@@ -23,6 +23,8 @@
 scripts/upload-secrets.ps1
 scripts/upload-secrets.sh
 scripts/*-secrets*
+build-pages.ps1
+scripts/patch-symlink.js
 
 # misc
 .DS_Store

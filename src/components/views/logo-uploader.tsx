@@ -67,7 +67,7 @@ export function LogoUploader({ currentKey, fallbackGradient }: LogoUploaderProps
         body: JSON.stringify({ contentType: file.type }),
       });
       if (!presignRes.ok) {
-        throw new Error((await presignRes.json().catch(() => ({}))).error ?? "Presign hiba.");
+        throw new Error(((await presignRes.json().catch(() => ({}))) as { error?: string }).error ?? "Presign hiba.");
       }
       const { uploadUrl, key } = (await presignRes.json()) as { uploadUrl: string; key: string };
 
@@ -84,7 +84,7 @@ export function LogoUploader({ currentKey, fallbackGradient }: LogoUploaderProps
         body: JSON.stringify({ key }),
       });
       if (!commitRes.ok) {
-        throw new Error((await commitRes.json().catch(() => ({}))).error ?? "Mentés hiba.");
+        throw new Error(((await commitRes.json().catch(() => ({}))) as { error?: string }).error ?? "Mentés hiba.");
       }
 
       setPreviewKey(key);

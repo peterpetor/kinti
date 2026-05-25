@@ -8,17 +8,20 @@ import { cn } from "@/lib/cn";
 export function ScreenHeader({
   eyebrow,
   title,
+  left,
   right,
   className,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
+  left?: ReactNode;
   right?: ReactNode;
   className?: string;
 }) {
   return (
     <header className={cn("flex items-start justify-between gap-3", className)}>
-      <div className="min-w-0">
+      {left && <div className="shrink-0 pt-1">{left}</div>}
+      <div className="min-w-0 flex-1">
         {eyebrow && (
           <p className="text-[11.5px] font-bold uppercase tracking-wider text-accent">{eyebrow}</p>
         )}

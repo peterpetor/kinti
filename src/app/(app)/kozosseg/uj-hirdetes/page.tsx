@@ -25,7 +25,7 @@ export default async function UjHirdetesPage() {
     <div className="px-5 pb-4">
       <ScreenHeader
         title="Új hirdetés"
-        back={
+        left={
           <Link
             href="/kozosseg"
             aria-label="Vissza"
