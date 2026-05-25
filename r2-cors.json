@@ -4,7 +4,8 @@
       "allowedOrigins": [
         "https://kinti.pages.dev",
         "https://kinti.app",
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "https://*.pages.dev"
       ],
       "allowedMethods": [
         "GET",
