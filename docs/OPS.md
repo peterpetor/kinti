@@ -5,7 +5,7 @@ beállítás után **automatikusan** működik — nem kell újabb deploy.
 
 ---
 
-## 1) Email Routing (info@kinti.app, abuse@kinti.app, hello@kinti.app)
+## 1) Email Routing (info@kinti.app, abuse@kinti.app)
 
 **Miért kell**: a jogi oldalak (`/impresszum`, `/adatvedelem`, `/aszf`)
 ezekre a címekre hivatkoznak — ha nem fogad őket valódi postafiók, NAIH /
@@ -22,7 +22,6 @@ Routing:
 3. **Routing rules** → Create address → vegyél fel egyenként:
    - `info@kinti.app`   →  a megerősített Gmail
    - `abuse@kinti.app`  →  a megerősített Gmail
-   - `hello@kinti.app`  →  a megerősített Gmail
 4. **Catch-all address** (ajánlott): bekapcsolod, így a `barmi@kinti.app`
    is megérkezik — gyakori elgépelést is elfog.
 

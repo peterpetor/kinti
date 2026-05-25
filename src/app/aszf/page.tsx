@@ -119,7 +119,7 @@ export default function AszfPage() {
 
       <h2>12. Kapcsolat</h2>
       <p>
-        Kérdés, panasz, takedown-bejelentés: <a href="mailto:hello@kinti.app">hello@kinti.app</a>
+        Kérdés, panasz, takedown-bejelentés: <a href="mailto:info@kinti.app">info@kinti.app</a>
         {" / "}
         <a href="mailto:abuse@kinti.app">abuse@kinti.app</a>
       </p>

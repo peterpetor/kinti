@@ -47,7 +47,7 @@ export function LegalPage({
 
       <footer className="mt-12 border-t border-line pt-6 text-[12px] leading-relaxed text-ink-muted">
         Kérdés vagy észrevétel:{" "}
-        <a href="mailto:hello@kinti.app" className="underline">hello@kinti.app</a>
+        <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a>
         <span className="mx-2">·</span>
         Visszaélés-bejelentés:{" "}
         <a href="mailto:abuse@kinti.app" className="underline">abuse@kinti.app</a>

@@ -37,7 +37,7 @@ interface CloudflareEnv {
   // https://resend.com → API Keys.  Sender domaint Resend dashboardban verifikálni
   // kell éles használathoz; fejlesztéshez az `onboarding@resend.dev` mehet.
   RESEND_API_KEY: string;
-  /** Pl. "Kinti <hello@kinti.app>" — Resend-en verifikált küldő. */
+  /** Pl. "Kinti <info@kinti.app>" — Resend-en verifikált küldő. */
   EMAIL_FROM: string;
   /** A megerősítő linkek bázisa (pl. https://kinti.app). Dev: http://localhost:3000 */
   PUBLIC_BASE_URL: string;
