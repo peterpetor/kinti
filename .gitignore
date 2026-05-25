@@ -19,6 +19,11 @@
 .env
 .env*.local
 
+# scripts with secrets (never commit these)
+scripts/upload-secrets.ps1
+scripts/upload-secrets.sh
+scripts/*-secrets*
+
 # misc
 .DS_Store
 *.pem
