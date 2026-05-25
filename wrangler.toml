@@ -1,0 +1,36 @@
+#:schema node_modules/wrangler/config-schema.json
+# ---------------------------------------------------------------------------
+# Kinti — Cloudflare Pages konfiguráció (Next.js + @cloudflare/next-on-pages)
+# ---------------------------------------------------------------------------
+# A `nodejs_compat` flag kell a Next.js Edge runtime-jának. A build kimenete a
+# next-on-pages konvenciója szerint a `.vercel/output/static` mappába kerül.
+# A bindingek (DB, MEDIA) helyi fejlesztésnél a `getRequestContext().env`-en
+# keresztül érhetők el — lásd src/lib/cloudflare.ts (2. lépésben).
+# ---------------------------------------------------------------------------
+
+name = "kinti"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+# --- D1: relációs adatbázis (categories, businesses, events, bulletin_posts) ---
+[[d1_databases]]
+binding = "DB"
+database_name = "kinti-db"
+database_id = "ec70d0d2-1b7c-416d-a2c6-c5d15c3e59a2"
+migrations_dir = "db/migrations"
+
+# --- R2: média (vállalkozói logók, hirdetés-képek) ---
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "kinti-media"
+preview_bucket_name = "kinti-media-preview"
+
+# --- Build-időben NEM titkos környezeti változók ---
+[vars]
+NEXT_PUBLIC_APP_NAME = "kinti"
+NEXT_PUBLIC_R2_PUBLIC_URL = "https://media.kinti.app"
+
+# A titkok (CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY stb.) NEM ide
+# kerülnek — helyben a .dev.vars fájlba, élesben:
+#   wrangler pages secret put CLERK_SECRET_KEY

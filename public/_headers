@@ -1,0 +1,17 @@
+# Cloudflare Pages — útvonal-specifikus HTTP fejlécek.
+# (A globális statikus cache-elést a Pages adja; itt csak a PWA-érzékeny
+#  fájlokra adunk meg külön szabályt.)
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Service-Worker-Allowed: /
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=300
+  Content-Type: application/manifest+json; charset=utf-8
+
+/icons/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/offline
+  Cache-Control: public, max-age=0, must-revalidate

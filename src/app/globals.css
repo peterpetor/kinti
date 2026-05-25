@@ -1,0 +1,270 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===========================================================================
+   Kinti téma-tokenek — a prototípus PALETTES objektumából (kinti-tokens.jsx).
+   Minden solid szín RGB-csatornaként (szóközzel) van tárolva, hogy a Tailwind
+   `rgb(... / <alpha-value>)` mintája megőrizze az opacity-módosítókat.
+   Téma váltása: <html data-theme="warm | modern">.
+   =========================================================================== */
+@layer base {
+  :root,
+  [data-theme="warm"] {
+    /* Meleg (krémszínű papír + fenyőzöld + paprikapiros) */
+    --bg: 244 237 224;            /* #f4ede0 */
+    --surface: 255 255 255;       /* #ffffff */
+    --surface-alt: 251 247 238;   /* #fbf7ee */
+    --primary: 29 68 52;          /* #1d4434 */
+    --primary-soft: 230 235 229;  /* #e6ebe5 */
+    --accent: 200 57 46;          /* #c8392e */
+    --accent-soft: 251 232 229;   /* #fbe8e5 */
+    --text: 14 31 23;             /* #0e1f17 */
+    --text-muted: 92 109 99;      /* #5c6d63 */
+    --text-faint: 148 160 151;    /* #94a097 */
+    --border-channel: 28 61 46;   /* rgba(28,61,46,...) */
+    --border-alpha: 0.1;
+    --border-strong-alpha: 0.18;
+    --map-land: 240 233 218;      /* #f0e9da */
+    --map-water: 207 225 216;     /* #cfe1d8 */
+    --map-green: 221 230 213;     /* #dde6d5 */
+    --map-road: 255 255 255;      /* #ffffff */
+    --map-road-line: 28 61 46;
+    --map-road-line-alpha: 0.12;
+
+    /* Árnyékok (SHADOWS) */
+    --shadow-card: 0 1px 2px rgba(14, 31, 23, 0.04), 0 4px 16px rgba(14, 31, 23, 0.06);
+    --shadow-card-hover: 0 2px 6px rgba(14, 31, 23, 0.06), 0 12px 32px rgba(14, 31, 23, 0.1);
+    --shadow-pop: 0 8px 28px rgba(14, 31, 23, 0.16), 0 2px 6px rgba(14, 31, 23, 0.06);
+    --shadow-pin: 0 3px 8px rgba(14, 31, 23, 0.22), 0 1px 2px rgba(14, 31, 23, 0.18);
+  }
+
+  [data-theme="modern"] {
+    /* Modern (hűvösebb szürke + sötétebb zöld) */
+    --bg: 245 245 243;            /* #f5f5f3 */
+    --surface: 255 255 255;       /* #ffffff */
+    --surface-alt: 250 250 248;   /* #fafaf8 */
+    --primary: 13 47 35;          /* #0d2f23 */
+    --primary-soft: 232 236 233;  /* #e8ece9 */
+    --accent: 214 59 48;          /* #d63b30 */
+    --accent-soft: 251 230 227;   /* #fbe6e3 */
+    --text: 10 10 8;              /* #0a0a08 */
+    --text-muted: 82 86 79;       /* #52564f */
+    --text-faint: 138 143 134;    /* #8a8f86 */
+    --border-channel: 10 10 8;
+    --border-alpha: 0.08;
+    --border-strong-alpha: 0.15;
+    --map-land: 237 237 234;      /* #ededea */
+    --map-water: 221 231 226;     /* #dde7e2 */
+    --map-green: 226 232 219;     /* #e2e8db */
+    --map-road: 255 255 255;      /* #ffffff */
+    --map-road-line: 10 10 8;
+    --map-road-line-alpha: 0.08;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Rejtsük a vízszintes kategória-pillek scrollbarját (a prototípusból) */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ===========================================================================
+   "Liquid Glass" segéd-réteg — a IOSGlassPill / IOSKeyboard üveghatás Tailwind
+   utility-kkel nehezen kifejezhető részei (belső fény + finom keret).
+   Használat: <div class="glass"> ... </div>
+   =========================================================================== */
+@layer components {
+  .glass {
+    @apply relative overflow-hidden backdrop-blur-md;
+    background: rgb(var(--surface) / 0.5);
+  }
+  .glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow:
+      inset 1.5px 1.5px 1px rgb(255 255 255 / 0.7),
+      inset -1px -1px 1px rgb(255 255 255 / 0.4);
+    border: 0.5px solid rgb(0 0 0 / 0.06);
+  }
+}
+
+/* ===========================================================================
+   Leaflet — Kinti-stílusú tűk és popup. A Leaflet beépített marker-ikonjait
+   nem használjuk (Next/webpack alatt törött az image-loading); helyette
+   L.divIcon-nal HTML elemet jelenítünk meg, amit itt CSS-szel formázunk.
+   =========================================================================== */
+
+/* Jogi oldalak tipográfiája — egységes olvashatóság hosszú szövegnél. */
+.prose-kinti {
+  color: rgb(var(--text));
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+.prose-kinti h2 {
+  margin: 28px 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: rgb(var(--text));
+}
+.prose-kinti h3 {
+  margin: 20px 0 8px;
+  font-size: 14.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgb(var(--text-muted));
+}
+.prose-kinti p {
+  margin: 0 0 14px;
+}
+.prose-kinti ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+  list-style: disc;
+}
+.prose-kinti li {
+  margin: 4px 0;
+}
+.prose-kinti a {
+  color: rgb(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-kinti strong {
+  font-weight: 700;
+  color: rgb(var(--text));
+}
+.prose-kinti hr {
+  border: none;
+  border-top: 1px solid rgb(var(--border-channel) / var(--border-alpha));
+  margin: 24px 0;
+}
+
+/* Kinti pin — gondoljunk rá úgy, mint egy fenyőzöld könnycseppre. */
+.kinti-pin {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(var(--shadow-pin));
+  transition: transform 0.15s ease;
+}
+.kinti-pin:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* A pin „könnycsepp” formája — egy lekerekített négyzet a primary színből,
+   a bal-alsó saroknál erős lekerekítéssel a klasszikus tű-vég helyett. */
+.kinti-pin__body {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 8%;
+  transform: rotate(45deg);
+  background: rgb(var(--primary));
+  box-shadow:
+    inset 1.5px 1.5px 1px rgb(255 255 255 / 0.25),
+    inset -1px -1px 1px rgb(0 0 0 / 0.2),
+    0 0 0 2px rgb(var(--surface));
+}
+
+/* A pin közepén ülő pötty (vagy csillag, ha kiemelt). */
+.kinti-pin__dot {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgb(var(--surface));
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Kiemelt vállalkozás: piros gyűrű + csillag a pin közepén. */
+.kinti-pin--featured .kinti-pin__body {
+  background: rgb(var(--accent));
+  box-shadow:
+    inset 1.5px 1.5px 1px rgb(255 255 255 / 0.25),
+    inset -1px -1px 1px rgb(0 0 0 / 0.2),
+    0 0 0 2px rgb(var(--surface)),
+    0 0 0 4px rgb(var(--accent) / 0.25);
+}
+
+/* Lüktető halo a kiemelt pin körül (aktív, nem zavaró). */
+.kinti-pin--featured::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  background: rgb(var(--accent) / 0.18);
+  animation: kinti-pin-pulse 2.4s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes kinti-pin-pulse {
+  0%   { transform: scale(0.9); opacity: 0.7; }
+  70%  { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Leaflet popup → Liquid Glass kártya stílusra hangolva. */
+.leaflet-popup-content-wrapper {
+  background: rgb(var(--surface));
+  border-radius: 18px;
+  box-shadow: var(--shadow-pop);
+  border: 0.5px solid rgb(var(--border-channel) / var(--border-strong-alpha));
+  padding: 0;
+}
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+  width: 240px !important;
+}
+.leaflet-popup-tip {
+  background: rgb(var(--surface));
+  border: 0.5px solid rgb(var(--border-channel) / var(--border-strong-alpha));
+}
+.leaflet-popup-close-button {
+  color: rgb(var(--text-muted)) !important;
+  padding: 8px 8px 0 0 !important;
+}
+/* A Leaflet-attribúciót kicsit visszafogjuk a Liquid Glass keretben. */
+.leaflet-control-attribution {
+  background: rgb(var(--surface) / 0.75) !important;
+  backdrop-filter: blur(8px);
+  font-size: 10px !important;
+  border-radius: 8px 0 0 0;
+}
+.leaflet-container {
+  font-family: inherit;
+  background: rgb(var(--map-land));
+}
+/* Zoom-vezérlők (asztali) — kerekítés + Liquid Glass-feel. */
+.leaflet-bar a {
+  background: rgb(var(--surface)) !important;
+  color: rgb(var(--text)) !important;
+  border-bottom-color: rgb(var(--border-channel) / var(--border-alpha)) !important;
+}
+.leaflet-bar {
+  border: none !important;
+  border-radius: 14px !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-card) !important;
+}

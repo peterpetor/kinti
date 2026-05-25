@@ -1,0 +1,162 @@
+-- ===========================================================================
+-- Kinti — seed (a prototípus kinti-data.jsx valós mock adatai).
+-- Alkalmazás:  npm run db:seed:local   /   npm run db:seed:remote
+-- Újrafuttatható: előbb törlés (gyerek → szülő), majd beszúrás (szülő → gyerek).
+-- ===========================================================================
+PRAGMA foreign_keys = ON;
+
+DELETE FROM business_daily_views;
+DELETE FROM business_stats;
+DELETE FROM bulletin_posts;
+DELETE FROM events;
+DELETE FROM businesses;
+DELETE FROM bulletin_kinds;
+DELETE FROM categories;
+
+-- --- 1) Kategóriák -------------------------------------------------------------
+INSERT INTO categories (id, label, glyph, sort_order) VALUES
+  ('all',      'Mind',           '⯐', 0),
+  ('fodrasz',  'Fodrász',        '✂', 1),
+  ('autoszer', 'Autószerelő',    '⚙', 2),
+  ('orvos',    'Orvos',          '＋', 3),
+  ('ugyved',   'Ügyvéd',         '§', 4),
+  ('pek',      'Pék',            '◐', 5),
+  ('etterem',  'Étterem',        '◍', 6),
+  ('villany',  'Villanyszerelő', '⚡', 7),
+  ('fordito',  'Fordító',        'A', 8),
+  ('takarito', 'Takarítás',      '⦦', 9),
+  ('it',       'Informatikus',   '⌘', 10);
+
+-- --- 2) Hirdetőtábla-taxonómia -------------------------------------------------
+INSERT INTO bulletin_kinds (id, label, color, sort_order) VALUES
+  ('alberlet', 'Albérlet', '#c8392e', 1),
+  ('allas',    'Állás',    '#1d4434', 2),
+  ('elado',    'Eladó',    '#c8862e', 3),
+  ('szolg',    'Szolg.',   '#3a6ea5', 4);
+
+-- --- 3) Vállalkozások ----------------------------------------------------------
+-- A lat/lng a Zürichi városrészek tényleges utcáihoz illesztett, plauzibilis
+-- WGS84 koordináta (OpenStreetMap-en ellenőrizhető). A pin_x/pin_y a régi
+-- prototípus mockupjához tartozik (0–100 %), a térkép a lat/lng-t használja.
+INSERT INTO businesses
+  (id, name, category_id, category_label, rating, reviews, dist_text, dist_meters,
+   address, phone, pin_x, pin_y, lat, lng, featured, blurb, open_now, open_text, years_here,
+   languages, photo, accent_photo, owner_user_id)
+VALUES
+  ('kovacs-anna', 'Kovács Anna fodrászat', 'fodrasz', 'Fodrász',
+   4.9, 47, '4 perc', 320,
+   'Birmensdorferstrasse 142, 8003 Zürich', '+41 76 421 88 03', 53, 49,
+   47.36750, 8.51690, 1,
+   'Magyar fodrász Wiedikonban. Női és férfi vágás, festés, melír. Magyarul, gyorsan, házias hangulatban.',
+   1, 'Nyitva · zár 19:00-kor', 6,
+   '["Magyar","Deutsch","English"]',
+   'linear-gradient(135deg, #d6b89a 0%, #b48868 60%, #8c5e3c 100%)',
+   'linear-gradient(135deg, #e8d4b8, #c89a76)',
+   NULL),
+
+  ('horvath-auto', 'Horváth autószerviz', 'autoszer', 'Autószerelő',
+   4.8, 112, '11 perc', 850,
+   'Letzigraben 89, 8003 Zürich', '+41 79 304 12 55', 36, 38,
+   47.38260, 8.50630, 0,
+   'Minden márka. Magyarul beszélünk. Becsületes ár, gyors átfutás.',
+   1, 'Nyitva · zár 18:00-kor', NULL,
+   NULL,
+   'linear-gradient(135deg, #5c6d63 0%, #2e3f33 100%)',
+   NULL,
+   NULL),
+
+  ('dr-szabo', 'Dr. Szabó Eszter – fogorvos', 'orvos', 'Fogorvos',
+   5.0, 28, '7 perc', 520,
+   'Seebahnstrasse 231, 8004 Zürich', '+41 44 555 12 99', 58, 62,
+   47.37130, 8.52150, 1,
+   'Általános és gyermek fogászat. Krankenkasse-elszámolás, magyar nyelvű konzultáció.',
+   0, 'Zárva · nyit 8:00-kor', NULL,
+   NULL,
+   'linear-gradient(135deg, #e9d8c0 0%, #c8392e 100%)',
+   NULL,
+   NULL),
+
+  ('nagy-pek', 'Nagy pékség', 'pek', 'Pék',
+   4.7, 89, '6 perc', 430,
+   'Albisriederplatz 4, 8003 Zürich', '+41 43 211 06 02', 44, 55,
+   47.37870, 8.50630, 0,
+   'Igazi magyar kenyér, kifli, pogácsa minden reggel. Szombaton bejgli is.',
+   1, 'Nyitva · zár 17:00-kor', NULL,
+   NULL,
+   'linear-gradient(135deg, #f0d9b5 0%, #c89a5c 100%)',
+   NULL,
+   NULL),
+
+  ('molnar-ugyved', 'Molnár & Partner ügyvédi iroda', 'ugyved', 'Ügyvéd',
+   4.9, 23, '14 perc', 1100,
+   'Bahnhofstrasse 88, 8001 Zürich', '+41 44 200 55 00', 68, 32,
+   47.37330, 8.53920, 0,
+   'Munkajog, családjog, tartózkodás. Svájci és magyar jogban is otthon.',
+   1, 'Nyitva · zár 18:00-kor', NULL,
+   NULL,
+   'linear-gradient(135deg, #1d4434 0%, #0e1f17 100%)',
+   NULL,
+   NULL),
+
+  ('kis-kocsma', 'Kiskocsma – magyar étterem', 'etterem', 'Étterem',
+   4.6, 203, '9 perc', 720,
+   'Langstrasse 152, 8004 Zürich', '+41 44 271 33 11', 60, 44,
+   47.37920, 8.53160, 0,
+   'Gulyás, töltött káposzta, rétes. Magyar borok. Csütörtök este élőzene.',
+   1, 'Nyitva · zár 23:00-kor', NULL,
+   NULL,
+   'linear-gradient(135deg, #c8392e 0%, #6b1d18 100%)',
+   NULL,
+   NULL),
+
+  ('toth-villany', 'Tóth villanyszerelő', 'villany', 'Villanyszerelő',
+   4.8, 56, '15 perc', 1200,
+   'Hardturmstrasse 11, 8005 Zürich', NULL, 30, 22,
+   47.38950, 8.51680, 0,
+   'Lakásfelújítás, hibakeresés, smart-home. 24/7 vészhelyzet.',
+   1, 'Nyitva · 24/7', NULL,
+   NULL,
+   'linear-gradient(135deg, #f0c14a 0%, #8c5e1a 100%)',
+   NULL,
+   NULL);
+
+-- --- 4) Események --------------------------------------------------------------
+INSERT INTO events
+  (id, title, event_date, date_day, date_month, date_weekday, start_time, venue, going, tag, color)
+VALUES
+  ('bal',      'Zürichi Magyar Bál 2026',          '2026-11-14', '14', 'NOV', 'szombat',   '19:00', 'Volkshaus, Helvetiaplatz', 187, 'Kulturális', '#c8392e'),
+  ('piknik',   'Magyar piknik a Sihl-parton',      '2026-06-07', '07', 'JÚN', 'vasárnap',  '11:00', 'Sihl-part, Allmend',        64, 'Család',     '#1d4434'),
+  ('foci',     'Magyar–Sváb focimeccs',            '2026-06-22', '22', 'JÚN', 'vasárnap',  '15:30', 'Sportplatz Hardhof',        31, 'Sport',      '#1d4434'),
+  ('irodalmi', 'Magyar irodalmi est – Esterházy',  '2026-07-03', '03', 'JÚL', 'csütörtök', '19:30', 'Kafi Schoffel',             22, 'Kulturális', '#c8392e');
+
+-- --- 5) Hirdetések -------------------------------------------------------------
+INSERT INTO bulletin_posts (id, kind_id, title, meta, age_text, poster) VALUES
+  ('b1', 'alberlet', '2.5-szobás Kreis 4-ben kiadó',        'Zürich · 1 980 CHF / hó',          '2 órája', 'Tímea'),
+  ('b2', 'allas',    'Magyar bébiszittert keresek heti 2x', 'Wollishofen · 28 CHF/óra',         '5 órája', 'Andrea'),
+  ('b3', 'elado',    'IKEA Malm ágy, 160×200, matraccal',   'Oerlikon · 220 CHF',               'tegnap',  'Gábor'),
+  ('b4', 'szolg',    'Magyar matek-korrepetálás (gimi)',    'Online v. személyes · 45 CHF/óra', '2 napja', 'Bence');
+
+-- --- 6) Dashboard heti KPI (Kovács Anna fodrászat) -----------------------------
+INSERT INTO business_stats
+  (business_id, week_views, week_views_delta, week_clicks, week_clicks_delta, week_calls, week_calls_delta)
+VALUES
+  ('kovacs-anna', 248, '+34%', 71, '+22%', 19, '+58%');
+
+-- --- 7) Dashboard 14 napos trendvonal (megtekintések) --------------------------
+--    A prototípus chart tömbje: [12,18,15,22,19,28,24,31,27,35,38,42,51,48]
+--    14 nap, a legutolsó a legfrissebb (összeg = 410, lásd "14 NAP · +41%").
+INSERT INTO business_daily_views (business_id, stat_date, views) VALUES
+  ('kovacs-anna', '2026-05-12', 12),
+  ('kovacs-anna', '2026-05-13', 18),
+  ('kovacs-anna', '2026-05-14', 15),
+  ('kovacs-anna', '2026-05-15', 22),
+  ('kovacs-anna', '2026-05-16', 19),
+  ('kovacs-anna', '2026-05-17', 28),
+  ('kovacs-anna', '2026-05-18', 24),
+  ('kovacs-anna', '2026-05-19', 31),
+  ('kovacs-anna', '2026-05-20', 27),
+  ('kovacs-anna', '2026-05-21', 35),
+  ('kovacs-anna', '2026-05-22', 38),
+  ('kovacs-anna', '2026-05-23', 42),
+  ('kovacs-anna', '2026-05-24', 51),
+  ('kovacs-anna', '2026-05-25', 48);

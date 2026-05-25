@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="kinti">
+  <!-- Maskable: a látható tartalom a középső 80%-ban (a launcher 1/8-ot vághat le minden szélen) -->
+
+  <!-- Teli háttér, hogy bármilyen alakú maszk alá kerül, ne legyen átlátszó él -->
+  <rect width="512" height="512" fill="#1d4434"/>
+
+  <!-- A márkajel a biztonságos zónába (~80%) zsugorítva -->
+  <g transform="translate(140 168)">
+    <rect x="0"   y="0" width="58" height="184" rx="14" ry="14" fill="#c8392e"/>
+    <rect x="86"  y="0" width="58" height="184" rx="14" ry="14" fill="#f4ede0"/>
+    <rect x="172" y="0" width="58" height="184" rx="14" ry="14" fill="#ffffff"/>
+  </g>
+</svg>

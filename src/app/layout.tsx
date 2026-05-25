@@ -1,0 +1,65 @@
+import type { Metadata, Viewport } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
+import { huHU } from "@clerk/localizations";
+import { jakarta, jetbrains } from "@/lib/fonts";
+import { SWRegister } from "@/components/sw-register";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: {
+    default: "kinti — Találj magyart a közeledben",
+    template: "%s · kinti",
+  },
+  description:
+    "GPS-alapú magyar szakemberkereső. Fodrász, autószerelő, orvos, ügyvéd, pék — bármi. Egy térkép. Anyanyelven.",
+  applicationName: "kinti",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "kinti",
+    startupImage: ["/icons/apple-touch-icon.png"],
+  },
+  formatDetection: { telephone: false },
+  icons: {
+    icon: [
+      { url: "/icons/kinti.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/favicon.ico"],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#1d4434" },
+    { media: "(prefers-color-scheme: dark)", color: "#1d4434" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <ClerkProvider
+      localization={huHU}
+      appearance={{ variables: { colorPrimary: "#1d4434", borderRadius: "0.75rem" } }}
+    >
+      <html lang="hu" data-theme="warm" className={`${jakarta.variable} ${jetbrains.variable}`}>
+        <body className="min-h-dvh bg-bg font-sans text-ink antialiased">
+          {children}
+          {/* PWA — Service Worker regisztráció + frissítés-prompt (prod-only) */}
+          <SWRegister />
+        </body>
+      </html>
+    </ClerkProvider>
+  );
+}

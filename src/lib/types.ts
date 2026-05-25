@@ -1,0 +1,107 @@
+/**
+ * Domén-típusok — a D1 séma (0000_init.sql) camelCase tükrei. A 4. lépés
+ * lekérdezései ezekké képezik le a sorokat (snake_case → camelCase, 0/1 → bool,
+ * languages JSON → string[]).
+ */
+
+export interface Category {
+  id: string;
+  label: string;
+  glyph: string | null;
+  sortOrder: number;
+}
+
+export interface Business {
+  id: string;
+  name: string;
+  categoryId: string;
+  categoryLabel: string | null;
+  rating: number;
+  reviews: number;
+  distText: string | null;
+  distMeters: number | null;
+  address: string | null;
+  phone: string | null;
+  pinX: number;
+  pinY: number;
+  /** WGS84 szélesség (latitude) — térképi koordináta. */
+  lat: number | null;
+  /** WGS84 hosszúság (longitude) — térképi koordináta. */
+  lng: number | null;
+  featured: boolean;
+  blurb: string | null;
+  openNow: boolean;
+  openText: string | null;
+  yearsHere: number | null;
+  languages: string[];
+  photo: string | null;
+  accentPhoto: string | null;
+  logoKey: string | null;
+  ownerUserId: string | null;
+}
+
+export interface KintiEvent {
+  id: string;
+  title: string;
+  eventDate: string | null;
+  dateDay: string | null;
+  dateMonth: string | null;
+  dateWeekday: string | null;
+  startTime: string | null;
+  venue: string | null;
+  going: number;
+  tag: string | null;
+  color: string | null;
+}
+
+export interface BulletinKind {
+  id: string;
+  label: string;
+  color: string | null;
+  sortOrder: number;
+}
+
+export interface BulletinPost {
+  id: string;
+  kindId: string;
+  title: string;
+  meta: string | null;
+  ageText: string | null;
+  poster: string | null;
+  posterUserId: string | null;
+  imageKey: string | null;
+  /** Hosszabb leírás (a 0002 óta). */
+  body: string | null;
+  /** Lejárati idő (ISO datetime); a publikus listán ami lejárt, nem jelenik meg. */
+  expiresAt: string | null;
+  /** Mikor publikálták (ISO datetime). */
+  publishedAt: string | null;
+  /** Csatolt taxonómia (JOIN bulletin_kinds). */
+  kind?: BulletinKind;
+}
+
+/** Megerősítésre váró hirdetés (bulletin_drafts) — a megerősítőnek küldve. */
+export interface BulletinDraft {
+  id: string;
+  email: string;
+  kindId: string;
+  title: string;
+  meta: string | null;
+  body: string | null;
+  poster: string | null;
+  confirmToken: string;
+  manageToken: string;
+  expiresAt: string;
+  createdAt: string;
+}
+
+export interface DashboardStats {
+  weekViews: number;
+  weekViewsDelta: string | null;
+  weekClicks: number;
+  weekClicksDelta: string | null;
+  weekCalls: number;
+  weekCallsDelta: string | null;
+  /** 14 napos trendvonal a Sparkline-hoz. */
+  trend: { date: string; views: number }[];
+}

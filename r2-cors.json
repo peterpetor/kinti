@@ -1,0 +1,21 @@
+{
+  "rules": [
+    {
+      "allowedOrigins": [
+        "https://kinti.pages.dev",
+        "https://kinti.app",
+        "http://localhost:3000"
+      ],
+      "allowedMethods": [
+        "GET",
+        "PUT",
+        "POST",
+        "DELETE",
+        "HEAD"
+      ],
+      "allowedHeaders": [
+        "*"
+      ]
+    }
+  ]
+}

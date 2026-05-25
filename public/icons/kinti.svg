@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="kinti">
+  <!-- Mély zöld háttér (primary @ warm téma — rgb(29,68,52)) -->
+  <rect width="512" height="512" rx="112" ry="112" fill="#1d4434"/>
+
+  <!-- Három álló csík: kéri-piros, krém, törtfehér — a KintiLogo komponens márkajele -->
+  <g transform="translate(96 128)">
+    <rect x="0"   y="0" width="80" height="256" rx="20" ry="20" fill="#c8392e"/>
+    <rect x="120" y="0" width="80" height="256" rx="20" ry="20" fill="#f4ede0"/>
+    <rect x="240" y="0" width="80" height="256" rx="20" ry="20" fill="#ffffff"/>
+  </g>
+
+  <!-- Finom belső highlight a glass-érzethez -->
+  <rect x="8" y="8" width="496" height="160" rx="104" ry="104" fill="url(#sheen)" opacity="0.10"/>
+  <defs>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
