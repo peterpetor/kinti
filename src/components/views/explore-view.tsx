@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import dynamic from "next/dynamic";
+import { useMemo, useState, lazy, Suspense } from "react";
 import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -17,17 +16,10 @@ import { cn } from "@/lib/cn";
  * a böngészőben („ssr: false”): csak akkor kerül a bundle-be, ha a felhasználó
  * tényleg átvált rá. A statikus lista így villámgyorsan megjelenik.
  */
-const BusinessMap = dynamic(
-  () => import("./business-map").then((m) => m.BusinessMap),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="grid h-[60vh] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
-        Térkép betöltése…
-      </div>
-    ),
-  },
-);
+const BusinessMap =
+  typeof window !== "undefined"
+    ? lazy(() => import("./business-map").then((m) => ({ default: m.BusinessMap })))
+    : () => null;
 
 type ViewMode = "list" | "map";
 
@@ -97,7 +89,15 @@ export function ExploreView({
         </div>
       ) : (
         <div className="px-5">
-          <BusinessMap businesses={filtered} className="h-[62dvh] sm:h-[68dvh]" />
+          <Suspense
+            fallback={
+              <div className="grid h-[60vh] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
+                Térkép betöltése…
+              </div>
+            }
+          >
+            <BusinessMap businesses={filtered} className="h-[62dvh] sm:h-[68dvh]" />
+          </Suspense>
         </div>
       )}
     </div>
