@@ -18,6 +18,7 @@ export interface Env {
 interface PurgeResult {
   draftsDeleted: number;
   postsDeleted: number;
+  reviewDraftsDeleted: number;
   ranAt: string;
 }
 
@@ -30,9 +31,14 @@ async function runPurge(env: Env): Promise<PurgeResult> {
     "DELETE FROM bulletin_posts WHERE expires_at IS NOT NULL AND expires_at <= datetime('now')",
   ).run();
 
+  const reviewDraftsRes = await env.DB.prepare(
+    "DELETE FROM review_drafts WHERE expires_at <= datetime('now')",
+  ).run();
+
   return {
     draftsDeleted: draftsRes.meta.changes ?? 0,
     postsDeleted: postsRes.meta.changes ?? 0,
+    reviewDraftsDeleted: reviewDraftsRes.meta.changes ?? 0,
     ranAt: new Date().toISOString(),
   };
 }

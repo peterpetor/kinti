@@ -1,18 +1,36 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
-import { getBusinessById } from "@/lib/repo";
+import { getBusinessById, getReviewsByBusiness } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
+import { ReviewForm } from "@/components/views/review-form";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-// Vélemények: külön reviews tábla nincs (prototípus), statikus minta.
-const REVIEWS = [
-  { name: "Eszter T.", date: "2 hete", rating: 5, text: "Anyukámat is hozzá viszem, ha Pestről jön. Anna érti, mit jelent magyarul fésülködni — nem kell elmagyarázni." },
-  { name: "Péter M.", date: "1 hónapja", rating: 5, text: "Pontos időpontok, normális ár (svájci viszonylatban tényleg az). Magyarul kedves, az ollót nem felejtjük el." },
+const HU_MONTHS = [
+  "január", "február", "március", "április", "május", "június",
+  "július", "augusztus", "szeptember", "október", "november", "december",
 ];
+
+/** "2 órája" / "tegnap" / "2025. okt. 14." formátum a vélemény dátumához. */
+function fmtRelative(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const now = Date.now();
+  const diff = now - d.getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return mins <= 1 ? "az imént" : `${mins} perce`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} órája`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return "tegnap";
+  if (days < 7) return `${days} napja`;
+  if (days < 30) return `${Math.floor(days / 7)} hete`;
+  if (days < 365) return `${Math.floor(days / 30)} hónapja`;
+  return `${d.getFullYear()}. ${HU_MONTHS[d.getMonth()].slice(0, 4)}. ${d.getDate()}.`;
+}
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const b = await getBusinessById(params.id);
@@ -25,6 +43,9 @@ const actionBtn =
 export default async function BusinessPage({ params }: { params: { id: string } }) {
   const b = await getBusinessById(params.id);
   if (!b) notFound();
+
+  const reviews = await getReviewsByBusiness(b.id);
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   const mapsHref = b.address
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.address)}`
@@ -141,29 +162,51 @@ export default async function BusinessPage({ params }: { params: { id: string } 
 
         {/* vélemények */}
         <section className="mt-6">
-          <SectionHeader right={<span className="text-[13px] font-bold text-primary">Mind ›</span>}>
-            Kintiek véleménye
+          <SectionHeader>
+            {reviews.length > 0
+              ? `Kintiek véleménye (${reviews.length})`
+              : "Kintiek véleménye"}
           </SectionHeader>
+
+          {/* Vélemény-írás CTA + form (account nélküli, email-megerősítéses) */}
+          <div className="mt-2.5">
+            <ReviewForm
+              businessId={b.id}
+              businessName={b.name}
+              turnstileSiteKey={turnstileSiteKey}
+            />
+          </div>
+
           <div className="mt-2.5 space-y-2.5">
-            {REVIEWS.map((r) => (
-              <article key={r.name} className="rounded-2xl border border-line bg-surface p-3.5">
-                <div className="mb-2 flex items-center gap-2.5">
-                  <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-white">
-                    {r.name.charAt(0)}
-                  </span>
-                  <div className="flex-1">
-                    <div className="text-[13.5px] font-bold text-ink">{r.name}</div>
-                    <div className="text-[11px] font-medium text-ink-muted">{r.date}</div>
+            {reviews.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-line bg-surface-alt px-4 py-6 text-center text-[13px] text-ink-muted">
+                Még nincs vélemény. Légy te az első!
+              </div>
+            ) : (
+              reviews.map((r) => (
+                <article key={r.id} className="rounded-2xl border border-line bg-surface p-3.5">
+                  <div className="mb-2 flex items-center gap-2.5">
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-white">
+                      {r.reviewerName.charAt(0).toUpperCase()}
+                    </span>
+                    <div className="flex-1">
+                      <div className="text-[13.5px] font-bold text-ink">{r.reviewerName}</div>
+                      <div className="text-[11px] font-medium text-ink-muted">
+                        {fmtRelative(r.publishedAt)}
+                      </div>
+                    </div>
+                    <div className="flex gap-px text-star">
+                      {Array.from({ length: r.rating }).map((_, i) => (
+                        <Icon key={i} name="star" size={12} filled />
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex gap-px text-star">
-                    {Array.from({ length: r.rating }).map((_, i) => (
-                      <Icon key={i} name="star" size={12} filled />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-[13.5px] leading-relaxed text-ink text-pretty">„{r.text}"</p>
-              </article>
-            ))}
+                  <p className="whitespace-pre-wrap text-[13.5px] leading-relaxed text-ink text-pretty">
+                    „{r.body}"
+                  </p>
+                </article>
+              ))
+            )}
           </div>
         </section>
 

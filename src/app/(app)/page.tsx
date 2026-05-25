@@ -3,7 +3,6 @@ import {
   BusinessCard,
   GlassPill,
   Icon,
-  IconButton,
   KintiLogo,
   SectionHeader,
 } from "@/components/ui";
@@ -25,10 +24,6 @@ export default async function FeedPage() {
       <header className="flex items-center gap-2.5">
         <KintiLogo size={28} />
         <span className="flex-1 text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
-        <IconButton variant="surface" aria-label="Értesítések" className="relative">
-          <Icon name="bell" size={18} />
-          <span className="absolute right-2.5 top-2 h-[7px] w-[7px] rounded-full border-[1.5px] border-surface bg-accent" />
-        </IconButton>
         <AuthControl />
       </header>
 

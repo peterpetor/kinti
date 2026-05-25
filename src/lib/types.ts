@@ -103,6 +103,34 @@ export interface BulletinDraft {
   ipHash: string | null;
 }
 
+/** Publikus vélemény egy vállalkozásról (account nélküli, email-megerősítéses). */
+export interface Review {
+  id: string;
+  businessId: string;
+  rating: number;
+  body: string;
+  reviewerName: string;
+  publishedAt: string;
+}
+
+/** Megerősítésre váró vélemény (review_drafts). */
+export interface ReviewDraft {
+  id: string;
+  businessId: string;
+  email: string;
+  rating: number;
+  body: string;
+  reviewerName: string;
+  confirmToken: string;
+  manageToken: string;
+  expiresAt: string;
+  createdAt: string;
+  termsVersion: string | null;
+  acceptedTermsAt: string | null;
+  ageConfirmed: boolean;
+  ipHash: string | null;
+}
+
 export interface DashboardStats {
   weekViews: number;
   weekViewsDelta: string | null;

@@ -1,0 +1,408 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Icon } from "@/components/ui";
+import { TurnstileWidget } from "@/components/turnstile-widget";
+import {
+  REVIEW_LIMITS,
+  type ReviewValidationError,
+} from "@/lib/reviews";
+import { cn } from "@/lib/cn";
+
+/**
+ * Account nélküli vélemény-űrlap (Liquid Glass kártyák). Flow:
+ *   1) felhasználó csillagot ad, szöveget ír, nevet + emailt
+ *   2) ÁSZF + 16+ checkbox
+ *   3) Turnstile token
+ *   4) POST → email kimegy → kattintás → publikus
+ *
+ * Az űrlap csak akkor látszik, ha a felhasználó megnyomja a "Vélemény írása"
+ * gombot — addig kompakt CTA, hogy a vállalkozás oldal ne legyen zsúfolt.
+ */
+export interface ReviewFormProps {
+  businessId: string;
+  businessName: string;
+  turnstileSiteKey: string;
+}
+
+type Phase = "idle" | "submitting" | "sent" | "error";
+
+interface FormState {
+  email: string;
+  rating: number;
+  body: string;
+  reviewerName: string;
+  website: string;
+  acceptTerms: boolean;
+  ageConfirmed: boolean;
+}
+
+const INITIAL: FormState = {
+  email: "",
+  rating: 0,
+  body: "",
+  reviewerName: "",
+  website: "",
+  acceptTerms: false,
+  ageConfirmed: false,
+};
+
+export function ReviewForm({
+  businessId,
+  businessName,
+  turnstileSiteKey,
+}: ReviewFormProps) {
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<FormState>(INITIAL);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [global, setGlobal] = useState<string | null>(null);
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+
+  function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setForm((f) => ({ ...f, [key]: value }));
+    setErrors((e) => ({ ...e, [key]: "" }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErrors({});
+    setGlobal(null);
+
+    if (!turnstileToken) {
+      setGlobal("Várd meg a robot-ellenőrzést, mielőtt elküldöd.");
+      return;
+    }
+
+    setPhase("submitting");
+    try {
+      const res = await fetch("/api/reviews/submit", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ ...form, businessId, turnstileToken }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        details?: ReviewValidationError[];
+      };
+      if (!res.ok) {
+        if (data.details?.length) {
+          const map: Record<string, string> = {};
+          for (const d of data.details) map[d.field as string] = d.message;
+          setErrors(map);
+        }
+        setGlobal(data.error ?? "Hiba történt. Próbáld újra.");
+        setPhase("error");
+        return;
+      }
+      setPhase("sent");
+    } catch (err) {
+      setGlobal(err instanceof Error ? err.message : "Hálózati hiba.");
+      setPhase("error");
+    }
+  }
+
+  // Sikeres beküldés
+  if (phase === "sent") {
+    return (
+      <div className="rounded-card border border-line bg-surface p-5 text-center shadow-card">
+        <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary text-white">
+          <Icon name="send" size={20} strokeWidth={2.2} />
+        </div>
+        <h3 className="mt-3 text-[16px] font-extrabold tracking-tight text-ink">
+          Megnéznéd a postafiókodat?
+        </h3>
+        <p className="mx-auto mt-2 max-w-sm text-pretty text-[13px] leading-relaxed text-ink-muted">
+          Küldtünk egy emailt a <strong className="text-ink">{form.email}</strong> címre.
+          A megerősítő linkre kattintva azonnal megjelenik a véleményed itt,{" "}
+          <strong className="text-ink">{businessName}</strong> oldalán. A link 24
+          órán át érvényes.
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            setForm(INITIAL);
+            setTurnstileToken("");
+            setPhase("idle");
+            setOpen(false);
+          }}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-4 py-2 text-[12px] font-bold text-ink"
+        >
+          Bezár
+        </button>
+      </div>
+    );
+  }
+
+  // Kompakt CTA
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-primary/40 bg-primary-soft/60 p-3.5 transition active:scale-[0.99]"
+      >
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary text-white">
+          <Icon name="star" size={16} strokeWidth={2.4} filled />
+        </span>
+        <div className="min-w-0 flex-1 text-left">
+          <div className="text-[14px] font-extrabold tracking-[-0.01em] text-ink">
+            Írd meg a véleményed
+          </div>
+          <div className="text-[11.5px] text-ink-muted">
+            Regisztráció nélkül — csak email-megerősítés
+          </div>
+        </div>
+        <Icon name="chevR" size={14} className="text-ink-muted" />
+      </button>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-3" noValidate>
+      {/* Csillag-választó */}
+      <Section title={`Értékelés: ${businessName}`} required>
+        <RatingPicker
+          value={form.rating}
+          onChange={(v) => setField("rating", v)}
+        />
+        <FieldError msg={errors.rating} />
+      </Section>
+
+      {/* Szöveg */}
+      <Section title="Mit gondolsz?" required>
+        <textarea
+          value={form.body}
+          onChange={(e) => setField("body", e.target.value)}
+          placeholder="Mire számíthatok? Min volt jó? Hova fejlődhetne?"
+          maxLength={REVIEW_LIMITS.bodyMax}
+          rows={5}
+          className={cn(inputCls(errors.body), "resize-none")}
+        />
+        <div className="mt-1 flex justify-between text-[10.5px] text-ink-faint">
+          <span>Min. {REVIEW_LIMITS.bodyMin} karakter</span>
+          <span>
+            {form.body.length} / {REVIEW_LIMITS.bodyMax}
+          </span>
+        </div>
+        <FieldError msg={errors.body} />
+      </Section>
+
+      {/* Név + email */}
+      <Section title="Megjelenő név és email" required>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <div>
+            <input
+              type="text"
+              value={form.reviewerName}
+              onChange={(e) => setField("reviewerName", e.target.value)}
+              placeholder="Pl. Eszter T."
+              maxLength={REVIEW_LIMITS.reviewerNameMax}
+              className={inputCls(errors.reviewerName)}
+            />
+            <FieldError msg={errors.reviewerName} />
+          </div>
+          <div>
+            <input
+              type="email"
+              required
+              value={form.email}
+              onChange={(e) => setField("email", e.target.value)}
+              placeholder="Email a megerősítéshez"
+              autoComplete="email"
+              maxLength={REVIEW_LIMITS.emailMax}
+              className={inputCls(errors.email)}
+            />
+            <FieldError msg={errors.email} />
+          </div>
+        </div>
+        <p className="mt-2 text-[11px] leading-snug text-ink-muted">
+          A megjelenő név nyilvános a véleményed mellett. Az email-cím csak a
+          megerősítő és kezelő linkek elküldésére kell — nem publikus.
+        </p>
+      </Section>
+
+      {/* Honeypot */}
+      <input
+        type="text"
+        name="website"
+        value={form.website}
+        onChange={(e) => setField("website", e.target.value)}
+        autoComplete="off"
+        tabIndex={-1}
+        aria-hidden="true"
+        className="hidden"
+      />
+
+      {/* Hozzájárulások */}
+      <section className="space-y-2.5 rounded-card border border-line bg-surface p-4 shadow-card">
+        <Consent
+          checked={form.ageConfirmed}
+          onChange={(v) => setField("ageConfirmed", v)}
+          error={errors.ageConfirmed}
+        >
+          Kijelentem, hogy elmúltam 16 éves.
+        </Consent>
+        <Consent
+          checked={form.acceptTerms}
+          onChange={(v) => setField("acceptTerms", v)}
+          error={errors.acceptTerms}
+        >
+          Elolvastam és elfogadom az{" "}
+          <Link href="/aszf" target="_blank" className="underline">
+            ÁSZF
+          </Link>
+          -et és az{" "}
+          <Link href="/adatvedelem" target="_blank" className="underline">
+            Adatkezelési Tájékoztatót
+          </Link>
+          .
+        </Consent>
+      </section>
+
+      <div className="px-1">
+        <TurnstileWidget siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
+      </div>
+
+      {global && (
+        <div className="rounded-card border border-accent/30 bg-accent-soft px-4 py-3 text-[12.5px] font-semibold text-accent">
+          {global}
+        </div>
+      )}
+
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="flex h-12 items-center justify-center rounded-pill border border-line bg-surface px-5 text-[13.5px] font-bold text-ink"
+        >
+          Mégse
+        </button>
+        <button
+          type="submit"
+          disabled={
+            phase === "submitting" || !form.acceptTerms || !form.ageConfirmed
+          }
+          className={cn(
+            "flex h-12 flex-1 items-center justify-center gap-1.5 rounded-pill bg-primary text-[14px] font-extrabold tracking-[-0.01em] text-white shadow-card-hover transition active:scale-[0.99]",
+            (phase === "submitting" || !form.acceptTerms || !form.ageConfirmed) &&
+              "cursor-not-allowed opacity-50",
+          )}
+        >
+          {phase === "submitting" ? "Küldés…" : "Vélemény beküldése"}
+          {phase !== "submitting" && (
+            <Icon name="arrowRight" size={15} strokeWidth={2.4} />
+          )}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// --- segéd-komponensek ------------------------------------------------------
+
+function RatingPicker({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map((n) => {
+        const active = n <= value;
+        return (
+          <button
+            key={n}
+            type="button"
+            aria-label={`${n} csillag`}
+            onClick={() => onChange(n)}
+            className={cn(
+              "grid h-10 w-10 place-items-center rounded-[12px] transition",
+              active ? "text-star" : "text-line-strong hover:text-ink-muted",
+            )}
+          >
+            <Icon name="star" size={26} strokeWidth={1.8} filled={active} />
+          </button>
+        );
+      })}
+      {value > 0 && (
+        <span className="ml-2 text-[13px] font-bold text-ink-muted">
+          {value}/5
+        </span>
+      )}
+    </div>
+  );
+}
+
+function Section({
+  title,
+  required,
+  children,
+}: {
+  title: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-card border border-line bg-surface p-4 shadow-card">
+      <div className="mb-2 flex items-center justify-between">
+        <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
+          {title}
+        </h3>
+        {required && (
+          <span className="text-[10.5px] font-semibold uppercase tracking-wide text-accent">
+            kötelező
+          </span>
+        )}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return (
+    <p className="mt-1 text-[11.5px] font-semibold text-accent" role="alert">
+      {msg}
+    </p>
+  );
+}
+
+function inputCls(error?: string): string {
+  return cn(
+    "w-full rounded-[12px] border bg-surface-alt px-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint",
+    "focus:outline-none focus:ring-2 focus:ring-primary/30",
+    error ? "border-accent/40" : "border-line",
+  );
+}
+
+function Consent({
+  checked,
+  onChange,
+  error,
+  children,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="flex cursor-pointer items-start gap-2.5 text-[12.5px] leading-relaxed text-ink">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          className="mt-0.5 h-4 w-4 flex-none cursor-pointer accent-primary"
+        />
+        <span>{children}</span>
+      </label>
+      <FieldError msg={error} />
+    </div>
+  );
+}

@@ -1,4 +1,5 @@
-import { Icon, IconButton, ScreenHeader } from "@/components/ui";
+import Link from "next/link";
+import { Icon, ScreenHeader } from "@/components/ui";
 import { CommunityView } from "@/components/views/community-view";
 import { getBulletinKinds, getBulletinPosts, getEvents } from "@/lib/repo";
 
@@ -27,9 +28,13 @@ export default async function KozossegPage() {
             </>
           }
           right={
-            <IconButton variant="primary" aria-label="Új bejegyzés">
+            <Link
+              href="/kozosseg/uj-hirdetes"
+              aria-label="Új hirdetés feladása"
+              className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-primary text-white shadow-card transition active:scale-95"
+            >
               <Icon name="plus" size={18} strokeWidth={2.6} />
-            </IconButton>
+            </Link>
           }
         />
       </div>
