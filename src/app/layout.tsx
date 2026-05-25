@@ -48,6 +48,10 @@ export const viewport: Viewport = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Cloudflare Web Analytics — cookie-mentes, GDPR-barát, nem igényel consentet.
+  // Akkor töltődik be, ha az env-be van állítva token (lásd README).
+  const cfBeaconToken = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
+
   return (
     <ClerkProvider
       localization={huHU}
@@ -58,6 +62,13 @@ export default function RootLayout({
           {children}
           {/* PWA — Service Worker regisztráció + frissítés-prompt (prod-only) */}
           <SWRegister />
+          {cfBeaconToken && (
+            <script
+              defer
+              src="https://static.cloudflareinsights.com/beacon.min.js"
+              data-cf-beacon={`{"token": "${cfBeaconToken}"}`}
+            />
+          )}
         </body>
       </html>
     </ClerkProvider>

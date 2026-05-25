@@ -13,9 +13,12 @@ export function AuthControl() {
     <>
       <SignedOut>
         <SignInButton mode="modal">
-          <button className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-3.5 py-2 text-sm font-bold text-white shadow-card transition active:scale-95">
+          <button
+            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-3.5 py-2 text-sm font-bold text-white shadow-card transition active:scale-95"
+            title="Csak vállalkozóknak — közösségi taghoz nem kell fiók"
+          >
             <Icon name="user" size={16} strokeWidth={2.2} />
-            Belépés
+            Vállalkozói belépés
           </button>
         </SignInButton>
       </SignedOut>

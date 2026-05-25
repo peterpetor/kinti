@@ -1,0 +1,28 @@
+#:schema node_modules/wrangler/config-schema.json
+# ---------------------------------------------------------------------------
+# kinti-cron-purge — különálló Cloudflare Worker, ami napi 1× lefutva
+# kitakarítja a 24h-nál régebbi, meg nem erősített bulletin_drafts sorokat
+# és a 30 nap után lejárt bulletin_posts rekordokat a D1 adatbázisból.
+#
+# A Pages projekttel UGYANAZT a D1-et bind-eli ide, így nincs külön DB.
+# Deploy:
+#   cd workers/cron-purge
+#   npx wrangler deploy
+# ---------------------------------------------------------------------------
+
+name = "kinti-cron-purge"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# Napi 03:17 UTC — direkt nem kerek, hogy ne ütközzön a CF tömeges cron-jaival
+[triggers]
+crons = ["17 3 * * *"]
+
+# Ugyanaz a D1 database, mint a Pages projektben (wrangler.toml [[d1_databases]])
+[[d1_databases]]
+binding = "DB"
+database_name = "kinti-db"
+database_id = "ec70d0d2-1b7c-416d-a2c6-c5d15c3e59a2"
+
+[observability]
+enabled = true

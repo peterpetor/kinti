@@ -115,6 +115,10 @@ interface BulletinDraftRow {
   manage_token: string;
   expires_at: string;
   created_at: string;
+  terms_version: string | null;
+  accepted_terms_at: string | null;
+  age_confirmed: number | null;
+  ip_hash: string | null;
 }
 
 // --- mapperek ---------------------------------------------------------------
@@ -203,6 +207,10 @@ function toBulletinDraft(r: BulletinDraftRow): BulletinDraft {
     manageToken: r.manage_token,
     expiresAt: r.expires_at,
     createdAt: r.created_at,
+    termsVersion: r.terms_version,
+    acceptedTermsAt: r.accepted_terms_at,
+    ageConfirmed: r.age_confirmed === 1,
+    ipHash: r.ip_hash,
   };
 }
 
@@ -352,6 +360,14 @@ export interface BulletinDraftInput {
   confirmToken: string;
   manageToken: string;
   expiresAt: string; // ISO
+  /** Az elfogadott jogi szövegek verziója (TERMS_VERSION). */
+  termsVersion: string;
+  /** Az elfogadás időbélyege (ISO datetime). */
+  acceptedTermsAt: string;
+  /** 1 = a feladó nyilatkozta, hogy elmúlt 16 (GDPR Art. 8). */
+  ageConfirmed: number;
+  /** SHA-256(IP) — null, ha nincs IP a kérésben (pl. localhost dev). */
+  ipHash: string | null;
 }
 
 /** Új piszkozat — a kliens-form `submit`-end-pointja használja. */
@@ -359,8 +375,10 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
   await getDB()
     .prepare(
       `INSERT INTO bulletin_drafts
-       (id, email, kind_id, title, meta, body, poster, confirm_token, manage_token, expires_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (id, email, kind_id, title, meta, body, poster,
+        confirm_token, manage_token, expires_at,
+        terms_version, accepted_terms_at, age_confirmed, ip_hash)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -373,6 +391,10 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
       input.confirmToken,
       input.manageToken,
       input.expiresAt,
+      input.termsVersion,
+      input.acceptedTermsAt,
+      input.ageConfirmed,
+      input.ipHash,
     )
     .run();
 }
@@ -417,6 +439,11 @@ export interface PublishBulletinInput {
   expiresAt: string;
   /** 1 = admin moderációra vár; 0 = azonnal publikus. */
   isPending: number;
+  /** Audit-trail átvezetése a draft-ról. */
+  termsVersion: string | null;
+  acceptedTermsAt: string | null;
+  ageConfirmed: number;
+  ipHash: string | null;
 }
 
 /**
@@ -429,8 +456,10 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
     .prepare(
       `INSERT INTO bulletin_posts
        (id, kind_id, title, meta, body, poster, email, manage_token,
-        age_text, expires_at, published_at, is_pending, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'frissen', ?, datetime('now'), ?, datetime('now'))`,
+        age_text, expires_at, published_at, is_pending, created_at,
+        terms_version, accepted_terms_at, age_confirmed, ip_hash)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'frissen', ?, datetime('now'), ?, datetime('now'),
+               ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -443,6 +472,10 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       input.manageToken,
       input.expiresAt,
       input.isPending,
+      input.termsVersion,
+      input.acceptedTermsAt,
+      input.ageConfirmed,
+      input.ipHash,
     )
     .run();
 }

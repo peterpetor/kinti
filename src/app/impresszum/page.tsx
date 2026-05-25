@@ -8,7 +8,8 @@ export const metadata = { title: "Impresszum" };
 const OPERATOR = {
   name: "Petor Péter",
   role: "magánszemély üzemeltető (közösségi kezdeményezés)",
-  address: "A postai cím jogi levelezés céljából írásos kérésre elérhető.",
+  address: "2233 Ecser, Nádas Béla utca 10., Magyarország",
+  addressNote: "Levelezési cím — jogi kézbesítés is itt érvényes.",
   email: "info@kinti.app",
   contactEmail: "info@kinti.app",
   abuseEmail: "abuse@kinti.app",
@@ -28,7 +29,11 @@ export default function ImpresszumPage() {
       <ul>
         <li>Név: <strong>{OPERATOR.name}</strong></li>
         <li>Jogállás: {OPERATOR.role}</li>
-        <li>Tartózkodási hely: {OPERATOR.address}</li>
+        <li>
+          Postai cím: {OPERATOR.address}
+          <br />
+          <span className="text-ink-muted">{OPERATOR.addressNote}</span>
+        </li>
         <li>
           Kapcsolat: <a href={`mailto:${OPERATOR.contactEmail}`}>{OPERATOR.contactEmail}</a>
         </li>

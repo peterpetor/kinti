@@ -22,6 +22,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               Visszaélés-bejelentés
             </a>
           </nav>
+          <p className="mt-1.5 text-ink-faint">
+            A bejelentkezett vállalkozókhoz Clerk session-cookie-t használunk
+            (technikailag szükséges). Tracking / analitikai cookie nincs.
+          </p>
           <p className="mt-2 text-ink-faint">
             Közösségi projekt · {new Date().getFullYear()}
           </p>

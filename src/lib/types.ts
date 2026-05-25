@@ -93,6 +93,14 @@ export interface BulletinDraft {
   manageToken: string;
   expiresAt: string;
   createdAt: string;
+  /** Audit-trail: melyik jogi-szöveg-verziót fogadta el a feladó. */
+  termsVersion: string | null;
+  /** Audit-trail: az elfogadás időbélyege. */
+  acceptedTermsAt: string | null;
+  /** Audit-trail: 16+ nyilatkozat. */
+  ageConfirmed: boolean;
+  /** Audit-trail: SHA-256(IP) — nyers IP-t nem tárolunk. */
+  ipHash: string | null;
 }
 
 export interface DashboardStats {

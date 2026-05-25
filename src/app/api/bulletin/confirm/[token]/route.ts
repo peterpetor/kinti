@@ -55,6 +55,10 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     manageToken: draft.manageToken,
     expiresAt: postExpiresAt,
     isPending,
+    termsVersion: draft.termsVersion,
+    acceptedTermsAt: draft.acceptedTermsAt,
+    ageConfirmed: draft.ageConfirmed ? 1 : 0,
+    ipHash: draft.ipHash,
   });
   await deleteBulletinDraft(draft.id);
 

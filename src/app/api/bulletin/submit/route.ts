@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { getBulletinKinds, createBulletinDraft } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { sendConfirmationEmail } from "@/lib/email";
-import { validateBulletinInput, CONFIRM_TTL_MS } from "@/lib/bulletin";
+import {
+  validateBulletinInput,
+  CONFIRM_TTL_MS,
+  TERMS_VERSION,
+  hashIp,
+} from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 
 export const runtime = "edge";
@@ -56,11 +61,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Ismeretlen kategória." }, { status: 400 });
   }
 
-  // 4) piszkozat-INSERT
+  // 4) piszkozat-INSERT (audit-trail mezőkkel: accepted_terms_at, ip_hash, terms_version)
   const id = crypto.randomUUID();
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
   const manageToken = crypto.randomUUID().replace(/-/g, "");
-  const expiresAt = new Date(Date.now() + CONFIRM_TTL_MS).toISOString();
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + CONFIRM_TTL_MS).toISOString();
+  const ipHash = await hashIp(ip);
 
   await createBulletinDraft({
     id,
@@ -73,6 +80,10 @@ export async function POST(req: Request) {
     confirmToken,
     manageToken,
     expiresAt,
+    termsVersion: TERMS_VERSION,
+    acceptedTermsAt: now.toISOString(),
+    ageConfirmed: 1,
+    ipHash,
   });
 
   // 5) Email küldés

@@ -3,6 +3,15 @@
  * és a szerver-route ugyanazt érvényesítse.
  */
 
+/**
+ * A jogi szövegek (ÁSZF + Adatkezelési Tájékoztató) jelenlegi verziója.
+ * Akkor frissítsd, amikor érdemi változtatás történik a /aszf vagy a
+ * /adatvedelem oldalon — a piszkozat-INSERT ezt az értéket rögzíti az
+ * `accepted_terms_at` mellé, így jogvitában bizonyítható, MELYIK verziót
+ * fogadta el a felhasználó.
+ */
+export const TERMS_VERSION = "2026-05-25";
+
 /** Megerősítő link érvényessége (ms). 24 óra — utána a piszkozat törlődik. */
 export const CONFIRM_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -38,6 +47,10 @@ export interface BulletinFormInput {
   poster?: unknown;
   /** Bot-csapda — ha bármi értéke van, eldobjuk. */
   website?: unknown;
+  /** Kötelező: az ÁSZF + Adatkezelési Tájékoztató elfogadása. */
+  acceptTerms?: unknown;
+  /** Kötelező: a feladó nyilatkozata, hogy elmúlt 16 éves (GDPR Art. 8). */
+  ageConfirmed?: unknown;
 }
 
 export interface ValidatedBulletinInput {
@@ -47,6 +60,8 @@ export interface ValidatedBulletinInput {
   meta: string | null;
   body: string | null;
   poster: string | null;
+  acceptTerms: true;
+  ageConfirmed: true;
 }
 
 export type ValidationError = { field: keyof BulletinFormInput; message: string };
@@ -94,6 +109,19 @@ export function validateBulletinInput(
   if (poster.length > LIMITS.posterMax)
     errors.push({ field: "poster", message: `Legfeljebb ${LIMITS.posterMax} karakter.` });
 
+  if (input.acceptTerms !== true) {
+    errors.push({
+      field: "acceptTerms",
+      message: "Az ÁSZF és az Adatkezelési Tájékoztató elfogadása kötelező.",
+    });
+  }
+  if (input.ageConfirmed !== true) {
+    errors.push({
+      field: "ageConfirmed",
+      message: "A Szolgáltatás csak 16. életévét betöltött személyek által vehető igénybe.",
+    });
+  }
+
   if (errors.length) return { ok: false, errors };
 
   return {
@@ -105,6 +133,26 @@ export function validateBulletinInput(
       meta: meta || null,
       body: body || null,
       poster: poster || null,
+      acceptTerms: true,
+      ageConfirmed: true,
     },
   };
+}
+
+/**
+ * Web Crypto SHA-256 hex — IP-cím irreverzibilis hash-eléséhez. A GDPR
+ * adatminimalizálási elvet teljesíti: a nyers IP-t nem tároljuk, csak a
+ * hash-ét; ettől függetlenül duplikáció / abuse-vizsgálatra használható
+ * (egy IP-ről indított ismétlődő spamhullám felismerésére).
+ *
+ * Edge-runtime kompatibilis — a `crypto.subtle` minden Workers/Pages
+ * környezetben elérhető.
+ */
+export async function hashIp(ip: string | null): Promise<string | null> {
+  if (!ip) return null;
+  const data = new TextEncoder().encode(ip);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }

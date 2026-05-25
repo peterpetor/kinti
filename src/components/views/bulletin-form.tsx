@@ -36,6 +36,10 @@ interface FormState {
   poster: string;
   /** Honeypot — bot kitölti, ember nem. Tailwind `hidden`-nel rejtve. */
   website: string;
+  /** Kötelező: ÁSZF + Adatkezelési Tájékoztató elfogadása. */
+  acceptTerms: boolean;
+  /** Kötelező: 16+ nyilatkozat (GDPR Art. 8). */
+  ageConfirmed: boolean;
 }
 
 const INITIAL: FormState = {
@@ -46,6 +50,8 @@ const INITIAL: FormState = {
   body: "",
   poster: "",
   website: "",
+  acceptTerms: false,
+  ageConfirmed: false,
 };
 
 export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
@@ -251,6 +257,32 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         className="hidden"
       />
 
+      {/* Kötelező nyilatkozatok — GDPR Art. 8 (16+) + szabad hozzájárulás */}
+      <section className="space-y-2.5 rounded-card border border-line bg-surface p-4 shadow-card">
+        <Consent
+          checked={form.ageConfirmed}
+          onChange={(v) => setField("ageConfirmed", v)}
+          error={errors.ageConfirmed}
+        >
+          Kijelentem, hogy elmúltam 16 éves.
+        </Consent>
+        <Consent
+          checked={form.acceptTerms}
+          onChange={(v) => setField("acceptTerms", v)}
+          error={errors.acceptTerms}
+        >
+          Elolvastam és elfogadom az{" "}
+          <Link href="/aszf" target="_blank" className="underline">
+            ÁSZF
+          </Link>
+          -et és az{" "}
+          <Link href="/adatvedelem" target="_blank" className="underline">
+            Adatkezelési Tájékoztatót
+          </Link>
+          .
+        </Consent>
+      </section>
+
       {/* Turnstile */}
       <div className="px-1">
         <TurnstileWidget siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
@@ -263,23 +295,21 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         </div>
       )}
 
-      {/* Beküldés gomb */}
+      {/* Beküldés gomb — csak akkor aktív, ha mindkét hozzájárulás megvan */}
       <button
         type="submit"
-        disabled={phase === "submitting"}
+        disabled={
+          phase === "submitting" || !form.acceptTerms || !form.ageConfirmed
+        }
         className={cn(
           "flex h-12 w-full items-center justify-center gap-1.5 rounded-pill bg-primary text-[14px] font-extrabold tracking-[-0.01em] text-white shadow-card-hover transition active:scale-[0.99]",
-          phase === "submitting" && "opacity-60",
+          (phase === "submitting" || !form.acceptTerms || !form.ageConfirmed) &&
+            "cursor-not-allowed opacity-50",
         )}
       >
         {phase === "submitting" ? "Küldés…" : "Hirdetés beküldése"}
         {phase !== "submitting" && <Icon name="arrowRight" size={15} strokeWidth={2.4} />}
       </button>
-
-      <p className="px-1 text-center text-[11px] leading-snug text-ink-faint">
-        A beküldéssel elfogadod az{" "}
-        <Link href="/aszf" className="underline">ÁSZF</Link>-et.
-      </p>
     </form>
   );
 }
@@ -326,5 +356,32 @@ function inputCls(error?: string): string {
     "w-full rounded-[12px] border bg-surface-alt px-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint",
     "focus:outline-none focus:ring-2 focus:ring-primary/30",
     error ? "border-accent/40" : "border-line",
+  );
+}
+
+function Consent({
+  checked,
+  onChange,
+  error,
+  children,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="flex cursor-pointer items-start gap-2.5 text-[12.5px] leading-relaxed text-ink">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          className="mt-0.5 h-4 w-4 flex-none cursor-pointer accent-primary"
+        />
+        <span>{children}</span>
+      </label>
+      <FieldError msg={error} />
+    </div>
   );
 }

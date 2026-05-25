@@ -22,6 +22,7 @@ export default function AdatvedelemPage() {
       <h2>1. Adatkezelő</h2>
       <p>
         Adatkezelő: <strong>{"Petor Péter"}</strong> magánszemély üzemeltető.<br />
+        Postai cím: 2233 Ecser, Nádas Béla utca 10., Magyarország.<br />
         Elérhetőség: <a href="mailto:info@kinti.app">info@kinti.app</a>
       </p>
       <p>
@@ -30,6 +31,15 @@ export default function AdatvedelemPage() {
       </p>
 
       <h2>2. Milyen adatokat kezelünk?</h2>
+
+      <h3>2.0 Korhatár</h3>
+      <p>
+        A Szolgáltatást <strong>16. életévét betöltött</strong> személyek
+        vehetik igénybe (GDPR 8. cikk). Ennél fiatalabb felhasználóktól
+        tudatosan nem gyűjtünk adatot; ha mégis tudomást szerzünk ilyenről,
+        az érintett adatokat haladéktalanul töröljük.
+      </p>
+
 
       <h3>2.1 Vállalkozói regisztráció (Clerk)</h3>
       <p>
@@ -134,7 +144,7 @@ export default function AdatvedelemPage() {
       <ul>
         <li>Cím: 1055 Budapest, Falk Miksa utca 9-11.</li>
         <li>Posta: 1363 Budapest, Pf. 9.</li>
-        <li>Email: ugyfelszolgalat@naih.hu</li>
+        <li>Email: <a href="mailto:ugyfelszolgalat@naih.hu">ugyfelszolgalat@naih.hu</a></li>
         <li>Web: <a href="https://naih.hu" target="_blank" rel="noreferrer">naih.hu</a></li>
       </ul>
 

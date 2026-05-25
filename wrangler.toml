@@ -30,6 +30,10 @@ preview_bucket_name = "kinti-media-preview"
 [vars]
 NEXT_PUBLIC_APP_NAME = "kinti"
 NEXT_PUBLIC_R2_PUBLIC_URL = "https://media.kinti.app"
+# Cloudflare Web Analytics beacon (üresen marad addig, amíg a CF dashboardon
+# ki nem generálod a tokent: Analytics & Logs → Web Analytics → Add a site).
+# Ha üres, a script egyáltalán nem renderelődik — semmilyen kérés nem megy ki.
+NEXT_PUBLIC_CF_BEACON_TOKEN = ""
 
 # A titkok (CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY stb.) NEM ide
 # kerülnek — helyben a .dev.vars fájlba, élesben:
