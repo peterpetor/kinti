@@ -192,7 +192,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         <FieldError msg={errors.title} />
       </Section>
 
-      {/* Helyszín és részletek */}
+      {/* Helyszín és ár */}
       <Section title="Helyszín és Ár" required>
         <div className="grid gap-2 sm:grid-cols-2">
           <div>
@@ -211,41 +211,45 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
             <FieldError msg={errors.cantonCode} />
           </div>
           <div>
-            <input
-              type="text"
-              value={form.meta}
-              onChange={(e) => setField("meta", e.target.value)}
-              placeholder='Pl. "Zürich · 1980 CHF / hó"'
-              maxLength={LIMITS.metaMax}
-              className={inputCls(errors.meta)}
-            />
-            <FieldError msg={errors.meta} />
+            <div className="flex items-center gap-2 rounded-[12px] border border-line bg-surface-alt focus-within:ring-2 focus-within:ring-primary/30">
+              <span className="pl-3 text-[12px] font-bold uppercase tracking-wide text-ink-muted">
+                Ár
+              </span>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={100000000}
+                step={1}
+                value={form.price}
+                onChange={(e) => setField("price", e.target.value)}
+                placeholder="Pl. 1980"
+                className="min-w-0 flex-1 bg-transparent px-2 py-2.5 text-[14px] text-ink placeholder:text-ink-faint outline-none"
+              />
+              <span className="pr-3 text-[12.5px] font-bold text-ink-muted">CHF</span>
+            </div>
+            <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
+              Üres = nem ismert / ingyenes / álláshirdetés.
+            </p>
+            <FieldError msg={errors.price} />
           </div>
         </div>
-        <div className="mt-2">
-          <div className="flex items-center gap-2 rounded-[12px] border border-line bg-surface-alt focus-within:ring-2 focus-within:ring-primary/30">
-            <span className="pl-3 text-[12px] font-bold uppercase tracking-wide text-ink-muted">
-              Ár
-            </span>
-            <input
-              type="number"
-              inputMode="numeric"
-              min={0}
-              max={100000000}
-              step={1}
-              value={form.price}
-              onChange={(e) => setField("price", e.target.value)}
-              placeholder="Pl. 1980"
-              className="min-w-0 flex-1 bg-transparent px-2 py-2.5 text-[14px] text-ink placeholder:text-ink-faint outline-none"
-            />
-            <span className="pr-3 text-[12.5px] font-bold text-ink-muted">CHF</span>
-          </div>
-          <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
-            Strukturált ár a kereséshez/rendezéshez. Üresen hagyhatod (pl. álláshirdetés,
-            keresett, ingyenes).
-          </p>
-          <FieldError msg={errors.price} />
-        </div>
+      </Section>
+
+      {/* További részletek (opcionális) */}
+      <Section title="További részletek">
+        <input
+          type="text"
+          value={form.meta}
+          onChange={(e) => setField("meta", e.target.value)}
+          placeholder='Pl. bútorozott, lift, parking, 3 szoba'
+          maxLength={LIMITS.metaMax}
+          className={inputCls(errors.meta)}
+        />
+        <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
+          Rövid főbb jellemzők a keresési kártyán. Max {LIMITS.metaMax} karakter.
+        </p>
+        <FieldError msg={errors.meta} />
       </Section>
 
       {/* Hosszabb leírás */}

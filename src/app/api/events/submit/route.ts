@@ -3,14 +3,15 @@ import { verifyTurnstile } from "@/lib/turnstile";
 import { validateEventInput } from "@/lib/events-validation";
 import {
   createEvent,
-  getEventByToken,
+  countRecentEventSubmits,
+  logEventSubmit,
 } from "@/lib/repo";
 import {
   sendEventConfirmationEmail,
-  sendEventAdminModerationEmail,
 } from "@/lib/email";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { isDisposableEmail } from "@/lib/disposable-emails";
+import { hashIp } from "@/lib/bulletin";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -63,10 +64,19 @@ export async function POST(req: Request) {
     );
   }
 
+  // 2b) IP rate-limit: max 3 esemény / IP / 24 óra
+  const ipHash = await hashIp(ip);
+  const recentEventCount = await countRecentEventSubmits(ipHash);
+  if (recentEventCount >= 3) {
+    return NextResponse.json(
+      { error: "Napi limit túllépve. Egy nap alatt legfeljebb 3 eseményt lehet beküldeni ugyanarról a kapcsolatról." },
+      { status: 429 },
+    );
+  }
+
   // 3) D1 INSERT — status: 'pending_confirm', egyedi token
   const id = crypto.randomUUID();
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
-  const moderateToken = crypto.randomUUID().replace(/-/g, "");
 
   // Dátumból number/hónap/nap neve leképezés
   const [year, month, day] = validation.value.eventDate.split("-").map(Number);
@@ -92,6 +102,9 @@ export async function POST(req: Request) {
     status: "pending_confirm",
     token: confirmToken,
   });
+
+  // Rate-limit napló frissítése (fire-and-forget — hiba esetén sem gátolja a flow-t)
+  logEventSubmit(crypto.randomUUID(), ipHash).catch(() => { /* silent */ });
 
   const baseUrl =
     getCloudflareEnv().PUBLIC_BASE_URL?.replace(/\/$/, "") ||

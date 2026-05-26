@@ -243,6 +243,72 @@
     0 4px 10px rgb(0 0 0 / 0.25);
 }
 
+/* ===========================================================================
+   Kinti Klaszter buborék — animált smaragdzöld, zoom-szinthez igazított.
+   Három méretosztály: sm (2–4), md (5–9), lg (10+).
+   =========================================================================== */
+
+.kinti-cluster {
+  --sz: 44px;
+  width: var(--sz);
+  height: var(--sz);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s ease;
+}
+.kinti-cluster:hover {
+  transform: scale(1.08);
+}
+.kinti-cluster--md { --sz: 52px; }
+.kinti-cluster--lg { --sz: 62px; }
+
+/* Fő buborék kör */
+.kinti-cluster__bubble {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgb(var(--primary));
+  box-shadow:
+    inset 1.5px 1.5px 0 rgb(255 255 255 / 0.22),
+    inset -1px -1px 0 rgb(0 0 0 / 0.12),
+    0 0 0 3px rgb(var(--surface)),
+    0 4px 14px rgb(var(--primary) / 0.40);
+  display: grid;
+  place-items: center;
+}
+
+/* Szám */
+.kinti-cluster__count {
+  color: rgb(var(--surface));
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-family: inherit;
+}
+.kinti-cluster--md .kinti-cluster__count { font-size: 15px; }
+.kinti-cluster--lg .kinti-cluster__count { font-size: 17px; }
+
+/* Pulzáló halo-gyűrű */
+.kinti-cluster::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: rgb(var(--primary) / 0.18);
+  animation: kinti-cluster-pulse 2.2s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes kinti-cluster-pulse {
+  0%   { transform: scale(0.75); opacity: 0.85; }
+  100% { transform: scale(1.6);  opacity: 0; }
+}
+
+/* CartoDB Voyager csempék: finom melegítő szűrő a Kinti krém-zöld palettához */
+.leaflet-tile-pane {
+  filter: sepia(0.08) saturate(0.92) brightness(1.01);
+}
+
 /* MapLibre — háttér + attribúció Liquid Glass-feel. */
 .maplibregl-map {
   font-family: inherit;

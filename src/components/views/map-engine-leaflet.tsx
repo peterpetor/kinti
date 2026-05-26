@@ -1,18 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import type { Business } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
+import { clusterBusinesses, clusterBounds, clusterSize } from "@/lib/cluster";
 
 import "leaflet/dist/leaflet.css";
 
 /**
  * Leaflet (raszteres) motor — minden környezetben (VM, WebGL-nélkül is) megy.
- * Csempék: CartoDB Positron (tiszta, világos, ingyenes).
+ * Csempék: CartoDB Voyager (meleg, prémium, ingyenes).
+ * Klaszterezés: zoom-szinthez igazított greedy geo-klaszter, külső csomag nélkül.
  */
 export interface MapEngineProps {
   located: Business[];
@@ -30,33 +32,29 @@ export function LeafletEngine({
   fallbackZoom,
 }: MapEngineProps) {
   const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
+
   return (
     <MapContainer
       center={fallbackCenter}
       zoom={fallbackZoom}
       scrollWheelZoom
       zoomControl={false}
-      // `z-0` + relative pozíció (Leaflet maga is `position: relative`) → saját
-      // stacking-context. Enélkül a Leaflet belső panelei (z-index 200–1000)
-      // legyűrnék a wrapper overlay-eit (z-10): hely-pill, kateg.-pillek, kártya.
       className="h-full w-full relative z-0"
       style={{ background: "rgb(var(--map-land))" }}
     >
+      {/* CartoDB Voyager — meleg, prémium, licenc-mentes */}
       <TileLayer
         attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         subdomains="abcd"
         maxZoom={20}
       />
 
-      {located.map((b) => (
-        <Marker
-          key={b.id}
-          position={[b.lat!, b.lng!]}
-          icon={pinFor(b, b.id === selectedId)}
-          eventHandlers={{ click: () => onSelectMarker(b.id) }}
-        />
-      ))}
+      <ClusteredMarkers
+        located={located}
+        selectedId={selectedId}
+        onSelectMarker={onSelectMarker}
+      />
 
       {myPosition && (
         <Marker position={myPosition} icon={ME_ICON} interactive={false} />
@@ -68,7 +66,74 @@ export function LeafletEngine({
   );
 }
 
-/** „Te vagy itt” pötty — divIcon, center anchor. */
+// ---------------------------------------------------------------------------
+// Klaszterezett markerek — zoom-figyeléssel
+// ---------------------------------------------------------------------------
+
+function ClusteredMarkers({
+  located,
+  selectedId,
+  onSelectMarker,
+}: {
+  located: Business[];
+  selectedId: string | null;
+  onSelectMarker: (id: string) => void;
+}) {
+  const map = useMap();
+  const [zoom, setZoom] = useState(() => map.getZoom());
+
+  useMapEvents({
+    zoomend: () => setZoom(map.getZoom()),
+  });
+
+  const points = useMemo(
+    () => clusterBusinesses(located, zoom),
+    [located, zoom],
+  );
+
+  return (
+    <>
+      {points.map((pt) => {
+        if (pt.type === "single") {
+          return (
+            <Marker
+              key={pt.business.id}
+              position={[pt.business.lat!, pt.business.lng!]}
+              icon={pinFor(pt.business, pt.business.id === selectedId)}
+              eventHandlers={{ click: () => onSelectMarker(pt.business.id) }}
+            />
+          );
+        }
+
+        // Klaszter marker
+        const sz = clusterSize(pt.count);
+        return (
+          <Marker
+            key={pt.id}
+            position={[pt.lat, pt.lng]}
+            icon={clusterIconFor(pt.count, sz)}
+            eventHandlers={{
+              click: () => {
+                const bounds = clusterBounds(located, pt.itemIds);
+                map.fitBounds(bounds, {
+                  padding: [80, 80],
+                  maxZoom: 15,
+                  animate: true,
+                });
+              },
+            }}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Ikon factory-k
+// ---------------------------------------------------------------------------
+
+/** „Te vagy itt" pötty — divIcon, center anchor. */
 const ME_ICON = L.divIcon({
   className: "",
   html: '<div class="kinti-me-dot"></div>',
@@ -76,11 +141,11 @@ const ME_ICON = L.divIcon({
   iconAnchor: [8, 8],
 });
 
-const ICON_CACHE = new Map<string, L.DivIcon>();
+const PIN_CACHE = new Map<string, L.DivIcon>();
 
 function pinFor(b: Business, active: boolean): L.DivIcon {
   const key = `${b.categoryId ?? "none"}-${b.featured ? "f" : "d"}-${active ? "a" : "n"}`;
-  const cached = ICON_CACHE.get(key);
+  const cached = PIN_CACHE.get(key);
   if (cached) return cached;
   const icon = L.divIcon({
     className: "",
@@ -91,21 +156,49 @@ function pinFor(b: Business, active: boolean): L.DivIcon {
     iconAnchor: [16, 42],
     popupAnchor: [0, -38],
   });
-  ICON_CACHE.set(key, icon);
+  PIN_CACHE.set(key, icon);
   return icon;
 }
+
+const CLUSTER_CACHE = new Map<string, L.DivIcon>();
+
+function clusterIconFor(count: number, sz: "sm" | "md" | "lg"): L.DivIcon {
+  const key = `${count}-${sz}`;
+  const cached = CLUSTER_CACHE.get(key);
+  if (cached) return cached;
+
+  const dim = sz === "lg" ? 62 : sz === "md" ? 52 : 44;
+  const anchor = dim / 2;
+
+  const icon = L.divIcon({
+    className: "",
+    html: `<div class="kinti-cluster kinti-cluster--${sz}">
+             <div class="kinti-cluster__bubble">
+               <span class="kinti-cluster__count">${count}</span>
+             </div>
+           </div>`,
+    iconSize: [dim, dim],
+    iconAnchor: [anchor, anchor],
+  });
+  CLUSTER_CACHE.set(key, icon);
+  return icon;
+}
+
+// ---------------------------------------------------------------------------
+// Helper komponensek
+// ---------------------------------------------------------------------------
 
 function FitToMarkers({ businesses }: { businesses: Business[] }) {
   const map = useMap();
   const lastSig = useRef<string>("");
+
   useEffect(() => {
     const sig = businesses.map((b) => b.id).join("|");
     if (sig === lastSig.current) return;
     lastSig.current = sig;
     if (businesses.length === 0) return;
     if (businesses.length === 1) {
-      const [b] = businesses;
-      map.setView([b.lat!, b.lng!], 15, { animate: true });
+      map.setView([businesses[0].lat!, businesses[0].lng!], 15, { animate: true });
       return;
     }
     const bounds = L.latLngBounds(
@@ -113,6 +206,7 @@ function FitToMarkers({ businesses }: { businesses: Business[] }) {
     );
     map.fitBounds(bounds, { padding: [50, 70], maxZoom: 16, animate: true });
   }, [businesses, map]);
+
   return null;
 }
 

@@ -20,8 +20,21 @@ export function SWRegister() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!("serviceWorker" in navigator)) return;
     if (process.env.NODE_ENV !== "production") return;
+
+    // FONTOS: sandboxolt iframe-ben (beépített böngésző, kiegészítő-preview)
+    // a `"serviceWorker" in navigator` IGAZ, de a `navigator.serviceWorker`
+    // OLVASÁSA `SecurityError`-t dob. Ezért try/catch — ilyenkor nem
+    // regisztrálunk, és nem omlik össze az app.
+    let sw: ServiceWorkerContainer | undefined;
+    try {
+      if (!("serviceWorker" in navigator)) return;
+      sw = navigator.serviceWorker;
+    } catch {
+      return;
+    }
+    if (!sw) return;
+    const swc = sw;
 
     let cancelled = false;
 
@@ -29,15 +42,15 @@ export function SWRegister() {
       // Az új SW átvette az irányítást → friss kód, friss oldal.
       window.location.reload();
     };
-    navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
+    swc.addEventListener("controllerchange", handleControllerChange);
 
-    navigator.serviceWorker
+    swc
       .register("/sw.js", { scope: "/", updateViaCache: "none" })
       .then((reg) => {
         if (cancelled) return;
 
         // 1) Ha most rögtön van „waiting” SW — már települt új verzió.
-        if (reg.waiting && navigator.serviceWorker.controller) {
+        if (reg.waiting && swc.controller) {
           setWaitingSW(reg.waiting);
         }
 
@@ -46,7 +59,7 @@ export function SWRegister() {
           const next = reg.installing;
           if (!next) return;
           next.addEventListener("statechange", () => {
-            if (next.state === "installed" && navigator.serviceWorker.controller) {
+            if (next.state === "installed" && swc.controller) {
               setWaitingSW(next);
             }
           });
@@ -62,7 +75,7 @@ export function SWRegister() {
 
     return () => {
       cancelled = true;
-      navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
+      swc.removeEventListener("controllerchange", handleControllerChange);
     };
   }, []);
 

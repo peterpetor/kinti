@@ -107,9 +107,8 @@ export function validateBulletinInput(
     errors.push({ field: "title", message: `Legfeljebb ${LIMITS.titleMax} karakter.` });
 
   const meta = str(input.meta);
-  if (!meta) {
-    errors.push({ field: "meta", message: "Ár és részletek megadása kötelező." });
-  } else if (meta.length > LIMITS.metaMax) {
+  // meta mostantól opcionális ("További részletek" — pl. bútorozott, lift)
+  if (meta.length > LIMITS.metaMax) {
     errors.push({ field: "meta", message: `Legfeljebb ${LIMITS.metaMax} karakter.` });
   }
 

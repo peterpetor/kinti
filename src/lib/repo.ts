@@ -785,6 +785,35 @@ export async function logContactAttempt(
     .run();
 }
 
+/**
+ * Hány eseményt küldött be ez az IP az elmúlt 24 órában.
+ * Limit: 3 / IP / 24 óra — véd a spam-beküldők ellen.
+ */
+export async function countRecentEventSubmits(ipHash: string | null): Promise<number> {
+  if (!ipHash) return 0; // localhost / ismeretlen IP → átengedünk
+  const res = await getDB()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM event_submit_log
+       WHERE ip_hash = ? AND created_at >= datetime('now', '-24 hours')`,
+    )
+    .bind(ipHash)
+    .first<{ n: number }>();
+  return res?.n ?? 0;
+}
+
+/** Esemény-beküldést rögzít a rate-limit táblába. */
+export async function logEventSubmit(
+  id: string,
+  ipHash: string | null,
+): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO event_submit_log (id, ip_hash) VALUES (?, ?)`,
+    )
+    .bind(id, ipHash)
+    .run();
+}
+
 // ---------------------------------------------------------------------------
 // Vélemények — email-megerősítéses, account nélküli flow.
 // ---------------------------------------------------------------------------

@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS event_submit_log (
+  id TEXT PRIMARY KEY,
+  ip_hash TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
