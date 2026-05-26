@@ -29,9 +29,9 @@ export default async function FeedPage() {
           <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/switzerland-map.png"
+            src="/switzerland-flag.png"
             alt="Svájc"
-            className="h-[20px] w-auto object-contain opacity-95 drop-shadow-sm select-none"
+            className="h-[18px] w-[18px] rounded-[4px] object-contain select-none"
           />
         </div>
         <div className="flex-1" />
