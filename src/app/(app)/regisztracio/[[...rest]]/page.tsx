@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SignUp } from "@clerk/nextjs";
-import { Icon } from "@/components/ui";
+import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 
 export const runtime = "edge";
 
@@ -12,8 +12,25 @@ export const metadata = { title: "Vállalkozói regisztráció" };
  */
 export default function SignUpPage() {
   return (
-    <main className="mx-auto min-h-dvh max-w-md px-5 py-10">
-      <section className="mb-6 rounded-card border border-line bg-surface p-5 shadow-card">
+    <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
+      {/* fejléc */}
+      <header className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
+          <KintiLogo size={28} />
+          <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/switzerland-flag.png"
+            alt="Svájc"
+            className="h-[18px] w-[18px] rounded-[4px] object-contain select-none"
+          />
+        </div>
+        <div className="flex-1" />
+        <DropdownMenu />
+      </header>
+
+      <main className="py-2">
+        <section className="mb-6 rounded-card border border-line bg-surface p-5 shadow-card">
         <div className="mb-3 inline-flex items-center gap-2 rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold uppercase tracking-wide text-primary">
           <Icon name="user" size={13} strokeWidth={2.4} />
           Csak vállalkozóknak
@@ -53,6 +70,7 @@ export default function SignUpPage() {
       <div className="grid place-items-center">
         <SignUp />
       </div>
-    </main>
+      </main>
+    </div>
   );
 }
