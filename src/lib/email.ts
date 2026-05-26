@@ -39,7 +39,7 @@ interface ConfirmEmailArgs {
 
 export async function sendConfirmationEmail(args: ConfirmEmailArgs): Promise<void> {
   const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <onboarding@resend.dev>";
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
 
   const greet = args.posterName?.trim() ? args.posterName.trim() : "kinti";
   const expiresHu = formatHu(args.confirmExpiresAt);
@@ -124,7 +124,7 @@ export async function sendReviewConfirmationEmail(
   args: ReviewConfirmArgs,
 ): Promise<void> {
   const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <onboarding@resend.dev>";
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
   const expiresHu = formatHu(args.confirmExpiresAt);
   const stars = "★".repeat(args.rating) + "☆".repeat(5 - args.rating);
   const subject = `Erősítsd meg a véleményed: ${args.businessName}`;
@@ -208,7 +208,7 @@ kinti.app`;
  */
 export async function sendTestEmail(to: string): Promise<{ id: string | null }> {
   const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <onboarding@resend.dev>";
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
 
   const { data, error } = await getResend().emails.send({
     from,
@@ -294,7 +294,7 @@ interface BulletinContactEmailArgs {
 
 export async function sendBulletinContactEmail(args: BulletinContactEmailArgs): Promise<void> {
   const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <onboarding@resend.dev>";
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
   const subject = `Új érdeklődő a hirdetésedre: ${args.adTitle}`;
 
   const text = `Szia ${args.posterName}!
