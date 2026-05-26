@@ -52,6 +52,11 @@ export interface KintiEvent {
   going: number;
   tag: string | null;
   color: string | null;
+  description?: string | null;
+  imageKey?: string | null;
+  email?: string | null;
+  status?: string;
+  token?: string | null;
 }
 
 export interface BulletinKind {

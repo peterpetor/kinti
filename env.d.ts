@@ -48,4 +48,10 @@ interface CloudflareEnv {
    * iCal-feedek kezelése).
    */
   ADMIN_EMAILS?: string;
+
+  /**
+   * Az az email-cím, ahova az esemény-jóváhagyási értesítők mennek.
+   * Ha nincs megadva, a ADMIN_EMAILS első eleme, vagy info@kinti.app.
+   */
+  ADMIN_EVENT_EMAIL?: string;
 }

@@ -80,6 +80,11 @@ interface EventRow {
   going: number;
   tag: string | null;
   color: string | null;
+  description: string | null;
+  image_key: string | null;
+  email: string | null;
+  status: string;
+  token: string | null;
   /** A JOIN-olt RSVP-darabszám (LEFT JOIN event_rsvps). */
   rsvp_count?: number;
 }
@@ -179,6 +184,11 @@ function toEvent(r: EventRow): KintiEvent {
     going: r.going + (r.rsvp_count ?? 0),
     tag: r.tag,
     color: r.color,
+    description: r.description,
+    imageKey: r.image_key,
+    email: r.email,
+    status: r.status,
+    token: r.token,
   };
 }
 
@@ -363,13 +373,20 @@ export interface EventQuery {
 
 export async function getEvents(opts: EventQuery = {}): Promise<KintiEvent[]> {
   const binds: unknown[] = [];
+  const where: string[] = ["e.status = 'approved'"];
+  if (opts.upcoming) {
+    where.push("e.event_date >= date('now')");
+  }
+
   let sql = `
     SELECT e.*, COALESCE(r.cnt, 0) AS rsvp_count
     FROM events e
     LEFT JOIN (
       SELECT event_id, COUNT(*) AS cnt FROM event_rsvps GROUP BY event_id
     ) r ON r.event_id = e.id`;
-  if (opts.upcoming) sql += " WHERE e.event_date >= date('now')";
+  if (where.length > 0) {
+    sql += " WHERE " + where.join(" AND ");
+  }
   sql += " ORDER BY e.event_date ASC";
   if (opts.limit) {
     sql += " LIMIT ?";
@@ -377,6 +394,71 @@ export async function getEvents(opts: EventQuery = {}): Promise<KintiEvent[]> {
   }
   const { results } = await getDB().prepare(sql).bind(...binds).all<EventRow>();
   return results.map(toEvent);
+}
+
+export async function createEvent(input: KintiEvent): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO events
+       (id, title, event_date, date_day, date_month, date_weekday,
+        start_time, venue, going, tag, color, description, image_key, email, status, token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      input.id,
+      input.title,
+      input.eventDate,
+      input.dateDay,
+      input.dateMonth,
+      input.dateWeekday,
+      input.startTime,
+      input.venue,
+      input.going,
+      input.tag,
+      input.color,
+      input.description ?? null,
+      input.imageKey ?? null,
+      input.email ? input.email.toLowerCase() : null,
+      input.status ?? "draft",
+      input.token ?? null,
+    )
+    .run();
+}
+
+export async function getEventByToken(token: string): Promise<KintiEvent | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM events WHERE token = ? LIMIT 1")
+    .bind(token)
+    .first<EventRow>();
+  return row ? toEvent(row) : null;
+}
+
+export async function getEventById(id: string): Promise<KintiEvent | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM events WHERE id = ? LIMIT 1")
+    .bind(id)
+    .first<EventRow>();
+  return row ? toEvent(row) : null;
+}
+
+export async function updateEventStatus(
+  id: string,
+  status: string,
+  nextToken: string | null,
+): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE events SET status = ?, token = ? WHERE id = ?")
+    .bind(status, nextToken, id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function deleteEvent(id: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM events WHERE id = ?")
+    .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
 }
 
 /**
