@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { UserButton } from "@clerk/nextjs";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ClaimDemoButton } from "@/components/views/claim-demo-button";
 import { LogoUploader } from "@/components/views/logo-uploader";
@@ -12,6 +11,7 @@ import {
   SectionHeader,
   Sparkline,
   StatCard,
+  DropdownMenu,
 } from "@/components/ui";
 import { getBusinessByOwner, getDashboard, getReviewsByBusiness } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
@@ -70,7 +70,7 @@ export default async function ProfilPage() {
             {business?.name ?? "Vállalkozói profil"} 👋
           </div>
         </div>
-        <UserButton appearance={{ elements: { avatarBox: "h-9 w-9" } }} />
+        <DropdownMenu />
       </header>
 
       {business ? (

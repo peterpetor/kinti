@@ -5,8 +5,8 @@ import {
   Icon,
   KintiLogo,
   SectionHeader,
+  DropdownMenu,
 } from "@/components/ui";
-import { AuthControl } from "@/components/auth-control";
 import { HomeSearch } from "@/components/home-search";
 import { HomeCantonSelector } from "@/components/home-canton-selector";
 import { getBusinesses, getEvents } from "@/lib/repo";
@@ -26,7 +26,7 @@ export default async function FeedPage() {
       <header className="flex items-center gap-2.5">
         <KintiLogo size={28} />
         <span className="flex-1 text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
-        <AuthControl />
+        <DropdownMenu />
       </header>
 
       {/* főoldali kereső — Enter / nyíl → /szaknevsor?q=<query> */}
