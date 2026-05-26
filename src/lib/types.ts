@@ -78,6 +78,8 @@ export interface BulletinPost {
   publishedAt: string | null;
   /** Svájci kanton kódja (pl. ZH, BE) */
   cantonCode: string | null;
+  /** Strukturált ár (egész CHF) — rendezéshez. NULL, ha nincs ára. */
+  price: number | null;
   /** Csatolt taxonómia (JOIN bulletin_kinds). */
   kind?: BulletinKind;
 }
@@ -107,6 +109,8 @@ export interface BulletinDraft {
   imageKey: string | null;
   /** Svájci kanton kódja (pl. ZH, BE) */
   cantonCode: string | null;
+  /** Strukturált ár (egész CHF) — rendezéshez. NULL, ha nincs ára. */
+  price: number | null;
 }
 
 /** Publikus vélemény egy vállalkozásról (account nélküli, email-megerősítéses). */

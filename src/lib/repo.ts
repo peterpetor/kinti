@@ -104,6 +104,7 @@ interface BulletinPostRow {
   expires_at: string | null;
   published_at: string | null;
   canton_code: string | null;
+  price: number | null;
   kind_label: string | null;
   kind_color: string | null;
   kind_sort: number | null;
@@ -127,6 +128,7 @@ interface BulletinDraftRow {
   ip_hash: string | null;
   image_key: string | null;
   canton_code: string | null;
+  price: number | null;
 }
 
 // --- mapperek ---------------------------------------------------------------
