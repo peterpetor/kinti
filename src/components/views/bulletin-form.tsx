@@ -38,6 +38,8 @@ interface FormState {
   poster: string;
   imageKey: string | null;
   cantonCode: string;
+  /** Opcionális strukturált ár (CHF) — string a beviteli mezőből. */
+  price: string;
   /** Honeypot — bot kitölti, ember nem. Tailwind `hidden`-nel rejtve. */
   website: string;
   /** Kötelező: ÁSZF + Adatkezelési Tájékoztató elfogadása. */
@@ -55,6 +57,7 @@ const INITIAL: FormState = {
   poster: "",
   imageKey: null,
   cantonCode: "",
+  price: "",
   website: "",
   acceptTerms: false,
   ageConfirmed: false,
@@ -218,6 +221,30 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
             />
             <FieldError msg={errors.meta} />
           </div>
+        </div>
+        <div className="mt-2">
+          <div className="flex items-center gap-2 rounded-[12px] border border-line bg-surface-alt focus-within:ring-2 focus-within:ring-primary/30">
+            <span className="pl-3 text-[12px] font-bold uppercase tracking-wide text-ink-muted">
+              Ár (opcionális)
+            </span>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              max={100000000}
+              step={1}
+              value={form.price}
+              onChange={(e) => setField("price", e.target.value)}
+              placeholder="Pl. 1980"
+              className="min-w-0 flex-1 bg-transparent px-2 py-2.5 text-[14px] text-ink placeholder:text-ink-faint outline-none"
+            />
+            <span className="pr-3 text-[12.5px] font-bold text-ink-muted">CHF</span>
+          </div>
+          <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
+            Strukturált ár a kereséshez/rendezéshez. Üresen hagyhatod (pl. álláshirdetés,
+            keresett, ingyenes).
+          </p>
+          <FieldError msg={errors.price} />
         </div>
       </Section>
 

@@ -105,7 +105,7 @@ export async function POST(req: Request) {
     ipHash,
     imageKey: validation.value.imageKey,
     cantonCode: validation.value.cantonCode,
-    price: null,
+    price: validation.value.price,
   });
 
   // 5) Email küldés

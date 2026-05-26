@@ -70,6 +70,7 @@ export interface ValidatedBulletinInput {
   ageConfirmed: true;
   imageKey: string | null;
   cantonCode: string;
+  price: number | null;
 }
 
 export type ValidationError = { field: keyof BulletinFormInput; message: string };
@@ -152,6 +153,18 @@ export function validateBulletinInput(
     errors.push({ field: "cantonCode", message: "Kanton kiválasztása kötelező." });
   }
 
+  // Opcionális ár: ha üres → null; ha megadták, pozitív egész CHF.
+  let price: number | null = null;
+  const priceRaw = input.price;
+  if (priceRaw !== undefined && priceRaw !== null && String(priceRaw).trim() !== "") {
+    const n = typeof priceRaw === "number" ? priceRaw : Number(String(priceRaw).replace(/[\s']/g, ""));
+    if (!Number.isFinite(n) || n < 0 || n > 100_000_000) {
+      errors.push({ field: "price", message: "Az ár egy 0 és 100 millió közötti szám lehet." });
+    } else {
+      price = Math.round(n);
+    }
+  }
+
   if (errors.length) return { ok: false, errors };
 
   return {
@@ -167,6 +180,7 @@ export function validateBulletinInput(
       ageConfirmed: true,
       imageKey,
       cantonCode,
+      price,
     },
   };
 }

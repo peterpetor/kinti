@@ -1,12 +1,81 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { BulletinKind, BulletinPost, KintiEvent } from "@/lib/types";
 import { mediaUrl } from "@/lib/media";
 import { CANTONS } from "@/lib/cantons";
+
+// --- helperek a hirdetésekhez -----------------------------------------------
+
+const SAVED_KEY = "kinti.savedBulletins";
+
+function loadSavedIds(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(SAVED_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return new Set(Array.isArray(arr) ? arr.map(String) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveSavedIds(set: Set<string>) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(SAVED_KEY, JSON.stringify([...set]));
+  } catch {
+    /* quota-overflow / privát mód → ignoráljuk */
+  }
+}
+
+function formatPrice(n: number | null): string | null {
+  if (n == null) return null;
+  return `${n.toLocaleString("hu-HU").replace(/,/g, " ")} CHF`;
+}
+
+/** Hány nap van még a lejáratig. null → nincs lejárat. */
+function daysRemaining(expiresAt: string | null): number | null {
+  if (!expiresAt) return null;
+  const t = Date.parse(expiresAt);
+  if (Number.isNaN(t)) return null;
+  const ms = t - Date.now();
+  if (ms <= 0) return 0;
+  return Math.ceil(ms / 86_400_000);
+}
+
+function formatExpiry(days: number | null): string | null {
+  if (days == null) return null;
+  if (days === 0) return "ma jár le";
+  if (days === 1) return "még 1 nap";
+  return `még ${days} nap`;
+}
+
+/** Web Share API, ha van; különben vágólap. */
+async function shareLink(url: string, title: string): Promise<"shared" | "copied" | "failed"> {
+  if (typeof navigator === "undefined") return "failed";
+  if (navigator.share) {
+    try {
+      await navigator.share({ url, title });
+      return "shared";
+    } catch {
+      return "failed";
+    }
+  }
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(url);
+      return "copied";
+    } catch {
+      return "failed";
+    }
+  }
+  return "failed";
+}
 
 type Tab = "events" | "board" | "newbie";
 
@@ -245,10 +314,19 @@ function parseImageKeys(keyStr: string | null | undefined): string[] {
   return [keyStr];
 }
 
-function BulletinCard({ post }: { post: BulletinPost }) {
+function BulletinCard({
+  post,
+  isSaved,
+  onToggleSaved,
+}: {
+  post: BulletinPost;
+  isSaved: boolean;
+  onToggleSaved: () => void;
+}) {
   const [expanded, setExpanded] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [shareHint, setShareHint] = useState<string | null>(null);
 
   const [senderName, setSenderName] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
@@ -259,6 +337,17 @@ function BulletinCard({ post }: { post: BulletinPost }) {
 
   const color = post.kind?.color ?? undefined;
   const imageKeys = parseImageKeys(post.imageKey);
+  const remaining = daysRemaining(post.expiresAt);
+  const expiryLabel = formatExpiry(remaining);
+  const priceLabel = formatPrice(post.price);
+
+  async function handleShare() {
+    const url = `${typeof window !== "undefined" ? window.location.origin : ""}/kozosseg/hirdetes/${post.id}`;
+    const result = await shareLink(url, post.title);
+    if (result === "copied") setShareHint("Link másolva");
+    else if (result === "shared") setShareHint("Megosztva");
+    if (result !== "failed") setTimeout(() => setShareHint(null), 1800);
+  }
 
   async function handleContactSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -303,7 +392,7 @@ function BulletinCard({ post }: { post: BulletinPost }) {
 
   return (
     <article className="rounded-2xl border border-line bg-surface p-3.5 transition-all hover:shadow-sm">
-      <div className="mb-2 flex items-center gap-2">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
         <span
           className="rounded-md px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide"
           style={{ color, backgroundColor: color ? `${color}22` : undefined }}
@@ -316,9 +405,42 @@ function BulletinCard({ post }: { post: BulletinPost }) {
           </span>
         )}
         <span className="text-[11.5px] font-medium text-ink-muted">{post.ageText}</span>
+        {expiryLabel && (
+          <span
+            className={cn(
+              "rounded-md px-1.5 py-0.5 text-[10.5px] font-bold",
+              remaining != null && remaining <= 3
+                ? "bg-accent/10 text-accent"
+                : "bg-surface-alt text-ink-muted",
+            )}
+            title="Hátralévő idő"
+          >
+            ⏳ {expiryLabel}
+          </span>
+        )}
         <span className="flex-1" />
-        <button type="button" className="text-ink-faint hover:text-ink-muted">
-          <Icon name="bookmark" size={14} />
+        {shareHint && (
+          <span className="text-[10.5px] font-bold text-success">{shareHint}</span>
+        )}
+        <button
+          type="button"
+          onClick={handleShare}
+          aria-label="Megosztás"
+          className="text-ink-faint transition hover:text-ink-muted active:scale-90"
+        >
+          <Icon name="share" size={14} strokeWidth={2.2} />
+        </button>
+        <button
+          type="button"
+          onClick={onToggleSaved}
+          aria-label={isSaved ? "Mentés visszavonása" : "Hirdetés mentése"}
+          aria-pressed={isSaved}
+          className={cn(
+            "transition active:scale-90",
+            isSaved ? "text-accent" : "text-ink-faint hover:text-ink-muted",
+          )}
+        >
+          <Icon name="bookmark" size={14} filled={isSaved} />
         </button>
       </div>
 
@@ -326,6 +448,11 @@ function BulletinCard({ post }: { post: BulletinPost }) {
         <h3 className="mb-1 text-[15.5px] font-bold tracking-[-0.01em] text-ink text-pretty hover:text-primary transition-colors">
           {post.title}
         </h3>
+        {priceLabel && (
+          <p className="text-[15px] font-extrabold tracking-tight text-primary">
+            {priceLabel}
+          </p>
+        )}
         <p className="text-[13px] font-medium text-ink-muted">{post.meta}</p>
       </div>
 
@@ -511,6 +638,8 @@ function BulletinCard({ post }: { post: BulletinPost }) {
   );
 }
 
+type SortMode = "newest" | "price-asc" | "price-desc";
+
 function BulletinList({
   posts,
   kinds,
@@ -521,6 +650,23 @@ function BulletinList({
   const [q, setQ] = useState("");
   const [kindId, setKindId] = useState("all");
   const [canton, setCanton] = useState("all");
+  const [sort, setSort] = useState<SortMode>("newest");
+  const [savedOnly, setSavedOnly] = useState(false);
+
+  // Mentett hirdetések — localStorage, mount után töltődik.
+  const [saved, setSaved] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    setSaved(loadSavedIds());
+  }, []);
+  function toggleSaved(id: string) {
+    setSaved((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      saveSavedIds(next);
+      return next;
+    });
+  }
 
   // Csak azokat a kantonokat kínáljuk a legördülőben, amikben TÉNYLEG van hirdetés.
   const availableCantons = useMemo(() => {
@@ -532,25 +678,43 @@ function BulletinList({
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return posts.filter((p) => {
+    const list = posts.filter((p) => {
       const byKind = kindId === "all" || p.kindId === kindId;
       const byCanton = canton === "all" || p.cantonCode === canton;
+      const bySaved = !savedOnly || saved.has(p.id);
       const byText =
         !needle ||
         p.title.toLowerCase().includes(needle) ||
         (p.meta ?? "").toLowerCase().includes(needle) ||
         (p.body ?? "").toLowerCase().includes(needle) ||
         (p.poster ?? "").toLowerCase().includes(needle);
-      return byKind && byCanton && byText;
+      return byKind && byCanton && bySaved && byText;
     });
-  }, [posts, q, kindId, canton]);
 
-  const hasFilter = q.trim() !== "" || kindId !== "all" || canton !== "all";
+    // Rendezés. Ár-rendezésnél az ár nélküli (null) hirdetések a végére.
+    if (sort === "price-asc" || sort === "price-desc") {
+      const dir = sort === "price-asc" ? 1 : -1;
+      return [...list].sort((a, b) => {
+        const ap = a.price;
+        const bp = b.price;
+        if (ap == null && bp == null) return 0;
+        if (ap == null) return 1;
+        if (bp == null) return -1;
+        return (ap - bp) * dir;
+      });
+    }
+    // "newest": a getBulletinPosts ORDER BY published_at DESC már elvégezte
+    return list;
+  }, [posts, q, kindId, canton, sort, savedOnly, saved]);
+
+  const hasFilter =
+    q.trim() !== "" || kindId !== "all" || canton !== "all" || savedOnly;
 
   function resetFilters() {
     setQ("");
     setKindId("all");
     setCanton("all");
+    setSavedOnly(false);
   }
 
   return (
