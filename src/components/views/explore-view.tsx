@@ -82,7 +82,7 @@ export function ExploreView({
             value={canton}
             onChange={(e) => setCanton(e.target.value)}
             aria-label="Kanton szűrő"
-            className="bg-transparent text-[13.5px] font-bold tracking-[-0.01em] text-ink outline-none"
+            className="appearance-none bg-transparent text-[13.5px] font-bold tracking-[-0.01em] text-ink outline-none"
           >
             <option value="all">Egész Svájc</option>
             {CANTONS.map((c) => (

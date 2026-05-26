@@ -23,7 +23,7 @@ export function HomeCantonSelector() {
         defaultValue="all"
         onChange={handleCantonChange}
         aria-label="Kanton választó"
-        className="bg-transparent font-bold tracking-[-0.01em] text-ink outline-none cursor-pointer pr-1"
+        className="appearance-none bg-transparent font-bold tracking-[-0.01em] text-ink outline-none cursor-pointer pr-1"
       >
         <option value="all">Egész Svájc</option>
         {CANTONS.map((c) => (

@@ -784,7 +784,7 @@ function BulletinList({
                 value={canton}
                 onChange={(e) => setCanton(e.target.value)}
                 aria-label="Kanton szűrő"
-                className="bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
+                className="appearance-none bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
               >
                 <option value="all">Egész Svájc</option>
                 {(availableCantons.length > 0 ? availableCantons : CANTONS).map((c) => (
@@ -802,7 +802,7 @@ function BulletinList({
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortMode)}
                 aria-label="Rendezés"
-                className="bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
+                className="appearance-none bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
               >
                 <option value="newest">Legújabb elöl</option>
                 <option value="price-asc">Ár szerint ↑</option>
