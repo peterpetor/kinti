@@ -36,8 +36,30 @@ export interface BusinessMapProps {
 // Zürich Kreis 3 → [longitude, latitude]
 const ZURICH_CENTER: [number, number] = [8.535, 47.378];
 
-// OpenFreeMap positron — világos, OSM-alapú, kulcs nélkül.
-const MAP_STYLE = "https://tiles.openfreemap.org/styles/positron";
+/**
+ * Raszter-alapú stílus (inline) — nem függ külső style.json-tól, és a vektor-
+ * csempék nehéz PBF-parse-olását is elkerüli, ezért robusztusabb a
+ * next-on-pages edge-bundle környezetben. CartoDB Voyager raszter-csempék
+ * (ingyenes, kulcs nélkül), világos, tiszta megjelenés.
+ */
+const MAP_STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  sources: {
+    carto: {
+      type: "raster",
+      tiles: [
+        "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        "https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        "https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+      ],
+      tileSize: 256,
+      attribution:
+        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>',
+    },
+  },
+  layers: [{ id: "carto", type: "raster", source: "carto" }],
+};
 
 export function BusinessMap({
   businesses,
@@ -51,6 +73,7 @@ export function BusinessMap({
   const popupRootsRef = useRef<Root[]>([]);
   const [locating, setLocating] = useState(false);
   const [mapReady, setMapReady] = useState(false);
+  const [initError, setInitError] = useState<string | null>(null);
 
   const located = useMemo(
     () => businesses.filter((b) => b.lat != null && b.lng != null),
@@ -61,23 +84,46 @@ export function BusinessMap({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: MAP_STYLE,
-      center: fallbackCenter,
-      zoom: fallbackZoom,
-      attributionControl: false,
-    });
+    let map: maplibregl.Map;
+    try {
+      map = new maplibregl.Map({
+        container: containerRef.current,
+        style: MAP_STYLE,
+        center: fallbackCenter,
+        zoom: fallbackZoom,
+        attributionControl: false,
+      });
+    } catch (err) {
+      setInitError(
+        err instanceof Error ? err.message : "A térkép nem indult el (WebGL?).",
+      );
+      return;
+    }
 
     map.addControl(
       new maplibregl.AttributionControl({ compact: true }),
       "bottom-left",
     );
 
-    map.on("load", () => setMapReady(true));
+    // Bármilyen futásidejű hiba (csempe / stílus / forrás) felszínre kerül.
+    map.on("error", (e) => {
+      const msg = e?.error?.message ?? "Ismeretlen térkép-hiba.";
+      // Csak az első érdemi hibát mutatjuk, hogy ne villogjon.
+      setInitError((prev) => prev ?? msg);
+    });
+
+    // A lazy/Suspense-mount után a konténer mérete néha 0 az init pillanatában;
+    // a resize() biztosítja, hogy a vászon a valós méretre álljon.
+    map.on("load", () => {
+      map.resize();
+      setMapReady(true);
+    });
+    const resizeTimer = setTimeout(() => map.resize(), 250);
+
     mapRef.current = map;
 
     return () => {
+      clearTimeout(resizeTimer);
       popupRootsRef.current.forEach((r) => {
         try {
           r.unmount();
@@ -203,10 +249,24 @@ export function BusinessMap({
         </button>
       </div>
 
-      {located.length === 0 && (
+      {located.length === 0 && !initError && (
         <div className="pointer-events-none absolute inset-0 z-[5] grid place-items-center">
           <div className="glass pointer-events-auto rounded-pill px-4 py-2 text-[12px] font-semibold text-ink shadow-pop">
             Ehhez a szűrőhöz nincs térképi találat.
+          </div>
+        </div>
+      )}
+
+      {initError && (
+        <div className="absolute inset-0 z-[20] grid place-items-center p-6">
+          <div className="max-w-xs rounded-card border border-accent/30 bg-surface p-4 text-center shadow-pop">
+            <div className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-2xl bg-accent/15 text-accent">
+              <Icon name="close" size={16} strokeWidth={2.4} />
+            </div>
+            <p className="text-[12.5px] font-bold text-ink">Térkép-hiba</p>
+            <p className="mt-1 break-words text-[11px] leading-snug text-ink-muted">
+              {initError}
+            </p>
           </div>
         </div>
       )}
