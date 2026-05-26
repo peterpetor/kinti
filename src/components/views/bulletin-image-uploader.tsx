@@ -89,7 +89,7 @@ export function BulletinImageUploader({
         const presignRes = await fetch("/api/bulletin/media-upload", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ contentType: file.type, contentLength: compressedBlob.size }),
+          body: JSON.stringify({ contentType: compressedBlob.type, contentLength: compressedBlob.size }),
         });
 
         if (!presignRes.ok) {
@@ -106,7 +106,7 @@ export function BulletinImageUploader({
         await new Promise<void>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open("PUT", uploadUrl, true);
-          xhr.setRequestHeader("content-type", file.type);
+          xhr.setRequestHeader("content-type", compressedBlob.type);
 
           xhr.upload.onprogress = (e) => {
             if (e.lengthComputable) {

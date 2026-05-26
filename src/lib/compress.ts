@@ -14,8 +14,8 @@ export async function compressImage(
     return file;
   }
 
-  // Ha a kép eleve nagyon kicsi (< 150 KB), felesleges tömöríteni
-  if (file.size < 150 * 1024) {
+  // Ha a kép eleve nagyon kicsi (< 150 KB) és már JPEG, felesleges tömöríteni
+  if (file.size < 150 * 1024 && file.type === "image/jpeg") {
     return file;
   }
 
