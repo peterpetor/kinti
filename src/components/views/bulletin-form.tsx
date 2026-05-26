@@ -223,7 +223,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
       </Section>
 
       {/* Feladó-név + email */}
-      <Section title="Tetőtér" required>
+      <Section title="Hirdető adatai" required>
         <div className="grid gap-2 sm:grid-cols-2">
           <div>
             <input
