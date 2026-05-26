@@ -39,6 +39,7 @@ export function LeafletEngine({
       zoom={fallbackZoom}
       scrollWheelZoom
       zoomControl={false}
+      doubleClickZoom={false}
       className="h-full w-full relative z-0"
       style={{ background: "rgb(var(--map-land))" }}
     >
@@ -213,6 +214,18 @@ function FitToMarkers({ businesses }: { businesses: Business[] }) {
 function Controls({ onLocate }: { onLocate: (ll: [number, number]) => void }) {
   const map = useMap();
   const [locating, setLocating] = useState(false);
+  // Véd a dupla-kattintásos zoom-irányváltás ellen: 300ms tiltás minden zoom után.
+  const zoomBusy = useRef(false);
+
+  function doZoom(dir: "in" | "out", e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (zoomBusy.current) return;
+    zoomBusy.current = true;
+    if (dir === "in") map.zoomIn();
+    else map.zoomOut();
+    setTimeout(() => { zoomBusy.current = false; }, 350);
+  }
 
   function handleLocate() {
     if (typeof navigator === "undefined" || !navigator.geolocation) return;
@@ -249,16 +262,16 @@ function Controls({ onLocate }: { onLocate: (ll: [number, number]) => void }) {
         <button
           type="button"
           aria-label="Nagyítás"
-          onClick={() => map.zoomIn()}
-          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card"
+          onClick={(e) => doZoom("in", e)}
+          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card active:scale-95 transition-transform"
         >
           <Icon name="plus" size={16} strokeWidth={2.4} />
         </button>
         <button
           type="button"
           aria-label="Kicsinyítés"
-          onClick={() => map.zoomOut()}
-          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card"
+          onClick={(e) => doZoom("out", e)}
+          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card active:scale-95 transition-transform"
         >
           <span className="text-[18px] font-extrabold leading-none">−</span>
         </button>

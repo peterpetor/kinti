@@ -148,13 +148,50 @@ interface RsvpState {
   busy: boolean;
 }
 
+// Hungarian month names for the filter pills
+const HU_MONTHS = [
+  "Január", "Február", "Március", "Április", "Május", "Június",
+  "Július", "Augusztus", "Szeptember", "Október", "November", "December",
+];
+
+const MAX_EVENTS = 10;
+
 function EventsList({ events }: { events: KintiEvent[] }) {
+  // Hónapos szűrő: "all" vagy "2025-06" formátum
+  const [monthFilter, setMonthFilter] = useState<string>("all");
+
   // Lokális RSVP-állapot eseményenként (felülírja a szerver going-ját).
   const [rsvp, setRsvp] = useState<Record<string, RsvpState>>({});
 
   const goingOf = (e: KintiEvent) => rsvp[e.id]?.going ?? e.going;
   const votedOf = (e: KintiEvent) => rsvp[e.id]?.voted ?? false;
   const busyOf = (e: KintiEvent) => rsvp[e.id]?.busy ?? false;
+
+  // Elérhető hónapok dinamikusan az esemény-adatokból
+  const availableMonths = useMemo(() => {
+    const seen = new Set<string>();
+    const months: { key: string; label: string }[] = [];
+    for (const e of events) {
+      if (!e.eventDate) continue;
+      const key = e.eventDate.slice(0, 7); // "2025-06"
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const [year, mon] = key.split("-");
+      const monIdx = parseInt(mon, 10) - 1;
+      const label = `${HU_MONTHS[monIdx] ?? mon} ${year}`;
+      months.push({ key, label });
+    }
+    return months;
+  }, [events]);
+
+  // Szűrt + max 10 esemény
+  const filtered = useMemo(() => {
+    const base =
+      monthFilter === "all"
+        ? events
+        : events.filter((e) => e.eventDate?.startsWith(monthFilter));
+    return base.slice(0, MAX_EVENTS);
+  }, [events, monthFilter]);
 
   async function handleRsvp(e: KintiEvent) {
     if (votedOf(e) || busyOf(e)) return;
@@ -177,104 +214,173 @@ function EventsList({ events }: { events: KintiEvent[] }) {
 
   if (events.length === 0) return <Empty label="Nincs közelgő esemény." />;
 
-  // Hero = a LEGTÖBB „Megyek"-et kapott esemény (szerver-oldali going szerint,
-  // ami a valós RSVP-k száma). Holtversenynél a soros következő.
-  const hero = [...events].sort((a, b) => b.going - a.going)[0];
-  const rest = events.filter((e) => e.id !== hero.id);
+  // Hero = a LEGTÖBB „Megyek"-et kapott esemény a szűrt listából.
+  const hero = [...filtered].sort((a, b) => b.going - a.going)[0];
+  const rest = filtered.filter((e) => e.id !== hero.id);
+
+  // Hány esemény van összesen a szűrt hónapban (limit nélkül)
+  const totalInFilter =
+    monthFilter === "all"
+      ? events.length
+      : events.filter((e) => e.eventDate?.startsWith(monthFilter)).length;
 
   return (
     <>
-      <article className="relative overflow-hidden rounded-[22px] p-[18px] text-white shadow-pop bg-gradient-to-br from-primary to-[#2e6a4e]">
-        <span className="mb-3.5 inline-block rounded-pill bg-white/[0.18] px-2.5 py-1 text-[10.5px] font-bold tracking-wide">
-          ★ Kiemelt esemény
-        </span>
-        <div className="flex items-start gap-3.5">
-          <DateChip event={hero} solid />
-          <div className="min-w-0 flex-1">
-            <h2 className="text-[22px] font-extrabold leading-tight tracking-tight text-balance">
-              {hero.title}
-            </h2>
-            <p className="mt-2 flex items-center gap-1.5 text-[13px] opacity-90">
-              <Icon name="pin" size={12} strokeWidth={2.2} /> {hero.venue}
-            </p>
-            <p className="mt-1 flex items-center gap-1.5 text-[13px] opacity-90">
-              <Icon name="clock" size={12} strokeWidth={2.2} /> {hero.startTime}
-            </p>
-          </div>
-        </div>
-        <div className="mt-3.5 flex items-center gap-2 rounded-xl bg-white/[0.12] px-3.5 py-2.5">
-          <p className="flex-1 text-[12.5px] font-semibold">
-            {goingOf(hero) > 0 ? (
-              <>
-                <strong>{goingOf(hero)} kinti</strong> jelezte, hogy megy
-              </>
-            ) : (
-              "Legyél te az első, aki jelzi!"
-            )}
-          </p>
+      {/* Hónap-szűrő pillek */}
+      {availableMonths.length > 1 && (
+        <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5">
           <button
             type="button"
-            onClick={() => handleRsvp(hero)}
-            disabled={votedOf(hero) || busyOf(hero)}
+            onClick={() => setMonthFilter("all")}
+            aria-pressed={monthFilter === "all"}
             className={cn(
-              "inline-flex items-center gap-1 rounded-pill px-3.5 py-1.5 text-[12.5px] font-bold transition",
-              votedOf(hero)
-                ? "bg-white/25 text-white"
-                : "bg-white text-primary active:scale-95",
-              busyOf(hero) && "opacity-60",
+              "inline-flex flex-none items-center rounded-pill px-3 py-1.5 text-[12.5px] font-bold tracking-[-0.01em] transition",
+              monthFilter === "all"
+                ? "bg-primary text-white shadow-card"
+                : "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-alpha))]",
             )}
           >
-            {votedOf(hero) && <Icon name="check" size={12} strokeWidth={2.6} />}
-            {votedOf(hero) ? "Ott leszek" : busyOf(hero) ? "…" : "Megyek"}
+            Mind
           </button>
+          {availableMonths.map((m) => (
+            <button
+              key={m.key}
+              type="button"
+              onClick={() => setMonthFilter(m.key)}
+              aria-pressed={monthFilter === m.key}
+              className={cn(
+                "inline-flex flex-none items-center rounded-pill px-3 py-1.5 text-[12.5px] font-bold tracking-[-0.01em] transition",
+                monthFilter === m.key
+                  ? "bg-primary text-white shadow-card"
+                  : "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-alpha))]",
+              )}
+            >
+              {m.label}
+            </button>
+          ))}
         </div>
-      </article>
+      )}
 
-      <p className="px-1 pt-2 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
-        Következő hetek
+      {/* Darabszám jelzés */}
+      <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
+        {filtered.length} esemény
+        {totalInFilter > MAX_EVENTS && (
+          <span className="ml-1 text-accent">
+            (összesen {totalInFilter})
+          </span>
+        )}
       </p>
 
-      {rest.map((e) => (
-        <div
-          key={e.id}
-          className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3"
-        >
-          <DateChip event={e} />
-          <div className="min-w-0 flex-1">
-            <div className="mb-0.5 flex items-center gap-1.5">
-              <TagBadge tag={e.tag} color={e.color} />
-              <span className="text-[11.5px] font-semibold text-ink-muted">
-                {e.dateWeekday} · {e.startTime}
-              </span>
+      {filtered.length === 0 ? (
+        <Empty label="Ebben a hónapban nincs esemény." />
+      ) : (
+        <>
+          <article className="relative overflow-hidden rounded-[22px] p-[18px] text-white shadow-pop bg-gradient-to-br from-primary to-[#2e6a4e]">
+            <span className="mb-3.5 inline-block rounded-pill bg-white/[0.18] px-2.5 py-1 text-[10.5px] font-bold tracking-wide">
+              ★ Kiemelt esemény
+            </span>
+            <div className="flex items-start gap-3.5">
+              <DateChip event={hero} solid />
+              <div className="min-w-0 flex-1">
+                <h2 className="text-[22px] font-extrabold leading-tight tracking-tight text-balance">
+                  {hero.title}
+                </h2>
+                <p className="mt-2 flex items-center gap-1.5 text-[13px] opacity-90">
+                  <Icon name="pin" size={12} strokeWidth={2.2} /> {hero.venue}
+                </p>
+                <p className="mt-1 flex items-center gap-1.5 text-[13px] opacity-90">
+                  <Icon name="clock" size={12} strokeWidth={2.2} /> {hero.startTime}
+                </p>
+              </div>
             </div>
-            <div className="truncate text-[14.5px] font-bold tracking-[-0.01em] text-ink">
-              {e.title}
+            <div className="mt-3.5 flex items-center gap-2 rounded-xl bg-white/[0.12] px-3.5 py-2.5">
+              <p className="flex-1 text-[12.5px] font-semibold">
+                {goingOf(hero) > 0 ? (
+                  <>
+                    <strong>{goingOf(hero)} kinti</strong> jelezte, hogy megy
+                  </>
+                ) : (
+                  "Legyél te az első, aki jelzi!"
+                )}
+              </p>
+              <button
+                type="button"
+                onClick={() => handleRsvp(hero)}
+                disabled={votedOf(hero) || busyOf(hero)}
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-pill px-3.5 py-1.5 text-[12.5px] font-bold transition",
+                  votedOf(hero)
+                    ? "bg-white/25 text-white"
+                    : "bg-white text-primary active:scale-95",
+                  busyOf(hero) && "opacity-60",
+                )}
+              >
+                {votedOf(hero) && <Icon name="check" size={12} strokeWidth={2.6} />}
+                {votedOf(hero) ? "Ott leszek" : busyOf(hero) ? "…" : "Megyek"}
+              </button>
             </div>
-            <div className="mt-0.5 text-xs text-ink-muted">
-              {e.venue}
-              {goingOf(e) > 0 && <> · {goingOf(e)} fő megy</>}
+          </article>
+
+          {rest.length > 0 && (
+            <p className="px-1 pt-2 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
+              Következő hetek
+            </p>
+          )}
+
+          {rest.map((e) => (
+            <div
+              key={e.id}
+              className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3"
+            >
+              <DateChip event={e} />
+              <div className="min-w-0 flex-1">
+                <div className="mb-0.5 flex items-center gap-1.5">
+                  <TagBadge tag={e.tag} color={e.color} />
+                  <span className="text-[11.5px] font-semibold text-ink-muted">
+                    {e.dateWeekday} · {e.startTime}
+                  </span>
+                </div>
+                <div className="truncate text-[14.5px] font-bold tracking-[-0.01em] text-ink">
+                  {e.title}
+                </div>
+                <div className="mt-0.5 text-xs text-ink-muted">
+                  {e.venue}
+                  {goingOf(e) > 0 && <> · {goingOf(e)} fő megy</>}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleRsvp(e)}
+                disabled={votedOf(e) || busyOf(e)}
+                className={cn(
+                  "inline-flex shrink-0 items-center gap-1 rounded-pill px-3 py-1.5 text-[11.5px] font-bold transition",
+                  votedOf(e)
+                    ? "bg-success/15 text-success"
+                    : "bg-primary text-white active:scale-95",
+                  busyOf(e) && "opacity-60",
+                )}
+              >
+                {votedOf(e) && <Icon name="check" size={11} strokeWidth={2.6} />}
+                {votedOf(e) ? "Megyek" : busyOf(e) ? "…" : "Megyek"}
+              </button>
             </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => handleRsvp(e)}
-            disabled={votedOf(e) || busyOf(e)}
-            className={cn(
-              "inline-flex shrink-0 items-center gap-1 rounded-pill px-3 py-1.5 text-[11.5px] font-bold transition",
-              votedOf(e)
-                ? "bg-success/15 text-success"
-                : "bg-primary text-white active:scale-95",
-              busyOf(e) && "opacity-60",
-            )}
-          >
-            {votedOf(e) && <Icon name="check" size={11} strokeWidth={2.6} />}
-            {votedOf(e) ? "Megyek" : busyOf(e) ? "…" : "Megyek"}
-          </button>
-        </div>
-      ))}
+          ))}
+
+          {/* Ha a hónapban több mint 10 van, de nem mutatjuk → info */}
+          {totalInFilter > MAX_EVENTS && (
+            <div className="rounded-2xl border border-dashed border-line bg-surface-alt px-5 py-4 text-center">
+              <p className="text-[12.5px] font-semibold text-ink-muted">
+                + {totalInFilter - MAX_EVENTS} további esemény ebben a hónapban —
+                válassz hónapot a szűrőkkel!
+              </p>
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 }
+
 
 function DateChip({ event, solid = false }: { event: KintiEvent; solid?: boolean }) {
   return (

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { isSwissAddress } from "@/lib/cantons";
 import {
   type WorkingHours,
   type DayHours,
@@ -107,8 +108,20 @@ export function ProfileEditor({
     }));
   };
 
+  // A kinti svájci szolgáltatás → csak svájci cím engedélyezett (ha van megadva).
+  const addressInvalid = address.trim().length > 0 && !isSwissAddress(address);
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
+
+    if (addressInvalid) {
+      setError(
+        "Csak svájci cím adható meg. Tüntesd fel a svájci várost és irányítószámot (pl. Bahnhofstrasse 10, 8001 Zürich).",
+      );
+      setPhase("error");
+      return;
+    }
+
     setPhase("saving");
     setError(null);
 
@@ -190,15 +203,28 @@ export function ProfileEditor({
 
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
-                  Cím
+                  Cím <span className="text-ink-faint normal-case font-medium">(csak svájci 🇨🇭)</span>
                 </label>
                 <input
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Pl. Bahnhofstrasse 10, Zürich"
-                  className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                  placeholder="Pl. Bahnhofstrasse 10, 8001 Zürich"
+                  aria-invalid={addressInvalid}
+                  className={cn(
+                    "w-full rounded-[12px] border bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 transition-all",
+                    addressInvalid
+                      ? "border-accent/60 focus:ring-accent/30"
+                      : "border-line focus:ring-primary/30",
+                  )}
                 />
+                {addressInvalid && (
+                  <p className="flex items-start gap-1 text-[11px] font-semibold text-accent">
+                    <Icon name="close" size={12} strokeWidth={2.4} className="mt-0.5 shrink-0" />
+                    Csak svájci cím adható meg — tüntesd fel a svájci várost és
+                    irányítószámot (pl. 8001 Zürich).
+                  </p>
+                )}
               </div>
             </div>
 
@@ -425,10 +451,10 @@ export function ProfileEditor({
         {/* Mentés gomb */}
         <button
           type="submit"
-          disabled={phase === "saving"}
+          disabled={phase === "saving" || addressInvalid}
           className={cn(
             "flex h-11 w-full items-center justify-center gap-1.5 rounded-pill bg-primary text-[14px] font-extrabold tracking-[-0.01em] text-white shadow-card-hover transition active:scale-[0.99] border-none",
-            phase === "saving" && "cursor-not-allowed opacity-50"
+            (phase === "saving" || addressInvalid) && "cursor-not-allowed opacity-50"
           )}
         >
           {phase === "saving" ? "Mentés…" : "Módosítások mentése"}

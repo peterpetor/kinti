@@ -121,6 +121,85 @@ export function cantonFromAddress(address: string | null | undefined): Canton | 
   return plzToCanton(m[1]);
 }
 
+// ===========================================================================
+// Svájci cím-ellenőrzés (vállalkozói profilhoz)
+//
+// FONTOS: a svájci ÉS a magyar irányítószám is 4-jegyű (1000–9999), ezért a PLZ
+// önmagában NEM elég a megkülönböztetéshez. Pozitív svájci jelet követelünk meg
+// (svájci város / kanton / ország-szó), és az egyértelmű külföldi országokat
+// külön elutasítjuk — így nem csúszik át pl. egy „1051 Budapest" cím.
+// ===========================================================================
+
+/** „Schweiz" és társai — ha a címben szerepel, biztosan svájci. */
+const SWISS_COUNTRY_WORDS = [
+  "schweiz", "suisse", "svizzera", "svizra", "switzerland", "swiss",
+  "svajc", "helvetia", "ch",
+];
+
+/** Egyértelmű NEM-svájci országok (jobb hibaüzenethez + biztos elutasításhoz). */
+const FOREIGN_COUNTRY_WORDS = [
+  "magyarorszag", "hungary", "ungarn", "hongrie",
+  "deutschland", "germany", "nemetorszag", "allemagne",
+  "osterreich", "austria", "ausztria", "autriche",
+  "france", "frankreich", "franciaorszag",
+  "italia", "italy", "italien", "olaszorszag",
+  "romania", "slovensko", "slovakia", "szlovakia", "slowakei",
+  "liechtenstein", "espana", "spain", "portugal", "polska", "poland",
+  "united states", "united kingdom", "england",
+];
+
+/** Nagyobb svájci városok (pozitív jel a PLZ mellé / helyett). */
+const SWISS_CITIES = [
+  "zurich", "geneve", "genf", "basel", "bern", "berne", "lausanne", "winterthur",
+  "luzern", "lucerne", "st. gallen", "st.gallen", "sankt gallen", "gallen",
+  "lugano", "biel", "bienne", "thun", "koniz", "la chaux-de-fonds", "fribourg",
+  "freiburg", "schaffhausen", "chur", "vernier", "neuchatel", "uster", "sion",
+  "sitten", "emmen", "lancy", "yverdon", "zug", "kriens", "rapperswil",
+  "dubendorf", "dietikon", "montreux", "frauenfeld", "wetzikon", "baar",
+  "aarau", "wadenswil", "allschwil", "renens", "kreuzlingen", "kloten",
+  "bulle", "horgen", "nyon", "bellinzona", "locarno", "carouge", "wettingen",
+  "baden", "riehen", "olten", "gossau", "muttenz", "meyrin", "onex", "liestal",
+  "delemont", "glarus", "herisau", "altdorf", "stans", "schwyz", "wil", "morges",
+  "martigny", "solothurn", "burgdorf", "spiez", "interlaken", "davos", "arosa",
+  "zermatt", "vevey", "pully", "wohlen", "buchs", "amriswil", "romanshorn",
+];
+
+/** Külön szóként illeszkedik-e a tű a szövegben (ne „ch" → „chur" belsejében). */
+function hasWord(haystack: string, needle: string): boolean {
+  const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, "i").test(haystack);
+}
+
+/**
+ * Svájci cím-e? A vállalkozói profilnál ezzel zárjuk ki a külföldi címeket.
+ *
+ * Logika (sorrendben):
+ *   1) Egyértelmű külföldi ország a címben  → false
+ *   2) Svájci ország-szó (Schweiz/Suisse/CH) → true
+ *   3) Ismert svájci város                   → true
+ *   4) Kanton név/alias a címben             → true
+ * Egyébként (pl. csak utca + 4-jegyű PLZ, város nélkül) → false, mert a PLZ
+ * önmagában megtévesztő lehet (magyar irányítószám is 4-jegyű).
+ */
+export function isSwissAddress(address: string | null | undefined): boolean {
+  if (!address || !address.trim()) return false;
+  const norm = normalize(address);
+
+  if (FOREIGN_COUNTRY_WORDS.some((w) => hasWord(norm, w))) return false;
+  if (SWISS_COUNTRY_WORDS.some((w) => hasWord(norm, w))) return true;
+  if (SWISS_CITIES.some((c) => hasWord(norm, normalize(c)))) return true;
+  if (
+    CANTONS.some(
+      (c) =>
+        hasWord(norm, normalize(c.name)) ||
+        c.aliases.some((a) => hasWord(norm, normalize(a))),
+    )
+  ) {
+    return true;
+  }
+  return false;
+}
+
 /**
  * A keresőszó utal-e konkrét kantonra (kód / név / alias)?
  * Min. 2 karakter, hogy a véletlen rövid karakter-sor ne illeszkedjen.

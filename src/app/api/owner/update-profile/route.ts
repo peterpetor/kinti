@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getBusinessByOwner, updateBusinessProfile } from "@/lib/repo";
+import { isSwissAddress } from "@/lib/cantons";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -61,6 +62,17 @@ export async function POST(req: Request) {
 
   if (address.length > 200) {
     return NextResponse.json({ error: "A cím legfeljebb 200 karakter lehet." }, { status: 400 });
+  }
+
+  // A kinti svájci szolgáltatás → csak svájci címet fogadunk el (ha van megadva).
+  if (address && !isSwissAddress(address)) {
+    return NextResponse.json(
+      {
+        error:
+          "Csak svájci cím adható meg. Tüntesd fel a svájci várost és irányítószámot (pl. Bahnhofstrasse 10, 8001 Zürich).",
+      },
+      { status: 400 },
+    );
   }
 
   if (categoryLabel.length > 50) {
