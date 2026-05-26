@@ -260,6 +260,22 @@
 }
 .maplibregl-marker { cursor: pointer; }
 
+/* Leaflet — háttér + attribúció Liquid Glass-feel. */
+.leaflet-container {
+  font-family: inherit;
+  background: rgb(var(--map-land));
+}
+.leaflet-control-attribution {
+  background: rgb(var(--surface) / 0.82) !important;
+  backdrop-filter: blur(8px);
+  font-size: 9.5px !important;
+  padding: 1px 6px !important;
+  border-radius: 8px 0 0 0;
+}
+.leaflet-control-attribution a {
+  color: rgb(var(--text-muted)) !important;
+}
+
 /* Leaflet popup → Liquid Glass kártya stílusra hangolva. */
 .leaflet-popup-content-wrapper {
   background: rgb(var(--surface));
