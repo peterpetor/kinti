@@ -48,6 +48,7 @@ export interface BulletinFormInput {
   body?: unknown;
   poster?: unknown;
   imageKey?: unknown;
+  cantonCode?: unknown;
   /** Bot-csapda — ha bármi értéke van, eldobjuk. */
   website?: unknown;
   /** Kötelező: az ÁSZF + Adatkezelési Tájékoztató elfogadása. */
@@ -66,6 +67,7 @@ export interface ValidatedBulletinInput {
   acceptTerms: true;
   ageConfirmed: true;
   imageKey: string | null;
+  cantonCode: string | null;
 }
 
 export type ValidationError = { field: keyof BulletinFormInput; message: string };
@@ -140,6 +142,7 @@ export function validateBulletinInput(
   }
 
   const imageKey = str(input.imageKey) || null;
+  const cantonCode = str(input.cantonCode) || null;
 
   if (errors.length) return { ok: false, errors };
 
@@ -155,6 +158,7 @@ export function validateBulletinInput(
       acceptTerms: true,
       ageConfirmed: true,
       imageKey,
+      cantonCode,
     },
   };
 }

@@ -240,6 +240,11 @@ function BulletinCard({ post }: { post: BulletinPost }) {
         >
           {post.kind?.label}
         </span>
+        {post.cantonCode && (
+          <span className="rounded-md bg-surface-alt border border-line px-1.5 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wide text-ink-muted flex items-center gap-0.5">
+            <span className="text-[11px] leading-none">🇨🇭</span> {post.cantonCode}
+          </span>
+        )}
         <span className="text-[11.5px] font-medium text-ink-muted">{post.ageText}</span>
         <span className="flex-1" />
         <button type="button" className="text-ink-faint hover:text-ink-muted">

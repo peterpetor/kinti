@@ -85,6 +85,7 @@ export async function POST(req: Request) {
     ageConfirmed: 1,
     ipHash,
     imageKey: validation.value.imageKey,
+    cantonCode: validation.value.cantonCode,
   });
 
   // 5) Email küldés

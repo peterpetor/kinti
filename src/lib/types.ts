@@ -76,6 +76,8 @@ export interface BulletinPost {
   expiresAt: string | null;
   /** Mikor publikálták (ISO datetime). */
   publishedAt: string | null;
+  /** Svájci kanton kódja (pl. ZH, BE) */
+  cantonCode: string | null;
   /** Csatolt taxonómia (JOIN bulletin_kinds). */
   kind?: BulletinKind;
 }
@@ -103,6 +105,8 @@ export interface BulletinDraft {
   ipHash: string | null;
   /** Az R2 kép(ek) kulcsa(i) — JSON string tömb vagy egyedi kulcs */
   imageKey: string | null;
+  /** Svájci kanton kódja (pl. ZH, BE) */
+  cantonCode: string | null;
 }
 
 /** Publikus vélemény egy vállalkozásról (account nélküli, email-megerősítéses). */

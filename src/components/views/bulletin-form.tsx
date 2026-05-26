@@ -9,6 +9,7 @@ import { LIMITS, type ValidationError } from "@/lib/bulletin";
 import type { BulletinKind } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { BulletinImageUploader } from "./bulletin-image-uploader";
+import { CANTONS } from "@/lib/cantons";
 
 /**
  * Hirdetés-feladó űrlap (account nélküli). Liquid Glass kártyák szekciókba
@@ -36,6 +37,7 @@ interface FormState {
   body: string;
   poster: string;
   imageKey: string | null;
+  cantonCode: string;
   /** Honeypot — bot kitölti, ember nem. Tailwind `hidden`-nel rejtve. */
   website: string;
   /** Kötelező: ÁSZF + Adatkezelési Tájékoztató elfogadása. */
@@ -52,6 +54,7 @@ const INITIAL: FormState = {
   body: "",
   poster: "",
   imageKey: null,
+  cantonCode: "",
   website: "",
   acceptTerms: false,
   ageConfirmed: false,
@@ -173,27 +176,49 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         <FieldError msg={errors.kindId} />
       </Section>
 
-      {/* Cím + meta */}
-      <Section title="Mit ajánlasz?" required>
+      {/* Hirdetés címe */}
+      <Section title="Hirdetés címe" required>
         <input
           type="text"
           value={form.title}
           onChange={(e) => setField("title", e.target.value)}
-          placeholder="Pl. 2.5-szobás Kreis 4-ben kiadó"
+          placeholder="Pl. 2.5-szobás lakás kiadó, Fodrászt keresünk"
           maxLength={LIMITS.titleMax}
           className={inputCls(errors.title)}
         />
         <FieldError msg={errors.title} />
+      </Section>
 
-        <input
-          type="text"
-          value={form.meta}
-          onChange={(e) => setField("meta", e.target.value)}
-          placeholder='Pl. "Zürich · 1 980 CHF / hó" (opcionális)'
-          maxLength={LIMITS.metaMax}
-          className={cn(inputCls(errors.meta), "mt-2")}
-        />
-        <FieldError msg={errors.meta} />
+      {/* Helyszín és részletek */}
+      <Section title="Helyszín és Ár (opcionális)">
+        <div className="grid gap-2 sm:grid-cols-2">
+          <div>
+            <select
+              value={form.cantonCode}
+              onChange={(e) => setField("cantonCode", e.target.value)}
+              className={inputCls(errors.cantonCode)}
+            >
+              <option value="" className="text-ink-faint">Melyik kantonban? (opcionális)</option>
+              {CANTONS.map((c) => (
+                <option key={c.code} value={c.code} className="text-ink">
+                  {c.name} ({c.code})
+                </option>
+              ))}
+            </select>
+            <FieldError msg={errors.cantonCode} />
+          </div>
+          <div>
+            <input
+              type="text"
+              value={form.meta}
+              onChange={(e) => setField("meta", e.target.value)}
+              placeholder='Pl. "Zürich · 1980 CHF / hó" vagy "Bázeli fodrászat"'
+              maxLength={LIMITS.metaMax}
+              className={inputCls(errors.meta)}
+            />
+            <FieldError msg={errors.meta} />
+          </div>
+        </div>
       </Section>
 
       {/* Hosszabb leírás */}

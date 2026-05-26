@@ -101,6 +101,7 @@ interface BulletinPostRow {
   body: string | null;
   expires_at: string | null;
   published_at: string | null;
+  canton_code: string | null;
   kind_label: string | null;
   kind_color: string | null;
   kind_sort: number | null;
@@ -123,6 +124,7 @@ interface BulletinDraftRow {
   age_confirmed: number | null;
   ip_hash: string | null;
   image_key: string | null;
+  canton_code: string | null;
 }
 
 // --- mapperek ---------------------------------------------------------------
@@ -192,6 +194,7 @@ function toBulletinPost(r: BulletinPostRow): BulletinPost {
     body: r.body,
     expiresAt: r.expires_at,
     publishedAt: r.published_at,
+    cantonCode: r.canton_code,
     kind: r.kind_label
       ? { id: r.kind_id, label: r.kind_label, color: r.kind_color, sortOrder: r.kind_sort ?? 0 }
       : undefined,
@@ -216,6 +219,7 @@ function toBulletinDraft(r: BulletinDraftRow): BulletinDraft {
     ageConfirmed: r.age_confirmed === 1,
     ipHash: r.ip_hash,
     imageKey: r.image_key,
+    cantonCode: r.canton_code,
   };
 }
 
@@ -374,6 +378,7 @@ export interface BulletinDraftInput {
   /** SHA-256(IP) — null, ha nincs IP a kérésben (pl. localhost dev). */
   ipHash: string | null;
   imageKey: string | null;
+  cantonCode: string | null;
 }
 
 /** Új piszkozat — a kliens-form `submit`-end-pointja használja. */
@@ -383,8 +388,8 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
       `INSERT INTO bulletin_drafts
        (id, email, kind_id, title, meta, body, poster,
         confirm_token, manage_token, expires_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -402,6 +407,7 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
       input.ageConfirmed,
       input.ipHash,
       input.imageKey,
+      input.cantonCode,
     )
     .run();
 }
@@ -452,6 +458,7 @@ export interface PublishBulletinInput {
   ageConfirmed: number;
   ipHash: string | null;
   imageKey: string | null;
+  cantonCode: string | null;
 }
 
 /**
@@ -465,9 +472,9 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       `INSERT INTO bulletin_posts
        (id, kind_id, title, meta, body, poster, email, manage_token,
         age_text, expires_at, published_at, is_pending, created_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key)
+        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'frissen', ?, datetime('now'), ?, datetime('now'),
-               ?, ?, ?, ?, ?)`,
+               ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -485,6 +492,7 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       input.ageConfirmed,
       input.ipHash,
       input.imageKey,
+      input.cantonCode,
     )
     .run();
 }
