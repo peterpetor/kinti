@@ -339,6 +339,8 @@ export interface UpdateBusinessProfileInput {
   openText: string | null;
   workingHours?: string | null;
   socialLinks?: string | null;
+  yearsHere?: number | null;
+  languages?: string[] | null;
 }
 
 export async function updateBusinessProfile(
@@ -357,6 +359,8 @@ export async function updateBusinessProfile(
            open_text = ?,
            working_hours = ?,
            social_links = ?,
+           years_here = ?,
+           languages = ?,
            updated_at = datetime('now')
        WHERE id = ? AND owner_user_id = ?`,
     )
@@ -369,6 +373,8 @@ export async function updateBusinessProfile(
       input.openText,
       input.workingHours ?? null,
       input.socialLinks ?? null,
+      input.yearsHere ?? null,
+      input.languages ? JSON.stringify(input.languages) : null,
       businessId,
       ownerUserId,
     )

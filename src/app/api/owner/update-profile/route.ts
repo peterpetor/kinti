@@ -37,6 +37,12 @@ export async function POST(req: Request) {
   const openText = typeof body.openText === "string" ? body.openText.trim() : "";
   const workingHours = typeof body.workingHours === "string" ? body.workingHours.trim() : "";
   const socialLinks = typeof body.socialLinks === "string" ? body.socialLinks.trim() : "";
+  
+  const yearsHereRaw = body.yearsHere;
+  const yearsHere = typeof yearsHereRaw === "number" ? yearsHereRaw : yearsHereRaw ? parseInt(String(yearsHereRaw)) : null;
+  
+  const languagesRaw = body.languages;
+  const languages = Array.isArray(languagesRaw) ? languagesRaw.map(l => String(l).trim()).filter(Boolean) : null;
 
   if (name.length < 2 || name.length > 100) {
     return NextResponse.json(
@@ -94,6 +100,8 @@ export async function POST(req: Request) {
     openText: openText || null,
     workingHours: workingHours || null,
     socialLinks: socialLinks || null,
+    yearsHere,
+    languages,
   });
 
   if (!ok) {

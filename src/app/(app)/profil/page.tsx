@@ -189,6 +189,8 @@ async function OwnerDashboard({
         initialOpenText={business.openText}
         initialWorkingHours={business.workingHours ?? null}
         initialSocialLinks={business.socialLinks ?? null}
+        initialYearsHere={business.yearsHere}
+        initialLanguages={business.languages}
       />
 
       {/* heti összegző hero */}

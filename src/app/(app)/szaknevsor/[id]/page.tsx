@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
+import { DynamicDistance } from "@/components/views/dynamic-distance";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -111,8 +112,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           </div>
           <span className="h-8 w-px self-stretch bg-line" />
           <div>
-            <div className="text-[15px] font-bold text-ink">{b.distText}</div>
-            <div className="text-[11px] font-medium text-ink-muted">{b.distMeters} m</div>
+            <DynamicDistance lat={b.lat} lng={b.lng} address={b.address} />
           </div>
           <span className="h-8 w-px self-stretch bg-line" />
           <div>
@@ -207,7 +207,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           <SectionHeader>Erről a helyről</SectionHeader>
           <p className="mt-2 text-[14.5px] leading-relaxed text-ink text-pretty">{b.blurb}</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
-            <Chip icon="clock">{b.openText || `${status.statusText} · ${status.detailText}`}</Chip>
+            <Chip icon="clock">{b.workingHours ? `${status.statusText} · ${status.detailText}` : (b.openText || `${status.statusText} · ${status.detailText}`)}</Chip>
             <Chip icon="globe">{b.languages.length ? b.languages.join(" · ") : "Magyar"}</Chip>
             {b.yearsHere != null && <Chip>{b.yearsHere} éve kint</Chip>}
           </div>

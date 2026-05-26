@@ -21,6 +21,8 @@ export interface ProfileEditorProps {
   initialOpenText: string | null;
   initialWorkingHours: string | null;
   initialSocialLinks: string | null;
+  initialYearsHere?: number | null;
+  initialLanguages?: string[] | null;
 }
 
 type Phase = "idle" | "saving" | "success" | "error";
@@ -34,6 +36,8 @@ export function ProfileEditor({
   initialOpenText,
   initialWorkingHours,
   initialSocialLinks,
+  initialYearsHere,
+  initialLanguages,
 }: ProfileEditorProps) {
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState(initialPhone ?? "");
@@ -41,6 +45,18 @@ export function ProfileEditor({
   const [address, setAddress] = useState(initialAddress ?? "");
   const [categoryLabel, setCategoryLabel] = useState(initialCategoryLabel ?? "");
   const [openText, setOpenText] = useState(initialOpenText ?? "");
+  const [yearsHere, setYearsHere] = useState(initialYearsHere != null ? String(initialYearsHere) : "");
+  const [languages, setLanguages] = useState<string[]>(initialLanguages ?? ["Magyar"]);
+
+  const availableLanguages = ["Magyar", "Deutsch", "English", "Français", "Italiano"];
+
+  const toggleLanguage = (lang: string) => {
+    setLanguages((prev) =>
+      prev.includes(lang)
+        ? prev.filter((l) => l !== lang)
+        : [...prev, lang]
+    );
+  };
 
   // Nyitvatartás napokra lebontva
   const [workingHours, setWorkingHours] = useState<WorkingHours>(() =>
@@ -109,6 +125,8 @@ export function ProfileEditor({
           openText,
           workingHours: JSON.stringify(workingHours),
           socialLinks: JSON.stringify(socialLinks),
+          yearsHere: yearsHere ? parseInt(yearsHere) : null,
+          languages,
         }),
       });
 
@@ -209,6 +227,49 @@ export function ProfileEditor({
                   placeholder="Pl. Bejelentkezés alapján"
                   className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                 />
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
+                  Mióta élsz kint Svájcban? (év)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="99"
+                  value={yearsHere}
+                  onChange={(e) => setYearsHere(e.target.value)}
+                  placeholder="Pl. 6"
+                  className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider block">
+                  Beszélt nyelvek
+                </label>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {availableLanguages.map((lang) => {
+                    const active = languages.includes(lang);
+                    return (
+                      <button
+                        key={lang}
+                        type="button"
+                        onClick={() => toggleLanguage(lang)}
+                        className={cn(
+                          "px-2.5 py-1 rounded-lg text-xs font-bold border transition cursor-pointer active:scale-95",
+                          active
+                            ? "bg-primary/10 border-primary/30 text-primary"
+                            : "bg-surface-alt border-line text-ink-muted"
+                        )}
+                      >
+                        {lang}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
