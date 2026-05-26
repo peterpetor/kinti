@@ -581,6 +581,35 @@ export async function countTrustedBulletinPosts(email: string): Promise<number> 
   return row?.n ?? 0;
 }
 
+/** Hány hirdetést (piszkozatot vagy publikáltat) adott fel ez az email vagy IP az elmúlt 24 órában. */
+export async function countRecentBulletins(email: string, ipHash: string | null): Promise<number> {
+  const db = getDB();
+  const lowerEmail = email.toLowerCase();
+
+  const draftsRes = await db
+    .prepare(
+      `SELECT COUNT(*) AS n FROM bulletin_drafts
+       WHERE (lower(email) = ? OR (ip_hash IS NOT NULL AND ip_hash = ?))
+         AND created_at >= datetime('now', '-24 hours')`
+    )
+    .bind(lowerEmail, ipHash)
+    .first<{ n: number }>();
+
+  const postsRes = await db
+    .prepare(
+      `SELECT COUNT(*) AS n FROM bulletin_posts
+       WHERE (lower(email) = ? OR (ip_hash IS NOT NULL AND ip_hash = ?))
+         AND created_at >= datetime('now', '-24 hours')`
+    )
+    .bind(lowerEmail, ipHash)
+    .first<{ n: number }>();
+
+  const draftsCount = draftsRes?.n ?? 0;
+  const postsCount = postsRes?.n ?? 0;
+
+  return draftsCount + postsCount;
+}
+
 // ---------------------------------------------------------------------------
 // Vélemények — email-megerősítéses, account nélküli flow.
 // ---------------------------------------------------------------------------

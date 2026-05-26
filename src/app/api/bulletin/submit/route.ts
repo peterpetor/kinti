@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getBulletinKinds, createBulletinDraft } from "@/lib/repo";
+import { getBulletinKinds, createBulletinDraft, countRecentBulletins } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { sendConfirmationEmail } from "@/lib/email";
 import {
@@ -20,8 +20,9 @@ export const dynamic = "force-dynamic";
  *   1) honeypot + form-validáció (lib/bulletin)
  *   2) Cloudflare Turnstile token verifikáció
  *   3) kindId létezésének ellenőrzése a DB-ben
- *   4) bulletin_drafts INSERT (confirm_token + manage_token UUID-k, 24h TTL)
- *   5) Resend → email megerősítő linkkel
+ *   4) 3 hirdetés/nap limit ellenőrzése (email/IP alapján)
+ *   5) bulletin_drafts INSERT (confirm_token + manage_token UUID-k, 24h TTL)
+ *   6) Resend → email megerősítő linkkel
  *
  * Visszatérés: 200 + { ok: true } — sose áruljuk el, hogy az email tényleg
  * létezik-e a rendszerben (privacy + enumerációs spam-szűrés szempontjából).
@@ -61,13 +62,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Ismeretlen kategória." }, { status: 400 });
   }
 
+  // 4) 3 hirdetés/nap limit ellenőrzése
+  const ipHash = await hashIp(ip);
+  const recentCount = await countRecentBulletins(validation.value.email, ipHash);
+  if (recentCount >= 3) {
+    return NextResponse.json(
+      { error: "Napi limit túllépve. Egy nap (24 óra) legfeljebb 3 hirdetés adható fel ugyanazzal az e-mail címmel vagy IP-címmel." },
+      { status: 429 },
+    );
+  }
+
   // 4) piszkozat-INSERT (audit-trail mezőkkel: accepted_terms_at, ip_hash, terms_version)
   const id = crypto.randomUUID();
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
   const manageToken = crypto.randomUUID().replace(/-/g, "");
   const now = new Date();
   const expiresAt = new Date(now.getTime() + CONFIRM_TTL_MS).toISOString();
-  const ipHash = await hashIp(ip);
 
   await createBulletinDraft({
     id,

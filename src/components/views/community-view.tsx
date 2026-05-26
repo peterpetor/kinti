@@ -130,7 +130,13 @@ function EventsList({ events }: { events: KintiEvent[] }) {
         </div>
         <div className="mt-3.5 flex items-center gap-2 rounded-xl bg-white/[0.12] px-3.5 py-2.5">
           <p className="flex-1 text-[12.5px] font-semibold">
-            <strong>{goingOf(hero)} kinti</strong> jelezte, hogy megy
+            {goingOf(hero) > 0 ? (
+              <>
+                <strong>{goingOf(hero)} kinti</strong> jelezte, hogy megy
+              </>
+            ) : (
+              "Legyél te az első, aki jelzi!"
+            )}
           </p>
           <button
             type="button"
@@ -171,7 +177,8 @@ function EventsList({ events }: { events: KintiEvent[] }) {
               {e.title}
             </div>
             <div className="mt-0.5 text-xs text-ink-muted">
-              {e.venue} · {goingOf(e)} fő megy
+              {e.venue}
+              {goingOf(e) > 0 && <> · {goingOf(e)} fő megy</>}
             </div>
           </div>
           <button
