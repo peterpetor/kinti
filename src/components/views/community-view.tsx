@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { BulletinKind, BulletinPost, KintiEvent } from "@/lib/types";
 import { mediaUrl } from "@/lib/media";
+import { CANTONS } from "@/lib/cantons";
 
 type Tab = "events" | "board" | "newbie";
 
 export function CommunityView({
   events,
+  kinds,
   posts,
 }: {
   events: KintiEvent[];
@@ -59,7 +61,7 @@ export function CommunityView({
 
       <div className="space-y-2.5 px-5">
         {tab === "events" && <EventsList events={events} />}
-        {tab === "board" && <BulletinList posts={posts} />}
+        {tab === "board" && <BulletinList posts={posts} kinds={kinds} />}
         {tab === "newbie" && <NewbieList />}
       </div>
     </div>
@@ -509,7 +511,48 @@ function BulletinCard({ post }: { post: BulletinPost }) {
   );
 }
 
-function BulletinList({ posts }: { posts: BulletinPost[] }) {
+function BulletinList({
+  posts,
+  kinds,
+}: {
+  posts: BulletinPost[];
+  kinds: BulletinKind[];
+}) {
+  const [q, setQ] = useState("");
+  const [kindId, setKindId] = useState("all");
+  const [canton, setCanton] = useState("all");
+
+  // Csak azokat a kantonokat kínáljuk a legördülőben, amikben TÉNYLEG van hirdetés.
+  const availableCantons = useMemo(() => {
+    const codes = new Set(
+      posts.map((p) => p.cantonCode).filter((c): c is string => !!c),
+    );
+    return CANTONS.filter((c) => codes.has(c.code));
+  }, [posts]);
+
+  const filtered = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    return posts.filter((p) => {
+      const byKind = kindId === "all" || p.kindId === kindId;
+      const byCanton = canton === "all" || p.cantonCode === canton;
+      const byText =
+        !needle ||
+        p.title.toLowerCase().includes(needle) ||
+        (p.meta ?? "").toLowerCase().includes(needle) ||
+        (p.body ?? "").toLowerCase().includes(needle) ||
+        (p.poster ?? "").toLowerCase().includes(needle);
+      return byKind && byCanton && byText;
+    });
+  }, [posts, q, kindId, canton]);
+
+  const hasFilter = q.trim() !== "" || kindId !== "all" || canton !== "all";
+
+  function resetFilters() {
+    setQ("");
+    setKindId("all");
+    setCanton("all");
+  }
+
   return (
     <>
       {/* CTA — account nélkül lehet hirdetést feladni */}
@@ -529,12 +572,126 @@ function BulletinList({ posts }: { posts: BulletinPost[] }) {
         <Icon name="chevR" size={14} className="text-ink-muted" />
       </Link>
 
-      {posts.length === 0 && <Empty label="Még nincs hirdetés. Légy te az első!" />}
+      {posts.length === 0 ? (
+        <Empty label="Még nincs hirdetés. Légy te az első!" />
+      ) : (
+        <>
+          {/* Kereső */}
+          <div className="flex items-center gap-2.5 rounded-[14px] border border-line bg-surface px-3 py-2.5 shadow-card">
+            <Icon name="search" size={17} className="shrink-0 text-ink-muted" />
+            <input
+              type="search"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Keresés a hirdetések közt…"
+              className="min-w-0 flex-1 bg-transparent text-[14px] font-medium text-ink outline-none placeholder:text-ink-faint"
+            />
+            {q && (
+              <button
+                type="button"
+                aria-label="Törlés"
+                onClick={() => setQ("")}
+                className="grid h-7 w-7 shrink-0 place-items-center rounded-[9px] bg-surface-alt text-ink-muted"
+              >
+                <Icon name="close" size={13} strokeWidth={2.4} />
+              </button>
+            )}
+          </div>
 
-      {posts.map((p) => (
-        <BulletinCard key={p.id} post={p} />
-      ))}
+          {/* Kategória-pillek (bulletin_kinds) */}
+          <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 py-0.5">
+            <KindPill label="Mind" active={kindId === "all"} onClick={() => setKindId("all")} />
+            {kinds.map((k) => (
+              <KindPill
+                key={k.id}
+                label={k.label}
+                color={k.color}
+                active={kindId === k.id}
+                onClick={() => setKindId(k.id)}
+              />
+            ))}
+          </div>
+
+          {/* Kanton-szűrő + darabszám */}
+          <div className="flex items-center justify-between gap-2">
+            <label className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 shadow-card">
+              <Icon name="pin" size={12} strokeWidth={2.2} className="shrink-0 text-accent" />
+              <select
+                value={canton}
+                onChange={(e) => setCanton(e.target.value)}
+                aria-label="Kanton szűrő"
+                className="bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
+              >
+                <option value="all">Egész Svájc</option>
+                {availableCantons.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name} ({c.code})
+                  </option>
+                ))}
+              </select>
+              <Icon name="chevD" size={12} strokeWidth={2.2} className="text-ink-muted" />
+            </label>
+
+            <span className="text-[11.5px] font-semibold uppercase tracking-wide text-ink-muted">
+              {filtered.length} hirdetés
+            </span>
+          </div>
+
+          {/* Találatok / üres állapot */}
+          {filtered.length === 0 ? (
+            <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-line bg-surface-alt px-6 py-10 text-center">
+              <Icon name="search" size={24} className="text-ink-faint" />
+              <p className="text-[13px] font-semibold text-ink">Nincs ilyen hirdetés</p>
+              {hasFilter && (
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="mt-1 rounded-pill bg-primary px-3.5 py-1.5 text-[12px] font-bold text-white"
+                >
+                  Szűrők törlése
+                </button>
+              )}
+            </div>
+          ) : (
+            filtered.map((p) => <BulletinCard key={p.id} post={p} />)
+          )}
+        </>
+      )}
     </>
+  );
+}
+
+function KindPill({
+  label,
+  color,
+  active,
+  onClick,
+}: {
+  label: string;
+  color?: string | null;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={cn(
+        "inline-flex flex-none items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-bold tracking-[-0.01em] transition",
+        active
+          ? "bg-primary text-white shadow-card"
+          : "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-alpha))]",
+      )}
+    >
+      {color && (
+        <span
+          className="h-2 w-2 rounded-full"
+          style={{ background: active ? "rgba(255,255,255,0.7)" : color }}
+        />
+      )}
+      {label}
+    </button>
   );
 }
 

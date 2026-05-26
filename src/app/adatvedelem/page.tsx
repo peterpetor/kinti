@@ -136,6 +136,25 @@ export default function AdatvedelemPage() {
         <strong> 30 napon belül</strong> válaszolunk.
       </p>
 
+      <h3>5.1 Hogyan kérheted az adataid végleges törlését?</h3>
+      <p>
+        A platformon tárolt adataid végleges és visszaállíthatatlan törlését az alábbi egyszerű és automatizált módokon tudod kezdeményezni:
+      </p>
+      <ul>
+        <li>
+          <strong>Hirdetések törlése</strong>: Minden feladott hirdetés megerősítő e-mailjében küldünk egy egyedi <em>hirdetés-kezelő linket</em>. Erre rákattintva egyetlen gombnyomással azonnal és véglegesen törölheted a hirdetésedet a kinti.app felületéről.
+        </li>
+        <li>
+          <strong>Vélemények törlése</strong>: Hasonlóan a hirdetésekhez, a véleményed elküldése után kapott megerősítő e-mail tartalmaz egy egyedi <em>vélemény-kezelő linket</em>, amellyel bármikor azonnal és véglegesen törölheted a leadott értékelésedet.
+        </li>
+        <li>
+          <strong>Vállalkozói fiók és profil törlése</strong>: Bejelentkezett vállalkozóként a <em>Profilom</em> oldalon vagy a fiókbeállításokban bármikor kezdeményezheted a fiókod és vállalkozásod végleges törlését a platformról.
+        </li>
+        <li>
+          <strong>Kézi törlési kérelem (E-mailben)</strong>: Ha a fenti automatizált linkek már nem állnak rendelkezésedre, bármikor írhatsz nekünk az <a href="mailto:info@kinti.app">info@kinti.app</a> címre a regisztrált vagy hirdetéskor használt e-mail címedről, és kérésedre munkatársaink haladéktalanul (legfeljebb 5 munkanapon belül) véglegesen törlik a hirdetéseidet, véleményeidet vagy vállalkozói profilodat.
+        </li>
+      </ul>
+
       <h2>6. Panasz</h2>
       <p>
         Ha úgy érzed, hogy az adatkezelésünk sérti a jogaidat, panasszal fordulhatsz a Nemzeti
