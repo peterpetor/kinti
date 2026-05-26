@@ -169,26 +169,6 @@ async function OwnerDashboard({
         </div>
       </section>
 
-      {/* premium upsell */}
-      <section className="relative overflow-hidden rounded-card bg-accent p-[18px] text-white">
-        <div className="absolute -right-5 -top-5 h-28 w-28 rounded-full border-[20px] border-white/10" />
-        <div className="relative">
-          <span className="mb-2.5 inline-block rounded-pill bg-white/[0.18] px-2.5 py-1 text-[10.5px] font-bold tracking-wide">
-            3 hónap ingyen
-          </span>
-          <h3 className="text-[19px] font-extrabold leading-tight tracking-tight">
-            Legyél kiemelt — lásd a számokat <em className="italic">megduplázódni</em>.
-          </h3>
-          <p className="mt-2 text-[13px] leading-relaxed opacity-90">
-            ★ Kiemelt badge · ★ Lista teteje · ★ Nagyobb kártya a térképen
-          </p>
-          <button className="mt-3.5 inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2.5 text-[13.5px] font-bold text-accent">
-            Indítom az ingyenes próbát
-            <Icon name="arrowRight" size={15} strokeWidth={2.4} />
-          </button>
-        </div>
-      </section>
-
       {/* mai aktivitás */}
       <section className="space-y-2">
         <SectionHeader right={<span className="text-[13px] font-bold text-primary">Mind ›</span>}>

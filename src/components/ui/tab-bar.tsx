@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { Icon, type IconName } from "./icons";
 import { cn } from "@/lib/cn";
 
 /**
  * TabBar — alsó, lebegő üveg-navigáció (Home/Térkép, Szaknévsor, Közösség,
- * Profil). A külső sávon `pointer-events-none` engedi át az érintést a margón,
- * a belső `.glass` doboz `pointer-events-auto`. Safe-area-tudatos alsó padding.
+ * Profil). A negyedik fül a Clerk auth-állapottól függően változik:
+ *   - kijelentkezve: "Vállalkozó" felirat + /belepes (egyértelműsíti, hogy
+ *     a profilkezelés csak vállalkozóknak)
+ *   - bejelentkezve: "Profil" felirat + /profil (saját dashboard)
  */
-const TABS: { href: string; label: string; icon: IconName }[] = [
+const STATIC_TABS: { href: string; label: string; icon: IconName }[] = [
   { href: "/", label: "Főoldal", icon: "home" },
   { href: "/szaknevsor", label: "Szaknévsor", icon: "list" },
   { href: "/kozosseg", label: "Közösség", icon: "users" },
-  { href: "/profil", label: "Profil", icon: "user" },
 ];
 
 function isActive(pathname: string, href: string): boolean {
@@ -23,10 +25,21 @@ function isActive(pathname: string, href: string): boolean {
 
 export function TabBar() {
   const pathname = usePathname();
+  const { isSignedIn, isLoaded } = useAuth();
+
+  // Amíg a Clerk be nem töltődik, az utolsó fül a "vállalkozó" — a /belepes
+  // úgyis át fogja venni a usert, ha mégis bejelentkezett már.
+  const lastTab =
+    isLoaded && isSignedIn
+      ? { href: "/profil", label: "Profil", icon: "user" as const }
+      : { href: "/belepes", label: "Vállalkozó", icon: "user" as const };
+
+  const tabs = [...STATIC_TABS, lastTab];
+
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-[calc(env(safe-area-inset-bottom)+12px)]">
       <div className="glass pointer-events-auto flex w-full max-w-md items-stretch gap-1 rounded-[22px] border border-line p-1.5 shadow-pop">
-        {TABS.map((t) => {
+        {tabs.map((t) => {
           const active = isActive(pathname, t.href);
           return (
             <Link
