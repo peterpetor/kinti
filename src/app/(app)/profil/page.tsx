@@ -12,6 +12,7 @@ import {
   Sparkline,
   StatCard,
   DropdownMenu,
+  KintiLogo,
 } from "@/components/ui";
 import { getBusinessByOwner, getDashboard, getReviewsByBusiness } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
@@ -50,26 +51,22 @@ export default async function ProfilPage() {
   if (!userId) redirect("/belepes");
 
   const business = await getBusinessByOwner(userId);
-  const avatarUrl = mediaUrl(business?.logoKey);
 
   return (
     <div className="space-y-4 px-[18px] pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
-      <header className="flex items-center gap-3">
-        <span
-          className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[14px] border-2 border-surface bg-primary-soft shadow-card"
-          style={!avatarUrl && business?.photo ? { background: business.photo } : undefined}
-        >
-          {avatarUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
-          )}
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="text-xs font-semibold text-ink-muted">Szia,</div>
-          <div className="truncate text-[17px] font-extrabold tracking-tight text-ink">
-            {business?.name ?? "Vállalkozói profil"} 👋
-          </div>
+      {/* fejléc */}
+      <header className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
+          <KintiLogo size={28} />
+          <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/switzerland-flag.png"
+            alt="Svájc"
+            className="h-[18px] w-[18px] rounded-[4px] object-contain select-none"
+          />
         </div>
+        <div className="flex-1" />
         <DropdownMenu />
       </header>
 
@@ -171,6 +168,13 @@ async function OwnerDashboard({
 
   return (
     <>
+      <div className="min-w-0 py-1">
+        <div className="text-xs font-semibold text-ink-muted">Szia,</div>
+        <div className="truncate text-[20px] font-extrabold tracking-tight text-ink">
+          {business.name} 👋
+        </div>
+      </div>
+
       {/* logó / borítókép feltöltő (R2) */}
       <LogoUploader currentKey={business.logoKey} fallbackGradient={business.photo} />
 
