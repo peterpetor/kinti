@@ -776,13 +776,10 @@ function BulletinList({
             ))}
           </div>
 
-          {/* Kanton-szűrő + darabszám */}
-          <div className="flex items-center justify-between gap-2">
-            <label className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-1.5 shadow-card">
+          {/* Kanton + rendezés + Mentett + darabszám */}
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 shadow-card">
               <Icon name="pin" size={12} strokeWidth={2.2} className="shrink-0 text-accent" />
-              <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-                Kanton
-              </span>
               <select
                 value={canton}
                 onChange={(e) => setCanton(e.target.value)}
@@ -790,7 +787,7 @@ function BulletinList({
                 className="bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
               >
                 <option value="all">Egész Svájc</option>
-                {CANTONS.map((c) => (
+                {(availableCantons.length > 0 ? availableCantons : CANTONS).map((c) => (
                   <option key={c.code} value={c.code}>
                     {c.name} ({c.code})
                   </option>
@@ -799,7 +796,37 @@ function BulletinList({
               <Icon name="chevD" size={12} strokeWidth={2.2} className="text-ink-muted" />
             </label>
 
-            <span className="text-[11.5px] font-semibold uppercase tracking-wide text-ink-muted">
+            <label className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 shadow-card">
+              <Icon name="filter" size={12} strokeWidth={2.2} className="shrink-0 text-primary" />
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortMode)}
+                aria-label="Rendezés"
+                className="bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
+              >
+                <option value="newest">Legújabb elöl</option>
+                <option value="price-asc">Ár szerint ↑</option>
+                <option value="price-desc">Ár szerint ↓</option>
+              </select>
+              <Icon name="chevD" size={12} strokeWidth={2.2} className="text-ink-muted" />
+            </label>
+
+            <button
+              type="button"
+              onClick={() => setSavedOnly((v) => !v)}
+              aria-pressed={savedOnly}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1.5 text-[12.5px] font-bold shadow-card transition",
+                savedOnly
+                  ? "bg-accent text-white"
+                  : "border border-line bg-surface text-ink",
+              )}
+            >
+              <Icon name="bookmark" size={12} strokeWidth={2.4} filled={savedOnly} />
+              Mentett{saved.size > 0 && ` (${saved.size})`}
+            </button>
+
+            <span className="ml-auto text-[11.5px] font-semibold uppercase tracking-wide text-ink-muted">
               {filtered.length} hirdetés
             </span>
           </div>
@@ -820,7 +847,14 @@ function BulletinList({
               )}
             </div>
           ) : (
-            filtered.map((p) => <BulletinCard key={p.id} post={p} />)
+            filtered.map((p) => (
+              <BulletinCard
+                key={p.id}
+                post={p}
+                isSaved={saved.has(p.id)}
+                onToggleSaved={() => toggleSaved(p.id)}
+              />
+            ))
           )}
         </>
       )}

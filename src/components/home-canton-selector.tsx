@@ -25,7 +25,7 @@ export function HomeCantonSelector() {
         aria-label="Kanton választó"
         className="bg-transparent font-bold tracking-[-0.01em] text-ink outline-none cursor-pointer pr-1"
       >
-        <option value="all">Válassz kantont...</option>
+        <option value="all">Egész Svájc</option>
         {CANTONS.map((c) => (
           <option key={c.code} value={c.code}>
             {c.name} ({c.code})
