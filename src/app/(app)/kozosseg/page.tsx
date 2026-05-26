@@ -14,6 +14,7 @@ export default async function KozossegPage() {
     getBulletinKinds(),
     getBulletinPosts(),
   ]);
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   return (
     <div className="space-y-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
@@ -49,7 +50,7 @@ export default async function KozossegPage() {
           }
         />
       </div>
-      <CommunityView events={events} kinds={kinds} posts={posts} />
+      <CommunityView events={events} kinds={kinds} posts={posts} turnstileSiteKey={turnstileSiteKey} />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import type { BulletinKind, BulletinPost, KintiEvent } from "@/lib/types";
 import { mediaUrl } from "@/lib/media";
 import { CANTONS } from "@/lib/cantons";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 
 // --- helperek a hirdetésekhez -----------------------------------------------
 
@@ -83,10 +84,12 @@ export function CommunityView({
   events,
   kinds,
   posts,
+  turnstileSiteKey = "",
 }: {
   events: KintiEvent[];
   kinds: BulletinKind[];
   posts: BulletinPost[];
+  turnstileSiteKey?: string;
 }) {
   const [tab, setTab] = useState<Tab>("events");
 
@@ -130,7 +133,7 @@ export function CommunityView({
 
       <div className="space-y-2.5 px-5">
         {tab === "events" && <EventsList events={events} />}
-        {tab === "board" && <BulletinList posts={posts} kinds={kinds} />}
+        {tab === "board" && <BulletinList posts={posts} kinds={kinds} turnstileSiteKey={turnstileSiteKey} />}
         {tab === "newbie" && <NewbieList />}
       </div>
     </div>
@@ -318,10 +321,12 @@ function BulletinCard({
   post,
   isSaved,
   onToggleSaved,
+  turnstileSiteKey = "",
 }: {
   post: BulletinPost;
   isSaved: boolean;
   onToggleSaved: () => void;
+  turnstileSiteKey?: string;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
@@ -334,6 +339,7 @@ function BulletinCard({
   const [sending, setSending] = useState(false);
   const [sentSuccess, setSentSuccess] = useState(false);
   const [contactError, setContactError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const color = post.kind?.color ?? undefined;
   const imageKeys = parseImageKeys(post.imageKey);
@@ -355,6 +361,10 @@ function BulletinCard({
       setContactError("Kérlek tölts ki minden mezőt.");
       return;
     }
+    if (!turnstileToken) {
+      setContactError("Várd meg a robot-ellenőrzést.");
+      return;
+    }
     setContactError(null);
     setSending(true);
 
@@ -367,6 +377,7 @@ function BulletinCard({
           senderName,
           senderEmail,
           message,
+          turnstileToken,
         }),
       });
 
@@ -591,6 +602,14 @@ function BulletinCard({
 
                 {contactError && <p className="text-xs font-bold text-accent">{contactError}</p>}
 
+                  {/* Turnstile CAPTCHA — bot-védelem */}
+                  {turnstileSiteKey && (
+                    <TurnstileWidget
+                      siteKey={turnstileSiteKey}
+                      onToken={setTurnstileToken}
+                    />
+                  )}
+
                 <div className="flex gap-2.5 pt-2">
                   <button
                     type="button"
@@ -643,9 +662,11 @@ type SortMode = "newest" | "price-asc" | "price-desc";
 function BulletinList({
   posts,
   kinds,
+  turnstileSiteKey = "",
 }: {
   posts: BulletinPost[];
   kinds: BulletinKind[];
+  turnstileSiteKey?: string;
 }) {
   const [q, setQ] = useState("");
   const [kindId, setKindId] = useState("all");
@@ -853,6 +874,7 @@ function BulletinList({
                 post={p}
                 isSaved={saved.has(p.id)}
                 onToggleSaved={() => toggleSaved(p.id)}
+                turnstileSiteKey={turnstileSiteKey}
               />
             ))
           )}
