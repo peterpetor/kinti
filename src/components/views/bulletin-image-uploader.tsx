@@ -89,7 +89,7 @@ export function BulletinImageUploader({
         const presignRes = await fetch("/api/bulletin/media-upload", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ contentType: file.type }),
+          body: JSON.stringify({ contentType: file.type, contentLength: compressedBlob.size }),
         });
 
         if (!presignRes.ok) {

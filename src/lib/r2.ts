@@ -21,6 +21,8 @@ export interface PresignOptions {
   expiresSeconds?: number;
   /** Opcionális: az aláírt `Content-Type` (a kliensnek pontosan ezt kell küldenie). */
   contentType?: string;
+  /** Opcionális: az aláírt `Content-Length` (a kliensnek pontosan ezt a méretet kell küldenie). */
+  contentLength?: number;
 }
 
 export interface PresignResult {
@@ -59,6 +61,7 @@ export async function presignR2Put(key: string, opts: PresignOptions = {}): Prom
 
   const headers: Record<string, string> = {};
   if (opts.contentType) headers["content-type"] = opts.contentType;
+  if (opts.contentLength != null) headers["content-length"] = String(opts.contentLength);
 
   const signed = await client.sign(url.toString(), {
     method: "PUT",

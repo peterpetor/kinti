@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
  *  3) Aláírt PUT URL → 5 percig érvényes, a kliens közvetlenül az R2-be tölt fel.
  */
 export async function POST(req: Request) {
-  let body: { contentType?: unknown } = {};
+  let body: { contentType?: unknown; contentLength?: unknown } = {};
   try {
     body = await req.json();
   } catch {
@@ -32,10 +32,30 @@ export async function POST(req: Request) {
     );
   }
 
+  const contentLength = typeof body.contentLength === "number" ? body.contentLength : null;
+  if (contentLength === null || Number.isNaN(contentLength) || contentLength <= 0) {
+    return NextResponse.json(
+      { error: "Érvénytelen vagy hiányzó fájlméret." },
+      { status: 400 },
+    );
+  }
+
+  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+  if (contentLength > MAX_SIZE) {
+    return NextResponse.json(
+      { error: "A fájlméret túl nagy. A megengedett maximális méret 5 MB." },
+      { status: 400 },
+    );
+  }
+
   const key = `bulletin-images/${crypto.randomUUID()}.${ext}`;
 
   try {
-    const presigned = await presignR2Put(key, { expiresSeconds: 300, contentType: contentType! });
+    const presigned = await presignR2Put(key, {
+      expiresSeconds: 300,
+      contentType: contentType!,
+      contentLength,
+    });
     return NextResponse.json(presigned, {
       headers: { "cache-control": "no-store" },
     });
