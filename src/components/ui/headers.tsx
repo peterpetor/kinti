@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { DropdownMenu } from "./dropdown-menu";
 
 /**
  * ScreenHeader — nézet-fejléc nagy címmel + opcionális eyebrow-val és jobb
@@ -29,7 +30,7 @@ export function ScreenHeader({
           {title}
         </h1>
       </div>
-      {right}
+      {right !== undefined ? right : <DropdownMenu />}
     </header>
   );
 }

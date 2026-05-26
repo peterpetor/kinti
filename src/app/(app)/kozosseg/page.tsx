@@ -28,26 +28,6 @@ export default async function KozossegPage() {
               nem vagy egyedül.
             </>
           }
-          right={
-            <div className="flex items-center gap-2">
-              <Link
-                href="/kozosseg/uj-esemeny"
-                aria-label="Új esemény beküldése"
-                title="Esemény beküldése"
-                className="grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition active:scale-95"
-              >
-                <Icon name="calendar" size={17} strokeWidth={2.2} />
-              </Link>
-              <Link
-                href="/kozosseg/uj-hirdetes"
-                aria-label="Új hirdetés feladása"
-                title="Új hirdetés"
-                className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-primary text-white shadow-card transition active:scale-95"
-              >
-                <Icon name="plus" size={18} strokeWidth={2.6} />
-              </Link>
-            </div>
-          }
         />
       </div>
       <CommunityView events={events} kinds={kinds} posts={posts} turnstileSiteKey={turnstileSiteKey} />
