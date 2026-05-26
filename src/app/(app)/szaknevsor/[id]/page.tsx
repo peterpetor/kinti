@@ -5,7 +5,7 @@ import { getBusinessById, getReviewsByBusiness } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
-import { ProfileHeaderActions, ProfileShareButton } from "@/components/views/profile-action-buttons";
+import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 
 export const runtime = "edge";
@@ -145,7 +145,6 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           >
             <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
           </a>
-          <ProfileShareButton businessName={b.name} />
         </div>
 
         {/* Közösségi és foglalási linkek */}
