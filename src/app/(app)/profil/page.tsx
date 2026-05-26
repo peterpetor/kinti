@@ -183,6 +183,8 @@ async function OwnerDashboard({
         initialAddress={business.address}
         initialCategoryLabel={business.categoryLabel}
         initialOpenText={business.openText}
+        initialWorkingHours={business.workingHours ?? null}
+        initialSocialLinks={business.socialLinks ?? null}
       />
 
       {/* heti összegző hero */}

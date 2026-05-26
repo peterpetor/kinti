@@ -66,6 +66,8 @@ interface BusinessRow {
   accent_photo: string | null;
   logo_key: string | null;
   owner_user_id: string | null;
+  working_hours: string | null;
+  social_links: string | null;
 }
 
 interface EventRow {
@@ -167,6 +169,8 @@ function toBusiness(r: BusinessRow): Business {
     accentPhoto: r.accent_photo,
     logoKey: r.logo_key,
     ownerUserId: r.owner_user_id,
+    workingHours: r.working_hours,
+    socialLinks: r.social_links,
   };
 }
 
@@ -333,6 +337,8 @@ export interface UpdateBusinessProfileInput {
   address: string | null;
   categoryLabel: string | null;
   openText: string | null;
+  workingHours?: string | null;
+  socialLinks?: string | null;
 }
 
 export async function updateBusinessProfile(
@@ -349,6 +355,8 @@ export async function updateBusinessProfile(
            address = ?,
            category_label = ?,
            open_text = ?,
+           working_hours = ?,
+           social_links = ?,
            updated_at = datetime('now')
        WHERE id = ? AND owner_user_id = ?`,
     )
@@ -359,6 +367,8 @@ export async function updateBusinessProfile(
       input.address,
       input.categoryLabel,
       input.openText,
+      input.workingHours ?? null,
+      input.socialLinks ?? null,
       businessId,
       ownerUserId,
     )

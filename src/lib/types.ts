@@ -38,6 +38,8 @@ export interface Business {
   accentPhoto: string | null;
   logoKey: string | null;
   ownerUserId: string | null;
+  workingHours?: string | null;
+  socialLinks?: string | null;
 }
 
 export interface KintiEvent {

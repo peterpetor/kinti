@@ -6,6 +6,7 @@ import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
 import { ProfileHeaderActions, ProfileShareButton } from "@/components/views/profile-action-buttons";
+import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -52,6 +53,15 @@ export default async function BusinessPage({ params }: { params: { id: string } 
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.address)}`
     : undefined;
   const heroUrl = mediaUrl(b.logoKey);
+
+  const wh = parseWorkingHours(b.workingHours ?? null);
+  const status = calculateBusinessHoursStatus(wh);
+
+  let socials: Record<string, string> | null = null;
+  try {
+    socials = b.socialLinks ? JSON.parse(b.socialLinks) : null;
+  } catch {}
+  const hasSocials = socials && (socials.facebook || socials.instagram || socials.linkedin || socials.booking);
 
   return (
     <div>
@@ -106,11 +116,12 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           </div>
           <span className="h-8 w-px self-stretch bg-line" />
           <div>
-            <div className={cn("text-[15px] font-bold", b.openNow ? "text-success" : "text-accent")}>
-              {b.openNow ? "Nyitva" : "Zárva"}
+            <div className={cn("text-[15px] font-bold flex items-center gap-1.5", status.isOpen ? "text-success" : "text-accent")}>
+              <span className={cn("h-2 w-2 rounded-full", status.isOpen ? "bg-success animate-pulse" : "bg-accent")} />
+              {status.statusText}
             </div>
-            <div className="text-[11px] font-medium text-ink-muted">
-              {b.openText?.replace(/^.*?·\s*/, "")}
+            <div className="text-[11px] font-medium text-ink-muted capitalize">
+              {status.detailText}
             </div>
           </div>
         </div>
@@ -137,12 +148,67 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           <ProfileShareButton businessName={b.name} />
         </div>
 
+        {/* Közösségi és foglalási linkek */}
+        {hasSocials && (
+          <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl bg-surface px-3 py-2 border border-line shadow-sm">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-ink-muted">
+              Közösség & Foglalás:
+            </span>
+            <div className="flex gap-2 ml-auto">
+              {socials?.facebook && (
+                <a
+                  href={socials.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                  className="grid h-8 w-8 place-items-center rounded-xl bg-surface-alt text-[#1877F2] hover:bg-[#1877F2]/10 transition-colors border border-line/40 active:scale-95"
+                >
+                  <Icon name="facebook" size={15} />
+                </a>
+              )}
+              {socials?.instagram && (
+                <a
+                  href={socials.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="grid h-8 w-8 place-items-center rounded-xl bg-surface-alt text-[#E4405F] hover:bg-[#E4405F]/10 transition-colors border border-line/40 active:scale-95"
+                >
+                  <Icon name="instagram" size={15} />
+                </a>
+              )}
+              {socials?.linkedin && (
+                <a
+                  href={socials.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  className="grid h-8 w-8 place-items-center rounded-xl bg-surface-alt text-[#0A66C2] hover:bg-[#0A66C2]/10 transition-colors border border-line/40 active:scale-95"
+                >
+                  <Icon name="linkedin" size={15} />
+                </a>
+              )}
+              {socials?.booking && (
+                <a
+                  href={socials.booking}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Időpontfoglalás"
+                  className="flex items-center gap-1 px-3 py-1 rounded-xl bg-primary text-white text-[11px] font-extrabold hover:bg-primary/95 transition-all shadow-sm active:scale-95"
+                >
+                  <Icon name="calendar" size={12} /> Időpont
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* erről a helyről */}
         <section className="mt-6">
           <SectionHeader>Erről a helyről</SectionHeader>
           <p className="mt-2 text-[14.5px] leading-relaxed text-ink text-pretty">{b.blurb}</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
-            <Chip icon="clock">{b.openText}</Chip>
+            <Chip icon="clock">{b.openText || `${status.statusText} · ${status.detailText}`}</Chip>
             <Chip icon="globe">{b.languages.length ? b.languages.join(" · ") : "Magyar"}</Chip>
             {b.yearsHere != null && <Chip>{b.yearsHere} éve kint</Chip>}
           </div>

@@ -35,6 +35,8 @@ export async function POST(req: Request) {
   const address = typeof body.address === "string" ? body.address.trim() : "";
   const categoryLabel = typeof body.categoryLabel === "string" ? body.categoryLabel.trim() : "";
   const openText = typeof body.openText === "string" ? body.openText.trim() : "";
+  const workingHours = typeof body.workingHours === "string" ? body.workingHours.trim() : "";
+  const socialLinks = typeof body.socialLinks === "string" ? body.socialLinks.trim() : "";
 
   if (name.length < 2 || name.length > 100) {
     return NextResponse.json(
@@ -69,6 +71,20 @@ export async function POST(req: Request) {
     );
   }
 
+  if (workingHours.length > 2000) {
+    return NextResponse.json(
+      { error: "A nyitvatartási adatok túl hosszúak." },
+      { status: 400 },
+    );
+  }
+
+  if (socialLinks.length > 2000) {
+    return NextResponse.json(
+      { error: "A közösségi linkek túl hosszúak." },
+      { status: 400 },
+    );
+  }
+
   const ok = await updateBusinessProfile(business.id, userId, {
     name,
     phone: phone || null,
@@ -76,6 +92,8 @@ export async function POST(req: Request) {
     address: address || null,
     categoryLabel: categoryLabel || null,
     openText: openText || null,
+    workingHours: workingHours || null,
+    socialLinks: socialLinks || null,
   });
 
   if (!ok) {

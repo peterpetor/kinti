@@ -10,7 +10,7 @@ export type IconName =
   | "globe" | "star" | "heart" | "arrowLeft" | "arrowRight" | "arrowUp"
   | "more" | "close" | "check" | "plus" | "filter" | "clock" | "calendar"
   | "share" | "bookmark" | "chevR" | "chevD" | "chevU" | "sliders" | "bell"
-  | "trending" | "eye" | "cursor" | "flag" | "send";
+  | "trending" | "eye" | "cursor" | "flag" | "send" | "facebook" | "instagram" | "linkedin";
 
 const PATHS: Record<IconName, string[]> = {
   search: ["M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14", "M16.5 16.5L21 21"],
@@ -47,6 +47,9 @@ const PATHS: Record<IconName, string[]> = {
   cursor: ["M4 4l16 6l-7 2l-2 7z"],
   flag: ["M5 21V4", "M5 5h12l-2 4l2 4H5"],
   send: ["M22 2L11 13M22 2l-7 20l-4-9l-9-4z"],
+  facebook: ["M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"],
+  instagram: ["M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z", "M17.5 6.5h.01", "M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12z"],
+  linkedin: ["M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z", "M2 9h4v12H2z", "M4 6a2 2 0 1 0 0-4a2 2 0 0 0 0 4z"],
 };
 
 // A '…' (more) három pöttye vastagabb vonallal néz jól ki.
