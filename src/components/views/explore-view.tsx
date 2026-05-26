@@ -65,6 +65,13 @@ export function ExploreView({
     [filtered],
   );
 
+  // A térkép hely-pillhez: a kiválasztott kanton neve, vagy "Egész Svájc"
+  const locationLabel = useMemo(() => {
+    if (canton === "all") return "Egész Svájc";
+    const found = CANTONS.find((c) => c.code === canton);
+    return found ? `${found.name} (${found.code})` : canton;
+  }, [canton]);
+
   return (
     <div className="space-y-3">
       <div className="px-5">
@@ -141,6 +148,7 @@ export function ExploreView({
               categories={categories}
               activeCat={cat}
               onSelectCat={setCat}
+              locationLabel={locationLabel}
               className="mb-6 h-[calc(100dvh-300px)] min-h-[460px] max-h-[640px]"
             />
           </Suspense>
