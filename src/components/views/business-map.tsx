@@ -37,32 +37,15 @@ const ZURICH_CENTER: [number, number] = [47.378, 8.535];
 type EngineChoice = "maplibre" | "leaflet";
 
 /**
- * Hardveres WebGL-detektálás. Egy SIMA `getContext("webgl")` siker önmagában
- * NEM elég: a Chrome szoftveres SwiftShader-fallback-je is sikert ad, de a
- * MapLibre csak üres vásznat rajzol vele. Ezért lekérdezzük a renderer-string-et
- * és elvetjük a szoftveres rendereléseket. Csak így biztos, hogy a MapLibre
- * tényleg fog rajzolni.
+ * MapLibre opt-in: `?engine=maplibre` URL-paraméter. A WebGL automatikus
+ * detektálása megbízhatatlan (Chrome néha elrejti a renderer-stringet,
+ * szoftveres SwiftShader pedig némán üres vásznat rajzol). Ezért a vektoros
+ * motor explicit opt-in — production-ban Leaflet a default mindenkinek.
  */
-function hasGoodWebGL(): boolean {
+function isMaplibreRequested(): boolean {
   if (typeof window === "undefined") return false;
   try {
-    const canvas = document.createElement("canvas");
-    const gl =
-      (canvas.getContext("webgl2") as WebGL2RenderingContext | null) ||
-      (canvas.getContext("webgl") as WebGLRenderingContext | null) ||
-      (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
-    if (!gl) return false;
-    const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
-    if (debugInfo) {
-      const renderer = String(
-        gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) ?? "",
-      );
-      // Szoftveres / virtuális renderelők — MapLibre rajtuk üres marad.
-      if (/swiftshader|software|llvmpipe|microsoft basic render/i.test(renderer)) {
-        return false;
-      }
-    }
-    return true;
+    return new URLSearchParams(window.location.search).get("engine") === "maplibre";
   } catch {
     return false;
   }
@@ -90,11 +73,10 @@ export function BusinessMap({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = located.find((b) => b.id === selectedId) ?? defaultBiz ?? null;
 
-  // Engine választás — kliens-only. Default Leaflet (SSR-safe), majd a mount
-  // utáni effekt szigorú WebGL-tesztet futtat és átvált MapLibre-re, ha lehet.
+  // Engine választás — Leaflet a default, MapLibre csak ?engine=maplibre URL-re.
   const [engine, setEngine] = useState<EngineChoice>("leaflet");
   useEffect(() => {
-    if (hasGoodWebGL()) setEngine("maplibre");
+    if (isMaplibreRequested()) setEngine("maplibre");
   }, []);
 
   const handleSelectMarker = useCallback((id: string) => setSelectedId(id), []);
