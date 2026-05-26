@@ -6,6 +6,7 @@ import type {
   BulletinPost,
   Category,
   DashboardStats,
+  EventFeed,
   KintiEvent,
   Review,
   ReviewDraft,
@@ -777,6 +778,123 @@ export async function recomputeBusinessRating(businessId: string): Promise<void>
     )
     .bind(avg, cnt, businessId)
     .run();
+}
+
+// ---------------------------------------------------------------------------
+// Event feed admin — iCal források listája az /admin/feeds UI-hoz.
+// ---------------------------------------------------------------------------
+
+interface EventFeedRow {
+  id: string;
+  url: string;
+  label: string | null;
+  enabled: number;
+  source_id: string;
+  last_synced_at: string | null;
+  last_error: string | null;
+  events_count: number;
+  created_at: string;
+}
+
+function toEventFeed(r: EventFeedRow): EventFeed {
+  return {
+    id: r.id,
+    url: r.url,
+    label: r.label,
+    enabled: r.enabled === 1,
+    sourceId: r.source_id,
+    lastSyncedAt: r.last_synced_at,
+    lastError: r.last_error,
+    eventsCount: r.events_count,
+    createdAt: r.created_at,
+  };
+}
+
+/** SHA-256(url) első 16 hex karaktere → stabil source_id (Edge-kompatibilis). */
+async function feedSourceId(url: string): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(url));
+  const hex = Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+  return `ical:${hex.slice(0, 16)}`;
+}
+
+export async function listEventFeeds(): Promise<EventFeed[]> {
+  const { results } = await getDB()
+    .prepare("SELECT * FROM event_feeds ORDER BY created_at DESC")
+    .all<EventFeedRow>();
+  return results.map(toEventFeed);
+}
+
+export async function createEventFeed(input: {
+  url: string;
+  label: string | null;
+}): Promise<EventFeed | { error: string }> {
+  const url = input.url.trim();
+  if (!/^https?:\/\//i.test(url)) {
+    return { error: "Az URL http(s):// kezdetű legyen." };
+  }
+  const sourceId = await feedSourceId(url);
+  const id = crypto.randomUUID();
+  try {
+    await getDB()
+      .prepare(
+        `INSERT INTO event_feeds (id, url, label, enabled, source_id)
+         VALUES (?, ?, ?, 1, ?)`,
+      )
+      .bind(id, url, input.label ?? null, sourceId)
+      .run();
+  } catch (err) {
+    const m = err instanceof Error ? err.message : String(err);
+    if (/UNIQUE/.test(m)) return { error: "Ez az URL már fel van véve." };
+    return { error: m };
+  }
+  const row = await getDB()
+    .prepare("SELECT * FROM event_feeds WHERE id = ?")
+    .bind(id)
+    .first<EventFeedRow>();
+  return row ? toEventFeed(row) : { error: "Mentés után nem volt visszaolvasható." };
+}
+
+export async function updateEventFeed(
+  id: string,
+  patch: { enabled?: boolean; label?: string | null },
+): Promise<boolean> {
+  const sets: string[] = [];
+  const binds: unknown[] = [];
+  if (typeof patch.enabled === "boolean") {
+    sets.push("enabled = ?");
+    binds.push(patch.enabled ? 1 : 0);
+  }
+  if (patch.label !== undefined) {
+    sets.push("label = ?");
+    binds.push(patch.label);
+  }
+  if (!sets.length) return false;
+  binds.push(id);
+  const res = await getDB()
+    .prepare(`UPDATE event_feeds SET ${sets.join(", ")} WHERE id = ?`)
+    .bind(...binds)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+/** Feed törlése + az ÖSSZES hozzá tartozó esemény-sor takarítása. */
+export async function deleteEventFeed(id: string): Promise<boolean> {
+  const row = await getDB()
+    .prepare("SELECT source_id FROM event_feeds WHERE id = ?")
+    .bind(id)
+    .first<{ source_id: string }>();
+  if (!row) return false;
+  await getDB()
+    .prepare("DELETE FROM events WHERE source = ?")
+    .bind(row.source_id)
+    .run();
+  const res = await getDB()
+    .prepare("DELETE FROM event_feeds WHERE id = ?")
+    .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
 }
 
 export interface DashboardResult {

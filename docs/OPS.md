@@ -94,7 +94,61 @@ napi log.
 
 ---
 
-## 4) DSB / NAIH adatkezelői nyilvántartás (opcionális, de ajánlott)
+## 4) Esemény-szinkron Worker (iCal → D1)
+
+A `workers/cron-events-sync` egy külön Worker, ami naponta egyszer (04:47 UTC)
+lehúzza a konfigurált svájci magyar szervezeti naptárakat (Google Calendar /
+Outlook .ics formátum) és az `events` táblába frissíti őket. Forrásonkénti
+`source` mező → újra-szinkronnál a régi sorok automatikusan törlődnek
+(stale-cleanup). A kézi/seed eseményeket NEM érinti (`source IS NULL`).
+
+**Deploy**:
+
+```powershell
+cd workers\cron-events-sync
+npx wrangler deploy
+```
+
+**Naptárak felvétele** — most már **admin felületről**, NEM env-változóval:
+
+1. A Pages projektben állítsd be a `ADMIN_EMAILS` env-változót (a Te Clerk
+   email-címed, kisbetűsen): Settings → Environment variables → Production →
+   `ADMIN_EMAILS = peterpetor1987@gmail.com` (vesszővel elválasztva több is)
+2. Deploy újra (`npm run deploy`), hogy az env beégjen.
+3. Belépve menj a `https://kinti.app/admin/feeds` oldalra.
+4. Add hozzá az iCal URL-eket (Google Calendar / Outlook publikus .ics linkek).
+5. A worker a következő futáskor (vagy a manuális trigger után) húzza őket.
+
+**Hol kérek naptár-azonosítót**: Magyar Egyesület / Magyar Misszió / Magyar
+Iskola / Cserkészek → a Google Calendar publikus iCal linkje (Settings →
+„Public address in iCal format").
+
+**Manuális teszt** (azonnali sync):
+
+```powershell
+# Egyszer beállítod a Bearer secret-et:
+cd workers\cron-events-sync
+npx wrangler secret put CRON_SECRET
+
+# Aztán bármikor lefuttatható:
+curl -H "authorization: Bearer <amit_beirtal>" `
+     https://kinti-cron-events-sync.<account>.workers.dev
+```
+
+A válasz JSON: feedenként hány eseményt írt be / mi volt a hiba.
+
+**Logok**: CF Dashboard → Workers → kinti-cron-events-sync → Logs.
+Mintázat: `[cron-events-sync] {"feeds":[...], "totalInserted":12, ...}`
+
+**Adatbázis migráció** (egyszer, ha még nem futott):
+```powershell
+npm run db:migrate:remote
+```
+(felveszi a `source` oszlopot az `events` táblába).
+
+---
+
+## 5) DSB / NAIH adatkezelői nyilvántartás (opcionális, de ajánlott)
 
 GDPR Art. 30 szerint **kevesebb mint 250 alkalmazott + nem szisztematikus
 megfigyelés = nem kötelező** adatkezelői nyilvántartást vezetni. A magán-

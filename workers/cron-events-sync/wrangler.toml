@@ -28,11 +28,10 @@ binding = "DB"
 database_name = "kinti-db"
 database_id = "ec70d0d2-1b7c-416d-a2c6-c5d15c3e59a2"
 
-# Vesszővel elválasztott iCal URL-ek. Üresen marad addig, amíg fel nem veszel
-# tényleges svájci magyar szervezeti naptárakat. A worker üres FEED_URLS
-# esetén csendben kilép (no-op).
-[vars]
-FEED_URLS = ""
+# A feedeket már a D1 `event_feeds` táblából olvassuk (admin felület:
+# /admin/feeds a Pages projektben). Itt nem kell env-változó. A
+# CRON_SECRET (kézi triggerhez) wrangler secret-tel kerül be:
+#   npx wrangler secret put CRON_SECRET
 
 [observability]
 enabled = true

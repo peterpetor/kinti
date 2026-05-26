@@ -131,6 +131,19 @@ export interface ReviewDraft {
   ipHash: string | null;
 }
 
+/** iCal-feed sor az `event_feeds` táblából (admin által szerkeszthető). */
+export interface EventFeed {
+  id: string;
+  url: string;
+  label: string | null;
+  enabled: boolean;
+  sourceId: string; // ical:<hash>
+  lastSyncedAt: string | null;
+  lastError: string | null;
+  eventsCount: number;
+  createdAt: string;
+}
+
 export interface DashboardStats {
   weekViews: number;
   weekViewsDelta: string | null;

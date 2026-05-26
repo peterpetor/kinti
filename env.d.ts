@@ -41,4 +41,11 @@ interface CloudflareEnv {
   EMAIL_FROM: string;
   /** A megerősítő linkek bázisa (pl. https://kinti.app). Dev: http://localhost:3000 */
   PUBLIC_BASE_URL: string;
+
+  /**
+   * Admin felhasználók (vesszővel elválasztott email-lista, kisbetűsen
+   * összehasonlítva). Csak ezek érik el az `/admin/*` útvonalakat (pl.
+   * iCal-feedek kezelése).
+   */
+  ADMIN_EMAILS?: string;
 }

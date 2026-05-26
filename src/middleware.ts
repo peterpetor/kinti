@@ -8,7 +8,9 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 const isProtected = createRouteMatcher([
   "/profil(.*)", // saját dashboard
   "/feltoltes(.*)", // leendő logó/hirdetés feltöltő űrlapok (B lépés)
+  "/admin(.*)", // admin felület (pl. iCal feedek)
   "/api/owner(.*)", // tulajdonosi írási műveletek (pl. vállalkozás igénylése)
+  "/api/admin(.*)", // admin API (pl. event_feeds CRUD)
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
