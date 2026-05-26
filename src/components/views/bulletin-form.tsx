@@ -201,7 +201,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
               onChange={(e) => setField("cantonCode", e.target.value)}
               className={inputCls(errors.cantonCode)}
             >
-              <option value="" className="text-ink-faint">Melyik kantonban? (kötelező)</option>
+              <option value="" className="text-ink-faint">Melyik kantonban?</option>
               {CANTONS.map((c) => (
                 <option key={c.code} value={c.code} className="text-ink">
                   {c.name} ({c.code})
@@ -215,7 +215,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
               type="text"
               value={form.meta}
               onChange={(e) => setField("meta", e.target.value)}
-              placeholder='Pl. "Zürich · 1980 CHF / hó" (kötelező)'
+              placeholder='Pl. "Zürich · 1980 CHF / hó"'
               maxLength={LIMITS.metaMax}
               className={inputCls(errors.meta)}
             />
@@ -225,7 +225,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         <div className="mt-2">
           <div className="flex items-center gap-2 rounded-[12px] border border-line bg-surface-alt focus-within:ring-2 focus-within:ring-primary/30">
             <span className="pl-3 text-[12px] font-bold uppercase tracking-wide text-ink-muted">
-              Ár (opcionális)
+              Ár
             </span>
             <input
               type="number"
@@ -249,7 +249,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
       </Section>
 
       {/* Hosszabb leírás */}
-      <Section title="Leírás (opcionális)">
+      <Section title="Leírás">
         <textarea
           value={form.body}
           onChange={(e) => setField("body", e.target.value)}
@@ -266,7 +266,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
       </Section>
 
       {/* Képek feltöltése */}
-      <Section title="Képek (opcionális)">
+      <Section title="Képek">
         <BulletinImageUploader
           value={form.imageKey}
           onChange={(val) => setField("imageKey", val)}
@@ -395,9 +395,13 @@ function Section({
         <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
           {title}
         </h3>
-        {required && (
+        {required ? (
           <span className="text-[10.5px] font-semibold uppercase tracking-wide text-accent">
             kötelező
+          </span>
+        ) : (
+          <span className="text-[10.5px] font-semibold uppercase tracking-wide text-ink-faint">
+            opcionális
           </span>
         )}
       </div>
