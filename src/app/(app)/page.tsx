@@ -7,6 +7,7 @@ import {
   SectionHeader,
 } from "@/components/ui";
 import { AuthControl } from "@/components/auth-control";
+import { HomeSearch } from "@/components/home-search";
 import { getBusinesses, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -27,17 +28,8 @@ export default async function FeedPage() {
         <AuthControl />
       </header>
 
-      {/* kereső-belépő (Szaknévsorra visz) */}
-      <Link
-        href="/szaknevsor"
-        className="flex items-center gap-2.5 rounded-[18px] border border-line bg-surface px-3.5 py-3 text-[15px] font-medium text-ink-faint shadow-card"
-      >
-        <Icon name="search" size={20} className="text-ink-muted" />
-        <span className="flex-1">Mit keresel?</span>
-        <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary-soft text-primary">
-          <Icon name="sliders" size={16} strokeWidth={2.2} />
-        </span>
-      </Link>
+      {/* főoldali kereső — Enter / nyíl → /szaknevsor?q=<query> */}
+      <HomeSearch />
 
       <GlassPill>
         <Icon name="pin" size={14} strokeWidth={2.2} className="text-accent" />

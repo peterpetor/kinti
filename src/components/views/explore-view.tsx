@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, lazy, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -30,8 +31,12 @@ export function ExploreView({
   categories: Category[];
   businesses: Business[];
 }) {
+  // ?q URL-paraméter (a főoldali HomeSearch küldi) → kezdő szűrő
+  const searchParams = useSearchParams();
+  const initialQ = searchParams?.get("q") ?? "";
+
   const [cat, setCat] = useState("all");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initialQ);
   const [view, setView] = useState<ViewMode>("list");
 
   const filtered = useMemo(() => {
