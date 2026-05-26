@@ -36,16 +36,33 @@ const ZURICH_CENTER: [number, number] = [47.378, 8.535];
 
 type EngineChoice = "maplibre" | "leaflet";
 
-/** Egyszerű kliens-oldali WebGL-tesztelő. */
-function hasWebGL(): boolean {
+/**
+ * Hardveres WebGL-detektálás. Egy SIMA `getContext("webgl")` siker önmagában
+ * NEM elég: a Chrome szoftveres SwiftShader-fallback-je is sikert ad, de a
+ * MapLibre csak üres vásznat rajzol vele. Ezért lekérdezzük a renderer-string-et
+ * és elvetjük a szoftveres rendereléseket. Csak így biztos, hogy a MapLibre
+ * tényleg fog rajzolni.
+ */
+function hasGoodWebGL(): boolean {
   if (typeof window === "undefined") return false;
   try {
     const canvas = document.createElement("canvas");
     const gl =
-      canvas.getContext("webgl2") ||
-      canvas.getContext("webgl") ||
+      (canvas.getContext("webgl2") as WebGL2RenderingContext | null) ||
+      (canvas.getContext("webgl") as WebGLRenderingContext | null) ||
       (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
-    return !!gl;
+    if (!gl) return false;
+    const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+    if (debugInfo) {
+      const renderer = String(
+        gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) ?? "",
+      );
+      // Szoftveres / virtuális renderelők — MapLibre rajtuk üres marad.
+      if (/swiftshader|software|llvmpipe|microsoft basic render/i.test(renderer)) {
+        return false;
+      }
+    }
+    return true;
   } catch {
     return false;
   }
@@ -74,10 +91,10 @@ export function BusinessMap({
   const selected = located.find((b) => b.id === selectedId) ?? defaultBiz ?? null;
 
   // Engine választás — kliens-only. Default Leaflet (SSR-safe), majd a mount
-  // utáni effekt WebGL-tesztet futtat és átvált MapLibre-re, ha lehet.
+  // utáni effekt szigorú WebGL-tesztet futtat és átvált MapLibre-re, ha lehet.
   const [engine, setEngine] = useState<EngineChoice>("leaflet");
   useEffect(() => {
-    if (hasWebGL()) setEngine("maplibre");
+    if (hasGoodWebGL()) setEngine("maplibre");
   }, []);
 
   const handleSelectMarker = useCallback((id: string) => setSelectedId(id), []);
