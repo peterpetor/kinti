@@ -13,7 +13,7 @@ export default async function SzaknevsorPage() {
   return (
     <div className="space-y-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <div className="px-5">
-        <ScreenHeader eyebrow="Zürich · Kreis 3" title="Szaknévsor" />
+        <ScreenHeader eyebrow="Szaknévsor · Svájc" title="Kereső" />
       </div>
       <ExploreView categories={categories} businesses={businesses} />
     </div>
