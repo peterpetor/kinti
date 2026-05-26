@@ -22,7 +22,7 @@ export default async function UjHirdetesPage() {
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   return (
-    <div className="px-5 pb-4">
+    <div className="px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <ScreenHeader
         title="Új hirdetés"
         left={

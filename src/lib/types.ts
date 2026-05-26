@@ -101,6 +101,8 @@ export interface BulletinDraft {
   ageConfirmed: boolean;
   /** Audit-trail: SHA-256(IP) — nyers IP-t nem tárolunk. */
   ipHash: string | null;
+  /** Az R2 kép(ek) kulcsa(i) — JSON string tömb vagy egyedi kulcs */
+  imageKey: string | null;
 }
 
 /** Publikus vélemény egy vállalkozásról (account nélküli, email-megerősítéses). */

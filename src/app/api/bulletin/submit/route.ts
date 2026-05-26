@@ -84,6 +84,7 @@ export async function POST(req: Request) {
     acceptedTermsAt: now.toISOString(),
     ageConfirmed: 1,
     ipHash,
+    imageKey: validation.value.imageKey,
   });
 
   // 5) Email küldés

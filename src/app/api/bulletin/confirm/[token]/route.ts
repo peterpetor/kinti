@@ -59,6 +59,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     acceptedTermsAt: draft.acceptedTermsAt,
     ageConfirmed: draft.ageConfirmed ? 1 : 0,
     ipHash: draft.ipHash,
+    imageKey: draft.imageKey,
   });
   await deleteBulletinDraft(draft.id);
 

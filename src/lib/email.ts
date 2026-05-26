@@ -283,6 +283,74 @@ function escapeAttr(s: string): string {
   return escapeHtml(s);
 }
 
+interface BulletinContactEmailArgs {
+  to: string;
+  posterName: string;
+  adTitle: string;
+  senderName: string;
+  senderEmail: string;
+  message: string;
+}
+
+export async function sendBulletinContactEmail(args: BulletinContactEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <onboarding@resend.dev>";
+  const subject = `Új érdeklődő a hirdetésedre: ${args.adTitle}`;
+
+  const text = `Szia ${args.posterName}!
+
+Új üzeneted érkezett a kinti.app-on feladott hirdetésedre ("${args.adTitle}")!
+
+Érdeklődő neve: ${args.senderName}
+Email címe: ${args.senderEmail}
+
+Üzenet:
+${args.message}
+
+Közvetlenül válaszolhatsz erre az emailre a fenti email címre írva.
+
+Üdv,
+kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Új érdeklődő a hirdetésedre: ${args.adTitle}`,
+    body: `
+      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
+        Szia ${escapeHtml(args.posterName)} 👋
+      </p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
+        Új érdeklődő írt a kinti.app hirdetőfalon feladott hirdetésedre:
+      </p>
+      <p style="margin:0 0 20px;padding:12px 14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;font-size:14.5px;font-weight:700;color:#0e1f17;">
+        ${escapeHtml(args.adTitle)}
+      </p>
+      <div style="margin:0 0 20px;padding:14px;background:#f8f9f8;border-radius:14px;border:1px solid #e6ebe5;">
+        <p style="margin:0 0 8px;font-size:13px;color:#5c6d63;">
+          <strong>Feladó:</strong> ${escapeHtml(args.senderName)} (<a href="mailto:${escapeAttr(args.senderEmail)}" style="color:#1d4434;">${escapeHtml(args.senderEmail)}</a>)
+        </p>
+        <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">
+          ${escapeHtml(args.message)}
+        </p>
+      </div>
+      <p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:#5c6d63;">
+        Válaszadáshoz írj közvetlenül az érdeklődőnek a <strong><a href="mailto:${escapeAttr(args.senderEmail)}" style="color:#1d4434;">${escapeHtml(args.senderEmail)}</a></strong> címre.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({
+    from,
+    to: args.to,
+    replyTo: args.senderEmail,
+    subject,
+    html,
+    text,
+  });
+
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 function formatHu(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;

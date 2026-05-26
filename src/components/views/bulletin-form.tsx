@@ -8,6 +8,7 @@ import { TurnstileWidget } from "@/components/turnstile-widget";
 import { LIMITS, type ValidationError } from "@/lib/bulletin";
 import type { BulletinKind } from "@/lib/types";
 import { cn } from "@/lib/cn";
+import { BulletinImageUploader } from "./bulletin-image-uploader";
 
 /**
  * Hirdetés-feladó űrlap (account nélküli). Liquid Glass kártyák szekciókba
@@ -34,6 +35,7 @@ interface FormState {
   meta: string;
   body: string;
   poster: string;
+  imageKey: string | null;
   /** Honeypot — bot kitölti, ember nem. Tailwind `hidden`-nel rejtve. */
   website: string;
   /** Kötelező: ÁSZF + Adatkezelési Tájékoztató elfogadása. */
@@ -49,6 +51,7 @@ const INITIAL: FormState = {
   meta: "",
   body: "",
   poster: "",
+  imageKey: null,
   website: "",
   acceptTerms: false,
   ageConfirmed: false,
@@ -208,6 +211,15 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
           <span>{form.body.length} / {LIMITS.bodyMax}</span>
         </div>
         <FieldError msg={errors.body} />
+      </Section>
+
+      {/* Képek feltöltése */}
+      <Section title="Képek (opcionális)">
+        <BulletinImageUploader
+          value={form.imageKey}
+          onChange={(val) => setField("imageKey", val)}
+          maxImages={3}
+        />
       </Section>
 
       {/* Feladó-név + email */}

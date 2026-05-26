@@ -122,6 +122,7 @@ interface BulletinDraftRow {
   accepted_terms_at: string | null;
   age_confirmed: number | null;
   ip_hash: string | null;
+  image_key: string | null;
 }
 
 // --- mapperek ---------------------------------------------------------------
@@ -214,6 +215,7 @@ function toBulletinDraft(r: BulletinDraftRow): BulletinDraft {
     acceptedTermsAt: r.accepted_terms_at,
     ageConfirmed: r.age_confirmed === 1,
     ipHash: r.ip_hash,
+    imageKey: r.image_key,
   };
 }
 
@@ -371,6 +373,7 @@ export interface BulletinDraftInput {
   ageConfirmed: number;
   /** SHA-256(IP) — null, ha nincs IP a kérésben (pl. localhost dev). */
   ipHash: string | null;
+  imageKey: string | null;
 }
 
 /** Új piszkozat — a kliens-form `submit`-end-pointja használja. */
@@ -380,8 +383,8 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
       `INSERT INTO bulletin_drafts
        (id, email, kind_id, title, meta, body, poster,
         confirm_token, manage_token, expires_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -398,6 +401,7 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
       input.acceptedTermsAt,
       input.ageConfirmed,
       input.ipHash,
+      input.imageKey,
     )
     .run();
 }
@@ -447,6 +451,7 @@ export interface PublishBulletinInput {
   acceptedTermsAt: string | null;
   ageConfirmed: number;
   ipHash: string | null;
+  imageKey: string | null;
 }
 
 /**
@@ -460,9 +465,9 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       `INSERT INTO bulletin_posts
        (id, kind_id, title, meta, body, poster, email, manage_token,
         age_text, expires_at, published_at, is_pending, created_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash)
+        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'frissen', ?, datetime('now'), ?, datetime('now'),
-               ?, ?, ?, ?)`,
+               ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -479,6 +484,7 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       input.acceptedTermsAt,
       input.ageConfirmed,
       input.ipHash,
+      input.imageKey,
     )
     .run();
 }
