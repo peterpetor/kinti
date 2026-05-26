@@ -29,7 +29,11 @@ preview_bucket_name = "kinti-media-preview"
 # --- Build-időben NEM titkos környezeti változók ---
 [vars]
 NEXT_PUBLIC_APP_NAME = "kinti"
-NEXT_PUBLIC_R2_PUBLIC_URL = "https://media.kinti.app"
+# R2 publikus URL (opcionális). Ha üres → a képek a Worker /api/media proxyján át
+# szolgálódnak (mindig működik, nincs DNS-beállítás). Ha beállítod, gyorsabb CDN-en
+# át megy, DE előtte a domaint Cloudflare Pages → R2 bucket → Custom Domain
+# alatt valódi DNS-szel és R2 publikus hozzáférést be kell kötnöd.
+NEXT_PUBLIC_R2_PUBLIC_URL = ""
 # Cloudflare Web Analytics beacon (üresen marad addig, amíg a CF dashboardon
 # ki nem generálod a tokent: Analytics & Logs → Web Analytics → Add a site).
 # Ha üres, a script egyáltalán nem renderelődik — semmilyen kérés nem megy ki.
