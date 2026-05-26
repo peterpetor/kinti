@@ -16,7 +16,7 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v1";
+const VERSION = "kinti-v2";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -115,7 +115,14 @@ async function cacheFirst(req, cacheName) {
   if (cached) return cached;
   try {
     const res = await fetch(req);
-    if (res.ok || res.type === "opaque") cache.put(req, res.clone());
+    // CSAK 200-at (vagy opaque-ot) cache-elünk. A Cache API NEM engedi a
+    // 206 Partial Content-et (range-kérésnél kapunk ilyet pl. /api/media-ra)
+    // — különben "Partial response is unsupported" hibára futunk.
+    if (res.status === 200 || res.type === "opaque") {
+      cache.put(req, res.clone()).catch(() => {
+        /* idempotens: ha mégis hibázik, csak nem cache-elünk */
+      });
+    }
     return res;
   } catch (err) {
     // Ha még semmi nincs cache-ben sem, a böngésző saját hiba-oldala jön.
@@ -129,7 +136,10 @@ async function networkFirstPage(event) {
     // navigation preload válasz, ha van
     const preload = await event.preloadResponse;
     const res = preload || (await fetch(event.request));
-    if (res && res.ok) cache.put(event.request, res.clone());
+    // Csak 200 cache-elhető (a 206-ot a Cache API elutasítja).
+    if (res && res.status === 200) {
+      cache.put(event.request, res.clone()).catch(() => {});
+    }
     return res;
   } catch {
     const cached = await cache.match(event.request);
@@ -148,7 +158,10 @@ async function staleWhileRevalidate(req, cacheName) {
   const cached = await cache.match(req);
   const networkPromise = fetch(req)
     .then((res) => {
-      if (res.ok) cache.put(req, res.clone());
+      // Csak 200 cache-elhető (a 206-ot a Cache API elutasítja).
+      if (res.status === 200) {
+        cache.put(req, res.clone()).catch(() => {});
+      }
       return res;
     })
     .catch(() => null);
