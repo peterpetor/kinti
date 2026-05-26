@@ -17,13 +17,15 @@ export function HomeCantonSelector() {
   };
 
   return (
-    <label className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface/60 px-3 py-1.5 text-sm font-semibold text-ink shadow-card backdrop-blur-md cursor-pointer hover:bg-surface/80 transition">
+    <label className="relative inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface/60 px-3 py-1.5 text-sm font-semibold text-ink shadow-card backdrop-blur-md cursor-pointer hover:bg-surface/80 transition">
       <Icon name="pin" size={14} strokeWidth={2.2} className="text-accent shrink-0" />
+      <span className="font-bold tracking-[-0.01em] text-ink pr-1">Egész Svájc</span>
+      <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted shrink-0" />
       <select
         defaultValue="all"
         onChange={handleCantonChange}
         aria-label="Kanton választó"
-        className="appearance-none bg-transparent font-bold tracking-[-0.01em] text-ink outline-none cursor-pointer pr-1"
+        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
       >
         <option value="all">Egész Svájc</option>
         {CANTONS.map((c) => (
@@ -32,7 +34,6 @@ export function HomeCantonSelector() {
           </option>
         ))}
       </select>
-      <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted shrink-0" />
     </label>
   );
 }

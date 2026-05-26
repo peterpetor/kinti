@@ -80,16 +80,20 @@ export function ExploreView({
 
       {/* Kanton (tartomány) szűrő — egész Svájcra, vagy egy kantonra */}
       <div className="px-5">
-        <label className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card">
+        <label className="relative inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card cursor-pointer hover:bg-surface-alt transition">
           <Icon name="pin" size={14} strokeWidth={2.2} className="shrink-0 text-accent" />
-          <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+          <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted select-none">
             Kanton
           </span>
+          <span className="text-[13.5px] font-bold tracking-[-0.01em] text-ink pr-1">
+            {locationLabel}
+          </span>
+          <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted shrink-0" />
           <select
             value={canton}
             onChange={(e) => setCanton(e.target.value)}
             aria-label="Kanton szűrő"
-            className="appearance-none bg-transparent text-[13.5px] font-bold tracking-[-0.01em] text-ink outline-none"
+            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
           >
             <option value="all">Egész Svájc</option>
             {CANTONS.map((c) => (
@@ -98,7 +102,6 @@ export function ExploreView({
               </option>
             ))}
           </select>
-          <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted" />
         </label>
       </div>
 
