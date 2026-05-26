@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
-import { matchesCanton } from "@/lib/cantons";
+import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
 
 /**
  * ExploreView (Szaknévsor) — szerverről kapja a teljes adatkészletet, és
@@ -38,22 +38,26 @@ export function ExploreView({
 
   const [cat, setCat] = useState("all");
   const [q, setQ] = useState(initialQ);
+  const [canton, setCanton] = useState("all");
   const [view, setView] = useState<ViewMode>("list");
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return businesses.filter((b) => {
       const byCat = cat === "all" || b.categoryId === cat;
+      const byCanton =
+        canton === "all" ||
+        cantonFromAddress(b.address ?? null)?.code === canton;
       const byText =
         !needle ||
         b.name.toLowerCase().includes(needle) ||
         (b.categoryLabel ?? "").toLowerCase().includes(needle) ||
         (b.address ?? "").toLowerCase().includes(needle) ||
-        // Svájci kanton-keresés: pl. "Aargau", "Zürich", "ZH", "Tessin", …
+        // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
         matchesCanton({ address: b.address ?? null }, needle);
-      return byCat && byText;
+      return byCat && byCanton && byText;
     });
-  }, [businesses, cat, q]);
+  }, [businesses, cat, canton, q]);
 
   const locatedCount = useMemo(
     () => filtered.filter((b) => b.lat != null && b.lng != null).length,
@@ -64,6 +68,30 @@ export function ExploreView({
     <div className="space-y-3">
       <div className="px-5">
         <SearchBar value={q} onChange={setQ} />
+      </div>
+
+      {/* Kanton (tartomány) szűrő — egész Svájcra, vagy egy kantonra */}
+      <div className="px-5">
+        <label className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card">
+          <Icon name="pin" size={14} strokeWidth={2.2} className="shrink-0 text-accent" />
+          <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+            Kanton
+          </span>
+          <select
+            value={canton}
+            onChange={(e) => setCanton(e.target.value)}
+            aria-label="Kanton szűrő"
+            className="bg-transparent text-[13.5px] font-bold tracking-[-0.01em] text-ink outline-none"
+          >
+            <option value="all">Egész Svájc</option>
+            {CANTONS.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.name} ({c.code})
+              </option>
+            ))}
+          </select>
+          <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted" />
+        </label>
       </div>
 
       {/* A kategória-pillek list-módban itt fent; map-módban a térképre úsztatva. */}

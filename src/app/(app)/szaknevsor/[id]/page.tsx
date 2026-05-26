@@ -198,6 +198,16 @@ export default async function BusinessPage({ params }: { params: { id: string } 
                   <p className="whitespace-pre-wrap text-[13.5px] leading-relaxed text-ink text-pretty">
                     „{r.body}"
                   </p>
+                  <div className="mt-2.5 flex justify-end border-t border-line/30 pt-2">
+                    <a
+                      href={`mailto:abuse@kinti.app?subject=${encodeURIComponent(`Visszaélés bejelentése: Vélemény (${r.id})`)}&body=${encodeURIComponent(
+                        `Tisztelt Kinti!\n\nBejelentem az alábbi véleményt, mert sérti a szabályzatot:\n- Vélemény azonosító: ${r.id}\n- Szerző: ${r.reviewerName}\n- Cég: ${b.name} (${b.id})\n- Vélemény szövege: "${r.body}"\n\nIndoklás (kérjük írja le, miért tartja jogsértőnek vagy alaptalannak): `
+                      )}`}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-ink-faint hover:text-accent transition-colors"
+                    >
+                      <Icon name="flag" size={11} strokeWidth={2.4} /> Vélemény bejelentése
+                    </a>
+                  </div>
                 </article>
               ))
             )}
