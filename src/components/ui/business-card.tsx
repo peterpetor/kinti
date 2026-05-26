@@ -41,11 +41,6 @@ export function BusinessCard({ business: b, href, className }: BusinessCardProps
             loading="lazy"
           />
         )}
-        {b.featured && (
-          <span className="absolute left-1 top-1 rounded-md bg-accent px-1.5 py-0.5 text-[9px] font-extrabold tracking-wide text-white">
-            KIEMELT
-          </span>
-        )}
       </div>
 
       <div className="min-w-0 flex-1">

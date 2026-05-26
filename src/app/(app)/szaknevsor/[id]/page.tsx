@@ -87,12 +87,6 @@ export default async function BusinessPage({ params }: { params: { id: string } 
 
       {/* tartalom-lap */}
       <div className="relative z-[2] -mt-6 rounded-t-sheet bg-bg px-[18px] pt-5">
-        {b.featured && (
-          <span className="mb-3 inline-flex items-center gap-1.5 rounded-pill bg-accent px-2.5 py-1 text-[10.5px] font-bold tracking-wide text-white">
-            ★ Kiemelt partner
-          </span>
-        )}
-
         <p className="mb-1 text-[12.5px] font-bold uppercase tracking-wide text-primary">
           {b.categoryLabel}
         </p>

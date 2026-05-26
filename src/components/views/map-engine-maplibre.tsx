@@ -80,8 +80,10 @@ export function MaplibreEngine({
   const markersRef = useRef<Map<string, { marker: MlMarker; el: HTMLElement }>>(
     new Map(),
   );
+  const meMarkerRef = useRef<MlMarker | null>(null);
   const [ready, setReady] = useState(false);
   const [locating, setLocating] = useState(false);
+  const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
   const failedRef = useRef(false);
 
   // --- init (egyszer) ---
@@ -145,6 +147,8 @@ export function MaplibreEngine({
       if (loadTimeout) clearTimeout(loadTimeout);
       markersRef.current.forEach(({ marker }) => marker.remove());
       markersRef.current.clear();
+      meMarkerRef.current?.remove();
+      meMarkerRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -190,17 +194,41 @@ export function MaplibreEngine({
     });
   }, [selectedId]);
 
+  // --- "Te vagy itt" pötty ---
+  useEffect(() => {
+    const map = mapRef.current;
+    const ml = mlRef.current;
+    if (!map || !ml || !ready) return;
+    if (!myPosition) {
+      meMarkerRef.current?.remove();
+      meMarkerRef.current = null;
+      return;
+    }
+    if (!meMarkerRef.current) {
+      const el = document.createElement("div");
+      el.className = "kinti-me-dot";
+      el.style.pointerEvents = "none";
+      meMarkerRef.current = new ml.Marker({ element: el, anchor: "center" })
+        .setLngLat([myPosition[1], myPosition[0]])
+        .addTo(map);
+    } else {
+      meMarkerRef.current.setLngLat([myPosition[1], myPosition[0]]);
+    }
+  }, [myPosition, ready]);
+
   function handleLocate() {
     if (typeof navigator === "undefined" || !navigator.geolocation || !mapRef.current)
       return;
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        const ll: [number, number] = [pos.coords.latitude, pos.coords.longitude];
         mapRef.current?.flyTo({
-          center: [pos.coords.longitude, pos.coords.latitude],
+          center: [ll[1], ll[0]],
           zoom: 15,
           duration: 600,
         });
+        setMyPosition(ll);
         setLocating(false);
       },
       () => setLocating(false),

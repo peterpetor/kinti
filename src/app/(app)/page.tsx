@@ -45,7 +45,7 @@ export default async function FeedPage() {
         <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted" />
       </GlassPill>
 
-      {/* kiemelt vállalkozások */}
+      {/* friss / közeli vállalkozások — szerkesztői válogatás */}
       <section className="space-y-3">
         <SectionHeader
           right={
@@ -54,7 +54,7 @@ export default async function FeedPage() {
             </Link>
           }
         >
-          Kiemelt a közeledben
+          A közeledben
         </SectionHeader>
         <div className="grid gap-2.5">
           {featured.map((b) => (

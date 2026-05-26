@@ -29,6 +29,7 @@ export function LeafletEngine({
   fallbackCenter,
   fallbackZoom,
 }: MapEngineProps) {
+  const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
   return (
     <MapContainer
       center={fallbackCenter}
@@ -57,11 +58,23 @@ export function LeafletEngine({
         />
       ))}
 
+      {myPosition && (
+        <Marker position={myPosition} icon={ME_ICON} interactive={false} />
+      )}
+
       <FitToMarkers businesses={located} />
-      <Controls />
+      <Controls onLocate={setMyPosition} />
     </MapContainer>
   );
 }
+
+/** „Te vagy itt” pötty — divIcon, center anchor. */
+const ME_ICON = L.divIcon({
+  className: "",
+  html: '<div class="kinti-me-dot"></div>',
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+});
 
 const ICON_CACHE = new Map<string, L.DivIcon>();
 
@@ -103,7 +116,7 @@ function FitToMarkers({ businesses }: { businesses: Business[] }) {
   return null;
 }
 
-function Controls() {
+function Controls({ onLocate }: { onLocate: (ll: [number, number]) => void }) {
   const map = useMap();
   const [locating, setLocating] = useState(false);
 
@@ -112,7 +125,9 @@ function Controls() {
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        map.flyTo([pos.coords.latitude, pos.coords.longitude], 15, { duration: 0.6 });
+        const ll: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+        map.flyTo(ll, 15, { duration: 0.6 });
+        onLocate(ll);
         setLocating(false);
       },
       () => setLocating(false),
