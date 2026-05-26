@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, lazy, Suspense } from "react";
+import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import type { Business, Category } from "@/lib/types";
@@ -36,11 +36,24 @@ export function ExploreView({
   const searchParams = useSearchParams();
   const initialQ = searchParams?.get("q") ?? "";
   const initialCanton = searchParams?.get("canton") ?? "all";
+  const initialFav = searchParams?.get("fav") === "1";
 
   const [cat, setCat] = useState("all");
   const [q, setQ] = useState(initialQ);
   const [canton, setCanton] = useState(initialCanton);
+  const [showFavs, setShowFavs] = useState(initialFav);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [view, setView] = useState<ViewMode>("list");
+
+  // Kedvenc ID-k betöltése localStorage-ből
+  useEffect(() => {
+    try {
+      const favs = JSON.parse(localStorage.getItem("kinti_favorites") || "[]");
+      setFavoriteIds(favs);
+    } catch {
+      // ignore
+    }
+  }, []);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -49,6 +62,7 @@ export function ExploreView({
       const byCanton =
         canton === "all" ||
         cantonFromAddress(b.address ?? null)?.code === canton;
+      const byFav = !showFavs || favoriteIds.includes(b.id);
       const byText =
         !needle ||
         b.name.toLowerCase().includes(needle) ||
@@ -56,9 +70,9 @@ export function ExploreView({
         (b.address ?? "").toLowerCase().includes(needle) ||
         // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
         matchesCanton({ address: b.address ?? null }, needle);
-      return byCat && byCanton && byText;
+      return byCat && byCanton && byFav && byText;
     });
-  }, [businesses, cat, canton, q]);
+  }, [businesses, cat, canton, q, showFavs, favoriteIds]);
 
   const locatedCount = useMemo(
     () => filtered.filter((b) => b.lat != null && b.lng != null).length,
@@ -78,8 +92,9 @@ export function ExploreView({
         <SearchBar value={q} onChange={setQ} />
       </div>
 
-      {/* Kanton (tartomány) szűrő — egész Svájcra, vagy egy kantonra */}
-      <div className="px-5">
+      {/* Szűrők sor (Kanton + Mentett kedvencek) */}
+      <div className="flex flex-wrap items-center gap-2 px-5">
+        {/* Kanton szűrő */}
         <label className="relative inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card cursor-pointer hover:bg-surface-alt transition">
           <Icon name="pin" size={14} strokeWidth={2.2} className="shrink-0 text-accent" />
           <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted select-none">
@@ -103,6 +118,29 @@ export function ExploreView({
             ))}
           </select>
         </label>
+
+        {/* Kedvencek szűrő */}
+        <button
+          type="button"
+          onClick={() => setShowFavs(!showFavs)}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            showFavs
+              ? "bg-accent/10 border-accent/30 text-accent font-bold"
+              : "bg-surface border-line text-ink-muted hover:bg-surface-alt"
+          )}
+        >
+          <Icon
+            name="heart"
+            size={14}
+            strokeWidth={2.2}
+            filled={showFavs}
+            className={cn("shrink-0", showFavs ? "text-accent" : "text-ink-muted")}
+          />
+          <span className="text-[11.5px] font-bold tracking-wide select-none">
+            Mentett kedvencek
+          </span>
+        </button>
       </div>
 
       {/* A kategória-pillek list-módban itt fent; map-módban a térképre úsztatva. */}

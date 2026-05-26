@@ -60,6 +60,13 @@ export function DropdownMenu() {
             </Link>
           )}
 
+          <Link href="/szaknevsor?fav=1" onClick={() => setIsOpen(false)} className={linkClass}>
+            <span className="grid h-6 w-6 place-items-center rounded-lg bg-accent/10 text-accent">
+              <Icon name="heart" size={13} strokeWidth={2.4} filled={true} />
+            </span>
+            Kedvenceim
+          </Link>
+
           <Link href="/kozosseg/uj-esemeny" onClick={() => setIsOpen(false)} className={linkClass}>
             <span className="grid h-6 w-6 place-items-center rounded-lg bg-[#E4405F]/10 text-[#E4405F]">
               <Icon name="calendar" size={13} strokeWidth={2.4} />
