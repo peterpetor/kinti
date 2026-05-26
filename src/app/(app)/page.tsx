@@ -24,8 +24,17 @@ export default async function FeedPage() {
     <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
       {/* fejléc */}
       <header className="flex items-center gap-2.5">
-        <KintiLogo size={28} />
-        <span className="flex-1 text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
+        <div className="flex items-center gap-2">
+          <KintiLogo size={28} />
+          <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/switzerland-map.png"
+            alt="Svájc"
+            className="h-[20px] w-auto object-contain opacity-95 drop-shadow-sm select-none"
+          />
+        </div>
+        <div className="flex-1" />
         <DropdownMenu />
       </header>
 
