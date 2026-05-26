@@ -35,7 +35,10 @@ export function LeafletEngine({
       zoom={fallbackZoom}
       scrollWheelZoom
       zoomControl={false}
-      className="h-full w-full"
+      // `z-0` + relative pozíció (Leaflet maga is `position: relative`) → saját
+      // stacking-context. Enélkül a Leaflet belső panelei (z-index 200–1000)
+      // legyűrnék a wrapper overlay-eit (z-10): hely-pill, kateg.-pillek, kártya.
+      className="h-full w-full relative z-0"
       style={{ background: "rgb(var(--map-land))" }}
     >
       <TileLayer
