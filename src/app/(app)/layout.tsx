@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { TabBar } from "@/components/ui";
 
 /**
@@ -11,25 +10,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <>
       <div className="mx-auto min-h-dvh max-w-md pb-28">
         {children}
-
-        {/* Diszkrét lábléc a jogi oldalakhoz — a pb-28 fölötti tér végén */}
-        <footer className="mt-10 px-5 pb-2 text-center text-[11px] text-ink-faint">
-          <nav className="flex flex-wrap justify-center gap-x-4 gap-y-1">
-            <Link href="/impresszum" className="hover:text-ink-muted">Impresszum</Link>
-            <Link href="/adatvedelem" className="hover:text-ink-muted">Adatvédelem</Link>
-            <Link href="/aszf" className="hover:text-ink-muted">ÁSZF</Link>
-            <a href="mailto:abuse@kinti.app" className="hover:text-ink-muted">
-              Visszaélés-bejelentés
-            </a>
-          </nav>
-          <p className="mt-1.5 text-ink-faint">
-            A bejelentkezett vállalkozókhoz Clerk session-cookie-t használunk
-            (technikailag szükséges). Tracking / analitikai cookie nincs.
-          </p>
-          <p className="mt-2 text-ink-faint">
-            Közösségi projekt · {new Date().getFullYear()}
-          </p>
-        </footer>
       </div>
       <TabBar />
     </>
