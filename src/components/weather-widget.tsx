@@ -9,9 +9,9 @@ import { describeWeather, type WeatherNow } from "@/lib/weather";
  * WeatherWidget — a főoldal tetején lévő svájci időjárás-csík.
  *
  * • Adatforrás: /api/weather (Open-Meteo · MeteoSwiss ICON CH2 modell).
- * • A kiválasztott kanton székhelyének aktuális időjárását mutatja, és követi
- *   a kanton-választót: a választást a `kinti.canton` localStorage-kulcsban
- *   tároljuk (ugyanazt használja a HomeCantonSelector is).
+ * • A kiválasztott kanton székhelyének aktuális időjárását mutatja. A saját
+ *   beépített kanton-választójával váltható; a választást a `kinti.canton`
+ *   localStorage-kulcsban tároljuk.
  * • Homokozó / letiltott localStorage esetén nem dob hibát (try/catch), és ha
  *   az API nem elérhető, csendben elrejti magát.
  */
@@ -138,10 +138,6 @@ export function WeatherWidget() {
           ))}
         </select>
       </label>
-
-      <span className="absolute bottom-1 right-2 text-[8px] font-semibold uppercase tracking-wide text-ink-faint/70">
-        MeteoSwiss · Open-Meteo
-      </span>
     </section>
   );
 }
