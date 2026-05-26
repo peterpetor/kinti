@@ -190,7 +190,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
       </Section>
 
       {/* Helyszín és részletek */}
-      <Section title="Helyszín és Ár (opcionális)">
+      <Section title="Helyszín és Ár" required>
         <div className="grid gap-2 sm:grid-cols-2">
           <div>
             <select
@@ -198,7 +198,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
               onChange={(e) => setField("cantonCode", e.target.value)}
               className={inputCls(errors.cantonCode)}
             >
-              <option value="" className="text-ink-faint">Melyik kantonban? (opcionális)</option>
+              <option value="" className="text-ink-faint">Melyik kantonban? (kötelező)</option>
               {CANTONS.map((c) => (
                 <option key={c.code} value={c.code} className="text-ink">
                   {c.name} ({c.code})
@@ -212,7 +212,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
               type="text"
               value={form.meta}
               onChange={(e) => setField("meta", e.target.value)}
-              placeholder='Pl. "Zürich · 1980 CHF / hó" vagy "Bázeli fodrászat"'
+              placeholder='Pl. "Zürich · 1980 CHF / hó" (kötelező)'
               maxLength={LIMITS.metaMax}
               className={inputCls(errors.meta)}
             />

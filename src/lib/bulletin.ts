@@ -61,13 +61,13 @@ export interface ValidatedBulletinInput {
   email: string;
   kindId: string;
   title: string;
-  meta: string | null;
+  meta: string;
   body: string | null;
   poster: string | null;
   acceptTerms: true;
   ageConfirmed: true;
   imageKey: string | null;
-  cantonCode: string | null;
+  cantonCode: string;
 }
 
 export type ValidationError = { field: keyof BulletinFormInput; message: string };
@@ -104,8 +104,11 @@ export function validateBulletinInput(
     errors.push({ field: "title", message: `Legfeljebb ${LIMITS.titleMax} karakter.` });
 
   const meta = str(input.meta);
-  if (meta.length > LIMITS.metaMax)
+  if (!meta) {
+    errors.push({ field: "meta", message: "Ár és részletek megadása kötelező." });
+  } else if (meta.length > LIMITS.metaMax) {
     errors.push({ field: "meta", message: `Legfeljebb ${LIMITS.metaMax} karakter.` });
+  }
 
   const body = str(input.body);
   if (body.length > LIMITS.bodyMax)
@@ -142,7 +145,10 @@ export function validateBulletinInput(
   }
 
   const imageKey = str(input.imageKey) || null;
-  const cantonCode = str(input.cantonCode) || null;
+  const cantonCode = str(input.cantonCode);
+  if (!cantonCode) {
+    errors.push({ field: "cantonCode", message: "Kanton kiválasztása kötelező." });
+  }
 
   if (errors.length) return { ok: false, errors };
 
@@ -152,7 +158,7 @@ export function validateBulletinInput(
       email,
       kindId,
       title,
-      meta: meta || null,
+      meta,
       body: body || null,
       poster: poster || null,
       acceptTerms: true,
