@@ -755,6 +755,36 @@ export async function countRecentBulletins(email: string, ipHash: string | null)
   return draftsCount + postsCount;
 }
 
+/**
+ * Hány kapcsolatfelvételi üzenetet küldött ez az IP az elmúlt 1 órában.
+ * Limit: 5 / IP / óra — véd a spam-ágyú botok ellen.
+ */
+export async function countRecentContacts(ipHash: string | null): Promise<number> {
+  if (!ipHash) return 0; // localhost / ismeretlen IP → átengedünk
+  const res = await getDB()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM bulletin_contact_log
+       WHERE ip_hash = ? AND created_at >= datetime('now', '-1 hours')`,
+    )
+    .bind(ipHash)
+    .first<{ n: number }>();
+  return res?.n ?? 0;
+}
+
+/** Kontakt-eseményt rögzít a rate-limit táblába. */
+export async function logContactAttempt(
+  id: string,
+  postId: string,
+  ipHash: string | null,
+): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO bulletin_contact_log (id, post_id, ip_hash) VALUES (?, ?, ?)`,
+    )
+    .bind(id, postId, ipHash)
+    .run();
+}
+
 // ---------------------------------------------------------------------------
 // Vélemények — email-megerősítéses, account nélküli flow.
 // ---------------------------------------------------------------------------
