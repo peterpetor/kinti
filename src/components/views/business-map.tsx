@@ -3,31 +3,32 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import L from "leaflet";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import type { Business } from "@/lib/types";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import type { Business, Category } from "@/lib/types";
 import { Icon } from "@/components/ui";
+import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 
-// A Leaflet CSS-t a komponensben importáljuk, hogy csak akkor töltődjön be, ha
-// tényleg térképet rendereltünk. A komponenst az ExploreView ssr:false-szal
-// hívja, így ez a fájl SOHA nem fut szerveren.
 import "leaflet/dist/leaflet.css";
 
 /**
- * BusinessMap — interaktív, raszteres Leaflet-térkép a kinti pinjeivel.
+ * BusinessMap — raszteres Leaflet-térkép app-réteggel (mockup-kompozíció):
+ *   • kategória-ikonos pinek (kinti-pin-v2)
+ *   • bal-felül: hely-pill
+ *   • jobb-felül: lokáció + zoom vezérlők
+ *   • alul: kategória-szűrő pillek + a kiválasztott vállalkozás kártyája
  *
- * Miért Leaflet és nem MapLibre? A MapLibre WebGL-t és Web-Workert igényel,
- * ami a Cloudflare `next-on-pages` edge-bundle-ben nem töltődik be megbízhatóan
- * (üres térkép, néma hiba). A Leaflet sima `<img>` raszter-csempéket rajzol a
- * DOM-ba — se WebGL, se worker —, ezért ebben a környezetben sziklaszilárd.
- *
- * Csempék: CartoDB Voyager (ingyenes, kulcs nélkül) — világos, tiszta stílus.
- * Pin: `L.divIcon` HTML + a `kinti-pin-v2` CSS (egyenes-álló, nem ferde).
+ * Pin koppintásra a kártya frissül (Leaflet-buborék helyett). Csempék:
+ * CartoDB Voyager (ingyenes, kulcs nélkül).
  */
 export interface BusinessMapProps {
   businesses: Business[];
-  /** [lat, lng] sorrendben (Leaflet-konvenció). */
+  categories?: Category[];
+  activeCat?: string;
+  onSelectCat?: (id: string) => void;
+  locationLabel?: string;
+  /** [lat, lng] (Leaflet). */
   fallbackCenter?: [number, number];
   fallbackZoom?: number;
   className?: string;
@@ -37,6 +38,10 @@ const ZURICH_CENTER: [number, number] = [47.378, 8.535];
 
 export function BusinessMap({
   businesses,
+  categories,
+  activeCat = "all",
+  onSelectCat,
+  locationLabel = "Zürich · Kreis 3",
   fallbackCenter = ZURICH_CENTER,
   fallbackZoom = 13,
   className,
@@ -46,16 +51,30 @@ export function BusinessMap({
     [businesses],
   );
 
+  // Kiválasztott vállalkozás az alsó kártyához. Default: első kiemelt, ill. első.
+  const defaultBiz = useMemo(
+    () => located.find((b) => b.featured) ?? located[0] ?? null,
+    [located],
+  );
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected =
+    located.find((b) => b.id === selectedId) ?? defaultBiz ?? null;
+
+  // Ha a szűrt lista változik és a kiválasztott kiesett, visszaállunk.
+  useEffect(() => {
+    if (selectedId && !located.some((b) => b.id === selectedId)) {
+      setSelectedId(null);
+    }
+  }, [located, selectedId]);
+
   return (
-    // `isolate` → saját stacking-context, hogy a Leaflet magas z-index-ű
-    // rétegei (panek, vezérlők ~1000) NE ússzanak a lebegő TabBar fölé.
-    <div className={cn("relative isolate", className)}>
+    <div className={cn("relative isolate overflow-hidden rounded-card", className)}>
       <MapContainer
         center={fallbackCenter}
         zoom={fallbackZoom}
         scrollWheelZoom
         zoomControl={false}
-        className="h-full w-full rounded-card"
+        className="h-full w-full"
         style={{ background: "rgb(var(--map-land))" }}
       >
         <TileLayer
@@ -66,19 +85,62 @@ export function BusinessMap({
         />
 
         {located.map((b) => (
-          <Marker key={b.id} position={[b.lat!, b.lng!]} icon={pinFor(b)}>
-            <Popup>
-              <BusinessPopup business={b} />
-            </Popup>
-          </Marker>
+          <Marker
+            key={b.id}
+            position={[b.lat!, b.lng!]}
+            icon={pinFor(b, b.id === selected?.id)}
+            eventHandlers={{ click: () => setSelectedId(b.id) }}
+          />
         ))}
 
         <FitToMarkers businesses={located} />
         <MapControls />
       </MapContainer>
 
+      {/* Bal-felül: hely-pill */}
+      <div className="pointer-events-none absolute left-3 top-3 z-[10]">
+        <span className="glass pointer-events-auto inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-bold text-ink shadow-card">
+          <Icon name="pin" size={13} strokeWidth={2.2} className="text-accent" />
+          {locationLabel}
+        </span>
+      </div>
+
+      {/* Alul: kategória-pillek + kiválasztott kártya */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[10] flex flex-col gap-2 p-3">
+        {categories && categories.length > 0 && (
+          <div className="no-scrollbar pointer-events-auto -mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5">
+            {categories.map((c) => {
+              const on = c.id === activeCat;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => onSelectCat?.(c.id)}
+                  className={cn(
+                    "inline-flex flex-none items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-bold tracking-[-0.01em] shadow-card transition",
+                    on ? "bg-primary text-white" : "glass text-ink",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "grid h-4 w-4 place-items-center",
+                      on ? "text-white" : "text-primary",
+                    )}
+                  >
+                    <CategoryGlyph categoryId={c.id} />
+                  </span>
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {selected && <SelectedCard business={selected} />}
+      </div>
+
       {located.length === 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[400] grid place-items-center">
+        <div className="pointer-events-none absolute inset-0 z-[5] grid place-items-center">
           <div className="glass pointer-events-auto rounded-pill px-4 py-2 text-[12px] font-semibold text-ink shadow-pop">
             Ehhez a szűrőhöz nincs térképi találat.
           </div>
@@ -88,155 +150,85 @@ export function BusinessMap({
   );
 }
 
-// --- pin (divIcon) ----------------------------------------------------------
+// --- alsó vállalkozás-kártya ------------------------------------------------
 
-/**
- * Kategória → vonalas SVG-ikon path-ek (24px viewBox, Lucide-stílus). A pin
- * fejébe renderelődnek fehér currentColor-ral. Új kategóriához itt vegyél fel
- * path-tömböt; ismeretlen kategória → pötty.
- */
-const CATEGORY_ICON_PATHS: Record<string, string[]> = {
-  fodrasz: [
-    // olló
-    "M9 6a3 3 0 1 1-6 0a3 3 0 0 1 6 0",
-    "M9 18a3 3 0 1 1-6 0a3 3 0 0 1 6 0",
-    "M8.12 8.12L12 12",
-    "M20 4L8.12 15.88",
-    "M14.8 14.8L20 20",
-  ],
-  autoszer: [
-    // villáskulcs
-    "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z",
-  ],
-  orvos: [
-    // pulzus
-    "M22 12h-4l-3 9L9 3l-3 9H2",
-  ],
-  ugyved: [
-    // aktatáska
-    "M4 8h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z",
-    "M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",
-  ],
-  pek: [
-    // búzakalász
-    "M12 21V9",
-    "M12 9c-2 0-3-2-3-4c2 0 3 2 3 4z",
-    "M12 9c2 0 3-2 3-4c-2 0-3 2-3 4z",
-    "M12 15c-2 0-3-2-3-4c2 0 3 2 3 4z",
-    "M12 15c2 0 3-2 3-4c-2 0-3 2-3 4z",
-  ],
-  etterem: [
-    // evőeszköz (villa + kés)
-    "M6 3v18",
-    "M4 3v4a2 2 0 0 0 4 0V3",
-    "M18 21V3c2 1 3 3 3 6s-1 4-3 5",
-  ],
-  villany: [
-    // villám
-    "M13 2L3 14h9l-1 8l10-12h-9l1-8z",
-  ],
-  fordito: [
-    // beszédbuborék + sorok
-    "M4 5h16v10H9l-4 4V15H4z",
-    "M8 9h8",
-    "M8 12h5",
-  ],
-  takarito: [
-    // spray-flakon
-    "M7 9h8v11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1z",
-    "M9 9V6h4v3",
-    "M10 6V4h2v2",
-    "M17 5h.01",
-    "M19 7h.01",
-    "M17 9h.01",
-  ],
-  it: [
-    // kód-zárójelek
-    "M16 6l6 6l-6 6",
-    "M8 6l-6 6l6 6",
-  ],
-};
-
-/** A pin fejébe kerülő SVG (vagy pötty, ha ismeretlen a kategória). */
-function iconSvgFor(categoryId: string | null): string {
-  const paths = categoryId ? CATEGORY_ICON_PATHS[categoryId] : undefined;
-  if (!paths) {
-    return `<svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>`;
-  }
-  const inner = paths.map((d) => `<path d="${d}"/>`).join("");
-  return `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+function SelectedCard({ business: b }: { business: Business }) {
+  const logoUrl = mediaUrl(b.logoKey);
+  return (
+    <Link
+      href={`/szaknevsor/${b.id}`}
+      className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-pop transition active:scale-[0.99]"
+    >
+      <div
+        className="relative h-[52px] w-[52px] shrink-0 overflow-hidden rounded-[14px] bg-primary-soft"
+        style={!logoUrl && b.photo ? { background: b.photo } : undefined}
+      >
+        {logoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logoUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+          {b.categoryLabel}
+          <span className="text-ink-faint">·</span>
+          <span className="inline-flex items-center gap-0.5 text-ink">
+            <Icon name="star" size={10} filled className="text-star" />
+            {b.rating.toFixed(1)}
+          </span>
+        </div>
+        <div className="mt-0.5 truncate text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
+          {b.name}
+        </div>
+        <div className="mt-0.5 text-[11.5px] text-ink-muted">
+          {b.distText ?? ""}
+          {b.distText && " · "}
+          <span className={b.openNow ? "font-semibold text-success" : "text-accent"}>
+            {b.openNow ? "Nyitva" : "Zárva"}
+          </span>
+        </div>
+      </div>
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-primary text-white">
+        <Icon name="arrowRight" size={16} strokeWidth={2.4} />
+      </span>
+    </Link>
+  );
 }
+
+/** React-oldali kategória-ikon a pillekhez (inline, hogy ne kelljen extra import). */
+function CategoryGlyph({ categoryId }: { categoryId: string }) {
+  return (
+    <span
+      className="grid h-4 w-4 place-items-center [&>svg]:h-3.5 [&>svg]:w-3.5"
+      dangerouslySetInnerHTML={{ __html: categoryIconSvgString(categoryId) }}
+    />
+  );
+}
+
+// --- pin (divIcon) ----------------------------------------------------------
 
 const ICON_CACHE = new Map<string, L.DivIcon>();
 
-function pinFor(b: Business): L.DivIcon {
-  const key = `${b.categoryId ?? "none"}-${b.featured ? "f" : "d"}`;
+function pinFor(b: Business, active: boolean): L.DivIcon {
+  const key = `${b.categoryId ?? "none"}-${b.featured ? "f" : "d"}-${active ? "a" : "n"}`;
   const cached = ICON_CACHE.get(key);
   if (cached) return cached;
 
   const icon = L.divIcon({
-    className: "", // a Leaflet alapértelmezett .leaflet-div-icon kikapcsolása
-    html: `<div class="kinti-pin-v2 ${b.featured ? "kinti-pin-v2--featured" : ""}">
-             <span class="kinti-pin-v2__inner">${iconSvgFor(b.categoryId)}</span>
+    className: "",
+    html: `<div class="kinti-pin-v2 ${b.featured ? "kinti-pin-v2--featured" : ""} ${active ? "kinti-pin-v2--active" : ""}">
+             <span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId)}</span>
            </div>`,
     iconSize: [32, 42],
-    iconAnchor: [16, 42], // a tűvég hegye a koordinátán
+    iconAnchor: [16, 42],
     popupAnchor: [0, -38],
   });
   ICON_CACHE.set(key, icon);
   return icon;
 }
 
-// --- popup tartalom ---------------------------------------------------------
-
-function BusinessPopup({ business: b }: { business: Business }) {
-  const logoUrl = mediaUrl(b.logoKey);
-  return (
-    <article className="p-3">
-      <div className="flex gap-3">
-        <div
-          className="relative h-12 w-12 shrink-0 overflow-hidden rounded-[12px] bg-primary-soft"
-          style={!logoUrl && b.photo ? { background: b.photo } : undefined}
-        >
-          {logoUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
-          )}
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="mb-0.5 flex items-center gap-1.5">
-            <span className="text-[9.5px] font-bold uppercase tracking-wide text-primary">
-              {b.categoryLabel}
-            </span>
-            <span className="text-[10px] text-ink-faint">•</span>
-            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-ink">
-              <Icon name="star" size={10} filled className="text-star" />
-              {b.rating.toFixed(1)}
-            </span>
-          </div>
-          <h3 className="truncate text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
-            {b.name}
-          </h3>
-          <p className="mt-0.5 truncate text-[11px] font-medium text-ink-muted">
-            {b.address}
-          </p>
-        </div>
-      </div>
-
-      <Link
-        href={`/szaknevsor/${b.id}`}
-        className="mt-3 flex h-9 w-full items-center justify-center gap-1.5 rounded-pill bg-primary px-3 text-[12px] font-bold text-white"
-      >
-        Profil megnyitása
-        <Icon name="arrowRight" size={12} strokeWidth={2.4} />
-      </Link>
-    </article>
-  );
-}
-
 // --- vezérlők ---------------------------------------------------------------
 
-/** Auto-fit a markerek bounding-box-ára (csak ha 2+ van; egynél fix zoom). */
 function FitToMarkers({ businesses }: { businesses: Business[] }) {
   const map = useMap();
   const lastSig = useRef<string>("");
@@ -254,12 +246,11 @@ function FitToMarkers({ businesses }: { businesses: Business[] }) {
     const bounds = L.latLngBounds(
       businesses.map((b) => [b.lat!, b.lng!] as [number, number]),
     );
-    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16, animate: true });
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16, animate: true });
   }, [businesses, map]);
   return null;
 }
 
-/** Liquid Glass overlay: lokáció + zoom. */
 function MapControls() {
   const map = useMap();
   const [locating, setLocating] = useState(false);

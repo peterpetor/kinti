@@ -2,6 +2,7 @@
 
 import type { Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
+import { CategoryIcon } from "./category-icon";
 
 /**
  * CategoryPills — vízszintesen görgethető kategória-választó (Szaknévsor/Térkép).
@@ -35,11 +36,11 @@ export function CategoryPills({ categories, active, onSelect, className }: Categ
           >
             <span
               className={cn(
-                "grid h-5 w-5 place-items-center rounded-md text-xs font-bold",
+                "grid h-5 w-5 place-items-center rounded-md",
                 on ? "bg-white/20 text-white" : "bg-primary-soft text-primary",
               )}
             >
-              {c.glyph}
+              <CategoryIcon categoryId={c.id} size={13} />
             </span>
             {c.label}
           </button>

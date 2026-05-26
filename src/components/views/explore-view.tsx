@@ -58,7 +58,10 @@ export function ExploreView({
         <SearchBar value={q} onChange={setQ} />
       </div>
 
-      <CategoryPills categories={categories} active={cat} onSelect={setCat} />
+      {/* A kategória-pillek list-módban itt fent; map-módban a térképre úsztatva. */}
+      {view === "list" && (
+        <CategoryPills categories={categories} active={cat} onSelect={setCat} />
+      )}
 
       {/* Lista / Térkép váltó + meta-sor */}
       <div className="flex items-center justify-between gap-3 px-5">
@@ -98,7 +101,10 @@ export function ExploreView({
           >
             <BusinessMap
               businesses={filtered}
-              className="mb-6 h-[calc(100dvh-380px)] min-h-[380px] max-h-[560px]"
+              categories={categories}
+              activeCat={cat}
+              onSelectCat={setCat}
+              className="mb-6 h-[calc(100dvh-300px)] min-h-[460px] max-h-[640px]"
             />
           </Suspense>
         </div>

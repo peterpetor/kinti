@@ -1,5 +1,6 @@
 // Barrel — egyszerűbb importok: `import { BusinessCard, TabBar } from "@/components/ui"`
 export * from "./icons";
+export * from "./category-icon";
 export * from "./logo";
 export * from "./glass";
 export * from "./button";

@@ -231,6 +231,18 @@
   border-color: rgb(var(--accent)) transparent transparent transparent;
 }
 
+/* Kiválasztott pin — kicsit nagyobb + erősebb gyűrű (kártya hozzá tartozik). */
+.kinti-pin-v2--active {
+  transform: scale(1.18) translateY(-2px);
+  z-index: 1000 !important;
+}
+.kinti-pin-v2--active::before {
+  box-shadow:
+    inset 1.5px 1.5px 0 rgb(255 255 255 / 0.2),
+    0 0 0 3px rgb(var(--surface)),
+    0 4px 10px rgb(0 0 0 / 0.25);
+}
+
 /* Leaflet popup → Liquid Glass kártya stílusra hangolva. */
 .leaflet-popup-content-wrapper {
   background: rgb(var(--surface));
