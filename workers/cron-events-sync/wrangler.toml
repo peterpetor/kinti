@@ -1,0 +1,38 @@
+#:schema node_modules/wrangler/config-schema.json
+# ---------------------------------------------------------------------------
+# kinti-cron-events-sync — Cloudflare Worker, ami naponta egyszer lehúzza a
+# konfigurált svájci magyar iCal feedeket (Google Calendar / Outlook export /
+# bármely .ics), parzolja, és a Pages projekttel közös D1 events táblájába
+# upsert-eli őket.
+#
+# Konfiguráció:
+#   FEED_URLS  vesszővel elválasztott .ics URL-ek (Pages dashboardon vagy
+#              `wrangler secret put`-tal). Üres → no-op.
+#
+# Deploy:
+#   cd workers/cron-events-sync
+#   npx wrangler deploy
+# ---------------------------------------------------------------------------
+
+name = "kinti-cron-events-sync"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# Napi 04:47 UTC — ne ütközzön a cron-purge-zsel (03:17 UTC).
+[triggers]
+crons = ["47 4 * * *"]
+
+# Ugyanaz a D1, mint a Pages projektben.
+[[d1_databases]]
+binding = "DB"
+database_name = "kinti-db"
+database_id = "ec70d0d2-1b7c-416d-a2c6-c5d15c3e59a2"
+
+# Vesszővel elválasztott iCal URL-ek. Üresen marad addig, amíg fel nem veszel
+# tényleges svájci magyar szervezeti naptárakat. A worker üres FEED_URLS
+# esetén csendben kilép (no-op).
+[vars]
+FEED_URLS = ""
+
+[observability]
+enabled = true
