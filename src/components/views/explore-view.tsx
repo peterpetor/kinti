@@ -32,13 +32,14 @@ export function ExploreView({
   categories: Category[];
   businesses: Business[];
 }) {
-  // ?q URL-paraméter (a főoldali HomeSearch küldi) → kezdő szűrő
+  // ?q és ?canton URL-paraméterek (a főoldalról / keresőből érkezve) → kezdő szűrők
   const searchParams = useSearchParams();
   const initialQ = searchParams?.get("q") ?? "";
+  const initialCanton = searchParams?.get("canton") ?? "all";
 
   const [cat, setCat] = useState("all");
   const [q, setQ] = useState(initialQ);
-  const [canton, setCanton] = useState("all");
+  const [canton, setCanton] = useState(initialCanton);
   const [view, setView] = useState<ViewMode>("list");
 
   const filtered = useMemo(() => {

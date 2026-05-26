@@ -200,6 +200,7 @@ function toBulletinPost(r: BulletinPostRow): BulletinPost {
     expiresAt: r.expires_at,
     publishedAt: r.published_at,
     cantonCode: r.canton_code,
+    price: r.price,
     kind: r.kind_label
       ? { id: r.kind_id, label: r.kind_label, color: r.kind_color, sortOrder: r.kind_sort ?? 0 }
       : undefined,
@@ -225,6 +226,7 @@ function toBulletinDraft(r: BulletinDraftRow): BulletinDraft {
     ipHash: r.ip_hash,
     imageKey: r.image_key,
     cantonCode: r.canton_code,
+    price: r.price,
   };
 }
 
@@ -465,6 +467,7 @@ export interface BulletinDraftInput {
   ipHash: string | null;
   imageKey: string | null;
   cantonCode: string | null;
+  price: number | null;
 }
 
 /** Új piszkozat — a kliens-form `submit`-end-pointja használja. */
@@ -474,8 +477,8 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
       `INSERT INTO bulletin_drafts
        (id, email, kind_id, title, meta, body, poster,
         confirm_token, manage_token, expires_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -494,6 +497,7 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
       input.ipHash,
       input.imageKey,
       input.cantonCode,
+      input.price,
     )
     .run();
 }
@@ -545,6 +549,7 @@ export interface PublishBulletinInput {
   ipHash: string | null;
   imageKey: string | null;
   cantonCode: string | null;
+  price: number | null;
 }
 
 /**
@@ -558,9 +563,9 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       `INSERT INTO bulletin_posts
        (id, kind_id, title, meta, body, poster, email, manage_token,
         age_text, expires_at, published_at, is_pending, created_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code)
+        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'frissen', ?, datetime('now'), ?, datetime('now'),
-               ?, ?, ?, ?, ?, ?)`,
+               ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -579,8 +584,24 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       input.ipHash,
       input.imageKey,
       input.cantonCode,
+      input.price,
     )
     .run();
+}
+
+/** Publikus, nem lejárt hirdetés azonosító alapján — a megosztható mély-link oldalhoz. */
+export async function getBulletinPostById(id: string): Promise<BulletinPost | null> {
+  const row = await getDB()
+    .prepare(
+      `SELECT p.*, k.label AS kind_label, k.color AS kind_color, k.sort_order AS kind_sort
+       FROM bulletin_posts p
+       JOIN bulletin_kinds k ON k.id = p.kind_id
+       WHERE p.id = ? AND p.is_pending = 0
+         AND (p.expires_at IS NULL OR p.expires_at > datetime('now'))`,
+    )
+    .bind(id)
+    .first<BulletinPostRow>();
+  return row ? toBulletinPost(row) : null;
 }
 
 /** Manage-token alapján visszaadja a posztot (a kezelő oldal használja). */

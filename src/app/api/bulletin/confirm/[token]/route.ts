@@ -61,6 +61,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     ipHash: draft.ipHash,
     imageKey: draft.imageKey,
     cantonCode: draft.cantonCode,
+    price: draft.price,
   });
   await deleteBulletinDraft(draft.id);
 

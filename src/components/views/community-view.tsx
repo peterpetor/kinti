@@ -614,8 +614,11 @@ function BulletinList({
 
           {/* Kanton-szűrő + darabszám */}
           <div className="flex items-center justify-between gap-2">
-            <label className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 shadow-card">
+            <label className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-1.5 shadow-card">
               <Icon name="pin" size={12} strokeWidth={2.2} className="shrink-0 text-accent" />
+              <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+                Kanton
+              </span>
               <select
                 value={canton}
                 onChange={(e) => setCanton(e.target.value)}
@@ -623,7 +626,7 @@ function BulletinList({
                 className="bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
               >
                 <option value="all">Egész Svájc</option>
-                {availableCantons.map((c) => (
+                {CANTONS.map((c) => (
                   <option key={c.code} value={c.code}>
                     {c.name} ({c.code})
                   </option>

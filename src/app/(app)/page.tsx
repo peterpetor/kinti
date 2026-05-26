@@ -8,6 +8,7 @@ import {
 } from "@/components/ui";
 import { AuthControl } from "@/components/auth-control";
 import { HomeSearch } from "@/components/home-search";
+import { HomeCantonSelector } from "@/components/home-canton-selector";
 import { getBusinesses, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -31,11 +32,7 @@ export default async function FeedPage() {
       {/* főoldali kereső — Enter / nyíl → /szaknevsor?q=<query> */}
       <HomeSearch />
 
-      <GlassPill>
-        <Icon name="pin" size={14} strokeWidth={2.2} className="text-accent" />
-        Zürich · Kreis 3
-        <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted" />
-      </GlassPill>
+      <HomeCantonSelector />
 
       {/* friss / közeli vállalkozások — szerkesztői válogatás */}
       <section className="space-y-3">

@@ -49,6 +49,8 @@ export interface BulletinFormInput {
   poster?: unknown;
   imageKey?: unknown;
   cantonCode?: unknown;
+  /** Opcionális strukturált ár (egész CHF). */
+  price?: unknown;
   /** Bot-csapda — ha bármi értéke van, eldobjuk. */
   website?: unknown;
   /** Kötelező: az ÁSZF + Adatkezelési Tájékoztató elfogadása. */
