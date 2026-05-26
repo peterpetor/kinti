@@ -91,12 +91,15 @@ export function ExploreView({
         <div className="px-5">
           <Suspense
             fallback={
-              <div className="grid h-[60vh] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
+              <div className="mb-4 grid h-[calc(100dvh-340px)] min-h-[420px] max-h-[640px] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
                 Térkép betöltése…
               </div>
             }
           >
-            <BusinessMap businesses={filtered} className="h-[62dvh] sm:h-[68dvh]" />
+            <BusinessMap
+              businesses={filtered}
+              className="mb-4 h-[calc(100dvh-340px)] min-h-[420px] max-h-[640px]"
+            />
           </Suspense>
         </div>
       )}

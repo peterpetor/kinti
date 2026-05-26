@@ -157,114 +157,114 @@
   margin: 24px 0;
 }
 
-/* Kinti pin — gondoljunk rá úgy, mint egy fenyőzöld könnycseppre. */
-.kinti-pin {
+/* Kinti pin v2 — egyenes-álló marker, kör fej + lefelé mutató tűvég.
+   Régebbi (rotate(45deg)-vel ferdített „könnycsepp”) helyett tiszta forma. */
+.kinti-pin-v2 {
   position: relative;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  filter: drop-shadow(var(--shadow-pin));
+  width: 32px;
+  height: 42px;
+  cursor: pointer;
   transition: transform 0.15s ease;
+  filter: drop-shadow(0 3px 4px rgb(0 0 0 / 0.18));
 }
-.kinti-pin:hover {
-  transform: translateY(-2px) scale(1.05);
+.kinti-pin-v2:hover {
+  transform: translateY(-2px);
 }
 
-/* A pin „könnycsepp” formája — egy lekerekített négyzet a primary színből,
-   a bal-alsó saroknál erős lekerekítéssel a klasszikus tű-vég helyett. */
-.kinti-pin__body {
-  width: 30px;
-  height: 30px;
-  border-radius: 50% 50% 50% 8%;
-  transform: rotate(45deg);
+/* Kör fej — a pin tetején, középen ülő ikonnal. */
+.kinti-pin-v2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   background: rgb(var(--primary));
   box-shadow:
-    inset 1.5px 1.5px 1px rgb(255 255 255 / 0.25),
-    inset -1px -1px 1px rgb(0 0 0 / 0.2),
+    inset 1.5px 1.5px 0 rgb(255 255 255 / 0.18),
+    inset -1px -1px 0 rgb(0 0 0 / 0.12),
     0 0 0 2px rgb(var(--surface));
 }
 
-/* A pin közepén ülő pötty (vagy csillag, ha kiemelt). */
-.kinti-pin__dot {
+/* Lefelé mutató tűvég (CSS-háromszög). */
+.kinti-pin-v2::after {
+  content: "";
   position: absolute;
-  inset: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 10px 7px 0 7px;
+  border-color: rgb(var(--primary)) transparent transparent transparent;
+}
+
+/* A fejben ülő ikon (• vagy ★). */
+.kinti-pin-v2__inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
   color: rgb(var(--surface));
+  font-size: 14px;
   font-weight: 800;
-  font-size: 13px;
   line-height: 1;
+  z-index: 1;
   pointer-events: none;
 }
 
-/* Kiemelt vállalkozás: piros gyűrű + csillag a pin közepén. */
-.kinti-pin--featured .kinti-pin__body {
+/* Kiemelt változat — accent szín, halvány gyűrűhalo. */
+.kinti-pin-v2--featured::before {
   background: rgb(var(--accent));
   box-shadow:
-    inset 1.5px 1.5px 1px rgb(255 255 255 / 0.25),
-    inset -1px -1px 1px rgb(0 0 0 / 0.2),
+    inset 1.5px 1.5px 0 rgb(255 255 255 / 0.18),
+    inset -1px -1px 0 rgb(0 0 0 / 0.12),
     0 0 0 2px rgb(var(--surface)),
     0 0 0 4px rgb(var(--accent) / 0.25);
 }
-
-/* Lüktető halo a kiemelt pin körül (aktív, nem zavaró). */
-.kinti-pin--featured::before {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 999px;
-  background: rgb(var(--accent) / 0.18);
-  animation: kinti-pin-pulse 2.4s ease-out infinite;
-  pointer-events: none;
-}
-@keyframes kinti-pin-pulse {
-  0%   { transform: scale(0.9); opacity: 0.7; }
-  70%  { transform: scale(1.6); opacity: 0; }
-  100% { transform: scale(1.6); opacity: 0; }
+.kinti-pin-v2--featured::after {
+  border-color: rgb(var(--accent)) transparent transparent transparent;
 }
 
-/* Leaflet popup → Liquid Glass kártya stílusra hangolva. */
-.leaflet-popup-content-wrapper {
-  background: rgb(var(--surface));
-  border-radius: 18px;
-  box-shadow: var(--shadow-pop);
+/* MapLibre popup → Liquid Glass kártya stílusra hangolva. */
+.maplibregl-popup-content {
+  background: rgb(var(--surface)) !important;
   border: 0.5px solid rgb(var(--border-channel) / var(--border-strong-alpha));
-  padding: 0;
+  border-radius: 18px !important;
+  box-shadow: var(--shadow-pop) !important;
+  padding: 0 !important;
+  width: 260px;
 }
-.leaflet-popup-content {
-  margin: 0;
-  padding: 0;
-  width: 240px !important;
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-top-color: rgb(var(--surface)) !important;
+  border-bottom-color: rgb(var(--surface)) !important;
 }
-.leaflet-popup-tip {
-  background: rgb(var(--surface));
-  border: 0.5px solid rgb(var(--border-channel) / var(--border-strong-alpha));
-}
-.leaflet-popup-close-button {
+.maplibregl-popup-close-button {
   color: rgb(var(--text-muted)) !important;
-  padding: 8px 8px 0 0 !important;
+  font-size: 18px !important;
+  padding: 4px 8px !important;
 }
-/* A Leaflet-attribúciót kicsit visszafogjuk a Liquid Glass keretben. */
-.leaflet-control-attribution {
-  background: rgb(var(--surface) / 0.75) !important;
+
+/* Attribúció — diszkrét, glass-feel */
+.maplibregl-ctrl-attrib {
+  background: rgb(var(--surface) / 0.85) !important;
   backdrop-filter: blur(8px);
-  font-size: 10px !important;
-  border-radius: 8px 0 0 0;
+  font-size: 9.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 8px !important;
 }
-.leaflet-container {
+.maplibregl-ctrl-attrib a {
+  color: rgb(var(--text-muted)) !important;
+}
+
+/* A térkép tartály háttere, amíg a tile-ek töltődnek. */
+.maplibregl-map {
   font-family: inherit;
   background: rgb(var(--map-land));
-}
-/* Zoom-vezérlők (asztali) — kerekítés + Liquid Glass-feel. */
-.leaflet-bar a {
-  background: rgb(var(--surface)) !important;
-  color: rgb(var(--text)) !important;
-  border-bottom-color: rgb(var(--border-channel) / var(--border-alpha)) !important;
-}
-.leaflet-bar {
-  border: none !important;
-  border-radius: 14px !important;
-  overflow: hidden;
-  box-shadow: var(--shadow-card) !important;
 }
