@@ -243,6 +243,23 @@
     0 4px 10px rgb(0 0 0 / 0.25);
 }
 
+/* MapLibre — háttér + attribúció Liquid Glass-feel. */
+.maplibregl-map {
+  font-family: inherit;
+  background: rgb(var(--map-land));
+}
+.maplibregl-ctrl-attrib {
+  background: rgb(var(--surface) / 0.82) !important;
+  backdrop-filter: blur(8px);
+  font-size: 9.5px !important;
+  padding: 1px 6px !important;
+  border-radius: 8px 0 0 0 !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: rgb(var(--text-muted)) !important;
+}
+.maplibregl-marker { cursor: pointer; }
+
 /* Leaflet popup → Liquid Glass kártya stílusra hangolva. */
 .leaflet-popup-content-wrapper {
   background: rgb(var(--surface));

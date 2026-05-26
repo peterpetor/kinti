@@ -2,25 +2,23 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import L from "leaflet";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import type { Map as MlMap, Marker as MlMarker } from "maplibre-gl";
 import type { Business, Category } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 
-import "leaflet/dist/leaflet.css";
-
 /**
- * BusinessMap — raszteres Leaflet-térkép app-réteggel (mockup-kompozíció):
- *   • kategória-ikonos pinek (kinti-pin-v2)
- *   • bal-felül: hely-pill
- *   • jobb-felül: lokáció + zoom vezérlők
- *   • alul: kategória-szűrő pillek + a kiválasztott vállalkozás kártyája
+ * BusinessMap — vektoros MapLibre GL térkép app-réteggel (mockup-kompozíció).
  *
- * Pin koppintásra a kártya frissül (Leaflet-buborék helyett). Csempék:
- * CartoDB Voyager (ingyenes, kulcs nélkül).
+ * A MapLibre-t SAJÁT originról, script-tagből töltjük (/vendor/maplibre-gl.js),
+ * NEM webpack-bundle-ből — így a worker-blobja sértetlen marad (a bundle-elt
+ * verzió a next-on-pages edge-build alatt nem renderelt). GDPR-tiszta:
+ * harmadik-fél JS-CDN nincs; csak a csempék mennek a tile-szolgáltatóhoz.
+ *
+ * Csempék: OpenFreeMap (ingyenes, kulcs nélkül). Ha be van állítva
+ * NEXT_PUBLIC_MAPTILER_KEY, a szebb MapTiler stílusra vált.
  */
 export interface BusinessMapProps {
   businesses: Business[];
@@ -28,13 +26,54 @@ export interface BusinessMapProps {
   activeCat?: string;
   onSelectCat?: (id: string) => void;
   locationLabel?: string;
-  /** [lat, lng] (Leaflet). */
+  /** [lng, lat] (MapLibre). */
   fallbackCenter?: [number, number];
   fallbackZoom?: number;
   className?: string;
 }
 
-const ZURICH_CENTER: [number, number] = [47.378, 8.535];
+// Zürich Kreis 3 → [lng, lat]
+const ZURICH_CENTER: [number, number] = [8.535, 47.378];
+
+const MAPTILER_KEY = process.env.NEXT_PUBLIC_MAPTILER_KEY;
+const MAP_STYLE = MAPTILER_KEY
+  ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${MAPTILER_KEY}`
+  : "https://tiles.openfreemap.org/styles/liberty";
+
+// --- MapLibre self-hosted loader (egyszer fut) ------------------------------
+declare global {
+  interface Window {
+    maplibregl?: typeof import("maplibre-gl");
+  }
+}
+
+let loaderPromise: Promise<typeof import("maplibre-gl")> | null = null;
+
+function loadMaplibre(): Promise<typeof import("maplibre-gl")> {
+  if (typeof window === "undefined") return Promise.reject(new Error("no window"));
+  if (window.maplibregl) return Promise.resolve(window.maplibregl);
+  if (loaderPromise) return loaderPromise;
+
+  loaderPromise = new Promise((resolve, reject) => {
+    if (!document.querySelector("link[data-maplibre]")) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "/vendor/maplibre-gl.css";
+      link.dataset.maplibre = "1";
+      document.head.appendChild(link);
+    }
+    const script = document.createElement("script");
+    script.src = "/vendor/maplibre-gl.js";
+    script.async = true;
+    script.onload = () =>
+      window.maplibregl
+        ? resolve(window.maplibregl)
+        : reject(new Error("A térkép-motor nem töltött be."));
+    script.onerror = () => reject(new Error("A térkép-motor betöltése sikertelen."));
+    document.head.appendChild(script);
+  });
+  return loaderPromise;
+}
 
 export function BusinessMap({
   businesses,
@@ -46,56 +85,125 @@ export function BusinessMap({
   fallbackZoom = 13,
   className,
 }: BusinessMapProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MlMap | null>(null);
+  const mlRef = useRef<typeof import("maplibre-gl") | null>(null);
+  const markersRef = useRef<Map<string, { marker: MlMarker; el: HTMLElement }>>(
+    new Map(),
+  );
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [locating, setLocating] = useState(false);
+
   const located = useMemo(
     () => businesses.filter((b) => b.lat != null && b.lng != null),
     [businesses],
   );
 
-  // Kiválasztott vállalkozás az alsó kártyához. Default: első kiemelt, ill. első.
   const defaultBiz = useMemo(
     () => located.find((b) => b.featured) ?? located[0] ?? null,
     [located],
   );
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selected =
-    located.find((b) => b.id === selectedId) ?? defaultBiz ?? null;
+  const selected = located.find((b) => b.id === selectedId) ?? defaultBiz ?? null;
 
-  // Ha a szűrt lista változik és a kiválasztott kiesett, visszaállunk.
+  // --- map init (egyszer) ---
   useEffect(() => {
-    if (selectedId && !located.some((b) => b.id === selectedId)) {
-      setSelectedId(null);
+    let cancelled = false;
+    loadMaplibre()
+      .then((ml) => {
+        if (cancelled || !containerRef.current) return;
+        mlRef.current = ml;
+        const map = new ml.Map({
+          container: containerRef.current,
+          style: MAP_STYLE,
+          center: fallbackCenter,
+          zoom: fallbackZoom,
+          attributionControl: false,
+        });
+        map.addControl(new ml.AttributionControl({ compact: true }), "bottom-left");
+        map.on("error", (e) => {
+          const msg = (e as { error?: { message?: string } })?.error?.message;
+          setError((prev) => prev ?? msg ?? "Térkép-hiba.");
+        });
+        map.on("load", () => {
+          map.resize();
+          setReady(true);
+        });
+        mapRef.current = map;
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Térkép-hiba."));
+
+    return () => {
+      cancelled = true;
+      markersRef.current.forEach(({ marker }) => marker.remove());
+      markersRef.current.clear();
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // --- markerek (located változására) ---
+  useEffect(() => {
+    const map = mapRef.current;
+    const ml = mlRef.current;
+    if (!map || !ml || !ready) return;
+
+    markersRef.current.forEach(({ marker }) => marker.remove());
+    markersRef.current.clear();
+
+    for (const b of located) {
+      const el = document.createElement("div");
+      el.className = `kinti-pin-v2 ${b.featured ? "kinti-pin-v2--featured" : ""}`;
+      el.innerHTML = `<span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId)}</span>`;
+      el.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        setSelectedId(b.id);
+      });
+      const marker = new ml.Marker({ element: el, anchor: "bottom" })
+        .setLngLat([b.lng!, b.lat!])
+        .addTo(map);
+      markersRef.current.set(b.id, { marker, el });
     }
-  }, [located, selectedId]);
+
+    if (located.length >= 2) {
+      const bounds = new ml.LngLatBounds();
+      located.forEach((b) => bounds.extend([b.lng!, b.lat!]));
+      map.fitBounds(bounds, { padding: 60, maxZoom: 16, duration: 600 });
+    } else if (located.length === 1) {
+      map.flyTo({ center: [located[0].lng!, located[0].lat!], zoom: 15, duration: 600 });
+    }
+  }, [located, ready]);
+
+  // --- kiválasztott pin kiemelése ---
+  useEffect(() => {
+    markersRef.current.forEach(({ el }, id) => {
+      el.classList.toggle("kinti-pin-v2--active", id === selected?.id);
+    });
+  }, [selected]);
+
+  function handleLocate() {
+    if (typeof navigator === "undefined" || !navigator.geolocation || !mapRef.current)
+      return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        mapRef.current?.flyTo({
+          center: [pos.coords.longitude, pos.coords.latitude],
+          zoom: 15,
+          duration: 600,
+        });
+        setLocating(false);
+      },
+      () => setLocating(false),
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 60_000 },
+    );
+  }
 
   return (
     <div className={cn("relative isolate overflow-hidden rounded-card", className)}>
-      <MapContainer
-        center={fallbackCenter}
-        zoom={fallbackZoom}
-        scrollWheelZoom
-        zoomControl={false}
-        className="h-full w-full"
-        style={{ background: "rgb(var(--map-land))" }}
-      >
-        <TileLayer
-          attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          subdomains="abcd"
-          maxZoom={20}
-        />
-
-        {located.map((b) => (
-          <Marker
-            key={b.id}
-            position={[b.lat!, b.lng!]}
-            icon={pinFor(b, b.id === selected?.id)}
-            eventHandlers={{ click: () => setSelectedId(b.id) }}
-          />
-        ))}
-
-        <FitToMarkers businesses={located} />
-        <MapControls />
-      </MapContainer>
+      <div ref={containerRef} className="absolute inset-0" />
 
       {/* Bal-felül: hely-pill */}
       <div className="pointer-events-none absolute left-3 top-3 z-[10]">
@@ -103,6 +211,37 @@ export function BusinessMap({
           <Icon name="pin" size={13} strokeWidth={2.2} className="text-accent" />
           {locationLabel}
         </span>
+      </div>
+
+      {/* Jobb-felül: vezérlők */}
+      <div className="absolute right-3 top-3 z-[10] grid gap-2">
+        <button
+          type="button"
+          aria-label="Saját helyem"
+          onClick={handleLocate}
+          className={cn(
+            "glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card",
+            locating && "animate-pulse",
+          )}
+        >
+          <Icon name="nav" size={16} strokeWidth={2.2} className="text-primary" />
+        </button>
+        <button
+          type="button"
+          aria-label="Nagyítás"
+          onClick={() => mapRef.current?.zoomIn()}
+          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card"
+        >
+          <Icon name="plus" size={16} strokeWidth={2.4} />
+        </button>
+        <button
+          type="button"
+          aria-label="Kicsinyítés"
+          onClick={() => mapRef.current?.zoomOut()}
+          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card"
+        >
+          <span className="text-[18px] font-extrabold leading-none">−</span>
+        </button>
       </div>
 
       {/* Alul: kategória-pillek + kiválasztott kártya */}
@@ -123,12 +262,11 @@ export function BusinessMap({
                 >
                   <span
                     className={cn(
-                      "grid h-4 w-4 place-items-center",
+                      "grid h-4 w-4 place-items-center [&>svg]:h-3.5 [&>svg]:w-3.5",
                       on ? "text-white" : "text-primary",
                     )}
-                  >
-                    <CategoryGlyph categoryId={c.id} />
-                  </span>
+                    dangerouslySetInnerHTML={{ __html: categoryIconSvgString(c.id) }}
+                  />
                   {c.label}
                 </button>
               );
@@ -139,9 +277,26 @@ export function BusinessMap({
         {selected && <SelectedCard business={selected} />}
       </div>
 
-      {located.length === 0 && (
+      {!ready && !error && (
         <div className="pointer-events-none absolute inset-0 z-[5] grid place-items-center">
-          <div className="glass pointer-events-auto rounded-pill px-4 py-2 text-[12px] font-semibold text-ink shadow-pop">
+          <div className="glass rounded-pill px-4 py-2 text-[12px] font-semibold text-ink-muted shadow-card">
+            Térkép betöltése…
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="absolute inset-0 z-[20] grid place-items-center p-6">
+          <div className="max-w-xs rounded-card border border-accent/30 bg-surface p-4 text-center shadow-pop">
+            <p className="text-[12.5px] font-bold text-ink">Térkép-hiba</p>
+            <p className="mt-1 break-words text-[11px] leading-snug text-ink-muted">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {ready && located.length === 0 && !error && (
+        <div className="pointer-events-none absolute inset-0 z-[5] grid place-items-center">
+          <div className="glass rounded-pill px-4 py-2 text-[12px] font-semibold text-ink shadow-pop">
             Ehhez a szűrőhöz nincs térképi találat.
           </div>
         </div>
@@ -192,116 +347,5 @@ function SelectedCard({ business: b }: { business: Business }) {
         <Icon name="arrowRight" size={16} strokeWidth={2.4} />
       </span>
     </Link>
-  );
-}
-
-/** React-oldali kategória-ikon a pillekhez (inline, hogy ne kelljen extra import). */
-function CategoryGlyph({ categoryId }: { categoryId: string }) {
-  return (
-    <span
-      className="grid h-4 w-4 place-items-center [&>svg]:h-3.5 [&>svg]:w-3.5"
-      dangerouslySetInnerHTML={{ __html: categoryIconSvgString(categoryId) }}
-    />
-  );
-}
-
-// --- pin (divIcon) ----------------------------------------------------------
-
-const ICON_CACHE = new Map<string, L.DivIcon>();
-
-function pinFor(b: Business, active: boolean): L.DivIcon {
-  const key = `${b.categoryId ?? "none"}-${b.featured ? "f" : "d"}-${active ? "a" : "n"}`;
-  const cached = ICON_CACHE.get(key);
-  if (cached) return cached;
-
-  const icon = L.divIcon({
-    className: "",
-    html: `<div class="kinti-pin-v2 ${b.featured ? "kinti-pin-v2--featured" : ""} ${active ? "kinti-pin-v2--active" : ""}">
-             <span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId)}</span>
-           </div>`,
-    iconSize: [32, 42],
-    iconAnchor: [16, 42],
-    popupAnchor: [0, -38],
-  });
-  ICON_CACHE.set(key, icon);
-  return icon;
-}
-
-// --- vezérlők ---------------------------------------------------------------
-
-function FitToMarkers({ businesses }: { businesses: Business[] }) {
-  const map = useMap();
-  const lastSig = useRef<string>("");
-  useEffect(() => {
-    const sig = businesses.map((b) => b.id).join("|");
-    if (sig === lastSig.current) return;
-    lastSig.current = sig;
-
-    if (businesses.length === 0) return;
-    if (businesses.length === 1) {
-      const [b] = businesses;
-      map.setView([b.lat!, b.lng!], 15, { animate: true });
-      return;
-    }
-    const bounds = L.latLngBounds(
-      businesses.map((b) => [b.lat!, b.lng!] as [number, number]),
-    );
-    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16, animate: true });
-  }, [businesses, map]);
-  return null;
-}
-
-function MapControls() {
-  const map = useMap();
-  const [locating, setLocating] = useState(false);
-
-  function handleLocate() {
-    if (typeof navigator === "undefined" || !navigator.geolocation) return;
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        map.flyTo([pos.coords.latitude, pos.coords.longitude], 15, { duration: 0.6 });
-        setLocating(false);
-      },
-      () => setLocating(false),
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 60_000 },
-    );
-  }
-
-  return (
-    <div className="leaflet-top leaflet-right" style={{ pointerEvents: "none" }}>
-      <div
-        className="leaflet-control"
-        style={{ pointerEvents: "auto", margin: "12px 12px 0 0", display: "grid", gap: 8 }}
-      >
-        <button
-          type="button"
-          aria-label="Saját helyem"
-          onClick={handleLocate}
-          className={cn(
-            "glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card",
-            locating && "animate-pulse",
-          )}
-        >
-          <Icon name="nav" size={16} strokeWidth={2.2} className="text-primary" />
-        </button>
-        <button
-          type="button"
-          aria-label="Nagyítás"
-          onClick={() => map.zoomIn()}
-          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card"
-        >
-          <Icon name="plus" size={16} strokeWidth={2.4} />
-        </button>
-        <button
-          type="button"
-          aria-label="Kicsinyítés"
-          onClick={() => map.zoomOut()}
-          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card"
-        >
-          <span className="text-[18px] font-extrabold leading-none">−</span>
-        </button>
-      </div>
-    </div>
   );
 }

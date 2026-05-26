@@ -34,6 +34,10 @@ NEXT_PUBLIC_R2_PUBLIC_URL = "https://media.kinti.app"
 # ki nem generálod a tokent: Analytics & Logs → Web Analytics → Add a site).
 # Ha üres, a script egyáltalán nem renderelődik — semmilyen kérés nem megy ki.
 NEXT_PUBLIC_CF_BEACON_TOKEN = ""
+# MapTiler API-kulcs a térkép vektor-stílusához (opcionális). Ha üres, a
+# térkép az ingyenes, kulcs nélküli OpenFreeMap stílust használja.
+# Kulcs: https://cloud.maptiler.com → Account → Keys (free, 100k load/hó).
+NEXT_PUBLIC_MAPTILER_KEY = ""
 
 # A titkok (CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY stb.) NEM ide
 # kerülnek — helyben a .dev.vars fájlba, élesben:
