@@ -312,6 +312,46 @@ export async function setBusinessLogo(
   return (res.meta.changes ?? 0) > 0;
 }
 
+export interface UpdateBusinessProfileInput {
+  name: string;
+  phone: string | null;
+  blurb: string | null;
+  address: string | null;
+  categoryLabel: string | null;
+  openText: string | null;
+}
+
+export async function updateBusinessProfile(
+  businessId: string,
+  ownerUserId: string,
+  input: UpdateBusinessProfileInput,
+): Promise<boolean> {
+  const res = await getDB()
+    .prepare(
+      `UPDATE businesses
+       SET name = ?,
+           phone = ?,
+           blurb = ?,
+           address = ?,
+           category_label = ?,
+           open_text = ?,
+           updated_at = datetime('now')
+       WHERE id = ? AND owner_user_id = ?`,
+    )
+    .bind(
+      input.name,
+      input.phone,
+      input.blurb,
+      input.address,
+      input.categoryLabel,
+      input.openText,
+      businessId,
+      ownerUserId,
+    )
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
 export interface EventQuery {
   upcoming?: boolean;
   limit?: number;

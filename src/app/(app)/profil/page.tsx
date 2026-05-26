@@ -4,6 +4,7 @@ import { UserButton } from "@clerk/nextjs";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ClaimDemoButton } from "@/components/views/claim-demo-button";
 import { LogoUploader } from "@/components/views/logo-uploader";
+import { ProfileEditor } from "@/components/views/profile-editor";
 import { InstallPrompt } from "@/components/install-prompt";
 import {
   Icon,
@@ -12,8 +13,9 @@ import {
   Sparkline,
   StatCard,
 } from "@/components/ui";
-import { getBusinessByOwner, getDashboard } from "@/lib/repo";
+import { getBusinessByOwner, getDashboard, getReviewsByBusiness } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
+import type { Business } from "@/lib/types";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -26,23 +28,32 @@ function fmtDate(iso: string): string {
   return `${HU_MONTH[Number(m) - 1] ?? ""} ${Number(d)}`;
 }
 
-const ACTIVITY: { icon: IconName; text: string; time: string }[] = [
-  { icon: "eye", text: "Eszter T. megnézte a profilodat", time: "11 perce" },
-  { icon: "phone", text: "Hívást kezdeményeztek a profilról", time: "34 perce" },
-  { icon: "star", text: "Új 5★ vélemény Péter M.-től", time: "2 órája" },
-  { icon: "eye", text: "12 kinti nézett rá a profilodra", time: "délelőtt" },
-];
+function getRelativeTime(isoString: string | null): string {
+  if (!isoString) return "nemrég";
+  const formatted = isoString.includes("T") ? isoString : `${isoString.replace(" ", "T")}Z`;
+  const date = new Date(formatted);
+  const diffMs = Date.now() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (isNaN(date.getTime())) return "nemrég";
+  if (diffMins < 1) return "épp most";
+  if (diffMins < 60) return `${diffMins} perce`;
+  if (diffHours < 24) return `${diffHours} órája`;
+  if (diffDays === 1) return "tegnap";
+  return `${diffDays} napja`;
+}
 
 export default async function ProfilPage() {
   const { userId } = await auth();
-  // A middleware már véd, de biztonsági redirect, ha valamiért ide jutna.
   if (!userId) redirect("/belepes");
 
   const business = await getBusinessByOwner(userId);
   const avatarUrl = mediaUrl(business?.logoKey);
 
   return (
-    <div className="space-y-4 px-[18px] pt-[calc(env(safe-area-inset-top)+2rem)]">
+    <div className="space-y-4 px-[18px] pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
       <header className="flex items-center gap-3">
         <span
           className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[14px] border-2 border-surface bg-primary-soft shadow-card"
@@ -63,7 +74,7 @@ export default async function ProfilPage() {
       </header>
 
       {business ? (
-        <OwnerDashboard businessId={business.id} logoKey={business.logoKey} photo={business.photo} />
+        <OwnerDashboard business={business} />
       ) : (
         <EmptyOwnerState />
       )}
@@ -102,15 +113,11 @@ function EmptyOwnerState() {
 
 // --- A tulajdonos saját dashboardja (valós D1-adat) -------------------------
 async function OwnerDashboard({
-  businessId,
-  logoKey,
-  photo,
+  business,
 }: {
-  businessId: string;
-  logoKey: string | null;
-  photo: string | null;
+  business: Business;
 }) {
-  const data = await getDashboard(businessId);
+  const data = await getDashboard(business.id);
   if (!data) return null;
 
   const { stats } = data;
@@ -124,10 +131,59 @@ async function OwnerDashboard({
       ]
     : [];
 
+  // Dinamikus, valódi aktivitások összeállítása
+  const reviews = await getReviewsByBusiness(business.id);
+  const activities: { icon: IconName; text: string; time: string }[] = [];
+
+  // 1) Valódi vélemények
+  reviews.slice(0, 4).forEach((r) => {
+    activities.push({
+      icon: "star",
+      text: `Új ${r.rating}★ vélemény tőle: ${r.reviewerName}`,
+      time: getRelativeTime(r.publishedAt),
+    });
+  });
+
+  // 2) Dinamikus statisztikai hírek (ha van rá adat)
+  if (stats.weekViews > 0) {
+    activities.push({
+      icon: "eye",
+      text: `${stats.weekViews} kinti kereste fel a profilodat ezen a héten`,
+      time: "ezen a héten",
+    });
+  }
+  if (stats.weekCalls > 0) {
+    activities.push({
+      icon: "phone",
+      text: `Összesen ${stats.weekCalls} hívást kezdeményeztek a profilról`,
+      time: "ezen a héten",
+    });
+  }
+
+  // 3) Üdvözlő kártya ha teljesen üres lenne
+  if (activities.length === 0) {
+    activities.push({
+      icon: "trending",
+      text: "A vállalkozásod létrejött és aktív a Szaknévsorban!",
+      time: "épp most",
+    });
+  }
+
   return (
     <>
       {/* logó / borítókép feltöltő (R2) */}
-      <LogoUploader currentKey={logoKey} fallbackGradient={photo} />
+      <LogoUploader currentKey={business.logoKey} fallbackGradient={business.photo} />
+
+      {/* Vállalkozói adatok szerkesztése form */}
+      <ProfileEditor
+        businessId={business.id}
+        initialName={business.name}
+        initialPhone={business.phone}
+        initialBlurb={business.blurb}
+        initialAddress={business.address}
+        initialCategoryLabel={business.categoryLabel}
+        initialOpenText={business.openText}
+      />
 
       {/* heti összegző hero */}
       <section className="relative overflow-hidden rounded-card bg-primary p-[18px] text-white">
@@ -171,10 +227,8 @@ async function OwnerDashboard({
 
       {/* mai aktivitás */}
       <section className="space-y-2">
-        <SectionHeader right={<span className="text-[13px] font-bold text-primary">Mind ›</span>}>
-          Mai aktivitás
-        </SectionHeader>
-        {ACTIVITY.map((a, i) => (
+        <SectionHeader>Valós aktivitás</SectionHeader>
+        {activities.map((a, i) => (
           <div key={i} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3">
             <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary-soft text-primary">
               <Icon name={a.icon} size={14} strokeWidth={2.2} />
