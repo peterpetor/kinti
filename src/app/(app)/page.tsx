@@ -9,6 +9,7 @@ import {
 } from "@/components/ui";
 import { HomeSearch } from "@/components/home-search";
 import { HomeCantonSelector } from "@/components/home-canton-selector";
+import { WeatherWidget } from "@/components/weather-widget";
 import { getBusinesses, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -37,6 +38,9 @@ export default async function FeedPage() {
         <div className="flex-1" />
         <DropdownMenu />
       </header>
+
+      {/* svájci időjárás — a kiválasztott kanton székhelye (MeteoSwiss ICON) */}
+      <WeatherWidget />
 
       {/* főoldali kereső — Enter / nyíl → /szaknevsor?q=<query> */}
       <HomeSearch />

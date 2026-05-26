@@ -49,6 +49,52 @@ export const CANTONS: Canton[] = [
 
 const BY_CODE = new Map(CANTONS.map((c) => [c.code, c]));
 
+/**
+ * Kanton-székhelyek koordinátái — az időjárás-widget ezeket használja
+ * (a kiválasztott kanton székhelyének aktuális időjárását mutatja).
+ */
+export interface CantonPoint {
+  code: string;
+  city: string; // a székhely neve, ahogy a UI-ban megjelenik
+  lat: number;
+  lng: number;
+}
+
+export const CANTON_COORDS: Record<string, CantonPoint> = {
+  ZH: { code: "ZH", city: "Zürich", lat: 47.3769, lng: 8.5417 },
+  BE: { code: "BE", city: "Bern", lat: 46.948, lng: 7.4474 },
+  LU: { code: "LU", city: "Luzern", lat: 47.0502, lng: 8.3093 },
+  UR: { code: "UR", city: "Altdorf", lat: 46.8803, lng: 8.6444 },
+  SZ: { code: "SZ", city: "Schwyz", lat: 47.0207, lng: 8.653 },
+  OW: { code: "OW", city: "Sarnen", lat: 46.8959, lng: 8.2456 },
+  NW: { code: "NW", city: "Stans", lat: 46.958, lng: 8.366 },
+  GL: { code: "GL", city: "Glarus", lat: 47.0404, lng: 9.068 },
+  ZG: { code: "ZG", city: "Zug", lat: 47.1662, lng: 8.5155 },
+  FR: { code: "FR", city: "Fribourg", lat: 46.8065, lng: 7.1619 },
+  SO: { code: "SO", city: "Solothurn", lat: 47.2088, lng: 7.5323 },
+  BS: { code: "BS", city: "Basel", lat: 47.5596, lng: 7.5886 },
+  BL: { code: "BL", city: "Liestal", lat: 47.484, lng: 7.734 },
+  SH: { code: "SH", city: "Schaffhausen", lat: 47.697, lng: 8.6349 },
+  AR: { code: "AR", city: "Herisau", lat: 47.3858, lng: 9.2792 },
+  AI: { code: "AI", city: "Appenzell", lat: 47.33, lng: 9.409 },
+  SG: { code: "SG", city: "St. Gallen", lat: 47.4245, lng: 9.3767 },
+  GR: { code: "GR", city: "Chur", lat: 46.8499, lng: 9.5329 },
+  AG: { code: "AG", city: "Aarau", lat: 47.3925, lng: 8.0442 },
+  TG: { code: "TG", city: "Frauenfeld", lat: 47.5536, lng: 8.8987 },
+  TI: { code: "TI", city: "Bellinzona", lat: 46.1944, lng: 9.0244 },
+  VD: { code: "VD", city: "Lausanne", lat: 46.5197, lng: 6.6323 },
+  VS: { code: "VS", city: "Sion", lat: 46.2294, lng: 7.3589 },
+  NE: { code: "NE", city: "Neuchâtel", lat: 46.992, lng: 6.931 },
+  GE: { code: "GE", city: "Genève", lat: 46.2044, lng: 6.1432 },
+  JU: { code: "JU", city: "Delémont", lat: 47.3667, lng: 7.35 },
+};
+
+/** Kanton-kód (vagy "all") → koordináta-pont. Alapértelmezés: Zürich. */
+export function cantonPoint(code: string | null | undefined): CantonPoint {
+  if (code && code !== "all" && CANTON_COORDS[code]) return CANTON_COORDS[code];
+  return CANTON_COORDS.ZH;
+}
+
 /** Diakritika-mentes, kisbetűs forma (Zürich → zurich, Genève → geneve). */
 function normalize(s: string): string {
   return s
