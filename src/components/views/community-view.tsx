@@ -103,9 +103,9 @@ function EventsList({ events }: { events: KintiEvent[] }) {
 
   if (events.length === 0) return <Empty label="Nincs közelgő esemény." />;
 
-  // Hero = a SOROS következő esemény (az events már dátum szerint növekvő).
-  const todayIso = new Date().toISOString().slice(0, 10);
-  const hero = events.find((e) => (e.eventDate ?? "") >= todayIso) ?? events[0];
+  // Hero = a LEGTÖBB „Megyek"-et kapott esemény (szerver-oldali going szerint,
+  // ami a valós RSVP-k száma). Holtversenynél a soros következő.
+  const hero = [...events].sort((a, b) => b.going - a.going)[0];
   const rest = events.filter((e) => e.id !== hero.id);
 
   return (
