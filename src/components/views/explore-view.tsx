@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -141,6 +142,27 @@ export function ExploreView({
             Mentett kedvencek
           </span>
         </button>
+      </div>
+
+      {/* Self-service CTA — itt pörög fel a Szaknévsor */}
+      <div className="px-5">
+        <Link
+          href="/szaknevsor/uj"
+          className="flex items-center gap-3 rounded-card border border-primary/25 bg-primary-soft px-4 py-3 shadow-card transition active:scale-[0.99]"
+        >
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary text-white">
+            <Icon name="plus" size={17} strokeWidth={2.6} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
+              Itt a vállalkozásod? Add hozzá ingyen
+            </span>
+            <span className="block text-[11.5px] text-ink-muted">
+              Nincs regisztráció — email-megerősítés, és 1 perc alatt fent vagy.
+            </span>
+          </span>
+          <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
+        </Link>
       </div>
 
       {/* A kategória-pillek list-módban itt fent; map-módban a térképre úsztatva. */}

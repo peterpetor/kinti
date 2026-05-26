@@ -27,6 +27,7 @@ interface PurgeResult {
   draftsDeleted: number;
   postsDeleted: number;
   reviewDraftsDeleted: number;
+  businessSubmissionsDeleted: number;
   expiryWarningsSent: number;
   expiryWarningErrors: number;
   ranAt: string;
@@ -183,6 +184,11 @@ async function runPurge(env: Env): Promise<PurgeResult> {
     .prepare("DELETE FROM review_drafts WHERE expires_at <= datetime('now')")
     .run();
 
+  // 3/b) Meg nem erősített vállalkozás-beküldések takarítása (24h után)
+  const bizSubsRes = await db
+    .prepare("DELETE FROM business_submissions WHERE expires_at <= datetime('now')")
+    .run();
+
   // 4) Lejárati figyelmeztető emailek küldése (3 napon belül lejáró, még nem értesített)
   let expiryWarningsSent = 0;
   let expiryWarningErrors = 0;
@@ -222,6 +228,7 @@ async function runPurge(env: Env): Promise<PurgeResult> {
     draftsDeleted: draftsRes.meta.changes ?? 0,
     postsDeleted: postsRes.meta.changes ?? 0,
     reviewDraftsDeleted: reviewDraftsRes.meta.changes ?? 0,
+    businessSubmissionsDeleted: bizSubsRes.meta.changes ?? 0,
     expiryWarningsSent,
     expiryWarningErrors,
     ranAt: new Date().toISOString(),

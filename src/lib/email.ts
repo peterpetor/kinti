@@ -465,6 +465,75 @@ export async function sendEventAdminModerationEmail(
   }
 }
 
+// --- Self-service vállalkozás-beküldés: megerősítő email --------------------
+
+interface BusinessConfirmEmailArgs {
+  to: string;
+  businessName: string;
+  /** Teljes URL — pl. https://kinti.app/api/business/confirm/<token>. */
+  confirmUrl: string;
+  confirmExpiresAt: string;
+}
+
+export async function sendBusinessConfirmationEmail(
+  args: BusinessConfirmEmailArgs,
+): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const expiresHu = formatHu(args.confirmExpiresAt);
+  const subject = "Erősítsd meg a vállalkozásod a kinti.app Szaknévsorban";
+
+  const text = `Szia!
+
+Megkaptuk a vállalkozásod a kinti Szaknévsorba:
+  "${args.businessName}"
+
+A publikáláshoz erősítsd meg egy kattintással:
+  ${args.confirmUrl}
+
+Amint rákattintasz, a vállalkozásod AZONNAL megjelenik a Szaknévsorban — nincs várakozás.
+
+A megerősítő link ${expiresHu}-ig érvényes. Ha lemaradsz róla, csak küldd be újra.
+
+Ha nem te küldted be ezt a vállalkozást, hagyd figyelmen kívül.
+
+Üdv,
+kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Egy kattintással fent a Szaknévsorban: ${args.businessName}`,
+    body: `
+      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
+        Szia 👋
+      </p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
+        Megkaptuk a vállalkozásod a kinti <strong>Szaknévsorba</strong>:
+      </p>
+      <p style="margin:0 0 20px;padding:12px 14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;font-size:14.5px;font-weight:700;color:#0e1f17;">
+        ${escapeHtml(args.businessName)}
+      </p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
+        A publikáláshoz erősítsd meg egy kattintással — utána <strong>azonnal</strong>
+        megjelenik a Szaknévsorban:
+      </p>
+      <p style="margin:0 0 20px;">
+        ${button(args.confirmUrl, "Vállalkozásom megerősítése →")}
+      </p>
+      <p style="margin:0 0 16px;font-size:12.5px;line-height:1.6;color:#5c6d63;">
+        A megerősítő link <strong>${escapeHtml(expiresHu)}-ig</strong> érvényes.
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        Ha nem te küldted be ezt a vállalkozást, hagyd figyelmen kívül — semmi sem
+        kerül ki a megerősítésed nélkül.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 function formatHu(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;

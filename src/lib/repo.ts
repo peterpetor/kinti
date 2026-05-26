@@ -1314,3 +1314,184 @@ export async function getDashboard(businessId: string): Promise<DashboardResult 
 
   return { business, stats };
 }
+
+// ---------------------------------------------------------------------------
+// Self-service vállalkozás-beküldés (account nélkül, email-megerősítéssel).
+// ---------------------------------------------------------------------------
+
+interface BusinessSubmissionRow {
+  id: string;
+  name: string;
+  category_id: string;
+  category_label: string | null;
+  address: string | null;
+  canton_code: string;
+  phone: string | null;
+  email: string;
+  blurb: string | null;
+  confirm_token: string;
+  expires_at: string;
+  created_at: string;
+  terms_version: string | null;
+  accepted_terms_at: string | null;
+  age_confirmed: number;
+  ip_hash: string | null;
+}
+
+export interface BusinessSubmission {
+  id: string;
+  name: string;
+  categoryId: string;
+  categoryLabel: string | null;
+  address: string | null;
+  cantonCode: string;
+  phone: string | null;
+  email: string;
+  blurb: string | null;
+}
+
+function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
+  return {
+    id: r.id,
+    name: r.name,
+    categoryId: r.category_id,
+    categoryLabel: r.category_label,
+    address: r.address,
+    cantonCode: r.canton_code,
+    phone: r.phone,
+    email: r.email,
+    blurb: r.blurb,
+  };
+}
+
+export interface BusinessSubmissionInput {
+  id: string;
+  name: string;
+  categoryId: string;
+  categoryLabel: string | null;
+  address: string | null;
+  cantonCode: string;
+  phone: string | null;
+  email: string;
+  blurb: string | null;
+  confirmToken: string;
+  expiresAt: string;
+  termsVersion: string;
+  acceptedTermsAt: string;
+  ageConfirmed: number;
+  ipHash: string | null;
+}
+
+export async function createBusinessSubmission(input: BusinessSubmissionInput): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO business_submissions
+       (id, name, category_id, category_label, address, canton_code, phone, email, blurb,
+        confirm_token, expires_at, terms_version, accepted_terms_at, age_confirmed, ip_hash)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      input.id,
+      input.name,
+      input.categoryId,
+      input.categoryLabel,
+      input.address,
+      input.cantonCode,
+      input.phone,
+      input.email.toLowerCase(),
+      input.blurb,
+      input.confirmToken,
+      input.expiresAt,
+      input.termsVersion,
+      input.acceptedTermsAt,
+      input.ageConfirmed,
+      input.ipHash,
+    )
+    .run();
+}
+
+/** Confirm-token alapján — csak ha még nem járt le. */
+export async function getBusinessSubmissionByConfirmToken(
+  confirmToken: string,
+): Promise<BusinessSubmission | null> {
+  const row = await getDB()
+    .prepare(
+      `SELECT * FROM business_submissions
+       WHERE confirm_token = ? AND expires_at > datetime('now')`,
+    )
+    .bind(confirmToken)
+    .first<BusinessSubmissionRow>();
+  return row ? toBusinessSubmission(row) : null;
+}
+
+export async function deleteBusinessSubmission(id: string): Promise<void> {
+  await getDB().prepare("DELETE FROM business_submissions WHERE id = ?").bind(id).run();
+}
+
+/** Lejárt (nem megerősített) beküldések takarítása (cron / lazy). */
+export async function purgeExpiredBusinessSubmissions(): Promise<number> {
+  const res = await getDB()
+    .prepare("DELETE FROM business_submissions WHERE expires_at <= datetime('now')")
+    .run();
+  return res.meta.changes ?? 0;
+}
+
+/** Hány vállalkozást küldött be ez az email vagy IP az elmúlt 24 órában. */
+export async function countRecentBusinessSubmissions(
+  email: string,
+  ipHash: string | null,
+): Promise<number> {
+  const res = await getDB()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM business_submissions
+       WHERE (lower(email) = ? OR (ip_hash IS NOT NULL AND ip_hash = ?))
+         AND created_at >= datetime('now', '-24 hours')`,
+    )
+    .bind(email.toLowerCase(), ipHash)
+    .first<{ n: number }>();
+  return res?.n ?? 0;
+}
+
+export interface CreateBusinessFromSubmissionInput {
+  id: string;
+  name: string;
+  categoryId: string;
+  categoryLabel: string | null;
+  address: string | null;
+  phone: string | null;
+  blurb: string | null;
+  contactEmail: string;
+  lat: number | null;
+  lng: number | null;
+}
+
+/**
+ * A megerősített beküldésből publikus businesses-rekord. Azonnal él (nincs
+ * kézi jóváhagyás). A `source='self_submitted'` jelöli az eredetét, a
+ * `contact_email` NEM publikus (admin/jövőbeni claimhez tartjuk).
+ */
+export async function createBusinessFromSubmission(
+  input: CreateBusinessFromSubmissionInput,
+): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO businesses
+       (id, name, category_id, category_label, address, phone, blurb,
+        contact_email, source, languages, lat, lng, pin_x, pin_y,
+        rating, reviews, featured, open_now)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'self_submitted', '["Magyar"]', ?, ?, 50, 50, 0, 0, 0, 0)`,
+    )
+    .bind(
+      input.id,
+      input.name,
+      input.categoryId,
+      input.categoryLabel,
+      input.address,
+      input.phone,
+      input.blurb,
+      input.contactEmail.toLowerCase(),
+      input.lat,
+      input.lng,
+    )
+    .run();
+}
