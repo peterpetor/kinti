@@ -5,6 +5,7 @@ import { getBusinessById, getReviewsByBusiness } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
+import { ProfileHeaderActions, ProfileShareButton } from "@/components/views/profile-action-buttons";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -76,12 +77,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
             <Icon name="arrowLeft" size={18} strokeWidth={2.2} />
           </Link>
           <span className="flex-1" />
-          <span className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-white/90 text-ink backdrop-blur-md">
-            <Icon name="share" size={17} />
-          </span>
-          <span className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-white/90 text-accent backdrop-blur-md">
-            <Icon name="heart" size={17} strokeWidth={2.2} />
-          </span>
+          <ProfileHeaderActions businessId={b.id} businessName={b.name} />
         </div>
       </div>
 
@@ -138,9 +134,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           >
             <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
           </a>
-          <span className="grid h-[46px] w-[50px] place-items-center rounded-[14px] bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]">
-            <Icon name="send" size={16} strokeWidth={2.2} />
-          </span>
+          <ProfileShareButton businessName={b.name} />
         </div>
 
         {/* erről a helyről */}
