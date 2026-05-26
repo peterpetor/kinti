@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Icon, KintiLogo } from "@/components/ui";
 import { getBulletinPostByManageToken } from "@/lib/repo";
 import { ManageActions } from "@/components/views/manage-actions";
+import { RenewButton } from "@/components/views/renew-button";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -15,9 +16,6 @@ export const metadata = { title: "Hirdetés kezelése" };
  * Auth nincs — a token MAGA a bizonyíték. A token 122 bit entrópiájú UUID,
  * gyakorlatilag brute-force-hatatlan. Az URL-t a megerősítő emailben kapta a
  * felhasználó, és csak az ő postafiókjában van.
- *
- * Itt jelenleg törlést kínálunk; a szerkesztést későbbi iterációban (ha sok
- * felhasználó használja, és kéri).
  */
 export default async function HirdetesKezelesPage({
   params,
@@ -28,6 +26,12 @@ export default async function HirdetesKezelesPage({
   if (!post) notFound();
 
   const expiresHu = post.expiresAt ? fmtHu(post.expiresAt) : null;
+  const isExpired = post.expiresAt ? new Date(post.expiresAt) < new Date() : false;
+
+  // Lejár-e 7 napon belül (nem lejárt, de hamarosan)?
+  const expiresSoon = post.expiresAt && !isExpired
+    ? new Date(post.expiresAt) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    : false;
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col gap-5 px-6 pt-[calc(env(safe-area-inset-top)+2rem)] pb-10">
@@ -49,9 +53,14 @@ export default async function HirdetesKezelesPage({
           <span className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
             {post.kind?.label ?? "—"}
           </span>
-          {post.expiresAt && new Date(post.expiresAt) < new Date() && (
+          {isExpired && (
             <span className="ml-auto rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent">
               lejárt
+            </span>
+          )}
+          {expiresSoon && !isExpired && (
+            <span className="ml-auto rounded-md bg-[#e3a233]/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#9a6b00]">
+              hamarosan lejár
             </span>
           )}
         </div>
@@ -69,11 +78,40 @@ export default async function HirdetesKezelesPage({
         )}
 
         {expiresHu && (
-          <p className="mt-4 text-[11.5px] text-ink-faint">
-            Automatikus lejárat: <span className="font-semibold text-ink-muted">{expiresHu}</span>
+          <p className={`mt-4 text-[11.5px] ${isExpired ? "text-accent font-semibold" : "text-ink-faint"}`}>
+            {isExpired ? "Lejárt:" : "Automatikus lejárat:"}{" "}
+            <span className="font-semibold text-ink-muted">{expiresHu}</span>
           </p>
         )}
       </section>
+
+      {/* Hosszabbítás szekció — csak ha van expires_at (nem seed-adat) */}
+      {post.expiresAt && post.manageToken && (
+        <section className={`rounded-card border p-5 shadow-card ${isExpired ? "border-accent/30 bg-accent/5" : expiresSoon ? "border-[#e3a233]/40 bg-[#fff8ed]" : "border-line bg-surface"}`}>
+          <div className="flex items-start gap-3">
+            <div className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-lg ${isExpired ? "bg-accent/10" : "bg-[#e3a233]/15"}`}>
+              ⏰
+            </div>
+            <div className="flex-1">
+              <p className={`text-[13.5px] font-bold ${isExpired ? "text-accent" : "text-[#9a6b00]"}`}>
+                {isExpired
+                  ? "Ez a hirdetés lejárt"
+                  : expiresSoon
+                    ? "A hirdetésed hamarosan lejár"
+                    : "Hirdetés meghosszabbítása"}
+              </p>
+              <p className="mt-0.5 text-[12px] leading-relaxed text-ink-muted">
+                {isExpired
+                  ? "A hirdetés már nem látható a közösség számára. Ha szeretnéd, meghosszabbíthatod az előző lejárattól számítva újabb 30 nappal."
+                  : "Egyetlen kattintással meghosszabbíthatod újabb 30 nappal — nem kell semmit újra megírni!"}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4">
+            <RenewButton token={params.token} />
+          </div>
+        </section>
+      )}
 
       {post.kind && (
         <ManageActions token={params.token} />

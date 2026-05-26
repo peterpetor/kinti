@@ -26,3 +26,10 @@ database_id = "ec70d0d2-1b7c-416d-a2c6-c5d15c3e59a2"
 
 [observability]
 enabled = true
+
+# Szükséges titkok a lejárati figyelmeztető emailekhez.
+# Beállítás: cd workers/cron-purge && npx wrangler secret put RESEND_API_KEY
+# [vars] -- ezeket titkosítva tároljuk, nem clear-text config:
+#   RESEND_API_KEY  — Resend API kulcs
+#   EMAIL_FROM      — pl. "Kinti <info@kinti.app>"
+#   SITE_URL        — pl. "https://kinti.app"

@@ -87,6 +87,12 @@ export interface BulletinPost {
   cantonCode: string | null;
   /** Strukturált ár (egész CHF) — rendezéshez. NULL, ha nincs ára. */
   price: number | null;
+  /** A feladó email-je — a kezelő oldalon mutatható. */
+  email: string | null;
+  /** Manage-token — a kezelő oldal URL-jéhez. */
+  manageToken: string | null;
+  /** Elküldték-e már a lejárati figyelmeztető emailt. */
+  expiryWarningSent: boolean;
   /** Csatolt taxonómia (JOIN bulletin_kinds). */
   kind?: BulletinKind;
 }
