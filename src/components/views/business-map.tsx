@@ -47,7 +47,9 @@ export function BusinessMap({
   );
 
   return (
-    <div className={cn("relative", className)}>
+    // `isolate` → saját stacking-context, hogy a Leaflet magas z-index-ű
+    // rétegei (panek, vezérlők ~1000) NE ússzanak a lebegő TabBar fölé.
+    <div className={cn("relative isolate", className)}>
       <MapContainer
         center={fallbackCenter}
         zoom={fallbackZoom}
