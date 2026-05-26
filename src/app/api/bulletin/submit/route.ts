@@ -9,6 +9,7 @@ import {
   hashIp,
 } from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+import { isDisposableEmail } from "@/lib/disposable-emails";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -40,6 +41,14 @@ export async function POST(req: Request) {
   if (!validation.ok) {
     return NextResponse.json(
       { error: "Hibás bemenet.", details: validation.errors },
+      { status: 400 },
+    );
+  }
+
+  // Eldobható email címek kizárása
+  if (isDisposableEmail(validation.value.email)) {
+    return NextResponse.json(
+      { error: "Eldobható vagy ideiglenes e-mail címek használata nem megengedett. Kérjük, használj valódi e-mail címet!" },
       { status: 400 },
     );
   }
