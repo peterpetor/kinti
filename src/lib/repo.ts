@@ -115,6 +115,10 @@ interface BulletinPostRow {
   kind_label: string | null;
   kind_color: string | null;
   kind_sort: number | null;
+  // Manage & warning fields
+  email: string | null;
+  manage_token: string | null;
+  expiry_warning_sent: number | null;
 }
 
 interface BulletinDraftRow {
@@ -215,6 +219,9 @@ function toBulletinPost(r: BulletinPostRow): BulletinPost {
     publishedAt: r.published_at,
     cantonCode: r.canton_code,
     price: r.price,
+    email: r.email,
+    manageToken: r.manage_token,
+    expiryWarningSent: bool(r.expiry_warning_sent),
     kind: r.kind_label
       ? { id: r.kind_id, label: r.kind_label, color: r.kind_color, sortOrder: r.kind_sort ?? 0 }
       : undefined,
@@ -725,6 +732,68 @@ export async function deleteBulletinPostByManageToken(manageToken: string): Prom
     .bind(manageToken)
     .run();
   return (res.meta.changes ?? 0) > 0;
+}
+
+/**
+ * Hirdetés lejárati idejét meghosszabbítja +30 nappal, és visszaállítja
+ * a figyelmeztető email jelzőt (expiry_warning_sent = 0).
+ * Csak a manage-token tulajdonosa hívhatja (ő kapta emailben).
+ */
+export async function renewBulletinPost(manageToken: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare(
+      `UPDATE bulletin_posts
+       SET expires_at = datetime(expires_at, '+30 days'),
+           expiry_warning_sent = 0
+       WHERE manage_token = ?
+         AND expires_at IS NOT NULL
+         AND expires_at > datetime('now', '-7 days')`, // ne hosszabbítsuk nagyon régi lejártakat
+    )
+    .bind(manageToken)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+/**
+ * Visszaadja azokat a publikus hirdetéseket, amelyek 3 napon belül lejárnak
+ * és még nem kaptak figyelmeztetőt (expiry_warning_sent = 0).
+ * A cron job használja.
+ */
+export interface ExpiringBulletinRow {
+  id: string;
+  title: string;
+  email: string;
+  poster: string | null;
+  manage_token: string;
+  expires_at: string;
+}
+
+export async function getBulletinPostsExpiringSoon(
+  db: D1Database,
+): Promise<ExpiringBulletinRow[]> {
+  const { results } = await db
+    .prepare(
+      `SELECT id, title, email, poster, manage_token, expires_at
+       FROM bulletin_posts
+       WHERE is_pending = 0
+         AND expiry_warning_sent = 0
+         AND expires_at IS NOT NULL
+         AND expires_at > datetime('now')
+         AND expires_at <= datetime('now', '+3 days')`,
+    )
+    .all<ExpiringBulletinRow>();
+  return results;
+}
+
+/** Megjelöli, hogy a figyelmeztető emailt elküldtük (expiry_warning_sent = 1). */
+export async function markBulletinExpiryWarningSent(
+  db: D1Database,
+  id: string,
+): Promise<void> {
+  await db
+    .prepare("UPDATE bulletin_posts SET expiry_warning_sent = 1 WHERE id = ?")
+    .bind(id)
+    .run();
 }
 
 /**
