@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
+import { matchesCanton } from "@/lib/cantons";
 
 /**
  * ExploreView (Szaknévsor) — szerverről kapja a teljes adatkészletet, és
@@ -47,7 +48,9 @@ export function ExploreView({
         !needle ||
         b.name.toLowerCase().includes(needle) ||
         (b.categoryLabel ?? "").toLowerCase().includes(needle) ||
-        (b.address ?? "").toLowerCase().includes(needle);
+        (b.address ?? "").toLowerCase().includes(needle) ||
+        // Svájci kanton-keresés: pl. "Aargau", "Zürich", "ZH", "Tessin", …
+        matchesCanton({ address: b.address ?? null }, needle);
       return byCat && byText;
     });
   }, [businesses, cat, q]);
