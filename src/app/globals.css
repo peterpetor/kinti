@@ -231,40 +231,37 @@
   border-color: rgb(var(--accent)) transparent transparent transparent;
 }
 
-/* MapLibre popup → Liquid Glass kártya stílusra hangolva. */
-.maplibregl-popup-content {
-  background: rgb(var(--surface)) !important;
+/* Leaflet popup → Liquid Glass kártya stílusra hangolva. */
+.leaflet-popup-content-wrapper {
+  background: rgb(var(--surface));
+  border-radius: 18px;
+  box-shadow: var(--shadow-pop);
   border: 0.5px solid rgb(var(--border-channel) / var(--border-strong-alpha));
-  border-radius: 18px !important;
-  box-shadow: var(--shadow-pop) !important;
-  padding: 0 !important;
-  width: 260px;
+  padding: 0;
 }
-.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
-.maplibregl-popup-anchor-top .maplibregl-popup-tip {
-  border-top-color: rgb(var(--surface)) !important;
-  border-bottom-color: rgb(var(--surface)) !important;
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+  width: 240px !important;
 }
-.maplibregl-popup-close-button {
+.leaflet-popup-tip {
+  background: rgb(var(--surface));
+  border: 0.5px solid rgb(var(--border-channel) / var(--border-strong-alpha));
+}
+.leaflet-popup-close-button {
   color: rgb(var(--text-muted)) !important;
-  font-size: 18px !important;
-  padding: 4px 8px !important;
+  padding: 8px 8px 0 0 !important;
 }
-
-/* Attribúció — diszkrét, glass-feel */
-.maplibregl-ctrl-attrib {
-  background: rgb(var(--surface) / 0.85) !important;
+.leaflet-control-attribution {
+  background: rgb(var(--surface) / 0.78) !important;
   backdrop-filter: blur(8px);
-  font-size: 9.5px !important;
-  padding: 2px 6px !important;
-  border-radius: 8px !important;
+  font-size: 10px !important;
+  border-radius: 8px 0 0 0;
 }
-.maplibregl-ctrl-attrib a {
+.leaflet-control-attribution a {
   color: rgb(var(--text-muted)) !important;
 }
-
-/* A térkép tartály háttere, amíg a tile-ek töltődnek. */
-.maplibregl-map {
+.leaflet-container {
   font-family: inherit;
   background: rgb(var(--map-land));
 }
