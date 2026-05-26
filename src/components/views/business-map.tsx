@@ -1,27 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import L from "leaflet";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import type { Business, Category } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
-
-import "leaflet/dist/leaflet.css";
+import { LeafletEngine } from "./map-engine-leaflet";
+import { MaplibreEngine } from "./map-engine-maplibre";
 
 /**
- * BusinessMap — raszteres Leaflet-térkép app-réteggel (mockup-kompozíció).
+ * BusinessMap — wrapper: WebGL-detektálás + motor-választás + közös overlay-ek.
  *
- * Miért Leaflet (raszter) és nem MapLibre (vektor)? A vektoros motorok WebGL-t
- * igényelnek, ami sok környezetben (VM, távoli asztal, gyenge GPU) nem elérhető
- * → üres térkép. A Leaflet sima `<img>` csempéket rajzol a DOM-ba, WebGL nélkül,
- * ezért MINDENHOL megbízhatóan renderel.
+ *   • Ha van működő WebGL → MaplibreEngine (szép, sima vektor).
+ *   • Ha nincs / futásidőben elhasal → LeafletEngine (raszter, mindig megy).
  *
- * Csempék: CartoDB Positron — a legtisztább, minimalista, világos stílus
- * (ingyenes, kulcs nélkül). A pinek jól kiugranak róla.
+ * Közös overlay-ek (motortól független): hely-pill, kategória-pillek,
+ * kiválasztott vállalkozás-kártya. A motor a térkép-vásznat + markereket +
+ * lokáció/zoom vezérlőket adja.
  */
 export interface BusinessMapProps {
   businesses: Business[];
@@ -29,13 +26,30 @@ export interface BusinessMapProps {
   activeCat?: string;
   onSelectCat?: (id: string) => void;
   locationLabel?: string;
-  /** [lat, lng] (Leaflet). */
+  /** [lat, lng] (wrapper konvenció — a maplibre motor belül konvertál). */
   fallbackCenter?: [number, number];
   fallbackZoom?: number;
   className?: string;
 }
 
 const ZURICH_CENTER: [number, number] = [47.378, 8.535];
+
+type EngineChoice = "maplibre" | "leaflet";
+
+/** Egyszerű kliens-oldali WebGL-tesztelő. */
+function hasWebGL(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const canvas = document.createElement("canvas");
+    const gl =
+      canvas.getContext("webgl2") ||
+      canvas.getContext("webgl") ||
+      (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
+    return !!gl;
+  } catch {
+    return false;
+  }
+}
 
 export function BusinessMap({
   businesses,
@@ -59,6 +73,22 @@ export function BusinessMap({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = located.find((b) => b.id === selectedId) ?? defaultBiz ?? null;
 
+  // Engine választás — kliens-only. Default Leaflet (SSR-safe), majd a mount
+  // utáni effekt WebGL-tesztet futtat és átvált MapLibre-re, ha lehet.
+  const [engine, setEngine] = useState<EngineChoice>("leaflet");
+  useEffect(() => {
+    if (hasWebGL()) setEngine("maplibre");
+  }, []);
+
+  const handleSelectMarker = useCallback((id: string) => setSelectedId(id), []);
+  // Ha a maplibre runtime elhasal (timeout, WebGL-hiba), automatikus fallback.
+  const handleMaplibreFail = useCallback((reason: string) => {
+    if (typeof console !== "undefined") {
+      console.warn("[kinti map] MapLibre fallback → Leaflet:", reason);
+    }
+    setEngine("leaflet");
+  }, []);
+
   useEffect(() => {
     if (selectedId && !located.some((b) => b.id === selectedId)) {
       setSelectedId(null);
@@ -67,33 +97,24 @@ export function BusinessMap({
 
   return (
     <div className={cn("relative isolate overflow-hidden rounded-card", className)}>
-      <MapContainer
-        center={fallbackCenter}
-        zoom={fallbackZoom}
-        scrollWheelZoom
-        zoomControl={false}
-        className="h-full w-full"
-        style={{ background: "rgb(var(--map-land))" }}
-      >
-        <TileLayer
-          attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          subdomains="abcd"
-          maxZoom={20}
+      {engine === "maplibre" ? (
+        <MaplibreEngine
+          located={located}
+          selectedId={selected?.id ?? null}
+          onSelectMarker={handleSelectMarker}
+          fallbackCenter={fallbackCenter}
+          fallbackZoom={fallbackZoom}
+          onFail={handleMaplibreFail}
         />
-
-        {located.map((b) => (
-          <Marker
-            key={b.id}
-            position={[b.lat!, b.lng!]}
-            icon={pinFor(b, b.id === selected?.id)}
-            eventHandlers={{ click: () => setSelectedId(b.id) }}
-          />
-        ))}
-
-        <FitToMarkers businesses={located} />
-        <MapControls />
-      </MapContainer>
+      ) : (
+        <LeafletEngine
+          located={located}
+          selectedId={selected?.id ?? null}
+          onSelectMarker={handleSelectMarker}
+          fallbackCenter={fallbackCenter}
+          fallbackZoom={fallbackZoom}
+        />
+      )}
 
       {/* Bal-felül: hely-pill */}
       <div className="pointer-events-none absolute left-3 top-3 z-[10]">
@@ -189,106 +210,5 @@ function SelectedCard({ business: b }: { business: Business }) {
         <Icon name="arrowRight" size={16} strokeWidth={2.4} />
       </span>
     </Link>
-  );
-}
-
-// --- pin (divIcon) ----------------------------------------------------------
-
-const ICON_CACHE = new Map<string, L.DivIcon>();
-
-function pinFor(b: Business, active: boolean): L.DivIcon {
-  const key = `${b.categoryId ?? "none"}-${b.featured ? "f" : "d"}-${active ? "a" : "n"}`;
-  const cached = ICON_CACHE.get(key);
-  if (cached) return cached;
-
-  const icon = L.divIcon({
-    className: "",
-    html: `<div class="kinti-pin-v2 ${b.featured ? "kinti-pin-v2--featured" : ""} ${active ? "kinti-pin-v2--active" : ""}">
-             <span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId)}</span>
-           </div>`,
-    iconSize: [32, 42],
-    iconAnchor: [16, 42],
-    popupAnchor: [0, -38],
-  });
-  ICON_CACHE.set(key, icon);
-  return icon;
-}
-
-// --- vezérlők ---------------------------------------------------------------
-
-function FitToMarkers({ businesses }: { businesses: Business[] }) {
-  const map = useMap();
-  const lastSig = useRef<string>("");
-  useEffect(() => {
-    const sig = businesses.map((b) => b.id).join("|");
-    if (sig === lastSig.current) return;
-    lastSig.current = sig;
-
-    if (businesses.length === 0) return;
-    if (businesses.length === 1) {
-      const [b] = businesses;
-      map.setView([b.lat!, b.lng!], 15, { animate: true });
-      return;
-    }
-    const bounds = L.latLngBounds(
-      businesses.map((b) => [b.lat!, b.lng!] as [number, number]),
-    );
-    map.fitBounds(bounds, { padding: [50, 70], maxZoom: 16, animate: true });
-  }, [businesses, map]);
-  return null;
-}
-
-function MapControls() {
-  const map = useMap();
-  const [locating, setLocating] = useState(false);
-
-  function handleLocate() {
-    if (typeof navigator === "undefined" || !navigator.geolocation) return;
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        map.flyTo([pos.coords.latitude, pos.coords.longitude], 15, { duration: 0.6 });
-        setLocating(false);
-      },
-      () => setLocating(false),
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 60_000 },
-    );
-  }
-
-  return (
-    <div className="leaflet-top leaflet-right" style={{ pointerEvents: "none" }}>
-      <div
-        className="leaflet-control"
-        style={{ pointerEvents: "auto", margin: "12px 12px 0 0", display: "grid", gap: 8 }}
-      >
-        <button
-          type="button"
-          aria-label="Saját helyem"
-          onClick={handleLocate}
-          className={cn(
-            "glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card",
-            locating && "animate-pulse",
-          )}
-        >
-          <Icon name="nav" size={16} strokeWidth={2.2} className="text-primary" />
-        </button>
-        <button
-          type="button"
-          aria-label="Nagyítás"
-          onClick={() => map.zoomIn()}
-          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card"
-        >
-          <Icon name="plus" size={16} strokeWidth={2.4} />
-        </button>
-        <button
-          type="button"
-          aria-label="Kicsinyítés"
-          onClick={() => map.zoomOut()}
-          className="glass grid h-10 w-10 place-items-center rounded-[12px] text-ink shadow-card"
-        >
-          <span className="text-[18px] font-extrabold leading-none">−</span>
-        </button>
-      </div>
-    </div>
   );
 }

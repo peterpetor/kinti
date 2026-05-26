@@ -24,6 +24,7 @@
     "@clerk/nextjs": "^6.9.6",
     "aws4fetch": "^1.0.20",
     "leaflet": "^1.9.4",
+    "maplibre-gl": "^5.24.0",
     "next": "14.2.29",
     "react": "18.3.1",
     "react-dom": "18.3.1",
