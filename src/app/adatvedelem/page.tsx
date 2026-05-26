@@ -71,6 +71,14 @@ export default function AdatvedelemPage() {
         <li>Email-cím (csak a megerősítő és kezelő linkek küldéséhez — NEM jelenik meg a hirdetésen)</li>
         <li>Hirdetés szövege és kategóriája</li>
         <li>Opcionális megjelenő név</li>
+        <li><strong>Új folyamatok</strong>:
+          <ul>
+            <li><strong>Kapcsolatfelvétel</strong>: a látogató neve és e‑mail címe továbbítódik a hirdetőnek e‑mailben.</li>
+            <li><strong>Hirdetés‑kép feltöltés</strong>: a képek a Cloudflare R2 tárolóba kerülnek, a kulcsot az adatbázisban tároljuk.</li>
+            <li><strong>Esemény RSVP IP‑hash</strong>: az RSVP‑k IP-címei SHA‑256 hash‑ként kerülnek tárolásra.</li>
+            <li><strong>Mentett hirdetések</strong>: a felhasználó által mentett hirdetések <code>localStorage</code>-ban tárolódnak, csak kliens‑oldalon.</li>
+          </ul>
+        </li>
       </ul>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás</li>
