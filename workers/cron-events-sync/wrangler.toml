@@ -27,6 +27,7 @@ crons = ["47 4 * * *"]
 binding = "DB"
 database_name = "kinti-db"
 database_id = "ec70d0d2-1b7c-416d-a2c6-c5d15c3e59a2"
+migrations_dir = "../../db/migrations"
 
 # A feedeket már a D1 `event_feeds` táblából olvassuk (admin felület:
 # /admin/feeds a Pages projektben). Itt nem kell env-változó. A
