@@ -80,6 +80,8 @@ interface EventRow {
   going: number;
   tag: string | null;
   color: string | null;
+  /** A JOIN-olt RSVP-darabszám (LEFT JOIN event_rsvps). */
+  rsvp_count?: number;
 }
 
 interface BulletinKindRow {
@@ -171,7 +173,8 @@ function toEvent(r: EventRow): KintiEvent {
     dateWeekday: r.date_weekday,
     startTime: r.start_time,
     venue: r.venue,
-    going: r.going,
+    // A megjelenített „fő megy" = seedelt base + tényleges RSVP-k.
+    going: r.going + (r.rsvp_count ?? 0),
     tag: r.tag,
     color: r.color,
   };
@@ -316,15 +319,56 @@ export interface EventQuery {
 
 export async function getEvents(opts: EventQuery = {}): Promise<KintiEvent[]> {
   const binds: unknown[] = [];
-  let sql = "SELECT * FROM events";
-  if (opts.upcoming) sql += " WHERE event_date >= date('now')";
-  sql += " ORDER BY event_date ASC";
+  let sql = `
+    SELECT e.*, COALESCE(r.cnt, 0) AS rsvp_count
+    FROM events e
+    LEFT JOIN (
+      SELECT event_id, COUNT(*) AS cnt FROM event_rsvps GROUP BY event_id
+    ) r ON r.event_id = e.id`;
+  if (opts.upcoming) sql += " WHERE e.event_date >= date('now')";
+  sql += " ORDER BY e.event_date ASC";
   if (opts.limit) {
     sql += " LIMIT ?";
     binds.push(opts.limit);
   }
   const { results } = await getDB().prepare(sql).bind(...binds).all<EventRow>();
   return results.map(toEvent);
+}
+
+/**
+ * „Megyek" RSVP rögzítése egy eseményre. 1 ip_hash = 1 RSVP / esemény
+ * (összetett PK + INSERT OR IGNORE). Visszaadja, hogy most került-e be (added),
+ * és a frissített összesített létszámot (base going + RSVP-k).
+ */
+export async function addEventRsvp(
+  eventId: string,
+  ipHash: string,
+): Promise<{ ok: boolean; added: boolean; total: number } > {
+  const db = getDB();
+  const event = await db
+    .prepare("SELECT going FROM events WHERE id = ?")
+    .bind(eventId)
+    .first<{ going: number }>();
+  if (!event) return { ok: false, added: false, total: 0 };
+
+  const res = await db
+    .prepare(
+      "INSERT OR IGNORE INTO event_rsvps (event_id, ip_hash) VALUES (?, ?)",
+    )
+    .bind(eventId, ipHash)
+    .run();
+  const added = (res.meta.changes ?? 0) > 0;
+
+  const cntRow = await db
+    .prepare("SELECT COUNT(*) AS cnt FROM event_rsvps WHERE event_id = ?")
+    .bind(eventId)
+    .first<{ cnt: number }>();
+
+  return {
+    ok: true,
+    added,
+    total: event.going + (cntRow?.cnt ?? 0),
+  };
 }
 
 export async function getBulletinKinds(): Promise<BulletinKind[]> {

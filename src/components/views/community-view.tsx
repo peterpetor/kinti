@@ -67,17 +67,52 @@ export function CommunityView({
 }
 
 // --- Események --------------------------------------------------------------
+
+interface RsvpState {
+  going: number;
+  voted: boolean;
+  busy: boolean;
+}
+
 function EventsList({ events }: { events: KintiEvent[] }) {
+  // Lokális RSVP-állapot eseményenként (felülírja a szerver going-ját).
+  const [rsvp, setRsvp] = useState<Record<string, RsvpState>>({});
+
+  const goingOf = (e: KintiEvent) => rsvp[e.id]?.going ?? e.going;
+  const votedOf = (e: KintiEvent) => rsvp[e.id]?.voted ?? false;
+  const busyOf = (e: KintiEvent) => rsvp[e.id]?.busy ?? false;
+
+  async function handleRsvp(e: KintiEvent) {
+    if (votedOf(e) || busyOf(e)) return;
+    setRsvp((p) => ({ ...p, [e.id]: { going: goingOf(e), voted: false, busy: true } }));
+    try {
+      const res = await fetch(`/api/events/${e.id}/rsvp`, { method: "POST" });
+      const data = (await res.json().catch(() => ({}))) as { total?: number };
+      if (res.ok) {
+        setRsvp((p) => ({
+          ...p,
+          [e.id]: { going: data.total ?? goingOf(e) + 1, voted: true, busy: false },
+        }));
+      } else {
+        setRsvp((p) => ({ ...p, [e.id]: { going: goingOf(e), voted: false, busy: false } }));
+      }
+    } catch {
+      setRsvp((p) => ({ ...p, [e.id]: { going: goingOf(e), voted: false, busy: false } }));
+    }
+  }
+
   if (events.length === 0) return <Empty label="Nincs közelgő esemény." />;
-  // „A hónap eseménye": a legtöbb résztvevővel.
-  const hero = [...events].sort((a, b) => b.going - a.going)[0];
+
+  // Hero = a SOROS következő esemény (az events már dátum szerint növekvő).
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const hero = events.find((e) => (e.eventDate ?? "") >= todayIso) ?? events[0];
   const rest = events.filter((e) => e.id !== hero.id);
 
   return (
     <>
       <article className="relative overflow-hidden rounded-[22px] p-[18px] text-white shadow-pop bg-gradient-to-br from-primary to-[#2e6a4e]">
         <span className="mb-3.5 inline-block rounded-pill bg-white/[0.18] px-2.5 py-1 text-[10.5px] font-bold tracking-wide">
-          ★ A hónap eseménye
+          ★ Kiemelt esemény
         </span>
         <div className="flex items-start gap-3.5">
           <DateChip event={hero} solid />
@@ -95,10 +130,22 @@ function EventsList({ events }: { events: KintiEvent[] }) {
         </div>
         <div className="mt-3.5 flex items-center gap-2 rounded-xl bg-white/[0.12] px-3.5 py-2.5">
           <p className="flex-1 text-[12.5px] font-semibold">
-            <strong>{hero.going} kinti</strong> jelezte, hogy megy
+            <strong>{goingOf(hero)} kinti</strong> jelezte, hogy megy
           </p>
-          <button className="rounded-pill bg-white px-3.5 py-1.5 text-[12.5px] font-bold text-primary">
-            Megyek
+          <button
+            type="button"
+            onClick={() => handleRsvp(hero)}
+            disabled={votedOf(hero) || busyOf(hero)}
+            className={cn(
+              "inline-flex items-center gap-1 rounded-pill px-3.5 py-1.5 text-[12.5px] font-bold transition",
+              votedOf(hero)
+                ? "bg-white/25 text-white"
+                : "bg-white text-primary active:scale-95",
+              busyOf(hero) && "opacity-60",
+            )}
+          >
+            {votedOf(hero) && <Icon name="check" size={12} strokeWidth={2.6} />}
+            {votedOf(hero) ? "Ott leszek" : busyOf(hero) ? "…" : "Megyek"}
           </button>
         </div>
       </article>
@@ -124,10 +171,24 @@ function EventsList({ events }: { events: KintiEvent[] }) {
               {e.title}
             </div>
             <div className="mt-0.5 text-xs text-ink-muted">
-              {e.venue} · {e.going} fő megy
+              {e.venue} · {goingOf(e)} fő megy
             </div>
           </div>
-          <Icon name="chevR" size={14} className="text-ink-muted" />
+          <button
+            type="button"
+            onClick={() => handleRsvp(e)}
+            disabled={votedOf(e) || busyOf(e)}
+            className={cn(
+              "inline-flex shrink-0 items-center gap-1 rounded-pill px-3 py-1.5 text-[11.5px] font-bold transition",
+              votedOf(e)
+                ? "bg-success/15 text-success"
+                : "bg-primary text-white active:scale-95",
+              busyOf(e) && "opacity-60",
+            )}
+          >
+            {votedOf(e) && <Icon name="check" size={11} strokeWidth={2.6} />}
+            {votedOf(e) ? "Megyek" : busyOf(e) ? "…" : "Megyek"}
+          </button>
         </div>
       ))}
     </>
