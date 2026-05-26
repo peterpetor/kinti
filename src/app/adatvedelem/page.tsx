@@ -34,10 +34,10 @@ export default function AdatvedelemPage() {
 
       <h3>2.0 Korhatár</h3>
       <p>
-        A Szolgáltatást <strong>16. életévét betöltött</strong> személyek
-        vehetik igénybe (GDPR 8. cikk). Ennél fiatalabb felhasználóktól
-        tudatosan nem gyűjtünk adatot; ha mégis tudomást szerzünk ilyenről,
-        az érintett adatokat haladéktalanul töröljük.
+        A Szolgáltatást <strong>18. életévét betöltött</strong> (nagykorú)
+        személyek vehetik igénybe (Ptk. 2:10 §). Ennél fiatalabb
+        felhasználóktól tudatosan nem gyűjtünk adatot; ha mégis tudomást
+        szerzünk ilyenről, az érintett adatokat haladéktalanul töröljük.
       </p>
 
 

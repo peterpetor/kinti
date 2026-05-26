@@ -3,6 +3,8 @@
  * és a szerver-route ugyanazt érvényesítse.
  */
 
+import { findProfanityInFields } from "./profanity";
+
 /**
  * A jogi szövegek (ÁSZF + Adatkezelési Tájékoztató) jelenlegi verziója.
  * Akkor frissítsd, amikor érdemi változtatás történik a /aszf vagy a
@@ -49,7 +51,7 @@ export interface BulletinFormInput {
   website?: unknown;
   /** Kötelező: az ÁSZF + Adatkezelési Tájékoztató elfogadása. */
   acceptTerms?: unknown;
-  /** Kötelező: a feladó nyilatkozata, hogy elmúlt 16 éves (GDPR Art. 8). */
+  /** Kötelező: a feladó nyilatkozata, hogy elmúlt 18 éves (Ptk. 2:10 §). */
   ageConfirmed?: unknown;
 }
 
@@ -118,8 +120,21 @@ export function validateBulletinInput(
   if (input.ageConfirmed !== true) {
     errors.push({
       field: "ageConfirmed",
-      message: "A Szolgáltatás csak 16. életévét betöltött személyek által vehető igénybe.",
+      message: "A Szolgáltatás csak 18. életévét betöltött személyek által vehető igénybe.",
     });
+  }
+
+  // Káromkodás-szűrő (szerver-oldali). Mindegyik publikus szöveg-mezőt vizsgálja.
+  if (!errors.length) {
+    const dirty = findProfanityInFields({ title, meta, body, poster });
+    if (dirty) {
+      errors.push({
+        field: dirty.field as keyof BulletinFormInput,
+        message:
+          "A hirdetésed olyan szót tartalmaz, amit nem engedünk. " +
+          "Kérlek, fogalmazd meg másképp.",
+      });
+    }
   }
 
   if (errors.length) return { ok: false, errors };

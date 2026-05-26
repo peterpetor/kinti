@@ -366,7 +366,7 @@ export interface BulletinDraftInput {
   termsVersion: string;
   /** Az elfogadás időbélyege (ISO datetime). */
   acceptedTermsAt: string;
-  /** 1 = a feladó nyilatkozta, hogy elmúlt 16 (GDPR Art. 8). */
+  /** 1 = a feladó nyilatkozta, hogy elmúlt 18 (Ptk. 2:10 §). */
   ageConfirmed: number;
   /** SHA-256(IP) — null, ha nincs IP a kérésben (pl. localhost dev). */
   ipHash: string | null;

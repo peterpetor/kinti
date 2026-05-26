@@ -46,7 +46,7 @@ export default function SignUpPage() {
           <Link href="/adatvedelem" className="underline">
             Adatkezelési Tájékoztatót
           </Link>
-          . A szolgáltatás 16. életévét betöltött személyek által vehető igénybe.
+          . A szolgáltatás 18. életévét betöltött személyek által vehető igénybe.
         </p>
       </section>
 

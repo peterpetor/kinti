@@ -38,7 +38,7 @@ interface FormState {
   website: string;
   /** Kötelező: ÁSZF + Adatkezelési Tájékoztató elfogadása. */
   acceptTerms: boolean;
-  /** Kötelező: 16+ nyilatkozat (GDPR Art. 8). */
+  /** Kötelező: 18+ nyilatkozat (Ptk. 2:10 §). */
   ageConfirmed: boolean;
 }
 
@@ -257,14 +257,14 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         className="hidden"
       />
 
-      {/* Kötelező nyilatkozatok — GDPR Art. 8 (16+) + szabad hozzájárulás */}
+      {/* Kötelező nyilatkozatok — Ptk. 2:10 § (18+) + szabad hozzájárulás */}
       <section className="space-y-2.5 rounded-card border border-line bg-surface p-4 shadow-card">
         <Consent
           checked={form.ageConfirmed}
           onChange={(v) => setField("ageConfirmed", v)}
           error={errors.ageConfirmed}
         >
-          Kijelentem, hogy elmúltam 16 éves.
+          Kijelentem, hogy elmúltam 18 éves.
         </Consent>
         <Consent
           checked={form.acceptTerms}

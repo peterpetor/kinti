@@ -3,6 +3,8 @@
  * Egy helyen, hogy a kliens-form és a szerver-route ugyanazt érvényesítse.
  */
 
+import { findProfanityInFields } from "./profanity";
+
 /** Megerősítő link érvényessége (ms). 24 óra — utána a piszkozat törlődik. */
 export const REVIEW_CONFIRM_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -117,8 +119,22 @@ export function validateReviewInput(
     errors.push({
       field: "ageConfirmed",
       message:
-        "A Szolgáltatás csak 16. életévét betöltött személyek által vehető igénybe.",
+        "A Szolgáltatás csak 18. életévét betöltött személyek által vehető igénybe.",
     });
+  }
+
+  // Káromkodás-szűrő (szerver-oldali, kerülhetetlen). A kliens-validáció
+  // után fut, hogy ne adjon vissza zavaró duplikált hibákat.
+  if (!errors.length) {
+    const dirty = findProfanityInFields({ body, reviewerName });
+    if (dirty) {
+      errors.push({
+        field: dirty.field as keyof ReviewFormInput,
+        message:
+          "A bejegyzésed olyan szót tartalmaz, amit nem engedünk. " +
+          "Kérlek, fogalmazd meg másképp.",
+      });
+    }
   }
 
   if (errors.length) return { ok: false, errors };

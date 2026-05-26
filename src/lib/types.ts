@@ -97,7 +97,7 @@ export interface BulletinDraft {
   termsVersion: string | null;
   /** Audit-trail: az elfogadás időbélyege. */
   acceptedTermsAt: string | null;
-  /** Audit-trail: 16+ nyilatkozat. */
+  /** Audit-trail: 18+ nyilatkozat. */
   ageConfirmed: boolean;
   /** Audit-trail: SHA-256(IP) — nyers IP-t nem tárolunk. */
   ipHash: string | null;

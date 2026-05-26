@@ -13,7 +13,7 @@ import { cn } from "@/lib/cn";
 /**
  * Account nélküli vélemény-űrlap (Liquid Glass kártyák). Flow:
  *   1) felhasználó csillagot ad, szöveget ír, nevet + emailt
- *   2) ÁSZF + 16+ checkbox
+ *   2) ÁSZF + 18+ checkbox
  *   3) Turnstile token
  *   4) POST → email kimegy → kattintás → publikus
  *
@@ -242,7 +242,7 @@ export function ReviewForm({
           onChange={(v) => setField("ageConfirmed", v)}
           error={errors.ageConfirmed}
         >
-          Kijelentem, hogy elmúltam 16 éves.
+          Kijelentem, hogy elmúltam 18 éves.
         </Consent>
         <Consent
           checked={form.acceptTerms}

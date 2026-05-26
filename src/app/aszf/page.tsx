@@ -28,9 +28,10 @@ export default function AszfPage() {
 
       <h2>2. Felhasználói típusok</h2>
       <p>
-        A Szolgáltatást <strong>16. életévét betöltött</strong> természetes
-        személyek vehetik igénybe (GDPR 8. cikk). 16 év alatti felhasználók
-        számára a regisztráció és a hirdetésfeladás kizárt.
+        A Szolgáltatást <strong>18. életévét betöltött</strong> (nagykorú)
+        természetes személyek vehetik igénybe (Ptk. 2:10 §). 18 év alatti
+        felhasználók számára a regisztráció, a hirdetésfeladás és a
+        vélemény-írás kizárt.
       </p>
       <h3>2.1 Kinti felhasználó (közösségi tag)</h3>
       <p>
