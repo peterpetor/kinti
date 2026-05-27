@@ -1495,3 +1495,67 @@ export async function createBusinessFromSubmission(
     )
     .run();
 }
+
+// ---------------------------------------------------------------------------
+// Web Push feliratkozások
+// ---------------------------------------------------------------------------
+
+export interface PushSubscriptionRow {
+  id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  canton_code: string | null;
+}
+
+export interface SavePushSubscriptionInput {
+  id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  cantonCode: string | null;
+}
+
+/** Feliratkozás mentése — endpoint UNIQUE, ismétléskor frissítjük a kantont/kulcsokat. */
+export async function savePushSubscription(input: SavePushSubscriptionInput): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO push_subscriptions (id, endpoint, p256dh, auth, canton_code)
+       VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT(endpoint) DO UPDATE SET
+         p256dh = excluded.p256dh,
+         auth = excluded.auth,
+         canton_code = excluded.canton_code`,
+    )
+    .bind(input.id, input.endpoint, input.p256dh, input.auth, input.cantonCode)
+    .run();
+}
+
+export async function deletePushSubscription(endpoint: string): Promise<void> {
+  await getDB()
+    .prepare("DELETE FROM push_subscriptions WHERE endpoint = ?")
+    .bind(endpoint)
+    .run();
+}
+
+/**
+ * Célzott feliratkozók. Ha `cantonCode` adott: az adott kanton + a „minden
+ * Svájc" (NULL) feliratkozói. Ha nincs (broadcast): mindenki.
+ */
+export async function listPushSubscriptions(
+  cantonCode?: string | null,
+): Promise<PushSubscriptionRow[]> {
+  if (cantonCode) {
+    const { results } = await getDB()
+      .prepare(
+        "SELECT * FROM push_subscriptions WHERE canton_code = ? OR canton_code IS NULL",
+      )
+      .bind(cantonCode)
+      .all<PushSubscriptionRow>();
+    return results;
+  }
+  const { results } = await getDB()
+    .prepare("SELECT * FROM push_subscriptions")
+    .all<PushSubscriptionRow>();
+  return results;
+}

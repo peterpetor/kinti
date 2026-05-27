@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, ScreenHeader } from "@/components/ui";
 import { CommunityView } from "@/components/views/community-view";
+import { PushOptin } from "@/components/push-optin";
 import { getBulletinKinds, getBulletinPosts, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -61,6 +62,11 @@ export default async function KozossegPage() {
             <span className="block text-[11px] text-ink-muted">munka · alkalmi</span>
           </span>
         </Link>
+      </div>
+
+      {/* Push-értesítés feliratkozás (új esemény a kantonodban) */}
+      <div className="px-5">
+        <PushOptin />
       </div>
 
       <CommunityView events={events} kinds={kinds} posts={posts} turnstileSiteKey={turnstileSiteKey} />

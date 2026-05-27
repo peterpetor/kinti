@@ -16,7 +16,7 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v3";
+const VERSION = "kinti-v4";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -105,6 +105,51 @@ self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
+});
+
+// --- Web Push -------------------------------------------------------------
+// Payload NÉLKÜLI push (a szerver a kanton-célzást már elvégezte). Ha valaha
+// titkosított payloadot küldenénk, itt olvasnánk az `event.data`-ból.
+self.addEventListener("push", (event) => {
+  let title = "kinti";
+  let body = "Új esemény a közösségben — koppints a részletekért 🎉";
+  let url = "/kozosseg";
+
+  if (event.data) {
+    try {
+      const payload = event.data.json();
+      title = payload.title || title;
+      body = payload.body || body;
+      url = payload.url || url;
+    } catch {
+      const text = event.data.text();
+      if (text) body = text;
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-192.png",
+      tag: "kinti-event",
+      data: { url },
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || "/kozosseg";
+  event.waitUntil(
+    (async () => {
+      const wins = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      for (const w of wins) {
+        if (w.url.includes(url) && "focus" in w) return w.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(url);
+    })(),
+  );
 });
 
 // --- stratégiák -----------------------------------------------------------

@@ -54,4 +54,11 @@ interface CloudflareEnv {
    * Ha nincs megadva, a ADMIN_EMAILS első eleme, vagy info@kinti.app.
    */
   ADMIN_EVENT_EMAIL?: string;
+
+  /**
+   * VAPID PRIVÁT kulcs a Web Push aláírásához (ES256). TITOK — Cloudflare
+   * Pages secret: `wrangler pages secret put VAPID_PRIVATE_KEY`. A publikus
+   * párja a kódban van (src/lib/push-keys.ts).
+   */
+  VAPID_PRIVATE_KEY?: string;
 }

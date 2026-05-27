@@ -1,6 +1,36 @@
 import { NextResponse } from "next/server";
-import { getEventByToken, updateEventStatus, deleteEvent } from "@/lib/repo";
+import {
+  getEventByToken,
+  updateEventStatus,
+  deleteEvent,
+  listPushSubscriptions,
+  deletePushSubscription,
+} from "@/lib/repo";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+import { sendPush } from "@/lib/push";
+import { cantonFromAddress } from "@/lib/cantons";
+
+/**
+ * Automatikus push az új (most jóváhagyott) eseményről. A célzott kantont a
+ * helyszínből próbáljuk kinyerni (PLZ → kanton); ha nem megy, mindenkinek megy.
+ * A jóváhagyást SOHA nem töri meg, ha a push hibázik (try/catch a hívónál).
+ */
+async function notifyNewEvent(venue: string | null): Promise<void> {
+  const env = getCloudflareEnv();
+  if (!env.VAPID_PRIVATE_KEY) return;
+  const cantonCode = cantonFromAddress(venue)?.code ?? null;
+  const subs = await listPushSubscriptions(cantonCode);
+  await Promise.all(
+    subs.map(async (s) => {
+      try {
+        const status = await sendPush(env.VAPID_PRIVATE_KEY!, { endpoint: s.endpoint });
+        if (status === 404 || status === 410) await deletePushSubscription(s.endpoint);
+      } catch {
+        /* egyedi kézbesítési hibát elnyelünk */
+      }
+    }),
+  );
+}
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -42,6 +72,12 @@ export async function GET(
 
   if (action === "approve") {
     await updateEventStatus(event.id, "approved", null);
+    // Automatikus push-értesítés a friss eseményről (a feliratkozóknak).
+    try {
+      await notifyNewEvent(event.venue);
+    } catch {
+      /* a push hibája ne akadályozza a jóváhagyást */
+    }
     return new Response(
       buildPage(
         "Esemény jóváhagyva! ✅",
