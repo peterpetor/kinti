@@ -53,65 +53,65 @@ export default function RootLayout({
   const cfBeaconToken = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
 
   return (
-    <ClerkProvider
-      localization={{
-        ...huHU,
-        formFieldInputPlaceholder__firstName: "Keresztnév",
-        formFieldInputPlaceholder__lastName: "Vezetéknév",
-        formFieldInputPlaceholder__emailAddress: "Email cím",
-        formFieldInputPlaceholder__password: "Jelszó megadása",
+    <html lang="hu" data-theme="warm" className={`${jakarta.variable} ${jetbrains.variable}`}>
+      <body className="min-h-dvh bg-bg font-sans text-ink antialiased">
+        <ClerkProvider
+          localization={{
+            ...huHU,
+            formFieldInputPlaceholder__firstName: "Keresztnév",
+            formFieldInputPlaceholder__lastName: "Vezetéknév",
+            formFieldInputPlaceholder__emailAddress: "Email cím",
+            formFieldInputPlaceholder__password: "Jelszó megadása",
 
-        signUp: {
-          ...huHU.signUp,
-          legalConsent: {
-            checkbox: {
-              label__termsOfServiceAndPrivacyPolicy:
-                'Elfogadom az {{ termsOfServiceLink || link("Általános Szerződési Feltételeket") }} és az {{ privacyPolicyLink || link("Adatvédelmi Tájékoztatót") }}.',
-              label__onlyPrivacyPolicy:
-                'Elfogadom az {{ privacyPolicyLink || link("Adatvédelmi Tájékoztatót") }}.',
-              label__onlyTermsOfService:
-                'Elfogadom az {{ termsOfServiceLink || link("Általános Szerződési Feltételeket") }}.',
+            signUp: {
+              ...huHU.signUp,
+              legalConsent: {
+                checkbox: {
+                  label__termsOfServiceAndPrivacyPolicy:
+                    'Elfogadom az {{ termsOfServiceLink || link("Általános Szerződési Feltételeket") }} és az {{ privacyPolicyLink || link("Adatvédelmi Tájékoztatót") }}.',
+                  label__onlyPrivacyPolicy:
+                    'Elfogadom az {{ privacyPolicyLink || link("Adatvédelmi Tájékoztatót") }}.',
+                  label__onlyTermsOfService:
+                    'Elfogadom az {{ termsOfServiceLink || link("Általános Szerződési Feltételeket") }}.',
+                },
+              },
+              start: {
+                title: "Regisztráció",
+                subtitle: "Üdv! Kérlek add meg adataidat a fiók létrehozásához.",
+                actionText: "Van már fiókod?",
+                actionLink: "Bejelentkezés",
+              },
             },
-          },
-          start: {
-            title: "Regisztráció",
-            subtitle: "Üdv! Kérlek add meg adataidat a fiók létrehozásához.",
-            actionText: "Van már fiókod?",
-            actionLink: "Bejelentkezés",
-          },
-        },
-        signIn: {
-          ...huHU.signIn,
-          forgotPassword: {
-            title: "Elfelejtett jelszó",
-            formTitle: "Jelszó visszaállítása",
-            subtitle_email: "Küldünk egy kódot az email címedre a jelszó visszaállításához.",
-            resendButton: "Kód újraküldése",
-          },
-          start: {
-            title: "Bejelentkezés",
-            subtitle: "Üdv újra! Jelentkezz be a folytatáshoz.",
-            actionText: "Nincs fiókod?",
-            actionLink: "Regisztráció",
-          },
-        },
-      }}
-      appearance={{ variables: { colorPrimary: "#1d4434", borderRadius: "0.75rem" } }}
-    >
-      <html lang="hu" data-theme="warm" className={`${jakarta.variable} ${jetbrains.variable}`}>
-        <body className="min-h-dvh bg-bg font-sans text-ink antialiased">
+            signIn: {
+              ...huHU.signIn,
+              forgotPassword: {
+                title: "Elfelejtett jelszó",
+                formTitle: "Jelszó visszaállítása",
+                subtitle_email: "Küldünk egy kódot az email címedre a jelszó visszaállításához.",
+                resendButton: "Kód újraküldése",
+              },
+              start: {
+                title: "Bejelentkezés",
+                subtitle: "Üdv újra! Jelentkezz be a folytatáshoz.",
+                actionText: "Nincs fiókod?",
+                actionLink: "Regisztráció",
+              },
+            },
+          }}
+          appearance={{ variables: { colorPrimary: "#1d4434", borderRadius: "0.75rem" } }}
+        >
           {children}
-          {/* PWA — Service Worker regisztráció + frissítés-prompt (prod-only) */}
-          <SWRegister />
-          {cfBeaconToken && (
-            <script
-              defer
-              src="https://static.cloudflareinsights.com/beacon.min.js"
-              data-cf-beacon={`{"token": "${cfBeaconToken}"}`}
-            />
-          )}
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+        {/* PWA — Service Worker regisztráció + frissítés-prompt (prod-only) */}
+        <SWRegister />
+        {cfBeaconToken && (
+          <script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={`{"token": "${cfBeaconToken}"}`}
+          />
+        )}
+      </body>
+    </html>
   );
 }
