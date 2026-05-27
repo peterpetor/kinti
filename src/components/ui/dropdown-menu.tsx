@@ -139,12 +139,12 @@ export function DropdownMenu() {
                 setIsOpen(false);
                 setIsSosOpen(true);
               }} 
-              className="flex w-full items-center justify-center gap-3 mt-4 px-4 py-4 rounded-2xl text-[15px] font-black text-white bg-red-600 hover:bg-red-700 transition-all active:scale-[0.98] shadow-card"
+              className="flex w-full items-center justify-center gap-2.5 mt-4 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-white bg-red-600 hover:bg-red-700 transition-all active:scale-[0.98] shadow-card"
             >
-              <span className="text-xl">
+              <span className="text-base leading-none">
                 🆘
               </span>
-              Közösségi S.O.S. Radar (névtelen)
+              Közösségi S.O.S. Radar
             </button>
           </div>
         </div>
