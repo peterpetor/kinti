@@ -32,7 +32,7 @@ export function TabBar() {
   const lastTab =
     isLoaded && isSignedIn
       ? { href: "/profil", label: "Profil", icon: "user" as const }
-      : { href: "/belepes", label: "Vállalkozó", icon: "user" as const };
+      : { href: "/vallalkozo", label: "Vállalkozó", icon: "user" as const };
 
   const tabs = [...STATIC_TABS, lastTab];
 
