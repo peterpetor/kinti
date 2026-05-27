@@ -117,7 +117,7 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
 
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
-              Telefonszám (WhatsApp / Hívás)
+              Telefonszám
             </label>
             <input
               type="text"
