@@ -11,7 +11,7 @@ import { isSwissAddress, CANTON_COORDS } from "./cantons";
 export const BUSINESS_CONFIRM_TTL_MS = 24 * 60 * 60 * 1000;
 
 /** Napi beküldési limit IP/email-enként (vállalkozás ritkább, mint hirdetés). */
-export const BUSINESS_DAILY_LIMIT = 2;
+export const BUSINESS_DAILY_LIMIT = 10;
 
 export const BUSINESS_LIMITS = {
   nameMin: 2,
