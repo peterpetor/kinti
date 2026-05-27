@@ -54,6 +54,8 @@ function run(cmd, args, { tolerateFail = false } = {}) {
     const patchPath = path.join(__dirname, "patch-symlink.js").replace(/\\/g, "/");
     const env = {
       ...process.env,
+      VERCEL_ORG_ID: process.env.VERCEL_ORG_ID || "dummy",
+      VERCEL_PROJECT_ID: process.env.VERCEL_PROJECT_ID || "dummy",
       NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ""} -r ${patchPath}`.trim(),
     };
     const child = spawn(cmd, args, {

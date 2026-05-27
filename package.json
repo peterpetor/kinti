@@ -11,7 +11,7 @@
     "pages:build": "node scripts/pages-build.mjs",
     "pages:build:win": "powershell -NoProfile -File build-pages.ps1",
     "preview": "npm run pages:build && wrangler pages dev",
-    "deploy": "npm run pages:build && wrangler pages deploy",
+    "deploy": "npm run pages:build && wrangler pages deploy --branch main",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv ./env.d.ts",
     "db:migrate:local": "wrangler d1 migrations apply kinti-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply kinti-db --remote",
