@@ -9,6 +9,7 @@ import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
+import { ReportButton } from "@/components/report-button";
 
 export interface SosAlert {
   id: string;
@@ -304,6 +305,10 @@ function SosDetailsCard({ sos, onClose }: { sos: SosAlert, onClose: () => void }
       <div className="mb-4 flex items-center gap-2 text-red-600">
         <span className="text-2xl">🆘</span>
         <h3 className="text-lg font-bold tracking-tight">Közösségi S.O.S.</h3>
+        <span className="flex-1" />
+        <div className="pr-8">
+          <ReportButton contentType="sos" contentId={sos.id} />
+        </div>
       </div>
 
       <div className="mb-6 rounded-xl bg-red-50 p-4 text-[14px] leading-relaxed text-red-900 border border-red-100">
