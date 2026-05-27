@@ -13,6 +13,8 @@
 
 export interface Env {
   DB: D1Database;
+  /** R2 média-tároló — a lejárt tartalmak képeit is töröljük. */
+  MEDIA: R2Bucket;
   /** Opcionális — ha be van állítva, a `fetch` endpointhoz kell. */
   CRON_SECRET?: string;
   /** Resend API kulcs — az expiry warning emailekhez. */
@@ -23,11 +25,41 @@ export interface Env {
   SITE_URL?: string;
 }
 
+/** Kép-kulcs(ok) kinyerése: JSON-tömb vagy egyetlen kulcs. */
+function parseImageKeys(keyStr: string | null | undefined): string[] {
+  if (!keyStr) return [];
+  if (keyStr.startsWith("[")) {
+    try {
+      const arr = JSON.parse(keyStr);
+      return Array.isArray(arr) ? arr.filter((k): k is string => typeof k === "string") : [];
+    } catch {
+      return [keyStr];
+    }
+  }
+  return [keyStr];
+}
+
+/** R2 objektumok törlése (kötegelve). Hiba esetén nem dobunk — best-effort. */
+async function deleteR2Keys(env: Env, keys: string[]): Promise<number> {
+  const unique = [...new Set(keys.filter(Boolean))];
+  if (unique.length === 0) return 0;
+  try {
+    // Az R2 .delete() tömböt is elfogad (max 1000 / hívás).
+    await env.MEDIA.delete(unique);
+    return unique.length;
+  } catch (err) {
+    console.error("[cron-purge] R2 törlési hiba:", err);
+    return 0;
+  }
+}
+
 interface PurgeResult {
   draftsDeleted: number;
   postsDeleted: number;
   reviewDraftsDeleted: number;
   businessSubmissionsDeleted: number;
+  oldEventsDeleted: number;
+  imagesDeleted: number;
   expiryWarningsSent: number;
   expiryWarningErrors: number;
   ranAt: string;
@@ -166,20 +198,38 @@ async function sendExpiryWarning(
 
 async function runPurge(env: Env): Promise<PurgeResult> {
   const db = env.DB;
+  let imagesDeleted = 0;
 
-  // 1) Piszkozatok takarítása
+  // 1) Meg nem erősített piszkozatok (24h után) — előbb a hozzájuk tartozó
+  //    R2-képeket töröljük, csak utána a sorokat (hard delete).
+  const { results: expiredDrafts } = await db
+    .prepare("SELECT image_key FROM bulletin_drafts WHERE expires_at <= datetime('now')")
+    .all<{ image_key: string | null }>();
+  imagesDeleted += await deleteR2Keys(
+    env,
+    expiredDrafts.flatMap((d) => parseImageKeys(d.image_key)),
+  );
   const draftsRes = await db
     .prepare("DELETE FROM bulletin_drafts WHERE expires_at <= datetime('now')")
     .run();
 
-  // 2) Lejárt posztok törlése
+  // 2) Lejárt hirdetések — a képeket is fizikailag töröljük az R2-ből.
+  const { results: expiredPosts } = await db
+    .prepare(
+      "SELECT image_key FROM bulletin_posts WHERE expires_at IS NOT NULL AND expires_at <= datetime('now')",
+    )
+    .all<{ image_key: string | null }>();
+  imagesDeleted += await deleteR2Keys(
+    env,
+    expiredPosts.flatMap((p) => parseImageKeys(p.image_key)),
+  );
   const postsRes = await db
     .prepare(
       "DELETE FROM bulletin_posts WHERE expires_at IS NOT NULL AND expires_at <= datetime('now')",
     )
     .run();
 
-  // 3) Vélemény-piszkozatok takarítása
+  // 3) Vélemény-piszkozatok takarítása (nincs kép)
   const reviewDraftsRes = await db
     .prepare("DELETE FROM review_drafts WHERE expires_at <= datetime('now')")
     .run();
@@ -188,6 +238,26 @@ async function runPurge(env: Env): Promise<PurgeResult> {
   const bizSubsRes = await db
     .prepare("DELETE FROM business_submissions WHERE expires_at <= datetime('now')")
     .run();
+
+  // 3/c) Régi/inaktív események hard delete (GDPR adattakarékosság):
+  //      30 napnál régebben lezajlott események + a 30 napnál régebbi, soha meg
+  //      nem erősített beküldések. A képeket (R2), a leadott RSVP-ket és a sort
+  //      (benne a beküldő emailje) is véglegesen töröljük.
+  const eventCondition =
+    "(event_date IS NOT NULL AND event_date < date('now','-30 days')) " +
+    "OR (status = 'pending_confirm' AND created_at < datetime('now','-30 days'))";
+  const { results: oldEvents } = await db
+    .prepare(`SELECT id, image_key FROM events WHERE ${eventCondition}`)
+    .all<{ id: string; image_key: string | null }>();
+  imagesDeleted += await deleteR2Keys(
+    env,
+    oldEvents.flatMap((e) => parseImageKeys(e.image_key)),
+  );
+  // Az RSVP-ket explicit is töröljük (nem csak FK-cascade-re hagyatkozva).
+  await db
+    .prepare(`DELETE FROM event_rsvps WHERE event_id IN (SELECT id FROM events WHERE ${eventCondition})`)
+    .run();
+  const oldEventsRes = await db.prepare(`DELETE FROM events WHERE ${eventCondition}`).run();
 
   // 4) Lejárati figyelmeztető emailek küldése (3 napon belül lejáró, még nem értesített)
   let expiryWarningsSent = 0;
@@ -229,6 +299,8 @@ async function runPurge(env: Env): Promise<PurgeResult> {
     postsDeleted: postsRes.meta.changes ?? 0,
     reviewDraftsDeleted: reviewDraftsRes.meta.changes ?? 0,
     businessSubmissionsDeleted: bizSubsRes.meta.changes ?? 0,
+    oldEventsDeleted: oldEventsRes.meta.changes ?? 0,
+    imagesDeleted,
     expiryWarningsSent,
     expiryWarningErrors,
     ranAt: new Date().toISOString(),

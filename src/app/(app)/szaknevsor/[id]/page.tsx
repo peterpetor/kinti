@@ -6,6 +6,7 @@ import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
+import { ReportButton } from "@/components/report-button";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
 
@@ -258,14 +259,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
                     „{r.body}"
                   </p>
                   <div className="mt-2.5 flex justify-end border-t border-line/30 pt-2">
-                    <a
-                      href={`mailto:abuse@kinti.app?subject=${encodeURIComponent(`Visszaélés bejelentése: Vélemény (${r.id})`)}&body=${encodeURIComponent(
-                        `Tisztelt Kinti!\n\nBejelentem az alábbi véleményt, mert sérti a szabályzatot:\n- Vélemény azonosító: ${r.id}\n- Szerző: ${r.reviewerName}\n- Cég: ${b.name} (${b.id})\n- Vélemény szövege: "${r.body}"\n\nIndoklás (kérjük írja le, miért tartja jogsértőnek vagy alaptalannak): `
-                      )}`}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-ink-faint hover:text-accent transition-colors"
-                    >
-                      <Icon name="flag" size={11} strokeWidth={2.4} /> Vélemény bejelentése
-                    </a>
+                    <ReportButton contentType="review" contentId={r.id} variant="link" />
                   </div>
                 </article>
               ))

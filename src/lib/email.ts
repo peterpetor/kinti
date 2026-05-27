@@ -534,6 +534,77 @@ kinti.app`;
   }
 }
 
+// --- Jelentés (Notice & Takedown): admin értesítő -------------------------
+
+interface ContentReportEmailArgs {
+  adminEmail: string;
+  /** "Hirdetés" vagy "Vélemény". */
+  contentLabel: string;
+  /** A bejelentett tartalom rövid kivonata (cím / szöveg-részlet). */
+  contentExcerpt: string;
+  reason: string;
+  /** Visszaállítás (rejtés feloldása) URL. */
+  keepUrl: string;
+  /** Végleges törlés URL. */
+  removeUrl: string;
+}
+
+export async function sendContentReportEmail(args: ContentReportEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = `⚠️ Bejelentett ${args.contentLabel.toLowerCase()} — el van rejtve, döntened kell`;
+
+  const text = `Kinti Admin
+
+Egy ${args.contentLabel.toLowerCase()} tartalmat bejelentettek, ezért AZONNAL elrejtettük a publikum elől.
+
+Tartalom: ${args.contentExcerpt}
+Indok: ${args.reason}
+
+Döntsd el:
+- VISSZAÁLLÍTÁS (a bejelentés alaptalan, jelenjen meg újra):
+${args.keepUrl}
+
+- VÉGLEGES TÖRLÉS:
+${args.removeUrl}
+
+A tartalom addig rejtve marad, amíg nem döntesz.`;
+
+  const html = baseLayout({
+    preheader: `Bejelentett ${args.contentLabel.toLowerCase()} — el van rejtve, döntened kell`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti Admin értesítő</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">Bejelentett ${escapeHtml(args.contentLabel.toLowerCase())} — már el van rejtve</p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
+        A tartalmat egy felhasználó bejelentette, ezért <strong>azonnal elrejtettük</strong> a publikum elől. Maradjon rejtve, vagy állítsd vissza?
+      </p>
+      <div style="margin:0 0 16px;padding:14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#94a097;margin-bottom:4px;">${escapeHtml(args.contentLabel)}</div>
+        <div style="font-size:14px;line-height:1.5;color:#0e1f17;">${escapeHtml(args.contentExcerpt)}</div>
+      </div>
+      <div style="margin:0 0 20px;padding:12px 14px;background:#fff8ed;border:1px solid #e3a233;border-radius:14px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#9a6b00;margin-bottom:4px;">Bejelentés indoka</div>
+        <div style="font-size:13.5px;line-height:1.5;color:#0e1f17;white-space:pre-wrap;">${escapeHtml(args.reason)}</div>
+      </div>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px;">
+        <tr>
+          <td style="padding-right:10px;">
+            <a href="${escapeAttr(args.keepUrl)}" style="display:inline-block;padding:13px 20px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">↩︎ Visszaállítás</a>
+          </td>
+          <td>
+            <a href="${escapeAttr(args.removeUrl)}" style="display:inline-block;padding:13px 20px;background:#c8392e;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">🗑 Végleges törlés</a>
+          </td>
+        </tr>
+      </table>
+      <p style="margin:0;font-size:11.5px;color:#94a097;">A tartalom addig NEM látható a kinti.app-on, amíg nem döntesz.</p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.adminEmail, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 function formatHu(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;

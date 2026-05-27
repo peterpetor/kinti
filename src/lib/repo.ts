@@ -537,6 +537,7 @@ export async function getBulletinPosts(kind?: string | null): Promise<BulletinPo
     FROM bulletin_posts p
     JOIN bulletin_kinds k ON k.id = p.kind_id
     WHERE p.is_pending = 0
+      AND p.hidden = 0
       AND (p.expires_at IS NULL OR p.expires_at > datetime('now'))`;
   if (kind && kind !== "all") {
     sql += " AND p.kind_id = ?";
@@ -701,7 +702,7 @@ export async function getBulletinPostById(id: string): Promise<BulletinPost | nu
       `SELECT p.*, k.label AS kind_label, k.color AS kind_color, k.sort_order AS kind_sort
        FROM bulletin_posts p
        JOIN bulletin_kinds k ON k.id = p.kind_id
-       WHERE p.id = ? AND p.is_pending = 0
+       WHERE p.id = ? AND p.is_pending = 0 AND p.hidden = 0
          AND (p.expires_at IS NULL OR p.expires_at > datetime('now'))`,
     )
     .bind(id)
@@ -1083,7 +1084,7 @@ export async function getReviewsByBusiness(businessId: string): Promise<Review[]
     .prepare(
       `SELECT id, business_id, rating, body, reviewer_name, published_at,
               manage_token, email
-       FROM reviews WHERE business_id = ?
+       FROM reviews WHERE business_id = ? AND hidden = 0
        ORDER BY published_at DESC`,
     )
     .bind(businessId)
@@ -1140,7 +1141,7 @@ export async function recomputeBusinessRating(businessId: string): Promise<void>
   const row = await getDB()
     .prepare(
       `SELECT COUNT(*) AS cnt, COALESCE(AVG(rating), 0) AS avg
-       FROM reviews WHERE business_id = ?`,
+       FROM reviews WHERE business_id = ? AND hidden = 0`,
     )
     .bind(businessId)
     .first<{ cnt: number; avg: number }>();
@@ -1558,4 +1559,130 @@ export async function listPushSubscriptions(
     .prepare("SELECT * FROM push_subscriptions")
     .all<PushSubscriptionRow>();
   return results;
+}
+
+// ---------------------------------------------------------------------------
+// Jelentés (Notice & Takedown) — hirdetések + vélemények elrejtése/törlése
+// ---------------------------------------------------------------------------
+
+/** Hirdetés elrejtése/visszaállítása. Visszaadja, érintett-e sort. */
+export async function setBulletinHidden(id: string, hidden: boolean): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE bulletin_posts SET hidden = ? WHERE id = ?")
+    .bind(hidden ? 1 : 0, id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+/** Vélemény elrejtése/visszaállítása. Visszaadja a business_id-t (rating újraszámoláshoz). */
+export async function setReviewHidden(id: string, hidden: boolean): Promise<string | null> {
+  const row = await getDB()
+    .prepare("SELECT business_id FROM reviews WHERE id = ?")
+    .bind(id)
+    .first<{ business_id: string }>();
+  if (!row) return null;
+  await getDB()
+    .prepare("UPDATE reviews SET hidden = ? WHERE id = ?")
+    .bind(hidden ? 1 : 0, id)
+    .run();
+  return row.business_id;
+}
+
+export async function deleteBulletinPostById(id: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM bulletin_posts WHERE id = ?")
+    .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+/** Vélemény törlése id alapján. Visszaadja a business_id-t (rating újraszámoláshoz). */
+export async function deleteReviewById(id: string): Promise<string | null> {
+  const row = await getDB()
+    .prepare("SELECT business_id FROM reviews WHERE id = ?")
+    .bind(id)
+    .first<{ business_id: string }>();
+  if (!row) return null;
+  await getDB().prepare("DELETE FROM reviews WHERE id = ?").bind(id).run();
+  return row.business_id;
+}
+
+/** Rövid összegző egy véleményről (a jelentő-emailhez + létezés-ellenőrzéshez). */
+export async function getReviewSummaryById(
+  id: string,
+): Promise<{ id: string; businessId: string; reviewerName: string; body: string } | null> {
+  const row = await getDB()
+    .prepare("SELECT id, business_id, reviewer_name, body FROM reviews WHERE id = ? AND hidden = 0")
+    .bind(id)
+    .first<{ id: string; business_id: string; reviewer_name: string; body: string }>();
+  if (!row) return null;
+  return { id: row.id, businessId: row.business_id, reviewerName: row.reviewer_name, body: row.body };
+}
+
+export interface ContentReportInput {
+  id: string;
+  contentType: "bulletin" | "review";
+  contentId: string;
+  reason: string | null;
+  reporterIpHash: string | null;
+  moderateToken: string;
+}
+
+export async function createContentReport(input: ContentReportInput): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO content_reports
+       (id, content_type, content_id, reason, reporter_ip_hash, moderate_token)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      input.id,
+      input.contentType,
+      input.contentId,
+      input.reason,
+      input.reporterIpHash,
+      input.moderateToken,
+    )
+    .run();
+}
+
+export interface ContentReport {
+  id: string;
+  contentType: "bulletin" | "review";
+  contentId: string;
+  status: string;
+}
+
+export async function getContentReportByToken(token: string): Promise<ContentReport | null> {
+  const row = await getDB()
+    .prepare("SELECT id, content_type, content_id, status FROM content_reports WHERE moderate_token = ?")
+    .bind(token)
+    .first<{ id: string; content_type: string; content_id: string; status: string }>();
+  if (!row) return null;
+  return {
+    id: row.id,
+    contentType: row.content_type as "bulletin" | "review",
+    contentId: row.content_id,
+    status: row.status,
+  };
+}
+
+export async function updateContentReportStatus(token: string, status: string): Promise<void> {
+  await getDB()
+    .prepare("UPDATE content_reports SET status = ? WHERE moderate_token = ?")
+    .bind(status, token)
+    .run();
+}
+
+/** Hány jelentés érkezett erről az IP-ről az elmúlt 1 órában (abuse-szűrés). */
+export async function countRecentReports(ipHash: string | null): Promise<number> {
+  if (!ipHash) return 0;
+  const res = await getDB()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM content_reports
+       WHERE reporter_ip_hash = ? AND created_at >= datetime('now', '-1 hours')`,
+    )
+    .bind(ipHash)
+    .first<{ n: number }>();
+  return res?.n ?? 0;
 }

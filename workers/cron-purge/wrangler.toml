@@ -24,6 +24,13 @@ binding = "DB"
 database_name = "kinti-db"
 database_id = "ec70d0d2-1b7c-416d-a2c6-c5d15c3e59a2"
 
+# Ugyanaz az R2 bucket, mint a Pages projektben — a lejárt tartalmak képeit is
+# fizikailag töröljük (GDPR adattakarékosság).
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "kinti-media"
+preview_bucket_name = "kinti-media-preview"
+
 [observability]
 enabled = true
 

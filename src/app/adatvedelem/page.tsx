@@ -87,6 +87,30 @@ export default function AdatvedelemPage() {
         <li>Meg nem erősített hirdetések 24 órán belül automatikusan törlődnek</li>
       </ul>
 
+      <div style={{
+        background: "var(--surface-alt, #f4ede0)",
+        border: "1px solid var(--border, #e6ebe5)",
+        borderRadius: 14,
+        padding: "14px 16px",
+        margin: "16px 0",
+      }}>
+        <p style={{ margin: 0, fontWeight: 700 }}>🔒 Automatikus, visszavonhatatlan törlés</p>
+        <p style={{ margin: "6px 0 0" }}>
+          Az adattakarékosság elve alapján csak addig tárolunk adatot, amíg muszáj. Egy
+          automatikus napi szkript (Cloudflare cron) <strong>fizikailag és véglegesen törli</strong>:
+        </p>
+        <ul style={{ margin: "8px 0 0" }}>
+          <li>a <strong>lejárt hirdetéseket</strong> (30 nap) a hozzájuk tartozó képekkel (R2) és a
+            feladó e-mail címével együtt;</li>
+          <li>a <strong>30 napnál régebben lezajlott eseményeket</strong> a képeikkel, a leadott
+            RSVP-kkel és a beküldő e-mail címével együtt;</li>
+          <li>a meg nem erősített piszkozatokat és beküldéseket (24 órán túl).</li>
+        </ul>
+        <p style={{ margin: "8px 0 0" }}>
+          Ami már nincs nálunk, az nem szivároghat ki. A törlés visszaállíthatatlan.
+        </p>
+      </div>
+
       <h3>2.4 Technikai adatok (Cloudflare)</h3>
       <p>
         A Cloudflare automatikusan kezeli a kérések metaadatait (IP-cím, User-Agent, kérés

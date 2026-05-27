@@ -10,6 +10,7 @@ import { CANTONS } from "@/lib/cantons";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { ShareSheet } from "@/components/share-sheet";
 import { AddToCalendar } from "@/components/add-to-calendar";
+import { ReportButton } from "@/components/report-button";
 import type { CalendarEvent } from "@/lib/calendar";
 
 // --- helperek a hirdetésekhez -----------------------------------------------
@@ -570,6 +571,7 @@ export function BulletinCard({
         >
           <Icon name="bookmark" size={14} filled={isSaved} />
         </button>
+        <ReportButton contentType="bulletin" contentId={post.id} />
       </div>
 
       <ShareSheet
