@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSosAlert, getActiveAlertCountForUser } from "@/lib/sos-repo";
+import { filterProfanity } from "@/lib/profanity";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
     id,
     lat,
     lng,
-    description: String(description).slice(0, 300), // Max 300 chars
+    description: filterProfanity(String(description).slice(0, 300)), // Max 300 chars
     contactPhone: String(contactPhone).slice(0, 50),
     posterUserId: userId,
     expiresAt,
