@@ -81,6 +81,13 @@ export function DropdownMenu() {
             Új hirdetés
           </Link>
 
+          <Link href="/tudasbazis" onClick={() => setIsOpen(false)} className={linkClass}>
+            <span className="grid h-6 w-6 place-items-center rounded-lg bg-primary/10 text-primary">
+              <Icon name="globe" size={13} strokeWidth={2.4} />
+            </span>
+            Tudásbázis
+          </Link>
+
           {/* Elválasztó */}
           <div className="h-px bg-line/60 my-1 mx-2" />
 

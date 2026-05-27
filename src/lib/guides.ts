@@ -381,6 +381,132 @@ export const GUIDES: Guide[] = [
       },
     ],
   },
+  {
+    slug: "csaladi-potlek",
+    title: "Családi pótlék (Kinderzulage)",
+    summary:
+      "Gyerekenként havi 215 CHF (0–16 év), tanuló gyereknél 268 CHF (max. 25 évig) — alkalmazottként a munkáltatón keresztül igényled.",
+    icon: "users",
+    sections: [
+      {
+        heading: "Kinek jár",
+        body: [
+          "Akkor jár családi pótlék, ha alkalmazott vagy önálló vállalkozó vagy, illetve ha nem dolgozol, de alacsony az adóköteles jövedelmed (a határ kantononként eltér).",
+          "Ha regisztrált munkanélküli vagy, családi pótlék helyett a munkanélküli-ellátáshoz kapsz pótlékot.",
+        ],
+      },
+      {
+        heading: "Összegek",
+        body: [
+          "Havi 215 CHF minden 0–16 éves gyerek után (egészségügyi ok miatt nem dolgozó gyereknél 20 éves korig).",
+          "Tanuló gyerek után 25 éves korig havi 268 CHF. Egyes kantonokban (és egyes munkáltatóknál) ennél több is lehet, és születéskor/örökbefogadáskor külön juttatás is járhat.",
+        ],
+      },
+      {
+        heading: "Hogyan igényled",
+        bullets: [
+          "Alkalmazottként: a munkáltatódtól kéred — ő intézi a családi pótlék pénztáránál, és a fizetéseddel együtt fizeti ki.",
+          "Önálló vállalkozóként: a saját családi pótlék pénztáradnál igényled.",
+          "Ha nem dolgozol: a kantoni kiegyenlítő pénztárnál (AHV) igényled.",
+        ],
+      },
+      {
+        heading: "Visszamenőleg",
+        body: [
+          "Ha lemaradtál róla vagy nem tudtál róla, akár 5 évre visszamenőleg is igényelheted.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Családi pótlék Svájcban",
+        url: "https://www.ch.ch/en/family-and-partnership/maternity-and-paternity/pregnancy-and-birth/family-allowance/",
+      },
+    ],
+  },
+  {
+    slug: "munkanelkuli-biztositas",
+    title: "Munkanélküli biztosítás (ALV)",
+    summary:
+      "Munkanélküliség esetén jelentkezz a RAV-nál; ellátás jár, ha 2 éven belül legalább 12 hónapot dolgoztál Svájcban.",
+    icon: "search",
+    sections: [
+      {
+        heading: "Jelentkezés a RAV-nál",
+        body: [
+          "Munkanélküliség esetén minél hamarabb jelentkezz be a regionális munkaügyi központban (RAV) — legkésőbb az első napon, amelytől ellátást szeretnél.",
+          "A bejelentkezés online vagy személyesen is megtehető; a RAV-nál te magad jelented be a munkanélküliséget.",
+        ],
+      },
+      {
+        heading: "Kinek jár ellátás",
+        bullets: [
+          "Aki a bejelentkezés előtti 2 évben legalább 12 hónapot dolgozott (járulékot fizetett) Svájcban.",
+          "Részben vagy teljesen munkanélküli, Svájcban lakik, és befejezte a kötelező oktatást.",
+          "Az ellátás a nyugdíjkorhatárig jár.",
+        ],
+      },
+      {
+        heading: "Fontos tudnivalók",
+        body: [
+          "Az önálló vállalkozók nem fizetnek ALV-járulékot, így nem jogosultak munkanélküli-ellátásra.",
+          "Külföldiként B vagy C engedély kell az ellátás igényléséhez. A határ menti ingázók általában a lakóhelyük országából kapják az ellátást, de a RAV szolgáltatásait igénybe vehetik álláskereséshez.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Munkanélküliség Svájcban",
+        url: "https://www.ch.ch/en/insurance/unemployment-insurance/",
+      },
+      {
+        label: "arbeit.swiss – Bejelentkezés (RAV)",
+        url: "https://www.arbeit.swiss/secoalv/en/home/menue/stellensuchende/arbeitslos-was-tun-/anmeldung.html",
+      },
+    ],
+  },
+  {
+    slug: "jogositvany-atiras",
+    title: "Jogosítvány átírása",
+    summary:
+      "Külföldi jogsival 12 hónapig vezethetsz; utána svájci jogosítványra kell cserélni — EU/EGT (így magyar) jogsi vizsga nélkül.",
+    icon: "nav",
+    sections: [
+      {
+        heading: "12 hónapos türelmi idő",
+        body: [
+          "Ha Svájcban laksz, a külföldi jogosítványoddal 12 hónapig vezethetsz. Utána svájci jogosítványra kell cserélned.",
+          "A határidő után is lecserélheted, de előfordulhat, hogy bírságot kell fizetned.",
+        ],
+      },
+      {
+        heading: "A csere menete",
+        body: [
+          "Minden esetben be kell mutatnod az eredeti jogosítványodat, és egy látásvizsgálaton is részt kell venned.",
+          "A folyamat attól függ, melyik ország állította ki a jogsidat.",
+        ],
+      },
+      {
+        heading: "EU/EGT vs. egyéb országok",
+        bullets: [
+          "EU/EGT jogsi (így a magyar is): vezetési vizsga nélkül kapsz svájci jogosítványt.",
+          "Más országok: a legtöbb esetben vezetési vizsgával kell igazolnod a tudásod.",
+        ],
+      },
+      {
+        heading: "Hova fordulj",
+        body: [
+          "A cserét a lakóhelyed kantonjának közúti közlekedési hivatala (Strassenverkehrsamt / service des automobiles) intézi.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Jogosítvány cseréje Svájcban",
+        url: "https://www.ch.ch/en/documents-and-register-extracts/driving-licence/exchanging-your-driving-licence/",
+      },
+    ],
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
