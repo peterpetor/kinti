@@ -42,18 +42,19 @@ export function DropdownMenu() {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex flex-col bg-surface animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-line">
-            <h2 className="text-xl font-black text-ink tracking-tight">Menü</h2>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="grid h-10 w-10 place-items-center rounded-full bg-surface-alt text-ink transition-transform hover:rotate-90 hover:bg-line active:scale-90"
-            >
-              ✕
-            </button>
-          </div>
+        <div className="fixed inset-0 z-[100] flex justify-center sm:items-center bg-surface sm:bg-black/50 sm:backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="flex w-full max-w-md flex-col bg-surface h-full sm:h-auto sm:max-h-[90vh] sm:rounded-3xl sm:shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300">
+            <div className="flex items-center justify-between px-5 py-4 sm:px-6 sm:py-5 border-b border-line shrink-0">
+              <h2 className="text-xl font-black text-ink tracking-tight">Menü</h2>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="grid h-10 w-10 place-items-center rounded-full bg-surface-alt text-ink transition-transform hover:rotate-90 hover:bg-line active:scale-90"
+              >
+                ✕
+              </button>
+            </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-1">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-1">
             {/* Fő akciók */}
             {isLoaded && isSignedIn ? (
               <Link href="/profil" onClick={() => setIsOpen(false)} className={linkClass}>
@@ -146,6 +147,7 @@ export function DropdownMenu() {
               Közösségi S.O.S. Radar (névtelen)
             </button>
           </div>
+        </div>
         </div>
       )}
 
