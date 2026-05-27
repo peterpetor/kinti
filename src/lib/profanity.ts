@@ -138,7 +138,7 @@ export function findProfanityInFields(
 const MASK_WORDS = [
   // Hungarian
   "bazdmeg", "bzdmg", "kurva", "fasz", "geci", "szar", "picsa", "köcsög", "kocsog", "buzi", "baszni", "baszás",
-  "faszfej", "gecc", "kurafi", "szarházi", "gec", "fos", "anyád", "kurvanyád",
+  "faszfej", "gecc", "kurafi", "szarházi", "gec", "fos", "anyád", "kurvanyád", "cigány", "cigany",
   // English
   "fuck", "shit", "bitch", "cunt", "asshole", "dick", "pussy", "slut", "whore", "motherfucker", "fucker",
   // German
