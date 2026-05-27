@@ -61,7 +61,7 @@ function formatExpiry(days: number | null): string | null {
 }
 
 
-type Tab = "events" | "board" | "newbie";
+type Tab = "events" | "board";
 
 export function CommunityView({
   events,
@@ -79,7 +79,6 @@ export function CommunityView({
   const tabs: { id: Tab; label: string; count: number | null }[] = [
     { id: "events", label: "Események", count: events.length },
     { id: "board", label: "Hirdetőtábla", count: posts.length },
-    { id: "newbie", label: "Újonnan", count: null },
   ];
 
   return (
@@ -117,7 +116,6 @@ export function CommunityView({
       <div className="space-y-2.5 px-5">
         {tab === "events" && <EventsList events={events} />}
         {tab === "board" && <BulletinList posts={posts} kinds={kinds} turnstileSiteKey={turnstileSiteKey} />}
-        {tab === "newbie" && <NewbieList />}
       </div>
     </div>
   );
@@ -1048,44 +1046,6 @@ function KindPill({
   );
 }
 
-// --- Újonnan érkezőknek (statikus útmutatók) --------------------------------
-const NEWBIE = [
-  { n: "1", title: "Bankszámla nyitás Svájcban", meta: "Postfinance, UBS, Migros — magyar tippekkel · 8 perc olvasás" },
-  { n: "2", title: "Lakásbérlés első 90 napban", meta: "Bürgschaft, Schufa, mire figyelj · 12 perc olvasás" },
-  { n: "3", title: "Anmeldung — hova menj, mit vigyél", meta: "Kreisbüro, határidők, AHV · 6 perc olvasás" },
-  { n: "4", title: "Krankenkasse-választás magyaroknak", meta: "Modellek, költségek, magyar orvosok · 10 perc" },
-];
-
-function NewbieList() {
-  return (
-    <>
-      <div className="rounded-[18px] border border-accent/20 bg-accent-soft p-4">
-        <p className="mb-1 text-[13.5px] font-bold tracking-[-0.01em] text-accent">
-          Most költöztél ki?
-        </p>
-        <p className="text-sm leading-relaxed text-ink">
-          Itt összeszedtük, amit mi is bárcsak tudtunk volna az első hónapokban.{" "}
-          <strong>Magyaroktól, magyaroknak.</strong>
-        </p>
-      </div>
-      {NEWBIE.map((it) => (
-        <div
-          key={it.n}
-          className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3.5"
-        >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-lg font-extrabold text-primary">
-            {it.n}
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="text-[14.5px] font-bold tracking-[-0.01em] text-ink">{it.title}</div>
-            <div className="mt-0.5 text-xs text-ink-muted">{it.meta}</div>
-          </div>
-          <Icon name="chevR" size={14} className="text-ink-muted" />
-        </div>
-      ))}
-    </>
-  );
-}
 
 function Empty({ label }: { label: string }) {
   return (

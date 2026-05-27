@@ -64,6 +64,25 @@ export default async function KozossegPage() {
         </Link>
       </div>
 
+      {/* Telekocsi — Svájc ↔ Magyarország */}
+      <div className="px-5">
+        <Link
+          href="/telekocsi"
+          className="flex items-center gap-3 rounded-card border border-[#3a6ea5]/20 bg-[#3a6ea5]/10 p-3 shadow-card transition active:scale-[0.98]"
+        >
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-[#3a6ea5] text-white text-lg">
+            🚗
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
+              Telekocsi
+            </span>
+            <span className="block text-[11px] text-ink-muted">szabad helyes utazások kintiek között</span>
+          </span>
+          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-[#3a6ea5]" />
+        </Link>
+      </div>
+
       {/* Push-értesítés feliratkozás (új esemény a kantonodban) */}
       <div className="px-5">
         <PushOptin />

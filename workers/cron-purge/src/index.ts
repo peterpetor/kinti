@@ -59,6 +59,7 @@ interface PurgeResult {
   reviewDraftsDeleted: number;
   businessSubmissionsDeleted: number;
   oldEventsDeleted: number;
+  ridesDeleted: number;
   imagesDeleted: number;
   expiryWarningsSent: number;
   expiryWarningErrors: number;
@@ -259,6 +260,10 @@ async function runPurge(env: Env): Promise<PurgeResult> {
     .run();
   const oldEventsRes = await db.prepare(`DELETE FROM events WHERE ${eventCondition}`).run();
 
+  // 3/d) Lejárt telekocsi-hirdetések hard delete (indulás + 24h → expires_at).
+  //      A telefonszám a sorral együtt véglegesen törlődik (GDPR).
+  const ridesRes = await db.prepare("DELETE FROM rides WHERE expires_at < datetime('now')").run();
+
   // 4) Lejárati figyelmeztető emailek küldése (3 napon belül lejáró, még nem értesített)
   let expiryWarningsSent = 0;
   let expiryWarningErrors = 0;
@@ -300,6 +305,7 @@ async function runPurge(env: Env): Promise<PurgeResult> {
     reviewDraftsDeleted: reviewDraftsRes.meta.changes ?? 0,
     businessSubmissionsDeleted: bizSubsRes.meta.changes ?? 0,
     oldEventsDeleted: oldEventsRes.meta.changes ?? 0,
+    ridesDeleted: ridesRes.meta.changes ?? 0,
     imagesDeleted,
     expiryWarningsSent,
     expiryWarningErrors,

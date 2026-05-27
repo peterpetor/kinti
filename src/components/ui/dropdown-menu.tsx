@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 import { SosModal } from "../views/sos-modal";
@@ -93,6 +93,13 @@ export function DropdownMenu() {
               Új hirdetés
             </Link>
 
+            <Link href="/telekocsi" onClick={() => setIsOpen(false)} className={linkClass}>
+              <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#3a6ea5]/10 text-[#3a6ea5]">
+                <Icon name="nav" size={16} strokeWidth={2.4} />
+              </span>
+              Telekocsi
+            </Link>
+
             <Link href="/tudasbazis" onClick={() => setIsOpen(false)} className={linkClass}>
               <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                 <Icon name="globe" size={16} strokeWidth={2.4} />
@@ -130,15 +137,24 @@ export function DropdownMenu() {
               </span>
               Visszaélés-bejelentés
             </a>
-            
+
             <div className="h-px bg-line/60 my-4 mx-2" />
-            
-            <button 
+
+            {isLoaded && isSignedIn && (
+              <SignOutButton redirectUrl="/">
+                <button className="flex w-full items-center justify-center gap-2.5 mt-2 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
+                  <Icon name="user" size={16} strokeWidth={2.4} />
+                  Kijelentkezés
+                </button>
+              </SignOutButton>
+            )}
+
+            <button
               type="button"
               onClick={() => {
                 setIsOpen(false);
                 setIsSosOpen(true);
-              }} 
+              }}
               className="flex w-full items-center justify-center gap-2.5 mt-4 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-white bg-red-600 hover:bg-red-700 transition-all active:scale-[0.98] shadow-card"
             >
               <span className="text-base leading-none">
