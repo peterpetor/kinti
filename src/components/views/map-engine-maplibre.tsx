@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
 import { clusterBusinesses, clusterBounds, clusterSize } from "@/lib/cluster";
+import type { SosAlert } from "./business-map";
 
 /**
  * MapLibre (vektoros) motor — szép, sima, prémium, WebGL-alapú.
@@ -23,6 +24,7 @@ export interface MaplibreEngineProps {
   fallbackCenter: [number, number]; // [lat, lng] (wrapper-konvenció)
   fallbackZoom: number;
   onFail: (reason: string) => void;
+  sosAlerts?: SosAlert[];
 }
 
 const MAPTILER_KEY = process.env.NEXT_PUBLIC_MAPTILER_KEY;
@@ -70,6 +72,7 @@ export function MaplibreEngine({
   fallbackCenter,
   fallbackZoom,
   onFail,
+  sosAlerts = [],
 }: MaplibreEngineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
@@ -81,6 +84,7 @@ export function MaplibreEngine({
   const [locating, setLocating] = useState(false);
   const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
   const failedRef = useRef(false);
+  const sosMarkersRef = useRef<Map<string, MlMarker>>(new Map());
 
   // --- init (egyszer) ---
   useEffect(() => {
@@ -140,6 +144,8 @@ export function MaplibreEngine({
       if (loadTimeout) clearTimeout(loadTimeout);
       markersRef.current.forEach(({ marker }) => marker.remove());
       markersRef.current.clear();
+      sosMarkersRef.current.forEach((marker) => marker.remove());
+      sosMarkersRef.current.clear();
       meMarkerRef.current?.remove();
       meMarkerRef.current = null;
       mapRef.current?.remove();
@@ -256,6 +262,37 @@ export function MaplibreEngine({
       }
     }
   }, [zoom, located, ready, selectedId, onSelectMarker]);
+
+  // --- SOS markerek renderelése ---
+  useEffect(() => {
+    const map = mapRef.current;
+    const ml = mlRef.current;
+    if (!map || !ml || !ready) return;
+
+    // Remove old SOS markers
+    sosMarkersRef.current.forEach((marker) => marker.remove());
+    sosMarkersRef.current.clear();
+
+    sosAlerts.forEach((sos) => {
+      const el = document.createElement("div");
+      el.className = "flex h-10 w-10 items-center justify-center relative cursor-pointer";
+      el.innerHTML = `
+        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+        <span class="relative flex items-center justify-center h-8 w-8 rounded-full bg-red-600 text-white text-lg">🆘</span>
+      `;
+
+      el.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        alert(\`S.O.S. Segítségkérés:\\n\\n\${sos.description}\\n\\nKapcsolat:\\nWhatsApp: wa.me/\${sos.contactPhone.replace('+', '')}\\nTelefon: \${sos.contactPhone}\`);
+      });
+
+      const marker = new ml.Marker({ element: el, anchor: "center" })
+        .setLngLat([sos.lng, sos.lat])
+        .addTo(map);
+
+      sosMarkersRef.current.set(sos.id, marker);
+    });
+  }, [sosAlerts, ready]);
 
   // --- kiválasztott pin kiemelése ---
   useEffect(() => {

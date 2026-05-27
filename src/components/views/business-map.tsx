@@ -10,6 +10,15 @@ import { cn } from "@/lib/cn";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
 
+export interface SosAlert {
+  id: string;
+  lat: number;
+  lng: number;
+  description: string;
+  contactPhone: string;
+  resolved: boolean;
+}
+
 /**
  * BusinessMap — wrapper: WebGL-detektálás + motor-választás + közös overlay-ek.
  *
@@ -79,6 +88,14 @@ export function BusinessMap({
     if (isMaplibreRequested()) setEngine("maplibre");
   }, []);
 
+  const [sosAlerts, setSosAlerts] = useState<SosAlert[]>([]);
+  useEffect(() => {
+    fetch("/api/sos")
+      .then((res) => res.json())
+      .then((data) => setSosAlerts(data || []))
+      .catch(() => setSosAlerts([]));
+  }, []);
+
   const handleSelectMarker = useCallback((id: string) => setSelectedId(id), []);
   // Ha a maplibre runtime elhasal (timeout, WebGL-hiba), automatikus fallback.
   const handleMaplibreFail = useCallback((reason: string) => {
@@ -104,6 +121,7 @@ export function BusinessMap({
           fallbackCenter={fallbackCenter}
           fallbackZoom={fallbackZoom}
           onFail={handleMaplibreFail}
+          sosAlerts={sosAlerts}
         />
       ) : (
         <LeafletEngine
@@ -112,6 +130,7 @@ export function BusinessMap({
           onSelectMarker={handleSelectMarker}
           fallbackCenter={fallbackCenter}
           fallbackZoom={fallbackZoom}
+          sosAlerts={sosAlerts}
         />
       )}
 

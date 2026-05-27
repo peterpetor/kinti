@@ -8,6 +8,7 @@ import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
 import { clusterBusinesses, clusterBounds, clusterSize } from "@/lib/cluster";
+import type { SosAlert } from "./business-map";
 
 import "leaflet/dist/leaflet.css";
 
@@ -22,6 +23,7 @@ export interface MapEngineProps {
   onSelectMarker: (id: string) => void;
   fallbackCenter: [number, number]; // [lat, lng]
   fallbackZoom: number;
+  sosAlerts?: SosAlert[];
 }
 
 export function LeafletEngine({
@@ -30,6 +32,7 @@ export function LeafletEngine({
   onSelectMarker,
   fallbackCenter,
   fallbackZoom,
+  sosAlerts = [],
 }: MapEngineProps) {
   const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
 
@@ -56,6 +59,19 @@ export function LeafletEngine({
         selectedId={selectedId}
         onSelectMarker={onSelectMarker}
       />
+
+      {sosAlerts.map((sos) => (
+        <Marker
+          key={sos.id}
+          position={[sos.lat, sos.lng]}
+          icon={SOS_ICON}
+          eventHandlers={{
+            click: () => {
+              alert(\`S.O.S. Segítségkérés:\\n\\n\${sos.description}\\n\\nKapcsolat:\\nWhatsApp: wa.me/\${sos.contactPhone.replace('+', '')}\\nTelefon: \${sos.contactPhone}\`);
+            },
+          }}
+        />
+      ))}
 
       {myPosition && (
         <Marker position={myPosition} icon={ME_ICON} interactive={false} />
@@ -140,6 +156,18 @@ const ME_ICON = L.divIcon({
   html: '<div class="kinti-me-dot"></div>',
   iconSize: [16, 16],
   iconAnchor: [8, 8],
+});
+
+const SOS_ICON = L.divIcon({
+  className: "",
+  html: `
+    <div class="flex h-10 w-10 items-center justify-center relative">
+      <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+      <span class="relative flex items-center justify-center h-8 w-8 rounded-full bg-red-600 text-white text-lg">🆘</span>
+    </div>
+  `,
+  iconSize: [40, 40],
+  iconAnchor: [20, 20],
 });
 
 const PIN_CACHE = new Map<string, L.DivIcon>();

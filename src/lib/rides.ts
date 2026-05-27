@@ -1,0 +1,141 @@
+/**
+ * Telekocsi (ride-sharing) — közös konstansok + validáció. A kliens-űrlap és a
+ * szerver-route ugyanezt használja.
+ */
+
+import { findProfanityInFields } from "./profanity";
+
+export const RIDE_LIMITS = {
+  cityMin: 2,
+  cityMax: 80,
+  priceMax: 40,
+  phoneMax: 24,
+  notesMax: 500,
+  seatsMin: 1,
+  seatsMax: 8,
+} as const;
+
+/** Lazán E.164-szerű telefonszám (a WhatsApp-linkhez a + és számok kellenek). */
+const PHONE_RE = /^\+?[0-9][0-9 ()\-/]{5,23}$/;
+
+export interface RideFormInput {
+  departureCity?: unknown;
+  destinationCity?: unknown;
+  departureTime?: unknown;
+  seats?: unknown;
+  priceText?: unknown;
+  contactPhone?: unknown;
+  notes?: unknown;
+  /** Opcionális: ha a kliens már geokódolta. */
+  lat?: unknown;
+  lng?: unknown;
+}
+
+export interface ValidatedRideInput {
+  departureCity: string;
+  destinationCity: string;
+  departureTime: string;
+  seats: number;
+  priceText: string | null;
+  contactPhone: string;
+  notes: string | null;
+  lat: number | null;
+  lng: number | null;
+}
+
+export type RideValidationError = { field: keyof RideFormInput; message: string };
+
+export function validateRideInput(
+  input: RideFormInput,
+): { ok: true; value: ValidatedRideInput } | { ok: false; errors: RideValidationError[] } {
+  const errors: RideValidationError[] = [];
+  const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+
+  const departureCity = str(input.departureCity);
+  if (departureCity.length < RIDE_LIMITS.cityMin || departureCity.length > RIDE_LIMITS.cityMax) {
+    errors.push({ field: "departureCity", message: "Add meg az indulás helyét." });
+  }
+
+  const destinationCity = str(input.destinationCity);
+  if (destinationCity.length < RIDE_LIMITS.cityMin || destinationCity.length > RIDE_LIMITS.cityMax) {
+    errors.push({ field: "destinationCity", message: "Add meg az érkezés helyét." });
+  }
+
+  const departureTime = str(input.departureTime);
+  const depMs = Date.parse(departureTime);
+  if (!departureTime || Number.isNaN(depMs)) {
+    errors.push({ field: "departureTime", message: "Adj meg egy érvényes indulási időpontot." });
+  } else if (depMs < Date.now() - 60 * 60 * 1000) {
+    errors.push({ field: "departureTime", message: "Az indulás időpontja a múltban van." });
+  }
+
+  let seats = NaN;
+  if (typeof input.seats === "number") seats = input.seats;
+  else if (typeof input.seats === "string" && input.seats.trim() !== "") seats = Number(input.seats);
+  if (!Number.isInteger(seats) || seats < RIDE_LIMITS.seatsMin || seats > RIDE_LIMITS.seatsMax) {
+    errors.push({ field: "seats", message: `A szabad helyek száma 1 és ${RIDE_LIMITS.seatsMax} között lehet.` });
+  }
+
+  const priceText = str(input.priceText);
+  if (priceText.length > RIDE_LIMITS.priceMax) {
+    errors.push({ field: "priceText", message: `Az ár-mező legfeljebb ${RIDE_LIMITS.priceMax} karakter.` });
+  }
+
+  const contactPhone = str(input.contactPhone);
+  if (!contactPhone) {
+    errors.push({ field: "contactPhone", message: "A telefonszám kötelező." });
+  } else if (contactPhone.length > RIDE_LIMITS.phoneMax || !PHONE_RE.test(contactPhone)) {
+    errors.push({
+      field: "contactPhone",
+      message: "Add meg a telefonszámot nemzetközi formátumban (pl. +41… vagy +36…).",
+    });
+  }
+
+  const notes = str(input.notes);
+  if (notes.length > RIDE_LIMITS.notesMax) {
+    errors.push({ field: "notes", message: `A megjegyzés legfeljebb ${RIDE_LIMITS.notesMax} karakter.` });
+  }
+
+  if (!errors.length) {
+    const dirty = findProfanityInFields({ departureCity, destinationCity, notes });
+    if (dirty) {
+      errors.push({
+        field: dirty.field as keyof RideFormInput,
+        message: "A szöveg olyan szót tartalmaz, amit nem engedünk. Fogalmazd meg másképp.",
+      });
+    }
+  }
+
+  // Opcionális kliens-koordináta
+  const lat = typeof input.lat === "number" && Number.isFinite(input.lat) ? input.lat : null;
+  const lng = typeof input.lng === "number" && Number.isFinite(input.lng) ? input.lng : null;
+
+  if (errors.length) return { ok: false, errors };
+
+  return {
+    ok: true,
+    value: {
+      departureCity,
+      destinationCity,
+      departureTime,
+      seats,
+      priceText: priceText || null,
+      contactPhone,
+      notes: notes || null,
+      lat,
+      lng,
+    },
+  };
+}
+
+/** expires_at = indulás + 24 óra, SQLite-kompatibilis UTC formátumban (YYYY-MM-DD HH:MM:SS). */
+export function computeRideExpiry(departureTime: string): string {
+  const t = Date.parse(departureTime);
+  const base = Number.isNaN(t) ? Date.now() : t;
+  return new Date(base + 24 * 60 * 60 * 1000).toISOString().slice(0, 19).replace("T", " ");
+}
+
+/** Telefonszám → wa.me-kompatibilis (csak számjegyek). */
+export function phoneToWhatsapp(phone: string): string {
+  return phone.replace(/[^0-9]/g, "");
+}

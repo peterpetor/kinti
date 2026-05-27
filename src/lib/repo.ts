@@ -1686,3 +1686,145 @@ export async function countRecentReports(ipHash: string | null): Promise<number>
     .first<{ n: number }>();
   return res?.n ?? 0;
 }
+
+// ---------------------------------------------------------------------------
+// Telekocsi (ride-sharing)
+// ---------------------------------------------------------------------------
+
+interface RideRow {
+  id: string;
+  departure_city: string;
+  destination_city: string;
+  departure_time: string;
+  lat: number;
+  lng: number;
+  seats: number;
+  price_text: string | null;
+  poster_name: string;
+  poster_user_id: string | null;
+  contact_phone: string;
+  notes: string | null;
+  created_at: string;
+  expires_at: string;
+}
+
+export interface Ride {
+  id: string;
+  departureCity: string;
+  destinationCity: string;
+  departureTime: string;
+  lat: number;
+  lng: number;
+  seats: number;
+  priceText: string | null;
+  posterName: string;
+  posterUserId: string | null;
+  contactPhone: string;
+  notes: string | null;
+  createdAt: string;
+  expiresAt: string;
+}
+
+function toRide(r: RideRow): Ride {
+  return {
+    id: r.id,
+    departureCity: r.departure_city,
+    destinationCity: r.destination_city,
+    departureTime: r.departure_time,
+    lat: r.lat,
+    lng: r.lng,
+    seats: r.seats,
+    priceText: r.price_text,
+    posterName: r.poster_name,
+    posterUserId: r.poster_user_id,
+    contactPhone: r.contact_phone,
+    notes: r.notes,
+    createdAt: r.created_at,
+    expiresAt: r.expires_at,
+  };
+}
+
+export interface CreateRideInput {
+  id: string;
+  departureCity: string;
+  destinationCity: string;
+  departureTime: string;
+  lat: number;
+  lng: number;
+  seats: number;
+  priceText: string | null;
+  posterName: string;
+  posterUserId: string | null;
+  contactPhone: string;
+  notes: string | null;
+  expiresAt: string;
+}
+
+export async function createRide(input: CreateRideInput): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO rides
+       (id, departure_city, destination_city, departure_time, lat, lng, seats,
+        price_text, poster_name, poster_user_id, contact_phone, notes, expires_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      input.id,
+      input.departureCity,
+      input.destinationCity,
+      input.departureTime,
+      input.lat,
+      input.lng,
+      input.seats,
+      input.priceText,
+      input.posterName,
+      input.posterUserId,
+      input.contactPhone,
+      input.notes,
+      input.expiresAt,
+    )
+    .run();
+}
+
+export interface RideQuery {
+  minLat?: number;
+  maxLat?: number;
+  minLng?: number;
+  maxLng?: number;
+}
+
+/** Aktív (nem lejárt) fuvarok, opcionális bounding-box szűréssel. */
+export async function getActiveRides(opts: RideQuery = {}): Promise<Ride[]> {
+  const where = ["expires_at > datetime('now')"];
+  const binds: unknown[] = [];
+  if (
+    typeof opts.minLat === "number" && typeof opts.maxLat === "number" &&
+    typeof opts.minLng === "number" && typeof opts.maxLng === "number"
+  ) {
+    where.push("lat BETWEEN ? AND ?", "lng BETWEEN ? AND ?");
+    binds.push(opts.minLat, opts.maxLat, opts.minLng, opts.maxLng);
+  }
+  const sql = `SELECT * FROM rides WHERE ${where.join(" AND ")} ORDER BY departure_time ASC`;
+  const { results } = await getDB().prepare(sql).bind(...binds).all<RideRow>();
+  return results.map(toRide);
+}
+
+export async function getRideById(id: string): Promise<Ride | null> {
+  const row = await getDB().prepare("SELECT * FROM rides WHERE id = ?").bind(id).first<RideRow>();
+  return row ? toRide(row) : null;
+}
+
+/** Törlés tulajdonosként (poster_user_id egyezés). Visszaadja, érintett-e sort. */
+export async function deleteRideByOwner(id: string, userId: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM rides WHERE id = ? AND poster_user_id = ?")
+    .bind(id, userId)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+/** Törlés adminként (tulajdonos-ellenőrzés nélkül). */
+export async function deleteRideById(id: string): Promise<boolean> {
+  const res = await getDB().prepare("DELETE FROM rides WHERE id = ?").bind(id).run();
+  return (res.meta.changes ?? 0) > 0;
+}
