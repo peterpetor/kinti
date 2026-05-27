@@ -7,6 +7,7 @@ import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
+import { GlobalSosButton } from "./global-sos-button";
 
 /**
  * ExploreView (Szaknévsor) — szerverről kapja a teljes adatkészletet, és

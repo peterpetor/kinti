@@ -23,7 +23,7 @@ export function GlobalSosButton() {
     <>
       <button
         onClick={handleClick}
-        className="fixed bottom-24 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.6)] transition-transform hover:scale-110 active:scale-95"
+        className="pointer-events-auto absolute top-3 right-3 z-[999] flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.6)] transition-transform hover:scale-110 active:scale-95"
         aria-label="S.O.S. Segítségkérés"
       >
         <span className="text-2xl">🆘</span>

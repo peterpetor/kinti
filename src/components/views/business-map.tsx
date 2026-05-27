@@ -9,6 +9,7 @@ import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
+import { GlobalSosButton } from "./global-sos-button";
 
 export interface SosAlert {
   id: string;
@@ -141,6 +142,8 @@ export function BusinessMap({
           {locationLabel}
         </span>
       </div>
+
+      <GlobalSosButton />
 
       {/* Alul: kategória-pillek + kiválasztott kártya */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[10] flex flex-col gap-2 p-3">

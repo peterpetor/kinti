@@ -1,5 +1,4 @@
 import { TabBar } from "@/components/ui";
-import { GlobalSosButton } from "@/components/views/global-sos-button";
 
 /**
  * Az alkalmazás-nézetek közös kerete: mobil-first, középre zárt max-w-md
@@ -12,7 +11,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="mx-auto min-h-dvh max-w-md pb-28">
         {children}
       </div>
-      <GlobalSosButton />
       <TabBar />
     </>
   );
