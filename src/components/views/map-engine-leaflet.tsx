@@ -67,7 +67,7 @@ export function LeafletEngine({
           icon={SOS_ICON}
           eventHandlers={{
             click: () => {
-              alert(\`S.O.S. Segítségkérés:\\n\\n\${sos.description}\\n\\nKapcsolat:\\nWhatsApp: wa.me/\${sos.contactPhone.replace('+', '')}\\nTelefon: \${sos.contactPhone}\`);
+              alert(`S.O.S. Segítségkérés:\n\n${sos.description}\n\nKapcsolat:\nWhatsApp: wa.me/${sos.contactPhone.replace('+', '')}\nTelefon: ${sos.contactPhone}`);
             },
           }}
         />

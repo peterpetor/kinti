@@ -92,7 +92,7 @@ export function BusinessMap({
   useEffect(() => {
     fetch("/api/sos")
       .then((res) => res.json())
-      .then((data) => setSosAlerts(data || []))
+      .then((data) => setSosAlerts(Array.isArray(data) ? data : []))
       .catch(() => setSosAlerts([]));
   }, []);
 

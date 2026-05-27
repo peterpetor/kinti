@@ -41,13 +41,17 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
           });
 
           if (!res.ok) {
-            const data = await res.json();
+            const data = await res.json() as any;
             throw new Error(data.error || "Hiba történt a küldés során.");
           }
 
           onSuccess();
-        } catch (err: any) {
-          setError(err.message);
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            setError(err.message);
+          } else {
+            setError("Hiba történt a küldés során.");
+          }
         } finally {
           setLoading(false);
         }

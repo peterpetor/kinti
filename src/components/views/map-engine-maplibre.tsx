@@ -283,7 +283,7 @@ export function MaplibreEngine({
 
       el.addEventListener("click", (ev) => {
         ev.stopPropagation();
-        alert(\`S.O.S. Segítségkérés:\\n\\n\${sos.description}\\n\\nKapcsolat:\\nWhatsApp: wa.me/\${sos.contactPhone.replace('+', '')}\\nTelefon: \${sos.contactPhone}\`);
+        alert(`S.O.S. Segítségkérés:\n\n${sos.description}\n\nKapcsolat:\nWhatsApp: wa.me/${sos.contactPhone.replace('+', '')}\nTelefon: ${sos.contactPhone}`);
       });
 
       const marker = new ml.Marker({ element: el, anchor: "center" })
