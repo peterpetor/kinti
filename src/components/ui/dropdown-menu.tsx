@@ -140,14 +140,12 @@ export function DropdownMenu() {
 
             <div className="h-px bg-line/60 my-4 mx-2" />
 
-            {isLoaded && isSignedIn && (
-              <SignOutButton redirectUrl="/">
-                <button className="flex w-full items-center justify-center gap-2.5 mt-2 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
-                  <Icon name="user" size={16} strokeWidth={2.4} />
-                  Kijelentkezés
-                </button>
-              </SignOutButton>
-            )}
+            <SignOutButton redirectUrl="/">
+              <button className="flex w-full items-center justify-center gap-2.5 mt-2 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
+                <Icon name="user" size={16} strokeWidth={2.4} />
+                Kijelentkezés
+              </button>
+            </SignOutButton>
 
             <button
               type="button"
