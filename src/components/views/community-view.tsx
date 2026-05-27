@@ -8,12 +8,15 @@ import type { BulletinKind, BulletinPost, KintiEvent } from "@/lib/types";
 import { mediaUrl } from "@/lib/media";
 import { CANTONS } from "@/lib/cantons";
 import { TurnstileWidget } from "@/components/turnstile-widget";
+import { ShareSheet } from "@/components/share-sheet";
+import { AddToCalendar } from "@/components/add-to-calendar";
+import type { CalendarEvent } from "@/lib/calendar";
 
 // --- helperek a hirdetésekhez -----------------------------------------------
 
 const SAVED_KEY = "kinti.savedBulletins";
 
-function loadSavedIds(): Set<string> {
+export function loadSavedIds(): Set<string> {
   if (typeof window === "undefined") return new Set();
   try {
     const raw = localStorage.getItem(SAVED_KEY);
@@ -25,7 +28,7 @@ function loadSavedIds(): Set<string> {
   }
 }
 
-function saveSavedIds(set: Set<string>) {
+export function saveSavedIds(set: Set<string>) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(SAVED_KEY, JSON.stringify([...set]));
@@ -56,27 +59,6 @@ function formatExpiry(days: number | null): string | null {
   return `még ${days} nap`;
 }
 
-/** Web Share API, ha van; különben vágólap. */
-async function shareLink(url: string, title: string): Promise<"shared" | "copied" | "failed"> {
-  if (typeof navigator === "undefined") return "failed";
-  if (navigator.share) {
-    try {
-      await navigator.share({ url, title });
-      return "shared";
-    } catch {
-      return "failed";
-    }
-  }
-  if (navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(url);
-      return "copied";
-    } catch {
-      return "failed";
-    }
-  }
-  return "failed";
-}
 
 type Tab = "events" | "board" | "newbie";
 
@@ -156,12 +138,24 @@ const HU_MONTHS = [
 
 const MAX_EVENTS = 10;
 
+function eventToCal(e: KintiEvent): CalendarEvent {
+  return {
+    title: e.title,
+    date: e.eventDate ?? "",
+    startTime: e.startTime,
+    venue: e.venue,
+    description: e.description ?? null,
+  };
+}
+
 function EventsList({ events }: { events: KintiEvent[] }) {
   // Hónapos szűrő: "all" vagy "2025-06" formátum
   const [monthFilter, setMonthFilter] = useState<string>("all");
 
   // Lokális RSVP-állapot eseményenként (felülírja a szerver going-ját).
   const [rsvp, setRsvp] = useState<Record<string, RsvpState>>({});
+  // Melyik eseményhez nyitottuk meg a „naptárba" választót.
+  const [calFor, setCalFor] = useState<KintiEvent | null>(null);
 
   const goingOf = (e: KintiEvent) => rsvp[e.id]?.going ?? e.going;
   const votedOf = (e: KintiEvent) => rsvp[e.id]?.voted ?? false;
@@ -303,6 +297,16 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                   "Legyél te az első, aki jelzi!"
                 )}
               </p>
+              {hero.eventDate && (
+                <button
+                  type="button"
+                  onClick={() => setCalFor(hero)}
+                  aria-label="Add a naptáradhoz"
+                  className="inline-flex items-center rounded-pill bg-white/20 px-2.5 py-1.5 text-white active:scale-95"
+                >
+                  <Icon name="calendar" size={13} strokeWidth={2.4} />
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => handleRsvp(hero)}
@@ -348,6 +352,16 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                   {goingOf(e) > 0 && <> · {goingOf(e)} fő megy</>}
                 </div>
               </div>
+              {e.eventDate && (
+                <button
+                  type="button"
+                  onClick={() => setCalFor(e)}
+                  aria-label="Add a naptáradhoz"
+                  className="grid h-8 w-8 shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-muted active:scale-95"
+                >
+                  <Icon name="calendar" size={13} strokeWidth={2.2} />
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => handleRsvp(e)}
@@ -377,6 +391,12 @@ function EventsList({ events }: { events: KintiEvent[] }) {
           )}
         </>
       )}
+
+      <AddToCalendar
+        open={!!calFor}
+        onClose={() => setCalFor(null)}
+        event={calFor ? eventToCal(calFor) : null}
+      />
     </>
   );
 }
@@ -423,7 +443,7 @@ function parseImageKeys(keyStr: string | null | undefined): string[] {
   return [keyStr];
 }
 
-function BulletinCard({
+export function BulletinCard({
   post,
   isSaved,
   onToggleSaved,
@@ -437,7 +457,7 @@ function BulletinCard({
   const [expanded, setExpanded] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const [shareHint, setShareHint] = useState<string | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const [senderName, setSenderName] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
@@ -453,13 +473,7 @@ function BulletinCard({
   const expiryLabel = formatExpiry(remaining);
   const priceLabel = formatPrice(post.price);
 
-  async function handleShare() {
-    const url = `${typeof window !== "undefined" ? window.location.origin : ""}/kozosseg/hirdetes/${post.id}`;
-    const result = await shareLink(url, post.title);
-    if (result === "copied") setShareHint("Link másolva");
-    else if (result === "shared") setShareHint("Megosztva");
-    if (result !== "failed") setTimeout(() => setShareHint(null), 1800);
-  }
+  const shareUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/kozosseg/hirdetes/${post.id}`;
 
   async function handleContactSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -536,12 +550,9 @@ function BulletinCard({
           </span>
         )}
         <span className="flex-1" />
-        {shareHint && (
-          <span className="text-[10.5px] font-bold text-success">{shareHint}</span>
-        )}
         <button
           type="button"
-          onClick={handleShare}
+          onClick={() => setShareOpen(true)}
           aria-label="Megosztás"
           className="text-ink-faint transition hover:text-ink-muted active:scale-90"
         >
@@ -560,6 +571,14 @@ function BulletinCard({
           <Icon name="bookmark" size={14} filled={isSaved} />
         </button>
       </div>
+
+      <ShareSheet
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        url={shareUrl}
+        title={post.title}
+        text={`Nézd meg ezt a hirdetést a kintin: ${post.title}`}
+      />
 
       <div onClick={() => setExpanded(!expanded)} className="cursor-pointer">
         <h3 className="mb-1 text-[15.5px] font-bold tracking-[-0.01em] text-ink text-pretty hover:text-primary transition-colors">

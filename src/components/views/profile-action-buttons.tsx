@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { ShareSheet } from "@/components/share-sheet";
 
 interface ProfileActionButtonsProps {
   businessId: string;
@@ -12,6 +13,7 @@ interface ProfileActionButtonsProps {
 export function ProfileHeaderActions({ businessId, businessName }: ProfileActionButtonsProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
 
   // Kedvenc állapot betöltése localStorage-ból
   useEffect(() => {
@@ -49,36 +51,12 @@ export function ProfileHeaderActions({ businessId, businessName }: ProfileAction
     }
   };
 
-  const handleShare = async () => {
-    const shareData = {
-      title: `${businessName} · Kinti`,
-      text: `Találd meg a magyar szakembert Svájcban: ${businessName}`,
-      url: window.location.href,
-    };
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-        showToast("Sikeresen megosztva!");
-      } catch (err) {
-        // Ha a felhasználó megszakította a megosztást, nem mutatunk hibát
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        showToast("Link másolva a vágólapra!");
-      } catch {
-        showToast("Nem sikerült másolni a linket.");
-      }
-    }
-  };
-
   return (
     <>
       <div className="flex gap-2">
         <button
           type="button"
-          onClick={handleShare}
+          onClick={() => setShareOpen(true)}
           aria-label="Megosztás"
           className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-white/95 text-ink shadow-card backdrop-blur-md transition hover:bg-white active:scale-95"
         >
@@ -109,6 +87,14 @@ export function ProfileHeaderActions({ businessId, businessName }: ProfileAction
           </div>
         </div>
       )}
+
+      <ShareSheet
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        url={typeof window !== "undefined" ? window.location.href : ""}
+        title={`${businessName} · Kinti`}
+        text={`Találd meg a magyar szakembert Svájcban: ${businessName}`}
+      />
     </>
   );
 }
