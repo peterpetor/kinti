@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { createSosAlert } from "@/lib/sos-repo";
+import { createSosAlert, getActiveAlertCountForUser } from "@/lib/sos-repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -9,6 +9,15 @@ export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Anti-spam: max 1 active alert per user
+  const activeCount = await getActiveAlertCountForUser(userId);
+  if (activeCount >= 1) {
+    return NextResponse.json(
+      { error: "Már van egy aktív riasztásod! Zárd le a meglévőt, mielőtt újat adsz le." },
+      { status: 429 }
+    );
   }
 
   let body: Record<string, any>;

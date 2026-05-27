@@ -67,6 +67,17 @@ export async function getActiveSosAlerts(): Promise<SosAlert[]> {
   return results.map(toSosAlert);
 }
 
+export async function getActiveAlertCountForUser(userId: string): Promise<number> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT count(*) as count FROM sos_alerts
+       WHERE poster_user_id = ? AND expires_at > datetime('now') AND resolved = 0`
+    )
+    .bind(userId)
+    .all<{ count: number }>();
+  return results[0]?.count ?? 0;
+}
+
 export async function resolveSosAlert(id: string, posterUserId: string): Promise<boolean> {
   const res = await getDB()
     .prepare("UPDATE sos_alerts SET resolved = 1 WHERE id = ? AND poster_user_id = ?")
