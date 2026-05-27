@@ -74,10 +74,18 @@ export const TurnstileWidget = forwardRef<TurnstileWidgetRef, TurnstileWidgetPro
 
     useImperativeHandle(ref, () => ({
       reset: () => {
-        if (widgetIdRef.current && window.turnstile) {
-          window.turnstile.reset(widgetIdRef.current);
-          onToken("");
+        if (window.turnstile) {
+          try {
+            if (widgetIdRef.current) {
+              window.turnstile.reset(widgetIdRef.current);
+            } else {
+              window.turnstile.reset();
+            }
+          } catch (e) {
+            console.warn("Turnstile reset failed:", e);
+          }
         }
+        onToken("");
       }
     }));
 
