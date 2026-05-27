@@ -213,9 +213,10 @@ export function ExploreView({
               activeCat={cat}
               onSelectCat={setCat}
               locationLabel={locationLabel}
-              className="mb-6 h-[calc(100dvh-300px)] min-h-[460px] max-h-[640px]"
+              className="mb-2 h-[calc(100dvh-350px)] min-h-[400px] max-h-[580px]"
             />
           </Suspense>
+          <GlobalSosButton />
         </div>
       )}
     </div>

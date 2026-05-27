@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { createSosAlert, getActiveAlertCountForUser } from "@/lib/sos-repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // IP alapú azonosítás (Clerk nélkül)
+  const ip = req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "unknown";
+  
+  // Hash the IP to avoid storing raw IPs if possible, but for simplicity here we just use it directly or a simple hash.
+  const ipHash = Array.from(
+    new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(ip)))
+  ).map((b) => b.toString(16).padStart(2, "0")).join("");
+  
+  const userId = `ip_${ipHash.substring(0, 16)}`;
 
   // Anti-spam: max 1 active alert per user
   const activeCount = await getActiveAlertCountForUser(userId);
