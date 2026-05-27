@@ -39,7 +39,9 @@ export default function VelemenyMegerositvePage({
           </h1>
           <p className="text-pretty text-[14px] leading-relaxed text-ink-muted">
             A vélemény-megerősítő link 24 óráig érvényes, és ez letelt — vagy
-            a link nem érvényes. Írd meg a véleményt újra.
+            a link már felhasználásra került.
+            <br/><br/>
+            <strong>Tipp:</strong> Bizonyos levelezők (pl. Gmail) automatikusan rákattintanak a linkekre biztonsági ellenőrzés céljából. Ha ez történt, a véleményed <strong>már sikeresen megjelent</strong>! Nézd meg a vállalkozás adatlapját.
           </p>
           <Link
             href="/szaknevsor"

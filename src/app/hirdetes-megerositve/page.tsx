@@ -37,8 +37,9 @@ export default function HirdetesMegerositvePage({
             Lejárt megerősítő link
           </h1>
           <p className="text-pretty text-[14px] leading-relaxed text-ink-muted">
-            A megerősítő link 24 óráig érvényes, és ez letelt — vagy a link nem érvényes.
-            Add fel a hirdetést újra, és kattints az új linkre időben.
+            A megerősítő link 24 óráig érvényes, és ez letelt — vagy a link már felhasználásra került.
+            <br/><br/>
+            <strong>Tipp:</strong> Bizonyos levelezők (pl. Gmail, céges rendszerek) biztonsági okokból automatikusan rákattintanak a linkekre a háttérben. Ha ez történt, a hirdetésed <strong>már sikeresen megjelent</strong>! Ellenőrizd a Közösség oldalon.
           </p>
           <Link
             href="/kozosseg/uj-hirdetes"

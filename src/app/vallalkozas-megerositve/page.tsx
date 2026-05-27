@@ -32,8 +32,9 @@ export default function VallalkozasMegerositvePage({
             Lejárt megerősítő link
           </h1>
           <p className="text-pretty text-[14px] leading-relaxed text-ink-muted">
-            A megerősítő link 24 óráig érvényes, és ez letelt — vagy a link nem érvényes.
-            Küldd be a vállalkozásod újra, és kattints az új linkre időben.
+            A megerősítő link 24 óráig érvényes, és ez letelt — vagy a link már felhasználásra került.
+            <br/><br/>
+            <strong>Tipp:</strong> Bizonyos levelezők (pl. Gmail, céges rendszerek) biztonsági okokból automatikusan rákattintanak a linkekre a háttérben. Ha ez történt, a vállalkozásod <strong>már sikeresen megjelent</strong>! Ellenőrizd a Szaknévsorban.
           </p>
           <Link
             href="/szaknevsor/uj"
