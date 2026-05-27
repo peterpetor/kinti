@@ -40,9 +40,15 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
             }),
           });
 
+          const data = await res.json() as any;
           if (!res.ok) {
-            const data = await res.json() as any;
             throw new Error(data.error || "Hiba történt a küldés során.");
+          }
+
+          if (data.id && typeof window !== 'undefined') {
+            const myAlerts = JSON.parse(localStorage.getItem('mySosAlerts') || '[]');
+            myAlerts.push(data.id);
+            localStorage.setItem('mySosAlerts', JSON.stringify(myAlerts));
           }
 
           if (typeof window !== 'undefined') {

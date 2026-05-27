@@ -24,6 +24,7 @@ export interface MapEngineProps {
   fallbackCenter: [number, number]; // [lat, lng]
   fallbackZoom: number;
   sosAlerts?: SosAlert[];
+  onSelectSosAlert?: (id: string) => void;
 }
 
 export function LeafletEngine({
@@ -33,6 +34,7 @@ export function LeafletEngine({
   fallbackCenter,
   fallbackZoom,
   sosAlerts = [],
+  onSelectSosAlert,
 }: MapEngineProps) {
   const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
 
@@ -66,9 +68,7 @@ export function LeafletEngine({
           position={[sos.lat, sos.lng]}
           icon={SOS_ICON}
           eventHandlers={{
-            click: () => {
-              alert(`S.O.S. Segítségkérés:\n\n${sos.description}\n\nKapcsolat:\nWhatsApp: wa.me/${sos.contactPhone.replace('+', '')}\nTelefon: ${sos.contactPhone}`);
-            },
+            click: () => onSelectSosAlert?.(sos.id),
           }}
         />
       ))}

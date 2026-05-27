@@ -25,6 +25,7 @@ export interface MaplibreEngineProps {
   fallbackZoom: number;
   onFail: (reason: string) => void;
   sosAlerts?: SosAlert[];
+  onSelectSosAlert?: (id: string) => void;
 }
 
 const MAPTILER_KEY = process.env.NEXT_PUBLIC_MAPTILER_KEY;
