@@ -59,6 +59,36 @@ export default function RootLayout({
         formFieldInputPlaceholder__firstName: "Keresztnév",
         formFieldInputPlaceholder__lastName: "Vezetéknév",
         formFieldInputPlaceholder__emailAddress: "Email cím",
+        formFieldInputPlaceholder__password: "Jelszó megadása",
+        formFieldInputPlaceholder__newPassword: "Új jelszó megadása",
+        signUp: {
+          ...huHU.signUp,
+          legalConsent: {
+            checkbox: {
+              label__termsOfServiceAndPrivacyPolicy:
+                "Elfogadom az {{termsOfServiceLink}} és az {{privacyPolicyLink}} feltételeit.",
+              label__onlyPrivacyPolicy:
+                "Elfogadom az {{privacyPolicyLink}} feltételeit.",
+              label__onlyTermsOfService:
+                "Elfogadom az {{termsOfServiceLink}} feltételeit.",
+            },
+          },
+          start: {
+            title: "Regisztráció",
+            subtitle: "Üdv! Kérlek add meg adataidat a fiók létrehozásához.",
+            actionText: "Van már fiókod?",
+            actionLink: "Bejelentkezés",
+          },
+        },
+        signIn: {
+          ...huHU.signIn,
+          start: {
+            title: "Bejelentkezés",
+            subtitle: "Üdv újra! Jelentkezz be a folytatáshoz.",
+            actionText: "Nincs fiókod?",
+            actionLink: "Regisztráció",
+          },
+        },
       }}
       appearance={{ variables: { colorPrimary: "#1d4434", borderRadius: "0.75rem" } }}
     >
