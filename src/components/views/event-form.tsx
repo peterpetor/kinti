@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "@/components/ui";
-import { TurnstileWidget } from "@/components/turnstile-widget";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { EVENT_LIMITS } from "@/lib/events-validation";
 import { cn } from "@/lib/cn";
 
@@ -102,6 +102,7 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [global, setGlobal] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -146,6 +147,7 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
           setGlobal(data.error ?? "Ismeretlen hiba. Próbáld újra.");
           setPhase("error");
         }
+        turnstileRef.current?.reset();
         return;
       }
 
@@ -153,6 +155,7 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
     } catch {
       setGlobal("Hálózati hiba. Ellenőrizd az internetkapcsolatodat.");
       setPhase("error");
+      turnstileRef.current?.reset();
     }
   }
 
@@ -349,7 +352,7 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
       </Section>
 
       {/* Turnstile CAPTCHA */}
-      <TurnstileWidget siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
+      <TurnstileWidget ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
 
       {global && (
         <p className="rounded-xl bg-accent/10 px-4 py-3 text-[12.5px] font-semibold text-accent">

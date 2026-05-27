@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 
 /**
  * Cloudflare Turnstile widget — `script` betöltés + render.
@@ -63,34 +63,46 @@ function loadTurnstileScript(): Promise<void> {
   return scriptLoading;
 }
 
-export function TurnstileWidget({ siteKey, onToken, className }: TurnstileWidgetProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const widgetIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadTurnstileScript().then(() => {
-      if (cancelled || !containerRef.current || !window.turnstile) return;
-      widgetIdRef.current = window.turnstile.render(containerRef.current, {
-        sitekey: siteKey,
-        theme: "light",
-        callback: (token) => onToken(token),
-        "expired-callback": () => onToken(""),
-        "error-callback": () => onToken(""),
-      });
-    });
-    return () => {
-      cancelled = true;
-      if (widgetIdRef.current && window.turnstile) {
-        window.turnstile.remove(widgetIdRef.current);
-        widgetIdRef.current = null;
-      }
-    };
-    // `siteKey` praktikusan nem változik runtime közben; az `onToken`-t
-    // szándékosan kihagyjuk, hogy ne renderelje újra a widgetet minden form-tipikus
-    // state-frissítésnél.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [siteKey]);
-
-  return <div ref={containerRef} className={className} />;
+export interface TurnstileWidgetRef {
+  reset: () => void;
 }
+
+export const TurnstileWidget = forwardRef<TurnstileWidgetRef, TurnstileWidgetProps>(
+  function TurnstileWidget({ siteKey, onToken, className }, ref) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const widgetIdRef = useRef<string | null>(null);
+
+    useImperativeHandle(ref, () => ({
+      reset: () => {
+        if (widgetIdRef.current && window.turnstile) {
+          window.turnstile.reset(widgetIdRef.current);
+          onToken("");
+        }
+      }
+    }));
+
+    useEffect(() => {
+      let cancelled = false;
+      loadTurnstileScript().then(() => {
+        if (cancelled || !containerRef.current || !window.turnstile) return;
+        widgetIdRef.current = window.turnstile.render(containerRef.current, {
+          sitekey: siteKey,
+          theme: "light",
+          callback: (token) => onToken(token),
+          "expired-callback": () => onToken(""),
+          "error-callback": () => onToken(""),
+        });
+      });
+      return () => {
+        cancelled = true;
+        if (widgetIdRef.current && window.turnstile) {
+          window.turnstile.remove(widgetIdRef.current);
+          widgetIdRef.current = null;
+        }
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [siteKey]);
+
+    return <div ref={containerRef} className={className} />;
+  }
+);

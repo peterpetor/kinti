@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import type { BulletinKind, BulletinPost, KintiEvent } from "@/lib/types";
 import { mediaUrl } from "@/lib/media";
 import { CANTONS } from "@/lib/cantons";
-import { TurnstileWidget } from "@/components/turnstile-widget";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ShareSheet } from "@/components/share-sheet";
 import { AddToCalendar } from "@/components/add-to-calendar";
 import { ReportButton } from "@/components/report-button";
@@ -467,6 +467,7 @@ export function BulletinCard({
   const [sentSuccess, setSentSuccess] = useState(false);
   const [contactError, setContactError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   const color = post.kind?.color ?? undefined;
   const imageKeys = parseImageKeys(post.imageKey);
@@ -517,6 +518,7 @@ export function BulletinCard({
       }, 2500);
     } catch (err) {
       setContactError(err instanceof Error ? err.message : "Nem sikerült elküldeni a levelet.");
+      turnstileRef.current?.reset();
     } finally {
       setSending(false);
     }
@@ -732,6 +734,7 @@ export function BulletinCard({
                   {/* Turnstile CAPTCHA — bot-védelem */}
                   {turnstileSiteKey && (
                     <TurnstileWidget
+                      ref={turnstileRef}
                       siteKey={turnstileSiteKey}
                       onToken={setTurnstileToken}
                     />

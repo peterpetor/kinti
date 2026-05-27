@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
-import { TurnstileWidget } from "@/components/turnstile-widget";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { LIMITS, type ValidationError } from "@/lib/bulletin";
 import type { BulletinKind } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -70,6 +70,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
   const [global, setGlobal] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -105,6 +106,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         }
         setGlobal(data.error ?? "Hiba történt. Próbáld újra.");
         setPhase("error");
+        turnstileRef.current?.reset();
         return;
       }
       setPhase("sent");
@@ -112,6 +114,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
     } catch (err) {
       setGlobal(err instanceof Error ? err.message : "Hálózati hiba.");
       setPhase("error");
+      turnstileRef.current?.reset();
     }
   }
 
@@ -353,7 +356,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
 
       {/* Turnstile */}
       <div className="px-1">
-        <TurnstileWidget siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
+        <TurnstileWidget ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
       </div>
 
       {/* Global hiba */}

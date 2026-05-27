@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
-import { TurnstileWidget } from "@/components/turnstile-widget";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import {
   REVIEW_LIMITS,
   type ReviewValidationError,
@@ -59,6 +59,7 @@ export function ReviewForm({
   const [global, setGlobal] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -94,12 +95,14 @@ export function ReviewForm({
         }
         setGlobal(data.error ?? "Hiba történt. Próbáld újra.");
         setPhase("error");
+        turnstileRef.current?.reset();
         return;
       }
       setPhase("sent");
     } catch (err) {
       setGlobal(err instanceof Error ? err.message : "Hálózati hiba.");
       setPhase("error");
+      turnstileRef.current?.reset();
     }
   }
 
@@ -262,7 +265,7 @@ export function ReviewForm({
       </section>
 
       <div className="px-1">
-        <TurnstileWidget siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
+        <TurnstileWidget ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
       </div>
 
       {global && (
