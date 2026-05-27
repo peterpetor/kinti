@@ -82,8 +82,12 @@ export default function RootLayout({
         },
         signIn: {
           ...huHU.signIn,
-          forgotPasswordLink: { label: "Elfelejtetted a jelszavad?" },
-          signUpLink: { label: "Nincs fiókod?" },
+          forgotPassword: {
+            title: "Elfelejtett jelszó",
+            formTitle: "Jelszó visszaállítása",
+            subtitle_email: "Küldünk egy kódot az email címedre a jelszó visszaállításához.",
+            resendButton: "Kód újraküldése",
+          },
           start: {
             title: "Bejelentkezés",
             subtitle: "Üdv újra! Jelentkezz be a folytatáshoz.",
