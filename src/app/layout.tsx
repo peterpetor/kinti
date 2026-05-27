@@ -54,7 +54,12 @@ export default function RootLayout({
 
   return (
     <ClerkProvider
-      localization={huHU}
+      localization={{
+        ...huHU,
+        formFieldInputPlaceholder__firstName: "Keresztnév",
+        formFieldInputPlaceholder__lastName: "Vezetéknév",
+        formFieldInputPlaceholder__emailAddress: "Email cím",
+      }}
       appearance={{ variables: { colorPrimary: "#1d4434", borderRadius: "0.75rem" } }}
     >
       <html lang="hu" data-theme="warm" className={`${jakarta.variable} ${jetbrains.variable}`}>
