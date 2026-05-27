@@ -245,7 +245,7 @@ function baseLayout({ preheader, body }: { preheader: string; body: string }): s
           <table role="presentation" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td style="vertical-align:middle;padding-right:10px;">
-                <img src="https://kinti.app/favicon.ico" width="28" height="28" alt="kinti logo" style="display:block; border-radius:8px; background:#1d4434;" />
+                <img src="https://kinti.app/favicon.ico" width="28" height="28" alt="kinti logo" style="display:block; border-radius:8px; background:#ffffff;" />
               </td>
               <td style="vertical-align:middle;font-size:18px;font-weight:800;color:#0e1f17;letter-spacing:-0.02em;">
                 kinti
