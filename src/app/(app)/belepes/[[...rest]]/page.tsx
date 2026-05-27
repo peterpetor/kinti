@@ -89,7 +89,7 @@ export default function VallalkozoPage() {
           </>
         ) : (
           <div className="flex flex-col items-center animate-fade-up pt-2">
-            <SignIn />
+            <SignIn signUpUrl="/regisztracio" />
             <button
               type="button"
               onClick={() => setShowSignIn(false)}
