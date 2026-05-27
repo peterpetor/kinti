@@ -9,7 +9,6 @@ import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
-import { GlobalSosButton } from "./global-sos-button";
 
 export interface SosAlert {
   id: string;
