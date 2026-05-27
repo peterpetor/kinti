@@ -18,6 +18,8 @@ import { getBusinessByOwner, getDashboard, getReviewsByBusiness } from "@/lib/re
 import { mediaUrl } from "@/lib/media";
 import type { Business } from "@/lib/types";
 
+import { NewsletterToggle } from "@/components/views/newsletter-toggle";
+
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
@@ -80,9 +82,10 @@ export default async function ProfilPage() {
       <InstallPrompt />
 
       <section className="space-y-2">
-        <SectionHeader>Megjelenés</SectionHeader>
+        <SectionHeader>Beállítások</SectionHeader>
+        <NewsletterToggle />
         <div className="flex items-center justify-between rounded-card border border-line bg-surface p-4 shadow-card">
-          <span className="text-sm font-semibold text-ink">Téma</span>
+          <span className="text-sm font-semibold text-ink">Sötét mód</span>
           <ThemeToggle />
         </div>
       </section>
