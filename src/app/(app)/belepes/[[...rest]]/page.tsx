@@ -47,7 +47,7 @@ export default function LoginPage() {
               href="/regisztracio"
               className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-bold text-white shadow-card-hover"
             >
-              <Icon name="userPlus" size={14} strokeWidth={2.4} />
+              <Icon name="user" size={14} strokeWidth={2.4} />
               Regisztráció
             </Link>
             <Link
