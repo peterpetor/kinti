@@ -11,6 +11,7 @@ import {
 import { hashIp } from "@/lib/bulletin";
 import { sendContentReportEmail } from "@/lib/email";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+import { getSosAlertById, hideSosAlert } from "@/lib/sos-repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }
 
-  const contentType = body.contentType === "bulletin" || body.contentType === "review"
+  const contentType = body.contentType === "bulletin" || body.contentType === "review" || body.contentType === "sos"
     ? body.contentType
     : null;
   const contentId = typeof body.contentId === "string" ? body.contentId.trim() : "";
@@ -72,7 +73,7 @@ export async function POST(req: Request) {
       contentExcerpt = post.title;
       await setBulletinHidden(contentId, true);
     }
-  } else {
+  } else if (contentType === "review") {
     const review = await getReviewSummaryById(contentId);
     if (review) {
       found = true;
@@ -80,6 +81,14 @@ export async function POST(req: Request) {
       contentExcerpt = `${review.reviewerName}: ${review.body.slice(0, 160)}`;
       await setReviewHidden(contentId, true);
       await recomputeBusinessRating(review.businessId);
+    }
+  } else if (contentType === "sos") {
+    const sos = await getSosAlertById(contentId);
+    if (sos) {
+      found = true;
+      contentLabel = "S.O.S. Riasztás";
+      contentExcerpt = `Tel: ${sos.contactPhone} - ${sos.description.slice(0, 160)}`;
+      await hideSosAlert(contentId);
     }
   }
 

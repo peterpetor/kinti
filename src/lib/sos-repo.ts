@@ -85,3 +85,19 @@ export async function resolveSosAlert(id: string, posterUserId: string): Promise
     .run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+export async function getSosAlertById(id: string): Promise<SosAlert | null> {
+  const { results } = await getDB()
+    .prepare("SELECT * FROM sos_alerts WHERE id = ?")
+    .bind(id)
+    .all<SosAlertRow>();
+  return results.length > 0 ? toSosAlert(results[0]) : null;
+}
+
+export async function hideSosAlert(id: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE sos_alerts SET resolved = 1 WHERE id = ?")
+    .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}

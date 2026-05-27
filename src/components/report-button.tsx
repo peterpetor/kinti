@@ -16,7 +16,7 @@ export function ReportButton({
   contentId,
   variant = "icon",
 }: {
-  contentType: "bulletin" | "review";
+  contentType: "bulletin" | "review" | "sos";
   contentId: string;
   variant?: "icon" | "link";
 }) {

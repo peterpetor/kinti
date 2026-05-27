@@ -1621,7 +1621,7 @@ export async function getReviewSummaryById(
 
 export interface ContentReportInput {
   id: string;
-  contentType: "bulletin" | "review";
+  contentType: "bulletin" | "review" | "sos";
   contentId: string;
   reason: string | null;
   reporterIpHash: string | null;
