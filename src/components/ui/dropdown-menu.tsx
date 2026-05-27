@@ -54,7 +54,7 @@ export function DropdownMenu() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-1">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-1 custom-scrollbar">
             {/* Fő akciók */}
             {isLoaded && isSignedIn ? (
               <Link href="/profil" onClick={() => setIsOpen(false)} className={linkClass}>
