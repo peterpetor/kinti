@@ -87,6 +87,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
       });
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
+        detail?: string;
         details?: BusinessValidationError[];
       };
       if (!res.ok) {
@@ -95,7 +96,9 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           for (const d of data.details) map[d.field as string] = d.message;
           setErrors(map);
         }
-        setGlobal(data.error ?? "Hiba történt. Próbáld újra.");
+        let errMsg = data.error ?? "Hiba történt. Próbáld újra.";
+        if (data.detail) errMsg += " (" + data.detail + ")";
+        setGlobal(errMsg);
         setPhase("error");
         turnstileRef.current?.reset();
         return;
