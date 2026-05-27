@@ -33,15 +33,15 @@ export function BottomSheet({
   if (!open || !mounted) return null;
 
   const content = (
-    <div className="fixed inset-0 z-[9998] flex items-end justify-center" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-[9998] flex sm:items-center items-end justify-center sm:p-4" role="dialog" aria-modal="true">
       <button
         type="button"
         aria-label="Bezárás"
         onClick={onClose}
         className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
       />
-      <div className="relative z-[1] w-full max-w-md rounded-t-[24px] border border-line bg-surface p-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-pop animate-fade-up">
-        <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-line" />
+      <div className="relative z-[1] w-full max-w-md sm:rounded-[24px] rounded-t-[24px] border border-line bg-surface p-5 sm:pb-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-pop animate-fade-up">
+        <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-line sm:hidden" />
         {title && (
           <h3 className="mb-3 text-center text-[14px] font-extrabold tracking-tight text-ink">
             {title}
