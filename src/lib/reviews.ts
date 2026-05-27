@@ -9,7 +9,7 @@ import { findProfanityInFields } from "./profanity";
 export const REVIEW_CONFIRM_TTL_MS = 24 * 60 * 60 * 1000;
 
 export const REVIEW_LIMITS = {
-  bodyMin: 30,
+  bodyMin: 5,
   bodyMax: 1000,
   reviewerNameMin: 2,
   reviewerNameMax: 40,
