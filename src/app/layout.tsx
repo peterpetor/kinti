@@ -66,11 +66,11 @@ export default function RootLayout({
           legalConsent: {
             checkbox: {
               label__termsOfServiceAndPrivacyPolicy:
-                "Elfogadom az {{termsOfServiceLink}} és az {{privacyPolicyLink}} feltételeit.",
+                'Elfogadom az {{ termsOfServiceLink || link("Általános Szerződési Feltételeket") }} és az {{ privacyPolicyLink || link("Adatvédelmi Tájékoztatót") }}.',
               label__onlyPrivacyPolicy:
-                "Elfogadom az {{privacyPolicyLink}} feltételeit.",
+                'Elfogadom az {{ privacyPolicyLink || link("Adatvédelmi Tájékoztatót") }}.',
               label__onlyTermsOfService:
-                "Elfogadom az {{termsOfServiceLink}} feltételeit.",
+                'Elfogadom az {{ termsOfServiceLink || link("Általános Szerződési Feltételeket") }}.',
             },
           },
           start: {
