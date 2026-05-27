@@ -18,6 +18,15 @@ export const RIDE_LIMITS = {
 /** Lazán E.164-szerű telefonszám (a WhatsApp-linkhez a + és számok kellenek). */
 const PHONE_RE = /^\+?[0-9][0-9 ()\-/]{5,23}$/;
 
+/** Egy geokódolt közbeeső megálló. */
+export interface Waypoint {
+  city: string;
+  lat: number;
+  lng: number;
+}
+
+export const MAX_WAYPOINTS = 5;
+
 export interface RideFormInput {
   departureCity?: unknown;
   destinationCity?: unknown;
@@ -26,7 +35,9 @@ export interface RideFormInput {
   priceText?: unknown;
   contactPhone?: unknown;
   notes?: unknown;
-  /** Opcionális: ha a kliens már geokódolta. */
+  /** Közbeeső megállók (város-nevek tömbje — a szerver geokódolja). */
+  waypoints?: unknown;
+  /** Opcionális: ha a kliens már geokódolta az indulást. */
   lat?: unknown;
   lng?: unknown;
 }
@@ -39,6 +50,8 @@ export interface ValidatedRideInput {
   priceText: string | null;
   contactPhone: string;
   notes: string | null;
+  /** Közbeeső megálló város-nevek (még nem geokódolva — a szerver csinálja). */
+  waypointCities: string[];
   lat: number | null;
   lng: number | null;
 }
@@ -106,6 +119,24 @@ export function validateRideInput(
     }
   }
 
+  // Közbeeső megállók (max MAX_WAYPOINTS, mindegyik 2-80 karakter)
+  const waypointCities: string[] = [];
+  if (Array.isArray(input.waypoints)) {
+    for (const w of input.waypoints) {
+      const wc = typeof w === "string" ? w.trim() : "";
+      if (wc.length > 0) {
+        if (wc.length < RIDE_LIMITS.cityMin || wc.length > RIDE_LIMITS.cityMax) {
+          errors.push({ field: "waypoints" as keyof RideFormInput, message: `A megálló-név ${RIDE_LIMITS.cityMin}–${RIDE_LIMITS.cityMax} karakter.` });
+          break;
+        }
+        waypointCities.push(wc);
+      }
+    }
+    if (waypointCities.length > MAX_WAYPOINTS) {
+      errors.push({ field: "waypoints" as keyof RideFormInput, message: `Legfeljebb ${MAX_WAYPOINTS} közbeeső megálló.` });
+    }
+  }
+
   // Opcionális kliens-koordináta
   const lat = typeof input.lat === "number" && Number.isFinite(input.lat) ? input.lat : null;
   const lng = typeof input.lng === "number" && Number.isFinite(input.lng) ? input.lng : null;
@@ -122,6 +153,7 @@ export function validateRideInput(
       priceText: priceText || null,
       contactPhone,
       notes: notes || null,
+      waypointCities,
       lat,
       lng,
     },

@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { Fragment, useMemo } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "@/components/ui";
@@ -31,6 +31,19 @@ function createCarIcon(): L.DivIcon {
   });
 }
 
+/** Kisebb kék pont a közbeeső megállókhoz. */
+function createStopIcon(): L.DivIcon {
+  return L.divIcon({
+    className: "",
+    html: `<div style="width:16px;height:16px;border-radius:50%;background:#3a6ea5;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.2);"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
+}
+
+/** Polyline szín. */
+const ROUTE_COLOR = "#3a6ea5";
+
 const HU_MON = ["jan.", "feb.", "márc.", "ápr.", "máj.", "jún.", "júl.", "aug.", "szept.", "okt.", "nov.", "dec."];
 function fmtDT(iso: string): string {
   const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
@@ -46,6 +59,7 @@ export function RideMap({
   className?: string;
 }) {
   const carIcon = useMemo(() => createCarIcon(), []);
+  const stopIcon = useMemo(() => createStopIcon(), []);
 
   // A térkép középpontja: ha van fuvar, az első; egyébként Svájc közepe.
   const center: [number, number] = rides.length > 0
@@ -62,11 +76,14 @@ export function RideMap({
       >
         <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
         {rides.map((r) => (
-          <Marker key={r.id} position={[r.lat, r.lng]} icon={carIcon}>
+          <Fragment key={r.id}>
+          <Marker position={[r.lat, r.lng]} icon={carIcon}>
             <Popup maxWidth={280} minWidth={220}>
               <div style={{ fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif" }}>
                 <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4, color: "#0e1f17" }}>
-                  {r.departureCity} → {r.destinationCity}
+                  {r.departureCity}
+                  {r.waypoints.map((wp) => ` → ${wp.city}`).join("")}
+                  {" → "}{r.destinationCity}
                 </div>
                 <div style={{ fontSize: 12, color: "#5c6d63", marginBottom: 8 }}>
                   📅 {fmtDT(r.departureTime)} · 👥 {r.seats} hely
@@ -103,6 +120,21 @@ export function RideMap({
               </div>
             </Popup>
           </Marker>
+          {/* Közbeeső megállók kisebb kék pontokkal */}
+          {r.waypoints.map((wp, i) => (
+            <Marker key={`${r.id}-wp-${i}`} position={[wp.lat, wp.lng]} icon={stopIcon} />
+          ))}
+          {/* Útvonal polyline (indulás → megállók → [érkezés ha van koordináta]) */}
+          {r.waypoints.length > 0 && (
+            <Polyline
+              positions={[
+                [r.lat, r.lng],
+                ...r.waypoints.map((wp) => [wp.lat, wp.lng] as [number, number]),
+              ]}
+              pathOptions={{ color: ROUTE_COLOR, weight: 3, opacity: 0.6, dashArray: "8 6" }}
+            />
+          )}
+          </Fragment>
         ))}
       </MapContainer>
     </div>

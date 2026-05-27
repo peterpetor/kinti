@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { createRide } from "@/lib/repo";
+import { createRide, type RideWaypoint } from "@/lib/repo";
 import { validateRideInput, computeRideExpiry } from "@/lib/rides";
 import { geocodeCity } from "@/lib/geocode";
 
@@ -53,6 +53,20 @@ export async function POST(req: Request) {
     user?.username ||
     "Kinti tag";
 
+  // Közbeeső megállók geokódolása (párhuzamosan).
+  const waypoints: RideWaypoint[] = [];
+  if (v.waypointCities.length > 0) {
+    const geos = await Promise.all(v.waypointCities.map((c) => geocodeCity(c)));
+    for (let i = 0; i < v.waypointCities.length; i++) {
+      const g = geos[i];
+      waypoints.push({
+        city: g?.name ?? v.waypointCities[i],
+        lat: g?.lat ?? FALLBACK.lat,
+        lng: g?.lng ?? FALLBACK.lng,
+      });
+    }
+  }
+
   const id = crypto.randomUUID();
   await createRide({
     id,
@@ -67,6 +81,7 @@ export async function POST(req: Request) {
     posterUserId: userId,
     contactPhone: v.contactPhone,
     notes: v.notes,
+    waypoints: waypoints.length > 0 ? waypoints : null,
     expiresAt: computeRideExpiry(v.departureTime),
   });
 

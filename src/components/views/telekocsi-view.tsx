@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -26,6 +26,26 @@ export function TelekocsiView({
   currentUserId: string | null;
 }) {
   const [view, setView] = useState<ViewMode>("list");
+  const [q, setQ] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+
+  const filtered = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    return rides.filter((r) => {
+      // Szöveg: indulás, érkezés, megállók, poszter
+      const byText =
+        !needle ||
+        r.departureCity.toLowerCase().includes(needle) ||
+        r.destinationCity.toLowerCase().includes(needle) ||
+        r.posterName.toLowerCase().includes(needle) ||
+        r.waypoints.some((wp) => wp.city.toLowerCase().includes(needle)) ||
+        (r.notes ?? "").toLowerCase().includes(needle);
+      // Dátum: ha kiválasztott, az indulás napja >= szűrő dátuma
+      const byDate =
+        !dateFilter || r.departureTime.slice(0, 10) >= dateFilter;
+      return byText && byDate;
+    });
+  }, [rides, q, dateFilter]);
 
   return (
     <div className="space-y-4">
@@ -50,10 +70,49 @@ export function TelekocsiView({
         </Link>
       </div>
 
+      {/* Kereső + dátumszűrő */}
+      <div className="space-y-2 px-5">
+        <div className="flex items-center gap-2.5 rounded-[14px] border border-line bg-surface px-3 py-2.5 shadow-card">
+          <Icon name="search" size={17} className="shrink-0 text-ink-muted" />
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Keresés (város, megálló, név…)"
+            className="min-w-0 flex-1 bg-transparent text-[14px] font-medium text-ink outline-none placeholder:text-ink-faint"
+          />
+          {q && (
+            <button type="button" aria-label="Törlés" onClick={() => setQ("")} className="grid h-7 w-7 shrink-0 place-items-center rounded-[9px] bg-surface-alt text-ink-muted">
+              <Icon name="close" size={13} strokeWidth={2.4} />
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 text-[12.5px] font-bold shadow-card">
+            <Icon name="calendar" size={12} strokeWidth={2.2} className="shrink-0 text-[#3a6ea5]" />
+            <input
+              type="date"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              className="bg-transparent text-ink outline-none"
+            />
+          </label>
+          {dateFilter && (
+            <button
+              type="button"
+              onClick={() => setDateFilter("")}
+              className="text-[11.5px] font-bold text-[#3a6ea5]"
+            >
+              Szűrő törlése
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Meta sor + toggle */}
       <div className="flex items-center justify-between gap-3 px-5">
         <p className="text-[11.5px] font-semibold uppercase tracking-wide text-ink-muted">
-          {rides.length} aktív fuvar
+          {filtered.length} fuvar{filtered.length !== rides.length && ` (összesen ${rides.length})`}
         </p>
         <ViewSwitch value={view} onChange={setView} />
       </div>
@@ -61,7 +120,7 @@ export function TelekocsiView({
       {/* Lista / Térkép */}
       {view === "list" ? (
         <div className="px-5">
-          {rides.length === 0 ? (
+          {filtered.length === 0 ? (
             <div className="flex flex-col items-center gap-2 rounded-card border border-dashed border-line bg-surface-alt px-6 py-12 text-center">
               <span className="text-3xl">🚗</span>
               <p className="text-[13.5px] font-semibold text-ink">Még nincs aktív fuvar</p>
@@ -69,7 +128,7 @@ export function TelekocsiView({
             </div>
           ) : (
             <div className="grid gap-3">
-              {rides.map((r) => (
+              {filtered.map((r) => (
                 <RideCard
                   key={r.id}
                   ride={r}
@@ -89,7 +148,7 @@ export function TelekocsiView({
             }
           >
             <RideMap
-              rides={rides}
+              rides={filtered}
               className="h-[calc(100dvh-340px)] min-h-[380px] max-h-[560px] overflow-hidden rounded-card border border-line shadow-card"
             />
           </Suspense>

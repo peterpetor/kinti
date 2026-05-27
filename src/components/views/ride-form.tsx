@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { RIDE_LIMITS, type RideValidationError } from "@/lib/rides";
+import { RIDE_LIMITS, MAX_WAYPOINTS, type RideValidationError } from "@/lib/rides";
 
 /**
  * RideForm — telekocsi-feladás (Clerk-belépéshez kötött). Az űrlap a szerver-route
@@ -21,6 +21,7 @@ interface FormState {
   priceText: string;
   contactPhone: string;
   notes: string;
+  waypoints: string[];
 }
 
 const INITIAL: FormState = {
@@ -31,6 +32,7 @@ const INITIAL: FormState = {
   priceText: "",
   contactPhone: "",
   notes: "",
+  waypoints: [],
 };
 
 export function RideForm() {
@@ -57,6 +59,7 @@ export function RideForm() {
         body: JSON.stringify({
           ...form,
           seats: Number(form.seats) || 1,
+          waypoints: form.waypoints.filter((w) => w.trim().length > 0),
         }),
       });
       const data = (await res.json().catch(() => ({}))) as {
@@ -139,6 +142,55 @@ export function RideForm() {
             <FieldError msg={errors.destinationCity} />
           </div>
         </div>
+      </Section>
+
+      {/* Közbeeső megállók */}
+      <Section title="Közbeeső megállók">
+        <div className="space-y-2">
+          {form.waypoints.map((wp, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#3a6ea5]/15 text-[10px] font-bold text-[#3a6ea5]">
+                {i + 1}
+              </span>
+              <input
+                type="text"
+                value={wp}
+                onChange={(e) => {
+                  const next = [...form.waypoints];
+                  next[i] = e.target.value;
+                  setForm((f) => ({ ...f, waypoints: next }));
+                }}
+                placeholder={`${i + 1}. megálló (pl. Győr)`}
+                maxLength={RIDE_LIMITS.cityMax}
+                className={inputCls(errors.waypoints)}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const next = form.waypoints.filter((_, j) => j !== i);
+                  setForm((f) => ({ ...f, waypoints: next }));
+                }}
+                aria-label="Megálló törlése"
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-surface-alt text-ink-muted active:scale-90"
+              >
+                <Icon name="close" size={14} strokeWidth={2.4} />
+              </button>
+            </div>
+          ))}
+          {form.waypoints.length < MAX_WAYPOINTS && (
+            <button
+              type="button"
+              onClick={() => setForm((f) => ({ ...f, waypoints: [...f.waypoints, ""] }))}
+              className="inline-flex items-center gap-1.5 text-[12.5px] font-bold text-[#3a6ea5] active:scale-95"
+            >
+              <Icon name="plus" size={14} strokeWidth={2.6} /> Megálló hozzáadása
+            </button>
+          )}
+          <FieldError msg={errors.waypoints} />
+        </div>
+        <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
+          Opcionális. Ott szállsz meg útközben, ahova útitársat keresel (pl. Győr, Hegyeshalom).
+        </p>
       </Section>
 
       <Section title="Mikor indulsz?" required>

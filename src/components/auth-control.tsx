@@ -26,8 +26,6 @@ export function AuthControl() {
       <Show when="signed-in">
         <UserButton
           appearance={{ elements: { avatarBox: "h-9 w-9" } }}
-          signInUrl="/belepes"
-          signUpUrl="/regisztracio"
         />
       </Show>
     </>

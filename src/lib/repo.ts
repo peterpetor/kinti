@@ -1704,8 +1704,15 @@ interface RideRow {
   poster_user_id: string | null;
   contact_phone: string;
   notes: string | null;
+  waypoints: string | null;
   created_at: string;
   expires_at: string;
+}
+
+export interface RideWaypoint {
+  city: string;
+  lat: number;
+  lng: number;
 }
 
 export interface Ride {
@@ -1721,8 +1728,21 @@ export interface Ride {
   posterUserId: string | null;
   contactPhone: string;
   notes: string | null;
+  waypoints: RideWaypoint[];
   createdAt: string;
   expiresAt: string;
+}
+
+function parseWaypoints(raw: string | null): RideWaypoint[] {
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((w: unknown) => {
+      if (!w || typeof w !== "object") return false;
+      const o = w as Record<string, unknown>;
+      return typeof o.city === "string" && typeof o.lat === "number" && typeof o.lng === "number";
+    }) : [];
+  } catch { return []; }
 }
 
 function toRide(r: RideRow): Ride {
@@ -1739,6 +1759,7 @@ function toRide(r: RideRow): Ride {
     posterUserId: r.poster_user_id,
     contactPhone: r.contact_phone,
     notes: r.notes,
+    waypoints: parseWaypoints(r.waypoints),
     createdAt: r.created_at,
     expiresAt: r.expires_at,
   };
@@ -1757,16 +1778,20 @@ export interface CreateRideInput {
   posterUserId: string | null;
   contactPhone: string;
   notes: string | null;
+  waypoints: RideWaypoint[] | null;
   expiresAt: string;
 }
 
 export async function createRide(input: CreateRideInput): Promise<void> {
+  const wpJson = input.waypoints && input.waypoints.length > 0
+    ? JSON.stringify(input.waypoints)
+    : null;
   await getDB()
     .prepare(
       `INSERT INTO rides
        (id, departure_city, destination_city, departure_time, lat, lng, seats,
-        price_text, poster_name, poster_user_id, contact_phone, notes, expires_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        price_text, poster_name, poster_user_id, contact_phone, notes, waypoints, expires_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -1781,6 +1806,7 @@ export async function createRide(input: CreateRideInput): Promise<void> {
       input.posterUserId,
       input.contactPhone,
       input.notes,
+      wpJson,
       input.expiresAt,
     )
     .run();
