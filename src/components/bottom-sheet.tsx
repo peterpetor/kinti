@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 /**
  * Egyszerű mobil-barát alsó lap (bottom sheet). A megosztás- és naptár-választó
@@ -17,6 +18,11 @@ export function BottomSheet({
   title?: string;
   children: React.ReactNode;
 }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -24,9 +30,9 @@ export function BottomSheet({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  const content = (
     <div className="fixed inset-0 z-[9998] flex items-end justify-center" role="dialog" aria-modal="true">
       <button
         type="button"
@@ -45,6 +51,8 @@ export function BottomSheet({
       </div>
     </div>
   );
+
+  return createPortal(content, document.body);
 }
 
 /** Egy sor az alsó lapon (ikon-badge + felirat). */
