@@ -5,6 +5,8 @@ import { useState } from "react";
 import { SignIn } from "@clerk/nextjs";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 
+export const runtime = "edge";
+
 /**
  * A „Vállalkozó" fül egységes belépő oldala. KÉT, világosan elkülönülő lépcső:
  *
