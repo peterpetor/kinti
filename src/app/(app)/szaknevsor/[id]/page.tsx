@@ -274,7 +274,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
             <ListGroup>
               <ListRow
                 leading={<Icon name="pin" size={18} strokeWidth={2.2} className="text-accent" />}
-                title={b.address?.trim() ? b.address : "Nincs megadva cím, valószínűleg otthonról vagy kiszállással dolgozik"}
+                title={b.address?.trim() ? b.address : "Nincs megadva"}
                 isLast
               />
             </ListGroup>
