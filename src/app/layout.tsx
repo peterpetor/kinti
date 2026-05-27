@@ -60,7 +60,7 @@ export default function RootLayout({
         formFieldInputPlaceholder__lastName: "Vezetéknév",
         formFieldInputPlaceholder__emailAddress: "Email cím",
         formFieldInputPlaceholder__password: "Jelszó megadása",
-        formFieldInputPlaceholder__newPassword: "Új jelszó megadása",
+
         signUp: {
           ...huHU.signUp,
           legalConsent: {
@@ -82,6 +82,8 @@ export default function RootLayout({
         },
         signIn: {
           ...huHU.signIn,
+          forgotPasswordLink: { label: "Elfelejtetted a jelszavad?" },
+          signUpLink: { label: "Nincs fiókod?" },
           start: {
             title: "Bejelentkezés",
             subtitle: "Üdv újra! Jelentkezz be a folytatáshoz.",
