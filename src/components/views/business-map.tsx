@@ -90,12 +90,19 @@ export function BusinessMap({
   }, []);
 
   const [sosAlerts, setSosAlerts] = useState<SosAlert[]>([]);
-  useEffect(() => {
+  
+  const loadSosAlerts = useCallback(() => {
     fetch("/api/sos")
       .then((res) => res.json())
       .then((data) => setSosAlerts(Array.isArray(data) ? data : []))
       .catch(() => setSosAlerts([]));
   }, []);
+
+  useEffect(() => {
+    loadSosAlerts();
+    window.addEventListener("sos-submitted", loadSosAlerts);
+    return () => window.removeEventListener("sos-submitted", loadSosAlerts);
+  }, [loadSosAlerts]);
 
   const handleSelectMarker = useCallback((id: string) => setSelectedId(id), []);
   // Ha a maplibre runtime elhasal (timeout, WebGL-hiba), automatikus fallback.

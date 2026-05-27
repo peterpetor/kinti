@@ -45,6 +45,10 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
             throw new Error(data.error || "Hiba történt a küldés során.");
           }
 
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('sos-submitted'));
+          }
+          
           onSuccess();
         } catch (err: unknown) {
           if (err instanceof Error) {

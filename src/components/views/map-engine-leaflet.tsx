@@ -77,7 +77,7 @@ export function LeafletEngine({
         <Marker position={myPosition} icon={ME_ICON} interactive={false} />
       )}
 
-      <FitToMarkers businesses={located} />
+      <FitToMarkers businesses={located} sosAlerts={sosAlerts} />
       <Controls onLocate={setMyPosition} />
     </MapContainer>
   );
@@ -217,24 +217,29 @@ function clusterIconFor(count: number, sz: "sm" | "md" | "lg"): L.DivIcon {
 // Helper komponensek
 // ---------------------------------------------------------------------------
 
-function FitToMarkers({ businesses }: { businesses: Business[] }) {
+function FitToMarkers({ businesses, sosAlerts = [] }: { businesses: Business[], sosAlerts?: SosAlert[] }) {
   const map = useMap();
   const lastSig = useRef<string>("");
 
   useEffect(() => {
-    const sig = businesses.map((b) => b.id).join("|");
+    const sig = businesses.map((b) => b.id).join("|") + sosAlerts.map(s => s.id).join("|");
     if (sig === lastSig.current) return;
     lastSig.current = sig;
-    if (businesses.length === 0) return;
-    if (businesses.length === 1) {
+    if (businesses.length === 0 && sosAlerts.length === 0) return;
+    
+    if (businesses.length === 1 && sosAlerts.length === 0) {
       map.setView([businesses[0].lat!, businesses[0].lng!], 15, { animate: true });
       return;
     }
-    const bounds = L.latLngBounds(
-      businesses.map((b) => [b.lat!, b.lng!] as [number, number]),
-    );
+    
+    const pts = [
+      ...businesses.map((b) => [b.lat!, b.lng!] as [number, number]),
+      ...sosAlerts.map((s) => [s.lat, s.lng] as [number, number])
+    ];
+    
+    const bounds = L.latLngBounds(pts);
     map.fitBounds(bounds, { padding: [50, 70], maxZoom: 16, animate: true });
-  }, [businesses, map]);
+  }, [businesses, sosAlerts, map]);
 
   return null;
 }
