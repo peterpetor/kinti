@@ -6,7 +6,6 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { BulletinKind, BulletinPost, KintiEvent } from "@/lib/types";
 import type { Ride } from "@/lib/repo";
-import { TelekocsiView } from "./telekocsi-view";
 import { mediaUrl } from "@/lib/media";
 import { CANTONS } from "@/lib/cantons";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
@@ -63,7 +62,7 @@ function formatExpiry(days: number | null): string | null {
 }
 
 
-type Tab = "board" | "events" | "rides";
+type Tab = "board" | "events";
 
 export function CommunityView({
   events,
@@ -85,7 +84,6 @@ export function CommunityView({
   const tabs: { id: Tab; label: string; count: number | null }[] = [
     { id: "board", label: "Hirdetések", count: posts.length },
     { id: "events", label: "Események", count: events.length },
-    { id: "rides", label: "Telekocsi", count: rides.length },
   ];
 
   return (
@@ -120,14 +118,10 @@ export function CommunityView({
         })}
       </div>
 
-      {tab !== "rides" ? (
-        <div className="space-y-2.5 px-5">
-          {tab === "events" && <EventsList events={events} />}
-          {tab === "board" && <BulletinList posts={posts} kinds={kinds} turnstileSiteKey={turnstileSiteKey} />}
-        </div>
-      ) : (
-        <TelekocsiView rides={rides} currentUserId={currentUserId} />
-      )}
+      <div className="space-y-2.5 px-5">
+        {tab === "events" && <EventsList events={events} />}
+        {tab === "board" && <BulletinList posts={posts} kinds={kinds} turnstileSiteKey={turnstileSiteKey} />}
+      </div>
     </div>
   );
 }
