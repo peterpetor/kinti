@@ -16,7 +16,7 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v5";
+const VERSION = "kinti-v6";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -90,10 +90,15 @@ self.addEventListener("fetch", (event) => {
   // Minden más /api/* → soha ne cache-eljünk; legyen friss
   if (url.pathname.startsWith("/api/")) return;
 
-  // Auth-érzékeny oldalak (Clerk redirect-ek zavarhatják a cache-t) — bypass
+  // Next.js RSC (React Server Component) adatkérések bypassolása.
+  // Ezek dinamikusak, a bejelentkezési állapottól függenek, így sosem szabad cache-elni őket.
+  if (url.searchParams.has("_rsc")) return;
+
+  // Auth-érzékeny és privát oldalak — bypass
   if (
     url.pathname.startsWith("/belepes") ||
     url.pathname.startsWith("/regisztracio") ||
+    url.pathname.startsWith("/profil") ||
     url.pathname.startsWith("/admin")
   ) return;
 

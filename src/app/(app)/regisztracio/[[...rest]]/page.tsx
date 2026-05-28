@@ -14,9 +14,9 @@ export default function SignUpPage() {
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.replace("/profil");
+      window.location.replace("/profil");
     }
-  }, [isLoaded, isSignedIn, router]);
+  }, [isLoaded, isSignedIn]);
 
   if (!isLoaded) {
     return (

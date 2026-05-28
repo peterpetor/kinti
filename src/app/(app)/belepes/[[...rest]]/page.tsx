@@ -33,9 +33,9 @@ export default function LoginPage() {
   // Ha már be van lépve a kliens, azonnal továbbítjuk.
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.replace(target);
+      window.location.replace(target);
     }
-  }, [isLoaded, isSignedIn, router, target]);
+  }, [isLoaded, isSignedIn, target]);
 
   if (!isLoaded) {
     return (
