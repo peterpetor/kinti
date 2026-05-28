@@ -16,7 +16,7 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v6";
+const VERSION = "kinti-v7";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -94,12 +94,20 @@ self.addEventListener("fetch", (event) => {
   // Ezek dinamikusak, a bejelentkezési állapottól függenek, így sosem szabad cache-elni őket.
   if (url.searchParams.has("_rsc")) return;
 
-  // Auth-érzékeny és privát oldalak — bypass
+  // Auth-érzékeny és privát oldalak — bypass.
+  // A manage-page-ek (token-alapú szerkesztők) is bypass-oltak: ha a feladó
+  // törli a vállalkozást a manage URL-en, és vissza próbál menni, a cache-ből
+  // visszakapott régi HTML hibás állapotot mutatna.
   if (
     url.pathname.startsWith("/belepes") ||
     url.pathname.startsWith("/regisztracio") ||
     url.pathname.startsWith("/profil") ||
-    url.pathname.startsWith("/admin")
+    url.pathname.startsWith("/admin") ||
+    url.pathname.startsWith("/szaknevsor/kezeles") ||
+    url.pathname.startsWith("/esemeny-kezeles") ||
+    url.pathname.startsWith("/telekocsi-kezeles") ||
+    url.pathname.startsWith("/hirdetes-kezeles") ||
+    url.pathname.startsWith("/velemeny-kezeles")
   ) return;
 
   // Navigációs kérés (HTML oldal) → network-first, fallback /offline-ra

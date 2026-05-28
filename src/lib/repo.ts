@@ -1452,6 +1452,8 @@ export interface BusinessSubmission {
   blurb: string | null;
   ownerUserId: string | null;
   manageToken: string | null;
+  confirmToken: string;
+  expiresAt: string;
 }
 
 function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
@@ -1467,6 +1469,8 @@ function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
     blurb: r.blurb,
     ownerUserId: r.owner_user_id,
     manageToken: r.manage_token,
+    confirmToken: r.confirm_token,
+    expiresAt: r.expires_at,
   };
 }
 
@@ -1531,6 +1535,25 @@ export async function getBusinessSubmissionByConfirmToken(
        WHERE confirm_token = ? AND expires_at > datetime('now')`,
     )
     .bind(confirmToken)
+    .first<BusinessSubmissionRow>();
+  return row ? toBusinessSubmission(row) : null;
+}
+
+/**
+ * Manage-token alapján — a confirm ELŐTTI piszkozat. Akkor jön kapóra, ha a
+ * feladó a confirm-link helyett (vagy mellette) először a kezelő-linkre kattint,
+ * mielőtt megerősítette volna az e-mailt → tudjuk magyarázni, hogy "először
+ * confirmálj".
+ */
+export async function getBusinessSubmissionByManageToken(
+  manageToken: string,
+): Promise<BusinessSubmission | null> {
+  const row = await getDB()
+    .prepare(
+      `SELECT * FROM business_submissions
+       WHERE manage_token = ? AND expires_at > datetime('now')`,
+    )
+    .bind(manageToken)
     .first<BusinessSubmissionRow>();
   return row ? toBusinessSubmission(row) : null;
 }
