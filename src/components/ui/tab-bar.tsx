@@ -6,12 +6,11 @@ import { Icon, type IconName } from "./icons";
 import { cn } from "@/lib/cn";
 
 /**
- * TabBar — alsó, lebegő üveg-navigáció. 5 stabil fül, auth-független label:
+ * TabBar — alsó, lebegő üveg-navigáció. 4 stabil fül, auth-független label:
  *   1) Főoldal   — dashboard
  *   2) Szaknévsor — vállalkozás-kereső
  *   3) Piac      — hirdetések + események
  *   4) Telekocsi — fuvarkereső
- *   5) Fiókom    — belépés / profil / kedvencek / beállítások
  */
 interface Tab {
   href: string;
@@ -31,12 +30,6 @@ const TABS: Tab[] = [
     alsoMatch: ["/alberlet", "/allas"],
   },
   { href: "/telekocsi", label: "Telekocsi", icon: "car" },
-  {
-    href: "/profil",
-    label: "Fiókom",
-    icon: "user",
-    alsoMatch: ["/belepes", "/regisztracio", "/vallalkozo"],
-  },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {
