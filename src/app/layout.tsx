@@ -66,6 +66,8 @@ export default function RootLayout({
             signUp: {
               ...huHU.signUp,
               legalConsent: {
+                title: "Jogi nyilatkozat",
+                subtitle: "Kérlek olvasd el és fogadd el a feltételeket a folytatáshoz.",
                 checkbox: {
                   label__termsOfServiceAndPrivacyPolicy:
                     'Elfogadom az {{ termsOfServiceLink || link("Általános Szerződési Feltételeket") }} és az {{ privacyPolicyLink || link("Adatvédelmi Tájékoztatót") }}.',

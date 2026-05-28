@@ -16,7 +16,12 @@ export default function SignUpPage() {
             Vissza
           </Link>
           <div className="flex justify-center">
-            <SignUp signInUrl="/belepes" />
+            <SignUp
+              path="/regisztracio"
+              routing="path"
+              signInUrl="/belepes"
+              fallbackRedirectUrl="/profil"
+            />
           </div>
         </div>
       </main>
