@@ -997,6 +997,37 @@ export async function logRideSubmit(id: string, ipHash: string | null): Promise<
     .run();
 }
 
+/**
+ * Generikus spam-log countolás IP-hash-re az utolsó N percből.
+ * @param kind  pl. 'quote' | 'rating' | 'digest'
+ * @param ipHash a kérés SHA-256(IP)-je
+ * @param windowMinutes default 60
+ */
+export async function countRecentSpamLog(
+  kind: string,
+  ipHash: string | null,
+  windowMinutes: number = 60,
+): Promise<number> {
+  if (!ipHash) return 0;
+  const res = await getDB()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM spam_log
+       WHERE kind = ? AND ip_hash = ?
+         AND created_at >= datetime('now', ? )`,
+    )
+    .bind(kind, ipHash, `-${Math.max(1, windowMinutes)} minutes`)
+    .first<{ n: number }>();
+  return res?.n ?? 0;
+}
+
+/** Generikus spam-log insert — fire-and-forget. */
+export async function logSpamSubmit(kind: string, ipHash: string | null): Promise<void> {
+  await getDB()
+    .prepare(`INSERT INTO spam_log (id, kind, ip_hash) VALUES (?, ?, ?)`)
+    .bind(crypto.randomUUID(), kind, ipHash)
+    .run();
+}
+
 // ---------------------------------------------------------------------------
 // Vélemények — email-megerősítéses, account nélküli flow.
 // ---------------------------------------------------------------------------

@@ -1,20 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
 import { CANTONS } from "@/lib/cantons";
 
 type Phase = "idle" | "sending" | "sent" | "error";
 
 export function DigestSubscribeForm() {
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   const [email, setEmail] = useState("");
   const [cantonCode, setCantonCode] = useState("all");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [website, setWebsite] = useState(""); // honeypot
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -23,15 +27,21 @@ export function DigestSubscribeForm() {
       setError("Az adatkezelési hozzájárulás kötelező a feliratkozáshoz.");
       return;
     }
+    if (!turnstileToken) {
+      setError("Várd meg a robot-ellenőrzést, mielőtt elküldöd.");
+      return;
+    }
     setPhase("sending");
     try {
       const res = await fetch("/api/digest/subscribe", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, cantonCode, acceptTerms, website }),
+        body: JSON.stringify({ email, cantonCode, acceptTerms, website, turnstileToken }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
+        turnstileRef.current?.reset();
+        setTurnstileToken("");
         setError(data.error ?? "Hiba történt. Próbáld újra.");
         setPhase("error");
         return;
@@ -129,6 +139,14 @@ export function DigestSubscribeForm() {
           </span>
         </label>
 
+        {turnstileSiteKey && (
+          <TurnstileWidget
+            ref={turnstileRef}
+            siteKey={turnstileSiteKey}
+            onToken={setTurnstileToken}
+          />
+        )}
+
         {error && (
           <p className="text-[11.5px] font-semibold text-accent" role="alert">
             {error}
@@ -137,10 +155,10 @@ export function DigestSubscribeForm() {
 
         <button
           type="submit"
-          disabled={phase === "sending" || !acceptTerms}
+          disabled={phase === "sending" || !acceptTerms || !turnstileToken}
           className={cn(
             "flex h-11 w-full items-center justify-center gap-1.5 rounded-pill bg-primary text-[14px] font-extrabold text-white shadow-card transition active:scale-[0.99]",
-            (phase === "sending" || !acceptTerms) && "cursor-not-allowed opacity-50",
+            (phase === "sending" || !acceptTerms || !turnstileToken) && "cursor-not-allowed opacity-50",
           )}
         >
           {phase === "sending" ? "Küldés…" : "Feliratkozom"}

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Icon } from "@/components/ui";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
 
 interface Props {
@@ -10,15 +11,19 @@ interface Props {
 }
 
 export function ContactBusinessForm({ businessId, hasContactEmail }: Props) {
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   const [expanded, setExpanded] = useState(false);
   const [phase, setPhase] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
     message: "",
+    website: "", // honeypot
   });
 
   if (!hasContactEmail) {
@@ -42,6 +47,10 @@ export function ContactBusinessForm({ businessId, hasContactEmail }: Props) {
       setError("Minden csillaggal jelölt mező kötelező.");
       return;
     }
+    if (!turnstileToken) {
+      setError("Várd meg a robot-ellenőrzést, mielőtt elküldöd.");
+      return;
+    }
     setPhase("sending");
     setError(null);
 
@@ -49,10 +58,12 @@ export function ContactBusinessForm({ businessId, hasContactEmail }: Props) {
       const res = await fetch(`/api/business/${businessId}/quote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, turnstileToken }),
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
+        turnstileRef.current?.reset();
+        setTurnstileToken("");
         throw new Error(data.error || "Hiba történt a küldés során.");
       }
       setPhase("success");
@@ -75,7 +86,7 @@ export function ContactBusinessForm({ businessId, hasContactEmail }: Props) {
           onClick={() => {
             setExpanded(false);
             setPhase("idle");
-            setForm({ name: "", email: "", phone: "", message: "" });
+            setForm({ name: "", email: "", phone: "", message: "", website: "" });
           }}
           className="mt-3 text-[12.5px] font-bold text-success hover:underline"
         >
@@ -151,6 +162,27 @@ export function ContactBusinessForm({ businessId, hasContactEmail }: Props) {
           />
         </div>
 
+        {/* Honeypot — botoknak vonzó, valódi user nem látja (display:none).
+            Server-szinten ha kitöltött, csendben elutasítjuk. */}
+        <input
+          type="text"
+          name="website"
+          value={form.website}
+          onChange={(e) => setForm({ ...form, website: e.target.value })}
+          autoComplete="off"
+          tabIndex={-1}
+          aria-hidden="true"
+          className="hidden"
+        />
+
+        {turnstileSiteKey && (
+          <TurnstileWidget
+            ref={turnstileRef}
+            siteKey={turnstileSiteKey}
+            onToken={setTurnstileToken}
+          />
+        )}
+
         {error && (
           <p className="text-[12px] font-bold text-accent">
             {error}
@@ -159,10 +191,10 @@ export function ContactBusinessForm({ businessId, hasContactEmail }: Props) {
 
         <button
           type="submit"
-          disabled={phase === "sending"}
+          disabled={phase === "sending" || !turnstileToken}
           className={cn(
             "flex w-full items-center justify-center gap-1.5 rounded-pill bg-primary px-4 py-2.5 text-[14px] font-bold text-white transition shadow-sm active:scale-95",
-            phase === "sending" && "opacity-60 cursor-not-allowed"
+            (phase === "sending" || !turnstileToken) && "opacity-60 cursor-not-allowed"
           )}
         >
           {phase === "sending" ? "Küldés folyamatban..." : (

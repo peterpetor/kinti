@@ -1,19 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Icon } from "@/components/ui";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
 
 export function RideRatingForm({ targetPhone, isRequest }: { targetPhone: string, isRequest: boolean }) {
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   const [expanded, setExpanded] = useState(false);
   const [phase, setPhase] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  
+
   const [rating, setRating] = useState(5);
   const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!turnstileToken) {
+      setErrorMsg("Várd meg a robot-ellenőrzést, mielőtt elküldöd.");
+      return;
+    }
     setPhase("submitting");
     setErrorMsg("");
 
@@ -21,10 +30,12 @@ export function RideRatingForm({ targetPhone, isRequest }: { targetPhone: string
       const res = await fetch("/api/ride/rating/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ targetPhone, email, rating }),
+        body: JSON.stringify({ targetPhone, email, rating, turnstileToken, website }),
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
+        turnstileRef.current?.reset();
+        setTurnstileToken("");
         throw new Error(data.error || "Hiba történt a küldés során.");
       }
       setPhase("success");
@@ -109,6 +120,26 @@ export function RideRatingForm({ targetPhone, isRequest }: { targetPhone: string
           />
         </div>
 
+        {/* Honeypot */}
+        <input
+          type="text"
+          name="website"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+          autoComplete="off"
+          tabIndex={-1}
+          aria-hidden="true"
+          className="hidden"
+        />
+
+        {turnstileSiteKey && (
+          <TurnstileWidget
+            ref={turnstileRef}
+            siteKey={turnstileSiteKey}
+            onToken={setTurnstileToken}
+          />
+        )}
+
         {errorMsg && (
           <div className="text-[11.5px] font-semibold text-accent leading-tight">
             {errorMsg}
@@ -117,10 +148,10 @@ export function RideRatingForm({ targetPhone, isRequest }: { targetPhone: string
 
         <button
           type="submit"
-          disabled={phase === "submitting"}
+          disabled={phase === "submitting" || !turnstileToken}
           className={cn(
             "flex w-full items-center justify-center gap-1.5 rounded-pill bg-primary py-2.5 text-[13px] font-bold text-white shadow-card transition active:scale-[0.98]",
-            phase === "submitting" && "opacity-70"
+            (phase === "submitting" || !turnstileToken) && "opacity-70"
           )}
         >
           {phase === "submitting" ? "Küldés..." : "Értékelés beküldése"}

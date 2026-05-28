@@ -1,22 +1,33 @@
 import { NextResponse } from "next/server";
-import { createDigestSubscriber } from "@/lib/repo";
+import {
+  countRecentSpamLog,
+  createDigestSubscriber,
+  logSpamSubmit,
+} from "@/lib/repo";
 import { validateDigestSubscribe } from "@/lib/digest";
 import { sendDigestConfirmEmail } from "@/lib/email";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { hashIp, TERMS_VERSION } from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
+const SPAM_KIND = "digest";
+/** Egy IP-ről max 3 hírlevél-feliratkozási kísérlet óránként. */
+const HOURLY_LIMIT = 3;
+
 /**
  * POST /api/digest/subscribe — heti hírlevél feliratkozás (double opt-in).
- * Body: { email, cantonCode?, acceptTerms, website? (honeypot) }
+ * Body: { email, cantonCode?, acceptTerms, website? (honeypot), turnstileToken }
  *
  * 1) Honeypot + validáció
- * 2) Eldobható email tiltás
- * 3) Subscriber INSERT confirmed=0, confirm_token + unsubscribe_token
- * 4) Megerősítő email (kattintás után élesedik)
+ * 2) Turnstile CAPTCHA
+ * 3) Eldobható email tiltás
+ * 4) IP-rate-limit (max 3/IP/óra) — random emaileknek küldött confirm-spam ellen
+ * 5) Subscriber INSERT confirmed=0, confirm_token + unsubscribe_token
+ * 6) Megerősítő email (kattintás után élesedik)
  */
 export async function POST(req: Request) {
   let body: Record<string, unknown> = {};
@@ -35,6 +46,17 @@ export async function POST(req: Request) {
   }
   const { email, cantonCode } = validation.value;
 
+  // Turnstile — minden public submit-on kötelező
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken : null;
+  const ip = req.headers.get("cf-connecting-ip") ?? null;
+  const captcha = await verifyTurnstile(turnstileToken, ip);
+  if (!captcha.ok) {
+    return NextResponse.json(
+      { error: "A robot-ellenőrzés sikertelen. Próbáld újra." },
+      { status: 400 },
+    );
+  }
+
   if (isDisposableEmail(email)) {
     return NextResponse.json(
       { error: "Eldobható vagy ideiglenes e-mail címek nem megengedettek." },
@@ -42,8 +64,16 @@ export async function POST(req: Request) {
     );
   }
 
-  const ip = req.headers.get("cf-connecting-ip") ?? null;
   const ipHash = await hashIp(ip);
+
+  // IP rate-limit
+  const recent = await countRecentSpamLog(SPAM_KIND, ipHash, 60);
+  if (recent >= HOURLY_LIMIT) {
+    return NextResponse.json(
+      { error: "Túl sok feliratkozási kísérlet egy óra alatt. Próbáld újra később." },
+      { status: 429 },
+    );
+  }
 
   const id = crypto.randomUUID();
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
@@ -77,6 +107,9 @@ export async function POST(req: Request) {
       { status: 502 },
     );
   }
+
+  // Rate-limit napló (fire-and-forget)
+  logSpamSubmit(SPAM_KIND, ipHash).catch(() => { /* silent */ });
 
   return NextResponse.json({ ok: true }, { headers: { "cache-control": "no-store" } });
 }
