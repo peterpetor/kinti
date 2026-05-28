@@ -15,7 +15,7 @@ export const metadata = { title: "Fuvar feladása" };
  */
 export default async function TelekocsiFeldasPage() {
   const { userId } = await auth();
-  if (!userId) redirect("/belepes");
+  if (!userId) redirect("/belepes?redirect_url=/telekocsi/feladas");
 
   return (
     <div className="px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1.5rem)]">

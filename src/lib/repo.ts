@@ -494,7 +494,7 @@ export async function deleteEvent(id: string): Promise<boolean> {
 export async function addEventRsvp(
   eventId: string,
   ipHash: string,
-): Promise<{ ok: boolean; added: boolean; total: number } > {
+): Promise<{ ok: boolean; added: boolean; total: number }> {
   const db = getDB();
   const event = await db
     .prepare("SELECT going FROM events WHERE id = ?")
