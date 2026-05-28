@@ -1,8 +1,9 @@
 import { Fragment } from "react";
 import { Icon } from "@/components/ui";
-import type { Ride } from "@/lib/repo";
+import type { PublicRide } from "@/lib/repo";
 import { phoneToWhatsapp } from "@/lib/rides";
 import { RideDeleteButton } from "./ride-delete-button";
+import { MyRideActions } from "./my-ride-actions";
 
 /**
  * RideCard — telekocsi-kártya: útvonal, idő, helyek, ár, contact gombok.
@@ -20,8 +21,9 @@ function fmtDateTime(iso: string): string {
   return iso;
 }
 
-export function RideCard({ ride, canDelete = false }: { ride: Ride; canDelete?: boolean }) {
-  const waNum = phoneToWhatsapp(ride.contactPhone);
+export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDelete?: boolean }) {
+  // WhatsApp: ha külön WA-szám van megadva, azt használjuk; egyébként a telefont.
+  const waNum = phoneToWhatsapp(ride.contactWhatsapp || ride.contactPhone);
 
   return (
     <article className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3 overflow-hidden">
@@ -94,7 +96,10 @@ export function RideCard({ ride, canDelete = false }: { ride: Ride; canDelete?: 
         </a>
       </div>
 
-      {/* Saját fuvar → törlés */}
+      {/* Saját fuvar → Módosítás + Törlés (kliens-oldalon, localStorage alapján).
+          A Clerk-belépett régi userek számára a canDelete (RideDeleteButton) is ott
+          marad — ők azonnali törlést kapnak owner-azonosítás alapján. */}
+      <MyRideActions rideId={ride.id} />
       {canDelete && (
         <div className="flex justify-end border-t border-line/30 pt-2">
           <RideDeleteButton id={ride.id} />

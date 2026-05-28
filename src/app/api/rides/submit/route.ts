@@ -145,6 +145,7 @@ export async function POST(req: Request) {
     posterName,
     posterUserId: userId ?? null,
     contactPhone: v.contactPhone,
+    contactWhatsapp: v.contactWhatsapp,
     notes: v.notes,
     waypoints: waypoints.length > 0 ? waypoints : null,
     expiresAt: computeRideExpiry(v.departureTime),

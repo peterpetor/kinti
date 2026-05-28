@@ -4,7 +4,7 @@ import { lazy, Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import type { Ride } from "@/lib/repo";
+import type { PublicRide } from "@/lib/repo";
 import { RideCard } from "./ride-card";
 import { PushOptin } from "@/components/push-optin";
 
@@ -23,7 +23,7 @@ export function TelekocsiView({
   rides,
   currentUserId,
 }: {
-  rides: Ride[];
+  rides: PublicRide[];
   currentUserId: string | null;
 }) {
   const [view, setView] = useState<ViewMode>("list");

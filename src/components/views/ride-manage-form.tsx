@@ -13,6 +13,7 @@ export function RideManageForm({ ride, token }: { ride: Ride; token: string }) {
     seats: String(ride.seats),
     priceText: ride.priceText ?? "",
     contactPhone: ride.contactPhone,
+    contactWhatsapp: ride.contactWhatsapp ?? "",
     notes: ride.notes ?? "",
   });
   const [phase, setPhase] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -30,6 +31,7 @@ export function RideManageForm({ ride, token }: { ride: Ride; token: string }) {
           seats: Number(form.seats),
           priceText: form.priceText || null,
           contactPhone: form.contactPhone,
+          contactWhatsapp: form.contactWhatsapp || null,
           notes: form.notes || null,
         }),
       });
@@ -82,8 +84,19 @@ export function RideManageForm({ ride, token }: { ride: Ride; token: string }) {
         <input type="text" value={form.priceText} onChange={(e) => setForm((f) => ({ ...f, priceText: e.target.value }))} placeholder="pl. 40 CHF" className={inputCls()} maxLength={40} />
       </Section>
 
-      <Section title="Telefonszám" required>
+      <Section title="Telefonszám (híváshoz)" required>
         <input type="tel" value={form.contactPhone} onChange={(e) => setForm((f) => ({ ...f, contactPhone: e.target.value }))} className={inputCls()} maxLength={24} />
+      </Section>
+
+      <Section title="WhatsApp szám (csak ha eltér)">
+        <input
+          type="tel"
+          value={form.contactWhatsapp}
+          onChange={(e) => setForm((f) => ({ ...f, contactWhatsapp: e.target.value }))}
+          placeholder="Üresen: a fenti telefonra megy a WhatsApp is"
+          className={inputCls()}
+          maxLength={24}
+        />
       </Section>
 
       <Section title="Megjegyzés">

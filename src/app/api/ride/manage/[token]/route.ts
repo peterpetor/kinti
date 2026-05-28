@@ -54,6 +54,7 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
     if (!t) return NextResponse.json({ error: "missing_phone" }, { status: 400 });
     fields.contactPhone = t;
   }
+  if ("contactWhatsapp" in body) fields.contactWhatsapp = str(body.contactWhatsapp);
   if ("notes" in body) fields.notes = str(body.notes);
 
   const ok = await updateRideByManageToken(params.token, fields);

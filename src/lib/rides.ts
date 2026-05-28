@@ -36,6 +36,8 @@ export interface RideFormInput {
   seats?: unknown;
   priceText?: unknown;
   contactPhone?: unknown;
+  /** Opcionális — ha a WhatsApp eltér a telefontól. Üresen a contactPhone-t használjuk. */
+  contactWhatsapp?: unknown;
   notes?: unknown;
   /** Feladó megjelenített neve — vendég-beküldésnél kötelező; Clerk-userhez opcionális (Clerk-fiókból jön). */
   posterName?: unknown;
@@ -53,6 +55,7 @@ export interface ValidatedRideInput {
   seats: number;
   priceText: string | null;
   contactPhone: string;
+  contactWhatsapp: string | null;
   notes: string | null;
   posterName: string | null;
   /** Közbeeső megálló város-nevek (még nem geokódolva — a szerver csinálja). */
@@ -106,6 +109,15 @@ export function validateRideInput(
     errors.push({
       field: "contactPhone",
       message: "Add meg a telefonszámot nemzetközi formátumban (pl. +41… vagy +36…).",
+    });
+  }
+
+  // WhatsApp szám opcionális — ha eltér a Telefontól, külön validáljuk.
+  const contactWhatsapp = str(input.contactWhatsapp);
+  if (contactWhatsapp && (contactWhatsapp.length > RIDE_LIMITS.phoneMax || !PHONE_RE.test(contactWhatsapp))) {
+    errors.push({
+      field: "contactWhatsapp",
+      message: "Add meg a WhatsApp számot nemzetközi formátumban, vagy hagyd üresen.",
     });
   }
 
@@ -165,6 +177,7 @@ export function validateRideInput(
       seats,
       priceText: priceText || null,
       contactPhone,
+      contactWhatsapp: contactWhatsapp || null,
       notes: notes || null,
       posterName: posterName || null,
       waypointCities,

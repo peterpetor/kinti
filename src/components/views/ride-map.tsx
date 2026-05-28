@@ -8,7 +8,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Icon } from "@/components/ui";
-import type { Ride } from "@/lib/repo";
+import type { PublicRide } from "@/lib/repo";
 import { phoneToWhatsapp } from "@/lib/rides";
 
 /**
@@ -58,7 +58,7 @@ export function RideMap({
   rides,
   className,
 }: {
-  rides: Ride[];
+  rides: PublicRide[];
   className?: string;
 }) {
   const carIcon = useMemo(() => createCarIcon(), []);
@@ -109,7 +109,7 @@ export function RideMap({
                     📞 Hívás
                   </a>
                   <a
-                    href={`https://wa.me/${phoneToWhatsapp(r.contactPhone)}`}
+                    href={`https://wa.me/${phoneToWhatsapp(r.contactWhatsapp || r.contactPhone)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
 import { RIDE_LIMITS, MAX_WAYPOINTS, type RideValidationError } from "@/lib/rides";
+import { rememberMyRide } from "./my-ride-actions";
 
 /**
  * RideForm — telekocsi-feladás. NEM kötelező a Clerk-belépés.
@@ -22,6 +23,7 @@ interface FormState {
   seats: string;
   priceText: string;
   contactPhone: string;
+  contactWhatsapp: string;
   notes: string;
   posterName: string;
   waypoints: string[];
@@ -34,6 +36,7 @@ const INITIAL: FormState = {
   seats: "1",
   priceText: "",
   contactPhone: "",
+  contactWhatsapp: "",
   notes: "",
   posterName: "",
   waypoints: [],
@@ -80,6 +83,8 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         error?: string;
         details?: RideValidationError[];
         manageUrl?: string;
+        manageToken?: string;
+        id?: string;
       };
       if (!res.ok) {
         if (data.details?.length) {
@@ -91,6 +96,11 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         setPhase("error");
         turnstileRef.current?.reset();
         return;
+      }
+      // Mentjük a localStorage-ba — így a Telekocsi-listán a "Módosítás"/Törlés
+      // gombok megjelennek a saját fuvarunk mellett.
+      if (data.id && data.manageToken) {
+        rememberMyRide(data.id, data.manageToken);
       }
       setManageUrl(data.manageUrl ?? null);
       setPhase("sent");
@@ -300,7 +310,7 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         </Section>
       )}
 
-      <Section title="Telefonszám" required>
+      <Section title="Telefonszám (híváshoz)" required>
         <input
           type="tel"
           value={form.contactPhone}
@@ -311,7 +321,22 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         />
         <FieldError msg={errors.contactPhone} />
         <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
-          Ezen a számon keresnek meg a jelentkezők (hívás + WhatsApp). Nemzetközi formátum ajánlott.
+          Ezen a számon hívnak fel a jelentkezők. Nemzetközi formátum ajánlott.
+        </p>
+      </Section>
+
+      <Section title="WhatsApp szám (csak ha eltér)">
+        <input
+          type="tel"
+          value={form.contactWhatsapp}
+          onChange={(e) => setField("contactWhatsapp", e.target.value)}
+          placeholder="Üresen: a fenti telefonra megy a WhatsApp is"
+          maxLength={RIDE_LIMITS.phoneMax}
+          className={inputCls(errors.contactWhatsapp)}
+        />
+        <FieldError msg={errors.contactWhatsapp} />
+        <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
+          Hagyd üresen, ha a WhatsApp számod azonos a Telefonszámmal. Csak akkor töltsd ki, ha másik számot használsz WhatsAppon.
         </p>
       </Section>
 

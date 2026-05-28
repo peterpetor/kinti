@@ -1982,6 +1982,7 @@ interface RideRow {
   created_at: string;
   expires_at: string;
   manage_token: string | null;
+  contact_whatsapp: string | null;
 }
 
 export interface RideWaypoint {
@@ -2002,11 +2003,28 @@ export interface Ride {
   posterName: string;
   posterUserId: string | null;
   contactPhone: string;
+  /** Opcionális — ha üres, a WhatsApp-gomb a contactPhone-ra megy. */
+  contactWhatsapp: string | null;
   notes: string | null;
   waypoints: RideWaypoint[];
   createdAt: string;
   expiresAt: string;
   manageToken: string | null;
+}
+
+/**
+ * PublicRide — a publikus API/oldal-render típusa, manage_token NÉLKÜL.
+ * A token brute-force-hatatlan, de SOSE szivároghat ki publikusan rendezett
+ * HTML-be vagy JSON API válaszba. A submit endpoint külön visszaadja a
+ * feladónak (success oldalon + localStorage-ba), és csak a feladó látja.
+ */
+export type PublicRide = Omit<Ride, "manageToken">;
+
+/** Lecsupaszítja a manage_token-t a publikus szállításhoz. */
+export function toPublicRide(r: Ride): PublicRide {
+  const { manageToken: _omit, ...pub } = r;
+  void _omit;
+  return pub;
 }
 
 function parseWaypoints(raw: string | null): RideWaypoint[] {
@@ -2034,6 +2052,7 @@ function toRide(r: RideRow): Ride {
     posterName: r.poster_name,
     posterUserId: r.poster_user_id,
     contactPhone: r.contact_phone,
+    contactWhatsapp: r.contact_whatsapp,
     notes: r.notes,
     waypoints: parseWaypoints(r.waypoints),
     createdAt: r.created_at,
@@ -2054,6 +2073,7 @@ export interface CreateRideInput {
   posterName: string;
   posterUserId: string | null;
   contactPhone: string;
+  contactWhatsapp: string | null;
   notes: string | null;
   waypoints: RideWaypoint[] | null;
   expiresAt: string;
@@ -2068,8 +2088,9 @@ export async function createRide(input: CreateRideInput): Promise<void> {
     .prepare(
       `INSERT INTO rides
        (id, departure_city, destination_city, departure_time, lat, lng, seats,
-        price_text, poster_name, poster_user_id, contact_phone, notes, waypoints, expires_at, manage_token)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        price_text, poster_name, poster_user_id, contact_phone, contact_whatsapp,
+        notes, waypoints, expires_at, manage_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -2083,6 +2104,7 @@ export async function createRide(input: CreateRideInput): Promise<void> {
       input.posterName,
       input.posterUserId,
       input.contactPhone,
+      input.contactWhatsapp,
       input.notes,
       wpJson,
       input.expiresAt,
@@ -2104,6 +2126,7 @@ export interface UpdateRideFields {
   seats?: number;
   priceText?: string | null;
   contactPhone?: string;
+  contactWhatsapp?: string | null;
   notes?: string | null;
 }
 
@@ -2118,6 +2141,7 @@ export async function updateRideByManageToken(
     seats: "seats",
     priceText: "price_text",
     contactPhone: "contact_phone",
+    contactWhatsapp: "contact_whatsapp",
     notes: "notes",
   };
   for (const [k, col] of Object.entries(map)) {
