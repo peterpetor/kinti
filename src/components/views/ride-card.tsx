@@ -5,6 +5,7 @@ import type { PublicRide } from "@/lib/repo";
 import { phoneToWhatsapp } from "@/lib/rides";
 import { RideDeleteButton } from "./ride-delete-button";
 import { MyRideActions } from "./my-ride-actions";
+import { RideRatingForm } from "./ride-rating-form";
 
 /**
  * RideCard — telekocsi-kártya: útvonal, idő, helyek, ár, contact gombok.
@@ -102,6 +103,15 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
         )}
       </div>
 
+      {/* Értékelés */}
+      {ride.rating != null && (
+        <div className="flex items-center gap-1 mt-1">
+          <Icon name="star" size={14} className="text-[#f1c40f]" filled />
+          <span className="text-[12.5px] font-bold text-ink">{ride.rating.toFixed(1)}</span>
+          <span className="text-[11.5px] text-ink-muted">({ride.reviews} értékelés)</span>
+        </div>
+      )}
+
       {/* Kapcsolat gombok (zero-liability: tel + WhatsApp, nincs chat) */}
       <div className="flex gap-2">
         <a
@@ -118,6 +128,10 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
         >
           <Icon name="send" size={14} strokeWidth={2.2} /> WhatsApp
         </a>
+      </div>
+
+      <div className="pt-1">
+        <RideRatingForm targetPhone={ride.contactPhone} isRequest={ride.isRequest} />
       </div>
 
       {/* Saját fuvar → Módosítás + Törlés (kliens-oldalon, localStorage alapján).

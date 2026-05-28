@@ -849,4 +849,45 @@ kinti.app`;
   }
 }
 
+export async function sendRideRatingConfirmEmail(
+  toEmail: string,
+  targetPhone: string,
+  rating: number,
+  confirmUrl: string
+): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = `Megerősítés: Értékelés beküldése (${rating} csillag)`;
 
+  const text = `Szia!
+
+Kaptunk tőled egy értékelést egy telekocsi felhasználóra (${targetPhone}).
+Értékelés: ${rating} csillag.
+
+Kérjük, kattints az alábbi linkre a hitelesítéshez (24 óráig érvényes):
+${confirmUrl}
+
+Ha nem te küldted be, hagyd figyelmen kívül ezt a levelet.
+Kinti`;
+
+  const html = baseLayout({
+    preheader: `Kérjük, erősítsd meg az értékelésed hitelességét!`,
+    body: `
+      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">Szia 👋</p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
+        Kaptunk tőled egy <strong>${rating} csillagos</strong> értékelést egy telekocsi felhasználóra (${targetPhone}).
+        Mivel a Kinti egy zárt és biztonságos közösség, kérjük, erősítsd meg az e-mail címedet:
+      </p>
+      <div style="margin:0 0 20px;">
+        ${button(confirmUrl, "Értékelés megerősítése")}
+      </div>
+      <p style="margin:0;font-size:12.5px;color:#94a097;">
+        A link <strong>24 óráig</strong> érvényes. Ha nem te küldted be az értékelést, kérjük hagyd figyelmen kívül ezt a levelet.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: toEmail, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}

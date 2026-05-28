@@ -2025,23 +2025,38 @@ export interface Ride {
 export type PublicRide = Omit<Ride, "manageToken"> & {
   /** Gamifikáció: implicit jelvény a hirdetőhöz (pl. "super_driver"). */
   badge: string | null;
+  rating?: number | null;
+  reviews?: number;
 };
 
 /**
  * Lecsupaszítja a manage_token-t a publikus szállításhoz.
  * Ha `rideCounts` adott, kiszámolja a sofőr-jelvényt.
  */
-export function toPublicRide(r: Ride, rideCounts?: Record<string, number>): PublicRide {
+export function toPublicRide(
+  r: Ride,
+  rideCounts?: Record<string, number>,
+  rideRatings?: Record<string, { rating: number; reviews: number }>
+): PublicRide {
   const { manageToken: _omit, ...pub } = r;
   void _omit;
   let badge: string | null = null;
-  if (!r.isRequest && rideCounts) {
-    const count = rideCounts[r.contactPhone] ?? 0;
-    if (count >= 10) badge = "legend_driver";     // 🏆 Legenda Sofőr
-    else if (count >= 5) badge = "super_driver";  // 🚗 Szuper Sofőr
-    else if (count >= 2) badge = "active_driver";  // ✅ Aktív Sofőr
+  let rating: number | null = null;
+  let reviews = 0;
+
+  if (!r.isRequest) {
+    if (rideCounts) {
+      const count = rideCounts[r.contactPhone] ?? 0;
+      if (count >= 10) badge = "legend_driver";     // 🏆 Legenda Sofőr
+      else if (count >= 5) badge = "super_driver";  // 🚗 Szuper Sofőr
+      else if (count >= 2) badge = "active_driver";  // ✅ Aktív Sofőr
+    }
+    if (rideRatings && rideRatings[r.contactPhone]) {
+      rating = rideRatings[r.contactPhone].rating;
+      reviews = rideRatings[r.contactPhone].reviews;
+    }
   }
-  return { ...pub, badge };
+  return { ...pub, badge, rating, reviews };
 }
 
 function parseWaypoints(raw: string | null): RideWaypoint[] {
@@ -2212,6 +2227,69 @@ export async function getActiveRides(opts: RideQuery = {}): Promise<Ride[]> {
 export async function getRideById(id: string): Promise<Ride | null> {
   const row = await getDB().prepare("SELECT * FROM rides WHERE id = ?").bind(id).first<RideRow>();
   return row ? toRide(row) : null;
+}
+
+
+
+export async function getRideRatingsByPhone(): Promise<Record<string, { rating: number; reviews: number }>> {
+  const db = getDB();
+  const { results } = await db.prepare(`
+    SELECT target_phone, AVG(rating) as avg_rating, COUNT(*) as c
+    FROM ride_ratings
+    GROUP BY target_phone
+  `).all<{ target_phone: string; avg_rating: number; c: number }>();
+
+  const map: Record<string, { rating: number; reviews: number }> = {};
+  for (const row of results) {
+    map[row.target_phone] = { rating: row.avg_rating, reviews: row.c };
+  }
+  return map;
+}
+
+export async function addRideRatingDraft(
+  targetPhone: string,
+  reviewerEmail: string,
+  rating: number,
+  confirmToken: string,
+  expiresAt: string
+): Promise<boolean> {
+  const res = await getDB().prepare(`
+    INSERT INTO ride_rating_drafts (id, target_phone, reviewer_email, rating, confirm_token, expires_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).bind(crypto.randomUUID(), targetPhone, reviewerEmail, rating, confirmToken, expiresAt).run();
+  return res.success;
+}
+
+export async function getRideRatingDraftByToken(token: string) {
+  return await getDB().prepare("SELECT * FROM ride_rating_drafts WHERE confirm_token = ?").bind(token).first<{
+    id: string;
+    target_phone: string;
+    reviewer_email: string;
+    rating: number;
+    confirm_token: string;
+    expires_at: string;
+  }>();
+}
+
+export async function confirmRideRatingDraft(draftId: string): Promise<boolean> {
+  const db = getDB();
+  const draft = await db.prepare("SELECT * FROM ride_rating_drafts WHERE id = ?").bind(draftId).first<{
+    target_phone: string;
+    reviewer_email: string;
+    rating: number;
+  }>();
+  if (!draft) return false;
+
+  const res = await db.batch([
+    db.prepare(`
+      INSERT INTO ride_ratings (id, target_phone, reviewer_email, rating)
+      VALUES (?, ?, ?, ?)
+      ON CONFLICT(target_phone, reviewer_email) DO UPDATE SET rating = excluded.rating
+    `).bind(crypto.randomUUID(), draft.target_phone, draft.reviewer_email, draft.rating),
+    db.prepare("DELETE FROM ride_rating_drafts WHERE id = ?").bind(draftId)
+  ]);
+  
+  return res.length === 2;
 }
 
 // ---------------------------------------------------------------------------
