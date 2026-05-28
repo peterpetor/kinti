@@ -274,7 +274,10 @@ function EventsList({ events }: { events: KintiEvent[] }) {
             </span>
             <div className="flex items-start gap-3.5">
               <DateChip event={hero} solid />
-              <div className="min-w-0 flex-1">
+              <Link
+                href={`/kozosseg/esemeny/${hero.id}`}
+                className="min-w-0 flex-1 transition active:opacity-80"
+              >
                 <h2 className="text-[22px] font-extrabold leading-tight tracking-tight text-balance">
                   {hero.title}
                 </h2>
@@ -284,7 +287,7 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                 <p className="mt-1 flex items-center gap-1.5 text-[13px] opacity-90">
                   <Icon name="clock" size={12} strokeWidth={2.2} /> {hero.startTime}
                 </p>
-              </div>
+              </Link>
             </div>
             <div className="mt-3.5 flex items-center gap-2 rounded-xl bg-white/[0.12] px-3.5 py-2.5">
               <p className="flex-1 text-[12.5px] font-semibold">
@@ -336,7 +339,11 @@ function EventsList({ events }: { events: KintiEvent[] }) {
               className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3"
             >
               <DateChip event={e} />
-              <div className="min-w-0 flex-1">
+              <Link
+                href={`/kozosseg/esemeny/${e.id}`}
+                className="min-w-0 flex-1 transition active:opacity-70"
+                aria-label={`${e.title} — részletek`}
+              >
                 <div className="mb-0.5 flex items-center gap-1.5">
                   <TagBadge tag={e.tag} color={e.color} />
                   <span className="text-[11.5px] font-semibold text-ink-muted">
@@ -350,7 +357,7 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                   {e.venue}
                   {goingOf(e) > 0 && <> · {goingOf(e)} fő megy</>}
                 </div>
-              </div>
+              </Link>
               {e.eventDate && (
                 <button
                   type="button"
