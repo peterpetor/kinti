@@ -96,6 +96,25 @@ export default async function FeedPage() {
         </div>
       </section>
 
+      {/* Heti hírlevél feliratkozó CTA */}
+      <Link
+        href="/hirlevel"
+        className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
+      >
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-accent-soft text-accent">
+          <Icon name="send" size={18} strokeWidth={2.3} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
+            Heti hírlevél a kantonodból
+          </span>
+          <span className="block text-[12px] text-ink-muted">
+            Új események + hirdetések emailben, hetente 1×. Bármikor 1 kattintással lemondható.
+          </span>
+        </span>
+        <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-accent" />
+      </Link>
+
       {/* Tudásbázis — hivatalos útmutatók */}
       <Link
         href="/tudasbazis"

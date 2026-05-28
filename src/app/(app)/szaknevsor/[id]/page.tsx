@@ -65,8 +65,47 @@ export default async function BusinessPage({ params }: { params: { id: string } 
   } catch {}
   const hasSocials = socials && (socials.facebook || socials.instagram || socials.linkedin || socials.booking);
 
+  // JSON-LD strukturált adat — Schema.org LocalBusiness (Google rich snippets)
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `https://kinti.app/szaknevsor/${b.id}`,
+    name: b.name,
+    url: `https://kinti.app/szaknevsor/${b.id}`,
+  };
+  if (b.blurb) jsonLd.description = b.blurb;
+  if (b.phone) jsonLd.telephone = b.phone;
+  if (heroUrl) jsonLd.image = heroUrl;
+  if (b.address) {
+    jsonLd.address = {
+      "@type": "PostalAddress",
+      streetAddress: b.address,
+      addressCountry: "CH",
+    };
+  }
+  if (b.lat != null && b.lng != null) {
+    jsonLd.geo = { "@type": "GeoCoordinates", latitude: b.lat, longitude: b.lng };
+  }
+  if (b.rating > 0 && b.reviews > 0) {
+    jsonLd.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: b.rating,
+      reviewCount: b.reviews,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+  if (b.categoryLabel) jsonLd.knowsAbout = b.categoryLabel;
+  jsonLd.knowsLanguage = ["hu", ...(b.languages ?? []).map((l) => l.toLowerCase())];
+
   return (
     <div>
+      {/* SEO: Google rich snippets a vállalkozóhoz */}
+      {/* eslint-disable-next-line @next/next/no-head-element */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* hero fotó + lebegő vezérlők — R2-kép, ha van; különben gradiens placeholder */}
       <div
         className="relative h-[280px]"

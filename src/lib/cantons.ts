@@ -95,6 +95,27 @@ export function cantonPoint(code: string | null | undefined): CantonPoint {
   return CANTON_COORDS.ZH;
 }
 
+/** Canton-név → URL-barát slug (ékezet-mentes, kisbetűs, kötőjeles). */
+export function cantonToSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** URL-slug → Canton objektum, vagy null. Felfedezi a "zurich" → ZH, "st-gallen" → SG. */
+export function cantonFromSlug(slug: string): Canton | null {
+  const s = slug.toLowerCase();
+  for (const c of CANTONS) {
+    if (cantonToSlug(c.name) === s) return c;
+    if (c.aliases.some((a) => cantonToSlug(a) === s)) return c;
+    if (c.code.toLowerCase() === s) return c;
+  }
+  return null;
+}
+
 /** Diakritika-mentes, kisbetűs forma (Zürich → zurich, Genève → geneve). */
 function normalize(s: string): string {
   return s

@@ -5,6 +5,7 @@ import { verifyTurnstile } from "@/lib/turnstile";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { hashIp } from "@/lib/bulletin";
 import { countRecentContacts, logContactAttempt } from "@/lib/repo";
+import { findProfanityInFields } from "@/lib/profanity";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -46,6 +47,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }
 
+  // 0) HONEYPOT — bot-csapda. Ha a rejtett `website` mező nem üres → bot.
+  //    Korai elutasítás, mielőtt Turnstile-kvótát égetnénk.
+  if (typeof body.website === "string" && body.website.trim().length > 0) {
+    return NextResponse.json({ error: "Hibás kérés." }, { status: 400 });
+  }
+
   const str = (v: unknown, max = 500) =>
     typeof v === "string" ? v.trim().slice(0, max) : "";
 
@@ -68,6 +75,15 @@ export async function POST(req: Request) {
   if (!message || message.length < MESSAGE_MIN) {
     return NextResponse.json(
       { error: `Az üzenet legalább ${MESSAGE_MIN} karakter legyen.` },
+      { status: 400 },
+    );
+  }
+
+  // 1/b) Profanitás-szűrő a publikus mezőkre (név + üzenet).
+  const dirty = findProfanityInFields({ senderName, message });
+  if (dirty) {
+    return NextResponse.json(
+      { error: "Az üzeneted olyan szót tartalmaz, amit nem engedünk. Kérlek, fogalmazd meg másképp." },
       { status: 400 },
     );
   }
@@ -104,7 +120,7 @@ export async function POST(req: Request) {
   const post = await getDB()
     .prepare(
       `SELECT email, poster, title FROM bulletin_posts
-       WHERE id = ? AND is_pending = 0
+       WHERE id = ? AND is_pending = 0 AND hidden = 0
          AND (expires_at IS NULL OR expires_at > datetime('now'))`,
     )
     .bind(postId)

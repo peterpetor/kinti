@@ -472,6 +472,7 @@ export function BulletinCard({
   const [senderName, setSenderName] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [hpWebsite, setHpWebsite] = useState(""); // honeypot — bot-csapda, sose lássa ember
   const [sending, setSending] = useState(false);
   const [sentSuccess, setSentSuccess] = useState(false);
   const [contactError, setContactError] = useState<string | null>(null);
@@ -509,6 +510,7 @@ export function BulletinCard({
           senderEmail,
           message,
           turnstileToken,
+          website: hpWebsite, // honeypot
         }),
       });
 
@@ -693,6 +695,18 @@ export function BulletinCard({
               </div>
             ) : (
               <form onSubmit={handleContactSubmit} className="space-y-4">
+                {/* Honeypot — bot-csapda: sose lássa az ember */}
+                <input
+                  type="text"
+                  name="website"
+                  value={hpWebsite}
+                  onChange={(e) => setHpWebsite(e.target.value)}
+                  autoComplete="off"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="hidden"
+                />
+
                 <div>
                   <h4 className="text-lg font-extrabold text-ink tracking-tight">Válasz a hirdetésre</h4>
                   <p className="text-xs text-ink-muted mt-1 truncate">

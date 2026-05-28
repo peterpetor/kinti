@@ -1854,3 +1854,80 @@ export async function deleteRideById(id: string): Promise<boolean> {
   const res = await getDB().prepare("DELETE FROM rides WHERE id = ?").bind(id).run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+// ---------------------------------------------------------------------------
+// Heti email-digest feliratkozók
+// ---------------------------------------------------------------------------
+
+export interface DigestSubscriberRow {
+  id: string;
+  email: string;
+  canton_code: string | null;
+  confirmed: number;
+  confirm_token: string | null;
+  unsubscribe_token: string;
+  terms_version: string | null;
+  accepted_terms_at: string | null;
+  ip_hash: string | null;
+  created_at: string;
+  last_sent_at: string | null;
+}
+
+export interface CreateDigestSubscriberInput {
+  id: string;
+  email: string;
+  cantonCode: string | null;
+  confirmToken: string;
+  unsubscribeToken: string;
+  termsVersion: string;
+  acceptedTermsAt: string;
+  ipHash: string | null;
+}
+
+/** Új feliratkozó (confirmed=0). Ha már létezik az email, az új tokenekkel és kantonnal frissül. */
+export async function createDigestSubscriber(input: CreateDigestSubscriberInput): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO digest_subscribers
+       (id, email, canton_code, confirm_token, unsubscribe_token,
+        terms_version, accepted_terms_at, ip_hash, confirmed)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
+       ON CONFLICT(email) DO UPDATE SET
+         canton_code = excluded.canton_code,
+         confirm_token = excluded.confirm_token,
+         unsubscribe_token = excluded.unsubscribe_token,
+         terms_version = excluded.terms_version,
+         accepted_terms_at = excluded.accepted_terms_at,
+         ip_hash = excluded.ip_hash,
+         confirmed = 0`,
+    )
+    .bind(
+      input.id,
+      input.email.toLowerCase(),
+      input.cantonCode,
+      input.confirmToken,
+      input.unsubscribeToken,
+      input.termsVersion,
+      input.acceptedTermsAt,
+      input.ipHash,
+    )
+    .run();
+}
+
+export async function confirmDigestSubscriber(confirmToken: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare(
+      "UPDATE digest_subscribers SET confirmed = 1, confirm_token = NULL WHERE confirm_token = ?",
+    )
+    .bind(confirmToken)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function deleteDigestSubscriberByUnsubToken(token: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM digest_subscribers WHERE unsubscribe_token = ?")
+    .bind(token)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}

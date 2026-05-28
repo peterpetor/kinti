@@ -465,6 +465,57 @@ export async function sendEventAdminModerationEmail(
   }
 }
 
+// --- Heti email-digest: feliratkozás megerősítő email -----------------------
+
+interface DigestConfirmEmailArgs {
+  to: string;
+  confirmUrl: string;
+  unsubscribeUrl: string;
+}
+
+export async function sendDigestConfirmEmail(args: DigestConfirmEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = "Erősítsd meg a feliratkozást a kinti hírlevélre";
+
+  const text = `Szia!
+
+Megkaptuk a feliratkozásodat a kinti heti hírlevelére.
+
+A feliratkozás véglegesítéséhez erősítsd meg egy kattintással:
+  ${args.confirmUrl}
+
+Ha mégsem te iratkoztál fel, hagyd figyelmen kívül ezt a levelet — vagy közvetlenül leiratkozhatsz itt:
+  ${args.unsubscribeUrl}
+
+Üdv,
+kinti.app`;
+
+  const html = baseLayout({
+    preheader: "Erősítsd meg a feliratkozást egy kattintással",
+    body: `
+      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">Szia 👋</p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
+        Megkaptuk a feliratkozásodat a kinti <strong>heti hírlevelére</strong>. Hetente egyszer
+        összegyűjtjük az új eseményeket és hirdetéseket a kantonodban.
+      </p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
+        A feliratkozás véglegesítéséhez kattints az alábbi gombra:
+      </p>
+      <p style="margin:0 0 20px;">${button(args.confirmUrl, "Feliratkozás megerősítése →")}</p>
+      <hr style="border:none;border-top:1px solid #e6ebe5;margin:20px 0;" />
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        Ha mégsem te iratkoztál fel, hagyd figyelmen kívül ezt a levelet — vagy közvetlenül
+        <a href="${escapeAttr(args.unsubscribeUrl)}" style="color:#94a097;">leiratkozhatsz itt</a>.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 // --- Self-service vállalkozás-beküldés: megerősítő email --------------------
 
 interface BusinessConfirmEmailArgs {

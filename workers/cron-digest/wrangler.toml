@@ -1,0 +1,35 @@
+#:schema node_modules/wrangler/config-schema.json
+# ---------------------------------------------------------------------------
+# kinti-cron-digest — Heti email-digest kiküldő Worker.
+#
+# Hétfő 08:17 UTC-kor lefutva minden megerősített (confirmed=1) feliratkozónak
+# küld egy összefoglalót: új események + új hirdetések a választott kantonból.
+#
+# Deploy:
+#   npx wrangler deploy --config workers/cron-digest/wrangler.toml
+#
+# Titkok beállítása:
+#   npx wrangler secret put RESEND_API_KEY --config workers/cron-digest/wrangler.toml
+# ---------------------------------------------------------------------------
+
+name = "kinti-cron-digest"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# Hétfő 08:17 UTC — direkt nem kerek, hogy ne ütközzön a CF tömeges cron-jaival
+[triggers]
+crons = ["17 8 * * 1"]
+
+# Ugyanaz a D1 database, mint a Pages projektben
+[[d1_databases]]
+binding = "DB"
+database_name = "kinti-db"
+database_id = "ec70d0d2-1b7c-416d-a2c6-c5d15c3e59a2"
+
+[observability]
+enabled = true
+
+# Szükséges titkok (npx wrangler secret put ... a fenti --config kapcsolóval):
+#   RESEND_API_KEY  — Resend API kulcs
+#   EMAIL_FROM      — pl. "Kinti <info@kinti.app>"
+#   SITE_URL        — pl. "https://kinti.app"

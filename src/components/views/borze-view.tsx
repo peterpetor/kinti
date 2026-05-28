@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import { CANTONS } from "@/lib/cantons";
 import type { BulletinPost } from "@/lib/types";
 import { BulletinCard, loadSavedIds, saveSavedIds } from "./community-view";
+import { whatsappShareUrl, viberShareUrl } from "@/lib/share";
 
 /**
  * BorzeView — dedikált, témára szabott hirdetés-böngésző (Albérlet / Állás).
@@ -129,6 +130,9 @@ export function BorzeView({
         <Icon name="chevR" size={14} className="text-ink-muted" />
       </Link>
 
+      {/* Csoportos megosztás (WhatsApp / Viber a magyar kintis csoportokba) */}
+      <GroupShareRow title={title} />
+
       {posts.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-line bg-surface-alt px-6 py-12 text-center">
           <Icon name={icon} size={26} className="text-ink-faint" />
@@ -248,6 +252,37 @@ export function BorzeView({
           )}
         </>
       )}
+    </div>
+  );
+}
+
+/**
+ * GroupShareRow — közvetlen megosztás a WhatsApp/Viber csoportokba (a kint élő
+ * magyarok itt szerveződnek). A megosztás-szöveg a börze címét + az aktuális
+ * URL-t használja.
+ */
+function GroupShareRow({ title }: { title: string }) {
+  const url = typeof window !== "undefined" ? window.location.href : "https://kinti.app";
+  const text = `${title} — kintieknek Svájcban`;
+  return (
+    <div className="flex gap-2">
+      <a
+        href={whatsappShareUrl(url, text)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex flex-1 items-center justify-center gap-1.5 rounded-pill bg-[#25D366] py-2 text-[12.5px] font-bold text-white shadow-card active:scale-[0.98]"
+      >
+        <Icon name="send" size={13} strokeWidth={2.4} />
+        Megosztás WhatsApp-csoportba
+      </a>
+      <a
+        href={viberShareUrl(url, text)}
+        className="flex items-center justify-center gap-1.5 rounded-pill bg-[#7360F2] px-3 py-2 text-[12.5px] font-bold text-white shadow-card active:scale-[0.98]"
+        aria-label="Megosztás Viber-csoportba"
+      >
+        <Icon name="send" size={13} strokeWidth={2.4} />
+        Viber
+      </a>
     </div>
   );
 }
