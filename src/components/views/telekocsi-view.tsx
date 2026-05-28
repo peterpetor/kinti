@@ -63,10 +63,10 @@ export function TelekocsiView({
               Van szabad helyed? Hirdesd meg!
             </div>
             <div className="text-[11.5px] text-ink-muted">
-              Belépés szükséges — a kapcsolat telefonon megy
+              Nincs regisztráció — a kapcsolat telefonon vagy WhatsAppon megy
             </div>
           </div>
-          <Icon name="chevR" size={14} className="text-[#3a6ea5]" />
+          <Icon name="chevR" size={14} className="text-[#3a6ea5] shrink-0" />
         </Link>
       </div>
 

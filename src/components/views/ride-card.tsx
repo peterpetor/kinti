@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Icon } from "@/components/ui";
 import type { Ride } from "@/lib/repo";
 import { phoneToWhatsapp } from "@/lib/rides";
@@ -23,27 +24,26 @@ export function RideCard({ ride, canDelete = false }: { ride: Ride; canDelete?: 
   const waNum = phoneToWhatsapp(ride.contactPhone);
 
   return (
-    <article className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
+    <article className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3 overflow-hidden">
       {/* Útvonal (indulás → [megállók] → érkezés) */}
       <div className="flex items-start gap-2">
         <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-[#3a6ea5]/15 text-[#3a6ea5] text-lg">
           🚗
         </span>
         <div className="min-w-0 flex-1">
-          <div className="text-[15px] font-extrabold tracking-[-0.01em] text-ink leading-tight">
-            {ride.departureCity}
-            {ride.waypoints.length > 0 && (
-              <>
-                {ride.waypoints.map((wp, i) => (
-                  <span key={i}>
-                    <span className="mx-1 text-ink-faint">→</span>
-                    <span className="text-[#3a6ea5]">{wp.city}</span>
-                  </span>
-                ))}
-              </>
-            )}
-            <span className="mx-1 text-ink-faint">→</span>
-            {ride.destinationCity}
+          {/* flex-wrap + gap-x-1: sortörés szabad, mert minden szakasz külön inline elem.
+              A korábbi nested <span>-ek bezárt struktúrája (whitespace nélkül) tiltotta a
+              törést és horizontálisan kilógott a kártya mobilon. */}
+          <div className="flex flex-wrap items-baseline gap-x-1 text-[15px] font-extrabold tracking-[-0.01em] text-ink leading-tight break-words">
+            <span className="break-words">{ride.departureCity}</span>
+            {ride.waypoints.map((wp, i) => (
+              <Fragment key={i}>
+                <span className="text-ink-faint">→</span>
+                <span className="text-[#3a6ea5] break-words">{wp.city}</span>
+              </Fragment>
+            ))}
+            <span className="text-ink-faint">→</span>
+            <span className="break-words">{ride.destinationCity}</span>
           </div>
           <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] font-semibold text-ink-muted">
             <span className="flex items-center gap-1">
