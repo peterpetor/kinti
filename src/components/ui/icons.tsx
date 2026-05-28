@@ -10,7 +10,7 @@ export type IconName =
   | "globe" | "star" | "heart" | "arrowLeft" | "arrowRight" | "arrowUp"
   | "more" | "close" | "check" | "plus" | "filter" | "clock" | "calendar"
   | "share" | "bookmark" | "chevR" | "chevD" | "chevU" | "sliders" | "bell"
-  | "trending" | "eye" | "cursor" | "flag" | "send" | "facebook" | "instagram" | "linkedin";
+  | "trending" | "eye" | "cursor" | "flag" | "send" | "facebook" | "instagram" | "linkedin" | "car";
 
 const PATHS: Record<IconName, string[]> = {
   search: ["M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14", "M16.5 16.5L21 21"],
@@ -50,6 +50,7 @@ const PATHS: Record<IconName, string[]> = {
   facebook: ["M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"],
   instagram: ["M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z", "M17.5 6.5h.01", "M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12z"],
   linkedin: ["M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z", "M2 9h4v12H2z", "M4 6a2 2 0 1 0 0-4a2 2 0 0 0 0 4z"],
+  car: ["M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2", "M 7 15 a 2 2 0 1 1 0 4 a 2 2 0 1 1 0 -4", "M9 17h6", "M 17 15 a 2 2 0 1 1 0 4 a 2 2 0 1 1 0 -4"],
 };
 
 // A '…' (more) három pöttye vastagabb vonallal néz jól ki.
