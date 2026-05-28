@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { BulletinKind, BulletinPost, KintiEvent } from "@/lib/types";
+import type { Ride } from "@/lib/repo";
+import { TelekocsiView } from "./telekocsi-view";
 import { mediaUrl } from "@/lib/media";
 import { CANTONS } from "@/lib/cantons";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
@@ -61,24 +63,29 @@ function formatExpiry(days: number | null): string | null {
 }
 
 
-type Tab = "events" | "board";
+type Tab = "board" | "events" | "rides";
 
 export function CommunityView({
   events,
   kinds,
   posts,
+  rides,
+  currentUserId,
   turnstileSiteKey = "",
 }: {
   events: KintiEvent[];
   kinds: BulletinKind[];
   posts: BulletinPost[];
+  rides: Ride[];
+  currentUserId: string | null;
   turnstileSiteKey?: string;
 }) {
-  const [tab, setTab] = useState<Tab>("events");
+  const [tab, setTab] = useState<Tab>("board");
 
   const tabs: { id: Tab; label: string; count: number | null }[] = [
+    { id: "board", label: "Hirdetések", count: posts.length },
     { id: "events", label: "Események", count: events.length },
-    { id: "board", label: "Hirdetőtábla", count: posts.length },
+    { id: "rides", label: "Telekocsi", count: rides.length },
   ];
 
   return (

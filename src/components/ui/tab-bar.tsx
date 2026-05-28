@@ -2,45 +2,55 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
 import { Icon, type IconName } from "./icons";
 import { cn } from "@/lib/cn";
 
 /**
- * TabBar — alsó, lebegő üveg-navigáció (Home/Térkép, Szaknévsor, Közösség,
- * Profil). A negyedik fül a Clerk auth-állapottól függően változik:
- *   - kijelentkezve: "Vállalkozó" felirat + /belepes (egyértelműsíti, hogy
- *     a profilkezelés csak vállalkozóknak)
- *   - bejelentkezve: "Profil" felirat + /profil (saját dashboard)
+ * TabBar — alsó, lebegő üveg-navigáció. 4 stabil fül, auth-független label:
+ *   1) Főoldal   — dashboard
+ *   2) Szaknévsor — vállalkozás-kereső
+ *   3) Piac      — hirdetések + események + telekocsi (a régi "Közösség")
+ *   4) Fiókom    — belépés / profil / kedvencek / beállítások
  */
-const STATIC_TABS: { href: string; label: string; icon: IconName }[] = [
+interface Tab {
+  href: string;
+  label: string;
+  icon: IconName;
+  /** Ezekre a prefix-ekre is aktívnak számít (a href-en felül). */
+  alsoMatch?: string[];
+}
+
+const TABS: Tab[] = [
   { href: "/", label: "Főoldal", icon: "home" },
   { href: "/szaknevsor", label: "Szaknévsor", icon: "list" },
-  { href: "/kozosseg", label: "Közösség", icon: "users" },
+  {
+    href: "/kozosseg",
+    label: "Piac",
+    icon: "users",
+    alsoMatch: ["/alberlet", "/allas", "/telekocsi"],
+  },
+  {
+    href: "/profil",
+    label: "Fiókom",
+    icon: "user",
+    alsoMatch: ["/belepes", "/regisztracio", "/vallalkozo"],
+  },
 ];
 
-function isActive(pathname: string, href: string): boolean {
-  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+function isActive(pathname: string, tab: Tab): boolean {
+  if (tab.href === "/") return pathname === "/";
+  if (pathname.startsWith(tab.href)) return true;
+  return tab.alsoMatch?.some((p) => pathname.startsWith(p)) ?? false;
 }
 
 export function TabBar() {
   const pathname = usePathname();
-  const { isSignedIn, isLoaded } = useAuth();
-
-  // Amíg a Clerk be nem töltődik, az utolsó fül a "vállalkozó" — a /belepes
-  // úgyis át fogja venni a usert, ha mégis bejelentkezett már.
-  const lastTab =
-    isLoaded && isSignedIn
-      ? { href: "/profil", label: "Profil", icon: "user" as const }
-      : { href: "/vallalkozo", label: "Vállalkozó", icon: "user" as const };
-
-  const tabs = [...STATIC_TABS, lastTab];
 
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-[calc(env(safe-area-inset-bottom)+12px)]">
       <div className="glass pointer-events-auto flex w-full max-w-md items-stretch gap-1 rounded-[22px] border border-line p-1.5 shadow-pop">
-        {tabs.map((t) => {
-          const active = isActive(pathname, t.href);
+        {TABS.map((t) => {
+          const active = isActive(pathname, t);
           return (
             <Link
               key={t.href}

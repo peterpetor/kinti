@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ClaimDemoButton } from "@/components/views/claim-demo-button";
 import { LogoUploader } from "@/components/views/logo-uploader";
 import { ProfileEditor } from "@/components/views/profile-editor";
 import { InstallPrompt } from "@/components/install-prompt";
@@ -72,11 +71,7 @@ export default async function ProfilPage() {
         <DropdownMenu />
       </header>
 
-      {business ? (
-        <OwnerDashboard business={business} />
-      ) : (
-        <EmptyOwnerState />
-      )}
+      {business && <OwnerDashboard business={business} />
 
       {/* PWA — telepítés a kezdőképernyőre (csak ha még nem standalone) */}
       <InstallPrompt />
@@ -85,29 +80,13 @@ export default async function ProfilPage() {
         <SectionHeader>Beállítások</SectionHeader>
         <NewsletterToggle />
         <div className="flex items-center justify-between rounded-card border border-line bg-surface p-4 shadow-card">
-          <span className="text-sm font-semibold text-ink">Sötét mód</span>
-          <ThemeToggle />
+          <span className="text-sm font-semibold text-ink">Megjelenés</span>
+          <div className="bg-ink rounded-pill p-1">
+            <ThemeToggle />
+          </div>
         </div>
       </section>
     </div>
-  );
-}
-
-// --- Üres állapot: nincs még a fiókhoz kötött vállalkozás -------------------
-function EmptyOwnerState() {
-  return (
-    <section className="space-y-3 rounded-card border border-line bg-surface p-6 text-center shadow-card">
-      <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary-soft text-primary">
-        <Icon name="trending" size={22} strokeWidth={2.2} />
-      </div>
-      <h2 className="text-lg font-extrabold tracking-tight text-ink">Még nincs vállalkozásod</h2>
-      <p className="text-sm leading-relaxed text-ink-muted">
-        Kösd a fiókodat egy vállalkozáshoz, és lásd a valós statisztikákat a D1-ből. Demóként
-        igényeld Kovács Anna fodrászatát — a Clerk user_id-d bekerül az{" "}
-        <code className="font-mono text-[12px]">owner_user_id</code> mezőbe.
-      </p>
-      <ClaimDemoButton businessId="kovacs-anna" />
-    </section>
   );
 }
 
