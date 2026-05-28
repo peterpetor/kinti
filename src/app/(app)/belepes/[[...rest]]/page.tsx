@@ -1,19 +1,15 @@
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import { SignIn, SignedIn, SignedOut } from "@clerk/nextjs";
+import { useRouter, useSearchParams } from "next/navigation";
+import { SignIn, useAuth } from "@clerk/nextjs";
 import { Icon } from "@/components/ui";
-import { ClientRedirect } from "./client-redirect";
-
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
-
-export const metadata = { title: "Vállalkozói belépés" };
 
 /**
  * Csak relatív vagy ugyanorigóra mutató URL-eket fogadunk el — open-redirect ellen.
  */
-function safeRedirect(target: string | undefined): string {
+function safeRedirect(target: string | null): string {
   if (!target) return "/profil";
   if (target.startsWith("/") && !target.startsWith("//")) return target;
   try {
@@ -25,16 +21,35 @@ function safeRedirect(target: string | undefined): string {
   return "/profil";
 }
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: { redirect_url?: string };
-}) {
-  const { userId } = await auth();
-  const target = safeRedirect(searchParams.redirect_url);
+export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { isSignedIn, isLoaded } = useAuth();
+  
+  const target = safeRedirect(searchParams.get("redirect_url"));
 
-  // Ha már be van lépve szerver oldalon, azonnal továbbítjuk.
-  if (userId) redirect(target);
+  // Ha már be van lépve a kliens, azonnal továbbítjuk.
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.replace(target);
+    }
+  }, [isLoaded, isSignedIn, router, target]);
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-[calc(100dvh-70px)] flex items-center justify-center">
+        <span className="text-ink-muted animate-pulse">Betöltés...</span>
+      </div>
+    );
+  }
+
+  if (isSignedIn) {
+    return (
+      <div className="min-h-[calc(100dvh-70px)] flex items-center justify-center">
+        <span className="text-ink-muted animate-pulse">Átirányítás...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)] min-h-[calc(100dvh-70px)] flex flex-col">
@@ -48,22 +63,15 @@ export default async function LoginPage({
             Vissza
           </Link>
           <div className="flex justify-center w-full">
-            <SignedIn>
-              {/* Ha a Service Worker gyorsítótárából betöltődne az oldal, de a kliens már be van lépve */}
-              <ClientRedirect target={target} />
-            </SignedIn>
-            <SignedOut>
-              <SignIn
-                path="/belepes"
-                routing="path"
-                signUpUrl="/regisztracio"
-                fallbackRedirectUrl={target}
-              />
-            </SignedOut>
+            <SignIn
+              path="/belepes"
+              routing="path"
+              signUpUrl="/regisztracio"
+              fallbackRedirectUrl={target}
+            />
           </div>
         </div>
       </main>
     </div>
   );
 }
-
