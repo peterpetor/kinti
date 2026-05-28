@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SignIn, useAuth } from "@clerk/nextjs";
 import { Icon } from "@/components/ui";
 
+export const runtime = "edge";
+
 /**
  * Csak relatív vagy ugyanorigóra mutató URL-eket fogadunk el — open-redirect ellen.
  */

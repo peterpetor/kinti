@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { SignUp, useAuth } from "@clerk/nextjs";
 import { Icon } from "@/components/ui";
 
+export const runtime = "edge";
+
 export default function SignUpPage() {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useAuth();
