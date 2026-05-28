@@ -16,7 +16,7 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v4";
+const VERSION = "kinti-v5";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -89,6 +89,13 @@ self.addEventListener("fetch", (event) => {
 
   // Minden más /api/* → soha ne cache-eljünk; legyen friss
   if (url.pathname.startsWith("/api/")) return;
+
+  // Auth-érzékeny oldalak (Clerk redirect-ek zavarhatják a cache-t) — bypass
+  if (
+    url.pathname.startsWith("/belepes") ||
+    url.pathname.startsWith("/regisztracio") ||
+    url.pathname.startsWith("/admin")
+  ) return;
 
   // Navigációs kérés (HTML oldal) → network-first, fallback /offline-ra
   if (req.mode === "navigate") {
@@ -178,11 +185,17 @@ async function cacheFirst(req, cacheName) {
 async function networkFirstPage(event) {
   const cache = await caches.open(PAGES_CACHE);
   try {
-    // navigation preload válasz, ha van
-    const preload = await event.preloadResponse;
+    // navigation preload válasz, ha van — DE csak ha érvényes (nem error-type)
+    let preload = null;
+    try {
+      const p = await event.preloadResponse;
+      if (p && p.type !== "error") preload = p;
+    } catch {
+      /* preload elszállt → fall through a fetch-re */
+    }
     const res = preload || (await fetch(event.request));
-    // Csak 200 cache-elhető (a 206-ot a Cache API elutasítja).
-    if (res && res.status === 200) {
+    // Csak ok-status cache-elhető (a 206-ot a Cache API elutasítja, redirect-et sem akarunk cache-elni).
+    if (res && res.status === 200 && res.type !== "opaqueredirect") {
       cache.put(event.request, res.clone()).catch(() => {});
     }
     return res;

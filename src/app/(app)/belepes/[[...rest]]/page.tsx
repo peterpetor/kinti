@@ -1,22 +1,57 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 import { SignIn } from "@clerk/nextjs";
-import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
+import { Icon } from "@/components/ui";
 
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Vállalkozói belépés" };
 
-export default function LoginPage() {
+/**
+ * Csak relatív vagy ugyanorigóra mutató URL-eket fogadunk el — open-redirect ellen.
+ */
+function safeRedirect(target: string | undefined): string {
+  if (!target) return "/profil";
+  if (target.startsWith("/") && !target.startsWith("//")) return target;
+  try {
+    const u = new URL(target);
+    if (u.host === "kinti.app") return u.pathname + u.search;
+  } catch {
+    /* érvénytelen URL */
+  }
+  return "/profil";
+}
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: { redirect_url?: string };
+}) {
+  const { userId } = await auth();
+  const target = safeRedirect(searchParams.redirect_url);
+
+  // Ha már be van lépve, ne mutassunk üres SignIn-t — küldjük tovább.
+  if (userId) redirect(target);
+
   return (
     <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)] min-h-[calc(100dvh-70px)] flex flex-col">
       <main className="flex-1 flex flex-col items-center pt-4 pb-[calc(env(safe-area-inset-bottom)+6rem)]">
         <div className="w-full max-w-md animate-fade-up">
-          <Link href="/vallalkozo" className="mb-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-ink-muted hover:text-ink transition-colors">
+          <Link
+            href="/vallalkozo"
+            className="mb-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-ink-muted hover:text-ink transition-colors"
+          >
             <Icon name="arrowLeft" size={14} strokeWidth={2.4} />
             Vissza
           </Link>
           <div className="flex justify-center">
-            <SignIn signUpUrl="/regisztracio" />
+            <SignIn
+              signUpUrl="/regisztracio"
+              fallbackRedirectUrl={target}
+              forceRedirectUrl={target}
+            />
           </div>
         </div>
       </main>
