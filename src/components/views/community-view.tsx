@@ -949,13 +949,17 @@ function BulletinList({
 
           {/* Kanton + rendezés + Mentett + darabszám */}
           <div className="flex flex-wrap items-center gap-2">
-            <label className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 shadow-card">
+            <label className="relative inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 shadow-card cursor-pointer hover:bg-surface-alt transition">
               <Icon name="pin" size={12} strokeWidth={2.2} className="shrink-0 text-accent" />
+              <span className="text-[12.5px] font-bold tracking-[-0.01em] text-ink pointer-events-none">
+                {canton === "all" ? "Egész Svájc" : CANTONS.find((c) => c.code === canton)?.name || canton}
+              </span>
+              <Icon name="chevD" size={12} strokeWidth={2.2} className="text-ink-muted shrink-0 pointer-events-none" />
               <select
                 value={canton}
                 onChange={(e) => setCanton(e.target.value)}
                 aria-label="Kanton szűrő"
-                className="appearance-none bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               >
                 <option value="all">Egész Svájc</option>
                 {(availableCantons.length > 0 ? availableCantons : CANTONS).map((c) => (
@@ -964,22 +968,24 @@ function BulletinList({
                   </option>
                 ))}
               </select>
-              <Icon name="chevD" size={12} strokeWidth={2.2} className="text-ink-muted" />
             </label>
 
-            <label className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 shadow-card">
+            <label className="relative inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 shadow-card cursor-pointer hover:bg-surface-alt transition">
               <Icon name="filter" size={12} strokeWidth={2.2} className="shrink-0 text-primary" />
+              <span className="text-[12.5px] font-bold tracking-[-0.01em] text-ink pointer-events-none">
+                {sort === "newest" ? "Legújabb elöl" : sort === "price-asc" ? "Ár szerint ↑" : "Ár szerint ↓"}
+              </span>
+              <Icon name="chevD" size={12} strokeWidth={2.2} className="text-ink-muted shrink-0 pointer-events-none" />
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortMode)}
                 aria-label="Rendezés"
-                className="appearance-none bg-transparent text-[12.5px] font-bold tracking-[-0.01em] text-ink outline-none"
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               >
                 <option value="newest">Legújabb elöl</option>
                 <option value="price-asc">Ár szerint ↑</option>
                 <option value="price-desc">Ár szerint ↓</option>
               </select>
-              <Icon name="chevD" size={12} strokeWidth={2.2} className="text-ink-muted" />
             </label>
 
             <button

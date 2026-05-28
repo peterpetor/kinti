@@ -10,6 +10,7 @@ export const metadata = { title: "Fuvar feladása" };
 /**
  * /telekocsi/feladas — telekocsi-hirdetés feladása (regisztráció NEM kötelező).
  * Belépett Clerk-user esetén a neve a fiókból jön, vendégként a form-ról.
+ * Spam-védelem: Turnstile + napi rate-limit (lásd /api/rides/submit).
  */
 export default function TelekocsiFeldasPage() {
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
