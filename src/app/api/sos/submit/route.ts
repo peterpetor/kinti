@@ -8,10 +8,28 @@ import { countRecentRideSubmits, logRideSubmit } from "@/lib/repo";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-/** Svájc + Liechtenstein földrajzi határai (laza, hogy a határszéliek se vesszenek el). */
-const SWISS_BOUNDS = {
-  minLat: 45.6, maxLat: 47.9,
-  minLng: 5.7, maxLng: 10.6,
+/**
+ * Földrajzi határ — Svájc + szomszédai és Magyarország felé az utazási
+ * útvonalak. Cél: ha a feladó útközben (pl. A1 / A4 / M1 autópályán)
+ * lerobban a CH ↔ HU között, le tudja adni a riasztást.
+ *
+ * Lefedett országok (bounding box-ban):
+ *   • Svájc + Liechtenstein
+ *   • Németország (északra Hamburg, keletre Berlin)
+ *   • Ausztria (egész terület)
+ *   • Franciaország (egész terület, ide tartozik a Genf-Lyon-Marseille folyosó)
+ *   • Olaszország (egész terület, Sicilia-ig)
+ *   • Magyarország (egész terület + tranzit Szlovákián/Szlovénián át)
+ *
+ * (Bónusz: Benelux + Csehország + Szlovákia + Szlovénia + Horvátország +
+ *  Spanyolország/Portugália északi része is benne van — tranzit-utak során
+ *  ezeken is áthaladhatnak, így OK.)
+ */
+const SOS_BOUNDS = {
+  minLat: 36.0,  // Szicília déli partja
+  maxLat: 55.0,  // Észak-Németország (Flensburg / Hamburg)
+  minLng: -5.0,  // Atlanti-óceáni partvidék (Bretagne)
+  maxLng: 23.0,  // Kelet-Magyarország (Záhony)
 };
 /** Loose nemzetközi telefon-formátum (E.164-szerű, max 24 char). */
 const PHONE_RE = /^\+?[0-9][0-9 ()\-/]{5,23}$/;
@@ -82,11 +100,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Hiányzó adatok." }, { status: 400 });
   }
   if (
-    lat < SWISS_BOUNDS.minLat || lat > SWISS_BOUNDS.maxLat ||
-    lng < SWISS_BOUNDS.minLng || lng > SWISS_BOUNDS.maxLng
+    lat < SOS_BOUNDS.minLat || lat > SOS_BOUNDS.maxLat ||
+    lng < SOS_BOUNDS.minLng || lng > SOS_BOUNDS.maxLng
   ) {
     return NextResponse.json(
-      { error: "A megadott koordináta nem Svájc / Liechtenstein területén van." },
+      { error: "A megadott koordináta a támogatott régión kívül van (CH / DE / AT / FR / IT / HU + tranzit-útvonalak)." },
       { status: 400 },
     );
   }
