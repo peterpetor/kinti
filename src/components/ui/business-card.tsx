@@ -59,8 +59,19 @@ export function BusinessCard({ business: b, href, className }: BusinessCardProps
           </span>
         </div>
 
-        <div className="mb-1 truncate text-[15.5px] font-bold tracking-[-0.02em] text-ink">
-          {b.name}
+        <div className="mb-1 flex items-center gap-1.5">
+          <span className="truncate text-[15.5px] font-bold tracking-[-0.02em] text-ink">
+            {b.name}
+          </span>
+          {b.verified && (
+            <span
+              title="Hitelesített magyar nyelvű vállalkozó"
+              className="inline-flex shrink-0 items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[9.5px] font-bold text-success"
+            >
+              <Icon name="check" size={9} strokeWidth={3} />
+              Verified
+            </span>
+          )}
         </div>
 
         <div className="mb-1.5 flex items-center gap-2 text-[12.5px] text-ink-muted">

@@ -57,6 +57,7 @@ interface BusinessRow {
   lat: number | null;
   lng: number | null;
   featured: number;
+  verified: number;
   blurb: string | null;
   open_now: number;
   open_text: string | null;
@@ -164,6 +165,7 @@ function toBusiness(r: BusinessRow): Business {
     lat: r.lat,
     lng: r.lng,
     featured: bool(r.featured),
+    verified: bool(r.verified),
     blurb: r.blurb,
     openNow: bool(r.open_now),
     openText: r.open_text,
@@ -1959,4 +1961,160 @@ export async function deleteDigestSubscriberByUnsubToken(token: string): Promise
     .bind(token)
     .run();
   return (res.meta.changes ?? 0) > 0;
+}
+
+// ---------------------------------------------------------------------------
+// Admin dashboard segédfüggvények
+// ---------------------------------------------------------------------------
+
+/** "Verified Hungarian-speaking" jelvény kapcsolása (admin). */
+export async function setBusinessVerified(id: string, verified: boolean): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE businesses SET verified = ?, updated_at = datetime('now') WHERE id = ?")
+    .bind(verified ? 1 : 0, id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export interface OpenReport {
+  id: string;
+  contentType: "bulletin" | "review" | "sos";
+  contentId: string;
+  reason: string | null;
+  moderateToken: string;
+  createdAt: string;
+  excerpt: string | null;
+}
+
+export async function listOpenReports(): Promise<OpenReport[]> {
+  const db = getDB();
+  const { results } = await db
+    .prepare(
+      `SELECT id, content_type, content_id, reason, moderate_token, created_at
+       FROM content_reports WHERE status = 'open'
+       ORDER BY created_at DESC LIMIT 100`,
+    )
+    .all<{
+      id: string; content_type: string; content_id: string;
+      reason: string | null; moderate_token: string; created_at: string;
+    }>();
+
+  const out: OpenReport[] = [];
+  for (const r of results) {
+    let excerpt: string | null = null;
+    if (r.content_type === "bulletin") {
+      const row = await db.prepare("SELECT title FROM bulletin_posts WHERE id = ?").bind(r.content_id).first<{ title: string }>();
+      excerpt = row?.title ?? null;
+    } else if (r.content_type === "review") {
+      const row = await db.prepare("SELECT reviewer_name, body FROM reviews WHERE id = ?").bind(r.content_id).first<{ reviewer_name: string; body: string }>();
+      excerpt = row ? `${row.reviewer_name}: ${row.body.slice(0, 100)}` : null;
+    }
+    out.push({
+      id: r.id,
+      contentType: r.content_type as OpenReport["contentType"],
+      contentId: r.content_id,
+      reason: r.reason,
+      moderateToken: r.moderate_token,
+      createdAt: r.created_at,
+      excerpt,
+    });
+  }
+  return out;
+}
+
+export interface PendingEvent {
+  id: string;
+  title: string;
+  eventDate: string | null;
+  startTime: string | null;
+  venue: string | null;
+  submitterEmail: string | null;
+  token: string | null;
+  createdAt: string;
+}
+
+export async function listPendingEvents(): Promise<PendingEvent[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, title, event_date, start_time, venue, email, token, created_at
+       FROM events WHERE status = 'pending_admin'
+       ORDER BY created_at DESC LIMIT 50`,
+    )
+    .all<{
+      id: string; title: string; event_date: string | null;
+      start_time: string | null; venue: string | null;
+      email: string | null; token: string | null; created_at: string;
+    }>();
+  return results.map((r) => ({
+    id: r.id, title: r.title, eventDate: r.event_date, startTime: r.start_time,
+    venue: r.venue, submitterEmail: r.email, token: r.token, createdAt: r.created_at,
+  }));
+}
+
+export interface AdminBusinessRow {
+  id: string;
+  name: string;
+  categoryLabel: string | null;
+  verified: boolean;
+  rating: number;
+  reviews: number;
+  source: string | null;
+  createdAt: string;
+}
+
+export async function listBusinessesForAdmin(): Promise<AdminBusinessRow[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, name, category_label, verified, rating, reviews, source, created_at
+       FROM businesses
+       ORDER BY verified DESC, created_at DESC LIMIT 100`,
+    )
+    .all<{
+      id: string; name: string; category_label: string | null;
+      verified: number; rating: number; reviews: number;
+      source: string | null; created_at: string;
+    }>();
+  return results.map((r) => ({
+    id: r.id, name: r.name, categoryLabel: r.category_label,
+    verified: r.verified === 1, rating: r.rating, reviews: r.reviews,
+    source: r.source, createdAt: r.created_at,
+  }));
+}
+
+export interface AdminStats {
+  businesses: number;
+  businessesVerified: number;
+  bulletinsActive: number;
+  eventsApproved: number;
+  ridesActive: number;
+  reviews: number;
+  digestSubscribersConfirmed: number;
+  pushSubscriptions: number;
+}
+
+export async function getAdminStats(): Promise<AdminStats> {
+  const db = getDB();
+  const q = (sql: string) => db.prepare(sql).first<{ n: number }>();
+  const [
+    businesses, verified, bulletins, events, rides, reviews, digest, push,
+  ] = await Promise.all([
+    q("SELECT COUNT(*) AS n FROM businesses"),
+    q("SELECT COUNT(*) AS n FROM businesses WHERE verified = 1"),
+    q("SELECT COUNT(*) AS n FROM bulletin_posts WHERE is_pending = 0 AND hidden = 0 AND (expires_at IS NULL OR expires_at > datetime('now'))"),
+    q("SELECT COUNT(*) AS n FROM events WHERE status = 'approved'"),
+    q("SELECT COUNT(*) AS n FROM rides WHERE expires_at > datetime('now')"),
+    q("SELECT COUNT(*) AS n FROM reviews WHERE hidden = 0"),
+    q("SELECT COUNT(*) AS n FROM digest_subscribers WHERE confirmed = 1"),
+    q("SELECT COUNT(*) AS n FROM push_subscriptions"),
+  ]);
+  return {
+    businesses: businesses?.n ?? 0,
+    businessesVerified: verified?.n ?? 0,
+    bulletinsActive: bulletins?.n ?? 0,
+    eventsApproved: events?.n ?? 0,
+    ridesActive: rides?.n ?? 0,
+    reviews: reviews?.n ?? 0,
+    digestSubscribersConfirmed: digest?.n ?? 0,
+    pushSubscriptions: push?.n ?? 0,
+  };
 }

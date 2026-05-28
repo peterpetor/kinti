@@ -29,6 +29,8 @@ export interface Business {
   /** WGS84 hosszúság (longitude) — térképi koordináta. */
   lng: number | null;
   featured: boolean;
+  /** Adminisztrátor által manuálisan ellenőrzött magyar nyelvű vállalkozó. */
+  verified: boolean;
   blurb: string | null;
   openNow: boolean;
   openText: string | null;

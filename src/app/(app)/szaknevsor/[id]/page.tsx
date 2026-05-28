@@ -142,6 +142,12 @@ export default async function BusinessPage({ params }: { params: { id: string } 
         <h1 className="text-[26px] font-extrabold leading-[1.08] tracking-tight text-ink text-balance">
           {b.name}
         </h1>
+        {b.verified && (
+          <p className="mt-1.5 inline-flex items-center gap-1 rounded-pill bg-success/15 px-2.5 py-1 text-[11px] font-bold text-success">
+            <Icon name="check" size={11} strokeWidth={2.6} />
+            Hitelesített magyar nyelvű vállalkozó
+          </p>
+        )}
 
         {/* meta sor */}
         <div className="mt-3 flex items-center gap-4">
