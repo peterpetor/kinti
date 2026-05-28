@@ -94,7 +94,7 @@ export function FeedsManager({ initialFeeds }: { initialFeeds: EventFeed[] }) {
         </h2>
         {feeds.length === 0 ? (
           <div className="rounded-card border border-dashed border-line bg-surface-alt px-4 py-8 text-center text-[13px] text-ink-muted">
-            Még nincs felvett iCal forrás. Adj hozzá egyet fent.
+            Még nincs felvett forrás. Adj hozzá egyet fent.
           </div>
         ) : (
           <ul className="space-y-2">
@@ -135,14 +135,14 @@ function AddForm({
       className="space-y-2 rounded-card border border-line bg-surface p-4 shadow-card"
     >
       <h2 className="text-[12px] font-bold uppercase tracking-wide text-ink-muted">
-        Új iCal forrás
+        Új forrás (iCal vagy RSS/Atom)
       </h2>
       <input
         type="url"
         required
         value={url}
         onChange={(e) => setUrl(e.target.value)}
-        placeholder="https://calendar.google.com/calendar/ical/.../basic.ics"
+        placeholder=".../basic.ics  vagy  .../rss.xml  vagy  .../feed"
         className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
       <input

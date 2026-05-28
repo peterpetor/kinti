@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { Icon } from "@/components/ui";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
 import { RIDE_LIMITS, MAX_WAYPOINTS, type RideValidationError } from "@/lib/rides";
 
@@ -38,7 +39,7 @@ const INITIAL: FormState = {
   waypoints: [],
 };
 
-export function RideForm() {
+export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string }) {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useAuth();
   const showPosterName = isLoaded && !isSignedIn;
@@ -46,6 +47,9 @@ export function RideForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [global, setGlobal] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [manageUrl, setManageUrl] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -56,6 +60,10 @@ export function RideForm() {
     e.preventDefault();
     setErrors({});
     setGlobal(null);
+    if (!turnstileToken) {
+      setGlobal("Várd meg a robot-ellenőrzést, mielőtt elküldöd.");
+      return;
+    }
     setPhase("submitting");
     try {
       const res = await fetch("/api/rides/submit", {
@@ -65,11 +73,13 @@ export function RideForm() {
           ...form,
           seats: Number(form.seats) || 1,
           waypoints: form.waypoints.filter((w) => w.trim().length > 0),
+          turnstileToken,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
         details?: RideValidationError[];
+        manageUrl?: string;
       };
       if (!res.ok) {
         if (data.details?.length) {
@@ -79,12 +89,15 @@ export function RideForm() {
         }
         setGlobal(data.error ?? "Hiba történt. Próbáld újra.");
         setPhase("error");
+        turnstileRef.current?.reset();
         return;
       }
+      setManageUrl(data.manageUrl ?? null);
       setPhase("sent");
     } catch (err) {
       setGlobal(err instanceof Error ? err.message : "Hálózati hiba.");
       setPhase("error");
+      turnstileRef.current?.reset();
     }
   }
 
@@ -100,17 +113,44 @@ export function RideForm() {
         <p className="mx-auto mt-2 max-w-sm text-pretty text-[13.5px] leading-relaxed text-ink-muted">
           Megjelent a telekocsi-listán. Az indulás + 24 óra után automatikusan eltűnik.
         </p>
+
+        {manageUrl && (
+          <div className="mt-4 rounded-card border border-primary/30 bg-primary-soft/40 p-3 text-left">
+            <p className="text-[11.5px] font-bold uppercase tracking-wide text-primary">
+              🔑 Kezelő-link — tedd el!
+            </p>
+            <p className="mt-1 text-[11.5px] leading-snug text-ink-muted">
+              Bármikor szerkesztheted vagy törölheted a fuvart ezen a linken (regisztráció nélkül):
+            </p>
+            <a
+              href={manageUrl}
+              className="mt-1.5 block break-all text-[11.5px] font-mono text-primary underline"
+            >
+              {typeof window !== "undefined" ? `${window.location.origin}${manageUrl}` : manageUrl}
+            </a>
+          </div>
+        )}
+
         <div className="mt-4 flex flex-col gap-2">
+          {manageUrl && (
+            <button
+              type="button"
+              onClick={() => router.push(manageUrl)}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-pill bg-primary px-5 text-[13.5px] font-bold text-white"
+            >
+              Kezelő oldal megnyitása <Icon name="arrowRight" size={15} strokeWidth={2.4} />
+            </button>
+          )}
           <button
             type="button"
             onClick={() => router.push("/telekocsi")}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-pill bg-primary px-5 text-[13.5px] font-bold text-white"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-pill border border-line bg-surface px-5 text-[13.5px] font-bold text-ink"
           >
-            Telekocsi-lista megnyitása <Icon name="arrowRight" size={15} strokeWidth={2.4} />
+            Telekocsi-lista megnyitása
           </button>
           <button
             type="button"
-            onClick={() => { setForm(INITIAL); setPhase("idle"); }}
+            onClick={() => { setForm(INITIAL); setPhase("idle"); setManageUrl(null); }}
             className="inline-flex h-11 items-center justify-center gap-2 rounded-pill border border-line bg-surface px-5 text-[13.5px] font-bold text-ink"
           >
             Másik fuvar feladása
@@ -290,6 +330,12 @@ export function RideForm() {
         </div>
         <FieldError msg={errors.notes} />
       </Section>
+
+      {turnstileSiteKey && (
+        <div className="px-1">
+          <TurnstileWidget ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
+        </div>
+      )}
 
       {global && (
         <div className="rounded-card border border-accent/30 bg-accent-soft px-4 py-3 text-[12.5px] font-semibold text-accent">

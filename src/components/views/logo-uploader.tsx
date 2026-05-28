@@ -26,6 +26,12 @@ export interface LogoUploaderProps {
   currentKey: string | null;
   /** Csak megjelenítéshez — a CSS-gradiens, ha nincs még feltöltött kép. */
   fallbackGradient?: string | null;
+  /**
+   * Ha megadod, a feltöltés a token-alapú email-only flow-n megy
+   * (`/api/business/manage/<token>/logo-*`), Clerk nélkül.
+   * Ha üres → a Clerk-védett `/api/owner/media-*` végpontokat hívja.
+   */
+  manageToken?: string;
 }
 
 type Phase = "idle" | "preparing" | "uploading" | "committing" | "done" | "error";
@@ -33,7 +39,13 @@ type Phase = "idle" | "preparing" | "uploading" | "committing" | "done" | "error
 const MAX_BYTES = 2 * 1024 * 1024; // 2 MB
 const ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
 
-export function LogoUploader({ currentKey, fallbackGradient }: LogoUploaderProps) {
+export function LogoUploader({ currentKey, fallbackGradient, manageToken }: LogoUploaderProps) {
+  const uploadEndpoint = manageToken
+    ? `/api/business/manage/${manageToken}/logo-upload`
+    : "/api/owner/media-upload";
+  const commitEndpoint = manageToken
+    ? `/api/business/manage/${manageToken}/logo-commit`
+    : "/api/owner/media-commit";
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("idle");
@@ -61,7 +73,7 @@ export function LogoUploader({ currentKey, fallbackGradient }: LogoUploaderProps
       // 1) presigned URL kérés ---------------------------------------------
       setPhase("preparing");
       setProgress(5);
-      const presignRes = await fetch("/api/owner/media-upload", {
+      const presignRes = await fetch(uploadEndpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ contentType: file.type }),
@@ -78,7 +90,7 @@ export function LogoUploader({ currentKey, fallbackGradient }: LogoUploaderProps
       // 3) D1 commit --------------------------------------------------------
       setPhase("committing");
       setProgress(95);
-      const commitRes = await fetch("/api/owner/media-commit", {
+      const commitRes = await fetch(commitEndpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ key }),

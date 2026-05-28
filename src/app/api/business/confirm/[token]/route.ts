@@ -36,6 +36,11 @@ export async function GET(_req: Request, { params }: { params: { token: string }
 
   const coords = approxCoordsForCanton(sub.cantonCode);
 
+  // A piszkozat manage_token-jét továbbvisszük a publikus rekordra. Ha valamiért
+  // hiányozna (régi piszkozat), generálunk egy újat — így a confirm email URL-je
+  // is működik.
+  const manageToken = sub.manageToken ?? crypto.randomUUID().replace(/-/g, "");
+
   await createBusinessFromSubmission({
     id,
     name: sub.name,
@@ -48,11 +53,12 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     lat: coords?.lat ?? null,
     lng: coords?.lng ?? null,
     ownerUserId: sub.ownerUserId, // belépett beküldő esetén → auto-kapcsolás
+    manageToken,
   });
   await deleteBusinessSubmission(sub.id);
 
   return NextResponse.redirect(
-    `${baseUrl}/vallalkozas-megerositve?status=published&id=${encodeURIComponent(id)}`,
+    `${baseUrl}/vallalkozas-megerositve?status=published&id=${encodeURIComponent(id)}&manage=${encodeURIComponent(manageToken)}`,
     302,
   );
 }

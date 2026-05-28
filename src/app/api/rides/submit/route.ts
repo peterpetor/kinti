@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { createRide, type RideWaypoint } from "@/lib/repo";
+import {
+  createRide,
+  countRecentRideSubmits,
+  logRideSubmit,
+  type RideWaypoint,
+} from "@/lib/repo";
 import { validateRideInput, computeRideExpiry } from "@/lib/rides";
 import { geocodeCity } from "@/lib/geocode";
+import { verifyTurnstile } from "@/lib/turnstile";
+import { hashIp } from "@/lib/bulletin";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -10,11 +17,16 @@ export const dynamic = "force-dynamic";
 /** Svájc közepe — fallback, ha a geokódolás nem talál koordinátát. */
 const FALLBACK = { lat: 46.8, lng: 8.23 };
 
+/** Napi limit / IP — spam-védelem. */
+const RIDE_DAILY_LIMIT = 5;
+
 /**
  * POST /api/rides/submit — új telekocsi-hirdetés.
  *
  * Nem kötelező a Clerk-belépés: vendég-felhasználó is feladhat fuvart, ekkor a
  * `posterName` mező a form-on jön. Belépett userhez a Clerk-fiók neve.
+ *
+ * Spam-védelem: Turnstile CAPTCHA + IP-alapú napi limit (5 / 24h).
  * A jelentkezőkkel a kapcsolat telefonon megy (zero-liability, nincs beépített chat).
  */
 export async function POST(req: Request) {
@@ -33,6 +45,28 @@ export async function POST(req: Request) {
     );
   }
   const v = validation.value;
+
+  // Turnstile CAPTCHA — minden vendég-feladásnál kötelező (belépett Clerk-userhez is).
+  const turnstileToken =
+    typeof body.turnstileToken === "string" ? body.turnstileToken : null;
+  const ip = req.headers.get("cf-connecting-ip") ?? null;
+  const captcha = await verifyTurnstile(turnstileToken, ip);
+  if (!captcha.ok) {
+    return NextResponse.json(
+      { error: "A robot-ellenőrzés sikertelen. Próbáld újra.", codes: captcha.errorCodes },
+      { status: 400 },
+    );
+  }
+
+  // IP-alapú napi limit
+  const ipHash = await hashIp(ip);
+  const recent = await countRecentRideSubmits(ipHash);
+  if (recent >= RIDE_DAILY_LIMIT) {
+    return NextResponse.json(
+      { error: `Napi limit túllépve. 24 óra alatt legfeljebb ${RIDE_DAILY_LIMIT} fuvar adható fel ugyanarról a kapcsolatról.` },
+      { status: 429 },
+    );
+  }
 
   // Koordináta: a kliensé, vagy geokódolás az indulás helyéből, vagy fallback.
   let lat = v.lat;
@@ -76,6 +110,7 @@ export async function POST(req: Request) {
   }
 
   const id = crypto.randomUUID();
+  const manageToken = crypto.randomUUID().replace(/-/g, "");
   await createRide({
     id,
     departureCity: v.departureCity,
@@ -91,7 +126,16 @@ export async function POST(req: Request) {
     notes: v.notes,
     waypoints: waypoints.length > 0 ? waypoints : null,
     expiresAt: computeRideExpiry(v.departureTime),
+    manageToken,
   });
 
-  return NextResponse.json({ ok: true, id }, { headers: { "cache-control": "no-store" } });
+  // Rate-limit napló (fire-and-forget — hiba esetén sem gátolja a flow-t).
+  logRideSubmit(crypto.randomUUID(), ipHash).catch(() => { /* silent */ });
+
+  // A manage URL-t a kliens success oldala kapja meg — a felhasználó elteszi
+  // (nincs email, mert vendég-feladásnál nem kérünk emailt).
+  return NextResponse.json(
+    { ok: true, id, manageToken, manageUrl: `/telekocsi-kezeles/${manageToken}` },
+    { headers: { "cache-control": "no-store" } },
+  );
 }

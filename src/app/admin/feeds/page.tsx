@@ -53,14 +53,23 @@ export default async function AdminFeedsPage() {
       </header>
 
       <h1 className="mt-6 text-[26px] font-extrabold tracking-tight text-ink">
-        iCal feedek
+        Esemény-feedek
       </h1>
       <p className="mt-2 text-[13.5px] leading-relaxed text-ink-muted">
         A <code className="font-mono text-[12px]">kinti-cron-events-sync</code>{" "}
-        Worker naponta 04:47 UTC-kor lehúzza az itt felvett forrásokat, parzolja
-        (RRULE expand + TZID), és az <code className="font-mono text-[12px]">events</code>{" "}
-        táblába frissíti őket. Forrás kikapcsolása → következő futáskor a hozzá
-        tartozó sorok eltűnnek. Forrás törlése → eseményei AZONNAL törlődnek.
+        Worker naponta 04:47 UTC-kor lehúzza az itt felvett forrásokat
+        (<strong>iCal</strong> RFC 5545: RRULE + TZID; vagy{" "}
+        <strong>RSS 2.0 / Atom 1.0</strong> hír-feed), és az{" "}
+        <code className="font-mono text-[12px]">events</code> táblába frissíti őket.
+        A formátumot a tartalomból auto-detektáljuk. Forrás kikapcsolása → a sorok
+        a következő futáskor eltűnnek. Forrás törlése → az események AZONNAL.
+      </p>
+      <p className="mt-3 text-[12.5px] leading-relaxed text-ink-muted rounded-card border border-line bg-surface-alt px-4 py-3">
+        <strong className="text-ink">Tipp — magyar konzulátus / nagykövetség:</strong>{" "}
+        A bern.mfa.gov.hu és kapcsolódó kormány-oldalak gyakran szolgálnak
+        <code className="font-mono text-[12px]"> /hu/rss.xml</code> vagy{" "}
+        <code className="font-mono text-[12px]">/rss</code> végponton hír-RSS-t —
+        ha az URL helyes és elérhető, az alábbi formban add hozzá.
       </p>
 
       <FeedsManager initialFeeds={feeds} />

@@ -12,6 +12,7 @@ export const metadata = { title: "Fuvar feladása" };
  * Belépett Clerk-user esetén a neve a fiókból jön, vendégként a form-ról.
  */
 export default function TelekocsiFeldasPage() {
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   return (
     <div className="px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <ScreenHeader
@@ -34,7 +35,7 @@ export default function TelekocsiFeldasPage() {
         A fuvar az indulás + 24 óra után automatikusan eltűnik.
       </div>
 
-      <RideForm />
+      <RideForm turnstileSiteKey={turnstileSiteKey} />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useUser, SignOutButton } from "@clerk/nextjs";
+import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 import { SosModal } from "../views/sos-modal";
@@ -10,9 +10,8 @@ import { SosModal } from "../views/sos-modal";
 export function DropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSosOpen, setIsSosOpen] = useState(false);
-  const { user, isLoaded } = useUser();
+  const { isSignedIn, isLoaded } = useAuth();
 
-  // Kívülre kattintás (már nem szükséges, mivel full screen, de meghagyhatjuk a biztonság kedvéért vagy eltávolíthatjuk. Inkább zárjuk be a menüt a X gombbal.)
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -54,108 +53,99 @@ export function DropdownMenu() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-1 custom-scrollbar">
-            {/* A Telekocsi az alsó TabBar 4. fülén — itt nem ismételjük. */}
-            {isLoaded && isSignedIn ? (
-              <Link href="/profil" onClick={() => setIsOpen(false)} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                  <Icon name="user" size={16} strokeWidth={2.4} />
-                </span>
-                Vállalkozói profilom
-              </Link>
-            ) : (
+              {/*
+                * A vállalkozók saját rekordjukat NEM belépéssel, hanem a confirmáló
+                * email-ben kapott kezelő-linkkel szerkesztik. Ezért nincs külön
+                * "Vállalkozói belépés" a menüben. Adminok a /belepes URL-t használják.
+                */}
               <Link href="/vallalkozo" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                  <Icon name="user" size={16} strokeWidth={2.4} />
+                  <Icon name="plus" size={16} strokeWidth={2.6} />
                 </span>
-                Vállalkozói belépés
+                Vidd fel a vállalkozásod
               </Link>
-            )}
 
-            <Link href="/szaknevsor?fav=1" onClick={() => setIsOpen(false)} className={linkClass}>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                <Icon name="heart" size={16} strokeWidth={2.4} filled={true} />
-              </span>
-              Kedvenceim
-            </Link>
+              <Link href="/szaknevsor?fav=1" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
+                  <Icon name="heart" size={16} strokeWidth={2.4} filled={true} />
+                </span>
+                Kedvenceim
+              </Link>
 
-            <Link href="/kozosseg/uj-esemeny" onClick={() => setIsOpen(false)} className={linkClass}>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#E4405F]/10 text-[#E4405F]">
-                <Icon name="calendar" size={16} strokeWidth={2.4} />
-              </span>
-              Esemény beküldése
-            </Link>
+              <Link href="/kozosseg/uj-esemeny" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#E4405F]/10 text-[#E4405F]">
+                  <Icon name="calendar" size={16} strokeWidth={2.4} />
+                </span>
+                Esemény beküldése
+              </Link>
 
-            <Link href="/kozosseg/uj-hirdetes" onClick={() => setIsOpen(false)} className={linkClass}>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#1877F2]/10 text-[#1877F2]">
-                <Icon name="plus" size={16} strokeWidth={2.4} />
-              </span>
-              Új hirdetés
-            </Link>
+              <Link href="/kozosseg/uj-hirdetes" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#1877F2]/10 text-[#1877F2]">
+                  <Icon name="plus" size={16} strokeWidth={2.4} />
+                </span>
+                Új hirdetés
+              </Link>
 
-            <Link href="/tudasbazis" onClick={() => setIsOpen(false)} className={linkClass}>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                <Icon name="globe" size={16} strokeWidth={2.4} />
-              </span>
-              Tudásbázis
-            </Link>
+              <Link href="/tudasbazis" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Icon name="globe" size={16} strokeWidth={2.4} />
+                </span>
+                Tudásbázis
+              </Link>
 
-            <div className="h-px bg-line/60 my-4 mx-2" />
+              <div className="h-px bg-line/60 my-4 mx-2" />
 
-            {/* Jogi linkek */}
-            <Link href="/impresszum" onClick={() => setIsOpen(false)} className={linkClass}>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
-                <Icon name="flag" size={16} strokeWidth={2.4} />
-              </span>
-              Impresszum
-            </Link>
+              {/* Jogi linkek */}
+              <Link href="/impresszum" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
+                  <Icon name="flag" size={16} strokeWidth={2.4} />
+                </span>
+                Impresszum
+              </Link>
 
-            <Link href="/adatvedelem" onClick={() => setIsOpen(false)} className={linkClass}>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
-                <Icon name="bookmark" size={16} strokeWidth={2.4} />
-              </span>
-              Adatvédelem
-            </Link>
+              <Link href="/adatvedelem" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
+                  <Icon name="bookmark" size={16} strokeWidth={2.4} />
+                </span>
+                Adatvédelem
+              </Link>
 
-            <Link href="/aszf" onClick={() => setIsOpen(false)} className={linkClass}>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
-                <Icon name="list" size={16} strokeWidth={2.4} />
-              </span>
-              ÁSZF
-            </Link>
+              <Link href="/aszf" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
+                  <Icon name="list" size={16} strokeWidth={2.4} />
+                </span>
+                ÁSZF
+              </Link>
 
-            <a href="mailto:abuse@kinti.app" onClick={() => setIsOpen(false)} className={linkClass}>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                <Icon name="bell" size={16} strokeWidth={2.4} />
-              </span>
-              Visszaélés-bejelentés
-            </a>
+              <a href="mailto:abuse@kinti.app" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
+                  <Icon name="bell" size={16} strokeWidth={2.4} />
+                </span>
+                Visszaélés-bejelentés
+              </a>
 
-            <div className="h-px bg-line/60 my-4 mx-2" />
+              {isLoaded && isSignedIn && (
+                <SignOutButton redirectUrl="/">
+                  <button className="flex w-full items-center justify-center gap-2.5 mt-2 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
+                    <Icon name="user" size={16} strokeWidth={2.4} />
+                    Kijelentkezés
+                  </button>
+                </SignOutButton>
+              )}
 
-            {isLoaded && user && (
-              <SignOutButton redirectUrl="/">
-                <button className="flex w-full items-center justify-center gap-2.5 mt-2 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
-                  <Icon name="user" size={16} strokeWidth={2.4} />
-                  Kijelentkezés
-                </button>
-              </SignOutButton>
-            )}
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsOpen(false);
-                setIsSosOpen(true);
-              }}
-              className="flex w-full items-center justify-center gap-2.5 mt-4 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-white bg-red-600 hover:bg-red-700 transition-all active:scale-[0.98] shadow-card"
-            >
-              <span className="text-base leading-none">
-                🆘
-              </span>
-              Közösségi S.O.S. Radar
-            </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                  setIsSosOpen(true);
+                }}
+                className="flex w-full items-center justify-center gap-2.5 mt-4 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-white bg-red-600 hover:bg-red-700 transition-all active:scale-[0.98] shadow-card"
+              >
+                <span className="text-base leading-none">🆘</span>
+                Közösségi S.O.S. Radar
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       )}
 

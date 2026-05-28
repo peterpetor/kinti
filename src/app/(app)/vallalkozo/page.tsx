@@ -3,7 +3,7 @@ import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 
 export const runtime = "edge";
 
-export const metadata = { title: "Vállalkozói fiók" };
+export const metadata = { title: "Vállalkozói felület" };
 
 export default function VallalkozoPage() {
   return (
@@ -24,39 +24,52 @@ export default function VallalkozoPage() {
         <DropdownMenu />
       </header>
 
-      <main className="flex-1 flex flex-col justify-center pb-20">
-        <div className="flex flex-col items-center gap-3 text-center mb-8 animate-fade-up">
-          <div className="h-16 w-16 rounded-full bg-primary/10 text-primary grid place-items-center mb-2">
-            <Icon name="user" size={32} strokeWidth={2} />
+      <main className="flex-1 pb-20">
+        {/* Hero */}
+        <section className="text-center mb-8 animate-fade-up">
+          <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 text-primary grid place-items-center mb-3">
+            <Icon name="list" size={32} strokeWidth={2} />
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-pill bg-accent/15 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-accent">
-            Csak vállalkozóknak
+            Csak svájci magyar vállalkozóknak
           </span>
-          <h1 className="text-[24px] font-extrabold tracking-tight text-ink">
-            Vállalkozói felület
+          <h1 className="mt-3 text-[24px] font-extrabold tracking-tight text-ink">
+            Vidd fel ingyen a vállalkozásod
           </h1>
-          <p className="text-[14px] leading-relaxed text-ink-muted max-w-xs">
-            Ez a szekció a kinti közösséget kiszolgáló magyar nyelvű vállalkozóknak van fenntartva.
-            Itt tudod beállítani a céges adatokat, nyitvatartást, beszélt nyelveket és kapcsolatot,
-            amit a látogatók a Szaknévsorban látnak.
+          <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-ink-muted text-pretty">
+            Regisztráció nem kell. Add meg az emailt, kapsz egy megerősítő linket
+            és egy <strong className="text-ink">kezelő-linket</strong> — utána szerkesztheted az adatokat bármikor.
+          </p>
+        </section>
+
+        {/* Fő CTA: vállalkozás feladás (account-mentes) */}
+        <div className="w-full max-w-sm mx-auto space-y-3 animate-fade-up animate-delay-100">
+          <Link
+            href="/szaknevsor/uj"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-primary text-[15px] font-extrabold text-white shadow-card-hover active:scale-[0.98] transition-all"
+          >
+            <Icon name="plus" size={16} strokeWidth={2.6} />
+            Vállalkozás felvétele
+          </Link>
+          <p className="px-2 text-center text-[11.5px] leading-relaxed text-ink-faint">
+            A megerősítő emailben kapsz egy „kezelő-linket". Azzal bármikor szerkesztheted az
+            adatokat (nyitvatartás, cím, kapcsolat, beszélt nyelvek, leírás), vagy törölheted a
+            vállalkozást — nincs jelszó, nincs fiók.
           </p>
         </div>
 
-        <div className="w-full max-w-sm mx-auto space-y-3 animate-fade-up animate-delay-100">
-          <Link
-            href="/belepes"
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-primary text-[15px] font-extrabold text-white shadow-card-hover active:scale-[0.98] transition-all"
-          >
-            <Icon name="user" size={16} strokeWidth={2.4} />
-            Vállalkozói bejelentkezés
-          </Link>
-          <Link
-            href="/regisztracio"
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-pill border-2 border-line bg-surface text-[15px] font-extrabold text-ink active:scale-[0.98] transition-all"
-          >
-            Új vállalkozói fiók
-          </Link>
+        {/* Az emailedet elveszítetted? */}
+        <div className="w-full max-w-sm mx-auto mt-8 rounded-card border border-line bg-surface-alt/60 p-4 animate-fade-up animate-delay-200">
+          <p className="text-[12.5px] leading-relaxed text-ink-muted">
+            <strong className="text-ink">Elveszítetted a kezelő-linket?</strong> Írj a{" "}
+            <a href="mailto:info@kinti.app" className="font-bold text-primary underline">
+              info@kinti.app
+            </a>{" "}
+            címre, és visszaküldjük az ahhoz az e-mailhez tartozó linket, amellyel feladtad
+            a vállalkozást.
+          </p>
         </div>
+
       </main>
     </div>
   );

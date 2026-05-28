@@ -70,6 +70,7 @@ interface BusinessRow {
   contact_email: string | null;
   working_hours: string | null;
   social_links: string | null;
+  manage_token: string | null;
 }
 
 interface EventRow {
@@ -89,6 +90,7 @@ interface EventRow {
   email: string | null;
   status: string;
   token: string | null;
+  manage_token: string | null;
   /** A JOIN-olt RSVP-darabszám (LEFT JOIN event_rsvps). */
   rsvp_count?: number;
 }
@@ -179,6 +181,7 @@ function toBusiness(r: BusinessRow): Business {
     contactEmail: r.contact_email,
     workingHours: r.working_hours,
     socialLinks: r.social_links,
+    manageToken: r.manage_token,
   };
 }
 
@@ -201,6 +204,7 @@ function toEvent(r: EventRow): KintiEvent {
     email: r.email,
     status: r.status,
     token: r.token,
+    manageToken: r.manage_token,
   };
 }
 
@@ -327,6 +331,20 @@ export async function claimBusiness(businessId: string, ownerUserId: string): Pr
  * sikeresen. A `WHERE id = ? AND owner_user_id = ?` szűrő miatt idegen
  * user_id-vel a sor nem érhető el, így az `UPDATE` 0 sort érint.
  */
+/** Manage-token alapú logo update (email-only flow, Clerk nélkül). */
+export async function setBusinessLogoByManageToken(
+  manageToken: string,
+  logoKey: string,
+): Promise<boolean> {
+  const res = await getDB()
+    .prepare(
+      "UPDATE businesses SET logo_key = ?, updated_at = datetime('now') WHERE manage_token = ?",
+    )
+    .bind(logoKey, manageToken)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
 export async function setBusinessLogo(
   businessId: string,
   ownerUserId: string,
@@ -428,8 +446,8 @@ export async function createEvent(input: KintiEvent): Promise<void> {
     .prepare(
       `INSERT INTO events
        (id, title, event_date, date_day, date_month, date_weekday,
-        start_time, venue, going, tag, color, description, image_key, email, status, token)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        start_time, venue, going, tag, color, description, image_key, email, status, token, manage_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -448,6 +466,7 @@ export async function createEvent(input: KintiEvent): Promise<void> {
       input.email ? input.email.toLowerCase() : null,
       input.status ?? "draft",
       input.token ?? null,
+      input.manageToken ?? null,
     )
     .run();
 }
@@ -484,6 +503,57 @@ export async function deleteEvent(id: string): Promise<boolean> {
   const res = await getDB()
     .prepare("DELETE FROM events WHERE id = ?")
     .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+// --- Email-only event management ------------------------------------------
+
+export async function getEventByManageToken(token: string): Promise<KintiEvent | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM events WHERE manage_token = ? LIMIT 1")
+    .bind(token)
+    .first<EventRow>();
+  return row ? toEvent(row) : null;
+}
+
+export interface UpdateEventFields {
+  title?: string;
+  venue?: string | null;
+  description?: string | null;
+  startTime?: string | null;
+}
+
+export async function updateEventByManageToken(
+  token: string,
+  fields: UpdateEventFields,
+): Promise<boolean> {
+  const sets: string[] = [];
+  const values: unknown[] = [];
+  const map: Record<string, string> = {
+    title: "title",
+    venue: "venue",
+    description: "description",
+    startTime: "start_time",
+  };
+  for (const [k, col] of Object.entries(map)) {
+    const v = fields[k as keyof UpdateEventFields];
+    if (v !== undefined) {
+      sets.push(`${col} = ?`);
+      values.push(v);
+    }
+  }
+  if (sets.length === 0) return true;
+  const sql = `UPDATE events SET ${sets.join(", ")} WHERE manage_token = ?`;
+  values.push(token);
+  const res = await getDB().prepare(sql).bind(...values).run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function deleteEventByManageToken(token: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM events WHERE manage_token = ?")
+    .bind(token)
     .run();
   return (res.meta.changes ?? 0) > 0;
 }
@@ -900,6 +970,27 @@ export async function logEventSubmit(
     .prepare(
       `INSERT INTO event_submit_log (id, ip_hash) VALUES (?, ?)`,
     )
+    .bind(id, ipHash)
+    .run();
+}
+
+/** Hány telekocsi-hirdetést adott fel ez az IP az elmúlt 24 órában. */
+export async function countRecentRideSubmits(ipHash: string | null): Promise<number> {
+  if (!ipHash) return 0;
+  const res = await getDB()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM ride_submit_log
+       WHERE ip_hash = ? AND created_at >= datetime('now', '-24 hours')`,
+    )
+    .bind(ipHash)
+    .first<{ n: number }>();
+  return res?.n ?? 0;
+}
+
+/** Telekocsi-beküldést rögzít a rate-limit táblába. */
+export async function logRideSubmit(id: string, ipHash: string | null): Promise<void> {
+  await getDB()
+    .prepare(`INSERT INTO ride_submit_log (id, ip_hash) VALUES (?, ?)`)
     .bind(id, ipHash)
     .run();
 }
@@ -1345,6 +1436,7 @@ interface BusinessSubmissionRow {
   accepted_terms_at: string | null;
   age_confirmed: number;
   owner_user_id: string | null;
+  manage_token: string | null;
   ip_hash: string | null;
 }
 
@@ -1359,6 +1451,7 @@ export interface BusinessSubmission {
   email: string;
   blurb: string | null;
   ownerUserId: string | null;
+  manageToken: string | null;
 }
 
 function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
@@ -1373,6 +1466,7 @@ function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
     email: r.email,
     blurb: r.blurb,
     ownerUserId: r.owner_user_id,
+    manageToken: r.manage_token,
   };
 }
 
@@ -1393,6 +1487,7 @@ export interface BusinessSubmissionInput {
   ageConfirmed: number;
   ipHash: string | null;
   ownerUserId: string | null;
+  manageToken: string;
 }
 
 export async function createBusinessSubmission(input: BusinessSubmissionInput): Promise<void> {
@@ -1401,8 +1496,8 @@ export async function createBusinessSubmission(input: BusinessSubmissionInput): 
       `INSERT INTO business_submissions
        (id, name, category_id, category_label, address, canton_code, phone, email, blurb,
         confirm_token, expires_at, terms_version, accepted_terms_at, age_confirmed, ip_hash,
-        owner_user_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        owner_user_id, manage_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -1421,6 +1516,7 @@ export async function createBusinessSubmission(input: BusinessSubmissionInput): 
       input.ageConfirmed,
       input.ipHash,
       input.ownerUserId,
+      input.manageToken,
     )
     .run();
 }
@@ -1479,6 +1575,7 @@ export interface CreateBusinessFromSubmissionInput {
   lat: number | null;
   lng: number | null;
   ownerUserId: string | null;
+  manageToken: string;
 }
 
 /**
@@ -1496,8 +1593,8 @@ export async function createBusinessFromSubmission(
       `INSERT INTO businesses
        (id, name, category_id, category_label, address, phone, blurb,
         contact_email, source, languages, lat, lng, pin_x, pin_y,
-        rating, reviews, featured, open_now, owner_user_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'self_submitted', '["Magyar"]', ?, ?, 50, 50, 0, 0, 0, 0, ?)`,
+        rating, reviews, featured, open_now, owner_user_id, manage_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'self_submitted', '["Magyar"]', ?, ?, 50, 50, 0, 0, 0, 0, ?, ?)`,
     )
     .bind(
       input.id,
@@ -1511,6 +1608,7 @@ export async function createBusinessFromSubmission(
       input.lat,
       input.lng,
       input.ownerUserId,
+      input.manageToken,
     )
     .run();
 }
@@ -1530,15 +1628,16 @@ export async function createOwnerDraftBusiness(input: {
   lat: number | null;
   lng: number | null;
   ownerUserId: string;
+  manageToken: string;
 }): Promise<void> {
   await getDB()
     .prepare(
       `INSERT INTO businesses
        (id, name, category_id, category_label, address, phone, blurb,
         contact_email, source, languages, lat, lng, pin_x, pin_y,
-        rating, reviews, featured, open_now, owner_user_id)
+        rating, reviews, featured, open_now, owner_user_id, manage_token)
        VALUES (?, ?, ?, NULL, NULL, NULL, NULL,
-        ?, 'owner_draft', '["Magyar"]', ?, ?, 50, 50, 0, 0, 0, 0, ?)`,
+        ?, 'owner_draft', '["Magyar"]', ?, ?, 50, 50, 0, 0, 0, 0, ?, ?)`,
     )
     .bind(
       input.id,
@@ -1548,95 +1647,80 @@ export async function createOwnerDraftBusiness(input: {
       input.lat,
       input.lng,
       input.ownerUserId,
+      input.manageToken,
     )
     .run();
 }
 
-// --- Vállalkozás-igénylés (email-megerősítéssel) ---------------------------
-
-export interface BusinessClaimRequestRow {
-  id: string;
-  business_id: string;
-  user_id: string;
-  user_email: string;
-  business_email: string;
-  verify_token: string;
-  expires_at: string;
-  consumed_at: string | null;
-  created_at: string;
-}
-
-export interface BusinessClaimRequest {
-  id: string;
-  businessId: string;
-  userId: string;
-  userEmail: string;
-  businessEmail: string;
-  verifyToken: string;
-  expiresAt: string;
-  consumedAt: string | null;
-}
-
-function toBusinessClaimRequest(r: BusinessClaimRequestRow): BusinessClaimRequest {
-  return {
-    id: r.id,
-    businessId: r.business_id,
-    userId: r.user_id,
-    userEmail: r.user_email,
-    businessEmail: r.business_email,
-    verifyToken: r.verify_token,
-    expiresAt: r.expires_at,
-    consumedAt: r.consumed_at,
-  };
-}
-
-export async function createBusinessClaimRequest(input: {
-  id: string;
-  businessId: string;
-  userId: string;
-  userEmail: string;
-  businessEmail: string;
-  verifyToken: string;
-  expiresAt: string;
-}): Promise<void> {
-  await getDB()
-    .prepare(
-      `INSERT INTO business_claim_requests
-       (id, business_id, user_id, user_email, business_email, verify_token, expires_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    )
-    .bind(
-      input.id,
-      input.businessId,
-      input.userId,
-      input.userEmail.toLowerCase(),
-      input.businessEmail.toLowerCase(),
-      input.verifyToken,
-      input.expiresAt,
-    )
-    .run();
-}
-
-export async function getBusinessClaimRequestByToken(
-  token: string,
-): Promise<BusinessClaimRequest | null> {
+/**
+ * Email-only business management: a feladó a manage_token-nel azonosítja magát.
+ * GET → adatok visszaolvasása; PATCH-szerű mezőnként.
+ */
+export async function getBusinessByManageToken(token: string): Promise<Business | null> {
   const row = await getDB()
-    .prepare(
-      `SELECT * FROM business_claim_requests
-       WHERE verify_token = ? AND consumed_at IS NULL AND expires_at > datetime('now')`,
-    )
+    .prepare("SELECT * FROM businesses WHERE manage_token = ? LIMIT 1")
     .bind(token)
-    .first<BusinessClaimRequestRow>();
-  return row ? toBusinessClaimRequest(row) : null;
+    .first<BusinessRow>();
+  return row ? toBusiness(row) : null;
 }
 
-export async function consumeBusinessClaimRequest(id: string): Promise<void> {
-  await getDB()
-    .prepare(
-      "UPDATE business_claim_requests SET consumed_at = datetime('now') WHERE id = ?",
-    )
-    .bind(id)
-    .run();
+export interface UpdateBusinessFields {
+  name?: string;
+  categoryLabel?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  blurb?: string | null;
+  openText?: string | null;
+  workingHours?: string | null;
+  socialLinks?: string | null;
+  languages?: string[] | null;
+}
+
+export async function updateBusinessByManageToken(
+  token: string,
+  fields: UpdateBusinessFields,
+): Promise<boolean> {
+  const sets: string[] = [];
+  const values: unknown[] = [];
+  const map: Record<string, string> = {
+    name: "name",
+    categoryLabel: "category_label",
+    address: "address",
+    phone: "phone",
+    blurb: "blurb",
+    openText: "open_text",
+    workingHours: "working_hours",
+    socialLinks: "social_links",
+  };
+  for (const [k, col] of Object.entries(map)) {
+    const v = fields[k as keyof UpdateBusinessFields];
+    if (v !== undefined) {
+      sets.push(`${col} = ?`);
+      values.push(v as string | null);
+    }
+  }
+  if (fields.languages !== undefined) {
+    sets.push("languages = ?");
+    values.push(fields.languages ? JSON.stringify(fields.languages) : null);
+  }
+  if (sets.length === 0) return true;
+  sets.push("updated_at = datetime('now')");
+  const sql = `UPDATE businesses SET ${sets.join(", ")} WHERE manage_token = ?`;
+  values.push(token);
+  const res = await getDB().prepare(sql).bind(...values).run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function deleteBusinessByManageToken(token: string): Promise<boolean> {
+  const db = getDB();
+  const biz = await db
+    .prepare("SELECT id FROM businesses WHERE manage_token = ?")
+    .bind(token)
+    .first<{ id: string }>();
+  if (!biz) return false;
+  await db.prepare("DELETE FROM reviews WHERE business_id = ?").bind(biz.id).run();
+  const res = await db.prepare("DELETE FROM businesses WHERE id = ?").bind(biz.id).run();
+  return (res.meta.changes ?? 0) > 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -1874,6 +1958,7 @@ interface RideRow {
   waypoints: string | null;
   created_at: string;
   expires_at: string;
+  manage_token: string | null;
 }
 
 export interface RideWaypoint {
@@ -1898,6 +1983,7 @@ export interface Ride {
   waypoints: RideWaypoint[];
   createdAt: string;
   expiresAt: string;
+  manageToken: string | null;
 }
 
 function parseWaypoints(raw: string | null): RideWaypoint[] {
@@ -1929,6 +2015,7 @@ function toRide(r: RideRow): Ride {
     waypoints: parseWaypoints(r.waypoints),
     createdAt: r.created_at,
     expiresAt: r.expires_at,
+    manageToken: r.manage_token,
   };
 }
 
@@ -1947,6 +2034,7 @@ export interface CreateRideInput {
   notes: string | null;
   waypoints: RideWaypoint[] | null;
   expiresAt: string;
+  manageToken: string;
 }
 
 export async function createRide(input: CreateRideInput): Promise<void> {
@@ -1957,8 +2045,8 @@ export async function createRide(input: CreateRideInput): Promise<void> {
     .prepare(
       `INSERT INTO rides
        (id, departure_city, destination_city, departure_time, lat, lng, seats,
-        price_text, poster_name, poster_user_id, contact_phone, notes, waypoints, expires_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        price_text, poster_name, poster_user_id, contact_phone, notes, waypoints, expires_at, manage_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -1975,8 +2063,60 @@ export async function createRide(input: CreateRideInput): Promise<void> {
       input.notes,
       wpJson,
       input.expiresAt,
+      input.manageToken,
     )
     .run();
+}
+
+export async function getRideByManageToken(token: string): Promise<Ride | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM rides WHERE manage_token = ? LIMIT 1")
+    .bind(token)
+    .first<RideRow>();
+  return row ? toRide(row) : null;
+}
+
+export interface UpdateRideFields {
+  departureTime?: string;
+  seats?: number;
+  priceText?: string | null;
+  contactPhone?: string;
+  notes?: string | null;
+}
+
+export async function updateRideByManageToken(
+  token: string,
+  fields: UpdateRideFields,
+): Promise<boolean> {
+  const sets: string[] = [];
+  const values: unknown[] = [];
+  const map: Record<string, string> = {
+    departureTime: "departure_time",
+    seats: "seats",
+    priceText: "price_text",
+    contactPhone: "contact_phone",
+    notes: "notes",
+  };
+  for (const [k, col] of Object.entries(map)) {
+    const v = fields[k as keyof UpdateRideFields];
+    if (v !== undefined) {
+      sets.push(`${col} = ?`);
+      values.push(v);
+    }
+  }
+  if (sets.length === 0) return true;
+  const sql = `UPDATE rides SET ${sets.join(", ")} WHERE manage_token = ?`;
+  values.push(token);
+  const res = await getDB().prepare(sql).bind(...values).run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function deleteRideByManageToken(token: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM rides WHERE manage_token = ?")
+    .bind(token)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
 }
 
 export interface RideQuery {
@@ -2215,6 +2355,71 @@ export async function listBusinessesForAdmin(): Promise<AdminBusinessRow[]> {
     verified: r.verified === 1, rating: r.rating, reviews: r.reviews,
     source: r.source, createdAt: r.created_at,
   }));
+}
+
+// --- Admin: tartalom-listák (törléshez) ------------------------------------
+
+export interface AdminContentRow {
+  id: string;
+  title: string;
+  meta: string | null;
+  createdAt: string | null;
+}
+
+export async function listBulletinsForAdmin(): Promise<AdminContentRow[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, title, kind_id, canton_code, created_at
+       FROM bulletin_posts
+       ORDER BY created_at DESC LIMIT 200`,
+    )
+    .all<{ id: string; title: string; kind_id: string; canton_code: string | null; created_at: string }>();
+  return results.map((r) => ({
+    id: r.id,
+    title: r.title,
+    meta: `${r.kind_id}${r.canton_code ? " · " + r.canton_code : ""}`,
+    createdAt: r.created_at,
+  }));
+}
+
+export async function listEventsForAdmin(): Promise<AdminContentRow[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, title, event_date, venue, status, created_at
+       FROM events
+       ORDER BY created_at DESC LIMIT 200`,
+    )
+    .all<{ id: string; title: string; event_date: string | null; venue: string | null; status: string | null; created_at: string }>();
+  return results.map((r) => ({
+    id: r.id,
+    title: r.title,
+    meta: `${r.status ?? "?"}${r.event_date ? " · " + r.event_date : ""}${r.venue ? " · " + r.venue : ""}`,
+    createdAt: r.created_at,
+  }));
+}
+
+export async function listRidesForAdmin(): Promise<AdminContentRow[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, departure_city, destination_city, departure_time, poster_name, created_at
+       FROM rides
+       ORDER BY created_at DESC LIMIT 200`,
+    )
+    .all<{ id: string; departure_city: string; destination_city: string; departure_time: string; poster_name: string | null; created_at: string }>();
+  return results.map((r) => ({
+    id: r.id,
+    title: `${r.departure_city} → ${r.destination_city}`,
+    meta: `${r.departure_time}${r.poster_name ? " · " + r.poster_name : ""}`,
+    createdAt: r.created_at,
+  }));
+}
+
+/** Admin-törlés: vállalkozás + a hozzá tartozó vélemények cascade. */
+export async function deleteBusinessAsAdmin(id: string): Promise<boolean> {
+  const db = getDB();
+  await db.prepare("DELETE FROM reviews WHERE business_id = ?").bind(id).run();
+  const res = await db.prepare("DELETE FROM businesses WHERE id = ?").bind(id).run();
+  return (res.meta.changes ?? 0) > 0;
 }
 
 export interface AdminStats {

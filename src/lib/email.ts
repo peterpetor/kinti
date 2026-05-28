@@ -360,6 +360,8 @@ interface EventConfirmEmailArgs {
   eventDate: string;
   venue: string;
   confirmUrl: string;
+  /** Manage URL — a feladó ezzel szerkesztheti/törölheti később. */
+  manageUrl: string;
 }
 
 export async function sendEventConfirmationEmail(args: EventConfirmEmailArgs): Promise<void> {
@@ -367,7 +369,7 @@ export async function sendEventConfirmationEmail(args: EventConfirmEmailArgs): P
   const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
   const subject = "Erősítsd meg az eseményedet – kinti.app";
 
-  const text = `Szia!\n\nMegkaptuk az eseménybeküldésedet a kinti.app-on:\n  Cím: ${args.title}\n  Dátum: ${args.eventDate}\n  Helyszín: ${args.venue}\n\nAz eseményt moderátor ellenőrzi, és hamarosan megjelenik az oldalon.\n\nAmíg erre várnál, erősítsd meg az email-cimedet egy kattintással:\n  ${args.confirmUrl}\n\nHa nem te küldted be ezt az eseményt, hagyd figyelmen kívül.\n\nÜdv,\nkinti.app`;
+  const text = `Szia!\n\nMegkaptuk az eseménybeküldésedet a kinti.app-on:\n  Cím: ${args.title}\n  Dátum: ${args.eventDate}\n  Helyszín: ${args.venue}\n\nAz eseményt moderátor ellenőrzi, és hamarosan megjelenik az oldalon.\n\nAmíg erre várnál, erősítsd meg az email-cimedet egy kattintással:\n  ${args.confirmUrl}\n\n—————————————————\n\nEsemény kezelése (szerkesztés, törlés):\n  ${args.manageUrl}\nTedd el ezt a linket — bármikor onnan tudod módosítani.\n\nHa nem te küldted be ezt az eseményt, hagyd figyelmen kívül.\n\nÜdv,\nkinti.app`;
 
   const html = baseLayout({
     preheader: `Esemény beküldve: ${args.title} – várd meg a moderátor jóváhagyását!`,
@@ -387,6 +389,16 @@ export async function sendEventConfirmationEmail(args: EventConfirmEmailArgs): P
       </p>
       <p style="margin:0 0 20px;">
         ${button(args.confirmUrl, "Email megerősítése →")}
+      </p>
+      <hr style="border:none;border-top:1px solid #e6ebe5;margin:24px 0;" />
+      <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#0e1f17;">
+        Esemény kezelése (szerkesztés, törlés)
+      </p>
+      <p style="margin:0 0 12px;font-size:12.5px;line-height:1.6;color:#5c6d63;">
+        Ezt a linket <strong>tedd el</strong> — bármikor itt módosíthatod, regisztráció nélkül:
+      </p>
+      <p style="margin:0 0 16px;">
+        <a href="${args.manageUrl}" style="display:inline-block;font-size:12.5px;color:#0e7c5b;word-break:break-all;text-decoration:underline;">${escapeHtml(args.manageUrl)}</a>
       </p>
       <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
         Ha nem te küldted be ezt az eseményt, hagyd figyelmen kívül. Semmi sem kerül ki a weboldalra a moderátor jóváhagyása nélkül.
@@ -524,6 +536,8 @@ interface BusinessConfirmEmailArgs {
   /** Teljes URL — pl. https://kinti.app/api/business/confirm/<token>. */
   confirmUrl: string;
   confirmExpiresAt: string;
+  /** Manage URL — a feladó ezzel szerkesztheti/törölheti később. */
+  manageUrl: string;
 }
 
 export async function sendBusinessConfirmationEmail(
@@ -544,7 +558,14 @@ A publikáláshoz erősítsd meg egy kattintással:
 
 Amint rákattintasz, a vállalkozásod AZONNAL megjelenik a Szaknévsorban — nincs várakozás.
 
-A megerősítő link ${expiresHu}-ig érvényes. Ha lemaradsz róla, csak küldd be újra.
+A megerősítő link ${expiresHu}-ig érvényes.
+
+—————————————————————————
+
+Vállalkozásod kezelése (szerkesztés / nyitvatartás / törlés):
+  ${args.manageUrl}
+
+Ezt a linket TEDD EL — bármikor onnan tudod módosítani vagy törölni a vállalkozást. Nem kell hozzá regisztráció.
 
 Ha nem te küldted be ezt a vállalkozást, hagyd figyelmen kívül.
 
@@ -573,75 +594,19 @@ kinti.app`;
       <p style="margin:0 0 16px;font-size:12.5px;line-height:1.6;color:#5c6d63;">
         A megerősítő link <strong>${escapeHtml(expiresHu)}-ig</strong> érvényes.
       </p>
+      <hr style="border:none;border-top:1px solid #e6ebe5;margin:24px 0;" />
+      <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#0e1f17;">
+        Vállalkozásod kezelése (szerkesztés, nyitvatartás, törlés)
+      </p>
+      <p style="margin:0 0 12px;font-size:12.5px;line-height:1.6;color:#5c6d63;">
+        Ezt a linket <strong>tedd el</strong> — bármikor itt módosíthatod vagy törölheted a vállalkozást, regisztráció nélkül:
+      </p>
+      <p style="margin:0 0 16px;">
+        <a href="${args.manageUrl}" style="display:inline-block;font-size:12.5px;color:#0e7c5b;word-break:break-all;text-decoration:underline;">${escapeHtml(args.manageUrl)}</a>
+      </p>
       <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
         Ha nem te küldted be ezt a vállalkozást, hagyd figyelmen kívül — semmi sem
         kerül ki a megerősítésed nélkül.
-      </p>`,
-  });
-
-  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
-  if (error) {
-    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
-  }
-}
-
-// --- Vállalkozás-igénylés (claim) megerősítése ----------------------------
-
-interface BusinessClaimEmailArgs {
-  to: string; // a business contact_email-je
-  businessName: string;
-  claimerUserEmail: string; // a Clerk userhez tartozó email (audit, a címzettnek megmutatjuk)
-  /** Teljes URL — pl. https://kinti.app/api/owner/claim/confirm/<token>. */
-  confirmUrl: string;
-  confirmExpiresAt: string;
-}
-
-export async function sendBusinessClaimEmail(args: BusinessClaimEmailArgs): Promise<void> {
-  const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-  const expiresHu = formatHu(args.confirmExpiresAt);
-  const subject = `Vállalkozásod igénylése a kinti.app-on: ${args.businessName}`;
-
-  const text = `Szia!
-
-Valaki — ${args.claimerUserEmail} fiókkal — igényelte a(z) "${args.businessName}" vállalkozás kezelési jogait a kinti.app-on. Ezt a kérést a vállalkozáshoz tartozó email címedre (${args.to}) küldtük megerősítésre.
-
-Ha TE indítottad az igénylést, erősítsd meg egy kattintással:
-  ${args.confirmUrl}
-
-A link ${expiresHu}-ig érvényes. Megerősítés után a vállalkozás a fenti fiókhoz lesz kötve, és onnantól a Vállalkozói profilban szerkesztheted (nyitvatartás, leírás, kapcsolat, logó, stb.).
-
-Ha NEM te indítottad, hagyd figyelmen kívül — semmi nem történik. A vállalkozásod a tied marad.
-
-Üdv,
-kinti.app`;
-
-  const html = baseLayout({
-    preheader: `Vállalkozás-igénylés megerősítése: ${args.businessName}`,
-    body: `
-      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
-        Szia 👋
-      </p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
-        Valaki igényelte a(z) <strong>${escapeHtml(args.businessName)}</strong> vállalkozást
-        a kinti.app-on. A kérés a vállalkozáshoz tartozó email címedre érkezett.
-      </p>
-      <p style="margin:0 0 20px;padding:12px 14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;font-size:13px;line-height:1.5;color:#0e1f17;">
-        <strong>Igénylő fiók:</strong><br>${escapeHtml(args.claimerUserEmail)}
-      </p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
-        Ha <strong>te</strong> indítottad az igénylést, erősítsd meg egy kattintással —
-        utána a fenti fiókkal szerkesztheted a vállalkozás adatait:
-      </p>
-      <p style="margin:0 0 20px;">
-        ${button(args.confirmUrl, "Igénylés megerősítése →")}
-      </p>
-      <p style="margin:0 0 16px;font-size:12.5px;line-height:1.6;color:#5c6d63;">
-        A link <strong>${escapeHtml(expiresHu)}-ig</strong> érvényes.
-      </p>
-      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
-        Ha nem te indítottad, hagyd figyelmen kívül — a vállalkozásod a tied marad,
-        nem történik semmi a megerősítésed nélkül.
       </p>`,
   });
 

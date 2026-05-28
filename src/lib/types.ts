@@ -44,6 +44,8 @@ export interface Business {
   contactEmail?: string | null;
   workingHours?: string | null;
   socialLinks?: string | null;
+  /** Email-only management token (a confirm-emailben kapja a feladó). */
+  manageToken?: string | null;
 }
 
 export interface KintiEvent {
@@ -63,6 +65,7 @@ export interface KintiEvent {
   email?: string | null;
   status?: string;
   token?: string | null;
+  manageToken?: string | null;
 }
 
 export interface BulletinKind {

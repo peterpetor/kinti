@@ -15,10 +15,11 @@ export const metadata = { title: "Vállalkozás megerősítve" };
 export default function VallalkozasMegerositvePage({
   searchParams,
 }: {
-  searchParams: { status?: string; id?: string };
+  searchParams: { status?: string; id?: string; manage?: string };
 }) {
   const status = searchParams.status ?? "published";
   const profileUrl = searchParams.id ? `/szaknevsor/${searchParams.id}` : null;
+  const manageUrl = searchParams.manage ? `/szaknevsor/kezeles/${searchParams.manage}` : null;
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-5 px-6 text-center">
@@ -58,22 +59,36 @@ export default function VallalkozasMegerositvePage({
             linkek).
           </p>
           <div className="flex flex-col gap-2 self-stretch">
+            {manageUrl && (
+              <Link
+                href={manageUrl}
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-pill bg-primary px-5 text-[13.5px] font-bold text-white shadow-card-hover"
+              >
+                Adatok beállítása / szerkesztés
+                <Icon name="arrowRight" size={15} strokeWidth={2.4} />
+              </Link>
+            )}
             {profileUrl && (
               <Link
                 href={profileUrl}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-pill bg-primary px-5 text-[13.5px] font-bold text-white shadow-card-hover"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-pill border border-line bg-surface px-5 text-[13.5px] font-bold text-ink"
               >
-                Megnézem a profilom
-                <Icon name="arrowRight" size={15} strokeWidth={2.4} />
+                Publikus profil megnyitása
               </Link>
             )}
             <Link
               href="/szaknevsor"
               className="inline-flex h-11 items-center justify-center gap-2 rounded-pill border border-line bg-surface px-5 text-[13.5px] font-bold text-ink"
             >
-              Szaknévsor megnyitása
+              Szaknévsor
             </Link>
           </div>
+          {manageUrl && (
+            <p className="mt-3 px-4 text-[11px] leading-relaxed text-ink-faint text-pretty">
+              💡 A kezelő-link az emailedben is megérkezett. <strong>Tedd el</strong> —
+              ezzel bármikor szerkesztheted vagy törölheted a vállalkozást, regisztráció nélkül.
+            </p>
+          )}
         </>
       )}
     </div>

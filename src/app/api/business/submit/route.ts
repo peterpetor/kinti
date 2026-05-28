@@ -90,6 +90,7 @@ export async function POST(req: Request) {
   // 6) piszkozat-INSERT
   const id = crypto.randomUUID();
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
+  const manageToken = crypto.randomUUID().replace(/-/g, "");
   const now = new Date();
   const expiresAt = new Date(now.getTime() + BUSINESS_CONFIRM_TTL_MS).toISOString();
 
@@ -115,6 +116,7 @@ export async function POST(req: Request) {
     ageConfirmed: 1,
     ipHash,
     ownerUserId: clerkUserId,
+    manageToken,
   });
 
   // 7) email
@@ -127,6 +129,7 @@ export async function POST(req: Request) {
       businessName: validation.value.name,
       confirmUrl: `${baseUrl}/api/business/confirm/${confirmToken}`,
       confirmExpiresAt: expiresAt,
+      manageUrl: `${baseUrl}/szaknevsor/kezeles/${manageToken}`,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Ismeretlen email-hiba.";

@@ -37,6 +37,8 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
   matcher: [
     // Minden útvonal, kivéve a Next belső fájljait és a statikus assetokat.
+    // A /belepes és /regisztracio is IDE TARTOZIK, mert az oldalukon szerveroldali
+    // `auth()` hívás van — anélkül hogy a clerkMiddleware lefutna itt, az auth() crash-el.
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Az API-kat és trpc-t mindig futtassa.
     "/(api|trpc)(.*)",

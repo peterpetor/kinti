@@ -74,9 +74,10 @@ export async function POST(req: Request) {
     );
   }
 
-  // 3) D1 INSERT — status: 'pending_confirm', egyedi token
+  // 3) D1 INSERT — status: 'pending_confirm', egyedi tokenek
   const id = crypto.randomUUID();
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
+  const manageToken = crypto.randomUUID().replace(/-/g, "");
 
   // Dátumból number/hónap/nap neve leképezés
   const [year, month, day] = validation.value.eventDate.split("-").map(Number);
@@ -101,6 +102,7 @@ export async function POST(req: Request) {
     email: validation.value.email,
     status: "pending_confirm",
     token: confirmToken,
+    manageToken,
   });
 
   // Rate-limit napló frissítése (fire-and-forget — hiba esetén sem gátolja a flow-t)
@@ -118,6 +120,7 @@ export async function POST(req: Request) {
       eventDate: validation.value.eventDate,
       venue: validation.value.venue,
       confirmUrl: `${baseUrl}/api/events/confirm/${confirmToken}`,
+      manageUrl: `${baseUrl}/esemeny-kezeles/${manageToken}`,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Ismeretlen email-hiba.";

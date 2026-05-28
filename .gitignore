@@ -2,6 +2,9 @@
 /node_modules
 /.pnp
 .pnp.js
+# workers minden alkönyvtárában is
+workers/**/node_modules
+workers/**/.wrangler
 
 # next.js
 /.next/
@@ -36,3 +39,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# debug/log artefaktok — soha NE kerüljenek repóba
+/error.log
+/dep.txt
+/deployments*.txt
+/test-*.js
+/test-*.ts
+/temp*.txt
+/*.dump
+# Screenshotok / képek a repó GYÖKERÉBEN (public/ alattiak külön)
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.gif

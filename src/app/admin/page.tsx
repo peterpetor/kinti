@@ -3,11 +3,15 @@ import { notFound } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { getAdminUserId } from "@/lib/admin";
 import { AdminVerifyToggle } from "@/components/views/admin-verify-toggle";
+import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import {
   getAdminStats,
   listOpenReports,
   listPendingEvents,
   listBusinessesForAdmin,
+  listBulletinsForAdmin,
+  listEventsForAdmin,
+  listRidesForAdmin,
 } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -19,12 +23,16 @@ export default async function AdminPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  const [stats, openReports, pendingEvents, businesses] = await Promise.all([
-    getAdminStats(),
-    listOpenReports(),
-    listPendingEvents(),
-    listBusinessesForAdmin(),
-  ]);
+  const [stats, openReports, pendingEvents, businesses, bulletins, events, rides] =
+    await Promise.all([
+      getAdminStats(),
+      listOpenReports(),
+      listPendingEvents(),
+      listBusinessesForAdmin(),
+      listBulletinsForAdmin(),
+      listEventsForAdmin(),
+      listRidesForAdmin(),
+    ]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-5 py-6">
@@ -129,37 +137,113 @@ export default async function AdminPage() {
         )}
       </section>
 
-      {/* Businesses + verify toggle */}
+      {/* Businesses + verify toggle + delete */}
       <section className="space-y-2">
         <h2 className="text-[14px] font-extrabold text-ink">
-          Vállalkozások — Verified jelvény ({businesses.length})
+          Vállalkozások — Verified + törlés ({businesses.length})
         </h2>
-        <div className="space-y-1.5">
-          {businesses.map((b) => (
-            <div key={b.id} className="flex items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card">
-              <div className="min-w-0 flex-1">
-                <Link href={`/szaknevsor/${b.id}`} className="block truncate text-[13px] font-bold text-ink hover:text-primary">
-                  {b.name}
-                </Link>
-                <p className="truncate text-[11px] text-ink-muted">
-                  {b.categoryLabel ?? "—"}
-                  {b.source ? ` · ${b.source}` : ""}
-                  {b.rating > 0 ? ` · ⭐ ${b.rating} (${b.reviews})` : ""}
-                </p>
+        {businesses.length === 0 ? (
+          <Empty label="Nincs vállalkozás a Szaknévsorban." />
+        ) : (
+          <div className="space-y-1.5">
+            {businesses.map((b) => (
+              <div key={b.id} className="flex items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card">
+                <div className="min-w-0 flex-1">
+                  <Link href={`/szaknevsor/${b.id}`} className="block truncate text-[13px] font-bold text-ink hover:text-primary">
+                    {b.name}
+                  </Link>
+                  <p className="truncate text-[11px] text-ink-muted">
+                    {b.categoryLabel ?? "—"}
+                    {b.source ? ` · ${b.source}` : ""}
+                    {b.rating > 0 ? ` · ⭐ ${b.rating} (${b.reviews})` : ""}
+                  </p>
+                </div>
+                <AdminVerifyToggle businessId={b.id} initial={b.verified} />
+                <AdminDeleteButton
+                  type="businesses"
+                  id={b.id}
+                  small
+                  confirmText={`Biztos törlöd a(z) "${b.name}" vállalkozást? A vélemények is törlődnek.`}
+                />
               </div>
-              <AdminVerifyToggle businessId={b.id} initial={b.verified} />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Hirdetések — bárki törölheti adminként */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">
+          Hirdetések — törlés ({bulletins.length})
+        </h2>
+        {bulletins.length === 0 ? (
+          <Empty label="Nincs hirdetés." />
+        ) : (
+          <ContentList items={bulletins} type="bulletins" />
+        )}
+      </section>
+
+      {/* Események — törlés (a status független) */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">
+          Események — törlés ({events.length})
+        </h2>
+        {events.length === 0 ? (
+          <Empty label="Nincs esemény." />
+        ) : (
+          <ContentList items={events} type="events" />
+        )}
+      </section>
+
+      {/* Telekocsi — törlés */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">
+          Telekocsi — törlés ({rides.length})
+        </h2>
+        {rides.length === 0 ? (
+          <Empty label="Nincs telekocsi-hirdetés." />
+        ) : (
+          <ContentList items={rides} type="rides" />
+        )}
       </section>
 
       {/* Egyéb admin linkek */}
       <section className="space-y-2 border-t border-line pt-4">
         <h2 className="text-[14px] font-extrabold text-ink">Egyéb admin</h2>
         <Link href="/admin/feeds" className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink">
-          <Icon name="calendar" size={13} strokeWidth={2.4} /> iCal feedek kezelése
+          <Icon name="calendar" size={13} strokeWidth={2.4} /> Esemény-feedek kezelése (iCal/RSS)
         </Link>
       </section>
+    </div>
+  );
+}
+
+function ContentList({
+  items,
+  type,
+}: {
+  items: { id: string; title: string; meta: string | null; createdAt: string | null }[];
+  type: "bulletins" | "events" | "rides";
+}) {
+  return (
+    <div className="space-y-1.5">
+      {items.map((it) => (
+        <div key={it.id} className="flex items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[13px] font-bold text-ink">{it.title}</p>
+            <p className="truncate text-[11px] text-ink-muted">
+              {it.meta ?? ""}
+              {it.createdAt ? ` · ${fmtAgo(it.createdAt)}` : ""}
+            </p>
+          </div>
+          <AdminDeleteButton
+            type={type}
+            id={it.id}
+            small
+            confirmText={`Biztos törlöd: "${it.title}"?`}
+          />
+        </div>
+      ))}
     </div>
   );
 }

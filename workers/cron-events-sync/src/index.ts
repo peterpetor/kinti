@@ -1,17 +1,21 @@
 /**
- * kinti-cron-events-sync — iCal → D1 szinkron.
+ * kinti-cron-events-sync — feed → D1 szinkron.
  *
  * Naponta egyszer (04:47 UTC) lehúzza a `event_feeds` táblában `enabled=1`-re
- * állított iCal forrásokat, parzolja (RRULE expand, TZID + Europe/Zurich-aware),
- * és az `events` táblába frissíti őket. Forrásonkénti `source = ical:<hash>`
- * mezővel — egy újra-sync előtt törli a forrás régi sorait, így a feedből
- * eltávolított esemény TÉNYLEG eltűnik a kintiből.
+ * állított forrásokat. Auto-detect formátum:
+ *   • iCal (RFC 5545): RRULE expand, TZID + Europe/Zurich-aware
+ *   • RSS 2.0 / Atom 1.0: hír-szerű feed → publikálási dátumot eseménydátumnak
+ *     vesszük, link a `venue` mezőbe (pl. magyar konzulátus hírei).
+ *
+ * Forrásonkénti `source = ical:<hash>` mezővel — egy újra-sync előtt törli a
+ * forrás régi sorait, így a feedből eltávolított esemény TÉNYLEG eltűnik.
  *
  * Statusz: minden feedhez visszaírja a `last_synced_at`, `last_error`,
  * `events_count` mezőket — az `/admin/feeds` oldal ezt olvassa.
  */
 
-import { parseIcs, type ParsedEvent } from "./ical";
+import { parseIcs } from "./ical";
+import { parseRss, looksLikeXmlFeed } from "./rss";
 
 export interface Env {
   DB: D1Database;
@@ -82,6 +86,46 @@ function formatForDb(date: Date, allDay: boolean): FormattedDate {
   return { eventDate, dateDay, dateMonth, dateWeekday, startTime };
 }
 
+// --- Insert helper (iCal + RSS közös) --------------------------------------
+
+interface InsertInput {
+  uid: string;
+  title: string;
+  date: Date;
+  allDay: boolean;
+  venue: string | null;
+  tag: string | null;
+  occurrenceIndex: number;
+}
+
+async function insertEvent(env: Env, sourceId: string, e: InsertInput): Promise<void> {
+  const f = formatForDb(e.date, e.allDay);
+  const id =
+    e.occurrenceIndex === 0
+      ? `${sourceId}:${e.uid}`
+      : `${sourceId}:${e.uid}:${e.date.toISOString()}`;
+
+  await env.DB.prepare(
+    `INSERT OR REPLACE INTO events
+       (id, title, event_date, date_day, date_month, date_weekday,
+        start_time, venue, going, tag, color, source)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, NULL, ?)`,
+  )
+    .bind(
+      id.slice(0, 200),
+      e.title.slice(0, 200),
+      f.eventDate,
+      f.dateDay,
+      f.dateMonth,
+      f.dateWeekday,
+      f.startTime || null,
+      e.venue?.slice(0, 200) ?? null,
+      e.tag?.slice(0, 50) ?? null,
+      sourceId,
+    )
+    .run();
+}
+
 // --- Feed-szinkron ----------------------------------------------------------
 
 async function syncFeed(feed: FeedRow, env: Env): Promise<FeedResult> {
@@ -94,48 +138,59 @@ async function syncFeed(feed: FeedRow, env: Env): Promise<FeedResult> {
 
   try {
     const res = await fetch(feed.url, {
-      headers: { "user-agent": "kinti-cron-events-sync/1.0" },
+      headers: {
+        "user-agent": "kinti-cron-events-sync/1.0",
+        // Néhány govt site (pl. mfa.gov.hu Drupal) csak ha adunk Accept-et.
+        accept: "text/calendar, application/rss+xml, application/atom+xml, application/xml;q=0.9, */*;q=0.5",
+      },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const text = await res.text();
 
     const windowStart = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const windowEnd = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
-    const occurrences = parseIcs(text, windowStart, windowEnd);
 
-    // Stale törlés
+    // Auto-detect: iCal vagy RSS/Atom XML?
+    const head = text.slice(0, 200).toUpperCase();
+    const isIcal = head.includes("BEGIN:VCALENDAR");
+
+    // Stale törlés (mindkét feed-típusnál azonos: forrás összes sora)
     await env.DB.prepare("DELETE FROM events WHERE source = ?")
       .bind(feed.source_id)
       .run();
 
-    // Insert
-    for (const e of occurrences) {
-      const f = formatForDb(e.startDate, e.allDay);
-      const id =
-        e.occurrenceIndex === 0
-          ? `${feed.source_id}:${e.uid}`
-          : `${feed.source_id}:${e.uid}:${e.startDate.toISOString()}`;
-      const tag = e.categories[0] ?? null;
-      await env.DB.prepare(
-        `INSERT INTO events
-           (id, title, event_date, date_day, date_month, date_weekday,
-            start_time, venue, going, tag, color, source)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, NULL, ?)`,
-      )
-        .bind(
-          id,
-          e.title.slice(0, 200),
-          f.eventDate,
-          f.dateDay,
-          f.dateMonth,
-          f.dateWeekday,
-          f.startTime || null,
-          e.venue?.slice(0, 200) ?? null,
-          tag?.slice(0, 50) ?? null,
-          feed.source_id,
-        )
-        .run();
-      result.inserted++;
+    if (isIcal) {
+      const occurrences = parseIcs(text, windowStart, windowEnd);
+      for (const e of occurrences) {
+        await insertEvent(env, feed.source_id, {
+          uid: e.uid,
+          title: e.title,
+          date: e.startDate,
+          allDay: e.allDay,
+          venue: e.venue,
+          tag: e.categories[0] ?? null,
+          occurrenceIndex: e.occurrenceIndex,
+        });
+        result.inserted++;
+      }
+    } else if (looksLikeXmlFeed(text)) {
+      const items = parseRss(text, windowStart, windowEnd);
+      for (const it of items) {
+        await insertEvent(env, feed.source_id, {
+          uid: it.uid,
+          title: it.title,
+          date: it.date,
+          // Hír-szerű feedeknél a publikálás napját all-day eseményként kezeljük
+          // (a feed nem közöl külön kezdési időt).
+          allDay: true,
+          venue: it.link, // a venue mezőben a hír-link — a kliensen kattintható
+          tag: it.category,
+          occurrenceIndex: 0,
+        });
+        result.inserted++;
+      }
+    } else {
+      throw new Error("Ismeretlen feed-formátum (sem iCal, sem RSS/Atom XML).");
     }
   } catch (err) {
     result.error = err instanceof Error ? err.message : String(err);

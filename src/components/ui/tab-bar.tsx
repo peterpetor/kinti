@@ -27,13 +27,9 @@ const TABS: Tab[] = [
     href: "/kozosseg",
     label: "Piac",
     icon: "users",
-    alsoMatch: ["/alberlet", "/allas", "/telekocsi"],
+    alsoMatch: ["/alberlet", "/allas"],
   },
-  {
-    href: "/telekocsi",
-    label: "Telekocsi",
-    icon: "car",
-  },
+  { href: "/telekocsi", label: "Telekocsi", icon: "car" },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {

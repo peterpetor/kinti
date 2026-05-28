@@ -77,6 +77,7 @@ export async function POST(req: NextRequest) {
   }
   const coords = approxCoordsForCanton(cantonCode);
 
+  const manageToken = crypto.randomUUID().replace(/-/g, "");
   await createOwnerDraftBusiness({
     id,
     name,
@@ -86,6 +87,7 @@ export async function POST(req: NextRequest) {
     lat: coords?.lat ?? null,
     lng: coords?.lng ?? null,
     ownerUserId: userId,
+    manageToken,
   });
 
   const business = await getBusinessById(id);
