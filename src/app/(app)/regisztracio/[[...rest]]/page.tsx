@@ -1,22 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
-import dynamic from "next/dynamic";
+import { SignUp, useAuth } from "@clerk/nextjs";
 import { Icon } from "@/components/ui";
-
-const SignUp = dynamic(
-  () => import("@clerk/nextjs").then((m) => m.SignUp),
-  { ssr: false }
-);
 
 export const runtime = "edge";
 
 export default function SignUpPage() {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
@@ -24,7 +23,7 @@ export default function SignUpPage() {
     }
   }, [isLoaded, isSignedIn]);
 
-  if (!isLoaded) {
+  if (!isLoaded || !mounted) {
     return (
       <div className="min-h-[calc(100dvh-70px)] flex items-center justify-center">
         <span className="text-ink-muted animate-pulse">Betöltés...</span>

@@ -1,16 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
-import dynamic from "next/dynamic";
+import { SignIn, useAuth } from "@clerk/nextjs";
 import { Icon } from "@/components/ui";
-
-const SignIn = dynamic(
-  () => import("@clerk/nextjs").then((m) => m.SignIn),
-  { ssr: false }
-);
 
 export const runtime = "edge";
 
@@ -29,13 +23,16 @@ function safeRedirect(target: string | null): string {
   return "/profil";
 }
 
-import { Suspense } from "react";
-
 function LoginForm() {
   const searchParams = useSearchParams();
   const { isSignedIn, isLoaded } = useAuth();
+  const [mounted, setMounted] = useState(false);
   
   const target = safeRedirect(searchParams.get("redirect_url"));
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Ha már be van lépve a kliens, azonnal továbbítjuk.
   useEffect(() => {
@@ -44,7 +41,7 @@ function LoginForm() {
     }
   }, [isLoaded, isSignedIn, target]);
 
-  if (!isLoaded) {
+  if (!isLoaded || !mounted) {
     return (
       <div className="min-h-[calc(100dvh-70px)] flex items-center justify-center">
         <span className="text-ink-muted animate-pulse">Betöltés...</span>
