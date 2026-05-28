@@ -71,7 +71,7 @@ export default async function ProfilPage() {
         <DropdownMenu />
       </header>
 
-      {business && <OwnerDashboard business={business} />
+      {business && <OwnerDashboard business={business} />}
 
       {/* PWA — telepítés a kezdőképernyőre (csak ha még nem standalone) */}
       <InstallPrompt />
@@ -81,9 +81,7 @@ export default async function ProfilPage() {
         <NewsletterToggle />
         <div className="flex items-center justify-between rounded-card border border-line bg-surface p-4 shadow-card">
           <span className="text-sm font-semibold text-ink">Megjelenés</span>
-          <div className="bg-ink rounded-pill p-1">
-            <ThemeToggle />
-          </div>
+          <ThemeToggle />
         </div>
       </section>
     </div>

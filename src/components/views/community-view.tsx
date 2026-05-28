@@ -120,10 +120,14 @@ export function CommunityView({
         })}
       </div>
 
-      <div className="space-y-2.5 px-5">
-        {tab === "events" && <EventsList events={events} />}
-        {tab === "board" && <BulletinList posts={posts} kinds={kinds} turnstileSiteKey={turnstileSiteKey} />}
-      </div>
+      {tab !== "rides" ? (
+        <div className="space-y-2.5 px-5">
+          {tab === "events" && <EventsList events={events} />}
+          {tab === "board" && <BulletinList posts={posts} kinds={kinds} turnstileSiteKey={turnstileSiteKey} />}
+        </div>
+      ) : (
+        <TelekocsiView rides={rides} currentUserId={currentUserId} />
+      )}
     </div>
   );
 }

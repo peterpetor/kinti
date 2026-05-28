@@ -36,24 +36,26 @@ export function NewsletterToggle() {
           Szeretnék értesülni a kinti újdonságairól, tippekről és exkluzív marketing anyagokról.
         </p>
       </div>
-      
-      <button
-        type="button"
-        role="switch"
-        aria-checked={isOptedIn}
-        onClick={toggle}
-        disabled={loading}
-        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
-          isOptedIn ? "bg-primary" : "bg-line-heavy"
-        } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
-      >
-        <span
-          aria-hidden="true"
-          className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-            isOptedIn ? "translate-x-6" : "translate-x-1"
-          }`}
-        />
-      </button>
+
+      <div className="bg-ink rounded-full p-1">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isOptedIn}
+          onClick={toggle}
+          disabled={loading}
+          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+            isOptedIn ? "bg-primary" : "bg-line-heavy"
+          } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+        >
+          <span
+            aria-hidden="true"
+            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+              isOptedIn ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </button>
+      </div>
     </div>
   );
 }
