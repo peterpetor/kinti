@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon, KintiLogo } from "@/components/ui";
 import { LogoUploader } from "@/components/views/logo-uploader";
+import { GalleryUploader } from "@/components/views/gallery-uploader";
 import { BusinessManageForm } from "@/components/views/business-manage-form";
 import {
   getBusinessByManageToken,
@@ -54,6 +55,11 @@ export default async function BusinessManagePage({ params }: { params: { token: 
       <LogoUploader
         currentKey={business.logoKey}
         fallbackGradient={business.photo}
+        manageToken={params.token}
+      />
+
+      <GalleryUploader
+        currentKeys={business.galleryKeys || []}
         manageToken={params.token}
       />
 

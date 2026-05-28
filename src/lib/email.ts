@@ -351,6 +351,77 @@ kinti.app`;
   }
 }
 
+// --- Szaknévsor: Árajánlatkérés / Időpontfoglalás --------------------------
+
+export interface BusinessQuoteEmailArgs {
+  to: string;
+  businessName: string;
+  senderName: string;
+  senderEmail: string;
+  senderPhone?: string;
+  message: string;
+}
+
+export async function sendBusinessQuoteEmail(args: BusinessQuoteEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = `Új érdeklődés a kinti.app-on: ${args.businessName}`;
+
+  const phoneLine = args.senderPhone ? `\nTelefonszám: ${args.senderPhone}` : "";
+
+  const text = `Kedves ${args.businessName}!
+
+Új üzeneted érkezett a kinti.app Szaknévsorból!
+
+Érdeklődő neve: ${args.senderName}
+Email címe: ${args.senderEmail}${phoneLine}
+
+Üzenet:
+${args.message}
+
+Közvetlenül válaszolhatsz erre az emailre a fenti email címre írva, vagy hívhatod a fenti telefonszámot.
+
+Üdv,
+kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Új érdeklődő / időpontkérés: ${args.businessName}`,
+    body: `
+      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
+        Kedves ${escapeHtml(args.businessName)} 👋
+      </p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
+        Új érdeklődő írt a kinti.app Szaknévsorból a profilodról:
+      </p>
+      <div style="margin:0 0 20px;padding:14px;background:#f8f9f8;border-radius:14px;border:1px solid #e6ebe5;">
+        <p style="margin:0 0 8px;font-size:13px;color:#5c6d63;">
+          <strong>Feladó:</strong> ${escapeHtml(args.senderName)}<br/>
+          <strong>Email:</strong> <a href="mailto:${escapeAttr(args.senderEmail)}" style="color:#1d4434;">${escapeHtml(args.senderEmail)}</a>
+          ${args.senderPhone ? `<br/><strong>Telefon:</strong> <a href="tel:${escapeAttr(args.senderPhone.replace(/\s/g, ""))}" style="color:#1d4434;">${escapeHtml(args.senderPhone)}</a>` : ""}
+        </p>
+        <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">
+          ${escapeHtml(args.message)}
+        </p>
+      </div>
+      <p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:#5c6d63;">
+        Válaszadáshoz írj közvetlenül az érdeklődőnek a <strong><a href="mailto:${escapeAttr(args.senderEmail)}" style="color:#1d4434;">${escapeHtml(args.senderEmail)}</a></strong> címre.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({
+    from,
+    to: args.to,
+    replyTo: args.senderEmail,
+    subject,
+    html,
+    text,
+  });
+
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 
 // --- Esemény beküldő: megerősítő email -------------------------------------
 

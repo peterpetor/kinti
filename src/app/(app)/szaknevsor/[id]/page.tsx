@@ -9,6 +9,8 @@ import { ProfileHeaderActions } from "@/components/views/profile-action-buttons"
 import { ReportButton } from "@/components/report-button";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
+import { ContactBusinessForm } from "@/components/views/contact-business-form";
+import { BusinessGallery } from "@/components/views/business-gallery";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -221,6 +223,11 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           </a>
         </div>
 
+        {/* Kapcsolat / Időpontfoglalás */}
+        <div className="mt-3">
+          <ContactBusinessForm businessId={b.id} hasContactEmail={!!b.contactEmail} />
+        </div>
+
         {/* A korábbi Clerk-alapú "Igényeld a vállalkozást" gombot lecseréltük:
             a vállalkozás-szerkesztés a confirmáló emailben kapott kezelő-linkkel
             megy. Ha valaki elveszítette, írhat az info@kinti.app-ra. */}
@@ -290,6 +297,9 @@ export default async function BusinessPage({ params }: { params: { id: string } 
             {b.yearsHere != null && <Chip>{b.yearsHere} éve kint</Chip>}
           </div>
         </section>
+
+        {/* Galéria */}
+        <BusinessGallery galleryKeys={b.galleryKeys} businessName={b.name} />
 
         {/* vélemények */}
         <section className="mt-6">

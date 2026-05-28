@@ -39,6 +39,7 @@ export interface Business {
   photo: string | null;
   accentPhoto: string | null;
   logoKey: string | null;
+  galleryKeys: string[];
   ownerUserId: string | null;
   /** A vállalkozás kapcsolati emailje (NEM publikus — csak claim/admin használat). */
   contactEmail?: string | null;

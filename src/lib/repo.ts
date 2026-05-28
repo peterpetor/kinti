@@ -71,6 +71,7 @@ interface BusinessRow {
   working_hours: string | null;
   social_links: string | null;
   manage_token: string | null;
+  gallery_keys: string | null;
 }
 
 interface EventRow {
@@ -182,6 +183,7 @@ function toBusiness(r: BusinessRow): Business {
     workingHours: r.working_hours,
     socialLinks: r.social_links,
     manageToken: r.manage_token,
+    galleryKeys: jsonArray(r.gallery_keys),
   };
 }
 
@@ -2251,6 +2253,35 @@ export async function deleteRideByOwner(id: string, userId: string): Promise<boo
 export async function deleteRideById(id: string): Promise<boolean> {
   const res = await getDB().prepare("DELETE FROM rides WHERE id = ?").bind(id).run();
   return (res.meta.changes ?? 0) > 0;
+}
+
+export async function updateBusinessLogo(id: string, key: string): Promise<boolean> {
+  const res = await getDB().prepare("UPDATE businesses SET logo_key = ? WHERE id = ?").bind(key, id).run();
+  return res.success;
+}
+
+export async function addBusinessGalleryKey(id: string, key: string): Promise<boolean> {
+  const db = getDB();
+  const business = await db.prepare("SELECT gallery_keys FROM businesses WHERE id = ?").bind(id).first<{ gallery_keys: string | null }>();
+  if (!business) return false;
+  
+  const currentKeys = jsonArray(business.gallery_keys);
+  currentKeys.push(key);
+  
+  const res = await db.prepare("UPDATE businesses SET gallery_keys = ? WHERE id = ?").bind(JSON.stringify(currentKeys), id).run();
+  return res.success;
+}
+
+export async function removeBusinessGalleryKey(id: string, key: string): Promise<boolean> {
+  const db = getDB();
+  const business = await db.prepare("SELECT gallery_keys FROM businesses WHERE id = ?").bind(id).first<{ gallery_keys: string | null }>();
+  if (!business) return false;
+  
+  const currentKeys = jsonArray(business.gallery_keys);
+  const newKeys = currentKeys.filter(k => k !== key);
+  
+  const res = await db.prepare("UPDATE businesses SET gallery_keys = ? WHERE id = ?").bind(JSON.stringify(newKeys), id).run();
+  return res.success;
 }
 
 // ---------------------------------------------------------------------------
