@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { SignUp } from "@clerk/nextjs";
+import { SignUp, SignedIn, SignedOut } from "@clerk/nextjs";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
+import { ClientRedirect } from "./client-redirect";
 
 export const runtime = "edge";
 
@@ -15,16 +16,23 @@ export default function SignUpPage() {
             <Icon name="arrowLeft" size={14} strokeWidth={2.4} />
             Vissza
           </Link>
-          <div className="flex justify-center">
-            <SignUp
-              path="/regisztracio"
-              routing="path"
-              signInUrl="/belepes"
-              fallbackRedirectUrl="/profil"
-            />
+          <div className="flex justify-center w-full">
+            <SignedIn>
+              {/* Ha a Service Worker gyorsítótárából betöltődne az oldal, de a kliens már be van lépve */}
+              <ClientRedirect target="/profil" />
+            </SignedIn>
+            <SignedOut>
+              <SignUp
+                path="/regisztracio"
+                routing="path"
+                signInUrl="/belepes"
+                fallbackRedirectUrl="/profil"
+              />
+            </SignedOut>
           </div>
         </div>
       </main>
     </div>
   );
 }
+

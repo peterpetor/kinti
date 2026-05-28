@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { SignIn } from "@clerk/nextjs";
+import { SignIn, SignedIn, SignedOut } from "@clerk/nextjs";
 import { Icon } from "@/components/ui";
+import { ClientRedirect } from "./client-redirect";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -32,7 +33,7 @@ export default async function LoginPage({
   const { userId } = await auth();
   const target = safeRedirect(searchParams.redirect_url);
 
-  // Ha már be van lépve, ne mutassunk üres SignIn-t — küldjük tovább.
+  // Ha már be van lépve szerver oldalon, azonnal továbbítjuk.
   if (userId) redirect(target);
 
   return (
@@ -46,16 +47,23 @@ export default async function LoginPage({
             <Icon name="arrowLeft" size={14} strokeWidth={2.4} />
             Vissza
           </Link>
-          <div className="flex justify-center">
-            <SignIn
-              path="/belepes"
-              routing="path"
-              signUpUrl="/regisztracio"
-              fallbackRedirectUrl={target}
-            />
+          <div className="flex justify-center w-full">
+            <SignedIn>
+              {/* Ha a Service Worker gyorsítótárából betöltődne az oldal, de a kliens már be van lépve */}
+              <ClientRedirect target={target} />
+            </SignedIn>
+            <SignedOut>
+              <SignIn
+                path="/belepes"
+                routing="path"
+                signUpUrl="/regisztracio"
+                fallbackRedirectUrl={target}
+              />
+            </SignedOut>
           </div>
         </div>
       </main>
     </div>
   );
 }
+
