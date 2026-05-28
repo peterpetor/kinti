@@ -48,9 +48,10 @@ export default async function LoginPage({
           </Link>
           <div className="flex justify-center">
             <SignIn
+              path="/belepes"
+              routing="path"
               signUpUrl="/regisztracio"
               fallbackRedirectUrl={target}
-              forceRedirectUrl={target}
             />
           </div>
         </div>
