@@ -131,7 +131,7 @@ export default async function HirdetesPage({ params }: { params: { id: string } 
                   className="overflow-hidden rounded-xl border border-line bg-surface-alt"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={url} alt="" className="w-full object-cover" loading="lazy" />
+                  <img src={url} alt="" className="w-full object-cover" loading="lazy" decoding="async" />
                 </div>
               );
             })}

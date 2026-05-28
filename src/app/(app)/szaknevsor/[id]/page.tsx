@@ -117,6 +117,8 @@ export default async function BusinessPage({ params }: { params: { id: string } 
             src={heroUrl}
             alt={`${b.name} borítóképe`}
             className="absolute inset-0 h-full w-full object-cover"
+            fetchPriority="high"
+            decoding="async"
           />
         )}
         <div className="absolute inset-x-0 top-0 flex gap-2 bg-gradient-to-b from-black/30 to-transparent px-3.5 pb-3.5 pt-[calc(env(safe-area-inset-top)+0.75rem)]">

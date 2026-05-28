@@ -620,7 +620,15 @@ export function BulletinCard({
                 className="relative aspect-video w-[220px] shrink-0 snap-start overflow-hidden rounded-xl border border-line bg-surface-alt shadow-sm cursor-zoom-in transition hover:opacity-90"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt="" className="h-full w-full object-cover" />
+                <img
+                  src={url}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  width={220}
+                  height={124}
+                />
               </div>
             );
           })}

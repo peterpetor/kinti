@@ -108,7 +108,7 @@ export function LogoUploader({ currentKey, fallbackGradient }: LogoUploaderProps
           {imageUrl && (
             // Az R2 binding immutable URL-en szolgálja ki — biztonságos a böngésző cache-nek.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={imageUrl} alt="A vállalkozás logója" className="h-full w-full object-cover" />
+            <img src={imageUrl} alt="A vállalkozás logója" className="h-full w-full object-cover" decoding="async" />
           )}
           {busy && (
             <div className="absolute inset-0 grid place-items-center bg-black/30 text-white">

@@ -39,6 +39,9 @@ export function BusinessCard({ business: b, href, className }: BusinessCardProps
             alt={`${b.name} logója`}
             className="h-full w-full object-cover"
             loading="lazy"
+            decoding="async"
+            width={72}
+            height={72}
           />
         )}
       </div>

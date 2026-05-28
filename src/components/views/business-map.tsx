@@ -223,7 +223,7 @@ function SelectedCard({ business: b }: { business: Business }) {
       >
         {logoUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={logoUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+          <img src={logoUrl} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" width={48} height={48} />
         )}
       </div>
       <div className="min-w-0 flex-1">

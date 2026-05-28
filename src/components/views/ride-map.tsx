@@ -2,8 +2,11 @@
 
 import { Fragment, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Icon } from "@/components/ui";
 import type { Ride } from "@/lib/repo";
 import { phoneToWhatsapp } from "@/lib/rides";
@@ -75,9 +78,10 @@ export function RideMap({
         scrollWheelZoom
       >
         <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
+        {/* Klaszterezzük a fő (indulási) markereket — a megállók + útvonal kívül marad */}
+        <MarkerClusterGroup chunkedLoading showCoverageOnHover={false} maxClusterRadius={45}>
         {rides.map((r) => (
-          <Fragment key={r.id}>
-          <Marker position={[r.lat, r.lng]} icon={carIcon}>
+          <Marker key={r.id} position={[r.lat, r.lng]} icon={carIcon}>
             <Popup maxWidth={280} minWidth={220}>
               <div style={{ fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif" }}>
                 <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4, color: "#0e1f17" }}>
@@ -120,20 +124,24 @@ export function RideMap({
               </div>
             </Popup>
           </Marker>
-          {/* Közbeeső megállók kisebb kék pontokkal */}
-          {r.waypoints.map((wp, i) => (
-            <Marker key={`${r.id}-wp-${i}`} position={[wp.lat, wp.lng]} icon={stopIcon} />
-          ))}
-          {/* Útvonal polyline (indulás → megállók → [érkezés ha van koordináta]) */}
-          {r.waypoints.length > 0 && (
-            <Polyline
-              positions={[
-                [r.lat, r.lng],
-                ...r.waypoints.map((wp) => [wp.lat, wp.lng] as [number, number]),
-              ]}
-              pathOptions={{ color: ROUTE_COLOR, weight: 3, opacity: 0.6, dashArray: "8 6" }}
-            />
-          )}
+        ))}
+        </MarkerClusterGroup>
+
+        {/* Megálló-jelölők és polyline-ok a klaszteren kívül (vizuális útvonal). */}
+        {rides.map((r) => (
+          <Fragment key={`route-${r.id}`}>
+            {r.waypoints.map((wp, i) => (
+              <Marker key={`${r.id}-wp-${i}`} position={[wp.lat, wp.lng]} icon={stopIcon} />
+            ))}
+            {r.waypoints.length > 0 && (
+              <Polyline
+                positions={[
+                  [r.lat, r.lng],
+                  ...r.waypoints.map((wp) => [wp.lat, wp.lng] as [number, number]),
+                ]}
+                pathOptions={{ color: ROUTE_COLOR, weight: 3, opacity: 0.6, dashArray: "8 6" }}
+              />
+            )}
           </Fragment>
         ))}
       </MapContainer>
