@@ -61,7 +61,7 @@ export function TelekocsiView({
           </span>
           <div className="min-w-0 flex-1">
             <div className="text-[14px] font-extrabold tracking-[-0.01em] text-ink">
-              Van szabad helyed? Hirdesd meg!
+              Utaznál? Hirdess vagy keress fuvart!
             </div>
             <div className="text-[11.5px] text-ink-muted">
               Nincs regisztráció — a kapcsolat telefonon vagy WhatsAppon megy
