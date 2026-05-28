@@ -17,6 +17,8 @@ export default function SignUpPage() {
           </Link>
           <div className="flex justify-center">
             <SignUp
+              path="/regisztracio"
+              routing="path"
               signInUrl="/belepes"
               fallbackRedirectUrl="/profil"
             />
