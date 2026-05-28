@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { addRideRatingDraft, countRecentSpamLog, logSpamSubmit } from "@/lib/repo";
 import { sendRideRatingConfirmEmail } from "@/lib/email";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { hashIp } from "@/lib/bulletin";
 import { isDisposableEmail } from "@/lib/disposable-emails";
+import { validateRideRating } from "@/lib/ride-rating";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -14,22 +14,15 @@ const SPAM_KIND = "rating";
 const HOURLY_LIMIT = 5;
 const HONEYPOT_FIELD = "website";
 
-const ratingSchema = z.object({
-  targetPhone: z.string().min(3).max(30),
-  email: z.string().email().max(254),
-  rating: z.number().int().min(1).max(5),
-  turnstileToken: z.string().optional(),
-  website: z.string().optional(), // honeypot
-});
-
 /**
  * POST /api/ride/rating/submit — telekocsi-rating bekérése.
  *
- * Védelmi rétegek:
+ * Védelmi rétegek (a többi public submit-tal egységes minta):
  *   1) Honeypot
  *   2) Cloudflare Turnstile CAPTCHA
- *   3) Zod input validáció
- *   4) Disposable email tiltás (ne lehessen mailinator-ról zaklatást indítani)
+ *   3) Manual `validateRideRating()` lib (lib/ride-rating.ts) — a többi
+ *      flow-val konzisztens minta (lib/business.ts, lib/digest.ts, …)
+ *   4) Disposable email tiltás
  *   5) IP-alapú rate-limit: max 5 / IP / 60 perc
  */
 export async function POST(req: Request) {
@@ -56,12 +49,15 @@ export async function POST(req: Request) {
     );
   }
 
-  // 3) Zod validáció
-  const parsed = ratingSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Érvénytelen adatok." }, { status: 400 });
+  // 3) Validáció a többi flow mintájára
+  const validation = validateRideRating(body);
+  if (!validation.ok) {
+    return NextResponse.json(
+      { error: "Érvénytelen adatok.", details: validation.errors },
+      { status: 400 },
+    );
   }
-  const { targetPhone, email, rating } = parsed.data;
+  const { targetPhone, email, rating } = validation.value;
 
   // 4) Disposable email
   if (isDisposableEmail(email)) {

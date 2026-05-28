@@ -875,7 +875,7 @@ Kinti`;
     body: `
       <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">Szia 👋</p>
       <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
-        Kaptunk tőled egy <strong>${rating} csillagos</strong> értékelést egy telekocsi felhasználóra (${targetPhone}).
+        Kaptunk tőled egy <strong>${rating} csillagos</strong> értékelést egy telekocsi felhasználóra (${escapeHtml(targetPhone)}).
         Mivel a Kinti egy zárt és biztonságos közösség, kérjük, erősítsd meg az e-mail címedet:
       </p>
       <div style="margin:0 0 20px;">

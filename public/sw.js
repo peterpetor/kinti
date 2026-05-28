@@ -16,7 +16,7 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v7";
+const VERSION = "kinti-v8";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -95,10 +95,13 @@ self.addEventListener("fetch", (event) => {
   // Ezek dinamikusak, a bejelentkezési állapottól függenek, így sosem szabad cache-elni őket.
   if (url.searchParams.has("_rsc")) return;
 
-  // Auth-érzékeny és privát oldalak — bypass.
+  // Auth-érzékeny, privát, és dinamikusan változó számokat mutató oldalak — bypass.
   // A manage-page-ek (token-alapú szerkesztők) is bypass-oltak: ha a feladó
   // törli a vállalkozást a manage URL-en, és vissza próbál menni, a cache-ből
   // visszakapott régi HTML hibás állapotot mutatna.
+  // Az esemény részlet oldal (RSVP után dinamikusan frissülő "Ki megy?" szám)
+  // is bypass-olt — különben a stale-while-revalidate egy körig a régi számot
+  // mutatná (FOMO élmény tönkrement).
   if (
     url.pathname.startsWith("/belepes") ||
     url.pathname.startsWith("/regisztracio") ||
@@ -108,7 +111,8 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/esemeny-kezeles") ||
     url.pathname.startsWith("/telekocsi-kezeles") ||
     url.pathname.startsWith("/hirdetes-kezeles") ||
-    url.pathname.startsWith("/velemeny-kezeles")
+    url.pathname.startsWith("/velemeny-kezeles") ||
+    url.pathname.startsWith("/kozosseg/esemeny/")
   ) return;
 
   // Navigációs kérés (HTML oldal) → network-first, fallback /offline-ra
