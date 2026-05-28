@@ -56,9 +56,18 @@ export async function POST(req: Request, { params }: { params: { token: string }
     );
   }
 
+  // A régi logó kulcsát eltároljuk — az UPDATE után töröljük R2-ből, hogy ne
+  // halmozzanak fel orphan fájlokat. Csak akkor töröljük, ha tényleg más kulcs
+  // (önmagát ne töröljük), és csak ha a régi a saját prefix-szel kezdődik.
+  const previousKey = business.logoKey;
+
   const ok = await setBusinessLogoByManageToken(params.token, key);
   if (!ok) {
     return NextResponse.json({ error: "A frissítés nem sikerült." }, { status: 500 });
+  }
+
+  if (previousKey && previousKey !== key && previousKey.startsWith(expectedPrefix)) {
+    await getMediaBucket().delete(previousKey).catch(() => { /* silent */ });
   }
 
   return NextResponse.json(

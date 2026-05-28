@@ -64,9 +64,16 @@ export async function POST(req: Request) {
     );
   }
 
+  // A régi logót töröljük R2-ből — különben halmozódnának az orphan fájlok.
+  const previousKey = business.logoKey;
+
   const ok = await setBusinessLogo(business.id, userId, key);
   if (!ok) {
     return NextResponse.json({ error: "A frissítés nem sikerült." }, { status: 500 });
+  }
+
+  if (previousKey && previousKey !== key && previousKey.startsWith(expectedPrefix)) {
+    await getMediaBucket().delete(previousKey).catch(() => { /* silent */ });
   }
 
   return NextResponse.json(
