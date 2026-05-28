@@ -30,7 +30,7 @@ export default async function FeedPage() {
           <img
             src="/switzerland-flag.png"
             alt="Svájc"
-            className="h-[18px] w-[18px] rounded-[4px] object-contain select-none"
+            className="h-[36px] w-[36px] rounded-[6px] object-contain select-none"
           />
         </div>
         <div className="flex-1" />

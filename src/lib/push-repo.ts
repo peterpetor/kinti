@@ -1,4 +1,4 @@
-import { getDb } from "./cloudflare";
+import { getDB } from "./cloudflare";
 
 export interface PushSubscriptionRow {
   id: string;
@@ -15,7 +15,7 @@ export async function addPushSubscription(
   auth: string,
   cantonCode: string | null = null,
 ): Promise<void> {
-  const db = getDb();
+  const db = getDB();
   const id = crypto.randomUUID();
   
   await db
@@ -29,12 +29,12 @@ export async function addPushSubscription(
 }
 
 export async function removePushSubscription(endpoint: string): Promise<void> {
-  const db = getDb();
+  const db = getDB();
   await db.prepare("DELETE FROM push_subscriptions WHERE endpoint = ?").bind(endpoint).run();
 }
 
 export async function getPushSubscriptions(cantonCode: string | null = null): Promise<PushSubscriptionRow[]> {
-  const db = getDb();
+  const db = getDB();
   if (cantonCode) {
     const { results } = await db
       .prepare("SELECT * FROM push_subscriptions WHERE canton_code = ? OR canton_code IS NULL")
