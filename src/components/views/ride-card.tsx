@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { Icon } from "@/components/ui";
+import { cn } from "@/lib/cn";
 import type { PublicRide } from "@/lib/repo";
 import { phoneToWhatsapp } from "@/lib/rides";
 import { RideDeleteButton } from "./ride-delete-button";
@@ -29,8 +30,11 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
     <article className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3 overflow-hidden">
       {/* Útvonal (indulás → [megállók] → érkezés) */}
       <div className="flex items-start gap-2">
-        <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-[#3a6ea5]/15 text-[#3a6ea5] text-lg">
-          🚗
+        <span className={cn(
+          "mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-[12px] text-lg",
+          ride.isRequest ? "bg-[#e67e22]/15 text-[#e67e22]" : "bg-[#3a6ea5]/15 text-[#3a6ea5]"
+        )}>
+          {ride.isRequest ? "🙋‍♂️" : "🚗"}
         </span>
         <div className="min-w-0 flex-1">
           {/* flex-wrap + gap-x-1: sortörés szabad, mert minden szakasz külön inline elem.
@@ -41,7 +45,9 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
             {ride.waypoints.map((wp, i) => (
               <Fragment key={i}>
                 <span className="text-ink-faint">→</span>
-                <span className="text-[#3a6ea5] break-words">{wp.city}</span>
+                <span className={cn("break-words", ride.isRequest ? "text-[#e67e22]" : "text-[#3a6ea5]")}>
+                  {wp.city}
+                </span>
               </Fragment>
             ))}
             <span className="text-ink-faint">→</span>
@@ -54,7 +60,7 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
             </span>
             <span className="flex items-center gap-1">
               <Icon name="users" size={11} strokeWidth={2.2} />
-              {ride.seats} hely
+              {ride.isRequest ? `Keres: ${ride.seats} fő` : `${ride.seats} hely`}
             </span>
             {ride.priceText && (
               <span className="font-bold text-primary">{ride.priceText}</span>
@@ -72,7 +78,10 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
 
       {/* Feladó */}
       <div className="flex items-center gap-2 text-[12.5px] text-ink-muted">
-        <span className="grid h-6 w-6 place-items-center rounded-full bg-[#3a6ea5]/15 text-[10px] font-bold text-[#3a6ea5]">
+        <span className={cn(
+          "grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold",
+          ride.isRequest ? "bg-[#e67e22]/15 text-[#e67e22]" : "bg-[#3a6ea5]/15 text-[#3a6ea5]"
+        )}>
           {ride.posterName.charAt(0).toUpperCase()}
         </span>
         <span className="font-semibold text-ink">{ride.posterName}</span>

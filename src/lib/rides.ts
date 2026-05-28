@@ -46,6 +46,8 @@ export interface RideFormInput {
   /** Opcionális: ha a kliens már geokódolta az indulást. */
   lat?: unknown;
   lng?: unknown;
+  /** Keresés (utas) vagy kínálat (sofőr)? */
+  isRequest?: unknown;
 }
 
 export interface ValidatedRideInput {
@@ -62,6 +64,7 @@ export interface ValidatedRideInput {
   waypointCities: string[];
   lat: number | null;
   lng: number | null;
+  isRequest: boolean;
 }
 
 export type RideValidationError = { field: keyof RideFormInput; message: string };
@@ -94,8 +97,10 @@ export function validateRideInput(
   if (typeof input.seats === "number") seats = input.seats;
   else if (typeof input.seats === "string" && input.seats.trim() !== "") seats = Number(input.seats);
   if (!Number.isInteger(seats) || seats < RIDE_LIMITS.seatsMin || seats > RIDE_LIMITS.seatsMax) {
-    errors.push({ field: "seats", message: `A szabad helyek száma 1 és ${RIDE_LIMITS.seatsMax} között lehet.` });
+    errors.push({ field: "seats", message: `A helyek száma ${RIDE_LIMITS.seatsMin} és ${RIDE_LIMITS.seatsMax} között lehet.` });
   }
+
+  const isRequest = input.isRequest === true || input.isRequest === "true";
 
   const priceText = str(input.priceText);
   if (priceText.length > RIDE_LIMITS.priceMax) {
@@ -183,6 +188,7 @@ export function validateRideInput(
       waypointCities,
       lat,
       lng,
+      isRequest,
     },
   };
 }

@@ -1979,6 +1979,7 @@ interface RideRow {
   contact_phone: string;
   notes: string | null;
   waypoints: string | null;
+  is_request: number;
   created_at: string;
   expires_at: string;
   manage_token: string | null;
@@ -2007,6 +2008,7 @@ export interface Ride {
   contactWhatsapp: string | null;
   notes: string | null;
   waypoints: RideWaypoint[];
+  isRequest: boolean;
   createdAt: string;
   expiresAt: string;
   manageToken: string | null;
@@ -2055,6 +2057,7 @@ function toRide(r: RideRow): Ride {
     contactWhatsapp: r.contact_whatsapp,
     notes: r.notes,
     waypoints: parseWaypoints(r.waypoints),
+    isRequest: r.is_request === 1,
     createdAt: r.created_at,
     expiresAt: r.expires_at,
     manageToken: r.manage_token,
@@ -2076,6 +2079,7 @@ export interface CreateRideInput {
   contactWhatsapp: string | null;
   notes: string | null;
   waypoints: RideWaypoint[] | null;
+  isRequest: boolean;
   expiresAt: string;
   manageToken: string;
 }
@@ -2089,8 +2093,8 @@ export async function createRide(input: CreateRideInput): Promise<void> {
       `INSERT INTO rides
        (id, departure_city, destination_city, departure_time, lat, lng, seats,
         price_text, poster_name, poster_user_id, contact_phone, contact_whatsapp,
-        notes, waypoints, expires_at, manage_token)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        notes, waypoints, is_request, expires_at, manage_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -2107,6 +2111,7 @@ export async function createRide(input: CreateRideInput): Promise<void> {
       input.contactWhatsapp,
       input.notes,
       wpJson,
+      input.isRequest ? 1 : 0,
       input.expiresAt,
       input.manageToken,
     )

@@ -17,6 +17,7 @@ import { rememberMyRide } from "./my-ride-actions";
 type Phase = "idle" | "submitting" | "sent" | "error";
 
 interface FormState {
+  isRequest: boolean;
   departureCity: string;
   destinationCity: string;
   departureTime: string;
@@ -30,6 +31,7 @@ interface FormState {
 }
 
 const INITIAL: FormState = {
+  isRequest: false,
   departureCity: "",
   destinationCity: "",
   departureTime: "",
@@ -75,6 +77,7 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         body: JSON.stringify({
           ...form,
           seats: Number(form.seats) || 1,
+          isRequest: form.isRequest,
           waypoints: form.waypoints.filter((w) => w.trim().length > 0),
           turnstileToken,
         }),
@@ -172,6 +175,19 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3" noValidate>
+      <Section title="Hirdetés típusa" required>
+        <div className="flex gap-2">
+          <label className={cn("flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border p-3 text-[13px] font-bold transition", !form.isRequest ? "border-[#3a6ea5] bg-[#3a6ea5]/10 text-[#3a6ea5]" : "border-line bg-surface-alt text-ink-muted")}>
+            <input type="radio" name="isRequest" className="sr-only" checked={!form.isRequest} onChange={() => setField("isRequest", false)} />
+            🚗 Fuvart kínálok
+          </label>
+          <label className={cn("flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] border p-3 text-[13px] font-bold transition", form.isRequest ? "border-[#3a6ea5] bg-[#3a6ea5]/10 text-[#3a6ea5]" : "border-line bg-surface-alt text-ink-muted")}>
+            <input type="radio" name="isRequest" className="sr-only" checked={form.isRequest} onChange={() => setField("isRequest", true)} />
+            🙋‍♂️ Fuvart keresek
+          </label>
+        </div>
+      </Section>
+
       <Section title="Honnan – hová" required>
         <div className="grid gap-2 sm:grid-cols-2">
           <div>
@@ -263,7 +279,7 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         <div className="grid gap-2 sm:grid-cols-2">
           <div>
             <label className="mb-1 block text-[11px] font-bold text-ink-muted uppercase tracking-wider">
-              Szabad helyek
+              {form.isRequest ? "Hányan utaztok?" : "Szabad helyek"}
             </label>
             <select
               value={form.seats}
@@ -278,7 +294,7 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
           </div>
           <div>
             <label className="mb-1 block text-[11px] font-bold text-ink-muted uppercase tracking-wider">
-              Ár
+              {form.isRequest ? "Hozzájárulás" : "Ár"}
             </label>
             <input
               type="text"
@@ -344,7 +360,7 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         <textarea
           value={form.notes}
           onChange={(e) => setField("notes", e.target.value)}
-          placeholder="Pl. Kutyát hozhatsz, 2 bőrönd fér, dohányzom…"
+          placeholder={form.isRequest ? "Pl. 2 kutyával utaznánk, van 1 bőröndünk…" : "Pl. Kutyát hozhatsz, 2 bőrönd fér, dohányzom…"}
           maxLength={RIDE_LIMITS.notesMax}
           rows={3}
           className={cn(inputCls(errors.notes), "resize-none")}
@@ -376,7 +392,7 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
           phase === "submitting" && "cursor-not-allowed opacity-50",
         )}
       >
-        {phase === "submitting" ? "Küldés…" : "Fuvar meghirdetése"}
+        {phase === "submitting" ? "Küldés…" : (form.isRequest ? "Keresés meghirdetése" : "Fuvar meghirdetése")}
         {phase !== "submitting" && <Icon name="arrowRight" size={15} strokeWidth={2.4} />}
       </button>
 

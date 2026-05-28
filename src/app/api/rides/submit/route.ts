@@ -148,6 +148,7 @@ export async function POST(req: Request) {
     contactWhatsapp: v.contactWhatsapp,
     notes: v.notes,
     waypoints: waypoints.length > 0 ? waypoints : null,
+    isRequest: v.isRequest,
     expiresAt: computeRideExpiry(v.departureTime),
     manageToken,
   });
