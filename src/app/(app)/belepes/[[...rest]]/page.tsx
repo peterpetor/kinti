@@ -2,9 +2,15 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { SignIn, useAuth } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
 import { Icon } from "@/components/ui";
+
+const SignIn = dynamic(
+  () => import("@clerk/nextjs").then((m) => m.SignIn),
+  { ssr: false }
+);
 
 export const runtime = "edge";
 
@@ -23,8 +29,9 @@ function safeRedirect(target: string | null): string {
   return "/profil";
 }
 
-export default function LoginPage() {
-  const router = useRouter();
+import { Suspense } from "react";
+
+function LoginForm() {
   const searchParams = useSearchParams();
   const { isSignedIn, isLoaded } = useAuth();
   
@@ -75,5 +82,17 @@ export default function LoginPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[calc(100dvh-70px)] flex items-center justify-center">
+        <span className="text-ink-muted animate-pulse">Betöltés...</span>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -21,8 +21,8 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    // Minden útvonal, kivéve a Next belső fájljait és a statikus assetokat.
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Minden útvonal, kivéve a Next belső fájljait, a statikus assetokat és a belépési/regisztrációs oldalakat.
+    "/((?!_next|belepes|regisztracio|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Az API-kat és trpc-t mindig futtassa.
     "/(api|trpc)(.*)",
   ],

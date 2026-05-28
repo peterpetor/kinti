@@ -3,8 +3,14 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SignUp, useAuth } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
 import { Icon } from "@/components/ui";
+
+const SignUp = dynamic(
+  () => import("@clerk/nextjs").then((m) => m.SignUp),
+  { ssr: false }
+);
 
 export const runtime = "edge";
 
