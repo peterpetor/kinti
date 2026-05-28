@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { Ride } from "@/lib/repo";
 import { RideCard } from "./ride-card";
+import { PushOptin } from "@/components/push-optin";
 
 /**
  * TelekocsiView — a /telekocsi oldal kliens-burkolója. Lista / Térkép váltó.
@@ -68,6 +69,10 @@ export function TelekocsiView({
           </div>
           <Icon name="chevR" size={14} className="text-[#3a6ea5] shrink-0" />
         </Link>
+      </div>
+
+      <div className="px-5">
+        <PushOptin />
       </div>
 
       {/* Kereső + dátumszűrő */}

@@ -5,11 +5,16 @@ import {
   countRecentRideSubmits,
   logRideSubmit,
   type RideWaypoint,
+  listPushSubscriptions,
+  deletePushSubscription,
 } from "@/lib/repo";
 import { validateRideInput, computeRideExpiry } from "@/lib/rides";
 import { geocodeCity } from "@/lib/geocode";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { hashIp } from "@/lib/bulletin";
+import { getCloudflareEnv } from "@/lib/cloudflare";
+import { sendPush } from "@/lib/push";
+import { matchCantonByName } from "@/lib/cantons";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -19,6 +24,23 @@ const FALLBACK = { lat: 46.8, lng: 8.23 };
 
 /** Napi limit / IP — spam-védelem. */
 const RIDE_DAILY_LIMIT = 5;
+
+async function notifyNewRide(city: string): Promise<void> {
+  const env = getCloudflareEnv();
+  if (!env.VAPID_PRIVATE_KEY) return;
+  const cantonCode = matchCantonByName(city)?.code ?? null;
+  const subs = await listPushSubscriptions(cantonCode);
+  await Promise.all(
+    subs.map(async (s) => {
+      try {
+        const status = await sendPush(env.VAPID_PRIVATE_KEY!, { endpoint: s.endpoint });
+        if (status === 404 || status === 410) await deletePushSubscription(s.endpoint);
+      } catch {
+        /* egyedi kézbesítési hibát elnyelünk */
+      }
+    }),
+  );
+}
 
 /**
  * POST /api/rides/submit — új telekocsi-hirdetés.
@@ -131,6 +153,12 @@ export async function POST(req: Request) {
 
   // Rate-limit napló (fire-and-forget — hiba esetén sem gátolja a flow-t).
   logRideSubmit(crypto.randomUUID(), ipHash).catch(() => { /* silent */ });
+
+  try {
+    await notifyNewRide(v.departureCity);
+  } catch {
+    /* push failure shouldn't block the API response */
+  }
 
   // A manage URL-t a kliens success oldala kapja meg — a felhasználó elteszi
   // (nincs email, mert vendég-feladásnál nem kérünk emailt).

@@ -27,6 +27,7 @@ const OFFLINE_URL = "/offline";
 /** Telepítéskor előmelegítjük a legfontosabb statikus erőforrásokat. */
 const PRECACHE = [
   OFFLINE_URL,
+  "/tudasbazis",
   "/manifest.webmanifest",
   "/icons/kinti.svg",
   "/icons/icon-192.png",
@@ -132,8 +133,8 @@ self.addEventListener("message", (event) => {
 // titkosított payloadot küldenénk, itt olvasnánk az `event.data`-ból.
 self.addEventListener("push", (event) => {
   let title = "kinti";
-  let body = "Új esemény a közösségben — koppints a részletekért 🎉";
-  let url = "/kozosseg";
+  let body = "Új esemény vagy fuvar a közösségben! — nézd meg az appban 🎉";
+  let url = "/";
 
   if (event.data) {
     try {
