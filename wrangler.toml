@@ -43,6 +43,10 @@ NEXT_PUBLIC_CF_BEACON_TOKEN = ""
 # Kulcs: https://cloud.maptiler.com → Account → Keys (free, 100k load/hó).
 NEXT_PUBLIC_MAPTILER_KEY = ""
 
-# A titkok (CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY stb.) NEM ide
-# kerülnek — helyben a .dev.vars fájlba, élesben:
-#   wrangler pages secret put CLERK_SECRET_KEY
+# A valódi titkok (pl. CLERK_SECRET_KEY) továbbra is a Cloudflare Dashboardon 
+# vagy a 'wrangler pages secret put' paranccsal kerülnek beállításra.
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsua2ludGkuYXBwJA"
+NEXT_PUBLIC_CLERK_SIGN_IN_URL = "/belepes"
+NEXT_PUBLIC_CLERK_SIGN_UP_URL = "/regisztracio"
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL = "/profil"
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL = "/profil"
