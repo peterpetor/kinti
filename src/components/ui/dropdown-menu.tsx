@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useAuth, SignOutButton } from "@clerk/nextjs";
+import { useUser, SignOutButton } from "@clerk/nextjs";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 import { SosModal } from "../views/sos-modal";
@@ -10,7 +10,7 @@ import { SosModal } from "../views/sos-modal";
 export function DropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSosOpen, setIsSosOpen] = useState(false);
-  const { isSignedIn, isLoaded } = useAuth();
+  const { user, isLoaded } = useUser();
 
   // Kívülre kattintás (már nem szükséges, mivel full screen, de meghagyhatjuk a biztonság kedvéért vagy eltávolíthatjuk. Inkább zárjuk be a menüt a X gombbal.)
   useEffect(() => {
@@ -132,7 +132,7 @@ export function DropdownMenu() {
 
             <div className="h-px bg-line/60 my-4 mx-2" />
 
-            {isLoaded && isSignedIn && (
+            {isLoaded && user && (
               <SignOutButton redirectUrl="/">
                 <button className="flex w-full items-center justify-center gap-2.5 mt-2 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
                   <Icon name="user" size={16} strokeWidth={2.4} />
