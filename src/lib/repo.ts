@@ -930,6 +930,8 @@ interface ReviewRow {
   published_at: string;
   manage_token: string;
   email: string;
+  owner_response: string | null;
+  owner_responded_at: string | null;
 }
 
 function toReviewDraft(r: ReviewDraftRow): ReviewDraft {
@@ -959,6 +961,8 @@ function toReview(r: ReviewRow): Review {
     body: r.body,
     reviewerName: r.reviewer_name,
     publishedAt: r.published_at,
+    ownerResponse: r.owner_response ?? null,
+    ownerRespondedAt: r.owner_responded_at ?? null,
   };
 }
 
@@ -1083,7 +1087,7 @@ export async function getReviewsByBusiness(businessId: string): Promise<Review[]
   const { results } = await getDB()
     .prepare(
       `SELECT id, business_id, rating, body, reviewer_name, published_at,
-              manage_token, email
+              manage_token, email, owner_response, owner_responded_at
        FROM reviews WHERE business_id = ? AND hidden = 0
        ORDER BY published_at DESC`,
     )
@@ -1672,6 +1676,31 @@ export async function updateContentReportStatus(token: string, status: string): 
     .prepare("UPDATE content_reports SET status = ? WHERE moderate_token = ?")
     .bind(status, token)
     .run();
+}
+
+/**
+ * A vállalkozó (tulajdonos) válasza egy véleményre. Csak akkor ír, ha a megadott
+ * userId tényleg a kérdéses vélemény vállalkozásának tulajdonosa. Visszaadja,
+ * hogy érintett-e sort.
+ */
+export async function setReviewOwnerResponse(
+  reviewId: string,
+  ownerUserId: string,
+  response: string | null,
+): Promise<boolean> {
+  // SQL-szintű tulajdonos-ellenőrzés: csak akkor ír, ha létezik a businesses
+  // sor a review business_id-jával és a megadott owner_user_id-vel.
+  const res = await getDB()
+    .prepare(
+      `UPDATE reviews
+       SET owner_response = ?, owner_responded_at = CASE WHEN ? IS NULL THEN NULL ELSE datetime('now') END
+       WHERE id = ? AND business_id IN (
+         SELECT id FROM businesses WHERE owner_user_id = ?
+       )`,
+    )
+    .bind(response, response, reviewId, ownerUserId)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
 }
 
 /** Hány jelentés érkezett erről az IP-ről az elmúlt 1 órában (abuse-szűrés). */

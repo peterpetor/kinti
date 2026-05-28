@@ -134,6 +134,9 @@ export interface Review {
   body: string;
   reviewerName: string;
   publishedAt: string;
+  /** A vállalkozó nyilvános válasza (Google-stílusú). */
+  ownerResponse: string | null;
+  ownerRespondedAt: string | null;
 }
 
 /** Megerősítésre váró vélemény (review_drafts). */

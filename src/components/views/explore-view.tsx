@@ -7,6 +7,7 @@ import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
+import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
 
 /**
  * ExploreView (Szaknévsor) — szerverről kapja a teljes adatkészletet, és
@@ -43,6 +44,7 @@ export function ExploreView({
   const [q, setQ] = useState(initialQ);
   const [canton, setCanton] = useState(initialCanton);
   const [showFavs, setShowFavs] = useState(initialFav);
+  const [openNow, setOpenNow] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [view, setView] = useState<ViewMode>("list");
 
@@ -64,6 +66,11 @@ export function ExploreView({
         canton === "all" ||
         cantonFromAddress(b.address ?? null)?.code === canton;
       const byFav = !showFavs || favoriteIds.includes(b.id);
+      const byOpen =
+        !openNow ||
+        (b.workingHours
+          ? calculateBusinessHoursStatus(parseWorkingHours(b.workingHours)).isOpen
+          : false);
       const byText =
         !needle ||
         b.name.toLowerCase().includes(needle) ||
@@ -71,9 +78,9 @@ export function ExploreView({
         (b.address ?? "").toLowerCase().includes(needle) ||
         // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
         matchesCanton({ address: b.address ?? null }, needle);
-      return byCat && byCanton && byFav && byText;
+      return byCat && byCanton && byFav && byOpen && byText;
     });
-  }, [businesses, cat, canton, q, showFavs, favoriteIds]);
+  }, [businesses, cat, canton, q, showFavs, openNow, favoriteIds]);
 
   const locatedCount = useMemo(
     () => filtered.filter((b) => b.lat != null && b.lng != null).length,
@@ -140,6 +147,29 @@ export function ExploreView({
           />
           <span className="text-[11.5px] font-bold tracking-wide select-none">
             Mentett kedvencek
+          </span>
+        </button>
+
+        {/* Most nyitva szűrő */}
+        <button
+          type="button"
+          onClick={() => setOpenNow((v) => !v)}
+          aria-pressed={openNow}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            openNow
+              ? "bg-success/10 border-success/30 text-success font-bold"
+              : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
+          )}
+        >
+          <span
+            className={cn(
+              "h-1.5 w-1.5 rounded-full",
+              openNow ? "bg-success animate-pulse" : "bg-ink-faint",
+            )}
+          />
+          <span className="text-[11.5px] font-bold tracking-wide select-none">
+            Most nyitva
           </span>
         </button>
       </div>

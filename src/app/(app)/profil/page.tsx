@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoUploader } from "@/components/views/logo-uploader";
 import { ProfileEditor } from "@/components/views/profile-editor";
+import { ReviewResponseForm } from "@/components/views/review-response-form";
 import { InstallPrompt } from "@/components/install-prompt";
 import {
   Icon,
@@ -226,6 +227,35 @@ async function OwnerDashboard({
           </div>
         ))}
       </section>
+
+      {/* Vélemények — a tulajdonos válaszolhat */}
+      {reviews.length > 0 && (
+        <section className="space-y-2">
+          <SectionHeader>Vélemények — válaszolj!</SectionHeader>
+          {reviews.map((r) => (
+            <div key={r.id} className="rounded-card border border-line bg-surface p-3.5 shadow-card">
+              <div className="flex items-center gap-2.5">
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-white">
+                  {r.reviewerName.charAt(0).toUpperCase()}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13.5px] font-bold text-ink">{r.reviewerName}</div>
+                  <div className="text-[11px] text-ink-muted">{getRelativeTime(r.publishedAt)}</div>
+                </div>
+                <div className="flex gap-px text-star">
+                  {Array.from({ length: r.rating }).map((_, i) => (
+                    <Icon key={i} name="star" size={12} filled />
+                  ))}
+                </div>
+              </div>
+              <p className="mt-2 whitespace-pre-wrap text-[13px] leading-relaxed text-ink-muted">
+                {r.body}
+              </p>
+              <ReviewResponseForm reviewId={r.id} existing={r.ownerResponse} />
+            </div>
+          ))}
+        </section>
+      )}
     </>
   );
 }

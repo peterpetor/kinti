@@ -8,6 +8,7 @@ import {
   DropdownMenu,
 } from "@/components/ui";
 import { WeatherWidget } from "@/components/weather-widget";
+import { OnboardingTour } from "@/components/onboarding-tour";
 import { getBusinesses, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -21,6 +22,9 @@ export default async function FeedPage() {
 
   return (
     <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
+      {/* Első indításkor: 3 lépéses bemutató (localStorage-gated) */}
+      <OnboardingTour />
+
       {/* fejléc */}
       <header className="flex items-center gap-2.5">
         <div className="flex items-center gap-2">

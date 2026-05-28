@@ -297,6 +297,16 @@ export default async function BusinessPage({ params }: { params: { id: string } 
                   <p className="whitespace-pre-wrap text-[13.5px] leading-relaxed text-ink text-pretty">
                     „{r.body}"
                   </p>
+                  {r.ownerResponse && (
+                    <div className="mt-2.5 rounded-[12px] border-l-2 border-primary bg-primary-soft/40 px-3 py-2">
+                      <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary">
+                        A vállalkozó válasza{r.ownerRespondedAt ? ` · ${fmtRelative(r.ownerRespondedAt)}` : ""}
+                      </p>
+                      <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-ink">
+                        {r.ownerResponse}
+                      </p>
+                    </div>
+                  )}
                   <div className="mt-2.5 flex justify-end border-t border-line/30 pt-2">
                     <ReportButton contentType="review" contentId={r.id} variant="link" />
                   </div>
