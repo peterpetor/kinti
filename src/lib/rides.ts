@@ -13,6 +13,8 @@ export const RIDE_LIMITS = {
   notesMax: 500,
   seatsMin: 1,
   seatsMax: 8,
+  posterNameMin: 2,
+  posterNameMax: 60,
 } as const;
 
 /** Lazán E.164-szerű telefonszám (a WhatsApp-linkhez a + és számok kellenek). */
@@ -35,6 +37,8 @@ export interface RideFormInput {
   priceText?: unknown;
   contactPhone?: unknown;
   notes?: unknown;
+  /** Feladó megjelenített neve — vendég-beküldésnél kötelező; Clerk-userhez opcionális (Clerk-fiókból jön). */
+  posterName?: unknown;
   /** Közbeeső megállók (város-nevek tömbje — a szerver geokódolja). */
   waypoints?: unknown;
   /** Opcionális: ha a kliens már geokódolta az indulást. */
@@ -50,6 +54,7 @@ export interface ValidatedRideInput {
   priceText: string | null;
   contactPhone: string;
   notes: string | null;
+  posterName: string | null;
   /** Közbeeső megálló város-nevek (még nem geokódolva — a szerver csinálja). */
   waypointCities: string[];
   lat: number | null;
@@ -109,8 +114,16 @@ export function validateRideInput(
     errors.push({ field: "notes", message: `A megjegyzés legfeljebb ${RIDE_LIMITS.notesMax} karakter.` });
   }
 
+  const posterName = str(input.posterName);
+  if (posterName && (posterName.length < RIDE_LIMITS.posterNameMin || posterName.length > RIDE_LIMITS.posterNameMax)) {
+    errors.push({
+      field: "posterName",
+      message: `A megjelenített név ${RIDE_LIMITS.posterNameMin}–${RIDE_LIMITS.posterNameMax} karakter között lehet.`,
+    });
+  }
+
   if (!errors.length) {
-    const dirty = findProfanityInFields({ departureCity, destinationCity, notes });
+    const dirty = findProfanityInFields({ departureCity, destinationCity, notes, posterName });
     if (dirty) {
       errors.push({
         field: dirty.field as keyof RideFormInput,
@@ -153,6 +166,7 @@ export function validateRideInput(
       priceText: priceText || null,
       contactPhone,
       notes: notes || null,
+      posterName: posterName || null,
       waypointCities,
       lat,
       lng,

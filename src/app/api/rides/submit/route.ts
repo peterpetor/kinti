@@ -11,16 +11,13 @@ export const dynamic = "force-dynamic";
 const FALLBACK = { lat: 46.8, lng: 8.23 };
 
 /**
- * POST /api/rides/submit — új telekocsi-hirdetés. Csak bejelentkezett (Clerk)
- * felhasználó. A poszter neve a Clerk-fiókból jön; a kapcsolat telefonon megy
- * (zero-liability, nincs beépített chat).
+ * POST /api/rides/submit — új telekocsi-hirdetés.
+ *
+ * Nem kötelező a Clerk-belépés: vendég-felhasználó is feladhat fuvart, ekkor a
+ * `posterName` mező a form-on jön. Belépett userhez a Clerk-fiók neve.
+ * A jelentkezőkkel a kapcsolat telefonon megy (zero-liability, nincs beépített chat).
  */
 export async function POST(req: Request) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Bejelentkezés szükséges." }, { status: 401 });
-  }
-
   let body: Record<string, unknown> = {};
   try {
     body = await req.json();
@@ -46,12 +43,23 @@ export async function POST(req: Request) {
     lng = geo?.lng ?? FALLBACK.lng;
   }
 
-  // Poszter neve a Clerk-fiókból
-  const user = await currentUser();
-  const posterName =
-    [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
-    user?.username ||
-    "Kinti tag";
+  // Poszter neve: belépett Clerk-fiók > form-ról adott név > generikus.
+  const { userId } = await auth();
+  let posterName: string | null = v.posterName?.trim() || null;
+  if (userId) {
+    const user = await currentUser();
+    const fromClerk =
+      [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
+      user?.username ||
+      null;
+    posterName = fromClerk || posterName;
+  }
+  if (!posterName) {
+    return NextResponse.json(
+      { error: "Hibás bemenet.", details: [{ field: "posterName", message: "Add meg a megjelenített neved." }] },
+      { status: 400 },
+    );
+  }
 
   // Közbeeső megállók geokódolása (párhuzamosan).
   const waypoints: RideWaypoint[] = [];
@@ -78,7 +86,7 @@ export async function POST(req: Request) {
     seats: v.seats,
     priceText: v.priceText,
     posterName,
-    posterUserId: userId,
+    posterUserId: userId ?? null,
     contactPhone: v.contactPhone,
     notes: v.notes,
     waypoints: waypoints.length > 0 ? waypoints : null,

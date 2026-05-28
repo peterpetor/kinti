@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import {
   getCategories,
   createBusinessSubmission,
@@ -92,6 +93,11 @@ export async function POST(req: Request) {
   const now = new Date();
   const expiresAt = new Date(now.getTime() + BUSINESS_CONFIRM_TTL_MS).toISOString();
 
+  // Ha a beküldést egy belépett vállalkozó indítja, a Clerk user_id-t is
+  // elmentjük a piszkozatba — a megerősítő linkre kattintáskor AUTOMATIKUSAN
+  // hozzákötjük a publikus businesses-rekordot a tulajdonoshoz.
+  const { userId: clerkUserId } = await auth();
+
   await createBusinessSubmission({
     id,
     name: validation.value.name,
@@ -108,6 +114,7 @@ export async function POST(req: Request) {
     acceptedTermsAt: now.toISOString(),
     ageConfirmed: 1,
     ipHash,
+    ownerUserId: clerkUserId,
   });
 
   // 7) email

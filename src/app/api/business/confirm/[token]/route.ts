@@ -47,6 +47,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     contactEmail: sub.email,
     lat: coords?.lat ?? null,
     lng: coords?.lng ?? null,
+    ownerUserId: sub.ownerUserId, // belépett beküldő esetén → auto-kapcsolás
   });
   await deleteBusinessSubmission(sub.id);
 

@@ -40,6 +40,8 @@ export interface Business {
   accentPhoto: string | null;
   logoKey: string | null;
   ownerUserId: string | null;
+  /** A vállalkozás kapcsolati emailje (NEM publikus — csak claim/admin használat). */
+  contactEmail?: string | null;
   workingHours?: string | null;
   socialLinks?: string | null;
 }

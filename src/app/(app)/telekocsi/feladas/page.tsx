@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Icon, ScreenHeader } from "@/components/ui";
 import { RideForm } from "@/components/views/ride-form";
@@ -10,13 +8,10 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Fuvar feladása" };
 
 /**
- * /telekocsi/feladas — a telekocsi-hirdetés feladása (Clerk-belépés szükséges).
- * Ha nincs belépve, a belepes oldalra redirect-áljuk.
+ * /telekocsi/feladas — telekocsi-hirdetés feladása (regisztráció NEM kötelező).
+ * Belépett Clerk-user esetén a neve a fiókból jön, vendégként a form-ról.
  */
-export default async function TelekocsiFeldasPage() {
-  const { userId } = await auth();
-  if (!userId) redirect("/belepes");
-
+export default function TelekocsiFeldasPage() {
   return (
     <div className="px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <ScreenHeader
@@ -33,8 +28,9 @@ export default async function TelekocsiFeldasPage() {
       />
 
       <div className="mb-4 rounded-card border border-line bg-surface-alt px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted">
-        Add meg az útvonalat, az időpontot és a telefonszámod — a jelentkezők
-        közvetlenül <strong className="text-ink">hívással vagy WhatsApp-on</strong> keresnek meg.
+        <strong className="text-ink">Nincs regisztráció.</strong> Add meg az útvonalat, az
+        időpontot, a neved és a telefonszámod — a jelentkezők közvetlenül{" "}
+        <strong className="text-ink">hívással vagy WhatsApp-on</strong> keresnek meg.
         A fuvar az indulás + 24 óra után automatikusan eltűnik.
       </div>
 

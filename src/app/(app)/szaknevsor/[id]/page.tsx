@@ -6,6 +6,7 @@ import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
+import { ClaimBusinessButton } from "@/components/views/claim-business-button";
 import { ReportButton } from "@/components/report-button";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
@@ -194,6 +195,9 @@ export default async function BusinessPage({ params }: { params: { id: string } 
             <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
           </a>
         </div>
+
+        {/* "Igényeld a vállalkozást" CTA — csak gazdátlan business-nél jelenik meg */}
+        {!b.ownerUserId && <ClaimBusinessButton businessId={b.id} />}
 
         {/* Közösségi és foglalási linkek */}
         {hasSocials && (

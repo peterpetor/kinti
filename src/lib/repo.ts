@@ -67,6 +67,7 @@ interface BusinessRow {
   accent_photo: string | null;
   logo_key: string | null;
   owner_user_id: string | null;
+  contact_email: string | null;
   working_hours: string | null;
   social_links: string | null;
 }
@@ -175,6 +176,7 @@ function toBusiness(r: BusinessRow): Business {
     accentPhoto: r.accent_photo,
     logoKey: r.logo_key,
     ownerUserId: r.owner_user_id,
+    contactEmail: r.contact_email,
     workingHours: r.working_hours,
     socialLinks: r.social_links,
   };
@@ -1342,6 +1344,7 @@ interface BusinessSubmissionRow {
   terms_version: string | null;
   accepted_terms_at: string | null;
   age_confirmed: number;
+  owner_user_id: string | null;
   ip_hash: string | null;
 }
 
@@ -1355,6 +1358,7 @@ export interface BusinessSubmission {
   phone: string | null;
   email: string;
   blurb: string | null;
+  ownerUserId: string | null;
 }
 
 function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
@@ -1368,6 +1372,7 @@ function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
     phone: r.phone,
     email: r.email,
     blurb: r.blurb,
+    ownerUserId: r.owner_user_id,
   };
 }
 
@@ -1387,6 +1392,7 @@ export interface BusinessSubmissionInput {
   acceptedTermsAt: string;
   ageConfirmed: number;
   ipHash: string | null;
+  ownerUserId: string | null;
 }
 
 export async function createBusinessSubmission(input: BusinessSubmissionInput): Promise<void> {
@@ -1394,8 +1400,9 @@ export async function createBusinessSubmission(input: BusinessSubmissionInput): 
     .prepare(
       `INSERT INTO business_submissions
        (id, name, category_id, category_label, address, canton_code, phone, email, blurb,
-        confirm_token, expires_at, terms_version, accepted_terms_at, age_confirmed, ip_hash)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        confirm_token, expires_at, terms_version, accepted_terms_at, age_confirmed, ip_hash,
+        owner_user_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -1413,6 +1420,7 @@ export async function createBusinessSubmission(input: BusinessSubmissionInput): 
       input.acceptedTermsAt,
       input.ageConfirmed,
       input.ipHash,
+      input.ownerUserId,
     )
     .run();
 }
@@ -1470,12 +1478,15 @@ export interface CreateBusinessFromSubmissionInput {
   contactEmail: string;
   lat: number | null;
   lng: number | null;
+  ownerUserId: string | null;
 }
 
 /**
  * A megerősített beküldésből publikus businesses-rekord. Azonnal él (nincs
  * kézi jóváhagyás). A `source='self_submitted'` jelöli az eredetét, a
  * `contact_email` NEM publikus (admin/jövőbeni claimhez tartjuk).
+ * Ha `ownerUserId` adott (a beküldést belépett vállalkozó indította), egyből
+ * a Clerk userhez kötjük a vállalkozást — nincs külön igénylési lépés.
  */
 export async function createBusinessFromSubmission(
   input: CreateBusinessFromSubmissionInput,
@@ -1485,8 +1496,8 @@ export async function createBusinessFromSubmission(
       `INSERT INTO businesses
        (id, name, category_id, category_label, address, phone, blurb,
         contact_email, source, languages, lat, lng, pin_x, pin_y,
-        rating, reviews, featured, open_now)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'self_submitted', '["Magyar"]', ?, ?, 50, 50, 0, 0, 0, 0)`,
+        rating, reviews, featured, open_now, owner_user_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'self_submitted', '["Magyar"]', ?, ?, 50, 50, 0, 0, 0, 0, ?)`,
     )
     .bind(
       input.id,
@@ -1499,7 +1510,132 @@ export async function createBusinessFromSubmission(
       input.contactEmail.toLowerCase(),
       input.lat,
       input.lng,
+      input.ownerUserId,
     )
+    .run();
+}
+
+/**
+ * Inline draft: a /profil onboarding form közvetlenül létrehoz egy publikus
+ * businesses-rekordot a belépett Clerk userhez (email-megerősítés NÉLKÜL, mert
+ * a Clerk már verifikálta). A részleteket utána a ProfileEditor-rel állítja be.
+ * Ha a usernek már van vállalkozása, a meglévőt adjuk vissza.
+ */
+export async function createOwnerDraftBusiness(input: {
+  id: string;
+  name: string;
+  categoryId: string;
+  cantonCode: string;
+  contactEmail: string;
+  lat: number | null;
+  lng: number | null;
+  ownerUserId: string;
+}): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO businesses
+       (id, name, category_id, category_label, address, phone, blurb,
+        contact_email, source, languages, lat, lng, pin_x, pin_y,
+        rating, reviews, featured, open_now, owner_user_id)
+       VALUES (?, ?, ?, NULL, NULL, NULL, NULL,
+        ?, 'owner_draft', '["Magyar"]', ?, ?, 50, 50, 0, 0, 0, 0, ?)`,
+    )
+    .bind(
+      input.id,
+      input.name,
+      input.categoryId,
+      input.contactEmail.toLowerCase(),
+      input.lat,
+      input.lng,
+      input.ownerUserId,
+    )
+    .run();
+}
+
+// --- Vállalkozás-igénylés (email-megerősítéssel) ---------------------------
+
+export interface BusinessClaimRequestRow {
+  id: string;
+  business_id: string;
+  user_id: string;
+  user_email: string;
+  business_email: string;
+  verify_token: string;
+  expires_at: string;
+  consumed_at: string | null;
+  created_at: string;
+}
+
+export interface BusinessClaimRequest {
+  id: string;
+  businessId: string;
+  userId: string;
+  userEmail: string;
+  businessEmail: string;
+  verifyToken: string;
+  expiresAt: string;
+  consumedAt: string | null;
+}
+
+function toBusinessClaimRequest(r: BusinessClaimRequestRow): BusinessClaimRequest {
+  return {
+    id: r.id,
+    businessId: r.business_id,
+    userId: r.user_id,
+    userEmail: r.user_email,
+    businessEmail: r.business_email,
+    verifyToken: r.verify_token,
+    expiresAt: r.expires_at,
+    consumedAt: r.consumed_at,
+  };
+}
+
+export async function createBusinessClaimRequest(input: {
+  id: string;
+  businessId: string;
+  userId: string;
+  userEmail: string;
+  businessEmail: string;
+  verifyToken: string;
+  expiresAt: string;
+}): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO business_claim_requests
+       (id, business_id, user_id, user_email, business_email, verify_token, expires_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      input.id,
+      input.businessId,
+      input.userId,
+      input.userEmail.toLowerCase(),
+      input.businessEmail.toLowerCase(),
+      input.verifyToken,
+      input.expiresAt,
+    )
+    .run();
+}
+
+export async function getBusinessClaimRequestByToken(
+  token: string,
+): Promise<BusinessClaimRequest | null> {
+  const row = await getDB()
+    .prepare(
+      `SELECT * FROM business_claim_requests
+       WHERE verify_token = ? AND consumed_at IS NULL AND expires_at > datetime('now')`,
+    )
+    .bind(token)
+    .first<BusinessClaimRequestRow>();
+  return row ? toBusinessClaimRequest(row) : null;
+}
+
+export async function consumeBusinessClaimRequest(id: string): Promise<void> {
+  await getDB()
+    .prepare(
+      "UPDATE business_claim_requests SET consumed_at = datetime('now') WHERE id = ?",
+    )
+    .bind(id)
     .run();
 }
 

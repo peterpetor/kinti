@@ -585,6 +585,72 @@ kinti.app`;
   }
 }
 
+// --- Vállalkozás-igénylés (claim) megerősítése ----------------------------
+
+interface BusinessClaimEmailArgs {
+  to: string; // a business contact_email-je
+  businessName: string;
+  claimerUserEmail: string; // a Clerk userhez tartozó email (audit, a címzettnek megmutatjuk)
+  /** Teljes URL — pl. https://kinti.app/api/owner/claim/confirm/<token>. */
+  confirmUrl: string;
+  confirmExpiresAt: string;
+}
+
+export async function sendBusinessClaimEmail(args: BusinessClaimEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const expiresHu = formatHu(args.confirmExpiresAt);
+  const subject = `Vállalkozásod igénylése a kinti.app-on: ${args.businessName}`;
+
+  const text = `Szia!
+
+Valaki — ${args.claimerUserEmail} fiókkal — igényelte a(z) "${args.businessName}" vállalkozás kezelési jogait a kinti.app-on. Ezt a kérést a vállalkozáshoz tartozó email címedre (${args.to}) küldtük megerősítésre.
+
+Ha TE indítottad az igénylést, erősítsd meg egy kattintással:
+  ${args.confirmUrl}
+
+A link ${expiresHu}-ig érvényes. Megerősítés után a vállalkozás a fenti fiókhoz lesz kötve, és onnantól a Vállalkozói profilban szerkesztheted (nyitvatartás, leírás, kapcsolat, logó, stb.).
+
+Ha NEM te indítottad, hagyd figyelmen kívül — semmi nem történik. A vállalkozásod a tied marad.
+
+Üdv,
+kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Vállalkozás-igénylés megerősítése: ${args.businessName}`,
+    body: `
+      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
+        Szia 👋
+      </p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
+        Valaki igényelte a(z) <strong>${escapeHtml(args.businessName)}</strong> vállalkozást
+        a kinti.app-on. A kérés a vállalkozáshoz tartozó email címedre érkezett.
+      </p>
+      <p style="margin:0 0 20px;padding:12px 14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;font-size:13px;line-height:1.5;color:#0e1f17;">
+        <strong>Igénylő fiók:</strong><br>${escapeHtml(args.claimerUserEmail)}
+      </p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
+        Ha <strong>te</strong> indítottad az igénylést, erősítsd meg egy kattintással —
+        utána a fenti fiókkal szerkesztheted a vállalkozás adatait:
+      </p>
+      <p style="margin:0 0 20px;">
+        ${button(args.confirmUrl, "Igénylés megerősítése →")}
+      </p>
+      <p style="margin:0 0 16px;font-size:12.5px;line-height:1.6;color:#5c6d63;">
+        A link <strong>${escapeHtml(expiresHu)}-ig</strong> érvényes.
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        Ha nem te indítottad, hagyd figyelmen kívül — a vállalkozásod a tied marad,
+        nem történik semmi a megerősítésed nélkül.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 // --- Jelentés (Notice & Takedown): admin értesítő -------------------------
 
 interface ContentReportEmailArgs {

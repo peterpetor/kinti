@@ -1,30 +1,37 @@
-import Link from "next/link";
-import { SignUp } from "@clerk/nextjs";
-import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
+import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Vállalkozói regisztráció" };
 
-export default function SignUpPage() {
-  return (
-    <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)] min-h-[calc(100dvh-70px)] flex flex-col">
-      <main className="flex-1 flex flex-col items-center pt-4 pb-[calc(env(safe-area-inset-bottom)+6rem)]">
-        <div className="w-full max-w-md animate-fade-up">
-          <Link href="/vallalkozo" className="mb-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-ink-muted hover:text-ink transition-colors">
-            <Icon name="arrowLeft" size={14} strokeWidth={2.4} />
-            Vissza
-          </Link>
-          <div className="flex justify-center">
-            <SignUp
-              path="/regisztracio"
-              routing="path"
-              signInUrl="/belepes"
-              fallbackRedirectUrl="/profil"
-            />
-          </div>
-        </div>
-      </main>
-    </div>
-  );
+const CLERK_ACCOUNTS_BASE = "https://accounts.kinti.app";
+const APP_BASE = "https://kinti.app";
+
+function safeTargetUrl(target: string | undefined): string {
+  if (!target) return `${APP_BASE}/profil`;
+  if (target.startsWith("/") && !target.startsWith("//")) {
+    return `${APP_BASE}${target}`;
+  }
+  try {
+    const u = new URL(target);
+    if (u.host === "kinti.app") return u.toString();
+  } catch {
+    /* invalid URL */
+  }
+  return `${APP_BASE}/profil`;
+}
+
+export default async function SignUpPage({
+  searchParams,
+}: {
+  searchParams: { redirect_url?: string };
+}) {
+  const target = safeTargetUrl(searchParams.redirect_url);
+
+  const { userId } = await auth();
+  if (userId) redirect(target);
+
+  redirect(`${CLERK_ACCOUNTS_BASE}/sign-up?redirect_url=${encodeURIComponent(target)}`);
 }

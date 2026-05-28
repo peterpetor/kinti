@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon } from "./icons";
@@ -11,7 +11,6 @@ export function DropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSosOpen, setIsSosOpen] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
-  const menuRef = useRef<HTMLDivElement>(null);
 
   // Kívülre kattintás (már nem szükséges, mivel full screen, de meghagyhatjuk a biztonság kedvéért vagy eltávolíthatjuk. Inkább zárjuk be a menüt a X gombbal.)
   useEffect(() => {
@@ -55,16 +54,16 @@ export function DropdownMenu() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-1 custom-scrollbar">
-            {/* Fő akciók */}
+            {/* A Telekocsi az alsó TabBar 4. fülén — itt nem ismételjük. */}
             {isLoaded && isSignedIn ? (
               <Link href="/profil" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                   <Icon name="user" size={16} strokeWidth={2.4} />
                 </span>
-                Profilom
+                Vállalkozói profilom
               </Link>
             ) : (
-              <Link href="/belepes" onClick={() => setIsOpen(false)} className={linkClass}>
+              <Link href="/vallalkozo" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                   <Icon name="user" size={16} strokeWidth={2.4} />
                 </span>
@@ -91,13 +90,6 @@ export function DropdownMenu() {
                 <Icon name="plus" size={16} strokeWidth={2.4} />
               </span>
               Új hirdetés
-            </Link>
-
-            <Link href="/telekocsi" onClick={() => setIsOpen(false)} className={linkClass}>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#3a6ea5]/10 text-[#3a6ea5]">
-                <Icon name="nav" size={16} strokeWidth={2.4} />
-              </span>
-              Telekocsi
             </Link>
 
             <Link href="/tudasbazis" onClick={() => setIsOpen(false)} className={linkClass}>
@@ -140,12 +132,14 @@ export function DropdownMenu() {
 
             <div className="h-px bg-line/60 my-4 mx-2" />
 
-            <SignOutButton redirectUrl="/">
-              <button className="flex w-full items-center justify-center gap-2.5 mt-2 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
-                <Icon name="user" size={16} strokeWidth={2.4} />
-                Kijelentkezés
-              </button>
-            </SignOutButton>
+            {isLoaded && isSignedIn && (
+              <SignOutButton redirectUrl="/">
+                <button className="flex w-full items-center justify-center gap-2.5 mt-2 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
+                  <Icon name="user" size={16} strokeWidth={2.4} />
+                  Kijelentkezés
+                </button>
+              </SignOutButton>
+            )}
 
             <button
               type="button"

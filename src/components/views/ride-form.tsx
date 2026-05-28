@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { RIDE_LIMITS, MAX_WAYPOINTS, type RideValidationError } from "@/lib/rides";
 
 /**
- * RideForm — telekocsi-feladás (Clerk-belépéshez kötött). Az űrlap a szerver-route
- * (/api/rides/submit) felé POST-ol; a poster_name és poster_user_id a szerveren
- * jön Clerk-ből (nem a kliensről).
+ * RideForm — telekocsi-feladás. NEM kötelező a Clerk-belépés.
+ *  • Vendég: a posterName a form-on, kötelező.
+ *  • Belépett Clerk-user: a posterName a fiókból (a mező rejtett).
  */
 type Phase = "idle" | "submitting" | "sent" | "error";
 
@@ -21,6 +22,7 @@ interface FormState {
   priceText: string;
   contactPhone: string;
   notes: string;
+  posterName: string;
   waypoints: string[];
 }
 
@@ -32,11 +34,14 @@ const INITIAL: FormState = {
   priceText: "",
   contactPhone: "",
   notes: "",
+  posterName: "",
   waypoints: [],
 };
 
 export function RideForm() {
   const router = useRouter();
+  const { isSignedIn, isLoaded } = useAuth();
+  const showPosterName = isLoaded && !isSignedIn;
   const [form, setForm] = useState<FormState>(INITIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [global, setGlobal] = useState<string | null>(null);
@@ -237,6 +242,23 @@ export function RideForm() {
           </div>
         </div>
       </Section>
+
+      {showPosterName && (
+        <Section title="Megjelenített név" required>
+          <input
+            type="text"
+            value={form.posterName}
+            onChange={(e) => setField("posterName", e.target.value)}
+            placeholder="Pl. Kovács Anna"
+            maxLength={RIDE_LIMITS.posterNameMax}
+            className={inputCls(errors.posterName)}
+          />
+          <FieldError msg={errors.posterName} />
+          <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
+            Ez fog megjelenni a fuvar mellett a Telekocsi listán.
+          </p>
+        </Section>
+      )}
 
       <Section title="Telefonszám" required>
         <input

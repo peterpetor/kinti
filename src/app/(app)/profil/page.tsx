@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoUploader } from "@/components/views/logo-uploader";
+import { OwnerDraftForm } from "@/components/views/owner-draft-form";
 import { ProfileEditor } from "@/components/views/profile-editor";
 import { ReviewResponseForm } from "@/components/views/review-response-form";
 import { InstallPrompt } from "@/components/install-prompt";
@@ -14,9 +16,9 @@ import {
   DropdownMenu,
   KintiLogo,
 } from "@/components/ui";
-import { getBusinessByOwner, getDashboard, getReviewsByBusiness } from "@/lib/repo";
+import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
-import type { Business } from "@/lib/types";
+import type { Business, Category } from "@/lib/types";
 
 import { NewsletterToggle } from "@/components/views/newsletter-toggle";
 
@@ -53,6 +55,7 @@ export default async function ProfilPage() {
   if (!userId) redirect("/belepes");
 
   const business = await getBusinessByOwner(userId);
+  const categories = business ? [] : (await getCategories()).filter((c) => c.id !== "all");
 
   return (
     <div className="space-y-4 px-[18px] pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
@@ -72,7 +75,7 @@ export default async function ProfilPage() {
         <DropdownMenu />
       </header>
 
-      {business && <OwnerDashboard business={business} />}
+      {business ? <OwnerDashboard business={business} /> : <OnboardingCTA categories={categories} />}
 
       {/* PWA — telepítés a kezdőképernyőre (csak ha még nem standalone) */}
       <InstallPrompt />
@@ -86,6 +89,63 @@ export default async function ProfilPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+// --- Onboarding: belépett userhez még nincs vállalkozás --------------------
+function OnboardingCTA({ categories }: { categories: Category[] }) {
+  const features: { icon: IconName; title: string; body: string }[] = [
+    { icon: "list", title: "Céges adatok", body: "Név, kategória, rövid bemutatkozás" },
+    { icon: "phone", title: "Kapcsolat", body: "Telefon, e-mail, weboldal, közösségi linkek" },
+    { icon: "nav", title: "Cím + térkép", body: "Svájci cím, kanton, megjelenés a térképen" },
+    { icon: "calendar", title: "Nyitvatartás", body: "Heti beosztás, „nyitva most” jelző" },
+    { icon: "globe", title: "Beszélt nyelvek", body: "Magyar + DE/FR/IT/EN jelzések" },
+    { icon: "star", title: "Vélemények", body: "Csillagos értékelések, válaszadás" },
+  ];
+
+  return (
+    <section className="space-y-4">
+      <div className="rounded-card border border-line bg-gradient-to-br from-primary to-accent p-5 text-white shadow-card">
+        <span className="inline-flex items-center gap-1.5 rounded-pill bg-white/20 px-2.5 py-1 text-[10.5px] font-extrabold uppercase tracking-wide">
+          Üdvözlünk! 👋
+        </span>
+        <h2 className="mt-2.5 text-[22px] font-extrabold leading-tight tracking-tight text-balance">
+          Hozd létre a vállalkozói profilod
+        </h2>
+        <p className="mt-1.5 text-[13.5px] leading-snug opacity-90 text-pretty">
+          Pár adat — név, kategória, kanton — és máris kész vagy. A részleteket
+          (kapcsolat, nyitvatartás, nyelvek, logó) utána állítod be.
+        </p>
+      </div>
+
+      <OwnerDraftForm categories={categories} />
+
+      <div className="rounded-card border border-line bg-surface p-4 shadow-card">
+        <SectionHeader>Mit fogsz beállítani</SectionHeader>
+        <div className="mt-2 grid grid-cols-2 gap-2.5">
+          {features.map((f) => (
+            <div key={f.title} className="flex items-start gap-2 rounded-2xl border border-line bg-surface-alt/50 p-2.5">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[9px] bg-primary/10 text-primary">
+                <Icon name={f.icon} size={13} strokeWidth={2.2} />
+              </span>
+              <div className="min-w-0">
+                <div className="text-[12px] font-extrabold leading-tight text-ink">{f.title}</div>
+                <div className="mt-0.5 text-[10.5px] leading-snug text-ink-muted">{f.body}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-card border border-line bg-surface-alt/60 p-3.5 text-center space-y-1.5">
+        <p className="text-[12px] leading-snug text-ink-muted">
+          Már szerepelsz a Szaknévsorban?
+        </p>
+        <Link href="/szaknevsor?claim=1" className="inline-block text-[12.5px] font-bold text-primary underline">
+          Igényeld a vállalkozásod →
+        </Link>
+      </div>
+    </section>
   );
 }
 

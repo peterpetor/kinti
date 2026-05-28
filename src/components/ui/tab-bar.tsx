@@ -7,10 +7,10 @@ import { cn } from "@/lib/cn";
 
 /**
  * TabBar — alsó, lebegő üveg-navigáció. 4 stabil fül, auth-független label:
- *   1) Főoldal   — dashboard
+ *   1) Főoldal    — dashboard
  *   2) Szaknévsor — vállalkozás-kereső
- *   3) Piac      — hirdetések + események + telekocsi (a régi "Közösség")
- *   4) Fiókom    — belépés / profil / kedvencek / beállítások
+ *   3) Piac       — hirdetések + események
+ *   4) Telekocsi  — szabad helyes utazások (vendég is feladhat)
  */
 interface Tab {
   href: string;
@@ -30,10 +30,9 @@ const TABS: Tab[] = [
     alsoMatch: ["/alberlet", "/allas", "/telekocsi"],
   },
   {
-    href: "/profil",
-    label: "Fiókom",
-    icon: "user",
-    alsoMatch: ["/belepes", "/regisztracio", "/vallalkozo"],
+    href: "/telekocsi",
+    label: "Telekocsi",
+    icon: "car",
   },
 ];
 

@@ -1,21 +1,36 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 /**
- * Védett útvonalak: ide nem jut be bejelentkezés nélkül — az `auth.protect()`
- * a NEXT_PUBLIC_CLERK_SIGN_IN_URL-re (/belepes) irányít. A nyilvános nézetek
- * (Feed, Szaknévsor, Közösség, vállalkozói profilok) szabadon böngészhetők.
+ * Védett oldalak (RSC-barát redirect): nem `auth.protect()`-tel, hanem manuális
+ * `auth() + NextResponse.redirect()`-tel kezeljük — különben a Clerk edge runtime
+ * alatt az RSC fetch-eket API-ként kezeli és 404-et dob redirect helyett,
+ * megakasztva a kliensoldali soft navigációt a login után.
  */
-const isProtected = createRouteMatcher([
-  "/profil(.*)", // saját dashboard
-  "/feltoltes(.*)", // leendő logó/hirdetés feltöltő űrlapok (B lépés)
-  "/admin(.*)", // admin felület (pl. iCal feedek)
+const isProtectedPage = createRouteMatcher([
+  "/profil(.*)",
+  "/feltoltes(.*)",
+  "/admin(.*)",
+]);
+
+const isProtectedApi = createRouteMatcher([
   "/api/owner(.*)", // tulajdonosi írási műveletek (pl. vállalkozás igénylése)
   "/api/admin(.*)", // admin API (pl. event_feeds CRUD)
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtected(req)) {
+  if (isProtectedApi(req)) {
     await auth.protect();
+    return;
+  }
+
+  if (isProtectedPage(req)) {
+    const { userId } = await auth();
+    if (!userId) {
+      const signInUrl = new URL("/belepes", req.url);
+      signInUrl.searchParams.set("redirect_url", req.url);
+      return NextResponse.redirect(signInUrl);
+    }
   }
 });
 

@@ -25,15 +25,20 @@ export default function VallalkozoPage() {
       </header>
 
       <main className="flex-1 flex flex-col justify-center pb-20">
-        <div className="flex flex-col items-center gap-3 text-center mb-10 animate-fade-up">
+        <div className="flex flex-col items-center gap-3 text-center mb-8 animate-fade-up">
           <div className="h-16 w-16 rounded-full bg-primary/10 text-primary grid place-items-center mb-2">
             <Icon name="user" size={32} strokeWidth={2} />
           </div>
+          <span className="inline-flex items-center gap-1.5 rounded-pill bg-accent/15 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-accent">
+            Csak vállalkozóknak
+          </span>
           <h1 className="text-[24px] font-extrabold tracking-tight text-ink">
-            Vállalkozói fiók
+            Vállalkozói felület
           </h1>
           <p className="text-[14px] leading-relaxed text-ink-muted max-w-xs">
-            Lépj be a fiókodba, vagy regisztrálj újat a vállalkozásod kezeléséhez.
+            Ez a szekció a kinti közösséget kiszolgáló magyar nyelvű vállalkozóknak van fenntartva.
+            Itt tudod beállítani a céges adatokat, nyitvatartást, beszélt nyelveket és kapcsolatot,
+            amit a látogatók a Szaknévsorban látnak.
           </p>
         </div>
 
@@ -43,19 +48,13 @@ export default function VallalkozoPage() {
             className="flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-primary text-[15px] font-extrabold text-white shadow-card-hover active:scale-[0.98] transition-all"
           >
             <Icon name="user" size={16} strokeWidth={2.4} />
-            Bejelentkezés
+            Vállalkozói bejelentkezés
           </Link>
           <Link
             href="/regisztracio"
             className="flex h-14 w-full items-center justify-center gap-2 rounded-pill border-2 border-line bg-surface text-[15px] font-extrabold text-ink active:scale-[0.98] transition-all"
           >
-            Regisztráció
-          </Link>
-        </div>
-        
-        <div className="mt-8 text-center animate-fade-up animate-delay-200">
-          <Link href="/szaknevsor/uj" className="text-[13px] font-bold text-ink-muted underline">
-            Vállalkozás feladása fiók nélkül
+            Új vállalkozói fiók
           </Link>
         </div>
       </main>

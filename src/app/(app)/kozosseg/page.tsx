@@ -1,13 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
 import { ScreenHeader } from "@/components/ui";
 import { CommunityView } from "@/components/views/community-view";
 import { PushOptin } from "@/components/push-optin";
-import {
-  getActiveRides,
-  getBulletinKinds,
-  getBulletinPosts,
-  getEvents,
-} from "@/lib/repo";
+import { getBulletinKinds, getBulletinPosts, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -15,12 +9,10 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Piac" };
 
 export default async function PiacPage() {
-  const [events, kinds, posts, rides, { userId }] = await Promise.all([
+  const [events, kinds, posts] = await Promise.all([
     getEvents(),
     getBulletinKinds(),
     getBulletinPosts(),
-    getActiveRides(),
-    auth(),
   ]);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
@@ -31,9 +23,9 @@ export default async function PiacPage() {
           eyebrow="Piac · Svájcban élő magyaroknak"
           title={
             <>
-              Hirdetések, események,
+              Hirdetések és események
               <br />
-              telekocsi — egy helyen.
+              egy helyen.
             </>
           }
         />
@@ -48,8 +40,6 @@ export default async function PiacPage() {
         events={events}
         kinds={kinds}
         posts={posts}
-        rides={rides}
-        currentUserId={userId}
         turnstileSiteKey={turnstileSiteKey}
       />
     </div>
