@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { ScreenHeader } from "@/components/ui";
-import { getActiveRides, toPublicRide } from "@/lib/repo";
+import { getActiveRides, getRideCountsByPhone, toPublicRide } from "@/lib/repo";
 import { TelekocsiView } from "@/components/views/telekocsi-view";
 
 export const runtime = "edge";
@@ -12,10 +12,14 @@ export const metadata = {
 };
 
 export default async function TelekocsiPage() {
-  const [rides, { userId }] = await Promise.all([getActiveRides(), auth()]);
+  const [rides, rideCounts, { userId }] = await Promise.all([
+    getActiveRides(),
+    getRideCountsByPhone(),
+    auth(),
+  ]);
   // SECURITY: a manage_token sose mehet ki publikus HTML-be — a publikus oldal
   // csak a PublicRide nézetét látja, a tokenek a feladó localStorage-ban élnek.
-  const publicRides = rides.map(toPublicRide);
+  const publicRides = rides.map((r) => toPublicRide(r, rideCounts));
 
   return (
     <div className="space-y-4 pb-8 pt-[calc(env(safe-area-inset-top)+2rem)]">

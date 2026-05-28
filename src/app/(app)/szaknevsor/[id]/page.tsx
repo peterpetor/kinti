@@ -38,7 +38,33 @@ function fmtRelative(iso: string): string {
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const b = await getBusinessById(params.id);
-  return { title: b?.name ?? "Vállalkozás" };
+  if (!b) return { title: "Vállalkozás" };
+
+  const title = `${b.name}${b.categoryLabel ? ` — ${b.categoryLabel}` : ""}`;
+  const description = b.blurb
+    ? b.blurb.slice(0, 160)
+    : `${b.name} · ${b.categoryLabel ?? "Magyar szakember"} Svájcban. ⭐ ${b.rating.toFixed(1)} (${b.reviews} vélemény)`;
+  const url = `https://kinti.app/szaknevsor/${b.id}`;
+  const image = mediaUrl(b.logoKey) ?? "https://kinti.app/icons/og-default.png";
+
+  return {
+    title: b.name,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "kinti",
+      type: "profile",
+      images: [{ url: image, width: 1200, height: 630, alt: b.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+  };
 }
 
 const actionBtn =

@@ -76,7 +76,7 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
         </p>
       )}
 
-      {/* Feladó */}
+      {/* Feladó + jelvény */}
       <div className="flex items-center gap-2 text-[12.5px] text-ink-muted">
         <span className={cn(
           "grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold",
@@ -85,6 +85,21 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
           {ride.posterName.charAt(0).toUpperCase()}
         </span>
         <span className="font-semibold text-ink">{ride.posterName}</span>
+        {ride.badge === "legend_driver" && (
+          <span className="inline-flex items-center gap-0.5 rounded-pill bg-[#f39c12]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#d68910]">
+            🏆 Legenda Sofőr
+          </span>
+        )}
+        {ride.badge === "super_driver" && (
+          <span className="inline-flex items-center gap-0.5 rounded-pill bg-[#3a6ea5]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#3a6ea5]">
+            🚗 Szuper Sofőr
+          </span>
+        )}
+        {ride.badge === "active_driver" && (
+          <span className="inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-2 py-0.5 text-[10px] font-extrabold text-success">
+            ✅ Aktív Sofőr
+          </span>
+        )}
       </div>
 
       {/* Kapcsolat gombok (zero-liability: tel + WhatsApp, nincs chat) */}

@@ -14,6 +14,22 @@ export const metadata: Metadata = {
     "GPS-alapú magyar szakemberkereső. Fodrász, autószerelő, orvos, ügyvéd, pék — bármi. Egy térkép. Anyanyelven.",
   applicationName: "kinti",
   manifest: "/manifest.webmanifest",
+  metadataBase: new URL("https://kinti.app"),
+  openGraph: {
+    title: "kinti — Találj magyart a közeledben",
+    description: "GPS-alapú magyar szakemberkereső Svájcban. Fodrász, autószerelő, orvos, ügyvéd — bármi. Egy térkép. Anyanyelven.",
+    url: "https://kinti.app",
+    siteName: "kinti",
+    type: "website",
+    locale: "hu_HU",
+    images: [{ url: "/icons/og-default.png", width: 1200, height: 630, alt: "kinti — Találj magyart a közeledben" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "kinti — Találj magyart a közeledben",
+    description: "GPS-alapú magyar szakemberkereső Svájcban.",
+    images: ["/icons/og-default.png"],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

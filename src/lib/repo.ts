@@ -2020,13 +2020,26 @@ export interface Ride {
  * HTML-be vagy JSON API válaszba. A submit endpoint külön visszaadja a
  * feladónak (success oldalon + localStorage-ba), és csak a feladó látja.
  */
-export type PublicRide = Omit<Ride, "manageToken">;
+export type PublicRide = Omit<Ride, "manageToken"> & {
+  /** Gamifikáció: implicit jelvény a hirdetőhöz (pl. "super_driver"). */
+  badge: string | null;
+};
 
-/** Lecsupaszítja a manage_token-t a publikus szállításhoz. */
-export function toPublicRide(r: Ride): PublicRide {
+/**
+ * Lecsupaszítja a manage_token-t a publikus szállításhoz.
+ * Ha `rideCounts` adott, kiszámolja a sofőr-jelvényt.
+ */
+export function toPublicRide(r: Ride, rideCounts?: Record<string, number>): PublicRide {
   const { manageToken: _omit, ...pub } = r;
   void _omit;
-  return pub;
+  let badge: string | null = null;
+  if (!r.isRequest && rideCounts) {
+    const count = rideCounts[r.contactPhone] ?? 0;
+    if (count >= 10) badge = "legend_driver";     // 🏆 Legenda Sofőr
+    else if (count >= 5) badge = "super_driver";  // 🚗 Szuper Sofőr
+    else if (count >= 2) badge = "active_driver";  // ✅ Aktív Sofőr
+  }
+  return { ...pub, badge };
 }
 
 function parseWaypoints(raw: string | null): RideWaypoint[] {
@@ -2197,6 +2210,32 @@ export async function getActiveRides(opts: RideQuery = {}): Promise<Ride[]> {
 export async function getRideById(id: string): Promise<Ride | null> {
   const row = await getDB().prepare("SELECT * FROM rides WHERE id = ?").bind(id).first<RideRow>();
   return row ? toRide(row) : null;
+}
+
+// ---------------------------------------------------------------------------
+// Gamifikáció — implicit jelvények (Szuper Sofőr, stb.)
+// ---------------------------------------------------------------------------
+
+/**
+ * Visszaadja, hány fuvar-hirdetést adott fel egy-egy telefonszám összesen (is_request=0,
+ * tehát csak sofőr-hirdetések). Az utas-kereséseket nem számoljuk — a „Szuper Sofőr"
+ * jelvényt a rendszeres sofőrök kapják.
+ *
+ * Hatékonysági okokból egyszerre lekérjük az összes aktív fuvarban szereplő telefon
+ * globális statisztikáját, így egyetlen extra query kell a telekocsi-oldalhoz.
+ */
+export async function getRideCountsByPhone(): Promise<Record<string, number>> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT contact_phone, COUNT(*) AS n FROM rides
+       WHERE is_request = 0
+       GROUP BY contact_phone
+       HAVING n >= 2`,
+    )
+    .all<{ contact_phone: string; n: number }>();
+  const map: Record<string, number> = {};
+  for (const r of results) map[r.contact_phone] = r.n;
+  return map;
 }
 
 /** Törlés tulajdonosként (poster_user_id egyezés). Visszaadja, érintett-e sort. */
