@@ -54,6 +54,15 @@ export async function POST(req: Request) {
       { status: 404 },
     );
   }
+  // Méret-védelem: csak <= 2 MB-os képet fogadunk el (Storage abuse ellen).
+  const MAX_BYTES = 2 * 1024 * 1024;
+  if (typeof head.size === "number" && head.size > MAX_BYTES) {
+    await getMediaBucket().delete(key).catch(() => { /* silent */ });
+    return NextResponse.json(
+      { error: "A fájl mérete max. 2 MB lehet." },
+      { status: 413 },
+    );
+  }
 
   const ok = await setBusinessLogo(business.id, userId, key);
   if (!ok) {

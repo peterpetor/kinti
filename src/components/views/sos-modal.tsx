@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 
 interface SosModalProps {
   onClose: () => void;
@@ -9,15 +9,24 @@ interface SosModalProps {
 }
 
 export function SosModal({ onClose, onSuccess }: SosModalProps) {
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [contactPhone, setContactPhone] = useState("+41");
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (!turnstileToken) {
+      setError("Várd meg a robot-ellenőrzést, mielőtt elküldöd.");
+      setLoading(false);
+      return;
+    }
 
     if (!navigator.geolocation) {
       setError("A böngésződ nem támogatja a helymeghatározást.");
@@ -37,11 +46,14 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
               lng: longitude,
               description,
               contactPhone,
+              turnstileToken,
             }),
           });
 
           const data = await res.json() as any;
           if (!res.ok) {
+            turnstileRef.current?.reset();
+            setTurnstileToken("");
             throw new Error(data.error || "Hiba történt a küldés során.");
           }
 
@@ -132,9 +144,17 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
             A kérés elküldésekor az app rögzíti a jelenlegi GPS pozíciódat. A riasztás 3 óra múlva automatikusan törlődik.
           </div>
 
+          {turnstileSiteKey && (
+            <TurnstileWidget
+              ref={turnstileRef}
+              siteKey={turnstileSiteKey}
+              onToken={setTurnstileToken}
+            />
+          )}
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !turnstileToken}
             className="mt-2 w-full rounded-xl bg-red-600 py-3 text-center font-bold text-white shadow-lg transition-colors hover:bg-red-700 disabled:opacity-50"
           >
             {loading ? "Küldés..." : "Riasztás Leadása"}

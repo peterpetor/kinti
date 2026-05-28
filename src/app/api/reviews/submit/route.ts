@@ -119,9 +119,9 @@ export async function POST(req: Request) {
       confirmExpiresAt: expiresAt,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Ismeretlen email-hiba.";
+    console.error("[reviews/submit] email send failed:", err);
     return NextResponse.json(
-      { error: "Az emailt nem sikerült elküldeni. Próbáld újra később.", detail: message },
+      { error: "Az emailt nem sikerült elküldeni. Próbáld újra később." },
       { status: 502 },
     );
   }

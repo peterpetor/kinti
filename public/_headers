@@ -1,7 +1,16 @@
-# Cloudflare Pages — útvonal-specifikus HTTP fejlécek.
-# (A globális statikus cache-elést a Pages adja; itt csak a PWA-érzékeny
-#  fájlokra adunk meg külön szabályt.)
+# Cloudflare Pages — globális security + útvonal-specifikus HTTP fejlécek.
+# Doc: https://developers.cloudflare.com/pages/configuration/headers/
 
+# --- Minden válaszra: alap security headerek -------------------------------
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Permissions-Policy: camera=(), microphone=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+
+# --- PWA-érzékeny fájlok ---------------------------------------------------
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
   Service-Worker-Allowed: /
@@ -11,6 +20,9 @@
   Content-Type: application/manifest+json; charset=utf-8
 
 /icons/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/_next/static/*
   Cache-Control: public, max-age=31536000, immutable
 
 /offline

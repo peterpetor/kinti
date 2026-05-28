@@ -71,9 +71,9 @@ export async function POST(req: Request) {
       unsubscribeUrl: `${baseUrl}/api/digest/unsubscribe/${unsubscribeToken}`,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Ismeretlen email-hiba.";
+    console.error("[digest/subscribe] email send failed:", err);
     return NextResponse.json(
-      { error: "Az emailt nem sikerült elküldeni. Próbáld újra később.", detail: message },
+      { error: "Az emailt nem sikerült elküldeni. Próbáld újra később." },
       { status: 502 },
     );
   }

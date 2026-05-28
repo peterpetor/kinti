@@ -126,9 +126,10 @@ export async function POST(req: Request) {
     // Az email-küldés bukása komoly hiba: nem kérünk újra a usertől, csak
     // jelezzük neki — a piszkozatot meghagyjuk, és 24h múlva az auto-purge
     // törli (a confirm_token egyébként sose került ki).
-    const message = err instanceof Error ? err.message : "Ismeretlen email-hiba.";
+    // Részleteket NEM küldjük vissza public-on (Resend Trace ID stb. szivárgás ellen).
+    console.error("[bulletin/submit] email send failed:", err);
     return NextResponse.json(
-      { error: "Az emailt nem sikerült elküldeni. Próbáld újra később.", detail: message },
+      { error: "Az emailt nem sikerült elküldeni. Próbáld újra később." },
       { status: 502 },
     );
   }
