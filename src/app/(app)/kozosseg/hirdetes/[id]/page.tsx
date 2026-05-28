@@ -162,7 +162,7 @@ export default async function HirdetesPage({ params }: { params: { id: string } 
       </article>
 
       <p className="px-1 text-center text-[11px] leading-snug text-ink-faint">
-        A hirdetésre választ a hirdetőtábla nézetből küldhetsz a „Megírom" gombbal.
+        A hirdetésre választ a hirdetőtábla nézetből küldhetsz az „Írok neki" gombbal.
       </p>
     </div>
   );

@@ -661,7 +661,7 @@ export function BulletinCard({
           className="rounded-lg bg-primary hover:bg-primary-dark active:scale-95 transition px-3.5 py-1.5 text-xs font-bold text-white shadow-sm flex items-center gap-1"
         >
           <Icon name="send" size={11} strokeWidth={2.5} />
-          Megírom
+          Írok neki
         </button>
       </div>
 
