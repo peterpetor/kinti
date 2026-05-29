@@ -8,11 +8,10 @@ interface SearchResult {
   businesses: Array<{ id: string; name: string; categoryLabel: string | null }>;
   bulletins: Array<{ id: string; title: string; kindLabel: string | null; cantonCode: string | null }>;
   events: Array<{ id: string; title: string; eventDate: string | null; venue: string | null }>;
-  rides: Array<{ id: string; departureCity: string; destinationCity: string; departureTime: string }>;
 }
 
 /**
- * GET /api/search?q=...  — globális kereső 4 entitásban.
+ * GET /api/search?q=...  — globális kereső 3 entitásban.
  *
  * Minden táblán LIKE-kereséssel (case-insensitive a SQLite LIKE-jával).
  * Limit per kategória: 5. A keresés legalább 2 karaktert vár.
@@ -22,7 +21,7 @@ export async function GET(req: Request) {
   const q = (url.searchParams.get("q") ?? "").trim();
 
   if (q.length < 2) {
-    return NextResponse.json({ businesses: [], bulletins: [], events: [], rides: [] } satisfies SearchResult, {
+    return NextResponse.json({ businesses: [], bulletins: [], events: [] } satisfies SearchResult, {
       headers: { "cache-control": "no-store" },
     });
   }
@@ -30,7 +29,7 @@ export async function GET(req: Request) {
   const needle = `%${q.replace(/[%_]/g, "")}%`;
   const db = getDB();
 
-  const [biz, bull, ev, rd] = await Promise.all([
+  const [biz, bull, ev] = await Promise.all([
     db
       .prepare(
         `SELECT b.id, b.name, b.category_label
@@ -62,16 +61,6 @@ export async function GET(req: Request) {
       )
       .bind(needle, needle)
       .all<{ id: string; title: string; event_date: string | null; venue: string | null }>(),
-    db
-      .prepare(
-        `SELECT id, departure_city, destination_city, departure_time
-         FROM rides
-         WHERE expires_at > datetime('now')
-           AND (LOWER(departure_city) LIKE LOWER(?) OR LOWER(destination_city) LIKE LOWER(?))
-         ORDER BY departure_time ASC LIMIT 5`,
-      )
-      .bind(needle, needle)
-      .all<{ id: string; departure_city: string; destination_city: string; departure_time: string }>(),
   ]);
 
   const result: SearchResult = {
@@ -83,12 +72,6 @@ export async function GET(req: Request) {
       cantonCode: r.canton_code,
     })),
     events: ev.results.map((r) => ({ id: r.id, title: r.title, eventDate: r.event_date, venue: r.venue })),
-    rides: rd.results.map((r) => ({
-      id: r.id,
-      departureCity: r.departure_city,
-      destinationCity: r.destination_city,
-      departureTime: r.departure_time,
-    })),
   };
 
   return NextResponse.json(result, { headers: { "cache-control": "no-store" } });
