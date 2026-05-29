@@ -133,6 +133,13 @@ export function DropdownMenu() {
                 Napi Svájci Kvíz
               </Link>
 
+              <Link href="/allampolgarsag" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  🇨🇭
+                </span>
+                Einbürgerung-szimulátor
+              </Link>
+
               <Link href="/segitseg" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
                   <Icon name="question" size={16} strokeWidth={2.4} />
