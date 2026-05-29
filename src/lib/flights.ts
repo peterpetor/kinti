@@ -169,28 +169,46 @@ export interface PriceEstimate {
   fullServiceMax: number;
 }
 
-export function estimatePrice(date: Date, fromAirport: SwissAirport): PriceEstimate {
+/** 50 CHF lépcsőre kerekít, hogy ne nézzen ki pontosnak / real-time-nak. */
+function roundTo50(n: number): number {
+  return Math.round(n / 50) * 50;
+}
+
+export function estimatePrice(date: Date, swissAirport: SwissAirport): PriceEstimate {
   const season = getSeason(date);
   const seasonInfo = SEASONS.find((s) => s.id === season)!;
   const mult = getWeekdayMultiplier(date);
 
   // BSL és GVA picit olcsóbb (low-cost bázis)
-  const airportAdj = fromAirport === "ZRH" ? 1.0 : 0.9;
+  const airportAdj = swissAirport === "ZRH" ? 1.0 : 0.9;
 
-  // Low-cost: alja-fele sáv, full-service: a felső
   const base = seasonInfo;
+  // Tág sávok 50 CHF-re kerekítve — nem csalják meg a usert real-time számokkal
   return {
     season,
     weekdayMultiplier: mult,
-    lowCostMin: Math.round(base.priceMin * mult * airportAdj),
-    lowCostMax: Math.round((base.priceMin + (base.priceMax - base.priceMin) * 0.5) * mult * airportAdj),
-    fullServiceMin: Math.round((base.priceMin + (base.priceMax - base.priceMin) * 0.5) * mult * airportAdj),
-    fullServiceMax: Math.round(base.priceMax * mult * airportAdj),
+    lowCostMin: Math.max(50, roundTo50(base.priceMin * mult * airportAdj)),
+    lowCostMax: roundTo50((base.priceMin + (base.priceMax - base.priceMin) * 0.5) * mult * airportAdj),
+    fullServiceMin: roundTo50((base.priceMin + (base.priceMax - base.priceMin) * 0.5) * mult * airportAdj),
+    fullServiceMax: roundTo50(base.priceMax * mult * airportAdj),
   };
 }
 
+/** Utazási irány. */
+export type Direction = "ch-to-bud" | "bud-to-ch";
+
+/** Egy adott irányhoz a "from" airport-kód. */
+export function getOrigin(direction: Direction, swissAirport: SwissAirport): string {
+  return direction === "ch-to-bud" ? swissAirport : "BUD";
+}
+
+/** Egy adott irányhoz a "to" airport-kód. */
+export function getDestination(direction: Direction, swissAirport: SwissAirport): string {
+  return direction === "ch-to-bud" ? "BUD" : swissAirport;
+}
+
 /** Deep-link a Skyscanner-be (ár-keresőbe). YYMMDD formátumban a dátum. */
-export function skyscannerUrl(from: SwissAirport, to: "BUD", date: Date, returnDate: Date | null): string {
+export function skyscannerUrl(from: string, to: string, date: Date, returnDate: Date | null): string {
   const fmt = (d: Date) => {
     const y = String(d.getFullYear()).slice(2);
     const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -204,12 +222,12 @@ export function skyscannerUrl(from: SwissAirport, to: "BUD", date: Date, returnD
 }
 
 /** Google Flights — egyszerű query. */
-export function googleFlightsUrl(from: SwissAirport, to: "BUD"): string {
+export function googleFlightsUrl(from: string, to: string): string {
   return `https://www.google.com/travel/flights?q=Flights%20from%20${from}%20to%20${to}`;
 }
 
 /** Kiwi.com keresési URL. */
-export function kiwiUrl(from: SwissAirport, to: "BUD", date: Date, returnDate: Date | null): string {
+export function kiwiUrl(from: string, to: string, date: Date, returnDate: Date | null): string {
   const fmt = (d: Date) =>
     `${String(d.getDate()).padStart(2, "0")}-${String(d.getMonth() + 1).padStart(2, "0")}-${d.getFullYear()}`;
   if (returnDate) {

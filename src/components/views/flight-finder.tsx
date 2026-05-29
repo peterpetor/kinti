@@ -13,10 +13,13 @@ import {
   skyscannerUrl,
   googleFlightsUrl,
   kiwiUrl,
+  getOrigin,
+  getDestination,
   WIZZAIR_URL,
   SWISS_URL,
   EASYJET_URL,
   type SwissAirport,
+  type Direction,
 } from "@/lib/flights";
 
 const HU_MONTHS = [
@@ -26,7 +29,8 @@ const HU_MONTHS = [
 const HU_WEEKDAYS = ["H", "K", "Sz", "Cs", "P", "Szo", "V"];
 
 export function FlightFinder() {
-  const [fromCode, setFromCode] = useState<SwissAirport>("ZRH");
+  const [direction, setDirection] = useState<Direction>("ch-to-bud");
+  const [swissAirport, setSwissAirport] = useState<SwissAirport>("ZRH");
   const today = new Date();
   const initial = new Date(today);
   initial.setDate(initial.getDate() + 21);
@@ -37,15 +41,19 @@ export function FlightFinder() {
   const [calYear, setCalYear] = useState(initial.getFullYear());
   const [calMonth, setCalMonth] = useState(initial.getMonth());
 
-  const fromAirport = AIRPORTS.find((a) => a.code === fromCode)!;
-  const toAirport = AIRPORTS.find((a) => a.code === "BUD")!;
+  // Aktuális from/to az iránytól függően
+  const fromCode = getOrigin(direction, swissAirport);
+  const toCode = getDestination(direction, swissAirport);
+  const fromAirport = AIRPORTS.find((a) => a.code === fromCode as never)!;
+  const toAirport = AIRPORTS.find((a) => a.code === toCode as never)!;
 
-  const estimate = useMemo(() => estimatePrice(outDate, fromCode), [outDate, fromCode]);
+  // Ár-becslés mindig a svájci reptér alapján (mindkét irányban hasonló sávok)
+  const estimate = useMemo(() => estimatePrice(outDate, swissAirport), [outDate, swissAirport]);
 
-  // Lehetséges légitársaságok a kiválasztott airportról
+  // Lehetséges légitársaságok a svájci reptérről
   const relevantAirlines = useMemo(
-    () => AIRLINES.filter((a) => a.routes.includes(fromCode)),
-    [fromCode],
+    () => AIRLINES.filter((a) => a.routes.includes(swissAirport)),
+    [swissAirport],
   );
 
   return (
@@ -56,19 +64,50 @@ export function FlightFinder() {
           <span className="text-4xl shrink-0">✈️</span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[20px] font-extrabold leading-tight tracking-tight text-ink">
-              Repülőjegy-figyelő · CH → BUD
+              Repülőjegy-figyelő · CH ↔ BUD
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              Becsült ár-sáv + szezonális tippek + foglalási oldal-linkek a 3 fő svájci reptérről Budapestre.
+              Becsült ár-sáv + szezonális tippek + foglalási oldal-linkek mindkét irányban.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* 0. Irány-toggle */}
+      <section className="rounded-card border border-line bg-surface p-4 shadow-card">
+        <label className="block mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+          Melyik irány?
+        </label>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setDirection("ch-to-bud")}
+            className={cn(
+              "rounded-[12px] border-2 px-3 py-3 transition active:scale-95 text-center",
+              direction === "ch-to-bud" ? "border-primary bg-primary-soft" : "border-line bg-surface",
+            )}
+          >
+            <div className="text-[15px] font-extrabold text-ink">🇨🇭 → 🇭🇺</div>
+            <div className="mt-0.5 text-[10.5px] text-ink-muted">Svájcból Budapestre</div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setDirection("bud-to-ch")}
+            className={cn(
+              "rounded-[12px] border-2 px-3 py-3 transition active:scale-95 text-center",
+              direction === "bud-to-ch" ? "border-primary bg-primary-soft" : "border-line bg-surface",
+            )}
+          >
+            <div className="text-[15px] font-extrabold text-ink">🇭🇺 → 🇨🇭</div>
+            <div className="mt-0.5 text-[10.5px] text-ink-muted">Budapestről Svájcba</div>
+          </button>
         </div>
       </section>
 
       {/* 1. Reptér-választó */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
         <label className="block mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-          Honnan indulsz?
+          {direction === "ch-to-bud" ? "Honnan indulsz?" : "Hova érkezel?"}
         </label>
         <div className="grid grid-cols-3 gap-2">
           {(["ZRH", "BSL", "GVA"] as const).map((code) => {
@@ -77,10 +116,10 @@ export function FlightFinder() {
               <button
                 key={code}
                 type="button"
-                onClick={() => setFromCode(code)}
+                onClick={() => setSwissAirport(code)}
                 className={cn(
                   "rounded-[12px] border-2 px-2 py-3 transition active:scale-95",
-                  fromCode === code ? "border-primary bg-primary-soft" : "border-line bg-surface",
+                  swissAirport === code ? "border-primary bg-primary-soft" : "border-line bg-surface",
                 )}
               >
                 <div className="text-[18px] font-extrabold text-ink">{ap.code}</div>
@@ -126,7 +165,7 @@ export function FlightFinder() {
               setReturnDate(null);
             }
           }}
-          fromAirport={fromCode}
+          fromAirport={swissAirport}
         />
 
         <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
@@ -155,7 +194,7 @@ export function FlightFinder() {
       </section>
 
       {/* 3. Becsült ár */}
-      <PriceEstimateCard estimate={estimate} airport={fromCode} date={outDate} />
+      <PriceEstimateCard estimate={estimate} airport={swissAirport} date={outDate} fromCode={fromCode} toCode={toCode} />
 
       {/* 4. Foglalási linkek */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card space-y-2">
@@ -163,19 +202,19 @@ export function FlightFinder() {
           🔍 Aktuális árak ellenőrzése
         </h3>
         <BookingLink
-          href={skyscannerUrl(fromCode, "BUD", outDate, returnDate)}
+          href={skyscannerUrl(fromCode, toCode, outDate, returnDate)}
           label="Skyscanner"
           desc="Több szolgáltatót összevet, áttekintő naptár"
           icon="🔭"
         />
         <BookingLink
-          href={googleFlightsUrl(fromCode, "BUD")}
+          href={googleFlightsUrl(fromCode, toCode)}
           label="Google Flights"
           desc="Gyors keresés + ár-figyelő"
           icon="🔍"
         />
         <BookingLink
-          href={kiwiUrl(fromCode, "BUD", outDate, returnDate)}
+          href={kiwiUrl(fromCode, toCode, outDate, returnDate)}
           label="Kiwi.com"
           desc="Kombinált járatok (multi-city)"
           icon="🥝"
@@ -185,7 +224,7 @@ export function FlightFinder() {
       {/* 5. Légitársaságok */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card space-y-2">
         <h3 className="mb-2 text-[12px] font-bold uppercase tracking-wide text-ink-muted">
-          ✈️ Légitársaságok ({fromCode}-ról)
+          ✈️ Légitársaságok ({swissAirport})
         </h3>
         {relevantAirlines.length === 0 ? (
           <p className="text-[12px] text-ink-muted">Erről a reptérről nincs közvetlen járat. Próbáld ZRH-t.</p>
@@ -249,10 +288,14 @@ function PriceEstimateCard({
   estimate,
   airport,
   date,
+  fromCode,
+  toCode,
 }: {
   estimate: ReturnType<typeof estimatePrice>;
   airport: SwissAirport;
   date: Date;
+  fromCode: string;
+  toCode: string;
 }) {
   const season = SEASONS.find((s) => s.id === estimate.season)!;
   const dow = date.getDay();
@@ -292,7 +335,8 @@ function PriceEstimateCard({
       </div>
 
       <p className="mt-3 text-[10.5px] text-ink-faint italic">
-        Egyirányú, gazdaságos osztály, kézipoggyász alap. {airport} → BUD.{" "}
+        Egyirányú, gazdaságos osztály, kézipoggyász alap. {fromCode} → {toCode}.{" "}
+        Az árak {airport} svájci reptérre/ről alapulnak; az ellenkező irány hasonló CHF-sávban.{" "}
         {isMidweek && "🌟 Hét közepe — olcsóbb mint hétvégén."}
         {isWeekend && "⚠️ Hétvégi nap — kb. 15% drágább mint kedden/szerdán."}
       </p>
