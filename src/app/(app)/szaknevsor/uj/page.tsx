@@ -35,9 +35,10 @@ export default async function UjVallalkozasPage() {
       />
 
       <div className="mb-4 rounded-card border border-line bg-surface-alt px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted">
-        <strong className="text-ink">Ingyenes, és nem kell regisztráció.</strong> Add meg a
-        vállalkozásod adatait + az emailedet, kapsz egy megerősítő linket — egy kattintás, és
-        fent vagy a Szaknévsorban. Csak <strong className="text-ink">svájci</strong> vállalkozások.
+        <strong className="text-ink">Ingyenes, nincs regisztráció, nincs email.</strong> Töltsd ki és
+        küldd — a vállalkozásod azonnal a Szaknévsorban van. Kapsz egy{" "}
+        <strong className="text-ink">kezelő-linket</strong> (QR-kód is jön): logót töltesz, nyitvatartást
+        állítasz, bármikor szerkesztesz. Csak <strong className="text-ink">svájci</strong> vállalkozások.
       </div>
 
       <BusinessForm categories={categories} turnstileSiteKey={turnstileSiteKey} />

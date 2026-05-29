@@ -283,145 +283,13 @@ function escapeAttr(s: string): string {
   return escapeHtml(s);
 }
 
-interface BulletinContactEmailArgs {
-  to: string;
-  posterName: string;
-  adTitle: string;
-  senderName: string;
-  senderEmail: string;
-  message: string;
-}
+// `sendBulletinContactEmail` ELTÁVOLÍTVA — a bulletin "Írok neki" email-relay
+// flow megszűnt. A kapcsolat zero-relay: a feladó a hirdetés body-ban telefont
+// / WhatsApp-ot ad meg. (GDPR adatminimalizálás 2026-05.)
 
-export async function sendBulletinContactEmail(args: BulletinContactEmailArgs): Promise<void> {
-  const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-  const subject = `Új érdeklődő a hirdetésedre: ${args.adTitle}`;
-
-  const text = `Szia ${args.posterName}!
-
-Új üzeneted érkezett a kinti.app-on feladott hirdetésedre ("${args.adTitle}")!
-
-Érdeklődő neve: ${args.senderName}
-Email címe: ${args.senderEmail}
-
-Üzenet:
-${args.message}
-
-Közvetlenül válaszolhatsz erre az emailre a fenti email címre írva.
-
-Üdv,
-kinti.app`;
-
-  const html = baseLayout({
-    preheader: `Új érdeklődő a hirdetésedre: ${args.adTitle}`,
-    body: `
-      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
-        Szia ${escapeHtml(args.posterName)} 👋
-      </p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
-        Új érdeklődő írt a kinti.app hirdetőfalon feladott hirdetésedre:
-      </p>
-      <p style="margin:0 0 20px;padding:12px 14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;font-size:14.5px;font-weight:700;color:#0e1f17;">
-        ${escapeHtml(args.adTitle)}
-      </p>
-      <div style="margin:0 0 20px;padding:14px;background:#f8f9f8;border-radius:14px;border:1px solid #e6ebe5;">
-        <p style="margin:0 0 8px;font-size:13px;color:#5c6d63;">
-          <strong>Feladó:</strong> ${escapeHtml(args.senderName)} (<a href="mailto:${escapeAttr(args.senderEmail)}" style="color:#1d4434;">${escapeHtml(args.senderEmail)}</a>)
-        </p>
-        <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">
-          ${escapeHtml(args.message)}
-        </p>
-      </div>
-      <p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:#5c6d63;">
-        Válaszadáshoz írj közvetlenül az érdeklődőnek a <strong><a href="mailto:${escapeAttr(args.senderEmail)}" style="color:#1d4434;">${escapeHtml(args.senderEmail)}</a></strong> címre.
-      </p>`,
-  });
-
-  const { error } = await getResend().emails.send({
-    from,
-    to: args.to,
-    replyTo: args.senderEmail,
-    subject,
-    html,
-    text,
-  });
-
-  if (error) {
-    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
-  }
-}
-
-// --- Szaknévsor: Árajánlatkérés / Időpontfoglalás --------------------------
-
-export interface BusinessQuoteEmailArgs {
-  to: string;
-  businessName: string;
-  senderName: string;
-  senderEmail: string;
-  senderPhone?: string;
-  message: string;
-}
-
-export async function sendBusinessQuoteEmail(args: BusinessQuoteEmailArgs): Promise<void> {
-  const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-  const subject = `Új érdeklődés a kinti.app-on: ${args.businessName}`;
-
-  const phoneLine = args.senderPhone ? `\nTelefonszám: ${args.senderPhone}` : "";
-
-  const text = `Kedves ${args.businessName}!
-
-Új üzeneted érkezett a kinti.app Szaknévsorból!
-
-Érdeklődő neve: ${args.senderName}
-Email címe: ${args.senderEmail}${phoneLine}
-
-Üzenet:
-${args.message}
-
-Közvetlenül válaszolhatsz erre az emailre a fenti email címre írva, vagy hívhatod a fenti telefonszámot.
-
-Üdv,
-kinti.app`;
-
-  const html = baseLayout({
-    preheader: `Új érdeklődő / időpontkérés: ${args.businessName}`,
-    body: `
-      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
-        Kedves ${escapeHtml(args.businessName)} 👋
-      </p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
-        Új érdeklődő írt a kinti.app Szaknévsorból a profilodról:
-      </p>
-      <div style="margin:0 0 20px;padding:14px;background:#f8f9f8;border-radius:14px;border:1px solid #e6ebe5;">
-        <p style="margin:0 0 8px;font-size:13px;color:#5c6d63;">
-          <strong>Feladó:</strong> ${escapeHtml(args.senderName)}<br/>
-          <strong>Email:</strong> <a href="mailto:${escapeAttr(args.senderEmail)}" style="color:#1d4434;">${escapeHtml(args.senderEmail)}</a>
-          ${args.senderPhone ? `<br/><strong>Telefon:</strong> <a href="tel:${escapeAttr(args.senderPhone.replace(/\s/g, ""))}" style="color:#1d4434;">${escapeHtml(args.senderPhone)}</a>` : ""}
-        </p>
-        <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">
-          ${escapeHtml(args.message)}
-        </p>
-      </div>
-      <p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:#5c6d63;">
-        Válaszadáshoz írj közvetlenül az érdeklődőnek a <strong><a href="mailto:${escapeAttr(args.senderEmail)}" style="color:#1d4434;">${escapeHtml(args.senderEmail)}</a></strong> címre.
-      </p>`,
-  });
-
-  const { error } = await getResend().emails.send({
-    from,
-    to: args.to,
-    replyTo: args.senderEmail,
-    subject,
-    html,
-    text,
-  });
-
-  if (error) {
-    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
-  }
-}
-
+// `sendBusinessQuoteEmail` ELTÁVOLÍTVA — a vállalkozás "Kérj árajánlatot"
+// email-relay flow megszűnt. A kapcsolat zero-relay: a vállalkozó telefonja
+// jelenik meg, a látogató közvetlenül hív vagy WhatsApp-ol.
 
 // --- Esemény beküldő: megerősítő email -------------------------------------
 
@@ -548,56 +416,8 @@ export async function sendEventAdminModerationEmail(
   }
 }
 
-// --- Heti email-digest: feliratkozás megerősítő email -----------------------
-
-interface DigestConfirmEmailArgs {
-  to: string;
-  confirmUrl: string;
-  unsubscribeUrl: string;
-}
-
-export async function sendDigestConfirmEmail(args: DigestConfirmEmailArgs): Promise<void> {
-  const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-  const subject = "Erősítsd meg a feliratkozást a kinti hírlevélre";
-
-  const text = `Szia!
-
-Megkaptuk a feliratkozásodat a kinti heti hírlevelére.
-
-A feliratkozás véglegesítéséhez erősítsd meg egy kattintással:
-  ${args.confirmUrl}
-
-Ha mégsem te iratkoztál fel, hagyd figyelmen kívül ezt a levelet — vagy közvetlenül leiratkozhatsz itt:
-  ${args.unsubscribeUrl}
-
-Üdv,
-kinti.app`;
-
-  const html = baseLayout({
-    preheader: "Erősítsd meg a feliratkozást egy kattintással",
-    body: `
-      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">Szia 👋</p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
-        Megkaptuk a feliratkozásodat a kinti <strong>heti hírlevelére</strong>. Hetente egyszer
-        összegyűjtjük az új eseményeket és hirdetéseket a kantonodban.
-      </p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
-        A feliratkozás véglegesítéséhez kattints az alábbi gombra:
-      </p>
-      <p style="margin:0 0 20px;">${button(args.confirmUrl, "Feliratkozás megerősítése →")}</p>
-      <hr style="border:none;border-top:1px solid #e6ebe5;margin:20px 0;" />
-      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
-        Ha mégsem te iratkoztál fel, hagyd figyelmen kívül ezt a levelet — vagy közvetlenül
-        <a href="${escapeAttr(args.unsubscribeUrl)}" style="color:#94a097;">leiratkozhatsz itt</a>.
-      </p>`,
-  });
-
-  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
-  if (error) {
-    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
-  }
-}
+// `sendDigestConfirmEmail` ELTÁVOLÍTVA — a heti hírlevél email-feliratkozás
+// megszűnt (digest_subscribers tábla droppolva). Helyette Web Push.
 
 // --- Self-service vállalkozás-beküldés: megerősítő email --------------------
 

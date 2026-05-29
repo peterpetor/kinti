@@ -10,7 +10,6 @@ import { ReportButton } from "@/components/report-button";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
-import { ContactBusinessForm } from "@/components/views/contact-business-form";
 import { BusinessGallery } from "@/components/views/business-gallery";
 
 export const runtime = "edge";
@@ -224,10 +223,10 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           </a>
         </div>
 
-        {/* Kapcsolat / Időpontfoglalás */}
-        <div className="mt-3">
-          <ContactBusinessForm businessId={b.id} hasContactEmail={!!b.contactEmail} />
-        </div>
+        {/* "Kérj árajánlatot" email-relay forma ELTÁVOLÍTVA — a kapcsolat
+            telefon/WhatsApp gombokkal megy közvetlenül (zero relay, zero
+            stored PII). Ha a vállalkozó nem adott meg telefont, írni rá a
+            saját web/Facebook profilján keresztül lehet. */}
 
         {/* A korábbi Clerk-alapú "Igényeld a vállalkozást" gombot lecseréltük:
             a vállalkozás-szerkesztés a confirmáló emailben kapott kezelő-linkkel

@@ -30,9 +30,10 @@ export default function UjEsemenyPage() {
       />
 
       <div className="mb-4 rounded-card border border-line bg-surface-alt px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted">
-        <strong className="text-ink">Nem kell regisztráció.</strong>{" "}
-        Töltsd ki az űrlapot, erősítsd meg az emailedet — és az eseményed
-        moderátor jóváhagyása után megjelenik a közösségi naptárban. 🗓️
+        <strong className="text-ink">Nincs regisztráció, nincs email.</strong>{" "}
+        Töltsd ki és küldd — moderátor-jóváhagyás után megjelenik a közösségi
+        naptárban. 🗓️ Kapsz egy <strong className="text-ink">kezelő-linket</strong>{" "}
+        (QR-kód is jön) — bármikor szerkesztheted vagy törölheted.
       </div>
 
       <EventForm turnstileSiteKey={turnstileSiteKey} />

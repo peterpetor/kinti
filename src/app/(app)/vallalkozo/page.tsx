@@ -37,8 +37,8 @@ export default function VallalkozoPage() {
             Vidd fel ingyen a vállalkozásod
           </h1>
           <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-ink-muted text-pretty">
-            Regisztráció nem kell. Add meg az emailt, kapsz egy megerősítő linket
-            és egy <strong className="text-ink">kezelő-linket</strong> — utána szerkesztheted az adatokat bármikor.
+            Sem regisztráció, sem email nem kell. Töltsd ki és küldd — kapsz egy{" "}
+            <strong className="text-ink">kezelő-linket</strong> (QR-kód is jön), amivel bármikor szerkesztheted az adatokat.
           </p>
         </section>
 

@@ -37,9 +37,9 @@ export default async function UjHirdetesPage() {
       />
 
       <div className="mb-4 rounded-card border border-line bg-surface-alt px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted">
-        <strong className="text-ink">Nem kell regisztráció.</strong> Add meg az emailedet,
-        kapsz egy megerősítő linket — egy kattintás, és a hirdetésed fent van a falon.
-        30 nap után automatikusan eltűnik.
+        <strong className="text-ink">Nincs regisztráció, nincs email.</strong> Töltsd ki és küldd —
+        a hirdetésed azonnal fent van a falon. Kapsz egy <strong className="text-ink">kezelő-linket</strong>{" "}
+        (QR-kód is jön): ezzel szerkesztheted vagy törölheted. 30 nap után automatikusan eltűnik.
       </div>
 
       <BulletinForm kinds={kinds} turnstileSiteKey={turnstileSiteKey} />
