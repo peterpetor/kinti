@@ -10,6 +10,7 @@ import { CANTONS } from "@/lib/cantons";
 import { handleFromId } from "@/lib/handle";
 import { getTagEmoji } from "@/lib/tag-emoji";
 import { OwnPostBadge } from "@/components/own-post-badge";
+import { EventCalendar } from "@/components/event-calendar";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ShareSheet } from "@/components/share-sheet";
 import { AddToCalendar } from "@/components/add-to-calendar";
@@ -156,6 +157,9 @@ function eventToCal(e: KintiEvent): CalendarEvent {
 }
 
 function EventsList({ events }: { events: KintiEvent[] }) {
+  // Nézet: lista vagy naptár
+  const [view, setView] = useState<"list" | "calendar">("list");
+
   // Hónapos szűrő: "all" vagy "2025-06" formátum
   const [monthFilter, setMonthFilter] = useState<string>("all");
 
@@ -163,6 +167,8 @@ function EventsList({ events }: { events: KintiEvent[] }) {
   const [rsvp, setRsvp] = useState<Record<string, RsvpState>>({});
   // Melyik eseményhez nyitottuk meg a „naptárba" választót.
   const [calFor, setCalFor] = useState<KintiEvent | null>(null);
+  // Melyik eseményt osztjuk meg most.
+  const [shareFor, setShareFor] = useState<KintiEvent | null>(null);
 
   const goingOf = (e: KintiEvent) => rsvp[e.id]?.going ?? e.going;
   const votedOf = (e: KintiEvent) => rsvp[e.id]?.voted ?? false;
@@ -215,6 +221,16 @@ function EventsList({ events }: { events: KintiEvent[] }) {
 
   if (events.length === 0) return <Empty label="Nincs közelgő esemény." />;
 
+  // Naptár-nézet — különálló blokk a hónap-szűrő és lista helyett
+  if (view === "calendar") {
+    return (
+      <>
+        <ViewToggle view={view} setView={setView} />
+        <EventCalendar events={events} />
+      </>
+    );
+  }
+
   // Hero = a LEGTÖBB „Megyek"-et kapott esemény a szűrt listából.
   const hero = [...filtered].sort((a, b) => b.going - a.going)[0];
   const rest = filtered.filter((e) => e.id !== hero.id);
@@ -227,6 +243,8 @@ function EventsList({ events }: { events: KintiEvent[] }) {
 
   return (
     <>
+      <ViewToggle view={view} setView={setView} />
+
       {/* Hónap-szűrő pillek */}
       {availableMonths.length > 1 && (
         <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5">
@@ -319,6 +337,14 @@ function EventsList({ events }: { events: KintiEvent[] }) {
               )}
               <button
                 type="button"
+                onClick={() => setShareFor(hero)}
+                aria-label="Megosztás"
+                className="inline-flex items-center rounded-pill bg-white/20 px-2.5 py-1.5 text-white active:scale-95"
+              >
+                <Icon name="share" size={13} strokeWidth={2.4} />
+              </button>
+              <button
+                type="button"
                 onClick={() => handleRsvp(hero)}
                 disabled={votedOf(hero) || busyOf(hero)}
                 className={cn(
@@ -379,6 +405,14 @@ function EventsList({ events }: { events: KintiEvent[] }) {
               )}
               <button
                 type="button"
+                onClick={() => setShareFor(e)}
+                aria-label="Megosztás"
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-muted active:scale-95"
+              >
+                <Icon name="share" size={12} strokeWidth={2.2} />
+              </button>
+              <button
+                type="button"
                 onClick={() => handleRsvp(e)}
                 disabled={votedOf(e) || busyOf(e)}
                 className={cn(
@@ -412,10 +446,57 @@ function EventsList({ events }: { events: KintiEvent[] }) {
         onClose={() => setCalFor(null)}
         event={calFor ? eventToCal(calFor) : null}
       />
+
+      <ShareSheet
+        open={!!shareFor}
+        onClose={() => setShareFor(null)}
+        url={
+          shareFor
+            ? `${typeof window !== "undefined" ? window.location.origin : ""}/kozosseg/esemeny/${shareFor.id}`
+            : ""
+        }
+        title={shareFor?.title ?? ""}
+        text={shareFor ? `Nézd meg ezt az eseményt a kintin: ${shareFor.title}` : ""}
+      />
     </>
   );
 }
 
+
+function ViewToggle({
+  view,
+  setView,
+}: {
+  view: "list" | "calendar";
+  setView: (v: "list" | "calendar") => void;
+}) {
+  return (
+    <div className="flex gap-1 rounded-pill border border-line bg-surface-alt p-1 w-fit">
+      <button
+        type="button"
+        onClick={() => setView("list")}
+        aria-pressed={view === "list"}
+        className={cn(
+          "rounded-pill px-3 py-1 text-[11.5px] font-bold transition",
+          view === "list" ? "bg-surface text-ink shadow-card" : "text-ink-muted",
+        )}
+      >
+        📋 Lista
+      </button>
+      <button
+        type="button"
+        onClick={() => setView("calendar")}
+        aria-pressed={view === "calendar"}
+        className={cn(
+          "rounded-pill px-3 py-1 text-[11.5px] font-bold transition",
+          view === "calendar" ? "bg-surface text-ink shadow-card" : "text-ink-muted",
+        )}
+      >
+        📅 Naptár
+      </button>
+    </div>
+  );
+}
 
 function DateChip({ event, solid = false }: { event: KintiEvent; solid?: boolean }) {
   return (

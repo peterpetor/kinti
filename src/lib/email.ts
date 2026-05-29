@@ -201,6 +201,111 @@ kinti.app`;
   }
 }
 
+interface BackupEmailItem {
+  type: string;
+  title: string;
+  manageUrl: string;
+  createdAt: string;
+}
+
+interface BackupEmailArgs {
+  to: string;
+  items: BackupEmailItem[];
+  origin: string;
+}
+
+/**
+ * sendBackupEmail — a /sajatjaim oldal "Küldjük emailre" gombja hívja.
+ *
+ * GDPR-tisztaság: a kinti SZERVERE SOSE látja az email + manage_token párosítást
+ * (csak ezt az egyetlen HTTP requestet, ami azonnal továbbküldi Resendre, és
+ * sehol nem tárolódik). A user megadja az email-jét, mi azonnal kiküldjük
+ * a backup-listát, NEM mentjük.
+ */
+export async function sendBackupEmail(args: BackupEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+
+  const TYPE_LABEL: Record<string, string> = {
+    ride: "Telekocsi",
+    bulletin: "Hirdetés",
+    event: "Esemény",
+    review: "Vélemény",
+    business: "Vállalkozás",
+  };
+
+  const itemsText = args.items
+    .map((it) => {
+      const label = TYPE_LABEL[it.type] ?? it.type;
+      const full = `${args.origin}${it.manageUrl}`;
+      return `  ${label}: "${it.title}"\n  Kezelő-link: ${full}`;
+    })
+    .join("\n\n");
+
+  const itemsHtml = args.items
+    .map((it) => {
+      const label = TYPE_LABEL[it.type] ?? it.type;
+      const full = `${args.origin}${it.manageUrl}`;
+      return `<div style="margin:0 0 16px;padding:12px 14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#5c6d63;margin-bottom:3px;">
+          ${escapeHtml(label)}
+        </div>
+        <div style="font-size:14px;font-weight:700;color:#0e1f17;margin-bottom:8px;">
+          ${escapeHtml(it.title)}
+        </div>
+        <a href="${escapeAttr(full)}" style="display:inline-block;font-size:12.5px;color:#1d4434;text-decoration:underline;word-break:break-all;">
+          Kezelő-link →
+        </a>
+      </div>`;
+    })
+    .join("");
+
+  const subject = `kinti backup — ${args.items.length} kezelő-link`;
+  const text = `Szia!
+
+Ezt a backup-emailt te kérted a kinti.app /sajatjaim oldalán.
+
+Az alábbi kezelő-linkekkel bármikor visszatérhetsz a posztjaidhoz (szerkesztés vagy törlés). Tedd biztonságos helyre — nálunk NEM marad meg semmilyen másolat erről az email-küldésről.
+
+${itemsText}
+
+— kinti.app
+`;
+
+  const html = baseLayout({
+    preheader: `${args.items.length} kezelő-link a posztjaidhoz`,
+    body: `
+      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
+        Szia 👋
+      </p>
+      <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#0e1f17;">
+        A kinti.app <strong>Saját posztjaim</strong> oldalán kértél tőlünk egy backup-emailt.
+        Az alábbi <strong>${args.items.length}</strong> kezelő-link a tiéd:
+      </p>
+      ${itemsHtml}
+      <p style="margin:0 0 12px;font-size:12px;line-height:1.6;color:#5c6d63;">
+        <strong style="color:#0e1f17;">Tedd ezt az emailt biztonságos helyre.</strong>
+        A kinti.app szerverein NEM marad meg semmilyen másolat erről az
+        email-küldésről — ez a kizárólag a te biztonsági mentésed.
+      </p>
+      <p style="margin:0;font-size:12px;line-height:1.6;color:#5c6d63;">
+        Ha nem te kérted, hagyd figyelmen kívül.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({
+    from,
+    to: args.to,
+    subject,
+    html,
+    text,
+  });
+
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 /**
  * Egyszerű "Hello world" teszt-email — gyors sanity check, hogy a Resend
  * konfiguráció (kulcs + küldő + címzett) működik-e. Az /api/dev/test-email

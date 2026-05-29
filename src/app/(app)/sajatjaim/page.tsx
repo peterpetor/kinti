@@ -2,7 +2,7 @@ import { MyPostsManager } from "@/components/views/my-posts-manager";
 import { KintiLogo } from "@/components/ui";
 
 export const runtime = "edge";
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Saját posztjaim",
@@ -17,6 +17,7 @@ export const metadata = {
  * localStorage-ból. Az oldal force-static — semmilyen Edge-erőforrás nem fogyy.
  */
 export default function MyPostsPage() {
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   return (
     <div className="mx-auto max-w-md space-y-5 px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
       <header className="flex items-center gap-3">
@@ -29,10 +30,11 @@ export default function MyPostsPage() {
       <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[12px] leading-relaxed text-ink-muted">
         <strong className="text-ink">Csak a böngésződben látható.</strong> A kinti szerveren nincs felhasználói azonosítód —
         ezt a listát a böngésző localStorage-ja tárolja. Ha cache-t törölsz vagy másik eszközön nyitod meg,
-        eltűnik. Másik eszközhöz: <strong className="text-ink">JSON export + import</strong>.
+        eltűnik. Másik eszközhöz: <strong className="text-ink">letöltés / import</strong> vagy{" "}
+        <strong className="text-ink">email-küldés</strong>.
       </div>
 
-      <MyPostsManager />
+      <MyPostsManager turnstileSiteKey={turnstileSiteKey} />
     </div>
   );
 }

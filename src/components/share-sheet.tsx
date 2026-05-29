@@ -6,6 +6,8 @@ import { BottomSheet, SheetRow } from "./bottom-sheet";
 import {
   whatsappShareUrl,
   viberShareUrl,
+  telegramShareUrl,
+  facebookShareUrl,
   copyLink,
   nativeShare,
   canNativeShare,
@@ -41,6 +43,20 @@ export function ShareSheet({
           badgeColor="#25D366"
           icon={<Icon name="send" size={16} strokeWidth={2.4} />}
           label="WhatsApp"
+        />
+        <SheetRow
+          href={telegramShareUrl(url, msg)}
+          onClick={onClose}
+          badgeColor="#229ED9"
+          icon={<Icon name="send" size={16} strokeWidth={2.4} />}
+          label="Telegram"
+        />
+        <SheetRow
+          href={facebookShareUrl(url)}
+          onClick={onClose}
+          badgeColor="#1877F2"
+          icon={<Icon name="facebook" size={16} strokeWidth={2.4} />}
+          label="Facebook"
         />
         <SheetRow
           href={viberShareUrl(url, msg)}

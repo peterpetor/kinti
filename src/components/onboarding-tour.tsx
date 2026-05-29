@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
 /**
- * OnboardingTour — első indításkor egy 3 lépéses ismertető a fő tab-ok körül.
+ * OnboardingTour — első indításkor egy többszörös bemutató a fő tartalmakról.
  * localStorage-flag (`kinti.tour.done`) jelzi, hogy ne mutassuk újra.
  */
 const STORAGE_KEY = "kinti.tour.done";
@@ -14,23 +15,39 @@ interface Step {
   emoji: string;
   title: string;
   body: string;
+  /** Ha van, "Mutasd!" gomb a step-en, ami direkt navigál. */
+  cta?: { href: string; label: string };
 }
 
 const STEPS: Step[] = [
   {
+    emoji: "👋",
+    title: "Üdv a kinti-n!",
+    body: "A Svájcban élő magyaroknak. Nincs fiók, nincs email-kérés — egyszerűen használd. Mutatunk 4 dolgot, ami biztosan jól fog jönni.",
+  },
+  {
     emoji: "🔎",
     title: "Szaknévsor",
     body: "Találd meg a magyar fodrászt, orvost, autószerelőt — a kantonod szerint szűrve. Térképen és listában is böngészhető.",
+    cta: { href: "/szaknevsor", label: "Mutasd!" },
   },
   {
     emoji: "🤝",
     title: "Közösség",
     body: "Események és hirdetések egy helyen — magyar bulik, albérlet, állás, eladó. A felső füleken válthatsz Események és Hirdetések közt.",
+    cta: { href: "/kozosseg", label: "Mutasd!" },
   },
   {
-    emoji: "👤",
-    title: "Fiókom",
-    body: "Itt léphetsz be (vagy regisztrálsz) vállalkozóként a profilod kezeléséhez. Itt vannak a kedvenceid és a beállítások is.",
+    emoji: "🚗",
+    title: "Telekocsi",
+    body: "Fuvart kínálsz vagy keresel? Itt megtalálod — Zürichből Bp-re, Bernből Ausztriába. A magyar közösségen belül.",
+    cta: { href: "/telekocsi", label: "Mutasd!" },
+  },
+  {
+    emoji: "📌",
+    title: "Saját posztjaim & Súgó",
+    body: "Mindent amit feladsz, megtalálod a Saját posztjaim oldalon. Bárhol elakadsz — nyisd meg a Segítség oldalt!",
+    cta: { href: "/segitseg", label: "Súgóhoz" },
   },
 ];
 
@@ -97,6 +114,15 @@ export function OnboardingTour() {
 
         {/* Vezérlők */}
         <div className="mt-5 flex flex-col gap-2">
+          {s.cta && (
+            <Link
+              href={s.cta.href}
+              onClick={close}
+              className="inline-flex h-11 items-center justify-center gap-1.5 rounded-pill border border-primary/40 bg-surface px-5 text-[13.5px] font-bold text-primary active:scale-[0.99]"
+            >
+              {s.cta.label} <Icon name="arrowRight" size={13} strokeWidth={2.4} />
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => (isLast ? close() : setStep((s) => s + 1))}

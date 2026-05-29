@@ -8,7 +8,7 @@ import {
   DropdownMenu,
 } from "@/components/ui";
 import { WeatherWidget } from "@/components/weather-widget";
-import { WelcomeModal } from "@/components/welcome-modal";
+import { OnboardingTour } from "@/components/onboarding-tour";
 import { MyPostsBanner } from "@/components/my-posts-banner";
 import { GlobalSearch } from "@/components/global-search";
 import { PwaInstallCard } from "@/components/pwa-install-card";
@@ -38,12 +38,20 @@ export default async function FeedPage() {
           />
         </div>
         <div className="flex-1" />
+        <Link
+          href="/de"
+          lang="de"
+          title="Deutsche Beschreibung der Plattform"
+          className="hidden sm:inline-flex items-center rounded-pill border border-line bg-surface px-2 py-1 text-[10px] font-bold tracking-wider text-ink-muted shadow-card hover:bg-surface-alt"
+        >
+          🇩🇪 DE
+        </Link>
         <GlobalSearch />
         <DropdownMenu />
       </header>
 
-      {/* első látogatáskor — üdvözlő modal */}
-      <WelcomeModal />
+      {/* első látogatáskor — 5 lépcsős mini-tour */}
+      <OnboardingTour />
 
       {/* helyi posztok banner — csak ha vannak */}
       <MyPostsBanner />

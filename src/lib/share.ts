@@ -15,6 +15,16 @@ export function viberShareUrl(url: string, text: string): string {
   return `viber://forward?text=${encodeURIComponent(msg)}`;
 }
 
+/** Telegram megosztó URL (t.me/share — app + web is kezeli). */
+export function telegramShareUrl(url: string, text: string): string {
+  return `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+}
+
+/** Facebook megosztó URL (sharer dialog). */
+export function facebookShareUrl(url: string): string {
+  return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+}
+
 /** Link a vágólapra. */
 export async function copyLink(url: string): Promise<boolean> {
   try {

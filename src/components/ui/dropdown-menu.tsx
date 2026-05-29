@@ -107,6 +107,13 @@ export function DropdownMenu() {
                 Segítség és GYIK
               </Link>
 
+              <Link href="/de" hrefLang="de" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted text-base">
+                  🇩🇪
+                </span>
+                Deutsche Beschreibung
+              </Link>
+
               <div className="h-px bg-line/60 my-4 mx-2" />
 
               {/* Jogi linkek */}
