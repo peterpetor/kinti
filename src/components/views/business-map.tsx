@@ -9,16 +9,6 @@ import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
-import { ReportButton } from "@/components/report-button";
-
-export interface SosAlert {
-  id: string;
-  lat: number;
-  lng: number;
-  description: string;
-  contactPhone: string;
-  resolved: boolean;
-}
 
 /**
  * BusinessMap — wrapper: WebGL-detektálás + motor-választás + közös overlay-ek.
@@ -89,21 +79,6 @@ export function BusinessMap({
     if (isMaplibreRequested()) setEngine("maplibre");
   }, []);
 
-  const [sosAlerts, setSosAlerts] = useState<SosAlert[]>([]);
-  
-  const loadSosAlerts = useCallback(() => {
-    fetch("/api/sos")
-      .then((res) => res.json())
-      .then((data) => setSosAlerts(Array.isArray(data) ? data : []))
-      .catch(() => setSosAlerts([]));
-  }, []);
-
-  useEffect(() => {
-    loadSosAlerts();
-    window.addEventListener("sos-submitted", loadSosAlerts);
-    return () => window.removeEventListener("sos-submitted", loadSosAlerts);
-  }, [loadSosAlerts]);
-
   const handleSelectMarker = useCallback((id: string) => setSelectedId(id), []);
   // Ha a maplibre runtime elhasal (timeout, WebGL-hiba), automatikus fallback.
   const handleMaplibreFail = useCallback((reason: string) => {
@@ -119,9 +94,6 @@ export function BusinessMap({
     }
   }, [located, selectedId]);
 
-  const [selectedSosId, setSelectedSosId] = useState<string | null>(null);
-  const handleSelectSos = useCallback((id: string) => setSelectedSosId(id), []);
-
   return (
     <div className={cn("relative isolate overflow-hidden rounded-card", className)}>
       {engine === "maplibre" ? (
@@ -132,8 +104,6 @@ export function BusinessMap({
           fallbackCenter={fallbackCenter}
           fallbackZoom={fallbackZoom}
           onFail={handleMaplibreFail}
-          sosAlerts={sosAlerts}
-          onSelectSosAlert={handleSelectSos}
         />
       ) : (
         <LeafletEngine
@@ -142,18 +112,7 @@ export function BusinessMap({
           onSelectMarker={handleSelectMarker}
           fallbackCenter={fallbackCenter}
           fallbackZoom={fallbackZoom}
-          sosAlerts={sosAlerts}
-          onSelectSosAlert={handleSelectSos}
         />
-      )}
-
-      {selectedSosId && (
-        <div className="absolute inset-0 z-[50] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
-          <SosDetailsCard
-            sos={sosAlerts.find(s => s.id === selectedSosId)!}
-            onClose={() => setSelectedSosId(null)}
-          />
-        </div>
       )}
 
       {/* Bal-felül: hely-pill */}
@@ -253,87 +212,3 @@ function SelectedCard({ business: b }: { business: Business }) {
   );
 }
 
-// --- S.O.S. Részletek Kártya (Felugró) ---------------------------------------
-
-function SosDetailsCard({ sos, onClose }: { sos: SosAlert, onClose: () => void }) {
-  const [isMine, setIsMine] = useState(false);
-  const [resolving, setResolving] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const myAlerts = JSON.parse(localStorage.getItem("mySosAlerts") || "[]");
-      if (myAlerts.includes(sos.id)) {
-        setIsMine(true);
-      }
-    }
-  }, [sos.id]);
-
-  const handleResolve = async () => {
-    if (resolving) return;
-    setResolving(true);
-    try {
-      const res = await fetch(`/api/sos/${sos.id}/resolve`, { method: "POST" });
-      if (res.ok) {
-        if (typeof window !== "undefined") {
-          const myAlerts = JSON.parse(localStorage.getItem("mySosAlerts") || "[]");
-          localStorage.setItem("mySosAlerts", JSON.stringify(myAlerts.filter((id: string) => id !== sos.id)));
-          window.dispatchEvent(new Event('sos-submitted'));
-        }
-        onClose();
-      } else {
-        alert("Sikertelen lezárás. (Csak az tudja lezárni, aki feladta!)");
-      }
-    } catch {
-      alert("Hiba történt a lezárás során.");
-    } finally {
-      setResolving(false);
-    }
-  };
-
-  if (!sos) return null;
-
-  return (
-    <div className="relative w-full max-w-sm rounded-[20px] border border-red-500/20 bg-surface p-5 shadow-2xl">
-      <button
-        onClick={onClose}
-        className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-surface-alt text-ink-muted hover:bg-line"
-        aria-label="Bezárás"
-      >
-        ✕
-      </button>
-
-      <div className="mb-4 flex items-center gap-2 text-red-600">
-        <span className="text-2xl">🆘</span>
-        <h3 className="text-lg font-bold tracking-tight">Közösségi S.O.S.</h3>
-        <span className="flex-1" />
-        <div className="pr-8">
-          <ReportButton contentType="sos" contentId={sos.id} />
-        </div>
-      </div>
-
-      <div className="mb-6 rounded-xl bg-red-50 p-4 text-[14px] leading-relaxed text-red-900 border border-red-100">
-        {sos.description}
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <a
-          href={`tel:${sos.contactPhone}`}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3.5 font-bold text-surface shadow-md transition-transform hover:bg-accent active:scale-95"
-        >
-          <Icon name="phone" size={18} />
-          Hívás ({sos.contactPhone})
-        </a>
-
-        {isMine && (
-          <button
-            onClick={handleResolve}
-            disabled={resolving}
-            className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-success-soft py-3 font-bold text-success-heavy transition-colors hover:bg-success/20 disabled:opacity-50"
-          >
-            {resolving ? "Folyamatban..." : "Megoldódott (Lezárás)"}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}

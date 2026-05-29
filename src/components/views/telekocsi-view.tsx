@@ -1,12 +1,15 @@
 "use client";
 
-import { lazy, Suspense, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { PublicRide } from "@/lib/repo";
+import type { SosAlert } from "@/lib/sos-repo";
 import { RideCard } from "./ride-card";
 import { PushOptin } from "@/components/push-optin";
+import { SosModal } from "./sos-modal";
+import { SosDetailsCard } from "@/components/sos-details-card";
 
 /**
  * TelekocsiView — a /telekocsi oldal kliens-burkolója. Lista / Térkép váltó.
@@ -30,6 +33,24 @@ export function TelekocsiView({
   const [q, setQ] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [packagesOnly, setPackagesOnly] = useState(false);
+
+  // SOS — riasztások a térképen + feladás modal
+  const [sosAlerts, setSosAlerts] = useState<SosAlert[]>([]);
+  const [sosModalOpen, setSosModalOpen] = useState(false);
+  const [selectedSosId, setSelectedSosId] = useState<string | null>(null);
+
+  const loadSosAlerts = useCallback(() => {
+    fetch("/api/sos")
+      .then((res) => res.json())
+      .then((data) => setSosAlerts(Array.isArray(data) ? data : []))
+      .catch(() => setSosAlerts([]));
+  }, []);
+
+  useEffect(() => {
+    loadSosAlerts();
+    window.addEventListener("sos-submitted", loadSosAlerts);
+    return () => window.removeEventListener("sos-submitted", loadSosAlerts);
+  }, [loadSosAlerts]);
 
   const packageCount = useMemo(() => rides.filter((r) => r.acceptsPackages).length, [rides]);
 
@@ -165,19 +186,67 @@ export function TelekocsiView({
           )}
         </div>
       ) : (
-        <div className="px-5">
+        <div className="px-5 space-y-2">
+          {/* SOS-bar a térkép fölött — feladás gomb + aktív riasztások jelzése */}
+          <div className="flex items-center gap-2 rounded-card border border-red-500/30 bg-red-50 px-3 py-2 shadow-card">
+            <span className="text-base">🆘</span>
+            <p className="min-w-0 flex-1 text-[11.5px] leading-snug text-red-900">
+              <strong>Bajban vagy az úton?</strong>{" "}
+              <span className="text-red-800/80">
+                {sosAlerts.length > 0
+                  ? `${sosAlerts.length} aktív riasztás a térképen.`
+                  : "Küldj S.O.S.-t a kinti közösségnek."}
+              </span>
+            </p>
+            <button
+              type="button"
+              onClick={() => setSosModalOpen(true)}
+              className="shrink-0 rounded-pill bg-red-600 hover:bg-red-700 active:scale-95 px-3 py-1.5 text-[11.5px] font-bold text-white shadow-card"
+            >
+              S.O.S. leadása
+            </button>
+          </div>
+
           <Suspense
             fallback={
-              <div className="grid h-[calc(100dvh-340px)] min-h-[380px] max-h-[560px] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
+              <div className="grid h-[calc(100dvh-380px)] min-h-[360px] max-h-[540px] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
                 Térkép betöltése…
               </div>
             }
           >
             <RideMap
               rides={filtered}
-              className="h-[calc(100dvh-340px)] min-h-[380px] max-h-[560px] overflow-hidden rounded-card border border-line shadow-card"
+              sosAlerts={sosAlerts}
+              onSelectSos={(id) => setSelectedSosId(id)}
+              className="h-[calc(100dvh-380px)] min-h-[360px] max-h-[540px] overflow-hidden rounded-card border border-line shadow-card"
             />
           </Suspense>
+        </div>
+      )}
+
+      {/* SOS-feladás modal */}
+      {sosModalOpen && (
+        <SosModal
+          onClose={() => setSosModalOpen(false)}
+          onSuccess={() => {
+            setSosModalOpen(false);
+            loadSosAlerts();
+          }}
+        />
+      )}
+
+      {/* SOS-részletek a térképen kattintott pinhez */}
+      {selectedSosId && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+          onClick={() => setSelectedSosId(null)}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <SosDetailsCard
+              sos={sosAlerts.find((s) => s.id === selectedSosId)!}
+              onClose={() => setSelectedSosId(null)}
+            />
+          </div>
         </div>
       )}
     </div>

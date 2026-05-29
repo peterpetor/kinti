@@ -8,7 +8,7 @@ import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
 import { clusterBusinesses, clusterBounds, clusterSize } from "@/lib/cluster";
-import type { SosAlert } from "./business-map";
+import type { SosAlert } from "@/lib/sos-repo";
 
 import "leaflet/dist/leaflet.css";
 

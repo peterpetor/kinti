@@ -5,11 +5,9 @@ import Link from "next/link";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
-import { SosModal } from "../views/sos-modal";
 
 export function DropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSosOpen, setIsSosOpen] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
 
   useEffect(() => {
@@ -146,30 +144,9 @@ export function DropdownMenu() {
                   </button>
                 </SignOutButton>
               )}
-
-              <button
-                type="button"
-                onClick={() => {
-                  setIsOpen(false);
-                  setIsSosOpen(true);
-                }}
-                className="flex w-full items-center justify-center gap-2.5 mt-4 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-white bg-red-600 hover:bg-red-700 transition-all active:scale-[0.98] shadow-card"
-              >
-                <span className="text-base leading-none">🆘</span>
-                Közösségi S.O.S. Radar
-              </button>
             </div>
           </div>
         </div>
-      )}
-
-      {isSosOpen && (
-        <SosModal
-          onClose={() => setIsSosOpen(false)}
-          onSuccess={() => {
-            setIsSosOpen(false);
-          }}
-        />
       )}
     </div>
   );

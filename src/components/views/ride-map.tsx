@@ -9,6 +9,7 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Icon } from "@/components/ui";
 import type { PublicRide } from "@/lib/repo";
+import type { SosAlert } from "@/lib/sos-repo";
 import { phoneToWhatsapp } from "@/lib/rides";
 import { handleFromId } from "@/lib/handle";
 
@@ -48,6 +49,19 @@ function createStopIcon(isRequest: boolean): L.DivIcon {
   });
 }
 
+/** SOS pulzáló piros marker. */
+const SOS_ICON = L.divIcon({
+  className: "",
+  html: `
+    <div class="flex h-10 w-10 items-center justify-center relative">
+      <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+      <span class="relative flex items-center justify-center h-8 w-8 rounded-full bg-red-600 text-white text-lg">🆘</span>
+    </div>
+  `,
+  iconSize: [40, 40],
+  iconAnchor: [20, 20],
+});
+
 const HU_MON = ["jan.", "feb.", "márc.", "ápr.", "máj.", "jún.", "júl.", "aug.", "szept.", "okt.", "nov.", "dec."];
 function fmtDT(iso: string): string {
   const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
@@ -57,9 +71,15 @@ function fmtDT(iso: string): string {
 
 export function RideMap({
   rides,
+  sosAlerts = [],
+  onSelectSos,
   className,
 }: {
   rides: PublicRide[];
+  /** Aktív SOS-riasztások — telekocsis kontextusban a sofőröknek értelmes. */
+  sosAlerts?: SosAlert[];
+  /** SOS-kiválasztás callback — a parent egy modal-t nyit a részletekhez. */
+  onSelectSos?: (id: string) => void;
   className?: string;
 }) {
   const offerIcon = useMemo(() => createCarIcon(false), []);
@@ -146,6 +166,18 @@ export function RideMap({
               />
             )}
           </Fragment>
+        ))}
+
+        {/* SOS-pinek — pulzáló piros markerek a klaszteren KÍVÜL (mindig láthatók). */}
+        {sosAlerts.map((sos) => (
+          <Marker
+            key={`sos-${sos.id}`}
+            position={[sos.lat, sos.lng]}
+            icon={SOS_ICON}
+            eventHandlers={{
+              click: () => onSelectSos?.(sos.id),
+            }}
+          />
         ))}
       </MapContainer>
     </div>
