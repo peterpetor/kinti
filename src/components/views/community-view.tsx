@@ -75,11 +75,11 @@ export function CommunityView({
   posts: BulletinPost[];
   turnstileSiteKey?: string;
 }) {
-  const [tab, setTab] = useState<Tab>("board");
+  const [tab, setTab] = useState<Tab>("events");
 
   const tabs: { id: Tab; label: string; count: number | null }[] = [
-    { id: "board", label: "Hirdetések", count: posts.length },
     { id: "events", label: "Események", count: events.length },
+    { id: "board", label: "Hirdetések", count: posts.length },
   ];
 
   return (

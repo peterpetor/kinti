@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
  * TabBar — alsó, lebegő üveg-navigáció. 4 stabil fül, auth-független label:
  *   1) Főoldal    — dashboard
  *   2) Szaknévsor — vállalkozás-kereső
- *   3) Piac       — hirdetések + események
+ *   3) Közösség   — események + hirdetések (alfülekkel)
  *   4) Telekocsi  — szabad helyes utazások (vendég is feladhat)
  */
 interface Tab {
@@ -25,7 +25,7 @@ const TABS: Tab[] = [
   { href: "/szaknevsor", label: "Szaknévsor", icon: "list" },
   {
     href: "/kozosseg",
-    label: "Piac",
+    label: "Közösség",
     icon: "users",
     alsoMatch: ["/alberlet", "/allas"],
   },

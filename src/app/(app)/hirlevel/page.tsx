@@ -41,14 +41,14 @@ export default function HirlevelPage() {
           Iratkozz fel push-értesítésre
         </h2>
         <p className="mx-auto mt-2 max-w-sm text-pretty text-[13px] leading-relaxed text-ink-muted">
-          A Piacon (események + hirdetések) találsz egy „Értesítések" gombot. Egy
+          A Közösség oldalon (események + hirdetések) találsz egy „Értesítések" gombot. Egy
           kattintás, és a böngésződ küld neked üzenetet, amikor új tartalom jön.
         </p>
         <Link
           href="/kozosseg"
           className="mt-4 inline-flex h-11 items-center justify-center gap-2 rounded-pill bg-primary px-5 text-[13.5px] font-bold text-white shadow-card-hover"
         >
-          Irány a Piac
+          Irány a Közösséghez
           <Icon name="arrowRight" size={15} strokeWidth={2.4} />
         </Link>
       </div>

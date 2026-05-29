@@ -6,9 +6,9 @@ import { getBulletinKinds, getBulletinPosts, getEvents } from "@/lib/repo";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Piac" };
+export const metadata = { title: "Közösség" };
 
-export default async function PiacPage() {
+export default async function KozossegPage() {
   const [events, kinds, posts] = await Promise.all([
     getEvents(),
     getBulletinKinds(),
@@ -20,10 +20,10 @@ export default async function PiacPage() {
     <div className="space-y-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <div className="px-5">
         <ScreenHeader
-          eyebrow="Piac · Svájcban élő magyaroknak"
+          eyebrow="Közösség · Svájcban élő magyaroknak"
           title={
             <>
-              Hirdetések és események
+              Események és hirdetések
               <br />
               egy helyen.
             </>

@@ -37,7 +37,7 @@ export default async function EventManagePage({ params }: { params: { token: str
       <EventManageForm event={event} token={params.token} />
 
       <Link href="/kozosseg" className="block text-[12.5px] font-semibold text-ink-muted underline">
-        ← Vissza a Piacra
+        ← Vissza a Közösséghez
       </Link>
     </div>
   );

@@ -24,8 +24,8 @@ const STEPS: Step[] = [
   },
   {
     emoji: "🤝",
-    title: "Piac",
-    body: "Hirdetések (albérlet, állás, eladó), események és telekocsi — minden közösségi tartalom egy helyen.",
+    title: "Közösség",
+    body: "Események és hirdetések egy helyen — magyar bulik, albérlet, állás, eladó. A felső füleken válthatsz Események és Hirdetések közt.",
   },
   {
     emoji: "👤",

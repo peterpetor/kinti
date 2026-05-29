@@ -17,7 +17,7 @@ interface FaqItem {
 
 const QUICK_LINKS: { href: string; label: string; emoji: string }[] = [
   { href: "/szaknevsor", label: "Szakembereket keresek", emoji: "🔍" },
-  { href: "/piac", label: "Hirdetést / eseményt nézek", emoji: "📢" },
+  { href: "/kozosseg", label: "Eseményt / hirdetést nézek", emoji: "📢" },
   { href: "/telekocsi", label: "Telekocsit keresek", emoji: "🚗" },
   { href: "/sajatjaim", label: "Saját posztjaim", emoji: "📌" },
 ];

@@ -83,7 +83,7 @@ export function WelcomeModal() {
           </Link>
 
           <Link
-            href="/piac"
+            href="/kozosseg"
             onClick={dismiss}
             className="flex items-center gap-3 rounded-[14px] border border-line bg-surface-alt p-3 transition active:scale-[0.99] hover:border-primary/40"
           >
@@ -91,9 +91,9 @@ export function WelcomeModal() {
               📢
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-[13.5px] font-extrabold text-ink">Hirdetés és események</span>
+              <span className="block text-[13.5px] font-extrabold text-ink">Események és hirdetések</span>
               <span className="block text-[11.5px] text-ink-muted">
-                Eladok-veszek, kérdezek, eseményt szervezek
+                Magyar bulik, eseményel jövök, eladok-veszek
               </span>
             </span>
           </Link>

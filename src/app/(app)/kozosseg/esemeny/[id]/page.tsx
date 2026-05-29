@@ -113,7 +113,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
         href="/kozosseg"
         className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-ink-muted hover:text-ink"
       >
-        <Icon name="arrowLeft" size={14} strokeWidth={2.4} /> Vissza a Piacra
+        <Icon name="arrowLeft" size={14} strokeWidth={2.4} /> Vissza a Közösséghez
       </Link>
 
       <article className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
