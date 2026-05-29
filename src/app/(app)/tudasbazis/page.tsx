@@ -47,6 +47,25 @@ export default function TudasbazisPage() {
         ))}
       </div>
 
+      {/* Cross-link: Ügyintézés Varázsló */}
+      <Link
+        href="/ugyintezes"
+        className="flex items-center gap-3 rounded-card border-2 border-primary/30 bg-primary-soft/60 p-4 shadow-card transition active:scale-[0.99]"
+      >
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary text-white text-xl">
+          📋
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
+            Ügyintézés Varázsló — pipálható csekklisták
+          </span>
+          <span className="mt-0.5 block text-[11.5px] leading-snug text-ink-muted">
+            Lépésről lépésre: bejelentkezés, jogosítvány-csere, adóbevallás, C-engedély…
+          </span>
+        </span>
+        <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+      </Link>
+
       <p className="px-1 text-[11px] leading-relaxed text-ink-faint">{GUIDES_DISCLAIMER}</p>
     </div>
   );

@@ -44,6 +44,12 @@ const STEPS: Step[] = [
     cta: { href: "/telekocsi", label: "Mutasd!" },
   },
   {
+    emoji: "📋",
+    title: "Ügyintézés Varázsló",
+    body: "Svájci bürokrácia? Pipálható csekklisták hivatalos linkekkel — bejelentkezés, jogosítvány-csere, adóbevallás, C-engedély.",
+    cta: { href: "/ugyintezes", label: "Mutasd!" },
+  },
+  {
     emoji: "📌",
     title: "Saját posztjaim & Súgó",
     body: "Mindent amit feladsz, megtalálod a Saját posztjaim oldalon. Bárhol elakadsz — nyisd meg a Segítség oldalt!",
