@@ -16,7 +16,6 @@ import {
 } from "@/lib/my-posts";
 
 const TYPE_META: Record<PostType, { label: string; icon: string; color: string }> = {
-  ride:     { label: "Telekocsi",    icon: "🚗", color: "#3a6ea5" },
   bulletin: { label: "Hirdetés",     icon: "📋", color: "#1877F2" },
   event:    { label: "Esemény",      icon: "📅", color: "#E4405F" },
   review:   { label: "Vélemény",     icon: "⭐", color: "#f1c40f" },
@@ -141,7 +140,7 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
   }
 
   const filtered = filter === "all" ? items : items.filter((it) => it.type === filter);
-  const totals: Record<PostType | "all", number> = { all: items.length, ride: 0, bulletin: 0, event: 0, review: 0, business: 0, spontan: 0 };
+  const totals: Record<PostType | "all", number> = { all: items.length, bulletin: 0, event: 0, review: 0, business: 0, spontan: 0 };
   for (const it of items) totals[it.type]++;
 
   return (
@@ -252,7 +251,7 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
           <p className="text-2xl mb-2">📭</p>
           <p className="text-[13px] font-bold text-ink">Egyelőre üres a listád</p>
           <p className="mt-1 text-[11.5px] text-ink-muted">
-            Amikor beküldesz valamit (hirdetés, telekocsi, esemény, vélemény, vállalkozás),
+            Amikor beküldesz valamit (hirdetés, esemény, vélemény, vállalkozás),
             automatikusan idekerül.
           </p>
         </div>

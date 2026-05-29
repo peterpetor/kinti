@@ -12,7 +12,6 @@ import {
   listBusinessesForAdmin,
   listBulletinsForAdmin,
   listEventsForAdmin,
-  listRidesForAdmin,
 } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -24,7 +23,7 @@ export default async function AdminPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  const [stats, openReports, pendingEvents, businesses, bulletins, events, rides] =
+  const [stats, openReports, pendingEvents, businesses, bulletins, events] =
     await Promise.all([
       getAdminStats(),
       listOpenReports(),
@@ -32,7 +31,6 @@ export default async function AdminPage() {
       listBusinessesForAdmin(),
       listBulletinsForAdmin(),
       listEventsForAdmin(),
-      listRidesForAdmin(),
     ]);
 
   return (
@@ -50,7 +48,6 @@ export default async function AdminPage() {
         <Stat label="Vállalkozás" value={stats.businesses} sub={`${stats.businessesVerified} verified`} />
         <Stat label="Hirdetés" value={stats.bulletinsActive} sub="aktív" />
         <Stat label="Esemény" value={stats.eventsApproved} sub="jóváhagyva" />
-        <Stat label="Telekocsi" value={stats.ridesActive} sub="aktív" />
         <Stat label="Vélemény" value={stats.reviews} />
         <Stat label="Hírlevél" value={stats.digestSubscribersConfirmed} sub="megerősített" />
         <Stat label="Push" value={stats.pushSubscriptions} sub="feliratkozó" />
@@ -197,17 +194,6 @@ export default async function AdminPage() {
         )}
       </section>
 
-      {/* Telekocsi — törlés */}
-      <section className="space-y-2">
-        <h2 className="text-[14px] font-extrabold text-ink">
-          Telekocsi — törlés ({rides.length})
-        </h2>
-        {rides.length === 0 ? (
-          <Empty label="Nincs telekocsi-hirdetés." />
-        ) : (
-          <ContentList items={rides} type="rides" />
-        )}
-      </section>
 
       {/* Egyéb admin linkek */}
       <section className="space-y-2 border-t border-line pt-4">
@@ -225,7 +211,7 @@ function ContentList({
   type,
 }: {
   items: { id: string; title: string; meta: string | null; createdAt: string | null; manageToken: string | null }[];
-  type: "bulletins" | "events" | "rides";
+  type: "bulletins" | "events";
 }) {
   return (
     <div className="space-y-1.5">

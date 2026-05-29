@@ -159,20 +159,7 @@ export default function AdatvedelemPage() {
         bármikor letiltható a böngésződ beállításaiban.
       </p>
 
-      <h3>2.8 Telekocsi Értékelések (Trust System)</h3>
-      <p>
-        A Telekocsi modulban a felhasználók értékelhetik egymást (csillagos értékelés). Mivel a platform 
-        account-mentes, a közösségi bizalom építése érdekében az értékeléseket a megadott <strong>telefonszámokhoz 
-        kötve</strong> tároljuk. A leadott értékelések (és az értékelést kapó telefonszáma) addig maradnak a 
-        rendszerben, amíg az érintett felhasználó a törlésüket nem kéri, így biztosítva a megbízhatósági 
-        pontszámok folytonosságát.
-      </p>
-      <ul>
-        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) f) — jogos érdek (közösségi bizalom és biztonság)</li>
-        <li><strong>Tárolási idő:</strong> a felhasználó általi törlési kérelemig</li>
-      </ul>
-
-      <h3>2.9 Moderáció és Tiltólisták (Jogos érdek)</h3>
+      <h3>2.8 Moderáció és Tiltólisták (Jogos érdek)</h3>
       <p>
         A platform biztonsága, a spam-támadások kivédése és a közösség védelme érdekében a moderátorok 
         által az ÁSZF súlyos megsértése miatt véglegesen kitiltott felhasználók technikai azonosítóit 

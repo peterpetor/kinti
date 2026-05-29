@@ -38,12 +38,6 @@ const STEPS: Step[] = [
     cta: { href: "/kozosseg", label: "Mutasd!" },
   },
   {
-    emoji: "🚗",
-    title: "Telekocsi",
-    body: "Fuvart kínálsz vagy keresel? Itt megtalálod — Zürichből Bp-re, Bernből Ausztriába. A magyar közösségen belül.",
-    cta: { href: "/telekocsi", label: "Mutasd!" },
-  },
-  {
     emoji: "📋",
     title: "Ügyintézés Varázsló",
     body: "Svájci bürokrácia? Pipálható csekklisták hivatalos linkekkel — bejelentkezés, jogosítvány-csere, adóbevallás, C-engedély.",

@@ -9,14 +9,13 @@ interface SearchResults {
   businesses: Array<{ id: string; name: string; categoryLabel: string | null }>;
   bulletins: Array<{ id: string; title: string; kindLabel: string | null; cantonCode: string | null }>;
   events: Array<{ id: string; title: string; eventDate: string | null; venue: string | null }>;
-  rides: Array<{ id: string; departureCity: string; destinationCity: string; departureTime: string }>;
 }
 
-const EMPTY: SearchResults = { businesses: [], bulletins: [], events: [], rides: [] };
+const EMPTY: SearchResults = { businesses: [], bulletins: [], events: [] };
 
 /**
- * GlobalSearch — fixed modal egy nagy kereső-mezővel, ami a 4 entitásban keres
- * (vállalkozás, hirdetés, esemény, telekocsi). Kliens komponens, /api/search-ot hív.
+ * GlobalSearch — fixed modal egy nagy kereső-mezővel, ami a 3 entitásban keres
+ * (vállalkozás, hirdetés, esemény). Kliens komponens, /api/search-ot hív.
  */
 export function GlobalSearch() {
   const [open, setOpen] = useState(false);
@@ -76,7 +75,7 @@ export function GlobalSearch() {
   }, [open]);
 
   const total =
-    results.businesses.length + results.bulletins.length + results.events.length + results.rides.length;
+    results.businesses.length + results.bulletins.length + results.events.length;
 
   return (
     <>
@@ -129,9 +128,8 @@ export function GlobalSearch() {
                 <div className="px-3 py-8 text-center text-[12.5px] text-ink-muted">
                   Írj legalább 2 karaktert.<br />
                   Keresel <strong className="text-ink">vállalkozást</strong>,{" "}
-                  <strong className="text-ink">hirdetést</strong>,{" "}
-                  <strong className="text-ink">eseményt</strong> vagy{" "}
-                  <strong className="text-ink">fuvart</strong>?
+                  <strong className="text-ink">hirdetést</strong> vagy{" "}
+                  <strong className="text-ink">eseményt</strong>?
                 </div>
               ) : total === 0 ? (
                 <div className="px-3 py-8 text-center text-[12.5px] text-ink-muted">
@@ -171,17 +169,6 @@ export function GlobalSearch() {
                       href: `/kozosseg/esemeny/${e.id}`,
                       title: e.title,
                       subtitle: [e.eventDate, e.venue].filter(Boolean).join(" · "),
-                    }))}
-                    onNavigate={() => setOpen(false)}
-                  />
-                  <ResultSection
-                    label="Telekocsi"
-                    emoji="🚗"
-                    items={results.rides.map((r) => ({
-                      key: r.id,
-                      href: `/telekocsi/${r.id}`,
-                      title: `${r.departureCity} → ${r.destinationCity}`,
-                      subtitle: fmtRideTime(r.departureTime),
                     }))}
                     onNavigate={() => setOpen(false)}
                   />
@@ -245,10 +232,4 @@ function ResultSection({
       </ul>
     </section>
   );
-}
-
-function fmtRideTime(iso: string): string {
-  const d = new Date(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z"));
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleString("hu-HU", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 }

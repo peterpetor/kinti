@@ -36,7 +36,7 @@ export default function AszfPage() {
       <h3>2.1 Kinti felhasználó (közösségi tag)</h3>
       <p>
         Bárki, aki a Szolgáltatást <strong>hagyományos regisztráció nélkül</strong> használja: böngészi a
-        vállalkozásokat, nézi az eseményeket, hirdetést, eseményt, véleményt, telekocsit
+        vállalkozásokat, nézi az eseményeket, hirdetést, eseményt vagy véleményt
         adhat fel. Felhasználói fiók és jelszó nem szükséges (a hitelesítés egyszeri megerősítő 
         e-maillel történik) — a beküldést ezen felül Cloudflare Turnstile CAPTCHA és IP-alapú rate-limit 
         védi a spam ellen.
@@ -90,29 +90,9 @@ export default function AszfPage() {
           értesítés nélküli eltávolítására.</li>
       </ul>
 
-      <h2>7. Telekocsi (Közösségi utazásmegosztás)</h2>
+      <h2>7. Értékelési Rendszer és Felhasználói Vélemények</h2>
       <p>
-        A platformon elérhető Telekocsi modul kizárólag a felhasználók egymás közötti kapcsolatfelvételét segíti 
-        <strong>non-profit, költségmegosztásos (cost-sharing)</strong> utazások céljából. Az üzletszerű, profitszerzési célú 
-        személyfuvarozás (engedély nélküli taxi szolgáltatás) a platformon szigorúan tilos! A sofőrök az utastól 
-        kizárólag a benzinköltség és az útdíjak arányos megtérítését kérhetik.
-      </p>
-      <p>
-        Az üzemeltető <strong>nem fuvarszervező vagy személyfuvarozó cég</strong>. Nem ellenőrizzük a sofőrök 
-        személyazonosságát, jogosítványát, a járművek műszaki állapotát vagy a biztosítások meglétét. Bármely, 
-        üzletszerű tevékenység gyanúját felvető hirdetést (pl. napi rendszerességű "kisbuszozás" haszonszerzés céljából) 
-        azonnal törlünk.
-      </p>
-      <p>
-        A közös utazás kizárólag a sofőr és az utas(ok) magánmegállapodása. Az utazás során bekövetkező esetleges 
-        balesetekért, késésekért, járatlekésésért, anyagi károkért vagy a felek közötti pénzügyi vitákért az 
-        üzemeltető <strong>semmilyen felelősséget nem vállal</strong>. A felhasználók a Telekocsi modult kizárólag 
-        saját kockázatukra használják.
-      </p>
-
-      <h2>8. Értékelési Rendszer és Felhasználói Vélemények</h2>
-      <p>
-        A platformon (pl. Telekocsi utazások után) leadott értékelések és vélemények a felhasználók szubjektív 
+        A platformon leadott értékelések és vélemények a felhasználók szubjektív 
         magánvéleményét tükrözik. Az üzemeltető a véleményeket előzetesen nem moderálja és azok valóságtartalmát nem ellenőrzi.
       </p>
       <p>
@@ -122,7 +102,7 @@ export default function AszfPage() {
         véleményeket bejelentés alapján vagy saját hatáskörben, indoklás nélkül eltávolítsuk.
       </p>
 
-      <h2>9. Börze (Apróhirdetések) és Adás-vétel</h2>
+      <h2>8. Börze (Apróhirdetések) és Adás-vétel</h2>
       <p>
         A platformon (Börze modul) közzétett hirdetések esetén az adásvétel kizárólag a hirdető és a vevő között 
         jön létre. Az üzemeltető <strong>nem vesz részt a tranzakcióban</strong>, nem kezel fizetéseket, nem nyújt 
@@ -131,7 +111,7 @@ export default function AszfPage() {
         felelősségre nem vonható.
       </p>
 
-      <h2>10. Események és Közösségi Találkozók</h2>
+      <h2>9. Események és Közösségi Találkozók</h2>
       <p>
         A platformon meghirdetett eseményeket a felhasználók maguk szervezik. Az üzemeltető <strong>nem 
         rendezvényszervező</strong>. Az eseményeken bekövetkező esetleges balesetekért, vagyoni károkért, 
@@ -139,7 +119,7 @@ export default function AszfPage() {
         nem vállal. A részvétel minden esetben a felhasználó saját felelősségére történik.
       </p>
 
-      <h2>11. Vállalkozói Szolgáltatások és Feketemunka Tilalma</h2>
+      <h2>10. Vállalkozói Szolgáltatások és Feketemunka Tilalma</h2>
       <p>
         A Szaknévsorban/Vállalkozói modulban szereplő szakemberek nem állnak az üzemeltető alkalmazásában. 
         Az üzemeltető nem ellenőrzi a vállalkozók szakképesítését, engedélyeit, vagy az általuk végzett munka 
@@ -158,7 +138,7 @@ export default function AszfPage() {
         töröljük</strong> a platformról.
       </p>
 
-      <h2>12. A Szolgáltatás rendelkezésre állása és Adatbiztonság</h2>
+      <h2>11. A Szolgáltatás rendelkezésre állása és Adatbiztonság</h2>
       <p>
         Igyekszünk a Szolgáltatást folyamatosan elérhetővé tenni, de <strong>garanciát nem
         vállalunk</strong> a 100%-os rendelkezésre állásra. Karbantartás, technikai hiba, vagy
@@ -171,13 +151,13 @@ export default function AszfPage() {
         gyorsítótár-törlés vagy technikai hiba miatti <strong>adatvesztésért az üzemeltető nem perelhető</strong>.
       </p>
 
-      <h2>13. Felelősség-korlátozás</h2>
+      <h2>12. Felelősség-korlátozás</h2>
       <p>
         Az üzemeltető felelőssége a magyar Polgári Törvénykönyv vonatkozó rendelkezései szerint,
         ingyenes szolgáltatás esetén <strong>csak szándékos károkozásra</strong> terjed ki.
       </p>
 
-      <h2>14. Eszközök, kalkulátorok és tájékoztató anyagok</h2>
+      <h2>13. Eszközök, kalkulátorok és tájékoztató anyagok</h2>
       <p>
         A Szolgáltatáson belül elérhető <strong>kalkulátorok</strong> (gyorshajtás-bírság,
         vám, árfolyam, repülőjegy-becslő stb.), <strong>varázslók</strong> (engedély-választó,
@@ -225,10 +205,10 @@ export default function AszfPage() {
         A <strong>napi Svájci kvíz</strong> kizárólag szórakoztató-oktatási céllal készült.
       </p>
 
-      <h2>15. Közösségi jelentések</h2>
+      <h2>14. Közösségi jelentések</h2>
       <p>
         A platformon a felhasználók által beadott <strong>közösségi jelentések</strong>{" "}
-        (akció-térkép, határátkelő-figyelő, SOS-radar, telekocsi-értékelés, vélemény stb.)
+        (akció-térkép, határátkelő-figyelő, SOS-radar, vélemény stb.)
         a feladó felhasználó saját megfigyelései — az üzemeltető <strong>nem ellenőrzi
         ezek pontosságát</strong>. A felhasználó saját felelősségére használja a
         közösségi jelentéseket; ezekre alapozott döntésekért az üzemeltető és más
@@ -239,7 +219,7 @@ export default function AszfPage() {
         segélyhívást (Svájcban 112). Vészhelyzet esetén MINDIG hívd a 112-t.
       </p>
 
-      <h2>16. Külső Linkekért Való Felelősség</h2>
+      <h2>15. Külső Linkekért Való Felelősség</h2>
       <p>
         A platformon a felhasználók és vállalkozások által megosztott külső weblapokra mutató 
         hivatkozások (linkek) tartalmáért az üzemeltető nem vállal felelősséget. Az üzemeltető nem 
@@ -248,7 +228,7 @@ export default function AszfPage() {
         (pl. adathalászat, vírusok) esetén az üzemeltető felelőssége kizárt.
       </p>
 
-      <h2>17. Szellemi tulajdon és Kártalanítás (Mentesítés)</h2>
+      <h2>16. Szellemi tulajdon és Kártalanítás (Mentesítés)</h2>
       <p>
         A kinti.app márkajegye, logója, design rendszere az üzemeltető szellemi tulajdona.
         A platformon megjelenő felhasználói tartalmak, képek és logók a feltöltők tulajdonát képezik,
@@ -263,14 +243,14 @@ export default function AszfPage() {
         és jogi költséget azonnal megtéríteni</strong>.
       </p>
 
-      <h2>18. Módosítás</h2>
+      <h2>17. Módosítás</h2>
       <p>
         Az üzemeltető fenntartja a jogot, hogy ezeket a feltételeket egyoldalúan módosítsa.
         A módosítás a közzétételkor lép hatályba; lényeges változásokról a vállalkozói
         regisztráltakat emailben is értesítjük.
       </p>
 
-      <h2>19. Adatvédelem</h2>
+      <h2>18. Adatvédelem</h2>
       <p>
         A személyes adatok kezelésének szabályait, a kezelt adatok körét, a megőrzési időket és az 
         érintettek jogait a különálló <strong>Adatvédelmi Tájékoztató</strong> tartalmazza, amely 
@@ -278,13 +258,13 @@ export default function AszfPage() {
         tudomásul veszi az Adatvédelmi Tájékoztatóban foglaltakat.
       </p>
 
-      <h2>20. Jogválasztás és bíróság</h2>
+      <h2>19. Jogválasztás és bíróság</h2>
       <p>
         A jelen feltételekre a <strong>magyar jog</strong> az irányadó. Esetleges jogvitákban
         a magyar bíróságok rendelkeznek hatáskörrel és illetékességgel.
       </p>
 
-      <h2>21. Kapcsolat</h2>
+      <h2>20. Kapcsolat</h2>
       <p>
         Kérdés, panasz, takedown-bejelentés: <a href="mailto:info@kinti.app">info@kinti.app</a>
         {" / "}

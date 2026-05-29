@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/", priority: 1.0, changeFrequency: "daily" },
     { path: "/szaknevsor", priority: 0.9, changeFrequency: "daily" },
     { path: "/kozosseg", priority: 0.9, changeFrequency: "daily" },
-    { path: "/telekocsi", priority: 0.8, changeFrequency: "daily" },
+    { path: "/piac", priority: 0.8, changeFrequency: "daily" },
     { path: "/alberlet", priority: 0.8, changeFrequency: "daily" },
     { path: "/allas", priority: 0.8, changeFrequency: "daily" },
     { path: "/tudasbazis", priority: 0.8, changeFrequency: "weekly" },

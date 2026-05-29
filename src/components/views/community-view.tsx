@@ -73,18 +73,14 @@ function formatExpiry(days: number | null): string | null {
 }
 
 
-type Tab = "board" | "events" | "spontan";
+type Tab = "events" | "spontan";
 
 export function CommunityView({
   events,
-  kinds,
-  posts,
   spontaneous,
   turnstileSiteKey = "",
 }: {
   events: KintiEvent[];
-  kinds: BulletinKind[];
-  posts: BulletinPost[];
   spontaneous: PublicSpontaneous[];
   turnstileSiteKey?: string;
 }) {
@@ -92,7 +88,6 @@ export function CommunityView({
 
   const tabs: { id: Tab; label: string; count: number | null }[] = [
     { id: "events", label: "Események", count: events.length },
-    { id: "board", label: "Hirdetések", count: posts.length },
     { id: "spontan", label: "🎲 Spontán", count: spontaneous.length },
   ];
 
@@ -130,7 +125,6 @@ export function CommunityView({
 
       <div className="space-y-2.5 px-5">
         {tab === "events" && <EventsList events={events} />}
-        {tab === "board" && <BulletinList posts={posts} kinds={kinds} turnstileSiteKey={turnstileSiteKey} />}
         {tab === "spontan" && <SpontaneousList items={spontaneous} turnstileSiteKey={turnstileSiteKey} />}
       </div>
     </div>
@@ -1022,7 +1016,7 @@ export function BulletinCard({
 
 type SortMode = "newest" | "price-asc" | "price-desc";
 
-function BulletinList({
+export function BulletinList({
   posts,
   kinds,
   turnstileSiteKey = "",

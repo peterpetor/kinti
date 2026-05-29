@@ -12,7 +12,6 @@ const STORAGE_KEY = "kinti.myPosts";
 const STORAGE_VERSION = 1;
 
 export type PostType =
-  | "ride"      // telekocsi
   | "bulletin"  // hirdetés
   | "event"     // esemény
   | "review"    // vélemény
@@ -53,7 +52,6 @@ export function loadMyPosts(): MyPostEntry[] {
     if (Array.isArray(parsed)) {
       return parsed
         .filter((it: unknown) => typeof it === "object" && it !== null)
-        .map((it) => migrateLegacyRide(it as Record<string, unknown>))
         .filter(isValidEntry);
     }
     return [];
@@ -146,17 +144,4 @@ function isValidEntry(x: unknown): x is MyPostEntry {
     typeof o.title === "string" &&
     typeof o.createdAt === "string"
   );
-}
-
-function migrateLegacyRide(o: Record<string, unknown>): MyPostEntry {
-  const id = typeof o.id === "string" ? o.id : "";
-  const token = typeof o.manageToken === "string" ? o.manageToken : "";
-  return {
-    type: "ride",
-    id,
-    manageToken: token,
-    title: typeof o.title === "string" ? o.title : "Telekocsi",
-    createdAt: typeof o.createdAt === "string" ? o.createdAt : new Date().toISOString(),
-    manageUrl: token ? `/telekocsi-kezeles/${token}` : "",
-  };
 }
