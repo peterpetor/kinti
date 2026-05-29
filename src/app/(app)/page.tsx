@@ -38,14 +38,6 @@ export default async function FeedPage() {
           />
         </div>
         <div className="flex-1" />
-        <Link
-          href="/de"
-          lang="de"
-          title="Deutsche Beschreibung der Plattform"
-          className="hidden sm:inline-flex items-center rounded-pill border border-line bg-surface px-2 py-1 text-[10px] font-bold tracking-wider text-ink-muted shadow-card hover:bg-surface-alt"
-        >
-          🇩🇪 DE
-        </Link>
         <GlobalSearch />
         <DropdownMenu />
       </header>
