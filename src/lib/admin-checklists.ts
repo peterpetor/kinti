@@ -421,6 +421,105 @@ export const CHECKLISTS: AdminChecklist[] = [
       { label: "ESTV — Quellensteuer hivatalos", url: "https://www.estv.admin.ch/estv/de/home/direkte-bundessteuer/quellensteuer.html" },
     ],
   },
+  {
+    slug: "hazakoltozes",
+    title: "Hazaköltözés Svájcból (Rückwanderung)",
+    emoji: "🏡",
+    summary: "Végleg elhagyod Svájcot? Ez a lépéssor segít rendezni minden ügyet: lakcím-kijelentés, adók, bank, BVG, autó, ingóságok.",
+    description:
+      "A svájci hazaköltözés tele van kevéssé ismert buktatóval — az Abmeldungtól a 2. pillérig. Ha nem intézed el időben, elmaradhat a Quellensteuer-visszatérítés, a zárolhatja a bankszámládat, vagy elveszítesz komoly összeget a nyugdíjpénztárból. Ez a csekklista sorban végigvezet minden fontos lépésen.",
+    deadline: "Ideális esetben 1-3 hónappal a tervezett hazaköltözés előtt kezd el",
+    totalDuration: "Kb. 4-8 hét teljes intézés",
+    steps: [
+      {
+        title: "Lakcím-kijelentés a községnél (Abmeldung)",
+        body:
+          "A tervezett elmenetel dátuma előtt legalább 2 héttel kell a lakóhelyed szerinti községnél (Gemeinde / Stadtverwaltung) személyesen vagy online kijelentkezned. Vidd magaddal: tartózkodási engedélyt (leadod!), útlevelet, esetleg a bérleti felmondásigazolást. Egyes kantonokban (ZH, BE) online is megy az eMovingCH-n. Az engedélykártyádat (B/C) leadod, vagy postán visszaküldöd.",
+        link: { label: "eMovingCH — online Abmeldung", url: "https://www.eumzug.swiss/" },
+        duration: "30-60 perc",
+      },
+      {
+        title: "Quellensteuer-igazolás (Lohnausweis / Quellensteuerausweis) igénylése",
+        body:
+          "Ha B-engedéllyel dolgoztál, a munkáltatód kiállít egy éves Quellensteuerausweis-t (forrásadó-igazolást). Kérd el a munkáltatódtól a távozásod évének összes bérpapírját (Lohnausweis). Ha NOV-ot (Nachträgliche ordentliche Veranlagung) kértél, az adóhivatal postán megküldi a lezárt adóhatározatot (Verfügung) a bejelentett külföldi címedre. Ha még volt visszatérítési igényed, érdemes NOV-ot beadni mielőtt elmész (határidő: március 31.).",
+        link: { label: "ESTV — Quellensteuer visszatérítés", url: "https://www.estv.admin.ch/estv/de/home/direkte-bundessteuer/quellensteuer.html" },
+        duration: "1-2 hét (munkáltatón múlik)",
+      },
+      {
+        title: "2. pillér (Pensionskasse / BVG) — kivét vagy átutalás",
+        body:
+          "Ez a legfontosabb pénzügyi lépés! Ha véglegesen elhagyod Svájcot és EU-s ország (pl. Magyarország) állampolgára vagy, a kötelező BVG-megtakarításod egy részét KIVEHETED. Az Überobligatorium (kötelező feletti rész) készpénzben kifizetnek. A kötelező rész (Obligatorium) azonban EU-állampolgárként Svájcban marad egy zárolóalapban (Freizügigkeitsstiftung), egész a svájci nyugdíjkorhatárig. Lépések: (1) Értesítsd a Pensionskassét az elhagyásról, (2) töltsd ki a Freizügigkeitsleistung-kérelem nyomtatványyt, (3) add meg a külföldi bankszámládat (IBAN).",
+        link: { label: "Freizügigkeitsstiftung — portál", url: "https://www.sfbvg.ch/" },
+        duration: "2-4 hét kifizetési átfutás",
+      },
+      {
+        title: "3. pillér (Säule 3a) lezárása — kivét",
+        body:
+          "A 3a-pillér (magán nyugdíjmegtakarítás) az Abmeldung napjától TELJES egészében kivehető! Ez azért érvényes, mert Svájcot végleg elhagyod. Értesítsd a bankodat vagy a Versicherungs-társaságot (pl. Swiss Life, AXA, Zurich) legalább 4-6 héttel előre. A kifizetésre végső forrásadót vonnak le (jellemzően 5-8% kantontól függően). Külföldi bankszámlára is lehet utalni.",
+        link: { label: "ch.ch — Säule 3a kifizetés", url: "https://www.ch.ch/de/steuern-und-finanzen/altersvorsorge/saeule-3a/" },
+        duration: "4-6 hét kifizetési átfutás",
+      },
+      {
+        title: "Krankenkasse (egészségbiztosítás) felmondása",
+        body:
+          "Az Abmeldung napjával a Krankenkasse automatikusan megszűnik — de értesíteni KELL a biztosítót tértivevényes levélben (Einschreiben). Vigyázz: ha az Abmeldung hónap közepén van, a teljes hónap díját kiszámlázhatják. Tárgyald meg velük a pontos zárónapot. Ha volt visszatérítésed (Prämienrückerstattung), jelezd a külföldi IBAN-odat.",
+        duration: "2-3 hét (levél + visszaigazolás)",
+      },
+      {
+        title: "Bankszámla és Twint lezárása",
+        body:
+          "Értesítsd a svájci bankod (UBS, CS, ZKB, PostFinance, Neon stb.) az állandó lakcím-változásról és a számla zárási szándékodról. Előtte: (1) ellenőrizd, nincs-e aktív állandó megbízás (Dauerauftrag), (2) mond fel az összes direct debit-et (LSV), (3) utalj át minden egyenleget a magyar számlára, (4) zárd le a Twint-regisztrációt (a számlazárással automatikusan megszűnik). Néhány bank csak személyesen zárja le — ez esetben egy utolsó svájci látogatásra lesz szükség.",
+        duration: "2-4 hét",
+      },
+      {
+        title: "AHV / 1. pillér — tájékoztatás",
+        body:
+          "Az AHV (állami nyugdíjbiztosítás) befizetéseid ott maradnak a svájci rendszerben, és a svájci nyugdíjkorhatár (65 év) elérésekor automatikusan AHV-járadékként folyósítják, AKKOR IS, ha külföldön élsz. Ha rövid ideje voltál Svájcban: elképzelhető a befizetett összeg időarányos visszaigénylése az Abmeldung után (kivét nem lehetséges EU-állampolgárnak — a pénz ottmarad, de nyugdíjként kapod meg). Értesítsd az illetékes SVA-t (Sozialversicherungsanstalt) a lakcím-változásról, hogy tudják, hova küldjék a jövőbeli leveleket.",
+        link: { label: "AHV — Rentenperspektiven külföldön", url: "https://www.ahv-iv.ch/de/Sozialversicherungen/Alters-und-Hinterlassenenversicherung-AHV" },
+        duration: "1 levél / e-mail",
+      },
+      {
+        title: "Gépjármű — exportálás vagy eladás",
+        body:
+          "Ha svájci rendszámú autóval szeretnél hazaköltözni: (1) Jelentsd be a Strassenverkehrsamt-nak az exportot, (2) kapsz Export-rendszámtáblát (érvényes 30 napig), (3) a szélvédő-matricát (Vignette) nem vihetted át, az az autóval maradt — de az export-rendszámmal nem kell matrica. Magyarországon: honosítási eljárás az okmányirodán (eredeti svájci forgalmi engedély, vámáru-nyilatkozat, CEMT-dokumentumok).",
+        link: { label: "ASTRA — Export-rendszám", url: "https://www.astra.admin.ch/" },
+        duration: "2-3 nap adminisztráció",
+      },
+      {
+        title: "Ingóságok vámmentes hazaköltöztetése (Übersiedlungsgut)",
+        body:
+          "Az EU-s vámszabályok szerint: ha legalább 12 hónapja Svájcban éltél és állandó lakóhelyed volt, a személyes ingóságaidat (bútor, ruha, háztartási eszközök) VÁMMENTESEN hozhatod be Magyarországra. Feltételek: (1) Az ingóságoknak legalább 6 hónapja a tulajdonodban kell legyenek (számlákkal igazolva), (2) az összes ingóságot egyszerre kell behozni (vagy a behozatalt a határokon átlépést követő 12 hónapon belül teljesíteni), (3) kitöltött EU-s vámnyilatkozat (C1A formanyomtatvány). NEM vámmentesek: szesz, dohány, gépjárművek (azokra külön szabályok vonatkoznak).",
+        link: { label: "Magyar Vámhatóság — Áttelepülés", url: "https://nav.gov.hu/vam/vasarlasok_kulfoldrol/letelepedes" },
+        duration: "Tervez 1-2 napot a vámolásra",
+      },
+      {
+        title: "Serafe (televíziós adó) lemondása",
+        body:
+          "Az Abmeldung dátumától a Serafe-díj (svájci média-adó, évi kb. 335 CHF) automatikusan leáll. De érdemes írni a Serafe-nek, hogy megerősítsék a lezárást és ne küldjenek tovább számlákat. Ha előre fizetted az évet, arányos visszatérítést kaphatsz.",
+        link: { label: "Serafe — lemondás", url: "https://www.serafe.ch/" },
+        duration: "10 perc (online)",
+      },
+      {
+        title: "Leiratkozás: telefon, internet, előfizetések",
+        body:
+          "Mondj fel minden svájci előfizetést: Swisscom / Salt / Sunrise telefon+internet (figyelem: jellemzően 3-6 hónap felmondási idő!), streaming-szolgáltatások (Netflix, Disney+ — ha svájci fizetési módra kapcsolva), NZZ / Watson / egyéb svájci sajtó. Hagyd érvényben a Nachsendeauftrag-ot (levéltovábbítás) legalább 6 hónapra — így a visszakapott levelek és csekkek utolérnek.",
+        link: { label: "Swiss Post — Nachsendeauftrag", url: "https://www.post.ch/de/empfangen/umleiten/nachsendeauftrag-bestellen" },
+        duration: "1-2 óra",
+      },
+    ],
+    warnings: [
+      "A 3. pillér (3a) kivétele csak az Abmeldung UTÁN lehetséges — hamarabb nem fizeti ki a bank.",
+      "Az EU-s vámmentesség NEM vonatkozik gépjárművekre — azokra külön honosítási/importvám szabályok érvényesek.",
+      "Ha aktív svájci hiteled vagy lízinged van, a bank engedélye kell az elhagyáshoz — nem hagyhatod ott tartozással.",
+      "A Pensionskasse (BVG) kötelező részét EU-állampolgárként NEM veheted ki, csak a kötelező feletti részt — a maradék a nyugdíjkorig zárolva marad Svájcban.",
+      "A Quellensteuer NOV-kérelmet (ha visszaigényeltél) BE kell adni MIELŐTT kimész, különben az idei éves visszatérítés elvész.",
+    ],
+    sources: [
+      { label: "ch.ch — Abmeldung külföldre", url: "https://www.ch.ch/de/leben-in-der-schweiz/zuzug/wegzug-ins-ausland/" },
+      { label: "AHV — Freizügigkeitsleistung", url: "https://www.ahv-iv.ch/" },
+      { label: "Magyar Vámhatóság — Áttelepülés", url: "https://nav.gov.hu/vam/vasarlasok_kulfoldrol/letelepedes" },
+    ],
+  },
 ];
 
 export function getChecklist(slug: string): AdminChecklist | null {

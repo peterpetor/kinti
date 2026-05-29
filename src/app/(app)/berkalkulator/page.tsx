@@ -2,8 +2,6 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { SalaryCalculator } from "@/components/views/salary-calculator";
 
-export const runtime = "edge";
-export const dynamic = "force-static";
 
 export const metadata = {
   title: "Svájci Bérkalkulátor (Nettó-Bruttó)",
