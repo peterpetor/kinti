@@ -92,9 +92,16 @@ export default function AszfPage() {
 
       <h2>7. Telekocsi (Közösségi utazásmegosztás)</h2>
       <p>
-        A platformon elérhető Telekocsi modul kizárólag a felhasználók egymás közötti kapcsolatfelvételét segíti. 
-        Az üzemeltető <strong>nem fuvarszervező vagy személyfuvarozó cég</strong>. Nem ellenőrizzük a sofőrök személyazonosságát, 
-        jogosítványát, a járművek műszaki állapotát vagy a biztosítások meglétét.
+        A platformon elérhető Telekocsi modul kizárólag a felhasználók egymás közötti kapcsolatfelvételét segíti 
+        <strong>non-profit, költségmegosztásos (cost-sharing)</strong> utazások céljából. Az üzletszerű, profitszerzési célú 
+        személyfuvarozás (engedély nélküli taxi szolgáltatás) a platformon szigorúan tilos! A sofőrök az utastól 
+        kizárólag a benzinköltség és az útdíjak arányos megtérítését kérhetik.
+      </p>
+      <p>
+        Az üzemeltető <strong>nem fuvarszervező vagy személyfuvarozó cég</strong>. Nem ellenőrizzük a sofőrök 
+        személyazonosságát, jogosítványát, a járművek műszaki állapotát vagy a biztosítások meglétét. Bármely, 
+        üzletszerű tevékenység gyanúját felvető hirdetést (pl. napi rendszerességű "kisbuszozás" haszonszerzés céljából) 
+        azonnal törlünk.
       </p>
       <p>
         A közös utazás kizárólag a sofőr és az utas(ok) magánmegállapodása. Az utazás során bekövetkező esetleges 
@@ -263,13 +270,21 @@ export default function AszfPage() {
         regisztráltakat emailben is értesítjük.
       </p>
 
-      <h2>19. Jogválasztás és bíróság</h2>
+      <h2>19. Adatvédelem</h2>
+      <p>
+        A személyes adatok kezelésének szabályait, a kezelt adatok körét, a megőrzési időket és az 
+        érintettek jogait a különálló <strong>Adatvédelmi Tájékoztató</strong> tartalmazza, amely 
+        a jelen ÁSZF elválaszthatatlan részét képezi. A Szolgáltatás használatával a felhasználó 
+        tudomásul veszi az Adatvédelmi Tájékoztatóban foglaltakat.
+      </p>
+
+      <h2>20. Jogválasztás és bíróság</h2>
       <p>
         A jelen feltételekre a <strong>magyar jog</strong> az irányadó. Esetleges jogvitákban
         a magyar bíróságok rendelkeznek hatáskörrel és illetékességgel.
       </p>
 
-      <h2>20. Kapcsolat</h2>
+      <h2>21. Kapcsolat</h2>
       <p>
         Kérdés, panasz, takedown-bejelentés: <a href="mailto:info@kinti.app">info@kinti.app</a>
         {" / "}

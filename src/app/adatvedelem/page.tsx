@@ -131,6 +131,21 @@ export default function AdatvedelemPage() {
         kezeli az adminisztrátor-értesítőket is (új esemény moderálása, tartalom-bejelentés). 
         Az email-címek kizárólag a technikai kiküldés idejére haladnak át a Resend szerverein.
       </p>
+      <div style={{
+        background: "var(--surface-alt, #f4ede0)",
+        border: "1px solid var(--border, #e6ebe5)",
+        borderRadius: 14,
+        padding: "14px 16px",
+        margin: "16px 0",
+      }}>
+        <p style={{ margin: 0, fontWeight: 700 }}>🚫 Szigorúan reklám- és hírlevélmentes</p>
+        <p style={{ margin: "6px 0 0" }}>
+          A kinti.app üzemeltetője semmilyen marketing célú (hírlevél, reklám, ajánlat) e-mailt 
+          vagy SMS-t nem küld a megadott e-mail címekre és telefonszámokra. A megadott adatokat 
+          <strong>kizárólag</strong> az általad indított folyamatok (megerősítés, törlés, lejárat) 
+          hitelesítésére használjuk. Nincs "spam".
+        </p>
+      </div>
       <ul>
         <li><strong>Adatfeldolgozó:</strong> Resend, Inc. — <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noreferrer">privacy policy</a></li>
       </ul>
@@ -143,6 +158,30 @@ export default function AdatvedelemPage() {
         szerveroldali adatbázisban</strong>, és nem használjuk nyomkövetésre vagy profilalkotásra. A helymeghatározás 
         bármikor letiltható a böngésződ beállításaiban.
       </p>
+
+      <h3>2.8 Telekocsi Értékelések (Trust System)</h3>
+      <p>
+        A Telekocsi modulban a felhasználók értékelhetik egymást (csillagos értékelés). Mivel a platform 
+        account-mentes, a közösségi bizalom építése érdekében az értékeléseket a megadott <strong>telefonszámokhoz 
+        kötve</strong> tároljuk. A leadott értékelések (és az értékelést kapó telefonszáma) addig maradnak a 
+        rendszerben, amíg az érintett felhasználó a törlésüket nem kéri, így biztosítva a megbízhatósági 
+        pontszámok folytonosságát.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) f) — jogos érdek (közösségi bizalom és biztonság)</li>
+        <li><strong>Tárolási idő:</strong> a felhasználó általi törlési kérelemig</li>
+      </ul>
+
+      <h3>2.9 Moderáció és Tiltólisták (Jogos érdek)</h3>
+      <p>
+        A platform biztonsága, a spam-támadások kivédése és a közösség védelme érdekében a moderátorok 
+        által az ÁSZF súlyos megsértése miatt véglegesen kitiltott felhasználók technikai azonosítóit 
+        (pl. IP-cím hash, visszaélésszerű e-mail címek hash formátuma) egy belső tiltólistán (blocklist) tárolhatjuk.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) f) — jogos érdek (visszaélések megakadályozása)</li>
+        <li><strong>Tárolási idő:</strong> a kitiltás visszavonásáig (jellemzően határozatlan ideig)</li>
+      </ul>
 
       <h2>3. Cookie-k</h2>
       <p>
@@ -187,7 +226,7 @@ export default function AdatvedelemPage() {
           <strong>Vélemények törlése</strong>: Hasonlóan a hirdetésekhez, a véleményed elküldése után kapott megerősítő e-mail tartalmaz egy egyedi <em>vélemény-kezelő linket</em>, amellyel bármikor azonnal és véglegesen törölheted a leadott értékelésedet.
         </li>
         <li>
-          <strong>Vállalkozói fiók és profil törlése</strong>: Bejelentkezett vállalkozóként a <em>Profilom</em> oldalon vagy a fiókbeállításokban bármikor kezdeményezheted a fiókod és vállalkozásod végleges törlését a platformról.
+          <strong>Vállalkozás törlése</strong>: A beküldés után kapott (és a böngésződben mentett) egyedi <em>vállalkozás-kezelő link</em> segítségével bármikor azonnal és véglegesen törölheted a szaknévsoros profilodat, anélkül, hogy ehhez jelszó vagy fiók kellene.
         </li>
         <li>
           <strong>Kézi törlési kérelem (E-mailben)</strong>: Ha a fenti automatizált linkek már nem állnak rendelkezésedre, bármikor írhatsz nekünk az <a href="mailto:info@kinti.app">info@kinti.app</a> címre a regisztrált vagy hirdetéskor használt e-mail címedről, és kérésedre munkatársaink haladéktalanul (legfeljebb 5 munkanapon belül) véglegesen törlik a hirdetéseidet, véleményeidet vagy vállalkozói profilodat.
@@ -206,7 +245,16 @@ export default function AdatvedelemPage() {
         <li>Web: <a href="https://naih.hu" target="_blank" rel="noreferrer">naih.hu</a></li>
       </ul>
 
-      <h2>7. Változtatások</h2>
+      <h2>7. Adatvédelmi Incidensek Kezelése (Data Breach)</h2>
+      <p>
+        Bár rendszerünk account-mentes és minimalizált adatkezelést folytat (az IP-címeket hash-eljük, a tartalmakat auto-töröljük), 
+        egy esetleges adatvédelmi incidens (pl. hacker támadás, adatbázis kompromittálódása) esetén a GDPR 33. cikkének 
+        megfelelően járunk el: az incidenst indokolatlan késedelem nélkül, de legkésőbb a tudomásszerzéstől számított 
+        <strong>72 órán belül bejelentjük a NAIH-nak</strong>. Amennyiben az incidens magas kockázattal jár a 
+        felhasználók jogaira nézve, az érintetteket nyilvános felhívás útján és (ha rendelkezésre áll) e-mailben is tájékoztatjuk.
+      </p>
+
+      <h2>8. Változtatások</h2>
       <p>
         Ezt a tájékoztatót szükség szerint frissítjük. A módosításokat ezen az oldalon
         jelezzük, a tetején lévő „Utolsó frissítés" dátum jelzi az aktuális verziót.
