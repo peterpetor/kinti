@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { huHU } from "@clerk/localizations";
 import { jakarta, jetbrains } from "@/lib/fonts";
 import { SWRegister } from "@/components/sw-register";
+import { LegalGatekeeper } from "@/components/legal-gatekeeper";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -124,6 +125,7 @@ export default function RootLayout({
         </ClerkProvider>
         {/* PWA — Service Worker regisztráció + frissítés-prompt (prod-only) */}
         <SWRegister />
+        <LegalGatekeeper />
         {cfBeaconToken && (
           <script
             defer
