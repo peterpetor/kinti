@@ -40,7 +40,7 @@ export function LegalGatekeeper() {
             </svg>
           </div>
           <h2 className="text-[22px] font-extrabold tracking-tight text-ink mt-3">
-            Üdvözöl a kinti.app! 🌲
+            Üdvözöl a kinti.app!
           </h2>
           <p className="text-[13px] leading-relaxed text-ink-muted px-2">
             Közösségünk biztonsága és a jogi tisztaság érdekében a platform elérése előtt kérjük, fogadd el az alábbi feltételeket.
