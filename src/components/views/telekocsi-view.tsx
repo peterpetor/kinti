@@ -98,6 +98,18 @@ export function TelekocsiView({
         </Link>
       </div>
 
+      {/* Jogi figyelemfelhívás (Non-profit) */}
+      <div className="px-5">
+        <div className="flex items-start gap-2.5 rounded-[14px] border border-[#e3a233]/40 bg-[#fff8ed] p-3 shadow-sm">
+          <span className="shrink-0 text-base leading-none">⚖️</span>
+          <div className="min-w-0 flex-1 text-[11.5px] leading-snug text-[#9a6b00]">
+            <strong>Szigorúan non-profit!</strong> A Telekocsi kizárólag költségmegosztásos (cost-sharing) 
+            utakra használható. A sofőr csak a benzin és az útdíj arányos megtérítését kérheti. 
+            Az üzletszerű személyfuvarozás (illegális taxi) azonnali, végleges kitiltást von maga után!
+          </div>
+        </div>
+      </div>
+
       <div className="px-5">
         <PushOptin />
       </div>
