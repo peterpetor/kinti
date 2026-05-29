@@ -1,0 +1,318 @@
+/**
+ * Svájci tartózkodási engedély-varázsló.
+ *
+ * 4-5 kérdés alapján javaslatot ad arra, melyik engedély-típus releváns
+ * a felhasználónak (L / B / C / G / Schengen / nincs).
+ *
+ * FONTOS: ez egy tájékoztató eszköz, NEM jogi tanács. A pontos eljárásért
+ * mindig a SEM (Staatssekretariat für Migration) vagy a kantoni
+ * Migrationsamt oldalát kell ellenőrizni.
+ */
+
+export type PermitType = "L" | "B" | "C" | "G" | "schengen" | "none";
+
+export interface PermitInfo {
+  type: PermitType;
+  name: string;
+  shortDesc: string;
+  emoji: string;
+  /** Hex szín az UI-hoz. */
+  color: string;
+  duration: string;
+  workPermitted: string;
+  cantonChange: string;
+  familyReunion: string;
+  pros: string[];
+  cons: string[];
+  applyTo: string;
+  /** Hivatalos linkek. */
+  links: { label: string; url: string }[];
+}
+
+export const PERMITS: Record<PermitType, PermitInfo> = {
+  L: {
+    type: "L",
+    name: "L — Kurzaufenthalt (rövid távú)",
+    emoji: "📅",
+    color: "#3a6ea5",
+    shortDesc: "1 év, max 24 hónap — szezonális/időszakos munka vagy tanulás",
+    duration: "Max 1 év, egyszer meghosszabbítható (összesen 24 hó).",
+    workPermitted: "Igen, ha munkaszerződésed van.",
+    cantonChange: "Korlátozott — új L kell.",
+    familyReunion: "Nehéz, jellemzően nem megengedett.",
+    pros: [
+      "Gyors elintézés (1-2 hónap)",
+      "EU-állampolgárként szabad munkaválasztás",
+      "Adminisztráció minimális",
+    ],
+    cons: [
+      "Max 24 hónap — utána nem hosszabbítható",
+      "Családtaggal nehezebb",
+      "Quellensteuer fizetendő",
+    ],
+    applyTo: "A kantoni Migrationsamt (a munkáltatód helye szerint).",
+    links: [
+      { label: "SEM — L-Bewilligung", url: "https://www.sem.admin.ch/sem/de/home/themen/aufenthalt/eu_efta/ausweis_l_eu_efta.html" },
+    ],
+  },
+  B: {
+    type: "B",
+    name: "B — Aufenthaltsbewilligung (tartózkodási)",
+    emoji: "🪪",
+    color: "#1d4434",
+    shortDesc: "5 év (EU) — a leggyakoribb tartózkodási engedély",
+    duration: "EU/EFTA: 5 év, hosszabbítható. Nem-EU: 1 év + hosszabbítható.",
+    workPermitted: "Igen, EU-állampolgárként szabadon.",
+    cantonChange: "Lehetséges (kanton-engedéllyel).",
+    familyReunion: "Igen — házastárs + 18 év alatti gyerekek.",
+    pros: [
+      "EU-állampolgárként legtöbb jog",
+      "Családtag-egyesítés engedélyezett",
+      "5 év után meghosszabbítható",
+    ],
+    cons: [
+      "Quellensteuer kötelező (bér-automatikus)",
+      "5 év után új meghosszabbítás kell",
+      "Nem-EU-snak ÖSSZESEN nehéz megszerezni (kvótás)",
+    ],
+    applyTo: "A kantoni Migrationsamt — a bejelentkezésed után automatikusan kapod.",
+    links: [
+      { label: "SEM — B-Bewilligung EU/EFTA", url: "https://www.sem.admin.ch/sem/de/home/themen/aufenthalt/eu_efta/ausweis_b_eu_efta.html" },
+    ],
+  },
+  C: {
+    type: "C",
+    name: "C — Niederlassungsbewilligung (letelepedési)",
+    emoji: "🆔",
+    color: "#7f4a1d",
+    shortDesc: "Határozatlan — gyakorlatilag 'permanent resident' státusz",
+    duration: "Határozatlan idejű. 5 évente biometriai frissítés (kártya).",
+    workPermitted: "Igen, korlátlanul. Munkahely-váltás szabad.",
+    cantonChange: "Szabad, csak bejelentés szükséges.",
+    familyReunion: "Igen, az összes közvetlen családtag.",
+    pros: [
+      "Quellensteuer megszűnik (normál adózás)",
+      "Munkahely-váltás teljesen szabad",
+      "Kanton-váltás csak bejelentés",
+      "Hitelfelvétel könnyebb",
+      "Választójog kantoni szinten (egyes kantonokban)",
+    ],
+    cons: [
+      "5 év B-engedélyt kell előtte (magyaroknak)",
+      "B1 szóban + A2 írásban nyelvtudás",
+      "Strafregister + Betreibungsauszug bemutatása",
+      "Kérvény-díj kb. 100-200 CHF",
+    ],
+    applyTo: "A kantoni Migrationsamt — kérvénnyel, miután jogosult vagy rá.",
+    links: [
+      { label: "SEM — C-Bewilligung EU/EFTA", url: "https://www.sem.admin.ch/sem/de/home/themen/aufenthalt/eu_efta/ausweis_c_eu_efta.html" },
+    ],
+  },
+  G: {
+    type: "G",
+    name: "G — Grenzgänger (határátlépő)",
+    emoji: "🚗",
+    color: "#5b21b6",
+    shortDesc: "Szomszéd országban lakol, CH-ban dolgozol — naponta hazajársz",
+    duration: "5 év (EU). Hetente legalább egyszer hazatérés kötelező.",
+    workPermitted: "Igen — CH-ban dolgozol, de NEM laksz itt.",
+    cantonChange: "A munkahely-kantonokra korlátozott.",
+    familyReunion: "Nem releváns — a család a másik országban él.",
+    pros: [
+      "Olcsóbb élet külföldön (DE/AT/FR/IT)",
+      "Magas svájci bér mellett alacsonyabb költség",
+      "Nem kell svájci Krankenkasse (külföldi biztosítás OK)",
+    ],
+    cons: [
+      "Naponta utazás (akár 1-2 óra)",
+      "Hetente legalább 1× hazatérés kötelező",
+      "Az adózás megosztva (CH-ban Quellensteuer, otthon is adózol)",
+      "Kanton-korlátozott",
+    ],
+    applyTo: "A kantoni Migrationsamt + a határ-régió hatóság.",
+    links: [
+      { label: "SEM — G-Bewilligung", url: "https://www.sem.admin.ch/sem/de/home/themen/aufenthalt/eu_efta/ausweis_g_eu_efta.html" },
+    ],
+  },
+  schengen: {
+    type: "schengen",
+    name: "Schengen-vízum (rövid távú)",
+    emoji: "✈️",
+    color: "#dc2626",
+    shortDesc: "Max 90 nap 180 napon belül — turizmus, üzleti út, családlátogatás",
+    duration: "Max 90 nap egy 180 napos periódusban.",
+    workPermitted: "NEM — munkavállalás tilos Schengen-vízummal.",
+    cantonChange: "Nincs kanton-bejelentés.",
+    familyReunion: "Nem alkalmazható.",
+    pros: [
+      "Gyors elintézés (1-2 hét)",
+      "Egyszerű kérvény",
+      "Egész Schengen-térségben utazhatsz",
+    ],
+    cons: [
+      "Csak 90 nap",
+      "Munkavállalás tilos",
+      "Hosszabbítás nem lehetséges (csak újabb 90 napos vízummal egy év múlva)",
+    ],
+    applyTo: "A svájci nagykövetség vagy konzulátus a hazádban.",
+    links: [
+      { label: "EDA — Schengen-vízum", url: "https://www.eda.admin.ch/eda/de/home/services-und-publikationen/visumvorschriften.html" },
+    ],
+  },
+  none: {
+    type: "none",
+    name: "Nincs engedély szükséges",
+    emoji: "✅",
+    color: "#16a34a",
+    shortDesc: "EU-állampolgárként 90 napig vízummentesen tartózkodhatsz",
+    duration: "Max 90 nap 180 napon belül — csak vendég-státusz.",
+    workPermitted: "NEM — munkavállaláshoz engedély kell.",
+    cantonChange: "Nincs hivatalos bejelentés.",
+    familyReunion: "Nem releváns ezen az időkereten.",
+    pros: [
+      "Semmi adminisztráció",
+      "Csak útlevél / személyi kell",
+      "Egész Schengen-térségben szabad mozgás",
+    ],
+    cons: [
+      "Max 90 nap",
+      "Munka tilos",
+      "Hosszabb tartózkodáshoz L vagy B engedély kell",
+    ],
+    applyTo: "Nincs hova — csak utazz be ID-vel / útlevéllel.",
+    links: [
+      { label: "ch.ch — Beutazás Svájcba", url: "https://www.ch.ch/de/leben-in-der-schweiz/einreise/" },
+    ],
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Decision-tree
+// ---------------------------------------------------------------------------
+
+export interface WizardAnswers {
+  /** "eu" = EU/EFTA-állampolgár (incl. Magyarország), "non-eu" = harmadik országbeli. */
+  citizenship: "eu" | "non-eu";
+  /** Mennyi időre tervezi maradni. */
+  duration: "short" | "medium" | "long" | "permanent";
+  /** Fő célja. */
+  purpose: "work" | "study" | "family" | "retired" | "cross-border";
+  /** Volt-e már svájci tartózkodási engedélye, és mennyi ideig. */
+  previousStay: "none" | "less-than-5" | "5-or-more";
+}
+
+export interface WizardResult {
+  primary: PermitType;
+  /** Alternatív / másodlagos megoldások (max 2). */
+  alternatives: PermitType[];
+  /** Egyedi tanácsok ehhez a kombinációhoz. */
+  notes: string[];
+}
+
+export function evaluatePermit(a: WizardAnswers): WizardResult {
+  // 1. Cross-border (G-engedély) — különleges eset
+  if (a.purpose === "cross-border") {
+    return {
+      primary: "G",
+      alternatives: [],
+      notes: [
+        "A G-engedélyhez szomszéd országban (DE/AT/FR/IT/LI) kell laknod.",
+        "Munkáltatód intézi a bejelentést a kantoni Migrationsamt-on.",
+        "Hetente legalább egyszer haza kell térned a lakóhelyedre.",
+      ],
+    };
+  }
+
+  // 2. Rövid tartózkodás (< 3 hónap) — Schengen / vízummentes
+  if (a.duration === "short") {
+    if (a.citizenship === "eu") {
+      return {
+        primary: "none",
+        alternatives: [],
+        notes: [
+          "EU-állampolgárként 90 napig vízummentesen tartózkodhatsz Svájcban.",
+          "Munkavállalás tilos — ehhez L-engedély kell.",
+          "Érvényes útlevél vagy ID elegendő.",
+        ],
+      };
+    }
+    return {
+      primary: "schengen",
+      alternatives: [],
+      notes: [
+        "Schengen-vízum max 90 nap 180 napon belül.",
+        "Munkavállalás SZIGORÚAN tilos vele.",
+        "Kérvény: svájci nagykövetség a hazádban (Budapest, ha még itt élsz).",
+      ],
+    };
+  }
+
+  // 3. C-engedély — csak ha már 5+ éve B-engedélyes és tartós szándék
+  if (
+    a.duration === "permanent" &&
+    a.previousStay === "5-or-more" &&
+    a.citizenship === "eu"
+  ) {
+    return {
+      primary: "C",
+      alternatives: ["B"],
+      notes: [
+        "Magyar állampolgárként 5 év B-engedély után jogosult vagy C-engedélyre.",
+        "Szükséges: B1 szóban + A2 írásban nyelvtudás (német/francia/olasz).",
+        "Strafregister + Betreibungsauszug bemutatása.",
+        "Quellensteuer megszűnik — átállsz a normál adózási rendszerre.",
+      ],
+    };
+  }
+
+  // 4. Tartós letelepedés szándéka, de még nincs 5 év — B
+  if (a.duration === "permanent" || a.duration === "long") {
+    if (a.citizenship === "eu") {
+      const notes: string[] = [
+        "Magyar / EU-állampolgárként a személyek szabad mozgása alapján kapod a B-t.",
+        "5 év B után jogosult leszel a C-engedélyre.",
+        "Munkáltatói szerződés vagy önálló vállalkozás-igazolás szükséges.",
+      ];
+      if (a.purpose === "study") {
+        notes.push("Tanulmányokhoz: az egyetem fogadólevelével pályázol.");
+      } else if (a.purpose === "family") {
+        notes.push("Családtagként: a CH-i családtag B/C-engedélye + házassági/születési anyakönyv kell.");
+      } else if (a.purpose === "retired") {
+        notes.push("Nyugdíjasként: bizonyított anyagi függetlenség kell (kb. 25 000 CHF/év).");
+      }
+      return { primary: "B", alternatives: ["L"], notes };
+    }
+    // Non-EU: nehéz a B (kvótás)
+    return {
+      primary: "B",
+      alternatives: ["L"],
+      notes: [
+        "Nem-EU-állampolgárként a B-engedély megszerzése NEHÉZ — kvótás rendszer.",
+        "A munkáltatódnak bizonyítania kell, hogy CH-EU/EFTA-szintű jelölt nincs.",
+        "Magasan képzett szakembereknek vagy kulcsfontosságú állásokhoz nyitott.",
+        "Tipikus átfutás: 3-6 hónap.",
+      ],
+    };
+  }
+
+  // 5. Középtáv (3-12 hó) — L
+  if (a.duration === "medium") {
+    const notes: string[] = [
+      "L-engedély 1 évig, egyszer meghosszabbítható (összesen 24 hó).",
+      "Utána új L vagy B-engedélyre kell pályázni.",
+    ];
+    if (a.purpose === "study") {
+      notes.push("Tanulmányokhoz: nyelvtanfolyam, csere-program L-en intézhető.");
+    } else if (a.purpose === "work") {
+      notes.push("Szezonális munka (vendéglátás, mezőgazdaság, építkezés) tipikus eset.");
+    }
+    return { primary: "L", alternatives: ["B"], notes };
+  }
+
+  // Fallback
+  return {
+    primary: "B",
+    alternatives: ["L"],
+    notes: ["Pontosabb tájékoztatáshoz keresd fel a kantoni Migrationsamt-ot."],
+  };
+}
