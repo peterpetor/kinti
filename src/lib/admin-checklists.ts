@@ -56,7 +56,7 @@ export const CHECKLISTS: AdminChecklist[] = [
         title: "Bejelentkezés a községnél (Gemeinde / commune)",
         body:
           "Az érkezés után 14 napon belül jelentkezz be a lakóhelyed szerinti községi hivatalnál. Vidd magaddal: útlevél, bérleti szerződés, munkáltatói igazolás, hozományi szerződés (ha házas). Sok helyen online is megy az eMovingCH-n.",
-        link: { label: "eMovingCH — országos online bejelentkezés", url: "https://www.eumzugch.ch/" },
+        link: { label: "eMovingCH — országos online bejelentkezés", url: "https://www.eumzug.swiss/" },
         duration: "1-2 óra (helyszín)",
       },
       {
@@ -124,7 +124,7 @@ export const CHECKLISTS: AdminChecklist[] = [
         title: "Online vagy személyes bejelentkezés",
         body:
           "Sok kantonban (ZH, BE, AG, LU, SO, SG, GR) működik az eMovingCH online. Más kantonokban személyes megjelenés kell a Gemeinde / Stadtverwaltung-on.",
-        link: { label: "eMovingCH — kanton-választóval", url: "https://www.eumzugch.ch/" },
+        link: { label: "eMovingCH — kanton-választóval", url: "https://www.eumzug.swiss/" },
         duration: "30 perc (online) / 1-2 óra (helyszín)",
       },
       {
@@ -159,7 +159,7 @@ export const CHECKLISTS: AdminChecklist[] = [
     ],
     sources: [
       { label: "ch.ch — Umzug", url: "https://www.ch.ch/de/leben-in-der-schweiz/wohnen-und-umzug/umzug-innerhalb-der-schweiz/" },
-      { label: "eMovingCH portál", url: "https://www.eumzugch.ch/" },
+      { label: "eMovingCH portál", url: "https://www.eumzug.swiss/" },
     ],
   },
   {
