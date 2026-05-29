@@ -42,8 +42,7 @@ const SOS_DAILY_LIMIT = 3;
  *
  * Több rétegű spam-védelem:
  *   1) Turnstile CAPTCHA (kötelező)
- *   2) IP-alapú napi limit (3 / 24h) — a logRideSubmit/countRecentRideSubmits-et
- *      újrahasználjuk (azonos ip-log tábla, "SOS"-t jelöljük az id-prefixszel)
+ *   2) IP-alapú napi limit (3 / 24h) — azonos IP rate-limit tábla használata
  *   3) Max 1 aktív riasztás / felhasználó (a meglévő business rule)
  *   4) Földrajzi határok (Svájc + Liechtenstein) — kívülről nem fogadunk el
  *   5) Telefonszám-formátum validáció (E.164-szerű)
@@ -69,8 +68,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // 2) IP-alapú napi limit (SOS specifikus log table-ünk nincs, a rides-log-ot
-  //    újrahasználjuk — közös ip-hash + 24h, megfelelő a SOS-rate-limithez is)
+  // 2) IP-alapú napi limit (közös ip-hash + 24h, megfelelő a SOS-rate-limithez is)
   const ipHash = await hashIp(ip);
   const recent = await countRecentRideSubmits(ipHash);
   if (recent >= SOS_DAILY_LIMIT) {
@@ -131,7 +129,7 @@ export async function POST(req: Request) {
     expiresAt,
   });
 
-  // 6) Rate-limit napló (fire-and-forget) — közös tábla a Telekocsival
+  // 6) Rate-limit napló (fire-and-forget)
   logRideSubmit(`sos_${crypto.randomUUID()}`, ipHash).catch(() => { /* silent */ });
 
   return NextResponse.json({ ok: true, id });

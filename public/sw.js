@@ -109,7 +109,6 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/admin") ||
     url.pathname.startsWith("/szaknevsor/kezeles") ||
     url.pathname.startsWith("/esemeny-kezeles") ||
-    url.pathname.startsWith("/telekocsi-kezeles") ||
     url.pathname.startsWith("/hirdetes-kezeles") ||
     url.pathname.startsWith("/velemeny-kezeles") ||
     url.pathname.startsWith("/spontan-kezeles") ||
@@ -138,7 +137,7 @@ self.addEventListener("message", (event) => {
 // titkosított payloadot küldenénk, itt olvasnánk az `event.data`-ból.
 self.addEventListener("push", (event) => {
   let title = "kinti";
-  let body = "Új esemény vagy fuvar a közösségben! — nézd meg az appban 🎉";
+  let body = "Új esemény vagy hirdetés a közösségben! — nézd meg az appban 🎉";
   let url = "/";
 
   if (event.data) {

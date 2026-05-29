@@ -9,8 +9,8 @@ import { cn } from "@/lib/cn";
  * TabBar — alsó, lebegő üveg-navigáció. 4 stabil fül, auth-független label:
  *   1) Főoldal    — dashboard
  *   2) Szaknévsor — vállalkozás-kereső
- *   3) Közösség   — események + hirdetések (alfülekkel)
- *   4) Telekocsi  — szabad helyes utazások (vendég is feladhat)
+ *   3) Közösség   — események (alfülekkel)
+ *   4) Piac       — apróhirdetések
  */
 interface Tab {
   href: string;

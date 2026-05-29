@@ -49,7 +49,6 @@ export default async function AdminPage() {
         <Stat label="Hirdetés" value={stats.bulletinsActive} sub="aktív" />
         <Stat label="Esemény" value={stats.eventsApproved} sub="jóváhagyva" />
         <Stat label="Vélemény" value={stats.reviews} />
-        <Stat label="Hírlevél" value={stats.digestSubscribersConfirmed} sub="megerősített" />
         <Stat label="Push" value={stats.pushSubscriptions} sub="feliratkozó" />
         <Stat label="Nyitott jelentés" value={openReports.length} accent={openReports.length > 0} />
       </section>

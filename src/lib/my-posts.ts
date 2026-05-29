@@ -28,7 +28,7 @@ export interface MyPostEntry {
   title: string;
   /** A létrehozás ISO timestampje (kliens időpontja). */
   createdAt: string;
-  /** Manage URL path — pl. "/telekocsi-kezeles/<token>". */
+  /** Manage URL path. */
   manageUrl: string;
 }
 
@@ -48,7 +48,7 @@ export function loadMyPosts(): MyPostEntry[] {
     if (parsed && typeof parsed === "object" && Array.isArray(parsed.items)) {
       return parsed.items.filter(isValidEntry);
     }
-    // Régi formátum kompat (csak ride-okra volt): {id, manageToken}[]
+    // Régi formátum kompatibilitás: {id, manageToken}[]
     if (Array.isArray(parsed)) {
       return parsed
         .filter((it: unknown) => typeof it === "object" && it !== null)

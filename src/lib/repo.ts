@@ -995,7 +995,7 @@ export async function logEventSubmit(
     .run();
 }
 
-/** Hány telekocsi-hirdetést adott fel ez az IP az elmúlt 24 órában. */
+/** Hány beküldést adott fel ez az IP az elmúlt 24 órában (rate-limit). */
 export async function countRecentRideSubmits(ipHash: string | null): Promise<number> {
   if (!ipHash) return 0;
   const res = await getDB()
@@ -1008,7 +1008,7 @@ export async function countRecentRideSubmits(ipHash: string | null): Promise<num
   return res?.n ?? 0;
 }
 
-/** Telekocsi-beküldést rögzít a rate-limit táblába. */
+/** Beküldést rögzít a rate-limit táblába. */
 export async function logRideSubmit(id: string, ipHash: string | null): Promise<void> {
   await getDB()
     .prepare(`INSERT INTO ride_submit_log (id, ip_hash) VALUES (?, ?)`)
