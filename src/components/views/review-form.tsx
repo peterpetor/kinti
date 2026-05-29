@@ -256,9 +256,10 @@ export function ReviewForm({
           </div>
         </div>
         <p className="mt-2 text-[11px] leading-snug text-ink-muted">
-          <strong className="text-ink">Email nem szükséges.</strong> Ha üresen hagyod, a vélemény
-          azonnal megjelenik, és kapsz egy kezelő-linket. Ha emailt adsz, a régi módon megerősítő linket kapsz hozzá.
-          kell — sehol nem publikus.
+          <strong className="text-ink">Email nem szükséges.</strong> Email nélkül a vélemény
+          azonnal megjelenik, és kapsz egy kezelő-linket. Ha emailt is megadsz, először egy
+          megerősítő linket küldünk rá — csak miután rákattintasz, jelenik meg a vélemény.
+          Az email sehol nem publikus, csak nálunk látható.
         </p>
       </Section>
 

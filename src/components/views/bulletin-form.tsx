@@ -404,9 +404,10 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         <FieldError msg={errors.email} />
 
         <p className="mt-3 text-[11px] leading-snug text-ink-muted">
-          <strong className="text-ink">Email NEM kötelező.</strong> Ha üresen hagyod, a hirdetés
+          <strong className="text-ink">Email NEM kötelező.</strong> Email nélkül a hirdetés
           azonnal megjelenik, és kapsz egy kezelő-linket (QR-kód is jön) — tedd el!{" "}
-          Ha emailt adsz, a régi módon megerősítő linket kapsz hozzá. Részletek:{" "}
+          Ha emailt is megadsz, először egy megerősítő linket küldünk rá — csak miután
+          rákattintasz, jelenik meg a hirdetés. Részletek:{" "}
           <Link href="/adatvedelem" className="underline">Adatkezelési Tájékoztató</Link>.
         </p>
       </Section>
