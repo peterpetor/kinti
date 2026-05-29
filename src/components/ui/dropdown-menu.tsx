@@ -105,6 +105,13 @@ export function DropdownMenu() {
                 Ügyintézés Varázsló
               </Link>
 
+              <Link href="/iskolarendszer" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#fef3c7] text-[#d97706] text-base">
+                  🏢
+                </span>
+                Svájci Iskolarendszer
+              </Link>
+
               <Link href="/arfolyam" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                   💱
