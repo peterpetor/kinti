@@ -149,27 +149,60 @@ export default async function HirdetesPage({ params }: { params: { id: string } 
         {/* Feladó + dátum — auto handle a rekord id-jéből (zéró PII) */}
         {(() => {
           const handle = post.poster?.trim() || handleFromId(post.id);
+          const phone = post.phone?.trim() ?? "";
+          const waNumber = post.whatsapp?.trim() || phone;
+          const waDigits = waNumber ? waNumber.replace(/[^\d]/g, "") : "";
+          const hasContact = !!(phone || waDigits.length >= 6 || (post.email && post.email.trim()));
+
           return (
-        <div className="mt-5 flex items-center gap-2.5 border-t border-dashed border-line pt-4">
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-[11px] font-bold text-white">
-            {handle.charAt(0).toUpperCase()}
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="text-[13.5px] font-bold text-ink">
-              {handle}
+            <div className="mt-5 border-t border-dashed border-line pt-4 space-y-3">
+              <div className="flex items-center gap-2.5">
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-[11px] font-bold text-white">
+                  {handle.charAt(0).toUpperCase()}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13.5px] font-bold text-ink">
+                    {handle}
+                  </div>
+                  <div className="text-[11.5px] text-ink-muted">
+                    Feladva: {fmtAbsoluteDate(post.publishedAt)}
+                  </div>
+                </div>
+              </div>
+
+              {hasContact && (
+                <div className="flex flex-wrap gap-2">
+                  {phone && (
+                    <a
+                      href={`tel:${phone}`}
+                      className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-surface border border-line py-2 px-3 text-[13px] font-bold text-ink active:scale-95"
+                    >
+                      <Icon name="phone" size={13} strokeWidth={2.4} />
+                      Hívás
+                    </a>
+                  )}
+                  {waDigits.length >= 6 && (
+                    <a
+                      href={`https://wa.me/${waDigits}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#25D366] hover:bg-[#1da851] py-2 px-3 text-[13px] font-bold text-white active:scale-95"
+                    >
+                      <span className="text-[14px] leading-none">💬</span>
+                      WhatsApp
+                    </a>
+                  )}
+                  {post.email && post.email.trim() && (
+                    <p className="basis-full text-center text-[11px] text-ink-muted">
+                      Emailt a hirdetőtábla nézetből küldhetsz az „Email" gombbal.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="text-[11.5px] text-ink-muted">
-              Feladva: {fmtAbsoluteDate(post.publishedAt)}
-            </div>
-          </div>
-        </div>
           );
         })()}
       </article>
-
-      <p className="px-1 text-center text-[11px] leading-snug text-ink-faint">
-        A hirdetésre választ a hirdetőtábla nézetből küldhetsz az „Írok neki" gombbal.
-      </p>
     </div>
   );
 }

@@ -35,13 +35,20 @@ export const LIMITS = {
   bodyMax: 1000,
   posterMax: 40,
   emailMax: 254,
+  phoneMax: 24,
 } as const;
 
 /** Egyszerű email-formátum (nem RFC5322-szigorúság, de praktikus). */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/** Lazán E.164-szerű telefonszám (a WhatsApp-linkhez a + és számok kellenek). */
+const PHONE_RE = /^\+?[0-9][0-9 ()\-/]{5,23}$/;
 
 export interface BulletinFormInput {
   email?: unknown;
+  /** Opcionális telefonszám — tap-to-call link a kártyán. */
+  phone?: unknown;
+  /** Opcionális WhatsApp szám — ha üres, a phone-ra megy a WA-link is. */
+  whatsapp?: unknown;
   kindId?: unknown;
   title?: unknown;
   meta?: unknown;
@@ -61,6 +68,8 @@ export interface BulletinFormInput {
 
 export interface ValidatedBulletinInput {
   email: string;
+  phone: string;
+  whatsapp: string;
   kindId: string;
   title: string;
   meta: string;
@@ -98,6 +107,34 @@ export function validateBulletinInput(
       errors.push({ field: "email", message: "Túl hosszú email-cím." });
     else if (!EMAIL_RE.test(email))
       errors.push({ field: "email", message: "Érvénytelen email-cím." });
+  }
+
+  // Telefon OPCIONÁLIS — ha megadták, nemzetközi formátum.
+  const phone = str(input.phone);
+  if (phone) {
+    if (phone.length > LIMITS.phoneMax || !PHONE_RE.test(phone))
+      errors.push({
+        field: "phone",
+        message: "Add meg a telefonszámot nemzetközi formátumban (pl. +41… vagy +36…).",
+      });
+  }
+
+  // WhatsApp OPCIONÁLIS — üresen a phone-ra mutat (vissza-kompat.).
+  const whatsapp = str(input.whatsapp);
+  if (whatsapp) {
+    if (whatsapp.length > LIMITS.phoneMax || !PHONE_RE.test(whatsapp))
+      errors.push({
+        field: "whatsapp",
+        message: "Add meg a WhatsApp számot nemzetközi formátumban, vagy hagyd üresen.",
+      });
+  }
+
+  // MIN. 1 ELÉRHETŐSÉG kötelező — különben hogyan venné fel valaki a kapcsolatot.
+  if (!email && !phone && !whatsapp) {
+    errors.push({
+      field: "phone",
+      message: "Adj meg legalább egy elérhetőséget: email, telefon vagy WhatsApp.",
+    });
   }
 
   const kindId = str(input.kindId);
@@ -173,6 +210,8 @@ export function validateBulletinInput(
     ok: true,
     value: {
       email,
+      phone,
+      whatsapp,
       kindId,
       title,
       meta,

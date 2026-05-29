@@ -52,6 +52,8 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     body: draft.body,
     poster: draft.poster,
     email: draft.email,
+    phone: draft.phone ?? "",
+    whatsapp: draft.whatsapp ?? "",
     manageToken: draft.manageToken,
     expiresAt: postExpiresAt,
     isPending,

@@ -32,6 +32,10 @@ type Phase = "idle" | "submitting" | "sent" | "error";
 
 interface FormState {
   email: string;
+  /** Telefonszám (opcionális). */
+  phone: string;
+  /** WhatsApp szám (opcionális). Ha üres, a phone-ra megy a WA-link. */
+  whatsapp: string;
   kindId: string;
   title: string;
   meta: string;
@@ -51,6 +55,8 @@ interface FormState {
 
 const INITIAL: FormState = {
   email: "",
+  phone: "",
+  whatsapp: "",
   kindId: "",
   title: "",
   meta: "",
@@ -345,22 +351,62 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         </p>
       </Section>
 
-      {/* Email — KÜLÖN szekció, opcionális */}
-      <Section title="Email">
+      {/* Elérhetőség — min. 1 kötelező (email VAGY phone VAGY WA) */}
+      <Section title="Elérhetőség" required>
+        <p className="mb-3 text-[11.5px] leading-snug text-ink-muted">
+          <strong className="text-ink">Hogyan vegyék fel veled a kapcsolatot?</strong>{" "}
+          Add meg legalább egyet — a többi mezőt nyugodtan hagyd üresen.
+        </p>
+
+        {/* Telefon */}
+        <label className="block mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+          📞 Telefon
+        </label>
+        <input
+          type="tel"
+          value={form.phone}
+          onChange={(e) => setField("phone", e.target.value)}
+          placeholder="+41 79 123 45 67"
+          autoComplete="tel"
+          maxLength={LIMITS.phoneMax}
+          className={inputCls(errors.phone)}
+        />
+        <FieldError msg={errors.phone} />
+
+        {/* WhatsApp */}
+        <label className="block mt-3 mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+          💬 WhatsApp <span className="text-ink-faint font-medium normal-case">(csak ha eltér a telefontól)</span>
+        </label>
+        <input
+          type="tel"
+          value={form.whatsapp}
+          onChange={(e) => setField("whatsapp", e.target.value)}
+          placeholder="Üresen: a fenti telefonra megy a WhatsApp is"
+          autoComplete="off"
+          maxLength={LIMITS.phoneMax}
+          className={inputCls(errors.whatsapp)}
+        />
+        <FieldError msg={errors.whatsapp} />
+
+        {/* Email */}
+        <label className="block mt-3 mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+          ✉️ Email <span className="text-ink-faint font-medium normal-case">(opcionális)</span>
+        </label>
         <input
           type="email"
           value={form.email}
           onChange={(e) => setField("email", e.target.value)}
-          placeholder="Email (opcionális — hagyhatod üresen)"
+          placeholder="email@pelda.hu"
           autoComplete="email"
           maxLength={LIMITS.emailMax}
           className={inputCls(errors.email)}
         />
         <FieldError msg={errors.email} />
-        <p className="mt-2 text-[11px] leading-snug text-ink-muted">
+
+        <p className="mt-3 text-[11px] leading-snug text-ink-muted">
           <strong className="text-ink">Email NEM kötelező.</strong> Ha üresen hagyod, a hirdetés
           azonnal megjelenik, és kapsz egy kezelő-linket (QR-kód is jön) — tedd el!{" "}
-          Ha mégis adsz emailt, a régi módon megerősítő linket kapsz hozzá. Részletek:{" "}
+          Ha emailt adsz, a régi módon megerősítő linket kapsz hozzá. Részletek:{" "}
           <Link href="/adatvedelem" className="underline">Adatkezelési Tájékoztató</Link>.
         </p>
       </Section>

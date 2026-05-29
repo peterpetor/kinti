@@ -122,6 +122,8 @@ interface BulletinPostRow {
   kind_sort: number | null;
   // Manage & warning fields
   email: string | null;
+  phone: string | null;
+  whatsapp: string | null;
   manage_token: string | null;
   expiry_warning_sent: number | null;
 }
@@ -129,6 +131,8 @@ interface BulletinPostRow {
 interface BulletinDraftRow {
   id: string;
   email: string;
+  phone: string | null;
+  whatsapp: string | null;
   kind_id: string;
   title: string;
   meta: string | null;
@@ -230,6 +234,8 @@ function toBulletinPost(r: BulletinPostRow): BulletinPost {
     cantonCode: r.canton_code,
     price: r.price,
     email: r.email,
+    phone: r.phone,
+    whatsapp: r.whatsapp,
     manageToken: r.manage_token,
     expiryWarningSent: bool(r.expiry_warning_sent),
     kind: r.kind_label
@@ -242,6 +248,8 @@ function toBulletinDraft(r: BulletinDraftRow): BulletinDraft {
   return {
     id: r.id,
     email: r.email,
+    phone: r.phone,
+    whatsapp: r.whatsapp,
     kindId: r.kind_id,
     title: r.title,
     meta: r.meta,
@@ -631,6 +639,8 @@ export async function getBulletinPosts(kind?: string | null): Promise<BulletinPo
 export interface BulletinDraftInput {
   id: string;
   email: string;
+  phone: string;
+  whatsapp: string;
   kindId: string;
   title: string;
   meta: string | null;
@@ -657,14 +667,16 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
   await getDB()
     .prepare(
       `INSERT INTO bulletin_drafts
-       (id, email, kind_id, title, meta, body, poster,
+       (id, email, phone, whatsapp, kind_id, title, meta, body, poster,
         confirm_token, manage_token, expires_at,
         terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
       input.email.toLowerCase(),
+      input.phone || null,
+      input.whatsapp || null,
       input.kindId,
       input.title,
       input.meta,
@@ -720,6 +732,10 @@ export interface PublishBulletinInput {
   poster: string | null;
   /** Email opcionális — local-first módban üres string mehet. */
   email: string;
+  /** Telefonszám opcionális. */
+  phone: string;
+  /** WhatsApp szám opcionális (ha üres, a phone-ra megy). */
+  whatsapp: string;
   manageToken: string;
   /** ISO datetime — 30 nap múlva. */
   expiresAt: string;
@@ -744,10 +760,10 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
   await getDB()
     .prepare(
       `INSERT INTO bulletin_posts
-       (id, kind_id, title, meta, body, poster, email, manage_token,
+       (id, kind_id, title, meta, body, poster, email, phone, whatsapp, manage_token,
         age_text, expires_at, published_at, is_pending, created_at,
         terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'frissen', ?, datetime('now'), ?, datetime('now'),
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'frissen', ?, datetime('now'), ?, datetime('now'),
                ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
@@ -758,6 +774,8 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       input.body,
       input.poster,
       input.email.toLowerCase(),
+      input.phone || null,
+      input.whatsapp || null,
       input.manageToken,
       input.expiresAt,
       input.isPending,

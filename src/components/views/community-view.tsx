@@ -44,6 +44,11 @@ function formatPrice(n: number | null): string | null {
   return `${n.toLocaleString("hu-HU").replace(/,/g, " ")} CHF`;
 }
 
+/** WhatsApp wa.me link-hez: csak számjegyeket tartunk meg (+ jelet is elhagyjuk). */
+function digitsOnly(phone: string): string {
+  return phone.replace(/[^\d]/g, "");
+}
+
 /** Hány nap van még a lejáratig. null → nincs lejárat. */
 function daysRemaining(expiresAt: string | null): number | null {
   if (!expiresAt) return null;
@@ -658,24 +663,54 @@ export function BulletinCard({
       {/* Alsó sor — auto handle a rekord id-jéből (zéró PII) */}
       {(() => {
         const handle = post.poster?.trim() ? post.poster : handleFromId(post.id);
+        const phone = post.phone?.trim() ?? "";
+        // WA mehet a külön WA-számra, vagy ha üres, a phone-ra (vissza-kompat.)
+        const waNumber = post.whatsapp?.trim() || phone;
+        const waDigits = waNumber ? digitsOnly(waNumber) : "";
+
         return (
-          <div className="mt-3 flex items-center gap-2 border-t border-dashed border-line pt-3">
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-dashed border-line pt-3">
             <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-[10.5px] font-bold text-white uppercase">
               {handle.charAt(0) || "?"}
             </span>
             <span className="text-[12.5px] font-semibold text-ink">{handle}</span>
             <span className="flex-1" />
-            {/* "Írok neki" email-relay CSAK akkor jelenik meg, ha a feladó adott
-                emailt — a local-first módban (no-email) a feladó a hirdetés body-jában
-                ad meg telefont/WhatsApp-ot. */}
+
+            {/* Tap-to-call — telefon megadva */}
+            {phone && (
+              <a
+                href={`tel:${phone}`}
+                aria-label={`Hívás: ${phone}`}
+                className="inline-flex items-center gap-1 rounded-lg bg-surface border border-line hover:bg-surface-alt active:scale-95 transition px-3 py-1.5 text-xs font-bold text-ink"
+              >
+                <Icon name="phone" size={11} strokeWidth={2.5} />
+                Hívás
+              </a>
+            )}
+
+            {/* Tap-to-WhatsApp — phone vagy whatsapp megadva */}
+            {waDigits.length >= 6 && (
+              <a
+                href={`https://wa.me/${waDigits}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp üzenet"
+                className="inline-flex items-center gap-1 rounded-lg bg-[#25D366] hover:bg-[#1da851] active:scale-95 transition px-3 py-1.5 text-xs font-bold text-white"
+              >
+                <span className="text-[12px] leading-none">💬</span>
+                WhatsApp
+              </a>
+            )}
+
+            {/* Email-relay — CSAK ha a feladó adott emailt */}
             {post.email && post.email.trim() && (
               <button
                 type="button"
                 onClick={() => setContactOpen(true)}
-                className="rounded-lg bg-primary hover:bg-primary-dark active:scale-95 transition px-3.5 py-1.5 text-xs font-bold text-white shadow-sm flex items-center gap-1"
+                className="rounded-lg bg-primary hover:bg-primary-dark active:scale-95 transition px-3 py-1.5 text-xs font-bold text-white shadow-sm flex items-center gap-1"
               >
                 <Icon name="send" size={11} strokeWidth={2.5} />
-                Írok neki
+                Email
               </button>
             )}
           </div>

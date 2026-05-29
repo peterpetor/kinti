@@ -97,6 +97,10 @@ export interface BulletinPost {
   price: number | null;
   /** A feladó email-je — a kezelő oldalon mutatható. */
   email: string | null;
+  /** Telefonszám (opcionális) — a publikus kártyán tap-to-call gomb. */
+  phone: string | null;
+  /** WhatsApp szám (opcionális) — ha NULL, a phone-ra megy a WA-link. */
+  whatsapp: string | null;
   /** Manage-token — a kezelő oldal URL-jéhez. */
   manageToken: string | null;
   /** Elküldték-e már a lejárati figyelmeztető emailt. */
@@ -109,6 +113,8 @@ export interface BulletinPost {
 export interface BulletinDraft {
   id: string;
   email: string;
+  phone: string | null;
+  whatsapp: string | null;
   kindId: string;
   title: string;
   meta: string | null;

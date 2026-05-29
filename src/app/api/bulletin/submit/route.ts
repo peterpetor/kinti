@@ -108,6 +108,8 @@ export async function POST(req: Request) {
       body: validation.value.body,
       poster: validation.value.poster,
       email: "",
+      phone: validation.value.phone,
+      whatsapp: validation.value.whatsapp,
       manageToken,
       expiresAt: postExpiresAt,
       isPending: 0,
@@ -139,6 +141,8 @@ export async function POST(req: Request) {
   await createBulletinDraft({
     id,
     email: validation.value.email,
+    phone: validation.value.phone,
+    whatsapp: validation.value.whatsapp,
     kindId: validation.value.kindId,
     title: validation.value.title,
     meta: validation.value.meta,
