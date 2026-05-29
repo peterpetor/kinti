@@ -105,13 +105,6 @@ export function DropdownMenu() {
                 Ügyintézés Varázsló
               </Link>
 
-              <Link href="/ugyintezes/hazakoltozes" onClick={() => setIsOpen(false)} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e8f5e9]/80 text-[#2e7d32] text-base">
-                  🏡
-                </span>
-                Hazaköltözés Varázsló
-              </Link>
-
               <Link href="/arfolyam" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                   💱
