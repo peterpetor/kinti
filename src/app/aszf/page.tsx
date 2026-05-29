@@ -131,13 +131,23 @@ export default function AszfPage() {
         nem vállal. A részvétel minden esetben a felhasználó saját felelősségére történik.
       </p>
 
-      <h2>11. Vállalkozói Szolgáltatások</h2>
+      <h2>11. Vállalkozói Szolgáltatások és Feketemunka Tilalma</h2>
       <p>
         A Szaknévsorban/Vállalkozói modulban szereplő szakemberek nem állnak az üzemeltető alkalmazásában. 
         Az üzemeltető nem ellenőrzi a vállalkozók szakképesítését, engedélyeit, vagy az általuk végzett munka 
         minőségét. A vállalkozó által okozott esetleges hibás teljesítésért, károkért vagy pénzügyi vitákért 
         kizárólag az adott vállalkozó felel, az üzemeltető felelőssége kizárt. A vállalkozó köteles a profilján 
         szereplő adatokat valósághűen tartani.
+      </p>
+      <p>
+        A platform kifejezetten <strong>tiltja a feketemunka (Schwarzarbeit)</strong> és a be nem jelentett 
+        gazdasági tevékenységek hirdetését. A hirdető vállalkozó/szakember kizárólagos felelőssége, hogy 
+        rendelkezzen a svájci (vagy a tevékenység helye szerinti) jogszabályok által előírt érvényes 
+        munkavállalási és letelepedési engedélyekkel, cégbejegyzéssel (pl. UID, MWST), valamint az adó- és 
+        társadalombiztosítási (pl. AHV, ALV) bejelentésekkel. Az üzemeltető kifejezetten kizárja a felelősségét 
+        a hirdetők adó-, munka- és cégjogi megfelelőségéért. Bármilyen hatósági megkeresés, gyanú vagy bejelentés 
+        esetén a feketemunkát vagy engedély nélküli tevékenységet hirdető profilt <strong>azonnal és véglegesen 
+        töröljük</strong> a platformról.
       </p>
 
       <h2>12. A Szolgáltatás rendelkezésre állása</h2>
