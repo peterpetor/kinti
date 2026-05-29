@@ -150,12 +150,17 @@ export default function AszfPage() {
         töröljük</strong> a platformról.
       </p>
 
-      <h2>12. A Szolgáltatás rendelkezésre állása</h2>
+      <h2>12. A Szolgáltatás rendelkezésre állása és Adatbiztonság</h2>
       <p>
         Igyekszünk a Szolgáltatást folyamatosan elérhetővé tenni, de <strong>garanciát nem
         vállalunk</strong> a 100%-os rendelkezésre állásra. Karbantartás, technikai hiba, vagy
-        külső szolgáltatók (Cloudflare, Clerk, Resend) leállása miatti elérhetetlenségért
-        kártérítés nem jár.
+        külső szolgáltatók leállása miatti elérhetetlenségért kártérítés nem jár.
+      </p>
+      <p>
+        Mivel a rendszer (kiemelten a felhasználói hozzáférések, mentett posztok és csekklisták) 
+        nagy mértékben támaszkodik a böngésző helyi tárolójára (localStorage), az adatok 
+        megőrzéséért az üzemeltető <strong>nem vállal felelősséget</strong>. Böngésző-frissítés, 
+        gyorsítótár-törlés vagy technikai hiba miatti <strong>adatvesztésért az üzemeltető nem perelhető</strong>.
       </p>
 
       <h2>13. Felelősség-korlátozás</h2>
@@ -235,12 +240,19 @@ export default function AszfPage() {
         (pl. adathalászat, vírusok) esetén az üzemeltető felelőssége kizárt.
       </p>
 
-      <h2>17. Szellemi tulajdon</h2>
+      <h2>17. Szellemi tulajdon és Kártalanítás (Mentesítés)</h2>
       <p>
         A kinti.app márkajegye, logója, design rendszere az üzemeltető szellemi tulajdona.
-        A platformon megjelenő vállalkozási logók és képek a vállalkozók tulajdonát képezik,
-        akik a platform használatával engedélyt adnak ezek megjelenítésére a Szolgáltatás
-        keretében.
+        A platformon megjelenő felhasználói tartalmak, képek és logók a feltöltők tulajdonát képezik,
+        akik a platform használatával engedélyt adnak ezek megjelenítésére a Szolgáltatás keretében.
+      </p>
+      <p>
+        A felhasználó garantálja, hogy az általa feltöltött képek, logók és szövegek <strong>nem sértik 
+        harmadik fél szerzői vagy védjegyjogait</strong>. Amennyiben egy felhasználó által feltöltött 
+        jogosulatlan tartalom miatt harmadik fél (pl. jogtulajdonos, ügyvédi iroda) kártérítési, 
+        bírság- vagy perköltség-követeléssel lép fel az üzemeltetővel szemben, a jogsértő felhasználó 
+        köteles az üzemeltetőt <strong>teljeskörűen mentesíteni, és az összes felmerülő kárt, bírságot 
+        és jogi költséget azonnal megtéríteni</strong>.
       </p>
 
       <h2>18. Módosítás</h2>
