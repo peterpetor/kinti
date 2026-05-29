@@ -2696,3 +2696,150 @@ export async function purgeExpiredDealReports(): Promise<number> {
     .run();
   return res.meta.changes ?? 0;
 }
+
+// ---------------------------------------------------------------------------
+// Hofladen spots — Helyi termelői pontok térképe
+// ---------------------------------------------------------------------------
+
+export interface HofladenSpot {
+  id: string;
+  name: string;
+  locationName: string | null;
+  lat: number;
+  lng: number;
+  cantonCode: string | null;
+  categories: string[];
+  paymentMethods: string[];
+  open24h: boolean;
+  openText: string | null;
+  note: string | null;
+  manageToken: string | null;
+  reportsCount: number;
+  createdAt: string;
+}
+
+interface HofladenSpotRow {
+  id: string;
+  name: string;
+  location_name: string | null;
+  lat: number;
+  lng: number;
+  canton_code: string | null;
+  categories: string;
+  payment_methods: string;
+  open_24h: number;
+  open_text: string | null;
+  note: string | null;
+  manage_token: string | null;
+  reports_count: number;
+  created_at: string;
+}
+
+function toHofladenSpot(r: HofladenSpotRow): HofladenSpot {
+  let categories: string[] = [];
+  let paymentMethods: string[] = [];
+  try {
+    const c = JSON.parse(r.categories);
+    if (Array.isArray(c)) categories = c.filter((v): v is string => typeof v === "string");
+  } catch { /* ignore */ }
+  try {
+    const p = JSON.parse(r.payment_methods);
+    if (Array.isArray(p)) paymentMethods = p.filter((v): v is string => typeof v === "string");
+  } catch { /* ignore */ }
+
+  return {
+    id: r.id,
+    name: r.name,
+    locationName: r.location_name,
+    lat: r.lat,
+    lng: r.lng,
+    cantonCode: r.canton_code,
+    categories,
+    paymentMethods,
+    open24h: r.open_24h === 1,
+    openText: r.open_text,
+    note: r.note,
+    manageToken: r.manage_token,
+    reportsCount: r.reports_count,
+    createdAt: r.created_at,
+  };
+}
+
+export type PublicHofladenSpot = Omit<HofladenSpot, "manageToken">;
+
+export function toPublicHofladenSpot(s: HofladenSpot): PublicHofladenSpot {
+  const { manageToken: _omit, ...pub } = s;
+  void _omit;
+  return pub;
+}
+
+export async function createHofladenSpot(input: {
+  id: string;
+  name: string;
+  locationName: string | null;
+  lat: number;
+  lng: number;
+  cantonCode: string | null;
+  categories: string[];
+  paymentMethods: string[];
+  open24h: boolean;
+  openText: string | null;
+  note: string | null;
+  manageToken: string;
+  ipHash: string | null;
+}): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO hofladen_spots
+       (id, name, location_name, lat, lng, canton_code, categories, payment_methods,
+        open_24h, open_text, note, manage_token, ip_hash)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      input.id,
+      input.name,
+      input.locationName,
+      input.lat,
+      input.lng,
+      input.cantonCode,
+      JSON.stringify(input.categories),
+      JSON.stringify(input.paymentMethods),
+      input.open24h ? 1 : 0,
+      input.openText,
+      input.note,
+      input.manageToken,
+      input.ipHash,
+    )
+    .run();
+}
+
+export async function getActiveHofladenSpots(): Promise<HofladenSpot[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT * FROM hofladen_spots
+       WHERE hidden = 0
+       ORDER BY created_at DESC`,
+    )
+    .all<HofladenSpotRow>();
+  return results.map(toHofladenSpot);
+}
+
+export async function deleteHofladenSpotByManageToken(token: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM hofladen_spots WHERE manage_token = ?")
+    .bind(token)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function countRecentHofladenSubmissions(ipHash: string | null): Promise<number> {
+  if (!ipHash) return 0;
+  const row = await getDB()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM hofladen_spots
+       WHERE ip_hash = ? AND created_at > datetime('now', '-1 day')`,
+    )
+    .bind(ipHash)
+    .first<{ n: number }>();
+  return row?.n ?? 0;
+}
