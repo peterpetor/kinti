@@ -8,8 +8,8 @@ export const metadata = { title: "Impresszum" };
 const OPERATOR = {
   name: "Petor Péter",
   role: "magánszemély üzemeltető (közösségi kezdeményezés)",
-  address: "c/o [Nővéred Neve / Postafiók], 2233 Ecser, Nádas Béla utca 10., Magyarország",
-  addressNote: "Levelezési cím — jogi kézbesítés is itt érvényes. (c/o megjelölés a meghatalmazott átvevő miatt)",
+  address: "2660 Balassagyarmat, Madách liget 13/2. fsz. 2., Magyarország",
+  addressNote: "Levelezési cím — jogi kézbesítés is itt érvényes.",
   email: "info@kinti.app",
   contactEmail: "info@kinti.app",
   abuseEmail: "abuse@kinti.app",

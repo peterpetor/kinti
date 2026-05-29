@@ -22,7 +22,7 @@ export default function AdatvedelemPage() {
       <h2>1. Adatkezelő</h2>
       <p>
         Adatkezelő: <strong>{"Petor Péter"}</strong> magánszemély üzemeltető.<br />
-        Postai cím: c/o [Nővéred Neve / Postafiók], 2233 Ecser, Nádas Béla utca 10., Magyarország.<br />
+        Postai cím: 2660 Balassagyarmat, Madách liget 13/2. fsz. 2., Magyarország.<br />
         Elérhetőség: <a href="mailto:info@kinti.app">info@kinti.app</a>
       </p>
       <p>
