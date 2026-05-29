@@ -13,6 +13,7 @@ import { MyPostsBanner } from "@/components/my-posts-banner";
 import { GlobalSearch } from "@/components/global-search";
 import { PwaInstallCard } from "@/components/pwa-install-card";
 import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
+import { KvizDailyCard } from "@/components/kviz-daily-card";
 import { getBusinesses, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -54,6 +55,9 @@ export default async function FeedPage() {
 
       {/* CHF/HUF árfolyam widget — gyors elérés a kalkulátorhoz */}
       <ExchangeRateWidget />
+
+      {/* Napi kvíz widget — 3 kérdés naponta */}
+      <KvizDailyCard />
 
       {/* friss / közeli vállalkozások — szerkesztői válogatás */}
       <section className="space-y-3">
