@@ -68,7 +68,7 @@ export default function AdatvedelemPage() {
         Hirdetés feladásához nincs szükség regisztrációra. A hirdetésfeladáskor megadott adatok:
       </p>
       <ul>
-        <li>Email-cím (csak a megerősítő és kezelő linkek küldéséhez — NEM jelenik meg a hirdetésen)</li>
+        <li>Email-cím (kizárólag tranzakciós megerősítő linkek küldésére — sehol nem jelenik meg nyilvánosan)</li>
         <li>Hirdetés szövege és kategóriája</li>
         <li>Opcionális megjelenő név</li>
         <li><strong>Új folyamatok</strong>:
@@ -99,10 +99,9 @@ export default function AdatvedelemPage() {
           automatikus napi szkript (Cloudflare cron) <strong>fizikailag és véglegesen törli</strong>:
         </p>
         <ul style={{ margin: "8px 0 0" }}>
-          <li>a <strong>lejárt hirdetéseket</strong> (30 nap) a hozzájuk tartozó képekkel (R2) és a
-            feladó e-mail címével együtt;</li>
-          <li>a <strong>30 napnál régebben lezajlott eseményeket</strong> a képeikkel, a leadott
-            RSVP-kkel és a beküldő e-mail címével együtt;</li>
+          <li>a <strong>lejárt hirdetéseket</strong> (30 nap) a hozzájuk tartozó képekkel (R2) együtt;</li>
+          <li>a <strong>30 napnál régebben lezajlott eseményeket</strong> a képeikkel és a leadott
+            RSVP-kkel együtt;</li>
           <li>a meg nem erősített piszkozatokat és beküldéseket (24 órán túl).</li>
         </ul>
         <p style={{ margin: "8px 0 0" }}>
@@ -129,12 +128,12 @@ export default function AdatvedelemPage() {
         a kérés jellegét (bot vagy ember).
       </p>
 
-      <h3>2.6 Email-küldés (Resend) — csak admin-értesítő</h3>
+      <h3>2.6 Tranzakciós emailek és Értesítők (Resend)</h3>
       <p>
-        A felhasználói flow-k <strong>nem küldenek emailt</strong>. A Resend Inc. (USA)
-        szolgáltatást kizárólag adminisztrátor-értesítőkre használjuk (új esemény
-        moderálása, tartalom-bejelentés), amelyek az oldal egyetlen admin email-címére
-        mennek. Felhasználói email-cím sehol nem haladja át a Resend-et.
+        A felhasználók által kért megerősítő linkeket, biztonsági másolatokat (backup) és lejárati 
+        figyelmeztetőket a Resend Inc. (USA) szolgáltatásán keresztül küldjük ki. Ezen kívül a Resend 
+        kezeli az adminisztrátor-értesítőket is (új esemény moderálása, tartalom-bejelentés). 
+        Az email-címek kizárólag a technikai kiküldés idejére haladnak át a Resend szerverein.
       </p>
       <ul>
         <li><strong>Adatfeldolgozó:</strong> Resend, Inc. — <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noreferrer">privacy policy</a></li>
