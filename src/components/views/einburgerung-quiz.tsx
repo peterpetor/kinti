@@ -10,6 +10,7 @@ import {
   type EbQuestion,
 } from "@/lib/einburgerung-bank";
 import { generateQuiz, QUIZ_LENGTH, PASS_THRESHOLD } from "@/lib/einburgerung-quiz";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 type Phase = "intro" | "quiz" | "result";
 
@@ -135,18 +136,16 @@ function IntroScreen({
         </button>
       </section>
 
-      <section className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11.5px] leading-relaxed text-ink-muted space-y-2">
-        <p>
-          <strong className="text-ink">⚠️ Ez egy felkészítő szimulátor, NEM hivatalos teszt.</strong>{" "}
-          A valódi állampolgársági vizsga kantononként és községenként eltér. A pontos
-          követelményekért keresd fel a lakhelyed kantoni migrációs hivatalát (Migrationsamt).
-        </p>
-        <p>
-          A C-engedély megszerzéséhez is hasonló tudásra van szükség — gyakorolj velünk!
-          A teljes követelmény: 10 év tartózkodás (B-engedéllyel) + B1 szóban / A2 írásban
-          nyelvtudás + integráció.
-        </p>
-      </section>
+      <LegalDisclaimer
+        toolName="Einbürgerung-szimulátor"
+        variant="critical"
+        notAdviceFor="jogi vagy állampolgársági"
+        extraWarning="Ez egy oktatási játék — NEM HIVATALOS VIZSGA. A valódi svájci állampolgársági vizsga kantononként és községenként SZIGNIFIKÁNSAN eltér: más kérdések, más nyelv, más küszöb. A szimulátor 'átmenő' eredménye semmilyen módon nem helyettesíti a tényleges vizsgát."
+        officialSources={[
+          { label: "SEM — Hivatalos állampolgárság-info", url: "https://www.sem.admin.ch/sem/de/home/themen/buergerrecht.html" },
+          { label: "ch.ch — Állampolgárság", url: "https://www.ch.ch/de/leben-in-der-schweiz/staatsbuergerschaft/" },
+        ]}
+      />
     </div>
   );
 }
@@ -440,9 +439,18 @@ function ResultScreen({
       </button>
 
       <p className="px-1 text-center text-[11px] leading-snug text-ink-faint">
-        Felkészítő szimulátor — nem hivatalos teszt. {EB_BANK.length} kérdés-bank,
-        {canton ? ` ${canton} kantoni kérdésekkel.` : "."} Gyakorolj újra annyiszor, amennyiszer akarsz!
+        {EB_BANK.length} kérdés-bank, gyakorolj annyiszor amennyiszer akarsz!
       </p>
+
+      <LegalDisclaimer
+        toolName="Einbürgerung-szimulátor"
+        variant="critical"
+        notAdviceFor="jogi vagy állampolgársági"
+        extraWarning="A SZIMULÁTOR ÁTMENT/MEGBUKOTT EREDMÉNYE SEMMILYEN MÓDON NEM HELYETTESÍTI A HIVATALOS VIZSGÁT. A valódi állampolgársági vizsga teljesen más: kantoni / községi szervezésű, más kérdésekkel, más nyelven, más szóbeli résszel."
+        officialSources={[
+          { label: "SEM — Állampolgárság hivatalos", url: "https://www.sem.admin.ch/sem/de/home/themen/buergerrecht.html" },
+        ]}
+      />
     </div>
   );
 }

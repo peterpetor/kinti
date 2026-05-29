@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { AdminChecklist } from "@/lib/admin-checklists";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 const STORAGE_KEY = "kinti.checklists";
 
@@ -246,6 +247,15 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
           ))}
         </ul>
       </section>
+
+      {/* Egységes jogi disclaimer */}
+      <LegalDisclaimer
+        toolName={`csekklista (${checklist.title})`}
+        variant="legal"
+        notAdviceFor="jogi vagy hatósági"
+        extraWarning="A svájci eljárások kantononként ELTÉRŐEK lehetnek, és időnként változnak. A lépések általános útmutatók — a TE konkrét helyzetedre vonatkozó pontos ügymenetet a lakhelyed szerinti illetékes hivataltól tudd meg."
+        officialSources={checklist.sources}
+      />
     </div>
   );
 }

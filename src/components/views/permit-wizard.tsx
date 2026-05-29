@@ -9,6 +9,7 @@ import {
   type WizardAnswers,
   type WizardResult,
 } from "@/lib/permit-wizard";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 interface StepOption {
   value: string;
@@ -232,18 +233,16 @@ export function PermitWizard() {
         </div>
       </section>
 
-      <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11px] leading-relaxed text-ink-muted">
-        Tájékoztató eszköz, NEM jogi tanács. A pontos eljárásért keresd fel a kantoni{" "}
-        <a
-          href="https://www.sem.admin.ch/sem/de/home.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary underline"
-        >
-          Migrationsamt
-        </a>
-        -ot vagy a SEM (Staatssekretariat für Migration) oldalát.
-      </div>
+      <LegalDisclaimer
+        toolName="engedély-varázsló"
+        variant="legal"
+        notAdviceFor="jogi vagy bevándorlási"
+        extraWarning="Az engedély-eljárás kantonok közt eltér, és a feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó engedélyt mindig a kantoni Migrationsamt vagy szakképzett ügyvéd határozza meg."
+        officialSources={[
+          { label: "SEM — Migráció hivatalos", url: "https://www.sem.admin.ch/" },
+          { label: "ch.ch — Tartózkodás", url: "https://www.ch.ch/de/leben-in-der-schweiz/aufenthalt/" },
+        ]}
+      />
     </div>
   );
 }
@@ -394,10 +393,15 @@ function ResultView({ result, onRestart }: { result: WizardResult; onRestart: ()
         Új kérdés-sor
       </button>
 
-      <p className="px-1 text-center text-[11px] leading-snug text-ink-faint">
-        Tájékoztató eszköz, NEM jogi tanács. A pontos eljárásért keresd fel a kantoni
-        Migrationsamt-ot vagy a SEM oldalát.
-      </p>
+      <LegalDisclaimer
+        toolName="engedély-varázsló"
+        variant="legal"
+        notAdviceFor="jogi vagy bevándorlási"
+        extraWarning="A varázsló javaslata egyszerű, általános minták alapján készült. A te konkrét helyzetedet (családi állapot, munkaadói támogatás, korábbi engedélyek, büntetett előélet) csak a kantoni Migrationsamt és/vagy szakképzett ügyvéd tudja értékelni."
+        officialSources={[
+          { label: "SEM — Migráció", url: "https://www.sem.admin.ch/" },
+        ]}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { CustomsCalculator } from "@/components/views/customs-calculator";
 import { BorderReports } from "@/components/views/border-reports";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -39,10 +40,11 @@ export default function VamPage() {
           </span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[20px] font-extrabold tracking-tight text-ink">
-              Vámmentes? Vagy büntetés?
+              Vámmentes mennyiség BECSLÉSE
             </h1>
             <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
-              Svájc nem EU-tag — vámmentes limit van. Csúszkás kalkulátor + közösségi határ-figyelő.
+              Svájc nem EU-tag — vámmentes limit van. Tájékoztató kalkulátor + közösségi határ-figyelő.{" "}
+              <strong className="text-ink">NEM hivatalos vámtanács.</strong>
             </p>
           </div>
         </div>
@@ -61,20 +63,17 @@ export default function VamPage() {
         <BorderReports turnstileSiteKey={turnstileSiteKey} />
       </section>
 
-      {/* Disclaimer */}
-      <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11px] leading-relaxed text-ink-muted">
-        <strong className="text-ink">Tájékoztató jellegű.</strong> A vám-limitek és vámrátok időnként
-        változnak. A pontos, mindig aktuális adatokért nézd meg a{" "}
-        <a
-          href="https://www.bazg.admin.ch/bazg/de/home/information-private/reisen-und-einkaufen--freimengen-und-mehrwertsteuer.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline font-bold text-primary"
-        >
-          BAZG hivatalos oldalát
-        </a>
-        . A közösségi határ-jelentések a felhasználók beadványai, NEM hivatalos — saját felelősségre.
-      </div>
+      {/* Jogi disclaimer */}
+      <LegalDisclaimer
+        toolName="vám-kalkulátor"
+        variant="legal"
+        notAdviceFor="vámjogi vagy adójogi"
+        extraWarning="A vám-mentes limitek időnként változnak. A közösségi határátkelő-jelentések felhasználói beadványok — NEM hivatalosak, sose helyettesítenek hivatalos információt. Hivatalos átkeléshez használd a QuickZoll alkalmazást."
+        officialSources={[
+          { label: "BAZG — Vámmentes mennyiség", url: "https://www.bazg.admin.ch/bazg/de/home/information-private/reisen-und-einkaufen--freimengen-und-mehrwertsteuer.html" },
+          { label: "QuickZoll — Hivatalos app", url: "https://www.bazg.admin.ch/bazg/de/home/services/services-firmen/services-firmen-warenanmeldung/quickzoll.html" },
+        ]}
+      />
     </div>
   );
 }

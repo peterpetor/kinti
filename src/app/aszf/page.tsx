@@ -7,7 +7,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-05-25">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-05-29">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -99,6 +99,68 @@ export default function AszfPage() {
       <p>
         Az üzemeltető felelőssége a magyar Polgári Törvénykönyv vonatkozó rendelkezései szerint,
         ingyenes szolgáltatás esetén <strong>csak szándékos károkozásra</strong> terjed ki.
+      </p>
+
+      <h2>8.1 Eszközök, kalkulátorok és tájékoztató anyagok</h2>
+      <p>
+        A Szolgáltatáson belül elérhető <strong>kalkulátorok</strong> (gyorshajtás-bírság,
+        vám, árfolyam, repülőjegy-becslő stb.), <strong>varázslók</strong> (engedély-választó,
+        Einbürgerung-szimulátor stb.), <strong>csekklisták</strong> (ügyintézés varázsló stb.)
+        és <strong>tájékoztató anyagok</strong> (Tudásbázis, Segítség oldal) kizárólag
+        TÁJÉKOZTATÓ JELLEGŰEK.
+      </p>
+      <ul>
+        <li>
+          Ezek <strong>NEM minősülnek jogi, pénzügyi, adótanácsadási, befektetési, orvosi,
+          vámjogi vagy bevándorlási szakvéleménynek.</strong> Az üzemeltető nem
+          szakképzett jogász, adótanácsadó, pénzügyi szakember vagy bevándorlási ügyvéd.
+        </li>
+        <li>
+          A megjelenített adatok, becslések és számítások publikus források (pl. ch.ch,
+          sem.admin.ch, bazg.admin.ch, ECB) és általános minták alapján készülnek.
+          Az adatok <strong>pontossága, frissessége és teljessége NEM garantált</strong>.
+        </li>
+        <li>
+          A svájci jogszabályok, vámértékek, árfolyamok és hatósági eljárások időnként
+          változnak. Az eszközök tartalma <strong>elavult lehet</strong>.
+        </li>
+        <li>
+          A felhasználó <strong>saját felelősségére</strong> használja ezeket az
+          eszközöket. Az üzemeltető <strong>kifejezetten kizárja</strong> a felelősségét
+          minden olyan kárért, jogi vagy hatósági következményért, pénzügyi veszteségért,
+          bírságért vagy egyéb hátrányért, amit a felhasználó az eszközök eredménye
+          alapján hozott döntésével szenved.
+        </li>
+        <li>
+          Hivatalos döntés előtt a felhasználó köteles a <strong>hivatalos forrásokat</strong>{" "}
+          (illetékes svájci szövetségi/kantoni hivatal, megfelelő szakképzett szakember)
+          önállóan ellenőrizni. A platformon megjelenő hivatalos linkek navigálási
+          segédletek, nem szakvélemények.
+        </li>
+        <li>
+          A felhasználói „pipált" csekklisták, mentett becslések, kvíz-eredmények csak a
+          felhasználó saját böngészőjében (localStorage) tárolódnak. Nem hatóság előtti
+          bizonyíték, nem jogi nyilatkozat.
+        </li>
+      </ul>
+      <p>
+        Az <strong>Einbürgerung-szimulátor</strong> (állampolgárság-felkészítő kvíz)
+        eredménye semmilyen módon nem helyettesíti a hivatalos állampolgársági vizsgát.
+        A <strong>napi Svájci kvíz</strong> kizárólag szórakoztató-oktatási céllal készült.
+      </p>
+
+      <h2>8.2 Közösségi jelentések</h2>
+      <p>
+        A platformon a felhasználók által beadott <strong>közösségi jelentések</strong>{" "}
+        (akció-térkép, határátkelő-figyelő, SOS-radar, telekocsi-értékelés, vélemény stb.)
+        a feladó felhasználó saját megfigyelései — az üzemeltető <strong>nem ellenőrzi
+        ezek pontosságát</strong>. A felhasználó saját felelősségére használja a
+        közösségi jelentéseket; ezekre alapozott döntésekért az üzemeltető és más
+        felhasználók nem felelnek.
+      </p>
+      <p>
+        A <strong>Közösségi SOS-radar</strong> nem helyettesíti a hivatalos
+        segélyhívást (Svájcban 112). Vészhelyzet esetén MINDIG hívd a 112-t.
       </p>
 
       <h2>9. Szellemi tulajdon</h2>

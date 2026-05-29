@@ -9,6 +9,7 @@ import {
   type RoadType,
   type FineResult,
 } from "@/lib/speeding-fine";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 const SEVERITY_META: Record<FineResult["severity"], { label: string; color: string; bg: string; emoji: string }> = {
   "no-fine":       { label: "Nincs büntetés",         color: "#16a34a", bg: "bg-success/10 border-success/40", emoji: "✅" },
@@ -55,11 +56,10 @@ export function SpeedingCalculator() {
           <span className="text-4xl shrink-0">🚓</span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[20px] font-extrabold leading-tight tracking-tight text-ink">
-              Gyorshajtás bírság-becslő
+              Gyorshajtás bírság-BECSLŐ
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              A 2026-os svájci szabályok alapján — fix bírság vs. büntetőeljárás,
-              jogosítvány-bevonás, jövedelem-arányos napi pénz (Tagessatz).
+              Tájékoztató becslés a publikus svájci szabályok (OBV 2026) alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót minden esetben a kantoni hatóság szabja meg.
             </p>
           </div>
         </div>
@@ -257,13 +257,17 @@ export function SpeedingCalculator() {
         </ul>
       </section>
 
-      {/* Disclaimer */}
-      <div className="rounded-card border-2 border-accent/30 bg-accent-soft px-4 py-3 text-[11.5px] leading-relaxed text-ink">
-        <strong className="text-accent">⚠️ Ez csak becslés.</strong> A tényleges büntetést a kantoni hatóság
-        szabja meg, figyelembe véve enyhítő/súlyosító körülményeket (visszaesés, próbaidő,
-        baleset, alkohol, stb). A jövedelem-igazolást a hatóság kéri be a Tagessatz pontos
-        kiszámításához.
-      </div>
+      {/* Egységes jogi disclaimer */}
+      <LegalDisclaimer
+        toolName="gyorshajtás bírság-becslő"
+        variant="legal"
+        notAdviceFor="jogi vagy büntetőjogi"
+        extraWarning="A tényleges büntetést a kantoni hatóság szabja meg, figyelembe véve enyhítő/súlyosító körülményeket (visszaesés, próbaidő, baleset, alkohol). Az eszköz NEM helyettesít ügyvédet — büntetőeljárás esetén fordulj ügyvédhez."
+        officialSources={[
+          { label: "ASTRA — Strassen", url: "https://www.astra.admin.ch/" },
+          { label: "OBV — Ordnungsbussenverordnung", url: "https://www.fedlex.admin.ch/eli/cc/2019/729/de" },
+        ]}
+      />
     </div>
   );
 }

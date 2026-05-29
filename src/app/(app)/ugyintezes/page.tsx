@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
-import { CHECKLISTS, CHECKLISTS_DISCLAIMER } from "@/lib/admin-checklists";
+import { CHECKLISTS } from "@/lib/admin-checklists";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 export const runtime = "edge";
 export const dynamic = "force-static";
@@ -82,9 +83,16 @@ export default function UgyintezesPage() {
         </div>
       </section>
 
-      <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11.5px] leading-relaxed text-ink-muted">
-        {CHECKLISTS_DISCLAIMER}
-      </div>
+      <LegalDisclaimer
+        toolName="ügyintézés varázsló"
+        variant="legal"
+        notAdviceFor="jogi vagy hatósági"
+        extraWarning="A svájci ügyintézés kantononként és községenként ELTÉR — a csekklisták általános minták, nem a te konkrét helyzeted. Mindig a lakhelyed kantoni Migrationsamt-jánál vagy a helyi Gemeinde-nél tájékozódj."
+        officialSources={[
+          { label: "ch.ch — Hivatalos info-portál", url: "https://www.ch.ch/" },
+          { label: "SEM — Migráció", url: "https://www.sem.admin.ch/" },
+        ]}
+      />
     </div>
   );
 }

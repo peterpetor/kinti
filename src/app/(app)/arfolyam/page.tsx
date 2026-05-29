@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { ExchangeCalculator } from "@/components/views/exchange-calculator";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -73,13 +74,16 @@ export default async function ArfolyamPage() {
         </div>
       )}
 
-      <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11.5px] leading-relaxed text-ink-muted">
-        <strong className="text-ink">Tájékoztató jellegű.</strong> Az ECB napi
-        középárfolyama nem ugyanaz mint amit a bank vagy a szolgáltató ad neked —
-        a tényleges váltáskor mindig 0.3-2% spread van a károdra. A díjbecslések
-        átlagos publikált tarifa alapján, az aktuális díjat ellenőrizd a
-        szolgáltatónál.
-      </div>
+      <LegalDisclaimer
+        toolName="árfolyam és hazautalás kalkulátor"
+        variant="legal"
+        notAdviceFor="pénzügyi vagy befektetési"
+        extraWarning="Az ECB napi középárfolyama NEM ugyanaz, mint amit a bank vagy a szolgáltató ad — a tényleges váltáskor 0.3-2% spread van a károdra. A szolgáltatói díjbecslések publikált átlagos tarifa alapján, és gyakran változnak. Konkrét utaláshoz mindig az adott szolgáltatónál ellenőrizd az aktuális díjat."
+        officialSources={[
+          { label: "Frankfurter.app — ECB napi árfolyam", url: "https://api.frankfurter.app/" },
+          { label: "SNB — Svájci Nemzeti Bank", url: "https://www.snb.ch/" },
+        ]}
+      />
     </div>
   );
 }

@@ -21,6 +21,7 @@ import {
   type SwissAirport,
   type Direction,
 } from "@/lib/flights";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 const HU_MONTHS = [
   "Január", "Február", "Március", "Április", "Május", "Június",
@@ -274,12 +275,17 @@ export function FlightFinder() {
         ))}
       </section>
 
-      {/* Disclaimer */}
-      <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11px] leading-relaxed text-ink-muted">
-        <strong className="text-ink">Becslés, NEM real-time ár.</strong> Az ár-sávok történelmi átlagok és
-        szezonális minták alapján — egy konkrét naphoz az aktuális árat mindig az adott foglalási oldalon nézd
-        meg. A linkek paraméterezett keresésre visznek.
-      </div>
+      <LegalDisclaimer
+        toolName="repülőjegy-figyelő"
+        variant="legal"
+        notAdviceFor="pénzügyi vagy utazási"
+        extraWarning="A megjelenített árak BECSLÉSEK, nem real-time foglalási árak. A foglalási oldal-linkek paraméterezett keresésre visznek; semmilyen szerződéses kapcsolatban nem állunk a Skyscanner / Google Flights / Kiwi / légitársaságok-kal. A jegy árát, feltételeit és érvényességét MINDIG az adott foglalási oldalon ellenőrizd a fizetés előtt."
+        officialSources={[
+          { label: "Skyscanner", url: "https://www.skyscanner.com/" },
+          { label: "Google Flights", url: "https://www.google.com/travel/flights" },
+          { label: "Kiwi.com", url: "https://www.kiwi.com/" },
+        ]}
+      />
     </div>
   );
 }
