@@ -72,6 +72,42 @@ export async function POST(req: Request) {
   }
 
   // Duplikáció-szűrés: 1 email / vállalkozás
+  const id = crypto.randomUUID();
+  const manageToken = crypto.randomUUID().replace(/-/g, "");
+  const now = new Date();
+  const ipHash = await hashIp(ip);
+  const hasEmail = validation.value.email.length > 0;
+
+  // === ÚJ FŐÚT (local-first) — azonnal publikálva, manage_token a kliensnek ===
+  if (!hasEmail) {
+    const { publishReview, recomputeBusinessRating } = await import("@/lib/repo");
+    await publishReview({
+      id,
+      businessId: business.id,
+      email: "",
+      rating: validation.value.rating,
+      body: validation.value.body,
+      reviewerName: validation.value.reviewerName,
+      manageToken,
+      termsVersion: TERMS_VERSION,
+      acceptedTermsAt: now.toISOString(),
+      ageConfirmed: 1,
+      ipHash,
+    });
+    await recomputeBusinessRating(business.id);
+    return NextResponse.json(
+      {
+        ok: true,
+        published: true,
+        id,
+        manageToken,
+        manageUrl: `/velemeny-kezeles/${manageToken}`,
+      },
+      { headers: { "cache-control": "no-store" } },
+    );
+  }
+
+  // === RÉGI ÚT (email-confirm) ===
   if (await hasReviewByEmail(business.id, validation.value.email)) {
     return NextResponse.json(
       {
@@ -82,12 +118,8 @@ export async function POST(req: Request) {
     );
   }
 
-  const id = crypto.randomUUID();
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
-  const manageToken = crypto.randomUUID().replace(/-/g, "");
-  const now = new Date();
   const expiresAt = new Date(now.getTime() + REVIEW_CONFIRM_TTL_MS).toISOString();
-  const ipHash = await hashIp(ip);
 
   await createReviewDraft({
     id,

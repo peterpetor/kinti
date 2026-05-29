@@ -90,12 +90,15 @@ export function validateBulletinInput(
     return { ok: false, errors: [{ field: "website", message: "Hibás kérés." }] };
   }
 
+  // Email OPCIONÁLIS (local-first mód) — ha üres, semmilyen hibát nem dobunk.
+  // Ha meg van adva, validáljuk a formátumot.
   const email = str(input.email).toLowerCase();
-  if (!email) errors.push({ field: "email", message: "Email kötelező." });
-  else if (email.length > LIMITS.emailMax)
-    errors.push({ field: "email", message: "Túl hosszú email-cím." });
-  else if (!EMAIL_RE.test(email))
-    errors.push({ field: "email", message: "Érvénytelen email-cím." });
+  if (email) {
+    if (email.length > LIMITS.emailMax)
+      errors.push({ field: "email", message: "Túl hosszú email-cím." });
+    else if (!EMAIL_RE.test(email))
+      errors.push({ field: "email", message: "Érvénytelen email-cím." });
+  }
 
   const kindId = str(input.kindId);
   if (!kindId) errors.push({ field: "kindId", message: "Válassz kategóriát." });

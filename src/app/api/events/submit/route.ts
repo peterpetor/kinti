@@ -75,10 +75,10 @@ export async function POST(req: Request) {
     );
   }
 
-  // 3) D1 INSERT — status: 'pending_confirm', egyedi tokenek
   const id = crypto.randomUUID();
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
   const manageToken = crypto.randomUUID().replace(/-/g, "");
+  const hasEmail = validation.value.email.length > 0;
 
   // Dátumból number/hónap/nap neve leképezés
   const [year, month, day] = validation.value.eventDate.split("-").map(Number);
@@ -101,19 +101,34 @@ export async function POST(req: Request) {
     description: validation.value.description,
     imageKey: validation.value.imageKey,
     email: validation.value.email,
-    status: "pending_confirm",
+    // Local-first: ha nincs email → admin-jóváhagyásra rögtön; egyébként email-confirm után
+    status: hasEmail ? "pending_confirm" : "pending_admin",
     token: confirmToken,
     manageToken,
   });
 
-  // Rate-limit napló frissítése (fire-and-forget — hiba esetén sem gátolja a flow-t)
   logEventSubmit(crypto.randomUUID(), ipHash).catch(() => { /* silent */ });
 
+  // Local-first mód: nincs email-küldés, csak manage_token vissza
+  if (!hasEmail) {
+    return NextResponse.json(
+      {
+        ok: true,
+        published: false, // admin-jóváhagyásra vár
+        pendingAdmin: true,
+        id,
+        manageToken,
+        manageUrl: `/esemeny-kezeles/${manageToken}`,
+      },
+      { headers: { "cache-control": "no-store" } },
+    );
+  }
+
+  // Régi email-confirm flow
   const baseUrl =
     getCloudflareEnv().PUBLIC_BASE_URL?.replace(/\/$/, "") ||
     new URL(req.url).origin;
 
-  // 4) Megerősítő email a beküldőnek
   try {
     await sendEventConfirmationEmail({
       to: validation.value.email,
@@ -131,5 +146,5 @@ export async function POST(req: Request) {
     );
   }
 
-  return NextResponse.json({ ok: true }, { headers: { "cache-control": "no-store" } });
+  return NextResponse.json({ ok: true, published: false }, { headers: { "cache-control": "no-store" } });
 }

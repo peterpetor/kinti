@@ -88,17 +88,52 @@ export async function POST(req: Request) {
     );
   }
 
-  // 6) piszkozat-INSERT
   const id = crypto.randomUUID();
-  const confirmToken = crypto.randomUUID().replace(/-/g, "");
   const manageToken = crypto.randomUUID().replace(/-/g, "");
   const now = new Date();
-  const expiresAt = new Date(now.getTime() + BUSINESS_CONFIRM_TTL_MS).toISOString();
+  const hasEmail = validation.value.email.length > 0;
 
-  // Ha a beküldést egy belépett vállalkozó indítja, a Clerk user_id-t is
-  // elmentjük a piszkozatba — a megerősítő linkre kattintáskor AUTOMATIKUSAN
-  // hozzákötjük a publikus businesses-rekordot a tulajdonoshoz.
   const { userId: clerkUserId } = await auth();
+
+  // === ÚJ FŐÚT (local-first, no-email) ===
+  // Ha nincs email: azonnal publikáljuk a vállalkozást és visszaadjuk a manage_token-t.
+  if (!hasEmail) {
+    const { createBusinessFromSubmission, getBusinessById } = await import("@/lib/repo");
+    const { slugifyBusinessName, approxCoordsForCanton } = await import("@/lib/business");
+    let bizId = `${slugifyBusinessName(validation.value.name)}-${crypto.randomUUID().slice(0, 6)}`;
+    if (await getBusinessById(bizId)) {
+      bizId = `${slugifyBusinessName(validation.value.name)}-${crypto.randomUUID().slice(0, 8)}`;
+    }
+    const coords = approxCoordsForCanton(validation.value.cantonCode);
+    await createBusinessFromSubmission({
+      id: bizId,
+      name: validation.value.name,
+      categoryId: validation.value.categoryId,
+      categoryLabel: validation.value.categoryLabel,
+      address: validation.value.address,
+      phone: validation.value.phone,
+      blurb: validation.value.blurb,
+      contactEmail: "",
+      lat: coords?.lat ?? null,
+      lng: coords?.lng ?? null,
+      ownerUserId: clerkUserId,
+      manageToken,
+    });
+    return NextResponse.json(
+      {
+        ok: true,
+        published: true,
+        id: bizId,
+        manageToken,
+        manageUrl: `/szaknevsor/kezeles/${manageToken}`,
+      },
+      { headers: { "cache-control": "no-store" } },
+    );
+  }
+
+  // === RÉGI ÚT (legacy email-confirm) — visszafelé kompat ===
+  const confirmToken = crypto.randomUUID().replace(/-/g, "");
+  const expiresAt = new Date(now.getTime() + BUSINESS_CONFIRM_TTL_MS).toISOString();
 
   await createBusinessSubmission({
     id,
@@ -120,7 +155,6 @@ export async function POST(req: Request) {
     manageToken,
   });
 
-  // 7) email
   const baseUrl =
     getCloudflareEnv().PUBLIC_BASE_URL?.replace(/\/$/, "") || new URL(req.url).origin;
 
@@ -140,5 +174,5 @@ export async function POST(req: Request) {
     );
   }
 
-  return NextResponse.json({ ok: true }, { headers: { "cache-control": "no-store" } });
+  return NextResponse.json({ ok: true, published: false }, { headers: { "cache-control": "no-store" } });
 }

@@ -665,14 +665,19 @@ export function BulletinCard({
             </span>
             <span className="text-[12.5px] font-semibold text-ink">{handle}</span>
             <span className="flex-1" />
-            <button
-              type="button"
-              onClick={() => setContactOpen(true)}
-              className="rounded-lg bg-primary hover:bg-primary-dark active:scale-95 transition px-3.5 py-1.5 text-xs font-bold text-white shadow-sm flex items-center gap-1"
-            >
-              <Icon name="send" size={11} strokeWidth={2.5} />
-              Írok neki
-            </button>
+            {/* "Írok neki" email-relay CSAK akkor jelenik meg, ha a feladó adott
+                emailt — a local-first módban (no-email) a feladó a hirdetés body-jában
+                ad meg telefont/WhatsApp-ot. */}
+            {post.email && post.email.trim() && (
+              <button
+                type="button"
+                onClick={() => setContactOpen(true)}
+                className="rounded-lg bg-primary hover:bg-primary-dark active:scale-95 transition px-3.5 py-1.5 text-xs font-bold text-white shadow-sm flex items-center gap-1"
+              >
+                <Icon name="send" size={11} strokeWidth={2.5} />
+                Írok neki
+              </button>
+            )}
           </div>
         );
       })()}

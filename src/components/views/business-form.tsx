@@ -8,6 +8,7 @@ import { cn } from "@/lib/cn";
 import { CANTONS, isSwissAddress } from "@/lib/cantons";
 import { BUSINESS_LIMITS, type BusinessValidationError } from "@/lib/business";
 import type { Category } from "@/lib/types";
+import { PostSavePrompt } from "@/components/post-save-prompt";
 
 /**
  * Self-service vállalkozás-feladó űrlap (account nélkül). A flow megegyezik a
@@ -56,6 +57,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
   const [phase, setPhase] = useState<Phase>("idle");
   const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
+  const [published, setPublished] = useState<{ id: string; manageToken: string; manageUrl: string } | null>(null);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -89,6 +91,10 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         error?: string;
         detail?: string;
         details?: BusinessValidationError[];
+        published?: boolean;
+        id?: string;
+        manageToken?: string;
+        manageUrl?: string;
       };
       if (!res.ok) {
         if (data.details?.length) {
@@ -103,6 +109,9 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         turnstileRef.current?.reset();
         return;
       }
+      if (data.published && data.id && data.manageToken && data.manageUrl) {
+        setPublished({ id: data.id, manageToken: data.manageToken, manageUrl: data.manageUrl });
+      }
       setPhase("sent");
     } catch (err) {
       setGlobal(err instanceof Error ? err.message : "Hálózati hiba.");
@@ -112,6 +121,45 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
   }
 
   if (phase === "sent") {
+    // Local-first publikálás → PostSavePrompt
+    if (published) {
+      return (
+        <div className="rounded-card border border-line bg-surface p-6 shadow-card">
+          <div className="mb-4 text-center">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success">
+              <Icon name="check" size={22} strokeWidth={2.4} />
+            </div>
+            <h2 className="mt-3 text-[18px] font-extrabold tracking-tight text-ink">
+              A vállalkozásod fent van!
+            </h2>
+            <p className="mx-auto mt-2 max-w-sm text-pretty text-[13.5px] leading-relaxed text-ink-muted">
+              Megjelent a Szaknévsorban. A részleteket (logó, nyitvatartás, leírás)
+              a kezelő-linkről állíthatod be.
+            </p>
+          </div>
+          <PostSavePrompt
+            type="business"
+            id={published.id}
+            manageToken={published.manageToken}
+            title={form.name}
+            manageUrl={published.manageUrl}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setForm(INITIAL);
+              setTurnstileToken("");
+              setPublished(null);
+              setPhase("idle");
+            }}
+            className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-pill border border-line bg-surface px-4 py-2 text-[12px] font-bold text-ink"
+          >
+            Másik vállalkozás hozzáadása
+          </button>
+        </div>
+      );
+    }
+    // Legacy email-confirm flow
     return (
       <div className="rounded-card border border-line bg-surface p-6 text-center shadow-card">
         <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary text-white">
@@ -248,22 +296,22 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         <FieldError msg={errors.blurb} />
       </Section>
 
-      {/* Email a megerősítéshez */}
-      <Section title="Email a megerősítéshez" required>
+      {/* Email — OPCIONÁLIS */}
+      <Section title="Email (opcionális)">
         <input
           type="email"
-          required
           value={form.email}
           onChange={(e) => setField("email", e.target.value)}
-          placeholder="te@example.ch"
+          placeholder="te@example.ch (nem kötelező)"
           autoComplete="email"
           maxLength={BUSINESS_LIMITS.emailMax}
           className={inputCls(errors.email)}
         />
         <FieldError msg={errors.email} />
         <p className="mt-2 text-[11px] leading-snug text-ink-muted">
-          Az emailedet csak a megerősítéshez használjuk — a Szaknévsorban
-          <strong> nem jelenik meg</strong>. Részletek:{" "}
+          <strong className="text-ink">Email nem szükséges.</strong> Ha üresen hagyod,
+          a vállalkozás azonnal megjelenik, és kapsz egy kezelő-linket (QR-kód is jön)
+          a részletek beállításához. Részletek:{" "}
           <Link href="/adatvedelem" className="underline">Adatkezelési Tájékoztató</Link>.
         </p>
       </Section>

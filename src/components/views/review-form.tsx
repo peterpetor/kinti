@@ -9,6 +9,7 @@ import {
   type ReviewValidationError,
 } from "@/lib/reviews";
 import { cn } from "@/lib/cn";
+import { PostSavePrompt } from "@/components/post-save-prompt";
 
 /**
  * Account nélküli vélemény-űrlap (Liquid Glass kártyák). Flow:
@@ -60,6 +61,7 @@ export function ReviewForm({
   const [phase, setPhase] = useState<Phase>("idle");
   const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
+  const [published, setPublished] = useState<{ id: string; manageToken: string; manageUrl: string } | null>(null);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -86,6 +88,10 @@ export function ReviewForm({
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
         details?: ReviewValidationError[];
+        published?: boolean;
+        id?: string;
+        manageToken?: string;
+        manageUrl?: string;
       };
       if (!res.ok) {
         if (data.details?.length) {
@@ -98,6 +104,9 @@ export function ReviewForm({
         turnstileRef.current?.reset();
         return;
       }
+      if (data.published && data.id && data.manageToken && data.manageUrl) {
+        setPublished({ id: data.id, manageToken: data.manageToken, manageUrl: data.manageUrl });
+      }
       setPhase("sent");
     } catch (err) {
       setGlobal(err instanceof Error ? err.message : "Hálózati hiba.");
@@ -108,6 +117,43 @@ export function ReviewForm({
 
   // Sikeres beküldés
   if (phase === "sent") {
+    if (published) {
+      return (
+        <div className="rounded-card border border-line bg-surface p-5 shadow-card">
+          <div className="mb-4 text-center">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success">
+              <Icon name="check" size={20} strokeWidth={2.4} />
+            </div>
+            <h3 className="mt-3 text-[16px] font-extrabold tracking-tight text-ink">
+              A véleményed fent van!
+            </h3>
+            <p className="mx-auto mt-2 max-w-sm text-pretty text-[13px] leading-relaxed text-ink-muted">
+              Megjelent a <strong className="text-ink">{businessName}</strong> oldalán.
+            </p>
+          </div>
+          <PostSavePrompt
+            type="review"
+            id={published.id}
+            manageToken={published.manageToken}
+            title={`${form.rating}★ — ${businessName}`}
+            manageUrl={published.manageUrl}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setForm(INITIAL);
+              setTurnstileToken("");
+              setPublished(null);
+              setPhase("idle");
+              setOpen(false);
+            }}
+            className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-pill border border-line bg-surface px-4 py-2 text-[12px] font-bold text-ink"
+          >
+            Bezár
+          </button>
+        </div>
+      );
+    }
     return (
       <div className="rounded-card border border-line bg-surface p-5 text-center shadow-card">
         <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary text-white">
@@ -192,17 +238,16 @@ export function ReviewForm({
         <FieldError msg={errors.body} />
       </Section>
 
-      {/* Email a megerősítéshez. NÉV NEM kell — auto-generált handle kerül melléd
-          a publikálott véleményen ("VidámPék_42" stílusú). Zéró tárolt PII. */}
-      <Section title="Email a megerősítéshez" required>
+      {/* Email — OPCIONÁLIS. Auto-generált handle ("VidámPék_42") kerül a publikus
+          vélemény mellé. Zéró tárolt PII. */}
+      <Section title="Email (opcionális)">
         <div>
           <div>
             <input
               type="email"
-              required
               value={form.email}
               onChange={(e) => setField("email", e.target.value)}
-              placeholder="Email a megerősítéshez"
+              placeholder="Email — vagy hagyd üresen"
               autoComplete="email"
               maxLength={REVIEW_LIMITS.emailMax}
               className={inputCls(errors.email)}
@@ -211,8 +256,8 @@ export function ReviewForm({
           </div>
         </div>
         <p className="mt-2 text-[11px] leading-snug text-ink-muted">
-          Auto-generált handle kerül melléd ("VidámPék_42" stílusú) — nincs név-bemenet,
-          nincs PII. Az email-cím csak a megerősítő és kezelő linkek elküldésére
+          <strong className="text-ink">Email nem szükséges.</strong> Ha üresen hagyod, a vélemény
+          azonnal megjelenik, és kapsz egy kezelő-linket. Ha emailt adsz, a régi módon megerősítő linket kapsz hozzá.
           kell — sehol nem publikus.
         </p>
       </Section>

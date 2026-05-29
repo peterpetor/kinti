@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { getBulletinKinds, createBulletinDraft, countRecentBulletins } from "@/lib/repo";
+import {
+  getBulletinKinds,
+  createBulletinDraft,
+  countRecentBulletins,
+  publishBulletinPost,
+} from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { sendConfirmationEmail } from "@/lib/email";
 import {
@@ -11,6 +16,9 @@ import {
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { safeLogError } from "@/lib/safe-log";
+
+/** A 30 napos publikus életidő — a publish flow-ban használjuk. */
+const POST_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -82,11 +90,50 @@ export async function POST(req: Request) {
     );
   }
 
-  // 4) piszkozat-INSERT (audit-trail mezőkkel: accepted_terms_at, ip_hash, terms_version)
   const id = crypto.randomUUID();
-  const confirmToken = crypto.randomUUID().replace(/-/g, "");
   const manageToken = crypto.randomUUID().replace(/-/g, "");
   const now = new Date();
+  const hasEmail = validation.value.email.length > 0;
+
+  // === ÚJ FŐÚT (local-first, no-email) ===
+  // Ha a feladó NEM adott meg emailt: azonnal publikáljuk a posztot, és a
+  // manage_token-t visszaadjuk a kliensnek (PostSavePrompt a localStorage-ba teszi).
+  if (!hasEmail) {
+    const postExpiresAt = new Date(now.getTime() + POST_TTL_MS).toISOString();
+    await publishBulletinPost({
+      id,
+      kindId: validation.value.kindId,
+      title: validation.value.title,
+      meta: validation.value.meta,
+      body: validation.value.body,
+      poster: validation.value.poster,
+      email: "",
+      manageToken,
+      expiresAt: postExpiresAt,
+      isPending: 0,
+      termsVersion: TERMS_VERSION,
+      acceptedTermsAt: now.toISOString(),
+      ageConfirmed: 1,
+      ipHash,
+      imageKey: validation.value.imageKey,
+      cantonCode: validation.value.cantonCode,
+      price: validation.value.price,
+    });
+
+    return NextResponse.json(
+      {
+        ok: true,
+        published: true,
+        id,
+        manageToken,
+        manageUrl: `/hirdetes-kezeles/${manageToken}`,
+      },
+      { headers: { "cache-control": "no-store" } },
+    );
+  }
+
+  // === RÉGI ÚT (legacy email-confirm) — visszafelé kompat ===
+  const confirmToken = crypto.randomUUID().replace(/-/g, "");
   const expiresAt = new Date(now.getTime() + CONFIRM_TTL_MS).toISOString();
 
   await createBulletinDraft({
@@ -109,7 +156,6 @@ export async function POST(req: Request) {
     price: validation.value.price,
   });
 
-  // 5) Email küldés
   const baseUrl =
     getCloudflareEnv().PUBLIC_BASE_URL?.replace(/\/$/, "") ||
     new URL(req.url).origin;
@@ -124,10 +170,6 @@ export async function POST(req: Request) {
       confirmExpiresAt: expiresAt,
     });
   } catch (err) {
-    // Az email-küldés bukása komoly hiba: nem kérünk újra a usertől, csak
-    // jelezzük neki — a piszkozatot meghagyjuk, és 24h múlva az auto-purge
-    // törli (a confirm_token egyébként sose került ki).
-    // Részleteket NEM küldjük vissza public-on (Resend Trace ID stb. szivárgás ellen).
     safeLogError("[bulletin/submit] email send failed", err);
     return NextResponse.json(
       { error: "Az emailt nem sikerült elküldeni. Próbáld újra később." },
@@ -135,5 +177,5 @@ export async function POST(req: Request) {
     );
   }
 
-  return NextResponse.json({ ok: true }, { headers: { "cache-control": "no-store" } });
+  return NextResponse.json({ ok: true, published: false }, { headers: { "cache-control": "no-store" } });
 }

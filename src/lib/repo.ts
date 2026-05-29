@@ -718,6 +718,7 @@ export interface PublishBulletinInput {
   meta: string | null;
   body: string | null;
   poster: string | null;
+  /** Email opcionális — local-first módban üres string mehet. */
   email: string;
   manageToken: string;
   /** ISO datetime — 30 nap múlva. */

@@ -10,6 +10,7 @@ import type { BulletinKind } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { BulletinImageUploader } from "./bulletin-image-uploader";
 import { CANTONS } from "@/lib/cantons";
+import { PostSavePrompt } from "@/components/post-save-prompt";
 
 /**
  * Hirdetés-feladó űrlap (account nélküli). Liquid Glass kártyák szekciókba
@@ -71,6 +72,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
+  const [published, setPublished] = useState<{ id: string; manageToken: string; manageUrl: string } | null>(null);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -97,6 +99,10 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
         details?: ValidationError[];
+        published?: boolean;
+        id?: string;
+        manageToken?: string;
+        manageUrl?: string;
       };
       if (!res.ok) {
         if (data.details?.length) {
@@ -109,6 +115,10 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         turnstileRef.current?.reset();
         return;
       }
+      // Local-first publish: a manage_token AZONNAL visszaérkezik
+      if (data.published && data.id && data.manageToken && data.manageUrl) {
+        setPublished({ id: data.id, manageToken: data.manageToken, manageUrl: data.manageUrl });
+      }
       setPhase("sent");
       router.refresh();
     } catch (err) {
@@ -118,8 +128,46 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
     }
   }
 
-  // --- siker-állapot — az űrlap helyén egy „Nézd meg a postafiókodat” panel
+  // --- siker-állapot
   if (phase === "sent") {
+    // Local-first (nincs email): azonnal publikus + PostSavePrompt
+    if (published) {
+      return (
+        <div className="rounded-card border border-line bg-surface p-6 shadow-card">
+          <div className="mb-4 text-center">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success">
+              <Icon name="check" size={22} strokeWidth={2.4} />
+            </div>
+            <h2 className="mt-3 text-[18px] font-extrabold tracking-tight text-ink">
+              A hirdetésed fent van!
+            </h2>
+            <p className="mx-auto mt-2 max-w-sm text-pretty text-[13.5px] leading-relaxed text-ink-muted">
+              Megjelent a hirdetőtáblán. 30 nap után automatikusan lejár.
+            </p>
+          </div>
+          <PostSavePrompt
+            type="bulletin"
+            id={published.id}
+            manageToken={published.manageToken}
+            title={form.title}
+            manageUrl={published.manageUrl}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setForm(INITIAL);
+              setTurnstileToken("");
+              setPublished(null);
+              setPhase("idle");
+            }}
+            className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-pill border border-line bg-surface px-4 py-2 text-[12px] font-bold text-ink"
+          >
+            Új hirdetés feladása
+          </button>
+        </div>
+      );
+    }
+    // Legacy email-confirm flow
     return (
       <div className="rounded-card border border-line bg-surface p-6 text-center shadow-card">
         <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary text-white">
@@ -298,10 +346,9 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
           <div>
             <input
               type="email"
-              required
               value={form.email}
               onChange={(e) => setField("email", e.target.value)}
-              placeholder="Email a megerősítéshez"
+              placeholder="Email (opcionális)"
               autoComplete="email"
               maxLength={LIMITS.emailMax}
               className={inputCls(errors.email)}
@@ -310,8 +357,9 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
           </div>
         </div>
         <p className="mt-2 text-[11px] leading-snug text-ink-muted">
-          Az emailedet csak a megerősítő és kezelő linkek elküldésére használjuk.
-          A hirdetésen csak a megjelenő név látszik, az email nem. Részletek:{" "}
+          <strong className="text-ink">Email nem kell.</strong> Ha üresen hagyod, a hirdetés
+          azonnal megjelenik, és kapsz egy kezelő-linket — tedd el (QR-kód is jön)!
+          Ha emailt adsz, a régi módon megerősítő linket kapsz hozzá. Részletek:{" "}
           <Link href="/adatvedelem" className="underline">Adatkezelési Tájékoztató</Link>.
         </p>
       </Section>

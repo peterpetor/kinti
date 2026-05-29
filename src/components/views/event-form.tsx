@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { EVENT_LIMITS } from "@/lib/events-validation";
 import { cn } from "@/lib/cn";
+import { PostSavePrompt } from "@/components/post-save-prompt";
 
 const EVENT_TAGS = [
   { id: "piknik",    label: "🧺 Piknik" },
@@ -103,6 +104,7 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
+  const [pendingAdmin, setPendingAdmin] = useState<{ id: string; manageToken: string; manageUrl: string } | null>(null);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -135,6 +137,10 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
         details?: { field: string; message: string }[];
+        pendingAdmin?: boolean;
+        id?: string;
+        manageToken?: string;
+        manageUrl?: string;
       };
 
       if (!res.ok) {
@@ -151,6 +157,11 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
         return;
       }
 
+      // Local-first: ha nincs email-confirm flow, mostantól admin-jóváhagyásra vár,
+      // de a manage_token már most jön — a usernek elmenthető.
+      if (data.pendingAdmin && data.id && data.manageToken && data.manageUrl) {
+        setPendingAdmin({ id: data.id, manageToken: data.manageToken, manageUrl: data.manageUrl });
+      }
       setPhase("sent");
     } catch {
       setGlobal("Hálózati hiba. Ellenőrizd az internetkapcsolatodat.");
@@ -161,6 +172,32 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
 
   // Success state
   if (phase === "sent") {
+    // Local-first: nincs email-confirm → admin-jóváhagyás várja + PostSavePrompt
+    if (pendingAdmin) {
+      return (
+        <div className="rounded-card border border-line bg-surface p-6 shadow-card">
+          <div className="mb-4 text-center">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/15 text-primary">
+              <Icon name="clock" size={22} strokeWidth={2.4} />
+            </div>
+            <h2 className="mt-3 text-[18px] font-extrabold tracking-tight text-ink">
+              Esemény admin-jóváhagyásra vár
+            </h2>
+            <p className="mx-auto mt-2 max-w-sm text-pretty text-[13.5px] leading-relaxed text-ink-muted">
+              Hamarosan ellenőrizzük, és ha minden rendben, megjelenik az
+              eseménynaptárban. Addig is mentsd el a kezelő-linkedet!
+            </p>
+          </div>
+          <PostSavePrompt
+            type="event"
+            id={pendingAdmin.id}
+            manageToken={pendingAdmin.manageToken}
+            title={form.title}
+            manageUrl={pendingAdmin.manageUrl}
+          />
+        </div>
+      );
+    }
     return (
       <div className="rounded-card border border-line bg-surface p-6 text-center shadow-card">
         <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary text-white">
@@ -207,19 +244,22 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
         />
       </div>
 
-      {/* Email */}
-      <Section title="Kapcsolat" required>
+      {/* Email — OPCIONÁLIS */}
+      <Section title="Email (opcionális)">
         <input
           type="email"
-          required
           value={form.email}
           onChange={(e) => setField("email", e.target.value)}
-          placeholder="Az emailedre küldünk megerősítő linket"
+          placeholder="Email — vagy hagyd üresen"
           autoComplete="email"
           maxLength={EVENT_LIMITS.emailMax}
           className={inputCls(errors.email)}
         />
         <FieldError msg={errors.email} />
+        <p className="mt-2 text-[11px] leading-snug text-ink-muted">
+          <strong className="text-ink">Email nem kell.</strong> Ha üresen hagyod, az esemény
+          azonnal admin-jóváhagyásra megy, és kapsz egy kezelő-linket (mentsd el!).
+        </p>
       </Section>
 
       {/* Cím */}
