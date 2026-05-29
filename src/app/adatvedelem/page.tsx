@@ -16,7 +16,7 @@ export default function AdatvedelemPage() {
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
         Az adatkezelés az Európai Parlament és a Tanács (EU) <strong>2016/679. számú rendelete
-        (GDPR)</strong> alapján történik.
+        (GDPR)</strong>, valamint a svájci Szövetségi Adatvédelmi Törvény (FADP/DSG) alapján történik.
       </p>
 
       <h2>1. Adatkezelő</h2>
