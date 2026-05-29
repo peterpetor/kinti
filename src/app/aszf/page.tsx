@@ -35,10 +35,11 @@ export default function AszfPage() {
       </p>
       <h3>2.1 Kinti felhasználó (közösségi tag)</h3>
       <p>
-        Bárki, aki a Szolgáltatást <strong>regisztráció nélkül</strong> használja: böngészi a
+        Bárki, aki a Szolgáltatást <strong>hagyományos regisztráció nélkül</strong> használja: böngészi a
         vállalkozásokat, nézi az eseményeket, hirdetést, eseményt, véleményt, telekocsit
-        adhat fel. Sem email, sem jelszó nem szükséges — a beküldést Cloudflare Turnstile
-        CAPTCHA + IP-alapú rate-limit védi spam ellen.
+        adhat fel. Felhasználói fiók és jelszó nem szükséges (a hitelesítés egyszeri megerősítő 
+        e-maillel történik) — a beküldést ezen felül Cloudflare Turnstile CAPTCHA és IP-alapú rate-limit 
+        védi a spam ellen.
       </p>
       <h3>2.2 Vállalkozó</h3>
       <p>

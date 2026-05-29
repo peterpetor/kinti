@@ -5,10 +5,6 @@ export const dynamic = "force-static";
 
 export const metadata = { title: "Adatkezelési Tájékoztató" };
 
-// FIGYELEM: ez egy alapszintű, GDPR-megfelelő tervezet — a saját adataid
-// (név, lakhely) beírása után érdemes egy ügyvéddel/adatvédelmi tanácsadóval
-// átnézetni. Az aláhúzott "{...}" helyőrzőket pótold ki éles bevezetés előtt.
-
 export default function AdatvedelemPage() {
   return (
     <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-05-25">
@@ -158,9 +154,10 @@ export default function AdatvedelemPage() {
 
       <h2>4. Adatok továbbítása harmadik országba</h2>
       <p>
-        A Clerk és a Cloudflare USA-ban székhelyű cégek. Az EU–USA adattranszferek a 2023-as
-        EU–US Data Privacy Framework, illetve az EU sztenderd szerződéses záradékok (SCC)
-        alapján történnek. Ezeket az adatfeldolgozói megállapodások (DPA) rögzítik.
+        A Clerk, a Cloudflare és a Resend USA-ban bejegyzett, ottani szervereket is használó 
+        vállalatok. Az EU–USA adattranszferek a 2023-as EU–US Data Privacy Framework (DPF), 
+        illetve az Európai Bizottság által elfogadott általános adatvédelmi kikötések (SCC)
+        alapján történnek, amelyek biztosítják a GDPR-nak megfelelő magas szintű adatvédelmet.
       </p>
 
       <h2>5. Jogaid</h2>
