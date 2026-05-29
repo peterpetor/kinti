@@ -135,16 +135,17 @@ export function calculateFine(input: FineInput): FineResult {
 
   // Raserdelikt — szándékos rendkívüli gyorshajtás
   if (effectiveOverage >= RASER_THRESHOLD[input.roadType]) {
+    const days = 150; // gyakorlati átlag — törvényi minimum 30, de a bíróság 100-300 napi pénzt szab ki tipikusan
     return {
       severity: "raser",
       effectiveOverage,
-      estimatedFineChf: 30 * tagessatz, // tipikus minimum (30 Tagessatz)
-      prisonInfo: "Min. 1 év börtön (törvényileg kötelező)",
+      estimatedFineChf: days * tagessatz,
+      prisonInfo: "MIN 1 év börtön (törvényileg kötelező) + jármű elkobozható",
       licenseSuspension: "2-10 év, első esetben min 24 hónap",
-      description: `Raserdelikt — szándékos rendkívüli sebesség-túllépés. Bűncselekmény (art. 90 abs. 3 SVG).`,
-      legalNote: "A jármű elkobozható. Visszaesés esetén életfogytig is bevonható a jogosítvány.",
+      description: "Raserdelikt — szándékos rendkívüli sebesség-túllépés. BŰNCSELEKMÉNY (art. 90 abs. 3 SVG). A pénzbüntetés MELLETT börtön + jogosítvány-bevonás + jármű-elkobzás is jár.",
+      legalNote: "Tipikus pénzbüntetés 100-300 napi pénz (a törvényi minimum 30, de a bíróság ennél jóval többet szab ki). Visszaesés esetén életfogytig bevonható a jogosítvány.",
       tagessatzChf: tagessatz,
-      daysOfFine: 30,
+      daysOfFine: days,
     };
   }
 
