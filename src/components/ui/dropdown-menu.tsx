@@ -154,6 +154,13 @@ export function DropdownMenu() {
                 Szolgáltató Váltó
               </Link>
 
+              <Link href="/kozlekedes" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  🚆
+                </span>
+                Tömegközlekedés
+              </Link>
+
               <Link href="/repulojegy" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                   ✈️
