@@ -7,7 +7,7 @@ export const metadata = { title: "Impresszum" };
 
 const OPERATOR = {
   name: "Petor Péter",
-  role: "magánszemély üzemeltető (közösségi kezdeményezés)",
+  role: "közösségi kezdeményezés",
   address: "2660 Balassagyarmat, Madách liget 13/2. fsz. 2., Magyarország",
   addressNote: "Levelezési cím — jogi kézbesítés is itt érvényes.",
   email: "info@kinti.app",

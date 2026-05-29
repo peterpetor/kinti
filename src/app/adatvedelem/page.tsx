@@ -21,7 +21,7 @@ export default function AdatvedelemPage() {
 
       <h2>1. Adatkezelő</h2>
       <p>
-        Adatkezelő: <strong>{"Petor Péter"}</strong> magánszemély üzemeltető.<br />
+        Adatkezelő: <strong>{"Petor Péter"}</strong> (közösségi kezdeményezés).<br />
         Postai cím: 2660 Balassagyarmat, Madách liget 13/2. fsz. 2., Magyarország.<br />
         Elérhetőség: <a href="mailto:info@kinti.app">info@kinti.app</a>
       </p>
