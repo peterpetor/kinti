@@ -2568,24 +2568,26 @@ export interface AdminBusinessRow {
   reviews: number;
   source: string | null;
   createdAt: string;
+  /** Manage URL token-je — az admin "kezelő-link másolása" funkcióhoz. */
+  manageToken: string | null;
 }
 
 export async function listBusinessesForAdmin(): Promise<AdminBusinessRow[]> {
   const { results } = await getDB()
     .prepare(
-      `SELECT id, name, category_label, verified, rating, reviews, source, created_at
+      `SELECT id, name, category_label, verified, rating, reviews, source, created_at, manage_token
        FROM businesses
        ORDER BY verified DESC, created_at DESC LIMIT 100`,
     )
     .all<{
       id: string; name: string; category_label: string | null;
       verified: number; rating: number; reviews: number;
-      source: string | null; created_at: string;
+      source: string | null; created_at: string; manage_token: string | null;
     }>();
   return results.map((r) => ({
     id: r.id, name: r.name, categoryLabel: r.category_label,
     verified: r.verified === 1, rating: r.rating, reviews: r.reviews,
-    source: r.source, createdAt: r.created_at,
+    source: r.source, createdAt: r.created_at, manageToken: r.manage_token,
   }));
 }
 
@@ -2596,53 +2598,58 @@ export interface AdminContentRow {
   title: string;
   meta: string | null;
   createdAt: string | null;
+  /** Manage URL token-je — az admin "kezelő-link másolása" funkcióhoz. */
+  manageToken: string | null;
 }
 
 export async function listBulletinsForAdmin(): Promise<AdminContentRow[]> {
   const { results } = await getDB()
     .prepare(
-      `SELECT id, title, kind_id, canton_code, created_at
+      `SELECT id, title, kind_id, canton_code, created_at, manage_token
        FROM bulletin_posts
        ORDER BY created_at DESC LIMIT 200`,
     )
-    .all<{ id: string; title: string; kind_id: string; canton_code: string | null; created_at: string }>();
+    .all<{ id: string; title: string; kind_id: string; canton_code: string | null; created_at: string; manage_token: string | null }>();
   return results.map((r) => ({
     id: r.id,
     title: r.title,
     meta: `${r.kind_id}${r.canton_code ? " · " + r.canton_code : ""}`,
     createdAt: r.created_at,
+    manageToken: r.manage_token,
   }));
 }
 
 export async function listEventsForAdmin(): Promise<AdminContentRow[]> {
   const { results } = await getDB()
     .prepare(
-      `SELECT id, title, event_date, venue, status, created_at
+      `SELECT id, title, event_date, venue, status, created_at, manage_token
        FROM events
        ORDER BY created_at DESC LIMIT 200`,
     )
-    .all<{ id: string; title: string; event_date: string | null; venue: string | null; status: string | null; created_at: string }>();
+    .all<{ id: string; title: string; event_date: string | null; venue: string | null; status: string | null; created_at: string; manage_token: string | null }>();
   return results.map((r) => ({
     id: r.id,
     title: r.title,
     meta: `${r.status ?? "?"}${r.event_date ? " · " + r.event_date : ""}${r.venue ? " · " + r.venue : ""}`,
     createdAt: r.created_at,
+    manageToken: r.manage_token,
   }));
 }
 
 export async function listRidesForAdmin(): Promise<AdminContentRow[]> {
   const { results } = await getDB()
     .prepare(
-      `SELECT id, departure_city, destination_city, departure_time, poster_name, created_at
+      `SELECT id, departure_city, destination_city, departure_time, poster_name, created_at, manage_token
        FROM rides
        ORDER BY created_at DESC LIMIT 200`,
     )
-    .all<{ id: string; departure_city: string; destination_city: string; departure_time: string; poster_name: string | null; created_at: string }>();
+    .all<{ id: string; departure_city: string; destination_city: string; departure_time: string; poster_name: string | null; created_at: string; manage_token: string | null }>();
   return results.map((r) => ({
     id: r.id,
     title: `${r.departure_city} → ${r.destination_city}`,
     meta: `${r.departure_time}${r.poster_name ? " · " + r.poster_name : ""}`,
     createdAt: r.created_at,
+    manageToken: r.manage_token,
   }));
 }
 

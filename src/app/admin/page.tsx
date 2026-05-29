@@ -4,6 +4,7 @@ import { Icon } from "@/components/ui";
 import { getAdminUserId } from "@/lib/admin";
 import { AdminVerifyToggle } from "@/components/views/admin-verify-toggle";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
+import { AdminCopyManageButton } from "@/components/admin/admin-copy-manage-button";
 import {
   getAdminStats,
   listOpenReports,
@@ -159,6 +160,7 @@ export default async function AdminPage() {
                   </p>
                 </div>
                 <AdminVerifyToggle businessId={b.id} initial={b.verified} />
+                <AdminCopyManageButton type="businesses" manageToken={b.manageToken} />
                 <AdminDeleteButton
                   type="businesses"
                   id={b.id}
@@ -222,7 +224,7 @@ function ContentList({
   items,
   type,
 }: {
-  items: { id: string; title: string; meta: string | null; createdAt: string | null }[];
+  items: { id: string; title: string; meta: string | null; createdAt: string | null; manageToken: string | null }[];
   type: "bulletins" | "events" | "rides";
 }) {
   return (
@@ -236,6 +238,7 @@ function ContentList({
               {it.createdAt ? ` · ${fmtAgo(it.createdAt)}` : ""}
             </p>
           </div>
+          <AdminCopyManageButton type={type} manageToken={it.manageToken} />
           <AdminDeleteButton
             type={type}
             id={it.id}
