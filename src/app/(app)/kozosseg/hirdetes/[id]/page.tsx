@@ -4,6 +4,7 @@ import { Icon } from "@/components/ui";
 import { getBulletinPostById } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { CANTONS } from "@/lib/cantons";
+import { handleFromId } from "@/lib/handle";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -145,20 +146,25 @@ export default async function HirdetesPage({ params }: { params: { id: string } 
           </p>
         )}
 
-        {/* Feladó + dátum */}
+        {/* Feladó + dátum — auto handle a rekord id-jéből (zéró PII) */}
+        {(() => {
+          const handle = post.poster?.trim() || handleFromId(post.id);
+          return (
         <div className="mt-5 flex items-center gap-2.5 border-t border-dashed border-line pt-4">
           <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-[11px] font-bold text-white">
-            {post.poster?.charAt(0)?.toUpperCase() || "?"}
+            {handle.charAt(0).toUpperCase()}
           </span>
           <div className="min-w-0 flex-1">
             <div className="text-[13.5px] font-bold text-ink">
-              {post.poster ?? "Anonim"}
+              {handle}
             </div>
             <div className="text-[11.5px] text-ink-muted">
               Feladva: {fmtAbsoluteDate(post.publishedAt)}
             </div>
           </div>
         </div>
+          );
+        })()}
       </article>
 
       <p className="px-1 text-center text-[11px] leading-snug text-ink-faint">

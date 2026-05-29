@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import type { BulletinKind, BulletinPost, KintiEvent } from "@/lib/types";
 import { mediaUrl } from "@/lib/media";
 import { CANTONS } from "@/lib/cantons";
+import { handleFromId } from "@/lib/handle";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ShareSheet } from "@/components/share-sheet";
 import { AddToCalendar } from "@/components/add-to-calendar";
@@ -654,22 +655,27 @@ export function BulletinCard({
         </div>
       )}
 
-      {/* Alsó sor */}
-      <div className="mt-3 flex items-center gap-2 border-t border-dashed border-line pt-3">
-        <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-[10.5px] font-bold text-white uppercase">
-          {post.poster?.charAt(0) || "?"}
-        </span>
-        <span className="text-[12.5px] font-semibold text-ink">{post.poster}</span>
-        <span className="flex-1" />
-        <button
-          type="button"
-          onClick={() => setContactOpen(true)}
-          className="rounded-lg bg-primary hover:bg-primary-dark active:scale-95 transition px-3.5 py-1.5 text-xs font-bold text-white shadow-sm flex items-center gap-1"
-        >
-          <Icon name="send" size={11} strokeWidth={2.5} />
-          Írok neki
-        </button>
-      </div>
+      {/* Alsó sor — auto handle a rekord id-jéből (zéró PII) */}
+      {(() => {
+        const handle = post.poster?.trim() ? post.poster : handleFromId(post.id);
+        return (
+          <div className="mt-3 flex items-center gap-2 border-t border-dashed border-line pt-3">
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-[10.5px] font-bold text-white uppercase">
+              {handle.charAt(0) || "?"}
+            </span>
+            <span className="text-[12.5px] font-semibold text-ink">{handle}</span>
+            <span className="flex-1" />
+            <button
+              type="button"
+              onClick={() => setContactOpen(true)}
+              className="rounded-lg bg-primary hover:bg-primary-dark active:scale-95 transition px-3.5 py-1.5 text-xs font-bold text-white shadow-sm flex items-center gap-1"
+            >
+              <Icon name="send" size={11} strokeWidth={2.5} />
+              Írok neki
+            </button>
+          </div>
+        );
+      })()}
 
       {/* Kapcsolatfelvételi modal */}
       {contactOpen && (
@@ -714,7 +720,7 @@ export function BulletinCard({
                 <div>
                   <h4 className="text-lg font-extrabold text-ink tracking-tight">Válasz a hirdetésre</h4>
                   <p className="text-xs text-ink-muted mt-1 truncate">
-                    Címzett: <strong>{post.poster}</strong> · {post.title}
+                    Címzett: <strong>{post.poster?.trim() || handleFromId(post.id)}</strong> · {post.title}
                   </p>
                 </div>
 

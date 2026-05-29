@@ -192,20 +192,10 @@ export function ReviewForm({
         <FieldError msg={errors.body} />
       </Section>
 
-      {/* Név + email */}
-      <Section title="Megjelenő név és email" required>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <div>
-            <input
-              type="text"
-              value={form.reviewerName}
-              onChange={(e) => setField("reviewerName", e.target.value)}
-              placeholder="Pl. Eszter T."
-              maxLength={REVIEW_LIMITS.reviewerNameMax}
-              className={inputCls(errors.reviewerName)}
-            />
-            <FieldError msg={errors.reviewerName} />
-          </div>
+      {/* Email a megerősítéshez. NÉV NEM kell — auto-generált handle kerül melléd
+          a publikálott véleményen ("VidámPék_42" stílusú). Zéró tárolt PII. */}
+      <Section title="Email a megerősítéshez" required>
+        <div>
           <div>
             <input
               type="email"
@@ -221,8 +211,9 @@ export function ReviewForm({
           </div>
         </div>
         <p className="mt-2 text-[11px] leading-snug text-ink-muted">
-          A megjelenő név nyilvános a véleményed mellett. Az email-cím csak a
-          megerősítő és kezelő linkek elküldésére kell — nem publikus.
+          Auto-generált handle kerül melléd ("VidámPék_42" stílusú) — nincs név-bemenet,
+          nincs PII. Az email-cím csak a megerősítő és kezelő linkek elküldésére
+          kell — sehol nem publikus.
         </p>
       </Section>
 

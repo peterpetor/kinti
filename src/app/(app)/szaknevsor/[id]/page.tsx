@@ -8,6 +8,7 @@ import { ReviewForm } from "@/components/views/review-form";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
+import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { ContactBusinessForm } from "@/components/views/contact-business-form";
 import { BusinessGallery } from "@/components/views/business-gallery";
@@ -324,14 +325,16 @@ export default async function BusinessPage({ params }: { params: { id: string } 
                 Még nincs vélemény. Légy te az első!
               </div>
             ) : (
-              reviews.map((r) => (
+              reviews.map((r) => {
+                const reviewerHandle = r.reviewerName?.trim() || handleFromId(r.id);
+                return (
                 <article key={r.id} className="rounded-2xl border border-line bg-surface p-3.5">
                   <div className="mb-2 flex items-center gap-2.5">
                     <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-white">
-                      {r.reviewerName.charAt(0).toUpperCase()}
+                      {reviewerHandle.charAt(0).toUpperCase()}
                     </span>
                     <div className="flex-1">
-                      <div className="text-[13.5px] font-bold text-ink">{r.reviewerName}</div>
+                      <div className="text-[13.5px] font-bold text-ink">{reviewerHandle}</div>
                       <div className="text-[11px] font-medium text-ink-muted">
                         {fmtRelative(r.publishedAt)}
                       </div>
@@ -359,7 +362,8 @@ export default async function BusinessPage({ params }: { params: { id: string } 
                     <ReportButton contentType="review" contentId={r.id} variant="link" />
                   </div>
                 </article>
-              ))
+                );
+              })
             )}
           </div>
         </section>

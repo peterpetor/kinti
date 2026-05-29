@@ -97,17 +97,9 @@ export function validateReviewInput(
       message: `Legfeljebb ${REVIEW_LIMITS.bodyMax} karakter.`,
     });
 
-  const reviewerName = str(input.reviewerName);
-  if (reviewerName.length < REVIEW_LIMITS.reviewerNameMin)
-    errors.push({
-      field: "reviewerName",
-      message: `Legalább ${REVIEW_LIMITS.reviewerNameMin} karakter.`,
-    });
-  else if (reviewerName.length > REVIEW_LIMITS.reviewerNameMax)
-    errors.push({
-      field: "reviewerName",
-      message: `Legfeljebb ${REVIEW_LIMITS.reviewerNameMax} karakter.`,
-    });
+  // reviewerName MEZŐ ELTÁVOLÍTVA — auto-generált handle a megjelenítéshez.
+  // Üres string a backend felé, csendben ignorálva.
+  const reviewerName = "";
 
   if (input.acceptTerms !== true) {
     errors.push({

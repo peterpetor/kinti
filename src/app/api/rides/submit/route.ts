@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import {
   createRide,
   countRecentRideSubmits,
@@ -99,23 +99,11 @@ export async function POST(req: Request) {
     lng = geo?.lng ?? FALLBACK.lng;
   }
 
-  // Poszter neve: belépett Clerk-fiók > form-ról adott név > generikus.
+  // Poszter NÉV már NEM tárolt — a kliens auto-derivált handle-t mutat
+  // a rekord id-jéből (lib/handle.ts). A Clerk-user-t továbbra is feljegyezzük
+  // (posterUserId) a "saját fuvar" felismeréshez, de nevét nem írjuk be.
   const { userId } = await auth();
-  let posterName: string | null = v.posterName?.trim() || null;
-  if (userId) {
-    const user = await currentUser();
-    const fromClerk =
-      [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
-      user?.username ||
-      null;
-    posterName = fromClerk || posterName;
-  }
-  if (!posterName) {
-    return NextResponse.json(
-      { error: "Hibás bemenet.", details: [{ field: "posterName", message: "Add meg a megjelenített neved." }] },
-      { status: 400 },
-    );
-  }
+  const posterName = "";
 
   // Közbeeső megállók geokódolása (párhuzamosan).
   const waypoints: RideWaypoint[] = [];

@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
 import { Icon } from "@/components/ui";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
@@ -11,8 +10,9 @@ import { rememberMyRide } from "./my-ride-actions";
 
 /**
  * RideForm — telekocsi-feladás. NEM kötelező a Clerk-belépés.
- *  • Vendég: a posterName a form-on, kötelező.
- *  • Belépett Clerk-user: a posterName a fiókból (a mező rejtett).
+ * NÉV-mezőt nem kérünk — a fuvar megjelenítésekor a kliens auto-derivált
+ * handle-t generál a rekord id-jéből (Reddit-stílusú: "VidámPék_42"). Ez
+ * GDPR-tisztább, mert semmilyen PII-nevet nem tárolunk.
  */
 type Phase = "idle" | "submitting" | "sent" | "error";
 
@@ -26,7 +26,6 @@ interface FormState {
   contactPhone: string;
   contactWhatsapp: string;
   notes: string;
-  posterName: string;
   waypoints: string[];
 }
 
@@ -40,14 +39,11 @@ const INITIAL: FormState = {
   contactPhone: "",
   contactWhatsapp: "",
   notes: "",
-  posterName: "",
   waypoints: [],
 };
 
 export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string }) {
   const router = useRouter();
-  const { isSignedIn, isLoaded } = useAuth();
-  const showPosterName = isLoaded && !isSignedIn;
   const [form, setForm] = useState<FormState>(INITIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [global, setGlobal] = useState<string | null>(null);
@@ -309,22 +305,9 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         </div>
       </Section>
 
-      {showPosterName && (
-        <Section title="Megjelenített név" required>
-          <input
-            type="text"
-            value={form.posterName}
-            onChange={(e) => setField("posterName", e.target.value)}
-            placeholder="Pl. Kovács Anna"
-            maxLength={RIDE_LIMITS.posterNameMax}
-            className={inputCls(errors.posterName)}
-          />
-          <FieldError msg={errors.posterName} />
-          <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
-            Ez fog megjelenni a fuvar mellett a Telekocsi listán.
-          </p>
-        </Section>
-      )}
+      {/* Megjelenített név MEZŐ ELTÁVOLÍTVA — auto-generált handle kerül helyette
+          (VidámPék_42 stílusú), amit a kliens deriválja a rekord id-jéből.
+          Zéró tárolt PII, kevesebb felelősség (GDPR adatminimalizálás). */}
 
       <Section title="Telefonszám (híváshoz)" required>
         <input

@@ -3,6 +3,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { PublicRide } from "@/lib/repo";
 import { phoneToWhatsapp } from "@/lib/rides";
+import { handleFromId } from "@/lib/handle";
 import { RideDeleteButton } from "./ride-delete-button";
 import { MyRideActions } from "./my-ride-actions";
 import { RideRatingForm } from "./ride-rating-form";
@@ -77,31 +78,36 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
         </p>
       )}
 
-      {/* Feladó + jelvény */}
-      <div className="flex items-center gap-2 text-[12.5px] text-ink-muted">
-        <span className={cn(
-          "grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold",
-          ride.isRequest ? "bg-[#e67e22]/15 text-[#e67e22]" : "bg-[#3a6ea5]/15 text-[#3a6ea5]"
-        )}>
-          {ride.posterName.charAt(0).toUpperCase()}
-        </span>
-        <span className="font-semibold text-ink">{ride.posterName}</span>
-        {ride.badge === "legend_driver" && (
-          <span className="inline-flex items-center gap-0.5 rounded-pill bg-[#f39c12]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#d68910]">
-            🏆 Legenda Sofőr
-          </span>
-        )}
-        {ride.badge === "super_driver" && (
-          <span className="inline-flex items-center gap-0.5 rounded-pill bg-[#3a6ea5]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#3a6ea5]">
-            🚗 Szuper Sofőr
-          </span>
-        )}
-        {ride.badge === "active_driver" && (
-          <span className="inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-2 py-0.5 text-[10px] font-extrabold text-success">
-            ✅ Aktív Sofőr
-          </span>
-        )}
-      </div>
+      {/* Feladó + jelvény — auto-generált handle a rekord id-jéből (zéró PII) */}
+      {(() => {
+        const handle = ride.posterName?.trim() ? ride.posterName : handleFromId(ride.id);
+        return (
+          <div className="flex items-center gap-2 text-[12.5px] text-ink-muted">
+            <span className={cn(
+              "grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold",
+              ride.isRequest ? "bg-[#e67e22]/15 text-[#e67e22]" : "bg-[#3a6ea5]/15 text-[#3a6ea5]"
+            )}>
+              {handle.charAt(0).toUpperCase()}
+            </span>
+            <span className="font-semibold text-ink">{handle}</span>
+            {ride.badge === "legend_driver" && (
+              <span className="inline-flex items-center gap-0.5 rounded-pill bg-[#f39c12]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#d68910]">
+                🏆 Legenda Sofőr
+              </span>
+            )}
+            {ride.badge === "super_driver" && (
+              <span className="inline-flex items-center gap-0.5 rounded-pill bg-[#3a6ea5]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#3a6ea5]">
+                🚗 Szuper Sofőr
+              </span>
+            )}
+            {ride.badge === "active_driver" && (
+              <span className="inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-2 py-0.5 text-[10px] font-extrabold text-success">
+                ✅ Aktív Sofőr
+              </span>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Értékelés */}
       {ride.rating != null && (

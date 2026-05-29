@@ -131,16 +131,12 @@ export function validateRideInput(
     errors.push({ field: "notes", message: `A megjegyzés legfeljebb ${RIDE_LIMITS.notesMax} karakter.` });
   }
 
-  const posterName = str(input.posterName);
-  if (posterName && (posterName.length < RIDE_LIMITS.posterNameMin || posterName.length > RIDE_LIMITS.posterNameMax)) {
-    errors.push({
-      field: "posterName",
-      message: `A megjelenített név ${RIDE_LIMITS.posterNameMin}–${RIDE_LIMITS.posterNameMax} karakter között lehet.`,
-    });
-  }
+  // posterName MEZŐ NINCS TÖBBÉ — auto-derivált handle a megjelenítéshez.
+  // Ha mégis bejön a kompatibilitás miatt, csendben ignoráljuk.
+  const posterName: string | null = null;
 
   if (!errors.length) {
-    const dirty = findProfanityInFields({ departureCity, destinationCity, notes, posterName });
+    const dirty = findProfanityInFields({ departureCity, destinationCity, notes });
     if (dirty) {
       errors.push({
         field: dirty.field as keyof RideFormInput,

@@ -10,6 +10,7 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Icon } from "@/components/ui";
 import type { PublicRide } from "@/lib/repo";
 import { phoneToWhatsapp } from "@/lib/rides";
+import { handleFromId } from "@/lib/handle";
 
 /**
  * RideMap — Telekocsi Leaflet-térkép kék 🚗 markerekkel. Önálló, nem érinti
@@ -96,7 +97,7 @@ export function RideMap({
                   {r.priceText ? ` · ${r.priceText}` : ""}
                 </div>
                 <div style={{ fontSize: 12, color: "#5c6d63", marginBottom: 10 }}>
-                  {r.posterName}
+                  {r.posterName?.trim() || handleFromId(r.id)}
                   {r.notes ? ` — ${r.notes.slice(0, 80)}${r.notes.length > 80 ? "…" : ""}` : ""}
                 </div>
                 <div style={{ display: "flex", gap: 6 }}>

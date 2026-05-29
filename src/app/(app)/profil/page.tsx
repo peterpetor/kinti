@@ -18,6 +18,7 @@ import {
 } from "@/components/ui";
 import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
+import { handleFromId } from "@/lib/handle";
 import type { Business, Category } from "@/lib/types";
 
 import { NewsletterToggle } from "@/components/views/newsletter-toggle";
@@ -191,7 +192,7 @@ async function OwnerDashboard({
   reviews.slice(0, 4).forEach((r) => {
     activities.push({
       icon: "star",
-      text: `Új ${r.rating}★ vélemény tőle: ${r.reviewerName}`,
+      text: `Új ${r.rating}★ vélemény tőle: ${r.reviewerName?.trim() || handleFromId(r.id)}`,
       time: getRelativeTime(r.publishedAt),
     });
   });
@@ -306,14 +307,16 @@ async function OwnerDashboard({
       {reviews.length > 0 && (
         <section className="space-y-2">
           <SectionHeader>Vélemények — válaszolj!</SectionHeader>
-          {reviews.map((r) => (
+          {reviews.map((r) => {
+            const reviewerHandle = r.reviewerName?.trim() || handleFromId(r.id);
+            return (
             <div key={r.id} className="rounded-card border border-line bg-surface p-3.5 shadow-card">
               <div className="flex items-center gap-2.5">
                 <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-white">
-                  {r.reviewerName.charAt(0).toUpperCase()}
+                  {reviewerHandle.charAt(0).toUpperCase()}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[13.5px] font-bold text-ink">{r.reviewerName}</div>
+                  <div className="text-[13.5px] font-bold text-ink">{reviewerHandle}</div>
                   <div className="text-[11px] text-ink-muted">{getRelativeTime(r.publishedAt)}</div>
                 </div>
                 <div className="flex gap-px text-star">
@@ -327,7 +330,8 @@ async function OwnerDashboard({
               </p>
               <ReviewResponseForm reviewId={r.id} existing={r.ownerResponse} />
             </div>
-          ))}
+            );
+          })}
         </section>
       )}
     </>

@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getRideById } from "@/lib/repo";
+import { handleFromId } from "@/lib/handle";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -27,7 +28,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const typeLabel = ride.isRequest ? "Fuvart keres" : "Fuvart kínál";
 
   const title = `${route} — ${typeLabel}`;
-  const description = `🚗 ${route} · 📅 ${depDate} · 👥 ${ride.seats} hely${ride.priceText ? ` · ${ride.priceText}` : ""} — ${ride.posterName}`;
+  const posterHandle = ride.posterName?.trim() || handleFromId(ride.id);
+  const description = `🚗 ${route} · 📅 ${depDate} · 👥 ${ride.seats} hely${ride.priceText ? ` · ${ride.priceText}` : ""} — ${posterHandle}`;
 
   const url = `https://kinti.app/telekocsi/${ride.id}`;
 
