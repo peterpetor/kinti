@@ -16,7 +16,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, renameSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -74,10 +74,27 @@ function run(cmd, args, { tolerateFail = false } = {}) {
 async function main() {
   ensureBashOnWindows();
 
-  // 1) vercel build — Windowson symlink-EPERM lehet, ezért toleráljuk,
-  //    de utána ellenőrizzük, hogy az output létrejött-e.
-  console.log("\n› Step 1: vercel build");
-  await run("npx", ["vercel", "build", "--yes"], { tolerateFail: true });
+  const envLocalPath = path.join(process.cwd(), ".env.local");
+  const envLocalBakPath = path.join(process.cwd(), ".env.local.bak");
+  let renamedEnv = false;
+
+  try {
+    if (existsSync(envLocalPath)) {
+      console.log("› Temporarily hiding .env.local to ensure production keys are used...");
+      renameSync(envLocalPath, envLocalBakPath);
+      renamedEnv = true;
+    }
+
+    // 1) vercel build — Windowson symlink-EPERM lehet, ezért toleráljuk,
+    //    de utána ellenőrizzük, hogy az output létrejött-e.
+    console.log("\n› Step 1: vercel build");
+    await run("npx", ["vercel", "build", "--yes"], { tolerateFail: true });
+  } finally {
+    if (renamedEnv && existsSync(envLocalBakPath)) {
+      console.log("› Restoring .env.local...");
+      renameSync(envLocalBakPath, envLocalPath);
+    }
+  }
 
   if (!existsSync(".vercel/output/static")) {
     console.error("\n✖ vercel build failed and .vercel/output/static is missing.");
