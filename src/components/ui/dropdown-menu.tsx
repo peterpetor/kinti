@@ -112,6 +112,13 @@ export function DropdownMenu() {
                 CHF / HUF árfolyam
               </Link>
 
+              <Link href="/vam" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  🛂
+                </span>
+                Vám- és Határinfó
+              </Link>
+
               <Link href="/segitseg" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
                   <Icon name="question" size={16} strokeWidth={2.4} />
