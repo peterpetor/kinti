@@ -71,12 +71,12 @@ export default function AdatvedelemPage() {
         <li>Email-cím (kizárólag tranzakciós megerősítő linkek küldésére — sehol nem jelenik meg nyilvánosan)</li>
         <li>Hirdetés szövege és kategóriája</li>
         <li>Opcionális megjelenő név</li>
-        <li><strong>Új folyamatok</strong>:
+        <li><strong>Technikai és kapcsolattartási folyamatok</strong>:
           <ul>
-            <li><strong>Kapcsolatfelvétel</strong>: e-mail-relay megszűnt. A feladó a telefonszámát / WhatsApp-ot adhatja meg a hirdetésében — ezek közvetlen csatornák, mi nem közvetítünk.</li>
-            <li><strong>Hirdetés-kép feltöltés</strong>: a képek a Cloudflare R2 tárolóba kerülnek, a kulcsot az adatbázisban tároljuk.</li>
-            <li><strong>Esemény RSVP IP-hash</strong>: az RSVP-k IP-címei SHA-256 hash-ként kerülnek tárolásra.</li>
-            <li><strong>Kezelő-tokenek</strong>: a beküldött tartalmak manage-token-jei (122-bit entrópia) a felhasználó <code>localStorage</code>-jában tárolódnak, csak kliens-oldalon. A szerver sem nevet, sem emailt nem köt hozzá.</li>
+            <li><strong>Kapcsolatfelvétel</strong>: A feladó a telefonszámát vagy egyéb publikus elérhetőségét adhatja meg a hirdetésében. A kinti.app belső üzenetküldőt nem üzemeltet, és nem közvetít üzeneteket a felek között.</li>
+            <li><strong>Képek feltöltése</strong>: A feltöltött képek a Cloudflare R2 felhőtárolóba kerülnek, amiket a hirdetés lejártával fizikailag törlünk.</li>
+            <li><strong>Esemény jelentkezés (RSVP)</strong>: A spam-védelem érdekében a jelentkezések során az IP-címeket egyirányú, visszafejthetetlen (SHA-256) hash formátumban tároljuk.</li>
+            <li><strong>Biztonságos tartalomkezelés</strong>: A hirdetések utólagos szerkesztéséhez szükséges azonosító kulcsok (tokenek) kizárólag a felhasználó böngészőjében (<code>localStorage</code>) tárolódnak.</li>
           </ul>
         </li>
       </ul>
