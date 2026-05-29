@@ -8,6 +8,8 @@ import type { BulletinKind, BulletinPost, KintiEvent } from "@/lib/types";
 import { mediaUrl } from "@/lib/media";
 import { CANTONS } from "@/lib/cantons";
 import { handleFromId } from "@/lib/handle";
+import { getTagEmoji } from "@/lib/tag-emoji";
+import { OwnPostBadge } from "@/components/own-post-badge";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ShareSheet } from "@/components/share-sheet";
 import { AddToCalendar } from "@/components/add-to-calendar";
@@ -352,6 +354,7 @@ function EventsList({ events }: { events: KintiEvent[] }) {
               >
                 <div className="mb-0.5 flex items-center gap-1.5">
                   <TagBadge tag={e.tag} color={e.color} />
+                  <OwnPostBadge type="event" id={e.id} />
                   <span className="text-[11.5px] font-semibold text-ink-muted">
                     {e.dateWeekday} · {e.startTime}
                   </span>
@@ -432,11 +435,13 @@ function DateChip({ event, solid = false }: { event: KintiEvent; solid?: boolean
 }
 
 function TagBadge({ tag, color }: { tag: string | null; color: string | null }) {
+  const emoji = getTagEmoji(tag);
   return (
     <span
-      className="rounded-md px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide"
+      className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide"
       style={{ color: color ?? undefined, backgroundColor: color ? `${color}1f` : undefined }}
     >
+      <span className="text-[12px] leading-none">{emoji}</span>
       {tag}
     </span>
   );
@@ -552,6 +557,7 @@ export function BulletinCard({
           </span>
         )}
         <span className="text-[11.5px] font-medium text-ink-muted">{post.ageText}</span>
+        <OwnPostBadge type="bulletin" id={post.id} />
         {expiryLabel && (
           <span
             className={cn(

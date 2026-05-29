@@ -4,6 +4,7 @@ import { Icon } from "@/components/ui";
 import { EventDetailActions } from "@/components/views/event-detail-actions";
 import { getEventById } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
+import { getTagEmoji } from "@/lib/tag-emoji";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -130,9 +131,10 @@ export default async function EventDetailPage({ params }: { params: { id: string
         <div className="p-5">
           {e.tag && (
             <span
-              className="inline-block rounded-md bg-surface-alt px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wide text-ink-muted"
+              className="inline-flex items-center gap-1 rounded-md bg-surface-alt px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wide text-ink-muted"
               style={e.color ? { color: e.color, backgroundColor: `${e.color}22` } : undefined}
             >
+              <span className="text-[13px] leading-none">{getTagEmoji(e.tag)}</span>
               {e.tag}
             </span>
           )}

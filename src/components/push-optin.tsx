@@ -12,7 +12,36 @@ import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
  * amit az időjárás-widget állít). Homokozó / nem támogatott környezetben
  * (pl. nem telepített iOS PWA) szépen elrejti magát vagy tippet ad.
  */
-type State = "checking" | "unsupported" | "ios-install" | "idle" | "subscribed" | "denied" | "busy";
+type State = "checking" | "unsupported" | "ios-install" | "idle" | "subscribed" | "denied" | "busy" | "too-early";
+
+/**
+ * Növeli a látogatás-számlálót localStorage-ban (oldalanként legfeljebb 1×,
+ * ehhez sessionStorage-flag-et használunk). Visszaadja az új visit count-ot.
+ */
+function bumpVisits(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    // Egy session-ön belül egyszer számolunk
+    if (window.sessionStorage.getItem("kinti.visitCounted")) {
+      return Number(window.localStorage.getItem("kinti.visits") || "0");
+    }
+    const next = Number(window.localStorage.getItem("kinti.visits") || "0") + 1;
+    window.localStorage.setItem("kinti.visits", String(next));
+    window.sessionStorage.setItem("kinti.visitCounted", "1");
+    return next;
+  } catch {
+    return 0;
+  }
+}
+
+function hasSubmitted(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem("kinti.hasSubmitted") === "1";
+  } catch {
+    return false;
+  }
+}
 
 export function PushOptin() {
   const [state, setState] = useState<State>("checking");
@@ -21,6 +50,14 @@ export function PushOptin() {
     let cancelled = false;
     (async () => {
       try {
+        // Timing guard: csak a 2+ látogatás után VAGY ha már sikeresen feladott valamit
+        const visits = bumpVisits();
+        const submitted = hasSubmitted();
+        if (visits < 2 && !submitted) {
+          if (!cancelled) setState("too-early");
+          return;
+        }
+
         const supported =
           "serviceWorker" in navigator &&
           "PushManager" in window &&
@@ -102,7 +139,7 @@ export function PushOptin() {
     }
   }
 
-  if (state === "checking" || state === "unsupported") return null;
+  if (state === "checking" || state === "unsupported" || state === "too-early") return null;
 
   if (state === "ios-install") {
     return (

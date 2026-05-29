@@ -7,6 +7,7 @@ import { handleFromId } from "@/lib/handle";
 import { RideDeleteButton } from "./ride-delete-button";
 import { MyRideActions } from "./my-ride-actions";
 import { RideRatingForm } from "./ride-rating-form";
+import { OwnPostBadge } from "@/components/own-post-badge";
 
 /**
  * RideCard — telekocsi-kártya: útvonal, idő, helyek, ár, contact gombok.
@@ -67,6 +68,7 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
             {ride.priceText && (
               <span className="font-bold text-primary">{ride.priceText}</span>
             )}
+            <OwnPostBadge type="ride" id={ride.id} />
           </div>
         </div>
       </div>

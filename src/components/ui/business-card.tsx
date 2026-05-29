@@ -3,6 +3,7 @@ import type { Business } from "@/lib/types";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 import { mediaUrl } from "@/lib/media";
+import { OwnPostBadge } from "@/components/own-post-badge";
 
 /**
  * BusinessCard — a Szaknévsor / találati lista kártyája. Fotó/logó placeholder
@@ -72,6 +73,7 @@ export function BusinessCard({ business: b, href, className }: BusinessCardProps
               Verified
             </span>
           )}
+          <OwnPostBadge type="business" id={b.id} />
         </div>
 
         <div className="mb-1.5 flex items-center gap-2 text-[12.5px] text-ink-muted">

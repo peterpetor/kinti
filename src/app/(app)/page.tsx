@@ -10,6 +10,8 @@ import {
 import { WeatherWidget } from "@/components/weather-widget";
 import { WelcomeModal } from "@/components/welcome-modal";
 import { MyPostsBanner } from "@/components/my-posts-banner";
+import { GlobalSearch } from "@/components/global-search";
+import { PwaInstallCard } from "@/components/pwa-install-card";
 import { getBusinesses, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -36,6 +38,7 @@ export default async function FeedPage() {
           />
         </div>
         <div className="flex-1" />
+        <GlobalSearch />
         <DropdownMenu />
       </header>
 
@@ -141,6 +144,9 @@ export default async function FeedPage() {
         </span>
         <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
       </Link>
+
+      {/* PWA install prompt — chrome/edge/android natív; iOS Safari instrukció */}
+      <PwaInstallCard />
     </div>
   );
 }

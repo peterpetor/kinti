@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/cn";
 import { RIDE_LIMITS, MAX_WAYPOINTS, type RideValidationError } from "@/lib/rides";
 import { rememberMyRide } from "./my-ride-actions";
 import { PostSavePrompt } from "@/components/post-save-prompt";
+import { loadFormPrefs, saveFormPrefs } from "@/lib/form-prefs";
 
 /**
  * RideForm — telekocsi-feladás. NEM kötelező a Clerk-belépés.
@@ -60,6 +61,16 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
     setErrors((e) => ({ ...e, [key]: "" }));
   }
 
+  // Mount-on: utoljára használt telefonszám előkitöltése
+  useEffect(() => {
+    const prefs = loadFormPrefs();
+    setForm((f) => ({
+      ...f,
+      contactPhone: f.contactPhone || prefs.phone || "",
+      contactWhatsapp: f.contactWhatsapp || prefs.whatsapp || "",
+    }));
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrors({});
@@ -106,6 +117,11 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         setCreatedId(data.id);
         setCreatedToken(data.manageToken);
       }
+      // Sikeres beküldés: telefonszámok mentése a következő űrlap-megnyitáshoz
+      saveFormPrefs({
+        phone: form.contactPhone || undefined,
+        whatsapp: form.contactWhatsapp || undefined,
+      });
       setManageUrl(data.manageUrl ?? null);
       setPhase("sent");
     } catch (err) {

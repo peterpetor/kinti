@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
@@ -11,6 +11,7 @@ import { cn } from "@/lib/cn";
 import { BulletinImageUploader } from "./bulletin-image-uploader";
 import { CANTONS } from "@/lib/cantons";
 import { PostSavePrompt } from "@/components/post-save-prompt";
+import { loadFormPrefs, saveFormPrefs } from "@/lib/form-prefs";
 
 /**
  * Hirdetés-feladó űrlap (account nélküli). Liquid Glass kártyák szekciókba
@@ -85,6 +86,19 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
     setErrors((e) => ({ ...e, [key]: "" }));
   }
 
+  // Mount-on: utoljára használt értékek előkitöltése (kanton, név, telefon, email)
+  useEffect(() => {
+    const prefs = loadFormPrefs();
+    setForm((f) => ({
+      ...f,
+      cantonCode: f.cantonCode || prefs.cantonCode || "",
+      poster: f.poster || prefs.posterName || "",
+      phone: f.phone || prefs.phone || "",
+      whatsapp: f.whatsapp || prefs.whatsapp || "",
+      email: f.email || prefs.email || "",
+    }));
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrors({});
@@ -125,6 +139,14 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
       if (data.published && data.id && data.manageToken && data.manageUrl) {
         setPublished({ id: data.id, manageToken: data.manageToken, manageUrl: data.manageUrl });
       }
+      // Sikeres beküldés: lementjük az utoljára használt értékeket következő űrlap-megnyitáshoz
+      saveFormPrefs({
+        cantonCode: form.cantonCode || undefined,
+        posterName: form.poster || undefined,
+        phone: form.phone || undefined,
+        whatsapp: form.whatsapp || undefined,
+        email: form.email || undefined,
+      });
       setPhase("sent");
       router.refresh();
     } catch (err) {

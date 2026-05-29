@@ -39,6 +39,13 @@ export function PostSavePrompt({
     };
     addMyPost(entry);
 
+    // Push-prompt timing: jelezzük, hogy a usernek már volt sikeres beküldése
+    try {
+      window.localStorage.setItem("kinti.hasSubmitted", "1");
+    } catch {
+      /* private mode → ok */
+    }
+
     setCanShare(
       typeof navigator !== "undefined" &&
       typeof navigator.share === "function",
