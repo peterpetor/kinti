@@ -147,6 +147,13 @@ export function DropdownMenu() {
                 Bérlés rejtett-költség
               </Link>
 
+              <Link href="/szolgaltato-valto" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
+                  🔄
+                </span>
+                Szolgáltató Váltó
+              </Link>
+
               <Link href="/repulojegy" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                   ✈️
