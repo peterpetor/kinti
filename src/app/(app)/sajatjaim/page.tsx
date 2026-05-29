@@ -1,0 +1,38 @@
+import { MyPostsManager } from "@/components/views/my-posts-manager";
+import { KintiLogo } from "@/components/ui";
+
+export const runtime = "edge";
+export const dynamic = "force-static";
+
+export const metadata = {
+  title: "Saját posztjaim",
+  description: "A böngésződben tárolt manage-link-jeid — szerkesztés, törlés, backup, sync.",
+  robots: { index: false, follow: false },
+};
+
+/**
+ * /sajatjaim — a felhasználó lokálisan tárolt poszt-tokenjeinek kezelője.
+ *
+ * Nincs szerver-oldali adat. A teljes tartalmat a kliens olvassa be a
+ * localStorage-ból. Az oldal force-static — semmilyen Edge-erőforrás nem fogyy.
+ */
+export default function MyPostsPage() {
+  return (
+    <div className="mx-auto max-w-md space-y-5 px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
+      <header className="flex items-center gap-3">
+        <KintiLogo size={28} />
+        <span className="text-[16px] font-extrabold tracking-tight text-ink">
+          Saját posztjaim
+        </span>
+      </header>
+
+      <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[12px] leading-relaxed text-ink-muted">
+        <strong className="text-ink">Csak a böngésződben látható.</strong> A kinti szerveren nincs felhasználói azonosítód —
+        ezt a listát a böngésző localStorage-ja tárolja. Ha cache-t törölsz vagy másik eszközön nyitod meg,
+        eltűnik. Másik eszközhöz: <strong className="text-ink">JSON export + import</strong>.
+      </div>
+
+      <MyPostsManager />
+    </div>
+  );
+}

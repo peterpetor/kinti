@@ -7,6 +7,7 @@ import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile
 import { cn } from "@/lib/cn";
 import { RIDE_LIMITS, MAX_WAYPOINTS, type RideValidationError } from "@/lib/rides";
 import { rememberMyRide } from "./my-ride-actions";
+import { PostSavePrompt } from "@/components/post-save-prompt";
 
 /**
  * RideForm — telekocsi-feladás. NEM kötelező a Clerk-belépés.
@@ -49,6 +50,8 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
   const [global, setGlobal] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [manageUrl, setManageUrl] = useState<string | null>(null);
+  const [createdId, setCreatedId] = useState<string | null>(null);
+  const [createdToken, setCreatedToken] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
@@ -100,6 +103,8 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
       // gombok megjelennek a saját fuvarunk mellett.
       if (data.id && data.manageToken) {
         rememberMyRide(data.id, data.manageToken);
+        setCreatedId(data.id);
+        setCreatedToken(data.manageToken);
       }
       setManageUrl(data.manageUrl ?? null);
       setPhase("sent");
@@ -123,20 +128,15 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
           Megjelent a telekocsi-listán. Az indulás + 24 óra után automatikusan eltűnik.
         </p>
 
-        {manageUrl && (
-          <div className="mt-4 rounded-card border border-primary/30 bg-primary-soft/40 p-3 text-left">
-            <p className="text-[11.5px] font-bold uppercase tracking-wide text-primary">
-              🔑 Kezelő-link — tedd el!
-            </p>
-            <p className="mt-1 text-[11.5px] leading-snug text-ink-muted">
-              Bármikor szerkesztheted vagy törölheted a fuvart ezen a linken (regisztráció nélkül):
-            </p>
-            <a
-              href={manageUrl}
-              className="mt-1.5 block break-all text-[11.5px] font-mono text-primary underline"
-            >
-              {typeof window !== "undefined" ? `${window.location.origin}${manageUrl}` : manageUrl}
-            </a>
+        {createdId && createdToken && manageUrl && (
+          <div className="mt-4 text-left">
+            <PostSavePrompt
+              type="ride"
+              id={createdId}
+              manageToken={createdToken}
+              title={`${form.departureCity} → ${form.destinationCity}`}
+              manageUrl={manageUrl}
+            />
           </div>
         )}
 
