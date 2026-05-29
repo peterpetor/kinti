@@ -351,16 +351,16 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         </p>
       </Section>
 
-      {/* Elérhetőség — min. 1 kötelező (email VAGY phone VAGY WA) */}
+      {/* Elérhetőség — egyetlen TELEFON elsődleges, többi a "Több opció" alatt */}
       <Section title="Elérhetőség" required>
         <p className="mb-3 text-[11.5px] leading-snug text-ink-muted">
-          <strong className="text-ink">Hogyan vegyék fel veled a kapcsolatot?</strong>{" "}
-          Add meg legalább egyet — a többi mezőt nyugodtan hagyd üresen.
+          Hogyan érjenek el? <strong className="text-ink">Legalább egy módon legyél elérhető</strong> —
+          a többit elhagyhatod.
         </p>
 
-        {/* Telefon */}
+        {/* TELEFON — elsődleges, mindig látható */}
         <label className="block mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-          📞 Telefon
+          📞 Telefonszám
         </label>
         <input
           type="tel"
@@ -372,42 +372,60 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
           className={inputCls(errors.phone)}
         />
         <FieldError msg={errors.phone} />
+        <p className="mt-1 text-[10.5px] leading-snug text-ink-faint">
+          Erre megy a <strong>Hívás</strong> ÉS a <strong>WhatsApp</strong> gomb is.
+        </p>
 
-        {/* WhatsApp */}
-        <label className="block mt-3 mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-          💬 WhatsApp <span className="text-ink-faint font-medium normal-case">(csak ha eltér a telefontól)</span>
-        </label>
-        <input
-          type="tel"
-          value={form.whatsapp}
-          onChange={(e) => setField("whatsapp", e.target.value)}
-          placeholder="Üresen: a fenti telefonra megy a WhatsApp is"
-          autoComplete="off"
-          maxLength={LIMITS.phoneMax}
-          className={inputCls(errors.whatsapp)}
-        />
-        <FieldError msg={errors.whatsapp} />
+        {/* Több opció — collapsed alapból, csak ha valakinek külön WA/email kell */}
+        <details className="mt-4 group">
+          <summary className="cursor-pointer text-[12px] font-bold text-primary hover:underline list-none flex items-center gap-1.5">
+            <span className="transition group-open:rotate-90">▶</span>
+            Másik WhatsApp szám vagy email is van?
+          </summary>
 
-        {/* Email */}
-        <label className="block mt-3 mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-          ✉️ Email <span className="text-ink-faint font-medium normal-case">(opcionális)</span>
-        </label>
-        <input
-          type="email"
-          value={form.email}
-          onChange={(e) => setField("email", e.target.value)}
-          placeholder="email@pelda.hu"
-          autoComplete="email"
-          maxLength={LIMITS.emailMax}
-          className={inputCls(errors.email)}
-        />
-        <FieldError msg={errors.email} />
+          <div className="mt-3 space-y-3 rounded-[12px] border border-line bg-surface-alt/50 p-3">
+            <div>
+              <label className="block mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+                💬 Másik WhatsApp szám
+              </label>
+              <input
+                type="tel"
+                value={form.whatsapp}
+                onChange={(e) => setField("whatsapp", e.target.value)}
+                placeholder="+41 78 ..."
+                autoComplete="off"
+                maxLength={LIMITS.phoneMax}
+                className={inputCls(errors.whatsapp)}
+              />
+              <FieldError msg={errors.whatsapp} />
+              <p className="mt-1 text-[10.5px] leading-snug text-ink-faint">
+                Csak ha a WhatsApp-od másik számon van, mint a telefonszámod.
+              </p>
+            </div>
 
-        <p className="mt-3 text-[11px] leading-snug text-ink-muted">
-          <strong className="text-ink">Email NEM kötelező.</strong> Email nélkül a hirdetés
-          azonnal megjelenik, és kapsz egy kezelő-linket (QR-kód is jön) — tedd el!{" "}
-          Ha emailt is megadsz, először egy megerősítő linket küldünk rá — csak miután
-          rákattintasz, jelenik meg a hirdetés. Részletek:{" "}
+            <div>
+              <label className="block mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+                ✉️ Email
+              </label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => setField("email", e.target.value)}
+                placeholder="email@pelda.hu"
+                autoComplete="email"
+                maxLength={LIMITS.emailMax}
+                className={inputCls(errors.email)}
+              />
+              <FieldError msg={errors.email} />
+              <p className="mt-1 text-[10.5px] leading-snug text-ink-faint">
+                Email megadása esetén először megerősítő linket küldünk rá — csak utána jelenik meg a hirdetés.
+              </p>
+            </div>
+          </div>
+        </details>
+
+        <p className="mt-3 text-[10.5px] leading-snug text-ink-faint">
+          Részletek a tárolásról:{" "}
           <Link href="/adatvedelem" className="underline">Adatkezelési Tájékoztató</Link>.
         </p>
       </Section>
