@@ -119,6 +119,13 @@ export function DropdownMenu() {
                 Vám- és Határinfó
               </Link>
 
+              <Link href="/bussen" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
+                  🚓
+                </span>
+                Gyorshajtás kalkulátor
+              </Link>
+
               <Link href="/akciok" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                   🏷️
