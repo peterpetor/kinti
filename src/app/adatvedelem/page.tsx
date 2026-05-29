@@ -41,11 +41,11 @@ export default function AdatvedelemPage() {
       </p>
 
 
-      <h3>2.1 Vállalkozói regisztráció (Clerk)</h3>
+      <h3>2.1 Adminisztrátor-belépés (Clerk)</h3>
       <p>
-        Vállalkozók a Clerk Inc. (USA) szolgáltatásán keresztül regisztrálhatnak. A Clerk
-        gyűjti: email-cím, jelszó (titkosítva), név (opcionális), profilkép (opcionális).
-        Ezek a vállalkozói fiók működéséhez szükségesek.
+        <strong>A vállalkozói flow regisztráció-mentes</strong> — a Clerk Inc. (USA) szolgáltatást
+        kizárólag az oldal adminisztrátorának belépéséhez használjuk (egyetlen admin email).
+        A látogatók / vállalkozók / hirdetésfeladók sehol nem találkoznak Clerk regisztrációval.
       </p>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — szerződés teljesítése</li>
@@ -73,18 +73,17 @@ export default function AdatvedelemPage() {
         <li>Opcionális megjelenő név</li>
         <li><strong>Új folyamatok</strong>:
           <ul>
-            <li><strong>Kapcsolatfelvétel</strong>: a látogató neve és e‑mail címe továbbítódik a hirdetőnek e‑mailben.</li>
-            <li><strong>Hirdetés‑kép feltöltés</strong>: a képek a Cloudflare R2 tárolóba kerülnek, a kulcsot az adatbázisban tároljuk.</li>
-            <li><strong>Esemény RSVP IP‑hash</strong>: az RSVP‑k IP-címei SHA‑256 hash‑ként kerülnek tárolásra.</li>
-            <li><strong>Mentett hirdetések</strong>: a felhasználó által mentett hirdetések <code>localStorage</code>-ban tárolódnak, csak kliens‑oldalon.</li>
+            <li><strong>Kapcsolatfelvétel</strong>: e-mail-relay megszűnt. A feladó a telefonszámát / WhatsApp-ot adhatja meg a hirdetésében — ezek közvetlen csatornák, mi nem közvetítünk.</li>
+            <li><strong>Hirdetés-kép feltöltés</strong>: a képek a Cloudflare R2 tárolóba kerülnek, a kulcsot az adatbázisban tároljuk.</li>
+            <li><strong>Esemény RSVP IP-hash</strong>: az RSVP-k IP-címei SHA-256 hash-ként kerülnek tárolásra.</li>
+            <li><strong>Kezelő-tokenek</strong>: a beküldött tartalmak manage-token-jei (122-bit entrópia) a felhasználó <code>localStorage</code>-jában tárolódnak, csak kliens-oldalon. A szerver sem nevet, sem emailt nem köt hozzá.</li>
           </ul>
         </li>
       </ul>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás</li>
         <li><strong>Tárolási idő:</strong> a hirdetés lejártáig (30 nap), vagy a feladó által
-          kezdeményezett törlésig (lásd: kezelő link az emailben)</li>
-        <li>Meg nem erősített hirdetések 24 órán belül automatikusan törlődnek</li>
+          kezdeményezett törlésig (a kezelő-link a böngésző localStorage-jában él).</li>
       </ul>
 
       <div style={{
@@ -130,10 +129,12 @@ export default function AdatvedelemPage() {
         a kérés jellegét (bot vagy ember).
       </p>
 
-      <h3>2.6 Email-küldés (Resend)</h3>
+      <h3>2.6 Email-küldés (Resend) — csak admin-értesítő</h3>
       <p>
-        A hirdetés-megerősítő emaileket a Resend Inc. (USA) küldi. A Resend feldolgozza
-        az email-címet és a küldés metaadatait a kézbesítéshez.
+        A felhasználói flow-k <strong>nem küldenek emailt</strong>. A Resend Inc. (USA)
+        szolgáltatást kizárólag adminisztrátor-értesítőkre használjuk (új esemény
+        moderálása, tartalom-bejelentés), amelyek az oldal egyetlen admin email-címére
+        mennek. Felhasználói email-cím sehol nem haladja át a Resend-et.
       </p>
       <ul>
         <li><strong>Adatfeldolgozó:</strong> Resend, Inc. — <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noreferrer">privacy policy</a></li>
@@ -141,9 +142,10 @@ export default function AdatvedelemPage() {
 
       <h2>3. Cookie-k</h2>
       <p>
-        Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk (Clerk session-cookie
-        a bejelentkezett vállalkozók azonosításához). Marketing-, analitikai-, vagy 3rd-party
-        tracking cookie-kat <strong>nem használunk</strong>. Ezekhez nem kell előzetes hozzájárulás.
+        Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk: a Clerk session-cookie
+        kizárólag az adminisztrátor belépéséhez (egyetlen admin email). A látogatóknak,
+        vállalkozóknak, hirdetésfeladóknak <strong>nincs cookie-juk</strong>. Marketing-,
+        analitikai-, vagy 3rd-party tracking cookie-kat <strong>nem használunk</strong>.
       </p>
 
       <h2>4. Adatok továbbítása harmadik országba</h2>

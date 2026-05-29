@@ -52,21 +52,24 @@ export default function VallalkozoPage() {
             Vállalkozás felvétele
           </Link>
           <p className="px-2 text-center text-[11.5px] leading-relaxed text-ink-faint">
-            A megerősítő emailben kapsz egy „kezelő-linket". Azzal bármikor szerkesztheted az
-            adatokat (nyitvatartás, cím, kapcsolat, beszélt nyelvek, leírás), vagy törölheted a
-            vállalkozást — nincs jelszó, nincs fiók.
+            Beküldés után <strong className="text-ink">azonnal megjelenik</strong>, és kapsz
+            egy <strong className="text-ink">kezelő-linket</strong> (QR-kód is jön). Azzal
+            bármikor szerkesztheted az adatokat (logó, nyitvatartás, cím, kapcsolat, beszélt
+            nyelvek, leírás), vagy törölheted a vállalkozást — nincs jelszó, nincs fiók,
+            nincs email.
           </p>
         </div>
 
-        {/* Az emailedet elveszítetted? */}
+        {/* Elveszítetted a kezelő-linket? */}
         <div className="w-full max-w-sm mx-auto mt-8 rounded-card border border-line bg-surface-alt/60 p-4 animate-fade-up animate-delay-200">
           <p className="text-[12.5px] leading-relaxed text-ink-muted">
-            <strong className="text-ink">Elveszítetted a kezelő-linket?</strong> Írj a{" "}
+            <strong className="text-ink">Elveszítetted a kezelő-linket?</strong> Először nézd
+            meg a böngésződ <Link href="/sajatjaim" className="font-bold text-primary underline">Saját posztjaim</Link>{" "}
+            oldalát (ott automatikusan elmentődik). Ha az is üres, írj az{" "}
             <a href="mailto:info@kinti.app" className="font-bold text-primary underline">
               info@kinti.app
             </a>{" "}
-            címre, és visszaküldjük az ahhoz az e-mailhez tartozó linket, amellyel feladtad
-            a vállalkozást.
+            címre a vállalkozásod nevével — visszaküldjük neked a linket.
           </p>
         </div>
 

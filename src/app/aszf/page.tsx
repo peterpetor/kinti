@@ -35,13 +35,17 @@ export default function AszfPage() {
       </p>
       <h3>2.1 Kinti felhasználó (közösségi tag)</h3>
       <p>
-        Bárki, aki a Szolgáltatást regisztráció nélkül használja: böngészi a vállalkozásokat,
-        nézi az eseményeket, és <strong>email-megerősítéssel</strong> hirdetést adhat fel.
+        Bárki, aki a Szolgáltatást <strong>regisztráció nélkül</strong> használja: böngészi a
+        vállalkozásokat, nézi az eseményeket, hirdetést, eseményt, véleményt, telekocsit
+        adhat fel. Sem email, sem jelszó nem szükséges — a beküldést Cloudflare Turnstile
+        CAPTCHA + IP-alapú rate-limit védi spam ellen.
       </p>
       <h3>2.2 Vállalkozó</h3>
       <p>
         Az a természetes vagy jogi személy, aki a saját vállalkozását kívánja a platformon
-        megjeleníteni. A vállalkozói regisztráció Clerk-szolgáltatáson keresztül történik.
+        megjeleníteni. <strong>Regisztráció nem szükséges</strong>: a vállalkozás-feladás
+        ugyanolyan account-mentes flow-n megy, mint az egyéb tartalmak. A beküldés után
+        kapott kezelő-linkkel szerkesztheti vagy törölheti az adatait.
       </p>
 
       <h2>3. Megengedett tartalom</h2>
@@ -70,8 +74,8 @@ export default function AszfPage() {
       <ul>
         <li>A megerősített hirdetések <strong>30 napig</strong> láthatók, utána automatikusan
           eltűnnek (törlődnek);</li>
-        <li>A feladó <strong>bármikor törölheti</strong> a hirdetését a megerősítő emailben
-          kapott <em>kezelő linkről</em>;</li>
+        <li>A feladó <strong>bármikor törölheti</strong> a hirdetését a beküldés után
+          megjelenő (és a böngésző helyi tárolójában elmentett) <em>kezelő linkről</em>;</li>
         <li>Az üzemeltető fenntartja a jogot a jogszabálysértő vagy a 3. pontba ütköző hirdetések
           értesítés nélküli eltávolítására.</li>
       </ul>
