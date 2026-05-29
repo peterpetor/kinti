@@ -140,6 +140,15 @@ export default function AdatvedelemPage() {
         <li><strong>Adatfeldolgozó:</strong> Resend, Inc. — <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noreferrer">privacy policy</a></li>
       </ul>
 
+      <h3>2.7 Helyadatok (GPS koordináták)</h3>
+      <p>
+        A Szolgáltatás használata során — a közeledben lévő szakemberek, vállalkozások vagy közösségi 
+        bejegyzések megjelenítése érdekében — engedélyezheted az eszközöd helymeghatározó funkcióját (GPS). 
+        A helyadatok feldolgozása átmeneti: azokat <strong>nem kötjük a személyazonosságodhoz, nem tároljuk 
+        szerveroldali adatbázisban</strong>, és nem használjuk nyomkövetésre vagy profilalkotásra. A helymeghatározás 
+        bármikor letiltható a böngésződ beállításaiban.
+      </p>
+
       <h2>3. Cookie-k</h2>
       <p>
         Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk: a Clerk session-cookie
