@@ -100,6 +100,13 @@ export function DropdownMenu() {
                 Tudásbázis
               </Link>
 
+              <Link href="/segitseg" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
+                  <Icon name="question" size={16} strokeWidth={2.4} />
+                </span>
+                Segítség és GYIK
+              </Link>
+
               <div className="h-px bg-line/60 my-4 mx-2" />
 
               {/* Jogi linkek */}

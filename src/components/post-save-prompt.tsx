@@ -7,18 +7,10 @@ import { cn } from "@/lib/cn";
 import { addMyPost, exportBackup, type MyPostEntry, type PostType } from "@/lib/my-posts";
 
 /**
- * PostSavePrompt — minden sikeres beküldés után megjelenő "tedd el!" doboz.
+ * PostSavePrompt — sikeres beküldés után megjelenő pozitív megerősítő doboz.
  *
- * Tartalom:
- *   1) Nagy figyelem-felhívás
- *   2) Másolható manage URL
- *   3) QR-kód (másik eszközre)
- *   4) "Letöltöm a teljes backup-ot" gomb (JSON file)
- *   5) Link a /sajatjaim oldalra
- *
- * Mihelyt mountolódik, ELMENTI a posztot a localStorage-ba (addMyPost),
- * tehát ha a user el is megy az oldalról, a következő látogatáskor a
- * /sajatjaim oldalon megtalálja.
+ * Hangsúly: a poszt MÁR fent van + a böngésződ MÁR megjegyezte. A link csak
+ * pluszbiztosíték másik eszközre vagy ha kitisztítod a cache-t.
  */
 export function PostSavePrompt({
   type,
@@ -35,19 +27,23 @@ export function PostSavePrompt({
 }) {
   const [copied, setCopied] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [canShare, setCanShare] = useState(false);
 
   const fullUrl = typeof window !== "undefined"
     ? `${window.location.origin}${manageUrl}`
     : manageUrl;
 
   useEffect(() => {
-    // 1) Eltároljuk a posztot localStorage-ba
     const entry: Omit<MyPostEntry, "createdAt"> = {
       type, id, manageToken, title, manageUrl,
     };
     addMyPost(entry);
 
-    // 2) QR-kód előállítás (data: URL)
+    setCanShare(
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function",
+    );
+
     QRCode.toDataURL(fullUrl, {
       errorCorrectionLevel: "M",
       margin: 1,
@@ -66,6 +62,19 @@ export function PostSavePrompt({
     }
   }
 
+  async function nativeShare() {
+    if (typeof navigator === "undefined" || typeof navigator.share !== "function") return;
+    try {
+      await navigator.share({
+        title: `kinti — ${title}`,
+        text: "Kezelő-link a posztomhoz (kinti.app):",
+        url: fullUrl,
+      });
+    } catch {
+      /* user megszakította vagy nem támogatott */
+    }
+  }
+
   function downloadBackup() {
     const backup = exportBackup();
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
@@ -80,70 +89,102 @@ export function PostSavePrompt({
   }
 
   return (
-    <div className="rounded-card border-2 border-primary/40 bg-primary-soft/50 p-4 shadow-card">
-      <div className="flex items-start gap-2 mb-2">
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary text-white text-lg">
-          🔑
+    <div className="rounded-card border-2 border-success/40 bg-success/10 p-4 shadow-card">
+      {/* Sikerélmény + biztatás */}
+      <div className="flex items-start gap-2.5">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-success text-white text-xl">
+          ✓
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
-            Tedd el a kezelő-linkedet!
+          <p className="text-[15px] font-extrabold tracking-[-0.01em] text-ink">
+            Sikerült! A posztod fent van. 🎉
           </p>
-          <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">
-            Ezzel a linkkel szerkesztheted vagy törölheted. <strong>Nincs email, nincs fiók — ha elveszíted, elvész.</strong>
+          <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
+            <strong className="text-ink">A böngésződ már megjegyezte</strong> — bármikor
+            megtalálod a <a href="/sajatjaim" className="text-primary font-bold underline">Saját posztjaim</a> oldalon.
           </p>
         </div>
       </div>
 
-      {/* Másolható URL */}
-      <div className="mt-3 flex items-stretch gap-2">
-        <div className="flex-1 rounded-[10px] border border-line bg-surface px-3 py-2 font-mono text-[11px] text-ink truncate">
-          {fullUrl}
-        </div>
-        <button
-          type="button"
-          onClick={copyUrl}
-          className={cn(
-            "shrink-0 rounded-[10px] px-3 py-2 text-[11.5px] font-bold transition active:scale-95",
-            copied ? "bg-success text-white" : "bg-primary text-white",
-          )}
-        >
-          {copied ? "✓ Másolva" : "Másol"}
-        </button>
-      </div>
+      {/* Tipp box */}
+      <div className="mt-3 rounded-[12px] border border-line bg-surface p-3">
+        <p className="text-[12px] font-bold text-ink flex items-center gap-1.5">
+          <span className="text-[14px]">💡</span> Pluszbiztonság: mentsd el a linket
+        </p>
+        <p className="mt-1 text-[11.5px] leading-snug text-ink-muted">
+          Ha másik telefonon is szerkeszteni szeretnéd, vagy ha véletlenül kitisztítod a böngésződ
+          cache-ét, ezzel a linkkel mindig visszatérhetsz a posztodhoz:
+        </p>
 
-      {/* QR-kód + akciók */}
-      <div className="mt-3 grid grid-cols-[auto,1fr] gap-3">
-        <div className="rounded-[10px] border border-line bg-surface p-2 flex items-center justify-center">
-          {qrDataUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={qrDataUrl} alt="Manage URL QR-kódja" className="h-[88px] w-[88px]" />
-          ) : (
-            <div className="grid h-[88px] w-[88px] place-items-center text-[10px] text-ink-faint">
-              QR…
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col gap-1.5 justify-center">
-          <p className="text-[11px] leading-snug text-ink-muted">
-            <strong className="text-ink">Másik eszközön</strong>: olvasd be a QR-kódot, vagy:
-          </p>
+        {/* Másolható URL */}
+        <div className="mt-2 flex items-stretch gap-2">
+          <div className="flex-1 rounded-[10px] border border-line bg-surface-alt px-3 py-2 font-mono text-[10.5px] text-ink truncate">
+            {fullUrl}
+          </div>
           <button
             type="button"
-            onClick={downloadBackup}
-            className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-surface border border-line py-1.5 px-3 text-[11.5px] font-bold text-ink shadow-card active:scale-95"
+            onClick={copyUrl}
+            className={cn(
+              "shrink-0 rounded-[10px] px-3 py-2 text-[11.5px] font-bold transition active:scale-95",
+              copied ? "bg-success text-white" : "bg-primary text-white",
+            )}
           >
-            <Icon name="arrowUp" size={11} strokeWidth={2.4} className="rotate-180" />
-            Letöltöm JSON-ként
+            {copied ? "✓ Másolva" : "Másol"}
           </button>
-          <a
-            href="/sajatjaim"
-            className="inline-flex items-center justify-center gap-1 text-[11px] font-bold text-primary underline"
+        </div>
+
+        {/* Action buttons: Share / Bookmark hint */}
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {canShare && (
+            <button
+              type="button"
+              onClick={nativeShare}
+              className="inline-flex items-center gap-1.5 rounded-pill bg-primary text-white py-1.5 px-3 text-[11.5px] font-bold active:scale-95"
+            >
+              📤 Megosztom magamnak
+            </button>
+          )}
+          <span
+            title="Nyomd meg a Ctrl+D-t (Windows) vagy ⌘+D-t (Mac), és add hozzá a könyvjelzőkhöz"
+            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface py-1.5 px-3 text-[11.5px] font-bold text-ink-muted"
           >
-            Összes saját posztom →
-          </a>
+            ⭐ Tipp: Ctrl+D = könyvjelző
+          </span>
         </div>
       </div>
+
+      {/* QR + JSON backup — kevésbé hangsúlyos, lent kis méretben */}
+      <details className="mt-3 group">
+        <summary className="cursor-pointer text-[11.5px] font-bold text-ink-muted hover:text-ink list-none flex items-center gap-1.5">
+          <span className="transition group-open:rotate-90">▶</span>
+          Profi opciók: QR-kód, mentés fájlba
+        </summary>
+        <div className="mt-2 grid grid-cols-[auto,1fr] gap-3 rounded-[12px] border border-line bg-surface p-3">
+          <div className="rounded-[10px] border border-line bg-surface-alt p-2 flex items-center justify-center">
+            {qrDataUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={qrDataUrl} alt="Manage URL QR-kódja" className="h-[80px] w-[80px]" />
+            ) : (
+              <div className="grid h-[80px] w-[80px] place-items-center text-[10px] text-ink-faint">
+                QR…
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-1.5 justify-center">
+            <p className="text-[10.5px] leading-snug text-ink-muted">
+              QR-kód másik telefonra. Vagy mentsd a teljes listát fájlba:
+            </p>
+            <button
+              type="button"
+              onClick={downloadBackup}
+              className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-surface-alt border border-line py-1.5 px-3 text-[11px] font-bold text-ink active:scale-95"
+            >
+              <Icon name="arrowUp" size={11} strokeWidth={2.4} className="rotate-180" />
+              JSON mentés
+            </button>
+          </div>
+        </div>
+      </details>
     </div>
   );
 }

@@ -10,7 +10,7 @@ export type IconName =
   | "globe" | "star" | "heart" | "arrowLeft" | "arrowRight" | "arrowUp"
   | "more" | "close" | "check" | "plus" | "filter" | "clock" | "calendar"
   | "share" | "bookmark" | "chevR" | "chevD" | "chevU" | "sliders" | "bell"
-  | "trending" | "eye" | "cursor" | "flag" | "send" | "car"
+  | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin";
 
 const PATHS: Record<IconName, string[]> = {
@@ -53,6 +53,11 @@ const PATHS: Record<IconName, string[]> = {
     "M19 16h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2",
     "M4 16.5a2.5 2.5 0 1 0 5 0a2.5 2.5 0 0 0-5 0",
     "M14 16.5a2.5 2.5 0 1 0 5 0a2.5 2.5 0 0 0-5 0",
+  ],
+  question: [
+    "M12 3a9 9 0 1 1 0 18a9 9 0 0 1 0-18",
+    "M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 1-1 1.7v.5",
+    "M12 17h.01",
   ],
   facebook: ["M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"],
   instagram: ["M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z", "M17.5 6.5h.01", "M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12z"],

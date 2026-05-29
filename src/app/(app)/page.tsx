@@ -8,6 +8,8 @@ import {
   DropdownMenu,
 } from "@/components/ui";
 import { WeatherWidget } from "@/components/weather-widget";
+import { WelcomeModal } from "@/components/welcome-modal";
+import { MyPostsBanner } from "@/components/my-posts-banner";
 import { getBusinesses, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -36,6 +38,12 @@ export default async function FeedPage() {
         <div className="flex-1" />
         <DropdownMenu />
       </header>
+
+      {/* első látogatáskor — üdvözlő modal */}
+      <WelcomeModal />
+
+      {/* helyi posztok banner — csak ha vannak */}
+      <MyPostsBanner />
 
       {/* svájci időjárás — a kiválasztott kanton székhelye (MeteoSwiss ICON) */}
       <WeatherWidget />
