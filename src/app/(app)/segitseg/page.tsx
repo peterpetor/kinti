@@ -18,7 +18,7 @@ interface FaqItem {
 const QUICK_LINKS: { href: string; label: string; emoji: string }[] = [
   { href: "/szaknevsor", label: "Szakembereket keresek", emoji: "🔍" },
   { href: "/kozosseg", label: "Eseményt / hirdetést nézek", emoji: "📢" },
-  { href: "/telekocsi", label: "Telekocsit keresek", emoji: "🚗" },
+  { href: "/piac", label: "Piac / Hirdetések", emoji: "🛒" },
   { href: "/sajatjaim", label: "Saját posztjaim", emoji: "📌" },
 ];
 
@@ -29,7 +29,7 @@ const FAQS: FaqItem[] = [
       <>
         <strong>Nem.</strong> A kinti egyik fő ígérete, hogy nincs fiók és nincs
         email-kérés. Csak nyisd meg, és használd. Amikor feladsz valamit (hirdetést,
-        eseményt, telekocsi-fuvart), a böngésződ automatikusan megjegyzi a posztodat —
+        eseményt), a böngésződ automatikusan megjegyzi a posztodat —
         és bármikor megnyithatod a <Link href="/sajatjaim" className="text-primary underline font-bold">Saját posztjaim</Link> oldalon.
       </>
     ),

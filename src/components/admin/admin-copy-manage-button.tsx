@@ -4,11 +4,10 @@ import { useState } from "react";
 import { cn } from "@/lib/cn";
 
 /** A 4 manage-flow path-prefix-e. */
-const PATH_PREFIX: Record<"businesses" | "bulletins" | "events" | "rides", string> = {
+const PATH_PREFIX: Record<"businesses" | "bulletins" | "events", string> = {
   businesses: "/szaknevsor/kezeles",
   bulletins:  "/hirdetes-kezeles",
   events:     "/esemeny-kezeles",
-  rides:      "/telekocsi-kezeles",
 };
 
 /**
@@ -25,7 +24,7 @@ export function AdminCopyManageButton({
   type,
   manageToken,
 }: {
-  type: "businesses" | "bulletins" | "events" | "rides";
+  type: "businesses" | "bulletins" | "events";
   manageToken: string | null;
 }) {
   const [copied, setCopied] = useState(false);
