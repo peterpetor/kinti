@@ -139,6 +139,8 @@ export async function POST(req: Request) {
     isRequest: v.isRequest,
     expiresAt: computeRideExpiry(v.departureTime),
     manageToken,
+    acceptsPackages: v.acceptsPackages,
+    packageNote: v.packageNote,
   });
 
   // Rate-limit napló (fire-and-forget — hiba esetén sem gátolja a flow-t).

@@ -80,6 +80,21 @@ export function RideCard({ ride, canDelete = false }: { ride: PublicRide; canDel
         </p>
       )}
 
+      {/* Csomagszállítás — kiemelt sárga kártya */}
+      {ride.acceptsPackages && (
+        <div className="rounded-[12px] border border-[#e3a233]/40 bg-[#fff8ed] p-3">
+          <div className="flex items-center gap-1.5 text-[12px] font-extrabold text-[#9a6b00]">
+            <span className="text-base">📦</span>
+            Csomagot is vállal
+          </div>
+          {ride.packageNote && (
+            <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink whitespace-pre-wrap">
+              {ride.packageNote}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Feladó + jelvény — auto-generált handle a rekord id-jéből (zéró PII) */}
       {(() => {
         const handle = ride.posterName?.trim() ? ride.posterName : handleFromId(ride.id);

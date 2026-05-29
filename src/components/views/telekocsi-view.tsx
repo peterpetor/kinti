@@ -29,24 +29,30 @@ export function TelekocsiView({
   const [view, setView] = useState<ViewMode>("list");
   const [q, setQ] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const [packagesOnly, setPackagesOnly] = useState(false);
+
+  const packageCount = useMemo(() => rides.filter((r) => r.acceptsPackages).length, [rides]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return rides.filter((r) => {
-      // Szöveg: indulás, érkezés, megállók, poszter
+      // Szöveg: indulás, érkezés, megállók, poszter, package note
       const byText =
         !needle ||
         r.departureCity.toLowerCase().includes(needle) ||
         r.destinationCity.toLowerCase().includes(needle) ||
         r.posterName.toLowerCase().includes(needle) ||
         r.waypoints.some((wp) => wp.city.toLowerCase().includes(needle)) ||
-        (r.notes ?? "").toLowerCase().includes(needle);
+        (r.notes ?? "").toLowerCase().includes(needle) ||
+        (r.packageNote ?? "").toLowerCase().includes(needle);
       // Dátum: ha kiválasztott, az indulás napja >= szűrő dátuma
       const byDate =
         !dateFilter || r.departureTime.slice(0, 10) >= dateFilter;
-      return byText && byDate;
+      // Csomagszállítás szűrő
+      const byPkg = !packagesOnly || r.acceptsPackages;
+      return byText && byDate && byPkg;
     });
-  }, [rides, q, dateFilter]);
+  }, [rides, q, dateFilter, packagesOnly]);
 
   return (
     <div className="space-y-4">
@@ -92,7 +98,7 @@ export function TelekocsiView({
             </button>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <label className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 text-[12.5px] font-bold shadow-card">
             <Icon name="calendar" size={12} strokeWidth={2.2} className="shrink-0 text-[#3a6ea5]" />
             <input
@@ -109,6 +115,21 @@ export function TelekocsiView({
               className="text-[11.5px] font-bold text-[#3a6ea5]"
             >
               Szűrő törlése
+            </button>
+          )}
+          {packageCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setPackagesOnly((v) => !v)}
+              aria-pressed={packagesOnly}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1.5 text-[12.5px] font-bold shadow-card transition",
+                packagesOnly
+                  ? "bg-[#e3a233] text-white"
+                  : "border border-line bg-surface text-ink",
+              )}
+            >
+              📦 Csomagot vállalók ({packageCount})
             </button>
           )}
         </div>

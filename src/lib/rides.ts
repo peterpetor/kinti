@@ -11,6 +11,7 @@ export const RIDE_LIMITS = {
   priceMax: 40,
   phoneMax: 24,
   notesMax: 500,
+  packageNoteMax: 300,
   seatsMin: 1,
   seatsMax: 8,
   posterNameMin: 2,
@@ -48,6 +49,10 @@ export interface RideFormInput {
   lng?: unknown;
   /** Keresés (utas) vagy kínálat (sofőr)? */
   isRequest?: unknown;
+  /** Vállal-e csomagot is a sofőr (kintieknek HU/CH-ról). */
+  acceptsPackages?: unknown;
+  /** Csomag-megjegyzés (mit, mennyiért, mekkora csomag). */
+  packageNote?: unknown;
 }
 
 export interface ValidatedRideInput {
@@ -65,6 +70,8 @@ export interface ValidatedRideInput {
   lat: number | null;
   lng: number | null;
   isRequest: boolean;
+  acceptsPackages: boolean;
+  packageNote: string | null;
 }
 
 export type RideValidationError = { field: keyof RideFormInput; message: string };
@@ -131,12 +138,23 @@ export function validateRideInput(
     errors.push({ field: "notes", message: `A megjegyzés legfeljebb ${RIDE_LIMITS.notesMax} karakter.` });
   }
 
+  // Csomagszállítás — opcionális. Ha bekapcsolt, a packageNote elfogadott
+  // (max 300 karakter), és a profanity-szűrőn is keresztülmegy.
+  const acceptsPackages = input.acceptsPackages === true || input.acceptsPackages === "true";
+  const packageNote = str(input.packageNote);
+  if (packageNote.length > RIDE_LIMITS.packageNoteMax) {
+    errors.push({
+      field: "packageNote",
+      message: `A csomag-megjegyzés legfeljebb ${RIDE_LIMITS.packageNoteMax} karakter.`,
+    });
+  }
+
   // posterName MEZŐ NINCS TÖBBÉ — auto-derivált handle a megjelenítéshez.
   // Ha mégis bejön a kompatibilitás miatt, csendben ignoráljuk.
   const posterName: string | null = null;
 
   if (!errors.length) {
-    const dirty = findProfanityInFields({ departureCity, destinationCity, notes });
+    const dirty = findProfanityInFields({ departureCity, destinationCity, notes, packageNote });
     if (dirty) {
       errors.push({
         field: dirty.field as keyof RideFormInput,
@@ -185,6 +203,8 @@ export function validateRideInput(
       lat,
       lng,
       isRequest,
+      acceptsPackages,
+      packageNote: acceptsPackages ? (packageNote || null) : null,
     },
   };
 }

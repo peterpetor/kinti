@@ -29,6 +29,8 @@ interface FormState {
   contactWhatsapp: string;
   notes: string;
   waypoints: string[];
+  acceptsPackages: boolean;
+  packageNote: string;
 }
 
 const INITIAL: FormState = {
@@ -42,6 +44,8 @@ const INITIAL: FormState = {
   contactWhatsapp: "",
   notes: "",
   waypoints: [],
+  acceptsPackages: false,
+  packageNote: "",
 };
 
 export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string }) {
@@ -370,6 +374,51 @@ export function RideForm({ turnstileSiteKey = "" }: { turnstileSiteKey?: string 
         </div>
         <FieldError msg={errors.notes} />
       </Section>
+
+      {/* Csomagszállítás — csak sofőröknek (nem isRequest) */}
+      {!form.isRequest && (
+        <Section title="📦 Csomagszállítás (opcionális)">
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.acceptsPackages}
+              onChange={(e) => setField("acceptsPackages", e.target.checked)}
+              className="mt-1 h-4 w-4 accent-primary"
+            />
+            <span className="text-[13px] leading-snug text-ink">
+              <strong>Csomagot is vállalok</strong> hozni vagy vinni —
+              {" "}
+              <span className="text-ink-muted">
+                magyar termékek (élelmiszer, könyv, gyógyszer), kis csomagok.
+              </span>
+            </span>
+          </label>
+
+          {form.acceptsPackages && (
+            <div className="mt-3">
+              <label className="block mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+                Mit, mennyiért, mekkora? (opcionális)
+              </label>
+              <textarea
+                value={form.packageNote}
+                onChange={(e) => setField("packageNote", e.target.value)}
+                placeholder="Pl. Élelmiszer + tartós termékek, max 5 kg. Túró Rudi-t is hozok hűtőtáskában. Szállítási költség: 15 CHF / csomag."
+                maxLength={RIDE_LIMITS.packageNoteMax}
+                rows={3}
+                className={cn(inputCls(errors.packageNote), "resize-none")}
+              />
+              <div className="mt-1 flex justify-between text-[10.5px] text-ink-faint">
+                <span>Max {RIDE_LIMITS.packageNoteMax} karakter</span>
+                <span>{form.packageNote.length} / {RIDE_LIMITS.packageNoteMax}</span>
+              </div>
+              <FieldError msg={errors.packageNote} />
+              <p className="mt-2 text-[10.5px] leading-snug text-ink-faint">
+                ⓘ Az érdeklődők közvetlenül felhívnak a megadott telefonszámon — a kinti.app nem közvetít üzeneteket.
+              </p>
+            </div>
+          )}
+        </Section>
+      )}
 
       {turnstileSiteKey && (
         <div className="px-1">

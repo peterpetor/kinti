@@ -2036,6 +2036,8 @@ interface RideRow {
   expires_at: string;
   manage_token: string | null;
   contact_whatsapp: string | null;
+  accepts_packages: number | null;
+  package_note: string | null;
 }
 
 export interface RideWaypoint {
@@ -2064,6 +2066,10 @@ export interface Ride {
   createdAt: string;
   expiresAt: string;
   manageToken: string | null;
+  /** Vállal-e csomagot is a sofőr (kintieknek HU termékeket). */
+  acceptsPackages: boolean;
+  /** Mit, mennyiért, mekkora — szabad szöveg. */
+  packageNote: string | null;
 }
 
 /**
@@ -2141,6 +2147,8 @@ function toRide(r: RideRow): Ride {
     createdAt: r.created_at,
     expiresAt: r.expires_at,
     manageToken: r.manage_token,
+    acceptsPackages: r.accepts_packages === 1,
+    packageNote: r.package_note,
   };
 }
 
@@ -2162,6 +2170,8 @@ export interface CreateRideInput {
   isRequest: boolean;
   expiresAt: string;
   manageToken: string;
+  acceptsPackages: boolean;
+  packageNote: string | null;
 }
 
 export async function createRide(input: CreateRideInput): Promise<void> {
@@ -2173,8 +2183,9 @@ export async function createRide(input: CreateRideInput): Promise<void> {
       `INSERT INTO rides
        (id, departure_city, destination_city, departure_time, lat, lng, seats,
         price_text, poster_name, poster_user_id, contact_phone, contact_whatsapp,
-        notes, waypoints, is_request, expires_at, manage_token)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        notes, waypoints, is_request, expires_at, manage_token,
+        accepts_packages, package_note)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -2194,6 +2205,8 @@ export async function createRide(input: CreateRideInput): Promise<void> {
       input.isRequest ? 1 : 0,
       input.expiresAt,
       input.manageToken,
+      input.acceptsPackages ? 1 : 0,
+      input.packageNote,
     )
     .run();
 }
@@ -2213,6 +2226,8 @@ export interface UpdateRideFields {
   contactPhone?: string;
   contactWhatsapp?: string | null;
   notes?: string | null;
+  acceptsPackages?: boolean;
+  packageNote?: string | null;
 }
 
 export async function updateRideByManageToken(
@@ -2228,6 +2243,7 @@ export async function updateRideByManageToken(
     contactPhone: "contact_phone",
     contactWhatsapp: "contact_whatsapp",
     notes: "notes",
+    packageNote: "package_note",
   };
   for (const [k, col] of Object.entries(map)) {
     const v = fields[k as keyof UpdateRideFields];
@@ -2235,6 +2251,10 @@ export async function updateRideByManageToken(
       sets.push(`${col} = ?`);
       values.push(v);
     }
+  }
+  if (fields.acceptsPackages !== undefined) {
+    sets.push("accepts_packages = ?");
+    values.push(fields.acceptsPackages ? 1 : 0);
   }
   if (sets.length === 0) return true;
   const sql = `UPDATE rides SET ${sets.join(", ")} WHERE manage_token = ?`;
