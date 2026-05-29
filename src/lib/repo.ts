@@ -2675,8 +2675,9 @@ export interface AdminStats {
 export async function getAdminStats(): Promise<AdminStats> {
   const db = getDB();
   const q = (sql: string) => db.prepare(sql).first<{ n: number }>();
+  // A digest_subscribers tábla DROP-pelve (0033) — már nincs lekérdezve.
   const [
-    businesses, verified, bulletins, events, rides, reviews, digest, push,
+    businesses, verified, bulletins, events, rides, reviews, push,
   ] = await Promise.all([
     q("SELECT COUNT(*) AS n FROM businesses"),
     q("SELECT COUNT(*) AS n FROM businesses WHERE verified = 1"),
@@ -2684,7 +2685,6 @@ export async function getAdminStats(): Promise<AdminStats> {
     q("SELECT COUNT(*) AS n FROM events WHERE status = 'approved'"),
     q("SELECT COUNT(*) AS n FROM rides WHERE expires_at > datetime('now')"),
     q("SELECT COUNT(*) AS n FROM reviews WHERE hidden = 0"),
-    q("SELECT COUNT(*) AS n FROM digest_subscribers WHERE confirmed = 1"),
     q("SELECT COUNT(*) AS n FROM push_subscriptions"),
   ]);
   return {
@@ -2694,7 +2694,7 @@ export async function getAdminStats(): Promise<AdminStats> {
     eventsApproved: events?.n ?? 0,
     ridesActive: rides?.n ?? 0,
     reviews: reviews?.n ?? 0,
-    digestSubscribersConfirmed: digest?.n ?? 0,
+    digestSubscribersConfirmed: 0,
     pushSubscriptions: push?.n ?? 0,
   };
 }
