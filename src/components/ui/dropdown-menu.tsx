@@ -98,6 +98,13 @@ export function DropdownMenu() {
                 Tudásbázis
               </Link>
 
+              <Link href="/arfolyam" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  💱
+                </span>
+                CHF / HUF árfolyam
+              </Link>
+
               <Link href="/segitseg" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
                   <Icon name="question" size={16} strokeWidth={2.4} />

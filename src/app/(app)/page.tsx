@@ -12,6 +12,7 @@ import { OnboardingTour } from "@/components/onboarding-tour";
 import { MyPostsBanner } from "@/components/my-posts-banner";
 import { GlobalSearch } from "@/components/global-search";
 import { PwaInstallCard } from "@/components/pwa-install-card";
+import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
 import { getBusinesses, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -50,6 +51,9 @@ export default async function FeedPage() {
 
       {/* svájci időjárás — a kiválasztott kanton székhelye (MeteoSwiss ICON) */}
       <WeatherWidget />
+
+      {/* CHF/HUF árfolyam widget — gyors elérés a kalkulátorhoz */}
+      <ExchangeRateWidget />
 
       {/* friss / közeli vállalkozások — szerkesztői válogatás */}
       <section className="space-y-3">
