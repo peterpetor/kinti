@@ -329,37 +329,38 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         />
       </Section>
 
-      {/* Feladó-név + email */}
-      <Section title="Hirdető adatai" required>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <div>
-            <input
-              type="text"
-              value={form.poster}
-              onChange={(e) => setField("poster", e.target.value)}
-              placeholder="Megjelenő név (pl. Tímea)"
-              maxLength={LIMITS.posterMax}
-              className={inputCls(errors.poster)}
-            />
-            <FieldError msg={errors.poster} />
-          </div>
-          <div>
-            <input
-              type="email"
-              value={form.email}
-              onChange={(e) => setField("email", e.target.value)}
-              placeholder="Email (opcionális)"
-              autoComplete="email"
-              maxLength={LIMITS.emailMax}
-              className={inputCls(errors.email)}
-            />
-            <FieldError msg={errors.email} />
-          </div>
-        </div>
+      {/* Megjelenő név — kötelező */}
+      <Section title="Megjelenő név" required>
+        <input
+          type="text"
+          value={form.poster}
+          onChange={(e) => setField("poster", e.target.value)}
+          placeholder="Pl. Tímea"
+          maxLength={LIMITS.posterMax}
+          className={inputCls(errors.poster)}
+        />
+        <FieldError msg={errors.poster} />
         <p className="mt-2 text-[11px] leading-snug text-ink-muted">
-          <strong className="text-ink">Email nem kell.</strong> Ha üresen hagyod, a hirdetés
-          azonnal megjelenik, és kapsz egy kezelő-linket — tedd el (QR-kód is jön)!
-          Ha emailt adsz, a régi módon megerősítő linket kapsz hozzá. Részletek:{" "}
+          Ezen a néven jelensz meg a hirdetésed mellett.
+        </p>
+      </Section>
+
+      {/* Email — KÜLÖN szekció, opcionális */}
+      <Section title="Email">
+        <input
+          type="email"
+          value={form.email}
+          onChange={(e) => setField("email", e.target.value)}
+          placeholder="Email (opcionális — hagyhatod üresen)"
+          autoComplete="email"
+          maxLength={LIMITS.emailMax}
+          className={inputCls(errors.email)}
+        />
+        <FieldError msg={errors.email} />
+        <p className="mt-2 text-[11px] leading-snug text-ink-muted">
+          <strong className="text-ink">Email NEM kötelező.</strong> Ha üresen hagyod, a hirdetés
+          azonnal megjelenik, és kapsz egy kezelő-linket (QR-kód is jön) — tedd el!{" "}
+          Ha mégis adsz emailt, a régi módon megerősítő linket kapsz hozzá. Részletek:{" "}
           <Link href="/adatvedelem" className="underline">Adatkezelési Tájékoztató</Link>.
         </p>
       </Section>
