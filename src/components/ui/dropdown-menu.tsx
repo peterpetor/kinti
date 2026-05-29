@@ -140,6 +140,13 @@ export function DropdownMenu() {
                 Gyorshajtás kalkulátor
               </Link>
 
+              <Link href="/lakberles" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  🏠
+                </span>
+                Bérlés rejtett-költség
+              </Link>
+
               <Link href="/repulojegy" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                   ✈️
