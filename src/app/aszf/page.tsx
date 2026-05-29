@@ -80,14 +80,39 @@ export default function AszfPage() {
           értesítés nélküli eltávolítására.</li>
       </ul>
 
-      <h2>6. Vállalkozói profil pontossága</h2>
+      <h2>6. Telekocsi (Közösségi utazásmegosztás)</h2>
+      <p>
+        A platformon elérhető Telekocsi modul kizárólag a felhasználók egymás közötti kapcsolatfelvételét segíti. 
+        Az üzemeltető <strong>nem fuvarszervező vagy személyfuvarozó cég</strong>. Nem ellenőrizzük a sofőrök személyazonosságát, 
+        jogosítványát, a járművek műszaki állapotát vagy a biztosítások meglétét.
+      </p>
+      <p>
+        A közös utazás kizárólag a sofőr és az utas(ok) magánmegállapodása. Az utazás során bekövetkező esetleges 
+        balesetekért, késésekért, járatlekésésért, anyagi károkért vagy a felek közötti pénzügyi vitákért az 
+        üzemeltető <strong>semmilyen felelősséget nem vállal</strong>. A felhasználók a Telekocsi modult kizárólag 
+        saját kockázatukra használják.
+      </p>
+
+      <h2>7. Értékelési Rendszer és Felhasználói Vélemények</h2>
+      <p>
+        A platformon (pl. Telekocsi utazások után) leadott értékelések és vélemények a felhasználók szubjektív 
+        magánvéleményét tükrözik. Az üzemeltető a véleményeket előzetesen nem moderálja és azok valóságtartalmát nem ellenőrzi.
+      </p>
+      <p>
+        A közzétett értékelésekből fakadó esetleges hitelrontásért vagy személyiségi jogsértésért 
+        kizárólag az értékelést leadó felhasználó felel, az üzemeltetőt felelősség nem terheli. 
+        Kifejezetten fenntartjuk azonban a jogot, hogy a rágalmazó, obszcén vagy a jelen ÁSZF-be ütköző 
+        véleményeket bejelentés alapján vagy saját hatáskörben, indoklás nélkül eltávolítsuk.
+      </p>
+
+      <h2>8. Vállalkozói profil pontossága</h2>
       <p>
         A vállalkozó köteles a profilján szereplő adatokat naprakészen és valósághűen tartani.
         Az adatok pontatlansága miatt esetlegesen kárt szenvedő harmadik féllel szemben az
         üzemeltető nem felel.
       </p>
 
-      <h2>7. A Szolgáltatás rendelkezésre állása</h2>
+      <h2>9. A Szolgáltatás rendelkezésre állása</h2>
       <p>
         Igyekszünk a Szolgáltatást folyamatosan elérhetővé tenni, de <strong>garanciát nem
         vállalunk</strong> a 100%-os rendelkezésre állásra. Karbantartás, technikai hiba, vagy
@@ -95,13 +120,13 @@ export default function AszfPage() {
         kártérítés nem jár.
       </p>
 
-      <h2>8. Felelősség-korlátozás</h2>
+      <h2>10. Felelősség-korlátozás</h2>
       <p>
         Az üzemeltető felelőssége a magyar Polgári Törvénykönyv vonatkozó rendelkezései szerint,
         ingyenes szolgáltatás esetén <strong>csak szándékos károkozásra</strong> terjed ki.
       </p>
 
-      <h2>8.1 Eszközök, kalkulátorok és tájékoztató anyagok</h2>
+      <h2>11. Eszközök, kalkulátorok és tájékoztató anyagok</h2>
       <p>
         A Szolgáltatáson belül elérhető <strong>kalkulátorok</strong> (gyorshajtás-bírság,
         vám, árfolyam, repülőjegy-becslő stb.), <strong>varázslók</strong> (engedély-választó,
@@ -149,7 +174,7 @@ export default function AszfPage() {
         A <strong>napi Svájci kvíz</strong> kizárólag szórakoztató-oktatási céllal készült.
       </p>
 
-      <h2>8.2 Közösségi jelentések</h2>
+      <h2>12. Közösségi jelentések</h2>
       <p>
         A platformon a felhasználók által beadott <strong>közösségi jelentések</strong>{" "}
         (akció-térkép, határátkelő-figyelő, SOS-radar, telekocsi-értékelés, vélemény stb.)
@@ -163,7 +188,7 @@ export default function AszfPage() {
         segélyhívást (Svájcban 112). Vészhelyzet esetén MINDIG hívd a 112-t.
       </p>
 
-      <h2>9. Szellemi tulajdon</h2>
+      <h2>13. Szellemi tulajdon</h2>
       <p>
         A kinti.app márkajegye, logója, design rendszere az üzemeltető szellemi tulajdona.
         A platformon megjelenő vállalkozási logók és képek a vállalkozók tulajdonát képezik,
@@ -171,20 +196,20 @@ export default function AszfPage() {
         keretében.
       </p>
 
-      <h2>10. Módosítás</h2>
+      <h2>14. Módosítás</h2>
       <p>
         Az üzemeltető fenntartja a jogot, hogy ezeket a feltételeket egyoldalúan módosítsa.
         A módosítás a közzétételkor lép hatályba; lényeges változásokról a vállalkozói
         regisztráltakat emailben is értesítjük.
       </p>
 
-      <h2>11. Jogválasztás és bíróság</h2>
+      <h2>15. Jogválasztás és bíróság</h2>
       <p>
         A jelen feltételekre a <strong>magyar jog</strong> az irányadó. Esetleges jogvitákban
         a magyar bíróságok rendelkeznek hatáskörrel és illetékességgel.
       </p>
 
-      <h2>12. Kapcsolat</h2>
+      <h2>16. Kapcsolat</h2>
       <p>
         Kérdés, panasz, takedown-bejelentés: <a href="mailto:info@kinti.app">info@kinti.app</a>
         {" / "}
