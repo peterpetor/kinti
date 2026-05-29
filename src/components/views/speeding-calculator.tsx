@@ -58,7 +58,7 @@ export function SpeedingCalculator() {
               Gyorshajtás bírság-becslő
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              A 2024-es svájci szabályok alapján — fix bírság vs. büntetőeljárás,
+              A 2026-os svájci szabályok alapján — fix bírság vs. büntetőeljárás,
               jogosítvány-bevonás, jövedelem-arányos napi pénz (Tagessatz).
             </p>
           </div>

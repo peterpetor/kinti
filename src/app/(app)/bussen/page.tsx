@@ -8,7 +8,7 @@ export const dynamic = "force-static";
 export const metadata = {
   title: "Gyorshajtás-bírság kalkulátor — Svájc",
   description:
-    "Svájci gyorshajtás-bírság becslő: 2024-es Ordnungsbussen-tábla + büntetőeljárás (jövedelem-arányos Tagessatz) + jogosítvány-bevonás. Csak becslés!",
+    "Svájci gyorshajtás-bírság becslő: 2026-os Ordnungsbussen-tábla + büntetőeljárás (jövedelem-arányos Tagessatz) + jogosítvány-bevonás. Csak becslés!",
 };
 
 export default function BussenPage() {

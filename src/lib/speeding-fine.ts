@@ -1,7 +1,7 @@
 /**
  * Svájci gyorshajtás-büntetés kalkulátor.
  *
- * Forrás: Ordnungsbussenverordnung (OBV) 2024 + StGB (büntetőjog).
+ * Forrás: Ordnungsbussenverordnung (OBV) 2026 + StGB (büntetőjog).
  *
  * FONTOS: tájékoztató jellegű becslés, NEM jogi tanács. A pontos
  * büntetést a kantoni hatóság szabja meg az esetleges enyhítő /
@@ -52,7 +52,7 @@ export interface FineResult {
 }
 
 /**
- * Ordnungsbusse-táblázat 2024 (CHF). Túllépés km/h → fix bírság.
+ * Ordnungsbusse-táblázat 2026 (CHF). Túllépés km/h → fix bírság.
  * Ha a túllépés nagyobb a táblázat végpontjánál, már Strafverfahren.
  */
 const ORDNUNGSBUSSE: Record<RoadType, Array<{ maxOverage: number; chf: number }>> = {
