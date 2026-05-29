@@ -10,6 +10,7 @@ import {
 } from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { isDisposableEmail } from "@/lib/disposable-emails";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -127,7 +128,7 @@ export async function POST(req: Request) {
     // jelezzük neki — a piszkozatot meghagyjuk, és 24h múlva az auto-purge
     // törli (a confirm_token egyébként sose került ki).
     // Részleteket NEM küldjük vissza public-on (Resend Trace ID stb. szivárgás ellen).
-    console.error("[bulletin/submit] email send failed:", err);
+    safeLogError("[bulletin/submit] email send failed", err);
     return NextResponse.json(
       { error: "Az emailt nem sikerült elküldeni. Próbáld újra később." },
       { status: 502 },

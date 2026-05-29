@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getEventByToken, updateEventStatus, deleteEvent } from "@/lib/repo";
 import { sendEventAdminModerationEmail } from "@/lib/email";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -66,7 +67,8 @@ export async function GET(
   } catch {
     // Admin-email küldési hiba NEM blokkolja a felhasználó visszajelzését,
     // csak logolja (a D1-ben már pending_admin státuszban van az esemény)
-    console.error("Admin email küldési hiba az esemény megerősítésekor:", event.id);
+    // Az event.id NEM PII (slug-jellegű), de a központi helperen megy
+    safeLogError(`[events/confirm] admin email failed for ${event.id}`, undefined);
   }
 
   return new Response(

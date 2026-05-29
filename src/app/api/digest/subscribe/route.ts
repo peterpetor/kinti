@@ -10,6 +10,7 @@ import { isDisposableEmail } from "@/lib/disposable-emails";
 import { hashIp, TERMS_VERSION } from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -101,7 +102,7 @@ export async function POST(req: Request) {
       unsubscribeUrl: `${baseUrl}/api/digest/unsubscribe/${unsubscribeToken}`,
     });
   } catch (err) {
-    console.error("[digest/subscribe] email send failed:", err);
+    safeLogError("[digest/subscribe] email send failed", err);
     return NextResponse.json(
       { error: "Az emailt nem sikerült elküldeni. Próbáld újra később." },
       { status: 502 },

@@ -10,6 +10,7 @@ import {
   validateReviewInput,
   REVIEW_CONFIRM_TTL_MS,
 } from "@/lib/reviews";
+import { safeLogError } from "@/lib/safe-log";
 import { TERMS_VERSION, hashIp } from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { isDisposableEmail } from "@/lib/disposable-emails";
@@ -119,7 +120,7 @@ export async function POST(req: Request) {
       confirmExpiresAt: expiresAt,
     });
   } catch (err) {
-    console.error("[reviews/submit] email send failed:", err);
+    safeLogError("[reviews/submit] email send failed", err);
     return NextResponse.json(
       { error: "Az emailt nem sikerült elküldeni. Próbáld újra később." },
       { status: 502 },

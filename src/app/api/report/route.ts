@@ -12,6 +12,7 @@ import { hashIp } from "@/lib/bulletin";
 import { sendContentReportEmail } from "@/lib/email";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { getSosAlertById, hideSosAlert } from "@/lib/sos-repo";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -123,7 +124,8 @@ export async function POST(req: Request) {
     });
   } catch {
     // Az admin-email hibája nem blokkolja a választ — a tartalom már rejtve van.
-    console.error("Jelentés admin-email hiba:", contentType, contentId);
+    // contentType/contentId nem PII (típus + slug), de a központi helperen
+    safeLogError(`[report] admin email failed (${contentType}/${contentId})`, undefined);
   }
 
   return NextResponse.json({ ok: true }, { headers: { "cache-control": "no-store" } });

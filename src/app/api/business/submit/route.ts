@@ -15,6 +15,7 @@ import {
 } from "@/lib/business";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { isDisposableEmail } from "@/lib/disposable-emails";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -132,7 +133,7 @@ export async function POST(req: Request) {
       manageUrl: `${baseUrl}/szaknevsor/kezeles/${manageToken}`,
     });
   } catch (err) {
-    console.error("[business/submit] email send failed:", err);
+    safeLogError("[business/submit] email send failed", err);
     return NextResponse.json(
       { error: "Az emailt nem sikerült elküldeni. Próbáld újra később." },
       { status: 502 },

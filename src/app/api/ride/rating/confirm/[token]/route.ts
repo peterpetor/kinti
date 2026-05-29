@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getRideRatingDraftByToken, confirmRideRatingDraft } from "@/lib/repo";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 
@@ -34,7 +35,7 @@ export async function GET(
     // Redirect to a success page or the ride list
     return NextResponse.redirect(new URL("/telekocsi?rating=success", req.url));
   } catch (err) {
-    console.error("Ride rating confirm error:", err);
+    safeLogError("[ride/rating/confirm] error", err);
     return new NextResponse(
       "Szerverhiba történt a megerősítés során.",
       { status: 500 }

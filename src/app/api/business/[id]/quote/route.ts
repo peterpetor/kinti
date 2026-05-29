@@ -8,6 +8,7 @@ import { sendBusinessQuoteEmail } from "@/lib/email";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { hashIp } from "@/lib/bulletin";
 import { isDisposableEmail } from "@/lib/disposable-emails";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -112,7 +113,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       message,
     });
   } catch (err) {
-    console.error("[business/quote] email send failed:", err);
+    safeLogError("[business/quote] email send failed", err);
     return NextResponse.json(
       { error: "Az emailt nem sikerült elküldeni. Próbáld újra később." },
       { status: 502 },

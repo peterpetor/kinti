@@ -5,6 +5,7 @@ import { verifyTurnstile } from "@/lib/turnstile";
 import { hashIp } from "@/lib/bulletin";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { validateRideRating } from "@/lib/ride-rating";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -92,7 +93,7 @@ export async function POST(req: Request) {
     logSpamSubmit(SPAM_KIND, ipHash).catch(() => { /* silent */ });
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("[ride/rating/submit] failed:", error);
+    safeLogError("[ride/rating/submit] failed", error);
     return NextResponse.json({ error: "Szerverhiba történt." }, { status: 500 });
   }
 }
