@@ -16,7 +16,8 @@ export type PostType =
   | "bulletin"  // hirdetés
   | "event"     // esemény
   | "review"    // vélemény
-  | "business"; // vállalkozás (szaknévsor)
+  | "business"  // vállalkozás (szaknévsor)
+  | "spontan";  // spontán mikro-esemény (24-48h)
 
 export interface MyPostEntry {
   type: PostType;

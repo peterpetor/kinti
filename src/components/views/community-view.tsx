@@ -11,6 +11,9 @@ import { handleFromId } from "@/lib/handle";
 import { getTagEmoji } from "@/lib/tag-emoji";
 import { OwnPostBadge } from "@/components/own-post-badge";
 import { EventCalendar } from "@/components/event-calendar";
+import { SpontaneousCard } from "./spontaneous-card";
+import { SpontaneousForm } from "./spontaneous-form";
+import type { PublicSpontaneous } from "@/lib/repo";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ShareSheet } from "@/components/share-sheet";
 import { AddToCalendar } from "@/components/add-to-calendar";
@@ -70,17 +73,19 @@ function formatExpiry(days: number | null): string | null {
 }
 
 
-type Tab = "board" | "events";
+type Tab = "board" | "events" | "spontan";
 
 export function CommunityView({
   events,
   kinds,
   posts,
+  spontaneous,
   turnstileSiteKey = "",
 }: {
   events: KintiEvent[];
   kinds: BulletinKind[];
   posts: BulletinPost[];
+  spontaneous: PublicSpontaneous[];
   turnstileSiteKey?: string;
 }) {
   const [tab, setTab] = useState<Tab>("events");
@@ -88,6 +93,7 @@ export function CommunityView({
   const tabs: { id: Tab; label: string; count: number | null }[] = [
     { id: "events", label: "Események", count: events.length },
     { id: "board", label: "Hirdetések", count: posts.length },
+    { id: "spontan", label: "🎲 Spontán", count: spontaneous.length },
   ];
 
   return (
@@ -125,8 +131,75 @@ export function CommunityView({
       <div className="space-y-2.5 px-5">
         {tab === "events" && <EventsList events={events} />}
         {tab === "board" && <BulletinList posts={posts} kinds={kinds} turnstileSiteKey={turnstileSiteKey} />}
+        {tab === "spontan" && <SpontaneousList items={spontaneous} turnstileSiteKey={turnstileSiteKey} />}
       </div>
     </div>
+  );
+}
+
+function SpontaneousList({
+  items,
+  turnstileSiteKey,
+}: {
+  items: PublicSpontaneous[];
+  turnstileSiteKey: string;
+}) {
+  const [showForm, setShowForm] = useState(false);
+
+  if (showForm) {
+    return (
+      <SpontaneousForm
+        turnstileSiteKey={turnstileSiteKey}
+        onClose={() => setShowForm(false)}
+      />
+    );
+  }
+
+  return (
+    <>
+      {/* Mit ez a fül? — pici magyarázat */}
+      <div className="rounded-card border border-[#9b59b6]/30 bg-[#fdf4ff] px-3.5 py-2.5">
+        <p className="text-[11.5px] leading-snug text-ink">
+          <strong className="text-[#9b59b6]">🎲 Spontán találkozók</strong> — túratárs, bringapartner, sörözés, kávé.
+          Pici csoport, max 48 órán belül. 1 órával a találkozó után automatikusan eltűnik.
+        </p>
+      </div>
+
+      {/* CTA — feladás */}
+      <button
+        type="button"
+        onClick={() => setShowForm(true)}
+        className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-[#9b59b6]/40 bg-[#9b59b6]/5 p-3.5 transition active:scale-[0.99]"
+      >
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-[#9b59b6] text-white">
+          <Icon name="plus" size={16} strokeWidth={2.4} />
+        </span>
+        <div className="min-w-0 flex-1 text-left">
+          <div className="text-[14px] font-extrabold tracking-[-0.01em] text-ink">
+            Spontán meetup közzététele
+          </div>
+          <div className="text-[11.5px] text-ink-muted">
+            „Szombat délelőtt bringázás, 2 embert várok…"
+          </div>
+        </div>
+        <Icon name="chevR" size={14} className="text-[#9b59b6] shrink-0" />
+      </button>
+
+      {/* Lista */}
+      {items.length === 0 ? (
+        <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-line bg-surface-alt px-6 py-12 text-center">
+          <span className="text-3xl">🎲</span>
+          <p className="text-[13.5px] font-semibold text-ink">Még nincs spontán meetup</p>
+          <p className="text-[12px] text-ink-muted">Légy te az első, aki feldob valamit!</p>
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {items.map((it) => (
+            <SpontaneousCard key={it.id} item={it} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
 

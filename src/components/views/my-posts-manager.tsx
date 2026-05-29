@@ -21,6 +21,7 @@ const TYPE_META: Record<PostType, { label: string; icon: string; color: string }
   event:    { label: "Esemény",      icon: "📅", color: "#E4405F" },
   review:   { label: "Vélemény",     icon: "⭐", color: "#f1c40f" },
   business: { label: "Vállalkozás",  icon: "🏪", color: "#1d4434" },
+  spontan:  { label: "Spontán",      icon: "🎲", color: "#9b59b6" },
 };
 
 export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: string }) {
@@ -140,7 +141,7 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
   }
 
   const filtered = filter === "all" ? items : items.filter((it) => it.type === filter);
-  const totals: Record<PostType | "all", number> = { all: items.length, ride: 0, bulletin: 0, event: 0, review: 0, business: 0 };
+  const totals: Record<PostType | "all", number> = { all: items.length, ride: 0, bulletin: 0, event: 0, review: 0, business: 0, spontan: 0 };
   for (const it of items) totals[it.type]++;
 
   return (

@@ -1,7 +1,12 @@
 import { ScreenHeader } from "@/components/ui";
 import { CommunityView } from "@/components/views/community-view";
 import { PushOptin } from "@/components/push-optin";
-import { getBulletinKinds, getBulletinPosts, getEvents } from "@/lib/repo";
+import {
+  getBulletinKinds,
+  getBulletinPosts,
+  getEvents,
+  getActiveSpontaneous,
+} from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -9,10 +14,11 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Közösség" };
 
 export default async function KozossegPage() {
-  const [events, kinds, posts] = await Promise.all([
+  const [events, kinds, posts, spontaneous] = await Promise.all([
     getEvents(),
     getBulletinKinds(),
     getBulletinPosts(),
+    getActiveSpontaneous(),
   ]);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
@@ -40,6 +46,7 @@ export default async function KozossegPage() {
         events={events}
         kinds={kinds}
         posts={posts}
+        spontaneous={spontaneous}
         turnstileSiteKey={turnstileSiteKey}
       />
     </div>

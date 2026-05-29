@@ -2736,3 +2736,167 @@ export async function getAdminStats(): Promise<AdminStats> {
     pushSubscriptions: push?.n ?? 0,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Spontán mikro-események (spontaneous_meetups) — 24-48h TTL
+// ---------------------------------------------------------------------------
+
+export interface Spontaneous {
+  id: string;
+  title: string;
+  locationName: string;
+  cantonCode: string | null;
+  lat: number | null;
+  lng: number | null;
+  meetupTime: string;
+  maxPeople: number;
+  contactPhone: string;
+  contactWhatsapp: string | null;
+  poster: string | null;
+  notes: string | null;
+  manageToken: string | null;
+  createdAt: string;
+  expiresAt: string;
+}
+
+/** Publikus változat — manage_token nélkül. */
+export type PublicSpontaneous = Omit<Spontaneous, "manageToken">;
+
+interface SpontaneousRow {
+  id: string;
+  title: string;
+  location_name: string;
+  canton_code: string | null;
+  lat: number | null;
+  lng: number | null;
+  meetup_time: string;
+  max_people: number;
+  contact_phone: string;
+  contact_whatsapp: string | null;
+  poster: string | null;
+  notes: string | null;
+  manage_token: string | null;
+  created_at: string;
+  expires_at: string;
+}
+
+function toSpontaneous(r: SpontaneousRow): Spontaneous {
+  return {
+    id: r.id,
+    title: r.title,
+    locationName: r.location_name,
+    cantonCode: r.canton_code,
+    lat: r.lat,
+    lng: r.lng,
+    meetupTime: r.meetup_time,
+    maxPeople: r.max_people,
+    contactPhone: r.contact_phone,
+    contactWhatsapp: r.contact_whatsapp,
+    poster: r.poster,
+    notes: r.notes,
+    manageToken: r.manage_token,
+    createdAt: r.created_at,
+    expiresAt: r.expires_at,
+  };
+}
+
+export function toPublicSpontaneous(s: Spontaneous): PublicSpontaneous {
+  const { manageToken: _omit, ...pub } = s;
+  void _omit;
+  return pub;
+}
+
+export interface CreateSpontaneousInput {
+  id: string;
+  title: string;
+  locationName: string;
+  cantonCode: string | null;
+  lat: number | null;
+  lng: number | null;
+  meetupTime: string;
+  maxPeople: number;
+  contactPhone: string;
+  contactWhatsapp: string | null;
+  poster: string | null;
+  notes: string | null;
+  manageToken: string;
+  expiresAt: string;
+  ipHash: string | null;
+}
+
+export async function createSpontaneous(input: CreateSpontaneousInput): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO spontaneous_meetups
+       (id, title, location_name, canton_code, lat, lng, meetup_time, max_people,
+        contact_phone, contact_whatsapp, poster, notes, manage_token, ip_hash, expires_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      input.id,
+      input.title,
+      input.locationName,
+      input.cantonCode,
+      input.lat,
+      input.lng,
+      input.meetupTime,
+      input.maxPeople,
+      input.contactPhone,
+      input.contactWhatsapp,
+      input.poster,
+      input.notes,
+      input.manageToken,
+      input.ipHash,
+      input.expiresAt,
+    )
+    .run();
+}
+
+/** Aktív (nem lejárt) spontán meetup-ok, meetup_time szerint emelkedő. */
+export async function getActiveSpontaneous(): Promise<PublicSpontaneous[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT * FROM spontaneous_meetups
+       WHERE expires_at > datetime('now')
+       ORDER BY meetup_time ASC`,
+    )
+    .all<SpontaneousRow>();
+  return results.map(toSpontaneous).map(toPublicSpontaneous);
+}
+
+export async function getSpontaneousByManageToken(token: string): Promise<Spontaneous | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM spontaneous_meetups WHERE manage_token = ?")
+    .bind(token)
+    .first<SpontaneousRow>();
+  return row ? toSpontaneous(row) : null;
+}
+
+export async function deleteSpontaneousByManageToken(token: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM spontaneous_meetups WHERE manage_token = ?")
+    .bind(token)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+/** Cron / purge: lejárt spontán meetup-ok takarítása. */
+export async function purgeExpiredSpontaneous(): Promise<number> {
+  const res = await getDB()
+    .prepare("DELETE FROM spontaneous_meetups WHERE expires_at <= datetime('now')")
+    .run();
+  return res.meta.changes ?? 0;
+}
+
+/** Hány spontán-hirdetést adott fel ez az IP az elmúlt 24 órában (anti-spam). */
+export async function countRecentSpontaneous(ipHash: string | null): Promise<number> {
+  if (!ipHash) return 0;
+  const row = await getDB()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM spontaneous_meetups
+       WHERE ip_hash = ? AND created_at > datetime('now', '-1 day')`,
+    )
+    .bind(ipHash)
+    .first<{ n: number }>();
+  return row?.n ?? 0;
+}

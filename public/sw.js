@@ -16,7 +16,7 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v8";
+const VERSION = "kinti-v9";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -112,6 +112,7 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/telekocsi-kezeles") ||
     url.pathname.startsWith("/hirdetes-kezeles") ||
     url.pathname.startsWith("/velemeny-kezeles") ||
+    url.pathname.startsWith("/spontan-kezeles") ||
     url.pathname.startsWith("/kozosseg/esemeny/")
   ) return;
 
