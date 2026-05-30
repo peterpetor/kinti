@@ -144,7 +144,7 @@ export function BulletinImageUploader({
               body: JSON.stringify({ imageKey: key }),
             });
             if (analyzeRes.ok) {
-              const { analysis, unsafe, error: serverError } = await analyzeRes.json();
+              const { analysis, unsafe, error: serverError } = (await analyzeRes.json()) as any;
               if (unsafe) {
                 throw new Error(serverError || "Kép biztonsági okokból elutasítva.");
               }

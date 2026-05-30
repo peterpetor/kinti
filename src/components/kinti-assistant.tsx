@@ -25,7 +25,7 @@ export function KintiAssistant() {
         body: JSON.stringify({ prompt: query }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as any;
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a kérdés feldolgozása közben.");
       }
