@@ -40,7 +40,25 @@ INSERT INTO categories (id, label, glyph, sort_order) VALUES
   ('tisztito',    'Tisztító / Ruhavarró', '👔', 22),
   ('allat',       'Állatgondozás',  '🐾', 23),
   ('ingatlan',    'Ingatlan',       '🏠', 24),
-  ('biztositas',  'Biztosítás',     '🛡️', 25);
+  ('biztositas',  'Biztosítás',     '🛡️', 25),
+  ('pszichologus', 'Pszichológus / Coach', '🧠', 26),
+  ('zenesz',      'Zene / Zenetanár', '🎵', 27),
+  ('edzo',        'Edző / Fitness', '💪', 28),
+  ('asztalos',    'Asztalos',       '🪚', 29),
+  ('cukrasz',     'Cukrász / Torták', '🎂', 30),
+  ('autoberles',  'Autóbérlés / Kozmetika', '🚗', 31),
+  ('szallas',     'Szálláshely / Panzió', '🏨', 32),
+  ('rendezveny',  'Rendezvényszervezés', '🎉', 33),
+  ('klima',       'Klíma / Fűtés',  '❄️', 34),
+  ('nyomda',      'Nyomda / Grafika', '🖨️', 35),
+  ('tanacsadas',  'Cégalapítás / Tanácsadás', '💼', 36),
+  ('webshop',     'Webáruház',      '🛒', 37),
+  ('takaritas_ipari', 'Ablak- / Ipari tisztítás', '🧼', 38),
+  ('biztonsag',   'Biztonságtechnika', '🛡️', 39),
+  ('lakberendezes', 'Belsőépítészet', '🛋️', 40),
+  ('terkovezes',  'Térkövezés / Útépítés', '🧱', 41),
+  ('animator',    'Gyermekanimátor', '🎈', 42),
+  ('fogorvos',    'Fogorvos',       '🦷', 43);
 
 -- --- 2) Hirdetőtábla-taxonómia -------------------------------------------------
 INSERT INTO bulletin_kinds (id, label, color, sort_order) VALUES
