@@ -64,58 +64,56 @@ export function LegalGatekeeper() {
           </label>
 
           {/* ASZF acceptance */}
-          <label className={`flex items-start gap-3 rounded-2xl border p-4 transition-all duration-200 cursor-pointer ${acceptAszf ? 'border-primary bg-primary-soft/40 shadow-sm' : 'border-line bg-surface-alt hover:bg-surface-alt/75'}`}>
-            <input
-              type="checkbox"
-              checked={acceptAszf}
-              onChange={(e) => setAcceptAszf(e.target.checked)}
-              className="mt-1 h-4.5 w-4.5 cursor-pointer accent-primary rounded-md"
-            />
-            <div className="space-y-0.5">
+          <div className={`rounded-2xl border p-4 transition-all duration-200 ${acceptAszf ? 'border-primary bg-primary-soft/40 shadow-sm' : 'border-line bg-surface-alt'}`}>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={acceptAszf}
+                onChange={(e) => setAcceptAszf(e.target.checked)}
+                className="mt-1 h-4.5 w-4.5 cursor-pointer accent-primary rounded-md"
+              />
               <span className="text-[13px] font-bold text-ink block">
                 Elfogadom az ÁSZF-et
               </span>
-              <span className="text-[11px] text-ink-muted block leading-snug">
-                Elolvastam és elfogadom a{" "}
-                <Link
-                  href="/aszf"
-                  target="_blank"
-                  onClick={(e) => e.stopPropagation()}
-                  className="underline font-bold text-primary hover:text-primary/80 transition"
-                >
-                  Felhasználási Feltételeket (ÁSZF)
-                </Link>
-                .
-              </span>
-            </div>
-          </label>
+            </label>
+            <p className="mt-1.5 pl-[28px] text-[11px] text-ink-muted leading-snug">
+              Elolvastam és elfogadom a{" "}
+              <Link
+                href="/aszf"
+                target="_blank"
+                className="underline font-bold text-primary hover:text-primary/80 transition"
+              >
+                Felhasználási Feltételeket (ÁSZF)
+              </Link>
+              .
+            </p>
+          </div>
 
           {/* Privacy acceptance */}
-          <label className={`flex items-start gap-3 rounded-2xl border p-4 transition-all duration-200 cursor-pointer ${acceptPrivacy ? 'border-primary bg-primary-soft/40 shadow-sm' : 'border-line bg-surface-alt hover:bg-surface-alt/75'}`}>
-            <input
-              type="checkbox"
-              checked={acceptPrivacy}
-              onChange={(e) => setAcceptPrivacy(e.target.checked)}
-              className="mt-1 h-4.5 w-4.5 cursor-pointer accent-primary rounded-md"
-            />
-            <div className="space-y-0.5">
+          <div className={`rounded-2xl border p-4 transition-all duration-200 ${acceptPrivacy ? 'border-primary bg-primary-soft/40 shadow-sm' : 'border-line bg-surface-alt'}`}>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={acceptPrivacy}
+                onChange={(e) => setAcceptPrivacy(e.target.checked)}
+                className="mt-1 h-4.5 w-4.5 cursor-pointer accent-primary rounded-md"
+              />
               <span className="text-[13px] font-bold text-ink block">
                 Elfogadom az Adatkezelési Tájékoztatót
               </span>
-              <span className="text-[11px] text-ink-muted block leading-snug">
-                Hozzájárulok adataim kezeléséhez a{" "}
-                <Link
-                  href="/adatvedelem"
-                  target="_blank"
-                  onClick={(e) => e.stopPropagation()}
-                  className="underline font-bold text-primary hover:text-primary/80 transition"
-                >
-                  Adatkezelési Tájékoztatóban
-                </Link>{" "}
-                leírtak szerint.
-              </span>
-            </div>
-          </label>
+            </label>
+            <p className="mt-1.5 pl-[28px] text-[11px] text-ink-muted leading-snug">
+              Hozzájárulok adataim kezeléséhez a{" "}
+              <Link
+                href="/adatvedelem"
+                target="_blank"
+                className="underline font-bold text-primary hover:text-primary/80 transition"
+              >
+                Adatkezelési Tájékoztatóban
+              </Link>{" "}
+              leírtak szerint.
+            </p>
+          </div>
         </div>
 
         {/* Enter Button */}
