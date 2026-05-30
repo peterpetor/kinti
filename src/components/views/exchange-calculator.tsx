@@ -162,9 +162,14 @@ export function ExchangeCalculator({
 
         {/* Eredmény — köztes árfolyam */}
         <div className="rounded-[14px] border border-dashed border-primary/30 bg-primary-soft/50 p-3">
-          <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
-            Középárfolyamon (nettó, díj nélkül)
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+              Középárfolyamon (nettó, díj nélkül)
+            </p>
+            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-accent">
+              Becslés
+            </span>
+          </div>
           <p className="mt-0.5 text-[22px] font-extrabold tracking-tight text-primary">
             {grossTargetFmt} {targetSymbol}
           </p>

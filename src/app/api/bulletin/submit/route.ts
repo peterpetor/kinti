@@ -17,6 +17,7 @@ import { getCloudflareEnv, getMediaBucket } from "@/lib/cloudflare";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { safeLogError } from "@/lib/safe-log";
 import { moderateImage } from "@/lib/moderation";
+import { moderateText } from "@/lib/text-moderation";
 import { triggerAlberletRadars } from "@/lib/radars";
 
 /** A 30 napos publikus életidő — a publish flow-ban használjuk. */
@@ -90,6 +91,29 @@ export async function POST(req: Request) {
       { error: "Napi limit túllépve. Egy nap (24 óra) legfeljebb 3 hirdetés adható fel ugyanazzal az e-mail címmel vagy IP-címmel." },
       { status: 429 },
     );
+  }
+
+  // 4.1) AI szöveg-moderáció — PII, rágalmazás, engedélyköteles tartalom
+  //      Fail-open: ha az AI nem elérhető, ne blokkoljuk a feladást.
+  const combinedText = [
+    validation.value.title,
+    validation.value.meta,
+    validation.value.body,
+  ]
+    .filter((s): s is string => typeof s === "string" && s.length > 0)
+    .join("\n");
+  if (combinedText.length > 0) {
+    const textMod = await moderateText(combinedText);
+    if (textMod.safe === false) {
+      return NextResponse.json(
+        {
+          error:
+            textMod.reason ||
+            "A hirdetés szövege nem felel meg a közösségi irányelveknek.",
+        },
+        { status: 400 },
+      );
+    }
   }
 
   // 5) Kép moderáció Cloudflare Workers AI-val

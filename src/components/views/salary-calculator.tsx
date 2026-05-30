@@ -344,7 +344,10 @@ export function SalaryCalculator() {
 
       {/* Eredmény kártya */}
       <div className="rounded-card border-2 border-primary bg-surface overflow-hidden shadow-card">
-        <div className="bg-primary/5 px-5 py-6 text-center">
+        <div className="bg-primary/5 px-5 py-6 text-center relative">
+          <span className="absolute right-3 top-3 rounded bg-accent/20 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-accent">
+            Becslés
+          </span>
           <p className="text-[13px] font-bold uppercase tracking-wide text-primary">
             Becsült Nettó Bér
           </p>

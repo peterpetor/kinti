@@ -69,11 +69,11 @@ export function BusinessCard({ business: b, href, className, distanceKm }: Busin
           </span>
           {b.verified && (
             <span
-              title="Hitelesített magyar nyelvű vállalkozó"
+              title="Az üzemeltető meggyőződött róla, hogy valódi magyarul beszélő vállalkozás — ez NEM minőségi garancia, a szakképesítést és a munka minőségét nem ellenőrizzük."
               className="inline-flex shrink-0 items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[9.5px] font-bold text-success"
             >
               <Icon name="check" size={9} strokeWidth={3} />
-              Verified
+              Hiteles
             </span>
           )}
           <OwnPostBadge type="business" id={b.id} />

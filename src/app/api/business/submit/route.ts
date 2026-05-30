@@ -6,6 +6,7 @@ import {
   countRecentBusinessSubmissions,
 } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { moderateText } from "@/lib/text-moderation";
 import { sendBusinessConfirmationEmail } from "@/lib/email";
 import { TERMS_VERSION, hashIp } from "@/lib/bulletin";
 import {
@@ -86,6 +87,25 @@ export async function POST(req: Request) {
       { error: `Napi limit túllépve. 24 óra alatt legfeljebb ${BUSINESS_DAILY_LIMIT} vállalkozás küldhető be ugyanazzal az emaillel vagy IP-vel.` },
       { status: 429 },
     );
+  }
+
+  // 5.1) AI szöveg-moderáció — PII, rágalmazás, engedélyköteles ajánlat
+  //      Fail-open: ha az AI nem elérhető, ne blokkoljuk a feladást.
+  const businessText = [validation.value.name, validation.value.blurb]
+    .filter((s): s is string => typeof s === "string" && s.length > 0)
+    .join("\n");
+  if (businessText.length > 0) {
+    const textMod = await moderateText(businessText);
+    if (textMod.safe === false) {
+      return NextResponse.json(
+        {
+          error:
+            textMod.reason ||
+            "A vállalkozási leírás nem felel meg a közösségi irányelveknek.",
+        },
+        { status: 400 },
+      );
+    }
   }
 
   const id = crypto.randomUUID();

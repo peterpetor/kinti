@@ -346,6 +346,14 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
           <span>{form.body.length} / {LIMITS.bodyMax}</span>
         </div>
         <FieldError msg={errors.body} />
+        <div className="mt-2 rounded-[10px] border border-accent/30 bg-accent/5 px-3 py-2 text-[11px] leading-snug text-ink-muted">
+          <strong className="text-accent">⚠ Adatvédelem:</strong> Csak a saját
+          adataidat tüntesd fel (név, telefon, email). Idegen személy adatát
+          (pl. mások telefonszámát) <strong>NE add meg</strong> — ez sérti a
+          GDPR-t és a feladó (te) felelős érte. Engedélyköteles tevékenységeket
+          (orvosi, jogi, pénzügyi tanácsadás stb.) csak hivatalos engedélyszámmal
+          hirdethetsz.
+        </div>
       </Section>
 
       {/* Képek feltöltése */}

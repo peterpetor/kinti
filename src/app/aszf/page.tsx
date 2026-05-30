@@ -60,8 +60,37 @@ export default function AszfPage() {
         <li>gyógyászati termék / dohánytermék / lőfegyver / pszichoaktív szer hirdetése;</li>
         <li>több-szintű marketing („MLM"), készpénzkölcsönzés, pénzügyi piramis;</li>
         <li>szexuális szolgáltatás vagy kísérő-szolgáltatás hirdetése;</li>
-        <li>politikai propaganda vagy szervezett toborzás.</li>
+        <li>politikai propaganda vagy szervezett toborzás;</li>
+        <li>idegen természetes személy adatát tartalmazó tartalom a saját kifejezett
+          hozzájárulása nélkül (más telefonszáma, lakcíme, email-címe).
+          Ennek megsértéséért a feladó GDPR-szabálysértésért és személyiségi
+          jogsértésért felelős, az üzemeltetőt regressz-igénnyel kárpótolja.</li>
       </ul>
+
+      <h3>3.1 Engedélyköteles tevékenységek</h3>
+      <p>
+        Az alábbi tevékenységek <strong>kizárólag érvényes hatósági engedéllyel /
+        szakképesítéssel</strong> rendelkező vállalkozók által hirdethetők, és a
+        hirdető köteles a profilján / hirdetésén az engedélyszámot is feltüntetni:
+      </p>
+      <ul>
+        <li>orvosi, fogorvosi, gyógyszerészeti, pszichológiai, fizioterápiás
+          tevékenység (Eütv., svájci MedBG, PsyG);</li>
+        <li>ügyvédi, közjegyzői, adótanácsadói tevékenység (Üt., svájci BGFA, ASA);</li>
+        <li>befektetési tanácsadás, vagyonkezelés, biztosításközvetítés
+          (Bszt., svájci FINSA, FINIG, VAG);</li>
+        <li>építészeti, statikus tervezői, energetikai-tanúsítói tevékenység
+          (Étv., svájci REG-jegyzék);</li>
+        <li>gyermek-/idősgondozás, oktatás (engedélyes szektorok).</li>
+      </ul>
+      <p>
+        Ezen felül minden vállalkozó köteles a Svájcban (vagy a tevékenység helye
+        szerint) szükséges iparűzési engedéllyel, AHV-bejelentéssel és érvényes
+        munkavállalási engedéllyel rendelkezni (Schwarzarbeit-tilalom — lásd 10.
+        pont). Az üzemeltető ezeket előzetesen nem ellenőrzi; az engedély hiányának
+        bárminemű jogkövetkezménye kizárólag a hirdetőt terheli, az üzemeltető
+        felelőssége teljes körűen kizárt.
+      </p>
 
       <h2>4. Szolgáltatásmegtagadás és Kitiltás joga</h2>
       <p>
@@ -72,12 +101,44 @@ export default function AszfPage() {
         platform biztonságát és jó hírnevét veszélyezteti.
       </p>
 
-      <h2>5. A tartalmakért való felelősség</h2>
+      <h2>5. A tartalmakért való felelősség és jogsértési bejelentés</h2>
       <p>
-        A feltöltött tartalomért <strong>a feltöltő felel</strong>. Az üzemeltető a jogszabálysértő
-        tartalmakat — értesítés (notice-and-takedown) vagy saját észlelés alapján — haladéktalanul
-        eltávolítja. A bejelentés címe:{" "}
-        <a href="mailto:abuse@kinti.app">abuse@kinti.app</a>.
+        A feltöltött tartalomért <strong>a feltöltő felel</strong>. Az üzemeltető a
+        jogszabálysértő tartalmakat — értesítés (notice-and-takedown) vagy saját
+        észlelés alapján — haladéktalanul eltávolítja.
+      </p>
+
+      <h3>5.1 Jogsértési bejelentés (DSA Art. 16)</h3>
+      <p>
+        Az Európai Unió Digitális Szolgáltatások Rendelete (2022/2065 EU rendelet)
+        16. cikke alapján bárki bejelenthet feltehetően jogsértő tartalmat. A
+        bejelentés legyen elektronikus formában (email-en){" "}
+        <a href="mailto:abuse@kinti.app">abuse@kinti.app</a> címre, és tartalmazza
+        legalább:
+      </p>
+      <ul>
+        <li>a bejelentő nevét és elektronikus elérhetőségét (kivéve szerzői jogot
+          érintő bejelentésnél, ahol kötelező);</li>
+        <li>a tartalom pontos elektronikus helyét (URL);</li>
+        <li>a vélelmezett jogsértés indokolt magyarázatát (mely jogot vagy
+          jogszabályt sérti);</li>
+        <li>a bejelentő jóhiszemű nyilatkozatát a bejelentés valóságosságáról.</li>
+      </ul>
+      <p>
+        Az üzemeltető a bejelentést <strong>indokolatlan késedelem nélkül</strong>{" "}
+        feldolgozza, és e-mailben tájékoztatja a bejelentőt és (ha azonosítható)
+        a tartalom feladóját az eredményről.
+      </p>
+
+      <h3>5.2 Tartalom-fellebbezés (DSA Art. 17 és 20)</h3>
+      <p>
+        Ha az üzemeltető a tartalmadat eltávolította vagy a hozzáférést korlátozta,
+        a döntés ellen <strong>indokolt panaszt</strong> nyújthatsz be 6 hónapon
+        belül emailben az <a href="mailto:info@kinti.app">info@kinti.app</a> címre.
+        A panaszt érdemben felülvizsgáljuk, és a beérkezéstől számított ésszerű
+        határidőn belül (jellemzően 30 napon belül) a döntésünk indokolásával
+        válaszolunk. Ha az eredeti döntésünket fenntartjuk, a feladó bírósághoz
+        vagy peren kívüli vitarendezéshez fordulhat (lásd 20.1 pont).
       </p>
 
       <h2>6. Hirdetés lejárta és törlése</h2>
@@ -378,7 +439,33 @@ export default function AszfPage() {
         a magyar bíróságok rendelkeznek hatáskörrel és illetékességgel.
       </p>
 
-      <h2>20. Kapcsolat</h2>
+      <h2>20. Vitarendezés</h2>
+      <h3>20.1 Peren kívüli vitarendezés (DSA Art. 21)</h3>
+      <p>
+        Ha a Szolgáltatással kapcsolatban panaszod van, és az 5.2 pont szerinti
+        belső panaszkezelési eljárásunk sem hozott megnyugtató eredményt, a
+        Digitális Szolgáltatások Rendelete (DSA) 21. cikke alapján jogosult vagy
+        igénybe venni egy elismert{" "}
+        <strong>peren kívüli vitarendezési szervet</strong>. Az Európai Bizottság
+        tagállamonkénti listáját a{" "}
+        <a href="https://digital-strategy.ec.europa.eu/" target="_blank" rel="noreferrer">
+          digital-strategy.ec.europa.eu
+        </a>{" "}
+        oldalon találod. A vitarendezési szerv döntései az üzemeltetőre nézve
+        ajánlás-jellegűek; a végső döntést bíróság hozhatja.
+      </p>
+      <h3>20.2 Fogyasztói vitarendezés</h3>
+      <p>
+        Magyarországi fogyasztóként a megyei (fővárosi) kereskedelmi és iparkamara
+        mellett működő <strong>békéltető testületekhez</strong> fordulhatsz; az
+        Európai Unióban élő fogyasztók az{" "}
+        <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noreferrer">
+          Online Dispute Resolution (ODR) platformon
+        </a>{" "}
+        is kezdeményezhetnek vitarendezést.
+      </p>
+
+      <h2>21. Kapcsolat</h2>
       <p>
         Kérdés, panasz, takedown-bejelentés: <a href="mailto:info@kinti.app">info@kinti.app</a>
         {" / "}

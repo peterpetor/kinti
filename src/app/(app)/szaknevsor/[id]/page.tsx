@@ -235,9 +235,12 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           {b.name}
         </h1>
         {b.verified && (
-          <p className="mt-1.5 inline-flex items-center gap-1 rounded-pill bg-success/15 px-2.5 py-1 text-[11px] font-bold text-success">
+          <p
+            title="Az üzemeltető meggyőződött róla, hogy valódi magyarul beszélő vállalkozás — ez NEM minőségi garancia, a szakképesítést és a munka minőségét nem ellenőrizzük."
+            className="mt-1.5 inline-flex items-center gap-1 rounded-pill bg-success/15 px-2.5 py-1 text-[11px] font-bold text-success"
+          >
             <Icon name="check" size={11} strokeWidth={2.6} />
-            Hitelesített magyar nyelvű vállalkozó
+            Hiteles magyar nyelvű vállalkozó
           </p>
         )}
 
@@ -355,6 +358,10 @@ export default async function BusinessPage({ params }: { params: { id: string } 
         <section className="mt-6">
           <SectionHeader>Erről a helyről</SectionHeader>
           <p className="mt-2 text-[14.5px] leading-relaxed text-ink text-pretty">{b.blurb}</p>
+          <p className="mt-2 text-[10.5px] leading-snug text-ink-faint italic">
+            ⓘ A profil adatait a vállalkozó tölti fel — frissességüket az üzemeltető nem ellenőrzi.
+            Hivatalos adatokat (engedélyszám, cégjegyzékszám) közvetlenül a hatóságoknál erősíts meg.
+          </p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             <Chip icon="clock">{b.workingHours ? `${status.statusText} · ${status.detailText}` : (b.openText || `${status.statusText} · ${status.detailText}`)}</Chip>
             <Chip icon="globe">{b.languages.length ? b.languages.join(" · ") : "Magyar"}</Chip>

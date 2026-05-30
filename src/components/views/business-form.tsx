@@ -350,6 +350,14 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           <span>{form.blurb.length} / {BUSINESS_LIMITS.blurbMax}</span>
         </div>
         <FieldError msg={errors.blurb} />
+        <div className="mt-2 rounded-[10px] border border-accent/30 bg-accent/5 px-3 py-2 text-[11px] leading-snug text-ink-muted">
+          <strong className="text-accent">⚠ Felelősség:</strong> A leírás
+          tartalmáért, valóságtartalmáért és a megadott szakképesítésekért
+          kizárólag <strong>te felelsz</strong>. Engedélyköteles tevékenységeket
+          (orvosi, jogi, befektetési-tanácsadói, gyógyszerészeti stb.) csak
+          érvényes hatósági engedélyszámmal jeleníthetsz meg. A feketemunka és
+          a hatósági engedély nélküli tevékenység hirdetése tilos.
+        </div>
 
         {/* AI-segéd: leírás-csiszolás + kategória-javaslat */}
         <div className="mt-2">
