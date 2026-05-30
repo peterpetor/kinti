@@ -138,6 +138,7 @@ interface BulletinPostRow {
   whatsapp: string | null;
   manage_token: string | null;
   expiry_warning_sent: number | null;
+  smart_filters: string | null;
 }
 
 interface BulletinDraftRow {
@@ -161,6 +162,7 @@ interface BulletinDraftRow {
   image_key: string | null;
   canton_code: string | null;
   price: number | null;
+  smart_filters: string | null;
 }
 
 // --- mapperek ---------------------------------------------------------------
@@ -262,6 +264,7 @@ function toBulletinPost(r: BulletinPostRow): BulletinPost {
     whatsapp: r.whatsapp,
     manageToken: r.manage_token,
     expiryWarningSent: bool(r.expiry_warning_sent),
+    smartFilters: r.smart_filters ?? null,
     kind: r.kind_label
       ? { id: r.kind_id, label: r.kind_label, color: r.kind_color, sortOrder: r.kind_sort ?? 0 }
       : undefined,
@@ -290,6 +293,7 @@ function toBulletinDraft(r: BulletinDraftRow): BulletinDraft {
     imageKey: r.image_key,
     cantonCode: r.canton_code,
     price: r.price,
+    smartFilters: r.smart_filters ?? null,
   };
 }
 
@@ -727,6 +731,7 @@ export interface BulletinDraftInput {
   imageKey: string | null;
   cantonCode: string | null;
   price: number | null;
+  smartFilters: string | null;
 }
 
 /** Új piszkozat — a kliens-form `submit`-end-pointja használja. */
@@ -736,8 +741,8 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
       `INSERT INTO bulletin_drafts
        (id, email, phone, whatsapp, kind_id, title, meta, body, poster,
         confirm_token, manage_token, expires_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price, smart_filters)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -759,6 +764,7 @@ export async function createBulletinDraft(input: BulletinDraftInput): Promise<vo
       input.imageKey,
       input.cantonCode,
       input.price,
+      input.smartFilters ?? null,
     )
     .run();
 }
@@ -816,6 +822,7 @@ export interface PublishBulletinInput {
   imageKey: string | null;
   cantonCode: string | null;
   price: number | null;
+  smartFilters: string | null;
 }
 
 /**
@@ -829,9 +836,9 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       `INSERT INTO bulletin_posts
        (id, kind_id, title, meta, body, poster, email, phone, whatsapp, manage_token,
         age_text, expires_at, published_at, is_pending, created_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price)
+        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price, smart_filters)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'frissen', ?, datetime('now'), ?, datetime('now'),
-               ?, ?, ?, ?, ?, ?, ?)`,
+               ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       input.id,
@@ -853,6 +860,7 @@ export async function publishBulletinPost(input: PublishBulletinInput): Promise<
       input.imageKey,
       input.cantonCode,
       input.price,
+      input.smartFilters ?? null,
     )
     .run();
 }

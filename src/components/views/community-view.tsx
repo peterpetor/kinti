@@ -20,6 +20,7 @@ import { AddToCalendar } from "@/components/add-to-calendar";
 import { ReportButton } from "@/components/report-button";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import type { CalendarEvent } from "@/lib/calendar";
+import { getSmartFilterConfig, parseSmartFilters } from "@/lib/smart-filters";
 
 // --- helperek a hirdetésekhez -----------------------------------------------
 
@@ -772,6 +773,30 @@ export function BulletinCard({
         )}
         <p className="text-[13px] font-medium text-ink-muted">{post.meta}</p>
       </div>
+
+      {/* Okos szűrő chip-ek — kategória-specifikus részletek (évjárat, méret stb.) */}
+      {post.smartFilters && (() => {
+        const filters = parseSmartFilters(post.smartFilters);
+        const cfg = getSmartFilterConfig(post.kindId);
+        if (!cfg) return null;
+        const chips = cfg.fields
+          .map((f) => ({ label: f.label, value: filters[f.id], unit: f.unit }))
+          .filter((c) => c.value !== undefined && c.value !== "" && String(c.value) !== "—");
+        if (chips.length === 0) return null;
+        return (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {chips.map((chip) => (
+              <span
+                key={chip.label}
+                className="inline-flex items-center gap-1 rounded-md border border-line bg-surface-alt px-2 py-0.5 text-[11px] font-semibold text-ink-muted"
+              >
+                <span className="font-bold text-ink-muted">{chip.label}:</span>
+                {String(chip.value)}{chip.unit ? ` ${chip.unit}` : ""}
+              </span>
+            ))}
+          </div>
+        );
+      })()}
 
       {/* Tömörített képek scrollable listája */}
       {imageKeys.length > 0 && (

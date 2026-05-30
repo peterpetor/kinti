@@ -123,6 +123,8 @@ export interface BulletinPost {
   manageToken: string | null;
   /** Elküldték-e már a lejárati figyelmeztető emailt. */
   expiryWarningSent: boolean;
+  /** Okos kategória-szűrők JSON formátumban (pl. autó évjárat, bútor méret) */
+  smartFilters: string | null;
   /** Csatolt taxonómia (JOIN bulletin_kinds). */
   kind?: BulletinKind;
 }
@@ -156,6 +158,8 @@ export interface BulletinDraft {
   cantonCode: string | null;
   /** Strukturált ár (egész CHF) — rendezéshez. NULL, ha nincs ára. */
   price: number | null;
+  /** Okos kategória-szűrők JSON formátumban */
+  smartFilters: string | null;
 }
 
 /** Publikus vélemény egy vállalkozásról (account nélküli, email-megerősítéses). */

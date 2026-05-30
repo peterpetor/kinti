@@ -186,6 +186,7 @@ export async function POST(req: Request) {
       imageKey: validation.value.imageKey,
       cantonCode: validation.value.cantonCode,
       price: validation.value.price,
+      smartFilters: typeof body.smartFilters === "string" ? body.smartFilters : null,
     });
 
     // A hirdetés moderation_status=0 (pending). Admin-ot értesítjük emailben.
@@ -236,6 +237,7 @@ export async function POST(req: Request) {
     imageKey: validation.value.imageKey,
     cantonCode: validation.value.cantonCode,
     price: validation.value.price,
+    smartFilters: typeof body.smartFilters === "string" ? body.smartFilters : null,
   });
 
   const baseUrl =

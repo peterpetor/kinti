@@ -12,6 +12,7 @@ import { BulletinImageUploader } from "./bulletin-image-uploader";
 import { CANTONS } from "@/lib/cantons";
 import { PostSavePrompt } from "@/components/post-save-prompt";
 import { loadFormPrefs, saveFormPrefs } from "@/lib/form-prefs";
+import { getSmartFilterConfig } from "@/lib/smart-filters";
 
 /**
  * Hirdetés-feladó űrlap (account nélküli). Liquid Glass kártyák szekciókba
@@ -52,6 +53,8 @@ interface FormState {
   acceptTerms: boolean;
   /** Kötelező: 18+ nyilatkozat (Ptk. 2:10 §). */
   ageConfirmed: boolean;
+  /** Okos kategória-szűrők (JSON-sérült értékek map, pl. { year: "2019", condition: "Jó" }) */
+  smartFilters: Record<string, string | number>;
 }
 
 const INITIAL: FormState = {
@@ -69,6 +72,7 @@ const INITIAL: FormState = {
   website: "",
   acceptTerms: false,
   ageConfirmed: false,
+  smartFilters: {},
 };
 
 export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
@@ -114,7 +118,13 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
       const res = await fetch("/api/bulletin/submit", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...form, turnstileToken }),
+        body: JSON.stringify({
+          ...form,
+          smartFilters: Object.keys(form.smartFilters).length > 0
+            ? JSON.stringify(form.smartFilters)
+            : undefined,
+          turnstileToken,
+        }),
       });
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
@@ -258,6 +268,69 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         </div>
         <FieldError msg={errors.kindId} />
       </Section>
+
+        {/* Okos szűrők — dinamikus mezők a kiválasztott kategória alapján */}
+      {form.kindId && (() => {
+        const cfg = getSmartFilterConfig(form.kindId);
+        if (!cfg) return null;
+        return (
+          <Section title="Részletek">
+            <p className="mb-3 text-[11.5px] leading-snug text-ink-muted">
+              Adj meg néhány részletet — ez segít a keresőknek megtalálni a hirdetésedet.
+            </p>
+            <div className="space-y-3">
+              {cfg.fields.map((field) => {
+                const val = form.smartFilters[field.id] ?? "";
+                const setVal = (v: string | number) =>
+                  setForm((f) => ({
+                    ...f,
+                    smartFilters: { ...f.smartFilters, [field.id]: v },
+                  }));
+                return (
+                  <div key={field.id}>
+                    <label className="block mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+                      {field.label}{field.unit && <span className="ml-1 normal-case font-normal text-ink-faint">({field.unit})</span>}
+                    </label>
+                    {field.type === "select" ? (
+                      <select
+                        value={String(val)}
+                        onChange={(e) => setVal(e.target.value)}
+                        className={inputCls()}
+                      >
+                        <option value="">— válassz —</option>
+                        {field.options?.map((opt) => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    ) : field.type === "number" ? (
+                      <div className="flex items-center gap-2 rounded-[12px] border border-line bg-surface-alt focus-within:ring-2 focus-within:ring-primary/30">
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          min={0}
+                          value={String(val)}
+                          onChange={(e) => setVal(e.target.value)}
+                          placeholder={field.placeholder}
+                          className="min-w-0 flex-1 bg-transparent px-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint outline-none"
+                        />
+                        {field.unit && <span className="pr-3 text-[12.5px] font-bold text-ink-muted">{field.unit}</span>}
+                      </div>
+                    ) : (
+                      <input
+                        type="text"
+                        value={String(val)}
+                        onChange={(e) => setVal(e.target.value)}
+                        placeholder={field.placeholder}
+                        className={inputCls()}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </Section>
+        );
+      })()}
 
       {/* Hirdetés címe */}
       <Section title="Hirdetés címe" required>
