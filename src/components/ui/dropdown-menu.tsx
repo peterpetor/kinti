@@ -24,6 +24,14 @@ export function DropdownMenu() {
   const linkClass =
     "flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] font-bold text-ink hover:bg-surface-alt transition-all active:scale-[0.98]";
 
+  const Divider = ({ label }: { label: string }) => (
+    <div className="flex items-center gap-3 px-2 pt-4 pb-1">
+      <div className="h-px flex-1 bg-line/60" />
+      <span className="text-[10px] font-black uppercase tracking-widest text-ink-faint">{label}</span>
+      <div className="h-px flex-1 bg-line/60" />
+    </div>
+  );
+
   return (
     <div className="relative shrink-0">
       <button
@@ -51,11 +59,8 @@ export function DropdownMenu() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-1 custom-scrollbar">
-              {/*
-                * A vállalkozók saját rekordjukat NEM belépéssel, hanem a confirmáló
-                * email-ben kapott kezelő-linkkel szerkesztik. Ezért nincs külön
-                * "Vállalkozói belépés" a menüben. Adminok a /belepes URL-t használják.
-                */}
+
+              {/* ── Közösség ──────────────────────────── */}
               <Link href="/vallalkozo" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                   <Icon name="plus" size={16} strokeWidth={2.6} />
@@ -91,6 +96,9 @@ export function DropdownMenu() {
                 Saját posztjaim
               </Link>
 
+              {/* ── Tudás & Ügyintézés ─────────────────── */}
+              <Divider label="Tudás & Ügyintézés" />
+
               <Link href="/tudasbazis" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                   <Icon name="globe" size={16} strokeWidth={2.4} />
@@ -112,6 +120,23 @@ export function DropdownMenu() {
                 Svájci Iskolarendszer
               </Link>
 
+              <Link href="/vizum" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  🪪
+                </span>
+                Melyik engedély kell?
+              </Link>
+
+              <Link href="/allampolgarsag" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  🇨🇭
+                </span>
+                Einbürgerung-szimulátor
+              </Link>
+
+              {/* ── Pénzügyek & Kalkulátorok ───────────── */}
+              <Divider label="Pénzügyek" />
+
               <Link href="/arfolyam" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                   💱
@@ -126,18 +151,11 @@ export function DropdownMenu() {
                 Svájci Bérkalkulátor
               </Link>
 
-              <Link href="/vam" onClick={() => setIsOpen(false)} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                  🛂
+              <Link href="/iranytu" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
+                  📊
                 </span>
-                Vám- és Határinfó
-              </Link>
-
-              <Link href="/bussen" onClick={() => setIsOpen(false)} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
-                  🚓
-                </span>
-                Gyorshajtás kalkulátor
+                Bér- és Lakbér Iránytű
               </Link>
 
               <Link href="/lakberles" onClick={() => setIsOpen(false)} className={linkClass}>
@@ -154,6 +172,9 @@ export function DropdownMenu() {
                 Szolgáltató Váltó
               </Link>
 
+              {/* ── Utazás & Térkép ────────────────────── */}
+              <Divider label="Utazás & Térkép" />
+
               <Link href="/kozlekedes" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                   🚆
@@ -166,6 +187,20 @@ export function DropdownMenu() {
                   ✈️
                 </span>
                 Repülőjegy-figyelő
+              </Link>
+
+              <Link href="/vam" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  🛂
+                </span>
+                Vám- és Határinfó
+              </Link>
+
+              <Link href="/bussen" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
+                  🚓
+                </span>
+                Gyorshajtás kalkulátor
               </Link>
 
               <Link href="/akciok" onClick={() => setIsOpen(false)} className={linkClass}>
@@ -182,6 +217,9 @@ export function DropdownMenu() {
                 Hofladen-térkép
               </Link>
 
+              {/* ── Játék ─────────────────────────────── */}
+              <Divider label="Játék" />
+
               <Link href="/kviz" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                   🎯
@@ -189,19 +227,8 @@ export function DropdownMenu() {
                 Napi Svájci Kvíz
               </Link>
 
-              <Link href="/allampolgarsag" onClick={() => setIsOpen(false)} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                  🇨🇭
-                </span>
-                Einbürgerung-szimulátor
-              </Link>
-
-              <Link href="/vizum" onClick={() => setIsOpen(false)} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                  🪪
-                </span>
-                Melyik engedély kell?
-              </Link>
+              {/* ── Jogi & Segítség ───────────────────── */}
+              <Divider label="Jogi & Segítség" />
 
               <Link href="/segitseg" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
@@ -210,9 +237,6 @@ export function DropdownMenu() {
                 Segítség és GYIK
               </Link>
 
-              <div className="h-px bg-line/60 my-4 mx-2" />
-
-              {/* Jogi linkek */}
               <Link href="/impresszum" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
                   <Icon name="flag" size={16} strokeWidth={2.4} />
