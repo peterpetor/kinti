@@ -271,6 +271,35 @@ export async function getSalaryTrend(
 }
 
 /**
+ * Bérsáv-hisztogram (10k-s sávokban) egy adott iparágban.
+ */
+export async function getSalaryHistogram(
+  industry: string,
+  cantonCode?: string | null
+): Promise<{ bucket_k: number; entry_count: number }[]> {
+  const conditions: string[] = ["industry = ?"];
+  const binds: unknown[] = [industry];
+
+  if (cantonCode && cantonCode !== "all") {
+    conditions.push("canton_code = ?");
+    binds.push(cantonCode);
+  }
+
+  const where = "WHERE " + conditions.join(" AND ");
+
+  const sql = `
+    SELECT
+      CAST(gross_salary_chf / 10000 AS INTEGER) * 10 as bucket_k,
+      COUNT(*) as entry_count
+    FROM salary_benchmarks ${where}
+    GROUP BY bucket_k
+    ORDER BY bucket_k ASC
+  `;
+  const { results } = await getDB().prepare(sql).bind(...binds).all<{ bucket_k: number; entry_count: number }>();
+  return results;
+}
+
+/**
  * Hőtérkép lekérdezése — átlagbér kantononként egy adott iparágban.
  */
 export async function getSalaryHeatmap(

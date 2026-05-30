@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { MiniTrendChart } from "./MiniTrendChart";
+import { MiniHistogram } from "./MiniHistogram";
 
 interface SalaryExpRow { industry: string; exp_bucket: string; avg_salary: number; entry_count: number; }
 interface SalaryStatsRow { industry: string; avg_salary: number; min_salary: number; max_salary: number; entry_count: number; }
@@ -24,12 +25,16 @@ export function SalaryCard({
   const [trend, setTrend] = useState<TrendRow[] | null>(null);
   const [loadingTrend, setLoadingTrend] = useState(false);
 
+  const [showHist, setShowHist] = useState(false);
+  const [hist, setHist] = useState<{ bucket_k: number; entry_count: number }[] | null>(null);
+  const [loadingHist, setLoadingHist] = useState(false);
+
   const pct = Math.min(100, Math.round((stat.avg_salary / 200000) * 100));
 
   const fetchTrend = useCallback(async () => {
-    if (trend) { setShowTrend(t => !t); return; }
+    if (trend) { setShowTrend(t => !t); setShowHist(false); setShowExp(false); return; }
     setLoadingTrend(true);
-    setShowTrend(true);
+    setShowTrend(true); setShowHist(false); setShowExp(false);
     try {
       const res = await fetch(`/api/benchmark/trend?industry=${encodeURIComponent(stat.industry)}&canton=${canton}`);
       const data: any = await res.json();
@@ -37,6 +42,18 @@ export function SalaryCard({
     } catch { setTrend([]); }
     setLoadingTrend(false);
   }, [stat.industry, canton, trend]);
+
+  const fetchHist = useCallback(async () => {
+    if (hist) { setShowHist(h => !h); setShowTrend(false); setShowExp(false); return; }
+    setLoadingHist(true);
+    setShowHist(true); setShowTrend(false); setShowExp(false);
+    try {
+      const res = await fetch(`/api/benchmark/histogram?industry=${encodeURIComponent(stat.industry)}&canton=${canton}`);
+      const data: any = await res.json();
+      setHist(data.histogram ?? []);
+    } catch { setHist([]); }
+    setLoadingHist(false);
+  }, [stat.industry, canton, hist]);
 
   return (
     <div className="rounded-2xl border border-line bg-surface p-4 space-y-3 hover:border-primary/40 transition-colors">
@@ -63,19 +80,26 @@ export function SalaryCard({
       </div>
 
       {/* Akciógombok */}
-      <div className="flex gap-2 pt-1">
+      <div className="flex gap-2 pt-1 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
         {expRows.length > 0 && (
           <button
-            onClick={() => setShowExp(v => !v)}
-            className={`flex-1 text-[12px] font-bold py-1.5 rounded-lg border transition-colors
+            onClick={() => { setShowExp(v => !v); setShowTrend(false); setShowHist(false); }}
+            className={`shrink-0 text-[12px] font-bold py-1.5 px-3 rounded-lg border transition-colors
               ${showExp ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
           >
-            {showExp ? "▲" : "▼"} Tapasztalat szerint
+            {showExp ? "▲" : "▼"} Tapasztalat
           </button>
         )}
         <button
+          onClick={fetchHist}
+          className={`flex-1 shrink-0 text-[12px] font-bold py-1.5 px-3 rounded-lg border transition-colors
+            ${showHist ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
+        >
+          📊 Eloszlás
+        </button>
+        <button
           onClick={fetchTrend}
-          className={`flex-1 text-[12px] font-bold py-1.5 rounded-lg border transition-colors
+          className={`flex-1 shrink-0 text-[12px] font-bold py-1.5 px-3 rounded-lg border transition-colors
             ${showTrend ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
         >
           📈 Trend
@@ -107,6 +131,16 @@ export function SalaryCard({
           {loadingTrend
             ? <div className="py-4 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" /></div>
             : <MiniTrendChart data={trend ?? []} />
+          }
+        </div>
+      )}
+
+      {/* Hisztogram */}
+      {showHist && (
+        <div className="border-t border-line pt-3">
+          {loadingHist
+            ? <div className="py-4 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" /></div>
+            : <MiniHistogram data={hist ?? []} />
           }
         </div>
       )}
