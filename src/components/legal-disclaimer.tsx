@@ -86,6 +86,16 @@ export function LegalDisclaimer({
             esetedre eltérő szabályok vonatkozhatnak.
           </span>
         </li>
+        <li className="flex gap-2">
+          <span className="shrink-0">•</span>
+          <span>
+            <strong>A szabályok, díjak, árfolyamok és hatósági eljárások bármikor
+            megváltozhatnak, előzetes értesítés nélkül.</strong>{" "}
+            Az itt szereplő adatok az utolsó szerkesztés időpontjában voltak érvényesek —
+            a kinti.app nem vállal felelősséget az azóta bekövetkezett változásokból eredő
+            károkért vagy tévedésekért.
+          </span>
+        </li>
       </ul>
 
       {extraWarning && (

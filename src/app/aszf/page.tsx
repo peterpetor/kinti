@@ -429,11 +429,26 @@ export default function AszfPage() {
         és jogi költséget azonnal megtéríteni</strong>.
       </p>
 
-      <h2>17. Módosítás</h2>
+      <h2>17. Módosítás és adatok változása</h2>
       <p>
         Az üzemeltető fenntartja a jogot, hogy ezeket a feltételeket egyoldalúan módosítsa.
         A módosítás a közzétételkor lép hatályba; lényeges változásokról a vállalkozói
         regisztráltakat emailben is értesítjük.
+      </p>
+      <p>
+        A platformon megjelenő <strong>adatok, szabályok, díjak, árfolyamok, hatósági
+        eljárások és jogszabályi előírások bármikor megváltozhatnak, előzetes értesítés
+        nélkül</strong> — különösen igaz ez a svájci közigazgatási szabályokra, vámhatár-értékekre,
+        forrásadó-kulcsokra, repülőjegy-árakra és engedélyezési feltételekre.
+        Az üzemeltetőt nem terheli kötelezettség arra, hogy az oldalon szereplő tartalmakat
+        folyamatosan naprakészen tartsa; az adatok az utolsó szerkesztés időpontjában
+        érvényes állapotra vonatkoznak.
+      </p>
+      <p>
+        A felhasználó <strong>kizárólagos felelőssége</strong>, hogy a platformon talált
+        információkat a döntés meghozatala előtt a hatályos, aktuális hivatalos forrásokkal
+        összevetse. Az elavult vagy megváltozott adatokon alapuló döntésekből eredő
+        <strong>bármilyen kárért az üzemeltető felelőssége teljes körűen kizárt.</strong>
       </p>
 
       <h2>18. Adatvédelem</h2>
