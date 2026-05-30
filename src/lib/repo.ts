@@ -356,6 +356,11 @@ export async function setBusinessHidden(id: string, hidden: boolean): Promise<vo
     .run();
 }
 
+/** Véglegesen töröl egy vállalkozást (DSA remove action). */
+export async function deleteBusinessById(id: string): Promise<void> {
+  await getDB().prepare("DELETE FROM businesses WHERE id = ?").bind(id).run();
+}
+
 /**
  * R2 logó-kulcs mentése a vállalkozáshoz — CSAK a tulajdonosa hívhatja
  * sikeresen. A `WHERE id = ? AND owner_user_id = ?` szűrő miatt idegen
@@ -1985,7 +1990,7 @@ export async function getReviewSummaryById(
 
 export interface ContentReportInput {
   id: string;
-  contentType: "bulletin" | "review" | "sos";
+  contentType: "business" | "bulletin" | "review" | "sos";
   contentId: string;
   reason: string | null;
   reporterIpHash: string | null;
@@ -2012,7 +2017,7 @@ export async function createContentReport(input: ContentReportInput): Promise<vo
 
 export interface ContentReport {
   id: string;
-  contentType: "bulletin" | "review";
+  contentType: "business" | "bulletin" | "review" | "sos";
   contentId: string;
   status: string;
 }
@@ -2025,7 +2030,7 @@ export async function getContentReportByToken(token: string): Promise<ContentRep
   if (!row) return null;
   return {
     id: row.id,
-    contentType: row.content_type as "bulletin" | "review",
+    contentType: row.content_type as "business" | "bulletin" | "review" | "sos",
     contentId: row.content_id,
     status: row.status,
   };

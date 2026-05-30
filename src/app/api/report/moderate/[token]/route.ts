@@ -6,6 +6,8 @@ import {
   deleteBulletinPostById,
   deleteReviewById,
   recomputeBusinessRating,
+  setBusinessHidden,
+  deleteBusinessById,
 } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -35,11 +37,16 @@ export async function GET(req: Request, { params }: { params: { token: string } 
   }
 
   if (action === "keep") {
-    if (report.contentType === "bulletin") {
+    if (report.contentType === "business") {
+      await setBusinessHidden(report.contentId, false);
+    } else if (report.contentType === "bulletin") {
       await setBulletinHidden(report.contentId, false);
-    } else {
+    } else if (report.contentType === "review") {
       const businessId = await setReviewHidden(report.contentId, false);
       if (businessId) await recomputeBusinessRating(businessId);
+    } else if (report.contentType === "sos") {
+      const { unresolveSosAlert } = await import("@/lib/sos-repo");
+      await unresolveSosAlert(report.contentId);
     }
     await updateContentReportStatus(params.token, "kept");
     return html(
@@ -50,11 +57,16 @@ export async function GET(req: Request, { params }: { params: { token: string } 
   }
 
   // action === "remove"
-  if (report.contentType === "bulletin") {
+  if (report.contentType === "business") {
+    await deleteBusinessById(report.contentId);
+  } else if (report.contentType === "bulletin") {
     await deleteBulletinPostById(report.contentId);
-  } else {
+  } else if (report.contentType === "review") {
     const businessId = await deleteReviewById(report.contentId);
     if (businessId) await recomputeBusinessRating(businessId);
+  } else if (report.contentType === "sos") {
+    const { deleteSosAlert } = await import("@/lib/sos-repo");
+    await deleteSosAlert(report.contentId);
   }
   await updateContentReportStatus(params.token, "removed");
   return html("Véglegesen törölve 🗑", "A bejelentett tartalmat véglegesen töröltük.", true);

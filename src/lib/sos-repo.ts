@@ -101,3 +101,19 @@ export async function hideSosAlert(id: string): Promise<boolean> {
     .run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+export async function unresolveSosAlert(id: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE sos_alerts SET resolved = 0 WHERE id = ?")
+    .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function deleteSosAlert(id: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM sos_alerts WHERE id = ?")
+    .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
