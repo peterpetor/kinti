@@ -150,6 +150,8 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           />
         )}
         <div className="absolute inset-x-0 top-0 flex gap-2 bg-gradient-to-b from-black/30 to-transparent px-3.5 pb-3.5 pt-[calc(env(safe-area-inset-top)+0.75rem)]">
+          <ProfileHeaderActions businessId={b.id} businessName={b.name} />
+          <span className="flex-1" />
           <Link
             href="/szaknevsor"
             aria-label="Vissza"
@@ -157,8 +159,6 @@ export default async function BusinessPage({ params }: { params: { id: string } 
           >
             <Icon name="arrowLeft" size={18} strokeWidth={2.2} />
           </Link>
-          <span className="flex-1" />
-          <ProfileHeaderActions businessId={b.id} businessName={b.name} />
         </div>
       </div>
 

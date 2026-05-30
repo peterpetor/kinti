@@ -5,18 +5,23 @@ import { DropdownMenu } from "./dropdown-menu";
 /**
  * ScreenHeader — nézet-fejléc nagy címmel + opcionális eyebrow-val és jobb
  * oldali akcióval (pl. ikongomb).
+ *
+ * `back` — a jobb oldalra (a menü/right elé) kerülő vissza-gomb. Az `left`
+ * prop megmaradt kompatibilitás miatt, de új oldalakon `back`-et használj.
  */
 export function ScreenHeader({
   eyebrow,
   title,
   left,
   right,
+  back,
   className,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
   left?: ReactNode;
   right?: ReactNode;
+  back?: ReactNode;
   className?: string;
 }) {
   return (
@@ -30,7 +35,10 @@ export function ScreenHeader({
           {title}
         </h1>
       </div>
-      {right !== undefined ? right : <DropdownMenu />}
+      <div className="flex shrink-0 items-center gap-2 pt-1">
+        {back}
+        {right !== undefined ? right : <DropdownMenu />}
+      </div>
     </header>
   );
 }

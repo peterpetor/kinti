@@ -18,7 +18,7 @@ export default function UjEsemenyPage() {
     <div className="px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <ScreenHeader
         title="Esemény beküldése"
-        left={
+        back={
           <Link
             href="/kozosseg"
             aria-label="Vissza"

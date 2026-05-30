@@ -165,17 +165,17 @@ export default function SegitsegPage() {
   return (
     <div className="space-y-6 px-5 pb-8 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <header className="flex items-center gap-2.5">
-        <Link
-          href="/"
-          aria-label="Vissza a Főoldalra"
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink active:scale-95"
-        >
-          <Icon name="arrowLeft" size={16} strokeWidth={2.4} />
-        </Link>
         <KintiLogo size={28} />
         <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
         <span className="text-[16px] font-extrabold text-ink-muted">·</span>
         <span className="text-[16px] font-extrabold text-ink-muted">segítség</span>
+        <Link
+          href="/"
+          aria-label="Vissza a Főoldalra"
+          className="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink active:scale-95"
+        >
+          <Icon name="arrowLeft" size={16} strokeWidth={2.4} />
+        </Link>
       </header>
 
       {/* Hero */}

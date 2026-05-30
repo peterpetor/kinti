@@ -28,16 +28,16 @@ export default function ChecklistDetailPage({ params }: { params: { slug: string
   return (
     <div className="space-y-5 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <header className="flex items-center gap-3">
-        <Link
-          href="/ugyintezes"
-          aria-label="Vissza az ügyintézés-listához"
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink active:scale-95"
-        >
-          <Icon name="arrowLeft" size={16} strokeWidth={2.4} />
-        </Link>
         <span className="text-[14px] font-bold text-ink-muted truncate">
           Ügyintézés Varázsló
         </span>
+        <Link
+          href="/ugyintezes"
+          aria-label="Vissza az ügyintézés-listához"
+          className="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink active:scale-95"
+        >
+          <Icon name="arrowLeft" size={16} strokeWidth={2.4} />
+        </Link>
       </header>
 
       <AdminChecklistView checklist={checklist} />

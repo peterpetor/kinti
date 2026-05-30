@@ -24,13 +24,6 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
   return (
     <div className="space-y-5 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <header className="flex items-start gap-3">
-        <Link
-          href="/tudasbazis"
-          aria-label="Vissza a Tudásbázishoz"
-          className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink"
-        >
-          <Icon name="arrowLeft" size={16} strokeWidth={2.2} />
-        </Link>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary-soft text-primary">
@@ -42,6 +35,13 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
           </div>
           <p className="mt-1.5 text-[13px] leading-snug text-ink-muted">{guide.summary}</p>
         </div>
+        <Link
+          href="/tudasbazis"
+          aria-label="Vissza a Tudásbázishoz"
+          className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink"
+        >
+          <Icon name="arrowLeft" size={16} strokeWidth={2.2} />
+        </Link>
       </header>
 
       {/* Szekciók */}

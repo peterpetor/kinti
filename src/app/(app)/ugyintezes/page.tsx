@@ -16,17 +16,17 @@ export default function UgyintezesPage() {
   return (
     <div className="space-y-5 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <header className="flex items-center gap-3">
-        <Link
-          href="/"
-          aria-label="Vissza a Főoldalra"
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink active:scale-95"
-        >
-          <Icon name="arrowLeft" size={16} strokeWidth={2.4} />
-        </Link>
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink">
           Ügyintézés Varázsló
         </span>
+        <Link
+          href="/"
+          aria-label="Vissza a Főoldalra"
+          className="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink active:scale-95"
+        >
+          <Icon name="arrowLeft" size={16} strokeWidth={2.4} />
+        </Link>
       </header>
 
       <section className="rounded-card border border-primary/20 bg-primary-soft p-5 shadow-card">

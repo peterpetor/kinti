@@ -23,7 +23,7 @@ export default async function UjVallalkozasPage() {
     <div className="px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <ScreenHeader
         title="Vállalkozásod hozzáadása"
-        left={
+        back={
           <Link
             href="/szaknevsor"
             aria-label="Vissza"
