@@ -95,16 +95,72 @@ export default async function BusinessPage({ params }: { params: { id: string } 
   const hasSocials = socials && (socials.facebook || socials.instagram || socials.linkedin || socials.booking);
 
   // JSON-LD strukturált adat — Schema.org LocalBusiness (Google rich snippets)
+  const schemaDays: Record<string, string> = {
+    mon: "Monday",
+    tue: "Tuesday",
+    wed: "Wednesday",
+    thu: "Thursday",
+    fri: "Friday",
+    sat: "Saturday",
+    sun: "Sunday",
+  };
+
+  const openingHoursSpec = [];
+  if (wh) {
+    for (const [key, val] of Object.entries(wh)) {
+      if (val && !val.closed) {
+        openingHoursSpec.push({
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": `https://schema.org/${schemaDays[key] || "Monday"}`,
+          "opens": val.open,
+          "closes": val.close
+        });
+      }
+    }
+  }
+
+  const reviewSchema = reviews && reviews.length > 0
+    ? reviews.slice(0, 5).map((r) => {
+        const authorName = r.reviewerName?.trim() || handleFromId(r.id);
+        return {
+          "@type": "Review",
+          "author": {
+            "@type": "Person",
+            "name": authorName,
+          },
+          "datePublished": r.publishedAt ? r.publishedAt.split("T")[0] : new Date().toISOString().split("T")[0],
+          "reviewBody": r.body,
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": r.rating,
+            "bestRating": 5,
+            "worstRating": 1,
+          }
+        };
+      })
+    : undefined;
+
+  const sameAsArray: string[] = [];
+  if (socials) {
+    if (socials.facebook) sameAsArray.push(socials.facebook);
+    if (socials.instagram) sameAsArray.push(socials.instagram);
+    if (socials.linkedin) sameAsArray.push(socials.linkedin);
+  }
+
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `https://kinti.app/szaknevsor/${b.id}`,
     name: b.name,
     url: `https://kinti.app/szaknevsor/${b.id}`,
+    priceRange: "$$",
   };
   if (b.blurb) jsonLd.description = b.blurb;
   if (b.phone) jsonLd.telephone = b.phone;
-  if (heroUrl) jsonLd.image = heroUrl;
+  if (heroUrl) {
+    jsonLd.image = heroUrl;
+    jsonLd.logo = heroUrl;
+  }
   if (b.address) {
     jsonLd.address = {
       "@type": "PostalAddress",
@@ -126,6 +182,9 @@ export default async function BusinessPage({ params }: { params: { id: string } 
   }
   if (b.categoryLabel) jsonLd.knowsAbout = b.categoryLabel;
   jsonLd.knowsLanguage = ["hu", ...(b.languages ?? []).map((l) => l.toLowerCase())];
+  if (openingHoursSpec.length > 0) jsonLd.openingHoursSpecification = openingHoursSpec;
+  if (reviewSchema) jsonLd.review = reviewSchema;
+  if (sameAsArray.length > 0) jsonLd.sameAs = sameAsArray;
 
   return (
     <div>

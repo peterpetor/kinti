@@ -15,17 +15,32 @@ DELETE FROM categories;
 
 -- --- 1) Kategóriák -------------------------------------------------------------
 INSERT INTO categories (id, label, glyph, sort_order) VALUES
-  ('all',      'Mind',           '⯐', 0),
-  ('fodrasz',  'Fodrász',        '✂', 1),
-  ('autoszer', 'Autószerelő',    '⚙', 2),
-  ('orvos',    'Orvos',          '＋', 3),
-  ('ugyved',   'Ügyvéd',         '§', 4),
-  ('pek',      'Pék',            '◐', 5),
-  ('etterem',  'Étterem',        '◍', 6),
-  ('villany',  'Villanyszerelő', '⚡', 7),
-  ('fordito',  'Fordító',        'A', 8),
-  ('takarito', 'Takarítás',      '⦦', 9),
-  ('it',       'Informatikus',   '⌘', 10);
+  ('all',         'Mind',           '⯐', 0),
+  ('fodrasz',     'Fodrász',        '✂', 1),
+  ('autoszer',    'Autószerelő',    '⚙', 2),
+  ('orvos',       'Orvos',          '＋', 3),
+  ('ugyved',      'Ügyvéd',         '§', 4),
+  ('pek',         'Pék',            '◐', 5),
+  ('etterem',     'Étterem',        '◍', 6),
+  ('villany',     'Villanyszerelő', '⚡', 7),
+  ('fordito',     'Fordító',        'A', 8),
+  ('takarito',    'Takarítás',      '⦦', 9),
+  ('it',          'Informatikus',   '⌘', 10),
+  ('tanar',       'Tanár',          '✏', 11),
+  ('konyveles',   'Könyvelés',      '📊', 12),
+  ('epitoipar',   'Építőipar',      '🔨', 13),
+  ('szepseg',     'Szépségápolás',  '🌸', 14),
+  ('masszazs',    'Masszázs',       '💆', 15),
+  ('futas',       'Fuvarozás',      '🚚', 16),
+  ('babysitter',  'Gyermekfelügyelet', '👶', 17),
+  ('kertesz',     'Kertészet',      '🌿', 18),
+  ('lakatos',     'Lakatos',        '🔑', 19),
+  ('gazvez',      'Víz-gáz szerelő', '💧', 20),
+  ('marketing',   'Marketing / Fotó', '📸', 21),
+  ('tisztito',    'Tisztító / Ruhavarró', '👔', 22),
+  ('allat',       'Állatgondozás',  '🐾', 23),
+  ('ingatlan',    'Ingatlan',       '🏠', 24),
+  ('biztositas',  'Biztosítás',     '🛡️', 25);
 
 -- --- 2) Hirdetőtábla-taxonómia -------------------------------------------------
 INSERT INTO bulletin_kinds (id, label, color, sort_order) VALUES
