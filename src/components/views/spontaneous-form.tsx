@@ -26,6 +26,8 @@ interface FormState {
   poster: string;
   notes: string;
   website: string; // honeypot
+  acceptTerms: boolean;
+  ageConfirmed: boolean;
 }
 
 const INITIAL: FormState = {
@@ -39,6 +41,8 @@ const INITIAL: FormState = {
   poster: "",
   notes: "",
   website: "",
+  acceptTerms: false,
+  ageConfirmed: false,
 };
 
 interface SubmitResponse {
@@ -292,6 +296,32 @@ export function SpontaneousForm({ turnstileSiteKey = "", onClose }: { turnstileS
         className="hidden"
       />
 
+      {/* Kötelező nyilatkozatok */}
+      <section className="space-y-2.5 rounded-card border border-line bg-surface p-4 shadow-card">
+        <Consent
+          checked={form.ageConfirmed}
+          onChange={(v) => setField("ageConfirmed", v)}
+          error={errors.ageConfirmed}
+        >
+          Kijelentem, hogy elmúltam 18 éves.
+        </Consent>
+        <Consent
+          checked={form.acceptTerms}
+          onChange={(v) => setField("acceptTerms", v)}
+          error={errors.acceptTerms}
+        >
+          Elolvastam és elfogadom az{" "}
+          <a href="/aszf" target="_blank" className="underline">
+            ÁSZF
+          </a>
+          -et és az{" "}
+          <a href="/adatvedelem" target="_blank" className="underline">
+            Adatkezelési Tájékoztatót
+          </a>
+          .
+        </Consent>
+      </section>
+
       {turnstileSiteKey && (
         <TurnstileWidget ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
       )}
@@ -315,10 +345,10 @@ export function SpontaneousForm({ turnstileSiteKey = "", onClose }: { turnstileS
         )}
         <button
           type="submit"
-          disabled={phase === "submitting" || !turnstileToken}
+          disabled={phase === "submitting" || !turnstileToken || !form.acceptTerms || !form.ageConfirmed}
           className={cn(
             "flex-1 rounded-pill bg-primary py-3 text-[13.5px] font-extrabold text-white shadow-card active:scale-95",
-            (phase === "submitting" || !turnstileToken) && "opacity-60",
+            (phase === "submitting" || !turnstileToken || !form.acceptTerms || !form.ageConfirmed) && "opacity-60",
           )}
         >
           {phase === "submitting" ? "Küldés…" : "🎲 Spontán meetup közzététele"}
@@ -354,5 +384,32 @@ function inputCls(err?: string): string {
   return cn(
     "h-11 w-full rounded-[12px] border bg-surface-alt px-3 text-[14px] font-medium text-ink outline-none placeholder:text-ink-faint focus:bg-surface focus:ring-2 focus:ring-primary/30",
     err ? "border-accent" : "border-line",
+  );
+}
+
+function Consent({
+  checked,
+  onChange,
+  error,
+  children,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="flex cursor-pointer items-start gap-2.5 text-[12.5px] leading-relaxed text-ink">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          className="mt-0.5 h-4 w-4 flex-none cursor-pointer accent-primary"
+        />
+        <span>{children}</span>
+      </label>
+      <FieldError msg={error} />
+    </div>
   );
 }
