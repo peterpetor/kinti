@@ -8,6 +8,7 @@ import {
 import { BUSINESS_LIMITS } from "@/lib/business";
 import { isSwissAddress } from "@/lib/cantons";
 import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
+import { moderateText } from "@/lib/text-moderation";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -120,6 +121,26 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
 
   if (errors.length) {
     return NextResponse.json({ error: "validation", details: errors }, { status: 400 });
+  }
+
+  // AI szöveg-moderáció a frissített tartalmon (fail-open):
+  // a tulajdonos a profil-frissítés során is felülírhatná a leírást, ezért
+  // ugyanúgy szűrjük mint a submit-en.
+  const updatedTextParts: string[] = [];
+  if (fields.name) updatedTextParts.push(fields.name);
+  if (fields.blurb) updatedTextParts.push(fields.blurb);
+  if (updatedTextParts.length > 0) {
+    const textMod = await moderateText(updatedTextParts.join("\n"));
+    if (textMod.safe === false) {
+      return NextResponse.json(
+        {
+          error:
+            textMod.reason ||
+            "A módosított leírás nem felel meg a közösségi irányelveknek.",
+        },
+        { status: 400 },
+      );
+    }
   }
 
   const ok = await updateBusinessByManageToken(params.token, fields);

@@ -269,6 +269,29 @@ export default function AdatvedelemPage() {
         analitikai-, vagy 3rd-party tracking cookie-kat <strong>nem használunk</strong>.
       </p>
 
+      <h3>3.1 Svájci adatkezelési rendelkezések (revFADP)</h3>
+      <p>
+        Mivel a Szolgáltatás célzottan a Svájcban élő magyarokat szolgálja ki, és
+        ennek során svájci illetőségű felhasználók személyes adatait is kezeljük, a
+        2023. szeptember 1-én hatályba lépett svájci szövetségi adatvédelmi törvény
+        (revFADP / nDSG) is irányadó. Az érintettek a magyar GDPR-hoz hasonló
+        jogokkal rendelkeznek: hozzáférés, helyesbítés, törlés, korlátozás,
+        adathordozhatóság, tiltakozás. Panasszal a svájci Eidgenössischer
+        Datenschutz- und Öffentlichkeitsbeauftragter (EDÖB,{" "}
+        <a href="https://www.edoeb.admin.ch/" target="_blank" rel="noreferrer">edoeb.admin.ch</a>
+        ) hatósághoz lehet fordulni.
+      </p>
+      <p>
+        <strong>Svájci képviselő kijelölése</strong>: a revFADP 14. cikke alapján a
+        Svájcon kívüli székhelyű adatkezelőnek bizonyos feltételek mellett svájci
+        képviselőt kell kijelölnie. Az üzemeltető folyamatosan értékeli ezt a
+        kötelezettséget, és amennyiben a feldolgozás mértéke / rendszeressége azt
+        szükségessé teszi, a képviselő kijelölését dokumentáljuk. Addig is az
+        EDÖB-höz forduláshoz vagy érintetti jog gyakorlásához írj a{" "}
+        <a href="mailto:info@kinti.app">info@kinti.app</a> címre — kérelmedet
+        haladéktalanul továbbítjuk.
+      </p>
+
       <h2>4. Adatok továbbítása harmadik országba</h2>
       <p>
         A Clerk, a Cloudflare és a Resend USA-ban bejegyzett, ottani szervereket is használó 

@@ -1789,6 +1789,21 @@ export async function updateBusinessByManageToken(
     values.push(fields.languages ? JSON.stringify(fields.languages) : null);
   }
   if (sets.length === 0) return true;
+
+  // Tartalom-érzékeny mezők frissítésekor (név, leírás, kategória, cím) a
+  // korábbi admin-hitelesítést revoke-oljuk — az admin-nak újra kell ellenőriznie
+  // a változott profilt. Ezzel megakadályozzuk hogy egy hiteles vállalkozó
+  // profil-frissítés ürügyén beillesszen tisztességtelen tartalmat.
+  const contentSensitive: (keyof UpdateBusinessFields)[] = [
+    "name",
+    "blurb",
+    "categoryLabel",
+    "address",
+  ];
+  if (contentSensitive.some((k) => fields[k] !== undefined)) {
+    sets.push("verified = 0");
+  }
+
   sets.push("updated_at = datetime('now')");
   const sql = `UPDATE businesses SET ${sets.join(", ")} WHERE manage_token = ?`;
   values.push(token);

@@ -151,6 +151,17 @@ export default function AszfPage() {
           értesítés nélküli eltávolítására.</li>
       </ul>
 
+      <h3>6.1 Hatósági/bírósági megőrzési kötelezettség (litigation hold)</h3>
+      <p>
+        Folyamatban lévő bírósági, hatósági vagy büntető-eljárás esetén — kifejezett
+        hivatalos megkeresésre — az érintett tartalom (hirdetés, vélemény, vállalkozói
+        adat, kapcsolódó metaadat, IP-hash) <strong>automatikus törlése felfüggesztésre kerül</strong>{" "}
+        a kötelező megőrzési időtartamra (jellemzően az eljárás jogerős befejezéséig +
+        a vonatkozó elévülési idő, általában 5 év). Ezen kötelező megőrzés a GDPR 6.
+        cikk (1) c) pontján alapul (jogi kötelezettség), és a felhasználói törlési
+        kérelem helyett is irányadó.
+      </p>
+
       <h2>7. Értékelési Rendszer és Felhasználói Vélemények</h2>
       <p>
         A platformon leadott értékelések és vélemények a felhasználók szubjektív 

@@ -86,6 +86,11 @@ export function SalaryOffersView() {
         <p className="mt-1 text-[12px] text-ink-muted">
           Az adatok csak a böngésződben élnek — szerverre nem küldjük.
         </p>
+        <p className="mt-2 rounded-[8px] border border-accent/30 bg-accent/5 px-2.5 py-1.5 text-[11px] leading-snug text-ink-muted">
+          ⚠ <strong className="text-accent">Megosztott gép?</strong> Ha valaki más is használja ezt a böngészőt
+          (családtag, kolléga), ő is láthatja a mentett ajánlataidat. Magán-böngészés (incognito)
+          módban a mentés nem őrződik meg, a kijelentkezés után törlődik.
+        </p>
       </section>
 
       {/* Összehasonlító táblázat — kompakt grid */}
