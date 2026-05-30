@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/admin";
 import {
   setModerationStatus,
+  addToBlocklist,
   type ModerationTable,
 } from "@/lib/repo";
+import { hashEmail } from "@/lib/bulletin";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -16,12 +18,27 @@ const VALID_TABLES: ModerationTable[] = [
   "events",
 ];
 
+const TABLE_LABELS: Record<ModerationTable, string> = {
+  bulletin_posts: "hirdetés",
+  reviews: "vélemény",
+  businesses: "vállalkozás",
+  events: "esemény",
+};
+
 /**
  * POST /api/admin/moderation/decide
  *
- * Body: { table: 'bulletin_posts'|'reviews'|'businesses'|'events',
- *         id: string,
- *         decision: 'approved'|'rejected' }
+ * Body:
+ *   {
+ *     table: 'bulletin_posts'|'reviews'|'businesses'|'events',
+ *     id: string,
+ *     decision: 'approved'|'rejected',
+ *     banIpHash?: string,   // ha jelen van + decision='rejected' → tiltólistára
+ *     banEmail?: string,    // ha jelen van + decision='rejected' → tiltólistára
+ *   }
+ *
+ * Ban-flow: csak `rejected` döntésnél van értelme. Az IP-hash már hashelt
+ * (a queue-listán ott van); az email plaintext, mi hash-eljük itt.
  */
 export async function POST(req: Request) {
   try {
@@ -34,6 +51,8 @@ export async function POST(req: Request) {
       table?: string;
       id?: string;
       decision?: string;
+      banIpHash?: string;
+      banEmail?: string;
     };
     const table = body.table as ModerationTable;
     const id = body.id;
@@ -53,7 +72,44 @@ export async function POST(req: Request) {
     }
 
     const ok = await setModerationStatus(table, id, statusValue, adminId);
-    return NextResponse.json({ ok }, { status: ok ? 200 : 404 });
+    if (!ok) {
+      return NextResponse.json({ ok: false }, { status: 404 });
+    }
+
+    // Ban-flow csak rejected esetén
+    let bannedIp = false;
+    let bannedEmail = false;
+    if (statusValue === 2) {
+      const reason = `Auto-ban (${TABLE_LABELS[table]}-elutasítás)`;
+
+      if (
+        typeof body.banIpHash === "string" &&
+        /^[a-f0-9]{64}$/i.test(body.banIpHash)
+      ) {
+        const entry = await addToBlocklist({
+          kind: "ip_hash",
+          value: body.banIpHash.toLowerCase(),
+          reason,
+          adminUserId: adminId,
+        });
+        bannedIp = !!entry;
+      }
+
+      if (typeof body.banEmail === "string" && body.banEmail.trim().length > 0) {
+        const emailHash = await hashEmail(body.banEmail);
+        if (emailHash) {
+          const entry = await addToBlocklist({
+            kind: "email_hash",
+            value: emailHash,
+            reason,
+            adminUserId: adminId,
+          });
+          bannedEmail = !!entry;
+        }
+      }
+    }
+
+    return NextResponse.json({ ok: true, bannedIp, bannedEmail });
   } catch (err) {
     safeLogError("api/admin/moderation/decide", err);
     return NextResponse.json({ error: "internal" }, { status: 500 });

@@ -208,6 +208,8 @@ export default async function ModerationPage({
                       table={typeParam}
                       id={it.id}
                       current={it.moderationStatus}
+                      submitterIpHash={it.submitterIpHash}
+                      submitterEmail={it.submitterEmail}
                     />
                   </div>
                 </article>
