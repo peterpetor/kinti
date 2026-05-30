@@ -52,7 +52,7 @@ Részletek:
 - Gyorshajtás autópályán (120 km/h limit): 1-5 km/h: 20 CHF, 6-10 km/h: 60 CHF, 11-15 km/h: 120 CHF, 16-20 km/h: 180 CHF, 21-25 km/h: 260 CHF. Felette feljelentés.
 `;
 
-    const response = await env.AI.run("@cf/meta/llama-3-8b-instruct", {
+    const response = await env.AI.run("@cf/meta/llama-3.1-8b-instruct-fast", {
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt }
@@ -60,7 +60,15 @@ Részletek:
       max_tokens: 512,
     });
 
-    const answer = response?.response || "Sajnos most nem tudok válaszolni, kérlek próbáld újra később.";
+    if (!response || !response.response) {
+      console.error("✖ [AI Ask] Üres AI válasz:", JSON.stringify(response));
+      return NextResponse.json(
+        { error: "Az AI jelenleg nem elérhető, kérlek próbáld újra pár perc múlva." },
+        { status: 503 }
+      );
+    }
+
+    const answer = response.response;
 
     return NextResponse.json(
       { answer },
