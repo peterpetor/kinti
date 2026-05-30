@@ -1,33 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 /**
  * A modálnak NEM szabad megjelennie azokon az oldalakon, amiket maga a modal
  * linkel be (különben az új tab-ban is letakarná a tartalmat). Az olvasáshoz
  * szükséges jogi oldalakat itt kizárjuk.
+ *
+ * `window.location.pathname` használunk (nem usePathname) — egyszerűbb,
+ * nem igényel Suspense-boundary-t, és a komponens már client-component.
  */
 const EXEMPT_PATHS = ["/aszf", "/adatvedelem", "/impresszum"];
 
+function pathIsExempt(pathname: string): boolean {
+  return EXEMPT_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+}
+
 export function LegalGatekeeper() {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [acceptAszf, setAcceptAszf] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
 
-  const isExempt = EXEMPT_PATHS.some((p) => pathname === p || pathname?.startsWith(p + "/"));
-
   useEffect(() => {
-    if (isExempt) return;
+    if (pathIsExempt(window.location.pathname)) return;
     const accepted = localStorage.getItem("kinti_legal_accepted");
     if (!accepted) {
       setIsOpen(true);
       document.body.style.overflow = "hidden";
     }
-  }, [isExempt]);
+  }, []);
 
   const handleAccept = () => {
     if (ageConfirmed && acceptAszf && acceptPrivacy) {
@@ -37,7 +40,7 @@ export function LegalGatekeeper() {
     }
   };
 
-  if (isExempt || !isOpen) return null;
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-bg/85 backdrop-blur-xl animate-fade-in">
