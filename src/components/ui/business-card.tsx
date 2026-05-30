@@ -4,6 +4,7 @@ import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 import { mediaUrl } from "@/lib/media";
 import { OwnPostBadge } from "@/components/own-post-badge";
+import { formatDistanceKm } from "@/lib/distance";
 
 /**
  * BusinessCard — a Szaknévsor / találati lista kártyája. Fotó/logó placeholder
@@ -15,9 +16,11 @@ export interface BusinessCardProps {
   business: Business;
   href?: string;
   className?: string;
+  /** Ha radius-keresés aktív, a tényleges Haversine-távolság km-ben — felülírja a distText placeholdert. */
+  distanceKm?: number | null;
 }
 
-export function BusinessCard({ business: b, href, className }: BusinessCardProps) {
+export function BusinessCard({ business: b, href, className, distanceKm }: BusinessCardProps) {
   const classes = cn(
     "relative flex gap-3 rounded-card border border-line bg-surface p-3 shadow-card",
     href && "transition hover:shadow-card-hover active:scale-[0.99]",
@@ -79,7 +82,7 @@ export function BusinessCard({ business: b, href, className }: BusinessCardProps
         <div className="mb-1.5 flex items-center gap-2 text-[12.5px] text-ink-muted">
           <span className="inline-flex items-center gap-1">
             <Icon name="nav" size={11} strokeWidth={2.2} />
-            {b.distText}
+            {distanceKm != null ? formatDistanceKm(distanceKm) : b.distText}
           </span>
           <span className="h-[3px] w-[3px] rounded-full bg-ink-faint" />
           <span className={cn("font-semibold", b.openNow ? "text-success" : "text-accent")}>

@@ -8,6 +8,11 @@ import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
 import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
+import { haversineKm } from "@/lib/distance";
+
+const RADIUS_OPTIONS_KM = [5, 10, 20, 50] as const;
+type RadiusKm = (typeof RADIUS_OPTIONS_KM)[number];
+const RADIUS_LS_KEY = "kinti_radius_km";
 
 /**
  * ExploreView (Szaknévsor) — szerverről kapja a teljes adatkészletet, és
@@ -48,7 +53,12 @@ export function ExploreView({
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [view, setView] = useState<ViewMode>("list");
 
-  // Kedvenc ID-k betöltése localStorage-ből
+  // Radius-search állapot (lat/lng = user böngészőjének poz.; ha null → kikapcsolva)
+  const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [radiusKm, setRadiusKm] = useState<RadiusKm>(20);
+  const [geoState, setGeoState] = useState<"idle" | "loading" | "denied" | "error">("idle");
+
+  // Kedvenc ID-k + radius-preferencia betöltése localStorage-ből
   useEffect(() => {
     try {
       const favs = JSON.parse(localStorage.getItem("kinti_favorites") || "[]");
@@ -56,36 +66,98 @@ export function ExploreView({
     } catch {
       // ignore
     }
+    try {
+      const saved = Number(localStorage.getItem(RADIUS_LS_KEY));
+      if (RADIUS_OPTIONS_KM.includes(saved as RadiusKm)) {
+        setRadiusKm(saved as RadiusKm);
+      }
+    } catch {
+      // ignore
+    }
   }, []);
+
+  function requestGeolocation() {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setGeoState("error");
+      return;
+    }
+    setGeoState("loading");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserPos({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setGeoState("idle");
+      },
+      (err) => {
+        setGeoState(err.code === err.PERMISSION_DENIED ? "denied" : "error");
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 5 * 60 * 1000 },
+    );
+  }
+
+  function clearGeolocation() {
+    setUserPos(null);
+    setGeoState("idle");
+  }
+
+  function handleRadiusChange(km: RadiusKm) {
+    setRadiusKm(km);
+    try {
+      localStorage.setItem(RADIUS_LS_KEY, String(km));
+    } catch {
+      // ignore
+    }
+  }
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return businesses.filter((b) => {
-      const byCat = cat === "all" || b.categoryId === cat;
-      const byCanton =
-        canton === "all" ||
-        cantonFromAddress(b.address ?? null)?.code === canton;
-      const byFav = !showFavs || favoriteIds.includes(b.id);
-      const byOpen =
-        !openNow ||
-        (b.workingHours
-          ? calculateBusinessHoursStatus(parseWorkingHours(b.workingHours)).isOpen
-          : false);
-      const byText =
-        !needle ||
-        b.name.toLowerCase().includes(needle) ||
-        (b.categoryLabel ?? "").toLowerCase().includes(needle) ||
-        (b.address ?? "").toLowerCase().includes(needle) ||
-        // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
-        matchesCanton({ address: b.address ?? null }, needle);
-      return byCat && byCanton && byFav && byOpen && byText;
-    });
-  }, [businesses, cat, canton, q, showFavs, openNow, favoriteIds]);
+    const withDistance = businesses
+      .filter((b) => {
+        const byCat = cat === "all" || b.categoryId === cat;
+        const byCanton =
+          canton === "all" ||
+          cantonFromAddress(b.address ?? null)?.code === canton;
+        const byFav = !showFavs || favoriteIds.includes(b.id);
+        const byOpen =
+          !openNow ||
+          (b.workingHours
+            ? calculateBusinessHoursStatus(parseWorkingHours(b.workingHours)).isOpen
+            : false);
+        const byText =
+          !needle ||
+          b.name.toLowerCase().includes(needle) ||
+          (b.categoryLabel ?? "").toLowerCase().includes(needle) ||
+          (b.address ?? "").toLowerCase().includes(needle) ||
+          // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
+          matchesCanton({ address: b.address ?? null }, needle);
+        return byCat && byCanton && byFav && byOpen && byText;
+      })
+      .map((b) => {
+        const dist =
+          userPos && b.lat != null && b.lng != null
+            ? haversineKm(userPos.lat, userPos.lng, b.lat, b.lng)
+            : null;
+        return { b, dist };
+      });
+
+    // Radius-szűrés: a koordináta nélküli rekordok ilyenkor kiesnek.
+    const radiusFiltered = userPos
+      ? withDistance.filter(({ dist }) => dist != null && dist <= radiusKm)
+      : withDistance;
+
+    // Ha aktív a radius, a közelebbi előbbre kerül.
+    if (userPos) {
+      radiusFiltered.sort((a, b) => (a.dist ?? Infinity) - (b.dist ?? Infinity));
+    }
+
+    return radiusFiltered;
+  }, [businesses, cat, canton, q, showFavs, openNow, favoriteIds, userPos, radiusKm]);
 
   const locatedCount = useMemo(
-    () => filtered.filter((b) => b.lat != null && b.lng != null).length,
+    () => filtered.filter(({ b }) => b.lat != null && b.lng != null).length,
     [filtered],
   );
+
+  const filteredBusinesses = useMemo(() => filtered.map(({ b }) => b), [filtered]);
 
   // A térkép hely-pillhez: a kiválasztott kanton neve, vagy "Egész Svájc"
   const locationLabel = useMemo(() => {
@@ -172,7 +244,70 @@ export function ExploreView({
             Most nyitva
           </span>
         </button>
+
+        {/* Közelemben / radius-szűrő */}
+        <button
+          type="button"
+          onClick={userPos ? clearGeolocation : requestGeolocation}
+          aria-pressed={userPos != null}
+          disabled={geoState === "loading"}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            userPos
+              ? "bg-primary/10 border-primary/30 text-primary font-bold"
+              : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
+            geoState === "loading" && "opacity-60 cursor-wait",
+          )}
+        >
+          <Icon
+            name="pin"
+            size={12}
+            strokeWidth={2.4}
+            className={cn("shrink-0", userPos ? "text-primary" : "text-ink-muted")}
+          />
+          <span className="text-[11.5px] font-bold tracking-wide select-none">
+            {geoState === "loading"
+              ? "Helymeghatározás…"
+              : userPos
+                ? `${radiusKm} km-en belül · ✕`
+                : "Közelemben"}
+          </span>
+        </button>
+
+        {/* Radius választó — csak ha aktív a helymeghatározás */}
+        {userPos && (
+          <label className="relative inline-flex items-center gap-2 rounded-pill border border-primary/30 bg-primary/5 px-3 py-2 shadow-card cursor-pointer transition hover:bg-primary/10">
+            <span className="text-[11px] font-bold uppercase tracking-wide text-primary/70 select-none">
+              Sugár
+            </span>
+            <span className="text-[13px] font-bold tracking-[-0.01em] text-primary pr-1">
+              {radiusKm} km
+            </span>
+            <Icon name="chevD" size={13} strokeWidth={2.2} className="text-primary/70 shrink-0" />
+            <select
+              value={radiusKm}
+              onChange={(e) => handleRadiusChange(Number(e.target.value) as RadiusKm)}
+              aria-label="Keresési sugár"
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+            >
+              {RADIUS_OPTIONS_KM.map((km) => (
+                <option key={km} value={km}>
+                  {km} km
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
+
+      {/* Geo-hiba visszajelzés */}
+      {(geoState === "denied" || geoState === "error") && (
+        <div className="mx-5 rounded-card border border-accent/30 bg-accent/5 px-4 py-2 text-[12px] text-accent">
+          {geoState === "denied"
+            ? "Helymeghatározás letiltva. Engedélyezd a böngésződ beállításaiban, hogy a közeli vállalkozásokat lásd."
+            : "Nem sikerült lekérni a helyzeted. Próbáld újra később."}
+        </div>
+      )}
 
       {/* Self-service CTA — vállalkozói regisztráció */}
       <div className="px-5">
@@ -215,15 +350,24 @@ export function ExploreView({
 
       {view === "list" ? (
         <div className="grid gap-2.5 px-5">
-          {filtered.map((b) => (
-            <BusinessCard key={b.id} business={b} href={`/szaknevsor/${b.id}`} />
+          {filtered.map(({ b, dist }) => (
+            <BusinessCard
+              key={b.id}
+              business={b}
+              href={`/szaknevsor/${b.id}`}
+              distanceKm={dist}
+            />
           ))}
 
           {filtered.length === 0 && (
             <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-12 text-center shadow-card">
               <Icon name="search" size={28} className="text-ink-faint" />
               <p className="text-sm font-semibold text-ink">Nincs találat</p>
-              <p className="text-xs text-ink-muted">Próbálj másik kategóriát vagy keresőszót.</p>
+              <p className="text-xs text-ink-muted">
+                {userPos
+                  ? `Nincs vállalkozás ${radiusKm} km-en belül. Növeld a sugarat vagy kapcsold ki a helymeghatározást.`
+                  : "Próbálj másik kategóriát vagy keresőszót."}
+              </p>
             </div>
           )}
         </div>
@@ -237,7 +381,7 @@ export function ExploreView({
             }
           >
             <BusinessMap
-              businesses={filtered}
+              businesses={filteredBusinesses}
               categories={categories}
               activeCat={cat}
               onSelectCat={setCat}
