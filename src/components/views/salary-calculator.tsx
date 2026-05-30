@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { CANTONS } from "@/lib/cantons";
 import { cn } from "@/lib/cn";
+import {
+  listSalaryOffers,
+  saveSalaryOffer,
+  type SalaryOfferInput,
+} from "@/lib/salary-offers";
 
 /**
  * Simplified Quellensteuer (Withholding Tax) estimates.
@@ -78,6 +84,43 @@ export function SalaryCalculator() {
   });
 
   const [expanded, setExpanded] = useState(false);
+
+  // "Ajánlataim" mentés-bar állapota
+  const [saveLabel, setSaveLabel] = useState("");
+  const [savedCount, setSavedCount] = useState(0);
+  const [justSaved, setJustSaved] = useState(false);
+
+  useEffect(() => {
+    setSavedCount(listSalaryOffers().length);
+  }, []);
+
+  function handleSaveOffer() {
+    const label = saveLabel.trim();
+    if (!label) return;
+    const input: SalaryOfferInput = {
+      gross: form.gross,
+      period: form.period,
+      canton: form.canton,
+      age: form.age,
+      civil: form.civil,
+      kids: form.kids,
+      churchTax: form.churchTax,
+      months: form.months,
+    };
+    saveSalaryOffer(label, input, {
+      grossMonthly,
+      grossYearly,
+      netMonthly,
+      netYearly,
+      totalDeductions,
+      qstAmount: valQst,
+      socialDeductions,
+    });
+    setSavedCount((n) => n + 1);
+    setSaveLabel("");
+    setJustSaved(true);
+    setTimeout(() => setJustSaved(false), 2400);
+  }
 
   function setField<K extends keyof SalaryForm>(k: K, v: SalaryForm[K]) {
     setForm((prev) => ({ ...prev, [k]: v }));
@@ -377,6 +420,67 @@ export function SalaryCalculator() {
           )}
         </div>
       </div>
+
+      {/* "Ajánlataim" — interjún kapott ajánlatok mentése + összehasonlítás */}
+      <section className="rounded-card border border-line bg-surface p-4 shadow-card">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="grid h-9 w-9 place-items-center rounded-[12px] bg-success/10 text-success">
+            <Icon name="bookmark" size={16} strokeWidth={2.4} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-[14px] font-extrabold tracking-tight text-ink">
+              Mentsd el ajánlatként
+            </h3>
+            <p className="text-[11.5px] text-ink-muted">
+              Hasonlítsd össze a különböző interjúkon kapott ajánlatokat.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <input
+            type="text"
+            value={saveLabel}
+            onChange={(e) => setSaveLabel(e.target.value)}
+            placeholder="Pl. ABB Zürich, Migros HQ Bern…"
+            maxLength={60}
+            className="flex-1 rounded-[10px] border border-line bg-surface-alt px-3 py-2.5 text-[13.5px] text-ink outline-none focus:ring-2 focus:ring-success/30"
+          />
+          <button
+            type="button"
+            onClick={handleSaveOffer}
+            disabled={!saveLabel.trim()}
+            className={cn(
+              "rounded-[10px] px-4 py-2.5 text-[13.5px] font-extrabold tracking-tight transition active:scale-95",
+              saveLabel.trim()
+                ? "bg-success text-white shadow-card"
+                : "bg-surface-alt text-ink-muted cursor-not-allowed",
+            )}
+          >
+            Mentés
+          </button>
+        </div>
+
+        {justSaved && (
+          <p className="mt-2 text-[12px] font-bold text-success">
+            ✓ Ajánlat mentve a böngésződben.
+          </p>
+        )}
+
+        {savedCount > 0 && (
+          <Link
+            href="/berkalkulator/ajanlataim"
+            className="mt-3 flex items-center justify-between rounded-[10px] border border-success/20 bg-success/5 px-3 py-2 text-[12.5px] font-bold text-success transition hover:bg-success/10"
+          >
+            <span>📊 Ajánlataim ({savedCount}) — összehasonlítás</span>
+            <Icon name="chevR" size={14} strokeWidth={2.4} />
+          </Link>
+        )}
+
+        <p className="mt-2 text-[10.5px] text-ink-faint">
+          Csak a böngésződben tárolva — sem mi, sem mások nem látják.
+        </p>
+      </section>
 
       <LegalDisclaimer
         toolName="bérkalkulátor"
