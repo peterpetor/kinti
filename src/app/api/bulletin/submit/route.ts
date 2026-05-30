@@ -17,6 +17,7 @@ import { getCloudflareEnv, getMediaBucket } from "@/lib/cloudflare";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { safeLogError } from "@/lib/safe-log";
 import { moderateImage } from "@/lib/moderation";
+import { triggerAlberletRadars } from "@/lib/radars";
 
 /** A 30 napos publikus életidő — a publish flow-ban használjuk. */
 const POST_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -153,6 +154,11 @@ export async function POST(req: Request) {
       cantonCode: validation.value.cantonCode,
       price: validation.value.price,
     });
+
+    if (validation.value.kindId === 'alberlet' && validation.value.cantonCode) {
+      // Értesítjük azokat, akik erre a kantonra (vagy 'all'-ra) iratkoztak fel
+      triggerAlberletRadars(validation.value.cantonCode).catch(() => {});
+    }
 
     return NextResponse.json(
       {

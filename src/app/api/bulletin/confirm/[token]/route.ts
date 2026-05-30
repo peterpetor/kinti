@@ -7,6 +7,7 @@ import {
 } from "@/lib/repo";
 import { POST_TTL_MS, REQUIRE_ADMIN_APPROVAL } from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+import { triggerAlberletRadars } from "@/lib/radars";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -66,6 +67,11 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     price: draft.price,
   });
   await deleteBulletinDraft(draft.id);
+
+  if (!isPending && draft.kindId === 'alberlet' && draft.cantonCode) {
+    // Csak akkor küldünk értesítést, ha nem kerül moderációs sorba
+    triggerAlberletRadars(draft.cantonCode).catch(() => {});
+  }
 
   const status = isPending ? "pending" : "published";
   return NextResponse.redirect(
