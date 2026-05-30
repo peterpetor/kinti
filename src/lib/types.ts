@@ -32,6 +32,7 @@ export interface Business {
   /** Adminisztrátor által manuálisan ellenőrzött magyar nyelvű vállalkozó. */
   verified: boolean;
   blurb: string | null;
+  licenseNumber: string | null;
   openNow: boolean;
   openText: string | null;
   yearsHere: number | null;

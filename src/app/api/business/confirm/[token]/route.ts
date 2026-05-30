@@ -49,6 +49,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     address: sub.address,
     phone: sub.phone,
     blurb: sub.blurb,
+    licenseNumber: sub.licenseNumber,
     contactEmail: sub.email,
     lat: coords?.lat ?? null,
     lng: coords?.lng ?? null,

@@ -21,7 +21,31 @@ export const BUSINESS_LIMITS = {
   phoneMax: 30,
   blurbMax: 600,
   emailMax: 254,
+  licenseNumberMax: 120,
 } as const;
+
+/**
+ * Engedélyköteles kategóriák (SZF 3.1) — ha valaki ilyen kategóriát választ,
+ * az UI automatikusan kéri az engedélyszámot és kötelező megadnia.
+ */
+export const LICENSED_CATEGORY_IDS = new Set([
+  // Egészségügy
+  "orvos", "fogorvos", "gyogyszeresz", "pszichologus", "fizioterapia",
+  "nogyogyasz", "gyermekorvos", "borgyogyasz", "ortopedus", "pszichiater",
+  "urologus", "belgyogyasz", "kardiologus", "sebesz", "szemesz", "ful-orr-gege",
+  "radiologus", "neurologist",
+  // Jog és pénz
+  "ugyvéd", "kozjegyzo", "adotanacsado", "befektetési-tanácsadó",
+  "biztositaskozveto", "vagyonkezelo",
+  // Építészet
+  "epitesz", "statikus", "energetikai-tanusite",
+  // Gyermek és gondozás
+  "gyermekgondozo", "idosgondozo", "oktatas", "magantanar",
+]);
+
+export function isLicensedCategory(categoryId: string): boolean {
+  return LICENSED_CATEGORY_IDS.has(categoryId.toLowerCase());
+}
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -34,6 +58,8 @@ export interface BusinessFormInput {
   address?: unknown;
   phone?: unknown;
   blurb?: unknown;
+  licenseNumber?: unknown;
+  licenseAccepted?: unknown;
   /** Bot-csapda — ha van értéke, eldobjuk. */
   website?: unknown;
   acceptTerms?: unknown;
@@ -49,6 +75,7 @@ export interface ValidatedBusinessInput {
   address: string | null;
   phone: string | null;
   blurb: string | null;
+  licenseNumber: string | null;
   acceptTerms: true;
   ageConfirmed: true;
 }
@@ -130,6 +157,29 @@ export function validateBusinessInput(
     });
   }
 
+  const licenseNumber = str(input.licenseNumber);
+  if (isLicensedCategory(categoryId)) {
+    if (!licenseNumber) {
+      errors.push({
+        field: "licenseNumber",
+        message: "Engedélyköteles tevékenység esetén a hatósági/kamarai engedélyszám megadása kötelező.",
+      });
+    } else if (licenseNumber.length > BUSINESS_LIMITS.licenseNumberMax) {
+      errors.push({
+        field: "licenseNumber",
+        message: `Legfeljebb ${BUSINESS_LIMITS.licenseNumberMax} karakter.`,
+      });
+    }
+    if (input.licenseAccepted !== true) {
+      errors.push({
+        field: "licenseAccepted",
+        message: "Az engedélyre vonatkozó nyilatkozat elfogadása kötelező.",
+      });
+    }
+  } else {
+    // Ha nem engedélyköteles, akkor nullázzuk a biztonság kedvéért.
+  }
+
   // Káromkodás-szűrő a publikus szöveg-mezőkre.
   if (!errors.length) {
     const dirty = findProfanityInFields({ name, blurb, categoryLabel });
@@ -141,7 +191,9 @@ export function validateBusinessInput(
     }
   }
 
-  if (errors.length) return { ok: false, errors };
+  if (errors.length > 0) {
+    return { ok: false, errors };
+  }
 
   return {
     ok: true,
@@ -154,6 +206,7 @@ export function validateBusinessInput(
       address: address || null,
       phone: phone || null,
       blurb: blurb || null,
+      licenseNumber: isLicensedCategory(categoryId) ? licenseNumber : null,
       acceptTerms: true,
       ageConfirmed: true,
     },

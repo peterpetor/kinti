@@ -358,7 +358,20 @@ export default async function BusinessPage({ params }: { params: { id: string } 
         <section className="mt-6">
           <SectionHeader>Erről a helyről</SectionHeader>
           <p className="mt-2 text-[14.5px] leading-relaxed text-ink text-pretty">{b.blurb}</p>
-          <p className="mt-2 text-[10.5px] leading-snug text-ink-faint italic">
+          
+          {b.licenseNumber && (
+            <div className="mt-3 rounded-[12px] border border-[#e3a233]/40 bg-[#fff8ed] px-3 py-2 flex items-start gap-2">
+              <span className="text-[14px] shrink-0 mt-0.5">📜</span>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#b8860b]">
+                  Hatósági engedélyszám / Kamarai szám
+                </p>
+                <p className="text-[13px] font-bold text-ink">{b.licenseNumber}</p>
+              </div>
+            </div>
+          )}
+
+          <p className="mt-3 text-[10.5px] leading-snug text-ink-faint italic">
             ⓘ A profil adatait a vállalkozó tölti fel — frissességüket az üzemeltető nem ellenőrzi.
             Hivatalos adatokat (engedélyszám, cégjegyzékszám) közvetlenül a hatóságoknál erősíts meg.
           </p>
