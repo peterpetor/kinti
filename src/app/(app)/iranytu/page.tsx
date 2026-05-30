@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function BenchmarkPage() {
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   return (
     <div className="space-y-4 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
       <div className="px-5">
@@ -38,7 +39,7 @@ export default function BenchmarkPage() {
           </div>
         </div>
 
-        <BenchmarkClient />
+        <BenchmarkClient turnstileSiteKey={turnstileSiteKey} />
       </div>
     </div>
   );

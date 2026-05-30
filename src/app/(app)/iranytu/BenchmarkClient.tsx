@@ -29,8 +29,8 @@ function Spinner() {
   return <div className="py-14 flex justify-center"><div className="animate-spin w-7 h-7 border-[3px] border-primary border-t-transparent rounded-full" /></div>;
 }
 
-function SubmitForm({ tab, mode, initialData, onSuccess, onCancel }: {
-  tab: Tab; mode: "submit" | "edit"; initialData?: MyData; onSuccess: () => void; onCancel?: () => void;
+function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSiteKey }: {
+  tab: Tab; mode: "submit" | "edit"; initialData?: MyData; onSuccess: () => void; onCancel?: () => void; turnstileSiteKey: string;
 }) {
   const isEdit = mode === "edit";
   const [canton, setCanton] = useState(tab === "salary" ? (initialData?.salary?.cantonCode ?? "ZH") : (initialData?.rent?.cantonCode ?? "ZH"));
@@ -87,7 +87,7 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel }: {
           <div><label className={labelCls}>Havi lakbér (CHF)</label><input type="number" min={300} max={10000} step={50} value={rent} onChange={e => setRent(parseInt(e.target.value) || 0)} required className={inputCls} /></div>
         </>)}
         {error && <p className="text-[13px] text-accent font-medium rounded-xl bg-accent/10 px-3 py-2">{error}</p>}
-        <TurnstileWidget siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} onToken={setToken} />
+        <TurnstileWidget siteKey={turnstileSiteKey} onToken={setToken} />
         <button type="submit" disabled={submitting || !token} className="w-full bg-primary hover:opacity-90 text-white font-bold py-3 rounded-xl transition disabled:opacity-40 text-[15px]">
           {submitting ? <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white inline-block" /> : isEdit ? "✏️ Módosítás mentése" : "🔓 Anonim beküldés & feloldás"}
         </button>
@@ -133,7 +133,7 @@ function RentCard({ stat }: { stat: RentStatsRow }) {
   );
 }
 
-export default function BenchmarkClient() {
+export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [lock, setLock] = useState({ salary: true, rent: true });
   const [myData, setMyData] = useState<MyData>({ salary: null, rent: null });
   const [loading, setLoading] = useState(true);
@@ -187,12 +187,12 @@ export default function BenchmarkClient() {
               <span className="mt-0.5">🔐</span>
               <span>{tab === "salary" ? "Küld be a béredet a statisztikák feloldásához!" : "Küld be a lakbéredet a statisztikák feloldásához!"}</span>
             </div>
-            <SubmitForm tab={tab} mode="submit" onSuccess={fetchStats} />
+            <SubmitForm tab={tab} mode="submit" onSuccess={fetchStats} turnstileSiteKey={turnstileSiteKey} />
           </div>
         ) : (
           <>
             {isEditing ? (
-              <SubmitForm tab={tab} mode="edit" initialData={myData} onSuccess={() => { setEditingTab(null); fetchStats(); }} onCancel={() => setEditingTab(null)} />
+              <SubmitForm tab={tab} mode="edit" initialData={myData} onSuccess={() => { setEditingTab(null); fetchStats(); }} onCancel={() => setEditingTab(null)} turnstileSiteKey={turnstileSiteKey} />
             ) : (
               <MyDataCard tab={tab} myData={myData} onEdit={() => setEditingTab(tab)} />
             )}
@@ -238,7 +238,7 @@ export default function BenchmarkClient() {
                 {/* Kalkulátor */}
                 {salaryByExp.length > 0 && <SalaryCalculator salaryByExp={salaryByExp} />}
                 {/* Email értesítés */}
-                <AlertSubscription defaultIndustry={topIndustry?.industry} defaultAvg={topIndustry?.avg_salary} />
+                <AlertSubscription defaultIndustry={topIndustry?.industry} defaultAvg={topIndustry?.avg_salary} turnstileSiteKey={turnstileSiteKey} />
               </div>
             ) : (
               rentStats.length === 0 ? (

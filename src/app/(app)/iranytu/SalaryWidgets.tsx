@@ -87,9 +87,11 @@ export function SalaryCalculator({ salaryByExp }: { salaryByExp: SalaryExpRow[] 
 export function AlertSubscription({
   defaultIndustry,
   defaultAvg,
+  turnstileSiteKey,
 }: {
   defaultIndustry?: string;
   defaultAvg?: number | null;
+  turnstileSiteKey: string;
 }) {
   const [email, setEmail] = useState("");
   const [industry, setIndustry] = useState(defaultIndustry ?? INDUSTRIES[0]);
@@ -160,7 +162,7 @@ export function AlertSubscription({
           </div>
         </div>
         {error && <p className="text-[13px] text-accent font-medium">{error}</p>}
-        <TurnstileWidget siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} onToken={setToken} />
+        <TurnstileWidget siteKey={turnstileSiteKey} onToken={setToken} />
         <button type="submit" disabled={submitting || !token}
           className="w-full bg-primary hover:opacity-90 text-white font-bold py-3 rounded-xl transition disabled:opacity-40 text-[14px]">
           {submitting ? "Feliratkozás..." : "🔔 Feliratkozás"}
