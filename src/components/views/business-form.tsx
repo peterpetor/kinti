@@ -50,9 +50,18 @@ const INITIAL: FormState = {
   ageConfirmed: false,
 };
 
+interface AiSuggestion {
+  polishedDescription: string | null;
+  suggestedCategoryId: string | null;
+  reasoning: string;
+}
+
 export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps) {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiResult, setAiResult] = useState<AiSuggestion | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
   const [global, setGlobal] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [turnstileToken, setTurnstileToken] = useState<string>("");
@@ -62,6 +71,53 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
     setErrors((e) => ({ ...e, [key]: "" }));
+  }
+
+  async function handleAiHelp() {
+    if (form.blurb.trim().length < 10) {
+      setAiError("Írj legalább 10 karakteres leírást, hogy tudjak segíteni.");
+      return;
+    }
+    setAiBusy(true);
+    setAiError(null);
+    setAiResult(null);
+    try {
+      const res = await fetch("/api/ai/business-helper", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          description: form.blurb,
+          currentCategoryId: form.categoryId || undefined,
+        }),
+      });
+      if (!res.ok) {
+        const j = (await res.json().catch(() => ({}))) as { error?: string };
+        setAiError(j.error ?? "Az AI nem tudott segíteni most.");
+        setAiBusy(false);
+        return;
+      }
+      const data = (await res.json()) as AiSuggestion;
+      setAiResult(data);
+      setAiBusy(false);
+    } catch {
+      setAiError("Hálózati hiba.");
+      setAiBusy(false);
+    }
+  }
+
+  function applyAiSuggestion(applyDesc: boolean, applyCat: boolean) {
+    if (!aiResult) return;
+    if (applyDesc && aiResult.polishedDescription) {
+      setField("blurb", aiResult.polishedDescription);
+    }
+    if (applyCat && aiResult.suggestedCategoryId) {
+      const cat = categories.find((c) => c.id === aiResult.suggestedCategoryId);
+      if (cat) {
+        setField("categoryId", cat.id);
+        setField("categoryLabel", cat.label);
+      }
+    }
+    setAiResult(null);
   }
 
   const addressInvalid = form.address.trim().length > 0 && !isSwissAddress(form.address);
@@ -294,6 +350,100 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           <span>{form.blurb.length} / {BUSINESS_LIMITS.blurbMax}</span>
         </div>
         <FieldError msg={errors.blurb} />
+
+        {/* AI-segéd: leírás-csiszolás + kategória-javaslat */}
+        <div className="mt-2">
+          <button
+            type="button"
+            onClick={handleAiHelp}
+            disabled={aiBusy || form.blurb.trim().length < 10}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[11.5px] font-extrabold transition active:scale-95",
+              aiBusy || form.blurb.trim().length < 10
+                ? "bg-surface-alt text-ink-muted cursor-not-allowed"
+                : "border border-primary/30 bg-primary-soft/40 text-primary hover:bg-primary-soft/60",
+            )}
+          >
+            <Icon name="sparkles" size={11} strokeWidth={2.4} />
+            {aiBusy ? "AI gondolkodik…" : "AI segítség (csiszolás + kategória-javaslat)"}
+          </button>
+          {aiError && (
+            <p className="mt-1 text-[11px] font-bold text-accent">{aiError}</p>
+          )}
+        </div>
+
+        {aiResult && (
+          <div className="mt-2 rounded-card border-2 border-primary/30 bg-primary-soft/40 p-3 space-y-2">
+            <div className="flex items-center gap-1.5">
+              <Icon name="sparkles" size={12} strokeWidth={2.4} className="text-primary" />
+              <span className="text-[11px] font-extrabold uppercase tracking-wide text-primary">
+                AI javaslat — Te döntesz, elfogadod-e
+              </span>
+            </div>
+
+            {aiResult.polishedDescription && (
+              <div className="rounded-[10px] border border-primary/20 bg-surface p-2.5">
+                <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+                  Csiszolt leírás:
+                </p>
+                <p className="mt-1 text-[12.5px] text-ink leading-relaxed">
+                  {aiResult.polishedDescription}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => applyAiSuggestion(true, false)}
+                  className="mt-2 text-[11px] font-bold text-primary underline"
+                >
+                  Ezt használom
+                </button>
+              </div>
+            )}
+
+            {aiResult.suggestedCategoryId &&
+              aiResult.suggestedCategoryId !== form.categoryId && (
+                <div className="rounded-[10px] border border-primary/20 bg-surface p-2.5">
+                  <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+                    Javasolt kategória:
+                  </p>
+                  <p className="mt-1 text-[12.5px] font-bold text-ink">
+                    {categories.find((c) => c.id === aiResult.suggestedCategoryId)?.label ||
+                      aiResult.suggestedCategoryId}
+                  </p>
+                  {aiResult.reasoning && (
+                    <p className="mt-0.5 text-[11px] text-ink-muted italic">
+                      {aiResult.reasoning}
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => applyAiSuggestion(false, true)}
+                    className="mt-2 text-[11px] font-bold text-primary underline"
+                  >
+                    Kategória átállítása
+                  </button>
+                </div>
+              )}
+
+            {aiResult.polishedDescription &&
+              aiResult.suggestedCategoryId &&
+              aiResult.suggestedCategoryId !== form.categoryId && (
+                <button
+                  type="button"
+                  onClick={() => applyAiSuggestion(true, true)}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card active:scale-95"
+                >
+                  Mindkét javaslat elfogadása
+                </button>
+              )}
+            <button
+              type="button"
+              onClick={() => setAiResult(null)}
+              className="block w-full text-center text-[10.5px] text-ink-faint underline"
+            >
+              Mégse, hagyom úgy
+            </button>
+          </div>
+        )}
       </Section>
 
       {/* Email — OPCIONÁLIS */}

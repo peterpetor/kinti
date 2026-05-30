@@ -74,6 +74,9 @@ interface BusinessRow {
   gallery_keys: string | null;
   view_count: number | null;
   phone_click_count: number | null;
+  ai_review_summary: string | null;
+  ai_review_summary_at: string | null;
+  ai_review_summary_count: number | null;
 }
 
 interface EventRow {
@@ -192,6 +195,9 @@ function toBusiness(r: BusinessRow): Business {
     galleryKeys: jsonArray(r.gallery_keys),
     viewCount: r.view_count ?? 0,
     phoneClickCount: r.phone_click_count ?? 0,
+    aiReviewSummary: r.ai_review_summary,
+    aiReviewSummaryAt: r.ai_review_summary_at,
+    aiReviewSummaryCount: r.ai_review_summary_count ?? 0,
   };
 }
 
@@ -3091,4 +3097,25 @@ export async function deleteExchangeRateAlert(
     .bind(id, pushEndpoint)
     .run();
   return (res.meta.changes ?? 0) > 0;
+}
+
+// ============================================================================
+//  AI vélemény-összegzés (cache-eléshez)
+// ============================================================================
+
+export async function setBusinessAiReviewSummary(params: {
+  businessId: string;
+  summary: string;
+  reviewCount: number;
+}): Promise<void> {
+  await getDB()
+    .prepare(
+      `UPDATE businesses
+       SET ai_review_summary = ?,
+           ai_review_summary_at = datetime('now'),
+           ai_review_summary_count = ?
+       WHERE id = ?`,
+    )
+    .bind(params.summary, params.reviewCount, params.businessId)
+    .run();
 }

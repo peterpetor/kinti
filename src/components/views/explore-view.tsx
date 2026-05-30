@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
 import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
 import { haversineKm } from "@/lib/distance";
+import { AISearchBar } from "./ai-search";
 
 const RADIUS_OPTIONS_KM = [5, 10, 20, 50] as const;
 type RadiusKm = (typeof RADIUS_OPTIONS_KM)[number];
@@ -170,6 +171,15 @@ export function ExploreView({
     <div className="space-y-3">
       <div className="px-5">
         <SearchBar value={q} onChange={setQ} />
+      </div>
+
+      {/* AI természetes nyelvű kereső */}
+      <div className="px-5">
+        <AISearchBar
+          onApplyCategory={setCat}
+          onApplyCanton={setCanton}
+          onApplyQuery={setQ}
+        />
       </div>
 
       {/* Szűrők sor (Kanton + Mentett kedvencek) */}
