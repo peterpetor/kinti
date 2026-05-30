@@ -12,32 +12,46 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: Request) {
   const env = getCloudflareEnv();
+  // Ha nincs beállítva CRON_SECRET, akkor csak lokális dev környezetben engedjük,
+  // egyébként elutasítjuk, nehogy véletlenül nyitva maradjon.
   const authHeader = req.headers.get("authorization") ?? "";
-  const expectedAuth = env.CRON_SECRET ? `Bearer ${env.CRON_SECRET}` : null;
-  
-  if (!expectedAuth || authHeader !== expectedAuth) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (env.CRON_SECRET) {
+    if (authHeader !== `Bearer ${env.CRON_SECRET}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  } else if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Missing CRON_SECRET configuration" }, { status: 401 });
   }
 
   const url = new URL(req.url);
   const type = url.searchParams.get("type");
   
   if (type === "alberlet") {
-    // Szimulálunk egy zürichi albérlet feltöltést
-    await triggerAlberletRadars("ZH");
-    return NextResponse.json({ ok: true, triggered: "alberlet", canton: "ZH" });
+    // Szimulálunk egy albérlet feltöltést a megadott kantonban (default: ZH)
+    const canton = url.searchParams.get("canton") || "ZH";
+    await triggerAlberletRadars(canton);
+    return NextResponse.json({ ok: true, triggered: "alberlet", canton });
   }
   
   if (type === "exchange_rate") {
-    // Lekérdezzük a valós árfolyamot
+    // Lekérdezzük a valós árfolyamot (cache nélkül!)
+    let huf: number;
     try {
-      const res = await fetch("https://api.frankfurter.app/latest?from=CHF&to=HUF");
+      const res = await fetch("https://api.frankfurter.app/latest?from=CHF&to=HUF", {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("API hiba");
       const data = await res.json() as any;
-      const huf = data.rates.HUF;
+      huf = data.rates.HUF;
+    } catch {
+      return NextResponse.json({ error: "Frankfurter API hiba" }, { status: 502 });
+    }
+
+    try {
       await triggerExchangeRateRadars(huf);
       return NextResponse.json({ ok: true, triggered: "exchange_rate", huf });
     } catch {
-      return NextResponse.json({ error: "Frankfurter API hiba" }, { status: 500 });
+      return NextResponse.json({ error: "Hiba a radarok triggerezésekor" }, { status: 500 });
     }
   }
   

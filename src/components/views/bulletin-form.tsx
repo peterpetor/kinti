@@ -206,7 +206,7 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         </h2>
         <p className="mx-auto mt-2 max-w-sm text-pretty text-[13.5px] leading-relaxed text-ink-muted">
           Küldtünk egy emailt a <strong className="text-ink">{form.email}</strong> címre. A megerősítő
-          linkre kattintva azonnal megjelenik a hirdetésed. A link 24 órán át érvényes.
+          linkre kattintva véglegesítheted a hirdetés feladását. A link 24 órán át érvényes.
         </p>
         <p className="mt-3 text-[11.5px] text-ink-faint">
           Spam mappa? Néha oda kerül — engedélyezd, ha úgy van.

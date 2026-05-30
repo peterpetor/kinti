@@ -18,6 +18,7 @@ import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile
 import { ShareSheet } from "@/components/share-sheet";
 import { AddToCalendar } from "@/components/add-to-calendar";
 import { ReportButton } from "@/components/report-button";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import type { CalendarEvent } from "@/lib/calendar";
 
 // --- helperek a hirdetésekhez -----------------------------------------------
@@ -525,6 +526,15 @@ function EventsList({ events }: { events: KintiEvent[] }) {
         title={shareFor?.title ?? ""}
         text={shareFor ? `Nézd meg ezt az eseményt a kintin: ${shareFor.title}` : ""}
       />
+
+      <div className="mt-4 pb-4 px-1">
+        <LegalDisclaimer
+          toolName="Eseménynaptár"
+          variant="info"
+          notAdviceFor="jogi vagy szerződéses"
+          extraWarning="Az eseményeket a közösség tagjai szervezik és töltik fel. A kinti.app üzemeltetője nem vállal felelősséget az események megszervezéséért, a helyszínek pontosságáért, vagy a résztvevők testi épségéért. Mindig tájékozódj a szervezőnél az esetleges belépődíjakról vagy változásokról."
+        />
+      </div>
     </>
   );
 }
@@ -1241,6 +1251,15 @@ export function BulletinList({
               />
             ))
           )}
+
+          <div className="mt-4 pb-4">
+            <LegalDisclaimer
+              toolName="Hirdetőtábla"
+              variant="info"
+              notAdviceFor="hivatalos vagy pénzügyi"
+              extraWarning="A hirdetőtáblán szereplő hirdetéseket a platform felhasználói töltik fel. A kinti.app üzemeltetője nem felelős a hirdetések valóságtartalmáért, a meghirdetett albérletek, munkák vagy termékek minőségéért és legálisságáért. Kérjük, légy körültekintő a kapcsolatfelvételkor, és soha ne utalj pénzt látatlanban!"
+            />
+          </div>
         </>
       )}
     </>

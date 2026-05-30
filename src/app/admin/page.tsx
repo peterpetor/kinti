@@ -155,18 +155,22 @@ export default async function AdminPage() {
                   {b.price ? ` · CHF ${b.price}` : ""}
                 </p>
                 <div className="mt-2 flex gap-2">
-                  <a
-                    href={`/api/admin/bulletins/${b.id}/approve`}
-                    className="inline-flex items-center gap-1 rounded-pill bg-primary px-3 py-1 text-[11.5px] font-bold text-white"
-                  >
-                    ✅ Jóváhagyás
-                  </a>
-                  <a
-                    href={`/api/admin/bulletins/${b.id}/reject`}
-                    className="inline-flex items-center gap-1 rounded-pill bg-accent px-3 py-1 text-[11.5px] font-bold text-white"
-                  >
-                    ❌ Elutasítás (Törlés)
-                  </a>
+                  <form method="POST" action={`/api/admin/bulletins/${b.id}/approve`}>
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1 rounded-pill bg-primary px-3 py-1 text-[11.5px] font-bold text-white hover:opacity-90"
+                    >
+                      ✅ Jóváhagyás
+                    </button>
+                  </form>
+                  <form method="POST" action={`/api/admin/bulletins/${b.id}/reject`}>
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1 rounded-pill bg-accent px-3 py-1 text-[11.5px] font-bold text-white hover:opacity-90"
+                    >
+                      ❌ Elutasítás (Törlés)
+                    </button>
+                  </form>
                 </div>
               </div>
             ))}

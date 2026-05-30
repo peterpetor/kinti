@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { AkciokView } from "./akciok-view";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -52,11 +53,12 @@ export default function AkciokPage() {
       <AkciokView turnstileSiteKey={turnstileSiteKey} />
 
       <div className="px-5">
-        <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11px] leading-relaxed text-ink-muted">
-          <strong className="text-ink">100% közösségi.</strong> A jelentések felhasználói beadványok, NEM hivatalosak.
-          Nincs képfeltöltés (anti-abuse), nincs push-értesítés (nem spammelünk).
-          Lejár éjfélkor — másnap reggel friss lista.
-        </div>
+        <LegalDisclaimer
+          toolName="Akciók térkép"
+          variant="info"
+          notAdviceFor="kereskedelmi vagy fogyasztóvédelmi"
+          extraWarning="Az akció-bejelentéseket a platform felhasználói teszik közzé saját tapasztalataik alapján, az adatok NEM hivatalosak és NEM ellenőrzöttek. Az aktuális árakhoz és akcicskhoz mindig az érintett boltlánc weboldalát vagy az alkalmazott kiszólálóját kell alapul venni. A kinti.app nem vállal felelősséget az eltelt akciszámított vásárlásokból eredett károkért."
+        />
       </div>
     </div>
   );

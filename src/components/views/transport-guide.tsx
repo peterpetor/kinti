@@ -24,7 +24,7 @@ export function TransportGuide() {
               Svájci Tömegközlekedés
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              Zóna-rendszerek (SBB, ZVV, Libero), jegy-típusok, mobil-appok és GA vs Halbtax kalkulátor — egyszerűen elmagyarázva.
+              Zónarendszerek (SBB, ZVV, Libero), jegytípusok, mobilappok és GA vs Halbtax kalkulátor — egyszerűen elmagyarázva.
             </p>
           </div>
         </div>
@@ -33,7 +33,7 @@ export function TransportGuide() {
       {/* Hogyan működik a zóna-rendszer */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card space-y-3">
         <h2 className="text-[14px] font-extrabold text-ink flex items-center gap-1.5">
-          📍 Hogy működik a zóna-rendszer?
+          📍 Hogy működik a zónarendszer?
         </h2>
         <div className="space-y-2 text-[12.5px] leading-relaxed text-ink-muted">
           <p>
@@ -41,7 +41,7 @@ export function TransportGuide() {
             Egy jegy a zónák számától függ — minél több zónán mész át, annál drágább.
           </p>
           <ul className="space-y-1 ml-4 list-disc">
-            <li>Minden nagy régiónak van saját <strong className="text-ink">Tarifverbund-ja</strong> (tarif-szövetség).</li>
+            <li>Minden nagy régiónak van saját <strong className="text-ink">Tarifverbundja</strong> (tarifaszövetség).</li>
             <li>Egy jegyen belül szabadon átszállhatsz vonatra, buszra, villamosra.</li>
             <li>Az országos SBB-vonatokra <strong className="text-ink">külön jegy</strong> kell — ezeket a zónarendszer NEM fedi.</li>
             <li>Mobil-app (FAIRTIQ, SBB Mobile) az utazás alapján a tipikusan kedvező jegytípust választja.</li>
@@ -52,7 +52,7 @@ export function TransportGuide() {
       {/* Tarif-szövetségek */}
       <section className="space-y-2">
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted px-1">
-          🗺️ Fő Tarif-szövetségek
+          🗺️ Fő Tarifaszövetségek
         </h2>
         {TARIF_SYSTEMS.map((s) => (
           <TarifCard key={s.id} system={s} />
@@ -62,7 +62,7 @@ export function TransportGuide() {
       {/* Jegy-típusok */}
       <section className="space-y-2">
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted px-1">
-          🎫 Jegy-típusok
+          🎫 Jegytípusok
         </h2>
         {TICKET_TYPES.map((t) => (
           <article key={t.id} className="rounded-card border border-line bg-surface p-4 shadow-card">
@@ -97,7 +97,7 @@ export function TransportGuide() {
       {/* Mobil-appok */}
       <section className="space-y-2">
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted px-1">
-          📱 Mobil-appok
+          📱 Mobilalkalmazások
         </h2>
         {MOBILE_APPS.map((app) => (
           <article key={app.id} className="rounded-card border border-line bg-surface p-3.5 shadow-card">

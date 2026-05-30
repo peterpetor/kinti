@@ -126,7 +126,7 @@ export function validateBusinessInput(
   if (input.ageConfirmed !== true) {
     errors.push({
       field: "ageConfirmed",
-      message: "A Szolgáltatás csak 18. életévét betöltött személyek által vehető igénybe.",
+      message: "A Szolgáltatást csak 18. életévüket betöltött személyek vehetik igénybe.",
     });
   }
 
@@ -136,7 +136,7 @@ export function validateBusinessInput(
     if (dirty) {
       errors.push({
         field: dirty.field as keyof BusinessFormInput,
-        message: "A szöveg olyan szót tartalmaz, amit nem engedünk. Kérlek, fogalmazd meg másképp.",
+        message: "A szöveg olyan szót tartalmaz, amit nem engedélyezünk. Kérlek, fogalmazd meg másképp.",
       });
     }
   }

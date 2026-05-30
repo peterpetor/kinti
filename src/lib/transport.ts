@@ -22,7 +22,7 @@ export interface TarifSystem {
   exampleZones: { name: string; zones: string }[];
   /** 1 zónás jegy ára CHF (2. osztály, normál ár). */
   singleZonePrice: number;
-  /** Napi-jegy ára CHF (1 zónás). */
+  /** Napijegy ára CHF (1 zónás). */
   dailyPrice: number;
   /** Hivatalos URL. */
   websiteUrl: string;
@@ -57,7 +57,7 @@ export const TARIF_SYSTEMS: TarifSystem[] = [
     region: "Bern + Solothurn + Biel",
     emoji: "🚊",
     zonesCount: 21,
-    description: "Bern, Solothurn és Biel régiói. Egyszerű 100-as zóna-számozás.",
+    description: "Bern, Solothurn és Biel régiói. Egyszerű 100-as zónaszámozás.",
     exampleZones: [
       { name: "Bern-város", zones: "100/101" },
       { name: "Thun", zones: "330" },
@@ -158,7 +158,7 @@ export const TICKET_TYPES: TicketType[] = [
     id: "single",
     name: "Egyszeri jegy (Einzelbillet)",
     emoji: "🎫",
-    description: "Egy útra szól, megadott zónákban. Általában 1 óráig érvényes szabadon átszállhatsz.",
+    description: "Egy útra szól, megadott zónákban. Általában 1 óráig érvényes, és ezalatt szabadon átszállhatsz.",
     price: "2.50–10 CHF (zónaszámtól függ)",
     validity: "1 óra (max 6 zónáig), különben hosszabb",
     bestFor: "Alkalmi utazás (1-2x/hó)",
@@ -246,7 +246,7 @@ export const MOBILE_APPS: MobileApp[] = [
     description: "Automatikus 'check-in / check-out' app. Csak indulj el — automatikusan megveszi a legolcsóbb jegyet.",
     iosUrl: "https://apps.apple.com/ch/app/fairtiq/id1180268651",
     androidUrl: "https://play.google.com/store/apps/details?id=ch.fairtiq",
-    pros: ["Nem kell jegyt választani", "Mindig a legolcsóbb opció", "Multi-rendszer kompatibilis"],
+    pros: ["Nem kell jegyet választani", "Mindig a legolcsóbb opció", "Multi-rendszer kompatibilis"],
   },
   {
     id: "lezzgo",
@@ -325,7 +325,7 @@ export const TRANSPORT_TIPS: { emoji: string; title: string; body: string }[] = 
   {
     emoji: "⏰",
     title: "1 óra alatt szabad átszállás",
-    body: "Az egyszeri jegy max 6 zónáig 1 óráig érvényes. Ezalatt szabadon szállhatsz át bármilyen jármű közt (vonat, busz, villamos, hajó).",
+    body: "Az egyszeri jegy max 6 zónáig 1 óráig érvényes. Ezalatt szabadon szállhatsz át bármilyen jármű között (vonat, busz, villamos, hajó).",
   },
   {
     emoji: "📅",
@@ -340,22 +340,22 @@ export const TRANSPORT_TIPS: { emoji: string; title: string; body: string }[] = 
   {
     emoji: "✨",
     title: "FAIRTIQ automatikusan a legolcsóbb",
-    body: "Ha bizonytalan vagy mit vegyél, telepítsd a FAIRTIQ-ot. Indulj el → start gomb → leszálláskor stop. Az app a legolcsóbb jegyet veszi.",
+    body: "Ha bizonytalan vagy, mit vegyél, telepítsd a FAIRTIQ-ot. Indulj el → start gomb → leszálláskor stop. Az app a legolcsóbb jegyet veszi.",
   },
   {
     emoji: "🎫",
     title: "GA + Halbtax külön család-tagoknak",
-    body: "Egy családban: 1× GA (ingázó) + 2× Halbtax (alkalmi) gyakran olcsóbb mint 3× GA. Számold ki!",
+    body: "Egy családban: 1× GA (ingázó) + 2× Halbtax (alkalmi) gyakran olcsóbb, mint 3× GA. Számold ki!",
   },
   {
     emoji: "🌅",
     title: "SuperSaver akciós jegyek",
-    body: "Hosszú-távú SBB-utazás (pl. ZRH → Genf)? Az SBB Mobile-on akciós SuperSaver jegyek 30-70%-kal olcsóbbak — de adott vonatra szólnak.",
+    body: "Hosszútávú SBB-utazás (pl. ZRH → Genf)? Az SBB Mobile-on akciós SuperSaver jegyek 30-70%-kal olcsóbbak — de adott vonatra szólnak.",
   },
   {
     emoji: "🌐",
     title: "Hétvégi tarifa (GA Bonus)",
-    body: "GA-val hétvégén ingyen viszed a 2. személyt (családi tag, partner). Ha barátoddal utazol hétvégén, jelezzd ezt.",
+    body: "GA-val hétvégén ingyen viszed a 2. személyt (családtag, partner). Ha barátoddal utazol hétvégén, jelezd ezt.",
   },
   {
     emoji: "🚲",

@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { BORDER_CROSSINGS, COUNTRY_FLAGS, type BorderCrossing } from "@/lib/border-crossings";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 type BorderStatus = "strict" | "moderate" | "easy" | "closed" | "traffic";
 
@@ -134,6 +135,15 @@ export function BorderReports({ turnstileSiteKey = "" }: { turnstileSiteKey?: st
           }}
         />
       )}
+
+      <div className="mt-4 pb-4">
+        <LegalDisclaimer
+          toolName="Határátkelő figyelő"
+          variant="info"
+          notAdviceFor="hivatalos vagy hivatalos határátkelési"
+          extraWarning="A jelentéseket a közösség tagjai, névtelenül töltik fel aktuális tapasztalataik alapján. A kinti.app üzemeltetője nem tudja garantálni az adatok pontosságát, frissességét vagy hitelességét. Az információk kizárólag tájékoztató jellegűek, hivatalos utazási döntésekhez kérjük, mindig tájékozódj a hivatalos állami vagy rendőrségi forrásokból."
+        />
+      </div>
     </div>
   );
 }

@@ -171,7 +171,7 @@ export function PermitWizard() {
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
               4 gyors kérdés alapján megmondjuk, melyik svájci tartózkodási
-              engedély-típus a legrelevánsabb a helyzetedre.
+              engedélytípus a legrelevánsabb a számodra.
             </p>
           </div>
         </div>
@@ -259,7 +259,7 @@ function ResultView({ result, onRestart }: { result: WizardResult; onRestart: ()
         style={{ borderColor: `${primary.color}66`, backgroundColor: `${primary.color}0d` }}
       >
         <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
-          Javasolt engedély-típus
+          Javasolt engedélytípus
         </p>
         <div className="mt-2 flex items-start gap-3">
           <span className="grid h-14 w-14 shrink-0 place-items-center rounded-[14px] text-3xl" style={{ backgroundColor: primary.color, color: "white" }}>
@@ -390,7 +390,7 @@ function ResultView({ result, onRestart }: { result: WizardResult; onRestart: ()
         className="flex w-full items-center justify-center gap-2 rounded-pill bg-primary py-3 text-[14px] font-extrabold text-white shadow-card active:scale-[0.99]"
       >
         <Icon name="arrowLeft" size={14} strokeWidth={2.4} className="rotate-180" />
-        Új kérdés-sor
+        Új kérdéssor
       </button>
 
       <LegalDisclaimer

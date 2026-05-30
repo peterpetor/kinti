@@ -81,7 +81,7 @@ export async function GET(
     return new Response(
       buildPage(
         "Esemény jóváhagyva! ✅",
-        `„${event.title}" mostantól látható a kinti.app eseménynaptárban. Köszönjük a moderációt!`,
+        `„${escapeHtml(event.title)}" mostantól látható a kinti.app eseménynaptárban. Köszönjük a moderációt!`,
         true,
       ),
       { headers: { "content-type": "text/html; charset=utf-8" } },
@@ -93,10 +93,16 @@ export async function GET(
   return new Response(
     buildPage(
       "Esemény elutasítva ❌",
-      `„${event.title}" véglegesen törölve. A beküldő nem kap értesítést erről.`,
+      `„${escapeHtml(event.title)}" véglegesen törölve. A beküldő nem kap értesítést erről.`,
       false,
     ),
     { headers: { "content-type": "text/html; charset=utf-8" } },
+  );
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c as never] || c
   );
 }
 

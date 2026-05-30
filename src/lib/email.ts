@@ -53,7 +53,7 @@ Megkaptuk a hirdetésedet a kinti közösségi hirdetőfalon:
 A publikáláshoz erősítsd meg a kattintással:
   ${args.confirmUrl}
 
-A megerősítő link ${expiresHu}-ig érvényes. Ha lemarad róla, csak küldd el újra a hirdetést.
+A megerősítő link ${expiresHu}-ig érvényes. Ha lemaradnál róla, csak küldd el újra a hirdetést.
 
 A hirdetésed kezelése (szerkesztés / törlés) később:
   ${args.manageUrl}
@@ -285,7 +285,7 @@ ${itemsText}
       <p style="margin:0 0 12px;font-size:12px;line-height:1.6;color:#5c6d63;">
         <strong style="color:#0e1f17;">Tedd ezt az emailt biztonságos helyre.</strong>
         A kinti.app szerverein NEM marad meg semmilyen másolat erről az
-        email-küldésről — ez a kizárólag a te biztonsági mentésed.
+        email-küldésről — ez kizárólag a te biztonsági mentésed.
       </p>
       <p style="margin:0;font-size:12px;line-height:1.6;color:#5c6d63;">
         Ha nem te kérted, hagyd figyelmen kívül.
@@ -412,7 +412,7 @@ export async function sendEventConfirmationEmail(args: EventConfirmEmailArgs): P
   const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
   const subject = "Erősítsd meg az eseményedet – kinti.app";
 
-  const text = `Szia!\n\nMegkaptuk az eseménybeküldésedet a kinti.app-on:\n  Cím: ${args.title}\n  Dátum: ${args.eventDate}\n  Helyszín: ${args.venue}\n\nAz eseményt moderátor ellenőrzi, és hamarosan megjelenik az oldalon.\n\nAmíg erre várnál, erősítsd meg az email-cimedet egy kattintással:\n  ${args.confirmUrl}\n\n—————————————————\n\nEsemény kezelése (szerkesztés, törlés):\n  ${args.manageUrl}\nTedd el ezt a linket — bármikor onnan tudod módosítani.\n\nHa nem te küldted be ezt az eseményt, hagyd figyelmen kívül.\n\nÜdv,\nkinti.app`;
+  const text = `Szia!\n\nMegkaptuk az eseménybeküldésedet a kinti.app-on:\n  Cím: ${args.title}\n  Dátum: ${args.eventDate}\n  Helyszín: ${args.venue}\n\nAz eseményt moderátor ellenőrzi, és hamarosan megjelenik az oldalon.\n\nAmíg erre várnál, erősítsd meg az email-címedet egy kattintással:\n  ${args.confirmUrl}\n\n—————————————————\n\nEsemény kezelése (szerkesztés, törlés):\n  ${args.manageUrl}\nTedd el ezt a linket — bármikor onnan tudod módosítani.\n\nHa nem te küldted be ezt az eseményt, hagyd figyelmen kívül.\n\nÜdv,\nkinti.app`;
 
   const html = baseLayout({
     preheader: `Esemény beküldve: ${args.title} – várd meg a moderátor jóváhagyását!`,

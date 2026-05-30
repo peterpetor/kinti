@@ -6,7 +6,7 @@ import { triggerAlberletRadars } from "@/lib/radars";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: { id: string } }) {
   const adminId = await getAdminUserId();
   if (!adminId) return NextResponse.json({ error: "forbidden" }, { status: 403 });
 

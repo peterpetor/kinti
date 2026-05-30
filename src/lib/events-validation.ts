@@ -100,7 +100,7 @@ export function validateEventInput(
   if (input.ageConfirmed !== true) {
     errors.push({
       field: "ageConfirmed",
-      message: "A Szolgáltatás csak 18. életévét betöltött személyek által vehető igénybe.",
+      message: "A Szolgáltatást csak 18. életévüket betöltött személyek vehetik igénybe.",
     });
   }
 
@@ -111,7 +111,7 @@ export function validateEventInput(
       errors.push({
         field: dirty.field as keyof EventFormInput,
         message:
-          "Az esemény leírása olyan szót tartalmaz, amit nem engedünk. " +
+          "Az esemény leírása olyan szót tartalmaz, amit nem engedélyezünk. " +
           "Kérlek, fogalmazd meg másképp.",
       });
     }

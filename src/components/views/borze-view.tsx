@@ -8,6 +8,7 @@ import { CANTONS } from "@/lib/cantons";
 import type { BulletinPost } from "@/lib/types";
 import { BulletinCard, loadSavedIds, saveSavedIds } from "./community-view";
 import { whatsappShareUrl, viberShareUrl } from "@/lib/share";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 /**
  * BorzeView — dedikált, témára szabott hirdetés-böngésző (Albérlet / Állás).
@@ -256,6 +257,15 @@ export function BorzeView({
               ))}
             </div>
           )}
+
+          <div className="mt-4 pb-4">
+            <LegalDisclaimer
+              toolName="Börze"
+              variant="info"
+              notAdviceFor="hivatalos vagy pénzügyi"
+              extraWarning="A hirdetéseket a felhasználók maguk töltik fel, így azok tartalmáért, hitelességéért és a meghirdetett feltételekért a kinti.app nem vállal felelősséget. Albérletnél vagy állásnál fokozottan ügyelj a csalókra! Soha ne utalj pénzt előre vagy látatlanban, és minden esetben győződj meg a hirdető megbízhatóságáról."
+            />
+          </div>
         </>
       )}
     </div>

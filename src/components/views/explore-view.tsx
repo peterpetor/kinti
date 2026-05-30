@@ -10,6 +10,7 @@ import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
 import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
 import { haversineKm } from "@/lib/distance";
 import { AISearchBar } from "./ai-search";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 const RADIUS_OPTIONS_KM = [5, 10, 20, 50] as const;
 type RadiusKm = (typeof RADIUS_OPTIONS_KM)[number];
@@ -380,6 +381,15 @@ export function ExploreView({
               </p>
             </div>
           )}
+
+          <div className="mt-4 pb-4">
+            <LegalDisclaimer
+              toolName="Szaknévsor"
+              variant="info"
+              notAdviceFor="hivatalos szakmai vagy megbízhatósági"
+              extraWarning="A megjelenő vállalkozások adatait és hirdetéseit a felhasználók (szolgáltatók) töltik fel. A kinti.app üzemeltetője nem ellenőrzi a szolgáltatók jogosítványait, engedélyeit, referenciáit, sem a szolgáltatások minőségét, és semmilyen felelősséget nem vállal a velük kötött ügyletekből eredő károkért. Kapcsolatfelvétel és megbízás előtt mindig győződj meg személyesen a szolgáltató megbízhatóságáról!"
+            />
+          </div>
         </div>
       ) : (
         <div className="px-5">

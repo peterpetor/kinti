@@ -181,10 +181,10 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
               <Icon name="clock" size={22} strokeWidth={2.4} />
             </div>
             <h2 className="mt-3 text-[18px] font-extrabold tracking-tight text-ink">
-              Esemény admin-jóváhagyásra vár
+              Az esemény adminisztrátori jóváhagyásra vár
             </h2>
             <p className="mx-auto mt-2 max-w-sm text-pretty text-[13.5px] leading-relaxed text-ink-muted">
-              Hamarosan ellenőrizzük, és ha minden rendben, megjelenik az
+              Hamarosan ellenőrizzük, és ha minden rendben van, megjelenik az
               eseménynaptárban. Addig is mentsd el a kezelő-linkedet!
             </p>
           </div>
@@ -257,8 +257,8 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
         />
         <FieldError msg={errors.email} />
         <p className="mt-2 text-[11px] leading-snug text-ink-muted">
-          <strong className="text-ink">Email nem kell.</strong> Ha üresen hagyod, az esemény
-          azonnal admin-jóváhagyásra megy, és kapsz egy kezelő-linket (mentsd el!).
+          <strong className="text-ink">Nem kötelező email-címet megadni.</strong> Ha üresen hagyod, az esemény
+          egyenesen az adminisztrátori jóváhagyási sorba kerül, és kapsz egy kezelő-linket (mentsd el!).
         </p>
       </Section>
 
@@ -412,7 +412,7 @@ export function EventForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
       </button>
 
       <p className="px-1 text-center text-[10.5px] text-ink-faint">
-        Az esemény moderátor jóváhagyása után jelenik meg a kinti.app naptárban.
+        Az esemény csak moderátori jóváhagyás után jelenik meg a kinti.app naptárban.
         Trágár vagy sértő tartalom esetén elutasítjuk.
       </p>
     </form>
