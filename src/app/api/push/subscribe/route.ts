@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { savePushSubscription } from "@/lib/repo";
 import { CANTON_COORDS } from "@/lib/cantons";
+import { hashIp } from "@/lib/bulletin";
+import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -11,6 +13,16 @@ export const dynamic = "force-dynamic";
  *   cantonCode: kanton-kód vagy "all"/üres (= egész Svájc → NULL).
  */
 export async function POST(req: Request) {
+  const ip = req.headers.get("cf-connecting-ip") ?? null;
+  const ipHash = await hashIp(ip);
+  const rateLimit = await checkAiRateLimit("radar-subscribe", ipHash); // use same bucket as radar
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Túl sok feliratkozás. Próbáld újra később." },
+      { status: 429 },
+    );
+  }
+
   let body: Record<string, unknown> = {};
   try {
     body = await req.json();
@@ -39,6 +51,8 @@ export async function POST(req: Request) {
     auth,
     cantonCode,
   });
+
+  await logAiRateLimit("radar-subscribe", ipHash);
 
   return NextResponse.json({ ok: true }, { headers: { "cache-control": "no-store" } });
 }

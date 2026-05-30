@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { triggerAlberletRadars, triggerExchangeRateRadars } from "@/lib/radars";
+import { getCloudflareEnv } from "@/lib/cloudflare";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -10,6 +11,14 @@ export const dynamic = "force-dynamic";
  * illetve az albérlet hirdetés feladásakor a /submit route.
  */
 export async function GET(req: Request) {
+  const env = getCloudflareEnv();
+  const authHeader = req.headers.get("authorization") ?? "";
+  const expectedAuth = env.CRON_SECRET ? `Bearer ${env.CRON_SECRET}` : null;
+  
+  if (!expectedAuth || authHeader !== expectedAuth) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const url = new URL(req.url);
   const type = url.searchParams.get("type");
   

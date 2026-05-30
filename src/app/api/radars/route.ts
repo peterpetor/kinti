@@ -1,12 +1,24 @@
 import { NextResponse } from "next/server";
 import { savePushSubscription, saveRadar, listRadarsByEndpoint } from "@/lib/repo";
 import { safeLogError } from "@/lib/safe-log";
+import { hashIp } from "@/lib/bulletin";
+import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("cf-connecting-ip") ?? null;
+    const ipHash = await hashIp(ip);
+    const rateLimit = await checkAiRateLimit("radar-subscribe", ipHash);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Túl sok radar beállítás. Próbáld újra később." },
+        { status: 429 },
+      );
+    }
+
     const body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
 
     const sub = body.subscription as
@@ -42,6 +54,8 @@ export async function POST(req: Request) {
       radarType,
       parameters,
     });
+
+    await logAiRateLimit("radar-subscribe", ipHash);
 
     return NextResponse.json({ ok: true, id: radarId }, { headers: { "cache-control": "no-store" } });
   } catch (err) {

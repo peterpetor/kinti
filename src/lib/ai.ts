@@ -68,6 +68,7 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "german-term": { windowHours: 1, maxPerWindow: 50 },
   "review-summary": { windowHours: 1, maxPerWindow: 30 },
   "media-upload": { windowHours: 1, maxPerWindow: 30 }, // Image upload rate limit
+  "radar-subscribe": { windowHours: 1, maxPerWindow: 10 }, // Radar DoS védelem
 };
 
 /**
