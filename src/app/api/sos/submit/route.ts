@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSosAlert, getActiveAlertCountForUser } from "@/lib/sos-repo";
-import { filterProfanity } from "@/lib/profanity";
+import { filterProfanity, containsProfanity } from "@/lib/profanity";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { hashIp } from "@/lib/bulletin";
 import { countRecentRideSubmits, logRideSubmit } from "@/lib/repo";
@@ -118,6 +118,14 @@ export async function POST(req: Request) {
 
   const id = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString();
+
+  // Profanity-szűrő: blokkolás rasszista/trágár tartalom esetén
+  if (containsProfanity(String(description)).hit) {
+    return NextResponse.json(
+      { error: "A leírás nem megfelelő szavakat tartalmaz. Fogalmazd meg másképp." },
+      { status: 400 },
+    );
+  }
 
   await createSosAlert({
     id,

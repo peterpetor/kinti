@@ -8,6 +8,7 @@ import {
 import { verifyTurnstile } from "@/lib/turnstile";
 import { hashIp } from "@/lib/bulletin";
 import { getCrossingById } from "@/lib/border-crossings";
+import { containsProfanity } from "@/lib/profanity";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -68,6 +69,14 @@ export async function POST(req: Request) {
   }
 
   const id = crypto.randomUUID();
+
+  // Profanity-szűrő a note mezőre
+  if (note && containsProfanity(note).hit) {
+    return NextResponse.json(
+      { error: "A megjegyzésed nem megfelelő szavakat tartalmaz. Fogalmazd meg másképp." },
+      { status: 400 },
+    );
+  }
   const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000)
     .toISOString()
     .slice(0, 19)

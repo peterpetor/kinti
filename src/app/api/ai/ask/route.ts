@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { GUIDES } from "@/lib/guides";
+import { containsProfanity } from "@/lib/profanity";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -19,6 +20,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Kérlek tegyél fel egy kérdést." }, { status: 400 });
     }
 
+    // Profanity / rasszista tartalom szűrése a bemeneten
+    if (containsProfanity(prompt).hit) {
+      return NextResponse.json(
+        { error: "A kérdésed nem megfelelő szavakat tartalmaz. Kérlek fogalmazd meg másképp." },
+        { status: 400 },
+      );
+    }
+
     const env = getCloudflareEnv();
     if (!env.AI) {
       return NextResponse.json({ error: "Az AI modul jelenleg nem elérhető." }, { status: 503 });
@@ -34,6 +43,8 @@ export async function POST(req: Request) {
 
     const systemPrompt = `Te a "Kinti Asszisztens" vagy, egy segítőkész, kedves és precíz AI szakértő a Svájcban élő magyarok számára. Válaszolj magyarul, röviden és érthetően.
 Kizárólag az alábbi tudásbázis alapján válaszolj. Ha a tudásbázisban nincs benne a válasz, mondd meg őszintén, hogy nem tudod, de javasold, hogy a kérdező keressen rá a hivatalos svájci oldalakon (pl. ch.ch). Ne találj ki új információt!
+
+FONTOS SZABÁLY: SOHA ne használj rasszista, diszkriminatív, gyűlöletkeltő, trágár vagy sértő nyelvezetet. Ha a felhasználó ilyen tartalmú kérdést tesz fel, utasítsd el udvariasan és kérd meg, hogy fogalmazza át a kérdését. Ne válaszolj etnikum-, vallás-, nem- vagy szexuális orientáció-alapú megalapozatlan állításokra.
 
 === TUDÁSBÁZIS ===
 ${knowledgeBase}

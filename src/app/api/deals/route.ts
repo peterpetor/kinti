@@ -7,6 +7,7 @@ import {
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { hashIp } from "@/lib/bulletin";
+import { containsProfanity } from "@/lib/profanity";
 import {
   getStoreById,
   getCategoryById,
@@ -90,6 +91,14 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: "Túl sok bejelentés egy óra alatt. Próbáld újra később." },
       { status: 429 },
+    );
+  }
+
+  // Profanity-szűrő a note mezőre
+  if (note && containsProfanity(note).hit) {
+    return NextResponse.json(
+      { error: "A megjegyzésed nem megfelelő szavakat tartalmaz. Fogalmazd meg másképp." },
+      { status: 400 },
     );
   }
 

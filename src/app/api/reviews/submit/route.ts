@@ -16,6 +16,7 @@ import { getCloudflareEnv } from "@/lib/cloudflare";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { isDisposableEmail } from "@/lib/disposable-emails";
+import { moderateText } from "@/lib/text-moderation";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -86,6 +87,16 @@ export async function POST(req: Request) {
   const now = new Date();
   const ipHash = await hashIp(ip);
   const hasEmail = validation.value.email.length > 0;
+
+  // AI text moderáció — rasszista/trágár/toxic tartalom szűrése
+  const combinedReviewText = [validation.value.reviewerName, validation.value.body].join("\n");
+  const textMod = await moderateText(combinedReviewText);
+  if (textMod.safe === false) {
+    return NextResponse.json(
+      { error: textMod.reason || "A véleményed nem megfelelő tartalmat hordoz." },
+      { status: 400 },
+    );
+  }
 
   // === ÚJ FŐÚT (local-first) — azonnal publikálva, manage_token a kliensnek ===
   if (!hasEmail) {

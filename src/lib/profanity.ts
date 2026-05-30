@@ -17,12 +17,11 @@
  */
 
 const BLOCKED_STEMS: string[] = [
-  // user által példaként adott
+  // ---- TRÁGÁR SZAVAK ----
   "szar",
   "fasz",
   "geci",
   "fos",
-  // gyakori magyar trágárság
   "kurv", // kurva, kurvák, kurvának
   "picsa",
   "segg", // segg, seggfej, segged
@@ -34,6 +33,48 @@ const BLOCKED_STEMS: string[] = [
   "bazze",
   "rohad", // rohadj, rohadt
   "buzi",
+
+  // ---- RASSZISTA / KIREKESZTŐ / GYŰLÖLETKELTŐ (HU) ----
+  "cigany",  // cigány — pejoratív kontextusban
+  "cigan",   // ragozott alakok (cigánok, cigányoz)
+  "putri",   // cigányputri
+  "neger",   // néger
+  "nigger",
+  "nigg",
+  "zsido",   // zsidó — sértő kontextusban
+  "buzik",   // buzik, buziknak
+  "koszos",  // "koszos cigány" stb.
+  "takarodj",
+  "doglod",  // döglődj
+  "dogol",   // dögölj
+  "halalod", // halálod
+  "fasiszta",
+  "nacist",
+  "nazi",
+  "hitler",
+  "sieg heil",
+  // Angol rasszista szavak
+  "nigga",
+  "faggot",
+  "tranny",
+  "retard",
+  "spastic",
+  "kike",
+  // Német rasszista szavak
+  "kanake",
+  "neger",
+  "schwuchtel",
+  "missgeburt",
+];
+
+// Többszavas rasszista/gyűlöletkeltő kifejezések (normalizálva, ékezet nélkül)
+const BLOCKED_PHRASES: string[] = [
+  "sieg heil",
+  "heil hitler",
+  "white power",
+  "halal a",  // "halál a [csoport]-ra"
+  "ki veluk", // "ki velük"
+  "takarodjanak",
 ];
 
 /**
@@ -62,6 +103,15 @@ const WHITELIST_TOKENS = new Set<string>([
   "fosztogato",
   "foszfor",
   "foszforos",
+  // "koszos" hamis pozitív
+  "koszoru", // koszorú
+  "koszoruk",
+  "koszont", // köszönt
+  "koszon",  // köszön
+  "koszonom",
+  "koszonjuk",
+  // "nazi" hamis pozitív
+  "nazim",   // név
 ]);
 
 /**
@@ -107,6 +157,15 @@ export function containsProfanity(text: string | null | undefined): ProfanityRes
   if (!text) return { hit: false };
   const normalized = normalize(text);
   const tokens = tokenize(normalized);
+
+  // 1) Többszavas tiltott kifejezések
+  for (const phrase of BLOCKED_PHRASES) {
+    if (normalized.includes(phrase)) {
+      return { hit: true, matched: phrase };
+    }
+  }
+
+  // 2) Szótő-prefix illesztés
   for (const token of tokens) {
     if (WHITELIST_TOKENS.has(token)) continue;
     for (const stem of BLOCKED_STEMS) {
@@ -136,13 +195,21 @@ export function findProfanityInFields(
 }
 
 const MASK_WORDS = [
-  // Hungarian
+  // Hungarian — trágár
   "bazdmeg", "bzdmg", "kurva", "fasz", "geci", "szar", "picsa", "köcsög", "kocsog", "buzi", "baszni", "baszás",
-  "faszfej", "gecc", "kurafi", "szarházi", "gec", "fos", "anyád", "kurvanyád", "cigány", "cigany",
-  // English
+  "faszfej", "gecc", "kurafi", "szarházi", "gec", "fos", "anyád", "kurvanyád",
+  // Hungarian — rasszista / gyűlöletkeltő
+  "cigány", "cigany", "néger", "neger", "nigger", "nigga", "zsidó", "zsido",
+  "putri", "cigányputri", "dögölj", "döglődj", "fasiszta", "nácista", "nacista",
+  "hitler", "sieg heil", "heil hitler", "white power",
+  // English — trágár
   "fuck", "shit", "bitch", "cunt", "asshole", "dick", "pussy", "slut", "whore", "motherfucker", "fucker",
-  // German
+  // English — rasszista
+  "faggot", "tranny", "retard", "spastic", "kike",
+  // German — trágár
   "scheisse", "scheiße", "arsch", "arschloch", "ficken", "hure", "fotze", "schlampe", "wixer", "wichser",
+  // German — rasszista
+  "kanake", "schwuchtel", "missgeburt",
 ];
 
 export function filterProfanity(text: string): string {

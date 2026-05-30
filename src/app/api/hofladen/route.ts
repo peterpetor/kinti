@@ -8,6 +8,7 @@ import {
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { hashIp } from "@/lib/bulletin";
+import { findProfanityInFields } from "@/lib/profanity";
 import {
   HOFLADEN_CATEGORIES,
   PAYMENT_METHODS,
@@ -101,6 +102,15 @@ export async function POST(req: Request) {
 
   const id = crypto.randomUUID();
   const manageToken = crypto.randomUUID().replace(/-/g, "");
+
+  // Profanity-szűrő a szöveges mezőkre
+  const dirty = findProfanityInFields({ name, note });
+  if (dirty) {
+    return NextResponse.json(
+      { error: "A megadott szöveg nem megfelelő szavakat tartalmaz. Fogalmazd meg másképp." },
+      { status: 400 },
+    );
+  }
 
   await createHofladenSpot({
     id,
