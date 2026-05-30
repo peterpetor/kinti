@@ -1,8 +1,9 @@
 /**
  * gen-categories.mjs
- * Generates a sorted INSERT INTO categories SQL block.
+ * Generates a sorted INSERT INTO categories SQL block AND injects it into seed.sql.
  * Run: node scripts/gen-categories.mjs
  */
+import { readFileSync, writeFileSync } from 'fs';
 
 // All categories: [id, label, glyph]
 const ALL = [
@@ -289,6 +290,31 @@ const lines = sorted.map(([id, label, glyph], i) => {
 
 const sql = `INSERT INTO categories (id, label, glyph, sort_order) VALUES\n${lines.join(',\n')};`;
 
-// Also output category-icon mapping additions
-console.log(sql);
-console.log(`\n-- Total categories: ${sorted.length}`);
+// --- Write directly to seed.sql (bypasses PowerShell encoding issues) ---
+const seedPath = 'db/seed.sql';
+const seed = readFileSync(seedPath, 'utf8');
+
+const START_MARKER = '-- --- 1) Kateg';
+const END_MARKER   = '-- --- 2) Hirdet';
+
+const start = seed.indexOf(START_MARKER);
+const end   = seed.indexOf(END_MARKER);
+
+if (start === -1 || end === -1) {
+  console.error('ERROR: Markers not found in seed.sql');
+  process.exit(1);
+}
+
+const newSeed =
+  seed.substring(0, start) +
+  '-- --- 1) Kateg\u00f3ri\u00e1k -------------------------------------------------------------\n' +
+  sql + '\n\n' +
+  seed.substring(end);
+
+writeFileSync(seedPath, newSeed, 'utf8');
+console.log(`\u2705 seed.sql updated with ${sorted.length} categories (A-Z sorted).`);
+
+// Verify first few rows
+const rows = newSeed.split('\n').filter(l => /^\s+'/.test(l) || /^  \('/.test(l));
+console.log('Sample rows:');
+rows.slice(0, 5).forEach(r => console.log(' ', r));
