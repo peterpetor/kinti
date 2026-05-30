@@ -174,7 +174,10 @@ export default function AdatvedelemPage() {
       <p>
         A böngésződben engedélyezheted a Push értesítéseket, és feliratkozhatsz bizonyos témákra (pl. albérlet, árfolyam). 
         Ezeket a preferenciákat (Radar paraméterek) és a böngésződ által generált, személytelen <code>push_endpoint</code> URL-t 
-        tároljuk az adatbázisunkban, hogy ki tudjuk küldeni az értesítőt.
+        tároljuk az adatbázisunkban, hogy ki tudjuk küldeni az értesítőt. 
+        <strong>Adatbiztonság:</strong> Az értesítések tartalmát nem küldjük át a böngésződ szolgáltatójának (Apple, Google, Mozilla) 
+        push szerverein (azok csak egy üres "ébresztő" jelet kapnak), az érdemi információt a készüléked közvetlenül a mi 
+        szerverünkről tölti le, így semmilyen személyes adat nem kerül harmadik félhez.
       </p>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a böngésző szintjén és a "Radar Aktiválása" gombbal)</li>
