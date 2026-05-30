@@ -2250,13 +2250,38 @@ export async function listOpenReports(): Promise<OpenReport[]> {
   const out: OpenReport[] = [];
   for (const r of results) {
     let excerpt: string | null = null;
+    let contentExists = false;
     if (r.content_type === "bulletin") {
       const row = await db.prepare("SELECT title FROM bulletin_posts WHERE id = ?").bind(r.content_id).first<{ title: string }>();
       excerpt = row?.title ?? null;
+      contentExists = !!row;
     } else if (r.content_type === "review") {
       const row = await db.prepare("SELECT reviewer_name, body FROM reviews WHERE id = ?").bind(r.content_id).first<{ reviewer_name: string; body: string }>();
       excerpt = row ? `${row.reviewer_name}: ${row.body.slice(0, 100)}` : null;
+      contentExists = !!row;
+    } else if (r.content_type === "business") {
+      const row = await db.prepare("SELECT name FROM businesses WHERE id = ?").bind(r.content_id).first<{ name: string }>();
+      excerpt = row?.name ?? null;
+      contentExists = !!row;
+    } else if (r.content_type === "sos") {
+      const row = await db.prepare("SELECT id FROM sos_alerts WHERE id = ?").bind(r.content_id).first<{ id: string }>();
+      contentExists = !!row;
+    } else {
+      // Ismeretlen content_type → kihagyjuk (és lezárjuk a jelentést, lásd lent).
+      contentExists = false;
     }
+
+    // Orphan-cleanup: ha a hivatkozott tartalom már nem létezik (admin törölte,
+    // vagy a feladó visszavonta), a jelentést automatikusan `dismissed`-re
+    // állítjuk és NEM jelenítjük meg az admin-listán.
+    if (!contentExists) {
+      await db
+        .prepare("UPDATE content_reports SET status = 'dismissed' WHERE id = ?")
+        .bind(r.id)
+        .run();
+      continue;
+    }
+
     out.push({
       id: r.id,
       contentType: r.content_type as OpenReport["contentType"],
