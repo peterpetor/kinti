@@ -37,6 +37,9 @@ export const metadata: Metadata = {
     title: "kinti",
     startupImage: ["/icons/apple-touch-icon.png"],
   },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
   formatDetection: { telephone: false },
   icons: {
     icon: [
