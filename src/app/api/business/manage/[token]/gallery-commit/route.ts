@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getBusinessByManageToken, addBusinessGalleryKey } from "@/lib/repo";
 import { getMediaBucket } from "@/lib/cloudflare";
+import { moderateImage } from "@/lib/moderation";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -50,6 +51,24 @@ export async function POST(req: Request, { params }: { params: { token: string }
     return NextResponse.json(
       { error: "A fájl mérete max. 2 MB lehet." },
       { status: 413 },
+    );
+  }
+
+  // Kép moderáció Cloudflare Workers AI-val
+  const obj = await getMediaBucket().get(key);
+  if (!obj) {
+    return NextResponse.json(
+      { error: "A kép nem tölthető be a moderációhoz." },
+      { status: 404 },
+    );
+  }
+  const arrayBuffer = await obj.arrayBuffer();
+  const moderation = await moderateImage(arrayBuffer);
+  if (!moderation.safe) {
+    await getMediaBucket().delete(key).catch(() => { /* silent */ });
+    return NextResponse.json(
+      { error: moderation.reason || "A kép moderációs okokból elutasításra került." },
+      { status: 400 },
     );
   }
 

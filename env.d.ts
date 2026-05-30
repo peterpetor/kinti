@@ -6,6 +6,9 @@ interface CloudflareEnv {
   DB: D1Database;
   // R2 média-tároló (logók, hirdetés-képek)
   MEDIA: R2Bucket;
+  // Cloudflare Workers AI binding
+  AI: any;
+
 
   // Build-időben NEM titkos változók (wrangler.toml [vars])
   NEXT_PUBLIC_APP_NAME: string;

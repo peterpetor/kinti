@@ -13,9 +13,10 @@ import {
   TERMS_VERSION,
   hashIp,
 } from "@/lib/bulletin";
-import { getCloudflareEnv } from "@/lib/cloudflare";
+import { getCloudflareEnv, getMediaBucket } from "@/lib/cloudflare";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { safeLogError } from "@/lib/safe-log";
+import { moderateImage } from "@/lib/moderation";
 
 /** A 30 napos publikus életidő — a publish flow-ban használjuk. */
 const POST_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -88,6 +89,23 @@ export async function POST(req: Request) {
       { error: "Napi limit túllépve. Egy nap (24 óra) legfeljebb 3 hirdetés adható fel ugyanazzal az e-mail címmel vagy IP-címmel." },
       { status: 429 },
     );
+  }
+
+  // 5) Kép moderáció Cloudflare Workers AI-val
+  const imageKey = validation.value.imageKey;
+  if (imageKey) {
+    const obj = await getMediaBucket().get(imageKey);
+    if (obj) {
+      const arrayBuffer = await obj.arrayBuffer();
+      const moderation = await moderateImage(arrayBuffer);
+      if (!moderation.safe) {
+        await getMediaBucket().delete(imageKey).catch(() => { /* silent */ });
+        return NextResponse.json(
+          { error: moderation.reason || "A kép moderációs okokból elutasításra került." },
+          { status: 400 },
+        );
+      }
+    }
   }
 
   const id = crypto.randomUUID();

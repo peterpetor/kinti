@@ -50,3 +50,8 @@ NEXT_PUBLIC_CLERK_SIGN_IN_URL = "/belepes"
 NEXT_PUBLIC_CLERK_SIGN_UP_URL = "/regisztracio"
 NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL = "/profil"
 NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL = "/profil"
+
+# --- Cloudflare Workers AI binding ---
+[ai]
+binding = "AI"
+
