@@ -12,7 +12,7 @@ export type IconName =
   | "share" | "bookmark" | "chevR" | "chevD" | "chevU" | "sliders" | "bell"
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "shoppingBag"
-  | "sparkles" | "magic" | "trash";
+  | "sparkles" | "magic" | "trash" | "qrCode";
 
 const PATHS: Record<IconName, string[]> = {
   search: ["M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14", "M16.5 16.5L21 21"],
@@ -67,6 +67,16 @@ const PATHS: Record<IconName, string[]> = {
   sparkles: ["M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z", "M19 16l.9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9z"],
   magic: ["M3 21l9-9", "M14 7l3 3", "M15 4l1 2l2 1l-2 1l-1 2l-1-2l-2-1l2-1z", "M20 11l.6 1.4l1.4.6l-1.4.6L20 15l-.6-1.4L18 13l1.4-.6z"],
   trash: ["M3 6h18", "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", "M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6", "M10 11v6", "M14 11v6"],
+  qrCode: [
+    "M4 4h6v6H4z",
+    "M14 4h6v6h-6z",
+    "M4 14h6v6H4z",
+    "M14 14h2v2h-2z",
+    "M18 18h2v2h-2z",
+    "M18 14h2v2h-2z",
+    "M14 18h2v2h-2z",
+    "M9 9h6v6H9z",
+  ],
 };
 
 // A '…' (more) három pöttye vastagabb vonallal néz jól ki.

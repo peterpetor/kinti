@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import QRCode from "qrcode";
 import { Icon } from "@/components/ui";
 import { BottomSheet, SheetRow } from "./bottom-sheet";
 import {
@@ -32,7 +33,33 @@ export function ShareSheet({
   text?: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const [qrDownloaded, setQrDownloaded] = useState(false);
   const msg = text ?? title;
+
+  const downloadQR = async () => {
+    try {
+      const dataUrl = await QRCode.toDataURL(url, {
+        width: 1024,
+        margin: 2,
+        color: { dark: "#1d4434", light: "#ffffff" },
+      });
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      const safeTitle = title.replace(/[^a-zA-Z0-9_-]/g, "_").replace(/_+/g, "_");
+      a.download = `QR_Kinti_${safeTitle}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      setQrDownloaded(true);
+      setTimeout(() => {
+        setQrDownloaded(false);
+        onClose();
+      }, 1500);
+    } catch (err) {
+      console.error("QR generálási hiba:", err);
+    }
+  };
 
   return (
     <BottomSheet open={open} onClose={onClose} title="Megosztás">
@@ -85,6 +112,12 @@ export function ShareSheet({
           badgeColor="#5c6d63"
           icon={<Icon name={copied ? "check" : "globe"} size={16} strokeWidth={2.2} />}
           label={copied ? "Link másolva ✓" : "Link másolása"}
+        />
+        <SheetRow
+          onClick={downloadQR}
+          badgeColor="#e3a233"
+          icon={<Icon name={qrDownloaded ? "check" : "qrCode"} size={16} strokeWidth={2.2} />}
+          label={qrDownloaded ? "Sikeres letöltés! ✓" : "QR Kód letöltése nyomtatáshoz"}
         />
       </div>
     </BottomSheet>
