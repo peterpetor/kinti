@@ -14,6 +14,7 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [contactPhone, setContactPhone] = useState("+41");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
@@ -22,6 +23,11 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
     setLoading(true);
     setError(null);
 
+    if (!acceptedTerms) {
+      setError("Az ÁSZF és az adatkezelési nyilatkozat elfogadása kötelező.");
+      setLoading(false);
+      return;
+    }
     if (!turnstileToken) {
       setError("Várd meg a robot-ellenőrzést, mielőtt elküldöd.");
       setLoading(false);
@@ -101,8 +107,12 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
             🆘 S.O.S. Segítségkérés
           </h2>
           <p className="text-sm text-red-800 font-medium">
-            Figyelem! Ez egy közösségi funkció. Életveszély vagy baleset esetén azonnal hívd a 112-t! A platform nem garantálja a segítség érkezését.
+            Figyelem! Ez egy közösségi funkció. Életveszély vagy baleset esetén azonnal hívd a <strong>112</strong>-t! A platform nem garantálja a segítség érkezését.
           </p>
+        </div>
+
+        <div className="mb-4 rounded-lg bg-yellow-50 p-3 border border-yellow-300 text-xs text-yellow-900 leading-relaxed">
+          📢 <strong>Fontos:</strong> Az elküldött telefonszámod és GPS-pozíciód <strong>nyilvánosan megjelenik a térképen</strong>, ahol más felhasználók is láthatják. A riasztás 3 óra múlva automatikusan törlődik.
         </div>
 
         {error && (
@@ -144,6 +154,20 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
             A kérés elküldésekor az app rögzíti a jelenlegi GPS pozíciódat. A riasztás 3 óra múlva automatikusan törlődik.
           </div>
 
+          <label className="flex items-start gap-2 text-xs text-gray-700 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-red-600"
+            />
+            <span>
+              Tudomásul veszem, hogy a telefonszámom és a pozícióm nyilvánosan megjelenik a platformon, és elfogadom az{" "}
+              <a href="/aszf" target="_blank" className="underline font-semibold">ÁSZF</a>-et és az{" "}
+              <a href="/adatvedelem" target="_blank" className="underline font-semibold">Adatkezelési Tájékoztatót</a>.
+            </span>
+          </label>
+
           {turnstileSiteKey && (
             <TurnstileWidget
               ref={turnstileRef}
@@ -154,7 +178,7 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
 
           <button
             type="submit"
-            disabled={loading || !turnstileToken}
+            disabled={loading || !turnstileToken || !acceptedTerms}
             className="mt-2 w-full rounded-xl bg-red-600 py-3 text-center font-bold text-white shadow-lg transition-colors hover:bg-red-700 disabled:opacity-50"
           >
             {loading ? "Küldés..." : "Riasztás Leadása"}

@@ -350,7 +350,7 @@ export default function AszfPage() {
         <li>
           A vélemény-összegzés és a leírás-csiszoló az AI-szolgáltató felé továbbítja
           az érintett vélemények és leírások szövegét — részletek az Adatkezelési
-          Tájékoztatóban (2.10 szakasz).
+          Tájékoztatóban (2.9 szakasz).
         </li>
         <li>
           Az AI funkciók <strong>spam-, abúzív- vagy automatizált használata</strong>{" "}

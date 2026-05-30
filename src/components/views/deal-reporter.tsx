@@ -35,6 +35,7 @@ export function DealReporter({
 
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
@@ -43,6 +44,10 @@ export function DealReporter({
 
     if (!storeId || !categoryId || !discountPct) {
       setErr("Hiányzó adat.");
+      return;
+    }
+    if (!acceptedTerms) {
+      setErr("Az ÁSZF és az adatkezelési nyilatkozat elfogadása kötelező.");
       return;
     }
     if (!turnstileToken) {
@@ -260,6 +265,20 @@ export function DealReporter({
             )}
 
             {err && <p className="text-[12px] font-bold text-accent">{err}</p>}
+
+            <label className="flex items-start gap-2 text-[11px] text-ink-muted cursor-pointer">
+              <input
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0"
+              />
+              <span>
+                Tudomásul veszem, hogy a GPS-pozícióm a térképen megjelenik, és elfogadom az{" "}
+                <a href="/aszf" target="_blank" className="underline">ÁSZF</a>-et és az{" "}
+                <a href="/adatvedelem" target="_blank" className="underline">Adatkezelési Tájékoztatót</a>.
+              </span>
+            </label>
 
             <div className="flex gap-2">
               <button

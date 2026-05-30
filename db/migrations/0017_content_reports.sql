@@ -12,7 +12,7 @@ ALTER TABLE reviews ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0 CHECK (hidden I
 
 CREATE TABLE content_reports (
   id               TEXT PRIMARY KEY,                 -- UUID
-  content_type     TEXT NOT NULL,                    -- 'bulletin' | 'review'
+  content_type     TEXT NOT NULL,                    -- 'bulletin' | 'review' | 'business' | 'sos'
   content_id       TEXT NOT NULL,
   reason           TEXT,                             -- a bejelentő indoka
   reporter_ip_hash TEXT,                             -- SHA-256(IP), abuse-szűréshez

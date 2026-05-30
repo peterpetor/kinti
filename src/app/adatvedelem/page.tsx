@@ -261,6 +261,53 @@ export default function AdatvedelemPage() {
         <li><strong>Jogi nyilatkozat (Árfolyam):</strong> Az értesítések tartalmáért (különösen a pénzügyi, árfolyami adatokért) felelősséget nem vállalunk. Az adatok tájékoztató jellegűek, a késésekből vagy pontatlanságokból eredő anyagi károkért a kinti.app nem perelhető.</li>
       </ul>
 
+      <h3>2.13 S.O.S. Riasztás (közösségi segítségkérés)</h3>
+      <p>
+        Az S.O.S. funkció használatakor az alábbi adatok kerülnek rögzítésre:
+      </p>
+      <ul>
+        <li><strong>GPS koordináta</strong> — a riasztás feltöltésekor mért aktuális helyzet</li>
+        <li><strong>Telefonszám</strong> — a felhasználó által megadott elérhetőség</li>
+        <li><strong>Leírás szövege</strong> — a probléma rövid leírása</li>
+      </ul>
+      <p>
+        <strong>Fontos:</strong> A telefonszám és a GPS-pozíció <strong>nyilvánosan megjelenik a térképen</strong> minden beérkező látogató számára. A riasztás <strong>3 óra múlva automatikusan törlődik</strong>. Az S.O.S. nem helyettesíti a hivatalos segélyhívást (112).
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (az űrlap elküldésével és a checkbox bepipálásával)</li>
+        <li><strong>Tárolási idő:</strong> 3 óra (automatikus törlés)</li>
+      </ul>
+
+      <h3>2.14 Akció-térkép (bolt-akció bejelentés)</h3>
+      <p>
+        Az akció bejelentésekor az alábbi adatok kerülnek rögzítésre:
+      </p>
+      <ul>
+        <li><strong>GPS koordináta</strong> — a bejelentés helye a térképen</li>
+        <li><strong>Bolt lánca, kategória, kedvezmény mértéke</strong></li>
+        <li><strong>Opcionális:</strong> boltнév, megjegyzés szövege</li>
+      </ul>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás</li>
+        <li><strong>Tárolási idő:</strong> azéjfélig (aznap), automatikus törlés</li>
+        <li><strong>Nyilvánosság:</strong> az akció pontosan a bejelentő GPS-pozícióján jelenik meg a nyilvános térképen</li>
+      </ul>
+
+      <h3>2.15 Hofladen-térkép (farmárusi értékesítőhelyek bejelentése)</h3>
+      <p>
+        A Hofladen bejelentésekor az alábbi adatok kerülnek rögzítésre:
+      </p>
+      <ul>
+        <li><strong>GPS koordináta</strong> — az értékesítőhely helye a térképen</li>
+        <li><strong>Név, kanton, kategóriák, fizetési módok, nyitvatartás</strong></li>
+        <li><strong>Opcionális megjegyzés</strong></li>
+      </ul>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás</li>
+        <li><strong>Tárolási idő:</strong> határozatlan (az adat közérdekű közösségi információ — a bejegyzés törlését az info@kinti.app címen kérheted)</li>
+        <li><strong>Nyilvánosság:</strong> a hely nyilvános térképen megjelenik</li>
+      </ul>
+
       <h2>3. Cookie-k</h2>
       <p>
         Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk: a Clerk session-cookie
@@ -287,7 +334,7 @@ export default function AdatvedelemPage() {
           <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noreferrer">privacy policy</a></li>
       </ul>
 
-      <h3>3.1 Svájci adatkezelési rendelkezések (revFADP)</h3>
+      <h3>3.2 Svájci adatkezelési rendelkezések (revFADP)</h3>
       <p>
         Mivel a Szolgáltatás célzottan a Svájcban élő magyarokat szolgálja ki, és
         ennek során svájci illetőségű felhasználók személyes adatait is kezeljük, a
