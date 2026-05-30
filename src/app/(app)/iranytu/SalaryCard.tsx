@@ -5,7 +5,7 @@ import { MiniTrendChart } from "./MiniTrendChart";
 import { MiniHistogram } from "./MiniHistogram";
 
 interface SalaryExpRow { industry: string; exp_bucket: string; avg_salary: number; entry_count: number; }
-interface SalaryStatsRow { industry: string; avg_salary: number; min_salary: number; max_salary: number; entry_count: number; }
+interface SalaryStatsRow { industry: string; avg_salary: number; median_salary: number; min_salary: number; max_salary: number; entry_count: number; }
 interface TrendRow { month: string; avg_salary: number; entry_count: number; }
 
 const EXP_ORDER = ["0–2 év", "3–5 év", "5+ év"];
@@ -65,11 +65,26 @@ export function SalaryCard({
         </span>
       </div>
 
-      {/* Átlag */}
+      {/* Medián (kiemelt) + átlag */}
       <div>
         <p className="text-[24px] font-extrabold text-ink tracking-tight">
-          {stat.avg_salary.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">CHF/év</span>
+          {stat.median_salary.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">CHF/év</span>
         </p>
+        <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary/70 mt-0.5">
+          Medián (középérték)
+        </p>
+        {(() => {
+          const skewed = stat.median_salary > 0 && Math.abs(stat.avg_salary - stat.median_salary) / stat.median_salary > 0.1;
+          return (
+            <div className="flex items-center gap-1.5 mt-1.5 text-[12px] text-ink-muted">
+              <span>Átlag:</span>
+              <strong className="text-ink">{stat.avg_salary.toLocaleString("hu-HU")} CHF</strong>
+              {skewed && (
+                <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[10px] text-amber-600 dark:text-amber-400">⚠ eltérés</span>
+              )}
+            </div>
+          );
+        })()}
         <div className="mt-1.5 h-2 rounded-full bg-surface-alt overflow-hidden">
           <div className="h-2 rounded-full bg-primary transition-all duration-500" style={{ width: `${pct}%` }} />
         </div>

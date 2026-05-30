@@ -21,17 +21,21 @@ export interface UserSubmissions {
     industry: string;
     yearsExperience: number;
     grossSalaryChf: number;
+    /** ISO-timestamp az utolsó frissítésről (created_at). */
+    lastUpdatedAt: string | null;
   } | null;
   rent: {
     cantonCode: string;
     rooms: number;
     rentChf: number;
+    lastUpdatedAt: string | null;
   } | null;
 }
 
 export interface SalaryStatsRow {
   industry: string;
   avg_salary: number;
+  median_salary: number;
   min_salary: number;
   max_salary: number;
   entry_count: number;
@@ -55,6 +59,7 @@ export interface SalaryTrendRow {
 export interface RentStatsRow {
   rooms: number;
   avg_rent: number;
+  median_rent: number;
   min_rent: number;
   max_rent: number;
   entry_count: number;
@@ -135,22 +140,43 @@ export async function updateRentBenchmark(input: RentBenchmarkInput): Promise<vo
 export async function getUserSubmissions(ipHash: string): Promise<UserSubmissions> {
   const [salaryRow, rentRow] = await Promise.all([
     getDB()
-      .prepare(`SELECT canton_code, industry, years_experience, gross_salary_chf FROM salary_benchmarks WHERE ip_hash = ? ORDER BY created_at DESC LIMIT 1`)
+      .prepare(`SELECT canton_code, industry, years_experience, gross_salary_chf, created_at FROM salary_benchmarks WHERE ip_hash = ? ORDER BY created_at DESC LIMIT 1`)
       .bind(ipHash)
-      .first<{ canton_code: string; industry: string; years_experience: number; gross_salary_chf: number }>(),
+      .first<{ canton_code: string; industry: string; years_experience: number; gross_salary_chf: number; created_at: string }>(),
     getDB()
-      .prepare(`SELECT canton_code, rooms, rent_chf FROM rent_benchmarks WHERE ip_hash = ? ORDER BY created_at DESC LIMIT 1`)
+      .prepare(`SELECT canton_code, rooms, rent_chf, created_at FROM rent_benchmarks WHERE ip_hash = ? ORDER BY created_at DESC LIMIT 1`)
       .bind(ipHash)
-      .first<{ canton_code: string; rooms: number; rent_chf: number }>(),
+      .first<{ canton_code: string; rooms: number; rent_chf: number; created_at: string }>(),
   ]);
   return {
     salary: salaryRow
-      ? { cantonCode: salaryRow.canton_code, industry: salaryRow.industry, yearsExperience: salaryRow.years_experience, grossSalaryChf: salaryRow.gross_salary_chf }
+      ? {
+          cantonCode: salaryRow.canton_code,
+          industry: salaryRow.industry,
+          yearsExperience: salaryRow.years_experience,
+          grossSalaryChf: salaryRow.gross_salary_chf,
+          lastUpdatedAt: salaryRow.created_at ?? null,
+        }
       : null,
     rent: rentRow
-      ? { cantonCode: rentRow.canton_code, rooms: rentRow.rooms, rentChf: rentRow.rent_chf }
+      ? {
+          cantonCode: rentRow.canton_code,
+          rooms: rentRow.rooms,
+          rentChf: rentRow.rent_chf,
+          lastUpdatedAt: rentRow.created_at ?? null,
+        }
       : null,
   };
+}
+
+/** Helper: medián JS-szel (D1-ben nincs PERCENTILE). */
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = sorted.length >> 1;
+  return sorted.length % 2 === 0
+    ? Math.round((sorted[mid - 1] + sorted[mid]) / 2)
+    : sorted[mid];
 }
 
 export async function getUserSubmissionStatus(ipHash: string): Promise<{ salary: boolean; rent: boolean }> {
@@ -181,21 +207,57 @@ export async function getSalaryStats(
 
   const where = conditions.length ? "WHERE " + conditions.join(" AND ") : "";
 
+  // Raw értékek iparáganként; átlag + valódi MEDIÁN JS-szel (D1 nem támogat
+  // PERCENTILE-t). 2.5σ outlier szűrés a min/max/átlag/medián értékekre,
+  // de az entry_count a NYERS rekord-szám (a frontend min-3 küszöbéhez).
   const sql = `
-    SELECT
-      industry,
-      ROUND(AVG(gross_salary_chf)) as avg_salary,
-      MIN(gross_salary_chf) as min_salary,
-      MAX(gross_salary_chf) as max_salary,
-      COUNT(*) as entry_count
+    SELECT industry, gross_salary_chf
     FROM salary_benchmarks ${where}
-    GROUP BY industry
-    HAVING entry_count >= 1
-    ORDER BY entry_count DESC, avg_salary DESC
-    LIMIT 50
+    ORDER BY industry ASC
+    LIMIT 50000
   `;
-  const { results } = await getDB().prepare(sql).bind(...binds).all<SalaryStatsRow>();
-  return results;
+  const { results } = await getDB()
+    .prepare(sql)
+    .bind(...binds)
+    .all<{ industry: string; gross_salary_chf: number }>();
+
+  const byIndustry = new Map<string, number[]>();
+  for (const r of results) {
+    if (!byIndustry.has(r.industry)) byIndustry.set(r.industry, []);
+    byIndustry.get(r.industry)!.push(r.gross_salary_chf);
+  }
+
+  const out: SalaryStatsRow[] = [];
+  for (const [industry, values] of byIndustry) {
+    if (values.length === 0) continue;
+    let filtered = values;
+    if (values.length >= 3) {
+      const mean = values.reduce((a, b) => a + b, 0) / values.length;
+      const variance =
+        values.reduce((a, b) => a + (b - mean) ** 2, 0) / (values.length - 1);
+      const stddev = Math.sqrt(variance);
+      const lo = mean - 2.5 * stddev;
+      const hi = mean + 2.5 * stddev;
+      filtered = values.filter((v) => v >= lo && v <= hi);
+      if (filtered.length === 0) filtered = values;
+    }
+    out.push({
+      industry,
+      avg_salary: Math.round(
+        filtered.reduce((a, b) => a + b, 0) / filtered.length,
+      ),
+      median_salary: median(filtered),
+      min_salary: Math.min(...filtered),
+      max_salary: Math.max(...filtered),
+      entry_count: values.length,
+    });
+  }
+  out.sort((a, b) =>
+    b.entry_count - a.entry_count !== 0
+      ? b.entry_count - a.entry_count
+      : b.avg_salary - a.avg_salary,
+  );
+  return out.slice(0, 50);
 }
 
 /**
@@ -371,13 +433,49 @@ export async function getRentStats(
   const where = conditions.length ? "WHERE " + conditions.join(" AND ") : "";
 
   const sql = `
-    SELECT rooms, ROUND(AVG(rent_chf)) as avg_rent, MIN(rent_chf) as min_rent,
-           MAX(rent_chf) as max_rent, COUNT(*) as entry_count
+    SELECT rooms, rent_chf
     FROM rent_benchmarks ${where}
-    GROUP BY rooms ORDER BY rooms ASC LIMIT 50
+    ORDER BY rooms ASC
+    LIMIT 50000
   `;
-  const { results } = await getDB().prepare(sql).bind(...binds).all<RentStatsRow>();
-  return results;
+  const { results } = await getDB()
+    .prepare(sql)
+    .bind(...binds)
+    .all<{ rooms: number; rent_chf: number }>();
+
+  const byRooms = new Map<number, number[]>();
+  for (const r of results) {
+    if (!byRooms.has(r.rooms)) byRooms.set(r.rooms, []);
+    byRooms.get(r.rooms)!.push(r.rent_chf);
+  }
+
+  const out: RentStatsRow[] = [];
+  for (const [rooms, values] of byRooms) {
+    if (values.length === 0) continue;
+    let filtered = values;
+    if (values.length >= 3) {
+      const mean = values.reduce((a, b) => a + b, 0) / values.length;
+      const variance =
+        values.reduce((a, b) => a + (b - mean) ** 2, 0) / (values.length - 1);
+      const stddev = Math.sqrt(variance);
+      const lo = mean - 2.5 * stddev;
+      const hi = mean + 2.5 * stddev;
+      filtered = values.filter((v) => v >= lo && v <= hi);
+      if (filtered.length === 0) filtered = values;
+    }
+    out.push({
+      rooms,
+      avg_rent: Math.round(
+        filtered.reduce((a, b) => a + b, 0) / filtered.length,
+      ),
+      median_rent: median(filtered),
+      min_rent: Math.min(...filtered),
+      max_rent: Math.max(...filtered),
+      entry_count: values.length,
+    });
+  }
+  out.sort((a, b) => a.rooms - b.rooms);
+  return out.slice(0, 50);
 }
 
 // ─── EMAIL ALERTS ────────────────────────────────────────────────────────

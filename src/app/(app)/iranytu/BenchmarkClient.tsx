@@ -18,10 +18,32 @@ const PERIODS = [
 ];
 
 type Tab = "salary" | "rent";
-interface SalaryStatsRow { industry: string; avg_salary: number; min_salary: number; max_salary: number; entry_count: number; }
+interface SalaryStatsRow { industry: string; avg_salary: number; median_salary: number; min_salary: number; max_salary: number; entry_count: number; }
 interface SalaryExpRow { industry: string; exp_bucket: string; avg_salary: number; entry_count: number; }
-interface RentStatsRow { rooms: number; avg_rent: number; min_rent: number; max_rent: number; entry_count: number; }
-interface MyData { salary: { cantonCode: string; industry: string; yearsExperience: number; grossSalaryChf: number } | null; rent: { cantonCode: string; rooms: number; rentChf: number } | null; }
+interface RentStatsRow { rooms: number; avg_rent: number; median_rent: number; min_rent: number; max_rent: number; entry_count: number; }
+interface MyData {
+  salary: { cantonCode: string; industry: string; yearsExperience: number; grossSalaryChf: number; lastUpdatedAt: string | null } | null;
+  rent:   { cantonCode: string; rooms: number; rentChf: number; lastUpdatedAt: string | null } | null;
+}
+
+/** 6+ hónapos adat → elavult. */
+const STALE_THRESHOLD_MS = 6 * 30 * 24 * 60 * 60 * 1000;
+/** Statisztikához kell minimum 3 adat. */
+const MIN_ENTRIES_FOR_STATS = 3;
+
+function isoToMs(iso: string | null): number | null {
+  if (!iso) return null;
+  const t = new Date(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z")).getTime();
+  return Number.isNaN(t) ? null : t;
+}
+function monthsSince(iso: string | null): number | null {
+  const t = isoToMs(iso);
+  return t === null ? null : Math.floor((Date.now() - t) / (30 * 24 * 60 * 60 * 1000));
+}
+function isStale(iso: string | null): boolean {
+  const t = isoToMs(iso);
+  return t !== null && Date.now() - t >= STALE_THRESHOLD_MS;
+}
 
 const inputCls = "w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 transition";
 const labelCls = "block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide";
@@ -100,32 +122,95 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
 function MyDataCard({ tab, myData, onEdit }: { tab: Tab; myData: MyData; onEdit: () => void }) {
   const s = myData.salary, r = myData.rent;
   if ((tab === "salary" && !s) || (tab === "rent" && !r)) return null;
+
+  const lastUpdated = tab === "salary" ? s?.lastUpdatedAt ?? null : r?.lastUpdatedAt ?? null;
+  const stale = isStale(lastUpdated);
+  const ageMonths = monthsSince(lastUpdated);
+
   return (
-    <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-[11px] font-black uppercase tracking-wide text-primary">Saját adatom</p>
-        <button onClick={onEdit} className="flex items-center gap-1.5 text-[12px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg hover:opacity-70 transition">✏️ Szerkesztés</button>
+    <div className="space-y-2">
+      {/* Sárga banner ha 6+ hónapos */}
+      {stale && ageMonths !== null && (
+        <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-4 py-3 text-[13px] text-amber-800 dark:text-amber-300 flex items-start gap-2">
+          <span className="text-base mt-0.5">⚠️</span>
+          <div className="flex-1">
+            <strong>Az adatod {ageMonths} hónapos.</strong>{" "}
+            Frissítsd, hogy pontos legyen a statisztika! A béred / lakbéred változhatott azóta.
+            <button
+              onClick={onEdit}
+              className="block mt-1.5 text-[12px] font-bold text-amber-900 dark:text-amber-100 underline hover:opacity-70"
+            >
+              Frissítem most →
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[11px] font-black uppercase tracking-wide text-primary">Saját adatom</p>
+          <button onClick={onEdit} className="flex items-center gap-1.5 text-[12px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg hover:opacity-70 transition">✏️ Szerkesztés</button>
+        </div>
+        {tab === "salary" && s && <div className="space-y-0.5 text-[13px] text-ink">
+          <p><span className="text-ink-muted">Kanton:</span> {s.cantonCode} · <span className="text-ink-muted">Iparág:</span> {s.industry}</p>
+          <p><span className="text-ink-muted">Tapasztalat:</span> {s.yearsExperience} év · <span className="text-ink-muted">Bér:</span> <strong>{s.grossSalaryChf.toLocaleString("hu-HU")} CHF/év</strong></p>
+          {ageMonths !== null && (
+            <p className="text-[11px] text-ink-faint pt-1">Utolsó frissítés: {ageMonths === 0 ? "kevesebb mint 1 hónapja" : `${ageMonths} hónapja`}</p>
+          )}
+        </div>}
+        {tab === "rent" && r && <div className="space-y-0.5 text-[13px] text-ink">
+          <p><span className="text-ink-muted">Kanton:</span> {r.cantonCode} · <span className="text-ink-muted">Szobák:</span> {r.rooms} · <span className="text-ink-muted">Lakbér:</span> <strong>{r.rentChf.toLocaleString("hu-HU")} CHF/hó</strong></p>
+          {ageMonths !== null && (
+            <p className="text-[11px] text-ink-faint pt-1">Utolsó frissítés: {ageMonths === 0 ? "kevesebb mint 1 hónapja" : `${ageMonths} hónapja`}</p>
+          )}
+        </div>}
       </div>
-      {tab === "salary" && s && <div className="space-y-0.5 text-[13px] text-ink">
-        <p><span className="text-ink-muted">Kanton:</span> {s.cantonCode} · <span className="text-ink-muted">Iparág:</span> {s.industry}</p>
-        <p><span className="text-ink-muted">Tapasztalat:</span> {s.yearsExperience} év · <span className="text-ink-muted">Bér:</span> <strong>{s.grossSalaryChf.toLocaleString("hu-HU")} CHF/év</strong></p>
-      </div>}
-      {tab === "rent" && r && <div className="space-y-0.5 text-[13px] text-ink">
-        <p><span className="text-ink-muted">Kanton:</span> {r.cantonCode} · <span className="text-ink-muted">Szobák:</span> {r.rooms} · <span className="text-ink-muted">Lakbér:</span> <strong>{r.rentChf.toLocaleString("hu-HU")} CHF/hó</strong></p>
-      </div>}
+    </div>
+  );
+}
+
+/** Minimum-küszöb alatti kártya: < 3 adat esetén nem mutatunk konkrét számot. */
+function LowDataCard({ title, count }: { title: string; count: number }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-line bg-surface-alt/40 p-4">
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <p className="font-bold text-[14px] text-ink leading-snug">{title}</p>
+        <span className="shrink-0 text-[11px] font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full whitespace-nowrap">
+          {count} adat
+        </span>
+      </div>
+      <p className="text-[12.5px] text-ink-muted leading-snug">
+        {count === 1
+          ? "Még csak 1 adat — legyél te a második!"
+          : `Még csak ${count} adat — kell még ${MIN_ENTRIES_FOR_STATS - count} a megbízható statisztikához.`}
+      </p>
+      <p className="mt-1 text-[11px] text-ink-faint">
+        Az adatvédelem érdekében 3+ beküldés alatt nem mutatunk konkrét számot.
+      </p>
     </div>
   );
 }
 
 function RentCard({ stat }: { stat: RentStatsRow }) {
   const pct = Math.min(100, Math.round((stat.avg_rent / 5000) * 100));
+  // Ha avg/median > 10%-kal eltér → kiugró adat
+  const skewed = stat.median_rent > 0 && Math.abs(stat.avg_rent - stat.median_rent) / stat.median_rent > 0.1;
   return (
     <div className="rounded-2xl border border-line bg-surface p-4 hover:border-primary/40 transition-colors">
       <div className="flex items-start justify-between gap-2 mb-2">
         <p className="font-bold text-[14px] text-ink">{stat.rooms} szobás lakás</p>
         <span className="shrink-0 text-[11px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">{stat.entry_count} adat</span>
       </div>
-      <p className="text-[22px] font-extrabold text-ink">{stat.avg_rent.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">CHF/hó</span></p>
+      {/* Medián (kiemelt — reprezentatívabb) */}
+      <p className="text-[22px] font-extrabold text-ink">{stat.median_rent.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">CHF/hó</span></p>
+      <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary/70 mt-0.5">Medián (középérték)</p>
+      <div className="flex items-center gap-1.5 mt-1.5 text-[12px] text-ink-muted">
+        <span>Átlag:</span>
+        <strong className="text-ink">{stat.avg_rent.toLocaleString("hu-HU")} CHF</strong>
+        {skewed && (
+          <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[10px] text-amber-600 dark:text-amber-400">⚠ eltérés</span>
+        )}
+      </div>
       <div className="mt-1.5 h-2 rounded-full bg-surface-alt overflow-hidden">
         <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
       </div>
@@ -231,9 +316,13 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                   <p className="py-10 text-center text-ink-muted text-[14px]">{search ? "Nincs találat." : "Nincs elég adat."}</p>
                 ) : (
                   <div className="grid gap-3 sm:grid-cols-2">
-                    {filtered.map((s, i) => (
-                      <SalaryCard key={i} stat={s} expRows={salaryByExp.filter(r => r.industry === s.industry)} canton={canton} />
-                    ))}
+                    {filtered.map((s, i) =>
+                      s.entry_count < MIN_ENTRIES_FOR_STATS ? (
+                        <LowDataCard key={i} title={s.industry} count={s.entry_count} />
+                      ) : (
+                        <SalaryCard key={i} stat={s} expRows={salaryByExp.filter(r => r.industry === s.industry)} canton={canton} />
+                      ),
+                    )}
                   </div>
                 )}
                 {/* Hőtérkép */}
@@ -249,7 +338,13 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                 <p className="py-10 text-center text-ink-muted text-[14px]">Nincs elég adat.</p>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {rentStats.map((r, i) => <RentCard key={i} stat={r} />)}
+                  {rentStats.map((r, i) =>
+                    r.entry_count < MIN_ENTRIES_FOR_STATS ? (
+                      <LowDataCard key={i} title={`${r.rooms} szobás lakás`} count={r.entry_count} />
+                    ) : (
+                      <RentCard key={i} stat={r} />
+                    ),
+                  )}
                 </div>
               )
             ))}
