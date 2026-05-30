@@ -63,12 +63,19 @@ export async function POST(req: Request) {
   // (a manageUrl-ban már benne van, mint URL-path).
   const safeItems = items
     .filter((it) => typeof it.title === "string" && typeof it.manageUrl === "string")
-    .map((it) => ({
-      type: String(it.type ?? ""),
-      title: String(it.title).slice(0, 200),
-      manageUrl: String(it.manageUrl).slice(0, 200),
-      createdAt: String(it.createdAt ?? ""),
-    }));
+    .map((it) => {
+      let url = String(it.manageUrl).slice(0, 200);
+      // Biztonság: Open Redirect védelem (ne lehessen @malicious.com vagy //malicious.com)
+      if (!url.startsWith("/") || url.startsWith("//") || url.startsWith("/\\")) {
+        url = "/";
+      }
+      return {
+        type: String(it.type ?? ""),
+        title: String(it.title).slice(0, 200),
+        manageUrl: url,
+        createdAt: String(it.createdAt ?? ""),
+      };
+    });
 
   const origin = new URL(req.url).origin;
 

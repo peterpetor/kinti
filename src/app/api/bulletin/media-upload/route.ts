@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { extForContentType, presignR2Put } from "@/lib/r2";
 import { safeLogError } from "@/lib/safe-log";
+import { hashIp } from "@/lib/bulletin";
+import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -49,6 +51,17 @@ export async function POST(req: Request) {
     );
   }
 
+  // Rate limiting (Denial of Wallet védelem)
+  const ip = req.headers.get("cf-connecting-ip") ?? null;
+  const ipHash = await hashIp(ip);
+  const rateLimit = await checkAiRateLimit("media-upload", ipHash);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Túl sok képfeltöltés. Próbáld újra később." },
+      { status: 429 },
+    );
+  }
+
   const key = `bulletin-images/${crypto.randomUUID()}.${ext}`;
 
   try {
@@ -57,6 +70,9 @@ export async function POST(req: Request) {
       contentType: contentType!,
       contentLength,
     });
+    
+    await logAiRateLimit("media-upload", ipHash);
+
     return NextResponse.json(presigned, {
       headers: { "cache-control": "no-store" },
     });
