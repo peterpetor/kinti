@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     const radarType = typeof body.radarType === "string" ? body.radarType : "";
     const parameters = typeof body.parameters === "object" && body.parameters !== null ? JSON.stringify(body.parameters) : "{}";
 
-    if (!['alberlet', 'telekocsi', 'exchange_rate'].includes(radarType)) {
+    if (!['alberlet', 'exchange_rate'].includes(radarType)) {
       return NextResponse.json({ error: "Érvénytelen radar típus." }, { status: 400 });
     }
 

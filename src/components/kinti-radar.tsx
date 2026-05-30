@@ -16,7 +16,7 @@ type State =
 
 interface Radar {
   id: string;
-  radarType: "exchange_rate" | "alberlet" | "telekocsi";
+  radarType: "exchange_rate" | "alberlet";
   parameters: string;
   createdAt: string;
 }
@@ -29,7 +29,7 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
   const [error, setError] = useState<string | null>(null);
 
   // Form states
-  const [activeTab, setActiveTab] = useState<"exchange_rate" | "alberlet" | "telekocsi">("exchange_rate");
+  const [activeTab, setActiveTab] = useState<"exchange_rate" | "alberlet">("exchange_rate");
   
   // Exchange Rate
   const [threshold, setThreshold] = useState<string>(String(Math.round((currentHufRate || 400) + 10)));
@@ -38,8 +38,6 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
   // Alberlet
   const [alberletCanton, setAlberletCanton] = useState<string>("ZH");
   
-  // Telekocsi
-  const [telekocsiRoute, setTelekocsiRoute] = useState<string>("CH-HU");
 
   const refreshRadars = useCallback(async (sub: PushSubscriptionJSON) => {
     if (!sub.endpoint) return;
@@ -123,8 +121,6 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
       parameters = { threshold: t, direction };
     } else if (activeTab === "alberlet") {
       parameters = { canton: alberletCanton };
-    } else if (activeTab === "telekocsi") {
-      parameters = { route: telekocsiRoute };
     }
 
     setState("busy");
@@ -200,9 +196,6 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
       if (r.radarType === "alberlet") {
         return `Új albérlet: ${p.canton} kantonban`;
       }
-      if (r.radarType === "telekocsi") {
-        return `Új telekocsi út: ${p.route}`;
-      }
     } catch {
       return "Ismeretlen radar";
     }
@@ -211,7 +204,6 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
   function renderRadarIcon(type: string) {
     if (type === "exchange_rate") return "trending";
     if (type === "alberlet") return "home";
-    if (type === "telekocsi") return "car";
     return "bell";
   }
 
@@ -244,12 +236,6 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
           className={cn("px-3 py-1.5 rounded-pill text-[12px] font-bold whitespace-nowrap transition", activeTab === "alberlet" ? "bg-accent text-white" : "bg-surface-alt text-ink-muted")}
         >
           🏠 Albérlet
-        </button>
-        <button 
-          onClick={() => setActiveTab("telekocsi")}
-          className={cn("px-3 py-1.5 rounded-pill text-[12px] font-bold whitespace-nowrap transition", activeTab === "telekocsi" ? "bg-accent text-white" : "bg-surface-alt text-ink-muted")}
-        >
-          🚗 Telekocsi
         </button>
       </div>
 
@@ -302,21 +288,6 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
               <option value="LU">Luzern (LU)</option>
               <option value="SG">St. Gallen (SG)</option>
               <option value="all">Svájc összes</option>
-            </select>
-          </div>
-        )}
-
-        {activeTab === "telekocsi" && (
-          <div className="space-y-2">
-            <span className="text-[13px] font-bold text-ink block">Útvonal</span>
-            <select
-              value={telekocsiRoute}
-              onChange={(e) => setTelekocsiRoute(e.target.value)}
-              disabled={state === "busy"}
-              className="w-full rounded-[10px] border border-line bg-surface px-3 py-2.5 text-[14px] font-bold text-ink"
-            >
-              <option value="CH-HU">Svájcból → Magyarországra</option>
-              <option value="HU-CH">Magyarországról → Svájcba</option>
             </select>
           </div>
         )}

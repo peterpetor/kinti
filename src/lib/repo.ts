@@ -3106,7 +3106,7 @@ export async function deleteExchangeRateAlert(
 export interface KintiRadar {
   id: string;
   pushEndpoint: string;
-  radarType: 'alberlet' | 'telekocsi' | 'exchange_rate';
+  radarType: 'alberlet' | 'exchange_rate';
   parameters: string; // JSON string
   active: number;
   createdAt: string;
