@@ -95,13 +95,6 @@ export function BorzeView({
     <div className="space-y-4 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
       {/* Fejléc */}
       <header className="flex items-start gap-3">
-        <Link
-          href="/kozosseg"
-          aria-label="Vissza a Közösséghez"
-          className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink"
-        >
-          <Icon name="arrowLeft" size={16} strokeWidth={2.2} />
-        </Link>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="grid h-7 w-7 place-items-center rounded-[9px] bg-primary-soft text-primary">
@@ -111,6 +104,13 @@ export function BorzeView({
           </div>
           <p className="mt-1 text-[13px] leading-snug text-ink-muted">{subtitle}</p>
         </div>
+        <Link
+          href="/kozosseg"
+          aria-label="Vissza a Közösséghez"
+          className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink"
+        >
+          <Icon name="arrowLeft" size={16} strokeWidth={2.2} />
+        </Link>
       </header>
 
       {/* Új hirdetés CTA */}
