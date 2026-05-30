@@ -5,6 +5,8 @@ import {
   setBulletinHidden,
   setReviewHidden,
   recomputeBusinessRating,
+  getBusinessById,
+  setBusinessHidden,
   createContentReport,
   countRecentReports,
 } from "@/lib/repo";
@@ -35,7 +37,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }
 
-  const contentType = body.contentType === "bulletin" || body.contentType === "review" || body.contentType === "sos"
+  const contentType = body.contentType === "business" || body.contentType === "bulletin" || body.contentType === "review" || body.contentType === "sos"
     ? body.contentType
     : null;
   const contentId = typeof body.contentId === "string" ? body.contentId.trim() : "";
@@ -66,7 +68,15 @@ export async function POST(req: Request) {
   let contentExcerpt = "";
   let found = false;
 
-  if (contentType === "bulletin") {
+  if (contentType === "business") {
+    const biz = await getBusinessById(contentId);
+    if (biz) {
+      found = true;
+      contentLabel = "Vállalkozás / Szakember";
+      contentExcerpt = biz.name;
+      await setBusinessHidden(contentId, true);
+    }
+  } else if (contentType === "bulletin") {
     const post = await getBulletinPostById(contentId);
     if (post) {
       found = true;

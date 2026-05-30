@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { ShareSheet } from "@/components/share-sheet";
+import { ReportButton } from "@/components/report-button";
 
 interface ProfileActionButtonsProps {
   businessId: string;
@@ -54,6 +55,7 @@ export function ProfileHeaderActions({ businessId, businessName }: ProfileAction
   return (
     <>
       <div className="flex gap-2">
+        <ReportButton contentType="business" contentId={businessId} />
         <button
           type="button"
           onClick={() => setShareOpen(true)}

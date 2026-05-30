@@ -296,7 +296,7 @@ export interface BusinessQuery {
 }
 
 export async function getBusinesses(opts: BusinessQuery = {}): Promise<Business[]> {
-  const where: string[] = [];
+  const where: string[] = ["COALESCE(hidden, 0) = 0"];
   const binds: unknown[] = [];
 
   if (opts.category && opts.category !== "all") {
@@ -319,7 +319,7 @@ export async function getBusinesses(opts: BusinessQuery = {}): Promise<Business[
 
 export async function getBusinessById(id: string): Promise<Business | null> {
   const row = await getDB()
-    .prepare("SELECT * FROM businesses WHERE id = ?")
+    .prepare("SELECT * FROM businesses WHERE id = ? AND COALESCE(hidden, 0) = 0")
     .bind(id)
     .first<BusinessRow>();
   return row ? toBusiness(row) : null;
@@ -328,7 +328,7 @@ export async function getBusinessById(id: string): Promise<Business | null> {
 /** A bejelentkezett tulajdonos vállalkozása (Clerk user_id → owner_user_id). */
 export async function getBusinessByOwner(ownerUserId: string): Promise<Business | null> {
   const row = await getDB()
-    .prepare("SELECT * FROM businesses WHERE owner_user_id = ? LIMIT 1")
+    .prepare("SELECT * FROM businesses WHERE owner_user_id = ? AND COALESCE(hidden, 0) = 0 LIMIT 1")
     .bind(ownerUserId)
     .first<BusinessRow>();
   return row ? toBusiness(row) : null;
@@ -346,6 +346,14 @@ export async function claimBusiness(businessId: string, ownerUserId: string): Pr
     .bind(ownerUserId, businessId)
     .run();
   return (res.meta.changes ?? 0) > 0;
+}
+
+/** Biztonsági okokból azonnal elrejti a vállalkozást a publikum elől (DSA notice & takedown). */
+export async function setBusinessHidden(id: string, hidden: boolean): Promise<void> {
+  await getDB()
+    .prepare("UPDATE businesses SET hidden = ?, updated_at = datetime('now') WHERE id = ?")
+    .bind(hidden ? 1 : 0, id)
+    .run();
 }
 
 /**

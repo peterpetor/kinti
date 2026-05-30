@@ -487,6 +487,18 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
         className="hidden"
       />
 
+      {/* Feketemunka (Schwarzarbeit) figyelmeztetés állás és szolgáltatás esetén */}
+      {["allas", "szolg"].includes(form.kindId) && (
+        <div className="rounded-[12px] border border-accent/40 bg-accent/5 p-4 text-[13px] leading-relaxed text-ink-muted shadow-sm">
+          <p className="font-bold text-accent mb-1 flex items-center gap-1.5">
+            <Icon name="warning" size={16} strokeWidth={2.4} /> Fontos jogi figyelmeztetés
+          </p>
+          <p>
+            Svájcban a munkavégzés <strong>kizárólag érvényes munkavállalási engedéllyel</strong> és társadalombiztosítási bejelentéssel (AHV) legális. A feketemunka (Schwarzarbeit) hirdetése szigorúan tilos. Engedélyköteles szakmákat csak engedély birtokában hirdethetsz.
+          </p>
+        </div>
+      )}
+
       {/* Kötelező nyilatkozatok — Ptk. 2:10 § (18+) + szabad hozzájárulás */}
       <section className="space-y-2.5 rounded-card border border-line bg-surface p-4 shadow-card">
         <Consent
