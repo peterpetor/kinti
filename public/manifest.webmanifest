@@ -70,5 +70,13 @@
       "url": "/profil",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
-  ]
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=app.kinti.android",
+      "id": "app.kinti.android"
+    }
+  ],
+  "prefer_related_applications": false
 }
