@@ -304,6 +304,12 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
           {state === "busy" ? "Beállítás folyamatban…" : "Radar Aktiválása"}
         </button>
 
+        {activeTab === "exchange_rate" && (
+          <p className="text-center text-[10px] leading-tight text-ink-muted">
+            Az árfolyam adatok tájékoztató jellegűek, a piaci mozgásokért és a késésekből adódó anyagi károkért felelősséget nem vállalunk.
+          </p>
+        )}
+
         {error && <p className="text-[12px] font-bold text-accent text-center pt-1">{error}</p>}
       </div>
 

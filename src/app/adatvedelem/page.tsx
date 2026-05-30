@@ -7,7 +7,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-05-25">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-05-30">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -168,6 +168,18 @@ export default function AdatvedelemPage() {
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) f) — jogos érdek (visszaélések megakadályozása)</li>
         <li><strong>Tárolási idő:</strong> a kitiltás visszavonásáig (jellemzően határozatlan ideig)</li>
+      </ul>
+
+      <h3>2.9 Kinti Radar (Push Értesítések)</h3>
+      <p>
+        A böngésződben engedélyezheted a Push értesítéseket, és feliratkozhatsz bizonyos témákra (pl. albérlet, árfolyam). 
+        Ezeket a preferenciákat (Radar paraméterek) és a böngésződ által generált, személytelen <code>push_endpoint</code> URL-t 
+        tároljuk az adatbázisunkban, hogy ki tudjuk küldeni az értesítőt.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a böngésző szintjén és a "Radar Aktiválása" gombbal)</li>
+        <li><strong>Tárolási idő:</strong> Amíg a böngésződben le nem tiltod az értesítéseket, vagy a felületen a "Radar törlése" gombra nem kattintasz.</li>
+        <li><strong>Jogi nyilatkozat (Árfolyam):</strong> Az értesítések tartalmáért (különösen a pénzügyi, árfolyami adatokért) felelősséget nem vállalunk. Az adatok tájékoztató jellegűek, a késésekből vagy pontatlanságokból eredő anyagi károkért a kinti.app nem perelhető.</li>
       </ul>
 
       <h2>3. Cookie-k</h2>
