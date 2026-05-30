@@ -77,7 +77,12 @@ export function LegalGatekeeper() {
               </span>
               <span className="text-[11px] text-ink-muted block leading-snug">
                 Elolvastam és elfogadom a{" "}
-                <Link href="/aszf" target="_blank" className="underline font-bold text-primary hover:text-primary/80 transition">
+                <Link
+                  href="/aszf"
+                  target="_blank"
+                  onClick={(e) => e.stopPropagation()}
+                  className="underline font-bold text-primary hover:text-primary/80 transition"
+                >
                   Felhasználási Feltételeket (ÁSZF)
                 </Link>
                 .
@@ -99,7 +104,12 @@ export function LegalGatekeeper() {
               </span>
               <span className="text-[11px] text-ink-muted block leading-snug">
                 Hozzájárulok adataim kezeléséhez a{" "}
-                <Link href="/adatvedelem" target="_blank" className="underline font-bold text-primary hover:text-primary/80 transition">
+                <Link
+                  href="/adatvedelem"
+                  target="_blank"
+                  onClick={(e) => e.stopPropagation()}
+                  className="underline font-bold text-primary hover:text-primary/80 transition"
+                >
                   Adatkezelési Tájékoztatóban
                 </Link>{" "}
                 leírtak szerint.
