@@ -128,11 +128,8 @@ export function BulletinImageUploader({
           xhr.send(compressedBlob);
         });
 
-        // 4) Hozzáadás a sikeresen feltöltött képek listájához
-        const updatedKeys = [...currentKeys, key];
-        onChange(JSON.stringify(updatedKeys));
-
-        // 5) AI elemzés (opcionális auto-kitöltés)
+        // 4) AI elemzés (opcionális biztonsági és auto-kitöltési ellenőrzés)
+        let isSafe = true;
         if (onAnalysisComplete) {
           try {
             setUploadingItems((prev) =>
@@ -146,6 +143,7 @@ export function BulletinImageUploader({
             if (analyzeRes.ok) {
               const { analysis, unsafe, error: serverError } = (await analyzeRes.json()) as any;
               if (unsafe) {
+                isSafe = false;
                 throw new Error(serverError || "Kép biztonsági okokból elutasítva.");
               }
               if (analysis) {
@@ -156,6 +154,12 @@ export function BulletinImageUploader({
             console.error("Analysis error:", analyzeErr);
             throw analyzeErr; // pass to outer catch block to show error and remove from UI
           }
+        }
+
+        // 5) Csak sikeres biztonsági ellenőrzés után adjuk hozzá a hirdetéshez!
+        if (isSafe) {
+          const updatedKeys = [...currentKeys, key];
+          onChange(JSON.stringify(updatedKeys));
         }
 
         setUploadingItems((prev) => prev.filter((item) => item.id !== itemId));

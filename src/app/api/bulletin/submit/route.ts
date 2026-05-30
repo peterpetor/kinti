@@ -94,16 +94,30 @@ export async function POST(req: Request) {
   // 5) Kép moderáció Cloudflare Workers AI-val
   const imageKey = validation.value.imageKey;
   if (imageKey) {
-    const obj = await getMediaBucket().get(imageKey);
-    if (obj) {
-      const arrayBuffer = await obj.arrayBuffer();
-      const moderation = await moderateImage(arrayBuffer);
-      if (!moderation.safe) {
-        await getMediaBucket().delete(imageKey).catch(() => { /* silent */ });
-        return NextResponse.json(
-          { error: moderation.reason || "A kép moderációs okokból elutasításra került." },
-          { status: 400 },
-        );
+    let keys: string[] = [];
+    if (imageKey.startsWith("[")) {
+      try {
+        keys = JSON.parse(imageKey);
+      } catch {
+        keys = [imageKey];
+      }
+    } else {
+      keys = [imageKey];
+    }
+
+    for (const key of keys) {
+      if (!key) continue;
+      const obj = await getMediaBucket().get(key);
+      if (obj) {
+        const arrayBuffer = await obj.arrayBuffer();
+        const moderation = await moderateImage(arrayBuffer);
+        if (!moderation.safe) {
+          await getMediaBucket().delete(key).catch(() => { /* silent */ });
+          return NextResponse.json(
+            { error: moderation.reason || "A kép moderációs okokból elutasításra került." },
+            { status: 400 },
+          );
+        }
       }
     }
   }
