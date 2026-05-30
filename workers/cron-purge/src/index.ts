@@ -270,6 +270,17 @@ async function runPurge(env: Env): Promise<PurgeResult> {
     )
     .run();
 
+  // 3/e) AI rate-limit log — >24 órás rekordok törlése (sliding-window max 1h)
+  try {
+    await db
+      .prepare(
+        "DELETE FROM ai_rate_limit_log WHERE created_at < datetime('now', '-1 day')",
+      )
+      .run();
+  } catch (err) {
+    console.warn("[cron-purge] ai_rate_limit_log takarítás kihagyva:", err);
+  }
+
   // 4) Lejárati figyelmeztető emailek küldése (3 napon belül lejáró, még nem értesített)
   let expiryWarningsSent = 0;
   let expiryWarningErrors = 0;

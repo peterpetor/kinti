@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { runAiChat, extractJsonObject } from "@/lib/ai";
+import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { getCategories } from "@/lib/repo";
+import { hashIp } from "@/lib/bulletin";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -29,6 +30,16 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "A leírás 10-1000 karakter hosszú legyen." },
         { status: 400 },
+      );
+    }
+
+    // Rate-limit (10/IP/óra)
+    const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
+    const rl = await checkAiRateLimit("business-helper", ipHash);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: `Túl sok AI-segítség kérelem. Próbáld újra egy óra múlva. (${rl.current}/${rl.max})` },
+        { status: 429 },
       );
     }
 
@@ -67,6 +78,7 @@ VÁLASZ FORMÁTUM (KIZÁRÓLAG JSON, semmi más):
     if (!ai.ok) {
       return NextResponse.json({ error: "Az AI nem elérhető." }, { status: 503 });
     }
+    await logAiRateLimit("business-helper", ipHash);
 
     const parsed = extractJsonObject<{
       polishedDescription?: string;

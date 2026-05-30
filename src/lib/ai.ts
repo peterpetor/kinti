@@ -1,4 +1,4 @@
-import { getCloudflareEnv } from "./cloudflare";
+import { getCloudflareEnv, getDB } from "./cloudflare";
 
 /**
  * Központi Cloudflare Workers AI hívó wrapper. Egységes timeout, error-kezelés,
@@ -47,6 +47,86 @@ export async function runAiChat(params: {
   } catch (err) {
     console.error("[ai] runAiChat hiba:", err);
     return { ok: false, text: "" };
+  }
+}
+
+// ============================================================================
+//  Rate-limit (közös, sliding-window, IP-hash alapú)
+// ============================================================================
+
+export interface AiRateLimitConfig {
+  /** Az ablak hossza órákban (pl. 1 = utolsó 1 óra). */
+  windowHours: number;
+  /** Max hívás az ablakban erről az IP-ről erre az endpoint-ra. */
+  maxPerWindow: number;
+}
+
+/** Per-endpoint default-ok. Adott IP-ről X hívás Y órán belül. */
+export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
+  "parse-search": { windowHours: 1, maxPerWindow: 20 },
+  "business-helper": { windowHours: 1, maxPerWindow: 10 },
+  "german-term": { windowHours: 1, maxPerWindow: 50 },
+  "review-summary": { windowHours: 1, maxPerWindow: 30 },
+};
+
+/**
+ * Megnézi hogy az adott IP a megadott endpoint-ra az utolsó windowHours
+ * órán belül átlépte-e a maxPerWindow limitet.
+ *
+ * @returns true, ha még szabad hívni; false, ha a limit elért.
+ *
+ * Ha az `ipHash` null (pl. localhost dev), ÁTengedünk — fejlesztéskor ne
+ * korlátozzon. Production-on a cf-connecting-ip mindig van.
+ */
+export async function checkAiRateLimit(
+  endpoint: string,
+  ipHash: string | null,
+): Promise<{ allowed: boolean; current: number; max: number }> {
+  const cfg = AI_LIMITS[endpoint];
+  if (!cfg) {
+    // Ismeretlen endpoint — engedélyezzük, de figyelmeztetünk a log-ban
+    console.warn(`[ai-rl] ismeretlen endpoint: ${endpoint}`);
+    return { allowed: true, current: 0, max: 9999 };
+  }
+  if (!ipHash) return { allowed: true, current: 0, max: cfg.maxPerWindow };
+
+  try {
+    const row = await getDB()
+      .prepare(
+        `SELECT COUNT(*) AS n FROM ai_rate_limit_log
+         WHERE ip_hash = ? AND endpoint = ?
+           AND created_at >= datetime('now', '-' || ? || ' hours')`,
+      )
+      .bind(ipHash, endpoint, cfg.windowHours)
+      .first<{ n: number }>();
+    const current = row?.n ?? 0;
+    return {
+      allowed: current < cfg.maxPerWindow,
+      current,
+      max: cfg.maxPerWindow,
+    };
+  } catch (err) {
+    // Ha a tábla még nem létezik (migration nem futott), nem blokkolunk.
+    console.error("[ai-rl] check failed:", err);
+    return { allowed: true, current: 0, max: cfg.maxPerWindow };
+  }
+}
+
+/** Egy hívást naplóz a rate-limit táblába (sikeres AI-call után). */
+export async function logAiRateLimit(
+  endpoint: string,
+  ipHash: string | null,
+): Promise<void> {
+  if (!ipHash) return;
+  try {
+    await getDB()
+      .prepare(
+        `INSERT INTO ai_rate_limit_log (id, endpoint, ip_hash) VALUES (?, ?, ?)`,
+      )
+      .bind(crypto.randomUUID(), endpoint, ipHash)
+      .run();
+  } catch (err) {
+    console.error("[ai-rl] log failed:", err);
   }
 }
 

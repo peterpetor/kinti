@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { runAiChat } from "@/lib/ai";
+import { runAiChat, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
+import { hashIp } from "@/lib/bulletin";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -33,6 +34,16 @@ export async function GET(req: Request) {
       );
     }
 
+    // Rate-limit (50/IP/óra) — cache-miss esetén lép életbe
+    const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
+    const rl = await checkAiRateLimit("german-term", ipHash);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { explanation: null, error: `Túl sok kérelem. Próbáld újra egy óra múlva. (${rl.current}/${rl.max})` },
+        { status: 429 },
+      );
+    }
+
     const system = `Te a kinti.app svájci ügyintézés-szótár AI-asszisztense vagy.
 A felhasználó egy svájci hivatali német vagy francia kifejezést ad meg, és te
 rövid magyar magyarázatot adsz hozzá.
@@ -59,6 +70,7 @@ SZABÁLYOK:
         { status: 503 },
       );
     }
+    await logAiRateLimit("german-term", ipHash);
 
     const explanation = ai.text.slice(0, 400);
     return NextResponse.json(

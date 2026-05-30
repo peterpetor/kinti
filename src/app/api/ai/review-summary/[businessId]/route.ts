@@ -4,7 +4,8 @@ import {
   getReviewsByBusiness,
   setBusinessAiReviewSummary,
 } from "@/lib/repo";
-import { runAiChat } from "@/lib/ai";
+import { runAiChat, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
+import { hashIp } from "@/lib/bulletin";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -20,7 +21,7 @@ export const dynamic = "force-dynamic";
  *   • <3 vélemény: nem generálunk (túl kevés, fals impression).
  */
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: { businessId: string } },
 ) {
   try {
@@ -48,6 +49,16 @@ export async function GET(
           reviewCount: cachedCount,
         });
       }
+    }
+
+    // Rate-limit (30/IP/óra) — cache-miss esetén lép életbe
+    const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
+    const rl = await checkAiRateLimit("review-summary", ipHash);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { summary: null, reason: "rate_limited" },
+        { status: 429 },
+      );
     }
 
     // AI prompt
@@ -80,6 +91,7 @@ export async function GET(
         { status: 200 },
       );
     }
+    await logAiRateLimit("review-summary", ipHash);
 
     const summary = ai.text.slice(0, 800); // védő-limit
     await setBusinessAiReviewSummary({

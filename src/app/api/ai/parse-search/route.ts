@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { runAiChat, extractJsonObject } from "@/lib/ai";
+import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { getCategories } from "@/lib/repo";
 import { CANTONS } from "@/lib/cantons";
+import { hashIp } from "@/lib/bulletin";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -33,6 +34,16 @@ export async function POST(req: Request) {
     const query = typeof body.query === "string" ? body.query.trim() : "";
     if (!query || query.length < 3 || query.length > 200) {
       return NextResponse.json({ error: "Adj meg egy keresési szöveget." }, { status: 400 });
+    }
+
+    // Rate-limit ellenőrzés (20/IP/óra)
+    const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
+    const rl = await checkAiRateLimit("parse-search", ipHash);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: `Túl sok keresés. Próbáld újra egy óra múlva. (${rl.current}/${rl.max})` },
+        { status: 429 },
+      );
     }
 
     const cats = await getCategories();
@@ -76,6 +87,9 @@ Ha valamit nem értesz vagy nincs benne a query-ben, írj null-t. Ne találj ki!
     if (!ai.ok) {
       return NextResponse.json({ error: "Az AI nem elérhető." }, { status: 503 });
     }
+
+    // Sikeres AI-hívás után naplózzuk
+    await logAiRateLimit("parse-search", ipHash);
 
     const parsed = extractJsonObject<Partial<ParsedFilter>>(ai.text);
     if (!parsed) {
