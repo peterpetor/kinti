@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import BenchmarkClient from "./BenchmarkClient";
 import { ScreenHeader } from "@/components/ui";
 
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Svájci Bér- és Lakbér Iránytű | Kinti",
   description: "Közösségi, anonim adatbázis a svájci magyarok fizetéséről és lakbéréről. Nézd meg, mennyit keresnek a te kantonodban!",
