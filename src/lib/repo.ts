@@ -3538,15 +3538,22 @@ export async function isSubmitterBlocked(params: {
 }
 
 export async function listBlocklist(): Promise<BlocklistEntry[]> {
-  const { results } = await getDB()
-    .prepare(
-      `SELECT id, kind, value, reason, created_at, created_by, active
-       FROM blocklist
-       ORDER BY active DESC, created_at DESC
-       LIMIT 200`,
-    )
-    .all<BlocklistRow>();
-  return results.map(toBlocklistEntry);
+  // Fail-open: ha a 0045 migráció még nem futott, üres listát adunk vissza
+  // (a tábla-nem-létezik SQL-hibára), hogy az admin-page ne dőljön el.
+  try {
+    const { results } = await getDB()
+      .prepare(
+        `SELECT id, kind, value, reason, created_at, created_by, active
+         FROM blocklist
+         ORDER BY active DESC, created_at DESC
+         LIMIT 200`,
+      )
+      .all<BlocklistRow>();
+    return results.map(toBlocklistEntry);
+  } catch (err) {
+    console.warn("[blocklist] listBlocklist failed (tábla hiányzik?):", err);
+    return [];
+  }
 }
 
 export async function addToBlocklist(params: {
