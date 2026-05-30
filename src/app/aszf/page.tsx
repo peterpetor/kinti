@@ -7,7 +7,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-05-31">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-05-30">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -210,7 +210,7 @@ export default function AszfPage() {
         töröljük</strong> a platformról.
       </p>
 
-      <h2>11. A Szolgáltatás rendelkezésre állása és Adatbiztonság</h2>
+      <h2>11. A Szolgáltatás rendelkezésre állása, Adatbiztonság és Vis Maior</h2>
       <p>
         Igyekszünk a Szolgáltatást folyamatosan elérhetővé tenni, de <strong>garanciát nem
         vállalunk</strong> a 100%-os rendelkezésre állásra. Karbantartás, technikai hiba, vagy
@@ -223,10 +223,39 @@ export default function AszfPage() {
         gyorsítótár-törlés vagy technikai hiba miatti <strong>adatvesztésért az üzemeltető nem perelhető</strong>.
       </p>
 
+      <h3>11.1 Vis maior (Force Majeure)</h3>
+      <p>
+        Az üzemeltető <strong>nem felelős</strong> a Szolgáltatás részleges vagy teljes szüneteltetéséért,
+        elérhetetlenségéért vagy adatvesztéséért, ha azt olyan rendkívüli körülmény okozza,
+        amelyre az üzemeltetőnek nincs ráhatása és azt előre látni sem lehetett. Ilyen
+        események különösen (nem kimerítő felsorolás):
+      </p>
+      <ul>
+        <li>infrastrukturális szolgáltatók leállása vagy üzemeltetési hibája (Cloudflare, Resend, Clerk, R2 stb.);</li>
+        <li>internet-hálózati infrastruktúra zavarai, DDoS-támadás;</li>
+        <li>jogszabályi változások, hatósági végzés (pl. domain-tiltás, IP-blokk);</li>
+        <li>természeti katasztrófa, járvány, áberelés;</li>
+        <li>kibertámadás (hacker, ransomware) és 0-day exploit;</li>
+        <li>harmadik fél API-jának vagy adatforrásának váratlan megszűnése
+        (pl. Frankfurter ECB árfolyam API, repülőjegy adatforrás stb.).</li>
+      </ul>
+      <p>
+        Vis maior esetén az üzemeltető haladéktalanul értesíti a felhasználókat és minden tőle
+        telhetőt megtesz az elérhetőség mielőbbi visszaállítása érdekében.
+        Kártérítés ilyen esetben sem jár.
+      </p>
       <h2>12. Felelősség-korlátozás</h2>
       <p>
         Az üzemeltető felelőssége a magyar Polgári Törvénykönyv vonatkozó rendelkezései szerint,
         ingyenes szolgáltatás esetén <strong>csak szándékos károkozásra</strong> terjed ki.
+        Gondatlanságból eredő, illetve felhasználók közötti, vagy felhasználó és vállalkozó
+        közötti jogvitákból származó károkért az üzemeltető <strong>nem felelős</strong>.
+      </p>
+      <p>
+        Ahol egy adott módul külön felelősség-kizáró nyilatkozatot tartalmaz (például a
+        vám-kalkulátor, a bérkalkulátor, az eszköz-leg lejárati nyilatkozata, a határátkelő-figyelő,
+        az akció-térkép), az ott rögzített kizáró feltételek a jelen 12. ponttal
+        együtt alkalmazandók, és egymást erősítik, nem győzik le.
       </p>
 
       <h2>13. Eszközök, kalkulátorok és tájékoztató anyagok</h2>

@@ -7,7 +7,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-05-31">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-05-30">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -268,6 +268,24 @@ export default function AdatvedelemPage() {
         vállalkozóknak, hirdetésfeladóknak <strong>nincs cookie-juk</strong>. Marketing-,
         analitikai-, vagy 3rd-party tracking cookie-kat <strong>nem használunk</strong>.
       </p>
+
+      <h3>3.1 Cloudflare Web Analytics (Beacon)</h3>
+      <p>
+        A platform a <strong>Cloudflare Web Analytics</strong> (CF Beacon) cookie-mentes,
+        GDPR-barát látogatói statisztikai eszközt használja, amennyiben a{" "}
+        <code>NEXT_PUBLIC_CF_BEACON_TOKEN</code> környezeti változó be van állítva.
+        Ez az eszköz <strong>nem használ cookie-t</strong>, nem gyűjt személyazonosításra
+        alkalmas adatot (sem IP-cím teljes formában, sem User-Agent string),
+        és nem követ felhasználókat oldalak között.
+      </p>
+      <ul>
+        <li><strong>Kezelt adatok:</strong> oldalletöltések aggregált száma, forrás-ország (anonim), betöltési idők</li>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) f) — jogos érdek (szolgáltatás teljesítményének mérése) — a{" "}
+          <a href="https://developers.cloudflare.com/analytics/web-analytics/" target="_blank" rel="noreferrer">Cloudflare Web Analytics</a>{" "}
+          kifejezetten PECR/ePrivacy-mentes megoldás, consent nem szükséges</li>
+        <li><strong>Adatfeldolgozó:</strong> Cloudflare, Inc. —{" "}
+          <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noreferrer">privacy policy</a></li>
+      </ul>
 
       <h3>3.1 Svájci adatkezelési rendelkezések (revFADP)</h3>
       <p>
