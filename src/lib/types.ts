@@ -47,6 +47,10 @@ export interface Business {
   socialLinks?: string | null;
   /** Email-only management token (a confirm-emailben kapja a feladó). */
   manageToken?: string | null;
+  /** Profil-megnyitások összes idejű száma (analitika). */
+  viewCount?: number;
+  /** Telefonszám-kattintások összes idejű száma (analitika). */
+  phoneClickCount?: number;
 }
 
 export interface KintiEvent {

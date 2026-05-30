@@ -60,6 +60,7 @@ interface PurgeResult {
   businessSubmissionsDeleted: number;
   oldEventsDeleted: number;
   imagesDeleted: number;
+  analyticsDedupeDeleted: number;
   expiryWarningsSent: number;
   expiryWarningErrors: number;
   ranAt: string;
@@ -261,6 +262,14 @@ async function runPurge(env: Env): Promise<PurgeResult> {
 
 
 
+  // 3/d) Vállalkozói analitika dedupe-tábla — >7 napos rekordok törlése.
+  //      A táblának csak rate-limit célja van; tartós érték nincs benne.
+  const analyticsDedupeRes = await db
+    .prepare(
+      "DELETE FROM business_analytics_dedupe WHERE created_at < datetime('now', '-7 days')",
+    )
+    .run();
+
   // 4) Lejárati figyelmeztető emailek küldése (3 napon belül lejáró, még nem értesített)
   let expiryWarningsSent = 0;
   let expiryWarningErrors = 0;
@@ -303,6 +312,7 @@ async function runPurge(env: Env): Promise<PurgeResult> {
     businessSubmissionsDeleted: bizSubsRes.meta.changes ?? 0,
     oldEventsDeleted: oldEventsRes.meta.changes ?? 0,
     imagesDeleted,
+    analyticsDedupeDeleted: analyticsDedupeRes.meta.changes ?? 0,
     expiryWarningsSent,
     expiryWarningErrors,
     ranAt: new Date().toISOString(),

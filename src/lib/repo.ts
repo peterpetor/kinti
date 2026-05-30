@@ -72,6 +72,8 @@ interface BusinessRow {
   social_links: string | null;
   manage_token: string | null;
   gallery_keys: string | null;
+  view_count: number | null;
+  phone_click_count: number | null;
 }
 
 interface EventRow {
@@ -188,6 +190,8 @@ function toBusiness(r: BusinessRow): Business {
     socialLinks: r.social_links,
     manageToken: r.manage_token,
     galleryKeys: jsonArray(r.gallery_keys),
+    viewCount: r.view_count ?? 0,
+    phoneClickCount: r.phone_click_count ?? 0,
   };
 }
 
@@ -2842,4 +2846,160 @@ export async function countRecentHofladenSubmissions(ipHash: string | null): Pro
     .bind(ipHash)
     .first<{ n: number }>();
   return row?.n ?? 0;
+}
+
+// ============================================================================
+//  Vállalkozói analitika (profil-view + telefon-kattintás)
+// ============================================================================
+
+export type BusinessAnalyticsKind = "view" | "phone";
+
+export interface BusinessAnalyticsSummary {
+  total: number;          // összes idejű
+  last7Days: number;      // utolsó 7 nap
+  last30Days: number;     // utolsó 30 nap
+}
+
+export interface BusinessAnalytics {
+  views: BusinessAnalyticsSummary;
+  phoneClicks: BusinessAnalyticsSummary;
+  /** Napi bontás csökkenő sorrendben (legfrissebb előbb), max 30 nap. */
+  daily: Array<{ day: string; views: number; phoneClicks: number }>;
+}
+
+/**
+ * Best-effort számláló-növelő. IP-hash-szel dedupe-olunk órás bontásban,
+ * hogy ne lehessen ugyanaz a látogató futtatva pumpálni a számot.
+ *
+ * Csendben hibázik (üres válasz), hogy a tracking-fail soha ne törje a UX-ot.
+ */
+export async function incrementBusinessAnalytic(
+  businessId: string,
+  kind: BusinessAnalyticsKind,
+  ipHash: string | null,
+): Promise<void> {
+  if (!businessId) return;
+  const db = getDB();
+  const now = new Date();
+  const day = now.toISOString().slice(0, 10);          // YYYY-MM-DD
+  const hourBucket = now.toISOString().slice(0, 13);    // YYYY-MM-DDTHH
+
+  // 1) Dedupe — csak akkor megyünk tovább, ha ez egy új (ip,bucket) pár.
+  //    IP-hash nélkül (pl. localhost dev) sose dedupe-olunk, csak mindig számolunk.
+  if (ipHash) {
+    const dedupe = await db
+      .prepare(
+        `INSERT OR IGNORE INTO business_analytics_dedupe
+          (business_id, kind, ip_hash, hour_bucket)
+         VALUES (?, ?, ?, ?)`,
+      )
+      .bind(businessId, kind, ipHash, hourBucket)
+      .run();
+    if ((dedupe.meta.changes ?? 0) === 0) return;
+  }
+
+  // 2) Daily aggregate — upsert (kind-tól függően melyik oszlopot növeljük)
+  const dailyCol = kind === "view" ? "view_count" : "phone_click_count";
+  await db
+    .prepare(
+      `INSERT INTO business_analytics_daily (business_id, day, ${dailyCol})
+       VALUES (?, ?, 1)
+       ON CONFLICT(business_id, day) DO UPDATE SET ${dailyCol} = ${dailyCol} + 1`,
+    )
+    .bind(businessId, day)
+    .run();
+
+  // 3) Összesített számláló a businesses táblán
+  const totalCol = kind === "view" ? "view_count" : "phone_click_count";
+  await db
+    .prepare(`UPDATE businesses SET ${totalCol} = ${totalCol} + 1 WHERE id = ?`)
+    .bind(businessId)
+    .run();
+}
+
+/** A vállalkozó számára: összes / 7 nap / 30 nap + napi bontás. */
+export async function getBusinessAnalytics(businessId: string): Promise<BusinessAnalytics> {
+  const db = getDB();
+
+  // Védő try/catch: ha a 0040 migration még nem futott a remote D1-en, a
+  // hiányzó oszlop/tábla "no such column" hibát dob. A manage-page-et NEM
+  // törjük ezért — 0-s értékekkel térünk vissza.
+  let totals: { view_count: number | null; phone_click_count: number | null } | null = null;
+  try {
+    totals = await db
+      .prepare("SELECT view_count, phone_click_count FROM businesses WHERE id = ?")
+      .bind(businessId)
+      .first<{ view_count: number | null; phone_click_count: number | null }>();
+  } catch {
+    totals = null;
+  }
+
+  let dailyRows: { day: string; views: number; phoneClicks: number }[] = [];
+  try {
+    const res = await db
+      .prepare(
+        `SELECT day, view_count AS views, phone_click_count AS phoneClicks
+         FROM business_analytics_daily
+         WHERE business_id = ? AND day >= date('now', '-30 days')
+         ORDER BY day DESC`,
+      )
+      .bind(businessId)
+      .all<{ day: string; views: number; phoneClicks: number }>();
+    dailyRows = res.results;
+  } catch {
+    dailyRows = [];
+  }
+
+  const today = new Date();
+  const dateMinusDays = (n: number) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() - n);
+    return d.toISOString().slice(0, 10);
+  };
+  const sevenDaysAgo = dateMinusDays(7);
+  const thirtyDaysAgo = dateMinusDays(30);
+
+  let viewsLast7 = 0;
+  let viewsLast30 = 0;
+  let phoneLast7 = 0;
+  let phoneLast30 = 0;
+  for (const r of dailyRows) {
+    if (r.day >= thirtyDaysAgo) {
+      viewsLast30 += r.views ?? 0;
+      phoneLast30 += r.phoneClicks ?? 0;
+    }
+    if (r.day >= sevenDaysAgo) {
+      viewsLast7 += r.views ?? 0;
+      phoneLast7 += r.phoneClicks ?? 0;
+    }
+  }
+
+  return {
+    views: {
+      total: totals?.view_count ?? 0,
+      last7Days: viewsLast7,
+      last30Days: viewsLast30,
+    },
+    phoneClicks: {
+      total: totals?.phone_click_count ?? 0,
+      last7Days: phoneLast7,
+      last30Days: phoneLast30,
+    },
+    daily: dailyRows.map((r) => ({
+      day: r.day,
+      views: r.views ?? 0,
+      phoneClicks: r.phoneClicks ?? 0,
+    })),
+  };
+}
+
+/** Cron-takarítás: a >7 napos dedupe-rekordok kitörlése. */
+export async function purgeBusinessAnalyticsDedupe(): Promise<number> {
+  const res = await getDB()
+    .prepare(
+      `DELETE FROM business_analytics_dedupe
+       WHERE created_at < datetime('now', '-7 days')`,
+    )
+    .run();
+  return res.meta.changes ?? 0;
 }

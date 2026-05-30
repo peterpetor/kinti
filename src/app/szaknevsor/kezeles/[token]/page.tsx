@@ -4,7 +4,9 @@ import { Icon, KintiLogo } from "@/components/ui";
 import { LogoUploader } from "@/components/views/logo-uploader";
 import { GalleryUploader } from "@/components/views/gallery-uploader";
 import { BusinessManageForm } from "@/components/views/business-manage-form";
+import { BusinessAnalyticsCard } from "@/components/views/business-analytics-card";
 import {
+  getBusinessAnalytics,
   getBusinessByManageToken,
   getBusinessSubmissionByManageToken,
 } from "@/lib/repo";
@@ -37,6 +39,8 @@ export default async function BusinessManagePage({ params }: { params: { token: 
     notFound();
   }
 
+  const analytics = await getBusinessAnalytics(business.id);
+
   return (
     <div className="mx-auto max-w-md space-y-5 px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
       <header className="flex items-center gap-3">
@@ -51,6 +55,8 @@ export default async function BusinessManagePage({ params }: { params: { token: 
         linkkel érhető el. Tedd el a böngésződ könyvjelzői közé, vagy az emailedben tartsd meg
         (a Resend e-mailben kaptad).
       </div>
+
+      <BusinessAnalyticsCard stats={analytics} />
 
       <LogoUploader
         currentKey={business.logoKey}

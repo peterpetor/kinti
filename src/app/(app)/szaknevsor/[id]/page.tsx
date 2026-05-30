@@ -11,6 +11,7 @@ import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { BusinessGallery } from "@/components/views/business-gallery";
+import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -128,6 +129,8 @@ export default async function BusinessPage({ params }: { params: { id: string } 
 
   return (
     <div>
+      {/* Anonim view-tracker — page-load-on egyszer POST-ol az analitikának. */}
+      <TrackBusinessView businessId={b.id} />
       {/* SEO: Google rich snippets a vállalkozóhoz */}
       {/* eslint-disable-next-line @next/next/no-head-element */}
       <script
@@ -205,9 +208,9 @@ export default async function BusinessPage({ params }: { params: { id: string } 
         {/* akciók */}
         <div className="mt-4 flex gap-2">
           {b.phone ? (
-            <a href={`tel:${b.phone.replace(/\s/g, "")}`} className={cn(actionBtn, "bg-primary text-white shadow-card-hover")}>
+            <TelLink businessId={b.id} phone={b.phone} className={cn(actionBtn, "bg-primary text-white shadow-card-hover")}>
               <Icon name="phone" size={16} strokeWidth={2.2} /> Hívás
-            </a>
+            </TelLink>
           ) : (
             <span className={cn(actionBtn, "bg-primary/40 text-white")}>
               <Icon name="phone" size={16} strokeWidth={2.2} /> Hívás
