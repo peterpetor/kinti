@@ -7,7 +7,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-05-30">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-05-31">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -170,7 +170,83 @@ export default function AdatvedelemPage() {
         <li><strong>Tárolási idő:</strong> a kitiltás visszavonásáig (jellemzően határozatlan ideig)</li>
       </ul>
 
-      <h3>2.9 Kinti Radar (Push Értesítések)</h3>
+      <h3>2.9 Mesterséges intelligencia (AI) feldolgozás — Cloudflare Workers AI</h3>
+      <p>
+        A platform helyenként <strong>nagy nyelvi modellre (LLM) épülő AI-funkciókat</strong>{" "}
+        kínál (lásd ÁSZF 13.1). A modell-hívások a Cloudflare Workers AI infrastruktúráján
+        futnak, az Európában elhelyezett Cloudflare edge-szervereken (Meta Llama nyílt
+        forrású modell, payload-szintű loggolás nélkül).
+      </p>
+      <p>
+        Az AI funkciók által feldolgozott adatok:
+      </p>
+      <ul>
+        <li>
+          <strong>Vélemény-összegzés</strong>: az érintett vállalkozó publikus,
+          megerősített véleményeinek szövege és csillag-értékelése. Ezek a vélemények
+          már a publikus profil-oldalon elérhetők; a Workers AI feldolgozással új
+          személyes adat nem keletkezik.
+        </li>
+        <li>
+          <strong>Természetes nyelvű kereső</strong>: a felhasználó által beírt keresési
+          mondat (max 200 karakter). NEM tartalmazhat személyes adatot.
+        </li>
+        <li>
+          <strong>Vállalkozói leírás-asszisztens</strong>: a vállalkozó által beírt
+          leírás-szöveg (max 1000 karakter), ami egyébként is publikussá válik a
+          profilján.
+        </li>
+        <li>
+          <strong>Német szó-szótár</strong>: egyetlen szó vagy rövid kifejezés (max
+          60 karakter). Személyes adatot nem tartalmaz.
+        </li>
+      </ul>
+      <ul>
+        <li><strong>Jogalap</strong>: GDPR 6. cikk (1) f) — jogos érdek
+          (felhasználói élmény javítása); a vélemény-összegzésnél a publikus tartalom
+          további feldolgozása szintén jogos érdek alapján történik.</li>
+        <li><strong>Tárolási idő</strong>: a Workers AI <strong>nem tárolja</strong>{" "}
+          a feldolgozott bemenetet és kimenetet (training-célra sem); az AI-válaszok
+          edge-cache-elve maximum 30 napig (vélemény-összegzés) vagy 7 napig
+          (német szó-szótár).</li>
+        <li><strong>Adatfeldolgozó</strong>: Cloudflare, Inc. (Workers AI) —{" "}
+          <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noreferrer">privacy policy</a>;{" "}
+          <a href="https://developers.cloudflare.com/workers-ai/privacy/" target="_blank" rel="noreferrer">Workers AI adatkezelés</a>.</li>
+        <li><strong>Spam-védelem</strong>: az AI-hívásokat IP-cím hash alapú
+          rate-limit védi; ennek logja maximum 24 óráig él, utána automatikusan
+          törlődik.</li>
+      </ul>
+
+      <h3>2.10 Vállalkozói analitika</h3>
+      <p>
+        A vállalkozó saját kezelő-linkjén látható aggregált forgalmi adatokat (profil-
+        megnyitás-szám, telefonszám-kattintás-szám napi bontásban) az alábbiak szerint
+        kezeljük:
+      </p>
+      <ul>
+        <li>A számlálók <strong>anonim aggregátumok</strong> — nem tartalmaznak IP-címet,
+          böngésző-azonosítót vagy bármilyen, az egyes látogatókra visszavezethető
+          adatot a vállalkozó felé.</li>
+        <li>A duplikáció elkerülésére rövid ideig (legfeljebb 7 nap) tároljuk a látogatói
+          IP-cím <strong>SHA-256 hash-ét</strong> + óra-pontosságú időbélyeget. Ezt
+          a vállalkozó NEM látja; kizárólag a számláló helyességét biztosítja.</li>
+        <li><strong>Jogalap</strong>: GDPR 6. cikk (1) f) — jogos érdek (a vállalkozó
+          tájékoztatása a saját profiljának forgalmáról).</li>
+        <li><strong>Tárolási idő</strong>: az aggregált számlálók a vállalkozói rekord
+          létezéséig, a dedupe-tábla IP-hash-rekordjai 7 napig.</li>
+      </ul>
+
+      <h3>2.11 Mentett bér-ajánlatok (Bérkalkulátor „Ajánlataim")</h3>
+      <p>
+        A Bérkalkulátor „Ajánlataim" funkciója a felhasználó által megadott
+        bér-ajánlatokat (cégcímke + bér + kanton + családi állapot + kor-sáv stb.)
+        kizárólag a felhasználó saját böngészőjében (<code>localStorage</code>)
+        tárolja. Az üzemeltető szerverére <strong>semmilyen adat nem kerül fel</strong>,
+        és más felhasználók nem férnek hozzá. Az adatok a böngésző-tároló kiürítésével
+        bármikor véglegesen törölhetők.
+      </p>
+
+      <h3>2.12 Kinti Radar (Push Értesítések)</h3>
       <p>
         A böngésződben engedélyezheted a Push értesítéseket, és feliratkozhatsz bizonyos témákra (pl. albérlet, árfolyam). 
         Ezeket a preferenciákat (Radar paraméterek) és a böngésződ által generált, személytelen <code>push_endpoint</code> URL-t 

@@ -7,7 +7,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-05-30">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-05-31">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -204,6 +204,110 @@ export default function AszfPage() {
         eredménye semmilyen módon nem helyettesíti a hivatalos állampolgársági vizsgát.
         A <strong>napi Svájci kvíz</strong> kizárólag szórakoztató-oktatási céllal készült.
       </p>
+
+      <h3>13.1 Mesterséges intelligencia (AI) alapú funkciók</h3>
+      <p>
+        A platformon helyenként <strong>nagy nyelvi modellen (LLM) alapuló mesterséges
+        intelligencia (AI) funkciók</strong> érhetők el (Cloudflare Workers AI keretrendszerben
+        futó nyílt forrású Meta Llama modell). Ezeket egyértelmű jelölés (✨ ikon, „AI"
+        címke) különbözteti meg a manuálisan szerkesztett tartalmaktól. Ide tartozik
+        (nem kimerítő felsorolás):
+      </p>
+      <ul>
+        <li>
+          <strong>AI vélemény-összegzés</strong> — a Szaknévsorban szereplő vállalkozók
+          publikus vélemény-listája alapján generált rövid összegzés.
+        </li>
+        <li>
+          <strong>Természetes nyelvű kereső</strong> — a felhasználó által beírt magyar
+          mondatból strukturált keresési szűrőket generál.
+        </li>
+        <li>
+          <strong>Vállalkozói leírás-asszisztens + kategória-javaslat</strong> — a
+          beküldés során a felhasználó saját szövegéből csiszolt változatot és
+          javasolt kategóriát ad; a végső szöveget és kategóriát mindig a
+          felhasználó hagyja jóvá.
+        </li>
+        <li>
+          <strong>Német szó-szótár</strong> — svájci hivatali német kifejezések
+          rövid magyar magyarázata.
+        </li>
+      </ul>
+      <ul>
+        <li>
+          Az AI által generált tartalom <strong>automatikus becslés</strong>, nem
+          szakvélemény, nem hivatalos fordítás, nem jogi tanácsadás. Pontossága,
+          frissessége és teljessége <strong>nem garantált</strong>; tartalmazhat
+          tényszerű hibákat („hallucinációkat") vagy elavult információt.
+        </li>
+        <li>
+          A felhasználó <strong>saját felelősségére</strong> használja az AI-funkciókat.
+          Az üzemeltető <strong>kifejezetten kizárja</strong> a felelősségét minden
+          olyan kárért, jogi vagy hatósági következményért, üzleti döntésért vagy
+          megtévesztésért, ami AI-generált tartalom alapján következik be.
+        </li>
+        <li>
+          A vélemény-összegzés és a leírás-csiszoló az AI-szolgáltató felé továbbítja
+          az érintett vélemények és leírások szövegét — részletek az Adatkezelési
+          Tájékoztatóban (2.10 szakasz).
+        </li>
+        <li>
+          Az AI funkciók <strong>spam-, abúzív- vagy automatizált használata</strong>{" "}
+          (pl. scraping, prompt injection-kísérlet, tömeges szöveg-generálás)
+          tiltott, és az adott IP-cím vagy felhasználói azonosító kitiltását
+          vonhatja maga után.
+        </li>
+        <li>
+          Az AI-szolgáltatás bármikor, előzetes értesítés nélkül szüneteltethető
+          vagy megszüntethető (pl. modell-frissítés, költségkeret kimerülése esetén).
+        </li>
+      </ul>
+
+      <h3>13.2 Vállalkozói analitika</h3>
+      <p>
+        A regisztrált vállalkozók a saját kezelő-linkjükön anonim, aggregált
+        statisztikákat látnak (profil-megnyitások és telefonszám-kattintások száma,
+        utolsó 7/30 nap). Ezek <strong>nem tartalmaznak semmilyen személyes adatot</strong>
+        a látogatókról (sem IP-címet, sem nevet, sem földrajzi helyet).
+      </p>
+      <ul>
+        <li>
+          Az analitika kizárólag a vállalkozó saját profiljához tartozik; más
+          vállalkozók adatai nem érhetők el.
+        </li>
+        <li>
+          A számlálók <strong>tájékoztató jellegűek</strong>, és technikai okból
+          (pl. cache, dedupe-szabály, késedelmes feldolgozás) eltérhetnek a tényleges
+          forgalomtól. Ezekre üzleti vagy hirdetési döntést alapozni a vállalkozó
+          kizárólagos felelőssége.
+        </li>
+        <li>
+          Az analitikai funkció <strong>jelenleg ingyenes</strong>. Az üzemeltető
+          fenntartja a jogot, hogy a jövőben bizonyos kiterjesztett analitikai
+          szolgáltatásokat fizetős vagy prémium konstrukcióban tegyen elérhetővé.
+        </li>
+      </ul>
+
+      <h3>13.3 Mentett bér-ajánlatok (Bérkalkulátor „Ajánlataim")</h3>
+      <p>
+        A Bérkalkulátor lehetőséget ad arra, hogy az interjún kapott
+        bér-ajánlatokat a felhasználó saját böngészőjében (localStorage) mentse és
+        összehasonlítsa. <strong>Ezek az adatok kizárólag a felhasználó eszközén
+        tárolódnak</strong>, az üzemeltető szervereire NEM kerülnek fel, és más
+        felhasználók nem férnek hozzá.
+      </p>
+      <ul>
+        <li>
+          Az adatok elvesznek, ha a felhasználó törli a böngésző-tárolóját, eszközt
+          vált, vagy privát módot használ. Az adatmegőrzésért az üzemeltető
+          felelősséget nem vállal.
+        </li>
+        <li>
+          A kalkulátor eredménye <strong>becslés</strong> (lásd a 13. pontot is) — a
+          tényleges nettó bér eltérhet kanton, község, biztosító, kollektív szerződés
+          és személyes körülmények szerint.
+        </li>
+      </ul>
 
       <h2>14. Közösségi jelentések</h2>
       <p>

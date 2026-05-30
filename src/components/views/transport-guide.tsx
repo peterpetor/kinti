@@ -44,7 +44,7 @@ export function TransportGuide() {
             <li>Minden nagy régiónak van saját <strong className="text-ink">Tarifverbund-ja</strong> (tarif-szövetség).</li>
             <li>Egy jegyen belül szabadon átszállhatsz vonatra, buszra, villamosra.</li>
             <li>Az országos SBB-vonatokra <strong className="text-ink">külön jegy</strong> kell — ezeket a zónarendszer NEM fedi.</li>
-            <li>Mobil-app (FAIRTIQ, SBB Mobile) automatikusan a legolcsóbb opciót választja.</li>
+            <li>Mobil-app (FAIRTIQ, SBB Mobile) az utazás alapján a tipikusan kedvező jegytípust választja.</li>
           </ul>
         </div>
       </section>

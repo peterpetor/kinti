@@ -144,7 +144,7 @@ const INTERNET: CategoryInfo = {
     { label: "Comparis — Internet összehasonlító", url: "https://www.comparis.ch/internet" },
   ],
   providers: [
-    { id: "swisscom", name: "Swisscom",  note: "Legdrágább, legjobb hálózat",   url: "https://www.swisscom.ch/",   tier: "premium", color: "#0058A3" },
+    { id: "swisscom", name: "Swisscom",  note: "Prémium tarifa, országos hálózati lefedettség",   url: "https://www.swisscom.ch/",   tier: "premium", color: "#0058A3" },
     { id: "sunrise",  name: "Sunrise",   note: "Második hálózat, közepes ár",   url: "https://www.sunrise.ch/",    tier: "mid",     color: "#FF0000" },
     { id: "salt",     name: "Salt",      note: "Olcsóbb, jó fiber",             url: "https://www.salt.ch/",       tier: "mid",     color: "#FA002B" },
     { id: "wingo",    name: "Wingo",     note: "Swisscom budget-márka",         url: "https://www.wingo.ch/",      tier: "budget",  color: "#FF7C00" },
@@ -243,7 +243,7 @@ const BANK: CategoryInfo = {
     "Digitális bankok (Neon, Yuh, Revolut) ingyenesek mindennapi használathoz.",
     "PostFinance: hagyományos, mindenhol bankautomata.",
     "UBS / Raiffeisen / Cantonal: drágább, de személyes ügyfélkapcsolat.",
-    "Wise: legjobb a nemzetközi átutalásra (HUF-CHF stb.).",
+    "Wise: kedvező feltételek nemzetközi átutalásra (HUF-CHF stb.) — díjak változhatnak, ellenőrizd a wise.com-on.",
     "Bankváltáskor a fizetésed új IBAN-jára átírass a munkáltatódnál.",
     "Az állandó utalások (Mietzins, NK) listáját kérd ki a régi banktól.",
   ],

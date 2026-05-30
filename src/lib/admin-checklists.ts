@@ -76,7 +76,7 @@ export const CHECKLISTS: AdminChecklist[] = [
       {
         title: "Bankszámla nyitása",
         body:
-          "Kell egy svájci bankszámla a fizetéshez, lakbér-utaláshoz. Vidd magaddal az útlevelet + tartózkodási engedélyt. Jellemzők: PostFinance (legolcsóbb), UBS / CS / Raiffeisen (drágább, de teljesebb). Neon / Yuh = digital-only, ingyenes.",
+          "Kell egy svájci bankszámla a fizetéshez, lakbér-utaláshoz. Vidd magaddal az útlevelet + tartózkodási engedélyt. Tipikus jellemzők (díjak változhatnak — ellenőrizd!): PostFinance (jellemzően alacsony díj), UBS / Raiffeisen (általában magasabb díj, szélesebb szolgáltatás). Neon / Yuh = digital-only, jellemzően díjmentes.",
         duration: "30-45 perc",
       },
       {
