@@ -3092,3 +3092,65 @@ export async function deleteExchangeRateAlert(
     .run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+// ===========================================================================
+// KINTI RADARS (Push Notifications)
+// ===========================================================================
+
+export interface KintiRadar {
+  id: string;
+  pushEndpoint: string;
+  radarType: 'alberlet' | 'telekocsi' | 'exchange_rate';
+  parameters: string; // JSON string
+  active: number;
+  createdAt: string;
+}
+
+export async function saveRadar(data: {
+  id: string;
+  pushEndpoint: string;
+  radarType: string;
+  parameters: string;
+}) {
+  await getDB()
+    .prepare(
+      'INSERT INTO kinti_radars (id, push_endpoint, radar_type, parameters) VALUES (?, ?, ?, ?)'
+    )
+    .bind(data.id, data.pushEndpoint, data.radarType, data.parameters)
+    .run();
+}
+
+export async function listRadarsByEndpoint(endpoint: string): Promise<KintiRadar[]> {
+  const { results } = await getDB()
+    .prepare('SELECT * FROM kinti_radars WHERE push_endpoint = ? ORDER BY created_at DESC')
+    .bind(endpoint)
+    .all();
+  return (results ?? []).map((r) => ({
+    id: String(r.id),
+    pushEndpoint: String(r.push_endpoint),
+    radarType: String(r.radar_type) as any,
+    parameters: String(r.parameters),
+    active: Number(r.active),
+    createdAt: String(r.created_at),
+  }));
+}
+
+export async function deleteRadar(id: string, endpoint: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare('DELETE FROM kinti_radars WHERE id = ? AND push_endpoint = ?')
+    .bind(id, endpoint)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function getActiveRadarsByType(radarType: string): Promise<{id: string, pushEndpoint: string, parameters: string}[]> {
+  const { results } = await getDB()
+    .prepare('SELECT id, push_endpoint, parameters FROM kinti_radars WHERE radar_type = ? AND active = 1')
+    .bind(radarType)
+    .all();
+  return (results ?? []).map(r => ({
+    id: String(r.id),
+    pushEndpoint: String(r.push_endpoint),
+    parameters: String(r.parameters)
+  }));
+}

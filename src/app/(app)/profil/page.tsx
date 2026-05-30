@@ -7,6 +7,7 @@ import { OwnerDraftForm } from "@/components/views/owner-draft-form";
 import { ProfileEditor } from "@/components/views/profile-editor";
 import { ReviewResponseForm } from "@/components/views/review-response-form";
 import { InstallPrompt } from "@/components/install-prompt";
+import { KintiRadar } from "@/components/kinti-radar";
 import {
   Icon,
   type IconName,
@@ -95,8 +96,13 @@ export default async function ProfilPage() {
       {/* PWA — telepítés a kezdőképernyőre (csak ha még nem standalone) */}
       <InstallPrompt />
 
-      <section className="space-y-2">
-        <SectionHeader>Beállítások</SectionHeader>
+      <section className="space-y-4">
+        <SectionHeader>Személyes</SectionHeader>
+        <KintiRadar />
+      </section>
+
+      <section className="space-y-2 mt-4">
+        <SectionHeader>Alkalmazás Beállítások</SectionHeader>
         <div className="flex items-center justify-between rounded-card border border-line bg-surface p-4 shadow-card">
           <span className="text-sm font-semibold text-ink">Megjelenés</span>
           <ThemeToggle />

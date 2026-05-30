@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { ExchangeCalculator } from "@/components/views/exchange-calculator";
-import { ExchangeRateAlert } from "@/components/exchange-rate-alert";
+import { KintiRadar } from "@/components/kinti-radar";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 export const runtime = "edge";
@@ -70,7 +70,7 @@ export default async function ArfolyamPage() {
             chfToEur={rate.rates.EUR}
             date={rate.date}
           />
-          <ExchangeRateAlert currentRate={{ huf: rate.rates.HUF }} />
+          <KintiRadar currentHufRate={rate.rates.HUF} />
         </>
       ) : (
         <div className="rounded-card border border-accent/30 bg-accent-soft px-4 py-6 text-center text-[13px] text-ink-muted">
