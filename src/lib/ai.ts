@@ -7,7 +7,7 @@ import { getCloudflareEnv, getDB } from "./cloudflare";
  * hívja.
  *
  * Modell:
- *   • `@cf/meta/llama-3-8b-instruct` — gyors, sokoldalú szöveges feladatokhoz.
+ *   • `@cf/meta/llama-3.1-8b-instruct-fast` — gyors, sokoldalú szöveges feladatokhoz.
  *
  * A binding (`env.AI`) a wrangler.toml `[ai]` blokkjából jön.
  */
@@ -17,7 +17,7 @@ export interface AiTextResult {
   ok: boolean;
 }
 
-const DEFAULT_MODEL = "@cf/meta/llama-3-8b-instruct";
+const DEFAULT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
 
 export async function runAiChat(params: {
   system: string;
