@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { ExchangeCalculator } from "@/components/views/exchange-calculator";
+import { ExchangeRateAlert } from "@/components/exchange-rate-alert";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 export const runtime = "edge";
@@ -63,11 +64,14 @@ export default async function ArfolyamPage() {
       </header>
 
       {rate ? (
-        <ExchangeCalculator
-          chfToHuf={rate.rates.HUF}
-          chfToEur={rate.rates.EUR}
-          date={rate.date}
-        />
+        <>
+          <ExchangeCalculator
+            chfToHuf={rate.rates.HUF}
+            chfToEur={rate.rates.EUR}
+            date={rate.date}
+          />
+          <ExchangeRateAlert currentRate={{ huf: rate.rates.HUF }} />
+        </>
       ) : (
         <div className="rounded-card border border-accent/30 bg-accent-soft px-4 py-6 text-center text-[13px] text-ink-muted">
           Az árfolyam-szolgáltatás átmenetileg nem érhető el. Próbáld újra később.

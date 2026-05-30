@@ -3003,3 +3003,92 @@ export async function purgeBusinessAnalyticsDedupe(): Promise<number> {
     .run();
   return res.meta.changes ?? 0;
 }
+
+// ============================================================================
+//  CHF/HUF árfolyam-riasztó (push)
+// ============================================================================
+
+export type ExchangeRateDirection = "above" | "below";
+
+export interface ExchangeRateAlert {
+  id: string;
+  pushEndpoint: string;
+  thresholdHuf: number;
+  direction: ExchangeRateDirection;
+  active: boolean;
+  createdAt: string;
+  lastFiredAt: string | null;
+}
+
+interface ExchangeRateAlertRow {
+  id: string;
+  push_endpoint: string;
+  threshold_huf: number;
+  direction: string;
+  active: number;
+  created_at: string;
+  last_fired_at: string | null;
+}
+
+function toExchangeRateAlert(r: ExchangeRateAlertRow): ExchangeRateAlert {
+  return {
+    id: r.id,
+    pushEndpoint: r.push_endpoint,
+    thresholdHuf: r.threshold_huf,
+    direction: r.direction === "below" ? "below" : "above",
+    active: !!r.active,
+    createdAt: r.created_at,
+    lastFiredAt: r.last_fired_at,
+  };
+}
+
+export async function saveExchangeRateAlert(params: {
+  id: string;
+  pushEndpoint: string;
+  thresholdHuf: number;
+  direction: ExchangeRateDirection;
+}): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO exchange_rate_alerts (id, push_endpoint, threshold_huf, direction, active)
+       VALUES (?, ?, ?, ?, 1)`,
+    )
+    .bind(
+      params.id,
+      params.pushEndpoint,
+      params.thresholdHuf,
+      params.direction,
+    )
+    .run();
+}
+
+export async function listExchangeRateAlertsByEndpoint(
+  pushEndpoint: string,
+): Promise<ExchangeRateAlert[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT * FROM exchange_rate_alerts
+       WHERE push_endpoint = ? AND active = 1
+       ORDER BY created_at DESC`,
+    )
+    .bind(pushEndpoint)
+    .all<ExchangeRateAlertRow>();
+  return results.map(toExchangeRateAlert);
+}
+
+/**
+ * A megadott alert csak akkor törlődik, ha a hívó a saját pushEndpoint-jával
+ * authentikálódott — így idegen alert-et nem lehet törölni.
+ */
+export async function deleteExchangeRateAlert(
+  id: string,
+  pushEndpoint: string,
+): Promise<boolean> {
+  const res = await getDB()
+    .prepare(
+      `DELETE FROM exchange_rate_alerts WHERE id = ? AND push_endpoint = ?`,
+    )
+    .bind(id, pushEndpoint)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}

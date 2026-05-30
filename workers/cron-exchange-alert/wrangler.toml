@@ -1,0 +1,40 @@
+#:schema node_modules/wrangler/config-schema.json
+# ---------------------------------------------------------------------------
+# kinti-cron-exchange-alert — CHF/HUF árfolyam riasztó cron-worker.
+#
+# Óránként lefutva lekéri az aktuális CHF/HUF árfolyamot a Frankfurter API-ról,
+# és a `exchange_rate_alerts` táblában tárolt aktív riasztásokat ellenőrzi.
+# Ha egy küszöb teljesül és a `last_fired_at` ≥ 6 órája volt (vagy null),
+# küld egy payload-os push-üzenetet a felhasználónak.
+#
+# Deploy:
+#   cd workers/cron-exchange-alert
+#   npx wrangler deploy
+# ---------------------------------------------------------------------------
+
+name = "kinti-cron-exchange-alert"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# Óránként 13. percben — direkt nem kerek időpont
+[triggers]
+crons = ["13 * * * *"]
+
+# Ugyanaz a D1, mint a Pages projekt
+[[d1_databases]]
+binding = "DB"
+database_name = "kinti-db"
+database_id = "ec70d0d2-1b7c-416d-a2c6-c5d15c3e59a2"
+
+[observability]
+enabled = true
+
+# Szükséges titkok:
+#   VAPID_PRIVATE_KEY  — a payload-mentes push VAPID JWT aláírásához
+#   VAPID_PUBLIC_KEY   — uppercase a JWT k= header-ben
+#   VAPID_SUBJECT      — pl. "mailto:info@kinti.app"
+# Beállítás:
+#   cd workers/cron-exchange-alert
+#   npx wrangler secret put VAPID_PRIVATE_KEY
+#   npx wrangler secret put VAPID_PUBLIC_KEY
+#   npx wrangler secret put VAPID_SUBJECT
