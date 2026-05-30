@@ -270,6 +270,40 @@ export async function getSalaryTrend(
   return results;
 }
 
+/**
+ * Hőtérkép lekérdezése — átlagbér kantononként egy adott iparágban.
+ */
+export async function getSalaryHeatmap(
+  industry: string,
+  period: string = "12m"
+): Promise<{ canton_code: string; avg_salary: number; entry_count: number }[]> {
+  const threshold = periodThreshold(period);
+  const conditions: string[] = [];
+  const binds: unknown[] = [];
+
+  if (industry !== "all") {
+    conditions.push("industry = ?");
+    binds.push(industry);
+  }
+  if (threshold) {
+    conditions.push("created_at >= ?");
+    binds.push(threshold);
+  }
+
+  const where = conditions.length ? "WHERE " + conditions.join(" AND ") : "";
+
+  const sql = `
+    SELECT
+      canton_code,
+      ROUND(AVG(gross_salary_chf)) as avg_salary,
+      COUNT(*) as entry_count
+    FROM salary_benchmarks ${where}
+    GROUP BY canton_code
+  `;
+  const { results } = await getDB().prepare(sql).bind(...binds).all<any>();
+  return results;
+}
+
 export async function getRentStats(
   cantonCode?: string | null,
   period: string = "12m"

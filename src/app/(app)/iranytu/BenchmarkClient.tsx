@@ -5,6 +5,7 @@ import { CANTONS } from "@/lib/cantons";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { SalaryCard } from "./SalaryCard";
 import { SalaryCalculator, AlertSubscription } from "./SalaryWidgets";
+import { SwissHeatmap } from "./SwissHeatmap";
 
 const INDUSTRIES = [
   "Informatika (IT)", "Vendéglátás / Szálloda", "Építőipar",
@@ -235,6 +236,9 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                     ))}
                   </div>
                 )}
+                {/* Hőtérkép */}
+                <SwissHeatmap industry={search || "all"} period={period} />
+                
                 {/* Kalkulátor */}
                 {salaryByExp.length > 0 && <SalaryCalculator salaryByExp={salaryByExp} />}
                 {/* Email értesítés */}
