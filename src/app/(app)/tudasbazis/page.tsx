@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, ScreenHeader } from "@/components/ui";
 import { GUIDES, GUIDES_DISCLAIMER } from "@/lib/guides";
+import { KintiAssistant } from "@/components/kinti-assistant";
 
 export const runtime = "edge";
 
@@ -23,6 +24,8 @@ export default function TudasbazisPage() {
           </>
         }
       />
+
+      <KintiAssistant />
 
       <div className="grid gap-2.5">
         {GUIDES.map((g) => (
