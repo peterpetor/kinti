@@ -11,6 +11,29 @@ import type { Category } from "@/lib/types";
 import { PostSavePrompt } from "@/components/post-save-prompt";
 
 /**
+ * Engedélyköteles kategóriák (SZF 3.1) — ha valaki ilyen kategóriát választ,
+ * az UI automatikusan kéri az engedélyszámot.
+ */
+const LICENSED_CATEGORY_IDS = new Set([
+  // Egészségügy
+  "orvos", "fogorvos", "gyogyszeresz", "pszichologus", "fizioterapia",
+  "nogyogyasz", "gyermekorvos", "borgyogyasz", "ortopedus", "pszichiater",
+  "urologus", "belgyogyasz", "kardiologus", "sebesz", "szemesz", "ful-orr-gege",
+  "radiologus", "neurologist",
+  // Jog és pénz
+  "ugyvéd", "ugyvéd", "kozjegyzo", "adotanacsado", "befektetési-tanácsadó",
+  "biztositaskozveto", "vagyonkezelo",
+  // Építészet
+  "epitesz", "statikus", "energetikai-tanusite",
+  // Gyermek és gondozás
+  "gyermekgondozo", "idosgondozo", "oktatas", "magantanar",
+]);
+
+function isLicensedCategory(categoryId: string): boolean {
+  return LICENSED_CATEGORY_IDS.has(categoryId.toLowerCase());
+}
+
+/**
  * Self-service vállalkozás-feladó űrlap (account nélkül). A flow megegyezik a
  * hirdetésével: kitöltés → Turnstile token → submit → megerősítő email →
  * kattintás → AZONNAL fent a Szaknévsorban.
@@ -31,6 +54,8 @@ interface FormState {
   address: string;
   phone: string;
   blurb: string;
+  licenseNumber: string;
+  licenseAccepted: boolean; // nyilatkozat engedélyköteles kategóriákhoz
   website: string; // honeypot
   acceptTerms: boolean;
   ageConfirmed: boolean;
@@ -45,6 +70,8 @@ const INITIAL: FormState = {
   address: "",
   phone: "",
   blurb: "",
+  licenseNumber: "",
+  licenseAccepted: false,
   website: "",
   acceptTerms: false,
   ageConfirmed: false,
@@ -454,6 +481,59 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         )}
       </Section>
 
+      {/* Engedélyköteles kategória — hatósági engedélyszám */}
+      {isLicensedCategory(form.categoryId) && (
+        <section className="rounded-card border-2 border-[#e3a233]/50 bg-[#fff8ed] p-4 shadow-card space-y-3">
+          <div className="flex items-start gap-2.5">
+            <span className="text-xl shrink-0">⚠️</span>
+            <div className="min-w-0">
+              <h3 className="text-[12px] font-extrabold uppercase tracking-wide text-[#b8860b]">Engedélyköteles tevékenység</h3>
+              <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">
+                A választott kategória hatósági engedélyhez vagy szakképesítéshez kötött (ÁSZF 3.1).
+                Az <strong className="text-ink">engedélyszámot</strong> (pl. FMH-szám, GLN, ügyvédi
+                kamarai szám, adótanácsadói igazolvány száma) meg kell adnod a profilodon.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+              Hatósági engedélyszám / Kamarai szám
+            </label>
+            <input
+              type="text"
+              value={form.licenseNumber}
+              onChange={(e) => setField("licenseNumber", e.target.value)}
+              placeholder="Pl. FMH 12345 · GLN 7601003456789 · ZH RA 2024/001"
+              maxLength={120}
+              className={inputCls(errors.licenseNumber)}
+            />
+            <FieldError msg={errors.licenseNumber} />
+            <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
+              Az engedélyszám a profilodon fog megjelenni a bizalom növelése érdekében.
+              Engedély nélküli hirdetés a platform szabályait sérti és azonnal törölhető (ÁSZF 4. §).
+            </p>
+          </div>
+
+          <label className="flex cursor-pointer items-start gap-2.5 rounded-[10px] border border-[#e3a233]/40 bg-white/60 px-3 py-2">
+            <input
+              type="checkbox"
+              checked={form.licenseAccepted}
+              onChange={(e) => setField("licenseAccepted", e.target.checked)}
+              className="mt-0.5 h-4 w-4 flex-none cursor-pointer accent-primary"
+            />
+            <span className="text-[11.5px] leading-relaxed text-ink">
+              <strong>Kijelentem</strong>, hogy rendelkezem az érvényes, hatályos hatósági engedéllyel /
+              szakmai kamarai tagsággal az általam meghirdetett tevékenységhez, és az
+              adatok valóságtartalmáért kizárólagos felelősséget vállalok.
+            </span>
+          </label>
+          {errors.licenseAccepted && (
+            <p className="text-[11.5px] font-semibold text-accent" role="alert">{errors.licenseAccepted}</p>
+          )}
+        </section>
+      )}
+
       {/* Email — OPCIONÁLIS */}
       <Section title="Email (opcionális)">
         <input
@@ -521,10 +601,16 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
 
       <button
         type="submit"
-        disabled={phase === "submitting" || !form.acceptTerms || !form.ageConfirmed}
+        disabled={
+          phase === "submitting" ||
+          !form.acceptTerms ||
+          !form.ageConfirmed ||
+          (isLicensedCategory(form.categoryId) && !form.licenseAccepted)
+        }
         className={cn(
           "flex h-12 w-full items-center justify-center gap-1.5 rounded-pill bg-primary text-[14px] font-extrabold tracking-[-0.01em] text-white shadow-card-hover transition active:scale-[0.99]",
-          (phase === "submitting" || !form.acceptTerms || !form.ageConfirmed) &&
+          (phase === "submitting" || !form.acceptTerms || !form.ageConfirmed ||
+            (isLicensedCategory(form.categoryId) && !form.licenseAccepted)) &&
             "cursor-not-allowed opacity-50",
         )}
       >
