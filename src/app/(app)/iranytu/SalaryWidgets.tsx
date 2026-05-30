@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { CANTONS } from "@/lib/cantons";
 
@@ -79,6 +79,88 @@ export function SalaryCalculator({ salaryByExp }: { salaryByExp: SalaryExpRow[] 
           </p>
         </div>
       )}
+    </div>
+  );
+}
+
+export function RentToSalaryCalculator({
+  mySalary,
+  myRent,
+  canton,
+}: {
+  mySalary?: number;
+  myRent?: number;
+  canton: string;
+}) {
+  const [salary, setSalary] = useState(mySalary || 80000);
+  const [rent, setRent] = useState(myRent || 1800);
+  const [avgRatio, setAvgRatio] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setSalary(mySalary || 80000);
+    setRent(myRent || 1800);
+  }, [mySalary, myRent]);
+
+  useEffect(() => {
+    let active = true;
+    const fetchRatio = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/benchmark/ratio?canton=${canton}`);
+        const data: any = await res.json();
+        if (active) setAvgRatio(data.avg_ratio);
+      } catch {
+        if (active) setAvgRatio(null);
+      }
+      setLoading(false);
+    };
+    fetchRatio();
+    return () => { active = false; };
+  }, [canton]);
+
+  const userRatio = Math.round((rent * 12) / salary * 100);
+  const isGood = avgRatio !== null && userRatio <= avgRatio;
+
+  return (
+    <div className="rounded-2xl border border-line bg-surface p-5 space-y-4 shadow-sm">
+      <div className="flex items-center gap-3">
+        <span className="text-2xl">⚖️</span>
+        <div>
+          <p className="font-bold text-[15px] text-ink">Bér vs. Lakbér Arány</p>
+          <p className="text-[12px] text-ink-muted">Mennyit költesz az otthonodra?</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase">Bruttó Bér (CHF/év)</label>
+          <input type="number" value={salary} onChange={(e) => setSalary(parseInt(e.target.value) || 0)}
+            className="w-full rounded-xl border border-line bg-surface-alt px-3 py-2 text-[14px] text-ink focus:ring-2 focus:ring-primary/40" />
+        </div>
+        <div>
+          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase">Lakbér (CHF/hó)</label>
+          <input type="number" value={rent} onChange={(e) => setRent(parseInt(e.target.value) || 0)}
+            className="w-full rounded-xl border border-line bg-surface-alt px-3 py-2 text-[14px] text-ink focus:ring-2 focus:ring-primary/40" />
+        </div>
+      </div>
+
+      <div className={`mt-3 rounded-xl p-4 ${isGood ? "bg-primary/10 border border-primary/20" : "bg-accent/10 border border-accent/20"}`}>
+        <p className={`text-[14px] font-medium leading-relaxed ${isGood ? "text-primary-dark" : "text-accent-dark"}`}>
+          Te a béred <strong>{userRatio}%</strong>-át költöd lakbérre.
+        </p>
+        {loading ? (
+          <p className="text-[13px] mt-1 flex items-center gap-2"><span className="animate-spin w-3 h-3 border-2 border-ink border-t-transparent rounded-full" /> Közösségi átlag számítása...</p>
+        ) : avgRatio ? (
+          <p className={`text-[13px] mt-1 ${isGood ? "text-primary" : "text-accent"}`}>
+            A {canton === "all" ? "svájci" : `${canton} kantonban élő`} magyarok átlaga: <strong>{avgRatio}%</strong>.
+            <br />
+            {isGood ? "Jól gazdálkodsz, ez az átlag alatti teher!" : "Ez az átlagnál magasabb teher a fizetésedhez képest."}
+          </p>
+        ) : (
+          <p className="text-[13px] text-ink-muted mt-1">Nincs még elég közösségi adat a párosításhoz ebben a kantonban.</p>
+        )}
+      </div>
     </div>
   );
 }

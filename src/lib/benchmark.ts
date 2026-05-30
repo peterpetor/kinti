@@ -300,6 +300,30 @@ export async function getSalaryHistogram(
 }
 
 /**
+ * Kiszámolja a lakbér/fizetés arány közösségi átlagát (azok alapján, akik mindkettőt beküldték).
+ */
+export async function getRentToSalaryRatio(cantonCode: string = "all"): Promise<{ avg_ratio: number | null; entry_count: number }> {
+  const binds: unknown[] = [];
+  let where = "";
+  
+  if (cantonCode !== "all") {
+    where = "AND s.canton_code = ?";
+    binds.push(cantonCode);
+  }
+
+  const sql = `
+    SELECT
+      ROUND(AVG((r.rent_chf * 12.0) / s.gross_salary_chf * 100)) as avg_ratio,
+      COUNT(*) as entry_count
+    FROM salary_benchmarks s
+    JOIN rent_benchmarks r ON s.ip_hash = r.ip_hash
+    WHERE s.gross_salary_chf > 0 AND r.rent_chf > 0 ${where}
+  `;
+  const row = await getDB().prepare(sql).bind(...binds).first<{ avg_ratio: number | null; entry_count: number }>();
+  return row ?? { avg_ratio: null, entry_count: 0 };
+}
+
+/**
  * Hőtérkép lekérdezése — átlagbér kantononként egy adott iparágban.
  */
 export async function getSalaryHeatmap(

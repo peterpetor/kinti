@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { CANTONS } from "@/lib/cantons";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { SalaryCard } from "./SalaryCard";
-import { SalaryCalculator, AlertSubscription } from "./SalaryWidgets";
+import { SalaryCalculator, AlertSubscription, RentToSalaryCalculator } from "./SalaryWidgets";
 import { SwissHeatmap } from "./SwissHeatmap";
 
 const INDUSTRIES = [
@@ -253,6 +253,15 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                 </div>
               )
             ))}
+
+            {/* Bér vs Lakbér arány - Mindkét fülön látszik, ha már beküldött valamit */}
+            {!isEditing && (
+              <RentToSalaryCalculator 
+                canton={canton} 
+                mySalary={myData?.salary?.grossSalaryChf} 
+                myRent={myData?.rent?.rentChf} 
+              />
+            )}
 
             {!isEditing && lock[tab === "salary" ? "rent" : "salary"] && (
               <div className="border-t border-line pt-3 text-center">
