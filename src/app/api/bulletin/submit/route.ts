@@ -19,6 +19,7 @@ import { safeLogError } from "@/lib/safe-log";
 import { moderateImage } from "@/lib/moderation";
 import { moderateText } from "@/lib/text-moderation";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
+import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { triggerAlberletRadars } from "@/lib/radars";
 
 /** A 30 napos publikus életidő — a publish flow-ban használjuk. */
@@ -77,6 +78,13 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+
+  // 2.1) Admin-tiltólista (ban): ha az IP vagy email a blocklist-en, 403.
+  const blocked = await checkBlocklistOrReject({
+    ip,
+    email: typeof validation.value.email === "string" ? validation.value.email : null,
+  });
+  if (blocked) return blocked;
 
   // 3) kindId létezés
   const kinds = await getBulletinKinds();

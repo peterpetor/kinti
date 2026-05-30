@@ -249,6 +249,12 @@ export default async function AdminPage() {
             🛡️ Moderációs sor (kézi jóváhagyás)
           </Link>
           <Link
+            href="/admin/blocklist"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-accent px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            🚫 Tiltólista (ban)
+          </Link>
+          <Link
             href="/admin/feeds"
             className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
           >

@@ -290,3 +290,18 @@ function normalizeIpForHash(ip: string): string {
     return trimmed;
   }
 }
+
+/**
+ * Email-cim SHA-256 hex hash, normalizalas utan (trim + lowercase). A tilto-
+ * listara kerulo emaileket is igy hash-eljuk, hogy ne nyers email legyen DB-ben.
+ */
+export async function hashEmail(email: string | null): Promise<string | null> {
+  if (!email) return null;
+  const normalized = email.trim().toLowerCase();
+  if (!normalized) return null;
+  const data = new TextEncoder().encode(normalized);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}

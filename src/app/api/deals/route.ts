@@ -5,6 +5,7 @@ import {
   countRecentDealReports,
 } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { hashIp } from "@/lib/bulletin";
 import {
   getStoreById,
@@ -79,6 +80,9 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+
+  const banned = await checkBlocklistOrReject({ ip, email: null });
+  if (banned) return banned;
 
   const ipHash = await hashIp(ip);
   const recent = await countRecentDealReports(ipHash);

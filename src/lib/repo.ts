@@ -3465,3 +3465,128 @@ export async function setModerationStatus(
     .run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+// ============================================================================
+//  Tiltólista (blocklist) — IP-hash + email-hash alapú ban
+// ============================================================================
+
+export type BlocklistKind = "ip_hash" | "email_hash";
+
+export interface BlocklistEntry {
+  id: string;
+  kind: BlocklistKind;
+  value: string;
+  reason: string | null;
+  createdAt: string;
+  createdBy: string;
+  active: boolean;
+}
+
+interface BlocklistRow {
+  id: string;
+  kind: string;
+  value: string;
+  reason: string | null;
+  created_at: string;
+  created_by: string;
+  active: number;
+}
+
+function toBlocklistEntry(r: BlocklistRow): BlocklistEntry {
+  return {
+    id: r.id,
+    kind: r.kind === "email_hash" ? "email_hash" : "ip_hash",
+    value: r.value,
+    reason: r.reason,
+    createdAt: r.created_at,
+    createdBy: r.created_by,
+    active: r.active === 1,
+  };
+}
+
+/**
+ * Gyors, indexelt lookup: az adott (kind, value) páros aktív-e a tiltólistán.
+ * Best-effort: tábla-hiány esetén `false`-t adunk vissza (nem blokkolunk).
+ */
+export async function isBlocked(
+  kind: BlocklistKind,
+  value: string | null,
+): Promise<boolean> {
+  if (!value) return false;
+  try {
+    const row = await getDB()
+      .prepare(
+        `SELECT 1 AS x FROM blocklist
+         WHERE kind = ? AND value = ? AND active = 1 LIMIT 1`,
+      )
+      .bind(kind, value)
+      .first<{ x: number }>();
+    return !!row;
+  } catch {
+    return false;
+  }
+}
+
+/** A két leggyakoribb check egyetlen hívásban (submit-endpoint védelem). */
+export async function isSubmitterBlocked(params: {
+  ipHash: string | null;
+  emailHash: string | null;
+}): Promise<boolean> {
+  if (await isBlocked("ip_hash", params.ipHash)) return true;
+  if (await isBlocked("email_hash", params.emailHash)) return true;
+  return false;
+}
+
+export async function listBlocklist(): Promise<BlocklistEntry[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, kind, value, reason, created_at, created_by, active
+       FROM blocklist
+       ORDER BY active DESC, created_at DESC
+       LIMIT 200`,
+    )
+    .all<BlocklistRow>();
+  return results.map(toBlocklistEntry);
+}
+
+export async function addToBlocklist(params: {
+  kind: BlocklistKind;
+  value: string;
+  reason: string | null;
+  adminUserId: string;
+}): Promise<BlocklistEntry | null> {
+  const id = crypto.randomUUID();
+  try {
+    await getDB()
+      .prepare(
+        `INSERT INTO blocklist (id, kind, value, reason, created_by, active)
+         VALUES (?, ?, ?, ?, ?, 1)
+         ON CONFLICT(kind, value) DO UPDATE SET
+           reason = excluded.reason,
+           active = 1,
+           created_at = datetime('now'),
+           created_by = excluded.created_by`,
+      )
+      .bind(id, params.kind, params.value, params.reason, params.adminUserId)
+      .run();
+  } catch {
+    return null;
+  }
+  const row = await getDB()
+    .prepare(
+      `SELECT id, kind, value, reason, created_at, created_by, active
+       FROM blocklist WHERE kind = ? AND value = ? LIMIT 1`,
+    )
+    .bind(params.kind, params.value)
+    .first<BlocklistRow>();
+  return row ? toBlocklistEntry(row) : null;
+}
+
+/** Soft-delete: active=0 (audit-trail megmarad). */
+export async function deactivateBlocklistEntry(id: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare(`UPDATE blocklist SET active = 0 WHERE id = ?`)
+    .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}

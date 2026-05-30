@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { validateEventInput } from "@/lib/events-validation";
 import {
   createEvent,
@@ -64,6 +65,13 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+
+  // 2a) Admin-tiltólista (ban): ha az IP vagy email a blocklist-en, 403.
+  const banned = await checkBlocklistOrReject({
+    ip,
+    email: typeof validation.value.email === "string" ? validation.value.email : null,
+  });
+  if (banned) return banned;
 
   // 2b) IP rate-limit: max 3 esemény / IP / 24 óra
   const ipHash = await hashIp(ip);

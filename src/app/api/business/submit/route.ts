@@ -8,6 +8,7 @@ import {
 import { verifyTurnstile } from "@/lib/turnstile";
 import { moderateText } from "@/lib/text-moderation";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
+import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { sendBusinessConfirmationEmail } from "@/lib/email";
 import { TERMS_VERSION, hashIp } from "@/lib/bulletin";
 import {
@@ -73,6 +74,13 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+
+  // 3.1) Admin-tiltólista (ban): ha az IP vagy email a blocklist-en, 403.
+  const banned = await checkBlocklistOrReject({
+    ip,
+    email: typeof validation.value.email === "string" ? validation.value.email : null,
+  });
+  if (banned) return banned;
 
   // 4) categoryId létezés
   const categories = await getCategories();

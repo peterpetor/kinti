@@ -14,6 +14,7 @@ import { safeLogError } from "@/lib/safe-log";
 import { TERMS_VERSION, hashIp } from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
+import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 
 export const runtime = "edge";
@@ -66,6 +67,13 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+
+  // Admin-tiltólista (ban): ha az IP vagy email a blocklist-en, 403.
+  const banned = await checkBlocklistOrReject({
+    ip,
+    email: typeof validation.value.email === "string" ? validation.value.email : null,
+  });
+  if (banned) return banned;
 
   const business = await getBusinessById(validation.value.businessId);
   if (!business) {
