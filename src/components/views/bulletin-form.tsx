@@ -354,6 +354,21 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
           value={form.imageKey}
           onChange={(val) => setField("imageKey", val)}
           maxImages={3}
+          onAnalysisComplete={(data) => {
+            setForm((f) => {
+              const next = { ...f };
+              if (!f.title && data.title) next.title = data.title;
+              if (!f.body && data.description) next.body = data.description;
+              if (!f.kindId && data.categoryId) {
+                const match = kinds.find((k) =>
+                  k.label.toLowerCase().includes(data.categoryId!.toLowerCase()) ||
+                  data.categoryId!.toLowerCase().includes(k.label.toLowerCase())
+                );
+                if (match) next.kindId = match.id;
+              }
+              return next;
+            });
+          }}
         />
       </Section>
 

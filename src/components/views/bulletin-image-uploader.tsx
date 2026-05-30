@@ -10,6 +10,7 @@ export interface BulletinImageUploaderProps {
   value: string | null | undefined;
   onChange: (value: string | null) => void;
   maxImages?: number;
+  onAnalysisComplete?: (data: { title?: string; categoryId?: string; description?: string }) => void;
 }
 
 type Phase = "idle" | "compressing" | "preparing" | "uploading" | "done" | "error";
@@ -25,6 +26,7 @@ export function BulletinImageUploader({
   value,
   onChange,
   maxImages = 3,
+  onAnalysisComplete,
 }: BulletinImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingItems, setUploadingItems] = useState<UploadingItem[]>([]);
@@ -130,6 +132,32 @@ export function BulletinImageUploader({
         const updatedKeys = [...currentKeys, key];
         onChange(JSON.stringify(updatedKeys));
 
+        // 5) AI elemzés (opcionális auto-kitöltés)
+        if (onAnalysisComplete) {
+          try {
+            setUploadingItems((prev) =>
+              prev.map((item) => (item.id === itemId ? { ...item, phase: "preparing", progress: 100 } : item)),
+            );
+            const analyzeRes = await fetch("/api/bulletin/analyze-image", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ imageKey: key }),
+            });
+            if (analyzeRes.ok) {
+              const { analysis, unsafe, error: serverError } = await analyzeRes.json();
+              if (unsafe) {
+                throw new Error(serverError || "Kép biztonsági okokból elutasítva.");
+              }
+              if (analysis) {
+                onAnalysisComplete(analysis);
+              }
+            }
+          } catch (analyzeErr) {
+            console.error("Analysis error:", analyzeErr);
+            throw analyzeErr; // pass to outer catch block to show error and remove from UI
+          }
+        }
+
         setUploadingItems((prev) => prev.filter((item) => item.id !== itemId));
       } catch (err) {
         setUploadingItems((prev) =>
@@ -209,7 +237,11 @@ export function BulletinImageUploader({
               />
             </div>
             <span className="mt-1 text-[9px] font-bold text-ink-muted truncate w-full px-1">
-              {item.phase === "compressing" ? "Tömörítés…" : `${item.progress}%`}
+              {item.phase === "compressing" 
+                ? "Tömörítés…" 
+                : item.phase === "preparing" 
+                ? "AI elemzés…" 
+                : `${item.progress}%`}
             </span>
             {/* Kis folyamatjelző csík az alján */}
             <div className="absolute bottom-0 left-0 h-1 bg-primary transition-[width] duration-150" style={{ width: `${item.progress}%` }} />
