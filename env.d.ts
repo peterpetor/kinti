@@ -64,4 +64,9 @@ interface CloudflareEnv {
    * párja a kódban van (src/lib/push-keys.ts).
    */
   VAPID_PRIVATE_KEY?: string;
+
+  /**
+   * Cron jobok és belső trigger végpontok hitelesítésére használt titok.
+   */
+  CRON_SECRET?: string;
 }
