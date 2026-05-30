@@ -58,8 +58,9 @@ export default function HirdetesMegerositvePage({
             Megerősítve — admin-jóváhagyásra vár
           </h1>
           <p className="text-pretty text-[14px] leading-relaxed text-ink-muted">
-            Köszi! Mivel ez az első hirdetésed, gyorsan átnézzük (általában 24 órán belül).
-            Utána automatikusan publikus lesz a hirdetőfalon. Értesítést küldünk az emailedre.
+            Köszi! A hirdetésed beérkezett, és az adminisztrátor hamarosan átnézi.
+            Ez általában <strong>24 órán belül</strong> megtörténik — utána azonnal megjelenik a hirdetőfalon.
+            A kezelő-linkkel közben is bármikor szerkesztheted vagy törölheted.
           </p>
           <PrimaryLinks manageUrl={manageUrl} />
         </>

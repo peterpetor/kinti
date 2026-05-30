@@ -213,11 +213,11 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
               <Icon name="check" size={22} strokeWidth={2.4} />
             </div>
             <h2 className="mt-3 text-[18px] font-extrabold tracking-tight text-ink">
-              A vállalkozásod fent van!
+              Vállalkozásod beérkezett!
             </h2>
             <p className="mx-auto mt-2 max-w-sm text-pretty text-[13.5px] leading-relaxed text-ink-muted">
-              Megjelent a Szaknévsorban. A részleteket (logó, nyitvatartás, leírás)
-              a kezelő-linkről állíthatod be.
+              Az adminisztrátor hamarosan ellenőrzi és aktiválja (általában 24 órán belül).
+              A részleteket (logó, nyitvatartás, leírás) addig is a kezelő-linkről állíthatod be.
             </p>
           </div>
           <PostSavePrompt

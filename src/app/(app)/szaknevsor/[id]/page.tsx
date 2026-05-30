@@ -78,6 +78,10 @@ const actionBtn =
 export default async function BusinessPage({ params }: { params: { id: string } }) {
   const b = await getBusinessById(params.id);
   if (!b) notFound();
+  // Publikus profil-oldal: csak admin által jóváhagyott (moderation_status=1)
+  // vállalkozás látható. Pending / rejected → 404. A tulajdonos a saját
+  // manage-link szerkesztő-oldalán látja az állapotot.
+  if ((b.moderationStatus ?? 0) !== 1) notFound();
 
   const reviews = await getReviewsByBusiness(b.id);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";

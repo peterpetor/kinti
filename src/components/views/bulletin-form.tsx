@@ -167,10 +167,11 @@ export function BulletinForm({ kinds, turnstileSiteKey }: BulletinFormProps) {
               <Icon name="check" size={22} strokeWidth={2.4} />
             </div>
             <h2 className="mt-3 text-[18px] font-extrabold tracking-tight text-ink">
-              A hirdetésed fent van!
+              Hirdetésed beérkezett!
             </h2>
             <p className="mx-auto mt-2 max-w-sm text-pretty text-[13.5px] leading-relaxed text-ink-muted">
-              Megjelent a hirdetőtáblán. 30 nap után automatikusan lejár.
+              Az adminisztrátor hamarosan ellenőrzi és aktiválja (általában 24 órán belül).
+              A kezelő-linkkel addig is bármikor szerkesztheted vagy törölheted.
             </p>
           </div>
           <PostSavePrompt

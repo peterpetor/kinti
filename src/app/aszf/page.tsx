@@ -92,6 +92,36 @@ export default function AszfPage() {
         felelőssége teljes körűen kizárt.
       </p>
 
+      <h3>3.2 Tartalom-moderációs eljárás</h3>
+      <p>
+        A platform <strong>előzetes admin-jóváhagyásos rendszerben</strong> működik.
+        Az alábbi tartalmak <strong>kizárólag az adminisztrátor kézi jóváhagyása
+        után válnak nyilvánosan elérhetővé</strong> (tipikusan 24 órán belül):
+      </p>
+      <ul>
+        <li>hirdetések a Hirdetőfalon;</li>
+        <li>vélemények a Szaknévsor profilokról;</li>
+        <li>vállalkozói profilok a Szaknévsorban;</li>
+        <li>közösségi események.</li>
+      </ul>
+      <p>
+        Az alábbi idő-érzékeny tartalmak <strong>automatikus AI-moderáció után
+        azonnal megjelennek</strong> (Cloudflare Workers AI szöveg- és
+        képmoderáció):
+      </p>
+      <ul>
+        <li>spontán találkozók (24 órás élettartam);</li>
+        <li>Hofladen-térkép helyei;</li>
+        <li>akciók a térképen (lejár éjfélkor).</li>
+      </ul>
+      <p>
+        Az üzemeltető a hirdetéseket / véleményeket / vállalkozói profilokat /
+        eseményeket <strong>indoklás nélkül elutasíthatja</strong>, ha
+        valószínűsíthetően sérti a jelen ÁSZF 3., 3.1 vagy a vonatkozó
+        jogszabályok rendelkezéseit. Az elutasított tartalmakat az 5.2 pont
+        szerinti emailes csatornán lehet fellebbezve vitatni.
+      </p>
+
       <h2>4. Szolgáltatásmegtagadás és Kitiltás joga</h2>
       <p>
         Az üzemeltető fenntartja a jogot, hogy indoklás és előzetes értesítés nélkül, azonnali hatállyal 

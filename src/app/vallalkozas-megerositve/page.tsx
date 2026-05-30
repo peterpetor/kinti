@@ -54,9 +54,10 @@ export default function VallalkozasMegerositvePage({
             Kint van a vállalkozásod!
           </h1>
           <p className="text-pretty text-[14px] leading-relaxed text-ink-muted">
-            Megjelent a kinti Szaknévsorban — mostantól megtalálnak a kintiek. Később
-            vállalkozóként regisztrálva igényelheted, és szerkesztheted is (logó, nyitvatartás,
-            linkek).
+            A vállalkozásod beérkezett, és az adminisztrátor hamarosan ellenőrzi
+            (általában <strong>24 órán belül</strong>). Utána azonnal megjelenik a
+            Szaknévsorban. A kezelő-linkkel addig is szerkesztheted az adatokat
+            (logó, nyitvatartás, linkek).
           </p>
           <div className="flex flex-col gap-2 self-stretch">
             {manageUrl && (

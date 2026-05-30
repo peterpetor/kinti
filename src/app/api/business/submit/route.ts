@@ -7,6 +7,7 @@ import {
 } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { moderateText } from "@/lib/text-moderation";
+import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { sendBusinessConfirmationEmail } from "@/lib/email";
 import { TERMS_VERSION, hashIp } from "@/lib/bulletin";
 import {
@@ -140,6 +141,13 @@ export async function POST(req: Request) {
       ownerUserId: clerkUserId,
       manageToken,
     });
+    // Új tartalom-moderációs réteg (0044): admin-jóváhagyás szükséges.
+    notifyAdminContentPending({
+      contentType: "vállalkozás",
+      title: validation.value.name,
+      preview: validation.value.blurb ?? validation.value.address ?? "",
+      submitterEmail: null,
+    }).catch(() => {});
     return NextResponse.json(
       {
         ok: true,
@@ -147,6 +155,7 @@ export async function POST(req: Request) {
         id: bizId,
         manageToken,
         manageUrl: `/szaknevsor/kezeles/${manageToken}`,
+        moderationPending: true,
       },
       { headers: { "cache-control": "no-store" } },
     );

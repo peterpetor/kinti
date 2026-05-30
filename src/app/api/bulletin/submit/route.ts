@@ -18,6 +18,7 @@ import { isDisposableEmail } from "@/lib/disposable-emails";
 import { safeLogError } from "@/lib/safe-log";
 import { moderateImage } from "@/lib/moderation";
 import { moderateText } from "@/lib/text-moderation";
+import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { triggerAlberletRadars } from "@/lib/radars";
 
 /** A 30 napos publikus életidő — a publish flow-ban használjuk. */
@@ -179,7 +180,15 @@ export async function POST(req: Request) {
       price: validation.value.price,
     });
 
-    // A Radar triggerezést áttesszük az admin jóváhagyáshoz, mivel a poszt mostantól pending!
+    // A hirdetés moderation_status=0 (pending). Admin-ot értesítjük emailben.
+    // A Radar trigger nem itt fut, hanem a /api/admin/moderation/decide-on
+    // a jóváhagyás pillanatában — különben a feliratkozók "üres" linket kapnának.
+    notifyAdminContentPending({
+      contentType: "hirdetés",
+      title: validation.value.title,
+      preview: validation.value.body ?? validation.value.meta ?? "",
+      submitterEmail: null,
+    }).catch(() => {});
 
     return NextResponse.json(
       {
@@ -189,6 +198,7 @@ export async function POST(req: Request) {
         id,
         manageToken,
         manageUrl: `/hirdetes-kezeles/${manageToken}`,
+        moderationPending: true,
       },
       { headers: { "cache-control": "no-store" } },
     );

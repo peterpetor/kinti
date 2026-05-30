@@ -78,6 +78,9 @@ interface BusinessRow {
   ai_review_summary: string | null;
   ai_review_summary_at: string | null;
   ai_review_summary_count: number | null;
+  moderation_status: number | null;
+  moderation_decision_at: string | null;
+  moderation_decided_by: string | null;
 }
 
 interface EventRow {
@@ -100,6 +103,9 @@ interface EventRow {
   manage_token: string | null;
   /** A JOIN-olt RSVP-darabszám (LEFT JOIN event_rsvps). */
   rsvp_count?: number;
+  moderation_status?: number | null;
+  moderation_decision_at?: string | null;
+  moderation_decided_by?: string | null;
 }
 
 interface BulletinKindRow {
@@ -200,6 +206,9 @@ function toBusiness(r: BusinessRow): Business {
     aiReviewSummary: r.ai_review_summary,
     aiReviewSummaryAt: r.ai_review_summary_at,
     aiReviewSummaryCount: r.ai_review_summary_count ?? 0,
+    moderationStatus: r.moderation_status ?? 0,
+    moderationDecisionAt: r.moderation_decision_at,
+    moderationDecidedBy: r.moderation_decided_by,
   };
 }
 
@@ -223,6 +232,9 @@ function toEvent(r: EventRow): KintiEvent {
     status: r.status,
     token: r.token,
     manageToken: r.manage_token,
+    moderationStatus: r.moderation_status ?? 0,
+    moderationDecisionAt: r.moderation_decision_at,
+    moderationDecidedBy: r.moderation_decided_by,
   };
 }
 
@@ -298,6 +310,9 @@ export interface BusinessQuery {
 export async function getBusinesses(opts: BusinessQuery = {}): Promise<Business[]> {
   const where: string[] = ["COALESCE(hidden, 0) = 0"];
   const binds: unknown[] = [];
+
+  // Publikus lista: csak admin által jóváhagyott vállalkozások.
+  where.push("moderation_status = 1");
 
   if (opts.category && opts.category !== "all") {
     where.push("category_id = ?");
@@ -453,7 +468,7 @@ export interface EventQuery {
 
 export async function getEvents(opts: EventQuery = {}): Promise<KintiEvent[]> {
   const binds: unknown[] = [];
-  const where: string[] = ["e.status = 'approved'"];
+  const where: string[] = ["e.status = 'approved'", "e.moderation_status = 1"];
   if (opts.upcoming) {
     where.push("e.event_date >= date('now')");
   }
@@ -527,9 +542,14 @@ export async function updateEventStatus(
   status: string,
   nextToken: string | null,
 ): Promise<boolean> {
+  // Az új admin-moderation réteg miatt: az "approved" status automatikusan
+  // moderation_status=1-et is jelent (régi email-link admin-flow kompatibilis).
+  const modStatus = status === "approved" ? 1 : 0;
   const res = await getDB()
-    .prepare("UPDATE events SET status = ?, token = ? WHERE id = ?")
-    .bind(status, nextToken, id)
+    .prepare(
+      "UPDATE events SET status = ?, token = ?, moderation_status = ?, moderation_decision_at = datetime('now'), moderation_decided_by = COALESCE(moderation_decided_by, 'email-moderate-token') WHERE id = ?",
+    )
+    .bind(status, nextToken, modStatus, id)
     .run();
   return (res.meta.changes ?? 0) > 0;
 }
@@ -647,6 +667,7 @@ export async function getBulletinPosts(kind?: string | null): Promise<BulletinPo
     JOIN bulletin_kinds k ON k.id = p.kind_id
     WHERE p.is_pending = 0
       AND p.hidden = 0
+      AND p.moderation_status = 1
       AND (p.expires_at IS NULL OR p.expires_at > datetime('now'))`;
   if (kind && kind !== "all") {
     sql += " AND p.kind_id = ?";
@@ -844,6 +865,7 @@ export async function getBulletinPostById(id: string): Promise<BulletinPost | nu
        FROM bulletin_posts p
        JOIN bulletin_kinds k ON k.id = p.kind_id
        WHERE p.id = ? AND p.is_pending = 0 AND p.hidden = 0
+         AND p.moderation_status = 1
          AND (p.expires_at IS NULL OR p.expires_at > datetime('now'))`,
     )
     .bind(id)
@@ -1281,7 +1303,7 @@ export async function getReviewsByBusiness(businessId: string): Promise<Review[]
     .prepare(
       `SELECT id, business_id, rating, body, reviewer_name, published_at,
               manage_token, email, owner_response, owner_responded_at
-       FROM reviews WHERE business_id = ? AND hidden = 0
+       FROM reviews WHERE business_id = ? AND hidden = 0 AND moderation_status = 1
        ORDER BY published_at DESC`,
     )
     .bind(businessId)
@@ -3238,4 +3260,183 @@ export async function setBusinessAiReviewSummary(params: {
     )
     .bind(params.summary, params.reviewCount, params.businessId)
     .run();
+}
+
+// ============================================================================
+//  Admin kézi tartalom-moderáció
+// ============================================================================
+
+export type ModerationTable =
+  | "bulletin_posts"
+  | "reviews"
+  | "businesses"
+  | "events";
+
+export type ModerationDecision = "approved" | "rejected" | "pending";
+
+const MODERATION_TABLE_WHITELIST: Set<ModerationTable> = new Set([
+  "bulletin_posts",
+  "reviews",
+  "businesses",
+  "events",
+]);
+
+/** SQL-injection védelem — csak az engedélyezett táblanevek. */
+function assertModerationTable(t: ModerationTable): void {
+  if (!MODERATION_TABLE_WHITELIST.has(t)) {
+    throw new Error(`Ismeretlen moderation-tábla: ${t}`);
+  }
+}
+
+export interface ModerationQueueItem {
+  table: ModerationTable;
+  id: string;
+  title: string;
+  preview: string;
+  createdAt: string | null;
+  /** Email — csak admin lát, audit-célra. */
+  submitterEmail: string | null;
+  /** IP-hash — szintén audit-célra. */
+  submitterIpHash: string | null;
+  /** Kép-kulcs (R2) ha van. */
+  imageKey: string | null;
+  moderationStatus: number;
+  moderationDecisionAt: string | null;
+  moderationDecidedBy: string | null;
+}
+
+/**
+ * Egy admin-queue-item listája az adott táblából. A `status` argumentum
+ * szűri: 0=pending, 1=approved, 2=rejected.
+ */
+export async function listModerationQueue(
+  table: ModerationTable,
+  status: 0 | 1 | 2,
+  limit = 50,
+): Promise<ModerationQueueItem[]> {
+  assertModerationTable(table);
+  const db = getDB();
+
+  // Tábla-specifikus mező-mappelés
+  const fields: Record<
+    ModerationTable,
+    { title: string; preview: string; createdAt: string; email: string; ip: string; image: string }
+  > = {
+    bulletin_posts: {
+      title: "title",
+      preview: "COALESCE(body, meta, '')",
+      createdAt: "COALESCE(published_at, created_at)",
+      email: "email",
+      ip: "ip_hash",
+      image: "image_key",
+    },
+    reviews: {
+      title: "reviewer_name",
+      preview: "body",
+      createdAt: "published_at",
+      email: "email",
+      ip: "ip_hash",
+      image: "''",
+    },
+    businesses: {
+      title: "name",
+      preview: "COALESCE(blurb, address, '')",
+      createdAt: "COALESCE(updated_at, '')",
+      email: "COALESCE(contact_email, '')",
+      ip: "''",
+      image: "logo_key",
+    },
+    events: {
+      title: "title",
+      preview: "COALESCE(description, venue, '')",
+      createdAt: "COALESCE(event_date, '')",
+      email: "email",
+      ip: "''",
+      image: "image_key",
+    },
+  };
+  const f = fields[table];
+
+  const sql = `SELECT id,
+                      ${f.title} AS title,
+                      ${f.preview} AS preview,
+                      ${f.createdAt} AS createdAt,
+                      ${f.email} AS submitterEmail,
+                      ${f.ip} AS submitterIpHash,
+                      ${f.image} AS imageKey,
+                      moderation_status AS moderationStatus,
+                      moderation_decision_at AS moderationDecisionAt,
+                      moderation_decided_by AS moderationDecidedBy
+               FROM ${table}
+               WHERE moderation_status = ?
+               ORDER BY createdAt DESC
+               LIMIT ?`;
+
+  const { results } = await db
+    .prepare(sql)
+    .bind(status, limit)
+    .all<{
+      id: string;
+      title: string;
+      preview: string;
+      createdAt: string | null;
+      submitterEmail: string | null;
+      submitterIpHash: string | null;
+      imageKey: string | null;
+      moderationStatus: number;
+      moderationDecisionAt: string | null;
+      moderationDecidedBy: string | null;
+    }>();
+
+  return results.map((r) => ({
+    table,
+    id: r.id,
+    title: r.title ?? "",
+    preview: (r.preview ?? "").slice(0, 200),
+    createdAt: r.createdAt,
+    submitterEmail: r.submitterEmail || null,
+    submitterIpHash: r.submitterIpHash || null,
+    imageKey: r.imageKey || null,
+    moderationStatus: r.moderationStatus,
+    moderationDecisionAt: r.moderationDecisionAt,
+    moderationDecidedBy: r.moderationDecidedBy,
+  }));
+}
+
+export async function moderationCount(
+  table: ModerationTable,
+  status: 0 | 1 | 2,
+): Promise<number> {
+  assertModerationTable(table);
+  const row = await getDB()
+    .prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE moderation_status = ?`)
+    .bind(status)
+    .first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
+/**
+ * Admin-döntés rögzítése: 1=approved, 2=rejected.
+ *
+ * Visszaadja az érintett sorok számát (1 = sikeres). 0 = nincs ilyen id
+ * vagy nincs jogosultság.
+ */
+export async function setModerationStatus(
+  table: ModerationTable,
+  id: string,
+  status: 0 | 1 | 2,
+  adminUserId: string,
+): Promise<boolean> {
+  assertModerationTable(table);
+  const res = await getDB()
+    .prepare(
+      `UPDATE ${table}
+       SET moderation_status = ?,
+           moderation_decision_at = datetime('now'),
+           moderation_decided_by = ?
+       WHERE id = ?`,
+    )
+    .bind(status, adminUserId, id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
 }

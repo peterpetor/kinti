@@ -58,6 +58,10 @@ export interface Business {
   aiReviewSummaryAt?: string | null;
   /** Hány vélemény volt akkor, amikor készült (invalidáláshoz). */
   aiReviewSummaryCount?: number;
+  /** Admin-moderation állapot: 0=pending, 1=approved, 2=rejected. */
+  moderationStatus?: number;
+  moderationDecisionAt?: string | null;
+  moderationDecidedBy?: string | null;
 }
 
 export interface KintiEvent {
@@ -78,6 +82,9 @@ export interface KintiEvent {
   status?: string;
   token?: string | null;
   manageToken?: string | null;
+  moderationStatus?: number;
+  moderationDecisionAt?: string | null;
+  moderationDecidedBy?: string | null;
 }
 
 export interface BulletinKind {

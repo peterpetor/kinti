@@ -8,6 +8,7 @@ import {
 import { POST_TTL_MS, REQUIRE_ADMIN_APPROVAL } from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { triggerAlberletRadars } from "@/lib/radars";
+import { notifyAdminContentPending } from "@/lib/admin-notify";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -68,14 +69,23 @@ export async function GET(_req: Request, { params }: { params: { token: string }
   });
   await deleteBulletinDraft(draft.id);
 
+  // Új tartalom-moderációs réteg (0044): minden hirdetés admin-jóváhagyásra vár.
+  notifyAdminContentPending({
+    contentType: "hirdetés",
+    title: draft.title,
+    preview: draft.body ?? draft.meta ?? "",
+    submitterEmail: draft.email,
+  }).catch(() => {});
+
   if (!isPending && draft.kindId === 'alberlet' && draft.cantonCode) {
     // Csak akkor küldünk értesítést, ha nem kerül moderációs sorba
     triggerAlberletRadars(draft.cantonCode).catch(() => {});
   }
 
-  const status = isPending ? "pending" : "published";
+  // ÚJ moderation-rend (0044): minden hirdetés admin-jóváhagyásra vár, ezért
+  // mindig "pending"-re irányítunk. A felhasználó kezelő-linkje azonnal él.
   return NextResponse.redirect(
-    `${baseUrl}/hirdetes-megerositve?status=${status}&manage=${draft.manageToken}`,
+    `${baseUrl}/hirdetes-megerositve?status=pending&manage=${draft.manageToken}`,
     302,
   );
 }

@@ -7,6 +7,8 @@ import {
   recomputeBusinessRating,
 } from "@/lib/repo";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+import { getBusinessById } from "@/lib/repo";
+import { notifyAdminContentPending } from "@/lib/admin-notify";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -54,6 +56,19 @@ export async function GET(_req: Request, { params }: { params: { token: string }
   });
   await deleteReviewDraft(draft.id);
   await recomputeBusinessRating(draft.businessId);
+
+  // Új tartalom-moderációs réteg: minden vélemény admin-jóváhagyásra vár.
+  try {
+    const biz = await getBusinessById(draft.businessId);
+    await notifyAdminContentPending({
+      contentType: "vélemény",
+      title: `${draft.rating}★ — ${biz?.name ?? "ismeretlen vállalkozás"}`,
+      preview: draft.body,
+      submitterEmail: draft.email,
+    });
+  } catch {
+    /* best-effort */
+  }
 
   return NextResponse.redirect(
     `${baseUrl}/velemeny-megerositve?status=published&business=${encodeURIComponent(draft.businessId)}&manage=${draft.manageToken}`,

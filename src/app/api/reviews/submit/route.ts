@@ -13,6 +13,7 @@ import {
 import { safeLogError } from "@/lib/safe-log";
 import { TERMS_VERSION, hashIp } from "@/lib/bulletin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 
 export const runtime = "edge";
@@ -95,6 +96,13 @@ export async function POST(req: Request) {
       ipHash,
     });
     await recomputeBusinessRating(business.id);
+    // Új tartalom-moderációs réteg: minden vélemény admin-jóváhagyásra vár.
+    notifyAdminContentPending({
+      contentType: "vélemény",
+      title: `${validation.value.rating}★ — ${business.name}`,
+      preview: validation.value.body,
+      submitterEmail: null,
+    }).catch(() => {});
     return NextResponse.json(
       {
         ok: true,
@@ -102,6 +110,7 @@ export async function POST(req: Request) {
         id,
         manageToken,
         manageUrl: `/velemeny-kezeles/${manageToken}`,
+        moderationPending: true,
       },
       { headers: { "cache-control": "no-store" } },
     );

@@ -65,8 +65,11 @@ export default async function EventDetailPage({ params }: { params: { id: string
   const e = await getEventById(params.id);
   if (!e) notFound();
 
-  // Csak az élesben elérhető eseményeket mutatjuk
+  // Csak az élesben elérhető eseményeket mutatjuk:
+  // a régi status flow (email-confirm) + új admin-moderation egyaránt
+  // el kell hogy fogadja.
   if (e.status && e.status !== "approved") notFound();
+  if ((e.moderationStatus ?? 0) !== 1) notFound();
 
   const dateInfo = fmtFullDate(e.eventDate);
   const heroUrl = mediaUrl(e.imageKey ?? null);

@@ -7,6 +7,7 @@ import {
 } from "@/lib/repo";
 import { slugifyBusinessName, approxCoordsForCanton } from "@/lib/business";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+import { notifyAdminContentPending } from "@/lib/admin-notify";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -57,6 +58,14 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     manageToken,
   });
   await deleteBusinessSubmission(sub.id);
+
+  // Új tartalom-moderációs réteg: minden új vállalkozás admin-jóváhagyásra vár.
+  notifyAdminContentPending({
+    contentType: "vállalkozás",
+    title: sub.name,
+    preview: sub.blurb ?? sub.address ?? "",
+    submitterEmail: sub.email,
+  }).catch(() => {});
 
   return NextResponse.redirect(
     `${baseUrl}/vallalkozas-megerositve?status=published&id=${encodeURIComponent(id)}&manage=${encodeURIComponent(manageToken)}`,

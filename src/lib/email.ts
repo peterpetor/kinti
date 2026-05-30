@@ -551,7 +551,7 @@ Megkaptuk a vállalkozásod a kinti Szaknévsorba:
 A publikáláshoz erősítsd meg egy kattintással:
   ${args.confirmUrl}
 
-Amint rákattintasz, a vállalkozásod AZONNAL megjelenik a Szaknévsorban — nincs várakozás.
+A megerősítés után a vállalkozásod az adminisztrátor ellenőrzésére vár (általában 24 órán belül). Amint elfogadta, automatikusan megjelenik a Szaknévsorban.
 
 A megerősítő link ${expiresHu}-ig érvényes.
 
@@ -773,3 +773,60 @@ kinti.app`;
   }
 }
 
+
+// --- Admin: generic "uj tartalom moderalasra var" ---------------------------
+
+interface AdminContentPendingArgs {
+  adminEmail: string;
+  contentType: string;
+  title: string;
+  preview: string;
+  submitterEmail: string | null;
+  moderationUrl: string;
+}
+
+export async function sendAdminContentPendingEmail(
+  args: AdminContentPendingArgs,
+): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = `Uj ${args.contentType} jovahagyasra var: "${args.title}"`;
+
+  const text = `Uj ${args.contentType} erkezett a kinti.app-on, es jovahagyasra var.
+
+Cim / nev: ${args.title}
+Elonezet: ${args.preview.slice(0, 200)}
+Bekulldo: ${args.submitterEmail ?? "(anonim)"}
+
+Moderacio:
+${args.moderationUrl}
+
+A tartalom addig NEM lathato publikusan, amig jova nem hagyod.`;
+
+  const html = baseLayout({
+    preheader: `Moderalando ${args.contentType}: ${args.title}`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti Admin ertesito</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">Uj ${escapeHtml(args.contentType)} jovahagyasra var</p>
+      <div style="margin:0 0 20px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:15px;font-weight:800;color:#0e1f17;margin-bottom:8px;">${escapeHtml(args.title)}</div>
+        ${args.preview ? `<div style="margin-top:8px;padding:10px;background:#f0ebe0;border-radius:10px;font-size:13px;line-height:1.5;color:#0e1f17;">${escapeHtml(args.preview.slice(0, 400))}</div>` : ""}
+        ${args.submitterEmail ? `<div style="margin-top:10px;font-size:12px;color:#5c6d63;"><strong>Bekulldo:</strong> ${escapeHtml(args.submitterEmail)}</div>` : ""}
+      </div>
+      <p style="margin:0 0 20px;">
+        <a href="${escapeAttr(args.moderationUrl)}" style="display:inline-block;padding:13px 22px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Megnyitom a moderaciot</a>
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;">A tartalom NEM lathato publikusan, amig jova nem hagyod.</p>`,
+  });
+
+  const { error } = await getResend().emails.send({
+    from,
+    to: args.adminEmail,
+    subject,
+    html,
+    text,
+  });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} - ${error.message ?? "ismeretlen"}`);
+  }
+}

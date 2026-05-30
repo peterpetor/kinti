@@ -241,9 +241,20 @@ export default async function AdminPage() {
       {/* Egyéb admin linkek */}
       <section className="space-y-2 border-t border-line pt-4">
         <h2 className="text-[14px] font-extrabold text-ink">Egyéb admin</h2>
-        <Link href="/admin/feeds" className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink">
-          <Icon name="calendar" size={13} strokeWidth={2.4} /> Esemény-feedek kezelése (iCal/RSS)
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/admin/moderation"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            🛡️ Moderációs sor (kézi jóváhagyás)
+          </Link>
+          <Link
+            href="/admin/feeds"
+            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
+          >
+            <Icon name="calendar" size={13} strokeWidth={2.4} /> Esemény-feedek (iCal/RSS)
+          </Link>
+        </div>
       </section>
     </div>
   );
