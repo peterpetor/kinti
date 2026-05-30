@@ -10,7 +10,8 @@ import {
 import {
   sendEventConfirmationEmail,
 } from "@/lib/email";
-import { getCloudflareEnv } from "@/lib/cloudflare";
+import { getCloudflareEnv, getMediaBucket } from "@/lib/cloudflare";
+import { moderateImage } from "@/lib/moderation";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { hashIp } from "@/lib/bulletin";
 import { safeLogError } from "@/lib/safe-log";
@@ -81,6 +82,37 @@ export async function POST(req: Request) {
       { error: "Napi limit túllépve. Egy nap alatt legfeljebb 3 eseményt lehet beküldeni ugyanarról a kapcsolatról." },
       { status: 429 },
     );
+  }
+
+  // 3) Kép moderáció Cloudflare Workers AI-val
+  const imageKey = validation.value.imageKey;
+  if (imageKey) {
+    let keys: string[] = [];
+    if (imageKey.startsWith("[")) {
+      try {
+        keys = JSON.parse(imageKey);
+      } catch {
+        keys = [imageKey];
+      }
+    } else {
+      keys = [imageKey];
+    }
+
+    for (const key of keys) {
+      if (!key) continue;
+      const obj = await getMediaBucket().get(key);
+      if (obj) {
+        const arrayBuffer = await obj.arrayBuffer();
+        const moderation = await moderateImage(arrayBuffer);
+        if (!moderation.safe) {
+          await getMediaBucket().delete(key).catch(() => { /* silent */ });
+          return NextResponse.json(
+            { error: moderation.reason || "A kép moderációs okokból elutasításra került." },
+            { status: 400 },
+          );
+        }
+      }
+    }
   }
 
   const id = crypto.randomUUID();
