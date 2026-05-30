@@ -43,6 +43,11 @@ interface RentStat {
   entry_count: number;
 }
 
+interface MyData {
+  salary: { cantonCode: string; industry: string; yearsExperience: number; grossSalaryChf: number } | null;
+  rent:   { cantonCode: string; rooms: number; rentChf: number } | null;
+}
+
 function Spinner() {
   return (
     <div className="py-16 flex justify-center">
@@ -51,31 +56,42 @@ function Spinner() {
   );
 }
 
-/** Mini adatfal — egy adott tab beküldési formja */
-function SubmitForm({
+const inputCls =
+  "w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition";
+const labelCls =
+  "block text-[12px] font-bold text-ink-muted mb-1 uppercase tracking-wide";
+
+/** Beküldési / szerkesztési form egy adott tabhoz */
+function BenchmarkForm({
   tab,
+  mode,
+  initialData,
   onSuccess,
+  onCancel,
 }: {
   tab: TabType;
+  mode: "submit" | "edit";
+  initialData?: MyData;
   onSuccess: () => void;
+  onCancel?: () => void;
 }) {
+  const isEdit = mode === "edit";
+
+  // Salary fields
+  const [canton, setCanton] = useState(
+    tab === "salary" ? (initialData?.salary?.cantonCode ?? "ZH") : (initialData?.rent?.cantonCode ?? "ZH")
+  );
+  const [industry, setIndustry] = useState(initialData?.salary?.industry ?? INDUSTRIES[0]);
+  const [exp, setExp] = useState(initialData?.salary?.yearsExperience ?? 3);
+  const [salary, setSalary] = useState(initialData?.salary?.grossSalaryChf ?? 80000);
+
+  // Rent fields
+  const [rooms, setRooms] = useState(initialData?.rent?.rooms ?? 3.5);
+  const [rent, setRent] = useState(initialData?.rent?.rentChf ?? 1800);
+
   const [submitting, setSubmitting] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Salary fields
-  const [canton, setCanton] = useState("ZH");
-  const [industry, setIndustry] = useState(INDUSTRIES[0]);
-  const [exp, setExp] = useState(3);
-  const [salary, setSalary] = useState(80000);
-
-  // Rent fields
-  const [rooms, setRooms] = useState(3.5);
-  const [rent, setRent] = useState(1800);
-
-  const inputCls =
-    "w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition";
-  const labelCls = "block text-[12px] font-bold text-ink-muted mb-1 uppercase tracking-wide";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -90,7 +106,7 @@ function SubmitForm({
 
     try {
       const res = await fetch("/api/benchmark", {
-        method: "POST",
+        method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -98,7 +114,7 @@ function SubmitForm({
       if (res.ok) {
         onSuccess();
       } else {
-        setError(data.error || "Hiba történt a beküldés során.");
+        setError(data.error || "Hiba történt.");
       }
     } catch {
       setError("Hálózati hiba.");
@@ -107,20 +123,32 @@ function SubmitForm({
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-surface p-5 space-y-4">
-      {/* Ikon + cím */}
-      <div className="flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-xl">
-          {tab === "salary" ? "💰" : "🏠"}
-        </span>
-        <div>
-          <p className="text-[15px] font-bold text-ink">
-            {tab === "salary" ? "Add meg a béredet" : "Add meg a lakbéredet"}
-          </p>
-          <p className="text-[12px] text-ink-muted">
-            Teljesen anonim · csak te látod az adatod
-          </p>
+    <div className={`rounded-2xl border ${isEdit ? "border-primary/30 bg-primary/5" : "border-line bg-surface"} p-5 space-y-4`}>
+      {/* Fejléc */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-xl">
+            {tab === "salary" ? "💰" : "🏠"}
+          </span>
+          <div>
+            <p className="text-[15px] font-bold text-ink">
+              {isEdit
+                ? (tab === "salary" ? "Béradatom szerkesztése" : "Lakbéradatom szerkesztése")
+                : (tab === "salary" ? "Add meg a béredet" : "Add meg a lakbéredet")}
+            </p>
+            <p className="text-[12px] text-ink-muted">
+              {isEdit ? "Az adatod módosítása azonnal frissíti a statisztikát" : "Teljesen anonim · csak te látod az adatod"}
+            </p>
+          </div>
         </div>
+        {onCancel && (
+          <button
+            onClick={onCancel}
+            className="text-ink-faint hover:text-ink text-[13px] font-medium transition-colors px-2 py-1"
+          >
+            Mégse
+          </button>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3">
@@ -190,6 +218,8 @@ function SubmitForm({
         >
           {submitting ? (
             <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+          ) : isEdit ? (
+            <>✏️ Módosítás mentése</>
           ) : (
             <>🔓 Anonim beküldés &amp; feloldás</>
           )}
@@ -199,14 +229,49 @@ function SubmitForm({
   );
 }
 
-/** Statisztika-kártya egy iparághoz / szobaszámhoz */
+/** Saját adat összegző kártya (szerkesztés gombbal) */
+function MyDataCard({ tab, myData, onEdit }: { tab: TabType; myData: MyData; onEdit: () => void }) {
+  const s = myData.salary;
+  const r = myData.rent;
+
+  if (tab === "salary" && !s) return null;
+  if (tab === "rent" && !r) return null;
+
+  return (
+    <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[12px] font-black uppercase tracking-wide text-primary">Saját adatom</p>
+        <button
+          onClick={onEdit}
+          className="flex items-center gap-1.5 text-[12px] font-bold text-primary hover:opacity-70 transition-opacity bg-primary/10 px-2.5 py-1 rounded-lg"
+        >
+          ✏️ Szerkesztés
+        </button>
+      </div>
+
+      {tab === "salary" && s && (
+        <div className="space-y-0.5 text-[13px] text-ink">
+          <p><span className="text-ink-muted">Kanton:</span> {s.cantonCode}</p>
+          <p><span className="text-ink-muted">Iparág:</span> {s.industry}</p>
+          <p><span className="text-ink-muted">Tapasztalat:</span> {s.yearsExperience} év</p>
+          <p><span className="text-ink-muted">Éves bér:</span> <strong>{s.grossSalaryChf.toLocaleString("hu-HU")} CHF</strong></p>
+        </div>
+      )}
+
+      {tab === "rent" && r && (
+        <div className="space-y-0.5 text-[13px] text-ink">
+          <p><span className="text-ink-muted">Kanton:</span> {r.cantonCode}</p>
+          <p><span className="text-ink-muted">Szobák:</span> {r.rooms} szoba</p>
+          <p><span className="text-ink-muted">Havi lakbér:</span> <strong>{r.rentChf.toLocaleString("hu-HU")} CHF</strong></p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Statisztika-kártya */
 function StatCard({ title, badge, avg, min, max, maxValue }: {
-  title: string;
-  badge: string;
-  avg: number;
-  min: number;
-  max: number;
-  maxValue: number;
+  title: string; badge: string; avg: number; min: number; max: number; maxValue: number;
 }) {
   const pct = Math.min(100, Math.round((avg / maxValue) * 100));
   return (
@@ -233,6 +298,7 @@ function StatCard({ title, badge, avg, min, max, maxValue }: {
 
 export default function BenchmarkClient() {
   const [lock, setLock] = useState<LockState>({ salary: true, rent: true });
+  const [myData, setMyData] = useState<MyData>({ salary: null, rent: null });
   const [loading, setLoading] = useState(true);
   const [salaryStats, setSalaryStats] = useState<SalaryStat[]>([]);
   const [rentStats, setRentStats] = useState<RentStat[]>([]);
@@ -242,14 +308,16 @@ export default function BenchmarkClient() {
   const [period, setPeriod] = useState("12m");
   const [search, setSearch] = useState("");
 
+  // Szerkesztési mód per tab
+  const [editingTab, setEditingTab] = useState<TabType | null>(null);
+
   const fetchStats = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/benchmark?canton=${canton}&period=${period}`);
       const data: any = await res.json();
-      if (data.locked) {
-        setLock(data.locked);
-      }
+      if (data.locked) setLock(data.locked);
+      if (data.myData) setMyData(data.myData);
       if (data.salary) setSalaryStats(data.salary);
       if (data.rent)   setRentStats(data.rent);
     } catch (err) {
@@ -260,19 +328,22 @@ export default function BenchmarkClient() {
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
-  // --- Tabs ---
   const tabs: { id: TabType; label: string; icon: string }[] = [
     { id: "salary", label: "Bérek", icon: "💰" },
     { id: "rent",   label: "Lakbérek", icon: "🏠" },
   ];
 
   const isCurrentLocked = lock[activeTab];
+  const isEditing = editingTab === activeTab;
 
-  // --- Filtered data ---
   const filteredSalary = salaryStats.filter((s) =>
     s.industry.toLowerCase().includes(search.toLowerCase())
   );
-  const filteredRent = rentStats;
+
+  function handleEditSuccess() {
+    setEditingTab(null);
+    fetchStats();
+  }
 
   return (
     <div className="rounded-2xl border border-line bg-surface overflow-hidden shadow-card">
@@ -282,7 +353,7 @@ export default function BenchmarkClient() {
         {tabs.map((t) => (
           <button
             key={t.id}
-            onClick={() => setActiveTab(t.id)}
+            onClick={() => { setActiveTab(t.id); setEditingTab(null); }}
             className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-[14px] font-bold transition-colors
               ${activeTab === t.id
                 ? "text-primary border-b-2 border-primary bg-primary/5"
@@ -291,9 +362,7 @@ export default function BenchmarkClient() {
             <span>{t.icon}</span>
             {t.label}
             {lock[t.id] && (
-              <span className="ml-1 text-[11px] bg-surface-alt text-ink-faint px-1.5 py-0.5 rounded-full font-normal">
-                🔒
-              </span>
+              <span className="ml-1 text-[11px] bg-surface-alt text-ink-faint px-1.5 py-0.5 rounded-full font-normal">🔒</span>
             )}
           </button>
         ))}
@@ -312,104 +381,113 @@ export default function BenchmarkClient() {
                   : "Küld be a lakbéredet, hogy lásd a kantonos átlagokat!"}
               </span>
             </div>
-            <SubmitForm tab={activeTab} onSuccess={fetchStats} />
+            <BenchmarkForm
+              tab={activeTab}
+              mode="submit"
+              onSuccess={fetchStats}
+            />
           </div>
         ) : (
           <>
+            {/* Szerkesztési mód */}
+            {isEditing ? (
+              <BenchmarkForm
+                tab={activeTab}
+                mode="edit"
+                initialData={myData}
+                onSuccess={handleEditSuccess}
+                onCancel={() => setEditingTab(null)}
+              />
+            ) : (
+              /* Saját adat kártya */
+              <MyDataCard
+                tab={activeTab}
+                myData={myData}
+                onEdit={() => setEditingTab(activeTab)}
+              />
+            )}
+
             {/* Szűrők */}
-            <div className="space-y-2">
-              {/* Kereső (csak salary tabon) */}
-              {activeTab === "salary" && (
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint text-sm">🔍</span>
-                  <input
-                    type="search"
-                    placeholder="Iparág keresése…"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full rounded-xl border border-line bg-surface-alt pl-8 pr-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
-                  />
-                </div>
-              )}
+            {!isEditing && (
+              <div className="space-y-2">
+                {activeTab === "salary" && (
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint text-sm">🔍</span>
+                    <input
+                      type="search"
+                      placeholder="Iparág keresése…"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="w-full rounded-xl border border-line bg-surface-alt pl-8 pr-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
+                    />
+                  </div>
+                )}
 
-              <div className="flex gap-2 flex-wrap">
-                {/* Kanton szűrő */}
-                <select
-                  value={canton}
-                  onChange={(e) => setCanton(e.target.value)}
-                  className="flex-1 min-w-0 rounded-xl border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
-                >
-                  <option value="all">🇨🇭 Egész Svájc</option>
-                  {CANTONS.map((c) => (
-                    <option key={c.code} value={c.code}>{c.name}</option>
-                  ))}
-                </select>
+                <div className="flex gap-2 flex-wrap">
+                  <select
+                    value={canton}
+                    onChange={(e) => setCanton(e.target.value)}
+                    className="flex-1 min-w-0 rounded-xl border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
+                  >
+                    <option value="all">🇨🇭 Egész Svájc</option>
+                    {CANTONS.map((c) => (
+                      <option key={c.code} value={c.code}>{c.name}</option>
+                    ))}
+                  </select>
 
-                {/* Időszak szűrő */}
-                <div className="flex rounded-xl border border-line overflow-hidden shrink-0">
-                  {PERIODS.map((p) => (
-                    <button
-                      key={p.value}
-                      onClick={() => setPeriod(p.value)}
-                      className={`px-3 py-2 text-[12px] font-bold transition-colors
-                        ${period === p.value
-                          ? "bg-primary text-white"
-                          : "bg-surface-alt text-ink-muted hover:text-ink"}`}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
+                  <div className="flex rounded-xl border border-line overflow-hidden shrink-0">
+                    {PERIODS.map((p) => (
+                      <button
+                        key={p.value}
+                        onClick={() => setPeriod(p.value)}
+                        className={`px-3 py-2 text-[12px] font-bold transition-colors
+                          ${period === p.value
+                            ? "bg-primary text-white"
+                            : "bg-surface-alt text-ink-muted hover:text-ink"}`}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Adatok */}
-            {loading ? (
-              <Spinner />
-            ) : activeTab === "salary" ? (
-              filteredSalary.length === 0 ? (
-                <div className="py-10 text-center text-ink-muted text-[14px]">
-                  {search ? "Nincs találat erre a keresési feltételre." : "Nincs elég adat ebben az időszakban ehhez a szűrőhöz."}
-                </div>
+            {/* Statisztikák */}
+            {!isEditing && (
+              loading ? (
+                <Spinner />
+              ) : activeTab === "salary" ? (
+                filteredSalary.length === 0 ? (
+                  <div className="py-10 text-center text-ink-muted text-[14px]">
+                    {search ? "Nincs találat." : "Nincs elég adat ebben az időszakban."}
+                  </div>
+                ) : (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {filteredSalary.map((s, i) => (
+                      <StatCard key={i} title={s.industry} badge={`${s.entry_count} adat`}
+                        avg={s.avg_salary} min={s.min_salary} max={s.max_salary} maxValue={200000} />
+                    ))}
+                  </div>
+                )
               ) : (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {filteredSalary.map((s, i) => (
-                    <StatCard
-                      key={i}
-                      title={s.industry}
-                      badge={`${s.entry_count} adat`}
-                      avg={s.avg_salary}
-                      min={s.min_salary}
-                      max={s.max_salary}
-                      maxValue={200000}
-                    />
-                  ))}
-                </div>
-              )
-            ) : (
-              filteredRent.length === 0 ? (
-                <div className="py-10 text-center text-ink-muted text-[14px]">
-                  Nincs elég adat ebben az időszakban ehhez a szűrőhöz.
-                </div>
-              ) : (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {filteredRent.map((r, i) => (
-                    <StatCard
-                      key={i}
-                      title={`${r.rooms} szobás lakás`}
-                      badge={`${r.entry_count} adat`}
-                      avg={r.avg_rent}
-                      min={r.min_rent}
-                      max={r.max_rent}
-                      maxValue={5000}
-                    />
-                  ))}
-                </div>
+                rentStats.length === 0 ? (
+                  <div className="py-10 text-center text-ink-muted text-[14px]">
+                    Nincs elég adat ebben az időszakban.
+                  </div>
+                ) : (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {rentStats.map((r, i) => (
+                      <StatCard key={i} title={`${r.rooms} szobás lakás`} badge={`${r.entry_count} adat`}
+                        avg={r.avg_rent} min={r.min_rent} max={r.max_rent} maxValue={5000} />
+                    ))}
+                  </div>
+                )
               )
             )}
 
-            {/* Ha a másik tab is zárolt, biztassuk beküldésre */}
-            {!lock[activeTab === "salary" ? "rent" : "salary"] ? null : (
+            {/* Másik tab ösztönzés */}
+            {!isEditing && lock[activeTab === "salary" ? "rent" : "salary"] && (
               <div className="border-t border-line pt-4">
                 <p className="text-[12px] text-ink-faint text-center">
                   A {activeTab === "salary" ? "🏠 Lakbérek" : "💰 Bérek"} fül még nincs feloldva.

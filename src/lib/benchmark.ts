@@ -15,6 +15,20 @@ export interface RentBenchmarkInput {
   ipHash: string;
 }
 
+export interface UserSubmissions {
+  salary: {
+    cantonCode: string;
+    industry: string;
+    yearsExperience: number;
+    grossSalaryChf: number;
+  } | null;
+  rent: {
+    cantonCode: string;
+    rooms: number;
+    rentChf: number;
+  } | null;
+}
+
 export interface SalaryStatsRow {
   industry: string;
   avg_salary: number;
@@ -44,7 +58,7 @@ export async function submitSalaryBenchmark(input: SalaryBenchmarkInput): Promis
   await getDB()
     .prepare(
       `INSERT INTO salary_benchmarks (id, canton_code, industry, years_experience, gross_salary_chf, ip_hash, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, unixepoch())`
+       VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
     )
     .bind(
       crypto.randomUUID(),
@@ -61,7 +75,7 @@ export async function submitRentBenchmark(input: RentBenchmarkInput): Promise<vo
   await getDB()
     .prepare(
       `INSERT INTO rent_benchmarks (id, canton_code, rooms, rent_chf, ip_hash, created_at)
-       VALUES (?, ?, ?, ?, ?, unixepoch())`
+       VALUES (?, ?, ?, ?, ?, datetime('now'))`
     )
     .bind(
       crypto.randomUUID(),
@@ -71,6 +85,64 @@ export async function submitRentBenchmark(input: RentBenchmarkInput): Promise<vo
       input.ipHash
     )
     .run();
+}
+
+/** Felülírja a felhasználó meglévő béradatát (az ip_hash alapján legutóbbi sort frissíti). */
+export async function updateSalaryBenchmark(input: SalaryBenchmarkInput): Promise<void> {
+  await getDB()
+    .prepare(
+      `UPDATE salary_benchmarks
+       SET canton_code = ?, industry = ?, years_experience = ?, gross_salary_chf = ?, created_at = datetime('now')
+       WHERE ip_hash = ?`
+    )
+    .bind(
+      input.cantonCode,
+      input.industry,
+      input.yearsExperience,
+      input.grossSalaryChf,
+      input.ipHash
+    )
+    .run();
+}
+
+/** Felülírja a felhasználó meglévő lakbéradatát. */
+export async function updateRentBenchmark(input: RentBenchmarkInput): Promise<void> {
+  await getDB()
+    .prepare(
+      `UPDATE rent_benchmarks
+       SET canton_code = ?, rooms = ?, rent_chf = ?, created_at = datetime('now')
+       WHERE ip_hash = ?`
+    )
+    .bind(
+      input.cantonCode,
+      input.rooms,
+      input.rentChf,
+      input.ipHash
+    )
+    .run();
+}
+
+/** Visszaadja a felhasználó saját beküldött adatait (szerkesztéshez). */
+export async function getUserSubmissions(ipHash: string): Promise<UserSubmissions> {
+  const [salaryRow, rentRow] = await Promise.all([
+    getDB()
+      .prepare(`SELECT canton_code, industry, years_experience, gross_salary_chf FROM salary_benchmarks WHERE ip_hash = ? ORDER BY created_at DESC LIMIT 1`)
+      .bind(ipHash)
+      .first<{ canton_code: string; industry: string; years_experience: number; gross_salary_chf: number }>(),
+    getDB()
+      .prepare(`SELECT canton_code, rooms, rent_chf FROM rent_benchmarks WHERE ip_hash = ? ORDER BY created_at DESC LIMIT 1`)
+      .bind(ipHash)
+      .first<{ canton_code: string; rooms: number; rent_chf: number }>(),
+  ]);
+
+  return {
+    salary: salaryRow
+      ? { cantonCode: salaryRow.canton_code, industry: salaryRow.industry, yearsExperience: salaryRow.years_experience, grossSalaryChf: salaryRow.gross_salary_chf }
+      : null,
+    rent: rentRow
+      ? { cantonCode: rentRow.canton_code, rooms: rentRow.rooms, rentChf: rentRow.rent_chf }
+      : null,
+  };
 }
 
 /**
