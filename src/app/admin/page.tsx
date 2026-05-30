@@ -11,6 +11,7 @@ import {
   listPendingEvents,
   listBusinessesForAdmin,
   listBulletinsForAdmin,
+  listPendingBulletins,
   listEventsForAdmin,
 } from "@/lib/repo";
 
@@ -23,11 +24,12 @@ export default async function AdminPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  const [stats, openReports, pendingEvents, businesses, bulletins, events] =
+  const [stats, openReports, pendingEvents, pendingBulletins, businesses, bulletins, events] =
     await Promise.all([
       getAdminStats(),
       listOpenReports(),
       listPendingEvents(),
+      listPendingBulletins(),
       listBusinessesForAdmin(),
       listBulletinsForAdmin(),
       listEventsForAdmin(),
@@ -128,6 +130,44 @@ export default async function AdminPage() {
                     </a>
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Pending bulletins */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">
+          Jóváhagyásra váró hirdetések ({pendingBulletins.length})
+        </h2>
+        {pendingBulletins.length === 0 ? (
+          <Empty label="Nincs várakozó hirdetés." />
+        ) : (
+          <div className="space-y-2">
+            {pendingBulletins.map((b) => (
+              <div key={b.id} className="rounded-card border border-line bg-surface p-3 shadow-card">
+                <p className="text-[13.5px] font-bold text-ink">{b.title}</p>
+                <p className="mt-0.5 text-[11.5px] text-ink-muted">
+                  {b.kind?.label}
+                  {b.email ? ` · ${b.email}` : ""}
+                  {b.cantonCode ? ` · ${b.cantonCode}` : ""}
+                  {b.price ? ` · CHF ${b.price}` : ""}
+                </p>
+                <div className="mt-2 flex gap-2">
+                  <a
+                    href={`/api/admin/bulletins/${b.id}/approve`}
+                    className="inline-flex items-center gap-1 rounded-pill bg-primary px-3 py-1 text-[11.5px] font-bold text-white"
+                  >
+                    ✅ Jóváhagyás
+                  </a>
+                  <a
+                    href={`/api/admin/bulletins/${b.id}/reject`}
+                    className="inline-flex items-center gap-1 rounded-pill bg-accent px-3 py-1 text-[11.5px] font-bold text-white"
+                  >
+                    ❌ Elutasítás (Törlés)
+                  </a>
+                </div>
               </div>
             ))}
           </div>

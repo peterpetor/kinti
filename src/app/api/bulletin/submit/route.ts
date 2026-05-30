@@ -169,7 +169,7 @@ export async function POST(req: Request) {
       whatsapp: validation.value.whatsapp,
       manageToken,
       expiresAt: postExpiresAt,
-      isPending: 0,
+      isPending: 1, // Kézi jóváhagyás (Admin ellenőrzés)
       termsVersion: TERMS_VERSION,
       acceptedTermsAt: now.toISOString(),
       ageConfirmed: 1,
@@ -179,15 +179,13 @@ export async function POST(req: Request) {
       price: validation.value.price,
     });
 
-    if (validation.value.kindId === 'alberlet' && validation.value.cantonCode) {
-      // Értesítjük azokat, akik erre a kantonra (vagy 'all'-ra) iratkoztak fel
-      triggerAlberletRadars(validation.value.cantonCode).catch(() => {});
-    }
+    // A Radar triggerezést áttesszük az admin jóváhagyáshoz, mivel a poszt mostantól pending!
 
     return NextResponse.json(
       {
         ok: true,
-        published: true,
+        published: false,
+        pendingAdmin: true,
         id,
         manageToken,
         manageUrl: `/hirdetes-kezeles/${manageToken}`,

@@ -642,6 +642,27 @@ export async function getBulletinPosts(kind?: string | null): Promise<BulletinPo
   return results.map(toBulletinPost);
 }
 
+export async function listPendingBulletins(): Promise<BulletinPost[]> {
+  const sql = `
+    SELECT p.*, k.label AS kind_label, k.color AS kind_color, k.sort_order AS kind_sort
+    FROM bulletin_posts p
+    JOIN bulletin_kinds k ON k.id = p.kind_id
+    WHERE p.is_pending = 1
+      AND p.hidden = 0
+    ORDER BY p.created_at ASC
+  `;
+  const { results } = await getDB().prepare(sql).all<BulletinPostRow>();
+  return results.map(toBulletinPost);
+}
+
+export async function approveBulletinPost(id: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE bulletin_posts SET is_pending = 0, published_at = datetime('now') WHERE id = ?")
+    .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
 // ---------------------------------------------------------------------------
 // Hirdetőfal — email-megerősítéses posztolás (account nélküli flow).
 // ---------------------------------------------------------------------------
