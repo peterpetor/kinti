@@ -159,6 +159,14 @@ export default function AszfPage() {
         feldolgozza, és e-mailben tájékoztatja a bejelentőt és (ha azonosítható)
         a tartalom feladóját az eredményről.
       </p>
+      <p>
+        <strong>DSA monitoring (Art. 17):</strong> Az{" "}
+        <a href="mailto:abuse@kinti.app">abuse@kinti.app</a> postafiók folyamatosan
+        monitorozva van. A bejelentéseket általában <strong>72 órán belül</strong>{" "}
+        feldolgozzuk; komplex ügyekben legkésőbb <strong>30 napon belül</strong>{" "}
+        döntünk és írásban értesítjük a bejelentőt.
+      </p>
+
 
       <h3>5.2 Tartalom-fellebbezés (DSA Art. 17 és 20)</h3>
       <p>
@@ -213,7 +221,27 @@ export default function AszfPage() {
         felelősségre nem vonható.
       </p>
 
-      <h2>9. Események és Közösségi Találkozók</h2>
+      <h2>9. Telekocsi (Utasmegosztás)</h2>
+      <p>
+        A platform közösségi telekocsi-mezős ég a határon átjárók és szövetanytárs között tett
+        utakhoz is lehet hirdetést feladni. Az üzemeltető a telekocsi-hirdetések vonatkozásában
+        kizárólag <strong>közvetítő platformként</strong> jár el:
+      </p>
+      <ul>
+        <li>Az üzemeltető <strong>nem utasmegosztó vállalat</strong>, nem szervez szállítást, nem határozza meg az árakat és nem része az utazási megállapodásnak;</li>
+        <li>A sofőr és az utasok között létrejövő megállapodás kizárólag az ő közöttük jön létre — az üzemeltető értékésért nem felel;</li>
+        <li>Menetközbeni balesetekért, személyi sérülésért, vagyoni kárért, főveszteségért, csomag káráért az üzemeltető semmilyen felelősséget nem vállal;</li>
+        <li>A sofőrök <strong>nem állnak munkaviszonyban</strong> az üzem eltetővel és nem számítanak annak alkalmazottának; a sofőr tel jes felelősséggel tartozik a szükéges jogosítvány, érvényes CASCO/felelősség-biztosítás és az utasok szállításához szükséges hatósági engedélyek meglétéért;</li>
+        <li>A csomagszállítási szolgáltatás (ha a sofőr ilyet vállal) keres kedelmi szállítmányozásnak minősülhet svájci jog szerint — ennek megítéléséért kizárólag a sofőr felel.</li>
+      </ul>
+      <p>
+        A telekocsi-hirdetések használata <strong>a felhasználó saját kockázatára</strong> történik.
+        Az üzemeltető kifejezetten kizárja a felelősségét minden olyan kárért, amely az
+        utasmegosztásból, a sofőr magatartásából, a jármű állapotából vagy a szállítás
+        meghiúsúlából ered.
+      </p>
+
+      <h2>10. Események és Közösségi Találkozók</h2>
       <p>
         A platformon meghirdetett eseményeket a felhasználók maguk szervezik. Az üzemeltető <strong>nem 
         rendezvényszervező</strong>. Az eseményeken bekövetkező esetleges balesetekért, vagyoni károkért, 
@@ -221,7 +249,7 @@ export default function AszfPage() {
         nem vállal. A részvétel minden esetben a felhasználó saját felelősségére történik.
       </p>
 
-      <h2>10. Vállalkozói Szolgáltatások és Feketemunka Tilalma</h2>
+      <h2>11. Vállalkozói Szolgáltatások és Feketemunka Tilalma</h2>
       <p>
         A Szaknévsorban/Vállalkozói modulban szereplő szakemberek nem állnak az üzemeltető alkalmazásában. 
         Az üzemeltető nem ellenőrzi a vállalkozók szakképesítését, engedélyeit, vagy az általuk végzett munka 
@@ -240,7 +268,7 @@ export default function AszfPage() {
         töröljük</strong> a platformról.
       </p>
 
-      <h2>11. A Szolgáltatás rendelkezésre állása, Adatbiztonság és Vis Maior</h2>
+      <h2>12. A Szolgáltatás rendelkezésre állása, Adatbiztonság és Vis Maior</h2>
       <p>
         Igyekszünk a Szolgáltatást folyamatosan elérhetővé tenni, de <strong>garanciát nem
         vállalunk</strong> a 100%-os rendelkezésre állásra. Karbantartás, technikai hiba, vagy
@@ -274,7 +302,7 @@ export default function AszfPage() {
         telhetőt megtesz az elérhetőség mielőbbi visszaállítása érdekében.
         Kártérítés ilyen esetben sem jár.
       </p>
-      <h2>12. Felelősség-korlátozás</h2>
+      <h2>13. Felelősség-korlátozás</h2>
       <p>
         Az üzemeltető felelőssége a magyar Polgári Törvénykönyv vonatkozó rendelkezései szerint,
         ingyenes szolgáltatás esetén <strong>csak szándékos károkozásra</strong> terjed ki.
@@ -288,7 +316,7 @@ export default function AszfPage() {
         együtt alkalmazandók, és egymást erősítik, nem győzik le.
       </p>
 
-      <h2>13. Eszközök, kalkulátorok és tájékoztató anyagok</h2>
+      <h2>14. Eszközök, kalkulátorok és tájékoztató anyagok</h2>
       <p>
         A Szolgáltatáson belül elérhető <strong>kalkulátorok</strong> (gyorshajtás-bírság,
         vám, árfolyam, repülőjegy-becslő stb.), <strong>varázslók</strong> (engedély-választó,
@@ -440,7 +468,7 @@ export default function AszfPage() {
         </li>
       </ul>
 
-      <h2>14. Közösségi jelentések</h2>
+      <h2>15. Közösségi jelentések</h2>
       <p>
         A platformon a felhasználók által beadott <strong>közösségi jelentések</strong>{" "}
         (akció-térkép, határátkelő-figyelő, SOS-radar, vélemény stb.)
@@ -454,7 +482,26 @@ export default function AszfPage() {
         segélyhívást (Svájcban 112). Vészhelyzet esetén MINDIG hívd a 112-t.
       </p>
 
-      <h3>14.1 Kinti Radar (Push Értesítések)</h3>
+      <h3>15.1 Akció-térkép (bolt-akciók)</h3>
+      <p>
+        Az akció-térkéren megjelenő akciós árak és kedvezmények a közösség tagjainak
+        saját megfigyelésén alapulnak. Az üzemeltető <strong>nem garantálja</strong> az árak,
+        kedvezmények vagy készletkészletek pontosságát, érvényességét, időbeli relevanciáját.
+        Vásárlási döntést kizárólag a saját felelősségére alapíthatsz ezen adatokra.
+        Az üzemeltető nem minősül kereskedelmi partnernek, közvetítőnek vagy fogyasztóvédelmi
+        eljárás félként.
+      </p>
+
+      <h3>15.2 Hofladen-térkép (farmárusi értékesítőhelyek)</h3>
+      <p>
+        A Hofladen-térképen szereplő nyitvatartások, terméklisták és fizetési módok
+        a közösség által beküldött adatok, amelyeket az üzemeltető <strong>nem ellenőriz
+        és nem frissít</strong>. Az adatok pontatlanok, elavultak lehetnek.
+        A Hofladen-lista alapján meghozott vásárlói döntésekért az üzemeltető
+        felelőssége kizárt; fogyasztóvédelmi vitában az üzemeltető nem fél.
+      </p>
+
+      <h3>15.3 Kinti Radar (Push Értesítések)</h3>
       <p>
         A "Kinti Radar" funkció segítségével a felhasználók (böngészőjük beállításaitól függően) Push értesítéseket 
         kérhetnek bizonyos eseményekről (pl. új albérlet, árfolyamváltozás). Az üzemeltető <strong>kifejezetten kizárja a felelősségét</strong> 
@@ -464,7 +511,7 @@ export default function AszfPage() {
         kizárólagos kockázata.
       </p>
 
-      <h2>15. Külső Linkekért Való Felelősség</h2>
+      <h2>16. Külső Linkekért Való Felelősség</h2>
       <p>
         A platformon a felhasználók és vállalkozások által megosztott külső weblapokra mutató 
         hivatkozások (linkek) tartalmáért az üzemeltető nem vállal felelősséget. Az üzemeltető nem 
@@ -473,7 +520,7 @@ export default function AszfPage() {
         (pl. adathalászat, vírusok) esetén az üzemeltető felelőssége kizárt.
       </p>
 
-      <h2>16. Szellemi tulajdon és Kártalanítás (Mentesítés)</h2>
+      <h2>17. Szellemi tulajdon és Kártalanítás (Mentesítés)</h2>
       <p>
         A kinti.app márkajegye, logója, design rendszere az üzemeltető szellemi tulajdona.
         A platformon megjelenő felhasználói tartalmak, képek és logók a feltöltők tulajdonát képezik,
@@ -488,7 +535,7 @@ export default function AszfPage() {
         és jogi költséget azonnal megtéríteni</strong>.
       </p>
 
-      <h2>17. Módosítás és adatok változása</h2>
+      <h2>18. Módosítás és adatok változása</h2>
       <p>
         Az üzemeltető fenntartja a jogot, hogy ezeket a feltételeket egyoldalúan módosítsa.
         A módosítás a közzétételkor lép hatályba; lényeges változásokról a vállalkozói
@@ -510,7 +557,7 @@ export default function AszfPage() {
         <strong>bármilyen kárért az üzemeltető felelőssége teljes körűen kizárt.</strong>
       </p>
 
-      <h2>18. Adatvédelem</h2>
+      <h2>19. Adatvédelem</h2>
       <p>
         A személyes adatok kezelésének szabályait, a kezelt adatok körét, a megőrzési időket és az 
         érintettek jogait a különálló <strong>Adatvédelmi Tájékoztató</strong> tartalmazza, amely 
@@ -518,14 +565,14 @@ export default function AszfPage() {
         tudomásul veszi az Adatvédelmi Tájékoztatóban foglaltakat.
       </p>
 
-      <h2>19. Jogválasztás és bíróság</h2>
+      <h2>20. Jogválasztás és bíróság</h2>
       <p>
         A jelen feltételekre a <strong>magyar jog</strong> az irányadó. Esetleges jogvitákban
         a magyar bíróságok rendelkeznek hatáskörrel és illetékességgel.
       </p>
 
-      <h2>20. Vitarendezés</h2>
-      <h3>20.1 Peren kívüli vitarendezés (DSA Art. 21)</h3>
+      <h2>21. Vitarendezés</h2>
+      <h3>21.1 Peren kívüli vitarendezés (DSA Art. 21)</h3>
       <p>
         Ha a Szolgáltatással kapcsolatban panaszod van, és az 5.2 pont szerinti
         belső panaszkezelési eljárásunk sem hozott megnyugtató eredményt, a
@@ -539,7 +586,7 @@ export default function AszfPage() {
         oldalon találod. A vitarendezési szerv döntései az üzemeltetőre nézve
         ajánlás-jellegűek; a végső döntést bíróság hozhatja.
       </p>
-      <h3>20.2 Fogyasztói vitarendezés</h3>
+      <h3>21.2 Fogyasztói vitarendezés</h3>
       <p>
         Magyarországi fogyasztóként a megyei (fővárosi) kereskedelmi és iparkamara
         mellett működő <strong>békéltető testületekhez</strong> fordulhatsz; az
@@ -550,7 +597,7 @@ export default function AszfPage() {
         is kezdeményezhetnek vitarendezést.
       </p>
 
-      <h2>21. Kapcsolat</h2>
+      <h2>22. Kapcsolat</h2>
       <p>
         Kérdés, panasz, takedown-bejelentés: <a href="mailto:info@kinti.app">info@kinti.app</a>
         {" / "}
