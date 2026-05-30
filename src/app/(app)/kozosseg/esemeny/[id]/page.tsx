@@ -5,6 +5,7 @@ import { EventDetailActions } from "@/components/views/event-detail-actions";
 import { getEventById } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { getTagEmoji } from "@/lib/tag-emoji";
+import { safeJsonLdStringify } from "@/lib/json-ld";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -107,7 +108,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
       {/* eslint-disable-next-line @next/next/no-head-element */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(jsonLd) }}
       />
 
       <Link

@@ -13,6 +13,7 @@ import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { BusinessGallery } from "@/components/views/business-gallery";
 import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
 import { AIReviewSummary } from "@/components/ai-review-summary";
+import { safeJsonLdStringify } from "@/lib/json-ld";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -195,7 +196,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
       {/* eslint-disable-next-line @next/next/no-head-element */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(jsonLd) }}
       />
       {/* hero fotó + lebegő vezérlők — R2-kép, ha van; különben gradiens placeholder */}
       <div

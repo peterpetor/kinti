@@ -72,9 +72,9 @@ export async function GET() {
         "cache-control": "public, max-age=3600, stale-while-revalidate=3600",
       },
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Hálózati hiba." },
+      { error: "Az árfolyam-szolgáltatás nem érhető el." },
       { status: 502, headers: { "cache-control": "no-store" } },
     );
   }

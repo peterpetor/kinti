@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getBusinessByOwner, updateBusinessProfile } from "@/lib/repo";
 import { isSwissAddress } from "@/lib/cantons";
+import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -103,6 +104,23 @@ export async function POST(req: Request) {
     );
   }
 
+  // Social URL-ek mély-validációja: csak https + ismert domain (facebook.com,
+  // instagram.com, linkedin.com, booking.com/airbnb/calendly). Megakadályozza
+  // a `javascript:` / `data:` / phishing-URL-ek mentését.
+  let sanitizedSocialLinks: string | null = socialLinks || null;
+  if (socialLinks) {
+    try {
+      const parsed = JSON.parse(socialLinks) as Partial<SocialLinks>;
+      const cleaned = validateSocialLinks(parsed);
+      sanitizedSocialLinks = cleaned ? JSON.stringify(cleaned) : null;
+    } catch {
+      return NextResponse.json(
+        { error: "Érvénytelen közösségi linkek formátum." },
+        { status: 400 },
+      );
+    }
+  }
+
   const ok = await updateBusinessProfile(business.id, userId, {
     name,
     phone: phone || null,
@@ -111,7 +129,7 @@ export async function POST(req: Request) {
     categoryLabel: categoryLabel || null,
     openText: openText || null,
     workingHours: workingHours || null,
-    socialLinks: socialLinks || null,
+    socialLinks: sanitizedSocialLinks,
     yearsHere,
     languages,
   });

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { extForContentType, presignR2Put } from "@/lib/r2";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -60,7 +61,7 @@ export async function POST(req: Request) {
       headers: { "cache-control": "no-store" },
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Ismeretlen hiba.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    safeLogError("bulletin/media-upload", err);
+    return NextResponse.json({ error: "Belső hiba." }, { status: 500 });
   }
 }

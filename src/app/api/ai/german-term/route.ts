@@ -17,7 +17,10 @@ export const revalidate = 604800;
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const term = (url.searchParams.get("term") ?? "").trim();
+    // toLowerCase a cache-key normalizáláshoz — anélkül case-variációkkal
+    // (Vorsorgeauftrag / vorsorgeauftrag / VorSorGe...) a cache megkerülhető
+    // és a rate-limit is ki-bypassolható volna.
+    const term = (url.searchParams.get("term") ?? "").trim().toLowerCase();
 
     if (!term || term.length < 2 || term.length > 60) {
       return NextResponse.json(

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { incrementBusinessAnalytic, type BusinessAnalyticsKind } from "@/lib/repo";
+import { incrementBusinessAnalytic, getBusinessById, type BusinessAnalyticsKind } from "@/lib/repo";
 import { hashIp } from "@/lib/bulletin";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -26,6 +26,14 @@ export async function POST(
     const kind = body?.kind;
     if (kind !== "view" && kind !== "phone") {
       return NextResponse.json({ ok: false, error: "invalid_kind" }, { status: 400 });
+    }
+
+    // Validáljuk hogy a businessId valós — máskülönben spamelhetne random ID-vel
+    // és DB-szemetet generálhatna a daily-aggregate táblába.
+    const business = await getBusinessById(params.id);
+    if (!business) {
+      // 200 OK szándékos — a kliens UX-ot ne befolyásolja a fail
+      return NextResponse.json({ ok: true });
     }
 
     const ip = req.headers.get("cf-connecting-ip");

@@ -7,6 +7,7 @@ import {
 } from "@/lib/repo";
 import { BUSINESS_LIMITS } from "@/lib/business";
 import { isSwissAddress } from "@/lib/cantons";
+import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -90,7 +91,23 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
 
   if ("openText" in body) fields.openText = str(body.openText);
   if ("workingHours" in body) fields.workingHours = str(body.workingHours);
-  if ("socialLinks" in body) fields.socialLinks = str(body.socialLinks);
+  if ("socialLinks" in body) {
+    const raw = str(body.socialLinks);
+    if (raw === null) {
+      fields.socialLinks = null;
+    } else {
+      try {
+        const parsed = JSON.parse(raw) as Partial<SocialLinks>;
+        const cleaned = validateSocialLinks(parsed);
+        fields.socialLinks = cleaned ? JSON.stringify(cleaned) : null;
+      } catch {
+        errors.push({
+          field: "socialLinks",
+          message: "Érvénytelen közösségi linkek formátum.",
+        });
+      }
+    }
+  }
 
   if ("languages" in body) {
     const v = body.languages;

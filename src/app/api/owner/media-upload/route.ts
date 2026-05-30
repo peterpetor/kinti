@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getBusinessByOwner } from "@/lib/repo";
 import { extForContentType, presignR2Put } from "@/lib/r2";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Nincs hozzád kötött vállalkozás." }, { status: 403 });
   }
 
-  let body: { contentType?: unknown } = {};
+  let body: { contentType?: unknown; contentLength?: unknown } = {};
   try {
     body = await req.json();
   } catch {
@@ -51,15 +52,34 @@ export async function POST(req: Request) {
     );
   }
 
+  const contentLength = typeof body.contentLength === "number" ? body.contentLength : null;
+  if (contentLength === null || !Number.isFinite(contentLength) || contentLength <= 0) {
+    return NextResponse.json(
+      { error: "Érvénytelen vagy hiányzó fájlméret." },
+      { status: 400 },
+    );
+  }
+  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+  if (contentLength > MAX_SIZE) {
+    return NextResponse.json(
+      { error: "A fájlméret túl nagy. Maximum 5 MB." },
+      { status: 400 },
+    );
+  }
+
   const key = `logos/${business.id}/${crypto.randomUUID()}.${ext}`;
 
   try {
-    const presigned = await presignR2Put(key, { expiresSeconds: 300, contentType: contentType! });
+    const presigned = await presignR2Put(key, {
+      expiresSeconds: 300,
+      contentType: contentType!,
+      contentLength,
+    });
     return NextResponse.json(presigned, {
       headers: { "cache-control": "no-store" },
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Ismeretlen hiba.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    safeLogError("owner/media-upload", err);
+    return NextResponse.json({ error: "Belső hiba." }, { status: 500 });
   }
 }
