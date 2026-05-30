@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { AdminChecklist } from "@/lib/admin-checklists";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { parseWithTerms } from "@/lib/highlight-terms";
 
 const STORAGE_KEY = "kinti.checklists";
 
@@ -190,7 +191,7 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
                 <div className="mt-2 pl-9">
                   {step.body && (
                     <p className="text-[12.5px] leading-relaxed text-ink-muted whitespace-pre-wrap">
-                      {step.body}
+                      {parseWithTerms(step.body, `s${idx}`)}
                     </p>
                   )}
                   {step.link && (

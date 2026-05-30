@@ -12,6 +12,7 @@ import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { BusinessGallery } from "@/components/views/business-gallery";
 import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
+import { AIReviewSummary } from "@/components/ai-review-summary";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -370,6 +371,13 @@ export default async function BusinessPage({ params }: { params: { id: string } 
               ? `Kintiek véleménye (${reviews.length})`
               : "Kintiek véleménye"}
           </SectionHeader>
+
+          {/* AI-generált 3-4 mondatos összegzés (3+ vélemény esetén) */}
+          {reviews.length >= 3 && (
+            <div className="mt-2.5">
+              <AIReviewSummary businessId={b.id} />
+            </div>
+          )}
 
           {/* Vélemény-írás CTA + form (account nélküli, email-megerősítéses) */}
           <div className="mt-2.5">

@@ -51,6 +51,12 @@ export interface Business {
   viewCount?: number;
   /** Telefonszám-kattintások összes idejű száma (analitika). */
   phoneClickCount?: number;
+  /** AI-generált 3-4 mondatos magyar összegzés a véleményekből. */
+  aiReviewSummary?: string | null;
+  /** Utolsó generálás időpontja (ISO). */
+  aiReviewSummaryAt?: string | null;
+  /** Hány vélemény volt akkor, amikor készült (invalidáláshoz). */
+  aiReviewSummaryCount?: number;
 }
 
 export interface KintiEvent {

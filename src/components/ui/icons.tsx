@@ -11,7 +11,8 @@ export type IconName =
   | "more" | "close" | "check" | "plus" | "filter" | "clock" | "calendar"
   | "share" | "bookmark" | "chevR" | "chevD" | "chevU" | "sliders" | "bell"
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
-  | "facebook" | "instagram" | "linkedin" | "shoppingBag";
+  | "facebook" | "instagram" | "linkedin" | "shoppingBag"
+  | "sparkles" | "magic" | "trash";
 
 const PATHS: Record<IconName, string[]> = {
   search: ["M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14", "M16.5 16.5L21 21"],
@@ -63,6 +64,9 @@ const PATHS: Record<IconName, string[]> = {
   instagram: ["M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z", "M17.5 6.5h.01", "M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12z"],
   linkedin: ["M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z", "M2 9h4v12H2z", "M4 6a2 2 0 1 0 0-4a2 2 0 0 0 0 4z"],
   shoppingBag: ["M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z", "M3 6h18", "M16 10a4 4 0 0 1-8 0"],
+  sparkles: ["M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z", "M19 16l.9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9z"],
+  magic: ["M3 21l9-9", "M14 7l3 3", "M15 4l1 2l2 1l-2 1l-1 2l-1-2l-2-1l2-1z", "M20 11l.6 1.4l1.4.6l-1.4.6L20 15l-.6-1.4L18 13l1.4-.6z"],
+  trash: ["M3 6h18", "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", "M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6", "M10 11v6", "M14 11v6"],
 };
 
 // A '…' (more) három pöttye vastagabb vonallal néz jól ki.
