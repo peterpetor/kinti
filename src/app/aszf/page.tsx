@@ -7,7 +7,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-05-29">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-05-30">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -217,6 +217,16 @@ export default function AszfPage() {
       <p>
         A <strong>Közösségi SOS-radar</strong> nem helyettesíti a hivatalos
         segélyhívást (Svájcban 112). Vészhelyzet esetén MINDIG hívd a 112-t.
+      </p>
+
+      <h3>14.1 Kinti Radar (Push Értesítések)</h3>
+      <p>
+        A "Kinti Radar" funkció segítségével a felhasználók (böngészőjük beállításaitól függően) Push értesítéseket 
+        kérhetnek bizonyos eseményekről (pl. új albérlet, árfolyamváltozás). Az üzemeltető <strong>kifejezetten kizárja a felelősségét</strong> 
+        az értesítések késedelmes kézbesítéséből, technikai hiba miatti elmaradásából, vagy az azokban szereplő (harmadik féltől származó) 
+        adatok pontatlanságából eredő <strong>bármilyen anyagi vagy nem vagyoni kárért, elmaradt haszonért</strong>. Az árfolyam riasztások, illetve 
+        hirdetés-értesítők kizárólag kényelmi és tájékoztató célt szolgálnak, ezek alapján hivatalos vagy pénzügyi döntést hozni a felhasználó 
+        kizárólagos kockázata.
       </p>
 
       <h2>15. Külső Linkekért Való Felelősség</h2>
