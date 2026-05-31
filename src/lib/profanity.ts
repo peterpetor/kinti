@@ -143,6 +143,47 @@ function tokenize(normalized: string): string[] {
   return normalized.split(/[^a-z]+/).filter(Boolean);
 }
 
+/**
+ * "Scattered" detektálás: ha valaki szóközökkel vagy írásjelekkel szétdarabol
+ * egy szót (pl. `f a s z`, `c.i.g.a.n.y`, `b a z d  m e g`), a meglévő
+ * tokenize 1-karakteres tokenekre vágja, amelyek külön-külön nem matchelnek
+ * a szótövekre. Ez a függvény végigfut a tokeneken, és ahol min. 3 EGYMÁS
+ * UTÁNI rövid (max 2 karakteres) token van, összefűzi őket, és substring-
+ * matcheli a tiltott szótövekre.
+ *
+ * Ez azért biztonságos hamis pozitív szempontból, mert a min-3-rövid-token
+ * kritérium nem teljesül normál mondatban (pl. "én is itt" — csak 3 rövid
+ * token, és a join "enisitt" nem tartalmaz tiltott szótövet).
+ */
+function detectScatteredProfanity(tokens: string[]): ProfanityResult {
+  const MAX_SHORT_LEN = 2;
+  const MIN_RUN = 3;
+
+  let i = 0;
+  while (i < tokens.length) {
+    if (tokens[i].length <= MAX_SHORT_LEN) {
+      // Konszekutív rövid-token sorozat keresése
+      let j = i;
+      while (j < tokens.length && tokens[j].length <= MAX_SHORT_LEN) j++;
+      if (j - i >= MIN_RUN) {
+        const joined = tokens.slice(i, j).join("");
+        // Whitelist: ha véletlenül egy ártatlan szó esik egybe
+        if (!WHITELIST_TOKENS.has(joined)) {
+          for (const stem of BLOCKED_STEMS) {
+            if (joined.includes(stem)) {
+              return { hit: true, matched: joined };
+            }
+          }
+        }
+      }
+      i = j;
+    } else {
+      i++;
+    }
+  }
+  return { hit: false };
+}
+
 export interface ProfanityResult {
   hit: boolean;
   /** A bemenetben talált eredeti szó (debug / hibaüzenethez). */
@@ -174,6 +215,11 @@ export function containsProfanity(text: string | null | undefined): ProfanityRes
       }
     }
   }
+
+  // 3) "Scattered" trükközés (f a s z, c.i.g.a.n.y, b a z d m e g)
+  const scattered = detectScatteredProfanity(tokens);
+  if (scattered.hit) return scattered;
+
   return { hit: false };
 }
 
