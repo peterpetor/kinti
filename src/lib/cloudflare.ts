@@ -15,7 +15,7 @@ export function getCloudflareEnv(): CloudflareEnv {
   return getRequestContext().env;
 }
 
-/** D1 relációs adatbázis (categories, businesses, events, bulletin_posts, …). */
+/** D1 relációs adatbázis (categories, businesses, events, reviews, …). */
 export function getDB(): D1Database {
   return getCloudflareEnv().DB;
 }

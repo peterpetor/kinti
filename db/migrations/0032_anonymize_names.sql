@@ -12,4 +12,3 @@
 
 UPDATE rides SET poster_name = '' WHERE poster_name IS NOT NULL;
 UPDATE reviews SET reviewer_name = '' WHERE reviewer_name IS NOT NULL;
-UPDATE bulletin_posts SET poster = '' WHERE poster IS NOT NULL;

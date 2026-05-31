@@ -99,7 +99,6 @@ export default function AszfPage() {
         után válnak nyilvánosan elérhetővé</strong> (tipikusan 24 órán belül):
       </p>
       <ul>
-        <li>hirdetések a Hirdetőfalon;</li>
         <li>vélemények a Szaknévsor profilokról;</li>
         <li>vállalkozói profilok a Szaknévsorban;</li>
         <li>közösségi események.</li>
@@ -181,21 +180,21 @@ export default function AszfPage() {
 
       <h3>5.3 Bűncselekmények gyanújának bejelentése (DSA Art. 18)</h3>
       <p>
-        Az Európai Unió Digitális Szolgáltatások Rendelete (DSA) 18. cikke értelmében, amennyiben 
-        az üzemeltető olyan információ birtokába jut, amely alapján alapos gyanú merül fel egy 
-        személy vagy személyek életét, illetve biztonságát fenyegető bűncselekmény (pl. terrorizmus, 
-        gyermekbántalmazás, élet elleni fenyegetés) elkövetésére, azt <strong>haladéktalanul bejelenti a 
-        svájci vagy magyar bűnüldöző hatóságoknak</strong> (Fedpol / ORFK), és átadja számukra a rendelkezésre 
+        Az Európai Unió Digitális Szolgáltatások Rendelete (DSA) 18. cikke értelmében, amennyiben
+        az üzemeltető olyan információ birtokába jut, amely alapján alapos gyanú merül fel egy
+        személy vagy személyek életét, illetve biztonságát fenyegető bűncselekmény (pl. terrorizmus,
+        gyermekbántalmazás, élet elleni fenyegetés) elkövetésére, azt <strong>haladéktalanul bejelenti a
+        svájci vagy magyar bűnüldöző hatóságoknak</strong> (Fedpol / ORFK), és átadja számukra a rendelkezésre
         álló összes digitális bizonyítékot (IP-címek, hash-ek, tartalmak).
       </p>
 
-      <h2>6. Hirdetés lejárta és törlése</h2>
+      <h2>6. Tartalom lejárta és törlése</h2>
       <ul>
-        <li>A megerősített hirdetések <strong>30 napig</strong> láthatók, utána automatikusan
-          eltűnnek (törlődnek);</li>
-        <li>A feladó <strong>bármikor törölheti</strong> a hirdetését a beküldés után
+        <li>A felhasználók által beküldött tartalmak (pl. események) a jellegüktől függő
+          ideig láthatók, utána automatikusan eltűnnek (törlődnek);</li>
+        <li>A feladó <strong>bármikor törölheti</strong> a saját tartalmát a beküldés után
           megjelenő (és a böngésző helyi tárolójában elmentett) <em>kezelő linkről</em>;</li>
-        <li>Az üzemeltető fenntartja a jogot a jogszabálysértő vagy a 3. pontba ütköző hirdetések
+        <li>Az üzemeltető fenntartja a jogot a jogszabálysértő vagy a 3. pontba ütköző tartalmak
           értesítés nélküli eltávolítására.</li>
       </ul>
 
@@ -222,12 +221,13 @@ export default function AszfPage() {
         véleményeket bejelentés alapján vagy saját hatáskörben, indoklás nélkül eltávolítsuk.
       </p>
 
-      <h2>8. Börze (Apróhirdetések) és Adás-vétel</h2>
+      <h2>8. Felhasználók közötti tranzakciók</h2>
       <p>
-        A platformon (Börze modul) közzétett hirdetések esetén az adásvétel kizárólag a hirdető és a vevő között 
-        jön létre. Az üzemeltető <strong>nem vesz részt a tranzakcióban</strong>, nem kezel fizetéseket, nem nyújt 
-        vásárlói garanciát, és nem vállal felelősséget a meghirdetett termékek minőségéért, eredetiségéért, 
-        biztonságáért vagy a hirdetés valóságtartalmáért. Bármilyen anyagi kár vagy csalás esetén az üzemeltető 
+        A platformon keresztül létrejövő bármely adásvétel, megbízás vagy egyéb megállapodás kizárólag az
+        érintett felhasználók (illetve felhasználó és vállalkozó) között jön létre. Az üzemeltető
+        <strong>nem vesz részt a tranzakcióban</strong>, nem kezel fizetéseket, nem nyújt vásárlói garanciát,
+        és nem vállal felelősséget a termékek vagy szolgáltatások minőségéért, eredetiségéért, biztonságáért
+        vagy a megosztott információk valóságtartalmáért. Bármilyen anyagi kár vagy csalás esetén az üzemeltető
         felelősségre nem vonható.
       </p>
 
@@ -490,10 +490,10 @@ export default function AszfPage() {
       <h3>14.3 Kinti Radar (Push Értesítések)</h3>
       <p>
         A "Kinti Radar" funkció segítségével a felhasználók (böngészőjük beállításaitól függően) Push értesítéseket 
-        kérhetnek bizonyos eseményekről (pl. új albérlet, árfolyamváltozás). Az üzemeltető <strong>kifejezetten kizárja a felelősségét</strong> 
-        az értesítések késedelmes kézbesítéséből, technikai hiba miatti elmaradásából, vagy az azokban szereplő (harmadik féltől származó) 
-        adatok pontatlanságából eredő <strong>bármilyen anyagi vagy nem vagyoni kárért, elmaradt haszonért</strong>. Az árfolyam riasztások, illetve 
-        hirdetés-értesítők kizárólag kényelmi és tájékoztató célt szolgálnak, ezek alapján hivatalos vagy pénzügyi döntést hozni a felhasználó 
+        kérhetnek bizonyos eseményekről (pl. árfolyamváltozás). Az üzemeltető <strong>kifejezetten kizárja a felelősségét</strong>
+        az értesítések késedelmes kézbesítéséből, technikai hiba miatti elmaradásából, vagy az azokban szereplő (harmadik féltől származó)
+        adatok pontatlanságából eredő <strong>bármilyen anyagi vagy nem vagyoni kárért, elmaradt haszonért</strong>. Az árfolyam riasztások
+        kizárólag kényelmi és tájékoztató célt szolgálnak, ezek alapján hivatalos vagy pénzügyi döntést hozni a felhasználó
         kizárólagos kockázata.
       </p>
 

@@ -2,7 +2,7 @@
 -- 0004_reviews  —  Account nélküli vélemény-rendszer (email-megerősítéses).
 --
 -- Cél: a kintiek (regisztráció nélkül) értékelhessék a szakembereket, de a
--- spam / fake-review veszélyt minimalizáljuk. A flow azonos a bulletin-éval:
+-- spam / fake-review veszélyt minimalizáljuk. A flow account-mentes:
 --   1) submit → Turnstile + honeypot + form-validáció
 --   2) review_drafts INSERT + email kiküldése
 --   3) confirm link kattintás → review_drafts → reviews átmozgatás
@@ -26,7 +26,7 @@ CREATE TABLE review_drafts (
   expires_at TEXT NOT NULL,                                       -- 24h
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
 
-  -- Audit-trail (mint a bulletin_drafts)
+  -- Audit-trail
   terms_version TEXT,
   accepted_terms_at TEXT,
   age_confirmed INTEGER NOT NULL DEFAULT 0,

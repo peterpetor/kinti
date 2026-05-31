@@ -8,8 +8,7 @@
 --   "VidámPék42"    → "VidámPék42"  (változatlan, mert nincs space)
 --   "  Anna  "      → "Anna"        (trim)
 --
--- A 3 érintett mező: rides.poster_name, reviews.reviewer_name,
---                    bulletin_posts.poster
+-- Az érintett mezők: rides.poster_name, reviews.reviewer_name.
 -- ===========================================================================
 
 UPDATE rides SET poster_name =
@@ -27,11 +26,3 @@ UPDATE reviews SET reviewer_name =
     ELSE TRIM(reviewer_name)
   END
   WHERE reviewer_name IS NOT NULL AND TRIM(reviewer_name) != '';
-
-UPDATE bulletin_posts SET poster =
-  CASE
-    WHEN INSTR(TRIM(poster), ' ') > 0
-    THEN TRIM(SUBSTR(TRIM(poster), 1, INSTR(TRIM(poster), ' ') - 1))
-    ELSE TRIM(poster)
-  END
-  WHERE poster IS NOT NULL AND TRIM(poster) != '';

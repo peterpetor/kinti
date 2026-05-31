@@ -5,7 +5,7 @@ import {
   setBusinessAiReviewSummary,
 } from "@/lib/repo";
 import { runAiChat, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";

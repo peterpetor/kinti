@@ -8,6 +8,7 @@ import { SPONTANEOUS_LIMITS, type SpontaneousValidationError } from "@/lib/spont
 import { CANTONS } from "@/lib/cantons";
 import { PostSavePrompt } from "@/components/post-save-prompt";
 import { loadFormPrefs, saveFormPrefs } from "@/lib/form-prefs";
+import { readPreferredCanton } from "@/lib/canton-pref";
 
 /**
  * SpontaneousForm — 24-48h spontán mikro-esemény feladás.
@@ -73,7 +74,7 @@ export function SpontaneousForm({ turnstileSiteKey = "", onClose }: { turnstileS
     const prefs = loadFormPrefs();
     setForm((f) => ({
       ...f,
-      cantonCode: f.cantonCode || prefs.cantonCode || "",
+      cantonCode: f.cantonCode || prefs.cantonCode || readPreferredCanton() || "",
       poster: f.poster || prefs.posterName || "",
       contactPhone: f.contactPhone || prefs.phone || "",
       contactWhatsapp: f.contactWhatsapp || prefs.whatsapp || "",

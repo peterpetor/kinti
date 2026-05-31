@@ -62,6 +62,10 @@ export interface Business {
   moderationStatus?: number;
   moderationDecisionAt?: string | null;
   moderationDecidedBy?: string | null;
+  /** Utolsó szerkesztés ISO időbélyege (frissesség-jelzőhöz). */
+  updatedAt?: string | null;
+  /** Létrehozás ISO időbélyege. */
+  createdAt?: string | null;
 }
 
 export interface KintiEvent {
@@ -87,80 +91,6 @@ export interface KintiEvent {
   moderationDecidedBy?: string | null;
 }
 
-export interface BulletinKind {
-  id: string;
-  label: string;
-  color: string | null;
-  sortOrder: number;
-}
-
-export interface BulletinPost {
-  id: string;
-  kindId: string;
-  title: string;
-  meta: string | null;
-  ageText: string | null;
-  poster: string | null;
-  posterUserId: string | null;
-  imageKey: string | null;
-  /** Hosszabb leírás (a 0002 óta). */
-  body: string | null;
-  /** Lejárati idő (ISO datetime); a publikus listán ami lejárt, nem jelenik meg. */
-  expiresAt: string | null;
-  /** Mikor publikálták (ISO datetime). */
-  publishedAt: string | null;
-  /** Svájci kanton kódja (pl. ZH, BE) */
-  cantonCode: string | null;
-  /** Strukturált ár (egész CHF) — rendezéshez. NULL, ha nincs ára. */
-  price: number | null;
-  /** A feladó email-je — a kezelő oldalon mutatható. */
-  email: string | null;
-  /** Telefonszám (opcionális) — a publikus kártyán tap-to-call gomb. */
-  phone: string | null;
-  /** WhatsApp szám (opcionális) — ha NULL, a phone-ra megy a WA-link. */
-  whatsapp: string | null;
-  /** Manage-token — a kezelő oldal URL-jéhez. */
-  manageToken: string | null;
-  /** Elküldték-e már a lejárati figyelmeztető emailt. */
-  expiryWarningSent: boolean;
-  /** Okos kategória-szűrők JSON formátumban (pl. autó évjárat, bútor méret) */
-  smartFilters: string | null;
-  /** Csatolt taxonómia (JOIN bulletin_kinds). */
-  kind?: BulletinKind;
-}
-
-/** Megerősítésre váró hirdetés (bulletin_drafts) — a megerősítőnek küldve. */
-export interface BulletinDraft {
-  id: string;
-  email: string;
-  phone: string | null;
-  whatsapp: string | null;
-  kindId: string;
-  title: string;
-  meta: string | null;
-  body: string | null;
-  poster: string | null;
-  confirmToken: string;
-  manageToken: string;
-  expiresAt: string;
-  createdAt: string;
-  /** Audit-trail: melyik jogi-szöveg-verziót fogadta el a feladó. */
-  termsVersion: string | null;
-  /** Audit-trail: az elfogadás időbélyege. */
-  acceptedTermsAt: string | null;
-  /** Audit-trail: 18+ nyilatkozat. */
-  ageConfirmed: boolean;
-  /** Audit-trail: SHA-256(IP) — nyers IP-t nem tárolunk. */
-  ipHash: string | null;
-  /** Az R2 kép(ek) kulcsa(i) — JSON string tömb vagy egyedi kulcs */
-  imageKey: string | null;
-  /** Svájci kanton kódja (pl. ZH, BE) */
-  cantonCode: string | null;
-  /** Strukturált ár (egész CHF) — rendezéshez. NULL, ha nincs ára. */
-  price: number | null;
-  /** Okos kategória-szűrők JSON formátumban */
-  smartFilters: string | null;
-}
 
 /** Publikus vélemény egy vállalkozásról (account nélküli, email-megerősítéses). */
 export interface Review {

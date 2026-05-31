@@ -61,9 +61,9 @@ egy kérés a `static.cloudflareinsights.com/beacon.min.js` felé.
 
 ## 3) Cron-worker (kinti-cron-purge) — D1 takarítás napi 1×
 
-**Miért kell**: a `bulletin_drafts` tábla a 24h-n túl meg nem erősített
-piszkozatokat és a `bulletin_posts` 30 nap után lejárt rekordjait nem
-takarítja magától. GDPR adatminimalizálási elv ezt kötelezővé teszi.
+**Miért kell**: a `review_drafts` / `business_submissions` táblák a 24h-n túl
+meg nem erősített piszkozatokat, illetve az `events` tábla a 30 napnál régebbi
+rekordokat nem takarítja magától. GDPR adatminimalizálási elv ezt kötelezővé teszi.
 
 **Lépések**:
 
@@ -168,6 +168,6 @@ külön.
 - [ ] `workers/cron-purge` deployolva (`npx wrangler deploy`)
 - [ ] Email Routing aktív, `info@` / `abuse@` postaládát fogadtad
 - [ ] Web Analytics token az env-ben, újrabuildelve
-- [ ] Spam-teszt: küldj el egy hirdetést a `/kozosseg` oldalról valódi
+- [ ] Spam-teszt: küldj be egy eseményt a `/kozosseg` oldalról valódi
       emailedről — érkezik a megerősítő, kattintásra megjelenik a listán,
       a kezelő-linkkel törölhető

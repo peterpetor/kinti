@@ -17,8 +17,7 @@ interface FaqItem {
 
 const QUICK_LINKS: { href: string; label: string; emoji: string }[] = [
   { href: "/szaknevsor", label: "Szakembereket keresek", emoji: "🔍" },
-  { href: "/kozosseg", label: "Eseményt / hirdetést nézek", emoji: "📢" },
-  { href: "/piac", label: "Piac / Hirdetések", emoji: "🛒" },
+  { href: "/kozosseg", label: "Eseményt nézek", emoji: "📢" },
   { href: "/sajatjaim", label: "Saját posztjaim", emoji: "📌" },
 ];
 
@@ -28,8 +27,8 @@ const FAQS: FaqItem[] = [
     a: (
       <>
         <strong>Nem.</strong> A kinti egyik fő ígérete, hogy nincs fiók és nincs
-        email-kérés. Csak nyisd meg, és használd. Amikor feladsz valamit (hirdetést,
-        eseményt), a böngésződ automatikusan megjegyzi a posztodat —
+        email-kérés. Csak nyisd meg, és használd. Amikor feladsz egy eseményt,
+        a böngésződ automatikusan megjegyzi a posztodat —
         és bármikor megnyithatod a <Link href="/sajatjaim" className="text-primary underline font-bold">Saját posztjaim</Link> oldalon.
       </>
     ),
@@ -78,17 +77,6 @@ const FAQS: FaqItem[] = [
             oldalon. Másik eszközön egyszerűen importálod.
           </li>
         </ul>
-      </>
-    ),
-  },
-  {
-    q: "Hogyan tudok kapcsolatba lépni egy hirdetés feladójával?",
-    a: (
-      <>
-        A hirdetésen megjelenik a feladó által megadott{" "}
-        <strong>telefonszám / WhatsApp</strong> (ha megadott egyet). A kinti{" "}
-        <strong>nem közvetít üzeneteket</strong> — nincs belső chat. Így biztosított,
-        hogy mi nem látjuk a beszélgetéseket, ti pedig közvetlenül egyeztettek.
       </>
     ),
   },

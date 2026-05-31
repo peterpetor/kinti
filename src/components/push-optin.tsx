@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
+import { readPreferredCanton } from "@/lib/canton-pref";
 
 /**
  * PushOptin — „Kérek értesítést új eseményről" feliratkozó kártya.
@@ -87,15 +88,6 @@ export function PushOptin() {
     };
   }, []);
 
-  function readCanton(): string | null {
-    try {
-      const v = localStorage.getItem("kinti.canton");
-      return v && v !== "all" ? v : null;
-    } catch {
-      return null;
-    }
-  }
-
   async function subscribe() {
     setState("busy");
     try {
@@ -112,7 +104,7 @@ export function PushOptin() {
       const res = await fetch("/api/push/subscribe", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ subscription: sub.toJSON(), cantonCode: readCanton() }),
+        body: JSON.stringify({ subscription: sub.toJSON(), cantonCode: readPreferredCanton() }),
       });
       setState(res.ok ? "subscribed" : "idle");
     } catch {

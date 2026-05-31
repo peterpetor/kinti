@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
 import { CANTONS, isSwissAddress } from "@/lib/cantons";
+import { readPreferredCanton } from "@/lib/canton-pref";
 import { BUSINESS_LIMITS, type BusinessValidationError } from "@/lib/business";
 import type { Category } from "@/lib/types";
 import { PostSavePrompt } from "@/components/post-save-prompt";
@@ -85,6 +86,12 @@ interface AiSuggestion {
 
 export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps) {
   const [form, setForm] = useState<FormState>(INITIAL);
+
+  // Kanton-személyre szabás: a felhasználó preferált kantonját ajánljuk fel.
+  useEffect(() => {
+    const pref = readPreferredCanton();
+    if (pref) setForm((f) => (f.cantonCode ? f : { ...f, cantonCode: pref }));
+  }, []);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [aiBusy, setAiBusy] = useState(false);
   const [aiResult, setAiResult] = useState<AiSuggestion | null>(null);

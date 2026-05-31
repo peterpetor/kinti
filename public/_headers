@@ -14,8 +14,6 @@
 # --- Manage-page-ek: szigorúbb referrer-policy hogy a token ne szivárogjon
 /szaknevsor/kezeles/*
   Referrer-Policy: no-referrer
-/hirdetes-kezeles/*
-  Referrer-Policy: no-referrer
 /esemeny-kezeles/*
   Referrer-Policy: no-referrer
 /spontan-kezeles/*

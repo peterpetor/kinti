@@ -7,15 +7,14 @@ import { cn } from "@/lib/cn";
 
 interface SearchResults {
   businesses: Array<{ id: string; name: string; categoryLabel: string | null }>;
-  bulletins: Array<{ id: string; title: string; kindLabel: string | null; cantonCode: string | null }>;
   events: Array<{ id: string; title: string; eventDate: string | null; venue: string | null }>;
 }
 
-const EMPTY: SearchResults = { businesses: [], bulletins: [], events: [] };
+const EMPTY: SearchResults = { businesses: [], events: [] };
 
 /**
- * GlobalSearch — fixed modal egy nagy kereső-mezővel, ami a 3 entitásban keres
- * (vállalkozás, hirdetés, esemény). Kliens komponens, /api/search-ot hív.
+ * GlobalSearch — fixed modal egy nagy kereső-mezővel, ami 2 entitásban keres
+ * (vállalkozás, esemény). Kliens komponens, /api/search-ot hív.
  */
 export function GlobalSearch() {
   const [open, setOpen] = useState(false);
@@ -75,7 +74,7 @@ export function GlobalSearch() {
   }, [open]);
 
   const total =
-    results.businesses.length + results.bulletins.length + results.events.length;
+    results.businesses.length + results.events.length;
 
   return (
     <>
@@ -127,8 +126,7 @@ export function GlobalSearch() {
               {q.trim().length < 2 ? (
                 <div className="px-3 py-8 text-center text-[12.5px] text-ink-muted">
                   Írj legalább 2 karaktert.<br />
-                  Keresel <strong className="text-ink">vállalkozást</strong>,{" "}
-                  <strong className="text-ink">hirdetést</strong> vagy{" "}
+                  Keresel <strong className="text-ink">vállalkozást</strong> vagy{" "}
                   <strong className="text-ink">eseményt</strong>?
                 </div>
               ) : total === 0 ? (
@@ -145,19 +143,6 @@ export function GlobalSearch() {
                       href: `/szaknevsor/${b.id}`,
                       title: b.name,
                       subtitle: b.categoryLabel,
-                    }))}
-                    onNavigate={() => setOpen(false)}
-                  />
-                  <ResultSection
-                    label="Hirdetések"
-                    emoji="📢"
-                    items={results.bulletins.map((b) => ({
-                      key: b.id,
-                      href: `/kozosseg/hirdetes/${b.id}`,
-                      title: b.title,
-                      subtitle: [b.kindLabel, b.cantonCode ? `🇨🇭 ${b.cantonCode}` : null]
-                        .filter(Boolean)
-                        .join(" · "),
                     }))}
                     onNavigate={() => setOpen(false)}
                   />

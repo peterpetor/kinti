@@ -5,7 +5,7 @@ import {
   getSalaryStats, getSalaryStatsByExp, getRentStats,
   getUserSubmissionStatus, getUserSubmissions,
 } from "@/lib/benchmark";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "edge";

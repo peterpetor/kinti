@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { triggerAlberletRadars, triggerExchangeRateRadars } from "@/lib/radars";
+import { triggerExchangeRateRadars } from "@/lib/radars";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 
 export const runtime = "edge";
@@ -7,8 +7,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * Belső/teszt végpont a Radarok (Push) triggerezéséhez.
- * Éles környezetben ezt egy Cron-Job hívná meg óránként (az árfolyam ellenőrzésére),
- * illetve az albérlet hirdetés feladásakor a /submit route.
+ * Éles környezetben ezt egy Cron-Job hívná meg óránként (az árfolyam ellenőrzésére).
  */
 export async function GET(req: Request) {
   const env = getCloudflareEnv();
@@ -25,14 +24,7 @@ export async function GET(req: Request) {
 
   const url = new URL(req.url);
   const type = url.searchParams.get("type");
-  
-  if (type === "alberlet") {
-    // Szimulálunk egy albérlet feltöltést a megadott kantonban (default: ZH)
-    const canton = url.searchParams.get("canton") || "ZH";
-    await triggerAlberletRadars(canton);
-    return NextResponse.json({ ok: true, triggered: "alberlet", canton });
-  }
-  
+
   if (type === "exchange_rate") {
     // Lekérdezzük a valós árfolyamot (cache nélkül!)
     let huf: number;
@@ -55,5 +47,5 @@ export async function GET(req: Request) {
     }
   }
   
-  return NextResponse.json({ error: "Használat: ?type=alberlet vagy ?type=exchange_rate" }, { status: 400 });
+  return NextResponse.json({ error: "Használat: ?type=exchange_rate" }, { status: 400 });
 }

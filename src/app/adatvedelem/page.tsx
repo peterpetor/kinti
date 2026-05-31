@@ -41,7 +41,7 @@ export default function AdatvedelemPage() {
       <p>
         <strong>A vállalkozói flow regisztráció-mentes</strong> — a Clerk Inc. (USA) szolgáltatást
         kizárólag az oldal adminisztrátorának belépéséhez használjuk (egyetlen admin email).
-        A látogatók / vállalkozók / hirdetésfeladók sehol nem találkoznak Clerk regisztrációval.
+        A látogatók / vállalkozók / tartalom-beküldők sehol nem találkoznak Clerk regisztrációval.
       </p>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — szerződés teljesítése</li>
@@ -59,26 +59,27 @@ export default function AdatvedelemPage() {
         <li><strong>Tárolási idő:</strong> a vállalkozás törléséig</li>
       </ul>
 
-      <h3>2.3 Hirdetésfeladás (account nélkül)</h3>
+      <h3>2.3 Tartalom-beküldés (account nélkül)</h3>
       <p>
-        Hirdetés feladásához nincs szükség regisztrációra. A hirdetésfeladáskor megadott adatok:
+        A közösségi tartalmak (esemény, vélemény, vállalkozás-beküldés stb.) feladásához nincs
+        szükség regisztrációra. A beküldéskor megadott adatok:
       </p>
       <ul>
         <li>Email-cím (kizárólag tranzakciós megerősítő linkek küldésére — sehol nem jelenik meg nyilvánosan)</li>
-        <li>Hirdetés szövege és kategóriája</li>
+        <li>A beküldött tartalom szövege és kategóriája</li>
         <li>Opcionális megjelenő név</li>
         <li><strong>Technikai és kapcsolattartási folyamatok</strong>:
           <ul>
-            <li><strong>Kapcsolatfelvétel</strong>: A feladó a telefonszámát vagy egyéb publikus elérhetőségét adhatja meg a hirdetésében. A kinti.app belső üzenetküldőt nem üzemeltet, és nem közvetít üzeneteket a felek között.</li>
-            <li><strong>Képek feltöltése</strong>: A feltöltött képek a Cloudflare R2 felhőtárolóba kerülnek, amiket a hirdetés lejártával fizikailag törlünk.</li>
+            <li><strong>Kapcsolatfelvétel</strong>: A feladó a telefonszámát vagy egyéb publikus elérhetőségét adhatja meg. A kinti.app belső üzenetküldőt nem üzemeltet, és nem közvetít üzeneteket a felek között.</li>
+            <li><strong>Képek feltöltése</strong>: A feltöltött képek a Cloudflare R2 felhőtárolóba kerülnek, amiket a tartalom lejártával / törlésével fizikailag törlünk.</li>
             <li><strong>Esemény jelentkezés (RSVP)</strong>: A spam-védelem érdekében a jelentkezések során az IP-címeket egyirányú, visszafejthetetlen (SHA-256) hash formátumban tároljuk.</li>
-            <li><strong>Biztonságos tartalomkezelés</strong>: A hirdetések utólagos szerkesztéséhez szükséges azonosító kulcsok (tokenek) kizárólag a felhasználó böngészőjében (<code>localStorage</code>) tárolódnak.</li>
+            <li><strong>Biztonságos tartalomkezelés</strong>: A tartalom utólagos szerkesztéséhez szükséges azonosító kulcsok (tokenek) kizárólag a felhasználó böngészőjében (<code>localStorage</code>) tárolódnak.</li>
           </ul>
         </li>
       </ul>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás</li>
-        <li><strong>Tárolási idő:</strong> a hirdetés lejártáig (30 nap), vagy a feladó által
+        <li><strong>Tárolási idő:</strong> a tartalom lejártáig vagy a feladó által
           kezdeményezett törlésig (a kezelő-link a böngésző localStorage-jában él).</li>
       </ul>
 
@@ -95,7 +96,6 @@ export default function AdatvedelemPage() {
           automatikus napi szkript (Cloudflare cron) <strong>fizikailag és véglegesen törli</strong>:
         </p>
         <ul style={{ margin: "8px 0 0" }}>
-          <li>a <strong>lejárt hirdetéseket</strong> (30 nap) a hozzájuk tartozó képekkel (R2) együtt;</li>
           <li>a <strong>30 napnál régebben lezajlott eseményeket</strong> a képeikkel és a leadott
             RSVP-kkel együtt;</li>
           <li>a meg nem erősített piszkozatokat és beküldéseket (24 órán túl).</li>
@@ -118,7 +118,7 @@ export default function AdatvedelemPage() {
 
       <h3>2.5 Cloudflare Turnstile (CAPTCHA)</h3>
       <p>
-        A hirdetésfeladó űrlapon a Cloudflare Turnstile szolgáltatás védi a rendszert a
+        A beküldő űrlapokon a Cloudflare Turnstile szolgáltatás védi a rendszert a
         spam-bot támadásoktól. A Turnstile <strong>nem használ cookie-t</strong> és <strong>nem
         gyűjt személyazonosításra alkalmas adatot</strong>, csak az IP-cím alapján értékeli
         a kérés jellegét (bot vagy ember).
@@ -248,7 +248,7 @@ export default function AdatvedelemPage() {
 
       <h3>2.12 Kinti Radar (Push Értesítések)</h3>
       <p>
-        A böngésződben engedélyezheted a Push értesítéseket, és feliratkozhatsz bizonyos témákra (pl. albérlet, árfolyam). 
+        A böngésződben engedélyezheted a Push értesítéseket, és feliratkozhatsz bizonyos témákra (pl. árfolyam-változás).
         Ezeket a preferenciákat (Radar paraméterek) és a böngésződ által generált, személytelen <code>push_endpoint</code> URL-t 
         tároljuk az adatbázisunkban, hogy ki tudjuk küldeni az értesítőt. 
         <strong>Adatbiztonság:</strong> Az értesítések tartalmát nem küldjük át a böngésződ szolgáltatójának (Apple, Google, Mozilla) 
@@ -369,16 +369,13 @@ export default function AdatvedelemPage() {
       </p>
       <ul>
         <li>
-          <strong>Hirdetések törlése</strong>: Minden feladott hirdetés megerősítő e-mailjében küldünk egy egyedi <em>hirdetés-kezelő linket</em>. Erre rákattintva egyetlen gombnyomással azonnal és véglegesen törölheted a hirdetésedet a kinti.app felületéről.
-        </li>
-        <li>
-          <strong>Vélemények törlése</strong>: Hasonlóan a hirdetésekhez, a véleményed elküldése után kapott megerősítő e-mail tartalmaz egy egyedi <em>vélemény-kezelő linket</em>, amellyel bármikor azonnal és véglegesen törölheted a leadott értékelésedet.
+          <strong>Vélemények törlése</strong>: A véleményed elküldése után kapott megerősítő e-mail tartalmaz egy egyedi <em>vélemény-kezelő linket</em>, amellyel bármikor azonnal és véglegesen törölheted a leadott értékelésedet.
         </li>
         <li>
           <strong>Vállalkozás törlése</strong>: A beküldés után kapott (és a böngésződben mentett) egyedi <em>vállalkozás-kezelő link</em> segítségével bármikor azonnal és véglegesen törölheted a szaknévsoros profilodat, anélkül, hogy ehhez jelszó vagy fiók kellene.
         </li>
         <li>
-          <strong>Kézi törlési kérelem (E-mailben)</strong>: Ha a fenti automatizált linkek már nem állnak rendelkezésedre, bármikor írhatsz nekünk az <a href="mailto:info@kinti.app">info@kinti.app</a> címre a regisztrált vagy hirdetéskor használt e-mail címedről, és kérésedre munkatársaink haladéktalanul (legfeljebb 5 munkanapon belül) véglegesen törlik a hirdetéseidet, véleményeidet vagy vállalkozói profilodat.
+          <strong>Kézi törlési kérelem (E-mailben)</strong>: Ha a fenti automatizált linkek már nem állnak rendelkezésedre, bármikor írhatsz nekünk az <a href="mailto:info@kinti.app">info@kinti.app</a> címre a beküldéskor használt e-mail címedről, és kérésedre munkatársaink haladéktalanul (legfeljebb 5 munkanapon belül) véglegesen törlik a véleményeidet vagy vállalkozói profilodat.
         </li>
       </ul>
 

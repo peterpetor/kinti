@@ -5,7 +5,7 @@ import {
   addToBlocklist,
   type ModerationTable,
 } from "@/lib/repo";
-import { hashEmail } from "@/lib/bulletin";
+import { hashEmail } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -28,7 +28,7 @@ const TABLE_LABELS: Record<ModerationTable, string> = {
  *
  * Body:
  *   {
- *     table: 'bulletin_posts'|'reviews'|'businesses'|'events',
+ *     table: 'reviews'|'businesses'|'events',
  *     id: string,
  *     decision: 'approved'|'rejected',
  *     banIpHash?: string,   // ha jelen van + decision='rejected' → tiltólistára

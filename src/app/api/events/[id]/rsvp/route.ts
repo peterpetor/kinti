@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { addEventRsvp } from "@/lib/repo";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";

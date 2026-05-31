@@ -6,12 +6,11 @@ export const dynamic = "force-dynamic";
 
 interface SearchResult {
   businesses: Array<{ id: string; name: string; categoryLabel: string | null }>;
-  bulletins: Array<{ id: string; title: string; kindLabel: string | null; cantonCode: string | null }>;
   events: Array<{ id: string; title: string; eventDate: string | null; venue: string | null }>;
 }
 
 /**
- * GET /api/search?q=...  — globális kereső 3 entitásban.
+ * GET /api/search?q=...  — globális kereső 2 entitásban.
  *
  * Minden táblán LIKE-kereséssel (case-insensitive a SQLite LIKE-jával).
  * Limit per kategória: 5. A keresés legalább 2 karaktert vár.
@@ -21,7 +20,7 @@ export async function GET(req: Request) {
   const q = (url.searchParams.get("q") ?? "").trim();
 
   if (q.length < 2) {
-    return NextResponse.json({ businesses: [], bulletins: [], events: [] } satisfies SearchResult, {
+    return NextResponse.json({ businesses: [], events: [] } satisfies SearchResult, {
       headers: { "cache-control": "no-store" },
     });
   }
@@ -29,7 +28,7 @@ export async function GET(req: Request) {
   const needle = `%${q.replace(/[%_]/g, "")}%`;
   const db = getDB();
 
-  const [biz, bull, ev] = await Promise.all([
+  const [biz, ev] = await Promise.all([
     db
       .prepare(
         `SELECT b.id, b.name, b.category_label
@@ -39,18 +38,6 @@ export async function GET(req: Request) {
       )
       .bind(needle, needle)
       .all<{ id: string; name: string; category_label: string | null }>(),
-    db
-      .prepare(
-        `SELECT p.id, p.title, p.canton_code, k.label AS kind_label
-         FROM bulletin_posts p
-         LEFT JOIN bulletin_kinds k ON k.id = p.kind_id
-         WHERE p.is_pending = 0 AND p.hidden = 0
-           AND (p.expires_at IS NULL OR p.expires_at > datetime('now'))
-           AND (LOWER(p.title) LIKE LOWER(?) OR LOWER(COALESCE(p.body, '')) LIKE LOWER(?))
-         ORDER BY p.published_at DESC LIMIT 5`,
-      )
-      .bind(needle, needle)
-      .all<{ id: string; title: string; canton_code: string | null; kind_label: string | null }>(),
     db
       .prepare(
         `SELECT id, title, event_date, venue
@@ -65,12 +52,6 @@ export async function GET(req: Request) {
 
   const result: SearchResult = {
     businesses: biz.results.map((r) => ({ id: r.id, name: r.name, categoryLabel: r.category_label })),
-    bulletins: bull.results.map((r) => ({
-      id: r.id,
-      title: r.title,
-      kindLabel: r.kind_label,
-      cantonCode: r.canton_code,
-    })),
     events: ev.results.map((r) => ({ id: r.id, title: r.title, eventDate: r.event_date, venue: r.venue })),
   };
 

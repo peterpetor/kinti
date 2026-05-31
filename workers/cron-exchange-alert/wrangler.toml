@@ -1,11 +1,10 @@
 #:schema node_modules/wrangler/config-schema.json
 # ---------------------------------------------------------------------------
-# kinti-cron-exchange-alert — CHF/HUF árfolyam riasztó cron-worker.
+# kinti-cron-exchange-alert — óránkénti push-cron (árfolyam + esemény-emlékeztető).
 #
-# Óránként lefutva lekéri az aktuális CHF/HUF árfolyamot a Frankfurter API-ról,
-# és a `exchange_rate_alerts` táblában tárolt aktív riasztásokat ellenőrzi.
-# Ha egy küszöb teljesül és a `last_fired_at` ≥ 6 órája volt (vagy null),
-# küld egy payload-os push-üzenetet a felhasználónak.
+# Óránként lefutva: (A) ellenőrzi a CHF/HUF árfolyam-küszöböket
+# (`exchange_rate_alerts`), és (B) kiküldi az esedékes esemény-RSVP
+# emlékeztetőket (`event_reminders`). Mindkettő payload-mentes push.
 #
 # Deploy:
 #   cd workers/cron-exchange-alert

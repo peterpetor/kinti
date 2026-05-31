@@ -69,32 +69,6 @@ CREATE TABLE events (
 
 CREATE INDEX idx_events_date ON events (event_date);
 
--- 4) Hirdetőtábla-taxonómia — SZÁNDÉKOSAN külön a vállalkozói kategóriáktól.
---    (Albérlet/Állás/Eladó/Szolg. nem keveredik a fodrász/orvos szűrőkkel.)
-CREATE TABLE bulletin_kinds (
-  id          TEXT PRIMARY KEY,            -- 'alberlet','allas','elado','szolg'
-  label       TEXT NOT NULL,               -- 'Albérlet','Állás','Eladó','Szolg.'
-  color       TEXT,
-  sort_order  INTEGER NOT NULL DEFAULT 0
-);
-
--- 5) Hirdetések — a kind_id IDEGEN KULCS a bulletin_kinds(id)-re.
-CREATE TABLE bulletin_posts (
-  id             TEXT PRIMARY KEY,
-  kind_id        TEXT NOT NULL,
-  title          TEXT NOT NULL,
-  meta           TEXT,
-  age_text       TEXT,                              -- prototípus: "2 órája"
-  poster         TEXT,                              -- megjelenített név
-  poster_user_id TEXT,                              -- Clerk user_id (nullable)
-  image_key      TEXT,                              -- R2 objektumkulcs (nullable)
-  created_at     TEXT NOT NULL DEFAULT (datetime('now')),
-  FOREIGN KEY (kind_id) REFERENCES bulletin_kinds(id)
-    ON UPDATE CASCADE ON DELETE RESTRICT
-);
-
-CREATE INDEX idx_bulletin_kind ON bulletin_posts (kind_id);
-
 -- 6) Vállalkozói dashboard — heti KPI összesítő (1:1 a vállalkozással).
 --    A delta-mezők szándékosan szövegesek (a prototípus "+34%" formátuma).
 CREATE TABLE business_stats (

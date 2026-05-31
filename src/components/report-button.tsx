@@ -6,8 +6,8 @@ import { cn } from "@/lib/cn";
 import { BottomSheet } from "./bottom-sheet";
 
 /**
- * ReportButton — „Jelentem" gomb hirdetésekhez és véleményekhez (Notice &
- * Takedown). Megnyit egy alsó lapot, ahol a felhasználó megadja az indokot;
+ * ReportButton — „Jelentem" gomb vállalkozásokhoz, véleményekhez és SOS-hez
+ * (Notice & Takedown). Megnyit egy alsó lapot, ahol a felhasználó megadja az indokot;
  * beküldés után a tartalom AZONNAL elrejtődik a publikum elől, amíg az admin
  * dönt róla. Vezérelt nélkül, önállóan használható.
  */
@@ -16,7 +16,7 @@ export function ReportButton({
   contentId,
   variant = "icon",
 }: {
-  contentType: "business" | "bulletin" | "review" | "sos";
+  contentType: "business" | "review" | "sos";
   contentId: string;
   variant?: "icon" | "link";
 }) {

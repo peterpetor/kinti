@@ -5,7 +5,7 @@ import {
   deactivateBlocklistEntry,
   type BlocklistKind,
 } from "@/lib/repo";
-import { hashIp, hashEmail } from "@/lib/bulletin";
+import { hashIp, hashEmail } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";

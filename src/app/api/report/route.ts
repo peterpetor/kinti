@@ -8,7 +8,7 @@ import {
   createContentReport,
   countRecentReports,
 } from "@/lib/repo";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { sendContentReportEmail } from "@/lib/email";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { getSosAlertById, hideSosAlert } from "@/lib/sos-repo";
@@ -18,8 +18,8 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
- * POST /api/report — egy hirdetés vagy vélemény bejelentése (Notice & Takedown).
- * Body: { contentType: "bulletin" | "review", contentId, reason }
+ * POST /api/report — egy vállalkozás, vélemény vagy SOS bejelentése (Notice & Takedown).
+ * Body: { contentType: "business" | "review" | "sos", contentId, reason }
  *
  * Hatás: a tartalmat AZONNAL elrejtjük a publikum elől (hidden=1), és értesítjük
  * az admint (visszaállítás / végleges törlés linkekkel). Abuse ellen IP-alapú
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }
 
-  const contentType = body.contentType === "business" || body.contentType === "bulletin" || body.contentType === "review" || body.contentType === "sos"
+  const contentType = body.contentType === "business" || body.contentType === "review" || body.contentType === "sos"
     ? body.contentType
     : null;
   const contentId = typeof body.contentId === "string" ? body.contentId.trim() : "";

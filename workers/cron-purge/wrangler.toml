@@ -1,8 +1,8 @@
 #:schema node_modules/wrangler/config-schema.json
 # ---------------------------------------------------------------------------
 # kinti-cron-purge — különálló Cloudflare Worker, ami napi 1× lefutva
-# kitakarítja a 24h-nál régebbi, meg nem erősített bulletin_drafts sorokat
-# és a 30 nap után lejárt bulletin_posts rekordokat a D1 adatbázisból.
+# kitakarítja a lejárt / meg nem erősített tartalmakat (vélemény-piszkozatok,
+# vállalkozás-beküldések, régi események) a D1 adatbázisból.
 #
 # A Pages projekttel UGYANAZT a D1-et bind-eli ide, így nincs külön DB.
 # Deploy:
@@ -33,10 +33,3 @@ preview_bucket_name = "kinti-media-preview"
 
 [observability]
 enabled = true
-
-# Szükséges titkok a lejárati figyelmeztető emailekhez.
-# Beállítás: cd workers/cron-purge && npx wrangler secret put RESEND_API_KEY
-# [vars] -- ezeket titkosítva tároljuk, nem clear-text config:
-#   RESEND_API_KEY  — Resend API kulcs
-#   EMAIL_FROM      — pl. "Kinti <info@kinti.app>"
-#   SITE_URL        — pl. "https://kinti.app"

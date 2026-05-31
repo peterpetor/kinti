@@ -4,7 +4,7 @@ import { getCloudflareEnv } from "./cloudflare";
  * Cloudflare Turnstile — szerver-oldali siteverify.
  *
  * A kliens megkapja a token-t a widget-től (`<TurnstileWidget />`), és átadja
- * a /api/bulletin/submit-nek; itt verifikáljuk, hogy a token valódi és még
+ * a beküldő végpontoknak; itt verifikáljuk, hogy a token valódi és még
  * nem lett "elsütve". A Cloudflare endpoint:
  *   POST https://challenges.cloudflare.com/turnstile/v0/siteverify
  *

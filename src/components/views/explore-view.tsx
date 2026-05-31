@@ -7,6 +7,7 @@ import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
+import { readPreferredCanton, setPreferredCanton } from "@/lib/canton-pref";
 import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
 import { haversineKm } from "@/lib/distance";
 import { AISearchBar } from "./ai-search";
@@ -46,14 +47,25 @@ export function ExploreView({
   const initialQ = searchParams?.get("q") ?? "";
   const initialCanton = searchParams?.get("canton") ?? "all";
   const initialFav = searchParams?.get("fav") === "1";
+  const initialCat = searchParams?.get("cat") ?? "all";
 
-  const [cat, setCat] = useState("all");
+  const [cat, setCat] = useState(initialCat);
   const [q, setQ] = useState(initialQ);
   const [canton, setCanton] = useState(initialCanton);
   const [showFavs, setShowFavs] = useState(initialFav);
   const [openNow, setOpenNow] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [view, setView] = useState<ViewMode>("list");
+
+  // Ha nem URL-ből érkezett kanton, a felhasználó preferált kantonjára szűrünk
+  // alapból (kanton-személyre szabás). A hidratálás után, hogy ne legyen mismatch.
+  useEffect(() => {
+    if (!searchParams?.get("canton")) {
+      const pref = readPreferredCanton();
+      if (pref) setCanton(pref);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Radius-search állapot (lat/lng = user böngészőjének poz.; ha null → kikapcsolva)
   const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
@@ -197,7 +209,11 @@ export function ExploreView({
           <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted shrink-0" />
           <select
             value={canton}
-            onChange={(e) => setCanton(e.target.value)}
+            onChange={(e) => {
+              setCanton(e.target.value);
+              // A kézi választást megjegyezzük preferenciaként (az app tanul).
+              setPreferredCanton(e.target.value);
+            }}
             aria-label="Kanton szűrő"
             className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
           >

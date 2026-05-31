@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { HOFLADEN_CATEGORIES, PAYMENT_METHODS } from "@/lib/hofladen";
+import { readPreferredCanton } from "@/lib/canton-pref";
 
 export function HofladenReporter({
   turnstileSiteKey,
@@ -19,6 +20,12 @@ export function HofladenReporter({
   const [locationName, setLocationName] = useState("");
   const [cantonCode, setCantonCode] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
+
+  // Kanton-személyre szabás: a preferált kantont ajánljuk fel alapból.
+  useEffect(() => {
+    const pref = readPreferredCanton();
+    if (pref) setCantonCode((c) => c || pref);
+  }, []);
   const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
   const [open24h, setOpen24h] = useState(true);
   const [openText, setOpenText] = useState("");

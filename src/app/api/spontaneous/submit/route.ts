@@ -9,7 +9,7 @@ import {
   validateSpontaneousInput,
   computeSpontaneousExpiry,
 } from "@/lib/spontaneous";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";

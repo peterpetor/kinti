@@ -3,7 +3,7 @@
 --
 -- A /api/rides/submit Clerk-auth NÉLKÜL működik (vendég-feladás), ezért a
 -- spam-védelem két rétegre tolódott: Turnstile CAPTCHA + IP-alapú napi limit
--- (a Bulletin / Event flow-kkal azonos mintára).
+-- (az Event flow-val azonos mintára).
 -- ===========================================================================
 
 CREATE TABLE IF NOT EXISTS ride_submit_log (

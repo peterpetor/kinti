@@ -1,8 +1,8 @@
 -- ===========================================================================
 -- 0030_generic_spam_log — generikus IP-alapú rate-limit log.
 --
--- Eddig minden flow-nak külön logja volt (bulletin_contact_log,
--- event_submit_log, ride_submit_log). Az új email-küldős endpointok
+-- Eddig minden flow-nak külön logja volt (event_submit_log,
+-- ride_submit_log). Az új email-küldős endpointok
 -- (quote, rating, digest) UGYANAZT a mintát igénylik, ezért egy közös
 -- táblát adunk hozzájuk `kind` diszkriminátorral.
 --

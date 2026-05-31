@@ -166,7 +166,6 @@ export default async function AdminPage() {
         )}
       </section>
 
-      {/* Hirdetések — bárki törölheti adminként */}
       {/* Események — törlés (a status független) */}
       <section className="space-y-2">
         <h2 className="text-[14px] font-extrabold text-ink">

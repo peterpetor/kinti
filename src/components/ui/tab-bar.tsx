@@ -6,11 +6,11 @@ import { Icon, type IconName } from "./icons";
 import { cn } from "@/lib/cn";
 
 /**
- * TabBar — alsó, lebegő üveg-navigáció. 4 stabil fül, auth-független label:
+ * TabBar — alsó, lebegő üveg-navigáció. Stabil fülek, auth-független label:
  *   1) Főoldal    — dashboard
  *   2) Szaknévsor — vállalkozás-kereső
  *   3) Közösség   — események (alfülekkel)
- *   4) Piac       — apróhirdetések
+ *   4) Iránytű    — kalkulátorok / útmutatók
  */
 interface Tab {
   href: string;

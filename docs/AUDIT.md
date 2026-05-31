@@ -26,11 +26,11 @@ A platform adatelérési rétege a `src/lib/repo.ts` fájlban helyezkedik el. Az
 * **Audit Eredmény**: **100%-ban biztonságos**. Nincsenek közvetlen string összefűzéses (string interpolation) SQL lekérdezések. Az SQL Injection támadási felület teljesen le van zárva.
 
 ### 1.2 Beviteli Validáció és Spam-védelem
-Az adatfeladási API végpontok (események és hirdetések) kiemelkedő biztonsági szűrőkkel rendelkeznek:
-* **Honeypot és Form Validáció**: A `validateBulletinInput` és `validateEventInput` funkciók szigorúan ellenőrzik a típusokat, hosszakat és a mezőket.
+Az adatfeladási API végpontok (események, vélemények, vállalkozás-beküldés) kiemelkedő biztonsági szűrőkkel rendelkeznek:
+* **Honeypot és Form Validáció**: A `validateEventInput` és a vállalkozás-/vélemény-validátorok szigorúan ellenőrzik a típusokat, hosszakat és a mezőket.
 * **Eldobható e-mailek szűrése**: Az `isDisposableEmail` modul kiszűri az ideiglenes (disposable) e-mail címeket, megakadályozva a spammerek gyors profilgenerálását.
 * **Turnstile CAPTCHA**: Minden publikus POST kérésnél Turnstile ellenőrzés fut (`verifyTurnstile`), amely a robotok automatikus beküldéseit blokkolja.
-* **IP és Email Rate Limit**: A `countRecentBulletins` és `countRecentEventSubmits` segítségével a rendszer napi 3 feladásra korlátozza az azonos IP-ről vagy e-mailről indított kéréseket. Az IP-címeket SHA-256-tal hashelve tárolja (`hashIp`), ami megfelel a GDPR adatminimalizálási elvének (nem tárolunk nyers PII-t az adatbázisban).
+* **IP és Email Rate Limit**: A `countRecentEventSubmits` és társai segítségével a rendszer napi pár feladásra korlátozza az azonos IP-ről vagy e-mailről indított kéréseket. Az IP-címeket SHA-256-tal hashelve tárolja (`hashIp`), ami megfelel a GDPR adatminimalizálási elvének (nem tárolunk nyers PII-t az adatbázisban).
 
 ### 1.3 AI és Képmoderáció
 * **Szövegmoderáció**: A `moderateText` a Cloudflare Workers AI-t használja a feltöltött címek és leírások valós idejű moderációjához (profanity, rágalmazás, tiltott tartalmak szűrése).
@@ -42,7 +42,7 @@ Az adatfeladási API végpontok (események és hirdetések) kiemelkedő biztons
 
 ### 1.5 DSA & Notice & Takedown megfelelőség
 A bejelentő végpont (`/api/report/route.ts`) lehetővé teszi a felhasználóknak a sértő vagy jogellenes tartalmak jelentését:
-* A jelentett tartalom (hirdetés, vélemény, szakember, SOS) **azonnal elrejtésre kerül** a nyilvánosság elől (`hidden = 1`), miközben az adminisztrátor e-mailben kap egy egyedi `moderateToken`-t a végleges törléshez vagy visszaállításhoz. Ez teljes mértékben megfelel az európai Digital Services Act (DSA) és a svájci jogi szabályozásoknak.
+* A jelentett tartalom (vélemény, szakember, SOS) **azonnal elrejtésre kerül** a nyilvánosság elől (`hidden = 1`), miközben az adminisztrátor e-mailben kap egy egyedi `moderateToken`-t a végleges törléshez vagy visszaállításhoz. Ez teljes mértékben megfelel az európai Digital Services Act (DSA) és a svájci jogi szabályozásoknak.
 
 ---
 
@@ -104,7 +104,7 @@ Azokon a teljesen statikus tájékoztató oldalakon (pl. `/impresszum`, `/adatve
 Adatvédelmi és üzemeltetési szempontból a platform az alábbi háttérfolyamatokra támaszkodik:
 
 * **Cron Purge Worker (`workers/cron-purge`)**:
-  * Napi egyszer lefutó tisztító folyamat, amely kitörli a megerősítetlen, elavult hirdetés-piszkozatokat a 24 órás TTL lejárta után, valamint a lejárt publikus hirdetéseket a 30 napos TTL után. Ez biztosítja a **GDPR kompatibilitást** (adatminimalizálás) és megvédi a D1-et a szükségtelen méretnövekedéstől.
+  * Napi egyszer lefutó tisztító folyamat, amely kitörli a megerősítetlen, elavult vélemény-piszkozatokat és vállalkozás-beküldéseket a 24 órás TTL lejárta után, valamint a 30 napnál régebbi eseményeket. Ez biztosítja a **GDPR kompatibilitást** (adatminimalizálás) és megvédi a D1-et a szükségtelen méretnövekedéstől.
 * **Esemény Szinkronizáló Worker (`workers/cron-events-sync`)**:
   * Svájci magyar szervezetek iCal (.ics) naptárjait szinkronizálja a D1 `events` táblájába, automatikusan kitakarítva az elavult szinkronizált rekordokat, anélkül, hogy érintené a manuálisan felvitt eseményeket.
 * **Email Routing**:

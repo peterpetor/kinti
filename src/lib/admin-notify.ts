@@ -4,14 +4,14 @@ import { safeLogError } from "./safe-log";
 
 /**
  * Best-effort admin-értesítés új moderálandó tartalomról. Több helyről hívható
- * (bulletin/submit, bulletin/confirm, business/confirm, review-confirm stb.) —
+ * (business/confirm, review-confirm, esemény-beküldés stb.) —
  * sose dob hibát kifelé (UX-prioritás), csak loggol.
  *
  * Csak a Resend-emailt küldi; a tartalom maga már `moderation_status=0`
  * (pending) állapotban van a DB-ben, és a publikus query-k szűrik.
  */
 export async function notifyAdminContentPending(params: {
-  contentType: "hirdetés" | "vélemény" | "vállalkozás" | "esemény";
+  contentType: "vélemény" | "vállalkozás" | "esemény";
   title: string;
   preview: string;
   submitterEmail: string | null;

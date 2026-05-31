@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { savePushSubscription } from "@/lib/repo";
 import { CANTON_COORDS } from "@/lib/cantons";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 
 export const runtime = "edge";

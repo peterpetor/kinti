@@ -1,9 +1,6 @@
 import { getDB } from "./cloudflare";
 import type {
   Business,
-  BulletinDraft,
-  BulletinKind,
-  BulletinPost,
   Category,
   DashboardStats,
   EventFeed,
@@ -81,6 +78,8 @@ interface BusinessRow {
   moderation_status: number | null;
   moderation_decision_at: string | null;
   moderation_decided_by: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 interface EventRow {
@@ -108,62 +107,6 @@ interface EventRow {
   moderation_decided_by?: string | null;
 }
 
-interface BulletinKindRow {
-  id: string;
-  label: string;
-  color: string | null;
-  sort_order: number;
-}
-
-interface BulletinPostRow {
-  id: string;
-  kind_id: string;
-  title: string;
-  meta: string | null;
-  age_text: string | null;
-  poster: string | null;
-  poster_user_id: string | null;
-  image_key: string | null;
-  body: string | null;
-  expires_at: string | null;
-  published_at: string | null;
-  canton_code: string | null;
-  price: number | null;
-  kind_label: string | null;
-  kind_color: string | null;
-  kind_sort: number | null;
-  // Manage & warning fields
-  email: string | null;
-  phone: string | null;
-  whatsapp: string | null;
-  manage_token: string | null;
-  expiry_warning_sent: number | null;
-  smart_filters: string | null;
-}
-
-interface BulletinDraftRow {
-  id: string;
-  email: string;
-  phone: string | null;
-  whatsapp: string | null;
-  kind_id: string;
-  title: string;
-  meta: string | null;
-  body: string | null;
-  poster: string | null;
-  confirm_token: string;
-  manage_token: string;
-  expires_at: string;
-  created_at: string;
-  terms_version: string | null;
-  accepted_terms_at: string | null;
-  age_confirmed: number | null;
-  ip_hash: string | null;
-  image_key: string | null;
-  canton_code: string | null;
-  price: number | null;
-  smart_filters: string | null;
-}
 
 // --- mapperek ---------------------------------------------------------------
 function toCategory(r: CategoryRow): Category {
@@ -211,6 +154,8 @@ function toBusiness(r: BusinessRow): Business {
     moderationStatus: r.moderation_status ?? 0,
     moderationDecisionAt: r.moderation_decision_at,
     moderationDecidedBy: r.moderation_decided_by,
+    updatedAt: r.updated_at ?? null,
+    createdAt: r.created_at ?? null,
   };
 }
 
@@ -240,62 +185,6 @@ function toEvent(r: EventRow): KintiEvent {
   };
 }
 
-function toBulletinKind(r: BulletinKindRow): BulletinKind {
-  return { id: r.id, label: r.label, color: r.color, sortOrder: r.sort_order };
-}
-
-function toBulletinPost(r: BulletinPostRow): BulletinPost {
-  return {
-    id: r.id,
-    kindId: r.kind_id,
-    title: r.title,
-    meta: r.meta,
-    ageText: r.age_text,
-    poster: r.poster,
-    posterUserId: r.poster_user_id,
-    imageKey: r.image_key,
-    body: r.body,
-    expiresAt: r.expires_at,
-    publishedAt: r.published_at,
-    cantonCode: r.canton_code,
-    price: r.price,
-    email: r.email,
-    phone: r.phone,
-    whatsapp: r.whatsapp,
-    manageToken: r.manage_token,
-    expiryWarningSent: bool(r.expiry_warning_sent),
-    smartFilters: r.smart_filters ?? null,
-    kind: r.kind_label
-      ? { id: r.kind_id, label: r.kind_label, color: r.kind_color, sortOrder: r.kind_sort ?? 0 }
-      : undefined,
-  };
-}
-
-function toBulletinDraft(r: BulletinDraftRow): BulletinDraft {
-  return {
-    id: r.id,
-    email: r.email,
-    phone: r.phone,
-    whatsapp: r.whatsapp,
-    kindId: r.kind_id,
-    title: r.title,
-    meta: r.meta,
-    body: r.body,
-    poster: r.poster,
-    confirmToken: r.confirm_token,
-    manageToken: r.manage_token,
-    expiresAt: r.expires_at,
-    createdAt: r.created_at,
-    termsVersion: r.terms_version,
-    acceptedTermsAt: r.accepted_terms_at,
-    ageConfirmed: r.age_confirmed === 1,
-    ipHash: r.ip_hash,
-    imageKey: r.image_key,
-    cantonCode: r.canton_code,
-    price: r.price,
-    smartFilters: r.smart_filters ?? null,
-  };
-}
 
 // --- lekérdezések -----------------------------------------------------------
 export async function getCategories(): Promise<Category[]> {
@@ -653,394 +542,26 @@ export async function addEventRsvp(
   };
 }
 
-export async function getBulletinKinds(): Promise<BulletinKind[]> {
-  const { results } = await getDB()
-    .prepare("SELECT * FROM bulletin_kinds ORDER BY sort_order ASC")
-    .all<BulletinKindRow>();
-  return results.map(toBulletinKind);
-}
-
-export async function getBulletinPosts(kind?: string | null): Promise<BulletinPost[]> {
-  const binds: unknown[] = [];
-  // A publikus listára kizárólag a jóváhagyott (is_pending=0) ÉS nem lejárt
-  // (expires_at IS NULL OR > now) posztok kerülnek. A régi seed-rekordoknak
-  // nincs expires_at-juk → "soha nem jár le", ami szándékos.
-  let sql = `
-    SELECT p.*, k.label AS kind_label, k.color AS kind_color, k.sort_order AS kind_sort
-    FROM bulletin_posts p
-    JOIN bulletin_kinds k ON k.id = p.kind_id
-    WHERE p.is_pending = 0
-      AND p.hidden = 0
-      AND p.moderation_status = 1
-      AND (p.expires_at IS NULL OR p.expires_at > datetime('now'))`;
-  if (kind && kind !== "all") {
-    sql += " AND p.kind_id = ?";
-    binds.push(kind);
-  }
-  sql += " ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id ASC";
-  const { results } = await getDB().prepare(sql).bind(...binds).all<BulletinPostRow>();
-  return results.map(toBulletinPost);
-}
-
-export async function listPendingBulletins(): Promise<BulletinPost[]> {
-  const sql = `
-    SELECT p.*, k.label AS kind_label, k.color AS kind_color, k.sort_order AS kind_sort
-    FROM bulletin_posts p
-    JOIN bulletin_kinds k ON k.id = p.kind_id
-    WHERE p.is_pending = 1
-      AND p.hidden = 0
-    ORDER BY p.created_at ASC
-  `;
-  const { results } = await getDB().prepare(sql).all<BulletinPostRow>();
-  return results.map(toBulletinPost);
-}
-
-export async function approveBulletinPost(id: string): Promise<boolean> {
-  const res = await getDB()
-    .prepare("UPDATE bulletin_posts SET is_pending = 0, published_at = datetime('now') WHERE id = ?")
-    .bind(id)
-    .run();
-  return (res.meta.changes ?? 0) > 0;
-}
-
-// ---------------------------------------------------------------------------
-// Hirdetőfal — email-megerősítéses posztolás (account nélküli flow).
-// ---------------------------------------------------------------------------
-
-export interface BulletinDraftInput {
+/**
+ * Push-emlékeztető rögzítése egy eseményre (RSVP után, ha van feliratkozás).
+ * 1 esemény = 1 emlékeztető / endpoint (UNIQUE → INSERT OR IGNORE). A `remindAt`
+ * UTC ISO; az óránkénti cron-worker küldi ki, amikor esedékessé válik.
+ */
+export async function createEventReminder(input: {
   id: string;
-  email: string;
-  phone: string;
-  whatsapp: string;
-  kindId: string;
-  title: string;
-  meta: string | null;
-  body: string | null;
-  poster: string | null;
-  confirmToken: string;
-  manageToken: string;
-  expiresAt: string; // ISO
-  /** Az elfogadott jogi szövegek verziója (TERMS_VERSION). */
-  termsVersion: string;
-  /** Az elfogadás időbélyege (ISO datetime). */
-  acceptedTermsAt: string;
-  /** 1 = a feladó nyilatkozta, hogy elmúlt 18 (Ptk. 2:10 §). */
-  ageConfirmed: number;
-  /** SHA-256(IP) — null, ha nincs IP a kérésben (pl. localhost dev). */
-  ipHash: string | null;
-  imageKey: string | null;
-  cantonCode: string | null;
-  price: number | null;
-  smartFilters: string | null;
-}
-
-/** Új piszkozat — a kliens-form `submit`-end-pointja használja. */
-export async function createBulletinDraft(input: BulletinDraftInput): Promise<void> {
+  eventId: string;
+  pushEndpoint: string;
+  remindAt: string;
+}): Promise<void> {
   await getDB()
     .prepare(
-      `INSERT INTO bulletin_drafts
-       (id, email, phone, whatsapp, kind_id, title, meta, body, poster,
-        confirm_token, manage_token, expires_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price, smart_filters)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT OR IGNORE INTO event_reminders (id, event_id, push_endpoint, remind_at)
+       VALUES (?, ?, ?, ?)`,
     )
-    .bind(
-      input.id,
-      input.email.toLowerCase(),
-      input.phone || null,
-      input.whatsapp || null,
-      input.kindId,
-      input.title,
-      input.meta,
-      input.body,
-      input.poster,
-      input.confirmToken,
-      input.manageToken,
-      input.expiresAt,
-      input.termsVersion,
-      input.acceptedTermsAt,
-      input.ageConfirmed,
-      input.ipHash,
-      input.imageKey,
-      input.cantonCode,
-      input.price,
-      input.smartFilters ?? null,
-    )
+    .bind(input.id, input.eventId, input.pushEndpoint, input.remindAt)
     .run();
 }
 
-/** Confirm-token alapján visszaadja a piszkozatot — csak ha nem lejárt. */
-export async function getBulletinDraftByConfirmToken(
-  confirmToken: string,
-): Promise<BulletinDraft | null> {
-  const row = await getDB()
-    .prepare(
-      `SELECT * FROM bulletin_drafts
-       WHERE confirm_token = ? AND expires_at > datetime('now')`,
-    )
-    .bind(confirmToken)
-    .first<BulletinDraftRow>();
-  return row ? toBulletinDraft(row) : null;
-}
-
-/** Piszkozat törlése (megerősítés után átmozgatás → törlés). */
-export async function deleteBulletinDraft(id: string): Promise<void> {
-  await getDB().prepare("DELETE FROM bulletin_drafts WHERE id = ?").bind(id).run();
-}
-
-/** Lejárt piszkozatok takarítása (cron / manual hívás). */
-export async function purgeExpiredBulletinDrafts(): Promise<number> {
-  const res = await getDB()
-    .prepare("DELETE FROM bulletin_drafts WHERE expires_at <= datetime('now')")
-    .run();
-  return res.meta.changes ?? 0;
-}
-
-export interface PublishBulletinInput {
-  id: string;
-  kindId: string;
-  title: string;
-  meta: string | null;
-  body: string | null;
-  poster: string | null;
-  /** Email opcionális — local-first módban üres string mehet. */
-  email: string;
-  /** Telefonszám opcionális. */
-  phone: string;
-  /** WhatsApp szám opcionális (ha üres, a phone-ra megy). */
-  whatsapp: string;
-  manageToken: string;
-  /** ISO datetime — 30 nap múlva. */
-  expiresAt: string;
-  /** 1 = admin moderációra vár; 0 = azonnal publikus. */
-  isPending: number;
-  /** Audit-trail átvezetése a draft-ról. */
-  termsVersion: string | null;
-  acceptedTermsAt: string | null;
-  ageConfirmed: number;
-  ipHash: string | null;
-  imageKey: string | null;
-  cantonCode: string | null;
-  price: number | null;
-  smartFilters: string | null;
-}
-
-/**
- * Megerősített hirdetés publikálása. Az `ageText` a poszt korára utaló kis
- * címke ("2 órája", "tegnap") — most "frissen" felirattal kerül be, és a
- * lekérdezésnél nem kötelező felülírni.
- */
-export async function publishBulletinPost(input: PublishBulletinInput): Promise<void> {
-  await getDB()
-    .prepare(
-      `INSERT INTO bulletin_posts
-       (id, kind_id, title, meta, body, poster, email, phone, whatsapp, manage_token,
-        age_text, expires_at, published_at, is_pending, created_at,
-        terms_version, accepted_terms_at, age_confirmed, ip_hash, image_key, canton_code, price, smart_filters)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'frissen', ?, datetime('now'), ?, datetime('now'),
-               ?, ?, ?, ?, ?, ?, ?, ?)`,
-    )
-    .bind(
-      input.id,
-      input.kindId,
-      input.title,
-      input.meta,
-      input.body,
-      input.poster,
-      input.email.toLowerCase(),
-      input.phone || null,
-      input.whatsapp || null,
-      input.manageToken,
-      input.expiresAt,
-      input.isPending,
-      input.termsVersion,
-      input.acceptedTermsAt,
-      input.ageConfirmed,
-      input.ipHash,
-      input.imageKey,
-      input.cantonCode,
-      input.price,
-      input.smartFilters ?? null,
-    )
-    .run();
-}
-
-/** Publikus, nem lejárt hirdetés azonosító alapján — a megosztható mély-link oldalhoz. */
-export async function getBulletinPostById(id: string): Promise<BulletinPost | null> {
-  const row = await getDB()
-    .prepare(
-      `SELECT p.*, k.label AS kind_label, k.color AS kind_color, k.sort_order AS kind_sort
-       FROM bulletin_posts p
-       JOIN bulletin_kinds k ON k.id = p.kind_id
-       WHERE p.id = ? AND p.is_pending = 0 AND p.hidden = 0
-         AND p.moderation_status = 1
-         AND (p.expires_at IS NULL OR p.expires_at > datetime('now'))`,
-    )
-    .bind(id)
-    .first<BulletinPostRow>();
-  return row ? toBulletinPost(row) : null;
-}
-
-/** Manage-token alapján visszaadja a posztot (a kezelő oldal használja). */
-export async function getBulletinPostByManageToken(
-  manageToken: string,
-): Promise<BulletinPost | null> {
-  const row = await getDB()
-    .prepare(
-      `SELECT p.*, k.label AS kind_label, k.color AS kind_color, k.sort_order AS kind_sort
-       FROM bulletin_posts p
-       JOIN bulletin_kinds k ON k.id = p.kind_id
-       WHERE p.manage_token = ?`,
-    )
-    .bind(manageToken)
-    .first<BulletinPostRow>();
-  return row ? toBulletinPost(row) : null;
-}
-
-/** Hirdetés törlése — csak manage-tokennel (a feladó email-jén át kapta). */
-export async function deleteBulletinPostByManageToken(manageToken: string): Promise<boolean> {
-  const res = await getDB()
-    .prepare("DELETE FROM bulletin_posts WHERE manage_token = ?")
-    .bind(manageToken)
-    .run();
-  return (res.meta.changes ?? 0) > 0;
-}
-
-/**
- * Hirdetés lejárati idejét meghosszabbítja +30 nappal, és visszaállítja
- * a figyelmeztető email jelzőt (expiry_warning_sent = 0).
- * Csak a manage-token tulajdonosa hívhatja (ő kapta emailben).
- */
-export async function renewBulletinPost(manageToken: string): Promise<boolean> {
-  const res = await getDB()
-    .prepare(
-      `UPDATE bulletin_posts
-       SET expires_at = datetime(expires_at, '+30 days'),
-           expiry_warning_sent = 0
-       WHERE manage_token = ?
-         AND expires_at IS NOT NULL
-         AND expires_at > datetime('now', '-7 days')`, // ne hosszabbítsuk nagyon régi lejártakat
-    )
-    .bind(manageToken)
-    .run();
-  return (res.meta.changes ?? 0) > 0;
-}
-
-/**
- * Visszaadja azokat a publikus hirdetéseket, amelyek 3 napon belül lejárnak
- * és még nem kaptak figyelmeztetőt (expiry_warning_sent = 0).
- * A cron job használja.
- */
-export interface ExpiringBulletinRow {
-  id: string;
-  title: string;
-  email: string;
-  poster: string | null;
-  manage_token: string;
-  expires_at: string;
-}
-
-export async function getBulletinPostsExpiringSoon(
-  db: D1Database,
-): Promise<ExpiringBulletinRow[]> {
-  const { results } = await db
-    .prepare(
-      `SELECT id, title, email, poster, manage_token, expires_at
-       FROM bulletin_posts
-       WHERE is_pending = 0
-         AND expiry_warning_sent = 0
-         AND expires_at IS NOT NULL
-         AND expires_at > datetime('now')
-         AND expires_at <= datetime('now', '+3 days')`,
-    )
-    .all<ExpiringBulletinRow>();
-  return results;
-}
-
-/** Megjelöli, hogy a figyelmeztető emailt elküldtük (expiry_warning_sent = 1). */
-export async function markBulletinExpiryWarningSent(
-  db: D1Database,
-  id: string,
-): Promise<void> {
-  await db
-    .prepare("UPDATE bulletin_posts SET expiry_warning_sent = 1 WHERE id = ?")
-    .bind(id)
-    .run();
-}
-
-/**
- * "Bizalmi" mutató: hány korábban publikált, lejáratlan és nem moderált
- * hirdetése van már ennek az emailnek. >0 → új poszt mehet azonnal publikusra.
- */
-export async function countTrustedBulletinPosts(email: string): Promise<number> {
-  const row = await getDB()
-    .prepare(
-      `SELECT COUNT(*) AS n FROM bulletin_posts
-       WHERE email = ? AND is_pending = 0`,
-    )
-    .bind(email.toLowerCase())
-    .first<{ n: number }>();
-  return row?.n ?? 0;
-}
-
-/** Hány hirdetést (piszkozatot vagy publikáltat) adott fel ez az email vagy IP az elmúlt 24 órában. */
-export async function countRecentBulletins(email: string, ipHash: string | null): Promise<number> {
-  const db = getDB();
-  const lowerEmail = email.toLowerCase();
-
-  const draftsRes = await db
-    .prepare(
-      `SELECT COUNT(*) AS n FROM bulletin_drafts
-       WHERE (lower(email) = ? OR (ip_hash IS NOT NULL AND ip_hash = ?))
-         AND created_at >= datetime('now', '-24 hours')`
-    )
-    .bind(lowerEmail, ipHash)
-    .first<{ n: number }>();
-
-  const postsRes = await db
-    .prepare(
-      `SELECT COUNT(*) AS n FROM bulletin_posts
-       WHERE (lower(email) = ? OR (ip_hash IS NOT NULL AND ip_hash = ?))
-         AND created_at >= datetime('now', '-24 hours')`
-    )
-    .bind(lowerEmail, ipHash)
-    .first<{ n: number }>();
-
-  const draftsCount = draftsRes?.n ?? 0;
-  const postsCount = postsRes?.n ?? 0;
-
-  return draftsCount + postsCount;
-}
-
-/**
- * Hány kapcsolatfelvételi üzenetet küldött ez az IP az elmúlt 1 órában.
- * Limit: 5 / IP / óra — véd a spam-ágyú botok ellen.
- */
-export async function countRecentContacts(ipHash: string | null): Promise<number> {
-  if (!ipHash) return 0; // localhost / ismeretlen IP → átengedünk
-  const res = await getDB()
-    .prepare(
-      `SELECT COUNT(*) AS n FROM bulletin_contact_log
-       WHERE ip_hash = ? AND created_at >= datetime('now', '-1 hours')`,
-    )
-    .bind(ipHash)
-    .first<{ n: number }>();
-  return res?.n ?? 0;
-}
-
-/** Kontakt-eseményt rögzít a rate-limit táblába. */
-export async function logContactAttempt(
-  id: string,
-  postId: string,
-  ipHash: string | null,
-): Promise<void> {
-  await getDB()
-    .prepare(
-      `INSERT INTO bulletin_contact_log (id, post_id, ip_hash) VALUES (?, ?, ?)`,
-    )
-    .bind(id, postId, ipHash)
-    .run();
-}
 
 /**
  * Hány eseményt küldött be ez az IP az elmúlt 24 órában.
@@ -1961,17 +1482,8 @@ export async function listPushSubscriptions(
 }
 
 // ---------------------------------------------------------------------------
-// Jelentés (Notice & Takedown) — hirdetések + vélemények elrejtése/törlése
+// Jelentés (Notice & Takedown) — vélemények elrejtése/törlése
 // ---------------------------------------------------------------------------
-
-/** Hirdetés elrejtése/visszaállítása. Visszaadja, érintett-e sort. */
-export async function setBulletinHidden(id: string, hidden: boolean): Promise<boolean> {
-  const res = await getDB()
-    .prepare("UPDATE bulletin_posts SET hidden = ? WHERE id = ?")
-    .bind(hidden ? 1 : 0, id)
-    .run();
-  return (res.meta.changes ?? 0) > 0;
-}
 
 /** Vélemény elrejtése/visszaállítása. Visszaadja a business_id-t (rating újraszámoláshoz). */
 export async function setReviewHidden(id: string, hidden: boolean): Promise<string | null> {
@@ -1985,14 +1497,6 @@ export async function setReviewHidden(id: string, hidden: boolean): Promise<stri
     .bind(hidden ? 1 : 0, id)
     .run();
   return row.business_id;
-}
-
-export async function deleteBulletinPostById(id: string): Promise<boolean> {
-  const res = await getDB()
-    .prepare("DELETE FROM bulletin_posts WHERE id = ?")
-    .bind(id)
-    .run();
-  return (res.meta.changes ?? 0) > 0;
 }
 
 /** Vélemény törlése id alapján. Visszaadja a business_id-t (rating újraszámoláshoz). */
@@ -2020,7 +1524,7 @@ export async function getReviewSummaryById(
 
 export interface ContentReportInput {
   id: string;
-  contentType: "business" | "bulletin" | "review" | "sos";
+  contentType: "business" | "review" | "sos";
   contentId: string;
   reason: string | null;
   reporterIpHash: string | null;
@@ -2047,7 +1551,7 @@ export async function createContentReport(input: ContentReportInput): Promise<vo
 
 export interface ContentReport {
   id: string;
-  contentType: "business" | "bulletin" | "review" | "sos";
+  contentType: "business" | "review" | "sos";
   contentId: string;
   status: string;
 }
@@ -2060,7 +1564,7 @@ export async function getContentReportByToken(token: string): Promise<ContentRep
   if (!row) return null;
   return {
     id: row.id,
-    contentType: row.content_type as "business" | "bulletin" | "review" | "sos",
+    contentType: row.content_type as "business" | "review" | "sos",
     contentId: row.content_id,
     status: row.status,
   };
@@ -2234,7 +1738,7 @@ export async function setBusinessVerified(id: string, verified: boolean): Promis
 
 export interface OpenReport {
   id: string;
-  contentType: "bulletin" | "review" | "sos";
+  contentType: "review" | "sos";
   contentId: string;
   reason: string | null;
   moderateToken: string;
@@ -2259,11 +1763,7 @@ export async function listOpenReports(): Promise<OpenReport[]> {
   for (const r of results) {
     let excerpt: string | null = null;
     let contentExists = false;
-    if (r.content_type === "bulletin") {
-      const row = await db.prepare("SELECT title FROM bulletin_posts WHERE id = ?").bind(r.content_id).first<{ title: string }>();
-      excerpt = row?.title ?? null;
-      contentExists = !!row;
-    } else if (r.content_type === "review") {
+    if (r.content_type === "review") {
       const row = await db.prepare("SELECT reviewer_name, body FROM reviews WHERE id = ?").bind(r.content_id).first<{ reviewer_name: string; body: string }>();
       excerpt = row ? `${row.reviewer_name}: ${row.body.slice(0, 100)}` : null;
       contentExists = !!row;
@@ -2375,23 +1875,6 @@ export interface AdminContentRow {
   manageToken: string | null;
 }
 
-export async function listBulletinsForAdmin(): Promise<AdminContentRow[]> {
-  const { results } = await getDB()
-    .prepare(
-      `SELECT id, title, kind_id, canton_code, created_at, manage_token
-       FROM bulletin_posts
-       ORDER BY created_at DESC LIMIT 200`,
-    )
-    .all<{ id: string; title: string; kind_id: string; canton_code: string | null; created_at: string; manage_token: string | null }>();
-  return results.map((r) => ({
-    id: r.id,
-    title: r.title,
-    meta: `${r.kind_id}${r.canton_code ? " · " + r.canton_code : ""}`,
-    createdAt: r.created_at,
-    manageToken: r.manage_token,
-  }));
-}
-
 export async function listEventsForAdmin(): Promise<AdminContentRow[]> {
   const { results } = await getDB()
     .prepare(
@@ -2422,7 +1905,6 @@ export async function deleteBusinessAsAdmin(id: string): Promise<boolean> {
 export interface AdminStats {
   businesses: number;
   businessesVerified: number;
-  bulletinsActive: number;
   eventsApproved: number;
   reviews: number;
   digestSubscribersConfirmed: number;
@@ -2445,7 +1927,6 @@ export async function getAdminStats(): Promise<AdminStats> {
   return {
     businesses: businesses?.n ?? 0,
     businessesVerified: verified?.n ?? 0,
-    bulletinsActive: 0,
     eventsApproved: events?.n ?? 0,
     reviews: reviews?.n ?? 0,
     digestSubscribersConfirmed: 0,
@@ -3218,7 +2699,7 @@ export async function deleteExchangeRateAlert(
 export interface KintiRadar {
   id: string;
   pushEndpoint: string;
-  radarType: 'alberlet' | 'exchange_rate';
+  radarType: 'exchange_rate';
   parameters: string; // JSON string
   active: number;
   createdAt: string;

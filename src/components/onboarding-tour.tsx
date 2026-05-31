@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { CANTONS } from "@/lib/cantons";
+import { usePreferredCanton } from "@/lib/canton-pref";
 
 /**
  * OnboardingTour — első indításkor egy többszörös bemutató a fő tartalmakról.
@@ -17,13 +19,21 @@ interface Step {
   body: string;
   /** Ha van, "Mutasd!" gomb a step-en, ami direkt navigál. */
   cta?: { href: string; label: string };
+  /** Interaktív vezérlő a step-en (pl. kanton-választó). */
+  picker?: "canton";
 }
 
 const STEPS: Step[] = [
   {
     emoji: "👋",
     title: "Üdv a kinti-n!",
-    body: "A Svájcban élő magyaroknak. A böngészéshez nincs szükség regisztrációra — egyszerűen használd! Bizonyos extra funkciókhoz (pl. hirdetés feladása) kérhetjük az email címedet. Mutatunk 4 dolgot, ami hasznos lehet.",
+    body: "A Svájcban élő magyaroknak. A böngészéshez nincs szükség regisztrációra — egyszerűen használd! Előbb egy gyors kérdés, aztán mutatunk pár hasznos dolgot.",
+  },
+  {
+    emoji: "📍",
+    title: "Hol élsz Svájcban?",
+    body: "Válaszd ki a kantonodat — ezután a Szaknévsor, az értesítések és a beküldő-űrlapok alapból erre szűrnek. Bármikor megváltoztathatod a főoldali időjárás-csíknál.",
+    picker: "canton",
   },
   {
     emoji: "🔎",
@@ -34,7 +44,7 @@ const STEPS: Step[] = [
   {
     emoji: "🤝",
     title: "Közösség",
-    body: "Események és hirdetések egy helyen — magyar bulik, albérlet, állás, eladó. A felső füleken válthatsz Események és Hirdetések közt.",
+    body: "Magyar események egy helyen — bulik, meetupok, koncertek. Naptár- és lista-nézetben böngészhető, és spontán találkozókat is feldobhatsz.",
     cta: { href: "/kozosseg", label: "Mutasd!" },
   },
   {
@@ -54,6 +64,7 @@ const STEPS: Step[] = [
 export function OnboardingTour() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
+  const [prefCanton, setPrefCanton] = usePreferredCanton();
 
   useEffect(() => {
     try {
@@ -98,6 +109,30 @@ export function OnboardingTour() {
         <p className="mx-auto mt-2 max-w-sm text-pretty text-[13.5px] leading-relaxed text-ink-muted">
           {s.body}
         </p>
+
+        {/* Interaktív kanton-választó */}
+        {s.picker === "canton" && (
+          <div className="mt-4">
+            <select
+              value={prefCanton ?? ""}
+              onChange={(e) => setPrefCanton(e.target.value || null)}
+              aria-label="Kanton kiválasztása"
+              className="w-full rounded-[14px] border border-line bg-surface px-3.5 py-3 text-center text-[15px] font-bold text-ink shadow-card focus:border-primary focus:outline-none"
+            >
+              <option value="">Válassz kantont…</option>
+              {CANTONS.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name} ({c.code})
+                </option>
+              ))}
+            </select>
+            {prefCanton && (
+              <p className="mt-2 text-[12px] font-semibold text-primary">
+                ✓ {CANTONS.find((c) => c.code === prefCanton)?.name ?? prefCanton} beállítva
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Lépés-pontok */}
         <div className="mt-4 flex justify-center gap-1.5">

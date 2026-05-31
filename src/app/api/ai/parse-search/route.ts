@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { getCategories } from "@/lib/repo";
 import { CANTONS } from "@/lib/cantons";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";

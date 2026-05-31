@@ -7,7 +7,7 @@ export const dynamic = "force-static";
 export const metadata = {
   title: "Hírlevél — átállás push-értesítésre",
   description:
-    "A heti email-hírlevél megszűnt. Aki értesítést kérne új eseményekről és hirdetésekről, push-feliratkozással kapja a böngészőjében.",
+    "A heti email-hírlevél megszűnt. Aki értesítést kérne új eseményekről, push-feliratkozással kapja a böngészőjében.",
 };
 
 /**
@@ -30,7 +30,7 @@ export default function HirlevelPage() {
         Az email-hírlevél <strong className="text-ink">megszűnt</strong> — a GDPR
         adatminimalizálás miatt semmilyen email-címet nem szeretnénk tárolni a
         kintinél. Helyette a böngésződ <strong className="text-ink">push-értesítést</strong>{" "}
-        kaphat új eseményekről és hirdetésekről a kantonodban.
+        kaphat új eseményekről a kantonodban.
       </div>
 
       <div className="rounded-card border border-line bg-surface p-5 shadow-card text-center">
@@ -41,7 +41,7 @@ export default function HirlevelPage() {
           Iratkozz fel push-értesítésre
         </h2>
         <p className="mx-auto mt-2 max-w-sm text-pretty text-[13px] leading-relaxed text-ink-muted">
-          A Közösség oldalon (események + hirdetések) találsz egy „Értesítések" gombot. Egy
+          A Közösség oldalon találsz egy „Értesítések" gombot. Egy
           kattintás, és a böngésződ küld neked üzenetet, amikor új tartalom jön.
         </p>
         <Link

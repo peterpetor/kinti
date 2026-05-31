@@ -11,10 +11,8 @@ export default function robots(): MetadataRoute.Robots {
       disallow: [
         "/api/",
         "/admin/",
-        "/hirdetes-kezeles/",
         "/velemeny-kezeles/",
         "/vallalkozas-megerositve",
-        "/hirdetes-megerositve",
       ],
     },
     sitemap: "https://kinti.app/sitemap.xml",

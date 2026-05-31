@@ -1,7 +1,6 @@
 /**
  * Self-service vállalkozás-beküldés — közös konstansok + validáció.
- * Egy helyen, hogy a kliens-űrlap és a szerver-route ugyanazt érvényesítse
- * (mint a hirdetőfalnál a lib/bulletin.ts).
+ * Egy helyen, hogy a kliens-űrlap és a szerver-route ugyanazt érvényesítse.
  */
 
 import { findProfanityInFields } from "./profanity";
@@ -10,7 +9,7 @@ import { isSwissAddress, CANTON_COORDS } from "./cantons";
 /** A megerősítő link érvényessége (ms). 24 óra — utána a piszkozat törlődik. */
 export const BUSINESS_CONFIRM_TTL_MS = 24 * 60 * 60 * 1000;
 
-/** Napi beküldési limit IP/email-enként (vállalkozás ritkább, mint hirdetés). */
+/** Napi beküldési limit IP/email-enként. */
 export const BUSINESS_DAILY_LIMIT = 10;
 
 export const BUSINESS_LIMITS = {

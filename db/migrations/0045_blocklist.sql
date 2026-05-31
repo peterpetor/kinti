@@ -3,7 +3,7 @@
 --
 -- Account-mentes platformon a "user-ban" valójában IP-cím-hash VAGY email-cím-
 -- hash alapú: ha az admin egy felhasználót banol, a következő submit-on
--- (bulletin / review / business / event / spontán / hofladen / akció) az adott
+-- (review / business / event / spontán / hofladen / akció) az adott
 -- IP-hash vagy email-hash 403-as választ kap.
 --
 -- A 'value' minden esetben SHA-256(IP) vagy SHA-256(lower(email)) — sose

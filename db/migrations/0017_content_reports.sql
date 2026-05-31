@@ -1,18 +1,17 @@
 -- ===========================================================================
--- 0017_content_reports — Jelentés (Notice & Takedown) a hirdetésekhez és
--- véleményekhez.
+-- 0017_content_reports — Jelentés (Notice & Takedown) a véleményekhez,
+-- vállalkozásokhoz és SOS-tartalmakhoz.
 --
 -- Logika: ha valaki jelent egy tartalmat (indokkal), az AZONNAL elrejtődik a
 -- publikum elől (hidden=1), amíg az admin vissza nem állítja vagy véglegesen
 -- nem törli. Így a rendszer azonnal reagál a jogsértő tartalomra.
 -- ===========================================================================
 
-ALTER TABLE bulletin_posts ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0 CHECK (hidden IN (0, 1));
 ALTER TABLE reviews ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0 CHECK (hidden IN (0, 1));
 
 CREATE TABLE content_reports (
   id               TEXT PRIMARY KEY,                 -- UUID
-  content_type     TEXT NOT NULL,                    -- 'bulletin' | 'review' | 'business' | 'sos'
+  content_type     TEXT NOT NULL,                    -- 'review' | 'business' | 'sos'
   content_id       TEXT NOT NULL,
   reason           TEXT,                             -- a bejelentő indoka
   reporter_ip_hash TEXT,                             -- SHA-256(IP), abuse-szűréshez

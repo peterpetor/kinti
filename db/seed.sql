@@ -7,10 +7,8 @@ PRAGMA foreign_keys = ON;
 
 DELETE FROM business_daily_views;
 DELETE FROM business_stats;
-DELETE FROM bulletin_posts;
 DELETE FROM events;
 DELETE FROM businesses;
-DELETE FROM bulletin_kinds;
 DELETE FROM categories;
 
 -- --- 1) Kategóriák -------------------------------------------------------------
@@ -260,13 +258,6 @@ INSERT INTO categories (id, label, glyph, sort_order) VALUES
   ('zenekar', 'Zenekar / Party DJ', '🎵', 242),
   ('zoldseges', 'Zöldséges / Hofladen', '🍎', 243);
 
--- --- 2) Hirdetőtábla-taxonómia -------------------------------------------------
-INSERT INTO bulletin_kinds (id, label, color, sort_order) VALUES
-  ('alberlet', 'Albérlet', '#c8392e', 1),
-  ('allas',    'Állás',    '#1d4434', 2),
-  ('elado',    'Eladó',    '#c8862e', 3),
-  ('szolg',    'Szolg.',   '#3a6ea5', 4);
-
 -- --- 3) Vállalkozások ----------------------------------------------------------
 -- A lat/lng a Zürichi városrészek tényleges utcáihoz illesztett, plauzibilis
 -- WGS84 koordináta (OpenStreetMap-en ellenőrizhető). A pin_x/pin_y a régi
@@ -361,13 +352,6 @@ VALUES
   ('piknik',   'Magyar piknik a Sihl-parton',      '2026-06-07', '07', 'JÚN', 'vasárnap',  '11:00', 'Sihl-part, Allmend',        64, 'Család',     '#1d4434'),
   ('foci',     'Magyar–Sváb focimeccs',            '2026-06-22', '22', 'JÚN', 'vasárnap',  '15:30', 'Sportplatz Hardhof',        31, 'Sport',      '#1d4434'),
   ('irodalmi', 'Magyar irodalmi est – Esterházy',  '2026-07-03', '03', 'JÚL', 'csütörtök', '19:30', 'Kafi Schoffel',             22, 'Kulturális', '#c8392e');
-
--- --- 5) Hirdetések -------------------------------------------------------------
-INSERT INTO bulletin_posts (id, kind_id, title, meta, age_text, poster) VALUES
-  ('b1', 'alberlet', '2.5-szobás Kreis 4-ben kiadó',        'Zürich · 1 980 CHF / hó',          '2 órája', 'Tímea'),
-  ('b2', 'allas',    'Magyar bébiszittert keresek heti 2x', 'Wollishofen · 28 CHF/óra',         '5 órája', 'Andrea'),
-  ('b3', 'elado',    'IKEA Malm ágy, 160×200, matraccal',   'Oerlikon · 220 CHF',               'tegnap',  'Gábor'),
-  ('b4', 'szolg',    'Magyar matek-korrepetálás (gimi)',    'Online v. személyes · 45 CHF/óra', '2 napja', 'Bence');
 
 -- --- 6) Dashboard heti KPI (Kovács Anna fodrászat) -----------------------------
 INSERT INTO business_stats

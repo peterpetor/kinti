@@ -1,11 +1,15 @@
 /**
- * Közös, GDPR-megfelelőséget biztosító titkosítási és jogi konstansok.
- * A hirdetőtábla kivezetése után is megmaradt, mert az egész alkalmazás
- * ezt használja a rate-limit és GDPR-biztos IP-hasheléshez.
+ * Megosztott biztonsági segédek — IP/email hash (GDPR adatminimalizálás) és a
+ * jogi szövegek verziója. Több account nélküli beküldő-flow (vélemény,
+ * vállalkozás, esemény, SOS stb.) használja.
  */
 
 /**
  * A jogi szövegek (ÁSZF + Adatkezelési Tájékoztató) jelenlegi verziója.
+ * Akkor frissítsd, amikor érdemi változtatás történik a /aszf vagy a
+ * /adatvedelem oldalon — a beküldések ezt az értéket rögzítik az
+ * `accepted_terms_at` mellé, így jogvitában bizonyítható, MELYIK verziót
+ * fogadta el a felhasználó.
  */
 export const TERMS_VERSION = "2026-05-25";
 

@@ -133,7 +133,7 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
   if (updatedTextParts.length > 0) {
     const textMod = await moderateText(updatedTextParts.join("\n"));
     if (textMod.action === "block") {
-      const { hashIp } = await import("@/lib/bulletin");
+      const { hashIp } = await import("@/lib/security");
       const ip = req.headers.get("cf-connecting-ip") ?? null;
       const ipHash = await hashIp(ip);
       await logModerationStrike(ipHash, "Business edit text moderation failed: " + textMod.reason);

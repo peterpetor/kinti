@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { savePushSubscription, saveRadar, listRadarsByEndpoint } from "@/lib/repo";
 import { safeLogError } from "@/lib/safe-log";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 
 export const runtime = "edge";
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     const radarType = typeof body.radarType === "string" ? body.radarType : "";
     const parameters = typeof body.parameters === "object" && body.parameters !== null ? JSON.stringify(body.parameters) : "{}";
 
-    if (!['alberlet', 'exchange_rate'].includes(radarType)) {
+    if (!['exchange_rate'].includes(radarType)) {
       return NextResponse.json({ error: "Érvénytelen radar típus." }, { status: 400 });
     }
 

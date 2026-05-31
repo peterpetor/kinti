@@ -6,7 +6,7 @@ import {
   type BorderStatus,
 } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { getCrossingById } from "@/lib/border-crossings";
 import { containsProfanity } from "@/lib/profanity";
 import { logModerationStrike } from "@/lib/repo";

@@ -14,6 +14,8 @@ import { BusinessGallery } from "@/components/views/business-gallery";
 import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
 import { AIReviewSummary } from "@/components/ai-review-summary";
 import { safeJsonLdStringify } from "@/lib/json-ld";
+import { registryForCategory } from "@/lib/business-registry";
+import { guidesForCategory } from "@/lib/guides";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -90,6 +92,13 @@ export default async function BusinessPage({ params }: { params: { id: string } 
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.address)}`
     : undefined;
   const heroUrl = mediaUrl(b.logoKey);
+
+  // Frissesség-jelző: az utolsó szerkesztés (vagy létrehozás) időbélyege.
+  const freshIso = b.updatedAt ?? b.createdAt ?? null;
+  // Hivatalos nyilvántartás-link (csak ha van engedélyszám) — fél-automata ellenőrzés.
+  const registry = b.licenseNumber ? registryForCategory(b.categoryId, b.name) : null;
+  // Kapcsolódó tudásbázis-cikkek (belső link a kategória alapján).
+  const relatedGuides = guidesForCategory(b.categoryId).slice(0, 3);
 
   const wh = parseWorkingHours(b.workingHours ?? null);
   const status = calculateBusinessHoursStatus(wh);
@@ -191,6 +200,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
   if (openingHoursSpec.length > 0) jsonLd.openingHoursSpecification = openingHoursSpec;
   if (reviewSchema) jsonLd.review = reviewSchema;
   if (sameAsArray.length > 0) jsonLd.sameAs = sameAsArray;
+  if (freshIso) jsonLd.dateModified = freshIso.slice(0, 10);
 
   return (
     <div>
@@ -371,6 +381,16 @@ export default async function BusinessPage({ params }: { params: { id: string } 
                   Hatósági engedélyszám / Kamarai szám
                 </p>
                 <p className="text-[13px] font-bold text-ink">{b.licenseNumber}</p>
+                {registry && (
+                  <a
+                    href={registry.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-flex items-center gap-1 text-[11.5px] font-bold text-[#b8860b] underline underline-offset-2 active:opacity-80"
+                  >
+                    Ellenőrizd: {registry.label} ↗
+                  </a>
+                )}
               </div>
             </div>
           )}
@@ -383,6 +403,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
             <Chip icon="clock">{b.workingHours ? `${status.statusText} · ${status.detailText}` : (b.openText || `${status.statusText} · ${status.detailText}`)}</Chip>
             <Chip icon="globe">{b.languages.length ? b.languages.join(" · ") : "Magyar"}</Chip>
             {b.yearsHere != null && <Chip>{b.yearsHere} éve kint</Chip>}
+            {freshIso && <Chip icon="calendar">Frissítve {fmtRelative(freshIso)}</Chip>}
           </div>
         </section>
 
@@ -461,6 +482,30 @@ export default async function BusinessPage({ params }: { params: { id: string } 
             )}
           </div>
         </section>
+
+        {/* Kapcsolódó tudásbázis-cikkek (belső link) */}
+        {relatedGuides.length > 0 && (
+          <section className="mt-6">
+            <SectionHeader>Hasznos útmutatók</SectionHeader>
+            <div className="mt-2.5 grid gap-2">
+              {relatedGuides.map((g) => (
+                <Link
+                  key={g.slug}
+                  href={`/tudasbazis/${g.slug}`}
+                  className="flex items-center gap-2.5 rounded-2xl border border-line bg-surface p-3 shadow-card transition active:scale-[0.99]"
+                >
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary">
+                    <Icon name={g.icon} size={15} strokeWidth={2.3} />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-ink">
+                    {g.title}
+                  </span>
+                  <Icon name="chevR" size={14} className="shrink-0 text-ink-muted" />
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* cím */}
         <section className="mt-6">

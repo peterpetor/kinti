@@ -24,91 +24,6 @@ function getResend(): Resend {
 
 // --- email-templátehelper-ek ------------------------------------------------
 
-interface ConfirmEmailArgs {
-  to: string;
-  /** Megjelenő név vagy "Kedves kinti" ha üres. */
-  posterName?: string | null;
-  title: string;
-  /** Teljes URL — pl. https://kinti.app/api/bulletin/confirm/<token>. */
-  confirmUrl: string;
-  /** Teljes URL — pl. https://kinti.app/hirdetes-kezeles/<token>. */
-  manageUrl: string;
-  /** Lejárati idő (ISO) — a megerősítő linké, NEM a posztté. */
-  confirmExpiresAt: string;
-}
-
-export async function sendConfirmationEmail(args: ConfirmEmailArgs): Promise<void> {
-  const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-
-  const greet = args.posterName?.trim() ? args.posterName.trim() : "kinti";
-  const expiresHu = formatHu(args.confirmExpiresAt);
-  const subject = "Erősítsd meg a hirdetésed a kinti.app-on";
-
-  const text = `Szia ${greet}!
-
-Megkaptuk a hirdetésedet a kinti közösségi hirdetőfalon:
-  "${args.title}"
-
-A publikáláshoz erősítsd meg a kattintással:
-  ${args.confirmUrl}
-
-A megerősítő link ${expiresHu}-ig érvényes. Ha lemaradnál róla, csak küldd el újra a hirdetést.
-
-A hirdetésed kezelése (szerkesztés / törlés) később:
-  ${args.manageUrl}
-
-Ha nem te küldted el ezt a hirdetést, hagyd figyelmen kívül.
-
-Üdv,
-kinti.app`;
-
-  const html = baseLayout({
-    preheader: `Egy kattintással publikáld a hirdetésedet: ${args.title}`,
-    body: `
-      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
-        Szia ${escapeHtml(greet)} 👋
-      </p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
-        Megkaptuk a hirdetésedet a kinti közösségi hirdetőfalra:
-      </p>
-      <p style="margin:0 0 20px;padding:12px 14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;font-size:14.5px;font-weight:700;color:#0e1f17;">
-        ${escapeHtml(args.title)}
-      </p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
-        A publikáláshoz erősítsd meg egy kattintással:
-      </p>
-      <p style="margin:0 0 20px;">
-        ${button(args.confirmUrl, "Hirdetésem megerősítése →")}
-      </p>
-      <p style="margin:0 0 16px;font-size:12.5px;line-height:1.6;color:#5c6d63;">
-        A megerősítő link <strong>${escapeHtml(expiresHu)}-ig</strong> érvényes.
-        Ha lemaradnál róla, csak küldd el a hirdetést újra — bármikor.
-      </p>
-      <hr style="border:none;border-top:1px solid #e6ebe5;margin:20px 0;" />
-      <p style="margin:0 0 6px;font-size:12px;color:#5c6d63;">
-        Később szeretnéd szerkeszteni / törölni a hirdetésed?
-        <br />
-        <a href="${escapeAttr(args.manageUrl)}" style="color:#1d4434;text-decoration:underline;">
-          Hirdetés kezelése
-        </a>
-        (mentsd el ezt az emailt)
-      </p>`,
-  });
-
-  const { error } = await getResend().emails.send({
-    from,
-    to: args.to,
-    subject,
-    html,
-    text,
-  });
-
-  if (error) {
-    // A Resend `error` egy `{ name, message, statusCode }` objektum.
-    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
-  }
-}
 
 interface ReviewConfirmArgs {
   to: string;
@@ -227,7 +142,6 @@ export async function sendBackupEmail(args: BackupEmailArgs): Promise<void> {
   const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
 
   const TYPE_LABEL: Record<string, string> = {
-    bulletin: "Hirdetés",
     event: "Esemény",
     review: "Vélemény",
     business: "Vállalkozás",
@@ -386,10 +300,6 @@ function escapeHtml(s: string): string {
 function escapeAttr(s: string): string {
   return escapeHtml(s);
 }
-
-// `sendBulletinContactEmail` ELTÁVOLÍTVA — a bulletin "Írok neki" email-relay
-// flow megszűnt. A kapcsolat zero-relay: a feladó a hirdetés body-ban telefont
-// / WhatsApp-ot ad meg. (GDPR adatminimalizálás 2026-05.)
 
 // `sendBusinessQuoteEmail` ELTÁVOLÍTVA — a vállalkozás "Kérj árajánlatot"
 // email-relay flow megszűnt. A kapcsolat zero-relay: a vállalkozó telefonja
@@ -615,7 +525,7 @@ kinti.app`;
 
 interface ContentReportEmailArgs {
   adminEmail: string;
-  /** "Hirdetés" vagy "Vélemény". */
+  /** Pl. "Vállalkozás", "Vélemény" vagy "S.O.S. Riasztás". */
   contentLabel: string;
   /** A bejelentett tartalom rövid kivonata (cím / szöveg-részlet). */
   contentExcerpt: string;
@@ -687,90 +597,6 @@ function formatHu(iso: string): string {
   if (Number.isNaN(d.getTime())) return iso;
   const HU_MONTH = ["jan.", "feb.", "márc.", "ápr.", "máj.", "jún.", "júl.", "aug.", "szept.", "okt.", "nov.", "dec."];
   return `${d.getFullYear()}. ${HU_MONTH[d.getMonth()]} ${d.getDate()}. ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-}
-
-// --- Hirdetés lejárati figyelmeztető email -----------------------------------
-
-interface BulletinExpiryWarningArgs {
-  to: string;
-  posterName?: string | null;
-  title: string;
-  /** ISO datetime — mikor jár le a hirdetés */
-  expiresAt: string;
-  /** Teljes URL — pl. https://kinti.app/hirdetes-kezeles/<token> */
-  manageUrl: string;
-}
-
-export async function sendBulletinExpiryWarningEmail(args: BulletinExpiryWarningArgs): Promise<void> {
-  const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-
-  const greet = args.posterName?.trim() ? args.posterName.trim() : "kinti";
-  const expiresHu = (() => {
-    const d = new Date(args.expiresAt);
-    if (Number.isNaN(d.getTime())) return args.expiresAt;
-    const HU_MONTH = ["jan.", "feb.", "márc.", "ápr.", "máj.", "jún.", "júl.", "aug.", "szept.", "okt.", "nov.", "dec."];
-    return `${d.getFullYear()}. ${HU_MONTH[d.getMonth()]} ${d.getDate()}.`;
-  })();
-
-  const subject = `⏰ A hirdetésed 3 nap múlva lejár — kinti.app`;
-
-  const text = `Szia ${greet}!
-
-A kinti.app-on feladott hirdetésed hamarosan lejár:
-  "${args.title}"
-
-Lejárat dátuma: ${expiresHu}
-
-Ha a hirdetés még aktuális, egyetlen kattintással meghosszabbíthatod újabb 30 nappal:
-  ${args.manageUrl}
-
-Ha nem hosszabbítod meg, a hirdetés automatikusan törlődik a lejárat után.
-
-Üdv,
-kinti.app`;
-
-  const html = baseLayout({
-    preheader: `A hirdetésed lejár ${expiresHu}-én — egyetlen kattintással meghosszabbíthatod!`,
-    body: `
-      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
-        Szia ${escapeHtml(greet)} 👋
-      </p>
-      <p style="margin:0 0 8px;font-size:14px;line-height:1.6;color:#0e1f17;">
-        A kinti.app hirdetőfalon feladott hirdetésed <strong>3 nap múlva lejár</strong>:
-      </p>
-      <p style="margin:0 0 20px;padding:12px 14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;font-size:14.5px;font-weight:700;color:#0e1f17;">
-        ${escapeHtml(args.title)}
-      </p>
-      <div style="margin:0 0 20px;padding:12px 14px;background:#fff8ed;border:2px solid #e3a233;border-radius:14px;display:flex;align-items:center;gap:10px;">
-        <span style="font-size:22px;line-height:1;">⏰</span>
-        <div>
-          <div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#9a6b00;margin-bottom:2px;">Lejárat</div>
-          <div style="font-size:14.5px;font-weight:800;color:#0e1f17;">${escapeHtml(expiresHu)}</div>
-        </div>
-      </div>
-      <p style="margin:0 0 10px;font-size:14px;line-height:1.6;color:#5c6d63;">
-        Ha a hirdetés még aktuális, <strong>egyetlen kattintással</strong> meghosszabbíthatod újabb <strong>30 nappal</strong> — nem kell semmit újra megírni!
-      </p>
-      <p style="margin:0 0 20px;">
-        ${button(args.manageUrl, "Hirdetésem meghosszabbítása →")}
-      </p>
-      <p style="margin:0;font-size:12px;line-height:1.6;color:#94a097;">
-        Ha nem hosszabbítod meg, a hirdetés automatikusan törlődik a lejárat után. Bármikor újra feladhatod a hirdetőfalon.
-      </p>`,
-  });
-
-  const { error } = await getResend().emails.send({
-    from,
-    to: args.to,
-    subject,
-    html,
-    text,
-  });
-
-  if (error) {
-    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
-  }
 }
 
 

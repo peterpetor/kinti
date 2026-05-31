@@ -16,7 +16,7 @@ type State =
 
 interface Radar {
   id: string;
-  radarType: "exchange_rate" | "alberlet";
+  radarType: "exchange_rate";
   parameters: string;
   createdAt: string;
 }
@@ -28,16 +28,9 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Form states
-  const [activeTab, setActiveTab] = useState<"exchange_rate" | "alberlet">("exchange_rate");
-  
-  // Exchange Rate
+  // Exchange Rate form
   const [threshold, setThreshold] = useState<string>(String(Math.round((currentHufRate || 400) + 10)));
   const [direction, setDirection] = useState<"above" | "below">("above");
-
-  // Alberlet
-  const [alberletCanton, setAlberletCanton] = useState<string>("ZH");
-  
 
   const refreshRadars = useCallback(async (sub: PushSubscriptionJSON) => {
     if (!sub.endpoint) return;
@@ -110,35 +103,29 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
 
   async function handleCreateRadar() {
     setError(null);
-    let parameters: any = {};
-    
-    if (activeTab === "exchange_rate") {
-      const t = Number(threshold);
-      if (!Number.isFinite(t) || t <= 0 || t > 10000) {
-        setError("Érvénytelen küszöb.");
-        return;
-      }
-      parameters = { threshold: t, direction };
-    } else if (activeTab === "alberlet") {
-      parameters = { canton: alberletCanton };
+    const t = Number(threshold);
+    if (!Number.isFinite(t) || t <= 0 || t > 10000) {
+      setError("Érvénytelen küszöb.");
+      return;
     }
+    const parameters = { threshold: t, direction };
 
     setState("busy");
     try {
       const sub = subscription ?? (await ensureSubscription());
       if (!sub) return;
       if (!subscription) setSubscription(sub);
-      
+
       const res = await fetch("/api/radars", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           subscription: sub,
-          radarType: activeTab,
+          radarType: "exchange_rate",
           parameters,
         }),
       });
-      
+
       if (!res.ok) {
         const j = (await res.json().catch(() => ({}))) as { error?: string };
         setError(j.error ?? "Nem sikerült elmenteni a radart.");
@@ -193,18 +180,10 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
       if (r.radarType === "exchange_rate") {
         return `${p.direction === "above" ? "≥" : "≤"} ${p.threshold} HUF / CHF`;
       }
-      if (r.radarType === "alberlet") {
-        return `Új albérlet: ${p.canton} kantonban`;
-      }
     } catch {
       return "Ismeretlen radar";
     }
-  }
-
-  function renderRadarIcon(type: string) {
-    if (type === "exchange_rate") return "trending";
-    if (type === "alberlet") return "home";
-    return "bell";
+    return "Ismeretlen radar";
   }
 
   return (
@@ -218,79 +197,39 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
             Kinti Radar 🎯
           </h3>
           <p className="text-[12.5px] leading-snug text-ink-muted">
-            Személyre szabott push értesítők. Spórolj időt és pénzt!
+            Árfolyam push értesítő. Spórolj időt és pénzt!
           </p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="mb-3 flex overflow-x-auto hide-scrollbar gap-2">
-        <button 
-          onClick={() => setActiveTab("exchange_rate")}
-          className={cn("px-3 py-1.5 rounded-pill text-[12px] font-bold whitespace-nowrap transition", activeTab === "exchange_rate" ? "bg-accent text-white" : "bg-surface-alt text-ink-muted")}
-        >
-          💱 Árfolyam
-        </button>
-        <button 
-          onClick={() => setActiveTab("alberlet")}
-          className={cn("px-3 py-1.5 rounded-pill text-[12px] font-bold whitespace-nowrap transition", activeTab === "alberlet" ? "bg-accent text-white" : "bg-surface-alt text-ink-muted")}
-        >
-          🏠 Albérlet
-        </button>
-      </div>
-
       {/* Új riasztó form */}
       <div className="rounded-2xl border border-line bg-surface-alt/40 p-4 space-y-3">
-        
-        {activeTab === "exchange_rate" && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-[13px]">
-              <span className="font-bold text-ink">Értesíts ha 1 CHF</span>
-              <select
-                value={direction}
-                onChange={(e) => setDirection(e.target.value as "above" | "below")}
-                disabled={state === "busy"}
-                className="rounded-[10px] border border-line bg-surface px-2.5 py-1.5 font-bold text-ink"
-              >
-                <option value="above">≥ fölé megy</option>
-                <option value="below">≤ alá süllyed</option>
-              </select>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="number"
-                inputMode="decimal"
-                step="0.5"
-                value={threshold}
-                onChange={(e) => setThreshold(e.target.value)}
-                disabled={state === "busy"}
-                className="flex-1 rounded-[10px] border border-line bg-surface px-3 py-2 text-[15px] font-extrabold text-ink outline-none"
-              />
-              <span className="grid place-items-center px-1 text-[13px] font-bold text-ink-muted">HUF</span>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "alberlet" && (
-          <div className="space-y-2">
-            <span className="text-[13px] font-bold text-ink block">Kanton (Keresési zóna)</span>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-[13px]">
+            <span className="font-bold text-ink">Értesíts ha 1 CHF</span>
             <select
-              value={alberletCanton}
-              onChange={(e) => setAlberletCanton(e.target.value)}
+              value={direction}
+              onChange={(e) => setDirection(e.target.value as "above" | "below")}
               disabled={state === "busy"}
-              className="w-full rounded-[10px] border border-line bg-surface px-3 py-2.5 text-[14px] font-bold text-ink"
+              className="rounded-[10px] border border-line bg-surface px-2.5 py-1.5 font-bold text-ink"
             >
-              <option value="ZH">Zürich (ZH)</option>
-              <option value="AG">Aargau (AG)</option>
-              <option value="BS">Basel-Stadt (BS)</option>
-              <option value="BL">Basel-Landschaft (BL)</option>
-              <option value="BE">Bern (BE)</option>
-              <option value="LU">Luzern (LU)</option>
-              <option value="SG">St. Gallen (SG)</option>
-              <option value="all">Svájc összes</option>
+              <option value="above">≥ fölé megy</option>
+              <option value="below">≤ alá süllyed</option>
             </select>
           </div>
-        )}
+          <div className="flex gap-2">
+            <input
+              type="number"
+              inputMode="decimal"
+              step="0.5"
+              value={threshold}
+              onChange={(e) => setThreshold(e.target.value)}
+              disabled={state === "busy"}
+              className="flex-1 rounded-[10px] border border-line bg-surface px-3 py-2 text-[15px] font-extrabold text-ink outline-none"
+            />
+            <span className="grid place-items-center px-1 text-[13px] font-bold text-ink-muted">HUF</span>
+          </div>
+        </div>
 
         <button
           type="button"
@@ -304,11 +243,9 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
           {state === "busy" ? "Beállítás folyamatban…" : "Radar Aktiválása"}
         </button>
 
-        {activeTab === "exchange_rate" && (
-          <p className="text-center text-[10px] leading-tight text-ink-muted">
-            Az árfolyam adatok tájékoztató jellegűek, a piaci mozgásokért és a késésekből adódó anyagi károkért felelősséget nem vállalunk.
-          </p>
-        )}
+        <p className="text-center text-[10px] leading-tight text-ink-muted">
+          Az árfolyam adatok tájékoztató jellegűek, a piaci mozgásokért és a késésekből adódó anyagi károkért felelősséget nem vállalunk.
+        </p>
 
         {error && <p className="text-[12px] font-bold text-accent text-center pt-1">{error}</p>}
       </div>
@@ -324,7 +261,7 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
               <div key={a.id} className="flex items-center justify-between gap-3 rounded-xl border border-line bg-surface px-3.5 py-2.5 shadow-sm">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-primary">
-                    <Icon name={renderRadarIcon(a.radarType) as any} size={14} strokeWidth={2.4} />
+                    <Icon name="trending" size={14} strokeWidth={2.4} />
                   </span>
                   <span className="text-[13px] font-bold text-ink truncate">
                     {renderRadarSummary(a)}

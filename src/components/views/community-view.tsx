@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -11,14 +11,10 @@ import { EventCalendar } from "@/components/event-calendar";
 import { SpontaneousCard } from "./spontaneous-card";
 import { SpontaneousForm } from "./spontaneous-form";
 import type { PublicSpontaneous } from "@/lib/repo";
-import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ShareSheet } from "@/components/share-sheet";
 import { AddToCalendar } from "@/components/add-to-calendar";
-import { ReportButton } from "@/components/report-button";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import type { CalendarEvent } from "@/lib/calendar";
-
-
 
 type Tab = "events" | "spontan";
 
@@ -170,6 +166,27 @@ function eventToCal(e: KintiEvent): CalendarEvent {
   };
 }
 
+/**
+ * Best-effort push-emlékeztető rögzítése RSVP után — CSAK ha a böngésző már fel
+ * van iratkozva (a Közösség oldalon a „Szólunk, ha új esemény van" kártyával).
+ * Sose dob hibát kifelé; ha nincs feliratkozás, csendben kihagyja.
+ */
+async function scheduleEventReminder(eventId: string): Promise<void> {
+  try {
+    if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if (!sub) return;
+    await fetch(`/api/events/${eventId}/reminder`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ endpoint: sub.endpoint }),
+    });
+  } catch {
+    /* best-effort — az emlékeztető extra, sose blokkolja az RSVP-t */
+  }
+}
+
 function EventsList({ events }: { events: KintiEvent[] }) {
   // Nézet: lista vagy naptár
   const [view, setView] = useState<"list" | "calendar">("list");
@@ -225,6 +242,8 @@ function EventsList({ events }: { events: KintiEvent[] }) {
           ...p,
           [e.id]: { going: data.total ?? goingOf(e) + 1, voted: true, busy: false },
         }));
+        // Ha a user fel van iratkozva push-ra, emlékeztetőt is kérünk (best-effort).
+        void scheduleEventReminder(e.id);
       } else {
         setRsvp((p) => ({ ...p, [e.id]: { going: goingOf(e), voted: false, busy: false } }));
       }
@@ -550,7 +569,6 @@ function TagBadge({ tag, color }: { tag: string | null; color: string | null }) 
     </span>
   );
 }
-
 
 function Empty({ label }: { label: string }) {
   return (

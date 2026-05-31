@@ -91,7 +91,7 @@ export default async function ModerationPage({
           Moderációs sor
         </h1>
         <p className="text-[12.5px] text-ink-muted">
-          Minden új hirdetés, vélemény, vállalkozás és esemény admin-jóváhagyásra vár.
+          Minden új vélemény, vállalkozás és esemény admin-jóváhagyásra vár.
           Spontán találkozók, Hofladen-térkép és Akciók automatikusan élesednek.
         </p>
       </header>

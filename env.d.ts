@@ -4,7 +4,7 @@
 interface CloudflareEnv {
   // D1 relációs adatbázis
   DB: D1Database;
-  // R2 média-tároló (logók, hirdetés-képek)
+  // R2 média-tároló (logók, esemény-képek)
   MEDIA: R2Bucket;
   // Cloudflare Workers AI binding
   AI: any;
@@ -30,13 +30,13 @@ interface CloudflareEnv {
   /** Opcionális — alapértelmezés: "kinti-media" (wrangler.toml binding). */
   R2_BUCKET?: string;
 
-  // Cloudflare Turnstile (CAPTCHA a hirdetés-űrlapon).
+  // Cloudflare Turnstile (CAPTCHA a beküldő űrlapokon).
   // Dashboard → Turnstile → Add site. A site key publikus, a secret titok.
   // Fejlesztéshez van "always-pass" test key: 1x00000000000000000000AA / 1x0000000000000000000000000000000AA
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: string;
   TURNSTILE_SECRET: string;
 
-  // Resend (tranzakciós email — bulletin megerősítő link).
+  // Resend (tranzakciós email — megerősítő linkek, admin értesítők).
   // https://resend.com → API Keys.  Sender domaint Resend dashboardban verifikálni
   // kell éles használathoz; fejlesztéshez az `onboarding@resend.dev` mehet.
   RESEND_API_KEY: string;

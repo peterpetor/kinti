@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { hashIp, hashEmail } from "./bulletin";
+import { hashIp, hashEmail } from "./security";
 import { isSubmitterBlocked } from "./repo";
 
 /**

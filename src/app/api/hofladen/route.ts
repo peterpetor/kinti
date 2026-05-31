@@ -7,7 +7,7 @@ import {
 } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { findProfanityInFields } from "@/lib/profanity";
 import { logModerationStrike } from "@/lib/repo";
 import {

@@ -3,42 +3,28 @@
 import { useEffect, useState, useCallback } from "react";
 import { Icon } from "@/components/ui";
 import { CANTONS } from "@/lib/cantons";
+import { usePreferredCanton } from "@/lib/canton-pref";
 import { describeWeather, type WeatherNow } from "@/lib/weather";
 
 /**
  * WeatherWidget — a főoldal tetején lévő svájci időjárás-csík.
  *
  * • Adatforrás: /api/weather (Open-Meteo · MeteoSwiss ICON CH2 modell).
- * • A kiválasztott kanton székhelyének aktuális időjárását mutatja. A saját
- *   beépített kanton-választójával váltható; a választást a `kinti.canton`
- *   localStorage-kulcsban tároljuk.
+ * • A kiválasztott kanton székhelyének aktuális időjárását mutatja. A
+ *   kanton-választója a megosztott „preferált kanton" beállítást írja
+ *   (`@/lib/canton-pref`), így az egész app személyre szabódik egy helyről.
  * • Homokozó / letiltott localStorage esetén nem dob hibát (try/catch), és ha
  *   az API nem elérhető, csendben elrejti magát.
  */
 
-const CANTON_KEY = "kinti.canton";
-
-function readStoredCanton(): string {
-  try {
-    const v = localStorage.getItem(CANTON_KEY);
-    if (v && v !== "all" && CANTONS.some((c) => c.code === v)) return v;
-  } catch {
-    /* sandbox / letiltott localStorage */
-  }
-  return "ZH";
-}
-
 type Phase = "loading" | "ready" | "error";
 
 export function WeatherWidget() {
-  const [canton, setCanton] = useState("ZH");
+  // A preferált kanton a megosztott forrás; ha nincs beállítva, ZH-t mutatunk.
+  const [preferred, setPreferred] = usePreferredCanton();
+  const canton = preferred ?? "ZH";
   const [data, setData] = useState<WeatherNow | null>(null);
   const [phase, setPhase] = useState<Phase>("loading");
-
-  // Induló kanton a localStorage-ből (csak kliensen).
-  useEffect(() => {
-    setCanton(readStoredCanton());
-  }, []);
 
   const load = useCallback(async (code: string) => {
     setPhase("loading");
@@ -58,19 +44,8 @@ export function WeatherWidget() {
   }, [canton, load]);
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const code = e.target.value;
-    setCanton(code);
-    try {
-      localStorage.setItem(CANTON_KEY, code);
-    } catch {
-      /* ignore */
-    }
-    // Más komponensek (pl. kanton-választó) értesítése ugyanabban a tabban.
-    try {
-      window.dispatchEvent(new CustomEvent("kinti:canton", { detail: code }));
-    } catch {
-      /* ignore */
-    }
+    // A megosztott setter perzisztál + értesíti az app többi részét.
+    setPreferred(e.target.value);
   }
 
   // Ha az API nem elérhető, ne rondítsuk a főoldalt — elrejtjük.

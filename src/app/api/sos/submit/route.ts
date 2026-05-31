@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createSosAlert, getActiveAlertCountForUser } from "@/lib/sos-repo";
 import { filterProfanity, containsProfanity } from "@/lib/profanity";
 import { verifyTurnstile } from "@/lib/turnstile";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { countRecentRideSubmits, logRideSubmit, logModerationStrike } from "@/lib/repo";
 
 export const runtime = "edge";

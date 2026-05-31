@@ -512,3 +512,69 @@ export const GUIDES: Guide[] = [
 export function getGuide(slug: string): Guide | undefined {
   return GUIDES.find((g) => g.slug === slug);
 }
+
+// ---------------------------------------------------------------------------
+// Belső linkelés: Tudásbázis ↔ Szaknévsor (SEO + konverzió).
+// A cikk-slug → kapcsolódó Szaknévsor-kategóriák; az {id} a /szaknevsor?cat=<id>
+// szűrőhöz, a {label} a megjelenítéshez. A kategória-id-k a kanonikusak
+// (lásd scripts/gen-categories.mjs). Külön map-ben, a guide-objektumok nélkül.
+// ---------------------------------------------------------------------------
+export interface RelatedCategory {
+  id: string;
+  label: string;
+}
+
+const GUIDE_RELATED_CATEGORIES: Record<string, RelatedCategory[]> = {
+  "bejelentkezes-letelepedes": [
+    { id: "koltoztetes", label: "Költöztetés" },
+    { id: "jogtanacsado", label: "Jogtanácsadó" },
+  ],
+  "egeszsegbiztositas-krankenkasse": [
+    { id: "biztositas", label: "Biztosítás" },
+    { id: "alkusz", label: "Biztosítási alkusz" },
+  ],
+  "adozas-quellensteuer": [
+    { id: "adotanacsado", label: "Adótanácsadó" },
+    { id: "konyveles", label: "Könyvelés" },
+  ],
+  "iskola-es-gyerek": [
+    { id: "babysitter", label: "Gyermekfelügyelet" },
+    { id: "gyermekorvos", label: "Gyermekorvos" },
+  ],
+  "munkavallalas": [
+    { id: "jogtanacsado", label: "Jogtanácsadó" },
+    { id: "fordito", label: "Fordító" },
+  ],
+  "bankszamla": [
+    { id: "banki_ugyintezo", label: "Banki ügyintéző" },
+    { id: "penzugyi_tanacsado", label: "Pénzügyi tanácsadó" },
+  ],
+  "ahv-nyugdij": [
+    { id: "penzugyi_tanacsado", label: "Pénzügyi tanácsadó" },
+    { id: "biztositas", label: "Biztosítás" },
+  ],
+  "magyar-kepviselet": [
+    { id: "fordito", label: "Fordító" },
+    { id: "forditasszak", label: "Szakfordító" },
+  ],
+  "csaladi-potlek": [
+    { id: "penzugyi_tanacsado", label: "Pénzügyi tanácsadó" },
+  ],
+  "munkanelkuli-biztositas": [
+    { id: "jogtanacsado", label: "Jogtanácsadó" },
+    { id: "penzugyi_tanacsado", label: "Pénzügyi tanácsadó" },
+  ],
+};
+
+/** Egy cikkhez kapcsolódó Szaknévsor-kategóriák (üres tömb, ha nincs). */
+export function relatedCategoriesForGuide(slug: string): RelatedCategory[] {
+  return GUIDE_RELATED_CATEGORIES[slug] ?? [];
+}
+
+/** Egy Szaknévsor-kategóriához kapcsolódó útmutatók (fordított irány). */
+export function guidesForCategory(categoryId: string): Guide[] {
+  if (!categoryId) return [];
+  return GUIDES.filter((g) =>
+    (GUIDE_RELATED_CATEGORIES[g.slug] ?? []).some((c) => c.id === categoryId),
+  );
+}

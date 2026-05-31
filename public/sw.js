@@ -109,7 +109,6 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/admin") ||
     url.pathname.startsWith("/szaknevsor/kezeles") ||
     url.pathname.startsWith("/esemeny-kezeles") ||
-    url.pathname.startsWith("/hirdetes-kezeles") ||
     url.pathname.startsWith("/velemeny-kezeles") ||
     url.pathname.startsWith("/spontan-kezeles") ||
     url.pathname.startsWith("/kozosseg/esemeny/")

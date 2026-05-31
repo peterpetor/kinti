@@ -1,11 +1,14 @@
 /**
- * kinti-cron-exchange-alert — CHF/HUF árfolyam-küszöb push-riasztó.
+ * kinti-cron-exchange-alert — óránkénti push-cron (árfolyam + esemény-emlékeztető).
  *
- * Óránként lefutva:
- *   1) lekéri a Frankfurter API-tól az aktuális CHF→HUF árfolyamot
- *   2) végigjárja az aktív `exchange_rate_alerts` rekordokat
- *   3) ha az árfolyam átlépte a küszöböt ÉS a last_fired_at ≥ 6 órája volt,
- *      payload-mentes push-t küld a feliratkozónak.
+ * Óránként lefutva két dolgot csinál:
+ *   A) Árfolyam-riasztás:
+ *      1) lekéri a Frankfurter API-tól az aktuális CHF→HUF árfolyamot
+ *      2) végigjárja az aktív `exchange_rate_alerts` rekordokat
+ *      3) ha az árfolyam átlépte a küszöböt ÉS a last_fired_at ≥ 6 órája volt,
+ *         payload-mentes push-t küld a feliratkozónak.
+ *   B) Esemény-emlékeztető: az esedékes (`event_reminders.remind_at ≤ most`)
+ *      RSVP-emlékeztetőket küldi ki, majd `sent = 1`-re állítja.
  *
  * A push payload nélküli — a service worker egy generikus "kinti — új
  * értesítés" üzenetet jelenít meg, a user a kinti.app/arfolyam-on látja az
@@ -236,6 +239,77 @@ async function runAlerts(env: Env): Promise<RunResult> {
   };
 }
 
+// --- Esemény RSVP push-emlékeztetők ---------------------------------------
+
+interface ReminderResult {
+  due: number;
+  sent: number;
+  removed: number;
+  failed: number;
+}
+
+/**
+ * Esedékes (remind_at ≤ most), még el nem küldött esemény-emlékeztetők
+ * kiküldése — csak élő feliratkozással és még be nem fejezett eseményre.
+ * A push payload-mentes (mint az árfolyam-riasztásnál): a SW egy generikus
+ * „kinti — új értesítés"-t mutat, a user a Közösség oldalon látja a részleteket.
+ */
+async function runEventReminders(env: Env): Promise<ReminderResult> {
+  const { results } = await env.DB
+    .prepare(
+      `SELECT r.id AS id, r.push_endpoint AS push_endpoint
+       FROM event_reminders r
+       JOIN push_subscriptions s ON s.endpoint = r.push_endpoint
+       JOIN events e ON e.id = r.event_id
+       WHERE r.sent = 0
+         AND r.remind_at <= datetime('now')
+         AND r.remind_at >= datetime('now', '-1 day')
+         AND e.event_date >= date('now')
+       LIMIT 200`,
+    )
+    .all<{ id: string; push_endpoint: string }>();
+
+  let sent = 0;
+  let removed = 0;
+  let failed = 0;
+
+  for (const r of results) {
+    try {
+      const status = await sendPush(env, r.push_endpoint);
+      if (status >= 200 && status < 300) {
+        sent++;
+        await env.DB
+          .prepare(`UPDATE event_reminders SET sent = 1 WHERE id = ?`)
+          .bind(r.id)
+          .run();
+      } else if (status === 404 || status === 410) {
+        // Endpoint megszűnt — takarítjuk a feliratkozást és az emlékeztetőit.
+        removed++;
+        await env.DB
+          .prepare(`DELETE FROM push_subscriptions WHERE endpoint = ?`)
+          .bind(r.push_endpoint)
+          .run();
+        await env.DB
+          .prepare(`DELETE FROM event_reminders WHERE push_endpoint = ?`)
+          .bind(r.push_endpoint)
+          .run();
+      } else {
+        failed++;
+      }
+    } catch (err) {
+      console.error("[cron-exchange-alert] reminder push hiba:", err);
+      failed++;
+    }
+  }
+
+  // Elavult (2+ napja esedékes) emlékeztetők takarítása.
+  await env.DB
+    .prepare(`DELETE FROM event_reminders WHERE remind_at < datetime('now', '-2 days')`)
+    .run();
+
+  return { due: results.length, sent, removed, failed };
+}
+
 export default {
   async scheduled(
     _event: ScheduledController,
@@ -243,9 +317,14 @@ export default {
     ctx: ExecutionContext,
   ): Promise<void> {
     ctx.waitUntil(
-      runAlerts(env).then((result) => {
-        console.log("[cron-exchange-alert]", JSON.stringify(result));
-      }),
+      Promise.all([
+        runAlerts(env).then((result) => {
+          console.log("[cron-exchange-alert]", JSON.stringify(result));
+        }),
+        runEventReminders(env).then((result) => {
+          console.log("[cron-exchange-alert][reminders]", JSON.stringify(result));
+        }),
+      ]).then(() => undefined),
     );
   },
 
@@ -256,6 +335,7 @@ export default {
       return new Response("Unauthorized", { status: 401 });
     }
     const result = await runAlerts(env);
-    return Response.json(result);
+    const reminders = await runEventReminders(env);
+    return Response.json({ ...result, reminders });
   },
 };

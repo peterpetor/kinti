@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { incrementBusinessAnalytic, getBusinessById, type BusinessAnalyticsKind } from "@/lib/repo";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";

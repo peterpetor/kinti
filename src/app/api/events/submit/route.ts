@@ -14,7 +14,7 @@ import {
 import { getCloudflareEnv, getMediaBucket } from "@/lib/cloudflare";
 import { moderateImage } from "@/lib/moderation";
 import { isDisposableEmail } from "@/lib/disposable-emails";
-import { hashIp } from "@/lib/bulletin";
+import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";

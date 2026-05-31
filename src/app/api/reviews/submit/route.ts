@@ -11,7 +11,7 @@ import {
   REVIEW_CONFIRM_TTL_MS,
 } from "@/lib/reviews";
 import { safeLogError } from "@/lib/safe-log";
-import { TERMS_VERSION, hashIp } from "@/lib/bulletin";
+import { TERMS_VERSION, hashIp } from "@/lib/security";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";

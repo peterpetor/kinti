@@ -11,7 +11,7 @@ import { moderateText } from "@/lib/text-moderation";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { sendBusinessConfirmationEmail } from "@/lib/email";
-import { TERMS_VERSION, hashIp } from "@/lib/bulletin";
+import { TERMS_VERSION, hashIp } from "@/lib/security";
 import {
   validateBusinessInput,
   BUSINESS_CONFIRM_TTL_MS,

@@ -250,7 +250,7 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
           <p className="text-2xl mb-2">📭</p>
           <p className="text-[13px] font-bold text-ink">Egyelőre üres a listád</p>
           <p className="mt-1 text-[11.5px] text-ink-muted">
-            Amikor beküldesz valamit (hirdetés, esemény, vélemény, vállalkozás),
+            Amikor beküldesz valamit (esemény, vélemény, vállalkozás),
             automatikusan idekerül.
           </p>
         </div>
