@@ -6,6 +6,7 @@ import {
   createEvent,
   countRecentEventSubmits,
   logEventSubmit,
+  logModerationStrike,
 } from "@/lib/repo";
 import {
   sendEventConfirmationEmail,
@@ -41,6 +42,12 @@ export async function POST(req: Request) {
   // 1) Validáció (profanity filter is benne van)
   const validation = validateEventInput(body);
   if (!validation.ok) {
+    const isProfane = validation.errors.some(e => e.message.includes("nem enged"));
+    const ip = req.headers.get("cf-connecting-ip") ?? null;
+    const ipHash = await hashIp(ip);
+    if (isProfane) {
+      await logModerationStrike(ipHash, "Event input contained profanity");
+    }
     return NextResponse.json(
       { error: "Hibás bemenet.", details: validation.errors },
       { status: 400 },
@@ -106,6 +113,7 @@ export async function POST(req: Request) {
         const moderation = await moderateImage(arrayBuffer);
         if (!moderation.safe) {
           await getMediaBucket().delete(key).catch(() => { /* silent */ });
+          await logModerationStrike(ipHash, "Image moderation failed: " + moderation.reason);
           return NextResponse.json(
             { error: moderation.reason || "A kép moderációs okokból elutasításra került." },
             { status: 400 },

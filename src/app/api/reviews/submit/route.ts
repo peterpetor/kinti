@@ -17,6 +17,7 @@ import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { moderateText } from "@/lib/text-moderation";
+import { logModerationStrike } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -92,6 +93,7 @@ export async function POST(req: Request) {
   const combinedReviewText = [validation.value.reviewerName, validation.value.body].join("\n");
   const textMod = await moderateText(combinedReviewText);
   if (textMod.safe === false) {
+    await logModerationStrike(ipHash, "Review text moderation failed: " + textMod.reason);
     return NextResponse.json(
       { error: textMod.reason || "A véleményed nem megfelelő tartalmat hordoz." },
       { status: 400 },

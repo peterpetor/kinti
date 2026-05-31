@@ -3605,3 +3605,47 @@ export async function deactivateBlocklistEntry(id: string): Promise<boolean> {
     .run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+// ---------------------------------------------------------------------------
+// Auto-Ban (Three Strikes) System
+// ---------------------------------------------------------------------------
+
+/**
+ * Naplózza egy felhasználó elutasított beküldését (trágár / NSFW tartalom).
+ * Ha 1 órán belül 3 vagy több strike gyűlik össze, az IP-t automatikusan
+ * kitiltjuk a rendszerből a `blocklist` használatával.
+ */
+export async function logModerationStrike(ipHash: string, reason: string): Promise<void> {
+  const db = getDB();
+  const id = crypto.randomUUID();
+  
+  await db
+    .prepare("INSERT INTO moderation_strikes (id, ip_hash, reason) VALUES (?, ?, ?)")
+    .bind(id, ipHash, reason.slice(0, 200))
+    .run();
+    
+  // Számoljuk meg a strike-okat az elmúlt 1 órában
+  const countRow = await db
+    .prepare("SELECT COUNT(*) AS cnt FROM moderation_strikes WHERE ip_hash = ? AND created_at > datetime('now', '-1 hour')")
+    .bind(ipHash)
+    .first<{ cnt: number }>();
+    
+  const cnt = countRow?.cnt ?? 0;
+  
+  if (cnt >= 3) {
+    // 3 strike -> Auto-ban! (Csak ha még nincs bannolva)
+    const existing = await db
+      .prepare("SELECT id FROM blocklist WHERE kind = 'ip_hash' AND value = ? AND active = 1")
+      .bind(ipHash)
+      .first();
+      
+    if (!existing) {
+      await addToBlocklist({
+        kind: "ip_hash",
+        value: ipHash,
+        reason: "Auto-ban: Sorozatos (3x) tiltott tartalom beküldési kísérlet 1 órán belül.",
+        createdBy: "system-auto-ban"
+      });
+    }
+  }
+}

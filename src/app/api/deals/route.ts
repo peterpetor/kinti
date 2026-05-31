@@ -8,6 +8,7 @@ import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { hashIp } from "@/lib/bulletin";
 import { containsProfanity } from "@/lib/profanity";
+import { logModerationStrike } from "@/lib/repo";
 import {
   getStoreById,
   getCategoryById,
@@ -96,6 +97,7 @@ export async function POST(req: Request) {
 
   // Profanity-szűrő a note mezőre
   if (note && containsProfanity(note).hit) {
+    await logModerationStrike(ipHash, "Deal note contained profanity").catch(() => {});
     return NextResponse.json(
       { error: "A megjegyzésed nem megfelelő szavakat tartalmaz. Fogalmazd meg másképp." },
       { status: 400 },

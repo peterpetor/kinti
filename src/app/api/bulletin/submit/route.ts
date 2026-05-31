@@ -4,6 +4,7 @@ import {
   createBulletinDraft,
   countRecentBulletins,
   publishBulletinPost,
+  logModerationStrike,
 } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { sendConfirmationEmail } from "@/lib/email";
@@ -53,6 +54,13 @@ export async function POST(req: Request) {
   // 1) form-validáció
   const validation = validateBulletinInput(body);
   if (!validation.ok) {
+    // Ha tragárság miatt bukt el, strike-ot logolunk a beküldő IP-jére
+    const isProfane = validation.errors.some((e) => e.message?.includes("szavakat"));
+    if (isProfane) {
+      const earlyIp = req.headers.get("cf-connecting-ip") ?? null;
+      const earlyIpHash = await hashIp(earlyIp);
+      await logModerationStrike(earlyIpHash, "Bulletin input contained profanity").catch(() => {});
+    }
     return NextResponse.json(
       { error: "Hibás bemenet.", details: validation.errors },
       { status: 400 },
@@ -114,6 +122,7 @@ export async function POST(req: Request) {
   if (combinedText.length > 0) {
     const textMod = await moderateText(combinedText);
     if (textMod.safe === false) {
+      await logModerationStrike(ipHash, "Text moderation failed: " + textMod.reason);
       return NextResponse.json(
         {
           error:
@@ -147,6 +156,7 @@ export async function POST(req: Request) {
         const moderation = await moderateImage(arrayBuffer);
         if (!moderation.safe) {
           await getMediaBucket().delete(key).catch(() => { /* silent */ });
+          await logModerationStrike(ipHash, "Image moderation failed: " + moderation.reason);
           return NextResponse.json(
             { error: moderation.reason || "A kép moderációs okokból elutasításra került." },
             { status: 400 },

@@ -3,7 +3,7 @@ import { createSosAlert, getActiveAlertCountForUser } from "@/lib/sos-repo";
 import { filterProfanity, containsProfanity } from "@/lib/profanity";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { hashIp } from "@/lib/bulletin";
-import { countRecentRideSubmits, logRideSubmit } from "@/lib/repo";
+import { countRecentRideSubmits, logRideSubmit, logModerationStrike } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -121,6 +121,7 @@ export async function POST(req: Request) {
 
   // Profanity-szűrő: blokkolás rasszista/trágár tartalom esetén
   if (containsProfanity(String(description)).hit) {
+    await logModerationStrike(ipHash, "SOS description contained profanity").catch(() => {});
     return NextResponse.json(
       { error: "A leírás nem megfelelő szavakat tartalmaz. Fogalmazd meg másképp." },
       { status: 400 },
