@@ -3615,7 +3615,8 @@ export async function deactivateBlocklistEntry(id: string): Promise<boolean> {
  * Ha 1 órán belül 3 vagy több strike gyűlik össze, az IP-t automatikusan
  * kitiltjuk a rendszerből a `blocklist` használatával.
  */
-export async function logModerationStrike(ipHash: string, reason: string): Promise<void> {
+export async function logModerationStrike(ipHash: string | null, reason: string): Promise<void> {
+  if (!ipHash) return;
   const db = getDB();
   const id = crypto.randomUUID();
   
@@ -3644,7 +3645,7 @@ export async function logModerationStrike(ipHash: string, reason: string): Promi
         kind: "ip_hash",
         value: ipHash,
         reason: "Auto-ban: Sorozatos (3x) tiltott tartalom beküldési kísérlet 1 órán belül.",
-        createdBy: "system-auto-ban"
+        adminUserId: "system-auto-ban"
       });
     }
   }
