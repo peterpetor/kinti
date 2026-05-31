@@ -227,6 +227,13 @@ export function DropdownMenu() {
               {/* ── Játék ─────────────────────────────── */}
               <Divider label="Játék" />
 
+              <Link href="/nyelvlecke" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  🦉
+                </span>
+                Svájci Német (Mundart)
+              </Link>
+
               <Link href="/kviz" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                   🎯
