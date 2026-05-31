@@ -193,7 +193,7 @@ export function DropdownMenu() {
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                   🛂
                 </span>
-                Vám- és Határinfó
+                Vám-kalkulátor
               </Link>
 
               <Link href="/bussen" onClick={() => setIsOpen(false)} className={linkClass}>
