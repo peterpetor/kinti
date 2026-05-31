@@ -420,5 +420,390 @@ export const LESSONS: Lesson[] = [
         ]
       }
     ]
+  },
+
+  // ── 7. Fejezet: Időjárás és Természet ────────────────────
+  {
+    id: "l11",
+    title: "11. Lecke: Időjárás (Wätter)",
+    description: "Beszélgessünk az időjárásról Svájcban.",
+    chapter: 7,
+    xpReward: 30,
+    questions: [
+      {
+        id: "q31",
+        type: "multiple_choice",
+        prompt: "Hogy mondják: 'Süt a nap'?",
+        options: [
+          { id: "o1", text: "D Sunne schiint" },
+          { id: "o2", text: "Die Sonne scheint" },
+          { id: "o3", text: "Es isch Sunne" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q32",
+        type: "flashcard",
+        prompt: "Esik az eső",
+        backText: "Es rägnet",
+        phonetic: "Esz regnet",
+      },
+      {
+        id: "q33",
+        type: "match",
+        prompt: "Párosítsd az időjárási szavakat!",
+        pairs: [
+          { id: "p1", left: "Hó", right: "Schnee" },
+          { id: "p2", left: "Szél", right: "Wind" },
+          { id: "p3", left: "Hideg van", right: "Es isch chalt" },
+          { id: "p4", left: "Meleg van", right: "Es isch heiss" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l12",
+    title: "12. Lecke: Túrázás (Wandere)",
+    description: "A svájciak kedvenc hétvégi programja.",
+    chapter: 7,
+    xpReward: 35,
+    questions: [
+      {
+        id: "q34",
+        type: "flashcard",
+        prompt: "Hegyek",
+        backText: "Bärge",
+        phonetic: "Berge",
+      },
+      {
+        id: "q35",
+        type: "multiple_choice",
+        prompt: "Hogy hívják a tipikus svájci hátizsákot?",
+        options: [
+          { id: "o1", text: "Rucksack" },
+          { id: "o2", text: "Täsche" },
+          { id: "o3", text: "Sack" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q36",
+        type: "match",
+        prompt: "Túra kifejezések",
+        pairs: [
+          { id: "p1", left: "Túraútvonal", right: "Wanderwäg" },
+          { id: "p2", left: "Kábelvasút", right: "Seilbahn" },
+          { id: "p3", left: "Erdő", right: "Wald" },
+        ]
+      }
+    ]
+  },
+
+  // ── 8. Fejezet: Otthon és Lakás ────────────────────
+  {
+    id: "l13",
+    title: "13. Lecke: Lakáskeresés",
+    description: "Kifejezések, ha lakást bérelsz (Wohnungssuche).",
+    chapter: 8,
+    xpReward: 40,
+    questions: [
+      {
+        id: "q37",
+        type: "flashcard",
+        prompt: "Lakbér",
+        backText: "Mieti",
+        phonetic: "Míeti",
+      },
+      {
+        id: "q38",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'Szoba' szót?",
+        options: [
+          { id: "o1", text: "Zimmer" },
+          { id: "o2", text: "Chammere" },
+          { id: "o3", text: "Stube" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q39",
+        type: "match",
+        prompt: "Lakás részei",
+        pairs: [
+          { id: "p1", left: "Konyha", right: "Chuchi" },
+          { id: "p2", left: "Nappali", right: "Stube" },
+          { id: "p3", left: "Erkély", right: "Balkon" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l14",
+    title: "14. Lecke: A ház körül",
+    description: "Mindennapi dolgok a lakásban.",
+    chapter: 8,
+    xpReward: 40,
+    questions: [
+      {
+        id: "q40",
+        type: "flashcard",
+        prompt: "Szemetes",
+        backText: "Chübel",
+        phonetic: "Khibel",
+      },
+      {
+        id: "q41",
+        type: "multiple_choice",
+        prompt: "Mit jelent a 'Fäster' szó?",
+        options: [
+          { id: "o1", text: "Ablak" },
+          { id: "o2", text: "Ajtó" },
+          { id: "o3", text: "Szőnyeg" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q42",
+        type: "match",
+        prompt: "Tárgyak a házban",
+        pairs: [
+          { id: "p1", left: "Ajtó", right: "Türe" },
+          { id: "p2", left: "Ágy", right: "Bett" },
+          { id: "p3", left: "Asztal", right: "Tisch" },
+          { id: "p4", left: "Szék", right: "Stuehl" },
+        ]
+      }
+    ]
+  },
+
+  // ── 9. Fejezet: Egészség és Orvos ────────────────────
+  {
+    id: "l15",
+    title: "15. Lecke: Betegség",
+    description: "Ha nem érzed jól magad.",
+    chapter: 9,
+    xpReward: 45,
+    questions: [
+      {
+        id: "q43",
+        type: "multiple_choice",
+        prompt: "Hogy mondod, hogy 'Beteg vagyok'?",
+        options: [
+          { id: "o1", text: "Ich bi chrank" },
+          { id: "o2", text: "Ich bin krank" },
+          { id: "o3", text: "Ich ha weh" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q44",
+        type: "flashcard",
+        prompt: "Fáj a fejem",
+        backText: "Ich ha Chopfweh",
+        phonetic: "Ich ha khopfvé",
+      },
+      {
+        id: "q45",
+        type: "match",
+        prompt: "Tünetek",
+        pairs: [
+          { id: "p1", left: "Fájdalom", right: "Schmärze" },
+          { id: "p2", left: "Láz", right: "Fieber" },
+          { id: "p3", left: "Köhögés", right: "Hueschte" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l16",
+    title: "16. Lecke: Az Orvosnál",
+    description: "Kifejezések az orvosi rendelőben.",
+    chapter: 9,
+    xpReward: 45,
+    questions: [
+      {
+        id: "q46",
+        type: "flashcard",
+        prompt: "Orvos",
+        backText: "Dokter",
+        phonetic: "Dokter",
+      },
+      {
+        id: "q47",
+        type: "multiple_choice",
+        prompt: "Mit kérdez az orvos: 'Mi a panasza?'",
+        options: [
+          { id: "o1", text: "Was fählt Ihne?" },
+          { id: "o2", text: "Was isch los?" },
+          { id: "o3", text: "Was wends?" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q48",
+        type: "match",
+        prompt: "Gyógyászat",
+        pairs: [
+          { id: "p1", left: "Gyógyszertár", right: "Apotheke" },
+          { id: "p2", left: "Gyógyszer", right: "Medikamänt" },
+          { id: "p3", left: "Recept", right: "Rezäpt" },
+        ]
+      }
+    ]
+  },
+
+  // ── 10. Fejezet: Szabadidő és Hobbik ────────────────────
+  {
+    id: "l17",
+    title: "17. Lecke: Sport és Hobbik",
+    description: "Mit csinálsz hétvégén?",
+    chapter: 10,
+    xpReward: 50,
+    questions: [
+      {
+        id: "q49",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'focizni' szót svájci németül?",
+        options: [
+          { id: "o1", text: "Tschuute" },
+          { id: "o2", text: "Fussball spiele" },
+          { id: "o3", text: "Kicke" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q50",
+        type: "flashcard",
+        prompt: "Síelés",
+        backText: "Schiifahre",
+        phonetic: "Sífáre",
+      },
+      {
+        id: "q51",
+        type: "match",
+        prompt: "Szabadidő",
+        pairs: [
+          { id: "p1", left: "Úszás", right: "Schwümme" },
+          { id: "p2", left: "Biciklizés", right: "Velofahre" },
+          { id: "p3", left: "Olvasás", right: "Läse" },
+        ]
+      }
+    ]
+  },
+
+  // ── 11. Fejezet: Svájci Ételek és Ünnepek ────────────────────
+  {
+    id: "l18",
+    title: "18. Lecke: Svájci Ételek",
+    description: "Kulináris kifejezések.",
+    chapter: 11,
+    xpReward: 50,
+    questions: [
+      {
+        id: "q52",
+        type: "flashcard",
+        prompt: "Sajt",
+        backText: "Chäs",
+        phonetic: "Khész",
+      },
+      {
+        id: "q53",
+        type: "multiple_choice",
+        prompt: "Melyik a híres svájci krumpliétel?",
+        options: [
+          { id: "o1", text: "Röschti" },
+          { id: "o2", text: "Pommes" },
+          { id: "o3", text: "Kartoffelstock" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q54",
+        type: "match",
+        prompt: "Édességek és italok",
+        pairs: [
+          { id: "p1", left: "Csokoládé", right: "Schoggi" },
+          { id: "p2", left: "Tej", right: "Milch" },
+          { id: "p3", left: "Sütemény", right: "Chueche" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "l19",
+    title: "19. Lecke: Ünnepek (Fäscht)",
+    description: "Amikor a svájciak ünnepelnek.",
+    chapter: 11,
+    xpReward: 60,
+    questions: [
+      {
+        id: "q55",
+        type: "flashcard",
+        prompt: "Karácsony",
+        backText: "Wiehnachte",
+        phonetic: "Víenahte",
+      },
+      {
+        id: "q56",
+        type: "multiple_choice",
+        prompt: "Mit kívánnak születésnapra?",
+        options: [
+          { id: "o1", text: "Alles Gueti zum Geburi" },
+          { id: "o2", text: "Herzliche Glückwunsch" },
+          { id: "o3", text: "Viel Glück" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q57",
+        type: "match",
+        prompt: "Ünnepi szavak",
+        pairs: [
+          { id: "p1", left: "Húsvét", right: "Oschtere" },
+          { id: "p2", left: "Újév", right: "Nöijohr" },
+          { id: "p3", left: "Ajándék", right: "Gschänk" },
+        ]
+      }
+    ]
+  },
+
+  // ── 12. Fejezet: Haladó Svájci Német ────────────────────
+  {
+    id: "l20",
+    title: "20. Lecke: Szleng és Kifejezések",
+    description: "Beszélj úgy, mint a fiatalok.",
+    chapter: 12,
+    xpReward: 100,
+    questions: [
+      {
+        id: "q58",
+        type: "flashcard",
+        prompt: "Szuper, király",
+        backText: "Huere geil",
+        phonetic: "Huere gájl",
+      },
+      {
+        id: "q59",
+        type: "multiple_choice",
+        prompt: "Mit mondasz, ha valami egyáltalán nem érdekel (szlengben)?",
+        options: [
+          { id: "o1", text: "Das isch mir Wurscht" },
+          { id: "o2", text: "Ich ha kei Lust" },
+          { id: "o3", text: "Das intressiert mi nöd" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q60",
+        type: "match",
+        prompt: "Tipikus töltelékszavak",
+        pairs: [
+          { id: "p1", left: "Mondjuk / Hát", right: "Also" },
+          { id: "p2", left: "De tényleg", right: "Aber würkli" },
+          { id: "p3", left: "Tényleg?", right: "Würkli?" },
+          { id: "p4", left: "Nézd csak", right: "Lueg emol" },
+        ]
+      }
+    ]
   }
 ];
