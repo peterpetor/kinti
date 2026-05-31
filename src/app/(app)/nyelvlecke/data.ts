@@ -1186,5 +1186,766 @@ export const LESSONS: Lesson[] = [
         ]
       }
     ]
+  },
+
+  // ── 18. Fejezet: Lakóközösség és Szomszédok ────────────────────
+  {
+    id: "l31",
+    title: "31. Lecke: Szomszédok",
+    description: "Viselkedés a svájci lakóközösségben.",
+    chapter: 18,
+    xpReward: 120,
+    questions: [
+      {
+        id: "q91",
+        type: "flashcard",
+        prompt: "Szomszéd",
+        backText: "Nochber",
+        phonetic: "Nokhber",
+      },
+      {
+        id: "q92",
+        type: "multiple_choice",
+        prompt: "Hogy mondják: 'Csendet kérek'?",
+        options: [
+          { id: "o1", text: "Bitte Rueh" },
+          { id: "o2", text: "Siit still" },
+          { id: "o3", text: "Schwiig" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q93",
+        type: "match",
+        prompt: "Együttélés",
+        pairs: [
+          { id: "p1", left: "Éjszakai csend", right: "Nachtrueh" },
+          { id: "p2", left: "Lépcsőház", right: "Stägehuus" },
+          { id: "p3", left: "Házirend", right: "Huusordnig" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l32",
+    title: "32. Lecke: Mosókonyha",
+    description: "A híres svájci Waschküche rejtelmei.",
+    chapter: 18,
+    xpReward: 130,
+    questions: [
+      {
+        id: "q94",
+        type: "flashcard",
+        prompt: "Mosógép",
+        backText: "Wäschmaschine",
+        phonetic: "Ves-maschine",
+      },
+      {
+        id: "q95",
+        type: "multiple_choice",
+        prompt: "Mit jelent a 'Wäschplan'?",
+        options: [
+          { id: "o1", text: "Mosási beosztás" },
+          { id: "o2", text: "Mosószer" },
+          { id: "o3", text: "Szárító" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q96",
+        type: "match",
+        prompt: "Mosás",
+        pairs: [
+          { id: "p1", left: "Tiszta", right: "Suuber" },
+          { id: "p2", left: "Piszkos", right: "Dräckig" },
+          { id: "p3", left: "Teregetni", right: "Ufhänke" },
+        ]
+      }
+    ]
+  },
+
+  // ── 19. Fejezet: Természetjárás és Szabályok ────────────────────
+  {
+    id: "l33",
+    title: "33. Lecke: Szelektív hulladék",
+    description: "Hogyan kell szemetelni Svájcban?",
+    chapter: 19,
+    xpReward: 130,
+    questions: [
+      {
+        id: "q97",
+        type: "flashcard",
+        prompt: "Szemeteszsák",
+        backText: "Abfallsagg",
+        phonetic: "Abfal-szak",
+      },
+      {
+        id: "q98",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'műanyagot' (PET)?",
+        options: [
+          { id: "o1", text: "PET-Fläsche" },
+          { id: "o2", text: "Plastik" },
+          { id: "o3", text: "Gummi" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q99",
+        type: "match",
+        prompt: "Újrahasznosítás",
+        pairs: [
+          { id: "p1", left: "Üveg", right: "Glas" },
+          { id: "p2", left: "Papír", right: "Bapier" },
+          { id: "p3", left: "Karton", right: "Charton" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l34",
+    title: "34. Lecke: Grillezés a természetben",
+    description: "Sütögetés a szabadban.",
+    chapter: 19,
+    xpReward: 140,
+    questions: [
+      {
+        id: "q100",
+        type: "flashcard",
+        prompt: "Kolbász",
+        backText: "Wurscht",
+        phonetic: "Vurst",
+      },
+      {
+        id: "q101",
+        type: "multiple_choice",
+        prompt: "Mit jelent: 'Brätle'?",
+        options: [
+          { id: "o1", text: "Tűzön sütögetni" },
+          { id: "o2", text: "Fázni" },
+          { id: "o3", text: "Fára mászni" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q102",
+        type: "match",
+        prompt: "Tűzrakás",
+        pairs: [
+          { id: "p1", left: "Tűz", right: "Füür" },
+          { id: "p2", left: "Fa", right: "Holz" },
+          { id: "p3", left: "Tó", right: "See" },
+        ]
+      }
+    ]
+  },
+
+  // ── 20. Fejezet: Téli Szabadidő ────────────────────
+  {
+    id: "l35",
+    title: "35. Lecke: Téli Sportok",
+    description: "Síelés és hófödte hegyek.",
+    chapter: 20,
+    xpReward: 140,
+    questions: [
+      {
+        id: "q103",
+        type: "flashcard",
+        prompt: "Síelés",
+        backText: "Schifahre",
+        phonetic: "Sífáre",
+      },
+      {
+        id: "q104",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'Szánkózni' szót?",
+        options: [
+          { id: "o1", text: "Schlittele" },
+          { id: "o2", text: "Ruttsche" },
+          { id: "o3", text: "Fahre" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q105",
+        type: "match",
+        prompt: "A hóban",
+        pairs: [
+          { id: "p1", left: "Hó", right: "Schnee" },
+          { id: "p2", left: "Hideg", right: "Chalt" },
+          { id: "p3", left: "Jég", right: "Iis" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l36",
+    title: "36. Lecke: Karácsonyi Vásár",
+    description: "Glühwein és hangulat.",
+    chapter: 20,
+    xpReward: 150,
+    questions: [
+      {
+        id: "q106",
+        type: "flashcard",
+        prompt: "Forralt bor",
+        backText: "Glüewii",
+        phonetic: "Glüeví",
+      },
+      {
+        id: "q107",
+        type: "multiple_choice",
+        prompt: "Mit jelent a 'Chrömli'?",
+        options: [
+          { id: "o1", text: "Karácsonyi keksz" },
+          { id: "o2", text: "Sapka" },
+          { id: "o3", text: "Csillag" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q108",
+        type: "match",
+        prompt: "Karácsony",
+        pairs: [
+          { id: "p1", left: "Karácsonyfa", right: "Chrischtbaum" },
+          { id: "p2", left: "Ajándék", right: "Gschänk" },
+          { id: "p3", left: "Gyertya", right: "Chärze" },
+        ]
+      }
+    ]
+  },
+
+  // ── 21. Fejezet: Média és Kommunikáció ────────────────────
+  {
+    id: "l37",
+    title: "37. Lecke: Telefonálás",
+    description: "Hogyan vedd fel a telefont?",
+    chapter: 21,
+    xpReward: 150,
+    questions: [
+      {
+        id: "q109",
+        type: "flashcard",
+        prompt: "Telefonálni",
+        backText: "Aalüüte",
+        phonetic: "A-lűte",
+      },
+      {
+        id: "q110",
+        type: "multiple_choice",
+        prompt: "Mit mondasz, ha bemutatkozol telefonban?",
+        options: [
+          { id: "o1", text: "Do isch de..." },
+          { id: "o2", text: "Ich bi..." },
+          { id: "o3", text: "Hallo" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q111",
+        type: "match",
+        prompt: "Telefonálás",
+        pairs: [
+          { id: "p1", left: "Üzenethagyás", right: "Uf d Combox spreche" },
+          { id: "p2", left: "Foglalt", right: "Bsetzt" },
+          { id: "p3", left: "Mobilszám", right: "Handynummere" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l38",
+    title: "38. Lecke: Email és Üzenetek",
+    description: "WhatsApp és hivatalos levelek.",
+    chapter: 21,
+    xpReward: 160,
+    questions: [
+      {
+        id: "q112",
+        type: "flashcard",
+        prompt: "Üzenet",
+        backText: "Nochricht",
+        phonetic: "Nokh-riht",
+      },
+      {
+        id: "q113",
+        type: "multiple_choice",
+        prompt: "Hogyan búcsúzol el baráti üzenetben?",
+        options: [
+          { id: "o1", text: "Liebi Grüess" },
+          { id: "o2", text: "Fründlichi Grüess" },
+          { id: "o3", text: "Tschüss" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q114",
+        type: "match",
+        prompt: "Levelezés",
+        pairs: [
+          { id: "p1", left: "Írni", right: "Schriibe" },
+          { id: "p2", left: "Olvasni", right: "Läse" },
+          { id: "p3", left: "Küldeni", right: "Schigge" },
+        ]
+      }
+    ]
+  },
+
+  // ── 22. Fejezet: Vásárlás és Szolgáltatások ────────────────────
+  {
+    id: "l39",
+    title: "39. Lecke: A Fodrásznál",
+    description: "Hajvágás svájci módra.",
+    chapter: 22,
+    xpReward: 160,
+    questions: [
+      {
+        id: "q115",
+        type: "flashcard",
+        prompt: "Fodrász",
+        backText: "Coiffeur",
+        phonetic: "Kva-főr",
+      },
+      {
+        id: "q116",
+        type: "multiple_choice",
+        prompt: "Hogy mondod: 'Rövidebbre kérem'?",
+        options: [
+          { id: "o1", text: "Chürzer bitte" },
+          { id: "o2", text: "Länger bitte" },
+          { id: "o3", text: "So loh" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q117",
+        type: "match",
+        prompt: "Haj",
+        pairs: [
+          { id: "p1", left: "Haj", right: "Hoor" },
+          { id: "p2", left: "Olló", right: "Schäär" },
+          { id: "p3", left: "Fésű", right: "Chämel" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l40",
+    title: "40. Lecke: Ruhavásárlás",
+    description: "A plázában.",
+    chapter: 22,
+    xpReward: 170,
+    questions: [
+      {
+        id: "q118",
+        type: "flashcard",
+        prompt: "Ruha",
+        backText: "Chleider",
+        phonetic: "Hlejder",
+      },
+      {
+        id: "q119",
+        type: "multiple_choice",
+        prompt: "Mit jelent: 'Das basst mir nöd'?",
+        options: [
+          { id: "o1", text: "Ez nem jó rám (nem illik)" },
+          { id: "o2", text: "Nem tetszik" },
+          { id: "o3", text: "Túl drága" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q120",
+        type: "match",
+        prompt: "Ruhadarabok",
+        pairs: [
+          { id: "p1", left: "Cipő", right: "Schueh" },
+          { id: "p2", left: "Nadrág", right: "Hose" },
+          { id: "p3", left: "Póló", right: "Liibli" },
+        ]
+      }
+    ]
+  },
+
+  // ── 23. Fejezet: Utazás a Világban ────────────────────
+  {
+    id: "l41",
+    title: "41. Lecke: A Repülőtéren",
+    description: "Készülődés az utazásra.",
+    chapter: 23,
+    xpReward: 170,
+    questions: [
+      {
+        id: "q121",
+        type: "flashcard",
+        prompt: "Repülőtér",
+        backText: "Flughafe",
+        phonetic: "Flug-háfe",
+      },
+      {
+        id: "q122",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'bőrönd' szót?",
+        options: [
+          { id: "o1", text: "Choffer" },
+          { id: "o2", text: "Täsche" },
+          { id: "o3", text: "Rucksack" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q123",
+        type: "match",
+        prompt: "Utazás",
+        pairs: [
+          { id: "p1", left: "Jegy", right: "Billet" },
+          { id: "p2", left: "Repülni", right: "Flüge" },
+          { id: "p3", left: "Nyarlás", right: "Ferie" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l42",
+    title: "42. Lecke: Nyaralás",
+    description: "Strand, napfény és pihenés.",
+    chapter: 23,
+    xpReward: 180,
+    questions: [
+      {
+        id: "q124",
+        type: "flashcard",
+        prompt: "Strand",
+        backText: "Strand / Badi",
+        phonetic: "Strand / Badi",
+      },
+      {
+        id: "q125",
+        type: "multiple_choice",
+        prompt: "Mit csinálsz nyaralás alatt?",
+        options: [
+          { id: "o1", text: "Entspanne" },
+          { id: "o2", text: "Schaffe" },
+          { id: "o3", text: "Putze" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q126",
+        type: "match",
+        prompt: "Nyaralás kifejezések",
+        pairs: [
+          { id: "p1", left: "Tenger", right: "Meer" },
+          { id: "p2", left: "Meleg van", right: "Es isch heiss" },
+          { id: "p3", left: "Nap", right: "Sunne" },
+        ]
+      }
+    ]
+  },
+
+  // ── 24. Fejezet: Hivatalos ügyek ────────────────────
+  {
+    id: "l43",
+    title: "43. Lecke: Biztosítás (Krankenkasse)",
+    description: "Az elkerülhetetlen svájci papírmunka.",
+    chapter: 24,
+    xpReward: 180,
+    questions: [
+      {
+        id: "q127",
+        type: "flashcard",
+        prompt: "Egészségbiztosító",
+        backText: "Chrankekasse",
+        phonetic: "Kranke-kassze",
+      },
+      {
+        id: "q128",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'kivétel / önrész' szót (amit neked kell fizetni)?",
+        options: [
+          { id: "o1", text: "Franchise" },
+          { id: "o2", text: "Prämie" },
+          { id: "o3", text: "Lohn" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q129",
+        type: "match",
+        prompt: "Hivatal",
+        pairs: [
+          { id: "p1", left: "Díjfizetés", right: "Prämie" },
+          { id: "p2", left: "Kórház", right: "Spital" },
+          { id: "p3", left: "Beteg", right: "Chrank" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l44",
+    title: "44. Lecke: Lakcímbejelentés",
+    description: "Hogyan intézkedj a Gemeindehaus-ban.",
+    chapter: 24,
+    xpReward: 190,
+    questions: [
+      {
+        id: "q130",
+        type: "flashcard",
+        prompt: "Községháza",
+        backText: "Gmeindshuus",
+        phonetic: "Gmeindsz-húz",
+      },
+      {
+        id: "q131",
+        type: "multiple_choice",
+        prompt: "Hogy hívják az 'igazolványt / engedélyt'?",
+        options: [
+          { id: "o1", text: "Uuswiis" },
+          { id: "o2", text: "Pass" },
+          { id: "o3", text: "Mindkettő használatos" }
+        ],
+        correctOptionId: "o3",
+      },
+      {
+        id: "q132",
+        type: "match",
+        prompt: "Papírmunka",
+        pairs: [
+          { id: "p1", left: "Aláírás", right: "Underschrift" },
+          { id: "p2", left: "Nyomtatvány", right: "Formular" },
+          { id: "p3", left: "Költözés", right: "Züügle" },
+        ]
+      }
+    ]
+  },
+
+  // ── 25. Fejezet: A Svájci Konyha II ────────────────────
+  {
+    id: "l45",
+    title: "45. Lecke: Sütés-Főzés",
+    description: "Csináljunk egy jó vacsorát.",
+    chapter: 25,
+    xpReward: 200,
+    questions: [
+      {
+        id: "q133",
+        type: "flashcard",
+        prompt: "Főzni",
+        backText: "Choche",
+        phonetic: "Khohe",
+      },
+      {
+        id: "q134",
+        type: "multiple_choice",
+        prompt: "Mit csinálsz egy 'Chueche'-vel (Sütemény)?",
+        options: [
+          { id: "o1", text: "Bache (Sütöd)" },
+          { id: "o2", text: "Trinke (Iszod)" },
+          { id: "o3", text: "Wäsche (Mosod)" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q135",
+        type: "match",
+        prompt: "Konyhai szavak",
+        pairs: [
+          { id: "p1", left: "Serpenyő", right: "Bratpfanne" },
+          { id: "p2", left: "Kés", right: "Mässer" },
+          { id: "p3", left: "Tányér", right: "Däller" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l46",
+    title: "46. Lecke: Étteremben II",
+    description: "Reklamáció és számlafizetés.",
+    chapter: 25,
+    xpReward: 200,
+    questions: [
+      {
+        id: "q136",
+        type: "flashcard",
+        prompt: "Fizetni szeretnék",
+        backText: "Ich wett zahle",
+        phonetic: "Ih vet cále",
+      },
+      {
+        id: "q137",
+        type: "multiple_choice",
+        prompt: "Mit mondasz, ha a leves túl hideg?",
+        options: [
+          { id: "o1", text: "D Suppe isch z chalt" },
+          { id: "o2", text: "D Suppe isch fein" },
+          { id: "o3", text: "D Suppe isch heiss" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q138",
+        type: "match",
+        prompt: "Éttermi kifejezések",
+        pairs: [
+          { id: "p1", left: "Borravaló", right: "Trinkgäld" },
+          { id: "p2", left: "Pincér", right: "Chällner" },
+          { id: "p3", left: "Számla", right: "Rächnig" },
+        ]
+      }
+    ]
+  },
+
+  // ── 26. Fejezet: Technológia és IT ────────────────────
+  {
+    id: "l47",
+    title: "47. Lecke: Számítógép",
+    description: "Internetezés Svájcban.",
+    chapter: 26,
+    xpReward: 210,
+    questions: [
+      {
+        id: "q139",
+        type: "flashcard",
+        prompt: "Képernyő",
+        backText: "Bildschirm",
+        phonetic: "Bils-sirm",
+      },
+      {
+        id: "q140",
+        type: "multiple_choice",
+        prompt: "Mit csinálsz, ha nem működik valami?",
+        options: [
+          { id: "o1", text: "Neu starte (Újraindítod)" },
+          { id: "o2", text: "Wegrüehre (Kidobod)" },
+          { id: "o3", text: "Bache (Megsütöd)" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q141",
+        type: "match",
+        prompt: "Tech szavak",
+        pairs: [
+          { id: "p1", left: "Jelszó", right: "Passwort" },
+          { id: "p2", left: "Billentyűzet", right: "Taschtatur" },
+          { id: "p3", left: "Egér", right: "Muus" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l48",
+    title: "48. Lecke: Elektronika",
+    description: "Kütyük a házban.",
+    chapter: 26,
+    xpReward: 210,
+    questions: [
+      {
+        id: "q142",
+        type: "flashcard",
+        prompt: "Mobiltelefon",
+        backText: "Natel / Handy",
+        phonetic: "Nátel",
+      },
+      {
+        id: "q143",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'Tévé'-t?",
+        options: [
+          { id: "o1", text: "Färnseh" },
+          { id: "o2", text: "Radio" },
+          { id: "o3", text: "Computer" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q144",
+        type: "match",
+        prompt: "Otthoni eszközök",
+        pairs: [
+          { id: "p1", left: "Akkumulátor", right: "Akku" },
+          { id: "p2", left: "Töltő", right: "Ladegrät" },
+          { id: "p3", left: "Konnektor", right: "Stäckdose" },
+        ]
+      }
+    ]
+  },
+
+  // ── 27. Fejezet: Mester szintű Szleng ────────────────────
+  {
+    id: "l49",
+    title: "49. Lecke: Káromkodás (Mértékkel)",
+    description: "Amikor a svájci is elveszíti a türelmét.",
+    chapter: 27,
+    xpReward: 250,
+    questions: [
+      {
+        id: "q145",
+        type: "flashcard",
+        prompt: "A fenébe! / Basszus!",
+        backText: "Gopferdeckel!",
+        phonetic: "Gopfer-dekkel",
+      },
+      {
+        id: "q146",
+        type: "multiple_choice",
+        prompt: "Melyik a híres, enyhe svájci mérgeskedő kifejezés?",
+        options: [
+          { id: "o1", text: "Gopfertammi" },
+          { id: "o2", text: "Guten Tag" },
+          { id: "o3", text: "Merci vilmal" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q147",
+        type: "match",
+        prompt: "Durvább szleng",
+        pairs: [
+          { id: "p1", left: "Hülye (Szelíd)", right: "Spinnsch?" },
+          { id: "p2", left: "Csend legyen!", right: "Heb d Schnurre" },
+          { id: "p3", left: "Hülyeség", right: "Seich" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l50",
+    title: "50. Lecke: A Svájci Identitás",
+    description: "Légy igazi 'Bünzli'. (Mestervizsga)",
+    chapter: 27,
+    xpReward: 500,
+    questions: [
+      {
+        id: "q148",
+        type: "flashcard",
+        prompt: "Túlságosan szabálykövető (Nyárspolgár)",
+        backText: "Bünzli",
+        phonetic: "Büncli",
+      },
+      {
+        id: "q149",
+        type: "multiple_choice",
+        prompt: "Mit csinál egy igazi Bünzli este 10 után?",
+        options: [
+          { id: "o1", text: "Szigorúan csendben van (Nachtrueh)" },
+          { id: "o2", text: "Porszívózik" },
+          { id: "o3", text: "Hangosan zenét hallgat" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q150",
+        type: "match",
+        prompt: "A legfontosabb szavak svájcban",
+        pairs: [
+          { id: "p1", left: "Pontosság", right: "Pünktlichkeit" },
+          { id: "p2", left: "Titoktartás", right: "Diskretion" },
+          { id: "p3", left: "Kantonok", right: "Kanton" },
+          { id: "p4", left: "Büszkeség", right: "Stolz" },
+        ]
+      }
+    ]
   }
 ];
