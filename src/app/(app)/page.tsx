@@ -26,7 +26,8 @@ export default async function FeedPage() {
   ]);
 
   return (
-    <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
+    <>
+      <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
       {/* fejléc */}
       <header className="flex items-center gap-2.5">
         <div className="flex items-center gap-2">
@@ -43,9 +44,6 @@ export default async function FeedPage() {
         <GlobalSearch />
         <DropdownMenu />
       </header>
-
-      {/* első látogatáskor — 5 lépcsős mini-tour */}
-      <OnboardingTour />
 
       {/* helyi posztok banner — csak ha vannak */}
       <MyPostsBanner />
@@ -155,6 +153,10 @@ export default async function FeedPage() {
 
       {/* PWA install prompt — chrome/edge/android natív; iOS Safari instrukció */}
       <PwaInstallCard />
-    </div>
+      </div>
+
+      {/* első látogatáskor — 5 lépcsős mini-tour (moved outside space-y-6 to fix margin bug) */}
+      <OnboardingTour />
+    </>
   );
 }
