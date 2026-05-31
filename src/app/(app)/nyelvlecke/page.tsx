@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ScreenHeader } from "@/components/ui/headers";
@@ -30,8 +32,8 @@ export default function LanguagePathPage() {
     return <div className="p-4">Betöltés...</div>;
   }
 
-  // Group lessons by chapter
-  const chapters = [1, 2, 3];
+  // Group lessons by chapter dynamically
+  const chapters = Array.from(new Set(LESSONS.map((l) => l.chapter))).sort((a, b) => a - b);
 
   return (
     <div className="flex flex-col pb-24 min-h-screen bg-surface">
@@ -118,7 +120,7 @@ export default function LanguagePathPage() {
 
                       {isUnlocked && isCompleted && (
                         <Link 
-                          href={\`/nyelvlecke/\${lesson.id}\`}
+                          href={`/nyelvlecke/${lesson.id}`}
                           className="grid h-[70px] w-[70px] place-items-center rounded-full bg-success border-4 border-surface shadow-[0_6px_0_0_rgb(20,80,45)] text-white hover:brightness-110 active:translate-y-1 active:shadow-[0_2px_0_0_rgb(20,80,45)] transition-all"
                         >
                           <Icon name="check" size={32} strokeWidth={3} />
@@ -130,7 +132,7 @@ export default function LanguagePathPage() {
                           {/* Crown/Pulse for current active lesson */}
                           <div className="absolute -top-3 -right-3 text-2xl animate-bounce">👑</div>
                           <Link 
-                            href={\`/nyelvlecke/\${lesson.id}\`}
+                            href={`/nyelvlecke/${lesson.id}`}
                             className="grid h-[70px] w-[70px] place-items-center rounded-full bg-primary border-4 border-surface shadow-[0_6px_0_0_rgb(var(--primary-soft))] text-white hover:brightness-110 active:translate-y-1 active:shadow-[0_2px_0_0_rgb(var(--primary-soft))] transition-all animate-pulse-ring"
                           >
                             <Icon name="star" size={30} strokeWidth={2.5} filled />

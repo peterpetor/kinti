@@ -1,9 +1,7 @@
 import {
   getContentReportByToken,
   updateContentReportStatus,
-  setBulletinHidden,
   setReviewHidden,
-  deleteBulletinPostById,
   deleteReviewById,
   recomputeBusinessRating,
   setBusinessHidden,
@@ -39,8 +37,6 @@ export async function GET(req: Request, { params }: { params: { token: string } 
   if (action === "keep") {
     if (report.contentType === "business") {
       await setBusinessHidden(report.contentId, false);
-    } else if (report.contentType === "bulletin") {
-      await setBulletinHidden(report.contentId, false);
     } else if (report.contentType === "review") {
       const businessId = await setReviewHidden(report.contentId, false);
       if (businessId) await recomputeBusinessRating(businessId);
@@ -59,8 +55,6 @@ export async function GET(req: Request, { params }: { params: { token: string } 
   // action === "remove"
   if (report.contentType === "business") {
     await deleteBusinessById(report.contentId);
-  } else if (report.contentType === "bulletin") {
-    await deleteBulletinPostById(report.contentId);
   } else if (report.contentType === "review") {
     const businessId = await deleteReviewById(report.contentId);
     if (businessId) await recomputeBusinessRating(businessId);

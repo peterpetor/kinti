@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import {
-  getBulletinPostById,
   getReviewSummaryById,
-  setBulletinHidden,
   setReviewHidden,
   recomputeBusinessRating,
   getBusinessById,
@@ -75,14 +73,6 @@ export async function POST(req: Request) {
       contentLabel = "Vállalkozás / Szakember";
       contentExcerpt = biz.name;
       await setBusinessHidden(contentId, true);
-    }
-  } else if (contentType === "bulletin") {
-    const post = await getBulletinPostById(contentId);
-    if (post) {
-      found = true;
-      contentLabel = "Hirdetés";
-      contentExcerpt = post.title;
-      await setBulletinHidden(contentId, true);
     }
   } else if (contentType === "review") {
     const review = await getReviewSummaryById(contentId);

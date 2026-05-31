@@ -35,6 +35,7 @@ export type Lesson = {
 };
 
 export const LESSONS: Lesson[] = [
+  // ── 1. Fejezet: Alapok ──────────────────────────────
   {
     id: "l1",
     title: "1. Lecke: Alapvető köszönések",
@@ -110,6 +111,8 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+
+  // ── 2. Fejezet: Bevásárlás és Étterem ────────────────
   {
     id: "l3",
     title: "3. Lecke: A pékségben / Étteremben",
@@ -148,4 +151,274 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: "l4",
+    title: "4. Lecke: A Migrosban",
+    description: "Alapvető kifejezések a kasszánál.",
+    chapter: 2,
+    xpReward: 20,
+    questions: [
+      {
+        id: "q10",
+        type: "flashcard",
+        prompt: "Bevásárlószatyor (Nylon zacskó)",
+        backText: "Säckli",
+        phonetic: "Szekli",
+      },
+      {
+        id: "q11",
+        type: "multiple_choice",
+        prompt: "Mit kérdez a pénztáros, amikor a blokkot akarja odaadni?",
+        options: [
+          { id: "o1", text: "Wollen Sie den Kassenzettel?" },
+          { id: "o2", text: "Quittig?" },
+          { id: "o3", text: "Zettelchen?" },
+        ],
+        correctOptionId: "o2",
+      },
+      {
+        id: "q12",
+        type: "multiple_choice",
+        prompt: "Hogyan köszönöd meg a visszajárót?",
+        options: [
+          { id: "o1", text: "Danke vielmal" },
+          { id: "o2", text: "Merci vilmal" },
+          { id: "o3", text: "Mindkettő tökéletes" },
+        ],
+        correctOptionId: "o3",
+      },
+    ]
+  },
+
+  // ── 3. Fejezet: Hétköznapi Élet ────────────────────
+  {
+    id: "l5",
+    title: "5. Lecke: Pénz és Számok",
+    description: "Fizetés és árak Svájcban.",
+    chapter: 3,
+    xpReward: 20,
+    questions: [
+      {
+        id: "q13",
+        type: "match",
+        prompt: "Párosítsd a számokat!",
+        pairs: [
+          { id: "p1", left: "Egy", right: "Eins" },
+          { id: "p2", left: "Kettő", right: "Zwei" },
+          { id: "p3", left: "Három", right: "Drü" },
+          { id: "p4", left: "Négy", right: "Vier" },
+        ],
+      },
+      {
+        id: "q14",
+        type: "flashcard",
+        prompt: "Mennyibe kerül?",
+        backText: "Was choschtet das?",
+        phonetic: "Vasz khostet dasz?",
+      },
+      {
+        id: "q15",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a frankot a szlengben?",
+        options: [
+          { id: "o1", text: "Stutz" },
+          { id: "o2", text: "Geld" },
+          { id: "o3", text: "Kröten" },
+        ],
+        correctOptionId: "o1",
+      },
+    ]
+  },
+  {
+    id: "l6",
+    title: "6. Lecke: A szomszédok (Nachbare)",
+    description: "Hogyan legyél jó viszonyban a svájci szomszédokkal.",
+    chapter: 3,
+    xpReward: 20,
+    questions: [
+      {
+        id: "q16",
+        type: "flashcard",
+        prompt: "Mosókonyha (közös mosóhelyiség)",
+        backText: "Wöschchuchi",
+        phonetic: "Vöskhukhi",
+      },
+      {
+        id: "q17",
+        type: "multiple_choice",
+        prompt: "Hogy mondjuk, hogy 'Elnézést!'?",
+        options: [
+          { id: "o1", text: "Entschuldigung" },
+          { id: "o2", text: "Exgüse" },
+          { id: "o3", text: "Pardon" },
+        ],
+        correctOptionId: "o2",
+      },
+      {
+        id: "q18",
+        type: "match",
+        prompt: "Házirend kifejezések",
+        pairs: [
+          { id: "p1", left: "Lépcsőház", right: "Stägehuus" },
+          { id: "p2", left: "Biciklitároló", right: "Velochäller" },
+          { id: "p3", left: "Szemét", right: "Abfall" },
+        ]
+      }
+    ]
+  },
+
+  // ── 4. Fejezet: Közlekedés ────────────────────
+  {
+    id: "l7",
+    title: "7. Lecke: Vonaton (SBB)",
+    description: "Közlekedj Svájcban problémamentesen.",
+    chapter: 4,
+    xpReward: 25,
+    questions: [
+      {
+        id: "q19",
+        type: "multiple_choice",
+        prompt: "Hogy mondják: 'Jegyeket, kérem!'?",
+        options: [
+          { id: "o1", text: "Billet bitte!" },
+          { id: "o2", text: "Fahrkarte bitte!" },
+          { id: "o3", text: "Ticket bitte!" },
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q20",
+        type: "flashcard",
+        prompt: "Bicikli (Kerékpár)",
+        backText: "Velo",
+        phonetic: "Velo",
+      },
+      {
+        id: "q21",
+        type: "match",
+        prompt: "Közlekedési eszközök",
+        pairs: [
+          { id: "p1", left: "Villamos", right: "Tram" },
+          { id: "p2", left: "Vonat", right: "Zug" },
+          { id: "p3", left: "Autó", right: "Auto" },
+          { id: "p4", left: "Pályaudvar", right: "Bahnhof" },
+        ]
+      }
+    ]
+  },
+  // ── 5. Fejezet: Hivatal és Ügyintézés ────────────────────
+  {
+    id: "l8",
+    title: "8. Lecke: A Kreisbüroban",
+    description: "Kifejezések az önkormányzati ügyintézéshez.",
+    chapter: 5,
+    xpReward: 30,
+    questions: [
+      {
+        id: "q22",
+        type: "multiple_choice",
+        prompt: "Mit kérdez az ügyintéző, amikor megkérdezi, hol laksz?",
+        options: [
+          { id: "o1", text: "Wo wohne Sie?" },
+          { id: "o2", text: "Wo lebsch?" },
+          { id: "o3", text: "Wo isch dis Huus?" },
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q23",
+        type: "flashcard",
+        prompt: "Személyi igazolvány",
+        backText: "ID (Identitätscharte)",
+        phonetic: "Ídé",
+      },
+      {
+        id: "q24",
+        type: "match",
+        prompt: "Párosítsd a hivatali szavakat!",
+        pairs: [
+          { id: "p1", left: "Lakcím", right: "Adrässe" },
+          { id: "p2", left: "Tartózkodási engedély", right: "Uuswiis" },
+          { id: "p3", left: "Aláírás", right: "Underschrift" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l9",
+    title: "9. Lecke: A postán (Uf de Poscht)",
+    description: "Csomagok és levelek feladása Svájcban.",
+    chapter: 5,
+    xpReward: 30,
+    questions: [
+      {
+        id: "q25",
+        type: "flashcard",
+        prompt: "Egy csomagot szeretnék feladni.",
+        backText: "Ich wet es Päckli ufgäh.",
+        phonetic: "Ich vet esz pekli uf-ge.",
+      },
+      {
+        id: "q26",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'postás' szót?",
+        options: [
+          { id: "o1", text: "Pösteler" },
+          { id: "o2", text: "Briefträger" },
+          { id: "o3", text: "Postmann" },
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q27",
+        type: "multiple_choice",
+        prompt: "A-Post vagy B-Post? Melyik a gyorsabb?",
+        options: [
+          { id: "o1", text: "A-Post (elsőbbségi)" },
+          { id: "o2", text: "B-Post (sima)" },
+        ],
+        correctOptionId: "o1",
+      }
+    ]
+  },
+
+  // ── 6. Fejezet: Barátkozás ────────────────────
+  {
+    id: "l10",
+    title: "10. Lecke: Füürobebier (Munka utáni sör)",
+    description: "Lazítás és szocializáció a kollégákkal.",
+    chapter: 6,
+    xpReward: 50,
+    questions: [
+      {
+        id: "q28",
+        type: "multiple_choice",
+        prompt: "Hogyan hívod meg a munkatársadat egy sörre munka után?",
+        options: [
+          { id: "o1", text: "Chömed mir es Bier go trinke?" },
+          { id: "o2", text: "Trinke mer eis?" },
+          { id: "o3", text: "Mindkettő tökéletes!" },
+        ],
+        correctOptionId: "o3",
+      },
+      {
+        id: "q29",
+        type: "flashcard",
+        prompt: "Egészségedre! (Koccintáskor)",
+        backText: "Proscht! / Zum Wohl!",
+        phonetic: "Prost!",
+      },
+      {
+        id: "q30",
+        type: "match",
+        prompt: "Kifejezések az estére",
+        pairs: [
+          { id: "p1", left: "Finom volt", right: "Es isch fein gsii" },
+          { id: "p2", left: "Nagyon jó", right: "Tiptop / Super" },
+          { id: "p3", left: "Nincs probléma", right: "Kes Problem" },
+          { id: "p4", left: "Meghívhatlak?", right: "Darf ich dii iilade?" },
+        ]
+      }
+    ]
+  }
 ];

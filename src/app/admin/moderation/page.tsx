@@ -18,7 +18,6 @@ export const metadata = {
 };
 
 const TABLE_LABELS: Record<ModerationTable, string> = {
-  bulletin_posts: "Hirdetések",
   reviews: "Vélemények",
   businesses: "Vállalkozások",
   events: "Események",
@@ -58,17 +57,15 @@ export default async function ModerationPage({
   const typeParam =
     searchParams.type && TABLE_LABELS[searchParams.type as ModerationTable]
       ? (searchParams.type as ModerationTable)
-      : "bulletin_posts";
+      : "reviews";
 
   // Számlálók minden táblára (csak pending) — a tab-okon való gyorsbadge.
   const [
-    pendingBulletins,
     pendingReviews,
     pendingBusinesses,
     pendingEvents,
     items,
   ] = await Promise.all([
-    moderationCount("bulletin_posts", 0),
     moderationCount("reviews", 0),
     moderationCount("businesses", 0),
     moderationCount("events", 0),
@@ -76,7 +73,6 @@ export default async function ModerationPage({
   ]);
 
   const pendingPerType: Record<ModerationTable, number> = {
-    bulletin_posts: pendingBulletins,
     reviews: pendingReviews,
     businesses: pendingBusinesses,
     events: pendingEvents,
@@ -224,8 +220,6 @@ export default async function ModerationPage({
 
 function previewLink(table: ModerationTable, id: string): string {
   switch (table) {
-    case "bulletin_posts":
-      return `/kozosseg/hirdetes/${id}`;
     case "businesses":
       return `/szaknevsor/${id}`;
     case "events":

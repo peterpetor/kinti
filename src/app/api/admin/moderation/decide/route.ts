@@ -12,14 +12,12 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const VALID_TABLES: ModerationTable[] = [
-  "bulletin_posts",
   "reviews",
   "businesses",
   "events",
 ];
 
 const TABLE_LABELS: Record<ModerationTable, string> = {
-  bulletin_posts: "hirdetés",
   reviews: "vélemény",
   businesses: "vállalkozás",
   events: "esemény",

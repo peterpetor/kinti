@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LESSONS, Question } from "../data";
@@ -36,6 +38,16 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   const isLastQuestion = currentQuestionIdx === lesson.questions.length - 1;
   const progressPercent = Math.round((currentQuestionIdx / lesson.questions.length) * 100);
 
+  const playAudio = (text: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!window.speechSynthesis) return;
+    const utterance = new SpeechSynthesisUtterance(text);
+    // Prefer Swiss German (de-CH) if available, otherwise fallback to German (de-DE)
+    utterance.lang = "de-CH"; 
+    utterance.rate = 0.85; // slightly slower for learners
+    window.speechSynthesis.speak(utterance);
+  };
+
   const handleCheck = () => {
     if (question.type === "multiple_choice") {
       const correct = selectedOption === question.correctOptionId;
@@ -61,7 +73,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
     if (isLastQuestion) {
       // Save progress
       const saved = localStorage.getItem("kinti_language_progress");
-      let data = { completed: [], xp: 0 };
+      let data: { completed: string[]; xp: number } = { completed: [], xp: 0 };
       if (saved) {
         try {
           data = JSON.parse(saved);
@@ -99,14 +111,21 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
             disabled={isAnswered}
             onClick={() => setSelectedOption(opt.id)}
             className={cn(
-              "p-4 rounded-2xl border-2 text-left font-bold text-[17px] transition-all",
+              "p-4 rounded-2xl border-2 text-left font-bold text-[17px] transition-all relative flex items-center justify-between",
               !isAnswered && !isSelected && "border-border-subtle bg-surface hover:bg-surface-alt",
               !isAnswered && isSelected && "border-primary bg-primary/5 text-primary",
               showCorrect && "border-success bg-success/10 text-success",
               showWrong && "border-accent bg-accent/10 text-accent animate-shake"
             )}
           >
-            {opt.text}
+            <span>{opt.text}</span>
+            <div 
+              onClick={(e) => playAudio(opt.text, e)}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ink/5 hover:bg-ink/10 transition-colors text-xl"
+              title="Kiejtés meghallgatása"
+            >
+              🔊
+            </div>
           </button>
         );
       })}
@@ -114,22 +133,38 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   );
 
   const renderFlashcard = () => (
-    <div className="flex flex-col items-center gap-6 mt-8 w-full max-w-sm mx-auto perspective-1000">
+    <div 
+      className="flex flex-col items-center gap-6 mt-8 w-full max-w-sm mx-auto"
+      style={{ perspective: "1000px" }}
+    >
       <button
         onClick={() => {
           setShowFlashcardBack(!showFlashcardBack);
           if (!isAnswered) setIsAnswered(true); // Any click counts as seen
         }}
-        className="relative w-full h-[300px] rounded-[32px] preserve-3d transition-transform duration-500 cursor-pointer"
-        style={{ transform: showFlashcardBack ? "rotateY(180deg)" : "rotateY(0deg)" }}
+        className="relative w-full h-[300px] rounded-[32px] transition-transform duration-500 cursor-pointer"
+        style={{ transformStyle: "preserve-3d", transform: showFlashcardBack ? "rotateY(180deg)" : "rotateY(0deg)" }}
       >
         {/* Front */}
-        <div className="absolute inset-0 backface-hidden bg-surface border-2 border-border-strong/20 rounded-[32px] flex items-center justify-center p-6 shadow-card">
+        <div 
+          className="absolute inset-0 bg-surface border-2 border-border-strong/20 rounded-[32px] flex items-center justify-center p-6 shadow-card"
+          style={{ backfaceVisibility: "hidden" }}
+        >
           <h2 className="text-3xl font-black text-ink text-center">{question.prompt}</h2>
         </div>
         
         {/* Back */}
-        <div className="absolute inset-0 backface-hidden bg-primary/5 border-2 border-primary/20 rounded-[32px] flex flex-col items-center justify-center p-6 shadow-card transform rotate-y-180">
+        <div 
+          className="absolute inset-0 bg-primary/5 border-2 border-primary/20 rounded-[32px] flex flex-col items-center justify-center p-6 shadow-card"
+          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+        >
+          <div 
+            onClick={(e) => playAudio(question.backText || "", e)}
+            className="mb-4 grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-2xl shadow-pop"
+            title="Kiejtés meghallgatása"
+          >
+            🔊
+          </div>
           <h2 className="text-3xl font-black text-primary text-center">{question.backText}</h2>
           {question.phonetic && (
             <p className="mt-4 text-lg font-bold text-ink/50 tracking-wider">[{question.phonetic}]</p>
@@ -200,7 +235,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
           {rights.map(r => {
             // Find which pair this right belongs to
             const pairId = question.pairs?.find(p => p.right === r.id)?.id;
-            const isMatched = pairId && matchedPairs.includes(pairId);
+            const isMatched = !!(pairId && matchedPairs.includes(pairId));
             
             return (
               <button
@@ -208,12 +243,21 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
                 disabled={isMatched}
                 onClick={() => handleMatchClick("right", r.id)}
                 className={cn(
-                  "p-3 rounded-xl border-2 text-[14px] font-bold transition-all text-center h-[60px] flex items-center justify-center",
+                  "p-3 rounded-xl border-2 text-[14px] font-bold transition-all text-center min-h-[60px] flex items-center justify-center relative",
                   isMatched ? "opacity-0 invisible" : "border-border-subtle bg-surface",
                   matchWrong && "animate-shake border-accent/50"
                 )}
               >
-                {r.text}
+                <span>{r.text}</span>
+                {!isMatched && (
+                  <div 
+                    onClick={(e) => playAudio(r.text, e)}
+                    className="absolute -right-2 -top-2 grid h-7 w-7 place-items-center rounded-full bg-surface-alt border border-line shadow-sm text-[12px] hover:bg-ink/10 transition-colors"
+                    title="Kiejtés meghallgatása"
+                  >
+                    🔊
+                  </div>
+                )}
               </button>
             )
           })}
@@ -235,7 +279,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
         <div className="flex-1 h-4 bg-ink/5 rounded-full overflow-hidden">
           <div 
             className="h-full bg-primary transition-all duration-500 ease-out rounded-full"
-            style={{ width: \`\${progressPercent}%\` }}
+            style={{ width: `${progressPercent}%` }}
           />
         </div>
       </div>

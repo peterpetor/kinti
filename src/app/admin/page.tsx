@@ -10,8 +10,6 @@ import {
   listOpenReports,
   listPendingEvents,
   listBusinessesForAdmin,
-  listBulletinsForAdmin,
-  listPendingBulletins,
   listEventsForAdmin,
 } from "@/lib/repo";
 
@@ -24,14 +22,12 @@ export default async function AdminPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  const [stats, openReports, pendingEvents, pendingBulletins, businesses, bulletins, events] =
+  const [stats, openReports, pendingEvents, businesses, events] =
     await Promise.all([
       getAdminStats(),
       listOpenReports(),
       listPendingEvents(),
-      listPendingBulletins(),
       listBusinessesForAdmin(),
-      listBulletinsForAdmin(),
       listEventsForAdmin(),
     ]);
 
@@ -48,7 +44,6 @@ export default async function AdminPage() {
       {/* Stats */}
       <section className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Stat label="Vállalkozás" value={stats.businesses} sub={`${stats.businessesVerified} verified`} />
-        <Stat label="Hirdetés" value={stats.bulletinsActive} sub="aktív" />
         <Stat label="Esemény" value={stats.eventsApproved} sub="jóváhagyva" />
         <Stat label="Vélemény" value={stats.reviews} />
         <Stat label="Push" value={stats.pushSubscriptions} sub="feliratkozó" />
@@ -136,48 +131,6 @@ export default async function AdminPage() {
         )}
       </section>
 
-      {/* Pending bulletins */}
-      <section className="space-y-2">
-        <h2 className="text-[14px] font-extrabold text-ink">
-          Jóváhagyásra váró hirdetések ({pendingBulletins.length})
-        </h2>
-        {pendingBulletins.length === 0 ? (
-          <Empty label="Nincs várakozó hirdetés." />
-        ) : (
-          <div className="space-y-2">
-            {pendingBulletins.map((b) => (
-              <div key={b.id} className="rounded-card border border-line bg-surface p-3 shadow-card">
-                <p className="text-[13.5px] font-bold text-ink">{b.title}</p>
-                <p className="mt-0.5 text-[11.5px] text-ink-muted">
-                  {b.kind?.label}
-                  {b.email ? ` · ${b.email}` : ""}
-                  {b.cantonCode ? ` · ${b.cantonCode}` : ""}
-                  {b.price ? ` · CHF ${b.price}` : ""}
-                </p>
-                <div className="mt-2 flex gap-2">
-                  <form method="POST" action={`/api/admin/bulletins/${b.id}/approve`}>
-                    <button
-                      type="submit"
-                      className="inline-flex items-center gap-1 rounded-pill bg-primary px-3 py-1 text-[11.5px] font-bold text-white hover:opacity-90"
-                    >
-                      ✅ Jóváhagyás
-                    </button>
-                  </form>
-                  <form method="POST" action={`/api/admin/bulletins/${b.id}/reject`}>
-                    <button
-                      type="submit"
-                      className="inline-flex items-center gap-1 rounded-pill bg-accent px-3 py-1 text-[11.5px] font-bold text-white hover:opacity-90"
-                    >
-                      ❌ Elutasítás (Törlés)
-                    </button>
-                  </form>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
       {/* Businesses + verify toggle + delete */}
       <section className="space-y-2">
         <h2 className="text-[14px] font-extrabold text-ink">
@@ -214,17 +167,6 @@ export default async function AdminPage() {
       </section>
 
       {/* Hirdetések — bárki törölheti adminként */}
-      <section className="space-y-2">
-        <h2 className="text-[14px] font-extrabold text-ink">
-          Hirdetések — törlés ({bulletins.length})
-        </h2>
-        {bulletins.length === 0 ? (
-          <Empty label="Nincs hirdetés." />
-        ) : (
-          <ContentList items={bulletins} type="bulletins" />
-        )}
-      </section>
-
       {/* Események — törlés (a status független) */}
       <section className="space-y-2">
         <h2 className="text-[14px] font-extrabold text-ink">
@@ -271,7 +213,7 @@ function ContentList({
   type,
 }: {
   items: { id: string; title: string; meta: string | null; createdAt: string | null; manageToken: string | null }[];
-  type: "bulletins" | "events";
+  type: "events";
 }) {
   return (
     <div className="space-y-1.5">

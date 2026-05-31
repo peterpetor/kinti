@@ -82,13 +82,6 @@ export function DropdownMenu() {
                 Esemény beküldése
               </Link>
 
-              <Link href="/kozosseg/uj-hirdetes" onClick={() => setIsOpen(false)} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#1877F2]/10 text-[#1877F2]">
-                  <Icon name="plus" size={16} strokeWidth={2.4} />
-                </span>
-                Új hirdetés
-              </Link>
-
               <Link href="/sajatjaim" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                   <Icon name="bookmark" size={16} strokeWidth={2.4} />

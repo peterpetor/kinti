@@ -2434,11 +2434,10 @@ export async function getAdminStats(): Promise<AdminStats> {
   const q = (sql: string) => db.prepare(sql).first<{ n: number }>();
   // A digest_subscribers tábla DROP-pelve (0033) — már nincs lekérdezve.
   const [
-    businesses, verified, bulletins, events, reviews, push,
+    businesses, verified, events, reviews, push,
   ] = await Promise.all([
     q("SELECT COUNT(*) AS n FROM businesses"),
     q("SELECT COUNT(*) AS n FROM businesses WHERE verified = 1"),
-    q("SELECT COUNT(*) AS n FROM bulletin_posts WHERE is_pending = 0 AND hidden = 0 AND (expires_at IS NULL OR expires_at > datetime('now'))"),
     q("SELECT COUNT(*) AS n FROM events WHERE status = 'approved'"),
     q("SELECT COUNT(*) AS n FROM reviews WHERE hidden = 0"),
     q("SELECT COUNT(*) AS n FROM push_subscriptions"),
@@ -2446,7 +2445,7 @@ export async function getAdminStats(): Promise<AdminStats> {
   return {
     businesses: businesses?.n ?? 0,
     businessesVerified: verified?.n ?? 0,
-    bulletinsActive: bulletins?.n ?? 0,
+    bulletinsActive: 0,
     eventsApproved: events?.n ?? 0,
     reviews: reviews?.n ?? 0,
     digestSubscribersConfirmed: 0,
@@ -3300,7 +3299,6 @@ export async function setBusinessAiReviewSummary(params: {
 // ============================================================================
 
 export type ModerationTable =
-  | "bulletin_posts"
   | "reviews"
   | "businesses"
   | "events";
@@ -3308,7 +3306,6 @@ export type ModerationTable =
 export type ModerationDecision = "approved" | "rejected" | "pending";
 
 const MODERATION_TABLE_WHITELIST: Set<ModerationTable> = new Set([
-  "bulletin_posts",
   "reviews",
   "businesses",
   "events",
@@ -3355,14 +3352,6 @@ export async function listModerationQueue(
     ModerationTable,
     { title: string; preview: string; createdAt: string; email: string; ip: string; image: string }
   > = {
-    bulletin_posts: {
-      title: "title",
-      preview: "COALESCE(body, meta, '')",
-      createdAt: "COALESCE(published_at, created_at)",
-      email: "email",
-      ip: "ip_hash",
-      image: "image_key",
-    },
     reviews: {
       title: "reviewer_name",
       preview: "body",
