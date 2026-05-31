@@ -26,6 +26,11 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showFlashcardBack, setShowFlashcardBack] = useState(false);
+  
+  // game mechanics
+  const [lives, setLives] = useState(5);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isLessonComplete, setIsLessonComplete] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -53,14 +58,24 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
       const correct = selectedOption === question.correctOptionId;
       setIsCorrect(correct);
       setIsAnswered(true);
+      if (!correct) {
+        setLives((prev) => {
+          const next = prev - 1;
+          if (next <= 0) setIsGameOver(true);
+          return next;
+        });
+        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(200);
+      } else {
+        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate([50, 50, 50]);
+      }
     } else if (question.type === "flashcard") {
       setIsCorrect(true);
       setIsAnswered(true);
     } else if (question.type === "match") {
-      // should auto-check as they match, "check" button is just for "continue" when all matched
       if (matchedPairs.length === question.pairs?.length) {
         setIsCorrect(true);
         setIsAnswered(true);
+        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate([50, 50, 50]);
       }
     }
   };
@@ -73,20 +88,43 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
     if (isLastQuestion) {
       // Save progress
       const saved = localStorage.getItem("kinti_language_progress");
-      let data: { completed: string[]; xp: number } = { completed: [], xp: 0 };
+      let data: { completed: string[]; xp: number; streak: number; lastPlayedDate: string | null } = { 
+        completed: [], xp: 0, streak: 0, lastPlayedDate: null 
+      };
       if (saved) {
         try {
-          data = JSON.parse(saved);
+          data = { ...data, ...JSON.parse(saved) };
         } catch (e) {}
       }
       
+      const todayDate = new Date();
+      // Use local timezone string 'YYYY-MM-DD'
+      const today = new Date(todayDate.getTime() - (todayDate.getTimezoneOffset() * 60000)).toISOString().split("T")[0];
+      
+      if (data.lastPlayedDate) {
+        const lastDate = new Date(data.lastPlayedDate);
+        const currentDate = new Date(today);
+        const diffDays = Math.floor((currentDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+          data.streak += 1;
+          data.lastPlayedDate = today;
+        } else if (diffDays > 1) {
+          data.streak = 1;
+          data.lastPlayedDate = today;
+        }
+      } else {
+        data.streak = 1;
+        data.lastPlayedDate = today;
+      }
+
       if (!data.completed.includes(lesson.id)) {
         data.completed.push(lesson.id);
         data.xp += lesson.xpReward;
-        localStorage.setItem("kinti_language_progress", JSON.stringify(data));
       }
+      localStorage.setItem("kinti_language_progress", JSON.stringify(data));
       
-      router.push("/nyelvlecke");
+      setIsLessonComplete(true);
     } else {
       setCurrentQuestionIdx((prev) => prev + 1);
       setSelectedOption(null);
@@ -148,7 +186,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
         {/* Front */}
         <div 
           className="absolute inset-0 bg-surface border-2 border-border-strong/20 rounded-[32px] flex items-center justify-center p-6 shadow-card"
-          style={{ backfaceVisibility: "hidden" }}
+          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
         >
           <h2 className="text-3xl font-black text-ink text-center">{question.prompt}</h2>
         </div>
@@ -156,7 +194,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
         {/* Back */}
         <div 
           className="absolute inset-0 bg-primary/5 border-2 border-primary/20 rounded-[32px] flex flex-col items-center justify-center p-6 shadow-card"
-          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
           <div 
             onClick={(e) => playAudio(question.backText || "", e)}
@@ -199,6 +237,12 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
         setMatchWrong(true);
         setTimeout(() => setMatchWrong(false), 500);
         setMatchSelectedLeft(null);
+        setLives((prev) => {
+          const next = prev - 1;
+          if (next <= 0) setIsGameOver(true);
+          return next;
+        });
+        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(200);
       }
     }
   };
@@ -282,22 +326,63 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
             style={{ width: `${progressPercent}%` }}
           />
         </div>
+        <div className="flex items-center gap-1 font-black text-accent text-lg">
+          <Icon name="heart" size={20} filled={true} /> {lives}
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-5 py-6 overflow-y-auto">
-        <h1 className="text-[24px] font-black tracking-tight text-ink leading-tight">
-          {question.type !== "flashcard" && question.prompt}
-        </h1>
+        {isLessonComplete ? (
+          <div className="flex flex-col items-center justify-center h-full gap-6 animate-fade-up">
+            <div className="text-[80px]">🎉</div>
+            <h1 className="text-3xl font-black text-ink text-center">Gratulálok!</h1>
+            <p className="text-center text-ink-muted text-[17px]">
+              Befejezted a leckét, és szereztél <strong className="text-accent">{lesson.xpReward} XP</strong>-t!
+            </p>
+          </div>
+        ) : isGameOver ? (
+          <div className="flex flex-col items-center justify-center h-full gap-6 animate-fade-up">
+            <div className="text-[64px]">💔</div>
+            <h1 className="text-3xl font-black text-ink text-center">Elfogyott az életed!</h1>
+            <p className="text-center text-ink-muted">Sajnos most nem sikerült befejezni a leckét. Próbáld újra!</p>
+          </div>
+        ) : (
+          <>
+            <h1 className="text-[24px] font-black tracking-tight text-ink leading-tight">
+              {question.type !== "flashcard" && question.prompt}
+            </h1>
 
-        {question.type === "multiple_choice" && renderMultipleChoice()}
-        {question.type === "flashcard" && renderFlashcard()}
-        {question.type === "match" && renderMatch()}
+            {question.type === "multiple_choice" && renderMultipleChoice()}
+            {question.type === "flashcard" && renderFlashcard()}
+            {question.type === "match" && renderMatch()}
+          </>
+        )}
       </div>
 
       {/* Footer / CTA Area */}
       <div className="shrink-0 p-5 border-t border-border-subtle bg-surface">
-        {!isAnswered ? (
+        {isLessonComplete ? (
+          <Button 
+            fullWidth 
+            size="lg" 
+            variant="primary"
+            onClick={() => router.push("/nyelvlecke")}
+            className="text-[17px] bg-[#ff9600] hover:bg-[#e68600] text-white border-none shadow-[0_6px_0_0_#cc7700] active:shadow-[0_2px_0_0_#cc7700]"
+          >
+            Folytatás
+          </Button>
+        ) : isGameOver ? (
+          <Button 
+            fullWidth 
+            size="lg" 
+            variant="primary"
+            onClick={() => router.push("/nyelvlecke")}
+            className="text-[17px]"
+          >
+            Vissza a leckékhez
+          </Button>
+        ) : !isAnswered ? (
           <Button 
             fullWidth 
             size="lg" 

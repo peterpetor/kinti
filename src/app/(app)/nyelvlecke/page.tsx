@@ -13,6 +13,7 @@ export default function LanguagePathPage() {
   const [mounted, setMounted] = useState(false);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [totalXp, setTotalXp] = useState(0);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
     const saved = localStorage.getItem("kinti_language_progress");
@@ -21,6 +22,19 @@ export default function LanguagePathPage() {
         const data = JSON.parse(saved);
         setCompletedLessons(data.completed || []);
         setTotalXp(data.xp || 0);
+        
+        let currentStreak = data.streak || 0;
+        if (data.lastPlayedDate) {
+          const todayDate = new Date();
+          const today = new Date(todayDate.getTime() - (todayDate.getTimezoneOffset() * 60000)).toISOString().split("T")[0];
+          const lastDate = new Date(data.lastPlayedDate);
+          const currentDate = new Date(today);
+          const diffDays = Math.floor((currentDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+          if (diffDays > 1) {
+            currentStreak = 0; // Megszakadt a sorozat
+          }
+        }
+        setStreak(currentStreak);
       } catch (e) {
         // ignore
       }
@@ -50,13 +64,13 @@ export default function LanguagePathPage() {
         />
 
         <div className="flex items-center gap-4 mt-6">
-          <div className="flex flex-1 items-center gap-3 rounded-2xl bg-[#ff9600]/10 p-3">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#ff9600] text-white">
+          <div className={cn("flex flex-1 items-center gap-3 rounded-2xl p-3", streak > 0 ? "bg-[#ff9600]/10" : "bg-ink/5")}>
+            <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-full text-white", streak > 0 ? "bg-[#ff9600]" : "bg-ink-muted/50")}>
               🔥
             </span>
             <div>
-              <div className="text-[11px] font-black uppercase tracking-wider text-[#ff9600]">Streak</div>
-              <div className="text-[17px] font-extrabold text-[#ff9600] leading-none">1 nap</div>
+              <div className={cn("text-[11px] font-black uppercase tracking-wider", streak > 0 ? "text-[#ff9600]" : "text-ink-muted")}>Streak</div>
+              <div className={cn("text-[17px] font-extrabold leading-none", streak > 0 ? "text-[#ff9600]" : "text-ink-muted")}>{streak} nap</div>
             </div>
           </div>
 
