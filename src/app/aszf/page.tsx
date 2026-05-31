@@ -179,6 +179,16 @@ export default function AszfPage() {
         vagy peren kívüli vitarendezéshez fordulhat (lásd 20.1 pont).
       </p>
 
+      <h3>5.3 Bűncselekmények gyanújának bejelentése (DSA Art. 18)</h3>
+      <p>
+        Az Európai Unió Digitális Szolgáltatások Rendelete (DSA) 18. cikke értelmében, amennyiben 
+        az üzemeltető olyan információ birtokába jut, amely alapján alapos gyanú merül fel egy 
+        személy vagy személyek életét, illetve biztonságát fenyegető bűncselekmény (pl. terrorizmus, 
+        gyermekbántalmazás, élet elleni fenyegetés) elkövetésére, azt <strong>haladéktalanul bejelenti a 
+        svájci vagy magyar bűnüldöző hatóságoknak</strong> (Fedpol / ORFK), és átadja számukra a rendelkezésre 
+        álló összes digitális bizonyítékot (IP-címek, hash-ek, tartalmak).
+      </p>
+
       <h2>6. Hirdetés lejárta és törlése</h2>
       <ul>
         <li>A megerősített hirdetések <strong>30 napig</strong> láthatók, utána automatikusan
@@ -557,6 +567,13 @@ export default function AszfPage() {
       <p>
         A jelen feltételekre a <strong>magyar jog</strong> az irányadó. Esetleges jogvitákban
         a magyar bíróságok rendelkeznek hatáskörrel és illetékességgel.
+      </p>
+      <p>
+        <strong>Fogyasztóvédelmi kivétel:</strong> Amennyiben a felhasználó fogyasztónak minősül (Svájcban 
+        vagy az Európai Unió tagállamában él), a jelen jogválasztás <strong>nem foszthatja meg a fogyasztót 
+        a szokásos tartózkodási helye szerinti ország jogának olyan kötelező rendelkezései által biztosított 
+        védelemtől</strong>, amelyektől szerződésben nem lehet eltérni. A svájci lakóhellyel rendelkező fogyasztók 
+        jogosultak panaszaikkal és pereikkel a svájci bíróságokhoz fordulni a svájci GestG alapján.
       </p>
 
       <h2>20. Vitarendezés</h2>
