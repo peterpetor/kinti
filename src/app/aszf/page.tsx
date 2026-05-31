@@ -451,15 +451,11 @@ export default function AszfPage() {
       <h2>14. Közösségi jelentések</h2>
       <p>
         A platformon a felhasználók által beadott <strong>közösségi jelentések</strong>{" "}
-        (akció-térkép, határátkelő-figyelő, SOS-radar, vélemény stb.)
+        (akció-térkép, határátkelő-figyelő, vélemény stb.)
         a feladó felhasználó saját megfigyelései — az üzemeltető <strong>nem ellenőrzi
         ezek pontosságát</strong>. A felhasználó saját felelősségére használja a
         közösségi jelentéseket; ezekre alapozott döntésekért az üzemeltető és más
         felhasználók nem felelnek.
-      </p>
-      <p>
-        A <strong>Közösségi SOS-radar</strong> nem helyettesíti a hivatalos
-        segélyhívást (Svájcban 112). Vészhelyzet esetén MINDIG hívd a 112-t.
       </p>
 
       <h3>14.1 Akció-térkép (bolt-akciók)</h3>
@@ -500,11 +496,23 @@ export default function AszfPage() {
         (pl. adathalászat, vírusok) esetén az üzemeltető felelőssége kizárt.
       </p>
 
-      <h2>16. Szellemi tulajdon és Kártalanítás (Mentesítés)</h2>
+      <h2>16. Szellemi tulajdon, Adatbázisjog és Kártalanítás (Mentesítés)</h2>
       <p>
         A kinti.app márkajegye, logója, design rendszere az üzemeltető szellemi tulajdona.
         A platformon megjelenő felhasználói tartalmak, képek és logók a feltöltők tulajdonát képezik,
         akik a platform használatával engedélyt adnak ezek megjelenítésére a Szolgáltatás keretében.
+      </p>
+      <h3>16.1 Adatbázis-előállítói jog (Sui Generis) és Scraping tilalma</h3>
+      <p>
+        A platformon felhalmozott és strukturált tartalmak (Szaknévsor cégadatbázisa, Hofladen térkép, Bérkalkulátor statisztikái)
+        rendszerezése és karbantartása jelentős anyagi és szellemi ráfordítást igényelt. Ezek egésze az üzemeltető 
+        <strong>adatbázis-előállítói jogának (sui generis védelmének)</strong> hatálya alá tartozik (1999. évi LXXVI. tv. 84/A. § és az EU Adatbázis Irányelve).
+      </p>
+      <p>
+        Kifejezetten <strong>tilos a platform tartalmának automatizált módszerekkel (pl. web scraping, botok, crawlerek) 
+        történő letöltése</strong>, tömeges kinyerése, másolása, vagy más (akár fizetős, akár ingyenes) szolgáltatásba 
+        való átemelése az üzemeltető előzetes, kifejezett írásbeli engedélye nélkül. Az adatbázis jogosulatlan letöltése 
+        esetén az üzemeltető azonnali jogi és kártérítési eljárást kezdeményez.
       </p>
       <p>
         A felhasználó garantálja, hogy az általa feltöltött képek, logók és szövegek <strong>nem sértik 
