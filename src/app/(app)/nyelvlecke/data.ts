@@ -805,5 +805,386 @@ export const LESSONS: Lesson[] = [
         ]
       }
     ]
+  },
+
+  // ── 13. Fejezet: Autó és Közlekedés II ────────────────────
+  {
+    id: "l21",
+    title: "21. Lecke: Autózás és Parkolás",
+    description: "Kifejezések, ha autóval járod Svájcot.",
+    chapter: 13,
+    xpReward: 60,
+    questions: [
+      {
+        id: "q61",
+        type: "flashcard",
+        prompt: "Jogosítvány",
+        backText: "Führerschiin",
+        phonetic: "Fírer-sín",
+      },
+      {
+        id: "q62",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'parkolóhely' szót?",
+        options: [
+          { id: "o1", text: "Parkplatz" },
+          { id: "o2", text: "Parkfäld" },
+          { id: "o3", text: "Mindkettő használatos" }
+        ],
+        correctOptionId: "o3",
+      },
+      {
+        id: "q63",
+        type: "match",
+        prompt: "Autós kifejezések",
+        pairs: [
+          { id: "p1", left: "Sebességtúllépés", right: "Z schnäll gfahre" },
+          { id: "p2", left: "Bírság (Büntetés)", right: "Buess" },
+          { id: "p3", left: "Autópálya-matrica", right: "Vignette" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l22",
+    title: "22. Lecke: A szerelőnél (Garagist)",
+    description: "Ha valami elromlik az autón.",
+    chapter: 13,
+    xpReward: 65,
+    questions: [
+      {
+        id: "q64",
+        type: "flashcard",
+        prompt: "Autószerelő",
+        backText: "Garagist",
+        phonetic: "Garázsisz",
+      },
+      {
+        id: "q65",
+        type: "multiple_choice",
+        prompt: "Hogyan mondod: 'Eltört / Elromlott'?",
+        options: [
+          { id: "o1", text: "Kaputt" },
+          { id: "o2", text: "Es isch hi" },
+          { id: "o3", text: "Mindkettő jó" }
+        ],
+        correctOptionId: "o3",
+      },
+      {
+        id: "q66",
+        type: "match",
+        prompt: "Alkatrészek",
+        pairs: [
+          { id: "p1", left: "Gumiabroncs", right: "Pneu" },
+          { id: "p2", left: "Kormány", right: "Stüürrad" },
+          { id: "p3", left: "Motor", right: "Motor" },
+        ]
+      }
+    ]
+  },
+
+  // ── 14. Fejezet: Munkahely és Karrier ────────────────────
+  {
+    id: "l23",
+    title: "23. Lecke: Állásinterjú",
+    description: "Hogyan mutatkozz be egy interjún.",
+    chapter: 14,
+    xpReward: 70,
+    questions: [
+      {
+        id: "q67",
+        type: "flashcard",
+        prompt: "Állásinterjú",
+        backText: "Bewerbigsgspröch",
+        phonetic: "Bewerbigsz-göprökh",
+      },
+      {
+        id: "q68",
+        type: "multiple_choice",
+        prompt: "Hogy mondod: 'Nagy tapasztalatom van'?",
+        options: [
+          { id: "o1", text: "Ich ha viel Erfahrig" },
+          { id: "o2", text: "Ich bi sehr guet" },
+          { id: "o3", text: "Ich schaffe gern" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q69",
+        type: "match",
+        prompt: "Karrier kifejezések",
+        pairs: [
+          { id: "p1", left: "Főnök", right: "Chef" },
+          { id: "p2", left: "Fizetés", right: "Lohn" },
+          { id: "p3", left: "Munkaszerződés", right: "Arbeitsvertrag" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l24",
+    title: "24. Lecke: Irodai Szleng",
+    description: "Túlélni a hétköznapokat az irodában.",
+    chapter: 14,
+    xpReward: 70,
+    questions: [
+      {
+        id: "q70",
+        type: "flashcard",
+        prompt: "Értekezlet / Meeting",
+        backText: "Sitzig",
+        phonetic: "Sziccig",
+      },
+      {
+        id: "q71",
+        type: "multiple_choice",
+        prompt: "Hogy mondják: 'Szabadságon vagyok'?",
+        options: [
+          { id: "o1", text: "Ich ha Ferie" },
+          { id: "o2", text: "Ich bi frei" },
+          { id: "o3", text: "Ich schaffe nöd" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q72",
+        type: "match",
+        prompt: "Irodai élet",
+        pairs: [
+          { id: "p1", left: "Betegszabadság", right: "Chrankschriibig" },
+          { id: "p2", left: "Kávészünet", right: "Kafipause" },
+          { id: "p3", left: "Munkaidő vége", right: "Fiirabig" },
+        ]
+      }
+    ]
+  },
+
+  // ── 15. Fejezet: Pénzügyek ────────────────────
+  {
+    id: "l25",
+    title: "25. Lecke: Számlák és Adók",
+    description: "Minden, ami pénz Svájcban.",
+    chapter: 15,
+    xpReward: 80,
+    questions: [
+      {
+        id: "q73",
+        type: "flashcard",
+        prompt: "Számla",
+        backText: "Rächnig",
+        phonetic: "Rehnig",
+      },
+      {
+        id: "q74",
+        type: "multiple_choice",
+        prompt: "Mit jelent a 'Stüüre'?",
+        options: [
+          { id: "o1", text: "Adók" },
+          { id: "o2", text: "Biztosítás" },
+          { id: "o3", text: "Kormány" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q75",
+        type: "match",
+        prompt: "Pénzügyi szavak",
+        pairs: [
+          { id: "p1", left: "Fizetni", right: "Zahle" },
+          { id: "p2", left: "Költség", right: "Choschte" },
+          { id: "p3", left: "Megtakarítás", right: "Gsparts" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l26",
+    title: "26. Lecke: A Bankban",
+    description: "Számlanyitás és utalások.",
+    chapter: 15,
+    xpReward: 80,
+    questions: [
+      {
+        id: "q76",
+        type: "flashcard",
+        prompt: "Bankszámla",
+        backText: "Bankkonto",
+        phonetic: "Bank-konto",
+      },
+      {
+        id: "q77",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'készpénz' szót?",
+        options: [
+          { id: "o1", text: "Bargäld" },
+          { id: "o2", text: "Cash" },
+          { id: "o3", text: "Stutz" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q78",
+        type: "match",
+        prompt: "Banki műveletek",
+        pairs: [
+          { id: "p1", left: "Kártya", right: "Charte" },
+          { id: "p2", left: "Átutalás", right: "Überwiisig" },
+          { id: "p3", left: "Bankautomata", right: "Bankomat" },
+        ]
+      }
+    ]
+  },
+
+  // ── 16. Fejezet: Érzelmek és Vélemény ────────────────────
+  {
+    id: "l27",
+    title: "27. Lecke: Érzelmek",
+    description: "Fejezd ki, hogyan érzed magad.",
+    chapter: 16,
+    xpReward: 90,
+    questions: [
+      {
+        id: "q79",
+        type: "multiple_choice",
+        prompt: "Hogy mondod: 'Fáradt vagyok'?",
+        options: [
+          { id: "o1", text: "Ich bi müed" },
+          { id: "o2", text: "Ich ha Schlof" },
+          { id: "o3", text: "Ich bi chrank" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q80",
+        type: "flashcard",
+        prompt: "Boldog",
+        backText: "Glückli",
+        phonetic: "Glükli",
+      },
+      {
+        id: "q81",
+        type: "match",
+        prompt: "Érzések",
+        pairs: [
+          { id: "p1", left: "Szomorú", right: "Truurig" },
+          { id: "p2", left: "Mérges", right: "Hässig" },
+          { id: "p3", left: "Félős / Fél", right: "Angscht" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l28",
+    title: "28. Lecke: Vita és Egyetértés",
+    description: "Vélemény kifejezése a mindennapokban.",
+    chapter: 16,
+    xpReward: 90,
+    questions: [
+      {
+        id: "q82",
+        type: "flashcard",
+        prompt: "Igazad van",
+        backText: "Du hesch Rächt",
+        phonetic: "Du hes reht",
+      },
+      {
+        id: "q83",
+        type: "multiple_choice",
+        prompt: "Hogy mondod: 'Nem hiszem'?",
+        options: [
+          { id: "o1", text: "Ich dänke nöd" },
+          { id: "o2", text: "Ich glaube scho" },
+          { id: "o3", text: "Vellicht" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q84",
+        type: "match",
+        prompt: "Vélemények",
+        pairs: [
+          { id: "p1", left: "Egyetértek", right: "Ich bi iiverschtande" },
+          { id: "p2", left: "Szerintem...", right: "Ich finde..." },
+          { id: "p3", left: "Lehetséges", right: "Mögli" },
+        ]
+      }
+    ]
+  },
+
+  // ── 17. Fejezet: Család és Barátok ────────────────────
+  {
+    id: "l29",
+    title: "29. Lecke: Családtagok",
+    description: "Kik a legfontosabbak az életedben?",
+    chapter: 17,
+    xpReward: 100,
+    questions: [
+      {
+        id: "q85",
+        type: "flashcard",
+        prompt: "Nagyszülők",
+        backText: "Grosseltere",
+        phonetic: "Grosz-eltere",
+      },
+      {
+        id: "q86",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'fiúgyermek' szót?",
+        options: [
+          { id: "o1", text: "Bueb" },
+          { id: "o2", text: "Sohn" },
+          { id: "o3", text: "Mindkettő használatos" }
+        ],
+        correctOptionId: "o3",
+      },
+      {
+        id: "q87",
+        type: "match",
+        prompt: "Családtagok",
+        pairs: [
+          { id: "p1", left: "Lánygyermek", right: "Meitli / Tochter" },
+          { id: "p2", left: "Feleség", right: "Frou" },
+          { id: "p3", left: "Férj", right: "Maa" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l30",
+    title: "30. Lecke: Ünneplés és Meghívások",
+    description: "Kifejezések bulizáshoz és partikhoz.",
+    chapter: 17,
+    xpReward: 120,
+    questions: [
+      {
+        id: "q88",
+        type: "flashcard",
+        prompt: "Meghívás",
+        backText: "Iiladig",
+        phonetic: "I-ladig",
+      },
+      {
+        id: "q89",
+        type: "multiple_choice",
+        prompt: "Mit jelent: 'Chömed ihr au?'",
+        options: [
+          { id: "o1", text: "Ti is jöttök?" },
+          { id: "o2", text: "Ti mit csináltok?" },
+          { id: "o3", text: "Hol vagytok?" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q90",
+        type: "match",
+        prompt: "Bulizás",
+        pairs: [
+          { id: "p1", left: "Buli / Parti", right: "Fäscht" },
+          { id: "p2", left: "Zene", right: "Musig" },
+          { id: "p3", left: "Táncolni", right: "Tanze" },
+          { id: "p4", left: "Nagyon jó volt", right: "Es isch mega gsii" },
+        ]
+      }
+    ]
   }
 ];
