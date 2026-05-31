@@ -115,6 +115,25 @@ export default async function FeedPage() {
         </div>
       </section>
 
+      {/* Kiköltözés Tracker — új modul */}
+      <Link
+        href="/kikoltozes"
+        className="flex items-center gap-3 rounded-card border border-accent/20 bg-accent-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
+      >
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-accent text-white">
+          <Icon name="check" size={19} strokeWidth={2.3} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
+            Kiköltözés Tracker
+          </span>
+          <span className="block text-[12px] text-ink-muted">
+            Személyre szabott, lépésről-lépésre checklist Svájcba költözőknek
+          </span>
+        </span>
+        <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-accent" />
+      </Link>
+
       {/* Tudásbázis — hivatalos útmutatók */}
       <Link
         href="/tudasbazis"

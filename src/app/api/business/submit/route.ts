@@ -4,6 +4,7 @@ import {
   getCategories,
   createBusinessSubmission,
   countRecentBusinessSubmissions,
+  logModerationStrike,
 } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { moderateText } from "@/lib/text-moderation";
@@ -105,7 +106,8 @@ export async function POST(req: Request) {
     .join("\n");
   if (businessText.length > 0) {
     const textMod = await moderateText(businessText);
-    if (textMod.safe === false) {
+    if (textMod.action === "block") {
+      await logModerationStrike(ipHash, "Business text moderation failed: " + textMod.reason);
       return NextResponse.json(
         {
           error:

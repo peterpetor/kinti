@@ -1,7 +1,7 @@
 import { getCloudflareEnv } from "./cloudflare";
 
 export interface ModerationResult {
-  safe: boolean;
+  action: "allow" | "block" | "review";
   reason?: string;
 }
 
@@ -18,7 +18,7 @@ export async function moderateImage(arrayBuffer: ArrayBuffer): Promise<Moderatio
     const env = getCloudflareEnv();
     if (!env.AI) {
       console.warn("› [AI Moderation] Az env.AI binding nem érhető el. Moderáció megkerülve.");
-      return { safe: true };
+      return { action: "allow" };
     }
 
     console.log("› [AI Moderation] Kép elemzése indítása (Llama 3.2 Vision)...");
@@ -28,8 +28,9 @@ export async function moderateImage(arrayBuffer: ArrayBuffer): Promise<Moderatio
     const prompt = 
       "You are a strict safety content moderator. Analyze this image. " +
       "Is it safe for a family-friendly community web application? " +
-      "Answer with exactly ONE word: 'safe' or 'unsafe'. " +
-      "You MUST answer 'unsafe' if the image contains explicit nudity, genitals, pornography, sexual acts, violence, gore, weapons, or highly inappropriate/explicit content.";
+      "Answer with exactly ONE word: 'safe', 'unsafe', or 'suspicious'. " +
+      "Answer 'unsafe' if the image contains explicit nudity, genitals, pornography, sexual acts, violence, gore, weapons, or highly inappropriate content. " +
+      "Answer 'suspicious' if it's not explicitly violating rules, but might be borderline, spam, or require human review.";
 
     const response = await env.AI.run("@cf/meta/llama-3.2-11b-vision-instruct", {
       messages: [
@@ -65,21 +66,27 @@ export async function moderateImage(arrayBuffer: ArrayBuffer): Promise<Moderatio
     ];
 
     const isUnsafe = unsafeTriggers.some(trigger => resultText.includes(trigger)) || resultText === "";
+    const isSuspicious = resultText.includes("suspicious") || resultText.includes("review") || resultText.includes("maybe");
 
-    if (isUnsafe) {
+    if (isUnsafe && !isSuspicious) {
       console.warn(`› [AI Moderation] BLOKKOLVA! Veszélyes tartalom észlelve vagy elutasított válasz: "${resultText}"`);
       return {
-        safe: false,
+        action: "block",
         reason: "Sajnáljuk, de a feltölteni kívánt kép nem biztonságos (NSFW) vagy nem családbarát tartalmat hordoz, ezért a rendszer elutasította.",
       };
     }
 
+    if (isSuspicious) {
+      console.warn(`› [AI Moderation] GYANÚS! A kép határeset, emberi felülvizsgálatot igényel.`);
+      return { action: "review" };
+    }
+
     console.log("› [AI Moderation] A kép átment a biztonsági ellenőrzésen.");
-    return { safe: true };
+    return { action: "allow" };
   } catch (error) {
     console.error("✖ [AI Moderation] Hiba történt a moderáció során:", error);
     // Ha a szerver teljesen elszáll (pl. timeout), átengedjük (fail-open) a UX miatt,
     // de az éles Cloudflare környezetben a Llama Vision sziklaszilárdan működik.
-    return { safe: true };
+    return { action: "allow" };
   }
 }

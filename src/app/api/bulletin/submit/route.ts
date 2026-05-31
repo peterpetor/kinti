@@ -121,7 +121,7 @@ export async function POST(req: Request) {
     .join("\n");
   if (combinedText.length > 0) {
     const textMod = await moderateText(combinedText);
-    if (textMod.safe === false) {
+    if (textMod.action === "block") {
       await logModerationStrike(ipHash, "Text moderation failed: " + textMod.reason);
       return NextResponse.json(
         {
@@ -132,6 +132,8 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+    // Ha textMod.action === "review", akkor nem blokkoljuk (shadowban), hanem engedjük továbbmenni,
+    // mivel a hirdetések amúgy is 'pending' státuszba (isPending=1) kerülnek jóváhagyásig.
   }
 
   // 5) Kép moderáció Cloudflare Workers AI-val
@@ -154,7 +156,7 @@ export async function POST(req: Request) {
       if (obj) {
         const arrayBuffer = await obj.arrayBuffer();
         const moderation = await moderateImage(arrayBuffer);
-        if (!moderation.safe) {
+        if (moderation.action === "block") {
           await getMediaBucket().delete(key).catch(() => { /* silent */ });
           await logModerationStrike(ipHash, "Image moderation failed: " + moderation.reason);
           return NextResponse.json(

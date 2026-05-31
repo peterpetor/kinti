@@ -75,7 +75,7 @@ export async function POST(req: Request) {
   }
   const arrayBuffer = await obj.arrayBuffer();
   const moderation = await moderateImage(arrayBuffer);
-  if (!moderation.safe) {
+  if (moderation.action === "block") {
     await getMediaBucket().delete(key).catch(() => { /* silent */ });
     return NextResponse.json(
       { error: moderation.reason || "A kép moderációs okokból elutasításra került." },

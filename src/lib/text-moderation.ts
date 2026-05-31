@@ -17,45 +17,44 @@ import { runAiChat, extractJsonObject } from "./ai";
  */
 
 export interface TextModerationResult {
-  /** true: biztonságos; false: nem biztonságos; null: nem tudtuk eldönteni */
-  safe: boolean | null;
-  /** Ha unsafe → rövid magyarázat magyarul; egyébként üres string. */
+  /**
+   * allow: biztonságos, mehet
+   * block: egyértelműen sértő/veszélyes, azonnal 400 Bad Request
+   * review: határeset / nem egyértelmű, a poszt létrejön, de admin jóváhagyásig rejtett marad (quarantine)
+   * null: AI nem tudott dönteni / nem elérhető (fail-open -> allow)
+   */
+  action: "allow" | "block" | "review" | null;
+  /** Ha action !== 'allow' → rövid magyarázat magyarul; egyébként üres string. */
   reason: string;
 }
 
 const SYSTEM = `Te a kinti.app tartalom-moderátor AI-ja vagy.
 A felhasználó egy hirdetést vagy vállalkozói leírást küld be magyar nyelven.
-A feladatod eldönteni: biztonságos-e közzétenni?
+A feladatod eldönteni: közzétehető-e?
 
-NEM BIZTONSÁGOS (unsafe), ha tartalmaz BÁRMELYIKET:
-- IDEGEN személy adatát (más telefonszámát, lakcímét, email-jét) hozzájárulás nélkül;
-- rágalmazó, gyűlöletkeltő, diszkriminatív, fenyegető szöveget;
-- pornográf, szexuális szolgáltatást, kísérőszolgáltatást;
-- gyógyászati / gyógyszerészeti termék / dohány / lőfegyver / drog hirdetést;
-- pénzügyi piramist (MLM, készpénzkölcsön, befektetési csalás);
-- jogosulatlan szakmai (orvos / ügyvéd / pszichológus) tanácsadási ajánlatot
-  hatósági engedélyszám említése nélkül;
-- nyilvánvaló spam / scam vagy ismétlődő reklámmondatokat;
-- politikai propagandát.
+Három döntést hozhatsz ("action"):
+1) "allow": Biztonságos.
+2) "block": Egyértelműen BIZTONSÁGTALAN. Tartalmaz PII-t (más adatait), rágalmazó/gyűlöletkeltő/fenyegető/trágár, pornográf/szexuális, tiltott termék (drog/fegyver/gyógyszer), egyértelmű csalás/MLM.
+3) "review": HATÁRESET. Nem vagy benne 100%-ig biztos, hogy sértő-e, lehet hogy csak kontextusból fakadó szleng, vagy gyanús, de nem egyértelmű spam. Ilyenkor a rendszer nem blokkolja a felhasználót, hanem "shadowban" karanténba teszi admin jóváhagyásig.
 
 KIZÁRÓLAG egy JSON objektummal válaszolj (semmi más, semmi magyarázat előtte/utána):
 {
-  "safe": true,
+  "action": "allow",
   "reason": ""
 }
 VAGY:
 {
-  "safe": false,
-  "reason": "<rövid magyar indok max 80 karakter, mit kell javítani>"
+  "action": "block" | "review",
+  "reason": "<rövid magyar indok max 80 karakter>"
 }`;
 
 export async function moderateText(text: string): Promise<TextModerationResult> {
   const trimmed = text.trim();
   if (!trimmed || trimmed.length < 5) {
-    return { safe: true, reason: "" };
+    return { action: "allow", reason: "" };
   }
   if (trimmed.length > 4000) {
-    return { safe: false, reason: "A szöveg túl hosszú (max 4000 karakter)." };
+    return { action: "block", reason: "A szöveg túl hosszú (max 4000 karakter)." };
   }
 
   const ai = await runAiChat({
@@ -67,16 +66,16 @@ export async function moderateText(text: string): Promise<TextModerationResult> 
 
   if (!ai.ok) {
     // Fail-open: ha az AI nem elérhető, ne blokkoljuk a feladást
-    return { safe: null, reason: "" };
+    return { action: null, reason: "" };
   }
 
-  const parsed = extractJsonObject<{ safe?: unknown; reason?: unknown }>(ai.text);
-  if (!parsed || typeof parsed.safe !== "boolean") {
-    return { safe: null, reason: "" };
+  const parsed = extractJsonObject<{ action?: unknown; reason?: unknown }>(ai.text);
+  if (!parsed || (parsed.action !== "allow" && parsed.action !== "block" && parsed.action !== "review")) {
+    return { action: null, reason: "" };
   }
 
   return {
-    safe: parsed.safe,
+    action: parsed.action as "allow" | "block" | "review",
     reason:
       typeof parsed.reason === "string" ? parsed.reason.slice(0, 160) : "",
   };

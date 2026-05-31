@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     
     // 1. lépés: Biztonsági moderáció a gyors, kis uform modellel
     const moderation = await moderateImage(arrayBuffer);
-    if (!moderation.safe) {
+    if (moderation.action === "block") {
       await getMediaBucket().delete(imageKey).catch(() => {});
       return NextResponse.json({ error: moderation.reason || "A kép nem megengedett tartalmat hordoz.", unsafe: true }, { status: 400 });
     }

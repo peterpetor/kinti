@@ -99,6 +99,13 @@ export function DropdownMenu() {
               {/* ── Tudás & Ügyintézés ─────────────────── */}
               <Divider label="Tudás & Ügyintézés" />
 
+              <Link href="/kikoltozes" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
+                  <Icon name="check" size={16} strokeWidth={2.4} />
+                </span>
+                Kiköltözés Tracker
+              </Link>
+
               <Link href="/tudasbazis" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                   <Icon name="globe" size={16} strokeWidth={2.4} />

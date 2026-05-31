@@ -111,7 +111,7 @@ export async function POST(req: Request) {
       if (obj) {
         const arrayBuffer = await obj.arrayBuffer();
         const moderation = await moderateImage(arrayBuffer);
-        if (!moderation.safe) {
+        if (moderation.action === "block") {
           await getMediaBucket().delete(key).catch(() => { /* silent */ });
           await logModerationStrike(ipHash, "Image moderation failed: " + moderation.reason);
           return NextResponse.json(

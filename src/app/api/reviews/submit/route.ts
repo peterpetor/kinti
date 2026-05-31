@@ -92,7 +92,7 @@ export async function POST(req: Request) {
   // AI text moderáció — rasszista/trágár/toxic tartalom szűrése
   const combinedReviewText = [validation.value.reviewerName, validation.value.body].join("\n");
   const textMod = await moderateText(combinedReviewText);
-  if (textMod.safe === false) {
+  if (textMod.action === "block") {
     await logModerationStrike(ipHash, "Review text moderation failed: " + textMod.reason);
     return NextResponse.json(
       { error: textMod.reason || "A véleményed nem megfelelő tartalmat hordoz." },
