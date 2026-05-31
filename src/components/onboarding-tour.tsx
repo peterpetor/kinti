@@ -23,7 +23,7 @@ const STEPS: Step[] = [
   {
     emoji: "👋",
     title: "Üdv a kinti-n!",
-    body: "A Svájcban élő magyaroknak. Nincs fiók, nincs email-kérés — egyszerűen használd. Mutatunk 4 dolgot, ami a mindennapokban hasznos lehet.",
+    body: "A Svájcban élő magyaroknak. A böngészéshez nincs szükség regisztrációra — egyszerűen használd! Bizonyos extra funkciókhoz (pl. hirdetés feladása) kérhetjük az email címedet. Mutatunk 4 dolgot, ami hasznos lehet.",
   },
   {
     emoji: "🔎",
