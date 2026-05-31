@@ -138,6 +138,28 @@ export default async function ModerationPage({
         })}
       </div>
 
+      {/* Audit Log & Abuse Dashboard Links */}
+      <div className="grid grid-cols-2 gap-3">
+        <Link
+          href="/admin/moderation/audit-log"
+          className="rounded-card border border-line bg-surface p-4 shadow-card transition hover:bg-surface-alt"
+        >
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            📋 Audit Log
+          </div>
+          <div className="mt-1 text-sm font-semibold text-ink">Admin döntések naplója</div>
+        </Link>
+        <Link
+          href="/admin/moderation/abuse-dashboard"
+          className="rounded-card border border-line bg-surface p-4 shadow-card transition hover:bg-surface-alt"
+        >
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            📊 Abuse Dashboard
+          </div>
+          <div className="mt-1 text-sm font-semibold text-ink">Rate limits & patterns</div>
+        </Link>
+      </div>
+
       {/* Lista */}
       <section className="space-y-2">
         <p className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">
