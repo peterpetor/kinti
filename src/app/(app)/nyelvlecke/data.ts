@@ -2899,5 +2899,955 @@ export const LESSONS: Lesson[] = [
         ]
       }
     ]
+  },
+
+  // ── 41. Fejezet: Ingatlan és Lakásvásárlás ────────────────────
+  {
+    id: "l76",
+    title: "76. Lecke: Háznézőben",
+    description: "Ingatlanügynök és a lakáskeresés.",
+    chapter: 41,
+    xpReward: 300,
+    questions: [
+      {
+        id: "q226",
+        type: "flashcard",
+        prompt: "Ingatlan (Ház)",
+        backText: "Immobilie (Huus)",
+        phonetic: "Húz",
+      },
+      {
+        id: "q227",
+        type: "multiple_choice",
+        prompt: "Hogy mondod: 'Szeretném megnézni a lakást'?",
+        options: [
+          { id: "o1", text: "Ich wett d Wohnig aaluege" },
+          { id: "o2", text: "Ich wett schlafe" },
+          { id: "o3", text: "Ich bi dusse" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q228",
+        type: "match",
+        prompt: "Házrészek",
+        pairs: [
+          { id: "p1", left: "Kert", right: "Garte" },
+          { id: "p2", left: "Erkély", right: "Balkon" },
+          { id: "p3", left: "Tető", right: "Dach" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l77",
+    title: "77. Lecke: Jelzáloghitel",
+    description: "Amikor a banké a házad.",
+    chapter: 41,
+    xpReward: 320,
+    questions: [
+      {
+        id: "q229",
+        type: "flashcard",
+        prompt: "Jelzálog",
+        backText: "Hypothek",
+        phonetic: "Hipoték",
+      },
+      {
+        id: "q230",
+        type: "multiple_choice",
+        prompt: "Mit jelent a svájci 'Eigäkapital'?",
+        options: [
+          { id: "o1", text: "Önerő (Saját tőke)" },
+          { id: "o2", text: "Kamat" },
+          { id: "o3", text: "Adomány" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q231",
+        type: "match",
+        prompt: "Pénzügy a bankban",
+        pairs: [
+          { id: "p1", left: "Kamat", right: "Zins" },
+          { id: "p2", left: "Szerződés", right: "Vertrag" },
+          { id: "p3", left: "Adósság", right: "Schulde" },
+        ]
+      }
+    ]
+  },
+
+  // ── 42. Fejezet: Pénzügyi Szaknyelv ────────────────────
+  {
+    id: "l78",
+    title: "78. Lecke: Részvények",
+    description: "A zürichi Paradeplatz világa.",
+    chapter: 42,
+    xpReward: 330,
+    questions: [
+      {
+        id: "q232",
+        type: "flashcard",
+        prompt: "Részvény",
+        backText: "Aktie",
+        phonetic: "Akcie",
+      },
+      {
+        id: "q233",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a 'Tőzsde' szót?",
+        options: [
+          { id: "o1", text: "Börse" },
+          { id: "o2", text: "Määrt" },
+          { id: "o3", text: "Lade" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q234",
+        type: "match",
+        prompt: "Befektetések",
+        pairs: [
+          { id: "p1", left: "Nyereség", right: "Gwünn" },
+          { id: "p2", left: "Veszteség", right: "Verluscht" },
+          { id: "p3", left: "Osztalék", right: "Dividände" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l79",
+    title: "79. Lecke: Megtakarítások",
+    description: "Säule 3a és a nyugdíj.",
+    chapter: 42,
+    xpReward: 350,
+    questions: [
+      {
+        id: "q235",
+        type: "flashcard",
+        prompt: "Nyugdíj",
+        backText: "Ränte",
+        phonetic: "Rente",
+      },
+      {
+        id: "q236",
+        type: "multiple_choice",
+        prompt: "Mit takar a 'Säule 3a'?",
+        options: [
+          { id: "o1", text: "Önkéntes magánnyugdíjpénztár" },
+          { id: "o2", text: "Balesetbiztosítás" },
+          { id: "o3", text: "Autóhitel" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q237",
+        type: "match",
+        prompt: "Spórolás",
+        pairs: [
+          { id: "p1", left: "Megtakarítani", right: "Spara" },
+          { id: "p2", left: "Számla", right: "Konto" },
+          { id: "p3", left: "Jövő", right: "Zuekunft" },
+        ]
+      }
+    ]
+  },
+
+  // ── 43. Fejezet: Politika és Szavazás ────────────────────
+  {
+    id: "l80",
+    title: "80. Lecke: A Svájci Demokrácia",
+    description: "Közvetlen demokrácia a mindennapokban.",
+    chapter: 43,
+    xpReward: 360,
+    questions: [
+      {
+        id: "q238",
+        type: "flashcard",
+        prompt: "Szavazás (Voksolás)",
+        backText: "Abstimmig",
+        phonetic: "Abs-timmig",
+      },
+      {
+        id: "q239",
+        type: "multiple_choice",
+        prompt: "Mit csinálnak a svájciak majdnem minden hónapban?",
+        options: [
+          { id: "o1", text: "Szavaznak valamilyen kérdésről" },
+          { id: "o2", text: "Síelnek" },
+          { id: "o3", text: "Tüntetnek" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q240",
+        type: "match",
+        prompt: "Politika",
+        pairs: [
+          { id: "p1", left: "Törvény", right: "Gsetz" },
+          { id: "p2", left: "Állam", right: "Staat" },
+          { id: "p3", left: "Nép", right: "Volk" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l81",
+    title: "81. Lecke: A Szövetségi Tanács",
+    description: "A svájci kormány.",
+    chapter: 43,
+    xpReward: 380,
+    questions: [
+      {
+        id: "q241",
+        type: "flashcard",
+        prompt: "Svájci kormány (Szövetségi Tanács)",
+        backText: "Bundesrot",
+        phonetic: "Bundesz-rót",
+      },
+      {
+        id: "q242",
+        type: "multiple_choice",
+        prompt: "Hány tagja van a Bundesrat-nak (Kormánynak)?",
+        options: [
+          { id: "o1", text: "Hét (Sibe)" },
+          { id: "o2", text: "Egy (Eis)" },
+          { id: "o3", text: "Tíz (Zäh)" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q243",
+        type: "match",
+        prompt: "Hivatalok",
+        pairs: [
+          { id: "p1", left: "Elnök", right: "Presidänt" },
+          { id: "p2", left: "Kanton", right: "Kanton" },
+          { id: "p3", left: "Község", right: "Gmeind" },
+        ]
+      }
+    ]
+  },
+
+  // ── 44. Fejezet: Gyerekek és Iskola ────────────────────
+  {
+    id: "l82",
+    title: "82. Lecke: Óvoda",
+    description: "Az első lépések a svájci rendszerben.",
+    chapter: 44,
+    xpReward: 400,
+    questions: [
+      {
+        id: "q244",
+        type: "flashcard",
+        prompt: "Óvoda",
+        backText: "Chindsgi",
+        phonetic: "Khin-dzgi",
+      },
+      {
+        id: "q245",
+        type: "multiple_choice",
+        prompt: "Hogyan mondják a 'Gyerekek' szót?",
+        options: [
+          { id: "o1", text: "Chind" },
+          { id: "o2", text: "Erwachseni" },
+          { id: "o3", text: "Lüüt" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q246",
+        type: "match",
+        prompt: "Játékok",
+        pairs: [
+          { id: "p1", left: "Játszani", right: "Spile" },
+          { id: "p2", left: "Játékszer", right: "Spilzüüg" },
+          { id: "p3", left: "Udvar", right: "Pausenplatz" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l83",
+    title: "83. Lecke: Iskola",
+    description: "Szülői értekezlet és házi feladat.",
+    chapter: 44,
+    xpReward: 420,
+    questions: [
+      {
+        id: "q247",
+        type: "flashcard",
+        prompt: "Iskola",
+        backText: "Schuel",
+        phonetic: "Suel",
+      },
+      {
+        id: "q248",
+        type: "multiple_choice",
+        prompt: "Mit jelent az 'Uufgab' (vagy Huusufgab)?",
+        options: [
+          { id: "o1", text: "Házi feladat" },
+          { id: "o2", text: "Tízórai" },
+          { id: "o3", text: "Késés" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q249",
+        type: "match",
+        prompt: "Iskolai kifejezések",
+        pairs: [
+          { id: "p1", left: "Tanár", right: "Lehrer" },
+          { id: "p2", left: "Diák", right: "Schüeler" },
+          { id: "p3", left: "Jegy / Osztályzat", right: "Note" },
+        ]
+      }
+    ]
+  },
+
+  // ── 45. Fejezet: Hadsereg és Védelem ────────────────────
+  {
+    id: "l84",
+    title: "84. Lecke: Sorkatonaság",
+    description: "Zöld ruhában a hegyek között.",
+    chapter: 45,
+    xpReward: 440,
+    questions: [
+      {
+        id: "q250",
+        type: "flashcard",
+        prompt: "Katonaság (Hadsereg)",
+        backText: "Militär",
+        phonetic: "Militér",
+      },
+      {
+        id: "q251",
+        type: "multiple_choice",
+        prompt: "Hogy hívják a katonai hátizsákot Svájcban?",
+        options: [
+          { id: "o1", text: "Rucksack" },
+          { id: "o2", text: "Sack" },
+          { id: "o3", text: "Täsche" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q252",
+        type: "match",
+        prompt: "Hadsereg",
+        pairs: [
+          { id: "p1", left: "Fegyver", right: "Waffe" },
+          { id: "p2", left: "Lőni", right: "Schiesse" },
+          { id: "p3", left: "Egyenruha", right: "Uniform" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l85",
+    title: "85. Lecke: Az Óvóhely (Bunker)",
+    description: "Minden háznak lennie kell egynek.",
+    chapter: 45,
+    xpReward: 450,
+    questions: [
+      {
+        id: "q253",
+        type: "flashcard",
+        prompt: "Pince / Óvóhely",
+        backText: "Chäller / Luftschutzruum",
+        phonetic: "Keller / Luft-sutz-rúm",
+      },
+      {
+        id: "q254",
+        type: "multiple_choice",
+        prompt: "Mi található majdnem minden svájci ház pincéjében?",
+        options: [
+          { id: "o1", text: "Egy atombiztos óvóhely" },
+          { id: "o2", text: "Egy medence" },
+          { id: "o3", text: "Egy bankfiók" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q255",
+        type: "match",
+        prompt: "Vészhelyzeti dolgok",
+        pairs: [
+          { id: "p1", left: "Sziréna", right: "Sirene" },
+          { id: "p2", left: "Biztonság", right: "Sicherheit" },
+          { id: "p3", left: "Veszély", right: "Gfohr" },
+        ]
+      }
+    ]
+  },
+
+  // ── 46. Fejezet: Barkácsolás és Kert ────────────────────
+  {
+    id: "l86",
+    title: "86. Lecke: Szerszámok",
+    description: "Ha szerelni kell valamit.",
+    chapter: 46,
+    xpReward: 470,
+    questions: [
+      {
+        id: "q256",
+        type: "flashcard",
+        prompt: "Kalapács",
+        backText: "Hammer",
+        phonetic: "Hammer",
+      },
+      {
+        id: "q257",
+        type: "multiple_choice",
+        prompt: "Mit jelent a 'Wärchzüüg'?",
+        options: [
+          { id: "o1", text: "Szerszám(ok)" },
+          { id: "o2", text: "Autó" },
+          { id: "o3", text: "Játék" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q258",
+        type: "match",
+        prompt: "Szerelés",
+        pairs: [
+          { id: "p1", left: "Csavar", right: "Schruube" },
+          { id: "p2", left: "Szeg", right: "Nagel" },
+          { id: "p3", left: "Fúrógép", right: "Bohrmaschine" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l87",
+    title: "87. Lecke: A Kertben",
+    description: "Fűnyírás, de csak csendben!",
+    chapter: 46,
+    xpReward: 480,
+    questions: [
+      {
+        id: "q259",
+        type: "flashcard",
+        prompt: "Fűnyíró",
+        backText: "Rase-mäier",
+        phonetic: "Ráze-méjer",
+      },
+      {
+        id: "q260",
+        type: "multiple_choice",
+        prompt: "Mikor szigorúan tilos füvet nyírni Svájcban?",
+        options: [
+          { id: "o1", text: "Vasárnap (Sunntig)" },
+          { id: "o2", text: "Hétfőn" },
+          { id: "o3", text: "Szerdán" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q261",
+        type: "match",
+        prompt: "Kerti munkák",
+        pairs: [
+          { id: "p1", left: "Fű", right: "Graas" },
+          { id: "p2", left: "Virág", right: "Blueme" },
+          { id: "p3", left: "Fa", right: "Baum" },
+        ]
+      }
+    ]
+  },
+
+  // ── 47. Fejezet: Sportok II. - Nyár ────────────────────
+  {
+    id: "l88",
+    title: "88. Lecke: Hegymászás",
+    description: "Túrázás az Alpokban.",
+    chapter: 47,
+    xpReward: 500,
+    questions: [
+      {
+        id: "q262",
+        type: "flashcard",
+        prompt: "Túrázni",
+        backText: "Wandere",
+        phonetic: "Vandere",
+      },
+      {
+        id: "q263",
+        type: "multiple_choice",
+        prompt: "Hogy mondják a túrabakancsot?",
+        options: [
+          { id: "o1", text: "Wanderschueh" },
+          { id: "o2", text: "Turnschueh" },
+          { id: "o3", text: "Finke" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q264",
+        type: "match",
+        prompt: "Hegyi szavak",
+        pairs: [
+          { id: "p1", left: "Hátizsák", right: "Rucksack" },
+          { id: "p2", left: "Ösvény", right: "Wäg" },
+          { id: "p3", left: "Kő / Szikla", right: "Stei" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l89",
+    title: "89. Lecke: Kerékpározás",
+    description: "Két keréken a hegyekben.",
+    chapter: 47,
+    xpReward: 520,
+    questions: [
+      {
+        id: "q265",
+        type: "flashcard",
+        prompt: "Bicikli",
+        backText: "Velo",
+        phonetic: "Vélo",
+      },
+      {
+        id: "q266",
+        type: "multiple_choice",
+        prompt: "Mit csinálsz egy Veló-val?",
+        options: [
+          { id: "o1", text: "Velo fahre (Biciklizem)" },
+          { id: "o2", text: "Velo ässe (Megeszem)" },
+          { id: "o3", text: "Velo trinke (Megiszom)" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q267",
+        type: "match",
+        prompt: "Biciklis alkatrészek",
+        pairs: [
+          { id: "p1", left: "Kerék", right: "Rad" },
+          { id: "p2", left: "Sisak", right: "Hälm" },
+          { id: "p3", left: "Elektromos bicikli", right: "E-Bike" },
+        ]
+      }
+    ]
+  },
+
+  // ── 48. Fejezet: Kórházban Haladó ────────────────────
+  {
+    id: "l90",
+    title: "90. Lecke: Műtét",
+    description: "Amikor nagy a baj.",
+    chapter: 48,
+    xpReward: 550,
+    questions: [
+      {
+        id: "q268",
+        type: "flashcard",
+        prompt: "Műtét",
+        backText: "Operation",
+        phonetic: "Operació",
+      },
+      {
+        id: "q269",
+        type: "multiple_choice",
+        prompt: "Hogy mondod: 'Fájdalmam van'?",
+        options: [
+          { id: "o1", text: "Ich ha Schmärze" },
+          { id: "o2", text: "Ich ha Hunger" },
+          { id: "o3", text: "Ich bi gsund" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q270",
+        type: "match",
+        prompt: "Testrészek II",
+        pairs: [
+          { id: "p1", left: "Vér", right: "Bluet" },
+          { id: "p2", left: "Csont", right: "Chnoche" },
+          { id: "p3", left: "Szív", right: "Härz" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l91",
+    title: "91. Lecke: A Gyógyszertárban",
+    description: "Receptek és tabletták.",
+    chapter: 48,
+    xpReward: 560,
+    questions: [
+      {
+        id: "q271",
+        type: "flashcard",
+        prompt: "Gyógyszertár",
+        backText: "Apotheke",
+        phonetic: "Apotéke",
+      },
+      {
+        id: "q272",
+        type: "multiple_choice",
+        prompt: "Mit kapsz a gyógyszertárban?",
+        options: [
+          { id: "o1", text: "Tablette / Medikamänt" },
+          { id: "o2", text: "Brot" },
+          { id: "o3", text: "Bier" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q273",
+        type: "match",
+        prompt: "Betegségek",
+        pairs: [
+          { id: "p1", left: "Láz", right: "Fieber" },
+          { id: "p2", left: "Köhögés", right: "Hueschte" },
+          { id: "p3", left: "Nátha / Megfázás", right: "Schnuppe" },
+        ]
+      }
+    ]
+  },
+
+  // ── 49. Fejezet: Üzleti Tárgyalások ────────────────────
+  {
+    id: "l92",
+    title: "92. Lecke: Szerződéskötés",
+    description: "Komoly üzlet a svájciakkal.",
+    chapter: 49,
+    xpReward: 600,
+    questions: [
+      {
+        id: "q274",
+        type: "flashcard",
+        prompt: "Szerződés",
+        backText: "Vertrag",
+        phonetic: "Fertrág",
+      },
+      {
+        id: "q275",
+        type: "multiple_choice",
+        prompt: "Mit jelent a 'Firma'?",
+        options: [
+          { id: "o1", text: "Cég / Vállalat" },
+          { id: "o2", text: "Iskola" },
+          { id: "o3", text: "Kórház" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q276",
+        type: "match",
+        prompt: "Üzlet",
+        pairs: [
+          { id: "p1", left: "Aláírás", right: "Underschrift" },
+          { id: "p2", left: "Főnök", right: "Chef" },
+          { id: "p3", left: "Megbeszélés", right: "Sitzig" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l93",
+    title: "93. Lecke: Munkahelyi Email",
+    description: "Hogyan írj a főnöködnek?",
+    chapter: 49,
+    xpReward: 620,
+    questions: [
+      {
+        id: "q277",
+        type: "flashcard",
+        prompt: "Tisztelt Hölgyem/Uram (hivatalos email kezdés)",
+        backText: "Sehr geehrti Dame und Herre",
+        phonetic: "Zér ge-érti dáme und herre",
+      },
+      {
+        id: "q278",
+        type: "multiple_choice",
+        prompt: "Hogyan zársz le egy teljesen hivatalos levelet?",
+        options: [
+          { id: "o1", text: "Fründlichi Grüess" },
+          { id: "o2", text: "Tschüssli" },
+          { id: "o3", text: "Bis bald" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q279",
+        type: "match",
+        prompt: "Irodai munka",
+        pairs: [
+          { id: "p1", left: "Nyomtató", right: "Drucker" },
+          { id: "p2", left: "Asztal", right: "Tisch" },
+          { id: "p3", left: "Kolléga", right: "Kolleg / Mitarbeiter" },
+        ]
+      }
+    ]
+  },
+
+  // ── 50. Fejezet: Svájci Humor ────────────────────
+  {
+    id: "l94",
+    title: "94. Lecke: Viccek",
+    description: "Hogyan nevetnek Svájcban?",
+    chapter: 50,
+    xpReward: 650,
+    questions: [
+      {
+        id: "q280",
+        type: "flashcard",
+        prompt: "Vicc",
+        backText: "Witz",
+        phonetic: "Vic",
+      },
+      {
+        id: "q281",
+        type: "multiple_choice",
+        prompt: "Mit mondanak a svájciak, if valami 'vicces'?",
+        options: [
+          { id: "o1", text: "S isch luschtig" },
+          { id: "o2", text: "S isch truurig" },
+          { id: "o3", text: "S isch tüür" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q282",
+        type: "match",
+        prompt: "Érzelmek a viccekben",
+        pairs: [
+          { id: "p1", left: "Nevetni", right: "Lache" },
+          { id: "p2", left: "Mosolyogni", right: "Lächle" },
+          { id: "p3", left: "Sírtam a nevetéstől", right: "Träne glachet" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l95",
+    title: "95. Lecke: Svájci Irónia",
+    description: "Félig komoly, félig vicc.",
+    chapter: 50,
+    xpReward: 680,
+    questions: [
+      {
+        id: "q283",
+        type: "flashcard",
+        prompt: "Tényleg? (Irónikusan)",
+        backText: "Wirklich? / Äbä?",
+        phonetic: "Virk-lih / Ebe?",
+      },
+      {
+        id: "q284",
+        type: "multiple_choice",
+        prompt: "A svájciak humorukról melyik jelző illik a legjobban?",
+        options: [
+          { id: "o1", text: "Száraz és visszafogott" },
+          { id: "o2", text: "Nagyon hangos" },
+          { id: "o3", text: "Nincs humoruk" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q285",
+        type: "match",
+        prompt: "Reakciók",
+        pairs: [
+          { id: "p1", left: "Pontosan (Igen)", right: "Genau" },
+          { id: "p2", left: "Hát persze", right: "Sicher" },
+          { id: "p3", left: "Meglepetés", right: "Überraschig" },
+        ]
+      }
+    ]
+  },
+
+  // ── 51. Fejezet: Mesteri Kifejezések ────────────────────
+  {
+    id: "l96",
+    title: "96. Lecke: A híres Chuchichäschtli",
+    description: "A szó, amit minden külföldivel kimondatnak.",
+    chapter: 51,
+    xpReward: 750,
+    questions: [
+      {
+        id: "q286",
+        type: "flashcard",
+        prompt: "Konyhaszekrény",
+        backText: "Chuchichäschtli",
+        phonetic: "Huhi-khestli",
+      },
+      {
+        id: "q287",
+        type: "multiple_choice",
+        prompt: "Miért szeretik a svájciak a 'Chuchichäschtli' szót?",
+        options: [
+          { id: "o1", text: "Mert a 'ch' hangokat nagyon nehéz kimondani külföldiként" },
+          { id: "o2", text: "Mert szeretnek enni" },
+          { id: "o3", text: "Mert a szekrények drágák" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q288",
+        type: "match",
+        prompt: "Konyha hardcore",
+        pairs: [
+          { id: "p1", left: "Konyha", right: "Chuchi" },
+          { id: "p2", left: "Szekrényke", right: "Chäschtli" },
+          { id: "p3", left: "Mosogatógép", right: "Gschirrspüeler" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l97",
+    title: "97. Lecke: A Bünzli mentalitás 2.0",
+    description: "Légy te is büszke Bünzli.",
+    chapter: 51,
+    xpReward: 800,
+    questions: [
+      {
+        id: "q289",
+        type: "flashcard",
+        prompt: "Nyárspolgár / Maximalista",
+        backText: "Bünzli",
+        phonetic: "Büncli",
+      },
+      {
+        id: "q290",
+        type: "multiple_choice",
+        prompt: "Mit csinál a Bünzli, ha meglátja, hogy rosszul parkoltál?",
+        options: [
+          { id: "o1", text: "Hagy egy passzív-agresszív cetlit a szélvédődön" },
+          { id: "o2", text: "Lemossa az autódat" },
+          { id: "o3", text: "Nem csinál semmit" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q291",
+        type: "match",
+        prompt: "Bünzli dolgok",
+        pairs: [
+          { id: "p1", left: "Cetli", right: "Zettel" },
+          { id: "p2", left: "Panasz", right: "Reklamation" },
+          { id: "p3", left: "Szabály", right: "Regle" },
+        ]
+      }
+    ]
+  },
+
+  // ── 52. Fejezet: A Végső Kihívás ────────────────────
+  {
+    id: "l98",
+    title: "98. Lecke: Dialektus Turmix",
+    description: "Találd ki, honnan jött ez a szó!",
+    chapter: 52,
+    xpReward: 900,
+    questions: [
+      {
+        id: "q292",
+        type: "flashcard",
+        prompt: "Szia (Berniül)",
+        backText: "Tschou",
+        phonetic: "Csoó",
+      },
+      {
+        id: "q293",
+        type: "multiple_choice",
+        prompt: "Mit jelent az 'Uf Wiederluege'?",
+        options: [
+          { id: "o1", text: "Viszontlátásra" },
+          { id: "o2", text: "Jó reggelt" },
+          { id: "o3", text: "Köszönöm" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q294",
+        type: "match",
+        prompt: "Üdvözlések mix",
+        pairs: [
+          { id: "p1", left: "Szia (Zürich)", right: "Hoi / Sali" },
+          { id: "p2", left: "Jó napot (Bern)", right: "Grüessech" },
+          { id: "p3", left: "Jó napot (Zürich)", right: "Grüezi" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l99",
+    title: "99. Lecke: Integráció",
+    description: "Majdnem svájci vagy.",
+    chapter: 52,
+    xpReward: 1200,
+    questions: [
+      {
+        id: "q295",
+        type: "flashcard",
+        prompt: "Külföldi (nem svájci)",
+        backText: "Uusländer",
+        phonetic: "Uusz-lender",
+      },
+      {
+        id: "q296",
+        type: "multiple_choice",
+        prompt: "Mit esznek a svájciak minden vasárnap reggel?",
+        options: [
+          { id: "o1", text: "Zopf (Fonott kalács)" },
+          { id: "o2", text: "Pizza" },
+          { id: "o3", text: "Rizs" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q297",
+        type: "match",
+        prompt: "Kultúra",
+        pairs: [
+          { id: "p1", left: "Sajt", right: "Chääs" },
+          { id: "p2", left: "Fonott kalács", right: "Zopf" },
+          { id: "p3", left: "Csokoládé", right: "Schoggi" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "l100",
+    title: "100. Lecke: Az Állampolgársági Teszt",
+    description: "A mindent eldöntő, 2000 XP-s Végső Vizsga.",
+    chapter: 52,
+    xpReward: 2000,
+    questions: [
+      {
+        id: "q298",
+        type: "multiple_choice",
+        prompt: "Melyik évben alapították Svájcot (Rütlischwur)?",
+        options: [
+          { id: "o1", text: "1291" },
+          { id: "o2", text: "1848" },
+          { id: "o3", text: "1990" }
+        ],
+        correctOptionId: "o1",
+      },
+      {
+        id: "q299",
+        type: "flashcard",
+        prompt: "Svájci útlevél",
+        backText: "Schwiizer Pass",
+        phonetic: "Svíjcer Passz",
+      },
+      {
+        id: "q300",
+        type: "match",
+        prompt: "A legfontosabb szimbólumok",
+        pairs: [
+          { id: "p1", left: "Zászló", right: "Fahne" },
+          { id: "p2", left: "Kereszt", right: "Chrüz" },
+          { id: "p3", left: "Alpok", right: "Alpe" },
+          { id: "p4", left: "Nemzeti ünnep", right: "Bundesfiir" },
+        ]
+      }
+    ]
   }
 ];
