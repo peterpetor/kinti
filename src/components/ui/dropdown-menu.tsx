@@ -89,6 +89,16 @@ export function DropdownMenu() {
                 Saját posztjaim
               </Link>
 
+              {/* ── Toborzás & Munkáltatók ─────────────── */}
+              <Divider label="Toborzás" />
+
+              <Link href="/munkaltato" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Icon name="user" size={16} strokeWidth={2.4} />
+                </span>
+                Munkáltatói Irányítópult
+              </Link>
+
               {/* ── Tudás & Ügyintézés ─────────────────── */}
               <Divider label="Tudás & Ügyintézés" />
 
