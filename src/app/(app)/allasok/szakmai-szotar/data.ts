@@ -28,6 +28,7 @@ export type Lesson = {
   description: string;
   industry: string;
   xpReward: number;
+  isPro?: boolean;
   questions: Question[];
 };
 
@@ -173,6 +174,43 @@ export const INDUSTRY_LESSONS: Lesson[] = [
         backText: "Händ Sie Schmerze?",
         phonetic: "Hent zí Smercö?",
       },
+    ],
+  },
+  
+  // ── 4. PRO LECKÉK ─────────────────────────────────────────────
+  {
+    id: "bau_pro_1",
+    title: "Mesterkurzus: Fizetésemelés és Konfliktus 🔒",
+    description: "Svájci német párbeszédek: hogyan kérj fizetésemelést, vagy intézz el egy konfliktust a svájci főnököddel.",
+    industry: "Építőipar (Baubranche)",
+    xpReward: 50,
+    isPro: true,
+    questions: [
+      {
+        id: "bau_pro_q1",
+        type: "flashcard",
+        prompt: "Szeretnék beszélni a fizetésemről.",
+        backText: "Ich wett gern über min Lohn rede.",
+        phonetic: "Ih vet gern über min Lón ré-dö",
+      },
+      {
+        id: "bau_pro_q2",
+        type: "multiple_choice",
+        prompt: "Hogyan mondod: 'Úgy gondolom, több felelősséget vállalok mostanában'?",
+        options: [
+          { id: "a", text: "Ich find, ich übernimm in letschter Ziit meh Verantwortig." },
+          { id: "b", text: "Ich schaffe meh als die andere." },
+          { id: "c", text: "Ich bruch meh Gäld." },
+        ],
+        correctOptionId: "a",
+      },
+      {
+        id: "bau_pro_q3",
+        type: "flashcard",
+        prompt: "Ez nem az én hibám volt.",
+        backText: "Das isch nid min Fähler gsii.",
+        phonetic: "Dász is nid min Fél-ler gszí",
+      }
     ],
   }
 ];
