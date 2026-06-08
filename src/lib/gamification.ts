@@ -120,3 +120,28 @@ export function computeGamification(posts: MyPostEntry[]): GamificationStats {
     earnedBadgeCount: badges.filter((b) => b.earned).length,
   };
 }
+
+export interface GamificationGain {
+  /** Mennyi XP-vel nőtt a pontszám (≤0, ha nem változott — pl. duplikált beküldés). */
+  xpGained: number;
+  /** Lépett-e szintet. */
+  leveledUp: boolean;
+  /** Az új (aktuális) szint. */
+  newLevel: number;
+  /** A most feloldott kitűzők (amik korábban nem voltak meg). */
+  unlockedBadges: BadgeState[];
+}
+
+/**
+ * Két állapot különbsége — a beküldés utáni pozitív visszajelzéshez
+ * ("+20 XP, Úttörő kitűző feloldva!"). Duplikált beküldésnél xpGained = 0.
+ */
+export function gamificationGain(before: GamificationStats, after: GamificationStats): GamificationGain {
+  const beforeEarned = new Set(before.badges.filter((b) => b.earned).map((b) => b.id));
+  return {
+    xpGained: after.points - before.points,
+    leveledUp: after.level > before.level,
+    newLevel: after.level,
+    unlockedBadges: after.badges.filter((b) => b.earned && !beforeEarned.has(b.id)),
+  };
+}

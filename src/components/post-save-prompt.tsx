@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { addMyPost, exportBackup, type MyPostEntry, type PostType } from "@/lib/my-posts";
+import { addMyPost, loadMyPosts, exportBackup, type MyPostEntry, type PostType } from "@/lib/my-posts";
+import { computeGamification, gamificationGain, type GamificationGain } from "@/lib/gamification";
 
 /**
  * PostSavePrompt — sikeres beküldés után megjelenő pozitív megerősítő doboz.
@@ -28,6 +29,7 @@ export function PostSavePrompt({
   const [copied, setCopied] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [canShare, setCanShare] = useState(false);
+  const [gain, setGain] = useState<GamificationGain | null>(null);
 
   const fullUrl = typeof window !== "undefined"
     ? `${window.location.origin}${manageUrl}`
@@ -37,7 +39,12 @@ export function PostSavePrompt({
     const entry: Omit<MyPostEntry, "createdAt"> = {
       type, id, manageToken, title, manageUrl,
     };
+    // Gamifikáció: a beküldés ELŐTTI és UTÁNI állapot különbsége adja az
+    // XP/szint/kitűző-visszajelzést. Duplikált beküldésnél (addMyPost dedupol)
+    // a különbség 0 → nem villantunk fel hamis "+XP"-t.
+    const before = computeGamification(loadMyPosts());
     addMyPost(entry);
+    setGain(gamificationGain(before, computeGamification(loadMyPosts())));
 
     // Push-prompt timing: jelezzük, hogy a usernek már volt sikeres beküldése
     try {
@@ -112,6 +119,35 @@ export function PostSavePrompt({
           </p>
         </div>
       </div>
+
+      {/* Gamifikáció: XP / szint / kitűző visszajelzés (csak ha tényleg nőtt) */}
+      {gain && gain.xpGained > 0 && (
+        <a
+          href="/sajatjaim"
+          className="mt-3 flex flex-wrap items-center gap-2 rounded-[12px] border border-primary/25 bg-primary/10 px-3 py-2.5 transition active:scale-[0.99]"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-white text-[13px] font-black">
+            +{gain.xpGained}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[12.5px] font-extrabold tracking-[-0.01em] text-primary">
+              +{gain.xpGained} XP a hozzájárulásodért! 🎉
+            </span>
+            {gain.leveledUp && (
+              <span className="block text-[11.5px] font-bold text-ink">
+                Új szint elérve: {gain.newLevel}. szint 👑
+              </span>
+            )}
+            {gain.unlockedBadges.length > 0 && (
+              <span className="block text-[11.5px] font-semibold text-ink-muted">
+                Új kitűző:{" "}
+                {gain.unlockedBadges.map((b) => `${b.icon} ${b.label}`).join(", ")}
+              </span>
+            )}
+          </span>
+          <span className="shrink-0 text-primary text-[13px] font-bold">›</span>
+        </a>
+      )}
 
       {/* Tipp box */}
       <div className="mt-3 rounded-[12px] border border-line bg-surface p-3">
