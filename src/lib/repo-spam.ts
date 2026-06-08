@@ -148,21 +148,6 @@ export async function countRecentReports(ipHash: string | null): Promise<number>
   return res?.n ?? 0;
 }
 
-export async function countRecentRideSubmits(ipHash: string | null): Promise<number> {
-  if (!ipHash) return 0;
-  const res = await getDB()
-    .prepare(`SELECT COUNT(*) AS n FROM ride_submit_log WHERE ip_hash = ? AND created_at >= datetime('now', '-24 hours')`)
-    .bind(ipHash)
-    .first<{ n: number }>();
-  return res?.n ?? 0;
-}
-
-export async function logRideSubmit(id: string, ipHash: string | null): Promise<void> {
-  await getDB()
-    .prepare(`INSERT INTO ride_submit_log (id, ip_hash) VALUES (?, ?)`)
-    .bind(id, ipHash)
-    .run();
-}
 
 export async function countRecentSpamLog(kind: string, ipHash: string | null, windowMinutes: number = 60): Promise<number> {
   if (!ipHash) return 0;

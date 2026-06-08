@@ -3,7 +3,7 @@ import { createSosAlert, getActiveAlertCountForUser } from "@/lib/sos-repo";
 import { filterProfanity, containsProfanity } from "@/lib/profanity";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { hashIp } from "@/lib/security";
-import { countRecentRideSubmits, logRideSubmit, logModerationStrike } from "@/lib/repo";
+import { countRecentSpamLog, logSpamSubmit, logModerationStrike } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
 
   // 2) IP-alapú napi limit (közös ip-hash + 24h, megfelelő a SOS-rate-limithez is)
   const ipHash = await hashIp(ip);
-  const recent = await countRecentRideSubmits(ipHash);
+  const recent = await countRecentSpamLog("sos", ipHash, 24 * 60);
   if (recent >= SOS_DAILY_LIMIT) {
     return NextResponse.json(
       { error: `Napi limit túllépve. 24 óra alatt legfeljebb ${SOS_DAILY_LIMIT} riasztás adható le ugyanarról a kapcsolatról.` },
@@ -139,7 +139,7 @@ export async function POST(req: Request) {
   });
 
   // 6) Rate-limit napló (fire-and-forget)
-  logRideSubmit(`sos_${crypto.randomUUID()}`, ipHash).catch(() => { /* silent */ });
+  logSpamSubmit("sos", ipHash).catch(() => { /* silent */ });
 
   return NextResponse.json({ ok: true, id });
 }

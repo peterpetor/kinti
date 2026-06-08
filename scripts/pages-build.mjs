@@ -85,25 +85,17 @@ async function main() {
       renamedEnv = true;
     }
 
-    // 1) vercel build — Windowson symlink-EPERM lehet, ezért toleráljuk,
-    //    de utána ellenőrizzük, hogy az output létrejött-e.
-    console.log("\n› Step 1: vercel build");
-    await run("npx", ["vercel", "build", "--yes"], { tolerateFail: true });
+    // next-on-pages — Workers-bundle generálás. Automatikusan futtatja a Vercel buildet
+    // token login nélkül.
+    console.log("\n› Step 1: @cloudflare/next-on-pages (with internal build)");
+    await run("npx", ["@cloudflare/next-on-pages"]);
+    
   } finally {
     if (renamedEnv && existsSync(envLocalBakPath)) {
       console.log("› Restoring .env.local...");
       renameSync(envLocalBakPath, envLocalPath);
     }
   }
-
-  if (!existsSync(".vercel/output/static")) {
-    console.error("\n✖ vercel build failed and .vercel/output/static is missing.");
-    process.exit(1);
-  }
-
-  // 2) next-on-pages — Workers-bundle generálás
-  console.log("\n› Step 2: @cloudflare/next-on-pages --skip-build");
-  await run("npx", ["@cloudflare/next-on-pages", "--skip-build"]);
 
   console.log("\n✔ Pages build complete — .vercel/output/static/ ready.");
 }
