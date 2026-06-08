@@ -6,6 +6,7 @@ import { TurnstileWidget } from "@/components/turnstile-widget";
 import { SalaryCard } from "./SalaryCard";
 import { SalaryCalculator, AlertSubscription, RentToSalaryCalculator } from "./SalaryWidgets";
 import { SwissHeatmap } from "./SwissHeatmap";
+import { salaryStanding, type SalaryStanding } from "@/lib/benchmark-stats";
 
 const INDUSTRIES = [
   "Informatika (IT)", "Vendéglátás / Szálloda", "Építőipar",
@@ -119,6 +120,49 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
   );
 }
 
+/** „Hol állsz?" — a saját bér percentilis pozíciója a kanton+iparág eloszlásában. */
+function SalaryStandingInsight({ cantonCode, industry, salary }: { cantonCode: string; industry: string; salary: number }) {
+  const [standing, setStanding] = useState<SalaryStanding | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    (async () => {
+      try {
+        const res = await fetch(`/api/benchmark/histogram?industry=${encodeURIComponent(industry)}&canton=${cantonCode}`);
+        const data: any = await res.json();
+        const s = salaryStanding(data.histogram ?? [], salary);
+        // Adatvédelem/megbízhatóság: 3+ adat alatt nem pozicionálunk.
+        if (alive) setStanding(s && s.total >= MIN_ENTRIES_FOR_STATS ? s : null);
+      } catch {
+        if (alive) setStanding(null);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, [cantonCode, industry, salary]);
+
+  if (loading || !standing) return null;
+
+  const cantonName = CANTONS.find((c) => c.code === cantonCode)?.name ?? cantonCode;
+  const topPct = Math.max(1, 100 - standing.percentile);
+  const highEarner = standing.percentile >= 50;
+
+  return (
+    <div className="mt-2.5 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5">
+      <p className="text-[12.5px] font-bold text-primary leading-snug">
+        {highEarner ? `📈 A béred a felső ${topPct}%-ban van` : "📊 Hol állsz a mezőnyben"} · {industry}, {cantonName}
+      </p>
+      <p className="mt-0.5 text-[11px] text-ink-muted leading-snug">
+        Többet keresel, mint a beküldők <strong className="text-ink">{standing.percentile}%</strong>-a{" "}
+        <span className="text-ink-faint">({standing.total} adat alapján)</span>.
+      </p>
+    </div>
+  );
+}
+
 function MyDataCard({ tab, myData, onEdit }: { tab: Tab; myData: MyData; onEdit: () => void }) {
   const s = myData.salary, r = myData.rent;
   if ((tab === "salary" && !s) || (tab === "rent" && !r)) return null;
@@ -157,6 +201,7 @@ function MyDataCard({ tab, myData, onEdit }: { tab: Tab; myData: MyData; onEdit:
           {ageMonths !== null && (
             <p className="text-[11px] text-ink-faint pt-1">Utolsó frissítés: {ageMonths === 0 ? "kevesebb mint 1 hónapja" : `${ageMonths} hónapja`}</p>
           )}
+          <SalaryStandingInsight cantonCode={s.cantonCode} industry={s.industry} salary={s.grossSalaryChf} />
         </div>}
         {tab === "rent" && r && <div className="space-y-0.5 text-[13px] text-ink">
           <p><span className="text-ink-muted">Kanton:</span> {r.cantonCode} · <span className="text-ink-muted">Szobák:</span> {r.rooms} · <span className="text-ink-muted">Lakbér:</span> <strong>{r.rentChf.toLocaleString("hu-HU")} CHF/hó</strong></p>
