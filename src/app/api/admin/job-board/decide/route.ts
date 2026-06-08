@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/admin";
 import { getDB } from "@/lib/cloudflare";
 import { safeLogError } from "@/lib/safe-log";
+import { triggerJobAlertRadars } from "@/lib/radars";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -58,6 +59,16 @@ export async function POST(req: Request) {
 
     if ((res.meta.changes ?? 0) === 0) {
       return NextResponse.json({ ok: false }, { status: 404 });
+    }
+
+    // Ha az állást most hagyták jóvá, triggerek futtatása a háttérben
+    if (table === "jobs" && statusValue === 1) {
+      const jobRow = await getDB().prepare("SELECT id, title, description, location FROM jobs WHERE id = ?").bind(id).first<{id:string, title:string, description:string, location:string}>();
+      if (jobRow) {
+        // Aszinkron háttérfolyamat (Cloudflare Pages/Workers waitUntil)
+        // Edge runtime-on a Promise megvárása nélkül megszakadhat, de a Next.js Edge megvárja az I/O-t, ha simán elsütjük, bár biztonságosabb await-elni vagy context.waitUntil-t használni. Mivel a route Next.js Route Handler, await-eljük, de nem szakítjuk meg a választ ha hibázik.
+        triggerJobAlertRadars(jobRow).catch(err => safeLogError("triggerJobAlertRadars.background", err));
+      }
     }
 
     return NextResponse.json({ ok: true });

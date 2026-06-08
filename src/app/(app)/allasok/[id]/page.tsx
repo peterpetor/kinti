@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getJobById, getEmployerById } from "@/lib/repo";
+import { getSalaryStats } from "@/lib/benchmark";
+import { matchCantonByName, cantonFromAddress } from "@/lib/cantons";
 import { Icon } from "@/components/ui";
 import { Metadata } from "next";
 
@@ -25,6 +27,31 @@ export default async function JobDetailPage({ params }: { params: { id: string }
   }
 
   const employer = await getEmployerById(job.employerId);
+
+  // 1. Iránytű Benchmark Widget Számolás
+  let cantonMedian: number | null = null;
+  let diffPercent: number | null = null;
+  let cantonName: string | null = null;
+
+  if (job.salaryMin && job.salaryMax) {
+    const jobMedian = (job.salaryMin + job.salaryMax) / 2;
+    // Megpróbáljuk a kantont PLZ, majd egyszerű név alapján meghatározni
+    const canton = cantonFromAddress(job.location) || matchCantonByName(job.location);
+    if (canton) {
+      cantonName = canton.name;
+      const stats = await getSalaryStats(canton.code, "12m");
+      let totalEntries = 0;
+      let weightedMedianSum = 0;
+      for (const s of stats) {
+        totalEntries += s.entry_count;
+        weightedMedianSum += (s.median_salary * s.entry_count);
+      }
+      if (totalEntries > 0) {
+        cantonMedian = Math.round(weightedMedianSum / totalEntries);
+        diffPercent = Math.round(((jobMedian - cantonMedian) / cantonMedian) * 100);
+      }
+    }
+  }
 
   return (
     <div className="mx-auto max-w-md space-y-6 px-5 pb-24 pt-[calc(env(safe-area-inset-top)+2rem)]">
@@ -68,11 +95,36 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           {job.salaryMin && job.salaryMax && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1.5 text-[12px] font-bold text-success">
               <Icon name="star" size={14} /> 
-              {job.salaryMin} - {job.salaryMax} {job.currency}
+              {job.salaryMin.toLocaleString('de-CH')} - {job.salaryMax.toLocaleString('de-CH')} {job.currency}
             </span>
           )}
         </div>
       </section>
+
+      {cantonMedian && diffPercent !== null && (
+        <section className="animate-fade-up animate-delay-100">
+          <div className="rounded-card border border-primary/20 bg-primary/5 p-4 shadow-sm flex items-start gap-3">
+            <div className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+              <Icon name="trending" size={18} strokeWidth={2.5} />
+            </div>
+            <div>
+              <h3 className="text-[13px] font-extrabold uppercase tracking-wide text-primary">
+                Kinti Iránytű Benchmark
+              </h3>
+              <p className="mt-1 text-[13.5px] leading-snug text-ink-muted text-balance">
+                A(z) <strong>{cantonName} kantonbeli</strong> becsült átlagfizetés jelenleg <strong>{cantonMedian.toLocaleString('de-CH')} CHF</strong>. 
+                Ez az állásajánlat <strong>{Math.abs(diffPercent)}%-kal </strong> 
+                <strong className={diffPercent >= 0 ? "text-success" : "text-accent"}>
+                  {diffPercent >= 0 ? "magasabb" : "alacsonyabb"}
+                </strong> a kantonális átlagnál.
+              </p>
+              <Link href="/iranytu" className="inline-flex items-center gap-1 mt-2 text-[12.5px] font-bold text-primary hover:underline">
+                Részletes bérstatisztikák <Icon name="arrowRight" size={12} strokeWidth={3} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="animate-fade-up animate-delay-100 space-y-6">
         <div>

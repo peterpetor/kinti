@@ -100,7 +100,7 @@ export async function deleteExchangeRateAlert(id: string, pushEndpoint: string):
 
 // --- Radars ------------------------------------------------------------------
 
-export interface KintiRadar { id: string; pushEndpoint: string; radarType: 'exchange_rate'; parameters: string; active: number; createdAt: string; }
+export interface KintiRadar { id: string; pushEndpoint: string; radarType: 'exchange_rate' | 'job_alert'; parameters: string; active: number; createdAt: string; }
 
 export async function saveRadar(data: { id: string; pushEndpoint: string; radarType: string; parameters: string; }) {
   await getDB().prepare('INSERT INTO kinti_radars (id, push_endpoint, radar_type, parameters) VALUES (?, ?, ?, ?)').bind(data.id, data.pushEndpoint, data.radarType, data.parameters).run();

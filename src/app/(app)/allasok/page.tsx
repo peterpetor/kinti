@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getJobs } from "@/lib/repo";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
+import { JobAlertRadar } from "@/components/views/job-alert-radar";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -56,6 +57,11 @@ export default async function JobsPage() {
           <button className="grid h-12 w-12 place-items-center rounded-full bg-surface-alt border border-line text-ink">
             <Icon name="filter" size={18} />
           </button>
+        </div>
+
+        {/* Állás-riasztás modul */}
+        <div className="animate-fade-up animate-delay-100">
+          <JobAlertRadar />
         </div>
 
         <section className="space-y-4">

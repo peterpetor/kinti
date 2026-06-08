@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     const radarType = typeof body.radarType === "string" ? body.radarType : "";
     const parameters = typeof body.parameters === "object" && body.parameters !== null ? JSON.stringify(body.parameters) : "{}";
 
-    if (!['exchange_rate'].includes(radarType)) {
+    if (!['exchange_rate', 'job_alert'].includes(radarType)) {
       return NextResponse.json({ error: "Érvénytelen radar típus." }, { status: 400 });
     }
 
