@@ -74,9 +74,11 @@ export default clerkMiddleware(async (auth, req) => {
     }
   }
 
-  // Karbantartási mód: csak admin láthatja az oldalt. Mindenki más a
-  // /keszul "Hamarosan érkezünk" oldalra kerül.
-  if (!isMaintenanceExempt(req)) {
+  // Karbantartási mód: ha a MAINTENANCE_MODE be van kapcsolva, csak admin láthatja.
+  // Egyébként a teljes oldal publikusan elérhető.
+  const isMaintenanceMode = process.env.MAINTENANCE_MODE === "true";
+  
+  if (isMaintenanceMode && !isMaintenanceExempt(req)) {
     if (!(await isCurrentUserAdmin())) {
       return NextResponse.redirect(new URL("/keszul", req.url));
     }
