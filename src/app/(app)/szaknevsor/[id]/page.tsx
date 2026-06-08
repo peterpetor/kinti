@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
+import { ReviewHelpfulButton } from "@/components/review-helpful-button";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
@@ -465,7 +466,8 @@ export default async function BusinessPage({ params }: { params: { id: string } 
                       </p>
                     </div>
                   )}
-                  <div className="mt-2.5 flex justify-end border-t border-line/30 pt-2">
+                  <div className="mt-2.5 flex items-center justify-between border-t border-line/30 pt-2">
+                    <ReviewHelpfulButton reviewId={r.id} initialCount={r.helpfulCount} />
                     <ReportButton contentType="review" contentId={r.id} variant="link" />
                   </div>
                 </article>

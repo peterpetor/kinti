@@ -28,6 +28,7 @@ interface ReviewRow {
   owner_response: string | null; owner_responded_at: string | null;
   moderation_status: number; moderation_decision_at: string | null;
   moderation_decided_by: string | null; hidden: number;
+  helpful_count?: number;
 }
 
 function toReview(r: ReviewRow): Review {
@@ -36,6 +37,7 @@ function toReview(r: ReviewRow): Review {
     body: r.body, reviewerName: r.reviewer_name, publishedAt: r.published_at,
     ownerResponse: r.owner_response,
     ownerRespondedAt: r.owner_responded_at,
+    helpfulCount: r.helpful_count ?? 0,
   };
 }
 
@@ -101,13 +103,47 @@ export async function publishReview(input: PublishReviewInput): Promise<void> {
 export async function getReviewsByBusiness(businessId: string): Promise<Review[]> {
   const { results } = await getDB()
     .prepare(
-      `SELECT id, business_id, rating, body, reviewer_name, published_at,
-              manage_token, email, owner_response, owner_responded_at
-       FROM reviews WHERE business_id = ? AND hidden = 0 AND moderation_status = 1
-       ORDER BY published_at DESC`,
+      `SELECT r.id, r.business_id, r.rating, r.body, r.reviewer_name, r.published_at,
+              r.manage_token, r.email, r.owner_response, r.owner_responded_at,
+              COUNT(v.ip_hash) AS helpful_count
+       FROM reviews r
+       LEFT JOIN review_helpful_votes v ON v.review_id = r.id
+       WHERE r.business_id = ? AND r.hidden = 0 AND r.moderation_status = 1
+       GROUP BY r.id
+       ORDER BY helpful_count DESC, r.published_at DESC`,
     )
     .bind(businessId).all<ReviewRow>();
   return results.map(toReview);
+}
+
+/**
+ * „Hasznos volt" szavazat egy véleményre — account nélkül, IP-hash dedup
+ * (1 szavazat / készülék-IP / vélemény). Az event-RSVP mintáját követi.
+ * @returns added=false, ha erről az IP-ről már volt szavazat.
+ */
+export async function addReviewHelpful(
+  reviewId: string,
+  ipHash: string,
+): Promise<{ ok: boolean; added: boolean; total: number }> {
+  const db = getDB();
+  const review = await db
+    .prepare("SELECT id FROM reviews WHERE id = ? AND hidden = 0 AND moderation_status = 1")
+    .bind(reviewId)
+    .first<{ id: string }>();
+  if (!review) return { ok: false, added: false, total: 0 };
+
+  const res = await db
+    .prepare("INSERT OR IGNORE INTO review_helpful_votes (review_id, ip_hash) VALUES (?, ?)")
+    .bind(reviewId, ipHash)
+    .run();
+  const added = (res.meta.changes ?? 0) > 0;
+
+  const cntRow = await db
+    .prepare("SELECT COUNT(*) AS cnt FROM review_helpful_votes WHERE review_id = ?")
+    .bind(reviewId)
+    .first<{ cnt: number }>();
+
+  return { ok: true, added, total: cntRow?.cnt ?? 0 };
 }
 
 export async function deleteReviewByManageToken(manageToken: string): Promise<string | null> {

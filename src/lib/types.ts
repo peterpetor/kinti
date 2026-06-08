@@ -98,6 +98,8 @@ export interface Review {
   /** A vállalkozó nyilvános válasza (Google-stílusú). */
   ownerResponse: string | null;
   ownerRespondedAt: string | null;
+  /** „Hasznos volt" szavazatok száma (account nélkül, IP-hash dedup). */
+  helpfulCount: number;
 }
 
 /** Megerősítésre váró vélemény (review_drafts). */
