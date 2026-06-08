@@ -46,13 +46,35 @@ export default async function JobsPage() {
           </Link>
 
           {/* Szakmai Szótár Banner */}
-          <Link href="/allasok/szakmai-szotar" className="mb-6 flex items-center gap-3 rounded-2xl bg-surface-alt border border-line px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
+          <Link href="/allasok/szakmai-szotar" className="mb-4 flex items-center gap-3 rounded-2xl bg-surface-alt border border-line px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-[#e3a233] text-white shadow-md">
               <Icon name="book" size={22} strokeWidth={2.4} />
             </span>
             <div className="text-left">
               <h2 className="text-[14px] font-extrabold text-ink">Szakmai Gyors-Szótár 👷‍♂️</h2>
               <p className="text-[12px] text-ink-muted mt-0.5">Építőipari, vendéglátós svájci-német gyorstalpalók hanggal.</p>
+            </div>
+          </Link>
+
+          {/* Kinti Talent Banner */}
+          <Link href="/allasok/talent" className="mb-4 flex items-center gap-3 rounded-2xl bg-[#1d9bf0]/10 border border-[#1d9bf0]/20 px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-[#1d9bf0] text-white shadow-md">
+              <Icon name="zap" size={22} strokeWidth={2.4} />
+            </span>
+            <div className="text-left">
+              <h2 className="text-[14px] font-extrabold text-ink">Kinti Talent Jelentkezés 🚀</h2>
+              <p className="text-[12px] text-ink-muted mt-0.5">Töltsd ki 2 perc alatt, és mi keresünk neked svájci munkát!</p>
+            </div>
+          </Link>
+
+          {/* Onboarding Checklist Banner */}
+          <Link href="/allasok/onboarding" className="mb-6 flex items-center gap-3 rounded-2xl bg-success/10 border border-success/20 px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-success text-white shadow-md">
+              <Icon name="check" size={22} strokeWidth={2.4} />
+            </span>
+            <div className="text-left">
+              <h2 className="text-[14px] font-extrabold text-ink">Svájci Kezdőcsomag (Checklist) 🇨🇭</h2>
+              <p className="text-[12px] text-ink-muted mt-0.5">Mindent intézz el időben az első 3 hónapban (AHV, Bank, stb.)!</p>
             </div>
           </Link>
           
