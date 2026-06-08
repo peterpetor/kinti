@@ -656,3 +656,79 @@ A tartalom addig NEM lathato publikusan, amig jova nem hagyod.`;
     throw new Error(`Resend: ${error.name ?? "hiba"} - ${error.message ?? "ismeretlen"}`);
   }
 }
+
+// --- Munkáltató értesítő: új pályázat érkezett ----------------------------
+
+interface JobApplicationNotificationArgs {
+  /** A munkáltató email-je (ahová értesítést küldünk). */
+  to: string;
+  companyName: string;
+  jobTitle: string;
+  applicantName: string;
+  applicantEmail: string;
+  applicantPhone: string | null;
+  message: string | null;
+  /** A munkáltatói dashboard URL (https://kinti.app/munkaltato). */
+  dashboardUrl: string;
+}
+
+/**
+ * sendJobApplicationNotificationEmail — a munkáltató kap emailt, ha valaki
+ * jelentkezik az állásra. Best-effort: ha a Resend API nem érhető el,
+ * a pályázat mentése sikeres marad, csak az email marad el.
+ */
+export async function sendJobApplicationNotificationEmail(
+  args: JobApplicationNotificationArgs,
+): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = `Új pályázat érkezett: ${args.jobTitle}`;
+
+  const text = `Szia, ${args.companyName}!
+
+Új pályázat érkezett a kinti.app-on meghirdetett állásodra:
+
+  Állás: ${args.jobTitle}
+  Pályázó neve: ${args.applicantName}
+  E-mail: ${args.applicantEmail}
+  Telefon: ${args.applicantPhone ?? "(nem adta meg)"}
+
+Motivációs levél:
+${args.message ?? "(nem írt üzenetet)"}
+
+A munkáltatói dashboardon megtekintheted és kezelheted az összes beérkező pályázatot:
+  ${args.dashboardUrl}
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Új pályázat érkezett az állásra: ${args.jobTitle}`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti Job Board</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">Új pályázat érkezett!</p>
+      <div style="margin:0 0 20px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#94a097;margin-bottom:4px;">Állás</div>
+        <div style="font-size:15px;font-weight:800;color:#0e1f17;margin-bottom:12px;">${escapeHtml(args.jobTitle)}</div>
+        <table style="border-collapse:collapse;width:100%;font-size:13px;color:#5c6d63;">
+          <tr><td style="padding:3px 0;font-weight:600;width:80px;">Név:</td><td>${escapeHtml(args.applicantName)}</td></tr>
+          <tr><td style="padding:3px 0;font-weight:600;">E-mail:</td><td><a href="mailto:${escapeAttr(args.applicantEmail)}" style="color:#1d4434;">${escapeHtml(args.applicantEmail)}</a></td></tr>
+          <tr><td style="padding:3px 0;font-weight:600;">Telefon:</td><td>${escapeHtml(args.applicantPhone ?? "–")}</td></tr>
+        </table>
+        ${args.message ? `<div style="margin-top:12px;padding:10px;background:#f0ebe0;border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a097;margin-bottom:4px;">Motivációs levél</div>
+          <div style="font-size:13px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">${escapeHtml(args.message)}</div>
+        </div>` : ""}
+      </div>
+      <p style="margin:0 0 20px;">
+        ${button(args.dashboardUrl, "Dashboard megnyitása →")}
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        Ez az értesítő automatikusan küldődött a kinti.app Job Board rendszeréből. A pályázó adatainak kezelésekor tartsd be az adatvédelmi szabályokat.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}

@@ -28,6 +28,7 @@ const TABS: Tab[] = [
     label: "Közösség",
     icon: "users",
   },
+  { href: "/allasok", label: "Állások", icon: "shoppingBag", alsoMatch: ["/munkaltato"] },
   { href: "/iranytu", label: "Iránytű", icon: "trending" },
 ];
 

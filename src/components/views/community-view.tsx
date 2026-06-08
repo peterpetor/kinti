@@ -22,6 +22,28 @@ export function CommunityView({
 }) {
   return (
     <div className="space-y-4">
+      <div className="px-5">
+        <Link 
+          href="/fuvarok"
+          className="flex w-full items-center justify-between rounded-card border border-primary/20 bg-primary-soft p-4 shadow-card transition active:scale-[0.99]"
+        >
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary text-white">
+              <Icon name="car" size={20} strokeWidth={2.2} />
+            </div>
+            <div>
+              <div className="text-[14.5px] font-extrabold tracking-tight text-ink">
+                Telekocsi (Fuvarok)
+              </div>
+              <div className="text-[12px] text-primary font-medium">
+                Útitárs kereső Svájc-Magyarország
+              </div>
+            </div>
+          </div>
+          <Icon name="chevR" size={16} className="text-primary" />
+        </Link>
+      </div>
+
       <div className="space-y-2.5 px-5">
         <EventsList events={events} />
       </div>

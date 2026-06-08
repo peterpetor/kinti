@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getJobById, getEmployerById } from "@/lib/repo";
 import { getDB } from "@/lib/cloudflare";
+import { sendJobApplicationNotificationEmail } from "@/lib/email";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -53,9 +55,30 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       .bind(id, job.id, job.employerId, fullName, email.toLowerCase(), phone, message, submittedAt)
       .run();
 
+    // Email értesítő a munkáltatónak — best-effort (ne blokkoljuk a 200-as választ)
+    try {
+      const employer = await getEmployerById(job.employerId);
+      if (employer?.contactEmail) {
+        await sendJobApplicationNotificationEmail({
+          to: employer.contactEmail,
+          companyName: employer.companyName,
+          jobTitle: job.title,
+          applicantName: fullName,
+          applicantEmail: email,
+          applicantPhone: phone,
+          message: message,
+          dashboardUrl: `https://kinti.app/munkaltato`,
+        });
+      }
+    } catch (emailErr) {
+      safeLogError("jobs/apply email notification", emailErr);
+      // Nem dobjuk vissza a hibát — a pályázat már el lett mentve
+    }
+
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[jobs/apply] error:", err);
     return NextResponse.json({ error: "Belső hiba történt." }, { status: 500 });
   }
 }
+

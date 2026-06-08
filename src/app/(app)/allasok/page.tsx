@@ -32,6 +32,15 @@ export default async function JobsPage() {
           <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-ink-muted text-pretty">
             Keresgélj a svájci magyar munkáltatók hirdetései között. Csak megbízható, ellenőrzött cégek.
           </p>
+          
+          <div className="mt-6 flex justify-center">
+            <Link 
+              href="/allasok/profil" 
+              className="inline-flex items-center gap-2 rounded-pill bg-primary/10 px-4 py-2 text-[13.5px] font-bold text-primary transition-all active:scale-[0.98]"
+            >
+              <Icon name="upload" size={16} strokeWidth={2.4} /> CV feltöltése munkáltatóknak
+            </Link>
+          </div>
         </section>
 
         {/* Filter / Search placeholder */}
