@@ -59,10 +59,10 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+  const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
   if (contentLength > MAX_SIZE) {
     return NextResponse.json(
-      { error: "A fájlméret túl nagy. Maximum 5 MB." },
+      { error: "A fájlméret túl nagy. Maximum 10 MB." },
       { status: 400 },
     );
   }

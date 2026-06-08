@@ -12,7 +12,7 @@ export type IconName =
   | "share" | "bookmark" | "chevR" | "chevD" | "chevU" | "sliders" | "bell"
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "shoppingBag"
-  | "sparkles" | "magic" | "trash" | "qrCode";
+  | "sparkles" | "magic" | "trash" | "qrCode" | "document";
 
 const PATHS: Record<IconName, string[]> = {
   search: ["M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14", "M16.5 16.5L21 21"],
@@ -76,6 +76,13 @@ const PATHS: Record<IconName, string[]> = {
     "M18 14h2v2h-2z",
     "M14 18h2v2h-2z",
     "M9 9h6v6H9z",
+  ],
+  document: [
+    "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z",
+    "M14 2v6h6",
+    "M16 13H8",
+    "M16 17H8",
+    "M10 9H8"
   ],
 };
 

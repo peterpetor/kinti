@@ -1,7 +1,7 @@
 /**
  * Kliens-oldali kép-tömörítő (HTML5 Canvas alapú).
  * Megőrzi az aspektusarányt, maximális szélességet/magasságot kényszerít,
- * és JPEG formátumba tömörít megadott minőséggel (quality).
+ * és WebP formátumba tömörít megadott minőséggel (quality).
  * Nem használ külső csomagokat, így nem növeli a bundle méretét.
  */
 export async function compressImage(
@@ -53,7 +53,7 @@ export async function compressImage(
       // Kép kirajzolása az új méretben
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Konverzió JPEG jellé megadott minőséggel
+      // Konverzió WebP jellé megadott minőséggel
       canvas.toBlob(
         (blob) => {
           if (blob) {
@@ -63,7 +63,7 @@ export async function compressImage(
             resolve(file);
           }
         },
-        "image/jpeg",
+        "image/webp",
         quality,
       );
     };

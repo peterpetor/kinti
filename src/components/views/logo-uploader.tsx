@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
+import { compressImage } from "@/lib/compress";
 
 /**
  * Liquid Glass logó-feltöltő — három lépés egy felhasználói klikkre:
@@ -36,7 +37,7 @@ export interface LogoUploaderProps {
 
 type Phase = "idle" | "preparing" | "uploading" | "committing" | "done" | "error";
 
-const MAX_BYTES = 2 * 1024 * 1024; // 2 MB
+const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 const ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
 
 export function LogoUploader({ currentKey, fallbackGradient, manageToken }: LogoUploaderProps) {
@@ -59,7 +60,7 @@ export function LogoUploader({ currentKey, fallbackGradient, manageToken }: Logo
   async function handleFile(file: File) {
     setError(null);
     if (file.size > MAX_BYTES) {
-      setError("A fájl mérete max. 2 MB lehet.");
+      setError("A fájl mérete max. 10 MB lehet.");
       setPhase("error");
       return;
     }
@@ -73,10 +74,17 @@ export function LogoUploader({ currentKey, fallbackGradient, manageToken }: Logo
       // 1) presigned URL kérés ---------------------------------------------
       setPhase("preparing");
       setProgress(5);
+
+      const blob = await compressImage(file, 1200, 0.8);
+      const fileToUpload = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: blob.type });
+
       const presignRes = await fetch(uploadEndpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ contentType: file.type }),
+        body: JSON.stringify({ 
+          contentType: fileToUpload.type,
+          contentLength: fileToUpload.size 
+        }),
       });
       if (!presignRes.ok) {
         throw new Error(((await presignRes.json().catch(() => ({}))) as { error?: string }).error ?? "Presign hiba.");
@@ -85,7 +93,7 @@ export function LogoUploader({ currentKey, fallbackGradient, manageToken }: Logo
 
       // 2) PUT az R2-be — XHR a tényleges progress miatt -------------------
       setPhase("uploading");
-      await xhrPut(uploadUrl, file, (pct) => setProgress(10 + Math.round(pct * 0.8)));
+      await xhrPut(uploadUrl, fileToUpload, (pct) => setProgress(10 + Math.round(pct * 0.8)));
 
       // 3) D1 commit --------------------------------------------------------
       setPhase("committing");
@@ -132,7 +140,7 @@ export function LogoUploader({ currentKey, fallbackGradient, manageToken }: Logo
         <div className="min-w-0 flex-1">
           <div className="text-[13.5px] font-extrabold tracking-tight text-ink">Logó / borítókép</div>
           <div className="mt-0.5 text-[11.5px] text-ink-muted">
-            JPEG, PNG, WebP vagy GIF · max. 2 MB
+            JPEG, PNG, WebP vagy GIF · max. 10 MB
           </div>
         </div>
 

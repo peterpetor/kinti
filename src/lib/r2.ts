@@ -81,16 +81,17 @@ export async function presignR2Put(key: string, opts: PresignOptions = {}): Prom
  * Engedélyezett feltöltési MIME-típusok → fájlkiterjesztés. Az ismeretlen típust
  * elutasítjuk a végponton, hogy ne lehessen tetszőleges fájlt feltölteni.
  */
-const ALLOWED_IMAGE_TYPES: Record<string, string> = {
+const ALLOWED_MEDIA_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
   "image/gif": "gif",
+  "application/pdf": "pdf",
 };
 
 export function extForContentType(contentType: string | null | undefined): string | null {
   if (!contentType) return null;
-  return ALLOWED_IMAGE_TYPES[contentType.toLowerCase()] ?? null;
+  return ALLOWED_MEDIA_TYPES[contentType.toLowerCase()] ?? null;
 }
 
 /** Path-szegmens kódolás, de a `/` elválasztókat megtartjuk a kulcson belül. */

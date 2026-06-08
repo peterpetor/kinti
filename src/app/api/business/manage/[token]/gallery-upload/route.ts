@@ -33,7 +33,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
   const ext = extForContentType(contentType);
   if (!ext) {
     return NextResponse.json(
-      { error: "Nem támogatott képtípus. Engedélyezett: JPEG, PNG, WebP, GIF." },
+      { error: "Nem támogatott fájltípus. Engedélyezett: JPEG, PNG, WebP, GIF, PDF." },
       { status: 415 },
     );
   }
@@ -45,10 +45,10 @@ export async function POST(req: Request, { params }: { params: { token: string }
       { status: 400 },
     );
   }
-  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+  const MAX_SIZE = 20 * 1024 * 1024; // 20 MB
   if (contentLength > MAX_SIZE) {
     return NextResponse.json(
-      { error: "A fájlméret túl nagy. Maximum 5 MB." },
+      { error: "A fájlméret túl nagy. Maximum 20 MB." },
       { status: 400 },
     );
   }
