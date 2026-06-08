@@ -1,0 +1,173 @@
+import { NextResponse } from "next/server";
+import { getDB } from "@/lib/cloudflare";
+import { safeLogError } from "@/lib/safe-log";
+import { hashIp } from "@/lib/security";
+import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
+import { cantonFromAddress, matchCantonByName, CANTONS } from "@/lib/cantons";
+import {
+  sendLeadRequestEmail,
+  sendLeadConfirmEmail,
+} from "@/lib/email";
+
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+
+const MAX_BUSINESSES = 15; // Egyszerre max ennyi cégnek küldünk
+const MIN_MESSAGE_LENGTH = 20;
+
+interface BusinessContactRow {
+  id: string;
+  name: string;
+  contact_email: string | null;
+  address: string | null;
+  category_id: string;
+  category_label: string | null;
+}
+
+/**
+ * POST /api/szaknevsor/ajanlatkeres
+ *
+ * Body: {
+ *   name: string,
+ *   email: string,
+ *   phone?: string,
+ *   categoryId: string,
+ *   categoryLabel: string,
+ *   cantonCode?: string,   // 2-betűs kód vagy "all"
+ *   message: string,
+ * }
+ */
+export async function POST(req: Request) {
+  try {
+    const ip = req.headers.get("cf-connecting-ip") ?? null;
+    const ipHash = await hashIp(ip);
+
+    // Rate limit: max 3 árajánlat-kérés / IP / óra
+    const rateLimit = await checkAiRateLimit("lead-request", ipHash);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Túl sok árajánlat-kérés. Próbáld újra 1 óra múlva." },
+        { status: 429 },
+      );
+    }
+
+    const body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
+
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    const phone = typeof body.phone === "string" && body.phone.trim() ? body.phone.trim() : null;
+    const categoryId = typeof body.categoryId === "string" ? body.categoryId.trim() : "";
+    const categoryLabel = typeof body.categoryLabel === "string" ? body.categoryLabel.trim() : "";
+    const cantonCode = typeof body.cantonCode === "string" ? body.cantonCode.trim() : "all";
+    const message = typeof body.message === "string" ? body.message.trim() : "";
+
+    // Validáció
+    if (!name || name.length < 2) {
+      return NextResponse.json({ error: "Kérjük add meg a neved (min. 2 karakter)." }, { status: 400 });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Érvénytelen e-mail-cím." }, { status: 400 });
+    }
+    if (!categoryId) {
+      return NextResponse.json({ error: "Válassz kategóriát." }, { status: 400 });
+    }
+    if (message.length < MIN_MESSAGE_LENGTH) {
+      return NextResponse.json(
+        { error: `Írj részletesebb üzenetet (min. ${MIN_MESSAGE_LENGTH} karakter).` },
+        { status: 400 },
+      );
+    }
+
+    // Kanton validáció
+    const validCantonCodes = new Set(["all", ...CANTONS.map((c) => c.code)]);
+    if (!validCantonCodes.has(cantonCode)) {
+      return NextResponse.json({ error: "Érvénytelen kanton-kód." }, { status: 400 });
+    }
+
+    // Vállalkozások lekérése kategória + email szűrővel
+    const { results: allBusinesses } = await getDB()
+      .prepare(
+        `SELECT id, name, contact_email, address, category_id, category_label
+         FROM businesses
+         WHERE category_id = ?
+           AND COALESCE(hidden, 0) = 0
+           AND moderation_status = 1
+           AND contact_email IS NOT NULL
+           AND length(trim(contact_email)) > 0
+         ORDER BY featured DESC, rating DESC
+         LIMIT 200`,
+      )
+      .bind(categoryId)
+      .all<BusinessContactRow>();
+
+    // Kanton szűrés JS-ben (nincs canton_code oszlop a táblában)
+    let filtered = allBusinesses;
+    if (cantonCode !== "all") {
+      filtered = allBusinesses.filter((b) => {
+        const canton = cantonFromAddress(b.address) || matchCantonByName(b.address ?? "");
+        return canton?.code === cantonCode;
+      });
+      // Ha a kanton szűrővel nem találtunk senkit, adjuk az összes kategóriabeli vállalkozást vissza
+      if (filtered.length === 0) {
+        filtered = allBusinesses;
+      }
+    }
+
+    // Legfeljebb MAX_BUSINESSES cégnek küldünk
+    const targets = filtered.slice(0, MAX_BUSINESSES);
+
+    if (targets.length === 0) {
+      return NextResponse.json(
+        {
+          error:
+            "Sajnos nem találtunk aktív vállalkozót ebben a kategóriában. Próbálj más kategóriát vagy böngészd a Szaknévsort!",
+        },
+        { status: 404 },
+      );
+    }
+
+    const effectiveCategoryLabel = categoryLabel || targets[0]?.category_label || categoryId;
+
+    // Emailek kiküldése — best-effort (ha egy-két cím hibás, ne akadjon el)
+    const emailResults = await Promise.allSettled(
+      targets.map((biz) =>
+        sendLeadRequestEmail({
+          senderName: name,
+          senderEmail: email,
+          senderPhone: phone,
+          categoryLabel: effectiveCategoryLabel,
+          message,
+          business: {
+            name: biz.name,
+            contactEmail: biz.contact_email!,
+          },
+        }),
+      ),
+    );
+
+    const sentCount = emailResults.filter((r) => r.status === "fulfilled").length;
+
+    // Visszaigazolás a kérező felhasználónak
+    try {
+      await sendLeadConfirmEmail({
+        to: email,
+        senderName: name,
+        categoryLabel: effectiveCategoryLabel,
+        businessCount: sentCount,
+      });
+    } catch (confirmErr) {
+      safeLogError("lead-request/confirm-email", confirmErr);
+      // Nem fatális — a kérés ment
+    }
+
+    await logAiRateLimit("lead-request", ipHash);
+
+    return NextResponse.json(
+      { ok: true, sent: sentCount, total: targets.length },
+      { headers: { "cache-control": "no-store" } },
+    );
+  } catch (err) {
+    safeLogError("api/szaknevsor/ajanlatkeres", err);
+    return NextResponse.json({ error: "Belső hiba. Próbáld újra később." }, { status: 500 });
+  }
+}

@@ -732,3 +732,141 @@ A munkáltatói dashboardon megtekintheted és kezelheted az összes beérkező 
     throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
   }
 }
+
+// --- Csoportos árajánlat-kérés (Lead Generation) ---------------------------
+
+export interface LeadRequestBusiness {
+  name: string;
+  contactEmail: string;
+}
+
+export interface LeadRequestEmailArgs {
+  /** A kérező neve. */
+  senderName: string;
+  /** A kérező email-je. */
+  senderEmail: string;
+  /** A kérező telefonja (opcionális). */
+  senderPhone: string | null;
+  /** A keresett szolgáltatás/kategória neve (pl. "Könyvelő"). */
+  categoryLabel: string;
+  /** A kérező üzenet/leírás. */
+  message: string;
+  /** Az adott vállalkozás, amelynek az emailt küldjük. */
+  business: LeadRequestBusiness;
+}
+
+/**
+ * Egyetlen vállalkozónak küldi ki az árajánlat-kérést.
+ * A kérező adatait közvetlenül tartalmazza — a Kinti szerver csak relay-el,
+ * majd a vállalkozó válaszol vissza a kérező email-jére.
+ */
+export async function sendLeadRequestEmail(args: LeadRequestEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = `Új árajánlat-kérés: ${args.categoryLabel} — kinti.app`;
+
+  const text = `Szia, ${args.business.name}!
+
+Valaki árajánlatot kért tőled a kinti.app-on:
+
+Szolgáltatás: ${args.categoryLabel}
+Kérező neve: ${args.senderName}
+E-mail: ${args.senderEmail}
+Telefon: ${args.senderPhone ?? "(nem adta meg)"}
+
+Leírás / üzenet:
+${args.message}
+
+Válaszolj közvetlenül erre az emailre, vagy vedd fel a kapcsolatot ${args.senderEmail} e-mail-en.
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Új árajánlat-kérés érkezett: ${args.categoryLabel}`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Árajánlat-kérés</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">Új árajánlat-kérés érkezett!</p>
+      <div style="margin:0 0 20px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#94a097;margin-bottom:4px;">Keresett szolgáltatás</div>
+        <div style="font-size:15px;font-weight:800;color:#0e1f17;margin-bottom:12px;">${escapeHtml(args.categoryLabel)}</div>
+        <table style="border-collapse:collapse;width:100%;font-size:13px;color:#5c6d63;">
+          <tr><td style="padding:3px 0;font-weight:600;width:80px;">Név:</td><td>${escapeHtml(args.senderName)}</td></tr>
+          <tr><td style="padding:3px 0;font-weight:600;">E-mail:</td><td><a href="mailto:${escapeAttr(args.senderEmail)}" style="color:#1d4434;">${escapeHtml(args.senderEmail)}</a></td></tr>
+          <tr><td style="padding:3px 0;font-weight:600;">Telefon:</td><td>${escapeHtml(args.senderPhone ?? "–")}</td></tr>
+        </table>
+        <div style="margin-top:14px;padding:12px;background:#f0ebe0;border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a097;margin-bottom:6px;">Leírás / üzenet</div>
+          <div style="font-size:13.5px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">${escapeHtml(args.message)}</div>
+        </div>
+      </div>
+      <p style="margin:0 0 20px;">
+        <a href="mailto:${escapeAttr(args.senderEmail)}" style="display:inline-block;padding:13px 22px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Válasz küldése →</a>
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        Ezt az árajánlat-kérést a kinti.app svájci-magyar közösségi platform közvetítette. A válaszodban közvetlenül a kérező e-mail-jét szólítsd meg.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({
+    from,
+    to: args.business.contactEmail,
+    replyTo: args.senderEmail,
+    subject,
+    html,
+    text,
+  });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
+export interface LeadConfirmEmailArgs {
+  to: string;
+  senderName: string;
+  categoryLabel: string;
+  businessCount: number;
+}
+
+/**
+ * Visszaigazoló email a kérező felhasználónak, hogy x vállalkozónak ment ki az árajánlat-kérése.
+ */
+export async function sendLeadConfirmEmail(args: LeadConfirmEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = `Árajánlat-kérésed elküldve ${args.businessCount} vállalkozónak — kinti.app`;
+
+  const text = `Szia ${args.senderName}!
+
+Árajánlat-kérésed sikeresen elküldtük ${args.businessCount} ${args.categoryLabel} kategóriájú vállalkozónak.
+
+Hamarosan keresni fognak téged! Ha 48 óra elteltével sem keresnek meg, próbálj közvetlen üzenetet küldeni a kinti.app Szaknévsorában.
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Árajánlat-kérésed ${args.businessCount} vállalkozónak elküldve`,
+    body: `
+      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">Szia ${escapeHtml(args.senderName)} 👋</p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
+        Árajánlat-kérésed sikeresen elküldtük:
+      </p>
+      <div style="margin:0 0 20px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;text-align:center;">
+        <div style="font-size:36px;font-weight:800;color:#1d4434;">${args.businessCount}</div>
+        <div style="font-size:13px;color:#5c6d63;margin-top:4px;font-weight:600;">${escapeHtml(args.categoryLabel)} kategóriájú vállalkozó kapta meg a kérésed</div>
+      </div>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
+        Hamarosan keresni fognak téged! Ha <strong>48 óra</strong> elteltével sem kapnál választ, próbálj közvetlen üzenetet küldeni a kinti.app Szaknévsorában.
+      </p>
+      <p style="margin:0 0 20px;">
+        ${button("https://kinti.app/szaknevsor", "Szaknévsor megtekintése →")}
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        A kinti.app csak közvetíti a kérést — az árajánlat részleteiért és pontosságáért a megkeresett vállalkozók a felelősek.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
