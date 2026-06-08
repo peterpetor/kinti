@@ -189,10 +189,14 @@ function SelectedCard({ business: b }: { business: Business }) {
         <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-primary">
           {b.categoryLabel}
           <span className="text-ink-faint">·</span>
-          <span className="inline-flex items-center gap-0.5 text-ink">
-            <Icon name="star" size={10} filled className="text-star" />
-            {b.rating.toFixed(1)}
-          </span>
+          {b.reviews > 0 ? (
+            <span className="inline-flex items-center gap-0.5 text-ink">
+              <Icon name="star" size={10} filled className="text-star" />
+              {b.rating.toFixed(1)}
+            </span>
+          ) : (
+            <span className="text-ink-faint">Új</span>
+          )}
         </div>
         <div className="mt-0.5 truncate text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
           {b.name}

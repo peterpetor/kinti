@@ -56,11 +56,15 @@ export function BusinessCard({ business: b, href, className, distanceKm }: Busin
             {b.categoryLabel}
           </span>
           <span className="text-[10px] text-ink-faint">•</span>
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-ink">
-            <Icon name="star" size={11} filled className="text-star" />
-            {b.rating.toFixed(1)}
-            <span className="font-medium text-ink-muted">({b.reviews})</span>
-          </span>
+          {b.reviews > 0 ? (
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-ink">
+              <Icon name="star" size={11} filled className="text-star" />
+              {b.rating.toFixed(1)}
+              <span className="font-medium text-ink-muted">({b.reviews})</span>
+            </span>
+          ) : (
+            <span className="text-[11px] font-semibold text-ink-faint">Új</span>
+          )}
         </div>
 
         <div className="mb-1 flex items-center gap-1.5">

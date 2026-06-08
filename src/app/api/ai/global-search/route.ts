@@ -78,9 +78,10 @@ VÁLASZ FORMÁTUM (KIZÁRÓLAG JSON):
     const ranked = rankBusinesses(allBiz, { cantonCode, queryTokens });
 
     // Top 5 a válasz-prompthoz.
-    const topBiz = ranked.slice(0, 5).map((b) =>
-      `- ${b.name} (Értékelés: ${b.rating}/5, Cím: ${b.address || "Nincs megadva"}). ${b.blurb ? "Leírás: " + b.blurb : ""} ${b.openText ? "Nyitva: " + b.openText : ""}`.trim(),
-    );
+    const topBiz = ranked.slice(0, 5).map((b) => {
+      const ratingPart = b.reviews > 0 ? `Értékelés: ${b.rating}/5` : "Még nincs értékelés";
+      return `- ${b.name} (${ratingPart}, Cím: ${b.address || "Nincs megadva"}). ${b.blurb ? "Leírás: " + b.blurb : ""} ${b.openText ? "Nyitva: " + b.openText : ""}`.trim();
+    });
 
     // 5. Természetes nyelvű válasz generálása.
     const systemResponse = `Te vagy Kinti, a svájci-magyar közösségi platform barátságos, segítőkész AI asszisztense.

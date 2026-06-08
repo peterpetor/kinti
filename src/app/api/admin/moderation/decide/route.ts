@@ -3,6 +3,8 @@ import { getAdminUserId } from "@/lib/admin";
 import {
   setModerationStatus,
   addToBlocklist,
+  getReviewSummaryById,
+  recomputeBusinessRating,
   type ModerationTable,
 } from "@/lib/repo";
 import { hashEmail } from "@/lib/security";
@@ -72,6 +74,14 @@ export async function POST(req: Request) {
     const ok = await setModerationStatus(table, id, statusValue, adminId);
     if (!ok) {
       return NextResponse.json({ ok: false }, { status: 404 });
+    }
+
+    // Vélemény-döntés után újraszámoljuk a vállalkozás ratingjét, mert az
+    // immár csak a jóváhagyott véleményekből áll (approve → beleszámít,
+    // reject → kiesik). Enélkül a publikus rating sosem frissülne jóváhagyáskor.
+    if (table === "reviews") {
+      const summary = await getReviewSummaryById(id);
+      if (summary?.businessId) await recomputeBusinessRating(summary.businessId);
     }
 
     // Ban-flow csak rejected esetén

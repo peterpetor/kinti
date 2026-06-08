@@ -167,8 +167,11 @@ export async function getReviewByManageToken(manageToken: string): Promise<(Revi
 }
 
 export async function recomputeBusinessRating(businessId: string): Promise<void> {
+  // Egyetlen igazságforrás: a publikus rating/szám CSAK a látható (hidden=0),
+  // jóváhagyott (moderation_status=1) véleményekből számolódik — pontosan azokból,
+  // amiket a getReviewsByBusiness is listáz. Így nincs „rating vélemény nélkül".
   const row = await getDB()
-    .prepare("SELECT COUNT(*) AS cnt, COALESCE(AVG(rating), 0) AS avg FROM reviews WHERE business_id = ? AND hidden = 0")
+    .prepare("SELECT COUNT(*) AS cnt, COALESCE(AVG(rating), 0) AS avg FROM reviews WHERE business_id = ? AND hidden = 0 AND moderation_status = 1")
     .bind(businessId).first<{ cnt: number; avg: number }>();
   const cnt = row?.cnt ?? 0;
   const avg = Math.round((row?.avg ?? 0) * 10) / 10;

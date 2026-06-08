@@ -377,3 +377,9 @@ INSERT INTO business_daily_views (business_id, stat_date, views) VALUES
   ('kovacs-anna', '2026-05-23', 42),
   ('kovacs-anna', '2026-05-24', 51),
   ('kovacs-anna', '2026-05-25', 48);
+
+-- Őszinte értékelés: a seed nem tartalmaz valódi vélemény-rekordokat, ezért a
+-- fent beégetett rating/reviews értékeket 0-ra állítjuk. Értékelés kizárólag
+-- beküldött, jóváhagyott véleményből keletkezhet (lásd recomputeBusinessRating
+-- és a 0061_honest_ratings migráció).
+UPDATE businesses SET rating = 0, reviews = 0;

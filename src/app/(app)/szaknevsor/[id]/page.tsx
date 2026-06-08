@@ -48,9 +48,10 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   if (!b) return { title: "Vállalkozás" };
 
   const title = `${b.name}${b.categoryLabel ? ` — ${b.categoryLabel}` : ""}`;
+  const ratingText = b.reviews > 0 ? ` ⭐ ${b.rating.toFixed(1)} (${b.reviews} vélemény)` : "";
   const description = b.blurb
     ? b.blurb.slice(0, 160)
-    : `${b.name} · ${b.categoryLabel ?? "Magyar szakember"} Svájcban. ⭐ ${b.rating.toFixed(1)} (${b.reviews} vélemény)`;
+    : `${b.name} · ${b.categoryLabel ?? "Magyar szakember"} Svájcban.${ratingText}`;
   const url = `https://kinti.app/szaknevsor/${b.id}`;
   const image = mediaUrl(b.logoKey) ?? "https://kinti.app/icons/og-default.png";
 
@@ -186,11 +187,14 @@ export default async function BusinessPage({ params }: { params: { id: string } 
   if (b.lat != null && b.lng != null) {
     jsonLd.geo = { "@type": "GeoCoordinates", latitude: b.lat, longitude: b.lng };
   }
-  if (b.rating > 0 && b.reviews > 0) {
+  // aggregateRating CSAK akkor, ha tényleg vannak megjelenített vélemények az
+  // oldalon — különben a Google strukturált-adat irányelve „valótlan értékelés"-
+  // ként jelölheti. A reviewCount a valódi lista-hossz, nem a denormalizált szám.
+  if (b.rating > 0 && reviews.length > 0) {
     jsonLd.aggregateRating = {
       "@type": "AggregateRating",
       ratingValue: b.rating,
-      reviewCount: b.reviews,
+      reviewCount: reviews.length,
       bestRating: 5,
       worstRating: 1,
     };
@@ -261,11 +265,20 @@ export default async function BusinessPage({ params }: { params: { id: string } 
         {/* meta sor */}
         <div className="mt-3 flex items-center gap-4">
           <div>
-            <div className="flex items-center gap-1">
-              <Icon name="star" size={14} filled className="text-star" />
-              <span className="text-[15px] font-bold text-ink">{b.rating.toFixed(1)}</span>
-            </div>
-            <div className="text-[11px] font-medium text-ink-muted">{b.reviews} vélemény</div>
+            {b.reviews > 0 ? (
+              <>
+                <div className="flex items-center gap-1">
+                  <Icon name="star" size={14} filled className="text-star" />
+                  <span className="text-[15px] font-bold text-ink">{b.rating.toFixed(1)}</span>
+                </div>
+                <div className="text-[11px] font-medium text-ink-muted">{b.reviews} vélemény</div>
+              </>
+            ) : (
+              <>
+                <div className="text-[15px] font-bold text-ink-muted">Új</div>
+                <div className="text-[11px] font-medium text-ink-muted">Még nincs értékelés</div>
+              </>
+            )}
           </div>
           <span className="h-8 w-px self-stretch bg-line" />
           <div>
