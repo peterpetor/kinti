@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const job = await getJobById(params.id);
-  if (!job) return { title: "Nem található állás" };
+  if (!job || job.moderationStatus !== 1) return { title: "Nem található állás" };
   return { title: `Jelentkezés: ${job.title} | Kinti` };
 }
 

@@ -52,19 +52,30 @@ export async function deleteDigestSubscriberByUnsubToken(token: string): Promise
 
 // --- Admin Stats -------------------------------------------------------------
 
-export interface AdminStats { businesses: number; businessesVerified: number; eventsApproved: number; reviews: number; digestSubscribersConfirmed: number; pushSubscriptions: number; }
+export interface AdminStats { businesses: number; businessesVerified: number; eventsApproved: number; reviews: number; digestSubscribersConfirmed: number; pushSubscriptions: number; jobs: number; employers: number; }
 
 export async function getAdminStats(): Promise<AdminStats> {
   const db = getDB();
   const q = (sql: string) => db.prepare(sql).first<{ n: number }>();
-  const [businesses, verified, events, reviews, push] = await Promise.all([
+  const [businesses, verified, events, reviews, push, jobs, employers] = await Promise.all([
     q("SELECT COUNT(*) AS n FROM businesses"),
     q("SELECT COUNT(*) AS n FROM businesses WHERE verified = 1"),
     q("SELECT COUNT(*) AS n FROM events WHERE status = 'approved'"),
     q("SELECT COUNT(*) AS n FROM reviews WHERE hidden = 0"),
     q("SELECT COUNT(*) AS n FROM push_subscriptions"),
+    q("SELECT COUNT(*) AS n FROM jobs WHERE status = 'active' AND moderation_status = 1"),
+    q("SELECT COUNT(*) AS n FROM employers"),
   ]);
-  return { businesses: businesses?.n ?? 0, businessesVerified: verified?.n ?? 0, eventsApproved: events?.n ?? 0, reviews: reviews?.n ?? 0, digestSubscribersConfirmed: 0, pushSubscriptions: push?.n ?? 0 };
+  return { 
+    businesses: businesses?.n ?? 0, 
+    businessesVerified: verified?.n ?? 0, 
+    eventsApproved: events?.n ?? 0, 
+    reviews: reviews?.n ?? 0, 
+    digestSubscribersConfirmed: 0, 
+    pushSubscriptions: push?.n ?? 0,
+    jobs: jobs?.n ?? 0,
+    employers: employers?.n ?? 0
+  };
 }
 
 // --- Exchange Rate Alerts ----------------------------------------------------

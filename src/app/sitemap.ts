@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getBusinesses, getCategories } from "@/lib/repo";
+import { getBusinesses, getCategories, getJobs } from "@/lib/repo";
 import { CANTONS, cantonFromAddress, cantonToSlug } from "@/lib/cantons";
 import { GUIDES } from "@/lib/guides";
 
@@ -22,6 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/", priority: 1.0, changeFrequency: "daily" },
     { path: "/szaknevsor", priority: 0.9, changeFrequency: "daily" },
     { path: "/kozosseg", priority: 0.9, changeFrequency: "daily" },
+    { path: "/allasok", priority: 0.8, changeFrequency: "daily" },
     { path: "/tudasbazis", priority: 0.8, changeFrequency: "weekly" },
     { path: "/hirlevel", priority: 0.6, changeFrequency: "monthly" },
     { path: "/szaknevsor/uj", priority: 0.6, changeFrequency: "monthly" },
@@ -82,6 +83,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch {
     /* ha a DB nem elérhető, a statikus oldalak akkor is jönnek */
+  }
+
+  // 4) Álláshirdetések (job board)
+  try {
+    const jobs = await getJobs({ status: "active" });
+    for (const job of jobs) {
+      items.push({
+        url: `${BASE}/allasok/${job.id}`,
+        lastModified: job.updatedAt ? new Date(job.updatedAt) : now,
+        changeFrequency: "weekly",
+        priority: 0.65,
+      });
+    }
+  } catch {
+    /* ha a DB nem elérhető, kihagyjuk */
   }
 
   return items;
