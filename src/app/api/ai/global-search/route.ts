@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { getBusinesses, getCategories } from "@/lib/repo";
+import type { Business } from "@/lib/types";
 import { CANTONS, cantonFromAddress, matchCantonByName } from "@/lib/cantons";
 import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
@@ -61,7 +62,7 @@ VÁLASZ FORMÁTUM (KIZÁRÓLAG JSON):
     const parsed = extractJsonObject<{ categoryId: string | null; cantonCode: string | null; keywords: string | null }>(extractRes.text);
 
     // 3. Keresés az adatbázisban
-    let matchedBusinesses = [];
+    let matchedBusinesses: Business[] = [];
     if (parsed) {
       const allBiz = await getBusinesses({ category: parsed.categoryId || "all" });
       

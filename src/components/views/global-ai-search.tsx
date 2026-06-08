@@ -27,15 +27,15 @@ export function GlobalAiSearch() {
         body: JSON.stringify({ query: q }),
       });
       
-      const data = await res.json();
-      
+      const data = (await res.json()) as { answer?: string; error?: string };
+
       if (!res.ok) {
         setMessages(prev => [...prev, { role: "ai", text: data.error || "Sajnos hiba történt a keresés közben." }]);
         setBusy(false);
         return;
       }
 
-      setMessages(prev => [...prev, { role: "ai", text: data.answer }]);
+      setMessages(prev => [...prev, { role: "ai", text: data.answer ?? "Sajnos nem érkezett válasz." }]);
     } catch {
       setMessages(prev => [...prev, { role: "ai", text: "Hálózati hiba történt. Kérlek, ellenőrizd az internetkapcsolatot!" }]);
     } finally {
