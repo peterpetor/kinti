@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { salaryStanding, type HistogramBucket } from "@/lib/benchmark-stats";
+import { salaryStanding, rentStanding, type HistogramBucket, type RentHistogramBucket } from "@/lib/benchmark-stats";
 
 // Eloszlás: 60k×2, 70k×4, 80k×4, 90k×2, 100k×... (összesen jól meghatározott)
 const HIST: HistogramBucket[] = [
@@ -43,5 +43,35 @@ describe("salaryStanding", () => {
     const s = salaryStanding(HIST, 200000)!;
     expect(s.percentile).toBeLessThanOrEqual(100);
     expect(s.percentile).toBeGreaterThanOrEqual(0);
+  });
+});
+
+// Lakbér-eloszlás 200-as sávokban: 1600×2, 1800×4, 2000×4, 2200×2 → total 12
+const RENT_HIST: RentHistogramBucket[] = [
+  { bucket_chf: 1600, entry_count: 2 },
+  { bucket_chf: 1800, entry_count: 4 },
+  { bucket_chf: 2000, entry_count: 4 },
+  { bucket_chf: 2200, entry_count: 2 },
+];
+
+describe("rentStanding", () => {
+  it("üres eloszlás → null", () => {
+    expect(rentStanding([], 1800)).toBeNull();
+  });
+
+  it("középső sáv ~mid percentilis (200-as bucket)", () => {
+    // 1900 → 1800-as sáv. below = 2, own = 4 → (2 + 2)/12 = 33.3 → 33
+    const s = rentStanding(RENT_HIST, 1900);
+    expect(s!.total).toBe(12);
+    expect(s!.percentile).toBe(33);
+  });
+
+  it("alacsony lakbér → alacsony percentilis (olcsón laksz)", () => {
+    // 1650 → 1600-as sáv. below=0, own=2 → (0+1)/12 = 8.3 → 8
+    expect(rentStanding(RENT_HIST, 1650)!.percentile).toBe(8);
+  });
+
+  it("eloszlás fölötti lakbér → 100 (drágán laksz)", () => {
+    expect(rentStanding(RENT_HIST, 5000)!.percentile).toBe(100);
   });
 });

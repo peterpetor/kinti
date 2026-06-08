@@ -24,15 +24,37 @@ export default async function JobsPage() {
 
       <main className="flex-1 pb-20 space-y-6">
         <section className="text-center animate-fade-up">
-          <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 text-primary grid place-items-center mb-3">
-            <Icon name="search" size={32} strokeWidth={2} />
+          <div className="mb-6">
+            <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
+              Kinti Állások 🇨🇭
+            </h1>
+            <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
+              Magyar-barát svájci munkalehetőségek. Böngéssz az ellenőrzött állások között, vagy 
+              készülj fel az interjúra!
+            </p>
           </div>
-          <h1 className="mt-3 text-[24px] font-extrabold tracking-tight text-ink">
-            Svájci magyar állások
-          </h1>
-          <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-ink-muted text-pretty">
-            Keresgélj a svájci magyar munkáltatók hirdetései között. Csak megbízható, ellenőrzött cégek.
-          </p>
+
+          {/* AI Interjú Szimulátor Banner */}
+          <Link href="/allasok/interju-szimulator" className="mb-4 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary text-white shadow-md">
+              <Icon name="briefcase" size={22} strokeWidth={2.4} />
+            </span>
+            <div className="text-left">
+              <h2 className="text-[14px] font-extrabold text-ink">AI Interjú Szimulátor 🤖</h2>
+              <p className="text-[12px] text-ink-muted mt-0.5">Gyakorold a svájci HR kérdéseket németül, stresszmentesen!</p>
+            </div>
+          </Link>
+
+          {/* Szakmai Szótár Banner */}
+          <Link href="/allasok/szakmai-szotar" className="mb-6 flex items-center gap-3 rounded-2xl bg-surface-alt border border-line px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-[#e3a233] text-white shadow-md">
+              <Icon name="book" size={22} strokeWidth={2.4} />
+            </span>
+            <div className="text-left">
+              <h2 className="text-[14px] font-extrabold text-ink">Szakmai Gyors-Szótár 👷‍♂️</h2>
+              <p className="text-[12px] text-ink-muted mt-0.5">Építőipari, vendéglátós svájci-német gyorstalpalók hanggal.</p>
+            </div>
+          </Link>
           
           <div className="mt-6 flex justify-center">
             <Link 

@@ -6,7 +6,7 @@ import { TurnstileWidget } from "@/components/turnstile-widget";
 import { SalaryCard } from "./SalaryCard";
 import { SalaryCalculator, AlertSubscription, RentToSalaryCalculator } from "./SalaryWidgets";
 import { SwissHeatmap } from "./SwissHeatmap";
-import { salaryStanding, type SalaryStanding } from "@/lib/benchmark-stats";
+import { salaryStanding, rentStanding, type SalaryStanding } from "@/lib/benchmark-stats";
 
 const INDUSTRIES = [
   "Informatika (IT)", "Vendéglátás / Szálloda", "Építőipar",
@@ -163,6 +163,54 @@ function SalaryStandingInsight({ cantonCode, industry, salary }: { cantonCode: s
   );
 }
 
+/** „Hol állsz?" — a saját lakbér pozíciója a kanton+szobaszám eloszlásában (kevesebb = jobb). */
+function RentStandingInsight({ cantonCode, rooms, rent }: { cantonCode: string; rooms: number; rent: number }) {
+  const [standing, setStanding] = useState<SalaryStanding | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    (async () => {
+      try {
+        const res = await fetch(`/api/benchmark/rent-histogram?rooms=${rooms}&canton=${cantonCode}`);
+        const data: any = await res.json();
+        const s = rentStanding(data.histogram ?? [], rent);
+        if (alive) setStanding(s && s.total >= MIN_ENTRIES_FOR_STATS ? s : null);
+      } catch {
+        if (alive) setStanding(null);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, [cantonCode, rooms, rent]);
+
+  if (loading || !standing) return null;
+
+  const cantonName = CANTONS.find((c) => c.code === cantonCode)?.name ?? cantonCode;
+  // Lakbérnél a KEVESEBB a kedvező. percentile = % aki nálad kevesebbet fizet,
+  // tehát cheaperThan = % aki nálad TÖBBET fizet (te olcsóbban laksz náluk).
+  const cheaperThan = 100 - standing.percentile;
+  const goodDeal = standing.percentile <= 50;
+
+  return (
+    <div className="mt-2.5 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5">
+      <p className="text-[12.5px] font-bold text-primary leading-snug">
+        {goodDeal ? "🏠 Kedvező lakbér" : "🏠 Hol állsz a lakbér-mezőnyben"} · {rooms} szoba, {cantonName}
+      </p>
+      <p className="mt-0.5 text-[11px] text-ink-muted leading-snug">
+        {goodDeal ? (
+          <>Olcsóbban laksz, mint a beküldők <strong className="text-ink">{cheaperThan}%</strong>-a</>
+        ) : (
+          <>Többet fizetsz, mint a beküldők <strong className="text-ink">{standing.percentile}%</strong>-a</>
+        )}{" "}
+        <span className="text-ink-faint">({standing.total} adat alapján)</span>.
+      </p>
+    </div>
+  );
+}
+
 function MyDataCard({ tab, myData, onEdit }: { tab: Tab; myData: MyData; onEdit: () => void }) {
   const s = myData.salary, r = myData.rent;
   if ((tab === "salary" && !s) || (tab === "rent" && !r)) return null;
@@ -208,6 +256,7 @@ function MyDataCard({ tab, myData, onEdit }: { tab: Tab; myData: MyData; onEdit:
           {ageMonths !== null && (
             <p className="text-[11px] text-ink-faint pt-1">Utolsó frissítés: {ageMonths === 0 ? "kevesebb mint 1 hónapja" : `${ageMonths} hónapja`}</p>
           )}
+          <RentStandingInsight cantonCode={r.cantonCode} rooms={r.rooms} rent={r.rentChf} />
         </div>}
       </div>
     </div>

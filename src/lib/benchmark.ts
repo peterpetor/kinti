@@ -362,6 +362,36 @@ export async function getSalaryHistogram(
 }
 
 /**
+ * Lakbér-hisztogram adott szobaszámra (és opcionálisan kantonra), 200 CHF-es
+ * sávokban. A szobaszám-szűrés azért kell, mert a lakbér erősen szobaszám-függő.
+ */
+export async function getRentHistogram(
+  rooms: number,
+  cantonCode?: string | null
+): Promise<{ bucket_chf: number; entry_count: number }[]> {
+  const conditions: string[] = ["rooms = ?"];
+  const binds: unknown[] = [rooms];
+
+  if (cantonCode && cantonCode !== "all") {
+    conditions.push("canton_code = ?");
+    binds.push(cantonCode);
+  }
+
+  const where = "WHERE " + conditions.join(" AND ");
+
+  const sql = `
+    SELECT
+      CAST(rent_chf / 200 AS INTEGER) * 200 as bucket_chf,
+      COUNT(*) as entry_count
+    FROM rent_benchmarks ${where}
+    GROUP BY bucket_chf
+    ORDER BY bucket_chf ASC
+  `;
+  const { results } = await getDB().prepare(sql).bind(...binds).all<{ bucket_chf: number; entry_count: number }>();
+  return results;
+}
+
+/**
  * Kiszámolja a lakbér/fizetés arány közösségi átlagát (azok alapján, akik mindkettőt beküldték).
  */
 export async function getRentToSalaryRatio(cantonCode: string = "all"): Promise<{ avg_ratio: number | null; entry_count: number }> {

@@ -50,6 +50,36 @@ export async function runAiChat(params: {
   }
 }
 
+export async function runAiMultiTurnChat(params: {
+  system: string;
+  messages: Array<{ role: "user" | "assistant"; content: string }>;
+  maxTokens?: number;
+  temperature?: number;
+  model?: string;
+}): Promise<AiTextResult> {
+  const env = getCloudflareEnv();
+  if (!env.AI) {
+    return { ok: false, text: "" };
+  }
+  try {
+    const response = (await env.AI.run(params.model ?? DEFAULT_MODEL, {
+      messages: [
+        { role: "system", content: params.system },
+        ...params.messages,
+      ],
+      max_tokens: params.maxTokens ?? 350,
+      ...(params.temperature !== undefined ? { temperature: params.temperature } : {}),
+    })) as { response?: string };
+
+    const text = (response?.response ?? "").trim();
+    if (!text) return { ok: false, text: "" };
+    return { ok: true, text };
+  } catch (err) {
+    console.error("[ai] runAiMultiTurnChat hiba:", err);
+    return { ok: false, text: "" };
+  }
+}
+
 // ============================================================================
 //  Rate-limit (közös, sliding-window, IP-hash alapú)
 // ============================================================================
@@ -69,6 +99,7 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "review-summary": { windowHours: 1, maxPerWindow: 30 },
   "media-upload": { windowHours: 1, maxPerWindow: 30 }, // Image upload rate limit
   "radar-subscribe": { windowHours: 1, maxPerWindow: 10 }, // Radar DoS védelem
+  "interview-sim": { windowHours: 1, maxPerWindow: 50 }, // Interview simulator
 };
 
 /**
