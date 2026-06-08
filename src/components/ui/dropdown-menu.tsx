@@ -99,6 +99,13 @@ export function DropdownMenu() {
                 Munkáltatói Irányítópult
               </Link>
 
+              <Link href="/allasok" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Icon name="list" size={16} strokeWidth={2.4} />
+                </span>
+                Álláshirdetések
+              </Link>
+
               {/* ── Tudás & Ügyintézés ─────────────────── */}
               <Divider label="Tudás & Ügyintézés" />
 

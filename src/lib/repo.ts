@@ -3205,6 +3205,14 @@ export async function getEmployerByOwner(ownerUserId: string): Promise<Employer 
   return row ? toEmployer(row) : null;
 }
 
+export async function getEmployerById(id: string): Promise<Employer | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM employers WHERE id = ? LIMIT 1")
+    .bind(id)
+    .first<EmployerRow>();
+  return row ? toEmployer(row) : null;
+}
+
 export async function createEmployer(employer: Omit<Employer, "createdAt" | "updatedAt">): Promise<void> {
   await getDB()
     .prepare(
@@ -3227,9 +3235,13 @@ export async function createEmployer(employer: Omit<Employer, "createdAt" | "upd
     .run();
 }
 
-export async function getJobs(opts: { status?: string, employerId?: string } = {}): Promise<Job[]> {
-  const where: string[] = ["moderation_status = 1"];
+export async function getJobs(opts: { status?: string, employerId?: string, includeAllStatuses?: boolean } = {}): Promise<Job[]> {
+  const where: string[] = [];
   const binds: unknown[] = [];
+
+  if (!opts.includeAllStatuses) {
+    where.push("moderation_status = 1");
+  }
 
   if (opts.status) {
     where.push("status = ?");
@@ -3246,6 +3258,14 @@ export async function getJobs(opts: { status?: string, employerId?: string } = {
 
   const { results } = await getDB().prepare(sql).bind(...binds).all<JobRow>();
   return results.map(toJob);
+}
+
+export async function getJobById(id: string): Promise<Job | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM jobs WHERE id = ? LIMIT 1")
+    .bind(id)
+    .first<JobRow>();
+  return row ? toJob(row) : null;
 }
 
 export async function createJob(job: Omit<Job, "createdAt" | "updatedAt">): Promise<void> {

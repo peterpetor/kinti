@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { getEmployerByOwner } from "@/lib/repo";
+import { getEmployerByOwner, getJobs } from "@/lib/repo";
 import Link from "next/link";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 
@@ -24,6 +24,8 @@ export default async function EmployerDashboardPage() {
     // Ha be van jelentkezve, de nincs munkáltatói profilja, regisztrációs oldalra küldjük
     redirect("/munkaltato/regisztracio");
   }
+
+  const jobs = await getJobs({ employerId: employer.id, includeAllStatuses: true });
 
   return (
     <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)] min-h-[calc(100dvh-70px)] flex flex-col">
@@ -72,11 +74,55 @@ export default async function EmployerDashboardPage() {
             </p>
             
             <div className="mt-4">
-              <button disabled className="flex h-12 w-full items-center justify-center gap-2 rounded-pill bg-primary/50 text-[14px] font-bold text-white cursor-not-allowed">
-                <Icon name="plus" size={16} /> Új álláshirdetés feladása (Hamarosan)
-              </button>
+              <Link href="/munkaltato/uj-hirdetes" className="flex h-12 w-full items-center justify-center gap-2 rounded-pill bg-primary text-[14px] font-bold text-white shadow-card-hover transition-all active:scale-[0.98]">
+                <Icon name="plus" size={16} strokeWidth={2.4} /> Új álláshirdetés feladása
+              </Link>
             </div>
           </div>
+        </div>
+
+        {/* Existing Jobs Section */}
+        <div className="space-y-3">
+          <h2 className="text-[16px] font-extrabold tracking-tight text-ink px-1">
+            Álláshirdetéseim
+          </h2>
+          
+          {(() => {
+            if (jobs.length === 0) {
+              return (
+                <div className="rounded-card border border-dashed border-line bg-surface-alt px-4 py-8 text-center text-[13px] text-ink-muted">
+                  Még nem adtál fel álláshirdetést.
+                </div>
+              );
+            }
+            return jobs.map((job) => (
+              <div key={job.id} className="rounded-card border border-line bg-surface p-4 shadow-card">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-[15px] font-extrabold text-ink">{job.title}</h3>
+                    <p className="text-[12.5px] text-ink-muted mt-0.5">{job.location} · {job.employmentType}</p>
+                  </div>
+                  {job.moderationStatus === 1 ? (
+                    <span className="rounded-full bg-success/15 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-success">
+                      Aktív
+                    </span>
+                  ) : job.moderationStatus === 2 ? (
+                     <span className="rounded-full bg-accent/15 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-accent">
+                      Elutasítva
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-line-strong/30 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-ink-muted">
+                      Függőben
+                    </span>
+                  )}
+                </div>
+                <div className="mt-3 flex items-center gap-3 border-t border-line/60 pt-3 text-[12px] font-semibold text-primary">
+                  <button className="hover:underline">Szerkesztés (hamarosan)</button>
+                  <button className="hover:underline">Jelentkezők (0)</button>
+                </div>
+              </div>
+            ));
+          })()}
         </div>
       </main>
     </div>
