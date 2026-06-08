@@ -54,3 +54,6 @@ next-env.d.ts
 /*.jpeg
 /*.webp
 /*.gif
+
+dummy_appdata/
+dummy_data/
