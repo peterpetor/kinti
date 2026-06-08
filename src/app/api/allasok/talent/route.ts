@@ -5,9 +5,15 @@ import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 
+interface TalentBody {
+  firstName?: string; lastName?: string; email?: string; phone?: string; profession?: string;
+  germanLevel?: string; drivingLicense?: boolean; hasCar?: boolean; isInSwitzerland?: boolean;
+  permitType?: string; targetCanton?: string; availableFrom?: string; notes?: string;
+}
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = (await req.json().catch(() => ({}))) as TalentBody;
 
     const id = "lead_" + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
     

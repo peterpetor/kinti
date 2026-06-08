@@ -56,9 +56,9 @@ export function AiInterviewSimulator() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profession, language, messages: [initialMsg] }),
       });
-      const data = await res.json();
+      const data = (await res.json().catch(() => ({}))) as { answer?: string; error?: string };
       if (res.ok && data.answer) {
-        setMessages((prev) => [...prev, { role: "assistant", content: data.answer }]);
+        setMessages((prev) => [...prev, { role: "assistant", content: data.answer! }]);
       } else {
         alert(data.error || "Hiba történt az induláskor.");
       }
@@ -85,9 +85,9 @@ export function AiInterviewSimulator() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profession, language, messages: newMessages }),
       });
-      const data = await res.json();
+      const data = (await res.json().catch(() => ({}))) as { answer?: string; error?: string };
       if (res.ok && data.answer) {
-        setMessages((prev) => [...prev, { role: "assistant", content: data.answer }]);
+        setMessages((prev) => [...prev, { role: "assistant", content: data.answer! }]);
       } else {
         alert(data.error || "Hiba történt a válaszadáskor.");
       }
@@ -149,7 +149,7 @@ export function AiInterviewSimulator() {
             onClick={startInterview}
             className="w-full flex items-center justify-center gap-2 rounded-pill bg-primary px-5 py-3.5 text-[15px] font-extrabold text-white shadow-card hover:bg-primary/90 transition active:scale-[0.98] mt-2"
           >
-            <Icon name="play" size={18} strokeWidth={2.4} />
+            <Icon name="sparkles" size={18} strokeWidth={2.4} />
             Interjú Indítása
           </button>
         </div>
@@ -163,7 +163,7 @@ export function AiInterviewSimulator() {
       <header className="flex items-center justify-between border-b border-line bg-surface-alt/60 px-4 py-3 shrink-0">
         <div className="flex items-center gap-3">
           <div className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
-            <Icon name="briefcase" size={18} strokeWidth={2} />
+            <Icon name="user" size={18} strokeWidth={2} />
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-success border-2 border-surface"></span>
           </div>
           <div>

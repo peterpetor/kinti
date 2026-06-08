@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui/icons";
 import { INDUSTRY_LESSONS } from "./data";
-import { KintiLogo } from "@/components/ui/kinti-logo";
+import { KintiLogo } from "@/components/ui";
 
 export const metadata = {
   title: "Szakmai Gyors-Szótár | Kinti",

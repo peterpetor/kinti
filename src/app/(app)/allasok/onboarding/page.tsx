@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
-import { KintiLogo } from "@/components/ui/kinti-logo";
+import { KintiLogo } from "@/components/ui";
 
 const CHECKLIST_ITEMS = [
   {
@@ -89,7 +89,7 @@ export default function OnboardingChecklistPage() {
           <div className="h-3 w-full rounded-full bg-line overflow-hidden">
             <div 
               className="h-full bg-primary transition-all duration-700 ease-out rounded-full"
-              style={{ width: \`\${progress}%\` }}
+              style={{ width: `${progress}%` }}
             />
           </div>
           {progress === 100 && (

@@ -37,7 +37,7 @@ export default async function JobsPage() {
           {/* AI Interjú Szimulátor Banner */}
           <Link href="/allasok/interju-szimulator" className="mb-4 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary text-white shadow-md">
-              <Icon name="briefcase" size={22} strokeWidth={2.4} />
+              <Icon name="sparkles" size={22} strokeWidth={2.4} />
             </span>
             <div className="text-left">
               <h2 className="text-[14px] font-extrabold text-ink">AI Interjú Szimulátor 🤖</h2>
@@ -48,7 +48,7 @@ export default async function JobsPage() {
           {/* Szakmai Szótár Banner */}
           <Link href="/allasok/szakmai-szotar" className="mb-4 flex items-center gap-3 rounded-2xl bg-surface-alt border border-line px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-[#e3a233] text-white shadow-md">
-              <Icon name="book" size={22} strokeWidth={2.4} />
+              <Icon name="document" size={22} strokeWidth={2.4} />
             </span>
             <div className="text-left">
               <h2 className="text-[14px] font-extrabold text-ink">Szakmai Gyors-Szótár 👷‍♂️</h2>
@@ -59,7 +59,7 @@ export default async function JobsPage() {
           {/* Kinti Talent Banner */}
           <Link href="/allasok/talent" className="mb-4 flex items-center gap-3 rounded-2xl bg-[#1d9bf0]/10 border border-[#1d9bf0]/20 px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-[#1d9bf0] text-white shadow-md">
-              <Icon name="zap" size={22} strokeWidth={2.4} />
+              <Icon name="trending" size={22} strokeWidth={2.4} />
             </span>
             <div className="text-left">
               <h2 className="text-[14px] font-extrabold text-ink">Kinti Talent Jelentkezés 🚀</h2>

@@ -242,6 +242,29 @@ export async function sendTestEmail(to: string): Promise<{ id: string | null }> 
   return { id: data?.id ?? null };
 }
 
+/**
+ * Generikus email-küldő nyers HTML-törzzsel (pl. admin-értesítőkhöz). A
+ * specifikus sablon-függvények (sendReviewConfirmationEmail stb.) saját
+ * layouttal küldenek; ez az egyszerű kimenet tetszőleges HTML-hez.
+ */
+export async function sendEmail(args: { to: string; subject: string; html: string; text?: string }): Promise<{ id: string | null }> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+
+  const { data, error } = await getResend().emails.send({
+    from,
+    to: args.to,
+    subject: args.subject,
+    html: args.html,
+    text: args.text ?? args.html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+  });
+
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+  return { id: data?.id ?? null };
+}
+
 // --- HTML-segédek -----------------------------------------------------------
 
 function baseLayout({ preheader, body }: { preheader: string; body: string }): string {

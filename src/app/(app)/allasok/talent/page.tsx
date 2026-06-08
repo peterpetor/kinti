@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
-import { KintiLogo } from "@/components/ui/kinti-logo";
+import { KintiLogo } from "@/components/ui";
 import { useRouter } from "next/navigation";
 
 export default function KintiTalentPage() {
@@ -57,7 +57,7 @@ export default function KintiTalentPage() {
       if (res.ok) {
         setStep(4); // Success step
       } else {
-        const data = await res.json();
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
         alert(data.error || "Hiba történt a küldéskor.");
       }
     } catch (err) {
