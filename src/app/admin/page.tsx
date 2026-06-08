@@ -204,6 +204,12 @@ export default async function AdminPage() {
             🚫 Tiltólista (ban)
           </Link>
           <Link
+            href="/admin/talent"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-[#1d9bf0] px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            🚀 Talent Jelöltek
+          </Link>
+          <Link
             href="/admin/feeds"
             className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
           >
