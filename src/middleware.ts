@@ -36,18 +36,25 @@ const isMaintenanceExempt = createRouteMatcher([
 
 async function isCurrentUserAdmin(): Promise<boolean> {
   try {
-    const env = getRequestContext().env as { ADMIN_EMAILS?: string };
-    const allowed = (env.ADMIN_EMAILS ?? "")
+    const cfEnv = (getRequestContext().env || {}) as { ADMIN_EMAILS?: string };
+    const envString = cfEnv.ADMIN_EMAILS || process.env.ADMIN_EMAILS || "";
+    
+    const allowed = envString
       .split(",")
       .map((s) => s.trim().toLowerCase())
       .filter(Boolean);
-    if (!allowed.length) return false;
+      
+    if (!allowed.length) {
+      console.log("[middleware] No ADMIN_EMAILS found in env");
+      return false;
+    }
 
     const user = await currentUser();
     if (!user) return false;
     const emails = user.emailAddresses.map((e) => e.emailAddress.toLowerCase());
     return emails.some((e) => allowed.includes(e));
-  } catch {
+  } catch (err) {
+    console.error("[middleware] isCurrentUserAdmin error:", err);
     return false;
   }
 }
