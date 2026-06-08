@@ -1,5 +1,6 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
 /**
  * Védett oldalak (RSC-barát redirect): nem `auth.protect()`-tel, hanem manuális
@@ -18,6 +19,39 @@ const isProtectedApi = createRouteMatcher([
   "/api/admin(.*)", // admin API (pl. event_feeds CRUD)
 ]);
 
+/**
+ * Karbantartási mód — jelenleg csak admin éri el a teljes oldalt. Ezek a
+ * route-ok mindenki számára elérhetők maradnak (különben nem tud belépni
+ * az admin, és nem érkezik be webhook).
+ *
+ * Ha élesedik a publikus launch: a maintenance-blokk törlésével vagy a
+ * MAINTENANCE_MODE env-flag bevezetésével kapcsolható ki.
+ */
+const isMaintenanceExempt = createRouteMatcher([
+  "/keszul",
+  "/belepes(.*)",
+  "/regisztracio(.*)",
+  "/api/webhooks(.*)",
+]);
+
+async function isCurrentUserAdmin(): Promise<boolean> {
+  try {
+    const env = getRequestContext().env as { ADMIN_EMAILS?: string };
+    const allowed = (env.ADMIN_EMAILS ?? "")
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    if (!allowed.length) return false;
+
+    const user = await currentUser();
+    if (!user) return false;
+    const emails = user.emailAddresses.map((e) => e.emailAddress.toLowerCase());
+    return emails.some((e) => allowed.includes(e));
+  } catch {
+    return false;
+  }
+}
+
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedApi(req)) {
     await auth.protect();
@@ -30,6 +64,14 @@ export default clerkMiddleware(async (auth, req) => {
       const signInUrl = new URL("/belepes", req.url);
       signInUrl.searchParams.set("redirect_url", req.url);
       return NextResponse.redirect(signInUrl);
+    }
+  }
+
+  // Karbantartási mód: csak admin láthatja az oldalt. Mindenki más a
+  // /keszul "Hamarosan érkezünk" oldalra kerül.
+  if (!isMaintenanceExempt(req)) {
+    if (!(await isCurrentUserAdmin())) {
+      return NextResponse.redirect(new URL("/keszul", req.url));
     }
   }
 });

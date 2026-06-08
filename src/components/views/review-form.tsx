@@ -219,24 +219,7 @@ export function ReviewForm({
         <FieldError msg={errors.rating} />
       </Section>
 
-      {/* Szöveg */}
-      <Section title="Mit gondolsz?" required>
-        <textarea
-          value={form.body}
-          onChange={(e) => setField("body", e.target.value)}
-          placeholder="Mire számíthatok? Min volt jó? Hova fejlődhetne?"
-          maxLength={REVIEW_LIMITS.bodyMax}
-          rows={5}
-          className={cn(inputCls(errors.body), "resize-none")}
-        />
-        <div className="mt-1 flex justify-between text-[10.5px] text-ink-faint">
-          <span>Min. {REVIEW_LIMITS.bodyMin} karakter</span>
-          <span>
-            {form.body.length} / {REVIEW_LIMITS.bodyMax}
-          </span>
-        </div>
-        <FieldError msg={errors.body} />
-      </Section>
+
 
       {/* Email — OPCIONÁLIS. Auto-generált handle ("VidámPék_42") kerül a publikus
           vélemény mellé. Zéró tárolt PII. */}

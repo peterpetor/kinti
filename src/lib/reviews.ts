@@ -87,17 +87,8 @@ export function validateReviewInput(
     errors.push({ field: "rating", message: "Adj 1–5 csillagot." });
   }
 
-  const body = str(input.body);
-  if (body.length < REVIEW_LIMITS.bodyMin)
-    errors.push({
-      field: "body",
-      message: `Legalább ${REVIEW_LIMITS.bodyMin} karakter.`,
-    });
-  else if (body.length > REVIEW_LIMITS.bodyMax)
-    errors.push({
-      field: "body",
-      message: `Legfeljebb ${REVIEW_LIMITS.bodyMax} karakter.`,
-    });
+  const body = ""; // rating-only
+
 
   // reviewerName MEZŐ ELTÁVOLÍTVA — auto-generált handle a megjelenítéshez.
   // Üres string a backend felé, csendben ignorálva.
@@ -117,19 +108,7 @@ export function validateReviewInput(
     });
   }
 
-  // Káromkodás-szűrő (szerver-oldali, kerülhetetlen). A kliens-validáció
-  // után fut, hogy ne adjon vissza zavaró duplikált hibákat.
-  if (!errors.length) {
-    const dirty = findProfanityInFields({ body, reviewerName });
-    if (dirty) {
-      errors.push({
-        field: dirty.field as keyof ReviewFormInput,
-        message:
-          "A bejegyzésed olyan szót tartalmaz, amit nem engedünk. " +
-          "Kérlek, fogalmazd meg másképp.",
-      });
-    }
-  }
+  // Profanity check nem kell, mert nincs szöveges tartalom.
 
   if (errors.length) return { ok: false, errors };
 

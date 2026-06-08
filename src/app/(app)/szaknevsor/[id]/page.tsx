@@ -12,7 +12,6 @@ import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { BusinessGallery } from "@/components/views/business-gallery";
 import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
-import { AIReviewSummary } from "@/components/ai-review-summary";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { registryForCategory } from "@/lib/business-registry";
 import { guidesForCategory } from "@/lib/guides";
@@ -418,12 +417,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
               : "Kintiek véleménye"}
           </SectionHeader>
 
-          {/* AI-generált 3-4 mondatos összegzés (3+ vélemény esetén) */}
-          {reviews.length >= 3 && (
-            <div className="mt-2.5">
-              <AIReviewSummary businessId={b.id} />
-            </div>
-          )}
+
 
           {/* Vélemény-írás CTA + form (account nélküli, email-megerősítéses) */}
           <div className="mt-2.5">
@@ -460,9 +454,7 @@ export default async function BusinessPage({ params }: { params: { id: string } 
                       ))}
                     </div>
                   </div>
-                  <p className="whitespace-pre-wrap text-[13.5px] leading-relaxed text-ink text-pretty">
-                    „{r.body}"
-                  </p>
+
                   {r.ownerResponse && (
                     <div className="mt-2.5 rounded-[12px] border-l-2 border-primary bg-primary-soft/40 px-3 py-2">
                       <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary">

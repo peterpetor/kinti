@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinti.app — Átadási Stratégia román cégnek</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.55;
+    background: #f5f5f5;
+    padding: 20px;
+  }
+  .page {
+    max-width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto 20px;
+    padding: 18mm 18mm 22mm 18mm;
+    background: white;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    position: relative;
+  }
+  h1 {
+    font-size: 28px;
+    color: #ea580c;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+  }
+  h2 {
+    font-size: 19px;
+    color: #1a1a1a;
+    margin-top: 22px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #ea580c;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+  }
+  h3 {
+    font-size: 14.5px;
+    color: #ea580c;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  h4 {
+    font-size: 12.5px;
+    color: #1a1a1a;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  p { font-size: 11.5px; margin-bottom: 8px; }
+  ul, ol { padding-left: 20px; font-size: 11.5px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  strong { color: #c2410c; }
+  .lead {
+    font-size: 12.5px;
+    color: #555;
+    font-style: italic;
+    border-left: 3px solid #ea580c;
+    padding-left: 12px;
+    margin: 12px 0;
+  }
+  .meta {
+    font-size: 10.5px;
+    color: #888;
+    margin-bottom: 14px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10.5px;
+    margin: 8px 0 14px;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 5px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #fef3e2;
+    color: #c2410c;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  tr:nth-child(even) { background: #fafafa; }
+  .badge {
+    display: inline-block;
+    background: #ea580c;
+    color: white;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge.green { background: #16a34a; }
+  .badge.red { background: #dc2626; }
+  .badge.yellow { background: #ca8a04; }
+  .box {
+    background: #fef3e2;
+    border-left: 4px solid #ea580c;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 11px;
+  }
+  .box-warning {
+    background: #fef2f2;
+    border-left-color: #dc2626;
+  }
+  .box-success {
+    background: #f0fdf4;
+    border-left-color: #16a34a;
+  }
+  .box-info {
+    background: #eff6ff;
+    border-left-color: #2563eb;
+  }
+  .layer-diagram {
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: "SF Mono", "Consolas", monospace;
+    font-size: 9.5px;
+    line-height: 1.6;
+    white-space: pre;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 10px 0;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  .card {
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .card h4 {
+    color: #ea580c;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-top: 0;
+    margin-bottom: 6px;
+  }
+  .card p { font-size: 10.5px; margin-bottom: 0; }
+  .footer {
+    position: absolute;
+    bottom: 10mm;
+    left: 18mm;
+    right: 18mm;
+    font-size: 9px;
+    color: #aaa;
+    border-top: 1px solid #eee;
+    padding-top: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .toc {
+    background: #fafafa;
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin: 14px 0;
+  }
+  .toc ol { padding-left: 20px; }
+  .toc li {
+    font-size: 11.5px;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  .toc li strong { color: #1a1a1a; }
+  .checklist {
+    list-style: none;
+    padding-left: 0;
+  }
+  .checklist li {
+    padding: 3px 0 3px 22px;
+    position: relative;
+    font-size: 11px;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0;
+    top: 2px;
+    color: #ea580c;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  hr.separator {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 18px 0;
+  }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .page {
+      box-shadow: none;
+      margin: 0;
+      page-break-after: always;
+      max-width: none;
+      min-height: auto;
+    }
+    .page:last-child { page-break-after: auto; }
+    @page {
+      size: A4;
+      margin: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== PAGE 1: COVER ============== -->
+<div class="page">
+  <div style="margin-top: 50mm; text-align: center;">
+    <div style="font-size: 11px; color: #888; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 18px;">
+      Stratégiai dokumentum &middot; 2026 június
+    </div>
+    <h1 style="font-size: 42px; margin-bottom: 12px;">kinti.app</h1>
+    <div style="font-size: 14px; color: #555; margin-bottom: 36px;">
+      Átadási és továbbfejlesztési stratégia<br>
+      román (erdélyi) recruitment cég számára
+    </div>
+
+    <div style="border: 1px solid #ea580c; border-radius: 8px; padding: 20px; margin: 24px auto; max-width: 140mm; text-align: left; background: #fef9f3;">
+      <div style="font-size: 11px; color: #ea580c; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">
+        A dokumentum lényege
+      </div>
+      <p style="font-size: 12px; margin-bottom: 0;">
+        Hogyan építsünk fel a meglévő kinti.app platformra egy <strong>3-rétegű ökoszisztémát</strong>
+        (publikus job board + premium worker-szolgáltatások + offline recruitment business), úgy hogy
+        <strong>egyik országban se kelljen recruitment-engedély a platformhoz</strong>, miközben a
+        meglévő RO SRL-en keresztül legálisan futhat a recruitment-tevékenység.
+      </p>
+    </div>
+
+    <div style="margin-top: 50mm; font-size: 10.5px; color: #888; line-height: 1.8;">
+      Készült technikai konzultáció keretében<br>
+      Verzió 1.0 &middot; 2026-06-08
+    </div>
+  </div>
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>1 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 2: TARTALOM + VEZETŐI ÖSSZEFOGLALÓ ============== -->
+<div class="page">
+  <h1>Tartalom és vezetői összefoglaló</h1>
+  <div class="meta">Mit kapsz ebben a dokumentumban</div>
+
+  <div class="toc">
+    <ol>
+      <li><strong>Vezetői összefoglaló</strong> — A 30-másodperces verzió</li>
+      <li><strong>A jelenlegi helyzet</strong> — Mi a kinti.app most</li>
+      <li><strong>Az alapelv</strong> — Pure Platform Safe Harbor</li>
+      <li><strong>3-rétegű architektúra</strong> — A javasolt felépítés</li>
+      <li><strong>Modul-térkép</strong> — Mit tartunk meg, dobunk ki, építünk újra</li>
+      <li><strong>Üzleti modell</strong> — 3 revenue stream és piaci pozíció</li>
+      <li><strong>Jogi compliance</strong> — Engedélyek 4 országra</li>
+      <li><strong>ÁSZF kulcs-klauzulák</strong> — A jogi védőfal</li>
+      <li><strong>5-éves roadmap</strong> — Y1-Y5 milestones</li>
+      <li><strong>Exit-stratégia</strong> — Mit ér 3-5 év múlva</li>
+      <li><strong>90-napos akcióterv</strong> — Mit csinálj a jövő hétfőtől</li>
+      <li><strong>Felelősségi mátrix</strong> — Ki mit csinál</li>
+    </ol>
+  </div>
+
+  <h2>Vezetői összefoglaló</h2>
+
+  <p>
+    A kinti.app egy működő PWA (Progressive Web App) ami jelenleg svájci magyar diaszpórát szolgál ki.
+    A jogi-felelősségi kockázatok (GDPR, DSA, polgári per UGC miatt) magas, és magánszemélyként
+    nehezen vállalható tovább.
+  </p>
+
+  <p>
+    Egy erdélyi magyar üzemeltető román cégen keresztül átveheti, és <strong>recruitment-platformmá</strong>
+    pozicionálhatja át, magyar nyelvi fókusszal (erdélyi magyarok DACH-piacra). Ez egyszerre kihasználja
+    a kinti meglévő technikai infrastruktúráját és a magyar nyelvi tartalmát, miközben új,
+    skálázható üzleti modellt épít rá.
+  </p>
+
+  <div class="box box-info">
+    <strong>A kulcs-felismerés:</strong> a recruitment-engedélyek (RO ITM, CH SECO, DE AÜG, AT AMS)
+    drágák, lassúak, óvadékot igényelnek (CH-ban CHF 50-100k bankgarancia!). Ha a platform <strong>passzív
+    hirdetési felület</strong> marad (mint Indeed vagy jobs.ch), akkor egyik engedély sem kell.
+    A recruitment-tevékenység külön rétegben, külön cégen keresztül futhat — a meglévő RO ITM-engedéllyel.
+  </div>
+
+  <h3>Mi a stratégia 3 mondatban</h3>
+  <ol>
+    <li>A kinti.app legyen <strong>"information society service"</strong> az EU 2000/31/EK irányelv szerint — semmi aktív közvetítés, csak hosting és hirdetési felület.</li>
+    <li>A bevétel <strong>employer subscription</strong> (€49-499/hó) — soha sikerdíj vagy per-hire jutalék.</li>
+    <li>A recruitment-tevékenység <strong>külön RO SRL-en</strong> keresztül fut, ITM-engedéllyel, és a platform organikus lead-generation funnelje a recruitment cégnek.</li>
+  </ol>
+
+  <h3>Várható számok</h3>
+  <table>
+    <tr><th>Év</th><th>Felhasználók</th><th>Employer</th><th>Platform revenue</th><th>Total stack</th></tr>
+    <tr><td>Y1</td><td>5.000</td><td>100</td><td>€40k</td><td>€80k</td></tr>
+    <tr><td>Y2</td><td>15.000</td><td>250</td><td>€100k</td><td>€220k</td></tr>
+    <tr><td>Y3</td><td>40.000</td><td>500</td><td>€220k</td><td>€450k</td></tr>
+    <tr><td>Y4-5 exit</td><td>—</td><td>—</td><td>—</td><td><strong>€800k - 2M</strong></td></tr>
+  </table>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>2 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 3: HELYZET + ALAPELV ============== -->
+<div class="page">
+  <h1>1. A jelenlegi helyzet</h1>
+
+  <h2>A kinti.app most</h2>
+  <p>
+    A kinti.app egy Next.js 14 alapú PWA, Cloudflare Pages-en hostolva, D1 (SQLite) adatbázissal,
+    R2 objektum-tárolóval és Workers AI-jal a tartalom-moderációhoz. A meglévő modulok:
+  </p>
+  <ul>
+    <li><strong>Iránytű</strong> — fizetés-kalkulátor, megélhetési költségek svájci cantonokra</li>
+    <li><strong>Szaknévsor</strong> — magyar vállalkozások Svájcban</li>
+    <li><strong>Közösség</strong> — események, spontán találkozók</li>
+    <li><strong>Vélemények</strong> — user-generated rating + szöveg</li>
+    <li><strong>Vám-kalkulátor</strong> — Svájc-EU vámszámítás</li>
+    <li><strong>Hofladen-térkép</strong> — svájci farm-boltok</li>
+    <li><strong>Push-notifikáció, AI moderáció, GDPR/DSA compliance</strong></li>
+  </ul>
+
+  <h2>Az átadás kontextusa</h2>
+  <p>
+    Egy <strong>román (erdélyi magyar üzemeltetőjű) recruitment cég</strong> érdeklődik az átvétel
+    iránt. Az operátor anyanyelvi szinten beszél magyarul és románul; a cég RO SRL formában van bejegyezve,
+    és RO ITM-engedéllyel rendelkezik recruitment-tevékenységre.
+  </p>
+
+  <p>
+    Az átadás <strong>nem egyszerű domain-csere</strong> — a kinti közösségi-platform jellege nem illik
+    a recruitment-üzlethez, és a UGC (user-generated content) jelentős jogi kockázatot hordoz. A javasolt
+    megoldás: a platform átalakítása <strong>passzív job board + relocation-helper</strong> hibriddé,
+    amely a recruitment cég lead-generation funneljeként szolgál.
+  </p>
+
+  <h1 style="margin-top: 28px;">2. Az alapelv — Pure Platform Safe Harbor</h1>
+
+  <h2>A jogi teszt</h2>
+  <p>
+    Mind a 4 célországban (RO, CH, DE, AT) ugyanaz a 4 kritikus kérdés különbözteti meg a "platformot"
+    a "recruitment ügynökségtől":
+  </p>
+
+  <table>
+    <tr><th>Kérdés</th><th>Pure platform ✅</th><th>Recruiter ❌</th></tr>
+    <tr>
+      <td><strong>Hogyan fizetnek?</strong></td>
+      <td>Fix subscription / per-post</td>
+      <td>Per-placement / sikerdíj</td>
+    </tr>
+    <tr>
+      <td><strong>Ki választ jelöltet?</strong></td>
+      <td>Munkáltató maga keres/szűr</td>
+      <td>Mi javasolunk konkrét jelöltet</td>
+    </tr>
+    <tr>
+      <td><strong>Ki kommunikál?</strong></td>
+      <td>Worker → Employer direktben</td>
+      <td>Mi intermediáljuk a beszélgetést</td>
+    </tr>
+    <tr>
+      <td><strong>Foglalkoztatunk valakit?</strong></td>
+      <td>Soha</td>
+      <td>Mi vagyunk a worker munkáltatója</td>
+    </tr>
+  </table>
+
+  <div class="box box-success">
+    <strong>Ha mind a 4-re a bal oldal a válasz → a platform kvázi-immunis a recruitment-szabályozástól.</strong>
+    Pontosan ezért nem kell Indeednek vagy jobs.ch-nak SECO-engedély, miközben minden DACH-pozíciót hirdetnek.
+  </div>
+
+  <h3>Miért fontos ez</h3>
+  <p>
+    Ha engedély kellene a platformhoz, az indulás <strong>jelentősen drágulna és lassulna</strong>:
+  </p>
+  <ul>
+    <li><strong>CH SECO-engedély</strong>: CHF 50.000 bankgarancia + 2-4 hónap ügyintézés</li>
+    <li><strong>DE AÜG-engedély</strong>: €2.000/fő likvid tartalék kötelező + 2-3 hónap</li>
+    <li><strong>RO ITM (kölcsönzéshez)</strong>: RON 100.000 (~€20.000) bankgarancia</li>
+    <li><strong>AT AÜG</strong>: per-fő ZKO3-bejelentés (€20.000-ig bírság mulasztásnál)</li>
+  </ul>
+  <p>
+    A "pure platform" modellel <strong>egyik se kell</strong>, és a recruiter cég offline tevékenysége
+    a már meglévő RO ITM-engedéllyel fut tovább.
+  </p>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>3 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 4: 3-RÉTEGŰ ARCHITEKTÚRA ============== -->
+<div class="page">
+  <h1>3. A 3-rétegű architektúra</h1>
+
+  <p class="lead">
+    A kulcs-meglátás: az <strong>adat</strong> ne legyen termék, hanem <strong>melléktermék</strong>.
+    A 3 réteg jogilag elkülönül, de organikusan táplálkozik egymásból.
+  </p>
+
+  <div class="layer-diagram">┌───────────────────────────────────────────────────────────┐
+│  Layer 1 — PUBLIC PLATFORM (kinti.app)                    │
+│  ─────────────────────────────────────                    │
+│  • Ingyenes job board + worker-tool-ok                    │
+│  • Bevétel: employer subscription (€49-499/hó)            │
+│  • SEMMI aktív közvetítés                                 │
+│  • SEMMI engedélyköteles                                  │
+│  • Cél: traffic + brand + organic data accumulation       │
+└───────────────────────────────────────────────────────────┘
+                ↓ (passive discovery, organic leads)
+┌───────────────────────────────────────────────────────────┐
+│  Layer 2 — PREMIUM WORKER SERVICES (új subbrand)          │
+│  ─────────────────────────────────────                    │
+│  • CV-írás, interjú-felkészítés, karrier-coaching         │
+│  • Worker fizet ÖNMAGÁNAK (€50-300 / szolgáltatás)        │
+│  • NEM placement! Csak consulting → nem engedélyköteles    │
+└───────────────────────────────────────────────────────────┘
+                ↓ (qualified worker pool, opt-in)
+┌───────────────────────────────────────────────────────────┐
+│  Layer 3 — RECRUITMENT BUSINESS (RO SRL — már létezik)    │
+│  ─────────────────────────────────────                    │
+│  • Aktív közvetítés, sikerdíj employer-től                │
+│  • RO ITM-engedély (~€600), később DACH-engedélyek        │
+│  • Külön brand, külön szerződés, külön számlák            │
+│  • Layer 1-2 LEAD-GENERATION funnel a számára             │
+└───────────────────────────────────────────────────────────┘</div>
+
+  <h2>Jogi szeparáció</h2>
+  <p>Mindegyik réteg külön legal entity. Ez védi a teljes stack-et:</p>
+
+  <table>
+    <tr>
+      <th>Réteg</th>
+      <th>Entitás</th>
+      <th>Szerződés</th>
+      <th>Engedély</th>
+    </tr>
+    <tr>
+      <td><strong>L1</strong></td>
+      <td>RO SRL #1 — "Kinti Platform SRL"</td>
+      <td>EULA + ÁSZF (information society service)</td>
+      <td>Egyik sem (pure platform)</td>
+    </tr>
+    <tr>
+      <td><strong>L2</strong></td>
+      <td>RO SRL #1 vagy PFA (egyéni vállalkozó)</td>
+      <td>Consulting contract</td>
+      <td>Nincs (consulting ≠ placement)</td>
+    </tr>
+    <tr>
+      <td><strong>L3</strong></td>
+      <td>RO SRL #2 — már meglévő recruitment cég</td>
+      <td>Recruitment contract (per-placement)</td>
+      <td>RO ITM, később DACH-onként</td>
+    </tr>
+  </table>
+
+  <h2>Organikus táplálkozás — hogyan áramlik a user a 3 rétegben</h2>
+
+  <ol>
+    <li><strong>Layer 1 user-traffic</strong>: erdélyi magyar worker böngészi a DACH-állásokat ingyen</li>
+    <li><strong>Layer 2 felfedezés</strong>: a workert érdekli a "CV-átírás magyar→német, €99" landing page</li>
+    <li><strong>Worker fizet Layer 2-nek</strong>: tanácsadás során explicit elmondja, milyen pozíciót szeretne</li>
+    <li><strong>Layer 3 felé átirányítás</strong>: a worker <em>explicit opt-in-nel</em> kéri a recruiter cég közvetítését</li>
+    <li><strong>Layer 3 közvetít</strong>: a recruiter cég a saját ITM-engedélyével, saját szerződéssel jár el — a platform már nincs az ügylet részese</li>
+  </ol>
+
+  <div class="box box-warning">
+    <strong>Kritikus:</strong> a Layer 1 → Layer 3 adat-átáramláshoz <strong>explicit, célzott consent</strong>
+    kell minden user-től (GDPR Art 6(1)(a)). Default-ban semmi adat nem áramlik át. Az ÁSZF-ben világosan
+    el kell különíteni a 3 réteg adatkezelését.
+  </div>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>4 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 5: MODUL-TÉRKÉP ============== -->
+<div class="page">
+  <h1>4. Modul-térkép — mit csinálunk a meglévő kinti-funkciókkal</h1>
+
+  <h2>Megtartandó modulok</h2>
+  <table>
+    <tr><th>Modul</th><th>Verdict</th><th>Indok / módosítás</th></tr>
+    <tr>
+      <td><strong>Iránytű (bérkalkulátor)</strong></td>
+      <td><span class="badge green">KEEP</span></td>
+      <td>Core érték a relocation-helper rétegben. Bővítés: CH-adatok mellé DE + AT (Lohnrechner-data, Brutto-Netto-Rechner)</td>
+    </tr>
+    <tr>
+      <td><strong>Szaknévsor</strong></td>
+      <td><span class="badge yellow">REFRAME</span></td>
+      <td>"Magyarul beszélő szolgáltatók DACH-ban" — ügyvéd, könyvelő, orvos, Treuhand. Frissen érkező magyar workernek értékes</td>
+    </tr>
+    <tr>
+      <td><strong>Vám-kalkulátor</strong></td>
+      <td><span class="badge green">KEEP</span></td>
+      <td>Relocation-helper része. Disclaimerrel: "nem hivatalos vámtanácsadás"</td>
+    </tr>
+    <tr>
+      <td><strong>Statikus útmutatók</strong></td>
+      <td><span class="badge green">KEEP + EXPAND</span></td>
+      <td>Anmeldung-CH, Anmeldung-DE, Meldezettel-AT, Krankenkasse, Steuerklasse, Familienzulagen/Kindergeld</td>
+    </tr>
+    <tr>
+      <td><strong>Push-notifikáció</strong></td>
+      <td><span class="badge green">KEEP</span></td>
+      <td>Új use-case: job-match alertek (algoritmikus, worker-konfigurált)</td>
+    </tr>
+    <tr>
+      <td><strong>AI moderáció (Workers AI)</strong></td>
+      <td><span class="badge green">KEEP</span></td>
+      <td>Álláshirdetések moderációja (csaló employer, ember-csempészet flag)</td>
+    </tr>
+    <tr>
+      <td><strong>Admin moderációs sor</strong></td>
+      <td><span class="badge green">KEEP</span></td>
+      <td>Új tartalom-típusokra: álláshirdetések + employer-profilok jóváhagyása</td>
+    </tr>
+  </table>
+
+  <h2>Átalakítandó modulok</h2>
+  <table>
+    <tr><th>Modul</th><th>Verdict</th><th>Új forma</th></tr>
+    <tr>
+      <td><strong>Vélemények</strong></td>
+      <td><span class="badge yellow">LIMIT</span></td>
+      <td>Csak <strong>struktúrált rating</strong> (csillag + tagek), szabad-szöveg tiltva. Csökkenti a defamation-kockázatot</td>
+    </tr>
+    <tr>
+      <td><strong>Közösség (események)</strong></td>
+      <td><span class="badge yellow">ADMIN-ONLY</span></td>
+      <td>User-submit tiltva. Csak az operátor által kurált, magyar diaszpóra-események DACH-ban</td>
+    </tr>
+    <tr>
+      <td><strong>Account-mentes flow</strong></td>
+      <td><span class="badge yellow">CONVERT</span></td>
+      <td>CV-tároláshoz kötelező az account. Magic-link auth (passwordless), de email-megerősítéssel</td>
+    </tr>
+  </table>
+
+  <h2>Eltávolítandó modulok</h2>
+  <table>
+    <tr><th>Modul</th><th>Verdict</th><th>Indok</th></tr>
+    <tr>
+      <td><strong>Spontán találkozók</strong></td>
+      <td><span class="badge red">DROP</span></td>
+      <td>Magas jogi kockázat (idegen-idegen találkozás, platform-felelősség). Off-scope</td>
+    </tr>
+    <tr>
+      <td><strong>Hofladen-térkép</strong></td>
+      <td><span class="badge red">DROP</span></td>
+      <td>Svájc-specifikus, off-scope recruitment-platformnak</td>
+    </tr>
+    <tr>
+      <td><strong>Free-text vélemények</strong></td>
+      <td><span class="badge red">DROP</span></td>
+      <td>Becsületsértés / rágalmazás kockázat (Svájci StGB 173-174, Ptk 2:45)</td>
+    </tr>
+  </table>
+
+  <h2>Új modulok (építeni kell)</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Álláshirdetések (CORE)</h4>
+      <p>Job posting form, search, filter, detail-view, "Apply" gomb direktben employer email-jére</p>
+    </div>
+    <div class="card">
+      <h4>CV / profil</h4>
+      <p>Worker létrehoz profilt, PDF upload R2-be, searchable employer számára (opt-in)</p>
+    </div>
+    <div class="card">
+      <h4>Employer profilok</h4>
+      <p>Cég-adatok, logó, bemutatkozó, aktív hirdetések listája. DE-nyelven</p>
+    </div>
+    <div class="card">
+      <h4>Subscription billing</h4>
+      <p>Stripe vagy Wise Business — Free/Basic/Pro/Enterprise csomagok</p>
+    </div>
+    <div class="card">
+      <h4>Salary expectation matcher</h4>
+      <p>Worker beírja a min. nettót — az iránytű-logikára épülve csak fölötte mutat hirdetéseket</p>
+    </div>
+    <div class="card">
+      <h4>Permit eligibility checker</h4>
+      <p>"RO állampolgárként mehetsz-e dolgozni CH-ba?" — automata FAQ-kalkulátor</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>5 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 6: ÜZLETI MODELL ============== -->
+<div class="page">
+  <h1>5. Üzleti modell — 3 revenue stream</h1>
+
+  <h2>Stream 1 — Employer Subscriptions (Layer 1, Y1-től)</h2>
+  <table>
+    <tr><th>Csomag</th><th>Ár</th><th>Mit ad</th><th>Cél-employer</th></tr>
+    <tr>
+      <td><strong>Free</strong></td>
+      <td>€0</td>
+      <td>1 aktív hirdetés / 30 nap</td>
+      <td>Próbaverzió, small business</td>
+    </tr>
+    <tr>
+      <td><strong>Basic</strong></td>
+      <td>€49 / hó</td>
+      <td>5 aktív hirdetés + cég-profil</td>
+      <td>KKV (1-50 fő)</td>
+    </tr>
+    <tr>
+      <td><strong>Pro</strong></td>
+      <td>€199 / hó</td>
+      <td>20 hirdetés + featured + candidate-search</td>
+      <td>Közepes vállalat (50-500)</td>
+    </tr>
+    <tr>
+      <td><strong>Enterprise</strong></td>
+      <td>€499+ / hó</td>
+      <td>Unlimited + branded landing + account manager</td>
+      <td>Nagyvállalat, recruitment-agency partnerek</td>
+    </tr>
+  </table>
+
+  <p>Y3-as cél: 500 fizető employer × átlag €100/hó = <strong>€600k / év ARR Layer 1-en</strong></p>
+
+  <h2>Stream 2 — Premium Worker Services (Layer 2, Y2-től)</h2>
+  <table>
+    <tr><th>Szolgáltatás</th><th>Ár</th><th>Mit ad</th></tr>
+    <tr><td>CV-átírás (HU → DE/EN)</td><td>€99</td><td>Anyanyelvű recruiter-által átírt, DACH-konform CV</td></tr>
+    <tr><td>Interjú-felkészítés</td><td>€149</td><td>1 órás videó-coaching, mock-interview</td></tr>
+    <tr><td>Relocation-csomag</td><td>€299</td><td>Anmeldung, Krankenkasse, Steuerklasse end-to-end támogatás</td></tr>
+    <tr><td>Karrier-coaching előfizetés</td><td>€29 / hó</td><td>Havi 1×1 óra coach + dokumentum-review</td></tr>
+  </table>
+
+  <p>Y3-as cél: 500 vásárló × átlag €120 = <strong>€60k / év</strong></p>
+
+  <h2>Stream 3 — Layer 3 Recruitment Business (a meglévő RO cég)</h2>
+  <p>
+    A platform <strong>nem szed jutalékot</strong> a Layer 3 ügyletekből. De a Layer 3 (recruitment cég)
+    a platform organikus lead-generation-jéből profitál — Y3-ra elérheti a havi 10-20 placement-et
+    átlag €3-5k per-placement-fee-vel.
+  </p>
+  <p>Y3-as Layer 3 cél: <strong>15 placement/hó × €4k = €720k / év</strong></p>
+
+  <h2>Stream 4 — Data Products (Y3+)</h2>
+  <p>
+    <strong>Anonimizált, aggregált</strong> riportok — soha nem nyers user-adat:
+  </p>
+  <ul>
+    <li>"DACH Magyar Béráttekintés" éves jelentés (€500-2.000 / vásárló) — HR-cégek, sajtó, kormányzat</li>
+    <li>Industry-szintű trend-riportok (€1.000-5.000 / vásárló)</li>
+    <li>Employer Brand Index — mely DACH-cégek népszerűek erdélyi munkavállalóknál</li>
+  </ul>
+  <p>Y3-as cél: 20 előfizető × €1.500 = <strong>€30k / év</strong></p>
+
+  <h2>Total stack revenue evolúció</h2>
+  <table>
+    <tr><th>Év</th><th>L1 platform</th><th>L2 premium</th><th>L3 recruitment</th><th>L4 data</th><th>TOTAL</th></tr>
+    <tr><td>Y1</td><td>€40k</td><td>—</td><td>€80k</td><td>—</td><td><strong>€120k</strong></td></tr>
+    <tr><td>Y2</td><td>€100k</td><td>€20k</td><td>€200k</td><td>—</td><td><strong>€320k</strong></td></tr>
+    <tr><td>Y3</td><td>€220k</td><td>€60k</td><td>€500k</td><td>€30k</td><td><strong>€810k</strong></td></tr>
+    <tr><td>Y4</td><td>€400k</td><td>€120k</td><td>€800k</td><td>€80k</td><td><strong>€1.4M</strong></td></tr>
+  </table>
+
+  <p class="lead">
+    A TOTAL stack 5-éves várható kumulatív bevétele: <strong>€3-4 millió EUR</strong>, ~€1.5M net profit.
+  </p>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>6 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 7: JOGI COMPLIANCE ============== -->
+<div class="page">
+  <h1>6. Jogi compliance — engedélyek 4 országra</h1>
+
+  <p class="lead">
+    A "pure platform" modell célja: <strong>a Layer 1 platform egyik országban se igényeljen
+    recruitment-engedélyt</strong>. A Layer 3 (offline recruitment) tevékenység engedély-igénye
+    külön ügy, és csak akkor skálázódik DACH-ra, ha a revenue indokolja.
+  </p>
+
+  <h2>Compliance-térkép országonként</h2>
+
+  <h3>🇷🇴 Románia — ITM</h3>
+  <table>
+    <tr><th>Layer 1 (platform)</th><th>Layer 3 (recruitment)</th></tr>
+    <tr>
+      <td>Nem kell engedély (pure online service)</td>
+      <td><strong>Kell:</strong> ITM-regisztráció + CAEN 7810. Bankgarancia kölcsönzéshez: RON 100.000</td>
+    </tr>
+  </table>
+
+  <h3>🇨🇭 Svájc — SECO (a legszigorúbb!)</h3>
+  <table>
+    <tr><th>Layer 1 (platform)</th><th>Layer 3 (recruitment)</th></tr>
+    <tr>
+      <td>Nem kell engedély, ha Indeed-stílusú online job board. <strong>SECO precedens: jobs.ch, indeed.ch nem rendelkezik AVG-engedéllyel</strong></td>
+      <td><strong>Külföldről CH-ba közvetítéshez SECO-engedély kell.</strong> CHF 50.000-100.000 bankgarancia svájci bankban. 2-4 hó ügyintézés. <em>Indulásnál ELHALASZTANI</em></td>
+    </tr>
+  </table>
+
+  <h3>🇩🇪 Németország — AÜG</h3>
+  <table>
+    <tr><th>Layer 1 (platform)</th><th>Layer 3 (recruitment)</th></tr>
+    <tr>
+      <td>Nem kell (Gewerbeanmeldung is csak ha DE-i alvállalkozót használunk)</td>
+      <td><strong>Kölcsönzéshez Erlaubnis nach AÜG.</strong> €750 + €2.000/fő likvid. Közvetítéshez (Vermittlung) <strong>nem kell külön engedély</strong></td>
+    </tr>
+  </table>
+
+  <h3>🇦🇹 Ausztria — AMS / AÜG</h3>
+  <table>
+    <tr><th>Layer 1 (platform)</th><th>Layer 3 (recruitment)</th></tr>
+    <tr>
+      <td>Nem kell</td>
+      <td><strong>Vermittlung:</strong> AMS-bejelentés (ingyenes, 1-2 hét). <strong>Kölcsönzés:</strong> AÜG-engedély. <strong>EU-Entsendung:</strong> ZKO3-bejelentés per-fő (€20k bírság/fő mulasztásnál!)</td>
+    </tr>
+  </table>
+
+  <h2>Mit kell csinálnia az operátornak a launch-hoz</h2>
+  <div class="box box-success">
+    <strong>Minimum compliance-csomag az induláshoz:</strong>
+    <ul style="margin-top: 6px;">
+      <li>RO SRL alapítása a platformhoz ("Kinti Platform SRL" vagy egyenértékű)</li>
+      <li>RO ITM-engedély a meglévő recruitment cégnek (€600, 60 nap) — ha még nincs meg</li>
+      <li>ÁSZF újraírása a "pure platform" klauzulákkal (lásd 7. fejezet)</li>
+      <li>GDPR-megfelelés: adatkezelési tájékoztató, ROPA, DPO ha CV-ket regularly kezel</li>
+      <li>ANSPDCP (RO data protection) bejelentés a RO SRL-ről</li>
+    </ul>
+    Költség: <strong>~€2.000-3.000</strong> ügyvéddel és könyvelővel együtt, ~3 hét.
+  </div>
+
+  <h2>GDPR — kritikus adatkezelési pontok</h2>
+  <ul>
+    <li><strong>Worker CV</strong>: explicit consent kell minden használathoz; opt-in külön a Layer 3 felé</li>
+    <li><strong>Employer adatok</strong>: cégadatok (név, székhely) publikus, problémamentes</li>
+    <li><strong>Application logs</strong>: csak technikai (anti-spam), max 90 nap retention</li>
+    <li><strong>Analytics</strong>: Cloudflare Web Analytics (cookie-mentes) — GDPR consent banner nem kell</li>
+    <li><strong>Email-kommunikáció</strong>: double opt-in regisztrációkor, könnyű unsubscribe</li>
+  </ul>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>7 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 8: ÁSZF KLAUZULÁK ============== -->
+<div class="page">
+  <h1>7. ÁSZF kulcs-klauzulák — a jogi védőfal</h1>
+
+  <p class="lead">
+    Az ÁSZF tartalmazza azokat a klauzulákat, amelyek <strong>kifejezetten</strong> kizárják a
+    "recruitment ügynökség" státuszt, és a platformot az EU 2000/31/EK ("E-Commerce irányelv") és
+    a DSA (Digital Services Act) Art 6 "hosting safe harbor" alá helyezik.
+  </p>
+
+  <h2>Az 5 kötelező klauzula</h2>
+
+  <div class="box">
+    <strong>1. Pure platform-státusz</strong>
+    <p style="margin-top: 4px;">
+      "A Kinti egy információs társadalmi szolgáltatás (information society service) az EU 2000/31/EK
+      irányelv 2(a) cikke szerint. A platform NEM munkaerő-közvetítő ügynökség, sem munkaerő-kölcsönző
+      szervezet."
+    </p>
+  </div>
+
+  <div class="box">
+    <strong>2. A platform szerepe = technikai hosztolás</strong>
+    <p style="margin-top: 4px;">
+      "A platform szerepe kizárólag technikai hosztolás: lehetővé tesszük, hogy a munkáltatók
+      állásajánlatokat tegyenek közzé, és a munkavállalók ezekre direkt módon jelentkezhessenek."
+    </p>
+  </div>
+
+  <div class="box">
+    <strong>3. Negatív lista — mit NEM csinálunk</strong>
+    <p style="margin-top: 4px;">
+      "A Kinti NEM: (a) válogat ki jelölteket munkáltatók számára, (b) nem ajánl konkrét jelöltet
+      konkrét pozícióra, (c) nem ellenőrzi a munkáltatók által közölt információk valóságát, (d) nem
+      ellenőrzi a munkavállalók által közölt adatokat, (e) nem közvetít a felek között a
+      munkaszerződés tárgyalása során, (f) nem garantálja a hirdetett pozíciók minőségét vagy
+      létezését, (g) nem felelős a felhasználók közötti megállapodások teljesítéséért."
+    </p>
+  </div>
+
+  <div class="box">
+    <strong>4. A munkaszerződés a felek között jön létre</strong>
+    <p style="margin-top: 4px;">
+      "A munkaszerződés kizárólag a munkáltató és a munkavállaló között jön létre. Kinti egyik fél
+      képviselőjeként sem jár el."
+    </p>
+  </div>
+
+  <div class="box">
+    <strong>5. Subscription-revenue, nincs sikerdíj</strong>
+    <p style="margin-top: 4px;">
+      "A platform díjazása fix előfizetési alapú a munkáltatók részéről. Kinti nem szed sikerdíjat,
+      jutalékot, vagy bármilyen olyan ellenértéket, amely munkaszerződés létrejöttéhez vagy
+      fenntartásához kötött."
+    </p>
+  </div>
+
+  <h2>További szükséges dokumentumok</h2>
+  <table>
+    <tr><th>Dokumentum</th><th>Cél</th><th>Min. követelmény</th></tr>
+    <tr><td><strong>Adatkezelési tájékoztató</strong></td><td>GDPR Art 13-14 megfelelés</td><td>Adatkezelő (RO SRL), célok, jogalap, retention, jogok</td></tr>
+    <tr><td><strong>Cookie-tájékoztató</strong></td><td>ePrivacy + Sw. Datenschutzgesetz</td><td>Ha vannak nem-tisztán-technikai sütik (Cloudflare Analytics cookie-mentes — nem kell)</td></tr>
+    <tr><td><strong>Impresszum</strong></td><td>EU + Sw. közzétételi kötelezettség</td><td>Cégnév, CUI, székhely, e-mail, képviselő</td></tr>
+    <tr><td><strong>DSA-jelentés</strong> (Art 14)</td><td>DSA transparency report (>50 user/hó esetén)</td><td>Tartalom-moderálási statisztika éves</td></tr>
+    <tr><td><strong>Recruiter-felhasználói szerződés</strong></td><td>Employer és platform közti szerződés</td><td>Subscription-modell, korlátozások (no headhunter-claim), tartalom-felelősség az employerre</td></tr>
+    <tr><td><strong>Worker felhasználói szerződés</strong></td><td>Worker és platform közti szerződés</td><td>CV-adatok kezelése, Layer 3 felé opt-in külön, törlési jog</td></tr>
+  </table>
+
+  <h2>DSA Art 6 — hosting safe harbor</h2>
+  <p>
+    A DSA Art 6 kimondja: ha a platform <strong>passzív hostingot</strong> végez, <strong>nem felelős
+    az illegális tartalomért</strong>, amíg nincs tudomása róla. Tudomásszerzés után pedig kötelező az
+    expeditious removal (Art 16 notice-and-action). A Layer 1 platform pontosan ebben az állapotban van,
+    ha az ÁSZF-ben világos a "no curation" elv.
+  </p>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>8 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 9: ROADMAP ============== -->
+<div class="page">
+  <h1>8. 5-éves roadmap</h1>
+
+  <h2>Y1 — Foundation (2026)</h2>
+  <h3>Q1-Q2: Setup</h3>
+  <ul class="checklist">
+    <li>RO SRL #1 alapítva ("Kinti Platform SRL")</li>
+    <li>kinti.app domain átadva</li>
+    <li>ÁSZF, Adatkezelési tájékoztató, Impresszum újraírva</li>
+    <li>Modul-cleanup: Hofladen, Spontán találkozók, free-text vélemények törölve</li>
+    <li>Vélemények: struktúrált rating-only mód</li>
+    <li>Közösség: admin-only posting</li>
+  </ul>
+  <h3>Q3: Job board core</h3>
+  <ul class="checklist">
+    <li>Job posting flow (employer side)</li>
+    <li>Job search + filter (worker side)</li>
+    <li>Direct-apply (worker CV → employer email)</li>
+    <li>Account-rendszer (Magic-link auth)</li>
+    <li>Employer profilok</li>
+  </ul>
+  <h3>Q4: Monetization + launch</h3>
+  <ul class="checklist">
+    <li>Stripe/Wise subscription billing</li>
+    <li>Free/Basic/Pro/Enterprise tier-ek</li>
+    <li>Launch erdélyi magyar fókusszal (Facebook erdélyi csoportok, Krónika, Maszol PR)</li>
+    <li>Első 50 employer-szerződés</li>
+  </ul>
+  <p><strong>Y1 cél: 5.000 worker, 100 employer, €40k platform-revenue.</strong></p>
+
+  <h2>Y2 — Premium Worker Layer (2027)</h2>
+  <ul class="checklist">
+    <li>Layer 2 launch: CV-átírás, interjú-felkészítés, relocation-csomag</li>
+    <li>"Kinti Career" subbrand vagy aldomain</li>
+    <li>Bayern + Wien expanzió (DE+AT lokalizáció a meglévő útmutatókhoz)</li>
+    <li>Magyarországi piacra nyitás (nemcsak Erdély, hanem hu-magyar workerek)</li>
+  </ul>
+  <p><strong>Y2 cél: 15.000 worker, 250 employer, €120k platform + premium revenue.</strong></p>
+
+  <h2>Y3 — Data Products (2028)</h2>
+  <ul class="checklist">
+    <li>Anonimizált adatok aggregálása éves jelentésekké</li>
+    <li>Layer 3 cross-promotion: Bayern AÜG-engedély megszerzése a recruitment cégnek</li>
+    <li>HR-Bench Index publikálása (sajtó-PR)</li>
+    <li>Felvidéki + vajdasági magyar workerek célzott megszólítása</li>
+  </ul>
+  <p><strong>Y3 cél: 40.000 worker, 500 employer, €280k platform + €30k data.</strong></p>
+
+  <h2>Y4-5 — Skálázás vagy Exit (2029-2030)</h2>
+  <ul class="checklist">
+    <li>CH SECO-engedély megszerzése a recruitment cégnek (ha CH-revenue indokolja)</li>
+    <li>Skálázás 40k+ workerig, 1.000+ employerig</li>
+    <li>Exit-előkészítés: pénzügyi audit, due diligence-csomag, M&amp;A-tanácsadó</li>
+    <li>Vevő-targeting: Stepstone, Indeed (CEE expansion), eJobs.ro (DACH expansion), Profession.hu</li>
+  </ul>
+  <p><strong>Várható exit Y4-5-ben: €800k - €2M</strong> (3-5× ARR multiple az iparági standardok szerint).</p>
+
+  <h2>Időbeli ütemezés vizuálisan</h2>
+  <div class="layer-diagram">2026 Q1 ──── 2026 Q4 ──── 2027 ──── 2028 ──── 2029 ──── 2030
+   │            │           │         │         │         │
+   ▼            ▼           ▼         ▼         ▼         ▼
+Setup       Launch L1     Launch L2  Data      DACH      EXIT
+RO SRL      Job board     Premium    products  expansion €0.8-2M
+ÁSZF        Subscription  Worker     anonymized recruitment
+Cleanup     billing       services   reports    licenses</div>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>9 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 10: EXIT ============== -->
+<div class="page">
+  <h1>9. Exit-stratégia</h1>
+
+  <p class="lead">
+    A 3-rétegű architektúra előnye, hogy az exit <strong>rugalmasan strukturálható</strong>: el lehet
+    adni csak a platformot, a teljes stack-et, vagy a recruitment-business-t külön.
+  </p>
+
+  <h2>Vevő-jelöltek és motivációjuk</h2>
+  <table>
+    <tr><th>Vevő-típus</th><th>Példa</th><th>Motiváció</th><th>Ár-multiplikátor</th></tr>
+    <tr>
+      <td><strong>Nagy nemzetközi job board</strong></td>
+      <td>Stepstone, Indeed, LinkedIn</td>
+      <td>CEE-bővítés, magyar nyelvi piac megszerzése</td>
+      <td>3-5× ARR</td>
+    </tr>
+    <tr>
+      <td><strong>CEE recruitment platform</strong></td>
+      <td>eJobs.ro, Bestjobs.ro</td>
+      <td>DACH-export piacra nyitás, premium kategória</td>
+      <td>2-4× ARR</td>
+    </tr>
+    <tr>
+      <td><strong>HU recruitment platform</strong></td>
+      <td>Profession.hu, JobStreet HU</td>
+      <td>Erdélyi piac, DACH-export specializáció</td>
+      <td>2-3× ARR</td>
+    </tr>
+    <tr>
+      <td><strong>PE-firm (recruitment-tech rollup)</strong></td>
+      <td>Hg Capital, Bridgepoint, Marlin Equity</td>
+      <td>EU recruitment-tech konszolidáció</td>
+      <td>5-8× ARR (legmagasabb)</td>
+    </tr>
+    <tr>
+      <td><strong>Strategic recruitment agency</strong></td>
+      <td>Randstad, Adecco, Hays</td>
+      <td>Tech-platform akvizíció a meglévő agency-business mellé</td>
+      <td>2-3× ARR + earn-out</td>
+    </tr>
+  </table>
+
+  <h2>Exit-forgatókönyvek</h2>
+
+  <h3>Forgatókönyv A — Csak Layer 1-2 eladása (legvalószínűbb)</h3>
+  <p>
+    Y4-ben a platform stabil revenue-val (€400k ARR), eladás egy nagyobb job board-nak.
+    A Layer 3 recruitment-business marad az operátornál mint cash-cow.
+  </p>
+  <ul>
+    <li>Várható ár: <strong>€1.2 - 2 millió</strong></li>
+    <li>Vevő: Stepstone / eJobs / Profession</li>
+    <li>Earn-out: 1-2 év tovább üzemeltetés, performance-based</li>
+  </ul>
+
+  <h3>Forgatókönyv B — Teljes stack eladása</h3>
+  <p>
+    Y5-ben Layer 1+2+3 együtt, vertikálisan integrált EU recruitment-tech-cég.
+  </p>
+  <ul>
+    <li>Várható ár: <strong>€1.5 - 3 millió</strong></li>
+    <li>Vevő: PE-firm vagy strategic acquirer (Randstad-szintű)</li>
+    <li>Komplexitás: magasabb (recruitment-license átadás)</li>
+  </ul>
+
+  <h3>Forgatókönyv C — Cash-cow mode (no exit)</h3>
+  <p>
+    Sose adjuk el. A 3-rétegű ökoszisztéma havi €100-200k profit-cash-flow-t termel az operátornak.
+  </p>
+  <ul>
+    <li>Y5+ éves nettó profit: <strong>€700k - 1.2M / év</strong></li>
+    <li>Reinvesztálható EU-bővítésbe, új diaszpóra-piacokra</li>
+  </ul>
+
+  <h2>Valuation drivers — mire figyeljünk útközben</h2>
+  <ul>
+    <li><strong>ARR (Annual Recurring Revenue)</strong>: a legfontosabb metrika. Cél: Y4-re &gt;€400k</li>
+    <li><strong>Worker-aktivitás (MAU)</strong>: legalább 30%-os havi visszatérő arány</li>
+    <li><strong>Employer-retention</strong>: >85% éves renewal-rate</li>
+    <li><strong>Net Revenue Retention</strong>: &gt;110% (upgrade > churn)</li>
+    <li><strong>Bruttó margin</strong>: >75% (SaaS-standard)</li>
+    <li><strong>GDPR/compliance clean record</strong>: 0 jelentős incidens</li>
+  </ul>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>10 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 11: 90-NAPOS AKCIÓTERV ============== -->
+<div class="page">
+  <h1>10. 90-napos akcióterv</h1>
+
+  <p class="lead">
+    Az alábbi 12 hetes terv konkrét lépéseket ad az induláshoz. A 90 nap végén már <strong>élesben
+    fogad workereket és employereket</strong> az új modellben.
+  </p>
+
+  <h2>Hét 1-2 — Jogi-pénzügyi alap</h2>
+  <ul class="checklist">
+    <li>RO SRL #1 alapítása ("Kinti Platform SRL" vagy egyenértékű név)</li>
+    <li>Cégbírósági bejegyzés, ANAF-regisztráció, banki számla nyitása</li>
+    <li>Cloudflare-account előkészítése a RO SRL nevére</li>
+    <li>GitHub repo előkészítése transzferre (peterpetor/kinti → új tulaj)</li>
+    <li>kinti.app domain Cloudflare Registrar internal transfer indítva</li>
+    <li>Ügyvéd-megbízás ÁSZF, Adatkezelési tájékoztató, Impresszum újraírásához</li>
+  </ul>
+
+  <h2>Hét 3-4 — Compliance + cleanup</h2>
+  <ul class="checklist">
+    <li>ÁSZF véglegesítve a "pure platform" klauzulákkal (5 kötelező)</li>
+    <li>Adatkezelési tájékoztató 3-rétegű adatáramlással</li>
+    <li>ANSPDCP bejelentés a RO SRL-ről</li>
+    <li>Cloudflare account transfer befejezve</li>
+    <li>Modul-cleanup PR mergelve: Hofladen, Spontán találkozók DROP, vélemények rating-only, közösség admin-only</li>
+    <li>Email-domain átállítás (Resend új API-kulcs az új SRL nevére)</li>
+  </ul>
+
+  <h2>Hét 5-8 — Job board core development</h2>
+  <ul class="checklist">
+    <li>DB-séma: <code>jobs</code>, <code>employers</code>, <code>worker_profiles</code>, <code>applications</code> táblák</li>
+    <li>Employer signup + profil-szerkesztés</li>
+    <li>Job posting flow + admin moderációs sor új típussal</li>
+    <li>Job search + filter (algoritmikus, no human curation)</li>
+    <li>Worker profil + CV-upload (PDF → R2 → AI moderáció)</li>
+    <li>Direct-apply: worker → employer email-relay (no platform messaging)</li>
+    <li>Push-notifikáció új use-case: job-match alert</li>
+  </ul>
+
+  <h2>Hét 9-10 — Monetization</h2>
+  <ul class="checklist">
+    <li>Stripe vagy Wise Business integráció</li>
+    <li>Free/Basic/Pro/Enterprise tier-ek implementálva</li>
+    <li>Subscription dashboard az employereknek</li>
+    <li>Invoice automation, ANAF e-Factura compliance (RO)</li>
+    <li>VAT-OSS regisztráció (intra-EU subscription billing)</li>
+  </ul>
+
+  <h2>Hét 11-12 — Launch</h2>
+  <ul class="checklist">
+    <li>Marketing-anyagok elkészítve (landing page revízió, screenshot, demo videó)</li>
+    <li>SEO-optimalizálás (Google Search Console, sitemap, meta-tagek)</li>
+    <li>PR-kampány: Krónika, Maszol, Erdélyi Napló, Facebook erdélyi csoportok</li>
+    <li>LinkedIn outreach 100 DACH-employer felé (alap-Pro csomag 50% kedvezménnyel első 3 hó)</li>
+    <li>Email-blast a meglévő kinti-felhasználóknak az új platformról + opt-in</li>
+    <li>Soft-launch, első employer-szerződések, első worker-jelentkezések</li>
+  </ul>
+
+  <h2>Költségbecslés a 90 napra</h2>
+  <table>
+    <tr><th>Tétel</th><th>Költség</th></tr>
+    <tr><td>RO SRL alapítása + bejegyzés</td><td>€500</td></tr>
+    <tr><td>Ügyvéd (ÁSZF + Adatkezelés)</td><td>€1.500-2.500</td></tr>
+    <tr><td>Könyvelő (3 hó)</td><td>€450</td></tr>
+    <tr><td>Domain + Cloudflare (3 hó)</td><td>€50</td></tr>
+    <tr><td>Email (Resend, 3 hó)</td><td>€60</td></tr>
+    <tr><td>Stripe setup + tranzakciós díjak (3 hó)</td><td>€100</td></tr>
+    <tr><td>Marketing (PR, social, hirdetés)</td><td>€2.000-5.000</td></tr>
+    <tr><td>Dev-órák (saját időben vagy outsourced)</td><td>€0 - 15.000</td></tr>
+    <tr><th>TOTAL</th><th>€4.660 - 23.660</th></tr>
+  </table>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>11 / 12</span>
+  </div>
+</div>
+
+<!-- ============== PAGE 12: FELELŐSSÉGI MÁTRIX + ZÁRÁS ============== -->
+<div class="page">
+  <h1>11. Felelősségi mátrix</h1>
+
+  <h2>Ki mit csinál a 90 nap alatt</h2>
+  <table>
+    <tr><th>Feladat</th><th>Felelős</th><th>Külsős szakember</th></tr>
+    <tr><td>RO SRL alapítás</td><td>Operátor (erdélyi)</td><td>Helyi könyvelő, jogász</td></tr>
+    <tr><td>ÁSZF, GDPR-dokumentumok</td><td>Operátor</td><td>EU-jogban jártas ügyvéd (~€1.5-2.5k)</td></tr>
+    <tr><td>Cloudflare + domain transzfer</td><td>Eredeti tulaj + operátor</td><td>—</td></tr>
+    <tr><td>Modul-cleanup (kód)</td><td>Dev</td><td>—</td></tr>
+    <tr><td>Job board core (kód)</td><td>Dev</td><td>—</td></tr>
+    <tr><td>Subscription billing</td><td>Dev</td><td>—</td></tr>
+    <tr><td>Marketing-content</td><td>Operátor</td><td>Copywriter HU+DE</td></tr>
+    <tr><td>SEO-optimalizálás</td><td>Operátor</td><td>SEO-tanácsadó (opcionális)</td></tr>
+    <tr><td>Employer-akvizíció</td><td>Operátor</td><td>—</td></tr>
+    <tr><td>Worker-marketing</td><td>Operátor</td><td>Social media manager (opcionális)</td></tr>
+  </table>
+
+  <h2>Y1 üzemeltetési feladatok (havi)</h2>
+  <table>
+    <tr><th>Feladat</th><th>Időigény</th><th>Ki</th></tr>
+    <tr><td>Admin moderáció (új hirdetés-jóváhagyás)</td><td>~5 óra/hét</td><td>Operátor</td></tr>
+    <tr><td>Customer support (HU + DE)</td><td>~10 óra/hét</td><td>Operátor + 1 part-time</td></tr>
+    <tr><td>Employer sales (új akvizíció)</td><td>~15 óra/hét</td><td>Operátor + 1 part-time sales</td></tr>
+    <tr><td>Tartalom-bővítés (útmutatók, hírlevél)</td><td>~5 óra/hét</td><td>Operátor</td></tr>
+    <tr><td>Tech-karbantartás, bug-fix</td><td>~5 óra/hét</td><td>Dev (freelance)</td></tr>
+  </table>
+
+  <h2>Y1 operatív költségvetés (havi)</h2>
+  <table>
+    <tr><th>Tétel</th><th>Havi költség</th></tr>
+    <tr><td>Cloudflare (Pages + D1 + R2 + Workers AI)</td><td>€20-50</td></tr>
+    <tr><td>Resend (email)</td><td>€20-100 (volume-függő)</td></tr>
+    <tr><td>Domain</td><td>€1</td></tr>
+    <tr><td>Könyvelő</td><td>€150</td></tr>
+    <tr><td>Operátor fizetése (full-time)</td><td>€1.500-2.500</td></tr>
+    <tr><td>Part-time sales / support (összesen 0.5 FTE)</td><td>€800-1.200</td></tr>
+    <tr><td>Marketing (PR, social, hirdetés)</td><td>€500-2.000</td></tr>
+    <tr><td>Dev-fenntartás (freelance, ~20 óra/hó)</td><td>€800-1.200</td></tr>
+    <tr><th>TOTAL havi</th><th>€3.790 - 7.200</th></tr>
+  </table>
+
+  <h2>Mérföldkő-mátrix</h2>
+  <table>
+    <tr><th>Hónap</th><th>Mérföldkő</th><th>Sikerkritérium</th></tr>
+    <tr><td>M3</td><td>Soft-launch</td><td>10 employer, 500 worker</td></tr>
+    <tr><td>M6</td><td>Public launch</td><td>30 employer, 2.000 worker, €5k MRR</td></tr>
+    <tr><td>M9</td><td>Marketing-skálázás</td><td>50 employer, 3.500 worker, €8k MRR</td></tr>
+    <tr><td>M12</td><td>Y1 cél</td><td>100 employer, 5.000 worker, €40k ARR, breakeven</td></tr>
+  </table>
+
+  <h2>Zárás</h2>
+  <div class="box box-success">
+    <strong>A stratégia lényege egy mondatban:</strong> a kinti.app-t alakítsuk át <strong>pure
+    information society service-szé</strong> (mint Indeed), futtassuk RO SRL-en keresztül erdélyi
+    magyar fókusszal DACH-piacra, és a meglévő recruitment-business legyen a Layer 3 — így
+    <strong>engedély nélkül indulhatunk</strong>, mégis 4-5 év alatt €0.8-2M exit-potenciál van benne.
+  </div>
+
+  <p style="margin-top: 20px; font-size: 10.5px; color: #888; text-align: center;">
+    Verzió 1.0 &middot; 2026-06-08 &middot; kinti.app átadási stratégia<br>
+    Készült technikai konzultáció keretében
+  </p>
+
+  <div class="footer">
+    <span>kinti.app — átadási stratégia</span>
+    <span>12 / 12</span>
+  </div>
+</div>
+
+</body>
+</html>

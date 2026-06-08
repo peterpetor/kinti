@@ -210,12 +210,6 @@ export function DropdownMenu() {
                 Akciók a térképen
               </Link>
 
-              <Link href="/hofladen" onClick={() => setIsOpen(false)} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
-                  🌾
-                </span>
-                Hofladen-térkép
-              </Link>
 
               {/* ── Játék ─────────────────────────────── */}
               <Divider label="Játék" />

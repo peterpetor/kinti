@@ -52,9 +52,7 @@ export default async function VelemenyKezelesPage({
             {review.rating}/5
           </span>
         </div>
-        <p className="whitespace-pre-wrap text-[14px] leading-relaxed text-ink text-pretty">
-          „{review.body}"
-        </p>
+
         <p className="mt-3 text-[11.5px] text-ink-faint">
           Megjelenő név:{" "}
           <span className="font-semibold text-ink-muted">{review.reviewerName}</span>

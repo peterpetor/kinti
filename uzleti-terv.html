@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kinti — Üzleti terv 2026–2029</title>
+<style>
+  :root {
+    --primary: #1d4434;
+    --accent: #c8392e;
+    --gold: #e3a233;
+    --ink: #0e1f17;
+    --ink-muted: #5c6d63;
+    --ink-faint: #94a097;
+    --line: #e6ebe5;
+    --surface: #ffffff;
+    --surface-alt: #fbf7ee;
+    --bg: #f4ede0;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 14px; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 920px;
+    margin: 32px auto;
+    background: var(--surface);
+    padding: 56px 64px;
+    box-shadow: 0 4px 24px rgba(14,31,23,.08);
+    border-radius: 12px;
+  }
+  h1 { font-size: 32px; letter-spacing: -0.02em; margin: 0 0 8px; color: var(--primary); }
+  h2 { font-size: 22px; letter-spacing: -0.015em; margin: 40px 0 12px; color: var(--primary); border-top: 2px solid var(--line); padding-top: 24px; }
+  h3 { font-size: 16px; margin: 18px 0 8px; color: var(--ink); }
+  h4 { font-size: 14px; margin: 12px 0 6px; color: var(--ink-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--ink); }
+  em { font-style: italic; color: var(--ink); }
+  .lead {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-muted);
+    border-left: 3px solid var(--primary);
+    padding: 4px 16px;
+    margin: 16px 0 24px;
+    background: var(--surface-alt);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin: 0 0 28px;
+  }
+  .meta strong { color: var(--primary); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 13px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    background: var(--surface-alt);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-muted);
+    font-weight: 700;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  th.num { text-align: right; }
+  .badge {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: white;
+  }
+  .badge.accent { background: var(--accent); }
+  .badge.gold { background: var(--gold); color: var(--ink); }
+  .badge.muted { background: var(--ink-faint); }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 14px 0 20px;
+  }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: var(--surface);
+  }
+  .card .kpi {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+  .card .label {
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .callout {
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 13px;
+  }
+  .callout.warn { background: #fff8ed; border-color: #f0c14a; }
+  .callout.ok { background: #f0f7f1; border-color: var(--primary); }
+  .footer-note {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--surface-alt);
+    color: var(--ink-muted);
+    margin-right: 4px;
+  }
+  .swot {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .swot-cell {
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+  }
+  .swot-cell h4 { margin-top: 0; }
+  .swot-cell.s { background: #f0f7f1; border-color: var(--primary); }
+  .swot-cell.w { background: #fff5f4; border-color: var(--accent); }
+  .swot-cell.o { background: #f0f6ff; border-color: #4a7ed4; }
+  .swot-cell.t { background: #fff8ed; border-color: var(--gold); }
+
+  /* Print stílusok — Ctrl+P / Cmd+P → PDF-mentés */
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+  @media print {
+    body { background: white; }
+    .page {
+      box-shadow: none;
+      border-radius: 0;
+      padding: 0;
+      margin: 0;
+      max-width: 100%;
+    }
+    h2 { page-break-before: auto; page-break-after: avoid; }
+    h3, h4 { page-break-after: avoid; }
+    table, .callout, .cards, .grid-2, .swot { page-break-inside: avoid; }
+    tr { page-break-inside: avoid; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="no-print" style="background: var(--surface-alt); border: 1px dashed var(--ink-faint); padding: 12px 16px; border-radius: 10px; margin-bottom: 24px; font-size: 13px; color: var(--ink-muted);">
+    📄 <strong>PDF-be mentéshez</strong>: nyomd a <kbd>Ctrl + P</kbd> (Mac: <kbd>⌘ + P</kbd>) gombot, és a Cél / Destination mezőnél válaszd a <em>„Mentés PDF-ként"</em>-et. Az A4-es nyomtatási stílus már be van állítva.
+  </div>
+
+  <header>
+    <span class="badge">Üzleti terv</span>
+    <h1 style="margin-top: 10px;">Kinti — magyar nyelvű életvezetési platform a diaszpórának</h1>
+    <p class="meta">
+      <span><strong>Időszak:</strong> 2026–2029 (3-éves stratégia)</span>
+      <span><strong>Üzemeltető:</strong> Petor Péter (HU)</span>
+      <span><strong>Domain:</strong> kinti.app</span>
+      <span><strong>Első piac:</strong> Svájc</span>
+    </p>
+    <div class="lead">
+      <strong>Mi a kinti?</strong> Egy fiók-mentes, GDPR-tiszta, AI-asszisztált PWA + TWA (Android) + Chrome extension platform, amely az EU-ban élő ~500 ezer magyar diaszpóra számára nyújt nyelv-anyanyelvű szakember-katalógust, közösségi funkciókat és helyspecifikus életvezetési eszközöket (bér-, lakhatás-, vám-, árfolyam-kalkulátorok stb.). Első piac Svájc (28 ezer magyar), skálázható DE/AT-ra ugyanazon a kódbázison.
+    </div>
+  </header>
+
+  <!-- ───────── 1. EXECUTIVE SUMMARY ───────── -->
+  <h2>1. Vezetői összefoglaló</h2>
+
+  <div class="cards">
+    <div class="card">
+      <div class="kpi">28 000</div>
+      <div class="label">magyar Svájcban (TAM)</div>
+    </div>
+    <div class="card">
+      <div class="kpi">500 000+</div>
+      <div class="label">magyar EU-szerte (5-éves cél)</div>
+    </div>
+    <div class="card">
+      <div class="kpi">~20</div>
+      <div class="label">modul / kalkulátor élesben</div>
+    </div>
+    <div class="card">
+      <div class="kpi">€ 0</div>
+      <div class="label">felhasználói díj — örökre</div>
+    </div>
+  </div>
+
+  <h3>1.1 Pozícionálás</h3>
+  <p>
+    A kinti <strong>nem</strong> Facebook-csoport, nem Google Maps-helyettesítő, és nem hagyományos hirdetőtábla. <strong>Magyar nyelvű, helyspecifikus mikro-szolgáltatások</strong> integrált platformja: egy app, amelyben a frissen érkezett magyar egy hét alatt elintézheti, amit különben 10 különböző helyen kéne (Krankenkasse-választás, bankszámla, ügyintézés, lakhatás-kereső, magyar szakember).
+  </p>
+
+  <h3>1.2 Versenyelőny</h3>
+  <ul>
+    <li><strong>Nyelvi mélység</strong>: nem fordítás, hanem magyar nyelvű kontextus (svájci szakkifejezések AI-magyarázattal).</li>
+    <li><strong>Fiók-mentes flow</strong>: a beküldés súrlódásmentes, viral coefficient magas.</li>
+    <li><strong>Compliance-first</strong>: GDPR, revFADP, DSA, EU AI Act — minden megfeleltetve. Egy esetleges nagy versenytárs (Meta, Google) ezt nem fogja olcsón replikálni.</li>
+    <li><strong>AI-natív</strong>: Cloudflare Workers AI EU-edge szervereken, training nélkül, nincs GDPR-rizikó.</li>
+    <li><strong>Edge-architektúra</strong>: ~$0–30/hó fix költség, skálázható 1k → 100k user-re refaktor nélkül.</li>
+  </ul>
+
+  <h3>1.3 Kérés a tőkétől</h3>
+  <p>A projekt <strong>bootstrap-mentes</strong>: a meglévő platform élesben van, költség elhanyagolható (Cloudflare free tier), és a fejlesztő-idő egy operatív 1 FTE-vel fedezhető. Külső tőkebevonás <strong>csak a 12+ hónapos DACH-skálázás után</strong> opcionális (marketingre, nem fejlesztésre).</p>
+
+  <!-- ───────── 2. PROBLÉMA & MEGOLDÁS ───────── -->
+  <h2>2. Probléma és megoldás</h2>
+
+  <h3>2.1 Probléma</h3>
+  <p>A kintis magyar diaszpóra (különösen az első 3 év) <strong>három fő nehézséggel</strong> küzd:</p>
+  <ol>
+    <li><strong>Nyelvi-szakmai szakadék</strong>: a Krankenkasse-választás, bér-bonyolítás, Steuererklärung, Aufenthaltsbewilligung-kérelem mind német/francia nyelven, magyar fordítás nélkül.</li>
+    <li><strong>Szétszórt információ</strong>: Facebook-csoportok (zaj + spam), magyar konzulátus hírei (esetenkénti), egyéni blogok (elavult).</li>
+    <li><strong>Magyar szakember keresése</strong>: nehéz megtalálni a magyar nyelvű fogorvost, autószerelőt, ügyvédet — Google ott nem segít.</li>
+  </ol>
+
+  <h3>2.2 Megoldás</h3>
+  <p>A kinti egy összevont mobil-első <strong>nyelv-anyanyelvű életvezetési hub</strong>:</p>
+
+  <div class="grid-2">
+    <div>
+      <h4>Szakember-katalógus</h4>
+      <ul>
+        <li>Vállalkozói profilok (admin-moderálva)</li>
+        <li>Vélemények ✓ Hiteles badge</li>
+        <li>Radius keresés geolokáció-alapon</li>
+        <li>Természetes nyelvű AI-kereső</li>
+      </ul>
+      <h4>Közösségi modulok</h4>
+      <ul>
+        <li>Hirdetőtábla (albérlet, állás, eladó)</li>
+        <li>Események (bál, piknik, irodalmi est)</li>
+        <li>Spontán találkozók (24h flash)</li>
+        <li>Hofladen-térkép, akció-térkép</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Életvezetési eszközök</h4>
+      <ul>
+        <li>Bérkalkulátor + Ajánlataim összehasonlító</li>
+        <li>Lakásbérlés rejtett-költség becslő</li>
+        <li>Vám- + gyorshajtás-kalkulátor</li>
+        <li>Árfolyam push-riasztó (CHF/HUF)</li>
+        <li>Tömegközlekedés-kalauz</li>
+        <li>Szolgáltató-váltó (Krankenkasse, áram, internet)</li>
+        <li>Ügyintézés-varázsló + Engedély-varázsló</li>
+        <li>Bér-Iránytű (közösségi statisztika)</li>
+      </ul>
+      <h4>AI-funkciók</h4>
+      <ul>
+        <li>Vélemény-összegzés</li>
+        <li>Természetes nyelvű kereső</li>
+        <li>Vállalkozói leírás-asszisztens</li>
+        <li>Német szó-szótár tooltip</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ───────── 3. TERMÉK ───────── -->
+  <h2>3. Termék-architektúra</h2>
+
+  <h3>3.1 Hármas elosztó-platform</h3>
+  <table>
+    <thead>
+      <tr><th>Csatorna</th><th>Mit ad</th><th>Státusz</th><th>Mikorra</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>PWA</strong> (kinti.app)</td>
+        <td>Mobile-first webapp, Add to Home Screen, offline mód, push-értesítések</td>
+        <td>✅ Élesben</td>
+        <td>2026 Q1</td>
+      </tr>
+      <tr>
+        <td><strong>TWA</strong> (Android Play Store)</td>
+        <td>Trusted Web Activity csomag = ugyanaz a PWA + natív launcher, Play Store-elérés</td>
+        <td>🟡 Tervezett</td>
+        <td>2026 Q2</td>
+      </tr>
+      <tr>
+        <td><strong>Chrome Extension</strong></td>
+        <td>Quick-search a böngészőből: „kinti, ki a magyar fodrász Zürichben?" — közvetlen átlinkelés app-ba</td>
+        <td>🟡 Tervezett</td>
+        <td>2026 Q3</td>
+      </tr>
+      <tr>
+        <td>iOS — natív app</td>
+        <td>PWA Safari-ban már működik (Add to Home). Külön store-jelenlét NEM tervezett (Apple-díjak miatt).</td>
+        <td>⛔ Kihagyva</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 Tech-stack</h3>
+  <p><span class="tag">Next.js 14</span><span class="tag">Cloudflare Pages</span><span class="tag">D1 SQLite</span><span class="tag">R2 storage</span><span class="tag">Workers AI</span><span class="tag">Clerk (admin)</span><span class="tag">Resend (email)</span><span class="tag">Turnstile</span><span class="tag">Web Push</span></p>
+  <p>Edge-natív, EU-szerverek (Cloudflare európai datacenterei), GDPR-tiszta. A TWA + Chrome Extension a meglévő PWA-t csomagolja, <strong>nincs külön kódbázis</strong>.</p>
+
+  <h3>3.3 Compliance-stack</h3>
+  <ul>
+    <li><strong>GDPR + revFADP/nDSG</strong> (svájci adatvédelem 2023+)</li>
+    <li><strong>EU Digital Services Act (DSA)</strong> — Art. 16 notice-and-takedown, Art. 17 fellebbezés, Art. 21 ODR</li>
+    <li><strong>EU AI Act</strong> (2024-26) — AI-generált tartalom jelölése (✨ ikon + szöveges badge)</li>
+    <li>ASZF + Adatkezelési tájékoztató: magyar jogválasztás, magyar bíróság</li>
+    <li>Két körös biztonsági audit (XSS, IDOR, rate-limit bypass) — befoltozva</li>
+    <li>Admin kézi moderáció + AI text/image szűrés + tiltólista (ban-rendszer)</li>
+  </ul>
+
+  <!-- ───────── 4. PIAC ───────── -->
+  <h2>4. Piac- és célközönség-elemzés</h2>
+
+  <h3>4.1 TAM / SAM / SOM</h3>
+  <table>
+    <thead>
+      <tr><th>Régió</th><th class="num">Magyar diaszpóra</th><th class="num">Magyar vállalkozó (becsl.)</th><th>Megjegyzés</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>🇨🇭 Svájc <span class="badge">SOM</span></td><td class="num">~28 000</td><td class="num">~500</td><td>Első piac, fizetőképes (medián bér ~85k CHF), tech-affin</td></tr>
+      <tr><td>🇩🇪 Németország <span class="badge accent">SAM</span></td><td class="num">~250 000</td><td class="num">~5 000</td><td>Méret 9× CH, marketing-nehéz</td></tr>
+      <tr><td>🇦🇹 Ausztria</td><td class="num">~70 000</td><td class="num">~1 500</td><td>Hasonló kultúra, könnyű DACH-cross-sell</td></tr>
+      <tr><td>🇬🇧 UK</td><td class="num">~90 000</td><td class="num">~2 000</td><td>Brexit-utáni instabilitás</td></tr>
+      <tr><td>🇳🇱 Hollandia</td><td class="num">~25 000</td><td class="num">~600</td><td>Magas-jövedelmű, kis méret</td></tr>
+      <tr><td>🇸🇪 🇩🇰 🇳🇴 Skandinávia</td><td class="num">~40 000</td><td class="num">~800</td><td>3+ év múlva</td></tr>
+      <tr><td><strong>🇪🇺 EU-TAM</strong></td><td class="num"><strong>~500 000+</strong></td><td class="num"><strong>~10 000</strong></td><td>+ leszármazottak, magyar-tanulók</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 Felhasználói perszonák</h3>
+  <div class="grid-2">
+    <div class="card">
+      <strong>1. Frissen érkezett (0–3 év)</strong> · ~30%<br>
+      <span style="font-size: 12.5px; color: var(--ink-muted);">Friss munkavállaló, kiküldetett, családtag. Min. német, max. szótár. Bér- + lakhatás-kalkulátor, ügyintézés-varázsló, magyar szakember alapvető szükséglet.</span>
+    </div>
+    <div class="card">
+      <strong>2. Beilleszkedett (3–8 év)</strong> · ~40%<br>
+      <span style="font-size: 12.5px; color: var(--ink-muted);">Letelepedett, gyerek születik. Magyar pediáter, magyar bébiszitter, magyar fogorvos. Push-értesítések (events, akciók). Közösségi belépő.</span>
+    </div>
+    <div class="card">
+      <strong>3. Veterán (8+ év)</strong> · ~25%<br>
+      <span style="font-size: 12.5px; color: var(--ink-muted);">Einbürgerung-szimulátor, ingatlan, befektetés. Kevesebb mindennapi szükséglet, de magas LTV (értékes véleményekkel hozzájárul).</span>
+    </div>
+    <div class="card">
+      <strong>4. Vállalkozó</strong> · ~5%<br>
+      <span style="font-size: 12.5px; color: var(--ink-muted);">A platformon ő hirdet, ő kap statisztikát. Bevétel-csatorna (Kiemelt csomag jövőben). Nyelv-anyanyelvű ügyfél-keresés.</span>
+    </div>
+  </div>
+
+  <!-- ───────── 5. BEVÉTEL-MODELL ───────── -->
+  <h2>5. Bevétel-modell (multi-stream)</h2>
+
+  <p>A platform <strong>felhasználói oldalon mindig ingyenes</strong> marad — ez stratégiai döntés a viral coefficient maximalizálására. A bevétel <strong>5 streamből</strong> jön, opcionálisan aktivált csomagokkal.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Stream</th>
+        <th>Mit ad</th>
+        <th class="num">ARPU/év</th>
+        <th>Aktiválás</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Vállalkozói „Kiemelt"</strong> csomag</td>
+        <td>Lista teteje, custom badge, statisztika+, AI-leírás-csiszolás priorizálva, e-mail-támogatás</td>
+        <td class="num">29 CHF/hó × 10 = 348 CHF</td>
+        <td>Y2 Q1</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Affiliate / Referral</strong></td>
+        <td>Wise, Revolut, Neon (bankváltás), Krankenkasse-vásárcsoportok, Salt/Sunrise (telco-váltás)</td>
+        <td class="num">~25 CHF / signup</td>
+        <td>Y1 Q2</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Sponsored content</strong></td>
+        <td>Magyar bormárkák, magyar étterem-csomagok, kulturális események. Bannerek MINDIG jelölve.</td>
+        <td class="num">200–1000 CHF / kampány</td>
+        <td>Y2 Q2</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>B2B SaaS licenc</strong></td>
+        <td>A teljes platform-stack licenszelése más diaszpóráknak (lengyel, román, ukrán nyelvi minimal-refactor)</td>
+        <td class="num">~10–50k CHF / licenc</td>
+        <td>Y3</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Anonim adat-szolgáltatás</strong></td>
+        <td>Bér-Iránytű aggregált statisztika értékesítése HR-cégeknek, médiáknak (GDPR-tisztán)</td>
+        <td class="num">~5–20k CHF / kérdés</td>
+        <td>Y2 Q4</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>📌 Mit NEM csinálunk:</strong> Nem futtatunk display-hirdetést (Google AdSense), nem adunk el felhasználói adatot, nem építünk paywall-t alapfunkcióra. A „Felhasználó az ügyfél, vállalkozó a fizető" modell az LTV alapja.
+  </div>
+
+  <!-- ───────── 6. GO-TO-MARKET ───────── -->
+  <h2>6. Go-to-market stratégia</h2>
+
+  <h3>Fázis 1 — Svájci bevezetés (2026 Q1–Q2, 0–6 hónap)</h3>
+  <p><strong>Cél:</strong> 500 napi aktív user (DAU), 100 vállalkozói profil, 30 vélemény.</p>
+  <ul>
+    <li><strong>Magyar FB-csoportok</strong> (Svájci Magyarok, Magyar Mama Svájcban, ZH-i Magyarok) — szervezetes posztok, „kinti.app/landing.html"</li>
+    <li><strong>Magyar konzulátus</strong> + magyar templom Zürichben — flyer-jelenlét</li>
+    <li><strong>Mikro-influencer</strong>: 5-10 svájci magyar YouTuber / Instagrammer organikus post (10k-50k követő)</li>
+    <li><strong>Hivatkozási hálózat</strong>: a meglévő ~20 magyar vállalkozó kínáljon kintit a vendégeinek</li>
+    <li><strong>SEO</strong>: „magyar [szakma] Svájcban" Google-kulcsszavakra</li>
+  </ul>
+  <p><strong>Költség:</strong> ~2 000 CHF (flyer-print, esetleg 1-2 promo-poszt)</p>
+
+  <h3>Fázis 2 — Svájci skálázás + Android app (2026 Q3–Q4, 6–12 hónap)</h3>
+  <p><strong>Cél:</strong> 3 000 DAU, 500 vállalkozói profil, 200 vélemény, TWA-launch Play Store-ban.</p>
+  <ul>
+    <li><strong>TWA Android app</strong> Play Store-ban (~$25 egyszeri reg.)</li>
+    <li><strong>Chrome Extension</strong> Quick-search funkcióval (Chrome Web Store $5 reg.)</li>
+    <li>Első <strong>affiliate-partnerségek</strong> (Wise, Revolut, Salt)</li>
+    <li>Kis fizetős <strong>Meta/Google Ads</strong> kampány (1 000 CHF/hó)</li>
+    <li>PR: magyar média (Magyar Nemzet, Origo) elismerő cikk</li>
+  </ul>
+  <p><strong>Költség:</strong> ~10 000 CHF (Ads + content)</p>
+
+  <h3>Fázis 3 — DACH-bővítés (2027 Q1–Q4, 12–24 hónap)</h3>
+  <p><strong>Cél:</strong> 10 000 DAU (CH + DE + AT együtt), 2 000 vállalkozói profil, „Kiemelt" csomag bevezetése.</p>
+  <ul>
+    <li>DE / AT-specifikus kalkulátorok (német Krankenkasse, osztrák ÖGK)</li>
+    <li>Berlin, München, Bécs, Graz <strong>helyi micro-influencer</strong>-kampány</li>
+    <li>„Kiemelt" csomag bevezetése (29 CHF/hó), első 100 vállalkozónál 3 hó ingyen</li>
+    <li>Cégalapítás (kft. vagy Stiftung) <strong>Magyarországon vagy Svájcban</strong> (jogi védelem + adózás)</li>
+  </ul>
+  <p><strong>Költség:</strong> ~30 000 CHF (Ads, content, jog, cégalapítás)</p>
+
+  <h3>Fázis 4 — EU-szerte (2028+, 24+ hónap)</h3>
+  <p>UK, Hollandia, Skandinávia. <strong>B2B SaaS</strong>-licenszelés más diaszpóráknak (Lengyel, Román, Ukrán). Exit-opció vagy fokozatos skálázás.</p>
+
+  <!-- ───────── 7. PÉNZÜGYI TERV ───────── -->
+  <h2>7. 3-éves pénzügyi terv</h2>
+
+  <h3>7.1 Költség-oldal (CAPEX + OPEX)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Tétel</th>
+        <th class="num">Y1 (2026)</th>
+        <th class="num">Y2 (2027)</th>
+        <th class="num">Y3 (2028)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Cloudflare (Pages, D1, R2, Workers AI)</td><td class="num">~ €0–200</td><td class="num">~ €800</td><td class="num">~ €2 500</td></tr>
+      <tr><td>Resend email</td><td class="num">~ €120</td><td class="num">~ €400</td><td class="num">~ €1 200</td></tr>
+      <tr><td>Domain + SSL (kinti.app + DE/AT)</td><td class="num">~ €60</td><td class="num">~ €120</td><td class="num">~ €180</td></tr>
+      <tr><td>Google Play (egyszeri) + Chrome Web Store</td><td class="num">~ €30</td><td class="num">—</td><td class="num">—</td></tr>
+      <tr><td>Cyberbiztosítás</td><td class="num">~ €500</td><td class="num">~ €800</td><td class="num">~ €1 200</td></tr>
+      <tr><td>Jogi + könyvelési</td><td class="num">~ €1 500</td><td class="num">~ €3 500</td><td class="num">~ €6 000</td></tr>
+      <tr><td>Marketing (Ads + content + flyer)</td><td class="num">~ €2 000</td><td class="num">~ €15 000</td><td class="num">~ €40 000</td></tr>
+      <tr><td>Cégalapítás + adminisztráció</td><td class="num">~ €1 000</td><td class="num">~ €2 000</td><td class="num">~ €3 000</td></tr>
+      <tr><td>Külső contractor (front-end / DE-tartalom)</td><td class="num">0</td><td class="num">~ €15 000</td><td class="num">~ €30 000</td></tr>
+      <tr><td>Saját idő (értékelve €40/óra × 800 óra/év)</td><td class="num">~ €32 000</td><td class="num">~ €32 000</td><td class="num">~ €32 000</td></tr>
+      <tr style="background: var(--surface-alt); font-weight: bold;">
+        <td>ÖSSZESEN (saját idő nélkül)</td>
+        <td class="num">~ €5 200</td>
+        <td class="num">~ €37 600</td>
+        <td class="num">~ €84 000</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>7.2 Bevétel-oldal (konzervatív)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Stream</th>
+        <th class="num">Y1 (2026)</th>
+        <th class="num">Y2 (2027)</th>
+        <th class="num">Y3 (2028)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Vállalkozói Kiemelt (29 CHF/hó × N db)</td>
+        <td class="num">€0 (nincs aktív)</td>
+        <td class="num">~ €5 200 <span class="tag">15 db</span></td>
+        <td class="num">~ €33 600 <span class="tag">100 db</span></td>
+      </tr>
+      <tr>
+        <td>Affiliate (Wise, Revolut, telco, Krankenkasse)</td>
+        <td class="num">~ €600 <span class="tag">~25 signup</span></td>
+        <td class="num">~ €7 500 <span class="tag">~300</span></td>
+        <td class="num">~ €30 000 <span class="tag">~1200</span></td>
+      </tr>
+      <tr>
+        <td>Sponsored content</td>
+        <td class="num">€0</td>
+        <td class="num">~ €4 000</td>
+        <td class="num">~ €15 000</td>
+      </tr>
+      <tr>
+        <td>B2B SaaS licenc</td>
+        <td class="num">€0</td>
+        <td class="num">€0</td>
+        <td class="num">~ €20 000 <span class="tag">1 partner</span></td>
+      </tr>
+      <tr>
+        <td>Adat-szolgáltatás (Iránytű)</td>
+        <td class="num">€0</td>
+        <td class="num">~ €3 000</td>
+        <td class="num">~ €12 000</td>
+      </tr>
+      <tr style="background: var(--surface-alt); font-weight: bold;">
+        <td>ÖSSZES bevétel</td>
+        <td class="num">~ €600</td>
+        <td class="num">~ €19 700</td>
+        <td class="num">~ €110 600</td>
+      </tr>
+      <tr style="background: #f0f7f1; font-weight: bold; color: var(--primary);">
+        <td>Net (bevétel − fix költség, saját idő nélkül)</td>
+        <td class="num">−€4 600</td>
+        <td class="num">−€17 900</td>
+        <td class="num">+€26 600</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>⚠ Fontos olvasat:</strong> Y1–Y2 NEGATÍV a saját idő nélküli kasszán is. Ez normál szoftver-startup-pálya. <strong>Megtérülés Y3 közepén</strong>, ha a DACH-skálázás sikerül. Saját idővel együtt nézve a Y3 net még negatív, de a vagyonérték (cég-érték = bevétel × multiplier) meghaladja a €100k-t.
+  </div>
+
+  <h3>7.3 Optimista forgatókönyv</h3>
+  <p>Ha a Fázis 2 (TWA + Chrome Extension) <strong>viral coefficient &gt; 1</strong>-et termel (egy user 1+ új usert hoz), és a magyar konzulátus / iskolák hivatalosan ajánlják:</p>
+  <ul>
+    <li>Y2 DAU: 8 000 (helyett 3 000)</li>
+    <li>Y3 DAU: 20 000 (helyett 10 000)</li>
+    <li>Y3 bevétel: ~ €250 000 (kb. 2.3×)</li>
+  </ul>
+
+  <!-- ───────── 8. VERSENYTÁRSAK ───────── -->
+  <h2>8. Versenytárs-elemzés</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Versenytárs</th>
+        <th>Mit ad</th>
+        <th>Gyenge pont</th>
+        <th>Kinti előny</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Facebook-csoportok</strong> (Svájci Magyarok, MKKE stb.)</td>
+        <td>Ingyenes közösség, ismert</td>
+        <td>Zaj, spam, nincs struktúra, nincs eszköz</td>
+        <td>Struktúrált adat, eszközök, fiók-mentes UX</td>
+      </tr>
+      <tr>
+        <td><strong>Google Maps</strong></td>
+        <td>Globális, általános</td>
+        <td>Nem nyelv-specifikus, nincs magyar kontextus</td>
+        <td>Magyar fókusz + nyelv-validáció (✓ Hiteles)</td>
+      </tr>
+      <tr>
+        <td><strong>Local.ch / search.ch</strong></td>
+        <td>Svájci általános katalógus</td>
+        <td>Németül, nincs közösségi flow</td>
+        <td>Magyar interface, közösségi modulok</td>
+      </tr>
+      <tr>
+        <td><strong>Helvetia Hungarian Society</strong></td>
+        <td>Off-line közösség, eseményekkel</td>
+        <td>Nincs digitális platform, korlátozott elérés</td>
+        <td>Komplementer — együttműködési lehetőség</td>
+      </tr>
+      <tr>
+        <td><strong>Magyar konzulátus weboldal</strong></td>
+        <td>Hivatalos információ</td>
+        <td>Statikus, nincs eszköz, nincs közösségi flow</td>
+        <td>Élő közösség + eszközök</td>
+      </tr>
+      <tr>
+        <td><strong>BettermentDE.de</strong> (német diaszpóra-tool)</td>
+        <td>Bér + adó kalkulátorok</td>
+        <td>Nincs magyar, nincs Svájc</td>
+        <td>Direkt fókusz a kintieken</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>8.1 Moat (védőárok)</h3>
+  <ul>
+    <li><strong>Compliance-moat</strong>: GDPR + DSA + revFADP + AI Act megfeleltetés = 6+ hónap fejlesztési előny.</li>
+    <li><strong>Nyelvi-kulturális moat</strong>: nehéz egy német vagy angol cégnek hirtelen magyar nyelvű kontextust építeni.</li>
+    <li><strong>Network effect</strong>: vélemények + szakember-katalógus self-reinforcing.</li>
+    <li><strong>Content moat</strong>: ~20 modul, mind magyarul, mind svájci kontextusban — egy versenytársnak 6-12 hónap reprodukálni.</li>
+  </ul>
+
+  <!-- ───────── 9. SWOT ───────── -->
+  <h2>9. SWOT-mátrix</h2>
+
+  <div class="swot">
+    <div class="swot-cell s">
+      <h4>S — Strengths (erősségek)</h4>
+      <ul>
+        <li>Élesben, működő platform</li>
+        <li>Modern edge-stack, alacsony fix költség</li>
+        <li>~20 modul, AI-integráció</li>
+        <li>Compliance-first (jogi audit kész)</li>
+        <li>Account-mentes UX → magas viral coefficient</li>
+      </ul>
+    </div>
+    <div class="swot-cell w">
+      <h4>W — Weaknesses (gyengeségek)</h4>
+      <ul>
+        <li>1 fő üzemeltető (single point of failure)</li>
+        <li>Email-mentes flow → nehéz remarketing</li>
+        <li>Magyar nyelvű piac kicsi (~500k EU-szerte)</li>
+        <li>Cold start (még kevés user, kevés vélemény)</li>
+      </ul>
+    </div>
+    <div class="swot-cell o">
+      <h4>O — Opportunities (lehetőségek)</h4>
+      <ul>
+        <li>Diaszpóra-szolgáltatás-hiány</li>
+        <li>B2B SaaS más nyelvi csoportoknak (PL/RO/UA)</li>
+        <li>AI-funkciók marketing-előny</li>
+        <li>Magyar konzulátus / iskolák partneri lehetőség</li>
+        <li>EU AI Act → kompetitív előny a compliance-on</li>
+      </ul>
+    </div>
+    <div class="swot-cell t">
+      <h4>T — Threats (veszélyek)</h4>
+      <ul>
+        <li>FB-csoport admin saját app-ot épít</li>
+        <li>Cloudflare/Resend árváltozás</li>
+        <li>EU szabályozás-változás (DSA Art 28)</li>
+        <li>Bevándorlási politika változása (csökkenő diaszpóra)</li>
+        <li>Magyar gazdasági visszafordulás (visszavándorlás)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ───────── 10. KPI ───────── -->
+  <h2>10. Mérőszámok (KPI-k)</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Kategória</th>
+        <th>Metrika</th>
+        <th class="num">Y1 cél</th>
+        <th class="num">Y2 cél</th>
+        <th class="num">Y3 cél</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Növekedés</td><td>Daily Active Users (DAU)</td><td class="num">500</td><td class="num">3 000</td><td class="num">10 000</td></tr>
+      <tr><td>Növekedés</td><td>Vállalkozói profilok</td><td class="num">100</td><td class="num">500</td><td class="num">2 000</td></tr>
+      <tr><td>Növekedés</td><td>Vélemények</td><td class="num">30</td><td class="num">300</td><td class="num">2 500</td></tr>
+      <tr><td>Engagement</td><td>Átlagos session-hossz</td><td class="num">4 perc</td><td class="num">6 perc</td><td class="num">8 perc</td></tr>
+      <tr><td>Engagement</td><td>Push-feliratkozók (Kinti Radar)</td><td class="num">100</td><td class="num">1 200</td><td class="num">4 500</td></tr>
+      <tr><td>Bevétel</td><td>MRR (Monthly Recurring Revenue)</td><td class="num">€50</td><td class="num">€1 600</td><td class="num">€9 200</td></tr>
+      <tr><td>Bevétel</td><td>Affiliate-konverziók</td><td class="num">25</td><td class="num">300</td><td class="num">1 200</td></tr>
+      <tr><td>Minőség</td><td>NPS (Net Promoter Score)</td><td class="num">>30</td><td class="num">>50</td><td class="num">>60</td></tr>
+      <tr><td>Minőség</td><td>Admin-moderation queue (átlagos várakozás)</td><td class="num">&lt;24h</td><td class="num">&lt;24h</td><td class="num">&lt;12h</td></tr>
+      <tr><td>Compliance</td><td>DSA-bejelentések / hónap (kezelt)</td><td class="num">&lt;5</td><td class="num">&lt;15</td><td class="num">&lt;30</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ───────── 11. CSAPAT ───────── -->
+  <h2>11. Csapat-roadmap</h2>
+
+  <table>
+    <thead>
+      <tr><th>Időszak</th><th>Csapat</th><th>Indoklás</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Most → 12 hónap</strong></td>
+        <td>1 FTE (Peter, full-stack + admin)</td>
+        <td>Edge-stack alacsony karbantartás-igényű, AI a content-asszisztens</td>
+      </tr>
+      <tr>
+        <td><strong>12–18 hónap</strong></td>
+        <td>+1 freelance front-end / content (DE-specifikus)</td>
+        <td>DACH-tartalom, TWA-marketing, Chrome Extension build</td>
+      </tr>
+      <tr>
+        <td><strong>18–24 hónap</strong></td>
+        <td>+1 community manager (DACH)</td>
+        <td>Moderation queue terhelt, vállalkozói outreach, affiliate-partnerségek</td>
+      </tr>
+      <tr>
+        <td><strong>24+ hónap</strong></td>
+        <td>+ 1 sales (B2B SaaS), opcionális</td>
+        <td>Más diaszpóra-licencek értékesítése</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ───────── 12. ROADMAP ───────── -->
+  <h2>12. Termékfejlesztési roadmap</h2>
+
+  <h3>Q1–Q2 2026 (most–6 hónap)</h3>
+  <ul>
+    <li>✅ PWA élesben, 20+ modul</li>
+    <li>🟡 TWA Android-csomagolás + Play Store-listázás</li>
+    <li>🟡 Email + push-onboarding flow</li>
+    <li>🟡 Magyar konzulátus / FB-csoport outreach</li>
+  </ul>
+
+  <h3>Q3–Q4 2026 (6–12 hónap)</h3>
+  <ul>
+    <li>Chrome Extension (quick-search)</li>
+    <li>DE-modulok adaptálása (Krankenkasse-DE, ÖGK-AT)</li>
+    <li>Első affiliate-partnerségek (Wise, Revolut)</li>
+    <li>Sponsored content infrastruktúra</li>
+  </ul>
+
+  <h3>2027 (12–24 hónap)</h3>
+  <ul>
+    <li>„Kiemelt" csomag aktiválás (29 CHF/hó)</li>
+    <li>DACH-skálázás (Berlin, München, Bécs)</li>
+    <li>B2B SaaS-pilot egy másik diaszpórával (LV/PL)</li>
+    <li>Cég-alapítás (Magyar Kft. vagy Sárl)</li>
+  </ul>
+
+  <h3>2028+ (24+ hónap)</h3>
+  <ul>
+    <li>EU-szerte (UK, NL, SE)</li>
+    <li>Data-szolgáltatás kommercializálása</li>
+    <li>Exit-opciók (B2B-akvizíció vagy fokozatos skálázás)</li>
+  </ul>
+
+  <!-- ───────── 13. KOCKÁZAT ───────── -->
+  <h2>13. Kockázat-mátrix és mitigáció</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Kockázat</th>
+        <th>Valószínűség</th>
+        <th>Hatás</th>
+        <th>Mitigáció</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Cold-start: nem érünk el kritikus tömeget</td>
+        <td>Közepes</td>
+        <td>Magas</td>
+        <td>FB-csoport partnerség, konzulátus-ajánlás, mikro-influencer</td>
+      </tr>
+      <tr>
+        <td>FB / Google saját magyar app-ot épít</td>
+        <td>Alacsony</td>
+        <td>Magas</td>
+        <td>Compliance-moat + content-moat, niche-fókusz</td>
+      </tr>
+      <tr>
+        <td>Cloudflare árváltozás (3-5×)</td>
+        <td>Alacsony</td>
+        <td>Közepes</td>
+        <td>Multi-cloud terv (R2 → Vercel/Netlify; D1 → Turso)</td>
+      </tr>
+      <tr>
+        <td>Adatvédelmi incidens (data breach)</td>
+        <td>Alacsony</td>
+        <td>Magas</td>
+        <td>Két körös security-audit kész, cyberbiztosítás, 72h-os GDPR-incidens-eljárás</td>
+      </tr>
+      <tr>
+        <td>Saját kiégés (1 FTE, magas mental load)</td>
+        <td>Közepes</td>
+        <td>Magas</td>
+        <td>Y2-től freelance-segítő, egyszerűsített moderation queue, AI-automatizálás</td>
+      </tr>
+      <tr>
+        <td>EU szabályozás-változás (DSA, AI Act)</td>
+        <td>Közepes</td>
+        <td>Közepes</td>
+        <td>Évi jogi-audit, ASZF + Adatvédelem frissítés</td>
+      </tr>
+      <tr>
+        <td>Magyar gazdaság javul → kintiek visszavándorolnak</td>
+        <td>Alacsony</td>
+        <td>Magas</td>
+        <td>Diverzifikáció: B2B SaaS más nyelvi csoportoknak</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ───────── 14. EXIT ───────── -->
+  <h2>14. Exit-stratégiák</h2>
+
+  <ol>
+    <li>
+      <strong>Lifestyle business</strong> (preferált 2027–2028) — Y3 után €100–300k/év net profit, 1 FTE + 2 freelance, nem skálázódik agresszíven. Stabil cashflow, alacsony stressz.
+    </li>
+    <li>
+      <strong>Stratégiai felvásárlás</strong> (2028+) — egy európai diaszpóra-platformnak (vagy magyar telekom-vállalatnak, vagy Migros/Coop loyalty-programjuknak). Becsült érték: 3–5× éves bevétel = €300k–€2M.
+    </li>
+    <li>
+      <strong>B2B SaaS-pivotálás</strong> (2028+) — a platform-stack-et más diaszpóráknak licenszelni (LV/PL/RO/UA). Bevétel-skála: €100k–€500k MRR potenciál.
+    </li>
+    <li>
+      <strong>VC-bevonás</strong> (kevésbé valószínű) — ha a Y2 DAU > 10 000, seed-round €200k–€500k valószínű. <em>De ez a fiók-mentes UX-tel ellentétes lenne (data-tracking-pressure).</em>
+    </li>
+  </ol>
+
+  <!-- ───────── 15. NEXT STEPS ───────── -->
+  <h2>15. Konkrét következő 90 nap</h2>
+
+  <table>
+    <thead>
+      <tr><th>Hét</th><th>Mit csinálunk</th><th>Output</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1–2</td><td>TWA Android-csomag setup (Bubblewrap CLI)</td><td>kinti.aab fájl Play Store-ra</td></tr>
+      <tr><td>3–4</td><td>Play Store-listázás, screenshot-asszet-készlet</td><td>App live a Play-en</td></tr>
+      <tr><td>5–6</td><td>FB-csoport beach-head outreach (5 nagy magyar csoport)</td><td>~500 user-targetelve</td></tr>
+      <tr><td>7–8</td><td>Magyar konzulátus + magyar templom Zürichben e-mail</td><td>Partnerségi felkérés</td></tr>
+      <tr><td>9–10</td><td>Mikro-influencer outreach (5 IG/YT magyar svájci)</td><td>2–3 organikus poszt</td></tr>
+      <tr><td>11–13</td><td>Wise + Revolut affiliate-program jelentkezés</td><td>Első bevétel-csatorna nyitva</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout ok">
+    <strong>📌 Stratégiai döntés:</strong> Az első 6 hónapban <strong>NE</strong> indítsunk fizetős marketing-et. A meglévő ~20 modul önmagában elég értékes → szervezetes terjedés mérése. Ha 1-3 hónap alatt nem érünk el 200+ DAU-t organikusan, akkor lépcsőzetes Ads-belépés.
+  </div>
+
+  <p class="footer-note">
+    Készítette: Kinti üzleti tervezés · 2026. május 31. · v1.0<br>
+    A számok és becslések szakirodalmi adatokra + saját piaci megfigyelésre épülnek. Üzleti döntés előtt szakmai due-diligence ajánlott.
+  </p>
+
+</div>
+</body>
+</html>

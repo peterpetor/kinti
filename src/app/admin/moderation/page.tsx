@@ -92,7 +92,7 @@ export default async function ModerationPage({
         </h1>
         <p className="text-[12.5px] text-ink-muted">
           Minden új vélemény, vállalkozás és esemény admin-jóváhagyásra vár.
-          Spontán találkozók, Hofladen-térkép és Akciók automatikusan élesednek.
+          Akciók automatikusan élesednek.
         </p>
       </header>
 

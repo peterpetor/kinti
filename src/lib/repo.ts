@@ -72,9 +72,7 @@ interface BusinessRow {
   gallery_keys: string | null;
   view_count: number | null;
   phone_click_count: number | null;
-  ai_review_summary: string | null;
-  ai_review_summary_at: string | null;
-  ai_review_summary_count: number | null;
+
   moderation_status: number | null;
   moderation_decision_at: string | null;
   moderation_decided_by: string | null;
@@ -148,9 +146,7 @@ function toBusiness(r: BusinessRow): Business {
     galleryKeys: jsonArray(r.gallery_keys),
     viewCount: r.view_count ?? 0,
     phoneClickCount: r.phone_click_count ?? 0,
-    aiReviewSummary: r.ai_review_summary,
-    aiReviewSummaryAt: r.ai_review_summary_at,
-    aiReviewSummaryCount: r.ai_review_summary_count ?? 0,
+
     moderationStatus: r.moderation_status ?? 0,
     moderationDecisionAt: r.moderation_decision_at,
     moderationDecidedBy: r.moderation_decided_by,
