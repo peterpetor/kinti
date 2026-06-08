@@ -12,9 +12,10 @@ export type IconName =
   | "share" | "bookmark" | "chevR" | "chevD" | "chevU" | "sliders" | "bell"
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "shoppingBag"
-  | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload";
+  | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock";
 
 const PATHS: Record<IconName, string[]> = {
+  lock: ["M6 10h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z", "M8 10V7a4 4 0 0 1 8 0v3"],
   search: ["M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14", "M16.5 16.5L21 21"],
   pin: ["M12 22s-7-7.5-7-13a7 7 0 0 1 14 0c0 5.5-7 13-7 13z", "M12 11.5a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5z"],
   list: ["M4 6h16", "M4 12h16", "M4 18h10"],
