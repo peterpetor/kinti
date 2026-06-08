@@ -8,6 +8,9 @@ import type { KintiEvent } from "@/lib/types";
 import { getTagEmoji } from "@/lib/tag-emoji";
 import { OwnPostBadge } from "@/components/own-post-badge";
 import { EventCalendar } from "@/components/event-calendar";
+import { AddToCalendar } from "@/components/add-to-calendar";
+import { ShareSheet } from "@/components/share-sheet";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import type { CalendarEvent } from "@/lib/calendar";
 
 export function CommunityView({

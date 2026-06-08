@@ -30,7 +30,7 @@ export function EmployerProfileForm({ employer }: { employer: Employer }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      const data = await res.json();
+      const data = await res.json() as any;
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a mentés során.");
       }

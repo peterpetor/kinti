@@ -44,7 +44,7 @@ export function ApplicationForm({ jobId, jobTitle }: Props) {
           message: form.message || null,
         }),
       });
-      const data = await res.json();
+      const data = await res.json() as any;
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a jelentkezés során.");
       }

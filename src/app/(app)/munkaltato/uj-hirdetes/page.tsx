@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Új álláshirdetés feladása — Munkáltató" };
 
 export default async function NewJobPage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   
   if (!userId) {
     redirect("/sign-in?redirect_url=/munkaltato/uj-hirdetes");

@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Profil szerkesztése — Munkáltató" };
 
 export default async function EmployerProfilePage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   
   if (!userId) {
     redirect("/sign-in?redirect_url=/munkaltato/profil");

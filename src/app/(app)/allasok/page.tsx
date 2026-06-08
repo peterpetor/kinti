@@ -73,7 +73,7 @@ export default async function JobsPage() {
                 
                 {job.salaryMin && job.salaryMax && (
                   <div className="mt-3 flex items-center gap-1.5 text-[13px] font-bold text-success bg-success/10 w-max px-2.5 py-1 rounded-[8px]">
-                    <Icon name="coins" size={14} />
+                    <Icon name="star" size={14} />
                     {job.salaryMin} - {job.salaryMax} {job.currency}
                   </div>
                 )}
@@ -85,7 +85,7 @@ export default async function JobsPage() {
                 <div className="mt-4 border-t border-line/60 pt-3 flex items-center justify-between text-[11px] font-bold text-ink-faint uppercase tracking-wide">
                   <span>Dátum: {new Date(job.createdAt).toLocaleDateString('hu-HU')}</span>
                   <span className="text-primary flex items-center gap-1">
-                    Részletek <Icon name="chevronRight" size={12} strokeWidth={3} />
+                    Részletek <Icon name="chevR" size={12} strokeWidth={3} />
                   </span>
                 </div>
               </Link>

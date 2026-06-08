@@ -38,7 +38,7 @@ export function JobPostForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
+      const data = await res.json() as any;
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a mentés során.");
       }

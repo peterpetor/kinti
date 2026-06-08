@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Munkáltatói Regisztráció" };
 
-export default async function EmployerRegPage() {
-  const { userId } = auth();
+export default async function EmployerRegistrationPage() {
+  const { userId } = await auth();
   
   if (!userId) {
     redirect("/sign-in?redirect_url=/munkaltato/regisztracio");

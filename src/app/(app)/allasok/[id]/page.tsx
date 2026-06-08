@@ -59,7 +59,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
 
         <div className="mt-5 flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-alt border border-line px-3 py-1.5 text-[12px] font-bold text-ink-muted">
-            <Icon name="mapPin" size={14} /> {job.location}
+            <Icon name="pin" size={14} /> {job.location}
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-alt border border-line px-3 py-1.5 text-[12px] font-bold text-ink-muted">
             <Icon name="clock" size={14} /> 
@@ -67,7 +67,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           </span>
           {job.salaryMin && job.salaryMax && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1.5 text-[12px] font-bold text-success">
-              <Icon name="coins" size={14} /> 
+              <Icon name="star" size={14} /> 
               {job.salaryMin} - {job.salaryMax} {job.currency}
             </span>
           )}
@@ -104,7 +104,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 mt-3 text-[13px] font-bold text-primary hover:underline"
               >
-                Weboldal megtekintése <Icon name="externalLink" size={12} strokeWidth={3} />
+                Weboldal megtekintése <Icon name="arrowRight" size={12} strokeWidth={3} />
               </a>
             )}
           </div>

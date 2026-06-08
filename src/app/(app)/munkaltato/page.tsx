@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Munkáltatói Irányítópult" };
 
 export default async function EmployerDashboardPage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   
   if (!userId) {
     // Ha nincs bejelentkezve, Clerk login oldalra irányítjuk (vagy sign-in urlre)
