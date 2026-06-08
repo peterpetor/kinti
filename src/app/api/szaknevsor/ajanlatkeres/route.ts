@@ -147,6 +147,14 @@ export async function POST(req: Request) {
 
     const sentCount = emailResults.filter((r) => r.status === "fulfilled").length;
 
+    // Analitika: lead_count növelése minden érintett cégnél (best-effort, no IP dedupe for leads)
+    const { incrementBusinessAnalytic } = await import("@/lib/repo");
+    await Promise.allSettled(
+      targets.map((biz) =>
+        incrementBusinessAnalytic(biz.id, "lead", null),
+      ),
+    );
+
     // Visszaigazolás a kérező felhasználónak
     try {
       await sendLeadConfirmEmail({

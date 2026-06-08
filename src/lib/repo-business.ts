@@ -114,12 +114,17 @@ export interface CreateBusinessFromSubmissionInput {
   lng: number | null; ownerUserId: string | null; manageToken: string;
 }
 
-export type BusinessAnalyticsKind = "view" | "phone";
+export type BusinessAnalyticsKind = "view" | "phone" | "lead";
 export interface BusinessAnalyticsSummary { total: number; last7Days: number; last30Days: number; }
 export interface BusinessAnalytics {
   views: BusinessAnalyticsSummary;
   phoneClicks: BusinessAnalyticsSummary;
-  daily: Array<{ day: string; views: number; phoneClicks: number }>;
+  leads: BusinessAnalyticsSummary;
+  daily: Array<{ day: string; views: number; phoneClicks: number; leads: number }>;
+  /** Competitor rank in same category+canton (1 = best rated). */
+  competitorRank: { rank: number; total: number; categoryLabel: string | null } | null;
+  /** Rating and review summary. */
+  reviewSummary: { rating: number; reviews: number };
 }
 
 // --- Queries: Categories -----------------------------------------------------
@@ -375,45 +380,73 @@ export async function incrementBusinessAnalytic(
       .bind(businessId, kind, ipHash, hourBucket).run();
     if ((dedupe.meta.changes ?? 0) === 0) return;
   }
-  const dailyCol = kind === "view" ? "view_count" : "phone_click_count";
+  const dailyCol = kind === "view" ? "view_count" : kind === "phone" ? "phone_click_count" : "lead_count";
   await db
     .prepare(`INSERT INTO business_analytics_daily (business_id,day,${dailyCol}) VALUES (?,?,1)
               ON CONFLICT(business_id,day) DO UPDATE SET ${dailyCol}=${dailyCol}+1`)
     .bind(businessId, day).run();
-  const totalCol = kind === "view" ? "view_count" : "phone_click_count";
+  const totalCol = kind === "view" ? "view_count" : kind === "phone" ? "phone_click_count" : "lead_count";
   await db.prepare(`UPDATE businesses SET ${totalCol}=${totalCol}+1 WHERE id=?`).bind(businessId).run();
 }
 
 export async function getBusinessAnalytics(businessId: string): Promise<BusinessAnalytics> {
   const db = getDB();
-  let totals: { view_count: number | null; phone_click_count: number | null } | null = null;
+
+  // 1. Totals + review summary
+  let totals: { view_count: number | null; phone_click_count: number | null; lead_count: number | null; rating: number; reviews: number; category_id: string | null; category_label: string | null; address: string | null } | null = null;
   try {
     totals = await db
-      .prepare("SELECT view_count, phone_click_count FROM businesses WHERE id = ?")
-      .bind(businessId).first<{ view_count: number | null; phone_click_count: number | null }>();
+      .prepare("SELECT view_count, phone_click_count, lead_count, rating, reviews, category_id, category_label, address FROM businesses WHERE id = ?")
+      .bind(businessId).first<{ view_count: number | null; phone_click_count: number | null; lead_count: number | null; rating: number; reviews: number; category_id: string | null; category_label: string | null; address: string | null }>();
   } catch { totals = null; }
-  let dailyRows: { day: string; views: number; phoneClicks: number }[] = [];
+
+  // 2. Daily rows (last 30 days)
+  let dailyRows: { day: string; views: number; phoneClicks: number; leads: number }[] = [];
   try {
     const res = await db
       .prepare(
-        `SELECT day,view_count AS views,phone_click_count AS phoneClicks
+        `SELECT day, view_count AS views, phone_click_count AS phoneClicks, lead_count AS leads
          FROM business_analytics_daily
          WHERE business_id=? AND day>=date('now','-30 days') ORDER BY day DESC`,
-      ).bind(businessId).all<{ day: string; views: number; phoneClicks: number }>();
+      ).bind(businessId).all<{ day: string; views: number; phoneClicks: number; leads: number }>();
     dailyRows = res.results;
   } catch { dailyRows = []; }
+
   const today = new Date();
   const minus = (n: number) => { const d = new Date(today); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10); };
   const d7 = minus(7); const d30 = minus(30);
-  let v7 = 0, v30 = 0, p7 = 0, p30 = 0;
+  let v7 = 0, v30 = 0, p7 = 0, p30 = 0, l7 = 0, l30 = 0;
   for (const r of dailyRows) {
-    if (r.day >= d30) { v30 += r.views ?? 0; p30 += r.phoneClicks ?? 0; }
-    if (r.day >= d7) { v7 += r.views ?? 0; p7 += r.phoneClicks ?? 0; }
+    if (r.day >= d30) { v30 += r.views ?? 0; p30 += r.phoneClicks ?? 0; l30 += r.leads ?? 0; }
+    if (r.day >= d7)  { v7  += r.views ?? 0; p7  += r.phoneClicks ?? 0; l7  += r.leads ?? 0; }
   }
+
+  // 3. Competitor rank (same category, approved businesses ordered by rating desc)
+  let competitorRank: BusinessAnalytics["competitorRank"] = null;
+  if (totals?.category_id) {
+    try {
+      const peers = await db
+        .prepare(
+          `SELECT id, rating FROM businesses
+           WHERE category_id=? AND moderation_status=1
+           ORDER BY rating DESC, reviews DESC`,
+        )
+        .bind(totals.category_id)
+        .all<{ id: string; rating: number }>();
+      const idx = peers.results.findIndex((r) => r.id === businessId);
+      if (idx !== -1) {
+        competitorRank = { rank: idx + 1, total: peers.results.length, categoryLabel: totals.category_label };
+      }
+    } catch { competitorRank = null; }
+  }
+
   return {
     views: { total: totals?.view_count ?? 0, last7Days: v7, last30Days: v30 },
     phoneClicks: { total: totals?.phone_click_count ?? 0, last7Days: p7, last30Days: p30 },
-    daily: dailyRows.map((r) => ({ day: r.day, views: r.views ?? 0, phoneClicks: r.phoneClicks ?? 0 })),
+    leads: { total: totals?.lead_count ?? 0, last7Days: l7, last30Days: l30 },
+    daily: dailyRows.map((r) => ({ day: r.day, views: r.views ?? 0, phoneClicks: r.phoneClicks ?? 0, leads: r.leads ?? 0 })),
+    competitorRank,
+    reviewSummary: { rating: totals?.rating ?? 0, reviews: totals?.reviews ?? 0 },
   };
 }
 

@@ -4,7 +4,7 @@ import { Icon, KintiLogo } from "@/components/ui";
 import { LogoUploader } from "@/components/views/logo-uploader";
 import { GalleryUploader } from "@/components/views/gallery-uploader";
 import { BusinessManageForm } from "@/components/views/business-manage-form";
-import { BusinessAnalyticsCard } from "@/components/views/business-analytics-card";
+import { BusinessAnalyticsDashboard } from "@/components/views/business-analytics-card";
 import {
   getBusinessAnalytics,
   getBusinessByManageToken,
@@ -56,7 +56,7 @@ export default async function BusinessManagePage({ params }: { params: { token: 
         (a Resend e-mailben kaptad).
       </div>
 
-      <BusinessAnalyticsCard stats={analytics} />
+      <BusinessAnalyticsDashboard stats={analytics} />
 
       <LogoUploader
         currentKey={business.logoKey}

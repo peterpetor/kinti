@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MyPostsManager } from "@/components/views/my-posts-manager";
+import { GamificationCard } from "@/components/views/gamification-card";
 import { Icon, KintiLogo } from "@/components/ui";
 
 export const runtime = "edge";
@@ -41,6 +42,8 @@ export default function MyPostsPage() {
         eltűnik. Másik eszközhöz: <strong className="text-ink">letöltés / import</strong> vagy{" "}
         <strong className="text-ink">email-küldés</strong>.
       </div>
+
+      <GamificationCard />
 
       <MyPostsManager turnstileSiteKey={turnstileSiteKey} />
     </div>
