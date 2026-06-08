@@ -141,3 +141,61 @@ export interface DashboardStats {
   /** 14 napos trendvonal a Sparkline-hoz. */
   trend: { date: string; views: number }[];
 }
+
+export interface Employer {
+  id: string;
+  ownerUserId: string;
+  companyName: string;
+  logoKey: string | null;
+  description: string | null;
+  website: string | null;
+  contactEmail: string;
+  billingEmail: string | null;
+  subscriptionTier: string;
+  stripeCustomerId: string | null;
+  moderationStatus: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Job {
+  id: string;
+  employerId: string;
+  title: string;
+  description: string;
+  location: string;
+  employmentType: string;
+  salaryMin: number | null;
+  salaryMax: number | null;
+  currency: string;
+  requirements: string | null;
+  status: string;
+  moderationStatus: number;
+  createdAt: string;
+  updatedAt: string;
+  expiresAt: string | null;
+}
+
+export interface WorkerProfile {
+  id: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  cvKey: string | null;
+  aiModerationStatus: number;
+  searchable: boolean;
+  layer3OptIn: boolean;
+  expectedSalaryMin: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Application {
+  id: string;
+  jobId: string;
+  workerProfileId: string;
+  message: string | null;
+  status: string;
+  createdAt: string;
+}
