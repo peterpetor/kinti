@@ -12,7 +12,7 @@ export type IconName =
   | "share" | "bookmark" | "chevR" | "chevD" | "chevU" | "sliders" | "bell"
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "shoppingBag"
-  | "sparkles" | "magic" | "trash" | "qrCode" | "document";
+  | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload";
 
 const PATHS: Record<IconName, string[]> = {
   search: ["M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14", "M16.5 16.5L21 21"],
@@ -84,6 +84,7 @@ const PATHS: Record<IconName, string[]> = {
     "M16 17H8",
     "M10 9H8"
   ],
+  upload: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "M17 8l-5-5l-5 5", "M12 3v12"],
 };
 
 // A '…' (more) három pöttye vastagabb vonallal néz jól ki.
