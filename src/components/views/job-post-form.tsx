@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui";
+import { CANTONS } from "@/lib/cantons";
+import { JOB_CATEGORIES } from "@/lib/job-categories";
 
 export function JobPostForm() {
   const router = useRouter();
@@ -13,6 +15,8 @@ export function JobPostForm() {
   const [form, setForm] = useState({
     title: "",
     location: "",
+    cantonCode: "",
+    category: "",
     employmentType: "full-time",
     salaryMin: "",
     salaryMax: "",
@@ -78,7 +82,42 @@ export function JobPostForm() {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-            Munkavégzés helye *
+            Szakma *
+          </label>
+          <select
+            required
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+            className={inputCls}
+          >
+            <option value="" disabled>Válassz szakmát…</option>
+            {JOB_CATEGORIES.map((c) => (
+              <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+            Kanton *
+          </label>
+          <select
+            required
+            value={form.cantonCode}
+            onChange={(e) => setForm({ ...form, cantonCode: e.target.value })}
+            className={inputCls}
+          >
+            <option value="" disabled>Válassz kantont…</option>
+            {CANTONS.map((c) => (
+              <option key={c.code} value={c.code}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+            Munkavégzés helye (város) *
           </label>
           <input
             type="text"
@@ -86,7 +125,7 @@ export function JobPostForm() {
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
             className={inputCls}
-            placeholder="Pl. Zürich (kanton)"
+            placeholder="Pl. Zürich"
           />
         </div>
         <div>

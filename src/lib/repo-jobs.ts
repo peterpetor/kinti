@@ -23,6 +23,7 @@ function toEmployer(r: EmployerRow): Employer {
 
 interface JobRow {
   id: string; employer_id: string; title: string; description: string; location: string;
+  canton_code: string | null; category: string | null;
   employment_type: string; salary_min: number | null; salary_max: number | null;
   currency: string; requirements: string | null; status: string; moderation_status: number;
   created_at: string; updated_at: string; expires_at: string | null;
@@ -31,7 +32,8 @@ interface JobRow {
 function toJob(r: JobRow): Job {
   return {
     id: r.id, employerId: r.employer_id, title: r.title, description: r.description,
-    location: r.location, employmentType: r.employment_type as any, salaryMin: r.salary_min,
+    location: r.location, cantonCode: r.canton_code ?? null, category: r.category ?? null,
+    employmentType: r.employment_type as any, salaryMin: r.salary_min,
     salaryMax: r.salary_max, currency: r.currency, requirements: r.requirements,
     status: r.status as any, moderationStatus: r.moderation_status,
     createdAt: r.created_at, updatedAt: r.updated_at, expiresAt: r.expires_at,
@@ -75,7 +77,7 @@ export async function getJobById(id: string): Promise<Job | null> {
 
 export async function createJob(job: Omit<Job, "createdAt" | "updatedAt">): Promise<void> {
   await getDB().prepare(
-    `INSERT INTO jobs (id, employer_id, title, description, location, employment_type, salary_min, salary_max, currency, requirements, status, moderation_status, expires_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).bind(job.id, job.employerId, job.title, job.description, job.location, job.employmentType, job.salaryMin, job.salaryMax, job.currency, job.requirements, job.status, job.moderationStatus, job.expiresAt).run();
+    `INSERT INTO jobs (id, employer_id, title, description, location, canton_code, category, employment_type, salary_min, salary_max, currency, requirements, status, moderation_status, expires_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(job.id, job.employerId, job.title, job.description, job.location, job.cantonCode, job.category, job.employmentType, job.salaryMin, job.salaryMax, job.currency, job.requirements, job.status, job.moderationStatus, job.expiresAt).run();
 }

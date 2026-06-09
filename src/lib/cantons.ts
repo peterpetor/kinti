@@ -49,6 +49,17 @@ export const CANTONS: Canton[] = [
 
 const BY_CODE = new Map(CANTONS.map((c) => [c.code, c]));
 
+/** Érvényes 2-betűs kanton-kód? */
+export function isValidCantonCode(code: unknown): code is string {
+  return typeof code === "string" && BY_CODE.has(code);
+}
+
+/** Megjelenítendő kanton-név egy kódhoz (ismeretlen → null). */
+export function cantonName(code: string | null | undefined): string | null {
+  if (!code) return null;
+  return BY_CODE.get(code)?.name ?? null;
+}
+
 /**
  * Kanton-székhelyek koordinátái — az időjárás-widget ezeket használja
  * (a kiválasztott kanton székhelyének aktuális időjárását mutatja).

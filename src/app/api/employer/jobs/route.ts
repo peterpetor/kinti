@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createJob, getEmployerByOwner } from "@/lib/repo";
+import { isValidCantonCode } from "@/lib/cantons";
+import { isValidJobCategory } from "@/lib/job-categories";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -26,6 +28,8 @@ export async function POST(req: Request) {
   const title = typeof body.title === "string" ? body.title.trim() : "";
   const description = typeof body.description === "string" ? body.description.trim() : "";
   const location = typeof body.location === "string" ? body.location.trim() : "";
+  const cantonCode = isValidCantonCode(body.cantonCode) ? body.cantonCode : null;
+  const category = isValidJobCategory(body.category) ? body.category : null;
   const employmentType = typeof body.employmentType === "string" ? body.employmentType.trim() : "full-time";
   const salaryMin = typeof body.salaryMin === "number" ? body.salaryMin : null;
   const salaryMax = typeof body.salaryMax === "number" ? body.salaryMax : null;
@@ -41,6 +45,12 @@ export async function POST(req: Request) {
   if (!location) {
     return NextResponse.json({ error: "A munkavégzés helye kötelező." }, { status: 400 });
   }
+  if (!cantonCode) {
+    return NextResponse.json({ error: "Válassz kantont." }, { status: 400 });
+  }
+  if (!category) {
+    return NextResponse.json({ error: "Válassz szakmát." }, { status: 400 });
+  }
 
   const id = crypto.randomUUID();
   
@@ -55,6 +65,8 @@ export async function POST(req: Request) {
       title,
       description,
       location,
+      cantonCode,
+      category,
       employmentType,
       salaryMin,
       salaryMax,

@@ -166,6 +166,10 @@ export interface Job {
   title: string;
   description: string;
   location: string;
+  /** Strukturált kanton-kód a szűréshez (lib/cantons.ts). Régi hirdetésnél null. */
+  cantonCode: string | null;
+  /** Szakma-id a szűréshez (lib/job-categories.ts). Régi hirdetésnél null. */
+  category: string | null;
   employmentType: string;
   salaryMin: number | null;
   salaryMax: number | null;
