@@ -44,8 +44,15 @@ export function SWRegister() {
     };
     swc.addEventListener("controllerchange", handleControllerChange);
 
+    // A build-ID-t a regisztrációs URL-be tesszük: deployonként változik
+    // (CF_PAGES_COMMIT_SHA), így a böngésző "új" SW-t lát és lefut az
+    // updatefound → "Új verzió érhető el" prompt. Build-ID nélkül (régi
+    // cache) sima /sw.js-re esünk vissza.
+    const buildId = process.env.NEXT_PUBLIC_BUILD_ID;
+    const swUrl = buildId ? `/sw.js?v=${encodeURIComponent(buildId)}` : "/sw.js";
+
     swc
-      .register("/sw.js", { scope: "/", updateViaCache: "none" })
+      .register(swUrl, { scope: "/", updateViaCache: "none" })
       .then((reg) => {
         if (cancelled) return;
 
