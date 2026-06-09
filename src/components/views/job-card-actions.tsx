@@ -43,6 +43,14 @@ export function JobCardActions({ jobId, applicantCount }: { jobId: string; appli
           Jelentkezők ({applicantCount})
         </Link>
 
+        <Link
+          href={`/munkaltato/allas/${jobId}/szerkesztes`}
+          className="flex items-center gap-1.5 text-ink-muted hover:text-primary transition-colors"
+        >
+          <Icon name="sliders" size={14} strokeWidth={2.2} />
+          Szerkesztés
+        </Link>
+
         <div className="flex-1" />
 
         {confirming ? (

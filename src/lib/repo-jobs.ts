@@ -82,6 +82,41 @@ export async function createJob(job: Omit<Job, "createdAt" | "updatedAt">): Prom
   ).bind(job.id, job.employerId, job.title, job.description, job.location, job.cantonCode, job.category, job.employmentType, job.salaryMin, job.salaryMax, job.currency, job.requirements, job.status, job.moderationStatus, job.expiresAt).run();
 }
 
+export interface UpdateJobInput {
+  title: string;
+  description: string;
+  location: string;
+  cantonCode: string | null;
+  category: string | null;
+  employmentType: string;
+  salaryMin: number | null;
+  salaryMax: number | null;
+  currency: string;
+  requirements: string | null;
+}
+
+/**
+ * Saját hirdetés szerkesztése. A moderation_status visszaáll 0-ra (pending):
+ * a szerkesztett tartalom újra admin-jóváhagyásra vár (visszaélés-védelem).
+ * @returns true, ha a hirdetés a munkáltatóé volt és frissült.
+ */
+export async function updateJob(id: string, employerId: string, fields: UpdateJobInput): Promise<boolean> {
+  const res = await getDB()
+    .prepare(
+      `UPDATE jobs SET title = ?, description = ?, location = ?, canton_code = ?, category = ?,
+         employment_type = ?, salary_min = ?, salary_max = ?, currency = ?, requirements = ?,
+         moderation_status = 0, updated_at = datetime('now')
+       WHERE id = ? AND employer_id = ?`,
+    )
+    .bind(
+      fields.title, fields.description, fields.location, fields.cantonCode, fields.category,
+      fields.employmentType, fields.salaryMin, fields.salaryMax, fields.currency, fields.requirements,
+      id, employerId,
+    )
+    .run();
+  return (res.meta?.changes ?? 0) > 0;
+}
+
 /** Saját hirdetés törlése. A FK ON DELETE CASCADE törli a hozzá tartozó jelentkezéseket is. */
 export async function deleteJob(id: string, employerId: string): Promise<boolean> {
   const res = await getDB()

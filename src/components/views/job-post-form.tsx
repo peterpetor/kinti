@@ -7,8 +7,26 @@ import { Icon } from "@/components/ui";
 import { CANTONS } from "@/lib/cantons";
 import { JOB_CATEGORIES } from "@/lib/job-categories";
 
-export function JobPostForm() {
+export interface JobFormInitial {
+  title?: string;
+  location?: string;
+  cantonCode?: string;
+  category?: string;
+  employmentType?: string;
+  salaryMin?: string;
+  salaryMax?: string;
+  currency?: string;
+  description?: string;
+  requirements?: string;
+}
+
+/**
+ * Hirdetésfeladó / -szerkesztő űrlap. `jobId` nélkül új hirdetést készít
+ * (POST), megadott `jobId`-vel a meglévőt szerkeszti (PATCH).
+ */
+export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobFormInitial } = {}) {
   const router = useRouter();
+  const isEdit = !!jobId;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,6 +41,7 @@ export function JobPostForm() {
     currency: "CHF",
     description: "",
     requirements: "",
+    ...initial,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,8 +56,8 @@ export function JobPostForm() {
         salaryMax: form.salaryMax ? parseInt(form.salaryMax, 10) : null,
       };
 
-      const res = await fetch("/api/employer/jobs", {
-        method: "POST",
+      const res = await fetch(isEdit ? `/api/employer/jobs/${jobId}` : "/api/employer/jobs", {
+        method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -46,7 +65,7 @@ export function JobPostForm() {
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a mentés során.");
       }
-      
+
       router.push("/munkaltato");
       router.refresh();
     } catch (err: any) {
@@ -222,11 +241,13 @@ export function JobPostForm() {
             loading && "opacity-60 cursor-not-allowed"
           )}
         >
-          {loading ? "Feldolgozás..." : "Álláshirdetés beküldése"}
+          {loading ? "Feldolgozás..." : isEdit ? "Módosítások mentése" : "Álláshirdetés beküldése"}
           {!loading && <Icon name="send" size={16} strokeWidth={2.4} />}
         </button>
         <p className="mt-2 text-center text-[11px] text-ink-faint">
-          Beküldés után a hirdetés adminisztrátori jóváhagyásra kerül.
+          {isEdit
+            ? "Szerkesztés után a hirdetés újra adminisztrátori jóváhagyásra kerül."
+            : "Beküldés után a hirdetés adminisztrátori jóváhagyásra kerül."}
         </p>
       </div>
     </form>
