@@ -29,45 +29,11 @@ export default async function JobsPage() {
               Kinti Állások 🇨🇭
             </h1>
             <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
-              Magyar-barát svájci munkalehetőségek. Böngéssz az ellenőrzött állások között, vagy 
+              Magyar-barát svájci munkalehetőségek. Böngéssz az ellenőrzött állások között, vagy
               készülj fel az interjúra!
             </p>
           </div>
 
-          {/* AI Interjú Szimulátor Banner */}
-          <Link href="/allasok/interju-szimulator" className="mb-4 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary text-white shadow-md">
-              <Icon name="sparkles" size={22} strokeWidth={2.4} />
-            </span>
-            <div className="text-left">
-              <h2 className="text-[14px] font-extrabold text-ink">AI Interjú Szimulátor 🤖</h2>
-              <p className="text-[12px] text-ink-muted mt-0.5">Gyakorold a svájci HR kérdéseket németül, stresszmentesen!</p>
-            </div>
-          </Link>
-
-          {/* Szakmai Szótár Banner */}
-          <Link href="/allasok/szakmai-szotar" className="mb-4 flex items-center gap-3 rounded-2xl bg-surface-alt border border-line px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-[#e3a233] text-white shadow-md">
-              <Icon name="document" size={22} strokeWidth={2.4} />
-            </span>
-            <div className="text-left">
-              <h2 className="text-[14px] font-extrabold text-ink">Szakmai Gyors-Szótár 👷‍♂️</h2>
-              <p className="text-[12px] text-ink-muted mt-0.5">Építőipari, vendéglátós svájci-német gyorstalpalók hanggal.</p>
-            </div>
-          </Link>
-
-
-          {/* Onboarding Checklist Banner */}
-          <Link href="/allasok/onboarding" className="mb-6 flex items-center gap-3 rounded-2xl bg-success/10 border border-success/20 px-4 py-3 hover:scale-[1.02] transition active:scale-[0.98]">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-success text-white shadow-md">
-              <Icon name="check" size={22} strokeWidth={2.4} />
-            </span>
-            <div className="text-left">
-              <h2 className="text-[14px] font-extrabold text-ink">Svájci Kezdőcsomag (Checklist) 🇨🇭</h2>
-              <p className="text-[12px] text-ink-muted mt-0.5">Mindent intézz el időben az első 3 hónapban (AHV, Bank, stb.)!</p>
-            </div>
-          </Link>
-          
           <div className="mt-6 flex justify-center">
             <Link 
               href="/allasok/profil" 

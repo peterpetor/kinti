@@ -106,6 +106,20 @@ export function DropdownMenu() {
                 Álláshirdetések
               </Link>
 
+              <Link href="/allasok/interju-szimulator" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Icon name="sparkles" size={16} strokeWidth={2.4} />
+                </span>
+                AI Interjú Szimulátor
+              </Link>
+
+              <Link href="/allasok/szakmai-szotar" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e3a233]/10 text-[#e3a233]">
+                  <Icon name="document" size={16} strokeWidth={2.4} />
+                </span>
+                Szakmai Gyors-Szótár
+              </Link>
+
               {/* ── Tudás & Ügyintézés ─────────────────── */}
               <Divider label="Tudás & Ügyintézés" />
 
@@ -114,6 +128,13 @@ export function DropdownMenu() {
                   <Icon name="check" size={16} strokeWidth={2.4} />
                 </span>
                 Kiköltözés Tracker
+              </Link>
+
+              <Link href="/allasok/onboarding" onClick={() => setIsOpen(false)} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
+                  <Icon name="check" size={16} strokeWidth={2.4} />
+                </span>
+                Svájci Kezdőcsomag (Checklist)
               </Link>
 
               <Link href="/tudasbazis" onClick={() => setIsOpen(false)} className={linkClass}>
