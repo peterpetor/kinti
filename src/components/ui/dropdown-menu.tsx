@@ -32,6 +32,12 @@ export function DropdownMenu() {
     </div>
   );
 
+  const ProBadge = () => (
+    <span className="ml-auto rounded-full bg-[#e3a233]/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-[#e3a233]">
+      PRO
+    </span>
+  );
+
   return (
     <div className="relative shrink-0">
       <button
@@ -111,6 +117,7 @@ export function DropdownMenu() {
                   <Icon name="sparkles" size={16} strokeWidth={2.4} />
                 </span>
                 AI Interjú Szimulátor
+                <ProBadge />
               </Link>
 
               <Link href="/allasok/szakmai-szotar" onClick={() => setIsOpen(false)} className={linkClass}>
@@ -118,6 +125,7 @@ export function DropdownMenu() {
                   <Icon name="document" size={16} strokeWidth={2.4} />
                 </span>
                 Szakmai Gyors-Szótár
+                <ProBadge />
               </Link>
 
               {/* ── Tudás & Ügyintézés ─────────────────── */}
@@ -170,6 +178,7 @@ export function DropdownMenu() {
                   🇨🇭
                 </span>
                 Einbürgerung-szimulátor
+                <ProBadge />
               </Link>
 
               {/* ── Pénzügyek & Kalkulátorok ───────────── */}
@@ -194,6 +203,7 @@ export function DropdownMenu() {
                   📊
                 </span>
                 Bér- és Lakbér Iránytű
+                <ProBadge />
               </Link>
 
               <Link href="/lakberles" onClick={() => setIsOpen(false)} className={linkClass}>
