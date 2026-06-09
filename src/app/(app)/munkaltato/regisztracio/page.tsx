@@ -33,7 +33,8 @@ export default async function EmployerRegistrationPage() {
           Üdvözlünk a Kinti Toborzásban!
         </h1>
         <p className="mt-1 text-[13px] leading-relaxed text-ink-muted text-pretty">
-          Hozd létre munkáltatói fiókodat pár lépésben. A megadott adatokat az adminisztrátor ellenőrzi.
+          Hozd létre munkáltatói fiókodat pár lépésben. A fiók létrehozása után rögtön
+          feladhatod az első álláshirdetésed — a hirdetések rövid ellenőrzés után jelennek meg.
         </p>
 
         <div className="mt-5">

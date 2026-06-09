@@ -32,9 +32,12 @@ export function EmployerRegForm() {
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a mentés során.");
       }
-      
-      // Sikeres mentés -> dashboard
-      router.push("/munkaltato");
+
+      // A fiók önmagában még nem hirdetés. Ha az AI azonnal jóváhagyta
+      // (status === 1), egyből a hirdetésfeladó űrlapra visszük, hogy a
+      // munkáltató ne "ragadjon be" egy üres profilnál. Ha kézi ellenőrzésre
+      // vár (review → 0), a dashboardon látja a függőben-üzenetet.
+      router.push(data.status === 1 ? "/munkaltato/uj-hirdetes" : "/munkaltato");
       router.refresh();
     } catch (err: any) {
       setError(err.message);

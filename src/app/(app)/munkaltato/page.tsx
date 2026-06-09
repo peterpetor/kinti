@@ -60,7 +60,7 @@ export default async function EmployerDashboardPage() {
           <div className="mt-5 pt-5 border-t border-line/60">
             {employer.moderationStatus === 0 && (
               <div className="rounded-[12px] bg-accent/10 px-3 py-2.5 text-[12.5px] font-semibold text-accent mb-4">
-                A munkáltatói fiókod jelenleg adminisztrátori jóváhagyásra vár. Amíg függőben van, az álláshirdetéseid nem jelennek meg publikusan.
+                A munkáltatói fiókod ellenőrzés alatt áll. Ez általában pár percen belül megtörténik — addig is feladhatsz hirdetést, az a jóváhagyás után jelenik meg.
               </div>
             )}
             {employer.moderationStatus === 2 && (
@@ -68,11 +68,21 @@ export default async function EmployerDashboardPage() {
                 A fiókodat az adminisztrátor elutasította. Kérlek vedd fel velünk a kapcsolatot.
               </div>
             )}
-            
-            <p className="text-[14px] text-ink-muted">
-              Itt fognak megjelenni a feladott álláshirdetéseid és a beérkező jelentkezések.
-            </p>
-            
+
+            {employer.moderationStatus === 1 && jobs.length === 0 ? (
+              // A "beragadt munkáltató" pillanat: a fiók aktív, de nincs hirdetés.
+              // Egyértelműsítjük, hogy a profil önmagában NEM hirdetés.
+              <div className="rounded-[12px] bg-primary/5 border border-primary/15 px-3.5 py-3 text-[13px] leading-relaxed text-ink mb-4">
+                <span className="font-extrabold text-primary">A fiókod aktív. ✅</span>{" "}
+                De a profilod önmagában <span className="font-bold">még nem jelenik meg</span> a
+                jelölteknek — ahhoz fel kell adnod egy álláshirdetést. Ez 1 perc, alább kezdheted.
+              </div>
+            ) : (
+              <p className="text-[14px] text-ink-muted">
+                Itt jelennek meg a feladott álláshirdetéseid és a beérkező jelentkezések.
+              </p>
+            )}
+
             <div className="mt-4">
               <Link href="/munkaltato/uj-hirdetes" className="flex h-12 w-full items-center justify-center gap-2 rounded-pill bg-primary text-[14px] font-bold text-white shadow-card-hover transition-all active:scale-[0.98]">
                 <Icon name="plus" size={16} strokeWidth={2.4} /> Új álláshirdetés feladása
