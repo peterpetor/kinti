@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { getEmployerByOwner, getJobs } from "@/lib/repo";
+import { getEmployerByOwner, getJobs, getApplicationCounts } from "@/lib/repo";
 import Link from "next/link";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
+import { JobCardActions } from "@/components/views/job-card-actions";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -26,6 +27,7 @@ export default async function EmployerDashboardPage() {
   }
 
   const jobs = await getJobs({ employerId: employer.id, includeAllStatuses: true });
+  const applicationCounts = await getApplicationCounts(employer.id);
 
   return (
     <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)] min-h-[calc(100dvh-70px)] flex flex-col">
@@ -126,10 +128,7 @@ export default async function EmployerDashboardPage() {
                     </span>
                   )}
                 </div>
-                <div className="mt-3 flex items-center gap-3 border-t border-line/60 pt-3 text-[12px] font-semibold text-primary">
-                  <button className="hover:underline">Szerkesztés (hamarosan)</button>
-                  <button className="hover:underline">Jelentkezők (0)</button>
-                </div>
+                <JobCardActions jobId={job.id} applicantCount={applicationCounts[job.id] ?? 0} />
               </div>
             ));
           })()}

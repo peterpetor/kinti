@@ -81,3 +81,62 @@ export async function createJob(job: Omit<Job, "createdAt" | "updatedAt">): Prom
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(job.id, job.employerId, job.title, job.description, job.location, job.cantonCode, job.category, job.employmentType, job.salaryMin, job.salaryMax, job.currency, job.requirements, job.status, job.moderationStatus, job.expiresAt).run();
 }
+
+/** Saját hirdetés törlése. A FK ON DELETE CASCADE törli a hozzá tartozó jelentkezéseket is. */
+export async function deleteJob(id: string, employerId: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM jobs WHERE id = ? AND employer_id = ?")
+    .bind(id, employerId)
+    .run();
+  return (res.meta?.changes ?? 0) > 0;
+}
+
+// --- Jelentkezések (job_applications) ---------------------------------------
+
+export interface JobApplication {
+  id: string;
+  jobId: string;
+  employerId: string;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  message: string | null;
+  status: string;
+  submittedAt: string;
+}
+
+interface JobApplicationRow {
+  id: string; job_id: string; employer_id: string; full_name: string; email: string;
+  phone: string | null; message: string | null; status: string; submitted_at: string;
+}
+
+function toApplication(r: JobApplicationRow): JobApplication {
+  return {
+    id: r.id, jobId: r.job_id, employerId: r.employer_id, fullName: r.full_name,
+    email: r.email, phone: r.phone, message: r.message, status: r.status,
+    submittedAt: r.submitted_at,
+  };
+}
+
+/** Egy munkáltató összes (vagy adott álláshoz tartozó) jelentkezője, legújabb elöl. */
+export async function getJobApplications(employerId: string, jobId?: string): Promise<JobApplication[]> {
+  const where = ["employer_id = ?"];
+  const binds: unknown[] = [employerId];
+  if (jobId) { where.push("job_id = ?"); binds.push(jobId); }
+  const { results } = await getDB()
+    .prepare(`SELECT * FROM job_applications WHERE ${where.join(" AND ")} ORDER BY submitted_at DESC`)
+    .bind(...binds)
+    .all<JobApplicationRow>();
+  return results.map(toApplication);
+}
+
+/** jobId → jelentkező-szám térkép a munkáltató dashboardjához. */
+export async function getApplicationCounts(employerId: string): Promise<Record<string, number>> {
+  const { results } = await getDB()
+    .prepare("SELECT job_id, COUNT(*) AS n FROM job_applications WHERE employer_id = ? GROUP BY job_id")
+    .bind(employerId)
+    .all<{ job_id: string; n: number }>();
+  const map: Record<string, number> = {};
+  for (const r of results) map[r.job_id] = r.n;
+  return map;
+}
