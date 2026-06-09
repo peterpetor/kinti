@@ -4,6 +4,8 @@ import {
   cantonFromSlug,
   cantonFromAddress,
   isSwissAddress,
+  isValidCantonCode,
+  cantonName,
 } from "@/lib/cantons";
 
 describe("cantonToSlug", () => {
@@ -41,5 +43,31 @@ describe("isSwissAddress", () => {
   });
   it("külföldi cím (Budapest, Hungary) → false", () => {
     expect(isSwissAddress("Andrássy út 1, 1051 Budapest, Hungary")).toBe(false);
+  });
+});
+
+describe("isValidCantonCode", () => {
+  it("érvényes kód → true", () => {
+    expect(isValidCantonCode("ZH")).toBe(true);
+    expect(isValidCantonCode("GE")).toBe(true);
+  });
+  it("érvénytelen / rossz típus → false", () => {
+    expect(isValidCantonCode("XX")).toBe(false);
+    expect(isValidCantonCode("zh")).toBe(false); // kis-nagybetű érzékeny
+    expect(isValidCantonCode("")).toBe(false);
+    expect(isValidCantonCode(null)).toBe(false);
+    expect(isValidCantonCode(26)).toBe(false);
+  });
+});
+
+describe("cantonName", () => {
+  it("kód → név", () => {
+    expect(cantonName("ZH")).toBe("Zürich");
+    expect(cantonName("BS")).toBe("Basel-Stadt");
+  });
+  it("ismeretlen / null → null", () => {
+    expect(cantonName("XX")).toBeNull();
+    expect(cantonName(null)).toBeNull();
+    expect(cantonName(undefined)).toBeNull();
   });
 });
