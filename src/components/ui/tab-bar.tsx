@@ -10,7 +10,10 @@ import { cn } from "@/lib/cn";
  *   1) Főoldal    — dashboard
  *   2) Szaknévsor — vállalkozás-kereső
  *   3) Közösség   — események (alfülekkel)
- *   4) Iránytű    — kalkulátorok / útmutatók
+ *   4) Állások    — álláshirdetések / munkáltató
+ *
+ * Az Iránytű (PRO) szándékosan nincs itt — a „…" menüből érhető el, hogy az
+ * alsó sáv csak ingyenes, mindenki által használható fő nézeteket tartalmazzon.
  */
 interface Tab {
   href: string;
@@ -29,7 +32,6 @@ const TABS: Tab[] = [
     icon: "users",
   },
   { href: "/allasok", label: "Állások", icon: "shoppingBag", alsoMatch: ["/munkaltato"] },
-  { href: "/iranytu", label: "Iránytű", icon: "trending" },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {
