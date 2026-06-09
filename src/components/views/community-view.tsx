@@ -10,7 +10,6 @@ import { OwnPostBadge } from "@/components/own-post-badge";
 import { EventCalendar } from "@/components/event-calendar";
 import { AddToCalendar } from "@/components/add-to-calendar";
 import { ShareSheet } from "@/components/share-sheet";
-import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import type { CalendarEvent } from "@/lib/calendar";
 
 export function CommunityView({
@@ -379,14 +378,6 @@ function EventsList({ events }: { events: KintiEvent[] }) {
         text={shareFor ? `Nézd meg ezt az eseményt a kintin: ${shareFor.title}` : ""}
       />
 
-      <div className="mt-4 pb-4 px-1">
-        <LegalDisclaimer
-          toolName="Eseménynaptár"
-          variant="info"
-          notAdviceFor="jogi vagy szerződéses"
-          extraWarning="Az eseményeket a közösség tagjai szervezik és töltik fel. A kinti.app üzemeltetője nem vállal felelősséget az események megszervezéséért, a helyszínek pontosságáért, vagy a résztvevők testi épségéért. Mindig tájékozódj a szervezőnél az esetleges belépődíjakról vagy változásokról."
-        />
-      </div>
     </>
   );
 }
