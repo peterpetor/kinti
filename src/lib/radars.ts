@@ -47,7 +47,14 @@ export async function triggerExchangeRateRadars(currentHuf: number) {
 /**
  * Triggerezi az Állás-riasztás radarokat egy újonnan jóváhagyott állás esetén.
  */
-export async function triggerJobAlertRadars(job: { id: string, title: string, description: string, location: string }) {
+export async function triggerJobAlertRadars(job: {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  cantonCode?: string | null;
+  category?: string | null;
+}) {
   try {
     const radars = await getActiveRadarsByType("job_alert");
     if (radars.length === 0) return;
@@ -57,27 +64,31 @@ export async function triggerJobAlertRadars(job: { id: string, title: string, de
     if (!privKey) return;
 
     const jobText = (job.title + " " + job.description).toLowerCase();
-    
-    // We need cantonFromAddress or matchCantonByName to check canton matching
-    // But since this is a server-side module, we can just do a lazy require or inline check.
-    const { cantonFromAddress, matchCantonByName } = await import("./cantons");
-    const jobCanton = cantonFromAddress(job.location) || matchCantonByName(job.location);
-    const jobCantonCode = jobCanton?.code;
+
+    // A kanton elsősorban a strukturált mezőből jön; régi (migráció előtti)
+    // hirdetésnél a szabad-szöveges helyből próbáljuk kitalálni.
+    let jobCantonCode = job.cantonCode ?? null;
+    if (!jobCantonCode) {
+      const { cantonFromAddress, matchCantonByName } = await import("./cantons");
+      jobCantonCode = (cantonFromAddress(job.location) || matchCantonByName(job.location))?.code ?? null;
+    }
 
     const targets = radars.filter(r => {
       try {
         const p = JSON.parse(r.parameters);
-        const targetCanton = p.cantonCode;
-        const kw = (p.keyword || "").trim().toLowerCase();
 
         // Kanton ellenőrzés
+        const targetCanton = p.cantonCode;
         if (targetCanton && targetCanton !== "all") {
           if (targetCanton !== jobCantonCode) return false;
         }
 
-        // Kulcsszó ellenőrzés
-        if (kw) {
-          if (!jobText.includes(kw)) return false;
+        // Szakma (új, strukturált radar) VAGY kulcsszó (régi radar) ellenőrzés
+        if (p.category) {
+          if (p.category !== job.category) return false;
+        } else if (p.keyword) {
+          const kw = String(p.keyword).trim().toLowerCase();
+          if (kw && !jobText.includes(kw)) return false;
         }
 
         return true;

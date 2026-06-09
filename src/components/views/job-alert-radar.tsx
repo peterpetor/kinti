@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { CANTONS } from "@/lib/cantons";
+import { JOB_CATEGORIES, jobCategoryLabel } from "@/lib/job-categories";
 
 type State =
   | "checking"
@@ -30,7 +31,7 @@ export function JobAlertRadar() {
   const [error, setError] = useState<string | null>(null);
 
   const [cantonCode, setCantonCode] = useState<string>("all");
-  const [keyword, setKeyword] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
 
   const refreshRadars = useCallback(async (sub: PushSubscriptionJSON) => {
     if (!sub.endpoint) return;
@@ -103,13 +104,12 @@ export function JobAlertRadar() {
 
   async function handleCreateRadar() {
     setError(null);
-    const kw = keyword.trim();
-    if (!kw && cantonCode === "all") {
-      setError("Adj meg egy kulcsszót vagy válassz kantont!");
+    if (!category && cantonCode === "all") {
+      setError("Válassz szakmát vagy kantont!");
       return;
     }
 
-    const parameters = { cantonCode, keyword: kw };
+    const parameters = { cantonCode, category };
 
     setState("busy");
     try {
@@ -134,7 +134,7 @@ export function JobAlertRadar() {
         return;
       }
       await refreshRadars(sub);
-      setKeyword("");
+      setCategory("");
       setState("ready");
     } catch {
       setError("Hálózati hiba.");
@@ -180,8 +180,13 @@ export function JobAlertRadar() {
     try {
       const p = JSON.parse(r.parameters);
       const canton = p.cantonCode === "all" ? "Minden kanton" : CANTONS.find((c) => c.code === p.cantonCode)?.name || p.cantonCode;
-      const kw = p.keyword ? `"${p.keyword}"` : "Minden állás";
-      return `${canton} · ${kw}`;
+      // Új radar: strukturált szakma; régi radar: szabad-szöveges kulcsszó.
+      const what = p.category
+        ? jobCategoryLabel(p.category) ?? "Szakma"
+        : p.keyword
+          ? `"${p.keyword}"`
+          : "Minden állás";
+      return `${canton} · ${what}`;
     } catch {
       return "Ismeretlen radar";
     }
@@ -223,15 +228,20 @@ export function JobAlertRadar() {
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[12px] font-bold text-ink">Kulcsszó / Iparág</label>
-            <input
-              type="text"
-              placeholder="pl. Informatika, sofőr, takarító..."
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
+            <label className="text-[12px] font-bold text-ink">Szakma</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               disabled={state === "busy"}
               className="h-11 w-full rounded-[10px] border border-line bg-surface px-3 text-[14px] font-medium text-ink outline-none focus:border-primary/50"
-            />
+            >
+              <option value="">Minden szakma</option>
+              {JOB_CATEGORIES.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.emoji} {c.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
