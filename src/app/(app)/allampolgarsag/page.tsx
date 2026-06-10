@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { EinburgerungQuiz } from "@/components/views/einburgerung-quiz";
 import { PermitWizardClient } from "./PermitWizardClient";
+import { requirePro } from "@/lib/subscriptions";
 
 // Az Edge runtime marad, de a force-static kikerül, így megszűnik a build warning!
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Engedély Varázsló & Kvíz | Kinti",
@@ -12,7 +14,8 @@ export const metadata = {
     "Mikor kaphatsz C-engedélyt vagy svájci útlevelet? Számold ki a varázslóval, és teszteld a tudásod a kvízzel!",
 };
 
-export default function AllampolgarsagPage() {
+export default async function AllampolgarsagPage() {
+  await requirePro("/allampolgarsag");
   return (
     <div className="mx-auto max-w-md space-y-8 px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
       <header className="flex items-center gap-3">

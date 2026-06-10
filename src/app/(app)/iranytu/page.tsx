@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import BenchmarkClient from "./BenchmarkClient";
 import { ScreenHeader } from "@/components/ui";
+import { requirePro } from "@/lib/subscriptions";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
   description: "Közösségi, anonim adatbázis a svájci magyarok fizetéséről és lakbéréről. Nézd meg, mennyit keresnek a te kantonodban!",
 };
 
-export default function BenchmarkPage() {
+export default async function BenchmarkPage() {
+  await requirePro("/iranytu");
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   return (
     <div className="space-y-4 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">

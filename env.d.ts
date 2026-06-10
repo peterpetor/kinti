@@ -69,4 +69,22 @@ interface CloudflareEnv {
    * Cron jobok és belső trigger végpontok hitelesítésére használt titok.
    */
   CRON_SECRET?: string;
+
+  /**
+   * PRO-zárolás kapcsoló. Amíg !== "true", a PRO funkciók mindenkinek
+   * elérhetők (a Lemon Squeezy beüzemeléséig). "true" → aktív paywall.
+   */
+  PRO_ENFORCED?: string;
+
+  /**
+   * A Lemon Squeezy checkout-link (a PRO előfizetésé). A userId passthrough
+   * automatikusan hozzáfűződik: ?checkout[custom][user_id]=...
+   */
+  LEMONSQUEEZY_CHECKOUT_URL?: string;
+
+  /**
+   * A Lemon Squeezy webhook aláírás-titka (HMAC-SHA256). TITOK — Cloudflare
+   * Pages secret. Amíg nincs beállítva, a webhook 503-at ad (inaktív).
+   */
+  LEMONSQUEEZY_WEBHOOK_SECRET?: string;
 }

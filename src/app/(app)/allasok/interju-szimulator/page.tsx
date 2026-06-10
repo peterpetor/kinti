@@ -1,13 +1,18 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { AiInterviewSimulator } from "@/components/views/ai-interview-simulator";
+import { requirePro } from "@/lib/subscriptions";
+
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "AI Munkainterjú Szimulátor | Kinti",
   description: "Gyakorolj svájci munkainterjúkra mesterséges intelligenciával.",
 };
 
-export default function AiInterviewPage() {
+export default async function AiInterviewPage() {
+  await requirePro("/allasok/interju-szimulator");
   return (
     <div className="mx-auto max-w-2xl px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-24">
       <div className="mb-4 flex justify-end">
