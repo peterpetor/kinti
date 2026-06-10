@@ -30,6 +30,23 @@ export async function getWorkerProfileByUser(userId: string): Promise<WorkerProf
   return row ? toWorkerProfile(row) : null;
 }
 
+export async function getWorkerProfileById(id: string): Promise<WorkerProfile | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM worker_profiles WHERE id = ? LIMIT 1")
+    .bind(id)
+    .first<WorkerProfileRow>();
+  return row ? toWorkerProfile(row) : null;
+}
+
+/** A kereshetőre (searchable) állított munkavállalói profilok, legfrissebb elöl. */
+export async function getSearchableWorkers(limit = 100): Promise<WorkerProfile[]> {
+  const { results } = await getDB()
+    .prepare("SELECT * FROM worker_profiles WHERE searchable = 1 ORDER BY updated_at DESC LIMIT ?")
+    .bind(limit)
+    .all<WorkerProfileRow>();
+  return results.map(toWorkerProfile);
+}
+
 export interface UpsertWorkerProfileInput {
   userId: string;
   fullName: string;

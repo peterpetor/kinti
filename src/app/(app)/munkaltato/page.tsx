@@ -85,9 +85,12 @@ export default async function EmployerDashboardPage() {
               </p>
             )}
 
-            <div className="mt-4">
+            <div className="mt-4 space-y-2">
               <Link href="/munkaltato/uj-hirdetes" className="flex h-12 w-full items-center justify-center gap-2 rounded-pill bg-primary text-[14px] font-bold text-white shadow-card-hover transition-all active:scale-[0.98]">
                 <Icon name="plus" size={16} strokeWidth={2.4} /> Új álláshirdetés feladása
+              </Link>
+              <Link href="/munkaltato/jeloltek" className="flex h-11 w-full items-center justify-center gap-2 rounded-pill border border-line bg-surface-alt text-[13.5px] font-bold text-ink transition-all active:scale-[0.98]">
+                <Icon name="users" size={15} strokeWidth={2.4} /> Jelöltek böngészése
               </Link>
             </div>
           </div>

@@ -22,6 +22,12 @@ export async function GET(req: Request, { params }: { params: { key: string[] } 
   if (!key || key.includes("..")) {
     return new Response("Bad Request", { status: 400 });
   }
+  // A CV-k (cv/<userId>/...) PII-t tartalmaznak — ezeket SOHA nem szolgáljuk ki
+  // a publikus media-végponton. Csak a védett /api/employer/candidate-cv route-on
+  // keresztül, jóváhagyott munkáltatónak.
+  if (key.startsWith("cv/")) {
+    return new Response("Not Found", { status: 404 });
+  }
 
   const range = req.headers.get("range") ?? undefined;
   const ifNoneMatch = req.headers.get("if-none-match") ?? undefined;
