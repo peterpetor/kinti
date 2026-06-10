@@ -1,0 +1,70 @@
+/**
+ * repo-workers.ts — Munkavállalói profilok (worker_profiles) adatrétege.
+ * A profil a Clerk `user_id`-hez kötött (1 user = 1 profil, UNIQUE).
+ */
+import { getDB } from "./cloudflare";
+import { bool } from "./repo-shared";
+import type { WorkerProfile } from "./types";
+
+interface WorkerProfileRow {
+  id: string; user_id: string; full_name: string; email: string; phone: string | null;
+  cv_key: string | null; ai_moderation_status: number; searchable: number;
+  layer3_opt_in: number; expected_salary_min: number | null;
+  created_at: string; updated_at: string;
+}
+
+function toWorkerProfile(r: WorkerProfileRow): WorkerProfile {
+  return {
+    id: r.id, userId: r.user_id, fullName: r.full_name, email: r.email, phone: r.phone,
+    cvKey: r.cv_key, aiModerationStatus: r.ai_moderation_status, searchable: bool(r.searchable),
+    layer3OptIn: bool(r.layer3_opt_in), expectedSalaryMin: r.expected_salary_min,
+    createdAt: r.created_at, updatedAt: r.updated_at,
+  };
+}
+
+export async function getWorkerProfileByUser(userId: string): Promise<WorkerProfile | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM worker_profiles WHERE user_id = ? LIMIT 1")
+    .bind(userId)
+    .first<WorkerProfileRow>();
+  return row ? toWorkerProfile(row) : null;
+}
+
+export interface UpsertWorkerProfileInput {
+  userId: string;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  cvKey: string | null;
+  searchable: boolean;
+  layer3OptIn: boolean;
+  expectedSalaryMin: number | null;
+}
+
+/**
+ * Profil létrehozása vagy frissítése a Clerk user_id-re (UNIQUE). A cv_key-t
+ * csak akkor írjuk felül, ha a hívó adott újat — `null` esetén a meglévő marad
+ * (a felhasználó nem mindig tölt fel új CV-t szerkesztéskor).
+ */
+export async function upsertWorkerProfile(input: UpsertWorkerProfileInput): Promise<void> {
+  await getDB()
+    .prepare(
+      `INSERT INTO worker_profiles
+         (id, user_id, full_name, email, phone, cv_key, searchable, layer3_opt_in, expected_salary_min, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+       ON CONFLICT(user_id) DO UPDATE SET
+         full_name = excluded.full_name,
+         email = excluded.email,
+         phone = excluded.phone,
+         cv_key = COALESCE(excluded.cv_key, worker_profiles.cv_key),
+         searchable = excluded.searchable,
+         layer3_opt_in = excluded.layer3_opt_in,
+         expected_salary_min = excluded.expected_salary_min,
+         updated_at = datetime('now')`,
+    )
+    .bind(
+      crypto.randomUUID(), input.userId, input.fullName, input.email, input.phone,
+      input.cvKey, input.searchable ? 1 : 0, input.layer3OptIn ? 1 : 0, input.expectedSalaryMin,
+    )
+    .run();
+}

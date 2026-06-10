@@ -1,10 +1,13 @@
+import { redirect } from "next/navigation";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { WorkerProfileForm } from "@/components/views/worker-profile-form";
+import { getWorkerProfileByUser } from "@/lib/repo";
 import type { Metadata } from "next";
 
 export const runtime = "edge";
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Munkavállalói profil — kinti.app",
@@ -12,7 +15,22 @@ export const metadata: Metadata = {
     "Töltsd fel a CV-det és add meg az elérhetőségedet. A svájci magyar munkáltatók megtalálnak téged a kinti.app Job Board rendszerén keresztül.",
 };
 
-export default function WorkerProfilePage() {
+export default async function WorkerProfilePage() {
+  const { userId } = await auth();
+  if (!userId) {
+    redirect("/sign-in?redirect_url=/allasok/profil");
+  }
+
+  const [profile, user] = await Promise.all([
+    getWorkerProfileByUser(userId),
+    currentUser(),
+  ]);
+
+  const defaultEmail =
+    profile?.email ?? user?.emailAddresses?.[0]?.emailAddress ?? "";
+  const defaultName =
+    profile?.fullName ?? [user?.firstName, user?.lastName].filter(Boolean).join(" ");
+
   return (
     <div className="mx-auto max-w-md space-y-6 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <header className="flex items-center gap-3">
@@ -36,7 +54,7 @@ export default function WorkerProfilePage() {
         <div className="relative">
           <span className="mb-3 inline-flex items-center gap-1.5 rounded-pill bg-white/[0.18] px-2.5 py-1 text-[10.5px] font-bold tracking-wide">
             <Icon name="users" size={11} strokeWidth={2.4} />
-            Layer 3 — Toborzási hálózat
+            Munkáltatói hálózat
           </span>
           <h2 className="text-[20px] font-extrabold leading-tight tracking-tight text-balance">
             Találjanak meg a munkáltatók
@@ -47,39 +65,17 @@ export default function WorkerProfilePage() {
         </div>
       </div>
 
-      {/* Miért érdemes? */}
-      <div className="grid grid-cols-3 gap-2">
-        {[
-          { icon: "eye" as const, label: "Láthatóság", sub: "Munkáltatók megtalálnak" },
-          { icon: "bell" as const, label: "Értesítő", sub: "Passzív álláskeresés" },
-          { icon: "check" as const, label: "Ingyenes", sub: "Regisztráció nélkül" },
-        ].map((f) => (
-          <div key={f.label} className="flex flex-col items-center gap-1.5 rounded-[16px] border border-line bg-surface p-3 shadow-card text-center">
-            <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary/10 text-primary">
-              <Icon name={f.icon} size={15} strokeWidth={2.2} />
-            </span>
-            <span className="text-[11.5px] font-extrabold text-ink leading-tight">{f.label}</span>
-            <span className="text-[10.5px] text-ink-muted leading-tight">{f.sub}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Profil form */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card">
-        <h2 className="text-[15px] font-extrabold tracking-tight text-ink mb-4">
-          Profil adatok
-        </h2>
-        <WorkerProfileForm />
+        <WorkerProfileForm
+          initial={{
+            fullName: defaultName,
+            email: defaultEmail,
+            phone: profile?.phone ?? "",
+            searchable: profile?.searchable ?? true,
+            hasCv: !!profile?.cvKey,
+          }}
+        />
       </section>
-
-      {/* Adatvédelem tájékoztató */}
-      <div className="rounded-xl border border-line bg-surface-alt/60 px-4 py-3 text-[11.5px] leading-relaxed text-ink-muted">
-        <strong className="text-ink">Adatvédelem:</strong> Az adataidat kizárólag a kinti.app munkáltatói
-        keresik (opcionálisan, ha engedélyezed). Bármikor törölheted a profilod.{" "}
-        <Link href="/adatvedelem" className="text-primary underline font-semibold">
-          Adatvédelmi tájékoztató →
-        </Link>
-      </div>
     </div>
   );
 }
