@@ -61,15 +61,15 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json() as any;
+      const data = await res.json() as { error?: string; status?: number };
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a mentés során.");
       }
 
       router.push("/munkaltato");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Hiba történt a mentés során.");
       setLoading(false);
     }
   };

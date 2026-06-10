@@ -28,7 +28,7 @@ export function EmployerRegForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      const data = await res.json() as any;
+      const data = await res.json() as { error?: string; status?: number };
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a mentés során.");
       }
@@ -39,8 +39,8 @@ export function EmployerRegForm() {
       // vár (review → 0), a dashboardon látja a függőben-üzenetet.
       router.push(data.status === 1 ? "/munkaltato/uj-hirdetes" : "/munkaltato");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Hiba történt a mentés során.");
       setLoading(false);
     }
   };

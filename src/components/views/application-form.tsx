@@ -44,13 +44,13 @@ export function ApplicationForm({ jobId, jobTitle }: Props) {
           message: form.message || null,
         }),
       });
-      const data = await res.json() as any;
+      const data = await res.json() as { error?: string };
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a jelentkezés során.");
       }
       setSubmitted(true);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Hiba történt a jelentkezés során.");
     } finally {
       setLoading(false);
     }

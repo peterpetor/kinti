@@ -15,7 +15,7 @@ function toEmployer(r: EmployerRow): Employer {
   return {
     id: r.id, ownerUserId: r.owner_user_id, companyName: r.company_name, logoKey: r.logo_key,
     description: r.description, website: r.website, contactEmail: r.contact_email,
-    billingEmail: r.billing_email, subscriptionTier: r.subscription_tier as any,
+    billingEmail: r.billing_email, subscriptionTier: r.subscription_tier,
     stripeCustomerId: r.stripe_customer_id, moderationStatus: r.moderation_status,
     createdAt: r.created_at, updatedAt: r.updated_at,
   };
@@ -33,9 +33,9 @@ function toJob(r: JobRow): Job {
   return {
     id: r.id, employerId: r.employer_id, title: r.title, description: r.description,
     location: r.location, cantonCode: r.canton_code ?? null, category: r.category ?? null,
-    employmentType: r.employment_type as any, salaryMin: r.salary_min,
+    employmentType: r.employment_type, salaryMin: r.salary_min,
     salaryMax: r.salary_max, currency: r.currency, requirements: r.requirements,
-    status: r.status as any, moderationStatus: r.moderation_status,
+    status: r.status, moderationStatus: r.moderation_status,
     createdAt: r.created_at, updatedAt: r.updated_at, expiresAt: r.expires_at,
   };
 }
