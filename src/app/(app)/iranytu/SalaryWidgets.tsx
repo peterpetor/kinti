@@ -108,8 +108,8 @@ export function RentToSalaryCalculator({
       setLoading(true);
       try {
         const res = await fetch(`/api/benchmark/ratio?canton=${canton}`);
-        const data: any = await res.json();
-        if (active) setAvgRatio(data.avg_ratio);
+        const data = await res.json() as { avg_ratio?: number | null };
+        if (active) setAvgRatio(data.avg_ratio ?? null);
       } catch {
         if (active) setAvgRatio(null);
       }
@@ -195,9 +195,9 @@ export function AlertSubscription({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, industry, cantonCode: canton, currentAvg: defaultAvg ?? null, turnstileToken: token }),
       });
-      const data: any = await res.json();
-      if (res.ok) setResult(data.message);
-      else setError(data.error);
+      const data = await res.json() as { message?: string; error?: string };
+      if (res.ok) setResult(data.message ?? null);
+      else setError(data.error ?? null);
     } catch { setError("Hálózati hiba."); }
     setSubmitting(false);
   }

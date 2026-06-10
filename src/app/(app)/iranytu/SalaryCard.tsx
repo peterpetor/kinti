@@ -37,7 +37,7 @@ export function SalaryCard({
     setShowTrend(true); setShowHist(false); setShowExp(false);
     try {
       const res = await fetch(`/api/benchmark/trend?industry=${encodeURIComponent(stat.industry)}&canton=${canton}`);
-      const data: any = await res.json();
+      const data = await res.json() as { trend?: TrendRow[] };
       setTrend(data.trend ?? []);
     } catch { setTrend([]); }
     setLoadingTrend(false);
@@ -49,7 +49,7 @@ export function SalaryCard({
     setShowHist(true); setShowTrend(false); setShowExp(false);
     try {
       const res = await fetch(`/api/benchmark/histogram?industry=${encodeURIComponent(stat.industry)}&canton=${canton}`);
-      const data: any = await res.json();
+      const data = await res.json() as { histogram?: { bucket_k: number; entry_count: number }[] };
       setHist(data.histogram ?? []);
     } catch { setHist([]); }
     setLoadingHist(false);

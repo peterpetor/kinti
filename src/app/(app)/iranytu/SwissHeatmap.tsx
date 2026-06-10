@@ -29,7 +29,7 @@ export function SwissHeatmap({ industry, period }: { industry: string; period: s
       setLoading(true);
       try {
         const res = await fetch(`/api/benchmark/heatmap?industry=${encodeURIComponent(industry)}&period=${period}`);
-        const d: any = await res.json();
+        const d = await res.json() as { heatmap?: HeatmapRow[] };
         if (active) setData(d.heatmap || []);
       } catch {
         if (active) setData([]);

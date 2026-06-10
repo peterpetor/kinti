@@ -11,6 +11,17 @@ import { verifyTurnstile } from "@/lib/turnstile";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
+interface BenchmarkBody {
+  turnstileToken?: string;
+  type?: string;
+  cantonCode?: string;
+  industry?: string;
+  yearsExperience?: number;
+  grossSalaryChf?: number;
+  rooms?: number;
+  rentChf?: number;
+}
+
 /**
  * GET: Aggregált statisztikák + tapasztalat-sávok + saját adat
  * Query: canton, period (3m|6m|12m|all)
@@ -43,7 +54,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("cf-connecting-ip") ?? null;
   const ipHash = (await hashIp(ip)) || "unknown-ip";
-  let body: any;
+  let body: BenchmarkBody;
   try { body = await req.json(); } catch { return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 }); }
   const captcha = await verifyTurnstile(body.turnstileToken, ip);
   if (!captcha.ok) return NextResponse.json({ error: "A robot-ellenőrzés sikertelen." }, { status: 400 });
@@ -54,14 +65,14 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const ip = req.headers.get("cf-connecting-ip") ?? null;
   const ipHash = (await hashIp(ip)) || "unknown-ip";
-  let body: any;
+  let body: BenchmarkBody;
   try { body = await req.json(); } catch { return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 }); }
   const captcha = await verifyTurnstile(body.turnstileToken, ip);
   if (!captcha.ok) return NextResponse.json({ error: "A robot-ellenőrzés sikertelen." }, { status: 400 });
   return handleUpsert("update", body, ipHash);
 }
 
-async function handleUpsert(mode: "insert" | "update", body: any, ipHash: string) {
+async function handleUpsert(mode: "insert" | "update", body: BenchmarkBody, ipHash: string) {
   if (body.type === "salary") {
     if (!body.cantonCode || !body.industry || typeof body.yearsExperience !== "number" || typeof body.grossSalaryChf !== "number")
       return NextResponse.json({ error: "Hiányzó bér adatok." }, { status: 400 });

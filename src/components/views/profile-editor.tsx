@@ -91,7 +91,7 @@ export function ProfileEditor({
     setPreviewStatus(calculateBusinessHoursStatus(workingHours));
   }, [workingHours]);
 
-  const handleHoursChange = (day: keyof WorkingHours, field: keyof DayHours, value: any) => {
+  const handleHoursChange = (day: keyof WorkingHours, field: keyof DayHours, value: string | boolean) => {
     setWorkingHours((prev) => ({
       ...prev,
       [day]: {

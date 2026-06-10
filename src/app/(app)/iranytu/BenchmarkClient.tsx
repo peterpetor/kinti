@@ -76,7 +76,7 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
       : { type: "rent", cantonCode: canton, rooms, rentChf: rent, turnstileToken: token };
     try {
       const res = await fetch("/api/benchmark", { method: isEdit ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      const data: any = await res.json();
+      const data = await res.json() as { error?: string };
       res.ok ? onSuccess() : setError(data.error || "Hiba.");
     } catch { setError("Hálózati hiba."); }
     setSubmitting(false);
@@ -131,7 +131,7 @@ function SalaryStandingInsight({ cantonCode, industry, salary }: { cantonCode: s
     (async () => {
       try {
         const res = await fetch(`/api/benchmark/histogram?industry=${encodeURIComponent(industry)}&canton=${cantonCode}`);
-        const data: any = await res.json();
+        const data = await res.json() as { histogram?: Parameters<typeof salaryStanding>[0] };
         const s = salaryStanding(data.histogram ?? [], salary);
         // Adatvédelem/megbízhatóság: 3+ adat alatt nem pozicionálunk.
         if (alive) setStanding(s && s.total >= MIN_ENTRIES_FOR_STATS ? s : null);
@@ -174,7 +174,7 @@ function RentStandingInsight({ cantonCode, rooms, rent }: { cantonCode: string; 
     (async () => {
       try {
         const res = await fetch(`/api/benchmark/rent-histogram?rooms=${rooms}&canton=${cantonCode}`);
-        const data: any = await res.json();
+        const data = await res.json() as { histogram?: Parameters<typeof rentStanding>[0] };
         const s = rentStanding(data.histogram ?? [], rent);
         if (alive) setStanding(s && s.total >= MIN_ENTRIES_FOR_STATS ? s : null);
       } catch {
@@ -330,7 +330,13 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
     setLoading(true);
     try {
       const res = await fetch(`/api/benchmark?canton=${canton}&period=${period}`);
-      const data: any = await res.json();
+      const data = await res.json() as {
+        locked?: Parameters<typeof setLock>[0];
+        myData?: Parameters<typeof setMyData>[0];
+        salary?: Parameters<typeof setSalaryStats>[0];
+        salaryByExp?: Parameters<typeof setSalaryByExp>[0];
+        rent?: Parameters<typeof setRentStats>[0];
+      };
       if (data.locked) setLock(data.locked);
       if (data.myData) setMyData(data.myData);
       if (data.salary) setSalaryStats(data.salary);

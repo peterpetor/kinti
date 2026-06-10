@@ -33,7 +33,7 @@ export async function GET(req: Request) {
         cache: "no-store",
       });
       if (!res.ok) throw new Error("API hiba");
-      const data = await res.json() as any;
+      const data = await res.json() as { rates: { HUF: number } };
       huf = data.rates.HUF;
     } catch {
       return NextResponse.json({ error: "Frankfurter API hiba" }, { status: 502 });

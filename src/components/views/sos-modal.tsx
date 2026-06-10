@@ -56,7 +56,7 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
             }),
           });
 
-          const data = await res.json() as any;
+          const data = await res.json() as { error?: string; id?: string };
           if (!res.ok) {
             turnstileRef.current?.reset();
             setTurnstileToken("");

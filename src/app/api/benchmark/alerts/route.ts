@@ -11,8 +11,17 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * POST /api/benchmark/alerts
  * Feliratkozás email értesítésre, ha az átlagbér ±10%-ot változik.
  */
+interface AlertBody {
+  email?: unknown;
+  industry?: unknown;
+  turnstileToken?: string;
+  cantonCode?: string;
+  expBucket?: string;
+  currentAvg?: number;
+}
+
 export async function POST(req: NextRequest) {
-  let body: any;
+  let body: AlertBody;
   try { body = await req.json(); } catch {
     return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }

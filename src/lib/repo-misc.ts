@@ -89,7 +89,9 @@ export async function saveExchangeRateAlert(params: { id: string; pushEndpoint: 
 }
 
 export async function listExchangeRateAlertsByEndpoint(pushEndpoint: string): Promise<ExchangeRateAlert[]> {
-  const { results } = await getDB().prepare(`SELECT * FROM exchange_rate_alerts WHERE push_endpoint = ? AND active = 1 ORDER BY created_at DESC`).bind(pushEndpoint).all<any>();
+  const { results } = await getDB().prepare(`SELECT * FROM exchange_rate_alerts WHERE push_endpoint = ? AND active = 1 ORDER BY created_at DESC`).bind(pushEndpoint).all<{
+    id: string; push_endpoint: string; threshold_huf: number; direction: string; active: number; created_at: string; last_fired_at: string | null;
+  }>();
   return results.map(r => ({ id: r.id, pushEndpoint: r.push_endpoint, thresholdHuf: r.threshold_huf, direction: r.direction === "below" ? "below" : "above", active: !!r.active, createdAt: r.created_at, lastFiredAt: r.last_fired_at }));
 }
 
@@ -107,8 +109,10 @@ export async function saveRadar(data: { id: string; pushEndpoint: string; radarT
 }
 
 export async function listRadarsByEndpoint(endpoint: string): Promise<KintiRadar[]> {
-  const { results } = await getDB().prepare('SELECT * FROM kinti_radars WHERE push_endpoint = ? ORDER BY created_at DESC').bind(endpoint).all<any>();
-  return (results ?? []).map((r) => ({ id: String(r.id), pushEndpoint: String(r.push_endpoint), radarType: String(r.radar_type) as any, parameters: String(r.parameters), active: Number(r.active), createdAt: String(r.created_at) }));
+  const { results } = await getDB().prepare('SELECT * FROM kinti_radars WHERE push_endpoint = ? ORDER BY created_at DESC').bind(endpoint).all<{
+    id: string; push_endpoint: string; radar_type: string; parameters: string; active: number; created_at: string;
+  }>();
+  return (results ?? []).map((r) => ({ id: String(r.id), pushEndpoint: String(r.push_endpoint), radarType: String(r.radar_type) as KintiRadar["radarType"], parameters: String(r.parameters), active: Number(r.active), createdAt: String(r.created_at) }));
 }
 
 export async function deleteRadar(id: string, endpoint: string): Promise<boolean> {
@@ -117,6 +121,6 @@ export async function deleteRadar(id: string, endpoint: string): Promise<boolean
 }
 
 export async function getActiveRadarsByType(radarType: string): Promise<{id: string, pushEndpoint: string, parameters: string}[]> {
-  const { results } = await getDB().prepare('SELECT id, push_endpoint, parameters FROM kinti_radars WHERE radar_type = ? AND active = 1').bind(radarType).all<any>();
+  const { results } = await getDB().prepare('SELECT id, push_endpoint, parameters FROM kinti_radars WHERE radar_type = ? AND active = 1').bind(radarType).all<{ id: string; push_endpoint: string; parameters: string }>();
   return (results ?? []).map(r => ({ id: String(r.id), pushEndpoint: String(r.push_endpoint), parameters: String(r.parameters) }));
 }

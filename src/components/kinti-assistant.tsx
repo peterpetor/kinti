@@ -25,12 +25,12 @@ export function KintiAssistant() {
         body: JSON.stringify({ prompt: query }),
       });
 
-      const data = (await res.json()) as any;
+      const data = (await res.json()) as { error?: string; answer?: string };
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a kérdés feldolgozása közben.");
       }
 
-      setAnswer(data.answer);
+      setAnswer(data.answer ?? null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ismeretlen hiba.");
     } finally {

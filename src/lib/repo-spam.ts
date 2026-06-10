@@ -32,7 +32,11 @@ export async function listModerationQueue(table: ModerationTable, status: 0 | 1 
                       moderation_status AS moderationStatus, moderation_decision_at AS moderationDecisionAt,
                       moderation_decided_by AS moderationDecidedBy
                FROM ${table} WHERE moderation_status = ? ORDER BY createdAt DESC LIMIT ?`;
-  const { results } = await db.prepare(sql).bind(status, limit).all<any>();
+  const { results } = await db.prepare(sql).bind(status, limit).all<{
+    id: string; title: string | null; preview: string | null; createdAt: string | null;
+    submitterEmail: string | null; submitterIpHash: string | null; imageKey: string | null;
+    moderationStatus: number; moderationDecisionAt: string | null; moderationDecidedBy: string | null;
+  }>();
   return results.map((r) => ({
     table, id: r.id, title: r.title ?? "", preview: (r.preview ?? "").slice(0, 200),
     createdAt: r.createdAt, submitterEmail: r.submitterEmail || null, submitterIpHash: r.submitterIpHash || null,
@@ -68,7 +72,7 @@ interface BlocklistRow {
 }
 
 function toBlocklistEntry(r: BlocklistRow): BlocklistEntry {
-  return { id: r.id, kind: r.kind as any, value: r.value, reason: r.reason, createdAt: r.created_at, createdBy: r.created_by, active: r.active === 1 };
+  return { id: r.id, kind: r.kind as BlocklistKind, value: r.value, reason: r.reason, createdAt: r.created_at, createdBy: r.created_by, active: r.active === 1 };
 }
 
 export async function isBlocked(kind: BlocklistKind, value: string | null): Promise<boolean> {
@@ -133,9 +137,9 @@ export async function createContentReport(input: ContentReportInput): Promise<vo
 }
 
 export async function getContentReportByToken(token: string): Promise<ContentReport | null> {
-  const row = await getDB().prepare("SELECT id, content_type, content_id, status FROM content_reports WHERE moderate_token = ?").bind(token).first<any>();
+  const row = await getDB().prepare("SELECT id, content_type, content_id, status FROM content_reports WHERE moderate_token = ?").bind(token).first<{ id: string; content_type: string; content_id: string; status: string }>();
   if (!row) return null;
-  return { id: row.id, contentType: row.content_type, contentId: row.content_id, status: row.status };
+  return { id: row.id, contentType: row.content_type as ContentReport["contentType"], contentId: row.content_id, status: row.status };
 }
 
 export async function updateContentReportStatus(token: string, status: string): Promise<void> {
@@ -170,7 +174,9 @@ export interface OpenReport { id: string; contentType: "review" | "sos" | "busin
 
 export async function listOpenReports(): Promise<OpenReport[]> {
   const db = getDB();
-  const { results } = await db.prepare(`SELECT id, content_type, content_id, reason, moderate_token, created_at FROM content_reports WHERE status = 'open' ORDER BY created_at DESC LIMIT 100`).all<any>();
+  const { results } = await db.prepare(`SELECT id, content_type, content_id, reason, moderate_token, created_at FROM content_reports WHERE status = 'open' ORDER BY created_at DESC LIMIT 100`).all<{
+    id: string; content_type: string; content_id: string; reason: string | null; moderate_token: string; created_at: string;
+  }>();
   const out: OpenReport[] = [];
   for (const r of results) {
     let excerpt: string | null = null; let contentExists = false;
@@ -188,7 +194,7 @@ export async function listOpenReports(): Promise<OpenReport[]> {
       await db.prepare("UPDATE content_reports SET status = 'dismissed' WHERE id = ?").bind(r.id).run();
       continue;
     }
-    out.push({ id: r.id, contentType: r.content_type, contentId: r.content_id, reason: r.reason, moderateToken: r.moderate_token, createdAt: r.created_at, excerpt });
+    out.push({ id: r.id, contentType: r.content_type as OpenReport["contentType"], contentId: r.content_id, reason: r.reason, moderateToken: r.moderate_token, createdAt: r.created_at, excerpt });
   }
   return out;
 }

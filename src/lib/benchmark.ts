@@ -445,7 +445,7 @@ export async function getSalaryHeatmap(
     FROM salary_benchmarks ${where}
     GROUP BY canton_code
   `;
-  const { results } = await getDB().prepare(sql).bind(...binds).all<any>();
+  const { results } = await getDB().prepare(sql).bind(...binds).all<{ canton_code: string; avg_salary: number; entry_count: number }>();
   return results;
 }
 
