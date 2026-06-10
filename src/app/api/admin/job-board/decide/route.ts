@@ -3,6 +3,7 @@ import { getAdminUserId } from "@/lib/admin";
 import { getDB } from "@/lib/cloudflare";
 import { safeLogError } from "@/lib/safe-log";
 import { triggerJobAlertRadars } from "@/lib/radars";
+import { logAdminAction } from "@/lib/audit";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -60,6 +61,13 @@ export async function POST(req: Request) {
     if ((res.meta.changes ?? 0) === 0) {
       return NextResponse.json({ ok: false }, { status: 404 });
     }
+
+    await logAdminAction({
+      adminUserId: adminId,
+      actionType: statusValue === 1 ? "approve" : "reject",
+      targetType: table,
+      targetId: id,
+    });
 
     // Ha az állást most hagyták jóvá, triggerek futtatása a háttérben
     if (table === "jobs" && statusValue === 1) {

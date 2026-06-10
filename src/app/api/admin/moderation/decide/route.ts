@@ -9,6 +9,7 @@ import {
 } from "@/lib/repo";
 import { hashEmail } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
+import { logAdminAction } from "@/lib/audit";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -76,6 +77,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 404 });
     }
 
+    await logAdminAction({
+      adminUserId: adminId,
+      actionType: statusValue === 1 ? "approve" : "reject",
+      targetType: table,
+      targetId: id,
+    });
+
     // Vélemény-döntés után újraszámoljuk a vállalkozás ratingjét, mert az
     // immár csak a jóváhagyott véleményekből áll (approve → beleszámít,
     // reject → kiesik). Enélkül a publikus rating sosem frissülne jóváhagyáskor.
@@ -101,6 +109,12 @@ export async function POST(req: Request) {
           adminUserId: adminId,
         });
         bannedIp = !!entry;
+        if (bannedIp) {
+          await logAdminAction({
+            adminUserId: adminId, actionType: "block", targetType: "ip",
+            ipHash: body.banIpHash.toLowerCase(), reason,
+          });
+        }
       }
 
       if (typeof body.banEmail === "string" && body.banEmail.trim().length > 0) {
