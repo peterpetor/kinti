@@ -12,7 +12,7 @@ export const metadata = { title: "Jelentkezők — Munkáltató" };
 export default async function JobApplicantsPage({ params }: { params: { id: string } }) {
   const { userId } = await auth();
   if (!userId) {
-    redirect(`/sign-in?redirect_url=/munkaltato/allas/${params.id}/jelentkezok`);
+    redirect(`/belepes?redirect_url=/munkaltato/allas/${params.id}/jelentkezok`);
   }
 
   const employer = await getEmployerByOwner(userId);

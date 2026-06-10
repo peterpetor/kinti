@@ -12,7 +12,7 @@ export const metadata = { title: "Jelöltek — Munkáltató" };
 export default async function CandidatesPage() {
   const { userId } = await auth();
   if (!userId) {
-    redirect("/sign-in?redirect_url=/munkaltato/jeloltek");
+    redirect("/belepes?redirect_url=/munkaltato/jeloltek");
   }
 
   const employer = await getEmployerByOwner(userId);

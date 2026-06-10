@@ -90,7 +90,7 @@ export async function requirePro(currentPath: string): Promise<void> {
   if (!isProEnforced()) return;
   const { userId } = await auth();
   if (!userId) {
-    redirect(`/sign-in?redirect_url=${encodeURIComponent(currentPath)}`);
+    redirect(`/belepes?redirect_url=${encodeURIComponent(currentPath)}`);
   }
   if (!(await isPro(userId))) {
     redirect("/allasok/pro");

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default async function WorkerProfilePage() {
   const { userId } = await auth();
   if (!userId) {
-    redirect("/sign-in?redirect_url=/allasok/profil");
+    redirect("/belepes?redirect_url=/allasok/profil");
   }
 
   const [profile, user] = await Promise.all([

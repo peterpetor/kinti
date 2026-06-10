@@ -14,7 +14,7 @@ export default async function EmployerProfilePage() {
   const { userId } = await auth();
   
   if (!userId) {
-    redirect("/sign-in?redirect_url=/munkaltato/profil");
+    redirect("/belepes?redirect_url=/munkaltato/profil");
   }
 
   const employer = await getEmployerByOwner(userId);

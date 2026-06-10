@@ -13,7 +13,7 @@ export default async function EmployerRegistrationPage() {
   const { userId } = await auth();
   
   if (!userId) {
-    redirect("/sign-in?redirect_url=/munkaltato/regisztracio");
+    redirect("/belepes?redirect_url=/munkaltato/regisztracio");
   }
 
   const existing = await getEmployerByOwner(userId);

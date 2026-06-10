@@ -16,7 +16,7 @@ export default async function EmployerDashboardPage() {
   if (!userId) {
     // Ha nincs bejelentkezve, Clerk login oldalra irányítjuk (vagy sign-in urlre)
     // De ideális esetben ez már middleware-rel is védve lenne, de biztos ami biztos:
-    redirect("/sign-in?redirect_url=/munkaltato");
+    redirect("/belepes?redirect_url=/munkaltato");
   }
 
   const employer = await getEmployerByOwner(userId);

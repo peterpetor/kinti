@@ -86,7 +86,7 @@ export default async function KintiProPage() {
             </div>
           ) : !userId ? (
             <Link
-              href="/sign-in?redirect_url=/allasok/pro"
+              href="/belepes?redirect_url=/allasok/pro"
               className="flex w-full items-center justify-center rounded-full bg-[#e3a233] py-4 text-[16px] font-extrabold text-white shadow-lg shadow-[#e3a233]/20 transition-all hover:scale-[1.02] hover:bg-[#d68f20]"
             >
               Jelentkezz be az előfizetéshez

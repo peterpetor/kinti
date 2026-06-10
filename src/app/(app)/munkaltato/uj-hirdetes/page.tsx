@@ -14,7 +14,7 @@ export default async function NewJobPage() {
   const { userId } = await auth();
   
   if (!userId) {
-    redirect("/sign-in?redirect_url=/munkaltato/uj-hirdetes");
+    redirect("/belepes?redirect_url=/munkaltato/uj-hirdetes");
   }
 
   const employer = await getEmployerByOwner(userId);
