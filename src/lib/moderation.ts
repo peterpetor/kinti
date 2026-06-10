@@ -21,7 +21,6 @@ export async function moderateImage(arrayBuffer: ArrayBuffer): Promise<Moderatio
       return { action: "allow" };
     }
 
-    console.log("› [AI Moderation] Kép elemzése indítása (Llama 3.2 Vision)...");
     const uint8Array = new Uint8Array(arrayBuffer);
     const imageArray = Array.from(uint8Array);
 
@@ -46,7 +45,6 @@ export async function moderateImage(arrayBuffer: ArrayBuffer): Promise<Moderatio
     }) as { response?: string };
 
     const resultText = (response?.response || "").trim().toLowerCase();
-    console.log(`› [AI Moderation] AI válasz: "${resultText}"`);
 
     // Elutasító szavak listája: Ha az AI biztonsági korlátok miatt nem hajlandó elemezni a képet,
     // az 100%, hogy durva pornográfia (NSFW) vagy erőszak, így ezt is el kell utasítanunk!
@@ -81,7 +79,6 @@ export async function moderateImage(arrayBuffer: ArrayBuffer): Promise<Moderatio
       return { action: "review" };
     }
 
-    console.log("› [AI Moderation] A kép átment a biztonsági ellenőrzésen.");
     return { action: "allow" };
   } catch (error) {
     console.error("✖ [AI Moderation] Hiba történt a moderáció során:", error);

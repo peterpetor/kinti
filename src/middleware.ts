@@ -45,7 +45,6 @@ async function isCurrentUserAdmin(): Promise<boolean> {
       .filter(Boolean);
       
     if (!allowed.length) {
-      console.log("[middleware] No ADMIN_EMAILS found in env");
       return false;
     }
 
