@@ -252,6 +252,7 @@ async function OwnerDashboard({
         initialSocialLinks={business.socialLinks ?? null}
         initialYearsHere={business.yearsHere}
         initialLanguages={business.languages}
+        isFeatured={business.featured}
       />
 
       {/* heti összegző hero */}
