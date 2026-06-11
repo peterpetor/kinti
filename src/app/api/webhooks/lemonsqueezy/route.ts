@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifySignature } from "@/lib/lemonsqueezy";
 import { getDB } from "@/lib/cloudflare";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export const runtime = "edge";
 
@@ -73,10 +74,16 @@ async function handleSuccessfulPayment(customData: any, data: any) {
 
   // Kinti PRO (Magánszemély)
   else if (customData.type === "user_pro" && customData.userId) {
-    // Meg kell nézni, hol tároljuk a user szintű előfizetéseket.
-    // Ha van subscriptions tábla, oda szúrjuk be.
-    // Egyelőre console log, amíg az adatbázis séma tisztázódik.
-    console.log(`User PRO activated for user: ${customData.userId}`);
+    try {
+      await clerkClient().users.updateUserMetadata(customData.userId, {
+        publicMetadata: {
+          isPro: true,
+        },
+      });
+      console.log(`User PRO activated in Clerk for user: ${customData.userId}`);
+    } catch (e) {
+      console.error("Failed to update Clerk user metadata for PRO:", e);
+    }
   }
 }
 
@@ -93,6 +100,15 @@ async function handleSubscriptionEnded(customData: any, data: any) {
 
   // Kinti PRO lejárat
   else if (customData.type === "user_pro" && customData.userId) {
-    console.log(`User PRO expired for user: ${customData.userId}`);
+    try {
+      await clerkClient().users.updateUserMetadata(customData.userId, {
+        publicMetadata: {
+          isPro: false,
+        },
+      });
+      console.log(`User PRO expired in Clerk for user: ${customData.userId}`);
+    } catch (e) {
+      console.error("Failed to update Clerk user metadata for PRO expiration:", e);
+    }
   }
 }
