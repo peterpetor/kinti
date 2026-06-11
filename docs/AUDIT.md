@@ -13,9 +13,9 @@
 | :--- | :---: | :--- |
 | **Biztonság és Adatvédelem** | 🟢 **Kiváló** | Parameterizált D1 lekérdezések (SQLi védelem), AI-alapú szöveg és kép moderáció, eldobható email szűrés, Turnstile és IP-alapú rate limit. |
 | **Kódminőség és Architektúra** | 🟢 **Kiváló** | Tiszta TypeScript típusok, explicit mappelési logikák a DB és a tartományi modellek között, kiváló modularizáció a `src/lib`-ben. |
-| **Adatbázis és Migrációk** | 🟡 **Jó** | 52 db migrációs fájl, helyes indexelések. Egyetlen kisebb észrevétel a számozási ütközések a migrációs fájloknál (pl. dupla `0044_` és `0042_`), ami nem okoz futási hibát, de orvosolható. |
+| **Adatbázis és Migrációk** | 🟢 **Kiváló** | A migrációs fájlok számozási ütközései (pl. 0042, 0044) maradéktalanul javítva lettek. Biztonságos `IF NOT EXISTS` záradékok az érintett új migrációkban. |
 | **PWA és Mobil Integráció** | 🟢 **Kiváló** | Teljesen szabványos webmanifest, maszkolható ikonok, TWA (Google Play Store) integrációs paraméterek konfigurálva. |
-| **Teljesítmény és Build** | 🟡 **Jó** | A Next.js build sikeresen lefut és optimalizálódik, de 17 oldalon figyelmeztetést ad a `runtime = 'edge'` és a `dynamic = 'force-static'` együttes használata miatt. |
+| **Teljesítmény és Build** | 🟢 **Kiváló** | A Next.js build hibátlanul fut. A korábbi `runtime = 'edge'` és `dynamic = 'force-static'` okozta 17 oldalas warningok megoldásra kerültek. |
 
 ---
 
@@ -70,32 +70,18 @@ A `db/migrations` mappában lévő 52 SQL migrációs fájl lefedi a platform te
 * Az indexelések és a relációs idegen kulcsok (foreign keys) helyesen vannak definiálva.
 * Az `event_rsvps` tábla összetett elsődleges kulcsot használ (`PRIMARY KEY(event_id, ip_hash)`), ami garantálja, hogy egy felhasználó (IP alapján) csak egyszer jelentkezhet be egy eseményre, megvédve a számlálót a duplikációktól.
 
-> [!WARNING]
-> **Migrációs Fájlok Számozása**:
-> Két esetben van névütközés az index-előtagokban:
-> * `0042_ai_review_summary.sql` és `0042_kinti_radars.sql`
-> * `0044_admin_moderation.sql` és `0044_business_license_number.sql`
-> * `0045_blocklist.sql` és `0045_business_hidden.sql`
->
-> Bár a Cloudflare Wrangler ábécérendben hajtja végre őket és nem okoz ütközést a telepítés során, a jövőbeli sémakezelés átláthatósága érdekében javasolt egyedi számozást alkalmazni (pl. a legközelebbi migráció legyen a `0047_...`).
+> [!NOTE]
+> **Migrációs Fájlok Számozása (JAVÍTVA)**:
+> Korábban névütközés volt a `0042`, `0044`, `0045` prefixeknél. Ezek átnevezésre kerültek (pl. `0042b_...`), a séma-ütközések elhárultak, és `IF NOT EXISTS` védelemmel lettek ellátva a redundáns végrehajtások elkerülésére.
 
 ---
 
-## 4. Build és Teljesítmény Audit (Figyelmeztetések Feloldása)
+## 4. Build és Teljesítmény Audit
 
-Az `npm run build` során a Next.js a következő figyelmeztetéseket (warnings) dobja 17 oldallal kapcsolatban:
+Az `npm run build` hibátlanul, **0 warninggal** lefut.
 
-```text
-⚠ Page "/allampolgarsag" is using runtime = 'edge' which is currently incompatible with dynamic = 'force-static'. Please remove either "runtime" or "force-static" for correct behavior
-```
-
-### 4.1 A hiba oka
-Az érintett oldalakon egyszerre van beállítva a `runtime = 'edge'` és a `dynamic = 'force-static'`. A Next.js statikus oldalgenerátora az Edge futtatókörnyezetben nem tudja teljesen statikusan előre renderelni az oldalt build időben, ha az Edge specifikus környezeti változókra vagy bindingekre támaszkodik.
-
-### 4.2 Javasolt Megoldás
-Azokon a teljesen statikus tájékoztató oldalakon (pl. `/impresszum`, `/adatvedelem`, `/aszf`, `/allampolgarsag`, `/segitseg`), amelyek nem igényelnek adatbázis kapcsolatot vagy Cloudflare Edge bindingeket futásidőben:
-1. **Távolítsd el** az `export const dynamic = "force-static"` sort, ha az Edge runtime szükséges.
-2. VAGY **Távolítsd el** az `export const runtime = "edge"` sort, így a Next.js alapértelmezett Node statikus generátorával build időben lefut a teljes HTML exportálás, ami Cloudflare Pages-en rendkívül gyors statikus kiszolgálást eredményez.
+### 4.1 Korábbi hibák (Javítva)
+A korábbi verziókban a Next.js `force-static` és `runtime = 'edge'` konfliktusából fakadó 17 oldalas warning megoldásra került a megfelelő oldal-szintű flag konfigurációk tisztításával.
 
 ---
 
