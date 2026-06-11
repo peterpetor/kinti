@@ -21,22 +21,22 @@ export default function ProPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-5 pb-20 pt-[calc(env(safe-area-inset-top)+2rem)]">
+    <div className="mx-auto max-w-md px-5 pb-24 pt-[calc(env(safe-area-inset-top)+2rem)]">
       {/* Header */}
       <header className="mb-10 text-center flex flex-col items-center">
         <Link href="/" className="mb-6 inline-block active:scale-95 transition-transform">
           <KintiLogo size={42} />
         </Link>
-        <h1 className="text-3xl md:text-5xl font-black text-ink tracking-tight mb-4">
+        <h1 className="text-[28px] font-black text-ink tracking-tight mb-4">
           Lépj szintet a <span className="text-primary">Kinti PRO</span>-val
         </h1>
-        <p className="text-[16px] md:text-[18px] text-ink-muted max-w-xl text-balance">
+        <p className="text-[15px] text-ink-muted text-balance">
           Svájci magyaroknak, szakembereknek és munkáltatóknak fejlesztett exkluzív csomagok, melyekkel maximalizálhatod a platform lehetőségeit.
         </p>
       </header>
 
       {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-8">
         
         {/* Kinti PRO (Users) */}
         <div className="flex flex-col rounded-[32px] border-2 border-line bg-surface p-6 shadow-card hover:border-primary/30 transition-colors relative">
@@ -74,7 +74,7 @@ export default function ProPage() {
         </div>
 
         {/* Szaknévsor PRO (Businesses) */}
-        <div className="flex flex-col rounded-[32px] border-2 border-[#ff9600] bg-surface p-6 shadow-pop relative overflow-hidden transform md:-translate-y-4">
+        <div className="flex flex-col rounded-[32px] border-2 border-[#ff9600] bg-surface p-6 shadow-pop relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9600]/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
           <div className="absolute top-4 right-4 bg-[#ff9600] text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-pill shadow-sm">
             Legnépszerűbb
