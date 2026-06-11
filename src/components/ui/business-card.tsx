@@ -4,6 +4,7 @@ import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 import { mediaUrl } from "@/lib/media";
 import { OwnPostBadge } from "@/components/own-post-badge";
+import { FavoriteButton } from "./favorite-button";
 import { formatDistanceKm } from "@/lib/distance";
 
 /**
@@ -18,9 +19,11 @@ export interface BusinessCardProps {
   className?: string;
   /** Ha radius-keresés aktív, a tényleges Haversine-távolság km-ben — felülírja a distText placeholdert. */
   distanceKm?: number | null;
+  /** Szív-toggle a kártya sarkában (kedvencek). Lista-nézetben kapcsoljuk be. */
+  showFavorite?: boolean;
 }
 
-export function BusinessCard({ business: b, href, className, distanceKm }: BusinessCardProps) {
+export function BusinessCard({ business: b, href, className, distanceKm, showFavorite }: BusinessCardProps) {
   const classes = cn(
     "relative flex gap-3 rounded-card border border-line bg-surface p-3 shadow-card",
     href && "transition hover:shadow-card-hover active:scale-[0.99]",
@@ -31,6 +34,9 @@ export function BusinessCard({ business: b, href, className, distanceKm }: Busin
 
   const inner = (
     <>
+      {showFavorite && (
+        <FavoriteButton businessId={b.id} className="absolute right-2 top-2 z-10" />
+      )}
       {/* fotó / logó — ha van feltöltött R2-kép, azt mutatjuk; különben gradiens placeholder */}
       <div
         className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[14px] bg-primary-soft"

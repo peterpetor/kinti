@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
+import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
@@ -73,12 +74,17 @@ export function ExploreView({
 
   // Kedvenc ID-k + radius-preferencia betöltése localStorage-ből
   useEffect(() => {
-    try {
-      const favs = JSON.parse(localStorage.getItem("kinti_favorites") || "[]");
-      setFavoriteIds(favs);
-    } catch {
-      // ignore
-    }
+    const readFavs = () => {
+      try {
+        const favs = JSON.parse(localStorage.getItem("kinti_favorites") || "[]");
+        setFavoriteIds(Array.isArray(favs) ? favs.map(String) : []);
+      } catch {
+        // ignore
+      }
+    };
+    readFavs();
+    // A kártyák szív-toggle-je ezt szórja → a szűrő (Mentett kedvencek) szinkronban marad.
+    window.addEventListener(FAVORITES_CHANGED_EVENT, readFavs);
     try {
       const saved = Number(localStorage.getItem(RADIUS_LS_KEY));
       if (RADIUS_OPTIONS_KM.includes(saved as RadiusKm)) {
@@ -87,6 +93,7 @@ export function ExploreView({
     } catch {
       // ignore
     }
+    return () => window.removeEventListener(FAVORITES_CHANGED_EVENT, readFavs);
   }, []);
 
   function requestGeolocation() {
@@ -401,17 +408,22 @@ export function ExploreView({
               business={b}
               href={`/szaknevsor/${b.id}`}
               distanceKm={dist}
+              showFavorite
             />
           ))}
 
           {filtered.length === 0 && (
             <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-12 text-center shadow-card">
-              <Icon name="search" size={28} className="text-ink-faint" />
-              <p className="text-sm font-semibold text-ink">Nincs találat</p>
+              <Icon name={showFavs ? "heart" : "search"} size={28} className="text-ink-faint" />
+              <p className="text-sm font-semibold text-ink">
+                {showFavs ? "Nincs mentett kedvenced" : "Nincs találat"}
+              </p>
               <p className="text-xs text-ink-muted">
-                {userPos
-                  ? `Nincs vállalkozás ${radiusKm} km-en belül. Növeld a sugarat vagy kapcsold ki a helymeghatározást.`
-                  : "Próbálj másik kategóriát vagy keresőszót."}
+                {showFavs
+                  ? "Nyomd meg a szívet egy vállalkozás kártyáján, és itt gyűjtöd a kedvenceidet."
+                  : userPos
+                    ? `Nincs vállalkozás ${radiusKm} km-en belül. Növeld a sugarat vagy kapcsold ki a helymeghatározást.`
+                    : "Próbálj másik kategóriát vagy keresőszót."}
               </p>
             </div>
           )}

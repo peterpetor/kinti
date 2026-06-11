@@ -47,6 +47,7 @@ export function ProfileHeaderActions({ businessId, businessName }: ProfileAction
         showToast("Kedvencekhez adva");
       }
       localStorage.setItem("kinti_favorites", JSON.stringify(nextFavs));
+      window.dispatchEvent(new CustomEvent("kinti-favorites-changed"));
     } catch {
       showToast("A kedvencek funkcióhoz engedélyezd a sütiket!");
     }
