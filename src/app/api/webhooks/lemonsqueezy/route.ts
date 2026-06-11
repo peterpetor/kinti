@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifySignature } from "@/lib/lemonsqueezy";
 import { getDB } from "@/lib/cloudflare";
 import { clerkClient } from "@clerk/nextjs/server";
+import { upsertSubscription } from "@/lib/subscriptions";
 
 export const runtime = "edge";
 
@@ -75,6 +76,15 @@ async function handleSuccessfulPayment(customData: any, data: any) {
   // Kinti PRO (Magánszemély)
   else if (customData.type === "user_pro" && customData.userId) {
     try {
+      await upsertSubscription({
+        userId: customData.userId,
+        status: data.status || "active",
+        plan: "kinti_pro",
+        lsSubscriptionId: data.order_id?.toString() || data.id?.toString(),
+        lsCustomerId: data.customer_id?.toString(),
+        currentPeriodEnd: data.renews_at || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      });
+      
       await clerkClient().users.updateUserMetadata(customData.userId, {
         publicMetadata: {
           isPro: true,
@@ -101,6 +111,15 @@ async function handleSubscriptionEnded(customData: any, data: any) {
   // Kinti PRO lejárat
   else if (customData.type === "user_pro" && customData.userId) {
     try {
+      await upsertSubscription({
+        userId: customData.userId,
+        status: data.status || "expired",
+        plan: "kinti_pro",
+        lsSubscriptionId: data.order_id?.toString() || data.id?.toString(),
+        lsCustomerId: data.customer_id?.toString(),
+        currentPeriodEnd: data.renews_at || new Date().toISOString(),
+      });
+
       await clerkClient().users.updateUserMetadata(customData.userId, {
         publicMetadata: {
           isPro: false,
