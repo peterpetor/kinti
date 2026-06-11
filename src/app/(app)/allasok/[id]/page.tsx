@@ -53,8 +53,49 @@ export default async function JobDetailPage({ params }: { params: { id: string }
     }
   }
 
+  // SEO JSON-LD JobPosting
+  const jobPostingJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    "title": job.title,
+    "description": job.requirements ? `${job.description}\n\nElvárások:\n${job.requirements}` : job.description,
+    "datePosted": job.createdAt,
+    "validThrough": job.expiresAt || new Date(new Date(job.createdAt).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    "employmentType": job.employmentType === 'full-time' ? 'FULL_TIME' : job.employmentType === 'part-time' ? 'PART_TIME' : 'OTHER',
+    "hiringOrganization": {
+      "@type": "Organization",
+      "name": employer?.companyName || "Ismeretlen cég",
+      "sameAs": employer?.website || undefined,
+      "logo": employer?.logoKey || undefined,
+    },
+    "jobLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": job.location,
+        "addressCountry": "CH"
+      }
+    },
+    ...(job.salaryMin && job.salaryMax ? {
+      "baseSalary": {
+        "@type": "MonetaryAmount",
+        "currency": job.currency || "CHF",
+        "value": {
+          "@type": "QuantitativeValue",
+          "minValue": job.salaryMin,
+          "maxValue": job.salaryMax,
+          "unitText": "MONTH"
+        }
+      }
+    } : {})
+  };
+
   return (
     <div className="mx-auto max-w-md space-y-6 px-5 pb-24 pt-[calc(env(safe-area-inset-top)+2rem)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
+      />
       <header className="flex items-center gap-3">
         <Link
           href="/allasok"
