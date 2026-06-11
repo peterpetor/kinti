@@ -3,11 +3,15 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
+import { CANTONS } from "@/lib/cantons";
+import { JOB_CATEGORIES } from "@/lib/job-categories";
 
 export interface WorkerProfileInitial {
   fullName: string;
   email: string;
   phone: string;
+  cantonCode: string;
+  category: string;
   searchable: boolean;
   hasCv: boolean;
 }
@@ -22,6 +26,8 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
     fullName: initial.fullName,
     email: initial.email,
     phone: initial.phone,
+    cantonCode: initial.cantonCode,
+    category: initial.category,
     searchable: initial.searchable,
   });
   const [cvFile, setCvFile] = useState<File | null>(null);
@@ -64,6 +70,8 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
           fullName: form.fullName,
           email: form.email,
           phone: form.phone || null,
+          cantonCode: form.cantonCode || null,
+          category: form.category || null,
           searchable: form.searchable,
           layer3OptIn: form.searchable,
           ...(cvKey ? { cvKey } : {}),
@@ -162,6 +170,35 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
             className={inputCls}
             placeholder="+41 79 123 45 67"
           />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="mb-1.5 block text-[12.5px] font-bold text-ink">Szakma</label>
+          <select
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+            className={inputCls}
+          >
+            <option value="">Nincs megadva</option>
+            {JOB_CATEGORIES.map((c) => (
+              <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="mb-1.5 block text-[12.5px] font-bold text-ink">Kanton</label>
+          <select
+            value={form.cantonCode}
+            onChange={(e) => setForm({ ...form, cantonCode: e.target.value })}
+            className={inputCls}
+          >
+            <option value="">Nincs megadva</option>
+            {CANTONS.map((c) => (
+              <option key={c.code} value={c.code}>{c.name}</option>
+            ))}
+          </select>
         </div>
       </div>
 

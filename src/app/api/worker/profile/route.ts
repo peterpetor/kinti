@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { upsertWorkerProfile } from "@/lib/repo";
+import { isValidCantonCode } from "@/lib/cantons";
+import { isValidJobCategory } from "@/lib/job-categories";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -25,6 +27,8 @@ export async function PUT(req: Request) {
   const fullName = typeof body.fullName === "string" ? body.fullName.trim() : "";
   const email = typeof body.email === "string" ? body.email.trim() : "";
   const phone = typeof body.phone === "string" && body.phone.trim() ? body.phone.trim() : null;
+  const cantonCode = isValidCantonCode(body.cantonCode) ? body.cantonCode : null;
+  const category = isValidJobCategory(body.category) ? body.category : null;
   const searchable = body.searchable === true;
   const layer3OptIn = body.layer3OptIn === true;
   const expectedSalaryMin =
@@ -51,7 +55,7 @@ export async function PUT(req: Request) {
 
   try {
     await upsertWorkerProfile({
-      userId, fullName, email, phone, cvKey, searchable, layer3OptIn, expectedSalaryMin,
+      userId, fullName, email, phone, cvKey, cantonCode, category, searchable, layer3OptIn, expectedSalaryMin,
     });
     return NextResponse.json({ ok: true });
   } catch (err) {

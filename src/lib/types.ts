@@ -189,6 +189,10 @@ export interface WorkerProfile {
   email: string;
   phone: string | null;
   cvKey: string | null;
+  /** Strukturált kanton-kód a jelölt-szűréshez (lib/cantons.ts). */
+  cantonCode: string | null;
+  /** Szakma-id a jelölt-szűréshez (lib/job-categories.ts). */
+  category: string | null;
   aiModerationStatus: number;
   searchable: boolean;
   layer3OptIn: boolean;

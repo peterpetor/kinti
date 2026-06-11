@@ -3,13 +3,19 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { getEmployerByOwner, getSearchableWorkers } from "@/lib/repo";
 import { Icon } from "@/components/ui";
+import { CANTONS, cantonName, isValidCantonCode } from "@/lib/cantons";
+import { JOB_CATEGORIES, jobCategoryLabel, isValidJobCategory } from "@/lib/job-categories";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Jelöltek — Munkáltató" };
 
-export default async function CandidatesPage() {
+export default async function CandidatesPage({
+  searchParams,
+}: {
+  searchParams: { canton?: string; category?: string };
+}) {
   const { userId } = await auth();
   if (!userId) {
     redirect("/belepes?redirect_url=/munkaltato/jeloltek");
@@ -20,8 +26,12 @@ export default async function CandidatesPage() {
     redirect("/munkaltato/regisztracio");
   }
 
+  const canton = isValidCantonCode(searchParams.canton) ? searchParams.canton : null;
+  const category = isValidJobCategory(searchParams.category) ? searchParams.category : null;
+
   const approved = employer.moderationStatus === 1;
-  const candidates = approved ? await getSearchableWorkers() : [];
+  const candidates = approved ? await getSearchableWorkers({ canton, category }) : [];
+  const hasFilter = !!canton || !!category;
 
   return (
     <div className="mx-auto max-w-md space-y-5 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+2rem)]">
@@ -40,13 +50,52 @@ export default async function CandidatesPage() {
         </div>
       </header>
 
+      {approved && (
+        <form method="get" className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <select
+              name="category"
+              defaultValue={category ?? ""}
+              className="h-11 rounded-[12px] border border-line bg-surface-alt px-3 text-[13.5px] font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value="">Összes szakma</option>
+              {JOB_CATEGORIES.map((c) => (
+                <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
+              ))}
+            </select>
+            <select
+              name="canton"
+              defaultValue={canton ?? ""}
+              className="h-11 rounded-[12px] border border-line bg-surface-alt px-3 text-[13.5px] font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value="">Összes kanton</option>
+              {CANTONS.map((c) => (
+                <option key={c.code} value={c.code}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <button type="submit" className="h-10 flex-1 rounded-pill bg-primary text-[13.5px] font-bold text-white active:scale-[0.98]">
+              Szűrés
+            </button>
+            {hasFilter && (
+              <Link href="/munkaltato/jeloltek" className="h-10 grid place-items-center px-4 rounded-pill border border-line bg-surface-alt text-[13px] font-bold text-ink-muted">
+                Törlés
+              </Link>
+            )}
+          </div>
+        </form>
+      )}
+
       {!approved ? (
         <div className="rounded-card border border-accent/20 bg-accent/10 px-4 py-4 text-[13px] font-semibold text-accent">
           A jelöltek böngészéséhez a munkáltatói fiókodnak jóváhagyottnak kell lennie. Amint a fiókod aktív, itt megjelennek a kereshető jelöltek.
         </div>
       ) : candidates.length === 0 ? (
         <div className="rounded-card border border-dashed border-line bg-surface-alt px-4 py-10 text-center text-[13px] text-ink-muted">
-          Jelenleg nincs kereshető jelölt. Nézz vissza később!
+          {hasFilter
+            ? "Nincs a szűrőknek megfelelő jelölt. Próbálj tágítani a feltételeken."
+            : "Jelenleg nincs kereshető jelölt. Nézz vissza később!"}
         </div>
       ) : (
         <div className="space-y-3">
@@ -60,6 +109,21 @@ export default async function CandidatesPage() {
                   </span>
                 )}
               </div>
+
+              {(c.category || c.cantonCode) && (
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {c.category && (
+                    <span className="rounded-[8px] bg-primary/10 px-2 py-0.5 text-[11.5px] font-bold text-primary">
+                      {jobCategoryLabel(c.category)}
+                    </span>
+                  )}
+                  {c.cantonCode && (
+                    <span className="rounded-[8px] bg-surface-alt px-2 py-0.5 text-[11.5px] font-semibold text-ink-muted">
+                      📍 {cantonName(c.cantonCode)}
+                    </span>
+                  )}
+                </div>
+              )}
 
               <div className="mt-2 space-y-1.5">
                 <a href={`mailto:${c.email}`} className="flex items-center gap-2 text-[13px] font-semibold text-primary hover:underline">

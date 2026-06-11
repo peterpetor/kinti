@@ -71,6 +71,8 @@ export default async function WorkerProfilePage() {
             fullName: defaultName,
             email: defaultEmail,
             phone: profile?.phone ?? "",
+            cantonCode: profile?.cantonCode ?? "",
+            category: profile?.category ?? "",
             searchable: profile?.searchable ?? true,
             hasCv: !!profile?.cvKey,
           }}

@@ -143,10 +143,18 @@ export function MaplibreEngine({
     return () => {
       cancelled = true;
       if (loadTimeout) clearTimeout(loadTimeout);
-      markersRef.current.forEach(({ marker }) => marker.remove());
-      markersRef.current.clear();
-      sosMarkersRef.current.forEach((marker) => marker.remove());
-      sosMarkersRef.current.clear();
+      // A marker-ref-eket MÁS effektek töltik fel (klaszterezés), ezért
+      // unmountkor a PILLANATNYI tartalmat kell takarítani — nem a mount-kori
+      // snapshotot (az szivárogtatná a később hozzáadott markereket). Az
+      // ESLint ref-cleanup heurisztikája erre nem illik, ezért elnyomjuk.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const markers = markersRef.current;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const sosMarkers = sosMarkersRef.current;
+      markers.forEach(({ marker }) => marker.remove());
+      markers.clear();
+      sosMarkers.forEach((marker) => marker.remove());
+      sosMarkers.clear();
       meMarkerRef.current?.remove();
       meMarkerRef.current = null;
       mapRef.current?.remove();
