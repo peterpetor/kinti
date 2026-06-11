@@ -30,6 +30,7 @@ export interface ProfileEditorProps {
 type Phase = "idle" | "saving" | "success" | "error";
 
 export function ProfileEditor({
+  businessId,
   initialName,
   initialPhone,
   initialBlurb,
@@ -40,6 +41,7 @@ export function ProfileEditor({
   initialSocialLinks,
   initialYearsHere,
   initialLanguages,
+  isFeatured,
 }: ProfileEditorProps & { isFeatured?: boolean }) {
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState(initialPhone ?? "");
