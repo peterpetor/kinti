@@ -105,8 +105,16 @@ export function JobsBrowser({ jobs }: { jobs: Job[] }) {
               <Link
                 href={`/allasok/${job.id}`}
                 key={job.id}
-                className="block rounded-card border border-line bg-surface p-4 shadow-card hover:border-primary/30 transition-all active:scale-[0.98]"
+                className={cn(
+                  "block rounded-card border bg-surface p-4 transition-all active:scale-[0.98]",
+                  job.status === "featured" ? "border-2 border-accent shadow-pop bg-accent/[0.02]" : "border-line shadow-card hover:border-primary/30"
+                )}
               >
+                {job.status === "featured" && (
+                  <div className="mb-2 inline-flex items-center gap-1 rounded-pill bg-accent px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-sm">
+                    <Icon name="star" size={9} filled /> Kiemelt Állás
+                  </div>
+                )}
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-[16px] font-extrabold text-ink">{job.title}</h3>
