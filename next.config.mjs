@@ -20,7 +20,7 @@ const nextConfig = {
     return [
       {
         source: '/go/revolut',
-        destination: 'https://revolut.com/referral/?referral-code=pter9sxrh!JUN1-26-AR-H2&geo-redirect',
+        destination: 'https://revolut.com/referral/?referral-code=pter9sxrh',
         permanent: false, // Nem állandó, hogy később könnyen cserélhető legyen a kód!
       },
       {
