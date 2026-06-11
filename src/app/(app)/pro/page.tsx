@@ -11,10 +11,16 @@ export default function ProPage() {
   const { user } = useUser();
 
   const handleCheckout = (product: "kinti_pro_monthly" | "business_pro_monthly" | "job_featured") => {
+    let customType = "";
+    if (product === "kinti_pro_monthly") customType = "user_pro";
+    else if (product === "business_pro_monthly") customType = "business_pro";
+    else if (product === "job_featured") customType = "job_featured";
+
     startCheckout({
       product,
       customerEmail: user?.emailAddresses?.[0]?.emailAddress,
       customData: {
+        type: customType,
         userId: user?.id || "anonymous",
       }
     });
