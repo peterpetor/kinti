@@ -38,6 +38,7 @@ export async function POST(req: Request) {
 
   const description = typeof body.description === "string" ? body.description.trim() : null;
   const website = typeof body.website === "string" ? body.website.trim() : null;
+  const companyUid = typeof body.companyUid === "string" && body.companyUid.trim() ? body.companyUid.trim() : null;
 
   // AI elő-moderáció: a munkáltatói profil szabad-szöveges mezőit (cégnév,
   // bemutatkozás, weboldal) átengedjük a Llama moderátoron. A profil önmagában
@@ -69,6 +70,8 @@ export async function POST(req: Request) {
       billingEmail: null,
       subscriptionTier: "free",
       stripeCustomerId: null,
+      companyUid,
+      verified: false,
       moderationStatus,
     });
 

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAdminUserId } from "@/lib/admin";
 import { getDB } from "@/lib/cloudflare";
 import { JobBoardDecideButtons } from "@/components/admin/job-board-decide-buttons";
+import { EmployerVerifyButton } from "@/components/admin/employer-verify-button";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -32,6 +33,8 @@ interface EmployerRow {
   contact_email: string;
   website: string | null;
   description: string | null;
+  company_uid: string | null;
+  verified: number;
   subscription_tier: string;
   moderation_status: number;
   moderation_decision_at: string | null;
@@ -74,7 +77,7 @@ export default async function JobBoardAdminPage({
   const [employers, jobs, pendingEmployers, pendingJobs] = await Promise.all([
     db
       .prepare(
-        `SELECT id, company_name, contact_email, website, description, subscription_tier,
+        `SELECT id, company_name, contact_email, website, description, company_uid, verified, subscription_tier,
                 moderation_status, moderation_decision_at, moderation_decided_by, created_at
          FROM employers WHERE moderation_status = ? ORDER BY created_at DESC LIMIT 100`
       )
@@ -209,6 +212,12 @@ export default async function JobBoardAdminPage({
                           Csomag: <strong className="text-ink">{emp.subscription_tier.toUpperCase()}</strong>
                           {" · "}Regisztrálva: {fmtAgo(emp.created_at)}
                         </p>
+                        <div className="mt-2 flex items-center gap-2">
+                          <span className="text-[10.5px] text-ink-muted">
+                            UID: {emp.company_uid ? <strong className="font-mono text-ink">{emp.company_uid}</strong> : <em className="text-ink-faint">nincs megadva</em>}
+                          </span>
+                          <EmployerVerifyButton id={emp.id} verified={emp.verified === 1} />
+                        </div>
                       </div>
                       <JobBoardDecideButtons
                         table="employers"

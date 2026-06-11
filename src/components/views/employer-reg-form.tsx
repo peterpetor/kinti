@@ -14,6 +14,7 @@ export function EmployerRegForm() {
     companyName: "",
     contactEmail: "",
     website: "",
+    companyUid: "",
     description: "",
   });
 
@@ -97,6 +98,22 @@ export function EmployerRegForm() {
           className={inputCls}
           placeholder="https://ceged.ch"
         />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+          Cég-azonosító (UID) — opcionális
+        </label>
+        <input
+          type="text"
+          value={form.companyUid}
+          onChange={(e) => setForm({ ...form, companyUid: e.target.value })}
+          className={inputCls}
+          placeholder="CHE-123.456.789"
+        />
+        <p className="mt-1 text-[10.5px] text-ink-faint">
+          Ha megadod és ellenőrizzük, „Hiteles cég" jelzést kapsz a hirdetéseiden.
+        </p>
       </div>
 
       <div>

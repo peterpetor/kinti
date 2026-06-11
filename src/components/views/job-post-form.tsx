@@ -18,6 +18,7 @@ export interface JobFormInitial {
   currency?: string;
   description?: string;
   requirements?: string;
+  legalAttested?: boolean;
 }
 
 /**
@@ -41,6 +42,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
     currency: "CHF",
     description: "",
     requirements: "",
+    legalAttested: false,
     ...initial,
   });
 
@@ -231,6 +233,21 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
           placeholder="Nyelvtudás, végzettség, tapasztalat..."
         />
       </div>
+
+      <label className="flex items-start gap-2.5 rounded-[12px] border border-line bg-surface-alt px-3.5 py-3">
+        <input
+          type="checkbox"
+          required
+          checked={form.legalAttested}
+          onChange={(e) => setForm({ ...form, legalAttested: e.target.checked })}
+          className="mt-0.5 rounded border-line text-primary focus:ring-primary"
+        />
+        <span className="text-[12px] leading-snug text-ink-muted">
+          <strong className="font-semibold text-ink">Nyilatkozom</strong>, hogy a meghirdetett munka{" "}
+          <strong className="font-semibold text-ink">bejelentett, legális foglalkoztatás</strong>{" "}
+          (AHV/SVA), és megfelel a svájci munkajogi előírásoknak. A feketemunka (Schwarzarbeit) hirdetése tilos és a fiók kitiltását vonja maga után.
+        </span>
+      </label>
 
       <div className="pt-3">
         <button

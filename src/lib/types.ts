@@ -155,6 +155,10 @@ export interface Employer {
   billingEmail: string | null;
   subscriptionTier: string;
   stripeCustomerId: string | null;
+  /** Opcionális svájci cég-azonosító (UID, pl. CHE-123.456.789). */
+  companyUid: string | null;
+  /** Admin által ellenőrzött, valódi cég → „Hiteles cég" badge. */
+  verified: boolean;
   moderationStatus: number;
   createdAt: string;
   updatedAt: string;
@@ -170,6 +174,8 @@ export interface Job {
   cantonCode: string | null;
   /** Szakma-id a szűréshez (lib/job-categories.ts). Régi hirdetésnél null. */
   category: string | null;
+  /** A feladó nyilatkozata: bejelentett (AHV), legális foglalkoztatás. */
+  legalAttested: boolean;
   employmentType: string;
   salaryMin: number | null;
   salaryMax: number | null;

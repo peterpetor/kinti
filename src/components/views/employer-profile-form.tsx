@@ -15,6 +15,7 @@ export function EmployerProfileForm({ employer }: { employer: Employer }) {
     companyName: employer.companyName,
     contactEmail: employer.contactEmail,
     website: employer.website || "",
+    companyUid: employer.companyUid || "",
     description: employer.description || "",
   });
 
@@ -96,6 +97,27 @@ export function EmployerProfileForm({ employer }: { employer: Employer }) {
           onChange={(e) => setForm({ ...form, website: e.target.value })}
           className={inputCls}
         />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+          Cég-azonosító (UID)
+          {employer.verified && (
+            <span className="ml-2 inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[9.5px] font-bold text-success">
+              Hiteles
+            </span>
+          )}
+        </label>
+        <input
+          type="text"
+          value={form.companyUid}
+          onChange={(e) => setForm({ ...form, companyUid: e.target.value })}
+          className={inputCls}
+          placeholder="CHE-123.456.789"
+        />
+        <p className="mt-1 text-[10.5px] text-ink-faint">
+          Ellenőrzött cég-azonosító esetén „Hiteles cég" jelzést kapsz. Az UID módosítása újra-ellenőrzést igényel.
+        </p>
       </div>
 
       <div>

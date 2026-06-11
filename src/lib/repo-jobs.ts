@@ -2,12 +2,14 @@
  * repo-jobs.ts — Munkáltatók és álláshirdetések (Job Board) adatrétege.
  */
 import { getDB } from "./cloudflare";
+import { bool } from "./repo-shared";
 import type { Employer, Job } from "./types";
 
 interface EmployerRow {
   id: string; owner_user_id: string; company_name: string; logo_key: string | null;
   description: string | null; website: string | null; contact_email: string;
   billing_email: string | null; subscription_tier: string; stripe_customer_id: string | null;
+  company_uid: string | null; verified: number | null;
   moderation_status: number; created_at: string; updated_at: string;
 }
 
@@ -16,14 +18,15 @@ function toEmployer(r: EmployerRow): Employer {
     id: r.id, ownerUserId: r.owner_user_id, companyName: r.company_name, logoKey: r.logo_key,
     description: r.description, website: r.website, contactEmail: r.contact_email,
     billingEmail: r.billing_email, subscriptionTier: r.subscription_tier,
-    stripeCustomerId: r.stripe_customer_id, moderationStatus: r.moderation_status,
+    stripeCustomerId: r.stripe_customer_id, companyUid: r.company_uid ?? null,
+    verified: bool(r.verified), moderationStatus: r.moderation_status,
     createdAt: r.created_at, updatedAt: r.updated_at,
   };
 }
 
 interface JobRow {
   id: string; employer_id: string; title: string; description: string; location: string;
-  canton_code: string | null; category: string | null;
+  canton_code: string | null; category: string | null; legal_attested: number | null;
   employment_type: string; salary_min: number | null; salary_max: number | null;
   currency: string; requirements: string | null; status: string; moderation_status: number;
   created_at: string; updated_at: string; expires_at: string | null;
@@ -33,6 +36,7 @@ function toJob(r: JobRow): Job {
   return {
     id: r.id, employerId: r.employer_id, title: r.title, description: r.description,
     location: r.location, cantonCode: r.canton_code ?? null, category: r.category ?? null,
+    legalAttested: bool(r.legal_attested),
     employmentType: r.employment_type, salaryMin: r.salary_min,
     salaryMax: r.salary_max, currency: r.currency, requirements: r.requirements,
     status: r.status, moderationStatus: r.moderation_status,
@@ -52,9 +56,18 @@ export async function getEmployerById(id: string): Promise<Employer | null> {
 
 export async function createEmployer(employer: Omit<Employer, "createdAt" | "updatedAt">): Promise<void> {
   await getDB().prepare(
-    `INSERT INTO employers (id, owner_user_id, company_name, logo_key, description, website, contact_email, billing_email, subscription_tier, stripe_customer_id, moderation_status)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).bind(employer.id, employer.ownerUserId, employer.companyName, employer.logoKey, employer.description, employer.website, employer.contactEmail, employer.billingEmail, employer.subscriptionTier, employer.stripeCustomerId, employer.moderationStatus).run();
+    `INSERT INTO employers (id, owner_user_id, company_name, logo_key, description, website, contact_email, billing_email, subscription_tier, stripe_customer_id, company_uid, moderation_status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(employer.id, employer.ownerUserId, employer.companyName, employer.logoKey, employer.description, employer.website, employer.contactEmail, employer.billingEmail, employer.subscriptionTier, employer.stripeCustomerId, employer.companyUid, employer.moderationStatus).run();
+}
+
+/** Admin: a munkáltató „Hiteles cég" jelzésének ki/be kapcsolása. */
+export async function setEmployerVerified(id: string, verified: boolean): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE employers SET verified = ?, updated_at = datetime('now') WHERE id = ?")
+    .bind(verified ? 1 : 0, id)
+    .run();
+  return (res.meta?.changes ?? 0) > 0;
 }
 
 export async function getJobs(opts: { status?: string; employerId?: string; includeAllStatuses?: boolean } = {}): Promise<Job[]> {
@@ -77,9 +90,9 @@ export async function getJobById(id: string): Promise<Job | null> {
 
 export async function createJob(job: Omit<Job, "createdAt" | "updatedAt">): Promise<void> {
   await getDB().prepare(
-    `INSERT INTO jobs (id, employer_id, title, description, location, canton_code, category, employment_type, salary_min, salary_max, currency, requirements, status, moderation_status, expires_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).bind(job.id, job.employerId, job.title, job.description, job.location, job.cantonCode, job.category, job.employmentType, job.salaryMin, job.salaryMax, job.currency, job.requirements, job.status, job.moderationStatus, job.expiresAt).run();
+    `INSERT INTO jobs (id, employer_id, title, description, location, canton_code, category, legal_attested, employment_type, salary_min, salary_max, currency, requirements, status, moderation_status, expires_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(job.id, job.employerId, job.title, job.description, job.location, job.cantonCode, job.category, job.legalAttested ? 1 : 0, job.employmentType, job.salaryMin, job.salaryMax, job.currency, job.requirements, job.status, job.moderationStatus, job.expiresAt).run();
 }
 
 export interface UpdateJobInput {
@@ -88,6 +101,7 @@ export interface UpdateJobInput {
   location: string;
   cantonCode: string | null;
   category: string | null;
+  legalAttested: boolean;
   employmentType: string;
   salaryMin: number | null;
   salaryMax: number | null;
@@ -104,13 +118,13 @@ export async function updateJob(id: string, employerId: string, fields: UpdateJo
   const res = await getDB()
     .prepare(
       `UPDATE jobs SET title = ?, description = ?, location = ?, canton_code = ?, category = ?,
-         employment_type = ?, salary_min = ?, salary_max = ?, currency = ?, requirements = ?,
+         legal_attested = ?, employment_type = ?, salary_min = ?, salary_max = ?, currency = ?, requirements = ?,
          moderation_status = 0, updated_at = datetime('now')
        WHERE id = ? AND employer_id = ?`,
     )
     .bind(
       fields.title, fields.description, fields.location, fields.cantonCode, fields.category,
-      fields.employmentType, fields.salaryMin, fields.salaryMax, fields.currency, fields.requirements,
+      fields.legalAttested ? 1 : 0, fields.employmentType, fields.salaryMin, fields.salaryMax, fields.currency, fields.requirements,
       id, employerId,
     )
     .run();

@@ -28,6 +28,7 @@ export async function PUT(req: Request) {
   const contactEmail = typeof body.contactEmail === "string" ? body.contactEmail.trim() : "";
   const website = typeof body.website === "string" ? body.website.trim() : null;
   const description = typeof body.description === "string" ? body.description.trim() : null;
+  const companyUid = typeof body.companyUid === "string" && body.companyUid.trim() ? body.companyUid.trim() : null;
 
   if (companyName.length < 2) {
     return NextResponse.json({ error: "A cégnév túl rövid." }, { status: 400 });
@@ -36,11 +37,14 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Érvénytelen email cím." }, { status: 400 });
   }
 
+  // Ha a cég-azonosító változik, a „Hiteles" jelzés visszaáll → admin újra-ellenőrzi.
+  const verified = companyUid === existing.companyUid ? existing.verified : false;
+
   try {
     const res = await getDB()
       .prepare(
         `UPDATE employers
-         SET company_name = ?, contact_email = ?, website = ?, description = ?, updated_at = datetime('now')
+         SET company_name = ?, contact_email = ?, website = ?, description = ?, company_uid = ?, verified = ?, updated_at = datetime('now')
          WHERE id = ? AND owner_user_id = ?`
       )
       .bind(
@@ -48,6 +52,8 @@ export async function PUT(req: Request) {
         contactEmail,
         website,
         description,
+        companyUid,
+        verified ? 1 : 0,
         existing.id,
         userId
       )

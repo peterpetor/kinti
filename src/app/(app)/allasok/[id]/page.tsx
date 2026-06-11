@@ -80,8 +80,16 @@ export default async function JobDetailPage({ params }: { params: { id: string }
         <h1 className="text-[24px] font-extrabold tracking-tight text-ink leading-tight text-balance">
           {job.title}
         </h1>
-        <p className="mt-1 text-[15px] font-bold text-ink-muted">
+        <p className="mt-1 flex items-center gap-1.5 text-[15px] font-bold text-ink-muted">
           {employer?.companyName || "Ismeretlen cég"}
+          {employer?.verified && (
+            <span
+              title="A kinti.app ellenőrizte, hogy bejegyzett svájci cég (UID alapján)."
+              className="inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-2 py-0.5 text-[10.5px] font-bold text-success"
+            >
+              <Icon name="check" size={10} strokeWidth={3} /> Hiteles cég
+            </span>
+          )}
         </p>
 
         <div className="mt-5 flex flex-wrap gap-2">

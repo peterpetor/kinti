@@ -53,6 +53,7 @@ export default async function EditJobPage({ params }: { params: { id: string } }
             currency: job.currency,
             description: job.description,
             requirements: job.requirements ?? "",
+            legalAttested: job.legalAttested,
           }}
         />
       </section>

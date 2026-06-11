@@ -3,6 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { createJob, getEmployerByOwner } from "@/lib/repo";
 import { isValidCantonCode } from "@/lib/cantons";
 import { isValidJobCategory } from "@/lib/job-categories";
+import { moderateText } from "@/lib/text-moderation";
+import { hasBlackWorkSignal } from "@/lib/job-screening";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -35,6 +37,7 @@ export async function POST(req: Request) {
   const salaryMax = typeof body.salaryMax === "number" ? body.salaryMax : null;
   const currency = typeof body.currency === "string" ? body.currency.trim() : "CHF";
   const requirements = typeof body.requirements === "string" ? body.requirements.trim() : null;
+  const legalAttested = body.legalAttested === true;
 
   if (title.length < 3) {
     return NextResponse.json({ error: "Az állás címe túl rövid." }, { status: 400 });
@@ -50,6 +53,29 @@ export async function POST(req: Request) {
   }
   if (!category) {
     return NextResponse.json({ error: "Válassz szakmát." }, { status: 400 });
+  }
+  if (!legalAttested) {
+    return NextResponse.json(
+      { error: "A hirdetés feladásához el kell fogadnod a legális (bejelentett, AHV) foglalkoztatásra vonatkozó nyilatkozatot." },
+      { status: 400 },
+    );
+  }
+
+  // Feketemunka-előszűrő: nyilvánvaló jelek (kulcsszó) → azonnali elutasítás.
+  const jobText = `${title}\n${description}\n${requirements ?? ""}`;
+  if (hasBlackWorkSignal(jobText)) {
+    return NextResponse.json(
+      { error: "A hirdetés be nem jelentett (fekete) munkára utaló megfogalmazást tartalmaz. A kinti.app kizárólag legális, bejelentett foglalkoztatást engedélyez." },
+      { status: 400 },
+    );
+  }
+  // Általános AI-moderáció (scam/MLM/tiltott) — block esetén elutasítjuk.
+  const mod = await moderateText(jobText);
+  if (mod.action === "block") {
+    return NextResponse.json(
+      { error: mod.reason || "A hirdetés nem felel meg a közösségi irányelveinknek." },
+      { status: 400 },
+    );
   }
 
   const id = crypto.randomUUID();
@@ -67,6 +93,7 @@ export async function POST(req: Request) {
       location,
       cantonCode,
       category,
+      legalAttested,
       employmentType,
       salaryMin,
       salaryMax,
