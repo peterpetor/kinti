@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui";
 import { CANTONS } from "@/lib/cantons";
 import { JOB_CATEGORIES } from "@/lib/job-categories";
+import { useCheckout } from "@/hooks/useCheckout";
 
 export interface JobFormInitial {
   title?: string;
@@ -19,6 +20,7 @@ export interface JobFormInitial {
   description?: string;
   requirements?: string;
   legalAttested?: boolean;
+  status?: string;
 }
 
 /**
@@ -30,6 +32,18 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
   const isEdit = !!jobId;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { startCheckout, isLoading: isCheckoutLoading } = useCheckout();
+
+  const handleUpgrade = () => {
+    if (!jobId) return;
+    startCheckout({
+      product: "job_featured",
+      customData: {
+        type: "job_featured",
+        jobId: jobId
+      }
+    });
+  };
 
   const [form, setForm] = useState({
     title: "",
@@ -79,12 +93,35 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
   const inputCls = "w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/30";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {error && (
-        <div className="rounded-[12px] bg-accent/10 px-4 py-3 text-[13px] font-semibold text-accent">
-          {error}
+    <div className="space-y-6">
+      {isEdit && initial?.status !== "featured" && (
+        <div className="rounded-[20px] border-2 border-accent/20 bg-accent/5 p-5 text-center shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+          <div className="mb-2 text-3xl">💼</div>
+          <h3 className="mb-1 text-[17px] font-black text-accent tracking-tight">Kiemelt Álláshirdetés</h3>
+          <p className="mb-4 text-[13px] font-medium text-ink-muted leading-snug">
+            Emeld ki a hirdetésedet sárga háttérrel 30 napra, és kerülj a lista élére, hogy azonnal megtaláld a legjobb svájci magyar munkaerőt!
+          </p>
+          <button
+            type="button"
+            onClick={handleUpgrade}
+            disabled={isCheckoutLoading}
+            className={cn(
+              "flex w-full items-center justify-center gap-2 rounded-pill bg-accent px-4 py-3 text-[15px] font-black text-white shadow-md transition hover:bg-accent/90 active:scale-[0.98]",
+              isCheckoutLoading && "opacity-60 cursor-wait"
+            )}
+          >
+            {isCheckoutLoading ? "Töltés..." : "Hirdetés Kiemelése (49 CHF)"}
+          </button>
         </div>
       )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="rounded-[12px] bg-accent/10 px-4 py-3 text-[13px] font-semibold text-accent">
+            {error}
+          </div>
+        )}
 
       <div>
         <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
@@ -268,5 +305,6 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
         </p>
       </div>
     </form>
+    </div>
   );
 }

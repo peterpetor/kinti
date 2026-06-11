@@ -67,7 +67,7 @@ async function handleSuccessfulPayment(customData: any, data: any) {
   // Szaknévsor PRO (Vállalkozás Kiemelés)
   else if (customData.type === "business_pro" && customData.businessId) {
     await db.prepare(
-      "UPDATE businesses SET subscription_tier = 'pro', updated_at = ? WHERE id = ?"
+      "UPDATE businesses SET featured = 1, updated_at = ? WHERE id = ?"
     ).bind(now, customData.businessId).run();
   }
 
@@ -87,7 +87,7 @@ async function handleSubscriptionEnded(customData: any, data: any) {
   // Szaknévsor PRO lejárat
   if (customData.type === "business_pro" && customData.businessId) {
     await db.prepare(
-      "UPDATE businesses SET subscription_tier = 'free', updated_at = ? WHERE id = ?"
+      "UPDATE businesses SET featured = 0, updated_at = ? WHERE id = ?"
     ).bind(now, customData.businessId).run();
   }
 
