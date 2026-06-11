@@ -16,6 +16,20 @@ const nextConfig = {
   // közvetlenül (vagy Cloudflare Images-szel) szolgáljuk ki.
   images: { unoptimized: true },
   env: { NEXT_PUBLIC_BUILD_ID: BUILD_ID },
+  async redirects() {
+    return [
+      {
+        source: '/go/revolut',
+        destination: 'https://revolut.com/referral/?referral-code=pter9sxrh!JUN1-26-AR-H2&geo-redirect',
+        permanent: false, // Nem állandó, hogy később könnyen cserélhető legyen a kód!
+      },
+      {
+        source: '/go/wise',
+        destination: 'https://wise.com/invite/dic/peterp286',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 if (process.env.NODE_ENV === "development") {
