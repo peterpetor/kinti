@@ -32,9 +32,15 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   const [isGameOver, setIsGameOver] = useState(false);
   const [isLessonComplete, setIsLessonComplete] = useState(false);
   const [sessionStreak, setSessionStreak] = useState(0);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      const loadVoices = () => setVoices(window.speechSynthesis.getVoices());
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
   }, []);
 
   if (!mounted) return <div className="p-4">Betöltés...</div>;
@@ -47,9 +53,22 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   const playAudio = (text: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (!window.speechSynthesis) return;
+
+    window.speechSynthesis.cancel(); // Stop current speech
     const utterance = new SpeechSynthesisUtterance(text);
-    // Prefer Swiss German (de-CH) if available, otherwise fallback to German (de-DE)
-    utterance.lang = "de-CH"; 
+    
+    // Prefer Swiss German (de-CH), then German
+    let voice = voices.find(v => v.lang.toLowerCase() === "de-ch" || v.lang.toLowerCase() === "de_ch");
+    if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith("de-"));
+    if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith("de"));
+    
+    if (voice) {
+      utterance.voice = voice;
+      utterance.lang = voice.lang;
+    } else {
+      utterance.lang = "de-CH"; 
+    }
+    
     utterance.rate = 0.85; // slightly slower for learners
     window.speechSynthesis.speak(utterance);
   };
@@ -177,18 +196,36 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
       className="flex flex-col items-center gap-6 mt-8 w-full max-w-sm mx-auto"
       style={{ perspective: "1000px" }}
     >
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => {
           setShowFlashcardBack(!showFlashcardBack);
           if (!isAnswered) setIsAnswered(true); // Any click counts as seen
         }}
-        className="relative w-full h-[300px] rounded-[32px] transition-transform duration-500 cursor-pointer"
-        style={{ transformStyle: "preserve-3d", transform: showFlashcardBack ? "rotateY(180deg)" : "rotateY(0deg)" }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setShowFlashcardBack(!showFlashcardBack);
+            if (!isAnswered) setIsAnswered(true);
+          }
+        }}
+        className="relative w-full h-[300px] rounded-[32px] transition-transform duration-500 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        style={{ 
+          transformStyle: "preserve-3d", 
+          WebkitTransformStyle: "preserve-3d", 
+          transform: showFlashcardBack ? "rotateY(180deg)" : "rotateY(0deg)",
+        }}
       >
         {/* Front */}
         <div 
           className="absolute inset-0 bg-surface border-2 border-border-strong/20 rounded-[32px] flex items-center justify-center p-6 shadow-card"
-          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
+          style={{ 
+            backfaceVisibility: "hidden", 
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(0deg)", 
+            WebkitTransform: "rotateY(0deg)"
+          }}
         >
           <h2 className="text-3xl font-black text-ink text-center">{question.prompt}</h2>
         </div>
@@ -196,7 +233,12 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
         {/* Back */}
         <div 
           className="absolute inset-0 bg-primary/5 border-2 border-primary/20 rounded-[32px] flex flex-col items-center justify-center p-6 shadow-card"
-          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+          style={{ 
+            backfaceVisibility: "hidden", 
+            WebkitBackfaceVisibility: "hidden", 
+            transform: "rotateY(180deg)",
+            WebkitTransform: "rotateY(180deg)"
+          }}
         >
           <div 
             onClick={(e) => playAudio(question.backText || "", e)}
@@ -210,7 +252,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
             <p className="mt-4 text-lg font-bold text-ink/50 tracking-wider">[{question.phonetic}]</p>
           )}
         </div>
-      </button>
+      </div>
       <p className="text-[13px] font-bold uppercase text-ink-muted tracking-widest">
         Koppints a fordításért
       </p>

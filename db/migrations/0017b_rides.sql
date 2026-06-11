@@ -2,7 +2,7 @@
 -- 0017_rides — Telekocsi (Ride-sharing) modul különálló táblája
 -- ===========================================================================
 
-CREATE TABLE rides (
+CREATE TABLE IF NOT EXISTS rides (
   id               TEXT PRIMARY KEY,
   departure_city   TEXT NOT NULL,
   destination_city TEXT NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE rides (
 );
 
 -- Index a térképes lekérdezésekhez (Bounding box alapú kereséshez)
-CREATE INDEX idx_rides_latlng ON rides(lat, lng);
+CREATE INDEX IF NOT EXISTS idx_rides_latlng ON rides(lat, lng);
 
 -- Index a lejárati időhöz a gyors Cron Job törléshez
-CREATE INDEX idx_rides_expires_at ON rides(expires_at);
+CREATE INDEX IF NOT EXISTS idx_rides_expires_at ON rides(expires_at);
