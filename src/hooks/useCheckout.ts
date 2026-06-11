@@ -24,7 +24,7 @@ export function useCheckout() {
         body: JSON.stringify(options),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as any;
 
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a fizetés inicializálásakor");

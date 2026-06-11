@@ -65,7 +65,7 @@ export async function createCheckout(
     throw new Error(`Failed to create checkout: ${res.statusText}`);
   }
 
-  const data = await res.json();
+  const data = (await res.json()) as any;
   return data.data.attributes.url;
 }
 
