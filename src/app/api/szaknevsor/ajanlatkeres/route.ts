@@ -147,12 +147,22 @@ export async function POST(req: Request) {
 
     const sentCount = emailResults.filter((r) => r.status === "fulfilled").length;
 
-    // Analitika: lead_count növelése minden érintett cégnél (best-effort, no IP dedupe for leads)
-    const { incrementBusinessAnalytic } = await import("@/lib/repo");
+    // Analitika: lead_count növelése + a lead in-app mentése minden érintett
+    // cégnél (best-effort). A mentett lead-et a PRO-vállalkozó látja a
+    // postaládájában; a free csak az emailt kapja (mint eddig).
+    const { incrementBusinessAnalytic, createBusinessLead } = await import("@/lib/repo");
     await Promise.allSettled(
-      targets.map((biz) =>
+      targets.flatMap((biz) => [
         incrementBusinessAnalytic(biz.id, "lead", null),
-      ),
+        createBusinessLead({
+          businessId: biz.id,
+          senderName: name,
+          senderEmail: email,
+          senderPhone: phone,
+          categoryLabel: effectiveCategoryLabel,
+          message,
+        }),
+      ]),
     );
 
     // Visszaigazolás a kérező felhasználónak

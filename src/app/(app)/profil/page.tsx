@@ -6,6 +6,7 @@ import { LogoUploader } from "@/components/views/logo-uploader";
 import { OwnerDraftForm } from "@/components/views/owner-draft-form";
 import { ProfileEditor } from "@/components/views/profile-editor";
 import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
+import { LeadInbox } from "@/components/views/lead-inbox";
 import { ReviewResponseForm } from "@/components/views/review-response-form";
 import { InstallPrompt } from "@/components/install-prompt";
 import { KintiRadar } from "@/components/kinti-radar";
@@ -18,7 +19,7 @@ import {
   DropdownMenu,
   KintiLogo,
 } from "@/components/ui";
-import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness } from "@/lib/repo";
+import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { handleFromId } from "@/lib/handle";
 import type { Business, Category } from "@/lib/types";
@@ -179,6 +180,10 @@ async function OwnerDashboard({
   const data = await getDashboard(business.id);
   if (!data) return null;
 
+  // Ajánlatkérés-postaláda (Szaknévsor PRO = business.featured).
+  const newLeadCount = await countNewBusinessLeads(business.id);
+  const leads = business.featured ? await getBusinessLeads(business.id) : [];
+
   const { stats } = data;
   const total14 = stats.trend.reduce((sum, p) => sum + p.views, 0);
   const trendData = stats.trend.map((p) => p.views);
@@ -245,7 +250,11 @@ async function OwnerDashboard({
       ) : (
         <div className="rounded-card border border-[#ff9600]/30 bg-[#ff9600]/5 px-4 py-3">
           <p className="text-[13px] font-bold text-ink">🚀 Szaknévsor PRO — több ügyfél, kiemelt láthatóság</p>
-          <p className="mt-0.5 mb-2.5 text-[12px] text-ink-muted">Sárga kiemelés, top pozíció a kategóriádban, bővített galéria.</p>
+          <p className="mt-0.5 mb-2.5 text-[12px] text-ink-muted">
+            {newLeadCount > 0
+              ? `📥 ${newLeadCount} beérkezett ajánlatkérésed vár — PRO-val egy helyen kezeled. Plusz sárga kiemelés és top pozíció.`
+              : "Beérkező ajánlatkérések postaládája, sárga kiemelés, top pozíció a kategóriádban, bővített galéria."}
+          </p>
           <BoostCheckoutButton
             product="business_pro_monthly"
             customData={{ type: "business_pro", businessId: business.id }}
@@ -253,6 +262,16 @@ async function OwnerDashboard({
             className="bg-[#ff9600] text-white hover:bg-[#e68600]"
           />
         </div>
+      )}
+
+      {/* Ajánlatkérés-postaláda — Szaknévsor PRO (business.featured) */}
+      {business.featured && (
+        <section className="space-y-2">
+          <SectionHeader>
+            Ajánlatkérések{newLeadCount > 0 ? ` · ${newLeadCount} új` : ""}
+          </SectionHeader>
+          <LeadInbox leads={leads} />
+        </section>
       )}
 
       {/* Vállalkozói adatok szerkesztése form */}
