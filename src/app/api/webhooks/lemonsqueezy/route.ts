@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifySignature } from "@/lib/lemonsqueezy";
 import { getDB } from "@/lib/cloudflare";
-import { clerkClient } from "@clerk/nextjs/server";
 import { upsertSubscription } from "@/lib/subscriptions";
 
 export const runtime = "edge";
@@ -84,15 +83,8 @@ async function handleSuccessfulPayment(customData: any, data: any) {
         lsCustomerId: data.customer_id?.toString(),
         currentPeriodEnd: data.renews_at || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       });
-      
-      await (await clerkClient()).users.updateUserMetadata(customData.userId, {
-        publicMetadata: {
-          isPro: true,
-        },
-      });
-      console.log(`User PRO activated in Clerk for user: ${customData.userId}`);
     } catch (e) {
-      console.error("Failed to update Clerk user metadata for PRO:", e);
+      console.error("Failed to upsert Kinti PRO subscription:", e);
     }
   }
 }
@@ -119,15 +111,8 @@ async function handleSubscriptionEnded(customData: any, data: any) {
         lsCustomerId: data.customer_id?.toString(),
         currentPeriodEnd: data.renews_at || new Date().toISOString(),
       });
-
-      await (await clerkClient()).users.updateUserMetadata(customData.userId, {
-        publicMetadata: {
-          isPro: false,
-        },
-      });
-      console.log(`User PRO expired in Clerk for user: ${customData.userId}`);
     } catch (e) {
-      console.error("Failed to update Clerk user metadata for PRO expiration:", e);
+      console.error("Failed to upsert Kinti PRO expiration:", e);
     }
   }
 }

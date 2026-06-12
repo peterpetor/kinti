@@ -6,6 +6,9 @@ import { cn } from "@/lib/cn";
 import { auth } from "@clerk/nextjs/server";
 import { isPro } from "@/lib/subscriptions";
 
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Szakmai Gyors-Szótár | Kinti",
   description: "Szakmaspecifikus svájci-német és német kifejezések, hanganyaggal.",
