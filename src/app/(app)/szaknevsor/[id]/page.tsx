@@ -119,7 +119,8 @@ export default async function BusinessPage({
   try {
     socials = b.socialLinks ? JSON.parse(b.socialLinks) : null;
   } catch {}
-  const hasSocials = socials && (socials.facebook || socials.instagram || socials.linkedin || socials.booking);
+  // A booking-nak külön „Időpontfoglalás" szekciója van, ezért itt nem számít.
+  const hasSocials = socials && (socials.facebook || socials.instagram || socials.linkedin);
 
   // JSON-LD strukturált adat — Schema.org LocalBusiness (Google rich snippets)
   const schemaDays: Record<string, string> = {
@@ -385,19 +386,34 @@ export default async function BusinessPage({
                   <Icon name="linkedin" size={15} />
                 </a>
               )}
-              {socials?.booking && (
-                <a
-                  href={socials.booking}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Időpontfoglalás"
-                  className="flex items-center gap-1 px-3 py-1 rounded-xl bg-primary text-white text-[11px] font-extrabold hover:bg-primary/95 transition-all shadow-sm active:scale-95"
-                >
-                  <Icon name="calendar" size={12} /> Időpont
-                </a>
-              )}
             </div>
           </div>
+        )}
+
+        {/* Időpontfoglalás widget (PRO) — Calendly esetén beágyazott, egyébként CTA */}
+        {socials?.booking && (
+          <section className="mt-6">
+            <h2 className="mb-2 text-[14px] font-bold uppercase tracking-wide text-ink-muted">Időpontfoglalás</h2>
+            {socials.booking.includes("calendly.com") ? (
+              <div className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
+                <iframe
+                  src={`${socials.booking}${socials.booking.includes("?") ? "&" : "?"}embed_domain=kinti.app&embed_type=Inline&hide_gdpr_banner=1`}
+                  title="Időpontfoglalás"
+                  className="h-[640px] w-full"
+                  loading="lazy"
+                />
+              </div>
+            ) : (
+              <a
+                href={socials.booking}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-pill bg-primary text-[15px] font-extrabold text-white shadow-card-hover transition active:scale-[0.98]"
+              >
+                <Icon name="calendar" size={16} strokeWidth={2.4} /> Foglalj időpontot
+              </a>
+            )}
+          </section>
         )}
 
         {/* erről a helyről */}
