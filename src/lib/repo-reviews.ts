@@ -209,3 +209,42 @@ export async function setReviewOwnerResponse(reviewId: string, ownerUserId: stri
     .bind(response, response, reviewId, ownerUserId).run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+export interface ReviewResponseEngagement {
+  /** A legelső vélemény-válasz napja (YYYY-MM-DD). */
+  since: string;
+  views: number;
+  calls: number;
+  leads: number;
+}
+
+/**
+ * „Review Response Counter" — mióta a vállalkozó válaszol a véleményekre,
+ * mennyi megkeresés (profil-megnyitás / hívás / ajánlatkérés) érkezett.
+ * A válaszadás megtérülését mutatja. Ha még sose válaszolt → null.
+ */
+export async function getReviewResponseEngagement(businessId: string): Promise<ReviewResponseEngagement | null> {
+  const first = await getDB()
+    .prepare("SELECT MIN(date(owner_responded_at)) AS since FROM reviews WHERE business_id = ? AND owner_responded_at IS NOT NULL")
+    .bind(businessId)
+    .first<{ since: string | null }>();
+  if (!first?.since) return null;
+
+  const agg = await getDB()
+    .prepare(
+      `SELECT COALESCE(SUM(view_count),0) AS views,
+              COALESCE(SUM(phone_click_count),0) AS calls,
+              COALESCE(SUM(lead_count),0) AS leads
+       FROM business_analytics_daily
+       WHERE business_id = ? AND day >= ?`,
+    )
+    .bind(businessId, first.since)
+    .first<{ views: number; calls: number; leads: number }>();
+
+  return {
+    since: first.since,
+    views: agg?.views ?? 0,
+    calls: agg?.calls ?? 0,
+    leads: agg?.leads ?? 0,
+  };
+}

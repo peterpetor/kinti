@@ -54,6 +54,7 @@ export function ExploreView({
   const [canton, setCanton] = useState(initialCanton);
   const [showFavs, setShowFavs] = useState(initialFav);
   const [openNow, setOpenNow] = useState(false);
+  const [minYears, setMinYears] = useState(0);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [view, setView] = useState<ViewMode>("list");
 
@@ -142,14 +143,17 @@ export function ExploreView({
           (b.workingHours
             ? calculateBusinessHoursStatus(parseWorkingHours(b.workingHours)).isOpen
             : false);
+        const byYears = minYears === 0 || (b.yearsHere ?? 0) >= minYears;
         const byText =
           !needle ||
           b.name.toLowerCase().includes(needle) ||
           (b.categoryLabel ?? "").toLowerCase().includes(needle) ||
+          // Specialitás-keresés a bemutatkozó szövegben is.
+          (b.blurb ?? "").toLowerCase().includes(needle) ||
           (b.address ?? "").toLowerCase().includes(needle) ||
           // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
           matchesCanton({ address: b.address ?? null }, needle);
-        return byCat && byCanton && byFav && byOpen && byText;
+        return byCat && byCanton && byFav && byOpen && byYears && byText;
       })
       .map((b) => {
         const dist =
@@ -170,7 +174,7 @@ export function ExploreView({
     }
 
     return radiusFiltered;
-  }, [businesses, cat, canton, q, showFavs, openNow, favoriteIds, userPos, radiusKm]);
+  }, [businesses, cat, canton, q, showFavs, openNow, minYears, favoriteIds, userPos, radiusKm]);
 
   const locatedCount = useMemo(
     () => filtered.filter(({ b }) => b.lat != null && b.lng != null).length,
@@ -277,6 +281,24 @@ export function ExploreView({
             Most nyitva
           </span>
         </button>
+
+        {/* Tapasztalat (év) szűrő — Advanced search */}
+        <select
+          value={minYears}
+          onChange={(e) => setMinYears(Number(e.target.value))}
+          aria-label="Szűrés tapasztalatra"
+          className={cn(
+            "inline-flex items-center rounded-pill border px-3 py-2 text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
+            minYears > 0
+              ? "bg-primary/10 border-primary/30 text-primary"
+              : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
+          )}
+        >
+          <option value={0}>Tapasztalat</option>
+          <option value={3}>3+ év</option>
+          <option value={5}>5+ év</option>
+          <option value={10}>10+ év</option>
+        </select>
 
         {/* Közelemben / radius-szűrő */}
         <button

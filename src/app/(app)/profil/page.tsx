@@ -19,7 +19,7 @@ import {
   DropdownMenu,
   KintiLogo,
 } from "@/components/ui";
-import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads } from "@/lib/repo";
+import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getReviewResponseEngagement } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { handleFromId } from "@/lib/handle";
 import type { Business, Category } from "@/lib/types";
@@ -184,6 +184,9 @@ async function OwnerDashboard({
   const newLeadCount = await countNewBusinessLeads(business.id);
   const leads = business.featured ? await getBusinessLeads(business.id) : [];
 
+  // Review Response Counter: megkeresések a vélemény-válaszadás óta.
+  const responseEngagement = await getReviewResponseEngagement(business.id);
+
   const { stats } = data;
   const total14 = stats.trend.reduce((sum, p) => sum + p.views, 0);
   const trendData = stats.trend.map((p) => p.views);
@@ -272,6 +275,24 @@ async function OwnerDashboard({
           </SectionHeader>
           <LeadInbox leads={leads} />
         </section>
+      )}
+
+      {/* Review Response Counter — a vélemény-válaszadás megtérülése */}
+      {responseEngagement && (
+        <div className="rounded-card border border-primary/20 bg-primary/5 p-4">
+          <div className="flex items-center gap-2">
+            <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+              <Icon name="trending" size={16} strokeWidth={2.4} />
+            </span>
+            <p className="text-[13px] font-extrabold text-ink">Megtérülő válaszok</p>
+          </div>
+          <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-muted">
+            Mióta válaszolsz a véleményekre ({new Date(responseEngagement.since + "T00:00:00Z").toLocaleDateString("hu-HU")}), összesen{" "}
+            <strong className="text-ink">{responseEngagement.views}</strong> profil-megnyitás,{" "}
+            <strong className="text-ink">{responseEngagement.calls}</strong> hívás és{" "}
+            <strong className="text-ink">{responseEngagement.leads}</strong> ajánlatkérés érkezett. A válaszadás növeli a bizalmat — így térül meg.
+          </p>
+        </div>
       )}
 
       {/* Vállalkozói adatok szerkesztése form */}
