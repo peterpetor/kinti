@@ -3,13 +3,18 @@ import { Icon } from "@/components/ui/icons";
 import { INDUSTRY_LESSONS } from "./data";
 import { KintiLogo } from "@/components/ui/kinti-logo";
 import { cn } from "@/lib/cn";
+import { auth } from "@clerk/nextjs/server";
+import { isPro } from "@/lib/subscriptions";
 
 export const metadata = {
   title: "Szakmai Gyors-Szótár | Kinti",
   description: "Szakmaspecifikus svájci-német és német kifejezések, hanganyaggal.",
 };
 
-export default function SzakmaiSzotarPage() {
+export default async function SzakmaiSzotarPage() {
+  const { userId } = await auth();
+  const userIsPro = userId ? await isPro(userId) : false;
+
   return (
     <div className="mx-auto max-w-2xl px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-24">
       <div className="mb-4 flex justify-end">
@@ -34,7 +39,8 @@ export default function SzakmaiSzotarPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 mt-8">
         {INDUSTRY_LESSONS.map((lesson) => {
-          const href = lesson.isPro ? "/allasok/pro" : `/allasok/szakmai-szotar/${lesson.id}`;
+          const requiresPro = lesson.isPro && !userIsPro;
+          const href = requiresPro ? "/allasok/pro" : `/allasok/szakmai-szotar/${lesson.id}`;
           
           return (
             <Link
@@ -61,7 +67,7 @@ export default function SzakmaiSzotarPage() {
                   </span>
                 </div>
                 <h2 className="text-[16px] font-extrabold text-ink group-hover:text-primary transition-colors flex items-center gap-2">
-                  {lesson.title}
+                  {lesson.title} {requiresPro && <span className="text-[14px]">🔒</span>}
                 </h2>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-muted line-clamp-2">
                   {lesson.description}
@@ -70,9 +76,9 @@ export default function SzakmaiSzotarPage() {
 
               <div className={cn(
                 "mt-4 flex items-center gap-1.5 text-[12px] font-bold",
-                lesson.isPro ? "text-[#e3a233]" : "text-primary"
+                requiresPro ? "text-[#e3a233]" : "text-primary"
               )}>
-                {lesson.isPro ? (
+                {requiresPro ? (
                   <>Prémium Feloldása <Icon name="lock" size={14} strokeWidth={2.5} /></>
                 ) : (
                   <>Lecke indítása <Icon name="arrowRight" size={14} strokeWidth={2.5} /></>

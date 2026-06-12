@@ -40,6 +40,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     description: "Alapvető szerszámok és kifejezések a svájci építkezéseken (Baustelle).",
     industry: "Építőipar (Baubranche)",
     xpReward: 15,
+    isPro: true,
     questions: [
       {
         id: "bau_q1",
@@ -94,6 +95,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     description: "Hogyan szolgálj ki svájci vendégeket egy étteremben?",
     industry: "Vendéglátás (Gastronomie)",
     xpReward: 15,
+    isPro: true,
     questions: [
       {
         id: "gas_q1",
@@ -148,6 +150,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     description: "Alapvető kifejezések az idősgondozásban és kórházban.",
     industry: "Egészségügy (Gesundheitswesen)",
     xpReward: 15,
+    isPro: true,
     questions: [
       {
         id: "pfl_q1",
@@ -180,7 +183,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
   // ── 4. PRO LECKÉK ─────────────────────────────────────────────
   {
     id: "bau_pro_1",
-    title: "Mesterkurzus: Fizetésemelés és Konfliktus 🔒",
+    title: "Mesterkurzus: Fizetésemelés és Konfliktus",
     description: "Svájci német párbeszédek: hogyan kérj fizetésemelést, vagy intézz el egy konfliktust a svájci főnököddel.",
     industry: "Építőipar (Baubranche)",
     xpReward: 50,
