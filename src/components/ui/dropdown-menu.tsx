@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon } from "./icons";
@@ -51,7 +52,7 @@ export function DropdownMenu() {
         <Icon name="more" size={17} strokeWidth={2.6} />
       </button>
 
-      {isOpen && (
+      {isOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex justify-center sm:items-center bg-surface sm:bg-black/50 sm:backdrop-blur-sm animate-in fade-in duration-300">
           <div className="flex w-full max-w-md flex-col bg-surface h-full sm:h-auto sm:max-h-[90vh] sm:rounded-3xl sm:shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300">
             <div className="flex items-center justify-between px-5 py-4 sm:px-6 sm:py-5 border-b border-line shrink-0">
@@ -317,7 +318,8 @@ export function DropdownMenu() {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
