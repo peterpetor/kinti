@@ -16,3 +16,4 @@ export * from "./repo-workers";
 export * from "./repo-spam";
 export * from "./repo-misc";
 export * from "./repo-piac";
+export * from "./repo-newsletter";

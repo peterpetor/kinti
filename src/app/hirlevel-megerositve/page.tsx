@@ -32,7 +32,7 @@ export default function HirlevelMegerositvePage({
     success = false;
   } else {
     title = "Feliratkoztál a hírlevélre! 🎉";
-    message = "Kész — mostantól hetente egyszer küldjük az új eseményeket a választott kantonból. Bármikor leiratkozhatsz az emailek alján található linkkel.";
+    message = "Kész — mostantól megkapod az összes releváns és fontos információt a választott országgal kapcsolatban. Bármikor leiratkozhatsz az emailek alján található linkkel.";
   }
 
   return (
