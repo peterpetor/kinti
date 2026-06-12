@@ -2,7 +2,6 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { Icon } from "@/components/ui/icons";
 import { KintiLogo } from "@/components/ui/kinti-logo";
-import { getCloudflareEnv } from "@/lib/cloudflare";
 import { isPro } from "@/lib/subscriptions";
 
 export const runtime = "edge";
@@ -13,15 +12,8 @@ export const metadata = {
   description: "Oldd fel a több mint 500+ svájci szakmai kifejezést és párbeszédet!",
 };
 
-/** A Lemon Squeezy checkout-link a bejelentkezett userId passthrough-jával. */
-function checkoutUrl(baseUrl: string, userId: string): string {
-  const sep = baseUrl.includes("?") ? "&" : "?";
-  return `${baseUrl}${sep}checkout[custom][user_id]=${encodeURIComponent(userId)}`;
-}
-
 export default async function KintiProPage() {
   const { userId } = await auth();
-  const base = getCloudflareEnv().LEMONSQUEEZY_CHECKOUT_URL ?? "";
   const alreadyPro = userId ? await isPro(userId) : false;
 
   return (
@@ -84,24 +76,13 @@ export default async function KintiProPage() {
             <div className="w-full rounded-full bg-success/15 py-4 text-center text-[15px] font-extrabold text-success">
               ✅ Aktív PRO előfizetésed van
             </div>
-          ) : !userId ? (
-            <Link
-              href="/belepes?redirect_url=/allasok/pro"
-              className="flex w-full items-center justify-center rounded-full bg-[#e3a233] py-4 text-[16px] font-extrabold text-white shadow-lg shadow-[#e3a233]/20 transition-all hover:scale-[1.02] hover:bg-[#d68f20]"
-            >
-              Jelentkezz be az előfizetéshez
-            </Link>
-          ) : base ? (
-            <a
-              href={checkoutUrl(base, userId)}
-              className="flex w-full items-center justify-center rounded-full bg-[#e3a233] py-4 text-[16px] font-extrabold text-white shadow-lg shadow-[#e3a233]/20 transition-all hover:scale-[1.02] hover:bg-[#d68f20]"
-            >
-              Előfizetek a Lemon Squeezy-vel
-            </a>
           ) : (
-            <div className="w-full rounded-full bg-surface-alt py-4 text-center text-[14px] font-bold text-ink-muted">
-              Az előfizetés hamarosan elérhető lesz.
-            </div>
+            <Link
+              href="/pro"
+              className="flex w-full items-center justify-center rounded-full bg-[#e3a233] py-4 text-[16px] font-extrabold text-white shadow-lg shadow-[#e3a233]/20 transition-all hover:scale-[1.02] hover:bg-[#d68f20]"
+            >
+              Kinti PRO feloldása
+            </Link>
           )}
         </div>
       </div>

@@ -9,7 +9,7 @@
  */
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { getDB, getCloudflareEnv } from "./cloudflare";
+import { getDB } from "./cloudflare";
 
 export interface Subscription {
   userId: string;
@@ -62,38 +62,18 @@ export async function isPro(userId: string | null | undefined): Promise<boolean>
   return false;
 }
 
-/** Be van-e kapcsolva a PRO-zárolás? (env: PRO_ENFORCED === "true") */
-export function isProEnforced(): boolean {
-  try {
-    return getCloudflareEnv().PRO_ENFORCED === "true";
-  } catch {
-    return false;
-  }
-}
-
 /**
- * Page-szintű guard: engedélyezett-e a hozzáférés a PRO funkcióhoz?
- * Ha a zárolás KI van kapcsolva → mindig true (nem törünk el működő funkciót).
- * Ha BE → csak PRO felhasználónak true.
- */
-export async function canAccessPro(userId: string | null | undefined): Promise<boolean> {
-  if (!isProEnforced()) return true;
-  return isPro(userId);
-}
-
-/**
- * PRO oldal-guard szerver-komponensekhez. Ha a zárolás KI van kapcsolva
- * (PRO_ENFORCED !== "true"), NEM csinál semmit — a működő funkció nem törik el.
- * Ha BE: nem-bejelentkezettet a loginra, nem-PRO-t a paywallra irányít.
+ * PRO oldal-guard szerver-komponensekhez (egységes a szótár-leckék isPro-
+ * ellenőrzésével): nem-bejelentkezettet a loginra, nem-PRO-t a /pro vásárló-
+ * oldalra irányít. Mivel a Lemon Squeezy él, mindig zárol (nincs env-flag).
  */
 export async function requirePro(currentPath: string): Promise<void> {
-  if (!isProEnforced()) return;
   const { userId } = await auth();
   if (!userId) {
     redirect(`/belepes?redirect_url=${encodeURIComponent(currentPath)}`);
   }
   if (!(await isPro(userId))) {
-    redirect("/allasok/pro");
+    redirect("/pro");
   }
 }
 

@@ -11,6 +11,13 @@ export default function ProPage() {
   const { user } = useUser();
 
   const handleCheckout = (product: "kinti_pro_monthly" | "business_pro_monthly" | "job_featured") => {
+    // PRO előfizetés a Clerk userId-hez kötődik — bejelentkezés nélkül nincs
+    // értelme (a webhook nem tudná kihez kötni). Ezért előbb beléptetünk.
+    if (!user?.id) {
+      window.location.href = "/belepes?redirect_url=/pro";
+      return;
+    }
+
     let customType = "";
     if (product === "kinti_pro_monthly") customType = "user_pro";
     else if (product === "business_pro_monthly") customType = "business_pro";
@@ -21,7 +28,7 @@ export default function ProPage() {
       customerEmail: user?.emailAddresses?.[0]?.emailAddress,
       customData: {
         type: customType,
-        userId: user?.id || "anonymous",
+        userId: user.id,
       }
     });
   };
