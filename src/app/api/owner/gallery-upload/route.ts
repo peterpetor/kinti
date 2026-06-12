@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getBusinessByManageToken } from "@/lib/repo";
+import { auth } from "@clerk/nextjs/server";
+import { getBusinessByOwner } from "@/lib/repo";
 import { extForContentType, presignR2Put } from "@/lib/r2";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -7,23 +8,32 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
- * POST /api/business/manage/[token]/logo-upload
- *
- * Email-only logó-feltöltés első lépése: presigned R2 PUT URL kérése.
- * Auth nincs — a manage_token MAGA a bizonyíték (a confirmáló e-mailben kapta).
+ * POST /api/owner/gallery-upload  — védett (Clerk).
  *
  * Bemenet: { contentType: "image/jpeg" | "image/png" | "image/webp" | "image/gif" }
  * Kimenet: { uploadUrl, key, expiresAt, bucket }
  *
- * A kulcs `logos/<businessId>/<uuid>.<ext>` — a commit-végpont ezen prefixet
- * ellenőrzi, hogy a kliens ne tudjon más vállalkozás kulcsát commit-olni.
+ * Logikailag:
+ *  1) Bejelentkezett felhasználó megkeresi a SAJÁT vállalkozását.
+ *  2) Validáljuk a content-type-ot → csak engedélyezett képtípus.
+ *  3) A kulcs `gallery/<businessId>/<uuid>.<ext>` formátumú.
+ *  4) Aláírt PUT URL → 5 percig érvényes, a kliens egyetlen PUT-tal feltölt.
+ *
+ * A commit (D1-mentés) külön végponton történik, hogy SOHA ne jelenjen meg
+ * éles logo_key D1-ben olyan kulcsra, amit a kliens elindított, de meg sem
+ * érkezett az R2-be.
  */
-export async function POST(req: Request, { params }: { params: { token: string } }) {
-  const business = await getBusinessByManageToken(params.token);
-  if (!business) {
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+export async function POST(req: Request) {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Bejelentkezés szükséges." }, { status: 401 });
   }
 
+  const business = await getBusinessByOwner(userId);
+  if (!business) {
+    return NextResponse.json({ error: "Nincs hozzád kötött vállalkozás." }, { status: 403 });
+  }
+  
   if (!business.featured) {
     return NextResponse.json({ error: "Ez a funkció csak Szaknévsor PRO tagoknak elérhető." }, { status: 403 });
   }
@@ -32,7 +42,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+    return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }
 
   const contentType = typeof body.contentType === "string" ? body.contentType : null;
@@ -59,7 +69,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
     );
   }
 
-  const key = `logos/${business.id}/${crypto.randomUUID()}.${ext}`;
+  const key = `gallery/${business.id}/${crypto.randomUUID()}.${ext}`;
 
   try {
     const presigned = await presignR2Put(key, {
@@ -71,7 +81,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
       headers: { "cache-control": "no-store" },
     });
   } catch (err) {
-    safeLogError("logo-upload", err);
+    safeLogError("owner/gallery-upload", err);
     return NextResponse.json({ error: "Belső hiba." }, { status: 500 });
   }
 }

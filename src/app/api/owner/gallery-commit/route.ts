@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getBusinessByManageToken, setBusinessLogoByManageToken } from "@/lib/repo";
+import { auth } from "@clerk/nextjs/server";
+import { getBusinessByOwner, addBusinessGalleryKey } from "@/lib/repo";
 import { getMediaBucket } from "@/lib/cloudflare";
 import { moderateImage } from "@/lib/moderation";
 
@@ -7,38 +8,44 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
- * POST /api/business/manage/[token]/logo-commit
+ * POST /api/owner/gallery-commit  — védett (Clerk).
  *
- * Email-only logó-commit: az R2-be feltöltött kulcs mentése a businesses.logo_key-be.
+ * Bemenet: { key: "gallery/<businessId>/<uuid>.<ext>" }
+ * Kimenet: { ok: true, key }
  *
- * Bemenet: { key: "logos/<businessId>/<uuid>.<ext>" }
- * Kimenet: { ok: true, logoKey }
+ * Mit ellenőrzünk?
+ *  1) Authentikált user → saját vállalkozás. Nincs idegen key.
+ *  2) A kulcs prefixe pontosan a saját vállalkozásé.
+ *  3) Csak PRO tagok!
+ *  4) Az objektum LÉTEZIK az R2-ben (`MEDIA.head(key)`).
  *
- * Védelmek:
- *  1) manage_token → létező business
- *  2) Kulcs prefixe pontosan a saját businessId-vel kezdődik
- *  3) Az R2-objektum LÉTEZIK (`MEDIA.head(key)`) — különben nem mentünk
- *     hivatkozást nem létező fájlra
+ * Csak ezután adjuk hozzá a `businesses.gallery_keys` tömbhöz.
  */
-export async function POST(req: Request, { params }: { params: { token: string } }) {
-  const business = await getBusinessByManageToken(params.token);
+export async function POST(req: Request) {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Bejelentkezés szükséges." }, { status: 401 });
+  }
+
+  const business = await getBusinessByOwner(userId);
   if (!business) {
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+    return NextResponse.json({ error: "Nincs hozzád kötött vállalkozás." }, { status: 403 });
   }
 
   if (!business.featured) {
     return NextResponse.json({ error: "Ez a funkció csak Szaknévsor PRO tagoknak elérhető." }, { status: 403 });
   }
 
+
   let body: { key?: unknown } = {};
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+    return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }
 
   const key = typeof body.key === "string" ? body.key : "";
-  const expectedPrefix = `logos/${business.id}/`;
+  const expectedPrefix = `gallery/${business.id}/`;
   if (!key.startsWith(expectedPrefix) || key.includes("..")) {
     return NextResponse.json({ error: "Érvénytelen kulcs." }, { status: 400 });
   }
@@ -50,8 +57,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
       { status: 404 },
     );
   }
-  // Méret-védelem: csak <= 2 MB-os képet fogadunk el. Ha valaki a presigned URL
-  // megszerzésével nagyobbat töltött fel, töröljük az R2-ből és elutasítjuk.
+  // Méret-védelem: csak <= 2 MB-os képet fogadunk el (Storage abuse ellen).
   const MAX_BYTES = 2 * 1024 * 1024;
   if (typeof head.size === "number" && head.size > MAX_BYTES) {
     await getMediaBucket().delete(key).catch(() => { /* silent */ });
@@ -79,22 +85,13 @@ export async function POST(req: Request, { params }: { params: { token: string }
     );
   }
 
-  // A régi logó kulcsát eltároljuk — az UPDATE után töröljük R2-ből, hogy ne
-  // halmozzanak fel orphan fájlokat. Csak akkor töröljük, ha tényleg más kulcs
-  // (önmagát ne töröljük), és csak ha a régi a saját prefix-szel kezdődik.
-  const previousKey = business.logoKey;
-
-  const ok = await setBusinessLogoByManageToken(params.token, key);
+  const ok = await addBusinessGalleryKey(business.id, key);
   if (!ok) {
-    return NextResponse.json({ error: "A frissítés nem sikerült." }, { status: 500 });
-  }
-
-  if (previousKey && previousKey !== key && previousKey.startsWith(expectedPrefix)) {
-    await getMediaBucket().delete(previousKey).catch(() => { /* silent */ });
+    return NextResponse.json({ error: "A galéria frissítése nem sikerült." }, { status: 500 });
   }
 
   return NextResponse.json(
-    { ok: true, logoKey: key },
+    { ok: true, key },
     { headers: { "cache-control": "no-store" } },
   );
 }

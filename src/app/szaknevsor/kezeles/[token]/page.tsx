@@ -58,16 +58,37 @@ export default async function BusinessManagePage({ params }: { params: { token: 
 
       <BusinessAnalyticsDashboard stats={analytics} />
 
-      <LogoUploader
-        currentKey={business.logoKey}
-        fallbackGradient={business.photo}
-        manageToken={params.token}
-      />
+      {business.featured ? (
+        <>
+          <LogoUploader
+            currentKey={business.logoKey}
+            fallbackGradient={business.photo}
+            manageToken={params.token}
+          />
 
-      <GalleryUploader
-        currentKeys={business.galleryKeys || []}
-        manageToken={params.token}
-      />
+          <GalleryUploader
+            currentKeys={business.galleryKeys || []}
+            manageToken={params.token}
+          />
+        </>
+      ) : (
+        <div className="rounded-card border-2 border-[#ff9600]/20 bg-[#ff9600]/5 p-5 text-center shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-[#ff9600]/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+          <div className="mb-2 text-3xl">🚀</div>
+          <h3 className="mb-1 text-[17px] font-black text-[#ff9600] tracking-tight">Szaknévsor PRO</h3>
+          <p className="mb-4 text-[13px] font-medium text-ink-muted leading-snug">
+            Emeld ki a vállalkozásod! Egyedi borítókép, bővített referenciagaléria és 
+            top pozíció a találati listákban, mindössze 19 CHF/hó áron. A vásárlást jelenleg 
+            ügyfélszolgálatunkon keresztül intézheted.
+          </p>
+          <a
+            href="mailto:info@kinti.app?subject=Szaknévsor PRO előfizetés"
+            className="flex w-full items-center justify-center gap-2 rounded-pill bg-[#ff9600] px-4 py-3 text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]"
+          >
+            Váltás PRO-ra (Email)
+          </a>
+        </div>
+      )}
 
       <BusinessManageForm business={business} token={params.token} />
 

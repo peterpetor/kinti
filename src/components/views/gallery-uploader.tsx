@@ -9,7 +9,7 @@ import { compressImage } from "@/lib/compress";
 
 export interface GalleryUploaderProps {
   currentKeys: string[];
-  manageToken: string;
+  manageToken?: string;
 }
 
 type Phase = "idle" | "preparing" | "uploading" | "committing" | "done" | "error" | "removing";
@@ -19,9 +19,15 @@ const MAX_PDF_BYTES = 20 * 1024 * 1024; // 20 MB
 const ACCEPT = "image/jpeg,image/png,image/webp,image/gif,application/pdf";
 
 export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderProps) {
-  const uploadEndpoint = `/api/business/manage/${manageToken}/gallery-upload`;
-  const commitEndpoint = `/api/business/manage/${manageToken}/gallery-commit`;
-  const removeEndpoint = `/api/business/manage/${manageToken}/gallery-remove`;
+  const uploadEndpoint = manageToken
+    ? `/api/business/manage/${manageToken}/gallery-upload`
+    : "/api/owner/gallery-upload";
+  const commitEndpoint = manageToken
+    ? `/api/business/manage/${manageToken}/gallery-commit`
+    : "/api/owner/gallery-commit";
+  const removeEndpoint = manageToken
+    ? `/api/business/manage/${manageToken}/gallery-remove`
+    : "/api/owner/gallery-delete";
 
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();

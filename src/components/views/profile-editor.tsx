@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Icon } from "@/components/ui";
+import { LogoUploader } from "./logo-uploader";
+import { GalleryUploader } from "./gallery-uploader";
 import { cn } from "@/lib/cn";
 import { isSwissAddress } from "@/lib/cantons";
 import {
@@ -25,6 +27,8 @@ export interface ProfileEditorProps {
   initialSocialLinks: string | null;
   initialYearsHere?: number | null;
   initialLanguages?: string[] | null;
+  initialLogoKey?: string | null;
+  initialGalleryKeys?: string[] | null;
 }
 
 type Phase = "idle" | "saving" | "success" | "error";
@@ -41,6 +45,8 @@ export function ProfileEditor({
   initialSocialLinks,
   initialYearsHere,
   initialLanguages,
+  initialLogoKey,
+  initialGalleryKeys,
   isFeatured,
 }: ProfileEditorProps & { isFeatured?: boolean }) {
   const [name, setName] = useState(initialName);
@@ -201,6 +207,14 @@ export function ProfileEditor({
               {isCheckoutLoading ? "Töltés..." : "Kiemelés Vásárlása (19 CHF/hó)"}
             </button>
           </div>
+        )}
+
+        {/* PRO Képek és Galéria */}
+        {isFeatured && (
+          <section className="space-y-4">
+            <LogoUploader currentKey={initialLogoKey ?? null} />
+            <GalleryUploader currentKeys={initialGalleryKeys ?? []} />
+          </section>
         )}
 
       <form onSubmit={handleSave} className="space-y-4">

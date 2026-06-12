@@ -35,6 +35,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Nincs hozzád kötött vállalkozás." }, { status: 403 });
   }
 
+  if (!business.featured) {
+    return NextResponse.json({ error: "Ez a funkció csak Szaknévsor PRO tagoknak elérhető." }, { status: 403 });
+  }
+
   let body: { key?: unknown } = {};
   try {
     body = await req.json();

@@ -18,6 +18,10 @@ export async function DELETE(req: Request, { params }: { params: { token: string
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
+  if (!business.featured) {
+    return NextResponse.json({ error: "Ez a funkció csak Szaknévsor PRO tagoknak elérhető." }, { status: 403 });
+  }
+
   let body: { key?: string } = {};
   try {
     body = await req.json();
