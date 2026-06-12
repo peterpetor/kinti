@@ -5,6 +5,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoUploader } from "@/components/views/logo-uploader";
 import { OwnerDraftForm } from "@/components/views/owner-draft-form";
 import { ProfileEditor } from "@/components/views/profile-editor";
+import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
 import { ReviewResponseForm } from "@/components/views/review-response-form";
 import { InstallPrompt } from "@/components/install-prompt";
 import { KintiRadar } from "@/components/kinti-radar";
@@ -235,6 +236,24 @@ async function OwnerDashboard({
           {business.name} 👋
         </div>
       </div>
+
+      {/* Szaknévsor PRO kiemelés — csak ha még nem kiemelt */}
+      {business.featured ? (
+        <div className="flex items-center gap-2 rounded-card border border-[#ff9600]/30 bg-[#ff9600]/5 px-4 py-3 text-[13px] font-bold text-[#ff9600]">
+          <Icon name="star" size={15} filled /> A vállalkozásod kiemelt a Szaknévsorban.
+        </div>
+      ) : (
+        <div className="rounded-card border border-[#ff9600]/30 bg-[#ff9600]/5 px-4 py-3">
+          <p className="text-[13px] font-bold text-ink">🚀 Szaknévsor PRO — több ügyfél, kiemelt láthatóság</p>
+          <p className="mt-0.5 mb-2.5 text-[12px] text-ink-muted">Sárga kiemelés, top pozíció a kategóriádban, bővített galéria.</p>
+          <BoostCheckoutButton
+            product="business_pro_monthly"
+            customData={{ type: "business_pro", businessId: business.id }}
+            label="Kiemelés vásárlása (19 CHF / hó)"
+            className="bg-[#ff9600] text-white hover:bg-[#e68600]"
+          />
+        </div>
+      )}
 
       {/* Vállalkozói adatok szerkesztése form */}
       <ProfileEditor

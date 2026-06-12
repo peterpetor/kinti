@@ -4,12 +4,21 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { BoostCheckoutButton } from "./boost-checkout-button";
 
 /**
- * Egy hirdetés-kártya akciói a munkáltató dashboardján: jelentkezők megnyitása
- * + törlés (megerősítéssel). A törlés a saját DELETE API-t hívja, majd frissít.
+ * Egy hirdetés-kártya akciói a munkáltató dashboardján: jelentkezők megnyitása,
+ * szerkesztés, törlés (megerősítéssel) + kiemelés-vásárlás (job_featured).
  */
-export function JobCardActions({ jobId, applicantCount }: { jobId: string; applicantCount: number }) {
+export function JobCardActions({
+  jobId,
+  applicantCount,
+  featured = false,
+}: {
+  jobId: string;
+  applicantCount: number;
+  featured?: boolean;
+}) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -81,6 +90,21 @@ export function JobCardActions({ jobId, applicantCount }: { jobId: string; appli
         )}
       </div>
       {error && <p className="mt-2 text-[12px] font-semibold text-accent">{error}</p>}
+
+      <div className="mt-2.5 flex items-center justify-between gap-2">
+        {featured ? (
+          <span className="inline-flex items-center gap-1 rounded-pill bg-accent/15 px-2.5 py-1 text-[11px] font-bold text-accent">
+            <Icon name="star" size={11} filled /> Kiemelt hirdetés
+          </span>
+        ) : (
+          <BoostCheckoutButton
+            product="job_featured"
+            customData={{ type: "job_featured", jobId }}
+            label="🚀 Hirdetés kiemelése (49 CHF)"
+            className="bg-ink text-surface hover:opacity-90"
+          />
+        )}
+      </div>
     </div>
   );
 }

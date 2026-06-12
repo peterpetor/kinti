@@ -131,7 +131,7 @@ export default async function EmployerDashboardPage() {
                     </span>
                   )}
                 </div>
-                <JobCardActions jobId={job.id} applicantCount={applicationCounts[job.id] ?? 0} />
+                <JobCardActions jobId={job.id} applicantCount={applicationCounts[job.id] ?? 0} featured={job.status === "featured"} />
               </div>
             ));
           })()}

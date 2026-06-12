@@ -107,16 +107,13 @@ export default function ProPage() {
             <FeatureItem text="Konkurencia kizárása a profilodról" />
           </ul>
 
-          <button
-            onClick={() => handleCheckout("business_pro_monthly")}
-            disabled={isLoading}
-            className={cn(
-              "w-full rounded-pill bg-[#ff9600] py-3.5 text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]",
-              isLoading && "opacity-60 cursor-not-allowed translate-y-1 shadow-none"
-            )}
+          <Link
+            href="/profil"
+            className="block w-full rounded-pill bg-[#ff9600] py-3.5 text-center text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]"
           >
             Kiemelés Vásárlása
-          </button>
+          </Link>
+          <p className="mt-2 text-center text-[11px] text-ink-faint">A vállalkozásod kezelőjében véglegesíted.</p>
         </div>
 
         {/* Kiemelt Állás (Employers) */}
@@ -141,16 +138,13 @@ export default function ProPage() {
             <FeatureItem text="Azonnali értesítés a releváns jelölteknek" />
           </ul>
 
-          <button
-            onClick={() => handleCheckout("job_featured")}
-            disabled={isLoading}
-            className={cn(
-              "w-full rounded-pill border-2 border-ink py-3.5 text-[15px] font-black text-ink shadow-card transition hover:bg-ink hover:text-surface active:scale-[0.98]",
-              isLoading && "opacity-60 cursor-not-allowed"
-            )}
+          <Link
+            href="/munkaltato"
+            className="block w-full rounded-pill border-2 border-ink py-3.5 text-center text-[15px] font-black text-ink shadow-card transition hover:bg-ink hover:text-surface active:scale-[0.98]"
           >
             Hirdetés Kiemelése
-          </button>
+          </Link>
+          <p className="mt-2 text-center text-[11px] text-ink-faint">A hirdetésednél, a munkáltató kezelőben véglegesíted.</p>
         </div>
 
       </div>
