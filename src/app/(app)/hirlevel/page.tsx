@@ -25,7 +25,7 @@ export default function HirlevelPage() {
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(data.error || "Hiba történt a feliratkozás során.");
       }
 

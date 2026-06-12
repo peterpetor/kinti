@@ -1,4 +1,4 @@
-import { getDB } from "./db";
+import { getDB } from "./cloudflare";
 
 export interface NewsletterSubscriber {
   id: string;

@@ -1,6 +1,6 @@
 /**
  * Kinti PRO előfizetés-réteg. Az identitás a Clerk userId; a státuszt a
- * Lemon Squeezy webhook frissíti (lib/../api/webhooks/lemon-squeezy).
+ * Lemon Squeezy webhook frissíti (src/app/api/webhooks/lemonsqueezy).
  *
  * A gate bekapcsolása env-flaggel: amíg `PRO_ENFORCED !== "true"`, a PRO
  * funkciók MINDENKINEK elérhetők (különben élő fizetés nélkül senki sem

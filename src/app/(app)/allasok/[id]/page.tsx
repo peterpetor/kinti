@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getJobById, getEmployerById } from "@/lib/repo";
 import { getSalaryStats } from "@/lib/benchmark";
-import { matchCantonByName, cantonFromAddress } from "@/lib/cantons";
+import { matchCantonByName, cantonFromAddress, cantonName as cantonNameByCode } from "@/lib/cantons";
+import { jobPostingJsonLd, safeJsonLdStringify } from "@/lib/json-ld";
 import { Icon } from "@/components/ui";
 import { Metadata } from "next";
 
@@ -53,48 +54,19 @@ export default async function JobDetailPage({ params }: { params: { id: string }
     }
   }
 
-  // SEO JSON-LD JobPosting
-  const jobPostingJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "JobPosting",
-    "title": job.title,
-    "description": job.requirements ? `${job.description}\n\nElvárások:\n${job.requirements}` : job.description,
-    "datePosted": job.createdAt,
-    "validThrough": job.expiresAt || new Date(new Date(job.createdAt).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    "employmentType": job.employmentType === 'full-time' ? 'FULL_TIME' : job.employmentType === 'part-time' ? 'PART_TIME' : 'OTHER',
-    "hiringOrganization": {
-      "@type": "Organization",
-      "name": employer?.companyName || "Ismeretlen cég",
-      "sameAs": employer?.website || undefined,
-      "logo": employer?.logoKey || undefined,
-    },
-    "jobLocation": {
-      "@type": "Place",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": job.location,
-        "addressCountry": "CH"
-      }
-    },
-    ...(job.salaryMin && job.salaryMax ? {
-      "baseSalary": {
-        "@type": "MonetaryAmount",
-        "currency": job.currency || "CHF",
-        "value": {
-          "@type": "QuantitativeValue",
-          "minValue": job.salaryMin,
-          "maxValue": job.salaryMax,
-          "unitText": "MONTH"
-        }
-      }
-    } : {})
-  };
+  // Google for Jobs strukturált adat — a kanton elsősorban a strukturált mezőből.
+  const cantonRegion =
+    cantonNameByCode(job.cantonCode) ??
+    (cantonFromAddress(job.location) || matchCantonByName(job.location))?.name ??
+    null;
+  const jobJsonLd = jobPostingJsonLd({ job, employer, cantonRegion });
 
   return (
     <div className="mx-auto max-w-md space-y-6 px-5 pb-24 pt-[calc(env(safe-area-inset-top)+2rem)]">
+      {/* SEO: Google for Jobs rich result */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(jobJsonLd) }}
       />
       <header className="flex items-center gap-3">
         <Link

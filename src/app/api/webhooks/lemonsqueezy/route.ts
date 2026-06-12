@@ -85,7 +85,7 @@ async function handleSuccessfulPayment(customData: any, data: any) {
         currentPeriodEnd: data.renews_at || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       });
       
-      await clerkClient().users.updateUserMetadata(customData.userId, {
+      await (await clerkClient()).users.updateUserMetadata(customData.userId, {
         publicMetadata: {
           isPro: true,
         },
@@ -120,7 +120,7 @@ async function handleSubscriptionEnded(customData: any, data: any) {
         currentPeriodEnd: data.renews_at || new Date().toISOString(),
       });
 
-      await clerkClient().users.updateUserMetadata(customData.userId, {
+      await (await clerkClient()).users.updateUserMetadata(customData.userId, {
         publicMetadata: {
           isPro: false,
         },

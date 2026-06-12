@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    const { email, country } = await req.json();
+    const { email, country } = (await req.json()) as { email?: string; country?: string };
 
     if (!email || !country) {
       return NextResponse.json({ error: "Hiányzó mezők." }, { status: 400 });
