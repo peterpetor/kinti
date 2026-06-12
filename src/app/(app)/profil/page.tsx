@@ -236,9 +236,6 @@ async function OwnerDashboard({
         </div>
       </div>
 
-      {/* logó / borítókép feltöltő (R2) */}
-      <LogoUploader currentKey={business.logoKey} fallbackGradient={business.photo} />
-
       {/* Vállalkozói adatok szerkesztése form */}
       <ProfileEditor
         businessId={business.id}
@@ -252,6 +249,8 @@ async function OwnerDashboard({
         initialSocialLinks={business.socialLinks ?? null}
         initialYearsHere={business.yearsHere}
         initialLanguages={business.languages}
+        initialLogoKey={business.logoKey}
+        initialGalleryKeys={business.galleryKeys}
         isFeatured={business.featured}
       />
 
