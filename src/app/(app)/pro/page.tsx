@@ -68,7 +68,6 @@ export default function ProPage() {
 
           <ul className="space-y-3 mb-8 flex-1">
             <FeatureItem text="Teljes Svájci Német (Mundart) kurzus" />
-            <FeatureItem text="Részletes Bér- és Lakbér Iránytű" />
             <FeatureItem text="Einbürgerung (Állampolgárság) Szimulátor" />
             <FeatureItem text="AI Interjú Szimulátor svájci cégekhez" />
             <FeatureItem text="Teljesen reklámmentes élmény" />

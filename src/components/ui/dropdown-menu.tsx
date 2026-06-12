@@ -197,7 +197,6 @@ export function DropdownMenu() {
                   📊
                 </span>
                 Bér- és Lakbér Iránytű
-                <ProBadge />
               </Link>
 
               <Link href="/lakberles" onClick={() => setIsOpen(false)} className={linkClass}>
