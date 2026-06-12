@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getBusinessByOwner, updateBusinessProfile } from "@/lib/repo";
 import { isSwissAddress } from "@/lib/cantons";
 import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
+import { isValidAccentColor } from "@/lib/business-branding";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -121,6 +122,11 @@ export async function POST(req: Request) {
     }
   }
 
+  // Custom branding accent szín — csak PRO (featured) vállalkozónak, és csak
+  // az előre definiált preset-hexekből (nincs tetszőleges CSS).
+  const accentColor =
+    business.featured && isValidAccentColor(body.accentColor) ? body.accentColor : null;
+
   const ok = await updateBusinessProfile(business.id, userId, {
     name,
     phone: phone || null,
@@ -132,6 +138,7 @@ export async function POST(req: Request) {
     socialLinks: sanitizedSocialLinks,
     yearsHere,
     languages,
+    accentColor,
   });
 
   if (!ok) {

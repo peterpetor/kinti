@@ -310,6 +310,7 @@ async function OwnerDashboard({
         initialLanguages={business.languages}
         initialLogoKey={business.logoKey}
         initialGalleryKeys={business.galleryKeys}
+        initialAccentColor={business.accentColor ?? null}
         isFeatured={business.featured}
       />
 

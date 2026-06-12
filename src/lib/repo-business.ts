@@ -22,7 +22,7 @@ interface BusinessRow {
   lat: number | null; lng: number | null; featured: number; verified: number;
   blurb: string | null; license_number: string | null; open_now: number;
   open_text: string | null; years_here: number | null; languages: string | null;
-  photo: string | null; accent_photo: string | null; logo_key: string | null;
+  photo: string | null; accent_photo: string | null; accent_color: string | null; logo_key: string | null;
   owner_user_id: string | null; contact_email: string | null; working_hours: string | null;
   social_links: string | null; manage_token: string | null; gallery_keys: string | null;
   view_count: number | null; phone_click_count: number | null;
@@ -53,7 +53,7 @@ export function toBusiness(r: BusinessRow): Business {
     featured: bool(r.featured), verified: bool(r.verified), blurb: r.blurb,
     licenseNumber: r.license_number, openNow: bool(r.open_now), openText: r.open_text,
     yearsHere: r.years_here, languages: jsonArray(r.languages), photo: r.photo,
-    accentPhoto: r.accent_photo, logoKey: r.logo_key, ownerUserId: r.owner_user_id,
+    accentPhoto: r.accent_photo, accentColor: r.accent_color ?? null, logoKey: r.logo_key, ownerUserId: r.owner_user_id,
     contactEmail: r.contact_email, workingHours: r.working_hours, socialLinks: r.social_links,
     manageToken: r.manage_token, galleryKeys: jsonArray(r.gallery_keys),
     viewCount: r.view_count ?? 0, phoneClickCount: r.phone_click_count ?? 0,
@@ -99,6 +99,7 @@ export interface UpdateBusinessProfileInput {
   name: string; phone: string | null; blurb: string | null; address: string | null;
   categoryLabel: string | null; openText: string | null; workingHours?: string | null;
   socialLinks?: string | null; yearsHere?: number | null; languages?: string[] | null;
+  accentColor?: string | null;
 }
 
 export interface UpdateBusinessFields {
@@ -202,12 +203,13 @@ export async function updateBusinessProfile(
   const res = await getDB()
     .prepare(
       `UPDATE businesses SET name=?,phone=?,blurb=?,address=?,category_label=?,open_text=?,
-       working_hours=?,social_links=?,years_here=?,languages=?,updated_at=datetime('now')
+       working_hours=?,social_links=?,years_here=?,languages=?,accent_color=?,updated_at=datetime('now')
        WHERE id=? AND owner_user_id=?`,
     )
     .bind(input.name, input.phone, input.blurb, input.address, input.categoryLabel,
       input.openText, input.workingHours ?? null, input.socialLinks ?? null,
       input.yearsHere ?? null, input.languages ? JSON.stringify(input.languages) : null,
+      input.accentColor ?? null,
       businessId, ownerUserId)
     .run();
   return (res.meta.changes ?? 0) > 0;

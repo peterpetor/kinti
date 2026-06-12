@@ -39,6 +39,8 @@ export interface Business {
   languages: string[];
   photo: string | null;
   accentPhoto: string | null;
+  /** Szaknévsor PRO custom branding accent szín (előre definiált hex) vagy null. */
+  accentColor?: string | null;
   logoKey: string | null;
   galleryKeys: string[];
   ownerUserId: string | null;

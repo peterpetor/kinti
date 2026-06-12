@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Icon } from "@/components/ui";
 import { LogoUploader } from "./logo-uploader";
+import { BUSINESS_ACCENT_COLORS } from "@/lib/business-branding";
 import { GalleryUploader } from "./gallery-uploader";
 import { cn } from "@/lib/cn";
 import { isSwissAddress } from "@/lib/cantons";
@@ -29,6 +30,7 @@ export interface ProfileEditorProps {
   initialLanguages?: string[] | null;
   initialLogoKey?: string | null;
   initialGalleryKeys?: string[] | null;
+  initialAccentColor?: string | null;
 }
 
 type Phase = "idle" | "saving" | "success" | "error";
@@ -47,8 +49,10 @@ export function ProfileEditor({
   initialLanguages,
   initialLogoKey,
   initialGalleryKeys,
+  initialAccentColor,
   isFeatured,
 }: ProfileEditorProps & { isFeatured?: boolean }) {
+  const [accentColor, setAccentColor] = useState(initialAccentColor ?? "");
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState(initialPhone ?? "");
   const [blurb, setBlurb] = useState(initialBlurb ?? "");
@@ -161,6 +165,7 @@ export function ProfileEditor({
           socialLinks: JSON.stringify(socialLinks),
           yearsHere: yearsHere ? parseInt(yearsHere) : null,
           languages,
+          accentColor: accentColor || null,
         }),
       });
 
@@ -218,6 +223,34 @@ export function ProfileEditor({
         )}
 
       <form onSubmit={handleSave} className="space-y-4">
+        {isFeatured && (
+          <section className="rounded-card border border-line bg-surface p-4 shadow-card">
+            <div className="text-[13px] font-extrabold text-ink">🎨 Egyedi arculat-szín (PRO)</div>
+            <p className="mt-0.5 mb-3 text-[12px] text-ink-muted">A profilod fejlécén jelenik meg.</p>
+            <div className="flex flex-wrap gap-2.5">
+              {BUSINESS_ACCENT_COLORS.map((c) => {
+                const selected = accentColor === c.hex;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setAccentColor(c.hex)}
+                    aria-label={c.label}
+                    aria-pressed={selected}
+                    className={cn(
+                      "h-9 w-9 rounded-full border-2 transition active:scale-90",
+                      selected ? "border-ink ring-2 ring-ink/20" : "border-line",
+                      !c.hex && "bg-surface-alt",
+                    )}
+                    style={c.hex ? { backgroundColor: c.hex } : undefined}
+                  >
+                    {!c.hex && <span className="text-[10px] font-bold text-ink-muted">Alap</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
         <section className="rounded-card border border-line bg-surface p-4 shadow-card space-y-4">
           <div className="flex items-center justify-between border-b border-line pb-2 mb-1">
             <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted flex items-center gap-1.5">

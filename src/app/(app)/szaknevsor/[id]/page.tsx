@@ -216,10 +216,18 @@ export default async function BusinessPage({ params }: { params: { id: string } 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(jsonLd) }}
       />
-      {/* hero fotó + lebegő vezérlők — R2-kép, ha van; különben gradiens placeholder */}
+      {/* hero fotó + lebegő vezérlők — R2-kép, ha van; különben PRO accent szín, vagy gradiens placeholder */}
       <div
         className="relative h-[280px]"
-        style={!heroUrl && b.photo ? { background: b.photo } : undefined}
+        style={
+          heroUrl
+            ? undefined
+            : b.accentColor
+              ? { background: `linear-gradient(135deg, ${b.accentColor}, ${b.accentColor}bb)` }
+              : b.photo
+                ? { background: b.photo }
+                : undefined
+        }
       >
         {heroUrl && (
           // eslint-disable-next-line @next/next/no-img-element

@@ -168,10 +168,14 @@ export function ExploreView({
       ? withDistance.filter(({ dist }) => dist != null && dist <= radiusKm)
       : withDistance;
 
-    // Ha aktív a radius, a közelebbi előbbre kerül.
-    if (userPos) {
-      radiusFiltered.sort((a, b) => (a.dist ?? Infinity) - (b.dist ?? Infinity));
-    }
+    // Rendezés: a PRO (featured) vállalkozások mindig elöl ("top pinning"),
+    // azon belül a közelebbi (ha van helymeghatározás), majd magasabb értékelés.
+    radiusFiltered.sort((a, b) => {
+      if (a.b.featured !== b.b.featured) return a.b.featured ? -1 : 1;
+      const byDist = (a.dist ?? Infinity) - (b.dist ?? Infinity);
+      if (byDist !== 0) return byDist;
+      return (b.b.rating ?? 0) - (a.b.rating ?? 0);
+    });
 
     return radiusFiltered;
   }, [businesses, cat, canton, q, showFavs, openNow, minYears, favoriteIds, userPos, radiusKm]);
