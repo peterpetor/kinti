@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
-import { getBusinessById, getReviewsByBusiness } from "@/lib/repo";
+import { getBusinessById, getReviewsByBusiness, recordBusinessSearchTerm } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
@@ -78,9 +78,20 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 const actionBtn =
   "flex h-[46px] flex-1 items-center justify-center gap-1.5 rounded-[14px] text-sm font-bold tracking-[-0.01em] transition active:scale-[0.98]";
 
-export default async function BusinessPage({ params }: { params: { id: string } }) {
+export default async function BusinessPage({
+  params,
+  searchParams,
+}: {
+  params: { id: string };
+  searchParams: { st?: string };
+}) {
   const b = await getBusinessById(params.id);
   if (!b) notFound();
+
+  // „Honnan jönnek" — ha a keresőből érkezett (?st=...), rögzítjük a keresőszót.
+  if (typeof searchParams.st === "string" && searchParams.st.trim()) {
+    await recordBusinessSearchTerm(params.id, searchParams.st);
+  }
   // Publikus profil-oldal: csak admin által jóváhagyott (moderation_status=1)
   // vállalkozás látható. Pending / rejected → 404. A tulajdonos a saját
   // manage-link szerkesztő-oldalán látja az állapotot.

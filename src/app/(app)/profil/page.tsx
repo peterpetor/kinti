@@ -19,7 +19,7 @@ import {
   DropdownMenu,
   KintiLogo,
 } from "@/components/ui";
-import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getReviewResponseEngagement } from "@/lib/repo";
+import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getReviewResponseEngagement, getTopSearchTerms } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { handleFromId } from "@/lib/handle";
 import type { Business, Category } from "@/lib/types";
@@ -187,6 +187,9 @@ async function OwnerDashboard({
   // Review Response Counter: megkeresések a vélemény-válaszadás óta.
   const responseEngagement = await getReviewResponseEngagement(business.id);
 
+  // Analytics: top keresőszavak ("honnan jönnek") — PRO.
+  const topSearchTerms = business.featured ? await getTopSearchTerms(business.id) : [];
+
   const { stats } = data;
   const total14 = stats.trend.reduce((sum, p) => sum + p.views, 0);
   const trendData = stats.trend.map((p) => p.views);
@@ -334,6 +337,34 @@ async function OwnerDashboard({
         <StatCard icon="cursor" value={stats.weekClicks} label="Profil-megnyitás" delta={stats.weekClicksDelta} />
         <StatCard icon="phone" value={stats.weekCalls} label="Hívás" delta={stats.weekCallsDelta} accent />
       </section>
+
+      {/* CTR — hívási arány (hívás / megtekintés) */}
+      {stats.weekViews > 0 && (
+        <div className="rounded-card border border-line bg-surface px-4 py-3 flex items-center justify-between">
+          <div>
+            <p className="text-[12.5px] font-bold text-ink">Hívási arány (CTR)</p>
+            <p className="text-[11.5px] text-ink-muted">A megtekintők hány %-a hívott / nyitotta meg a profilt.</p>
+          </div>
+          <span className="text-[22px] font-black text-primary">
+            {Math.round(((stats.weekCalls + stats.weekClicks) / stats.weekViews) * 100)}%
+          </span>
+        </div>
+      )}
+
+      {/* Honnan jönnek — top keresőszavak (PRO) */}
+      {topSearchTerms.length > 0 && (
+        <section className="rounded-card border border-line bg-surface p-4 shadow-card">
+          <SectionHeader>Honnan jönnek</SectionHeader>
+          <p className="mt-0.5 mb-2.5 text-[11.5px] text-ink-muted">A leggyakoribb keresőszavak, amikből rád kattintottak.</p>
+          <div className="flex flex-wrap gap-2">
+            {topSearchTerms.map((t) => (
+              <span key={t.term} className="inline-flex items-center gap-1.5 rounded-pill bg-primary/10 px-2.5 py-1 text-[12px] font-bold text-primary">
+                {t.term} <span className="text-primary/60">{t.count}×</span>
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* trendvonal */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">

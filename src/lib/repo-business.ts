@@ -215,6 +215,37 @@ export async function updateBusinessProfile(
   return (res.meta.changes ?? 0) > 0;
 }
 
+/** Keresőszó rögzítése egy vállalkozás-megnyitáshoz (aggregált, PII-mentes). */
+export async function recordBusinessSearchTerm(businessId: string, term: string): Promise<void> {
+  const t = term.trim().toLowerCase().slice(0, 60);
+  if (t.length < 2) return;
+  try {
+    await getDB()
+      .prepare(
+        `INSERT INTO business_search_terms (business_id, term, count, last_seen)
+         VALUES (?, ?, 1, datetime('now'))
+         ON CONFLICT(business_id, term) DO UPDATE SET count = count + 1, last_seen = datetime('now')`,
+      )
+      .bind(businessId, t)
+      .run();
+  } catch {
+    /* best-effort */
+  }
+}
+
+/** Egy vállalkozás leggyakoribb keresőszavai (Analytics Dashboard). */
+export async function getTopSearchTerms(businessId: string, limit = 6): Promise<{ term: string; count: number }[]> {
+  try {
+    const { results } = await getDB()
+      .prepare("SELECT term, count FROM business_search_terms WHERE business_id = ? ORDER BY count DESC LIMIT ?")
+      .bind(businessId, limit)
+      .all<{ term: string; count: number }>();
+    return results;
+  } catch {
+    return [];
+  }
+}
+
 export async function getBusinessByManageToken(token: string): Promise<Business | null> {
   const row = await getDB()
     .prepare("SELECT * FROM businesses WHERE manage_token = ? LIMIT 1")

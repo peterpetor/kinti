@@ -432,7 +432,7 @@ export function ExploreView({
             <BusinessCard
               key={b.id}
               business={b}
-              href={`/szaknevsor/${b.id}`}
+              href={`/szaknevsor/${b.id}${q.trim() ? `?st=${encodeURIComponent(q.trim())}` : ""}`}
               distanceKm={dist}
               showFavorite
             />
