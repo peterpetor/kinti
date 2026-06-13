@@ -30,7 +30,7 @@ export function AdminCopyManageButton({
 
   if (!manageToken) {
     return (
-      <span className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2 py-0.5 text-[10px] font-bold text-ink-faint">
+      <span className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-faint">
         nincs token
       </span>
     );
@@ -56,7 +56,7 @@ export function AdminCopyManageButton({
       onClick={onCopy}
       title="Másold a kezelő URL-t — küldd el a felhasználónak ha elveszítette"
       className={cn(
-        "inline-flex items-center gap-1 rounded-pill border px-2 py-0.5 text-[10.5px] font-bold transition active:scale-95",
+        "inline-flex items-center gap-1 rounded-pill border px-2 py-0.5 text-[11.5px] font-bold transition active:scale-95",
         copied
           ? "border-success/40 bg-success/10 text-success"
           : "border-line bg-surface text-ink-muted hover:text-ink",

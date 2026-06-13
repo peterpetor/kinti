@@ -409,7 +409,7 @@ function ResultView({ result, onRestart }: { result: WizardResult; onRestart: ()
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[10.5px] font-bold uppercase tracking-wider text-ink-muted">
+      <p className="text-[11.5px] font-bold uppercase tracking-wider text-ink-muted">
         {label}
       </p>
       <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink">{value}</p>

@@ -106,7 +106,7 @@ export function ExchangeCalculator({
           />
         </div>
 
-        <p className="mt-3 text-[10.5px] leading-snug text-ink-muted">
+        <p className="mt-3 text-[11.5px] leading-snug text-ink-muted">
           Frissítés: <strong className="text-ink">{fmtDate(date)}</strong> · Forrás: Frankfurter / ECB
         </p>
       </section>
@@ -167,10 +167,10 @@ export function ExchangeCalculator({
         {/* Eredmény — köztes árfolyam */}
         <div className="rounded-[14px] border border-dashed border-primary/30 bg-primary-soft/50 p-3">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+            <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
               Középárfolyamon (nettó, díj nélkül)
             </p>
-            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-accent">
+            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-accent">
               Becslés
             </span>
           </div>
@@ -182,7 +182,7 @@ export function ExchangeCalculator({
         {/* Szolgáltatók */}
         {chf > 0 && direction === "to-huf" && (
           <div className="space-y-2">
-            <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+            <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
               Becsült érkező összeg szolgáltatónként
             </p>
             {PROVIDERS.map((p) => {
@@ -203,9 +203,9 @@ export function ExchangeCalculator({
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-[13px] font-extrabold text-ink">{p.name}</span>
-                      <span className="text-[10.5px] text-ink-faint">· {p.speed}</span>
+                      <span className="text-[11.5px] text-ink-faint">· {p.speed}</span>
                     </div>
-                    <p className="text-[10.5px] text-ink-muted truncate">{p.note}</p>
+                    <p className="text-[11.5px] text-ink-muted truncate">{p.note}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <div className="flex items-center justify-end gap-1 text-[14px] font-extrabold text-ink">
@@ -214,7 +214,7 @@ export function ExchangeCalculator({
                         <Icon name="arrowRight" size={13} strokeWidth={2.6} className="text-ink-faint" />
                       )}
                     </div>
-                    <div className="text-[10px] text-accent">
+                    <div className="text-[11px] text-accent">
                       − {fee.toLocaleString("hu-HU", { maximumFractionDigits: 0 })} Ft díj
                     </div>
                   </div>
@@ -239,7 +239,7 @@ export function ExchangeCalculator({
                 </div>
               );
             })}
-            <p className="px-1 pt-0.5 text-[9.5px] leading-snug text-ink-faint">
+            <p className="px-1 pt-0.5 text-[10.5px] leading-snug text-ink-faint">
               A Wise és Revolut kártyára kattintva referál-linkre jutsz — ha rajta keresztül
               regisztrálsz, a Kintit is támogatod. A díjak becsültek, az aktuálisat a
               szolgáltatónál ellenőrizd.
@@ -250,7 +250,7 @@ export function ExchangeCalculator({
 
       {/* Gyors-konvertálók */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
-        <p className="mb-2 text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+        <p className="mb-2 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
           Gyors-konverzió
         </p>
         <div className="grid grid-cols-3 gap-2">
@@ -263,7 +263,7 @@ export function ExchangeCalculator({
             >
               {amt} CHF
               <br />
-              <span className="text-[10.5px] text-ink-muted font-medium">
+              <span className="text-[11.5px] text-ink-muted font-medium">
                 = {(amt * chfToHuf).toLocaleString("hu-HU", { maximumFractionDigits: 0 })} Ft
               </span>
             </button>
@@ -277,7 +277,7 @@ export function ExchangeCalculator({
 function RateCard({ label, value, unit }: { label: string; value: string; unit: string }) {
   return (
     <div className="rounded-[14px] bg-surface border border-line px-3 py-2.5 shadow-card">
-      <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">{label}</p>
+      <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">{label}</p>
       <p className="mt-0.5 text-[18px] font-extrabold tracking-tight text-ink">
         {value}{" "}
         <span className="text-[12px] font-bold text-ink-muted">{unit}</span>

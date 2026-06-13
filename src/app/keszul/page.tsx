@@ -44,7 +44,7 @@ export default function ComingSoonPage() {
         </a>
       </div>
 
-      <footer className="pt-6 text-[10.5px] text-ink-faint">
+      <footer className="pt-6 text-[11.5px] text-ink-faint">
         © kinti.app · {new Date().getFullYear()}
       </footer>
     </main>

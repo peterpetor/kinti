@@ -40,7 +40,7 @@ export default async function AbuseDashboardPage() {
           { label: "Pending Content", value: "—", color: "ink-muted" },
         ].map((stat, i) => (
           <div key={i} className="rounded-card border border-line bg-surface p-3 shadow-card">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-ink-muted">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
               {stat.label}
             </div>
             <div className={`text-2xl font-black text-${stat.color}`}>{stat.value}</div>
@@ -55,7 +55,7 @@ export default async function AbuseDashboardPage() {
           <h3 className="mb-3 font-bold text-ink">🔴 Top 10 Abusive IPs</h3>
           <div className="rounded-lg border border-dashed border-line bg-surface-alt p-6 text-center">
             <p className="text-[12px] text-ink-muted">
-              Lekérdezés: <code className="font-mono text-[10px]">blocklist_summary</code>
+              Lekérdezés: <code className="font-mono text-[11px]">blocklist_summary</code>
             </p>
             <p className="mt-2 text-[11px] text-ink-faint">
               Rendezve: strike_count + report_count alapján
@@ -68,7 +68,7 @@ export default async function AbuseDashboardPage() {
           <h3 className="mb-3 font-bold text-ink">📊 Rate Limit Activity (24h)</h3>
           <div className="rounded-lg border border-dashed border-line bg-surface-alt p-6 text-center">
             <p className="text-[12px] text-ink-muted">
-              Lekérdezés: <code className="font-mono text-[10px]">rate_limit_events</code>
+              Lekérdezés: <code className="font-mono text-[11px]">rate_limit_events</code>
             </p>
             <p className="mt-2 text-[11px] text-ink-faint">
               Csoportosítva: endpoint és IP alapján

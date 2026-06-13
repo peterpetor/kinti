@@ -165,7 +165,7 @@ function CrossingCard({ crossing, reports }: { crossing: BorderCrossing; reports
           <h3 className="text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
             {crossing.name}
           </h3>
-          <p className="text-[10.5px] uppercase tracking-wide text-ink-muted">
+          <p className="text-[11.5px] uppercase tracking-wide text-ink-muted">
             CH {crossing.canton} ↔ {crossing.country}
             {crossing.type === "highway" && " · Autópálya"}
           </p>
@@ -174,14 +174,14 @@ function CrossingCard({ crossing, reports }: { crossing: BorderCrossing; reports
             <div className="mt-2">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span
-                  className="inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[10.5px] font-bold text-white"
+                  className="inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[11.5px] font-bold text-white"
                   style={{ backgroundColor: STATUS_META[latest.status].color }}
                 >
                   {STATUS_META[latest.status].emoji} {STATUS_META[latest.status].label}
                 </span>
-                <span className="text-[10.5px] text-ink-faint">{fmtAgo(latest.createdAt)}</span>
+                <span className="text-[11.5px] text-ink-faint">{fmtAgo(latest.createdAt)}</span>
                 {reports.length > 1 && (
-                  <span className="text-[10.5px] text-ink-muted">
+                  <span className="text-[11.5px] text-ink-muted">
                     +{reports.length - 1} további jelentés
                   </span>
                 )}
@@ -368,7 +368,7 @@ function ReportForm({
           </button>
         </div>
 
-        <p className="text-[10.5px] leading-snug text-ink-faint">
+        <p className="text-[11.5px] leading-snug text-ink-faint">
           A jelentés 4 órán át látható. Anonim — sem fiók, sem email nem kell.
         </p>
       </form>

@@ -98,7 +98,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           {employer?.verified && (
             <span
               title="A kinti.app ellenőrizte, hogy bejegyzett svájci cég (UID alapján)."
-              className="inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-2 py-0.5 text-[10.5px] font-bold text-success"
+              className="inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-2 py-0.5 text-[11.5px] font-bold text-success"
             >
               <Icon name="check" size={10} strokeWidth={3} /> Hiteles cég
             </span>

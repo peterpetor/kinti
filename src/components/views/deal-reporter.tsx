@@ -232,7 +232,7 @@ export function DealReporter({
 
             <div className="border-t border-dashed border-line pt-3 space-y-2">
               <div>
-                <label className="block mb-1 text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+                <label className="block mb-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
                   Bolt-név vagy hely (opcionális)
                 </label>
                 <input
@@ -246,7 +246,7 @@ export function DealReporter({
               </div>
 
               <div>
-                <label className="block mb-1 text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+                <label className="block mb-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
                   Megjegyzés (opcionális)
                 </label>
                 <input
@@ -300,7 +300,7 @@ export function DealReporter({
               </button>
             </div>
 
-            <p className="text-[10.5px] leading-snug text-ink-faint">
+            <p className="text-[11.5px] leading-snug text-ink-faint">
               Engedélyezd a helymeghatározást — a térképen pontosan ott jelenik meg az akció ahol vagy.
               Aznap éjfélkor automatikusan eltűnik.
             </p>

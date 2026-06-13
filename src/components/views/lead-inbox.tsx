@@ -53,7 +53,7 @@ export function LeadInbox({ leads }: { leads: BusinessLead[] }) {
           >
             <div className="flex items-start justify-between gap-2">
               <h3 className="text-[15px] font-extrabold text-ink">{lead.senderName}</h3>
-              <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ${meta.cls}`}>
+              <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-extrabold uppercase tracking-wide ${meta.cls}`}>
                 {meta.label}
               </span>
             </div>

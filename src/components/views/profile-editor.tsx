@@ -244,7 +244,7 @@ export function ProfileEditor({
                     )}
                     style={c.hex ? { backgroundColor: c.hex } : undefined}
                   >
-                    {!c.hex && <span className="text-[10px] font-bold text-ink-muted">Alap</span>}
+                    {!c.hex && <span className="text-[11px] font-bold text-ink-muted">Alap</span>}
                   </button>
                 );
               })}
@@ -331,7 +331,7 @@ export function ProfileEditor({
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider flex items-center justify-between">
                   <span>Alternatív nyitvatartás szöveg</span>
-                  <span className="text-[9px] text-ink-faint font-medium">ha nem nap alapú</span>
+                  <span className="text-[10px] text-ink-faint font-medium">ha nem nap alapú</span>
                 </label>
                 <input
                   type="text"
@@ -553,7 +553,7 @@ export function ProfileEditor({
       {/* Jobb oldali Live Preview Mobil Mockup Device (5 oszlop) */}
       <div className="hidden md:block md:col-span-5 md:sticky md:top-20">
         <div className="text-center mb-3">
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-ink-faint bg-surface border border-line px-2.5 py-1 rounded-full shadow-sm">
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-ink-faint bg-surface border border-line px-2.5 py-1 rounded-full shadow-sm">
             ✨ Élő Mobil Előnézet
           </span>
         </div>
@@ -570,7 +570,7 @@ export function ProfileEditor({
               <span className="text-ink-muted/30"><Icon name="globe" size={36} /></span>
               {/* Kis vissza nyíl és megosztók a telefonon */}
               <div className="absolute inset-x-0 top-6 flex gap-1.5 px-3">
-                <span className="grid h-[24px] w-[24px] place-items-center rounded-lg bg-white/90 text-ink text-[10px]">
+                <span className="grid h-[24px] w-[24px] place-items-center rounded-lg bg-white/90 text-ink text-[11px]">
                   <Icon name="arrowLeft" size={12} />
                 </span>
                 <span className="flex-1" />
@@ -588,7 +588,7 @@ export function ProfileEditor({
             {/* Profil tartalom a telefonon */}
             <div className="relative -mt-4 rounded-t-2xl bg-bg px-3.5 pt-3.5 space-y-3.5">
               <div>
-                <p className="text-[10px] font-extrabold uppercase tracking-wide text-primary mb-0.5">
+                <p className="text-[11px] font-extrabold uppercase tracking-wide text-primary mb-0.5">
                   {categoryLabel || "Kategória"}
                 </p>
                 <h4 className="text-[17px] font-extrabold leading-tight text-ink truncate">
@@ -603,12 +603,12 @@ export function ProfileEditor({
                     <Icon name="star" size={10} filled className="text-star" />
                     <span>5.0</span>
                   </div>
-                  <div className="text-[9px] text-ink-muted">12 vélemény</div>
+                  <div className="text-[10px] text-ink-muted">12 vélemény</div>
                 </div>
                 <span className="h-6 w-px bg-line/40" />
                 <div className="flex-1">
                   <div className="font-bold text-ink">2.4 km</div>
-                  <div className="text-[9px] text-ink-muted">Zürich</div>
+                  <div className="text-[10px] text-ink-muted">Zürich</div>
                 </div>
                 <span className="h-6 w-px bg-line/40" />
                 <div className="flex-1">
@@ -627,7 +627,7 @@ export function ProfileEditor({
                     />
                     {previewStatus.isOpen ? "Nyitva" : "Zárva"}
                   </div>
-                  <div className="text-[9px] text-ink-muted truncate capitalize">
+                  <div className="text-[10px] text-ink-muted truncate capitalize">
                     {previewStatus.detailText}
                   </div>
                 </div>
@@ -676,7 +676,7 @@ export function ProfileEditor({
 
               {/* Leírás */}
               <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-ink-muted">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
                   Erről a helyről
                 </span>
                 <p className="text-[11.5px] leading-relaxed text-ink/90 line-clamp-4">
@@ -686,11 +686,11 @@ export function ProfileEditor({
 
               {/* Chips mockup */}
               <div className="flex flex-wrap gap-1">
-                <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-[9px] font-bold text-ink">
+                <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] font-bold text-ink">
                   <Icon name="clock" size={9} className="text-primary" />
                   {openText || `${previewStatus.statusText} · ${previewStatus.detailText}`}
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-[9px] font-bold text-ink">
+                <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] font-bold text-ink">
                   <Icon name="globe" size={9} className="text-primary" /> Magyar
                 </span>
               </div>

@@ -53,7 +53,7 @@ export function TabBar() {
               href={t.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative z-[1] flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[10.5px] transition",
+                "relative z-[1] flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11.5px] transition",
                 active ? "text-primary" : "text-ink-faint",
               )}
             >

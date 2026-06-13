@@ -266,10 +266,10 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-1.5">
-                      <span className="text-[10.5px] font-bold uppercase tracking-wide" style={{ color: meta.color }}>
+                      <span className="text-[11.5px] font-bold uppercase tracking-wide" style={{ color: meta.color }}>
                         {meta.label}
                       </span>
-                      <span className="text-[10px] text-ink-faint">· {fmtRel(it.createdAt)}</span>
+                      <span className="text-[11px] text-ink-faint">· {fmtRel(it.createdAt)}</span>
                     </div>
                     <p className="mt-0.5 text-[13.5px] font-bold tracking-[-0.01em] text-ink truncate">
                       {it.title}

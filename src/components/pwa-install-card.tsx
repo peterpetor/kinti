@@ -140,7 +140,7 @@ export function PwaInstallCard() {
           <p className="text-[11.5px] leading-snug text-ink-muted">
             iPhone-on:{" "}
             <span className="inline-flex items-center gap-0.5 align-middle">
-              <span className="rounded bg-surface-alt border border-line px-1.5 py-0.5 text-[10px] font-bold">
+              <span className="rounded bg-surface-alt border border-line px-1.5 py-0.5 text-[11px] font-bold">
                 ⤴
               </span>
             </span>{" "}

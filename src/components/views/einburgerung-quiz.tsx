@@ -120,7 +120,7 @@ function IntroScreen({
               )}
             >
               <div className="text-[15px] font-extrabold text-ink">{c.code}</div>
-              <div className="mt-0.5 text-[10.5px] text-ink-muted">{c.name}</div>
+              <div className="mt-0.5 text-[11.5px] text-ink-muted">{c.name}</div>
             </button>
           ))}
         </div>
@@ -211,7 +211,7 @@ function QuizScreen({
 
       <article className="rounded-card border border-line bg-surface p-5 shadow-card space-y-4">
         <span
-          className="inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[10.5px] font-bold text-white"
+          className="inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[11.5px] font-bold text-white"
           style={{ backgroundColor: meta.color }}
         >
           {meta.emoji} {meta.label}
@@ -403,7 +403,7 @@ function ResultScreen({
               <div className="flex items-start gap-2">
                 <span
                   className={cn(
-                    "grid h-6 w-6 shrink-0 place-items-center rounded-full text-white text-[10.5px] font-extrabold",
+                    "grid h-6 w-6 shrink-0 place-items-center rounded-full text-white text-[11.5px] font-extrabold",
                     correct ? "bg-success" : "bg-accent",
                   )}
                 >

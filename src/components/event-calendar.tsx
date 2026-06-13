@@ -92,7 +92,7 @@ export function EventCalendar({ events }: { events: KintiEvent[] }) {
       </div>
 
       {/* Hetek fejléce */}
-      <div className="grid grid-cols-7 gap-1 px-1 text-center text-[10.5px] font-bold uppercase tracking-wide text-ink-faint">
+      <div className="grid grid-cols-7 gap-1 px-1 text-center text-[11.5px] font-bold uppercase tracking-wide text-ink-faint">
         {HU_WEEKDAYS_SHORT.map((d) => (
           <div key={d}>{d}</div>
         ))}

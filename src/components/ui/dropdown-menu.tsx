@@ -28,7 +28,7 @@ export function DropdownMenu() {
     "flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] font-bold text-ink hover:bg-surface-alt transition-all active:scale-[0.98]";
 
   const ProBadge = () => (
-    <span className="ml-auto rounded-full bg-[#e3a233]/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-[#e3a233]">
+    <span className="ml-auto rounded-full bg-[#e3a233]/15 px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-[#e3a233]">
       PRO
     </span>
   );
@@ -71,7 +71,7 @@ export function DropdownMenu() {
                   <Icon name="sparkles" size={16} strokeWidth={2.6} />
                 </span>
                 Kinti PRO csomagok
-                <span className="ml-auto rounded-full bg-[#e3a233] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+                <span className="ml-auto rounded-full bg-[#e3a233] px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white">
                   PRO
                 </span>
               </Link>

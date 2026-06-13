@@ -184,7 +184,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           maxLength={600}
           className={cn(inputCls(), "resize-none")}
         />
-        <p className="mt-1 text-right text-[10.5px] text-ink-faint">
+        <p className="mt-1 text-right text-[11.5px] text-ink-faint">
           {form.blurb.length} / 600
         </p>
       </Section>
@@ -276,7 +276,7 @@ function Section({ title, required, children }: { title: string; required?: bool
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">{title}</h3>
         {required && (
-          <span className="text-[10.5px] font-semibold uppercase tracking-wide text-accent">
+          <span className="text-[11.5px] font-semibold uppercase tracking-wide text-accent">
             kötelező
           </span>
         )}

@@ -110,7 +110,7 @@ export function GlobalSearch() {
                 className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-ink outline-none placeholder:text-ink-faint"
                 autoComplete="off"
               />
-              {busy && <span className="text-[10px] text-ink-faint shrink-0">keresek…</span>}
+              {busy && <span className="text-[11px] text-ink-faint shrink-0">keresek…</span>}
               <button
                 type="button"
                 aria-label="Bezárás"
@@ -188,7 +188,7 @@ function ResultSection({
   if (items.length === 0) return null;
   return (
     <section>
-      <h3 className="px-2 py-1 text-[10.5px] font-bold uppercase tracking-wider text-ink-muted flex items-center gap-1.5">
+      <h3 className="px-2 py-1 text-[11.5px] font-bold uppercase tracking-wider text-ink-muted flex items-center gap-1.5">
         <span>{emoji}</span>
         {label}
         <span className="text-ink-faint">({items.length})</span>

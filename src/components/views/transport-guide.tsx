@@ -71,7 +71,7 @@ export function TransportGuide() {
               <div className="min-w-0 flex-1">
                 <h3 className="text-[14px] font-extrabold text-ink">{t.name}</h3>
                 <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">{t.description}</p>
-                <div className="mt-2 grid grid-cols-3 gap-1.5 text-[10.5px]">
+                <div className="mt-2 grid grid-cols-3 gap-1.5 text-[11.5px]">
                   <div className="rounded-md bg-surface-alt px-2 py-1">
                     <p className="font-bold uppercase tracking-wide text-ink-muted">Ár</p>
                     <p className="font-extrabold text-ink">{t.price}</p>
@@ -110,7 +110,7 @@ export function TransportGuide() {
                   {app.pros.map((p, i) => (
                     <span
                       key={i}
-                      className="inline-flex items-center rounded-pill bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success"
+                      className="inline-flex items-center rounded-pill bg-success/10 px-2 py-0.5 text-[11px] font-bold text-success"
                     >
                       ✓ {p}
                     </span>
@@ -121,7 +121,7 @@ export function TransportGuide() {
                     href={app.iosUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-pill bg-ink px-2.5 py-1 text-[10.5px] font-bold text-white"
+                    className="rounded-pill bg-ink px-2.5 py-1 text-[11.5px] font-bold text-white"
                   >
                     🍎 iOS
                   </a>
@@ -129,7 +129,7 @@ export function TransportGuide() {
                     href={app.androidUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-pill bg-success px-2.5 py-1 text-[10.5px] font-bold text-white"
+                    className="rounded-pill bg-success px-2.5 py-1 text-[11.5px] font-bold text-white"
                   >
                     🤖 Android
                   </a>
@@ -212,7 +212,7 @@ function TarifCard({ system }: { system: typeof TARIF_SYSTEMS[number] }) {
           <p className="text-[11.5px] text-ink-muted">{system.region}</p>
         </div>
         <div className="text-right shrink-0">
-          <p className="text-[10px] font-bold uppercase tracking-wide text-ink-muted">Zónák</p>
+          <p className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Zónák</p>
           <p className="text-[18px] font-extrabold text-ink leading-none">{system.zonesCount}</p>
         </div>
       </div>
@@ -234,11 +234,11 @@ function TarifCard({ system }: { system: typeof TARIF_SYSTEMS[number] }) {
 
       {/* Árak */}
       <div className="grid grid-cols-2 gap-1.5">
-        <div className="rounded-md bg-primary-soft/60 px-2 py-1.5 text-[10.5px]">
+        <div className="rounded-md bg-primary-soft/60 px-2 py-1.5 text-[11.5px]">
           <p className="font-bold uppercase tracking-wide text-primary">1 zóna jegy</p>
           <p className="font-extrabold text-ink">{system.singleZonePrice.toFixed(2)} CHF</p>
         </div>
-        <div className="rounded-md bg-success/10 px-2 py-1.5 text-[10.5px]">
+        <div className="rounded-md bg-success/10 px-2 py-1.5 text-[11.5px]">
           <p className="font-bold uppercase tracking-wide text-success">Napijegy</p>
           <p className="font-extrabold text-ink">{system.dailyPrice.toFixed(2)} CHF</p>
         </div>
@@ -248,7 +248,7 @@ function TarifCard({ system }: { system: typeof TARIF_SYSTEMS[number] }) {
         href={system.websiteUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-3 inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[10.5px] font-bold text-primary"
+        className="mt-3 inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[11.5px] font-bold text-primary"
       >
         🔗 Hivatalos oldal →
       </a>
@@ -282,13 +282,13 @@ function GaVsHalbtaxCalculator() {
         <span className="text-3xl">🧮</span>
         <div>
           <h2 className="text-[15px] font-extrabold text-ink">GA vs Halbtax kalkulátor</h2>
-          <p className="text-[10.5px] text-ink-muted">Add meg a tipikus utazásod adatait — kiszámoljuk, megéri-e</p>
+          <p className="text-[11.5px] text-ink-muted">Add meg a tipikus utazásod adatait — kiszámoljuk, megéri-e</p>
         </div>
       </div>
 
       <div className="space-y-3">
         <div>
-          <label className="block mb-1 text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+          <label className="block mb-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
             Átlagos jegyár (CHF / út)
           </label>
           <div className="flex items-center gap-3">
@@ -309,12 +309,12 @@ function GaVsHalbtaxCalculator() {
               onChange={(e) => setAvgTripPrice(Math.max(0, Number(e.target.value)))}
               className="w-16 rounded-[8px] border border-line bg-surface-alt px-2 py-1 text-[13px] font-bold text-ink text-right"
             />
-            <span className="text-[10.5px] font-bold text-ink-muted">CHF</span>
+            <span className="text-[11.5px] font-bold text-ink-muted">CHF</span>
           </div>
         </div>
 
         <div>
-          <label className="block mb-1 text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+          <label className="block mb-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
             Heti utazások száma (oda-vissza = 2)
           </label>
           <div className="flex items-center gap-3">
@@ -330,7 +330,7 @@ function GaVsHalbtaxCalculator() {
             <span className="w-16 text-right text-[18px] font-extrabold text-primary">
               {tripsPerWeek}
             </span>
-            <span className="text-[10.5px] font-bold text-ink-muted">/ hét</span>
+            <span className="text-[11.5px] font-bold text-ink-muted">/ hét</span>
           </div>
         </div>
       </div>
@@ -340,7 +340,7 @@ function GaVsHalbtaxCalculator() {
         className="rounded-[14px] p-4 text-center"
         style={{ backgroundColor: `${rec.color}15`, border: `2px solid ${rec.color}40` }}
       >
-        <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1" style={{ color: rec.color }}>
+        <p className="text-[11.5px] font-bold uppercase tracking-wider mb-1" style={{ color: rec.color }}>
           Ajánlás
         </p>
         <p className="text-[24px] mb-1">{rec.emoji}</p>
@@ -370,7 +370,7 @@ function GaVsHalbtaxCalculator() {
         />
       </div>
 
-      <p className="text-[10px] leading-snug text-ink-faint">
+      <p className="text-[11px] leading-snug text-ink-faint">
         Ebben az évben: {result.yearlyTrips} utazás. Számolj még gyermek-, hétvégi és family-tarifákkal.
       </p>
     </section>
@@ -397,7 +397,7 @@ function CostRow({
     >
       <div className="min-w-0 flex-1">
         <p className="text-[12.5px] font-bold text-ink">{label}</p>
-        {subtitle && <p className="text-[10px] text-ink-muted">{subtitle}</p>}
+        {subtitle && <p className="text-[11px] text-ink-muted">{subtitle}</p>}
       </div>
       <p className={cn("text-[14px] font-extrabold ml-2", highlight ? "text-success" : "text-ink")}>
         {cost.toLocaleString("hu-HU")} CHF

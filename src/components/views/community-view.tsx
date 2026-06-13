@@ -214,7 +214,7 @@ function EventsList({ events }: { events: KintiEvent[] }) {
       ) : (
         <>
           <article className="relative overflow-hidden rounded-[22px] p-[18px] text-white shadow-pop bg-gradient-to-br from-primary to-[#2e6a4e]">
-            <span className="mb-3.5 inline-block rounded-pill bg-white/[0.18] px-2.5 py-1 text-[10.5px] font-bold tracking-wide">
+            <span className="mb-3.5 inline-block rounded-pill bg-white/[0.18] px-2.5 py-1 text-[11.5px] font-bold tracking-wide">
               ★ Kiemelt esemény
             </span>
             <div className="flex items-start gap-3.5">
@@ -426,7 +426,7 @@ function DateChip({ event, solid = false }: { event: KintiEvent; solid?: boolean
         solid ? "w-[58px] bg-white px-0 py-2" : "w-[50px] border border-line bg-surface-alt py-1.5",
       )}
     >
-      <div className={cn("text-[9px] font-extrabold uppercase tracking-wide", solid ? "text-accent" : "text-primary")}>
+      <div className={cn("text-[10px] font-extrabold uppercase tracking-wide", solid ? "text-accent" : "text-primary")}>
         {event.dateMonth}
       </div>
       <div className="text-xl font-extrabold leading-none text-ink">{event.dateDay}</div>
@@ -439,7 +439,7 @@ function TagBadge({ tag, color }: { tag: string | null; color: string | null }) 
   const emoji = getTagEmoji(tag);
   return (
     <span
-      className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide"
+      className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wide"
       style={{ color: color ?? undefined, backgroundColor: color ? `${color}1f` : undefined }}
     >
       <span className="text-[12px] leading-none">{emoji}</span>

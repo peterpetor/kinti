@@ -135,7 +135,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
         <div className="p-5">
           {e.tag && (
             <span
-              className="inline-flex items-center gap-1 rounded-md bg-surface-alt px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wide text-ink-muted"
+              className="inline-flex items-center gap-1 rounded-md bg-surface-alt px-2 py-0.5 text-[11.5px] font-extrabold uppercase tracking-wide text-ink-muted"
               style={e.color ? { color: e.color, backgroundColor: `${e.color}22` } : undefined}
             >
               <span className="text-[13px] leading-none">{getTagEmoji(e.tag)}</span>
@@ -152,7 +152,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
               <div className="flex items-start gap-2">
                 <Icon name="calendar" size={15} strokeWidth={2.2} className="mt-0.5 shrink-0 text-primary" />
                 <div>
-                  <dt className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">Mikor</dt>
+                  <dt className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">Mikor</dt>
                   <dd className="font-semibold text-ink">
                     {dateInfo.full} <span className="text-ink-muted">({dateInfo.weekday})</span>
                     {e.startTime && (
@@ -166,7 +166,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
               <div className="flex items-start gap-2">
                 <Icon name="pin" size={15} strokeWidth={2.2} className="mt-0.5 shrink-0 text-primary" />
                 <div>
-                  <dt className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">Hol</dt>
+                  <dt className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">Hol</dt>
                   <dd className="font-semibold text-ink">{e.venue}</dd>
                 </div>
               </div>

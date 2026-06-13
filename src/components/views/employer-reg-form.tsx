@@ -82,7 +82,7 @@ export function EmployerRegForm() {
           className={inputCls}
           placeholder="hr@ceged.ch"
         />
-        <p className="mt-1 text-[10.5px] text-ink-faint">
+        <p className="mt-1 text-[11.5px] text-ink-faint">
           Ezen az emailen keresztül küldjük a számlákat és az értesítéseket.
         </p>
       </div>
@@ -111,7 +111,7 @@ export function EmployerRegForm() {
           className={inputCls}
           placeholder="CHE-123.456.789"
         />
-        <p className="mt-1 text-[10.5px] text-ink-faint">
+        <p className="mt-1 text-[11.5px] text-ink-faint">
           Ha megadod és ellenőrizzük, „Hiteles cég" jelzést kapsz a hirdetéseiden.
         </p>
       </div>

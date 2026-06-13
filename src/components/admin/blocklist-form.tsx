@@ -97,7 +97,7 @@ export function BlocklistForm() {
       >
         🚫 {busy ? "Mentés…" : "Hozzáadás a tiltólistához"}
       </button>
-      <p className="text-[10.5px] text-ink-faint">
+      <p className="text-[11.5px] text-ink-faint">
         Az IP-t és emailt a szerver SHA-256-tal hash-eli mentés előtt. Az IPv6
         címeket /64 prefix-re normalizáljuk (egy ISP-blokk = egy ban).
       </p>

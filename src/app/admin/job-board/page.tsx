@@ -155,7 +155,7 @@ export default async function JobBoardAdminPage({
             >
               {t === "employers" ? "Munkáltatók" : "Álláshirdetések"}
               {count > 0 && (
-                <span className="rounded-full bg-accent px-1.5 py-0.5 text-[9.5px] font-extrabold text-white">
+                <span className="rounded-full bg-accent px-1.5 py-0.5 text-[10.5px] font-extrabold text-white">
                   {count}
                 </span>
               )}
@@ -208,12 +208,12 @@ export default async function JobBoardAdminPage({
                             {emp.description}
                           </p>
                         )}
-                        <p className="mt-1 text-[10px] text-ink-faint">
+                        <p className="mt-1 text-[11px] text-ink-faint">
                           Csomag: <strong className="text-ink">{emp.subscription_tier.toUpperCase()}</strong>
                           {" · "}Regisztrálva: {fmtAgo(emp.created_at)}
                         </p>
                         <div className="mt-2 flex items-center gap-2">
-                          <span className="text-[10.5px] text-ink-muted">
+                          <span className="text-[11.5px] text-ink-muted">
                             UID: {emp.company_uid ? <strong className="font-mono text-ink">{emp.company_uid}</strong> : <em className="text-ink-faint">nincs megadva</em>}
                           </span>
                           <EmployerVerifyButton id={emp.id} verified={emp.verified === 1} />
@@ -247,13 +247,13 @@ export default async function JobBoardAdminPage({
                           {job.description}
                         </p>
                         <div className="mt-2 flex items-center gap-2">
-                          <p className="text-[10px] text-ink-faint">
+                          <p className="text-[11px] text-ink-faint">
                             Feladva: {fmtAgo(job.created_at)}
                           </p>
                           <Link
                             href={`/allasok/${job.id}`}
                             target="_blank"
-                            className="text-[10px] font-bold text-primary hover:underline"
+                            className="text-[11px] font-bold text-primary hover:underline"
                           >
                             ↗ Előnézet
                           </Link>

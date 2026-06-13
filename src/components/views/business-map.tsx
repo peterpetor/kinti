@@ -186,7 +186,7 @@ function SelectedCard({ business: b }: { business: Business }) {
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary">
           {b.categoryLabel}
           <span className="text-ink-faint">·</span>
           {b.reviews > 0 ? (

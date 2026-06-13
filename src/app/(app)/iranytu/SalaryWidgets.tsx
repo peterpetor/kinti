@@ -250,7 +250,7 @@ export function AlertSubscription({
           {submitting ? "Feliratkozás..." : "🔔 Feliratkozás"}
         </button>
       </form>
-      <p className="text-[10px] text-ink-faint text-center">Az email-cím csak értesítési célra kerül felhasználásra. Bármikor leiratkozhatsz.</p>
+      <p className="text-[11px] text-ink-faint text-center">Az email-cím csak értesítési célra kerül felhasználásra. Bármikor leiratkozhatsz.</p>
     </div>
   );
 }

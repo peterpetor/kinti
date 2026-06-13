@@ -250,9 +250,9 @@ function ContentList({
 function Stat({ label, value, sub, accent }: { label: string; value: number; sub?: string; accent?: boolean }) {
   return (
     <div className={`rounded-card border bg-surface p-3 shadow-card ${accent ? "border-accent/40" : "border-line"}`}>
-      <p className="text-[10.5px] font-bold uppercase tracking-wider text-ink-muted">{label}</p>
+      <p className="text-[11.5px] font-bold uppercase tracking-wider text-ink-muted">{label}</p>
       <p className={`mt-0.5 text-[22px] font-extrabold tracking-tight ${accent ? "text-accent" : "text-ink"}`}>{value}</p>
-      {sub && <p className="text-[10px] text-ink-faint">{sub}</p>}
+      {sub && <p className="text-[11px] text-ink-faint">{sub}</p>}
     </div>
   );
 }

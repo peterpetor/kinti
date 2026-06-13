@@ -57,7 +57,7 @@ export default async function SzakmaiSzotarPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className={cn(
-                    "inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider",
+                    "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider",
                     lesson.isPro ? "bg-[#e3a233]/20 text-[#e3a233]" : "bg-primary/10 text-primary"
                   )}>
                     {lesson.industry}

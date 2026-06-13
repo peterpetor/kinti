@@ -184,7 +184,7 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
                   );
                 })}
               </div>
-              <div className="flex justify-between text-[10px] text-ink-faint px-0.5">
+              <div className="flex justify-between text-[11px] text-ink-faint px-0.5">
                 <span>{last30[0]?.day?.slice(5)}</span>
                 <span className="text-primary font-bold">Ma</span>
               </div>
@@ -259,7 +259,7 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
 
       {/* Footer note */}
       <div className="px-5 pb-4">
-        <p className="text-[10.5px] text-ink-faint text-center leading-relaxed">
+        <p className="text-[11.5px] text-ink-faint text-center leading-relaxed">
           Anonim adatok — sem te, sem mi nem látunk nevet vagy IP-t.
           Adatok 30 napos ablakon belül tárolódnak.
         </p>
@@ -284,7 +284,7 @@ function KpiCard({
 
   return (
     <div className={cn("rounded-[14px] border p-2.5", bg)}>
-      <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-ink-muted">
+      <div className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
         <Icon name={icon} size={9} strokeWidth={2.4} />
         <span className="truncate">{label}</span>
       </div>

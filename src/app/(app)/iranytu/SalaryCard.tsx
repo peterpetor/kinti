@@ -70,7 +70,7 @@ export function SalaryCard({
         <p className="text-[24px] font-extrabold text-ink tracking-tight">
           {stat.median_salary.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">CHF/év</span>
         </p>
-        <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary/70 mt-0.5">
+        <p className="text-[11.5px] font-bold uppercase tracking-wide text-primary/70 mt-0.5">
           Medián (középérték)
         </p>
         {(() => {
@@ -80,7 +80,7 @@ export function SalaryCard({
               <span>Átlag:</span>
               <strong className="text-ink">{stat.avg_salary.toLocaleString("hu-HU")} CHF</strong>
               {skewed && (
-                <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[10px] text-amber-600 dark:text-amber-400">⚠ eltérés</span>
+                <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-amber-600 dark:text-amber-400">⚠ eltérés</span>
               )}
             </div>
           );

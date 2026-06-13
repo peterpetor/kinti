@@ -89,7 +89,7 @@ export function FlightFinder() {
             )}
           >
             <div className="text-[15px] font-extrabold text-ink">🇨🇭 → 🇭🇺</div>
-            <div className="mt-0.5 text-[10.5px] text-ink-muted">Svájcból Budapestre</div>
+            <div className="mt-0.5 text-[11.5px] text-ink-muted">Svájcból Budapestre</div>
           </button>
           <button
             type="button"
@@ -100,7 +100,7 @@ export function FlightFinder() {
             )}
           >
             <div className="text-[15px] font-extrabold text-ink">🇭🇺 → 🇨🇭</div>
-            <div className="mt-0.5 text-[10.5px] text-ink-muted">Budapestről Svájcba</div>
+            <div className="mt-0.5 text-[11.5px] text-ink-muted">Budapestről Svájcba</div>
           </button>
         </div>
       </section>
@@ -124,7 +124,7 @@ export function FlightFinder() {
                 )}
               >
                 <div className="text-[18px] font-extrabold text-ink">{ap.code}</div>
-                <div className="mt-0.5 text-[10.5px] text-ink-muted">{ap.city}</div>
+                <div className="mt-0.5 text-[11.5px] text-ink-muted">{ap.city}</div>
               </button>
             );
           })}
@@ -144,7 +144,7 @@ export function FlightFinder() {
           <label className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">
             Mikor utazol?
           </label>
-          <p className="text-[10.5px] text-ink-faint">
+          <p className="text-[11.5px] text-ink-faint">
             Színek = becsült ár-sáv
           </p>
         </div>
@@ -185,7 +185,7 @@ export function FlightFinder() {
               <button
                 type="button"
                 onClick={() => setReturnDate(null)}
-                className="text-[10px] font-bold text-primary underline mt-0.5"
+                className="text-[11px] font-bold text-primary underline mt-0.5"
               >
                 ✕ Csak oda
               </button>
@@ -247,7 +247,7 @@ export function FlightFinder() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
                   <span className="text-[13.5px] font-extrabold text-ink">{a.name}</span>
-                  <span className="text-[9.5px] font-bold uppercase rounded-pill bg-surface px-1.5 py-0.5 text-ink-muted">
+                  <span className="text-[10.5px] font-bold uppercase rounded-pill bg-surface px-1.5 py-0.5 text-ink-muted">
                     {a.type === "low-cost" ? "Low-cost" : "Full-service"}
                   </span>
                 </div>
@@ -340,7 +340,7 @@ function PriceEstimateCard({
         />
       </div>
 
-      <p className="mt-3 text-[10.5px] text-ink-faint italic">
+      <p className="mt-3 text-[11.5px] text-ink-faint italic">
         Egyirányú, gazdaságos osztály, kézipoggyász alap. {fromCode} → {toCode}.{" "}
         Az árak {airport} svájci reptérre/ről alapulnak; az ellenkező irány hasonló CHF-sávban.{" "}
         {isMidweek && "🌟 Hét közepe — olcsóbb mint hétvégén."}
@@ -448,7 +448,7 @@ function FlightCalendar({
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 px-1 text-center text-[10px] font-bold uppercase tracking-wide text-ink-faint">
+      <div className="grid grid-cols-7 gap-1 px-1 text-center text-[11px] font-bold uppercase tracking-wide text-ink-faint">
         {HU_WEEKDAYS.map((d) => (
           <div key={d}>{d}</div>
         ))}
@@ -494,7 +494,7 @@ function FlightCalendar({
         {SEASONS.map((s) => (
           <span
             key={s.id}
-            className="inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[9.5px] font-bold"
+            className="inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[10.5px] font-bold"
             style={{ backgroundColor: `${s.color}26`, color: s.color }}
           >
             {s.emoji} {s.label}

@@ -101,8 +101,8 @@ export function RentCostCalculator() {
               )}
             >
               <span className="text-2xl">{s.emoji}</span>
-              <span className="text-[10.5px] font-bold text-ink">{s.label}</span>
-              <span className="text-[9.5px] text-ink-faint">{s.m2Min}-{s.m2Max} m²</span>
+              <span className="text-[11.5px] font-bold text-ink">{s.label}</span>
+              <span className="text-[10.5px] text-ink-faint">{s.m2Min}-{s.m2Max} m²</span>
             </button>
           ))}
         </div>
@@ -125,7 +125,7 @@ export function RentCostCalculator() {
               )}
             >
               <span className="text-xl">{h.emoji}</span>
-              <span className="text-[10.5px] font-bold text-ink">{h.label}</span>
+              <span className="text-[11.5px] font-bold text-ink">{h.label}</span>
             </button>
           ))}
         </div>
@@ -159,7 +159,7 @@ export function RentCostCalculator() {
         <label className="block mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
           5. Akontó Nebenkosten (havi, ahogy a szerződésben)
         </label>
-        <p className="mb-2 text-[10.5px] leading-snug text-ink-faint">
+        <p className="mb-2 text-[11.5px] leading-snug text-ink-faint">
           A bérleti szerződésben általában külön szerepel: pl. „Mietzins 1800 + NK 180".
         </p>
         <div className="flex items-center gap-3">
@@ -315,7 +315,7 @@ export function RentCostCalculator() {
           <p className="text-[24px] font-extrabold leading-none text-accent">
             {Math.round(result.totalHiddenCostOverPeriod).toLocaleString("hu-HU")} CHF
           </p>
-          <p className="mt-1 text-[10.5px] text-ink-muted">
+          <p className="mt-1 text-[11.5px] text-ink-muted">
             Csak az opportunity + utánfizetés-kockázat — a bért nem tartalmazza
           </p>
         </div>
@@ -386,7 +386,7 @@ function ResultRow({
         </span>
       </div>
       {sub && (
-        <p className="mt-0.5 text-[10.5px] leading-snug text-ink-muted">{sub}</p>
+        <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">{sub}</p>
       )}
     </div>
   );

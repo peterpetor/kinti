@@ -176,7 +176,7 @@ function CategoryDetail({
                 <span className="text-[13px] font-extrabold text-ink">{p.name}</span>
                 <span
                   className={cn(
-                    "rounded-pill px-1.5 py-0.5 text-[9.5px] font-bold uppercase",
+                    "rounded-pill px-1.5 py-0.5 text-[10.5px] font-bold uppercase",
                     p.tier === "premium" && "bg-primary/10 text-primary",
                     p.tier === "mid" && "bg-[#e3a233]/10 text-[#9a6b00]",
                     p.tier === "budget" && "bg-success/10 text-success",
@@ -236,7 +236,7 @@ function RuleRow({
     >
       <div className="flex items-center gap-2">
         <span className="text-base">{icon}</span>
-        <p className="text-[10.5px] font-bold uppercase tracking-wider text-ink-muted">{label}</p>
+        <p className="text-[11.5px] font-bold uppercase tracking-wider text-ink-muted">{label}</p>
       </div>
       <p
         className={cn(
@@ -326,7 +326,7 @@ function TemplateGenerator({ category }: { category: CategoryInfo }) {
 
       {/* Letter-preview */}
       <div className="rounded-[10px] border border-line bg-surface p-3">
-        <pre className="text-[10.5px] leading-relaxed text-ink whitespace-pre-wrap font-mono">
+        <pre className="text-[11.5px] leading-relaxed text-ink whitespace-pre-wrap font-mono">
           {generatedLetter}
         </pre>
       </div>
@@ -342,7 +342,7 @@ function TemplateGenerator({ category }: { category: CategoryInfo }) {
         {copied ? "✓ Másolva!" : "📋 Másolás vágólapra"}
       </button>
 
-      <p className="text-[10.5px] leading-snug text-ink-faint">
+      <p className="text-[11.5px] leading-snug text-ink-faint">
         💡 Postán <strong>Einschreiben</strong> (tértivevényes) ajánlott levélként küldd — a
         feladás dátuma a határidő bizonyítéka.
       </p>
@@ -363,7 +363,7 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="block mb-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-muted">
+      <label className="block mb-0.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
         {label}
       </label>
       <input

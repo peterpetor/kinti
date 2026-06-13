@@ -349,7 +349,7 @@ export default async function BusinessPage({
         {/* Közösségi és foglalási linkek */}
         {hasSocials && (
           <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl bg-surface px-3 py-2 border border-line shadow-sm">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-ink-muted">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-ink-muted">
               Közösség & Foglalás:
             </span>
             <div className="flex gap-2 ml-auto">
@@ -425,7 +425,7 @@ export default async function BusinessPage({
             <div className="mt-3 rounded-[12px] border border-[#e3a233]/40 bg-[#fff8ed] px-3 py-2 flex items-start gap-2">
               <span className="text-[14px] shrink-0 mt-0.5">📜</span>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#b8860b]">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-[#b8860b]">
                   Hatósági engedélyszám / Kamarai szám
                 </p>
                 <p className="text-[13px] font-bold text-ink">{b.licenseNumber}</p>
@@ -443,7 +443,7 @@ export default async function BusinessPage({
             </div>
           )}
 
-          <p className="mt-3 text-[10.5px] leading-snug text-ink-faint italic">
+          <p className="mt-3 text-[11.5px] leading-snug text-ink-faint italic">
             ⓘ A profil adatait a vállalkozó tölti fel — frissességüket az üzemeltető nem ellenőrzi.
             Hivatalos adatokat (engedélyszám, cégjegyzékszám) közvetlenül a hatóságoknál erősíts meg.
           </p>
@@ -506,7 +506,7 @@ export default async function BusinessPage({
 
                   {r.ownerResponse && (
                     <div className="mt-2.5 rounded-[12px] border-l-2 border-primary bg-primary-soft/40 px-3 py-2">
-                      <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary">
+                      <p className="text-[11.5px] font-bold uppercase tracking-wide text-primary">
                         A vállalkozó válasza{r.ownerRespondedAt ? ` · ${fmtRelative(r.ownerRespondedAt)}` : ""}
                       </p>
                       <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-ink">

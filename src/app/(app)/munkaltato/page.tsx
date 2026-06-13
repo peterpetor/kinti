@@ -123,15 +123,15 @@ export default async function EmployerDashboardPage() {
                     <p className="text-[12.5px] text-ink-muted mt-0.5">{job.location} · {job.employmentType}</p>
                   </div>
                   {job.moderationStatus === 1 ? (
-                    <span className="rounded-full bg-success/15 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-success">
+                    <span className="rounded-full bg-success/15 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-success">
                       Aktív
                     </span>
                   ) : job.moderationStatus === 2 ? (
-                     <span className="rounded-full bg-accent/15 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-accent">
+                     <span className="rounded-full bg-accent/15 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-accent">
                       Elutasítva
                     </span>
                   ) : (
-                    <span className="rounded-full bg-line-strong/30 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-ink-muted">
+                    <span className="rounded-full bg-line-strong/30 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-ink-muted">
                       Függőben
                     </span>
                   )}

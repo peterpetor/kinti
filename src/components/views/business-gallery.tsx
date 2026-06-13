@@ -113,7 +113,7 @@ export function BusinessGallery({ galleryKeys, businessName }: Props) {
               />
               {/* Premium dark gradient overlay on hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
-                <span className="text-[10px] font-extrabold text-white uppercase tracking-wider bg-white/20 backdrop-blur-md rounded-pill px-2 py-0.5">
+                <span className="text-[11px] font-extrabold text-white uppercase tracking-wider bg-white/20 backdrop-blur-md rounded-pill px-2 py-0.5">
                   Nagyítás ⛶
                 </span>
               </div>

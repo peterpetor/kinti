@@ -126,7 +126,7 @@ export function AISearchBar({
       />
 
       <div className="mt-2 flex items-center justify-between gap-2">
-        <span className="text-[10.5px] text-ink-faint">
+        <span className="text-[11.5px] text-ink-faint">
           A kereső automatikusan beállítja a szűrőket.
         </span>
         <button

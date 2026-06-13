@@ -62,7 +62,7 @@ export function ModerationDecideButtons({
       {/* Ban checkbox-ok: csak akkor látszanak, ha van mit ban-olni
           ÉS a tétel még nem rejected. */}
       {current !== 2 && (canBanIp || canBanEmail) && (
-        <div className="flex flex-wrap items-center justify-end gap-2 text-[10.5px] text-ink-muted">
+        <div className="flex flex-wrap items-center justify-end gap-2 text-[11.5px] text-ink-muted">
           {canBanIp && (
             <label className="inline-flex items-center gap-1 cursor-pointer">
               <input

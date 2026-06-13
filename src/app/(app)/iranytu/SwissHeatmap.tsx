@@ -101,10 +101,10 @@ export function SwissHeatmap({ industry, period }: { industry: string; period: s
                       {row ? (
                         <>
                           <p>{row.avg_salary.toLocaleString("hu-HU")} CHF/év</p>
-                          <p className="text-[10px] text-surface/60">{row.entry_count} adat</p>
+                          <p className="text-[11px] text-surface/60">{row.entry_count} adat</p>
                         </>
                       ) : (
-                        <p className="text-[10px] text-surface/60">Nincs elég adat</p>
+                        <p className="text-[11px] text-surface/60">Nincs elég adat</p>
                       )}
                       {/* Tooltip arrow */}
                       <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-ink" />
@@ -117,7 +117,7 @@ export function SwissHeatmap({ industry, period }: { industry: string; period: s
 
           {/* Színskála legenda */}
           {data.length > 0 && (
-            <div className="absolute bottom-0 right-2 left-2 flex items-center justify-between text-[10px] font-medium text-ink-faint">
+            <div className="absolute bottom-0 right-2 left-2 flex items-center justify-between text-[11px] font-medium text-ink-faint">
               <span>{min.toLocaleString("hu-HU")} CHF</span>
               <div className="flex-1 mx-4 h-1.5 rounded-full" style={{ background: "linear-gradient(to right, rgba(var(--primary), 0.2), rgba(var(--primary), 1))" }} />
               <span>{max.toLocaleString("hu-HU")} CHF</span>

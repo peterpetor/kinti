@@ -229,7 +229,7 @@ export function AiInterviewSimulator() {
             <Icon name="arrowRight" size={16} strokeWidth={2.5} />
           </button>
         </div>
-        <p className="mt-2 text-center text-[10px] text-ink-faint">
+        <p className="mt-2 text-center text-[11px] text-ink-faint">
           Tipp: Próbálj kerek, egész mondatokban válaszolni a HR vezetőnek.
         </p>
       </form>

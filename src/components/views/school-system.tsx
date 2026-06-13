@@ -205,10 +205,10 @@ export function SchoolSystem() {
               {/* Kor-sáv */}
               <div className="flex flex-col items-center shrink-0">
                 <span className="text-2xl">{level.emoji}</span>
-                <div className={cn("mt-1 rounded-pill px-2 py-0.5 text-[10px] font-black", level.color, "bg-white/60")}>
+                <div className={cn("mt-1 rounded-pill px-2 py-0.5 text-[11px] font-black", level.color, "bg-white/60")}>
                   {level.ages}
                 </div>
-                <div className="text-[10px] font-semibold text-ink-muted mt-0.5">{level.years} év</div>
+                <div className="text-[11px] font-semibold text-ink-muted mt-0.5">{level.years} év</div>
               </div>
 
               {/* Tartalom */}

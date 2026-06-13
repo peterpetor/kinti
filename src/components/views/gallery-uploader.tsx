@@ -202,7 +202,7 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
                 {key.toLowerCase().endsWith(".pdf") ? (
                   <div className="h-full w-full flex flex-col items-center justify-center text-ink-muted p-2">
                     <Icon name="document" size={24} />
-                    <span className="text-[10px] mt-1 font-semibold">PDF</span>
+                    <span className="text-[11px] mt-1 font-semibold">PDF</span>
                   </div>
                 ) : (
                   /* eslint-disable-next-line @next/next/no-img-element */

@@ -51,7 +51,7 @@ export function AdminDeleteButton({
       disabled={disabled}
       className={cn(
         "inline-flex items-center gap-1 rounded-pill border border-accent/40 bg-accent/10 font-bold text-accent transition active:scale-95 hover:bg-accent hover:text-white",
-        small ? "px-2 py-0.5 text-[10.5px]" : "px-3 py-1 text-[11.5px]",
+        small ? "px-2 py-0.5 text-[11.5px]" : "px-3 py-1 text-[11.5px]",
         disabled && "cursor-not-allowed opacity-60",
       )}
     >

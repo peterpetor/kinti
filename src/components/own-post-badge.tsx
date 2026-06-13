@@ -25,7 +25,7 @@ export function OwnPostBadge({ type, id }: { type: PostType; id: string }) {
     <Link
       href={manageUrl}
       onClick={(e) => e.stopPropagation()}
-      className="inline-flex items-center gap-1 rounded-md bg-accent/15 text-accent border border-accent/30 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide hover:bg-accent/25 transition"
+      className="inline-flex items-center gap-1 rounded-md bg-accent/15 text-accent border border-accent/30 px-1.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wide hover:bg-accent/25 transition"
       title="Saját posztod — kattints a szerkesztéshez"
     >
       ★ Tied

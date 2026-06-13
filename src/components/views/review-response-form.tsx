@@ -79,7 +79,7 @@ export function ReviewResponseForm({
 
   return (
     <div className="mt-2 rounded-[12px] border border-line bg-surface-alt p-2.5 space-y-2">
-      <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+      <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
         A vállalkozó válasza
       </p>
       <textarea
@@ -90,7 +90,7 @@ export function ReviewResponseForm({
         maxLength={600}
         className="w-full resize-none rounded-[10px] border border-line bg-surface px-2.5 py-2 text-[13px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
-      <div className="flex justify-between text-[10.5px] text-ink-faint">
+      <div className="flex justify-between text-[11.5px] text-ink-faint">
         <span>Max 600 karakter</span>
         <span>{text.length} / 600</span>
       </div>

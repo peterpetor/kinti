@@ -124,13 +124,13 @@ export function SalaryOffersView() {
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-1.5">
                         {isBest && (
-                          <span className="rounded bg-success px-1 py-0.5 text-[9px] font-extrabold text-white">
+                          <span className="rounded bg-success px-1 py-0.5 text-[10px] font-extrabold text-white">
                             TOP
                           </span>
                         )}
                         <span className="font-bold text-ink truncate">{o.label}</span>
                       </div>
-                      <span className="text-[10.5px] text-ink-faint">
+                      <span className="text-[11.5px] text-ink-faint">
                         {o.input.canton} · {fmtDate(o.createdAt)}
                       </span>
                     </td>
@@ -175,7 +175,7 @@ function Th({ children, align = "left" }: { children: React.ReactNode; align?: "
   return (
     <th
       className={cn(
-        "px-3 py-2 text-[10.5px] font-extrabold uppercase tracking-wide text-ink-muted",
+        "px-3 py-2 text-[11.5px] font-extrabold uppercase tracking-wide text-ink-muted",
         align === "right" && "text-right",
       )}
     >
@@ -256,7 +256,7 @@ function OfferDetail({
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded border border-line bg-surface px-2.5 py-1.5">
-      <p className="text-[10px] font-bold uppercase tracking-wide text-ink-muted">{label}</p>
+      <p className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">{label}</p>
       <p className="text-[12.5px] font-bold text-ink">{value}</p>
     </div>
   );

@@ -59,15 +59,15 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
 
       <div className="min-w-0 flex-1">
         {b.featured && (
-          <div className="mb-1.5 inline-flex items-center gap-1 rounded-pill bg-[#ff9600] px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-sm">
+          <div className="mb-1.5 inline-flex items-center gap-1 rounded-pill bg-[#ff9600] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
             <Icon name="star" size={9} filled /> Szaknévsor PRO
           </div>
         )}
         <div className="mb-0.5 flex items-center gap-1.5">
-          <span className="text-[10.5px] font-bold uppercase tracking-wide text-primary">
+          <span className="text-[11.5px] font-bold uppercase tracking-wide text-primary">
             {b.categoryLabel}
           </span>
-          <span className="text-[10px] text-ink-faint">•</span>
+          <span className="text-[11px] text-ink-faint">•</span>
           {b.reviews > 0 ? (
             <span className="inline-flex items-center gap-1 text-xs font-bold text-ink">
               <Icon name="star" size={11} filled className="text-star" />
@@ -86,7 +86,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
           {b.verified && (
             <span
               title="Az üzemeltető meggyőződött róla, hogy valódi magyarul beszélő vállalkozás — ez NEM minőségi garancia, a szakképesítést és a munka minőségét nem ellenőrizzük."
-              className="inline-flex shrink-0 items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[9.5px] font-bold text-success"
+              className="inline-flex shrink-0 items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[10.5px] font-bold text-success"
             >
               <Icon name="check" size={9} strokeWidth={3} />
               Hiteles

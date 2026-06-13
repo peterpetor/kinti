@@ -73,7 +73,7 @@ export function GermanTerm({ children }: { children: string }) {
 
       {open && (
         <span className="absolute left-0 top-full z-20 mt-1 w-[260px] rounded-card border border-line bg-surface p-3 shadow-pop">
-          <span className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+          <span className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary">
             <Icon name="sparkles" size={10} strokeWidth={2.4} />
             AI magyarázat
           </span>
@@ -89,7 +89,7 @@ export function GermanTerm({ children }: { children: string }) {
           {explanation && (
             <span className="block text-[12px] leading-snug text-ink">{explanation}</span>
           )}
-          <span className="mt-2 block text-[9.5px] text-ink-faint italic">
+          <span className="mt-2 block text-[10.5px] text-ink-faint italic">
             Automatikus magyarázat, nem hivatalos forrás. Részletekért: ch.ch
           </span>
         </span>

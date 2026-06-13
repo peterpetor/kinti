@@ -111,7 +111,7 @@ export function JobsBrowser({ jobs }: { jobs: Job[] }) {
                 )}
               >
                 {job.status === "featured" && (
-                  <div className="mb-2 inline-flex items-center gap-1 rounded-pill bg-accent px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-sm">
+                  <div className="mb-2 inline-flex items-center gap-1 rounded-pill bg-accent px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
                     <Icon name="star" size={9} filled /> Kiemelt Állás
                   </div>
                 )}
@@ -122,7 +122,7 @@ export function JobsBrowser({ jobs }: { jobs: Job[] }) {
                       {job.location}{cant ? ` · ${cant}` : ""}
                     </p>
                   </div>
-                  <span className="rounded-full bg-surface-alt px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-ink-muted">
+                  <span className="rounded-full bg-surface-alt px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-ink-muted">
                     {job.employmentType === 'full-time' ? '100%' : job.employmentType === 'part-time' ? 'Részmunkaidő' : job.employmentType}
                   </span>
                 </div>

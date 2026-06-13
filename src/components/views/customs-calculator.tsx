@@ -162,7 +162,7 @@ function CategoryRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5 flex-wrap">
             <h3 className="text-[13.5px] font-extrabold text-ink">{category.label}</h3>
-            <span className={cn("rounded-pill px-1.5 py-0.5 text-[10px] font-bold", colors.pill)}>
+            <span className={cn("rounded-pill px-1.5 py-0.5 text-[11px] font-bold", colors.pill)}>
               {status === "ok" && "✓ Rendben"}
               {status === "warning" && "⚠ Közel a limithez"}
               {status === "over" && "✕ Túl"}
@@ -219,7 +219,7 @@ function CategoryRow({
       )}
 
       {category.note && (
-        <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">{category.note}</p>
+        <p className="mt-1.5 text-[11.5px] leading-snug text-ink-faint">{category.note}</p>
       )}
     </div>
   );

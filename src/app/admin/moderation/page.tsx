@@ -129,7 +129,7 @@ export default async function ModerationPage({
             >
               {TABLE_LABELS[t]}
               {pending > 0 && (
-                <span className="rounded-full bg-accent px-1.5 py-0.5 text-[9.5px] font-extrabold text-white">
+                <span className="rounded-full bg-accent px-1.5 py-0.5 text-[10.5px] font-extrabold text-white">
                   {pending}
                 </span>
               )}
@@ -198,7 +198,7 @@ export default async function ModerationPage({
                           {it.preview}
                         </p>
                       )}
-                      <p className="mt-1 text-[10.5px] text-ink-faint">
+                      <p className="mt-1 text-[11.5px] text-ink-faint">
                         {it.submitterEmail && (
                           <>📧 {it.submitterEmail} · </>
                         )}
@@ -218,7 +218,7 @@ export default async function ModerationPage({
                     <Link
                       href={previewLink(typeParam, it.id)}
                       target="_blank"
-                      className="text-[10.5px] font-bold text-ink-muted hover:text-primary"
+                      className="text-[11.5px] font-bold text-ink-muted hover:text-primary"
                     >
                       ↗ Megnyitás új tab-ban
                     </Link>

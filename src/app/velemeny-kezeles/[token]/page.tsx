@@ -32,7 +32,7 @@ export default async function VelemenyKezelesPage({
 
       <section className="rounded-card border border-line bg-surface p-5 shadow-card">
         {review.businessName && (
-          <p className="mb-1.5 text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+          <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
             {review.businessName}
           </p>
         )}

@@ -93,7 +93,7 @@ export default async function FeedPage() {
               className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-card transition active:scale-[0.99]"
             >
               <div className="w-[50px] shrink-0 rounded-xl border border-line bg-surface-alt py-1.5 text-center">
-                <div className="text-[9px] font-extrabold uppercase tracking-wide text-primary">
+                <div className="text-[10px] font-extrabold uppercase tracking-wide text-primary">
                   {e.dateMonth}
                 </div>
                 <div className="text-xl font-extrabold leading-none text-ink">{e.dateDay}</div>

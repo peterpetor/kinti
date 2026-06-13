@@ -155,7 +155,7 @@ function QuestionCard({
   return (
     <article className="rounded-card border border-line bg-surface p-5 shadow-card space-y-4">
       <div className="flex items-center gap-1.5">
-        <span className="inline-flex items-center gap-1 rounded-pill bg-primary-soft px-2 py-0.5 text-[10.5px] font-bold text-primary">
+        <span className="inline-flex items-center gap-1 rounded-pill bg-primary-soft px-2 py-0.5 text-[11.5px] font-bold text-primary">
           {meta.emoji} {meta.label}
         </span>
       </div>
@@ -304,7 +304,7 @@ function ResultScreen({ state, questions }: { state: QuizState; questions: QuizQ
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-card border border-line bg-surface p-3 text-center shadow-card">
-      <p className="text-[9.5px] font-bold uppercase tracking-wider text-ink-muted">{label}</p>
+      <p className="text-[10.5px] font-bold uppercase tracking-wider text-ink-muted">{label}</p>
       <p className="mt-1 text-[16px] font-extrabold text-ink">{value}</p>
     </div>
   );

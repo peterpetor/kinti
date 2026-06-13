@@ -93,7 +93,7 @@ export default function ProPage() {
         {/* Szaknévsor PRO (Businesses) */}
         <div className="flex flex-col rounded-[32px] border-2 border-[#ff9600] bg-surface p-6 shadow-pop relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9600]/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-          <div className="absolute top-4 right-4 bg-[#ff9600] text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-pill shadow-sm">
+          <div className="absolute top-4 right-4 bg-[#ff9600] text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-pill shadow-sm">
             Legnépszerűbb
           </div>
           

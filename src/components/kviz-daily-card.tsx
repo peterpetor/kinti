@@ -40,7 +40,7 @@ export function KvizDailyCard() {
                 Mai kvíz: {score} / 3
               </span>
               {state.streak >= 2 && (
-                <span className="text-[10px] font-bold text-accent">
+                <span className="text-[11px] font-bold text-accent">
                   🔥 {state.streak}
                 </span>
               )}

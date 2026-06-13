@@ -52,7 +52,7 @@ export default async function WorkerProfilePage() {
       <div className="relative overflow-hidden rounded-[22px] bg-gradient-to-br from-primary to-[#2e6a4e] p-5 text-white shadow-pop">
         <div className="absolute -bottom-10 -right-8 h-36 w-36 rounded-full bg-white/[0.06]" />
         <div className="relative">
-          <span className="mb-3 inline-flex items-center gap-1.5 rounded-pill bg-white/[0.18] px-2.5 py-1 text-[10.5px] font-bold tracking-wide">
+          <span className="mb-3 inline-flex items-center gap-1.5 rounded-pill bg-white/[0.18] px-2.5 py-1 text-[11.5px] font-bold tracking-wide">
             <Icon name="users" size={11} strokeWidth={2.4} />
             Munkáltatói hálózat
           </span>

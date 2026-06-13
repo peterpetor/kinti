@@ -243,7 +243,7 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
           {state === "busy" ? "Beállítás folyamatban…" : "Radar Aktiválása"}
         </button>
 
-        <p className="text-center text-[10px] leading-tight text-ink-muted">
+        <p className="text-center text-[11px] leading-tight text-ink-muted">
           Az árfolyam adatok tájékoztató jellegűek, a piaci mozgásokért és a késésekből adódó anyagi károkért felelősséget nem vállalunk.
         </p>
 

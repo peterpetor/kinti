@@ -103,7 +103,7 @@ export function EmployerProfileForm({ employer }: { employer: Employer }) {
         <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
           Cég-azonosító (UID)
           {employer.verified && (
-            <span className="ml-2 inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[9.5px] font-bold text-success">
+            <span className="ml-2 inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[10.5px] font-bold text-success">
               Hiteles
             </span>
           )}
@@ -115,7 +115,7 @@ export function EmployerProfileForm({ employer }: { employer: Employer }) {
           className={inputCls}
           placeholder="CHE-123.456.789"
         />
-        <p className="mt-1 text-[10.5px] text-ink-faint">
+        <p className="mt-1 text-[11.5px] text-ink-faint">
           Ellenőrzött cég-azonosító esetén „Hiteles cég" jelzést kapsz. Az UID módosítása újra-ellenőrzést igényel.
         </p>
       </div>

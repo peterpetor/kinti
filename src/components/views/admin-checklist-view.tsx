@@ -164,13 +164,13 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10.5px] font-bold uppercase tracking-wide text-ink-faint">
+                    <span className="text-[11.5px] font-bold uppercase tracking-wide text-ink-faint">
                       Lépés {idx + 1}
                     </span>
                     {step.duration && (
                       <>
                         <span className="text-ink-faint">·</span>
-                        <span className="text-[10.5px] font-semibold text-ink-muted">
+                        <span className="text-[11.5px] font-semibold text-ink-muted">
                           {step.duration}
                         </span>
                       </>
@@ -264,7 +264,7 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
 function MetaCard({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div className="rounded-[10px] border border-line bg-surface px-2.5 py-1.5">
-      <p className="text-[9.5px] font-bold uppercase tracking-wider" style={{ color }}>
+      <p className="text-[10.5px] font-bold uppercase tracking-wider" style={{ color }}>
         {label}
       </p>
       <p className="mt-0.5 text-[11.5px] font-semibold text-ink leading-tight">{value}</p>

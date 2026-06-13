@@ -128,7 +128,7 @@ function OnboardingCTA({ categories }: { categories: Category[] }) {
   return (
     <section className="space-y-4">
       <div className="rounded-card border border-line bg-gradient-to-br from-primary to-accent p-5 text-white shadow-card">
-        <span className="inline-flex items-center gap-1.5 rounded-pill bg-white/20 px-2.5 py-1 text-[10.5px] font-extrabold uppercase tracking-wide">
+        <span className="inline-flex items-center gap-1.5 rounded-pill bg-white/20 px-2.5 py-1 text-[11.5px] font-extrabold uppercase tracking-wide">
           Üdvözlünk! 👋
         </span>
         <h2 className="mt-2.5 text-[22px] font-extrabold leading-tight tracking-tight text-balance">
@@ -152,7 +152,7 @@ function OnboardingCTA({ categories }: { categories: Category[] }) {
               </span>
               <div className="min-w-0">
                 <div className="text-[12px] font-extrabold leading-tight text-ink">{f.title}</div>
-                <div className="mt-0.5 text-[10.5px] leading-snug text-ink-muted">{f.body}</div>
+                <div className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">{f.body}</div>
               </div>
             </div>
           ))}
@@ -321,7 +321,7 @@ async function OwnerDashboard({
       <section className="relative overflow-hidden rounded-card bg-primary p-[18px] text-white">
         <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-white/[0.06]" />
         <div className="relative">
-          <span className="mb-2.5 inline-flex items-center gap-1.5 rounded-pill bg-white/[0.18] px-2.5 py-1 text-[10.5px] font-bold tracking-wide">
+          <span className="mb-2.5 inline-flex items-center gap-1.5 rounded-pill bg-white/[0.18] px-2.5 py-1 text-[11.5px] font-bold tracking-wide">
             <Icon name="trending" size={11} strokeWidth={2.4} /> Ez a hét
           </span>
           <p className="text-[13.5px] leading-snug opacity-90 text-pretty">
@@ -378,7 +378,7 @@ async function OwnerDashboard({
           </div>
         </div>
         <Sparkline data={trendData} />
-        <div className="mt-1.5 flex justify-between text-[10px] font-semibold text-ink-faint">
+        <div className="mt-1.5 flex justify-between text-[11px] font-semibold text-ink-faint">
           {labels.map((l, i) => (
             <span key={i}>{l}</span>
           ))}

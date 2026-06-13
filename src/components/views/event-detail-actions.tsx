@@ -85,7 +85,7 @@ export function EventDetailActions({
             </>
           )}
         </button>
-        <p className="mt-2 px-1 text-center text-[10.5px] leading-snug text-ink-faint">
+        <p className="mt-2 px-1 text-center text-[11.5px] leading-snug text-ink-faint">
           Account nélkül — egyetlen szavazat / készülék.
         </p>
       </div>

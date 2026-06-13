@@ -97,7 +97,7 @@ function Section({ title, required, children }: { title: string; required?: bool
     <section className="rounded-card border border-line bg-surface p-4 shadow-card">
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">{title}</h3>
-        {required && <span className="text-[10.5px] font-semibold uppercase tracking-wide text-accent">kötelező</span>}
+        {required && <span className="text-[11.5px] font-semibold uppercase tracking-wide text-accent">kötelező</span>}
       </div>
       {children}
     </section>

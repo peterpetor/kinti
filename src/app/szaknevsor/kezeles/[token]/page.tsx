@@ -142,7 +142,7 @@ function PendingConfirmView({
           Vállalkozásom megerősítése
           <Icon name="arrowRight" size={15} strokeWidth={2.4} />
         </a>
-        <p className="mt-3 text-center text-[10.5px] text-ink-faint">
+        <p className="mt-3 text-center text-[11.5px] text-ink-faint">
           Megerősítés után a kezelő-link automatikusan ezen az URL-en lesz elérhető — tedd el a könyvjelzők közé.
         </p>
       </section>

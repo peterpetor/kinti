@@ -399,7 +399,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         ) : (
           <FieldError msg={errors.address} />
         )}
-        <p className="mt-1 px-1 text-[10.5px] leading-snug text-ink-faint">
+        <p className="mt-1 px-1 text-[11.5px] leading-snug text-ink-faint">
           A kanton kötelező (ide kerül a térképen). A pontos cím opcionális — mobil
           szolgáltatóknál (pl. villanyszerelő) elhagyható.
         </p>
@@ -438,7 +438,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           rows={3}
           className={cn(inputCls(errors.blurb), "mt-2 resize-none")}
         />
-        <div className="mt-1 flex justify-between text-[10.5px] text-ink-faint">
+        <div className="mt-1 flex justify-between text-[11.5px] text-ink-faint">
           <span>Max {BUSINESS_LIMITS.blurbMax} karakter</span>
           <span>{form.blurb.length} / {BUSINESS_LIMITS.blurbMax}</span>
         </div>
@@ -484,7 +484,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
 
             {aiResult.polishedDescription && (
               <div className="rounded-[10px] border border-primary/20 bg-surface p-2.5">
-                <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+                <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
                   Csiszolt leírás:
                 </p>
                 <p className="mt-1 text-[12.5px] text-ink leading-relaxed">
@@ -503,7 +503,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
             {aiResult.suggestedCategoryId &&
               aiResult.suggestedCategoryId !== form.categoryId && (
                 <div className="rounded-[10px] border border-primary/20 bg-surface p-2.5">
-                  <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-muted">
+                  <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
                     Javasolt kategória:
                   </p>
                   <p className="mt-1 text-[12.5px] font-bold text-ink">
@@ -539,7 +539,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
             <button
               type="button"
               onClick={() => setAiResult(null)}
-              className="block w-full text-center text-[10.5px] text-ink-faint underline"
+              className="block w-full text-center text-[11.5px] text-ink-faint underline"
             >
               Mégse, hagyom úgy
             </button>
@@ -577,7 +577,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
               className={inputCls(errors.licenseNumber)}
             />
             <FieldError msg={errors.licenseNumber} />
-            <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
+            <p className="mt-1.5 text-[11.5px] leading-snug text-ink-faint">
               Az engedélyszám a profilodon fog megjelenni a bizalom növelése érdekében.
               Engedély nélküli hirdetés a platform szabályait sérti és azonnal törölhető (ÁSZF 4. §).
             </p>
@@ -708,7 +708,7 @@ function Section({
         <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">{title}</h3>
         <span
           className={cn(
-            "text-[10.5px] font-semibold uppercase tracking-wide",
+            "text-[11.5px] font-semibold uppercase tracking-wide",
             required ? "text-accent" : "text-ink-faint",
           )}
         >

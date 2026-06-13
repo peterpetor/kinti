@@ -66,7 +66,7 @@ export default function UgyintezesPage() {
                 <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
                   {c.summary}
                 </p>
-                <div className="mt-2 flex flex-wrap gap-1.5 text-[10px]">
+                <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
                   {c.deadline && (
                     <span className="inline-flex items-center gap-1 rounded-pill bg-accent/10 px-2 py-0.5 font-bold text-accent">
                       ⏰ {c.deadline}

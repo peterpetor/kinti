@@ -51,7 +51,7 @@ export function GamificationCard() {
                 style={{ width: `${Math.round(stats.levelProgress * 100)}%` }}
               />
             </div>
-            <p className="mt-1 text-[10.5px] font-semibold text-ink-faint">
+            <p className="mt-1 text-[11.5px] font-semibold text-ink-faint">
               {pointsSpan > 0
                 ? `${pointsIntoLevel} / ${pointsSpan} XP — még ${toNext} a következő szintig`
                 : "Elérted a legmagasabb szintet 🎉"}
@@ -92,7 +92,7 @@ export function GamificationCard() {
               </span>
               <span
                 className={cn(
-                  "text-[10.5px] font-bold leading-tight",
+                  "text-[11.5px] font-bold leading-tight",
                   b.earned ? "text-primary" : "text-ink-faint",
                 )}
               >

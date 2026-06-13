@@ -54,19 +54,19 @@ export default async function AuditLogPage() {
       {/* Quick Stats (utolsó 24 óra) */}
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-card border border-line bg-surface p-3 shadow-card">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-ink-muted">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
             24h döntés
           </div>
           <div className="text-2xl font-black text-ink">{stats.actions24h}</div>
         </div>
         <div className="rounded-card border border-line bg-surface p-3 shadow-card">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-ink-muted">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
             Elutasítás
           </div>
           <div className="text-2xl font-black text-accent">{stats.rejections24h}</div>
         </div>
         <div className="rounded-card border border-line bg-surface p-3 shadow-card">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-ink-muted">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
             Tiltás
           </div>
           <div className="text-2xl font-black text-primary">{stats.blocks24h}</div>
@@ -95,7 +95,7 @@ export default async function AuditLogPage() {
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ${action.cls}`}>
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-extrabold uppercase tracking-wide ${action.cls}`}>
                         {action.label}
                       </span>
                       <span className="text-[13px] font-bold text-ink">{target}</span>

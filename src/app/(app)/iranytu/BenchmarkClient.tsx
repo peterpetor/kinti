@@ -297,12 +297,12 @@ function RentCard({ stat }: { stat: RentStatsRow }) {
       </div>
       {/* Medián (kiemelt — reprezentatívabb) */}
       <p className="text-[22px] font-extrabold text-ink">{stat.median_rent.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">CHF/hó</span></p>
-      <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary/70 mt-0.5">Medián (középérték)</p>
+      <p className="text-[11.5px] font-bold uppercase tracking-wide text-primary/70 mt-0.5">Medián (középérték)</p>
       <div className="flex items-center gap-1.5 mt-1.5 text-[12px] text-ink-muted">
         <span>Átlag:</span>
         <strong className="text-ink">{stat.avg_rent.toLocaleString("hu-HU")} CHF</strong>
         {skewed && (
-          <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[10px] text-amber-600 dark:text-amber-400">⚠ eltérés</span>
+          <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-amber-600 dark:text-amber-400">⚠ eltérés</span>
         )}
       </div>
       <div className="mt-1.5 h-2 rounded-full bg-surface-alt overflow-hidden">
@@ -361,7 +361,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
           <button key={t} onClick={() => { setTab(t); setEditingTab(null); }}
             className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-[14px] font-bold transition-colors ${tab === t ? "text-primary border-b-2 border-primary bg-primary/5" : "text-ink-muted hover:text-ink"}`}>
             {t === "salary" ? "💰 Bérek" : "🏠 Lakbérek"}
-            {lock[t] && <span className="text-[10px] bg-surface-alt text-ink-faint px-1.5 py-0.5 rounded-full font-normal">🔒</span>}
+            {lock[t] && <span className="text-[11px] bg-surface-alt text-ink-faint px-1.5 py-0.5 rounded-full font-normal">🔒</span>}
           </button>
         ))}
       </div>

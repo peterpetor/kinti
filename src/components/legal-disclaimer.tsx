@@ -106,7 +106,7 @@ export function LegalDisclaimer({
 
       {officialSources.length > 0 && (
         <div className="pt-1">
-          <p className="text-[10.5px] font-bold uppercase tracking-wider text-ink-muted mb-1">
+          <p className="text-[11.5px] font-bold uppercase tracking-wider text-ink-muted mb-1">
             Hivatalos források
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -125,7 +125,7 @@ export function LegalDisclaimer({
         </div>
       )}
 
-      <p className="pt-1 text-[10.5px] text-ink-muted">
+      <p className="pt-1 text-[11.5px] text-ink-muted">
         Részletek:{" "}
         <Link href="/aszf" className="underline font-bold">Felhasználási Feltételek</Link>{" "}
         ·{" "}

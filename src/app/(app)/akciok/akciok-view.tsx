@@ -180,12 +180,12 @@ function DealListCard({ deal }: { deal: DealReport }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 flex-wrap">
           <span
-            className="inline-flex items-center gap-1 rounded-pill px-1.5 py-0.5 text-[10px] font-extrabold text-white"
+            className="inline-flex items-center gap-1 rounded-pill px-1.5 py-0.5 text-[11px] font-extrabold text-white"
             style={{ backgroundColor: store?.color ?? "#5c6d63" }}
           >
             {store?.label ?? deal.storeId}
           </span>
-          <span className="inline-flex items-center rounded-pill bg-accent px-1.5 py-0.5 text-[10.5px] font-extrabold text-white">
+          <span className="inline-flex items-center rounded-pill bg-accent px-1.5 py-0.5 text-[11.5px] font-extrabold text-white">
             −{deal.discountPct}%
           </span>
         </div>
@@ -199,7 +199,7 @@ function DealListCard({ deal }: { deal: DealReport }) {
           <p className="text-[11.5px] italic text-ink-muted truncate">„{deal.note}"</p>
         )}
       </div>
-      <span className="shrink-0 text-[10px] text-ink-faint">{fmtAgo(deal.createdAt)}</span>
+      <span className="shrink-0 text-[11px] text-ink-faint">{fmtAgo(deal.createdAt)}</span>
     </article>
   );
 }

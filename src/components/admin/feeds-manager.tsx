@@ -247,7 +247,7 @@ function FeedRow({
           Események: <span className="font-semibold text-ink">{feed.eventsCount}</span>
         </span>
         {feed.lastError && (
-          <span className="rounded-md bg-accent/10 px-2 py-0.5 text-[10.5px] font-semibold text-accent">
+          <span className="rounded-md bg-accent/10 px-2 py-0.5 text-[11.5px] font-semibold text-accent">
             Hiba: {feed.lastError.slice(0, 80)}
           </span>
         )}

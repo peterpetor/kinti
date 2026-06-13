@@ -32,13 +32,13 @@ export function JobBoardDecideButtons({ table, id, current }: Props) {
   if (current === 1) {
     return (
       <div className="flex items-center gap-2">
-        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-extrabold uppercase text-success">
+        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-extrabold uppercase text-success">
           Jóváhagyva
         </span>
         <button
           onClick={() => decide("rejected")}
           disabled={!!loading}
-          className="rounded-lg border border-line px-2 py-1 text-[10px] font-bold text-ink-muted hover:bg-surface-alt transition-colors"
+          className="rounded-lg border border-line px-2 py-1 text-[11px] font-bold text-ink-muted hover:bg-surface-alt transition-colors"
         >
           Visszavon
         </button>
@@ -49,13 +49,13 @@ export function JobBoardDecideButtons({ table, id, current }: Props) {
   if (current === 2) {
     return (
       <div className="flex items-center gap-2">
-        <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-extrabold uppercase text-accent">
+        <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[11px] font-extrabold uppercase text-accent">
           Elutasítva
         </span>
         <button
           onClick={() => decide("approved")}
           disabled={!!loading}
-          className="rounded-lg border border-line px-2 py-1 text-[10px] font-bold text-ink-muted hover:bg-surface-alt transition-colors"
+          className="rounded-lg border border-line px-2 py-1 text-[11px] font-bold text-ink-muted hover:bg-surface-alt transition-colors"
         >
           Jóváhagy
         </button>

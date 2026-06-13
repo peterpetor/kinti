@@ -30,7 +30,7 @@ export function MiniHistogram({ data }: { data: { bucket_k: number; entry_count:
           return (
             <div key={d.bucket_k} className="flex-1 flex flex-col items-center justify-end group">
               {/* Oszlop fölötti érték */}
-              <span className="text-[9px] font-bold text-ink-faint mb-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] font-bold text-ink-faint mb-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 {d.entry_count > 0 ? d.entry_count : ""}
               </span>
               
@@ -41,14 +41,14 @@ export function MiniHistogram({ data }: { data: { bucket_k: number; entry_count:
               />
               
               {/* Tengely felirat (minden második vagy első/utolsó, ha sok van) */}
-              <span className="text-[9px] text-ink-muted mt-1 rotate-[-45deg] origin-top-left -ml-2 whitespace-nowrap">
+              <span className="text-[10px] text-ink-muted mt-1 rotate-[-45deg] origin-top-left -ml-2 whitespace-nowrap">
                 {d.bucket_k}k
               </span>
             </div>
           );
         })}
       </div>
-      <p className="text-[10px] text-ink-faint text-right pt-2">Bérsávok 10.000 CHF-enként</p>
+      <p className="text-[11px] text-ink-faint text-right pt-2">Bérsávok 10.000 CHF-enként</p>
     </div>
   );
 }

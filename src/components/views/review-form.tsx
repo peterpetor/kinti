@@ -376,7 +376,7 @@ function Section({
           {title}
         </h3>
         {required && (
-          <span className="text-[10.5px] font-semibold uppercase tracking-wide text-accent">
+          <span className="text-[11.5px] font-semibold uppercase tracking-wide text-accent">
             kötelező
           </span>
         )}

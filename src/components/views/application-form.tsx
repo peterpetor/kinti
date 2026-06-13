@@ -113,7 +113,7 @@ export function ApplicationForm({ jobId, jobTitle }: Props) {
           className={inputCls}
           placeholder="janos@example.com"
         />
-        <p className="mt-1 text-[10.5px] text-ink-faint">
+        <p className="mt-1 text-[11.5px] text-ink-faint">
           A munkáltató erre az email-re fogja felvenni veled a kapcsolatot.
         </p>
       </div>

@@ -161,7 +161,7 @@ export function PostSavePrompt({
 
         {/* Másolható URL */}
         <div className="mt-2 flex items-stretch gap-2">
-          <div className="flex-1 rounded-[10px] border border-line bg-surface-alt px-3 py-2 font-mono text-[10.5px] text-ink truncate">
+          <div className="flex-1 rounded-[10px] border border-line bg-surface-alt px-3 py-2 font-mono text-[11.5px] text-ink truncate">
             {fullUrl}
           </div>
           <button
@@ -208,13 +208,13 @@ export function PostSavePrompt({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={qrDataUrl} alt="Manage URL QR-kódja" className="h-[80px] w-[80px]" />
             ) : (
-              <div className="grid h-[80px] w-[80px] place-items-center text-[10px] text-ink-faint">
+              <div className="grid h-[80px] w-[80px] place-items-center text-[11px] text-ink-faint">
                 QR…
               </div>
             )}
           </div>
           <div className="flex flex-col gap-1.5 justify-center">
-            <p className="text-[10.5px] leading-snug text-ink-muted">
+            <p className="text-[11.5px] leading-snug text-ink-muted">
               QR-kód másik telefonra. Vagy mentsd a teljes listát fájlba:
             </p>
             <button

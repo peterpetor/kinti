@@ -130,10 +130,10 @@ export function SpeedingCalculator() {
           />
           <div className="min-w-[5rem] text-right">
             <div className="text-[24px] font-extrabold leading-none text-primary">{actualSpeed}</div>
-            <div className="text-[10px] font-bold uppercase text-ink-faint">km/h</div>
+            <div className="text-[11px] font-bold uppercase text-ink-faint">km/h</div>
           </div>
         </div>
-        <div className="mt-2 flex items-center justify-between text-[10.5px] text-ink-muted">
+        <div className="mt-2 flex items-center justify-between text-[11.5px] text-ink-muted">
           <span>Limit: {speedLimit} km/h</span>
           <span className="font-bold">
             Túllépés: +{actualSpeed - speedLimit} km/h
@@ -147,7 +147,7 @@ export function SpeedingCalculator() {
         <label className="block mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
           3. Havi nettó jövedelem (CHF)
         </label>
-        <p className="mb-3 text-[10.5px] leading-snug text-ink-faint">
+        <p className="mb-3 text-[11.5px] leading-snug text-ink-faint">
           A büntetőeljárásnál a bírság jövedelem-arányos. Csak akkor releváns, ha közepes vagy súlyos a túllépés.
         </p>
         <div className="flex items-center gap-3">
@@ -168,7 +168,7 @@ export function SpeedingCalculator() {
             onChange={(e) => setMonthlyIncome(Math.max(0, Number(e.target.value)))}
             className="w-20 rounded-[8px] border border-line bg-surface-alt px-2 py-1 text-[13px] font-bold text-ink text-right outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
           />
-          <span className="text-[10px] font-bold text-ink-muted">CHF</span>
+          <span className="text-[11px] font-bold text-ink-muted">CHF</span>
         </div>
       </section>
 
