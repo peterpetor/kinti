@@ -67,13 +67,16 @@ export async function isPro(userId: string | null | undefined): Promise<boolean>
  * ellenőrzésével): nem-bejelentkezettet a loginra, nem-PRO-t a /pro vásárló-
  * oldalra irányít. Mivel a Lemon Squeezy él, mindig zárol (nincs env-flag).
  */
-export async function requirePro(currentPath: string): Promise<void> {
+export async function requirePro(
+  currentPath: string,
+  upgradePath: string = "/pro",
+): Promise<void> {
   const { userId } = await auth();
   if (!userId) {
     redirect(`/belepes?redirect_url=${encodeURIComponent(currentPath)}`);
   }
   if (!(await isPro(userId))) {
-    redirect("/pro");
+    redirect(upgradePath);
   }
 }
 

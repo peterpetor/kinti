@@ -26,51 +26,52 @@ export default async function KintiProPage() {
           Kinti <span className="text-[#e3a233]">PRO</span> Feloldása
         </h1>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-muted px-4">
-          Ez a Mesterkurzus prémium tartalom. Fizess elő a Kinti Premiumra, és sajátítsd el a tökéletes svájci kommunikációt a munkahelyeden!
+          Egy előfizetés, minden prémium modul. A Kinti PRO-val feloldod az összes
+          PRO funkciót — nem modulonként fizetsz, hanem egyetlen havidíjért mindent megkapsz.
         </p>
       </div>
 
       <div className="rounded-3xl border-2 border-[#e3a233]/30 bg-surface text-left overflow-hidden shadow-card mb-8">
         <div className="bg-gradient-to-r from-[#e3a233]/10 to-transparent p-6 border-b border-line">
-          <h2 className="text-[18px] font-extrabold text-ink">Mit tartalmaz a PRO csomag?</h2>
+          <h2 className="text-[18px] font-extrabold text-ink">Mit tartalmaz a Kinti PRO?</h2>
         </div>
         <ul className="p-6 space-y-4">
           <li className="flex gap-3">
             <span className="text-[#e3a233] shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
             <div>
-              <strong className="text-[14px] text-ink block">500+ Új Szakmai Kifejezés</strong>
-              <span className="text-[13px] text-ink-muted">Építőipar, Vendéglátás és Egészségügy mélyvíz.</span>
+              <strong className="text-[14px] text-ink block">Teljes Szakmai Gyors-Szótár</strong>
+              <span className="text-[13px] text-ink-muted">500+ svájci szakmai kifejezés és munkahelyi párbeszéd hanganyaggal.</span>
             </div>
           </li>
           <li className="flex gap-3">
             <span className="text-[#e3a233] shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
             <div>
-              <strong className="text-[14px] text-ink block">Komplett Munkahelyi Párbeszédek</strong>
-              <span className="text-[13px] text-ink-muted">"Hogyan kérj fizetésemelést svájci németül?" hanganyaggal.</span>
+              <strong className="text-[14px] text-ink block">AI Munkainterjú Szimulátor</strong>
+              <span className="text-[13px] text-ink-muted">Gyakorolj svájci cégek interjúira mesterséges intelligenciával.</span>
             </div>
           </li>
           <li className="flex gap-3">
             <span className="text-[#e3a233] shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
             <div>
-              <strong className="text-[14px] text-ink block">Kinti Szakmai Nyelvi Oklevél</strong>
-              <span className="text-[13px] text-ink-muted">A kurzus végén letölthető elismervény a CV-dhez.</span>
+              <strong className="text-[14px] text-ink block">Svájci Német (Mundart) mesterkurzus + Einbürgerung szimulátor</strong>
+              <span className="text-[13px] text-ink-muted">A teljes nyelvi és állampolgársági felkészülés egy helyen.</span>
             </div>
           </li>
           <li className="flex gap-3">
             <span className="text-[#e3a233] shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
             <div>
-              <strong className="text-[14px] text-ink block">Korlátlan Hozzáférés</strong>
-              <span className="text-[13px] text-ink-muted">Minden jövőbeni frissítés és új iparág ingyenes marad.</span>
+              <strong className="text-[14px] text-ink block">Reklámmentes élmény + minden jövőbeni PRO modul</strong>
+              <span className="text-[13px] text-ink-muted">Minden új funkció és frissítés az előfizetés része marad.</span>
             </div>
           </li>
         </ul>
-        
+
         <div className="bg-surface-alt p-6 border-t border-line text-center">
-          <p className="text-[13px] font-bold text-ink-muted uppercase tracking-wider mb-2">Havidíj</p>
+          <p className="text-[13px] font-bold text-ink-muted uppercase tracking-wider mb-2">Kinti PRO előfizetés</p>
           <div className="text-[36px] font-extrabold text-ink">
-            4.90 <span className="text-[20px] text-ink-muted font-bold">CHF / hó</span>
+            29 <span className="text-[20px] text-ink-muted font-bold">CHF / hó</span>
           </div>
-          <p className="text-[12px] text-ink-muted mt-1 mb-6">Bármikor lemondható. Rejtett költségek nélkül.</p>
+          <p className="text-[12px] text-ink-muted mt-1 mb-6">Egy díj, minden PRO funkció. Bármikor lemondható, rejtett költségek nélkül.</p>
           
           {alreadyPro ? (
             <div className="w-full rounded-full bg-success/15 py-4 text-center text-[15px] font-extrabold text-success">

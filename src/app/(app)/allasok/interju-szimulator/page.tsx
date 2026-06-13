@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 export default async function AiInterviewPage() {
-  await requirePro("/allasok/interju-szimulator");
+  await requirePro("/allasok/interju-szimulator", "/allasok/pro");
   return (
     <div className="mx-auto max-w-2xl px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-24">
       <div className="mb-4 flex justify-end">
