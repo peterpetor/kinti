@@ -6,6 +6,8 @@ import {
   SectionHeader,
   DropdownMenu,
 } from "@/components/ui";
+import type { IconName } from "@/components/ui/icons";
+import { cn } from "@/lib/cn";
 import { WeatherWidget } from "@/components/weather-widget";
 import { OnboardingTour } from "@/components/onboarding-tour";
 import { MyPostsBanner } from "@/components/my-posts-banner";
@@ -44,9 +46,17 @@ export default async function FeedPage() {
       </header>
 
       <MyPostsBanner />
-      <WeatherWidget />
-      <ExchangeRateWidget />
-      <KvizDailyCard />
+
+      {/* Fő belépési pontok — „mit hol találok" (nagy, érthető célok) */}
+      <section className="space-y-3">
+        <SectionHeader>Mit szeretnél?</SectionHeader>
+        <div className="grid grid-cols-2 gap-2.5">
+          <PrimaryAction href="/szaknevsor" icon="list" label="Szakembert keresek" tone="primary" />
+          <PrimaryAction href="/allasok" icon="shoppingBag" label="Állást keresek" tone="primary" />
+          <PrimaryAction href="/vallalkozo" icon="plus" label="Vállalkozásom felviszem" tone="accent" />
+          <PrimaryAction href="/ugyintezes" icon="document" label="Ügyintézés Svájcban" tone="accent" />
+        </div>
+      </section>
 
       <section className="space-y-3">
         <SectionHeader
@@ -102,6 +112,11 @@ export default async function FeedPage() {
         </div>
       </section>
 
+      {/* Napi infó — másodlagos, a tartalom alatt */}
+      <WeatherWidget />
+      <ExchangeRateWidget />
+      <KvizDailyCard />
+
       <Link
         href="/kikoltozes"
         className="flex items-center gap-3 rounded-card border border-accent/20 bg-accent-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
@@ -138,28 +153,40 @@ export default async function FeedPage() {
         <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
       </Link>
 
-      <Link
-        href="/allasok"
-        className="flex items-center gap-3 rounded-card border border-primary/20 bg-primary-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
-      >
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary text-white">
-          <Icon name="shoppingBag" size={19} strokeWidth={2.3} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
-            Álláskeresés — Job Board
-          </span>
-          <span className="block text-[12px] text-ink-muted">
-            Svájci magyar munkáltatók hitelesített álláshirdetései
-          </span>
-        </span>
-        <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
-      </Link>
-
       <PwaInstallCard />
       </div>
 
       <OnboardingTour />
     </>
+  );
+}
+
+/** Nagy, érthető fő belépési pont a kezdőképernyőn (2×2 rács). */
+function PrimaryAction({
+  href,
+  icon,
+  label,
+  tone,
+}: {
+  href: string;
+  icon: IconName;
+  label: string;
+  tone: "primary" | "accent";
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex flex-col items-center gap-2.5 rounded-2xl border border-line bg-surface px-3 py-5 text-center shadow-card transition active:scale-[0.98]"
+    >
+      <span
+        className={cn(
+          "grid h-12 w-12 place-items-center rounded-2xl",
+          tone === "accent" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary",
+        )}
+      >
+        <Icon name={icon} size={23} strokeWidth={2.2} />
+      </span>
+      <span className="text-[13.5px] font-bold leading-tight text-ink">{label}</span>
+    </Link>
   );
 }
