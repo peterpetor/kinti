@@ -106,6 +106,29 @@ export function cantonPoint(code: string | null | undefined): CantonPoint {
   return CANTON_COORDS.ZH;
 }
 
+/**
+ * GPS-koordinátához a legközelebbi kanton (a kanton-fővárosok pontjai alapján).
+ *
+ * Kliensoldali közelítés az onboarding „Helyzetem használata" gombhoz: a
+ * felhasználó GPS-pontjához legközelebbi kanton-fővárost választja. Nem küld
+ * semmit a szerverre (nincs PII), és a felhasználó a dropdownban felülírhatja.
+ * A fővárosi pont közelítés a legtöbb esetben a tényleges kantont adja; a
+ * határszéli pontoknál a szomszéd kantont — ezt az ember egy kattintással javítja.
+ */
+export function nearestCantonCode(lat: number, lng: number): CantonPoint {
+  let best: CantonPoint = CANTON_COORDS.ZH;
+  let bestD = Infinity;
+  for (const p of Object.values(CANTON_COORDS)) {
+    // Olcsó négyzetes euklideszi táv (rangsoroláshoz elég, nincs sqrt/trig).
+    const d = (p.lat - lat) ** 2 + (p.lng - lng) ** 2;
+    if (d < bestD) {
+      bestD = d;
+      best = p;
+    }
+  }
+  return best;
+}
+
 /** Canton-név → URL-barát slug (ékezet-mentes, kisbetűs, kötőjeles). */
 export function cantonToSlug(name: string): string {
   return name

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
-import { CANTONS, isSwissAddress } from "@/lib/cantons";
+import { CANTONS, isSwissAddress, nearestCantonCode } from "@/lib/cantons";
 import { readPreferredCanton } from "@/lib/canton-pref";
 import { BUSINESS_LIMITS, type BusinessValidationError } from "@/lib/business";
 import type { Category } from "@/lib/types";
@@ -101,10 +101,38 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
   const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
   const [published, setPublished] = useState<{ id: string; manageToken: string; manageUrl: string } | null>(null);
+  // Progresszív feltárás: az opcionális mezők (telefon/leírás/email) alapból rejtve,
+  // hogy az első benyomás 3 mező legyen (név + kategória + hely) → kisebb drop-off.
+  const [showDetails, setShowDetails] = useState(false);
+  // Geolokáció a kantonhoz ("Hol dolgozol?")
+  const [geoBusy, setGeoBusy] = useState(false);
+  const [geoMsg, setGeoMsg] = useState<string | null>(null);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
     setErrors((e) => ({ ...e, [key]: "" }));
+  }
+
+  function handleUseLocation() {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setGeoMsg("A böngésződ nem támogatja a helymeghatározást — válassz kantont a listából.");
+      return;
+    }
+    setGeoBusy(true);
+    setGeoMsg(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const p = nearestCantonCode(pos.coords.latitude, pos.coords.longitude);
+        setField("cantonCode", p.code);
+        setGeoMsg(`Megvan: ${p.city} (${p.code}). Ha nem stimmel, válaszd ki kézzel.`);
+        setGeoBusy(false);
+      },
+      () => {
+        setGeoMsg("Nem sikerült a helymeghatározás. Válaszd ki a kantont a listából.");
+        setGeoBusy(false);
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600_000 },
+    );
   }
 
   async function handleAiHelp() {
@@ -324,6 +352,23 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
 
       {/* Hely: kanton + cím */}
       <Section title="Hol dolgozol?" required>
+        <button
+          type="button"
+          onClick={handleUseLocation}
+          disabled={geoBusy}
+          className={cn(
+            "mb-2 flex w-full items-center justify-center gap-1.5 rounded-[12px] border px-3 py-2.5 text-[13px] font-bold transition active:scale-[0.99]",
+            geoBusy
+              ? "border-line bg-surface-alt text-ink-muted cursor-wait"
+              : "border-primary/30 bg-primary-soft/40 text-primary",
+          )}
+        >
+          <Icon name="pin" size={14} strokeWidth={2.4} />
+          {geoBusy ? "Helymeghatározás…" : "📍 Használd a helyzetem"}
+        </button>
+        {geoMsg && (
+          <p className="mb-2 px-1 text-[11.5px] font-semibold text-ink-muted">{geoMsg}</p>
+        )}
         <select
           value={form.cantonCode}
           onChange={(e) => setField("cantonCode", e.target.value)}
@@ -360,6 +405,20 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         </p>
       </Section>
 
+      {/* Progresszív feltárás: opcionális mezők egy kattintásra */}
+      {!showDetails && (
+        <button
+          type="button"
+          onClick={() => setShowDetails(true)}
+          className="flex w-full items-center justify-center gap-1.5 rounded-card border border-dashed border-line bg-surface px-4 py-3 text-[12.5px] font-bold text-ink-muted active:scale-[0.99]"
+        >
+          <Icon name="plus" size={14} strokeWidth={2.6} />
+          Telefon, leírás, email hozzáadása (opcionális)
+        </button>
+      )}
+
+      {showDetails && (
+        <>
       {/* Elérhetőség: telefon + leírás */}
       <Section title="Telefon és leírás">
         <input
@@ -487,6 +546,8 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           </div>
         )}
       </Section>
+        </>
+      )}
 
       {/* Engedélyköteles kategória — hatósági engedélyszám */}
       {isLicensedCategory(form.categoryId) && (
@@ -542,7 +603,8 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
       )}
 
       {/* Email — OPCIONÁLIS */}
-      <Section title="Email (opcionális)">
+      {showDetails && (
+        <Section title="Email (opcionális)">
         <input
           type="email"
           value={form.email}
@@ -559,7 +621,8 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           a részletek beállításához. Részletek:{" "}
           <Link href="/adatvedelem" className="underline">Adatkezelési Tájékoztató</Link>.
         </p>
-      </Section>
+        </Section>
+      )}
 
       {/* Honeypot */}
       <input
