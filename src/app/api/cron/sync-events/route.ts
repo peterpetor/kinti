@@ -1,6 +1,6 @@
 import { getAdminUserId } from "@/lib/admin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
-import { syncEventFeeds } from "@/lib/repo";
+import { runFullEventSync } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -27,9 +27,9 @@ async function handle(req: Request): Promise<Response> {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const results = await syncEventFeeds();
-  const imported = results.reduce((n, r) => n + r.imported, 0);
-  return Response.json({ ok: true, feeds: results.length, imported, results });
+  const { generated, feeds } = await runFullEventSync();
+  const imported = feeds.reduce((n, r) => n + r.imported, 0);
+  return Response.json({ ok: true, generated, feeds: feeds.length, imported, results: feeds });
 }
 
 export const POST = handle;

@@ -4,6 +4,7 @@
 import { getDB } from "./cloudflare";
 import type { KintiEvent, EventFeed } from "./types";
 import { parseIcal, huDateParts } from "./ical";
+import { generateRecurringEvents, GENERATED_SOURCE } from "./event-generator";
 
 // --- Row types ---------------------------------------------------------------
 
@@ -471,12 +472,65 @@ async function claimStaleFeedSync(): Promise<boolean> {
  */
 export async function kickoffEventFeedSync(): Promise<void> {
   try {
+    // 1) Generált megemlékezések — feed NÉLKÜL is, hogy mindig legyen tartalom.
+    await ensureGeneratedEvents(false);
+    // 2) iCal feedek (ha vannak és elavultak).
     if (await claimStaleFeedSync()) {
       await syncEventFeeds();
     }
   } catch {
     // A háttér-szinkron hibája soha ne befolyásolja a kérést.
   }
+}
+
+/**
+ * Generált, dátum-biztos megemlékezések upsert-elése (feed nélkül is).
+ * Lustán: csak akkor ír, ha nincs ~10 hónapra előre lefedettség (`force=false`),
+ * vagy ha kényszerítve van (`force=true`, pl. kézi/cron szinkronkor).
+ */
+export async function ensureGeneratedEvents(force: boolean): Promise<number> {
+  const db = getDB();
+
+  if (!force) {
+    const row = await db
+      .prepare(`SELECT MAX(event_date) AS maxd FROM events WHERE source = ?`)
+      .bind(GENERATED_SOURCE)
+      .first<{ maxd: string | null }>();
+    const horizon = new Date();
+    horizon.setUTCDate(horizon.getUTCDate() + 300);
+    const horizonISO = horizon.toISOString().slice(0, 10);
+    if (row?.maxd && row.maxd >= horizonISO) return 0; // már van bőven előre
+  }
+
+  const events = generateRecurringEvents();
+  await db
+    .prepare(`DELETE FROM events WHERE source = ? AND event_date >= date('now')`)
+    .bind(GENERATED_SOURCE)
+    .run();
+
+  if (!events.length) return 0;
+  const stmt = db.prepare(
+    `INSERT OR REPLACE INTO events
+       (id, title, event_date, date_day, date_month, date_weekday, start_time,
+        venue, going, tag, color, description, source, status, moderation_status,
+        moderation_decided_by, moderation_decision_at, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, NULL, ?, 0, ?, ?, ?, ?, 'approved', 1, 'auto-generated', datetime('now'), datetime('now'))`,
+  );
+  const batch = events.map((e) =>
+    stmt.bind(
+      e.id, e.title, e.eventDate, e.dateDay, e.dateMonth, e.dateWeekday,
+      e.venue, e.tag, e.color, e.description, GENERATED_SOURCE,
+    ),
+  );
+  await db.batch(batch);
+  return batch.length;
+}
+
+/** Teljes szinkron (generált + feedek) — a /api/cron/sync-events endpointhoz. */
+export async function runFullEventSync(): Promise<{ generated: number; feeds: FeedSyncResult[] }> {
+  const generated = await ensureGeneratedEvents(true);
+  const feeds = await syncEventFeeds();
+  return { generated, feeds };
 }
 
 export interface PendingEvent {
