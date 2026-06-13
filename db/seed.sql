@@ -348,10 +348,10 @@ VALUES
 INSERT INTO events
   (id, title, event_date, date_day, date_month, date_weekday, start_time, venue, going, tag, color)
 VALUES
-  ('bal',      'Zürichi Magyar Bál 2026',          '2026-11-14', '14', 'NOV', 'szombat',   '19:00', 'Volkshaus, Helvetiaplatz', 187, 'Kulturális', '#c8392e'),
-  ('piknik',   'Magyar piknik a Sihl-parton',      '2026-06-07', '07', 'JÚN', 'vasárnap',  '11:00', 'Sihl-part, Allmend',        64, 'Család',     '#1d4434'),
-  ('foci',     'Magyar–Sváb focimeccs',            '2026-06-22', '22', 'JÚN', 'vasárnap',  '15:30', 'Sportplatz Hardhof',        31, 'Sport',      '#1d4434'),
-  ('irodalmi', 'Magyar irodalmi est – Esterházy',  '2026-07-03', '03', 'JÚL', 'csütörtök', '19:30', 'Kafi Schoffel',             22, 'Kulturális', '#c8392e');
+  ('bal',      'Zürichi Magyar Bál 2026',          '2026-11-14', '14', 'NOV', 'szombat',   '19:00', 'Volkshaus, Helvetiaplatz', 0, 'Kulturális', '#c8392e'),
+  ('piknik',   'Magyar piknik a Sihl-parton',      '2026-06-07', '07', 'JÚN', 'vasárnap',  '11:00', 'Sihl-part, Allmend',        0, 'Család',     '#1d4434'),
+  ('foci',     'Magyar–Sváb focimeccs',            '2026-06-22', '22', 'JÚN', 'vasárnap',  '15:30', 'Sportplatz Hardhof',        0, 'Sport',      '#1d4434'),
+  ('irodalmi', 'Magyar irodalmi est – Esterházy',  '2026-07-03', '03', 'JÚL', 'csütörtök', '19:30', 'Kafi Schoffel',             0, 'Kulturális', '#c8392e');
 
 -- --- 6) Dashboard heti KPI (Kovács Anna fodrászat) -----------------------------
 INSERT INTO business_stats
