@@ -414,7 +414,8 @@ export async function syncEventFeeds(): Promise<FeedSyncResult[]> {
         );
         const batch = future.map((ev) => {
           const { day, month, weekday } = huDateParts(ev.dateISO);
-          const id = `${feed.source_id}:${tinyHash(ev.uid)}`;
+          // URL-biztos ID (NINCS kettőspont — a source_id "ical:..." kettőspontját is cseréljük).
+          const id = `${feed.source_id.replace(/:/g, "-")}-${tinyHash(ev.uid)}`;
           return stmt.bind(
             id,
             ev.summary.slice(0, 200),

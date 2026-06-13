@@ -88,7 +88,8 @@ export function generateRecurringEvents(now: Date = new Date()): GeneratedEvent[
       if (dateISO < todayISO) continue;
       const { day, month, weekday } = huDateParts(dateISO);
       out.push({
-        id: `auto:hu:${def.key}:${y}`,
+        // URL-biztos ID (NINCS kettőspont — különben a böngésző sémának nézné).
+        id: `auto-hu-${def.key}-${y}`,
         title: def.title,
         eventDate: dateISO,
         dateDay: day,
