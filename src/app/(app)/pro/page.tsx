@@ -108,7 +108,10 @@ export default function ProPage() {
           <ul className="space-y-3 mb-8 flex-1">
             <FeatureItem text="Sárga PRO kiemelés a találati listákban" />
             <FeatureItem text="Garantált Top pozíció a kategóriádban" />
-            <FeatureItem text="Egyedi profil borítókép feltöltése" />
+            <FeatureItem text="Egyedi profil borítókép és arculat-szín" />
+            <FeatureItem text="Analytics: profil-megtekintések, CTR, keresőszavak" />
+            <FeatureItem text="Időpontfoglalás widget (Calendly-beágyazás)" />
+            <FeatureItem text="Ajánlatkérő postafiók (lead-kezelő)" />
             <FeatureItem text="Bővített referenciagaléria" />
             <FeatureItem text="Konkurencia kizárása a profilodról" />
           </ul>
