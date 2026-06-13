@@ -35,6 +35,7 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
   const [phase, setPhase] = useState<Phase>("idle");
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false); // desktop drag-drop kiemelés
 
   const busy = phase === "preparing" || phase === "uploading" || phase === "committing" || phase === "removing";
 
@@ -138,7 +139,23 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
   }
 
   return (
-    <div className="rounded-card border border-line bg-surface p-4 shadow-card">
+    <div
+      className={cn(
+        "rounded-card border bg-surface p-4 shadow-card transition-colors",
+        dragOver ? "border-primary border-dashed bg-primary-soft/30" : "border-line",
+      )}
+      onDragOver={(e) => {
+        e.preventDefault();
+        if (!busy) setDragOver(true);
+      }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setDragOver(false);
+        const f = e.dataTransfer.files?.[0];
+        if (f && !busy) handleFile(f);
+      }}
+    >
       <div className="flex items-center justify-between mb-3">
         <div>
           <div className="text-[13.5px] font-extrabold tracking-tight text-ink">Vizuális portfólió</div>

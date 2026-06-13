@@ -52,6 +52,7 @@ export function LogoUploader({ currentKey, fallbackGradient, manageToken }: Logo
   const [phase, setPhase] = useState<Phase>("idle");
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false); // desktop drag-drop kiemelés
   const [previewKey, setPreviewKey] = useState<string | null>(currentKey);
 
   const imageUrl = mediaUrl(previewKey);
@@ -119,7 +120,23 @@ export function LogoUploader({ currentKey, fallbackGradient, manageToken }: Logo
   }
 
   return (
-    <div className="rounded-card border border-line bg-surface p-4 shadow-card">
+    <div
+      className={cn(
+        "rounded-card border bg-surface p-4 shadow-card transition-colors",
+        dragOver ? "border-primary border-dashed bg-primary-soft/30" : "border-line",
+      )}
+      onDragOver={(e) => {
+        e.preventDefault();
+        if (!busy) setDragOver(true);
+      }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setDragOver(false);
+        const f = e.dataTransfer.files?.[0];
+        if (f && !busy) handleFile(f);
+      }}
+    >
       <div className="flex items-center gap-3">
         <div
           className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[16px] border border-line bg-primary-soft"
