@@ -25,6 +25,8 @@ interface Provider {
   note: string;
   /** Marketing szín (hex). */
   color: string;
+  /** Referál/affiliate link — ha van, a kártya kattinthatóvá válik. */
+  url?: string;
 }
 
 const PROVIDERS: Provider[] = [
@@ -35,6 +37,7 @@ const PROVIDERS: Provider[] = [
     speed: "néhány óra",
     note: "Mid-market rate + transparens díj.",
     color: "#00b9ff",
+    url: "https://wise.com/invite/dic/peterp286",
   },
   {
     name: "Revolut",
@@ -43,6 +46,7 @@ const PROVIDERS: Provider[] = [
     speed: "azonnali",
     note: "Standard fiók — hétvégén magasabb spread (~1.5%).",
     color: "#0075eb",
+    url: "https://revolut.com/referral/?referral-code=pter9sxrh",
   },
   {
     name: "Bank SEPA",
@@ -186,11 +190,10 @@ export function ExchangeCalculator({
               const netChf = Math.max(0, chf - p.fixedFee);
               const received = netChf * actualRate;
               const fee = chf * chfToHuf - received;
-              return (
-                <div
-                  key={p.name}
-                  className="flex items-center gap-3 rounded-[12px] border border-line bg-surface px-3 py-2.5"
-                >
+              const cardCls =
+                "flex items-center gap-3 rounded-[12px] border border-line bg-surface px-3 py-2.5";
+              const inner = (
+                <>
                   <span
                     className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] text-white text-[11px] font-extrabold"
                     style={{ backgroundColor: p.color }}
@@ -205,16 +208,42 @@ export function ExchangeCalculator({
                     <p className="text-[10.5px] text-ink-muted truncate">{p.note}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-[14px] font-extrabold text-ink">
+                    <div className="flex items-center justify-end gap-1 text-[14px] font-extrabold text-ink">
                       {received.toLocaleString("hu-HU", { maximumFractionDigits: 0 })} Ft
+                      {p.url && (
+                        <Icon name="arrowRight" size={13} strokeWidth={2.6} className="text-ink-faint" />
+                      )}
                     </div>
                     <div className="text-[10px] text-accent">
                       − {fee.toLocaleString("hu-HU", { maximumFractionDigits: 0 })} Ft díj
                     </div>
                   </div>
+                </>
+              );
+              return p.url ? (
+                <a
+                  key={p.name}
+                  href={p.url}
+                  target="_blank"
+                  rel="sponsored nofollow noopener noreferrer"
+                  className={cn(
+                    cardCls,
+                    "transition hover:border-primary/40 hover:bg-surface-alt active:scale-[0.99]",
+                  )}
+                >
+                  {inner}
+                </a>
+              ) : (
+                <div key={p.name} className={cardCls}>
+                  {inner}
                 </div>
               );
             })}
+            <p className="px-1 pt-0.5 text-[9.5px] leading-snug text-ink-faint">
+              A Wise és Revolut kártyára kattintva referál-linkre jutsz — ha rajta keresztül
+              regisztrálsz, a Kintit is támogatod. A díjak becsültek, az aktuálisat a
+              szolgáltatónál ellenőrizd.
+            </p>
           </div>
         )}
       </section>
