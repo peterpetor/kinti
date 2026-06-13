@@ -67,6 +67,21 @@ export function DropdownMenu() {
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-1 custom-scrollbar">
 
+              {/* ── PRO csomagok (kiemelt) ─────────────── */}
+              <Link
+                href="/pro"
+                onClick={() => setIsOpen(false)}
+                className="mb-1 flex items-center gap-3 rounded-xl border border-[#e3a233]/30 bg-[#e3a233]/10 px-4 py-3.5 text-[15px] font-black text-[#e3a233] transition-all hover:bg-[#e3a233]/15 active:scale-[0.98]"
+              >
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e3a233]/20 text-[#e3a233]">
+                  <Icon name="sparkles" size={16} strokeWidth={2.6} />
+                </span>
+                Kinti PRO csomagok
+                <span className="ml-auto rounded-full bg-[#e3a233] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+                  PRO
+                </span>
+              </Link>
+
               {/* ── Közösség ──────────────────────────── */}
               <Link href="/vallalkozo" onClick={() => setIsOpen(false)} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">

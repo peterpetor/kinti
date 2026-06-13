@@ -1,7 +1,7 @@
 "use client";
 
 import { useCheckout } from "@/hooks/useCheckout";
-import { Icon, KintiLogo } from "@/components/ui";
+import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
@@ -34,7 +34,12 @@ export default function ProPage() {
   };
 
   return (
-    <div className="mx-auto max-w-md px-5 pb-24 pt-[calc(env(safe-area-inset-top)+2rem)]">
+    <div className="relative mx-auto max-w-md px-5 pb-24 pt-[calc(env(safe-area-inset-top)+2rem)]">
+      {/* "..." menü a jobb felső sarokban */}
+      <div className="absolute right-5 top-[calc(env(safe-area-inset-top)+1.25rem)] z-10">
+        <DropdownMenu />
+      </div>
+
       {/* Header */}
       <header className="mb-10 text-center flex flex-col items-center">
         <Link href="/" className="mb-6 inline-block active:scale-95 transition-transform">
