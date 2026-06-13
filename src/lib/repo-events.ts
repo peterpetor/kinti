@@ -3,6 +3,7 @@
  */
 import { getDB } from "./cloudflare";
 import type { KintiEvent, EventFeed } from "./types";
+import { parseIcal, huDateParts } from "./ical";
 
 // --- Row types ---------------------------------------------------------------
 
@@ -336,6 +337,146 @@ export async function deleteEventFeed(id: string): Promise<boolean> {
   await getDB().prepare("DELETE FROM events WHERE source = ?").bind(row.source_id).run();
   const res = await getDB().prepare("DELETE FROM event_feeds WHERE id = ?").bind(id).run();
   return (res.meta.changes ?? 0) > 0;
+}
+
+// --- iCal feed szinkron (automatikus esemény-frissítés) ----------------------
+
+/** Milyen gyakran frissüljön a feed lusta (forgalom-vezérelt) triggerből. */
+const FEED_SYNC_INTERVAL_HOURS = 12;
+/** Egy feedből legfeljebb ennyi (jövőbeli) eseményt importálunk. */
+const FEED_MAX_EVENTS = 60;
+
+export interface FeedSyncResult {
+  feedId: string;
+  label: string | null;
+  imported: number;
+  error: string | null;
+}
+
+/** Determinisztikus, rövid hash a stabil esemény-ID-hez (FNV-1a). */
+function tinyHash(s: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16);
+}
+
+/**
+ * Az összes engedélyezett feed letöltése + parse-olása, és a JÖVŐBELI
+ * események upsert-elése (status='approved', moderation_status=1, going=0).
+ * Forrásonként előbb törli a meglévő jövőbeli eseményeket (törölt/elmaradt
+ * események eltűnnek), majd újra beszúrja az aktuálisakat. A múltbeli
+ * eseményeket nem bántja (történeti adat). Az `event_feeds` táblába visszaírja
+ * az utolsó futás eredményét.
+ */
+export async function syncEventFeeds(): Promise<FeedSyncResult[]> {
+  const db = getDB();
+  const { results: feeds } = await db
+    .prepare("SELECT * FROM event_feeds WHERE enabled = 1")
+    .all<EventFeedRow>();
+
+  const out: FeedSyncResult[] = [];
+
+  for (const feed of feeds) {
+    let imported = 0;
+    let error: string | null = null;
+    try {
+      const res = await fetch(feed.url, {
+        headers: { "user-agent": "KintiBot/1.0 (+https://kinti.app)", accept: "text/calendar, */*" },
+        redirect: "follow",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      const parsed = parseIcal(text);
+
+      const today = new Date().toISOString().slice(0, 10);
+      const future = parsed
+        .filter((e) => e.dateISO >= today)
+        .sort((a, b) => a.dateISO.localeCompare(b.dateISO))
+        .slice(0, FEED_MAX_EVENTS);
+
+      // Friss állapot: a forrás jövőbeli eseményeit cseréljük.
+      await db
+        .prepare("DELETE FROM events WHERE source = ? AND event_date >= date('now')")
+        .bind(feed.source_id)
+        .run();
+
+      if (future.length) {
+        const stmt = db.prepare(
+          `INSERT OR REPLACE INTO events
+             (id, title, event_date, date_day, date_month, date_weekday, start_time,
+              venue, going, tag, color, description, source, status, moderation_status,
+              moderation_decided_by, moderation_decision_at, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, 'approved', 1, 'ical-sync', datetime('now'), datetime('now'))`,
+        );
+        const batch = future.map((ev) => {
+          const { day, month, weekday } = huDateParts(ev.dateISO);
+          const id = `${feed.source_id}:${tinyHash(ev.uid)}`;
+          return stmt.bind(
+            id,
+            ev.summary.slice(0, 200),
+            ev.dateISO,
+            day,
+            month,
+            weekday,
+            ev.startTime,
+            ev.location?.slice(0, 200) ?? feed.label ?? null,
+            feed.label?.slice(0, 60) ?? null,
+            "#5b4a8c",
+            ev.description?.slice(0, 1000) ?? null,
+            feed.source_id,
+          );
+        });
+        await db.batch(batch);
+        imported = batch.length;
+      }
+    } catch (err) {
+      error = err instanceof Error ? err.message : String(err);
+    }
+
+    await db
+      .prepare("UPDATE event_feeds SET last_synced_at = datetime('now'), last_error = ?, events_count = ? WHERE id = ?")
+      .bind(error, imported, feed.id)
+      .run();
+
+    out.push({ feedId: feed.id, label: feed.label, imported, error });
+  }
+
+  return out;
+}
+
+/**
+ * Atomikus „igénylés": ha van legalább egy elavult, engedélyezett feed,
+ * megjelöli azokat frissként és true-t ad — így párhuzamos kérések közül csak
+ * EGY futtatja le ténylegesen a szinkront (a D1 sorosítja az írásokat).
+ */
+async function claimStaleFeedSync(): Promise<boolean> {
+  const res = await getDB()
+    .prepare(
+      `UPDATE event_feeds SET last_synced_at = datetime('now')
+       WHERE enabled = 1 AND (last_synced_at IS NULL OR last_synced_at < datetime('now', ?))`,
+    )
+    .bind(`-${FEED_SYNC_INTERVAL_HOURS} hours`)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+/**
+ * Lusta, forgalom-vezérelt szinkron háttérben (waitUntil-lel hívandó): ha a
+ * feedek elavultak, lefuttatja a szinkront a válasz elküldése után. Nincs
+ * szükség cronra — a látogatók forgalma frissíti az eseményeket. (Külön cron
+ * is ráköthető a /api/cron/sync-events endpointra, ha pontosabb időzítés kell.)
+ */
+export async function kickoffEventFeedSync(): Promise<void> {
+  try {
+    if (await claimStaleFeedSync()) {
+      await syncEventFeeds();
+    }
+  } catch {
+    // A háttér-szinkron hibája soha ne befolyásolja a kérést.
+  }
 }
 
 export interface PendingEvent {

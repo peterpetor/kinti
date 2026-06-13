@@ -1,7 +1,8 @@
 import { ScreenHeader } from "@/components/ui";
 import { CommunityView } from "@/components/views/community-view";
 import { PushOptin } from "@/components/push-optin";
-import { getEvents } from "@/lib/repo";
+import { getEvents, kickoffEventFeedSync } from "@/lib/repo";
+import { getCloudflareCtx } from "@/lib/cloudflare";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -9,6 +10,10 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Közösség" };
 
 export default async function KozossegPage() {
+  // Lusta, háttér esemény-feed szinkron — a forgalom frissíti az eseményeket
+  // (nincs szükség külön cronra). A válasz nem vár rá.
+  getCloudflareCtx()?.waitUntil(kickoffEventFeedSync());
+
   const events = await getEvents();
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 

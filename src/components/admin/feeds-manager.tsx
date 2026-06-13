@@ -20,6 +20,28 @@ export function FeedsManager({ initialFeeds }: { initialFeeds: EventFeed[] }) {
   const [pending, startTransition] = useTransition();
   const [feeds, setFeeds] = useState(initialFeeds);
   const [error, setError] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
+
+  async function syncNow() {
+    setSyncing(true);
+    setSyncMsg(null);
+    setError(null);
+    try {
+      const res = await fetch("/api/cron/sync-events", { method: "POST" });
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; imported?: number; feeds?: number };
+      if (!res.ok || !data.ok) {
+        setError("A szinkron nem sikerült (jogosultság vagy hálózat).");
+      } else {
+        setSyncMsg(`Kész: ${data.feeds ?? 0} forrás, ${data.imported ?? 0} esemény frissítve.`);
+        startTransition(() => router.refresh());
+      }
+    } catch {
+      setError("Hálózati hiba a szinkron közben.");
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   // optimista UI: kis változtatásokat lokálban is alkalmazzuk
   function patchLocal(id: string, p: Partial<EventFeed>) {
@@ -88,10 +110,30 @@ export function FeedsManager({ initialFeeds }: { initialFeeds: EventFeed[] }) {
         </div>
       )}
 
+      {syncMsg && (
+        <div className="rounded-card border border-success/30 bg-success/10 px-4 py-3 text-[12.5px] font-semibold text-success">
+          {syncMsg}
+        </div>
+      )}
+
       <section className="space-y-3">
-        <h2 className="text-[12px] font-bold uppercase tracking-wide text-ink-muted">
-          Bejegyzett források ({feeds.length})
-        </h2>
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-[12px] font-bold uppercase tracking-wide text-ink-muted">
+            Bejegyzett források ({feeds.length})
+          </h2>
+          <button
+            type="button"
+            onClick={syncNow}
+            disabled={syncing || feeds.length === 0}
+            className="rounded-pill border border-primary/30 bg-primary-soft/40 px-3 py-1.5 text-[12px] font-bold text-primary transition active:scale-95 disabled:opacity-50"
+          >
+            {syncing ? "Szinkron…" : "Szinkronizálás most"}
+          </button>
+        </div>
+        <p className="text-[11.5px] leading-snug text-ink-faint">
+          Az események maguktól is frissülnek (kb. {12} óránként, a forgalom alapján).
+          Ez a gomb azonnal lefuttatja a szinkront.
+        </p>
         {feeds.length === 0 ? (
           <div className="rounded-card border border-dashed border-line bg-surface-alt px-4 py-8 text-center text-[13px] text-ink-muted">
             Még nincs felvett forrás. Adj hozzá egyet fent.

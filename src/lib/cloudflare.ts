@@ -24,3 +24,16 @@ export function getDB(): D1Database {
 export function getMediaBucket(): R2Bucket {
   return getCloudflareEnv().MEDIA;
 }
+
+/**
+ * A kérés ExecutionContext-je (`waitUntil`) — háttér-munkához, ami a válasz
+ * elküldése UTÁN is fusson (pl. lusta esemény-feed szinkron). Ha nincs
+ * kérés-kontextus (build/statikus), null-t ad vissza, és a hívó kihagyja.
+ */
+export function getCloudflareCtx(): ExecutionContext | null {
+  try {
+    return getRequestContext().ctx ?? null;
+  } catch {
+    return null;
+  }
+}
