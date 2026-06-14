@@ -168,12 +168,12 @@ export function PushOptin() {
       <Bell active={subscribed} />
       <div className="min-w-0 flex-1">
         <p className="text-[13px] font-bold text-ink">
-          {subscribed ? "Értesítések bekapcsolva" : "Szólunk, ha új esemény van"}
+          {subscribed ? "Értesítések bekapcsolva" : "Szólunk, ha új a kantonodban"}
         </p>
         <p className="text-[11.5px] leading-snug text-ink-muted">
           {subscribed
-            ? "Értesítünk az új eseményekről a kantonodban."
-            : "Engedélyezd, és értesítünk az új eseményekről a környékeden."}
+            ? "Értesítünk az új vállalkozásokról, állásokról és eseményekről a kantonodban."
+            : "Engedélyezd, és értesítünk az új magyar vállalkozásokról, állásokról és eseményekről a környékeden."}
         </p>
       </div>
       <button

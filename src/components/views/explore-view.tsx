@@ -12,6 +12,7 @@ import { readPreferredCanton, setPreferredCanton } from "@/lib/canton-pref";
 import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
 import { haversineKm } from "@/lib/distance";
 import { AISearchBar } from "./ai-search";
+import { PushOptin } from "@/components/push-optin";
 
 const RADIUS_OPTIONS_KM = [5, 10, 20, 50] as const;
 type RadiusKm = (typeof RADIUS_OPTIONS_KM)[number];
@@ -414,6 +415,11 @@ export function ExploreView({
           </span>
           <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-accent" />
         </Link>
+
+        {/* Push-feliratkozás: új vállalkozás/állás/esemény a kantonodban */}
+        <div className="mt-2">
+          <PushOptin />
+        </div>
       </div>
 
       {/* A kategória-pillek list-módban itt fent; map-módban a térképre úsztatva. */}
