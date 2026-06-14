@@ -348,6 +348,65 @@ export const CATEGORY_ICON_PATHS: Record<string, string[]> = {
   késélező: PATHS_EPITOIPAR,
   szonyegház: PATHS_TAKARITO,
   takaritas_ablak: PATHS_TAKARITO,
+
+  // --- Korábban ikon nélküli (fallback) kategóriák → releváns meglévő ikon ---
+  // Egészségügy
+  epileptologus: PATHS_ORVOS,
+  fül_orr_gege: PATHS_ORVOS,
+  laboratorium: PATHS_ORVOS,
+  sportorvos: PATHS_ORVOS,
+  sportorvos2: PATHS_ORVOS,
+  pszichoterapia: PATHS_MASSZAZS,
+  rehabilitacios: PATHS_MASSZAZS,
+  // Jog / pénzügy / üzlet
+  banki_ugyintezo: PATHS_KONYVELES,
+  beruhazasi_tanacsado: PATHS_KONYVELES,
+  penzugyi_tanacsado: PATHS_KONYVELES,
+  penzmosasellenes: PATHS_KONYVELES,
+  szamviteli_ellenor: PATHS_KONYVELES,
+  nonprofitmenedzser: PATHS_KONYVELES,
+  projektmenedzser: PATHS_KONYVELES,
+  kozjegyzo: PATHS_UGYVED,
+  iparjogvedelmi: PATHS_UGYVED,
+  talalmanyi_szakerto: PATHS_UGYVED,
+  vagyonvedelem: PATHS_BIZTOSITAS,
+  munkaero_kozvetito: PATHS_KONYVELES,
+  vallalkozoi_coach: PATHS_EDZO,
+  // Marketing / média / IT
+  online_marketing: PATHS_MARKETING,
+  piackutatas: PATHS_MARKETING,
+  drone_pilot: PATHS_IT,
+  pilotas_drone2: PATHS_IT,
+  oktatastechnologus: PATHS_TANAR,
+  szocialis_pedagogus: PATHS_TANAR,
+  // Fordítás / zene
+  nemet_tolmacs: PATHS_FORDITO,
+  hangszerkeszito: PATHS_ZENESZ,
+  zenetermelo: PATHS_ZENESZ,
+  // Építőipar / mérnök / felújítás
+  epitesz: PATHS_EPITOIPAR,
+  ev_mernok: PATHS_EPITOIPAR,
+  szerkezeti_mernok: PATHS_EPITOIPAR,
+  kozlekedesi_mernok: PATHS_EPITOIPAR,
+  parkettazas: PATHS_EPITOIPAR,
+  lakasfelujitas: PATHS_EPITOIPAR,
+  fuggesztett_menyezet: PATHS_EPITOIPAR,
+  kemenytechnika: PATHS_EPITOIPAR,
+  looveges2: PATHS_EPITOIPAR,
+  epuletgepeszet: PATHS_GAZVEZ,
+  szuretes: PATHS_GAZVEZ,
+  hegeszto: PATHS_LAKATOS,
+  keselelo: PATHS_LAKATOS,
+  // Energia / villany
+  fotovoltaika: PATHS_VILLANY,
+  solar_technikus: PATHS_VILLANY,
+  // Egyéb
+  ingatlan_fejleszto: PATHS_INGATLAN,
+  hotel_menedzser: PATHS_ETTEREM,
+  szallitmanyozo: PATHS_AUTOSZER,
+  mezogazdasag: PATHS_KERTESZ,
+  szemelyi_stilista: PATHS_SZEPSEG,
+  takaritas_irodai: PATHS_TAKARITO,
 };
 
 /** Térkép-pin HTML-stringje (Leaflet divIcon). */
@@ -369,9 +428,22 @@ export interface CategoryIconProps extends Omit<SVGProps<SVGSVGElement>, "name">
 export function CategoryIcon({ categoryId, size = 16, ...props }: CategoryIconProps) {
   const paths = categoryId ? CATEGORY_ICON_PATHS[categoryId] : undefined;
   if (!paths) {
+    // Általános „szakma/üzlet" fallback (aktatáska) — nem üres pötty.
     return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
-        <circle cx="12" cy="12" r="5" />
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        {...props}
+      >
+        <rect x="3" y="8" width="18" height="12" rx="2" />
+        <path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
       </svg>
     );
   }
