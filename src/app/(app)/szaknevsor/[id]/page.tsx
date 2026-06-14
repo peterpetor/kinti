@@ -8,6 +8,7 @@ import { ReviewForm } from "@/components/views/review-form";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
 import { ReviewHelpfulButton } from "@/components/review-helpful-button";
+import { BusinessClaimCard } from "@/components/views/business-claim-card";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
@@ -272,6 +273,11 @@ export default async function BusinessPage({
         <h1 className="text-[26px] font-extrabold leading-[1.08] tracking-tight text-ink text-balance">
           {b.name}
         </h1>
+        {b.claimed === false && (
+          <div className="mt-3">
+            <BusinessClaimCard businessId={b.id} businessName={b.name} />
+          </div>
+        )}
         {b.verified && (
           <p
             title="Az üzemeltető meggyőződött róla, hogy valódi magyarul beszélő vállalkozás — ez NEM minőségi garancia, a szakképesítést és a munka minőségét nem ellenőrizzük."

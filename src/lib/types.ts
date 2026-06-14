@@ -63,6 +63,8 @@ export interface Business {
   updatedAt?: string | null;
   /** Létrehozás ISO időbélyege. */
   createdAt?: string | null;
+  /** false = „nem megerősített" lista (kutatott, tulajdonos nélkül) → foglalható. */
+  claimed?: boolean;
 }
 
 export interface KintiEvent {

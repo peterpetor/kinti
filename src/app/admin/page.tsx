@@ -210,6 +210,12 @@ export default async function AdminPage() {
           >
             <Icon name="calendar" size={13} strokeWidth={2.4} /> Esemény-feedek (iCal/RSS)
           </Link>
+          <Link
+            href="/admin/claims"
+            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
+          >
+            <Icon name="flag" size={13} strokeWidth={2.4} /> Claim-igénylések
+          </Link>
         </div>
       </section>
     </div>

@@ -28,6 +28,7 @@ interface BusinessRow {
   view_count: number | null; phone_click_count: number | null;
   moderation_status: number | null; moderation_decision_at: string | null;
   moderation_decided_by: string | null; created_at: string | null; updated_at: string | null;
+  claimed: number | null;
 }
 
 interface BusinessSubmissionRow {
@@ -60,6 +61,7 @@ export function toBusiness(r: BusinessRow): Business {
     moderationStatus: r.moderation_status ?? 0, moderationDecisionAt: r.moderation_decision_at,
     moderationDecidedBy: r.moderation_decided_by, updatedAt: r.updated_at ?? null,
     createdAt: r.created_at ?? null,
+    claimed: bool(r.claimed ?? 1),
   };
 }
 

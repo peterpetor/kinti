@@ -14,6 +14,7 @@ export * from "./repo-reviews";
 export * from "./repo-jobs";
 export * from "./repo-workers";
 export * from "./repo-leads";
+export * from "./repo-claims";
 export * from "./repo-spam";
 export * from "./repo-misc";
 export * from "./repo-piac";
