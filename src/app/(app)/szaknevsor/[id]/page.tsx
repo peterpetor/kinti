@@ -5,6 +5,7 @@ import { getBusinessById, getReviewsByBusiness, recordBusinessSearchTerm } from 
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
+import { cantonFromAddress, cantonToSlug } from "@/lib/cantons";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
 import { ReviewHelpfulButton } from "@/components/review-helpful-button";
@@ -568,6 +569,21 @@ export default async function BusinessPage({
             </ListGroup>
           </div>
         </section>
+
+        {/* SEO belső link a kategória×kanton landing oldalra */}
+        {(() => {
+          const lc = cantonFromAddress(b.address ?? null);
+          if (!lc || !b.categoryId) return null;
+          return (
+            <Link
+              href={`/magyar/${b.categoryId}/${cantonToSlug(lc.name)}`}
+              className="mt-6 flex items-center gap-2 text-[13px] font-bold text-primary"
+            >
+              Több magyar {(b.categoryLabel || "szakember").toLowerCase()} {lc.name} kantonban
+              <Icon name="arrowRight" size={14} strokeWidth={2.4} />
+            </Link>
+          );
+        })()}
       </div>
     </div>
   );

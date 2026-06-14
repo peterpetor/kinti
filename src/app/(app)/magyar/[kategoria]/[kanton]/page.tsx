@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { BusinessCard, Icon, ScreenHeader } from "@/components/ui";
 import { getBusinesses, getCategories } from "@/lib/repo";
 import { CANTONS, cantonFromSlug, cantonFromAddress, cantonToSlug } from "@/lib/cantons";
+import { safeJsonLdStringify } from "@/lib/json-ld";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -56,13 +57,66 @@ export default async function MagyarLanding({ params }: { params: Params }) {
   const all = await getBusinesses({ category: category.id });
   const businesses = all.filter((b) => cantonFromAddress(b.address ?? null)?.code === canton.code);
 
-  // Kapcsolódó: ugyanez a kategória másik kantonokban + ez a kanton másik kategóriákban.
-  const otherCantons = CANTONS.filter((c) => c.code !== canton.code).slice(0, 6);
+  // Kapcsolódó kantonok: CSAK azok, ahol tényleg van ilyen vállalkozás (nincs
+  // „thin content" link üres oldalakra). A kategória összes találatából vesszük.
+  const cantonCodesWithBiz = new Set<string>();
+  for (const b of all) {
+    const c = cantonFromAddress(b.address ?? null);
+    if (c && c.code !== canton.code) cantonCodesWithBiz.add(c.code);
+  }
+  const otherCantons = CANTONS.filter((c) => cantonCodesWithBiz.has(c.code)).slice(0, 8);
   const categories = await getCategories();
-  const otherCategories = categories.filter((c) => c.id !== category.id && c.id !== "all").slice(0, 6);
+  const otherCategories = categories.filter((c) => c.id !== category.id && c.id !== "all").slice(0, 8);
+
+  // Strukturált adat: a találatok ItemList-je + breadcrumb (rich result jelöltek).
+  const base = "https://kinti.app";
+  const pageUrl = `${base}/magyar/${params.kategoria}/${params.kanton}`;
+  const itemListJsonLd = businesses.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: `Magyar ${category.label} — ${canton.name} kanton`,
+        numberOfItems: businesses.length,
+        itemListElement: businesses.map((b, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          url: `${base}/szaknevsor/${b.id}`,
+          name: b.name,
+        })),
+      }
+    : null;
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Szaknévsor", item: `${base}/szaknevsor` },
+      { "@type": "ListItem", position: 2, name: category.label, item: pageUrl },
+      { "@type": "ListItem", position: 3, name: canton.name, item: pageUrl },
+    ],
+  };
 
   return (
     <div className="space-y-5 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+2rem)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(breadcrumbJsonLd) }}
+      />
+      {itemListJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(itemListJsonLd) }}
+        />
+      )}
+
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1.5 text-[11.5px] font-semibold text-ink-muted" aria-label="Útvonal">
+        <Link href="/szaknevsor" className="hover:text-primary">Szaknévsor</Link>
+        <Icon name="chevR" size={11} className="text-ink-faint" />
+        <span className="text-ink">{category.label}</span>
+        <Icon name="chevR" size={11} className="text-ink-faint" />
+        <span className="text-ink">{canton.name}</span>
+      </nav>
+
       <ScreenHeader
         eyebrow={`Szaknévsor · ${canton.name} (${canton.code})`}
         title={
@@ -128,7 +182,8 @@ export default async function MagyarLanding({ params }: { params: Params }) {
         <Icon name="chevR" size={16} strokeWidth={2.4} className="text-primary" />
       </Link>
 
-      {/* Kapcsolódó kantonok ugyanebben a kategóriában */}
+      {/* Kapcsolódó kantonok ugyanebben a kategóriában (csak ahol van találat) */}
+      {otherCantons.length > 0 && (
       <section className="space-y-2">
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
           Magyar {category.label.toLowerCase()} más kantonokban
@@ -145,6 +200,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
           ))}
         </div>
       </section>
+      )}
 
       {/* Más szakmák ebben a kantonban */}
       <section className="space-y-2">
