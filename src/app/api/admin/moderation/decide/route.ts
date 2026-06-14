@@ -5,11 +5,15 @@ import {
   addToBlocklist,
   getReviewSummaryById,
   recomputeBusinessRating,
+  getBusinessById,
   type ModerationTable,
 } from "@/lib/repo";
 import { hashEmail } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 import { logAdminAction } from "@/lib/audit";
+import { notifyCanton } from "@/lib/push-notify";
+import { cantonFromAddress } from "@/lib/cantons";
+import { getCloudflareCtx } from "@/lib/cloudflare";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -90,6 +94,17 @@ export async function POST(req: Request) {
     if (table === "reviews") {
       const summary = await getReviewSummaryById(id);
       if (summary?.businessId) await recomputeBusinessRating(summary.businessId);
+    }
+
+    // Új vállalkozás jóváhagyásakor: kanton-célzott push az adott kanton (+ az
+    // „egész Svájc") feliratkozóinak. Csak ha a kanton feloldható a címből
+    // (különben mindenkit spammelnénk). Háttérben fut, a választ nem várja.
+    if (table === "businesses" && statusValue === 1) {
+      const biz = await getBusinessById(id);
+      const canton = cantonFromAddress(biz?.address ?? null);
+      if (canton) {
+        getCloudflareCtx()?.waitUntil(notifyCanton(canton.code));
+      }
     }
 
     // Ban-flow csak rejected esetén
