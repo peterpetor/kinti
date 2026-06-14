@@ -212,14 +212,58 @@ function plzToCanton(plz: string): Canton | null {
 }
 
 /**
- * Címből (PLZ alapján) megpróbálja kinyerni a kantont.
- * Pl. "Birmensdorferstr. 142, 8003 Zürich" → ZH.
+ * Ismert svájci városok → kanton-kód (kézzel ellenőrzött). Azokhoz kell, ahol a
+ * város neve ≠ a kanton neve, ÉS a PLZ-mapping közelítő/pontatlan lehet
+ * (pl. Wädenswil→ZH, Lausanne→VD, Siebnen→SZ, Sirnach→TG).
+ */
+const CITY_CANTON: Record<string, string> = {
+  zurich: "ZH", winterthur: "ZH", wadenswil: "ZH", uster: "ZH", dietikon: "ZH",
+  dubendorf: "ZH", kloten: "ZH", horgen: "ZH", thalwil: "ZH", wetzikon: "ZH",
+  thun: "BE", biel: "BE", bienne: "BE", koniz: "BE", burgdorf: "BE", interlaken: "BE",
+  riehen: "BS", liestal: "BL", allschwil: "BL", muttenz: "BL", pratteln: "BL",
+  emmen: "LU", kriens: "LU", horw: "LU",
+  baar: "ZG", cham: "ZG",
+  gossau: "SG", rapperswil: "SG", buchs: "SG", uzwil: "SG", "st gallen": "SG", gallen: "SG",
+  lausanne: "VD", montreux: "VD", nyon: "VD", yverdon: "VD", renens: "VD", morges: "VD", vevey: "VD",
+  carouge: "GE", vernier: "GE", lancy: "GE", meyrin: "GE", onex: "GE",
+  bulle: "FR",
+  martigny: "VS", zermatt: "VS", brig: "VS", visp: "VS",
+  bellinzona: "TI", locarno: "TI",
+  davos: "GR", arosa: "GR",
+  baden: "AG", wettingen: "AG", wohlen: "AG", lenzburg: "AG",
+  frauenfeld: "TG", kreuzlingen: "TG", amriswil: "TG", romanshorn: "TG", sirnach: "TG",
+  tagerwilen: "TG", weinfelden: "TG", arbon: "TG",
+  neuhausen: "SH",
+  olten: "SO", obergosgen: "SO", grenchen: "SO",
+  einsiedeln: "SZ", lachen: "SZ", siebnen: "SZ", freienbach: "SZ", arth: "SZ",
+};
+
+/**
+ * Címből megpróbálja kinyerni a kantont. Sorrend (megbízhatóság szerint):
+ *   1) kanton-név vagy -alias a címben (pl. „…, Solothurn" → SO; „Zürich" → ZH),
+ *   2) ismert város → kanton (CITY_CANTON),
+ *   3) PLZ → kanton (közelítő fallback).
+ * Pl. "Baarerstrasse 91, 6300 Zug" → ZG; "8820 Wädenswil" → ZH.
  */
 export function cantonFromAddress(address: string | null | undefined): Canton | null {
   if (!address) return null;
+  const norm = normalize(address);
+
+  // 1) Kanton-név / alias (definitív, ha a címben benne van)
+  for (const c of CANTONS) {
+    if (hasWord(norm, normalize(c.name))) return c;
+    if (c.aliases.some((a) => hasWord(norm, normalize(a)))) return c;
+  }
+
+  // 2) Ismert város
+  for (const city in CITY_CANTON) {
+    if (hasWord(norm, city)) return BY_CODE.get(CITY_CANTON[city]) ?? null;
+  }
+
+  // 3) PLZ fallback (közelítő)
   const m = address.match(/\b([1-9]\d{3})\b/);
-  if (!m) return null;
-  return plzToCanton(m[1]);
+  if (m) return plzToCanton(m[1]);
+  return null;
 }
 
 // ===========================================================================
