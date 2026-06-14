@@ -187,6 +187,14 @@ export function ExploreView({
 
   const filteredBusinesses = useMemo(() => filtered.map(({ b }) => b), [filtered]);
 
+  // Csak azokat a kategóriákat mutatjuk a pill-sorban, amikben TÉNYLEG van
+  // vállalkozás (+ „Mind", + az épp kiválasztott) — így nincs üres, irreleváns
+  // kategória, és a sor rövid/letisztult marad.
+  const visibleCategories = useMemo(() => {
+    const present = new Set(businesses.map((b) => b.categoryId));
+    return categories.filter((c) => c.id === "all" || c.id === cat || present.has(c.id));
+  }, [categories, businesses, cat]);
+
   // A térkép hely-pillhez: a kiválasztott kanton neve, vagy "Egész Svájc"
   const locationLabel = useMemo(() => {
     if (canton === "all") return "Egész Svájc";
@@ -410,7 +418,7 @@ export function ExploreView({
 
       {/* A kategória-pillek list-módban itt fent; map-módban a térképre úsztatva. */}
       {view === "list" && (
-        <CategoryPills categories={categories} active={cat} onSelect={setCat} />
+        <CategoryPills categories={visibleCategories} active={cat} onSelect={setCat} />
       )}
 
       {/* Lista / Térkép váltó + meta-sor */}
@@ -465,7 +473,7 @@ export function ExploreView({
           >
             <BusinessMap
               businesses={filteredBusinesses}
-              categories={categories}
+              categories={visibleCategories}
               activeCat={cat}
               onSelectCat={setCat}
               locationLabel={locationLabel}
