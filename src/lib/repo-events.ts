@@ -4,6 +4,7 @@
 import { getDB } from "./cloudflare";
 import type { KintiEvent, EventFeed } from "./types";
 import { parseIcal, huDateParts } from "./ical";
+import { cantonFromAddress } from "./cantons";
 import { generateRecurringEvents, GENERATED_SOURCE } from "./event-generator";
 
 // --- Row types ---------------------------------------------------------------
@@ -30,6 +31,7 @@ interface EventRow {
   moderation_status?: number | null;
   moderation_decision_at?: string | null;
   moderation_decided_by?: string | null;
+  canton_code?: string | null;
 }
 
 interface EventFeedRow {
@@ -62,6 +64,7 @@ export function toEvent(r: EventRow): KintiEvent {
     moderationStatus: r.moderation_status ?? 0,
     moderationDecisionAt: r.moderation_decision_at,
     moderationDecidedBy: r.moderation_decided_by,
+    cantonCode: r.canton_code ?? null,
   };
 }
 
@@ -408,9 +411,9 @@ export async function syncEventFeeds(): Promise<FeedSyncResult[]> {
         const stmt = db.prepare(
           `INSERT OR REPLACE INTO events
              (id, title, event_date, date_day, date_month, date_weekday, start_time,
-              venue, going, tag, color, description, source, status, moderation_status,
+              venue, going, tag, color, description, source, canton_code, status, moderation_status,
               moderation_decided_by, moderation_decision_at, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, 'approved', 1, 'ical-sync', datetime('now'), datetime('now'))`,
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, 'approved', 1, 'ical-sync', datetime('now'), datetime('now'))`,
         );
         const batch = future.map((ev) => {
           const { day, month, weekday } = huDateParts(ev.dateISO);
@@ -429,6 +432,7 @@ export async function syncEventFeeds(): Promise<FeedSyncResult[]> {
             "#5b4a8c",
             ev.description?.slice(0, 1000) ?? null,
             feed.source_id,
+            cantonFromAddress(ev.location ?? null)?.code ?? null,
           );
         });
         await db.batch(batch);

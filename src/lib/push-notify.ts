@@ -6,13 +6,17 @@
  * általános „új a Kintin a kantonodban" értesítést) — a célzás itt történik.
  * A megszűnt (404/410) endpointokat törli.
  */
-import { sendPush } from "./push";
+import { sendPush, type PushPayload } from "./push";
 import { listPushSubscriptions, deletePushSubscription } from "./repo-misc";
 import { getCloudflareEnv } from "./cloudflare";
 
 export interface NotifyResult { total: number; sent: number; removed: number; failed: number }
 
-export async function notifyCanton(cantonCode: string | null): Promise<NotifyResult> {
+/**
+ * Kanton-célzott push. Ha `payload` meg van adva, titkosítva küldjük (a SW a
+ * konkrét „mi az új" szöveget mutatja); egyébként payload nélküli tickle.
+ */
+export async function notifyCanton(cantonCode: string | null, payload?: PushPayload): Promise<NotifyResult> {
   const env = getCloudflareEnv();
   if (!env.VAPID_PRIVATE_KEY) return { total: 0, sent: 0, removed: 0, failed: 0 };
 
@@ -22,7 +26,11 @@ export async function notifyCanton(cantonCode: string | null): Promise<NotifyRes
   await Promise.all(
     subs.map(async (s) => {
       try {
-        const status = await sendPush(env.VAPID_PRIVATE_KEY!, { endpoint: s.endpoint });
+        const status = await sendPush(
+          env.VAPID_PRIVATE_KEY!,
+          { endpoint: s.endpoint, p256dh: s.p256dh, auth: s.auth },
+          payload,
+        );
         if (status >= 200 && status < 300) sent++;
         else if (status === 404 || status === 410) {
           await deletePushSubscription(s.endpoint);

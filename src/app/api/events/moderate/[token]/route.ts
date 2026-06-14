@@ -3,33 +3,24 @@ import {
   getEventByToken,
   updateEventStatus,
   deleteEvent,
-  listPushSubscriptions,
-  deletePushSubscription,
 } from "@/lib/repo";
-import { getCloudflareEnv } from "@/lib/cloudflare";
-import { sendPush } from "@/lib/push";
+import { notifyCanton } from "@/lib/push-notify";
 import { cantonFromAddress } from "@/lib/cantons";
+import type { KintiEvent } from "@/lib/types";
 
 /**
- * Automatikus push az új (most jóváhagyott) eseményről. A célzott kantont a
- * helyszínből próbáljuk kinyerni (PLZ → kanton); ha nem megy, mindenkinek megy.
+ * Automatikus, titkosított-payloados push az új (most jóváhagyott) eseményről.
+ * A kanton elsősorban a strukturált `cantonCode`-ból jön (iCal-sync tölti);
+ * ha nincs, a helyszínből (PLZ → kanton); ha az sincs, mindenkinek megy.
  * A jóváhagyást SOHA nem töri meg, ha a push hibázik (try/catch a hívónál).
  */
-async function notifyNewEvent(venue: string | null): Promise<void> {
-  const env = getCloudflareEnv();
-  if (!env.VAPID_PRIVATE_KEY) return;
-  const cantonCode = cantonFromAddress(venue)?.code ?? null;
-  const subs = await listPushSubscriptions(cantonCode);
-  await Promise.all(
-    subs.map(async (s) => {
-      try {
-        const status = await sendPush(env.VAPID_PRIVATE_KEY!, { endpoint: s.endpoint });
-        if (status === 404 || status === 410) await deletePushSubscription(s.endpoint);
-      } catch {
-        /* egyedi kézbesítési hibát elnyelünk */
-      }
-    }),
-  );
+async function notifyNewEvent(event: KintiEvent): Promise<void> {
+  const cantonCode = event.cantonCode ?? cantonFromAddress(event.venue)?.code ?? null;
+  await notifyCanton(cantonCode, {
+    title: "Új esemény a kantonodban 📅",
+    body: event.title,
+    url: "/kozosseg",
+  });
 }
 
 export const runtime = "edge";
@@ -74,7 +65,7 @@ export async function GET(
     await updateEventStatus(event.id, "approved", null);
     // Automatikus push-értesítés a friss eseményről (a feliratkozóknak).
     try {
-      await notifyNewEvent(event.venue);
+      await notifyNewEvent(event);
     } catch {
       /* a push hibája ne akadályozza a jóváhagyást */
     }

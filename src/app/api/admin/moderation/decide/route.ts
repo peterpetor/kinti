@@ -102,8 +102,14 @@ export async function POST(req: Request) {
     if (table === "businesses" && statusValue === 1) {
       const biz = await getBusinessById(id);
       const canton = cantonFromAddress(biz?.address ?? null);
-      if (canton) {
-        getCloudflareCtx()?.waitUntil(notifyCanton(canton.code));
+      if (biz && canton) {
+        getCloudflareCtx()?.waitUntil(
+          notifyCanton(canton.code, {
+            title: "Új magyar vállalkozás a kantonodban 🎉",
+            body: `${biz.name}${biz.categoryLabel ? " — " + biz.categoryLabel : ""} · ${canton.name}`,
+            url: `/szaknevsor/${biz.id}`,
+          }),
+        );
       }
     }
 

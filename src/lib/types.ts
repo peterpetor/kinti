@@ -88,6 +88,8 @@ export interface KintiEvent {
   moderationStatus?: number;
   moderationDecisionAt?: string | null;
   moderationDecidedBy?: string | null;
+  /** Kanton-kód a push-célzáshoz (iCal-sync tölti; generáltnál null = országos). */
+  cantonCode?: string | null;
 }
 
 

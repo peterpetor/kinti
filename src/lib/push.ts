@@ -77,27 +77,101 @@ async function buildVapidJwt(audience: string, key: CryptoKey): Promise<string> 
 
 export interface PushTarget {
   endpoint: string;
+  /** A feliratkozó publikus kulcsa (base64url) — titkosított payloadhoz kell. */
+  p256dh?: string;
+  /** A feliratkozó auth-titka (base64url) — titkosított payloadhoz kell. */
+  auth?: string;
+}
+
+export interface PushPayload {
+  title?: string;
+  body?: string;
+  url?: string;
+}
+
+function concatBytes(...arrays: Uint8Array[]): Uint8Array {
+  const total = arrays.reduce((n, a) => n + a.length, 0);
+  const out = new Uint8Array(total);
+  let off = 0;
+  for (const a of arrays) { out.set(a, off); off += a.length; }
+  return out;
+}
+
+/** TS 5.x szigorítás miatt a Uint8Array → BufferSource castot egy helperbe tesszük. */
+const bs = (u: Uint8Array): BufferSource => u as unknown as BufferSource;
+
+async function hkdf(salt: Uint8Array, ikm: Uint8Array, info: Uint8Array, length: number): Promise<Uint8Array> {
+  const key = await crypto.subtle.importKey("raw", bs(ikm), "HKDF", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "HKDF", hash: "SHA-256", salt: bs(salt), info: bs(info) }, key, length * 8);
+  return new Uint8Array(bits);
 }
 
 /**
- * Egyetlen feliratkozónak küld egy (payload nélküli) push-t. Visszaadja a
- * push-szolgáltató HTTP státuszát. 201 = kézbesítve; 404/410 = az endpoint
- * megszűnt (a hívó törölje a DB-ből).
+ * Web Push payload titkosítás (RFC 8291 + aes128gcm content coding, RFC 8188).
+ * A body: salt(16) | rs(4) | idlen(1)=65 | as_public(65) | ciphertext.
+ */
+async function encryptPayload(p256dhB64: string, authB64: string, plaintext: Uint8Array): Promise<Uint8Array> {
+  const uaPublic = b64urlToBytes(p256dhB64); // 65 bájt (0x04||X||Y)
+  const authSecret = b64urlToBytes(authB64); // 16 bájt
+
+  // Efemer ECDH kulcspár + közös titok a feliratkozó publikus kulcsával.
+  const asKeyPair = (await crypto.subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"])) as CryptoKeyPair;
+  const asPublic = new Uint8Array(await crypto.subtle.exportKey("raw", asKeyPair.publicKey)); // 65 bájt
+  const uaKey = await crypto.subtle.importKey("raw", bs(uaPublic), { name: "ECDH", namedCurve: "P-256" }, false, []);
+  const ecdhSecret = new Uint8Array(await crypto.subtle.deriveBits({ name: "ECDH", public: uaKey }, asKeyPair.privateKey, 256));
+
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+
+  // RFC 8291: IKM = HKDF(salt=auth, ikm=ecdh, info="WebPush: info\0"||ua||as, 32)
+  const keyInfo = concatBytes(new TextEncoder().encode("WebPush: info"), new Uint8Array([0]), uaPublic, asPublic);
+  const ikm = await hkdf(authSecret, ecdhSecret, keyInfo, 32);
+
+  // RFC 8188: CEK (16) + NONCE (12) az IKM-ből a random salttal.
+  const cek = await hkdf(salt, ikm, concatBytes(new TextEncoder().encode("Content-Encoding: aes128gcm"), new Uint8Array([0])), 16);
+  const nonce = await hkdf(salt, ikm, concatBytes(new TextEncoder().encode("Content-Encoding: nonce"), new Uint8Array([0])), 12);
+
+  // Egyetlen rekord: plaintext || 0x02 (utolsó-rekord határoló).
+  const padded = concatBytes(plaintext, new Uint8Array([0x02]));
+  const aesKey = await crypto.subtle.importKey("raw", bs(cek), { name: "AES-GCM" }, false, ["encrypt"]);
+  const ciphertext = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv: bs(nonce), tagLength: 128 }, aesKey, bs(padded)));
+
+  const rs = new Uint8Array(4);
+  new DataView(rs.buffer).setUint32(0, 4096, false);
+  return concatBytes(salt, rs, new Uint8Array([asPublic.length]), asPublic, ciphertext);
+}
+
+/**
+ * Egyetlen feliratkozónak küld push-t. Ha `payload` ÉS a target p256dh+auth
+ * megvan → titkosított payload (a SW a konkrét szöveget mutatja). Egyébként
+ * payload nélküli „tickle". Visszaadja a HTTP státuszt (201=ok; 404/410=törlendő).
  */
 export async function sendPush(
   privateKeyB64url: string,
   target: PushTarget,
+  payload?: PushPayload,
 ): Promise<number> {
   const audience = new URL(target.endpoint).origin;
   const key = await importSigningKey(privateKeyB64url);
   const jwt = await buildVapidJwt(audience, key);
 
-  const res = await fetch(target.endpoint, {
-    method: "POST",
-    headers: {
-      Authorization: `vapid t=${jwt}, k=${VAPID_PUBLIC_KEY}`,
-      TTL: "86400",
-    },
-  });
+  const headers: Record<string, string> = {
+    Authorization: `vapid t=${jwt}, k=${VAPID_PUBLIC_KEY}`,
+    TTL: "86400",
+  };
+
+  let body: Uint8Array | undefined;
+  if (payload && target.p256dh && target.auth) {
+    try {
+      const plaintext = new TextEncoder().encode(JSON.stringify(payload));
+      body = await encryptPayload(target.p256dh, target.auth, plaintext);
+      headers["Content-Encoding"] = "aes128gcm";
+      headers["Content-Type"] = "application/octet-stream";
+    } catch {
+      // Titkosítás hiba → payload nélküli tickle (a SW az általánosat mutatja).
+      body = undefined;
+    }
+  }
+
+  const res = await fetch(target.endpoint, { method: "POST", headers, body: body as BodyInit | undefined });
   return res.status;
 }
