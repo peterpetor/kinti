@@ -12,6 +12,15 @@ import {
   getStoreById,
   getCategoryById,
 } from "@/lib/deals";
+import { useMyLocation } from "@/lib/use-my-location";
+
+/** „Te vagy itt" pötty — egységes a többi térképpel. */
+const ME_ICON = L.divIcon({
+  className: "",
+  html: '<div class="kinti-me-dot"></div>',
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+});
 
 const TILE_URL = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 const TILE_ATTR =
@@ -61,6 +70,8 @@ export function DealsMap({
   deals: DealReport[];
   className?: string;
 }) {
+  // Saját pozíció, ha a helymeghatározás már engedélyezve van (prompt nélkül).
+  const myPos = useMyLocation();
   const icons = useMemo(() => {
     const map = new Map<string, L.DivIcon>();
     for (const d of deals) {
@@ -95,6 +106,7 @@ export function DealsMap({
         scrollWheelZoom
       >
         <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
+        {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
         <MarkerClusterGroup chunkedLoading showCoverageOnHover={false} maxClusterRadius={40}>
           {deals.map((d) => {
             const store = getStoreById(d.storeId);

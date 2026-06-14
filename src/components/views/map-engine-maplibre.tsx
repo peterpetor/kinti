@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
 import { clusterBusinesses, clusterBounds, clusterSize } from "@/lib/cluster";
+import { useMyLocation } from "@/lib/use-my-location";
 import type { SosAlert } from "@/lib/sos-repo";
 
 /**
@@ -84,6 +85,9 @@ export function MaplibreEngine({
   const [zoom, setZoom] = useState(fallbackZoom);
   const [locating, setLocating] = useState(false);
   const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
+  // Automatikus pozíció, ha a helymeghatározás már engedélyezve van (prompt nélkül).
+  const autoPosition = useMyLocation();
+  const effectivePosition = myPosition ?? autoPosition;
   const failedRef = useRef(false);
   const sosMarkersRef = useRef<Map<string, MlMarker>>(new Map());
 
@@ -315,7 +319,7 @@ export function MaplibreEngine({
     const map = mapRef.current;
     const ml = mlRef.current;
     if (!map || !ml || !ready) return;
-    if (!myPosition) {
+    if (!effectivePosition) {
       meMarkerRef.current?.remove();
       meMarkerRef.current = null;
       return;
@@ -325,12 +329,12 @@ export function MaplibreEngine({
       el.className = "kinti-me-dot";
       el.style.pointerEvents = "none";
       meMarkerRef.current = new ml.Marker({ element: el, anchor: "center" })
-        .setLngLat([myPosition[1], myPosition[0]])
+        .setLngLat([effectivePosition[1], effectivePosition[0]])
         .addTo(map);
     } else {
-      meMarkerRef.current.setLngLat([myPosition[1], myPosition[0]]);
+      meMarkerRef.current.setLngLat([effectivePosition[1], effectivePosition[0]]);
     }
-  }, [myPosition, ready]);
+  }, [effectivePosition, ready]);
 
   function handleLocate() {
     if (typeof navigator === "undefined" || !navigator.geolocation || !mapRef.current) return;

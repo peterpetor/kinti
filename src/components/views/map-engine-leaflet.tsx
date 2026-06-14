@@ -8,6 +8,7 @@ import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
 import { clusterBusinesses, clusterBounds, clusterSize } from "@/lib/cluster";
+import { useMyLocation } from "@/lib/use-my-location";
 import type { SosAlert } from "@/lib/sos-repo";
 
 import "leaflet/dist/leaflet.css";
@@ -37,6 +38,9 @@ export function LeafletEngine({
   onSelectSosAlert,
 }: MapEngineProps) {
   const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
+  // Automatikus pozíció, ha a helymeghatározás már engedélyezve van (prompt nélkül).
+  const autoPosition = useMyLocation();
+  const effectivePosition = myPosition ?? autoPosition;
 
   return (
     <MapContainer
@@ -73,8 +77,8 @@ export function LeafletEngine({
         />
       ))}
 
-      {myPosition && (
-        <Marker position={myPosition} icon={ME_ICON} interactive={false} />
+      {effectivePosition && (
+        <Marker position={effectivePosition} icon={ME_ICON} interactive={false} />
       )}
 
       <FitToMarkers businesses={located} sosAlerts={sosAlerts} />
