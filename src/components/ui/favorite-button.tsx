@@ -59,8 +59,8 @@ export function FavoriteButton({ businessId, className }: { businessId: string; 
       aria-label={fav ? "Eltávolítás a kedvencekből" : "Hozzáadás a kedvencekhez"}
       aria-pressed={fav}
       className={cn(
-        "grid h-8 w-8 place-items-center rounded-full bg-surface/80 backdrop-blur-sm shadow-sm transition active:scale-90",
-        fav ? "text-accent" : "text-ink-faint hover:text-accent",
+        "grid h-8 w-8 place-items-center rounded-full border bg-surface shadow-sm transition active:scale-90",
+        fav ? "border-accent/40 text-accent" : "border-line text-ink-muted hover:text-accent hover:border-accent/40",
         className,
       )}
     >

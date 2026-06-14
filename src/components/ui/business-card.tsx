@@ -25,7 +25,7 @@ export interface BusinessCardProps {
 
 export function BusinessCard({ business: b, href, className, distanceKm, showFavorite }: BusinessCardProps) {
   const classes = cn(
-    "relative flex gap-3 rounded-card border bg-surface p-3",
+    "relative flex min-w-0 gap-3 rounded-card border bg-surface p-3",
     b.featured ? "border-2 border-[#ff9600] shadow-pop bg-[#ff9600]/[0.02]" : "border-line shadow-card",
     href && "transition hover:shadow-card-hover active:scale-[0.99]",
     className,
