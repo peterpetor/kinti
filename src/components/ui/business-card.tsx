@@ -57,7 +57,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
         )}
       </div>
 
-      <div className="min-w-0 flex-1">
+      <div className={cn("min-w-0 flex-1", showFavorite && "pr-7")}>
         {b.featured && (
           <div className="mb-1.5 inline-flex items-center gap-1 rounded-pill bg-[#ff9600] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
             <Icon name="star" size={9} filled /> Szaknévsor PRO
@@ -80,7 +80,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
         </div>
 
         <div className="mb-1 flex items-center gap-1.5">
-          <span className="truncate text-[15.5px] font-bold tracking-[-0.02em] text-ink">
+          <span className="min-w-0 truncate text-[15.5px] font-bold tracking-[-0.02em] text-ink">
             {b.name}
           </span>
           {b.verified && (
