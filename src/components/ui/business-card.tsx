@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Business } from "@/lib/types";
 import { Icon } from "./icons";
+import { CategoryIcon } from "./category-icon";
 import { cn } from "@/lib/cn";
 import { mediaUrl } from "@/lib/media";
 import { OwnPostBadge } from "@/components/own-post-badge";
@@ -40,10 +41,10 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
       )}
       {/* fotó / logó — ha van feltöltött R2-kép, azt mutatjuk; különben gradiens placeholder */}
       <div
-        className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[14px] bg-primary-soft"
+        className="relative grid h-[72px] w-[72px] shrink-0 place-items-center overflow-hidden rounded-[14px] bg-gradient-to-br from-primary-soft to-primary/15 text-primary/75"
         style={!logoUrl && b.photo ? { background: b.photo } : undefined}
       >
-        {logoUrl && (
+        {logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={logoUrl}
@@ -54,6 +55,9 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
             width={72}
             height={72}
           />
+        ) : (
+          // Nincs feltöltött logó → kategória-ikon (releváns, nem üres szürke doboz).
+          <CategoryIcon categoryId={b.categoryId} size={32} aria-hidden="true" />
         )}
       </div>
 

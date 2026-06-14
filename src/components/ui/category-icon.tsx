@@ -174,6 +174,7 @@ export const CATEGORY_ICON_PATHS: Record<string, string[]> = {
   edzo: PATHS_EDZO,
   asztalos: PATHS_ASZTALOS,
   cukrasz: PATHS_CUKRASZ,
+  kenyer_pekseg: PATHS_CUKRASZ,
   autoberles: PATHS_FUTAS,
   szallas: PATHS_INGATLAN,
   rendezveny: PATHS_ANIMATOR,
