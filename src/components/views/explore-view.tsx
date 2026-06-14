@@ -459,7 +459,36 @@ export function ExploreView({
                     ? `Nincs vállalkozás ${radiusKm} km-en belül. Növeld a sugarat vagy kapcsold ki a helymeghatározást.`
                     : "Próbálj másik kategóriát vagy keresőszót."}
               </p>
+              {!showFavs && (
+                <Link
+                  href="/szaknevsor/ajanlas"
+                  className="mt-2 inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12.5px] font-bold text-white shadow-card active:scale-95"
+                >
+                  <Icon name="plus" size={13} strokeWidth={2.6} /> Ajánlj egy magyar vállalkozást
+                </Link>
+              )}
             </div>
+          )}
+
+          {/* Hiányzik valaki? — közösségi ajánlás a lista alján */}
+          {filtered.length > 0 && (
+            <Link
+              href="/szaknevsor/ajanlas"
+              className="flex items-center gap-3 rounded-card border border-dashed border-line bg-surface px-4 py-3 text-left transition active:scale-[0.99]"
+            >
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary">
+                <Icon name="plus" size={17} strokeWidth={2.6} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[13px] font-extrabold tracking-[-0.01em] text-ink">
+                  Hiányzik egy magyar vállalkozás?
+                </span>
+                <span className="block text-[11.5px] text-ink-muted">
+                  Ajánld 30 mp alatt — mi ellenőrizzük és felvesszük.
+                </span>
+              </span>
+              <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
+            </Link>
           )}
         </div>
       ) : (

@@ -399,6 +399,40 @@ export async function createOwnerDraftBusiness(input: {
     .run();
 }
 
+export interface SuggestBusinessInput {
+  name: string;
+  categoryId: string;
+  categoryLabel: string | null;
+  address: string | null;
+  phone: string | null;
+  blurb: string | null;
+  lat: number | null;
+  lng: number | null;
+}
+
+/**
+ * Közösségi „Ajánlj egy vállalkozást" — egy felhasználó által ismert, valódi
+ * magyar vállalkozás beküldése. moderation_status=0 (admin jóváhagyásra vár),
+ * claimed=0 (nem megerősített → a tulaj később átveheti). Nincs owner/token/email.
+ */
+export async function createSuggestedBusiness(input: SuggestBusinessInput): Promise<string> {
+  const id = `sug-${crypto.randomUUID().slice(0, 16)}`;
+  await getDB()
+    .prepare(
+      `INSERT INTO businesses
+       (id,name,category_id,category_label,address,phone,blurb,
+        source,languages,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,
+        moderation_status,claimed)
+       VALUES (?,?,?,?,?,?,?,'community-suggestion','["Magyar"]',?,?,50,50,0,0,0,0,0,0)`,
+    )
+    .bind(
+      id, input.name, input.categoryId, input.categoryLabel, input.address,
+      input.phone, input.blurb, input.lat, input.lng,
+    )
+    .run();
+  return id;
+}
+
 // --- Business Analytics ------------------------------------------------------
 
 export async function incrementBusinessAnalytic(
