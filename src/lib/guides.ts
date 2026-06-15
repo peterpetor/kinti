@@ -810,6 +810,186 @@ export const GUIDES: Guide[] = [
       },
     ],
   },
+  {
+    slug: "felmondas-munkabizonyitvany",
+    title: "Felmondás és munkabizonyítvány",
+    summary:
+      "A felmondási idő a ledolgozott évektől függ (próbaidő után jellemzően 1–3 hónap), bizonyos időszakokban a munkáltató nem mondhat fel, és jogod van munkabizonyítványra.",
+    icon: "send",
+    sections: [
+      {
+        heading: "Próbaidő (Probezeit)",
+        body: [
+          "A munkaviszony elején általában van próbaidő (jellemzően 1–3 hónap), amely alatt mindkét fél rövidebb, gyakran 7 napos felmondási idővel léphet ki.",
+        ],
+      },
+      {
+        heading: "Felmondási idő próbaidő után",
+        bullets: [
+          "1. szolgálati évben: jellemzően 1 hónap.",
+          "2.–9. évben: jellemzően 2 hónap.",
+          "10. évtől: jellemzően 3 hónap, mindig a hónap végére.",
+          "A szerződés vagy a kollektív szerződés (GAV) ettől eltérhet — azt nézd elsőként.",
+        ],
+      },
+      {
+        heading: "Védett időszakok (Sperrfrist)",
+        body: [
+          "A munkáltató nem mondhat fel bizonyos védett időszakokban: pl. betegség vagy baleset miatti munkaképtelenség, terhesség és a szülés utáni hetek, illetve katonai/polgári szolgálat alatt.",
+          "Az ilyen időszak alatt közölt munkáltatói felmondás érvénytelen.",
+        ],
+      },
+      {
+        heading: "Munkabizonyítvány (Arbeitszeugnis)",
+        body: [
+          "A munkaviszony végén jogod van munkabizonyítványra: kérhetsz teljes (a teljesítményt és magatartást is minősítő) vagy egyszerű (csak a tényeket rögzítő) bizonyítványt.",
+        ],
+      },
+      {
+        heading: "Felmondás után",
+        body: [
+          "Ha elveszíted az állásod, mielőbb jelentkezz be a regionális munkaközvetítőnél (RAV) — a munkanélküli ellátásról az „Munkanélküli biztosítás (ALV)” útmutató szól.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Munkaviszony megszűnése",
+        url: "https://www.ch.ch/en/work/employees/termination-of-employment/",
+      },
+      {
+        label: "ch.ch – Munkabizonyítvány",
+        url: "https://www.ch.ch/en/work/employees/job-reference/",
+      },
+    ],
+  },
+  {
+    slug: "hulladek-ujrahasznositas",
+    title: "Hulladék és újrahasznosítás",
+    summary:
+      "Sok községben a háztartási szemetet csak hivatalos, díjköteles zsákban szabad kitenni, és a papír, üveg, PET, zöldhulladék szelektíven megy — a rossz kukázásért bírság jár.",
+    icon: "home",
+    sections: [
+      {
+        heading: "Díjköteles szemeteszsák (Gebührensack)",
+        body: [
+          "Számos községben a vegyes háztartási hulladékot csak a hivatalos, községi zsákban (Gebührensack — pl. Züri-Sack, Bebbi-Sagg) szabad kitenni; a zsák ára tartalmazza a szemétdíjat.",
+          "A nem megfelelő zsákban kitett szemetet nem viszik el, és bírság is járhat érte.",
+        ],
+      },
+      {
+        heading: "Szelektív gyűjtés",
+        bullets: [
+          "Papír és karton — kötegelve vagy gyűjtőpontra, a naptár szerinti napokon.",
+          "Üveg szín szerint (zöld/barna/fehér) — gyűjtőkonténerbe.",
+          "PET-palack, alumínium, fém — boltokban/gyűjtőpontokon.",
+          "Zöldhulladék (Grüngut) és komposzt — külön elszállítással, ahol van.",
+        ],
+      },
+      {
+        heading: "Gyűjtési naptár (Abfuhrkalender)",
+        body: [
+          "Minden község kiad egy hulladéknaptárat, amely megmondja, mikor viszik az egyes frakciókat. Sok helyen app vagy online naptár is van.",
+          "A pontos szabályok községenként eltérnek — a lakóhelyed község oldalát nézd.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Hulladék és újrahasznosítás",
+        url: "https://www.ch.ch/en/housing/waste-disposal-and-recycling/",
+      },
+    ],
+  },
+  {
+    slug: "lakasvasarlas-jelzalog",
+    title: "Lakásvásárlás és jelzálog",
+    summary:
+      "Saját lakáshoz jellemzően a vételár legalább 20%-a önerő kell (ennek fele kemény saját pénz), a jelzálog tarthatóságát pedig kalkulált kamattal vizsgálja a bank.",
+    icon: "trending",
+    sections: [
+      {
+        heading: "Önerő (Eigenkapital)",
+        body: [
+          "Általában a vételár legalább 20%-át önerőből kell fedezned. Ennek legalább a fele (a vételár ~10%-a) „kemény” saját pénz legyen, ne a 2. pillérből.",
+          "Saját lakás vásárlásához a 2. és 3. pillér megtakarítása részben felhasználható (előrehozás vagy elzálogosítás).",
+        ],
+      },
+      {
+        heading: "Jelzálog és tarthatóság (Tragbarkeit)",
+        body: [
+          "A vételár fennmaradó részét jelzáloghitel (Hypothek) finanszírozza. A bank a tarthatóságot nem a tényleges, hanem egy magasabb, kalkulált kamatlábbal számolja.",
+          "Ökölszabály: a lakás összes éves költsége (kalkulált kamat + amortizáció + fenntartás) ne haladja meg a bruttó jövedelmed kb. egyharmadát.",
+        ],
+      },
+      {
+        heading: "Amortizáció",
+        body: [
+          "A jelzálog egy részét (a 2. jelzálogot) meghatározott időn belül vissza kell fizetni (amortizáció), hogy az adósság a vételárhoz képest csökkenjen.",
+        ],
+      },
+      {
+        heading: "Segítség",
+        body: [
+          "A számok rád szabásához a Szaknévsorban kereshetsz magyarul beszélő könyvelőt vagy pénzügyi tanácsadót; az előtakarékosságról a „3. pillér (Säule 3a)” útmutató segít.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Lakástulajdon vásárlása",
+        url: "https://www.ch.ch/en/housing/buying-a-home/",
+      },
+    ],
+  },
+  {
+    slug: "vallalkozasinditas-svajcban",
+    title: "Vállalkozásindítás Svájcban",
+    summary:
+      "A legegyszerűbb forma az egyéni cég (Einzelfirma); az AHV-nál önállóként be kell jelentkezned, és 100 000 CHF árbevétel felett cégjegyzék és ÁFA (MWST) is kötelező.",
+    icon: "users",
+    sections: [
+      {
+        heading: "Jogi formák",
+        bullets: [
+          "Egyéni cég (Einzelfirma) — a legegyszerűbb, nincs minimáltőke; a tulajdonos teljes vagyonával felel.",
+          "GmbH (kft) — jellemzően 20 000 CHF törzstőke, korlátozott felelősség.",
+          "AG (rt) — jellemzően 100 000 CHF alaptőke.",
+        ],
+      },
+      {
+        heading: "Önálló státusz és AHV",
+        body: [
+          "Önálló vállalkozóként be kell jelentkezned a kompenzációs pénztárhoz (Ausgleichskasse), amely elismeri (vagy nem) az önálló státuszt és beszedi a társadalombiztosítási járulékot.",
+          "Önállóként nincs munkanélküli-biztosításod (ALV), a nyugdíj-előtakarékosságról magadnak kell gondoskodnod.",
+        ],
+      },
+      {
+        heading: "Cégjegyzék és ÁFA (MWST)",
+        bullets: [
+          "Egyéni cég 100 000 CHF éves árbevétel felett kötelezően a cégjegyzékbe (Handelsregister) kerül; a GmbH/AG mindig bejegyzendő.",
+          "100 000 CHF árbevétel felett ÁFA-regisztráció (MWST) is kötelező.",
+        ],
+      },
+      {
+        heading: "Hasznos lépés a Kintin",
+        body: [
+          "Könyveléshez, adóhoz magyarul beszélő könyvelőt találsz a Szaknévsorban.",
+          "Ha a saját vállalkozásod már működik Svájcban, a Szaknévsorba ingyen felveheted a „Vállalkozásod van?” gombbal.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Vállalkozás alapítása",
+        url: "https://www.ch.ch/en/business/setting-up-a-business/",
+      },
+      {
+        label: "ch.ch – Önálló vállalkozói tevékenység",
+        url: "https://www.ch.ch/en/work/self-employment/",
+      },
+    ],
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
