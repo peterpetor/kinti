@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getJobById, getEmployerById } from "@/lib/repo";
+import { auth } from "@clerk/nextjs/server";
+import { getJobById, getEmployerById, getWorkerProfileByUser } from "@/lib/repo";
 import { Icon } from "@/components/ui";
 import { ApplicationForm } from "@/components/views/application-form";
 import { Metadata } from "next";
@@ -22,6 +23,14 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
   }
 
   const employer = await getEmployerById(job.employerId);
+
+  // Egykattintásos jelentkezés: ha a jelölt be van jelentkezve és van worker-profilja,
+  // előtöltjük az adatait (a CV-kulcsot a szerver olvassa, nem a kliens).
+  const { userId } = await auth();
+  const profile = userId ? await getWorkerProfileByUser(userId) : null;
+  const prefill = profile
+    ? { fullName: profile.fullName, email: profile.email, phone: profile.phone, hasCv: !!profile.cvKey }
+    : null;
 
   return (
     <div className="mx-auto max-w-md space-y-6 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+2rem)]">
@@ -45,7 +54,7 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
       </div>
 
       <section className="rounded-card border border-line bg-surface p-5 shadow-card animate-fade-up animate-delay-100">
-        <ApplicationForm jobId={job.id} jobTitle={job.title} />
+        <ApplicationForm jobId={job.id} jobTitle={job.title} prefill={prefill} />
       </section>
     </div>
   );

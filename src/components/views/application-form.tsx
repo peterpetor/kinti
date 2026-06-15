@@ -9,18 +9,23 @@ import { Icon } from "@/components/ui";
 interface Props {
   jobId: string;
   jobTitle: string;
+  /** Bejelentkezett, worker-profillal rendelkező jelölt adatai az egykattintásos
+   *  jelentkezéshez. A CV-kulcsot NEM küldjük a kliensre — a szerver a saját
+   *  profilból olvassa (lásd /api/jobs/[id]/apply). */
+  prefill?: { fullName: string; email: string; phone: string | null; hasCv: boolean } | null;
 }
 
-export function ApplicationForm({ jobId, jobTitle }: Props) {
+export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [useProfileCv, setUseProfileCv] = useState(!!prefill?.hasCv);
 
   const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
+    fullName: prefill?.fullName ?? "",
+    email: prefill?.email ?? "",
+    phone: prefill?.phone ?? "",
     message: "",
     consent: false,
   });
@@ -43,6 +48,7 @@ export function ApplicationForm({ jobId, jobTitle }: Props) {
           email: form.email,
           phone: form.phone || null,
           message: form.message || null,
+          useProfileCv: useProfileCv && !!prefill?.hasCv,
         }),
       });
       const data = await res.json() as { error?: string };
@@ -92,6 +98,36 @@ export function ApplicationForm({ jobId, jobTitle }: Props) {
       {error && (
         <div className="rounded-[12px] bg-accent/10 px-4 py-3 text-[13px] font-semibold text-accent">
           {error}
+        </div>
+      )}
+
+      {prefill && (
+        <div className="rounded-[12px] border border-primary/25 bg-primary-soft px-3.5 py-3">
+          <p className="flex items-center gap-1.5 text-[12.5px] font-bold text-ink">
+            <Icon name="check" size={14} strokeWidth={2.6} className="text-primary" />
+            A profilodból kitöltöttük az adataidat
+          </p>
+          {prefill.hasCv ? (
+            <label className="mt-2 flex cursor-pointer items-start gap-2">
+              <input
+                type="checkbox"
+                checked={useProfileCv}
+                onChange={(e) => setUseProfileCv(e.target.checked)}
+                className="mt-0.5 h-4 w-4 cursor-pointer rounded border-line text-primary"
+              />
+              <span className="text-[12px] leading-snug text-ink-muted">
+                A mentett önéletrajzomat (CV) csatolom a jelentkezéshez.
+              </span>
+            </label>
+          ) : (
+            <p className="mt-1.5 text-[11.5px] text-ink-muted">
+              Tölts fel CV-t a{" "}
+              <Link href="/allasok/profil" className="font-bold text-primary underline">
+                profilodon
+              </Link>
+              , hogy automatikusan csatolható legyen.
+            </p>
+          )}
         </div>
       )}
 

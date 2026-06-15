@@ -65,6 +65,25 @@ export default async function WorkerProfilePage() {
         </div>
       </div>
 
+      {/* Saját jelentkezések nyomon követése */}
+      <Link
+        href="/allasok/jelentkezeseim"
+        className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
+      >
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary">
+          <Icon name="send" size={17} strokeWidth={2.4} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
+            Jelentkezéseim
+          </span>
+          <span className="block text-[11.5px] text-ink-muted">
+            Kövesd a beküldött pályázataid állapotát.
+          </span>
+        </span>
+        <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-ink-faint" />
+      </Link>
+
       <section className="rounded-card border border-line bg-surface p-5 shadow-card">
         <WorkerProfileForm
           initial={{

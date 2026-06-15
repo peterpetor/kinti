@@ -150,21 +150,31 @@ export interface JobApplication {
   email: string;
   phone: string | null;
   message: string | null;
+  cvKey: string | null;
   status: string;
   submittedAt: string;
 }
 
 interface JobApplicationRow {
   id: string; job_id: string; employer_id: string; full_name: string; email: string;
-  phone: string | null; message: string | null; status: string; submitted_at: string;
+  phone: string | null; message: string | null; cv_key: string | null; status: string; submitted_at: string;
 }
 
 function toApplication(r: JobApplicationRow): JobApplication {
   return {
     id: r.id, jobId: r.job_id, employerId: r.employer_id, fullName: r.full_name,
-    email: r.email, phone: r.phone, message: r.message, status: r.status,
-    submittedAt: r.submitted_at,
+    email: r.email, phone: r.phone, message: r.message, cvKey: r.cv_key ?? null,
+    status: r.status, submittedAt: r.submitted_at,
   };
+}
+
+/** Egy pályázat lekérése id alapján (pl. a CV-letöltés jogosultság-ellenőrzéséhez). */
+export async function getJobApplicationById(id: string): Promise<JobApplication | null> {
+  const row = await getDB()
+    .prepare("SELECT * FROM job_applications WHERE id = ? LIMIT 1")
+    .bind(id)
+    .first<JobApplicationRow>();
+  return row ? toApplication(row) : null;
 }
 
 /** Egy munkáltató összes (vagy adott álláshoz tartozó) jelentkezője, legújabb elöl. */
@@ -188,4 +198,35 @@ export async function getApplicationCounts(employerId: string): Promise<Record<s
   const map: Record<string, number> = {};
   for (const r of results) map[r.job_id] = r.n;
   return map;
+}
+
+/** A jelölt (email alapján) saját jelentkezései — a „Jelentkezéseim" nézethez. */
+export interface CandidateApplication {
+  id: string;
+  jobId: string;
+  jobTitle: string;
+  companyName: string | null;
+  location: string | null;
+  status: string;
+  submittedAt: string;
+}
+
+export async function getApplicationsByEmail(email: string): Promise<CandidateApplication[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT a.id AS id, a.job_id AS job_id, a.status AS status, a.submitted_at AS submitted_at,
+              j.title AS job_title, j.location AS location,
+              e.company_name AS company_name
+         FROM job_applications a
+         JOIN jobs j ON j.id = a.job_id
+         LEFT JOIN employers e ON e.id = a.employer_id
+        WHERE lower(a.email) = lower(?)
+        ORDER BY a.submitted_at DESC`,
+    )
+    .bind(email)
+    .all<{ id: string; job_id: string; status: string; submitted_at: string; job_title: string; location: string | null; company_name: string | null }>();
+  return results.map((r) => ({
+    id: r.id, jobId: r.job_id, jobTitle: r.job_title, companyName: r.company_name,
+    location: r.location, status: r.status, submittedAt: r.submitted_at,
+  }));
 }

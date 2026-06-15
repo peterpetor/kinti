@@ -76,6 +76,17 @@ export default async function JobApplicantsPage({ params }: { params: { id: stri
                   {app.message}
                 </p>
               )}
+
+              {app.cvKey && (
+                <a
+                  href={`/api/employer/application-cv/${app.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-pill border border-primary/30 bg-primary-soft px-3 py-1.5 text-[12.5px] font-bold text-primary active:scale-95"
+                >
+                  <Icon name="document" size={14} strokeWidth={2.2} /> Önéletrajz (CV) letöltése
+                </a>
+              )}
             </article>
           ))}
         </div>

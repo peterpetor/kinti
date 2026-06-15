@@ -3,6 +3,7 @@ import { getAdminUserId } from "@/lib/admin";
 import { getDB } from "@/lib/cloudflare";
 import { safeLogError } from "@/lib/safe-log";
 import { triggerJobAlertRadars } from "@/lib/radars";
+import { notifyMatchingWorkers } from "@/lib/worker-match";
 import { logAdminAction } from "@/lib/audit";
 
 export const runtime = "edge";
@@ -83,6 +84,15 @@ export async function POST(req: Request) {
           cantonCode: jobRow.canton_code,
           category: jobRow.category,
         }).catch(err => safeLogError("triggerJobAlertRadars.background", err));
+
+        // Profil-alapú matching: kereshető jelölteknek (kanton + szakma) email.
+        notifyMatchingWorkers({
+          id: jobRow.id,
+          title: jobRow.title,
+          location: jobRow.location,
+          cantonCode: jobRow.canton_code,
+          category: jobRow.category,
+        }).catch(err => safeLogError("notifyMatchingWorkers.background", err));
       }
     }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getJobById, getEmployerById } from "@/lib/repo";
+import { auth } from "@clerk/nextjs/server";
+import { getJobById, getEmployerById, getWorkerProfileByUser } from "@/lib/repo";
 import { getDB } from "@/lib/cloudflare";
 import { sendJobApplicationNotificationEmail } from "@/lib/email";
 import { safeLogError } from "@/lib/safe-log";
@@ -26,6 +27,22 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const phone = typeof body.phone === "string" ? body.phone.trim() : null;
   const message = typeof body.message === "string" ? body.message.trim() : null;
 
+  // Egykattintásos CV-csatolás: a kulcsot SZERVEROLDALON, a bejelentkezett user
+  // SAJÁT worker-profiljából olvassuk — sosem a kliens küldi. Így nem lehet más
+  // jelölt CV-jét csatolni.
+  let cvKey: string | null = null;
+  if (body.useProfileCv === true) {
+    try {
+      const { userId } = await auth();
+      if (userId) {
+        const profile = await getWorkerProfileByUser(userId);
+        cvKey = profile?.cvKey ?? null;
+      }
+    } catch (e) {
+      safeLogError("jobs/apply useProfileCv", e);
+    }
+  }
+
   if (fullName.length < 2) {
     return NextResponse.json({ error: "A névmező túl rövid." }, { status: 400 });
   }
@@ -49,10 +66,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   try {
     await getDB()
       .prepare(
-        `INSERT INTO job_applications (id, job_id, employer_id, full_name, email, phone, message, status, submitted_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, 'new', ?)`
+        `INSERT INTO job_applications (id, job_id, employer_id, full_name, email, phone, message, cv_key, status, submitted_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)`
       )
-      .bind(id, job.id, job.employerId, fullName, email.toLowerCase(), phone, message, submittedAt)
+      .bind(id, job.id, job.employerId, fullName, email.toLowerCase(), phone, message, cvKey, submittedAt)
       .run();
 
     // Email értesítő a munkáltatónak — best-effort (ne blokkoljuk a 200-as választ)
