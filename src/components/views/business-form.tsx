@@ -36,8 +36,8 @@ function isLicensedCategory(categoryId: string): boolean {
 
 /**
  * Self-service vállalkozás-feladó űrlap (account nélkül). A flow megegyezik a
- * hirdetésével: kitöltés → Turnstile token → submit → megerősítő email →
- * kattintás → AZONNAL fent a Szaknévsorban.
+ * hirdetésével: kitöltés → Turnstile token → submit → azonnal kezelő-link;
+ * a profil admin-jóváhagyás után jelenik meg a Szaknévsorban.
  */
 export interface BusinessFormProps {
   categories: Category[];
@@ -617,8 +617,8 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         <FieldError msg={errors.email} />
         <p className="mt-2 text-[11px] leading-snug text-ink-muted">
           <strong className="text-ink">Email nem szükséges.</strong> Ha üresen hagyod,
-          a vállalkozás azonnal megjelenik, és kapsz egy kezelő-linket (QR-kód is jön)
-          a részletek beállításához. Részletek:{" "}
+          azonnal kapsz egy kezelő-linket (QR-kód is jön) a részletek beállításához; a
+          vállalkozás az admin ellenőrzése után jelenik meg. Részletek:{" "}
           <Link href="/adatvedelem" className="underline">Adatkezelési Tájékoztató</Link>.
         </p>
         </Section>

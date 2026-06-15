@@ -52,11 +52,12 @@ export default function VallalkozoPage() {
             Vállalkozás felvétele
           </Link>
           <p className="px-2 text-center text-[11.5px] leading-relaxed text-ink-faint">
-            Beküldés után <strong className="text-ink">azonnal megjelenik</strong>, és kapsz
-            egy <strong className="text-ink">kezelő-linket</strong> (QR-kód is jön). Azzal
-            bármikor szerkesztheted az adatokat (logó, nyitvatartás, cím, kapcsolat, beszélt
-            nyelvek, leírás), vagy törölheted a vállalkozást — nincs jelszó, nincs fiók,
-            nincs email.
+            Beküldés után <strong className="text-ink">azonnal kapsz egy kezelő-linket</strong>{" "}
+            (QR-kód is jön), amivel bármikor szerkesztheted az adatokat (logó, nyitvatartás,
+            cím, kapcsolat, beszélt nyelvek, leírás), vagy törölheted a vállalkozást — nincs
+            jelszó, nincs fiók, nincs email. A profil az{" "}
+            <strong className="text-ink">admin ellenőrzése után jelenik meg</strong> a
+            Szaknévsorban (általában 24 órán belül).
           </p>
         </div>
 

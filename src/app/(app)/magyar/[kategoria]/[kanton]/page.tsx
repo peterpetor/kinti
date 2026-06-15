@@ -176,7 +176,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
             Itt a vállalkozásod? Add hozzá ingyen
           </span>
           <span className="block text-[11.5px] text-ink-muted">
-            Email-megerősítés után azonnal megjelenik
+            Jóváhagyás után megjelenik a listában
           </span>
         </span>
         <Icon name="chevR" size={16} strokeWidth={2.4} className="text-primary" />

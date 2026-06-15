@@ -13,7 +13,7 @@ export const metadata = { title: "Vállalkozásod hozzáadása" };
  *
  * NEM Clerk-védett: bárki bejelentheti a vállalkozását, a spam-szűrés a
  * Turnstile + email-megerősítés + svájci cím-ellenőrzés rétegen történik.
- * Megerősítés után AZONNAL fent van a Szaknévsorban (nincs kézi jóváhagyás).
+ * Beküldés után azonnal kezelő-linket kap; a profil admin-jóváhagyás után jelenik meg.
  */
 export default async function UjVallalkozasPage() {
   const categories = (await getCategories()).filter((c) => c.id !== "all");
@@ -36,9 +36,10 @@ export default async function UjVallalkozasPage() {
 
       <div className="mb-4 rounded-card border border-line bg-surface-alt px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted">
         <strong className="text-ink">Ingyenes, nincs regisztráció, nincs email.</strong> Töltsd ki és
-        küldd — a vállalkozásod azonnal a Szaknévsorban van. Kapsz egy{" "}
-        <strong className="text-ink">kezelő-linket</strong> (QR-kód is jön): logót töltesz, nyitvatartást
-        állítasz, bármikor szerkesztesz. Csak <strong className="text-ink">svájci</strong> vállalkozások.
+        küldd — azonnal kapsz egy <strong className="text-ink">kezelő-linket</strong> (QR-kód is jön):
+        logót töltesz, nyitvatartást állítasz, bármikor szerkesztesz. A profil az{" "}
+        <strong className="text-ink">admin ellenőrzése után</strong> (általában 24 órán belül) jelenik
+        meg a Szaknévsorban. Csak <strong className="text-ink">svájci</strong> vállalkozások.
       </div>
 
       <BusinessForm categories={categories} turnstileSiteKey={turnstileSiteKey} />
