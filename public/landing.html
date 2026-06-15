@@ -256,6 +256,56 @@
       text-wrap: pretty;
     }
 
+    /* ─── COUNTRY MAP (Európai bővítés) ───────────── */
+    section.geomap { background: var(--surface-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .geomap-panel {
+      position: relative; margin: 44px auto 0; max-width: 540px; aspect-ratio: 4 / 3.5;
+      border-radius: 26px; border: 1px solid var(--border);
+      background:
+        radial-gradient(circle, rgba(29,68,52,.08) 1.3px, transparent 1.5px) -8px -8px / 26px 26px,
+        linear-gradient(180deg, #ffffff, var(--surface-alt));
+      box-shadow: 0 22px 50px -28px rgba(14,42,31,.45);
+      overflow: hidden;
+    }
+    .geo-node {
+      position: absolute; transform: translate(-50%, -50%);
+      display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center;
+    }
+    .geo-pin {
+      display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%;
+      font-size: 24px; line-height: 1; background: #fff; border: 2px solid var(--border);
+      box-shadow: 0 7px 16px -8px rgba(14,42,31,.55);
+    }
+    .geo-node.live .geo-pin {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft), 0 7px 16px -8px rgba(200,57,46,.6);
+      animation: geoPulse 2.2s ease-out infinite;
+    }
+    .geo-name { font-size: 12px; font-weight: 800; color: var(--text); letter-spacing: -.2px; }
+    .geo-status {
+      font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+      padding: 2px 7px; border-radius: 999px;
+    }
+    .geo-node.live .geo-status { color: #fff; background: var(--accent); }
+    .geo-node.soon { opacity: .85; }
+    .geo-node.soon .geo-status { color: var(--text-muted); background: var(--primary-soft); }
+    @keyframes geoPulse {
+      0%   { box-shadow: 0 0 0 0 var(--accent-soft), 0 7px 16px -8px rgba(200,57,46,.6); }
+      70%  { box-shadow: 0 0 0 12px rgba(200,57,46,0), 0 7px 16px -8px rgba(200,57,46,.6); }
+      100% { box-shadow: 0 0 0 0 rgba(200,57,46,0), 0 7px 16px -8px rgba(200,57,46,.6); }
+    }
+    .geo-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 30px; }
+    .geo-chip {
+      display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px;
+      background: #fff; border: 1px solid var(--border); font-size: 13px; font-weight: 700; color: var(--text);
+    }
+    .geo-chip.live { border-color: var(--accent); color: var(--accent); }
+    .geo-chip .s { font-size: 10px; font-weight: 800; color: var(--text-faint); text-transform: uppercase; letter-spacing: .03em; }
+    @media (max-width: 480px) {
+      .geo-pin { width: 40px; height: 40px; font-size: 21px; }
+      .geo-name { font-size: 11px; }
+    }
+
     /* ─── HOW IT WORKS ────────────────────────────── */
     section.how { background: var(--bg); }
     .steps {
@@ -939,7 +989,7 @@
     <div class="hero-grid">
       <div>
         <div class="hero-eyebrow">
-          <span class="dot">Most már Zürichben is</span>
+          <span class="dot">Svájcban élőben · most indulunk Európában</span>
         </div>
         <h1 class="hero-title">Találj <em>magyart</em> a közeledben.</h1>
         <p class="hero-sub">
@@ -1244,9 +1294,9 @@
         <p class="comm-body">Becsült ár-sávok mindkét irányban + szezonális tippek + közvetlen link a foglalási oldalakra.</p>
       </div>
       <div class="comm-card" style="background: #fbf7ee;">
-        <div class="comm-eyebrow">🌾 Helyi</div>
-        <h3 class="comm-title" style="font-size: 18px;">Hofladen-térkép</h3>
-        <p class="comm-body">24h-ban nyitott becsületkasszás farmboltok Svájcban. Friss zöldség, tojás, méz — közvetlenül a termelőtől.</p>
+        <div class="comm-eyebrow">💼 Munka</div>
+        <h3 class="comm-title" style="font-size: 18px;">Magyar állásbörze</h3>
+        <p class="comm-body">Svájci állások magyaroknak — bérsáv-benchmarkkal, egykattintásos jelentkezéssel és CV-profillal.</p>
       </div>
       <div class="comm-card" style="background: #fbf7ee;">
         <div class="comm-eyebrow">🏷️ Akciók</div>
@@ -1517,11 +1567,11 @@
       </div>
       <div class="faq-item">
         <div class="faq-q">Mi a tartalom-moderációs eljárás?</div>
-        <div class="faq-a"><strong>Minden hirdetés, vélemény, vállalkozói profil és esemény admin-jóváhagyásra vár</strong> (típikusan 24 órán belül). Az idő-érzékenyek (spontán találkozó, Hofladen, akciók) automatikus AI-moderáció után azonnal megjelennek. Llama AI szűri a szöveg + képtartalmat.</div>
+        <div class="faq-a"><strong>Minden hirdetés, vélemény, vállalkozói profil és esemény admin-jóváhagyásra vár</strong> (típikusan 24 órán belül). Az idő-érzékeny tartalmak (pl. térképes akciók) automatikus AI-moderáció után azonnal megjelennek. Llama AI szűri a szöveg + képtartalmat.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">Milyen városokban érhető el?</div>
-        <div class="faq-a"><strong>Egész Svájcban</strong> elérhető — minden kanton-szintű szűrővel. Sok adat van Zürich, Bern, Basel, Genf körül; más városokban a közösség építi fel a kínálatot. Magyarországi vagy más kintis bővítés egyelőre nem tervezett.</div>
+        <div class="faq-q">Mely országokban érhető el?</div>
+        <div class="faq-a"><strong>Svájcban élőben</strong> érhető el — kanton-szintű szűrővel; sok adat van Zürich, Bern, Basel, Genf körül, máshol a közösség építi a kínálatot. <strong>Svájc után Ausztria, Németország, Hollandia, Dánia és Svédország következik</strong> — ott, ahol kint élsz.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">Adatvédelem? Geolokáció? Cookie?</div>
@@ -1543,6 +1593,33 @@
         <div class="faq-q">Lesz iOS és Android app is?</div>
         <div class="faq-a">A kinti egy PWA — letölthető iPhone-ra és Androidra, mint egy normál app. Telepítés a Safari/Chrome „Hozzáadás a kezdőképernyőhöz" gombbal. Nincs App Store / Play Store-jelenlét — direkt választás, hogy ne kelljen fizetni a store-díjakat.</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COUNTRY MAP (Európai bővítés) ─────────── -->
+<section class="geomap" id="orszagok">
+  <div class="wrap">
+    <div class="sec-eyebrow">Európai közösség · most indulunk</div>
+    <h2 class="sec-title">Ott, ahol <em>magyarok</em> élnek.</h2>
+    <p class="sec-sub">Svájcban indultunk élőben — és most visszük tovább Európába. Nézd, hol vagyunk már ott, és hova érkezünk hamarosan.</p>
+
+    <div class="geomap-panel" role="img" aria-label="Térkép: Svájc élőben; Ausztria, Németország, Hollandia, Dánia és Svédország hamarosan.">
+      <div class="geo-node soon" style="left:65%; top:13%;"><div class="geo-pin">🇸🇪</div><div class="geo-name">Svédország</div><span class="geo-status">Hamarosan</span></div>
+      <div class="geo-node soon" style="left:52%; top:31%;"><div class="geo-pin">🇩🇰</div><div class="geo-name">Dánia</div><span class="geo-status">Hamarosan</span></div>
+      <div class="geo-node soon" style="left:28%; top:46%;"><div class="geo-pin">🇳🇱</div><div class="geo-name">Hollandia</div><span class="geo-status">Hamarosan</span></div>
+      <div class="geo-node soon" style="left:49%; top:52%;"><div class="geo-pin">🇩🇪</div><div class="geo-name">Németország</div><span class="geo-status">Hamarosan</span></div>
+      <div class="geo-node soon" style="left:62%; top:64%;"><div class="geo-pin">🇦🇹</div><div class="geo-name">Ausztria</div><span class="geo-status">Hamarosan</span></div>
+      <div class="geo-node live" style="left:43%; top:71%;"><div class="geo-pin">🇨🇭</div><div class="geo-name">Svájc</div><span class="geo-status">Élő</span></div>
+    </div>
+
+    <div class="geo-legend">
+      <span class="geo-chip live">🇨🇭 Svájc · <span class="s">Élő</span></span>
+      <span class="geo-chip">🇦🇹 Ausztria</span>
+      <span class="geo-chip">🇩🇪 Németország</span>
+      <span class="geo-chip">🇳🇱 Hollandia</span>
+      <span class="geo-chip">🇩🇰 Dánia</span>
+      <span class="geo-chip">🇸🇪 Svédország</span>
     </div>
   </div>
 </section>
@@ -1581,7 +1658,7 @@
           </svg>
           kinti
         </div>
-        <p>GPS-alapú magyar szakember kereső a külföldön élő magyaroknak. Indulás Zürichben — utána ahol csak magyarok vannak.</p>
+        <p>GPS-alapú magyar szakember- és állás-kereső a külföldön élő magyaroknak. Svájcban indultunk — és visszük tovább Európába, ott, ahol kint élsz.</p>
       </div>
       <div class="foot-col">
         <h4>Termék</h4>
@@ -1604,18 +1681,18 @@
       <div class="foot-col">
         <h4>Cég</h4>
         <ul>
-          <li><a href="#">Rólunk</a></li>
-          <li><a href="#">Adatvédelem</a></li>
-          <li><a href="#">Felhasználási feltételek</a></li>
-          <li><a href="#">Kapcsolat</a></li>
+          <li><a href="/impresszum">Impresszum</a></li>
+          <li><a href="/adatvedelem">Adatvédelem</a></li>
+          <li><a href="/aszf">Felhasználási feltételek</a></li>
+          <li><a href="mailto:info@kinti.app">Kapcsolat</a></li>
         </ul>
       </div>
     </div>
     <div class="foot-bottom">
-      <div>© 2026 kinti.app — Made with ♥ for kintiek</div>
+      <div>© 2026 kinti.app · Üzemelteti: <strong>Feedback Jobs S.R.L.</strong> — Made with ♥ for kintiek</div>
       <div style="display: flex; gap: 18px;">
         <a href="#"><span class="__cf_email__" data-cfemail="5139343d3d3e113a383f25387f302121">[email&#160;protected]</span></a>
-        <a href="#">Zürich, CH</a>
+        <a href="/impresszum">Impresszum</a>
       </div>
     </div>
   </div>
