@@ -27,7 +27,14 @@ export function CountrySwitcher() {
         <span className="text-[24px] leading-none" aria-hidden="true">{current.flag}</span>
         <span className="min-w-0 flex-1">
           <span className="block text-[11px] font-bold uppercase tracking-wide text-ink-muted">Ország</span>
-          <span className="block text-[14px] font-extrabold text-ink">{current.name}</span>
+          <span className="flex items-center gap-1.5">
+            <span className="text-[14px] font-extrabold text-ink">{current.name}</span>
+            {!current.enabled && (
+              <span className="rounded-full bg-primary-soft px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-ink-muted">
+                Hamarosan
+              </span>
+            )}
+          </span>
         </span>
         <Icon
           name="chevD"

@@ -1,5 +1,6 @@
 import { TabBar } from "@/components/ui";
 import { CountryGate } from "@/components/country-gate";
+import { CountryBanner } from "@/components/country-banner";
 
 /**
  * Az alkalmazás-nézetek közös kerete: mobil-first, középre zárt max-w-md
@@ -16,6 +17,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <TabBar />
+      {/* Őszinte „Hamarosan" sáv, ha nem-CH ország van kiválasztva. */}
+      <CountryBanner />
       {/* Belépés előtti ország-választó (csak ha még nincs választott ország). */}
       <CountryGate />
     </>
