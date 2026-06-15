@@ -197,10 +197,10 @@ export function ReviewForm({
         </span>
         <div className="min-w-0 flex-1 text-left">
           <div className="text-[14px] font-extrabold tracking-[-0.01em] text-ink">
-            Írd meg a véleményed
+            Értékeld csillaggal
           </div>
           <div className="text-[11.5px] text-ink-muted">
-            Regisztráció nélkül — csak email-megerősítés
+            Regisztráció nélkül, pár másodperc alatt
           </div>
         </div>
         <Icon name="chevR" size={14} className="text-ink-muted" />
@@ -210,8 +210,9 @@ export function ReviewForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3" noValidate>
-      {/* Csillag-választó */}
-      <Section title={`Értékelés: ${businessName}`} required>
+      {/* Csillag-választó — ez a kötelező rész (a „kötelező" jelzés a csillagokra
+          vonatkozik, NEM az emailre). A vélemény csak csillagból áll. */}
+      <Section title="Hány csillagot adsz?" required>
         <RatingPicker
           value={form.rating}
           onChange={(v) => setField("rating", v)}
@@ -305,16 +306,16 @@ export function ReviewForm({
         <button
           type="submit"
           disabled={
-            phase === "submitting" || !form.acceptTerms || !form.ageConfirmed
+            phase === "submitting" || form.rating < 1 || !form.acceptTerms || !form.ageConfirmed
           }
           className={cn(
             "flex h-12 flex-1 items-center justify-center gap-1.5 rounded-pill bg-primary text-[14px] font-extrabold tracking-[-0.01em] text-white shadow-card-hover transition active:scale-[0.99]",
-            (phase === "submitting" || !form.acceptTerms || !form.ageConfirmed) &&
+            (phase === "submitting" || form.rating < 1 || !form.acceptTerms || !form.ageConfirmed) &&
               "cursor-not-allowed opacity-50",
           )}
         >
-          {phase === "submitting" ? "Küldés…" : "Vélemény beküldése"}
-          {phase !== "submitting" && (
+          {phase === "submitting" ? "Küldés…" : form.rating < 1 ? "Előbb adj csillagot" : "Értékelés beküldése"}
+          {phase !== "submitting" && form.rating >= 1 && (
             <Icon name="arrowRight" size={15} strokeWidth={2.4} />
           )}
         </button>
