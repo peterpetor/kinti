@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/admin";
-import { getDB } from "@/lib/cloudflare";
+import { getDB, getCloudflareCtx } from "@/lib/cloudflare";
 import { safeLogError } from "@/lib/safe-log";
 import { triggerJobAlertRadars } from "@/lib/radars";
 import { notifyMatchingWorkers } from "@/lib/worker-match";
@@ -74,25 +74,38 @@ export async function POST(req: Request) {
     if (table === "jobs" && statusValue === 1) {
       const jobRow = await getDB().prepare("SELECT id, title, description, location, canton_code, category FROM jobs WHERE id = ?").bind(id).first<{id:string, title:string, description:string, location:string, canton_code:string|null, category:string|null}>();
       if (jobRow) {
-        // Aszinkron háttérfolyamat (Cloudflare Pages/Workers waitUntil)
-        // Edge runtime-on a Promise megvárása nélkül megszakadhat, de a Next.js Edge megvárja az I/O-t, ha simán elsütjük, bár biztonságosabb await-elni vagy context.waitUntil-t használni. Mivel a route Next.js Route Handler, await-eljük, de nem szakítjuk meg a választ ha hibázik.
-        triggerJobAlertRadars({
-          id: jobRow.id,
-          title: jobRow.title,
-          description: jobRow.description,
-          location: jobRow.location,
-          cantonCode: jobRow.canton_code,
-          category: jobRow.category,
-        }).catch(err => safeLogError("triggerJobAlertRadars.background", err));
+        // Háttér-értesítések a válasz UTÁN: ctx.waitUntil tartja életben a Workert,
+        // különben az edge runtime megszakíthatja a fire-and-forget promise-okat
+        // (és az e-mailek/push némán elmaradnának). Ha nincs ctx (build/teszt),
+        // sima fire-and-forget a fallback.
+        const ctx = getCloudflareCtx();
+        const background = (p: Promise<unknown>) => {
+          if (ctx) ctx.waitUntil(p);
+          else void p;
+        };
+
+        // Explicit alert-radarok (kulcsszavas feliratkozók).
+        background(
+          triggerJobAlertRadars({
+            id: jobRow.id,
+            title: jobRow.title,
+            description: jobRow.description,
+            location: jobRow.location,
+            cantonCode: jobRow.canton_code,
+            category: jobRow.category,
+          }).catch(err => safeLogError("triggerJobAlertRadars.background", err)),
+        );
 
         // Profil-alapú matching: kereshető jelölteknek (kanton + szakma) email.
-        notifyMatchingWorkers({
-          id: jobRow.id,
-          title: jobRow.title,
-          location: jobRow.location,
-          cantonCode: jobRow.canton_code,
-          category: jobRow.category,
-        }).catch(err => safeLogError("notifyMatchingWorkers.background", err));
+        background(
+          notifyMatchingWorkers({
+            id: jobRow.id,
+            title: jobRow.title,
+            location: jobRow.location,
+            cantonCode: jobRow.canton_code,
+            category: jobRow.category,
+          }).catch(err => safeLogError("notifyMatchingWorkers.background", err)),
+        );
       }
     }
 
