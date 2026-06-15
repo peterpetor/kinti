@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
 import { getBusinessById, getReviewsByBusiness, recordBusinessSearchTerm } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
 import { cantonFromAddress, cantonToSlug } from "@/lib/cantons";
@@ -232,7 +233,11 @@ export default async function BusinessPage({
       />
       {/* hero fotó + lebegő vezérlők — R2-kép, ha van; különben PRO accent szín, vagy gradiens placeholder */}
       <div
-        className="relative h-[280px]"
+        className={cn(
+          "relative h-[280px]",
+          !heroUrl && !b.accentColor && !b.photo &&
+            "bg-gradient-to-br from-primary/15 via-surface-alt to-accent/10",
+        )}
         style={
           heroUrl
             ? undefined
@@ -252,6 +257,12 @@ export default async function BusinessPage({
             fetchPriority="high"
             decoding="async"
           />
+        )}
+        {/* Üres borító → kategória-vízjel (nem fake fotó), hogy ne legyen csúnya az üres box */}
+        {!heroUrl && !b.accentColor && !b.photo && (
+          <div className="pointer-events-none absolute inset-0 grid place-items-center">
+            <CategoryIcon categoryId={b.categoryId} size={96} className="text-primary/20" />
+          </div>
         )}
         <div className="absolute inset-x-0 top-0 flex gap-2 bg-gradient-to-b from-black/30 to-transparent px-3.5 pb-3.5 pt-[calc(env(safe-area-inset-top)+0.75rem)]">
           <ProfileHeaderActions businessId={b.id} businessName={b.name} />
