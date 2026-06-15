@@ -278,21 +278,6 @@ export default function AdatvedelemPage() {
         <li><strong>Nyilvánosság:</strong> az akció pontosan a bejelentő GPS-pozícióján jelenik meg a nyilvános térképen</li>
       </ul>
 
-      <h3>2.14 Hofladen-térkép (farmárusi értékesítőhelyek bejelentése)</h3>
-      <p>
-        A Hofladen bejelentésekor az alábbi adatok kerülnek rögzítésre:
-      </p>
-      <ul>
-        <li><strong>GPS koordináta</strong> — az értékesítőhely helye a térképen</li>
-        <li><strong>Név, kanton, kategóriák, fizetési módok, nyitvatartás</strong></li>
-        <li><strong>Opcionális megjegyzés</strong></li>
-      </ul>
-      <ul>
-        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás</li>
-        <li><strong>Tárolási idő:</strong> határozatlan (az adat közérdekű közösségi információ — a bejegyzés törlését az info@kinti.app címen kérheted)</li>
-        <li><strong>Nyilvánosság:</strong> a hely nyilvános térképen megjelenik</li>
-      </ul>
-
       <h2>3. Cookie-k</h2>
       <p>
         Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk: a Clerk session-cookie

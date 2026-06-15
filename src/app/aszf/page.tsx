@@ -113,7 +113,6 @@ export default function AszfPage() {
       </p>
       <ul>
         <li>spontán találkozók (24 órás élettartam);</li>
-        <li>Hofladen-térkép helyei;</li>
         <li>akciók a térképen (lejár éjfélkor).</li>
       </ul>
       <p>
@@ -481,16 +480,7 @@ export default function AszfPage() {
         eljárás félként.
       </p>
 
-      <h3>14.2 Hofladen-térkép (farmárusi értékesítőhelyek)</h3>
-      <p>
-        A Hofladen-térképen szereplő nyitvatartások, terméklisták és fizetési módok
-        a közösség által beküldött adatok, amelyeket az üzemeltető <strong>nem ellenőriz
-        és nem frissít</strong>. Az adatok pontatlanok, elavultak lehetnek.
-        A Hofladen-lista alapján meghozott vásárlói döntésekért az üzemeltető
-        felelőssége kizárt; fogyasztóvédelmi vitában az üzemeltető nem fél.
-      </p>
-
-      <h3>14.3 Kinti Radar (Push Értesítések)</h3>
+      <h3>14.2 Kinti Radar (Push Értesítések)</h3>
       <p>
         A "Kinti Radar" funkció segítségével a felhasználók (böngészőjük beállításaitól függően) Push értesítéseket 
         kérhetnek bizonyos eseményekről (pl. árfolyamváltozás). Az üzemeltető <strong>kifejezetten kizárja a felelősségét</strong>
@@ -517,7 +507,7 @@ export default function AszfPage() {
       </p>
       <h3>16.1 Adatbázis-előállítói jog (Sui Generis) és Scraping tilalma</h3>
       <p>
-        A platformon felhalmozott és strukturált tartalmak (Szaknévsor cégadatbázisa, Hofladen térkép, Bérkalkulátor statisztikái)
+        A platformon felhalmozott és strukturált tartalmak (Szaknévsor cégadatbázisa, Bérkalkulátor statisztikái)
         rendszerezése és karbantartása jelentős anyagi és szellemi ráfordítást igényelt. Ezek egésze az üzemeltető 
         <strong>adatbázis-előállítói jogának (sui generis védelmének)</strong> hatálya alá tartozik (az EU Adatbázis Irányelve, 96/9/EK, és a vonatkozó nemzeti jogszabályok alapján).
       </p>
