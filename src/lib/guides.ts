@@ -507,6 +507,121 @@ export const GUIDES: Guide[] = [
       },
     ],
   },
+  {
+    slug: "lakasberles",
+    title: "Lakásbérlés Svájcban",
+    summary:
+      "A lakáspiac feszes: erős jelentkezési dosszié, legfeljebb 3 havi kaució külön letéti számlán, és kötött felmondási idők jellemzik.",
+    icon: "home",
+    sections: [
+      {
+        heading: "Hol keress lakást",
+        body: [
+          "A legtöbb kiadó lakás online hirdetőkön jelenik meg (Homegate, ImmoScout24, Comparis, Flatfox), de érdemes a helyi újságokat és a faliújságokat is figyelni.",
+          "A nagyvárosokban (Zürich, Genf, Bázel, Zug) erős a verseny — egy-egy megtekintésre sokan jönnek, ezért a gyors, hiánytalan jelentkezés sokat számít.",
+        ],
+      },
+      {
+        heading: "A jelentkezési dosszié (Bewerbungsdossier)",
+        bullets: [
+          "Kitöltött jelentkezési lap (Anmeldeformular)",
+          "Útlevél / személyi és tartózkodási engedély másolata",
+          "Friss fizetésigazolás(ok) vagy munkaszerződés",
+          "Behajtási kivonat (Betreibungsauszug) — a lakóhelyed Betreibungsamt-jától, max. pár franc",
+          "Néha referencia az előző bérbeadótól",
+        ],
+      },
+      {
+        heading: "Kaució (Mietkaution)",
+        body: [
+          "A bérbeadó legfeljebb 3 havi (nettó) bérnek megfelelő letétet kérhet.",
+          "A pénzt törvény szerint a bérlő nevére szóló, elkülönített banki letéti számlán kell tartani — nem a bérbeadó saját számláján. A kamat téged illet.",
+          "Kiköltözéskor a letét csak a kifogástalan átadás-átvétel (és az esetleges károk rendezése) után szabadul fel.",
+        ],
+      },
+      {
+        heading: "Bérleti szerződés és felmondás",
+        body: [
+          "A felmondási időt és a hivatalos felmondási időpontokat (Kündigungstermine) a szerződés és a kantonális szokások határozzák meg — gyakran 3 hónap.",
+          "Ha hamarabb költöznél, általában akkor szabadulsz a szerződéstől, ha megfelelő, fizetőképes utódbérlőt (Nachmieter) állítasz.",
+          "A bérbeadó felmondását hivatalos űrlapon kell közölnie; egyes felmondások megtámadhatók a bérleti egyeztető hatóságnál (Schlichtungsbehörde).",
+        ],
+      },
+      {
+        heading: "Átadás-átvétel és mellékköltségek",
+        body: [
+          "Beköltözéskor és kiköltözéskor is készül átadási jegyzőkönyv (Übergabeprotokoll) — minden meglévő hibát írj bele, különben később rajtad maradhat.",
+          "A bérleti díj mellett mellékköltségek (Nebenkosten: fűtés, melegvíz, közös területek) is felmerülnek, gyakran átalány + éves elszámolás formájában.",
+        ],
+      },
+      {
+        heading: "Hasznos lépés a Kintin",
+        body: [
+          "Költözéshez vagy kisebb felújításhoz a Szaknévsorban kereshetsz magyarul beszélő szakembert (költöztető, festő, villanyszerelő) a saját kantonodban.",
+          "Bejelentkezésről és az engedélyekről a „Bejelentkezés és letelepedés” útmutató segít.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Lakásbérlés Svájcban",
+        url: "https://www.ch.ch/en/housing/renting-a-home/",
+      },
+      {
+        label: "ch.ch – Letét (kaució) bérléskor",
+        url: "https://www.ch.ch/en/housing/renting-a-home/rental-deposit/",
+      },
+    ],
+  },
+  {
+    slug: "mobil-internet-elofizetes",
+    title: "Mobil- és internet-előfizetés",
+    summary:
+      "A svájci telekom drága, de a kötöttség oldódott: gyakran havi felmondású csomagok és olcsóbb másodmárkák között válogathatsz — érdemes összehasonlítani.",
+    icon: "phone",
+    sections: [
+      {
+        heading: "A három fő hálózat és a másodmárkák",
+        body: [
+          "Három nagy hálózat van: Swisscom, Sunrise és Salt. A tényleges lefedettség mindháromnál jó, a különbség inkább az árban és az ügyfélszolgálatban van.",
+          "Sokszor a nagyok olcsóbb másodmárkái (pl. Wingo, yallo, Lebara, Coop Mobile, Aldi Suisse Mobile) ugyanazon a hálózaton adnak lényegesen olcsóbb csomagot.",
+        ],
+      },
+      {
+        heading: "Előfizetés vs. feltöltőkártya (Prepaid)",
+        bullets: [
+          "Prepaid: nincs hűségidő, kötöttség nélkül kipróbálhatod a lefedettséget — jó az első hónapokra.",
+          "Abo (előfizetés): kedvezőbb havidíj, de figyelj a minimális futamidőre és a felmondási időre.",
+          "Sok új csomag már havi felmondású — nem ragadsz bele 24 hónapba.",
+        ],
+      },
+      {
+        heading: "Mire figyelj szerződéskötéskor",
+        bullets: [
+          "Roaming/EU-adat: utazol-e sokat — egyes csomagokban benne van, másokban drága.",
+          "Készülék részletre: a „féláras telefon” gyakran hosszú hűségidővel jár.",
+          "Otthoni internet: a TV + internet + mobil csomag (bundle) néha olcsóbb, de nehezebb külön felmondani.",
+        ],
+      },
+      {
+        heading: "Spórolj a Kinti szolgáltató-váltó eszközével",
+        body: [
+          "A Kinti beépített szolgáltató-váltó varázslója végigvezet, hogyan válts olcsóbb mobil- vagy internetcsomagra, és mire figyelj a felmondásnál.",
+          "Mindig hasonlítsd össze a tényleges havidíjat (Comparis és a szolgáltatók saját oldalai) a hűségidővel együtt — a legolcsóbb listaár nem mindig a legolcsóbb összköltség.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Telefon és internet",
+        url: "https://www.ch.ch/en/communications-and-media/telephone-and-internet/",
+      },
+      {
+        label: "comparis.ch – Mobilcsomagok összehasonlítása",
+        url: "https://en.comparis.ch/telecom/mobile/uebersicht",
+      },
+    ],
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
