@@ -6,34 +6,40 @@ export const dynamic = "force-static";
 export const metadata = { title: "Impresszum" };
 
 const OPERATOR = {
-  name: "Petor Péter",
-  role: "közösségi kezdeményezés",
-  address: "2660 Balassagyarmat, Madách liget 13/2. fsz. 2., Magyarország",
-  addressNote: "Levelezési cím — jogi kézbesítés is itt érvényes.",
+  name: "Feedback Jobs S.R.L.",
+  role: "korlátolt felelősségű társaság (S.R.L., Románia)",
+  address: "Cart. Bekecs, Bloc F, Ap. 15, 545500 Szováta (Sovata), Maros megye, Románia",
+  addressNote: "Bejegyzett székhely — jogi kézbesítés is itt érvényes.",
   email: "info@kinti.app",
   contactEmail: "info@kinti.app",
   abuseEmail: "abuse@kinti.app",
   hostingProvider: "Cloudflare, Inc. — 101 Townsend St, San Francisco, CA 94107, USA",
   authDomain: "kinti.app",
+  cui: "53137115",
+  regNumber: "J2025098494007",
+  phone: "+40 752 607 245",
 };
 
 export default function ImpresszumPage() {
   return (
-    <LegalPage title="Impresszum" updatedAt="2026-05-30">
+    <LegalPage title="Impresszum" updatedAt="2026-06-15">
       <p>
-        Az elektronikus kereskedelmi szolgáltatásokról szóló <strong>2001. évi CVIII. törvény</strong>{" "}
-        4. §-a alapján a kinti.app szolgáltatás üzemeltetőjének adatai:
+        Az elektronikus kereskedelemről szóló <strong>2000/31/EK irányelv</strong> és a
+        vonatkozó nemzeti jogszabályok alapján a kinti.app szolgáltatás üzemeltetőjének adatai:
       </p>
 
       <h2>Üzemeltető</h2>
       <ul>
-        <li>Név: <strong>{OPERATOR.name}</strong></li>
-        <li>Jogállás: {OPERATOR.role} (magánszemély, nem gazdasági társaság)</li>
+        <li>Cégnév: <strong>{OPERATOR.name}</strong></li>
+        <li>Jogállás: {OPERATOR.role}</li>
+        <li>Cégjegyzékszám: <strong>{OPERATOR.regNumber}</strong></li>
+        <li>Adószám (CUI): <strong>{OPERATOR.cui}</strong></li>
         <li>
-          Postai cím: {OPERATOR.address}
+          Székhely: {OPERATOR.address}
           <br />
           <span className="text-ink-muted">{OPERATOR.addressNote}</span>
         </li>
+        <li>Telefon: <a href={`tel:${OPERATOR.phone.replace(/\s/g, "")}`}>{OPERATOR.phone}</a></li>
         <li>
           Kapcsolat e-mail: <a href={`mailto:${OPERATOR.contactEmail}`}>{OPERATOR.contactEmail}</a>
         </li>
@@ -53,9 +59,10 @@ export default function ImpresszumPage() {
       <p>
         A kinti.app egy <strong>közösségi platform</strong>, amely a Svájcban és Európában élő magyar
         közösség és a velük kapcsolatban álló vállalkozások / szakemberek találkozását segíti.
-        A platform <strong>non-profit, ingyenes, közösségi kezdeményezés</strong> — sem a felhasználóktól,
-        sem a regisztrált vállalkozóktól nem szed díjat. A Szolgáltatás <strong>közvetítő
-        platformként</strong> működik (DSA 2022/2065 értelmében „közvetítő szolgáltató").
+        Az <strong>alapszolgáltatások</strong> (kereső, események, kalkulátorok) ingyenesen
+        használhatók; egyes <strong>prémium funkciók opcionális PRO-előfizetés</strong> keretében
+        érhetők el. A Szolgáltatás <strong>közvetítő platformként</strong> működik (DSA 2022/2065
+        értelmében „közvetítő szolgáltató").
       </p>
 
       <h2>Felelősség</h2>
@@ -74,7 +81,7 @@ export default function ImpresszumPage() {
 
       <h2>Szerzői jog</h2>
       <p>
-        © 2024–2026 Petor Péter / kinti.app. Minden jog fenntartva.
+        © 2024–2026 Feedback Jobs S.R.L. / kinti.app. Minden jog fenntartva.
         A platform arculata, logója, kódbázisa és szerkesztett tartalmai szerzői jogi
         védelem alatt állnak. A felhasználók által feltöltött tartalmak (hirdetések, fotók,
         vélemények) az adott felhasználó szellemi tulajdonát képezik; a platform csak a

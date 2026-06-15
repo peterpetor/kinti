@@ -7,7 +7,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-05-30">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-06-15">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -17,9 +17,11 @@ export default function AdatvedelemPage() {
 
       <h2>1. Adatkezelő</h2>
       <p>
-        Adatkezelő: <strong>{"Petor Péter"}</strong> (közösségi kezdeményezés).<br />
-        Postai cím: 2660 Balassagyarmat, Madách liget 13/2. fsz. 2., Magyarország.<br />
-        Elérhetőség: <a href="mailto:info@kinti.app">info@kinti.app</a>
+        Adatkezelő: <strong>Feedback Jobs S.R.L.</strong><br />
+        Székhely: Cart. Bekecs, Bloc F, Ap. 15, 545500 Szováta (Sovata), Maros megye, Románia.<br />
+        Cégjegyzékszám: J2025098494007 · Adószám (CUI): 53137115.<br />
+        Elérhetőség: <a href="mailto:info@kinti.app">info@kinti.app</a> · Telefon:{" "}
+        <a href="tel:+40752607245">+40 752 607 245</a>
       </p>
       <p>
         Adatvédelmi tisztviselő kijelölésére jogszabály nem kötelez, mivel az adatkezelés
@@ -381,22 +383,26 @@ export default function AdatvedelemPage() {
 
       <h2>6. Panasz</h2>
       <p>
-        Ha úgy érzed, hogy az adatkezelésünk sérti a jogaidat, panasszal fordulhatsz a Nemzeti
-        Adatvédelmi és Információszabadság Hatósághoz (NAIH):
+        Ha úgy érzed, hogy az adatkezelésünk sérti a jogaidat, panasszal fordulhatsz az
+        adatkezelő székhelye szerinti felügyeleti hatósághoz, a román Nemzeti Adatvédelmi
+        Felügyelő Hatósághoz (ANSPDCP):
       </p>
       <ul>
-        <li>Cím: 1055 Budapest, Falk Miksa utca 9-11.</li>
-        <li>Posta: 1363 Budapest, Pf. 9.</li>
-        <li>Email: <a href="mailto:ugyfelszolgalat@naih.hu">ugyfelszolgalat@naih.hu</a></li>
-        <li>Web: <a href="https://naih.hu" target="_blank" rel="noreferrer">naih.hu</a></li>
+        <li>Cím: B-dul G-ral. Gheorghe Magheru nr. 28-30, Sector 1, 010336 Bukarest, Románia</li>
+        <li>Email: <a href="mailto:anspdcp@dataprotection.ro">anspdcp@dataprotection.ro</a></li>
+        <li>Web: <a href="https://www.dataprotection.ro" target="_blank" rel="noreferrer">dataprotection.ro</a></li>
       </ul>
+      <p>
+        Uniós tagállamban élő felhasználóként a <strong>szokásos tartózkodási helyed</strong>{" "}
+        szerinti adatvédelmi hatósághoz is fordulhatsz.
+      </p>
 
       <h2>7. Adatvédelmi Incidensek Kezelése (Data Breach)</h2>
       <p>
         Bár rendszerünk account-mentes és minimalizált adatkezelést folytat (az IP-címeket hash-eljük, a tartalmakat auto-töröljük), 
         egy esetleges adatvédelmi incidens (pl. hacker támadás, adatbázis kompromittálódása) esetén a GDPR 33. cikkének 
         megfelelően járunk el: az incidenst indokolatlan késedelem nélkül, de legkésőbb a tudomásszerzéstől számított 
-        <strong>72 órán belül bejelentjük a NAIH-nak</strong>. Amennyiben az incidens magas kockázattal jár a 
+        <strong>72 órán belül bejelentjük az illetékes felügyeleti hatóságnak (ANSPDCP)</strong>. Amennyiben az incidens magas kockázattal jár a
         felhasználók jogaira nézve, az érintetteket nyilvános felhívás útján és (ha rendelkezésre áll) e-mailben is tájékoztatjuk.
       </p>
 

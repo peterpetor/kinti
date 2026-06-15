@@ -7,7 +7,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-05-30">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-06-15">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -17,8 +17,11 @@ export default function AszfPage() {
       <p>
         A kinti.app egy közösségi platform, amely a Svájcban és Európában élő magyarokat
         és a velük kapcsolatban álló vállalkozásokat / szakembereket köti össze. A Szolgáltatás
-        jelenleg <strong>ingyenes</strong>; sem regisztrációs, sem hirdetésfeladási díjat nem
-        számolunk fel.
+        üzemeltetője a <strong>Feedback Jobs S.R.L.</strong> Az <strong>alapszolgáltatások</strong>{" "}
+        (kereső, regisztráció, hirdetésfeladás, események, kalkulátorok) <strong>ingyenesek</strong>;
+        egyes <strong>prémium funkciók opcionális, díjköteles PRO-előfizetés</strong> keretében
+        érhetők el, amelyet a Lemon Squeezy fizetési szolgáltatón keresztül lehet megrendelni és
+        bármikor lemondani.
       </p>
       <p>
         A Szolgáltatás <strong>közvetítő platform</strong>: nem vagyunk fél a felhasználók és
@@ -126,7 +129,7 @@ export default function AszfPage() {
         Az üzemeltető fenntartja a jogot, hogy indoklás és előzetes értesítés nélkül, azonnali hatállyal 
         eltávolítson bármilyen hirdetést, eseményt vagy vállalkozói profilt, illetve IP-cím vagy egyéb 
         azonosító alapján véglegesen kitiltson bármely felhasználót a platformról, amennyiben az a 
-        jelen ÁSZF-et, a közösségi irányelveket, vagy a svájci/magyar jogszabályokat megsérti, vagy a 
+        jelen ÁSZF-et, a közösségi irányelveket, vagy a svájci/uniós jogszabályokat megsérti, vagy a 
         platform biztonságát és jó hírnevét veszélyezteti.
       </p>
 
@@ -516,7 +519,7 @@ export default function AszfPage() {
       <p>
         A platformon felhalmozott és strukturált tartalmak (Szaknévsor cégadatbázisa, Hofladen térkép, Bérkalkulátor statisztikái)
         rendszerezése és karbantartása jelentős anyagi és szellemi ráfordítást igényelt. Ezek egésze az üzemeltető 
-        <strong>adatbázis-előállítói jogának (sui generis védelmének)</strong> hatálya alá tartozik (1999. évi LXXVI. tv. 84/A. § és az EU Adatbázis Irányelve).
+        <strong>adatbázis-előállítói jogának (sui generis védelmének)</strong> hatálya alá tartozik (az EU Adatbázis Irányelve, 96/9/EK, és a vonatkozó nemzeti jogszabályok alapján).
       </p>
       <p>
         Kifejezetten <strong>tilos a platform tartalmának automatizált módszerekkel (pl. web scraping, botok, crawlerek) 
@@ -565,8 +568,9 @@ export default function AszfPage() {
 
       <h2>19. Jogválasztás és bíróság</h2>
       <p>
-        A jelen feltételekre a <strong>magyar jog</strong> az irányadó. Esetleges jogvitákban
-        a magyar bíróságok rendelkeznek hatáskörrel és illetékességgel.
+        A jelen feltételekre — az üzemeltető (Feedback Jobs S.R.L.) székhelyére tekintettel —
+        a <strong>román jog</strong> az irányadó. Esetleges jogvitákban a román bíróságok
+        rendelkeznek hatáskörrel és illetékességgel.
       </p>
       <p>
         <strong>Fogyasztóvédelmi kivétel:</strong> Amennyiben a felhasználó fogyasztónak minősül (Svájcban 
