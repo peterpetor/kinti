@@ -39,11 +39,15 @@ export default function AdatvedelemPage() {
       </p>
 
 
-      <h3>2.1 Adminisztrátor-belépés (Clerk)</h3>
+      <h3>2.1 Belépés / fiók (Clerk)</h3>
       <p>
-        <strong>A vállalkozói flow regisztráció-mentes</strong> — a Clerk Inc. (USA) szolgáltatást
-        kizárólag az oldal adminisztrátorának belépéséhez használjuk (egyetlen admin email).
-        A látogatók / vállalkozók / tartalom-beküldők sehol nem találkoznak Clerk regisztrációval.
+        A platform nagy része <strong>regisztráció-mentes</strong>. A Clerk Inc. (USA)
+        bejelentkezési szolgáltatást két esetben használjuk: (1) az oldal
+        <strong>adminisztrátorának</strong> belépéséhez, és (2) a <strong>Kinti PRO
+        előfizetés</strong> megrendeléséhez és kezeléséhez, mivel az előfizetést a
+        felhasználói fiókhoz kötjük (lásd 2.14). A látogatók / vállalkozók /
+        tartalom-beküldők egyébként nem találkoznak Clerk regisztrációval. A Clerk a
+        belépéshez az e-mail-címet (és az általad megadott profiladatokat) kezeli.
       </p>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — szerződés teljesítése</li>
@@ -140,12 +144,13 @@ export default function AdatvedelemPage() {
         padding: "14px 16px",
         margin: "16px 0",
       }}>
-        <p style={{ margin: 0, fontWeight: 700 }}>🚫 Szigorúan reklám- és hírlevélmentes</p>
+        <p style={{ margin: 0, fontWeight: 700 }}>🚫 Nincs spam — marketing e-mail csak külön feliratkozással</p>
         <p style={{ margin: "6px 0 0" }}>
-          A kinti.app üzemeltetője semmilyen marketing célú (hírlevél, reklám, ajánlat) e-mailt 
-          vagy SMS-t nem küld a megadott e-mail címekre és telefonszámokra. A megadott adatokat 
-          <strong>kizárólag</strong> az általad indított folyamatok (megerősítés, törlés, lejárat) 
-          hitelesítésére használjuk. Nincs "spam".
+          A tartalom-beküldéskor / vásárláskor megadott e-mail-címedre és telefonszámodra{" "}
+          <strong>kizárólag tranzakciós</strong> üzenetet küldünk (megerősítés, törlés, lejárat,
+          számla). Marketing célú e-mailt (hírlevél) <strong>csak akkor</strong> kapsz, ha arra
+          külön, kifejezett <strong>dupla opt-in</strong> feliratkozással hozzájárultál (lásd 2.16) —
+          és onnan egy kattintással bármikor leiratkozhatsz. SMS-t soha nem küldünk.
         </p>
       </div>
       <ul>
@@ -248,18 +253,25 @@ export default function AdatvedelemPage() {
         bármikor véglegesen törölhetők.
       </p>
 
-      <h3>2.12 Kinti Radar (Push Értesítések)</h3>
+      <h3>2.12 Push értesítések (kanton-célzott)</h3>
       <p>
-        A böngésződben engedélyezheted a Push értesítéseket, és feliratkozhatsz bizonyos témákra (pl. árfolyam-változás).
-        Ezeket a preferenciákat (Radar paraméterek) és a böngésződ által generált, személytelen <code>push_endpoint</code> URL-t 
-        tároljuk az adatbázisunkban, hogy ki tudjuk küldeni az értesítőt. 
-        <strong>Adatbiztonság:</strong> Az értesítések tartalmát nem küldjük át a böngésződ szolgáltatójának (Apple, Google, Mozilla) 
-        push szerverein (azok csak egy üres "ébresztő" jelet kapnak), az érdemi információt a készüléked közvetlenül a mi 
-        szerverünkről tölti le, így semmilyen személyes adat nem kerül harmadik félhez.
+        A böngésződben engedélyezheted a Push értesítéseket, hogy szóljunk az új
+        vállalkozásokról, állásokról és eseményekről a kantonodban (illetve bizonyos
+        témákban, pl. árfolyam-radar). A feliratkozáskor a következőket tároljuk az
+        adatbázisunkban: a böngésződ által generált, személytelen feliratkozási
+        <code>endpoint</code> URL, a hozzá tartozó nyilvános titkosító kulcsok
+        (<code>p256dh</code>, <code>auth</code> — ezekkel titkosítjuk neked az értesítést),
+        és az általad választott <strong>kanton-preferencia</strong> a célzáshoz.
+      </p>
+      <p>
+        <strong>Adatbiztonság:</strong> az értesítés tartalmát <strong>végpontig titkosítva</strong>{" "}
+        küldjük. Bár az a böngésződ push-szolgáltatóján (Apple, Google, Mozilla) halad át, azt
+        <strong> kizárólag a te eszközöd tudja visszafejteni</strong> — a push-szolgáltató nem
+        látja a tartalmat.
       </p>
       <ul>
-        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a böngésző szintjén és a "Radar Aktiválása" gombbal)</li>
-        <li><strong>Tárolási idő:</strong> Amíg a böngésződben le nem tiltod az értesítéseket, vagy a felületen a "Radar törlése" gombra nem kattintasz.</li>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a böngésző szintjén és a feliratkozás gombbal)</li>
+        <li><strong>Tárolási idő:</strong> amíg a böngésződben le nem tiltod az értesítéseket vagy le nem iratkozol; a megszűnt (érvénytelen) feliratkozásokat automatikusan töröljük.</li>
         <li><strong>Jogi nyilatkozat (Árfolyam):</strong> Az értesítések tartalmáért (különösen a pénzügyi, árfolyami adatokért) felelősséget nem vállalunk. Az adatok tájékoztató jellegűek, a késésekből vagy pontatlanságokból eredő anyagi károkért a kinti.app nem perelhető.</li>
       </ul>
 
@@ -270,20 +282,70 @@ export default function AdatvedelemPage() {
       <ul>
         <li><strong>GPS koordináta</strong> — a bejelentés helye a térképen</li>
         <li><strong>Bolt lánca, kategória, kedvezmény mértéke</strong></li>
-        <li><strong>Opcionális:</strong> boltнév, megjegyzés szövege</li>
+        <li><strong>Opcionális:</strong> bolt neve, megjegyzés szövege</li>
       </ul>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás</li>
-        <li><strong>Tárolási idő:</strong> azéjfélig (aznap), automatikus törlés</li>
+        <li><strong>Tárolási idő:</strong> aznap éjfélig, automatikus törlés</li>
         <li><strong>Nyilvánosság:</strong> az akció pontosan a bejelentő GPS-pozícióján jelenik meg a nyilvános térképen</li>
+      </ul>
+
+      <h3>2.14 Kinti PRO előfizetés és fizetés (Lemon Squeezy)</h3>
+      <p>
+        A <strong>Kinti PRO</strong> (és a Szaknévsor-kiemelés / kiemelt állás) előfizetés
+        megvásárlásakor a fizetést a <strong>Lemon Squeezy</strong> (Lemon Squeezy LLC, USA)
+        mint <em>Merchant of Record</em> bonyolítja. A bankkártya- és számlázási adataidat
+        közvetlenül a Lemon Squeezy kezeli — <strong>a kinti.app nem látja és nem tárolja a
+        kártyaadatokat</strong>.
+      </p>
+      <p>
+        A mi adatbázisunkban kizárólag az előfizetés <strong>állapotát</strong> tároljuk a
+        funkciók feloldásához, a bejelentkezett felhasználói fiókhoz (Clerk userId) kötve:
+        az előfizetés státusza, a csomag típusa, a Lemon Squeezy előfizetés- és vásárló-
+        azonosítója, valamint a következő számlázási időszak vége. Számlaadatot/kártyaadatot
+        nem tárolunk.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — szerződés teljesítése (az előfizetés nyújtása); a számviteli bizonylatok megőrzése: 6. cikk (1) c) — jogi kötelezettség.</li>
+        <li><strong>Tárolási idő:</strong> az előfizetés fennállásáig, illetve a számviteli/adójogi megőrzési határidőig.</li>
+        <li><strong>Adatfeldolgozó / Merchant of Record:</strong> Lemon Squeezy LLC —{" "}
+          <a href="https://www.lemonsqueezy.com/privacy" target="_blank" rel="noreferrer">privacy policy</a>.</li>
+      </ul>
+
+      <h3>2.15 Ajánlatkérés és kapcsolatfelvétel (lead)</h3>
+      <p>
+        Ha az <strong>„Kérj árajánlatot"</strong> funkcióval üzenetet küldesz vállalkozóknak,
+        illetve egy nem megerősített listát a <strong>„Foglald el"</strong> gombbal igényelsz,
+        a megadott adataidat (név, e-mail, opcionális telefonszám, üzenet) az érintett
+        vállalkozónak / az adminisztrátornak továbbítjuk, és — a megkeresés kezeléséhez — az
+        adatbázisban is rögzítjük.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a megkeresés elküldésével).</li>
+        <li><strong>Tárolási idő:</strong> a megkeresés kezeléséig; törlést az <a href="mailto:info@kinti.app">info@kinti.app</a> címen kérhetsz.</li>
+        <li><strong>Címzett:</strong> a megkeresett vállalkozó (lead), illetve a moderáló adminisztrátor (claim) — az e-mail-továbbítás a Resend-en keresztül történik (lásd 2.6).</li>
+      </ul>
+
+      <h3>2.16 Hírlevél (opcionális feliratkozás)</h3>
+      <p>
+        Ha feliratkozol a hírlevélre, az <strong>e-mail-címedet</strong> és az opcionális
+        <strong> ország-preferenciádat</strong> tároljuk, hogy időszakos összefoglalót
+        küldhessünk. A feliratkozás <strong>dupla opt-in</strong>: a megadott címre megerősítő
+        linket küldünk, és csak a megerősítés után kerülsz a listára. Minden hírlevélben szerepel
+        egy <strong>egy kattintásos leiratkozó</strong> link.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás.</li>
+        <li><strong>Tárolási idő:</strong> a leiratkozásig; a megerősítetlen feliratkozásokat automatikusan töröljük.</li>
+        <li><strong>Adatfeldolgozó:</strong> Resend, Inc. (kiküldés) — lásd 2.6.</li>
       </ul>
 
       <h2>3. Cookie-k</h2>
       <p>
         Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk: a Clerk session-cookie
-        kizárólag az adminisztrátor belépéséhez (egyetlen admin email). A látogatóknak,
-        vállalkozóknak, hirdetésfeladóknak <strong>nincs cookie-juk</strong>. Marketing-,
-        analitikai-, vagy 3rd-party tracking cookie-kat <strong>nem használunk</strong>.
+        az adminisztrátor belépéséhez és a PRO-előfizetők bejelentkezéséhez. A bejelentkezés
+        nélkül böngésző látogatóknak, vállalkozóknak, hirdetésfeladóknak <strong>nincs cookie-juk</strong>.
+        Marketing-, analitikai-, vagy 3rd-party tracking cookie-kat <strong>nem használunk</strong>.
       </p>
 
       <h3>3.1 Cloudflare Web Analytics (Beacon)</h3>
@@ -329,9 +391,9 @@ export default function AdatvedelemPage() {
 
       <h2>4. Adatok továbbítása harmadik országba</h2>
       <p>
-        A Clerk, a Cloudflare és a Resend USA-ban bejegyzett, ottani szervereket is használó 
-        vállalatok. Az EU–USA adattranszferek a 2023-as EU–US Data Privacy Framework (DPF), 
-        illetve az Európai Bizottság által elfogadott általános adatvédelmi kikötések (SCC)
+        A Clerk, a Cloudflare, a Resend és a Lemon Squeezy USA-ban bejegyzett, ottani szervereket
+        is használó vállalatok. Az EU–USA adattranszferek a 2023-as EU–US Data Privacy Framework
+        (DPF), illetve az Európai Bizottság által elfogadott általános adatvédelmi kikötések (SCC)
         alapján történnek, amelyek biztosítják a GDPR-nak megfelelő magas szintű adatvédelmet.
       </p>
 
