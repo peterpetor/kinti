@@ -139,12 +139,6 @@ export function DropdownMenu() {
                   </span>
                   Kiköltözés Tracker
                 </Link>
-                <Link href="/allasok/onboarding" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
-                    <Icon name="check" size={16} strokeWidth={2.4} />
-                  </span>
-                  Svájci Kezdőcsomag (Checklist)
-                </Link>
                 <Link href="/tudasbazis" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                     <Icon name="globe" size={16} strokeWidth={2.4} />
