@@ -320,7 +320,9 @@ function CollapsibleSection({
   title: string;
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(false);
+  // Alapból NYITVA — a felhasználó ne kelljen minden szekciót külön kinyitnia.
+  // (A fejléc-gombbal továbbra is összecsukható, ha valaki mégis szeretné.)
+  const [open, setOpen] = useState(true);
   return (
     <div className="pt-1.5">
       <button
