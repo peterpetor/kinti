@@ -14,8 +14,27 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const job = await getJobById(params.id);
   if (!job || job.moderationStatus !== 1) return { title: "Nem található állás" };
   const employer = await getEmployerById(job.employerId);
+  const company = employer?.companyName || "Svájci munka";
+  const loc = job.location || (cantonFromAddress(job.location) || matchCantonByName(job.location))?.name || "";
+  const title = `${job.title} — ${company}`;
+  const description = `${job.title} · ${company}${loc ? ` · ${loc}` : ""} — magyar munkalehetőség Svájcban (Kinti).`;
+  const ogSubtitle = `${company}${loc ? " · " + loc : ""}`.slice(0, 110);
+  const image =
+    `https://kinti.app/api/og?type=job&title=${encodeURIComponent(job.title)}` +
+    `&subtitle=${encodeURIComponent(ogSubtitle)}`;
+  const url = `https://kinti.app/allasok/${job.id}`;
   return {
-    title: `${job.title} — ${employer?.companyName || "Svájci munka"} | Kinti`,
+    title: `${title} | Kinti`,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "kinti",
+      type: "article",
+      images: [{ url: image, width: 1200, height: 630, alt: job.title }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
   };
 }
 
