@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
 import { CANTONS } from "@/lib/cantons";
 import type { Category } from "@/lib/types";
@@ -15,7 +16,7 @@ const inputCls =
  * — egy ismert, valódi magyar vállalkozást ajánlasz. Admin jóváhagyás után
  * jelenik meg, nem-megerősített listaként (a tulaj később átveheti).
  */
-export function BusinessSuggestForm({ categories }: { categories: Category[] }) {
+export function BusinessSuggestForm({ categories, turnstileSiteKey }: { categories: Category[]; turnstileSiteKey: string }) {
   const cats = categories.filter((c) => c.id !== "all");
   const [name, setName] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -26,6 +27,8 @@ export function BusinessSuggestForm({ categories }: { categories: Category[] }) 
   const [note, setNote] = useState("");
   const [phase, setPhase] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,6 +36,7 @@ export function BusinessSuggestForm({ categories }: { categories: Category[] }) 
     if (name.trim().length < 2) return setError("Add meg a vállalkozás nevét.");
     if (!categoryId) return setError("Válassz kategóriát.");
     if (!cantonCode) return setError("Válassz kantont.");
+    if (!turnstileToken) return setError("Várj a robot-ellenőrzésre (pár másodperc).");
 
     setPhase("sending");
     try {
@@ -40,18 +44,22 @@ export function BusinessSuggestForm({ categories }: { categories: Category[] }) 
       const res = await fetch("/api/szaknevsor/ajanlas", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name, categoryId, categoryLabel, cantonCode, city, phone, website, note }),
+        body: JSON.stringify({ name, categoryId, categoryLabel, cantonCode, city, phone, website, note, turnstileToken }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
         setError(data.error ?? "Nem sikerült elküldeni. Próbáld újra.");
         setPhase("error");
+        turnstileRef.current?.reset();
+        setTurnstileToken("");
         return;
       }
       setPhase("sent");
     } catch {
       setError("Hálózati hiba.");
       setPhase("error");
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
     }
   }
 
@@ -117,6 +125,10 @@ export function BusinessSuggestForm({ categories }: { categories: Category[] }) 
         Csak <strong className="text-ink">valódi, létező</strong> magyar vállalkozást ajánlj.
         A beküldést admin ellenőrzi, és csak jóváhagyás után jelenik meg. A tulajdonos
         kérheti az eltávolítást az <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a> címen.
+      </div>
+
+      <div className="flex justify-center">
+        <TurnstileWidget ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
       </div>
 
       <button

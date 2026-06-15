@@ -5,6 +5,7 @@ import { safeLogError } from "@/lib/safe-log";
 import { createSuggestedBusiness } from "@/lib/repo";
 import { CANTONS, cantonPoint } from "@/lib/cantons";
 import { sendEmail } from "@/lib/email";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -18,13 +19,22 @@ const ADMIN_EMAIL = "info@kinti.app";
  */
 export async function POST(req: Request) {
   try {
-    const ipHash = await hashIp(req.headers.get("cf-connecting-ip") ?? null);
+    const ip = req.headers.get("cf-connecting-ip");
+    const ipHash = await hashIp(ip ?? null);
     const rl = await checkAiRateLimit("business-suggest", ipHash);
     if (!rl.allowed) {
       return NextResponse.json({ error: "Túl sok ajánlás. Próbáld újra 1 óra múlva." }, { status: 429 });
     }
 
     const body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
+
+    // Robot-ellenőrzés (Turnstile) — a kiemelt supply-CTA miatt is fontos.
+    const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken : null;
+    const captcha = await verifyTurnstile(turnstileToken, ip);
+    if (!captcha.ok) {
+      return NextResponse.json({ error: "A robot-ellenőrzés sikertelen. Próbáld újra." }, { status: 403 });
+    }
+
     const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
     const name = str(body.name, 120);
     const categoryId = str(body.categoryId, 60);

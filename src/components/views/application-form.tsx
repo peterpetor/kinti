@@ -161,7 +161,7 @@ export function ApplicationForm({ jobId, jobTitle }: Props) {
           className="mt-0.5 h-4 w-4 cursor-pointer rounded border-line text-primary"
         />
         <label htmlFor="consent" className="text-[12px] leading-relaxed text-ink-muted cursor-pointer">
-          Elfogadom, hogy a megadott személyes adataimat (névés email cím) a munkáltató kapcsolatfelvétel céljából kezelje. Az adatkezelés az adott álláshirdetés lezárásáig tart.
+          Elfogadom, hogy a megadott személyes adataimat (név, e-mail cím és telefonszám) a munkáltató kapcsolatfelvétel céljából kezelje. Az adatkezelés az adott álláshirdetés lezárásáig tart.
         </label>
       </div>
 

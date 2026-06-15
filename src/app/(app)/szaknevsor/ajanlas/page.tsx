@@ -15,6 +15,7 @@ export const metadata = { title: "Ajánlj egy magyar vállalkozást" };
  */
 export default async function AjanlasPage() {
   const categories = await getCategories();
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   return (
     <div className="px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
@@ -37,7 +38,7 @@ export default async function AjanlasPage() {
         később <strong className="text-ink">átveheti</strong> a profilt.
       </div>
 
-      <BusinessSuggestForm categories={categories} />
+      <BusinessSuggestForm categories={categories} turnstileSiteKey={turnstileSiteKey} />
     </div>
   );
 }
