@@ -26,6 +26,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       { status: 429 },
     );
   }
+  // MINDEN próbálkozást naplózunk (nem csak a sikereset), hogy a duplikátum-
+  // ellenőrzés (409) ne adjon throttle-mentes e-mail-enumerációs orákulumot.
+  await logAiRateLimit("job-apply", ipHash);
 
   let body: Record<string, unknown>;
   try {
@@ -104,7 +107,6 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       // Nem dobjuk vissza a hibát — a pályázat már el lett mentve
     }
 
-    await logAiRateLimit("job-apply", ipHash);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[jobs/apply] error:", err);
