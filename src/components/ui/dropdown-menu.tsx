@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon } from "./icons";
+import { CountrySwitcher } from "./country-switcher";
 import { cn } from "@/lib/cn";
 
 export function DropdownMenu() {
@@ -60,6 +61,9 @@ export function DropdownMenu() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-1 custom-scrollbar">
+
+              {/* ── Ország-váltó ───────────────────────── */}
+              <CountrySwitcher />
 
               {/* ── PRO csomagok (kiemelt) ─────────────── */}
               <Link
