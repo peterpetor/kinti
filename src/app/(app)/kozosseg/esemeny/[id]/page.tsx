@@ -39,11 +39,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   const url = `https://kinti.app/kozosseg/esemeny/${e.id}`;
   const title = e.title;
   const description = e.description?.slice(0, 160) ?? `${title} · ${date}${venue ? ` · ${venue}` : ""}`;
-  const ogDate = e.dateMonth && e.dateDay ? `${e.dateMonth} ${e.dateDay}.` : date;
-  const ogSubtitle = `${ogDate}${venue ? " · " + venue : ""}`.slice(0, 110);
-  const image =
-    mediaUrl(e.imageKey ?? null) ??
-    `https://kinti.app/api/og?type=event&title=${encodeURIComponent(title)}&subtitle=${encodeURIComponent(ogSubtitle)}`;
+  const image = mediaUrl(e.imageKey ?? null) ?? "https://kinti.app/icons/og-default.png";
 
   return {
     title,

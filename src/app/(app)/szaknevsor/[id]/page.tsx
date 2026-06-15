@@ -55,12 +55,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     ? b.blurb.slice(0, 160)
     : `${b.name} · ${b.categoryLabel ?? "Magyar szakember"} Svájcban.${ratingText}`;
   const url = `https://kinti.app/szaknevsor/${b.id}`;
-  const canton = cantonFromAddress(b.address ?? null);
-  const ogSubtitle = `${b.categoryLabel ?? "Magyar szakember"}${canton ? " · " + canton.name : ""}`;
-  const ogBadge = b.reviews > 0 ? `★ ${b.rating.toFixed(1)} (${b.reviews})` : "Új";
-  const image =
-    `https://kinti.app/api/og?type=business&title=${encodeURIComponent(b.name)}` +
-    `&subtitle=${encodeURIComponent(ogSubtitle)}&badge=${encodeURIComponent(ogBadge)}`;
+  const image = mediaUrl(b.logoKey) ?? "https://kinti.app/icons/og-default.png";
 
   return {
     title: b.name,

@@ -18,10 +18,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const loc = job.location || (cantonFromAddress(job.location) || matchCantonByName(job.location))?.name || "";
   const title = `${job.title} — ${company}`;
   const description = `${job.title} · ${company}${loc ? ` · ${loc}` : ""} — magyar munkalehetőség Svájcban (Kinti).`;
-  const ogSubtitle = `${company}${loc ? " · " + loc : ""}`.slice(0, 110);
-  const image =
-    `https://kinti.app/api/og?type=job&title=${encodeURIComponent(job.title)}` +
-    `&subtitle=${encodeURIComponent(ogSubtitle)}`;
+  const image = "https://kinti.app/icons/og-default.png";
   const url = `https://kinti.app/allasok/${job.id}`;
   return {
     title: `${title} | Kinti`,
