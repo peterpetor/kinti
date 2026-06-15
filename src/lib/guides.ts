@@ -622,6 +622,194 @@ export const GUIDES: Guide[] = [
       },
     ],
   },
+  {
+    slug: "auto-svajcban",
+    title: "Autó Svájcban",
+    summary:
+      "A forgalomba helyezéshez kötelező felelősségbiztosítás és kantonális regisztráció kell, a nemzeti utakra autópálya-matrica, az autót pedig időszakosan műszakira (MFK) viszik.",
+    icon: "car",
+    sections: [
+      {
+        heading: "Forgalomba helyezés és rendszám",
+        body: [
+          "Az autót a lakóhelyed kantonjának közúti hivatalánál (Strassenverkehrsamt / service des automobiles) kell forgalomba helyezni — innen kapod a rendszámot is.",
+          "A regisztráció előtt kötelező felelősségbiztosítást (Haftpflicht) kötni; a biztosító elektronikus igazolást küld a hivatalnak.",
+        ],
+      },
+      {
+        heading: "Külföldről behozott autó",
+        bullets: [
+          "Behozatalkor vámkezelés és a jármű vámeljárása szükséges.",
+          "Általában 1 hónapon belül forgalomba kell helyezni Svájcban.",
+          "Sok esetben műszaki vizsga (MFK) és adott típusjóváhagyás kell a regisztrációhoz.",
+        ],
+      },
+      {
+        heading: "Időszakos műszaki vizsga (MFK)",
+        body: [
+          "A járműveket rendszeresen műszaki ellenőrzésre (Motorfahrzeugkontrolle, MFK) hívják be — a kantonális hivataltól kapsz értesítést, időpontot.",
+        ],
+      },
+      {
+        heading: "Autópálya-matrica (Vignette)",
+        body: [
+          "A nemzeti autópályák és autóutak használatához éves autópálya-matrica (Autobahnvignette) kötelező. Kapható ragasztós és elektronikus (e-vignette) formában is, és a naptári évre szól.",
+        ],
+      },
+      {
+        heading: "Hasznos lépés a Kintin",
+        body: [
+          "Szervizhez vagy gumicseréhez a Szaknévsorban kereshetsz magyarul beszélő autószerelőt a saját kantonodban.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Gépjárművek és vezetés",
+        url: "https://www.ch.ch/en/driving-and-transport/",
+      },
+      {
+        label: "ch.ch – Autópálya-matrica (vignette)",
+        url: "https://www.ch.ch/en/driving-and-transport/motorway-charge-sticker-vignette/",
+      },
+    ],
+  },
+  {
+    slug: "serafe-tv-radio-dij",
+    title: "Serafe — rádió- és TV-díj",
+    summary:
+      "Svájcban minden háztartás kötelező rádió- és televízió-díjat fizet (a Serafe szedi), függetlenül attól, hogy van-e otthon készüléked.",
+    icon: "home",
+    sections: [
+      {
+        heading: "Háztartásonkénti kötelező díj",
+        body: [
+          "A médiadíjat háztartásonként (nem személyenként) kell fizetni, és akkor is jár, ha nincs tévéd vagy rádiód.",
+          "A díjat a Serafe AG szedi be; a számlát a községi lakcímnyilvántartás alapján automatikusan küldik, miután bejelentkeztél.",
+        ],
+      },
+      {
+        heading: "Mikor kapod az első számlát",
+        body: [
+          "Miután a községnél bejelentkeztél, a háztartásod bekerül a nyilvántartásba, és a Serafe automatikusan kiállítja az éves számlát — külön regisztrálni nem kell.",
+          "Ha társbérletben (WG) laksz, a háztartás egészére egy díj jár, amit a lakók egymás közt osztanak meg.",
+        ],
+      },
+      {
+        heading: "Mentesség",
+        bullets: [
+          "Kiegészítő ellátásban (Ergänzungsleistungen, EL) részesülők kérhetnek mentességet.",
+          "Egyes kollektív háztartások (pl. otthonok) külön szabályok alá esnek.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Rádió- és TV-díj",
+        url: "https://www.ch.ch/en/communications-and-media/radio-and-television-licence-fee/",
+      },
+      {
+        label: "Serafe AG – hivatalos oldal",
+        url: "https://www.serafe.ch/en/",
+      },
+    ],
+  },
+  {
+    slug: "szulesi-apasagi-szabadsag",
+    title: "Szülési és apasági szabadság",
+    summary:
+      "Az anya 14 hét anyasági szabadságra és a kereset 80%-ára jogosult, a másik szülő 2 hét apasági szabadságra — a jövedelemkiesést a keresetpótló rendszer (EO/APG) fedezi.",
+    icon: "heart",
+    sections: [
+      {
+        heading: "Anyasági szabadság (14 hét)",
+        body: [
+          "A szülés után az anya 14 hét (98 nap) anyasági szabadságra jogosult, ezalatt a korábbi keresete 80%-át kapja, napi felső határig.",
+          "A juttatás akkor jár, ha az anya a szülés előtt megfelelő ideig AHV-biztosított volt és dolgozott — a pontos feltételeket a kifizetést intéző pénztár (Ausgleichskasse) ellenőrzi.",
+        ],
+      },
+      {
+        heading: "A másik szülő szabadsága (2 hét)",
+        body: [
+          "A másik szülő (apa vagy az anya bejegyzett partnere) 2 hét szabadságra jogosult, amelyet a szülést követő 6 hónapon belül lehet kivenni — egyben vagy napokra elosztva.",
+          "Erre az időre is a kereset 80%-a jár, napi felső határig.",
+        ],
+      },
+      {
+        heading: "Hogyan igényeld",
+        body: [
+          "A juttatást általában a munkáltatón keresztül, a megfelelő űrlappal igényled a kompenzációs pénztárnál (Ausgleichskasse).",
+          "Beteg gyermek gondozására külön gondozási szabadság és juttatás is létezhet.",
+        ],
+      },
+      {
+        heading: "Kapcsolódó",
+        body: [
+          "A gyermek után járó rendszeres támogatásról a „Családi pótlék (Kinderzulage)” útmutató szól.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – Anyasági szabadság és juttatás",
+        url: "https://www.ch.ch/en/family-and-partnership/having-children/maternity-leave-and-maternity-benefits/",
+      },
+      {
+        label: "ch.ch – A másik szülő szabadsága",
+        url: "https://www.ch.ch/en/family-and-partnership/having-children/paternity-leave/",
+      },
+    ],
+  },
+  {
+    slug: "harmadik-piller-saule-3a",
+    title: "3. pillér (Säule 3a)",
+    summary:
+      "A svájci nyugdíj 3 pilléren áll; a 3. pillér önkéntes magán-előtakarékosság. A kötött 3a adókedvezményes, de a pénz jellemzően a nyugdíjig le van kötve.",
+    icon: "trending",
+    sections: [
+      {
+        heading: "A három pillér röviden",
+        bullets: [
+          "1. pillér — AHV/IV: állami alapnyugdíj, a létfenntartást fedezi.",
+          "2. pillér — BVG (Pensionskasse): foglalkoztatói nyugdíj, a megszokott életszínvonalat célozza.",
+          "3. pillér — önkéntes magán-előtakarékosság, a kettő kiegészítésére.",
+        ],
+      },
+      {
+        heading: "Kötött 3. pillér (Säule 3a)",
+        body: [
+          "A 3a adókedvezményes: az évente befizetett összeg (egy törvényi felső határig) levonható az adóköteles jövedelmedből.",
+          "Alkalmazottra és önálló vállalkozóra eltérő éves plafon vonatkozik — a pontos, aktuális összeget mindig a hivatalos forrásnál ellenőrizd.",
+        ],
+      },
+      {
+        heading: "Mikor férsz hozzá",
+        bullets: [
+          "Nyugdíjazás előtt néhány évvel.",
+          "Saját lakás/ház vásárlására.",
+          "Önálló vállalkozás indításakor.",
+          "Svájcból való végleges kivándorláskor.",
+        ],
+      },
+      {
+        heading: "Szabad 3. pillér (Säule 3b) és segítség",
+        body: [
+          "A 3b szabad megtakarítás: rugalmasabb hozzáférés, de általában nincs külön adókedvezmény.",
+          "Konkrét, rád szabott tervhez a Szaknévsorban kereshetsz magyarul beszélő könyvelőt vagy pénzügyi tanácsadót; az adózásról az „Adózás és adóbevallás” útmutató segít.",
+        ],
+      },
+    ],
+    sources: [
+      {
+        label: "ch.ch – A svájci nyugdíjrendszer (3 pillér)",
+        url: "https://www.ch.ch/en/retirement/the-3-pillar-system/",
+      },
+      {
+        label: "ch.ch – Magán-előtakarékosság (3. pillér)",
+        url: "https://www.ch.ch/en/retirement/private-pension-provision/",
+      },
+    ],
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
