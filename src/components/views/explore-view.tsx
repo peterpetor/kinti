@@ -440,6 +440,33 @@ export function ExploreView({
         <ViewSwitch value={view} onChange={setView} />
       </div>
 
+      {/* Kontextuális supply-CTA: ha egy szűrt kategóriában/kantonban kevés a
+          találat, ott a legnagyobb a hiányérzet → magas szándékú ajánlás-pont. */}
+      {view === "list" &&
+        filtered.length > 0 &&
+        filtered.length <= 4 &&
+        (cat !== "all" || canton !== "all") && (
+          <div className="px-5">
+            <Link
+              href="/szaknevsor/ajanlas"
+              className="flex items-center gap-3 rounded-card border border-primary/30 bg-primary-soft px-4 py-3 shadow-card transition active:scale-[0.99]"
+            >
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary text-white">
+                <Icon name="plus" size={17} strokeWidth={2.6} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[13px] font-extrabold tracking-[-0.01em] text-ink">
+                  Kevés a találat — ismersz többet?
+                </span>
+                <span className="block text-[11.5px] text-ink-muted">
+                  Ajánlj egy magyar vállalkozást 30 mp alatt — mi ellenőrizzük és felvesszük.
+                </span>
+              </span>
+              <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
+            </Link>
+          </div>
+        )}
+
       {view === "list" ? (
         <div className="grid gap-2.5 px-5">
           {filtered.map(({ b, dist }) => (
