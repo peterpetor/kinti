@@ -39,7 +39,7 @@ export default function AszfPage() {
       <h3>2.1 Kinti felhasználó (közösségi tag)</h3>
       <p>
         Bárki, aki a Szolgáltatást <strong>hagyományos regisztráció nélkül</strong> használja: böngészi a
-        vállalkozásokat, nézi az eseményeket, hirdetést, eseményt vagy véleményt
+        vállalkozásokat, nézi az eseményeket, hirdetést, eseményt vagy értékelést
         adhat fel. Felhasználói fiók és jelszó nem szükséges (a hitelesítés egyszeri megerősítő 
         e-maillel történik) — a beküldést ezen felül Cloudflare Turnstile CAPTCHA és IP-alapú rate-limit 
         védi a spam ellen.
@@ -102,7 +102,6 @@ export default function AszfPage() {
         után válnak nyilvánosan elérhetővé</strong> (tipikusan 24 órán belül):
       </p>
       <ul>
-        <li>vélemények a Szaknévsor profilokról;</li>
         <li>vállalkozói profilok a Szaknévsorban;</li>
         <li>közösségi események.</li>
       </ul>
@@ -112,11 +111,10 @@ export default function AszfPage() {
         képmoderáció):
       </p>
       <ul>
-        <li>spontán találkozók (24 órás élettartam);</li>
         <li>akciók a térképen (lejár éjfélkor).</li>
       </ul>
       <p>
-        Az üzemeltető a hirdetéseket / véleményeket / vállalkozói profilokat /
+        Az üzemeltető a hirdetéseket / értékeléseket / vállalkozói profilokat /
         eseményeket <strong>indoklás nélkül elutasíthatja</strong>, ha
         valószínűsíthetően sérti a jelen ÁSZF 3., 3.1 vagy a vonatkozó
         jogszabályok rendelkezéseit. Az elutasított tartalmakat az 5.2 pont
@@ -211,16 +209,17 @@ export default function AszfPage() {
         kérelem helyett is irányadó.
       </p>
 
-      <h2>7. Értékelési Rendszer és Felhasználói Vélemények</h2>
+      <h2>7. Csillagos Értékelési Rendszer</h2>
       <p>
-        A platformon leadott értékelések és vélemények a felhasználók szubjektív 
-        magánvéleményét tükrözik. Az üzemeltető a véleményeket előzetesen nem moderálja és azok valóságtartalmát nem ellenőrzi.
+        A platformon <strong>kizárólag csillagos értékelés</strong> adható (1–5 csillag);
+        szöveges vélemény írására nincs mód. A leadott csillagos értékelések a felhasználók 
+        megítélését tükrözik. Az üzemeltető az értékeléseket előzetesen nem moderálja és azok valóságtartalmát nem ellenőrzi.
       </p>
       <p>
         A közzétett értékelésekből fakadó esetleges hitelrontásért vagy személyiségi jogsértésért 
         kizárólag az értékelést leadó felhasználó felel, az üzemeltetőt felelősség nem terheli. 
         Kifejezetten fenntartjuk azonban a jogot, hogy a rágalmazó, obszcén vagy a jelen ÁSZF-be ütköző 
-        véleményeket bejelentés alapján vagy saját hatáskörben, indoklás nélkül eltávolítsuk.
+        értékeléseket bejelentés alapján vagy saját hatáskörben, indoklás nélkül eltávolítsuk.
       </p>
 
       <h2>8. Felhasználók közötti tranzakciók</h2>
@@ -365,10 +364,6 @@ export default function AszfPage() {
         (nem kimerítő felsorolás):
       </p>
       <ul>
-        <li>
-          <strong>AI vélemény-összegzés</strong> — a Szaknévsorban szereplő vállalkozók
-          publikus vélemény-listája alapján generált rövid összegzés.
-        </li>
         <li>
           <strong>Természetes nyelvű kereső</strong> — a felhasználó által beírt magyar
           mondatból strukturált keresési szűrőket generál.

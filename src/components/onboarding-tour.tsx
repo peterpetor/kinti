@@ -44,7 +44,7 @@ const STEPS: Step[] = [
   {
     emoji: "🤝",
     title: "Közösség",
-    body: "Magyar események egy helyen — bulik, meetupok, koncertek. Naptár- és lista-nézetben böngészhető, és spontán találkozókat is feldobhatsz.",
+    body: "Magyar események egy helyen — bulik, meetupok, koncertek. Naptár- és lista-nézetben böngészheted.",
     cta: { href: "/kozosseg", label: "Mutasd!" },
   },
   {

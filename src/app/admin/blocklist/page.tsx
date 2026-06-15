@@ -36,8 +36,7 @@ export default async function BlocklistPage() {
         <p className="text-[12.5px] text-ink-muted">
           IP-cím (SHA-256 hash, IPv6 /64 prefix) vagy email-cím (SHA-256 hash)
           alapú ban. A tiltott felhasználó 403-as választ kap minden submit-
-          végponton (vélemény, vállalkozás, esemény, spontán találkozó,
-          Hofladen, akció).
+          végponton (értékelés, vállalkozás, esemény, akció).
         </p>
       </header>
 
