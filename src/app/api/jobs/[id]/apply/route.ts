@@ -4,6 +4,8 @@ import { getJobById, getEmployerById, getWorkerProfileByUser } from "@/lib/repo"
 import { getDB } from "@/lib/cloudflare";
 import { sendJobApplicationNotificationEmail } from "@/lib/email";
 import { safeLogError } from "@/lib/safe-log";
+import { hashIp } from "@/lib/security";
+import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -13,6 +15,16 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   
   if (!job || job.moderationStatus !== 1 || job.status !== "active") {
     return NextResponse.json({ error: "Ez az álláshirdetés nem aktív." }, { status: 404 });
+  }
+
+  // Rate-limit: jelentkezés-spam, employer-email-flood és e-mail-enumeráció ellen.
+  const ipHash = await hashIp(req.headers.get("cf-connecting-ip") ?? null);
+  const rl = await checkAiRateLimit("job-apply", ipHash);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Túl sok jelentkezés erről a hálózatról. Próbáld újra később." },
+      { status: 429 },
+    );
   }
 
   let body: Record<string, unknown>;
@@ -92,6 +104,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       // Nem dobjuk vissza a hibát — a pályázat már el lett mentve
     }
 
+    await logAiRateLimit("job-apply", ipHash);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[jobs/apply] error:", err);

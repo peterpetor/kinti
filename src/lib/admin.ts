@@ -20,6 +20,10 @@ export async function getAdminUserId(): Promise<string | null> {
 
   const user = await currentUser();
   if (!user) return null;
-  const emails = user.emailAddresses.map((e) => e.emailAddress.toLowerCase());
+  // Csak IGAZOLT (verified) e-mail számít — különben egy támadó egy nem-igazolt
+  // admin-e-mail hozzáadásával jogosultságot szerezhetne (defense-in-depth).
+  const emails = user.emailAddresses
+    .filter((e) => e.verification?.status === "verified")
+    .map((e) => e.emailAddress.toLowerCase());
   return emails.some((e) => allowed.includes(e)) ? userId : null;
 }

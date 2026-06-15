@@ -100,6 +100,9 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "media-upload": { windowHours: 1, maxPerWindow: 30 }, // Image upload rate limit
   "radar-subscribe": { windowHours: 1, maxPerWindow: 10 }, // Radar DoS védelem
   "interview-sim": { windowHours: 1, maxPerWindow: 50 }, // Interview simulator
+  "business-suggest": { windowHours: 1, maxPerWindow: 10 }, // Közösségi vállalkozás-ajánlás spam-védelem
+  "lead-request": { windowHours: 1, maxPerWindow: 8 }, // Árajánlatkérés (lead) spam-védelem
+  "job-apply": { windowHours: 1, maxPerWindow: 10 }, // Álláspályázat spam / employer-email-flood védelem
 };
 
 /**
