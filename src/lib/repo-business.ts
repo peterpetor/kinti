@@ -571,15 +571,19 @@ export async function getDashboard(businessId: string): Promise<DashboardResult 
 
 export interface AdminBusinessRow {
   id: string; name: string; categoryLabel: string | null; verified: boolean;
+  moderationStatus: number; // 0=függőben, 1=jóváhagyva, 2=elutasítva
   rating: number; reviews: number; source: string | null; createdAt: string; manageToken: string | null;
 }
 
 export async function listBusinessesForAdmin(): Promise<AdminBusinessRow[]> {
+  // A függőben lévőket (moderation_status=0) előre rendezzük, hogy az admin
+  // azonnal lássa, mi vár jóváhagyásra.
   const { results } = await getDB()
-    .prepare("SELECT id,name,category_label,verified,rating,reviews,source,created_at,manage_token FROM businesses ORDER BY verified DESC,created_at DESC LIMIT 100")
-    .all<{ id: string; name: string; category_label: string | null; verified: number; rating: number; reviews: number; source: string | null; created_at: string; manage_token: string | null }>();
+    .prepare("SELECT id,name,category_label,verified,moderation_status,rating,reviews,source,created_at,manage_token FROM businesses ORDER BY moderation_status ASC, created_at DESC LIMIT 100")
+    .all<{ id: string; name: string; category_label: string | null; verified: number; moderation_status: number | null; rating: number; reviews: number; source: string | null; created_at: string; manage_token: string | null }>();
   return results.map((r) => ({
     id: r.id, name: r.name, categoryLabel: r.category_label, verified: r.verified === 1,
+    moderationStatus: r.moderation_status ?? 0,
     rating: r.rating, reviews: r.reviews, source: r.source, createdAt: r.created_at, manageToken: r.manage_token,
   }));
 }

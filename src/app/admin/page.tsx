@@ -142,12 +142,24 @@ export default async function AdminPage() {
           <Empty label="Nincs vállalkozás a Szaknévsorban." />
         ) : (
           <div className="space-y-1.5">
-            {businesses.map((b) => (
-              <div key={b.id} className="flex items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card">
+            {businesses.map((b) => {
+              const st =
+                b.moderationStatus === 1
+                  ? { label: "Jóváhagyva", cls: "bg-success/15 text-success", border: "border-l-success" }
+                  : b.moderationStatus === 2
+                    ? { label: "Elutasítva", cls: "bg-ink/10 text-ink-muted", border: "border-l-line" }
+                    : { label: "Függőben", cls: "bg-[#fef3c7] text-[#b45309]", border: "border-l-[#f59e0b]" };
+              return (
+              <div key={b.id} className={`flex items-center gap-2 rounded-card border border-line border-l-4 ${st.border} bg-surface px-3 py-2 shadow-card`}>
                 <div className="min-w-0 flex-1">
-                  <Link href={`/szaknevsor/${b.id}`} className="block truncate text-[13px] font-bold text-ink hover:text-primary">
-                    {b.name}
-                  </Link>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wide ${st.cls}`}>
+                      {st.label}
+                    </span>
+                    <Link href={`/szaknevsor/${b.id}`} className="truncate text-[13px] font-bold text-ink hover:text-primary">
+                      {b.name}
+                    </Link>
+                  </div>
                   <p className="truncate text-[11px] text-ink-muted">
                     {b.categoryLabel ?? "—"}
                     {b.source ? ` · ${b.source}` : ""}
@@ -163,7 +175,8 @@ export default async function AdminPage() {
                   confirmText={`Biztos törlöd a(z) "${b.name}" vállalkozást? A vélemények is törlődnek.`}
                 />
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
