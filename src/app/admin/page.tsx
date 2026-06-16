@@ -5,6 +5,7 @@ import { getAdminUserId } from "@/lib/admin";
 import { AdminVerifyToggle } from "@/components/views/admin-verify-toggle";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { AdminCopyManageButton } from "@/components/admin/admin-copy-manage-button";
+import { ModerationDecideButtons } from "@/components/admin/moderation-decide-buttons";
 import {
   getAdminStats,
   listOpenReports,
@@ -152,7 +153,7 @@ export default async function AdminPage() {
               return (
               <div
                 key={b.id}
-                className="flex items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card"
+                className="flex flex-wrap items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card"
                 style={{ borderLeft: `4px solid ${st.border}` }}
               >
                 <div className="min-w-0 flex-1">
@@ -173,6 +174,13 @@ export default async function AdminPage() {
                     {b.rating > 0 ? ` · ⭐ ${b.rating} (${b.reviews})` : ""}
                   </p>
                 </div>
+                <ModerationDecideButtons
+                  table="businesses"
+                  id={b.id}
+                  current={b.moderationStatus}
+                  submitterIpHash={null}
+                  submitterEmail={null}
+                />
                 <AdminVerifyToggle businessId={b.id} initial={b.verified} />
                 <AdminCopyManageButton type="businesses" manageToken={b.manageToken} />
                 <AdminDeleteButton
