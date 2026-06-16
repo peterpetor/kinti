@@ -16,7 +16,50 @@ import { useEffect, useState } from "react";
  */
 export function SWRegister() {
   const [waitingSW, setWaitingSW] = useState<ServiceWorker | null>(null);
+  // Verzió-eltérés (új deploy) észlelve — akkor is, ha nincs „waiting" SW.
+  const [versionStale, setVersionStale] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+
+  // Build-ID alapú frissítés-figyelő: melegindításnál is elkapja az új verziót.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (process.env.NODE_ENV !== "production") return;
+    const myBuild = process.env.NEXT_PUBLIC_BUILD_ID;
+    if (!myBuild) return;
+
+    let lastCheck = 0;
+    let stopped = false;
+
+    const check = async () => {
+      // Throttle: legfeljebb 30 mp-enként.
+      const now = Date.now();
+      if (now - lastCheck < 30_000) return;
+      lastCheck = now;
+      try {
+        const res = await fetch("/api/version", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = (await res.json()) as { buildId?: string };
+        if (!stopped && data.buildId && data.buildId !== myBuild) {
+          setVersionStale(true);
+        }
+      } catch {
+        /* hálózati hiba — csendben kihagyjuk */
+      }
+    };
+
+    const onVisible = () => {
+      if (document.visibilityState === "visible") check();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", check);
+    check(); // induláskor is
+
+    return () => {
+      stopped = true;
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", check);
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -86,7 +129,18 @@ export function SWRegister() {
     };
   }, []);
 
-  if (!waitingSW || dismissed) return null;
+  const updateReady = !!waitingSW || versionStale;
+  if (!updateReady || dismissed) return null;
+
+  const applyUpdate = () => {
+    if (waitingSW) {
+      // A SW átveszi → controllerchange → automatikus reload.
+      waitingSW.postMessage({ type: "SKIP_WAITING" });
+    } else {
+      // Csak verzió-eltérés (nincs waiting SW) → friss oldalbetöltés.
+      window.location.reload();
+    }
+  };
 
   return (
     <div
@@ -114,7 +168,7 @@ export function SWRegister() {
         </button>
         <button
           type="button"
-          onClick={() => waitingSW.postMessage({ type: "SKIP_WAITING" })}
+          onClick={applyUpdate}
           className="rounded-full bg-primary px-3 py-1 text-[12px] font-bold text-white"
         >
           Frissítés
