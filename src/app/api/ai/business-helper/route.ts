@@ -76,7 +76,10 @@ VÁLASZ FORMÁTUM (KIZÁRÓLAG JSON, semmi más):
       temperature: 0.4,
     });
     if (!ai.ok) {
-      return NextResponse.json({ error: "Az AI nem elérhető." }, { status: 503 });
+      return NextResponse.json(
+        { error: "Az AI épp túlterhelt — próbáld újra pár másodperc múlva." },
+        { status: 503 },
+      );
     }
     await logAiRateLimit("business-helper", ipHash);
 

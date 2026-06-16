@@ -19,6 +19,19 @@ export interface AiTextResult {
 
 const DEFAULT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
 
+/** A Workers AI hívás max. ideje, mielőtt feladjuk (a platform-kill előtt). */
+const AI_TIMEOUT_MS = 12_000;
+
+/** Promise timeout-tal — ha az AI elakad, ne hagyjuk a worker-t a falig futni. */
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("ai-timeout")), ms),
+    ),
+  ]);
+}
+
 export async function runAiChat(params: {
   system: string;
   user: string;
@@ -31,22 +44,34 @@ export async function runAiChat(params: {
   if (!env.AI) {
     return { ok: false, text: "" };
   }
-  try {
-    const response = (await env.AI.run(params.model ?? DEFAULT_MODEL, {
-      messages: [
-        { role: "system", content: params.system },
-        { role: "user", content: params.user },
-      ],
-      max_tokens: params.maxTokens ?? 256,
-      ...(params.temperature !== undefined ? { temperature: params.temperature } : {}),
-    })) as { response?: string };
 
+  const call = async (): Promise<AiTextResult> => {
+    const response = (await withTimeout(
+      env.AI.run(params.model ?? DEFAULT_MODEL, {
+        messages: [
+          { role: "system", content: params.system },
+          { role: "user", content: params.user },
+        ],
+        max_tokens: params.maxTokens ?? 256,
+        ...(params.temperature !== undefined ? { temperature: params.temperature } : {}),
+      }),
+      AI_TIMEOUT_MS,
+    )) as { response?: string };
     const text = (response?.response ?? "").trim();
-    if (!text) return { ok: false, text: "" };
-    return { ok: true, text };
+    return text ? { ok: true, text } : { ok: false, text: "" };
+  };
+
+  // Egy újrapróbálkozás: a Llama-fast időnként tranziens hibát/timeoutot ad.
+  try {
+    return await call();
   } catch (err) {
-    console.error("[ai] runAiChat hiba:", err);
-    return { ok: false, text: "" };
+    console.error("[ai] runAiChat 1. próba hiba:", err);
+    try {
+      return await call();
+    } catch (err2) {
+      console.error("[ai] runAiChat 2. próba hiba:", err2);
+      return { ok: false, text: "" };
+    }
   }
 }
 

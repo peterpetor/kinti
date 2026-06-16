@@ -166,7 +166,10 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
       });
       if (!res.ok) {
         const j = (await res.json().catch(() => ({}))) as { error?: string };
-        setAiError(j.error ?? "Az AI nem tudott segíteni most.");
+        setAiError(
+          j.error ??
+            "Az AI épp túlterhelt — próbáld újra pár másodperc múlva. (A leírást kézzel is beírhatod, az AI nem kötelező.)",
+        );
         setAiBusy(false);
         return;
       }
