@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <clipPath id="kintiPin"><path d="M24 2.5C13.8 2.5 6.5 10.4 6.5 20.4c0 9 8.2 18 14.8 24.3a3.8 3.8 0 0 0 5.4 0c6.6-6.3 14.8-15.3 14.8-24.3 0-10-7.3-17.9-17.5-17.9z"/></clipPath>
+  </defs>
+  <g clip-path="url(#kintiPin)">
+    <rect x="4" y="0" width="40" height="16" fill="#c8392e"/>
+    <rect x="4" y="16" width="40" height="16" fill="#f4ede0"/>
+    <rect x="4" y="32" width="40" height="16" fill="#1d4434"/>
+  </g>
+  <path d="M24 2.5C13.8 2.5 6.5 10.4 6.5 20.4c0 9 8.2 18 14.8 24.3a3.8 3.8 0 0 0 5.4 0c6.6-6.3 14.8-15.3 14.8-24.3 0-10-7.3-17.9-17.5-17.9z" fill="none" stroke="#1d4434" stroke-width="2.4"/>
+  <circle cx="24" cy="20" r="5.2" fill="#f4ede0" stroke="#1d4434" stroke-width="2.4"/>
+</svg>
