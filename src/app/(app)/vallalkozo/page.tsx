@@ -28,7 +28,7 @@ export default function VallalkozoPage() {
         {/* Hero */}
         <section className="text-center mb-8 animate-fade-up">
           <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 text-primary grid place-items-center mb-3">
-            <Icon name="list" size={32} strokeWidth={2} />
+            <Icon name="shoppingBag" size={30} strokeWidth={2} />
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-pill bg-accent/15 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-accent">
             Csak svájci magyar vállalkozóknak
