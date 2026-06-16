@@ -116,9 +116,21 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           <div className="absolute top-0 right-0 w-24 h-24 bg-[#ff9600]/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
           <div className="mb-2 text-3xl">🚀</div>
           <h3 className="mb-1 text-[17px] font-black text-[#ff9600] tracking-tight">Válts Szaknévsor PRO-ba!</h3>
-          <p className="mb-4 text-[13px] font-medium text-ink-muted leading-snug">
-            Tűnj ki a tömegből a sárga kiemeléssel, és kerülj a listák legtetejére, hogy több svájci magyar ügyfelet szerezz!
+          <p className="mb-3 text-[13px] font-medium text-ink-muted leading-snug">
+            Tűnj ki a sárga kiemeléssel, kerülj a listák legtetejére, és{" "}
+            <strong className="text-ink">lásd, hányan nézték meg és hívták</strong> a vállalkozásod —
+            több svájci magyar ügyfélért.
           </p>
+          <div className="mb-4 flex flex-wrap justify-center gap-1.5">
+            {["Megtekintés", "Hívás", "14 napos trend"].map((m) => (
+              <span
+                key={m}
+                className="inline-flex items-center gap-1 rounded-pill bg-[#ff9600]/10 px-2.5 py-1 text-[11px] font-bold text-[#ff9600]"
+              >
+                🔒 {m}
+              </span>
+            ))}
+          </div>
           <button
             type="button"
             onClick={handleUpgrade}

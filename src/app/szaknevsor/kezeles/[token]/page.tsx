@@ -57,7 +57,9 @@ export default async function BusinessManagePage({ params }: { params: { token: 
         (a Resend e-mailben kaptad).
       </div>
 
-      {business.featured ? (
+      {/* PRO: statisztikák + arculat. Nem-PRO esetén az egyetlen upsell a
+          BusinessManageForm-ban van (valódi checkout), hogy ne legyen két kártya. */}
+      {business.featured && (
         <>
           {analytics && <BusinessAnalyticsDashboard stats={analytics} />}
 
@@ -72,34 +74,6 @@ export default async function BusinessManagePage({ params }: { params: { token: 
             manageToken={params.token}
           />
         </>
-      ) : (
-        <div className="rounded-card border-2 border-[#ff9600]/20 bg-[#ff9600]/5 p-5 text-center shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[#ff9600]/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
-          <div className="mb-2 text-3xl">📊</div>
-          <h3 className="mb-1 text-[17px] font-black text-[#ff9600] tracking-tight">Szaknévsor PRO</h3>
-          <p className="mb-3 text-[13px] font-medium text-ink-muted leading-snug">
-            Lásd, <strong className="text-ink">hányan nézték meg és hívták</strong> a vállalkozásod —
-            részletes statisztikák, egyedi borítókép, bővített referenciagaléria és top pozíció a
-            találati listákban, mindössze 19 CHF/hó áron. A vásárlást jelenleg ügyfélszolgálatunkon
-            keresztül intézheted.
-          </p>
-          <div className="mb-4 flex flex-wrap justify-center gap-1.5">
-            {["Megtekintés", "Hívás", "14 napos trend"].map((m) => (
-              <span
-                key={m}
-                className="inline-flex items-center gap-1 rounded-pill bg-[#ff9600]/10 px-2.5 py-1 text-[11px] font-bold text-[#ff9600]"
-              >
-                🔒 {m}
-              </span>
-            ))}
-          </div>
-          <a
-            href="mailto:info@kinti.app?subject=Szaknévsor PRO előfizetés"
-            className="flex w-full items-center justify-center gap-2 rounded-pill bg-[#ff9600] px-4 py-3 text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]"
-          >
-            Váltás PRO-ra (Email)
-          </a>
-        </div>
       )}
 
       <BusinessManageForm business={business} token={params.token} />
