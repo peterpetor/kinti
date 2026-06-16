@@ -114,9 +114,8 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
   const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
   const [published, setPublished] = useState<{ id: string; manageToken: string; manageUrl: string } | null>(null);
-  // Progresszív feltárás: az opcionális mezők (telefon/leírás/email) alapból rejtve,
-  // hogy az első benyomás 3 mező legyen (név + kategória + hely) → kisebb drop-off.
-  const [showDetails, setShowDetails] = useState(false);
+  // Az opcionális mezők (telefon/leírás/email) alapból nyitva.
+  const [showDetails, setShowDetails] = useState(true);
   // Geolokáció a kantonhoz ("Hol dolgozol?")
   const [geoBusy, setGeoBusy] = useState(false);
   const [geoMsg, setGeoMsg] = useState<string | null>(null);
