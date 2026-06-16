@@ -10,7 +10,7 @@ import { readPreferredCanton } from "@/lib/canton-pref";
 import { BUSINESS_LIMITS, isSwissCoord, type BusinessValidationError } from "@/lib/business";
 import type { Category } from "@/lib/types";
 import { PostSavePrompt } from "@/components/post-save-prompt";
-import { AddressAutocomplete } from "@/components/views/address-autocomplete";
+import { AddressFields, composeAddress, type AddressParts } from "@/components/views/address-fields";
 import { LanguagePicker, WorkingHoursEditor, DEFAULT_WORKING_HOURS } from "@/components/views/business-fields";
 import type { WorkingHours } from "@/lib/hours";
 
@@ -55,7 +55,9 @@ interface FormState {
   categoryId: string;
   categoryLabel: string;
   cantonCode: string;
-  address: string;
+  street: string;
+  zip: string;
+  city: string;
   lat: number | null;
   lng: number | null;
   phone: string;
@@ -74,7 +76,9 @@ const INITIAL: FormState = {
   categoryId: "",
   categoryLabel: "",
   cantonCode: "",
-  address: "",
+  street: "",
+  zip: "",
+  city: "",
   lat: null,
   lng: null,
   phone: "",
@@ -207,10 +211,11 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
     setAiResult(null);
   }
 
+  const composedAddress = composeAddress({ street: form.street, zip: form.zip, city: form.city });
   // Ha térképről választott (van koordináta), megbízunk benne — a hivatalos
   // svájci geokóder csak svájci címet ad, akkor is ha a falu nincs a listánkban.
   const addressInvalid =
-    form.address.trim().length > 0 && form.lat == null && !isSwissAddress(form.address);
+    composedAddress.trim().length > 0 && form.lat == null && !isSwissAddress(composedAddress);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -233,6 +238,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           ...form,
+          address: composedAddress,
           workingHours: hoursOn ? JSON.stringify(hours) : null,
           turnstileToken,
         }),
@@ -417,23 +423,17 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         </select>
         <FieldError msg={errors.cantonCode} />
         <div className="mt-2">
-          <AddressAutocomplete
-            value={form.address}
+          <AddressFields
+            value={{ street: form.street, zip: form.zip, city: form.city }}
             invalid={addressInvalid || !!errors.address}
-            onTextChange={(text) => {
+            onChange={(parts) => {
               // Kézi szerkesztésnél elavul a pontos koordináta → töröljük.
-              setForm((f) => ({ ...f, address: text, lat: null, lng: null }));
+              setForm((f) => ({ ...f, ...parts, lat: null, lng: null }));
               setErrors((e) => ({ ...e, address: "" }));
             }}
-            onSelect={(hit) => {
+            onGeocode={(hit) => {
               const c = nearestCantonCode(hit.lat, hit.lng);
-              setForm((f) => ({
-                ...f,
-                address: hit.label,
-                lat: hit.lat,
-                lng: hit.lng,
-                cantonCode: c.code,
-              }));
+              setForm((f) => ({ ...f, lat: hit.lat, lng: hit.lng, cantonCode: c.code }));
               setErrors((e) => ({ ...e, address: "", cantonCode: "" }));
               setGeoMsg(null);
             }}
