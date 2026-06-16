@@ -1,6 +1,7 @@
 import { TabBar } from "@/components/ui";
 import { CountryGate } from "@/components/country-gate";
 import { CountryBanner } from "@/components/country-banner";
+import { PageTransition, ScrollRestorer } from "@/components/page-transition";
 
 /**
  * Az alkalmazás-nézetek közös kerete: mobil-first, középre zárt max-w-md
@@ -14,9 +15,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           kategória-sor) — a belső vízszintes görgetők (overflow-x-auto) ettől
           még működnek. */}
       <div className="mx-auto min-h-dvh max-w-md overflow-x-clip pb-28">
-        {children}
+        <PageTransition>{children}</PageTransition>
       </div>
       <TabBar />
+      {/* Tab-szintű scroll-pozíció megőrzés (natív tab-bar viselkedés). */}
+      <ScrollRestorer />
       {/* Őszinte „Hamarosan" sáv, ha nem-CH ország van kiválasztva. */}
       <CountryBanner />
       {/* Belépés előtti ország-választó (csak ha még nincs választott ország). */}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "./icons";
 import { cn } from "@/lib/cn";
+import { haptic } from "@/lib/haptics";
 
 /**
  * TabBar — alsó, lebegő üveg-navigáció. Stabil fülek, auth-független label:
@@ -51,6 +52,7 @@ export function TabBar() {
             <Link
               key={t.href}
               href={t.href}
+              onClick={() => { if (!active) haptic("selection"); }}
               aria-current={active ? "page" : undefined}
               className={cn(
                 "relative z-[1] flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11.5px] transition",

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
+import { haptic } from "@/lib/haptics";
 
 const LS_KEY = "kinti_favorites";
 /** Az esemény, amivel a lista-nézet (explore-view) szinkronban marad. */
@@ -46,6 +47,7 @@ export function FavoriteButton({ businessId, className }: { businessId: string; 
         : [...favs, businessId];
       localStorage.setItem(LS_KEY, JSON.stringify(next));
       setFav(next.includes(businessId));
+      haptic("tap");
       window.dispatchEvent(new CustomEvent(FAVORITES_CHANGED_EVENT));
     } catch {
       /* localStorage letiltva — csendben elnyeljük */
