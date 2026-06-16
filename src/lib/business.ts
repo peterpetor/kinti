@@ -94,7 +94,7 @@ export interface ValidatedBusinessInput {
 export const ALLOWED_LANGUAGES = ["Magyar", "Deutsch", "Français", "Italiano", "English"];
 
 /** Svájc nagyjábóli bounding boxa — koordináta-épelméjűségi ellenőrzéshez. */
-function isSwissCoord(lat: number, lng: number): boolean {
+export function isSwissCoord(lat: number, lng: number): boolean {
   return lat >= 45.7 && lat <= 47.95 && lng >= 5.8 && lng <= 10.7;
 }
 

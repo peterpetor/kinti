@@ -7,7 +7,7 @@ import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile
 import { cn } from "@/lib/cn";
 import { CANTONS, isSwissAddress, nearestCantonCode } from "@/lib/cantons";
 import { readPreferredCanton } from "@/lib/canton-pref";
-import { BUSINESS_LIMITS, type BusinessValidationError } from "@/lib/business";
+import { BUSINESS_LIMITS, isSwissCoord, type BusinessValidationError } from "@/lib/business";
 import type { Category } from "@/lib/types";
 import { PostSavePrompt } from "@/components/post-save-prompt";
 import { AddressAutocomplete } from "@/components/views/address-autocomplete";
@@ -134,7 +134,17 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
     setGeoMsg(null);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const p = nearestCantonCode(pos.coords.latitude, pos.coords.longitude);
+        const { latitude, longitude } = pos.coords;
+        // A kinti egyelőre Svájcra szól — ha a felhasználó épp Svájcon kívül van
+        // (pl. külföldön nyaral), NE rántsuk a legközelebbi svájci kantonra.
+        if (!isSwissCoord(latitude, longitude)) {
+          setGeoMsg(
+            "Úgy tűnik, most épp Svájcon kívül vagy. A kinti egyelőre Svájcra szól — válaszd ki kézzel azt a kantont, ahol a vállalkozásod működik.",
+          );
+          setGeoBusy(false);
+          return;
+        }
+        const p = nearestCantonCode(latitude, longitude);
         setField("cantonCode", p.code);
         setGeoMsg(`Megvan: ${p.city} (${p.code}). Ha nem stimmel, válaszd ki kézzel.`);
         setGeoBusy(false);
