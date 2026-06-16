@@ -457,17 +457,20 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           <button
             type="button"
             onClick={handleAiHelp}
-            disabled={aiBusy || form.blurb.trim().length < 10}
+            disabled={aiBusy}
             className={cn(
               "inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[11.5px] font-extrabold transition active:scale-95",
-              aiBusy || form.blurb.trim().length < 10
-                ? "bg-surface-alt text-ink-muted cursor-not-allowed"
+              aiBusy
+                ? "bg-surface-alt text-ink-muted cursor-wait"
                 : "border border-primary/30 bg-primary-soft/40 text-primary hover:bg-primary-soft/60",
             )}
           >
             <Icon name="sparkles" size={11} strokeWidth={2.4} />
             {aiBusy ? "AI gondolkodik…" : "AI segítség (csiszolás + kategória-javaslat)"}
           </button>
+          <p className="mt-1 text-[11px] text-ink-faint">
+            Tipp: írj pár szót a leírásba, és az AI kicsiszolja + a legjobb kategóriát javasolja.
+          </p>
           {aiError && (
             <p className="mt-1 text-[11px] font-bold text-accent">{aiError}</p>
           )}
