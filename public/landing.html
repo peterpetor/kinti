@@ -1548,6 +1548,7 @@
   .price-card.gold  .price-top { background: #cda434; }
   .price-card.red   .price-top { background: var(--accent); }
   .price-card.featured { border: 1.5px solid var(--primary); box-shadow: var(--shadow-pop); }
+  .price-card.gold.featured { border-color: #cda434; }
   .price-ribbon { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); padding: 6px 16px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 11.5px; font-weight: 800; letter-spacing: 0.4px; white-space: nowrap; box-shadow: var(--shadow-card); }
   .price-head { display: flex; align-items: center; gap: 13px; }
   .price-ico { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; }
@@ -1583,9 +1584,8 @@
 
     <div class="price-grid">
 
-      <div class="price-card green featured">
+      <div class="price-card green">
         <div class="price-top"></div>
-        <div class="price-ribbon">★ Legnépszerűbb</div>
         <div class="price-head">
           <div class="price-ico">★</div>
           <div>
@@ -1604,8 +1604,9 @@
         <button class="price-cta">Válts Kinti PRO-ba</button>
       </div>
 
-      <div class="price-card gold">
+      <div class="price-card gold featured">
         <div class="price-top"></div>
+        <div class="price-ribbon">★ Legnépszerűbb</div>
         <div class="price-head">
           <div class="price-ico">🚀</div>
           <div>
