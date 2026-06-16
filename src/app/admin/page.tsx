@@ -145,15 +145,22 @@ export default async function AdminPage() {
             {businesses.map((b) => {
               const st =
                 b.moderationStatus === 1
-                  ? { label: "Jóváhagyva", cls: "bg-success/15 text-success", border: "border-l-success" }
+                  ? { label: "Jóváhagyva", bg: "#dcfce7", fg: "#15803d", border: "#22c55e" }
                   : b.moderationStatus === 2
-                    ? { label: "Elutasítva", cls: "bg-ink/10 text-ink-muted", border: "border-l-line" }
-                    : { label: "Függőben", cls: "bg-[#fef3c7] text-[#b45309]", border: "border-l-[#f59e0b]" };
+                    ? { label: "Elutasítva", bg: "#f1f5f9", fg: "#64748b", border: "#cbd5e1" }
+                    : { label: "Függőben", bg: "#fef3c7", fg: "#b45309", border: "#f59e0b" };
               return (
-              <div key={b.id} className={`flex items-center gap-2 rounded-card border border-line border-l-4 ${st.border} bg-surface px-3 py-2 shadow-card`}>
+              <div
+                key={b.id}
+                className="flex items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card"
+                style={{ borderLeft: `4px solid ${st.border}` }}
+              >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wide ${st.cls}`}>
+                    <span
+                      className="shrink-0 rounded-full px-1.5 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wide"
+                      style={{ backgroundColor: st.bg, color: st.fg }}
+                    >
                       {st.label}
                     </span>
                     <Link href={`/szaknevsor/${b.id}`} className="truncate text-[13px] font-bold text-ink hover:text-primary">
