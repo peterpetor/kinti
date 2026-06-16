@@ -7,7 +7,6 @@ import { OwnerDraftForm } from "@/components/views/owner-draft-form";
 import { ProfileEditor } from "@/components/views/profile-editor";
 import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
 import { LeadInbox } from "@/components/views/lead-inbox";
-import { ReviewResponseForm } from "@/components/views/review-response-form";
 import { InstallPrompt } from "@/components/install-prompt";
 import { KintiRadar } from "@/components/kinti-radar";
 import {
@@ -19,7 +18,7 @@ import {
   DropdownMenu,
   KintiLogo,
 } from "@/components/ui";
-import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getReviewResponseEngagement, getTopSearchTerms } from "@/lib/repo";
+import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getTopSearchTerms } from "@/lib/repo";
 import { mediaUrl } from "@/lib/media";
 import { handleFromId } from "@/lib/handle";
 import type { Business, Category } from "@/lib/types";
@@ -185,7 +184,6 @@ async function OwnerDashboard({
   const leads = business.featured ? await getBusinessLeads(business.id) : [];
 
   // Review Response Counter: megkeresések a vélemény-válaszadás óta.
-  const responseEngagement = await getReviewResponseEngagement(business.id);
 
   // Analytics: top keresőszavak ("honnan jönnek") — PRO.
   const topSearchTerms = business.featured ? await getTopSearchTerms(business.id) : [];
@@ -280,23 +278,6 @@ async function OwnerDashboard({
         </section>
       )}
 
-      {/* Review Response Counter — a vélemény-válaszadás megtérülése */}
-      {responseEngagement && (
-        <div className="rounded-card border border-primary/20 bg-primary/5 p-4">
-          <div className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-              <Icon name="trending" size={16} strokeWidth={2.4} />
-            </span>
-            <p className="text-[13px] font-extrabold text-ink">Megtérülő válaszok</p>
-          </div>
-          <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-muted">
-            Mióta válaszolsz a véleményekre ({new Date(responseEngagement.since + "T00:00:00Z").toLocaleDateString("hu-HU")}), összesen{" "}
-            <strong className="text-ink">{responseEngagement.views}</strong> profil-megnyitás,{" "}
-            <strong className="text-ink">{responseEngagement.calls}</strong> hívás és{" "}
-            <strong className="text-ink">{responseEngagement.leads}</strong> ajánlatkérés érkezett. A válaszadás növeli a bizalmat — így térül meg.
-          </p>
-        </div>
-      )}
 
       {/* Vállalkozói adatok szerkesztése form */}
       <ProfileEditor
@@ -421,10 +402,6 @@ async function OwnerDashboard({
                   ))}
                 </div>
               </div>
-              <p className="mt-2 whitespace-pre-wrap text-[13px] leading-relaxed text-ink-muted">
-                {r.body}
-              </p>
-              <ReviewResponseForm reviewId={r.id} existing={r.ownerResponse} />
             </div>
             );
           })}

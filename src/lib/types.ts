@@ -101,11 +101,6 @@ export interface Review {
   body: string;
   reviewerName: string;
   publishedAt: string;
-  /** A vállalkozó nyilvános válasza (Google-stílusú). */
-  ownerResponse: string | null;
-  ownerRespondedAt: string | null;
-  /** „Hasznos volt" szavazatok száma (account nélkül, IP-hash dedup). */
-  helpfulCount: number;
 }
 
 /** Megerősítésre váró vélemény (review_drafts). */

@@ -9,7 +9,6 @@ import { ReviewForm } from "@/components/views/review-form";
 import { cantonFromAddress, cantonToSlug } from "@/lib/cantons";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
-import { ReviewHelpfulButton } from "@/components/review-helpful-button";
 import { BusinessClaimCard } from "@/components/views/business-claim-card";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
@@ -522,18 +521,7 @@ export default async function BusinessPage({
                     </div>
                   </div>
 
-                  {r.ownerResponse && (
-                    <div className="mt-2.5 rounded-[12px] border-l-2 border-primary bg-primary-soft/40 px-3 py-2">
-                      <p className="text-[11.5px] font-bold uppercase tracking-wide text-primary">
-                        A vállalkozó válasza{r.ownerRespondedAt ? ` · ${fmtRelative(r.ownerRespondedAt)}` : ""}
-                      </p>
-                      <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-ink">
-                        {r.ownerResponse}
-                      </p>
-                    </div>
-                  )}
-                  <div className="mt-2.5 flex items-center justify-between border-t border-line/30 pt-2">
-                    <ReviewHelpfulButton reviewId={r.id} initialCount={r.helpfulCount} />
+                  <div className="mt-2.5 flex items-center justify-end border-t border-line/30 pt-2">
                     <ReportButton contentType="review" contentId={r.id} variant="link" />
                   </div>
                 </article>

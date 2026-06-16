@@ -25,19 +25,14 @@ function toReviewDraft(r: ReviewDraftRow): ReviewDraft {
 interface ReviewRow {
   id: string; business_id: string; email: string; rating: number; body: string;
   reviewer_name: string; published_at: string; manage_token: string;
-  owner_response: string | null; owner_responded_at: string | null;
   moderation_status: number; moderation_decision_at: string | null;
   moderation_decided_by: string | null; hidden: number;
-  helpful_count?: number;
 }
 
 function toReview(r: ReviewRow): Review {
   return {
     id: r.id, businessId: r.business_id, rating: r.rating,
     body: r.body, reviewerName: r.reviewer_name, publishedAt: r.published_at,
-    ownerResponse: r.owner_response,
-    ownerRespondedAt: r.owner_responded_at,
-    helpfulCount: r.helpful_count ?? 0,
   };
 }
 
@@ -104,46 +99,13 @@ export async function getReviewsByBusiness(businessId: string): Promise<Review[]
   const { results } = await getDB()
     .prepare(
       `SELECT r.id, r.business_id, r.rating, r.body, r.reviewer_name, r.published_at,
-              r.manage_token, r.email, r.owner_response, r.owner_responded_at,
-              COUNT(v.ip_hash) AS helpful_count
+              r.manage_token, r.email
        FROM reviews r
-       LEFT JOIN review_helpful_votes v ON v.review_id = r.id
        WHERE r.business_id = ? AND r.hidden = 0 AND r.moderation_status = 1
-       GROUP BY r.id
-       ORDER BY helpful_count DESC, r.published_at DESC`,
+       ORDER BY r.published_at DESC`,
     )
     .bind(businessId).all<ReviewRow>();
   return results.map(toReview);
-}
-
-/**
- * „Hasznos volt" szavazat egy véleményre — account nélkül, IP-hash dedup
- * (1 szavazat / készülék-IP / vélemény). Az event-RSVP mintáját követi.
- * @returns added=false, ha erről az IP-ről már volt szavazat.
- */
-export async function addReviewHelpful(
-  reviewId: string,
-  ipHash: string,
-): Promise<{ ok: boolean; added: boolean; total: number }> {
-  const db = getDB();
-  const review = await db
-    .prepare("SELECT id FROM reviews WHERE id = ? AND hidden = 0 AND moderation_status = 1")
-    .bind(reviewId)
-    .first<{ id: string }>();
-  if (!review) return { ok: false, added: false, total: 0 };
-
-  const res = await db
-    .prepare("INSERT OR IGNORE INTO review_helpful_votes (review_id, ip_hash) VALUES (?, ?)")
-    .bind(reviewId, ipHash)
-    .run();
-  const added = (res.meta.changes ?? 0) > 0;
-
-  const cntRow = await db
-    .prepare("SELECT COUNT(*) AS cnt FROM review_helpful_votes WHERE review_id = ?")
-    .bind(reviewId)
-    .first<{ cnt: number }>();
-
-  return { ok: true, added, total: cntRow?.cnt ?? 0 };
 }
 
 export async function deleteReviewByManageToken(manageToken: string): Promise<string | null> {
@@ -157,7 +119,7 @@ export async function getReviewByManageToken(manageToken: string): Promise<(Revi
   const row = await getDB()
     .prepare(
       `SELECT r.id, r.business_id, r.rating, r.body, r.reviewer_name,
-              r.published_at, r.manage_token, r.email, r.owner_response, r.owner_responded_at, b.name AS business_name
+              r.published_at, r.manage_token, r.email, b.name AS business_name
        FROM reviews r LEFT JOIN businesses b ON b.id = r.business_id
        WHERE r.manage_token = ?`,
     )
@@ -200,51 +162,3 @@ export async function getReviewSummaryById(id: string): Promise<{ id: string; bu
   return { id: row.id, businessId: row.business_id, reviewerName: row.reviewer_name, body: row.body };
 }
 
-export async function setReviewOwnerResponse(reviewId: string, ownerUserId: string, response: string | null): Promise<boolean> {
-  const res = await getDB()
-    .prepare(
-      `UPDATE reviews SET owner_response = ?, owner_responded_at = CASE WHEN ? IS NULL THEN NULL ELSE datetime('now') END
-       WHERE id = ? AND business_id IN (SELECT id FROM businesses WHERE owner_user_id = ?)`
-    )
-    .bind(response, response, reviewId, ownerUserId).run();
-  return (res.meta.changes ?? 0) > 0;
-}
-
-export interface ReviewResponseEngagement {
-  /** A legelső vélemény-válasz napja (YYYY-MM-DD). */
-  since: string;
-  views: number;
-  calls: number;
-  leads: number;
-}
-
-/**
- * „Review Response Counter" — mióta a vállalkozó válaszol a véleményekre,
- * mennyi megkeresés (profil-megnyitás / hívás / ajánlatkérés) érkezett.
- * A válaszadás megtérülését mutatja. Ha még sose válaszolt → null.
- */
-export async function getReviewResponseEngagement(businessId: string): Promise<ReviewResponseEngagement | null> {
-  const first = await getDB()
-    .prepare("SELECT MIN(date(owner_responded_at)) AS since FROM reviews WHERE business_id = ? AND owner_responded_at IS NOT NULL")
-    .bind(businessId)
-    .first<{ since: string | null }>();
-  if (!first?.since) return null;
-
-  const agg = await getDB()
-    .prepare(
-      `SELECT COALESCE(SUM(view_count),0) AS views,
-              COALESCE(SUM(phone_click_count),0) AS calls,
-              COALESCE(SUM(lead_count),0) AS leads
-       FROM business_analytics_daily
-       WHERE business_id = ? AND day >= ?`,
-    )
-    .bind(businessId, first.since)
-    .first<{ views: number; calls: number; leads: number }>();
-
-  return {
-    since: first.since,
-    views: agg?.views ?? 0,
-    calls: agg?.calls ?? 0,
-    leads: agg?.leads ?? 0,
-  };
-}
