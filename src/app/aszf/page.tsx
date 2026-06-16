@@ -295,10 +295,13 @@ export default function AszfPage() {
       </p>
       <h2>12. Felelősség-korlátozás</h2>
       <p>
-        Az üzemeltető felelőssége a magyar Polgári Törvénykönyv vonatkozó rendelkezései szerint,
-        ingyenes szolgáltatás esetén <strong>csak szándékos károkozásra</strong> terjed ki.
-        Gondatlanságból eredő, illetve felhasználók közötti, vagy felhasználó és vállalkozó
-        közötti jogvitákból származó károkért az üzemeltető <strong>nem felelős</strong>.
+        Az üzemeltető felelőssége az irányadó jog (lásd 19. pont — román jog) vonatkozó
+        rendelkezései szerint, ingyenes szolgáltatás esetén a jogszabály által megengedett
+        legszűkebb körre, <strong>elsősorban a szándékos vagy súlyosan gondatlan
+        károkozásra</strong> korlátozódik. A felhasználók közötti, vagy felhasználó és
+        vállalkozó közötti jogvitákból származó károkért az üzemeltető <strong>nem
+        felelős</strong>. E korlátozás nem érinti a fogyasztót a lakóhelye szerinti jog
+        kötelező rendelkezései által biztosított védelmet (lásd 19. pont).
       </p>
       <p>
         Ahol egy adott módul külön felelősség-kizáró nyilatkozatot tartalmaz (például a
@@ -393,9 +396,8 @@ export default function AszfPage() {
           megtévesztésért, ami AI-generált tartalom alapján következik be.
         </li>
         <li>
-          A vélemény-összegzés és a leírás-csiszoló az AI-szolgáltató felé továbbítja
-          az érintett vélemények és leírások szövegét — részletek az Adatkezelési
-          Tájékoztatóban (2.9 szakasz).
+          A leírás-asszisztens az AI-szolgáltató felé továbbítja a vállalkozó által
+          beírt leírás szövegét — részletek az Adatkezelési Tájékoztatóban (2.9 szakasz).
         </li>
         <li>
           Az AI funkciók <strong>spam-, abúzív- vagy automatizált használata</strong>{" "}
@@ -583,12 +585,10 @@ export default function AszfPage() {
       <h3>20.2 Fogyasztói vitarendezés</h3>
       <p>
         Magyarországi fogyasztóként a megyei (fővárosi) kereskedelmi és iparkamara
-        mellett működő <strong>békéltető testületekhez</strong> fordulhatsz; az
-        Európai Unióban élő fogyasztók az{" "}
-        <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noreferrer">
-          Online Dispute Resolution (ODR) platformon
-        </a>{" "}
-        is kezdeményezhetnek vitarendezést.
+        mellett működő <strong>békéltető testületekhez</strong> fordulhatsz; más
+        uniós tagállamban élő fogyasztók a <strong>lakóhelyük szerinti fogyasztói
+        vitarendezési (AVR/ADR) testülethez</strong> fordulhatnak. (Az Európai
+        Bizottság központi ODR-platformja 2025. július 20-án megszűnt.)
       </p>
 
       <h2>21. Kapcsolat</h2>

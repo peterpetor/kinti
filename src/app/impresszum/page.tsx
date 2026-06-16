@@ -90,12 +90,12 @@ export default function ImpresszumPage() {
 
       <h2>Online vitarendezés (ODR)</h2>
       <p>
-        Az Európai Bizottság online vitarendezési platformot működtet fogyasztói jogviták
-        rendezésére:{" "}
-        <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noreferrer">
-          ec.europa.eu/consumers/odr
-        </a>. Ezen a platformon fogyasztói panasz nyújtható be az üzemeltetővel szemben.
-        Az üzemeltető email-alapú vitarendezésre is nyitott: <a href={`mailto:${OPERATOR.contactEmail}`}>{OPERATOR.contactEmail}</a>.
+        Az Európai Bizottság korábbi online vitarendezési (ODR) platformja{" "}
+        <strong>2025. július 20-án megszűnt</strong>. Fogyasztói jogvita esetén a
+        szokásos tartózkodási helyed szerinti tagállam <strong>fogyasztói
+        vitarendezési testületéhez</strong> (alternatív vitarendezés, AVR/ADR)
+        fordulhatsz. Az üzemeltető emellett email-alapú, peren kívüli vitarendezésre
+        is nyitott: <a href={`mailto:${OPERATOR.contactEmail}`}>{OPERATOR.contactEmail}</a>.
       </p>
 
       <h2>DSA Átláthatóság</h2>

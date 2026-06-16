@@ -189,12 +189,6 @@ export default function AdatvedelemPage() {
       </p>
       <ul>
         <li>
-          <strong>Vélemény-összegzés</strong>: az érintett vállalkozó publikus,
-          megerősített véleményeinek szövege és csillag-értékelése. Ezek a vélemények
-          már a publikus profil-oldalon elérhetők; a Workers AI feldolgozással új
-          személyes adat nem keletkezik.
-        </li>
-        <li>
           <strong>Természetes nyelvű kereső</strong>: a felhasználó által beírt keresési
           mondat (max 200 karakter). NEM tartalmazhat személyes adatot.
         </li>
@@ -204,18 +198,20 @@ export default function AdatvedelemPage() {
           profilján.
         </li>
         <li>
+          <strong>AI interjú-szimulátor</strong>: a felhasználó által gyakorlásként
+          beírt válaszok. Kérünk, hogy ide valós személyes adatot ne írj be.
+        </li>
+        <li>
           <strong>Német szó-szótár</strong>: egyetlen szó vagy rövid kifejezés (max
           60 karakter). Személyes adatot nem tartalmaz.
         </li>
       </ul>
       <ul>
         <li><strong>Jogalap</strong>: GDPR 6. cikk (1) f) — jogos érdek
-          (felhasználói élmény javítása); a vélemény-összegzésnél a publikus tartalom
-          további feldolgozása szintén jogos érdek alapján történik.</li>
+          (felhasználói élmény javítása).</li>
         <li><strong>Tárolási idő</strong>: a Workers AI <strong>nem tárolja</strong>{" "}
           a feldolgozott bemenetet és kimenetet (training-célra sem); az AI-válaszok
-          edge-cache-elve maximum 30 napig (vélemény-összegzés) vagy 7 napig
-          (német szó-szótár).</li>
+          edge-cache-elve legfeljebb 7 napig (német szó-szótár).</li>
         <li><strong>Adatfeldolgozó</strong>: Cloudflare, Inc. (Workers AI) —{" "}
           <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noreferrer">privacy policy</a>;{" "}
           <a href="https://developers.cloudflare.com/workers-ai/privacy/" target="_blank" rel="noreferrer">Workers AI adatkezelés</a>.</li>
