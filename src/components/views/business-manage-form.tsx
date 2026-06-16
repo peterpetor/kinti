@@ -7,8 +7,8 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { Business } from "@/lib/types";
 import { useCheckout } from "@/hooks/useCheckout";
-
-const ALL_LANGS = ["Magyar", "Deutsch", "Français", "Italiano", "English"];
+import { LanguagePicker, WorkingHoursEditor } from "@/components/views/business-fields";
+import { parseWorkingHours, type WorkingHours } from "@/lib/hours";
 
 /**
  * Email-only business manager: token-alapú szerkesztés/törlés Clerk nélkül.
@@ -23,9 +23,12 @@ export function BusinessManageForm({ business, token }: { business: Business; to
     phone: business.phone ?? "",
     blurb: business.blurb ?? "",
     openText: business.openText ?? "",
-    workingHours: business.workingHours ?? "",
     languages: business.languages ?? ["Magyar"],
   });
+  // Strukturált nyitvatartás — ez hajtja a "Most nyitva" szűrőt és a státuszt.
+  const [hours, setHours] = useState<WorkingHours>(() =>
+    parseWorkingHours(business.workingHours ?? null),
+  );
   const [phase, setPhase] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const { startCheckout, isLoading: isCheckoutLoading } = useCheckout();
@@ -45,17 +48,6 @@ export function BusinessManageForm({ business, token }: { business: Business; to
     setPhase("idle");
   }
 
-  function toggleLang(lang: string) {
-    setForm((f) => {
-      const has = f.languages.includes(lang);
-      const next = has ? f.languages.filter((l) => l !== lang) : [...f.languages, lang];
-      // Magyar mindig kötelező
-      if (!next.includes("Magyar")) next.unshift("Magyar");
-      return { ...f, languages: next };
-    });
-    setPhase("idle");
-  }
-
   async function save() {
     setPhase("saving");
     setError(null);
@@ -70,7 +62,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           phone: form.phone || null,
           blurb: form.blurb || null,
           openText: form.openText || null,
-          workingHours: form.workingHours || null,
+          workingHours: JSON.stringify(hours),
           languages: form.languages,
         }),
       });
@@ -201,40 +193,35 @@ export function BusinessManageForm({ business, token }: { business: Business; to
         </p>
       </Section>
 
-      <Section title="Nyitvatartás szöveges">
-        <input
-          type="text"
-          value={form.openText}
-          onChange={(e) => set("openText", e.target.value)}
-          placeholder="Pl. H–P: 9–18 · Sz: 9–13"
-          className={inputCls()}
+      <Section title="Nyitvatartás">
+        <WorkingHoursEditor
+          value={hours}
+          onChange={(next) => {
+            setHours(next);
+            setPhase("idle");
+          }}
         />
+        <div className="mt-3 border-t border-line/60 pt-3">
+          <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+            Extra megjegyzés (opcionális)
+          </label>
+          <input
+            type="text"
+            value={form.openText}
+            onChange={(e) => set("openText", e.target.value)}
+            placeholder="Pl. Ebédszünet 12–13 · Ünnepnap zárva"
+            className={inputCls()}
+          />
+        </div>
       </Section>
 
       <Section title="Beszélt nyelvek">
-        <div className="flex flex-wrap gap-1.5">
-          {ALL_LANGS.map((lang) => {
-            const on = form.languages.includes(lang);
-            const required = lang === "Magyar";
-            return (
-              <button
-                key={lang}
-                type="button"
-                onClick={() => !required && toggleLang(lang)}
-                disabled={required}
-                className={cn(
-                  "rounded-pill px-3 py-1.5 text-[12px] font-bold transition",
-                  on
-                    ? "bg-primary text-white"
-                    : "border border-line bg-surface text-ink-muted hover:text-ink",
-                  required && "cursor-not-allowed",
-                )}
-              >
-                {lang} {required && "(kötelező)"}
-              </button>
-            );
-          })}
-        </div>
+        <LanguagePicker
+          value={form.languages}
+          onChange={(next) => {
+            set("languages", next);
+          }}
+        />
       </Section>
 
       {error && (

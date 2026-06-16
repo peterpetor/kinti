@@ -59,6 +59,13 @@ export interface BusinessFormInput {
   blurb?: unknown;
   licenseNumber?: unknown;
   licenseAccepted?: unknown;
+  /** Beszélt nyelvek (Magyar mindig kötelező). */
+  languages?: unknown;
+  /** Strukturált heti nyitvatartás JSON (lib/hours WorkingHours). */
+  workingHours?: unknown;
+  /** Pontos koordináta a térképes címkeresőből (geo.admin.ch). */
+  lat?: unknown;
+  lng?: unknown;
   /** Bot-csapda — ha van értéke, eldobjuk. */
   website?: unknown;
   acceptTerms?: unknown;
@@ -75,8 +82,20 @@ export interface ValidatedBusinessInput {
   phone: string | null;
   blurb: string | null;
   licenseNumber: string | null;
+  languages: string[];
+  workingHours: string | null;
+  lat: number | null;
+  lng: number | null;
   acceptTerms: true;
   ageConfirmed: true;
+}
+
+/** Engedélyezett nyelvek (egységes a kliens LanguagePicker-rel). */
+export const ALLOWED_LANGUAGES = ["Magyar", "Deutsch", "Français", "Italiano", "English"];
+
+/** Svájc nagyjábóli bounding boxa — koordináta-épelméjűségi ellenőrzéshez. */
+function isSwissCoord(lat: number, lng: number): boolean {
+  return lat >= 45.7 && lat <= 47.95 && lng >= 5.8 && lng <= 10.7;
 }
 
 export type BusinessValidationError = { field: keyof BusinessFormInput; message: string };
@@ -123,11 +142,16 @@ export function validateBusinessInput(
   if (categoryLabel.length > BUSINESS_LIMITS.labelMax)
     errors.push({ field: "categoryLabel", message: `Legfeljebb ${BUSINESS_LIMITS.labelMax} karakter.` });
 
-  // Cím opcionális, DE ha megadták, svájcinak kell lennie.
+  // Cím opcionális, DE ha megadták, svájcinak kell lennie. Kivéve, ha térképről
+  // választott (érvényes svájci koordináta van) — akkor a geokódernek hiszünk.
   const address = str(input.address);
+  const hasSwissCoord =
+    Number.isFinite(Number(input.lat)) &&
+    Number.isFinite(Number(input.lng)) &&
+    isSwissCoord(Number(input.lat), Number(input.lng));
   if (address.length > BUSINESS_LIMITS.addressMax) {
     errors.push({ field: "address", message: `Legfeljebb ${BUSINESS_LIMITS.addressMax} karakter.` });
-  } else if (address && !isSwissAddress(address)) {
+  } else if (address && !hasSwissCoord && !isSwissAddress(address)) {
     errors.push({
       field: "address",
       message:
@@ -190,6 +214,38 @@ export function validateBusinessInput(
     }
   }
 
+  // Nyelvek: csak az engedélyezett listából, Magyar mindig benne, max 5.
+  let languages = ["Magyar"];
+  if (Array.isArray(input.languages)) {
+    const picked = input.languages
+      .filter((l): l is string => typeof l === "string")
+      .filter((l) => ALLOWED_LANGUAGES.includes(l));
+    languages = ["Magyar", ...picked.filter((l) => l !== "Magyar")].slice(0, ALLOWED_LANGUAGES.length);
+  }
+
+  // Strukturált nyitvatartás: JSON-string, ésszerű hosszkorláttal. A formátumot
+  // a megjelenítő réteg (lib/hours) toleráns parse-olja; rossz JSON → default.
+  let workingHours: string | null = null;
+  const whRaw = str(input.workingHours);
+  if (whRaw && whRaw.length <= 2000) {
+    try {
+      JSON.parse(whRaw);
+      workingHours = whRaw;
+    } catch {
+      workingHours = null;
+    }
+  }
+
+  // Pontos koordináta a térképes keresőből (csak ha Svájcon belül van).
+  let lat: number | null = null;
+  let lng: number | null = null;
+  const latN = typeof input.lat === "number" ? input.lat : Number(input.lat);
+  const lngN = typeof input.lng === "number" ? input.lng : Number(input.lng);
+  if (Number.isFinite(latN) && Number.isFinite(lngN) && isSwissCoord(latN, lngN)) {
+    lat = +latN.toFixed(6);
+    lng = +lngN.toFixed(6);
+  }
+
   if (errors.length > 0) {
     return { ok: false, errors };
   }
@@ -206,6 +262,10 @@ export function validateBusinessInput(
       phone: phone || null,
       blurb: blurb || null,
       licenseNumber: isLicensedCategory(categoryId) ? licenseNumber : null,
+      languages,
+      workingHours,
+      lat,
+      lng,
       acceptTerms: true,
       ageConfirmed: true,
     },

@@ -135,7 +135,10 @@ export async function POST(req: Request) {
     if (await getBusinessById(bizId)) {
       bizId = `${slugifyBusinessName(validation.value.name)}-${crypto.randomUUID().slice(0, 8)}`;
     }
-    const coords = approxCoordsForCanton(validation.value.cantonCode);
+    // Pontos koordináta a térképes címkeresőből; ha nincs, kanton-közelítés.
+    const approx = approxCoordsForCanton(validation.value.cantonCode);
+    const lat = validation.value.lat ?? approx?.lat ?? null;
+    const lng = validation.value.lng ?? approx?.lng ?? null;
     await createBusinessFromSubmission({
       id: bizId,
       name: validation.value.name,
@@ -146,8 +149,10 @@ export async function POST(req: Request) {
       blurb: validation.value.blurb,
       licenseNumber: validation.value.licenseNumber,
       contactEmail: "",
-      lat: coords?.lat ?? null,
-      lng: coords?.lng ?? null,
+      lat,
+      lng,
+      languages: validation.value.languages,
+      workingHours: validation.value.workingHours,
       ownerUserId: clerkUserId,
       manageToken,
     });

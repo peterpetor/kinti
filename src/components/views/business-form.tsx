@@ -10,6 +10,9 @@ import { readPreferredCanton } from "@/lib/canton-pref";
 import { BUSINESS_LIMITS, type BusinessValidationError } from "@/lib/business";
 import type { Category } from "@/lib/types";
 import { PostSavePrompt } from "@/components/post-save-prompt";
+import { AddressAutocomplete } from "@/components/views/address-autocomplete";
+import { LanguagePicker, WorkingHoursEditor, DEFAULT_WORKING_HOURS } from "@/components/views/business-fields";
+import type { WorkingHours } from "@/lib/hours";
 
 /**
  * Engedélyköteles kategóriák (SZF 3.1) — ha valaki ilyen kategóriát választ,
@@ -53,8 +56,11 @@ interface FormState {
   categoryLabel: string;
   cantonCode: string;
   address: string;
+  lat: number | null;
+  lng: number | null;
   phone: string;
   blurb: string;
+  languages: string[];
   licenseNumber: string;
   licenseAccepted: boolean; // nyilatkozat engedélyköteles kategóriákhoz
   website: string; // honeypot
@@ -69,8 +75,11 @@ const INITIAL: FormState = {
   categoryLabel: "",
   cantonCode: "",
   address: "",
+  lat: null,
+  lng: null,
   phone: "",
   blurb: "",
+  languages: ["Magyar"],
   licenseNumber: "",
   licenseAccepted: false,
   website: "",
@@ -107,6 +116,9 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
   // Geolokáció a kantonhoz ("Hol dolgozol?")
   const [geoBusy, setGeoBusy] = useState(false);
   const [geoMsg, setGeoMsg] = useState<string | null>(null);
+  // Strukturált nyitvatartás (opcionális) — ez hajtja a "Most nyitva" szűrőt.
+  const [hoursOn, setHoursOn] = useState(false);
+  const [hours, setHours] = useState<WorkingHours>(DEFAULT_WORKING_HOURS);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -182,7 +194,10 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
     setAiResult(null);
   }
 
-  const addressInvalid = form.address.trim().length > 0 && !isSwissAddress(form.address);
+  // Ha térképről választott (van koordináta), megbízunk benne — a hivatalos
+  // svájci geokóder csak svájci címet ad, akkor is ha a falu nincs a listánkban.
+  const addressInvalid =
+    form.address.trim().length > 0 && form.lat == null && !isSwissAddress(form.address);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -203,7 +218,11 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
       const res = await fetch("/api/business/submit", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...form, turnstileToken }),
+        body: JSON.stringify({
+          ...form,
+          workingHours: hoursOn ? JSON.stringify(hours) : null,
+          turnstileToken,
+        }),
       });
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
@@ -266,6 +285,8 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
             type="button"
             onClick={() => {
               setForm(INITIAL);
+              setHoursOn(false);
+              setHours(DEFAULT_WORKING_HOURS);
               setTurnstileToken("");
               setPublished(null);
               setPhase("idle");
@@ -382,26 +403,60 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           ))}
         </select>
         <FieldError msg={errors.cantonCode} />
-        <input
-          type="text"
-          value={form.address}
-          onChange={(e) => setField("address", e.target.value)}
-          placeholder="Cím (opcionális) — pl. Bahnhofstrasse 10, 8001 Zürich"
-          maxLength={BUSINESS_LIMITS.addressMax}
-          aria-invalid={addressInvalid}
-          className={cn(inputCls(errors.address || (addressInvalid ? "x" : "")), "mt-2")}
-        />
+        <div className="mt-2">
+          <AddressAutocomplete
+            value={form.address}
+            invalid={addressInvalid || !!errors.address}
+            onTextChange={(text) => {
+              // Kézi szerkesztésnél elavul a pontos koordináta → töröljük.
+              setForm((f) => ({ ...f, address: text, lat: null, lng: null }));
+              setErrors((e) => ({ ...e, address: "" }));
+            }}
+            onSelect={(hit) => {
+              const c = nearestCantonCode(hit.lat, hit.lng);
+              setForm((f) => ({
+                ...f,
+                address: hit.label,
+                lat: hit.lat,
+                lng: hit.lng,
+                cantonCode: c.code,
+              }));
+              setErrors((e) => ({ ...e, address: "", cantonCode: "" }));
+              setGeoMsg(null);
+            }}
+          />
+        </div>
         {addressInvalid ? (
           <p className="mt-1 flex items-start gap-1 text-[11.5px] font-semibold text-accent">
             <Icon name="close" size={12} strokeWidth={2.4} className="mt-0.5 shrink-0" />
-            Csak svájci cím adható meg — tüntesd fel a svájci várost és irányítószámot.
+            Csak svájci cím adható meg — válassz a felkínált találatok közül.
           </p>
         ) : (
           <FieldError msg={errors.address} />
         )}
-        <p className="mt-1 px-1 text-[11.5px] leading-snug text-ink-faint">
-          A kanton kötelező (ide kerül a térképen). A pontos cím opcionális — mobil
-          szolgáltatóknál (pl. villanyszerelő) elhagyható.
+        {form.lat != null && form.lng != null ? (
+          <p className="mt-1 flex items-center gap-1 px-1 text-[11.5px] font-semibold text-success">
+            <Icon name="check" size={12} strokeWidth={2.6} className="shrink-0" />
+            Pontos hely rögzítve a térképen — a kanton automatikusan beállt.
+          </p>
+        ) : (
+          <p className="mt-1 px-1 text-[11.5px] leading-snug text-ink-faint">
+            Írd be a címet és <strong className="text-ink-muted">válassz a felkínált találatok közül</strong> —
+            így pontosan a térképre kerülsz, és a kanton magától beáll. A pontos cím
+            opcionális (mobil szolgáltatónál elhagyható); ilyenkor válassz kantont alább.
+          </p>
+        )}
+      </Section>
+
+      {/* Beszélt nyelvek */}
+      <Section title="Beszélt nyelvek" required>
+        <LanguagePicker
+          value={form.languages}
+          onChange={(next) => setField("languages", next)}
+        />
+        <p className="mt-2 px-1 text-[11.5px] leading-snug text-ink-faint">
+          Az ügyfelek így látják, milyen nyelven tudnak nálad ügyet intézni. A
+          magyar alapból be van jelölve.
         </p>
       </Section>
 
@@ -548,6 +603,36 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
             </button>
           </div>
         )}
+      </Section>
+
+      {/* Nyitvatartás — strukturált, napokra bontva (a "Most nyitva" szűrőhöz) */}
+      <Section title="Nyitvatartás">
+        {!hoursOn ? (
+          <button
+            type="button"
+            onClick={() => setHoursOn(true)}
+            className="flex w-full items-center justify-center gap-1.5 rounded-[12px] border border-dashed border-line bg-surface px-4 py-3 text-[12.5px] font-bold text-ink-muted active:scale-[0.99]"
+          >
+            <Icon name="clock" size={14} strokeWidth={2.4} />
+            Nyitvatartás megadása (hogy a „Most nyitva" szűrőben megjelenj)
+          </button>
+        ) : (
+          <>
+            <WorkingHoursEditor value={hours} onChange={setHours} />
+            <button
+              type="button"
+              onClick={() => setHoursOn(false)}
+              className="mt-2 text-[11.5px] font-bold text-ink-faint underline"
+            >
+              Mégse, hagyom üresen
+            </button>
+          </>
+        )}
+        <p className="mt-2 px-1 text-[11.5px] leading-snug text-ink-faint">
+          Egységes rendszer: napokra bontva add meg, és az app automatikusan mutatja,
+          hogy épp <strong className="text-ink-muted">nyitva vagy zárva</strong> vagy —
+          a vendég pedig szűrhet a „Most nyitva" gombbal.
+        </p>
       </Section>
         </>
       )}

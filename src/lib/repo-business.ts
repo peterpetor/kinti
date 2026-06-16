@@ -115,6 +115,7 @@ export interface CreateBusinessFromSubmissionInput {
   address: string | null; phone: string | null; blurb: string | null;
   licenseNumber: string | null; contactEmail: string; lat: number | null;
   lng: number | null; ownerUserId: string | null; manageToken: string;
+  languages?: string[] | null; workingHours?: string | null;
 }
 
 export type BusinessAnalyticsKind = "view" | "phone" | "lead";
@@ -373,11 +374,13 @@ export async function createBusinessFromSubmission(input: CreateBusinessFromSubm
     .prepare(
       `INSERT INTO businesses
        (id,name,category_id,category_label,address,phone,blurb,license_number,
-        contact_email,source,languages,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,owner_user_id,manage_token)
-       VALUES (?,?,?,?,?,?,?,?,?,'self_submitted','["Magyar"]',?,?,50,50,0,0,0,0,?,?)`,
+        contact_email,source,languages,working_hours,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,owner_user_id,manage_token)
+       VALUES (?,?,?,?,?,?,?,?,?,'self_submitted',?,?,?,?,50,50,0,0,0,0,?,?)`,
     )
     .bind(input.id, input.name, input.categoryId, input.categoryLabel, input.address,
       input.phone, input.blurb, input.licenseNumber, input.contactEmail.toLowerCase(),
+      JSON.stringify(input.languages?.length ? input.languages : ["Magyar"]),
+      input.workingHours ?? null,
       input.lat, input.lng, input.ownerUserId, input.manageToken)
     .run();
 }

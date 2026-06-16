@@ -8,7 +8,7 @@ import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
-import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
+import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode } from "@/lib/cantons";
 import { readPreferredCanton, setPreferredCanton } from "@/lib/canton-pref";
 import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
 import { haversineKm } from "@/lib/distance";
@@ -139,7 +139,10 @@ export function ExploreView({
         const byCat = cat === "all" || b.categoryId === cat;
         const byCanton =
           canton === "all" ||
-          cantonFromAddress(b.address ?? null)?.code === canton;
+          cantonFromAddress(b.address ?? null)?.code === canton ||
+          // Cím nélkül (vagy pontatlan címnél): a koordináta-alapú kanton is
+          // számít — így a felvitelkor kiválasztott kanton is megtalálható.
+          (b.lat != null && b.lng != null && nearestCantonCode(b.lat, b.lng).code === canton);
         const byFav = !showFavs || favoriteIds.includes(b.id);
         const byOpen =
           !openNow ||
