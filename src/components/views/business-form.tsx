@@ -143,7 +143,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         // (pl. külföldön nyaral), NE rántsuk a legközelebbi svájci kantonra.
         if (!isSwissCoord(latitude, longitude)) {
           setGeoMsg(
-            "Úgy tűnik, most épp Svájcon kívül vagy. A kinti egyelőre Svájcra szól — válaszd ki kézzel azt a kantont, ahol a vállalkozásod működik.",
+            "Úgy tűnik, most épp Svájcon kívül vagy. Válaszd ki kézzel azt a kantont, ahol a vállalkozásod működik.",
           );
           setGeoBusy(false);
           return;
