@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
 import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { CANTONS, cantonFromAddress, matchesCanton } from "@/lib/cantons";
@@ -58,6 +59,7 @@ export function ExploreView({
   const [minYears, setMinYears] = useState(0);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [view, setView] = useState<ViewMode>("list");
+  const [cantonSheetOpen, setCantonSheetOpen] = useState(false);
 
   // Ha nem URL-ből érkezett kanton, a felhasználó preferált kantonjára szűrünk
   // alapból (kanton-személyre szabás). A hidratálás után, hogy ne legyen mismatch.
@@ -220,34 +222,47 @@ export function ExploreView({
 
       {/* Szűrők sor (Kanton + Mentett kedvencek) */}
       <div className="flex flex-wrap items-center gap-2 px-5">
-        {/* Kanton szűrő */}
-        <label className="relative inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card cursor-pointer hover:bg-surface-alt transition">
+        {/* Kanton szűrő — natív alsó lap (BottomSheet) */}
+        <button
+          type="button"
+          onClick={() => setCantonSheetOpen(true)}
+          className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card transition hover:bg-surface-alt active:scale-[0.97]"
+        >
           <Icon name="pin" size={14} strokeWidth={2.2} className="shrink-0 text-accent" />
-          <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted select-none">
-            Kanton
-          </span>
-          <span className="text-[13.5px] font-bold tracking-[-0.01em] text-ink pr-1">
-            {locationLabel}
-          </span>
+          <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Kanton</span>
+          <span className="text-[13.5px] font-bold tracking-[-0.01em] text-ink">{locationLabel}</span>
           <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted shrink-0" />
-          <select
-            value={canton}
-            onChange={(e) => {
-              setCanton(e.target.value);
-              // A kézi választást megjegyezzük preferenciaként (az app tanul).
-              setPreferredCanton(e.target.value);
-            }}
-            aria-label="Kanton szűrő"
-            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-          >
-            <option value="all">Egész Svájc</option>
-            {CANTONS.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.name} ({c.code})
-              </option>
-            ))}
-          </select>
-        </label>
+        </button>
+        <BottomSheet open={cantonSheetOpen} onClose={() => setCantonSheetOpen(false)} title="Válassz kantont">
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            {[{ code: "all", name: "Egész Svájc" }, ...CANTONS].map((c) => {
+              const active = canton === c.code;
+              return (
+                <button
+                  key={c.code}
+                  type="button"
+                  onClick={() => {
+                    setCanton(c.code);
+                    setPreferredCanton(c.code); // az app tanul a kézi választásból
+                    setCantonSheetOpen(false);
+                  }}
+                  className={cn(
+                    "flex items-center justify-between gap-1 rounded-xl border px-3 py-2.5 text-left text-[13.5px] font-bold transition active:scale-[0.97]",
+                    active
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : "border-line bg-surface text-ink hover:bg-surface-alt",
+                  )}
+                >
+                  <span className="truncate">
+                    {c.name}
+                    {c.code !== "all" ? ` (${c.code})` : ""}
+                  </span>
+                  {active && <Icon name="check" size={15} strokeWidth={3} className="shrink-0 text-primary" />}
+                </button>
+              );
+            })}
+          </div>
+        </BottomSheet>
 
         {/* Kedvencek szűrő */}
         <button

@@ -3,6 +3,7 @@ import { getJobs } from "@/lib/repo";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 import { JobAlertRadar } from "@/components/views/job-alert-radar";
 import { JobsBrowser } from "@/components/views/jobs-browser";
+import { PullToRefresh } from "@/components/pull-to-refresh";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -13,7 +14,9 @@ export default async function JobsPage() {
   const jobs = await getJobs();
 
   return (
-    <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)] min-h-[calc(100dvh-70px)] flex flex-col">
+    <div className="pt-[calc(env(safe-area-inset-top)+2rem)]">
+      <PullToRefresh>
+    <div className="space-y-6 px-5 pb-4 min-h-[calc(100dvh-70px)] flex flex-col">
       <header className="flex items-center gap-2.5">
         <div className="flex items-center gap-2">
           <KintiLogo size={28} />
@@ -53,6 +56,8 @@ export default async function JobsPage() {
         {/* Kereső (szöveg + kanton + szakma) + találatok */}
         <JobsBrowser jobs={jobs} />
       </main>
+    </div>
+      </PullToRefresh>
     </div>
   );
 }
