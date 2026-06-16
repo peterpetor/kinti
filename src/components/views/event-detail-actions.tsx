@@ -6,6 +6,7 @@ import { AddToCalendar } from "@/components/add-to-calendar";
 import { ShareSheet } from "@/components/share-sheet";
 import type { CalendarEvent } from "@/lib/calendar";
 import { cn } from "@/lib/cn";
+import { haptic } from "@/lib/haptics";
 
 /**
  * EventDetailActions — az esemény mély-link oldal aktív vezérlői:
@@ -35,15 +36,24 @@ export function EventDetailActions({
   async function onRsvp() {
     if (voted || busy) return;
     setBusy(true);
+    // Optimista UI: azonnal váltunk (szám + „voted" + haptika), a szerver
+    // válaszával reconcile-olunk; hiba esetén visszaállítjuk.
+    const prev = going;
+    setGoing((g) => g + 1);
+    setVoted(true);
+    haptic("success");
     try {
       const res = await fetch(`/api/events/${eventId}/rsvp`, { method: "POST" });
       const data = (await res.json().catch(() => ({}))) as { total?: number };
       if (res.ok) {
-        setGoing(data.total ?? going + 1);
-        setVoted(true);
+        if (typeof data.total === "number") setGoing(data.total);
+      } else {
+        setGoing(prev);
+        setVoted(false);
       }
     } catch {
-      /* hálózati hiba — silent */
+      setGoing(prev);
+      setVoted(false);
     } finally {
       setBusy(false);
     }

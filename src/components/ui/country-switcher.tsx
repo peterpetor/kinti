@@ -5,11 +5,12 @@ import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 import { COUNTRIES, getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 import { usePreferredCountry } from "@/lib/country-pref";
+import { BottomSheet } from "./bottom-sheet";
 
 /**
- * Ország-váltó a menüben: mutatja az aktuális Kinti országot, és lenyitva
- * átválthatsz másikra. A választás a localStorage-ba kerül (country-pref).
- * Egyelőre csak CH-nak van tartalma — a többi „soon", de kiválasztható.
+ * Ország-váltó a menüben: mutatja az aktuális Kinti országot, és egy natív-szerű
+ * alsó lapon (BottomSheet) átválthatsz másikra. A választás a localStorage-ba
+ * kerül (country-pref). Egyelőre csak CH-nak van tartalma — a többi „soon".
  */
 export function CountrySwitcher() {
   const [code, setCode] = usePreferredCountry();
@@ -20,8 +21,7 @@ export function CountrySwitcher() {
     <div className="mb-2 overflow-hidden rounded-xl border border-line bg-surface-alt/60">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
+        onClick={() => setOpen(true)}
         className="flex w-full items-center gap-3 px-4 py-3 text-left transition active:scale-[0.99]"
       >
         <span className="text-[24px] leading-none" aria-hidden="true">{current.flag}</span>
@@ -36,16 +36,11 @@ export function CountrySwitcher() {
             )}
           </span>
         </span>
-        <Icon
-          name="chevD"
-          size={16}
-          strokeWidth={2.4}
-          className={cn("text-ink-muted transition-transform", open && "rotate-180")}
-        />
+        <Icon name="chevR" size={16} strokeWidth={2.4} className="text-ink-muted" />
       </button>
 
-      {open && (
-        <div className="grid grid-cols-2 gap-2 border-t border-line p-3">
+      <BottomSheet open={open} onClose={() => setOpen(false)} title="Válassz országot">
+        <div className="grid grid-cols-2 gap-2 pt-1">
           {COUNTRIES.map((c) => {
             const active = c.code === current.code;
             return (
@@ -57,15 +52,15 @@ export function CountrySwitcher() {
                   setOpen(false);
                 }}
                 className={cn(
-                  "relative flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left transition active:scale-[0.97]",
+                  "relative flex items-center gap-2 rounded-xl border px-3 py-3 text-left transition active:scale-[0.97]",
                   active
                     ? "border-primary/40 bg-primary/10"
                     : "border-line bg-surface hover:bg-surface-alt",
                 )}
               >
-                <span className="text-[20px] leading-none" aria-hidden="true">{c.flag}</span>
-                <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-ink">{c.name}</span>
-                {active && <Icon name="check" size={14} strokeWidth={3} className="shrink-0 text-primary" />}
+                <span className="text-[22px] leading-none" aria-hidden="true">{c.flag}</span>
+                <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-ink">{c.name}</span>
+                {active && <Icon name="check" size={15} strokeWidth={3} className="shrink-0 text-primary" />}
                 {!c.enabled && !active && (
                   <span className="absolute right-1.5 top-1.5 rounded-full bg-ink/10 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wide text-ink-muted">
                     soon
@@ -75,7 +70,10 @@ export function CountrySwitcher() {
             );
           })}
         </div>
-      )}
+        <p className="mt-3 px-1 text-center text-[11.5px] leading-snug text-ink-faint">
+          Jelenleg a 🇨🇭 svájci tartalom érhető el; a többi ország hamarosan indul.
+        </p>
+      </BottomSheet>
     </div>
   );
 }
