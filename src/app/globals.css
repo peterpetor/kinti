@@ -64,11 +64,37 @@
 
   html {
     -webkit-tap-highlight-color: transparent;
+    /* Natív érzet: nincs gumi-rugózás / véletlen pull-to-refresh / scroll-chaining. */
+    overscroll-behavior: none;
   }
 
   body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  /* Natív-szerű interakció az UI-vezérlőkön — NEM jelölhetők ki a feliratai
+     (mint egy weboldalon), és nincs 300ms tap-késleltetés / dupla-tap zoom.
+     A tartalom-szöveg (p, h1–h6, span, input…) továbbra is kijelölhető marad. */
+  button,
+  a,
+  [role="button"],
+  label,
+  summary,
+  nav,
+  select {
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  /* Egységes press-feedback minden gombon. @layer base → a Tailwind
+     `active:scale-*` utility-k (utilities layer) felülírják, ahol egyedi van. */
+  button:not(:disabled):active,
+  [role="button"]:active {
+    transform: scale(0.97);
+    transition: transform 0.08s ease;
   }
 
   /* Rejtsük a vízszintes kategória-pillek scrollbarját (a prototípusból) */
