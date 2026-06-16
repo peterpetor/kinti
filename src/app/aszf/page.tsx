@@ -18,7 +18,7 @@ export default function AszfPage() {
         A kinti.app egy közösségi platform, amely a Svájcban és Európában élő magyarokat
         és a velük kapcsolatban álló vállalkozásokat / szakembereket köti össze. A Szolgáltatás
         üzemeltetője a <strong>Feedback Jobs S.R.L.</strong> Az <strong>alapszolgáltatások</strong>{" "}
-        (kereső, regisztráció, hirdetésfeladás, események, kalkulátorok) <strong>ingyenesek</strong>;
+        (kereső, regisztráció, hirdetésfeladás, események, állásbörze, kalkulátorok) <strong>ingyenesek</strong>;
         egyes <strong>prémium funkciók opcionális, díjköteles PRO-előfizetés</strong> keretében
         érhetők el, amelyet a Lemon Squeezy fizetési szolgáltatón keresztül lehet megrendelni és
         bármikor lemondani.
@@ -255,9 +255,64 @@ export default function AszfPage() {
         munkavállalási és letelepedési engedélyekkel, cégbejegyzéssel (pl. UID, MWST), valamint az adó- és 
         társadalombiztosítási (pl. AHV, ALV) bejelentésekkel. Az üzemeltető kifejezetten kizárja a felelősségét 
         a hirdetők adó-, munka- és cégjogi megfelelőségéért. Bármilyen hatósági megkeresés, gyanú vagy bejelentés 
-        esetén a feketemunkát vagy engedély nélküli tevékenységet hirdető profilt <strong>azonnal és véglegesen 
+        esetén a feketemunkát vagy engedély nélküli tevékenységet hirdető profilt <strong>azonnal és véglegesen
         töröljük</strong> a platformról.
       </p>
+
+      <h3>10.1 Állásbörze (Állások modul) — állás-lista, nem munkaközvetítés</h3>
+      <p>
+        Az <strong>„Állások" modul</strong> egy <strong>ingyenes állás-hirdetési felület
+        (állás-lista)</strong>: a munkáltatók saját maguk töltik fel az álláshirdetéseiket
+        (admin-moderáció mellett), a felhasználók pedig böngészhetik azokat, és — saját
+        döntésük alapján — jelentkezhetnek rájuk.
+      </p>
+      <ul>
+        <li>
+          <strong>Az üzemeltető nem munkáltató és nem szerződő fél.</strong> A Kinti az
+          álláshirdetés és a jelentkezés megjelenítésén / továbbításán túl <strong>nem hoz
+          létre</strong> munkaviszonyt, megbízási vagy bármilyen foglalkoztatási jogviszonyt
+          a jelentkező és a munkáltató között, és annak nem részese. A felvételi döntés
+          kizárólag a munkáltatóé.
+        </li>
+        <li>
+          <strong>Ez a felület önmagában nem minősül munkaerő-közvetítésnek
+          (Arbeitsvermittlung) vagy munkaerő-kölcsönzésnek (Personalverleih).</strong> A
+          Kinti az Állások modulban kizárólag hirdetéseket jelenít meg, és — a jelentkező
+          kifejezett kezdeményezésére — továbbítja a jelentkezési adatokat a munkáltatónak;
+          közvetítői díjat, sikerdíjat vagy hasonló ellenértéket <strong>nem számít fel</strong>,
+          és <strong>az álláskeresőktől semmilyen díjat nem kér</strong>.
+        </li>
+        <li>
+          <strong>A munkaközvetítés a Feedback Jobs S.R.L. külön, megfelelően
+          engedélyezett tevékenysége.</strong> Amennyiben az üzemeltető (vagy kapcsolt
+          vállalkozása) engedélyköteles munkaerő-közvetítést vagy -kölcsönzést végez, az
+          a jelen ingyenes platformtól <strong>elkülönülő szolgáltatás</strong>, saját
+          külön szerződés és a vonatkozó (pl. svájci AVG/Arbeitsvermittlungsgesetz szerinti)
+          engedély alapján — és nem képezi a jelen ÁSZF tárgyát.
+        </li>
+        <li>
+          <strong>Jelentkezési adatok továbbítása.</strong> Amikor egy állásra jelentkezel,
+          a megadott adataidat (név, e-mail, opcionális telefonszám, üzenet és — ha
+          feltöltötted — önéletrajz) <strong>a te kezdeményezésedre, a hozzájárulásoddal</strong>
+          továbbítjuk a hirdető munkáltatónak. Ezt követően az adataidat a munkáltató önálló
+          adatkezelőként kezeli; az ő adatkezeléséért az üzemeltető nem felel (lásd
+          Adatkezelési Tájékoztató).
+        </li>
+        <li>
+          <strong>Semmilyen garancia.</strong> Az üzemeltető nem garantálja az
+          álláshirdetések valódiságát, pontosságát, betölthetőségét, sem azt, hogy a
+          jelentkezésedre választ vagy állásajánlatot kapsz. A munkakörülményekért,
+          bérezésért, a munkáltató magatartásáért és a hirdetés jogszerűségéért kizárólag
+          a hirdető munkáltató felel.
+        </li>
+        <li>
+          <strong>A munkáltató felelőssége.</strong> A hirdető szavatolja, hogy a
+          hirdetés valós, nem megtévesztő, nem diszkriminatív, megfelel a munkajogi és
+          adatvédelmi előírásoknak, és nem irányul be nem jelentett (Schwarzarbeit) vagy
+          engedély nélküli foglalkoztatásra (lásd 10. pont). A jogsértő hirdetéseket
+          értesítés vagy saját észlelés alapján eltávolítjuk.
+        </li>
+      </ul>
 
       <h2>11. A Szolgáltatás rendelkezésre állása, Adatbiztonság és Vis Maior</h2>
       <p>

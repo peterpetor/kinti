@@ -336,6 +336,30 @@ export default function AdatvedelemPage() {
         <li><strong>Adatfeldolgozó:</strong> Resend, Inc. (kiküldés) — lásd 2.6.</li>
       </ul>
 
+      <h3>2.17 Álláskeresés és jelentkezés (Állások modul)</h3>
+      <p>
+        Ha egy álláshirdetésre <strong>jelentkezel</strong>, a megadott adataidat
+        (<strong>név, e-mail-cím, opcionális telefonszám, üzenet</strong>, és — ha
+        feltöltöd — <strong>önéletrajz / CV</strong>) rögzítjük, és a <strong>te
+        kezdeményezésedre</strong> továbbítjuk a hirdető munkáltatónak, hogy fel tudja
+        venni veled a kapcsolatot. A feltöltött CV a Cloudflare R2 tárolóba kerül, és
+        nem nyilvános — kizárólag az érintett munkáltató (és technikai okból az
+        adminisztráció) férhet hozzá.
+      </p>
+      <p>
+        A továbbítást követően a munkáltató az adataidat <strong>önálló adatkezelőként</strong>{" "}
+        kezeli, a saját adatvédelmi gyakorlata szerint; ezért az üzemeltető nem felel.
+        A Kinti az Állások modulban <strong>állás-listát</strong> üzemeltet, és nem hoz
+        létre munkaviszonyt a felek között (lásd ÁSZF 10.1).
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a jelentkezés elküldésével).</li>
+        <li><strong>Címzett:</strong> a hirdető munkáltató (e-mail-továbbítás a Resend-en keresztül, lásd 2.6).</li>
+        <li><strong>Tárolási idő:</strong> a jelentkezés kezeléséig; törlést a{" "}
+          <a href="mailto:info@kinti.app">info@kinti.app</a> címen kérhetsz. A korábbi
+          jelentkezéseidet a böngésződben a „Jelentkezéseim" nézetben követheted.</li>
+      </ul>
+
       <h2>3. Cookie-k</h2>
       <p>
         Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk: a Clerk session-cookie
