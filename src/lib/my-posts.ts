@@ -14,8 +14,7 @@ const STORAGE_VERSION = 1;
 export type PostType =
   | "event"     // esemény
   | "review"    // vélemény
-  | "business"  // vállalkozás (szaknévsor)
-  | "spontan";  // spontán mikro-esemény (24-48h)
+  | "business"; // vállalkozás (szaknévsor)
 
 export interface MyPostEntry {
   type: PostType;

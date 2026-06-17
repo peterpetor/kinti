@@ -18,7 +18,6 @@ const XP_BY_TYPE: Record<PostType, number> = {
   business: 50, // vállalkozás regisztrálása — a legnagyobb hozzájárulás
   review: 20, // vélemény írása
   event: 10, // esemény szervezése
-  spontan: 10, // spontán mikro-esemény
 };
 
 export interface BadgeDef {
@@ -83,7 +82,7 @@ export function calculateLevel(points: number): number {
 
 /** A teljes statisztika kiszámítása a saját posztok listájából. */
 export function computeGamification(posts: MyPostEntry[]): GamificationStats {
-  const countsByType: Record<PostType, number> = { event: 0, review: 0, business: 0, spontan: 0 };
+  const countsByType: Record<PostType, number> = { event: 0, review: 0, business: 0 };
   let points = 0;
   for (const p of posts) {
     if (p.type in countsByType) {
