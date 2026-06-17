@@ -17,6 +17,7 @@ import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { moderateText } from "@/lib/text-moderation";
+import { assessSpam } from "@/lib/spam-score";
 import { logModerationStrike } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -100,6 +101,18 @@ export async function POST(req: Request) {
     );
   }
 
+  // AI-alapú spam-scoring (reklám / link-farm / scam) — a toxicitástól külön
+  // tengely. A queue-ra-állítás threshold felett: egyértelmű spam → elutasítás,
+  // a gyanús (review) eset a meglévő moderation_status=0 sorba kerül.
+  const spam = await assessSpam(validation.value.body);
+  if (spam.verdict === "spam") {
+    await logModerationStrike(ipHash, `Review spam (${spam.score}): ${spam.signals.join(",")}`);
+    return NextResponse.json(
+      { error: "A véleményed reklámnak vagy spamnek tűnik (linkek, promóció). Ha valódi tapasztalat, írd át link és reklámszöveg nélkül." },
+      { status: 400 },
+    );
+  }
+
   // === ÚJ FŐÚT (local-first) — azonnal publikálva, manage_token a kliensnek ===
   if (!hasEmail) {
     const { publishReview, recomputeBusinessRating } = await import("@/lib/repo");
@@ -121,7 +134,10 @@ export async function POST(req: Request) {
     notifyAdminContentPending({
       contentType: "vélemény",
       title: `${validation.value.rating}★ — ${business.name}`,
-      preview: validation.value.body,
+      preview:
+        spam.verdict === "review"
+          ? `⚠️ AI-spam gyanú (${spam.score}: ${spam.signals.join(", ")}) — ${validation.value.body}`
+          : validation.value.body,
       submitterEmail: null,
     }).catch(() => {});
     return NextResponse.json(

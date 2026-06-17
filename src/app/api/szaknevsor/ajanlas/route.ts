@@ -3,6 +3,7 @@ import { hashIp } from "@/lib/security";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { safeLogError } from "@/lib/safe-log";
 import { createSuggestedBusiness } from "@/lib/repo";
+import { assessSpam } from "@/lib/spam-score";
 import { CANTONS, cantonPoint } from "@/lib/cantons";
 import { sendEmail } from "@/lib/email";
 import { verifyTurnstile } from "@/lib/turnstile";
@@ -57,6 +58,15 @@ export async function POST(req: Request) {
 
     const pt = cantonPoint(cantonCode);
     const blurbParts = [note, website ? `Web: ${website}` : null].filter(Boolean);
+
+    // AI-alapú spam-scoring (a website külön, legitim URL-mező → kihagyjuk).
+    const spam = await assessSpam([name, note].filter(Boolean).join("\n"));
+    if (spam.verdict === "spam") {
+      return NextResponse.json(
+        { error: "A beküldés reklámnak vagy spamnek tűnik. Hagyd ki a linkeket és a promóciós szöveget." },
+        { status: 400 },
+      );
+    }
 
     const id = await createSuggestedBusiness({
       name,
