@@ -7,6 +7,7 @@ import { mediaImageUrl } from "@/lib/media";
 import { OwnPostBadge } from "@/components/own-post-badge";
 import { FavoriteButton } from "./favorite-button";
 import { formatDistanceKm } from "@/lib/distance";
+import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 
 /**
  * BusinessCard — a Szaknévsor / találati lista kártyája. Fotó/logó placeholder
@@ -33,6 +34,10 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
   );
 
   const logoUrl = mediaImageUrl(b.logoKey, { width: 160 });
+
+  // Élő nyitva/zárva a tényleges nyitvatartásból (svájci idő) — NEM a statikus
+  // open_now DB-flagből, ami mindig "Zárva"-t mutatott. (Mint a részlet-oldalon.)
+  const openStatus = calculateBusinessHoursStatus(parseWorkingHours(b.workingHours ?? null));
 
   const inner = (
     <>
@@ -105,8 +110,8 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
             {distanceKm != null ? formatDistanceKm(distanceKm) : b.distText}
           </span>
           <span className="h-[3px] w-[3px] rounded-full bg-ink-faint" />
-          <span className={cn("font-semibold", b.openNow ? "text-success" : "text-accent")}>
-            {b.openNow ? "Nyitva" : "Zárva"}
+          <span className={cn("font-semibold", openStatus.isOpen ? "text-success" : "text-accent")}>
+            {openStatus.isOpen ? "Nyitva" : "Zárva"}
           </span>
         </div>
 

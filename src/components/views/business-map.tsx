@@ -6,6 +6,7 @@ import type { Business, Category } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { mediaImageUrl } from "@/lib/media";
+import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { cn } from "@/lib/cn";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
@@ -171,6 +172,7 @@ export function BusinessMap({
 
 function SelectedCard({ business: b }: { business: Business }) {
   const logoUrl = mediaImageUrl(b.logoKey, { width: 120 });
+  const openStatus = calculateBusinessHoursStatus(parseWorkingHours(b.workingHours ?? null));
   return (
     <Link
       href={`/szaknevsor/${b.id}`}
@@ -204,8 +206,8 @@ function SelectedCard({ business: b }: { business: Business }) {
         <div className="mt-0.5 text-[11.5px] text-ink-muted">
           {b.distText ?? ""}
           {b.distText && " · "}
-          <span className={b.openNow ? "font-semibold text-success" : "text-accent"}>
-            {b.openNow ? "Nyitva" : "Zárva"}
+          <span className={openStatus.isOpen ? "font-semibold text-success" : "text-accent"}>
+            {openStatus.isOpen ? "Nyitva" : "Zárva"}
           </span>
         </div>
       </div>
