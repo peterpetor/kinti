@@ -843,74 +843,7 @@ Válaszolj közvetlenül erre az emailre, vagy vedd fel a kapcsolatot ${args.sen
   }
 }
 
-export interface LeadDigestEmailArgs {
-  to: string;
-  businessName: string;
-  leads: Array<{
-    senderName: string;
-    senderEmail: string;
-    senderPhone: string | null;
-    categoryLabel: string | null;
-    message: string;
-    createdAt: string;
-  }>;
-}
 
-/**
- * Napi DIGEST: egyetlen e-mail a vállalkozónak az aznapra összegyűlt árajánlat-
- * kérésekről (a send-lead-digests cron hívja). A Kinti csak relay-el; a
- * vállalkozó közvetlenül a kérező e-mail-jén válaszol.
- */
-export async function sendLeadDigestEmail(args: LeadDigestEmailArgs): Promise<void> {
-  const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-  const n = args.leads.length;
-  const subject = `${n} új árajánlat-kérés érkezett — kinti.app`;
-
-  const text =
-    `Szia, ${args.businessName}!\n\n${n} új árajánlat-kérés érkezett a kinti.app-on:\n\n` +
-    args.leads
-      .map(
-        (l, i) =>
-          `${i + 1}. ${l.categoryLabel ?? "Árajánlat-kérés"}\n   Név: ${l.senderName}\n   E-mail: ${l.senderEmail}\n   Telefon: ${l.senderPhone ?? "(nem adta meg)"}\n   Üzenet: ${l.message}`,
-      )
-      .join("\n\n") +
-    `\n\nVálaszolj közvetlenül az egyes kérezők e-mail-címére.\n\n— kinti.app`;
-
-  const cards = args.leads
-    .map(
-      (l) => `
-      <div style="margin:0 0 12px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#94a097;margin-bottom:4px;">${escapeHtml(l.categoryLabel ?? "Árajánlat-kérés")}</div>
-        <table style="border-collapse:collapse;width:100%;font-size:13px;color:#5c6d63;">
-          <tr><td style="padding:3px 0;font-weight:600;width:80px;">Név:</td><td>${escapeHtml(l.senderName)}</td></tr>
-          <tr><td style="padding:3px 0;font-weight:600;">E-mail:</td><td><a href="mailto:${escapeAttr(l.senderEmail)}" style="color:#1d4434;">${escapeHtml(l.senderEmail)}</a></td></tr>
-          <tr><td style="padding:3px 0;font-weight:600;">Telefon:</td><td>${escapeHtml(l.senderPhone ?? "–")}</td></tr>
-        </table>
-        <div style="margin-top:12px;padding:12px;background:#f0ebe0;border-radius:10px;font-size:13.5px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">${escapeHtml(l.message)}</div>
-        <p style="margin:12px 0 0;">
-          <a href="mailto:${escapeAttr(l.senderEmail)}" style="display:inline-block;padding:10px 18px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:13px;font-weight:800;">Válasz küldése →</a>
-        </p>
-      </div>`,
-    )
-    .join("");
-
-  const html = baseLayout({
-    preheader: `${n} új árajánlat-kérés érkezett a kinti.app-on`,
-    body: `
-      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Árajánlat-kérések</p>
-      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">${n} új árajánlat-kérés érkezett!</p>
-      ${cards}
-      <p style="margin:16px 0 0;font-size:11.5px;color:#94a097;line-height:1.5;">
-        Ezeket az árajánlat-kéréseket a kinti.app svájci-magyar közösségi platform közvetítette. Minden kérezőnek közvetlenül az ő e-mail-címén válaszolj.
-      </p>`,
-  });
-
-  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
-  if (error) {
-    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
-  }
-}
 
 export interface LeadConfirmEmailArgs {
   to: string;
