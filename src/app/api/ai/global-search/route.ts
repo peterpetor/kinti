@@ -3,6 +3,8 @@ import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "
 import { getBusinesses, getCategories } from "@/lib/repo";
 import { CANTONS } from "@/lib/cantons";
 import { detectCanton, detectCategory, tokenize, rankBusinesses } from "@/lib/global-search";
+import { semanticBusinessIds } from "@/lib/vector-search";
+import { cantonFromAddress, nearestCantonCode } from "@/lib/cantons";
 import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -73,9 +75,32 @@ VÁLASZ FORMÁTUM (KIZÁRÓLAG JSON):
       }
     }
 
-    // 4. Visszakeresés + relevancia-rangsorolás (determinisztikus).
-    const allBiz = await getBusinesses({ category: categoryId || "all" });
-    const ranked = rankBusinesses(allBiz, { cantonCode, queryTokens });
+    // 4. Visszakeresés + relevancia-rangsorolás.
+    const allBiz = await getBusinesses();
+    const byId = new Map(allBiz.map((b) => [b.id, b]));
+
+    // 4a. Kulcsszavas rangsor (kategória-szűrt, ha felismertük a szándékot).
+    const keywordPool = categoryId ? allBiz.filter((b) => b.categoryId === categoryId) : allBiz;
+    const keywordRanked = rankBusinesses(keywordPool, { cantonCode, queryTokens });
+
+    // 4b. Szemantikus réteg (Vectorize) — ragozás-/kategória-független.
+    //     Beüzemelés nélkül null → marad a kulcsszavas rangsor (graceful fallback).
+    const cantonOk = (b: (typeof allBiz)[number]) =>
+      !cantonCode ||
+      cantonFromAddress(b.address ?? null)?.code === cantonCode ||
+      (b.lat != null && b.lng != null && nearestCantonCode(b.lat, b.lng).code === cantonCode);
+
+    let ranked = keywordRanked;
+    const semantic = await semanticBusinessIds(query, 12);
+    if (semantic && semantic.length > 0) {
+      const semBiz = semantic
+        .filter((h) => h.score >= 0.45)
+        .map((h) => byId.get(h.id))
+        .filter((b): b is NonNullable<typeof b> => !!b)
+        .filter(cantonOk);
+      const seen = new Set(semBiz.map((b) => b.id));
+      ranked = [...semBiz, ...keywordRanked.filter((b) => !seen.has(b.id))];
+    }
 
     // Top 5 a válasz-prompthoz.
     const topBiz = ranked.slice(0, 5).map((b) => {

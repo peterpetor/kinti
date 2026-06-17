@@ -14,6 +14,7 @@ import { logAdminAction } from "@/lib/audit";
 import { notifyCanton } from "@/lib/push-notify";
 import { cantonFromAddress, nearestCantonCode, CANTONS } from "@/lib/cantons";
 import { getCloudflareCtx } from "@/lib/cloudflare";
+import { upsertBusinessVector } from "@/lib/vector-search";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -101,6 +102,8 @@ export async function POST(req: Request) {
     // (különben mindenkit spammelnénk). Háttérben fut, a választ nem várja.
     if (table === "businesses" && statusValue === 1) {
       const biz = await getBusinessById(id);
+      // Szemantikus index frissítése (no-op, ha a Vectorize nincs beüzemelve).
+      if (biz) getCloudflareCtx()?.waitUntil(upsertBusinessVector(biz));
       // Kanton a címből; ha nincs cím (kanton-választós felvitel), a koordinátából.
       // Így az address nélküli vállalkozások jóváhagyása is értesít (nem vész el).
       let cantonCode: string | null = null;

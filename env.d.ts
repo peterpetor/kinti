@@ -8,6 +8,10 @@ interface CloudflareEnv {
   MEDIA: R2Bucket;
   // Cloudflare Workers AI binding
   AI: any;
+  // Cloudflare Vectorize index (szemantikus keresés) — OPCIONÁLIS.
+  // Amíg a wrangler.toml [[vectorize]] blokk kommentben van, ez undefined,
+  // és a keresés a kulcsszavas fallbackra esik vissza (lib/vector-search.ts).
+  VECTORIZE?: unknown;
 
 
   // Build-időben NEM titkos változók (wrangler.toml [vars])
