@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { getJobs } from "@/lib/repo";
+import { auth } from "@clerk/nextjs/server";
+import { getJobs, getWorkerProfileByUser } from "@/lib/repo";
+import { isPro } from "@/lib/subscriptions";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 import { JobAlertRadar } from "@/components/views/job-alert-radar";
 import { JobsBrowser } from "@/components/views/jobs-browser";
@@ -11,7 +13,17 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Állások — Svájci magyaroknak" };
 
 export default async function JobsPage() {
-  const jobs = await getJobs();
+  const [jobs, { userId }] = await Promise.all([getJobs(), auth()]);
+
+  // PRO match-score kontextus: csak előfizetőnek + kitöltött profilnál aktív.
+  const pro = userId ? await isPro(userId) : false;
+  const profile = userId ? await getWorkerProfileByUser(userId) : null;
+  const proMatch = {
+    isPro: pro,
+    profile: profile
+      ? { category: profile.category, cantonCode: profile.cantonCode, expectedSalaryMin: profile.expectedSalaryMin }
+      : null,
+  };
 
   return (
     <div className="pt-[calc(env(safe-area-inset-top)+2rem)]">
@@ -54,7 +66,7 @@ export default async function JobsPage() {
         </div>
 
         {/* Kereső (szöveg + kanton + szakma) + találatok */}
-        <JobsBrowser jobs={jobs} />
+        <JobsBrowser jobs={jobs} proMatch={proMatch} />
       </main>
     </div>
       </PullToRefresh>

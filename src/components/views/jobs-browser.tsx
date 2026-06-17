@@ -6,14 +6,24 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { CANTONS, cantonName } from "@/lib/cantons";
 import { JOB_CATEGORIES, jobCategoryLabel } from "@/lib/job-categories";
+import { jobMatchScore, hasMatchableProfile, type MatchProfile } from "@/lib/job-match";
 import type { Job } from "@/lib/types";
+
+export interface ProMatchContext {
+  isPro: boolean;
+  profile: MatchProfile | null;
+}
 
 /**
  * JobsBrowser — kliensoldali állás-kereső: szabad szöveg (cím/leírás/hely) +
  * kanton + szakma szűrő. A teljes (jóváhagyott) lista a szerverről jön, a
  * szűrés a böngészőben történik — a jelenlegi listaméretnél ez azonnali.
+ *
+ * `proMatch` (PRO funkció): ha az előfizető profilja kitöltött, minden álláshoz
+ * megjelenik a „X% match" jelvény.
  */
-export function JobsBrowser({ jobs }: { jobs: Job[] }) {
+export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMatchContext }) {
+  const canMatch = !!proMatch?.isPro && hasMatchableProfile(proMatch.profile);
   const [query, setQuery] = useState("");
   const [canton, setCanton] = useState("");
   const [category, setCategory] = useState("");
@@ -89,6 +99,33 @@ export function JobsBrowser({ jobs }: { jobs: Job[] }) {
         )}
       </div>
 
+      {/* PRO match-score sáv */}
+      {proMatch && !canMatch && (
+        proMatch.isPro ? (
+          <Link
+            href="/allasok/profil"
+            className="flex items-center gap-2.5 rounded-card border border-primary/20 bg-primary/5 px-4 py-3 text-left transition active:scale-[0.99]"
+          >
+            <span className="text-lg">🎯</span>
+            <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
+              <strong className="text-ink">Tölts ki egy munkavállalói profilt</strong> (szakma + kanton), és minden álláshoz látod a <strong className="text-primary">% match-et</strong>.
+            </span>
+            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-primary" />
+          </Link>
+        ) : (
+          <Link
+            href="/pro"
+            className="flex items-center gap-2.5 rounded-card border border-[#ff9600]/25 bg-[#ff9600]/5 px-4 py-3 text-left transition active:scale-[0.99]"
+          >
+            <span className="text-lg">🔒</span>
+            <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
+              <strong className="text-[#cc7700]">PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% match</strong> minden hirdetésnél.
+            </span>
+            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
+          </Link>
+        )
+      )}
+
       {/* Találatok */}
       <section className="space-y-4">
         {filtered.length === 0 ? (
@@ -131,16 +168,27 @@ export function JobsBrowser({ jobs }: { jobs: Job[] }) {
                     <Icon name="star" size={9} filled /> Kiemelt Állás
                   </div>
                 )}
-                <div className="flex justify-between items-start">
-                  <div>
+                <div className="flex justify-between items-start gap-2">
+                  <div className="min-w-0">
                     <h3 className="text-[16px] font-extrabold text-ink">{job.title}</h3>
                     <p className="text-[13px] text-ink-muted mt-0.5 font-medium">
                       {job.location}{cant ? ` · ${cant}` : ""}
                     </p>
                   </div>
-                  <span className="rounded-full bg-surface-alt px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-ink-muted">
-                    {job.employmentType === 'full-time' ? '100%' : job.employmentType === 'part-time' ? 'Részmunkaidő' : job.employmentType}
-                  </span>
+                  <div className="flex shrink-0 flex-col items-end gap-1">
+                    <span className="rounded-full bg-surface-alt px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-ink-muted">
+                      {job.employmentType === 'full-time' ? '100%' : job.employmentType === 'part-time' ? 'Részmunkaidő' : job.employmentType}
+                    </span>
+                    {canMatch && (() => {
+                      const m = jobMatchScore(proMatch!.profile!, job);
+                      const tone = m.score >= 66 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-[#e3a233]/15 text-[#b8860b]" : "bg-surface-alt text-ink-muted";
+                      return (
+                        <span className={cn("rounded-full px-2.5 py-1 text-[11px] font-black", tone)}>
+                          {m.score}% match
+                        </span>
+                      );
+                    })()}
+                  </div>
                 </div>
 
                 {(cat || (job.salaryMin && job.salaryMax)) && (

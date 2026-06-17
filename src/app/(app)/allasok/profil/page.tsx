@@ -3,7 +3,9 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { WorkerProfileForm } from "@/components/views/worker-profile-form";
+import { CvAssistant } from "@/components/views/cv-assistant";
 import { getWorkerProfileByUser } from "@/lib/repo";
+import { isPro } from "@/lib/subscriptions";
 import type { Metadata } from "next";
 
 export const runtime = "edge";
@@ -21,9 +23,10 @@ export default async function WorkerProfilePage() {
     redirect("/belepes?redirect_url=/allasok/profil");
   }
 
-  const [profile, user] = await Promise.all([
+  const [profile, user, pro] = await Promise.all([
     getWorkerProfileByUser(userId),
     currentUser(),
+    isPro(userId),
   ]);
 
   const defaultEmail =
@@ -97,6 +100,22 @@ export default async function WorkerProfilePage() {
           }}
         />
       </section>
+
+      {/* AI CV-asszisztens (PRO) */}
+      {pro ? (
+        <CvAssistant />
+      ) : (
+        <Link
+          href="/pro"
+          className="flex items-center gap-3 rounded-card border border-[#ff9600]/25 bg-[#ff9600]/5 p-4 shadow-card transition active:scale-[0.99]"
+        >
+          <span className="text-xl">🔒</span>
+          <span className="min-w-0 flex-1 text-[13px] leading-snug text-ink">
+            <strong className="text-[#cc7700]">PRO — AI CV-asszisztens:</strong> a tapasztalatodból svájci stílusú szakmai összefoglaló, kiemelendő pontok és jelentkezési tippek.
+          </span>
+          <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
+        </Link>
+      )}
     </div>
   );
 }

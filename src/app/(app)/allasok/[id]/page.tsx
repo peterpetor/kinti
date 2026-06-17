@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getJobById, getEmployerById } from "@/lib/repo";
+import { auth } from "@clerk/nextjs/server";
+import { getJobById, getEmployerById, getWorkerProfileByUser } from "@/lib/repo";
+import { isPro } from "@/lib/subscriptions";
+import { jobMatchScore, hasMatchableProfile } from "@/lib/job-match";
+import { computeSalary } from "@/lib/salary-calc";
 import { getSalaryStats } from "@/lib/benchmark";
 import { matchCantonByName, cantonFromAddress, cantonName as cantonNameByCode } from "@/lib/cantons";
 import { jobPostingJsonLd, safeJsonLdStringify } from "@/lib/json-ld";
@@ -44,6 +48,24 @@ export default async function JobDetailPage({ params }: { params: { id: string }
   }
 
   const employer = await getEmployerById(job.employerId);
+
+  // === PRO: match-score + nettó-becslés ===
+  const { userId } = await auth();
+  const pro = userId ? await isPro(userId) : false;
+  const workerProfile = userId ? await getWorkerProfileByUser(userId) : null;
+  const matchProfile = workerProfile
+    ? { category: workerProfile.category, cantonCode: workerProfile.cantonCode, expectedSalaryMin: workerProfile.expectedSalaryMin }
+    : null;
+  const match = pro && hasMatchableProfile(matchProfile) ? jobMatchScore(matchProfile, job) : null;
+
+  // Nettó-becslés: a bér középértékére, a profil kantonjában (vagy az állás kantonjában).
+  let netEstimate: { gross: number; net: number; cantonCode: string } | null = null;
+  if (pro && job.salaryMin && job.salaryMax) {
+    const estCanton = workerProfile?.cantonCode ?? job.cantonCode ?? "ZH";
+    const gross = Math.round((job.salaryMin + job.salaryMax) / 2);
+    const r = computeSalary({ gross, period: "month", canton: estCanton, age: "25-34", civil: "A", kids: 0, churchTax: false, months: 12 });
+    netEstimate = { gross, net: Math.round(r.netMonthly), cantonCode: estCanton };
+  }
 
   // 1. Iránytű Benchmark Widget Számolás
   let cantonMedian: number | null = null;
@@ -161,6 +183,55 @@ export default async function JobDetailPage({ params }: { params: { id: string }
             </div>
           </div>
         </section>
+      )}
+
+      {/* PRO: match-score + nettó-becslés (vagy upsell) */}
+      {pro ? (
+        (match || netEstimate) && (
+          <section className="animate-fade-up animate-delay-100 rounded-card border-2 border-success/20 bg-success/5 p-4 shadow-card space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="grid h-7 w-7 place-items-center rounded-[10px] bg-success/15 text-[15px]">⚡</span>
+              <h3 className="text-[13px] font-extrabold uppercase tracking-wide text-success">PRO — neked szabva</h3>
+            </div>
+            {match && (
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[13.5px] font-bold text-ink">Illeszkedés a profilodhoz</span>
+                  <span className="text-[18px] font-black text-success">{match.score}%</span>
+                </div>
+                <div className="mt-1.5 h-2.5 w-full overflow-hidden rounded-pill bg-surface-alt">
+                  <div className="h-full rounded-pill bg-success" style={{ width: `${match.score}%` }} />
+                </div>
+                {match.reasons.length > 0 && (
+                  <p className="mt-1.5 text-[12px] text-ink-muted">{match.reasons.join(" · ")}</p>
+                )}
+              </div>
+            )}
+            {netEstimate && (
+              <div className="border-t border-success/15 pt-3">
+                <p className="text-[13.5px] leading-snug text-ink">
+                  Becsült <strong>nettó</strong> ({cantonNameByCode(netEstimate.cantonCode) ?? netEstimate.cantonCode}, egyedülálló):{" "}
+                  <strong className="text-success">~{netEstimate.net.toLocaleString("de-CH")} CHF/hó</strong>
+                  <span className="text-ink-muted"> (bruttó {netEstimate.gross.toLocaleString("de-CH")} CHF-ből)</span>
+                </p>
+                <Link href="/berkalkulator" className="mt-1 inline-flex items-center gap-1 text-[12px] font-bold text-primary hover:underline">
+                  Pontosítsd a bérkalkulátorban <Icon name="arrowRight" size={11} strokeWidth={3} />
+                </Link>
+              </div>
+            )}
+          </section>
+        )
+      ) : (
+        <Link
+          href="/pro"
+          className="animate-fade-up animate-delay-100 flex items-center gap-3 rounded-card border border-[#ff9600]/25 bg-[#ff9600]/5 p-4 shadow-card transition active:scale-[0.99]"
+        >
+          <span className="text-xl">🔒</span>
+          <span className="min-w-0 flex-1 text-[13px] leading-snug text-ink">
+            <strong className="text-[#cc7700]">PRO:</strong> lásd, hány %-ban illik ez az állás a profilodhoz, és a becsült <strong>nettó bért</strong> a kantonodban.
+          </span>
+          <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
+        </Link>
       )}
 
       <section className="animate-fade-up animate-delay-100 space-y-6">
