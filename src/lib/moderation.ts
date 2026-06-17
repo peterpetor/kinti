@@ -66,7 +66,11 @@ export async function moderateImage(arrayBuffer: ArrayBuffer): Promise<Moderatio
     const isUnsafe = unsafeTriggers.some(trigger => resultText.includes(trigger)) || resultText === "";
     const isSuspicious = resultText.includes("suspicious") || resultText.includes("review") || resultText.includes("maybe");
 
-    if (isUnsafe && !isSuspicious) {
+    // Fail-safe: ha BÁRMILYEN unsafe jel (explicit szó vagy AI-elutasítás) van,
+    // BLOKKOLUNK — akkor is, ha a válasz egyúttal "suspicious"-t is tartalmaz.
+    // (Korábban a `&& !isSuspicious` miatt az unsafe+suspicious eset csak review-ba
+    // került, ami veszélyes tartalmat átengedhetett.)
+    if (isUnsafe) {
       console.warn(`› [AI Moderation] BLOKKOLVA! Veszélyes tartalom észlelve vagy elutasított válasz: "${resultText}"`);
       return {
         action: "block",

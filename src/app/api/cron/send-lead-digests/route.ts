@@ -84,6 +84,11 @@ async function handle(req: Request): Promise<Response> {
 
     // Vállalkozói adatok lekérése (név + email)
     const businessIds = [...byBusiness.keys()];
+    // Defenzív: üres tömbnél az IN () érvénytelen SQL — bár a pendingLeads>0
+    // miatt ez gyakorlatilag elérhetetlen, expliciten kezeljük.
+    if (businessIds.length === 0) {
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0 });
+    }
     const { results: businesses } = await getDB()
       .prepare(
         `SELECT id, name, contact_email FROM businesses

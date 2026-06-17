@@ -148,7 +148,7 @@ export async function updateContentReportStatus(token: string, status: string): 
 
 export async function countRecentReports(ipHash: string | null): Promise<number> {
   if (!ipHash) return 0;
-  const res = await getDB().prepare(`SELECT COUNT(*) AS n FROM content_reports WHERE reporter_ip_hash = ? AND created_at >= datetime('now', '-1 hours')`).bind(ipHash).first<{ n: number }>();
+  const res = await getDB().prepare(`SELECT COUNT(*) AS n FROM content_reports WHERE reporter_ip_hash = ? AND created_at >= datetime('now', '-1 hour')`).bind(ipHash).first<{ n: number }>();
   return res?.n ?? 0;
 }
 

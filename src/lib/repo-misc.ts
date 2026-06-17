@@ -107,12 +107,19 @@ export async function getAdminStats(): Promise<AdminStats> {
     q("SELECT COUNT(*) AS n FROM jobs WHERE status = 'active' AND moderation_status = 1"),
     q("SELECT COUNT(*) AS n FROM employers"),
   ]);
-  return { 
-    businesses: businesses?.n ?? 0, 
-    businessesVerified: verified?.n ?? 0, 
-    eventsApproved: events?.n ?? 0, 
-    reviews: reviews?.n ?? 0, 
-    digestSubscribersConfirmed: 0, 
+  // Megerősített hírlevél-feliratkozók. A régi digest_subscribers táblát eldobtuk
+  // (0033); az új newsletter_subscribers (0066). Defenzív: ha a tábla hiányozna
+  // (migráció nem futott), 0-ra esünk vissza a régi viselkedés szerint.
+  const newsletter = await db
+    .prepare("SELECT COUNT(*) AS n FROM newsletter_subscribers WHERE confirmed_at IS NOT NULL")
+    .first<{ n: number }>()
+    .catch(() => null);
+  return {
+    businesses: businesses?.n ?? 0,
+    businessesVerified: verified?.n ?? 0,
+    eventsApproved: events?.n ?? 0,
+    reviews: reviews?.n ?? 0,
+    digestSubscribersConfirmed: newsletter?.n ?? 0,
     pushSubscriptions: push?.n ?? 0,
     jobs: jobs?.n ?? 0,
     employers: employers?.n ?? 0

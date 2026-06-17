@@ -53,6 +53,7 @@ export default async function AdminPage() {
         <Stat label="Push" value={stats.pushSubscriptions} sub="feliratkozó" />
         <Stat label="Állás" value={stats.jobs} sub="aktív" />
         <Stat label="Munkaadó" value={stats.employers} />
+        <Stat label="Hírlevél" value={stats.digestSubscribersConfirmed} sub="megerősített" />
         <Stat label="Nyitott jelentés" value={openReports.length} accent={openReports.length > 0} />
       </section>
 

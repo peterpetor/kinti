@@ -75,7 +75,16 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Karbantartási mód: ha a MAINTENANCE_MODE be van kapcsolva, csak admin láthatja.
   // Egyébként a teljes oldal publikusan elérhető.
-  const isMaintenanceMode = process.env.MAINTENANCE_MODE === "true";
+  // Cloudflare Pages edge: a vars/secrets a binding-on (getRequestContext().env)
+  // jönnek, a process.env nem feltétlenül tartalmazza — előbb onnan olvassuk
+  // (mint az ADMIN_EMAILS-nél), process.env csak fallback (dev).
+  let maintenanceFlag: string | undefined;
+  try {
+    maintenanceFlag = (getRequestContext().env as { MAINTENANCE_MODE?: string } | undefined)?.MAINTENANCE_MODE;
+  } catch {
+    /* nincs request-kontextus → marad a process.env */
+  }
+  const isMaintenanceMode = (maintenanceFlag ?? process.env.MAINTENANCE_MODE) === "true";
   
   if (isMaintenanceMode && !isMaintenanceExempt(req)) {
     if (!(await isCurrentUserAdmin())) {
