@@ -28,7 +28,7 @@ interface BusinessRow {
   view_count: number | null; phone_click_count: number | null;
   moderation_status: number | null; moderation_decision_at: string | null;
   moderation_decided_by: string | null; created_at: string | null; updated_at: string | null;
-  claimed: number | null;
+  claimed: number | null; lead_opt_out: number | null;
 }
 
 interface BusinessSubmissionRow {
@@ -62,6 +62,7 @@ export function toBusiness(r: BusinessRow): Business {
     moderationDecidedBy: r.moderation_decided_by, updatedAt: r.updated_at ?? null,
     createdAt: r.created_at ?? null,
     claimed: bool(r.claimed ?? 1),
+    leadOptOut: bool(r.lead_opt_out ?? 0),
   };
 }
 
@@ -108,6 +109,8 @@ export interface UpdateBusinessFields {
   name?: string; categoryLabel?: string | null; address?: string | null;
   phone?: string | null; blurb?: string | null; openText?: string | null;
   workingHours?: string | null; socialLinks?: string | null; languages?: string[] | null;
+  /** Árajánlat-kérések fogadásának kikapcsolása (lead_opt_out). */
+  leadOptOut?: boolean;
 }
 
 export interface CreateBusinessFromSubmissionInput {
@@ -271,6 +274,10 @@ export async function updateBusinessByManageToken(token: string, fields: UpdateB
   if (fields.languages !== undefined) {
     sets.push("languages = ?");
     values.push(fields.languages ? JSON.stringify(fields.languages) : null);
+  }
+  if (fields.leadOptOut !== undefined) {
+    sets.push("lead_opt_out = ?");
+    values.push(fields.leadOptOut ? 1 : 0);
   }
   if (sets.length === 0) return true;
   const contentSensitive: (keyof UpdateBusinessFields)[] = ["name", "blurb", "categoryLabel", "address"];

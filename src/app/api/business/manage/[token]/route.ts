@@ -120,6 +120,10 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
     } else errors.push({ field: "languages", message: "A languages tömb kell legyen." });
   }
 
+  if ("leadOptOut" in body) {
+    fields.leadOptOut = body.leadOptOut === true || body.leadOptOut === 1;
+  }
+
   if (errors.length) {
     return NextResponse.json({ error: "validation", details: errors }, { status: 400 });
   }

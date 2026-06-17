@@ -24,6 +24,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
     blurb: business.blurb ?? "",
     openText: business.openText ?? "",
     languages: business.languages ?? ["Magyar"],
+    leadOptOut: business.leadOptOut ?? false,
   });
   // Strukturált nyitvatartás — ez hajtja a "Most nyitva" szűrőt és a státuszt.
   const [hours, setHours] = useState<WorkingHours>(() =>
@@ -64,6 +65,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           openText: form.openText || null,
           workingHours: JSON.stringify(hours),
           languages: form.languages,
+          leadOptOut: form.leadOptOut,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as {
@@ -222,6 +224,22 @@ export function BusinessManageForm({ business, token }: { business: Business; to
             set("languages", next);
           }}
         />
+      </Section>
+
+      <Section title="Árajánlat-kérések">
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            checked={form.leadOptOut}
+            onChange={(e) => set("leadOptOut", e.target.checked)}
+            className="mt-0.5 h-5 w-5 shrink-0 accent-primary"
+          />
+          <span className="text-[13px] leading-snug text-ink-muted">
+            <strong className="text-ink">Ne kapjak árajánlat-kéréseket.</strong> Ha bekapcsolod, a
+            felhasználók „Kérj árajánlatot" üzenetei nem érkeznek meg hozzád — sem azonnali e-mailben,
+            sem a napi összefoglalóban.
+          </span>
+        </label>
       </Section>
 
       {error && (

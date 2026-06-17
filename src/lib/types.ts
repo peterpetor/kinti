@@ -65,6 +65,8 @@ export interface Business {
   createdAt?: string | null;
   /** false = „nem megerősített" lista (kutatott, tulajdonos nélkül) → foglalható. */
   claimed?: boolean;
+  /** true = a vállalkozó leiratkozott az árajánlat-kérések fogadásáról. */
+  leadOptOut?: boolean;
 }
 
 export interface KintiEvent {
