@@ -115,7 +115,7 @@ export async function POST(req: Request) {
 
   // === ÚJ FŐÚT (local-first) — azonnal publikálva, manage_token a kliensnek ===
   if (!hasEmail) {
-    const { publishReview, recomputeBusinessRating } = await import("@/lib/repo");
+    const { publishReview } = await import("@/lib/repo");
     await publishReview({
       id,
       businessId: business.id,
@@ -129,7 +129,9 @@ export async function POST(req: Request) {
       ageConfirmed: 1,
       ipHash,
     });
-    await recomputeBusinessRating(business.id);
+    // A rating NEM számolódik újra itt: a vélemény moderation_status=0 (függőben),
+    // a recompute csak a jóváhagyott (status=1) sorokból dolgozik. A tényleges
+    // újraszámolás a jóváhagyáskor történik (admin/moderation/decide).
     // Új tartalom-moderációs réteg: minden vélemény admin-jóváhagyásra vár.
     notifyAdminContentPending({
       contentType: "vélemény",

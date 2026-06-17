@@ -1019,6 +1019,6 @@ kinti.app`;
 
   const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
   if (error) {
-    throw new Error(`Resend: \${error.name ?? "hiba"} — \${error.message ?? "ismeretlen"}`);
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
   }
 }

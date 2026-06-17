@@ -72,10 +72,12 @@ async function handle(req: Request): Promise<Response> {
         } else {
           sent++;
         }
+        // Csak nem-dobó küldés (siker vagy halott feliratkozás) után jelöljük
+        // elküldöttnek — egy tranziens push-hiba így a következő futáskor újrapróbálódik.
+        await markEventReminderSent(r.id);
       } catch (err) {
         safeLogError("send-event-reminders push", err);
       }
-      await markEventReminderSent(r.id);
     }
   } catch (err) {
     safeLogError("send-event-reminders", err);
