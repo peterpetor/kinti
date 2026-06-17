@@ -42,8 +42,9 @@ async function handle(req: Request): Promise<Response> {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  // Mai nap kezdete UTC-ben
-  const todayStart = new Date().toISOString().slice(0, 10) + "T00:00:00";
+  // Mai nap kezdete UTC-ben. SZÓKÖZ-elválasztó (nem 'T'!) — a D1 datetime('now')
+  // így tárol; 'T'-vel a string-összehasonlítás félrevisz (' ' < 'T').
+  const todayStart = new Date().toISOString().slice(0, 10) + " 00:00:00";
 
   let digestsSent = 0;
   let leadsMarked = 0;

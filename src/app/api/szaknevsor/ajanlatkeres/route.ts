@@ -184,7 +184,7 @@ export async function POST(req: Request) {
            AND first_ping_sent = 1
            AND created_at >= ?`,
       )
-      .bind(...targets.map((b) => b.id), `${today}T00:00:00`)
+      .bind(...targets.map((b) => b.id), `${today} 00:00:00`)
       .all<{ business_id: string }>();
 
     const alreadyPingedSet = new Set(alreadyPingedRows.map((r) => r.business_id));
