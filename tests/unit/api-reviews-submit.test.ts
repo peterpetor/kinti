@@ -10,7 +10,6 @@ vi.mock("@/lib/email", () => ({ sendReviewConfirmationEmail: vi.fn() }));
 vi.mock("@/lib/admin-notify", () => ({ notifyAdminContentPending: vi.fn() }));
 vi.mock("@/lib/blocklist-guard", () => ({ checkBlocklistOrReject: vi.fn() }));
 vi.mock("@/lib/disposable-emails", () => ({ isDisposableEmail: vi.fn() }));
-vi.mock("@/lib/text-moderation", () => ({ moderateText: vi.fn() }));
 vi.mock("@/lib/safe-log", () => ({ safeLogError: vi.fn() }));
 vi.mock("@/lib/security", () => ({ hashIp: vi.fn(), TERMS_VERSION: "test-terms-1" }));
 vi.mock("@/lib/cloudflare", () => ({ getCloudflareEnv: vi.fn(() => ({})) }));
@@ -24,7 +23,6 @@ vi.mock("@/lib/repo", () => ({
 }));
 
 import { verifyTurnstile } from "@/lib/turnstile";
-import { moderateText } from "@/lib/text-moderation";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { isDisposableEmail } from "@/lib/disposable-emails";
@@ -32,7 +30,6 @@ import { hashIp } from "@/lib/security";
 import {
   getBusinessById,
   hasReviewByEmail,
-  logModerationStrike,
   publishReview,
   createReviewDraft,
 } from "@/lib/repo";
@@ -62,7 +59,6 @@ beforeEach(() => {
   vi.mocked(notifyAdminContentPending).mockResolvedValue(undefined as never);
   vi.mocked(isDisposableEmail).mockReturnValue(false);
   vi.mocked(hashIp).mockResolvedValue("iphash" as never);
-  vi.mocked(moderateText).mockResolvedValue({ action: "allow" } as never);
   vi.mocked(getBusinessById).mockResolvedValue({ id: "biz1", name: "Teszt Bt" } as never);
   vi.mocked(hasReviewByEmail).mockResolvedValue(false as never);
   vi.mocked(publishReview).mockResolvedValue(undefined as never);
@@ -105,14 +101,6 @@ describe("POST /api/reviews/submit", () => {
     vi.mocked(getBusinessById).mockResolvedValue(null as never);
     const res = await POST(req(validBody));
     expect(res.status).toBe(400);
-  });
-
-  it("AI moderáció blokk → 400 + strike naplózva", async () => {
-    vi.mocked(moderateText).mockResolvedValue({ action: "block", reason: "tilos" } as never);
-    const res = await POST(req(validBody));
-    expect(res.status).toBe(400);
-    expect(logModerationStrike).toHaveBeenCalled();
-    expect(publishReview).not.toHaveBeenCalled();
   });
 
   it("duplikált vélemény ugyanazzal az emaillel → 409", async () => {

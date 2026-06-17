@@ -16,9 +16,6 @@ import { getCloudflareEnv } from "@/lib/cloudflare";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { isDisposableEmail } from "@/lib/disposable-emails";
-import { moderateText } from "@/lib/text-moderation";
-import { assessSpam } from "@/lib/spam-score";
-import { logModerationStrike } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -90,28 +87,10 @@ export async function POST(req: Request) {
   const ipHash = await hashIp(ip);
   const hasEmail = validation.value.email.length > 0;
 
-  // AI text moderáció — rasszista/trágár/toxic tartalom szűrése
-  const combinedReviewText = [validation.value.reviewerName, validation.value.body].join("\n");
-  const textMod = await moderateText(combinedReviewText);
-  if (textMod.action === "block") {
-    await logModerationStrike(ipHash, "Review text moderation failed: " + textMod.reason);
-    return NextResponse.json(
-      { error: textMod.reason || "A véleményed nem megfelelő tartalmat hordoz." },
-      { status: 400 },
-    );
-  }
-
-  // AI-alapú spam-scoring (reklám / link-farm / scam) — a toxicitástól külön
-  // tengely. A queue-ra-állítás threshold felett: egyértelmű spam → elutasítás,
-  // a gyanús (review) eset a meglévő moderation_status=0 sorba kerül.
-  const spam = await assessSpam(validation.value.body);
-  if (spam.verdict === "spam") {
-    await logModerationStrike(ipHash, `Review spam (${spam.score}): ${spam.signals.join(",")}`);
-    return NextResponse.json(
-      { error: "A véleményed reklámnak vagy spamnek tűnik (linkek, promóció). Ha valódi tapasztalat, írd át link és reklámszöveg nélkül." },
-      { status: 400 },
-    );
-  }
+  // A vélemény CSAK csillagos (1–5) — nincs szöveges body vagy név (lásd
+  // validateReviewInput), ezért szöveg-moderáció (moderateText) és spam-scoring
+  // (assessSpam) sem szükséges. HA valaha visszajön a szöveges vélemény, itt kell
+  // újra bevezetni a moderateText + assessSpam guardot a beküldött szövegre.
 
   // === ÚJ FŐÚT (local-first) — azonnal publikálva, manage_token a kliensnek ===
   if (!hasEmail) {
@@ -136,10 +115,7 @@ export async function POST(req: Request) {
     notifyAdminContentPending({
       contentType: "vélemény",
       title: `${validation.value.rating}★ — ${business.name}`,
-      preview:
-        spam.verdict === "review"
-          ? `⚠️ AI-spam gyanú (${spam.score}: ${spam.signals.join(", ")}) — ${validation.value.body}`
-          : validation.value.body,
+      preview: "Csillagos értékelés — nincs szöveges tartalom.",
       submitterEmail: null,
     }).catch(() => {});
     return NextResponse.json(
