@@ -16,14 +16,19 @@ import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
 import { KvizDailyCard } from "@/components/kviz-daily-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
 import { getBusinesses, getEvents } from "@/lib/repo";
+import { cached } from "@/lib/edge-cache";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
+/** A kezdőlap listái mindenkinek azonosak (nincs per-user szerver-adat) →
+ *  izolátum-szintű TTL-cache, hogy ne minden kérés érje a D1-et. */
+const HOME_TTL_MS = 300_000; // 5 perc
+
 export default async function FeedPage() {
   const [allBusinesses, events] = await Promise.all([
-    getBusinesses(),
-    getEvents({ limit: 3 }),
+    cached("home:businesses", HOME_TTL_MS, () => getBusinesses()),
+    cached("home:events:3", HOME_TTL_MS, () => getEvents({ limit: 3 })),
   ]);
   // „A közeledben" csak a koordinátával rendelkezőkből válogat (kliensoldali
   // GPS-rendezéshez). Trükkös payload-méret ellen: max 200 rekord.
