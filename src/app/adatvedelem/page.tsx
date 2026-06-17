@@ -7,7 +7,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-06-15">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-06-17">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -415,6 +415,12 @@ export default function AdatvedelemPage() {
         is használó vállalatok. Az EU–USA adattranszferek a 2023-as EU–US Data Privacy Framework
         (DPF), illetve az Európai Bizottság által elfogadott általános adatvédelmi kikötések (SCC)
         alapján történnek, amelyek biztosítják a GDPR-nak megfelelő magas szintű adatvédelmet.
+      </p>
+      <p>
+        <strong>Svájci érintettek</strong>: a Svájcból az USA-ba történő adattovábbításra a{" "}
+        <strong>Swiss–U.S. Data Privacy Framework</strong> (a svájci Szövetségi Tanács által
+        elismert kiegészítés), illetve az SCC-k svájci adaptációja az irányadó — a revFADP/nDSG
+        által megkívánt megfelelő védelmi szint biztosításával.
       </p>
 
       <h2>5. Jogaid</h2>

@@ -7,7 +7,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-06-15">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-06-17">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -27,6 +27,41 @@ export default function AszfPage() {
         A Szolgáltatás <strong>közvetítő platform</strong>: nem vagyunk fél a felhasználók és
         a vállalkozások között létrejövő esetleges megállapodásokban, és nem garantáljuk a
         platformon található információk pontosságát.
+      </p>
+
+      <h3>1.1 Kinti PRO előfizetés: fizetés, elállás és visszatérítés</h3>
+      <p>
+        A díjköteles <strong>Kinti PRO</strong> (és a Szaknévsor-kiemelés / kiemelt állás)
+        előfizetést a <strong>Lemon Squeezy</strong> (Lemon Squeezy LLC) mint{" "}
+        <em>Merchant of Record</em> (a vásárlás szerződő eladója és számlakibocsátója)
+        bonyolítja. A vásárlásra így a <strong>Lemon Squeezy szerződési és visszatérítési
+        feltételei is</strong> irányadók; az adó (pl. ÁFA/MWST) felszámítása és a számlázás
+        is a Lemon Squeezynél történik. Az árak a megrendeléskor feltüntetett pénznemben és
+        összegben, az alkalmazandó adóval értendők.
+      </p>
+      <p>
+        <strong>Elállási jog (EU/EGT fogyasztók).</strong> Ha az Európai Unióban / EGT-ben
+        élő fogyasztó vagy, a fogyasztói jogokról szóló 2011/83/EU irányelv alapján a
+        szerződéskötéstől számított <strong>14 napon belül indokolás nélkül elállhatsz</strong>{" "}
+        a vásárlástól. Mivel a PRO egy <strong>azonnal hozzáférhetővé váló digitális
+        szolgáltatás</strong>, a megrendeléskor <strong>kifejezetten kéred a szolgáltatás
+        14 napon belüli megkezdését</strong>, és <strong>tudomásul veszed, hogy a szolgáltatás
+        teljes körű teljesítésével elveszíted az elállási jogodat</strong> (az irányelv 16. cikk
+        m) pontja). A részben igénybe vett időszakra az ellenérték arányos része számítható fel.
+        Az elállási / visszatérítési kérelmet a Lemon Squeezynél, illetve az{" "}
+        <a href="mailto:info@kinti.app">info@kinti.app</a> címen jelezheted.
+      </p>
+      <p>
+        <strong>Lemondás és megújulás.</strong> Az előfizetés <strong>bármikor lemondható</strong>;
+        a lemondás a folyó számlázási időszak végén lép hatályba, addig a PRO funkciók elérhetők
+        maradnak. A lemondás a már kiszámlázott, megkezdett időszakra — a fenti elállási jogon
+        túl — nem keletkeztet automatikus visszatérítési igényt. Méltányossági visszatérítésről a
+        Lemon Squeezy feltételei és az üzemeltető egyedi mérlegelése szerint dönthetünk.
+      </p>
+      <p style={{ fontStyle: "italic" }}>
+        Svájci fogyasztóként a svájci jog az online/digitális vásárlásokra általában nem ír elő
+        kötelező elállási (cooling-off) időszakot; a fenti 14 napos jog az EU/EGT-fogyasztókat
+        illeti. A kötelező fogyasztóvédelmi rendelkezések érintetlenül maradnak (lásd 19. pont).
       </p>
 
       <h2>2. Felhasználói típusok</h2>
@@ -212,8 +247,13 @@ export default function AszfPage() {
       <h2>7. Csillagos Értékelési Rendszer</h2>
       <p>
         A platformon <strong>kizárólag csillagos értékelés</strong> adható (1–5 csillag);
-        szöveges vélemény írására nincs mód. A leadott csillagos értékelések a felhasználók 
-        megítélését tükrözik. Az üzemeltető az értékeléseket előzetesen nem moderálja és azok valóságtartalmát nem ellenőrzi.
+        szöveges vélemény írására nincs mód. A leadott csillagos értékelések a felhasználók
+        <strong> szubjektív megítélését</strong> tükrözik. A közzététel előtt az értékeléseket
+        a jelen ÁSZF-nek való megfelelés (visszaélés-, spam- és jogsértés-szűrés) szempontjából
+        <strong> ellenőrizzük</strong> (admin-jóváhagyás, jellemzően 24 órán belül); az értékelések
+        <strong> valóságtartalmát, megalapozottságát azonban nem vizsgáljuk és nem szavatoljuk</strong>.
+        Ez az előzetes ellenőrzés a DSA 7. cikke szerinti önkéntes, saját kezdeményezésű intézkedés,
+        és nem keletkeztet az üzemeltető részéről felelősséget az értékelések tartalmáért.
       </p>
       <p>
         A közzétett értékelésekből fakadó esetleges hitelrontásért vagy személyiségi jogsértésért 

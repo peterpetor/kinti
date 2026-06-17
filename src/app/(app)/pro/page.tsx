@@ -166,7 +166,13 @@ export default function ProPage() {
       {/* FAQ / Trust section */}
       <div className="mt-16 text-center">
         <p className="text-[13px] font-semibold text-ink-muted">
-          A fizetéseket a biztonságos <strong className="text-ink">Lemon Squeezy</strong> dolgozza fel. Bármikor lemondható.
+          A fizetéseket a biztonságos <strong className="text-ink">Lemon Squeezy</strong> (Merchant of
+          Record) dolgozza fel. Bármikor lemondható.
+        </p>
+        <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
+          A vásárlással kéred a PRO <strong>azonnali aktiválását</strong>, és tudomásul veszed, hogy a
+          teljesítéssel elveszíted a 14 napos elállási jogod (EU/EGT fogyasztók — lásd{" "}
+          <Link href="/aszf" target="_blank" className="underline">ÁSZF 1.1</Link>).
         </p>
       </div>
     </div>
