@@ -119,6 +119,102 @@ export async function getAdminStats(): Promise<AdminStats> {
   };
 }
 
+// --- Admin Trends (14 napos napi bontás) -------------------------------------
+
+export interface AdminTrends {
+  /** 14 nap ISO-dátum címkéi (UTC, régitől újig). */
+  days: string[];
+  /** Napi új vállalkozás-regisztrációk. */
+  businessRegistrations: number[];
+  /** Napi benchmark-beküldések (bér + lakbér együtt). */
+  benchmarkSubmissions: number[];
+  /** Napi aktív beküldők — egyedi ip_hash a fő közreműködési táblákból (DAU-proxy). */
+  activeContributors: number[];
+  /** Összegzések az utolsó 7 napra. */
+  newBusinesses7d: number;
+  newBenchmark7d: number;
+  /** Egyedi beküldő (ip_hash) az utolsó 7 napban — NEM a napi értékek összege. */
+  activeContributors7d: number;
+}
+
+const TREND_DAYS = 14;
+
+/** Az utolsó n nap ISO-dátumai (UTC), régitől újig. */
+function lastNDatesUtc(n: number): string[] {
+  const now = new Date();
+  const out: string[] = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
+    out.push(d.toISOString().slice(0, 10));
+  }
+  return out;
+}
+
+export async function getAdminTrends(): Promise<AdminTrends> {
+  const db = getDB();
+  const since = `datetime('now', '-${TREND_DAYS} days')`;
+
+  // Napi bontású lekérdezések (UTC dátumkulcs). A hiányzó napokat JS-ben 0-zzuk.
+  const dailyBusiness = db
+    .prepare(`SELECT strftime('%Y-%m-%d', created_at) AS d, COUNT(*) AS n
+              FROM businesses WHERE created_at >= ${since} GROUP BY d`)
+    .all<{ d: string; n: number }>();
+
+  const dailyBenchmark = db
+    .prepare(`SELECT strftime('%Y-%m-%d', created_at) AS d, COUNT(*) AS n FROM (
+                SELECT created_at FROM salary_benchmarks WHERE created_at >= ${since}
+                UNION ALL
+                SELECT created_at FROM rent_benchmarks   WHERE created_at >= ${since}
+              ) GROUP BY d`)
+    .all<{ d: string; n: number }>();
+
+  // DAU-proxy: egyedi ip_hash/nap a fő közreműködési táblákból. Account nincs,
+  // így ez "aktív beküldőt" mér (nem passzív olvasót) — adatvédelem-barát.
+  const activitySubquery = `
+    SELECT strftime('%Y-%m-%d', created_at) AS d, ip_hash FROM salary_benchmarks   WHERE created_at >= ${since} AND ip_hash IS NOT NULL
+    UNION ALL
+    SELECT strftime('%Y-%m-%d', created_at) AS d, ip_hash FROM rent_benchmarks     WHERE created_at >= ${since} AND ip_hash IS NOT NULL
+    UNION ALL
+    SELECT strftime('%Y-%m-%d', created_at) AS d, ip_hash FROM business_submissions WHERE created_at >= ${since} AND ip_hash IS NOT NULL
+    UNION ALL
+    SELECT strftime('%Y-%m-%d', created_at) AS d, ip_hash FROM reviews             WHERE created_at >= ${since} AND ip_hash IS NOT NULL`;
+
+  const dailyActive = db
+    .prepare(`SELECT d, COUNT(DISTINCT ip_hash) AS n FROM (${activitySubquery}) GROUP BY d`)
+    .all<{ d: string; n: number }>();
+
+  // 7 napos egyedi beküldő (a napi distinct-ek összege félrevezetne).
+  const active7d = db
+    .prepare(`SELECT COUNT(DISTINCT ip_hash) AS n FROM (${activitySubquery.replace(
+      new RegExp(`datetime\\('now', '-${TREND_DAYS} days'\\)`, "g"),
+      "datetime('now', '-7 days')",
+    )})`)
+    .first<{ n: number }>();
+
+  const [biz, bench, active, a7] = await Promise.all([dailyBusiness, dailyBenchmark, dailyActive, active7d]);
+
+  const days = lastNDatesUtc(TREND_DAYS);
+  const toSeries = (rows: { d: string; n: number }[]): number[] => {
+    const map = new Map(rows.map((r) => [r.d, r.n]));
+    return days.map((d) => map.get(d) ?? 0);
+  };
+
+  const businessRegistrations = toSeries(biz.results);
+  const benchmarkSubmissions = toSeries(bench.results);
+  const activeContributors = toSeries(active.results);
+  const sumLast7 = (arr: number[]) => arr.slice(-7).reduce((s, n) => s + n, 0);
+
+  return {
+    days,
+    businessRegistrations,
+    benchmarkSubmissions,
+    activeContributors,
+    newBusinesses7d: sumLast7(businessRegistrations),
+    newBenchmark7d: sumLast7(benchmarkSubmissions),
+    activeContributors7d: a7?.n ?? 0,
+  };
+}
+
 // --- Exchange Rate Alerts ----------------------------------------------------
 
 export type ExchangeRateDirection = "above" | "below";

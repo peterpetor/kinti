@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/ui";
+import { Sparkline } from "@/components/ui/sparkline";
 import { getAdminUserId } from "@/lib/admin";
 import { AdminVerifyToggle } from "@/components/views/admin-verify-toggle";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
@@ -8,6 +9,7 @@ import { AdminCopyManageButton } from "@/components/admin/admin-copy-manage-butt
 import { ModerationDecideButtons } from "@/components/admin/moderation-decide-buttons";
 import {
   getAdminStats,
+  getAdminTrends,
   listOpenReports,
   listPendingEvents,
   listBusinessesForAdmin,
@@ -23,9 +25,10 @@ export default async function AdminPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  const [stats, openReports, pendingEvents, businesses, events] =
+  const [stats, trends, openReports, pendingEvents, businesses, events] =
     await Promise.all([
       getAdminStats(),
+      getAdminTrends(),
       listOpenReports(),
       listPendingEvents(),
       listBusinessesForAdmin(),
@@ -51,6 +54,35 @@ export default async function AdminPage() {
         <Stat label="Állás" value={stats.jobs} sub="aktív" />
         <Stat label="Munkaadó" value={stats.employers} />
         <Stat label="Nyitott jelentés" value={openReports.length} accent={openReports.length > 0} />
+      </section>
+
+      {/* Trendek — utolsó 14 nap */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">Trendek (utolsó 14 nap)</h2>
+        <div className="grid gap-2 sm:grid-cols-3">
+          <TrendCard
+            label="Új vállalkozás"
+            data={trends.businessRegistrations}
+            total7d={trends.newBusinesses7d}
+          />
+          <TrendCard
+            label="Benchmark-beküldés"
+            data={trends.benchmarkSubmissions}
+            total7d={trends.newBenchmark7d}
+            sub="bér + lakbér"
+          />
+          <TrendCard
+            label="Aktív beküldő"
+            data={trends.activeContributors}
+            total7d={trends.activeContributors7d}
+            sub="egyedi IP / 7 nap"
+          />
+        </div>
+        <p className="text-[11px] leading-snug text-ink-faint">
+          Az „aktív beküldő" a fő közreműködési táblák (benchmark, vállalkozás-beküldés, vélemény) egyedi
+          IP-hash-eit számolja naponta — account/azonosító nincs, így ez a beküldői aktivitás proxyja (nem a
+          passzív olvasóké).
+        </p>
       </section>
 
       {/* Open reports */}
@@ -287,6 +319,29 @@ function Stat({ label, value, sub, accent }: { label: string; value: number; sub
       <p className="text-[11.5px] font-bold uppercase tracking-wider text-ink-muted">{label}</p>
       <p className={`mt-0.5 text-[22px] font-extrabold tracking-tight ${accent ? "text-accent" : "text-ink"}`}>{value}</p>
       {sub && <p className="text-[11px] text-ink-faint">{sub}</p>}
+    </div>
+  );
+}
+
+function TrendCard({ label, data, total7d, sub }: { label: string; data: number[]; total7d: number; sub?: string }) {
+  const max = Math.max(...data, 0);
+  return (
+    <div className="rounded-card border border-line bg-surface p-3 shadow-card">
+      <div className="flex items-baseline justify-between gap-2">
+        <p className="text-[11.5px] font-bold uppercase tracking-wider text-ink-muted">{label}</p>
+        <span className="text-[11px] font-bold text-ink-faint">csúcs: {max}</span>
+      </div>
+      <p className="mt-0.5 text-[22px] font-extrabold tracking-tight text-ink">
+        {total7d}
+        <span className="ml-1 text-[11px] font-bold text-ink-faint">/ 7 nap{sub ? ` · ${sub}` : ""}</span>
+      </p>
+      <div className="mt-1.5">
+        {max > 0 ? (
+          <Sparkline data={data} height={48} />
+        ) : (
+          <p className="py-3 text-center text-[11px] text-ink-faint">Nincs adat az időszakban.</p>
+        )}
+      </div>
     </div>
   );
 }
