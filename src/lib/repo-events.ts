@@ -267,15 +267,59 @@ export async function addEventRsvp(
 }
 
 export async function createEventReminder(input: {
-  id: string; eventId: string; pushEndpoint: string; remindAt: string;
+  id: string; eventId: string; pushEndpoint: string; remindAt: string; leadMinutes: number;
 }): Promise<void> {
   await getDB()
     .prepare(
-      `INSERT OR IGNORE INTO event_reminders (id, event_id, push_endpoint, remind_at)
-       VALUES (?, ?, ?, ?)`
+      `INSERT OR IGNORE INTO event_reminders (id, event_id, push_endpoint, remind_at, lead_minutes)
+       VALUES (?, ?, ?, ?, ?)`
     )
-    .bind(input.id, input.eventId, input.pushEndpoint, input.remindAt)
+    .bind(input.id, input.eventId, input.pushEndpoint, input.remindAt, input.leadMinutes)
     .run();
+}
+
+export interface DueEventReminder {
+  id: string;
+  leadMinutes: number;
+  endpoint: string;
+  p256dh: string | null;
+  auth: string | null;
+  eventId: string;
+  title: string;
+  startTime: string | null;
+  venue: string | null;
+}
+
+/**
+ * Esedékes (sent=0, remind_at ≤ most) emlékeztetők a push-kulcsokkal és az
+ * esemény-adatokkal együtt (LEFT JOIN — a törölt sub-os árva sor is jön, hogy
+ * a cron lezárhassa).
+ */
+export async function getDueEventReminders(nowIso: string, limit = 200): Promise<DueEventReminder[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT r.id, r.lead_minutes, r.push_endpoint, s.p256dh, s.auth,
+              e.id AS event_id, e.title, e.start_time, e.venue
+       FROM event_reminders r
+       JOIN events e ON e.id = r.event_id
+       LEFT JOIN push_subscriptions s ON s.endpoint = r.push_endpoint
+       WHERE r.sent = 0 AND r.remind_at <= ?
+       ORDER BY r.remind_at ASC
+       LIMIT ?`,
+    )
+    .bind(nowIso, limit)
+    .all<{
+      id: string; lead_minutes: number; push_endpoint: string; p256dh: string | null; auth: string | null;
+      event_id: string; title: string; start_time: string | null; venue: string | null;
+    }>();
+  return results.map((r) => ({
+    id: r.id, leadMinutes: r.lead_minutes, endpoint: r.push_endpoint, p256dh: r.p256dh, auth: r.auth,
+    eventId: r.event_id, title: r.title, startTime: r.start_time, venue: r.venue,
+  }));
+}
+
+export async function markEventReminderSent(id: string): Promise<void> {
+  await getDB().prepare("UPDATE event_reminders SET sent = 1 WHERE id = ?").bind(id).run();
 }
 
 export async function countRecentEventSubmits(ipHash: string | null): Promise<number> {

@@ -10,11 +10,13 @@ export const dynamic = "force-dynamic";
  *
  * Body: { endpoint: string }  (a böngésző már meglévő push-feliratkozása)
  *
- * A reminder az esemény kezdés előtt 3 órára esedékes (Europe/Zurich → UTC).
- * Best-effort, account nélkül: ha az endpointhoz nincs élő feliratkozás, a
- * cron egyszerűen kihagyja. Lejárt eseményre nem rögzítünk.
+ * Két emlékeztető készül: az esemény kezdés előtt 24 órával ÉS 1 órával
+ * (Europe/Zurich → UTC). Best-effort, account nélkül: ha az endpointhoz nincs
+ * élő feliratkozás, a cron egyszerűen kihagyja. Lejárt eseményre nem rögzítünk;
+ * a már elmúlt lead-ablakot kihagyjuk (pl. ha holnaputáni helyett ma RSVP-zik
+ * egy 2 óra múlva kezdődő eseményre, csak az 1h emlékeztető jön létre).
  */
-const REMINDER_LEAD_MS = 3 * 60 * 60 * 1000; // 3 óra
+const REMINDER_LEADS_MIN = [1440, 60]; // 24 óra és 1 óra (perc)
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   let body: { endpoint?: unknown } = {};
@@ -45,17 +47,23 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ ok: true, scheduled: false });
   }
 
-  const remindAt = new Date(startUtc.getTime() - REMINDER_LEAD_MS).toISOString();
-
-  await createEventReminder({
-    id: crypto.randomUUID(),
-    eventId: event.id,
-    pushEndpoint: endpoint,
-    remindAt,
-  });
+  const now = Date.now();
+  let scheduled = 0;
+  for (const leadMinutes of REMINDER_LEADS_MIN) {
+    const remindMs = startUtc.getTime() - leadMinutes * 60 * 1000;
+    if (remindMs <= now) continue; // ez a lead-ablak már elmúlt
+    await createEventReminder({
+      id: crypto.randomUUID(),
+      eventId: event.id,
+      pushEndpoint: endpoint,
+      remindAt: new Date(remindMs).toISOString(),
+      leadMinutes,
+    });
+    scheduled++;
+  }
 
   return NextResponse.json(
-    { ok: true, scheduled: true, remindAt },
+    { ok: true, scheduled: scheduled > 0, count: scheduled },
     { headers: { "cache-control": "no-store" } },
   );
 }

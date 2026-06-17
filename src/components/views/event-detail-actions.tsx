@@ -7,6 +7,7 @@ import { ShareSheet } from "@/components/share-sheet";
 import type { CalendarEvent } from "@/lib/calendar";
 import { cn } from "@/lib/cn";
 import { haptic } from "@/lib/haptics";
+import { scheduleEventReminder } from "@/lib/event-reminder-client";
 
 /**
  * EventDetailActions — az esemény mély-link oldal aktív vezérlői:
@@ -47,6 +48,8 @@ export function EventDetailActions({
       const data = (await res.json().catch(() => ({}))) as { total?: number };
       if (res.ok) {
         if (typeof data.total === "number") setGoing(data.total);
+        // Push-emlékeztető (24h + 1h) — best-effort, ha van feliratkozás.
+        void scheduleEventReminder(eventId);
       } else {
         setGoing(prev);
         setVoted(false);

@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { KintiEvent } from "@/lib/types";
 import { getTagEmoji } from "@/lib/tag-emoji";
+import { scheduleEventReminder } from "@/lib/event-reminder-client";
 import { OwnPostBadge } from "@/components/own-post-badge";
 import { EventCalendar } from "@/components/event-calendar";
 import { AddToCalendar } from "@/components/add-to-calendar";
@@ -57,21 +58,6 @@ function eventToCal(e: KintiEvent): CalendarEvent {
  * van iratkozva (a Közösség oldalon a „Szólunk, ha új esemény van" kártyával).
  * Sose dob hibát kifelé; ha nincs feliratkozás, csendben kihagyja.
  */
-async function scheduleEventReminder(eventId: string): Promise<void> {
-  try {
-    if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
-    const reg = await navigator.serviceWorker.ready;
-    const sub = await reg.pushManager.getSubscription();
-    if (!sub) return;
-    await fetch(`/api/events/${eventId}/reminder`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ endpoint: sub.endpoint }),
-    });
-  } catch {
-    /* best-effort — az emlékeztető extra, sose blokkolja az RSVP-t */
-  }
-}
 
 function EventsList({ events }: { events: KintiEvent[] }) {
   // Nézet: lista vagy naptár
