@@ -52,9 +52,10 @@ export function PullToRefresh({
     if (pull >= THRESHOLD && !refreshing) {
       setRefreshing(true);
       setPull(THRESHOLD);
-      haptic("tap");
+      haptic("selection"); // a húzás kioldása
       try {
         await doRefresh();
+        haptic("success"); // sikeres frissítés
       } finally {
         setRefreshing(false);
         setPull(0);

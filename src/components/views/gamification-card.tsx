@@ -6,6 +6,9 @@ import { loadMyPosts } from "@/lib/my-posts";
 import { computeGamification, type GamificationStats } from "@/lib/gamification";
 import { streakXp } from "@/lib/streak";
 import { gatherAchievementExtras } from "@/lib/achievements";
+import { haptic } from "@/lib/haptics";
+
+const SEEN_BADGES_KEY = "kinti.seenBadges";
 
 /**
  * /sajatjaim — "Kinti eredményeim" kártya.
@@ -15,10 +18,32 @@ import { gatherAchievementExtras } from "@/lib/achievements";
  */
 export function GamificationCard() {
   const [stats, setStats] = useState<GamificationStats | null>(null);
+  const [freshBadges, setFreshBadges] = useState<Set<string>>(new Set());
 
   // localStorage csak kliensen — useEffect a hidratációs eltérés elkerülésére.
   useEffect(() => {
-    setStats(computeGamification(loadMyPosts(), streakXp(), gatherAchievementExtras()));
+    const s = computeGamification(loadMyPosts(), streakXp(), gatherAchievementExtras());
+    setStats(s);
+
+    // Új kitűző észlelése: a most megszerzett azonosítók összevetése a korábban
+    // látottakkal. Az ELSŐ betöltéskor csak rögzítünk (nincs rezgés a meglévőkre).
+    try {
+      const earnedIds = s.badges.filter((b) => b.earned).map((b) => b.id);
+      const raw = localStorage.getItem(SEEN_BADGES_KEY);
+      if (raw == null) {
+        localStorage.setItem(SEEN_BADGES_KEY, JSON.stringify(earnedIds));
+      } else {
+        const seen = new Set<string>(JSON.parse(raw));
+        const fresh = earnedIds.filter((id) => !seen.has(id));
+        if (fresh.length > 0) {
+          haptic("success");
+          setFreshBadges(new Set(fresh));
+          localStorage.setItem(SEEN_BADGES_KEY, JSON.stringify(earnedIds));
+        }
+      }
+    } catch {
+      /* localStorage nem elérhető — kihagyjuk */
+    }
   }, []);
 
   if (!stats) {
@@ -89,8 +114,14 @@ export function GamificationCard() {
                     ? "border-[#e3a233]/45 bg-[#e3a233]/15 shadow-[0_0_0_1px_rgba(227,162,51,0.25)]"
                     : "border-primary/25 bg-primary/10"
                   : "border-line bg-surface-alt/40",
+                freshBadges.has(b.id) && "animate-pulse ring-2 ring-primary ring-offset-1",
               )}
             >
+              {freshBadges.has(b.id) && (
+                <span className="absolute -left-1 -top-1 rounded-full bg-primary px-1.5 py-0.5 text-[8px] font-black uppercase text-white shadow">
+                  Új
+                </span>
+              )}
               {b.rare && (
                 <span
                   className={cn(
