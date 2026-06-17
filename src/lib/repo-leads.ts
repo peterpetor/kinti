@@ -39,6 +39,8 @@ export interface CreateBusinessLeadInput {
   senderPhone: string | null;
   categoryLabel: string | null;
   message: string;
+  /** true = azonnali first-ping email ment, false = csak digest-be kerül */
+  firstPingSent?: boolean;
 }
 
 /** Egy beérkező ajánlatkérés mentése. Best-effort: hibát NEM dob (az email amúgy is ment). */
@@ -46,12 +48,14 @@ export async function createBusinessLead(input: CreateBusinessLeadInput): Promis
   try {
     await getDB()
       .prepare(
-        `INSERT INTO business_leads (id, business_id, sender_name, sender_email, sender_phone, category_label, message)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO business_leads
+           (id, business_id, sender_name, sender_email, sender_phone, category_label, message, first_ping_sent)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
         crypto.randomUUID(), input.businessId, input.senderName, input.senderEmail,
         input.senderPhone, input.categoryLabel, input.message,
+        input.firstPingSent ? 1 : 0,
       )
       .run();
   } catch (err) {

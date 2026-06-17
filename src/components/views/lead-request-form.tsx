@@ -24,6 +24,7 @@ export function LeadRequestForm({ categories }: Props) {
   const [categoryId, setCategoryId] = useState("");
   const [cantonCode, setCantonCode] = useState("all");
   const [message, setMessage] = useState("");
+  const [honeypot, setHoneypot] = useState(""); // bot-szűrő
 
   const selectedCategory = categories.find((c) => c.id === categoryId);
 
@@ -52,6 +53,7 @@ export function LeadRequestForm({ categories }: Props) {
           categoryLabel: selectedCategory?.label ?? categoryId,
           cantonCode,
           message: message.trim(),
+          _hp: honeypot, // honeypot mező — bot detektálás
         }),
       });
 
@@ -129,6 +131,20 @@ export function LeadRequestForm({ categories }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 animate-fade-up">
+      {/* Honeypot — botok kitöltik, emberek soha nem látják */}
+      <div style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
+        <label htmlFor="lrf-hp">Ne töltsd ki</label>
+        <input
+          id="lrf-hp"
+          type="text"
+          name="_hp"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
+
       {/* Kategória */}
       <div className="space-y-1.5">
         <label htmlFor="lrf-category" className="block text-[13px] font-bold text-ink">

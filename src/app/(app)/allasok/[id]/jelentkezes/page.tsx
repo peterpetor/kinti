@@ -37,7 +37,7 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
       <header className="flex items-center gap-3">
         <Link
           href={`/allasok/${job.id}`}
-          className="grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition-all active:scale-95"
+          className="ml-auto order-last grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition-all active:scale-95"
         >
           <Icon name="arrowLeft" size={18} strokeWidth={2.4} />
         </Link>

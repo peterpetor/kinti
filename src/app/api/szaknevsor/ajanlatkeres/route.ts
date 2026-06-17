@@ -35,6 +35,7 @@ interface BusinessContactRow {
  *   categoryLabel: string,
  *   cantonCode?: string,   // 2-betűs kód vagy "all"
  *   message: string,
+ *   _hp?: string,          // honeypot — botok kitöltik, emberek nem
  * }
  */
 export async function POST(req: Request) {
@@ -42,16 +43,36 @@ export async function POST(req: Request) {
     const ip = req.headers.get("cf-connecting-ip") ?? null;
     const ipHash = await hashIp(ip);
 
-    // Rate limit: max 3 árajánlat-kérés / IP / óra
-    const rateLimit = await checkAiRateLimit("lead-request", ipHash);
-    if (!rateLimit.allowed) {
+    // ── Rate limit #1: max 3 árajánlat-kérés / IP / óra ────────────────────
+    const rateLimitHour = await checkAiRateLimit("lead-request", ipHash);
+    if (!rateLimitHour.allowed) {
       return NextResponse.json(
         { error: "Túl sok árajánlat-kérés. Próbáld újra 1 óra múlva." },
         { status: 429 },
       );
     }
 
+    // ── Rate limit #2: max 5 árajánlat-kérés / IP / nap ─────────────────────
+    const rateLimitDay = await checkAiRateLimit("lead-request-day", ipHash);
+    if (!rateLimitDay.allowed) {
+      return NextResponse.json(
+        { error: "Napi limit elérve. Próbáld újra holnap." },
+        { status: 429 },
+      );
+    }
+
     const body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
+
+    // ── Honeypot ellenőrzés — bot-szűrő CAPTCHA nélkül ──────────────────────
+    // A _hp mező rejtett az UI-ban; ember soha nem tölti ki.
+    const honeypot = typeof body._hp === "string" ? body._hp : "";
+    if (honeypot.length > 0) {
+      // Csendesen elfogadjuk (ne tudja a bot hogy felfedeztük), de nem küldünk
+      return NextResponse.json(
+        { ok: true, sent: 0, total: 0 },
+        { headers: { "cache-control": "no-store" } },
+      );
+    }
 
     const name = typeof body.name === "string" ? body.name.trim() : "";
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
@@ -84,7 +105,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Érvénytelen kanton-kód." }, { status: 400 });
     }
 
+    // ── Dedup: ugyanaz az email + kategória 24 órán belül? ──────────────────
+    // Megakadályozza, hogy ugyanaz a személy ugyanabba a kategóriába 1 napon
+    // belül többször is leadet küldjön (pl. véletlen dupla submit, vagy szándékos).
+    const emailHash = await hashIp(email); // sha-256 az emailre is
+    const dedupKey = `lead-cat-${categoryId}-${emailHash}`;
+    const dedupRow = await getDB()
+      .prepare(
+        `SELECT COUNT(*) AS n FROM ai_rate_limit_log
+         WHERE ip_hash = ? AND endpoint = 'lead-dedup'
+           AND created_at >= datetime('now', '-24 hours')`,
+      )
+      .bind(dedupKey)
+      .first<{ n: number }>();
+    if ((dedupRow?.n ?? 0) > 0) {
+      return NextResponse.json(
+        { error: "Ebbe a kategóriába az elmúlt 24 órán belül már küldtél árajánlat-kérést. Kérjük várj egy napot." },
+        { status: 429 },
+      );
+    }
+
     // Vállalkozások lekérése kategória + email szűrővel
+    // lead_opt_out = 0 → csak azok kapják, akik nem iratkoztak le
     const { results: allBusinesses } = await getDB()
       .prepare(
         `SELECT id, name, contact_email, address, category_id, category_label
@@ -94,6 +136,7 @@ export async function POST(req: Request) {
            AND moderation_status = 1
            AND contact_email IS NOT NULL
            AND length(trim(contact_email)) > 0
+           AND COALESCE(lead_opt_out, 0) = 0
          ORDER BY featured DESC, rating DESC
          LIMIT 200`,
       )
@@ -128,9 +171,31 @@ export async function POST(req: Request) {
 
     const effectiveCategoryLabel = categoryLabel || targets[0]?.category_label || categoryId;
 
-    // Emailek kiküldése — best-effort (ha egy-két cím hibás, ne akadjon el)
+    // ── First-ping logika: minden vállalkozónak csak 1 azonnali email/nap ───
+    // Ha az adott vállalkozónak aznap már ment azonnali email (first_ping_sent=1),
+    // csak DB-be mentjük — a cron küldi ki másnap reggel a digestben.
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+    // Azok a vállalkozók akiknek MA már ment first-ping
+    const { results: alreadyPingedRows } = await getDB()
+      .prepare(
+        `SELECT DISTINCT business_id FROM business_leads
+         WHERE business_id IN (${targets.map(() => "?").join(",")})
+           AND first_ping_sent = 1
+           AND created_at >= ?`,
+      )
+      .bind(...targets.map((b) => b.id), `${today}T00:00:00`)
+      .all<{ business_id: string }>();
+
+    const alreadyPingedSet = new Set(alreadyPingedRows.map((r) => r.business_id));
+
+    // Csak az első-pingeseknek küldjük az azonnali emailt
+    const firstPingTargets = targets.filter((b) => !alreadyPingedSet.has(b.id));
+    const digestOnlyTargets = targets.filter((b) => alreadyPingedSet.has(b.id));
+
+    // Email küldés — csak a first-ping célpontoknak, best-effort
     const emailResults = await Promise.allSettled(
-      targets.map((biz) =>
+      firstPingTargets.map((biz) =>
         sendLeadRequestEmail({
           senderName: name,
           senderEmail: email,
@@ -147,12 +212,10 @@ export async function POST(req: Request) {
 
     const sentCount = emailResults.filter((r) => r.status === "fulfilled").length;
 
-    // Analitika: lead_count növelése + a lead in-app mentése minden érintett
-    // cégnél (best-effort). A mentett lead-et a PRO-vállalkozó látja a
-    // postaládájában; a free csak az emailt kapja (mint eddig).
+    // Lead mentése DB-be minden célpontnál (best-effort)
     const { incrementBusinessAnalytic, createBusinessLead } = await import("@/lib/repo");
-    await Promise.allSettled(
-      targets.flatMap((biz) => [
+    await Promise.allSettled([
+      ...firstPingTargets.flatMap((biz) => [
         incrementBusinessAnalytic(biz.id, "lead", null),
         createBusinessLead({
           businessId: biz.id,
@@ -161,9 +224,22 @@ export async function POST(req: Request) {
           senderPhone: phone,
           categoryLabel: effectiveCategoryLabel,
           message,
+          firstPingSent: true,
         }),
       ]),
-    );
+      ...digestOnlyTargets.flatMap((biz) => [
+        incrementBusinessAnalytic(biz.id, "lead", null),
+        createBusinessLead({
+          businessId: biz.id,
+          senderName: name,
+          senderEmail: email,
+          senderPhone: phone,
+          categoryLabel: effectiveCategoryLabel,
+          message,
+          firstPingSent: false,
+        }),
+      ]),
+    ]);
 
     // Visszaigazolás a kérező felhasználónak
     try {
@@ -171,14 +247,25 @@ export async function POST(req: Request) {
         to: email,
         senderName: name,
         categoryLabel: effectiveCategoryLabel,
-        businessCount: sentCount,
+        businessCount: targets.length,
       });
     } catch (confirmErr) {
       safeLogError("lead-request/confirm-email", confirmErr);
       // Nem fatális — a kérés ment
     }
 
+    // Rate limit naplózása mindkét ablakhoz + dedup kulcs
     await logAiRateLimit("lead-request", ipHash);
+    await logAiRateLimit("lead-request-day", ipHash);
+    // Dedup: az email+kategória kombinációt is naplózzuk
+    try {
+      await getDB()
+        .prepare(`INSERT INTO ai_rate_limit_log (id, endpoint, ip_hash) VALUES (?, 'lead-dedup', ?)`)
+        .bind(crypto.randomUUID(), dedupKey)
+        .run();
+    } catch (e) {
+      safeLogError("lead-request/dedup-log", e);
+    }
 
     return NextResponse.json(
       { ok: true, sent: sentCount, total: targets.length },
