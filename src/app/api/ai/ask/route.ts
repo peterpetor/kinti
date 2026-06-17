@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { GUIDES } from "@/lib/guides";
 import { containsProfanity } from "@/lib/profanity";
+import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
+import { hashIp } from "@/lib/security";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -25,6 +28,17 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "A kérdésed nem megfelelő szavakat tartalmaz. Kérlek fogalmazd meg másképp." },
         { status: 400 },
+      );
+    }
+
+    // Rate-limit: minden hívás fizetős Workers AI-inferencia → IP-alapú limit
+    // a költség-abúzus/DoS ellen (mint a többi AI-route-on).
+    const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
+    const rl = await checkAiRateLimit("ai-ask", ipHash);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: "Túl sok kérdés rövid idő alatt. Próbáld újra 1 óra múlva." },
+        { status: 429 },
       );
     }
 
@@ -72,7 +86,7 @@ Részletek:
     });
 
     if (!response || !response.response) {
-      console.error("✖ [AI Ask] Üres AI válasz:", JSON.stringify(response));
+      safeLogError("[ai/ask] üres AI válasz", new Error("empty-ai-response"));
       return NextResponse.json(
         { error: "Az AI jelenleg nem elérhető, kérlek próbáld újra pár perc múlva." },
         { status: 503 }
@@ -80,13 +94,14 @@ Részletek:
     }
 
     const answer = response.response;
+    await logAiRateLimit("ai-ask", ipHash);
 
     return NextResponse.json(
       { answer },
       { headers: { "cache-control": "no-store" } }
     );
   } catch (error) {
-    console.error("✖ [AI Ask] Hiba:", error);
+    safeLogError("[ai/ask] hiba", error);
     return NextResponse.json(
       { error: "Szerverhiba történt a kérés feldolgozása közben." },
       { status: 500 }

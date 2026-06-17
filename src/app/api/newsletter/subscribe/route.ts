@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createNewsletterSubscriber } from "@/lib/repo-newsletter";
 import { sendNewsletterConfirmationEmail } from "@/lib/email";
 import { isDisposableEmail } from "@/lib/disposable-emails";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -47,8 +48,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
-    console.error("Newsletter subscribe error:", err);
+  } catch (err) {
+    safeLogError("[newsletter/subscribe]", err);
     return NextResponse.json(
       { error: "Belső szerverhiba történt." },
       { status: 500 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { confirmNewsletterSubscription } from "@/lib/repo-newsletter";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -14,8 +15,8 @@ export async function GET(req: Request, { params }: { params: { token: string } 
     }
 
     return NextResponse.redirect(new URL("/hirlevel-megerositve", req.url));
-  } catch (err: any) {
-    console.error("Newsletter confirm error:", err);
+  } catch (err) {
+    safeLogError("[newsletter/confirm]", err);
     return NextResponse.redirect(new URL("/hirlevel-megerositve?error=server", req.url));
   }
 }

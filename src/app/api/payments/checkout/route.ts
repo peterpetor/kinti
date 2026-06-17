@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createCheckout } from "@/lib/lemonsqueezy";
 import { getVariantId, ProductType, CountryCode } from "@/lib/payments-config";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 
@@ -45,8 +46,11 @@ export async function POST(req: Request) {
     );
 
     return NextResponse.json({ url: checkoutUrl });
-  } catch (error: any) {
-    console.error("Checkout creation failed:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    safeLogError("[payments/checkout]", error);
+    return NextResponse.json(
+      { error: "A fizetés elindítása nem sikerült. Próbáld újra később." },
+      { status: 500 },
+    );
   }
 }
