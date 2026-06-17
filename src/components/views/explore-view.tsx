@@ -498,27 +498,46 @@ export function ExploreView({
           ))}
 
           {filtered.length === 0 && (
-            <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-12 text-center shadow-card">
-              <Icon name={showFavs ? "heart" : "search"} size={28} className="text-ink-faint" />
-              <p className="text-sm font-semibold text-ink">
-                {showFavs ? "Nincs mentett kedvenced" : "Nincs találat"}
+            (() => {
+              const cantonLabel = canton !== "all" ? CANTONS.find((c) => c.code === canton)?.name ?? null : null;
+              return (
+            <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
+              <Icon name={showFavs ? "heart" : "pin"} size={28} className="text-ink-faint" />
+              <p className="text-[15px] font-extrabold text-ink">
+                {showFavs
+                  ? "Nincs mentett kedvenced"
+                  : cantonLabel
+                    ? `Még nincs magyar vállalkozás ${cantonLabel} kantonban`
+                    : "Még nincs itt magyar vállalkozás"}
               </p>
-              <p className="text-xs text-ink-muted">
+              <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-muted">
                 {showFavs
                   ? "Nyomd meg a szívet egy vállalkozás kártyáján, és itt gyűjtöd a kedvenceidet."
                   : userPos
                     ? `Nincs vállalkozás ${radiusKm} km-en belül. Növeld a sugarat vagy kapcsold ki a helymeghatározást.`
-                    : "Próbálj másik kategóriát vagy keresőszót."}
+                    : cantonLabel
+                      ? "Légy te az első! Ha itt dolgozol, kerülj fel a térképre — vagy ajánlj egy magyar vállalkozót, akit ismersz."
+                      : "Légy te az első! Vidd fel a vállalkozásod, vagy ajánlj egy magyar vállalkozót, akit ismersz."}
               </p>
               {!showFavs && (
-                <Link
-                  href="/szaknevsor/ajanlas"
-                  className="mt-2 inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12.5px] font-bold text-white shadow-card active:scale-95"
-                >
-                  <Icon name="plus" size={13} strokeWidth={2.6} /> Ajánlj egy magyar vállalkozást
-                </Link>
+                <div className="mt-2 flex w-full max-w-xs flex-col gap-2">
+                  <Link
+                    href="/szaknevsor/uj"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-primary px-4 py-2.5 text-[13px] font-extrabold text-white shadow-card-hover active:scale-[0.98]"
+                  >
+                    <Icon name="pin" size={14} strokeWidth={2.6} /> Vidd fel a vállalkozásod
+                  </Link>
+                  <Link
+                    href="/szaknevsor/ajanlas"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-pill border border-line bg-surface px-4 py-2 text-[12.5px] font-bold text-ink active:scale-95"
+                  >
+                    <Icon name="plus" size={13} strokeWidth={2.6} /> Inkább ajánlok egyet
+                  </Link>
+                </div>
               )}
             </div>
+              );
+            })()
           )}
 
           {/* Hiányzik valaki? — közösségi ajánlás a lista alján */}

@@ -450,8 +450,13 @@ function TagBadge({ tag, color }: { tag: string | null; color: string | null }) 
 
 function Empty({ label }: { label: string }) {
   return (
-    <div className="rounded-card border border-line bg-surface px-6 py-12 text-center text-sm text-ink-muted shadow-card">
-      {label}
+    <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
+      <Icon name="calendar" size={28} className="text-ink-faint" />
+      <p className="text-[15px] font-extrabold text-ink">{label}</p>
+      <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-muted">
+        Iratkozz fel fent a <strong className="text-ink">„Szólunk, ha új esemény van"</strong>{" "}
+        kártyán — és elsőként értesülsz a kantonod magyar programjairól.
+      </p>
     </div>
   );
 }

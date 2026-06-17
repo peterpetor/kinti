@@ -92,10 +92,26 @@ export function JobsBrowser({ jobs }: { jobs: Job[] }) {
       {/* Találatok */}
       <section className="space-y-4">
         {filtered.length === 0 ? (
-          <div className="rounded-card border border-dashed border-line bg-surface-alt px-4 py-10 text-center text-[13px] text-ink-muted">
-            {jobs.length === 0
-              ? "Jelenleg nincs aktív álláshirdetés. Nézz vissza később!"
-              : "Nincs a szűrőknek megfelelő állás. Próbálj tágítani a feltételeken."}
+          <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
+            <Icon name="search" size={28} className="text-ink-faint" />
+            <p className="text-[15px] font-extrabold text-ink">
+              {jobs.length === 0
+                ? "Még nincs aktív álláshirdetés"
+                : canton
+                  ? `Nincs állás ${cantonName(canton)} kantonban`
+                  : "Nincs a szűrőknek megfelelő állás"}
+            </p>
+            <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-muted">
+              {jobs.length === 0
+                ? "Légy te az első! Ha magyar munkaerőt keresel, hirdesd meg itt ingyen — pont a megfelelő közönség előtt."
+                : "Próbálj tágítani a szűrőkön — vagy ha munkaerőt keresel, add fel az állásod."}
+            </p>
+            <Link
+              href="/munkaltato"
+              className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-pill bg-primary px-4 py-2.5 text-[13px] font-extrabold text-white shadow-card-hover active:scale-[0.98]"
+            >
+              <Icon name="plus" size={14} strokeWidth={2.6} /> Hirdesd meg az állásod
+            </Link>
           </div>
         ) : (
           filtered.map((job) => {
