@@ -302,7 +302,7 @@ export async function deleteBusinessByManageToken(token: string): Promise<boolea
 
 export async function updateBusinessLogo(id: string, key: string): Promise<boolean> {
   const res = await getDB().prepare("UPDATE businesses SET logo_key = ? WHERE id = ?").bind(key, id).run();
-  return res.success;
+  return (res.meta.changes ?? 0) > 0;
 }
 
 export async function addBusinessGalleryKey(id: string, key: string): Promise<boolean> {
@@ -311,7 +311,7 @@ export async function addBusinessGalleryKey(id: string, key: string): Promise<bo
   if (!b) return false;
   const keys = jsonArray(b.gallery_keys); keys.push(key);
   const res = await db.prepare("UPDATE businesses SET gallery_keys = ? WHERE id = ?").bind(JSON.stringify(keys), id).run();
-  return res.success;
+  return (res.meta.changes ?? 0) > 0;
 }
 
 export async function removeBusinessGalleryKey(id: string, key: string): Promise<boolean> {
@@ -320,7 +320,7 @@ export async function removeBusinessGalleryKey(id: string, key: string): Promise
   if (!b) return false;
   const keys = jsonArray(b.gallery_keys).filter((k) => k !== key);
   const res = await db.prepare("UPDATE businesses SET gallery_keys = ? WHERE id = ?").bind(JSON.stringify(keys), id).run();
-  return res.success;
+  return (res.meta.changes ?? 0) > 0;
 }
 
 // --- Business Submissions ----------------------------------------------------
