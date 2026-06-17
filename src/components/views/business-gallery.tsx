@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Icon } from "@/components/ui";
-import { mediaUrl } from "@/lib/media";
+import { mediaImageUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 
 interface Props {
@@ -92,7 +92,7 @@ export function BusinessGallery({ galleryKeys, businessName }: Props) {
       {/* Scroll-snap gallery (horizontális) */}
       <div className="flex snap-x snap-mandatory gap-3.5 overflow-x-auto pb-4 scrollbar-hide -mx-[18px] px-[18px]">
         {galleryKeys.map((key, i) => {
-          const url = mediaUrl(key);
+          const url = mediaImageUrl(key, { width: 600 });
           if (!url) return null;
           return (
             <button
@@ -154,7 +154,7 @@ export function BusinessGallery({ galleryKeys, businessName }: Props) {
             <div className="h-full w-full max-w-5xl max-h-[75vh] flex items-center justify-center relative">
               <img
                 key={`gallery-${fullscreenIndex}`}
-                src={mediaUrl(galleryKeys[fullscreenIndex])!}
+                src={mediaImageUrl(galleryKeys[fullscreenIndex], { width: 1280, fit: "scale-down" })!}
                 alt={`${businessName} nagyított kép`}
                 className={cn(
                   "max-h-full max-w-full rounded-2xl object-contain shadow-2xl border border-white/5 select-none",
@@ -190,7 +190,7 @@ export function BusinessGallery({ galleryKeys, businessName }: Props) {
                 )}
               >
                 <img
-                  src={mediaUrl(key)!}
+                  src={mediaImageUrl(key, { width: 120 })!}
                   alt=""
                   className="h-full w-full object-cover"
                   loading="lazy"

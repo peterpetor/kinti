@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Business, Category } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
-import { mediaUrl } from "@/lib/media";
+import { mediaImageUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
@@ -170,7 +170,7 @@ export function BusinessMap({
 // --- alsó vállalkozás-kártya ------------------------------------------------
 
 function SelectedCard({ business: b }: { business: Business }) {
-  const logoUrl = mediaUrl(b.logoKey);
+  const logoUrl = mediaImageUrl(b.logoKey, { width: 120 });
   return (
     <Link
       href={`/szaknevsor/${b.id}`}

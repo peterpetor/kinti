@@ -17,6 +17,8 @@ interface CloudflareEnv {
   // Build-időben NEM titkos változók (wrangler.toml [vars])
   NEXT_PUBLIC_APP_NAME: string;
   NEXT_PUBLIC_R2_PUBLIC_URL: string;
+  /** "1"|"true" → Cloudflare Image Resizing (/cdn-cgi/image, AVIF/WebP). Opt-in. */
+  NEXT_PUBLIC_IMAGE_RESIZE: string;
 
   // Clerk (.env.local `next dev`-hez / .dev.vars + wrangler pages secret éleshez)
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: string;

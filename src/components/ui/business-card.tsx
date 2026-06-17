@@ -3,7 +3,7 @@ import type { Business } from "@/lib/types";
 import { Icon } from "./icons";
 import { CategoryIcon } from "./category-icon";
 import { cn } from "@/lib/cn";
-import { mediaUrl } from "@/lib/media";
+import { mediaImageUrl } from "@/lib/media";
 import { OwnPostBadge } from "@/components/own-post-badge";
 import { FavoriteButton } from "./favorite-button";
 import { formatDistanceKm } from "@/lib/distance";
@@ -32,7 +32,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
     className,
   );
 
-  const logoUrl = mediaUrl(b.logoKey);
+  const logoUrl = mediaImageUrl(b.logoKey, { width: 160 });
 
   const inner = (
     <>
