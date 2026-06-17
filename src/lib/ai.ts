@@ -126,6 +126,7 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "radar-subscribe": { windowHours: 1, maxPerWindow: 10 }, // Radar DoS védelem
   "interview-sim": { windowHours: 1, maxPerWindow: 50 }, // Interview simulator
   "cv-helper": { windowHours: 1, maxPerWindow: 8 }, // PRO CV-asszisztens
+  "leaderboard": { windowHours: 1, maxPerWindow: 20 }, // ranglista csatlakozás/szinkron
   "business-suggest": { windowHours: 1, maxPerWindow: 10 }, // Közösségi vállalkozás-ajánlás spam-védelem
   "lead-request": { windowHours: 1, maxPerWindow: 8 }, // Árajánlatkérés (lead) spam-védelem
   "job-apply": { windowHours: 1, maxPerWindow: 10 }, // Álláspályázat spam / employer-email-flood védelem

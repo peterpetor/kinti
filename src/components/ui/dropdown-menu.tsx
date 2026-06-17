@@ -111,6 +111,10 @@ export function DropdownMenu() {
                 </span>
                 Saját posztjaim
               </Link>
+              <Link href="/ranglista" onClick={close} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e3a233]/15 text-base">🏆</span>
+                Közösségi ranglista
+              </Link>
 
               {/* ── Összecsukható szekciók (alapból zárva) ── */}
               <CollapsibleSection title="Toborzás & AI">
