@@ -11,65 +11,20 @@ import {
   saveSalaryOffer,
   type SalaryOfferInput,
 } from "@/lib/salary-offers";
+import {
+  computeSalary,
+  salaryPercentile,
+  RATE_AHV,
+  RATE_ALV,
+  RATE_NBU,
+  RATE_KTG,
+  CANTON_MEDIAN_GROSS,
+  type AgeBracket,
+  type CivilStatus,
+  type SalaryCalcInput,
+} from "@/lib/salary-calc";
 
-/**
- * Simplified Quellensteuer (Withholding Tax) estimates.
- * Based roughly on 7000 CHF/month gross salary in 2024/2025.
- * A = Egyedülálló (Single, no kids)
- * B = Házas, 1 keresős (Married, 1 income, no kids)
- * C = Házas, 2 keresős (Married, 2 incomes, no kids) -> Approx slightly higher than B.
- * 
- * Kids reduce the rate significantly, but for simplicity we ask for kids and subtract a flat ~2-3% per kid.
- */
-const QST_RATES: Record<string, { A: number; B: number; C: number }> = {
-  ZH: { A: 8.5, B: 5.0, C: 8.0 },
-  BE: { A: 13.0, B: 9.0, C: 12.0 },
-  LU: { A: 10.0, B: 6.0, C: 9.5 },
-  UR: { A: 7.5, B: 4.0, C: 7.0 },
-  SZ: { A: 6.5, B: 3.5, C: 6.0 },
-  OW: { A: 8.5, B: 5.0, C: 8.0 },
-  NW: { A: 7.5, B: 4.0, C: 7.0 },
-  GL: { A: 10.0, B: 6.5, C: 9.5 },
-  ZG: { A: 4.5, B: 2.0, C: 4.0 },
-  FR: { A: 12.5, B: 8.5, C: 12.0 },
-  SO: { A: 11.5, B: 8.0, C: 11.0 },
-  BS: { A: 12.5, B: 8.5, C: 12.0 },
-  BL: { A: 11.5, B: 8.0, C: 11.0 },
-  SH: { A: 11.0, B: 7.5, C: 10.5 },
-  AR: { A: 11.0, B: 7.5, C: 10.5 },
-  AI: { A: 8.5, B: 5.0, C: 8.0 },
-  SG: { A: 11.0, B: 7.5, C: 10.5 },
-  GR: { A: 9.5, B: 6.0, C: 9.0 },
-  AG: { A: 10.0, B: 6.5, C: 9.5 },
-  TG: { A: 10.5, B: 7.0, C: 10.0 },
-  TI: { A: 11.0, B: 7.5, C: 10.5 },
-  VD: { A: 13.5, B: 9.5, C: 13.0 },
-  VS: { A: 10.5, B: 7.0, C: 10.0 },
-  NE: { A: 14.0, B: 10.0, C: 13.5 },
-  GE: { A: 13.0, B: 9.0, C: 12.5 },
-  JU: { A: 13.0, B: 9.0, C: 12.5 },
-};
-
-// Social security employee share
-const RATE_AHV = 5.3; // AHV/IV/EO (10.6% total -> 5.3% employee)
-const RATE_ALV = 1.1; // ALV (Unemployment) up to 148k CHF
-const RATE_NBU = 1.2; // Non-occupational accident (varies, avg 1.2%)
-const RATE_KTG = 0.8; // Daily sickness allowance (varies, avg 0.8%)
-
-type AgeBracket = "<25" | "25-34" | "35-44" | "45-54" | "55-65";
-type CivilStatus = "A" | "B" | "C"; // A: Single, B: Married (1 inc), C: Married (2 inc)
-type PayPeriod = "month" | "year";
-
-interface SalaryForm {
-  gross: number;
-  period: PayPeriod;
-  canton: string;
-  age: AgeBracket;
-  civil: CivilStatus;
-  kids: number;
-  churchTax: boolean;
-  months: number; // usually 12 or 13
-}
+type SalaryForm = SalaryCalcInput;
 
 export function SalaryCalculator() {
   const [form, setForm] = useState<SalaryForm>({
@@ -126,54 +81,26 @@ export function SalaryCalculator() {
     setForm((prev) => ({ ...prev, [k]: v }));
   }
 
-  // Calculate values
-  const grossMonthly = form.period === "month" ? form.gross : form.gross / form.months;
-  const grossYearly = form.period === "year" ? form.gross : form.gross * form.months;
+  // Számítás — a tiszta, tesztelt mag (lib/salary-calc).
+  const {
+    grossMonthly, grossYearly, valAhv, valAlv, valNbu, valKtg, valBvg,
+    valQst, qstRate, socialNonPension, socialDeductions, totalDeductions,
+    netMonthly, netYearly,
+  } = computeSalary(form);
 
-  // BVG Deduction (Pensionskasse 2nd Pillar)
-  // Simplified: only coordinated salary (Gross - 25725) is insured.
-  const bvgAgeRates: Record<AgeBracket, number> = {
-    "<25": 1.0, // Only risk insurance
-    "25-34": 3.5, // 7% total -> 3.5% employee
-    "35-44": 5.0, // 10% -> 5%
-    "45-54": 7.5, // 15% -> 7.5%
-    "55-65": 9.0, // 18% -> 9%
-  };
-  const bvgRate = bvgAgeRates[form.age];
-  // Calculate BVG on monthly basis (approx coordinated deduction ~2143 CHF/m)
-  const coordinatedSalaryMonthly = Math.max(0, grossMonthly - 2143);
-  const valBvg = (coordinatedSalaryMonthly * bvgRate) / 100;
+  // „Jó ez az ajánlat?" — percentilis a kanton mediánjához képest.
+  const { percentile, median: cantonMedian } = salaryPercentile(grossMonthly, form.canton);
 
-  // AHV/ALV/NBU/KTG
-  const valAhv = (grossMonthly * RATE_AHV) / 100;
-  const valAlv = (grossMonthly * RATE_ALV) / 100;
-  const valNbu = (grossMonthly * RATE_NBU) / 100;
-  const valKtg = (grossMonthly * RATE_KTG) / 100;
-
-  const socialDeductions = valAhv + valAlv + valNbu + valKtg + valBvg;
-
-  // Quellensteuer (Withholding Tax)
-  // Base rate from dictionary
-  const cantonRates = QST_RATES[form.canton] || QST_RATES["ZH"];
-  let qstRate = cantonRates[form.civil];
-  
-  // Kids reduce the rate (~2% per kid, up to a minimum of 0%)
-  if (form.kids > 0) {
-    qstRate = Math.max(0, qstRate - form.kids * 2.2);
-  }
-  // Church tax adds approx 0.8% - 1.2% depending on canton
-  if (form.churchTax) {
-    qstRate += 1.0;
-  }
-  // Cap at 0
-  qstRate = Math.max(0, qstRate);
-
-  const valQst = (grossMonthly * qstRate) / 100;
-
-  // Net salary
-  const totalDeductions = socialDeductions + valQst;
-  const netMonthly = grossMonthly - totalDeductions;
-  const netYearly = netMonthly * form.months;
+  // Kanton-összehasonlítás: ugyanez a bruttó a többi kantonban (nettó/hó).
+  const cantonCompare = CANTONS
+    .map((c) => ({
+      code: c.code,
+      name: c.name,
+      net: computeSalary({ ...form, canton: c.code }).netMonthly,
+    }))
+    .sort((a, b) => b.net - a.net);
+  const bestCanton = cantonCompare[0];
+  const topAlternatives = cantonCompare.filter((c) => c.code !== form.canton).slice(0, 3);
 
   // Formatting helpers
   const formatCHF = (num: number) =>
@@ -424,6 +351,89 @@ export function SalaryCalculator() {
         </div>
       </div>
 
+      {/* „Jó ez az ajánlat?" — benchmark + nettó-bontás + kanton-összehasonlítás */}
+      <section className="space-y-4 rounded-card border-2 border-success/20 bg-success/5 p-5 shadow-card">
+        <div className="flex items-center gap-2">
+          <span className="grid h-9 w-9 place-items-center rounded-[12px] bg-success/15 text-lg">📊</span>
+          <h3 className="text-[15px] font-extrabold tracking-tight text-ink">Jó ez az ajánlat?</h3>
+        </div>
+
+        {/* 1) Percentilis a kanton mediánjához */}
+        <div>
+          <div className="mb-1.5 flex items-end justify-between">
+            <span className="text-[13px] font-bold text-ink">
+              {percentile >= 66 ? "Erős ajánlat 💪" : percentile >= 40 ? "Tisztességes ajánlat" : "Az átlag alatt"}
+            </span>
+            <span className="text-[12px] font-semibold text-ink-muted">
+              {CANTONS.find((c) => c.code === form.canton)?.name ?? form.canton} medián: {formatCHF(cantonMedian)}
+            </span>
+          </div>
+          <div className="h-3 w-full overflow-hidden rounded-pill bg-surface-alt">
+            <div
+              className="h-full rounded-pill bg-success transition-all"
+              style={{ width: `${percentile}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-[12.5px] leading-snug text-ink-muted">
+            A(z) <strong className="text-ink">{CANTONS.find((c) => c.code === form.canton)?.name ?? form.canton}</strong>{" "}
+            kantonban a dolgozók becsült <strong className="text-success">~{percentile}%-ánál</strong> keresel többet
+            ezzel a bruttóval.
+          </p>
+        </div>
+
+        {/* 2) Vizuális nettó-bontás */}
+        <div>
+          <p className="mb-1.5 text-[12px] font-bold uppercase tracking-wide text-ink-muted">Hová megy a bruttód?</p>
+          <div className="flex h-4 w-full overflow-hidden rounded-pill">
+            <BreakdownSeg value={netMonthly} total={grossMonthly} className="bg-primary" />
+            <BreakdownSeg value={valQst} total={grossMonthly} className="bg-accent" />
+            <BreakdownSeg value={socialNonPension} total={grossMonthly} className="bg-[#e3a233]" />
+            <BreakdownSeg value={valBvg} total={grossMonthly} className="bg-[#6b8cae]" />
+          </div>
+          <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5">
+            <LegendRow color="bg-primary" label="Nettó" amount={formatCHF(netMonthly)} />
+            <LegendRow color="bg-accent" label="Forrásadó" amount={formatCHF(valQst)} />
+            <LegendRow color="bg-[#e3a233]" label="Társadalombiztosítás" amount={formatCHF(socialNonPension)} />
+            <LegendRow color="bg-[#6b8cae]" label="Nyugdíj (BVG)" amount={formatCHF(valBvg)} />
+          </div>
+          <p className="mt-2 rounded-[10px] bg-surface-alt px-3 py-2 text-[11.5px] leading-snug text-ink-muted">
+            ℹ️ A <strong className="text-ink">Krankenkasse</strong> (egészségbiztosítás, ~300–450 CHF/hó) <strong>nem</strong> a
+            bérből vonódik — azt külön fizeted, ezért a nettóból még levonódik.
+          </p>
+        </div>
+
+        {/* 3) Kanton-összehasonlítás */}
+        <div>
+          <p className="mb-1.5 text-[12px] font-bold uppercase tracking-wide text-ink-muted">
+            Ugyanez a bruttó más kantonban (nettó/hó)
+          </p>
+          {bestCanton.code === form.canton && (
+            <p className="mb-2 text-[12px] font-semibold text-success">
+              🏆 A te kantonod adózásilag a legkedvezőbb erre a bruttóra.
+            </p>
+          )}
+          <div className="space-y-1.5">
+            {topAlternatives.map((c) => {
+              const delta = Math.round(c.net - netMonthly);
+              return (
+                <div
+                  key={c.code}
+                  className="flex items-center justify-between rounded-[10px] border border-line bg-surface px-3 py-2"
+                >
+                  <span className="text-[13px] font-semibold text-ink">{c.name}</span>
+                  <span className="flex items-baseline gap-2">
+                    <span className="text-[13px] font-bold text-ink">{formatCHF(c.net)}</span>
+                    <span className={cn("text-[12px] font-bold", delta > 0 ? "text-success" : "text-ink-faint")}>
+                      {delta > 0 ? `+${formatCHF(delta)}` : formatCHF(delta)}
+                    </span>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* "Ajánlataim" — interjún kapott ajánlatok mentése + összehasonlítás */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
         <div className="mb-3 flex items-center gap-2">
@@ -495,6 +505,24 @@ export function SalaryCalculator() {
           { label: "Lohncomputer (Részletes svájci kalkulátor)", url: "https://lohncomputer.ch/" }
         ]}
       />
+    </div>
+  );
+}
+
+/** Egy szegmens a nettó-bontás sávban (szélesség = érték / bruttó). */
+function BreakdownSeg({ value, total, className }: { value: number; total: number; className: string }) {
+  const pct = total > 0 ? Math.max(0, (value / total) * 100) : 0;
+  if (pct <= 0) return null;
+  return <div className={className} style={{ width: `${pct}%` }} />;
+}
+
+/** Jelmagyarázat-sor a nettó-bontáshoz. */
+function LegendRow({ color, label, amount }: { color: string; label: string; amount: string }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className={cn("h-2.5 w-2.5 shrink-0 rounded-full", color)} />
+      <span className="min-w-0 flex-1 truncate text-[11.5px] text-ink-muted">{label}</span>
+      <span className="text-[11.5px] font-bold text-ink">{amount}</span>
     </div>
   );
 }
