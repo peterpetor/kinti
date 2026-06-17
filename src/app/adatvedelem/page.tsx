@@ -7,7 +7,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-06-17">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-06-18">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -67,7 +67,7 @@ export default function AdatvedelemPage() {
 
       <h3>2.3 Tartalom-beküldés (account nélkül)</h3>
       <p>
-        A közösségi tartalmak (esemény, vélemény, vállalkozás-beküldés stb.) feladásához nincs
+        A közösségi tartalmak (vélemény-értékelés, vállalkozás-beküldés stb.) feladásához nincs
         szükség regisztrációra. A beküldéskor megadott adatok:
       </p>
       <ul>
@@ -134,7 +134,7 @@ export default function AdatvedelemPage() {
       <p>
         A felhasználók által kért megerősítő linkeket, biztonsági másolatokat (backup) és lejárati 
         figyelmeztetőket a Resend Inc. (USA) szolgáltatásán keresztül küldjük ki. Ezen kívül a Resend 
-        kezeli az adminisztrátor-értesítőket is (új esemény moderálása, tartalom-bejelentés). 
+        kezeli az adminisztrátor-értesítőket is (új tartalom moderálása, tartalom-bejelentés).
         Az email-címek kizárólag a technikai kiküldés idejére haladnak át a Resend szerverein.
       </p>
       <div style={{
