@@ -52,7 +52,7 @@ export default async function FeedPage() {
         <SectionHeader>Mit szeretnél?</SectionHeader>
         <div className="grid grid-cols-2 gap-2.5">
           <PrimaryAction href="/szaknevsor" icon="list" label="Szakembert keresek" tone="primary" />
-          <PrimaryAction href="/allasok" icon="shoppingBag" label="Állást keresek" tone="primary" />
+          <PrimaryAction href="/allasok" icon="briefcase" label="Állást keresek" tone="primary" />
           <PrimaryAction href="/vallalkozo" icon="plus" label="Vállalkozásom felviszem" tone="accent" />
           <PrimaryAction href="/ugyintezes" icon="document" label="Ügyintézés Svájcban" tone="accent" />
         </div>

@@ -95,7 +95,7 @@ export function DropdownMenu() {
               </Link>
               <Link href="/allasok" onClick={close} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                  <Icon name="shoppingBag" size={16} strokeWidth={2.4} />
+                  <Icon name="briefcase" size={16} strokeWidth={2.4} />
                 </span>
                 Álláshirdetések
               </Link>
