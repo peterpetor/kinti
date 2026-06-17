@@ -114,6 +114,12 @@ export function DropdownMenu() {
 
               {/* ── Összecsukható szekciók (alapból zárva) ── */}
               <CollapsibleSection title="Toborzás & AI">
+                <Link href="/allasok/profil" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <Icon name="user" size={16} strokeWidth={2.4} />
+                  </span>
+                  Munkavállalói profil
+                </Link>
                 <Link href="/munkaltato" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                     <Icon name="user" size={16} strokeWidth={2.4} />
