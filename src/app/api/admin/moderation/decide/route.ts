@@ -12,7 +12,7 @@ import { hashEmail } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 import { logAdminAction } from "@/lib/audit";
 import { notifyCanton } from "@/lib/push-notify";
-import { cantonFromAddress } from "@/lib/cantons";
+import { cantonFromAddress, nearestCantonCode, CANTONS } from "@/lib/cantons";
 import { getCloudflareCtx } from "@/lib/cloudflare";
 
 export const runtime = "edge";
@@ -101,12 +101,24 @@ export async function POST(req: Request) {
     // (különben mindenkit spammelnénk). Háttérben fut, a választ nem várja.
     if (table === "businesses" && statusValue === 1) {
       const biz = await getBusinessById(id);
-      const canton = cantonFromAddress(biz?.address ?? null);
-      if (biz && canton) {
+      // Kanton a címből; ha nincs cím (kanton-választós felvitel), a koordinátából.
+      // Így az address nélküli vállalkozások jóváhagyása is értesít (nem vész el).
+      let cantonCode: string | null = null;
+      let cantonName: string | null = null;
+      const fromAddr = cantonFromAddress(biz?.address ?? null);
+      if (fromAddr) {
+        cantonCode = fromAddr.code;
+        cantonName = fromAddr.name;
+      } else if (biz?.lat != null && biz?.lng != null) {
+        const near = nearestCantonCode(biz.lat, biz.lng);
+        cantonCode = near.code;
+        cantonName = CANTONS.find((c) => c.code === near.code)?.name ?? near.code;
+      }
+      if (biz && cantonCode) {
         getCloudflareCtx()?.waitUntil(
-          notifyCanton(canton.code, {
+          notifyCanton(cantonCode, {
             title: "Új magyar vállalkozás a kantonodban 🎉",
-            body: `${biz.name}${biz.categoryLabel ? " — " + biz.categoryLabel : ""} · ${canton.name}`,
+            body: `${biz.name}${biz.categoryLabel ? " — " + biz.categoryLabel : ""}${cantonName ? " · " + cantonName : ""}`,
             url: `/szaknevsor/${biz.id}`,
           }),
         );

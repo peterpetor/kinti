@@ -44,7 +44,14 @@ function hasSubmitted(): boolean {
   }
 }
 
-export function PushOptin() {
+export function PushOptin({
+  title = "Szólunk, ha új a kantonodban",
+  subtitle = "Engedélyezd, és értesítünk az új magyar vállalkozásokról, állásokról és eseményekről a környékeden.",
+}: {
+  /** A feliratkozás-kártya címe (idle állapot) — felületenként testreszabható. */
+  title?: string;
+  subtitle?: string;
+} = {}) {
   const [state, setState] = useState<State>("checking");
 
   useEffect(() => {
@@ -138,7 +145,7 @@ export function PushOptin() {
       <Card>
         <Bell />
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-bold text-ink">Értesítések új eseményekről</p>
+          <p className="text-[13px] font-bold text-ink">Értesítések a kantonodból</p>
           <p className="text-[11.5px] leading-snug text-ink-muted">
             iPhone-on előbb tedd ki a kezdőképernyőre (Megosztás → „Főképernyőhöz adás"),
             utána kapcsolhatod be.
@@ -168,12 +175,12 @@ export function PushOptin() {
       <Bell active={subscribed} />
       <div className="min-w-0 flex-1">
         <p className="text-[13px] font-bold text-ink">
-          {subscribed ? "Értesítések bekapcsolva" : "Szólunk, ha új a kantonodban"}
+          {subscribed ? "Értesítések bekapcsolva" : title}
         </p>
         <p className="text-[11.5px] leading-snug text-ink-muted">
           {subscribed
             ? "Értesítünk az új vállalkozásokról, állásokról és eseményekről a kantonodban."
-            : "Engedélyezd, és értesítünk az új magyar vállalkozásokról, állásokról és eseményekről a környékeden."}
+            : subtitle}
         </p>
       </div>
       <button

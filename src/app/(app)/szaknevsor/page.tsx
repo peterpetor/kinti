@@ -1,6 +1,7 @@
 import { ScreenHeader } from "@/components/ui";
 import { ExploreView } from "@/components/views/explore-view";
 import { PullToRefresh } from "@/components/pull-to-refresh";
+import { PushOptin } from "@/components/push-optin";
 import { getBusinesses, getCategories } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -17,6 +18,12 @@ export default async function SzaknevsorPage() {
         <div className="space-y-4">
           <div className="px-5">
             <ScreenHeader eyebrow="Szaknévsor · Svájc" title="Kereső" />
+          </div>
+          <div className="px-5">
+            <PushOptin
+              title="Szólunk, ha új magyar vállalkozás kerül a kantonodba"
+              subtitle="Engedélyezd, és értesítünk, amint új magyar szakember vagy vállalkozás jelenik meg a környékeden."
+            />
           </div>
           <ExploreView categories={categories} businesses={businesses} />
         </div>
