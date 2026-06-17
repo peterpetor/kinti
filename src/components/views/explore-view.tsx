@@ -144,11 +144,10 @@ export function ExploreView({
           // számít — így a felvitelkor kiválasztott kanton is megtalálható.
           (b.lat != null && b.lng != null && nearestCantonCode(b.lat, b.lng).code === canton);
         const byFav = !showFavs || favoriteIds.includes(b.id);
+        // Ugyanaz a DEFAULT-fallback, mint a kártyán (parseWorkingHours null → 8–18),
+        // különben egy üzlet a kártyán "Nyitva", de a "Nyitva most" szűrő kidobná.
         const byOpen =
-          !openNow ||
-          (b.workingHours
-            ? calculateBusinessHoursStatus(parseWorkingHours(b.workingHours)).isOpen
-            : false);
+          !openNow || calculateBusinessHoursStatus(parseWorkingHours(b.workingHours ?? null)).isOpen;
         const byYears = minYears === 0 || (b.yearsHere ?? 0) >= minYears;
         const byText =
           !needle ||

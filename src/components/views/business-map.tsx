@@ -204,8 +204,7 @@ function SelectedCard({ business: b }: { business: Business }) {
           {b.name}
         </div>
         <div className="mt-0.5 text-[11.5px] text-ink-muted">
-          {b.distText ?? ""}
-          {b.distText && " · "}
+          {/* A distText prototípus-placeholder → nem mutatjuk; csak a valós státusz. */}
           <span className={openStatus.isOpen ? "font-semibold text-success" : "text-accent"}>
             {openStatus.isOpen ? "Nyitva" : "Zárva"}
           </span>

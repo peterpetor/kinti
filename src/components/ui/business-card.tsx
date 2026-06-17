@@ -19,7 +19,7 @@ export interface BusinessCardProps {
   business: Business;
   href?: string;
   className?: string;
-  /** Ha radius-keresés aktív, a tényleges Haversine-távolság km-ben — felülírja a distText placeholdert. */
+  /** A tényleges Haversine-távolság km-ben (GPS-szel). Csak ezt mutatjuk — null esetén nincs táv-címke. */
   distanceKm?: number | null;
   /** Szív-toggle a kártya sarkában (kedvencek). Lista-nézetben kapcsoljuk be. */
   showFavorite?: boolean;
@@ -105,11 +105,17 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
         </div>
 
         <div className="mb-1.5 flex items-center gap-2 text-[12.5px] text-ink-muted">
-          <span className="inline-flex items-center gap-1">
-            <Icon name="nav" size={11} strokeWidth={2.2} />
-            {distanceKm != null ? formatDistanceKm(distanceKm) : b.distText}
-          </span>
-          <span className="h-[3px] w-[3px] rounded-full bg-ink-faint" />
+          {/* Csak VALÓDI, élőben számolt távolságot mutatunk — a distText egy
+              prototípus-placeholder (kézi seed-érték), azt sosem jelenítjük meg. */}
+          {distanceKm != null && (
+            <>
+              <span className="inline-flex items-center gap-1">
+                <Icon name="nav" size={11} strokeWidth={2.2} />
+                {formatDistanceKm(distanceKm)}
+              </span>
+              <span className="h-[3px] w-[3px] rounded-full bg-ink-faint" />
+            </>
+          )}
           <span className={cn("font-semibold", openStatus.isOpen ? "text-success" : "text-accent")}>
             {openStatus.isOpen ? "Nyitva" : "Zárva"}
           </span>
