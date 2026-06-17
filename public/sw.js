@@ -16,11 +16,16 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v9";
+const VERSION = "kinti-v10";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
+
+// Offline tudásbázis: STABIL nevű cache (NEM verziózott), hogy a felhasználó
+// által letöltött útmutatók túléljék az app-frissítést. Az activate-cleanup
+// kifejezetten megőrzi (lásd lent). A kliens tölti fel (OfflineGuidesButton).
+const GUIDES_CACHE = "kinti-guides-offline";
 
 const OFFLINE_URL = "/offline";
 
@@ -57,7 +62,9 @@ self.addEventListener("activate", (event) => {
     (async () => {
       const keys = await caches.keys();
       await Promise.all(
-        keys.filter((k) => !k.startsWith(VERSION)).map((k) => caches.delete(k)),
+        keys
+          .filter((k) => !k.startsWith(VERSION) && k !== GUIDES_CACHE)
+          .map((k) => caches.delete(k)),
       );
       // Navigation Preload: a navigációs kérésnél a böngésző párhuzamosan indít
       // egy hálózati kérést, mire a SW felébred — gyorsabb élmény.
@@ -217,7 +224,11 @@ async function networkFirstPage(event) {
     }
     return res;
   } catch {
-    const cached = await cache.match(event.request);
+    // Offline: előbb a látogatott oldalak cache-e, majd BÁRMELY cache (pl. a
+    // letöltött offline tudásbázis), Vary-fejlécektől függetlenül.
+    const cached =
+      (await cache.match(event.request)) ||
+      (await caches.match(event.request, { ignoreVary: true }));
     if (cached) return cached;
     const offline = await caches.match(OFFLINE_URL);
     if (offline) return offline;

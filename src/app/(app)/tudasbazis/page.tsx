@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Icon, ScreenHeader } from "@/components/ui";
 import { GUIDES, GUIDES_DISCLAIMER } from "@/lib/guides";
 import { KintiAssistant } from "@/components/kinti-assistant";
+import { OfflineGuidesButton } from "@/components/offline-guides-button";
 
 export const runtime = "edge";
 
@@ -26,6 +27,10 @@ export default function TudasbazisPage() {
       />
 
       <KintiAssistant />
+
+      <OfflineGuidesButton
+        paths={["/tudasbazis", ...GUIDES.map((g) => `/tudasbazis/${g.slug}`)]}
+      />
 
       <div className="grid gap-2.5">
         {GUIDES.map((g) => (
