@@ -123,7 +123,7 @@ export async function POST(req: Request) {
             title: "Új magyar vállalkozás a kantonodban 🎉",
             body: `${biz.name}${biz.categoryLabel ? " — " + biz.categoryLabel : ""}${cantonName ? " · " + cantonName : ""}`,
             url: `/szaknevsor/${biz.id}`,
-          }),
+          }, "business"),
         );
       }
     }

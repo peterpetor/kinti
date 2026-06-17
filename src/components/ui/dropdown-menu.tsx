@@ -115,6 +115,12 @@ export function DropdownMenu() {
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e3a233]/15 text-base">🏆</span>
                 Közösségi ranglista
               </Link>
+              <Link href="/ertesitesek" onClick={close} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Icon name="bell" size={16} strokeWidth={2.4} />
+                </span>
+                Értesítések
+              </Link>
 
               {/* ── Összecsukható szekciók (alapból zárva) ── */}
               <CollapsibleSection title="Toborzás & AI">

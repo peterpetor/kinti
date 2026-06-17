@@ -7,7 +7,7 @@
  * A megszűnt (404/410) endpointokat törli.
  */
 import { sendPush, type PushPayload } from "./push";
-import { listPushSubscriptions, deletePushSubscription } from "./repo-misc";
+import { listPushSubscriptions, deletePushSubscription, type PushCategory } from "./repo-misc";
 import { getCloudflareEnv } from "./cloudflare";
 
 export interface NotifyResult { total: number; sent: number; removed: number; failed: number }
@@ -15,12 +15,18 @@ export interface NotifyResult { total: number; sent: number; removed: number; fa
 /**
  * Kanton-célzott push. Ha `payload` meg van adva, titkosítva küldjük (a SW a
  * konkrét „mi az új" szöveget mutatja); egyébként payload nélküli tickle.
+ * `category`: ha megadod, csak az adott típusra feliratkozottak kapják meg
+ * (push kategória-preferencia — beállítások UI).
  */
-export async function notifyCanton(cantonCode: string | null, payload?: PushPayload): Promise<NotifyResult> {
+export async function notifyCanton(
+  cantonCode: string | null,
+  payload?: PushPayload,
+  category?: PushCategory,
+): Promise<NotifyResult> {
   const env = getCloudflareEnv();
   if (!env.VAPID_PRIVATE_KEY) return { total: 0, sent: 0, removed: 0, failed: 0 };
 
-  const subs = await listPushSubscriptions(cantonCode);
+  const subs = await listPushSubscriptions(cantonCode, category);
   let sent = 0, removed = 0, failed = 0;
 
   await Promise.all(

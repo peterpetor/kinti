@@ -5,7 +5,7 @@ import { getDB } from "./cloudflare";
 
 // --- Web Push ----------------------------------------------------------------
 
-export interface PushSubscriptionRow { id: string; endpoint: string; p256dh: string; auth: string; canton_code: string | null; }
+export interface PushSubscriptionRow { id: string; endpoint: string; p256dh: string; auth: string; canton_code: string | null; notify_business?: number; notify_event?: number; }
 
 export interface SavePushSubscriptionInput { id: string; endpoint: string; p256dh: string; auth: string; cantonCode: string | null; }
 
@@ -26,13 +26,45 @@ export async function getPushKeysByEndpoint(endpoint: string): Promise<{ p256dh:
   return row ?? null;
 }
 
-export async function listPushSubscriptions(cantonCode?: string | null): Promise<PushSubscriptionRow[]> {
+export type PushCategory = "business" | "event";
+
+export async function listPushSubscriptions(
+  cantonCode?: string | null,
+  category?: PushCategory,
+): Promise<PushSubscriptionRow[]> {
+  const conds: string[] = [];
+  const binds: unknown[] = [];
   if (cantonCode) {
-    const { results } = await getDB().prepare("SELECT * FROM push_subscriptions WHERE canton_code = ? OR canton_code IS NULL").bind(cantonCode).all<PushSubscriptionRow>();
-    return results;
+    conds.push("(canton_code = ? OR canton_code IS NULL)");
+    binds.push(cantonCode);
   }
-  const { results } = await getDB().prepare("SELECT * FROM push_subscriptions").all<PushSubscriptionRow>();
+  // Kategória-preferencia: csak az adott típusra feliratkozottakat (alapból be).
+  if (category === "business") conds.push("notify_business = 1");
+  else if (category === "event") conds.push("notify_event = 1");
+
+  const where = conds.length ? ` WHERE ${conds.join(" AND ")}` : "";
+  const { results } = await getDB().prepare(`SELECT * FROM push_subscriptions${where}`).bind(...binds).all<PushSubscriptionRow>();
   return results;
+}
+
+export interface PushPreferences { notifyBusiness: boolean; notifyEvent: boolean; }
+
+/** A feliratkozás kategória-preferenciái endpoint alapján (a beállítások UI-hoz). */
+export async function getPushPreferences(endpoint: string): Promise<PushPreferences | null> {
+  const row = await getDB()
+    .prepare("SELECT notify_business, notify_event FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
+    .bind(endpoint)
+    .first<{ notify_business: number; notify_event: number }>();
+  if (!row) return null;
+  return { notifyBusiness: row.notify_business === 1, notifyEvent: row.notify_event === 1 };
+}
+
+export async function updatePushPreferences(endpoint: string, prefs: PushPreferences): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE push_subscriptions SET notify_business = ?, notify_event = ? WHERE endpoint = ?")
+    .bind(prefs.notifyBusiness ? 1 : 0, prefs.notifyEvent ? 1 : 0, endpoint)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
 }
 
 // --- Email Digest ------------------------------------------------------------

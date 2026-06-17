@@ -20,7 +20,7 @@ async function notifyNewEvent(event: KintiEvent): Promise<void> {
     title: "Új esemény a kantonodban 📅",
     body: event.title,
     url: "/kozosseg",
-  });
+  }, "event");
 }
 
 export const runtime = "edge";
