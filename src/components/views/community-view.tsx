@@ -137,8 +137,10 @@ function EventsList({ events }: { events: KintiEvent[] }) {
   }
 
   // Hero = a LEGTÖBB „Megyek"-et kapott esemény a szűrt listából.
+  // Lehet undefined, ha a szűrt lista üres (pl. hónap-szűrő találat nélkül) —
+  // a `rest` és a render is guardolt, hogy ne dobjon `hero.id`-n.
   const hero = [...filtered].sort((a, b) => b.going - a.going)[0];
-  const rest = filtered.filter((e) => e.id !== hero.id);
+  const rest = hero ? filtered.filter((e) => e.id !== hero.id) : [];
 
   // Hány esemény van összesen a szűrt hónapban (limit nélkül)
   const totalInFilter =
@@ -195,7 +197,7 @@ function EventsList({ events }: { events: KintiEvent[] }) {
         )}
       </p>
 
-      {filtered.length === 0 ? (
+      {!hero ? (
         <Empty label="Ebben a hónapban nincs esemény." />
       ) : (
         <>
@@ -329,7 +331,7 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                 )}
               >
                 {votedOf(e) && <Icon name="check" size={11} strokeWidth={2.6} />}
-                {votedOf(e) ? "Megyek" : busyOf(e) ? "…" : "Megyek"}
+                {votedOf(e) ? "Ott leszek" : busyOf(e) ? "…" : "Megyek"}
               </button>
             </div>
           ))}
