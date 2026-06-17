@@ -88,8 +88,8 @@ export function GamificationCard() {
 
         {stats.total === 0 && (
           <p className="mt-3 rounded-[10px] bg-surface-alt/60 px-3 py-2 text-[11.5px] leading-relaxed text-ink-muted">
-            Gyűjts XP-t és kitűzőket: írj véleményt, szervezz eseményt vagy
-            regisztráld a vállalkozásodat. Minden saját posztod itt számít!
+            Gyűjts XP-t és kitűzőket: értékelj egy magyar vállalkozást, vagy
+            vidd fel a sajátodat a Szaknévsorba. Minden saját posztod itt számít!
           </p>
         )}
       </div>

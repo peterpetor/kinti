@@ -255,9 +255,17 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
           <p className="text-2xl mb-2">📭</p>
           <p className="text-[13px] font-bold text-ink">Egyelőre üres a listád</p>
           <p className="mt-1 text-[11.5px] text-ink-muted">
-            Amikor beküldesz valamit (esemény, vélemény, vállalkozás),
-            automatikusan idekerül.
+            Amikor értékelsz egy vállalkozást vagy felviszed a sajátodat a
+            Szaknévsorba, a kezelő-linkje automatikusan idekerül.
           </p>
+          <div className="mt-3 flex flex-wrap justify-center gap-2">
+            <Link href="/szaknevsor" className="rounded-pill bg-primary px-3 py-1.5 text-[11.5px] font-bold text-white shadow-card active:scale-95">
+              Vállalkozást keresek
+            </Link>
+            <Link href="/vallalkozo" className="rounded-pill border border-line bg-surface px-3 py-1.5 text-[11.5px] font-bold text-ink shadow-card active:scale-95">
+              Felviszem a vállalkozásom
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="space-y-2">
