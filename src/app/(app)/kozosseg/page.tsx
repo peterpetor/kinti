@@ -16,7 +16,6 @@ export default async function KozossegPage() {
   getCloudflareCtx()?.waitUntil(kickoffEventFeedSync());
 
   const events = await getEvents();
-  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   return (
     <div className="pt-[calc(env(safe-area-inset-top)+2rem)]">
@@ -40,7 +39,7 @@ export default async function KozossegPage() {
             <PushOptin />
           </div>
 
-          <CommunityView events={events} turnstileSiteKey={turnstileSiteKey} />
+          <CommunityView events={events} />
         </div>
       </PullToRefresh>
     </div>

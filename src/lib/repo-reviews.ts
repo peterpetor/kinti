@@ -154,9 +154,21 @@ export async function deleteReviewById(id: string): Promise<string | null> {
   return row.business_id;
 }
 
-export async function getReviewSummaryById(id: string): Promise<{ id: string; businessId: string; reviewerName: string; body: string } | null> {
+/**
+ * Egy vélemény kivonata id alapján. Biztonság alapból: CSAK jóváhagyott
+ * (moderation_status = 1) és nem rejtett véleményt ad vissza — így publikus /
+ * AI-összefoglaló hívó nem szivárogtathat moderálás alatti vagy elutasított
+ * tartalmat. Az admin-moderáció (decide route) `includeUnpublished: true`-val
+ * hív, mert az elutasítás (status=2) UTÁN is szüksége van a businessId-re a
+ * rating újraszámolásához.
+ */
+export async function getReviewSummaryById(
+  id: string,
+  opts?: { includeUnpublished?: boolean },
+): Promise<{ id: string; businessId: string; reviewerName: string; body: string } | null> {
+  const modClause = opts?.includeUnpublished ? "" : " AND moderation_status = 1";
   const row = await getDB()
-    .prepare("SELECT id, business_id, reviewer_name, body FROM reviews WHERE id = ? AND hidden = 0")
+    .prepare(`SELECT id, business_id, reviewer_name, body FROM reviews WHERE id = ? AND hidden = 0${modClause}`)
     .bind(id).first<{ id: string; business_id: string; reviewer_name: string; body: string }>();
   if (!row) return null;
   return { id: row.id, businessId: row.business_id, reviewerName: row.reviewer_name, body: row.body };

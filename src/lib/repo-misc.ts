@@ -7,10 +7,33 @@ import { getDB } from "./cloudflare";
 
 export interface PushSubscriptionRow { id: string; endpoint: string; p256dh: string; auth: string; canton_code: string | null; notify_business?: number; notify_event?: number; }
 
-export interface SavePushSubscriptionInput { id: string; endpoint: string; p256dh: string; auth: string; cantonCode: string | null; }
+export interface SavePushSubscriptionInput {
+  id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  cantonCode: string | null;
+  /**
+   * Ha true: meglévő feliratkozásnál a canton_code-ot NEM írja felül null-lal
+   * (COALESCE-szal megőrzi a korábbit). A radar-feliratkozás ezt használja —
+   * ott a cantonCode mindig null, de nem akarjuk törölni a user kanton-célzását.
+   * A /api/push/subscribe NEM állítja be, mert ott a null szándékos ("egész
+   * Svájc") és felül KELL írnia a korábbi kantont.
+   */
+  preserveCanton?: boolean;
+}
 
 export async function savePushSubscription(input: SavePushSubscriptionInput): Promise<void> {
-  await getDB().prepare(`INSERT INTO push_subscriptions (id, endpoint, p256dh, auth, canton_code) VALUES (?, ?, ?, ?, ?) ON CONFLICT(endpoint) DO UPDATE SET p256dh = excluded.p256dh, auth = excluded.auth, canton_code = excluded.canton_code`).bind(input.id, input.endpoint, input.p256dh, input.auth, input.cantonCode).run();
+  // preserveCanton esetén a meglévő canton_code marad, ha az új érték null.
+  const cantonSet = input.preserveCanton
+    ? "canton_code = COALESCE(excluded.canton_code, push_subscriptions.canton_code)"
+    : "canton_code = excluded.canton_code";
+  await getDB()
+    .prepare(
+      `INSERT INTO push_subscriptions (id, endpoint, p256dh, auth, canton_code) VALUES (?, ?, ?, ?, ?) ON CONFLICT(endpoint) DO UPDATE SET p256dh = excluded.p256dh, auth = excluded.auth, ${cantonSet}`,
+    )
+    .bind(input.id, input.endpoint, input.p256dh, input.auth, input.cantonCode)
+    .run();
 }
 
 export async function deletePushSubscription(endpoint: string): Promise<void> {
@@ -39,8 +62,10 @@ export async function listPushSubscriptions(
     binds.push(cantonCode);
   }
   // Kategória-preferencia: csak az adott típusra feliratkozottakat (alapból be).
-  if (category === "business") conds.push("notify_business = 1");
-  else if (category === "event") conds.push("notify_event = 1");
+  // COALESCE(...,1): a 0075 migráció NOT NULL DEFAULT 1, így a régi sorok már
+  // 1-et adnak — ez csak védőháló, hogy egy esetleges NULL se essen ki.
+  if (category === "business") conds.push("COALESCE(notify_business, 1) = 1");
+  else if (category === "event") conds.push("COALESCE(notify_event, 1) = 1");
 
   const where = conds.length ? ` WHERE ${conds.join(" AND ")}` : "";
   const { results } = await getDB().prepare(`SELECT * FROM push_subscriptions${where}`).bind(...binds).all<PushSubscriptionRow>();
@@ -184,7 +209,7 @@ export async function getAdminTrends(): Promise<AdminTrends> {
     UNION ALL
     SELECT strftime('%Y-%m-%d', created_at) AS d, ip_hash FROM business_submissions WHERE created_at >= ${since} AND ip_hash IS NOT NULL
     UNION ALL
-    SELECT strftime('%Y-%m-%d', created_at) AS d, ip_hash FROM reviews             WHERE created_at >= ${since} AND ip_hash IS NOT NULL`;
+    SELECT strftime('%Y-%m-%d', published_at) AS d, ip_hash FROM reviews           WHERE published_at >= ${since} AND ip_hash IS NOT NULL`;
 
   const dailyActive = db
     .prepare(`SELECT d, COUNT(DISTINCT ip_hash) AS n FROM (${activitySubquery}) GROUP BY d`)

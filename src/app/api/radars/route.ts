@@ -45,6 +45,9 @@ export async function POST(req: Request) {
       p256dh,
       auth,
       cantonCode: null, // Radars handle canton specifically inside parameters JSON
+      // preserveCanton: a meglévő kanton-célzott push-feliratkozást nem töröljük
+      // (a radar null kantont küld, de nem akarjuk felülírni a korábbi választást).
+      preserveCanton: true,
     });
 
     const radarId = crypto.randomUUID();

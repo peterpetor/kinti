@@ -93,7 +93,9 @@ export async function POST(req: Request) {
     // immár csak a jóváhagyott véleményekből áll (approve → beleszámít,
     // reject → kiesik). Enélkül a publikus rating sosem frissülne jóváhagyáskor.
     if (table === "reviews") {
-      const summary = await getReviewSummaryById(id);
+      // includeUnpublished: elutasításkor (status=2) is meg kell találnunk a
+      // véleményt, hogy a businessId-ből újraszámoljuk a ratinget.
+      const summary = await getReviewSummaryById(id, { includeUnpublished: true });
       if (summary?.businessId) await recomputeBusinessRating(summary.businessId);
     }
 

@@ -15,10 +15,8 @@ import type { CalendarEvent } from "@/lib/calendar";
 
 export function CommunityView({
   events,
-  turnstileSiteKey = "",
 }: {
   events: KintiEvent[];
-  turnstileSiteKey?: string;
 }) {
   return (
     <div className="space-y-2.5 px-5">
