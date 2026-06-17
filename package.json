@@ -10,6 +10,9 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
     "pages:build": "node scripts/pages-build.mjs",
     "pages:build:win": "powershell -NoProfile -File build-pages.ps1",
     "preview": "npm run pages:build && wrangler pages dev",
@@ -40,6 +43,7 @@
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.7",
     "@cloudflare/workers-types": "^4.20241112.0",
+    "@playwright/test": "^1.49.1",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20.16.13",
     "@types/qrcode": "^1.5.6",

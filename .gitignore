@@ -57,3 +57,9 @@ next-env.d.ts
 
 dummy_appdata/
 dummy_data/
+
+# Playwright E2E
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
