@@ -25,7 +25,7 @@ export default async function UjVallalkozasPage() {
         title="Vállalkozásod hozzáadása"
         back={
           <Link
-            href="/szaknevsor"
+            href="/vallalkozo"
             aria-label="Vissza"
             className="grid h-9 w-9 place-items-center rounded-[12px] border border-line bg-surface text-ink"
           >
