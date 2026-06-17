@@ -154,9 +154,15 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
           Import
         </button>
         <button
-          onClick={() => setEmailOpen(true)}
-          disabled={items.length === 0}
-          className="flex items-center justify-center gap-1.5 rounded-pill border border-line bg-surface py-2 text-[12px] font-bold text-ink shadow-card active:scale-95 disabled:opacity-50"
+          onClick={() => {
+            // Üres listánál ne legyen néma/halott gomb: magyarázó üzenet.
+            if (items.length === 0) {
+              showMsg("Nincs menthető poszt — előbb hozz létre vagy importálj egyet.");
+              return;
+            }
+            setEmailOpen(true);
+          }}
+          className="flex items-center justify-center gap-1.5 rounded-pill border border-line bg-surface py-2 text-[12px] font-bold text-ink shadow-card active:scale-95"
         >
           <Icon name="send" size={12} strokeWidth={2.4} />
           Email
