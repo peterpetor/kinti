@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { loadMyPosts } from "@/lib/my-posts";
 import { computeGamification, type GamificationStats } from "@/lib/gamification";
+import { streakXp } from "@/lib/streak";
 
 /**
  * /sajatjaim — "Kinti eredményeim" kártya.
@@ -16,7 +17,7 @@ export function GamificationCard() {
 
   // localStorage csak kliensen — useEffect a hidratációs eltérés elkerülésére.
   useEffect(() => {
-    setStats(computeGamification(loadMyPosts()));
+    setStats(computeGamification(loadMyPosts(), streakXp()));
   }, []);
 
   if (!stats) {

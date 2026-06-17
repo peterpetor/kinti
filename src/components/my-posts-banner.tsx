@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { loadMyPosts } from "@/lib/my-posts";
 import { computeGamification, type GamificationStats } from "@/lib/gamification";
+import { streakXp } from "@/lib/streak";
 
 /**
  * MyPostsBanner — a főoldalra mutatja, hogy a usernek vannak saját posztjai
@@ -14,7 +15,7 @@ export function MyPostsBanner() {
   const [stats, setStats] = useState<GamificationStats | null>(null);
 
   useEffect(() => {
-    setStats(computeGamification(loadMyPosts()));
+    setStats(computeGamification(loadMyPosts(), streakXp()));
   }, []);
 
   if (!stats || stats.total === 0) return null;

@@ -80,10 +80,14 @@ export function calculateLevel(points: number): number {
   return level;
 }
 
-/** A teljes statisztika kiszámítása a saját posztok listájából. */
-export function computeGamification(posts: MyPostEntry[]): GamificationStats {
+/**
+ * A teljes statisztika kiszámítása a saját posztok listájából.
+ * `bonusXp` (opcionális): külső, monoton XP-forrás (pl. napi streak — lib/streak),
+ * ami beleszámít a pontba/szintbe, de nem poszt-alapú.
+ */
+export function computeGamification(posts: MyPostEntry[], bonusXp = 0): GamificationStats {
   const countsByType: Record<PostType, number> = { event: 0, review: 0, business: 0 };
-  let points = 0;
+  let points = Math.max(0, Math.round(bonusXp));
   for (const p of posts) {
     if (p.type in countsByType) {
       countsByType[p.type]++;

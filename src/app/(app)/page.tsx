@@ -9,6 +9,7 @@ import type { IconName } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { WeatherWidget } from "@/components/weather-widget";
 import { MyPostsBanner } from "@/components/my-posts-banner";
+import { DailyStreak } from "@/components/daily-streak";
 import { GlobalSearch } from "@/components/global-search";
 import { PwaInstallCard } from "@/components/pwa-install-card";
 import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
@@ -50,6 +51,7 @@ export default async function FeedPage() {
       </header>
 
       <MyPostsBanner />
+      <DailyStreak />
 
       {/* Fő belépési pontok — „mit hol találok" (nagy, érthető célok) */}
       <section className="space-y-3">
