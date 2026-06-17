@@ -16,8 +16,10 @@ import {
   type Region,
 } from "@/lib/rent-cost";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { RentCompare } from "@/components/views/rent-compare";
 
 export function RentCostCalculator() {
+  const [mode, setMode] = useState<"single" | "compare">("single");
   const [monthlyRent, setMonthlyRent] = useState(1800);
   const [size, setSize] = useState<FlatSize>("2-room");
   const [heating, setHeating] = useState<HeatingType>("gas");
@@ -56,6 +58,34 @@ export function RentCostCalculator() {
         </div>
       </section>
 
+      {/* Mód-váltó: egy lakás részletesen / két lakás összehasonlítása */}
+      <div className="grid grid-cols-2 gap-2 rounded-pill border border-line bg-surface-alt/60 p-1">
+        <button
+          type="button"
+          onClick={() => setMode("single")}
+          className={cn(
+            "rounded-pill px-3 py-2 text-[13px] font-bold transition",
+            mode === "single" ? "bg-primary text-white shadow-card" : "text-ink-muted",
+          )}
+        >
+          Egy lakás
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("compare")}
+          className={cn(
+            "rounded-pill px-3 py-2 text-[13px] font-bold transition",
+            mode === "compare" ? "bg-primary text-white shadow-card" : "text-ink-muted",
+          )}
+        >
+          2 lakás összevetése
+        </button>
+      </div>
+
+      {mode === "compare" && <RentCompare />}
+
+      {mode === "single" && (
+      <>
       {/* 1. Bérleti díj */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
         <label className="block mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
@@ -349,6 +379,8 @@ export function RentCostCalculator() {
           </li>
         </ul>
       </section>
+      </>
+      )}
 
       {/* Disclaimer */}
       <LegalDisclaimer
