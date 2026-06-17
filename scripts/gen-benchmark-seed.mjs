@@ -85,10 +85,17 @@ function recentTs() {
 
 const rows = [];
 const esc = (s) => String(s).replace(/'/g, "''");
+// FONTOS: minden sor EGYEDI ip_hash-t kap (prefix 'seed-'), különben a
+// getRentToSalaryRatio JOIN (s.ip_hash = r.ip_hash) descartes-szorzatot adna.
+// A lakbér-sorok egy része ÚJRAHASZNÁLJA egy bér-sor ip_hash-ét (ugyanaz a
+// "person" bér + lakbér) → a ratio-widget reális, 1:1 párokból számol.
+const seedIp = () => `seed-${randomUUID()}`;
+const salaryIpByCanton = {}; // canton -> bér-ip_hash-ek, párosításhoz
 
 // --- Bér-benchmark -----------------------------------------------------------
 let salaryCount = 0;
 for (const [canton, w] of CANTONS) {
+  salaryIpByCanton[canton] = [];
   const monthly = MEDIAN_MONTHLY[canton];
   const annualBase = monthly * 13; // 13. havi bérrel
   for (const [industry, indFactor] of Object.entries(INDUSTRIES)) {
@@ -100,8 +107,10 @@ for (const [canton, w] of CANTONS) {
       let salary = annualBase * indFactor * expF;
       salary = round(jitter(salary, 0.08), 500);
       salary = clamp(salary, 24000, 280000);
+      const ip = seedIp();
+      salaryIpByCanton[canton].push(ip);
       rows.push(
-        `INSERT INTO salary_benchmarks (id, canton_code, industry, years_experience, gross_salary_chf, ip_hash, created_at) VALUES ('${randomUUID()}', '${canton}', '${esc(industry)}', ${years}, ${salary}, 'seed-baseline', '${recentTs()}');`,
+        `INSERT INTO salary_benchmarks (id, canton_code, industry, years_experience, gross_salary_chf, ip_hash, created_at) VALUES ('${randomUUID()}', '${canton}', '${esc(industry)}', ${years}, ${salary}, '${ip}', '${recentTs()}');`,
       );
       salaryCount++;
     }
@@ -113,14 +122,24 @@ const ROOMS = [1.5, 2, 2.5, 3, 3.5, 4, 4.5];
 let rentCount = 0;
 for (const [canton, w] of CANTONS) {
   const base = RENT_3_5[canton];
+  // A kanton bér-ip_hash-einek másolata — egy ip_hash MAX EGY lakbér-sorhoz
+  // párosítható (1:1), hogy a JOIN ne fanoutoljon.
+  const pairPool = [...(salaryIpByCanton[canton] ?? [])];
   for (const rooms of ROOMS) {
     const n = Math.round(clamp(between(3, 5) * w, 3, 6));
     for (let i = 0; i < n; i++) {
       let rent = base * ROOM_FACTOR[rooms];
       rent = round(jitter(rent, 0.09), 25);
       rent = clamp(rent, 350, 6500);
+      // ~55%: ugyanaz a person bér+lakbér (párosítva); különben lakbér-only.
+      let ip;
+      if (pairPool.length > 0 && rnd() < 0.55) {
+        ip = pairPool.splice(Math.floor(rnd() * pairPool.length), 1)[0];
+      } else {
+        ip = seedIp();
+      }
       rows.push(
-        `INSERT INTO rent_benchmarks (id, canton_code, rooms, rent_chf, ip_hash, created_at) VALUES ('${randomUUID()}', '${canton}', ${rooms}, ${rent}, 'seed-baseline', '${recentTs()}');`,
+        `INSERT INTO rent_benchmarks (id, canton_code, rooms, rent_chf, ip_hash, created_at) VALUES ('${randomUUID()}', '${canton}', ${rooms}, ${rent}, '${ip}', '${recentTs()}');`,
       );
       rentCount++;
     }
@@ -129,12 +148,20 @@ for (const [canton, w] of CANTONS) {
 
 const header = `-- seed-benchmarks.sql — GENERÁLT (scripts/gen-benchmark-seed.mjs). NE szerkeszd kézzel.
 -- Realisztikus BASELINE az Iránytű hidegindításához (valós CH mediánokhoz horgonyozva).
--- Minden sor ip_hash='seed-baseline' → eltávolítás:
---   DELETE FROM salary_benchmarks WHERE ip_hash='seed-baseline';
---   DELETE FROM rent_benchmarks   WHERE ip_hash='seed-baseline';
+-- Minden sor EGYEDI ip_hash-t kap (prefix 'seed-'); a lakbér egy része egy
+-- bér-sorral PÁROSÍTVA (ugyanaz az ip_hash) a lakbér/fizetés-arány widgethez.
+-- A fájl IDEMPOTENS: felül törli a korábbi seedet (ip_hash LIKE 'seed-%') — így
+-- a régi, hibás (konstans ip_hash) seed is felülíródik újra-alkalmazáskor.
+-- Eltávolítás kézzel:
+--   DELETE FROM salary_benchmarks WHERE ip_hash LIKE 'seed-%';
+--   DELETE FROM rent_benchmarks   WHERE ip_hash LIKE 'seed-%';
 -- Alkalmazás:  wrangler d1 execute kinti-db --remote --file=./db/seed-benchmarks.sql
 -- Bér-sorok: ${salaryCount} · Lakbér-sorok: ${rentCount}
 `;
 
-writeFileSync("db/seed-benchmarks.sql", header + "\n" + rows.join("\n") + "\n");
+const cleanup =
+  "DELETE FROM salary_benchmarks WHERE ip_hash LIKE 'seed-%';\n" +
+  "DELETE FROM rent_benchmarks WHERE ip_hash LIKE 'seed-%';\n";
+
+writeFileSync("db/seed-benchmarks.sql", header + "\n" + cleanup + "\n" + rows.join("\n") + "\n");
 console.log(`Generálva: db/seed-benchmarks.sql — ${salaryCount} bér + ${rentCount} lakbér = ${rows.length} sor`);
