@@ -8,7 +8,6 @@ import {
 import type { IconName } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { WeatherWidget } from "@/components/weather-widget";
-import { OnboardingTour } from "@/components/onboarding-tour";
 import { MyPostsBanner } from "@/components/my-posts-banner";
 import { GlobalSearch } from "@/components/global-search";
 import { PwaInstallCard } from "@/components/pwa-install-card";
@@ -156,8 +155,6 @@ export default async function FeedPage() {
 
       <PwaInstallCard />
       </div>
-
-      <OnboardingTour />
     </>
   );
 }
