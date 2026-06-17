@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { reportClientError } from "@/lib/report-client-error";
+
 /**
  * Globális hiba-határ (App Router). Akkor lép életbe, ha a gyökér-layout
  * (pl. a Clerk-provider) renderelés közben elhasal — leggyakrabban
@@ -19,6 +22,11 @@ export default function GlobalError({
   const isStorageBlocked =
     typeof error?.message === "string" &&
     /localStorage|sandbox|serviceWorker|SecurityError/i.test(error.message);
+
+  useEffect(() => {
+    // A sandbox-tiltás várt környezeti hiba, NEM jelentjük (zaj lenne).
+    if (!isStorageBlocked) reportClientError(error);
+  }, [error, isStorageBlocked]);
 
   return (
     <html lang="hu">

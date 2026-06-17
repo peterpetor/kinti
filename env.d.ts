@@ -59,6 +59,13 @@ interface CloudflareEnv {
   ADMIN_EMAILS?: string;
 
   /**
+   * Hiba-monitoring ingest-végpont (opcionális, alapból OFF). Vendor-agnosztikus
+   * JSON-webhook: Logflare HTTP, Baselime events, Sentry-relay vagy Slack/Discord.
+   * Ha üres → a redaktált hibák csak a Workers logba mennek (jelenlegi viselkedés).
+   */
+  ERROR_WEBHOOK_URL?: string;
+
+  /**
    * Az az email-cím, ahova az esemény-jóváhagyási értesítők mennek.
    * Ha nincs megadva, a ADMIN_EMAILS első eleme, vagy info@kinti.app.
    */

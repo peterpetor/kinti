@@ -20,7 +20,7 @@ const EMAIL_RE = /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/g;
 const PHONE_RE = /\+?\b\d[\d\s()-]{6,}\d\b/g;
 
 /** Eltávolítja az email-címeket és telefonszámokat egy stringből. */
-function redactPii(s: string): string {
+export function redactPii(s: string): string {
   return s
     .replace(EMAIL_RE, "[email-redacted]")
     .replace(PHONE_RE, "[phone-redacted]");
@@ -39,18 +39,32 @@ interface ErrorLike {
  * potenciálisan PII-t hordoz a Resend / fetch trace-ekben.
  */
 export function safeLogError(prefix: string, err: unknown): void {
+  let name: string | undefined;
+  let status: string | number | undefined;
+  let message: string | undefined;
+
   if (err instanceof Error || (typeof err === "object" && err !== null)) {
     const e = err as ErrorLike;
+    name = e.name;
+    status = e.statusCode;
+    if (e.message) message = redactPii(String(e.message)).slice(0, 200);
     const parts: string[] = [];
-    if (e.name) parts.push(`name=${e.name}`);
-    if (e.statusCode !== undefined) parts.push(`status=${e.statusCode}`);
-    if (e.message) parts.push(`msg=${redactPii(String(e.message)).slice(0, 200)}`);
+    if (name) parts.push(`name=${name}`);
+    if (status !== undefined) parts.push(`status=${status}`);
+    if (message) parts.push(`msg=${message}`);
     console.error(prefix, parts.join(" · ") || "[unknown error shape]");
-    return;
+  } else {
+    // String / number / undefined
+    message = redactPii(err === undefined ? "[undefined]" : String(err)).slice(0, 200);
+    console.error(prefix, message);
   }
-  // String / number / undefined
-  const text = err === undefined ? "[undefined]" : String(err);
-  console.error(prefix, redactPii(text).slice(0, 200));
+
+  // Külső monitoring (ha ERROR_WEBHOOK_URL be van állítva). LUSTA import, hogy
+  // a safe-log top-level NE húzza be a cloudflare-t → unit-tesztelhető marad.
+  // Best-effort: a forwardError waitUntil-lel él tovább, a hibákat elnyeljük.
+  void import("./monitoring")
+    .then((m) => m.forwardError({ source: "server", prefix, name, status, message }))
+    .catch(() => {});
 }
 
 /** Hash-szel egyenértékű "rövidítés" ami azonosítja a sort de nem fedi fel. */

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { reportClientError } from "@/lib/report-client-error";
 
 /**
  * Barátságos, újrapróbálható hiba-határ a route-szintű error.tsx-ekhez.
@@ -22,8 +23,9 @@ export function RouteError({
   className?: string;
 }) {
   useEffect(() => {
-    // Csak fejlesztői konzolra; éles loggolást a platform végez.
     console.error("[route-error]", error);
+    // Éles hiba-jelentés a monitoringnak (redaktálva, best-effort).
+    reportClientError(error);
   }, [error]);
 
   return (
