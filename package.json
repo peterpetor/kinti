@@ -22,6 +22,8 @@
     "db:migrate:remote": "wrangler d1 migrations apply kinti-db --remote",
     "db:seed:local": "wrangler d1 execute kinti-db --local --file=./db/seed.sql",
     "db:seed:remote": "wrangler d1 execute kinti-db --remote --file=./db/seed.sql",
+    "db:seed:benchmarks:remote": "wrangler d1 execute kinti-db --remote --file=./db/seed-benchmarks.sql",
+    "gen:benchmark-seed": "node scripts/gen-benchmark-seed.mjs",
     "gen:icons": "node scripts/gen-icons.mjs"
   },
   "dependencies": {

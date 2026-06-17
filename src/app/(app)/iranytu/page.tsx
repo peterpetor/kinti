@@ -29,13 +29,15 @@ export default async function BenchmarkPage() {
       <div className="px-5 space-y-6 pt-2">
         <div className="space-y-4">
           <p className="text-[14px] text-ink-muted leading-relaxed">
-            Közösség által feltöltött, 100%-ban anonim statisztikák. Tudd meg, mennyit keresnek a szakmádban Svájcban, és mennyit fizetnek egy hasonló lakásért! 
+            Anonim bér- és lakbér-statisztikák Svájcban. Az induló szintek valós svájci
+            referencia-adatokon alapulnak, és a közösség anonim beküldéseivel folyamatosan
+            pontosodnak — tudd meg, mennyit keresnek a szakmádban, és mennyit fizetnek egy hasonló lakásért!
           </p>
           <div className="inline-flex items-center space-x-2 bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 px-3 py-1.5 rounded-full text-xs font-medium border border-amber-200 dark:border-amber-800 text-left">
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>Közösségi, nem hivatalos adatok.</span>
+            <span>Referencia + közösségi adatok — nem hivatalos.</span>
           </div>
         </div>
 
