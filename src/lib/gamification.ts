@@ -20,24 +20,63 @@ const XP_BY_TYPE: Record<PostType, number> = {
   event: 10, // esemény szervezése
 };
 
+/** Egy kitűző mércéje: poszt-számláló, összpont, streak, kvíz, kedvencek stb. */
+export type BadgeMetric =
+  | "total" | "review" | "event" | "business" | "points"
+  | "streak" | "quizPerfect" | "quizDays" | "appInstalled" | "favorites";
+
 export interface BadgeDef {
   id: string;
   label: string;
   icon: string;
-  /** Hány elem kell a megszerzéshez (a `countOf` szerint). */
+  /** Hány elem kell a megszerzéshez (a `countOf` mérce szerint). */
   threshold: number;
-  /** Melyik számláló alapján mérünk: egy típus vagy az összes. */
-  countOf: PostType | "total";
+  /** Melyik mérce alapján mérünk. */
+  countOf: BadgeMetric;
+  /** Ritka/különleges kitűző — kiemelt megjelenítés. */
+  rare?: boolean;
+}
+
+/** Poszton túli jelek a kitűzőkhöz (mind kliensoldali localStorage / PWA). */
+export interface GamificationExtras {
+  /** Leghosszabb napi belépési sorozat (lib/streak). */
+  streakLongest?: number;
+  /** Valaha elért legjobb napi kvíz-eredmény (0-3). */
+  quizBest?: number;
+  /** Hány napon játszott kvízt. */
+  quizDays?: number;
+  /** Telepítve van-e PWA-ként (standalone). */
+  appInstalled?: boolean;
+  /** Mentett kedvenc vállalkozások száma. */
+  favorites?: number;
 }
 
 /** A kitűzők definíciói. A sorrend a megjelenítési sorrend is. */
 export const BADGES: BadgeDef[] = [
+  // Közösségi hozzájárulás
   { id: "early_adopter", label: "Úttörő", icon: "🚀", threshold: 1, countOf: "total" },
   { id: "first_voice", label: "Első szó", icon: "⭐", threshold: 1, countOf: "review" },
   { id: "host", label: "Házigazda", icon: "📅", threshold: 1, countOf: "event" },
   { id: "entrepreneur", label: "Vállalkozó", icon: "🏪", threshold: 1, countOf: "business" },
+  { id: "event_master", label: "Programszervező", icon: "🎉", threshold: 5, countOf: "event" },
+  { id: "business_booster", label: "Cégépítő", icon: "🏗️", threshold: 3, countOf: "business" },
   { id: "pro_reviewer", label: "Profi véleményező", icon: "🏆", threshold: 5, countOf: "review" },
   { id: "super_contributor", label: "Oszlop", icon: "💎", threshold: 10, countOf: "total" },
+  { id: "critic", label: "Kritikus", icon: "📝", threshold: 15, countOf: "review", rare: true },
+  { id: "veteran", label: "Veterán", icon: "🎖️", threshold: 25, countOf: "total", rare: true },
+  // Napi sorozat (streak)
+  { id: "streak_3", label: "Lendületben", icon: "🔥", threshold: 3, countOf: "streak" },
+  { id: "streak_7", label: "Heti hős", icon: "🗓️", threshold: 7, countOf: "streak" },
+  { id: "streak_30", label: "Hűséges", icon: "💞", threshold: 30, countOf: "streak", rare: true },
+  // Kvíz
+  { id: "quiz_first", label: "Kvíz-újonc", icon: "🧠", threshold: 1, countOf: "quizDays" },
+  { id: "quiz_perfect", label: "Telitalálat", icon: "🎯", threshold: 1, countOf: "quizPerfect" },
+  { id: "quiz_master", label: "Kvíz-mester", icon: "🦉", threshold: 30, countOf: "quizDays", rare: true },
+  // Elköteleződés
+  { id: "installed", label: "Bennfentes", icon: "📲", threshold: 1, countOf: "appInstalled" },
+  { id: "collector", label: "Gyűjtögető", icon: "💛", threshold: 5, countOf: "favorites" },
+  { id: "curator", label: "Kurátor", icon: "📌", threshold: 15, countOf: "favorites", rare: true },
+  { id: "xp_champ", label: "XP-bajnok", icon: "👑", threshold: 500, countOf: "points", rare: true },
 ];
 
 export interface BadgeState extends BadgeDef {
@@ -80,12 +119,36 @@ export function calculateLevel(points: number): number {
   return level;
 }
 
+/** Egy kitűző-mérce aktuális értéke a kontextusból. */
+function metricValue(
+  metric: BadgeMetric,
+  ctx: { countsByType: Record<PostType, number>; total: number; points: number; extras: GamificationExtras },
+): number {
+  switch (metric) {
+    case "total": return ctx.total;
+    case "review":
+    case "event":
+    case "business": return ctx.countsByType[metric];
+    case "points": return ctx.points;
+    case "streak": return ctx.extras.streakLongest ?? 0;
+    case "quizPerfect": return (ctx.extras.quizBest ?? 0) >= 3 ? 1 : 0;
+    case "quizDays": return ctx.extras.quizDays ?? 0;
+    case "appInstalled": return ctx.extras.appInstalled ? 1 : 0;
+    case "favorites": return ctx.extras.favorites ?? 0;
+  }
+}
+
 /**
  * A teljes statisztika kiszámítása a saját posztok listájából.
  * `bonusXp` (opcionális): külső, monoton XP-forrás (pl. napi streak — lib/streak),
  * ami beleszámít a pontba/szintbe, de nem poszt-alapú.
+ * `extras` (opcionális): poszton túli jelek a kitűzőkhöz (streak, kvíz, PWA, kedvencek).
  */
-export function computeGamification(posts: MyPostEntry[], bonusXp = 0): GamificationStats {
+export function computeGamification(
+  posts: MyPostEntry[],
+  bonusXp = 0,
+  extras: GamificationExtras = {},
+): GamificationStats {
   const countsByType: Record<PostType, number> = { event: 0, review: 0, business: 0 };
   let points = Math.max(0, Math.round(bonusXp));
   for (const p of posts) {
@@ -102,8 +165,9 @@ export function computeGamification(posts: MyPostEntry[], bonusXp = 0): Gamifica
   const span = nextLevelAt - levelBase;
   const levelProgress = span > 0 ? Math.min(1, Math.max(0, (points - levelBase) / span)) : 1;
 
+  const ctx = { countsByType, total, points, extras };
   const badges: BadgeState[] = BADGES.map((b) => {
-    const current = b.countOf === "total" ? total : countsByType[b.countOf];
+    const current = metricValue(b.countOf, ctx);
     return {
       ...b,
       earned: current >= b.threshold,

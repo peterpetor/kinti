@@ -64,6 +64,41 @@ describe("computeGamification", () => {
     expect(s.levelProgress).toBeGreaterThan(0);
     expect(s.levelProgress).toBeLessThanOrEqual(1);
   });
+
+  it("extras-alapú kitűzők (streak/kvíz/PWA/kedvencek)", () => {
+    const s = computeGamification([], 0, {
+      streakLongest: 7,
+      quizBest: 3,
+      quizDays: 1,
+      appInstalled: true,
+      favorites: 5,
+    });
+    const earned = new Set(s.badges.filter((b) => b.earned).map((b) => b.id));
+    expect(earned.has("streak_3")).toBe(true); // 7 ≥ 3
+    expect(earned.has("streak_7")).toBe(true); // 7 ≥ 7
+    expect(earned.has("streak_30")).toBe(false); // 7 < 30
+    expect(earned.has("quiz_perfect")).toBe(true); // best 3 = telitalálat
+    expect(earned.has("quiz_first")).toBe(true); // 1 nap
+    expect(earned.has("installed")).toBe(true);
+    expect(earned.has("collector")).toBe(true); // 5 kedvenc
+    expect(earned.has("curator")).toBe(false); // < 15
+  });
+
+  it("extras nélkül az új kitűzők zárva (visszafelé kompat)", () => {
+    const earned = computeGamification([]).badges.filter((b) => b.earned);
+    expect(earned).toHaveLength(0);
+  });
+
+  it("XP-bajnok (points ≥ 500) bónusz XP-ből is feloldható", () => {
+    const s = computeGamification([], 500);
+    expect(s.badges.find((b) => b.id === "xp_champ")?.earned).toBe(true);
+  });
+
+  it("van legalább 15 kitűző, köztük ritkák", () => {
+    const s = computeGamification([]);
+    expect(s.badges.length).toBeGreaterThanOrEqual(15);
+    expect(s.badges.some((b) => b.rare)).toBe(true);
+  });
 });
 
 describe("gamificationGain", () => {

@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { loadMyPosts } from "@/lib/my-posts";
 import { computeGamification, type GamificationStats } from "@/lib/gamification";
 import { streakXp } from "@/lib/streak";
+import { gatherAchievementExtras } from "@/lib/achievements";
 
 /**
  * /sajatjaim — "Kinti eredményeim" kártya.
@@ -17,7 +18,7 @@ export function GamificationCard() {
 
   // localStorage csak kliensen — useEffect a hidratációs eltérés elkerülésére.
   useEffect(() => {
-    setStats(computeGamification(loadMyPosts(), streakXp()));
+    setStats(computeGamification(loadMyPosts(), streakXp(), gatherAchievementExtras()));
   }, []);
 
   if (!stats) {
@@ -80,21 +81,33 @@ export function GamificationCard() {
           {stats.badges.map((b) => (
             <div
               key={b.id}
-              title={b.earned ? `${b.label} — megszerezve` : `${b.label} — még zárolva`}
+              title={`${b.label}${b.rare ? " (ritka)" : ""} — ${b.earned ? "megszerezve" : "még zárolva"}`}
               className={cn(
-                "flex flex-col items-center gap-1 rounded-2xl border px-2 py-3 text-center transition",
+                "relative flex flex-col items-center gap-1 rounded-2xl border px-2 py-3 text-center transition",
                 b.earned
-                  ? "border-primary/25 bg-primary/10"
+                  ? b.rare
+                    ? "border-[#e3a233]/45 bg-[#e3a233]/15 shadow-[0_0_0_1px_rgba(227,162,51,0.25)]"
+                    : "border-primary/25 bg-primary/10"
                   : "border-line bg-surface-alt/40",
               )}
             >
+              {b.rare && (
+                <span
+                  className={cn(
+                    "absolute right-1 top-1 text-[9px] font-black",
+                    b.earned ? "text-[#b8860b]" : "text-ink-faint/50",
+                  )}
+                >
+                  ✦
+                </span>
+              )}
               <span className={cn("text-2xl leading-none", !b.earned && "opacity-30 grayscale")}>
                 {b.icon}
               </span>
               <span
                 className={cn(
                   "text-[11.5px] font-bold leading-tight",
-                  b.earned ? "text-primary" : "text-ink-faint",
+                  b.earned ? (b.rare ? "text-[#b8860b]" : "text-primary") : "text-ink-faint",
                 )}
               >
                 {b.label}

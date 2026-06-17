@@ -28,6 +28,8 @@ export interface QuizState {
   totalScore: number;
   /** Hány nap óta játszik. */
   totalDays: number;
+  /** Valaha elért legjobb napi eredmény (0-3) — a „Telitalálat" kitűzőhöz. */
+  bestScore: number;
 }
 
 const DEFAULT_STATE: QuizState = {
@@ -36,6 +38,7 @@ const DEFAULT_STATE: QuizState = {
   lastPlayed: null,
   totalScore: 0,
   totalDays: 0,
+  bestScore: 0,
 };
 
 /** Mai dátum YYYY-MM-DD (Europe/Zurich-szerű egyszerűsítés). */
@@ -144,6 +147,7 @@ export function recordResult(answers: number[]): QuizState {
     lastPlayed: today,
     totalScore: state.totalScore + score,
     totalDays: state.totalDays + 1,
+    bestScore: Math.max(state.bestScore ?? 0, score),
   };
 
   saveState(next);
