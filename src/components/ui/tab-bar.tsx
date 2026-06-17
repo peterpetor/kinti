@@ -31,7 +31,7 @@ const TABS: Tab[] = [
     icon: "users",
   },
   { href: "/allasok", label: "Állások", icon: "briefcase", alsoMatch: ["/munkaltato"] },
-  { href: "/iranytu", label: "Iránytű", icon: "trending" },
+  { href: "/iranytu", label: "Iránytű", icon: "compass" },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {

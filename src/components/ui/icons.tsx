@@ -12,7 +12,8 @@ export type IconName =
   | "share" | "bookmark" | "chevR" | "chevD" | "chevU" | "sliders" | "bell"
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "shoppingBag" | "briefcase"
-  | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock";
+  | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock"
+  | "compass";
 
 const PATHS: Record<IconName, string[]> = {
   lock: ["M6 10h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z", "M8 10V7a4 4 0 0 1 8 0v3"],
@@ -87,6 +88,8 @@ const PATHS: Record<IconName, string[]> = {
     "M10 9H8"
   ],
   upload: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "M17 8l-5-5l-5 5", "M12 3v12"],
+  // Iránytű: kör + rombusz-tű (Lucide compass).
+  compass: ["M12 3a9 9 0 1 1 0 18a9 9 0 0 1 0-18", "M16.24 7.76L14.12 14.12L7.76 16.24L9.88 9.88z"],
 };
 
 // A '…' (more) három pöttye vastagabb vonallal néz jól ki.
