@@ -3,8 +3,13 @@ import { createNewsletterSubscriber } from "@/lib/repo-newsletter";
 import { sendNewsletterConfirmationEmail } from "@/lib/email";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { safeLogError } from "@/lib/safe-log";
+import { hashIp } from "@/lib/security";
+import { countRecentSpamLog, logSpamSubmit } from "@/lib/repo";
 
 export const runtime = "edge";
+
+/** Megerősítő-email spam (email-bomba) elleni IP-limit: óránként max. ennyi. */
+const SUBSCRIBE_PER_HOUR = 5;
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
@@ -23,6 +28,16 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "Kérlek ne használj eldobható e-mail címet." },
         { status: 400 }
+      );
+    }
+
+    // IP-rate-limit: a double-opt-in megvédi az előfizetést, de nem a megerősítő-
+    // email spamet (egy áldozat címére ismételt POST). Óránkénti IP-korlát ellene.
+    const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
+    if ((await countRecentSpamLog("newsletter-subscribe", ipHash, 60)) >= SUBSCRIBE_PER_HOUR) {
+      return NextResponse.json(
+        { error: "Túl sok feliratkozási kísérlet. Próbáld újra később." },
+        { status: 429 }
       );
     }
 
@@ -47,6 +62,7 @@ export async function POST(req: Request) {
       confirmUrl,
     });
 
+    await logSpamSubmit("newsletter-subscribe", ipHash);
     return NextResponse.json({ success: true });
   } catch (err) {
     safeLogError("[newsletter/subscribe]", err);

@@ -109,7 +109,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[jobs/apply] error:", err);
+    safeLogError("[jobs/apply]", err);
     return NextResponse.json({ error: "Belső hiba történt." }, { status: 500 });
   }
 }

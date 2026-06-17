@@ -5,6 +5,7 @@ import { isValidCantonCode } from "@/lib/cantons";
 import { isValidJobCategory } from "@/lib/job-categories";
 import { moderateText } from "@/lib/text-moderation";
 import { hasBlackWorkSignal } from "@/lib/job-screening";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -88,7 +89,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[employer/jobs/:id PATCH] error:", err);
+    safeLogError("[employer/jobs/:id PATCH]", err);
     return NextResponse.json({ error: "Belső hiba történt a mentés során." }, { status: 500 });
   }
 }
@@ -113,7 +114,7 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
     }
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[employer/jobs/:id DELETE] error:", err);
+    safeLogError("[employer/jobs/:id DELETE]", err);
     return NextResponse.json({ error: "Belső hiba történt a törlés során." }, { status: 500 });
   }
 }

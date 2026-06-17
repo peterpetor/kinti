@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createEmployer, getEmployerByOwner } from "@/lib/repo";
 import { moderateText } from "@/lib/text-moderation";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -77,7 +78,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, id, status: moderationStatus });
   } catch (err) {
-    console.error("[employer/profile] create error:", err);
+    safeLogError("[employer/profile] create", err);
     return NextResponse.json({ error: "Belső hiba történt a mentés során." }, { status: 500 });
   }
 }

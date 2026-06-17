@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { redactPii } from "@/lib/safe-log";
 import { forwardError } from "@/lib/monitoring";
+import { hashIp } from "@/lib/security";
+import { countRecentSpamLog, logSpamSubmit } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
+
+/** IP-cap óránként, hogy egy hibahurok ne árassza el a monitoring-webhookot. */
+const CLIENT_ERROR_PER_HOUR = 20;
 
 /**
  * POST /api/client-error — kliens-oldali crash-jelentés fogadása.
@@ -32,7 +37,13 @@ export async function POST(req: Request) {
     }
   }
 
-  forwardError({ source: "client", prefix: "[client-error]", name, message, digest, url });
+  // IP-cap: egy végtelen hibahurok ne floodolja a webhookot. A kliens mindig
+  // {ok:true}-t kap, csak a továbbítást hagyjuk ki a limit felett.
+  const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
+  if ((await countRecentSpamLog("client-error", ipHash, 60)) < CLIENT_ERROR_PER_HOUR) {
+    forwardError({ source: "client", prefix: "[client-error]", name, message, digest, url });
+    await logSpamSubmit("client-error", ipHash);
+  }
 
   return NextResponse.json({ ok: true }, { headers: { "cache-control": "no-store" } });
 }

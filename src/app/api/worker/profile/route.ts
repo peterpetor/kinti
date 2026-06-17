@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { upsertWorkerProfile } from "@/lib/repo";
 import { isValidCantonCode } from "@/lib/cantons";
 import { isValidJobCategory } from "@/lib/job-categories";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -59,7 +60,7 @@ export async function PUT(req: Request) {
     });
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[worker/profile PUT] error:", err);
+    safeLogError("[worker/profile PUT]", err);
     return NextResponse.json({ error: "Belső hiba a mentés során." }, { status: 500 });
   }
 }

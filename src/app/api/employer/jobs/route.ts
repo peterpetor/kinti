@@ -5,6 +5,7 @@ import { isValidCantonCode } from "@/lib/cantons";
 import { isValidJobCategory } from "@/lib/job-categories";
 import { moderateText } from "@/lib/text-moderation";
 import { hasBlackWorkSignal } from "@/lib/job-screening";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -106,7 +107,7 @@ export async function POST(req: Request) {
     
     return NextResponse.json({ ok: true, id });
   } catch (err) {
-    console.error("[employer/jobs] create error:", err);
+    safeLogError("[employer/jobs] create", err);
     return NextResponse.json({ error: "Belső hiba történt a mentés során." }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getEmployerByOwner } from "@/lib/repo";
 import { getDB } from "@/lib/cloudflare";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -65,7 +66,7 @@ export async function PUT(req: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[employer/profile/update] error:", err);
+    safeLogError("[employer/profile/update]", err);
     return NextResponse.json({ error: "Belső hiba történt a mentés során." }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifySignature } from "@/lib/lemonsqueezy";
 import { getDB } from "@/lib/cloudflare";
 import { upsertSubscription } from "@/lib/subscriptions";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("Webhook processing error:", err);
+    safeLogError("[webhooks/lemonsqueezy] processing", err);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -84,7 +85,7 @@ async function handleSuccessfulPayment(customData: any, data: any) {
         currentPeriodEnd: data.renews_at || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       });
     } catch (e) {
-      console.error("Failed to upsert Kinti PRO subscription:", e);
+      safeLogError("[webhooks/lemonsqueezy] PRO subscription upsert", e);
     }
   }
 }
@@ -112,7 +113,7 @@ async function handleSubscriptionEnded(customData: any, data: any) {
         currentPeriodEnd: data.renews_at || new Date().toISOString(),
       });
     } catch (e) {
-      console.error("Failed to upsert Kinti PRO expiration:", e);
+      safeLogError("[webhooks/lemonsqueezy] PRO expiration upsert", e);
     }
   }
 }
