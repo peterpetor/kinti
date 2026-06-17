@@ -55,19 +55,22 @@
     {
       "name": "Szaknévsor",
       "short_name": "Szaknévsor",
-      "url": "/szaknevsor",
+      "description": "Magyar szakemberek és vállalkozások listája",
+      "url": "/szaknevsor?source=pwa-shortcut",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Közösség",
-      "short_name": "Közösség",
-      "url": "/kozosseg",
+      "name": "Események",
+      "short_name": "Események",
+      "description": "Közösségi események és meetupok",
+      "url": "/kozosseg?source=pwa-shortcut",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Profilom",
-      "short_name": "Profil",
-      "url": "/profil",
+      "name": "Kvíz",
+      "short_name": "Kvíz",
+      "description": "Svájci beilleszkedési kvíz",
+      "url": "/kviz?source=pwa-shortcut",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ],
