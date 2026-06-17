@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  BusinessCard,
   Icon,
   KintiLogo,
   SectionHeader,
@@ -15,16 +14,22 @@ import { GlobalSearch } from "@/components/global-search";
 import { PwaInstallCard } from "@/components/pwa-install-card";
 import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
 import { KvizDailyCard } from "@/components/kviz-daily-card";
+import { NearbyBusinesses } from "@/components/nearby-businesses";
 import { getBusinesses, getEvents } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export default async function FeedPage() {
-  const [featured, events] = await Promise.all([
-    getBusinesses({ featured: true }),
+  const [allBusinesses, events] = await Promise.all([
+    getBusinesses(),
     getEvents({ limit: 3 }),
   ]);
+  // „A közeledben" csak a koordinátával rendelkezőkből válogat (kliensoldali
+  // GPS-rendezéshez). Trükkös payload-méret ellen: max 200 rekord.
+  const nearby = allBusinesses
+    .filter((b) => b.lat != null && b.lng != null)
+    .slice(0, 200);
 
   return (
     <>
@@ -68,11 +73,7 @@ export default async function FeedPage() {
         >
           A közeledben
         </SectionHeader>
-        <div className="grid gap-2.5">
-          {featured.map((b) => (
-            <BusinessCard key={b.id} business={b} href={`/szaknevsor/${b.id}`} />
-          ))}
-        </div>
+        <NearbyBusinesses businesses={nearby} />
       </section>
 
       <section className="space-y-3">
