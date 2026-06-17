@@ -66,7 +66,10 @@ export interface RentStatsRow {
 }
 
 export interface AlertSubscription {
-  email: string;
+  /** Email-alapú feliratkozás (vagy push). Legalább az egyik kötelező. */
+  email?: string | null;
+  /** Push-alapú feliratkozás (a böngésző meglévő push-endpointja). */
+  pushEndpoint?: string | null;
   industry: string;
   cantonCode: string;
   expBucket: string;
@@ -511,9 +514,13 @@ export async function getRentStats(
 // ─── EMAIL ALERTS ────────────────────────────────────────────────────────
 
 export async function subscribeToAlert(input: AlertSubscription): Promise<"created" | "updated"> {
+  const isPush = !!input.pushEndpoint;
+  const matchCol = isPush ? "push_endpoint" : "email";
+  const matchVal = isPush ? input.pushEndpoint! : input.email!;
+
   const existing = await getDB()
-    .prepare("SELECT id FROM benchmark_alerts WHERE email = ? AND industry = ? AND canton_code = ? LIMIT 1")
-    .bind(input.email, input.industry, input.cantonCode)
+    .prepare(`SELECT id FROM benchmark_alerts WHERE ${matchCol} = ? AND industry = ? AND canton_code = ? LIMIT 1`)
+    .bind(matchVal, input.industry, input.cantonCode)
     .first<{ id: string }>();
 
   if (existing) {
@@ -525,23 +532,36 @@ export async function subscribeToAlert(input: AlertSubscription): Promise<"creat
   }
 
   await getDB()
-    .prepare(`INSERT INTO benchmark_alerts (id, email, industry, canton_code, exp_bucket, last_avg_chf, created_at, updated_at)
-              VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`)
-    .bind(crypto.randomUUID(), input.email, input.industry, input.cantonCode, input.expBucket, input.currentAvg)
+    .prepare(`INSERT INTO benchmark_alerts (id, email, push_endpoint, industry, canton_code, exp_bucket, last_avg_chf, created_at, updated_at)
+              VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`)
+    .bind(
+      crypto.randomUUID(),
+      isPush ? null : input.email,
+      isPush ? input.pushEndpoint : null,
+      input.industry, input.cantonCode, input.expBucket, input.currentAvg,
+    )
     .run();
   return "created";
 }
 
-/** Lekéri azokat a feliratkozókat, akiknél az átlag ±10%-ot változott (radar trigger hívja). */
-export async function getAlertsToFire(): Promise<Array<{
-  id: string; email: string; industry: string; canton_code: string;
-  exp_bucket: string; last_avg_chf: number; new_avg: number;
-}>> {
-  const { results: subscribers } = await getDB()
-    .prepare("SELECT id, email, industry, canton_code, exp_bucket, last_avg_chf FROM benchmark_alerts WHERE last_avg_chf IS NOT NULL")
-    .all<{ id: string; email: string; industry: string; canton_code: string; exp_bucket: string; last_avg_chf: number }>();
+export interface AlertToFire {
+  id: string;
+  email: string | null;
+  pushEndpoint: string | null;
+  industry: string;
+  cantonCode: string;
+  expBucket: string;
+  lastAvgChf: number;
+  newAvg: number;
+}
 
-  const toFire: Array<{ id: string; email: string; industry: string; canton_code: string; exp_bucket: string; last_avg_chf: number; new_avg: number }> = [];
+/** Lekéri azokat a feliratkozókat, akiknél az átlag ±10%-ot változott (a cron hívja). */
+export async function getAlertsToFire(): Promise<AlertToFire[]> {
+  const { results: subscribers } = await getDB()
+    .prepare("SELECT id, email, push_endpoint, industry, canton_code, exp_bucket, last_avg_chf FROM benchmark_alerts WHERE last_avg_chf IS NOT NULL")
+    .all<{ id: string; email: string | null; push_endpoint: string | null; industry: string; canton_code: string; exp_bucket: string; last_avg_chf: number }>();
+
+  const toFire: AlertToFire[] = [];
 
   for (const sub of subscribers) {
     const row = await getDB()
@@ -556,7 +576,16 @@ export async function getAlertsToFire(): Promise<Array<{
     if (!row?.avg) continue;
     const change = Math.abs(row.avg - sub.last_avg_chf) / sub.last_avg_chf;
     if (change >= 0.10) {
-      toFire.push({ ...sub, new_avg: row.avg });
+      toFire.push({
+        id: sub.id,
+        email: sub.email,
+        pushEndpoint: sub.push_endpoint,
+        industry: sub.industry,
+        cantonCode: sub.canton_code,
+        expBucket: sub.exp_bucket,
+        lastAvgChf: sub.last_avg_chf,
+        newAvg: row.avg,
+      });
     }
   }
 

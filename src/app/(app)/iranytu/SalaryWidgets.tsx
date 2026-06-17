@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { CANTONS } from "@/lib/cantons";
+import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 
 const INDUSTRIES = [
   "Informatika (IT)", "Vendéglátás / Szálloda", "Építőipar",
@@ -202,6 +203,38 @@ export function AlertSubscription({
     setSubmitting(false);
   }
 
+  async function handlePushSubscribe() {
+    setSubmitting(true); setError(null);
+    try {
+      if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+        setError("A böngésződ nem támogatja a push-értesítést (iPhone-on telepítsd előbb a kezdőképernyőre).");
+        setSubmitting(false); return;
+      }
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") {
+        setError("Engedélyezd az értesítéseket a push-hoz.");
+        setSubmitting(false); return;
+      }
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
+        });
+      }
+      const res = await fetch("/api/benchmark/alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pushEndpoint: sub.endpoint, industry, cantonCode: canton, currentAvg: defaultAvg ?? null }),
+      });
+      const data = await res.json() as { message?: string; error?: string };
+      if (res.ok) setResult(data.message ?? "Push-értesítés bekapcsolva!");
+      else setError(data.error ?? "Sikertelen feliratkozás.");
+    } catch { setError("Hálózati hiba."); }
+    setSubmitting(false);
+  }
+
   if (result) {
     return (
       <div className="rounded-2xl border border-success/30 bg-success/10 p-5 text-center space-y-1">
@@ -218,7 +251,7 @@ export function AlertSubscription({
         <span className="text-2xl">🔔</span>
         <div>
           <p className="font-bold text-[15px] text-ink">Értesíts, ha változik!</p>
-          <p className="text-[12px] text-ink-muted">Email ha az átlagbér ±10%-ot mozog</p>
+          <p className="text-[12px] text-ink-muted">Email vagy push, ha az átlagbér ±10%-ot mozog</p>
         </div>
       </div>
 
@@ -247,10 +280,26 @@ export function AlertSubscription({
         <TurnstileWidget siteKey={turnstileSiteKey} onToken={setToken} />
         <button type="submit" disabled={submitting || !token}
           className="w-full bg-primary hover:opacity-90 text-white font-bold py-3 rounded-xl transition disabled:opacity-40 text-[14px]">
-          {submitting ? "Feliratkozás..." : "🔔 Feliratkozás"}
+          {submitting ? "Feliratkozás..." : "🔔 Feliratkozás emailben"}
         </button>
       </form>
-      <p className="text-[11px] text-ink-faint text-center">Az email-cím csak értesítési célra kerül felhasználásra. Bármikor leiratkozhatsz.</p>
+
+      <div className="flex items-center gap-2">
+        <span className="h-px flex-1 bg-line" />
+        <span className="text-[11px] font-bold uppercase tracking-wide text-ink-faint">vagy</span>
+        <span className="h-px flex-1 bg-line" />
+      </div>
+
+      <button
+        type="button"
+        onClick={handlePushSubscribe}
+        disabled={submitting}
+        className="w-full rounded-xl border border-primary/30 bg-primary-soft/50 py-3 text-[14px] font-bold text-primary transition hover:bg-primary-soft disabled:opacity-40"
+      >
+        {submitting ? "…" : "📲 Push-értesítést kérek (email nélkül)"}
+      </button>
+
+      <p className="text-[11px] text-ink-faint text-center">Push esetén nem kell email — a böngésződ értesítését használjuk. Bármikor leiratkozhatsz.</p>
     </div>
   );
 }

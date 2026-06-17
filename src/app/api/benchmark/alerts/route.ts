@@ -13,6 +13,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  */
 interface AlertBody {
   email?: unknown;
+  pushEndpoint?: unknown;
   industry?: unknown;
   turnstileToken?: string;
   cantonCode?: string;
@@ -26,23 +27,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }
 
-  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
-  if (!EMAIL_RE.test(email)) {
-    return NextResponse.json({ error: "Érvénytelen email-cím." }, { status: 400 });
-  }
   if (!body.industry || typeof body.industry !== "string") {
     return NextResponse.json({ error: "Az iparág megadása kötelező." }, { status: 400 });
   }
 
-  // Turnstile védelem
-  const ip = req.headers.get("cf-connecting-ip") ?? null;
-  const captcha = await verifyTurnstile(body.turnstileToken, ip);
-  if (!captcha.ok) {
-    return NextResponse.json({ error: "A robot-ellenőrzés sikertelen." }, { status: 400 });
+  const pushEndpoint = typeof body.pushEndpoint === "string" ? body.pushEndpoint.trim() : "";
+  const usePush = /^https:\/\//.test(pushEndpoint);
+
+  // Email-ágnál Turnstile + email-validáció; push-ágnál a böngésző push-endpointja
+  // maga a bizonyíték (nem kell email/captcha).
+  let email: string | null = null;
+  if (!usePush) {
+    email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    if (!EMAIL_RE.test(email)) {
+      return NextResponse.json({ error: "Érvénytelen email-cím." }, { status: 400 });
+    }
+    const ip = req.headers.get("cf-connecting-ip") ?? null;
+    const captcha = await verifyTurnstile(body.turnstileToken, ip);
+    if (!captcha.ok) {
+      return NextResponse.json({ error: "A robot-ellenőrzés sikertelen." }, { status: 400 });
+    }
   }
 
   const result = await subscribeToAlert({
     email,
+    pushEndpoint: usePush ? pushEndpoint : null,
     industry: body.industry,
     cantonCode: body.cantonCode || "all",
     expBucket: body.expBucket || "all",
@@ -53,7 +62,9 @@ export async function POST(req: NextRequest) {
     ok: true,
     status: result, // 'created' | 'updated'
     message: result === "created"
-      ? "Sikeresen feliratkoztál! Értesítünk, ha az átlagbér ±10%-ot változik."
+      ? (usePush
+          ? "Push-értesítés bekapcsolva! Szólunk, ha az átlagbér ±10%-ot változik."
+          : "Sikeresen feliratkoztál! Értesítünk, ha az átlagbér ±10%-ot változik.")
       : "Feliratkozásod frissítettük.",
   });
 }

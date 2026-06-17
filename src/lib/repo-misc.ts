@@ -17,6 +17,15 @@ export async function deletePushSubscription(endpoint: string): Promise<void> {
   await getDB().prepare("DELETE FROM push_subscriptions WHERE endpoint = ?").bind(endpoint).run();
 }
 
+/** Egy push-feliratkozás titkosító-kulcsai endpoint alapján (cron-célzott küldéshez). */
+export async function getPushKeysByEndpoint(endpoint: string): Promise<{ p256dh: string; auth: string } | null> {
+  const row = await getDB()
+    .prepare("SELECT p256dh, auth FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
+    .bind(endpoint)
+    .first<{ p256dh: string; auth: string }>();
+  return row ?? null;
+}
+
 export async function listPushSubscriptions(cantonCode?: string | null): Promise<PushSubscriptionRow[]> {
   if (cantonCode) {
     const { results } = await getDB().prepare("SELECT * FROM push_subscriptions WHERE canton_code = ? OR canton_code IS NULL").bind(cantonCode).all<PushSubscriptionRow>();
