@@ -1,51 +1,26 @@
 /**
- * CV PDF → nyers szöveg kinyerés az edge-en (Cloudflare Workers/Pages).
+ * CV PDF → nyers szöveg kinyerés az edge-en — a Cloudflare NATÍV
+ * `env.AI.toMarkdown()` dokumentum-konverterével.
  *
- * Az `unpdf` egy serverless-re szabott pdf.js build — nincs DOM/worker függősége,
- * így a workerd runtime-on (next-on-pages edge) is fut. A feltöltött CV az R2-ben
- * `cv/<userId>/<uuid>.pdf` kulcson van; innen olvassuk és szöveggé alakítjuk.
- *
- * A lusta `await import("unpdf")` szándékos: így a modul nem kerül be a hideg-
- * start kritikus útjába, és a unit-tesztek sem próbálják betölteni.
+ * Miért ez és nem az `unpdf`/pdf.js: a pdf.js a workerd runtime-on megbízhatatlan
+ * (runtime-hiba), a kliensbe csomagolva pedig megtörte a next-on-pages buildet.
+ * A `toMarkdown` viszont csak egy binding-hívás (semmit nem kell bundle-ölni),
+ * az R2-ből olvasott PDF-et a Cloudflare oldalán alakítja szöveggé/markdownná.
  */
+import { getCloudflareEnv } from "./cloudflare";
 
 export interface CvExtractResult {
   ok: boolean;
   text: string;
-  /** Diagnosztikai ok, ha ok=false (pl. "no-cv", "empty", "scanned"). */
+  /** Diagnosztikai ok, ha ok=false. */
   reason?: "no-cv" | "not-found" | "empty" | "error";
 }
 
 /** Max. karakter, amit az LLM-nek átadunk (kb. 2-3 oldalnyi CV bőven elfér). */
 const MAX_CHARS = 8000;
 
-// PDF-ből gyakran jönnek speciális szóköz-/láthatatlan karakterek. Kódpont-
-// alapon kezeljük (tiszta ASCII forrás, nincs törékeny regex-literál).
-const SPACE_CODEPOINTS = new Set<number>([
-  0x00a0, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
-  0x2007, 0x2008, 0x2009, 0x200a, 0x202f, 0x205f, 0x3000,
-]);
-const ZERO_WIDTH_CODEPOINTS = new Set<number>([
-  0x00ad, 0x200b, 0x200c, 0x200d, 0x2060, 0xfeff,
-]);
-
-/** Normalizálja a PDF-ből kinyert szöveget (szóközök, láthatatlanok, sortörés). */
-function normalizePdfText(raw: string): string {
-  let out = "";
-  for (const ch of raw) {
-    const cp = ch.codePointAt(0)!;
-    if (ZERO_WIDTH_CODEPOINTS.has(cp)) continue;
-    out += SPACE_CODEPOINTS.has(cp) ? " " : ch;
-  }
-  return out
-    .replace(/[ \t]{2,}/g, " ") // szóköz-futamok összevonása (a sima szóköz marad!)
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
 /**
- * Kinyeri a megadott R2-kulcson lévő PDF szövegét.
+ * Kinyeri a megadott R2-kulcson lévő PDF szövegét a Cloudflare AI.toMarkdown-nal.
  * @param bucket az R2 binding (getMediaBucket())
  * @param cvKey  a CV kulcsa (cv/<userId>/<uuid>.pdf), vagy null ha nincs CV
  */
@@ -55,35 +30,43 @@ export async function extractCvText(
 ): Promise<CvExtractResult> {
   if (!cvKey) return { ok: false, text: "", reason: "no-cv" };
 
-  // R2-olvasás (külön a parse-tól: így megkülönböztethető a "nincs fájl" a
-  // "parse-hiba"-tól).
-  let buf: Uint8Array;
+  // 1) PDF letöltése R2-ből
+  let bytes: ArrayBuffer;
   try {
     const obj = await bucket.get(cvKey);
     if (!obj) {
-      console.error(`[cv-extract] R2 miss: nincs objektum a kulcson: ${cvKey}`);
+      console.error(`[cv-extract] R2 miss: ${cvKey}`);
       return { ok: false, text: "", reason: "not-found" };
     }
-    buf = new Uint8Array(await obj.arrayBuffer());
+    bytes = await obj.arrayBuffer();
   } catch (err) {
     console.error("[cv-extract] R2 get hiba:", err);
     return { ok: false, text: "", reason: "not-found" };
   }
 
-  // PDF → szöveg (unpdf, edge). Ha ez dob, az a parse-réteg hibája.
+  // 2) PDF → markdown/szöveg a Cloudflare AI-konverterrel
   try {
-    const { extractText, getDocumentProxy } = await import("unpdf");
-    const pdf = await getDocumentProxy(buf);
-    const { text } = await extractText(pdf, { mergePages: true });
+    const env = getCloudflareEnv() as { AI?: { toMarkdown?: (docs: unknown[]) => Promise<unknown> } };
+    if (!env.AI?.toMarkdown) {
+      console.error("[cv-extract] env.AI.toMarkdown nem elérhető");
+      return { ok: false, text: "", reason: "error" };
+    }
 
-    const clean = normalizePdfText(Array.isArray(text) ? text.join("\n") : text);
+    const out = (await env.AI.toMarkdown([
+      { name: "cv.pdf", blob: new Blob([bytes], { type: "application/pdf" }) },
+    ])) as Array<{ data?: string }> | { data?: string } | null;
 
-    // Szkennelt / kép-alapú PDF-ből alig jön szöveg → jelezzük a hívónak.
+    const raw = Array.isArray(out) ? (out[0]?.data ?? "") : (out?.data ?? "");
+    const clean = raw
+      .replace(/[ \t]{2,}/g, " ")
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+
     if (clean.length < 80) return { ok: false, text: clean, reason: "empty" };
-
     return { ok: true, text: clean.slice(0, MAX_CHARS) };
   } catch (err) {
-    console.error("[cv-extract] unpdf parse hiba (edge):", err);
+    console.error("[cv-extract] toMarkdown hiba:", err);
     return { ok: false, text: "", reason: "error" };
   }
 }

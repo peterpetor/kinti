@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
@@ -22,62 +22,25 @@ interface CvReview {
 }
 
 /**
- * AI CV-audit (PRO). A PDF szövegét a BÖNGÉSZŐ nyeri ki (pdf.js/unpdf) — ez
- * megbízhatóbb, mint az edge-en futtatott PDF-parse —, majd a kinyert szöveget
- * küldjük a szervernek, ahol egy erős (70B) modell svájci HR-szempontból auditálja:
- * 0–100 pont, erősségek, szakaszonkénti konkrét hibák + javítások, végül a
- * leggyengébb szakaszok svájci formátumban újraírva.
+ * AI CV-audit (PRO) — a FELTÖLTÖTT CV-t (PDF) nézi át a szerver: R2 → szöveg
+ * (Cloudflare AI.toMarkdown) → erős (70B) modell. Eredmény: 0–100 pont,
+ * erősségek, szakaszonkénti konkrét hibák + javítások, végül a leggyengébb
+ * szakaszok svájci formátumban újraírva.
  */
-export function CvAssistant() {
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [phase, setPhase] = useState<"idle" | "reading" | "analyzing">("idle");
-  const [fileName, setFileName] = useState<string | null>(null);
+export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CvReview | null>(null);
 
-  const busy = phase !== "idle";
-
-  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = ""; // ugyanaz a fájl újraválasztható legyen
-    if (!file) return;
-    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
-      setError("Csak PDF-et tudok elemezni.");
-      return;
-    }
+  async function run() {
+    setBusy(true);
     setError(null);
     setResult(null);
-    setFileName(file.name);
-
-    // 1) Szöveg kinyerése a böngészőben
-    let text = "";
-    setPhase("reading");
-    try {
-      const buf = new Uint8Array(await file.arrayBuffer());
-      const { extractText, getDocumentProxy } = await import("unpdf");
-      const pdf = await getDocumentProxy(buf);
-      const res = await extractText(pdf, { mergePages: true });
-      text = (Array.isArray(res.text) ? res.text.join("\n") : res.text).trim();
-    } catch {
-      setPhase("idle");
-      setError("Nem sikerült beolvasni a PDF-et. Próbálj egy másik (szöveges) PDF-et.");
-      return;
-    }
-    if (text.replace(/\s+/g, "").length < 60) {
-      setPhase("idle");
-      setError(
-        "Ebből a PDF-ből alig jött ki szöveg — valószínűleg szkennelt/kép-alapú. Tölts fel szöveges, kimásolható PDF-et.",
-      );
-      return;
-    }
-
-    // 2) Elemzés a szerveren
-    setPhase("analyzing");
     try {
       const res = await fetch("/api/ai/cv-review", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ text: text.slice(0, 12000) }),
+        body: "{}",
       });
       const data = (await res.json().catch(() => ({}))) as CvReview & { error?: string };
       if (!res.ok) {
@@ -94,7 +57,7 @@ export function CvAssistant() {
     } catch {
       setError("Hálózati hiba — próbáld újra.");
     } finally {
-      setPhase("idle");
+      setBusy(false);
     }
   }
 
@@ -107,22 +70,21 @@ export function CvAssistant() {
         <div className="min-w-0 flex-1">
           <h3 className="text-[14px] font-extrabold tracking-tight text-ink">AI CV-audit</h3>
           <p className="text-[11.5px] text-ink-muted">
-            PRO — átnézi a CV-det a svájci HR-elvárások szerint.
+            PRO — átnézi a feltöltött CV-det a svájci HR-elvárások szerint.
           </p>
         </div>
       </div>
 
-      <input
-        ref={fileRef}
-        type="file"
-        accept="application/pdf"
-        onChange={onPick}
-        className="hidden"
-      />
+      {!hasCv && !result && (
+        <p className="mb-3 rounded-[12px] border border-accent/20 bg-accent/5 px-3 py-2 text-[12.5px] leading-snug text-ink-muted">
+          📄 Tölts fel egy <strong>szöveges (nem szkennelt) PDF</strong> CV-t fent, aztán
+          futtasd az auditot.
+        </p>
+      )}
 
       <button
         type="button"
-        onClick={() => fileRef.current?.click()}
+        onClick={run}
         disabled={busy}
         className={cn(
           "inline-flex w-full items-center justify-center gap-1.5 rounded-pill px-4 py-2.5 text-[13px] font-extrabold transition active:scale-95",
@@ -130,18 +92,9 @@ export function CvAssistant() {
         )}
       >
         <Icon name="sparkles" size={13} strokeWidth={2.4} />
-        {phase === "reading"
-          ? "CV beolvasása…"
-          : phase === "analyzing"
-            ? "Az AI elemzi… (~20–40 mp)"
-            : result
-              ? "Másik CV elemzése"
-              : "Válaszd ki a CV-det (PDF)"}
+        {busy ? "Az AI átnézi a CV-det… (~20–40 mp)" : result ? "Újra elemzem" : "Elemezd a CV-met"}
       </button>
 
-      {fileName && !error && (
-        <p className="mt-1.5 truncate text-[11px] text-ink-faint">📄 {fileName}</p>
-      )}
       {error && <p className="mt-2 text-[12px] font-bold text-accent">{error}</p>}
 
       {result && (
