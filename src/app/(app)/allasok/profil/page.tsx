@@ -103,7 +103,7 @@ export default async function WorkerProfilePage() {
 
       {/* AI CV-audit (PRO) */}
       {pro ? (
-        <CvAssistant hasCv={!!profile?.cvKey} />
+        <CvAssistant />
       ) : (
         <Link
           href="/pro"

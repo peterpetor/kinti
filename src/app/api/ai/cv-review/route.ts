@@ -57,20 +57,30 @@ export async function POST(req: Request) {
       );
     }
 
-    // A feltöltött CV kulcsa a worker-profilból
-    const profile = await getWorkerProfileByUser(userId);
-    const extracted = await extractCvText(getMediaBucket(), profile?.cvKey ?? null);
-    if (!extracted.ok) {
-      const msg =
-        extracted.reason === "no-cv"
-          ? "Előbb tölts fel egy CV-t (PDF) a profilodban, aztán futtasd az auditot."
-          : extracted.reason === "not-found"
-            ? "Nem találom a feltöltött CV-fájlt a tárolóban — lehet, hogy a feltöltés nem fejeződött be. Töltsd fel újra a CV-t a profilban."
-            : extracted.reason === "empty"
-              ? "A PDF-ből nem jött ki szöveg (valószínűleg szkennelt/kép-alapú). Tölts fel szöveges, kimásolható PDF-et."
-              : "A PDF feldolgozása a szerveren hibára futott (PDF-parse). Ezt nézem — szólj, ha látod ezt az üzenetet.";
-      // A reason-t a kliensnek is visszaadjuk (diagnosztika; nem érzékeny adat).
-      return NextResponse.json({ error: msg, reason: extracted.reason }, { status: 422 });
+    // A CV-szöveg forrása: ELSŐDLEGESEN a kliens által (böngészőben, pdf.js-szel)
+    // kinyert szöveg — ez megbízhatóbb, mint az edge-en futó PDF-parse, és a privát
+    // R2-objektumot sem kell elérnünk. Ha nincs kliens-szöveg, FALLBACK az R2-ből.
+    const body = (await req.json().catch(() => ({}))) as { text?: unknown };
+    const clientText = typeof body.text === "string" ? body.text.trim() : "";
+
+    let cvText: string;
+    if (clientText.length >= 80) {
+      cvText = clientText.slice(0, 8000);
+    } else {
+      const profile = await getWorkerProfileByUser(userId);
+      const extracted = await extractCvText(getMediaBucket(), profile?.cvKey ?? null);
+      if (!extracted.ok) {
+        const msg =
+          extracted.reason === "no-cv"
+            ? "Válaszd ki a CV-det (PDF), vagy tölts fel egyet a profilodban."
+            : extracted.reason === "not-found"
+              ? "Nem találom a feltöltött CV-fájlt — válaszd ki a PDF-et közvetlenül a gombbal."
+              : extracted.reason === "empty"
+                ? "A PDF-ből nem jött ki szöveg (valószínűleg szkennelt/kép-alapú). Tölts fel szöveges, kimásolható PDF-et."
+                : "A CV szövegét nem sikerült beolvasni. Válaszd ki a PDF-et közvetlenül a gombbal.";
+        return NextResponse.json({ error: msg, reason: extracted.reason }, { status: 422 });
+      }
+      cvText = extracted.text;
     }
 
     const system = `Te a kinti.app SVÁJCI CV-szakértője vagy, magyar anyanyelvű, Svájcban álláskereső ügyfeleknek. A felhasználó nyers CV-szövegét kapod (PDF-ből kinyerve). Készíts MAGYAR nyelven egy komoly, konkrét auditot a SVÁJCI munkaerőpiac elvárásai szerint.
@@ -100,7 +110,7 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
     const ai = await runAiChat({
       model: MODEL,
       system,
-      user: `CV-tartalom:\n"""\n${extracted.text}\n"""`,
+      user: `CV-tartalom:\n"""\n${cvText}\n"""`,
       maxTokens: 1800,
       temperature: 0.4,
       timeoutMs: 45_000,
