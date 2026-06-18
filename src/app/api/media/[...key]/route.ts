@@ -45,17 +45,35 @@ export async function GET(req: Request, { params }: { params: { key: string[] } 
   // onlyIf nem-match esetén bizonyos kombinációk R2Object*-ként térnek vissza
   // body nélkül — ilyenkor 304-et küldünk.
   if (!("body" in obj) || obj.body == null) {
-    return new Response(null, { status: 304, headers: { etag: obj.httpEtag } });
+    const h = new Headers({ etag: obj.httpEtag });
+    applyMediaSecurityHeaders(h);
+    return new Response(null, { status: 304, headers: h });
   }
 
   const headers = new Headers();
   obj.writeHttpMetadata(headers);
   headers.set("etag", obj.httpEtag);
   headers.set("cache-control", "public, max-age=31536000, immutable");
+  applyMediaSecurityHeaders(headers);
   // Ha range volt és a R2 részlegest adott, 206-ot illik küldeni.
   const status = obj.range ? 206 : 200;
 
   return new Response(obj.body, { status, headers });
+}
+
+/**
+ * Biztonsági fejlécek a felhasználó-által-feltöltött tartalmat kiszolgáló
+ * válaszokra. A feltöltés ugyan csak kép-MIME-eket enged (extForContentType:
+ * jpeg/png/webp/gif — SVG NEM), de mélységi védelemként itt is letiltjuk a
+ * MIME-sniffinget és sandboxoljuk a választ, így egy esetleges polyglot fájl
+ * sem futtathat HTML/JS-t a kinti.app origin alatt.
+ *   - nosniff: a böngésző tartsa a deklarált content-type-ot (ne sniffeljen HTML-t).
+ *   - CSP default-src 'none' + sandbox: a válasz egyedi, script-mentes origin —
+ *     kép továbbra is renderelődik, de aktív tartalom nem fut.
+ */
+function applyMediaSecurityHeaders(h: Headers): void {
+  h.set("x-content-type-options", "nosniff");
+  h.set("content-security-policy", "default-src 'none'; sandbox");
 }
 
 /** Egyszerű `bytes=START-END` → R2 range-objektum. */

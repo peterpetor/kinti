@@ -30,6 +30,31 @@ const nextConfig = {
       },
     ];
   },
+  // Globális biztonsági fejlécek minden válaszra. Tudatosan KÖNNYŰ CSP: csak
+  // frame-ancestors / base-uri / object-src — NINCS default-src/script-src, így
+  // nem töri a Clerk-et, az inline scripteket, a térkép-csempéket vagy a CF
+  // beacont, viszont kivédi a clickjackinget és a <base>-injekciót. A
+  // /api/media route ezen felül saját, szigorúbb (sandbox) CSP-t is kap.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), payment=(), usb=(), geolocation=(self)',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 if (process.env.NODE_ENV === "development") {
