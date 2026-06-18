@@ -68,6 +68,10 @@ VÁLASZ FORMÁTUM (KIZÁRÓLAG JSON, semmi más):
       user: `Nyers tapasztalat: """${text}"""`,
       maxTokens: 600,
       temperature: 0.5,
+      // 600 token a legnagyobb budget az appban — a 8B „fast" modellnek a hosszú
+      // system prompttal ez >12-20s is lehet, ezért bő keret kell, különben mindig
+      // „túlterhelt"-be fut. 30s biztonságos a Pages Function I/O-keretén belül.
+      timeoutMs: 30_000,
     });
     if (!ai.ok) {
       return NextResponse.json(

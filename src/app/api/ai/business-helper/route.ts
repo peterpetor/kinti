@@ -74,6 +74,7 @@ VÁLASZ FORMÁTUM (KIZÁRÓLAG JSON, semmi más):
       user: `Nyers leírás: """${description}"""`,
       maxTokens: 400,
       temperature: 0.4,
+      timeoutMs: 28_000,
     });
     if (!ai.ok) {
       return NextResponse.json(
