@@ -360,6 +360,29 @@ export default function AdatvedelemPage() {
           jelentkezéseidet a böngésződben a „Jelentkezéseim" nézetben követheted.</li>
       </ul>
 
+      <h3>2.18 Kereshető munkavállalói profil (jelölt-adatbázis)</h3>
+      <p>
+        Ha az Állások modulban <strong>munkavállalói profilt</strong> hozol létre és azt
+        <strong> „kereshető"-re</strong> állítod, a profilodat felvesszük egy jelölt-keresőbe,
+        ahol a platform <strong>jóváhagyott (moderált) munkáltatói</strong> rákereshetnek és
+        megnézhetik. A profil <strong>kereshetővé tétele a te kifejezett, bármikor visszavonható
+        döntésed</strong>; a kapcsolót a profilodban kikapcsolhatod, vagy a profilt törölheted.
+      </p>
+      <ul>
+        <li><strong>Kezelt / megjelenített adatok:</strong> a megadott neved, kantonod, szakmai
+          kategóriád, elérhetőséged és — ha feltöltötted — az <strong>önéletrajzod (CV)</strong>.</li>
+        <li><strong>Címzettek:</strong> nem egyetlen munkáltató, hanem a platform <strong>összes
+          jóváhagyott munkáltatója</strong>, aki a jelölt-keresőt használja (ez különbözik a 2.17
+          pont szerinti, egyetlen hirdetőnek küldött jelentkezéstől). A CV a Cloudflare R2-ben
+          tárolt, nem nyilvános; kizárólag bejelentkezett, jóváhagyott munkáltató (és technikai
+          okból az adminisztráció) töltheti le.</li>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a profil kereshetővé
+          tételével).</li>
+        <li><strong>Tárolási idő:</strong> amíg a profilod kereshető, illetve a profil / a CV
+          törléséig. A kereshetőséget bármikor kikapcsolhatod, vagy törlést kérhetsz a{" "}
+          <a href="mailto:info@kinti.app">info@kinti.app</a> címen.</li>
+      </ul>
+
       <h2>3. Cookie-k</h2>
       <p>
         Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk: a Clerk session-cookie
