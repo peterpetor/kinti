@@ -34,6 +34,46 @@ const isMaintenanceExempt = createRouteMatcher([
   "/api/webhooks(.*)",
 ]);
 
+/**
+ * Szigorú, nonce-alapú CSP — egyelőre REPORT-ONLY módban (nem blokkol, csak
+ * jelent a böngésző-konzolba), hogy élesben kockázat nélkül kiderüljön, mit
+ * kell engedélyezni. A nonce minden kéréshez új; a Next 14 a request-header
+ * `Content-Security-Policy`-ból olvassa ki és teszi rá a saját scriptjeire, a
+ * `'strict-dynamic'` pedig a nonce-olt bootstrap által betöltött további
+ * scripteket (Clerk, Turnstile, CF beacon, MapLibre) is megbízhatóvá teszi.
+ * A `https: 'unsafe-inline'` csak a strict-dynamic-et NEM támogató régi
+ * böngészők fallbackje (azokat az újak figyelmen kívül hagyják).
+ *
+ * Élesítés: a response-fejléc nevét `Content-Security-Policy`-ra cserélve
+ * (a `-Report-Only` levételével) válik kötelezővé — a konzol-jelentések tiszta
+ * állapota után.
+ */
+function buildStrictCsp(nonce: string): string {
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://api.frankfurter.app https://challenges.cloudflare.com https://cloudflareinsights.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.kinti.app https://api.maptiler.com https://tiles.openfreemap.org https://*.basemaps.cartocdn.com",
+    "frame-src 'self' https://challenges.cloudflare.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.kinti.app https://*.lemonsqueezy.com",
+    "worker-src 'self' blob:",
+    "manifest-src 'self'",
+    "base-uri 'self'",
+    "form-action 'self' https://*.lemonsqueezy.com",
+    "object-src 'none'",
+    "frame-ancestors 'self'",
+  ].join("; ");
+}
+
+/** Edge-kompatibilis base64 nonce (16 random bájt). */
+function makeNonce(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
+
 async function isCurrentUserAdmin(): Promise<boolean> {
   try {
     const cfEnv = (getRequestContext().env || {}) as { ADMIN_EMAILS?: string };
@@ -90,6 +130,21 @@ export default clerkMiddleware(async (auth, req) => {
     if (!(await isCurrentUserAdmin())) {
       return NextResponse.redirect(new URL("/keszul", req.url));
     }
+  }
+
+  // Szigorú nonce-alapú CSP CSAK HTML-oldalakra (az API-válaszokban nincs script,
+  // ott felesleges). REPORT-ONLY: nem blokkol, csak a konzolba jelent. A request-
+  // header `Content-Security-Policy`-t a Next a saját scriptjei nonce-olásához
+  // olvassa (a böngészőhöz nem jut el); a kliens csak a Report-Only fejlécet kapja.
+  if (!req.nextUrl.pathname.startsWith("/api")) {
+    const nonce = makeNonce();
+    const csp = buildStrictCsp(nonce);
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-nonce", nonce);
+    requestHeaders.set("Content-Security-Policy", csp);
+    const res = NextResponse.next({ request: { headers: requestHeaders } });
+    res.headers.set("Content-Security-Policy-Report-Only", csp);
+    return res;
   }
 });
 
