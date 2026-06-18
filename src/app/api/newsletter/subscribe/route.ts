@@ -5,6 +5,7 @@ import { isDisposableEmail } from "@/lib/disposable-emails";
 import { safeLogError } from "@/lib/safe-log";
 import { hashIp } from "@/lib/security";
 import { countRecentSpamLog, logSpamSubmit } from "@/lib/repo";
+import { getCloudflareEnv } from "@/lib/cloudflare";
 
 export const runtime = "edge";
 
@@ -51,10 +52,14 @@ export async function POST(req: Request) {
       manageToken,
     });
 
-    // TODO: get dynamic origin from request headers (x-forwarded-host, etc.) 
-    // or use a configured base url
-    const origin = req.headers.get("origin") || "https://kinti.app";
-    const confirmUrl = `${origin}/api/newsletter/confirm/${confirmToken}`;
+    // Bázis-URL a megerősítő linkhez. SOHA ne a kliens által küldött `Origin`
+    // headerből — azt egy támadó hamisíthatja, és a kinti nevében küldött
+    // megerősítő-email linkje az ő doménjére mutatna (token-szivárgás / phishing).
+    // A kanonikus minta: konfigurált PUBLIC_BASE_URL, fallback a valódi
+    // kérés-origin (req.url — a CF a zónához validált hosztot adja).
+    const baseUrl =
+      getCloudflareEnv().PUBLIC_BASE_URL?.replace(/\/$/, "") || new URL(req.url).origin;
+    const confirmUrl = `${baseUrl}/api/newsletter/confirm/${confirmToken}`;
 
     await sendNewsletterConfirmationEmail({
       to: email,

@@ -178,7 +178,14 @@ export async function POST(req: Request) {
 
   // === RÉGI ÚT (legacy email-confirm) — visszafelé kompat ===
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
-  const expiresAt = new Date(now.getTime() + BUSINESS_CONFIRM_TTL_MS).toISOString();
+  // SZÓKÖZ-elválasztó (nem 'T'/'Z') — a D1 `datetime('now')` így tárol, és az
+  // `expires_at > datetime('now')` string-összehasonlítás csak így pontos.
+  // 'T'-vel (0x54 > 0x20 space) az aznapi, már lejárt token éjfélig érvényesnek
+  // látszana.
+  const expiresAt = new Date(now.getTime() + BUSINESS_CONFIRM_TTL_MS)
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
 
   await createBusinessSubmission({
     id,

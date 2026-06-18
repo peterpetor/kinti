@@ -143,7 +143,12 @@ export async function POST(req: Request) {
   }
 
   const confirmToken = crypto.randomUUID().replace(/-/g, "");
-  const expiresAt = new Date(now.getTime() + REVIEW_CONFIRM_TTL_MS).toISOString();
+  // SZÓKÖZ-elválasztó (nem 'T') — a D1 `datetime('now')` így tárol; az
+  // `expires_at > datetime('now')` string-összehasonlítás csak így pontos.
+  const expiresAt = new Date(now.getTime() + REVIEW_CONFIRM_TTL_MS)
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
 
   await createReviewDraft({
     id,
