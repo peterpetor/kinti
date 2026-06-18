@@ -55,11 +55,23 @@ export async function extractCvText(
 ): Promise<CvExtractResult> {
   if (!cvKey) return { ok: false, text: "", reason: "no-cv" };
 
+  // R2-olvasás (külön a parse-tól: így megkülönböztethető a "nincs fájl" a
+  // "parse-hiba"-tól).
+  let buf: Uint8Array;
   try {
     const obj = await bucket.get(cvKey);
-    if (!obj) return { ok: false, text: "", reason: "not-found" };
+    if (!obj) {
+      console.error(`[cv-extract] R2 miss: nincs objektum a kulcson: ${cvKey}`);
+      return { ok: false, text: "", reason: "not-found" };
+    }
+    buf = new Uint8Array(await obj.arrayBuffer());
+  } catch (err) {
+    console.error("[cv-extract] R2 get hiba:", err);
+    return { ok: false, text: "", reason: "not-found" };
+  }
 
-    const buf = new Uint8Array(await obj.arrayBuffer());
+  // PDF → szöveg (unpdf, edge). Ha ez dob, az a parse-réteg hibája.
+  try {
     const { extractText, getDocumentProxy } = await import("unpdf");
     const pdf = await getDocumentProxy(buf);
     const { text } = await extractText(pdf, { mergePages: true });
@@ -70,7 +82,8 @@ export async function extractCvText(
     if (clean.length < 80) return { ok: false, text: clean, reason: "empty" };
 
     return { ok: true, text: clean.slice(0, MAX_CHARS) };
-  } catch {
+  } catch (err) {
+    console.error("[cv-extract] unpdf parse hiba (edge):", err);
     return { ok: false, text: "", reason: "error" };
   }
 }

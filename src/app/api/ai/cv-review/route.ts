@@ -64,10 +64,13 @@ export async function POST(req: Request) {
       const msg =
         extracted.reason === "no-cv"
           ? "Előbb tölts fel egy CV-t (PDF) a profilodban, aztán futtasd az auditot."
-          : extracted.reason === "empty"
-            ? "A CV-ből nem sikerült szöveget kinyerni. Valószínűleg szkennelt/kép-alapú PDF — tölts fel szöveges (kimásolható) PDF-et."
-            : "A CV-t most nem sikerült beolvasni. Próbáld újra kicsit később.";
-      return NextResponse.json({ error: msg }, { status: 422 });
+          : extracted.reason === "not-found"
+            ? "Nem találom a feltöltött CV-fájlt a tárolóban — lehet, hogy a feltöltés nem fejeződött be. Töltsd fel újra a CV-t a profilban."
+            : extracted.reason === "empty"
+              ? "A PDF-ből nem jött ki szöveg (valószínűleg szkennelt/kép-alapú). Tölts fel szöveges, kimásolható PDF-et."
+              : "A PDF feldolgozása a szerveren hibára futott (PDF-parse). Ezt nézem — szólj, ha látod ezt az üzenetet.";
+      // A reason-t a kliensnek is visszaadjuk (diagnosztika; nem érzékeny adat).
+      return NextResponse.json({ error: msg, reason: extracted.reason }, { status: 422 });
     }
 
     const system = `Te a kinti.app SVÁJCI CV-szakértője vagy, magyar anyanyelvű, Svájcban álláskereső ügyfeleknek. A felhasználó nyers CV-szövegét kapod (PDF-ből kinyerve). Készíts MAGYAR nyelven egy komoly, konkrét auditot a SVÁJCI munkaerőpiac elvárásai szerint.
