@@ -9,7 +9,7 @@
  */
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { getDB } from "./cloudflare";
+import { getDB, getCloudflareEnv } from "./cloudflare";
 
 export interface Subscription {
   userId: string;
@@ -37,6 +37,22 @@ function toSubscription(r: SubscriptionRow): Subscription {
 /** Aktív hozzáférést adó státuszok. */
 const ACTIVE_STATUSES = new Set(["active", "on_trial"]);
 
+/**
+ * Él-e a PRO-zárolás? CSAK akkor, ha a `PRO_ENFORCED` env-flag === "true".
+ * Egyébként TESZT-MÓD: a PRO funkciók mindenkinek elérhetők (a fizetés
+ * bekötése után a flag bekapcsolásával — kódváltoztatás nélkül — aktiválódik
+ * a zárolás). Edge-en a binding-ról olvasunk, process.env csak dev-fallback.
+ */
+export function isProEnforced(): boolean {
+  let v: string | undefined;
+  try {
+    v = (getCloudflareEnv() as { PRO_ENFORCED?: string }).PRO_ENFORCED;
+  } catch {
+    /* nincs request-kontextus (pl. unit teszt) → process.env fallback */
+  }
+  return (v ?? process.env.PRO_ENFORCED) === "true";
+}
+
 export async function getSubscription(userId: string): Promise<Subscription | null> {
   try {
     const row = await getDB()
@@ -50,10 +66,20 @@ export async function getSubscription(userId: string): Promise<Subscription | nu
 }
 
 /**
- * PRO-e a felhasználó? Aktív/trial státusz VAGY a periódus vége még a jövőben
- * (lemondott, de a végéig járó hozzáférés). Hiba/nincs előfizetés → false.
+ * PRO-e a felhasználó (a HOZZÁFÉRÉS szempontjából)?
+ *
+ * TESZT-MÓD: ha a zárolás nincs élesítve (`PRO_ENFORCED !== "true"`), MINDENKI
+ * PRO — így a PRO funkciók fizetés nélkül tesztelhetők. A statikus „PRO"
+ * jelzések (pl. `lesson.isPro` arany stílus, „PRO funkció" címkék) ettől
+ * függetlenül megmaradnak, mert nem a user-státuszból, hanem a funkció-adatból
+ * jönnek — csak a paywall-zárak / -átirányítások oldódnak fel.
+ *
+ * Élesben (`PRO_ENFORCED === "true"`): aktív/trial státusz VAGY a periódus vége
+ * még a jövőben (lemondott, de a végéig járó hozzáférés). Hiba/nincs előfizetés
+ * → false.
  */
 export async function isPro(userId: string | null | undefined): Promise<boolean> {
+  if (!isProEnforced()) return true;
   if (!userId) return false;
   const sub = await getSubscription(userId);
   if (!sub) return false;
@@ -65,7 +91,8 @@ export async function isPro(userId: string | null | undefined): Promise<boolean>
 /**
  * PRO oldal-guard szerver-komponensekhez (egységes a szótár-leckék isPro-
  * ellenőrzésével): nem-bejelentkezettet a loginra, nem-PRO-t a /pro vásárló-
- * oldalra irányít. Mivel a Lemon Squeezy él, mindig zárol (nincs env-flag).
+ * oldalra irányít. A zárolás az `isPro()`-n keresztül a `PRO_ENFORCED` flaget
+ * követi: teszt-módban (flag nincs „true") nem irányít át, a funkció elérhető.
  */
 export async function requirePro(
   currentPath: string,
