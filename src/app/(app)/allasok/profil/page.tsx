@@ -101,9 +101,9 @@ export default async function WorkerProfilePage() {
         />
       </section>
 
-      {/* AI CV-asszisztens (PRO) */}
+      {/* AI CV-audit (PRO) */}
       {pro ? (
-        <CvAssistant />
+        <CvAssistant hasCv={!!profile?.cvKey} />
       ) : (
         <Link
           href="/pro"
@@ -111,7 +111,7 @@ export default async function WorkerProfilePage() {
         >
           <span className="text-xl">🔒</span>
           <span className="min-w-0 flex-1 text-[13px] leading-snug text-ink">
-            <strong className="text-[#cc7700]">PRO — AI CV-asszisztens:</strong> a tapasztalatodból svájci stílusú szakmai összefoglaló, kiemelendő pontok és jelentkezési tippek.
+            <strong className="text-[#cc7700]">PRO — AI CV-audit:</strong> átnézi a feltöltött CV-det, pontozza a svájci HR-elvárások szerint, és konkrét javításokat + újraírt szakaszokat ad.
           </span>
           <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
         </Link>
