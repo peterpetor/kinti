@@ -16,8 +16,8 @@ export interface CvExtractResult {
   reason?: "no-cv" | "not-found" | "empty" | "error";
 }
 
-/** Max. karakter, amit az LLM-nek átadunk (kb. 2-3 oldalnyi CV bőven elfér). */
-const MAX_CHARS = 8000;
+/** Max. karakter, amit az LLM-nek átadunk (kb. 2 oldalnyi CV; gyorsabb prefill). */
+const MAX_CHARS = 6000;
 
 /**
  * Kinyeri a megadott R2-kulcson lévő PDF szövegét a Cloudflare AI.toMarkdown-nal.

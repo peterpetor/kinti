@@ -87,7 +87,7 @@ Vizsgáld kiemelten (svájci specifikumok):
 
 Szabályok:
 - KIZÁRÓLAG a megadott CV-tartalomból dolgozz — NE találj ki céget, évszámot, képesítést, eredményt. Ahol adat hiányzik, a "fix"-ben kérd be, ne pótold kitalálttal.
-- A "rewrite" mezőben a 2–3 LEGGYENGÉBB szakaszt írd újra svájci formátumban, a meglévő tényekre építve (a hiányzó számokat jelöld [...]-tal).
+- LÉGY TÖMÖR (a válasznak bőven bele kell férnie a keretbe): max 4 strengths, max 5 issues, és a "rewrite"-ban a 2 LEGGYENGÉBB szakasz — rövid, lényegre törő mondatokkal, a meglévő tényekre építve (a hiányzó számokat jelöld [...]-tal).
 - Pontozz reálisan, ne hízelegj.
 
 VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
@@ -103,9 +103,11 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
       model: MODEL,
       system,
       user: `CV-tartalom:\n"""\n${cvText}\n"""`,
-      maxTokens: 1800,
+      // Kisebb kimenet + bő timeout: a 70B-nek bele kell férnie a Pages Function
+      // I/O-keretébe (a korábbi 1800 token / 45s rendszeresen lejárt → „túlterhelt").
+      maxTokens: 1000,
       temperature: 0.4,
-      timeoutMs: 45_000,
+      timeoutMs: 55_000,
     });
 
     if (!ai.ok) {
