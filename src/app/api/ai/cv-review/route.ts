@@ -16,9 +16,8 @@ export const dynamic = "force-dynamic";
  *
  * 1) Kiolvassa a user worker-profiljához tartozó CV-t az R2-ből, és a Cloudflare
  *    AI.toMarkdown-nal szöveggé alakítja (lásd cv-extract.ts).
- * 2) Svájci HR-szempontú AUDIT: 0–100 pont, erősségek, szakaszonkénti konkrét
- *    hibák + javítások.
- * 3) A 2–3 leggyengébb szakaszt ÚJRAÍRJA svájci formátumban.
+ * 2) Svájci HR-szempontú AUDIT (CSAK értékelés, nincs újraírás → kevés token,
+ *    gyors): 0–100 pont, erősségek, szakaszonkénti konkrét hibák + javítások.
  *
  * Modell-stratégia: egy gyors, modern modellel próbálkozunk (jó minőség, gyors),
  * és ha az bármiért nem ad választ (timeout/hiba/throttling), FALLBACK a biztosan
@@ -33,10 +32,6 @@ interface CvIssue {
   section: string;
   problem: string;
   fix: string;
-}
-interface CvRewrite {
-  title: string;
-  content: string;
 }
 
 export async function POST(req: Request) {
@@ -89,9 +84,10 @@ Vizsgáld kiemelten (svájci specifikumok):
 - Időrendi hézagok, túl hosszú szöveg, magyar-specifikus, CH-ban szokatlan elemek.
 - Arbeitszeugnis / Motivationsschreiben utalások, releváns CH-képesítés-megfeleltetés.
 
+FONTOS: CSAK ÉRTÉKELSZ — NEM írsz újra szakaszokat, NEM generálsz új CV-szöveget.
 Szabályok:
 - KIZÁRÓLAG a megadott CV-tartalomból dolgozz — NE találj ki céget, évszámot, képesítést, eredményt. Ahol adat hiányzik, a "fix"-ben kérd be, ne pótold kitalálttal.
-- LÉGY TÖMÖR (a válasznak bőven bele kell férnie a keretbe): max 4 strengths, max 5 issues, és a "rewrite"-ban a 2 LEGGYENGÉBB szakasz — rövid, lényegre törő mondatokkal, a meglévő tényekre építve (a hiányzó számokat jelöld [...]-tal).
+- LÉGY TÖMÖR: max 4 strengths, max 6 issues; rövid, lényegre törő mondatok.
 - Pontozz reálisan, ne hízelegj.
 
 VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
@@ -99,28 +95,28 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
   "score": <egész 0-100>,
   "summary": "<2-3 mondatos összegzés>",
   "strengths": ["<erősség>", "..."],
-  "issues": [{"section":"<szakasz neve>","problem":"<mi a baj>","fix":"<konkrét javítás>"}],
-  "rewrite": [{"title":"<szakasz címe, pl. Kurzprofil>","content":"<újraírt, svájci formátumú szöveg>"}]
+  "issues": [{"section":"<szakasz neve>","problem":"<mi a baj>","fix":"<konkrét javítás>"}]
 }`;
 
     const userMsg = `CV-tartalom:\n"""\n${cvText}\n"""`;
-    // 1) Gyors, modern modell. 2) Ha nem ad választ → fallback a 8B-re.
+    // Csak értékelés (nincs újraírás) → KICSI kimenet → gyors, nem fut „túlterhelt"-be.
+    // 1) gyors modern modell; 2) ha nem ad választ → a bevált 8B.
     let ai = await runAiChat({
       model: PRIMARY_MODEL,
       system,
       user: userMsg,
-      maxTokens: 1000,
+      maxTokens: 600,
       temperature: 0.4,
-      timeoutMs: 30_000,
+      timeoutMs: 22_000,
     });
     if (!ai.ok) {
       ai = await runAiChat({
         model: FALLBACK_MODEL,
         system,
         user: userMsg,
-        maxTokens: 900,
+        maxTokens: 600,
         temperature: 0.4,
-        timeoutMs: 25_000,
+        timeoutMs: 18_000,
       });
     }
 
@@ -137,7 +133,6 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
       summary?: string;
       strengths?: string[];
       issues?: CvIssue[];
-      rewrite?: CvRewrite[];
     }>(ai.text);
     if (!parsed) {
       return NextResponse.json({ error: "Nem értelmezhető AI-válasz. Próbáld újra." }, { status: 502 });
@@ -160,17 +155,6 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
           .slice(0, 8)
       : [];
 
-    const rewrite: CvRewrite[] = Array.isArray(parsed.rewrite)
-      ? parsed.rewrite
-          .filter((r): r is CvRewrite => !!r && typeof r === "object")
-          .map((r) => ({
-            title: String(r.title ?? "").slice(0, 80).trim(),
-            content: String(r.content ?? "").slice(0, 1500).trim(),
-          }))
-          .filter((r) => r.content)
-          .slice(0, 4)
-      : [];
-
     const scoreRaw = typeof parsed.score === "number" ? parsed.score : Number(parsed.score);
     const score = Number.isFinite(scoreRaw) ? Math.max(0, Math.min(100, Math.round(scoreRaw))) : null;
 
@@ -179,7 +163,6 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
       summary: typeof parsed.summary === "string" ? parsed.summary.slice(0, 600).trim() : "",
       strengths: strArr(parsed.strengths, 6),
       issues,
-      rewrite,
     });
   } catch (err) {
     safeLogError("api/ai/cv-review", err);

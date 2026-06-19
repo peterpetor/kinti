@@ -9,23 +9,17 @@ interface CvIssue {
   problem: string;
   fix: string;
 }
-interface CvRewrite {
-  title: string;
-  content: string;
-}
 interface CvReview {
   score: number | null;
   summary: string;
   strengths: string[];
   issues: CvIssue[];
-  rewrite: CvRewrite[];
 }
 
 /**
  * AI CV-audit (PRO) — a FELTÖLTÖTT CV-t (PDF) nézi át a szerver: R2 → szöveg
- * (Cloudflare AI.toMarkdown) → erős (70B) modell. Eredmény: 0–100 pont,
- * erősségek, szakaszonkénti konkrét hibák + javítások, végül a leggyengébb
- * szakaszok svájci formátumban újraírva.
+ * (Cloudflare AI.toMarkdown) → modell. CSAK értékel (nem ír újra): 0–100 pont,
+ * erősségek, szakaszonkénti konkrét hibák + javítások.
  */
 export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
   const [busy, setBusy] = useState(false);
@@ -52,7 +46,6 @@ export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
         summary: data.summary ?? "",
         strengths: data.strengths ?? [],
         issues: data.issues ?? [],
-        rewrite: data.rewrite ?? [],
       });
     } catch {
       setError("Hálózati hiba — próbáld újra.");
@@ -147,26 +140,9 @@ export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
             </div>
           )}
 
-          {result.rewrite.length > 0 && (
-            <div>
-              <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
-                Újraírt szakaszok (svájci formátum)
-              </p>
-              <div className="space-y-2">
-                {result.rewrite.map((r, i) => (
-                  <Block key={i} title={r.title || "Szakasz"} copyText={r.content}>
-                    <p className="whitespace-pre-line text-[13px] leading-relaxed text-ink">
-                      {r.content}
-                    </p>
-                  </Block>
-                ))}
-              </div>
-            </div>
-          )}
-
           <p className="text-[11px] text-ink-faint">
-            Az AI csak javaslat — ellenőrizd és igazítsd a saját szavaidra, mielőtt a CV-dbe
-            emeled. A [...] helyekre a saját konkrét adataidat írd.
+            Az AI csak javaslat — a végső döntés a tiéd. A „mit javíts" pontokat a saját
+            CV-szerkesztődben vezesd át.
           </p>
         </div>
       )}
@@ -197,34 +173,3 @@ function ScoreBar({ score }: { score: number }) {
   );
 }
 
-function Block({
-  title,
-  copyText,
-  children,
-}: {
-  title: string;
-  copyText: string;
-  children: React.ReactNode;
-}) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <div className="rounded-[12px] border border-primary/20 bg-surface p-3">
-      <div className="mb-1 flex items-center justify-between">
-        <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">{title}</p>
-        <button
-          type="button"
-          onClick={() => {
-            navigator.clipboard?.writeText(copyText).then(() => {
-              setCopied(true);
-              setTimeout(() => setCopied(false), 1500);
-            });
-          }}
-          className="text-[11px] font-bold text-primary"
-        >
-          {copied ? "✓ Másolva" : "Másolás"}
-        </button>
-      </div>
-      {children}
-    </div>
-  );
-}
