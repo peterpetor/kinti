@@ -1,8 +1,27 @@
 import Link from "next/link";
 import { Icon, ScreenHeader } from "@/components/ui";
 import { GUIDES, GUIDES_DISCLAIMER } from "@/lib/guides";
-import { KintiAssistant } from "@/components/kinti-assistant";
+import { GuideSearch } from "@/components/guide-search";
 import { OfflineGuidesButton } from "@/components/offline-guides-button";
+
+/** Kereshető index a guide-okból (kliensoldali, INGYENES kulcsszavas kereséshez). */
+const GUIDE_INDEX = GUIDES.map((g) => ({
+  slug: g.slug,
+  title: g.title,
+  summary: g.summary,
+  icon: g.icon,
+  hay: [
+    g.title,
+    g.summary,
+    ...g.sections.flatMap((s) => [
+      s.heading,
+      s.body?.join(" ") ?? "",
+      s.bullets?.join(" ") ?? "",
+    ]),
+  ]
+    .join(" ")
+    .toLowerCase(),
+}));
 
 export const runtime = "edge";
 
@@ -26,7 +45,7 @@ export default function TudasbazisPage() {
         }
       />
 
-      <KintiAssistant />
+      <GuideSearch guides={GUIDE_INDEX} />
 
       <OfflineGuidesButton
         paths={["/tudasbazis", ...GUIDES.map((g) => `/tudasbazis/${g.slug}`)]}

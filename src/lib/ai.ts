@@ -198,7 +198,6 @@ export interface AiRateLimitConfig {
 export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "parse-search": { windowHours: 1, maxPerWindow: 20 },
   "business-helper": { windowHours: 1, maxPerWindow: 10 },
-  "ai-ask": { windowHours: 1, maxPerWindow: 15 }, // Kinti Asszisztens — AI-koltseg/DoS vedelem
 
   "german-term": { windowHours: 1, maxPerWindow: 50 },
   "review-summary": { windowHours: 1, maxPerWindow: 30 },
