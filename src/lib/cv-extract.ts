@@ -56,7 +56,15 @@ export async function extractCvText(
       { name: "cv.pdf", blob: new Blob([bytes], { type: "application/pdf" }) },
     ])) as Array<{ data?: string }> | { data?: string } | null;
 
+    // DIAGNOSZTIKA: mit adott vissza a toMarkdown erre a PDF-re?
+    try {
+      console.log(`[cv-extract] toMarkdown out: ${JSON.stringify(out).slice(0, 600)}`);
+    } catch {
+      console.log("[cv-extract] toMarkdown out: <nem-szerializálható>");
+    }
+
     const raw = Array.isArray(out) ? (out[0]?.data ?? "") : (out?.data ?? "");
+    console.log(`[cv-extract] raw len=${typeof raw === "string" ? raw.length : "n/a"}, preview=${String(raw).slice(0, 250)}`);
     const clean = raw
       .replace(/[ \t]{2,}/g, " ")
       .replace(/[ \t]+\n/g, "\n")
