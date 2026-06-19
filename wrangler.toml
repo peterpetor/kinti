@@ -61,7 +61,7 @@ binding = "AI"
 #   2) vedd ki az alábbi blokk kommentjét, majd deploy (push main)
 #   3) POST /api/admin/reindex-search (admin) — feltölti a vektorokat
 # Amíg ez kommentben van, a VECTORIZE binding undefined → kulcsszavas fallback.
-# [[vectorize]]
-# binding = "VECTORIZE"
-# index_name = "kinti-search"
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "kinti-search"
 
