@@ -10,6 +10,7 @@ import { ModerationDecideButtons } from "@/components/admin/moderation-decide-bu
 import {
   getAdminStats,
   getAdminTrends,
+  getAiUsageStats,
   listOpenReports,
   listPendingEvents,
   listBusinessesForAdmin,
@@ -25,15 +26,19 @@ export default async function AdminPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  const [stats, trends, openReports, pendingEvents, businesses, events] =
+  const [stats, trends, aiUsage, openReports, pendingEvents, businesses, events] =
     await Promise.all([
       getAdminStats(),
       getAdminTrends(),
+      getAiUsageStats(),
       listOpenReports(),
       listPendingEvents(),
       listBusinessesForAdmin(),
       listEventsForAdmin(),
     ]);
+
+  const fmt = (n: number) => n.toLocaleString("hu-HU");
+  const FREE_NEURONS_DAY = 10000; // CF ingyenes napi keret (tájékoztató)
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-5 py-6">
@@ -55,6 +60,47 @@ export default async function AdminPage() {
         <Stat label="Munkaadó" value={stats.employers} />
         <Stat label="Hírlevél" value={stats.digestSubscribersConfirmed} sub="megerősített" />
         <Stat label="Nyitott jelentés" value={openReports.length} accent={openReports.length > 0} />
+      </section>
+
+      {/* AI-használat (Workers AI token-fogyás) */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">AI-használat (Workers AI)</h2>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Stat label="Ma — token" value={aiUsage.todayTokens} sub={`${fmt(aiUsage.todayCalls)} hívás`} accent={aiUsage.todayTokens > 0} />
+          <Stat label="7 nap — token" value={aiUsage.last7Tokens} sub={`${fmt(aiUsage.last7Calls)} hívás`} />
+        </div>
+        {aiUsage.todayByModel.length > 0 ? (
+          <div className="overflow-hidden rounded-card border border-line bg-surface">
+            <table className="w-full text-[12px]">
+              <thead>
+                <tr className="border-b border-line text-ink-muted">
+                  <th className="px-3 py-2 text-left font-bold">Modell (ma)</th>
+                  <th className="px-3 py-2 text-right font-bold">Hívás</th>
+                  <th className="px-3 py-2 text-right font-bold">Input</th>
+                  <th className="px-3 py-2 text-right font-bold">Output</th>
+                  <th className="px-3 py-2 text-right font-bold">Összes token</th>
+                </tr>
+              </thead>
+              <tbody>
+                {aiUsage.todayByModel.map((r) => (
+                  <tr key={r.model} className="border-b border-line/60 last:border-0">
+                    <td className="px-3 py-2 font-mono text-[11px] text-ink">{r.model.replace("@cf/", "")}</td>
+                    <td className="px-3 py-2 text-right text-ink-muted">{fmt(r.calls)}</td>
+                    <td className="px-3 py-2 text-right text-ink-muted">{fmt(r.promptTokens)}</td>
+                    <td className="px-3 py-2 text-right text-ink-muted">{fmt(r.completionTokens)}</td>
+                    <td className="px-3 py-2 text-right font-bold text-ink">{fmt(r.totalTokens)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-[12px] text-ink-muted">Ma még nem volt AI-hívás (vagy a 0077 migráció még nem futott).</p>
+        )}
+        <p className="text-[11px] text-ink-faint">
+          A token app-szintű, becsült/valós érték — a pontos <strong>Neuron-fogyás és számla</strong> a Cloudflare
+          dashboard → AI → Workers AI alatt. Tájékoztató: az ingyenes keret kb. <strong>{fmt(FREE_NEURONS_DAY)} Neuron/nap</strong> (≠ token).
+        </p>
       </section>
 
       {/* Trendek — utolsó 14 nap */}

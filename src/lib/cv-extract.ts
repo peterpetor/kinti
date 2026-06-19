@@ -54,7 +54,16 @@ export async function extractCvText(
 
     const out = (await env.AI.toMarkdown([
       { name: "cv.pdf", blob: new Blob([bytes], { type: "application/pdf" }) },
-    ])) as Array<{ data?: string }> | { data?: string } | null;
+    ])) as Array<{ data?: string; tokens?: number }> | { data?: string; tokens?: number } | null;
+
+    // Token-fogyás naplózása az admin monitoringhoz (best-effort).
+    try {
+      const tokens = Array.isArray(out) ? (out[0]?.tokens ?? 0) : (out?.tokens ?? 0);
+      const { recordAiUsage } = await import("./ai");
+      await recordAiUsage("@cf/toMarkdown (PDF)", 0, tokens);
+    } catch {
+      /* a usage-napló sosem törheti a kinyerést */
+    }
 
     // DIAGNOSZTIKA: mit adott vissza a toMarkdown erre a PDF-re?
     try {

@@ -151,6 +151,68 @@ export async function getAdminStats(): Promise<AdminStats> {
   };
 }
 
+// --- AI-használat (Workers AI token-fogyás, admin monitoring) -----------------
+
+export interface AiUsageModelRow {
+  model: string;
+  calls: number;
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}
+export interface AiUsageStats {
+  /** Mai (UTC) összes hívás + token. */
+  todayCalls: number;
+  todayTokens: number;
+  /** Utolsó 7 nap (mai napot is beleértve). */
+  last7Calls: number;
+  last7Tokens: number;
+  /** Mai bontás modellenként (fogyás szerint csökkenő). */
+  todayByModel: AiUsageModelRow[];
+}
+
+export async function getAiUsageStats(): Promise<AiUsageStats> {
+  const today = new Date().toISOString().slice(0, 10);
+  const d7 = new Date(Date.now() - 6 * 86_400_000).toISOString().slice(0, 10);
+  const db = getDB();
+
+  // A tábla a 0077 migrációval jön létre; ha még nincs, üres statot adunk vissza.
+  const byModel = await db
+    .prepare(
+      `SELECT model, calls, prompt_tokens AS pt, completion_tokens AS ct
+       FROM ai_usage_daily WHERE day = ?
+       ORDER BY (prompt_tokens + completion_tokens) DESC`,
+    )
+    .bind(today)
+    .all<{ model: string; calls: number; pt: number; ct: number }>()
+    .catch(() => ({ results: [] as { model: string; calls: number; pt: number; ct: number }[] }));
+
+  const last7 = await db
+    .prepare(
+      `SELECT COALESCE(SUM(calls),0) AS calls, COALESCE(SUM(prompt_tokens + completion_tokens),0) AS tot
+       FROM ai_usage_daily WHERE day >= ?`,
+    )
+    .bind(d7)
+    .first<{ calls: number; tot: number }>()
+    .catch(() => null);
+
+  const todayByModel: AiUsageModelRow[] = (byModel.results ?? []).map((r) => ({
+    model: r.model,
+    calls: r.calls ?? 0,
+    promptTokens: r.pt ?? 0,
+    completionTokens: r.ct ?? 0,
+    totalTokens: (r.pt ?? 0) + (r.ct ?? 0),
+  }));
+
+  return {
+    todayCalls: todayByModel.reduce((n, r) => n + r.calls, 0),
+    todayTokens: todayByModel.reduce((n, r) => n + r.totalTokens, 0),
+    last7Calls: last7?.calls ?? 0,
+    last7Tokens: last7?.tot ?? 0,
+    todayByModel,
+  };
+}
+
 // --- Admin Trends (14 napos napi bontás) -------------------------------------
 
 export interface AdminTrends {

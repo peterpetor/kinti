@@ -45,6 +45,39 @@ function aiResponseToText(raw: unknown): string {
   }
 }
 
+/** Durva token-becslés szöveghosszból (ha a modell nem ad usage-t). ~4 char/token. */
+function estTokens(s: string | undefined | null): number {
+  return s ? Math.ceil(s.length / 4) : 0;
+}
+
+/**
+ * Egy AI-hívás token-fogyásának naplózása (napi + modellenkénti aggregátum az
+ * admin monitoringhoz). Best-effort: ha a tábla még nincs (migráció előtt) vagy
+ * bármi hiba van, NEM törheti az AI-hívást.
+ */
+export async function recordAiUsage(
+  model: string,
+  promptTokens: number,
+  completionTokens: number,
+): Promise<void> {
+  try {
+    const day = new Date().toISOString().slice(0, 10);
+    await getDB()
+      .prepare(
+        `INSERT INTO ai_usage_daily (day, model, calls, prompt_tokens, completion_tokens)
+         VALUES (?, ?, 1, ?, ?)
+         ON CONFLICT(day, model) DO UPDATE SET
+           calls = calls + 1,
+           prompt_tokens = prompt_tokens + excluded.prompt_tokens,
+           completion_tokens = completion_tokens + excluded.completion_tokens`,
+      )
+      .bind(day, model, Math.max(0, Math.round(promptTokens) || 0), Math.max(0, Math.round(completionTokens) || 0))
+      .run();
+  } catch {
+    /* usage-napló sosem törheti az AI-t */
+  }
+}
+
 /** Promise timeout-tal — ha az AI elakad, ne hagyjuk a worker-t a falig futni. */
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
@@ -83,8 +116,14 @@ export async function runAiChat(params: {
         ...(params.temperature !== undefined ? { temperature: params.temperature } : {}),
       }),
       timeoutMs,
-    )) as { response?: unknown };
+    )) as { response?: unknown; usage?: { prompt_tokens?: number; completion_tokens?: number } };
     const text = aiResponseToText(response?.response);
+    if (text) {
+      const model = params.model ?? DEFAULT_MODEL;
+      const pt = response?.usage?.prompt_tokens ?? estTokens(params.system) + estTokens(params.user);
+      const ct = response?.usage?.completion_tokens ?? estTokens(text);
+      await recordAiUsage(model, pt, ct);
+    }
     return text ? { ok: true, text } : { ok: false, text: "" };
   };
 
@@ -126,10 +165,17 @@ export async function runAiMultiTurnChat(params: {
       ],
       max_tokens: params.maxTokens ?? 350,
       ...(params.temperature !== undefined ? { temperature: params.temperature } : {}),
-    })) as { response?: unknown };
+    })) as { response?: unknown; usage?: { prompt_tokens?: number; completion_tokens?: number } };
 
     const text = aiResponseToText(response?.response);
     if (!text) return { ok: false, text: "" };
+    const model = params.model ?? DEFAULT_MODEL;
+    const ptAll = params.messages.reduce((n, m) => n + estTokens(m.content), 0);
+    await recordAiUsage(
+      model,
+      response?.usage?.prompt_tokens ?? estTokens(params.system) + ptAll,
+      response?.usage?.completion_tokens ?? estTokens(text),
+    );
     return { ok: true, text };
   } catch (err) {
     console.error("[ai] runAiMultiTurnChat hiba:", err);
