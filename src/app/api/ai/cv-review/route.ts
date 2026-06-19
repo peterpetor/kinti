@@ -47,12 +47,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // Napi limit (drága 70B hívás)
-    const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
-    const rl = await checkAiRateLimit("cv-review", ipHash);
+    // Napi limit FELHASZNÁLÓNKÉNT (nem IP — a funkció bejelentkezéshez kötött, így
+    // a userId a megbízható kulcs: közös IP-n se osztozzanak a kereten, és IP-cserével
+    // se legyen megkerülhető). A `hashIp` itt a userId-t hash-eli (csak SHA-256 kulcs).
+    const userKey = await hashIp(`cv-review-user:${userId}`);
+    const rl = await checkAiRateLimit("cv-review", userKey);
     if (!rl.allowed) {
       return NextResponse.json(
-        { error: `Mára elérted a CV-auditok számát. Próbáld holnap. (${rl.current}/${rl.max})` },
+        { error: `Mára elérted a CV-auditok számát (${rl.max}/nap). Próbáld holnap.` },
         { status: 429 },
       );
     }
@@ -128,7 +130,7 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
         { status: 503 },
       );
     }
-    await logAiRateLimit("cv-review", ipHash);
+    await logAiRateLimit("cv-review", userKey);
 
     const parsed = extractJsonObject<{
       score?: number;
