@@ -58,12 +58,10 @@ NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL = "/profil"
 [ai]
 binding = "AI"
 
-# --- Cloudflare Vectorize (szemantikus keresés) — KIKAPCSOLVA ---
-# Beüzemelés:
-#   1) wrangler vectorize create kinti-search --dimensions=1024 --metric=cosine
-#   2) vedd ki az alábbi blokk kommentjét, majd deploy (push main)
-#   3) POST /api/admin/reindex-search (admin) — feltölti a vektorokat
-# Amíg ez kommentben van, a VECTORIZE binding undefined → kulcsszavas fallback.
+# --- Cloudflare Vectorize (szemantikus keresés) — AKTÍV ---
+# Index: kinti-search (1024 dim, cosine; bge-m3). A vektorokat a
+# POST /api/admin/reindex-search (admin-only) tölti fel.
+# Ha a binding hiányozna / az index üres, a kód tisztán visszaesik kulcsszavasra.
 [[vectorize]]
 binding = "VECTORIZE"
 index_name = "kinti-search"

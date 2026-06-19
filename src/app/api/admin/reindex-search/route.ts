@@ -12,10 +12,9 @@ export const dynamic = "force-dynamic";
  * (újra)indexelése a Vectorize szemantikus keresőbe. Admin-only, egyszeri/manuális
  * művelet a Vectorize beüzemelése után (lásd wrangler.toml [[vectorize]]).
  */
-export async function POST(request: Request) {
+export async function POST() {
   const adminId = await getAdminUserId();
-  const bypassKey = request.headers.get("x-bypass-key");
-  if (!adminId && bypassKey !== "kinti-temp-reindex-123") {
+  if (!adminId) {
     return NextResponse.json({ error: "Csak adminisztrátor." }, { status: 403 });
   }
 
