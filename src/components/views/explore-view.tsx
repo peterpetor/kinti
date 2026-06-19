@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { BusinessCard, CategoryPills, Icon, SearchBar } from "@/components/ui";
+import { BusinessCard, CategoryPills, Icon } from "@/components/ui";
 import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Business, Category } from "@/lib/types";
@@ -12,7 +12,7 @@ import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode } from "@/
 import { readPreferredCanton, setPreferredCanton } from "@/lib/canton-pref";
 import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
 import { haversineKm } from "@/lib/distance";
-import { AISearchBar } from "./ai-search";
+import { SmartSearchBar } from "./smart-search-bar";
 import { PushOptin } from "@/components/push-optin";
 
 const RADIUS_OPTIONS_KM = [5, 10, 20, 50] as const;
@@ -209,13 +209,11 @@ export function ExploreView({
 
   return (
     <div className="space-y-3">
+      {/* EGY kereső: kulcsszavas (élő) + ✨ AI (természetes nyelv → szűrők) */}
       <div className="px-5">
-        <SearchBar value={q} onChange={setQ} />
-      </div>
-
-      {/* AI természetes nyelvű kereső */}
-      <div className="px-5">
-        <AISearchBar
+        <SmartSearchBar
+          value={q}
+          onChange={setQ}
           onApplyCategory={setCat}
           onApplyCanton={setCanton}
           onApplyQuery={setQ}
