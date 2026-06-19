@@ -20,10 +20,14 @@ export const dynamic = "force-dynamic";
  *    hibák + javítások.
  * 3) A 2–3 leggyengébb szakaszt ÚJRAÍRJA svájci formátumban.
  *
- * Egyetlen, erős (70B) modell-hívás, strukturált JSON kimenettel.
+ * Modell-stratégia: egy gyors, modern modellel próbálkozunk (jó minőség, gyors),
+ * és ha az bármiért nem ad választ (timeout/hiba/throttling), FALLBACK a biztosan
+ * elérhető, gyors 8B-re. Így a felhasználó mindig kap eredményt — a 70B önmagában
+ * ezen a fiókon rendszeresen „túlterhelt"-be futott (túl lassú/queue-zött).
  */
 
-const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+const PRIMARY_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
+const FALLBACK_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
 
 interface CvIssue {
   section: string;
@@ -99,16 +103,26 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
   "rewrite": [{"title":"<szakasz címe, pl. Kurzprofil>","content":"<újraírt, svájci formátumú szöveg>"}]
 }`;
 
-    const ai = await runAiChat({
-      model: MODEL,
+    const userMsg = `CV-tartalom:\n"""\n${cvText}\n"""`;
+    // 1) Gyors, modern modell. 2) Ha nem ad választ → fallback a 8B-re.
+    let ai = await runAiChat({
+      model: PRIMARY_MODEL,
       system,
-      user: `CV-tartalom:\n"""\n${cvText}\n"""`,
-      // Kisebb kimenet + bő timeout: a 70B-nek bele kell férnie a Pages Function
-      // I/O-keretébe (a korábbi 1800 token / 45s rendszeresen lejárt → „túlterhelt").
+      user: userMsg,
       maxTokens: 1000,
       temperature: 0.4,
-      timeoutMs: 55_000,
+      timeoutMs: 30_000,
     });
+    if (!ai.ok) {
+      ai = await runAiChat({
+        model: FALLBACK_MODEL,
+        system,
+        user: userMsg,
+        maxTokens: 900,
+        temperature: 0.4,
+        timeoutMs: 25_000,
+      });
+    }
 
     if (!ai.ok) {
       return NextResponse.json(
