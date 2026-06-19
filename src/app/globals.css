@@ -464,3 +464,11 @@
   font-family: inherit;
   background: rgb(var(--map-land));
 }
+
+/* A natív böngésző search-clear gomb (kék ×) elrejtése — a kereső-mezőink saját,
+   stílusos törlő-gombot adnak (lásd SearchBar), így a natív duplikátum zavaró volt. */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
