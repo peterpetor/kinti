@@ -24,8 +24,13 @@ export async function embedTexts(texts: string[]): Promise<number[][] | null> {
   const env = getCloudflareEnv();
   if (!env.AI) return null;
   try {
-    const res = (await env.AI.run(EMBEDDING_MODEL, { text: clean })) as { data?: number[][] };
+    const res = (await env.AI.run(EMBEDDING_MODEL, { text: clean })) as { data?: number[][], usage?: { prompt_tokens?: number } };
     const data = res?.data;
+    
+    const { recordAiUsage, estTokens } = await import("./ai");
+    const pt = res?.usage?.prompt_tokens ?? clean.reduce((acc, t) => acc + estTokens(t), 0);
+    await recordAiUsage(EMBEDDING_MODEL, pt, 0);
+
     if (!Array.isArray(data) || data.length === 0) return null;
     return data;
   } catch {

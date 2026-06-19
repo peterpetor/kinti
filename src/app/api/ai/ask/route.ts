@@ -83,7 +83,7 @@ Részletek:
         { role: "user", content: prompt }
       ],
       max_tokens: 512,
-    });
+    }) as { response?: string, usage?: { prompt_tokens?: number, completion_tokens?: number } };
 
     if (!response || !response.response) {
       safeLogError("[ai/ask] üres AI válasz", new Error("empty-ai-response"));
@@ -95,6 +95,13 @@ Részletek:
 
     const answer = response.response;
     await logAiRateLimit("ai-ask", ipHash);
+
+    const { recordAiUsage, estTokens } = await import("@/lib/ai");
+    await recordAiUsage(
+      "@cf/meta/llama-3.1-8b-instruct-fast",
+      response.usage?.prompt_tokens ?? estTokens(systemPrompt) + estTokens(prompt),
+      response.usage?.completion_tokens ?? estTokens(answer)
+    );
 
     return NextResponse.json(
       { answer },

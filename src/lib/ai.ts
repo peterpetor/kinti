@@ -46,7 +46,7 @@ function aiResponseToText(raw: unknown): string {
 }
 
 /** Durva token-becslés szöveghosszból (ha a modell nem ad usage-t). ~4 char/token. */
-function estTokens(s: string | undefined | null): number {
+export function estTokens(s: string | undefined | null): number {
   return s ? Math.ceil(s.length / 4) : 0;
 }
 

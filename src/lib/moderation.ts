@@ -42,9 +42,16 @@ export async function moderateImage(arrayBuffer: ArrayBuffer): Promise<Moderatio
         }
       ],
       max_tokens: 16,
-    }) as { response?: string };
+    }) as { response?: string, usage?: { prompt_tokens?: number, completion_tokens?: number } };
 
     const resultText = (response?.response || "").trim().toLowerCase();
+
+    const { recordAiUsage, estTokens } = await import("./ai");
+    await recordAiUsage(
+      "@cf/meta/llama-3.2-11b-vision-instruct",
+      response?.usage?.prompt_tokens ?? estTokens(prompt) + 1000, // 1000 for image approx
+      response?.usage?.completion_tokens ?? estTokens(resultText)
+    );
 
     // Elutasító szavak listája: Ha az AI biztonsági korlátok miatt nem hajlandó elemezni a képet,
     // az 100%, hogy durva pornográfia (NSFW) vagy erőszak, így ezt is el kell utasítanunk!
