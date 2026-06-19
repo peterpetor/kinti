@@ -27,6 +27,24 @@ const DEFAULT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
  */
 const AI_TIMEOUT_MS = 20_000;
 
+/**
+ * A Workers AI `response` mező → szöveg. NÉMELY modell (pl. ha a prompt JSON-t
+ * kér) NEM stringként, hanem már PARSE-olt OBJEKTUMként adja vissza a `response`-t
+ * — ilyenkor a régi `(response ?? "").trim()` `TypeError: .trim is not a function`-nal
+ * elszállt (és az egész hívás „túlterhelt"-nek látszott). Itt biztonságosan
+ * stringgé alakítjuk: stringnél marad, objektumnál JSON-né (amit az
+ * extractJsonObject később úgyis ki tud bontani).
+ */
+function aiResponseToText(raw: unknown): string {
+  if (typeof raw === "string") return raw.trim();
+  if (raw == null) return "";
+  try {
+    return JSON.stringify(raw).trim();
+  } catch {
+    return "";
+  }
+}
+
 /** Promise timeout-tal — ha az AI elakad, ne hagyjuk a worker-t a falig futni. */
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
@@ -65,8 +83,8 @@ export async function runAiChat(params: {
         ...(params.temperature !== undefined ? { temperature: params.temperature } : {}),
       }),
       timeoutMs,
-    )) as { response?: string };
-    const text = (response?.response ?? "").trim();
+    )) as { response?: unknown };
+    const text = aiResponseToText(response?.response);
     return text ? { ok: true, text } : { ok: false, text: "" };
   };
 
@@ -108,9 +126,9 @@ export async function runAiMultiTurnChat(params: {
       ],
       max_tokens: params.maxTokens ?? 350,
       ...(params.temperature !== undefined ? { temperature: params.temperature } : {}),
-    })) as { response?: string };
+    })) as { response?: unknown };
 
-    const text = (response?.response ?? "").trim();
+    const text = aiResponseToText(response?.response);
     if (!text) return { ok: false, text: "" };
     return { ok: true, text };
   } catch (err) {
