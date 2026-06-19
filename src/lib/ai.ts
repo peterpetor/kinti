@@ -160,7 +160,7 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "radar-subscribe": { windowHours: 1, maxPerWindow: 10 }, // Radar DoS védelem
   "interview-sim": { windowHours: 1, maxPerWindow: 50 }, // Interview simulator
   "cv-helper": { windowHours: 1, maxPerWindow: 8 }, // PRO CV-asszisztens (rövid szöveg-csiszolás)
-  "cv-review": { windowHours: 24, maxPerWindow: 6 }, // PRO CV-audit (feltöltött PDF elemzése — drága 70B hívás)
+  "cv-review": { windowHours: 24, maxPerWindow: 50 }, // PRO CV-audit (TESZT alatt magas; launchra ~5-6/user/nap)
   "leaderboard": { windowHours: 1, maxPerWindow: 20 }, // ranglista csatlakozás/szinkron
   "business-suggest": { windowHours: 1, maxPerWindow: 10 }, // Közösségi vállalkozás-ajánlás spam-védelem
   "lead-request": { windowHours: 1, maxPerWindow: 3 },     // Árajánlatkérés (lead) — max 3/IP/óra

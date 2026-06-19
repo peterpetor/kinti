@@ -163,6 +163,8 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
       summary: typeof parsed.summary === "string" ? parsed.summary.slice(0, 600).trim() : "",
       strengths: strArr(parsed.strengths, 6),
       issues,
+      // IDEIGLENES DIAGNOSZTIKA: mit nyert ki a toMarkdown a PDF-ből (hossz + előnézet).
+      _debug: { extractedLen: cvText.length, extractedPreview: cvText.slice(0, 400) },
     });
   } catch (err) {
     safeLogError("api/ai/cv-review", err);
