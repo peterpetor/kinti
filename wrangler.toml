@@ -43,6 +43,9 @@ NEXT_PUBLIC_CF_BEACON_TOKEN = ""
 # Kulcs: https://cloud.maptiler.com → Account → Keys (free, 100k load/hó).
 NEXT_PUBLIC_MAPTILER_KEY = ""
 
+# Cloudflare Image Transformations bekapcsolása a frontend kártyákhoz
+NEXT_PUBLIC_IMAGE_RESIZE = "1"
+
 # A valódi titkok (pl. CLERK_SECRET_KEY) továbbra is a Cloudflare Dashboardon 
 # vagy a 'wrangler pages secret put' paranccsal kerülnek beállításra.
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsua2ludGkuYXBwJA"
