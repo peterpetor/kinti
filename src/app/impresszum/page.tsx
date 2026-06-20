@@ -1,6 +1,5 @@
 import { LegalPage } from "@/components/legal-page";
 
-export const runtime = "edge";
 export const dynamic = "force-static";
 
 export const metadata = { title: "Impresszum" };

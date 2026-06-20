@@ -98,8 +98,7 @@ export async function publishReview(input: PublishReviewInput): Promise<void> {
 export async function getReviewsByBusiness(businessId: string): Promise<Review[]> {
   const { results } = await getDB()
     .prepare(
-      `SELECT r.id, r.business_id, r.rating, r.body, r.reviewer_name, r.published_at,
-              r.manage_token, r.email
+      `SELECT r.id, r.business_id, r.rating, r.body, r.reviewer_name, r.published_at
        FROM reviews r
        WHERE r.business_id = ? AND r.hidden = 0 AND r.moderation_status = 1
        ORDER BY r.published_at DESC`,
