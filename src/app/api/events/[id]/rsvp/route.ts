@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { addEventRsvp } from "@/lib/repo";
-import { hashIp } from "@/lib/security";
+import { getClientIp, hashIp } from "@/lib/security";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
  * (added=false → már szavazott erről az IP-ről).
  */
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const ip = req.headers.get("cf-connecting-ip") ?? null;
+  const ip = getClientIp(req);
   const ipHash = await hashIp(ip);
   if (!ipHash) {
     return NextResponse.json(

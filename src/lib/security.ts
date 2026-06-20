@@ -28,6 +28,36 @@ export const TERMS_VERSION = "2026-05-25";
  * Edge-runtime kompatibilis — a `crypto.subtle` minden Workers/Pages
  * környezetben elérhető.
  */
+/**
+ * A kliens IP-címe a request-fejlécekből, fallback-lánccal:
+ *   `cf-connecting-ip` (Cloudflare élesben MINDIG kitölti)
+ *   → `x-forwarded-for` (első tag, proxy-lánc esetén)
+ *   → `x-real-ip`.
+ *
+ * Miért kell: ha csak a `cf-connecting-ip`-re támaszkodunk, akkor lokál
+ * `next dev`-en (és bizonyos proxy-k mögött) hiányzik a fejléc, és az account
+ * nélküli flow-k (pl. esemény-RSVP „Megyek") váratlan 400-at dobnának. Élesben
+ * a CF-fejléc mindig jelen van, így a fallback oda sosem jut el.
+ *
+ * Ha egyik fejléc sincs, fejlesztésben stabil loopback-címet adunk vissza
+ * (hogy a funkció működjön), élesben pedig `null`-t (a hívó dönt a hibáról).
+ */
+export function getClientIp(req: Request): string | null {
+  const cf = req.headers.get("cf-connecting-ip");
+  if (cf?.trim()) return cf.trim();
+
+  const xff = req.headers.get("x-forwarded-for");
+  const first = xff?.split(",")[0]?.trim();
+  if (first) return first;
+
+  const real = req.headers.get("x-real-ip");
+  if (real?.trim()) return real.trim();
+
+  // Lokál fejlesztés: nincs proxy/CF-fejléc → stabil dev-IP, hogy ne 400-azzon.
+  if (process.env.NODE_ENV !== "production") return "127.0.0.1";
+  return null;
+}
+
 export async function hashIp(ip: string | null): Promise<string | null> {
   if (!ip) return null;
   const normalized = normalizeIpForHash(ip);
