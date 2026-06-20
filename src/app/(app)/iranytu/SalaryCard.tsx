@@ -94,31 +94,35 @@ export function SalaryCard({
         </div>
       </div>
 
-      {/* Akciógombok */}
-      <div className="flex gap-2 pt-1 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
+      {/* Akciógombok — egymás alá/rácsba rendezve, hogy a keskeny kártyán is
+          teljesen olvashatók legyenek (nincs vízszintes elcsúszás / levágás).
+          A gombok alatt nyílnak ki a részletek (Tapasztalat / Eloszlás / Trend). */}
+      <div className="space-y-2 pt-1">
         {expRows.length > 0 && (
           <button
             onClick={() => { setShowExp(v => !v); setShowTrend(false); setShowHist(false); }}
-            className={`shrink-0 text-[12px] font-bold py-1.5 px-3 rounded-lg border transition-colors
+            className={`w-full text-[12px] font-bold py-2 px-3 rounded-lg border transition-colors
               ${showExp ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
           >
-            {showExp ? "▲" : "▼"} Tapasztalat
+            {showExp ? "▲" : "▼"} Tapasztalat szerint
           </button>
         )}
-        <button
-          onClick={fetchHist}
-          className={`flex-1 shrink-0 text-[12px] font-bold py-1.5 px-3 rounded-lg border transition-colors
-            ${showHist ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
-        >
-          📊 Eloszlás
-        </button>
-        <button
-          onClick={fetchTrend}
-          className={`flex-1 shrink-0 text-[12px] font-bold py-1.5 px-3 rounded-lg border transition-colors
-            ${showTrend ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
-        >
-          📈 Trend
-        </button>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={fetchHist}
+            className={`text-[12px] font-bold py-2 px-3 rounded-lg border transition-colors
+              ${showHist ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
+          >
+            📊 Eloszlás
+          </button>
+          <button
+            onClick={fetchTrend}
+            className={`text-[12px] font-bold py-2 px-3 rounded-lg border transition-colors
+              ${showTrend ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
+          >
+            📈 Trend
+          </button>
+        </div>
       </div>
 
       {/* Tapasztalat bontás */}
