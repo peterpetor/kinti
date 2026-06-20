@@ -22,33 +22,43 @@ export function MiniHistogram({ data }: { data: { bucket_k: number; entry_count:
     fullData.push(existing || { bucket_k: k, entry_count: 0 });
   }
 
+  const midK = fullData[Math.floor(fullData.length / 2)].bucket_k;
+
   return (
-    <div className="pt-2 pb-1 space-y-2">
-      <div className="flex items-end gap-1 h-24 mt-2">
-        {fullData.map((d, i) => {
+    <div className="pt-2 pb-1 space-y-1.5">
+      {/* Oszlopok */}
+      <div className="flex items-end gap-1 h-24">
+        {fullData.map((d) => {
           const pct = (d.entry_count / maxCount) * 100;
           return (
-            <div key={d.bucket_k} className="flex-1 flex flex-col items-center justify-end group">
-              {/* Oszlop fölötti érték */}
-              <span className="text-[10px] font-bold text-ink-faint mb-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div key={d.bucket_k} className="group relative flex flex-1 flex-col items-center justify-end">
+              {/* Oszlop fölötti érték — csak hoverre, nem tolja el a sávokat */}
+              <span className="pointer-events-none absolute -top-3.5 text-[10px] font-bold text-ink-muted opacity-0 transition-opacity group-hover:opacity-100">
                 {d.entry_count > 0 ? d.entry_count : ""}
               </span>
-              
+
               {/* Maga az oszlop */}
-              <div 
-                className="w-full bg-primary/20 hover:bg-primary transition-colors rounded-t-sm"
+              <div
+                className="w-full rounded-t-sm bg-primary/40 transition-colors group-hover:bg-primary"
                 style={{ height: `${pct}%`, minHeight: d.entry_count > 0 ? "4px" : "0px" }}
               />
-              
-              {/* Tengely felirat (minden második vagy első/utolsó, ha sok van) */}
-              <span className="text-[10px] text-ink-muted mt-1 rotate-[-45deg] origin-top-left -ml-2 whitespace-nowrap">
-                {d.bucket_k}k
-              </span>
             </div>
           );
         })}
       </div>
-      <p className="text-[11px] text-ink-faint text-right pt-2">Bérsávok 10.000 CHF-enként</p>
+
+      {/* Vízszintes tengely: olvasható, csak a két szélső (+ középső) bérsáv */}
+      {minK === maxK ? (
+        <div className="text-center text-[10px] font-medium text-ink-muted">{minK}k CHF</div>
+      ) : (
+        <div className="flex justify-between text-[10px] font-medium text-ink-muted">
+          <span>{minK}k</span>
+          {fullData.length > 2 && <span>{midK}k</span>}
+          <span>{maxK}k</span>
+        </div>
+      )}
+
+      <p className="pt-1 text-right text-[11px] text-ink-faint">Bérsávok 10.000 CHF-enként</p>
     </div>
   );
 }
