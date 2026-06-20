@@ -8,6 +8,7 @@ import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { mediaImageUrl } from "@/lib/media";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { cn } from "@/lib/cn";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
 
@@ -97,24 +98,40 @@ export function BusinessMap({
 
   return (
     <div className={cn("relative isolate overflow-hidden rounded-card", className)}>
-      {engine === "maplibre" ? (
-        <MaplibreEngine
-          located={located}
-          selectedId={selected?.id ?? null}
-          onSelectMarker={handleSelectMarker}
-          fallbackCenter={fallbackCenter}
-          fallbackZoom={fallbackZoom}
-          onFail={handleMaplibreFail}
-        />
-      ) : (
-        <LeafletEngine
-          located={located}
-          selectedId={selected?.id ?? null}
-          onSelectMarker={handleSelectMarker}
-          fallbackCenter={fallbackCenter}
-          fallbackZoom={fallbackZoom}
-        />
-      )}
+      {/* Granuláris hiba-határ: ha a térkép-motor (Leaflet/MapLibre) futásidőben
+          elhasal (WebGL, lib-hiba), csak a térkép helyén jelenik meg fallback —
+          a lista, a kategória-pillek és a kiválasztott kártya tovább működnek. */}
+      <ErrorBoundary
+        label="business-map"
+        fallback={
+          <div className="grid min-h-[280px] place-items-center bg-surface-alt px-6 text-center">
+            <div>
+              <div className="mx-auto mb-2 grid h-10 w-10 place-items-center rounded-2xl bg-accent/15 text-xl">🗺️</div>
+              <p className="text-[13px] font-semibold text-ink">A térkép most nem tölthető be.</p>
+              <p className="mt-1 text-[12px] text-ink-muted">A lista és az elérhetőségek továbbra is elérhetők.</p>
+            </div>
+          </div>
+        }
+      >
+        {engine === "maplibre" ? (
+          <MaplibreEngine
+            located={located}
+            selectedId={selected?.id ?? null}
+            onSelectMarker={handleSelectMarker}
+            fallbackCenter={fallbackCenter}
+            fallbackZoom={fallbackZoom}
+            onFail={handleMaplibreFail}
+          />
+        ) : (
+          <LeafletEngine
+            located={located}
+            selectedId={selected?.id ?? null}
+            onSelectMarker={handleSelectMarker}
+            fallbackCenter={fallbackCenter}
+            fallbackZoom={fallbackZoom}
+          />
+        )}
+      </ErrorBoundary>
 
       {/* Bal-felül: hely-pill */}
       <div className="pointer-events-none absolute left-3 top-3 z-[10]">
