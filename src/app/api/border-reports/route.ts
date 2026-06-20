@@ -3,8 +3,10 @@ import {
   createBorderReport,
   getActiveBorderReports,
   countRecentBorderReports,
+  purgeExpiredBorderReports,
   type BorderStatus,
 } from "@/lib/repo";
+import { getCloudflareCtx } from "@/lib/cloudflare";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { hashIp } from "@/lib/security";
 import { getCrossingById } from "@/lib/border-crossings";
@@ -92,6 +94,10 @@ export async function POST(req: Request) {
     ipHash,
     expiresAt,
   });
+
+  // Opportunista, nem-blokkoló takarítás: a lejárt sorok törlése. A beküldés
+  // rate-limitelt, így ez ritkán fut → nincs DB-bloat / felesleges PII-megőrzés.
+  getCloudflareCtx()?.waitUntil(purgeExpiredBorderReports());
 
   return NextResponse.json(
     { ok: true, id },

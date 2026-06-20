@@ -4,6 +4,7 @@ import {
   getCategories,
   createBusinessSubmission,
   countRecentBusinessSubmissions,
+  purgeExpiredBusinessSubmissions,
   logModerationStrike,
 } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
@@ -17,7 +18,7 @@ import {
   BUSINESS_CONFIRM_TTL_MS,
   BUSINESS_DAILY_LIMIT,
 } from "@/lib/business";
-import { getCloudflareEnv } from "@/lib/cloudflare";
+import { getCloudflareEnv, getCloudflareCtx } from "@/lib/cloudflare";
 import { isDisposableEmail } from "@/lib/disposable-emails";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -207,6 +208,11 @@ export async function POST(req: Request) {
     ownerUserId: clerkUserId,
     manageToken,
   });
+
+  // Opportunista, nem-blokkoló takarítás: a lejárt, MEG NEM ERŐSÍTETT beküldések
+  // törlése (email + ip_hash PII-t tartalmaznak) — GDPR adatminimalizálás, és
+  // nincs DB-bloat. A beküldés rate-limitelt, így ez ritkán fut.
+  getCloudflareCtx()?.waitUntil(purgeExpiredBusinessSubmissions());
 
   const baseUrl =
     getCloudflareEnv().PUBLIC_BASE_URL?.replace(/\/$/, "") || new URL(req.url).origin;

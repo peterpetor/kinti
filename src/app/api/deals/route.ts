@@ -3,7 +3,9 @@ import {
   createDealReport,
   getActiveDealReports,
   countRecentDealReports,
+  purgeExpiredDealReports,
 } from "@/lib/repo";
+import { getCloudflareCtx } from "@/lib/cloudflare";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { hashIp } from "@/lib/security";
@@ -119,6 +121,10 @@ export async function POST(req: Request) {
     ipHash,
     expiresAt: todayMidnightCh(),
   });
+
+  // Opportunista, nem-blokkoló takarítás: a lejárt sorok törlése (ritkán fut,
+  // a beküldés rate-limitelt) → nincs DB-bloat / felesleges PII-megőrzés.
+  getCloudflareCtx()?.waitUntil(purgeExpiredDealReports());
 
   return NextResponse.json(
     { ok: true, id },
