@@ -39,31 +39,27 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
 
   const busy = phase === "preparing" || phase === "uploading" || phase === "committing" || phase === "removing";
 
-  async function handleFile(file: File) {
-    setError(null);
-    if (currentKeys.length >= 10) {
-      setError("Maximum 10 fájl tölthető fel.");
-      setPhase("error");
-      return;
-    }
-
+  // Egyetlen fájl feltöltése: presign → R2 PUT → commit. NEM nyúl a "done"
+  // állapothoz / router.refresh-hez — azt a köteg végén egyszer intézzük.
+  // Visszatérés: true ha sikeres; false ha hiba (az error-state be van állítva).
+  async function uploadOne(file: File): Promise<boolean> {
     const isPdf = file.type === "application/pdf";
     const isImage = file.type.startsWith("image/");
 
     if (!ACCEPT.split(",").includes(file.type)) {
       setError("Csak JPEG, PNG, WebP, GIF vagy PDF tölthető fel.");
       setPhase("error");
-      return;
+      return false;
     }
     if (isImage && file.size > MAX_IMAGE_BYTES) {
       setError("A kép mérete max. 10 MB lehet.");
       setPhase("error");
-      return;
+      return false;
     }
     if (isPdf && file.size > MAX_PDF_BYTES) {
       setError("A PDF mérete max. 20 MB lehet.");
       setPhase("error");
-      return;
+      return false;
     }
 
     try {
@@ -72,7 +68,9 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
       setProgress(5);
 
       let fileToUpload = file;
-      if (isImage) {
+      // GIF-et NEM tömörítünk: a canvas-alapú compressImage csak az első
+      // képkockát rajzolná ki → elveszne az animáció. Az eredeti GIF megy fel.
+      if (isImage && file.type !== "image/gif") {
         const blob = await compressImage(file, 1920, 0.8);
         fileToUpload = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: blob.type });
       }
@@ -80,9 +78,9 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
       const presignRes = await fetch(uploadEndpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           contentType: fileToUpload.type,
-          contentLength: fileToUpload.size 
+          contentLength: fileToUpload.size
         }),
       });
       if (!presignRes.ok) {
@@ -107,12 +105,45 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
       }
 
       setProgress(100);
-      setPhase("done");
-      router.refresh();
-      setTimeout(() => setPhase("idle"), 2000);
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ismeretlen hiba.");
       setPhase("error");
+      return false;
+    }
+  }
+
+  // Egy VAGY több fájl feltöltése sorban (drag-drop / fájlválasztó). A korábbi
+  // kód csak az ELSŐ behúzott fájlt vette, a többit némán eldobta — most az
+  // összeset feltöltjük (a 10-es keretig), a maradékról értesítjük a usert.
+  async function handleFiles(files: File[]) {
+    if (busy || files.length === 0) return;
+    setError(null);
+
+    let slots = 10 - currentKeys.length;
+    if (slots <= 0) {
+      setError("Maximum 10 fájl tölthető fel.");
+      setPhase("error");
+      return;
+    }
+
+    let uploaded = 0;
+    let skipped = 0;
+    for (const file of files) {
+      if (slots <= 0) { skipped++; continue; }
+      const ok = await uploadOne(file);
+      if (!ok) return; // hiba: az error-state már be van állítva, megállunk
+      uploaded++;
+      slots--;
+    }
+
+    if (uploaded > 0) {
+      setPhase("done");
+      router.refresh();
+      if (skipped > 0) {
+        setError(`${uploaded} fájl feltöltve. ${skipped} kimaradt (max. 10 fájl).`);
+      }
+      setTimeout(() => setPhase("idle"), 2000);
     }
   }
 
@@ -152,8 +183,7 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
       onDrop={(e) => {
         e.preventDefault();
         setDragOver(false);
-        const f = e.dataTransfer.files?.[0];
-        if (f && !busy) handleFile(f);
+        void handleFiles(Array.from(e.dataTransfer.files ?? []));
       }}
     >
       <div className="flex items-center justify-between mb-3">
@@ -232,11 +262,12 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
         ref={inputRef}
         type="file"
         accept={ACCEPT}
+        multiple
         className="hidden"
         onChange={(e) => {
-          const f = e.target.files?.[0];
+          const files = Array.from(e.target.files ?? []);
           e.target.value = "";
-          if (f) handleFile(f);
+          void handleFiles(files);
         }}
       />
     </div>

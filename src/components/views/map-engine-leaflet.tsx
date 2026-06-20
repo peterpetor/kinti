@@ -229,18 +229,28 @@ function FitToMarkers({ businesses, sosAlerts = [] }: { businesses: Business[], 
     const sig = businesses.map((b) => b.id).join("|") + sosAlerts.map(s => s.id).join("|");
     if (sig === lastSig.current) return;
     lastSig.current = sig;
-    if (businesses.length === 0 && sosAlerts.length === 0) return;
-    
-    if (businesses.length === 1 && sosAlerts.length === 0) {
-      map.setView([businesses[0].lat!, businesses[0].lng!], 15, { animate: true });
+
+    // Csak az érvényes koordinátájú vállalkozások: a geokódolás szerveroldalon
+    // elszállhatott → null lat/lng. Ilyen értékekkel az L.latLngBounds érvénytelen
+    // argumentumot kapna és szétfagyasztaná a térképet (és a React-fát).
+    const geoBiz = businesses.filter(
+      (b): b is Business & { lat: number; lng: number } =>
+        typeof b.lat === "number" && typeof b.lng === "number",
+    );
+
+    if (geoBiz.length === 0 && sosAlerts.length === 0) return;
+
+    if (geoBiz.length === 1 && sosAlerts.length === 0) {
+      map.setView([geoBiz[0].lat, geoBiz[0].lng], 15, { animate: true });
       return;
     }
-    
+
     const pts = [
-      ...businesses.map((b) => [b.lat!, b.lng!] as [number, number]),
+      ...geoBiz.map((b) => [b.lat, b.lng] as [number, number]),
       ...sosAlerts.map((s) => [s.lat, s.lng] as [number, number])
     ];
-    
+    if (pts.length === 0) return;
+
     const bounds = L.latLngBounds(pts);
     map.fitBounds(bounds, { padding: [50, 70], maxZoom: 16, animate: true });
   }, [businesses, sosAlerts, map]);
