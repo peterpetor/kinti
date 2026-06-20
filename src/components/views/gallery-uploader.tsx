@@ -90,7 +90,9 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
 
       // 2) upload
       setPhase("uploading");
-      await xhrPut(uploadUrl, fileToUpload, (pct) => setProgress(10 + Math.round(pct * 0.8)));
+      // pct ∈ [0,1] → a 10–90% sávra képezzük (×80). A korábbi ×0.8 miatt a
+      // csík végig 10–11%-on ragadt, majd a 95-re ugrott.
+      await xhrPut(uploadUrl, fileToUpload, (pct) => setProgress(10 + Math.round(pct * 80)));
 
       // 3) commit
       setPhase("committing");

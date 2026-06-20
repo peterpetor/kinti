@@ -27,18 +27,18 @@ export async function createBorderReport(input: CreateBorderReportInput): Promis
 }
 
 export async function getActiveBorderReports(): Promise<BorderReport[]> {
-  const { results } = await getDB().prepare(`SELECT * FROM border_reports WHERE expires_at > datetime('now') ORDER BY created_at DESC`).all<BorderReportRow>();
+  const { results } = await getDB().prepare(`SELECT * FROM border_reports WHERE datetime(expires_at) > datetime('now') ORDER BY created_at DESC`).all<BorderReportRow>();
   return results.map((r) => ({ id: r.id, crossingId: r.crossing_id, status: r.status as BorderStatus, note: r.note, createdAt: r.created_at, expiresAt: r.expires_at }));
 }
 
 export async function countRecentBorderReports(ipHash: string | null): Promise<number> {
   if (!ipHash) return 0;
-  const row = await getDB().prepare(`SELECT COUNT(*) AS n FROM border_reports WHERE ip_hash = ? AND created_at > datetime('now', '-1 hour')`).bind(ipHash).first<{ n: number }>();
+  const row = await getDB().prepare(`SELECT COUNT(*) AS n FROM border_reports WHERE ip_hash = ? AND datetime(created_at) > datetime('now', '-1 hour')`).bind(ipHash).first<{ n: number }>();
   return row?.n ?? 0;
 }
 
 export async function purgeExpiredBorderReports(): Promise<number> {
-  const res = await getDB().prepare("DELETE FROM border_reports WHERE expires_at <= datetime('now')").run();
+  const res = await getDB().prepare("DELETE FROM border_reports WHERE datetime(expires_at) <= datetime('now')").run();
   return res.meta.changes ?? 0;
 }
 
@@ -63,17 +63,17 @@ export async function createDealReport(input: CreateDealReportInput): Promise<vo
 }
 
 export async function getActiveDealReports(): Promise<DealReport[]> {
-  const { results } = await getDB().prepare(`SELECT * FROM deal_reports WHERE expires_at > datetime('now') ORDER BY discount_pct DESC, created_at DESC`).all<DealReportRow>();
+  const { results } = await getDB().prepare(`SELECT * FROM deal_reports WHERE datetime(expires_at) > datetime('now') ORDER BY discount_pct DESC, created_at DESC`).all<DealReportRow>();
   return results.map(r => ({ id: r.id, storeId: r.store_id, categoryId: r.category_id, discountPct: r.discount_pct, lat: r.lat, lng: r.lng, locationName: r.location_name, cantonCode: r.canton_code, note: r.note, createdAt: r.created_at, expiresAt: r.expires_at }));
 }
 
 export async function countRecentDealReports(ipHash: string | null): Promise<number> {
   if (!ipHash) return 0;
-  const row = await getDB().prepare(`SELECT COUNT(*) AS n FROM deal_reports WHERE ip_hash = ? AND created_at > datetime('now', '-1 hour')`).bind(ipHash).first<{ n: number }>();
+  const row = await getDB().prepare(`SELECT COUNT(*) AS n FROM deal_reports WHERE ip_hash = ? AND datetime(created_at) > datetime('now', '-1 hour')`).bind(ipHash).first<{ n: number }>();
   return row?.n ?? 0;
 }
 
 export async function purgeExpiredDealReports(): Promise<number> {
-  const res = await getDB().prepare("DELETE FROM deal_reports WHERE expires_at <= datetime('now')").run();
+  const res = await getDB().prepare("DELETE FROM deal_reports WHERE datetime(expires_at) <= datetime('now')").run();
   return res.meta.changes ?? 0;
 }
