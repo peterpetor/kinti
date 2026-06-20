@@ -56,7 +56,11 @@ export function ProfileHeaderActions({ businessId, businessName }: ProfileAction
   return (
     <>
       <div className="flex gap-2">
-        <ReportButton contentType="business" contentId={businessId} />
+        <ReportButton
+          contentType="business"
+          contentId={businessId}
+          className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-white/95 text-ink shadow-card backdrop-blur-md transition hover:bg-white hover:text-accent active:scale-95"
+        />
         <button
           type="button"
           onClick={() => setShareOpen(true)}

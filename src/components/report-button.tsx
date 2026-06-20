@@ -15,10 +15,13 @@ export function ReportButton({
   contentType,
   contentId,
   variant = "icon",
+  className,
 }: {
   contentType: "business" | "review" | "sos";
   contentId: string;
   variant?: "icon" | "link";
+  /** Az „icon" variáns gomb-stílusának felülírása (pl. fehér-pill a profil-fejlécben). */
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
@@ -76,9 +79,9 @@ export function ReportButton({
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Jelentés"
-          className="text-ink-faint transition hover:text-accent active:scale-90"
+          className={className ?? "text-ink-faint transition hover:text-accent active:scale-90"}
         >
-          <Icon name="flag" size={14} strokeWidth={2.2} />
+          <Icon name="flag" size={className ? 16 : 14} strokeWidth={2.2} />
         </button>
       )}
 

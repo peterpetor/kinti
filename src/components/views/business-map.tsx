@@ -124,8 +124,10 @@ export function BusinessMap({
         </span>
       </div>
 
-      {/* Alul: kategória-pillek + kiválasztott kártya */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[10] flex flex-col gap-2 p-3">
+      {/* Alul: kategória-pillek + kiválasztott kártya. A térkép a lebegő alsó
+          nav-sáv mögé nyúlik, ezért a tartalmat a nav (+ safe-area) fölé emeljük,
+          különben a kategória-pillek kitakarnák a menü-ikonokat. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[10] flex flex-col gap-2 px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+4rem)]">
         {categories && categories.length > 0 && (
           <div className="no-scrollbar pointer-events-auto -mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5">
             {categories.map((c) => {

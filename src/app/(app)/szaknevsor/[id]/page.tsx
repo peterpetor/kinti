@@ -573,12 +573,15 @@ export default async function BusinessPage({
         {(() => {
           const lc = cantonFromAddress(b.address ?? null);
           if (!lc || !b.categoryId) return null;
+          // Ne legyen „magyar magyar …", ha a kategória neve maga is „magyar"-ral
+          // kezdődik (pl. „Magyar bolt, pékség" → „magyar bolt, pékség").
+          const catLabel = (b.categoryLabel || "szakember").toLowerCase().replace(/^magyar\s+/i, "");
           return (
             <Link
               href={`/magyar/${b.categoryId}/${cantonToSlug(lc.name)}`}
               className="mt-6 flex items-center gap-2 text-[13px] font-bold text-primary"
             >
-              Több magyar {(b.categoryLabel || "szakember").toLowerCase()} {lc.name} kantonban
+              Több magyar {catLabel} {lc.name} kantonban
               <Icon name="arrowRight" size={14} strokeWidth={2.4} />
             </Link>
           );

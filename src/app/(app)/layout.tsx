@@ -14,7 +14,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* overflow-x-clip: semmi ne tudja oldalra tolni az oldalt (pl. görgő
           kategória-sor) — a belső vízszintes görgetők (overflow-x-auto) ettől
           még működnek. */}
-      <div className="mx-auto min-h-dvh max-w-md overflow-x-clip pb-28">
+      <div className="mx-auto min-h-dvh max-w-md overflow-x-clip pb-[calc(env(safe-area-inset-bottom)+7.5rem)]">
         <PageTransition>{children}</PageTransition>
       </div>
       <TabBar />
