@@ -11,6 +11,7 @@ import {
   getAdminStats,
   getAdminTrends,
   getAiUsageStats,
+  getEmailUsageStats,
   listOpenReports,
   listPendingEvents,
   listBusinessesForAdmin,
@@ -26,11 +27,12 @@ export default async function AdminPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  const [stats, trends, aiUsage, openReports, pendingEvents, businesses, events] =
+  const [stats, trends, aiUsage, emailUsage, openReports, pendingEvents, businesses, events] =
     await Promise.all([
       getAdminStats(),
       getAdminTrends(),
       getAiUsageStats(),
+      getEmailUsageStats(),
       listOpenReports(),
       listPendingEvents(),
       listBusinessesForAdmin(),
@@ -38,6 +40,8 @@ export default async function AdminPage() {
     ]);
 
   const fmt = (n: number) => n.toLocaleString("hu-HU");
+  const emailPct = Math.min(100, Math.round((emailUsage.todayCount / emailUsage.dailyFreeLimit) * 100));
+  const emailColor = emailPct >= 90 ? "#c2410c" : emailPct >= 70 ? "#cc7700" : "#2e7d52";
   const FREE_NEURONS_DAY = 10000; // CF ingyenes napi keret (tájékoztató)
 
   return (
@@ -100,6 +104,33 @@ export default async function AdminPage() {
         <p className="text-[11px] text-ink-faint">
           A token app-szintű, becsült/valós érték — a pontos <strong>Neuron-fogyás és számla</strong> a Cloudflare
           dashboard → AI → Workers AI alatt. Tájékoztató: az ingyenes keret kb. <strong>{fmt(FREE_NEURONS_DAY)} Neuron/nap</strong> (≠ token).
+        </p>
+      </section>
+
+      {/* Email-küldés (Resend napi limit) */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">Email-küldés (Resend)</h2>
+        <div className="rounded-card border border-line bg-surface p-4 shadow-card">
+          <div className="flex items-baseline justify-between">
+            <span className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">Ma elküldve</span>
+            <span className="text-[15px] font-extrabold" style={{ color: emailColor }}>
+              {fmt(emailUsage.todayCount)} / {fmt(emailUsage.dailyFreeLimit)}
+            </span>
+          </div>
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-alt">
+            <div className="h-full rounded-full transition-all" style={{ width: `${emailPct}%`, backgroundColor: emailColor }} />
+          </div>
+          <p className="mt-2 text-[11.5px] text-ink-muted">
+            {emailPct >= 90
+              ? "⚠️ Majdnem elérted a Resend ingyenes napi limitjét (100/nap) — fontold meg a Resend Pro-t (~$20/hó)."
+              : emailPct >= 70
+                ? "Közelíted a napi 100-as ingyenes Resend-keretet — tartsd szemmel."
+                : `7 nap: ${fmt(emailUsage.last7Count)} email. Az ingyenes keret 100/nap; fölötte a küldés elakadhat.`}
+          </p>
+        </div>
+        <p className="text-[11px] text-ink-faint">
+          Csak a sikeres küldések számítanak (megerősítők, lead-ek, digest, admin-értesítők). A 0078 migráció
+          aktiválja; addig 0-t mutat.
         </p>
       </section>
 

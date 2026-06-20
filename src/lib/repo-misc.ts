@@ -213,6 +213,54 @@ export async function getAiUsageStats(): Promise<AiUsageStats> {
   };
 }
 
+// --- Email-használat (Resend napi limit-figyelés, admin monitoring) ----------
+
+/** Egy SIKERES email-küldés naplózása (napi összesítő). Best-effort: a számláló
+ *  (tábla hiányzik / hiba) SOSEM törheti meg az email-küldést. */
+export async function recordEmailSent(): Promise<void> {
+  try {
+    const day = new Date().toISOString().slice(0, 10);
+    await getDB()
+      .prepare(
+        `INSERT INTO email_usage_daily (day, count) VALUES (?, 1)
+         ON CONFLICT(day) DO UPDATE SET count = count + 1`,
+      )
+      .bind(day)
+      .run();
+  } catch {
+    /* a számláló sosem törheti meg az emailt */
+  }
+}
+
+export interface EmailUsageStats {
+  todayCount: number;
+  last7Count: number;
+  /** A Resend ingyenes napi limitje (tájékoztató küszöb). */
+  dailyFreeLimit: number;
+}
+
+export async function getEmailUsageStats(): Promise<EmailUsageStats> {
+  const today = new Date().toISOString().slice(0, 10);
+  const d7 = new Date(Date.now() - 6 * 86_400_000).toISOString().slice(0, 10);
+  const db = getDB();
+  // A 0078 migráció hozza létre a táblát; addig defenzíven 0.
+  const todayRow = await db
+    .prepare("SELECT count FROM email_usage_daily WHERE day = ?")
+    .bind(today)
+    .first<{ count: number }>()
+    .catch(() => null);
+  const last7 = await db
+    .prepare("SELECT COALESCE(SUM(count),0) AS n FROM email_usage_daily WHERE day >= ?")
+    .bind(d7)
+    .first<{ n: number }>()
+    .catch(() => null);
+  return {
+    todayCount: todayRow?.count ?? 0,
+    last7Count: last7?.n ?? 0,
+    dailyFreeLimit: 100,
+  };
+}
+
 // --- Admin Trends (14 napos napi bontás) -------------------------------------
 
 export interface AdminTrends {

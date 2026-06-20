@@ -13,13 +13,30 @@ import { getCloudflareEnv } from "./cloudflare";
  * csak a .dev.vars vagy a Pages secret-et frissítsd; a kód változatlan marad.
  */
 
-/** A Resend kliens kérés-hatókörű — minden szerver-route új példányt vesz. */
+/** A Resend kliens kérés-hatókörű — minden szerver-route új példányt vesz.
+ *  A `emails.send`-et becsomagoljuk: minden SIKERES küldést napi számlálóba
+ *  írunk (a Resend 100/nap free-tier figyeléséhez az admin fülön). Best-effort —
+ *  a számláló sosem törheti meg a küldést, és nem változtat a visszatérési értéken. */
 function getResend(): Resend {
   const env = getCloudflareEnv();
   if (!env.RESEND_API_KEY) {
     throw new Error("Hiányzó RESEND_API_KEY env-változó.");
   }
-  return new Resend(env.RESEND_API_KEY);
+  const resend = new Resend(env.RESEND_API_KEY);
+  const originalSend = resend.emails.send.bind(resend.emails);
+  resend.emails.send = (async (...args: Parameters<typeof originalSend>) => {
+    const res = await originalSend(...args);
+    if (res && !res.error) {
+      try {
+        const { recordEmailSent } = await import("./repo-misc");
+        await recordEmailSent();
+      } catch {
+        /* a számláló sosem törheti meg az emailt */
+      }
+    }
+    return res;
+  }) as typeof resend.emails.send;
+  return resend;
 }
 
 // --- email-templátehelper-ek ------------------------------------------------
