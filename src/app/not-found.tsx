@@ -1,4 +1,4 @@
-import { GlobalAiSearch } from "@/components/views/global-ai-search";
+import { NotFoundSearch } from "@/components/not-found-search";
 
 export const runtime = "edge";
 
@@ -9,12 +9,12 @@ export default function NotFound() {
         <p className="text-[64px] font-extrabold leading-none tracking-tight text-ink drop-shadow-sm">404</p>
         <p className="text-[18px] font-extrabold text-ink mt-2">Hoppá, eltévedtél?</p>
         <p className="text-[14px] leading-relaxed text-ink-muted mt-2 max-w-[280px] mx-auto text-balance">
-          A keresett oldal nem található, de a Kinti asszisztens segít megtalálni, amire szükséged van!
+          A keresett oldal nem található — keress rá, amire szükséged van, vagy ugorj a fő részekre.
         </p>
       </div>
-      
+
       <div className="w-full animate-fade-up">
-        <GlobalAiSearch />
+        <NotFoundSearch />
       </div>
 
       <a

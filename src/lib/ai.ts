@@ -204,7 +204,6 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "media-upload": { windowHours: 1, maxPerWindow: 30 }, // Image upload rate limit
   "radar-subscribe": { windowHours: 1, maxPerWindow: 10 }, // Radar DoS védelem
   "interview-sim": { windowHours: 1, maxPerWindow: 50 }, // Interview simulator
-  "cv-helper": { windowHours: 1, maxPerWindow: 8 }, // PRO CV-asszisztens (rövid szöveg-csiszolás)
   "cv-review": { windowHours: 24, maxPerWindow: 5 }, // PRO CV-audit — 5/FELHASZNÁLÓ/nap (userId-kulcs, nem IP)
   "leaderboard": { windowHours: 1, maxPerWindow: 20 }, // ranglista csatlakozás/szinkron
   "business-suggest": { windowHours: 1, maxPerWindow: 10 }, // Közösségi vállalkozás-ajánlás spam-védelem
