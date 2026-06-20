@@ -113,7 +113,11 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
     setState("busy");
     try {
       const sub = subscription ?? (await ensureSubscription());
-      if (!sub) return;
+      if (!sub) {
+        // Ne ragadjon a gomb „busy"-ban, ha a feliratkozás/engedély nem jött össze.
+        setState((s) => (s === "busy" ? "ready" : s));
+        return;
+      }
       if (!subscription) setSubscription(sub);
 
       const res = await fetch("/api/radars", {

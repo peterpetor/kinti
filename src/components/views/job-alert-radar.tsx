@@ -114,7 +114,12 @@ export function JobAlertRadar() {
     setState("busy");
     try {
       const sub = subscription ?? (await ensureSubscription());
-      if (!sub) return;
+      if (!sub) {
+        // ensureSubscription beállította a megfelelő state-et (denied/needs-permission).
+        // De ha valamiért még "busy" maradt, NE ragadjon ott a gomb örökre.
+        setState((s) => (s === "busy" ? "ready" : s));
+        return;
+      }
       if (!subscription) setSubscription(sub);
 
       const res = await fetch("/api/radars", {

@@ -62,7 +62,7 @@ export function SwissHeatmap({ industry, period }: { industry: string; period: s
           <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
         </div>
       ) : (
-        <div className="relative pt-2 pb-6 px-2 overflow-x-auto">
+        <div className="no-scrollbar relative pt-2 pb-6 px-2 overflow-x-auto">
           <div 
             className="grid gap-1.5 min-w-[340px]" 
             style={{ 

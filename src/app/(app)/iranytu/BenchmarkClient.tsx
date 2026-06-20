@@ -398,10 +398,10 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                     <option value="all">🇨🇭 Egész Svájc</option>
                     {CANTONS.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
                   </select>
-                  <div className="flex rounded-xl border border-line overflow-hidden shrink-0">
+                  <div className="flex w-full rounded-xl border border-line overflow-hidden">
                     {PERIODS.map(p => (
                       <button key={p.value} onClick={() => setPeriod(p.value)}
-                        className={`px-3 py-2 text-[12px] font-bold transition-colors ${period === p.value ? "bg-primary text-white" : "bg-surface-alt text-ink-muted hover:text-ink"}`}>
+                        className={`flex-1 px-3 py-2.5 text-[12.5px] font-bold transition-colors ${period === p.value ? "bg-primary text-white" : "bg-surface-alt text-ink-muted hover:text-ink"}`}>
                         {p.label}
                       </button>
                     ))}

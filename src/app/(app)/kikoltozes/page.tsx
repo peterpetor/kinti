@@ -178,7 +178,7 @@ export default function RelocationTrackerPage() {
 
   return (
     <div className="flex flex-col pb-24">
-      <div className="sticky top-0 z-10 bg-background/80 px-4 pb-4 pt-6 backdrop-blur-xl">
+      <div className="px-4 pb-4 pt-6">
         <ScreenHeader 
           eyebrow="Tervező" 
           title="Kiköltözés Tracker" 

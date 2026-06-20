@@ -290,7 +290,7 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                     {e.dateWeekday} · {e.startTime}
                   </span>
                 </div>
-                <div className="truncate text-[14.5px] font-bold tracking-[-0.01em] text-ink">
+                <div className="line-clamp-2 text-[14.5px] font-bold leading-snug tracking-[-0.01em] text-ink">
                   {e.title}
                 </div>
                 <div className="mt-0.5 text-xs text-ink-muted">

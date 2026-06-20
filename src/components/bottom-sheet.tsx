@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { Icon } from "@/components/ui/icons";
 
 /**
  * Egyszerű mobil-barát alsó lap (bottom sheet). A megosztás- és naptár-választó
@@ -42,8 +43,18 @@ export function BottomSheet({
       />
       <div className="relative z-[1] w-full max-w-md sm:rounded-[24px] rounded-t-[24px] border border-line bg-surface p-5 sm:pb-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-pop animate-fade-up">
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-line sm:hidden" />
+        {/* Egyértelmű bezáró gomb — mobilon nem volt nyilvánvaló, hogy a háttérre
+            koppintva lehet kilépni. */}
+        <button
+          type="button"
+          aria-label="Bezárás"
+          onClick={onClose}
+          className="absolute right-3.5 top-3.5 z-[2] grid h-8 w-8 place-items-center rounded-full bg-surface-alt text-ink-muted transition hover:text-ink active:scale-90"
+        >
+          <Icon name="close" size={16} strokeWidth={2.4} />
+        </button>
         {title && (
-          <h3 className="mb-3 text-center text-[14px] font-extrabold tracking-tight text-ink">
+          <h3 className="mb-3 px-8 text-center text-[14px] font-extrabold tracking-tight text-ink">
             {title}
           </h3>
         )}
