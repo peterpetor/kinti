@@ -122,10 +122,19 @@ export async function POST(req: Request) {
     }
   }
 
-  // Custom branding accent szín — csak PRO (featured) vállalkozónak, és csak
-  // az előre definiált preset-hexekből (nincs tetszőleges CSS).
-  const accentColor =
-    business.featured && isValidAccentColor(body.accentColor) ? body.accentColor : null;
+  // Custom branding accent szín — csak PRO (featured), és csak az előre
+  // definiált preset-hexekből (nincs tetszőleges CSS). FONTOS: csak akkor
+  // írjuk felül, ha a payload EXPLICIT tartalmazza az `accentColor` mezőt;
+  // ha hiányzik (pl. csak a telefonszám módosul), megőrizzük a korábbi színt,
+  // hogy ne töröljük némán (silent data loss).
+  let accentColor: string | null;
+  if (body.accentColor === undefined) {
+    accentColor = business.accentColor ?? null; // mező hiányzik → megőrzés
+  } else if (business.featured && isValidAccentColor(body.accentColor)) {
+    accentColor = body.accentColor; // PRO + érvényes preset → beállít
+  } else {
+    accentColor = null; // explicit törlés / nem-PRO / érvénytelen
+  }
 
   const ok = await updateBusinessProfile(business.id, userId, {
     name,

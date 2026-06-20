@@ -33,13 +33,13 @@ export async function GET(
     );
   }
 
-  // Friss moderátor-token generálása (approve + reject URL-ekhez)
-  const approveToken = crypto.randomUUID().replace(/-/g, "");
-  const rejectToken  = crypto.randomUUID().replace(/-/g, "");
+  // Friss moderátor-token generálása. EGY token szolgál mindkét művelethez —
+  // az approve/reject különbséget a moderáció route a `?action=` query-param
+  // alapján teszi meg (lásd /api/events/moderate/[token]), nem külön tokennel.
+  const moderationToken = crypto.randomUUID().replace(/-/g, "");
 
-  // Státusz 'pending_admin', token-t az approve-token-re cseréljük
-  // (a reject-token-t a moderáció route-on kezeljük: külön paraméterrel)
-  await updateEventStatus(event.id, "pending_admin", approveToken);
+  // Státusz 'pending_admin', a moderációs token mentése.
+  await updateEventStatus(event.id, "pending_admin", moderationToken);
 
   const env = getCloudflareEnv();
   const baseUrl = env.PUBLIC_BASE_URL?.replace(/\/$/, "") || new URL(req.url).origin;
@@ -61,8 +61,8 @@ export async function GET(
       description: event.description ?? null,
       tag: event.tag ?? null,
       submitterEmail: event.email ?? "(ismeretlen)",
-      approveUrl: `${baseUrl}/api/events/moderate/${approveToken}?action=approve`,
-      rejectUrl:  `${baseUrl}/api/events/moderate/${approveToken}?action=reject`,
+      approveUrl: `${baseUrl}/api/events/moderate/${moderationToken}?action=approve`,
+      rejectUrl:  `${baseUrl}/api/events/moderate/${moderationToken}?action=reject`,
     });
   } catch {
     // Admin-email küldési hiba NEM blokkolja a felhasználó visszajelzését,

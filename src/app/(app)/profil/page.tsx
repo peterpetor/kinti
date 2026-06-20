@@ -191,13 +191,17 @@ async function OwnerDashboard({
   const { stats } = data;
   const total14 = stats.trend.reduce((sum, p) => sum + p.views, 0);
   const trendData = stats.trend.map((p) => p.views);
-  const labels = stats.trend.length
-    ? [
-        fmtDate(stats.trend[0].date),
-        fmtDate(stats.trend[Math.floor(stats.trend.length / 2)].date),
-        fmtDate(stats.trend[stats.trend.length - 1].date),
-      ]
-    : [];
+  // A tengelycímkék: első / középső / utolsó nap. Kevés adatnál (1-2 nap) az
+  // indexek egybeesnének → ismétlődő dátumok ("Jún 20 · Jún 20"). Ezért az
+  // index-halmazt deduplikáljuk, így csak a ténylegesen eltérő napok jelennek meg.
+  const labelIdxs = Array.from(
+    new Set(
+      stats.trend.length
+        ? [0, Math.floor((stats.trend.length - 1) / 2), stats.trend.length - 1]
+        : [],
+    ),
+  );
+  const labels = labelIdxs.map((i) => fmtDate(stats.trend[i].date));
 
   // Dinamikus, valódi aktivitások összeállítása
   const reviews = await getReviewsByBusiness(business.id);
