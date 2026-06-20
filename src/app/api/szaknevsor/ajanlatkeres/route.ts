@@ -16,6 +16,10 @@ export const dynamic = "force-dynamic";
 // drasztikus email-spórolás (a Resend 100/nap free-tier fő fogyasztója ez volt),
 // és a „kérj 3 árajánlatot" amúgy is bevett, jobb minőségű minta a 15-szöri spam helyett.
 const MAX_BUSINESSES = 3;
+// Lead-fogadás = Szaknévsor PRO (featured) perk: ha van featured cég a kategóriában,
+// ŐK kapják a leadet. Nem-featured cég csak FALLBACK-ként, hogy a kérő mindig kapjon
+// legalább ennyi árajánlatot (különben holt a funkció, és nincs mit eladni).
+const LEAD_MIN_RECIPIENTS = 2;
 const MIN_MESSAGE_LENGTH = 20;
 
 interface BusinessContactRow {
@@ -25,6 +29,7 @@ interface BusinessContactRow {
   address: string | null;
   category_id: string;
   category_label: string | null;
+  featured: number;
 }
 
 /**
@@ -132,7 +137,8 @@ export async function POST(req: Request) {
     // lead_opt_out = 0 → csak azok kapják, akik nem iratkoztak le
     const { results: allBusinesses } = await getDB()
       .prepare(
-        `SELECT id, name, contact_email, address, category_id, category_label
+        `SELECT id, name, contact_email, address, category_id, category_label,
+                COALESCE(featured, 0) AS featured
          FROM businesses
          WHERE category_id = ?
            AND COALESCE(hidden, 0) = 0
@@ -159,8 +165,24 @@ export async function POST(req: Request) {
       }
     }
 
-    // Legfeljebb MAX_BUSINESSES cégnek küldünk
-    const targets = filtered.slice(0, MAX_BUSINESSES);
+    // LEAD-FOGADÁS = Szaknévsor PRO (featured) perk.
+    //  • Van featured cég → ŐK kapják a leadet (legfeljebb MAX_BUSINESSES). Ha túl
+    //    kevés ahhoz, hogy a kérő pár árajánlatot kapjon, nem-featured-del töltjük fel
+    //    LEAD_MIN_RECIPIENTS-ig (UX-biztosíték).
+    //  • Nincs featured cég (korai szakasz) → a top cégek kapják, a funkció így is él.
+    // (A `filtered` már `featured DESC, rating DESC` szerint rendezett.)
+    const featuredBiz = filtered.filter((b) => Number(b.featured) === 1);
+    const otherBiz = filtered.filter((b) => Number(b.featured) !== 1);
+
+    let targets: BusinessContactRow[];
+    if (featuredBiz.length === 0) {
+      targets = otherBiz.slice(0, MAX_BUSINESSES);
+    } else {
+      targets = featuredBiz.slice(0, MAX_BUSINESSES);
+      if (targets.length < LEAD_MIN_RECIPIENTS) {
+        targets = [...targets, ...otherBiz.slice(0, LEAD_MIN_RECIPIENTS - targets.length)];
+      }
+    }
 
     if (targets.length === 0) {
       return NextResponse.json(
