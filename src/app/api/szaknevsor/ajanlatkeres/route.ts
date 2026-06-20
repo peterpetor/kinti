@@ -12,7 +12,10 @@ import {
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-const MAX_BUSINESSES = 15; // Egyszerre max ennyi cégnek küldünk
+// Max ennyi (legjobban illeszkedő) cégnek küldünk egy árajánlat-kérést. 15 → 3:
+// drasztikus email-spórolás (a Resend 100/nap free-tier fő fogyasztója ez volt),
+// és a „kérj 3 árajánlatot" amúgy is bevett, jobb minőségű minta a 15-szöri spam helyett.
+const MAX_BUSINESSES = 3;
 const MIN_MESSAGE_LENGTH = 20;
 
 interface BusinessContactRow {
