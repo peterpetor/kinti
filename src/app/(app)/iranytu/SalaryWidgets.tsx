@@ -16,7 +16,6 @@ interface SalaryExpRow { industry: string; exp_bucket: string; avg_salary: numbe
 /** "Mennyit kapnék?" kalkulátor — kliens-oldali összehasonlítás */
 export function SalaryCalculator({ salaryByExp }: { salaryByExp: SalaryExpRow[] }) {
   const [industry, setIndustry] = useState(INDUSTRIES[0]);
-  const [canton, setCanton] = useState("all");
   const [exp, setExp] = useState(3);
   const [mySalary, setMySalary] = useState(80000);
 
@@ -120,7 +119,9 @@ export function RentToSalaryCalculator({
     return () => { active = false; };
   }, [canton]);
 
-  const userRatio = Math.round((rent * 12) / salary * 100);
+  // Védelem a 0-val osztás ellen: ha a bér mezőt kiürítik (salary=0), a ratio
+  // Infinity lenne és "Infinity%"-ot írna ki.
+  const userRatio = salary > 0 ? Math.round((rent * 12) / salary * 100) : 0;
   const isGood = avgRatio !== null && userRatio <= avgRatio;
 
   return (

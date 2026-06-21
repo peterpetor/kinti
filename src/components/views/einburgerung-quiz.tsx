@@ -306,7 +306,7 @@ function ResultScreen({
     [questions, answers],
   );
   const total = questions.length;
-  const pct = Math.round((score / total) * 100);
+  const pct = total > 0 ? Math.round((score / total) * 100) : 0;
   const passed = pct >= PASS_THRESHOLD;
 
   // Topic-statisztika
