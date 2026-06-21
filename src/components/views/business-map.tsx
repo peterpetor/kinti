@@ -144,7 +144,7 @@ export function BusinessMap({
       {/* Alul: kategória-pillek + kiválasztott kártya. A térkép a lebegő alsó
           nav-sáv mögé nyúlik, ezért a tartalmat a nav (+ safe-area) fölé emeljük,
           különben a kategória-pillek kitakarnák a menü-ikonokat. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[10] flex flex-col gap-2 px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+4rem)]">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[10] flex flex-col gap-2 px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+5.5rem)]">
         {categories && categories.length > 0 && (
           <div className="no-scrollbar pointer-events-auto -mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5">
             {categories.map((c) => {
@@ -177,7 +177,7 @@ export function BusinessMap({
       </div>
 
       {located.length === 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[5] grid place-items-center">
+        <div className="pointer-events-none absolute inset-0 z-[5] grid place-items-center pb-[calc(env(safe-area-inset-bottom)+6rem)]">
           <div className="glass pointer-events-auto rounded-pill px-4 py-2 text-[12px] font-semibold text-ink shadow-pop">
             Ehhez a szűrőhöz nincs térképi találat.
           </div>
