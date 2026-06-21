@@ -6,6 +6,7 @@ import { TurnstileWidget } from "@/components/turnstile-widget";
 import { SalaryCard } from "./SalaryCard";
 import { SalaryCalculator, AlertSubscription, RentToSalaryCalculator } from "./SalaryWidgets";
 import { SwissHeatmap } from "./SwissHeatmap";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { salaryStanding, rentStanding, type SalaryStanding } from "@/lib/benchmark-stats";
 
 const INDUSTRIES = [
@@ -426,7 +427,12 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                   </div>
                 )}
                 {/* Hőtérkép */}
-                <SwissHeatmap industry={search || "all"} period={period} />
+                <ErrorBoundary
+                  label="swiss-heatmap"
+                  fallback={<p className="rounded-2xl border border-line bg-surface p-5 text-center text-[12px] text-ink-muted">A hőtérkép most nem jeleníthető meg.</p>}
+                >
+                  <SwissHeatmap industry={search || "all"} period={period} />
+                </ErrorBoundary>
                 
                 {/* Kalkulátor */}
                 {salaryByExp.length > 0 && <SalaryCalculator salaryByExp={salaryByExp} />}

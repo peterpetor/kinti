@@ -14,6 +14,7 @@ import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { BusinessGallery } from "@/components/views/business-gallery";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { registryForCategory } from "@/lib/business-registry";
@@ -472,8 +473,11 @@ export default async function BusinessPage({
           </div>
         </section>
 
-        {/* Galéria */}
-        <BusinessGallery galleryKeys={b.galleryKeys} businessName={b.name} />
+        {/* Galéria — granuláris hiba-határ: ha a képnézegető elhasal, csak ez a
+            blokk tűnik el, a profil többi része (elérhetőség, vélemények) marad. */}
+        <ErrorBoundary label="business-gallery" fallback={null}>
+          <BusinessGallery galleryKeys={b.galleryKeys} businessName={b.name} />
+        </ErrorBoundary>
 
         {/* vélemények */}
         <section className="mt-6">

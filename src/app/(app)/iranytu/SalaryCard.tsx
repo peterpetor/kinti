@@ -1,8 +1,13 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { MiniTrendChart } from "./MiniTrendChart";
 import { MiniHistogram } from "./MiniHistogram";
+
+const chartErrorFallback = (
+  <p className="py-4 text-center text-[12px] text-ink-muted">A grafikon most nem jeleníthető meg.</p>
+);
 
 interface SalaryExpRow { industry: string; exp_bucket: string; avg_salary: number; entry_count: number; }
 interface SalaryStatsRow { industry: string; avg_salary: number; median_salary: number; min_salary: number; max_salary: number; entry_count: number; }
@@ -149,7 +154,7 @@ export function SalaryCard({
         <div className="border-t border-line pt-3">
           {loadingTrend
             ? <div className="py-4 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" /></div>
-            : <MiniTrendChart data={trend ?? []} />
+            : <ErrorBoundary label="trend-chart" fallback={chartErrorFallback}><MiniTrendChart data={trend ?? []} /></ErrorBoundary>
           }
         </div>
       )}
@@ -159,7 +164,7 @@ export function SalaryCard({
         <div className="border-t border-line pt-3">
           {loadingHist
             ? <div className="py-4 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" /></div>
-            : <MiniHistogram data={hist ?? []} />
+            : <ErrorBoundary label="histogram" fallback={chartErrorFallback}><MiniHistogram data={hist ?? []} /></ErrorBoundary>
           }
         </div>
       )}
