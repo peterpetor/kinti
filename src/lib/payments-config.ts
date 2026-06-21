@@ -37,3 +37,33 @@ export function getVariantId(product: ProductType, country: CountryCode = "CH"):
   }
   return variantId;
 }
+
+/** A webhookban használt belső jogosultság-típus. */
+export type EntitlementType = "user_pro" | "business_pro" | "job_featured";
+
+/** Termék → belső jogosultság-típus (a webhook ez alapján aktivál). */
+export const PRODUCT_ENTITLEMENT: Record<ProductType, EntitlementType> = {
+  kinti_pro_monthly: "user_pro",
+  business_pro_monthly: "business_pro",
+  job_featured: "job_featured",
+};
+
+/**
+ * A FIZETETT variant ID-ból vezeti le a jogosultság-típust — a webhook EZT
+ * használja a kliens-megadta `custom_data.type` HELYETT. Így nem lehet olcsó
+ * terméket fizetve drága jogosultságot aktiválni (akár a Lemon Squeezy publikus
+ * checkout-URL custom-data paramétereivel sem). Ismeretlen variant → null.
+ */
+export function entitlementFromVariantId(
+  variantId: string | number | null | undefined,
+): EntitlementType | null {
+  if (variantId == null) return null;
+  const vid = String(variantId);
+  for (const product of Object.keys(LEMON_VARIANTS) as ProductType[]) {
+    const byCountry = LEMON_VARIANTS[product];
+    for (const v of Object.values(byCountry)) {
+      if (v && v === vid) return PRODUCT_ENTITLEMENT[product];
+    }
+  }
+  return null;
+}

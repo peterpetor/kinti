@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifySignature } from "@/lib/lemonsqueezy";
 import { getDB } from "@/lib/cloudflare";
 import { upsertSubscription } from "@/lib/subscriptions";
+import { entitlementFromVariantId, type EntitlementType } from "@/lib/payments-config";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -26,20 +27,29 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const eventName = event.meta.event_name;
-  const customData = event.data.attributes.first_order_item?.custom_data || event.meta.custom_data || {};
-  const data = event.data.attributes;
+  const eventName = event.meta?.event_name;
+  const data = event.data?.attributes ?? {};
+  const customData = data.first_order_item?.custom_data || event.meta?.custom_data || {};
+
+  // BIZTONSÁG: a jogosultság-típust a FIZETETT variantból vezetjük le, NEM a
+  // kliens-megadta `custom_data.type`-ból. Az utóbbi a Lemon Squeezy publikus
+  // checkout-URL custom-data paraméterein át hamisítható lenne (olcsó terméket
+  // fizetve drága jogosultságot aktiválni). Ismeretlen variant → nem aktiválunk.
+  const entitlement = entitlementFromVariantId(
+    data.first_order_item?.variant_id ?? data.variant_id,
+  );
 
   try {
     switch (eventName) {
       case "order_created":
       case "subscription_created":
-        await handleSuccessfulPayment(customData, data);
+        if (entitlement) await handleSuccessfulPayment(entitlement, customData, data);
+        else console.log("[lemonsqueezy] Ismeretlen variant — aktiválás kihagyva.");
         break;
-      
+
       case "subscription_cancelled":
       case "subscription_expired":
-        await handleSubscriptionEnded(customData, data);
+        if (entitlement) await handleSubscriptionEnded(entitlement, customData, data);
         break;
       
       // További események (pl. refund) kezelése ide kerülhet
@@ -54,27 +64,27 @@ export async function POST(req: Request) {
   }
 }
 
-async function handleSuccessfulPayment(customData: any, data: any) {
+async function handleSuccessfulPayment(type: EntitlementType, customData: any, data: any) {
   const db = getDB();
   const now = new Date().toISOString();
 
   // Kiemelt Álláshirdetés
-  if (customData.type === "job_featured" && customData.jobId) {
+  if (type === "job_featured" && customData.jobId) {
     // 30 napos kiemelés beállítása
     await db.prepare(
       "UPDATE jobs SET status = 'featured', updated_at = ? WHERE id = ?"
     ).bind(now, customData.jobId).run();
   }
-  
+
   // Szaknévsor PRO (Vállalkozás Kiemelés)
-  else if (customData.type === "business_pro" && customData.businessId) {
+  else if (type === "business_pro" && customData.businessId) {
     await db.prepare(
       "UPDATE businesses SET featured = 1, updated_at = ? WHERE id = ?"
     ).bind(now, customData.businessId).run();
   }
 
   // Kinti PRO (Magánszemély)
-  else if (customData.type === "user_pro" && customData.userId) {
+  else if (type === "user_pro" && customData.userId) {
     try {
       await upsertSubscription({
         userId: customData.userId,
@@ -90,19 +100,19 @@ async function handleSuccessfulPayment(customData: any, data: any) {
   }
 }
 
-async function handleSubscriptionEnded(customData: any, data: any) {
+async function handleSubscriptionEnded(type: EntitlementType, customData: any, data: any) {
   const db = getDB();
   const now = new Date().toISOString();
 
   // Szaknévsor PRO lejárat
-  if (customData.type === "business_pro" && customData.businessId) {
+  if (type === "business_pro" && customData.businessId) {
     await db.prepare(
       "UPDATE businesses SET featured = 0, updated_at = ? WHERE id = ?"
     ).bind(now, customData.businessId).run();
   }
 
   // Kinti PRO lejárat
-  else if (customData.type === "user_pro" && customData.userId) {
+  else if (type === "user_pro" && customData.userId) {
     try {
       await upsertSubscription({
         userId: customData.userId,

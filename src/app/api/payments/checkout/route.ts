@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createCheckout } from "@/lib/lemonsqueezy";
-import { getVariantId, ProductType, CountryCode } from "@/lib/payments-config";
+import { getVariantId, PRODUCT_ENTITLEMENT, ProductType, CountryCode } from "@/lib/payments-config";
+import { getBusinessByOwner, getEmployerByOwner, getJobById } from "@/lib/repo";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    // A jogosultságot (PRO) a webhook a customData.userId alapján adja meg.
-    // Ezért NEM bízhatunk a kliens által küldött userId-ben — a bejelentkezett
-    // session-ből vesszük, különben más fiókjára lehetne íratni a vásárlást.
+    // A jogosultságot a webhook a customData.userId alapján adja meg, ezért NEM
+    // bízhatunk a kliens userId-jében — a bejelentkezett session-ből vesszük.
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Bejelentkezés szükséges a vásárláshoz." }, { status: 401 });
@@ -25,20 +25,41 @@ export async function POST(req: Request) {
       customerName?: string;
     };
 
-    if (!product) {
-      return NextResponse.json({ error: "Missing product" }, { status: 400 });
+    const type = product ? PRODUCT_ENTITLEMENT[product] : undefined;
+    if (!product || !type) {
+      return NextResponse.json({ error: "Ismeretlen termék." }, { status: 400 });
     }
 
-    // Alapértelmezetten Svájc (CH), de ha küldik, használjuk azt
+    // Alapértelmezetten Svájc (CH), de ha küldik, használjuk azt.
     const selectedCountry = country || "CH";
-
-    // 1. Megkeressük a megfelelő Lemon Squeezy Variant ID-t az adott országhoz
     const variantId = getVariantId(product, selectedCountry);
 
-    // A userId-t MINDIG a session-ből írjuk felül (a kliensét eldobjuk).
-    const safeCustomData: Record<string, string> = { ...(customData || {}), userId };
+    // A webhook a custom_data alapján aktivál — ezért MINDENT szerver-oldalon, a
+    // bejelentkezett user tényleges tulajdonjogából vezetünk le. A kliens
+    // customData-ját (type/businessId/jobId) NEM bízzuk meg.
+    const safeCustomData: Record<string, string> = { type, userId };
 
-    // 2. Létrehozzuk a Checkout URL-t a Lemon Squeezy API-n keresztül
+    if (type === "business_pro") {
+      // Csak a SAJÁT vállalkozásodat emelheted ki (a kliens businessId-ját eldobjuk).
+      const business = await getBusinessByOwner(userId);
+      if (!business) {
+        return NextResponse.json({ error: "Nincs hozzád kötött vállalkozás." }, { status: 403 });
+      }
+      safeCustomData.businessId = business.id;
+    } else if (type === "job_featured") {
+      // Csak a SAJÁT hirdetésedet emelheted ki — ellenőrizzük a tulajdonjogot.
+      const jobId = typeof customData?.jobId === "string" ? customData.jobId : "";
+      const [employer, job] = await Promise.all([
+        getEmployerByOwner(userId),
+        jobId ? getJobById(jobId) : Promise.resolve(null),
+      ]);
+      if (!employer || !job || job.employerId !== employer.id) {
+        return NextResponse.json({ error: "Ez a hirdetés nem a tiéd." }, { status: 403 });
+      }
+      safeCustomData.jobId = jobId;
+    }
+    // user_pro: csak { type, userId } kell.
+
     const checkoutUrl = await createCheckout(
       variantId,
       safeCustomData,
