@@ -27,21 +27,24 @@ export function MiniHistogram({ data }: { data: { bucket_k: number; entry_count:
   return (
     <div className="pt-2 pb-1 space-y-1.5">
       {/* Oszlopok */}
-      <div className="flex items-end gap-1 h-24">
+      <div className="flex items-end gap-1 h-28">
         {fullData.map((d) => {
           const pct = (d.entry_count / maxCount) * 100;
           return (
-            <div key={d.bucket_k} className="group relative flex flex-1 flex-col items-center justify-end">
-              {/* Oszlop fölötti érték — csak hoverre, nem tolja el a sávokat */}
-              <span className="pointer-events-none absolute -top-3.5 text-[10px] font-bold text-ink-muted opacity-0 transition-opacity group-hover:opacity-100">
+            <div key={d.bucket_k} className="group flex h-full flex-1 flex-col items-center justify-end">
+              {/* Darabszám — MINDIG látható (touch-on is, nem csak hoveren). A fix
+                  magasságú sáv tartja az igazítást akkor is, ha 0 az érték. */}
+              <span className="mb-0.5 h-3.5 text-[10px] font-bold leading-none text-ink-muted">
                 {d.entry_count > 0 ? d.entry_count : ""}
               </span>
 
-              {/* Maga az oszlop */}
-              <div
-                className="w-full rounded-t-sm bg-primary/40 transition-colors group-hover:bg-primary"
-                style={{ height: `${pct}%`, minHeight: d.entry_count > 0 ? "4px" : "0px" }}
-              />
+              {/* A sáv a maradék magasságban, alulra igazítva */}
+              <div className="flex w-full flex-1 items-end">
+                <div
+                  className="w-full rounded-t-sm bg-primary/40 transition-colors group-hover:bg-primary"
+                  style={{ height: `${pct}%`, minHeight: d.entry_count > 0 ? "4px" : "0px" }}
+                />
+              </div>
             </div>
           );
         })}
