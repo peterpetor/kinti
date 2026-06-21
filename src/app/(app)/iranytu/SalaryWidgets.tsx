@@ -271,7 +271,7 @@ export function AlertSubscription({
           <div>
             <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">Kanton</label>
             <select value={canton} onChange={e => setCanton(e.target.value)} className={inputCls}>
-              <option value="all">🇨🇭 Egész Svájc</option>
+              <option value="all">Egész Svájc</option>
               {CANTONS.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
             </select>
           </div>

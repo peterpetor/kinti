@@ -396,7 +396,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                 <div className="flex gap-2 flex-wrap">
                   <select value={canton} onChange={e => setCanton(e.target.value)}
                     className="flex-1 min-w-0 rounded-xl border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 transition">
-                    <option value="all">🇨🇭 Egész Svájc</option>
+                    <option value="all">Egész Svájc</option>
                     {CANTONS.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
                   </select>
                   <div className="flex w-full rounded-xl border border-line overflow-hidden">
@@ -416,7 +416,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                 {filtered.length === 0 ? (
                   <p className="py-10 text-center text-ink-muted text-[14px]">{search ? "Nincs találat." : "Nincs elég adat."}</p>
                 ) : (
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="grid gap-3 md:grid-cols-2">
                     {filtered.map((s, i) =>
                       s.entry_count < MIN_ENTRIES_FOR_STATS ? (
                         <LowDataCard key={i} title={s.industry} count={s.entry_count} />
@@ -443,7 +443,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
               rentStats.length === 0 ? (
                 <p className="py-10 text-center text-ink-muted text-[14px]">Nincs elég adat.</p>
               ) : (
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-3 md:grid-cols-2">
                   {rentStats.map((r, i) =>
                     r.entry_count < MIN_ENTRIES_FOR_STATS ? (
                       <LowDataCard key={i} title={`${r.rooms} szobás lakás`} count={r.entry_count} />

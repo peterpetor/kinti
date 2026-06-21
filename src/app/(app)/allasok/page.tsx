@@ -55,7 +55,7 @@ export default async function JobsPage() {
               href="/allasok/profil" 
               className="inline-flex items-center gap-2 rounded-pill bg-primary/10 px-4 py-2 text-[13.5px] font-bold text-primary transition-all active:scale-[0.98]"
             >
-              <Icon name="upload" size={16} strokeWidth={2.4} /> CV feltöltése munkáltatóknak
+              <Icon name="upload" size={16} strokeWidth={2.4} /> Töltsd fel a CV-det
             </Link>
           </div>
         </section>

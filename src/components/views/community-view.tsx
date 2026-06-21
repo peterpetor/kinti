@@ -215,9 +215,11 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                 <p className="mt-2 flex items-center gap-1.5 text-[13px] opacity-90">
                   <Icon name="pin" size={12} strokeWidth={2.2} /> {hero.venue}
                 </p>
-                <p className="mt-1 flex items-center gap-1.5 text-[13px] opacity-90">
-                  <Icon name="clock" size={12} strokeWidth={2.2} /> {hero.startTime}
-                </p>
+                {hero.startTime && (
+                  <p className="mt-1 flex items-center gap-1.5 text-[13px] opacity-90">
+                    <Icon name="clock" size={12} strokeWidth={2.2} /> {hero.startTime}
+                  </p>
+                )}
               </Link>
             </div>
             <div className="mt-3.5 flex items-center gap-2 rounded-xl bg-white/[0.12] px-3.5 py-2.5">
@@ -286,8 +288,8 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                 <div className="mb-0.5 flex items-center gap-1.5">
                   <TagBadge tag={e.tag} color={e.color} />
                   <OwnPostBadge type="event" id={e.id} />
-                  <span className="text-[11.5px] font-semibold text-ink-muted">
-                    {e.dateWeekday} · {e.startTime}
+                  <span className="whitespace-nowrap text-[11.5px] font-semibold text-ink-muted">
+                    {e.dateWeekday}{e.startTime ? ` · ${e.startTime}` : ""}
                   </span>
                 </div>
                 <div className="line-clamp-2 text-[14.5px] font-bold leading-snug tracking-[-0.01em] text-ink">

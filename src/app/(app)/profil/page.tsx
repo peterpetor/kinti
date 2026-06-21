@@ -145,7 +145,7 @@ function OnboardingCTA({ categories }: { categories: Category[] }) {
         <SectionHeader>Mit fogsz beállítani</SectionHeader>
         <div className="mt-2 grid grid-cols-2 gap-2.5">
           {features.map((f) => (
-            <div key={f.title} className="flex items-start gap-2 rounded-2xl border border-line bg-surface-alt/50 p-2.5">
+            <div key={f.title} className="flex h-full items-start gap-2 rounded-2xl border border-line bg-surface-alt/50 p-2.5">
               <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[9px] bg-primary/10 text-primary">
                 <Icon name={f.icon} size={13} strokeWidth={2.2} />
               </span>

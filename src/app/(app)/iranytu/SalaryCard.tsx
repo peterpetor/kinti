@@ -61,7 +61,7 @@ export function SalaryCard({
   }, [stat.industry, canton, hist]);
 
   return (
-    <div className="rounded-2xl border border-line bg-surface p-4 space-y-3 hover:border-primary/40 transition-colors">
+    <div className="flex h-full flex-col gap-3 rounded-2xl border border-line bg-surface p-4 hover:border-primary/40 transition-colors">
       {/* Fejléc */}
       <div className="flex items-start justify-between gap-2">
         <p className="font-bold text-[14px] text-ink leading-snug">{stat.industry}</p>
@@ -102,7 +102,7 @@ export function SalaryCard({
       {/* Akciógombok — egymás alá/rácsba rendezve, hogy a keskeny kártyán is
           teljesen olvashatók legyenek (nincs vízszintes elcsúszás / levágás).
           A gombok alatt nyílnak ki a részletek (Tapasztalat / Eloszlás / Trend). */}
-      <div className="space-y-2 pt-1">
+      <div className="space-y-2 pt-1 mt-auto">
         {expRows.length > 0 && (
           <button
             onClick={() => { setShowExp(v => !v); setShowTrend(false); setShowHist(false); }}

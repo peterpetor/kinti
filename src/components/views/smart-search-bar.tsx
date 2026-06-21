@@ -36,7 +36,7 @@ export function SmartSearchBar({
   onApplyCategory,
   onApplyCanton,
   onApplyQuery,
-  placeholder = "Mit keresel? Pl. „villanyszerelő Aargauban, aki angolul is tud”",
+  placeholder = "Mit keresel? Pl. villanyszerelő Zürichben",
   className,
 }: Props) {
   const [busy, setBusy] = useState(false);
