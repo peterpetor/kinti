@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { CANTONS } from "@/lib/cantons";
+import { cn } from "@/lib/cn";
 
 const GRID = [
   { c: "SH", x: 5, y: 1 }, { c: "TG", x: 6, y: 1 }, { c: "SG", x: 7, y: 1 },
@@ -18,10 +19,26 @@ interface HeatmapRow {
   entry_count: number;
 }
 
+/** Hőszín: t∈[0,1] → hideg kék (alacsony bér) → sárga → vörös (magas bér). */
+function heatColor(t: number): string {
+  const c = Math.max(0, Math.min(1, t));
+  const stops = [
+    { p: 0, r: 37, g: 99, b: 235 },   // #2563eb kék
+    { p: 0.5, r: 245, g: 158, b: 11 }, // #f59e0b sárga/borostyán
+    { p: 1, r: 220, g: 38, b: 38 },    // #dc2626 vörös
+  ];
+  const [lo, hi] = c <= 0.5 ? [stops[0], stops[1]] : [stops[1], stops[2]];
+  const f = (c - lo.p) / (hi.p - lo.p || 1);
+  const r = Math.round(lo.r + (hi.r - lo.r) * f);
+  const g = Math.round(lo.g + (hi.g - lo.g) * f);
+  const b = Math.round(lo.b + (hi.b - lo.b) * f);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
 export function SwissHeatmap({ industry, period }: { industry: string; period: string }) {
   const [data, setData] = useState<HeatmapRow[]>([]);
   const [loading, setLoading] = useState(false);
-  const [hovered, setHovered] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -40,10 +57,14 @@ export function SwissHeatmap({ industry, period }: { industry: string; period: s
     return () => { active = false; };
   }, [industry, period]);
 
-  const vals = data.map(d => d.avg_salary);
+  const vals = data.map((d) => d.avg_salary);
   const min = vals.length > 0 ? Math.min(...vals) : 0;
   const max = vals.length > 0 ? Math.max(...vals) : 0;
   const range = max - min || 1;
+
+  const byCode = new Map(data.map((d) => [d.canton_code, d]));
+  const selRow = selected ? byCode.get(selected) : undefined;
+  const selName = selected ? (CANTONS.find((c) => c.code === selected)?.name ?? selected) : null;
 
   return (
     <div className="rounded-2xl border border-line bg-surface p-5 space-y-4 shadow-sm">
@@ -53,7 +74,7 @@ export function SwissHeatmap({ industry, period }: { industry: string; period: s
           <p className="font-bold text-[15px] text-ink">
             Hőtérkép: {industry === "all" ? "Összes iparág" : industry}
           </p>
-          <p className="text-[12px] text-ink-muted">Svájci átlagbérek kantononként</p>
+          <p className="text-[12px] text-ink-muted">Átlagbérek kantononként — minél vörösebb, annál magasabb</p>
         </div>
       </div>
 
@@ -62,68 +83,76 @@ export function SwissHeatmap({ industry, period }: { industry: string; period: s
           <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
         </div>
       ) : (
-        <div className="no-scrollbar relative pt-2 pb-6 px-2 overflow-x-auto">
-          <div 
-            className="grid gap-1.5 min-w-[340px]" 
-            style={{ 
-              gridTemplateColumns: "repeat(8, minmax(0, 1fr))",
-              gridTemplateRows: "repeat(6, 1fr)" 
-            }}
-          >
-            {GRID.map(cell => {
-              const row = data.find(d => d.canton_code === cell.c);
-              const cantonInfo = CANTONS.find(c => c.code === cell.c);
-              
-              // Opacity based on value
-              let bgStyle = { backgroundColor: "var(--surface-alt)", color: "var(--text-faint)" };
-              let borderCls = "border border-line";
-              
-              if (row) {
-                const intensity = 0.2 + (0.8 * (row.avg_salary - min) / range);
-                bgStyle = { backgroundColor: `rgba(var(--primary), ${intensity})`, color: intensity > 0.5 ? "#fff" : "var(--text)" };
-                borderCls = "border-transparent";
-              }
-
-              return (
-                <div
-                  key={cell.c}
-                  onMouseEnter={() => setHovered(cell.c)}
-                  onMouseLeave={() => setHovered(null)}
-                  className={`relative flex items-center justify-center rounded-xl font-bold text-[13px] h-10 transition-transform cursor-crosshair hover:scale-110 hover:z-10 shadow-sm ${borderCls}`}
-                  style={{ gridColumn: cell.x, gridRow: cell.y, ...bgStyle }}
-                >
-                  {cell.c}
-
-                  {/* Tooltip */}
-                  {hovered === cell.c && (
-                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max bg-ink text-surface px-3 py-2 rounded-lg text-[12px] shadow-lg z-20 font-medium">
-                      <p className="font-bold mb-0.5">{cantonInfo?.name}</p>
-                      {row ? (
-                        <>
-                          <p>{row.avg_salary.toLocaleString("hu-HU")} CHF/év</p>
-                          <p className="text-[11px] text-surface/60">{row.entry_count} adat</p>
-                        </>
-                      ) : (
-                        <p className="text-[11px] text-surface/60">Nincs elég adat</p>
-                      )}
-                      {/* Tooltip arrow */}
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-ink" />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+        <>
+          {/* Kanton-rács — minden kanton mindig látszik (adat nélkül halvány). */}
+          <div className="no-scrollbar overflow-x-auto">
+            <div
+              className="grid gap-1.5 min-w-[360px]"
+              style={{ gridTemplateColumns: "repeat(8, minmax(0, 1fr))", gridTemplateRows: "repeat(6, 1fr)" }}
+            >
+              {GRID.map((cell) => {
+                const row = byCode.get(cell.c);
+                const hasData = !!row;
+                const t = hasData ? (row!.avg_salary - min) / range : 0;
+                const isSel = selected === cell.c;
+                const cantonName = CANTONS.find((c) => c.code === cell.c)?.name ?? cell.c;
+                return (
+                  <button
+                    type="button"
+                    key={cell.c}
+                    onClick={() => setSelected(isSel ? null : cell.c)}
+                    onMouseEnter={() => setSelected(cell.c)}
+                    title={hasData ? `${cantonName}: ${row!.avg_salary.toLocaleString("hu-HU")} CHF/év` : `${cantonName}: nincs elég adat`}
+                    style={{
+                      gridColumn: cell.x,
+                      gridRow: cell.y,
+                      backgroundColor: hasData ? heatColor(t) : undefined,
+                    }}
+                    className={cn(
+                      "flex h-10 items-center justify-center rounded-lg text-[12px] font-extrabold transition-transform",
+                      hasData ? "text-white shadow-sm hover:scale-105" : "border border-line bg-surface-alt text-ink-faint hover:scale-105",
+                      isSel && "ring-2 ring-ink/70 scale-105 relative z-10",
+                    )}
+                  >
+                    {cell.c}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Színskála legenda */}
-          {data.length > 0 && (
-            <div className="absolute bottom-0 right-2 left-2 flex items-center justify-between text-[11px] font-medium text-ink-faint">
-              <span>{min.toLocaleString("hu-HU")} CHF</span>
-              <div className="flex-1 mx-4 h-1.5 rounded-full" style={{ background: "linear-gradient(to right, rgba(var(--primary), 0.2), rgba(var(--primary), 1))" }} />
-              <span>{max.toLocaleString("hu-HU")} CHF</span>
+          {/* Kiválasztott/hover kanton kiírása — touch-barát, nincs levágódó tooltip. */}
+          <div className="min-h-[20px] text-center text-[12.5px]">
+            {selected ? (
+              selRow ? (
+                <span className="text-ink">
+                  <strong>{selName}</strong>: {selRow.avg_salary.toLocaleString("hu-HU")} CHF/év{" "}
+                  <span className="text-ink-faint">({selRow.entry_count} adat)</span>
+                </span>
+              ) : (
+                <span className="text-ink-faint">
+                  <strong className="text-ink-muted">{selName}</strong>: nincs elég adat
+                </span>
+              )
+            ) : (
+              <span className="text-ink-faint">Koppints egy kantonra a részletekért</span>
+            )}
+          </div>
+
+          {/* Színskála-legenda */}
+          {data.length > 0 ? (
+            <div className="flex items-center gap-2 text-[11px] font-medium text-ink-faint">
+              <span className="whitespace-nowrap">{min.toLocaleString("hu-HU")}</span>
+              <div
+                className="flex-1 h-2 rounded-full"
+                style={{ background: `linear-gradient(to right, ${heatColor(0)}, ${heatColor(0.5)}, ${heatColor(1)})` }}
+              />
+              <span className="whitespace-nowrap">{max.toLocaleString("hu-HU")} CHF</span>
             </div>
+          ) : (
+            <p className="text-center text-[12px] text-ink-faint">Ehhez a szűréshez még nincs elég adat a hőtérképhez.</p>
           )}
-        </div>
+        </>
       )}
     </div>
   );
