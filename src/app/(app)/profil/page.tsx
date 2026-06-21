@@ -61,7 +61,7 @@ export default async function ProfilPage() {
   const categories = business ? [] : (await getCategories()).filter((c) => c.id !== "all");
 
   return (
-    <div className="space-y-4 px-[18px] pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
+    <div className="space-y-4 px-[18px] pt-[calc(env(safe-area-inset-top)+2rem)] pb-28">
       {/* fejléc */}
       <header className="flex items-center gap-2.5">
         <div className="flex items-center gap-2">
@@ -391,22 +391,22 @@ async function OwnerDashboard({
           {reviews.map((r) => {
             const reviewerHandle = r.reviewerName?.trim() || handleFromId(r.id);
             return (
-            <div key={r.id} className="rounded-card border border-line bg-surface p-3.5 shadow-card">
-              <div className="flex items-center gap-2.5">
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-white">
-                  {reviewerHandle.charAt(0).toUpperCase()}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[13.5px] font-bold text-ink">{reviewerHandle}</div>
-                  <div className="text-[11px] text-ink-muted">{getRelativeTime(r.publishedAt)}</div>
-                </div>
-                <div className="flex gap-px text-star">
-                  {Array.from({ length: r.rating }).map((_, i) => (
-                    <Icon key={i} name="star" size={12} filled />
-                  ))}
+              <div key={r.id} className="rounded-card border border-line bg-surface p-3.5 shadow-card">
+                <div className="flex items-center gap-2.5">
+                  <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-white">
+                    {reviewerHandle.charAt(0).toUpperCase()}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13.5px] font-bold text-ink">{reviewerHandle}</div>
+                    <div className="text-[11px] text-ink-muted">{getRelativeTime(r.publishedAt)}</div>
+                  </div>
+                  <div className="flex gap-px text-star">
+                    {Array.from({ length: r.rating }).map((_, i) => (
+                      <Icon key={i} name="star" size={12} filled />
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
             );
           })}
         </section>

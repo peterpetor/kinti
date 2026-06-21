@@ -35,7 +35,7 @@ export default async function WorkerProfilePage() {
     profile?.fullName ?? [user?.firstName, user?.lastName].filter(Boolean).join(" ");
 
   return (
-    <div className="mx-auto max-w-md space-y-6 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+2rem)]">
+    <div className="mx-auto max-w-md space-y-6 px-5 pb-28 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <header className="flex items-center gap-3">
         <Link
           href="/allasok"
