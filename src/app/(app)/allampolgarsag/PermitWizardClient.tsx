@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 export function PermitWizardClient() {
+  const [prefCountry] = usePreferredCountry();
+  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
   const [arrivalDate, setArrivalDate] = useState<string>("");
 
   let arrival = new Date();
@@ -37,13 +41,15 @@ export function PermitWizardClient() {
   return (
     <div className="space-y-6">
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-sm">
-        <h2 className="text-xl font-bold mb-2">Engedély Varázsló (EU/EFTA)</h2>
+        <h2 className="text-xl font-bold mb-2">Állampolgárság Varázsló (EU)</h2>
         <p className="text-neutral-500 text-sm mb-4">
-          Magyar állampolgárként mikor lehetsz jogosult a svájci C-engedélyre (Niederlassungsbewilligung) és a svájci útlevélre (Einbürgerung)? Add meg mikor költöztél ki.
+          {isAT
+            ? "Magyar állampolgárként mikor lehetsz jogosult az osztrák tartós tartózkodásra (Daueraufenthalt, 5 év) és az osztrák állampolgárságra (Staatsbürgerschaft, jellemzően 10 év)? Add meg, mikor jelentkeztél be."
+            : "Magyar állampolgárként mikor lehetsz jogosult a svájci C-engedélyre (Niederlassungsbewilligung) és a svájci útlevélre (Einbürgerung)? Add meg mikor költöztél ki."}
         </p>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium">Svájci bejelentkezésed hónapja:</label>
+          <label className="block text-sm font-medium">{isAT ? "Ausztriai bejelentkezésed" : "Svájci bejelentkezésed"} hónapja:</label>
           <input 
             type="month" 
             value={arrivalDate} 
@@ -60,10 +66,10 @@ export function PermitWizardClient() {
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
             <div className={`absolute top-0 left-0 w-full h-1.5 ${isCEligible ? 'bg-green-500' : 'bg-brand-500'}`} />
             <div className="flex justify-between items-start mb-2 mt-1">
-              <h3 className="font-bold text-lg">Leetelepedési Engedély (C-Bewilligung)</h3>
+              <h3 className="font-bold text-lg">{isAT ? "Tartós tartózkodás (Daueraufenthalt)" : "Letelepedési Engedély (C-Bewilligung)"}</h3>
               {isCEligible && <span className="bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-bold whitespace-nowrap ml-2">Jogosult lehetsz!</span>}
             </div>
-            <p className="text-sm text-neutral-500 mb-5">A C-engedéllyel végleges tartózkodási jogot kapsz, és megszűnik a munkáltatóhoz / kvótákhoz való kötődésed.</p>
+            <p className="text-sm text-neutral-500 mb-5">{isAT ? "5 év jogszerű tartózkodás után a Daueraufenthalt megerősített letelepedési státuszt és erősebb védelmet ad a kiutasítás ellen." : "A C-engedéllyel végleges tartózkodási jogot kapsz, és megszűnik a munkáltatóhoz / kvótákhoz való kötődésed."}</p>
             
             <div className="mb-5 bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl">
               <div className="flex justify-between text-xs font-semibold text-neutral-500 mb-2">
@@ -75,7 +81,7 @@ export function PermitWizardClient() {
               </div>
               <div className="text-center mt-3 text-sm font-semibold">
                 {isCEligible ? (
-                  <span className="text-green-600">Az 5 éves (EU/EFTA) időtartamot elérted! Már beadhatod a kérelmet a Gemeinde-nél.</span>
+                  <span className="text-green-600">{isAT ? "Az 5 évet elérted! Kérheted a Daueraufenthalt-igazolást a tartózkodási hatóságnál." : "Az 5 éves (EU/EFTA) időtartamot elérted! Már beadhatod a kérelmet a Gemeinde-nél."}</span>
                 ) : (
                   <span className="text-brand-600 dark:text-brand-400">Még {(100 - progressToC).toFixed(1)}% van hátra az 5 évből.</span>
                 )}
@@ -83,7 +89,15 @@ export function PermitWizardClient() {
             </div>
 
             <div className="bg-brand-50 dark:bg-brand-900/10 border border-brand-100 dark:border-brand-900/50 rounded-xl p-4 text-sm space-y-2">
-              <p className="font-semibold text-brand-800 dark:text-brand-300">Mik a feltételei a C-engedélynek?</p>
+              <p className="font-semibold text-brand-800 dark:text-brand-300">{isAT ? "Mik a Daueraufenthalt feltételei?" : "Mik a feltételei a C-engedélynek?"}</p>
+              {isAT ? (
+              <ul className="list-disc pl-5 text-neutral-700 dark:text-neutral-300 space-y-1.5">
+                <li>5 év megszakítás nélküli, jogszerű ausztriai tartózkodás (EU-állampolgárként a szabad mozgás alapján).</li>
+                <li>Folyamatos megélhetés (munka/önfoglalkoztatás vagy elég jövedelem) + egészségbiztosítás.</li>
+                <li>Nem terhelted túlzottan a szociális rendszert.</li>
+                <li>A »Bescheinigung des Daueraufenthalts« kérelmezése a tartózkodási hatóságnál.</li>
+              </ul>
+              ) : (
               <ul className="list-disc pl-5 text-neutral-700 dark:text-neutral-300 space-y-1.5">
                 <li>Megszakítás nélküli, 5 év B-engedéllyel történő szabályos svájci tartózkodás.</li>
                 <li>Nyelvtudás igazolása (Fide teszt / Goethe): szóban <strong>B1</strong>, írásban <strong>A2</strong> szint. (Egyes kantonokban, pl. Zürichben egyelőre A2/A1 is elég lehet, de a szövetségi ajánlás szigorodik).</li>
@@ -91,6 +105,7 @@ export function PermitWizardClient() {
                 <li>Nincs betömetlen adósságod (Betreibungsauskunft).</li>
                 <li>Szociális segély (Sozialhilfe) hiánya az elmúlt 3 évben.</li>
               </ul>
+              )}
             </div>
           </div>
 
@@ -98,10 +113,10 @@ export function PermitWizardClient() {
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
             <div className={`absolute top-0 left-0 w-full h-1.5 ${isCitizenEligible ? 'bg-red-500' : 'bg-neutral-400'}`} />
             <div className="flex justify-between items-start mb-2 mt-1">
-              <h3 className="font-bold text-lg">Svájci Állampolgárság (Einbürgerung)</h3>
+              <h3 className="font-bold text-lg">{isAT ? "Osztrák Állampolgárság (Staatsbürgerschaft)" : "Svájci Állampolgárság (Einbürgerung)"}</h3>
               {isCitizenEligible && <span className="bg-red-100 text-red-800 text-xs px-2.5 py-1 rounded-full font-bold whitespace-nowrap ml-2">Jogosult lehetsz!</span>}
             </div>
-            <p className="text-sm text-neutral-500 mb-5">Rendes honosítási eljárás (Ordentliche Einbürgerung). Teljes választójog és állampolgári kötelezettségek.</p>
+            <p className="text-sm text-neutral-500 mb-5">{isAT ? "Honosítás (Verleihung der Staatsbürgerschaft). FONTOS: Ausztria általában NEM enged kettős állampolgárságot — a magyar állampolgárságról le kell mondanod!" : "Rendes honosítási eljárás (Ordentliche Einbürgerung). Teljes választójog és állampolgári kötelezettségek."}</p>
             
             <div className="mb-5 bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl">
               <div className="flex justify-between text-xs font-semibold text-neutral-500 mb-2">
@@ -113,7 +128,7 @@ export function PermitWizardClient() {
               </div>
               <div className="text-center mt-3 text-sm font-semibold">
                 {isCitizenEligible ? (
-                  <span className="text-red-600">A szövetségi 10 éves szabályt elérted! (Vedd figyelembe a kantonális éveket is)</span>
+                  <span className="text-red-600">{isAT ? "A 10 évet elérted! (Különleges esetben már 6 év is elég lehet — lásd a feltételeket.)" : "A szövetségi 10 éves szabályt elérted! (Vedd figyelembe a kantonális éveket is)"}</span>
                 ) : (
                   <span className="text-neutral-600 dark:text-neutral-400">Még {(100 - progressToCitizen).toFixed(1)}% van hátra a 10 évből.</span>
                 )}
@@ -121,7 +136,16 @@ export function PermitWizardClient() {
             </div>
 
             <div className="bg-red-50/50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-xl p-4 text-sm space-y-2">
-              <p className="font-semibold text-red-800 dark:text-red-300">Mik a feltételei az Útlevélnek?</p>
+              <p className="font-semibold text-red-800 dark:text-red-300">{isAT ? "Mik az állampolgárság feltételei?" : "Mik a feltételei az Útlevélnek?"}</p>
+              {isAT ? (
+              <ul className="list-disc pl-5 text-neutral-700 dark:text-neutral-300 space-y-1.5">
+                <li>Legalább <strong>10 év</strong> jogszerű tartózkodás (ebből min. 5 év Niederlassung/Daueraufenthalt). Különleges esetben <strong>6 év</strong> (pl. kiemelkedő integráció B2-vel, Ausztriában született, elismert menekült).</li>
+                <li>Nyelvtudás <strong>B1</strong> + a <strong>Staatsbürgerschaftstest</strong> sikeres letétele (osztrák történelem, intézmények + a tartomány kérdései).</li>
+                <li><strong className="text-red-700">A magyar állampolgárságról LE KELL MONDANOD — Ausztria általában nem enged kettős állampolgárságot!</strong></li>
+                <li>Biztos megélhetés (az elmúlt 6 évből kb. 3 év igazolt jövedelem), tartós szociális segély-függés nélkül.</li>
+                <li>Tiszta büntetlen előélet (osztrák és külföldi), az alkotmányos rend elfogadása.</li>
+              </ul>
+              ) : (
               <ul className="list-disc pl-5 text-neutral-700 dark:text-neutral-300 space-y-1.5">
                 <li>Legalább 10 év igazolt svájci tartózkodás (a 8-18 életév között töltött évek duplán számítanak).</li>
                 <li><strong>Követelmény: Már rendelkezz C-engedéllyel!</strong></li>
@@ -129,6 +153,7 @@ export function PermitWizardClient() {
                 <li><strong>Minimális helyben lakás:</strong> Kantontól függően 2-5 évig egyazon településen / kantonban kell élned a kérelem beadása előtt. (Ha átköltözöl egy másik kantonba, ez az óra nullázódhat!)</li>
                 <li>Szigorú büntetlen előélet és anyagi függetlenség bizonyítása.</li>
               </ul>
+              )}
             </div>
           </div>
 
