@@ -2,9 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Icon, type IconName } from "./icons";
 import { cn } from "@/lib/cn";
 import { haptic } from "@/lib/haptics";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 
 /**
  * TabBar — alsó, lebegő üveg-navigáció. Stabil fülek, auth-független label:
@@ -20,6 +24,8 @@ interface Tab {
   icon: IconName;
   /** Ezekre a prefix-ekre is aktívnak számít (a href-en felül). */
   alsoMatch?: string[];
+  /** Ha megadva, csak akkor látszik, ha a funkció elérhető az országban. */
+  feature?: string;
 }
 
 const TABS: Tab[] = [
@@ -31,7 +37,8 @@ const TABS: Tab[] = [
     icon: "users",
   },
   { href: "/allasok", label: "Állások", icon: "briefcase", alsoMatch: ["/munkaltato"] },
-  { href: "/iranytu", label: "Iránytű", icon: "compass" },
+  // Iránytű = svájci bér/lakbér-benchmark → csak CH (lib/feature-availability).
+  { href: "/iranytu", label: "Iránytű", icon: "compass", feature: "iranytu" },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {
@@ -42,11 +49,18 @@ function isActive(pathname: string, tab: Tab): boolean {
 
 export function TabBar() {
   const pathname = usePathname();
+  // Ország-tudatos fülek: hidratálás-biztos (mount előtt CH-default = minden fül,
+  // egyezik az SSR-rel; mount után a választott ország szerint szűrünk).
+  const [prefCountry] = usePreferredCountry();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
+  const tabs = TABS.filter((t) => !t.feature || isFeatureAvailable(t.feature, country));
 
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-[calc(env(safe-area-inset-bottom)+12px)]">
       <div className="glass pointer-events-auto flex w-full max-w-md items-stretch gap-1 rounded-[22px] border border-line p-1.5 shadow-pop">
-        {TABS.map((t) => {
+        {tabs.map((t) => {
           const active = isActive(pathname, t);
           return (
             <Link
