@@ -9,6 +9,7 @@ import { haptic } from "@/lib/haptics";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
+import { isImmersiveRoute } from "@/lib/immersive-routes";
 
 /**
  * TabBar — alsó, lebegő üveg-navigáció. Stabil fülek, auth-független label:
@@ -47,6 +48,7 @@ function isActive(pathname: string, tab: Tab): boolean {
   return tab.alsoMatch?.some((p) => pathname.startsWith(p)) ?? false;
 }
 
+
 export function TabBar() {
   const pathname = usePathname();
   // Ország-tudatos fülek: hidratálás-biztos (mount előtt CH-default = minden fül,
@@ -56,6 +58,9 @@ export function TabBar() {
   useEffect(() => setMounted(true), []);
   const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
   const tabs = TABS.filter((t) => !t.feature || isFeatureAvailable(t.feature, country));
+
+  // Lecke-lejátszó (immerzív): ne lógjon rá a navigáció az alsó CTA-ra.
+  if (isImmersiveRoute(pathname)) return null;
 
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-[calc(env(safe-area-inset-bottom)+12px)]">
