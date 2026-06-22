@@ -431,6 +431,29 @@ export default function AdatvedelemPage() {
         haladéktalanul továbbítjuk.
       </p>
 
+      <h3>3.3 Böngészőben tárolt beállítások (localStorage)</h3>
+      <p>
+        A kényelmi és személyre szabási beállításaidat <strong>kizárólag a saját
+        böngésződben</strong> (<code>localStorage</code> / <code>sessionStorage</code>)
+        tároljuk — ezek <strong>nem cookie-k</strong>, és{" "}
+        <strong>semmilyen formában nem kerülnek fel az üzemeltető szerverére</strong>,
+        így más felhasználók sem férnek hozzájuk. Ezek a következők:
+      </p>
+      <ul>
+        <li><strong>Választott ország</strong> (<code>kinti.country</code>) — melyik ország Kintijét nézed (Svájc, Ausztria, Németország, Hollandia, Dánia, Svédország). A térkép és a tartalom ehhez igazodik.</li>
+        <li><strong>Választott régió / kanton</strong> (<code>kinti.canton</code>) — a helyi szűréshez és a kanton-célzott push-hoz.</li>
+        <li><strong>Nézet- és szűrő-preferenciák</strong> — pl. lista vagy térkép nézet, a kalkulátorokba (bér, vám, lakhatás, árfolyam) utoljára beírt értékek, kiválasztott szűrők.</li>
+        <li><strong>Mentett bér-ajánlatok</strong> — lásd a 2.11 pontot.</li>
+        <li><strong>Látogatás-számláló és állapotjelzők</strong> — pl. hányadszor jársz itt (a feliratkozás-felkérés időzítéséhez), illetve hogy beküldtél-e már tartalmat.</li>
+        <li><strong>Tartalom-kezelő tokenek</strong> — a saját vállalkozásod/eseményed/hirdetésed utólagos szerkesztéséhez (lásd 2.1).</li>
+        <li><strong>Letöltött offline útmutatók</strong> — ha letöltöd a tudásbázist offline olvasásra, az a böngésződ gyorsítótárában marad.</li>
+      </ul>
+      <p>
+        Mindezt bármikor <strong>véglegesen törölheted</strong> a böngésződ tárolójának
+        (sütik és webhelyadatok) ürítésével. A választott ország és régió pusztán
+        UX-segéd: nem azonosít téged, és nincs hozzá fiók.
+      </p>
+
       <h2>4. Adatok továbbítása harmadik országba</h2>
       <p>
         A Clerk, a Cloudflare és a Resend USA-ban bejegyzett, ottani szervereket
