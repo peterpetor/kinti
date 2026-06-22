@@ -58,8 +58,20 @@ export function ExploreView({
   const [openNow, setOpenNow] = useState(false);
   const [minYears, setMinYears] = useState(0);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
-  // A térkép az app "lelke" → alapból a térkép-nézet nyílik (a lista 1 koppintásra).
-  const [view, setView] = useState<ViewMode>("map");
+  // Alapból LISTA (gyors pásztázás + SEO + nincs hydration-mismatch: az SSR és az
+  // első kliens-render is "list"). A user térkép/lista választását megjegyezzük:
+  // mount után visszaállítjuk a mentett preferenciát, váltáskor elmentjük.
+  const [view, setView] = useState<ViewMode>("list");
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("kinti_szaknevsor_view");
+      if (saved === "map" || saved === "list") setView(saved);
+    } catch { /* ignore */ }
+  }, []);
+  const setViewPersist = (v: ViewMode) => {
+    setView(v);
+    try { localStorage.setItem("kinti_szaknevsor_view", v); } catch { /* ignore */ }
+  };
   const [cantonSheetOpen, setCantonSheetOpen] = useState(false);
 
   // Ha nem URL-ből érkezett kanton, a felhasználó preferált kantonjára szűrünk
@@ -455,7 +467,7 @@ export function ExploreView({
             </span>
           )}
         </p>
-        <ViewSwitch value={view} onChange={setView} />
+        <ViewSwitch value={view} onChange={setViewPersist} />
       </div>
 
       {/* Kontextuális supply-CTA: ha egy szűrt kategóriában/kantonban kevés a
