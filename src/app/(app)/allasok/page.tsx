@@ -42,10 +42,10 @@ export default async function JobsPage() {
         <section className="text-center animate-fade-up">
           <div className="mb-6">
             <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
-              Kinti Állások 🇨🇭
+              Kinti Állások
             </h1>
             <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
-              Magyar-barát svájci munkalehetőségek. Böngéssz az ellenőrzött állások között, vagy
+              Magyar-barát munkalehetőségek külföldön. Böngéssz az ellenőrzött állások között, vagy
               készülj fel az interjúra!
             </p>
           </div>

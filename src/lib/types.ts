@@ -181,6 +181,8 @@ export interface Job {
   location: string;
   /** Strukturált kanton-kód a szűréshez (lib/cantons.ts). Régi hirdetésnél null. */
   cantonCode: string | null;
+  /** Ország-kód (CH/AT/…) — a 6-ország rendszerhez. Régi sorok: 'CH'. */
+  country?: string;
   /** Szakma-id a szűréshez (lib/job-categories.ts). Régi hirdetésnél null. */
   category: string | null;
   /** A feladó nyilatkozata: bejelentett (AHV), legális foglalkoztatás. */

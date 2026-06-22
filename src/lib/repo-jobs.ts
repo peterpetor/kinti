@@ -26,7 +26,7 @@ function toEmployer(r: EmployerRow): Employer {
 
 interface JobRow {
   id: string; employer_id: string; title: string; description: string; location: string;
-  canton_code: string | null; category: string | null; legal_attested: number | null;
+  canton_code: string | null; country_code?: string | null; category: string | null; legal_attested: number | null;
   employment_type: string; salary_min: number | null; salary_max: number | null;
   currency: string; requirements: string | null; status: string; moderation_status: number;
   created_at: string; updated_at: string; expires_at: string | null;
@@ -35,7 +35,7 @@ interface JobRow {
 function toJob(r: JobRow): Job {
   return {
     id: r.id, employerId: r.employer_id, title: r.title, description: r.description,
-    location: r.location, cantonCode: r.canton_code ?? null, category: r.category ?? null,
+    location: r.location, cantonCode: r.canton_code ?? null, country: r.country_code ?? "CH", category: r.category ?? null,
     legalAttested: bool(r.legal_attested),
     employmentType: r.employment_type, salaryMin: r.salary_min,
     salaryMax: r.salary_max, currency: r.currency, requirements: r.requirements,

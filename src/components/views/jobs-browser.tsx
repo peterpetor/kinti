@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState, lazy, Suspense } from "react";
+import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 import { usePersistedState } from "@/hooks/use-persisted-state";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { CANTONS, cantonName } from "@/lib/cantons";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { getRegions, regionName } from "@/lib/regions";
 import { JOB_CATEGORIES, jobCategoryLabel } from "@/lib/job-categories";
 import { jobMatchScore, hasMatchableProfile, type MatchProfile } from "@/lib/job-match";
 import type { Job } from "@/lib/types";
@@ -36,12 +38,21 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
   const [category, setCategory] = usePersistedState("kinti_jobs_category", "");
   const [showMap, setShowMap] = useState(false);
 
+  // Ország-tudatos (6-ország). Hidratálás-biztos: mount előtt CH-default = minden
+  // állás (az SSR is azt rendereli; jelenleg minden állás CH), mount után a választott.
+  const [prefCountry] = usePreferredCountry();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
+  const regions = useMemo(() => getRegions(country), [country]);
+  const jobsInCountry = useMemo(() => jobs.filter((j) => (j.country ?? "CH") === country), [jobs, country]);
+
   // Kanton-térképhez: darabszám kantononként, a kanton-szűrőt KIVÉVE (hogy a
   // térképen minden kanton látsszon, amiből választani lehet).
   const cantonCounts = useMemo(() => {
     const q = query.trim().toLowerCase();
     const counts: Record<string, number> = {};
-    for (const job of jobs) {
+    for (const job of jobsInCountry) {
       if (category && job.category !== category) continue;
       if (q) {
         const haystack = `${job.title} ${job.description} ${job.location}`.toLowerCase();
@@ -50,11 +61,11 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
       if (job.cantonCode) counts[job.cantonCode] = (counts[job.cantonCode] ?? 0) + 1;
     }
     return counts;
-  }, [jobs, query, category]);
+  }, [jobsInCountry, query, category]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return jobs.filter((job) => {
+    return jobsInCountry.filter((job) => {
       if (canton && job.cantonCode !== canton) return false;
       if (category && job.category !== category) return false;
       if (q) {
@@ -63,7 +74,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
       }
       return true;
     });
-  }, [jobs, query, canton, category]);
+  }, [jobsInCountry, query, canton, category]);
 
   const hasActiveFilter = canton !== "" || category !== "" || query.trim() !== "";
 
@@ -105,8 +116,8 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
               canton ? "border-primary/40 text-ink" : "border-line text-ink-muted",
             )}
           >
-            <option value="">Összes kanton</option>
-            {CANTONS.map((c) => (
+            <option value="">Összes régió</option>
+            {regions.map((c) => (
               <option key={c.code} value={c.code}>{c.name}</option>
             ))}
           </select>
@@ -124,7 +135,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
       </div>
 
       {/* Térkép: hol vannak az állások (kanton-buborékok) — koppintásra szűr */}
-      {jobs.length > 0 && Object.keys(cantonCounts).length > 0 && (
+      {jobsInCountry.length > 0 && Object.keys(cantonCounts).length > 0 && (
         <div className="space-y-2">
           <button
             type="button"
@@ -137,7 +148,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                 Térkép — hol vannak az állások?
               </span>
               <span className="block text-[11.5px] text-ink-muted">
-                {Object.keys(cantonCounts).length} kanton · koppints egy kantonra a szűréshez
+                {Object.keys(cantonCounts).length} régió · koppints a szűréshez
               </span>
             </span>
             <Icon name="chevD" size={16} strokeWidth={2.4} className={cn("shrink-0 text-ink-faint transition-transform", showMap && "rotate-180")} />
@@ -190,14 +201,14 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
           <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
             <Icon name="search" size={28} className="text-ink-faint" />
             <p className="text-[15px] font-extrabold text-ink">
-              {jobs.length === 0
+              {jobsInCountry.length === 0
                 ? "Még nincs aktív álláshirdetés"
                 : canton
-                  ? `Nincs állás ${cantonName(canton)} kantonban`
+                  ? `Nincs állás itt: ${regionName(country, canton)}`
                   : "Nincs a szűrőknek megfelelő állás"}
             </p>
             <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-muted">
-              {jobs.length === 0
+              {jobsInCountry.length === 0
                 ? "Légy te az első! Ha magyar munkaerőt keresel, hirdesd meg itt ingyen — pont a megfelelő közönség előtt."
                 : "Próbálj tágítani a szűrőkön — vagy ha munkaerőt keresel, add fel az állásod."}
             </p>
@@ -211,7 +222,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
         ) : (
           filtered.map((job) => {
             const cat = jobCategoryLabel(job.category);
-            const cant = cantonName(job.cantonCode);
+            const cant = regionName(job.country ?? "CH", job.cantonCode);
             return (
               <Link
                 href={`/allasok/${job.id}`}
