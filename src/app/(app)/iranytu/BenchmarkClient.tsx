@@ -372,7 +372,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
           <div className="space-y-3">
             <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 px-4 py-3 text-[13px] text-amber-800 flex items-start gap-2">
               <span className="mt-0.5">🔐</span>
-              <span>{tab === "salary" ? "Küld be a béredet a statisztikák feloldásához!" : "Küld be a lakbéredet a statisztikák feloldásához!"}</span>
+              <span>{tab === "salary" ? "Küldd be a béredet a statisztikák feloldásához!" : "Küldd be a lakbéredet a statisztikák feloldásához!"}</span>
             </div>
             <SubmitForm tab={tab} mode="submit" onSuccess={fetchStats} turnstileSiteKey={turnstileSiteKey} />
           </div>
