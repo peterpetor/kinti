@@ -37,6 +37,20 @@ const BusinessMap =
 
 type ViewMode = "list" | "map";
 
+type SortMode = "relevant" | "rating" | "distance" | "newest";
+const SORT_OPTIONS: { id: SortMode; label: string }[] = [
+  { id: "relevant", label: "Ajánlott" },
+  { id: "rating", label: "⭐ Értékelés" },
+  { id: "distance", label: "📍 Közelség" },
+  { id: "newest", label: "🆕 Legújabb" },
+];
+/** SQLite ("YYYY-MM-DD HH:MM:SS") vagy ISO dátum → ms. Hiányzó/hibás → 0. */
+function tsOf(s?: string | null): number {
+  if (!s) return 0;
+  const t = Date.parse(s.includes("T") ? s : s.replace(" ", "T") + "Z");
+  return Number.isNaN(t) ? 0 : t;
+}
+
 export function ExploreView({
   categories,
   businesses,
@@ -62,6 +76,7 @@ export function ExploreView({
   // első kliens-render is "list"). A user térkép/lista választását megjegyezzük:
   // mount után visszaállítjuk a mentett preferenciát, váltáskor elmentjük.
   const [view, setView] = useState<ViewMode>("list");
+  const [sortBy, setSortBy] = useState<SortMode>("relevant");
   useEffect(() => {
     try {
       const saved = localStorage.getItem("kinti_szaknevsor_view");
@@ -186,17 +201,29 @@ export function ExploreView({
       ? withDistance.filter(({ dist }) => dist != null && dist <= radiusKm)
       : withDistance;
 
-    // Rendezés: a PRO (featured) vállalkozások mindig elöl ("top pinning"),
-    // azon belül a közelebbi (ha van helymeghatározás), majd magasabb értékelés.
+    // Rendezés: a PRO (featured) vállalkozások MINDIG elöl ("top pinning"),
+    // azon belül a felhasználó által választott szempont szerint.
     radiusFiltered.sort((a, b) => {
       if (a.b.featured !== b.b.featured) return a.b.featured ? -1 : 1;
-      const byDist = (a.dist ?? Infinity) - (b.dist ?? Infinity);
-      if (byDist !== 0) return byDist;
-      return (b.b.rating ?? 0) - (a.b.rating ?? 0);
+      switch (sortBy) {
+        case "rating": {
+          const r = (b.b.rating ?? 0) - (a.b.rating ?? 0);
+          return r !== 0 ? r : (b.b.reviews ?? 0) - (a.b.reviews ?? 0);
+        }
+        case "distance":
+          return (a.dist ?? Infinity) - (b.dist ?? Infinity);
+        case "newest":
+          return tsOf(b.b.createdAt) - tsOf(a.b.createdAt);
+        case "relevant":
+        default: {
+          const byDist = (a.dist ?? Infinity) - (b.dist ?? Infinity);
+          return byDist !== 0 ? byDist : (b.b.rating ?? 0) - (a.b.rating ?? 0);
+        }
+      }
     });
 
     return radiusFiltered;
-  }, [businesses, cat, canton, q, showFavs, openNow, minYears, favoriteIds, userPos, radiusKm]);
+  }, [businesses, cat, canton, q, showFavs, openNow, minYears, favoriteIds, userPos, radiusKm, sortBy]);
 
   const locatedCount = useMemo(
     () => filtered.filter(({ b }) => b.lat != null && b.lng != null).length,
@@ -469,6 +496,33 @@ export function ExploreView({
         </p>
         <ViewSwitch value={view} onChange={setViewPersist} />
       </div>
+
+      {/* Rendezés (csak lista-nézetben, ha van mit rendezni) */}
+      {view === "list" && filtered.length > 1 && (
+        <div className="no-scrollbar flex items-center gap-2 overflow-x-auto px-5">
+          <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-ink-faint">Rendezés</span>
+          {SORT_OPTIONS.map((o) => {
+            if (o.id === "distance" && !userPos) return null;
+            const on = sortBy === o.id;
+            return (
+              <button
+                key={o.id}
+                type="button"
+                onClick={() => setSortBy(o.id)}
+                aria-pressed={on}
+                className={cn(
+                  "inline-flex flex-none items-center rounded-pill px-3 py-1.5 text-[12px] font-bold tracking-[-0.01em] transition",
+                  on
+                    ? "bg-primary text-white shadow-card"
+                    : "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-alpha))]",
+                )}
+              >
+                {o.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Kontextuális supply-CTA: ha egy szűrt kategóriában/kantonban kevés a
           találat, ott a legnagyobb a hiányérzet → magas szándékú ajánlás-pont. */}
