@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, lazy, Suspense } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -12,6 +12,12 @@ import { EventCalendar } from "@/components/event-calendar";
 import { AddToCalendar } from "@/components/add-to-calendar";
 import { ShareSheet } from "@/components/share-sheet";
 import type { CalendarEvent } from "@/lib/calendar";
+
+// Leaflet csak kliensen (window-függő) → SSR-en () => null.
+const CantonBubbleMap =
+  typeof window !== "undefined"
+    ? lazy(() => import("./canton-bubble-map").then((m) => ({ default: m.CantonBubbleMap })))
+    : () => null;
 
 export function CommunityView({
   events,
@@ -63,6 +69,9 @@ function EventsList({ events }: { events: KintiEvent[] }) {
 
   // Hónapos szűrő: "all" vagy "2025-06" formátum
   const [monthFilter, setMonthFilter] = useState<string>("all");
+  // Kanton-szűrő (a térkép-buborékokról), és a térkép nyitott állapota.
+  const [cantonFilter, setCantonFilter] = useState<string>("");
+  const [showMap, setShowMap] = useState(false);
 
   // Lokális RSVP-állapot eseményenként (felülírja a szerver going-ját).
   const [rsvp, setRsvp] = useState<Record<string, RsvpState>>({});
@@ -92,14 +101,26 @@ function EventsList({ events }: { events: KintiEvent[] }) {
     return months;
   }, [events]);
 
+  // Kanton-térképhez: esemény-darabszám kantononként (a hónap-szűrőt figyelembe
+  // véve, a kanton-szűrőt KIVÉVE, hogy minden kanton látsszon a térképen).
+  const cantonCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const e of events) {
+      if (monthFilter !== "all" && !e.eventDate?.startsWith(monthFilter)) continue;
+      if (e.cantonCode) counts[e.cantonCode] = (counts[e.cantonCode] ?? 0) + 1;
+    }
+    return counts;
+  }, [events, monthFilter]);
+
   // Szűrt + max 10 esemény
   const filtered = useMemo(() => {
-    const base =
+    let base =
       monthFilter === "all"
         ? events
         : events.filter((e) => e.eventDate?.startsWith(monthFilter));
+    if (cantonFilter) base = base.filter((e) => e.cantonCode === cantonFilter);
     return base.slice(0, MAX_EVENTS);
-  }, [events, monthFilter]);
+  }, [events, monthFilter, cantonFilter]);
 
   async function handleRsvp(e: KintiEvent) {
     if (votedOf(e) || busyOf(e)) return;
@@ -182,6 +203,39 @@ function EventsList({ events }: { events: KintiEvent[] }) {
               {m.label}
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Térkép: hol vannak az események (kanton-buborékok) — koppintásra szűr */}
+      {Object.keys(cantonCounts).length > 0 && (
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => setShowMap((s) => !s)}
+            className="flex w-full items-center gap-2.5 rounded-card border border-line bg-surface px-4 py-3 text-left shadow-card transition active:scale-[0.99]"
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-[17px]">🗺️</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
+                Térkép — hol vannak az események?
+              </span>
+              <span className="block text-[11.5px] text-ink-muted">
+                {Object.keys(cantonCounts).length} kanton · koppints egy kantonra a szűréshez
+              </span>
+            </span>
+            <Icon name="chevD" size={16} strokeWidth={2.4} className={cn("shrink-0 text-ink-faint transition-transform", showMap && "rotate-180")} />
+          </button>
+          {showMap && (
+            <Suspense
+              fallback={
+                <div className="grid h-[320px] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
+                  Térkép betöltése…
+                </div>
+              }
+            >
+              <CantonBubbleMap counts={cantonCounts} selectedCanton={cantonFilter} onSelectCanton={setCantonFilter} />
+            </Suspense>
+          )}
         </div>
       )}
 
