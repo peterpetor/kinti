@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, lazy, Suspense } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -8,6 +8,12 @@ import { CANTONS, cantonName } from "@/lib/cantons";
 import { JOB_CATEGORIES, jobCategoryLabel } from "@/lib/job-categories";
 import { jobMatchScore, hasMatchableProfile, type MatchProfile } from "@/lib/job-match";
 import type { Job } from "@/lib/types";
+
+// Leaflet csak kliensen (window-függő) → SSR-en () => null.
+const CantonBubbleMap =
+  typeof window !== "undefined"
+    ? lazy(() => import("./canton-bubble-map").then((m) => ({ default: m.CantonBubbleMap })))
+    : () => null;
 
 export interface ProMatchContext {
   isPro: boolean;
@@ -27,6 +33,23 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
   const [query, setQuery] = useState("");
   const [canton, setCanton] = useState("");
   const [category, setCategory] = useState("");
+  const [showMap, setShowMap] = useState(false);
+
+  // Kanton-térképhez: darabszám kantononként, a kanton-szűrőt KIVÉVE (hogy a
+  // térképen minden kanton látsszon, amiből választani lehet).
+  const cantonCounts = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const counts: Record<string, number> = {};
+    for (const job of jobs) {
+      if (category && job.category !== category) continue;
+      if (q) {
+        const haystack = `${job.title} ${job.description} ${job.location}`.toLowerCase();
+        if (!haystack.includes(q)) continue;
+      }
+      if (job.cantonCode) counts[job.cantonCode] = (counts[job.cantonCode] ?? 0) + 1;
+    }
+    return counts;
+  }, [jobs, query, category]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -98,6 +121,40 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
           </button>
         )}
       </div>
+
+      {/* Térkép: hol vannak az állások (kanton-buborékok) — koppintásra szűr */}
+      {jobs.length > 0 && Object.keys(cantonCounts).length > 0 && (
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => setShowMap((s) => !s)}
+            className="flex w-full items-center gap-2.5 rounded-card border border-line bg-surface px-4 py-3 text-left shadow-card transition active:scale-[0.99]"
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-[17px]">🗺️</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
+                Térkép — hol vannak az állások?
+              </span>
+              <span className="block text-[11.5px] text-ink-muted">
+                {Object.keys(cantonCounts).length} kanton · koppints egy kantonra a szűréshez
+              </span>
+            </span>
+            <Icon name="chevD" size={16} strokeWidth={2.4} className={cn("shrink-0 text-ink-faint transition-transform", showMap && "rotate-180")} />
+          </button>
+
+          {showMap && (
+            <Suspense
+              fallback={
+                <div className="grid h-[320px] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
+                  Térkép betöltése…
+                </div>
+              }
+            >
+              <CantonBubbleMap counts={cantonCounts} selectedCanton={canton} onSelectCanton={setCanton} />
+            </Suspense>
+          )}
+        </div>
+      )}
 
       {/* PRO match-score sáv */}
       {proMatch && !canMatch && (
