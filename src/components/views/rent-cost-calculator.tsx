@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { usePersistedState } from "@/hooks/use-persisted-state";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import {
@@ -20,12 +21,12 @@ import { RentCompare } from "@/components/views/rent-compare";
 
 export function RentCostCalculator() {
   const [mode, setMode] = useState<"single" | "compare">("single");
-  const [monthlyRent, setMonthlyRent] = useState(1800);
-  const [size, setSize] = useState<FlatSize>("2-room");
-  const [heating, setHeating] = useState<HeatingType>("gas");
-  const [region, setRegion] = useState<Region>("city-zh");
-  const [acontoNebenkosten, setAcontoNebenkosten] = useState(180);
-  const [years, setYears] = useState(3);
+  const [monthlyRent, setMonthlyRent] = usePersistedState("kinti_calc_rent_monthly", 1800);
+  const [size, setSize] = usePersistedState<FlatSize>("kinti_calc_rent_size", "2-room");
+  const [heating, setHeating] = usePersistedState<HeatingType>("kinti_calc_rent_heating", "gas");
+  const [region, setRegion] = usePersistedState<Region>("kinti_calc_rent_region", "city-zh");
+  const [acontoNebenkosten, setAcontoNebenkosten] = usePersistedState("kinti_calc_rent_aconto", 180);
+  const [years, setYears] = usePersistedState("kinti_calc_rent_years", 3);
 
   const result = useMemo(
     () =>

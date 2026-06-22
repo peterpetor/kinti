@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, lazy, Suspense } from "react";
+import { usePersistedState } from "@/hooks/use-persisted-state";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -31,8 +32,8 @@ export interface ProMatchContext {
 export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMatchContext }) {
   const canMatch = !!proMatch?.isPro && hasMatchableProfile(proMatch.profile);
   const [query, setQuery] = useState("");
-  const [canton, setCanton] = useState("");
-  const [category, setCategory] = useState("");
+  const [canton, setCanton] = usePersistedState("kinti_jobs_canton", "");
+  const [category, setCategory] = usePersistedState("kinti_jobs_category", "");
   const [showMap, setShowMap] = useState(false);
 
   // Kanton-térképhez: darabszám kantononként, a kanton-szűrőt KIVÉVE (hogy a

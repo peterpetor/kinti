@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { usePersistedState } from "@/hooks/use-persisted-state";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
@@ -67,8 +68,8 @@ export function ExchangeCalculator({
   chfToEur: number;
   date: string;
 }) {
-  const [chfAmount, setChfAmount] = useState("100");
-  const [direction, setDirection] = useState<"to-huf" | "to-eur">("to-huf");
+  const [chfAmount, setChfAmount] = usePersistedState("kinti_calc_exchange_amount", "100");
+  const [direction, setDirection] = usePersistedState<"to-huf" | "to-eur">("kinti_calc_exchange_dir", "to-huf");
 
   const chf = useMemo(() => {
     const n = Number(chfAmount.replace(",", "."));

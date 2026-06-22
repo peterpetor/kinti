@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { usePersistedState } from "@/hooks/use-persisted-state";
 import { cn } from "@/lib/cn";
 import {
   CUSTOMS_CATEGORIES,
@@ -14,8 +15,8 @@ import {
  * visz. Színes feedback (zöld/sárga/piros) + becsült vám-költség.
  */
 export function CustomsCalculator() {
-  const [persons, setPersons] = useState(1);
-  const [amounts, setAmounts] = useState<Record<string, number>>({});
+  const [persons, setPersons] = usePersistedState("kinti_calc_customs_persons", 1);
+  const [amounts, setAmounts] = usePersistedState<Record<string, number>>("kinti_calc_customs_amounts", {});
 
   function setAmount(id: string, val: number) {
     setAmounts((a) => ({ ...a, [id]: val }));

@@ -12,6 +12,7 @@ import { MyPostsBanner } from "@/components/my-posts-banner";
 import { DailyStreak } from "@/components/daily-streak";
 import { GlobalSearch } from "@/components/global-search";
 import { PwaInstallCard } from "@/components/pwa-install-card";
+import { RelocationReminderBanner } from "@/components/relocation-reminder-banner";
 import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
 import { KvizDailyCard } from "@/components/kviz-daily-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
@@ -57,6 +58,7 @@ export default async function FeedPage() {
 
       <MyPostsBanner />
       <DailyStreak />
+      <RelocationReminderBanner />
 
       {/* Fő belépési pontok — „mit hol találok" (nagy, érthető célok) */}
       <section className="space-y-3">
