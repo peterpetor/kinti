@@ -8,11 +8,11 @@ import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { readPreferredCanton } from "@/lib/canton-pref";
 
 type Status = "checking" | "unsupported" | "ios-install" | "denied" | "unsubscribed" | "subscribed";
-interface Prefs { notifyBusiness: boolean; notifyEvent: boolean }
+interface Prefs { notifyBusiness: boolean; notifyEvent: boolean; notifyJob: boolean }
 
 export function NotificationSettings() {
   const [status, setStatus] = useState<Status>("checking");
-  const [prefs, setPrefs] = useState<Prefs>({ notifyBusiness: true, notifyEvent: true });
+  const [prefs, setPrefs] = useState<Prefs>({ notifyBusiness: true, notifyEvent: true, notifyJob: true });
   const [busy, setBusy] = useState(false);
 
   async function loadPrefs(endpoint: string) {
@@ -167,6 +167,13 @@ export function NotificationSettings() {
               on={prefs.notifyEvent}
               onToggle={() => togglePref("notifyEvent")}
             />
+            <ToggleRow
+              icon="💼"
+              label="Új állás"
+              hint="Ha új álláshirdetést hagynak jóvá a kantonodban."
+              on={prefs.notifyJob}
+              onToggle={() => togglePref("notifyJob")}
+            />
             <button
               type="button"
               onClick={disableAll}
@@ -186,7 +193,7 @@ export function NotificationSettings() {
           <InfoRow icon="🔔" title="Esemény-emlékeztető" desc="24h és 1h előtt, ha „Megyek”-et nyomsz egy eseményre. Automatikus." />
           <LinkRow href="/iranytu" icon="📊" title="Béradat-riasztás" desc="Szólunk, ha az iparágad átlagbére ±10%-ot mozdul." />
           <LinkRow href="/arfolyam" icon="💱" title="Árfolyam-riasztás" desc="Push, ha az EUR/HUF eléri az általad megadott szintet." />
-          <LinkRow href="/allasok" icon="💼" title="Állás-riasztás" desc="Új állás a szakmádban/kantonodban (Kinti Radar)." />
+          <LinkRow href="/allasok" icon="🎯" title="Állás-riasztás (kulcsszó)" desc="Kulcsszó-alapú találat a szakmádban, bárhol — pontosabb, mint a kanton-kapcsoló (Kinti Radar)." />
         </div>
       </section>
 

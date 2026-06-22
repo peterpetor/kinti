@@ -4,6 +4,7 @@ import { getDB, getCloudflareCtx } from "@/lib/cloudflare";
 import { safeLogError } from "@/lib/safe-log";
 import { triggerJobAlertRadars } from "@/lib/radars";
 import { notifyMatchingWorkers } from "@/lib/worker-match";
+import { notifyCanton } from "@/lib/push-notify";
 import { logAdminAction } from "@/lib/audit";
 
 export const runtime = "edge";
@@ -106,6 +107,22 @@ export async function POST(req: Request) {
             category: jobRow.category,
           }).catch(err => safeLogError("notifyMatchingWorkers.background", err)),
         );
+
+        // Kanton-célzott push a „Új állás"-ra feliratkozóknak (mint az eseménynél).
+        // Csak ha van kanton — különben a notifyCanton(null) MINDENKINEK menne.
+        if (jobRow.canton_code) {
+          background(
+            notifyCanton(
+              jobRow.canton_code,
+              {
+                title: "Új állás a kantonodban 💼",
+                body: `${jobRow.title}${jobRow.location ? " · " + jobRow.location : ""}`,
+                url: "/allasok",
+              },
+              "job",
+            ).catch(err => safeLogError("notifyCanton.job.background", err)),
+          );
+        }
       }
     }
 
