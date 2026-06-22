@@ -465,7 +465,7 @@ export function ExploreView({
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
-              Svájci vállalkozásod van? Add hozzá ingyen!
+              Magyar vállalkozásod van? Add hozzá ingyen!
             </span>
             <span className="block text-[11.5px] text-ink-muted">
               Gyors regisztráció, és 1 perc alatt fent vagy.
