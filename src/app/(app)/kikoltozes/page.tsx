@@ -142,10 +142,53 @@ const PHASES: RoadmapPhase[] = [
   },
 ];
 
+/**
+ * Feladat-határidők a kiköltözés dátumához képest (nap). Negatív = a költözés
+ * ELŐTT esedékes; pozitív = az érkezés UTÁN. `hard` = jogi/kötelező határidő.
+ */
+const TASK_DEADLINES: Record<string, { days: number; hard?: boolean }> = {
+  cv: { days: -60 },
+  ber: { days: -60 },
+  megtakaritas: { days: -45 },
+  kreisburo: { days: 14, hard: true },   // lakcím-bejelentés: érkezés + 14 nap (jogi)
+  sim: { days: 7 },
+  bank: { days: 7 },
+  krankenkasse: { days: 90, hard: true }, // betegbiztosítás: 3 hónapon belül (jogi)
+  lakas: { days: 30 },
+  ado: { days: 60 },
+  kozosseg: { days: 90 },
+  nyelv: { days: 120 },
+};
+
+function parseYMD(s: string): Date | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+}
+function startOfDay(d: Date): number {
+  const r = new Date(d);
+  r.setHours(0, 0, 0, 0);
+  return r.getTime();
+}
+function daysFromToday(target: Date): number {
+  return Math.round((startOfDay(target) - startOfDay(new Date())) / 86_400_000);
+}
+function fmtDate(d: Date): string {
+  return d.toLocaleDateString("hu-HU", { month: "short", day: "numeric" });
+}
+function relLabel(days: number): string {
+  if (days < 0) return `${Math.abs(days)} napja lejárt`;
+  if (days === 0) return "ma esedékes";
+  if (days === 1) return "holnap";
+  if (days < 14) return `${days} nap múlva`;
+  if (days < 60) return `${Math.round(days / 7)} hét múlva`;
+  return `${Math.round(days / 30)} hónap múlva`;
+}
+
 export default function RelocationTrackerPage() {
   const [mounted, setMounted] = useState(false);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [expandedPhase, setExpandedPhase] = useState<string>("phase-1");
+  const [moveDate, setMoveDate] = useState<string>("");
 
   useEffect(() => {
     const saved = localStorage.getItem("kinti_relocation_tasks");
@@ -156,8 +199,19 @@ export default function RelocationTrackerPage() {
         // ignore
       }
     }
+    const savedDate = localStorage.getItem("kinti_relocation_movedate");
+    if (savedDate) setMoveDate(savedDate);
     setMounted(true);
   }, []);
+
+  const updateMoveDate = (v: string) => {
+    setMoveDate(v);
+    try {
+      localStorage.setItem("kinti_relocation_movedate", v);
+    } catch {
+      /* ignore */
+    }
+  };
 
   const toggleTask = (taskId: string) => {
     setCompletedTasks((prev) => {
@@ -171,6 +225,26 @@ export default function RelocationTrackerPage() {
 
   const totalTasks = PHASES.reduce((acc, phase) => acc + phase.tasks.length, 0);
   const progressPercent = Math.round((completedTasks.length / totalTasks) * 100) || 0;
+
+  const moveDateObj = parseYMD(moveDate);
+  const daysToMove = moveDateObj ? daysFromToday(moveDateObj) : null;
+
+  const taskDeadline = (taskId: string): { date: Date; days: number; hard: boolean } | null => {
+    const def = TASK_DEADLINES[taskId];
+    if (!def || !moveDateObj) return null;
+    const date = new Date(moveDateObj);
+    date.setDate(date.getDate() + def.days);
+    return { date, days: daysFromToday(date), hard: !!def.hard };
+  };
+
+  // Sürgős/lejárt határidők (≤7 nap), a be nem fejezett feladatokból.
+  const reminders = moveDateObj
+    ? PHASES.flatMap((p) => p.tasks)
+        .filter((t) => !completedTasks.includes(t.id) && TASK_DEADLINES[t.id])
+        .map((t) => ({ task: t, dl: taskDeadline(t.id)! }))
+        .filter((x) => x.dl.days <= 7)
+        .sort((a, b) => a.dl.days - b.dl.days)
+    : [];
 
   if (!mounted) {
     return <div className="p-4">Betöltés...</div>;
@@ -209,6 +283,55 @@ export default function RelocationTrackerPage() {
             {completedTasks.length} a {totalTasks} feladatból teljesítve.
           </p>
         </div>
+
+        {/* Tervezett kiköltözés dátuma + visszaszámláló */}
+        <div className="mt-4 rounded-2xl border border-border-subtle bg-surface p-4 shadow-card">
+          <label htmlFor="movedate" className="mb-2 block text-[13px] font-bold uppercase tracking-wide text-ink/70">
+            🗓️ Tervezett kiköltözés
+          </label>
+          <input
+            id="movedate"
+            type="date"
+            value={moveDate}
+            onChange={(e) => updateMoveDate(e.target.value)}
+            className="w-full rounded-xl border border-border-subtle bg-ink/5 px-3 py-2.5 text-[14px] font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+          {daysToMove !== null ? (
+            <p className="mt-3 text-center text-[14px] font-bold text-ink">
+              {daysToMove > 0 ? (
+                <>⏳ <span className="text-[20px] font-extrabold text-primary">{daysToMove}</span> nap a kiköltözésig</>
+              ) : daysToMove === 0 ? (
+                "🎉 Ma van a nagy nap — sok sikert!"
+              ) : (
+                <>🇨🇭 <span className="text-[20px] font-extrabold text-primary">{Math.abs(daysToMove)}</span>. napod Svájcban</>
+              )}
+            </p>
+          ) : (
+            <p className="mt-2 text-[12px] text-ink/60">
+              Add meg a dátumot, és minden határidőt a te idővonaladhoz igazítunk.
+            </p>
+          )}
+        </div>
+
+        {/* Sürgős / lejárt határidők — emlékeztető az app megnyitásakor */}
+        {reminders.length > 0 && (
+          <div className="mt-4 rounded-2xl border border-accent/30 bg-accent/5 p-4">
+            <p className="flex items-center gap-1.5 text-[13px] font-extrabold text-accent">
+              <Icon name="clock" size={15} strokeWidth={2.5} /> Közelgő / lejárt határidők
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              {reminders.slice(0, 3).map(({ task, dl }) => (
+                <li key={task.id} className="text-[12.5px] leading-snug text-ink">
+                  <strong>{task.title}</strong> —{" "}
+                  <span className={cn("font-bold", dl.days <= 3 ? "text-accent" : "text-ink/70")}>
+                    {relLabel(dl.days)}
+                  </span>
+                  {dl.hard && <span className="ml-1 text-[10.5px] font-bold text-accent">⚖️ jogi</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="px-4 py-2 space-y-4">
@@ -290,7 +413,24 @@ export default function RelocationTrackerPage() {
                               )}>
                                 {task.description}
                               </p>
-                              
+
+                              {(() => {
+                                const dl = taskDeadline(task.id);
+                                if (!dl || isDone) return null;
+                                const tone =
+                                  dl.days < 0
+                                    ? "bg-accent/10 text-accent"
+                                    : dl.days <= 7
+                                      ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
+                                      : "bg-ink/5 text-ink/60";
+                                return (
+                                  <span className={cn("mt-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold", tone)}>
+                                    <Icon name="clock" size={11} strokeWidth={2.4} />
+                                    {fmtDate(dl.date)} · {relLabel(dl.days)}{dl.hard ? " · ⚖️" : ""}
+                                  </span>
+                                );
+                              })()}
+
                               {task.linkHref && (
                                 <div className="mt-3">
                                   <Link 
