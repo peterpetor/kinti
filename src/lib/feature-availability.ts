@@ -33,6 +33,7 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "kviz",              // kvíz (svájci tartalom)
   "berkalkulator",     // bérkalkulátor (svájci adó/CHF)
   "iranytu",           // béradat-radar (svájci bérbenchmark)
+  "repulojegy",        // CH↔BUD járatfigyelő (más országban más reptér/útvonal; pl. VIE↔BUD vonatos)
 ]);
 
 /**

@@ -259,12 +259,14 @@ export function DropdownMenu() {
                   Tömegközlekedés
                 </Link>
                 )}
+                {has("repulojegy") && (
                 <Link href="/repulojegy" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     ✈️
                   </span>
                   Repülőjegy-figyelő
                 </Link>
+                )}
                 {has("vam") && (
                 <Link href="/vam" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">

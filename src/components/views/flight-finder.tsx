@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import {
   AIRPORTS,
   AIRLINES,
@@ -56,6 +58,27 @@ export function FlightFinder() {
     () => AIRLINES.filter((a) => a.routes.includes(swissAirport)),
     [swissAirport],
   );
+
+  // A járatfigyelő a CH↔BUD útvonalra modellezett. Más országban (pl. AT) más
+  // reptér/útvonal kellene; ott egyelőre nem mutatjuk a svájci eszközt. Hidratálás-
+  // biztos: mount előtt a teljes eszköz látszik (egyezik az SSR-rel).
+  const [prefCountry] = usePreferredCountry();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (mounted && (prefCountry ?? DEFAULT_COUNTRY) !== "CH") {
+    return (
+      <div className="space-y-2 rounded-card border border-line bg-surface p-6 text-center shadow-card">
+        <span className="text-4xl">🚆</span>
+        <p className="text-[15px] font-extrabold text-ink">
+          A járatfigyelő egyelőre a Svájc ↔ Budapest útvonalra van
+        </p>
+        <p className="mx-auto max-w-sm text-[12.5px] leading-relaxed text-ink-muted">
+          A te országodból a magyar célok többnyire vonattal, busszal vagy autóval érhetők el a
+          legjobban (pl. Bécs–Budapest ~2,5 óra). Ország-specifikus járatfigyelő hamarosan.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
