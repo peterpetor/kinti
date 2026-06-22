@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
-import { PHASES, parseYMD, taskDeadline, relLabel } from "@/lib/relocation";
+import { getPhases, parseYMD, taskDeadline, relLabel } from "@/lib/relocation";
+import { readPreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 export function RelocationReminderBanner() {
   const [mounted, setMounted] = useState(false);
@@ -24,7 +26,7 @@ export function RelocationReminderBanner() {
 
       const moveDateObj = parseYMD(savedDate);
       if (moveDateObj) {
-        const urgentTasks = PHASES.flatMap((p) => p.tasks)
+        const urgentTasks = getPhases(readPreferredCountry() ?? DEFAULT_COUNTRY).flatMap((p) => p.tasks)
           .filter((t) => !completedTasks.includes(t.id))
           .map((t) => ({ task: t, dl: taskDeadline(t.id, moveDateObj)! }))
           .filter((x) => x.dl && x.dl.days <= 7)

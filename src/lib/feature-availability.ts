@@ -19,7 +19,6 @@ import { DEFAULT_COUNTRY } from "./countries";
  */
 export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "ugyintezes",        // ügyintézés-varázsló (svájci hivatalok)
-  "kikoltozes",        // kiköltözés-tracker (Svájcba)
   "allampolgarsag",    // állampolgárság / Einbürgerung (svájci)
   "vam",               // vám-kalkulátor (svájci határ)
   "bussen",            // bírság-info (svájci)

@@ -167,7 +167,6 @@ export function DropdownMenu() {
                 </Link>
               </CollapsibleSection>
 
-              {isCH && (
               <CollapsibleSection title="Tudás & Ügyintézés">
                 <Link href="/kikoltozes" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
@@ -175,6 +174,7 @@ export function DropdownMenu() {
                   </span>
                   Kiköltözés Tracker
                 </Link>
+                {isCH && (<>
                 <Link href="/tudasbazis" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                     <Icon name="globe" size={16} strokeWidth={2.4} />
@@ -206,8 +206,8 @@ export function DropdownMenu() {
                   Einbürgerung-szimulátor
                   <ProBadge />
                 </Link>
+                </>)}
               </CollapsibleSection>
-              )}
 
               <CollapsibleSection title="Pénzügyek & Kalkulátorok">
                 <Link href="/arfolyam" onClick={close} className={linkClass}>

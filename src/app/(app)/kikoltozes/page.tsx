@@ -8,19 +8,25 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
 import {
-  PHASES,
+  getPhases,
   taskDeadline,
   daysFromToday,
   fmtDate,
   relLabel,
   parseYMD,
 } from "@/lib/relocation";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { CountryFlag } from "@/components/ui/country-flag";
 
 export default function RelocationTrackerPage() {
   const [mounted, setMounted] = useState(false);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [expandedPhase, setExpandedPhase] = useState<string>("phase-1");
   const [moveDate, setMoveDate] = useState<string>("");
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const PHASES = getPhases(country);
 
   useEffect(() => {
     const saved = localStorage.getItem("kinti_relocation_tasks");
@@ -127,7 +133,7 @@ export default function RelocationTrackerPage() {
               ) : daysToMove === 0 ? (
                 "🎉 Ma van a nagy nap — sok sikert!"
               ) : (
-                <>🇨🇭 <span className="text-[20px] font-extrabold text-primary">{Math.abs(daysToMove)}</span>. napod Svájcban</>
+                <><CountryFlag code={country} className="inline-block h-[13px] w-[19px] align-middle" /> <span className="text-[20px] font-extrabold text-primary">{Math.abs(daysToMove)}</span>. napod {country === "AT" ? "Ausztriában" : "Svájcban"}</>
               )}
             </p>
           ) : (
