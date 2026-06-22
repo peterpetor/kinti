@@ -212,3 +212,80 @@ export function calculateFine(input: FineInput): FineResult {
     daysOfFine: null,
   };
 }
+
+/**
+ * ─────────────── AUSZTRIA (StVO / FSG) ───────────────
+ * Az osztrák rendszer ALAPVETŐEN MÁS, mint a svájci: a bírság NEM jövedelem-arányos
+ * (nincs Tagessatz), hanem fix sávok / Strafverfügung szerint. A jogosítvány-bevonás
+ * (Führerscheinentzug) küszöbe: innerorts +40, außerorts +50 km/h. A 2024-es „Raser”-
+ * szabály szerint extrém túllépésnél a jármű elkobozható.
+ *
+ * A meglévő 5 súlyossági kulcsra képezzük le (a UI újrahasználatához):
+ *   ordnungsbusse = Organmandat/Strafverfügung, mittelschwer = +entzug (1 hó),
+ *   schwer = +entzug (3 hó), raser = „Rasen” (jármű-elkobzás).
+ */
+const AT_TOLERANCE = 5;
+
+export function calculateFineAT(input: { roadType: RoadType; speedLimit: number; actualSpeed: number }): FineResult {
+  const overage = Math.max(0, Math.max(0, input.actualSpeed - input.speedLimit) - AT_TOLERANCE);
+  const innerorts = input.roadType === "city";
+  const entzugTh = innerorts ? 40 : 50; // Führerscheinentzug küszöb
+  const schwerTh = innerorts ? 60 : 70; // min. 3 hó entzug
+  const rasenTh = innerorts ? 80 : 90;  // 2024-es „Raser” — jármű-elkobzás
+
+  const base = { effectiveOverage: overage, tagessatzChf: null, daysOfFine: null, prisonInfo: null as string | null };
+
+  if (overage === 0) {
+    return {
+      ...base,
+      severity: "no-fine",
+      estimatedFineChf: 0,
+      licenseSuspension: null,
+      description: "A sebesség a megengedett kereten belül van (a tolerancia utáni túllépés 0).",
+      legalNote: "Ausztriában a rendőrség jellemzően kb. 5 km/h mérési toleranciát von le (radar; nagyobb sebességnél százalékos).",
+    };
+  }
+  if (overage >= rasenTh) {
+    return {
+      ...base,
+      severity: "raser",
+      estimatedFineChf: 5000,
+      licenseSuspension: "Min. 6 hónap + Nachschulung; a jármű elkobozható (Beschlagnahme)",
+      description: `Extrém gyorshajtás (${innerorts ? "innerorts +80" : "außerorts +90"} km/h fölött). A 2024-es „Raser”-szabály szerint a jármű lefoglalható, sőt elkobozható.`,
+      legalNote: "A bírság akár 5 000 €-ig; ismétlésnél/extrém esetben a jármű véglegesen elkobozható. Mindenképp fordulj ügyvédhez.",
+    };
+  }
+  if (overage >= schwerTh) {
+    return {
+      ...base,
+      severity: "schwer",
+      estimatedFineChf: 1000,
+      licenseSuspension: "Min. 3 hónap Führerscheinentzug + kötelező Nachschulung",
+      description: "Nagyfokú sebesség-túllépés — Vormerkdelikt, kötelező jogosítvány-bevonás (min. 3 hónap).",
+      legalNote: "A bírság jellemzően több száz €-tól ~2 180 €-ig terjedhet. A jogosítvány-bevonás kötelező.",
+    };
+  }
+  if (overage >= entzugTh) {
+    return {
+      ...base,
+      severity: "mittelschwer",
+      estimatedFineChf: 400,
+      licenseSuspension: "Min. 2 hét – 1 hónap Führerscheinentzug + Vormerkung",
+      description: `Jelentős túllépés (${innerorts ? "innerorts +40" : "außerorts +50"} km/h fölött) — Vormerkdelikt, jogosítvány-bevonás jár.`,
+      legalNote: "Vormerkung: 2 éven belüli ismétlésnél kötelező Nachschulung. A bírság jellemzően több száz €.",
+    };
+  }
+  // Organmandat / Strafverfügung — fix sávok
+  const eur = overage <= 10 ? 30 : overage <= 20 ? 70 : overage <= 30 ? 150 : 300;
+  return {
+    ...base,
+    severity: "ordnungsbusse",
+    estimatedFineChf: eur,
+    licenseSuspension: null,
+    description:
+      overage <= 10
+        ? "Csekély túllépés — Organmandat (helyszíni bírság), jogosítvány-következmény nélkül."
+        : "Strafverfügung (büntetőparancs) — pénzbírság, jogosítvány-bevonás nélkül.",
+    legalNote: "Helyszínen (Organmandat, max 90 € készpénz) vagy postán (Anonym-/Strafverfügung) fizetendő.",
+  };
+}

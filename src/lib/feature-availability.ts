@@ -19,7 +19,6 @@ import { DEFAULT_COUNTRY } from "./countries";
  */
 export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "vam",               // vám-kalkulátor (svájci határ)
-  "bussen",            // bírság-info (svájci)
   "szolgaltato-valto", // szolgáltató-váltás (svájci szolgáltatók)
   "kviz",              // kvíz (svájci tartalom)
   "berkalkulator",     // bérkalkulátor (svájci adó/CHF)

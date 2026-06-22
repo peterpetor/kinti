@@ -6,10 +6,13 @@ import { cn } from "@/lib/cn";
 import {
   ROADS,
   calculateFine,
+  calculateFineAT,
   type RoadType,
   type FineResult,
 } from "@/lib/speeding-fine";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 const SEVERITY_META: Record<FineResult["severity"], { label: string; color: string; bg: string; emoji: string }> = {
   "no-fine":       { label: "Nincs büntetés",         color: "#16a34a", bg: "bg-success/10 border-success/40", emoji: "✅" },
@@ -19,7 +22,19 @@ const SEVERITY_META: Record<FineResult["severity"], { label: string; color: stri
   "raser":         { label: "Raserdelikt (bűncs.)",   color: "#7f1d1d", bg: "bg-red-100 border-red-500",         emoji: "🚔" },
 };
 
+/** Osztrák súlyossági címkék (a szín/emoji közös, csak a felirat tér el). */
+const AT_LABELS: Record<FineResult["severity"], string> = {
+  "no-fine":       "Nincs büntetés",
+  "ordnungsbusse": "Organmandat / Strafe",
+  "mittelschwer":  "Führerscheinentzug",
+  "schwer":        "Súlyos (3 hó entzug)",
+  "raser":         "Extrém — „Rasen”",
+};
+
 export function SpeedingCalculator() {
+  const [prefCountry] = usePreferredCountry();
+  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+  const cur = isAT ? "EUR" : "CHF";
   const [roadType, setRoadType] = useState<RoadType>("highway");
   const [speedLimit, setSpeedLimit] = useState(120);
   const [actualSpeed, setActualSpeed] = useState(135);
@@ -29,13 +44,15 @@ export function SpeedingCalculator() {
 
   const result = useMemo(
     () =>
-      calculateFine({
-        roadType,
-        speedLimit,
-        actualSpeed,
-        monthlyNetIncomeChf: monthlyIncome,
-      }),
-    [roadType, speedLimit, actualSpeed, monthlyIncome],
+      isAT
+        ? calculateFineAT({ roadType, speedLimit, actualSpeed })
+        : calculateFine({
+            roadType,
+            speedLimit,
+            actualSpeed,
+            monthlyNetIncomeChf: monthlyIncome,
+          }),
+    [isAT, roadType, speedLimit, actualSpeed, monthlyIncome],
   );
 
   function changeRoadType(t: RoadType) {
@@ -59,7 +76,11 @@ export function SpeedingCalculator() {
               Gyorshajtás bírság-BECSLŐ
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              Tájékoztató becslés a publikus svájci szabályok (OBV 2026) alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót minden esetben a kantoni hatóság szabja meg.
+              {isAT ? (
+                <>Tájékoztató becslés a publikus osztrák szabályok (StVO / FSG) alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót a hatóság (Bezirkshauptmannschaft / LPD) szabja meg.</>
+              ) : (
+                <>Tájékoztató becslés a publikus svájci szabályok (OBV 2026) alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót minden esetben a kantoni hatóság szabja meg.</>
+              )}
             </p>
           </div>
         </div>
@@ -142,7 +163,8 @@ export function SpeedingCalculator() {
         </div>
       </section>
 
-      {/* Income */}
+      {/* Income — csak CH (Ausztriában a bírság NEM jövedelem-arányos) */}
+      {!isAT && (
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
         <label className="block mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
           3. Havi nettó jövedelem (CHF)
@@ -171,6 +193,7 @@ export function SpeedingCalculator() {
           <span className="text-[11px] font-bold text-ink-muted">CHF</span>
         </div>
       </section>
+      )}
 
       {/* Eredmény */}
       <section className={cn("rounded-card border-2 p-5 shadow-pop", meta.bg)}>
@@ -178,12 +201,12 @@ export function SpeedingCalculator() {
           <span className="text-4xl shrink-0">{meta.emoji}</span>
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: meta.color }}>
-              {meta.label}
+              {isAT ? AT_LABELS[result.severity] : meta.label}
             </p>
             <h2 className="mt-1 text-[20px] font-extrabold leading-tight tracking-tight text-ink">
               {result.severity === "no-fine"
                 ? "Rendben — nincs büntetés"
-                : `~ ${result.estimatedFineChf.toLocaleString("hu-HU")} CHF bírság`}
+                : `~ ${result.estimatedFineChf.toLocaleString("hu-HU")} ${cur} bírság`}
             </h2>
             <p className="mt-2 text-[12.5px] leading-relaxed text-ink">
               {result.description}
@@ -239,21 +262,43 @@ export function SpeedingCalculator() {
           Hogyan számolódik?
         </h3>
         <ul className="space-y-1.5 text-[11.5px] leading-relaxed text-ink-muted">
-          <li>
-            <strong className="text-ink">Mért sebesség − 5 km/h Messtoleranz</strong> = tényleges túllépés.
-          </li>
-          <li>
-            <strong className="text-ink">Ordnungsbusse</strong> (fix bírság): kis túllépés. Nincs jogi
-            következmény, nincs jogosítvány-bevonás.
-          </li>
-          <li>
-            <strong className="text-ink">Mittelschwer / Schwer</strong>: büntetőeljárás. A bírság a Tagessatz
-            (havi nettó × 12 / 360) × napi-pénz száma.
-          </li>
-          <li>
-            <strong className="text-ink">Raserdelikt</strong>: rendkívüli túllépés (városban +50, autópályán
-            +80 km/h fölött) — bűncselekmény, börtön kötelező.
-          </li>
+          {isAT ? (
+            <>
+              <li>
+                <strong className="text-ink">Mért sebesség − ~5 km/h tolerancia</strong> = tényleges túllépés.
+              </li>
+              <li>
+                <strong className="text-ink">Organmandat / Strafverfügung</strong>: fix pénzbírság kis-közepes
+                túllépésnél, jogosítvány-következmény nélkül. A bírság NEM jövedelem-arányos.
+              </li>
+              <li>
+                <strong className="text-ink">Führerscheinentzug</strong>: innerorts +40 / außerorts +50 km/h
+                fölött kötelező jogosítvány-bevonás + Vormerkung (min. 2 hét – 1 hónap, súlyosabbnál 3 hónap).
+              </li>
+              <li>
+                <strong className="text-ink">„Rasen” (2024)</strong>: extrém túllépésnél (innerorts +80 /
+                außerorts +90 km/h fölött) a jármű lefoglalható, sőt elkobozható.
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <strong className="text-ink">Mért sebesség − 5 km/h Messtoleranz</strong> = tényleges túllépés.
+              </li>
+              <li>
+                <strong className="text-ink">Ordnungsbusse</strong> (fix bírság): kis túllépés. Nincs jogi
+                következmény, nincs jogosítvány-bevonás.
+              </li>
+              <li>
+                <strong className="text-ink">Mittelschwer / Schwer</strong>: büntetőeljárás. A bírság a Tagessatz
+                (havi nettó × 12 / 360) × napi-pénz száma.
+              </li>
+              <li>
+                <strong className="text-ink">Raserdelikt</strong>: rendkívüli túllépés (városban +50, autópályán
+                +80 km/h fölött) — bűncselekmény, börtön kötelező.
+              </li>
+            </>
+          )}
         </ul>
       </section>
 
@@ -262,8 +307,13 @@ export function SpeedingCalculator() {
         toolName="gyorshajtás bírság-becslő"
         variant="legal"
         notAdviceFor="jogi vagy büntetőjogi"
-        extraWarning="A tényleges büntetést a kantoni hatóság szabja meg, figyelembe véve enyhítő/súlyosító körülményeket (visszaesés, próbaidő, baleset, alkohol). Az eszköz NEM helyettesít ügyvédet — büntetőeljárás esetén fordulj ügyvédhez."
-        officialSources={[
+        extraWarning={isAT
+          ? "A tényleges büntetést a hatóság (Bezirkshauptmannschaft / LPD) szabja meg, az enyhítő/súlyosító körülmények (visszaesés, Vormerkung, baleset, alkohol) figyelembevételével. A sávok tájékoztató jellegűek és időben változnak. Az eszköz NEM helyettesít ügyvédet."
+          : "A tényleges büntetést a kantoni hatóság szabja meg, figyelembe véve enyhítő/súlyosító körülményeket (visszaesés, próbaidő, baleset, alkohol). Az eszköz NEM helyettesít ügyvédet — büntetőeljárás esetén fordulj ügyvédhez."}
+        officialSources={isAT ? [
+          { label: "oesterreich.gv.at — Strassenverkehr", url: "https://www.oesterreich.gv.at/themen/freizeit_und_strassenverkehr.html" },
+          { label: "RIS — StVO / FSG", url: "https://www.ris.bka.gv.at/" },
+        ] : [
           { label: "ASTRA — Strassen", url: "https://www.astra.admin.ch/" },
           { label: "OBV — Ordnungsbussenverordnung", url: "https://www.fedlex.admin.ch/eli/cc/2019/729/de" },
         ]}
