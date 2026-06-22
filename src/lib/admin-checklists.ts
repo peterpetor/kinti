@@ -41,7 +41,7 @@ export interface AdminChecklist {
 export const CHECKLISTS_DISCLAIMER =
   "Ez tájékoztató jellegű ügyintézési segédlet hivatalos svájci forrásokból. A pontos eljárás kantontól és időtől függhet — döntés előtt mindig ellenőrizd a hivatalos oldalt és a lakóhelyed kantonját.";
 
-export const CHECKLISTS: AdminChecklist[] = [
+export const CHECKLISTS_CH: AdminChecklist[] = [
   {
     slug: "uj-bevandorlo",
     title: "Most költöztem Svájcba",
@@ -521,6 +521,98 @@ export const CHECKLISTS: AdminChecklist[] = [
     ],
   },
 ];
+
+// ── Ausztria — osztrák ügyintézési csekklisták (EU-fókusz). ──
+export const CHECKLISTS_AT: AdminChecklist[] = [
+  {
+    slug: "at-uj-bevandorlo",
+    title: "Most költöztem Ausztriába",
+    emoji: "🇦🇹",
+    summary: "Az első hetek lépései — Meldezettel, bankszámla, e-card, EU-regisztráció.",
+    description: "EU-állampolgárként szabad mozgásod van, de pár hivatalos lépés kell az első hetekben. A Meldezettel határideje SZIGORÚAN 3 nap!",
+    deadline: "Meldezettel: 3 napon belül! Anmeldebescheinigung: 4 hónapon belül (ha >3 hó maradsz).",
+    totalDuration: "Kb. 2-4 hét",
+    steps: [
+      { title: "Lakcímbejelentés (Meldezettel)", body: "A beköltözéstől 3 NAPON belül a Meldeamtnál (Bécsben a kerületi Magistratisches Bezirksamt). Vidd: útlevél/igazolvány, kitöltött Meldezettel a szállásadó aláírásával.", link: { label: "oesterreich.gv.at — Meldepflicht", url: "https://www.oesterreich.gv.at/themen/dokumente_und_recht/meldebestaetigung.html" }, duration: "30-60 perc" },
+      { title: "Bankszámlanyitás", body: "Erste, Bank Austria, BAWAG vagy online (N26, bank99). A Meldezettel + útlevél kell. A fizetésedhez és a bérleti díjhoz elengedhetetlen.", duration: "30-60 perc" },
+      { title: "Egészségbiztosítás (e-card / ÖGK)", body: "A munkaviszonnyal AUTOMATIKUSAN biztosított leszel — a munkáltató bejelent az ÖGK-hoz, az e-card postán jön. NEM kell pénztárt választani, mint Svájcban!", link: { label: "gesundheitskasse.at", url: "https://www.gesundheitskasse.at/" }, duration: "automatikus" },
+      { title: "EU-regisztráció (Anmeldebescheinigung)", body: "3 hónapnál hosszabb tartózkodáshoz 4 hónapon belül kérd a tartózkodási hatóságnál (Bécsben MA 35). Kell: munkaviszony-igazolás VAGY elég jövedelem + biztosítás.", link: { label: "oesterreich.gv.at — Anmeldebescheinigung", url: "https://www.oesterreich.gv.at/themen/leben_in_oesterreich/aufenthalt/3.html" }, duration: "1-2 óra" },
+    ],
+    warnings: ["A Meldezettel 3 napos határideje SZIGORÚ — a késés bírsággal járhat.", "Minden költözéskor frissíteni kell (Ummeldung)."],
+    sources: [{ label: "oesterreich.gv.at", url: "https://www.oesterreich.gv.at/" }, { label: "migration.gv.at", url: "https://www.migration.gv.at/" }],
+  },
+  {
+    slug: "at-meldezettel",
+    title: "Lakcímbejelentés (Meldezettel)",
+    emoji: "🏠",
+    summary: "Be-, át- és kijelentkezés a Meldeamtnál — 3 napon belül kötelező.",
+    description: "Ausztriában minden lakcímváltozást 3 napon belül be kell jelenteni. A Meldezettel sok más ügyhöz (bank, hivatal) is kell.",
+    deadline: "A beköltözéstől 3 napon belül.",
+    totalDuration: "30-60 perc",
+    steps: [
+      { title: "Meldezettel-űrlap kitöltése", body: "Töltsd ki a Meldezettel nyomtatványt (online letölthető). A szállásadónak (Unterkunftgeber) alá kell írnia.", link: { label: "BMI — Meldewesen", url: "https://www.bmi.gv.at/personenwesen/meldewesen/start.aspx" }, duration: "10 perc" },
+      { title: "Személyes megjelenés a Meldeamtnál", body: "Bécsben a kerületi Magistratisches Bezirksamt; tartományokban a Gemeindeamt. Vidd: kitöltött Meldezettel + útlevél/igazolvány.", duration: "20-40 perc" },
+      { title: "Meldebestätigung átvétele", body: "Megkapod az igazolást. Őrizd meg — bankhoz, hivatalokhoz kelleni fog.", duration: "azonnal" },
+    ],
+    warnings: ["Költözéskor Ummeldung, kiköltözéskor Abmeldung is kell."],
+    sources: [{ label: "oesterreich.gv.at — Meldewesen", url: "https://www.oesterreich.gv.at/themen/dokumente_und_recht/meldebestaetigung.html" }],
+  },
+  {
+    slug: "at-adobevallas",
+    title: "Adóelszámolás (Arbeitnehmerveranlagung)",
+    emoji: "💶",
+    summary: "Év végi munkavállalói adóelszámolás — gyakran VISSZAJÁR pénz!",
+    description: "A bérből automatikusan vonják a Lohnsteuert. Év végén az Arbeitnehmerveranlagung (önkéntes elszámolás) gyakran visszatérítést hoz — érdemes beadni.",
+    deadline: "Visszamenőleg 5 évig beadható.",
+    totalDuration: "30-60 perc online",
+    steps: [
+      { title: "FinanzOnline regisztráció", body: "Regisztrálj a FinanzOnline-on (az osztrák adóhivatal portálja), vagy használd a 'Finanz' appot.", link: { label: "FinanzOnline", url: "https://finanzonline.bmf.gv.at/" }, duration: "15 perc" },
+      { title: "Arbeitnehmerveranlagung kitöltése", body: "Add meg a levonható tételeket: ingázás (Pendlerpauschale), gyermek (Familienbonus Plus), továbbképzés, biztosítások.", duration: "30 perc" },
+      { title: "Beadás és visszatérítés", body: "A Finanzamt kiszámolja; túlfizetés esetén a különbözetet a számládra utalja (Gutschrift).", duration: "néhány hét" },
+    ],
+    warnings: ["A Familienbonus Plus és a Pendlerpauschale jelentős összeg lehet — ne hagyd ki!"],
+    sources: [{ label: "BMF — Arbeitnehmerveranlagung", url: "https://www.bmf.gv.at/" }],
+  },
+  {
+    slug: "at-jogositvany",
+    title: "Jogosítvány Ausztriában",
+    emoji: "🚗",
+    summary: "A magyar (EU) jogosítvány érvényes — általában NEM kell cserélni!",
+    description: "Jó hír: EU-állampolgárként a magyar jogosítványod Ausztriában korlátlanul érvényes. Cserére általában nincs szükség (ellentétben Svájccal).",
+    deadline: "Nincs határidő — az EU-jogosítvány érvényes.",
+    totalDuration: "0 (általában nincs teendő)",
+    steps: [
+      { title: "EU-jogosítvány = érvényes", body: "A magyar jogosítvány EU-s, így Ausztriában is érvényes. NEM kell osztrákra cserélni a használathoz.", duration: "—" },
+      { title: "Opcionális csere", body: "Ha mégis osztrák jogosítványt szeretnél (lejár, elveszett), a Führerscheinbehörde-nél cserélheted. Kell: Meldezettel, fotó, a magyar jogosítvány.", link: { label: "oesterreich.gv.at — Führerschein", url: "https://www.oesterreich.gv.at/themen/dokumente_und_recht/fuehrerschein.html" }, duration: "ha kell: 1 óra + díj" },
+    ],
+    warnings: ["A magyar jogosítvány lejáratakor osztrák lakosként már Ausztriában kell megújítani."],
+    sources: [{ label: "oesterreich.gv.at — Führerschein", url: "https://www.oesterreich.gv.at/themen/dokumente_und_recht/fuehrerschein.html" }],
+  },
+  {
+    slug: "at-familienbeihilfe",
+    title: "Családi pótlék (Familienbeihilfe)",
+    emoji: "👨‍👩‍👧",
+    summary: "Gyerek után járó osztrák családi támogatás — EU-munkavállalóként is jár.",
+    description: "Ha Ausztriában dolgozol és gyereked van, jár a Familienbeihilfe + a Kinderabsetzbetrag — akkor is, ha a gyerek Magyarországon él (EU-szabály, különbözeti összeg).",
+    deadline: "Visszamenőleg 5 évig igényelhető.",
+    totalDuration: "30 perc + feldolgozás",
+    steps: [
+      { title: "Jogosultság ellenőrzése", body: "EU-munkavállalóként jár a Familienbeihilfe; ha a gyerek másik EU-országban él, kiegészítő/különbözeti összeg jár.", duration: "—" },
+      { title: "Igénylés a Finanzamtnál", body: "FinanzOnline-on vagy a Finanzamtnál add be a Beih 100 űrlapot. Kell: a gyerek születési anyakönyve, Meldezettel, munkaviszony-igazolás.", link: { label: "BMF — Familienbeihilfe", url: "https://www.bmf.gv.at/themen/familienfoerderung.html" }, duration: "30 perc" },
+      { title: "Folyósítás", body: "Jóváhagyás után havonta a számládra utalják.", duration: "néhány hét" },
+    ],
+    warnings: ["A Familienbonus Plus az adóból külön levonható (Arbeitnehmerveranlagung) — a Familienbeihilfe mellett."],
+    sources: [{ label: "BMF — Familienförderung", url: "https://www.bmf.gv.at/themen/familienfoerderung.html" }],
+  },
+];
+
+/** Az összes csekklista (statikus generáláshoz + slug-kereséshez). */
+export const CHECKLISTS: AdminChecklist[] = [...CHECKLISTS_CH, ...CHECKLISTS_AT];
+
+/** A választott ország csekklistái (a lista-nézethez). */
+export function getChecklists(country: string | null | undefined): AdminChecklist[] {
+  return country === "AT" ? CHECKLISTS_AT : CHECKLISTS_CH;
+}
 
 export function getChecklist(slug: string): AdminChecklist | null {
   return CHECKLISTS.find((c) => c.slug === slug) ?? null;

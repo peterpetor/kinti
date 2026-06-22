@@ -18,7 +18,6 @@ import { DEFAULT_COUNTRY } from "./countries";
  * csak Svájcban jelennek meg, amíg nincs ország-specifikus változatuk.
  */
 export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
-  "ugyintezes",        // ügyintézés-varázsló (svájci hivatalok)
   "vam",               // vám-kalkulátor (svájci határ)
   "bussen",            // bírság-info (svájci)
   "szolgaltato-valto", // szolgáltató-váltás (svájci szolgáltatók)

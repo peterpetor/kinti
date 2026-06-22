@@ -199,18 +199,20 @@ export function DropdownMenu() {
                   {isCH && <ProBadge />}
                 </Link>
                 )}
+                {has("ugyintezes") && (
+                <Link href="/ugyintezes" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                    📋
+                  </span>
+                  Ügyintézés Varázsló
+                </Link>
+                )}
                 {isCH && (<>
                 <Link href="/tudasbazis" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                     <Icon name="globe" size={16} strokeWidth={2.4} />
                   </span>
                   Tudásbázis
-                </Link>
-                <Link href="/ugyintezes" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    📋
-                  </span>
-                  Ügyintézés Varázsló
                 </Link>
                 </>)}
               </CollapsibleSection>
