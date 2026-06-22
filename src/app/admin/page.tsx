@@ -12,6 +12,7 @@ import {
   getAdminTrends,
   getAiUsageStats,
   getEmailUsageStats,
+  getFeatureUsageStats,
   listOpenReports,
   listPendingEvents,
   listBusinessesForAdmin,
@@ -27,12 +28,13 @@ export default async function AdminPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  const [stats, trends, aiUsage, emailUsage, openReports, pendingEvents, businesses, events] =
+  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, pendingEvents, businesses, events] =
     await Promise.all([
       getAdminStats(),
       getAdminTrends(),
       getAiUsageStats(),
       getEmailUsageStats(),
+      getFeatureUsageStats(7),
       listOpenReports(),
       listPendingEvents(),
       listBusinessesForAdmin(),
@@ -131,6 +133,42 @@ export default async function AdminPage() {
         <p className="text-[11px] text-ink-faint">
           Csak a sikeres küldések számítanak (megerősítők, lead-ek, digest, admin-értesítők). A 0078 migráció
           aktiválja; addig 0-t mutat.
+        </p>
+      </section>
+
+      {/* Funkció-használat — melyik modult használják (privacy-first, azonosító nélkül) */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">Funkció-használat (utolsó 7 nap)</h2>
+        <div className="rounded-card border border-line bg-surface p-4 shadow-card">
+          {featureUsage.rows.length === 0 ? (
+            <p className="text-[12.5px] text-ink-muted">
+              Még nincs adat. A 0079 migráció (db:migrate:remote) aktiválja; utána itt látszik, melyik
+              funkciót használják valójában.
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {featureUsage.rows.map((r) => {
+                const maxCount = featureUsage.rows[0]?.count ?? 1;
+                const w = Math.max(4, Math.round((r.count / maxCount) * 100));
+                const label = r.event.replace(/^page:/, "📄 ").replace(/^action:/, "⚡ ");
+                return (
+                  <li key={r.event}>
+                    <div className="flex items-baseline justify-between text-[12.5px]">
+                      <span className="font-semibold text-ink">{label}</span>
+                      <span className="font-bold text-ink-muted">{fmt(r.count)}</span>
+                    </div>
+                    <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-alt">
+                      <div className="h-full rounded-full bg-primary" style={{ width: `${w}%` }} />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+        <p className="text-[11px] text-ink-faint">
+          Aggregált, azonosító nélküli (nincs cookie/IP) — sessionönként egyszer/oldal. A legritkábban használt
+          funkciókat érdemes összevonni vagy archiválni.
         </p>
       </section>
 

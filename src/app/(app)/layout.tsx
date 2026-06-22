@@ -2,6 +2,7 @@ import { TabBar } from "@/components/ui";
 import { CountryGate } from "@/components/country-gate";
 import { CountryBanner } from "@/components/country-banner";
 import { PageTransition, ScrollRestorer } from "@/components/page-transition";
+import { UsageTracker } from "@/components/usage-tracker";
 
 /**
  * Az alkalmazás-nézetek közös kerete: mobil-first, középre zárt max-w-md
@@ -20,6 +21,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <TabBar />
       {/* Tab-szintű scroll-pozíció megőrzés (natív tab-bar viselkedés). */}
       <ScrollRestorer />
+      {/* Privacy-first oldal-használat mérés (aggregált, azonosító nélkül). */}
+      <UsageTracker />
       {/* Őszinte „Hamarosan" sáv, ha nem-CH ország van kiválasztva. */}
       <CountryBanner />
       {/* Belépés előtti ország-választó (csak ha még nincs választott ország). */}

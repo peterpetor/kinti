@@ -261,6 +261,56 @@ export async function getEmailUsageStats(): Promise<EmailUsageStats> {
   };
 }
 
+// --- Funkció-/oldal-használat (privacy-first termék-analitika) ---------------
+
+/**
+ * Aggregált használat-számláló: (nap + esemény) → +1. NINCS per-user/IP/cookie
+ * adat. A számlálás SOHA nem törhet meg semmit (best-effort, elnyeli a hibát;
+ * a tábla a 0079 migrációval jön létre).
+ */
+export async function recordUsage(event: string): Promise<void> {
+  try {
+    const day = new Date().toISOString().slice(0, 10);
+    await getDB()
+      .prepare(
+        `INSERT INTO feature_usage_daily (day, event, count) VALUES (?, ?, 1)
+         ON CONFLICT(day, event) DO UPDATE SET count = count + 1`,
+      )
+      .bind(day, event)
+      .run();
+  } catch {
+    /* a számláló sosem törhet meg semmit */
+  }
+}
+
+export interface UsageRow {
+  event: string;
+  count: number;
+}
+export interface FeatureUsageStats {
+  days: number;
+  rows: UsageRow[];
+  total: number;
+}
+
+/** Az elmúlt N nap eseményei darabszám szerint csökkenőben (admin nézet). */
+export async function getFeatureUsageStats(days = 7): Promise<FeatureUsageStats> {
+  const since = new Date(Date.now() - (days - 1) * 86_400_000).toISOString().slice(0, 10);
+  try {
+    const { results } = await getDB()
+      .prepare(
+        `SELECT event, SUM(count) AS count FROM feature_usage_daily
+         WHERE day >= ? GROUP BY event ORDER BY count DESC`,
+      )
+      .bind(since)
+      .all<UsageRow>();
+    const rows = results ?? [];
+    return { days, rows, total: rows.reduce((s, r) => s + (r.count ?? 0), 0) };
+  } catch {
+    return { days, rows: [], total: 0 }; // tábla még nincs (0079 migráció előtt)
+  }
+}
+
 // --- Admin Trends (14 napos napi bontás) -------------------------------------
 
 export interface AdminTrends {
