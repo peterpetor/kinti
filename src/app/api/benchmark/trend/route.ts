@@ -12,11 +12,12 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const industry = searchParams.get("industry");
   const canton = searchParams.get("canton") || "all";
+  const country = searchParams.get("country") === "AT" ? "AT" : "CH";
 
   if (!industry) {
     return NextResponse.json({ error: "Az 'industry' paraméter kötelező." }, { status: 400 });
   }
 
-  const trend = await getSalaryTrend(industry, canton);
+  const trend = await getSalaryTrend(country, industry, canton);
   return NextResponse.json({ trend }, { headers: { "cache-control": "no-store" } });
 }

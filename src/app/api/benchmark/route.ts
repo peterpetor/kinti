@@ -14,10 +14,11 @@ export const dynamic = "force-dynamic";
 interface BenchmarkBody {
   turnstileToken?: string;
   type?: string;
+  country?: string;     // 'CH' | 'AT'
   cantonCode?: string;
   industry?: string;
   yearsExperience?: number;
-  grossSalaryChf?: number;
+  grossSalaryChf?: number; // a helyi pénznem összege (CH: CHF, AT: EUR)
   rooms?: number;
   rentChf?: number;
 }
@@ -32,16 +33,17 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const canton = searchParams.get("canton") || "all";
   const period = searchParams.get("period") || "12m";
+  const country = searchParams.get("country") === "AT" ? "AT" : "CH";
 
   const [status, myData] = await Promise.all([
-    getUserSubmissionStatus(ipHash),
-    getUserSubmissions(ipHash),
+    getUserSubmissionStatus(ipHash, country),
+    getUserSubmissions(ipHash, country),
   ]);
 
   const [salary, salaryByExp, rent] = await Promise.all([
-    status.salary ? getSalaryStats(canton, period) : Promise.resolve(null),
-    status.salary ? getSalaryStatsByExp(canton, period) : Promise.resolve(null),
-    status.rent   ? getRentStats(canton, period)    : Promise.resolve(null),
+    status.salary ? getSalaryStats(country, canton, period) : Promise.resolve(null),
+    status.salary ? getSalaryStatsByExp(country, canton, period) : Promise.resolve(null),
+    status.rent   ? getRentStats(country, canton, period)    : Promise.resolve(null),
   ]);
 
   return NextResponse.json(
@@ -73,21 +75,26 @@ export async function PUT(req: NextRequest) {
 }
 
 async function handleUpsert(mode: "insert" | "update", body: BenchmarkBody, ipHash: string) {
+  const country = body.country === "AT" ? "AT" : "CH";
+  const cur = country === "AT" ? "EUR" : "CHF";
   if (body.type === "salary") {
     if (!body.cantonCode || !body.industry || typeof body.yearsExperience !== "number" || typeof body.grossSalaryChf !== "number")
       return NextResponse.json({ error: "Hiányzó bér adatok." }, { status: 400 });
-    if (body.grossSalaryChf < 20000 || body.grossSalaryChf > 300000)
-      return NextResponse.json({ error: "Érvényes bruttó éves béradatot adj meg (20.000–300.000 CHF között)." }, { status: 400 });
-    const input = { cantonCode: body.cantonCode, industry: body.industry, yearsExperience: body.yearsExperience, grossSalaryChf: body.grossSalaryChf, ipHash };
+    const minS = country === "AT" ? 15000 : 20000;
+    const maxS = country === "AT" ? 250000 : 300000;
+    if (body.grossSalaryChf < minS || body.grossSalaryChf > maxS)
+      return NextResponse.json({ error: `Érvényes bruttó éves béradatot adj meg (${minS.toLocaleString("hu-HU")}–${maxS.toLocaleString("hu-HU")} ${cur} között).` }, { status: 400 });
+    const input = { country, cantonCode: body.cantonCode, industry: body.industry, yearsExperience: body.yearsExperience, grossSalaryChf: body.grossSalaryChf, ipHash };
     mode === "update" ? await updateSalaryBenchmark(input) : await submitSalaryBenchmark(input);
     return NextResponse.json({ ok: true, type: "salary" });
   }
   if (body.type === "rent") {
     if (!body.cantonCode || typeof body.rooms !== "number" || typeof body.rentChf !== "number")
       return NextResponse.json({ error: "Hiányzó lakbér adatok." }, { status: 400 });
-    if (body.rentChf < 300 || body.rentChf > 10000)
-      return NextResponse.json({ error: "Érvényes havi lakbér adatot adj meg (300–10.000 CHF között)." }, { status: 400 });
-    const input = { cantonCode: body.cantonCode, rooms: body.rooms, rentChf: body.rentChf, ipHash };
+    const maxR = country === "AT" ? 6000 : 10000;
+    if (body.rentChf < 300 || body.rentChf > maxR)
+      return NextResponse.json({ error: `Érvényes havi lakbér adatot adj meg (300–${maxR.toLocaleString("hu-HU")} ${cur} között).` }, { status: 400 });
+    const input = { country, cantonCode: body.cantonCode, rooms: body.rooms, rentChf: body.rentChf, ipHash };
     mode === "update" ? await updateRentBenchmark(input) : await submitRentBenchmark(input);
     return NextResponse.json({ ok: true, type: "rent" });
   }

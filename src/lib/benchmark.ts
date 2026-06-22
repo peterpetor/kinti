@@ -1,17 +1,19 @@
 import { getDB } from "./cloudflare";
 
 export interface SalaryBenchmarkInput {
-  cantonCode: string;
+  country: string;       // 'CH' | 'AT' — ország-dimenzió (0082)
+  cantonCode: string;    // CH: kanton; AT: Bundesland-kód
   industry: string;
   yearsExperience: number;
-  grossSalaryChf: number;
+  grossSalaryChf: number; // a helyi pénznem összege (CH: CHF, AT: EUR)
   ipHash: string;
 }
 
 export interface RentBenchmarkInput {
+  country: string;
   cantonCode: string;
   rooms: number;
-  rentChf: number;
+  rentChf: number;       // a helyi pénznem összege (CH: CHF, AT: EUR)
   ipHash: string;
 }
 
@@ -97,20 +99,20 @@ function periodThreshold(period: string): string | null {
 export async function submitSalaryBenchmark(input: SalaryBenchmarkInput): Promise<void> {
   await getDB()
     .prepare(
-      `INSERT INTO salary_benchmarks (id, canton_code, industry, years_experience, gross_salary_chf, ip_hash, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
+      `INSERT INTO salary_benchmarks (id, country_code, canton_code, industry, years_experience, gross_salary_chf, ip_hash, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`
     )
-    .bind(crypto.randomUUID(), input.cantonCode, input.industry, input.yearsExperience, input.grossSalaryChf, input.ipHash)
+    .bind(crypto.randomUUID(), input.country, input.cantonCode, input.industry, input.yearsExperience, input.grossSalaryChf, input.ipHash)
     .run();
 }
 
 export async function submitRentBenchmark(input: RentBenchmarkInput): Promise<void> {
   await getDB()
     .prepare(
-      `INSERT INTO rent_benchmarks (id, canton_code, rooms, rent_chf, ip_hash, created_at)
-       VALUES (?, ?, ?, ?, ?, datetime('now'))`
+      `INSERT INTO rent_benchmarks (id, country_code, canton_code, rooms, rent_chf, ip_hash, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
     )
-    .bind(crypto.randomUUID(), input.cantonCode, input.rooms, input.rentChf, input.ipHash)
+    .bind(crypto.randomUUID(), input.country, input.cantonCode, input.rooms, input.rentChf, input.ipHash)
     .run();
 }
 
@@ -121,9 +123,9 @@ export async function updateSalaryBenchmark(input: SalaryBenchmarkInput): Promis
     .prepare(
       `UPDATE salary_benchmarks
        SET canton_code = ?, industry = ?, years_experience = ?, gross_salary_chf = ?, created_at = datetime('now')
-       WHERE ip_hash = ?`
+       WHERE ip_hash = ? AND country_code = ?`
     )
-    .bind(input.cantonCode, input.industry, input.yearsExperience, input.grossSalaryChf, input.ipHash)
+    .bind(input.cantonCode, input.industry, input.yearsExperience, input.grossSalaryChf, input.ipHash, input.country)
     .run();
 }
 
@@ -132,23 +134,23 @@ export async function updateRentBenchmark(input: RentBenchmarkInput): Promise<vo
     .prepare(
       `UPDATE rent_benchmarks
        SET canton_code = ?, rooms = ?, rent_chf = ?, created_at = datetime('now')
-       WHERE ip_hash = ?`
+       WHERE ip_hash = ? AND country_code = ?`
     )
-    .bind(input.cantonCode, input.rooms, input.rentChf, input.ipHash)
+    .bind(input.cantonCode, input.rooms, input.rentChf, input.ipHash, input.country)
     .run();
 }
 
 // ─── USER OWN DATA ────────────────────────────────────────────────────────
 
-export async function getUserSubmissions(ipHash: string): Promise<UserSubmissions> {
+export async function getUserSubmissions(ipHash: string, country: string = "CH"): Promise<UserSubmissions> {
   const [salaryRow, rentRow] = await Promise.all([
     getDB()
-      .prepare(`SELECT canton_code, industry, years_experience, gross_salary_chf, created_at FROM salary_benchmarks WHERE ip_hash = ? ORDER BY created_at DESC LIMIT 1`)
-      .bind(ipHash)
+      .prepare(`SELECT canton_code, industry, years_experience, gross_salary_chf, created_at FROM salary_benchmarks WHERE ip_hash = ? AND country_code = ? ORDER BY created_at DESC LIMIT 1`)
+      .bind(ipHash, country)
       .first<{ canton_code: string; industry: string; years_experience: number; gross_salary_chf: number; created_at: string }>(),
     getDB()
-      .prepare(`SELECT canton_code, rooms, rent_chf, created_at FROM rent_benchmarks WHERE ip_hash = ? ORDER BY created_at DESC LIMIT 1`)
-      .bind(ipHash)
+      .prepare(`SELECT canton_code, rooms, rent_chf, created_at FROM rent_benchmarks WHERE ip_hash = ? AND country_code = ? ORDER BY created_at DESC LIMIT 1`)
+      .bind(ipHash, country)
       .first<{ canton_code: string; rooms: number; rent_chf: number; created_at: string }>(),
   ]);
   return {
@@ -182,10 +184,10 @@ function median(values: number[]): number {
     : sorted[mid];
 }
 
-export async function getUserSubmissionStatus(ipHash: string): Promise<{ salary: boolean; rent: boolean }> {
+export async function getUserSubmissionStatus(ipHash: string, country: string = "CH"): Promise<{ salary: boolean; rent: boolean }> {
   const [s, r] = await Promise.all([
-    getDB().prepare("SELECT 1 FROM salary_benchmarks WHERE ip_hash = ? LIMIT 1").bind(ipHash).first(),
-    getDB().prepare("SELECT 1 FROM rent_benchmarks WHERE ip_hash = ? LIMIT 1").bind(ipHash).first(),
+    getDB().prepare("SELECT 1 FROM salary_benchmarks WHERE ip_hash = ? AND country_code = ? LIMIT 1").bind(ipHash, country).first(),
+    getDB().prepare("SELECT 1 FROM rent_benchmarks WHERE ip_hash = ? AND country_code = ? LIMIT 1").bind(ipHash, country).first(),
   ]);
   return { salary: !!s, rent: !!r };
 }
@@ -198,12 +200,13 @@ export async function hasUserSubmittedBenchmark(ipHash: string): Promise<boolean
 // ─── STATS (aggregált, outlier-szűrt) ────────────────────────────────────
 
 export async function getSalaryStats(
+  country: string,
   cantonCode?: string | null,
   period: string = "12m"
 ): Promise<SalaryStatsRow[]> {
   const threshold = periodThreshold(period);
-  const conditions: string[] = [];
-  const binds: unknown[] = [];
+  const conditions: string[] = ["country_code = ?"];
+  const binds: unknown[] = [country];
 
   if (cantonCode && cantonCode !== "all") { conditions.push("canton_code = ?"); binds.push(cantonCode); }
   if (threshold) { conditions.push("created_at >= ?"); binds.push(threshold); }
@@ -268,12 +271,13 @@ export async function getSalaryStats(
  * '0–2 év', '3–5 év', '5+ év'
  */
 export async function getSalaryStatsByExp(
+  country: string,
   cantonCode?: string | null,
   period: string = "12m"
 ): Promise<SalaryExpRow[]> {
   const threshold = periodThreshold(period);
-  const conditions: string[] = [];
-  const binds: unknown[] = [];
+  const conditions: string[] = ["country_code = ?"];
+  const binds: unknown[] = [country];
 
   if (cantonCode && cantonCode !== "all") { conditions.push("canton_code = ?"); binds.push(cantonCode); }
   if (threshold) { conditions.push("created_at >= ?"); binds.push(threshold); }
@@ -305,14 +309,16 @@ export async function getSalaryStatsByExp(
  * Kantonra is szűrhető.
  */
 export async function getSalaryTrend(
+  country: string,
   industry: string,
   cantonCode?: string | null
 ): Promise<SalaryTrendRow[]> {
   const conditions: string[] = [
+    "country_code = ?",
     "industry = ?",
     "created_at >= datetime('now', '-12 months')",
   ];
-  const binds: unknown[] = [industry];
+  const binds: unknown[] = [country, industry];
 
   if (cantonCode && cantonCode !== "all") {
     conditions.push("canton_code = ?");
@@ -339,11 +345,12 @@ export async function getSalaryTrend(
  * Bérsáv-hisztogram (10k-s sávokban) egy adott iparágban.
  */
 export async function getSalaryHistogram(
+  country: string,
   industry: string,
   cantonCode?: string | null
 ): Promise<{ bucket_k: number; entry_count: number }[]> {
-  const conditions: string[] = ["industry = ?"];
-  const binds: unknown[] = [industry];
+  const conditions: string[] = ["country_code = ?", "industry = ?"];
+  const binds: unknown[] = [country, industry];
 
   if (cantonCode && cantonCode !== "all") {
     conditions.push("canton_code = ?");
@@ -369,11 +376,12 @@ export async function getSalaryHistogram(
  * sávokban. A szobaszám-szűrés azért kell, mert a lakbér erősen szobaszám-függő.
  */
 export async function getRentHistogram(
+  country: string,
   rooms: number,
   cantonCode?: string | null
 ): Promise<{ bucket_chf: number; entry_count: number }[]> {
-  const conditions: string[] = ["rooms = ?"];
-  const binds: unknown[] = [rooms];
+  const conditions: string[] = ["country_code = ?", "rooms = ?"];
+  const binds: unknown[] = [country, rooms];
 
   if (cantonCode && cantonCode !== "all") {
     conditions.push("canton_code = ?");
@@ -397,10 +405,10 @@ export async function getRentHistogram(
 /**
  * Kiszámolja a lakbér/fizetés arány közösségi átlagát (azok alapján, akik mindkettőt beküldték).
  */
-export async function getRentToSalaryRatio(cantonCode: string = "all"): Promise<{ avg_ratio: number | null; entry_count: number }> {
-  const binds: unknown[] = [];
+export async function getRentToSalaryRatio(country: string, cantonCode: string = "all"): Promise<{ avg_ratio: number | null; entry_count: number }> {
+  const binds: unknown[] = [country, country];
   let where = "";
-  
+
   if (cantonCode !== "all") {
     where = "AND s.canton_code = ?";
     binds.push(cantonCode);
@@ -412,7 +420,7 @@ export async function getRentToSalaryRatio(cantonCode: string = "all"): Promise<
       COUNT(*) as entry_count
     FROM salary_benchmarks s
     JOIN rent_benchmarks r ON s.ip_hash = r.ip_hash
-    WHERE s.gross_salary_chf > 0 AND r.rent_chf > 0 ${where}
+    WHERE s.country_code = ? AND r.country_code = ? AND s.gross_salary_chf > 0 AND r.rent_chf > 0 ${where}
   `;
   const row = await getDB().prepare(sql).bind(...binds).first<{ avg_ratio: number | null; entry_count: number }>();
   return row ?? { avg_ratio: null, entry_count: 0 };
@@ -422,12 +430,13 @@ export async function getRentToSalaryRatio(cantonCode: string = "all"): Promise<
  * Hőtérkép lekérdezése — átlagbér kantononként egy adott iparágban.
  */
 export async function getSalaryHeatmap(
+  country: string,
   industry: string,
   period: string = "12m"
 ): Promise<{ canton_code: string; avg_salary: number; entry_count: number }[]> {
   const threshold = periodThreshold(period);
-  const conditions: string[] = [];
-  const binds: unknown[] = [];
+  const conditions: string[] = ["country_code = ?"];
+  const binds: unknown[] = [country];
 
   if (industry !== "all") {
     conditions.push("industry = ?");
@@ -453,12 +462,13 @@ export async function getSalaryHeatmap(
 }
 
 export async function getRentStats(
+  country: string,
   cantonCode?: string | null,
   period: string = "12m"
 ): Promise<RentStatsRow[]> {
   const threshold = periodThreshold(period);
-  const conditions: string[] = [];
-  const binds: unknown[] = [];
+  const conditions: string[] = ["country_code = ?"];
+  const binds: unknown[] = [country];
 
   if (cantonCode && cantonCode !== "all") { conditions.push("canton_code = ?"); binds.push(cantonCode); }
   if (threshold) { conditions.push("created_at >= ?"); binds.push(threshold); }
