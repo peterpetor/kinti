@@ -23,7 +23,7 @@ export default async function KozossegPage() {
         <div className="space-y-4">
           <div className="px-5">
             <ScreenHeader
-              eyebrow="Közösség · Svájcban élő magyaroknak"
+              eyebrow="Közösség · külföldön élő magyaroknak"
               title={
                 <>
                   Események és meetupok

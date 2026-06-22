@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState, lazy, Suspense } from "react";
+import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { KintiEvent } from "@/lib/types";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { getTagEmoji } from "@/lib/tag-emoji";
 import { scheduleEventReminder } from "@/lib/event-reminder-client";
 import { OwnPostBadge } from "@/components/own-post-badge";
@@ -24,9 +26,19 @@ export function CommunityView({
 }: {
   events: KintiEvent[];
 }) {
+  // Ország-szűrés (6-ország). Hidratálás-biztos: mount előtt nincs szűrés
+  // (egyezik az SSR-rel), mount után a választott ország (default CH).
+  const [prefCountry] = usePreferredCountry();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : null;
+  const countryEvents = useMemo(
+    () => (country == null ? events : events.filter((e) => (e.country ?? "CH") === country)),
+    [events, country],
+  );
   return (
     <div className="space-y-2.5 px-5">
-      <EventsList events={events} />
+      <EventsList events={countryEvents} />
     </div>
   );
 }

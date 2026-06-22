@@ -96,6 +96,8 @@ export interface KintiEvent {
   moderationDecidedBy?: string | null;
   /** Kanton-kód a push-célzáshoz (iCal-sync tölti; generáltnál null = országos). */
   cantonCode?: string | null;
+  /** Ország-kód (CH/AT/…) — a 6-ország rendszerhez. Régi sorok: 'CH'. */
+  country?: string;
 }
 
 

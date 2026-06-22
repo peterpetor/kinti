@@ -32,6 +32,7 @@ interface EventRow {
   moderation_decision_at?: string | null;
   moderation_decided_by?: string | null;
   canton_code?: string | null;
+  country_code?: string | null;
 }
 
 interface EventFeedRow {
@@ -65,6 +66,7 @@ export function toEvent(r: EventRow): KintiEvent {
     moderationDecisionAt: r.moderation_decision_at,
     moderationDecidedBy: r.moderation_decided_by,
     cantonCode: r.canton_code ?? null,
+    country: r.country_code ?? "CH",
   };
 }
 
