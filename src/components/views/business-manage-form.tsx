@@ -113,7 +113,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           <p className="mb-3 text-[13px] font-medium text-ink-muted leading-snug">
             Tűnj ki a sárga kiemeléssel, kerülj a listák legtetejére, és{" "}
             <strong className="text-ink">lásd, hányan nézték meg és hívták</strong> a vállalkozásod —
-            több svájci magyar ügyfélért.
+            több magyar ügyfélért.
           </p>
           <div className="mb-4 flex flex-wrap justify-center gap-1.5">
             {["Megtekintés", "Hívás", "14 napos trend"].map((m) => (
@@ -160,7 +160,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
         />
       </Section>
 
-      <Section title="Cím (svájci)">
+      <Section title="Cím">
         <input
           type="text"
           value={form.address}

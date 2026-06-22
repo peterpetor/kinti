@@ -68,7 +68,7 @@ export function CountryGate() {
         </div>
 
         <p className="mt-6 text-center text-[11.5px] leading-relaxed text-white/70">
-          Jelenleg a 🇨🇭 svájci tartalom érhető el. A többi ország hamarosan indul —
+          Svájc és Ausztria érhető el. A többi ország hamarosan indul —
           a választásod elmentjük, és onnan folytatod, amint kész.
         </p>
       </div>
