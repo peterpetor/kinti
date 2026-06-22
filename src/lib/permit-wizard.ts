@@ -9,7 +9,10 @@
  * Migrationsamt oldalát kell ellenőrizni.
  */
 
-export type PermitType = "L" | "B" | "C" | "G" | "schengen" | "none";
+export type PermitType =
+  | "L" | "B" | "C" | "G" | "schengen" | "none"
+  // Ausztria (EU-fókusz: szabad mozgás → regisztráció → tartós; RWR nem-EU-nak)
+  | "at-freizug" | "at-anmeldung" | "at-dauer" | "at-rwr";
 
 export interface PermitInfo {
   type: PermitType;
@@ -184,6 +187,68 @@ export const PERMITS: Record<PermitType, PermitInfo> = {
       { label: "ch.ch — Beutazás Svájcba", url: "https://www.ch.ch/de/leben-in-der-schweiz/einreise/" },
     ],
   },
+
+  // ── Ausztria ──────────────────────────────────────────────────────────────
+  "at-freizug": {
+    type: "at-freizug",
+    name: "Szabad mozgás (EU) — nincs engedély",
+    emoji: "✅",
+    color: "#16a34a",
+    shortDesc: "EU-állampolgárként engedély nélkül tartózkodhatsz és dolgozhatsz",
+    duration: "Korlátlan — a személyek szabad mozgása alapján.",
+    workPermitted: "Igen, azonnal és szabadon (EU-állampolgár).",
+    cantonChange: "Szabad — Ausztrián belül bárhova költözhetsz.",
+    familyReunion: "EU-családtag szabadon; nem-EU családtag: Aufenthaltskarte.",
+    pros: ["Nincs engedély-kérelem", "Szabad munkavállalás az első naptól", "Szabad költözés Ausztrián belül"],
+    cons: ["3 hónapnál hosszabb tartózkodáshoz regisztrálni kell (Anmeldebescheinigung)", "A Meldezettel (lakcím) 3 napon belül kötelező"],
+    applyTo: "Nincs hova — érvényes útlevél/igazolvány elég. A lakcímet a Meldeamtban jelented be.",
+    links: [{ label: "oesterreich.gv.at — EU-Bürger", url: "https://www.oesterreich.gv.at/themen/leben_in_oesterreich/aufenthalt.html" }],
+  },
+  "at-anmeldung": {
+    type: "at-anmeldung",
+    name: "Anmeldebescheinigung (EU-regisztráció)",
+    emoji: "🪪",
+    color: "#1d4434",
+    shortDesc: "3 hónapnál hosszabb EU-tartózkodás regisztrációs igazolása",
+    duration: "Határozatlan, amíg a feltételek (munka / önfenntartás) fennállnak.",
+    workPermitted: "Igen, szabadon.",
+    cantonChange: "Szabad (Ausztrián belül).",
+    familyReunion: "Igen (EU-családtag); nem-EU családtagnak Aufenthaltskarte.",
+    pros: ["A személyek szabad mozgásán alapul", "Igazolás, NEM klasszikus »engedély«", "5 év után tartós tartózkodás (Daueraufenthalt)"],
+    cons: ["A beköltözéstől 4 hónapon belül kérni kell (ha >3 hó maradsz)", "Igazolni kell: munka/önfoglalkoztatás VAGY elég pénz + egészségbiztosítás"],
+    applyTo: "A lakóhely szerinti tartózkodási hatóság (Bécsben az MA 35; tartományokban a Landeshauptmann/BH).",
+    links: [{ label: "oesterreich.gv.at — Anmeldebescheinigung", url: "https://www.oesterreich.gv.at/themen/leben_in_oesterreich/aufenthalt/3.html" }],
+  },
+  "at-dauer": {
+    type: "at-dauer",
+    name: "Daueraufenthalt (tartós tartózkodás)",
+    emoji: "🆔",
+    color: "#7f4a1d",
+    shortDesc: "5 év jogszerű EU-tartózkodás után — megerősített státusz",
+    duration: "Határozatlan — 5 év folyamatos jogszerű tartózkodás után.",
+    workPermitted: "Igen, korlátlanul.",
+    cantonChange: "Szabad.",
+    familyReunion: "Igen.",
+    pros: ["5 év folyamatos jogszerű tartózkodás után jár", "Erősebb védelem a kiutasítás ellen", "Megerősített letelepedési státusz"],
+    cons: ["5 év folyamatos tartózkodás kell", "Kérni kell a »Bescheinigung des Daueraufenthalts«-ot"],
+    applyTo: "A lakóhely szerinti tartózkodási hatóság (Niederlassungsbehörde).",
+    links: [{ label: "oesterreich.gv.at — Daueraufenthalt", url: "https://www.oesterreich.gv.at/themen/leben_in_oesterreich/aufenthalt.html" }],
+  },
+  "at-rwr": {
+    type: "at-rwr",
+    name: "Rot-Weiß-Rot Karte (nem-EU)",
+    emoji: "🌍",
+    color: "#dc2626",
+    shortDesc: "Harmadik országbeli (nem-EU) képzett munkaerőnek — pontrendszer",
+    duration: "Kezdetben 24 hónap (RWR), majd RWR plus.",
+    workPermitted: "Igen — kezdetben adott munkáltatónál, RWR plus után szabadon.",
+    cantonChange: "Ausztrián belül szabad.",
+    familyReunion: "Igen (RWR – Familienangehörige).",
+    pros: ["Képzett munkaerőnek / hiányszakmáknak", "Pontrendszer (Punktesystem)", "RWR plus után szabad munkaerőpiac"],
+    cons: ["Csak harmadik országbeli (nem-EU) állampolgárnak", "Pontrendszer + jövedelem-feltétel", "Hosszabb eljárás (több hónap)"],
+    applyTo: "Tartózkodási hatóság (ABH) / osztrák képviselet külföldön; az AMS munkaerőpiaci értékelésével.",
+    links: [{ label: "migration.gv.at — Rot-Weiß-Rot Karte", url: "https://www.migration.gv.at/" }],
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -209,7 +274,8 @@ export interface WizardResult {
   notes: string[];
 }
 
-export function evaluatePermit(a: WizardAnswers): WizardResult {
+export function evaluatePermit(a: WizardAnswers, country: string = "CH"): WizardResult {
+  if (country === "AT") return evaluatePermitAT(a);
   // 1. Cross-border (G-engedély) — különleges eset
   if (a.purpose === "cross-border") {
     return {
@@ -315,4 +381,69 @@ export function evaluatePermit(a: WizardAnswers): WizardResult {
     alternatives: ["L"],
     notes: ["Pontosabb tájékoztatáshoz keresd fel a kantoni Migrationsamt-ot."],
   };
+}
+
+/** Ausztria — EU-fókuszú döntési fa (szabad mozgás / Anmeldebescheinigung / Daueraufenthalt / RWR). */
+function evaluatePermitAT(a: WizardAnswers): WizardResult {
+  // Harmadik országbeli (nem-EU)
+  if (a.citizenship === "non-eu") {
+    if (a.duration === "short") {
+      return {
+        primary: "at-rwr",
+        alternatives: [],
+        notes: [
+          "Rövid (max 90 nap) tartózkodáshoz harmadik országbeliként Schengen-vízum kell az osztrák képviseleten.",
+          "Munkavállaláshoz / hosszabb tartózkodáshoz Rot-Weiß-Rot Karte szükséges.",
+        ],
+      };
+    }
+    return {
+      primary: "at-rwr",
+      alternatives: [],
+      notes: [
+        "Harmadik országbeliként a Rot-Weiß-Rot Karte a fő út (pontrendszer / Punktesystem).",
+        "A képzettségedtől, jövedelmedtől és a hiányszakma-listától függ.",
+        "Az eljárás jellemzően több hónap; a munkáltató és az AMS is részt vesz.",
+      ],
+    };
+  }
+
+  // EU-állampolgár (magyar) — szabad mozgás
+  if (a.duration === "short" || a.purpose === "cross-border") {
+    return {
+      primary: "at-freizug",
+      alternatives: [],
+      notes: [
+        "EU-állampolgárként szabad mozgásod van — nincs szükség tartózkodási engedélyre.",
+        a.purpose === "cross-border"
+          ? "Ingázóként (pl. Burgenland–Sopron) sem kell külön engedély; a magyar lakcímed megmaradhat."
+          : "3 hónapnál hosszabb tartózkodáshoz Anmeldebescheinigung kell.",
+        "A Meldezettel (lakcímbejelentés) a beköltözéstől 3 napon belül kötelező.",
+      ],
+    };
+  }
+
+  // 5+ év jogszerű tartózkodás → Daueraufenthalt
+  if (a.duration === "permanent" && a.previousStay === "5-or-more") {
+    return {
+      primary: "at-dauer",
+      alternatives: ["at-anmeldung"],
+      notes: [
+        "5 év folyamatos jogszerű tartózkodás után tartós tartózkodási státusz (Daueraufenthalt) jár.",
+        "Kérd a »Bescheinigung des Daueraufenthalts«-ot a tartózkodási hatóságnál.",
+        "Megerősített védelem és letelepedési státusz.",
+      ],
+    };
+  }
+
+  // EU, 3+ hónap (de még nincs 5 év) → Anmeldebescheinigung
+  const notes: string[] = [
+    "EU-állampolgárként a személyek szabad mozgása alapján tartózkodhatsz.",
+    "3 hónapnál hosszabb tartózkodás esetén a beköltözéstől 4 hónapon belül kérd az Anmeldebescheinigungot.",
+    "Igazolnod kell: munkaviszony / önfoglalkoztatás VAGY elég megélhetés + egészségbiztosítás.",
+  ];
+  if (a.purpose === "study") notes.push("Tanulóként: beiratkozási igazolás + megélhetés + biztosítás kell.");
+  else if (a.purpose === "family") notes.push("Családtagként: az EU-s rokon státusza + házassági/születési anyakönyvi kivonat kell.");
+  else if (a.purpose === "retired") notes.push("Nyugdíjasként: elég jövedelem + egészségbiztosítás igazolása.");
+  return { primary: "at-anmeldung", alternatives: ["at-freizug"], notes };
 }

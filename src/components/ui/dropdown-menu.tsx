@@ -182,6 +182,14 @@ export function DropdownMenu() {
                   {isCH ? "Svájci Iskolarendszer" : "Osztrák Iskolarendszer"}
                 </Link>
                 )}
+                {has("vizum") && (
+                <Link href="/vizum" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                    🪪
+                  </span>
+                  {isCH ? "Melyik engedély kell?" : "Tartózkodás Ausztriában?"}
+                </Link>
+                )}
                 {isCH && (<>
                 <Link href="/tudasbazis" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -194,12 +202,6 @@ export function DropdownMenu() {
                     📋
                   </span>
                   Ügyintézés Varázsló
-                </Link>
-                <Link href="/vizum" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    🪪
-                  </span>
-                  Melyik engedély kell?
                 </Link>
                 <Link href="/allampolgarsag" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">

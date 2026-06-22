@@ -10,6 +10,8 @@ import {
   type WizardResult,
 } from "@/lib/permit-wizard";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 interface StepOption {
   value: string;
@@ -24,7 +26,7 @@ interface Step {
   options: StepOption[];
 }
 
-const STEPS: Step[] = [
+const STEPS_CH: Step[] = [
   {
     id: "citizenship",
     question: "Honnan jössz?",
@@ -125,7 +127,53 @@ const STEPS: Step[] = [
   },
 ];
 
+// Ausztria — EU-fókuszú lépések (a magyar EU-állampolgárnak más a valóság).
+const STEPS_AT: Step[] = [
+  {
+    id: "citizenship",
+    question: "Honnan jössz?",
+    options: [
+      { value: "eu", label: "🇭🇺 Magyarország / 🇪🇺 EU / 🇮🇸 EFTA", emoji: "🇪🇺", hint: "Szabad mozgás — nincs szükség tartózkodási engedélyre." },
+      { value: "non-eu", label: "🌍 Nem-EU ország (USA, India, UK, stb.)", emoji: "🌍", hint: "Harmadik országbeli — Rot-Weiß-Rot Karte / vízum." },
+    ],
+  },
+  {
+    id: "duration",
+    question: "Mennyi időre tervezed Ausztriában tartózkodni?",
+    options: [
+      { value: "short", label: "< 3 hónap (turizmus, üzleti út, családlátogatás)", emoji: "✈️" },
+      { value: "medium", label: "3-12 hónap (szezonális munka, csere, kurzus)", emoji: "📅" },
+      { value: "long", label: "1-5 év (munkavállalás, családi)", emoji: "🏠" },
+      { value: "permanent", label: "5+ év / végleges letelepedés", emoji: "🏡" },
+    ],
+  },
+  {
+    id: "purpose",
+    question: "Mi a fő célod?",
+    options: [
+      { value: "work", label: "Munkavállalás Ausztriában", emoji: "💼" },
+      { value: "study", label: "Tanulás (egyetem, kurzus, csere)", emoji: "🎓" },
+      { value: "family", label: "Családi okok (házasság, családtag)", emoji: "👨‍👩‍👧" },
+      { value: "retired", label: "Nyugdíjasként, anyagi-független", emoji: "🏖️" },
+      { value: "cross-border", label: "Magyarországon élek, csak Ausztriában dolgozom", emoji: "🚗", hint: "Ingázó (pl. Sopron–Burgenland) — EU-állampolgárként szabad." },
+    ],
+  },
+  {
+    id: "previousStay",
+    question: "Mióta élsz (jogszerűen) Ausztriában?",
+    options: [
+      { value: "5-or-more", label: "Már 5+ éve folyamatosan itt élek", emoji: "🪪", hint: "Daueraufenthaltra jogosult lehetsz." },
+      { value: "less-than-5", label: "Kevesebb mint 5 éve", emoji: "📅" },
+      { value: "none", label: "Most érkezem / első alkalom", emoji: "✨" },
+    ],
+  },
+];
+
 export function PermitWizard() {
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  const STEPS = isAT ? STEPS_AT : STEPS_CH;
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<WizardAnswers>>({});
   const [result, setResult] = useState<WizardResult | null>(null);
@@ -136,7 +184,7 @@ export function PermitWizard() {
 
     if (step >= STEPS.length - 1) {
       // Mindenre válaszolt — eredmény
-      setResult(evaluatePermit(next as WizardAnswers));
+      setResult(evaluatePermit(next as WizardAnswers, country));
     } else {
       setStep(step + 1);
     }
@@ -154,7 +202,7 @@ export function PermitWizard() {
   }
 
   if (result) {
-    return <ResultView result={result} onRestart={restart} />;
+    return <ResultView result={result} onRestart={restart} isAT={isAT} />;
   }
 
   const currentStep = STEPS[step];
@@ -170,8 +218,8 @@ export function PermitWizard() {
               Melyik engedély kell nekem?
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              4 gyors kérdés alapján megmondjuk, melyik svájci tartózkodási
-              engedélytípus a legrelevánsabb a számodra.
+              4 gyors kérdés alapján megmondjuk, mi a legrelevánsabb a{" "}
+              {isAT ? "ausztriai" : "svájci"} tartózkodási helyzetedhez.
             </p>
           </div>
         </div>
@@ -237,8 +285,13 @@ export function PermitWizard() {
         toolName="engedély-varázsló"
         variant="legal"
         notAdviceFor="jogi vagy bevándorlási"
-        extraWarning="Az engedély-eljárás kantonok közt eltér, és a feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó engedélyt mindig a kantoni Migrationsamt vagy szakképzett ügyvéd határozza meg."
-        officialSources={[
+        extraWarning={isAT
+          ? "A pontos eljárás és feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó státuszt a tartózkodási hatóság (Bécsben MA 35, tartományokban Landeshauptmann/BH) vagy szakképzett ügyvéd határozza meg."
+          : "Az engedély-eljárás kantonok közt eltér, és a feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó engedélyt mindig a kantoni Migrationsamt vagy szakképzett ügyvéd határozza meg."}
+        officialSources={isAT ? [
+          { label: "oesterreich.gv.at — Aufenthalt", url: "https://www.oesterreich.gv.at/themen/leben_in_oesterreich/aufenthalt.html" },
+          { label: "migration.gv.at — Migráció", url: "https://www.migration.gv.at/" },
+        ] : [
           { label: "SEM — Migráció hivatalos", url: "https://www.sem.admin.ch/" },
           { label: "ch.ch — Tartózkodás", url: "https://www.ch.ch/de/leben-in-der-schweiz/aufenthalt/" },
         ]}
@@ -247,7 +300,7 @@ export function PermitWizard() {
   );
 }
 
-function ResultView({ result, onRestart }: { result: WizardResult; onRestart: () => void }) {
+function ResultView({ result, onRestart, isAT }: { result: WizardResult; onRestart: () => void; isAT: boolean }) {
   const primary = PERMITS[result.primary];
   const alternatives = result.alternatives.map((t) => PERMITS[t]);
 
@@ -299,7 +352,7 @@ function ResultView({ result, onRestart }: { result: WizardResult; onRestart: ()
         <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
           <DetailRow label="Időtartam" value={primary.duration} />
           <DetailRow label="Munkavállalás" value={primary.workPermitted} />
-          <DetailRow label="Kanton-váltás" value={primary.cantonChange} />
+          <DetailRow label={isAT ? "Költözés" : "Kanton-váltás"} value={primary.cantonChange} />
           <DetailRow label="Családtag-egyesítés" value={primary.familyReunion} />
         </div>
       </section>
@@ -397,8 +450,10 @@ function ResultView({ result, onRestart }: { result: WizardResult; onRestart: ()
         toolName="engedély-varázsló"
         variant="legal"
         notAdviceFor="jogi vagy bevándorlási"
-        extraWarning="A varázsló javaslata egyszerű, általános minták alapján készült. A te konkrét helyzetedet (családi állapot, munkaadói támogatás, korábbi engedélyek, büntetett előélet) csak a kantoni Migrationsamt és/vagy szakképzett ügyvéd tudja értékelni."
-        officialSources={[
+        extraWarning="A varázsló javaslata egyszerű, általános minták alapján készült. A te konkrét helyzetedet (családi állapot, munkaadói támogatás, korábbi tartózkodás, büntetett előélet) csak az illetékes hatóság és/vagy szakképzett ügyvéd tudja értékelni."
+        officialSources={isAT ? [
+          { label: "migration.gv.at — Migráció", url: "https://www.migration.gv.at/" },
+        ] : [
           { label: "SEM — Migráció", url: "https://www.sem.admin.ch/" },
         ]}
       />

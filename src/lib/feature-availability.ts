@@ -22,7 +22,6 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "allampolgarsag",    // állampolgárság / Einbürgerung (svájci)
   "vam",               // vám-kalkulátor (svájci határ)
   "bussen",            // bírság-info (svájci)
-  "vizum",             // vízum/engedély (svájci)
   "kozlekedes",        // közlekedés (svájci)
   "szolgaltato-valto", // szolgáltató-váltás (svájci szolgáltatók)
   "lakberles",         // lakbér-kalkulátor (svájci)
