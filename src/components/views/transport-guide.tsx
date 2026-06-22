@@ -9,10 +9,24 @@ import {
   MOBILE_APPS,
   TRANSPORT_TIPS,
   calculateGaVsHalbtax,
+  AT_TARIF_SYSTEMS,
+  AT_TICKET_TYPES,
+  AT_MOBILE_APPS,
+  AT_TRANSPORT_TIPS,
+  calculateAtTransport,
 } from "@/lib/transport";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 export function TransportGuide() {
+  const [prefCountry] = usePreferredCountry();
+  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+  const cur = isAT ? "EUR" : "CHF";
+  const tarifSystems = isAT ? AT_TARIF_SYSTEMS : TARIF_SYSTEMS;
+  const ticketTypes = isAT ? AT_TICKET_TYPES : TICKET_TYPES;
+  const mobileApps = isAT ? AT_MOBILE_APPS : MOBILE_APPS;
+  const tips = isAT ? AT_TRANSPORT_TIPS : TRANSPORT_TIPS;
   return (
     <div className="space-y-4">
       {/* Hero */}
@@ -21,10 +35,12 @@ export function TransportGuide() {
           <span className="text-4xl shrink-0">🚆</span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[20px] font-extrabold leading-tight tracking-tight text-ink">
-              Svájci Tömegközlekedés
+              {isAT ? "Osztrák Tömegközlekedés" : "Svájci Tömegközlekedés"}
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              Zónarendszerek (SBB, ZVV, Libero), jegytípusok, mobilappok és GA vs Halbtax kalkulátor — egyszerűen elmagyarázva.
+              {isAT
+                ? "Wiener Linien, ÖBB, VOR, jegytípusok, mobilappok és Klimaticket-kalkulátor — egyszerűen elmagyarázva."
+                : "Zónarendszerek (SBB, ZVV, Libero), jegytípusok, mobilappok és GA vs Halbtax kalkulátor — egyszerűen elmagyarázva."}
             </p>
           </div>
         </div>
@@ -36,16 +52,30 @@ export function TransportGuide() {
           📍 Hogy működik a zónarendszer?
         </h2>
         <div className="space-y-2 text-[12.5px] leading-relaxed text-ink-muted">
-          <p>
-            Svájc tömegközlekedési rendszere <strong className="text-ink">zónákra</strong> van osztva.
-            Egy jegy a zónák számától függ — minél több zónán mész át, annál drágább.
-          </p>
-          <ul className="space-y-1 ml-4 list-disc">
-            <li>Minden nagy régiónak van saját <strong className="text-ink">Tarifverbundja</strong> (tarifaszövetség).</li>
-            <li>Egy jegyen belül szabadon átszállhatsz vonatra, buszra, villamosra.</li>
-            <li>Az országos SBB-vonatokra <strong className="text-ink">külön jegy</strong> kell — ezeket a zónarendszer NEM fedi.</li>
-            <li>Mobil-app (FAIRTIQ, SBB Mobile) az utazás alapján a tipikusan kedvező jegytípust választja.</li>
-          </ul>
+          {isAT ? (
+            <>
+              <p>Ausztriában minden régiónak van <strong className="text-ink">Verkehrsverbundja</strong>. Bécs egyetlen zóna (<strong className="text-ink">Kernzone Wien</strong>); ott a jegy idő-alapú.</p>
+              <ul className="space-y-1 ml-4 list-disc">
+                <li>Bécsen belül egy jegyen szabadon átszállhatsz <strong className="text-ink">U-Bahn / Bim / Bus</strong> között.</li>
+                <li>A Kernzonén kívül (VOR — ingázóknak, pl. Sopron felé) zóna-alapú a tarifa.</li>
+                <li>Az országos <strong className="text-ink">Klimaticket Österreich</strong> MINDEN tömegközlekedést fedez egész Ausztriában.</li>
+                <li>Bécsi lakosként a <strong className="text-ink">Jahreskarte (365 €/év — napi 1 €)</strong> verhetetlen.</li>
+              </ul>
+            </>
+          ) : (
+            <>
+              <p>
+                Svájc tömegközlekedési rendszere <strong className="text-ink">zónákra</strong> van osztva.
+                Egy jegy a zónák számától függ — minél több zónán mész át, annál drágább.
+              </p>
+              <ul className="space-y-1 ml-4 list-disc">
+                <li>Minden nagy régiónak van saját <strong className="text-ink">Tarifverbundja</strong> (tarifaszövetség).</li>
+                <li>Egy jegyen belül szabadon átszállhatsz vonatra, buszra, villamosra.</li>
+                <li>Az országos SBB-vonatokra <strong className="text-ink">külön jegy</strong> kell — ezeket a zónarendszer NEM fedi.</li>
+                <li>Mobil-app (FAIRTIQ, SBB Mobile) az utazás alapján a tipikusan kedvező jegytípust választja.</li>
+              </ul>
+            </>
+          )}
         </div>
       </section>
 
@@ -54,8 +84,8 @@ export function TransportGuide() {
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted px-1">
           🗺️ Fő Tarifaszövetségek
         </h2>
-        {TARIF_SYSTEMS.map((s) => (
-          <TarifCard key={s.id} system={s} />
+        {tarifSystems.map((s) => (
+          <TarifCard key={s.id} system={s} cur={cur} />
         ))}
       </section>
 
@@ -64,7 +94,7 @@ export function TransportGuide() {
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted px-1">
           🎫 Jegytípusok
         </h2>
-        {TICKET_TYPES.map((t) => (
+        {ticketTypes.map((t) => (
           <article key={t.id} className="rounded-card border border-line bg-surface p-4 shadow-card">
             <div className="flex items-start gap-3">
               <span className="text-3xl shrink-0">{t.emoji}</span>
@@ -99,7 +129,7 @@ export function TransportGuide() {
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted px-1">
           📱 Mobilalkalmazások
         </h2>
-        {MOBILE_APPS.map((app) => (
+        {mobileApps.map((app) => (
           <article key={app.id} className="rounded-card border border-line bg-surface p-3.5 shadow-card">
             <div className="flex items-start gap-3">
               <span className="text-3xl shrink-0">{app.emoji}</span>
@@ -146,7 +176,7 @@ export function TransportGuide() {
           💡 Tippek
         </h2>
         <div className="space-y-2">
-          {TRANSPORT_TIPS.map((tip, i) => (
+          {tips.map((tip, i) => (
             <div key={i} className="flex items-start gap-3 rounded-card border border-line bg-surface p-3 shadow-card">
               <span className="text-2xl shrink-0">{tip.emoji}</span>
               <div className="min-w-0 flex-1">
@@ -164,21 +194,19 @@ export function TransportGuide() {
           Hivatalos források
         </h3>
         <ul className="space-y-1.5">
-          <li>
-            <a href="https://www.sbb.ch/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">
-              🔗 SBB — Schweizerische Bundesbahnen
-            </a>
-          </li>
-          <li>
-            <a href="https://www.allianceswisspass.ch/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">
-              🔗 Alliance SwissPass — Halbtax & GA
-            </a>
-          </li>
-          <li>
-            <a href="https://www.fairtiq.com/de-ch" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">
-              🔗 FAIRTIQ — Auto-jegy app
-            </a>
-          </li>
+          {isAT ? (
+            <>
+              <li><a href="https://www.oebb.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 ÖBB — Österreichische Bundesbahnen</a></li>
+              <li><a href="https://www.wienerlinien.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Wiener Linien</a></li>
+              <li><a href="https://www.klimaticket.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Klimaticket Österreich</a></li>
+            </>
+          ) : (
+            <>
+              <li><a href="https://www.sbb.ch/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 SBB — Schweizerische Bundesbahnen</a></li>
+              <li><a href="https://www.allianceswisspass.ch/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Alliance SwissPass — Halbtax & GA</a></li>
+              <li><a href="https://www.fairtiq.com/de-ch" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 FAIRTIQ — Auto-jegy app</a></li>
+            </>
+          )}
         </ul>
       </section>
 
@@ -188,7 +216,10 @@ export function TransportGuide() {
         variant="info"
         notAdviceFor="utazási, jegyügyi vagy szerződéses"
         extraWarning="A megjelölt árak és zónák a tájékoztató publikálásakor érvényesek — időnként változnak. Jegyvásárlás előtt mindig ellenőrizd a hivatalos szolgáltató oldalán vagy alkalmazásában. A megjelölt szolgáltatókkal NEM állunk affiliate vagy kereskedelmi kapcsolatban."
-        officialSources={[
+        officialSources={isAT ? [
+          { label: "ÖBB", url: "https://www.oebb.at/" },
+          { label: "Wiener Linien", url: "https://www.wienerlinien.at/" },
+        ] : [
           { label: "SBB", url: "https://www.sbb.ch/" },
           { label: "Alliance SwissPass", url: "https://www.allianceswisspass.ch/" },
         ]}
@@ -197,7 +228,7 @@ export function TransportGuide() {
   );
 }
 
-function TarifCard({ system }: { system: typeof TARIF_SYSTEMS[number] }) {
+function TarifCard({ system, cur }: { system: typeof TARIF_SYSTEMS[number]; cur: string }) {
   return (
     <article className="rounded-card border border-line bg-surface p-4 shadow-card">
       <div className="flex items-start gap-3 mb-2">
@@ -213,7 +244,7 @@ function TarifCard({ system }: { system: typeof TARIF_SYSTEMS[number] }) {
         </div>
         <div className="text-right shrink-0">
           <p className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Zónák</p>
-          <p className="text-[18px] font-extrabold text-ink leading-none">{system.zonesCount}</p>
+          <p className="text-[18px] font-extrabold text-ink leading-none">{system.zonesCount > 0 ? system.zonesCount : "—"}</p>
         </div>
       </div>
 
@@ -235,12 +266,12 @@ function TarifCard({ system }: { system: typeof TARIF_SYSTEMS[number] }) {
       {/* Árak */}
       <div className="grid grid-cols-2 gap-1.5">
         <div className="rounded-md bg-primary-soft/60 px-2 py-1.5 text-[11.5px]">
-          <p className="font-bold uppercase tracking-wide text-primary">1 zóna jegy</p>
-          <p className="font-extrabold text-ink">{system.singleZonePrice.toFixed(2)} CHF</p>
+          <p className="font-bold uppercase tracking-wide text-primary">Egyszeri jegy</p>
+          <p className="font-extrabold text-ink">{system.singleZonePrice.toFixed(2)} {cur}</p>
         </div>
         <div className="rounded-md bg-success/10 px-2 py-1.5 text-[11.5px]">
           <p className="font-bold uppercase tracking-wide text-success">Napijegy</p>
-          <p className="font-extrabold text-ink">{system.dailyPrice.toFixed(2)} CHF</p>
+          <p className="font-extrabold text-ink">{system.dailyPrice.toFixed(2)} {cur}</p>
         </div>
       </div>
 
@@ -257,31 +288,34 @@ function TarifCard({ system }: { system: typeof TARIF_SYSTEMS[number] }) {
 }
 
 function GaVsHalbtaxCalculator() {
-  const [avgTripPrice, setAvgTripPrice] = useState(12);
+  const [prefCountry] = usePreferredCountry();
+  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+  const cur = isAT ? "EUR" : "CHF";
+  const [avgTripPrice, setAvgTripPrice] = useState(isAT ? 3 : 12);
   const [tripsPerWeek, setTripsPerWeek] = useState(5);
 
-  const result = useMemo(
-    () =>
-      calculateGaVsHalbtax({
-        avgTripPrice,
-        tripsPerWeek,
-      }),
-    [avgTripPrice, tripsPerWeek],
-  );
+  const chResult = useMemo(() => calculateGaVsHalbtax({ avgTripPrice, tripsPerWeek }), [avgTripPrice, tripsPerWeek]);
+  const atResult = useMemo(() => calculateAtTransport({ avgTripPrice, tripsPerWeek }), [avgTripPrice, tripsPerWeek]);
+  const yearlyTrips = isAT ? atResult.yearlyTrips : chResult.yearlyTrips;
 
-  const recommendationInfo = {
-    "full-price": { emoji: "🎫", label: "Maradj a sima jegyeknél", color: "#9a6b00" },
-    halbtax:      { emoji: "✂️", label: "Halbtax éri meg!",          color: "#16a34a" },
-    ga:           { emoji: "🎟️", label: "GA éri meg!",               color: "#1d4434" },
-  };
-  const rec = recommendationInfo[result.recommendation];
+  const rec = isAT
+    ? ({
+        "full-price": { emoji: "🎫", label: "Maradj az egyes jegyeknél", color: "#9a6b00" },
+        jahreskarte:  { emoji: "🎟️", label: "Jahreskarte Wien éri meg!", color: "#16a34a" },
+        klimaticket:  { emoji: "🌍", label: "Klimaticket éri meg!",       color: "#1d4434" },
+      } as const)[atResult.recommendation]
+    : ({
+        "full-price": { emoji: "🎫", label: "Maradj a sima jegyeknél", color: "#9a6b00" },
+        halbtax:      { emoji: "✂️", label: "Halbtax éri meg!",          color: "#16a34a" },
+        ga:           { emoji: "🎟️", label: "GA éri meg!",               color: "#1d4434" },
+      } as const)[chResult.recommendation];
 
   return (
     <section className="rounded-card border-2 border-primary/30 bg-gradient-to-br from-primary-soft to-surface p-5 shadow-pop space-y-4">
       <div className="flex items-center gap-2">
         <span className="text-3xl">🧮</span>
         <div>
-          <h2 className="text-[15px] font-extrabold text-ink">GA vs Halbtax kalkulátor</h2>
+          <h2 className="text-[15px] font-extrabold text-ink">{isAT ? "Klimaticket kalkulátor" : "GA vs Halbtax kalkulátor"}</h2>
           <p className="text-[11.5px] text-ink-muted">Add meg a tipikus utazásod adatait — kiszámoljuk, megéri-e</p>
         </div>
       </div>
@@ -289,7 +323,7 @@ function GaVsHalbtaxCalculator() {
       <div className="space-y-3">
         <div>
           <label className="block mb-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
-            Átlagos jegyár (CHF / út)
+            Átlagos jegyár ({cur} / út)
           </label>
           <div className="flex items-center gap-3">
             <input
@@ -309,7 +343,7 @@ function GaVsHalbtaxCalculator() {
               onChange={(e) => setAvgTripPrice(Math.max(0, Number(e.target.value)))}
               className="w-16 rounded-[8px] border border-line bg-surface-alt px-2 py-1 text-[13px] font-bold text-ink text-right"
             />
-            <span className="text-[11.5px] font-bold text-ink-muted">CHF</span>
+            <span className="text-[11.5px] font-bold text-ink-muted">{cur}</span>
           </div>
         </div>
 
@@ -351,27 +385,23 @@ function GaVsHalbtaxCalculator() {
 
       {/* Részletes táblázat */}
       <div className="space-y-1.5">
-        <CostRow
-          label="Sima jegyekkel"
-          cost={result.fullPriceCost}
-          highlight={result.recommendation === "full-price"}
-        />
-        <CostRow
-          label="Halbtax (-50% jegyekre)"
-          cost={result.halbtaxCost}
-          highlight={result.recommendation === "halbtax"}
-          subtitle="190 CHF Halbtax + 50% jegyár"
-        />
-        <CostRow
-          label="GA (Generalabonnement)"
-          cost={result.gaCost}
-          highlight={result.recommendation === "ga"}
-          subtitle="3995 CHF / év, minden tömegközlekedés"
-        />
+        {isAT ? (
+          <>
+            <CostRow label="Egyes jegyekkel" cost={atResult.fullPriceCost} highlight={atResult.recommendation === "full-price"} cur={cur} />
+            <CostRow label="Jahreskarte Wien" cost={atResult.jahreskarteCost} highlight={atResult.recommendation === "jahreskarte"} subtitle="365 € / év — korlátlan Bécsben" cur={cur} />
+            <CostRow label="Klimaticket Österreich" cost={atResult.klimaticketCost} highlight={atResult.recommendation === "klimaticket"} subtitle="~1095 € / év — egész Ausztria" cur={cur} />
+          </>
+        ) : (
+          <>
+            <CostRow label="Sima jegyekkel" cost={chResult.fullPriceCost} highlight={chResult.recommendation === "full-price"} cur={cur} />
+            <CostRow label="Halbtax (-50% jegyekre)" cost={chResult.halbtaxCost} highlight={chResult.recommendation === "halbtax"} subtitle="190 CHF Halbtax + 50% jegyár" cur={cur} />
+            <CostRow label="GA (Generalabonnement)" cost={chResult.gaCost} highlight={chResult.recommendation === "ga"} subtitle="3995 CHF / év, minden tömegközlekedés" cur={cur} />
+          </>
+        )}
       </div>
 
       <p className="text-[11px] leading-snug text-ink-faint">
-        Ebben az évben: {result.yearlyTrips} utazás. Számolj még gyermek-, hétvégi és family-tarifákkal.
+        Ebben az évben: {yearlyTrips} utazás. {isAT ? "Számolj még kedvezményekkel (Vorteilscard, fiatal/szenior tarifák)." : "Számolj még gyermek-, hétvégi és family-tarifákkal."}
       </p>
     </section>
   );
@@ -382,11 +412,13 @@ function CostRow({
   cost,
   highlight,
   subtitle,
+  cur,
 }: {
   label: string;
   cost: number;
   highlight?: boolean;
   subtitle?: string;
+  cur: string;
 }) {
   return (
     <div
@@ -400,7 +432,7 @@ function CostRow({
         {subtitle && <p className="text-[11px] text-ink-muted">{subtitle}</p>}
       </div>
       <p className={cn("text-[14px] font-extrabold ml-2", highlight ? "text-success" : "text-ink")}>
-        {cost.toLocaleString("hu-HU")} CHF
+        {cost.toLocaleString("hu-HU")} {cur}
       </p>
     </div>
   );

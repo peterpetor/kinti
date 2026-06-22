@@ -363,3 +363,87 @@ export const TRANSPORT_TIPS: { emoji: string; title: string; body: string }[] = 
     body: "Kérj 'Velobillet' jegyet (kb. 14 CHF/nap) ha biciklit viszel. SuperSaver opció: csak nagy ünnepekkor / korlátozottan elérhető.",
   },
 ];
+
+// ════════════════════ AUSZTRIA ════════════════════
+// Osztrák Verkehrsverbünde + jegyek + Klimaticket-kalkulátor. Az árak tájékoztató
+// jellegűek (EUR), a pontosakat a hivatalos oldalon ellenőrizd.
+
+export const AT_TARIF_SYSTEMS: TarifSystem[] = [
+  {
+    id: "wl", name: "Wiener Linien (Wien)", abbreviation: "WL", region: "Bécs (Kernzone Wien / 100-as zóna)", emoji: "🚇",
+    zonesCount: 1, description: "Bécs egyetlen zóna (Kernzone Wien). A jegy idő-alapú: a városban szabadon átszállhatsz metróra (U-Bahn), villamosra (Bim), buszra.",
+    exampleZones: [{ name: "Egész Bécs", zones: "Kernzone (100)" }, { name: "U-Bahn / Bim / Bus", zones: "ugyanaz a jegy" }],
+    singleZonePrice: 2.40, dailyPrice: 8.00, websiteUrl: "https://www.wienerlinien.at/", color: "#E2231A",
+  },
+  {
+    id: "vor", name: "VOR — Verkehrsverbund Ost-Region", abbreviation: "VOR", region: "Bécs + Alsó-Ausztria + Burgenland", emoji: "🚆",
+    zonesCount: 0, description: "A keleti régió (Bécsen túl NÖ + Burgenland). A Kernzonén kívül zóna-alapú; ingázóknak (pl. Sopron–Bécs felé) ez a rendszer.",
+    exampleZones: [{ name: "Bécs Kernzone", zones: "100" }, { name: "Wiener Neustadt → Wien", zones: "több zóna" }, { name: "Regionalbahn / S-Bahn", zones: "VOR-jegy" }],
+    singleZonePrice: 2.40, dailyPrice: 8.00, websiteUrl: "https://www.vor.at/", color: "#005CA9",
+  },
+  {
+    id: "vlbg-stmk", name: "Verbundlinie (Steiermark)", abbreviation: "Verbundlinie", region: "Stájerország (Graz + környék)", emoji: "🚊",
+    zonesCount: 0, description: "Graz és Stájerország tarifaszövetsége. Zóna-alapú; Graz városa egy zóna.",
+    exampleZones: [{ name: "Graz-város", zones: "Zóna 101" }, { name: "Graz → környék", zones: "több zóna" }],
+    singleZonePrice: 2.90, dailyPrice: 5.90, websiteUrl: "https://www.verbundlinie.at/", color: "#009640",
+  },
+  {
+    id: "ooevv", name: "OÖVV (Oberösterreich)", abbreviation: "OÖVV", region: "Felső-Ausztria (Linz + környék)", emoji: "🚍",
+    zonesCount: 0, description: "Felső-Ausztria tarifaszövetsége (Linz központtal). Zóna-alapú.",
+    exampleZones: [{ name: "Linz-város", zones: "Kernzone Linz" }, { name: "Linz → Wels", zones: "több zóna" }],
+    singleZonePrice: 2.60, dailyPrice: 5.10, websiteUrl: "https://www.ooevv.at/", color: "#E2007A",
+  },
+  {
+    id: "vvt", name: "VVT (Tirol)", abbreviation: "VVT", region: "Tirol (Innsbruck + környék)", emoji: "🚞",
+    zonesCount: 0, description: "Tirol tarifaszövetsége (Innsbruck központtal). Zóna-alapú, sok hegyi járattal.",
+    exampleZones: [{ name: "Innsbruck-város", zones: "Kernzone" }, { name: "Innsbruck → völgyek", zones: "több zóna" }],
+    singleZonePrice: 2.70, dailyPrice: 5.40, websiteUrl: "https://www.vvt.at/", color: "#1D70B7",
+  },
+];
+
+export const AT_TICKET_TYPES: TicketType[] = [
+  { id: "einzel", name: "Egyszeri jegy (Einzelfahrt)", emoji: "🎫", description: "Egy útra szól. Bécsben a Kernzonén belül idő-alapú: szabadon átszállhatsz metróra/villamosra/buszra egy irányba.", price: "2,40 € (Wien); régiónként eltér", validity: "Egy út (Wien: átszállással, megszakítás nélkül)", bestFor: "Alkalmi utazás" },
+  { id: "h24", name: "24/48/72 órás jegy", emoji: "📅", description: "Korlátlan utazás a zónában a megadott időtartamig. 24h kb. 3 egyszeri jegy ára — intenzív naphoz megéri.", price: "8,00 € (24h Wien)", validity: "24 / 48 / 72 óra", bestFor: "Turista nap / intenzív utazás" },
+  { id: "woche", name: "Hetijegy (Wochenkarte)", emoji: "🗓️", description: "Egy hét korlátlan utazás a zónában.", price: "kb. 17 € (Wien)", validity: "Hétfőtől vasárnapig (Wien)", bestFor: "Rövid távú itt-tartózkodás" },
+  { id: "monat", name: "Havijegy (Monatskarte)", emoji: "📆", description: "Egy hónap korlátlan utazás a zónában.", price: "kb. 51 € (Wien)", validity: "1 naptári hónap", bestFor: "Rendszeres városi utazás" },
+  { id: "jahres", name: "Éves bérlet (Jahreskarte / Klimaticket Wien)", emoji: "🎟️", description: "Egy év korlátlan utazás Bécsben. A híres »365 €/év« = napi 1 euró! (Klimaticket Wien.)", price: "365 € / év (Wien)", validity: "1 év", bestFor: "Bécsi lakosok — verhetetlen ár" },
+  { id: "klima-at", name: "Klimaticket Österreich", emoji: "🌍", description: "EGÉSZ Ausztria összes tömegközlekedése (ÖBB + összes Verbund + város) egy bérlettel, egy évig — vonat, busz, villamos, regionális.", price: "kb. 1 095 € / év (kedvezménnyel kevesebb)", validity: "1 év, országosan", bestFor: "Aki sokat utazik országon belül / ingázik" },
+  { id: "vorteilscard", name: "ÖBB Vorteilscard", emoji: "✂️", description: "Éves kártya, ami kb. 45-50% kedvezményt ad az ÖBB-vonatjegyekre (nem városi).", price: "kb. 66 € / év (fiataloknak/nyugdíjasoknak olcsóbb)", validity: "1 év", bestFor: "Aki gyakran utazik vonattal városok között" },
+];
+
+export const AT_MOBILE_APPS: MobileApp[] = [
+  { id: "oebb", name: "ÖBB", emoji: "🚉", description: "Az osztrák vasút hivatalos appja. Menetrend, jegyvásárlás, mobil-jegy, Klimaticket, real-time késés.", iosUrl: "https://apps.apple.com/at/app/öbb/id476256388", androidUrl: "https://play.google.com/store/apps/details?id=at.oebb.ts", pros: ["Országos vonat + busz", "Mobil-jegy + Klimaticket", "Real-time info"] },
+  { id: "wienmobil", name: "WienMobil", emoji: "🚇", description: "A Wiener Linien hivatalos appja. Bécsi jegyek, útvonaltervező, Jahreskarte, megosztott mobilitás (bike, e-scooter).", iosUrl: "https://apps.apple.com/at/app/wienmobil/id1110988201", androidUrl: "https://play.google.com/store/apps/details?id=at.wienerlinien.wienmobillab", pros: ["Bécsi jegyek + Jahreskarte", "Útvonaltervező", "Megosztott mobilitás"] },
+  { id: "vor-anachb", name: "VOR AnachB", emoji: "🗺️", description: "A keleti régió (Bécs/NÖ/Bgld) útvonaltervezője és jegyvásárlása az egész VOR-területre.", iosUrl: "https://apps.apple.com/at/app/vor-anachb/id412341736", androidUrl: "https://play.google.com/store/apps/details?id=at.itsmobility.android", pros: ["VOR egész terület", "Régiós jegyek", "Door-to-door tervező"] },
+];
+
+export const AT_TRANSPORT_TIPS: { emoji: string; title: string; body: string }[] = [
+  { emoji: "💶", title: "Jahreskarte Wien = napi 1 euró", body: "Ha Bécsben élsz, a 365 €/év éves bérlet (Klimaticket Wien) szinte verhetetlen — kb. 7 havijegy áráért egy egész év." },
+  { emoji: "🌍", title: "Klimaticket Österreich — minden, mindenhol", body: "Ha az egész országban utazol (ingázol, sokat vonatozol), a Klimaticket Österreich (~1095 €/év) MINDEN tömegközlekedést fedez országosan." },
+  { emoji: "🎫", title: "Bécsben a jegy idő-alapú", body: "A Kernzonén belül egy egyszeri jegy egy IRÁNYBA, megszakítás nélkül érvényes — szabadon átszállhatsz U-Bahn / Bim / Bus között." },
+  { emoji: "✂️", title: "Vorteilscard a vonatozáshoz", body: "Ha gyakran utazol ÖBB-vonattal városok között (de nincs Klimaticketed), a Vorteilscard kb. fél áron viszi a jegyeket." },
+  { emoji: "🅿️", title: "Park & Ride", body: "Bécs szélén sok P&R parkoló van a metró-végállomásoknál — autóval a szélére, onnan U-Bahn-nal a központba (olcsóbb, mint bent parkolni)." },
+  { emoji: "🚲", title: "Bicikli + WienMobil Rad", body: "Bécsben a WienMobil Rad (városi bringa) az első óra olcsó; a vonaton/U-Bahn-on a biciklihez külön jegy kell (csúcsidőn kívül)." },
+];
+
+const AT_JAHRESKARTE = 365;
+const AT_KLIMATICKET = 1095;
+
+export interface AtTransportResult {
+  yearlyTrips: number;
+  fullPriceCost: number;
+  jahreskarteCost: number;
+  klimaticketCost: number;
+  recommendation: "full-price" | "jahreskarte" | "klimaticket";
+}
+
+/** Ausztria: Einzeltickets vs Jahreskarte Wien (365) vs Klimaticket Österreich (1095). */
+export function calculateAtTransport(input: GaVsHalbtaxInput): AtTransportResult {
+  const yearlyTrips = input.tripsPerWeek * 52;
+  const fullPriceCost = Math.round(yearlyTrips * input.avgTripPrice);
+  let recommendation: "full-price" | "jahreskarte" | "klimaticket";
+  if (AT_JAHRESKARTE <= fullPriceCost && AT_JAHRESKARTE <= AT_KLIMATICKET) recommendation = "jahreskarte";
+  else if (AT_KLIMATICKET < fullPriceCost && AT_KLIMATICKET < AT_JAHRESKARTE) recommendation = "klimaticket";
+  else recommendation = "full-price";
+  return { yearlyTrips, fullPriceCost, jahreskarteCost: AT_JAHRESKARTE, klimaticketCost: AT_KLIMATICKET, recommendation };
+}
