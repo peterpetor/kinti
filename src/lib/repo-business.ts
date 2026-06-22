@@ -29,6 +29,7 @@ interface BusinessRow {
   moderation_status: number | null; moderation_decision_at: string | null;
   moderation_decided_by: string | null; created_at: string | null; updated_at: string | null;
   claimed: number | null; lead_opt_out: number | null;
+  country_code: string | null; canton_code: string | null;
 }
 
 interface BusinessSubmissionRow {
@@ -63,6 +64,8 @@ export function toBusiness(r: BusinessRow): Business {
     createdAt: r.created_at ?? null,
     claimed: bool(r.claimed ?? 1),
     leadOptOut: bool(r.lead_opt_out ?? 0),
+    country: r.country_code ?? "CH",
+    canton: r.canton_code ?? null,
   };
 }
 

@@ -67,6 +67,10 @@ export interface Business {
   claimed?: boolean;
   /** true = a vállalkozó leiratkozott az árajánlat-kérések fogadásáról. */
   leadOptOut?: boolean;
+  /** Ország-kód (CH/AT/…) — a 6-ország rendszerhez. Régi sorok: 'CH'. */
+  country: string;
+  /** Régió-kód az országon belül (CH: kanton, AT: Bundesland, …) vagy null. */
+  canton: string | null;
 }
 
 export interface KintiEvent {
