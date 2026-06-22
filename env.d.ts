@@ -85,7 +85,7 @@ interface CloudflareEnv {
 
   /**
    * PRO-zárolás kapcsoló. Amíg !== "true", a PRO funkciók mindenkinek
-   * elérhetők (a Lemon Squeezy beüzemeléséig). "true" → aktív paywall.
+   * elérhetők (a Paddle beüzemeléséig). "true" → aktív paywall.
    */
   PRO_ENFORCED?: string;
 
