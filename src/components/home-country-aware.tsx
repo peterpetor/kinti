@@ -101,7 +101,6 @@ export function HomeChCards() {
         <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-accent" />
       </Link>
 
-      {isCH && (
       <Link
         href="/tudasbazis"
         className="flex items-center gap-3 rounded-card border border-primary/20 bg-primary-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
@@ -112,12 +111,11 @@ export function HomeChCards() {
         <span className="min-w-0 flex-1">
           <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">Tudásbázis — hasznos tudnivalók</span>
           <span className="block text-[12px] text-ink-muted">
-            Bejelentkezés, Krankenkasse, adó, iskola — hivatalos forrásból
+            Bejelentkezés, {isCH ? "Krankenkasse" : "ÖGK"}, adó, iskola — hivatalos forrásból
           </span>
         </span>
         <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
       </Link>
-      )}
     </>
   );
 }

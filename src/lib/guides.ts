@@ -32,7 +32,7 @@ export interface Guide {
 export const GUIDES_DISCLAIMER =
   "Ez általános tájékoztatás hivatalos forrásokból, nem jogi tanács. A részletek kantononként és időben változnak — a pontos, rád vonatkozó információért mindig a hivatalos oldalt és a lakóhelyed kantonját nézd.";
 
-export const GUIDES: Guide[] = [
+export const GUIDES_CH: Guide[] = [
   {
     slug: "bejelentkezes-letelepedes",
     title: "Bejelentkezés és letelepedés",
@@ -991,6 +991,113 @@ export const GUIDES: Guide[] = [
     ],
   },
 ];
+
+// ════════════════════ AUSZTRIA — osztrák tudásbázis (EU-fókusz) ════════════════════
+export const GUIDES_AT: Guide[] = [
+  {
+    slug: "at-bejelentkezes",
+    title: "Bejelentkezés és tartózkodás",
+    summary: "Meldezettel 3 napon belül; 3 hónapnál hosszabb tartózkodáshoz Anmeldebescheinigung (EU-regisztráció).",
+    icon: "home",
+    sections: [
+      { heading: "Lakcímbejelentés (Meldezettel)", body: ["A beköltözéstől 3 NAPON belül be kell jelentkezned a Meldeamtnál (Bécsben a kerületi Magistratisches Bezirksamt, tartományokban a Gemeindeamt).", "A Meldezettel-űrlapot a szállásadónak (Unterkunftgeber) is alá kell írnia. A kapott Meldebestätigung sok más ügyhöz kell."] },
+      { heading: "EU-regisztráció (Anmeldebescheinigung)", body: ["EU-állampolgárként szabad mozgásod van. Ha 3 hónapnál tovább maradsz, a beköltözéstől 4 hónapon belül kérned kell az Anmeldebescheinigungot.", "Feltétel: munkaviszony / önfoglalkoztatás VAGY elég megélhetés + egészségbiztosítás."] },
+      { heading: "Hosszabb távon", bullets: ["5 év jogszerű tartózkodás → Daueraufenthalt (tartós tartózkodás)", "10 év (különleges esetben 6) → Staatsbürgerschaft — DE le kell mondani a magyar állampolgárságról!"] },
+    ],
+    sources: [{ label: "oesterreich.gv.at — Aufenthalt", url: "https://www.oesterreich.gv.at/themen/leben_in_oesterreich/aufenthalt.html" }, { label: "migration.gv.at", url: "https://www.migration.gv.at/" }],
+  },
+  {
+    slug: "at-egeszsegbiztositas",
+    title: "Egészségbiztosítás (ÖGK / e-card)",
+    summary: "A munkaviszonnyal automatikusan biztosított vagy — nem kell pénztárt választani, mint Svájcban.",
+    icon: "heart",
+    sections: [
+      { heading: "Automatikus biztosítás", body: ["Ha munkaviszonyban állsz, a munkáltató bejelent az ÖGK-hoz (Österreichische Gesundheitskasse), és AUTOMATIKUSAN biztosított leszel. Az e-card postán érkezik.", "Itt NEM kell biztosítót választani és külön díjat fizetni, mint a svájci Krankenkasse-nál — a járulékot a bérből vonják."] },
+      { heading: "e-card", body: ["Az e-card a TB-kártyád: orvosnál, gyógyszertárban, kórházban ezt mutatod fel.", "A háziorvos (Hausarzt) az első kontakt; beutalóval mész szakorvoshoz."] },
+      { heading: "Családtagok", bullets: ["A nem dolgozó házastárs és a gyerekek jellemzően társbiztosítottak (mitversichert)", "Önfoglalkoztatóknak az SVS (Sozialversicherung der Selbständigen)"] },
+    ],
+    sources: [{ label: "gesundheitskasse.at — ÖGK", url: "https://www.gesundheitskasse.at/" }, { label: "oesterreich.gv.at — e-card", url: "https://www.oesterreich.gv.at/themen/gesundheit_und_notfaelle.html" }],
+  },
+  {
+    slug: "at-adozas",
+    title: "Adózás (Lohnsteuer)",
+    summary: "A bérből automatikusan vonják a Lohnsteuert; év végén az Arbeitnehmerveranlagung gyakran visszatérítést hoz.",
+    icon: "document",
+    sections: [
+      { heading: "Bérből vont adó", body: ["Munkavállalóként a Lohnsteuert (jövedelemadó) és a társadalombiztosítási járulékot a munkáltató automatikusan levonja a bérből, és befizeti.", "A nettó bér a bruttóból a Lohnsteuer + SV-járulék levonása után marad."] },
+      { heading: "Arbeitnehmerveranlagung", body: ["Év végén önkéntesen beadhatod az Arbeitnehmerveranlagungot (munkavállalói adóelszámolás) a FinanzOnline-on — visszamenőleg 5 évig.", "Gyakran VISSZAJÁR pénz: levonható az ingázás (Pendlerpauschale), gyermek (Familienbonus Plus), továbbképzés, bizonyos biztosítások."] },
+      { heading: "Hasznos tudni", bullets: ["FinanzOnline = az osztrák adóhivatal online portálja", "Familienbonus Plus: jelentős gyermek-adókedvezmény", "13./14. havi fizetés (Urlaubs- és Weihnachtsgeld) kedvezményesen adózik"] },
+    ],
+    sources: [{ label: "BMF — Finanzministerium", url: "https://www.bmf.gv.at/" }, { label: "FinanzOnline", url: "https://finanzonline.bmf.gv.at/" }],
+  },
+  {
+    slug: "at-iskola",
+    title: "Iskola és gyerek",
+    summary: "Kötelező, ingyenes oktatás; nemzeti rendszer (Volksschule → Mittelschule/AHS → Matura/Lehre).",
+    icon: "bookmark",
+    sections: [
+      { heading: "Tankötelezettség", body: ["9 év tankötelezettség (6–15 éves kor). Az állami iskola ingyenes. Az utolsó óvodai év (5 éves kortól) is kötelező.", "Ha a gyerek nem tud németül, a Deutschförderklasse / Deutschförderkurs segíti a felzárkózást."] },
+      { heading: "A rendszer", bullets: ["Volksschule (1–4. osztály)", "Sekundarstufe I: Mittelschule vagy AHS-Unterstufe", "Sekundarstufe II: AHS-Oberstufe (Matura), BHS (HTL/HAK), BMS, vagy Lehre"] },
+      { heading: "Beiratkozás", body: ["Kell: útlevél/igazolvány, Meldezettel, e-card, az előző iskola bizonyítványa (lehetőleg hitelesített fordítással). Részletek a Kinti Osztrák Iskolarendszer modulban."] },
+    ],
+    sources: [{ label: "oesterreich.gv.at — Bildung", url: "https://www.oesterreich.gv.at/themen/bildung_und_neue_medien.html" }, { label: "BMBWF", url: "https://www.bmbwf.gv.at/" }],
+  },
+  {
+    slug: "at-munkavallalas",
+    title: "Munkavállalás",
+    summary: "EU-állampolgárként szabadon dolgozhatsz; a Kollektivvertrag szabja a minimálbért és a feltételeket.",
+    icon: "briefcase",
+    sections: [
+      { heading: "Szabad munkavállalás", body: ["EU-állampolgárként engedély nélkül, szabadon vállalhatsz munkát Ausztriában.", "A legtöbb ágazatban Kollektivvertrag (kollektív szerződés) szabja a minimálbért, a béremelést és a feltételeket — szakmánként eltér."] },
+      { heading: "Munkaidő és szabadság", bullets: ["Normál munkaidő: heti 40 óra (sok KV-ben 38,5)", "Évi 5 hét (25 munkanap) fizetett szabadság", "13. és 14. havi fizetés (Urlaubsgeld + Weihnachtsgeld) szokásos"] },
+      { heading: "Felmondás", body: ["A felmondási idők és a próbaidő (Probezeit, jellemzően 1 hónap) a KV / szerződés szerint. Munkaviszony végén Arbeitszeugnis (munkáltatói igazolás) jár.", "Munkanélküliség esetén az AMS-nél (Arbeitsmarktservice) jelentkezz."] },
+    ],
+    sources: [{ label: "arbeiterkammer.at — AK (munkavállalói jogok)", url: "https://www.arbeiterkammer.at/" }, { label: "AMS — Arbeitsmarktservice", url: "https://www.ams.at/" }],
+  },
+  {
+    slug: "at-bankszamla",
+    title: "Bankszámla",
+    summary: "A fizetésedhez és a lakbérhez kell; a Meldezettel + útlevél elég a nyitáshoz.",
+    icon: "trending",
+    sections: [
+      { heading: "Számlanyitás", body: ["Nyiss Girokonto-t (folyószámla) banknál (Erste, Bank Austria, BAWAG, Raiffeisen) vagy online (N26, bank99).", "Általában kell: érvényes útlevél/igazolvány + Meldezettel. A bérutaláshoz és a Daueraufträge (állandó megbízás, pl. lakbér) beállításához is ez kell."] },
+      { heading: "Fizetés", bullets: ["A kártya = Bankomatkarte (debit); a Bankomat = ATM", "Erlagschein / Zahlschein = sárga csekk (számlák befizetése)", "Sok helyen kártya/kontaktless; piacon, kis boltban inkább készpénz"] },
+      { heading: "Betétvédelem", body: ["Az EU-szabály szerint a betétek bankonként 100 000 €-ig védettek (Einlagensicherung)."] },
+    ],
+    sources: [{ label: "oesterreich.gv.at — Konto", url: "https://www.oesterreich.gv.at/themen/bauen_wohnen_und_umwelt.html" }],
+  },
+  {
+    slug: "at-nyugdij",
+    title: "Nyugdíj (Pensionsversicherung)",
+    summary: "A bérből kötelező nyugdíjjárulékot vonnak; az EU-ban szerzett évek összeszámítódnak.",
+    icon: "globe",
+    sections: [
+      { heading: "Kötelező rendszer", body: ["Munkavállalóként kötelező nyugdíjbiztosítás (Pensionsversicherung); a járulékot a bérből vonják (PVA — Pensionsversicherungsanstalt).", "A magyar és az osztrák (és más EU-) szolgálati évek a nyugdíjnál összeszámítódnak — az EU-koordináció miatt nem vész el a külföldön szerzett idő."] },
+      { heading: "Pillérek", bullets: ["1. pillér: állami Pensionsversicherung (kötelező)", "2. pillér: vállalati nyugdíj (Betriebliche Vorsorge) — egyes munkáltatóknál", "3. pillér: magán-előtakarékosság (pl. prämienbegünstigte Zukunftsvorsorge)"] },
+    ],
+    sources: [{ label: "pv.at — Pensionsversicherungsanstalt", url: "https://www.pv.at/" }, { label: "oesterreich.gv.at — Pension", url: "https://www.oesterreich.gv.at/themen/arbeit_und_pension.html" }],
+  },
+  {
+    slug: "at-lakasberles",
+    title: "Lakásbérlés",
+    summary: "Hauptmietvertrag, Kaution (kb. 3 havi bér), esetleg Provision; figyelj a Betriebskostenre.",
+    icon: "home",
+    sections: [
+      { heading: "Bérleti szerződés", body: ["A leggyakoribb a Hauptmietvertrag (fő bérleti szerződés). Lehet határozott (befristet) vagy határozatlan (unbefristet) idejű.", "A bérleti díjon (Miete) felül jön a Betriebskosten (üzemeltetési/rezsi költség) — kérdezd meg az összköltséget (Bruttomiete)."] },
+      { heading: "Költségek beköltözéskor", bullets: ["Kaution (kaució): jellemzően 3 havi bruttó lakbér", "Provision (ingatlanos jutalék): max. 2 havi lakbér (ha ingatlanoson keresztül)", "Esetleg Ablöse (bútorért/felújításért a régi bérlőnek)"] },
+      { heading: "Jogvédelem", body: ["A Mietrechtsgesetz (MRG) sok bérleményt véd (díjkorlát, felmondási védelem). Vitás kérdésben az Arbeiterkammer (AK) vagy a Mietervereinigung segít."] },
+    ],
+    sources: [{ label: "oesterreich.gv.at — Wohnen", url: "https://www.oesterreich.gv.at/themen/bauen_wohnen_und_umwelt.html" }, { label: "mietervereinigung.at", url: "https://mietervereinigung.at/" }],
+  },
+];
+
+/** Az összes guide (statikus generáláshoz + slug-kereséshez). */
+export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT];
+
+/** A választott ország guide-jai (a lista + kereső). */
+export function getGuides(country: string | null | undefined): Guide[] {
+  return country === "AT" ? GUIDES_AT : GUIDES_CH;
+}
 
 export function getGuide(slug: string): Guide | undefined {
   return GUIDES.find((g) => g.slug === slug);

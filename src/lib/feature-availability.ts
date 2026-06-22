@@ -22,7 +22,6 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "bussen",            // bírság-info (svájci)
   "szolgaltato-valto", // szolgáltató-váltás (svájci szolgáltatók)
   "lakberles",         // lakbér-kalkulátor (svájci)
-  "tudasbazis",        // tudásbázis (svájci hivatalos források)
   "kviz",              // kvíz (svájci tartalom)
   "berkalkulator",     // bérkalkulátor (svájci adó/CHF)
   "iranytu",           // béradat-radar (svájci bérbenchmark)
