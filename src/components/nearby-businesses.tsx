@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { BusinessCard, Icon } from "@/components/ui";
 import { haversineKm } from "@/lib/distance";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import type { Business } from "@/lib/types";
 
 /**
@@ -15,6 +17,17 @@ import type { Business } from "@/lib/types";
 export function NearbyBusinesses({ businesses }: { businesses: Business[] }) {
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(true);
+
+  // Ország-szűrés (6-ország). Hidratálás-biztos: mount ELŐTT nincs szűrés (egyezik
+  // az SSR-rel, ami minden országot átad), mount UTÁN a választott ország (default CH).
+  const [prefCountry] = usePreferredCountry();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : null;
+  const countryBusinesses = useMemo(
+    () => (country == null ? businesses : businesses.filter((b) => (b.country ?? "CH") === country)),
+    [businesses, country],
+  );
 
   useEffect(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -41,19 +54,19 @@ export function NearbyBusinesses({ businesses }: { businesses: Business[] }) {
   const items = useMemo(() => {
     if (pos) {
       // Valódi legközelebbi 3, távolsággal.
-      return businesses
+      return countryBusinesses
         .map((b) => ({ b, dist: haversineKm(pos.lat, pos.lng, b.lat as number, b.lng as number) }))
         .sort((a, b) => a.dist - b.dist)
         .slice(0, 3);
     }
     // Fallback: kiemelt elöl, aztán a többi — km nélkül.
-    return [...businesses]
+    return [...countryBusinesses]
       .sort((a, b) => Number(b.featured) - Number(a.featured))
       .slice(0, 3)
       .map((b) => ({ b, dist: null as number | null }));
-  }, [businesses, pos]);
+  }, [countryBusinesses, pos]);
 
-  if (businesses.length === 0) {
+  if (countryBusinesses.length === 0) {
     return (
       <Link
         href="/szaknevsor/uj"

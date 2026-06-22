@@ -5,9 +5,8 @@ import {
   SectionHeader,
   DropdownMenu,
 } from "@/components/ui";
-import type { IconName } from "@/components/ui/icons";
-import { cn } from "@/lib/cn";
 import { WeatherWidget } from "@/components/weather-widget";
+import { HomeCountryFlag, HomePrimaryActions } from "@/components/home-country-aware";
 import { MyPostsBanner } from "@/components/my-posts-banner";
 import { DailyStreak } from "@/components/daily-streak";
 import { GlobalSearch } from "@/components/global-search";
@@ -44,12 +43,7 @@ export default async function FeedPage() {
         <div className="flex items-center gap-2">
           <KintiLogo size={28} />
           <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/switzerland-flag.png"
-            alt="Svájc"
-            className="h-[36px] w-[36px] rounded-[6px] object-contain select-none"
-          />
+          <HomeCountryFlag />
         </div>
         <div className="flex-1" />
         <GlobalSearch />
@@ -63,12 +57,7 @@ export default async function FeedPage() {
       {/* Fő belépési pontok — „mit hol találok" (nagy, érthető célok) */}
       <section className="space-y-3">
         <SectionHeader>Mit szeretnél?</SectionHeader>
-        <div className="grid grid-cols-2 gap-2.5">
-          <PrimaryAction href="/szaknevsor" icon="list" label="Szakembert keresek" tone="primary" />
-          <PrimaryAction href="/allasok" icon="briefcase" label="Állást keresek" tone="primary" />
-          <PrimaryAction href="/vallalkozo" icon="plus" label="Vállalkozásom felviszem" tone="accent" />
-          <PrimaryAction href="/ugyintezes" icon="document" label="Ügyintézés Svájcban" tone="accent" />
-        </div>
+        <HomePrimaryActions />
       </section>
 
       <section className="space-y-3">
@@ -168,32 +157,3 @@ export default async function FeedPage() {
   );
 }
 
-/** Nagy, érthető fő belépési pont a kezdőképernyőn (2×2 rács). */
-function PrimaryAction({
-  href,
-  icon,
-  label,
-  tone,
-}: {
-  href: string;
-  icon: IconName;
-  label: string;
-  tone: "primary" | "accent";
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex flex-col items-center gap-2.5 rounded-2xl border border-line bg-surface px-3 py-5 text-center shadow-card transition active:scale-[0.98]"
-    >
-      <span
-        className={cn(
-          "grid h-12 w-12 place-items-center rounded-2xl",
-          tone === "accent" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary",
-        )}
-      >
-        <Icon name={icon} size={23} strokeWidth={2.2} />
-      </span>
-      <span className="text-[13.5px] font-bold leading-tight text-ink">{label}</span>
-    </Link>
-  );
-}
