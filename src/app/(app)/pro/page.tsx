@@ -166,7 +166,7 @@ export default function ProPage() {
       {/* FAQ / Trust section */}
       <div className="mt-16 text-center">
         <p className="text-[13px] font-semibold text-ink-muted">
-          A fizetéseket a biztonságos <strong className="text-ink">Lemon Squeezy</strong> (Merchant of
+          A fizetéseket a biztonságos <strong className="text-ink">Paddle</strong> (Merchant of
           Record) dolgozza fel. Bármikor lemondható.
         </p>
         <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">

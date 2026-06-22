@@ -19,7 +19,7 @@ export default function AszfPage() {
         üzemeltetője a <strong>Feedback Jobs S.R.L.</strong> Az <strong>alapszolgáltatások</strong>{" "}
         (kereső, regisztráció, hirdetésfeladás, események, állásbörze, kalkulátorok) <strong>ingyenesek</strong>;
         egyes <strong>prémium funkciók opcionális, díjköteles PRO-előfizetés</strong> keretében
-        érhetők el, amelyet a Lemon Squeezy fizetési szolgáltatón keresztül lehet megrendelni és
+        érhetők el, amelyet a Paddle fizetési szolgáltatón keresztül lehet megrendelni és
         bármikor lemondani.
       </p>
       <p>
@@ -31,11 +31,11 @@ export default function AszfPage() {
       <h3>1.1 Kinti PRO előfizetés: fizetés, elállás és visszatérítés</h3>
       <p>
         A díjköteles <strong>Kinti PRO</strong> (és a Szaknévsor-kiemelés / kiemelt állás)
-        előfizetést a <strong>Lemon Squeezy</strong> (Lemon Squeezy LLC) mint{" "}
+        előfizetést a <strong>Paddle</strong> (Paddle.com Market Limited) mint{" "}
         <em>Merchant of Record</em> (a vásárlás szerződő eladója és számlakibocsátója)
-        bonyolítja. A vásárlásra így a <strong>Lemon Squeezy szerződési és visszatérítési
+        bonyolítja. A vásárlásra így a <strong>Paddle szerződési és visszatérítési
         feltételei is</strong> irányadók; az adó (pl. ÁFA/MWST) felszámítása és a számlázás
-        is a Lemon Squeezynél történik. Az árak a megrendeléskor feltüntetett pénznemben és
+        is a Paddle-nél történik. Az árak a megrendeléskor feltüntetett pénznemben és
         összegben, az alkalmazandó adóval értendők.
       </p>
       <p>
@@ -47,7 +47,7 @@ export default function AszfPage() {
         14 napon belüli megkezdését</strong>, és <strong>tudomásul veszed, hogy a szolgáltatás
         teljes körű teljesítésével elveszíted az elállási jogodat</strong> (az irányelv 16. cikk
         m) pontja). A részben igénybe vett időszakra az ellenérték arányos része számítható fel.
-        Az elállási / visszatérítési kérelmet a Lemon Squeezynél, illetve az{" "}
+        Az elállási / visszatérítési kérelmet a Paddle-nél, illetve az{" "}
         <a href="mailto:info@kinti.app">info@kinti.app</a> címen jelezheted.
       </p>
       <p>
@@ -55,7 +55,7 @@ export default function AszfPage() {
         a lemondás a folyó számlázási időszak végén lép hatályba, addig a PRO funkciók elérhetők
         maradnak. A lemondás a már kiszámlázott, megkezdett időszakra — a fenti elállási jogon
         túl — nem keletkeztet automatikus visszatérítési igényt. Méltányossági visszatérítésről a
-        Lemon Squeezy feltételei és az üzemeltető egyedi mérlegelése szerint dönthetünk.
+        Paddle feltételei és az üzemeltető egyedi mérlegelése szerint dönthetünk.
       </p>
       <p style={{ fontStyle: "italic" }}>
         Svájci fogyasztóként a svájci jog az online/digitális vásárlásokra általában nem ír elő

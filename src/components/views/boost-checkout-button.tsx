@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import type { ProductType } from "@/lib/payments-config";
 
 /**
- * Kontextuális „Kiemelés" / vásárlás gomb. A Lemon Squeezy checkoutot a
+ * Kontextuális „Kiemelés" / vásárlás gomb. A Paddle checkoutot a
  * megadott `customData`-val indítja — FONTOS, hogy a business_pro / job_featured
  * termékeknél a `businessId` / `jobId` is benne legyen, különben a webhook nem
  * tudja, mit aktiváljon a fizetés után.
@@ -52,7 +52,7 @@ export function BoostCheckoutButton({
         A vásárlással kéred {subjectNoun[product]} <strong>azonnali aktiválását</strong>, és tudomásul veszed, hogy a
         teljesítéssel elveszíted a 14 napos elállási jogod (
         <Link href="/aszf" target="_blank" className="underline">ÁSZF 1.1</Link>). A fizetést a
-        Lemon Squeezy (Merchant of Record) bonyolítja.
+        Paddle (Merchant of Record) bonyolítja.
       </p>
     </div>
   );

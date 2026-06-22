@@ -1,28 +1,33 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { createCheckout } from "@/lib/lemonsqueezy";
-import { getVariantId, PRODUCT_ENTITLEMENT, ProductType, CountryCode } from "@/lib/payments-config";
+import { createTransaction } from "@/lib/paddle";
+import { getPriceId, PRODUCT_ENTITLEMENT, ProductType, CountryCode } from "@/lib/payments-config";
 import { getBusinessByOwner, getEmployerByOwner, getJobById } from "@/lib/repo";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 
+/**
+ * POST /api/payments/checkout — Paddle transaction (checkout) létrehozása.
+ *
+ * A jogosultság-típust a `product`-ból vezetjük le (nem a kliensét), és a
+ * businessId/jobId-t a bejelentkezett user tényleges tulajdonjogából — így nem
+ * lehet olcsó terméket fizetve drágát aktiválni, sem idegen entitást kiemelni.
+ * Visszaad egy `transactionId`-t, amit a kliens a Paddle.js overlay-ben nyit meg.
+ */
 export async function POST(req: Request) {
   try {
-    // A jogosultságot a webhook a customData.userId alapján adja meg, ezért NEM
-    // bízhatunk a kliens userId-jében — a bejelentkezett session-ből vesszük.
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Bejelentkezés szükséges a vásárláshoz." }, { status: 401 });
     }
 
     const body = await req.json();
-    const { product, country, customData, customerEmail, customerName } = body as {
+    const { product, country, customData, customerEmail } = body as {
       product: ProductType;
       country?: CountryCode;
       customData?: Record<string, string>;
       customerEmail?: string;
-      customerName?: string;
     };
 
     const type = product ? PRODUCT_ENTITLEMENT[product] : undefined;
@@ -30,24 +35,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Ismeretlen termék." }, { status: 400 });
     }
 
-    // Alapértelmezetten Svájc (CH), de ha küldik, használjuk azt.
-    const selectedCountry = country || "CH";
-    const variantId = getVariantId(product, selectedCountry);
+    const priceId = getPriceId(product, country || "CH");
 
-    // A webhook a custom_data alapján aktivál — ezért MINDENT szerver-oldalon, a
-    // bejelentkezett user tényleges tulajdonjogából vezetünk le. A kliens
-    // customData-ját (type/businessId/jobId) NEM bízzuk meg.
+    // A custom_data SZERVER-OLDALON, a tényleges tulajdonjogból (a kliensét eldobjuk).
     const safeCustomData: Record<string, string> = { type, userId };
 
     if (type === "business_pro") {
-      // Csak a SAJÁT vállalkozásodat emelheted ki (a kliens businessId-ját eldobjuk).
       const business = await getBusinessByOwner(userId);
       if (!business) {
         return NextResponse.json({ error: "Nincs hozzád kötött vállalkozás." }, { status: 403 });
       }
       safeCustomData.businessId = business.id;
     } else if (type === "job_featured") {
-      // Csak a SAJÁT hirdetésedet emelheted ki — ellenőrizzük a tulajdonjogot.
       const jobId = typeof customData?.jobId === "string" ? customData.jobId : "";
       const [employer, job] = await Promise.all([
         getEmployerByOwner(userId),
@@ -58,15 +57,14 @@ export async function POST(req: Request) {
       }
       safeCustomData.jobId = jobId;
     }
-    // user_pro: csak { type, userId } kell.
 
-    const checkoutUrl = await createCheckout(
-      variantId,
+    const transactionId = await createTransaction(
+      priceId,
       safeCustomData,
-      customerEmail ? { email: customerEmail, name: customerName } : undefined
+      customerEmail ? { email: customerEmail } : undefined,
     );
 
-    return NextResponse.json({ url: checkoutUrl });
+    return NextResponse.json({ transactionId });
   } catch (error) {
     safeLogError("[payments/checkout]", error);
     return NextResponse.json(

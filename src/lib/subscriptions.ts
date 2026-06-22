@@ -1,10 +1,10 @@
 /**
  * Kinti PRO előfizetés-réteg. Az identitás a Clerk userId; a státuszt a
- * Lemon Squeezy webhook frissíti (src/app/api/webhooks/lemonsqueezy).
+ * Paddle webhook frissíti (src/app/api/webhooks/paddle).
  *
  * A gate bekapcsolása env-flaggel: amíg `PRO_ENFORCED !== "true"`, a PRO
  * funkciók MINDENKINEK elérhetők (különben élő fizetés nélkül senki sem
- * tudná használni őket). Ha él a Lemon Squeezy, a flag bekapcsolásával
+ * tudná használni őket). Ha él a Paddle, a flag bekapcsolásával
  * aktiválódik a zárolás — kódváltoztatás nélkül.
  */
 import { redirect } from "next/navigation";

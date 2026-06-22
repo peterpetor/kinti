@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ProductType, CountryCode } from "@/lib/payments-config";
+import { loadPaddle } from "@/lib/paddle-client";
 
 interface CheckoutOptions {
   product: ProductType;
@@ -9,6 +10,10 @@ interface CheckoutOptions {
   customerName?: string;
 }
 
+/**
+ * A szerver létrehoz egy Paddle transactiont (a validált adatokkal), a kliens
+ * pedig a Paddle.js overlay-ben megnyitja — a felhasználó a kinti.app-on marad.
+ */
 export function useCheckout() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,18 +29,19 @@ export function useCheckout() {
         body: JSON.stringify(options),
       });
 
-      const data = (await res.json()) as any;
+      const data = (await res.json()) as { transactionId?: string; error?: string };
 
       if (!res.ok) {
         throw new Error(data.error || "Hiba történt a fizetés inicializálásakor");
       }
 
-      if (data.url) {
-        // Átirányítás a Lemon Squeezy fizetési oldalára
-        window.location.href = data.url;
+      if (data.transactionId) {
+        const paddle = await loadPaddle();
+        paddle.Checkout.open({ transactionId: data.transactionId });
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Ismeretlen hiba";
+      setError(msg);
       console.error(err);
     } finally {
       setIsLoading(false);

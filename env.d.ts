@@ -90,14 +90,14 @@ interface CloudflareEnv {
   PRO_ENFORCED?: string;
 
   /**
-   * A Lemon Squeezy checkout-link (a PRO előfizetésé). A userId passthrough
-   * automatikusan hozzáfűződik: ?checkout[custom][user_id]=...
+   * Paddle (Billing) szerver API-kulcs — a checkout (transaction) létrehozásához.
+   * TITOK — Cloudflare Pages secret.
    */
-  LEMONSQUEEZY_CHECKOUT_URL?: string;
+  PADDLE_API_KEY?: string;
 
   /**
-   * A Lemon Squeezy webhook aláírás-titka (HMAC-SHA256). TITOK — Cloudflare
-   * Pages secret. Amíg nincs beállítva, a webhook 503-at ad (inaktív).
+   * Paddle webhook aláírás-titka (HMAC-SHA256, `Paddle-Signature` fejléc). TITOK —
+   * Cloudflare Pages secret. Amíg nincs beállítva, a webhook 401-et ad (inaktív).
    */
-  LEMONSQUEEZY_WEBHOOK_SECRET?: string;
+  PADDLE_WEBHOOK_SECRET?: string;
 }

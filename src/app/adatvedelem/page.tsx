@@ -285,26 +285,26 @@ export default function AdatvedelemPage() {
         <li><strong>Nyilvánosság:</strong> az akció pontosan a bejelentő GPS-pozícióján jelenik meg a nyilvános térképen</li>
       </ul>
 
-      <h3>2.14 Kinti PRO előfizetés és fizetés (Lemon Squeezy)</h3>
+      <h3>2.14 Kinti PRO előfizetés és fizetés (Paddle)</h3>
       <p>
         A <strong>Kinti PRO</strong> (és a Szaknévsor-kiemelés / kiemelt állás) előfizetés
-        megvásárlásakor a fizetést a <strong>Lemon Squeezy</strong> (Lemon Squeezy LLC, USA)
+        megvásárlásakor a fizetést a <strong>Paddle</strong> (Paddle.com Market Limited, Egyesült Királyság)
         mint <em>Merchant of Record</em> bonyolítja. A bankkártya- és számlázási adataidat
-        közvetlenül a Lemon Squeezy kezeli — <strong>a kinti.app nem látja és nem tárolja a
+        közvetlenül a Paddle kezeli — <strong>a kinti.app nem látja és nem tárolja a
         kártyaadatokat</strong>.
       </p>
       <p>
         A mi adatbázisunkban kizárólag az előfizetés <strong>állapotát</strong> tároljuk a
         funkciók feloldásához, a bejelentkezett felhasználói fiókhoz (Clerk userId) kötve:
-        az előfizetés státusza, a csomag típusa, a Lemon Squeezy előfizetés- és vásárló-
+        az előfizetés státusza, a csomag típusa, a Paddle előfizetés- és vásárló-
         azonosítója, valamint a következő számlázási időszak vége. Számlaadatot/kártyaadatot
         nem tárolunk.
       </p>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — szerződés teljesítése (az előfizetés nyújtása); a számviteli bizonylatok megőrzése: 6. cikk (1) c) — jogi kötelezettség.</li>
         <li><strong>Tárolási idő:</strong> az előfizetés fennállásáig, illetve a számviteli/adójogi megőrzési határidőig.</li>
-        <li><strong>Adatfeldolgozó / Merchant of Record:</strong> Lemon Squeezy LLC —{" "}
-          <a href="https://www.lemonsqueezy.com/privacy" target="_blank" rel="noreferrer">privacy policy</a>.</li>
+        <li><strong>Adatfeldolgozó / Merchant of Record:</strong> Paddle.com Market Limited —{" "}
+          <a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noreferrer">privacy policy</a>.</li>
       </ul>
 
       <h3>2.15 Ajánlatkérés és kapcsolatfelvétel (lead)</h3>
@@ -433,10 +433,13 @@ export default function AdatvedelemPage() {
 
       <h2>4. Adatok továbbítása harmadik országba</h2>
       <p>
-        A Clerk, a Cloudflare, a Resend és a Lemon Squeezy USA-ban bejegyzett, ottani szervereket
+        A Clerk, a Cloudflare és a Resend USA-ban bejegyzett, ottani szervereket
         is használó vállalatok. Az EU–USA adattranszferek a 2023-as EU–US Data Privacy Framework
         (DPF), illetve az Európai Bizottság által elfogadott általános adatvédelmi kikötések (SCC)
         alapján történnek, amelyek biztosítják a GDPR-nak megfelelő magas szintű adatvédelmet.
+        A fizetést bonyolító <strong>Paddle</strong> az <strong>Egyesült Királyságban</strong>{" "}
+        bejegyzett; az EU–UK adattovábbítást az Európai Bizottság UK-ra vonatkozó megfelelőségi
+        határozata fedi.
       </p>
       <p>
         <strong>Svájci érintettek</strong>: a Svájcból az USA-ba történő adattovábbításra a{" "}
