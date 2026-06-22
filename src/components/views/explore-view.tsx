@@ -58,7 +58,8 @@ export function ExploreView({
   const [openNow, setOpenNow] = useState(false);
   const [minYears, setMinYears] = useState(0);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
-  const [view, setView] = useState<ViewMode>("list");
+  // A térkép az app "lelke" → alapból a térkép-nézet nyílik (a lista 1 koppintásra).
+  const [view, setView] = useState<ViewMode>("map");
   const [cantonSheetOpen, setCantonSheetOpen] = useState(false);
 
   // Ha nem URL-ből érkezett kanton, a felhasználó preferált kantonjára szűrünk

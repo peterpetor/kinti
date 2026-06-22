@@ -96,8 +96,28 @@ export function BusinessMap({
     }
   }, [located, selectedId]);
 
+  const [fullscreen, setFullscreen] = useState(false);
+
+  // Fullscreen: body-scroll zár + Escape-kilépés.
+  useEffect(() => {
+    if (!fullscreen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setFullscreen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [fullscreen]);
+
   return (
-    <div className={cn("relative isolate overflow-hidden rounded-card", className)}>
+    <div
+      className={cn(
+        "relative isolate overflow-hidden",
+        fullscreen ? "fixed inset-0 z-[60] rounded-none" : cn("rounded-card", className),
+      )}
+    >
       {/* Granuláris hiba-határ: ha a térkép-motor (Leaflet/MapLibre) futásidőben
           elhasal (WebGL, lib-hiba), csak a térkép helyén jelenik meg fallback —
           a lista, a kategória-pillek és a kiválasztott kártya tovább működnek. */}
@@ -129,16 +149,31 @@ export function BusinessMap({
             onSelectMarker={handleSelectMarker}
             fallbackCenter={fallbackCenter}
             fallbackZoom={fallbackZoom}
+            fullscreen={fullscreen}
           />
         )}
       </ErrorBoundary>
 
-      {/* Bal-felül: hely-pill */}
-      <div className="pointer-events-none absolute left-3 top-3 z-[10]">
+      {/* Bal-felül: hely-pill + teljes képernyő kapcsoló */}
+      <div className="pointer-events-none absolute left-3 top-3 z-[20] flex items-center gap-2">
         <span className="glass pointer-events-auto inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-bold text-ink shadow-card">
           <Icon name="pin" size={13} strokeWidth={2.2} className="text-accent" />
           {locationLabel}
         </span>
+        <button
+          type="button"
+          onClick={() => setFullscreen((f) => !f)}
+          aria-label={fullscreen ? "Kilépés a teljes képernyőből" : "Teljes képernyő"}
+          className="glass pointer-events-auto grid h-9 w-9 place-items-center rounded-[12px] text-ink shadow-card active:scale-95 transition-transform"
+        >
+          {fullscreen ? (
+            <Icon name="close" size={16} strokeWidth={2.4} />
+          ) : (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3" />
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* Alul: kategória-pillek + kiválasztott kártya. A térkép a lebegő alsó

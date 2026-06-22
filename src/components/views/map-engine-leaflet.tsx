@@ -26,6 +26,8 @@ export interface MapEngineProps {
   fallbackZoom: number;
   sosAlerts?: SosAlert[];
   onSelectSosAlert?: (id: string) => void;
+  /** Ha true, a térkép teljes képernyőn van → a Leaflet-nek újra kell mérnie. */
+  fullscreen?: boolean;
 }
 
 export function LeafletEngine({
@@ -36,6 +38,7 @@ export function LeafletEngine({
   fallbackZoom,
   sosAlerts = [],
   onSelectSosAlert,
+  fullscreen,
 }: MapEngineProps) {
   const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
   // Automatikus pozíció, ha a helymeghatározás már engedélyezve van (prompt nélkül).
@@ -83,8 +86,19 @@ export function LeafletEngine({
 
       <FitToMarkers businesses={located} sosAlerts={sosAlerts} />
       <Controls onLocate={setMyPosition} />
+      <InvalidateSize trigger={fullscreen} />
     </MapContainer>
   );
+}
+
+/** Fullscreen-váltáskor (konténer-méret változás) a Leaflet-nek újra kell mérnie. */
+function InvalidateSize({ trigger }: { trigger: unknown }) {
+  const map = useMap();
+  useEffect(() => {
+    const t = setTimeout(() => map.invalidateSize(), 220);
+    return () => clearTimeout(t);
+  }, [trigger, map]);
+  return null;
 }
 
 // ---------------------------------------------------------------------------
