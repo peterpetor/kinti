@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { getTodayState, type QuizState } from "@/lib/quiz-daily";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 
 /**
  * KvizDailyCard — kompakt napi-kvíz widget a főoldalon.
@@ -14,12 +17,15 @@ import { getTodayState, type QuizState } from "@/lib/quiz-daily";
  */
 export function KvizDailyCard() {
   const [state, setState] = useState<QuizState | null>(null);
+  const [prefCountry] = usePreferredCountry();
 
   useEffect(() => {
     setState(getTodayState());
   }, []);
 
   if (!state) return null;
+  // A napi kvíz svájci tartalom → csak CH-ban (lib/feature-availability).
+  if (!isFeatureAvailable("kviz", prefCountry ?? DEFAULT_COUNTRY)) return null;
 
   const played = !!state.today;
   const score = state.today?.score ?? 0;
