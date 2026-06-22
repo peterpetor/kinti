@@ -7,10 +7,18 @@ import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon } from "./icons";
 import { CountrySwitcher } from "./country-switcher";
 import { cn } from "@/lib/cn";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 
 export function DropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
+  // A menü kattintásra (mount után) renderel → az ország közvetlenül olvasható.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isCH = country === "CH";
+  const has = (feature: string) => isFeatureAvailable(feature, country);
 
   useEffect(() => {
     if (isOpen) {
@@ -159,6 +167,7 @@ export function DropdownMenu() {
                 </Link>
               </CollapsibleSection>
 
+              {isCH && (
               <CollapsibleSection title="Tudás & Ügyintézés">
                 <Link href="/kikoltozes" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
@@ -198,65 +207,80 @@ export function DropdownMenu() {
                   <ProBadge />
                 </Link>
               </CollapsibleSection>
+              )}
 
               <CollapsibleSection title="Pénzügyek & Kalkulátorok">
                 <Link href="/arfolyam" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     💱
                   </span>
-                  CHF / HUF árfolyam
+                  Árfolyam-figyelő
                 </Link>
+                {has("berkalkulator") && (
                 <Link href="/berkalkulator" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
                     💰
                   </span>
                   Svájci Bérkalkulátor
                 </Link>
+                )}
+                {has("iranytu") && (
                 <Link href="/iranytu" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
                     📊
                   </span>
                   Bér- és Lakbér Iránytű
                 </Link>
+                )}
+                {has("lakberles") && (
                 <Link href="/lakberles" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🏠
                   </span>
                   Bérlés rejtett-költség
                 </Link>
+                )}
+                {has("szolgaltato-valto") && (
                 <Link href="/szolgaltato-valto" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
                     🔄
                   </span>
                   Szolgáltató Váltó
                 </Link>
+                )}
               </CollapsibleSection>
 
               <CollapsibleSection title="Utazás & Térkép">
+                {has("kozlekedes") && (
                 <Link href="/kozlekedes" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🚆
                   </span>
                   Tömegközlekedés
                 </Link>
+                )}
                 <Link href="/repulojegy" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     ✈️
                   </span>
                   Repülőjegy-figyelő
                 </Link>
+                {has("vam") && (
                 <Link href="/vam" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🛂
                   </span>
                   Vám-kalkulátor
                 </Link>
+                )}
+                {has("bussen") && (
                 <Link href="/bussen" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     🚓
                   </span>
                   Gyorshajtás kalkulátor
                 </Link>
+                )}
                 <Link href="/akciok" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     🏷️
@@ -265,6 +289,7 @@ export function DropdownMenu() {
                 </Link>
               </CollapsibleSection>
 
+              {isCH && (
               <CollapsibleSection title="Játék">
                 <Link href="/nyelvlecke" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
@@ -279,6 +304,7 @@ export function DropdownMenu() {
                   Napi Svájci Kvíz
                 </Link>
               </CollapsibleSection>
+              )}
 
               <CollapsibleSection title="Jogi & Segítség">
                 <Link href="/segitseg" onClick={close} className={linkClass}>
