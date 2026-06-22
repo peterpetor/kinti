@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
-import { SalaryCalculator } from "@/components/views/salary-calculator";
+import { SalaryCalculatorSwitch } from "@/components/views/salary-calculator-switch";
 
 
 export const metadata = {
-  title: "Svájci Bérkalkulátor (Nettó-Bruttó)",
-  description: "Számold ki a svájci nettó fizetésed! Forrásadó (Quellensteuer), AHV, ALV, és BVG levonások kanton és családi állapot alapján.",
+  title: "Bérkalkulátor (Nettó-Bruttó) — Svájc & Ausztria",
+  description: "Számold ki a nettó fizetésed! Svájc: Quellensteuer/AHV/BVG kantononként. Ausztria: SV + Lohnsteuer + 13./14. havi.",
 };
 
 export default function SalaryCalculatorPage() {
@@ -14,7 +14,7 @@ export default function SalaryCalculatorPage() {
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink truncate">
-          Svájci Bérkalkulátor
+          Bérkalkulátor
         </span>
         <Link
           href="/"
@@ -25,7 +25,7 @@ export default function SalaryCalculatorPage() {
         </Link>
       </header>
 
-      <SalaryCalculator />
+      <SalaryCalculatorSwitch />
     </div>
   );
 }

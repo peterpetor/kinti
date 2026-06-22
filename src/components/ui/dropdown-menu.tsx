@@ -229,7 +229,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
                     💰
                   </span>
-                  Svájci Bérkalkulátor
+                  {isCH ? "Svájci Bérkalkulátor" : "Bérkalkulátor"}
                 </Link>
                 )}
                 {has("iranytu") && (

@@ -150,3 +150,155 @@ export function salaryPercentile(grossMonthly: number, canton: string): SalaryPe
   const p = Math.round(normalCdf(z) * 100);
   return { percentile: Math.min(99, Math.max(1, p)), median };
 }
+
+/* ════════════════════════ AUSZTRIA (Lohnsteuer + SV) ════════════════════════
+ * Forrás: BMF Lohnsteuertarif 2025, ÖGK SV-kulcsok (Angestellte), Familienbonus
+ * Plus. FONTOS: a Lohnsteuer ÉS az SV ORSZÁGOS — nincs Bundesland-szintű adóeltérés
+ * (a svájci kantonokkal ellentétben). Az SV MAGÁBAN FOGLALJA az egészségbiztosítást
+ * (nincs külön Krankenkasse-díj, mint Svájcban). Egyszerűsített becslés.
+ */
+
+/** Éves Lohnsteuer-sávok (2025, BMF). A `upTo` határig az adott `rate`%. */
+const AT_TAX_BRACKETS: { upTo: number; rate: number }[] = [
+  { upTo: 13308, rate: 0 },
+  { upTo: 21617, rate: 20 },
+  { upTo: 35836, rate: 30 },
+  { upTo: 69166, rate: 40 },
+  { upTo: 103072, rate: 48 },
+  { upTo: 1000000, rate: 50 },
+  { upTo: Infinity, rate: 55 },
+];
+
+function atTaxByBrackets(taxable: number, brackets: { upTo: number; rate: number }[]): number {
+  let tax = 0;
+  let lower = 0;
+  for (const b of brackets) {
+    if (taxable <= lower) break;
+    const slice = Math.min(taxable, b.upTo) - lower;
+    tax += (slice * b.rate) / 100;
+    lower = b.upTo;
+  }
+  return tax;
+}
+
+/** Sonderzahlungs-tarifa (13./14. — Jahressechstel) a 620 € Freibetrag fölött. */
+const AT_SPECIAL_BRACKETS: { upTo: number; rate: number }[] = [
+  { upTo: 25000, rate: 6 },
+  { upTo: 50000, rate: 27 },
+  { upTo: 83333, rate: 35.75 },
+  { upTo: Infinity, rate: 50 },
+];
+
+// SV munkavállalói kulcsok (Angestellte, 2025)
+export const AT_SV_BASE = 15.12;          // KV 3.87 + PV 10.25 + AK 0.50 + WBF 0.50
+const AT_SV_HBGL_MONTH = 6450;            // Höchstbeitragsgrundlage 2025 (laufend)
+const AT_SV_HBGL_SPECIAL = 12900;         // Sonderzahlungen éves max-alap (2×6450)
+export const AT_SV_SPECIAL_RATE = 17.07;  // Sonderzahlungen SV-kulcs
+
+/** ALV (munkanélküli) lépcsős kulcs alacsony jövedelemnél (2025, havi bruttó). */
+function atAlvRate(grossMonthly: number): number {
+  if (grossMonthly <= 2074) return 0;
+  if (grossMonthly <= 2262) return 1;
+  if (grossMonthly <= 2451) return 2;
+  return 2.95;
+}
+
+// Absetzbeträge (éves, 2025)
+export const AT_VERKEHRSABSETZBETRAG = 487;
+export const AT_FAMILIENBONUS_PER_KID = 2000;  // <18 év / gyerek
+const AT_ALLEINVERDIENER_1KID = 601;
+
+export interface SalaryCalcInputAT {
+  gross: number;
+  period: PayPeriod;
+  months: 12 | 14;       // 14 = Urlaubs- + Weihnachtsgeld (13./14.)
+  kids: number;          // Familienbonus Plus (<18)
+  soleEarner: boolean;   // Alleinverdiener
+}
+
+export interface SalaryCalcResultAT {
+  grossMonthly: number;   // laufend havi bruttó
+  grossYearly: number;    // teljes éves bruttó (14× esetén 14 hónap)
+  svRate: number;         // alkalmazott SV-kulcs (laufend)
+  svMonthly: number;      // SV laufend / hó
+  taxMonthly: number;     // Lohnsteuer laufend / hó (Absetzbeträge után)
+  netMonthly: number;     // laufend nettó / hó
+  // Sonderzahlungen (13./14.) — csak ha months===14
+  specialGross: number;
+  specialSv: number;
+  specialTax: number;
+  specialNet: number;
+  netYearly: number;      // teljes éves nettó (laufend×12 + special)
+  effectiveRate: number;  // teljes levonás / teljes bruttó (%)
+}
+
+/** Osztrák nettó-bér becslés — a kalkulátor és a benchmark közös magja. */
+export function computeSalaryAT(input: SalaryCalcInputAT): SalaryCalcResultAT {
+  const months = input.months || 14;
+  const grossMonthly = input.period === "month" ? input.gross : input.gross / months;
+  const grossYearly = input.period === "year" ? input.gross : input.gross * months;
+
+  // — Laufender Bezug (havi rendes bér) —
+  const svRate = AT_SV_BASE + atAlvRate(grossMonthly);
+  const svMonthly = (Math.min(grossMonthly, AT_SV_HBGL_MONTH) * svRate) / 100;
+  const annualTaxable = (grossMonthly - svMonthly) * 12;
+  let annualTax = atTaxByBrackets(annualTaxable, AT_TAX_BRACKETS);
+  let credits = AT_VERKEHRSABSETZBETRAG + input.kids * AT_FAMILIENBONUS_PER_KID;
+  if (input.soleEarner && input.kids >= 1) credits += AT_ALLEINVERDIENER_1KID;
+  annualTax = Math.max(0, annualTax - credits);
+  const taxMonthly = annualTax / 12;
+  const netMonthly = grossMonthly - svMonthly - taxMonthly;
+
+  // — Sonderzahlungen (13./14.) —
+  let specialGross = 0, specialSv = 0, specialTax = 0, specialNet = 0;
+  if (months === 14) {
+    specialGross = grossMonthly * 2;
+    specialSv = (Math.min(specialGross, AT_SV_HBGL_SPECIAL) * AT_SV_SPECIAL_RATE) / 100;
+    const base = Math.max(0, specialGross - specialSv - 620); // 620 € éves Freibetrag
+    specialTax = atTaxByBrackets(base, AT_SPECIAL_BRACKETS);
+    specialNet = specialGross - specialSv - specialTax;
+  }
+
+  const netYearly = netMonthly * 12 + specialNet;
+  const effectiveRate = grossYearly > 0 ? ((grossYearly - netYearly) / grossYearly) * 100 : 0;
+
+  return {
+    grossMonthly, grossYearly, svRate, svMonthly, taxMonthly, netMonthly,
+    specialGross, specialSv, specialTax, specialNet, netYearly, effectiveRate,
+  };
+}
+
+/** Bundesland-medián havi BRUTTÓ (full-time, ~14× konvenció) — Statistik Austria becslés. */
+export const AT_NATIONAL_MEDIAN_GROSS = 3350;
+export const BUNDESLAND_MEDIAN_GROSS: Record<string, number> = {
+  W: 3400,   // Wien
+  NOe: 3450, // Niederösterreich
+  OOe: 3400, // Oberösterreich
+  Vbg: 3450, // Vorarlberg
+  Sbg: 3300, // Salzburg
+  Stmk: 3300,// Steiermark
+  Bgld: 3300,// Burgenland
+  Ktn: 3200, // Kärnten
+  Tirol: 3150,
+};
+
+export const AT_BUNDESLAENDER: { code: string; name: string }[] = [
+  { code: "W", name: "Bécs (Wien)" },
+  { code: "NOe", name: "Alsó-Ausztria (NÖ)" },
+  { code: "OOe", name: "Felső-Ausztria (OÖ)" },
+  { code: "Stmk", name: "Stájerország" },
+  { code: "Tirol", name: "Tirol" },
+  { code: "Ktn", name: "Karintia" },
+  { code: "Sbg", name: "Salzburg" },
+  { code: "Vbg", name: "Vorarlberg" },
+  { code: "Bgld", name: "Burgenland" },
+];
+
+/** Percentilis az osztrák Bundesland-mediánhoz (log-normál becslés). */
+export function salaryPercentileAT(grossMonthly: number, bundesland: string): SalaryPercentile {
+  const median = BUNDESLAND_MEDIAN_GROSS[bundesland] ?? AT_NATIONAL_MEDIAN_GROSS;
+  const sigma = 0.30;
+  const z = (Math.log(Math.max(1, grossMonthly)) - Math.log(median)) / sigma;
+  const p = Math.round(normalCdf(z) * 100);
+  return { percentile: Math.min(99, Math.max(1, p)), median };
+}
