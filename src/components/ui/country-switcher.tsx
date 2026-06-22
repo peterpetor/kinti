@@ -71,7 +71,7 @@ export function CountrySwitcher() {
           })}
         </div>
         <p className="mt-3 px-1 text-center text-[11.5px] leading-snug text-ink-faint">
-          Jelenleg a 🇨🇭 svájci tartalom érhető el; a többi ország hamarosan indul.
+          🇨🇭 Svájc és 🇦🇹 Ausztria él; a többi ország hamarosan indul.
         </p>
       </BottomSheet>
     </div>
