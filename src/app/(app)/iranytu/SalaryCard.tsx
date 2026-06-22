@@ -20,10 +20,13 @@ export function SalaryCard({
   stat,
   expRows,
   canton,
+  userSalaryChf,
 }: {
   stat: SalaryStatsRow;
   expRows: SalaryExpRow[];
   canton: string;
+  /** A user saját bére (CHF) — csak a saját iparága kártyáján, az „itt állsz" jelöléshez. */
+  userSalaryChf?: number;
 }) {
   const [showExp, setShowExp] = useState(false);
   const [showTrend, setShowTrend] = useState(false);
@@ -164,7 +167,7 @@ export function SalaryCard({
         <div className="border-t border-line pt-3">
           {loadingHist
             ? <div className="py-4 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" /></div>
-            : <ErrorBoundary label="histogram" fallback={chartErrorFallback}><MiniHistogram data={hist ?? []} /></ErrorBoundary>
+            : <ErrorBoundary label="histogram" fallback={chartErrorFallback}><MiniHistogram data={hist ?? []} userValueChf={userSalaryChf} /></ErrorBoundary>
           }
         </div>
       )}

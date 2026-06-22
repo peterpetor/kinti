@@ -1,6 +1,16 @@
 "use client";
 
-export function MiniHistogram({ data }: { data: { bucket_k: number; entry_count: number }[] }) {
+import { cn } from "@/lib/cn";
+import { salaryStanding } from "@/lib/benchmark-stats";
+
+export function MiniHistogram({
+  data,
+  userValueChf,
+}: {
+  data: { bucket_k: number; entry_count: number }[];
+  /** A user saját bére (CHF). Ha megvan, a saját sávja kiemelve + „top X%". */
+  userValueChf?: number;
+}) {
   if (data.length === 0) {
     return (
       <div className="py-4 text-center text-[12px] text-ink-faint">
@@ -15,7 +25,7 @@ export function MiniHistogram({ data }: { data: { bucket_k: number; entry_count:
   // Hogy szép legyen, kiegészítjük az üres "lyukakat" a min és max bucket között
   const minK = Math.min(...data.map(d => d.bucket_k));
   const maxK = Math.max(...data.map(d => d.bucket_k));
-  
+
   const fullData: { bucket_k: number; entry_count: number }[] = [];
   for (let k = minK; k <= maxK; k += 10) {
     const existing = data.find(d => d.bucket_k === k);
@@ -24,25 +34,42 @@ export function MiniHistogram({ data }: { data: { bucket_k: number; entry_count:
 
   const midK = fullData[Math.floor(fullData.length / 2)].bucket_k;
 
+  // „Itt állsz": a user sávja (10k-s bucketre kerekítve) + percentilis pozíció.
+  const hasUser = typeof userValueChf === "number" && userValueChf > 0;
+  const userBucketK = hasUser ? Math.floor(userValueChf! / 10000) * 10 : null;
+  const standing = hasUser ? salaryStanding(data, userValueChf!) : null;
+  const showStanding = !!standing && standing.total >= 3;
+  const topPct = standing ? Math.max(1, 100 - standing.percentile) : null;
+
   return (
     <div className="pt-2 pb-1 space-y-1.5">
       {/* Oszlopok */}
       <div className="flex items-end gap-1 h-28">
         {fullData.map((d) => {
           const pct = (d.entry_count / maxCount) * 100;
+          const isUser = userBucketK != null && d.bucket_k === userBucketK;
           return (
             <div key={d.bucket_k} className="group flex h-full flex-1 flex-col items-center justify-end">
-              {/* Darabszám — MINDIG látható (touch-on is, nem csak hoveren). A fix
-                  magasságú sáv tartja az igazítást akkor is, ha 0 az érték. */}
-              <span className="mb-0.5 h-3.5 text-[10px] font-bold leading-none text-ink-muted">
-                {d.entry_count > 0 ? d.entry_count : ""}
+              {/* Felső sáv: a darabszám (mindig látszik), VAGY a user pin-je */}
+              <span
+                className={cn(
+                  "mb-0.5 h-3.5 text-[10px] font-bold leading-none",
+                  isUser ? "text-accent" : "text-ink-muted",
+                )}
+              >
+                {isUser ? "📍" : d.entry_count > 0 ? d.entry_count : ""}
               </span>
 
               {/* A sáv a maradék magasságban, alulra igazítva */}
               <div className="flex w-full flex-1 items-end">
                 <div
-                  className="w-full rounded-t-sm bg-primary/40 transition-colors group-hover:bg-primary"
-                  style={{ height: `${pct}%`, minHeight: d.entry_count > 0 ? "4px" : "0px" }}
+                  className={cn(
+                    "w-full rounded-t-sm transition-colors",
+                    isUser
+                      ? "bg-accent shadow-[0_0_0_2px_rgb(var(--surface))]"
+                      : "bg-primary/40 group-hover:bg-primary",
+                  )}
+                  style={{ height: `${pct}%`, minHeight: isUser || d.entry_count > 0 ? "4px" : "0px" }}
                 />
               </div>
             </div>
@@ -61,7 +88,23 @@ export function MiniHistogram({ data }: { data: { bucket_k: number; entry_count:
         </div>
       )}
 
-      <p className="pt-1 text-right text-[11px] text-ink-faint">Bérsávok 10.000 CHF-enként</p>
+      {/* „Itt állsz" összegző sáv — a saját bér pozíciója az eloszlásban */}
+      {hasUser ? (
+        <div className="rounded-xl border border-accent/25 bg-accent/5 px-3 py-2 text-center">
+          <p className="text-[12px] font-bold text-accent leading-snug">
+            📍 Te itt vagy: {userValueChf!.toLocaleString("hu-HU")} CHF
+            {showStanding ? ` · a felső ${topPct}%-ban` : ""}
+          </p>
+          {showStanding && (
+            <p className="mt-0.5 text-[10.5px] leading-snug text-ink-muted">
+              Többet keresel, mint a beküldők <strong className="text-ink">{standing!.percentile}%</strong>-a{" "}
+              <span className="text-ink-faint">({standing!.total} adat)</span>.
+            </p>
+          )}
+        </div>
+      ) : (
+        <p className="pt-1 text-right text-[11px] text-ink-faint">Bérsávok 10.000 CHF-enként</p>
+      )}
     </div>
   );
 }

@@ -421,7 +421,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                       s.entry_count < MIN_ENTRIES_FOR_STATS ? (
                         <LowDataCard key={i} title={s.industry} count={s.entry_count} />
                       ) : (
-                        <SalaryCard key={i} stat={s} expRows={salaryByExp.filter(r => r.industry === s.industry)} canton={canton} />
+                        <SalaryCard key={i} stat={s} expRows={salaryByExp.filter(r => r.industry === s.industry)} canton={canton} userSalaryChf={myData.salary && myData.salary.industry === s.industry ? myData.salary.grossSalaryChf : undefined} />
                       ),
                     )}
                   </div>
