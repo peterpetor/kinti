@@ -5,18 +5,21 @@
  * A checkout overlay-t a kinti.app-on nyitja meg (nem visz el átirányítással).
  */
 
+interface PaddleInstance {
+  Environment: { set: (env: string) => void };
+  Initialize: (opts: { token?: string }) => void;
+  Checkout: { open: (opts: Record<string, unknown>) => void };
+}
+
 declare global {
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Paddle?: any;
+    Paddle?: PaddleInstance;
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let paddlePromise: Promise<any> | null = null;
+let paddlePromise: Promise<PaddleInstance> | null = null;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function loadPaddle(): Promise<any> {
+export function loadPaddle(): Promise<PaddleInstance> {
   if (paddlePromise) return paddlePromise;
   paddlePromise = new Promise((resolve, reject) => {
     if (typeof window === "undefined") {
@@ -33,10 +36,10 @@ export function loadPaddle(): Promise<any> {
     s.onload = () => {
       try {
         if (process.env.NEXT_PUBLIC_PADDLE_ENV === "sandbox") {
-          window.Paddle.Environment.set("sandbox");
+          window.Paddle!.Environment.set("sandbox");
         }
-        window.Paddle.Initialize({ token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN });
-        resolve(window.Paddle);
+        window.Paddle!.Initialize({ token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN });
+        resolve(window.Paddle!);
       } catch (e) {
         reject(e);
       }

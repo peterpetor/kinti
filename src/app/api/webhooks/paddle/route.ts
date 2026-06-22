@@ -15,6 +15,28 @@ export const runtime = "edge";
  * hamisítható (olcsót fizetve drágát aktiválni). A custom_data csak a célt
  * azonosítja (businessId/jobId/userId), amit a checkout szerver-oldalon validált.
  */
+
+interface PaddleCustomData {
+  jobId?: string;
+  businessId?: string;
+  userId?: string;
+}
+
+interface PaddleEventData {
+  custom_data?: PaddleCustomData;
+  items?: Array<{ price?: { id?: string }; price_id?: string }>;
+  status?: string;
+  id?: string | number;
+  customer_id?: string | number;
+  current_billing_period?: { ends_at?: string };
+  next_billed_at?: string;
+}
+
+interface PaddleEvent {
+  event_type?: string;
+  data?: PaddleEventData;
+}
+
 export async function POST(req: Request) {
   const raw = await req.text();
   const valid = await verifyPaddleSignature(raw, req.headers.get("paddle-signature"));
@@ -22,10 +44,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let event: any;
+  let event: PaddleEvent;
   try {
-    event = JSON.parse(raw);
+    event = JSON.parse(raw) as PaddleEvent;
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -70,8 +91,7 @@ export async function POST(req: Request) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function activate(type: EntitlementType, customData: any, data: any) {
+async function activate(type: EntitlementType, customData: PaddleCustomData, data: PaddleEventData) {
   const db = getDB();
   const now = new Date().toISOString();
 
@@ -93,8 +113,7 @@ async function activate(type: EntitlementType, customData: any, data: any) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function deactivate(type: EntitlementType, customData: any, data: any) {
+async function deactivate(type: EntitlementType, customData: PaddleCustomData, data: PaddleEventData) {
   const db = getDB();
   const now = new Date().toISOString();
 

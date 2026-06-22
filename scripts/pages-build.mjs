@@ -87,8 +87,10 @@ async function main() {
 
     // next-on-pages — Workers-bundle generálás. Automatikusan futtatja a Vercel buildet
     // token login nélkül.
+    // Windowson a shell: true esetén is npx.cmd kell, különben ENOENT hibát kapunk.
+    const npxCmd = isWindows ? "npx.cmd" : "npx";
     console.log("\n› Step 1: @cloudflare/next-on-pages (with internal build)");
-    await run("npx", ["@cloudflare/next-on-pages"]);
+    await run(npxCmd, ["@cloudflare/next-on-pages"]);
     
   } finally {
     if (renamedEnv && existsSync(envLocalBakPath)) {
