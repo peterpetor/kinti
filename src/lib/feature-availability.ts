@@ -21,7 +21,6 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "vam",               // vám-kalkulátor (svájci határ)
   "bussen",            // bírság-info (svájci)
   "szolgaltato-valto", // szolgáltató-váltás (svájci szolgáltatók)
-  "lakberles",         // lakbér-kalkulátor (svájci)
   "kviz",              // kvíz (svájci tartalom)
   "berkalkulator",     // bérkalkulátor (svájci adó/CHF)
   "iranytu",           // béradat-radar (svájci bérbenchmark)

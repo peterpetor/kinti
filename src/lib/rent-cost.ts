@@ -10,7 +10,9 @@
 
 export type FlatSize = "studio" | "1-room" | "2-room" | "3-room" | "4-room" | "5plus-room";
 export type HeatingType = "gas" | "oil" | "district" | "heatpump" | "pellet" | "unknown";
-export type Region = "city-zh" | "city-ge" | "city-bs" | "city-bern" | "suburb" | "rural";
+export type Region =
+  | "city-zh" | "city-ge" | "city-bs" | "city-bern" | "suburb" | "rural"
+  | "at-wien" | "at-graz" | "at-linz" | "at-salzburg" | "at-suburb" | "at-rural";
 
 export interface FlatSizeInfo {
   id: FlatSize;
@@ -39,14 +41,26 @@ export const HEATING_TYPES: { id: HeatingType; label: string; emoji: string; cos
   { id: "unknown",   label: "Nem tudom",    emoji: "❓", costMod: 1.0 },
 ];
 
-export const REGIONS: { id: Region; label: string; emoji: string; nebenkostenMod: number }[] = [
-  { id: "city-zh",   label: "Zürich város", emoji: "🏙️", nebenkostenMod: 1.25 },
-  { id: "city-ge",   label: "Genf város",   emoji: "🏙️", nebenkostenMod: 1.20 },
-  { id: "city-bs",   label: "Basel város",  emoji: "🏙️", nebenkostenMod: 1.15 },
-  { id: "city-bern", label: "Bern város",   emoji: "🏙️", nebenkostenMod: 1.10 },
-  { id: "suburb",    label: "Agglomeráció", emoji: "🏘️", nebenkostenMod: 1.00 },
-  { id: "rural",     label: "Vidék",        emoji: "🌳", nebenkostenMod: 0.85 },
+export const REGIONS: { id: Region; label: string; emoji: string; nebenkostenMod: number; country: "CH" | "AT" }[] = [
+  { id: "city-zh",   label: "Zürich város", emoji: "🏙️", nebenkostenMod: 1.25, country: "CH" },
+  { id: "city-ge",   label: "Genf város",   emoji: "🏙️", nebenkostenMod: 1.20, country: "CH" },
+  { id: "city-bs",   label: "Basel város",  emoji: "🏙️", nebenkostenMod: 1.15, country: "CH" },
+  { id: "city-bern", label: "Bern város",   emoji: "🏙️", nebenkostenMod: 1.10, country: "CH" },
+  { id: "suburb",    label: "Agglomeráció", emoji: "🏘️", nebenkostenMod: 1.00, country: "CH" },
+  { id: "rural",     label: "Vidék",        emoji: "🌳", nebenkostenMod: 0.85, country: "CH" },
+  // Ausztria
+  { id: "at-wien",     label: "Bécs",        emoji: "🏙️", nebenkostenMod: 1.15, country: "AT" },
+  { id: "at-graz",     label: "Graz",        emoji: "🏙️", nebenkostenMod: 1.05, country: "AT" },
+  { id: "at-linz",     label: "Linz",        emoji: "🏙️", nebenkostenMod: 1.05, country: "AT" },
+  { id: "at-salzburg", label: "Salzburg",    emoji: "🏙️", nebenkostenMod: 1.10, country: "AT" },
+  { id: "at-suburb",   label: "Agglomeráció", emoji: "🏘️", nebenkostenMod: 1.00, country: "AT" },
+  { id: "at-rural",    label: "Vidék",       emoji: "🌳", nebenkostenMod: 0.85, country: "AT" },
 ];
+
+/** A választott ország régiói (a régió-választóhoz). */
+export function regionsFor(country: string): { id: Region; label: string; emoji: string; nebenkostenMod: number }[] {
+  return REGIONS.filter((r) => r.country === (country === "AT" ? "AT" : "CH"));
+}
 
 /**
  * Svájci szabály (OR 257e §): a kaució max 3 havi nettó bérleti díj.

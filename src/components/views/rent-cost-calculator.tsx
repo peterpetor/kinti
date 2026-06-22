@@ -7,24 +7,32 @@ import { cn } from "@/lib/cn";
 import {
   FLAT_SIZES,
   HEATING_TYPES,
-  REGIONS,
   calculateRentCost,
   MAX_KAUTION_MONTHS,
   KAUTION_INSURANCE_RATE,
   OPPORTUNITY_COST_RATE,
+  regionsFor,
   type FlatSize,
   type HeatingType,
   type Region,
 } from "@/lib/rent-cost";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { RentCompare } from "@/components/views/rent-compare";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 export function RentCostCalculator() {
+  const [prefCountry] = usePreferredCountry();
+  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+  const cur = isAT ? "EUR" : "CHF";
+  const regionOptions = regionsFor(isAT ? "AT" : "CH");
   const [mode, setMode] = useState<"single" | "compare">("single");
   const [monthlyRent, setMonthlyRent] = usePersistedState("kinti_calc_rent_monthly", 1800);
   const [size, setSize] = usePersistedState<FlatSize>("kinti_calc_rent_size", "2-room");
   const [heating, setHeating] = usePersistedState<HeatingType>("kinti_calc_rent_heating", "gas");
   const [region, setRegion] = usePersistedState<Region>("kinti_calc_rent_region", "city-zh");
+  // Ha a mentett régió másik országé, az aktuális ország első régióját használjuk.
+  const effectiveRegion = regionOptions.some((r) => r.id === region) ? region : regionOptions[0].id;
   const [acontoNebenkosten, setAcontoNebenkosten] = usePersistedState("kinti_calc_rent_aconto", 180);
   const [years, setYears] = usePersistedState("kinti_calc_rent_years", 3);
 
@@ -34,11 +42,11 @@ export function RentCostCalculator() {
         monthlyRentChf: monthlyRent,
         size,
         heating,
-        region,
+        region: effectiveRegion,
         acontoNebenkostenChf: acontoNebenkosten,
         yearsToCalculate: years,
       }),
-    [monthlyRent, size, heating, region, acontoNebenkosten, years],
+    [monthlyRent, size, heating, effectiveRegion, acontoNebenkosten, years],
   );
 
   return (
@@ -52,7 +60,7 @@ export function RentCostCalculator() {
               Bérlés rejtett-költség BECSLŐ
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              <strong className="text-ink">Mietkaution</strong> blokkolása + <strong className="text-ink">Nebenkosten</strong> év végi
+              <strong className="text-ink">{isAT ? "Kaution" : "Mietkaution"}</strong> blokkolása + <strong className="text-ink">{isAT ? "Betriebskosten" : "Nebenkosten"}</strong> év végi
               elszámolás tájékoztató becsléssel. NEM jogi vagy pénzügyi tanács.
             </p>
           </div>
@@ -111,7 +119,7 @@ export function RentCostCalculator() {
             onChange={(e) => setMonthlyRent(Math.max(0, Number(e.target.value)))}
             className="w-24 rounded-[10px] border border-line bg-surface-alt px-2 py-1 text-[14px] font-bold text-ink text-right outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
           />
-          <span className="text-[11px] font-bold text-ink-muted">CHF</span>
+          <span className="text-[11px] font-bold text-ink-muted">{cur}</span>
         </div>
       </section>
 
@@ -168,14 +176,14 @@ export function RentCostCalculator() {
           4. Régió
         </label>
         <div className="grid grid-cols-2 gap-2">
-          {REGIONS.map((r) => (
+          {regionOptions.map((r) => (
             <button
               key={r.id}
               type="button"
               onClick={() => setRegion(r.id)}
               className={cn(
                 "flex items-center gap-2 rounded-[10px] border-2 p-2.5 transition active:scale-95",
-                region === r.id ? "border-primary bg-primary-soft" : "border-line bg-surface",
+                effectiveRegion === r.id ? "border-primary bg-primary-soft" : "border-line bg-surface",
               )}
             >
               <span className="text-lg">{r.emoji}</span>
@@ -211,7 +219,7 @@ export function RentCostCalculator() {
             onChange={(e) => setAcontoNebenkosten(Math.max(0, Number(e.target.value)))}
             className="w-24 rounded-[10px] border border-line bg-surface-alt px-2 py-1 text-[14px] font-bold text-ink text-right outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
           />
-          <span className="text-[11px] font-bold text-ink-muted">CHF</span>
+          <span className="text-[11px] font-bold text-ink-muted">{cur}</span>
         </div>
       </section>
 
@@ -239,10 +247,10 @@ export function RentCostCalculator() {
           <span className="text-3xl">🔒</span>
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wide text-[#9b59b6]">
-              Mietkaution (kaúció) — OR 257e §
+              {isAT ? "Kaution (kaúció)" : "Mietkaution (kaúció) — OR 257e §"}
             </p>
             <h2 className="text-[16px] font-extrabold text-ink">
-              Max {MAX_KAUTION_MONTHS} havi nettó bérleti díj
+              {isAT ? `Általában ${MAX_KAUTION_MONTHS} havi bruttó bérleti díj` : `Max ${MAX_KAUTION_MONTHS} havi nettó bérleti díj`}
             </h2>
           </div>
         </div>
@@ -250,27 +258,36 @@ export function RentCostCalculator() {
         <div className="space-y-2">
           <ResultRow
             label="Kaúció összege"
-            value={`${result.kautionAmount.toLocaleString("hu-HU")} CHF`}
-            sub={`${monthlyRent} CHF × ${MAX_KAUTION_MONTHS} hó (kötött Mietkautionskonto)`}
+            value={`${result.kautionAmount.toLocaleString("hu-HU")} ${cur}`}
+            sub={`${monthlyRent} ${cur} × ${MAX_KAUTION_MONTHS} hó (${isAT ? "Sparbuch/letéti számla" : "kötött Mietkautionskonto"})`}
           />
           <ResultRow
             label="Évi rejtett költség (opportunity)"
-            value={`-${Math.round(result.kautionOpportunityCostPerYear).toLocaleString("hu-HU")} CHF`}
-            sub={`${(OPPORTUNITY_COST_RATE * 100).toFixed(0)}% hozam-elmaradás (ETF/3a-piller helyett kötött bankszámla)`}
+            value={`-${Math.round(result.kautionOpportunityCostPerYear).toLocaleString("hu-HU")} ${cur}`}
+            sub={`${(OPPORTUNITY_COST_RATE * 100).toFixed(0)}% hozam-elmaradás (ETF/befektetés helyett kötött számla)`}
             negative
           />
-          <ResultRow
-            label="Kaúció-biztosítás alternatíva"
-            value={`-${Math.round(result.insurancePremiumPerYear).toLocaleString("hu-HU")} CHF/év`}
-            sub={`${(KAUTION_INSURANCE_RATE * 100).toFixed(0)}% éves díj (nem ad vissza pénzt — pl. SwissCaution, SmartCaution)`}
-            negative
-          />
+          {isAT ? (
+            <ResultRow
+              label="Provision (ingatlanos jutalék, ha van)"
+              value={`${(monthlyRent * 2).toLocaleString("hu-HU")} ${cur}`}
+              sub="Max 2 havi bruttó bérleti díj + ÁFA — EGYSZERI költség, ha ingatlanoson keresztül bérelsz. Sok hirdetés provisionsfrei (jutalékmentes)."
+              negative
+            />
+          ) : (
+            <ResultRow
+              label="Kaúció-biztosítás alternatíva"
+              value={`-${Math.round(result.insurancePremiumPerYear).toLocaleString("hu-HU")} ${cur}/év`}
+              sub={`${(KAUTION_INSURANCE_RATE * 100).toFixed(0)}% éves díj (nem ad vissza pénzt — pl. SwissCaution, SmartCaution)`}
+              negative
+            />
+          )}
         </div>
 
         <div className="mt-3 rounded-[10px] bg-white/60 px-3 py-2 text-[11.5px] leading-relaxed text-ink">
-          💡 <strong>Tipp:</strong> ha hosszú távra (5+ év) maradnál, a készpénz-kaúció jobb (visszakapod).
-          Rövid távra (1-2 év) vagy ha nincs likviditásod, a Mietkautionsversicherung megoldás lehet —
-          de a éves díj „elveszett" pénz.
+          💡 <strong>Tipp:</strong> {isAT
+            ? "a kaúciót a bérbeadó köteles kamatozó számlán (Sparbuch) tartani, és kiköltözéskor kamatostul visszaadni. Keress provisionsfrei (jutalékmentes) hirdetést — így megspórolod a 2 havi Provisiont."
+            : "ha hosszú távra (5+ év) maradnál, a készpénz-kaúció jobb (visszakapod). Rövid távra (1-2 év) vagy ha nincs likviditásod, a Mietkautionsversicherung megoldás lehet — de az éves díj „elveszett” pénz."}
         </div>
       </section>
 
@@ -280,7 +297,7 @@ export function RentCostCalculator() {
           <span className="text-3xl">🌡️</span>
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wide text-[#9a6b00]">
-              Nebenkosten (rezsi) év végi elszámolás
+              {isAT ? "Betriebskosten" : "Nebenkosten"} (rezsi) év végi elszámolás
             </p>
             <h2 className="text-[16px] font-extrabold text-ink">
               {result.settlementDirection === "underpaid"
@@ -294,14 +311,14 @@ export function RentCostCalculator() {
 
         <div className="space-y-2">
           <ResultRow
-            label="Becsült tényleges éves Nebenkosten"
-            value={`${result.estimatedActualNebenkostenPerYear.toLocaleString("hu-HU")} CHF`}
+            label={`Becsült tényleges éves ${isAT ? "Betriebskosten" : "Nebenkosten"}`}
+            value={`${result.estimatedActualNebenkostenPerYear.toLocaleString("hu-HU")} ${cur}`}
             sub="Becslés a méret, fűtés-típus és régió alapján — a tényleges szerződéstől függ."
           />
           <ResultRow
             label="Akontó éves összege"
-            value={`${result.acontoNebenkostenPerYear.toLocaleString("hu-HU")} CHF`}
-            sub={`${acontoNebenkosten} CHF/hó × 12`}
+            value={`${result.acontoNebenkostenPerYear.toLocaleString("hu-HU")} ${cur}`}
+            sub={`${acontoNebenkosten} ${cur}/hó × 12`}
           />
           <div className="border-t border-current/20 pt-2">
             <ResultRow
@@ -312,7 +329,7 @@ export function RentCostCalculator() {
                   ? "Várt visszatérítés (NK-elszámoláskor)"
                   : "Különbség"
               }
-              value={`${result.nebenkostenSettlementPerYear > 0 ? "-" : "+"}${Math.abs(result.nebenkostenSettlementPerYear).toLocaleString("hu-HU")} CHF/év`}
+              value={`${result.nebenkostenSettlementPerYear > 0 ? "-" : "+"}${Math.abs(result.nebenkostenSettlementPerYear).toLocaleString("hu-HU")} ${cur}/év`}
               sub="Pozitív különbség (utánfizetés) — emeld az akontót a következő évre, hogy ne kelljen egyszerre kifizetni."
               negative={result.nebenkostenSettlementPerYear > 0}
             />
@@ -333,7 +350,7 @@ export function RentCostCalculator() {
           Teljes éves lakhatási költség (becsült)
         </p>
         <p className="text-[32px] font-extrabold leading-none text-ink">
-          {result.firstYearTotalCost.toLocaleString("hu-HU")} CHF
+          {result.firstYearTotalCost.toLocaleString("hu-HU")} {cur}
         </p>
         <p className="mt-1 text-[11.5px] text-ink-muted">
           Bér + akontó + opportunity + várható elszámolás (1. év)
@@ -344,7 +361,7 @@ export function RentCostCalculator() {
             Teljes rejtett költség {years} év alatt
           </p>
           <p className="text-[24px] font-extrabold leading-none text-accent">
-            {Math.round(result.totalHiddenCostOverPeriod).toLocaleString("hu-HU")} CHF
+            {Math.round(result.totalHiddenCostOverPeriod).toLocaleString("hu-HU")} {cur}
           </p>
           <p className="mt-1 text-[11.5px] text-ink-muted">
             Csak az opportunity + utánfizetés-kockázat — a bért nem tartalmazza
@@ -358,26 +375,53 @@ export function RentCostCalculator() {
           📋 Mit kérdezz a bérléskor?
         </h3>
         <ul className="space-y-1.5 text-[12px] leading-relaxed text-ink-muted">
-          <li className="flex gap-2">
-            <span className="text-primary shrink-0">•</span>
-            <span><strong className="text-ink">Mietkautionskonto neve:</strong> melyik banknál vezeti? (A te
-            nevedre kell, nem a bérbeadóéra.)</span>
-          </li>
-          <li className="flex gap-2">
-            <span className="text-primary shrink-0">•</span>
-            <span><strong className="text-ink">NK-tételek részletes bontása</strong> a szerződésben. Ha
-            csak „NK 180 CHF" áll, kérd a részletezést.</span>
-          </li>
-          <li className="flex gap-2">
-            <span className="text-primary shrink-0">•</span>
-            <span><strong className="text-ink">Mietzinsreduktion</strong> a hivatalos referencia-kamatláb
-            csökkenésekor — a bérlő kérheti.</span>
-          </li>
-          <li className="flex gap-2">
-            <span className="text-primary shrink-0">•</span>
-            <span><strong className="text-ink">Kiköltözéskor:</strong> a kaúciót a bérbeadó max 30-60 nap
-            múlva köteles felszabadítani, a végszámla után. Ha vita van: Mieterverband segít.</span>
-          </li>
+          {isAT ? (
+            <>
+              <li className="flex gap-2">
+                <span className="text-primary shrink-0">•</span>
+                <span><strong className="text-ink">Kaution-számla (Sparbuch):</strong> a kaúciót a bérbeadó
+                köteles a TE nevedre, kamatozó számlán tartani — kiköltözéskor kamatostul jár vissza.</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-primary shrink-0">•</span>
+                <span><strong className="text-ink">Betriebskosten-tételek bontása</strong> a szerződésben. Ha
+                csak „BK 180 EUR" áll, kérd a részletezést.</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-primary shrink-0">•</span>
+                <span><strong className="text-ink">Provisionsfrei (jutalékmentes)</strong> hirdetést keress —
+                így megspórolod a max 2 havi ingatlanos-jutalékot (Provision).</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-primary shrink-0">•</span>
+                <span><strong className="text-ink">Richtwert / Mietzinsobergrenze:</strong> régi (Altbau)
+                lakásnál törvényi felső díjhatár lehet. Vita esetén: Arbeiterkammer (AK) vagy Mietervereinigung.</span>
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="flex gap-2">
+                <span className="text-primary shrink-0">•</span>
+                <span><strong className="text-ink">Mietkautionskonto neve:</strong> melyik banknál vezeti? (A te
+                nevedre kell, nem a bérbeadóéra.)</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-primary shrink-0">•</span>
+                <span><strong className="text-ink">NK-tételek részletes bontása</strong> a szerződésben. Ha
+                csak „NK 180 CHF" áll, kérd a részletezést.</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-primary shrink-0">•</span>
+                <span><strong className="text-ink">Mietzinsreduktion</strong> a hivatalos referencia-kamatláb
+                csökkenésekor — a bérlő kérheti.</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-primary shrink-0">•</span>
+                <span><strong className="text-ink">Kiköltözéskor:</strong> a kaúciót a bérbeadó max 30-60 nap
+                múlva köteles felszabadítani, a végszámla után. Ha vita van: Mieterverband segít.</span>
+              </li>
+            </>
+          )}
         </ul>
       </section>
       </>
@@ -388,8 +432,14 @@ export function RentCostCalculator() {
         toolName="lakásbérlés rejtett-költség becslő"
         variant="legal"
         notAdviceFor="jogi, pénzügyi vagy ingatlan"
-        extraWarning="A Nebenkosten-becslés átlagos svájci adatokat használ (32 CHF/m²/év alaprátával) — a TE konkrét lakásod tényleges költsége jelentősen eltérhet a fűtés-állapottól, lakói szokásoktól, télies időjárástól. Az 'opportunity cost' számítás feltételezett 4% éves hozam alapján — befektetési tanácsnak NEM minősül. Bérleti vita vagy elszámolás-kifogás esetén fordulj a kantoni Mieterverband-hoz vagy szakképzett bérleti-jogászhoz."
-        officialSources={[
+        extraWarning={isAT
+          ? "A Betriebskosten-becslés átlagos adatokat használ — a TE konkrét lakásod tényleges költsége jelentősen eltérhet a fűtés-állapottól és szokásoktól. Az 'opportunity cost' feltételezett 4% éves hozam alapján — befektetési tanácsnak NEM minősül. A Provision/Kaution/Richtwert szabályok időben változnak; bérleti vita esetén fordulj az Arbeiterkammer-hez (AK) vagy a Mietervereinigung-hoz."
+          : "A Nebenkosten-becslés átlagos svájci adatokat használ (32 CHF/m²/év alaprátával) — a TE konkrét lakásod tényleges költsége jelentősen eltérhet a fűtés-állapottól, lakói szokásoktól, télies időjárástól. Az 'opportunity cost' számítás feltételezett 4% éves hozam alapján — befektetési tanácsnak NEM minősül. Bérleti vita vagy elszámolás-kifogás esetén fordulj a kantoni Mieterverband-hoz vagy szakképzett bérleti-jogászhoz."}
+        officialSources={isAT ? [
+          { label: "Arbeiterkammer (AK) — Wohnen/Miete", url: "https://www.arbeiterkammer.at/" },
+          { label: "Mietervereinigung", url: "https://mietervereinigung.at/" },
+          { label: "oesterreich.gv.at — Wohnen", url: "https://www.oesterreich.gv.at/themen/bauen_wohnen_und_umwelt.html" },
+        ] : [
           { label: "Mieterverband (mv.ch)", url: "https://www.mieterverband.ch/" },
           { label: "ch.ch — Bérlés", url: "https://www.ch.ch/de/wohnen/" },
           { label: "OR 257e § (kaúció)", url: "https://www.fedlex.admin.ch/eli/cc/27/317_321_377/de#art_257_e" },
