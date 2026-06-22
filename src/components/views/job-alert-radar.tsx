@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
-import { CANTONS } from "@/lib/cantons";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
+import { getRegions } from "@/lib/regions";
 import { JOB_CATEGORIES, jobCategoryLabel } from "@/lib/job-categories";
 
 type State =
@@ -32,6 +34,12 @@ export function JobAlertRadar() {
 
   const [cantonCode, setCantonCode] = useState<string>("all");
   const [category, setCategory] = useState<string>("");
+
+  // Ország-tudatos régiók (6-ország). A radar a választott ország régióira szól.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const regions = getRegions(country);
+  const countryName = getCountry(country)?.name ?? "Svájc";
 
   const refreshRadars = useCallback(async (sub: PushSubscriptionJSON) => {
     if (!sub.endpoint) return;
@@ -105,7 +113,7 @@ export function JobAlertRadar() {
   async function handleCreateRadar() {
     setError(null);
     if (!category && cantonCode === "all") {
-      setError("Válassz szakmát vagy kantont!");
+      setError("Válassz szakmát vagy régiót!");
       return;
     }
 
@@ -184,7 +192,7 @@ export function JobAlertRadar() {
   function renderRadarSummary(r: Radar) {
     try {
       const p = JSON.parse(r.parameters);
-      const canton = p.cantonCode === "all" ? "Minden kanton" : CANTONS.find((c) => c.code === p.cantonCode)?.name || p.cantonCode;
+      const canton = p.cantonCode === "all" ? "Minden régió" : regions.find((c) => c.code === p.cantonCode)?.name || p.cantonCode;
       // Új radar: strukturált szakma; régi radar: szabad-szöveges kulcsszó.
       const what = p.category
         ? jobCategoryLabel(p.category) ?? "Szakma"
@@ -208,7 +216,7 @@ export function JobAlertRadar() {
             Állás-riasztás (Job Alert)
           </h3>
           <p className="text-[12.5px] leading-snug text-ink-muted">
-            Kapj azonnali Push értesítést a legújabb svájci munkákról!
+            Kapj azonnali Push értesítést a legújabb munkákról!
           </p>
         </div>
       </div>
@@ -217,15 +225,15 @@ export function JobAlertRadar() {
       <div className="rounded-2xl border border-line bg-surface/80 p-4 space-y-3">
         <div className="space-y-3">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[12px] font-bold text-ink">Kanton</label>
+            <label className="text-[12px] font-bold text-ink">Régió</label>
             <select
               value={cantonCode}
               onChange={(e) => setCantonCode(e.target.value)}
               disabled={state === "busy"}
               className="h-11 w-full rounded-[10px] border border-line bg-surface px-3 text-[14px] font-medium text-ink outline-none focus:border-primary/50"
             >
-              <option value="all">Egész Svájc (Minden kanton)</option>
-              {CANTONS.map((c) => (
+              <option value="all">Egész {countryName} (minden régió)</option>
+              {regions.map((c) => (
                 <option key={c.code} value={c.code}>
                   {c.name}
                 </option>
