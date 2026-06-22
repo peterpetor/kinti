@@ -6,7 +6,7 @@ import {
   DropdownMenu,
 } from "@/components/ui";
 import { WeatherWidget } from "@/components/weather-widget";
-import { HomeCountryFlag, HomePrimaryActions } from "@/components/home-country-aware";
+import { HomeCountryFlag, HomePrimaryActions, HomeEvents, HomeChCards } from "@/components/home-country-aware";
 import { MyPostsBanner } from "@/components/my-posts-banner";
 import { DailyStreak } from "@/components/daily-streak";
 import { GlobalSearch } from "@/components/global-search";
@@ -28,7 +28,7 @@ const HOME_TTL_MS = 300_000; // 5 perc
 export default async function FeedPage() {
   const [allBusinesses, events] = await Promise.all([
     cached("home:businesses", HOME_TTL_MS, () => getBusinesses()),
-    cached("home:events:3", HOME_TTL_MS, () => getEvents({ limit: 3 })),
+    cached("home:events:12", HOME_TTL_MS, () => getEvents({ limit: 12 })),
   ]);
   // „A közeledben" csak a koordinátával rendelkezőkből válogat (kliensoldali
   // GPS-rendezéshez). Trükkös payload-méret ellen: max 200 rekord.
@@ -73,83 +73,14 @@ export default async function FeedPage() {
         <NearbyBusinesses businesses={nearby} />
       </section>
 
-      <section className="space-y-3">
-        <SectionHeader
-          right={
-            <Link href="/kozosseg" className="text-[13px] font-bold text-primary">
-              Mind ›
-            </Link>
-          }
-        >
-          Következő események
-        </SectionHeader>
-        <div className="grid gap-2.5">
-          {events.map((e) => (
-            <Link
-              key={e.id}
-              href="/kozosseg"
-              className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-card transition active:scale-[0.99]"
-            >
-              <div className="w-[50px] shrink-0 rounded-xl border border-line bg-surface-alt py-1.5 text-center">
-                <div className="text-[10px] font-extrabold uppercase tracking-wide text-primary">
-                  {e.dateMonth}
-                </div>
-                <div className="text-xl font-extrabold leading-none text-ink">{e.dateDay}</div>
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-[14.5px] font-bold tracking-[-0.01em] text-ink">
-                  {e.title}
-                </div>
-                <div className="mt-0.5 text-xs text-ink-muted">
-                  {e.venue} · {e.going} fő megy
-                </div>
-              </div>
-              <Icon name="chevR" size={14} className="text-ink-muted" />
-            </Link>
-          ))}
-        </div>
-      </section>
+      <HomeEvents events={events} />
 
       {/* Napi infó — másodlagos, a tartalom alatt */}
       <WeatherWidget />
       <ExchangeRateWidget />
       <KvizDailyCard />
 
-      <Link
-        href="/kikoltozes"
-        className="flex items-center gap-3 rounded-card border border-accent/20 bg-accent-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
-      >
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-accent text-white">
-          <Icon name="check" size={19} strokeWidth={2.3} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
-            Kiköltözés Tracker
-          </span>
-          <span className="block text-[12px] text-ink-muted">
-            Személyre szabott, lépésről-lépésre checklist Svájcba költözőknek
-          </span>
-        </span>
-        <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-accent" />
-      </Link>
-
-      <Link
-        href="/tudasbazis"
-        className="flex items-center gap-3 rounded-card border border-primary/20 bg-primary-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
-      >
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary text-white">
-          <Icon name="globe" size={19} strokeWidth={2.3} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
-            Tudásbázis — hasznos tudnivalók
-          </span>
-          <span className="block text-[12px] text-ink-muted">
-            Bejelentkezés, Krankenkasse, adó, iskola — hivatalos forrásból
-          </span>
-        </span>
-        <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
-      </Link>
+      <HomeChCards />
 
       <PwaInstallCard />
       </div>

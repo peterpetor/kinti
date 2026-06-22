@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 interface ExchangeData {
   date: string;
@@ -17,6 +19,7 @@ interface ExchangeData {
 export function ExchangeRateWidget() {
   const [data, setData] = useState<ExchangeData | null>(null);
   const [error, setError] = useState(false);
+  const [prefCountry] = usePreferredCountry();
 
   useEffect(() => {
     fetch("/api/exchange-rate")
@@ -38,8 +41,12 @@ export function ExchangeRateWidget() {
 
   if (error || !data) return null;
 
-  const huf = data.rates.HUF;
-  const hufFmt = huf.toLocaleString("hu-HU", { maximumFractionDigits: 1 });
+  // CH: 1 CHF = X Ft. Más ország (EUR-bázis, AT/DE/NL): 1 EUR = Y Ft, a CHF-alap
+  // rátákból számolva (HUF/CHF ÷ EUR/CHF). DKK/SEK később (nem élő még).
+  const isEur = (prefCountry ?? DEFAULT_COUNTRY) !== "CH";
+  const base = isEur ? "EUR" : "CHF";
+  const perHuf = isEur && data.rates.EUR ? data.rates.HUF / data.rates.EUR : data.rates.HUF;
+  const hufFmt = perHuf.toLocaleString("hu-HU", { maximumFractionDigits: 1 });
 
   return (
     <Link
@@ -52,7 +59,7 @@ export function ExchangeRateWidget() {
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-1.5">
           <span className="text-[16px] font-extrabold tracking-tight text-ink">
-            1 CHF = {hufFmt} Ft
+            1 {base} = {hufFmt} Ft
           </span>
         </div>
         <p className="text-[11px] text-ink-muted">

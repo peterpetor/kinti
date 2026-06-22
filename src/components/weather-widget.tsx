@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { Icon } from "@/components/ui";
 import { CANTONS } from "@/lib/cantons";
 import { usePreferredCanton } from "@/lib/canton-pref";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { describeWeather, type WeatherNow } from "@/lib/weather";
 
 /**
@@ -25,6 +27,11 @@ export function WeatherWidget() {
   const canton = preferred ?? "ZH";
   const [data, setData] = useState<WeatherNow | null>(null);
   const [phase, setPhase] = useState<Phase>("loading");
+  // A svájci időjárás-modell (MeteoSwiss, kantonok) csak CH-ra értelmes → más
+  // országban elrejtjük. Hidratálás-biztos: mount előtt CH-default (látszik).
+  const [prefCountry] = usePreferredCountry();
+  const [mountedC, setMountedC] = useState(false);
+  useEffect(() => setMountedC(true), []);
 
   const load = useCallback(async (code: string) => {
     setPhase("loading");
@@ -50,6 +57,8 @@ export function WeatherWidget() {
 
   // Ha az API nem elérhető, ne rondítsuk a főoldalt — elrejtjük.
   if (phase === "error") return null;
+  // Nem-CH országban a svájci időjárás nem releváns → elrejtjük.
+  if (mountedC && (prefCountry ?? DEFAULT_COUNTRY) !== "CH") return null;
 
   const cond = data ? describeWeather(data.code) : null;
 
