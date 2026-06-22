@@ -392,7 +392,8 @@ export function ExploreView({
         </div>
       )}
 
-      {/* Self-service CTA — vállalkozói regisztráció */}
+      {/* Self-service CTA-k + push — csak lista-nézetben; map-módban a térkép a hős. */}
+      {view === "list" && (
       <div className="px-5">
         <Link
           href="/vallalkozo"
@@ -436,6 +437,7 @@ export function ExploreView({
           <PushOptin />
         </div>
       </div>
+      )}
 
       {/* A kategória-pillek list-módban itt fent; map-módban a térképre úsztatva. */}
       {view === "list" && (
@@ -559,10 +561,10 @@ export function ExploreView({
           )}
         </div>
       ) : (
-        <div className="px-5">
+        <div className="px-3">
           <Suspense
             fallback={
-              <div className="mb-6 grid h-[calc(100dvh-430px)] min-h-[360px] max-h-[560px] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
+              <div className="mb-2 grid h-[calc(100dvh-300px)] min-h-[440px] max-h-[760px] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
                 Térkép betöltése…
               </div>
             }
@@ -573,7 +575,7 @@ export function ExploreView({
               activeCat={cat}
               onSelectCat={setCat}
               locationLabel={locationLabel}
-              className="mb-2 h-[calc(100dvh-430px)] min-h-[360px] max-h-[560px]"
+              className="mb-2 h-[calc(100dvh-300px)] min-h-[440px] max-h-[760px]"
             />
           </Suspense>
         </div>
