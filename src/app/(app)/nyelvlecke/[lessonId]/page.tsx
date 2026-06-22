@@ -5,6 +5,7 @@ export const runtime = "edge";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LESSONS, Question } from "../data";
+import { LESSONS_AT } from "../data-at";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
@@ -13,7 +14,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   
-  const lesson = LESSONS.find((l) => l.id === params.lessonId);
+  const lesson = [...LESSONS, ...LESSONS_AT].find((l) => l.id === params.lessonId);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   

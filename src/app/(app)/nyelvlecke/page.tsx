@@ -7,6 +7,9 @@ import Link from "next/link";
 import { ScreenHeader } from "@/components/ui/headers";
 import { Icon } from "@/components/ui/icons";
 import { LESSONS } from "./data";
+import { LESSONS_AT } from "./data-at";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { cn } from "@/lib/cn";
 
 export default function LanguagePathPage() {
@@ -14,6 +17,7 @@ export default function LanguagePathPage() {
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [totalXp, setTotalXp] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [prefCountry] = usePreferredCountry();
 
   useEffect(() => {
     const saved = localStorage.getItem("kinti_language_progress");
@@ -46,8 +50,11 @@ export default function LanguagePathPage() {
     return <div className="p-4">Betöltés...</div>;
   }
 
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const lessons = country === "AT" ? LESSONS_AT : LESSONS;
+
   // Group lessons by chapter dynamically
-  const chapters = Array.from(new Set(LESSONS.map((l) => l.chapter))).sort((a, b) => a - b);
+  const chapters = Array.from(new Set(lessons.map((l) => l.chapter))).sort((a, b) => a - b);
 
   return (
     <div className="flex flex-col pb-24 min-h-screen bg-surface">
@@ -55,7 +62,7 @@ export default function LanguagePathPage() {
       <div className="sticky top-0 z-20 bg-background/80 px-4 pb-4 pt-6 backdrop-blur-xl border-b border-border-subtle">
         <ScreenHeader 
           eyebrow="Nyelvlecke" 
-          title="Schwyzerdütsch" 
+          title={country === "AT" ? "Österreichisch" : "Schwyzerdütsch"}
           back={
             <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-full bg-ink/5 text-ink hover:bg-ink/10 transition">
               <Icon name="arrowLeft" size={20} strokeWidth={2.5} />
@@ -89,7 +96,7 @@ export default function LanguagePathPage() {
       {/* The Path */}
       <div className="flex flex-col items-center py-10 px-4 space-y-12">
         {chapters.map((chapter) => {
-          const chapterLessons = LESSONS.filter(l => l.chapter === chapter);
+          const chapterLessons = lessons.filter(l => l.chapter === chapter);
           if (chapterLessons.length === 0) return null;
 
           return (
@@ -112,8 +119,8 @@ export default function LanguagePathPage() {
                 {chapterLessons.map((lesson, idx) => {
                   const isCompleted = completedLessons.includes(lesson.id);
                   // Next lesson is unlocked if previous is completed (or if it's the first lesson)
-                  const prevLessonIndex = LESSONS.findIndex(l => l.id === lesson.id) - 1;
-                  const isUnlocked = prevLessonIndex < 0 || completedLessons.includes(LESSONS[prevLessonIndex].id);
+                  const prevLessonIndex = lessons.findIndex(l => l.id === lesson.id) - 1;
+                  const isUnlocked = prevLessonIndex < 0 || completedLessons.includes(lessons[prevLessonIndex].id);
                   
                   // Zigzag offsets
                   const offsetClasses = [

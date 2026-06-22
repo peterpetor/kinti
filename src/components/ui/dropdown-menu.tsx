@@ -291,22 +291,22 @@ export function DropdownMenu() {
                 </Link>
               </CollapsibleSection>
 
-              {isCH && (
               <CollapsibleSection title="Játék">
                 <Link href="/nyelvlecke" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🦉
                   </span>
-                  Svájci Német (Mundart)
+                  {isCH ? "Svájci Német (Mundart)" : "Osztrák Német"}
                 </Link>
+                {isCH && (
                 <Link href="/kviz" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     🎯
                   </span>
                   Napi Svájci Kvíz
                 </Link>
+                )}
               </CollapsibleSection>
-              )}
 
               <CollapsibleSection title="Jogi & Segítség">
                 <Link href="/segitseg" onClick={close} className={linkClass}>

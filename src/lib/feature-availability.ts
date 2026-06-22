@@ -28,7 +28,6 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "kozlekedes",        // közlekedés (svájci)
   "szolgaltato-valto", // szolgáltató-váltás (svájci szolgáltatók)
   "lakberles",         // lakbér-kalkulátor (svájci)
-  "nyelvlecke",        // Mundart / svájci német kurzus
   "tudasbazis",        // tudásbázis (svájci hivatalos források)
   "kviz",              // kvíz (svájci tartalom)
   "berkalkulator",     // bérkalkulátor (svájci adó/CHF)
