@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { cn } from "@/lib/cn";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 type CantonCode = "ZH" | "BE" | "GE" | "VD" | "BS" | "LU" | "AG" | "SG" | "TI";
 
@@ -140,9 +142,30 @@ const CANTONS: Record<CantonCode, CantonData> = {
 
 const CANTON_LIST = Object.entries(CANTONS).map(([code, data]) => ({ code: code as CantonCode, name: data.name, lang: data.lang }));
 
+// ── Ausztria: NEMZETI iskolarendszer (nem tartományonként eltérő, mint a svájci kantonok). ──
+const AT_NOTE = "Ausztriában az iskolarendszer szövetségi (nemzeti) — a struktúra egész Ausztriában nagyrészt azonos. 9 év a tankötelezettség (6–15 éves kor). Az osztályzás 1–5-ig megy, ahol az 1 a legjobb (5 = megbukott).";
+const AT_LEVELS: SchoolLevel[] = [
+  { name: "Kindergarten", emoji: "🎨", ages: "3–6 év", years: 3, color: "text-[#f59e0b]", bg: "bg-[#fef3c7]", description: "Óvoda; az UTOLSÓ év (5 éves kortól) KÖTELEZŐ és ingyenes. Játékos fejlesztés + németre felkészítés.", tip: "Ha a gyerek nem tud németül, az óvoda Sprachförderung-gal (nyelvi felzárkóztatás) segít." },
+  { name: "Volksschule", emoji: "📚", ages: "6–10 év", years: 4, color: "text-[#10b981]", bg: "bg-[#d1fae5]", description: "4 éves általános alapiskola (1–4. osztály). A 4. osztály végén dől el a továbbtanulás iránya.", tip: "Az osztályzás 1–5-ig (1 a legjobb) — fordítva, mint a svájci 6-os rendszer!" },
+  { name: "Sekundarstufe I", nameDe: "MS / AHS-Unterstufe", emoji: "🏫", ages: "10–14 év", years: 4, color: "text-[#6366f1]", bg: "bg-[#ede9fe]", description: "Két út: Mittelschule (MS) vagy a gimnázium alsó tagozata (AHS-Unterstufe). Az átjárás lehetséges.", tracks: ["AHS-Unterstufe → Gymnasium felső → Matura", "Mittelschule (MS) → BHS / BMS / Lehre"], tip: "A jó eredményű MS-diákok később is válthatnak gimnáziumra vagy BHS-re." },
+  { name: "Sekundarstufe II", emoji: "🎓", ages: "14–18/19 év", years: "1–5", color: "text-[#0ea5e9]", bg: "bg-[#e0f2fe]", description: "Több út a tankötelezettség után: érettségi (Matura) vagy duális szakképzés (Lehre).", tracks: ["AHS-Oberstufe (4 év) → Matura → Universität", "BHS — HTL / HAK / HLW (5 év) → Matura + szakma", "BMS (3–4 év) → szakmai bizonyítvány", "Lehre (duális, 3–4 év) → Lehrabschluss (+ »Lehre mit Matura«)", "Polytechnische Schule (1 év) → szakma-előkészítő"] },
+];
+const AT_TIPS = [
+  { icon: "📝", text: "Beiratkozáshoz: útlevél/igazolvány, Meldezettel, e-card, és az előző iskola bizonyítványa (lehetőleg hitelesített fordítással)." },
+  { icon: "🗣️", text: "Ha a gyerek nem tud németül: »Deutschförderklasse« / Deutschförderkurs segíti a felzárkózást — ingyenes." },
+  { icon: "🎓", text: "A Matura (Reifeprüfung) az érettségi — ez az egyetemi felvétel feltétele. A »Lehre mit Matura« a szakmával párhuzamosan is megszerezhető, ingyen." },
+  { icon: "🍱", text: "Az állami iskola ingyenes; a délutáni felügyelet (Nachmittagsbetreuung) és az ebéd külön fizethető." },
+  { icon: "📅", text: "A Semesterferien (félévi szünet) Ausztriában tartományonként 2 hullámban van (kelet/nyugat); a nyári szünet országosan egységes." },
+  { icon: "🔄", text: "Az iskolatípusok közti átjárás lehetséges — a gyerek nincs véglegesen »beskatulyázva«." },
+];
+
 export function SchoolSystem() {
+  const [prefCountry] = usePreferredCountry();
+  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
   const [selected, setSelected] = useState<CantonCode>("ZH");
   const canton = CANTONS[selected];
+  const levels = isAT ? AT_LEVELS : canton.levels;
+  const regionTitle = isAT ? "Ausztria" : canton.name;
 
   const langLabel: Record<string, string> = { de: "🇩🇪 Német", fr: "🇫🇷 Francia", it: "🇮🇹 Olasz" };
 
@@ -153,15 +176,18 @@ export function SchoolSystem() {
         <div className="flex items-start gap-3">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary text-white text-2xl">🏫</span>
           <div>
-            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">Svájci Iskolarendszer</h1>
+            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">{isAT ? "Osztrák Iskolarendszer" : "Svájci Iskolarendszer"}</h1>
             <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
-              Kantononként eltérő szintek vizuális ábrázolása kiköltöző szülőknek. Válaszd ki a kanton ahol laksz!
+              {isAT
+                ? "Az osztrák iskolarendszer szintjei kiköltöző szülőknek — a Kindergartentől a Maturáig és a Lehréig."
+                : "Kantononként eltérő szintek vizuális ábrázolása kiköltöző szülőknek. Válaszd ki a kanton ahol laksz!"}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Kanton választó */}
+      {/* Régió-választó — csak CH (Ausztria nemzeti rendszer, nincs választó). */}
+      {!isAT && (
       <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
         <label className="block text-[12px] font-bold uppercase tracking-wide text-ink-muted">Válaszd ki a kantont</label>
         <div className="grid grid-cols-3 gap-2">
@@ -183,22 +209,23 @@ export function SchoolSystem() {
           ))}
         </div>
       </div>
+      )}
 
-      {/* Kanton info */}
+      {/* Régió info */}
       <div className="rounded-card border border-line bg-surface p-4 shadow-card">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-[14px] font-extrabold text-ink">{canton.name}</span>
+          <span className="text-[14px] font-extrabold text-ink">{isAT ? "Ausztria" : canton.name}</span>
           <span className="rounded-pill bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-muted">
-            {langLabel[canton.lang]} nyelvű
+            {isAT ? "🇩🇪 Német nyelvű" : `${langLabel[canton.lang]} nyelvű`}
           </span>
         </div>
-        <p className="text-[12.5px] leading-snug text-ink-muted">{canton.note}</p>
+        <p className="text-[12.5px] leading-snug text-ink-muted">{isAT ? AT_NOTE : canton.note}</p>
       </div>
 
       {/* Vizuális szintlépők */}
       <div className="space-y-3">
-        <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted px-1">Iskolai szintek — {canton.name}</h2>
-        {canton.levels.map((level, idx) => (
+        <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted px-1">Iskolai szintek — {regionTitle}</h2>
+        {levels.map((level, idx) => (
           <div key={idx} className={cn("rounded-card border-2 p-4 shadow-card", level.bg, "border-transparent")}>
             {/* Fejléc */}
             <div className="flex items-start gap-3">
@@ -241,7 +268,7 @@ export function SchoolSystem() {
             </div>
 
             {/* Szintek összekötője */}
-            {idx < canton.levels.length - 1 && (
+            {idx < levels.length - 1 && (
               <div className="flex justify-center mt-2">
                 <span className="text-ink-muted text-lg">↓</span>
               </div>
@@ -253,14 +280,14 @@ export function SchoolSystem() {
       {/* Általános tippek */}
       <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
         <h2 className="text-[13px] font-extrabold text-ink">📌 Amit minden szülőnek tudni kell</h2>
-        {[
+        {(isAT ? AT_TIPS : [
           { icon: "📝", text: "Beiratkozáshoz: útlevél, tartózkodási engedély, és az előző iskola bizonyítványa (lehetőleg hitelesített fordítással)." },
           { icon: "🗣️", text: "Ha a gyerek nem tud svájcin / franciául / olaszul: a legtöbb kanton ingyenes INTENSIVKURS-t (felzárkóztató tanfolyamot) biztosít." },
           { icon: "🚌", text: "Az iskolabusz (Schulbus) sok helyen ingyenes — a körzet határolja meg. A lakcím megválasztása kulcsfontosságú." },
           { icon: "🍱", text: "Az iskolai ebéd (Mittagessen / cantine) külön fizethető — nem kötelező. Ára kb. 8–25 CHF/nap kantontól függően." },
           { icon: "📅", text: "Svájcban az iskolai szünetek KANTONONKÉNT ELTÉRNEK. Nincs egységes nyári szünet kezdet!" },
           { icon: "🔄", text: "Átjárás a szintek között lehetséges — félévente újraértékelik a diák helyzetét. Nem véglegesen 'skatulyázzák be' a gyereket." },
-        ].map((tip, i) => (
+        ]).map((tip, i) => (
           <div key={i} className="flex gap-2.5 text-[12.5px] leading-snug text-ink-muted">
             <span className="shrink-0 text-base">{tip.icon}</span>
             <span>{tip.text}</span>
@@ -272,8 +299,13 @@ export function SchoolSystem() {
         toolName="iskolarendszer útmutató"
         variant="info"
         notAdviceFor="jogi vagy oktatási hatósági"
-        extraWarning="A svájci iskolarendszer szabályai kantononként és évente változhatnak. Mindig ellenőrizd a lakhely szerinti kanton oktatási hivatal (Volksschulamt / Service de l'enseignement) aktuális tájékoztatóját beiratkozás előtt."
-        officialSources={[
+        extraWarning={isAT
+          ? "Az osztrák iskolarendszer szabályai tartományonként kis eltéréssel és évente változhatnak. Beiratkozás előtt ellenőrizd a lakhely szerinti tartományi oktatási igazgatóság (Bildungsdirektion) aktuális tájékoztatóját."
+          : "A svájci iskolarendszer szabályai kantononként és évente változhatnak. Mindig ellenőrizd a lakhely szerinti kanton oktatási hivatal (Volksschulamt / Service de l'enseignement) aktuális tájékoztatóját beiratkozás előtt."}
+        officialSources={isAT ? [
+          { label: "oesterreich.gv.at — Schule & Bildung", url: "https://www.oesterreich.gv.at/themen/bildung_und_neue_medien.html" },
+          { label: "BMBWF — Oktatási Minisztérium", url: "https://www.bmbwf.gv.at/" },
+        ] : [
           { label: "ch.ch — Iskolarendszer", url: "https://www.ch.ch/de/bildung/" },
           { label: "EDK — Svájci Oktatási Konferencia", url: "https://www.edk.ch/" },
         ]}

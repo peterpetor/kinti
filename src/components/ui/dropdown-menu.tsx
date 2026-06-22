@@ -174,6 +174,14 @@ export function DropdownMenu() {
                   </span>
                   Kiköltözés Tracker
                 </Link>
+                {has("iskolarendszer") && (
+                <Link href="/iskolarendszer" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#fef3c7] text-[#d97706] text-base">
+                    🏢
+                  </span>
+                  {isCH ? "Svájci Iskolarendszer" : "Osztrák Iskolarendszer"}
+                </Link>
+                )}
                 {isCH && (<>
                 <Link href="/tudasbazis" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -186,12 +194,6 @@ export function DropdownMenu() {
                     📋
                   </span>
                   Ügyintézés Varázsló
-                </Link>
-                <Link href="/iskolarendszer" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#fef3c7] text-[#d97706] text-base">
-                    🏢
-                  </span>
-                  Svájci Iskolarendszer
                 </Link>
                 <Link href="/vizum" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
