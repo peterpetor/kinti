@@ -1,8 +1,9 @@
 "use client";
 
 /** Mini SVG vonaldiagram — külső library nélkül */
-export function MiniTrendChart({ data }: {
+export function MiniTrendChart({ data, cur = "CHF" }: {
   data: { month: string; avg_salary: number }[];
+  cur?: string;
 }) {
   if (data.length < 2) {
     return (
@@ -39,7 +40,7 @@ export function MiniTrendChart({ data }: {
       {data.map((d, i) => (
         <circle key={i} cx={x(i)} cy={y(d.avg_salary)} r="3"
           fill="white" stroke="rgb(var(--primary))" strokeWidth="2">
-          <title>{d.month}: {d.avg_salary.toLocaleString("hu-HU")} CHF</title>
+          <title>{d.month}: {d.avg_salary.toLocaleString("hu-HU")} {cur}</title>
         </circle>
       ))}
       {labelIdxs.map(i => (

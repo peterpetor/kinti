@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { MiniTrendChart } from "./MiniTrendChart";
 import { MiniHistogram } from "./MiniHistogram";
+import { benchCurrency } from "./region-util";
 
 const chartErrorFallback = (
   <p className="py-4 text-center text-[12px] text-ink-muted">A grafikon most nem jeleníthető meg.</p>
@@ -20,14 +21,17 @@ export function SalaryCard({
   stat,
   expRows,
   canton,
+  country = "CH",
   userSalaryChf,
 }: {
   stat: SalaryStatsRow;
   expRows: SalaryExpRow[];
   canton: string;
-  /** A user saját bére (CHF) — csak a saját iparága kártyáján, az „itt állsz" jelöléshez. */
+  country?: string;
+  /** A user saját bére (helyi pénznem) — csak a saját iparága kártyáján, az „itt állsz" jelöléshez. */
   userSalaryChf?: number;
 }) {
+  const cur = benchCurrency(country);
   const [showExp, setShowExp] = useState(false);
   const [showTrend, setShowTrend] = useState(false);
   const [trend, setTrend] = useState<TrendRow[] | null>(null);
@@ -44,7 +48,7 @@ export function SalaryCard({
     setLoadingTrend(true);
     setShowTrend(true); setShowHist(false); setShowExp(false);
     try {
-      const res = await fetch(`/api/benchmark/trend?industry=${encodeURIComponent(stat.industry)}&canton=${canton}`);
+      const res = await fetch(`/api/benchmark/trend?industry=${encodeURIComponent(stat.industry)}&canton=${canton}&country=${country}`);
       const data = await res.json() as { trend?: TrendRow[] };
       setTrend(data.trend ?? []);
     } catch { setTrend([]); }
@@ -56,7 +60,7 @@ export function SalaryCard({
     setLoadingHist(true);
     setShowHist(true); setShowTrend(false); setShowExp(false);
     try {
-      const res = await fetch(`/api/benchmark/histogram?industry=${encodeURIComponent(stat.industry)}&canton=${canton}`);
+      const res = await fetch(`/api/benchmark/histogram?industry=${encodeURIComponent(stat.industry)}&canton=${canton}&country=${country}`);
       const data = await res.json() as { histogram?: { bucket_k: number; entry_count: number }[] };
       setHist(data.histogram ?? []);
     } catch { setHist([]); }
@@ -76,7 +80,7 @@ export function SalaryCard({
       {/* Medián (kiemelt) + átlag */}
       <div>
         <p className="text-[24px] font-extrabold text-ink tracking-tight">
-          {stat.median_salary.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">CHF/év</span>
+          {stat.median_salary.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">{cur}/év</span>
         </p>
         <p className="text-[11.5px] font-bold uppercase tracking-wide text-primary/70 mt-0.5">
           Medián (középérték)
@@ -86,7 +90,7 @@ export function SalaryCard({
           return (
             <div className="flex items-center gap-1.5 mt-1.5 text-[12px] text-ink-muted">
               <span>Átlag:</span>
-              <strong className="text-ink">{stat.avg_salary.toLocaleString("hu-HU")} CHF</strong>
+              <strong className="text-ink">{stat.avg_salary.toLocaleString("hu-HU")} {cur}</strong>
               {skewed && (
                 <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-amber-600 dark:text-amber-400">⚠ eltérés</span>
               )}
@@ -143,7 +147,7 @@ export function SalaryCard({
               <div key={bucket} className="flex items-center justify-between text-[13px]">
                 <span className={`font-semibold ${EXP_COLORS[bi]}`}>{bucket}</span>
                 <div className="text-right">
-                  <span className="font-bold text-ink">{row.avg_salary.toLocaleString("hu-HU")} CHF</span>
+                  <span className="font-bold text-ink">{row.avg_salary.toLocaleString("hu-HU")} {cur}</span>
                   <span className="text-ink-faint text-[11px] ml-1.5">({row.entry_count} adat)</span>
                 </div>
               </div>
@@ -157,7 +161,7 @@ export function SalaryCard({
         <div className="border-t border-line pt-3">
           {loadingTrend
             ? <div className="py-4 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" /></div>
-            : <ErrorBoundary label="trend-chart" fallback={chartErrorFallback}><MiniTrendChart data={trend ?? []} /></ErrorBoundary>
+            : <ErrorBoundary label="trend-chart" fallback={chartErrorFallback}><MiniTrendChart data={trend ?? []} cur={cur} /></ErrorBoundary>
           }
         </div>
       )}
@@ -167,7 +171,7 @@ export function SalaryCard({
         <div className="border-t border-line pt-3">
           {loadingHist
             ? <div className="py-4 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" /></div>
-            : <ErrorBoundary label="histogram" fallback={chartErrorFallback}><MiniHistogram data={hist ?? []} userValueChf={userSalaryChf} /></ErrorBoundary>
+            : <ErrorBoundary label="histogram" fallback={chartErrorFallback}><MiniHistogram data={hist ?? []} userValueChf={userSalaryChf} cur={cur} /></ErrorBoundary>
           }
         </div>
       )}

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { TurnstileWidget } from "@/components/turnstile-widget";
-import { CANTONS } from "@/lib/cantons";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
+import { benchRegions, benchCurrency, benchAllLabel, benchDefaultSalary, benchDefaultRent } from "./region-util";
 
 const INDUSTRIES = [
   "Informatika (IT)", "Vendéglátás / Szálloda", "Építőipar",
@@ -14,10 +14,11 @@ const INDUSTRIES = [
 interface SalaryExpRow { industry: string; exp_bucket: string; avg_salary: number; entry_count: number; }
 
 /** "Mennyit kapnék?" kalkulátor — kliens-oldali összehasonlítás */
-export function SalaryCalculator({ salaryByExp }: { salaryByExp: SalaryExpRow[] }) {
+export function SalaryCalculator({ salaryByExp, country = "CH" }: { salaryByExp: SalaryExpRow[]; country?: string }) {
+  const cur = benchCurrency(country);
   const [industry, setIndustry] = useState(INDUSTRIES[0]);
   const [exp, setExp] = useState(3);
-  const [mySalary, setMySalary] = useState(80000);
+  const [mySalary, setMySalary] = useState(benchDefaultSalary(country));
 
   const bucket = exp <= 2 ? "0–2 év" : exp <= 5 ? "3–5 év" : "5+ év";
   const match = salaryByExp.find(r => r.industry === industry && r.exp_bucket === bucket);
@@ -50,8 +51,8 @@ export function SalaryCalculator({ salaryByExp }: { salaryByExp: SalaryExpRow[] 
             className={inputCls} />
         </div>
         <div className="col-span-2">
-          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">Az én bruttó éves bérem (CHF)</label>
-          <input type="number" min={20000} max={300000} step={1000} value={mySalary}
+          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">Az én bruttó éves bérem ({cur})</label>
+          <input type="number" min={country === "AT" ? 15000 : 20000} max={country === "AT" ? 250000 : 300000} step={1000} value={mySalary}
             onChange={e => setMySalary(parseInt(e.target.value) || 0)}
             className={`${inputCls} text-[16px] font-bold`} />
         </div>
@@ -69,7 +70,7 @@ export function SalaryCalculator({ salaryByExp }: { salaryByExp: SalaryExpRow[] 
             }
           </p>
           <p className="text-[11px] text-ink-faint">
-            Közösségi átlag ({bucket}): {avg.toLocaleString("hu-HU")} CHF/év · {match?.entry_count} adat alapján
+            Közösségi átlag ({bucket}): {avg.toLocaleString("hu-HU")} {cur}/év · {match?.entry_count} adat alapján
           </p>
         </div>
       ) : (
@@ -87,27 +88,32 @@ export function RentToSalaryCalculator({
   mySalary,
   myRent,
   canton,
+  country = "CH",
 }: {
   mySalary?: number;
   myRent?: number;
   canton: string;
+  country?: string;
 }) {
-  const [salary, setSalary] = useState(mySalary || 80000);
-  const [rent, setRent] = useState(myRent || 1800);
+  const cur = benchCurrency(country);
+  const defS = benchDefaultSalary(country);
+  const defR = benchDefaultRent(country);
+  const [salary, setSalary] = useState(mySalary || defS);
+  const [rent, setRent] = useState(myRent || defR);
   const [avgRatio, setAvgRatio] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setSalary(mySalary || 80000);
-    setRent(myRent || 1800);
-  }, [mySalary, myRent]);
+    setSalary(mySalary || defS);
+    setRent(myRent || defR);
+  }, [mySalary, myRent, defS, defR]);
 
   useEffect(() => {
     let active = true;
     const fetchRatio = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/benchmark/ratio?canton=${canton}`);
+        const res = await fetch(`/api/benchmark/ratio?canton=${canton}&country=${country}`);
         const data = await res.json() as { avg_ratio?: number | null };
         if (active) setAvgRatio(data.avg_ratio ?? null);
       } catch {
@@ -117,7 +123,7 @@ export function RentToSalaryCalculator({
     };
     fetchRatio();
     return () => { active = false; };
-  }, [canton]);
+  }, [canton, country]);
 
   // Védelem a 0-val osztás ellen: ha a bér mezőt kiürítik (salary=0), a ratio
   // Infinity lenne és "Infinity%"-ot írna ki.
@@ -136,12 +142,12 @@ export function RentToSalaryCalculator({
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase">Bruttó Bér (CHF/év)</label>
+          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase">Bruttó Bér ({cur}/év)</label>
           <input type="number" value={salary} onChange={(e) => setSalary(parseInt(e.target.value) || 0)}
             className="w-full rounded-xl border border-line bg-surface-alt px-3 py-2 text-[14px] text-ink focus:ring-2 focus:ring-primary/40" />
         </div>
         <div>
-          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase">Lakbér (CHF/hó)</label>
+          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase">Lakbér ({cur}/hó)</label>
           <input type="number" value={rent} onChange={(e) => setRent(parseInt(e.target.value) || 0)}
             className="w-full rounded-xl border border-line bg-surface-alt px-3 py-2 text-[14px] text-ink focus:ring-2 focus:ring-primary/40" />
         </div>
@@ -155,7 +161,7 @@ export function RentToSalaryCalculator({
           <p className="text-[13px] mt-1 flex items-center gap-2"><span className="animate-spin w-3 h-3 border-2 border-ink border-t-transparent rounded-full" /> Közösségi átlag számítása...</p>
         ) : avgRatio ? (
           <p className={`text-[13px] mt-1 ${isGood ? "text-primary" : "text-accent"}`}>
-            A {canton === "all" ? "svájci" : `${canton} kantonban élő`} magyarok átlaga: <strong>{avgRatio}%</strong>.
+            A {canton === "all" ? (country === "AT" ? "ausztriai" : "svájci") : `${canton} ${country === "AT" ? "tartományban" : "kantonban"} élő`} magyarok átlaga: <strong>{avgRatio}%</strong>.
             <br />
             {isGood ? "Jól gazdálkodsz, ez az átlag alatti teher!" : "Ez az átlagnál magasabb teher a fizetésedhez képest."}
           </p>
@@ -172,10 +178,12 @@ export function AlertSubscription({
   defaultIndustry,
   defaultAvg,
   turnstileSiteKey,
+  country = "CH",
 }: {
   defaultIndustry?: string;
   defaultAvg?: number | null;
   turnstileSiteKey: string;
+  country?: string;
 }) {
   const [email, setEmail] = useState("");
   const [industry, setIndustry] = useState(defaultIndustry ?? INDUSTRIES[0]);
@@ -270,10 +278,10 @@ export function AlertSubscription({
             </select>
           </div>
           <div>
-            <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">Kanton</label>
+            <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">{country === "AT" ? "Bundesland" : "Kanton"}</label>
             <select value={canton} onChange={e => setCanton(e.target.value)} className={inputCls}>
-              <option value="all">Egész Svájc</option>
-              {CANTONS.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+              <option value="all">{benchAllLabel(country)}</option>
+              {benchRegions(country).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
             </select>
           </div>
         </div>

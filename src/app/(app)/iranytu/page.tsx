@@ -6,8 +6,8 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Svájci Bér- és Lakbér Iránytű | Kinti",
-  description: "Közösségi, anonim adatbázis a svájci magyarok fizetéséről és lakbéréről. Nézd meg, mennyit keresnek a te kantonodban!",
+  title: "Bér- és Lakbér Iránytű | Kinti",
+  description: "Közösségi, anonim adatbázis a kint élő magyarok fizetéséről és lakbéréről (Svájc & Ausztria). Nézd meg, mennyit keresnek a régiódban!",
 };
 
 export default async function BenchmarkPage() {
@@ -16,7 +16,7 @@ export default async function BenchmarkPage() {
     <div className="space-y-4 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
       <div className="px-5">
         <ScreenHeader
-          eyebrow="Iránytű · Svájci Magyaroknak"
+          eyebrow="Iránytű · Kint élő Magyaroknak"
           title={
             <>
               Anonim Bér- és<br />
@@ -29,7 +29,7 @@ export default async function BenchmarkPage() {
       <div className="px-5 space-y-6 pt-2">
         <div className="space-y-4">
           <p className="text-[14px] text-ink-muted leading-relaxed">
-            Anonim bér- és lakbér-statisztikák Svájcban. Az induló szintek valós svájci
+            Anonim bér- és lakbér-statisztikák a lakóhelyed országában. Az induló szintek valós
             referencia-adatokon alapulnak, és a közösség anonim beküldéseivel folyamatosan
             pontosodnak — tudd meg, mennyit keresnek a szakmádban, és mennyit fizetnek egy hasonló lakásért!
           </p>

@@ -6,10 +6,12 @@ import { salaryStanding } from "@/lib/benchmark-stats";
 export function MiniHistogram({
   data,
   userValueChf,
+  cur = "CHF",
 }: {
   data: { bucket_k: number; entry_count: number }[];
-  /** A user saját bére (CHF). Ha megvan, a saját sávja kiemelve + „top X%". */
+  /** A user saját bére (helyi pénznem). Ha megvan, a saját sávja kiemelve + „top X%". */
   userValueChf?: number;
+  cur?: string;
 }) {
   if (data.length === 0) {
     return (
@@ -79,7 +81,7 @@ export function MiniHistogram({
 
       {/* Vízszintes tengely: olvasható, csak a két szélső (+ középső) bérsáv */}
       {minK === maxK ? (
-        <div className="text-center text-[10px] font-medium text-ink-muted">{minK}k CHF</div>
+        <div className="text-center text-[10px] font-medium text-ink-muted">{minK}k {cur}</div>
       ) : (
         <div className="flex justify-between text-[10px] font-medium text-ink-muted">
           <span>{minK}k</span>
@@ -92,7 +94,7 @@ export function MiniHistogram({
       {hasUser ? (
         <div className="rounded-xl border border-accent/25 bg-accent/5 px-3 py-2 text-center">
           <p className="text-[12px] font-bold text-accent leading-snug">
-            📍 Te itt vagy: {userValueChf!.toLocaleString("hu-HU")} CHF
+            📍 Te itt vagy: {userValueChf!.toLocaleString("hu-HU")} {cur}
             {showStanding ? ` · a felső ${topPct}%-ban` : ""}
           </p>
           {showStanding && (
@@ -103,7 +105,7 @@ export function MiniHistogram({
           )}
         </div>
       ) : (
-        <p className="pt-1 text-right text-[11px] text-ink-faint">Bérsávok 10.000 CHF-enként</p>
+        <p className="pt-1 text-right text-[11px] text-ink-faint">Bérsávok 10.000 {cur}-enként</p>
       )}
     </div>
   );

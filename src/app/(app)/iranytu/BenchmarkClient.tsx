@@ -1,13 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { CANTONS } from "@/lib/cantons";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { SalaryCard } from "./SalaryCard";
 import { SalaryCalculator, AlertSubscription, RentToSalaryCalculator } from "./SalaryWidgets";
 import { SwissHeatmap } from "./SwissHeatmap";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { salaryStanding, rentStanding, type SalaryStanding } from "@/lib/benchmark-stats";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import {
+  benchRegions, benchRegionName, benchCurrency, benchAllLabel,
+  benchDefaultRegion, benchDefaultSalary, benchDefaultRent,
+} from "./region-util";
 
 const INDUSTRIES = [
   "Informatika (IT)", "Vendéglátás / Szálloda", "Építőipar",
@@ -54,16 +59,18 @@ function Spinner() {
   return <div className="py-14 flex justify-center"><div className="animate-spin w-7 h-7 border-[3px] border-primary border-t-transparent rounded-full" /></div>;
 }
 
-function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSiteKey }: {
-  tab: Tab; mode: "submit" | "edit"; initialData?: MyData; onSuccess: () => void; onCancel?: () => void; turnstileSiteKey: string;
+function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSiteKey, country }: {
+  tab: Tab; mode: "submit" | "edit"; initialData?: MyData; onSuccess: () => void; onCancel?: () => void; turnstileSiteKey: string; country: string;
 }) {
   const isEdit = mode === "edit";
-  const [canton, setCanton] = useState(tab === "salary" ? (initialData?.salary?.cantonCode ?? "ZH") : (initialData?.rent?.cantonCode ?? "ZH"));
+  const cur = benchCurrency(country);
+  const def = benchDefaultRegion(country);
+  const [canton, setCanton] = useState(tab === "salary" ? (initialData?.salary?.cantonCode ?? def) : (initialData?.rent?.cantonCode ?? def));
   const [industry, setIndustry] = useState(initialData?.salary?.industry ?? INDUSTRIES[0]);
   const [exp, setExp] = useState(initialData?.salary?.yearsExperience ?? 3);
-  const [salary, setSalary] = useState(initialData?.salary?.grossSalaryChf ?? 80000);
+  const [salary, setSalary] = useState(initialData?.salary?.grossSalaryChf ?? benchDefaultSalary(country));
   const [rooms, setRooms] = useState(initialData?.rent?.rooms ?? 3.5);
-  const [rent, setRent] = useState(initialData?.rent?.rentChf ?? 1800);
+  const [rent, setRent] = useState(initialData?.rent?.rentChf ?? benchDefaultRent(country));
   const [token, setToken] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,8 +80,8 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
     if (!token) { setError("CAPTCHA szükséges."); return; }
     setSubmitting(true); setError(null);
     const payload = tab === "salary"
-      ? { type: "salary", cantonCode: canton, industry, yearsExperience: exp, grossSalaryChf: salary, turnstileToken: token }
-      : { type: "rent", cantonCode: canton, rooms, rentChf: rent, turnstileToken: token };
+      ? { type: "salary", country, cantonCode: canton, industry, yearsExperience: exp, grossSalaryChf: salary, turnstileToken: token }
+      : { type: "rent", country, cantonCode: canton, rooms, rentChf: rent, turnstileToken: token };
     try {
       const res = await fetch("/api/benchmark", { method: isEdit ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const data = await res.json() as { error?: string };
@@ -90,9 +97,9 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
         {onCancel && <button onClick={onCancel} className="text-[12px] text-ink-faint hover:text-ink">Mégse</button>}
       </div>
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div><label className={labelCls}>Kanton</label>
+        <div><label className={labelCls}>{country === "AT" ? "Bundesland" : "Kanton"}</label>
           <select value={canton} onChange={e => setCanton(e.target.value)} className={inputCls}>
-            {CANTONS.map(c => <option key={c.code} value={c.code}>{c.name} ({c.code})</option>)}
+            {benchRegions(country).map(r => <option key={r.code} value={r.code}>{r.name} ({r.code})</option>)}
           </select>
         </div>
         {tab === "salary" ? (<>
@@ -102,14 +109,14 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
             </select>
           </div>
           <div><label className={labelCls}>Tapasztalat (év)</label><input type="number" min={0} max={50} value={exp} onChange={e => setExp(parseInt(e.target.value) || 0)} className={inputCls} /></div>
-          <div><label className={labelCls}>Bruttó éves bér (CHF)</label><input type="number" min={20000} max={300000} step={500} value={salary} onChange={e => setSalary(parseInt(e.target.value) || 0)} required className={inputCls} /></div>
+          <div><label className={labelCls}>Bruttó éves bér ({cur})</label><input type="number" min={country === "AT" ? 15000 : 20000} max={country === "AT" ? 250000 : 300000} step={500} value={salary} onChange={e => setSalary(parseInt(e.target.value) || 0)} required className={inputCls} /></div>
         </>) : (<>
           <div><label className={labelCls}>Szobák száma</label>
             <select value={rooms} onChange={e => setRooms(parseFloat(e.target.value))} className={inputCls}>
               {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map(r => <option key={r} value={r}>{r === 1 ? "1 szoba (Stúdió)" : `${r} szoba`}</option>)}
             </select>
           </div>
-          <div><label className={labelCls}>Havi lakbér (CHF)</label><input type="number" min={300} max={10000} step={50} value={rent} onChange={e => setRent(parseInt(e.target.value) || 0)} required className={inputCls} /></div>
+          <div><label className={labelCls}>Havi lakbér ({cur})</label><input type="number" min={300} max={country === "AT" ? 6000 : 10000} step={50} value={rent} onChange={e => setRent(parseInt(e.target.value) || 0)} required className={inputCls} /></div>
         </>)}
         {error && <p className="text-[13px] text-accent font-medium rounded-xl bg-accent/10 px-3 py-2">{error}</p>}
         <TurnstileWidget siteKey={turnstileSiteKey} onToken={setToken} />
@@ -122,7 +129,7 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
 }
 
 /** „Hol állsz?" — a saját bér percentilis pozíciója a kanton+iparág eloszlásában. */
-function SalaryStandingInsight({ cantonCode, industry, salary }: { cantonCode: string; industry: string; salary: number }) {
+function SalaryStandingInsight({ cantonCode, industry, salary, country }: { cantonCode: string; industry: string; salary: number; country: string }) {
   const [standing, setStanding] = useState<SalaryStanding | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -131,7 +138,7 @@ function SalaryStandingInsight({ cantonCode, industry, salary }: { cantonCode: s
     setLoading(true);
     (async () => {
       try {
-        const res = await fetch(`/api/benchmark/histogram?industry=${encodeURIComponent(industry)}&canton=${cantonCode}`);
+        const res = await fetch(`/api/benchmark/histogram?industry=${encodeURIComponent(industry)}&canton=${cantonCode}&country=${country}`);
         const data = await res.json() as { histogram?: Parameters<typeof salaryStanding>[0] };
         const s = salaryStanding(data.histogram ?? [], salary);
         // Adatvédelem/megbízhatóság: 3+ adat alatt nem pozicionálunk.
@@ -143,11 +150,11 @@ function SalaryStandingInsight({ cantonCode, industry, salary }: { cantonCode: s
       }
     })();
     return () => { alive = false; };
-  }, [cantonCode, industry, salary]);
+  }, [cantonCode, industry, salary, country]);
 
   if (loading || !standing) return null;
 
-  const cantonName = CANTONS.find((c) => c.code === cantonCode)?.name ?? cantonCode;
+  const cantonName = benchRegionName(country, cantonCode);
   const topPct = Math.max(1, 100 - standing.percentile);
   const highEarner = standing.percentile >= 50;
 
@@ -165,7 +172,7 @@ function SalaryStandingInsight({ cantonCode, industry, salary }: { cantonCode: s
 }
 
 /** „Hol állsz?" — a saját lakbér pozíciója a kanton+szobaszám eloszlásában (kevesebb = jobb). */
-function RentStandingInsight({ cantonCode, rooms, rent }: { cantonCode: string; rooms: number; rent: number }) {
+function RentStandingInsight({ cantonCode, rooms, rent, country }: { cantonCode: string; rooms: number; rent: number; country: string }) {
   const [standing, setStanding] = useState<SalaryStanding | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -174,7 +181,7 @@ function RentStandingInsight({ cantonCode, rooms, rent }: { cantonCode: string; 
     setLoading(true);
     (async () => {
       try {
-        const res = await fetch(`/api/benchmark/rent-histogram?rooms=${rooms}&canton=${cantonCode}`);
+        const res = await fetch(`/api/benchmark/rent-histogram?rooms=${rooms}&canton=${cantonCode}&country=${country}`);
         const data = await res.json() as { histogram?: Parameters<typeof rentStanding>[0] };
         const s = rentStanding(data.histogram ?? [], rent);
         if (alive) setStanding(s && s.total >= MIN_ENTRIES_FOR_STATS ? s : null);
@@ -185,11 +192,11 @@ function RentStandingInsight({ cantonCode, rooms, rent }: { cantonCode: string; 
       }
     })();
     return () => { alive = false; };
-  }, [cantonCode, rooms, rent]);
+  }, [cantonCode, rooms, rent, country]);
 
   if (loading || !standing) return null;
 
-  const cantonName = CANTONS.find((c) => c.code === cantonCode)?.name ?? cantonCode;
+  const cantonName = benchRegionName(country, cantonCode);
   // Lakbérnél a KEVESEBB a kedvező. percentile = % aki nálad kevesebbet fizet,
   // tehát cheaperThan = % aki nálad TÖBBET fizet (te olcsóbban laksz náluk).
   const cheaperThan = 100 - standing.percentile;
@@ -212,8 +219,10 @@ function RentStandingInsight({ cantonCode, rooms, rent }: { cantonCode: string; 
   );
 }
 
-function MyDataCard({ tab, myData, onEdit }: { tab: Tab; myData: MyData; onEdit: () => void }) {
+function MyDataCard({ tab, myData, onEdit, country }: { tab: Tab; myData: MyData; onEdit: () => void; country: string }) {
   const s = myData.salary, r = myData.rent;
+  const cur = benchCurrency(country);
+  const regionLabel = country === "AT" ? "Bundesland" : "Kanton";
   if ((tab === "salary" && !s) || (tab === "rent" && !r)) return null;
 
   const lastUpdated = tab === "salary" ? s?.lastUpdatedAt ?? null : r?.lastUpdatedAt ?? null;
@@ -245,19 +254,19 @@ function MyDataCard({ tab, myData, onEdit }: { tab: Tab; myData: MyData; onEdit:
           <button onClick={onEdit} className="flex items-center gap-1.5 text-[12px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg hover:opacity-70 transition">✏️ Szerkesztés</button>
         </div>
         {tab === "salary" && s && <div className="space-y-0.5 text-[13px] text-ink">
-          <p><span className="text-ink-muted">Kanton:</span> {s.cantonCode} · <span className="text-ink-muted">Iparág:</span> {s.industry}</p>
-          <p><span className="text-ink-muted">Tapasztalat:</span> {s.yearsExperience} év · <span className="text-ink-muted">Bér:</span> <strong>{s.grossSalaryChf.toLocaleString("hu-HU")} CHF/év</strong></p>
+          <p><span className="text-ink-muted">{regionLabel}:</span> {benchRegionName(country, s.cantonCode)} · <span className="text-ink-muted">Iparág:</span> {s.industry}</p>
+          <p><span className="text-ink-muted">Tapasztalat:</span> {s.yearsExperience} év · <span className="text-ink-muted">Bér:</span> <strong>{s.grossSalaryChf.toLocaleString("hu-HU")} {cur}/év</strong></p>
           {ageMonths !== null && (
             <p className="text-[11px] text-ink-faint pt-1">Utolsó frissítés: {ageMonths === 0 ? "kevesebb mint 1 hónapja" : `${ageMonths} hónapja`}</p>
           )}
-          <SalaryStandingInsight cantonCode={s.cantonCode} industry={s.industry} salary={s.grossSalaryChf} />
+          <SalaryStandingInsight cantonCode={s.cantonCode} industry={s.industry} salary={s.grossSalaryChf} country={country} />
         </div>}
         {tab === "rent" && r && <div className="space-y-0.5 text-[13px] text-ink">
-          <p><span className="text-ink-muted">Kanton:</span> {r.cantonCode} · <span className="text-ink-muted">Szobák:</span> {r.rooms} · <span className="text-ink-muted">Lakbér:</span> <strong>{r.rentChf.toLocaleString("hu-HU")} CHF/hó</strong></p>
+          <p><span className="text-ink-muted">{regionLabel}:</span> {benchRegionName(country, r.cantonCode)} · <span className="text-ink-muted">Szobák:</span> {r.rooms} · <span className="text-ink-muted">Lakbér:</span> <strong>{r.rentChf.toLocaleString("hu-HU")} {cur}/hó</strong></p>
           {ageMonths !== null && (
             <p className="text-[11px] text-ink-faint pt-1">Utolsó frissítés: {ageMonths === 0 ? "kevesebb mint 1 hónapja" : `${ageMonths} hónapja`}</p>
           )}
-          <RentStandingInsight cantonCode={r.cantonCode} rooms={r.rooms} rent={r.rentChf} />
+          <RentStandingInsight cantonCode={r.cantonCode} rooms={r.rooms} rent={r.rentChf} country={country} />
         </div>}
       </div>
     </div>
@@ -286,7 +295,7 @@ function LowDataCard({ title, count }: { title: string; count: number }) {
   );
 }
 
-function RentCard({ stat }: { stat: RentStatsRow }) {
+function RentCard({ stat, cur }: { stat: RentStatsRow; cur: string }) {
   const pct = Math.min(100, Math.round((stat.avg_rent / 5000) * 100));
   // Ha avg/median > 10%-kal eltér → kiugró adat
   const skewed = stat.median_rent > 0 && Math.abs(stat.avg_rent - stat.median_rent) / stat.median_rent > 0.1;
@@ -297,11 +306,11 @@ function RentCard({ stat }: { stat: RentStatsRow }) {
         <span className="shrink-0 text-[11px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">{stat.entry_count} adat</span>
       </div>
       {/* Medián (kiemelt — reprezentatívabb) */}
-      <p className="text-[22px] font-extrabold text-ink">{stat.median_rent.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">CHF/hó</span></p>
+      <p className="text-[22px] font-extrabold text-ink">{stat.median_rent.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">{cur}/hó</span></p>
       <p className="text-[11.5px] font-bold uppercase tracking-wide text-primary/70 mt-0.5">Medián (középérték)</p>
       <div className="flex items-center gap-1.5 mt-1.5 text-[12px] text-ink-muted">
         <span>Átlag:</span>
-        <strong className="text-ink">{stat.avg_rent.toLocaleString("hu-HU")} CHF</strong>
+        <strong className="text-ink">{stat.avg_rent.toLocaleString("hu-HU")} {cur}</strong>
         {skewed && (
           <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-amber-600 dark:text-amber-400">⚠ eltérés</span>
         )}
@@ -327,10 +336,14 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
   const [search, setSearch] = useState("");
   const [editingTab, setEditingTab] = useState<Tab | null>(null);
 
+  const [prefCountry] = usePreferredCountry();
+  const country = (prefCountry ?? DEFAULT_COUNTRY) === "AT" ? "AT" : "CH";
+  const cur = benchCurrency(country);
+
   const fetchStats = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/benchmark?canton=${canton}&period=${period}`);
+      const res = await fetch(`/api/benchmark?canton=${canton}&period=${period}&country=${country}`);
       const data = await res.json() as {
         locked?: Parameters<typeof setLock>[0];
         myData?: Parameters<typeof setMyData>[0];
@@ -345,7 +358,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
       if (data.rent) setRentStats(data.rent);
     } catch (e) { console.error(e); }
     setLoading(false);
-  }, [canton, period]);
+  }, [canton, period, country]);
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
@@ -374,14 +387,14 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
               <span className="mt-0.5">🔐</span>
               <span>{tab === "salary" ? "Küldd be a béredet a statisztikák feloldásához!" : "Küldd be a lakbéredet a statisztikák feloldásához!"}</span>
             </div>
-            <SubmitForm tab={tab} mode="submit" onSuccess={fetchStats} turnstileSiteKey={turnstileSiteKey} />
+            <SubmitForm tab={tab} mode="submit" onSuccess={fetchStats} turnstileSiteKey={turnstileSiteKey} country={country} />
           </div>
         ) : (
           <>
             {isEditing ? (
-              <SubmitForm tab={tab} mode="edit" initialData={myData} onSuccess={() => { setEditingTab(null); fetchStats(); }} onCancel={() => setEditingTab(null)} turnstileSiteKey={turnstileSiteKey} />
+              <SubmitForm tab={tab} mode="edit" initialData={myData} onSuccess={() => { setEditingTab(null); fetchStats(); }} onCancel={() => setEditingTab(null)} turnstileSiteKey={turnstileSiteKey} country={country} />
             ) : (
-              <MyDataCard tab={tab} myData={myData} onEdit={() => setEditingTab(tab)} />
+              <MyDataCard tab={tab} myData={myData} onEdit={() => setEditingTab(tab)} country={country} />
             )}
 
             {!isEditing && (
@@ -396,8 +409,8 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                 <div className="flex gap-2 flex-wrap">
                   <select value={canton} onChange={e => setCanton(e.target.value)}
                     className="flex-1 min-w-0 rounded-xl border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 transition">
-                    <option value="all">Egész Svájc</option>
-                    {CANTONS.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+                    <option value="all">{benchAllLabel(country)}</option>
+                    {benchRegions(country).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
                   </select>
                   <div className="flex w-full rounded-xl border border-line overflow-hidden">
                     {PERIODS.map(p => (
@@ -421,7 +434,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                       s.entry_count < MIN_ENTRIES_FOR_STATS ? (
                         <LowDataCard key={i} title={s.industry} count={s.entry_count} />
                       ) : (
-                        <SalaryCard key={i} stat={s} expRows={salaryByExp.filter(r => r.industry === s.industry)} canton={canton} userSalaryChf={myData.salary && myData.salary.industry === s.industry ? myData.salary.grossSalaryChf : undefined} />
+                        <SalaryCard key={i} stat={s} expRows={salaryByExp.filter(r => r.industry === s.industry)} canton={canton} country={country} userSalaryChf={myData.salary && myData.salary.industry === s.industry ? myData.salary.grossSalaryChf : undefined} />
                       ),
                     )}
                   </div>
@@ -431,13 +444,13 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                   label="swiss-heatmap"
                   fallback={<p className="rounded-2xl border border-line bg-surface p-5 text-center text-[12px] text-ink-muted">A hőtérkép most nem jeleníthető meg.</p>}
                 >
-                  <SwissHeatmap industry={search || "all"} period={period} />
+                  <SwissHeatmap industry={search || "all"} period={period} country={country} />
                 </ErrorBoundary>
                 
                 {/* Kalkulátor */}
-                {salaryByExp.length > 0 && <SalaryCalculator salaryByExp={salaryByExp} />}
+                {salaryByExp.length > 0 && <SalaryCalculator salaryByExp={salaryByExp} country={country} />}
                 {/* Email értesítés */}
-                <AlertSubscription defaultIndustry={topIndustry?.industry} defaultAvg={topIndustry?.avg_salary} turnstileSiteKey={turnstileSiteKey} />
+                <AlertSubscription defaultIndustry={topIndustry?.industry} defaultAvg={topIndustry?.avg_salary} turnstileSiteKey={turnstileSiteKey} country={country} />
               </div>
             ) : (
               rentStats.length === 0 ? (
@@ -448,7 +461,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                     r.entry_count < MIN_ENTRIES_FOR_STATS ? (
                       <LowDataCard key={i} title={`${r.rooms} szobás lakás`} count={r.entry_count} />
                     ) : (
-                      <RentCard key={i} stat={r} />
+                      <RentCard key={i} stat={r} cur={cur} />
                     ),
                   )}
                 </div>
@@ -457,10 +470,11 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
 
             {/* Bér vs Lakbér arány - Mindkét fülön látszik, ha már beküldött valamit */}
             {!isEditing && (
-              <RentToSalaryCalculator 
-                canton={canton} 
-                mySalary={myData?.salary?.grossSalaryChf} 
-                myRent={myData?.rent?.rentChf} 
+              <RentToSalaryCalculator
+                canton={canton}
+                country={country}
+                mySalary={myData?.salary?.grossSalaryChf}
+                myRent={myData?.rent?.rentChf}
               />
             )}
 
