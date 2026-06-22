@@ -10,6 +10,9 @@ import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode } from "@/lib/cantons";
 import { readPreferredCanton, setPreferredCanton } from "@/lib/canton-pref";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { getRegions, regionLabel } from "@/lib/regions";
+import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
 import { haversineKm } from "@/lib/distance";
 import { SmartSearchBar } from "./smart-search-bar";
@@ -89,6 +92,18 @@ export function ExploreView({
   };
   const [cantonSheetOpen, setCantonSheetOpen] = useState(false);
 
+  // Választott ország (6-ország rendszer). A régiók/szűrés/feliratok ehhez igazodnak.
+  // CH a default; a régiók a lib/regions.ts-ből (CH: kantonok, AT: Bundeslandok, …).
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const countryName = getCountry(country)?.name ?? "Svájc";
+  const regions = useMemo(() => getRegions(country), [country]);
+  // Ország-váltáskor a más országbeli régió-választás érvénytelen → vissza "all"-ra.
+  useEffect(() => {
+    if (canton !== "all" && !regions.some((r) => r.code === canton)) setCanton("all");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [country]);
+
   // Ha nem URL-ből érkezett kanton, a felhasználó preferált kantonjára szűrünk
   // alapból (kanton-személyre szabás). A hidratálás után, hogy ne legyen mismatch.
   useEffect(() => {
@@ -164,13 +179,17 @@ export function ExploreView({
     const needle = q.trim().toLowerCase();
     const withDistance = businesses
       .filter((b) => {
+        // Ország-szűrés (6-ország): a választott ország tartalma. Régi sorok: 'CH'.
+        const byCountry = (b.country ?? "CH") === country;
         const byCat = cat === "all" || b.categoryId === cat;
         const byCanton =
           canton === "all" ||
-          cantonFromAddress(b.address ?? null)?.code === canton ||
-          // Cím nélkül (vagy pontatlan címnél): a koordináta-alapú kanton is
-          // számít — így a felvitelkor kiválasztott kanton is megtalálható.
-          (b.lat != null && b.lng != null && nearestCantonCode(b.lat, b.lng).code === canton);
+          // A TÁROLT régió-kód (AT/DE/… seed, ill. új CH-felvitel) mindenhol számít.
+          b.canton === canton ||
+          // CH-nál a régi származtatás is (cím / koordináta → kanton) a kompatibilitásért.
+          (country === "CH" &&
+            (cantonFromAddress(b.address ?? null)?.code === canton ||
+              (b.lat != null && b.lng != null && nearestCantonCode(b.lat, b.lng).code === canton)));
         const byFav = !showFavs || favoriteIds.includes(b.id);
         // Ugyanaz a DEFAULT-fallback, mint a kártyán (parseWorkingHours null → 8–18),
         // különben egy üzlet a kártyán "Nyitva", de a "Nyitva most" szűrő kidobná.
@@ -186,7 +205,7 @@ export function ExploreView({
           (b.address ?? "").toLowerCase().includes(needle) ||
           // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
           matchesCanton({ address: b.address ?? null }, needle);
-        return byCat && byCanton && byFav && byOpen && byYears && byText;
+        return byCountry && byCat && byCanton && byFav && byOpen && byYears && byText;
       })
       .map((b) => {
         const dist =
@@ -223,7 +242,7 @@ export function ExploreView({
     });
 
     return radiusFiltered;
-  }, [businesses, cat, canton, q, showFavs, openNow, minYears, favoriteIds, userPos, radiusKm, sortBy]);
+  }, [businesses, country, cat, canton, q, showFavs, openNow, minYears, favoriteIds, userPos, radiusKm, sortBy]);
 
   const locatedCount = useMemo(
     () => filtered.filter(({ b }) => b.lat != null && b.lng != null).length,
@@ -236,16 +255,18 @@ export function ExploreView({
   // vállalkozás (+ „Mind", + az épp kiválasztott) — így nincs üres, irreleváns
   // kategória, és a sor rövid/letisztult marad.
   const visibleCategories = useMemo(() => {
-    const present = new Set(businesses.map((b) => b.categoryId));
+    const present = new Set(
+      businesses.filter((b) => (b.country ?? "CH") === country).map((b) => b.categoryId),
+    );
     return categories.filter((c) => c.id === "all" || c.id === cat || present.has(c.id));
-  }, [categories, businesses, cat]);
+  }, [categories, businesses, country, cat]);
 
-  // A térkép hely-pillhez: a kiválasztott kanton neve, vagy "Egész Svájc"
+  // A térkép hely-pillhez: a kiválasztott régió neve, vagy "Egész <ország>"
   const locationLabel = useMemo(() => {
-    if (canton === "all") return "Egész Svájc";
-    const found = CANTONS.find((c) => c.code === canton);
+    if (canton === "all") return `Egész ${countryName}`;
+    const found = regions.find((c) => c.code === canton);
     return found ? `${found.name} (${found.code})` : canton;
-  }, [canton]);
+  }, [canton, regions, countryName]);
 
   return (
     <div className="space-y-3">
@@ -273,9 +294,9 @@ export function ExploreView({
           <span className="text-[13.5px] font-bold tracking-[-0.01em] text-ink">{locationLabel}</span>
           <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted shrink-0" />
         </button>
-        <BottomSheet open={cantonSheetOpen} onClose={() => setCantonSheetOpen(false)} title="Válassz kantont">
+        <BottomSheet open={cantonSheetOpen} onClose={() => setCantonSheetOpen(false)} title={`Válassz ${regionLabel(country)}t`}>
           <div className="grid grid-cols-2 gap-2 pt-1">
-            {[{ code: "all", name: "Egész Svájc" }, ...CANTONS].map((c) => {
+            {[{ code: "all", name: `Egész ${countryName}` }, ...regions].map((c) => {
               const active = canton === c.code;
               return (
                 <button
@@ -565,7 +586,7 @@ export function ExploreView({
 
           {filtered.length === 0 && (
             (() => {
-              const cantonLabel = canton !== "all" ? CANTONS.find((c) => c.code === canton)?.name ?? null : null;
+              const cantonLabel = canton !== "all" ? regions.find((c) => c.code === canton)?.name ?? null : null;
               return (
             <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
               <Icon name={showFavs ? "heart" : "pin"} size={28} className="text-ink-faint" />
@@ -573,7 +594,7 @@ export function ExploreView({
                 {showFavs
                   ? "Nincs mentett kedvenced"
                   : cantonLabel
-                    ? `Még nincs magyar vállalkozás ${cantonLabel} kantonban`
+                    ? `Még nincs magyar vállalkozás itt: ${cantonLabel}`
                     : "Még nincs itt magyar vállalkozás"}
               </p>
               <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-muted">
