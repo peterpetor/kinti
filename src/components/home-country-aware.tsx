@@ -6,7 +6,8 @@ import { Icon, SectionHeader } from "@/components/ui";
 import type { IconName } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { CountryFlag } from "@/components/ui/country-flag";
 import type { KintiEvent } from "@/lib/types";
 
 /**
@@ -21,14 +22,9 @@ function useEffectiveCountry(): string {
   return mounted ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
 }
 
-/** A fejléc ország-zászlója (a választott országé; default 🇨🇭). */
+/** A fejléc ország-zászlója (a választott országé; default CH). */
 export function HomeCountryFlag() {
-  const country = getCountry(useEffectiveCountry());
-  return (
-    <span className="select-none text-[30px] leading-none" aria-hidden="true">
-      {country?.flag ?? "🇨🇭"}
-    </span>
-  );
+  return <CountryFlag code={useEffectiveCountry()} className="h-[22px] w-[30px]" />;
 }
 
 /** A „Mit szeretnél?" fő belépési pontok — az Ügyintézés (svájci) csak CH-ban. */

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getCountry } from "@/lib/countries";
 import { usePreferredCountry } from "@/lib/country-pref";
+import { CountryFlag } from "@/components/ui/country-flag";
 
 /**
  * CountryBanner — őszinte „Hamarosan" sáv, ha a felhasználó nem-CH országot
@@ -21,7 +22,7 @@ export function CountryBanner() {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+88px)] z-30 flex justify-center px-4">
       <div className="pointer-events-auto flex max-w-md items-center gap-2.5 rounded-2xl border border-accent/30 bg-surface/95 px-3.5 py-2.5 shadow-card-hover backdrop-blur-md">
-        <span className="text-[18px] leading-none" aria-hidden="true">{country.flag}</span>
+        <CountryFlag code={country.code} className="h-[16px] w-[22px]" />
         <span className="text-[12px] leading-snug text-ink-muted">
           <strong className="text-ink">{country.name}</strong> hamarosan — most a 🇨🇭 svájci tartalmat látod.
         </span>

@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { COUNTRIES, getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { BottomSheet } from "./bottom-sheet";
+import { CountryFlag } from "./country-flag";
 
 /**
  * Ország-váltó a menüben: mutatja az aktuális Kinti országot, és egy natív-szerű
@@ -24,7 +25,7 @@ export function CountrySwitcher() {
         onClick={() => setOpen(true)}
         className="flex w-full items-center gap-3 px-4 py-3 text-left transition active:scale-[0.99]"
       >
-        <span className="text-[24px] leading-none" aria-hidden="true">{current.flag}</span>
+        <CountryFlag code={current.code} className="h-[20px] w-[28px]" />
         <span className="min-w-0 flex-1">
           <span className="block text-[11px] font-bold uppercase tracking-wide text-ink-muted">Ország</span>
           <span className="flex items-center gap-1.5">
@@ -58,7 +59,7 @@ export function CountrySwitcher() {
                     : "border-line bg-surface hover:bg-surface-alt",
                 )}
               >
-                <span className="text-[22px] leading-none" aria-hidden="true">{c.flag}</span>
+                <CountryFlag code={c.code} className="h-[18px] w-[26px]" />
                 <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-ink">{c.name}</span>
                 {active && <Icon name="check" size={15} strokeWidth={3} className="shrink-0 text-primary" />}
                 {!c.enabled && !active && (
