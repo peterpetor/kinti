@@ -16,7 +16,6 @@ import { RelocationReminderBanner } from "@/components/relocation-reminder-banne
 import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
 import { KvizDailyCard } from "@/components/kviz-daily-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
-import { OnboardingGate } from "@/components/onboarding-gate";
 import { getBusinesses, getEvents } from "@/lib/repo";
 import { cached } from "@/lib/edge-cache";
 
@@ -40,9 +39,6 @@ export default async function FeedPage() {
 
   return (
     <>
-      {/* Egyszeri „Mire van szükséged?" üdvözlő (a CountryGate alatt, z-110). */}
-      <OnboardingGate />
-
       <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <header className="flex items-center gap-2.5">
         <div className="flex items-center gap-2">
