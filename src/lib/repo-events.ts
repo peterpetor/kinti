@@ -6,6 +6,7 @@ import type { KintiEvent, EventFeed } from "./types";
 import { parseIcal, huDateParts } from "./ical";
 import { cantonFromAddress } from "./cantons";
 import { generateRecurringEvents, GENERATED_SOURCE } from "./event-generator";
+import { fetchChwEvents, CHW_SOURCE } from "./chw-events";
 
 // --- Row types ---------------------------------------------------------------
 
@@ -515,6 +516,20 @@ async function claimStaleFeedSync(): Promise<boolean> {
   return (res.meta.changes ?? 0) > 0;
 }
 
+/** A CHW-szinkron elavult-e (a legutóbbi CHW-sor kora alapján, feed-független throttle). */
+async function chwIsStale(): Promise<boolean> {
+  const row = await getDB()
+    .prepare(`SELECT MAX(created_at) AS last FROM events WHERE source = ?`)
+    .bind(CHW_SOURCE)
+    .first<{ last: string | null }>();
+  if (!row?.last) return true;
+  const cutoff = new Date(Date.now() - FEED_SYNC_INTERVAL_HOURS * 3_600_000)
+    .toISOString()
+    .replace("T", " ")
+    .slice(0, 19);
+  return row.last < cutoff;
+}
+
 /**
  * Lusta, forgalom-vezérelt szinkron háttérben (waitUntil-lel hívandó): ha a
  * feedek elavultak, lefuttatja a szinkront a válasz elküldése után. Nincs
@@ -525,7 +540,11 @@ export async function kickoffEventFeedSync(): Promise<void> {
   try {
     // 1) Generált megemlékezések — feed NÉLKÜL is, hogy mindig legyen tartalom.
     await ensureGeneratedEvents(false);
-    // 2) iCal feedek (ha vannak és elavultak).
+    // 2) CHW (Bécs) valós események a publikus culture.hu API-ból (throttle-olva).
+    if (await chwIsStale()) {
+      await syncChwEvents();
+    }
+    // 3) iCal feedek (ha vannak és elavultak).
     if (await claimStaleFeedSync()) {
       await syncEventFeeds();
     }
@@ -587,11 +606,50 @@ export async function ensureGeneratedEvents(force: boolean): Promise<number> {
   return batch.length;
 }
 
-/** Teljes szinkron (generált + feedek) — a /api/cron/sync-events endpointhoz. */
+/**
+ * Collegium Hungaricum Wien (Bécs) valós eseményeinek szinkronja a publikus
+ * culture.hu API-ból. Idempotens: a jövőbeli CHW-eseményeket törli + újraírja.
+ * Az események country_code='AT', moderation 'approved' (hivatalos intézet).
+ */
+export async function syncChwEvents(): Promise<number> {
+  const db = getDB();
+  let events: Awaited<ReturnType<typeof fetchChwEvents>>;
+  try {
+    events = await fetchChwEvents();
+  } catch {
+    return 0;
+  }
+
+  await db
+    .prepare(`DELETE FROM events WHERE source = ? AND event_date >= date('now')`)
+    .bind(CHW_SOURCE)
+    .run();
+
+  if (!events.length) return 0;
+  const stmt = db.prepare(
+    `INSERT OR REPLACE INTO events
+       (id, title, event_date, date_day, date_month, date_weekday, start_time,
+        venue, going, tag, color, description, country_code, source, status, moderation_status,
+        moderation_decided_by, moderation_decision_at, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 'AT', ?, 'approved', 1, 'chw-api', datetime('now'), datetime('now'))`,
+  );
+  const batch = events.map((e) =>
+    stmt.bind(
+      e.id, e.title, e.eventDate, e.dateDay, e.dateMonth, e.dateWeekday, e.startTime,
+      e.venue, e.tag, e.color, e.description, CHW_SOURCE,
+    ),
+  );
+  await db.batch(batch);
+  return batch.length;
+}
+
+/** Teljes szinkron (generált + CHW + feedek) — a /api/cron/sync-events endpointhoz. */
 export async function runFullEventSync(): Promise<{ generated: number; feeds: FeedSyncResult[] }> {
   const generated = await ensureGeneratedEvents(true);
+  const chw = await syncChwEvents();
   const feeds = await syncEventFeeds();
-  return { generated, feeds };
+  // A CHW-t a "generated" összegben jelezzük vissza (a hívó csak számokat naplóz).
+  return { generated: generated + chw, feeds };
 }
 
 export interface PendingEvent {
