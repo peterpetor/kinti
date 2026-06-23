@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 export interface AddressParts {
   street: string; // utca + házszám
@@ -56,6 +58,10 @@ export function AddressFields({
   const [picked, setPicked] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const seq = useRef(0);
+  // Ország-tudatos geokóder (CH: geo.admin.ch, AT/egyéb: Photon/OSM) + példák.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
 
   // Debounce-olt keresés az utca-mező szövegére (+ helység, ha már van).
   useEffect(() => {
@@ -70,7 +76,7 @@ export function AddressFields({
     setBusy(true);
     const t = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/geo/search?q=${encodeURIComponent(q)}`);
+        const res = await fetch(`/api/geo/search?q=${encodeURIComponent(q)}&country=${country}`);
         const data = (await res.json().catch(() => ({}))) as { results?: GeoHit[] };
         if (my !== seq.current) return;
         setHits(data.results ?? []);
@@ -83,7 +89,7 @@ export function AddressFields({
     }, 280);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value.street, picked]);
+  }, [value.street, picked, country]);
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
@@ -127,7 +133,7 @@ export function AddressFields({
               onChange({ ...value, street: e.target.value });
             }}
             onFocus={() => hits.length > 0 && setOpen(true)}
-            placeholder="Pl. Bahnhofstrasse 10"
+            placeholder={isAT ? "Pl. Hauptstraße 4" : "Pl. Bahnhofstrasse 10"}
             autoComplete="off"
             className={cn(fieldCls(invalid), "pl-9 pr-9")}
           />
@@ -175,7 +181,7 @@ export function AddressFields({
               setPicked(false);
               onChange({ ...value, zip: e.target.value.replace(/[^\d]/g, "").slice(0, 4) });
             }}
-            placeholder="8001"
+            placeholder={isAT ? "1010" : "8001"}
             maxLength={4}
             autoComplete="off"
             className={fieldCls(invalid)}
@@ -192,7 +198,7 @@ export function AddressFields({
               setPicked(false);
               onChange({ ...value, city: e.target.value });
             }}
-            placeholder="Zürich"
+            placeholder={isAT ? "Wien" : "Zürich"}
             autoComplete="off"
             className={fieldCls(invalid)}
           />
