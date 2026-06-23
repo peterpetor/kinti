@@ -37,7 +37,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
 
   const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, pendingEvents, businesses, events] =
     await Promise.all([
-      getAdminStats(),
+      getAdminStats(country),
       getAdminTrends(),
       getAiUsageStats(),
       getEmailUsageStats(),
@@ -63,13 +63,19 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
         </p>
       </header>
 
-      {/* Ország-szűrő: a tartalom-listák (vállalkozás, esemény) ország szerint */}
+      {/* Ország-szűrő: a country_code-os adatok (vállalkozás, esemény, állás) + listák */}
       <nav className="flex flex-wrap gap-1.5">
         <CountryTab code="all" label="🌍 Mind" active={country === "all"} />
         {COUNTRIES.map((c) => (
           <CountryTab key={c.code} code={c.code} label={`${c.flag} ${c.name}`} active={country === c.code} live={c.enabled} />
         ))}
       </nav>
+
+      {country !== "all" && (
+        <p className="-mt-3 text-[11.5px] leading-snug text-ink-faint">
+          Az ország-szűrő a <strong className="font-semibold text-ink-muted">vállalkozás · esemény · állás</strong> számokra és a tartalom-listákra hat. A platform-metrikák (vélemény, push, munkaadó, hírlevél, AI, e-mail, használat, trendek) <strong className="font-semibold text-ink-muted">globálisak</strong>.
+        </p>
+      )}
 
       {/* Stats */}
       <section className="grid grid-cols-2 gap-2 sm:grid-cols-4">

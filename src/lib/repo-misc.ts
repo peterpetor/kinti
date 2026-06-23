@@ -142,16 +142,22 @@ export async function deleteDigestSubscriberByUnsubToken(token: string): Promise
 
 export interface AdminStats { businesses: number; businessesVerified: number; eventsApproved: number; reviews: number; digestSubscribersConfirmed: number; pushSubscriptions: number; jobs: number; employers: number; }
 
-export async function getAdminStats(): Promise<AdminStats> {
+export async function getAdminStats(country?: string | null): Promise<AdminStats> {
   const db = getDB();
-  const q = (sql: string) => db.prepare(sql).first<{ n: number }>();
+  const q = (sql: string, ...binds: unknown[]) => db.prepare(sql).bind(...binds).first<{ n: number }>();
+  // Ország-szűrő CSAK a country_code-os tábláknál (businesses/events/jobs). A
+  // reviews/push/employers/newsletter platform-szintű (nincs country_code) → globális.
+  const filter = !!country && country !== "all";
+  const cc = filter ? " AND country_code = ?" : "";
+  const ccW = filter ? " WHERE country_code = ?" : "";
+  const a = filter ? [country] : [];
   const [businesses, verified, events, reviews, push, jobs, employers] = await Promise.all([
-    q("SELECT COUNT(*) AS n FROM businesses"),
-    q("SELECT COUNT(*) AS n FROM businesses WHERE verified = 1"),
-    q("SELECT COUNT(*) AS n FROM events WHERE status = 'approved'"),
+    q(`SELECT COUNT(*) AS n FROM businesses${ccW}`, ...a),
+    q(`SELECT COUNT(*) AS n FROM businesses WHERE verified = 1${cc}`, ...a),
+    q(`SELECT COUNT(*) AS n FROM events WHERE status = 'approved'${cc}`, ...a),
     q("SELECT COUNT(*) AS n FROM reviews WHERE hidden = 0"),
     q("SELECT COUNT(*) AS n FROM push_subscriptions"),
-    q("SELECT COUNT(*) AS n FROM jobs WHERE status = 'active' AND moderation_status = 1"),
+    q(`SELECT COUNT(*) AS n FROM jobs WHERE status = 'active' AND moderation_status = 1${cc}`, ...a),
     q("SELECT COUNT(*) AS n FROM employers"),
   ]);
   // Megerősített hírlevél-feliratkozók. A régi digest_subscribers táblát eldobtuk
