@@ -14,9 +14,10 @@ const CH_GRID = [
   { c: "GE", x: 1, y: 6 },
 ];
 
-/** AT-rács (6×3) — a 9 Bundesland nagyjából földrajzi elrendezése (nyugat→kelet). */
+/** AT-rács (5×3) — a 9 Bundesland nagyjából földrajzi elrendezése (nyugat→kelet).
+ *  5 oszlop, hogy a teljes szélességbe kiférjen (ne vágódjon le a jobb széle). */
 const AT_GRID = [
-  { c: "OOe", x: 4, y: 1 }, { c: "NOe", x: 5, y: 1 }, { c: "W", x: 6, y: 1 },
+  { c: "OOe", x: 3, y: 1 }, { c: "NOe", x: 4, y: 1 }, { c: "W", x: 5, y: 1 },
   { c: "Vbg", x: 1, y: 2 }, { c: "Tirol", x: 2, y: 2 }, { c: "Sbg", x: 3, y: 2 }, { c: "Stmk", x: 4, y: 2 }, { c: "Bgld", x: 5, y: 2 },
   { c: "Ktn", x: 3, y: 3 },
 ];
@@ -50,7 +51,7 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
 
   const isAT = country === "AT";
   const grid = isAT ? AT_GRID : CH_GRID;
-  const cols = isAT ? 6 : 8;
+  const cols = isAT ? 5 : 8;
   const rows = isAT ? 3 : 6;
   const cur = benchCurrency(country);
   const regionWord = isAT ? "Bundeslandonként" : "kantononként";
@@ -101,7 +102,7 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
         <>
           <div className="no-scrollbar overflow-x-auto">
             <div
-              className="grid gap-1.5 min-w-[360px]"
+              className={cn("grid gap-1.5", isAT ? "w-full" : "min-w-[360px]")}
               style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, 1fr)` }}
             >
               {grid.map((cell) => {
