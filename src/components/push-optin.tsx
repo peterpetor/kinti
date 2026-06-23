@@ -145,7 +145,7 @@ export function PushOptin({
       <Card>
         <Bell />
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-bold text-ink">Értesítések a kantonodból</p>
+          <p className="text-[13px] font-bold text-ink">Értesítések a régiódból</p>
           <p className="text-[11.5px] leading-snug text-ink-muted">
             iPhone-on előbb tedd ki a kezdőképernyőre (Megosztás → „Főképernyőhöz adás"),
             utána kapcsolhatod be.

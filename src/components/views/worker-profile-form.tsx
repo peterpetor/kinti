@@ -112,7 +112,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
         <h3 className="text-[18px] font-extrabold text-ink">Profil mentve!</h3>
         <p className="mt-2 text-[14px] text-ink-muted px-4">
           {form.searchable
-            ? "A svájci magyar munkáltatók megtalálhatnak a rendszerben."
+            ? "A magyar munkáltatók megtalálhatnak a rendszerben."
             : "A profilod elmentve. A láthatóság jelenleg kikapcsolva — bekapcsolhatod bármikor."}
         </p>
         <button

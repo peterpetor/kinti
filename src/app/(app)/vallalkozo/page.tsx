@@ -31,7 +31,7 @@ export default function VallalkozoPage() {
             <Icon name="pin" size={30} strokeWidth={2} />
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-pill bg-accent/15 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-accent">
-            Csak svájci magyar vállalkozóknak
+            Csak kint élő magyar vállalkozóknak
           </span>
           <h1 className="mt-3 text-[24px] font-extrabold tracking-tight text-ink">
             Vidd fel ingyen a vállalkozásod

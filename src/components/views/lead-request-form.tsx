@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { CANTONS } from "@/lib/cantons";
 import type { Category } from "@/lib/types";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
+import { getRegions } from "@/lib/regions";
 
 interface Props {
   categories: Category[];
@@ -27,6 +29,14 @@ export function LeadRequestForm({ categories }: Props) {
   const [honeypot, setHoneypot] = useState(""); // bot-szűrő
 
   const selectedCategory = categories.find((c) => c.id === categoryId);
+
+  // Ország-tudatos régió-lista + példák (CH: kanton/Zürich/+41, AT: Bundesland/Bécs/+43).
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const countryName = getCountry(country)?.name ?? "Svájc";
+  const regions = getRegions(country);
+  const cityExample = country === "AT" ? "Bécsben" : "Zürichben";
+  const phoneExample = country === "AT" ? "+43 660 123 4567" : "+41 79 123 45 67";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -170,7 +180,7 @@ export function LeadRequestForm({ categories }: Props) {
       {/* Kanton */}
       <div className="space-y-1.5">
         <label htmlFor="lrf-canton" className="block text-[13px] font-bold text-ink">
-          Melyik kantonban? <span className="text-[11px] font-medium text-ink-muted">(opcionális)</span>
+          Melyik régióban? <span className="text-[11px] font-medium text-ink-muted">(opcionális)</span>
         </label>
         <select
           id="lrf-canton"
@@ -179,8 +189,8 @@ export function LeadRequestForm({ categories }: Props) {
           disabled={loading}
           className="h-12 w-full rounded-card border border-line bg-surface px-3 text-[14px] font-medium text-ink outline-none focus:border-primary/50 disabled:opacity-50"
         >
-          <option value="all">Egész Svájc (mind)</option>
-          {CANTONS.map((c) => (
+          <option value="all">Egész {countryName} (mind)</option>
+          {regions.map((c) => (
             <option key={c.code} value={c.code}>
               {c.name}
             </option>
@@ -236,7 +246,7 @@ export function LeadRequestForm({ categories }: Props) {
           id="lrf-phone"
           type="tel"
           autoComplete="tel"
-          placeholder="+41 79 123 45 67"
+          placeholder={phoneExample}
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           disabled={loading}
@@ -252,7 +262,7 @@ export function LeadRequestForm({ categories }: Props) {
         <textarea
           id="lrf-message"
           rows={5}
-          placeholder={`Pl. "Könyvelőt keresek egyéni vállalkozáshoz Zürichben. Éves zárást és áfa-bevallást kellene csinálni. Mikor tudna időpontot adni, és mi a díjszabása?"`}
+          placeholder={`Pl. "Könyvelőt keresek egyéni vállalkozáshoz ${cityExample}. Éves zárást és áfa-bevallást kellene csinálni. Mikor tudna időpontot adni, és mi a díjszabása?"`}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           disabled={loading}

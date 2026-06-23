@@ -198,7 +198,7 @@ export function ProfileEditor({
             <div className="mb-2 text-3xl">🚀</div>
             <h3 className="mb-1 text-[17px] font-black text-[#ff9600] tracking-tight">Válts Szaknévsor PRO-ba!</h3>
             <p className="mb-4 text-[13px] font-medium text-ink-muted leading-snug">
-              Tűnj ki a tömegből a sárga kiemeléssel, és kerülj a listák legtetejére, hogy több svájci magyar ügyfelet szerezz!
+              Tűnj ki a tömegből a sárga kiemeléssel, és kerülj a listák legtetejére, hogy több magyar ügyfelet szerezz!
             </p>
             <button
               type="button"

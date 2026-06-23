@@ -122,10 +122,10 @@ export function NotificationSettings() {
           <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary/10 text-primary">
             <Icon name="bell" size={16} strokeWidth={2.2} />
           </span>
-          <h2 className="text-[15px] font-extrabold tracking-tight text-ink">Kanton-értesítések</h2>
+          <h2 className="text-[15px] font-extrabold tracking-tight text-ink">Régió-értesítések</h2>
         </div>
         <p className="mb-3 text-[12.5px] leading-snug text-ink-muted">
-          Push, ha új tartalom kerül a kantonodba. Kategóriánként ki-be kapcsolható.
+          Push, ha új tartalom kerül a régiódba. Kategóriánként ki-be kapcsolható.
         </p>
 
         {status === "checking" && <div className="h-20 animate-pulse rounded-xl bg-surface-alt/50" />}
@@ -156,21 +156,21 @@ export function NotificationSettings() {
             <ToggleRow
               icon="🏪"
               label="Új magyar vállalkozás"
-              hint="Ha jóváhagynak egy új vállalkozást a kantonodban."
+              hint="Ha jóváhagynak egy új vállalkozást a régiódban."
               on={prefs.notifyBusiness}
               onToggle={() => togglePref("notifyBusiness")}
             />
             <ToggleRow
               icon="📅"
               label="Új esemény"
-              hint="Ha új közösségi esemény kerül a kantonodba."
+              hint="Ha új közösségi esemény kerül a régiódba."
               on={prefs.notifyEvent}
               onToggle={() => togglePref("notifyEvent")}
             />
             <ToggleRow
               icon="💼"
               label="Új állás"
-              hint="Ha új álláshirdetést hagynak jóvá a kantonodban."
+              hint="Ha új álláshirdetést hagynak jóvá a régiódban."
               on={prefs.notifyJob}
               onToggle={() => togglePref("notifyJob")}
             />

@@ -254,7 +254,7 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
         toolName={`csekklista (${checklist.title})`}
         variant="legal"
         notAdviceFor="jogi vagy hatósági"
-        extraWarning="A svájci eljárások kantononként ELTÉRŐEK lehetnek, és időnként változnak. A lépések általános útmutatók — a TE konkrét helyzetedre vonatkozó pontos ügymenetet a lakhelyed szerinti illetékes hivataltól tudd meg."
+        extraWarning="A hivatalos eljárások régiónként és hivatalonként ELTÉRŐEK lehetnek, és időnként változnak. A lépések általános útmutatók — a TE konkrét helyzetedre vonatkozó pontos ügymenetet a lakhelyed szerinti illetékes hivataltól tudd meg."
         officialSources={checklist.sources}
       />
     </div>

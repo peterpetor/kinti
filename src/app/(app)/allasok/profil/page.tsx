@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Munkavállalói profil — kinti.app",
   description:
-    "Töltsd fel a CV-det és add meg az elérhetőségedet. A svájci magyar munkáltatók megtalálnak téged a kinti.app Job Board rendszerén keresztül.",
+    "Töltsd fel a CV-det és add meg az elérhetőségedet. A magyar munkáltatók megtalálnak téged a kinti.app Job Board rendszerén keresztül.",
 };
 
 export default async function WorkerProfilePage() {
@@ -63,7 +63,7 @@ export default async function WorkerProfilePage() {
             Találjanak meg a munkáltatók
           </h2>
           <p className="mt-2 text-[13px] leading-relaxed opacity-90 text-pretty">
-            Töltsd fel az adataidat és a CV-det — svájci magyar munkáltatók közvetlenül megkereshetnek, ha illik a profilodhoz egy állás.
+            Töltsd fel az adataidat és a CV-det — magyar munkáltatók közvetlenül megkereshetnek, ha illik a profilodhoz egy állás.
           </p>
         </div>
       </div>

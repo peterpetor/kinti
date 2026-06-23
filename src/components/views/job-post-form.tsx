@@ -100,7 +100,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
           <div className="mb-2 text-3xl">💼</div>
           <h3 className="mb-1 text-[17px] font-black text-accent tracking-tight">Kiemelt Álláshirdetés</h3>
           <p className="mb-4 text-[13px] font-medium text-ink-muted leading-snug">
-            Emeld ki a hirdetésedet sárga háttérrel 30 napra, és kerülj a lista élére, hogy azonnal megtaláld a legjobb svájci magyar munkaerőt!
+            Emeld ki a hirdetésedet sárga háttérrel 30 napra, és kerülj a lista élére, hogy azonnal megtaláld a legjobb magyar munkaerőt!
           </p>
           <button
             type="button"
