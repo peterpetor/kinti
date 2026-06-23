@@ -109,14 +109,14 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
             </select>
           </div>
           <div><label className={labelCls}>Tapasztalat (év)</label><input type="number" min={0} max={50} value={exp} onChange={e => setExp(parseInt(e.target.value) || 0)} className={inputCls} /></div>
-          <div><label className={labelCls}>Bruttó éves bér ({cur})</label><input type="number" min={country === "AT" ? 15000 : 20000} max={country === "AT" ? 250000 : 300000} step={500} value={salary} onChange={e => setSalary(parseInt(e.target.value) || 0)} required className={inputCls} /></div>
+          <div><label className={labelCls}>Bruttó éves bér ({cur})</label><input type="number" min={country === "AT" ? 15000 : 20000} max={country === "AT" ? 250000 : 300000} step={500} value={salary || ""} onChange={e => setSalary(parseInt(e.target.value) || 0)} required className={inputCls} /></div>
         </>) : (<>
           <div><label className={labelCls}>Szobák száma</label>
             <select value={rooms} onChange={e => setRooms(parseFloat(e.target.value))} className={inputCls}>
               {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map(r => <option key={r} value={r}>{r === 1 ? "1 szoba (Stúdió)" : `${r} szoba`}</option>)}
             </select>
           </div>
-          <div><label className={labelCls}>Havi lakbér ({cur})</label><input type="number" min={300} max={country === "AT" ? 6000 : 10000} step={50} value={rent} onChange={e => setRent(parseInt(e.target.value) || 0)} required className={inputCls} /></div>
+          <div><label className={labelCls}>Havi lakbér ({cur})</label><input type="number" min={300} max={country === "AT" ? 6000 : 10000} step={50} value={rent || ""} onChange={e => setRent(parseInt(e.target.value) || 0)} required className={inputCls} /></div>
         </>)}
         {error && <p className="text-[13px] text-accent font-medium rounded-xl bg-accent/10 px-3 py-2">{error}</p>}
         <TurnstileWidget siteKey={turnstileSiteKey} onToken={setToken} />

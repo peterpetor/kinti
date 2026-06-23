@@ -52,7 +52,7 @@ export function SalaryCalculator({ salaryByExp, country = "CH" }: { salaryByExp:
         </div>
         <div className="col-span-2">
           <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">Az én bruttó éves bérem ({cur})</label>
-          <input type="number" min={country === "AT" ? 15000 : 20000} max={country === "AT" ? 250000 : 300000} step={1000} value={mySalary}
+          <input type="number" min={country === "AT" ? 15000 : 20000} max={country === "AT" ? 250000 : 300000} step={1000} value={mySalary || ""}
             onChange={e => setMySalary(parseInt(e.target.value) || 0)}
             className={`${inputCls} text-[16px] font-bold`} />
         </div>
@@ -143,12 +143,12 @@ export function RentToSalaryCalculator({
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase">Bruttó Bér ({cur}/év)</label>
-          <input type="number" value={salary} onChange={(e) => setSalary(parseInt(e.target.value) || 0)}
+          <input type="number" value={salary || ""} onChange={(e) => setSalary(parseInt(e.target.value) || 0)}
             className="w-full rounded-xl border border-line bg-surface-alt px-3 py-2 text-[14px] text-ink focus:ring-2 focus:ring-primary/40" />
         </div>
         <div>
           <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase">Lakbér ({cur}/hó)</label>
-          <input type="number" value={rent} onChange={(e) => setRent(parseInt(e.target.value) || 0)}
+          <input type="number" value={rent || ""} onChange={(e) => setRent(parseInt(e.target.value) || 0)}
             className="w-full rounded-xl border border-line bg-surface-alt px-3 py-2 text-[14px] text-ink focus:ring-2 focus:ring-primary/40" />
         </div>
       </div>
