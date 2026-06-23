@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 type Role = "user" | "assistant";
 interface Message {
@@ -26,6 +28,18 @@ const LANGUAGES = [
 ];
 
 export function AiInterviewSimulator() {
+  // Ország-tudatos: a dialektus-opció és a HR-kontextus a választott országhoz.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  const languages = [
+    LANGUAGES[0],
+    isAT
+      ? { id: "Österreichisches Deutsch", label: "Österreichisches Deutsch (Osztrák német)" }
+      : LANGUAGES[1],
+    LANGUAGES[2],
+  ];
+
   const [hasStarted, setHasStarted] = useState(false);
   const [profession, setProfession] = useState(PROFESSIONS[0]);
   const [language, setLanguage] = useState(LANGUAGES[0].id);
@@ -54,7 +68,7 @@ export function AiInterviewSimulator() {
       const res = await fetch("/api/ai/interview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profession, language, messages: [initialMsg] }),
+        body: JSON.stringify({ profession, language, country, messages: [initialMsg] }),
       });
       const data = (await res.json().catch(() => ({}))) as { answer?: string; error?: string };
       if (res.ok && data.answer) {
@@ -83,7 +97,7 @@ export function AiInterviewSimulator() {
       const res = await fetch("/api/ai/interview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profession, language, messages: newMessages }),
+        body: JSON.stringify({ profession, language, country, messages: newMessages }),
       });
       const data = (await res.json().catch(() => ({}))) as { answer?: string; error?: string };
       if (res.ok && data.answer) {
@@ -110,7 +124,7 @@ export function AiInterviewSimulator() {
           AI Munkainterjú Szimulátor
         </h2>
         <p className="text-center text-[13px] leading-relaxed text-ink-muted mb-6">
-          Készülj fel a svájci HR menedzserek kérdéseire! Az AI szerepjátékot játszik veled, 
+          Készülj fel {isAT ? "az osztrák" : "a svájci"} HR menedzserek kérdéseire! Az AI szerepjátékot játszik veled,
           hogy magabiztosabb legyél az éles interjún.
         </p>
 
@@ -139,7 +153,7 @@ export function AiInterviewSimulator() {
               onChange={(e) => setLanguage(e.target.value)}
               className="w-full appearance-none rounded-xl border-2 border-line bg-surface-alt px-4 py-3 text-[14px] font-semibold text-ink outline-none focus:border-primary focus:bg-surface transition"
             >
-              {LANGUAGES.map((l) => (
+              {languages.map((l) => (
                 <option key={l.id} value={l.id}>{l.label}</option>
               ))}
             </select>

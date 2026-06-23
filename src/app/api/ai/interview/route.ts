@@ -11,11 +11,13 @@ export async function POST(req: Request) {
     const body = (await req.json().catch(() => ({}))) as {
       profession?: string;
       language?: string;
+      country?: string;
       messages?: Array<{ role: "user" | "assistant"; content: string }>;
     };
 
     const profession = typeof body.profession === "string" ? body.profession.trim() : "Allgemein";
     const language = typeof body.language === "string" ? body.language.trim() : "Hochdeutsch";
+    const country = body.country === "AT" ? "AT" : "CH";
     const messages = Array.isArray(body.messages) ? body.messages : [];
 
     if (messages.length === 0) {
@@ -32,15 +34,19 @@ export async function POST(req: Request) {
       );
     }
 
-    // System prompt: Svájci HR Menedzser
-    const systemPrompt = `Du bist Herr Müller (oder Frau Keller), ein strenger aber fairer Schweizer HR-Manager (Personalchef) in der Branche "${profession}".
+    // System prompt: ország-tudatos HR-menedzser (CH / AT).
+    const ctx =
+      country === "AT"
+        ? { adj: "österreichischer", land: "Österreich", landDat: "in Österreich", motiv: "Motivation für Österreich" }
+        : { adj: "Schweizer", land: "der Schweiz", landDat: "in der Schweiz", motiv: "Motivation für die Schweiz" };
+    const systemPrompt = `Du bist Herr Müller (oder Frau Keller), ein strenger aber fairer ${ctx.adj} HR-Manager (Personalchef) in der Branche "${profession}".
 Du führst gerade ein Bewerbungsgespräch auf ${language}.
-Der Bewerber (User) kommt aus Ungarn und möchte in der Schweiz arbeiten.
+Der Bewerber (User) kommt aus Ungarn und möchte ${ctx.landDat} arbeiten.
 
 Regeln für dich:
 1. Stelle IMMER NUR EINE Frage auf einmal! Warte auf die Antwort.
 2. Wenn der Bewerber antwortet, reagiere kurz (z.B. "Verstehe", "Interessant") und stelle die nächste logische Frage.
-3. Typische Schweizer Themen: Pünktlichkeit, Erfahrung, Motivation für die Schweiz, Deutschkenntnisse, Teamfähigkeit.
+3. Typische Themen: Pünktlichkeit, Erfahrung, ${ctx.motiv}, Deutschkenntnisse, Teamfähigkeit.
 4. Sei professionell (Siezen).
 5. Wenn das Gespräch beendet scheint (oder nach ca. 5-6 Fragen), bedanke dich und gib dem Bewerber auf Ungarisch ein kurzes Feedback zu seiner Performance und seinen Deutschkenntnissen.
 
