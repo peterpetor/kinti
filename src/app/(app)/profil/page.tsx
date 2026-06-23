@@ -108,6 +108,21 @@ export default async function ProfilPage() {
           <span className="text-sm font-semibold text-ink">Megjelenés</span>
           <ThemeToggle />
         </div>
+        <Link
+          href="/hirlevel"
+          className="flex items-center justify-between rounded-card border border-line bg-surface p-4 shadow-card active:scale-[0.99] transition"
+        >
+          <div className="flex items-center gap-3">
+            <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary-soft text-primary">
+              <Icon name="send" size={15} strokeWidth={2.2} />
+            </span>
+            <div>
+              <span className="block text-sm font-semibold text-ink">Hírlevél</span>
+              <span className="block text-[11.5px] text-ink-muted">Hírek és események országodra szabva</span>
+            </div>
+          </div>
+          <Icon name="chevR" size={16} className="text-ink-faint" />
+        </Link>
       </section>
     </div>
   );

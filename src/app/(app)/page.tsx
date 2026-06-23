@@ -14,6 +14,7 @@ import { PwaInstallCard } from "@/components/pwa-install-card";
 import { RelocationReminderBanner } from "@/components/relocation-reminder-banner";
 import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
 import { KvizDailyCard } from "@/components/kviz-daily-card";
+import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
 import { getBusinesses, getEvents } from "@/lib/repo";
 import { cached } from "@/lib/edge-cache";
@@ -82,6 +83,7 @@ export default async function FeedPage() {
 
       <HomeChCards />
 
+      <NewsletterCtaCard />
       <PwaInstallCard />
       </div>
     </>
