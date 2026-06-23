@@ -351,11 +351,13 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
         salaryByExp?: Parameters<typeof setSalaryByExp>[0];
         rent?: Parameters<typeof setRentStats>[0];
       };
-      if (data.locked) setLock(data.locked);
-      if (data.myData) setMyData(data.myData);
-      if (data.salary) setSalaryStats(data.salary);
-      if (data.salaryByExp) setSalaryByExp(data.salaryByExp);
-      if (data.rent) setRentStats(data.rent);
+      // MINDIG frissítünk (üres/null → ürítés), különben ország- vagy lock-váltáskor
+      // a régi ország adata bennragad (pl. CH-stat látszana EUR-címkével AT-n).
+      setLock(data.locked ?? { salary: true, rent: true });
+      setMyData(data.myData ?? { salary: null, rent: null });
+      setSalaryStats(data.salary ?? []);
+      setSalaryByExp(data.salaryByExp ?? []);
+      setRentStats(data.rent ?? []);
     } catch (e) { console.error(e); }
     setLoading(false);
   }, [canton, period, country]);

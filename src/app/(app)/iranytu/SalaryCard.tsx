@@ -53,7 +53,7 @@ export function SalaryCard({
       setTrend(data.trend ?? []);
     } catch { setTrend([]); }
     setLoadingTrend(false);
-  }, [stat.industry, canton, trend]);
+  }, [stat.industry, canton, country, trend]);
 
   const fetchHist = useCallback(async () => {
     if (hist) { setShowHist(h => !h); setShowTrend(false); setShowExp(false); return; }
@@ -65,7 +65,7 @@ export function SalaryCard({
       setHist(data.histogram ?? []);
     } catch { setHist([]); }
     setLoadingHist(false);
-  }, [stat.industry, canton, hist]);
+  }, [stat.industry, canton, country, hist]);
 
   return (
     <div className="flex h-full flex-col gap-3 rounded-2xl border border-line bg-surface p-4 hover:border-primary/40 transition-colors">
