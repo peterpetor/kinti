@@ -156,7 +156,9 @@ function ClusteredMarkers({
                 const bounds = clusterBounds(located, pt.itemIds);
                 map.fitBounds(bounds, {
                   padding: [80, 80],
-                  maxZoom: 15,
+                  // 18: elég közeli, hogy az azonos koordinátáról szétpöckölt
+                  // (spreadColocated) pontok külön markerként váljanak szét.
+                  maxZoom: 18,
                   animate: true,
                 });
               },

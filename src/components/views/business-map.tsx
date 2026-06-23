@@ -11,6 +11,7 @@ import { cn } from "@/lib/cn";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
+import { spreadColocated } from "@/lib/cluster";
 
 /**
  * BusinessMap — wrapper: WebGL-detektálás + motor-választás + közös overlay-ek.
@@ -63,8 +64,10 @@ export function BusinessMap({
   fallbackZoom = 13,
   className,
 }: BusinessMapProps) {
+  // Azonos koordinátán álló (pl. város-középre geokódolt AT) vállalkozások
+  // szétpöckölése, hogy nagyításkor külön-külön kattinthatók legyenek.
   const located = useMemo(
-    () => businesses.filter((b) => b.lat != null && b.lng != null),
+    () => spreadColocated(businesses.filter((b) => b.lat != null && b.lng != null)),
     [businesses],
   );
 

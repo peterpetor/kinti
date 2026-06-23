@@ -17,6 +17,40 @@ export interface SinglePoint {
 export type MapPoint = ClusterGroup | SinglePoint;
 
 /**
+ * Azonos koordinátán álló vállalkozások szétpöckölése egy kis körre, hogy
+ * nagyításkor KÜLÖN-KÜLÖN láthatók / kattinthatók legyenek (ne ragadjanak egy
+ * klaszterbe, amit a fitBounds egy pontra nem tud szétnyitni).
+ *
+ * Pl. az osztrák seed több szervezetet UGYANARRA a város-koordinátára geokódolt
+ * → 23 db egy ponton Bécsben, 4 Innsbruckban. A pötty determinisztikus (index a
+ * csoportban), így stabil renderek közt. A CH (valós geokód) jellemzően egyedi
+ * koordinátájú → csoportméret 1 → érintetlen.
+ */
+export function spreadColocated(businesses: Business[]): Business[] {
+  const groups = new Map<string, Business[]>();
+  for (const b of businesses) {
+    if (b.lat == null || b.lng == null) continue;
+    const key = `${b.lat.toFixed(5)},${b.lng.toFixed(5)}`;
+    let g = groups.get(key);
+    if (!g) { g = []; groups.set(key, g); }
+    g.push(b);
+  }
+  return businesses.map((b) => {
+    if (b.lat == null || b.lng == null) return b;
+    const key = `${b.lat.toFixed(5)},${b.lng.toFixed(5)}`;
+    const g = groups.get(key)!;
+    if (g.length <= 1) return b;
+    const idx = g.indexOf(b);
+    // Sugár a csoportmérettel skálázva (nagy zoomon szétválik), max ~220 m.
+    const radiusM = Math.min(220, Math.max(40, 9 * g.length));
+    const angle = (2 * Math.PI * idx) / g.length;
+    const dLat = (radiusM / 111320) * Math.cos(angle);
+    const dLng = (radiusM / (111320 * Math.cos((b.lat * Math.PI) / 180))) * Math.sin(angle);
+    return { ...b, lat: b.lat + dLat, lng: b.lng + dLng };
+  });
+}
+
+/**
  * Greedy geo-klaszterezés — zoom-szinthez igazított sugárral, külső csomag nélkül.
  *
  * threshold = clusterPx × (360 / (256 × 2^zoom))
