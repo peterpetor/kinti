@@ -27,6 +27,7 @@ const TILE_ATTR =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>';
 
 const CH_CENTER: [number, number] = [46.82, 8.23];
+const AT_CENTER: [number, number] = [47.59, 14.14];
 const CH_ZOOM = 7;
 
 /** Bolt-szín + kedvezmény-fokozat alapján generál egy egyedi pin-t. */
@@ -66,9 +67,11 @@ function createDealIcon(storeColor: string, storeInitial: string, discountPct: n
 export function DealsMap({
   deals,
   className,
+  country = "CH",
 }: {
   deals: DealReport[];
   className?: string;
+  country?: string;
 }) {
   // Saját pozíció, ha a helymeghatározás már engedélyezve van (prompt nélkül).
   const myPos = useMyLocation();
@@ -93,9 +96,11 @@ export function DealsMap({
     return map;
   }, [deals]);
 
+  // Ország-tudatos közép: akció nélkül a választott ország közepe (AT-ben NE Svájc).
+  const fallbackCenter = country === "AT" ? AT_CENTER : CH_CENTER;
   const center: [number, number] = deals.length > 0
     ? [deals[0].lat, deals[0].lng]
-    : CH_CENTER;
+    : fallbackCenter;
 
   return (
     <div className={className}>

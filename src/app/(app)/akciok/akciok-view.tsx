@@ -11,6 +11,8 @@ import {
   DEAL_STORES,
 } from "@/lib/deals";
 import { DealReporter } from "@/components/views/deal-reporter";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 // Lazy-load — a Leaflet csak böngészőben
 const DealsMap =
@@ -19,6 +21,12 @@ const DealsMap =
     : () => null;
 
 type ViewMode = "map" | "list";
+
+/** Durva ország-bbox — az akciók (lat/lng) ország szerinti szűréséhez. */
+function inCountryBox(lat: number, lng: number, country: string): boolean {
+  if (country === "AT") return lat >= 46.3 && lat <= 49.1 && lng >= 9.5 && lng <= 17.2;
+  return lat >= 45.7 && lat <= 47.9 && lng >= 5.8 && lng <= 10.6; // CH
+}
 
 export function AkciokView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [view, setView] = useState<ViewMode>("map");
@@ -39,10 +47,18 @@ export function AkciokView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
     return () => clearInterval(t);
   }, [load]);
 
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+
+  // Ország-szűrt akciók (bbox) — AT-ben ne látszódjanak a svájci akciók.
+  const countryDeals = useMemo(
+    () => deals.filter((d) => inCountryBox(d.lat, d.lng, country)),
+    [deals, country],
+  );
   const filtered = useMemo(() => {
-    if (filterStore === "all") return deals;
-    return deals.filter((d) => d.storeId === filterStore);
-  }, [deals, filterStore]);
+    if (filterStore === "all") return countryDeals;
+    return countryDeals.filter((d) => d.storeId === filterStore);
+  }, [countryDeals, filterStore]);
 
   return (
     <div className="space-y-4">
@@ -68,9 +84,9 @@ export function AkciokView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
 
       {/* Filter pillek — boltok */}
       <div className="no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-6 pb-0.5">
-        <FilterPill active={filterStore === "all"} onClick={() => setFilterStore("all")} label={`Mind (${deals.length})`} />
+        <FilterPill active={filterStore === "all"} onClick={() => setFilterStore("all")} label={`Mind (${countryDeals.length})`} />
         {DEAL_STORES.map((s) => {
-          const count = deals.filter((d) => d.storeId === s.id).length;
+          const count = countryDeals.filter((d) => d.storeId === s.id).length;
           if (count === 0) return null;
           return (
             <button
@@ -138,6 +154,7 @@ export function AkciokView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
           >
             <DealsMap
               deals={filtered}
+              country={country}
               className="h-[calc(100dvh-340px)] min-h-[400px] max-h-[600px] overflow-hidden rounded-card border border-line shadow-card"
             />
           </Suspense>

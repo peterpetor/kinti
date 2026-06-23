@@ -91,12 +91,16 @@ export function LeafletEngine({
   );
 }
 
-/** Fullscreen-váltáskor (konténer-méret változás) a Leaflet-nek újra kell mérnie. */
+/**
+ * Fullscreen-váltáskor (konténer-méret változás) a Leaflet-nek újra kell mérnie.
+ * Több próbálkozás, mert a fullscreen-layout (100dvh + safe-area) később ül le —
+ * egyetlen hívás üres (szürke) térképet hagyhat.
+ */
 function InvalidateSize({ trigger }: { trigger: unknown }) {
   const map = useMap();
   useEffect(() => {
-    const t = setTimeout(() => map.invalidateSize(), 220);
-    return () => clearTimeout(t);
+    const timers = [60, 220, 450, 800].map((d) => setTimeout(() => map.invalidateSize(), d));
+    return () => timers.forEach(clearTimeout);
   }, [trigger, map]);
   return null;
 }

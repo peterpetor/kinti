@@ -114,8 +114,11 @@ export function BusinessMap({
   return (
     <div
       className={cn(
-        "relative isolate overflow-hidden",
-        fullscreen ? "fixed inset-0 z-[60] rounded-none" : cn("rounded-card", className),
+        // FONTOS: a `relative` NEM lehet az alap-osztályban, mert a Tailwind a
+        // `.relative`-t a `.fixed` UTÁN emittálja → felülírná a fullscreen `fixed`-et
+        // (a térkép nem menne teljes képernyőre, 0 magas maradna → üres).
+        "isolate overflow-hidden",
+        fullscreen ? "fixed inset-0 z-[60] rounded-none" : cn("relative rounded-card", className),
       )}
     >
       {/* Granuláris hiba-határ: ha a térkép-motor (Leaflet/MapLibre) futásidőben

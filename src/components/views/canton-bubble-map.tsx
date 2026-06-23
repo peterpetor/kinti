@@ -53,8 +53,10 @@ export function CantonBubbleMap({
   return (
     <div
       className={cn(
-        "relative isolate overflow-hidden",
-        fullscreen ? "fixed inset-0 z-[60]" : "h-[320px] rounded-card border border-line shadow-card",
+        // A `relative` a nem-fullscreen ágban (a Tailwind a .relative-t a .fixed
+        // UTÁN emittálja → különben felülírná a fullscreen `fixed`-et).
+        "isolate overflow-hidden",
+        fullscreen ? "fixed inset-0 z-[60]" : "relative h-[320px] rounded-card border border-line shadow-card",
       )}
     >
       <MapContainer
@@ -152,12 +154,12 @@ function bubbleIcon(count: number, max: number, active: boolean): L.DivIcon {
   return icon;
 }
 
-/** Fullscreen-váltáskor a Leaflet-nek újra kell mérnie a konténert. */
+/** Fullscreen-váltáskor a Leaflet-nek újra kell mérnie a konténert (több próba). */
 function InvalidateSize({ trigger }: { trigger: unknown }) {
   const map = useMap();
   useEffect(() => {
-    const t = setTimeout(() => map.invalidateSize(), 220);
-    return () => clearTimeout(t);
+    const timers = [60, 220, 450, 800].map((d) => setTimeout(() => map.invalidateSize(), d));
+    return () => timers.forEach(clearTimeout);
   }, [trigger, map]);
   return null;
 }
