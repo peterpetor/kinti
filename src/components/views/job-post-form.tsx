@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui";
-import { CANTONS } from "@/lib/cantons";
 import { JOB_CATEGORIES } from "@/lib/job-categories";
 import { useCheckout } from "@/hooks/useCheckout";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { getRegions } from "@/lib/regions";
 
 export interface JobFormInitial {
   title?: string;
@@ -59,6 +61,16 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
     legalAttested: false,
     ...initial,
   });
+
+  // Ország-tudatos régió-lista + pénznem-alapérték (CH: kanton/CHF, AT: Bundesland/EUR).
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const regions = getRegions(country);
+  // Új hirdetésnél a pénznem alapból az ország szerinti; szerkesztésnél marad a meglévő.
+  useEffect(() => {
+    if (isEdit) return;
+    setForm((f) => ({ ...f, currency: country === "AT" ? "EUR" : "CHF" }));
+  }, [country, isEdit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,7 +168,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
         </div>
         <div>
           <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-            Kanton *
+            {country === "AT" ? "Bundesland" : "Kanton"} *
           </label>
           <select
             required
@@ -164,8 +176,8 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
             onChange={(e) => setForm({ ...form, cantonCode: e.target.value })}
             className={inputCls}
           >
-            <option value="" disabled>Válassz kantont…</option>
-            {CANTONS.map((c) => (
+            <option value="" disabled>Válassz régiót…</option>
+            {regions.map((c) => (
               <option key={c.code} value={c.code}>{c.name}</option>
             ))}
           </select>
@@ -240,6 +252,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
             <option value="CHF">CHF (Bruttó/hó)</option>
             <option value="CHF_HOUR">CHF (Bruttó/óra)</option>
             <option value="EUR">EUR (Bruttó/hó)</option>
+            <option value="EUR_HOUR">EUR (Bruttó/óra)</option>
           </select>
         </div>
       </div>

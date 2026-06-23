@@ -12,6 +12,17 @@ export interface JobCategory {
   emoji: string;
 }
 
+/** A tárolt bér-pénznem kód → megjelenítendő címke (pl. CHF_HOUR → „CHF/óra"). */
+export function formatJobCurrency(currency: string): string {
+  switch (currency) {
+    case "CHF": return "CHF/hó";
+    case "CHF_HOUR": return "CHF/óra";
+    case "EUR": return "EUR/hó";
+    case "EUR_HOUR": return "EUR/óra";
+    default: return currency;
+  }
+}
+
 export const JOB_CATEGORIES: JobCategory[] = [
   { id: "epitoipar",    label: "Építőipar",                emoji: "🏗️" },
   { id: "vendeglatas",  label: "Vendéglátás / Gastro",     emoji: "🍽️" },

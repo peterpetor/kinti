@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { getRegions, regionName } from "@/lib/regions";
-import { JOB_CATEGORIES, jobCategoryLabel } from "@/lib/job-categories";
+import { JOB_CATEGORIES, jobCategoryLabel, formatJobCurrency } from "@/lib/job-categories";
 import { jobMatchScore, hasMatchableProfile, type MatchProfile } from "@/lib/job-match";
 import type { Job } from "@/lib/types";
 
@@ -270,7 +270,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                     {job.salaryMin && job.salaryMax && (
                       <span className="flex items-center gap-1.5 rounded-[8px] bg-success/10 px-2.5 py-1 text-[13px] font-bold text-success">
                         <Icon name="star" size={14} />
-                        {job.salaryMin} - {job.salaryMax} {job.currency}
+                        {job.salaryMin} - {job.salaryMax} {formatJobCurrency(job.currency)}
                       </span>
                     )}
                   </div>

@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getJobById, getEmployerById, getWorkerProfileByUser } from "@/lib/repo";
 import { isPro } from "@/lib/subscriptions";
 import { jobMatchScore, hasMatchableProfile } from "@/lib/job-match";
+import { formatJobCurrency } from "@/lib/job-categories";
 import { computeSalary } from "@/lib/salary-calc";
 import { getSalaryStats } from "@/lib/benchmark";
 import { matchCantonByName, cantonFromAddress, cantonName as cantonNameByCode } from "@/lib/cantons";
@@ -154,7 +155,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           {job.salaryMin && job.salaryMax && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1.5 text-[12px] font-bold text-success">
               <Icon name="star" size={14} /> 
-              {job.salaryMin.toLocaleString('de-CH')} - {job.salaryMax.toLocaleString('de-CH')} {job.currency}
+              {job.salaryMin.toLocaleString('de-CH')} - {job.salaryMax.toLocaleString('de-CH')} {formatJobCurrency(job.currency)}
             </span>
           )}
         </div>
