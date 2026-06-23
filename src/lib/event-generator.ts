@@ -12,6 +12,12 @@ import { huDateParts } from "./ical";
 
 export const GENERATED_SOURCE = "auto:hu-national";
 
+/** Ország-specifikus felirat a generált megemlékezésekhez. */
+const COUNTRY_META: Record<string, { adj: string; venue: string }> = {
+  CH: { adj: "svájci", venue: "Svájc-szerte" },
+  AT: { adj: "osztrák", venue: "Ausztria-szerte" },
+};
+
 interface RecurringDef {
   key: string;       // stabil slug a determinisztikus ID-hez
   month: number;     // 1–12
@@ -27,21 +33,21 @@ const HU_NATIONAL: RecurringDef[] = [
     key: "marc15", month: 3, day: 15,
     title: "Március 15. — 1848-as forradalom",
     description:
-      "Nemzeti ünnep. A svájci magyar egyesületek és missziók helyi megemlékezéseket szerveznek — a pontos helyszínt és időpontot a szervezők hirdetik meg.",
+      "Nemzeti ünnep. A {adj} magyar egyesületek és missziók helyi megemlékezéseket szerveznek — a pontos helyszínt és időpontot a szervezők hirdetik meg.",
     color: "#c8392e",
   },
   {
     key: "trianon", month: 6, day: 4,
     title: "Nemzeti Összetartozás Napja",
     description:
-      "Megemlékezés a nemzeti összetartozásról (1920, Trianon). A svájci magyar közösségek helyi programokat tartanak — részletek a szervezőknél.",
+      "Megemlékezés a nemzeti összetartozásról (1920, Trianon). A {adj} magyar közösségek helyi programokat tartanak — részletek a szervezőknél.",
     color: "#5b4a8c",
   },
   {
     key: "istvan", month: 8, day: 20,
     title: "Augusztus 20. — Szent István, államalapítás",
     description:
-      "Nemzeti ünnep, az államalapítás és Szent István király emléknapja. A svájci magyar közösségek ünnepi programokat, szentmisét szerveznek — részletek a szervezőknél.",
+      "Nemzeti ünnep, az államalapítás és Szent István király emléknapja. A {adj} magyar közösségek ünnepi programokat, szentmisét szerveznek — részletek a szervezőknél.",
     color: "#c89a5c",
   },
   {
@@ -55,7 +61,7 @@ const HU_NATIONAL: RecurringDef[] = [
     key: "1956", month: 10, day: 23,
     title: "Október 23. — 1956-os forradalom",
     description:
-      "Nemzeti ünnep az 1956-os forradalom és szabadságharc emlékére. A svájci magyar egyesületek megemlékezéseket szerveznek — a helyszínt és időpontot a szervezők hirdetik meg.",
+      "Nemzeti ünnep az 1956-os forradalom és szabadságharc emlékére. A {adj} magyar egyesületek megemlékezéseket szerveznek — a helyszínt és időpontot a szervezők hirdetik meg.",
     color: "#c8392e",
   },
 ];
@@ -77,7 +83,8 @@ export interface GeneratedEvent {
  * A következő ~18 hónap jövőbeli megemlékezéseit generálja (a mai naptól).
  * Determinisztikus ID-k (`auto:hu:<key>:<év>`) → idempotens újrafuttatás.
  */
-export function generateRecurringEvents(now: Date = new Date()): GeneratedEvent[] {
+export function generateRecurringEvents(now: Date = new Date(), country: string = "CH"): GeneratedEvent[] {
+  const meta = COUNTRY_META[country] ?? COUNTRY_META.CH;
   const todayISO = now.toISOString().slice(0, 10);
   const startYear = now.getUTCFullYear();
   const out: GeneratedEvent[] = [];
@@ -88,17 +95,17 @@ export function generateRecurringEvents(now: Date = new Date()): GeneratedEvent[
       if (dateISO < todayISO) continue;
       const { day, month, weekday } = huDateParts(dateISO);
       out.push({
-        // URL-biztos ID (NINCS kettőspont — különben a böngésző sémának nézné).
-        id: `auto-hu-${def.key}-${y}`,
+        // URL-biztos ID (NINCS kettőspont) — ország a kulcsban, hogy CH és AT ne ütközzön.
+        id: `auto-hu-${country.toLowerCase()}-${def.key}-${y}`,
         title: def.title,
         eventDate: dateISO,
         dateDay: day,
         dateMonth: month,
         dateWeekday: weekday,
-        venue: "Svájc-szerte",
+        venue: meta.venue,
         tag: "Megemlékezés",
         color: def.color,
-        description: def.description,
+        description: def.description.replace(/\{adj\}/g, meta.adj),
       });
     }
   }

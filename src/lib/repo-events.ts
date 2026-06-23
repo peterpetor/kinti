@@ -547,13 +547,23 @@ export async function ensureGeneratedEvents(force: boolean): Promise<number> {
       .prepare(`SELECT MAX(event_date) AS maxd FROM events WHERE source = ?`)
       .bind(GENERATED_SOURCE)
       .first<{ maxd: string | null }>();
+    // Az AT-jelenlétet külön nézzük: ha a CH már fedett, de AT-generált még nincs
+    // (pl. közvetlenül a többcountry-deploy után), akkor IS regenerálunk.
+    const atRow = await db
+      .prepare(`SELECT COUNT(*) AS c FROM events WHERE source = ? AND country_code = 'AT' AND event_date >= date('now')`)
+      .bind(GENERATED_SOURCE)
+      .first<{ c: number }>();
     const horizon = new Date();
     horizon.setUTCDate(horizon.getUTCDate() + 300);
     const horizonISO = horizon.toISOString().slice(0, 10);
-    if (row?.maxd && row.maxd >= horizonISO) return 0; // már van bőven előre
+    if (row?.maxd && row.maxd >= horizonISO && (atRow?.c ?? 0) > 0) return 0; // már van bőven előre, mindkét országra
   }
 
-  const events = generateRecurringEvents();
+  // CH és AT generált megemlékezések (ország-tudatos felirat + country_code).
+  const GEN_COUNTRIES = ["CH", "AT"];
+  const events = GEN_COUNTRIES.flatMap((c) =>
+    generateRecurringEvents(new Date(), c).map((ev) => ({ ev, country: c })),
+  );
   await db
     .prepare(`DELETE FROM events WHERE source = ? AND event_date >= date('now')`)
     .bind(GENERATED_SOURCE)
@@ -563,14 +573,14 @@ export async function ensureGeneratedEvents(force: boolean): Promise<number> {
   const stmt = db.prepare(
     `INSERT OR REPLACE INTO events
        (id, title, event_date, date_day, date_month, date_weekday, start_time,
-        venue, going, tag, color, description, source, status, moderation_status,
+        venue, going, tag, color, description, country_code, source, status, moderation_status,
         moderation_decided_by, moderation_decision_at, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, NULL, ?, 0, ?, ?, ?, ?, 'approved', 1, 'auto-generated', datetime('now'), datetime('now'))`,
+     VALUES (?, ?, ?, ?, ?, ?, NULL, ?, 0, ?, ?, ?, ?, ?, ?, 'approved', 1, 'auto-generated', datetime('now'), datetime('now'))`,
   );
-  const batch = events.map((e) =>
+  const batch = events.map(({ ev, country }) =>
     stmt.bind(
-      e.id, e.title, e.eventDate, e.dateDay, e.dateMonth, e.dateWeekday,
-      e.venue, e.tag, e.color, e.description, GENERATED_SOURCE,
+      ev.id, ev.title, ev.eventDate, ev.dateDay, ev.dateMonth, ev.dateWeekday,
+      ev.venue, ev.tag, ev.color, ev.description, country, GENERATED_SOURCE,
     ),
   );
   await db.batch(batch);
