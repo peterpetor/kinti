@@ -270,28 +270,30 @@ export function computeSalaryAT(input: SalaryCalcInputAT): SalaryCalcResultAT {
 
 /** Bundesland-medián havi BRUTTÓ (full-time, ~14× konvenció) — Statistik Austria becslés. */
 export const AT_NATIONAL_MEDIAN_GROSS = 3350;
+// FONTOS: a kódok a regions.ts AT-kódjaival EGYEZNEK (W/NOE/OOE/STM/TIR/KTN/SBG/VBG/BGL),
+// hogy az egész app egységes legyen (ne legyen kétféle AT-régiókód-séma).
 export const BUNDESLAND_MEDIAN_GROSS: Record<string, number> = {
   W: 3400,   // Wien
-  NOe: 3450, // Niederösterreich
-  OOe: 3400, // Oberösterreich
-  Vbg: 3450, // Vorarlberg
-  Sbg: 3300, // Salzburg
-  Stmk: 3300,// Steiermark
-  Bgld: 3300,// Burgenland
-  Ktn: 3200, // Kärnten
-  Tirol: 3150,
+  NOE: 3450, // Niederösterreich
+  OOE: 3400, // Oberösterreich
+  VBG: 3450, // Vorarlberg
+  SBG: 3300, // Salzburg
+  STM: 3300, // Steiermark
+  BGL: 3300, // Burgenland
+  KTN: 3200, // Kärnten
+  TIR: 3150,
 };
 
 export const AT_BUNDESLAENDER: { code: string; name: string }[] = [
   { code: "W", name: "Bécs (Wien)" },
-  { code: "NOe", name: "Alsó-Ausztria (NÖ)" },
-  { code: "OOe", name: "Felső-Ausztria (OÖ)" },
-  { code: "Stmk", name: "Stájerország" },
-  { code: "Tirol", name: "Tirol" },
-  { code: "Ktn", name: "Karintia" },
-  { code: "Sbg", name: "Salzburg" },
-  { code: "Vbg", name: "Vorarlberg" },
-  { code: "Bgld", name: "Burgenland" },
+  { code: "NOE", name: "Alsó-Ausztria (NÖ)" },
+  { code: "OOE", name: "Felső-Ausztria (OÖ)" },
+  { code: "STM", name: "Stájerország" },
+  { code: "TIR", name: "Tirol" },
+  { code: "KTN", name: "Karintia" },
+  { code: "SBG", name: "Salzburg" },
+  { code: "VBG", name: "Vorarlberg" },
+  { code: "BGL", name: "Burgenland" },
 ];
 
 /** Percentilis az osztrák Bundesland-mediánhoz (log-normál becslés). */

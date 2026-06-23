@@ -32,8 +32,9 @@ const INDUSTRIES = {
 };
 
 // Bundesland-kód → bér-szorzó (a regions/salary-calc kódjaival egyezően).
+// A kódok a regions.ts AT-kódjaival egyeznek (W/NOE/OOE/STM/TIR/KTN/SBG/VBG/BGL).
 const BL = {
-  W: 1.05, NOe: 1.02, OOe: 1.03, Vbg: 1.04, Sbg: 1.0, Stmk: 0.98, Bgld: 0.96, Ktn: 0.95, Tirol: 0.96,
+  W: 1.05, NOE: 1.02, OOE: 1.03, VBG: 1.04, SBG: 1.0, STM: 0.98, BGL: 0.96, KTN: 0.95, TIR: 0.96,
 };
 const BL_CODES = Object.keys(BL);
 
@@ -42,7 +43,7 @@ const EXP = [[1, 0.82], [4, 1.0], [8, 1.18], [14, 1.3]];
 
 // 2 szobás havi alap-lakbér (EUR) Bundeslandonként; szobánként +~230.
 const RENT_BASE = {
-  W: 1000, NOe: 850, OOe: 820, Vbg: 1050, Sbg: 1020, Stmk: 800, Bgld: 760, Ktn: 770, Tirol: 980,
+  W: 1000, NOE: 850, OOE: 820, VBG: 1050, SBG: 1020, STM: 800, BGL: 760, KTN: 770, TIR: 980,
 };
 const ROOMS = [1, 2, 3, 4];
 
