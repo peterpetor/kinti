@@ -51,10 +51,11 @@ export function SalaryCalculator({ salaryByExp, country = "CH" }: { salaryByExp:
             className={inputCls} />
         </div>
         <div className="col-span-2">
-          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">Az én bruttó éves bérem ({cur})</label>
+          <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">Az én bruttó éves bérem ({cur}){country === "AT" ? " · 14×" : ""}</label>
           <input type="number" min={country === "AT" ? 15000 : 20000} max={country === "AT" ? 250000 : 300000} step={1000} value={mySalary || ""}
             onChange={e => setMySalary(parseInt(e.target.value) || 0)}
             className={`${inputCls} text-[16px] font-bold`} />
+          {country === "AT" && <p className="mt-1 text-[10.5px] leading-snug text-ink-faint normal-case">A teljes éves bruttó (Jahresbrutto) — a 13./14. havi fizetéssel együtt.</p>}
         </div>
       </div>
 
