@@ -66,6 +66,11 @@
     -webkit-tap-highlight-color: transparent;
     /* Natív érzet: nincs gumi-rugózás / véletlen pull-to-refresh / scroll-chaining. */
     overscroll-behavior: none;
+    /* A függőleges scrollbar MINDIG foglaljon helyet (rövid oldalon is), különben
+       a középre zárt tartalom oldalra ugrik, amikor megjelenik/eltűnik a sáv.
+       Desktopon látható sáv; mobilon overlay (úgyis nem tol). */
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
   }
 
   body {
