@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { CustomsCalculator } from "@/components/views/customs-calculator";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { CountryGuard } from "@/components/country-guard";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ export default function VamPage() {
 
   return (
     <div className="space-y-5 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
+      <CountryGuard feature="vam" />
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink">
