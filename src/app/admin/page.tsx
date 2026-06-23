@@ -91,7 +91,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
 
       {/* AI-használat (Workers AI token-fogyás) */}
       <section className="space-y-2">
-        <h2 className="text-[14px] font-extrabold text-ink">AI-használat (Workers AI)</h2>
+        <h2 className="text-[14px] font-extrabold text-ink">AI-használat (Workers AI){country !== "all" && <GlobalTag />}</h2>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Stat label="Ma — token" value={aiUsage.todayTokens} sub={`${fmt(aiUsage.todayCalls)} hívás`} accent={aiUsage.todayTokens > 0} />
           <Stat label="7 nap — token" value={aiUsage.last7Tokens} sub={`${fmt(aiUsage.last7Calls)} hívás`} />
@@ -132,7 +132,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
 
       {/* Email-küldés (Resend napi limit) */}
       <section className="space-y-2">
-        <h2 className="text-[14px] font-extrabold text-ink">Email-küldés (Resend)</h2>
+        <h2 className="text-[14px] font-extrabold text-ink">Email-küldés (Resend){country !== "all" && <GlobalTag />}</h2>
         <div className="rounded-card border border-line bg-surface p-4 shadow-card">
           <div className="flex items-baseline justify-between">
             <span className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">Ma elküldve</span>
@@ -159,7 +159,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
 
       {/* Funkció-használat — melyik modult használják (privacy-first, azonosító nélkül) */}
       <section className="space-y-2">
-        <h2 className="text-[14px] font-extrabold text-ink">Funkció-használat (utolsó 7 nap)</h2>
+        <h2 className="text-[14px] font-extrabold text-ink">Funkció-használat (utolsó 7 nap){country !== "all" && <GlobalTag />}</h2>
         <div className="rounded-card border border-line bg-surface p-4 shadow-card">
           {featureUsage.rows.length === 0 ? (
             <p className="text-[12.5px] text-ink-muted">
@@ -195,7 +195,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
 
       {/* Trendek — utolsó 14 nap */}
       <section className="space-y-2">
-        <h2 className="text-[14px] font-extrabold text-ink">Trendek (utolsó 14 nap)</h2>
+        <h2 className="text-[14px] font-extrabold text-ink">Trendek (utolsó 14 nap){country !== "all" && <GlobalTag />}</h2>
         <div className="grid gap-2 sm:grid-cols-3">
           <TrendCard
             label="Új vállalkozás"
@@ -486,6 +486,15 @@ function TrendCard({ label, data, total7d, sub }: { label: string; data: number[
         )}
       </div>
     </div>
+  );
+}
+
+/** Jelzi, hogy egy szekció platform-szintű (nincs ország-dimenziója → az ország-szűrő nem hat rá). */
+function GlobalTag() {
+  return (
+    <span className="ml-2 align-middle rounded-full bg-surface-alt px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-faint">
+      🌍 globális
+    </span>
   );
 }
 
