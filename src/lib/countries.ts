@@ -8,7 +8,7 @@
  */
 
 export interface Country {
-  /** ISO-3166 alpha-2 kód (nagybetűs): CH, AT, DE, NL, DK, SE. */
+  /** ISO-3166 alpha-2 kód (nagybetűs): CH, AT, DE, NL. */
   code: string;
   /** Magyar országnév. */
   name: string;
@@ -23,8 +23,6 @@ export const COUNTRIES: Country[] = [
   { code: "AT", name: "Ausztria", flag: "🇦🇹", enabled: true },
   { code: "DE", name: "Németország", flag: "🇩🇪", enabled: false },
   { code: "NL", name: "Hollandia", flag: "🇳🇱", enabled: false },
-  { code: "DK", name: "Dánia", flag: "🇩🇰", enabled: false },
-  { code: "SE", name: "Svédország", flag: "🇸🇪", enabled: false },
 ];
 
 /** Alapértelmezett ország, ha a felhasználó még nem választott (vagy érvénytelen). */

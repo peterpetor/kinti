@@ -24,8 +24,6 @@ export const REGION_LABEL: Record<string, string> = {
   AT: "tartomány",
   DE: "tartomány",
   NL: "provincia",
-  DK: "régió",
-  SE: "megye",
 };
 
 // Ausztria — 9 Bundesland.
@@ -77,48 +75,12 @@ const NL_REGIONS: Region[] = [
   { code: "ZE", name: "Zeeland", aliases: [] },
 ];
 
-// Dánia — 5 region.
-const DK_REGIONS: Region[] = [
-  { code: "HOV", name: "Hovedstaden", aliases: ["koppenhága", "copenhagen", "københavn"] },
-  { code: "SJ", name: "Sjælland", aliases: ["zealand"] },
-  { code: "SYD", name: "Syddanmark", aliases: ["dél-dánia", "south denmark", "odense"] },
-  { code: "MJ", name: "Midtjylland", aliases: ["közép-jylland", "aarhus", "århus"] },
-  { code: "NJ", name: "Nordjylland", aliases: ["észak-jylland", "aalborg"] },
-];
-
-// Svédország — 21 län (hivatalos megyebetűk).
-const SE_REGIONS: Region[] = [
-  { code: "AB", name: "Stockholm", aliases: [] },
-  { code: "M", name: "Skåne", aliases: ["malmö", "scania"] },
-  { code: "O", name: "Västra Götaland", aliases: ["göteborg", "gothenburg"] },
-  { code: "C", name: "Uppsala", aliases: [] },
-  { code: "D", name: "Södermanland", aliases: [] },
-  { code: "E", name: "Östergötland", aliases: ["linköping"] },
-  { code: "F", name: "Jönköping", aliases: [] },
-  { code: "G", name: "Kronoberg", aliases: ["växjö"] },
-  { code: "H", name: "Kalmar", aliases: [] },
-  { code: "I", name: "Gotland", aliases: ["visby"] },
-  { code: "K", name: "Blekinge", aliases: [] },
-  { code: "N", name: "Halland", aliases: [] },
-  { code: "S", name: "Värmland", aliases: ["karlstad"] },
-  { code: "T", name: "Örebro", aliases: [] },
-  { code: "U", name: "Västmanland", aliases: ["västerås"] },
-  { code: "W", name: "Dalarna", aliases: ["falun"] },
-  { code: "X", name: "Gävleborg", aliases: ["gävle"] },
-  { code: "Y", name: "Västernorrland", aliases: ["sundsvall"] },
-  { code: "Z", name: "Jämtland", aliases: ["östersund"] },
-  { code: "AC", name: "Västerbotten", aliases: ["umeå"] },
-  { code: "BD", name: "Norrbotten", aliases: ["luleå", "kiruna"] },
-];
-
 /** Ország → régiók. A CH a meglévő CANTONS-ra mutat (egyetlen forrás). */
 export const REGIONS: Record<string, Region[]> = {
   CH: CANTONS,
   AT: AT_REGIONS,
   DE: DE_REGIONS,
   NL: NL_REGIONS,
-  DK: DK_REGIONS,
-  SE: SE_REGIONS,
 };
 
 /** Az adott ország régiói (ismeretlen ország → üres lista). */

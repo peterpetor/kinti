@@ -440,7 +440,7 @@ export default function AdatvedelemPage() {
         így más felhasználók sem férnek hozzájuk. Ezek a következők:
       </p>
       <ul>
-        <li><strong>Választott ország</strong> (<code>kinti.country</code>) — melyik ország Kintijét nézed (Svájc, Ausztria, Németország, Hollandia, Dánia, Svédország). A térkép és a tartalom ehhez igazodik.</li>
+        <li><strong>Választott ország</strong> (<code>kinti.country</code>) — melyik ország Kintijét nézed (Svájc, Ausztria, Németország, Hollandia). A térkép és a tartalom ehhez igazodik.</li>
         <li><strong>Választott régió / kanton</strong> (<code>kinti.canton</code>) — a helyi szűréshez és a kanton-célzott push-hoz.</li>
         <li><strong>Nézet- és szűrő-preferenciák</strong> — pl. lista vagy térkép nézet, a kalkulátorokba (bér, vám, lakhatás, árfolyam) utoljára beírt értékek, kiválasztott szűrők.</li>
         <li><strong>Mentett bér-ajánlatok</strong> — lásd a 2.11 pontot.</li>

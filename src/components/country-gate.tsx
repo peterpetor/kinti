@@ -68,8 +68,8 @@ export function CountryGate() {
         </div>
 
         <p className="mt-6 text-center text-[11.5px] leading-relaxed text-white/70">
-          Svájc és Ausztria érhető el. A többi ország hamarosan indul —
-          a választásod elmentjük, és onnan folytatod, amint kész.
+          Svájc és Ausztria már él — Németország és Hollandia hamarosan.
+          A választásod elmentjük, és onnan folytatod, amint kész.
         </p>
       </div>
     </div>

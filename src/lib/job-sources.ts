@@ -73,24 +73,6 @@ export const JOB_SOURCES: Record<string, CountryJobSources> = {
     ],
     tip: "Hollandiában munkához BSN-szám (társadalombiztosítási azonosító) kell — intézd a beköltözéskor. Sok nemzetközi állás angolul is elérhető.",
   },
-  DK: {
-    sources: [
-      { name: "Jobnet (jobnet.dk)", url: "https://job.jobnet.dk", note: "A dán állam hivatalos állásportálja.", official: true },
-      { name: "Work in Denmark", url: "https://www.workindenmark.dk", note: "Hivatalos portál kifejezetten külföldi munkavállalóknak — angolul.", official: true },
-      { name: "Jobindex", url: "https://www.jobindex.dk", note: "Dánia legnagyobb piaci állásportálja." },
-      EURES,
-    ],
-    tip: "A Work in Denmark a legjobb belépő külföldinek (angol nyelvű, hatósági). Munkához CPR-szám és (sok helyen) NemKonto kell.",
-  },
-  SE: {
-    sources: [
-      { name: "Platsbanken (Arbetsförmedlingen)", url: "https://arbetsformedlingen.se/platsbanken", note: "A svéd állami munkaügyi szolgálat hivatalos állásbörzéje.", official: true },
-      { name: "Blocket Jobb", url: "https://jobb.blocket.se", note: "Nagy svéd piaci állásportál." },
-      { name: "Indeed.se", url: "https://se.indeed.com", note: "Aggregátor — sok hirdetés egy helyen." },
-      EURES,
-    ],
-    tip: "Munkához és adóhoz svéd személyi szám (personnummer) kell — intézd a Skatteverketnél. Sok tech- és nemzetközi állás angolul is megy.",
-  },
 };
 
 /** Egy ország forrás-katalógusa (vagy `null`, ha nincs felvéve). */
