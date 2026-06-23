@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isValidCountry } from "@/lib/countries";
 import { createNewsletterSubscriber } from "@/lib/repo-newsletter";
 import { sendNewsletterConfirmationEmail } from "@/lib/email";
 import { isDisposableEmail } from "@/lib/disposable-emails";
@@ -19,6 +20,11 @@ export async function POST(req: Request) {
 
     if (!email || !country) {
       return NextResponse.json({ error: "Hiányzó mezők." }, { status: 400 });
+    }
+
+    // Csak érvényes ország-KÓD (CH/AT/DE/NL) — egységes a többi felülettel.
+    if (!isValidCountry(country)) {
+      return NextResponse.json({ error: "Érvénytelen ország." }, { status: 400 });
     }
 
     if (!email.includes("@")) {

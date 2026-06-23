@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { Icon, ScreenHeader } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { COUNTRIES, DEFAULT_COUNTRY } from "@/lib/countries";
 
 export default function HirlevelPage() {
   const [email, setEmail] = useState("");
-  const [country, setCountry] = useState("Svájc");
+  const [country, setCountry] = useState(DEFAULT_COUNTRY); // ország-KÓD (CH/AT/DE/NL)
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -74,23 +75,20 @@ export default function HirlevelPage() {
             <label htmlFor="country" className="text-[12px] font-bold text-ink-muted uppercase tracking-wider">
               Ország kiválasztása
             </label>
-            <div className="grid grid-cols-3 gap-2">
-              {["Svájc", "Németország", "Ausztria"].map((c) => (
+            <div className="grid grid-cols-2 gap-2">
+              {COUNTRIES.map((c) => (
                 <button
-                  key={c}
+                  key={c.code}
                   type="button"
-                  onClick={() => setCountry(c)}
+                  onClick={() => setCountry(c.code)}
                   className={cn(
                     "rounded-xl border py-2.5 text-[13px] font-bold transition-all active:scale-95",
-                    country === c
+                    country === c.code
                       ? "border-primary bg-primary/10 text-primary"
                       : "border-line bg-surface-alt text-ink-muted hover:border-primary/50"
                   )}
                 >
-                  {c === "Svájc" && "🇨🇭 "}
-                  {c === "Németország" && "🇩🇪 "}
-                  {c === "Ausztria" && "🇦🇹 "}
-                  {c}
+                  {c.flag} {c.name}
                 </button>
               ))}
             </div>
