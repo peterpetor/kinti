@@ -36,7 +36,7 @@ export default function ProPage() {
   return (
     <div className="relative mx-auto max-w-md px-5 pb-24 pt-[calc(env(safe-area-inset-top)+2rem)]">
       {/* "..." menü a jobb felső sarokban */}
-      <div className="absolute right-5 top-[calc(env(safe-area-inset-top)+1.25rem)] z-10">
+      <div className="absolute right-5 top-[calc(env(safe-area-inset-top)+2rem)] z-10">
         <DropdownMenu />
       </div>
 

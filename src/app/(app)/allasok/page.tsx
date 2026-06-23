@@ -30,7 +30,7 @@ export default async function JobsPage() {
   return (
     <div className="pt-[calc(env(safe-area-inset-top)+2rem)]">
       <PullToRefresh>
-    <div className="space-y-5 px-5 pb-4 min-h-[calc(100dvh-70px)] flex flex-col pt-2">
+    <div className="space-y-5 px-5 pb-4 min-h-[calc(100dvh-70px)] flex flex-col">
       <AllasokHeader />
 
       <main className="flex-1 pb-20 space-y-6">

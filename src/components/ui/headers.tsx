@@ -26,7 +26,7 @@ export function ScreenHeader({
 }) {
   return (
     <header className={cn("flex items-start justify-between gap-3", className)}>
-      {left && <div className="shrink-0 pt-1">{left}</div>}
+      {left && <div className="shrink-0">{left}</div>}
       <div className="min-w-0 flex-1">
         {eyebrow && (
           <p className="text-[11.5px] font-bold uppercase tracking-wider text-accent">{eyebrow}</p>
@@ -35,7 +35,9 @@ export function ScreenHeader({
           {title}
         </h1>
       </div>
-      <div className="flex shrink-0 items-center gap-2 pt-1">
+      {/* A menü gomb a tartalom tetejéhez (content-top) igazodik — így MINDEN
+          oldalon ugyanazon a szinten van (a logó-soros oldalak is content-top-ok). */}
+      <div className="flex shrink-0 items-center gap-2">
         {back}
         {right !== undefined ? right : <DropdownMenu />}
       </div>
