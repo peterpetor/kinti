@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import {
   deleteSalaryOffer,
   listSalaryOffers,
@@ -28,6 +30,10 @@ export function SalaryOffersView() {
   const [offers, setOffers] = useState<SalaryOffer[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  // Az ajánlat-összehasonlítás a svájci modellre épül (Quellensteuer, kanton) —
+  // az osztrák Bérkalkulátor más adórendszerrel számol, és nem ment ajánlatot.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
 
   useEffect(() => {
     setOffers(listSalaryOffers());
@@ -50,6 +56,31 @@ export function SalaryOffersView() {
   if (!hydrated) {
     return (
       <p className="text-center text-[13px] text-ink-muted">Betöltés…</p>
+    );
+  }
+
+  if (country !== "CH") {
+    return (
+      <section className="rounded-card border border-dashed border-line bg-surface p-8 text-center shadow-card">
+        <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary">
+          <Icon name="globe" size={20} strokeWidth={2.4} />
+        </span>
+        <h2 className="mt-3 text-[17px] font-extrabold tracking-tight text-ink">
+          Ez a svájci Bérkalkulátorhoz tartozik
+        </h2>
+        <p className="mt-2 text-[13px] leading-relaxed text-ink-muted">
+          Az ajánlat-összehasonlítás a svájci nettó-bér modelljére épül (Quellensteuer,
+          kanton, egyházi adó). Az osztrák Bérkalkulátor más adórendszerrel (Lohnsteuer,
+          SV) számol, és nem ment ajánlatot.
+        </p>
+        <Link
+          href="/berkalkulator"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-pill bg-primary px-5 py-2.5 text-[13px] font-extrabold text-white shadow-card active:scale-95"
+        >
+          <span>💰</span>
+          Bérkalkulátorhoz
+        </Link>
+      </section>
     );
   }
 

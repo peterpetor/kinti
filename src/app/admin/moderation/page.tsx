@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cn } from "@/lib/cn";
+import { COUNTRIES, getCountry } from "@/lib/countries";
 import { getAdminUserId } from "@/lib/admin";
 import {
   listModerationQueue,
@@ -38,6 +40,7 @@ const STATUS_VALUES: Record<string, 0 | 1 | 2> = {
 type SearchParams = {
   status?: string;
   type?: string;
+  c?: string;
 };
 
 export default async function ModerationPage({
@@ -59,6 +62,10 @@ export default async function ModerationPage({
       ? (searchParams.type as ModerationTable)
       : "reviews";
 
+  // Ország-szűrő (a vállalkozás/esemény táblákra; a vélemény nem ország-szűrhető).
+  const country = searchParams?.c && searchParams.c !== "all" ? searchParams.c : "all";
+  const countryName = country === "all" ? "összes ország" : getCountry(country)?.name ?? country;
+
   // Számlálók minden táblára (csak pending) — a tab-okon való gyorsbadge.
   const [
     pendingReviews,
@@ -67,9 +74,9 @@ export default async function ModerationPage({
     items,
   ] = await Promise.all([
     moderationCount("reviews", 0),
-    moderationCount("businesses", 0),
-    moderationCount("events", 0),
-    listModerationQueue(typeParam, statusValue, 100),
+    moderationCount("businesses", 0, country),
+    moderationCount("events", 0, country),
+    listModerationQueue(typeParam, statusValue, 100, country),
   ]);
 
   const pendingPerType: Record<ModerationTable, number> = {
@@ -101,7 +108,7 @@ export default async function ModerationPage({
         {(["pending", "approved", "rejected"] as const).map((s) => (
           <Link
             key={s}
-            href={`/admin/moderation?status=${s}&type=${typeParam}`}
+            href={`/admin/moderation?status=${s}&type=${typeParam}&c=${country}`}
             className={`flex-1 rounded-pill px-3 py-1.5 text-center text-[12px] font-bold transition ${
               statusParam === s
                 ? "bg-primary text-white shadow-card"
@@ -120,7 +127,7 @@ export default async function ModerationPage({
           return (
             <Link
               key={t}
-              href={`/admin/moderation?status=${statusParam}&type=${t}`}
+              href={`/admin/moderation?status=${statusParam}&type=${t}&c=${country}`}
               className={`inline-flex items-center gap-1.5 rounded-pill border px-3 py-1.5 text-[11.5px] font-bold transition ${
                 typeParam === t
                   ? "border-primary bg-primary-soft text-primary"
@@ -137,6 +144,16 @@ export default async function ModerationPage({
           );
         })}
       </div>
+
+      {/* Ország-szűrő (a vállalkozás/esemény táblákra — a vélemény nem ország-szűrhető) */}
+      {typeParam !== "reviews" && (
+        <div className="flex flex-wrap gap-1.5">
+          <CountryTab code="all" label="🌍 Mind" active={country === "all"} status={statusParam} type={typeParam} />
+          {COUNTRIES.map((c) => (
+            <CountryTab key={c.code} code={c.code} label={`${c.flag} ${c.code}`} active={country === c.code} live={c.enabled} status={statusParam} type={typeParam} />
+          ))}
+        </div>
+      )}
 
       {/* Audit Log & Abuse Dashboard Links */}
       <div className="grid grid-cols-2 gap-3">
@@ -163,8 +180,8 @@ export default async function ModerationPage({
       {/* Lista */}
       <section className="space-y-2">
         <p className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-          {STATUS_LABELS[statusParam]} {TABLE_LABELS[typeParam].toLowerCase()} ·{" "}
-          {items.length} db
+          {STATUS_LABELS[statusParam]} {TABLE_LABELS[typeParam].toLowerCase()}
+          {typeParam !== "reviews" ? ` · ${countryName}` : ""} · {items.length} db
         </p>
 
         {items.length === 0 ? (
@@ -237,6 +254,21 @@ export default async function ModerationPage({
         )}
       </section>
     </div>
+  );
+}
+
+function CountryTab({ code, label, active, status, type, live = true }: { code: string; label: string; active: boolean; status: string; type: string; live?: boolean }) {
+  return (
+    <Link
+      href={`/admin/moderation?status=${status}&type=${type}&c=${code}`}
+      className={cn(
+        "inline-flex items-center gap-1 rounded-pill px-3 py-1.5 text-[11.5px] font-bold transition",
+        active ? "bg-primary text-white shadow-card" : "border border-line bg-surface text-ink hover:bg-surface-alt",
+        !live && !active && "opacity-55",
+      )}
+    >
+      {label}
+    </Link>
   );
 }
 

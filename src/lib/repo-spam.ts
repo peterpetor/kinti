@@ -18,7 +18,12 @@ export interface ModerationQueueItem {
   moderationStatus: number; moderationDecisionAt: string | null; moderationDecidedBy: string | null;
 }
 
-export async function listModerationQueue(table: ModerationTable, status: 0 | 1 | 2, limit = 50): Promise<ModerationQueueItem[]> {
+/** A businesses/events táblának van country_code-ja; a reviews-nek nincs (ott a szűrő no-op). */
+function moderationHasCountry(table: ModerationTable): boolean {
+  return table === "businesses" || table === "events";
+}
+
+export async function listModerationQueue(table: ModerationTable, status: 0 | 1 | 2, limit = 50, country?: string | null): Promise<ModerationQueueItem[]> {
   assertModerationTable(table);
   const db = getDB();
   const fields: Record<ModerationTable, { title: string; preview: string; createdAt: string; email: string; ip: string; image: string }> = {
@@ -27,12 +32,14 @@ export async function listModerationQueue(table: ModerationTable, status: 0 | 1 
     events: { title: "title", preview: "COALESCE(description, venue, '')", createdAt: "COALESCE(event_date, '')", email: "email", ip: "''", image: "image_key" },
   };
   const f = fields[table];
+  const useCountry = !!country && country !== "all" && moderationHasCountry(table);
   const sql = `SELECT id, ${f.title} AS title, ${f.preview} AS preview, ${f.createdAt} AS createdAt,
                       ${f.email} AS submitterEmail, ${f.ip} AS submitterIpHash, ${f.image} AS imageKey,
                       moderation_status AS moderationStatus, moderation_decision_at AS moderationDecisionAt,
                       moderation_decided_by AS moderationDecidedBy
-               FROM ${table} WHERE moderation_status = ? ORDER BY createdAt DESC LIMIT ?`;
-  const { results } = await db.prepare(sql).bind(status, limit).all<{
+               FROM ${table} WHERE moderation_status = ? ${useCountry ? "AND country_code = ?" : ""} ORDER BY createdAt DESC LIMIT ?`;
+  const binds = useCountry ? [status, country, limit] : [status, limit];
+  const { results } = await db.prepare(sql).bind(...binds).all<{
     id: string; title: string | null; preview: string | null; createdAt: string | null;
     submitterEmail: string | null; submitterIpHash: string | null; imageKey: string | null;
     moderationStatus: number; moderationDecisionAt: string | null; moderationDecidedBy: string | null;
@@ -45,9 +52,12 @@ export async function listModerationQueue(table: ModerationTable, status: 0 | 1 
   }));
 }
 
-export async function moderationCount(table: ModerationTable, status: 0 | 1 | 2): Promise<number> {
+export async function moderationCount(table: ModerationTable, status: 0 | 1 | 2, country?: string | null): Promise<number> {
   assertModerationTable(table);
-  const row = await getDB().prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE moderation_status = ?`).bind(status).first<{ n: number }>();
+  const useCountry = !!country && country !== "all" && moderationHasCountry(table);
+  const sql = `SELECT COUNT(*) AS n FROM ${table} WHERE moderation_status = ? ${useCountry ? "AND country_code = ?" : ""}`;
+  const binds = useCountry ? [status, country] : [status];
+  const row = await getDB().prepare(sql).bind(...binds).first<{ n: number }>();
   return row?.n ?? 0;
 }
 
