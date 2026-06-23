@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Icon } from "@/components/ui";
 import { CANTONS } from "@/lib/cantons";
+import { getRegions } from "@/lib/regions";
 import { usePreferredCanton } from "@/lib/canton-pref";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -22,21 +23,26 @@ import { describeWeather, type WeatherNow } from "@/lib/weather";
 type Phase = "loading" | "ready" | "error";
 
 export function WeatherWidget() {
-  // A preferált kanton a megosztott forrás; ha nincs beállítva, ZH-t mutatunk.
+  // A preferált régió a megosztott forrás (kanton CH / Bundesland AT).
   const [preferred, setPreferred] = usePreferredCanton();
-  const canton = preferred ?? "ZH";
   const [data, setData] = useState<WeatherNow | null>(null);
   const [phase, setPhase] = useState<Phase>("loading");
-  // A svájci időjárás-modell (MeteoSwiss, kantonok) csak CH-ra értelmes → más
-  // országban elrejtjük. Hidratálás-biztos: mount előtt CH-default (látszik).
+  // Hidratálás-biztos: mount előtt CH-default. CH + AT támogatott (más modell/pont);
+  // a többi országban elrejtjük.
   const [prefCountry] = usePreferredCountry();
   const [mountedC, setMountedC] = useState(false);
   useEffect(() => setMountedC(true), []);
+  const country = mountedC ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  const regions = isAT ? getRegions("AT") : CANTONS;
+  const defaultCode = isAT ? "W" : "ZH";
+  // Ha a megosztott preferált régió másik országé, az aktuális ország székhelyére esünk.
+  const canton = preferred && regions.some((r) => r.code === preferred) ? preferred : defaultCode;
 
-  const load = useCallback(async (code: string) => {
+  const load = useCallback(async (code: string, ctry: string) => {
     setPhase("loading");
     try {
-      const res = await fetch(`/api/weather?canton=${encodeURIComponent(code)}`);
+      const res = await fetch(`/api/weather?canton=${encodeURIComponent(code)}&country=${ctry}`);
       if (!res.ok) throw new Error("weather");
       const json = (await res.json()) as WeatherNow;
       setData(json);
@@ -47,8 +53,8 @@ export function WeatherWidget() {
   }, []);
 
   useEffect(() => {
-    load(canton);
-  }, [canton, load]);
+    load(canton, country);
+  }, [canton, country, load]);
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     // A megosztott setter perzisztál + értesíti az app többi részét.
@@ -57,8 +63,8 @@ export function WeatherWidget() {
 
   // Ha az API nem elérhető, ne rondítsuk a főoldalt — elrejtjük.
   if (phase === "error") return null;
-  // Nem-CH országban a svájci időjárás nem releváns → elrejtjük.
-  if (mountedC && (prefCountry ?? DEFAULT_COUNTRY) !== "CH") return null;
+  // Csak a támogatott országokban (CH, AT); másutt elrejtjük.
+  if (mountedC && country !== "CH" && country !== "AT") return null;
 
   const cond = data ? describeWeather(data.code) : null;
 
@@ -84,7 +90,7 @@ export function WeatherWidget() {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1 text-[13.5px] font-bold tracking-[-0.01em] text-ink">
           <Icon name="pin" size={12} strokeWidth={2.4} className="shrink-0 text-accent" />
-          <span className="truncate">{data?.city ?? "Svájc"}</span>
+          <span className="truncate">{data?.city ?? (isAT ? "Ausztria" : "Svájc")}</span>
         </div>
         <div className="mt-0.5 truncate text-[11.5px] font-semibold text-ink-muted">
           {phase === "loading" || !data || !cond ? (
@@ -112,10 +118,10 @@ export function WeatherWidget() {
         <select
           value={canton}
           onChange={handleChange}
-          aria-label="Időjárás — kanton választó"
+          aria-label={isAT ? "Időjárás — Bundesland választó" : "Időjárás — kanton választó"}
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
         >
-          {CANTONS.map((c) => (
+          {regions.map((c) => (
             <option key={c.code} value={c.code}>
               {c.name} ({c.code})
             </option>

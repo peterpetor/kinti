@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cantonPoint } from "@/lib/cantons";
+import { atPoint } from "@/lib/at-points";
 import type { WeatherNow } from "@/lib/weather";
 
 export const runtime = "edge";
@@ -30,13 +31,17 @@ interface OpenMeteoResponse {
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const point = cantonPoint(searchParams.get("canton"));
+  // Ország-tudatos: CH → MeteoSwiss modell + kanton-pont; AT → best_match + Bundesland-pont.
+  const country = searchParams.get("country") === "AT" ? "AT" : "CH";
+  const point = country === "AT" ? atPoint(searchParams.get("canton")) : cantonPoint(searchParams.get("canton"));
+  const tz = country === "AT" ? "Europe%2FVienna" : "Europe%2FZurich";
+  const modelParam = country === "AT" ? "" : "&models=meteoswiss_icon_ch2";
 
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${point.lat}&longitude=${point.lng}` +
     `&current=temperature_2m,weather_code,apparent_temperature,relative_humidity_2m,wind_speed_10m` +
     `&daily=temperature_2m_max,temperature_2m_min,weather_code` +
-    `&timezone=Europe%2FZurich&forecast_days=1&models=meteoswiss_icon_ch2`;
+    `&timezone=${tz}&forecast_days=1${modelParam}`;
 
   try {
     const upstream = await fetch(url, {
