@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui";
 import { AllasokHeader } from "./AllasokHeader";
 import { JobAlertRadar } from "@/components/views/job-alert-radar";
 import { JobsBrowser } from "@/components/views/jobs-browser";
+import { JobSourcesSection } from "@/components/views/job-sources-section";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 
 export const runtime = "edge";
@@ -53,6 +54,9 @@ export default async function JobsPage() {
 
         {/* Kereső (szöveg + kanton + szakma) + találatok */}
         <JobsBrowser jobs={jobs} proMatch={proMatch} />
+
+        {/* Hol keress még? — ország-tudatos hivatalos álláskereső-források (jogtiszta, link-out) */}
+        <JobSourcesSection />
       </main>
     </div>
       </PullToRefresh>
