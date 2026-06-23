@@ -60,6 +60,8 @@ export async function fetchChwEvents(now: Date = new Date()): Promise<ChwMappedE
     const res = await fetch(url, {
       // Edge-cache: óránként frissítjük (kíméli a külső API-t).
       cf: { cacheTtl: 3600, cacheEverything: true },
+      // Időkorlát: a render-úton (inline) await-elhető legyen anélkül, hogy beragadna.
+      signal: AbortSignal.timeout(6000),
     } as RequestInit);
     if (!res.ok) return [];
     const json = (await res.json()) as { data?: ChwApiEvent[] };

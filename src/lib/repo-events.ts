@@ -554,6 +554,23 @@ export async function kickoffEventFeedSync(): Promise<void> {
 }
 
 /**
+ * Render-úton AWAIT-elhető, megbízható tartalom-frissítés (NEM waitUntil!).
+ * A `waitUntil` Pages-en nem fut le megbízhatóan (a generált/CHW események így
+ * sosem kerültek be élesben), ezért a kulcs-tartalmat inline biztosítjuk:
+ *   • generált megemlékezések (gyors, helyi) — garantáltan naprakész,
+ *   • CHW (Bécs) — ha elavult (időkorlátos fetch, throttle-olva → ritkán fut).
+ * Az iCal feedek (ritka, admin által hozzáadott) maradnak a háttér-szinkronban.
+ */
+export async function ensureFreshEvents(): Promise<void> {
+  try {
+    await ensureGeneratedEvents(false);
+    if (await chwIsStale()) await syncChwEvents();
+  } catch {
+    // Sose törje meg a Közösség-oldal renderét.
+  }
+}
+
+/**
  * Generált, dátum-biztos megemlékezések upsert-elése (feed nélkül is).
  * Lustán: csak akkor ír, ha nincs ~10 hónapra előre lefedettség (`force=false`),
  * vagy ha kényszerítve van (`force=true`, pl. kézi/cron szinkronkor).
