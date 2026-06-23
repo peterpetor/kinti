@@ -63,18 +63,20 @@ export default function ProPage() {
           </div>
           <h2 className="text-[22px] font-black text-ink">Kinti PRO</h2>
           <p className="text-[13px] text-ink-muted mt-2 mb-6 flex-1">
-            Magánszemélyeknek. Nyisd meg az összes prémium modult és kalkulátort.
+            Magánszemélyeknek. AI-asszisztens, prémium modulok és kalkulátorok — egy havidíjért.
           </p>
-          
+
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">29 CHF</span>
+            <span className="text-3xl font-black text-ink">19 CHF</span>
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
           </div>
 
           <ul className="space-y-3 mb-8 flex-1">
+            <FeatureItem text="AI Interjú Szimulátor svájci cégekhez" />
+            <FeatureItem text="AI CV-audit — önéletrajz-elemzés és tippek" />
+            <FeatureItem text="Szakmai szótár — 500+ svájci kifejezés" />
             <FeatureItem text="Teljes Svájci Német (Mundart) kurzus" />
             <FeatureItem text="Einbürgerung (Állampolgárság) Szimulátor" />
-            <FeatureItem text="AI Interjú Szimulátor svájci cégekhez" />
             <FeatureItem text="Teljesen reklámmentes élmény" />
           </ul>
 

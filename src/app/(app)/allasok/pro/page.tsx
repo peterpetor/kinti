@@ -46,8 +46,8 @@ export default async function KintiProPage() {
           <li className="flex gap-3">
             <span className="text-[#e3a233] shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
             <div>
-              <strong className="text-[14px] text-ink block">AI Munkainterjú Szimulátor</strong>
-              <span className="text-[13px] text-ink-muted">Gyakorolj svájci cégek interjúira mesterséges intelligenciával.</span>
+              <strong className="text-[14px] text-ink block">AI Munkainterjú Szimulátor + CV-audit</strong>
+              <span className="text-[13px] text-ink-muted">Gyakorolj svájci cégek interjúira, és elemeztesd az önéletrajzod mesterséges intelligenciával.</span>
             </div>
           </li>
           <li className="flex gap-3">
@@ -69,7 +69,7 @@ export default async function KintiProPage() {
         <div className="bg-surface-alt p-6 border-t border-line text-center">
           <p className="text-[13px] font-bold text-ink-muted uppercase tracking-wider mb-2">Kinti PRO előfizetés</p>
           <div className="text-[36px] font-extrabold text-ink">
-            29 <span className="text-[20px] text-ink-muted font-bold">CHF / hó</span>
+            19 <span className="text-[20px] text-ink-muted font-bold">CHF / hó</span>
           </div>
           <p className="text-[12px] text-ink-muted mt-1 mb-6">Egy díj, minden PRO funkció. Bármikor lemondható, rejtett költségek nélkül.</p>
           
