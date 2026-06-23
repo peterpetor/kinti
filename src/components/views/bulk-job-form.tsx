@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui";
-import { CANTONS } from "@/lib/cantons";
+import { getRegions, regionLabel } from "@/lib/regions";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { JOB_CATEGORIES } from "@/lib/job-categories";
 
 interface Row {
@@ -29,6 +31,12 @@ const inputCls =
 
 export function BulkJobForm() {
   const router = useRouter();
+  // Ország-tudatos: a régió-lista, a pénznem és a város-példa a választott országhoz.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  const regions = getRegions(country);
+  const cur = isAT ? "EUR" : "CHF";
   const [rows, setRows] = useState<Row[]>([emptyRow(), emptyRow(), emptyRow()]);
   const [legalAttested, setLegalAttested] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -67,7 +75,7 @@ export function BulkJobForm() {
       const res = await fetch("/api/employer/jobs/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ legalAttested, jobs }),
+        body: JSON.stringify({ legalAttested, jobs, country }),
       });
       const data = (await res.json()) as { error?: string; created?: number; errors?: { index: number; error: string }[] };
       if (!res.ok) throw new Error(data.error || "Hiba történt a feladás során.");
@@ -128,8 +136,8 @@ export function BulkJobForm() {
               ))}
             </select>
             <select value={row.cantonCode} onChange={(e) => update(i, "cantonCode", e.target.value)} className={inputCls}>
-              <option value="">Kanton…</option>
-              {CANTONS.map((c) => (
+              <option value="">{regionLabel(country)}…</option>
+              {regions.map((c) => (
                 <option key={c.code} value={c.code}>{c.name}</option>
               ))}
             </select>
@@ -140,7 +148,7 @@ export function BulkJobForm() {
               value={row.location}
               onChange={(e) => update(i, "location", e.target.value)}
               className={inputCls}
-              placeholder="Város (pl. Zürich)"
+              placeholder={isAT ? "Város (pl. Wien)" : "Város (pl. Zürich)"}
             />
             <select value={row.employmentType} onChange={(e) => update(i, "employmentType", e.target.value)} className={inputCls}>
               <option value="full-time">Teljes (100%)</option>
@@ -156,14 +164,14 @@ export function BulkJobForm() {
               value={row.salaryMin}
               onChange={(e) => update(i, "salaryMin", e.target.value)}
               className={inputCls}
-              placeholder="Bér min (CHF)"
+              placeholder={`Bér min (${cur})`}
             />
             <input
               type="number"
               value={row.salaryMax}
               onChange={(e) => update(i, "salaryMax", e.target.value)}
               className={inputCls}
-              placeholder="Bér max (CHF)"
+              placeholder={`Bér max (${cur})`}
             />
           </div>
 
@@ -197,7 +205,7 @@ export function BulkJobForm() {
         />
         <span className="text-[12px] leading-snug text-ink-muted">
           <strong className="font-semibold text-ink">Nyilatkozom</strong>, hogy minden fenti hirdetés{" "}
-          <strong className="font-semibold text-ink">bejelentett, legális foglalkoztatás</strong> (AHV/SVA). A feketemunka hirdetése tilos.
+          <strong className="font-semibold text-ink">bejelentett, legális foglalkoztatás</strong> ({isAT ? "SV" : "AHV/SVA"}). A feketemunka hirdetése tilos.
         </span>
       </label>
 

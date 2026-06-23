@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createJob, getEmployerByOwner } from "@/lib/repo";
-import { isValidCantonCode } from "@/lib/cantons";
+import { getRegion } from "@/lib/regions";
+import { getCountry } from "@/lib/countries";
 import { isValidJobCategory } from "@/lib/job-categories";
 import { moderateText } from "@/lib/text-moderation";
 import { hasBlackWorkSignal } from "@/lib/job-screening";
@@ -31,7 +32,9 @@ export async function POST(req: Request) {
   const title = typeof body.title === "string" ? body.title.trim() : "";
   const description = typeof body.description === "string" ? body.description.trim() : "";
   const location = typeof body.location === "string" ? body.location.trim() : "";
-  const cantonCode = isValidCantonCode(body.cantonCode) ? body.cantonCode : null;
+  // Ország-tudatos régió-validáció: csak élő ország (CH/AT) + abban érvényes régiókód.
+  const country = typeof body.country === "string" && getCountry(body.country)?.enabled ? body.country : "CH";
+  const cantonCode = typeof body.cantonCode === "string" && getRegion(country, body.cantonCode) ? body.cantonCode : null;
   const category = isValidJobCategory(body.category) ? body.category : null;
   const employmentType = typeof body.employmentType === "string" ? body.employmentType.trim() : "full-time";
   const salaryMin = typeof body.salaryMin === "number" ? body.salaryMin : null;
@@ -50,7 +53,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "A munkavégzés helye kötelező." }, { status: 400 });
   }
   if (!cantonCode) {
-    return NextResponse.json({ error: "Válassz kantont." }, { status: 400 });
+    return NextResponse.json({ error: "Válassz régiót." }, { status: 400 });
   }
   if (!category) {
     return NextResponse.json({ error: "Válassz szakmát." }, { status: 400 });
@@ -93,6 +96,7 @@ export async function POST(req: Request) {
       description,
       location,
       cantonCode,
+      country,
       category,
       legalAttested,
       employmentType,

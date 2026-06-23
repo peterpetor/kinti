@@ -80,6 +80,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
     try {
       const payload = {
         ...form,
+        country,
         salaryMin: form.salaryMin ? parseInt(form.salaryMin, 10) : null,
         salaryMax: form.salaryMax ? parseInt(form.salaryMax, 10) : null,
       };

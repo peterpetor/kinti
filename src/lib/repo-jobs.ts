@@ -90,9 +90,9 @@ export async function getJobById(id: string): Promise<Job | null> {
 
 export async function createJob(job: Omit<Job, "createdAt" | "updatedAt">): Promise<void> {
   await getDB().prepare(
-    `INSERT INTO jobs (id, employer_id, title, description, location, canton_code, category, legal_attested, employment_type, salary_min, salary_max, currency, requirements, status, moderation_status, expires_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).bind(job.id, job.employerId, job.title, job.description, job.location, job.cantonCode, job.category, job.legalAttested ? 1 : 0, job.employmentType, job.salaryMin, job.salaryMax, job.currency, job.requirements, job.status, job.moderationStatus, job.expiresAt).run();
+    `INSERT INTO jobs (id, employer_id, title, description, location, canton_code, country_code, category, legal_attested, employment_type, salary_min, salary_max, currency, requirements, status, moderation_status, expires_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(job.id, job.employerId, job.title, job.description, job.location, job.cantonCode, job.country ?? "CH", job.category, job.legalAttested ? 1 : 0, job.employmentType, job.salaryMin, job.salaryMax, job.currency, job.requirements, job.status, job.moderationStatus, job.expiresAt).run();
 }
 
 export interface UpdateJobInput {

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createJob, getEmployerByOwner } from "@/lib/repo";
-import { isValidCantonCode } from "@/lib/cantons";
+import { getRegion } from "@/lib/regions";
+import { getCountry } from "@/lib/countries";
 import { isValidJobCategory } from "@/lib/job-categories";
 import { moderateText } from "@/lib/text-moderation";
 import { hasBlackWorkSignal } from "@/lib/job-screening";
@@ -30,12 +31,15 @@ export async function POST(req: Request) {
   const employer = await getEmployerByOwner(userId);
   if (!employer) return NextResponse.json({ error: "Nincs munkáltatói fiókod." }, { status: 403 });
 
-  let body: { legalAttested?: unknown; jobs?: unknown };
+  let body: { legalAttested?: unknown; jobs?: unknown; country?: unknown };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+
+  // Ország-tudatos: csak élő ország (CH/AT); a régiókat ehhez validáljuk.
+  const country = typeof body.country === "string" && getCountry(body.country)?.enabled ? body.country : "CH";
 
   if (body.legalAttested !== true) {
     return NextResponse.json(
@@ -60,7 +64,7 @@ export async function POST(req: Request) {
     const title = typeof r.title === "string" ? r.title.trim() : "";
     const description = typeof r.description === "string" ? r.description.trim() : "";
     const location = typeof r.location === "string" ? r.location.trim() : "";
-    const cantonCode = isValidCantonCode(r.cantonCode) ? r.cantonCode : null;
+    const cantonCode = typeof r.cantonCode === "string" && getRegion(country, r.cantonCode) ? r.cantonCode : null;
     const category = isValidJobCategory(r.category) ? r.category : null;
     const employmentType = typeof r.employmentType === "string" ? r.employmentType.trim() : "full-time";
     const salaryMin = typeof r.salaryMin === "number" ? r.salaryMin : null;
@@ -71,7 +75,7 @@ export async function POST(req: Request) {
     if (title.length < 3) { errors.push({ index: i, error: "Túl rövid cím." }); continue; }
     if (description.length < 20) { errors.push({ index: i, error: "Túl rövid leírás (min. 20)." }); continue; }
     if (!location) { errors.push({ index: i, error: "Hiányzó hely." }); continue; }
-    if (!cantonCode) { errors.push({ index: i, error: "Válassz kantont." }); continue; }
+    if (!cantonCode) { errors.push({ index: i, error: "Válassz régiót." }); continue; }
     if (!category) { errors.push({ index: i, error: "Válassz szakmát." }); continue; }
 
     const jobText = `${title}\n${description}\n${requirements ?? ""}`;
@@ -92,7 +96,7 @@ export async function POST(req: Request) {
       await createJob({
         id: crypto.randomUUID(),
         employerId: employer.id,
-        title, description, location, cantonCode, category,
+        title, description, location, cantonCode, country, category,
         legalAttested: true,
         employmentType, salaryMin, salaryMax, currency, requirements,
         status: "active",
