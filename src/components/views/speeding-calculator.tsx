@@ -186,7 +186,7 @@ export function SpeedingCalculator() {
             type="number"
             min={0}
             max={50000}
-            value={monthlyIncome}
+            value={monthlyIncome || ""}
             onChange={(e) => setMonthlyIncome(Math.max(0, Number(e.target.value)))}
             className="w-20 rounded-[8px] border border-line bg-surface-alt px-2 py-1 text-[13px] font-bold text-ink text-right outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
           />

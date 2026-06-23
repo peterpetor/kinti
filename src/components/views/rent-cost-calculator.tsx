@@ -115,7 +115,7 @@ export function RentCostCalculator() {
             min={0}
             max={20000}
             step={50}
-            value={monthlyRent}
+            value={monthlyRent || ""}
             onChange={(e) => setMonthlyRent(Math.max(0, Number(e.target.value)))}
             className="w-24 rounded-[10px] border border-line bg-surface-alt px-2 py-1 text-[14px] font-bold text-ink text-right outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
           />
@@ -215,7 +215,7 @@ export function RentCostCalculator() {
             type="number"
             min={0}
             max={2000}
-            value={acontoNebenkosten}
+            value={acontoNebenkosten || ""}
             onChange={(e) => setAcontoNebenkosten(Math.max(0, Number(e.target.value)))}
             className="w-24 rounded-[10px] border border-line bg-surface-alt px-2 py-1 text-[14px] font-bold text-ink text-right outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
           />

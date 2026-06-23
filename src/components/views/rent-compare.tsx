@@ -175,7 +175,7 @@ function FlatColumn({
         min={0}
         max={20000}
         step={50}
-        value={cfg.monthlyRent}
+        value={cfg.monthlyRent || ""}
         onChange={(e) => set({ monthlyRent: Math.max(0, Number(e.target.value)) })}
         className="w-full rounded-[10px] border border-line bg-surface-alt px-2 py-1.5 text-right text-[14px] font-bold text-ink outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
       />
@@ -204,7 +204,7 @@ function FlatColumn({
         min={0}
         max={2000}
         step={10}
-        value={cfg.aconto}
+        value={cfg.aconto || ""}
         onChange={(e) => set({ aconto: Math.max(0, Number(e.target.value)) })}
         className="w-full rounded-[10px] border border-line bg-surface-alt px-2 py-1.5 text-right text-[14px] font-bold text-ink outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
       />
