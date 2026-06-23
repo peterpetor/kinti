@@ -3,13 +3,29 @@
 import { useEffect, useMemo, useState } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
-import { CANTON_COORDS, cantonName } from "@/lib/cantons";
+import { CANTON_COORDS } from "@/lib/cantons";
+import { regionName } from "@/lib/regions";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
 import "leaflet/dist/leaflet.css";
 
 const SWISS_CENTER: [number, number] = [46.82, 8.23];
+const AT_CENTER: [number, number] = [47.7, 13.9];
+
+/** Osztrák Bundesland-centroidok (a regions.ts AT-kódjaival). A jobs/events
+ *  ugyanezeket a kódokat tárolja, így a buborékok a megfelelő helyre kerülnek. */
+const AT_BUNDESLAND_COORDS: Record<string, { lat: number; lng: number }> = {
+  W:   { lat: 48.21, lng: 16.37 },
+  NOE: { lat: 48.33, lng: 15.75 },
+  OOE: { lat: 48.05, lng: 13.95 },
+  STM: { lat: 47.30, lng: 14.90 },
+  TIR: { lat: 47.15, lng: 11.40 },
+  KTN: { lat: 46.72, lng: 14.10 },
+  SBG: { lat: 47.45, lng: 13.05 },
+  VBG: { lat: 47.25, lng: 9.90 },
+  BGL: { lat: 47.55, lng: 16.45 },
+};
 
 /**
  * Kanton-buborék térkép — kantononként EGY buborék a centroidján (CANTON_COORDS),
@@ -24,13 +40,20 @@ export function CantonBubbleMap({
   counts,
   selectedCanton,
   onSelectCanton,
+  country = "CH",
 }: {
-  /** kanton-kód → darabszám */
+  /** régió-kód → darabszám */
   counts: Record<string, number>;
   selectedCanton: string;
   onSelectCanton: (code: string) => void;
+  country?: string;
 }) {
   const [fullscreen, setFullscreen] = useState(false);
+
+  // Ország-tudatos közép + koordináták (CH: kanton, AT: Bundesland).
+  const isAT = country === "AT";
+  const COORDS: Record<string, { lat: number; lng: number }> = isAT ? AT_BUNDESLAND_COORDS : CANTON_COORDS;
+  const center = isAT ? AT_CENTER : SWISS_CENTER;
 
   useEffect(() => {
     if (!fullscreen) return;
@@ -45,8 +68,9 @@ export function CantonBubbleMap({
   }, [fullscreen]);
 
   const entries = useMemo(
-    () => Object.entries(counts).filter(([code, n]) => n > 0 && CANTON_COORDS[code]),
-    [counts],
+    () => Object.entries(counts).filter(([code, n]) => n > 0 && COORDS[code]),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [counts, isAT],
   );
   const maxCount = useMemo(() => Math.max(1, ...entries.map(([, n]) => n)), [entries]);
 
@@ -60,7 +84,7 @@ export function CantonBubbleMap({
       )}
     >
       <MapContainer
-        center={SWISS_CENTER}
+        center={center}
         zoom={7}
         scrollWheelZoom
         zoomControl={false}
@@ -74,7 +98,7 @@ export function CantonBubbleMap({
           maxZoom={20}
         />
         {entries.map(([code, n]) => {
-          const c = CANTON_COORDS[code];
+          const c = COORDS[code];
           return (
             <Marker
               key={code}
@@ -91,7 +115,7 @@ export function CantonBubbleMap({
       <div className="pointer-events-none absolute left-3 top-3 z-[20] flex items-center gap-2">
         <span className="glass pointer-events-auto inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12px] font-bold text-ink shadow-card">
           <Icon name="pin" size={12} strokeWidth={2.2} className="text-accent" />
-          {selectedCanton ? cantonName(selectedCanton) : "Koppints egy kantonra"}
+          {selectedCanton ? regionName(country, selectedCanton) : (isAT ? "Koppints egy tartományra" : "Koppints egy kantonra")}
         </span>
         <button
           type="button"

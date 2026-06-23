@@ -162,7 +162,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                 </div>
               }
             >
-              <CantonBubbleMap counts={cantonCounts} selectedCanton={canton} onSelectCanton={setCanton} />
+              <CantonBubbleMap counts={cantonCounts} selectedCanton={canton} onSelectCanton={setCanton} country={country} />
             </Suspense>
           )}
         </div>

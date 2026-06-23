@@ -38,7 +38,7 @@ export function CommunityView({
   );
   return (
     <div className="space-y-2.5 px-5">
-      <EventsList events={countryEvents} />
+      <EventsList events={countryEvents} country={country ?? "CH"} />
     </div>
   );
 }
@@ -75,7 +75,7 @@ function eventToCal(e: KintiEvent): CalendarEvent {
  * Sose dob hibát kifelé; ha nincs feliratkozás, csendben kihagyja.
  */
 
-function EventsList({ events }: { events: KintiEvent[] }) {
+function EventsList({ events, country }: { events: KintiEvent[]; country: string }) {
   // Nézet: lista vagy naptár
   const [view, setView] = useState<"list" | "calendar">("list");
 
@@ -232,7 +232,7 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                 Térkép — hol vannak az események?
               </span>
               <span className="block text-[11.5px] text-ink-muted">
-                {Object.keys(cantonCounts).length} kanton · koppints egy kantonra a szűréshez
+                {Object.keys(cantonCounts).length} régió · koppints a szűréshez
               </span>
             </span>
             <Icon name="chevD" size={16} strokeWidth={2.4} className={cn("shrink-0 text-ink-faint transition-transform", showMap && "rotate-180")} />
@@ -245,7 +245,7 @@ function EventsList({ events }: { events: KintiEvent[] }) {
                 </div>
               }
             >
-              <CantonBubbleMap counts={cantonCounts} selectedCanton={cantonFilter} onSelectCanton={setCantonFilter} />
+              <CantonBubbleMap counts={cantonCounts} selectedCanton={cantonFilter} onSelectCanton={setCantonFilter} country={country} />
             </Suspense>
           )}
         </div>
