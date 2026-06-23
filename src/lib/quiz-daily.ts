@@ -7,6 +7,7 @@
  */
 
 import { QUIZ_BANK, type QuizQuestion } from "./quiz-bank";
+import { AT_QUIZ_BANK } from "./quiz-bank-at";
 
 const STORAGE_KEY = "kinti.quizState";
 
@@ -54,15 +55,18 @@ export function todayKey(): string {
  * Determinisztikus seedezés egy dátum-key-ből.
  * Egyszerű hash → kiválaszt 3 különböző indexet a bankból.
  */
-export function getDailyQuestions(dateKey: string): QuizQuestion[] {
-  // Hash: YYYY-MM-DD → szám (FNV-1a-szerű)
+export function getDailyQuestions(dateKey: string, country: string = "CH"): QuizQuestion[] {
+  const bank = country === "AT" ? AT_QUIZ_BANK : QUIZ_BANK;
+  // Hash: ország + YYYY-MM-DD → szám (FNV-1a-szerű). Az ország a seedben, hogy
+  // CH és AT más napi szettet kapjon.
+  const seedStr = `${country}:${dateKey}`;
   let hash = 2166136261;
-  for (let i = 0; i < dateKey.length; i++) {
-    hash ^= dateKey.charCodeAt(i);
+  for (let i = 0; i < seedStr.length; i++) {
+    hash ^= seedStr.charCodeAt(i);
     hash = (hash * 16777619) >>> 0;
   }
 
-  const n = QUIZ_BANK.length;
+  const n = bank.length;
   const indexes = new Set<number>();
   let h = hash;
   while (indexes.size < 3) {
@@ -70,7 +74,7 @@ export function getDailyQuestions(dateKey: string): QuizQuestion[] {
     indexes.add(h % n);
   }
 
-  return Array.from(indexes).map((i) => QUIZ_BANK[i]);
+  return Array.from(indexes).map((i) => bank[i]);
 }
 
 export function loadState(): QuizState {
@@ -111,9 +115,9 @@ export function getTodayState(): QuizState {
 }
 
 /** Lemented az eredményt és frissíti a streak-et. */
-export function recordResult(answers: number[]): QuizState {
+export function recordResult(answers: number[], country: string = "CH"): QuizState {
   const today = todayKey();
-  const questions = getDailyQuestions(today);
+  const questions = getDailyQuestions(today, country);
   let score = 0;
   for (let i = 0; i < 3; i++) {
     if (answers[i] === questions[i].correct) score++;

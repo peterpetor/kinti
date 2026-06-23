@@ -11,7 +11,10 @@ import {
   todayKey,
   type QuizState,
 } from "@/lib/quiz-daily";
-import { QUIZ_CATEGORY_META, type QuizQuestion } from "@/lib/quiz-bank";
+import { QUIZ_CATEGORY_META, type QuizCategory, type QuizQuestion } from "@/lib/quiz-bank";
+import { AT_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-at";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 /**
  * KvizGame — interaktív napi 3 kérdéses kvíz játék.
@@ -26,13 +29,17 @@ export function KvizGame() {
   const [answers, setAnswers] = useState<number[]>([]);
   const [revealed, setRevealed] = useState(false);
 
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const categoryMeta = country === "AT" ? AT_QUIZ_CATEGORY_META : QUIZ_CATEGORY_META;
+
   // Mount-on: load state
   useEffect(() => {
     setState(getTodayState());
   }, []);
 
   const today = todayKey();
-  const questions = useMemo(() => getDailyQuestions(today), [today]);
+  const questions = useMemo(() => getDailyQuestions(today, country), [today, country]);
 
   if (state === null) {
     return (
@@ -65,7 +72,7 @@ export function KvizGame() {
   function goNext() {
     if (isLast) {
       // Submit
-      const result = recordResult(answers);
+      const result = recordResult(answers, country);
       setState(result);
       return;
     }
@@ -110,6 +117,7 @@ export function KvizGame() {
         selectedAnswer={selectedAnswer}
         revealed={revealed}
         onAnswer={chooseAnswer}
+        categoryMeta={categoryMeta}
       />
 
       {revealed && (
@@ -146,13 +154,15 @@ function QuestionCard({
   selectedAnswer,
   revealed,
   onAnswer,
+  categoryMeta,
 }: {
   question: QuizQuestion;
   selectedAnswer?: number;
   revealed: boolean;
   onAnswer: (idx: number) => void;
+  categoryMeta: Record<QuizCategory, { label: string; emoji: string }>;
 }) {
-  const meta = QUIZ_CATEGORY_META[question.category];
+  const meta = categoryMeta[question.category];
 
   return (
     <article className="rounded-card border border-line bg-surface p-5 shadow-card space-y-4">

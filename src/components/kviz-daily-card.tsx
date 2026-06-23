@@ -6,7 +6,6 @@ import { Icon } from "@/components/ui";
 import { getTodayState, type QuizState } from "@/lib/quiz-daily";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
-import { isFeatureAvailable } from "@/lib/feature-availability";
 
 /**
  * KvizDailyCard — kompakt napi-kvíz widget a főoldalon.
@@ -24,9 +23,8 @@ export function KvizDailyCard() {
   }, []);
 
   if (!state) return null;
-  // A napi kvíz svájci tartalom → csak CH-ban (lib/feature-availability).
-  if (!isFeatureAvailable("kviz", prefCountry ?? DEFAULT_COUNTRY)) return null;
 
+  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
   const played = !!state.today;
   const score = state.today?.score ?? 0;
 
@@ -58,7 +56,7 @@ export function KvizDailyCard() {
         ) : (
           <>
             <div className="text-[15px] font-extrabold tracking-tight text-ink">
-              Mai Svájci Kvíz
+              {isAT ? "Mai Osztrák Kvíz" : "Mai Svájci Kvíz"}
             </div>
             <p className="text-[11px] text-ink-muted">
               3 kérdés · 30 másodperc · új kérdések naponta

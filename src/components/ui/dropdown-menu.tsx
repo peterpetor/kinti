@@ -306,12 +306,12 @@ export function DropdownMenu() {
                   </span>
                   {isCH ? "Svájci Német (Mundart)" : "Osztrák Német"}
                 </Link>
-                {isCH && (
+                {has("kviz") && (
                 <Link href="/kviz" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     🎯
                   </span>
-                  Napi Svájci Kvíz
+                  {isCH ? "Napi Svájci Kvíz" : "Napi Osztrák Kvíz"}
                 </Link>
                 )}
               </CollapsibleSection>
