@@ -43,17 +43,25 @@ export function DropdownMenu() {
   );
 
   return (
-    <div className="relative shrink-0">
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
-        aria-label="Menü megnyitása"
-        className={cn(
-          "grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition-all active:scale-95 cursor-pointer focus:outline-none"
-        )}
-      >
-        <Icon name="more" size={17} strokeWidth={2.6} />
-      </button>
+    // In-flow helykitöltő (38px): a fejléc-elrendezés helye megmarad, a cím nem
+    // fut a gomb alá. Maga a gomb FIXED, a tartalommal AZONOS módon (mx-auto
+    // max-w-md) középre zárt sávban — így MINDEN oldalon pontosan ugyanott van
+    // (a max-w-md oszlop jobb felső sarka), bármennyi is az oldal felső paddingje.
+    <div className="h-[38px] w-[38px] shrink-0">
+      <div className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+2rem)] z-40">
+        <div className="mx-auto flex max-w-md justify-end px-5">
+          <button
+            type="button"
+            onClick={() => setIsOpen(true)}
+            aria-label="Menü megnyitása"
+            className={cn(
+              "pointer-events-auto grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition-all active:scale-95 cursor-pointer focus:outline-none"
+            )}
+          >
+            <Icon name="more" size={17} strokeWidth={2.6} />
+          </button>
+        </div>
+      </div>
 
       {isOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex justify-center sm:items-center bg-surface sm:bg-black/50 sm:backdrop-blur-sm animate-in fade-in duration-300">
