@@ -134,6 +134,58 @@ export async function claimDailyNudge(day: string): Promise<boolean> {
   }
 }
 
+/**
+ * A kliens szinkronizálja a (localStorage-beli) streak-jét a saját push-
+ * feliratkozására, hogy a streak-mentő cron tudjon kinek szólni. Best-effort:
+ * ha az oszlopok még hiányoznak (0085 előtt), csendben elnyeljük.
+ */
+export async function syncSubscriptionStreak(endpoint: string, streakLen: number, lastActiveDay: string): Promise<void> {
+  try {
+    await getDB()
+      .prepare("UPDATE push_subscriptions SET streak_len = ?, last_active_day = ? WHERE endpoint = ?")
+      .bind(Math.max(0, Math.round(streakLen) || 0), lastActiveDay, endpoint)
+      .run();
+  } catch {
+    /* 0085 migráció előtt — nincs hova írni, kihagyjuk */
+  }
+}
+
+export interface StreakSaveTarget { endpoint: string; p256dh: string; auth: string; streak_len: number; }
+
+/**
+ * Streak-mentő célpontok: akik TEGNAP voltak aktívak (azaz ma még nem, a
+ * sorozatuk ma szakadhat meg), elég hosszú sorozattal, és ma még nem kaptak
+ * streak-mentő pusht. A `notify_daily` opt-outot tiszteletben tartjuk.
+ */
+export async function getStreakSaveTargets(yesterday: string, today: string, minStreak: number): Promise<StreakSaveTarget[]> {
+  try {
+    const { results } = await getDB()
+      .prepare(
+        `SELECT endpoint, p256dh, auth, streak_len FROM push_subscriptions
+         WHERE last_active_day = ? AND streak_len >= ?
+           AND COALESCE(notify_daily, 1) = 1
+           AND (streak_save_sent_day IS NULL OR streak_save_sent_day <> ?)`,
+      )
+      .bind(yesterday, minStreak, today)
+      .all<StreakSaveTarget>();
+    return results;
+  } catch {
+    return [];
+  }
+}
+
+/** Megjelöli, hogy ez a feliratkozás ma kapott streak-mentő pusht (idempotencia). */
+export async function markStreakSaveSent(endpoint: string, today: string): Promise<void> {
+  try {
+    await getDB()
+      .prepare("UPDATE push_subscriptions SET streak_save_sent_day = ? WHERE endpoint = ?")
+      .bind(today, endpoint)
+      .run();
+  } catch {
+    /* best-effort */
+  }
+}
+
 // --- Email Digest ------------------------------------------------------------
 
 export interface DigestSubscriberRow {

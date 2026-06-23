@@ -14,7 +14,26 @@ export function DailyStreak() {
   const [visit, setVisit] = useState<VisitResult | null>(null);
 
   useEffect(() => {
-    setVisit(recordVisit());
+    const v = recordVisit();
+    setVisit(v);
+    // Streak-szinkron a push-feliratkozásra (ha van) — így a streak-mentő cron
+    // tud szólni, mielőtt ma megszakad. Fire-and-forget, endpoint-scope.
+    (async () => {
+      try {
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.getSubscription();
+        if (!sub) return;
+        await fetch("/api/push/streak", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ endpoint: sub.endpoint, streak: v.state.current, day: v.state.lastDate }),
+          keepalive: true,
+        });
+      } catch {
+        /* legrosszabb esetben nincs streak-mentő — nem kritikus */
+      }
+    })();
   }, []);
 
   if (!visit || visit.state.current <= 0) return null;
