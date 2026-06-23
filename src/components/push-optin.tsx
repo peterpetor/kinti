@@ -45,7 +45,7 @@ function hasSubmitted(): boolean {
 }
 
 export function PushOptin({
-  title = "Szólunk, ha új a kantonodban",
+  title = "Szólunk, ha új a régiódban",
   subtitle = "Engedélyezd, és értesítünk az új magyar vállalkozásokról, állásokról és eseményekről a környékeden.",
 }: {
   /** A feliratkozás-kártya címe (idle állapot) — felületenként testreszabható. */
@@ -179,7 +179,7 @@ export function PushOptin({
         </p>
         <p className="text-[11.5px] leading-snug text-ink-muted">
           {subscribed
-            ? "Értesítünk az új vállalkozásokról, állásokról és eseményekről a kantonodban."
+            ? "Értesítünk az új vállalkozásokról, állásokról és eseményekről a régiódban."
             : subtitle}
         </p>
       </div>

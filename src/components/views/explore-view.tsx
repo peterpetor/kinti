@@ -278,6 +278,7 @@ export function ExploreView({
           onApplyCategory={setCat}
           onApplyCanton={setCanton}
           onApplyQuery={setQ}
+          placeholder={`Mit keresel? Pl. villanyszerelő ${country === "AT" ? "Bécsben" : "Zürichben"}`}
         />
       </div>
 
