@@ -20,11 +20,11 @@ export const LESSONS_AT: Lesson[] = [
     ],
   },
   {
-    id: "al2", title: "Búcsúzás", description: "Servus, Pfiat di — elköszönés osztrák módra (és a bécsies „Baba”).", chapter: 1, xpReward: 10,
+    id: "al2", title: "Búcsúzás", description: "Servus, Pfiat di, Auf Wiederschauen — elköszönés osztrák módra.", chapter: 1, xpReward: 10,
     questions: [
       { id: "q4", type: "multiple_choice", prompt: "Informális 'szia' búcsúzáskor (Ausztria-szerte)?", options: [{ id: "o1", text: "Servus" }, { id: "o2", text: "Ciao bella" }, { id: "o3", text: "Hi" }], correctOptionId: "o1" },
       { id: "q5", type: "flashcard", prompt: "'Viszlát' (informális, regionális)?", backText: "Pfiat di", phonetic: "Pfíjat di" },
-      { id: "q6", type: "match", prompt: "Párosítsd a búcsúzásokat!", pairs: [{ id: "p1", left: "Szia (búcsú, Ausztria-szerte)", right: "Servus" }, { id: "p2", left: "Viszlát (regionális)", right: "Pfiat di" }, { id: "p3", left: "Szia (bécsiesen, informális)", right: "Baba" }] },
+      { id: "q6", type: "match", prompt: "Párosítsd a búcsúzásokat!", pairs: [{ id: "p1", left: "Szia (búcsú, Ausztria-szerte)", right: "Servus" }, { id: "p2", left: "Viszlát (regionális)", right: "Pfiat di" }, { id: "p3", left: "Viszontlátásra (hivatalos)", right: "Auf Wiederschauen" }] },
     ],
   },
   {
