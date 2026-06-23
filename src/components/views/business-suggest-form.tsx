@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
-import { CANTONS } from "@/lib/cantons";
+import { getRegions, regionLabel } from "@/lib/regions";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import type { Category } from "@/lib/types";
 
 const inputCls =
@@ -18,6 +20,9 @@ const inputCls =
  */
 export function BusinessSuggestForm({ categories, turnstileSiteKey }: { categories: Category[]; turnstileSiteKey: string }) {
   const cats = categories.filter((c) => c.id !== "all");
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const regions = getRegions(country);
   const [name, setName] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [cantonCode, setCantonCode] = useState("");
@@ -35,7 +40,7 @@ export function BusinessSuggestForm({ categories, turnstileSiteKey }: { categori
     setError(null);
     if (name.trim().length < 2) return setError("Add meg a vállalkozás nevét.");
     if (!categoryId) return setError("Válassz kategóriát.");
-    if (!cantonCode) return setError("Válassz kantont.");
+    if (!cantonCode) return setError("Válassz régiót.");
     if (!turnstileToken) return setError("Várj a robot-ellenőrzésre (pár másodperc).");
 
     setPhase("sending");
@@ -44,7 +49,7 @@ export function BusinessSuggestForm({ categories, turnstileSiteKey }: { categori
       const res = await fetch("/api/szaknevsor/ajanlas", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name, categoryId, categoryLabel, cantonCode, city, phone, website, note, turnstileToken }),
+        body: JSON.stringify({ name, categoryId, categoryLabel, cantonCode, country, city, phone, website, note, turnstileToken }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
@@ -105,8 +110,8 @@ export function BusinessSuggestForm({ categories, turnstileSiteKey }: { categori
 
       <Section title="Hol van?" required>
         <select value={cantonCode} onChange={(e) => setCantonCode(e.target.value)} className={inputCls}>
-          <option value="">Melyik kantonban?</option>
-          {CANTONS.map((c) => (
+          <option value="">Melyik {regionLabel(country).toLowerCase()}?</option>
+          {regions.map((c) => (
             <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
           ))}
         </select>

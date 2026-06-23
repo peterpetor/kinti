@@ -5,6 +5,9 @@
 
 import { findProfanityInFields } from "./profanity";
 import { isSwissAddress, CANTON_COORDS } from "./cantons";
+import { getRegion } from "./regions";
+import { getCountry } from "./countries";
+import { AT_BUNDESLAND_POINTS } from "./at-points";
 
 /** A megerősítő link érvényessége (ms). 24 óra — utána a piszkozat törlődik. */
 export const BUSINESS_CONFIRM_TTL_MS = 24 * 60 * 60 * 1000;
@@ -54,6 +57,8 @@ export interface BusinessFormInput {
   categoryId?: unknown;
   categoryLabel?: unknown;
   cantonCode?: unknown;
+  /** Ország-kód (CH/AT…); a régió + cím + koordináta ehhez validálódik. */
+  country?: unknown;
   address?: unknown;
   phone?: unknown;
   blurb?: unknown;
@@ -78,6 +83,7 @@ export interface ValidatedBusinessInput {
   categoryId: string;
   categoryLabel: string | null;
   cantonCode: string;
+  country: string;
   address: string | null;
   phone: string | null;
   blurb: string | null;
@@ -96,6 +102,16 @@ export const ALLOWED_LANGUAGES = ["Magyar", "Deutsch", "Français", "Italiano", 
 /** Svájc nagyjábóli bounding boxa — koordináta-épelméjűségi ellenőrzéshez. */
 export function isSwissCoord(lat: number, lng: number): boolean {
   return lat >= 45.7 && lat <= 47.95 && lng >= 5.8 && lng <= 10.7;
+}
+
+/** Osztrák bounding box. */
+function isAustrianCoord(lat: number, lng: number): boolean {
+  return lat >= 46.3 && lat <= 49.1 && lng >= 9.5 && lng <= 17.2;
+}
+
+/** Ország-tudatos koordináta-épelméjűség (CH/AT). */
+export function isInCountryCoord(country: string, lat: number, lng: number): boolean {
+  return country === "AT" ? isAustrianCoord(lat, lng) : isSwissCoord(lat, lng);
 }
 
 export type BusinessValidationError = { field: keyof BusinessFormInput; message: string };
@@ -131,11 +147,13 @@ export function validateBusinessInput(
   const categoryId = str(input.categoryId);
   if (!categoryId) errors.push({ field: "categoryId", message: "Válassz kategóriát." });
 
+  // Ország: csak élő ország (CH/AT); a régiót/koordinátát ehhez validáljuk.
+  const country = str(input.country) && getCountry(str(input.country))?.enabled ? str(input.country) : "CH";
   const cantonCode = str(input.cantonCode);
   if (!cantonCode) {
-    errors.push({ field: "cantonCode", message: "Kanton kiválasztása kötelező." });
-  } else if (!CANTON_COORDS[cantonCode]) {
-    errors.push({ field: "cantonCode", message: "Ismeretlen kanton." });
+    errors.push({ field: "cantonCode", message: "Régió kiválasztása kötelező." });
+  } else if (!getRegion(country, cantonCode)) {
+    errors.push({ field: "cantonCode", message: "Ismeretlen régió." });
   }
 
   const categoryLabel = str(input.categoryLabel);
@@ -145,13 +163,14 @@ export function validateBusinessInput(
   // Cím opcionális, DE ha megadták, svájcinak kell lennie. Kivéve, ha térképről
   // választott (érvényes svájci koordináta van) — akkor a geokódernek hiszünk.
   const address = str(input.address);
-  const hasSwissCoord =
+  const hasCountryCoord =
     Number.isFinite(Number(input.lat)) &&
     Number.isFinite(Number(input.lng)) &&
-    isSwissCoord(Number(input.lat), Number(input.lng));
+    isInCountryCoord(country, Number(input.lat), Number(input.lng));
   if (address.length > BUSINESS_LIMITS.addressMax) {
     errors.push({ field: "address", message: `Legfeljebb ${BUSINESS_LIMITS.addressMax} karakter.` });
-  } else if (address && !hasSwissCoord && !isSwissAddress(address)) {
+  } else if (country === "CH" && address && !hasCountryCoord && !isSwissAddress(address)) {
+    // CH-ban szigorú formátum-ellenőrzés; más országban a régió + geokóder (Photon) fedi le.
     errors.push({
       field: "address",
       message:
@@ -241,7 +260,7 @@ export function validateBusinessInput(
   let lng: number | null = null;
   const latN = typeof input.lat === "number" ? input.lat : Number(input.lat);
   const lngN = typeof input.lng === "number" ? input.lng : Number(input.lng);
-  if (Number.isFinite(latN) && Number.isFinite(lngN) && isSwissCoord(latN, lngN)) {
+  if (Number.isFinite(latN) && Number.isFinite(lngN) && isInCountryCoord(country, latN, lngN)) {
     lat = +latN.toFixed(6);
     lng = +lngN.toFixed(6);
   }
@@ -258,6 +277,7 @@ export function validateBusinessInput(
       categoryId,
       categoryLabel: categoryLabel || null,
       cantonCode,
+      country,
       address: address || null,
       phone: phone || null,
       blurb: blurb || null,
@@ -297,4 +317,15 @@ export function approxCoordsForCanton(cantonCode: string): { lat: number; lng: n
   if (!p) return null;
   const jitter = () => (Math.random() - 0.5) * 0.04; // ~±0.02° ≈ ±2 km
   return { lat: +(p.lat + jitter()).toFixed(5), lng: +(p.lng + jitter()).toFixed(5) };
+}
+
+/** Ország-tudatos régió-közelítés (CH: kanton-székhely, AT: Bundesland-székhely). */
+export function approxCoordsForRegion(country: string, code: string): { lat: number; lng: number } | null {
+  const jitter = () => (Math.random() - 0.5) * 0.04;
+  if (country === "AT") {
+    const p = AT_BUNDESLAND_POINTS[code];
+    if (!p) return null;
+    return { lat: +(p.lat + jitter()).toFixed(5), lng: +(p.lng + jitter()).toFixed(5) };
+  }
+  return approxCoordsForCanton(code);
 }

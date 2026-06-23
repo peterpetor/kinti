@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
-import { CANTONS } from "@/lib/cantons";
+import { getRegions, regionLabel } from "@/lib/regions";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { cn } from "@/lib/cn";
 import type { Category } from "@/lib/types";
 
@@ -14,6 +16,9 @@ import type { Category } from "@/lib/types";
  */
 export function OwnerDraftForm({ categories }: { categories: Category[] }) {
   const router = useRouter();
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const regions = getRegions(country);
   const [name, setName] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [cantonCode, setCantonCode] = useState("");
@@ -31,7 +36,7 @@ export function OwnerDraftForm({ categories }: { categories: Category[] }) {
       const res = await fetch("/api/owner/draft", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), categoryId, cantonCode }),
+        body: JSON.stringify({ name: name.trim(), categoryId, cantonCode, country }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
@@ -96,8 +101,8 @@ export function OwnerDraftForm({ categories }: { categories: Category[] }) {
           onChange={(e) => setCantonCode(e.target.value)}
           className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30"
         >
-          <option value="">Melyik kantonban?</option>
-          {CANTONS.map((c) => (
+          <option value="">Melyik {regionLabel(country).toLowerCase()}?</option>
+          {regions.map((c) => (
             <option key={c.code} value={c.code}>
               {c.name} ({c.code})
             </option>

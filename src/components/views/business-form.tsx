@@ -5,9 +5,13 @@ import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
-import { CANTONS, isSwissAddress, nearestCantonCode } from "@/lib/cantons";
+import { isSwissAddress, nearestCantonCode } from "@/lib/cantons";
+import { nearestAtBundesland } from "@/lib/at-points";
 import { readPreferredCanton } from "@/lib/canton-pref";
-import { BUSINESS_LIMITS, isSwissCoord, type BusinessValidationError } from "@/lib/business";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { getRegions, regionLabel } from "@/lib/regions";
+import { BUSINESS_LIMITS, isInCountryCoord, type BusinessValidationError } from "@/lib/business";
 import type { Category } from "@/lib/types";
 import { PostSavePrompt } from "@/components/post-save-prompt";
 import { AddressFields, composeAddress, type AddressParts } from "@/components/views/address-fields";
@@ -99,12 +103,18 @@ interface AiSuggestion {
 
 export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps) {
   const [form, setForm] = useState<FormState>(INITIAL);
+  // Ország-tudatos: a régió-lista, a geo-derivation és a cím-ellenőrzés a választott országhoz.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  const regions = getRegions(country);
 
-  // Kanton-személyre szabás: a felhasználó preferált kantonját ajánljuk fel.
+  // Régió-személyre szabás: CH-ban a preferált kantont ajánljuk fel (AT-ben nincs ilyen).
   useEffect(() => {
+    if (country !== "CH") return;
     const pref = readPreferredCanton();
     if (pref) setForm((f) => (f.cantonCode ? f : { ...f, cantonCode: pref }));
-  }, []);
+  }, [country]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [aiBusy, setAiBusy] = useState(false);
   const [aiResult, setAiResult] = useState<AiSuggestion | null>(null);
@@ -138,16 +148,15 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        // A kinti egyelőre Svájcra szól — ha a felhasználó épp Svájcon kívül van
-        // (pl. külföldön nyaral), NE rántsuk a legközelebbi svájci kantonra.
-        if (!isSwissCoord(latitude, longitude)) {
+        // Ha a felhasználó épp az országon kívül van, NE rántsuk a legközelebbi régióra.
+        if (!isInCountryCoord(country, latitude, longitude)) {
           setGeoMsg(
-            "Úgy tűnik, most épp Svájcon kívül vagy. Válaszd ki kézzel azt a kantont, ahol a vállalkozásod működik.",
+            `Úgy tűnik, most épp ${isAT ? "Ausztrián" : "Svájcon"} kívül vagy. Válaszd ki kézzel a ${regionLabel(country).toLowerCase()}-t, ahol a vállalkozásod működik.`,
           );
           setGeoBusy(false);
           return;
         }
-        const p = nearestCantonCode(latitude, longitude);
+        const p = isAT ? nearestAtBundesland(latitude, longitude) : nearestCantonCode(latitude, longitude);
         setField("cantonCode", p.code);
         setGeoMsg(`Megvan: ${p.city} (${p.code}). Ha nem stimmel, válaszd ki kézzel.`);
         setGeoBusy(false);
@@ -211,10 +220,10 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
   }
 
   const composedAddress = composeAddress({ street: form.street, zip: form.zip, city: form.city });
-  // Ha térképről választott (van koordináta), megbízunk benne — a hivatalos
-  // svájci geokóder csak svájci címet ad, akkor is ha a falu nincs a listánkban.
+  // CH-ban szigorú svájci cím-ellenőrzés (ha nincs térképről választott koordináta);
+  // más országban a régió + a Photon-geokóder fedi le, így ott nem blokkolunk.
   const addressInvalid =
-    composedAddress.trim().length > 0 && form.lat == null && !isSwissAddress(composedAddress);
+    country === "CH" && composedAddress.trim().length > 0 && form.lat == null && !isSwissAddress(composedAddress);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -237,6 +246,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           ...form,
+          country,
           address: composedAddress,
           workingHours: hoursOn ? JSON.stringify(hours) : null,
           turnstileToken,
@@ -413,8 +423,8 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           onChange={(e) => setField("cantonCode", e.target.value)}
           className={inputCls(errors.cantonCode)}
         >
-          <option value="">Melyik kantonban?</option>
-          {CANTONS.map((c) => (
+          <option value="">Melyik {regionLabel(country).toLowerCase()}?</option>
+          {regions.map((c) => (
             <option key={c.code} value={c.code}>
               {c.name} ({c.code})
             </option>
@@ -431,7 +441,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
               setErrors((e) => ({ ...e, address: "" }));
             }}
             onGeocode={(hit) => {
-              const c = nearestCantonCode(hit.lat, hit.lng);
+              const c = isAT ? nearestAtBundesland(hit.lat, hit.lng) : nearestCantonCode(hit.lat, hit.lng);
               setForm((f) => ({ ...f, lat: hit.lat, lng: hit.lng, cantonCode: c.code }));
               setErrors((e) => ({ ...e, address: "", cantonCode: "" }));
               setGeoMsg(null);

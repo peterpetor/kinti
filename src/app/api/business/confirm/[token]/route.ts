@@ -5,7 +5,7 @@ import {
   deleteBusinessSubmission,
   getBusinessById,
 } from "@/lib/repo";
-import { slugifyBusinessName, approxCoordsForCanton } from "@/lib/business";
+import { slugifyBusinessName, approxCoordsForRegion } from "@/lib/business";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
 
@@ -35,7 +35,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     id = `${slugifyBusinessName(sub.name)}-${crypto.randomUUID().slice(0, 8)}`;
   }
 
-  const coords = approxCoordsForCanton(sub.cantonCode);
+  const coords = approxCoordsForRegion(sub.country, sub.cantonCode);
 
   // A piszkozat manage_token-jét továbbvisszük a publikus rekordra. Ha valamiért
   // hiányozna (régi piszkozat), generálunk egy újat — így a confirm email URL-je
@@ -48,6 +48,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     categoryId: sub.categoryId,
     categoryLabel: sub.categoryLabel,
     address: sub.address,
+    country: sub.country,
     phone: sub.phone,
     blurb: sub.blurb,
     licenseNumber: sub.licenseNumber,

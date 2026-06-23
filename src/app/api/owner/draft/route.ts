@@ -6,8 +6,9 @@ import {
   getBusinessById,
   getCategories,
 } from "@/lib/repo";
-import { approxCoordsForCanton, slugifyBusinessName, BUSINESS_LIMITS } from "@/lib/business";
-import { CANTON_COORDS } from "@/lib/cantons";
+import { approxCoordsForRegion, slugifyBusinessName, BUSINESS_LIMITS } from "@/lib/business";
+import { getRegion } from "@/lib/regions";
+import { getCountry } from "@/lib/countries";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -36,11 +37,13 @@ export async function POST(req: NextRequest) {
     name?: string;
     categoryId?: string;
     cantonCode?: string;
+    country?: string;
   };
 
   const name = (body.name ?? "").trim();
   const categoryId = (body.categoryId ?? "").trim();
   const cantonCode = (body.cantonCode ?? "").trim();
+  const country = body.country && getCountry(body.country)?.enabled ? body.country : "CH";
 
   if (name.length < BUSINESS_LIMITS.nameMin || name.length > BUSINESS_LIMITS.nameMax) {
     return NextResponse.json(
@@ -51,8 +54,8 @@ export async function POST(req: NextRequest) {
   if (!categoryId) {
     return NextResponse.json({ error: "Válassz kategóriát." }, { status: 400 });
   }
-  if (!cantonCode || !CANTON_COORDS[cantonCode]) {
-    return NextResponse.json({ error: "Válassz svájci kantont." }, { status: 400 });
+  if (!cantonCode || !getRegion(country, cantonCode)) {
+    return NextResponse.json({ error: "Válassz régiót." }, { status: 400 });
   }
 
   const categories = await getCategories();
@@ -75,7 +78,7 @@ export async function POST(req: NextRequest) {
   if (await getBusinessById(id)) {
     id = `${slugifyBusinessName(name)}-${crypto.randomUUID().slice(0, 8)}`;
   }
-  const coords = approxCoordsForCanton(cantonCode);
+  const coords = approxCoordsForRegion(country, cantonCode);
 
   const manageToken = crypto.randomUUID().replace(/-/g, "");
   await createOwnerDraftBusiness({
@@ -83,6 +86,7 @@ export async function POST(req: NextRequest) {
     name,
     categoryId,
     cantonCode,
+    country,
     contactEmail: primaryEmail,
     lat: coords?.lat ?? null,
     lng: coords?.lng ?? null,

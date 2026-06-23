@@ -131,13 +131,13 @@ export async function POST(req: Request) {
   // Ha nincs email: azonnal publikáljuk a vállalkozást és visszaadjuk a manage_token-t.
   if (!hasEmail) {
     const { createBusinessFromSubmission, getBusinessById } = await import("@/lib/repo");
-    const { slugifyBusinessName, approxCoordsForCanton } = await import("@/lib/business");
+    const { slugifyBusinessName, approxCoordsForRegion } = await import("@/lib/business");
     let bizId = `${slugifyBusinessName(validation.value.name)}-${crypto.randomUUID().slice(0, 6)}`;
     if (await getBusinessById(bizId)) {
       bizId = `${slugifyBusinessName(validation.value.name)}-${crypto.randomUUID().slice(0, 8)}`;
     }
-    // Pontos koordináta a térképes címkeresőből; ha nincs, kanton-közelítés.
-    const approx = approxCoordsForCanton(validation.value.cantonCode);
+    // Pontos koordináta a térképes címkeresőből; ha nincs, régió-közelítés (ország-tudatos).
+    const approx = approxCoordsForRegion(validation.value.country, validation.value.cantonCode);
     const lat = validation.value.lat ?? approx?.lat ?? null;
     const lng = validation.value.lng ?? approx?.lng ?? null;
     await createBusinessFromSubmission({
@@ -146,6 +146,7 @@ export async function POST(req: Request) {
       categoryId: validation.value.categoryId,
       categoryLabel: validation.value.categoryLabel,
       address: validation.value.address,
+      country: validation.value.country,
       phone: validation.value.phone,
       blurb: validation.value.blurb,
       licenseNumber: validation.value.licenseNumber,
@@ -195,6 +196,7 @@ export async function POST(req: Request) {
     categoryLabel: validation.value.categoryLabel,
     address: validation.value.address,
     cantonCode: validation.value.cantonCode,
+    country: validation.value.country,
     phone: validation.value.phone,
     email: validation.value.email,
     blurb: validation.value.blurb,

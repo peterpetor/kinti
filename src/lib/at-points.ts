@@ -26,3 +26,14 @@ export function atPoint(code: string | null | undefined): RegionPoint {
   if (code && AT_BUNDESLAND_POINTS[code]) return AT_BUNDESLAND_POINTS[code];
   return AT_BUNDESLAND_POINTS.W;
 }
+
+/** A koordinátához legközelebbi Bundesland-székhely (durva derivációhoz). */
+export function nearestAtBundesland(lat: number, lng: number): RegionPoint {
+  let best = AT_BUNDESLAND_POINTS.W;
+  let bestD = Infinity;
+  for (const p of Object.values(AT_BUNDESLAND_POINTS)) {
+    const d = (p.lat - lat) ** 2 + (p.lng - lng) ** 2;
+    if (d < bestD) { bestD = d; best = p; }
+  }
+  return best;
+}

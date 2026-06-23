@@ -34,7 +34,7 @@ interface BusinessRow {
 
 interface BusinessSubmissionRow {
   id: string; name: string; category_id: string; category_label: string | null;
-  address: string | null; canton_code: string; phone: string | null; email: string;
+  address: string | null; canton_code: string; country_code?: string | null; phone: string | null; email: string;
   blurb: string | null; license_number: string | null; confirm_token: string;
   expires_at: string; created_at: string; terms_version: string | null;
   accepted_terms_at: string | null; age_confirmed: number; owner_user_id: string | null;
@@ -72,7 +72,7 @@ export function toBusiness(r: BusinessRow): Business {
 function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
   return {
     id: r.id, name: r.name, categoryId: r.category_id, categoryLabel: r.category_label,
-    address: r.address, cantonCode: r.canton_code, phone: r.phone, email: r.email,
+    address: r.address, cantonCode: r.canton_code, country: r.country_code ?? "CH", phone: r.phone, email: r.email,
     blurb: r.blurb, licenseNumber: r.license_number, ownerUserId: r.owner_user_id,
     manageToken: r.manage_token, confirmToken: r.confirm_token, expiresAt: r.expires_at,
   };
@@ -82,14 +82,14 @@ function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
 
 export interface BusinessSubmission {
   id: string; name: string; categoryId: string; categoryLabel: string | null;
-  address: string | null; cantonCode: string; phone: string | null; email: string;
+  address: string | null; cantonCode: string; country: string; phone: string | null; email: string;
   blurb: string | null; licenseNumber: string | null; ownerUserId: string | null;
   manageToken: string | null; confirmToken: string; expiresAt: string;
 }
 
 export interface BusinessSubmissionInput {
   id: string; name: string; categoryId: string; categoryLabel: string | null;
-  address: string | null; cantonCode: string; phone: string | null; email: string;
+  address: string | null; cantonCode: string; country: string; phone: string | null; email: string;
   blurb: string | null; licenseNumber: string | null; confirmToken: string;
   expiresAt: string; termsVersion: string; acceptedTermsAt: string; ageConfirmed: number;
   ipHash: string | null; ownerUserId: string | null; manageToken: string;
@@ -118,7 +118,7 @@ export interface UpdateBusinessFields {
 
 export interface CreateBusinessFromSubmissionInput {
   id: string; name: string; categoryId: string; categoryLabel: string | null;
-  address: string | null; phone: string | null; blurb: string | null;
+  address: string | null; country: string; phone: string | null; blurb: string | null;
   licenseNumber: string | null; contactEmail: string; lat: number | null;
   lng: number | null; ownerUserId: string | null; manageToken: string;
   languages?: string[] | null; workingHours?: string | null;
@@ -332,13 +332,13 @@ export async function createBusinessSubmission(input: BusinessSubmissionInput): 
   await getDB()
     .prepare(
       `INSERT INTO business_submissions
-       (id,name,category_id,category_label,address,canton_code,phone,email,blurb,
+       (id,name,category_id,category_label,address,canton_code,country_code,phone,email,blurb,
         license_number,confirm_token,expires_at,terms_version,accepted_terms_at,age_confirmed,ip_hash,
         owner_user_id,manage_token)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     )
     .bind(input.id, input.name, input.categoryId, input.categoryLabel, input.address,
-      input.cantonCode, input.phone, input.email.toLowerCase(), input.blurb, input.licenseNumber,
+      input.cantonCode, input.country, input.phone, input.email.toLowerCase(), input.blurb, input.licenseNumber,
       input.confirmToken, input.expiresAt, input.termsVersion, input.acceptedTermsAt,
       input.ageConfirmed, input.ipHash, input.ownerUserId, input.manageToken)
     .run();
@@ -383,12 +383,12 @@ export async function createBusinessFromSubmission(input: CreateBusinessFromSubm
   await getDB()
     .prepare(
       `INSERT INTO businesses
-       (id,name,category_id,category_label,address,phone,blurb,license_number,
+       (id,name,category_id,category_label,address,country_code,phone,blurb,license_number,
         contact_email,source,languages,working_hours,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,owner_user_id,manage_token)
        VALUES (?,?,?,?,?,?,?,?,?,'self_submitted',?,?,?,?,50,50,0,0,0,0,?,?)`,
     )
     .bind(input.id, input.name, input.categoryId, input.categoryLabel, input.address,
-      input.phone, input.blurb, input.licenseNumber, input.contactEmail.toLowerCase(),
+      input.country, input.phone, input.blurb, input.licenseNumber, input.contactEmail.toLowerCase(),
       JSON.stringify(input.languages?.length ? input.languages : ["Magyar"]),
       input.workingHours ?? null,
       input.lat, input.lng, input.ownerUserId, input.manageToken)
@@ -396,18 +396,18 @@ export async function createBusinessFromSubmission(input: CreateBusinessFromSubm
 }
 
 export async function createOwnerDraftBusiness(input: {
-  id: string; name: string; categoryId: string; cantonCode: string;
+  id: string; name: string; categoryId: string; cantonCode: string; country: string;
   contactEmail: string; lat: number | null; lng: number | null;
   ownerUserId: string; manageToken: string;
 }): Promise<void> {
   await getDB()
     .prepare(
       `INSERT INTO businesses
-       (id,name,category_id,category_label,address,phone,blurb,
+       (id,name,category_id,country_code,category_label,address,phone,blurb,
         contact_email,source,languages,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,owner_user_id,manage_token)
-       VALUES (?,?,?,NULL,NULL,NULL,NULL,?,'owner_draft','["Magyar"]',?,?,50,50,0,0,0,0,?,?)`,
+       VALUES (?,?,?,?,NULL,NULL,NULL,NULL,?,'owner_draft','["Magyar"]',?,?,50,50,0,0,0,0,?,?)`,
     )
-    .bind(input.id, input.name, input.categoryId, input.contactEmail.toLowerCase(),
+    .bind(input.id, input.name, input.categoryId, input.country, input.contactEmail.toLowerCase(),
       input.lat, input.lng, input.ownerUserId, input.manageToken)
     .run();
 }
@@ -417,6 +417,7 @@ export interface SuggestBusinessInput {
   categoryId: string;
   categoryLabel: string | null;
   address: string | null;
+  country: string;
   phone: string | null;
   blurb: string | null;
   lat: number | null;
@@ -433,13 +434,13 @@ export async function createSuggestedBusiness(input: SuggestBusinessInput): Prom
   await getDB()
     .prepare(
       `INSERT INTO businesses
-       (id,name,category_id,category_label,address,phone,blurb,
+       (id,name,category_id,country_code,category_label,address,phone,blurb,
         source,languages,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,
         moderation_status,claimed)
-       VALUES (?,?,?,?,?,?,?,'community-suggestion','["Magyar"]',?,?,50,50,0,0,0,0,0,0)`,
+       VALUES (?,?,?,?,?,?,?,?,'community-suggestion','["Magyar"]',?,?,50,50,0,0,0,0,0,0)`,
     )
     .bind(
-      id, input.name, input.categoryId, input.categoryLabel, input.address,
+      id, input.name, input.categoryId, input.country, input.categoryLabel, input.address,
       input.phone, input.blurb, input.lat, input.lng,
     )
     .run();

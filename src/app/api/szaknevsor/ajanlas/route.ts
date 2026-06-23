@@ -4,7 +4,10 @@ import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { safeLogError } from "@/lib/safe-log";
 import { createSuggestedBusiness } from "@/lib/repo";
 import { assessSpam } from "@/lib/spam-score";
-import { CANTONS, cantonPoint } from "@/lib/cantons";
+import { cantonPoint } from "@/lib/cantons";
+import { atPoint } from "@/lib/at-points";
+import { getRegion } from "@/lib/regions";
+import { getCountry } from "@/lib/countries";
 import { sendEmail } from "@/lib/email";
 import { verifyTurnstile } from "@/lib/turnstile";
 
@@ -41,6 +44,7 @@ export async function POST(req: Request) {
     const categoryId = str(body.categoryId, 60);
     const categoryLabel = str(body.categoryLabel, 80) || null;
     const cantonCode = str(body.cantonCode, 4);
+    const country = typeof body.country === "string" && getCountry(body.country)?.enabled ? body.country : "CH";
     const city = str(body.city, 120) || null;
     const phone = str(body.phone, 40) || null;
     const website = str(body.website, 200) || null;
@@ -52,11 +56,11 @@ export async function POST(req: Request) {
     if (!categoryId) {
       return NextResponse.json({ error: "Válassz kategóriát." }, { status: 400 });
     }
-    if (!CANTONS.some((c) => c.code === cantonCode)) {
-      return NextResponse.json({ error: "Válassz kantont." }, { status: 400 });
+    if (!getRegion(country, cantonCode)) {
+      return NextResponse.json({ error: "Válassz régiót." }, { status: 400 });
     }
 
-    const pt = cantonPoint(cantonCode);
+    const pt = country === "AT" ? atPoint(cantonCode) : cantonPoint(cantonCode);
     const blurbParts = [note, website ? `Web: ${website}` : null].filter(Boolean);
 
     // AI-alapú spam-scoring (a website külön, legitim URL-mező → kihagyjuk).
@@ -73,6 +77,7 @@ export async function POST(req: Request) {
       categoryId,
       categoryLabel,
       address: city,
+      country,
       phone,
       blurb: blurbParts.length ? blurbParts.join(" · ") : null,
       lat: pt.lat,
