@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cn } from "@/lib/cn";
+import { COUNTRIES } from "@/lib/countries";
 import { getAdminUserId } from "@/lib/admin";
 import { getDB } from "@/lib/cloudflare";
 import { JobBoardDecideButtons } from "@/components/admin/job-board-decide-buttons";
@@ -25,7 +27,7 @@ const STATUS_VALUES: Record<string, 0 | 1 | 2> = {
   rejected: 2,
 };
 
-type SearchParams = { status?: string; tab?: string };
+type SearchParams = { status?: string; tab?: string; c?: string };
 
 interface EmployerRow {
   id: string;
@@ -71,6 +73,9 @@ export default async function JobBoardAdminPage({
       : "pending";
   const statusValue = STATUS_VALUES[statusParam];
   const tab = searchParams.tab === "jobs" ? "jobs" : "employers";
+  // Ország-szűrő (az álláshirdetésekre; a munkáltatói fiókok ország-függetlenek).
+  const country = searchParams.c && searchParams.c !== "all" ? searchParams.c : "all";
+  const jobFilter = country !== "all";
 
   const db = getDB();
 
@@ -88,9 +93,9 @@ export default async function JobBoardAdminPage({
       .prepare(
         `SELECT id, employer_id, title, location, employment_type, salary_min, salary_max,
                 currency, description, moderation_status, moderation_decision_at, created_at
-         FROM jobs WHERE moderation_status = ? ORDER BY created_at DESC LIMIT 100`
+         FROM jobs WHERE moderation_status = ? ${jobFilter ? "AND country_code = ?" : ""} ORDER BY created_at DESC LIMIT 100`
       )
-      .bind(statusValue)
+      .bind(...(jobFilter ? [statusValue, country] : [statusValue]))
       .all<JobRow>()
       .then((r) => r.results),
     db
@@ -127,7 +132,7 @@ export default async function JobBoardAdminPage({
         {(["pending", "approved", "rejected"] as const).map((s) => (
           <Link
             key={s}
-            href={`/admin/job-board?status=${s}&tab=${tab}`}
+            href={`/admin/job-board?status=${s}&tab=${tab}&c=${country}`}
             className={`flex-1 rounded-pill px-3 py-1.5 text-center text-[12px] font-bold transition ${
               statusParam === s
                 ? "bg-primary text-white shadow-card"
@@ -146,7 +151,7 @@ export default async function JobBoardAdminPage({
           return (
             <Link
               key={t}
-              href={`/admin/job-board?status=${statusParam}&tab=${t}`}
+              href={`/admin/job-board?status=${statusParam}&tab=${t}&c=${country}`}
               className={`inline-flex items-center gap-1.5 rounded-pill border px-4 py-1.5 text-[11.5px] font-bold transition ${
                 tab === t
                   ? "border-primary bg-primary-soft text-primary"
@@ -163,6 +168,16 @@ export default async function JobBoardAdminPage({
           );
         })}
       </div>
+
+      {/* Ország-szűrő (az álláshirdetésekre) */}
+      {tab === "jobs" && (
+        <div className="flex flex-wrap gap-1.5">
+          <CountryTab code="all" label="🌍 Mind" active={country === "all"} status={statusParam} />
+          {COUNTRIES.map((c) => (
+            <CountryTab key={c.code} code={c.code} label={`${c.flag} ${c.code}`} active={country === c.code} live={c.enabled} status={statusParam} />
+          ))}
+        </div>
+      )}
 
       {/* Items */}
       <section className="space-y-2">
@@ -271,6 +286,21 @@ export default async function JobBoardAdminPage({
         )}
       </section>
     </div>
+  );
+}
+
+function CountryTab({ code, label, active, status, live = true }: { code: string; label: string; active: boolean; status: string; live?: boolean }) {
+  return (
+    <Link
+      href={`/admin/job-board?status=${status}&tab=jobs&c=${code}`}
+      className={cn(
+        "inline-flex items-center gap-1 rounded-pill px-3 py-1.5 text-[11.5px] font-bold transition",
+        active ? "bg-primary text-white shadow-card" : "border border-line bg-surface text-ink hover:bg-surface-alt",
+        !live && !active && "opacity-55",
+      )}
+    >
+      {label}
+    </Link>
   );
 }
 

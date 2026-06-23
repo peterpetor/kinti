@@ -657,9 +657,11 @@ export interface PendingEvent {
   venue: string | null; submitterEmail: string | null; token: string | null; createdAt: string;
 }
 
-export async function listPendingEvents(): Promise<PendingEvent[]> {
-  const { results } = await getDB()
-    .prepare("SELECT id,title,event_date,start_time,venue,email,token,created_at FROM events WHERE status = 'pending_admin' ORDER BY created_at DESC LIMIT 50")
+export async function listPendingEvents(country?: string | null): Promise<PendingEvent[]> {
+  const filter = !!country && country !== "all";
+  const sql = `SELECT id,title,event_date,start_time,venue,email,token,created_at FROM events WHERE status = 'pending_admin' ${filter ? "AND country_code = ?" : ""} ORDER BY created_at DESC LIMIT 50`;
+  const stmt = getDB().prepare(sql);
+  const { results } = await (filter ? stmt.bind(country) : stmt)
     .all<{ id: string; title: string; event_date: string | null; start_time: string | null; venue: string | null; email: string | null; token: string | null; created_at: string; }>();
   return results.map((r) => ({
     id: r.id, title: r.title, eventDate: r.event_date, startTime: r.start_time,
@@ -671,9 +673,11 @@ export interface AdminContentRow {
   id: string; title: string; meta: string | null; createdAt: string | null; manageToken: string | null;
 }
 
-export async function listEventsForAdmin(): Promise<AdminContentRow[]> {
-  const { results } = await getDB()
-    .prepare("SELECT id, title, event_date, venue, status, created_at, manage_token FROM events ORDER BY created_at DESC LIMIT 200")
+export async function listEventsForAdmin(country?: string | null): Promise<AdminContentRow[]> {
+  const filter = !!country && country !== "all";
+  const sql = `SELECT id, title, event_date, venue, status, created_at, manage_token FROM events ${filter ? "WHERE country_code = ?" : ""} ORDER BY created_at DESC LIMIT 200`;
+  const stmt = getDB().prepare(sql);
+  const { results } = await (filter ? stmt.bind(country) : stmt)
     .all<{ id: string; title: string; event_date: string | null; venue: string | null; status: string | null; created_at: string; manage_token: string | null }>();
   return results.map((r) => ({
     id: r.id, title: r.title, meta: `${r.status ?? "?"}${r.event_date ? " · " + r.event_date : ""}${r.venue ? " · " + r.venue : ""}`,

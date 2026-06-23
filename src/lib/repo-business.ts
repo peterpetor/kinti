@@ -588,11 +588,13 @@ export interface AdminBusinessRow {
   rating: number; reviews: number; source: string | null; createdAt: string; manageToken: string | null;
 }
 
-export async function listBusinessesForAdmin(): Promise<AdminBusinessRow[]> {
+export async function listBusinessesForAdmin(country?: string | null): Promise<AdminBusinessRow[]> {
   // A függőben lévőket (moderation_status=0) előre rendezzük, hogy az admin
-  // azonnal lássa, mi vár jóváhagyásra.
-  const { results } = await getDB()
-    .prepare("SELECT id,name,category_label,verified,moderation_status,rating,reviews,source,created_at,manage_token FROM businesses ORDER BY moderation_status ASC, created_at DESC LIMIT 100")
+  // azonnal lássa, mi vár jóváhagyásra. Opcionális ország-szűrő (admin tab).
+  const filter = !!country && country !== "all";
+  const sql = `SELECT id,name,category_label,verified,moderation_status,rating,reviews,source,created_at,manage_token FROM businesses ${filter ? "WHERE country_code = ?" : ""} ORDER BY moderation_status ASC, created_at DESC LIMIT 100`;
+  const stmt = getDB().prepare(sql);
+  const { results } = await (filter ? stmt.bind(country) : stmt)
     .all<{ id: string; name: string; category_label: string | null; verified: number; moderation_status: number | null; rating: number; reviews: number; source: string | null; created_at: string; manage_token: string | null }>();
   return results.map((r) => ({
     id: r.id, name: r.name, categoryLabel: r.category_label, verified: r.verified === 1,

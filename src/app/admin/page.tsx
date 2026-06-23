@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { Sparkline } from "@/components/ui/sparkline";
+import { cn } from "@/lib/cn";
+import { COUNTRIES, getCountry } from "@/lib/countries";
 import { getAdminUserId } from "@/lib/admin";
 import { AdminVerifyToggle } from "@/components/views/admin-verify-toggle";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
@@ -24,9 +26,14 @@ export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Admin — kinti", robots: { index: false, follow: false } };
 
-export default async function AdminPage() {
+export default async function AdminPage({ searchParams }: { searchParams: { c?: string } }) {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
+
+  // Ország-szűrő (admin tab): a tartalom-listák ország szerint, hogy 6 országgal
+  // se legyen káosz. "all" = összes ország.
+  const country = searchParams?.c && searchParams.c !== "all" ? searchParams.c : "all";
+  const countryName = country === "all" ? "összes ország" : getCountry(country)?.name ?? country;
 
   const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, pendingEvents, businesses, events] =
     await Promise.all([
@@ -36,9 +43,9 @@ export default async function AdminPage() {
       getEmailUsageStats(),
       getFeatureUsageStats(7),
       listOpenReports(),
-      listPendingEvents(),
-      listBusinessesForAdmin(),
-      listEventsForAdmin(),
+      listPendingEvents(country),
+      listBusinessesForAdmin(country),
+      listEventsForAdmin(country),
     ]);
 
   const fmt = (n: number) => n.toLocaleString("hu-HU");
@@ -55,6 +62,14 @@ export default async function AdminPage() {
           Csak admin email-címek érik el (<code className="text-[11px]">ADMIN_EMAILS</code> env).
         </p>
       </header>
+
+      {/* Ország-szűrő: a tartalom-listák (vállalkozás, esemény) ország szerint */}
+      <nav className="flex flex-wrap gap-1.5">
+        <CountryTab code="all" label="🌍 Mind" active={country === "all"} />
+        {COUNTRIES.map((c) => (
+          <CountryTab key={c.code} code={c.code} label={`${c.flag} ${c.name}`} active={country === c.code} live={c.enabled} />
+        ))}
+      </nav>
 
       {/* Stats */}
       <section className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -245,7 +260,7 @@ export default async function AdminPage() {
       {/* Pending events */}
       <section className="space-y-2">
         <h2 className="text-[14px] font-extrabold text-ink">
-          Jóváhagyásra váró események ({pendingEvents.length})
+          Jóváhagyásra váró események ({pendingEvents.length}) · {countryName}
         </h2>
         {pendingEvents.length === 0 ? (
           <Empty label="Nincs várakozó esemény." />
@@ -285,7 +300,7 @@ export default async function AdminPage() {
       {/* Businesses + verify toggle + delete */}
       <section className="space-y-2">
         <h2 className="text-[14px] font-extrabold text-ink">
-          Vállalkozások — Verified + törlés ({businesses.length})
+          Vállalkozások — Verified + törlés ({businesses.length}) · {countryName}
         </h2>
         {businesses.length === 0 ? (
           <Empty label="Nincs vállalkozás a Szaknévsorban." />
@@ -347,7 +362,7 @@ export default async function AdminPage() {
       {/* Események — törlés (a status független) */}
       <section className="space-y-2">
         <h2 className="text-[14px] font-extrabold text-ink">
-          Események — törlés ({events.length})
+          Események — törlés ({events.length}) · {countryName}
         </h2>
         {events.length === 0 ? (
           <Empty label="Nincs esemény." />
@@ -465,6 +480,24 @@ function TrendCard({ label, data, total7d, sub }: { label: string; data: number[
         )}
       </div>
     </div>
+  );
+}
+
+function CountryTab({ code, label, active, live = true }: { code: string; label: string; active: boolean; live?: boolean }) {
+  return (
+    <Link
+      href={`/admin?c=${code}`}
+      className={cn(
+        "inline-flex items-center gap-1 rounded-pill px-3 py-1.5 text-[12px] font-bold transition",
+        active
+          ? "bg-primary text-white shadow-card"
+          : "border border-line bg-surface text-ink hover:bg-surface-alt",
+        !live && !active && "opacity-55",
+      )}
+      title={live ? undefined : "Még nem élő ország (tartalom-szűrőként már használható)"}
+    >
+      {label}
+    </Link>
   );
 }
 
