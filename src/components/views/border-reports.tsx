@@ -18,12 +18,12 @@ interface BorderReport {
   expiresAt: string;
 }
 
-const STATUS_META: Record<BorderStatus, { label: string; emoji: string; color: string; bg: string }> = {
-  strict:   { label: "Szigorú ellenőrzés", emoji: "🚨", color: "#e74c3c", bg: "bg-red-50 border-red-200" },
-  moderate: { label: "Mérsékelt ellenőrzés", emoji: "🟡", color: "#e3a233", bg: "bg-yellow-50 border-yellow-200" },
-  easy:     { label: "Lazább, gyors átkelés", emoji: "✅", color: "#27ae60", bg: "bg-green-50 border-green-200" },
-  closed:   { label: "Zárva", emoji: "⛔", color: "#7f8c8d", bg: "bg-gray-100 border-gray-300" },
-  traffic:  { label: "Dugó / forgalom", emoji: "🚗", color: "#3a6ea5", bg: "bg-blue-50 border-blue-200" },
+const STATUS_META: Record<BorderStatus, { label: string; emoji: string; color: string }> = {
+  strict:   { label: "Szigorú ellenőrzés", emoji: "🚨", color: "#e74c3c" },
+  moderate: { label: "Mérsékelt ellenőrzés", emoji: "🟡", color: "#e3a233" },
+  easy:     { label: "Lazább, gyors átkelés", emoji: "✅", color: "#27ae60" },
+  closed:   { label: "Zárva", emoji: "⛔", color: "#7f8c8d" },
+  traffic:  { label: "Dugó / forgalom", emoji: "🚗", color: "#3a6ea5" },
 };
 
 /**
@@ -156,8 +156,16 @@ function CrossingCard({ crossing, reports }: { crossing: BorderCrossing; reports
     <article
       className={cn(
         "rounded-card border-2 px-4 py-3 shadow-card",
-        latest ? STATUS_META[latest.status].bg : "border-line bg-surface",
+        !latest && "border-line bg-surface",
       )}
+      style={
+        latest
+          ? {
+              backgroundColor: STATUS_META[latest.status].color + "14",
+              borderColor: STATUS_META[latest.status].color + "66",
+            }
+          : undefined
+      }
     >
       <div className="flex items-start gap-3">
         <span className="text-2xl shrink-0">{flag}</span>

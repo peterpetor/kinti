@@ -14,12 +14,12 @@ import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 
-const SEVERITY_META: Record<FineResult["severity"], { label: string; color: string; bg: string; emoji: string }> = {
-  "no-fine":       { label: "Nincs büntetés",         color: "#16a34a", bg: "bg-success/10 border-success/40", emoji: "✅" },
-  "ordnungsbusse": { label: "Ordnungsbusse (fix)",    color: "#3a6ea5", bg: "bg-blue-50 border-blue-300",        emoji: "📋" },
-  "mittelschwer":  { label: "Közepes súlyú",          color: "#e3a233", bg: "bg-yellow-50 border-yellow-300",    emoji: "⚠️" },
-  "schwer":        { label: "Súlyos",                  color: "#dc2626", bg: "bg-red-50 border-red-300",          emoji: "🚨" },
-  "raser":         { label: "Raserdelikt (bűncs.)",   color: "#7f1d1d", bg: "bg-red-100 border-red-500",         emoji: "🚔" },
+const SEVERITY_META: Record<FineResult["severity"], { label: string; color: string; emoji: string }> = {
+  "no-fine":       { label: "Nincs büntetés",         color: "#16a34a", emoji: "✅" },
+  "ordnungsbusse": { label: "Ordnungsbusse (fix)",    color: "#3a6ea5", emoji: "📋" },
+  "mittelschwer":  { label: "Közepes súlyú",          color: "#e3a233", emoji: "⚠️" },
+  "schwer":        { label: "Súlyos",                  color: "#dc2626", emoji: "🚨" },
+  "raser":         { label: "Raserdelikt (bűncs.)",   color: "#7f1d1d", emoji: "🚔" },
 };
 
 /** Osztrák súlyossági címkék (a szín/emoji közös, csak a felirat tér el). */
@@ -196,7 +196,10 @@ export function SpeedingCalculator() {
       )}
 
       {/* Eredmény */}
-      <section className={cn("rounded-card border-2 p-5 shadow-pop", meta.bg)}>
+      <section
+        className="rounded-card border-2 p-5 shadow-pop"
+        style={{ backgroundColor: meta.color + "14", borderColor: meta.color + "66" }}
+      >
         <div className="flex items-start gap-3">
           <span className="text-4xl shrink-0">{meta.emoji}</span>
           <div className="min-w-0 flex-1">

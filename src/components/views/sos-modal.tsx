@@ -97,33 +97,33 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+          className="absolute top-4 right-4 text-ink-muted hover:text-ink"
         >
           ✕
         </button>
 
-        <div className="mb-6 rounded-lg bg-red-50 p-4 border border-red-200">
-          <h2 className="text-lg font-bold text-red-700 flex items-center gap-2 mb-2">
+        <div className="mb-6 rounded-lg bg-accent/5 p-4 border border-accent/20">
+          <h2 className="text-lg font-bold text-accent flex items-center gap-2 mb-2">
             🆘 S.O.S. Segítségkérés
           </h2>
-          <p className="text-sm text-red-800 font-medium">
+          <p className="text-sm text-accent font-medium">
             Figyelem! Ez egy közösségi funkció. Életveszély vagy baleset esetén azonnal hívd a <strong>112</strong>-t! A platform nem garantálja a segítség érkezését.
           </p>
         </div>
 
-        <div className="mb-4 rounded-lg bg-yellow-50 p-3 border border-yellow-300 text-xs text-yellow-900 leading-relaxed">
+        <div className="mb-4 rounded-lg bg-star/10 p-3 border border-star/30 text-xs text-ink leading-relaxed">
           📢 <strong>Fontos:</strong> Az elküldött telefonszámod és GPS-pozíciód <strong>nyilvánosan megjelenik a térképen</strong>, ahol más felhasználók is láthatják. A riasztás 3 óra múlva automatikusan törlődik.
         </div>
 
         {error && (
-          <div className="mb-4 rounded bg-red-100 p-3 text-sm text-red-700">
+          <div className="mb-4 rounded bg-accent/10 p-3 text-sm text-accent">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1 block text-sm font-medium text-ink">
               Mi a probléma? (Röviden)
             </label>
             <textarea
@@ -131,35 +131,35 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
               rows={3}
               maxLength={300}
               placeholder="Pl. Lerobbant az autóm az A1-esen, segítség kellene a vontatáshoz..."
-              className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              className="w-full rounded-lg border border-line bg-surface text-ink p-3 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1 block text-sm font-medium text-ink">
               Telefonszám
             </label>
             <input
               type="text"
               required
-              className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              className="w-full rounded-lg border border-line bg-surface text-ink p-3 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
               value={contactPhone}
               onChange={(e) => setContactPhone(e.target.value)}
             />
           </div>
 
-          <div className="mt-2 text-xs text-gray-500">
+          <div className="mt-2 text-xs text-ink-muted">
             A kérés elküldésekor az app rögzíti a jelenlegi GPS pozíciódat. A riasztás 3 óra múlva automatikusan törlődik.
           </div>
 
-          <label className="flex items-start gap-2 text-xs text-gray-700 cursor-pointer">
+          <label className="flex items-start gap-2 text-xs text-ink-muted cursor-pointer">
             <input
               type="checkbox"
               checked={acceptedTerms}
               onChange={(e) => setAcceptedTerms(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 accent-red-600"
+              className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
             />
             <span>
               Tudomásul veszem, hogy a telefonszámom és a pozícióm nyilvánosan megjelenik a platformon, és elfogadom az{" "}
@@ -179,7 +179,7 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
           <button
             type="submit"
             disabled={loading || !turnstileToken || !acceptedTerms}
-            className="mt-2 w-full rounded-xl bg-red-600 py-3 text-center font-bold text-white shadow-lg transition-colors hover:bg-red-700 disabled:opacity-50"
+            className="mt-2 w-full rounded-xl bg-accent py-3 text-center font-bold text-white shadow-lg transition-colors hover:bg-accent/90 disabled:opacity-50"
           >
             {loading ? "Küldés..." : "Riasztás Leadása"}
           </button>
