@@ -2,7 +2,8 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getJobs, getWorkerProfileByUser } from "@/lib/repo";
 import { isPro } from "@/lib/subscriptions";
-import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
+import { Icon } from "@/components/ui";
+import { AllasokHeader } from "./AllasokHeader";
 import { JobAlertRadar } from "@/components/views/job-alert-radar";
 import { JobsBrowser } from "@/components/views/jobs-browser";
 import { PullToRefresh } from "@/components/pull-to-refresh";
@@ -10,7 +11,7 @@ import { PullToRefresh } from "@/components/pull-to-refresh";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Állások — Svájci magyaroknak" };
+export const metadata = { title: "Állások — Kint élő magyaroknak" };
 
 export default async function JobsPage() {
   const [jobs, { userId }] = await Promise.all([getJobs(), auth()]);
@@ -28,36 +29,21 @@ export default async function JobsPage() {
   return (
     <div className="pt-[calc(env(safe-area-inset-top)+2rem)]">
       <PullToRefresh>
-    <div className="space-y-6 px-5 pb-4 min-h-[calc(100dvh-70px)] flex flex-col">
-      <header className="flex items-center gap-2.5">
-        <div className="flex items-center gap-2">
-          <KintiLogo size={28} />
-          <span className="text-[22px] font-extrabold tracking-tight text-ink">Állások</span>
-        </div>
-        <div className="flex-1" />
-        <DropdownMenu />
-      </header>
+    <div className="space-y-5 px-5 pb-4 min-h-[calc(100dvh-70px)] flex flex-col pt-2">
+      <AllasokHeader />
 
       <main className="flex-1 pb-20 space-y-6">
-        <section className="text-center animate-fade-up">
-          <div className="mb-6">
-            <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
-              Kinti Állások
-            </h1>
-            <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
-              Magyar-barát munkalehetőségek külföldön. Böngéssz az ellenőrzött állások között, vagy
-              készülj fel az interjúra!
-            </p>
-          </div>
-
-          <div className="mt-6 flex justify-center">
-            <Link 
-              href="/allasok/profil" 
-              className="inline-flex items-center gap-2 rounded-pill bg-primary/10 px-4 py-2 text-[13.5px] font-bold text-primary transition-all active:scale-[0.98]"
-            >
-              <Icon name="upload" size={16} strokeWidth={2.4} /> Töltsd fel a CV-det
-            </Link>
-          </div>
+        <section className="animate-fade-up space-y-3">
+          <p className="text-[14px] leading-relaxed text-ink-muted">
+            Magyar-barát munkalehetőségek külföldön. Böngéssz az ellenőrzött állások között, vagy
+            készülj fel az interjúra!
+          </p>
+          <Link
+            href="/allasok/profil"
+            className="inline-flex items-center gap-2 rounded-pill bg-primary/10 px-4 py-2 text-[13.5px] font-bold text-primary transition-all active:scale-[0.98]"
+          >
+            <Icon name="upload" size={16} strokeWidth={2.4} /> Töltsd fel a CV-det
+          </Link>
         </section>
 
         {/* Állás-riasztás modul */}
