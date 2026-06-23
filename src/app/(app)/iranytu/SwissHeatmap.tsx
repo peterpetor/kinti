@@ -17,9 +17,9 @@ const CH_GRID = [
 /** AT-rács (5×3) — a 9 Bundesland nagyjából földrajzi elrendezése (nyugat→kelet).
  *  5 oszlop, hogy a teljes szélességbe kiférjen (ne vágódjon le a jobb széle). */
 const AT_GRID = [
-  { c: "OOe", x: 3, y: 1 }, { c: "NOe", x: 4, y: 1 }, { c: "W", x: 5, y: 1 },
-  { c: "Vbg", x: 1, y: 2 }, { c: "Tirol", x: 2, y: 2 }, { c: "Sbg", x: 3, y: 2 }, { c: "Stmk", x: 4, y: 2 }, { c: "Bgld", x: 5, y: 2 },
-  { c: "Ktn", x: 3, y: 3 },
+  { c: "OOE", x: 3, y: 1 }, { c: "NOE", x: 4, y: 1 }, { c: "W", x: 5, y: 1 },
+  { c: "VBG", x: 1, y: 2 }, { c: "TIR", x: 2, y: 2 }, { c: "SBG", x: 3, y: 2 }, { c: "STM", x: 4, y: 2 }, { c: "BGL", x: 5, y: 2 },
+  { c: "KTN", x: 3, y: 3 },
 ];
 
 interface HeatmapRow {
