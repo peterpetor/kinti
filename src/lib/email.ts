@@ -259,6 +259,51 @@ export async function sendTestEmail(to: string): Promise<{ id: string | null }> 
   return { id: data?.id ?? null };
 }
 
+/** A hírlevél-email HTML-layoutja: a szerkesztett törzs + KÖTELEZŐ leiratkozó-lábléc. */
+function newsletterHtml(bodyHtml: string, unsubscribeUrl: string): string {
+  return `<div style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;color:#1a1a1a;max-width:560px;margin:0 auto;padding:8px">
+${bodyHtml}
+<hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0"/>
+<p style="font-size:12px;color:#888;margin:0">Ezt az e-mailt azért kapod, mert feliratkoztál a Kinti hírlevélre. <a href="${unsubscribeUrl}" style="color:#888">Leiratkozás</a></p>
+</div>`;
+}
+
+/**
+ * TÖMEGES hírlevél-küldés Resend BATCH API-val (egy hívásban max 100 email) —
+ * így nem ütközünk a 2/sec rate-limitbe. Minden email személyre szabott leiratkozó-
+ * linkkel megy. A napi számlálót manuálisan írjuk (a batch nem a wrappelt send-en megy).
+ * A hívó gondoskodik róla, hogy `recipients.length <= 100` (napi keret / batch-limit).
+ */
+export async function sendNewsletterBatch(args: {
+  recipients: { to: string; unsubscribeUrl: string }[];
+  subject: string;
+  bodyHtml: string;
+  bodyText: string;
+}): Promise<{ sent: number; failed: number }> {
+  if (!args.recipients.length) return { sent: 0, failed: 0 };
+  const env = getCloudflareEnv();
+  if (!env.RESEND_API_KEY) throw new Error("Hiányzó RESEND_API_KEY env-változó.");
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const resend = new Resend(env.RESEND_API_KEY);
+  const batch = args.recipients.map((r) => ({
+    from,
+    to: r.to,
+    subject: args.subject,
+    html: newsletterHtml(args.bodyHtml, r.unsubscribeUrl),
+    text: `${args.bodyText}\n\n—\nLeiratkozás: ${r.unsubscribeUrl}`,
+  }));
+  const { data, error } = await resend.batch.send(batch);
+  if (error) return { sent: 0, failed: batch.length };
+  const sent = data?.data?.length ?? batch.length;
+  try {
+    const { recordEmailsSent } = await import("./repo-misc");
+    await recordEmailsSent(sent);
+  } catch {
+    /* a számláló sosem törheti meg a küldést */
+  }
+  return { sent, failed: batch.length - sent };
+}
+
 /**
  * Generikus email-küldő nyers HTML-törzzsel (pl. admin-értesítőkhöz). A
  * specifikus sablon-függvények (sendReviewConfirmationEmail stb.) saját

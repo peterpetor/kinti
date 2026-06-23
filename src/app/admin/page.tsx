@@ -414,6 +414,12 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
             <Icon name="flag" size={13} strokeWidth={2.4} /> Claim-igénylések
           </Link>
           <Link
+            href="/admin/newsletter"
+            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
+          >
+            <Icon name="send" size={13} strokeWidth={2.4} /> Hírlevél küldése
+          </Link>
+          <Link
             href="/admin/moderation/audit-log"
             className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
           >

@@ -246,14 +246,20 @@ export async function getAiUsageStats(): Promise<AiUsageStats> {
 /** Egy SIKERES email-küldés naplózása (napi összesítő). Best-effort: a számláló
  *  (tábla hiányzik / hiba) SOSEM törheti meg az email-küldést. */
 export async function recordEmailSent(): Promise<void> {
+  return recordEmailsSent(1);
+}
+
+/** Napi email-számláló növelése N-nel (pl. tömeges hírlevél-batch után). Best-effort. */
+export async function recordEmailsSent(n: number): Promise<void> {
+  if (n <= 0) return;
   try {
     const day = new Date().toISOString().slice(0, 10);
     await getDB()
       .prepare(
-        `INSERT INTO email_usage_daily (day, count) VALUES (?, 1)
-         ON CONFLICT(day) DO UPDATE SET count = count + 1`,
+        `INSERT INTO email_usage_daily (day, count) VALUES (?, ?)
+         ON CONFLICT(day) DO UPDATE SET count = count + ?`,
       )
-      .bind(day)
+      .bind(day, n, n)
       .run();
   } catch {
     /* a számláló sosem törheti meg az emailt */
