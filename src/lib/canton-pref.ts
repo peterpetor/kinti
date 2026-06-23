@@ -12,13 +12,21 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { CANTONS } from "./cantons";
+import { COUNTRIES } from "./countries";
+import { getRegions } from "./regions";
 
 export const CANTON_KEY = "kinti.canton";
 export const CANTON_EVENT = "kinti:canton";
 
+/**
+ * Érvényes régiókód, ha valamelyik ÉLŐ ország (CH kanton / AT Bundesland / …)
+ * régiói közt szerepel. Így az időjárás- és egyéb választók nem-CH országban is
+ * elmentik a választást (a kódok ország-egyediek a CH+AT halmazon). Az egyes
+ * nézetek a saját országukhoz külön validálnak.
+ */
 function isValidCode(code: string | null | undefined): code is string {
-  return !!code && code !== "all" && CANTONS.some((c) => c.code === code);
+  if (!code || code === "all") return false;
+  return COUNTRIES.some((c) => c.enabled && getRegions(c.code).some((r) => r.code === code));
 }
 
 /** A beállított preferált kanton kódja, vagy `null` ha nincs / „egész Svájc". */
