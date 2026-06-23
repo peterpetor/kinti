@@ -600,12 +600,13 @@ export async function ensureGeneratedEvents(force: boolean): Promise<number> {
   const events = GEN_COUNTRIES.flatMap((c) =>
     generateRecurringEvents(new Date(), c).map((ev) => ({ ev, country: c })),
   );
-  await db
-    .prepare(`DELETE FROM events WHERE source = ? AND event_date >= date('now')`)
-    .bind(GENERATED_SOURCE)
-    .run();
-
+  // Ha nincs mit beszúrni, NE töröljünk (különben üresen maradna). A törlés + beszúrás
+  // EGY atomi tranzakcióban (db.batch) megy — eddig külön DELETE futott, és ha az INSERT
+  // megszakadt (pl. waitUntil-leállás Pages-en), az események elvesztek.
   if (!events.length) return 0;
+  const del = db
+    .prepare(`DELETE FROM events WHERE source = ? AND event_date >= date('now')`)
+    .bind(GENERATED_SOURCE);
   const stmt = db.prepare(
     `INSERT OR REPLACE INTO events
        (id, title, event_date, date_day, date_month, date_weekday, start_time,
@@ -613,14 +614,14 @@ export async function ensureGeneratedEvents(force: boolean): Promise<number> {
         moderation_decided_by, moderation_decision_at, created_at)
      VALUES (?, ?, ?, ?, ?, ?, NULL, ?, 0, ?, ?, ?, ?, ?, ?, 'approved', 1, 'auto-generated', datetime('now'), datetime('now'))`,
   );
-  const batch = events.map(({ ev, country }) =>
+  const inserts = events.map(({ ev, country }) =>
     stmt.bind(
       ev.id, ev.title, ev.eventDate, ev.dateDay, ev.dateMonth, ev.dateWeekday,
       ev.venue, ev.tag, ev.color, ev.description, country, GENERATED_SOURCE,
     ),
   );
-  await db.batch(batch);
-  return batch.length;
+  await db.batch([del, ...inserts]);
+  return inserts.length;
 }
 
 /**
@@ -637,12 +638,12 @@ export async function syncChwEvents(): Promise<number> {
     return 0;
   }
 
-  await db
-    .prepare(`DELETE FROM events WHERE source = ? AND event_date >= date('now')`)
-    .bind(CHW_SOURCE)
-    .run();
-
+  // Üres/API-hiba esetén NE töröljük a meglévőt (különben culture.hu-leállásnál eltűnne a
+  // CHW-esemény). A törlés + beszúrás EGY atomi tranzakcióban.
   if (!events.length) return 0;
+  const del = db
+    .prepare(`DELETE FROM events WHERE source = ? AND event_date >= date('now')`)
+    .bind(CHW_SOURCE);
   const stmt = db.prepare(
     `INSERT OR REPLACE INTO events
        (id, title, event_date, date_day, date_month, date_weekday, start_time,
@@ -650,14 +651,14 @@ export async function syncChwEvents(): Promise<number> {
         moderation_decided_by, moderation_decision_at, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 'AT', ?, 'approved', 1, 'chw-api', datetime('now'), datetime('now'))`,
   );
-  const batch = events.map((e) =>
+  const inserts = events.map((e) =>
     stmt.bind(
       e.id, e.title, e.eventDate, e.dateDay, e.dateMonth, e.dateWeekday, e.startTime,
       e.venue, e.tag, e.color, e.description, CHW_SOURCE,
     ),
   );
-  await db.batch(batch);
-  return batch.length;
+  await db.batch([del, ...inserts]);
+  return inserts.length;
 }
 
 /** Teljes szinkron (generált + CHW + feedek) — a /api/cron/sync-events endpointhoz. */
