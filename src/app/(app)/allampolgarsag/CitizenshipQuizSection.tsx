@@ -17,10 +17,10 @@ export function CitizenshipQuizSection({ isPro }: { isPro: boolean }) {
   const quizName = isAT ? "Staatsbürgerschaftstest-szimulátor" : "Einbürgerung-szimulátor";
 
   return (
-    <div className="pt-8 border-t border-neutral-200 dark:border-neutral-800">
+    <div className="pt-8 border-t border-line">
       <div className="mb-6 space-y-2">
-        <h2 className="text-xl font-bold">Készen állsz az állampolgársági vizsgára?</h2>
-        <p className="text-sm text-neutral-500">
+        <h2 className="text-xl font-bold text-ink">Készen állsz az állampolgársági vizsgára?</h2>
+        <p className="text-sm text-ink-muted">
           {isAT
             ? "Teszteld le a tudásod az osztrák Staatsbürgerschaftstest témáiból: demokrácia, történelem, földrajz + a választott Bundesland kérdései."
             : "Teszteld le, hogy átmennél-e a hivatalos Einbürgerung tudásfelmérőn! Svájci történelmi és politikai kérdésekkel."}

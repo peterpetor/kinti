@@ -233,14 +233,14 @@ function MyDataCard({ tab, myData, onEdit, country }: { tab: Tab; myData: MyData
     <div className="space-y-2">
       {/* Sárga banner ha 6+ hónapos */}
       {stale && ageMonths !== null && (
-        <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-4 py-3 text-[13px] text-amber-800 dark:text-amber-300 flex items-start gap-2">
+        <div className="rounded-xl bg-star/10 border border-star/30 px-4 py-3 text-[13px] text-ink-muted flex items-start gap-2">
           <span className="text-base mt-0.5">⚠️</span>
           <div className="flex-1">
             <strong>Az adatod {ageMonths} hónapos.</strong>{" "}
             Frissítsd, hogy pontos legyen a statisztika! A béred / lakbéred változhatott azóta.
             <button
               onClick={onEdit}
-              className="block mt-1.5 text-[12px] font-bold text-amber-900 dark:text-amber-100 underline hover:opacity-70"
+              className="block mt-1.5 text-[12px] font-bold text-star underline hover:opacity-70"
             >
               Frissítem most →
             </button>
@@ -279,7 +279,7 @@ function LowDataCard({ title, count }: { title: string; count: number }) {
     <div className="rounded-2xl border border-dashed border-line bg-surface-alt/40 p-4">
       <div className="flex items-start justify-between gap-2 mb-2">
         <p className="font-bold text-[14px] text-ink leading-snug">{title}</p>
-        <span className="shrink-0 text-[11px] font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full whitespace-nowrap">
+        <span className="shrink-0 text-[11px] font-bold bg-star/15 text-ink px-2 py-0.5 rounded-full whitespace-nowrap">
           {count} adat
         </span>
       </div>
@@ -312,7 +312,7 @@ function RentCard({ stat, cur }: { stat: RentStatsRow; cur: string }) {
         <span>Átlag:</span>
         <strong className="text-ink">{stat.avg_rent.toLocaleString("hu-HU")} {cur}</strong>
         {skewed && (
-          <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-amber-600 dark:text-amber-400">⚠ eltérés</span>
+          <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-star">⚠ eltérés</span>
         )}
       </div>
       <div className="mt-1.5 h-2 rounded-full bg-surface-alt overflow-hidden">
@@ -383,7 +383,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
       <div className="p-4 space-y-4">
         {isLocked ? (
           <div className="space-y-3">
-            <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 px-4 py-3 text-[13px] text-amber-800 flex items-start gap-2">
+            <div className="rounded-xl bg-star/10 border border-star/30 px-4 py-3 text-[13px] text-ink-muted flex items-start gap-2">
               <span className="mt-0.5">🔐</span>
               <span>{tab === "salary" ? "Küldd be a béredet a statisztikák feloldásához!" : "Küldd be a lakbéredet a statisztikák feloldásához!"}</span>
             </div>

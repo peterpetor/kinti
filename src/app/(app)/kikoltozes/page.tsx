@@ -251,7 +251,7 @@ export default function RelocationTrackerPage() {
                                   dl.days < 0
                                     ? "bg-accent/10 text-accent"
                                     : dl.days <= 7
-                                      ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
+                                      ? "bg-star/15 text-star"
                                       : "bg-ink/5 text-ink/60";
                                 return (
                                   <span className={cn("mt-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold", tone)}>
