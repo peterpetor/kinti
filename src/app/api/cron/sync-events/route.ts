@@ -1,6 +1,7 @@
 import { getAdminUserId } from "@/lib/admin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { runFullEventSync } from "@/lib/repo";
+import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -27,9 +28,17 @@ async function handle(req: Request): Promise<Response> {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const { generated, feeds } = await runFullEventSync();
-  const imported = feeds.reduce((n, r) => n + r.imported, 0);
-  return Response.json({ ok: true, generated, feeds: feeds.length, imported, results: feeds });
+  // Egy lépés bukása NE 500-azza a teljes cront (a külső ütemező „Failed"-et
+  // mutatna). Elkapjuk, naplózzuk, és a hiba okát visszaadjuk a válaszban.
+  try {
+    const { generated, feeds } = await runFullEventSync();
+    const imported = feeds.reduce((n, r) => n + r.imported, 0);
+    return Response.json({ ok: true, generated, feeds: feeds.length, imported, results: feeds });
+  } catch (err) {
+    safeLogError("sync-events", err);
+    const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    return Response.json({ ok: false, error: message }, { status: 200 });
+  }
 }
 
 export const POST = handle;
