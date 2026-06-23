@@ -35,9 +35,12 @@ async function handle(req: Request): Promise<Response> {
     const imported = feeds.reduce((n, r) => n + r.imported, 0);
     return Response.json({ ok: true, generated, feeds: feeds.length, imported, results: feeds });
   } catch (err) {
+    // 500-at adunk, hogy a külső ütemező „Failed"-et jelezzen (látható hibajelzés),
+    // de a részletes ok a törzsben — a cron-job.org elmenti a választ, így
+    // legközelebb azonnal diagnosztizálható (nem opák „Internal Server Error").
     safeLogError("sync-events", err);
     const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
-    return Response.json({ ok: false, error: message }, { status: 200 });
+    return Response.json({ ok: false, error: message }, { status: 500 });
   }
 }
 
