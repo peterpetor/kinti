@@ -612,7 +612,7 @@ export async function ensureGeneratedEvents(force: boolean): Promise<number> {
        (id, title, event_date, date_day, date_month, date_weekday, start_time,
         venue, going, tag, color, description, country_code, source, status, moderation_status,
         moderation_decided_by, moderation_decision_at, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, NULL, ?, 0, ?, ?, ?, ?, ?, ?, 'approved', 1, 'auto-generated', datetime('now'), datetime('now'))`,
+     VALUES (?, ?, ?, ?, ?, ?, NULL, ?, 0, ?, ?, ?, ?, ?, 'approved', 1, 'auto-generated', datetime('now'), datetime('now'))`,
   );
   const inserts = events.map(({ ev, country }) =>
     stmt.bind(
