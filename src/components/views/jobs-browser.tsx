@@ -202,14 +202,14 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
             <Icon name="search" size={28} className="text-ink-faint" />
             <p className="text-[15px] font-extrabold text-ink">
               {jobsInCountry.length === 0
-                ? "Még nincs aktív álláshirdetés"
+                ? "A legjobb álláskereső-források — egy helyen"
                 : canton
                   ? `Nincs állás itt: ${regionName(country, canton)}`
                   : "Nincs a szűrőknek megfelelő állás"}
             </p>
             <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-muted">
               {jobsInCountry.length === 0
-                ? "Légy te az első! Ha magyar munkaerőt keresel, hirdesd meg itt ingyen — pont a megfelelő közönség előtt."
+                ? "Magyar-barát hirdetések folyamatosan érkeznek. Addig is összegyűjtöttük neked a hivatalos és vezető állásportálokat — görgess lejjebb. Munkaerőt keresel? Hirdesd meg ingyen."
                 : "Próbálj tágítani a szűrőkön — vagy ha munkaerőt keresel, add fel az állásod."}
             </p>
             <Link
