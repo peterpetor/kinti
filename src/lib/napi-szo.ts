@@ -89,7 +89,41 @@ const AT_WORDS: DailyWord[] = [
   { hu: "Köszönöm", word: "Danke schön", phonetic: "dánke sőn", standard: "Danke sehr" },
 ];
 
-const LISTS: Record<string, DailyWord[]> = { CH: CH_WORDS, AT: AT_WORDS };
+/** Németország — hasznos hétköznapi + hivatali szavak (a sztenderd német a cél). */
+const DE_WORDS: DailyWord[] = [
+  { hu: "Időpont / foglalás", word: "Termin", phonetic: "termin", standard: "Verabredung / Reservierung", note: "Németországban SZINTE MINDENHEZ Termin kell — orvos, hivatal, bank." },
+  { hu: "Lakcím-bejelentés", word: "Anmeldung", phonetic: "ánmeldung", standard: "Wohnsitz-Registrierung", note: "Beköltözés után a Bürgeramtnál — ez kell mindenhez (bankszámla, adószám)." },
+  { hu: "Betét (üveg/doboz)", word: "Pfand", phonetic: "pfand", standard: "Flaschenpfand", note: "A palack/doboz ára (0,25 €) visszajár az automatánál (Pfandautomat)." },
+  { hu: "Munka utáni szabadidő", word: "Feierabend", phonetic: "fájerábend", standard: "Arbeitsende", note: "„Schönen Feierabend!\" = szép pihenést munka után." },
+  { hu: "Egészségbiztosító", word: "Krankenkasse", phonetic: "kránkenkásze", standard: "Krankenversicherung", note: "Kötelező; gesetzlich (AOK, TK, Barmer…) vagy privat." },
+  { hu: "Táppénzes papír", word: "Krankschreibung", phonetic: "kránksrájbung", standard: "Arbeitsunfähigkeitsbescheinigung", note: "Az orvostól; a munkáltatónak ÉS a Krankenkassénak küldeni kell." },
+  { hu: "Médiajárulék", word: "Rundfunkbeitrag", phonetic: "rundfunkbájtrág", standard: "GEZ", note: "Háztartásonként kötelező (~18,36 €/hó), a lakcímre jön." },
+  { hu: "Családi pótlék", word: "Kindergeld", phonetic: "kindergeld", standard: "—", note: "A Familienkassénál igényled; gyermekenként havi ~250 €." },
+  { hu: "Adóhivatal", word: "Finanzamt", phonetic: "fináncámt", standard: "Steuerbehörde" },
+  { hu: "Adóbevallás", word: "Steuererklärung", phonetic: "stojer-erklérung", standard: "—", note: "Sokszor visszajár pénz — érdemes beadni (ELSTER vagy app)." },
+  { hu: "Nyugta / blokk", word: "Kassenbon", phonetic: "kásszenbon", standard: "Quittung / Beleg" },
+  { hu: "Zsemle", word: "Brötchen", phonetic: "bröthen", standard: "Semmel (dél) / Schrippe (Berlin)", note: "Délen Semmel, Berlinben Schrippe ugyanaz." },
+  { hu: "Csirke (sült)", word: "Hähnchen", phonetic: "hénhen", standard: "Hühnchen" },
+  { hu: "Túró", word: "Quark", phonetic: "kvark", standard: "—" },
+  { hu: "Forgalmi dugó", word: "Stau", phonetic: "stau", standard: "Verkehrsstau", note: "Az Autobahn-on gyakori — a DB Navigator/Google jelzi." },
+  { hu: "Vágány", word: "Gleis", phonetic: "glájsz", standard: "Bahnsteig", note: "„Gleis 7\" = 7-es vágány a pályaudvaron." },
+  { hu: "Késés", word: "Verspätung", phonetic: "ferspétung", standard: "—", note: "A DB klasszikusa; 60+ perc késésnél jegyár-visszatérítés jár." },
+  { hu: "Gyógyszertár", word: "Apotheke", phonetic: "ápotéke", standard: "—", note: "Recept = Rezept; a Drogerie (dm, Rossmann) NEM gyógyszertár." },
+  { hu: "Bliccelés", word: "Schwarzfahren", phonetic: "svárcfáren", standard: "Fahren ohne Ticket", note: "Büntetés (~60 €) + a Deutschlandticket szinte kizárja." },
+  { hu: "Szemétszelektálás", word: "Mülltrennung", phonetic: "mülltrennung", standard: "—", note: "Gelber Sack (műanyag), Papier, Bio, Restmüll, Glas — szigorú!" },
+  { hu: "Gondnok / házmester", word: "Hausmeister", phonetic: "hauszmájszter", standard: "—" },
+  { hu: "Köszönés (északon)", word: "Moin", phonetic: "mojn", standard: "Hallo / Guten Tag", note: "Észak-Németország — egész nap használható, nem csak reggel." },
+  { hu: "Szia (búcsú)", word: "Tschüss", phonetic: "csüsz", standard: "Auf Wiedersehen" },
+  { hu: "Egészségedre (koccintás)", word: "Prost", phonetic: "proszt", standard: "Zum Wohl" },
+  { hu: "Pontosan / így van", word: "Genau", phonetic: "genau", standard: "Richtig", note: "A németek beszéd-tölteléke — nagyon sokszor hallod." },
+  { hu: "Rendben / megvan", word: "Alles klar", phonetic: "ÁLlesz klár", standard: "In Ordnung" },
+  { hu: "Jó étvágyat (déli köszönés)", word: "Mahlzeit", phonetic: "málcájt", standard: "Guten Appetit", note: "Munkahelyen délben köszönésként is használják." },
+  { hu: "Felmondás", word: "Kündigung", phonetic: "kündigung", standard: "—", note: "Munka- és lakásszerződésnél is; mindig írásban, határidővel (Frist)." },
+  { hu: "Kaució", word: "Kaution", phonetic: "kaucion", standard: "Mietkaution", note: "Lakásnál max 3 havi hideg-bérleti díj (Kaltmiete)." },
+  { hu: "Mellékköltség (rezsi)", word: "Nebenkosten", phonetic: "nébenkoszten", standard: "Betriebskosten", note: "A Kaltmiete + Nebenkosten = Warmmiete (a tényleges havi díj)." },
+];
+
+const LISTS: Record<string, DailyWord[]> = { CH: CH_WORDS, AT: AT_WORDS, DE: DE_WORDS };
 
 /** Van-e napi szó az adott országhoz? (Csak az élő nyelvi tartalmú országok.) */
 export function hasDailyWord(country: string): boolean {
@@ -98,7 +132,9 @@ export function hasDailyWord(country: string): boolean {
 
 /** A BCP-47 nyelvi kód a TTS-hez. */
 export function ttsLang(country: string): string {
-  return country === "AT" ? "de-AT" : "de-CH";
+  if (country === "AT") return "de-AT";
+  if (country === "DE") return "de-DE";
+  return "de-CH";
 }
 
 /**
