@@ -86,12 +86,6 @@ export default async function ProfilPage() {
         * Ez a /profil oldal egy Clerk-belépést igénylő admin/legacy dashboard,
         * megőrizve azoknak, akik még Clerk-fiókkal lépnek be (pl. te magad).
         */}
-      <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-2.5 text-[11.5px] leading-relaxed text-ink-muted">
-        ℹ️ <strong className="text-ink">Legacy felület.</strong> Az új vállalkozói flow email-link
-        alapú szerkesztést használ (regisztráció nélkül) — lásd a kezelő URL-t a confirmáló
-        e-mailedben.
-      </div>
-
       {business ? <OwnerDashboard business={business} /> : <OnboardingCTA categories={categories} />}
 
       {/* PWA — telepítés a kezdőképernyőre (csak ha még nem standalone) */}
