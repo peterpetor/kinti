@@ -52,13 +52,22 @@ export function FlightFinder() {
   const [calYear, setCalYear] = useState(initial.getFullYear());
   const [calMonth, setCalMonth] = useState(initial.getMonth());
 
+  // A rendereléshez MINDIG az aktuális ország configjában létező reptér-kódot
+  // használjuk. Ország-váltáskor (CH→AT) egy átmeneti renderben az originCode még
+  // a régi (ZRH), ami nincs az AT configban — az effektív kód ilyenkor a fő hubra
+  // esik vissza, így a reptér-keresés sosem ad undefined-et (különben crash).
+  const effectiveCode =
+    config && config.origins.some((o) => o.code === originCode)
+      ? originCode
+      : config?.origins[0]?.code ?? originCode;
+
   const estimate = useMemo(
-    () => (config ? estimatePrice(outDate, originCode, config) : null),
-    [outDate, originCode, config],
+    () => (config ? estimatePrice(outDate, effectiveCode, config) : null),
+    [outDate, effectiveCode, config],
   );
   const relevantAirlines = useMemo(
-    () => (config ? config.airlines.filter((a) => a.routes.includes(originCode)) : []),
-    [config, originCode],
+    () => (config ? config.airlines.filter((a) => a.routes.includes(effectiveCode)) : []),
+    [config, effectiveCode],
   );
 
   // Olyan ország, ahol nincs járat-konfig (DE/NL) — barátságos üzenet.
@@ -75,10 +84,11 @@ export function FlightFinder() {
     );
   }
 
-  const fromCode = getOrigin(direction, originCode);
-  const toCode = getDestination(direction, originCode);
-  const fromAirport = [config.home, ...config.origins].find((a) => a.code === fromCode)!;
-  const toAirport = [config.home, ...config.origins].find((a) => a.code === toCode)!;
+  const fromCode = getOrigin(direction, effectiveCode);
+  const toCode = getDestination(direction, effectiveCode);
+  const airports = [config.home, ...config.origins];
+  const fromAirport = airports.find((a) => a.code === fromCode) ?? config.origins[0];
+  const toAirport = airports.find((a) => a.code === toCode) ?? config.home;
   const cur = config.currency;
 
   return (
@@ -132,7 +142,7 @@ export function FlightFinder() {
               key={ap.code}
               type="button"
               onClick={() => setOriginCode(ap.code)}
-              className={cn("rounded-[12px] border-2 px-2 py-3 transition active:scale-95", originCode === ap.code ? "border-primary bg-primary-soft" : "border-line bg-surface")}
+              className={cn("rounded-[12px] border-2 px-2 py-3 transition active:scale-95", effectiveCode === ap.code ? "border-primary bg-primary-soft" : "border-line bg-surface")}
             >
               <div className="text-[18px] font-extrabold text-ink">{ap.code}</div>
               <div className="mt-0.5 text-[11.5px] text-ink-muted">{ap.city}</div>
@@ -181,7 +191,7 @@ export function FlightFinder() {
 
       {/* 3. Becsült ár */}
       {estimate && (
-        <PriceEstimateCard estimate={estimate} seasons={config.seasons} currency={cur} date={outDate} fromCode={fromCode} toCode={toCode} primaryHub={config.origins[0].code} originCode={originCode} />
+        <PriceEstimateCard estimate={estimate} seasons={config.seasons} currency={cur} date={outDate} fromCode={fromCode} toCode={toCode} primaryHub={config.origins[0].code} originCode={effectiveCode} />
       )}
 
       {/* 4. Foglalási linkek */}
@@ -194,7 +204,7 @@ export function FlightFinder() {
 
       {/* 5. Légitársaságok */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card space-y-2">
-        <h3 className="mb-2 text-[12px] font-bold uppercase tracking-wide text-ink-muted">✈️ Légitársaságok ({originCode})</h3>
+        <h3 className="mb-2 text-[12px] font-bold uppercase tracking-wide text-ink-muted">✈️ Légitársaságok ({effectiveCode})</h3>
         {relevantAirlines.length === 0 ? (
           <p className="text-[12px] text-ink-muted">Erről a reptérről nincs jellemző direktjárat — próbáld a fő hubot, vagy nézd a foglalási linkeket (átszállással).</p>
         ) : (
