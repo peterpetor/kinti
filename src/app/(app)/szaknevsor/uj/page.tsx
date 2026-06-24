@@ -39,7 +39,7 @@ export default async function UjVallalkozasPage() {
         küldd — azonnal kapsz egy <strong className="text-ink">kezelő-linket</strong> (QR-kód is jön):
         logót töltesz, nyitvatartást állítasz, bármikor szerkesztesz. A profil az{" "}
         <strong className="text-ink">admin ellenőrzése után</strong> (általában 24 órán belül) jelenik
-        meg a Szaknévsorban. Csak <strong className="text-ink">kint élő magyar</strong> vállalkozások.
+        meg a Szaknévsorban.
       </div>
 
       <BusinessForm categories={categories} turnstileSiteKey={turnstileSiteKey} />
