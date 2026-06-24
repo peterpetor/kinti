@@ -16,7 +16,7 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v10";
+const VERSION = "kinti-v11";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;

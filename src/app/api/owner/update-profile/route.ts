@@ -66,8 +66,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "A cím legfeljebb 200 karakter lehet." }, { status: 400 });
   }
 
-  // A kinti svájci szolgáltatás → csak svájci címet fogadunk el (ha van megadva).
-  if (address && !isSwissAddress(address)) {
+  // A szigorú svájci cím-formátum csak CH-ban kötelező; AT/DE/NL-ben a cím
+  // szabad szöveg (a hely/régió a koordinátából/geokóderből jön).
+  if (business.country === "CH" && address && !isSwissAddress(address)) {
     return NextResponse.json(
       {
         error:

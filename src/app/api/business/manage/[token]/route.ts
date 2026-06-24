@@ -72,7 +72,8 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
 
   if ("address" in body) {
     const v = str(body.address);
-    if (v && (v.length > BUSINESS_LIMITS.addressMax || !isSwissAddress(v))) {
+    // A szigorú svájci cím-formátum csak CH-ban kötelező; AT/DE/NL: szabad szöveg.
+    if (v && (v.length > BUSINESS_LIMITS.addressMax || (business.country === "CH" && !isSwissAddress(v)))) {
       errors.push({ field: "address", message: "Csak svájci cím adható meg (pl. 8001 Zürich)." });
     } else fields.address = v;
   }

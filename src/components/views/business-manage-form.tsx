@@ -165,7 +165,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           type="text"
           value={form.address}
           onChange={(e) => set("address", e.target.value)}
-          placeholder="Pl. Bahnhofstrasse 10, 8001 Zürich"
+          placeholder="Pl. utca, házszám, irányítószám, város"
           className={inputCls()}
           maxLength={200}
         />

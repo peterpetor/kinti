@@ -196,7 +196,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
             className={inputCls}
-            placeholder="Pl. Zürich"
+            placeholder={country === "AT" ? "Pl. Wien" : country === "DE" ? "Pl. Berlin" : country === "NL" ? "Pl. Amsterdam" : "Pl. Zürich"}
           />
         </div>
         <div>

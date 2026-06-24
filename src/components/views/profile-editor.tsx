@@ -7,6 +7,8 @@ import { BUSINESS_ACCENT_COLORS } from "@/lib/business-branding";
 import { GalleryUploader } from "./gallery-uploader";
 import { cn } from "@/lib/cn";
 import { isSwissAddress } from "@/lib/cantons";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import {
   type WorkingHours,
   type DayHours,
@@ -133,8 +135,11 @@ export function ProfileEditor({
     }));
   };
 
-  // A kinti svájci szolgáltatás → csak svájci cím engedélyezett (ha van megadva).
-  const addressInvalid = address.trim().length > 0 && !isSwissAddress(address);
+  // A szigorú svájci cím-formátum csak CH-ban kötelező; AT/DE/NL-ben a cím
+  // szabad szöveg (a régiót/helyet a beküldéskor a geokóder fedi le).
+  const [prefCountry] = usePreferredCountry();
+  const isCHpref = (prefCountry ?? DEFAULT_COUNTRY) === "CH";
+  const addressInvalid = isCHpref && address.trim().length > 0 && !isSwissAddress(address);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -290,13 +295,13 @@ export function ProfileEditor({
 
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
-                  Cím <span className="text-ink-faint normal-case font-medium">(csak svájci 🇨🇭)</span>
+                  Cím {isCHpref && <span className="text-ink-faint normal-case font-medium">(csak svájci 🇨🇭)</span>}
                 </label>
                 <input
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Pl. Bahnhofstrasse 10, 8001 Zürich"
+                  placeholder={isCHpref ? "Pl. Bahnhofstrasse 10, 8001 Zürich" : "Pl. utca, házszám, irányítószám, város"}
                   aria-invalid={addressInvalid}
                   className={cn(
                     "w-full rounded-[12px] border bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 transition-all",
