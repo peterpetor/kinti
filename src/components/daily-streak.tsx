@@ -46,10 +46,10 @@ export function DailyStreak() {
     <div
       className={
         "flex items-center gap-3 rounded-card border px-4 py-3 shadow-card " +
-        (isMilestone ? "border-[#e3a233]/40 bg-[#e3a233]/10" : "border-line bg-surface")
+        (isMilestone ? "border-star/40 bg-star/10" : "border-line bg-surface")
       }
     >
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[14px] bg-[#e3a233]/15 text-2xl">
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[14px] bg-star/15 text-2xl">
         🔥
       </span>
       <div className="min-w-0 flex-1">

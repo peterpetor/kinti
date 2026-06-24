@@ -261,11 +261,11 @@ async function OwnerDashboard({
 
       {/* Szaknévsor PRO kiemelés — csak ha még nem kiemelt */}
       {business.featured ? (
-        <div className="flex items-center gap-2 rounded-card border border-[#ff9600]/30 bg-[#ff9600]/5 px-4 py-3 text-[13px] font-bold text-[#ff9600]">
+        <div className="flex items-center gap-2 rounded-card border border-pro/30 bg-pro/5 px-4 py-3 text-[13px] font-bold text-pro">
           <Icon name="star" size={15} filled /> A vállalkozásod kiemelt a Szaknévsorban.
         </div>
       ) : (
-        <div className="rounded-card border border-[#ff9600]/30 bg-[#ff9600]/5 px-4 py-3">
+        <div className="rounded-card border border-pro/30 bg-pro/5 px-4 py-3">
           <p className="text-[13px] font-bold text-ink">🚀 Szaknévsor PRO — több ügyfél, kiemelt láthatóság</p>
           <p className="mt-0.5 mb-2.5 text-[12px] text-ink-muted">
             {newLeadCount > 0
@@ -276,7 +276,7 @@ async function OwnerDashboard({
             product="business_pro_monthly"
             customData={{ type: "business_pro", businessId: business.id }}
             label="Kiemelés vásárlása (19 CHF / hó)"
-            className="bg-[#ff9600] text-white hover:bg-[#e68600]"
+            className="bg-pro text-white hover:bg-[#e68600]"
           />
         </div>
       )}

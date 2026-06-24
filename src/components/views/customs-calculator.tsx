@@ -152,7 +152,7 @@ function CategoryRow({
 
   const colors = {
     ok: { border: "border-success/30", bar: "bg-success", pill: "bg-success/15 text-success" },
-    warning: { border: "border-[#e3a233]/40", bar: "bg-[#e3a233]", pill: "bg-[#e3a233]/15 text-[#9a6b00]" },
+    warning: { border: "border-star/40", bar: "bg-star", pill: "bg-star/15 text-[#9a6b00]" },
     over: { border: "border-accent/40", bar: "bg-accent", pill: "bg-accent/15 text-accent" },
   }[status];
 
@@ -184,7 +184,7 @@ function CategoryRow({
           step={step}
           value={amount}
           onChange={(e) => onChange(Number(e.target.value))}
-          className={cn("flex-1", status === "over" ? "accent-accent" : status === "warning" ? "accent-[#e3a233]" : "accent-success")}
+          className={cn("flex-1", status === "over" ? "accent-accent" : status === "warning" ? "accent-star" : "accent-success")}
         />
         <input
           type="number"

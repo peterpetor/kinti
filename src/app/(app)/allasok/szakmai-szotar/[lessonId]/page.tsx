@@ -343,9 +343,9 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
               Befejezted a leckét, és szereztél <strong className="text-accent">{lesson.xpReward} XP</strong>-t!
             </p>
             {sessionStreak > 0 && (
-              <div className="flex items-center gap-2 mt-4 px-4 py-2 bg-[#ff9600]/10 rounded-full animate-bounce">
+              <div className="flex items-center gap-2 mt-4 px-4 py-2 bg-pro/10 rounded-full animate-bounce">
                 <span className="text-2xl">🔥</span>
-                <span className="text-[#ff9600] font-bold text-[17px]">{sessionStreak} napos széria!</span>
+                <span className="text-pro font-bold text-[17px]">{sessionStreak} napos széria!</span>
               </div>
             )}
           </div>
@@ -376,7 +376,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
             size="lg" 
             variant="primary"
             onClick={() => router.push("/nyelvlecke")}
-            className="text-[17px] bg-[#ff9600] hover:bg-[#e68600] text-white border-none shadow-[0_6px_0_0_#cc7700] active:shadow-[0_2px_0_0_#cc7700]"
+            className="text-[17px] bg-pro hover:bg-[#e68600] text-white border-none shadow-[0_6px_0_0_#cc7700] active:shadow-[0_2px_0_0_#cc7700]"
           >
             Folytatás
           </Button>

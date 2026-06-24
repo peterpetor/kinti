@@ -190,7 +190,7 @@ export function NotificationSettings() {
       {status === "subscribed" && (
         <section className="rounded-card border border-line bg-surface p-5 shadow-card">
           <div className="mb-1 flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-[#e3a233]/15 text-[#e3a233]">
+            <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-star/15 text-star">
               🔥
             </span>
             <h2 className="text-[15px] font-extrabold tracking-tight text-ink">Napi emlékeztető</h2>

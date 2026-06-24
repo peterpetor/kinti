@@ -111,7 +111,7 @@ export function GamificationCard() {
                 "relative flex flex-col items-center gap-1 rounded-2xl border px-2 py-3 text-center transition",
                 b.earned
                   ? b.rare
-                    ? "border-[#e3a233]/45 bg-[#e3a233]/15 shadow-[0_0_0_1px_rgba(227,162,51,0.25)]"
+                    ? "border-star/45 bg-star/15 shadow-[0_0_0_1px_rgba(227,162,51,0.25)]"
                     : "border-primary/25 bg-primary/10"
                   : "border-line bg-surface-alt/40",
                 freshBadges.has(b.id) && "animate-pulse ring-2 ring-primary ring-offset-1",

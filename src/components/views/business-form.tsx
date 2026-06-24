@@ -661,7 +661,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
 
       {/* Engedélyköteles kategória — hatósági engedélyszám */}
       {isLicensedCategory(form.categoryId) && (
-        <section className="rounded-card border-2 border-[#e3a233]/50 bg-[#fff8ed] p-4 shadow-card space-y-3">
+        <section className="rounded-card border-2 border-star/50 bg-[#fff8ed] p-4 shadow-card space-y-3">
           <div className="flex items-start gap-2.5">
             <span className="text-xl shrink-0">⚠️</span>
             <div className="min-w-0">
@@ -693,7 +693,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
             </p>
           </div>
 
-          <label className="flex cursor-pointer items-start gap-2.5 rounded-[10px] border border-[#e3a233]/40 bg-white/60 px-3 py-2">
+          <label className="flex cursor-pointer items-start gap-2.5 rounded-[10px] border border-star/40 bg-white/60 px-3 py-2">
             <input
               type="checkbox"
               checked={form.licenseAccepted}

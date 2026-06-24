@@ -31,7 +31,7 @@ interface LegalDisclaimerProps {
 
 const VARIANT_STYLE: Record<NonNullable<LegalDisclaimerProps["variant"]>, { border: string; bg: string; icon: string }> = {
   info:     { border: "border-line",          bg: "bg-surface-alt/60",    icon: "ℹ️" },
-  legal:    { border: "border-[#e3a233]/40",  bg: "bg-[#fff8ed]",         icon: "⚠️" },
+  legal:    { border: "border-star/40",  bg: "bg-[#fff8ed]",         icon: "⚠️" },
   critical: { border: "border-accent/30",     bg: "bg-accent-soft",       icon: "🚨" },
 };
 

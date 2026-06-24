@@ -193,10 +193,10 @@ export function ProfileEditor({
         
         {/* PRO Kiemelés Banner */}
         {businessId && !isFeatured && (
-          <div className="rounded-[20px] border-2 border-[#ff9600]/20 bg-[#ff9600]/5 p-5 text-center shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-[#ff9600]/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+          <div className="rounded-[20px] border-2 border-pro/20 bg-pro/5 p-5 text-center shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-pro/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
             <div className="mb-2 text-3xl">🚀</div>
-            <h3 className="mb-1 text-[17px] font-black text-[#ff9600] tracking-tight">Válts Szaknévsor PRO-ba!</h3>
+            <h3 className="mb-1 text-[17px] font-black text-pro tracking-tight">Válts Szaknévsor PRO-ba!</h3>
             <p className="mb-4 text-[13px] font-medium text-ink-muted leading-snug">
               Tűnj ki a tömegből a sárga kiemeléssel, és kerülj a listák legtetejére, hogy több magyar ügyfelet szerezz!
             </p>
@@ -205,7 +205,7 @@ export function ProfileEditor({
               onClick={handleUpgrade}
               disabled={isCheckoutLoading}
               className={cn(
-                "flex w-full items-center justify-center gap-2 rounded-pill bg-[#ff9600] px-4 py-3 text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]",
+                "flex w-full items-center justify-center gap-2 rounded-pill bg-pro px-4 py-3 text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]",
                 isCheckoutLoading && "opacity-60 cursor-wait translate-y-1 shadow-none"
               )}
             >

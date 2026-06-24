@@ -292,7 +292,7 @@ export function RentCostCalculator() {
       </section>
 
       {/* Nebenkosten kártya */}
-      <section className="rounded-card border-2 border-[#e3a233]/40 bg-[#fff8ed] p-5 shadow-pop">
+      <section className="rounded-card border-2 border-star/40 bg-[#fff8ed] p-5 shadow-pop">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-3xl">🌡️</span>
           <div>

@@ -184,7 +184,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
         ) : (
           <Link
             href="/pro"
-            className="flex items-center gap-2.5 rounded-card border border-[#ff9600]/25 bg-[#ff9600]/5 px-4 py-3 text-left transition active:scale-[0.99]"
+            className="flex items-center gap-2.5 rounded-card border border-pro/25 bg-pro/5 px-4 py-3 text-left transition active:scale-[0.99]"
           >
             <span className="text-lg">🔒</span>
             <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
@@ -250,7 +250,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                     </span>
                     {canMatch && (() => {
                       const m = jobMatchScore(proMatch!.profile!, job);
-                      const tone = m.score >= 66 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-[#e3a233]/15 text-[#b8860b]" : "bg-surface-alt text-ink-muted";
+                      const tone = m.score >= 66 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-star/15 text-[#b8860b]" : "bg-surface-alt text-ink-muted";
                       return (
                         <span className={cn("rounded-full px-2.5 py-1 text-[11px] font-black", tone)}>
                           {m.score}% match

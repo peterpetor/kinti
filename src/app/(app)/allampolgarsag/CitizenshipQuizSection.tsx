@@ -30,8 +30,8 @@ export function CitizenshipQuizSection({ isPro }: { isPro: boolean }) {
       {isPro ? (
         <Quiz />
       ) : (
-        <div className="rounded-card border-2 border-[#e3a233]/30 bg-[#e3a233]/5 p-5 text-center">
-          <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-[14px] bg-[#e3a233] text-white">
+        <div className="rounded-card border-2 border-star/30 bg-star/5 p-5 text-center">
+          <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-[14px] bg-star text-white">
             <Icon name="lock" size={22} strokeWidth={2.4} />
           </div>
           <p className="text-[15px] font-extrabold text-ink">A {quizName} PRO funkció</p>
@@ -40,7 +40,7 @@ export function CitizenshipQuizSection({ isPro }: { isPro: boolean }) {
           </p>
           <Link
             href="/pro"
-            className="mt-4 inline-flex items-center justify-center rounded-pill bg-[#e3a233] px-5 py-2.5 text-[14px] font-extrabold text-white transition hover:bg-[#d68f20] active:scale-[0.98]"
+            className="mt-4 inline-flex items-center justify-center rounded-pill bg-star px-5 py-2.5 text-[14px] font-extrabold text-white transition hover:bg-[#d68f20] active:scale-[0.98]"
           >
             Kinti PRO feloldása
           </Link>

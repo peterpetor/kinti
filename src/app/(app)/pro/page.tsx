@@ -114,16 +114,16 @@ export default function ProPage() {
         </div>
 
         {/* Szaknévsor PRO (Businesses) */}
-        <div className="flex flex-col rounded-[32px] border-2 border-[#ff9600] bg-surface p-6 shadow-pop relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9600]/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-          <div className="absolute top-4 right-4 bg-[#ff9600] text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-pill shadow-sm">
+        <div className="flex flex-col rounded-[32px] border-2 border-pro bg-surface p-6 shadow-pop relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-pro/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+          <div className="absolute top-4 right-4 bg-pro text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-pill shadow-sm">
             Legnépszerűbb
           </div>
           
-          <div className="mb-4 inline-flex items-center justify-center rounded-full bg-[#ff9600]/10 w-14 h-14 text-[#ff9600] text-2xl">
+          <div className="mb-4 inline-flex items-center justify-center rounded-full bg-pro/10 w-14 h-14 text-pro text-2xl">
             🚀
           </div>
-          <h2 className="text-[22px] font-black text-[#ff9600]">Szaknévsor PRO</h2>
+          <h2 className="text-[22px] font-black text-pro">Szaknévsor PRO</h2>
           <p className="text-[13px] text-ink-muted mt-2 mb-6 flex-1">
             Vállalkozóknak és szakembereknek. Szerezz több ügyfelet prémium láthatósággal.
           </p>
@@ -146,7 +146,7 @@ export default function ProPage() {
 
           <Link
             href="/profil"
-            className="block w-full rounded-pill bg-[#ff9600] py-3.5 text-center text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]"
+            className="block w-full rounded-pill bg-pro py-3.5 text-center text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]"
           >
             Kiemelés Vásárlása
           </Link>

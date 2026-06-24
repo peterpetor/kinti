@@ -387,13 +387,13 @@ export function SalaryCalculator() {
           <div className="flex h-4 w-full overflow-hidden rounded-pill">
             <BreakdownSeg value={netMonthly} total={grossMonthly} className="bg-primary" />
             <BreakdownSeg value={valQst} total={grossMonthly} className="bg-accent" />
-            <BreakdownSeg value={socialNonPension} total={grossMonthly} className="bg-[#e3a233]" />
+            <BreakdownSeg value={socialNonPension} total={grossMonthly} className="bg-star" />
             <BreakdownSeg value={valBvg} total={grossMonthly} className="bg-[#6b8cae]" />
           </div>
           <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5">
             <LegendRow color="bg-primary" label="Nettó" amount={formatCHF(netMonthly)} />
             <LegendRow color="bg-accent" label="Forrásadó" amount={formatCHF(valQst)} />
-            <LegendRow color="bg-[#e3a233]" label="Társadalombiztosítás" amount={formatCHF(socialNonPension)} />
+            <LegendRow color="bg-star" label="Társadalombiztosítás" amount={formatCHF(socialNonPension)} />
             <LegendRow color="bg-[#6b8cae]" label="Nyugdíj (BVG)" amount={formatCHF(valBvg)} />
           </div>
           <p className="mt-2 rounded-[10px] bg-surface-alt px-3 py-2 text-[11.5px] leading-snug text-ink-muted">

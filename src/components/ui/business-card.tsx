@@ -28,7 +28,7 @@ export interface BusinessCardProps {
 export function BusinessCard({ business: b, href, className, distanceKm, showFavorite }: BusinessCardProps) {
   const classes = cn(
     "relative flex min-w-0 gap-3 rounded-card border bg-surface p-3",
-    b.featured ? "border-2 border-[#ff9600] shadow-pop bg-[#ff9600]/[0.02]" : "border-line shadow-card",
+    b.featured ? "border-2 border-pro shadow-pop bg-pro/[0.02]" : "border-line shadow-card",
     href && "transition hover:shadow-card-hover active:scale-[0.99]",
     className,
   );
@@ -68,7 +68,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
 
       <div className={cn("min-w-0 flex-1", showFavorite && "pr-7")}>
         {b.featured && (
-          <div className="mb-1.5 inline-flex items-center gap-1 rounded-pill bg-[#ff9600] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
+          <div className="mb-1.5 inline-flex items-center gap-1 rounded-pill bg-pro px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
             <Icon name="star" size={9} filled /> Szaknévsor PRO
           </div>
         )}

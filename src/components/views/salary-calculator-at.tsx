@@ -251,12 +251,12 @@ export function SalaryCalculatorAT() {
           <div className="flex h-4 w-full overflow-hidden rounded-pill">
             <Seg value={r.netMonthly} total={r.grossMonthly} className="bg-primary" />
             <Seg value={r.taxMonthly} total={r.grossMonthly} className="bg-accent" />
-            <Seg value={r.svMonthly} total={r.grossMonthly} className="bg-[#e3a233]" />
+            <Seg value={r.svMonthly} total={r.grossMonthly} className="bg-star" />
           </div>
           <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5">
             <Legend color="bg-primary" label="Nettó" amount={fmt(r.netMonthly)} />
             <Legend color="bg-accent" label="Lohnsteuer" amount={fmt(r.taxMonthly)} />
-            <Legend color="bg-[#e3a233]" label="SV-járulék" amount={fmt(r.svMonthly)} />
+            <Legend color="bg-star" label="SV-járulék" amount={fmt(r.svMonthly)} />
           </div>
           <p className="mt-2 rounded-[10px] bg-surface-alt px-3 py-2 text-[11.5px] leading-snug text-ink-muted">
             ℹ️ A svájcival ellentétben az <strong className="text-ink">egészségbiztosítás (ÖGK)</strong> MÁR benne van az SV-ben — nincs külön havi Krankenkasse-díj.

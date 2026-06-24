@@ -135,7 +135,7 @@ function CategoryDetail({
       </section>
 
       {/* Tippek */}
-      <section className="rounded-card border-2 border-[#e3a233]/30 bg-[#fff8ed] p-4 shadow-card">
+      <section className="rounded-card border-2 border-star/30 bg-[#fff8ed] p-4 shadow-card">
         <h3 className="mb-2 flex items-center gap-1.5 text-[12px] font-extrabold uppercase tracking-wide text-[#9a6b00]">
           💡 Tippek
         </h3>
@@ -178,7 +178,7 @@ function CategoryDetail({
                   className={cn(
                     "rounded-pill px-1.5 py-0.5 text-[10.5px] font-bold uppercase",
                     p.tier === "premium" && "bg-primary/10 text-primary",
-                    p.tier === "mid" && "bg-[#e3a233]/10 text-[#9a6b00]",
+                    p.tier === "mid" && "bg-star/10 text-[#9a6b00]",
                     p.tier === "budget" && "bg-success/10 text-success",
                   )}
                 >

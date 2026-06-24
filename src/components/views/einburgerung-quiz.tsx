@@ -426,7 +426,7 @@ function ResultScreen({
                 <p className="text-[12.5px] font-bold text-ink">{meta.label}</p>
                 <div className="mt-1 h-1.5 w-full rounded-full bg-surface-alt overflow-hidden">
                   <div
-                    className={cn("h-full transition-all", topicPct >= 80 ? "bg-success" : topicPct >= 50 ? "bg-[#e3a233]" : "bg-accent")}
+                    className={cn("h-full transition-all", topicPct >= 80 ? "bg-success" : topicPct >= 50 ? "bg-star" : "bg-accent")}
                     style={{ width: `${topicPct}%` }}
                   />
                 </div>

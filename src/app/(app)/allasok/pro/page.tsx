@@ -19,11 +19,11 @@ export default async function KintiProPage() {
   return (
     <div className="mx-auto max-w-xl px-5 pt-[calc(env(safe-area-inset-top)+3rem)] pb-24 text-center">
       <div className="mb-8">
-        <div className="mx-auto grid h-20 w-20 place-items-center rounded-[20px] bg-gradient-to-br from-[#e3a233] to-[#d68f20] text-white shadow-xl shadow-[#e3a233]/20 mb-6">
+        <div className="mx-auto grid h-20 w-20 place-items-center rounded-[20px] bg-gradient-to-br from-star to-[#d68f20] text-white shadow-xl shadow-star/20 mb-6">
           <Icon name="lock" size={36} strokeWidth={2.4} />
         </div>
         <h1 className="text-[28px] font-extrabold tracking-tight text-ink">
-          Kinti <span className="text-[#e3a233]">PRO</span> Feloldása
+          Kinti <span className="text-star">PRO</span> Feloldása
         </h1>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-muted px-4">
           Egy előfizetés, minden prémium modul. A Kinti PRO-val feloldod az összes
@@ -31,34 +31,34 @@ export default async function KintiProPage() {
         </p>
       </div>
 
-      <div className="rounded-3xl border-2 border-[#e3a233]/30 bg-surface text-left overflow-hidden shadow-card mb-8">
-        <div className="bg-gradient-to-r from-[#e3a233]/10 to-transparent p-6 border-b border-line">
+      <div className="rounded-3xl border-2 border-star/30 bg-surface text-left overflow-hidden shadow-card mb-8">
+        <div className="bg-gradient-to-r from-star/10 to-transparent p-6 border-b border-line">
           <h2 className="text-[18px] font-extrabold text-ink">Mit tartalmaz a Kinti PRO?</h2>
         </div>
         <ul className="p-6 space-y-4">
           <li className="flex gap-3">
-            <span className="text-[#e3a233] shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
+            <span className="text-star shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
             <div>
               <strong className="text-[14px] text-ink block">Teljes Szakmai Gyors-Szótár</strong>
               <span className="text-[13px] text-ink-muted">500+ svájci szakmai kifejezés és munkahelyi párbeszéd hanganyaggal.</span>
             </div>
           </li>
           <li className="flex gap-3">
-            <span className="text-[#e3a233] shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
+            <span className="text-star shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
             <div>
               <strong className="text-[14px] text-ink block">AI Munkainterjú Szimulátor + CV-audit</strong>
               <span className="text-[13px] text-ink-muted">Gyakorolj svájci cégek interjúira, és elemeztesd az önéletrajzod mesterséges intelligenciával.</span>
             </div>
           </li>
           <li className="flex gap-3">
-            <span className="text-[#e3a233] shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
+            <span className="text-star shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
             <div>
               <strong className="text-[14px] text-ink block">Svájci Német (Mundart) mesterkurzus + Einbürgerung szimulátor</strong>
               <span className="text-[13px] text-ink-muted">A teljes nyelvi és állampolgársági felkészülés egy helyen.</span>
             </div>
           </li>
           <li className="flex gap-3">
-            <span className="text-[#e3a233] shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
+            <span className="text-star shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
             <div>
               <strong className="text-[14px] text-ink block">Reklámmentes élmény + minden jövőbeni PRO modul</strong>
               <span className="text-[13px] text-ink-muted">Minden új funkció és frissítés az előfizetés része marad.</span>
@@ -80,7 +80,7 @@ export default async function KintiProPage() {
           ) : (
             <Link
               href="/pro"
-              className="flex w-full items-center justify-center rounded-full bg-[#e3a233] py-4 text-[16px] font-extrabold text-white shadow-lg shadow-[#e3a233]/20 transition-all hover:scale-[1.02] hover:bg-[#d68f20]"
+              className="flex w-full items-center justify-center rounded-full bg-star py-4 text-[16px] font-extrabold text-white shadow-lg shadow-star/20 transition-all hover:scale-[1.02] hover:bg-[#d68f20]"
             >
               Kinti PRO feloldása
             </Link>

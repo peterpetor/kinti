@@ -49,7 +49,7 @@ export default function MyPostsPage() {
         href="/ranglista"
         className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
       >
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-[#e3a233]/15 text-lg">🏆</span>
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-star/15 text-lg">🏆</span>
         <span className="min-w-0 flex-1">
           <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">Közösségi ranglista</span>
           <span className="block text-[11.5px] text-ink-muted">Opcionális, becenévvel — hasonlítsd a pontod másokéval.</span>

@@ -37,7 +37,7 @@ export function DropdownMenu() {
     "flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] font-bold text-ink hover:bg-surface-alt transition-all active:scale-[0.98]";
 
   const ProBadge = () => (
-    <span className="ml-auto rounded-full bg-[#e3a233]/15 px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-[#e3a233]">
+    <span className="ml-auto rounded-full bg-star/15 px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-star">
       PRO
     </span>
   );
@@ -77,13 +77,13 @@ export function DropdownMenu() {
               <Link
                 href="/pro"
                 onClick={close}
-                className="mb-2 flex items-center gap-3 rounded-xl border border-[#e3a233]/30 bg-[#e3a233]/10 px-4 py-3.5 text-[15px] font-black text-[#e3a233] transition-all hover:bg-[#e3a233]/15 active:scale-[0.98]"
+                className="mb-2 flex items-center gap-3 rounded-xl border border-star/30 bg-star/10 px-4 py-3.5 text-[15px] font-black text-star transition-all hover:bg-star/15 active:scale-[0.98]"
               >
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e3a233]/20 text-[#e3a233]">
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/20 text-star">
                   <Icon name="sparkles" size={16} strokeWidth={2.6} />
                 </span>
                 Kinti PRO csomagok
-                <span className="ml-auto rounded-full bg-[#e3a233] px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white">
+                <span className="ml-auto rounded-full bg-star px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white">
                   PRO
                 </span>
               </Link>
@@ -120,7 +120,7 @@ export function DropdownMenu() {
                 Saját posztjaim
               </Link>
               <Link href="/ranglista" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e3a233]/15 text-base">🏆</span>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🏆</span>
                 Közösségi ranglista
               </Link>
               <Link href="/ertesitesek" onClick={close} className={linkClass}>
@@ -159,7 +159,7 @@ export function DropdownMenu() {
                   <ProBadge />
                 </Link>
                 <Link href="/allasok/szakmai-szotar" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e3a233]/10 text-[#e3a233]">
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/10 text-star">
                     <Icon name="document" size={16} strokeWidth={2.4} />
                   </span>
                   Szakmai Gyors-Szótár

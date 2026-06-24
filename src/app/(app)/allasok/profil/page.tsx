@@ -107,7 +107,7 @@ export default async function WorkerProfilePage() {
       ) : (
         <Link
           href="/pro"
-          className="flex items-center gap-3 rounded-card border border-[#ff9600]/25 bg-[#ff9600]/5 p-4 shadow-card transition active:scale-[0.99]"
+          className="flex items-center gap-3 rounded-card border border-pro/25 bg-pro/5 p-4 shadow-card transition active:scale-[0.99]"
         >
           <span className="text-xl">🔒</span>
           <span className="min-w-0 flex-1 text-[13px] leading-snug text-ink">

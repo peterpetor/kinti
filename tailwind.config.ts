@@ -55,7 +55,8 @@ const config: Config = {
         },
         // Állapot-jelzők
         success: "rgb(29 106 60 / <alpha-value>)",   // #1d6a3c — "Nyitva"
-        star: "rgb(240 162 58 / <alpha-value>)",     // #f0a23a — értékelés
+        star: "rgb(240 162 58 / <alpha-value>)",     // #f0a23a — értékelés / arany kiemelés
+        pro: "rgb(255 150 0 / <alpha-value>)",       // #ff9600 — Szaknévsor PRO / kiemelt állás
       },
       borderColor: {
         DEFAULT: "rgb(var(--border-channel) / var(--border-alpha))",
