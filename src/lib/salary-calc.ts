@@ -304,3 +304,135 @@ export function salaryPercentileAT(grossMonthly: number, bundesland: string): Sa
   const p = Math.round(normalCdf(z) * 100);
   return { percentile: Math.min(99, Math.max(1, p)), median };
 }
+
+/* ════════════════════════ NÉMETORSZÁG (Lohnsteuer + SV) ════════════════════════
+ * Forrás: §32a EStG 2025 (Einkommensteuer-tarif), SV-kulcsok 2025 (RV/AV/KV/PV).
+ * A jövedelemadó ORSZÁGOS (nincs Bundesland-eltérés). Az SV-ből az egészségbiztosítás
+ * a Krankenkassénál van (a Zusatzbeitrag pénztáranként eltér — átlaggal számolunk).
+ * EGYSZERŰSÍTETT becslés: a Lohnsteuer a hivatalos PAP-nál egyszerűbb modellel készül
+ * (a Vorsorgepauschale helyett a tényleges SV-t vonjuk a zvE-ből), a Steuerklasse V/VI
+ * speciális esete nincs külön kezelve.
+ */
+
+/** §32a EStG 2025 — éves Einkommensteuer a zu versteuerndes Einkommen (zvE) alapján. */
+function estDE(zvE: number): number {
+  const x = Math.floor(zvE);
+  if (x <= 12096) return 0;
+  if (x <= 17443) { const y = (x - 12096) / 10000; return Math.floor((932.30 * y + 1400) * y); }
+  if (x <= 68480) { const z = (x - 17443) / 10000; return Math.floor((176.64 * z + 2397) * z + 1015.13); }
+  if (x <= 277825) return Math.floor(0.42 * x - 10911.92);
+  return Math.floor(0.45 * x - 19246.67);
+}
+
+// SV munkavállalói kulcsok (2025) + Beitragsbemessungsgrenzék (havi)
+const DE_BBG_RV_AV = 8050;        // RV/AV felső határ (2025, egységes)
+const DE_BBG_KV_PV = 5512.5;      // KV/PV felső határ (2025)
+const DE_RATE_RV = 0.093;         // Rentenversicherung (munkavállaló)
+const DE_RATE_AV = 0.013;         // Arbeitslosenversicherung (munkavállaló)
+const DE_RATE_KV = 0.0855;        // KV 7,3% + átlag Zusatzbeitrag fele (~1,25%)
+const DE_RATE_PV_KIND = 0.018;    // Pflege (gyermekkel)
+const DE_RATE_PV_KINDERLOS = 0.024; // Pflege (gyermektelen, 23+) — +0,6% pótlék
+const DE_WERBUNGSKOSTEN = 1230;   // Arbeitnehmer-Pauschbetrag (éves)
+const DE_SONDERAUSGABEN = 36;     // Sonderausgaben-Pauschbetrag (éves)
+const DE_ENTLASTUNG_II = 4260;    // Entlastungsbetrag für Alleinerziehende (1. gyerek)
+
+export type Steuerklasse = 1 | 2 | 3 | 4;
+
+export interface SalaryCalcInputDE {
+  gross: number;
+  period: PayPeriod;
+  steuerklasse: Steuerklasse;
+  kids: number;          // PV-pótlék + Steuerklasse II
+  churchTax: boolean;    // Kirchensteuer 9%
+}
+
+export interface SalaryCalcResultDE {
+  grossMonthly: number;
+  grossYearly: number;
+  rvMonthly: number;
+  avMonthly: number;
+  kvMonthly: number;
+  pvMonthly: number;
+  svMonthly: number;     // RV+AV+KV+PV összesen
+  taxMonthly: number;    // Lohnsteuer
+  soliMonthly: number;   // Solidaritätszuschlag
+  churchMonthly: number; // Kirchensteuer
+  netMonthly: number;
+  netYearly: number;
+  effectiveRate: number; // teljes levonás / bruttó (%)
+}
+
+/** Német nettó-bér becslés — a kalkulátor (és benchmark) közös magja. */
+export function computeSalaryDE(input: SalaryCalcInputDE): SalaryCalcResultDE {
+  const grossMonthly = input.period === "month" ? input.gross : input.gross / 12;
+  const grossYearly = input.period === "year" ? input.gross : input.gross * 12;
+
+  // — Sozialversicherung (munkavállalói rész) —
+  const rvMonthly = Math.min(grossMonthly, DE_BBG_RV_AV) * DE_RATE_RV;
+  const avMonthly = Math.min(grossMonthly, DE_BBG_RV_AV) * DE_RATE_AV;
+  const kvMonthly = Math.min(grossMonthly, DE_BBG_KV_PV) * DE_RATE_KV;
+  const pvMonthly = Math.min(grossMonthly, DE_BBG_KV_PV) * (input.kids > 0 ? DE_RATE_PV_KIND : DE_RATE_PV_KINDERLOS);
+  const svMonthly = rvMonthly + avMonthly + kvMonthly + pvMonthly;
+
+  // — Lohnsteuer (§32a, éves zvE) —
+  let zvE = grossYearly - svMonthly * 12 - DE_WERBUNGSKOSTEN - DE_SONDERAUSGABEN;
+  if (input.steuerklasse === 2 && input.kids >= 1) zvE -= DE_ENTLASTUNG_II + Math.max(0, input.kids - 1) * 240;
+  zvE = Math.max(0, zvE);
+
+  // Steuerklasse: III = Splitting (≈ 2× a fele jövedelem adója); I/II/IV = alap tarifa.
+  const estYearly = input.steuerklasse === 3 ? 2 * estDE(zvE / 2) : estDE(zvE);
+
+  // Soli: 5,5% a Lohnsteuerre, csak a Freigrenze fölött (a legtöbb dolgozónál 0).
+  const soliThreshold = input.steuerklasse === 3 ? 39900 : 19950;
+  const soliYearly = estYearly > soliThreshold ? estYearly * 0.055 : 0;
+  // Kirchensteuer: 9% (Bayern/BW: 8%) a Lohnsteuerre, ha egyháztag.
+  const churchYearly = input.churchTax ? estYearly * 0.09 : 0;
+
+  const taxMonthly = estYearly / 12;
+  const soliMonthly = soliYearly / 12;
+  const churchMonthly = churchYearly / 12;
+  const netMonthly = grossMonthly - svMonthly - taxMonthly - soliMonthly - churchMonthly;
+  const netYearly = netMonthly * 12;
+  const effectiveRate = grossYearly > 0 ? ((grossYearly - netYearly) / grossYearly) * 100 : 0;
+
+  return {
+    grossMonthly, grossYearly, rvMonthly, avMonthly, kvMonthly, pvMonthly, svMonthly,
+    taxMonthly, soliMonthly, churchMonthly, netMonthly, netYearly, effectiveRate,
+  };
+}
+
+/** Bundesland-medián havi BRUTTÓ (Vollzeit) — Destatis becslés (tájékoztató). */
+export const DE_NATIONAL_MEDIAN_GROSS = 4300;
+export const DE_LAND_MEDIAN_GROSS: Record<string, number> = {
+  HH: 4800, HE: 4700, BW: 4650, BY: 4600, HB: 4400, NW: 4350, BE: 4300,
+  NI: 4150, RP: 4150, SL: 4150, SH: 4050, BB: 3900, SN: 3800, TH: 3800,
+  ST: 3800, MV: 3750,
+};
+
+export const DE_BUNDESLAENDER: { code: string; name: string }[] = [
+  { code: "BW", name: "Baden-Württemberg" },
+  { code: "BY", name: "Bajorország (Bayern)" },
+  { code: "BE", name: "Berlin" },
+  { code: "BB", name: "Brandenburg" },
+  { code: "HB", name: "Bréma (Bremen)" },
+  { code: "HH", name: "Hamburg" },
+  { code: "HE", name: "Hessen" },
+  { code: "MV", name: "Mecklenburg-Vorpommern" },
+  { code: "NI", name: "Alsó-Szászország (Niedersachsen)" },
+  { code: "NW", name: "Észak-Rajna-Vesztfália (NRW)" },
+  { code: "RP", name: "Rajna-vidék-Pfalz" },
+  { code: "SL", name: "Saar-vidék (Saarland)" },
+  { code: "SN", name: "Szászország (Sachsen)" },
+  { code: "ST", name: "Szász-Anhalt" },
+  { code: "SH", name: "Schleswig-Holstein" },
+  { code: "TH", name: "Türingia (Thüringen)" },
+];
+
+/** Percentilis a német Bundesland-mediánhoz (log-normál becslés). */
+export function salaryPercentileDE(grossMonthly: number, land: string): SalaryPercentile {
+  const median = DE_LAND_MEDIAN_GROSS[land] ?? DE_NATIONAL_MEDIAN_GROSS;
+  const sigma = 0.32;
+  const z = (Math.log(Math.max(1, grossMonthly)) - Math.log(median)) / sigma;
+  const p = Math.round(normalCdf(z) * 100);
+  return { percentile: Math.min(99, Math.max(1, p)), median };
+}
