@@ -41,19 +41,36 @@ export async function POST(req: Request) {
   }
   if (!brief) return NextResponse.json({ error: "Nincs jelölt-profil (előbb fuss AI CV-elemzést, vagy tölts fel CV-t)." }, { status: 422 });
 
-  const system = `Te egy munkaerő-közvetítő asszisztense vagy (Feedback Jobs). Egy JELÖLT profilját és EGY ÁLLÁSHIRDETÉST kapsz. Add vissza KIZÁRÓLAG ezt a JSON-t (semmi más):
+  const system = `Te a Feedback Jobs MUNKAERŐ-KÖZVETÍTŐ ÜGYNÖKSÉG (Personalvermittlung) asszisztense vagy. Egy JELÖLT profilját és EGY ÁLLÁSHIRDETÉST kapsz. A feladat: a MUNKÁLTATÓNAK (a hirdetést feladó cégnek) írj egy profi, üzleti (B2B) megkereső e-mailt ${lang} nyelven, amelyben FELAJÁNLOD a jelöltünket erre a pozícióra.
+
+KÖTELEZŐ keretezés:
+- MI vagyunk a közvetítő ügynökség (Feedback Jobs), NEM a jelölt. SOHA ne írj első személyű álláspályázatot (TILOS: "ich bewerbe mich", "mit Begeisterung bewerbe ich mich", "ich bin überzeugt"). Az ilyen HIBÁS.
+- A jelöltről HARMADIK személyben beszélj ("unser Kandidat", "ein erfahrener ...", "die Kandidatin").
+- A jelölt NEVÉT és elérhetőségét NE add meg ebben az első levélben — csak rövid, anonim szakmai profil; a teljes CV-t érdeklődés esetén küldjük.
+- Sikerdíjas közvetítés: a jutalék CSAK sikeres felvétel esetén jár, és a MUNKÁLTATÓ fizeti (a jelöltnek ingyenes).
+
+Az "email" mező felépítése (${lang} nyelven, ehhez igazítva a megszólítást/zárást):
+1. Tárgysor (pl. "Betreff: Qualifizierter Kandidat für Ihre offene Stelle – <pozíció>").
+2. Megszólítás a cégnek (pl. "Sehr geehrte Damen und Herren,").
+3. Bemutatkozás: a Feedback Jobs munkaerő-közvetítő, és van egy alkalmas jelöltünk az Önök által meghirdetett <pozíció> pozícióra <helyszín>.
+4. 2-3 mondatos ANONIM jelölt-profil, a hirdetés követelményeihez illesztve (tapasztalat, fő készségek, nyelvtudás).
+5. Ajánlat: szívesen küldjük a teljes profilt/CV-t; a közvetítés sikerdíjas, provízió csak sikeres felvételnél, a munkáltató oldalán.
+6. Felhívás: érdeklődés esetén válaszoljanak erre az e-mailre.
+7. Zárás aláírással, a végén pontosan ezzel a kitöltendő hellyel: "[Az Ön neve] – Feedback Jobs".
+
+Add vissza KIZÁRÓLAG ezt a JSON-t (semmi más):
 {
   "score": <0-100 egész: mennyire illik a jelölt erre az állásra>,
   "reason": "<1 rövid mondat MAGYARUL, miért ennyi a pont>",
-  "email": "<KÉSZ megkereső e-mail a HIRDETŐNEK, ${lang} nyelven, a Feedback Jobs közvetítő nevében. Formátum: 'Betreff/Tárgy: ...' majd 4-6 mondatos udvarias levél, amiben bemutatod a jelöltet ERRE az állásra és kéred a kapcsolatfelvételt. NE találj ki adatot a profilon túl.>"
+  "email": "<a fenti felépítésű, kész ${lang} nyelvű megkereső e-mail>"
 }
-Csak a megadott profilból és hirdetésből dolgozz.`;
+Csak a megadott profilból és hirdetésből dolgozz, ne találj ki konkrétumot (céget, évszámot).`;
 
   const userMsg = `JELÖLT PROFIL:\n"""\n${brief}\n"""\n\nÁLLÁS:\n- Pozíció: ${job.title}\n- Cég: ${job.company ?? "(nincs megadva)"}\n- Hely: ${job.location ?? "(nincs megadva)"}`;
 
   try {
-    let ai = await runAiChat({ model: PRIMARY_MODEL, system, user: userMsg, maxTokens: 600, temperature: 0.5, timeoutMs: 24_000 });
-    if (!ai.ok) ai = await runAiChat({ model: FALLBACK_MODEL, system, user: userMsg, maxTokens: 600, temperature: 0.5, timeoutMs: 18_000 });
+    let ai = await runAiChat({ model: PRIMARY_MODEL, system, user: userMsg, maxTokens: 850, temperature: 0.5, timeoutMs: 26_000 });
+    if (!ai.ok) ai = await runAiChat({ model: FALLBACK_MODEL, system, user: userMsg, maxTokens: 850, temperature: 0.5, timeoutMs: 20_000 });
     if (!ai.ok) return NextResponse.json({ error: "Az AI épp túlterhelt — próbáld újra." }, { status: 503 });
 
     const p = extractJsonObject<{ score?: number; reason?: string; email?: string }>(ai.text);
