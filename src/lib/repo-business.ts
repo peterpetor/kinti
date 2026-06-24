@@ -385,7 +385,7 @@ export async function createBusinessFromSubmission(input: CreateBusinessFromSubm
       `INSERT INTO businesses
        (id,name,category_id,category_label,address,country_code,phone,blurb,license_number,
         contact_email,source,languages,working_hours,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,owner_user_id,manage_token)
-       VALUES (?,?,?,?,?,?,?,?,?,'self_submitted',?,?,?,?,50,50,0,0,0,0,?,?)`,
+       VALUES (?,?,?,?,?,?,?,?,?,?,'self_submitted',?,?,?,?,50,50,0,0,0,0,?,?)`,
     )
     .bind(input.id, input.name, input.categoryId, input.categoryLabel, input.address,
       input.country, input.phone, input.blurb, input.licenseNumber, input.contactEmail.toLowerCase(),
