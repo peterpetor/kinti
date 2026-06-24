@@ -1,9 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
 import { getJobSources } from "@/lib/job-sources";
+
+/** EU-országok, ahova a Feedback Jobs közvetít (Svájc kimarad — SECO-engedély). */
+const PLACEMENT_COUNTRIES = new Set(["AT", "DE", "NL"]);
 
 /**
  * „Hol keress még állást?" — ország-tudatos, hivatalos álláskereső-források.
@@ -35,6 +39,36 @@ export function JobSourcesSection() {
           </p>
         </div>
       </header>
+
+      {PLACEMENT_COUNTRIES.has(country) && (
+        <div className="mt-3 rounded-card border-2 border-primary/30 bg-primary-soft/50 p-4">
+          <div className="flex items-start gap-2.5">
+            <span className="text-2xl shrink-0">🤝</span>
+            <div className="min-w-0">
+              <p className="text-[13.5px] font-extrabold text-ink">Profi segítség az álláskeresésben</p>
+              <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
+                A <strong>Feedback Jobs</strong> (a Kinti üzemeltetője) ingyen segít EU-s állást találni — töltsd fel a CV-d, és felvesszük veled a kapcsolatot. A díjat a munkáltató fizeti, neked semmibe sem kerül.
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Link
+              href="/allasok/profil"
+              className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12.5px] font-bold text-white shadow-card active:scale-95"
+            >
+              <Icon name="upload" size={14} strokeWidth={2.4} /> Töltsd fel a CV-d
+            </Link>
+            <a
+              href="https://feedbackjobs.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[12px] font-bold text-primary hover:underline"
+            >
+              feedbackjobs.com ↗
+            </a>
+          </div>
+        </div>
+      )}
 
       <ul className="mt-3 space-y-1.5">
         {data.sources.map((s) => (

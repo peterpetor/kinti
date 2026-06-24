@@ -395,6 +395,12 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
             💼 Állásportál moderáció
           </Link>
           <Link
+            href="/admin/jeloltek"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            🤝 Jelöltek (közvetítés)
+          </Link>
+          <Link
             href="/admin/blocklist"
             className="inline-flex items-center gap-1.5 rounded-pill bg-accent px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
           >
