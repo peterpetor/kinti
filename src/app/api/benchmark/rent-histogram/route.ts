@@ -12,7 +12,8 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const roomsStr = searchParams.get("rooms");
   const canton = searchParams.get("canton") || "all";
-  const country = searchParams.get("country") === "AT" ? "AT" : "CH";
+  const cGet = searchParams.get("country");
+  const country = cGet === "AT" || cGet === "DE" ? cGet : "CH";
   const rooms = roomsStr ? parseFloat(roomsStr) : NaN;
 
   if (!Number.isFinite(rooms) || rooms <= 0) {

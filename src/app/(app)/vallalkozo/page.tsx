@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
+import { HomeCountryFlag } from "@/components/home-country-aware";
 
 export const runtime = "edge";
 
@@ -13,12 +14,7 @@ export default function VallalkozoPage() {
         <div className="flex items-center gap-2">
           <KintiLogo size={28} />
           <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/switzerland-flag.png"
-            alt="Svájc"
-            className="h-[36px] w-[36px] rounded-[6px] object-contain select-none"
-          />
+          <HomeCountryFlag />
         </div>
         <div className="flex-1" />
         <DropdownMenu />

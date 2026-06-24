@@ -33,7 +33,8 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const canton = searchParams.get("canton") || "all";
   const period = searchParams.get("period") || "12m";
-  const country = searchParams.get("country") === "AT" ? "AT" : "CH";
+  const cGet = searchParams.get("country");
+  const country = cGet === "AT" || cGet === "DE" ? cGet : "CH";
 
   const [status, myData] = await Promise.all([
     getUserSubmissionStatus(ipHash, country),
@@ -75,13 +76,13 @@ export async function PUT(req: NextRequest) {
 }
 
 async function handleUpsert(mode: "insert" | "update", body: BenchmarkBody, ipHash: string) {
-  const country = body.country === "AT" ? "AT" : "CH";
-  const cur = country === "AT" ? "EUR" : "CHF";
+  const country = body.country === "AT" || body.country === "DE" ? body.country : "CH";
+  const cur = country !== "CH" ? "EUR" : "CHF";
   if (body.type === "salary") {
     if (!body.cantonCode || !body.industry || typeof body.yearsExperience !== "number" || typeof body.grossSalaryChf !== "number")
       return NextResponse.json({ error: "Hiányzó bér adatok." }, { status: 400 });
-    const minS = country === "AT" ? 15000 : 20000;
-    const maxS = country === "AT" ? 250000 : 300000;
+    const minS = country !== "CH" ? 15000 : 20000;
+    const maxS = country !== "CH" ? 250000 : 300000;
     if (body.grossSalaryChf < minS || body.grossSalaryChf > maxS)
       return NextResponse.json({ error: `Érvényes bruttó éves béradatot adj meg (${minS.toLocaleString("hu-HU")}–${maxS.toLocaleString("hu-HU")} ${cur} között).` }, { status: 400 });
     const input = { country, cantonCode: body.cantonCode, industry: body.industry, yearsExperience: body.yearsExperience, grossSalaryChf: body.grossSalaryChf, ipHash };
@@ -91,7 +92,7 @@ async function handleUpsert(mode: "insert" | "update", body: BenchmarkBody, ipHa
   if (body.type === "rent") {
     if (!body.cantonCode || typeof body.rooms !== "number" || typeof body.rentChf !== "number")
       return NextResponse.json({ error: "Hiányzó lakbér adatok." }, { status: 400 });
-    const maxR = country === "AT" ? 6000 : 10000;
+    const maxR = country !== "CH" ? 6000 : 10000;
     if (body.rentChf < 300 || body.rentChf > maxR)
       return NextResponse.json({ error: `Érvényes havi lakbér adatot adj meg (300–${maxR.toLocaleString("hu-HU")} ${cur} között).` }, { status: 400 });
     const input = { country, cantonCode: body.cantonCode, rooms: body.rooms, rentChf: body.rentChf, ipHash };

@@ -12,7 +12,8 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const industry = searchParams.get("industry");
   const canton = searchParams.get("canton") || "all";
-  const country = searchParams.get("country") === "AT" ? "AT" : "CH";
+  const cGet = searchParams.get("country");
+  const country = cGet === "AT" || cGet === "DE" ? cGet : "CH";
 
   if (!industry) {
     return NextResponse.json({ error: "Az 'industry' paraméter kötelező." }, { status: 400 });

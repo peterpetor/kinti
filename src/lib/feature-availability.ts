@@ -30,9 +30,10 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
  */
 export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "kviz",          // napi kvíz — nincs DE/NL kérdésbank
-  "iranytu",       // Bér- és Lakbér Iránytű — nincs DE/NL benchmark-seed
   "ugyintezes",    // ügyintézés-csekklisták — CH/AT-specifikus (DE-bürokrácia: tudásbázis)
   "allampolgarsag",// állampolgárság/Einbürgerung — CH/AT-specifikus (DE: /vizum + guide)
+  // "iranytu" — KIVÉVE: az Iránytű közösségi benchmark (a userek töltik), DE-tudatos
+  // (region-util DE-ág), és fő nav-fül → ne tűnjön el DE-ben; üresen indul, mint AT.
 ]);
 
 /**

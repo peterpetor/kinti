@@ -9,6 +9,7 @@ import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
 import { LeadInbox } from "@/components/views/lead-inbox";
 import { InstallPrompt } from "@/components/install-prompt";
 import { KintiRadar } from "@/components/kinti-radar";
+import { HomeCountryFlag } from "@/components/home-country-aware";
 import {
   Icon,
   type IconName,
@@ -67,12 +68,7 @@ export default async function ProfilPage() {
         <div className="flex items-center gap-2">
           <KintiLogo size={28} />
           <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/switzerland-flag.png"
-            alt="Svájc"
-            className="h-[36px] w-[36px] rounded-[6px] object-contain select-none"
-          />
+          <HomeCountryFlag />
         </div>
         <div className="flex-1" />
         <DropdownMenu />
