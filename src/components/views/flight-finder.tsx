@@ -77,7 +77,7 @@ export function FlightFinder() {
         <span className="text-4xl">✈️</span>
         <p className="text-[15px] font-extrabold text-ink">A járatfigyelő hamarosan a te országodban is</p>
         <p className="mx-auto max-w-sm text-[12.5px] leading-relaxed text-ink-muted">
-          Jelenleg a Svájc ↔ Budapest és az Ausztria ↔ Budapest útvonalakra van. A te országodhoz is
+          Jelenleg Svájc, Ausztria és Németország ↔ Budapest útvonalakra van. A te országodhoz is
           hozzáadjuk a repterekkel és tippekkel.
         </p>
       </div>

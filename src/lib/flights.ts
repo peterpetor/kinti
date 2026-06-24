@@ -136,6 +136,35 @@ export const FLIGHT_CONFIG: Record<string, FlightConfig> = {
       { emoji: "🚗", title: "Autó-alternatíva", body: "Bécs → Budapest autóval ~2,5 óra (M1/A4). Matrica (Vignette) + magyar e-matrica kell. Többen utazva gyakran a legolcsóbb." },
     ],
   },
+  DE: {
+    country: "DE",
+    origins: [
+      { code: "BER", name: "Berlin Brandenburg", city: "Berlin", emoji: "🇩🇪" },
+      { code: "MUC", name: "München Franz Josef Strauß", city: "München", emoji: "🇩🇪" },
+      { code: "FRA", name: "Frankfurt am Main", city: "Frankfurt", emoji: "🇩🇪" },
+    ],
+    home: BUD,
+    originFlag: "🇩🇪",
+    homeFlag: "🇭🇺",
+    currency: "€",
+    roundStep: 10,
+    airlines: [
+      { id: "wizzair", name: "WizzAir", type: "low-cost", routes: ["BER"], color: "#C6037E", emoji: "💜", notes: "Nagy berlini bázis, gyakori BER↔BUD járatok. Olcsó alap-ár, kézipoggyász díjas.", url: "https://wizzair.com/" },
+      { id: "ryanair", name: "Ryanair", type: "low-cost", routes: ["BER"], color: "#073590", emoji: "💙", notes: "Berlinből, illetve Memmingen (München-nyugat) és Dortmund reptérről nagyon olcsón. Minden extra fizetős.", url: "https://www.ryanair.com/" },
+      { id: "lufthansa", name: "Lufthansa", type: "full-service", routes: ["FRA", "MUC"], color: "#05164D", emoji: "🤍", notes: "FRA és MUC hubokról direkt BUD. 23 kg poggyász az alapban, drágább, de kényelmes és gyakori.", url: "https://www.lufthansa.com/" },
+      { id: "eurowings", name: "Eurowings", type: "low-cost", routes: ["MUC"], color: "#A4126F", emoji: "💗", notes: "Lufthansa low-cost leánya, több német városból BUD-ra. Köztes ár-kategória.", url: "https://www.eurowings.com/" },
+    ],
+    // Németország távolabb → kicsit magasabb EUR-sávok, de erős low-cost kínálat.
+    seasons: seasons("€", [[25, 90], [40, 140], [70, 220], [140, 380]]),
+    tips: [
+      { emoji: "✈️", title: "Berlinből a legolcsóbb", body: "BER↔BUD a legsűrűbb low-cost útvonal (WizzAir, Ryanair, easyJet). München/Frankfurt inkább Lufthansa — drágább, de gyakori." },
+      { emoji: "🛫", title: "Másodlagos repterek = mély-olcsó", body: "Ha Bajorországban élsz: Memmingen (FMM, München-nyugat, Ryanair/Wizz). NRW-ben: Dortmund (DTM) vagy Weeze (NRN). Gyakran feleannyi, mint a nagy hubok." },
+      { emoji: "📅", title: "Foglalj 6–8 héttel előre", body: "A 6–8 hetes ablak a legjobb. Túl korán (5+ hó) még magas, túl későn (2 hét) drága." },
+      { emoji: "🗓️", title: "Hét közepe = olcsóbb", body: "Kedd–szerda jellemzően 15–20%-kal olcsóbb, mint csütörtök–péntek–vasárnap." },
+      { emoji: "🎒", title: "Ryanair / WizzAir trükkök", body: "Az alap-jegy CSAK egy kis táskát enged. Plus poggyász = +20–45 €. Online check-in kötelező, különben reptéri díj." },
+      { emoji: "🚆", title: "Vonat csak rövid távon éri meg", body: "München → Budapest DB+ÖBB ~7–8 óra, Frankfurtból még több. Repülni általában gyorsabb és olcsóbb — a vonat inkább Bécs-közeli német határvárosokból." },
+    ],
+  },
 };
 
 /** Egy ország járat-konfigja (vagy null, ha nincs felvéve). */

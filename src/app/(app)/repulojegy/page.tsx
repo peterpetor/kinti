@@ -9,7 +9,7 @@ export const dynamic = "force-static";
 export const metadata = {
   title: "Repülőjegy-figyelő — hazautazás Budapestre",
   description:
-    "Mikor érdemes hazautazni? Becsült ár-sávok és szezonális naptár Svájcból (ZRH/BSL/GVA) és Ausztriából (VIE) Budapestre, foglalási linkek (Skyscanner, Google Flights, Kiwi) + vonat/busz tippek.",
+    "Mikor érdemes hazautazni? Becsült ár-sávok és szezonális naptár Svájcból (ZRH/BSL/GVA), Ausztriából (VIE) és Németországból (BER/MUC/FRA) Budapestre, foglalási linkek (Skyscanner, Google Flights, Kiwi) + vonat/busz tippek.",
 };
 
 export default function RepulojegyPage() {
