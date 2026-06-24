@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/admin";
 import { getMediaBucket } from "@/lib/cloudflare";
 import { extractCvText } from "@/lib/cv-extract";
-import { runAiChat, extractJsonObject } from "@/lib/ai";
+import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
+import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -24,6 +25,10 @@ const LANG: Record<string, string> = { AT: "német", DE: "német", NL: "holland 
 export async function POST(req: Request) {
   const adminId = await getAdminUserId();
   if (!adminId) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+
+  const rlKey = await hashIp(`recruiter-match:${adminId}`);
+  const rl = await checkAiRateLimit("recruiter-match", rlKey);
+  if (!rl.allowed) return NextResponse.json({ error: `Mára elérted a megkeresés-generálások napi keretét (${rl.max}).` }, { status: 429 });
 
   const body = (await req.json().catch(() => ({}))) as {
     brief?: string; cvKey?: string; country?: string;
@@ -72,6 +77,7 @@ Csak a megadott profilból és hirdetésből dolgozz, ne találj ki konkrétumot
     let ai = await runAiChat({ model: PRIMARY_MODEL, system, user: userMsg, maxTokens: 850, temperature: 0.5, timeoutMs: 26_000 });
     if (!ai.ok) ai = await runAiChat({ model: FALLBACK_MODEL, system, user: userMsg, maxTokens: 850, temperature: 0.5, timeoutMs: 20_000 });
     if (!ai.ok) return NextResponse.json({ error: "Az AI épp túlterhelt — próbáld újra." }, { status: 503 });
+    await logAiRateLimit("recruiter-match", rlKey);
 
     const p = extractJsonObject<{ score?: number; reason?: string; email?: string }>(ai.text);
     if (!p) return NextResponse.json({ error: "Nem értelmezhető AI-válasz." }, { status: 502 });

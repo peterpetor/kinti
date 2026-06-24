@@ -61,6 +61,20 @@ Mit freundlichen Grüßen,
   };
 }
 
+/**
+ * Determinisztikus elő-pontozás (LLM NÉLKÜL, #4): kulcsszó-átfedés a jelölt-profil
+ * és a hirdetés címe közt → durva relevancia 0-100. Csak rangsorolásra/böngészésre;
+ * a pontos % + e-mail az AI-match (✉️), ami csak kattintásra fut → nem ég token.
+ */
+function prescore(profile: string, job: string): number {
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-zà-ÿ0-9\s]/gi, " ").split(/\s+/).filter((w) => w.length > 2);
+  const pset = new Set(norm(profile));
+  const jt = norm(job);
+  if (!pset.size || !jt.length) return 0;
+  const hits = jt.filter((w) => pset.has(w)).length;
+  return Math.min(100, Math.round((hits / jt.length) * 140));
+}
+
 export function RecruiterWorkspace() {
   const [candidates, setCandidates] = useState<RecruitingCandidate[]>([]);
   const [addName, setAddName] = useState("");
@@ -276,6 +290,14 @@ export function RecruiterWorkspace() {
   const enc = encodeURIComponent(q);
   const inputCls = "w-full rounded-[12px] border border-line bg-surface-alt px-3.5 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
 
+  // Determinisztikus rangsor a találatokhoz (LLM nélkül): az aktív jelölt
+  // profilja (AI-brief vagy kulcsszó) vs. a hirdetés címe.
+  const activeBrief = active ? briefs[active.id] : undefined;
+  const activeText = active ? (activeBrief ? `${activeBrief.keyword} ${activeBrief.skills.join(" ")}` : (active.keyword ?? "")) : "";
+  const rankedJobs = activeText
+    ? jobs.map((j) => ({ j, pre: prescore(activeText, `${j.title} ${j.company ?? ""}`) })).sort((a, b) => b.pre - a.pre)
+    : jobs.map((j) => ({ j, pre: -1 }));
+
   const pageSize = 30;
   const statusTotal = statusCounts ? Object.values(statusCounts).reduce((a, b) => a + b, 0) : 0;
   const anyCandidates = statusTotal > 0 || candidates.length > 0;
@@ -449,7 +471,7 @@ export function RecruiterWorkspace() {
           <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">💼 Konkrét hirdetések — „{q}" · {ctry.label}{region ? ` · ${region}` : ""} ({jobs.length})</h3>
           {jobs.length === 0 ? (
             <p className="rounded-card border border-dashed border-line bg-surface px-4 py-6 text-center text-[12.5px] text-ink-muted">Nincs találat. Próbálj más/tágabb kifejezést, vagy a kézi kereséseket lent.</p>
-          ) : jobs.map((j) => {
+          ) : rankedJobs.map(({ j, pre }) => {
             const m = matches[j.url];
             return (
               <div key={j.url} className="rounded-card border border-line bg-surface p-3.5 shadow-card">
@@ -458,7 +480,11 @@ export function RecruiterWorkspace() {
                     <p className="text-[13.5px] font-extrabold text-ink">{j.title}</p>
                     <p className="mt-0.5 text-[12px] text-ink-muted">{[j.company, j.location].filter(Boolean).join(" · ") || "—"}{(j.salaryMin || j.salaryMax) && <span className="text-ink-faint"> · {j.salaryMin?.toLocaleString("de-AT") ?? "?"}–{j.salaryMax?.toLocaleString("de-AT") ?? "?"}</span>}</p>
                   </a>
-                  {m?.score != null && <span className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[12px] font-extrabold", m.score >= 70 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-star/15 text-star" : "bg-accent/10 text-accent")}>{m.score}%</span>}
+                  {m?.score != null ? (
+                    <span className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[12px] font-extrabold", m.score >= 70 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-star/15 text-star" : "bg-accent/10 text-accent")}>{m.score}%</span>
+                  ) : pre >= 0 ? (
+                    <span className="shrink-0 rounded-pill border border-line px-2 py-0.5 text-[11px] font-bold text-ink-faint" title="Durva relevancia (AI nélkül)">≈{pre}%</span>
+                  ) : null}
                 </div>
                 {active && (
                   <div className="mt-2 flex flex-wrap items-center gap-2">

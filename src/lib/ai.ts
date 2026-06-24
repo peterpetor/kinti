@@ -205,6 +205,8 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "radar-subscribe": { windowHours: 1, maxPerWindow: 10 }, // Radar DoS védelem
   "interview-sim": { windowHours: 1, maxPerWindow: 50 }, // Interview simulator
   "cv-review": { windowHours: 24, maxPerWindow: 5 }, // PRO CV-audit — 5/FELHASZNÁLÓ/nap (userId-kulcs, nem IP)
+  "recruiter-parse": { windowHours: 24, maxPerWindow: 300 }, // admin CV-elemzés — runaway-guard
+  "recruiter-match": { windowHours: 24, maxPerWindow: 300 }, // admin match+e-mail — runaway-guard
   "leaderboard": { windowHours: 1, maxPerWindow: 20 }, // ranglista csatlakozás/szinkron
   "business-suggest": { windowHours: 1, maxPerWindow: 10 }, // Közösségi vállalkozás-ajánlás spam-védelem
   "lead-request": { windowHours: 1, maxPerWindow: 3 },     // Árajánlatkérés (lead) — max 3/IP/óra

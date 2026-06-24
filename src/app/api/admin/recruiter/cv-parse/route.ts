@@ -2,14 +2,18 @@ import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/admin";
 import { getMediaBucket } from "@/lib/cloudflare";
 import { extractCvText } from "@/lib/cv-extract";
-import { runAiChat, extractJsonObject } from "@/lib/ai";
+import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
+import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-const PRIMARY_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
-const FALLBACK_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
+// Kulcsszó/skill kinyerés EGYSZERŰ feladat → a gyors 8B a primary (olcsóbb),
+// a 17B csak fallback, ha a gyors nem ad választ (#2 AI-költség-csökkentés).
+const PRIMARY_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
+const FALLBACK_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
+const MAX_INPUT = 4000; // a kulcsszóhoz ennyi bőven elég (#3)
 
 const LANG: Record<string, string> = { AT: "német", DE: "német", NL: "holland vagy angol" };
 
@@ -23,6 +27,11 @@ export async function POST(req: Request) {
   const adminId = await getAdminUserId();
   if (!adminId) return NextResponse.json({ error: "forbidden" }, { status: 403 });
 
+  // Runaway-guard: admin-only, de a futamidő-költség miatt napi sapka (#5).
+  const rlKey = await hashIp(`recruiter-parse:${adminId}`);
+  const rl = await checkAiRateLimit("recruiter-parse", rlKey);
+  if (!rl.allowed) return NextResponse.json({ error: `Mára elérted a CV-elemzések napi keretét (${rl.max}).` }, { status: 429 });
+
   const body = (await req.json().catch(() => ({}))) as { cvKey?: string; country?: string };
   const cvKey = typeof body.cvKey === "string" ? body.cvKey : null;
   const country = (body.country ?? "AT").toUpperCase();
@@ -32,6 +41,7 @@ export async function POST(req: Request) {
   if (!extracted.ok) {
     return NextResponse.json({ error: "A CV nem olvasható (hiányzik vagy szkennelt PDF).", reason: extracted.reason }, { status: 422 });
   }
+  const cvText = extracted.text.slice(0, MAX_INPUT);
 
   const system = `Te egy munkaerő-közvetítő asszisztense vagy. A jelölt nyers CV-szövegét kapod. Add vissza KIZÁRÓLAG ezt a JSON-t (semmi más):
 {
@@ -43,9 +53,11 @@ export async function POST(req: Request) {
 Szabályok: KIZÁRÓLAG a CV-ből dolgozz, NE találj ki céget/évszámot/képesítést. A "keyword" a célország (${lang}) álláskeresőjébe illő, rövid szakma-kifejezés legyen. Tömör.`;
 
   try {
-    let ai = await runAiChat({ model: PRIMARY_MODEL, system, user: `CV-szöveg:\n"""\n${extracted.text}\n"""`, maxTokens: 350, temperature: 0.3, timeoutMs: 22_000 });
-    if (!ai.ok) ai = await runAiChat({ model: FALLBACK_MODEL, system, user: `CV-szöveg:\n"""\n${extracted.text}\n"""`, maxTokens: 350, temperature: 0.3, timeoutMs: 18_000 });
+    const userMsg = `CV-szöveg:\n"""\n${cvText}\n"""`;
+    let ai = await runAiChat({ model: PRIMARY_MODEL, system, user: userMsg, maxTokens: 300, temperature: 0.3, timeoutMs: 20_000 });
+    if (!ai.ok) ai = await runAiChat({ model: FALLBACK_MODEL, system, user: userMsg, maxTokens: 300, temperature: 0.3, timeoutMs: 20_000 });
     if (!ai.ok) return NextResponse.json({ error: "Az AI épp túlterhelt — próbáld újra." }, { status: 503 });
+    await logAiRateLimit("recruiter-parse", rlKey);
 
     const p = extractJsonObject<{ keyword?: string; skills?: string[]; languages?: string[]; summary?: string }>(ai.text);
     if (!p) return NextResponse.json({ error: "Nem értelmezhető AI-válasz." }, { status: 502 });

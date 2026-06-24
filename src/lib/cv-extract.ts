@@ -30,6 +30,20 @@ export async function extractCvText(
 ): Promise<CvExtractResult> {
   if (!cvKey) return { ok: false, text: "", reason: "no-cv" };
 
+  // 0) CACHE: a kinyert szöveg sidecar-ja (cv/x/y.pdf -> cv/x/y.pdf.txt). A
+  // kulcsok feltöltésenként egyediek (uuid), így a cache sosem avul el. Találat
+  // esetén MEGSPÓROLJUK a toMarkdown AI-hívást (#1 AI-költség-csökkentés).
+  const sidecarKey = `${cvKey}.txt`;
+  try {
+    const cached = await bucket.get(sidecarKey);
+    if (cached) {
+      const text = (await cached.text()).trim();
+      if (text.length >= 80) return { ok: true, text: text.slice(0, MAX_CHARS) };
+    }
+  } catch {
+    /* cache-miss vagy hiba → normál kinyerés alább */
+  }
+
   // 1) PDF letöltése R2-ből
   let bytes: ArrayBuffer;
   try {
@@ -73,7 +87,15 @@ export async function extractCvText(
       .trim();
 
     if (clean.length < 80) return { ok: false, text: clean, reason: "empty" };
-    return { ok: true, text: clean.slice(0, MAX_CHARS) };
+
+    // Cache-be írás a következő hívásokhoz (best-effort — sose törheti a kinyerést).
+    const result = clean.slice(0, MAX_CHARS);
+    try {
+      await bucket.put(sidecarKey, result, { httpMetadata: { contentType: "text/plain; charset=utf-8" } });
+    } catch {
+      /* a cache-írás sosem törheti a kinyerést */
+    }
+    return { ok: true, text: result };
   } catch (err) {
     console.error("[cv-extract] toMarkdown hiba:", err);
     return { ok: false, text: "", reason: "error" };

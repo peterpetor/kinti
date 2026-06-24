@@ -89,7 +89,9 @@ export async function DELETE(req: Request) {
   const ok = await deleteRecruitingCandidate(id);
   await removeShortlistByCandidate(id);
   if (cand?.cvKey && cand.cvKey.startsWith("cv/recruiting/")) {
-    await getMediaBucket().delete(cand.cvKey).catch(() => { /* silent */ });
+    const bucket = getMediaBucket();
+    await bucket.delete(cand.cvKey).catch(() => { /* silent */ });
+    await bucket.delete(`${cand.cvKey}.txt`).catch(() => { /* silent — cache sidecar */ });
   }
   return NextResponse.json({ ok });
 }
