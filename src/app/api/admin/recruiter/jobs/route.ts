@@ -11,11 +11,10 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/admin/recruiter/jobs?country=AT&q=Maler — VALÓDI állás-listák. Admin-only.
  *
- * Forrás-lánc (az első KONFIGURÁLT nyer):
- *   1. Adzuna   — kulccsal, AT/DE/NL + fizetés-adat (a legjobb).
- *   2. Jooble   — kulccsal, jó AT/EU lefedés.
- *   3. Arbeitnow — INGYENES, kulcs nélkül (DE/EU-fókusz) → mindig van valami.
- * `source` jelzi, melyikből jött.
+ * Forrás-stratégia:
+ *   - Ha van Adzuna ÉS/VAGY Jooble kulcs → mindkettőből listázunk + URL-dedup
+ *     (max több lefedés). source = "adzuna+jooble" / "adzuna" / "jooble".
+ *   - Ha EGYIK kulcs sincs → Arbeitnow (INGYENES, kulcs nélkül) fallback.
  */
 export async function GET(req: Request) {
   const adminId = await getAdminUserId();
@@ -26,14 +25,22 @@ export async function GET(req: Request) {
   const q = sp.get("q") ?? "";
 
   try {
-    const ad = await searchAdzunaJobs(country, q, 20);
-    if (ad.configured) {
-      return NextResponse.json({ jobs: ad.jobs, source: "adzuna" }, { headers: { "cache-control": "no-store" } });
+    const [ad, jb] = await Promise.all([
+      searchAdzunaJobs(country, q, 20),
+      searchJoobleJobs(country, q, 20),
+    ]);
+
+    if (ad.configured || jb.configured) {
+      // Összefésülés + dedup URL szerint (Adzuna elöl — nála van fizetés-adat).
+      const seen = new Set<string>();
+      const jobs = [...ad.jobs, ...jb.jobs]
+        .filter((j) => (seen.has(j.url) ? false : (seen.add(j.url), true)))
+        .slice(0, 30);
+      const source = ad.configured && jb.configured ? "adzuna+jooble" : ad.configured ? "adzuna" : "jooble";
+      return NextResponse.json({ jobs, source }, { headers: { "cache-control": "no-store" } });
     }
-    const jb = await searchJoobleJobs(country, q, 20);
-    if (jb.configured) {
-      return NextResponse.json({ jobs: jb.jobs, source: "jooble" }, { headers: { "cache-control": "no-store" } });
-    }
+
+    // Nincs kulcs → ingyenes fallback.
     const jobs = await searchArbeitnowJobs(country, q, 20);
     return NextResponse.json({ jobs, source: "arbeitnow" }, { headers: { "cache-control": "no-store" } });
   } catch (err) {

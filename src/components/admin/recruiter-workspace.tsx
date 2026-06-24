@@ -195,8 +195,8 @@ export function RecruiterWorkspace() {
               <p className="mt-0.5 text-[12px] text-ink-muted">{[j.company, j.location].filter(Boolean).join(" · ") || "—"}{(j.salaryMin || j.salaryMax) && <span className="text-ink-faint"> · {j.salaryMin?.toLocaleString("de-AT") ?? "?"}–{j.salaryMax?.toLocaleString("de-AT") ?? "?"}</span>}</p>
             </a>
           ))}
-          {source === "adzuna" || source === "jooble" ? (
-            <p className="px-1 text-[10.5px] text-ink-faint">Forrás: {source === "adzuna" ? "Adzuna" : "Jooble"} (jogtiszta aggregátor). A jelentkezés/feltételek az adott hirdetésnél.</p>
+          {source && source !== "arbeitnow" && source !== "error" ? (
+            <p className="px-1 text-[10.5px] text-ink-faint">Forrás: {source === "adzuna+jooble" ? "Adzuna + Jooble" : source === "adzuna" ? "Adzuna" : "Jooble"} (jogtiszta aggregátor). A jelentkezés/feltételek az adott hirdetésnél.</p>
           ) : (
             <p className="rounded-[10px] border border-star/30 bg-star/5 px-3 py-2 text-[11px] leading-snug text-ink-muted">
               Forrás: Arbeitnow (ingyenes, DE/EU-fókusz). A <strong>teljes AT/DE/NL lefedéshez + fizetés-adatért</strong> adj meg egy ingyenes kulcsot: <strong>Adzuna</strong> (<code className="rounded bg-surface-alt px-1">ADZUNA_APP_ID</code> + <code className="rounded bg-surface-alt px-1">ADZUNA_APP_KEY</code>) vagy <strong>Jooble</strong> (<code className="rounded bg-surface-alt px-1">JOOBLE_API_KEY</code>).
