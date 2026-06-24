@@ -779,8 +779,8 @@ export const LESSONS: Lesson[] = [
         id: "q58",
         type: "flashcard",
         prompt: "Szuper, király",
-        backText: "Huere geil",
-        phonetic: "Huere gájl",
+        backText: "Mega guet",
+        phonetic: "Mega guet",
       },
       {
         id: "q59",
@@ -1875,24 +1875,24 @@ export const LESSONS: Lesson[] = [
   // ── 27. Fejezet: Mester szintű Szleng ────────────────────
   {
     id: "l49",
-    title: "49. Lecke: Káromkodás (Mértékkel)",
-    description: "Amikor a svájci is elveszíti a türelmét.",
+    title: "49. Lecke: Bosszúság szalonképesen",
+    description: "Ha valami balul sül el — csúnya szavak nélkül.",
     chapter: 27,
     xpReward: 250,
     questions: [
       {
         id: "q145",
         type: "flashcard",
-        prompt: "A fenébe! / Basszus!",
-        backText: "Gopferdeckel!",
-        phonetic: "Gopfer-dekkel",
+        prompt: "A fenébe! / Bosszúság (szalonképes)",
+        backText: "Verflixt! / Schad!",
+        phonetic: "Ferflikst / Sád",
       },
       {
         id: "q146",
         type: "multiple_choice",
-        prompt: "Melyik a híres, enyhe svájci mérgeskedő kifejezés?",
+        prompt: "Melyik tipikus, szalonképes svájci felkiáltás, ha valami nem jön össze?",
         options: [
-          { id: "o1", text: "Gopfertammi" },
+          { id: "o1", text: "Jänu! (na mindegy)" },
           { id: "o2", text: "Guten Tag" },
           { id: "o3", text: "Merci vilmal" }
         ],
@@ -1901,11 +1901,11 @@ export const LESSONS: Lesson[] = [
       {
         id: "q147",
         type: "match",
-        prompt: "Durvább szleng",
+        prompt: "Reakciók, ha valami félresikerül",
         pairs: [
-          { id: "p1", left: "Hülye (Szelíd)", right: "Spinnsch?" },
-          { id: "p2", left: "Csend legyen!", right: "Heb d Schnurre" },
-          { id: "p3", left: "Hülyeség", right: "Seich" },
+          { id: "p1", left: "Kár! / Sajnálom", right: "Schad!" },
+          { id: "p2", left: "Hoppá!", right: "Hoppla!" },
+          { id: "p3", left: "Na mindegy", right: "Egal" },
         ]
       }
     ]
@@ -2310,7 +2310,7 @@ export const LESSONS: Lesson[] = [
         type: "multiple_choice",
         prompt: "Mit mondasz, ha fáj a fejed a buli után?",
         options: [
-          { id: "o1", text: "Ich ha e huere Chater" },
+          { id: "o1", text: "Ich ha en mega Chater" },
           { id: "o2", text: "Ich bi zwääg" },
           { id: "o3", text: "Es isch lustig gsii" }
         ],

@@ -820,7 +820,7 @@ export const LESSONS_AT: Lesson[] = [
   {
     id: "al99", title: "Hangulat", description: "leiwand, deppert, fad, grantig.", chapter: 12, xpReward: 20,
     questions: [
-      { id: "q295", type: "multiple_choice", prompt: "'szuper / menő'?", options: [{ id: "o1", text: "leiwand" }, { id: "o2", text: "geil" }, { id: "o3", text: "fico" }], correctOptionId: "o1" },
+      { id: "q295", type: "multiple_choice", prompt: "'szuper / menő'?", options: [{ id: "o1", text: "leiwand" }, { id: "o2", text: "deppert" }, { id: "o3", text: "fico" }], correctOptionId: "o1" },
       { id: "q296", type: "flashcard", prompt: "Mit jelent 'fad'?", backText: "unalmas", phonetic: "fád" },
       { id: "q297", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "Szuper", right: "leiwand" }, { id: "p2", left: "Buta", right: "deppert" }, { id: "p3", left: "Mogorva", right: "grantig" }, { id: "p4", left: "Unalmas", right: "fad" }] },
     ],
