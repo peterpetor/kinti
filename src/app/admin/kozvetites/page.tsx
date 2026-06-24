@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminUserId } from "@/lib/admin";
-import { RecruiterSearch } from "@/components/admin/recruiter-search";
+import { RecruiterWorkspace } from "@/components/admin/recruiter-workspace";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -23,11 +23,11 @@ export default async function AdminKozvetitesPage() {
         </Link>
         <h1 className="text-[26px] font-extrabold tracking-tight text-ink">Közvetítő-kereső</h1>
         <p className="text-[12.5px] text-ink-muted">
-          Add meg a jelölt szakmáját és az országot — egy kattintással keresel a fő állásportálokon. Onnan veszed fel a kapcsolatot a hirdetővel.
+          Vidd fel a jelöltet (CV-vel), kövesd a folyamatot, és keress neki valódi hirdetéseket az ország fő portáljairól. Onnan veszed fel a kapcsolatot a hirdetővel.
         </p>
       </header>
 
-      <RecruiterSearch />
+      <RecruiterWorkspace />
 
       <div className="rounded-card border border-dashed border-line bg-surface-alt/50 px-4 py-3 text-[11.5px] leading-snug text-ink-muted">
         ⚖️ A linkek <strong>élő keresésre</strong> visznek a portálokon (nem tárolunk idegen hirdetést — jogtiszta). Csak <strong>EU-ba</strong> közvetíts (AT/DE/NL); a jelölttől díjat NEM szedsz, a munkáltató fizet.
