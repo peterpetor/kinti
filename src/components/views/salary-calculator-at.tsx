@@ -101,7 +101,7 @@ export function SalaryCalculatorAT() {
           />
         </label>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 items-end gap-4">
           {/* Gyerekek (Familienbonus) */}
           <div>
             <label className="mb-1.5 block text-[12px] font-bold uppercase tracking-wide text-ink-muted">
