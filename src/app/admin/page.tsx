@@ -401,6 +401,12 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
             🤝 Jelöltek (közvetítés)
           </Link>
           <Link
+            href="/admin/kozvetites"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            🔎 Közvetítő-kereső
+          </Link>
+          <Link
             href="/admin/blocklist"
             className="inline-flex items-center gap-1.5 rounded-pill bg-accent px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
           >
