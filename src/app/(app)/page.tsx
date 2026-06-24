@@ -16,6 +16,7 @@ import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
 import { KvizDailyCard } from "@/components/kviz-daily-card";
 import { NapiSzoCard } from "@/components/napi-szo-card";
 import { HomePlatformGrid } from "@/components/home-platform-grid";
+import { TrustBar } from "@/components/trust-bar";
 import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
 import { getBusinesses, getEvents } from "@/lib/repo";
@@ -91,6 +92,7 @@ export default async function FeedPage() {
 
       <NewsletterCtaCard />
       <PwaInstallCard />
+      <TrustBar />
       </div>
     </>
   );
