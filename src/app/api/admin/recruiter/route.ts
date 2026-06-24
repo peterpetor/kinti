@@ -38,11 +38,12 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   if (!(await guard())) return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  const body = (await req.json().catch(() => ({}))) as { id?: string; status?: string; notes?: string };
+  const body = (await req.json().catch(() => ({}))) as { id?: string; status?: string; notes?: string; keyword?: string };
   if (!body.id) return NextResponse.json({ error: "Hiányzó id." }, { status: 400 });
-  const fields: { status?: RecruitingStatus; notes?: string | null } = {};
+  const fields: { status?: RecruitingStatus; notes?: string | null; keyword?: string | null } = {};
   if (body.status && STATUSES.has(body.status as RecruitingStatus)) fields.status = body.status as RecruitingStatus;
   if (typeof body.notes === "string") fields.notes = body.notes.slice(0, 2000) || null;
+  if (typeof body.keyword === "string") fields.keyword = body.keyword.slice(0, 80).trim() || null;
   const ok = await updateRecruitingCandidate(body.id, fields);
   return NextResponse.json({ ok });
 }

@@ -60,12 +60,13 @@ export async function createRecruitingCandidate(input: CreateRecruitingInput): P
 
 export async function updateRecruitingCandidate(
   id: string,
-  fields: { status?: RecruitingStatus; notes?: string | null },
+  fields: { status?: RecruitingStatus; notes?: string | null; keyword?: string | null },
 ): Promise<boolean> {
   const sets: string[] = [];
   const binds: unknown[] = [];
   if (fields.status !== undefined) { sets.push("status = ?"); binds.push(fields.status); }
   if (fields.notes !== undefined) { sets.push("notes = ?"); binds.push(fields.notes); }
+  if (fields.keyword !== undefined) { sets.push("keyword = ?"); binds.push(fields.keyword); }
   if (!sets.length) return false;
   sets.push("updated_at = datetime('now')");
   binds.push(id);
