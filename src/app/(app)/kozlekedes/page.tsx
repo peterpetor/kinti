@@ -6,9 +6,9 @@ export const runtime = "edge";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Svájci Tömegközlekedési Zóna-térkép és Mobiljegy Kalauz",
+  title: "Tömegközlekedési Kalauz — Svájc, Ausztria, Németország",
   description:
-    "SBB, ZVV, Libero, TNW zónarendszerek egyszerűen elmagyarázva. Jegy-típusok, mobil-appok, GA vs Halbtax kalkulátor.",
+    "Zóna- és Verkehrsverbund-rendszerek egyszerűen: SBB/ZVV (CH), ÖBB/Wiener Linien (AT), DB/VBB/MVV (DE). Jegytípusok, mobilappok, GA/Klimaticket/Deutschlandticket kalkulátor.",
 };
 
 export default function KozlekedesPage() {

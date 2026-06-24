@@ -447,3 +447,87 @@ export function calculateAtTransport(input: GaVsHalbtaxInput): AtTransportResult
   else recommendation = "full-price";
   return { yearlyTrips, fullPriceCost, jahreskarteCost: AT_JAHRESKARTE, klimaticketCost: AT_KLIMATICKET, recommendation };
 }
+
+// ════════════════════ NÉMETORSZÁG ════════════════════
+// Német Verkehrsverbünde + jegyek + Deutschlandticket-kalkulátor. Árak tájékoztató
+// jellegűek (EUR); a pontosakat a hivatalos oldalon ellenőrizd. A sztár a
+// Deutschlandticket: 58 €/hó, EGÉSZ Németország összes helyi/regionális közlekedése.
+
+export const DE_TARIF_SYSTEMS: TarifSystem[] = [
+  {
+    id: "vbb", name: "VBB (Berlin-Brandenburg)", abbreviation: "VBB", region: "Berlin + Brandenburg", emoji: "🚇",
+    zonesCount: 3, description: "Berlin három tarifa-zónája: A (belváros), B (külváros), C (Brandenburg + BER reptér). A jegyet zóna-kombóra veszed (AB, BC, ABC).",
+    exampleZones: [{ name: "Berlin belváros", zones: "AB" }, { name: "BER reptér", zones: "ABC" }, { name: "Potsdam", zones: "ABC" }],
+    singleZonePrice: 3.80, dailyPrice: 9.90, websiteUrl: "https://www.vbb.de/", color: "#E30613",
+  },
+  {
+    id: "mvv", name: "MVV (München)", abbreviation: "MVV", region: "München + környék", emoji: "🚆",
+    zonesCount: 7, description: "München gyűrűs zóna-rendszere: M (város) + 1–6 külső zóna. A jegy a bejárt zónáktól függ.",
+    exampleZones: [{ name: "München-város", zones: "M" }, { name: "Reptér (MUC)", zones: "M-5" }, { name: "Dachau", zones: "M-1" }],
+    singleZonePrice: 3.90, dailyPrice: 9.20, websiteUrl: "https://www.mvv-muenchen.de/", color: "#0065B1",
+  },
+  {
+    id: "hvv", name: "HVV (Hamburg)", abbreviation: "HVV", region: "Hamburg + környék", emoji: "🚊",
+    zonesCount: 8, description: "Hamburg gyűrűs rendszere (Ringe A–F). A belváros az A-gyűrű; kifelé drágul.",
+    exampleZones: [{ name: "Hamburg belváros", zones: "Ring A" }, { name: "Reptér (HAM)", zones: "Ring A" }, { name: "Norderstedt", zones: "Ring B" }],
+    singleZonePrice: 3.80, dailyPrice: 8.90, websiteUrl: "https://www.hvv.de/", color: "#C50018",
+  },
+  {
+    id: "rmv", name: "RMV (Rhein-Main / Frankfurt)", abbreviation: "RMV", region: "Frankfurt + Rajna-Majna régió", emoji: "🚍",
+    zonesCount: 0, description: "A frankfurti régió tarifaszövetsége (Frankfurt, Wiesbaden, Mainz, Darmstadt). Ár-fokozatos (Preisstufe).",
+    exampleZones: [{ name: "Frankfurt-város", zones: "Preisstufe 1-2" }, { name: "Reptér (FRA)", zones: "Frankfurt + 1" }, { name: "Wiesbaden", zones: "magasabb fokozat" }],
+    singleZonePrice: 3.65, dailyPrice: 6.45, websiteUrl: "https://www.rmv.de/", color: "#1A9F4B",
+  },
+  {
+    id: "vrr", name: "VRR (Rhein-Ruhr)", abbreviation: "VRR", region: "Düsseldorf, Essen, Dortmund, Köln-közel", emoji: "🚞",
+    zonesCount: 0, description: "A Ruhr-vidék tarifaszövetsége (Düsseldorf, Essen, Dortmund, Duisburg). Preisstufe A–D, a megtett táv szerint.",
+    exampleZones: [{ name: "Egy városon belül", zones: "Preisstufe A" }, { name: "Szomszéd város", zones: "Preisstufe B" }, { name: "Régión át", zones: "Preisstufe C-D" }],
+    singleZonePrice: 3.40, dailyPrice: 8.60, websiteUrl: "https://www.vrr.de/", color: "#0072BC",
+  },
+];
+
+export const DE_TICKET_TYPES: TicketType[] = [
+  { id: "einzel", name: "Egyszeri jegy (Einzelfahrt)", emoji: "🎫", description: "Egy útra szól a megadott zónákban, jellemzően átszállással egy irányba. Városonként eltér.", price: "kb. 3,40–3,90 €", validity: "Egy út (átszállással, megszakítás nélkül)", bestFor: "Alkalmi utazás" },
+  { id: "tages", name: "Napijegy (Tageskarte)", emoji: "📅", description: "Egész napos korlátlan utazás a zónában. 2–3 egyszeri jegy ára.", price: "kb. 6,5–10 €", validity: "Aznap (gyakran 3:00-ig másnap)", bestFor: "Intenzív nap / turista" },
+  { id: "deutschlandticket", name: "Deutschlandticket (D-Ticket)", emoji: "🇩🇪", description: "A sztár: EGÉSZ Németország ÖSSZES helyi és regionális közlekedése (U-Bahn, S-Bahn, Tram, Bus, RB/RE-vonatok) — országosan, egy bérlettel. NEM érvényes ICE/IC/EC távolsági vonatra. Havi felmondású előfizetés.", price: "58 € / hó (2025-től)", validity: "1 naptári hónap (megújuló)", bestFor: "Szinte mindenkinek, aki rendszeresen utazik" },
+  { id: "monat", name: "Havi/éves bérlet (helyi)", emoji: "📆", description: "Városi havi/éves bérlet — a legtöbb helyen a Deutschlandticket már olcsóbb és többet tud, kivéve speciális eseteket (pl. Jobticket-kedvezmény).", price: "városonként eltér", validity: "1 hónap / 1 év", bestFor: "Ahol a Jobticket a D-Ticketet még olcsóbbá teszi" },
+  { id: "bahncard25", name: "BahnCard 25", emoji: "✂️", description: "Éves kártya, 25% kedvezmény a DB távolsági (ICE/IC) és sok regionális jegyre. Kombinálható a Sparpreis-akciókkal.", price: "kb. 62,90 € / év (2. osztály)", validity: "1 év (automatikusan megújul!)", bestFor: "Aki néhányszor utazik ICE-vel" },
+  { id: "bahncard50", name: "BahnCard 50", emoji: "🎟️", description: "50% kedvezmény a DB rugalmas (Flexpreis) jegyekre. Sok utazásnál hamar megtérül.", price: "kb. 244 € / év (2. osztály)", validity: "1 év (automatikusan megújul!)", bestFor: "Gyakori ICE/IC-utazó" },
+];
+
+export const DE_MOBILE_APPS: MobileApp[] = [
+  { id: "db-navigator", name: "DB Navigator", emoji: "🚉", description: "A Deutsche Bahn hivatalos appja. Országos menetrend, jegy- és Deutschlandticket-vásárlás, Sparpreis-akciók, real-time késés és vágány-info.", iosUrl: "https://apps.apple.com/de/app/db-navigator/id343555245", androidUrl: "https://play.google.com/store/apps/details?id=de.hafas.android.db", pros: ["Országos vonat (ICE-ig)", "Deutschlandticket + Sparpreis", "Real-time késés/vágány"] },
+  { id: "bvg-fahrinfo", name: "BVG (Berlin)", emoji: "🚇", description: "A berlini közlekedés (BVG) hivatalos appja: helyi jegyek, útvonaltervező, Deutschlandticket.", iosUrl: "https://apps.apple.com/de/app/bvg-fahrinfo-plus-berlin/id296872036", androidUrl: "https://play.google.com/store/apps/details?id=de.hafas.android.bvg", pros: ["Berlini jegyek", "Útvonaltervező", "U/S-Bahn térkép"] },
+  { id: "mvgo", name: "MVGO (München)", emoji: "🚆", description: "A müncheni közlekedés (MVG) appja: helyi jegyek, útvonaltervező, megosztott mobilitás.", iosUrl: "https://apps.apple.com/de/app/mvgo/id1543812645", androidUrl: "https://play.google.com/store/apps/details?id=de.swm.mvgo", pros: ["Müncheni jegyek", "MVV-zónák", "Bike/e-scooter"] },
+];
+
+export const DE_TRANSPORT_TIPS: { emoji: string; title: string; body: string }[] = [
+  { emoji: "🇩🇪", title: "Deutschlandticket — szinte mindig megéri", body: "58 €/hó az EGÉSZ ország helyi és regionális közlekedéséért. Ha havonta 15+ helyi utazásod van, vagy ingázol regionális vonattal, ez verhetetlen. Havonta felmondható." },
+  { emoji: "🚄", title: "ICE/IC ≠ Deutschlandticket", body: "A D-Ticket a távolsági gyorsvonatra (ICE/IC/EC) NEM érvényes — azokra külön DB-jegy kell. De az RB/RE regionális vonatok mennek vele országosan (lassabb, de ingyen)." },
+  { emoji: "💸", title: "Sparpreis a DB-n", body: "ICE-re a DB Navigatorban a kötött idejű Sparpreis-jegyek sokkal olcsóbbak a Flexpreisnál (akár 17,90 €-tól). Foglalj előre, és BahnCard-dal még olcsóbb." },
+  { emoji: "✂️", title: "BahnCard automatikusan megújul!", body: "A BahnCard 1 év után MAGÁTÓL meghosszabbodik — ha nem akarod, 6 héttel a lejárat ELŐTT mondd fel írásban, különben kifizeted a következő évet." },
+  { emoji: "💼", title: "Jobticket / Deutschlandticket a munkahelytől", body: "Sok munkáltató kedvezményesen (vagy ingyen) adja a Deutschlandticketet (Jobticket). Kérdezd meg a HR-t — gyakran 25–100%-ot átvállalnak." },
+  { emoji: "🎓", title: "Semesterticket diákoknak", body: "Egyetemistáknál a Semesterticket gyakran a beiratkozási díjban van — sokszor a kibővített D-Ticket-verzió (Semesterticket Deutschland) ~30 €/hó." },
+];
+
+const DE_DEUTSCHLANDTICKET_MONTHLY = 58;
+
+export interface DeTransportResult {
+  yearlyTrips: number;
+  fullPriceCost: number;
+  deutschlandticketCost: number;
+  recommendation: "full-price" | "deutschlandticket";
+}
+
+/** Németország: Einzeltickets vs Deutschlandticket (58 €/hó = 696 €/év). */
+export function calculateDeTransport(input: GaVsHalbtaxInput): DeTransportResult {
+  const yearlyTrips = input.tripsPerWeek * 52;
+  const fullPriceCost = Math.round(yearlyTrips * input.avgTripPrice);
+  const deutschlandticketCost = DE_DEUTSCHLANDTICKET_MONTHLY * 12;
+  return {
+    yearlyTrips,
+    fullPriceCost,
+    deutschlandticketCost,
+    recommendation: deutschlandticketCost < fullPriceCost ? "deutschlandticket" : "full-price",
+  };
+}

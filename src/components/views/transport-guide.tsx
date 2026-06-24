@@ -14,6 +14,11 @@ import {
   AT_MOBILE_APPS,
   AT_TRANSPORT_TIPS,
   calculateAtTransport,
+  DE_TARIF_SYSTEMS,
+  DE_TICKET_TYPES,
+  DE_MOBILE_APPS,
+  DE_TRANSPORT_TIPS,
+  calculateDeTransport,
 } from "@/lib/transport";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -21,12 +26,14 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 export function TransportGuide() {
   const [prefCountry] = usePreferredCountry();
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
-  const cur = isAT ? "EUR" : "CHF";
-  const tarifSystems = isAT ? AT_TARIF_SYSTEMS : TARIF_SYSTEMS;
-  const ticketTypes = isAT ? AT_TICKET_TYPES : TICKET_TYPES;
-  const mobileApps = isAT ? AT_MOBILE_APPS : MOBILE_APPS;
-  const tips = isAT ? AT_TRANSPORT_TIPS : TRANSPORT_TIPS;
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  const isDE = country === "DE";
+  const cur = isAT || isDE ? "EUR" : "CHF";
+  const tarifSystems = isDE ? DE_TARIF_SYSTEMS : isAT ? AT_TARIF_SYSTEMS : TARIF_SYSTEMS;
+  const ticketTypes = isDE ? DE_TICKET_TYPES : isAT ? AT_TICKET_TYPES : TICKET_TYPES;
+  const mobileApps = isDE ? DE_MOBILE_APPS : isAT ? AT_MOBILE_APPS : MOBILE_APPS;
+  const tips = isDE ? DE_TRANSPORT_TIPS : isAT ? AT_TRANSPORT_TIPS : TRANSPORT_TIPS;
   return (
     <div className="space-y-4">
       {/* Hero */}
@@ -35,10 +42,12 @@ export function TransportGuide() {
           <span className="text-4xl shrink-0">🚆</span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[20px] font-extrabold leading-tight tracking-tight text-ink">
-              {isAT ? "Osztrák Tömegközlekedés" : "Svájci Tömegközlekedés"}
+              {isDE ? "Német Tömegközlekedés" : isAT ? "Osztrák Tömegközlekedés" : "Svájci Tömegközlekedés"}
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              {isAT
+              {isDE
+                ? "Deutsche Bahn, Verkehrsverbünde (VBB, MVV, HVV), jegytípusok, DB Navigator és Deutschlandticket-kalkulátor — egyszerűen elmagyarázva."
+                : isAT
                 ? "Wiener Linien, ÖBB, VOR, jegytípusok, mobilappok és Klimaticket-kalkulátor — egyszerűen elmagyarázva."
                 : "Zónarendszerek (SBB, ZVV, Libero), jegytípusok, mobilappok és GA vs Halbtax kalkulátor — egyszerűen elmagyarázva."}
             </p>
@@ -52,7 +61,17 @@ export function TransportGuide() {
           📍 Hogy működik a zónarendszer?
         </h2>
         <div className="space-y-2 text-[12.5px] leading-relaxed text-ink-muted">
-          {isAT ? (
+          {isDE ? (
+            <>
+              <p>Németországban minden régiónak van <strong className="text-ink">Verkehrsverbundja</strong> (pl. VBB Berlin, MVV München) — a helyi jegy zóna/ár-fokozat alapú. Az országos szuper-ajánlat a <strong className="text-ink">Deutschlandticket</strong>.</p>
+              <ul className="space-y-1 ml-4 list-disc">
+                <li>A <strong className="text-ink">Deutschlandticket (58 €/hó)</strong> az EGÉSZ ország összes helyi és regionális közlekedését fedezi (U/S-Bahn, Tram, Bus, RB/RE-vonat).</li>
+                <li>A távolsági gyorsvonatra (<strong className="text-ink">ICE/IC/EC</strong>) külön DB-jegy kell — azt a D-Ticket NEM fedi.</li>
+                <li>Egy helyi jegyen belül jellemzően szabadon átszállhatsz a járművek közt (egy irányba, megszakítás nélkül).</li>
+                <li>A <strong className="text-ink">DB Navigator</strong> app intézi az országos menetrendet, jegyet és a Sparpreis-akciókat.</li>
+              </ul>
+            </>
+          ) : isAT ? (
             <>
               <p>Ausztriában minden régiónak van <strong className="text-ink">Verkehrsverbundja</strong>. Bécs egyetlen zóna (<strong className="text-ink">Kernzone Wien</strong>); ott a jegy idő-alapú.</p>
               <ul className="space-y-1 ml-4 list-disc">
@@ -194,7 +213,13 @@ export function TransportGuide() {
           Hivatalos források
         </h3>
         <ul className="space-y-1.5">
-          {isAT ? (
+          {isDE ? (
+            <>
+              <li><a href="https://www.bahn.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Deutsche Bahn (DB)</a></li>
+              <li><a href="https://www.deutschlandticket.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Deutschlandticket — hivatalos info</a></li>
+              <li><a href="https://www.vbb.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 VBB (Berlin-Brandenburg)</a></li>
+            </>
+          ) : isAT ? (
             <>
               <li><a href="https://www.oebb.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 ÖBB — Österreichische Bundesbahnen</a></li>
               <li><a href="https://www.wienerlinien.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Wiener Linien</a></li>
@@ -216,7 +241,10 @@ export function TransportGuide() {
         variant="info"
         notAdviceFor="utazási, jegyügyi vagy szerződéses"
         extraWarning="A megjelölt árak és zónák a tájékoztató publikálásakor érvényesek — időnként változnak. Jegyvásárlás előtt mindig ellenőrizd a hivatalos szolgáltató oldalán vagy alkalmazásában. A megjelölt szolgáltatókkal NEM állunk affiliate vagy kereskedelmi kapcsolatban."
-        officialSources={isAT ? [
+        officialSources={isDE ? [
+          { label: "Deutsche Bahn", url: "https://www.bahn.de/" },
+          { label: "Deutschlandticket", url: "https://www.deutschlandticket.de/" },
+        ] : isAT ? [
           { label: "ÖBB", url: "https://www.oebb.at/" },
           { label: "Wiener Linien", url: "https://www.wienerlinien.at/" },
         ] : [
@@ -289,16 +317,24 @@ function TarifCard({ system, cur }: { system: typeof TARIF_SYSTEMS[number]; cur:
 
 function GaVsHalbtaxCalculator() {
   const [prefCountry] = usePreferredCountry();
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
-  const cur = isAT ? "EUR" : "CHF";
-  const [avgTripPrice, setAvgTripPrice] = useState(isAT ? 3 : 12);
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  const isDE = country === "DE";
+  const cur = isAT || isDE ? "EUR" : "CHF";
+  const [avgTripPrice, setAvgTripPrice] = useState(isDE ? 3.5 : isAT ? 3 : 12);
   const [tripsPerWeek, setTripsPerWeek] = useState(5);
 
   const chResult = useMemo(() => calculateGaVsHalbtax({ avgTripPrice, tripsPerWeek }), [avgTripPrice, tripsPerWeek]);
   const atResult = useMemo(() => calculateAtTransport({ avgTripPrice, tripsPerWeek }), [avgTripPrice, tripsPerWeek]);
-  const yearlyTrips = isAT ? atResult.yearlyTrips : chResult.yearlyTrips;
+  const deResult = useMemo(() => calculateDeTransport({ avgTripPrice, tripsPerWeek }), [avgTripPrice, tripsPerWeek]);
+  const yearlyTrips = isDE ? deResult.yearlyTrips : isAT ? atResult.yearlyTrips : chResult.yearlyTrips;
 
-  const rec = isAT
+  const rec = isDE
+    ? ({
+        "full-price":       { emoji: "🎫", label: "Maradj az egyes jegyeknél", color: "#9a6b00" },
+        deutschlandticket:  { emoji: "🇩🇪", label: "Deutschlandticket éri meg!", color: "#1d4434" },
+      } as const)[deResult.recommendation]
+    : isAT
     ? ({
         "full-price": { emoji: "🎫", label: "Maradj az egyes jegyeknél", color: "#9a6b00" },
         jahreskarte:  { emoji: "🎟️", label: "Jahreskarte Wien éri meg!", color: "#16a34a" },
@@ -315,7 +351,7 @@ function GaVsHalbtaxCalculator() {
       <div className="flex items-center gap-2">
         <span className="text-3xl">🧮</span>
         <div>
-          <h2 className="text-[15px] font-extrabold text-ink">{isAT ? "Klimaticket kalkulátor" : "GA vs Halbtax kalkulátor"}</h2>
+          <h2 className="text-[15px] font-extrabold text-ink">{isDE ? "Deutschlandticket kalkulátor" : isAT ? "Klimaticket kalkulátor" : "GA vs Halbtax kalkulátor"}</h2>
           <p className="text-[11.5px] text-ink-muted">Add meg a tipikus utazásod adatait — kiszámoljuk, megéri-e</p>
         </div>
       </div>
@@ -385,7 +421,12 @@ function GaVsHalbtaxCalculator() {
 
       {/* Részletes táblázat */}
       <div className="space-y-1.5">
-        {isAT ? (
+        {isDE ? (
+          <>
+            <CostRow label="Egyes jegyekkel" cost={deResult.fullPriceCost} highlight={deResult.recommendation === "full-price"} cur={cur} />
+            <CostRow label="Deutschlandticket" cost={deResult.deutschlandticketCost} highlight={deResult.recommendation === "deutschlandticket"} subtitle="58 € / hó = 696 € / év — egész Németország (helyi+regionális)" cur={cur} />
+          </>
+        ) : isAT ? (
           <>
             <CostRow label="Egyes jegyekkel" cost={atResult.fullPriceCost} highlight={atResult.recommendation === "full-price"} cur={cur} />
             <CostRow label="Jahreskarte Wien" cost={atResult.jahreskarteCost} highlight={atResult.recommendation === "jahreskarte"} subtitle="365 € / év — korlátlan Bécsben" cur={cur} />
@@ -401,7 +442,7 @@ function GaVsHalbtaxCalculator() {
       </div>
 
       <p className="text-[11px] leading-snug text-ink-faint">
-        Ebben az évben: {yearlyTrips} utazás. {isAT ? "Számolj még kedvezményekkel (Vorteilscard, fiatal/szenior tarifák)." : "Számolj még gyermek-, hétvégi és family-tarifákkal."}
+        Ebben az évben: {yearlyTrips} utazás. {isDE ? "A Deutschlandticket csak helyi+regionális; ICE/IC-hez külön DB-jegy (Sparpreis/BahnCard)." : isAT ? "Számolj még kedvezményekkel (Vorteilscard, fiatal/szenior tarifák)." : "Számolj még gyermek-, hétvégi és family-tarifákkal."}
       </p>
     </section>
   );
