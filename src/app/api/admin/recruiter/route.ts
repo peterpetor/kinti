@@ -5,6 +5,7 @@ import {
   createRecruitingCandidate,
   updateRecruitingCandidate,
   deleteRecruitingCandidate,
+  getRecruitingStats,
   type RecruitingStatus,
 } from "@/lib/repo-recruiting";
 
@@ -20,8 +21,8 @@ async function guard(): Promise<boolean> {
 
 export async function GET() {
   if (!(await guard())) return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  const candidates = await listRecruitingCandidates(500);
-  return NextResponse.json({ candidates }, { headers: { "cache-control": "no-store" } });
+  const [candidates, stats] = await Promise.all([listRecruitingCandidates(500), getRecruitingStats()]);
+  return NextResponse.json({ candidates, stats }, { headers: { "cache-control": "no-store" } });
 }
 
 export async function POST(req: Request) {
@@ -38,12 +39,14 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   if (!(await guard())) return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  const body = (await req.json().catch(() => ({}))) as { id?: string; status?: string; notes?: string; keyword?: string };
+  const body = (await req.json().catch(() => ({}))) as { id?: string; status?: string; notes?: string; keyword?: string; feeEur?: number | null };
   if (!body.id) return NextResponse.json({ error: "Hiányzó id." }, { status: 400 });
-  const fields: { status?: RecruitingStatus; notes?: string | null; keyword?: string | null } = {};
+  const fields: { status?: RecruitingStatus; notes?: string | null; keyword?: string | null; feeEur?: number | null } = {};
   if (body.status && STATUSES.has(body.status as RecruitingStatus)) fields.status = body.status as RecruitingStatus;
   if (typeof body.notes === "string") fields.notes = body.notes.slice(0, 2000) || null;
   if (typeof body.keyword === "string") fields.keyword = body.keyword.slice(0, 80).trim() || null;
+  if (body.feeEur === null) fields.feeEur = null;
+  else if (typeof body.feeEur === "number" && Number.isFinite(body.feeEur)) fields.feeEur = Math.max(0, Math.min(10_000_000, Math.round(body.feeEur)));
   const ok = await updateRecruitingCandidate(body.id, fields);
   return NextResponse.json({ ok });
 }

@@ -14,13 +14,14 @@ export interface RecruitingCandidate {
   cvKey: string | null;
   status: RecruitingStatus;
   notes: string | null;
+  feeEur: number | null;
   createdAt: string;
   updatedAt: string;
 }
 
 interface Row {
   id: string; full_name: string; country: string; keyword: string | null;
-  cv_key: string | null; status: string; notes: string | null;
+  cv_key: string | null; status: string; notes: string | null; fee_eur: number | null;
   created_at: string; updated_at: string;
 }
 
@@ -28,7 +29,38 @@ function toCandidate(r: Row): RecruitingCandidate {
   return {
     id: r.id, fullName: r.full_name, country: r.country, keyword: r.keyword,
     cvKey: r.cv_key, status: (r.status as RecruitingStatus) ?? "new", notes: r.notes,
-    createdAt: r.created_at, updatedAt: r.updated_at,
+    feeEur: r.fee_eur ?? null, createdAt: r.created_at, updatedAt: r.updated_at,
+  };
+}
+
+export interface RecruitingStats {
+  total: number;        // aktív (nem elejtett) jelöltek
+  placed: number;       // elhelyezve + kifizetve
+  paid: number;         // kifizetve
+  revenueTotal: number; // összes bejött jutalék (kifizetve)
+  revenueMonth: number; // ebből e hónapban
+  conversionPct: number; // elhelyezve / aktív
+}
+
+export async function getRecruitingStats(): Promise<RecruitingStats> {
+  const row = await getDB().prepare(
+    `SELECT
+       SUM(CASE WHEN status != 'dropped' THEN 1 ELSE 0 END) AS total,
+       SUM(CASE WHEN status IN ('placed','paid') THEN 1 ELSE 0 END) AS placed,
+       SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) AS paid,
+       SUM(CASE WHEN status = 'paid' THEN COALESCE(fee_eur,0) ELSE 0 END) AS revenue_total,
+       SUM(CASE WHEN status = 'paid' AND updated_at >= strftime('%Y-%m-01 00:00:00','now') THEN COALESCE(fee_eur,0) ELSE 0 END) AS revenue_month
+     FROM recruiting_candidates`,
+  ).first<{ total: number | null; placed: number | null; paid: number | null; revenue_total: number | null; revenue_month: number | null }>();
+  const total = row?.total ?? 0;
+  const placed = row?.placed ?? 0;
+  return {
+    total,
+    placed,
+    paid: row?.paid ?? 0,
+    revenueTotal: row?.revenue_total ?? 0,
+    revenueMonth: row?.revenue_month ?? 0,
+    conversionPct: total > 0 ? Math.round((placed / total) * 100) : 0,
   };
 }
 
@@ -60,13 +92,14 @@ export async function createRecruitingCandidate(input: CreateRecruitingInput): P
 
 export async function updateRecruitingCandidate(
   id: string,
-  fields: { status?: RecruitingStatus; notes?: string | null; keyword?: string | null },
+  fields: { status?: RecruitingStatus; notes?: string | null; keyword?: string | null; feeEur?: number | null },
 ): Promise<boolean> {
   const sets: string[] = [];
   const binds: unknown[] = [];
   if (fields.status !== undefined) { sets.push("status = ?"); binds.push(fields.status); }
   if (fields.notes !== undefined) { sets.push("notes = ?"); binds.push(fields.notes); }
   if (fields.keyword !== undefined) { sets.push("keyword = ?"); binds.push(fields.keyword); }
+  if (fields.feeEur !== undefined) { sets.push("fee_eur = ?"); binds.push(fields.feeEur); }
   if (!sets.length) return false;
   sets.push("updated_at = datetime('now')");
   binds.push(id);

@@ -52,13 +52,15 @@ export function RecruiterWorkspace() {
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const [shortlist, setShortlist] = useState<ShortlistJob[]>([]);
+  const [stats, setStats] = useState<{ total: number; placed: number; paid: number; revenueTotal: number; revenueMonth: number; conversionPct: number } | null>(null);
 
   useEffect(() => { loadCandidates(); loadShortlist(); }, []);
   async function loadCandidates() {
     try {
       const res = await fetch("/api/admin/recruiter");
-      const data = (await res.json().catch(() => ({}))) as { candidates?: RecruitingCandidate[] };
+      const data = (await res.json().catch(() => ({}))) as { candidates?: RecruitingCandidate[]; stats?: typeof stats };
       setCandidates(data.candidates ?? []);
+      setStats(data.stats ?? null);
     } catch { /* ignore */ }
   }
   async function loadShortlist() {
@@ -107,6 +109,12 @@ export function RecruiterWorkspace() {
   async function setStatus(id: string, status: RecruitingStatus) {
     setCandidates((cs) => cs.map((c) => (c.id === id ? { ...c, status } : c)));
     await fetch("/api/admin/recruiter", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, status }) });
+    await loadCandidates(); // friss stat
+  }
+  async function setFee(id: string, feeEur: number | null) {
+    setCandidates((cs) => cs.map((c) => (c.id === id ? { ...c, feeEur } : c)));
+    await fetch("/api/admin/recruiter", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, feeEur }) });
+    await loadCandidates(); // friss stat
   }
   async function removeCandidate(id: string) {
     if (!confirm("Biztosan törlöd ezt a jelöltet?")) return;
@@ -172,6 +180,27 @@ export function RecruiterWorkspace() {
 
   return (
     <div className="space-y-5">
+      {/* ── Bevétel-dashboard ── */}
+      {stats && stats.total > 0 && (
+        <section className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="rounded-card border border-line bg-surface p-3 text-center shadow-card">
+            <p className="text-[20px] font-extrabold text-ink">{stats.placed}</p>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-muted">Elhelyezve</p>
+          </div>
+          <div className="rounded-card border border-line bg-surface p-3 text-center shadow-card">
+            <p className="text-[20px] font-extrabold text-ink">{stats.conversionPct}%</p>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-muted">Konverzió</p>
+          </div>
+          <div className="rounded-card border border-success/30 bg-success/5 p-3 text-center shadow-card">
+            <p className="text-[20px] font-extrabold text-success">{stats.revenueTotal.toLocaleString("de-AT")} €</p>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-muted">Bevétel ({stats.paid} fő)</p>
+          </div>
+          <div className="rounded-card border border-line bg-surface p-3 text-center shadow-card">
+            <p className="text-[20px] font-extrabold text-ink">{stats.revenueMonth.toLocaleString("de-AT")} €</p>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-muted">E hónapban</p>
+          </div>
+        </section>
+      )}
       {/* ── Jelölt felvitele ── */}
       <section className="space-y-3 rounded-card border border-line bg-surface p-4 shadow-card">
         <h2 className="text-[14px] font-extrabold text-ink">Jelölt felvitele</h2>
@@ -209,6 +238,13 @@ export function RecruiterWorkspace() {
                   <button type="button" onClick={() => searchForCandidate(c)} disabled={!c.keyword} className="rounded-pill bg-primary px-3 py-1 text-[12px] font-bold text-white shadow-card disabled:opacity-50">🔎 Keres</button>
                   {c.cvKey && <a href={`/api/admin/recruiter/cv/${c.id}`} target="_blank" rel="noopener noreferrer" className="rounded-pill border border-line bg-surface-alt px-3 py-1 text-[12px] font-bold text-primary">CV ↗</a>}
                 </div>
+                {(c.status === "placed" || c.status === "paid") && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <label className="text-[11.5px] font-bold text-ink-muted">💰 Jutalék:</label>
+                    <input type="number" min={0} defaultValue={c.feeEur ?? ""} onBlur={(e) => { const v = e.target.value.trim(); setFee(c.id, v ? Number(v) : null); }} placeholder="0" className="w-24 rounded-[10px] border border-line bg-surface-alt px-2.5 py-1 text-[13px] font-bold text-ink focus:border-primary focus:outline-none" />
+                    <span className="text-[12px] font-bold text-ink-muted">€</span>
+                  </div>
+                )}
                 {b && (
                   <div className="mt-2.5 rounded-[10px] border border-line bg-surface-alt/50 p-2.5 text-[11.5px] text-ink-muted">
                     {b.summary && <p className="text-ink">{b.summary}</p>}
