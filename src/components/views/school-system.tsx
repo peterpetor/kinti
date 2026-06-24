@@ -159,13 +159,32 @@ const AT_TIPS = [
   { icon: "🔄", text: "Az iskolatípusok közti átjárás lehetséges — a gyerek nincs véglegesen »beskatulyázva«." },
 ];
 
+// ── Németország: tartományi (Länder) rendszer — a struktúra Bundeslandonként eltér. ──
+const DE_NOTE = "Németországban az oktatás tartományi (Länder) hatáskör — a struktúra, a nevek és az átmenet ideje Bundeslandonként ELTÉRNEK. Általában 9–10 év a tankötelezettség. Az osztályzás 1–6-ig, ahol az 1 a legjobb (6 = elégtelen).";
+const DE_LEVELS: SchoolLevel[] = [
+  { name: "Kindergarten / Kita", emoji: "🎨", ages: "3–6 év", years: 3, color: "text-[#f59e0b]", bg: "bg-[#fef3c7]", description: "Óvoda/bölcsőde; NEM kötelező, de nagyon elterjedt. A Kita-Platz-ért sokszor korán kell jelentkezni (várólisták).", tip: "Ha a gyerek nem tud németül, az óvoda Sprachförderung-gal segít a felzárkózásban." },
+  { name: "Grundschule", emoji: "📚", ages: "6–10 év", years: 4, color: "text-[#10b981]", bg: "bg-[#d1fae5]", description: "4 éves közös alapiskola (1–4. osztály; Berlinben és Brandenburgban 1–6.). A végén ajánlás (Grundschulempfehlung) a továbbtanulásra.", tip: "Az osztályzás 1–6-ig (1 a legjobb) — fordítva, mint a svájci 6-os rendszer!" },
+  { name: "Sekundarstufe I", nameDe: "Gymnasium / Realschule / …", emoji: "🏫", ages: "10–15/16 év", years: "5–6", color: "text-[#6366f1]", bg: "bg-[#ede9fe]", description: "Tagolt rendszer, Bundeslandonként eltérő nevekkel. A Grundschule után a gyerek típust választ.", tracks: ["Gymnasium → Abitur → Universität", "Realschule → Mittlere Reife → Ausbildung / FOS", "Hauptschule → Hauptschulabschluss → Ausbildung", "Gesamtschule → minden út egy iskolában nyitva"], tip: "Az ajánlás Bundeslandonként kötelező vagy csak tanácsadó — sok helyen a szülő dönt." },
+  { name: "Sekundarstufe II", emoji: "🎓", ages: "15/16–18/19 év", years: "2–3,5", color: "text-[#0ea5e9]", bg: "bg-[#e0f2fe]", description: "Két fő út a tankötelezettség után: érettségi (Abitur) vagy duális szakképzés (Ausbildung).", tracks: ["Gymnasiale Oberstufe (2–3 év) → Abitur → egyetem", "Duale Ausbildung (2–3,5 év) → szakma + FIZETÉS", "Berufsschule + Betrieb (duális gyakorlat)", "Fachoberschule (FOS) → Fachhochschulreife"] },
+];
+const DE_TIPS = [
+  { icon: "📝", text: "Beiratkozáshoz: útlevél/igazolvány, Meldebescheinigung, az előző iskola bizonyítványa, és a KÖTELEZŐ kanyaró-oltás igazolása (Masernschutz)." },
+  { icon: "🗣️", text: "Ha a gyerek nem tud németül: »Willkommensklasse« / Sprachförderung segíti a felzárkózást — ingyenes." },
+  { icon: "🎓", text: "Az Abitur az érettségi → egyetemi felvétel. Az Ausbildung (duális szakképzés) fizetett, megbecsült út egy szakmához." },
+  { icon: "🏫", text: "A rendszer Bundesland-FÜGGŐ: a lakóhelyed tartománya dönt a nevekről és az átmenetről — nézd a helyi Kultusministeriumot." },
+  { icon: "🍱", text: "Az állami iskola ingyenes; a délutáni felügyelet (Hort / Ganztag) és az ebéd külön fizethető." },
+  { icon: "🔄", text: "Az iskolatípusok közti átjárás lehetséges — a gyerek nincs véglegesen »beskatulyázva«." },
+];
+
 export function SchoolSystem() {
   const [prefCountry] = usePreferredCountry();
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  const isDE = country === "DE";
   const [selected, setSelected] = useState<CantonCode>("ZH");
   const canton = CANTONS[selected];
-  const levels = isAT ? AT_LEVELS : canton.levels;
-  const regionTitle = isAT ? "Ausztria" : canton.name;
+  const levels = isDE ? DE_LEVELS : isAT ? AT_LEVELS : canton.levels;
+  const regionTitle = isDE ? "Németország" : isAT ? "Ausztria" : canton.name;
 
   const langLabel: Record<string, string> = { de: "🇩🇪 Német", fr: "🇫🇷 Francia", it: "🇮🇹 Olasz" };
 
@@ -176,9 +195,11 @@ export function SchoolSystem() {
         <div className="flex items-start gap-3">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary text-white text-2xl">🏫</span>
           <div>
-            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">{isAT ? "Osztrák Iskolarendszer" : "Svájci Iskolarendszer"}</h1>
+            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">{isDE ? "Német Iskolarendszer" : isAT ? "Osztrák Iskolarendszer" : "Svájci Iskolarendszer"}</h1>
             <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
-              {isAT
+              {isDE
+                ? "A német iskolarendszer szintjei kiköltöző szülőknek — a Kitától az Abiturig és az Ausbildungig (Bundeslandonként eltér)."
+                : isAT
                 ? "Az osztrák iskolarendszer szintjei kiköltöző szülőknek — a Kindergartentől a Maturáig és a Lehréig."
                 : "Kantononként eltérő szintek vizuális ábrázolása kiköltöző szülőknek. Válaszd ki a kanton ahol laksz!"}
             </p>
@@ -186,8 +207,8 @@ export function SchoolSystem() {
         </div>
       </section>
 
-      {/* Régió-választó — csak CH (Ausztria nemzeti rendszer, nincs választó). */}
-      {!isAT && (
+      {/* Régió-választó — csak CH (AT/DE nemzeti rendszer, nincs választó). */}
+      {!isAT && !isDE && (
       <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
         <label className="block text-[12px] font-bold uppercase tracking-wide text-ink-muted">Válaszd ki a kantont</label>
         <div className="grid grid-cols-3 gap-2">
@@ -214,12 +235,12 @@ export function SchoolSystem() {
       {/* Régió info */}
       <div className="rounded-card border border-line bg-surface p-4 shadow-card">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-[14px] font-extrabold text-ink">{isAT ? "Ausztria" : canton.name}</span>
+          <span className="text-[14px] font-extrabold text-ink">{regionTitle}</span>
           <span className="rounded-pill bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-muted">
-            {isAT ? "🇩🇪 Német nyelvű" : `${langLabel[canton.lang]} nyelvű`}
+            {isAT || isDE ? "🇩🇪 Német nyelvű" : `${langLabel[canton.lang]} nyelvű`}
           </span>
         </div>
-        <p className="text-[12.5px] leading-snug text-ink-muted">{isAT ? AT_NOTE : canton.note}</p>
+        <p className="text-[12.5px] leading-snug text-ink-muted">{isDE ? DE_NOTE : isAT ? AT_NOTE : canton.note}</p>
       </div>
 
       {/* Vizuális szintlépők */}
@@ -280,7 +301,7 @@ export function SchoolSystem() {
       {/* Általános tippek */}
       <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
         <h2 className="text-[13px] font-extrabold text-ink">📌 Amit minden szülőnek tudni kell</h2>
-        {(isAT ? AT_TIPS : [
+        {(isDE ? DE_TIPS : isAT ? AT_TIPS : [
           { icon: "📝", text: "Beiratkozáshoz: útlevél, tartózkodási engedély, és az előző iskola bizonyítványa (lehetőleg hitelesített fordítással)." },
           { icon: "🗣️", text: "Ha a gyerek nem tud svájcin / franciául / olaszul: a legtöbb kanton ingyenes INTENSIVKURS-t (felzárkóztató tanfolyamot) biztosít." },
           { icon: "🚌", text: "Az iskolabusz (Schulbus) sok helyen ingyenes — a körzet határolja meg. A lakcím megválasztása kulcsfontosságú." },
@@ -299,10 +320,15 @@ export function SchoolSystem() {
         toolName="iskolarendszer útmutató"
         variant="info"
         notAdviceFor="jogi vagy oktatási hatósági"
-        extraWarning={isAT
+        extraWarning={isDE
+          ? "A német iskolarendszer szabályai tartományonként (Bundesland) JELENTŐSEN eltérnek, és évente változhatnak. Beiratkozás előtt ellenőrizd a lakhely szerinti tartomány oktatási minisztériumának (Kultusministerium) aktuális tájékoztatóját."
+          : isAT
           ? "Az osztrák iskolarendszer szabályai tartományonként kis eltéréssel és évente változhatnak. Beiratkozás előtt ellenőrizd a lakhely szerinti tartományi oktatási igazgatóság (Bildungsdirektion) aktuális tájékoztatóját."
           : "A svájci iskolarendszer szabályai kantononként és évente változhatnak. Mindig ellenőrizd a lakhely szerinti kanton oktatási hivatal (Volksschulamt / Service de l'enseignement) aktuális tájékoztatóját beiratkozás előtt."}
-        officialSources={isAT ? [
+        officialSources={isDE ? [
+          { label: "KMK — Kultusministerkonferenz", url: "https://www.kmk.org/" },
+          { label: "make-it-in-germany.com — Schule", url: "https://www.make-it-in-germany.com/" },
+        ] : isAT ? [
           { label: "oesterreich.gv.at — Schule & Bildung", url: "https://www.oesterreich.gv.at/themen/bildung_und_neue_medien.html" },
           { label: "BMBWF — Oktatási Minisztérium", url: "https://www.bmbwf.gv.at/" },
         ] : [
