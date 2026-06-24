@@ -78,3 +78,74 @@ export async function deleteRecruitingCandidate(id: string): Promise<boolean> {
   const res = await getDB().prepare("DELETE FROM recruiting_candidates WHERE id = ?").bind(id).run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+// --- Shortlist (jelölt ↔ állás, 0087) ---------------------------------------
+
+export type ShortlistStatus = "saved" | "contacted";
+
+export interface ShortlistJob {
+  id: string;
+  candidateId: string;
+  jobTitle: string;
+  jobCompany: string | null;
+  jobLocation: string | null;
+  jobUrl: string;
+  matchScore: number | null;
+  status: ShortlistStatus;
+  createdAt: string;
+}
+
+interface ShortlistRow {
+  id: string; candidate_id: string; job_title: string; job_company: string | null;
+  job_location: string | null; job_url: string; match_score: number | null;
+  status: string; created_at: string;
+}
+
+function toShortlist(r: ShortlistRow): ShortlistJob {
+  return {
+    id: r.id, candidateId: r.candidate_id, jobTitle: r.job_title, jobCompany: r.job_company,
+    jobLocation: r.job_location, jobUrl: r.job_url, matchScore: r.match_score,
+    status: (r.status as ShortlistStatus) ?? "saved", createdAt: r.created_at,
+  };
+}
+
+export async function listAllShortlist(limit = 1000): Promise<ShortlistJob[]> {
+  const { results } = await getDB()
+    .prepare("SELECT * FROM recruiting_shortlist ORDER BY created_at DESC LIMIT ?")
+    .bind(limit).all<ShortlistRow>();
+  return results.map(toShortlist);
+}
+
+export interface AddShortlistInput {
+  candidateId: string; jobTitle: string; jobCompany: string | null;
+  jobLocation: string | null; jobUrl: string; matchScore: number | null;
+}
+
+export async function addShortlistJob(input: AddShortlistInput): Promise<string> {
+  // Ne duplikáljunk: ugyanaz a jelölt + URL → frissítjük a pontot.
+  const existing = await getDB()
+    .prepare("SELECT id FROM recruiting_shortlist WHERE candidate_id = ? AND job_url = ? LIMIT 1")
+    .bind(input.candidateId, input.jobUrl).first<{ id: string }>();
+  if (existing) {
+    if (input.matchScore != null) {
+      await getDB().prepare("UPDATE recruiting_shortlist SET match_score = ? WHERE id = ?").bind(input.matchScore, existing.id).run();
+    }
+    return existing.id;
+  }
+  const id = crypto.randomUUID();
+  await getDB()
+    .prepare("INSERT INTO recruiting_shortlist (id, candidate_id, job_title, job_company, job_location, job_url, match_score) VALUES (?, ?, ?, ?, ?, ?, ?)")
+    .bind(id, input.candidateId, input.jobTitle, input.jobCompany, input.jobLocation, input.jobUrl, input.matchScore)
+    .run();
+  return id;
+}
+
+export async function updateShortlistStatus(id: string, status: ShortlistStatus): Promise<boolean> {
+  const res = await getDB().prepare("UPDATE recruiting_shortlist SET status = ? WHERE id = ?").bind(status, id).run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function removeShortlistJob(id: string): Promise<boolean> {
+  const res = await getDB().prepare("DELETE FROM recruiting_shortlist WHERE id = ?").bind(id).run();
+  return (res.meta.changes ?? 0) > 0;
+}

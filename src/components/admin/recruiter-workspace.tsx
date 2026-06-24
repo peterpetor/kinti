@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import type { AdzunaJob } from "@/lib/adzuna";
-import type { RecruitingCandidate, RecruitingStatus } from "@/lib/repo-recruiting";
+import type { RecruitingCandidate, RecruitingStatus, ShortlistJob, ShortlistStatus } from "@/lib/repo-recruiting";
 
 /**
  * RecruiterWorkspace — Feedback Jobs közvetítői eszköz (admin-only):
@@ -51,13 +51,36 @@ export function RecruiterWorkspace() {
   const [source, setSource] = useState<string>("");
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { loadCandidates(); }, []);
+  const [shortlist, setShortlist] = useState<ShortlistJob[]>([]);
+
+  useEffect(() => { loadCandidates(); loadShortlist(); }, []);
   async function loadCandidates() {
     try {
       const res = await fetch("/api/admin/recruiter");
       const data = (await res.json().catch(() => ({}))) as { candidates?: RecruitingCandidate[] };
       setCandidates(data.candidates ?? []);
     } catch { /* ignore */ }
+  }
+  async function loadShortlist() {
+    try {
+      const res = await fetch("/api/admin/recruiter/shortlist");
+      const data = (await res.json().catch(() => ({}))) as { shortlist?: ShortlistJob[] };
+      setShortlist(data.shortlist ?? []);
+    } catch { /* ignore */ }
+  }
+  async function saveToShortlist(job: AdzunaJob) {
+    if (!active) return;
+    const matchScore = matches[job.url]?.score ?? undefined;
+    await fetch("/api/admin/recruiter/shortlist", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ candidateId: active.id, job: { title: job.title, company: job.company, location: job.location, url: job.url }, matchScore }) });
+    await loadShortlist();
+  }
+  async function setShortStatus(id: string, status: ShortlistStatus) {
+    setShortlist((s) => s.map((x) => (x.id === id ? { ...x, status } : x)));
+    await fetch("/api/admin/recruiter/shortlist", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, status }) });
+  }
+  async function removeShort(id: string) {
+    setShortlist((s) => s.filter((x) => x.id !== id));
+    await fetch(`/api/admin/recruiter/shortlist?id=${encodeURIComponent(id)}`, { method: "DELETE" });
   }
 
   async function uploadCv(file: File): Promise<string | null> {
@@ -193,6 +216,25 @@ export function RecruiterWorkspace() {
                     {b.languages.length > 0 && <p className="mt-0.5"><strong>Nyelvek:</strong> {b.languages.join(", ")}</p>}
                   </div>
                 )}
+                {(() => {
+                  const sl = shortlist.filter((s) => s.candidateId === c.id);
+                  if (sl.length === 0) return null;
+                  return (
+                    <div className="mt-2.5 space-y-1.5">
+                      <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-faint">📋 Shortlist ({sl.length})</p>
+                      {sl.map((s) => (
+                        <div key={s.id} className="flex items-center gap-2 rounded-[10px] border border-line bg-surface-alt/40 px-2.5 py-1.5">
+                          <a href={s.jobUrl} target="_blank" rel="noopener noreferrer" className="min-w-0 flex-1 hover:underline">
+                            <span className="block truncate text-[12px] font-bold text-ink">{s.jobTitle}</span>
+                            <span className="block truncate text-[11px] text-ink-muted">{[s.jobCompany, s.jobLocation].filter(Boolean).join(" · ")}{s.matchScore != null ? ` · ${s.matchScore}%` : ""}</span>
+                          </a>
+                          <button type="button" onClick={() => setShortStatus(s.id, s.status === "contacted" ? "saved" : "contacted")} className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[10.5px] font-bold", s.status === "contacted" ? "bg-success/15 text-success" : "border border-line text-ink-muted")}>{s.status === "contacted" ? "✓ Megkeresve" : "Megkeresve?"}</button>
+                          <button type="button" onClick={() => removeShort(s.id)} aria-label="Törlés" className="shrink-0 text-ink-faint hover:text-accent">✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
             );
           })}
@@ -231,6 +273,11 @@ export function RecruiterWorkspace() {
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <button type="button" onClick={() => matchJob(j)} disabled={matching === j.url} className="rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary disabled:opacity-50">{matching === j.url ? "AI…" : m ? "↻ Újra" : "✉️ Megkeresés + pont"}</button>
                     {m && <button type="button" onClick={() => setOpenEmail(openEmail === j.url ? null : j.url)} className="text-[11.5px] font-bold text-primary hover:underline">{openEmail === j.url ? "Levél elrejt" : "Levél mutat"}</button>}
+                    {shortlist.some((s) => s.candidateId === active.id && s.jobUrl === j.url) ? (
+                      <span className="rounded-pill bg-success/15 px-3 py-1 text-[11.5px] font-bold text-success">✓ Shortlist</span>
+                    ) : (
+                      <button type="button" onClick={() => saveToShortlist(j)} className="rounded-pill border border-line bg-surface-alt px-3 py-1 text-[11.5px] font-bold text-ink">+ Mentés</button>
+                    )}
                   </div>
                 )}
                 {m && openEmail === j.url && (

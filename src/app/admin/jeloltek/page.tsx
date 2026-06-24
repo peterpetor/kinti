@@ -5,6 +5,7 @@ import { getPlacementCandidates } from "@/lib/repo";
 import { COUNTRIES } from "@/lib/countries";
 import { getRegions } from "@/lib/regions";
 import { jobCategoryLabel } from "@/lib/job-categories";
+import { ImportToPipeline } from "@/components/admin/import-to-pipeline";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -73,18 +74,21 @@ export default async function AdminJeloltekPage() {
                       {w.expectedSalaryMin ? <> · elvárás: {w.expectedSalaryMin.toLocaleString("de-CH")}+</> : null}
                     </p>
                   </div>
-                  {w.cvKey ? (
-                    <a
-                      href={`/api/admin/candidate-cv/${w.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="shrink-0 rounded-pill bg-primary px-3.5 py-1.5 text-[12px] font-bold text-white shadow-card active:scale-95"
-                    >
-                      CV ↗
-                    </a>
-                  ) : (
-                    <span className="shrink-0 rounded-pill bg-surface-alt px-3 py-1.5 text-[11px] font-bold text-ink-faint">nincs CV</span>
-                  )}
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    <ImportToPipeline workerId={w.id} />
+                    {w.cvKey ? (
+                      <a
+                        href={`/api/admin/candidate-cv/${w.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-pill bg-surface-alt border border-line px-3.5 py-1.5 text-[12px] font-bold text-primary active:scale-95"
+                      >
+                        CV ↗
+                      </a>
+                    ) : (
+                      <span className="rounded-pill bg-surface-alt px-3 py-1.5 text-[11px] font-bold text-ink-faint">nincs CV</span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] font-semibold">
