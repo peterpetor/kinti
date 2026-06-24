@@ -80,7 +80,7 @@ export default function ImpresszumPage() {
 
       <h2>Szerzői jog</h2>
       <p>
-        © 2024–2026 Feedback Jobs S.R.L. / kinti.app. Minden jog fenntartva.
+        © 2025–2026 Feedback Jobs S.R.L. / kinti.app. Minden jog fenntartva.
         A platform arculata, logója, kódbázisa és szerkesztett tartalmai szerzői jogi
         védelem alatt állnak. A felhasználók által feltöltött tartalmak (hirdetések, fotók,
         vélemények) az adott felhasználó szellemi tulajdonát képezik; a platform csak a

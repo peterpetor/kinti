@@ -32,7 +32,7 @@ export function TrustBar() {
         ))}
       </div>
       <p className="mt-2 text-center text-[11px] text-ink-faint">
-        © 2024–2026 Feedback Jobs S.R.L. · kinti.app
+        © 2025–2026 Feedback Jobs S.R.L. · kinti.app
       </p>
     </section>
   );
