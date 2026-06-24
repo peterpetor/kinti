@@ -53,6 +53,9 @@ export function RecruiterWorkspace() {
 
   const [shortlist, setShortlist] = useState<ShortlistJob[]>([]);
   const [stats, setStats] = useState<{ total: number; placed: number; paid: number; revenueTotal: number; revenueMonth: number; conversionPct: number } | null>(null);
+  const [fStatus, setFStatus] = useState<RecruitingStatus | "all">("all");
+  const [fCountry, setFCountry] = useState<string>("all");
+  const [fSearch, setFSearch] = useState("");
 
   useEffect(() => { loadCandidates(); loadShortlist(); }, []);
   async function loadCandidates() {
@@ -178,6 +181,15 @@ export function RecruiterWorkspace() {
   const enc = encodeURIComponent(q);
   const inputCls = "w-full rounded-[12px] border border-line bg-surface-alt px-3.5 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
 
+  const fq = fSearch.trim().toLowerCase();
+  const filtered = candidates.filter((c) => {
+    if (fStatus !== "all" && c.status !== fStatus) return false;
+    if (fCountry !== "all" && c.country !== fCountry) return false;
+    if (fq && !c.fullName.toLowerCase().includes(fq) && !(c.keyword ?? "").toLowerCase().includes(fq)) return false;
+    return true;
+  });
+  const showFilters = candidates.length > 4;
+
   return (
     <div className="space-y-5">
       {/* ── Bevétel-dashboard ── */}
@@ -218,8 +230,24 @@ export function RecruiterWorkspace() {
 
       {candidates.length > 0 && (
         <section className="space-y-2">
-          <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">Jelöltek ({candidates.length})</h3>
-          {candidates.map((c) => {
+          <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">Jelöltek ({showFilters && filtered.length !== candidates.length ? `${filtered.length}/${candidates.length}` : candidates.length})</h3>
+          {showFilters && (
+            <div className="space-y-2 rounded-card border border-line bg-surface p-3 shadow-card">
+              <input value={fSearch} onChange={(e) => setFSearch(e.target.value)} placeholder="Keresés névre / szakmára…" className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none" />
+              <div className="flex flex-wrap gap-1.5">
+                <button type="button" onClick={() => setFStatus("all")} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fStatus === "all" ? "bg-primary text-white" : "border border-line bg-surface-alt text-ink-muted")}>Mind</button>
+                {STATUS.map((s) => <button key={s.id} type="button" onClick={() => setFStatus(s.id)} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fStatus === s.id ? "bg-primary text-white" : "border border-line bg-surface-alt text-ink-muted")}>{s.label}</button>)}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                <button type="button" onClick={() => setFCountry("all")} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fCountry === "all" ? "bg-ink text-white" : "border border-line bg-surface-alt text-ink-muted")}>🌍 Mind</button>
+                {COUNTRIES.map((c) => <button key={c.code} type="button" onClick={() => setFCountry(c.code)} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fCountry === c.code ? "bg-ink text-white" : "border border-line bg-surface-alt text-ink-muted")}>{c.label}</button>)}
+              </div>
+            </div>
+          )}
+          {filtered.length === 0 && (
+            <p className="rounded-card border border-dashed border-line bg-surface px-4 py-6 text-center text-[12.5px] text-ink-muted">Nincs a szűrőnek megfelelő jelölt.</p>
+          )}
+          {filtered.map((c) => {
             const b = briefs[c.id];
             return (
               <div key={c.id} className={cn("rounded-card border bg-surface p-3.5 shadow-card", active?.id === c.id ? "border-primary/40" : "border-line")}>

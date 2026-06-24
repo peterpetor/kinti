@@ -116,3 +116,16 @@ export async function upsertWorkerProfile(input: UpsertWorkerProfileInput): Prom
     )
     .run();
 }
+
+/**
+ * Jelölt eltávolítása az AKTÍV közvetítésből (layer3_opt_in = 0) — admin GDPR-
+ * kérésre. A worker-profil/board-láthatóság megmarad, csak a Feedback Jobs
+ * aktív-közvetítési hozzájárulása szűnik meg, és eltűnik a /admin/jeloltek listáról.
+ */
+export async function removePlacementOptIn(id: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE worker_profiles SET layer3_opt_in = 0, updated_at = datetime('now') WHERE id = ?")
+    .bind(id)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}

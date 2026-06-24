@@ -6,6 +6,7 @@ import { COUNTRIES } from "@/lib/countries";
 import { getRegions } from "@/lib/regions";
 import { jobCategoryLabel } from "@/lib/job-categories";
 import { ImportToPipeline } from "@/components/admin/import-to-pipeline";
+import { RemoveFromPlacement } from "@/components/admin/remove-from-placement";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -88,6 +89,7 @@ export default async function AdminJeloltekPage() {
                     ) : (
                       <span className="rounded-pill bg-surface-alt px-3 py-1.5 text-[11px] font-bold text-ink-faint">nincs CV</span>
                     )}
+                    <RemoveFromPlacement workerId={w.id} />
                   </div>
                 </div>
 

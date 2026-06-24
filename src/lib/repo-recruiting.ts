@@ -182,3 +182,8 @@ export async function removeShortlistJob(id: string): Promise<boolean> {
   const res = await getDB().prepare("DELETE FROM recruiting_shortlist WHERE id = ?").bind(id).run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+/** A jelölt összes shortlist-tételének törlése (jelölt-törléskor, kaszkád). */
+export async function removeShortlistByCandidate(candidateId: string): Promise<void> {
+  await getDB().prepare("DELETE FROM recruiting_shortlist WHERE candidate_id = ?").bind(candidateId).run();
+}

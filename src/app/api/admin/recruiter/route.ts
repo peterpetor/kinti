@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/admin";
+import { getMediaBucket } from "@/lib/cloudflare";
 import {
   listRecruitingCandidates,
   createRecruitingCandidate,
   updateRecruitingCandidate,
   deleteRecruitingCandidate,
+  getRecruitingCandidate,
+  removeShortlistByCandidate,
   getRecruitingStats,
   type RecruitingStatus,
 } from "@/lib/repo-recruiting";
@@ -55,6 +58,14 @@ export async function DELETE(req: Request) {
   if (!(await guard())) return NextResponse.json({ error: "forbidden" }, { status: 403 });
   const id = new URL(req.url).searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Hiányzó id." }, { status: 400 });
+  // GDPR-tiszta törlés: a jelölt + a shortlistje + (ha a recruiter töltötte fel)
+  // a CV is törlődik az R2-ből. Az importált self-service jelölt CV-je a user saját
+  // worker-profiljáé (cv/<userId>/...) — azt NEM töröljük itt.
+  const cand = await getRecruitingCandidate(id);
   const ok = await deleteRecruitingCandidate(id);
+  await removeShortlistByCandidate(id);
+  if (cand?.cvKey && cand.cvKey.startsWith("cv/recruiting/")) {
+    await getMediaBucket().delete(cand.cvKey).catch(() => { /* silent */ });
+  }
   return NextResponse.json({ ok });
 }
