@@ -36,3 +36,23 @@ export function getCountry(code: string | null | undefined): Country | undefined
 export function isValidCountry(code: string | null | undefined): code is string {
   return !!code && COUNTRIES.some((c) => c.code === code);
 }
+
+/** Az ország „-ban/-ben" alakja (hol?). Pl. „Svájcban", „Németországban". */
+export function countryLocative(code: string | null | undefined): string {
+  switch (code) {
+    case "AT": return "Ausztriában";
+    case "DE": return "Németországban";
+    case "NL": return "Hollandiában";
+    default: return "Svájcban";
+  }
+}
+
+/** Az ország „-on/-en/-ön" (felszíni) alakja. Pl. „Svájcon kívül", „Németországon". */
+export function countrySuperessive(code: string | null | undefined): string {
+  switch (code) {
+    case "AT": return "Ausztrián";
+    case "DE": return "Németországon";
+    case "NL": return "Hollandián";
+    default: return "Svájcon";
+  }
+}

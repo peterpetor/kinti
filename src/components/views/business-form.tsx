@@ -9,7 +9,7 @@ import { isSwissAddress, nearestCantonCode } from "@/lib/cantons";
 import { nearestAtBundesland } from "@/lib/at-points";
 import { readPreferredCanton } from "@/lib/canton-pref";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countrySuperessive } from "@/lib/countries";
 import { getRegions, regionLabel } from "@/lib/regions";
 import { BUSINESS_LIMITS, isInCountryCoord, type BusinessValidationError } from "@/lib/business";
 import type { Category } from "@/lib/types";
@@ -151,7 +151,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         // Ha a felhasználó épp az országon kívül van, NE rántsuk a legközelebbi régióra.
         if (!isInCountryCoord(country, latitude, longitude)) {
           setGeoMsg(
-            `Úgy tűnik, most épp ${isAT ? "Ausztrián" : "Svájcon"} kívül vagy. Válaszd ki kézzel a ${regionLabel(country).toLowerCase()}-t, ahol a vállalkozásod működik.`,
+            `Úgy tűnik, most épp ${countrySuperessive(country)} kívül vagy. Válaszd ki kézzel a ${regionLabel(country).toLowerCase()}-t, ahol a vállalkozásod működik.`,
           );
           setGeoBusy(false);
           return;

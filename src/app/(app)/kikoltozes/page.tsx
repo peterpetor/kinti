@@ -16,7 +16,7 @@ import {
   parseYMD,
 } from "@/lib/relocation";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { CountryFlag } from "@/components/ui/country-flag";
 
 export default function RelocationTrackerPage() {
@@ -133,7 +133,7 @@ export default function RelocationTrackerPage() {
               ) : daysToMove === 0 ? (
                 "🎉 Ma van a nagy nap — sok sikert!"
               ) : (
-                <><CountryFlag code={country} className="inline-block h-[13px] w-[19px] align-middle" /> <span className="text-[20px] font-extrabold text-primary">{Math.abs(daysToMove)}</span>. napod {country === "AT" ? "Ausztriában" : "Svájcban"}</>
+                <><CountryFlag code={country} className="inline-block h-[13px] w-[19px] align-middle" /> <span className="text-[20px] font-extrabold text-primary">{Math.abs(daysToMove)}</span>. napod {countryLocative(country)}</>
               )}
             </p>
           ) : (

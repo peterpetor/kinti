@@ -29,8 +29,10 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
  * a benchmark-seed). Ezeket DE/NL-ben rejtjük, amíg el nem készül a tartalmuk.
  */
 export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
-  "kviz",     // napi kvíz — nincs DE/NL kérdésbank
-  "iranytu",  // Bér- és Lakbér Iránytű — nincs DE/NL benchmark-seed
+  "kviz",          // napi kvíz — nincs DE/NL kérdésbank
+  "iranytu",       // Bér- és Lakbér Iránytű — nincs DE/NL benchmark-seed
+  "ugyintezes",    // ügyintézés-csekklisták — CH/AT-specifikus (DE-bürokrácia: tudásbázis)
+  "allampolgarsag",// állampolgárság/Einbürgerung — CH/AT-specifikus (DE: /vizum + guide)
 ]);
 
 /**

@@ -6,7 +6,7 @@ import { CANTONS } from "@/lib/cantons";
 import { getRegions } from "@/lib/regions";
 import { usePreferredCanton } from "@/lib/canton-pref";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
 import { describeWeather, type WeatherNow } from "@/lib/weather";
 
 /**
@@ -90,7 +90,7 @@ export function WeatherWidget() {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1 text-[13.5px] font-bold tracking-[-0.01em] text-ink">
           <Icon name="pin" size={12} strokeWidth={2.4} className="shrink-0 text-accent" />
-          <span className="truncate">{data?.city ?? (isAT ? "Ausztria" : "Svájc")}</span>
+          <span className="truncate">{data?.city ?? getCountry(country)?.name ?? "Svájc"}</span>
         </div>
         <div className="mt-0.5 truncate text-[11.5px] font-semibold text-ink-muted">
           {phase === "loading" || !data || !cond ? (

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { Icon, KintiLogo } from "@/components/ui";
 import { PermitWizardClient } from "./PermitWizardClient";
 import { CitizenshipQuizSection } from "./CitizenshipQuizSection";
+import { CountryGuard } from "@/components/country-guard";
 import { isPro } from "@/lib/subscriptions";
 
 // Az Edge runtime marad, de a force-static kikerül, így megszűnik a build warning!
@@ -20,6 +21,7 @@ export default async function AllampolgarsagPage() {
   const userIsPro = userId ? await isPro(userId) : false;
   return (
     <div className="mx-auto max-w-md space-y-8 px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
+      <CountryGuard feature="allampolgarsag" />
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink">

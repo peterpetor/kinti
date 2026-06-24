@@ -6,7 +6,7 @@ import { Icon, SectionHeader } from "@/components/ui";
 import type { IconName } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { CountryFlag } from "@/components/ui/country-flag";
 import type { KintiEvent } from "@/lib/types";
 
@@ -27,15 +27,15 @@ export function HomeCountryFlag() {
   return <CountryFlag code={useEffectiveCountry()} className="h-[22px] w-[30px]" />;
 }
 
-/** A „Mit szeretnél?" fő belépési pontok — az Ügyintézés (svájci) csak CH-ban. */
+/** A „Mit szeretnél?" fő belépési pontok — az Ügyintézés ország-tudatos felirattal. */
 export function HomePrimaryActions() {
-  const isCH = useEffectiveCountry() === "CH";
+  const country = useEffectiveCountry();
   return (
     <div className="grid grid-cols-2 gap-2.5">
       <PrimaryAction href="/szaknevsor" icon="list" label="Szakembert keresek" tone="primary" />
       <PrimaryAction href="/allasok" icon="briefcase" label="Állást keresek" tone="primary" />
       <PrimaryAction href="/vallalkozo" icon="plus" label="Vállalkozásom felviszem" tone="accent" />
-      <PrimaryAction href="/ugyintezes" icon="document" label={isCH ? "Ügyintézés Svájcban" : "Ügyintézés Ausztriában"} tone="accent" />
+      <PrimaryAction href={country === "DE" || country === "NL" ? "/tudasbazis" : "/ugyintezes"} icon="document" label={`Ügyintézés ${countryLocative(country)}`} tone="accent" />
     </div>
   );
 }

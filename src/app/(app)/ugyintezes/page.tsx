@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { ChecklistList } from "./ChecklistList";
+import { CountryGuard } from "@/components/country-guard";
 
 export const runtime = "edge";
 export const dynamic = "force-static";
@@ -14,6 +15,7 @@ export const metadata = {
 export default function UgyintezesPage() {
   return (
     <div className="space-y-5 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
+      <CountryGuard feature="ugyintezes" />
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink">

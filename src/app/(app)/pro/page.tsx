@@ -6,13 +6,14 @@ import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 
 export default function ProPage() {
   const { startCheckout, isLoading } = useCheckout();
   const { user } = useUser();
   const [prefCountry] = usePreferredCountry();
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
 
   // A Kinti PRO funkciók ország-tudatosak. AT-n osztrák megfelelők (az AI-interjú,
   // a nyelvkurzus és az állampolgárság-kvíz ország-tudatos a backenden is). A
@@ -73,7 +74,7 @@ export default function ProPage() {
           Lépj szintet a <span className="text-primary">Kinti PRO</span>-val
         </h1>
         <p className="text-[15px] text-ink-muted text-balance">
-          {isAT ? "Ausztriában" : "Svájcban"} élő magyaroknak, szakembereknek és munkáltatóknak fejlesztett exkluzív csomagok, melyekkel maximalizálhatod a platform lehetőségeit.
+          {countryLocative(country)} élő magyaroknak, szakembereknek és munkáltatóknak fejlesztett exkluzív csomagok, melyekkel maximalizálhatod a platform lehetőségeit.
         </p>
       </header>
 
