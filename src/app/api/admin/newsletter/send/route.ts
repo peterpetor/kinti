@@ -64,7 +64,9 @@ export async function POST(req: Request) {
   const baseUrl = getCloudflareEnv().PUBLIC_BASE_URL?.replace(/\/$/, "") || new URL(req.url).origin;
   const recipients = targets.map((s) => ({
     to: s.email,
-    unsubscribeUrl: `${baseUrl}/api/newsletter/unsubscribe/${s.manageToken}`,
+    // Megerősítő oldal (nem a törlő API) — a prefetcherek/szkennerek így nem
+    // iratkoztatnak le senkit egy automatikus GET-tel.
+    unsubscribeUrl: `${baseUrl}/leiratkozas/${s.manageToken}`,
   }));
 
   try {
