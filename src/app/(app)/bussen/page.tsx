@@ -6,9 +6,9 @@ export const runtime = "edge";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Gyorshajtás-bírság kalkulátor — Svájc",
+  title: "Gyorshajtás-bírság kalkulátor — Svájc, Ausztria, Németország",
   description:
-    "Svájci gyorshajtás-bírság becslő: 2026-os Ordnungsbussen-tábla + büntetőeljárás (jövedelem-arányos Tagessatz) + jogosítvány-bevonás. Csak becslés!",
+    "Gyorshajtás-bírság becslő: Svájc (Ordnungsbusse + jövedelem-arányos Tagessatz), Ausztria (Organmandat + Führerscheinentzug), Németország (Bußgeldkatalog + Punkte + Fahrverbot). Csak becslés!",
 };
 
 export default function BussenPage() {

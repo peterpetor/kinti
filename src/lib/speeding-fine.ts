@@ -289,3 +289,67 @@ export function calculateFineAT(input: { roadType: RoadType; speedLimit: number;
     legalNote: "Helyszínen (Organmandat, max 90 € készpénz) vagy postán (Anonym-/Strafverfügung) fizetendő.",
   };
 }
+
+/**
+ * ─────────────── NÉMETORSZÁG (Bußgeldkatalog) ───────────────
+ * A német rendszer fix sávos (NEM jövedelem-arányos): Bußgeld (€) + Punkte a
+ * flensburgi Fahreignungsregisterbe + esetleg Fahrverbot (vezetési tilalom, hó).
+ * A sávok eltérnek innerorts (városban) és außerorts (városon kívül). Tolerancia
+ * jellemzően 3 km/h (100 km/h-ig) vagy 3%. A meglévő 5 súlyossági kulcsra képezzük:
+ *   ordnungsbusse = Verwarnungsgeld (pont nélkül), mittelschwer = Bußgeld + Punkte,
+ *   schwer = + Fahrverbot (1-2 hó), raser = legmagasabb sáv (3 hó Fahrverbot).
+ */
+const DE_TOLERANCE = 3;
+
+export function calculateFineDE(input: { roadType: RoadType; speedLimit: number; actualSpeed: number }): FineResult {
+  const overage = Math.max(0, Math.max(0, input.actualSpeed - input.speedLimit) - DE_TOLERANCE);
+  const innerorts = input.roadType === "city";
+  const base = { effectiveOverage: overage, tagessatzChf: null, daysOfFine: null, prisonInfo: null as string | null };
+
+  if (overage === 0) {
+    return {
+      ...base,
+      severity: "no-fine",
+      estimatedFineChf: 0,
+      licenseSuspension: null,
+      description: "A sebesség a megengedett kereten belül van (a 3 km/h tolerancia utáni túllépés 0).",
+      legalNote: "Németországban jellemzően 3 km/h (100 km/h-ig), felette 3% mérési toleranciát vonnak le.",
+    };
+  }
+
+  // Bußgeldkatalog (2025) — €, Punkte, Fahrverbot (hó), sávonként.
+  const tiers: { max: number; eur: number; pts: number; ban: number }[] = innerorts
+    ? [
+        { max: 10, eur: 30, pts: 0, ban: 0 }, { max: 15, eur: 50, pts: 0, ban: 0 }, { max: 20, eur: 70, pts: 0, ban: 0 },
+        { max: 25, eur: 115, pts: 1, ban: 0 }, { max: 30, eur: 180, pts: 1, ban: 0 }, { max: 40, eur: 260, pts: 2, ban: 1 },
+        { max: 50, eur: 400, pts: 2, ban: 1 }, { max: 60, eur: 560, pts: 2, ban: 2 }, { max: 70, eur: 700, pts: 2, ban: 3 },
+        { max: Infinity, eur: 800, pts: 2, ban: 3 },
+      ]
+    : [
+        { max: 10, eur: 20, pts: 0, ban: 0 }, { max: 15, eur: 40, pts: 0, ban: 0 }, { max: 20, eur: 60, pts: 0, ban: 0 },
+        { max: 25, eur: 100, pts: 1, ban: 0 }, { max: 30, eur: 150, pts: 1, ban: 0 }, { max: 40, eur: 200, pts: 1, ban: 0 },
+        { max: 50, eur: 320, pts: 2, ban: 1 }, { max: 60, eur: 480, pts: 2, ban: 1 }, { max: 70, eur: 600, pts: 2, ban: 2 },
+        { max: Infinity, eur: 700, pts: 2, ban: 3 },
+      ];
+  const t = tiers.find((x) => overage <= x.max)!;
+  const ban = t.ban > 0 ? `${t.ban} hónap Fahrverbot` : null;
+  const ptsText = t.pts > 0 ? ` + ${t.pts} pont (Flensburg)` : "";
+  const baseNote = "A Bußgeld FIX (nem jövedelem-arányos). A pontok a flensburgi Fahreignungsregisterbe kerülnek; 8 pontnál bevonják a jogosítványt.";
+
+  if (t.ban >= 3) {
+    return { ...base, severity: "raser", estimatedFineChf: t.eur, licenseSuspension: ban,
+      description: `Nagyfokú sebesség-túllépés${ptsText}.`,
+      legalNote: `${baseNote} Megjegyzés: a verseny-jellegű, illegális gyorshajtás (»Rennen«, §315d StGB) viszont BŰNCSELEKMÉNY — börtönnel is járhat.` };
+  }
+  if (t.ban >= 1) {
+    return { ...base, severity: "schwer", estimatedFineChf: t.eur, licenseSuspension: ban,
+      description: `Jelentős túllépés${ptsText} + Fahrverbot.`, legalNote: `${baseNote} A Fahrverbot alatt nem vezethetsz; a 4 hónapos »kezdő« időszakban (Fahranfänger/Probezeit) szigorúbb.` };
+  }
+  if (t.pts >= 1) {
+    return { ...base, severity: "mittelschwer", estimatedFineChf: t.eur, licenseSuspension: null,
+      description: `Bußgeld${ptsText} — Fahrverbot nélkül (ismétlésnél jöhet).`, legalNote: baseNote };
+  }
+  return { ...base, severity: "ordnungsbusse", estimatedFineChf: t.eur, licenseSuspension: null,
+    description: "Verwarnungsgeld (csekély túllépés) — nincs pont, nincs Fahrverbot.",
+    legalNote: "55 €-ig Verwarnungsgeld (pont nélkül), postán/online fizethető. Nincs hatása a büntetett-előéletre." };
+}
