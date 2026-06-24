@@ -7,9 +7,10 @@ import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile
 import { cn } from "@/lib/cn";
 import { isSwissAddress, nearestCantonCode } from "@/lib/cantons";
 import { nearestAtBundesland } from "@/lib/at-points";
+import { nearestDeBundesland } from "@/lib/de-points";
 import { readPreferredCanton } from "@/lib/canton-pref";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY, countrySuperessive } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countrySuperessive, countryAdjective, regionWord } from "@/lib/countries";
 import { getRegions, regionLabel } from "@/lib/regions";
 import { BUSINESS_LIMITS, isInCountryCoord, type BusinessValidationError } from "@/lib/business";
 import type { Category } from "@/lib/types";
@@ -107,6 +108,10 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
+  const isDE = country === "DE";
+  /** A koordinátához tartozó régió-kód az aktuális ország szerint. */
+  const nearestRegion = (lat: number, lng: number) =>
+    isDE ? nearestDeBundesland(lat, lng) : isAT ? nearestAtBundesland(lat, lng) : nearestCantonCode(lat, lng);
   const regions = getRegions(country);
 
   // Régió-személyre szabás: CH-ban a preferált kantont ajánljuk fel (AT-ben nincs ilyen).
@@ -156,7 +161,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           setGeoBusy(false);
           return;
         }
-        const p = isAT ? nearestAtBundesland(latitude, longitude) : nearestCantonCode(latitude, longitude);
+        const p = nearestRegion(latitude, longitude);
         setField("cantonCode", p.code);
         setGeoMsg(`Megvan: ${p.city} (${p.code}). Ha nem stimmel, válaszd ki kézzel.`);
         setGeoBusy(false);
@@ -231,7 +236,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
     setGlobal(null);
 
     if (addressInvalid) {
-      setErrors((p) => ({ ...p, address: "Csak svájci cím adható meg (pl. 8001 Zürich)." }));
+      setErrors((p) => ({ ...p, address: `Csak ${countryAdjective(country)} cím adható meg — válassz a felkínált találatok közül.` }));
       return;
     }
     if (!turnstileToken) {
@@ -441,7 +446,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
               setErrors((e) => ({ ...e, address: "" }));
             }}
             onGeocode={(hit) => {
-              const c = isAT ? nearestAtBundesland(hit.lat, hit.lng) : nearestCantonCode(hit.lat, hit.lng);
+              const c = nearestRegion(hit.lat, hit.lng);
               setForm((f) => ({ ...f, lat: hit.lat, lng: hit.lng, cantonCode: c.code }));
               setErrors((e) => ({ ...e, address: "", cantonCode: "" }));
               setGeoMsg(null);
@@ -451,7 +456,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         {addressInvalid ? (
           <p className="mt-1 flex items-start gap-1 text-[11.5px] font-semibold text-accent">
             <Icon name="close" size={12} strokeWidth={2.4} className="mt-0.5 shrink-0" />
-            Csak svájci cím adható meg — válassz a felkínált találatok közül.
+            Csak {countryAdjective(country)} cím adható meg — válassz a felkínált találatok közül.
           </p>
         ) : (
           <FieldError msg={errors.address} />
@@ -459,13 +464,13 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         {form.lat != null && form.lng != null ? (
           <p className="mt-1 flex items-center gap-1 px-1 text-[11.5px] font-semibold text-success">
             <Icon name="check" size={12} strokeWidth={2.6} className="shrink-0" />
-            Pontos hely rögzítve a térképen — a kanton automatikusan beállt.
+            Pontos hely rögzítve a térképen — a {regionWord(country)} automatikusan beállt.
           </p>
         ) : (
           <p className="mt-1 px-1 text-[11.5px] leading-snug text-ink-faint">
             Írd be a címet és <strong className="text-ink-muted">válassz a felkínált találatok közül</strong> —
-            így pontosan a térképre kerülsz, és a kanton magától beáll. A pontos cím
-            opcionális (mobil szolgáltatónál elhagyható); ilyenkor válassz kantont alább.
+            így pontosan a térképre kerülsz, és a {regionWord(country)} magától beáll. A pontos cím
+            opcionális (mobil szolgáltatónál elhagyható); ilyenkor válassz {regionWord(country)}t alább.
           </p>
         )}
       </Section>

@@ -109,9 +109,16 @@ function isAustrianCoord(lat: number, lng: number): boolean {
   return lat >= 46.3 && lat <= 49.1 && lng >= 9.5 && lng <= 17.2;
 }
 
-/** Ország-tudatos koordináta-épelméjűség (CH/AT). */
+/** Német bounding box. */
+function isGermanCoord(lat: number, lng: number): boolean {
+  return lat >= 47.2 && lat <= 55.1 && lng >= 5.8 && lng <= 15.1;
+}
+
+/** Ország-tudatos koordináta-épelméjűség (CH/AT/DE). */
 export function isInCountryCoord(country: string, lat: number, lng: number): boolean {
-  return country === "AT" ? isAustrianCoord(lat, lng) : isSwissCoord(lat, lng);
+  if (country === "AT") return isAustrianCoord(lat, lng);
+  if (country === "DE") return isGermanCoord(lat, lng);
+  return isSwissCoord(lat, lng);
 }
 
 export type BusinessValidationError = { field: keyof BusinessFormInput; message: string };

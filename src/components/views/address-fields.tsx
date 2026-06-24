@@ -18,9 +18,10 @@ interface GeoHit {
   lng: number;
 }
 
-/** "Bahnhofstrasse 10 8001 Zürich" → { street, zip, city } */
+/** "Bahnhofstrasse 10 8001 Zürich" / "Hauptstraße 12 10115 Berlin" → { street, zip, city }.
+ *  4-5 jegyű irányítószámot kezel (CH/AT = 4, DE = 5). */
 export function parseSwissAddress(label: string): AddressParts {
-  const m = label.match(/\b(\d{4})\b/);
+  const m = label.match(/\b(\d{4,5})\b/);
   if (!m) return { street: label.trim(), zip: "", city: "" };
   const zip = m[1];
   const idx = label.indexOf(zip);
@@ -62,6 +63,13 @@ export function AddressFields({
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
+  const isDE = country === "DE";
+  const zipLen = isDE ? 5 : 4; // DE PLZ 5 jegyű, CH/AT 4
+  const ph = isDE
+    ? { street: "Pl. Hauptstraße 12", zip: "10115", city: "Berlin" }
+    : isAT
+    ? { street: "Pl. Hauptstraße 4", zip: "1010", city: "Wien" }
+    : { street: "Pl. Bahnhofstrasse 10", zip: "8001", city: "Zürich" };
 
   // Debounce-olt keresés az utca-mező szövegére (+ helység, ha már van).
   useEffect(() => {
@@ -133,7 +141,7 @@ export function AddressFields({
               onChange({ ...value, street: e.target.value });
             }}
             onFocus={() => hits.length > 0 && setOpen(true)}
-            placeholder={isAT ? "Pl. Hauptstraße 4" : "Pl. Bahnhofstrasse 10"}
+            placeholder={ph.street}
             autoComplete="off"
             className={cn(fieldCls(invalid), "pl-9 pr-9")}
           />
@@ -179,10 +187,10 @@ export function AddressFields({
             value={value.zip}
             onChange={(e) => {
               setPicked(false);
-              onChange({ ...value, zip: e.target.value.replace(/[^\d]/g, "").slice(0, 4) });
+              onChange({ ...value, zip: e.target.value.replace(/[^\d]/g, "").slice(0, zipLen) });
             }}
-            placeholder={isAT ? "1010" : "8001"}
-            maxLength={4}
+            placeholder={ph.zip}
+            maxLength={zipLen}
             autoComplete="off"
             className={fieldCls(invalid)}
           />
@@ -198,7 +206,7 @@ export function AddressFields({
               setPicked(false);
               onChange({ ...value, city: e.target.value });
             }}
-            placeholder={isAT ? "Wien" : "Zürich"}
+            placeholder={ph.city}
             autoComplete="off"
             className={fieldCls(invalid)}
           />

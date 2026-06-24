@@ -56,3 +56,18 @@ export function countrySuperessive(code: string | null | undefined): string {
     default: return "Svájcon";
   }
 }
+
+/** Az ország melléknévi alakja. Pl. „svájci", „német", „osztrák". */
+export function countryAdjective(code: string | null | undefined): string {
+  switch (code) {
+    case "AT": return "osztrák";
+    case "DE": return "német";
+    case "NL": return "holland";
+    default: return "svájci";
+  }
+}
+
+/** A közigazgatási régió-egység neve. CH: kanton; AT/DE/NL: tartomány. */
+export function regionWord(code: string | null | undefined): string {
+  return code && code !== "CH" ? "tartomány" : "kanton";
+}
