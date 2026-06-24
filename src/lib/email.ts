@@ -305,6 +305,41 @@ export async function sendNewsletterBatch(args: {
 }
 
 /**
+ * Közvetítői KÖRLEVÉL — egyenként személyre szabott (tárgy/törzs) e-mailek
+ * a munkáltatóknak, Resend BATCH-csel (max 100/hívás). Minden levél külön To-ra
+ * megy (NEM közös CC/BCC), a `replyTo` a közvetítő saját címe → a hirdető neki
+ * válaszol. A `from` megjelenített neve a hívótól jön (pl. "Feedback Jobs ...").
+ */
+export async function sendOutreachBatch(args: {
+  from: string;
+  replyTo?: string;
+  recipients: { to: string; subject: string; html: string; text: string }[];
+}): Promise<{ sent: number; failed: number }> {
+  if (!args.recipients.length) return { sent: 0, failed: 0 };
+  const env = getCloudflareEnv();
+  if (!env.RESEND_API_KEY) throw new Error("Hiányzó RESEND_API_KEY env-változó.");
+  const resend = new Resend(env.RESEND_API_KEY);
+  const batch = args.recipients.map((r) => ({
+    from: args.from,
+    to: r.to,
+    replyTo: args.replyTo,
+    subject: r.subject,
+    html: r.html,
+    text: r.text,
+  }));
+  const { data, error } = await resend.batch.send(batch);
+  if (error) return { sent: 0, failed: batch.length };
+  const sent = data?.data?.length ?? batch.length;
+  try {
+    const { recordEmailsSent } = await import("./repo-misc");
+    await recordEmailsSent(sent);
+  } catch {
+    /* a számláló sosem törheti meg a küldést */
+  }
+  return { sent, failed: batch.length - sent };
+}
+
+/**
  * Generikus email-küldő nyers HTML-törzzsel (pl. admin-értesítőkhöz). A
  * specifikus sablon-függvények (sendReviewConfirmationEmail stb.) saját
  * layouttal küldenek; ez az egyszerű kimenet tetszőleges HTML-hez.

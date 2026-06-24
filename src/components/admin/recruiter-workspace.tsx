@@ -28,6 +28,38 @@ type Phase = "idle" | "loading" | "done" | "error";
 interface Brief { keyword: string; skills: string[]; languages: string[]; summary: string }
 interface Match { score: number | null; reason: string; email: string }
 
+/** Körlevél alap-sablon a célország nyelvén ({{pozicio}}, {{ceg}} helyettesítőkkel). */
+function defaultTemplate(country: string): { subject: string; body: string } {
+  if (country === "NL") {
+    return {
+      subject: "Geschikte kandidaat voor uw vacature – {{pozicio}}",
+      body: `Geachte heer/mevrouw,
+
+wij zijn Feedback Jobs, een wervingsbureau. Voor uw vacature „{{pozicio}}" bij {{ceg}} hebben wij momenteel een geschikte, ervaren kandidaat.
+
+Graag sturen wij u het volledige profiel/cv toe. Onze bemiddeling werkt op no-cure-no-pay basis – een vergoeding is alleen verschuldigd bij een succesvolle plaatsing en wordt door de werkgever betaald.
+
+Bij interesse kunt u eenvoudig op deze e-mail reageren.
+
+Met vriendelijke groet,
+[Uw naam] – Feedback Jobs`,
+    };
+  }
+  return {
+    subject: "Qualifizierter Kandidat für Ihre offene Stelle – {{pozicio}}",
+    body: `Sehr geehrte Damen und Herren,
+
+wir sind Feedback Jobs, eine Personalvermittlung. Für Ihre ausgeschriebene Position „{{pozicio}}" bei {{ceg}} haben wir aktuell einen passenden, erfahrenen Kandidaten.
+
+Gerne senden wir Ihnen das vollständige Profil bzw. den Lebenslauf zu. Unsere Vermittlung erfolgt rein erfolgsbasiert – eine Provision fällt ausschließlich bei einer erfolgreichen Einstellung an und wird vom Arbeitgeber getragen.
+
+Bei Interesse antworten Sie einfach auf diese E-Mail.
+
+Mit freundlichen Grüßen,
+[Ihr Name] – Feedback Jobs`,
+  };
+}
+
 export function RecruiterWorkspace() {
   const [candidates, setCandidates] = useState<RecruitingCandidate[]>([]);
   const [addName, setAddName] = useState("");
@@ -56,6 +88,13 @@ export function RecruiterWorkspace() {
   const [fStatus, setFStatus] = useState<RecruitingStatus | "all">("all");
   const [fCountry, setFCountry] = useState<string>("all");
   const [fSearch, setFSearch] = useState("");
+
+  const [outreachFor, setOutreachFor] = useState<string | null>(null);
+  const [outreachSubject, setOutreachSubject] = useState("");
+  const [outreachBody, setOutreachBody] = useState("");
+  const [outreachReplyTo, setOutreachReplyTo] = useState("");
+  const [sending, setSending] = useState(false);
+  const [outreachResult, setOutreachResult] = useState<string | null>(null);
 
   useEffect(() => { loadCandidates(); loadShortlist(); }, []);
   async function loadCandidates() {
@@ -86,6 +125,29 @@ export function RecruiterWorkspace() {
   async function removeShort(id: string) {
     setShortlist((s) => s.filter((x) => x.id !== id));
     await fetch(`/api/admin/recruiter/shortlist?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+  }
+  async function setShortEmail(id: string, email: string) {
+    const v = email.trim();
+    setShortlist((s) => s.map((x) => (x.id === id ? { ...x, employerEmail: v || null } : x)));
+    await fetch("/api/admin/recruiter/shortlist", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, employerEmail: v || null }) });
+  }
+  function openOutreach(c: RecruitingCandidate) {
+    const t = defaultTemplate(c.country);
+    setOutreachSubject(t.subject); setOutreachBody(t.body); setOutreachResult(null); setOutreachFor(c.id);
+    try { const v = localStorage.getItem("kinti.recruiter.replyTo"); if (v && !outreachReplyTo) setOutreachReplyTo(v); } catch { /* ignore */ }
+  }
+  async function sendOutreach(candidateId: string) {
+    if (!outreachReplyTo.trim()) { alert("Adj meg egy válasz-címet (a TE e-mailed) — ide jönnek a hirdetők válaszai."); return; }
+    setSending(true); setOutreachResult(null);
+    try {
+      try { localStorage.setItem("kinti.recruiter.replyTo", outreachReplyTo.trim()); } catch { /* ignore */ }
+      const res = await fetch("/api/admin/recruiter/outreach", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ candidateId, subject: outreachSubject, body: outreachBody, replyTo: outreachReplyTo.trim() }) });
+      const data = (await res.json().catch(() => ({}))) as { sent?: number; failed?: number; total?: number; skipped?: number; error?: string };
+      if (!res.ok) { setOutreachResult(`❌ ${data.error || "Hiba a kiküldésnél."}`); return; }
+      setOutreachResult(`✅ Kiküldve ${data.sent ?? 0} címre${data.failed ? `, ${data.failed} sikertelen` : ""}${data.skipped ? ` (${data.skipped} a napi keret felett maradt)` : ""}.`);
+      await loadShortlist();
+    } catch { setOutreachResult("❌ Hálózati hiba."); }
+    finally { setSending(false); }
   }
 
   async function uploadCv(file: File): Promise<string | null> {
@@ -283,19 +345,40 @@ export function RecruiterWorkspace() {
                 {(() => {
                   const sl = shortlist.filter((s) => s.candidateId === c.id);
                   if (sl.length === 0) return null;
+                  const withEmail = sl.filter((s) => s.employerEmail).length;
                   return (
                     <div className="mt-2.5 space-y-1.5">
-                      <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-faint">📋 Shortlist ({sl.length})</p>
+                      <p className="text-[10.5px] font-bold uppercase tracking-wide text-ink-faint">📋 Shortlist ({sl.length}){withEmail > 0 ? ` · ${withEmail} e-maillel` : ""}</p>
                       {sl.map((s) => (
-                        <div key={s.id} className="flex items-center gap-2 rounded-[10px] border border-line bg-surface-alt/40 px-2.5 py-1.5">
-                          <a href={s.jobUrl} target="_blank" rel="noopener noreferrer" className="min-w-0 flex-1 hover:underline">
-                            <span className="block truncate text-[12px] font-bold text-ink">{s.jobTitle}</span>
-                            <span className="block truncate text-[11px] text-ink-muted">{[s.jobCompany, s.jobLocation].filter(Boolean).join(" · ")}{s.matchScore != null ? ` · ${s.matchScore}%` : ""}</span>
-                          </a>
-                          <button type="button" onClick={() => setShortStatus(s.id, s.status === "contacted" ? "saved" : "contacted")} className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[10.5px] font-bold", s.status === "contacted" ? "bg-success/15 text-success" : "border border-line text-ink-muted")}>{s.status === "contacted" ? "✓ Megkeresve" : "Megkeresve?"}</button>
-                          <button type="button" onClick={() => removeShort(s.id)} aria-label="Törlés" className="shrink-0 text-ink-faint hover:text-accent">✕</button>
+                        <div key={s.id} className="rounded-[10px] border border-line bg-surface-alt/40 px-2.5 py-1.5">
+                          <div className="flex items-center gap-2">
+                            <a href={s.jobUrl} target="_blank" rel="noopener noreferrer" className="min-w-0 flex-1 hover:underline">
+                              <span className="block truncate text-[12px] font-bold text-ink">{s.jobTitle}</span>
+                              <span className="block truncate text-[11px] text-ink-muted">{[s.jobCompany, s.jobLocation].filter(Boolean).join(" · ")}{s.matchScore != null ? ` · ${s.matchScore}%` : ""}</span>
+                            </a>
+                            <button type="button" onClick={() => setShortStatus(s.id, s.status === "contacted" ? "saved" : "contacted")} className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[10.5px] font-bold", s.status === "contacted" ? "bg-success/15 text-success" : "border border-line text-ink-muted")}>{s.status === "contacted" ? "✓ Megkeresve" : "Megkeresve?"}</button>
+                            <button type="button" onClick={() => removeShort(s.id)} aria-label="Törlés" className="shrink-0 text-ink-faint hover:text-accent">✕</button>
+                          </div>
+                          <input type="email" defaultValue={s.employerEmail ?? ""} onBlur={(e) => { if ((e.target.value.trim() || null) !== (s.employerEmail ?? null)) setShortEmail(s.id, e.target.value); }} placeholder="munkáltató e-mail (a hirdetésből / cég honlapjáról)" className="mt-1.5 w-full rounded-[8px] border border-line bg-surface px-2.5 py-1 text-[11.5px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none" />
                         </div>
                       ))}
+                      {outreachFor === c.id ? (
+                        <div className="mt-2 space-y-2 rounded-[10px] border border-primary/30 bg-primary-soft/40 p-2.5">
+                          <p className="text-[11px] font-extrabold text-ink">📧 Körlevél — {withEmail} címre megy ki</p>
+                          <input value={outreachReplyTo} onChange={(e) => setOutreachReplyTo(e.target.value)} placeholder="Válasz-cím (a TE e-mailed) — ide jönnek a válaszok" className="w-full rounded-[8px] border border-line bg-surface px-2.5 py-1.5 text-[12px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none" />
+                          <input value={outreachSubject} onChange={(e) => setOutreachSubject(e.target.value)} placeholder="Tárgy" className="w-full rounded-[8px] border border-line bg-surface px-2.5 py-1.5 text-[12px] font-semibold text-ink focus:border-primary focus:outline-none" />
+                          <textarea value={outreachBody} onChange={(e) => setOutreachBody(e.target.value)} rows={10} className="w-full rounded-[8px] border border-line bg-surface px-2.5 py-2 text-[12px] leading-relaxed text-ink focus:border-primary focus:outline-none" />
+                          <p className="text-[10px] leading-snug text-ink-muted">Helyettesítők: <code>{"{{pozicio}}"}</code>, <code>{"{{ceg}}"}</code>, <code>{"{{helyszin}}"}</code> — címzettenként automatikusan kitöltődnek.</p>
+                          <div className="flex items-center gap-2">
+                            <button type="button" onClick={() => sendOutreach(c.id)} disabled={sending || withEmail === 0} className="rounded-pill bg-primary px-3.5 py-1.5 text-[12px] font-extrabold text-white shadow-card disabled:opacity-50">{sending ? "Küldés…" : `Kiküldés (${withEmail})`}</button>
+                            <button type="button" onClick={() => setOutreachFor(null)} className="text-[11.5px] font-bold text-ink-muted">Mégse</button>
+                          </div>
+                          {outreachResult && <p className="text-[11.5px] font-semibold text-ink">{outreachResult}</p>}
+                          <p className="text-[10px] leading-snug text-ink-faint">⚖️ Üzleti (B2B) megkeresés a hirdetést feladó cégeknek, egyenként személyre szabva. Ne küldj tömeges, irreleváns levelet — csak releváns, nyitott pozícióra.</p>
+                        </div>
+                      ) : (
+                        withEmail > 0 && <button type="button" onClick={() => openOutreach(c)} className="mt-1 rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary">📧 Körlevél ({withEmail})</button>
+                      )}
                     </div>
                   );
                 })()}

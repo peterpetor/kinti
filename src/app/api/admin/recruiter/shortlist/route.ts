@@ -4,6 +4,7 @@ import {
   listAllShortlist,
   addShortlistJob,
   updateShortlistStatus,
+  updateShortlistEmail,
   removeShortlistJob,
   type ShortlistStatus,
 } from "@/lib/repo-recruiting";
@@ -41,10 +42,21 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   if (!(await guard())) return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  const body = (await req.json().catch(() => ({}))) as { id?: string; status?: string };
-  if (!body.id || !body.status || !STATUSES.has(body.status as ShortlistStatus)) return NextResponse.json({ error: "Hibás kérés." }, { status: 400 });
-  const ok = await updateShortlistStatus(body.id, body.status as ShortlistStatus);
-  return NextResponse.json({ ok });
+  const body = (await req.json().catch(() => ({}))) as { id?: string; status?: string; employerEmail?: string | null };
+  if (!body.id) return NextResponse.json({ error: "Hiányzó id." }, { status: 400 });
+  // E-mail beállítása (vagy törlése null-lal)
+  if (body.employerEmail !== undefined) {
+    const raw = (body.employerEmail ?? "").trim();
+    const email = raw && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw) ? raw.slice(0, 200) : null;
+    const ok = await updateShortlistEmail(body.id, email);
+    return NextResponse.json({ ok, email });
+  }
+  // Státusz
+  if (body.status && STATUSES.has(body.status as ShortlistStatus)) {
+    const ok = await updateShortlistStatus(body.id, body.status as ShortlistStatus);
+    return NextResponse.json({ ok });
+  }
+  return NextResponse.json({ error: "Hibás kérés." }, { status: 400 });
 }
 
 export async function DELETE(req: Request) {

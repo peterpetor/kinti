@@ -125,20 +125,22 @@ export interface ShortlistJob {
   jobUrl: string;
   matchScore: number | null;
   status: ShortlistStatus;
+  employerEmail: string | null;
   createdAt: string;
 }
 
 interface ShortlistRow {
   id: string; candidate_id: string; job_title: string; job_company: string | null;
   job_location: string | null; job_url: string; match_score: number | null;
-  status: string; created_at: string;
+  status: string; employer_email: string | null; created_at: string;
 }
 
 function toShortlist(r: ShortlistRow): ShortlistJob {
   return {
     id: r.id, candidateId: r.candidate_id, jobTitle: r.job_title, jobCompany: r.job_company,
     jobLocation: r.job_location, jobUrl: r.job_url, matchScore: r.match_score,
-    status: (r.status as ShortlistStatus) ?? "saved", createdAt: r.created_at,
+    status: (r.status as ShortlistStatus) ?? "saved", employerEmail: r.employer_email ?? null,
+    createdAt: r.created_at,
   };
 }
 
@@ -176,6 +178,26 @@ export async function addShortlistJob(input: AddShortlistInput): Promise<string>
 export async function updateShortlistStatus(id: string, status: ShortlistStatus): Promise<boolean> {
   const res = await getDB().prepare("UPDATE recruiting_shortlist SET status = ? WHERE id = ?").bind(status, id).run();
   return (res.meta.changes ?? 0) > 0;
+}
+
+export async function updateShortlistEmail(id: string, email: string | null): Promise<boolean> {
+  const res = await getDB().prepare("UPDATE recruiting_shortlist SET employer_email = ? WHERE id = ?").bind(email, id).run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+/** Egy jelölt shortlistje (a körlevél-kiküldéshez, szerveroldalon). */
+export async function listShortlistByCandidate(candidateId: string): Promise<ShortlistJob[]> {
+  const { results } = await getDB()
+    .prepare("SELECT * FROM recruiting_shortlist WHERE candidate_id = ? ORDER BY created_at DESC")
+    .bind(candidateId).all<ShortlistRow>();
+  return results.map(toShortlist);
+}
+
+/** Több shortlist-tétel státuszának beállítása egyszerre (körlevél után → contacted). */
+export async function markShortlistContacted(ids: string[]): Promise<void> {
+  if (!ids.length) return;
+  const db = getDB();
+  await db.batch(ids.map((id) => db.prepare("UPDATE recruiting_shortlist SET status = 'contacted' WHERE id = ?").bind(id)));
 }
 
 export async function removeShortlistJob(id: string): Promise<boolean> {
