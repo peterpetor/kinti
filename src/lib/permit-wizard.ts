@@ -12,7 +12,9 @@
 export type PermitType =
   | "L" | "B" | "C" | "G" | "schengen" | "none"
   // Ausztria (EU-fókusz: szabad mozgás → regisztráció → tartós; RWR nem-EU-nak)
-  | "at-freizug" | "at-anmeldung" | "at-dauer" | "at-rwr";
+  | "at-freizug" | "at-anmeldung" | "at-dauer" | "at-rwr"
+  // Németország (EU: Freizügigkeit → Anmeldung → Daueraufenthalt; Blaue Karte nem-EU-nak)
+  | "de-freizug" | "de-anmeldung" | "de-dauer" | "de-aufenthalt";
 
 export interface PermitInfo {
   type: PermitType;
@@ -249,6 +251,66 @@ export const PERMITS: Record<PermitType, PermitInfo> = {
     applyTo: "Tartózkodási hatóság (ABH) / osztrák képviselet külföldön; az AMS munkaerőpiaci értékelésével.",
     links: [{ label: "migration.gv.at — Rot-Weiß-Rot Karte", url: "https://www.migration.gv.at/" }],
   },
+  "de-freizug": {
+    type: "de-freizug",
+    name: "Freizügigkeit (EU) — nincs engedély",
+    emoji: "✅",
+    color: "#16a34a",
+    shortDesc: "EU-állampolgárként engedély nélkül élhetsz és dolgozhatsz Németországban",
+    duration: "Korlátlan — a személyek szabad mozgása alapján.",
+    workPermitted: "Igen, azonnal és szabadon (EU-állampolgár).",
+    cantonChange: "Szabad — Németországon belül bárhova költözhetsz.",
+    familyReunion: "EU-családtag szabadon; nem-EU családtag: Aufenthaltskarte.",
+    pros: ["Nincs engedély-kérelem", "Szabad munkavállalás az első naptól", "Szabad költözés Németországon belül"],
+    cons: ["A lakcímet a beköltözéstől ~1-2 héten belül be kell jelenteni (Anmeldung)", "A Freizügigkeitsbescheinigungot 2013-ban eltörölték — nincs külön EU-papír"],
+    applyTo: "Nincs hova — érvényes útlevél/igazolvány elég. A lakcímet a Bürgeramtban jelented be (Anmeldung).",
+    links: [{ label: "make-it-in-germany.com — EU-Bürger", url: "https://www.make-it-in-germany.com/" }],
+  },
+  "de-anmeldung": {
+    type: "de-anmeldung",
+    name: "Anmeldung (lakcím-bejelentés)",
+    emoji: "🪪",
+    color: "#1d4434",
+    shortDesc: "A kötelező lakcím-regisztráció a Bürgeramtnál — mindenhez ez kell",
+    duration: "A lakcím érvényességéig; költözéskor újra (Ummeldung).",
+    workPermitted: "Igen, szabadon (EU-állampolgár).",
+    cantonChange: "Szabad; új lakcímnél Ummeldung.",
+    familyReunion: "Igen (EU-családtag); nem-EU családtagnak Aufenthaltskarte.",
+    pros: ["A Meldebescheinigung kell a bankszámlához, Steuer-ID-hoz, biztosításhoz", "Egyszerű, díjmentes (a legtöbb városban)", "5 év után Daueraufenthalt-jogosultság"],
+    cons: ["A beköltözéstől ~1-2 héten belül kötelező (városonként eltér, pl. Berlin 14 nap)", "Termin kell a Bürgeramtnál — nagyvárosban hetekre előre telt"],
+    applyTo: "A lakóhely szerinti Bürgeramt / Einwohnermeldeamt (Termin-foglalással).",
+    links: [{ label: "make-it-in-germany.com — Anmeldung", url: "https://www.make-it-in-germany.com/de/leben-in-deutschland/erste-schritte/anmeldung" }],
+  },
+  "de-dauer": {
+    type: "de-dauer",
+    name: "Daueraufenthalt-EU (tartós tartózkodás)",
+    emoji: "🆔",
+    color: "#7f4a1d",
+    shortDesc: "5 év jogszerű EU-tartózkodás után — megerősített státusz",
+    duration: "Határozatlan — 5 év folyamatos jogszerű tartózkodás után.",
+    workPermitted: "Igen, korlátlanul.",
+    cantonChange: "Szabad.",
+    familyReunion: "Igen.",
+    pros: ["5 év folyamatos jogszerű tartózkodás után jár", "Erősebb védelem a kiutasítás ellen", "Megerősített letelepedési státusz"],
+    cons: ["5 év folyamatos tartózkodás kell", "Kérni kell a »Bescheinigung des Daueraufenthalts«-ot a hatóságnál"],
+    applyTo: "A lakóhely szerinti idegenrendészeti hatóság (Ausländerbehörde).",
+    links: [{ label: "make-it-in-germany.com — Daueraufenthalt", url: "https://www.make-it-in-germany.com/" }],
+  },
+  "de-aufenthalt": {
+    type: "de-aufenthalt",
+    name: "Aufenthaltstitel / Blaue Karte EU (nem-EU)",
+    emoji: "🌍",
+    color: "#dc2626",
+    shortDesc: "Harmadik országbeli (nem-EU) képzett munkaerőnek — Blaue Karte EU",
+    duration: "Aufenthaltserlaubnis (határozott); Blaue Karte után Niederlassungserlaubnis.",
+    workPermitted: "Igen — a Blaue Karte EU képzett munkaerőnek, jövedelmi küszöbbel.",
+    cantonChange: "Németországon belül szabad.",
+    familyReunion: "Igen (a Blaue Karte kedvező családegyesítéssel).",
+    pros: ["Blaue Karte EU képzett munkaerőnek (Fachkräfteeinwanderungsgesetz)", "Gyorsabb út a letelepedéshez (Niederlassungserlaubnis)", "Kedvező családegyesítés"],
+    cons: ["Csak harmadik országbeli (nem-EU) állampolgárnak", "Elismert végzettség + jövedelmi küszöb kell", "Eljárás a Botschaft/Ausländerbehörde-n keresztül"],
+    applyTo: "Német külképviselet (vízum) + a lakóhely szerinti Ausländerbehörde.",
+    links: [{ label: "make-it-in-germany.com — Blaue Karte", url: "https://www.make-it-in-germany.com/" }],
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -276,6 +338,7 @@ export interface WizardResult {
 
 export function evaluatePermit(a: WizardAnswers, country: string = "CH"): WizardResult {
   if (country === "AT") return evaluatePermitAT(a);
+  if (country === "DE") return evaluatePermitDE(a);
   // 1. Cross-border (G-engedély) — különleges eset
   if (a.purpose === "cross-border") {
     return {
@@ -446,4 +509,69 @@ function evaluatePermitAT(a: WizardAnswers): WizardResult {
   else if (a.purpose === "family") notes.push("Családtagként: az EU-s rokon státusza + házassági/születési anyakönyvi kivonat kell.");
   else if (a.purpose === "retired") notes.push("Nyugdíjasként: elég jövedelem + egészségbiztosítás igazolása.");
   return { primary: "at-anmeldung", alternatives: ["at-freizug"], notes };
+}
+
+/** Németország — EU-fókuszú döntési fa (Freizügigkeit / Anmeldung / Daueraufenthalt / Blaue Karte). */
+function evaluatePermitDE(a: WizardAnswers): WizardResult {
+  // Harmadik országbeli (nem-EU)
+  if (a.citizenship === "non-eu") {
+    if (a.duration === "short") {
+      return {
+        primary: "de-aufenthalt",
+        alternatives: [],
+        notes: [
+          "Rövid (max 90 nap) tartózkodáshoz harmadik országbeliként Schengen-vízum kell a német képviseleten.",
+          "Munkavállaláshoz / hosszabb tartózkodáshoz Aufenthaltstitel (pl. Blaue Karte EU) szükséges.",
+        ],
+      };
+    }
+    return {
+      primary: "de-aufenthalt",
+      alternatives: [],
+      notes: [
+        "Harmadik országbeliként a Blaue Karte EU a fő út képzett munkaerőnek (Fachkräfteeinwanderungsgesetz).",
+        "Elismert végzettség + jövedelmi küszöb + munkaszerződés kell.",
+        "Az eljárás a német külképviseleten (vízum) és a helyi Ausländerbehörde-n keresztül megy.",
+      ],
+    };
+  }
+
+  // EU-állampolgár (magyar) — szabad mozgás
+  if (a.duration === "short" || a.purpose === "cross-border") {
+    return {
+      primary: "de-freizug",
+      alternatives: ["de-anmeldung"],
+      notes: [
+        "EU-állampolgárként szabad mozgásod van — nincs szükség tartózkodási engedélyre.",
+        a.purpose === "cross-border"
+          ? "Ingázóként sem kell külön engedély; a magyar lakcímed megmaradhat."
+          : "Ha egy lakásba beköltözöl, a lakcímet ~1-2 héten belül be kell jelentened (Anmeldung).",
+        "A Freizügigkeitsbescheinigungot 2013-ban eltörölték — EU-állampolgárnak nincs külön papír.",
+      ],
+    };
+  }
+
+  // 5+ év jogszerű tartózkodás → Daueraufenthalt-EU
+  if (a.duration === "permanent" && a.previousStay === "5-or-more") {
+    return {
+      primary: "de-dauer",
+      alternatives: ["de-anmeldung"],
+      notes: [
+        "5 év folyamatos jogszerű tartózkodás után tartós tartózkodási jog (Daueraufenthalt-EU) jár.",
+        "Kérd a »Bescheinigung des Daueraufenthalts«-ot az Ausländerbehörde-n.",
+        "Megerősített védelem és letelepedési státusz.",
+      ],
+    };
+  }
+
+  // EU, 3+ hónap (de még nincs 5 év) → Anmeldung + szabad mozgás
+  const notes: string[] = [
+    "EU-állampolgárként a személyek szabad mozgása alapján élhetsz és dolgozhatsz — nincs engedély-kérelem.",
+    "A gyakorlati lépés a lakcím-bejelentés (Anmeldung) a Bürgeramtnál, a beköltözéstől ~1-2 héten belül.",
+    "A Meldebescheinigung kell a bankszámlához, a Steuer-ID-hoz és a biztosításhoz.",
+  ];
+  if (a.purpose === "study") notes.push("Tanulóként: beiratkozási igazolás + megélhetés + egészségbiztosítás kell.");
+  else if (a.purpose === "family") notes.push("Családtagként: az EU-s rokon státusza + házassági/születési anyakönyvi kivonat kell.");
+  else if (a.purpose === "retired") notes.push("Nyugdíjasként: elég jövedelem + egészségbiztosítás igazolása.");
+  return { primary: "de-anmeldung", alternatives: ["de-freizug"], notes };
 }

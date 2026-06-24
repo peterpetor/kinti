@@ -6,9 +6,9 @@ export const runtime = "edge";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Melyik engedély kell? — L/B/C/G vízum-varázsló",
+  title: "Engedély-varázsló — tartózkodás Svájcban, Ausztriában, Németországban",
   description:
-    "Interaktív kérdés-sor, ami megmondja, melyik svájci tartózkodási engedély-típus (L, B, C, G) releváns a helyzetedre.",
+    "Interaktív kérdés-sor, ami megmondja, melyik tartózkodási státusz releváns a helyzetedre. Svájc (L/B/C/G), Ausztria (Anmeldebescheinigung/Daueraufenthalt), Németország (Freizügigkeit/Anmeldung/Daueraufenthalt).",
 };
 
 export default function VizumPage() {
