@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/admin";
 import { searchAdzunaJobs } from "@/lib/adzuna";
+import { searchJoobleJobs } from "@/lib/jooble";
 import { searchArbeitnowJobs } from "@/lib/arbeitnow";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -10,9 +11,11 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/admin/recruiter/jobs?country=AT&q=Maler — VALÓDI állás-listák. Admin-only.
  *
- * Forrás-stratégia: ha be van állítva az Adzuna-kulcs → Adzuna (AT/DE/NL, fizetés,
- * jó kulcsszó-keresés). Ha nincs → Arbeitnow (ingyenes, kulcs nélkül, DE/EU-fókusz)
- * mint fallback, hogy kulcs nélkül is legyen listázás. `source` jelzi, melyik.
+ * Forrás-lánc (az első KONFIGURÁLT nyer):
+ *   1. Adzuna   — kulccsal, AT/DE/NL + fizetés-adat (a legjobb).
+ *   2. Jooble   — kulccsal, jó AT/EU lefedés.
+ *   3. Arbeitnow — INGYENES, kulcs nélkül (DE/EU-fókusz) → mindig van valami.
+ * `source` jelzi, melyikből jött.
  */
 export async function GET(req: Request) {
   const adminId = await getAdminUserId();
@@ -25,13 +28,16 @@ export async function GET(req: Request) {
   try {
     const ad = await searchAdzunaJobs(country, q, 20);
     if (ad.configured) {
-      return NextResponse.json({ jobs: ad.jobs, configured: true, source: "adzuna" }, { headers: { "cache-control": "no-store" } });
+      return NextResponse.json({ jobs: ad.jobs, source: "adzuna" }, { headers: { "cache-control": "no-store" } });
     }
-    // Nincs Adzuna-kulcs → ingyenes fallback.
+    const jb = await searchJoobleJobs(country, q, 20);
+    if (jb.configured) {
+      return NextResponse.json({ jobs: jb.jobs, source: "jooble" }, { headers: { "cache-control": "no-store" } });
+    }
     const jobs = await searchArbeitnowJobs(country, q, 20);
-    return NextResponse.json({ jobs, configured: false, source: "arbeitnow" }, { headers: { "cache-control": "no-store" } });
+    return NextResponse.json({ jobs, source: "arbeitnow" }, { headers: { "cache-control": "no-store" } });
   } catch (err) {
     safeLogError("[admin/recruiter/jobs]", err);
-    return NextResponse.json({ jobs: [], configured: true, source: "error", error: "internal" }, { status: 500 });
+    return NextResponse.json({ jobs: [], source: "error", error: "internal" }, { status: 500 });
   }
 }
