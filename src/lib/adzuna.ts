@@ -39,7 +39,7 @@ export interface AdzunaSearch {
   configured: boolean;
 }
 
-export async function searchAdzunaJobs(country: string, keyword: string, limit = 20): Promise<AdzunaSearch> {
+export async function searchAdzunaJobs(country: string, keyword: string, limit = 20, where?: string): Promise<AdzunaSearch> {
   const env = getCloudflareEnv() as unknown as { ADZUNA_APP_ID?: string; ADZUNA_APP_KEY?: string };
   const id = env.ADZUNA_APP_ID;
   const key = env.ADZUNA_APP_KEY;
@@ -49,10 +49,13 @@ export async function searchAdzunaJobs(country: string, keyword: string, limit =
   const q = keyword.trim();
   if (!ADZUNA_COUNTRIES.has(cc) || !q) return { jobs: [], configured: true };
 
+  // Tartomány-szűrő: az Adzuna `where` helyszín-paramétere (pl. "Wien", "Bayern").
+  const w = (where ?? "").trim();
+  const whereParam = w ? `&where=${encodeURIComponent(w)}` : "";
   const url =
     `https://api.adzuna.com/v1/api/jobs/${cc}/search/1` +
     `?app_id=${encodeURIComponent(id)}&app_key=${encodeURIComponent(key)}` +
-    `&what=${encodeURIComponent(q)}&results_per_page=${limit}&content-type=application/json`;
+    `&what=${encodeURIComponent(q)}${whereParam}&results_per_page=${limit}&content-type=application/json`;
 
   try {
     const res = await fetch(url, { cf: { cacheTtl: 600, cacheEverything: true } } as RequestInit);

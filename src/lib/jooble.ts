@@ -27,14 +27,16 @@ export interface JoobleSearch {
   configured: boolean;
 }
 
-export async function searchJoobleJobs(country: string, keyword: string, limit = 20): Promise<JoobleSearch> {
+export async function searchJoobleJobs(country: string, keyword: string, limit = 20, region?: string): Promise<JoobleSearch> {
   const env = getCloudflareEnv() as unknown as { JOOBLE_API_KEY?: string };
   const key = env.JOOBLE_API_KEY;
   if (!key) return { jobs: [], configured: false };
 
   const q = keyword.trim();
   if (!q) return { jobs: [], configured: true };
-  const location = COUNTRY_LOCATION[country.toUpperCase()] ?? "";
+  // Tartomány-szűrő: ha van region, azt használjuk helyszínként (pl. "Wien"),
+  // különben az egész országot.
+  const location = (region ?? "").trim() || COUNTRY_LOCATION[country.toUpperCase()] || "";
 
   try {
     const res = await fetch(`https://jooble.org/api/${encodeURIComponent(key)}`, {

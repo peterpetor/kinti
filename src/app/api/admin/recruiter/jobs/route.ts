@@ -23,11 +23,12 @@ export async function GET(req: Request) {
   const sp = new URL(req.url).searchParams;
   const country = sp.get("country") ?? "AT";
   const q = sp.get("q") ?? "";
+  const region = sp.get("region") ?? "";
 
   try {
     const [ad, jb] = await Promise.all([
-      searchAdzunaJobs(country, q, 20),
-      searchJoobleJobs(country, q, 20),
+      searchAdzunaJobs(country, q, 20, region),
+      searchJoobleJobs(country, q, 20, region),
     ]);
 
     if (ad.configured || jb.configured) {
@@ -41,7 +42,7 @@ export async function GET(req: Request) {
     }
 
     // Nincs kulcs → ingyenes fallback.
-    const jobs = await searchArbeitnowJobs(country, q, 20);
+    const jobs = await searchArbeitnowJobs(country, q, 20, region);
     return NextResponse.json({ jobs, source: "arbeitnow" }, { headers: { "cache-control": "no-store" } });
   } catch (err) {
     safeLogError("[admin/recruiter/jobs]", err);

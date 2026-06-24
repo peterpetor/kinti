@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { getJobRegions } from "@/lib/job-regions";
 import type { AdzunaJob } from "@/lib/adzuna";
 import type { RecruitingCandidate, RecruitingStatus, ShortlistJob, ShortlistStatus } from "@/lib/repo-recruiting";
 
@@ -77,6 +78,7 @@ export function RecruiterWorkspace() {
   const [openEmail, setOpenEmail] = useState<string | null>(null);
 
   const [country, setCountry] = useState("AT");
+  const [region, setRegion] = useState("");
   const [keyword, setKeyword] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [jobs, setJobs] = useState<AdzunaJob[]>([]);
@@ -202,8 +204,8 @@ export function RecruiterWorkspace() {
         void fetch("/api/admin/recruiter", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: c.id, keyword: data.keyword }) });
       }
       const updated = { ...c, keyword: kw };
-      setActive(updated); setCountry(c.country); setKeyword(kw);
-      if (kw) void runSearch(c.country, kw);
+      setActive(updated); setCountry(c.country); setRegion(""); setKeyword(kw);
+      if (kw) void runSearch(c.country, kw, "");
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     } finally { setParsing(null); }
   }
@@ -224,15 +226,16 @@ export function RecruiterWorkspace() {
   }
 
   function searchForCandidate(c: RecruitingCandidate) {
-    setActive(c); setCountry(c.country); setKeyword(c.keyword ?? "");
-    if (c.keyword) void runSearch(c.country, c.keyword);
+    setActive(c); setCountry(c.country); setRegion(""); setKeyword(c.keyword ?? "");
+    if (c.keyword) void runSearch(c.country, c.keyword, "");
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   }
-  async function runSearch(c: string, kw: string) {
+  async function runSearch(c: string, kw: string, reg: string = region) {
     if (!kw.trim()) return;
     setPhase("loading"); setMatches({}); setOpenEmail(null);
     try {
-      const res = await fetch(`/api/admin/recruiter/jobs?country=${c}&q=${encodeURIComponent(kw.trim())}`);
+      const regParam = reg.trim() ? `&region=${encodeURIComponent(reg.trim())}` : "";
+      const res = await fetch(`/api/admin/recruiter/jobs?country=${c}&q=${encodeURIComponent(kw.trim())}${regParam}`);
       const data = (await res.json().catch(() => ({}))) as { jobs?: AdzunaJob[]; source?: string };
       setJobs(data.jobs ?? []); setSource(data.source ?? ""); setPhase("done");
     } catch { setPhase("error"); }
@@ -392,8 +395,12 @@ export function RecruiterWorkspace() {
       <div ref={resultsRef} className="space-y-3 rounded-card border border-line bg-surface p-4 shadow-card">
         <h2 className="text-[14px] font-extrabold text-ink">Hirdetés-keresés{active ? ` · ${active.fullName}` : ""}</h2>
         <div className="flex flex-wrap gap-1.5">
-          {COUNTRIES.map((c) => <button key={c.code} type="button" onClick={() => { setCountry(c.code); setPhase("idle"); }} className={cn("rounded-pill px-3 py-1.5 text-[12px] font-bold transition", country === c.code ? "bg-primary text-white shadow-card" : "border border-line bg-surface-alt text-ink")}>{c.label}</button>)}
+          {COUNTRIES.map((c) => <button key={c.code} type="button" onClick={() => { setCountry(c.code); setRegion(""); setPhase("idle"); }} className={cn("rounded-pill px-3 py-1.5 text-[12px] font-bold transition", country === c.code ? "bg-primary text-white shadow-card" : "border border-line bg-surface-alt text-ink")}>{c.label}</button>)}
         </div>
+        <select value={region} onChange={(e) => { setRegion(e.target.value); setPhase("idle"); }} className={inputCls}>
+          <option value="">📍 Egész ország ({ctry.label})</option>
+          {getJobRegions(country).map((r) => <option key={r.code} value={r.code}>{r.label}</option>)}
+        </select>
         <input value={keyword} onChange={(e) => { setKeyword(e.target.value); setPhase("idle"); }} onKeyDown={(e) => { if (e.key === "Enter") { setActive(null); runSearch(country, keyword); } }} placeholder="Szakma / kulcsszó (a portál nyelvén)" className={inputCls} />
         <button type="button" onClick={() => { setActive(null); runSearch(country, keyword); }} disabled={!q || phase === "loading"} className="h-11 w-full rounded-pill bg-primary text-[14px] font-extrabold text-white shadow-card-hover disabled:opacity-60">{phase === "loading" ? "Keresés…" : "Hirdetések keresése"}</button>
       </div>
@@ -402,7 +409,7 @@ export function RecruiterWorkspace() {
 
       {phase === "done" && (
         <section className="space-y-2">
-          <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">💼 Konkrét hirdetések — „{q}" · {ctry.label} ({jobs.length})</h3>
+          <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">💼 Konkrét hirdetések — „{q}" · {ctry.label}{region ? ` · ${region}` : ""} ({jobs.length})</h3>
           {jobs.length === 0 ? (
             <p className="rounded-card border border-dashed border-line bg-surface px-4 py-6 text-center text-[12.5px] text-ink-muted">Nincs találat. Próbálj más/tágabb kifejezést, vagy a kézi kereséseket lent.</p>
           ) : jobs.map((j) => {

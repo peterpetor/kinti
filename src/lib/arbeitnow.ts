@@ -26,10 +26,11 @@ const COUNTRY_HINTS: Record<string, string[]> = {
   NL: ["netherlands", "nederland", "amsterdam", "rotterdam", "utrecht", "den haag", "the hague", "eindhoven"],
 };
 
-export async function searchArbeitnowJobs(country: string, keyword: string, limit = 20): Promise<AdzunaJob[]> {
+export async function searchArbeitnowJobs(country: string, keyword: string, limit = 20, region?: string): Promise<AdzunaJob[]> {
   const q = keyword.trim().toLowerCase();
   if (!q) return [];
   const hints = COUNTRY_HINTS[country.toUpperCase()] ?? [];
+  const reg = (region ?? "").trim().toLowerCase();
   try {
     const res = await fetch("https://www.arbeitnow.com/api/job-board-api", {
       headers: { accept: "application/json", "user-agent": "kinti.app" },
@@ -42,6 +43,8 @@ export async function searchArbeitnowJobs(country: string, keyword: string, limi
         const hay = `${j.title ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
         const loc = (j.location ?? "").toLowerCase();
+        // Tartomány-szűrő (best-effort): ha megadtak régiót, a location tartalmazza.
+        if (reg && !loc.includes(reg)) return false;
         // Ország-egyezés: remote, vagy a location tartalmaz egy ország-kulcsszót.
         return j.remote === true || hints.length === 0 || hints.some((h) => loc.includes(h));
       })
