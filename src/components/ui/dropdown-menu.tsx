@@ -187,7 +187,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🪪
                   </span>
-                  {isCH ? "Melyik engedély kell?" : "Tartózkodás Ausztriában?"}
+                  {isCH ? "Tartózkodási engedély" : "Tartózkodás Ausztriában"}
                 </Link>
                 )}
                 {has("allampolgarsag") && (
