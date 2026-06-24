@@ -14,8 +14,8 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
  */
 export function GuideList() {
   const [prefCountry] = usePreferredCountry();
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
-  const guides = getGuides(isAT ? "AT" : "CH");
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const guides = getGuides(country);
 
   const index = guides.map((g) => ({
     slug: g.slug,

@@ -5,9 +5,9 @@ import { GuideList } from "./GuideList";
 export const runtime = "edge";
 
 export const metadata = {
-  title: "Tudásbázis — útmutatók magyaroknak Svájcban",
+  title: "Tudásbázis — útmutatók kint élő magyaroknak",
   description:
-    "Hivatalos forrásból: bejelentkezés, egészségbiztosítás (Krankenkasse), adózás és iskola — kint élő magyaroknak Svájcban.",
+    "Hivatalos forrásból: bejelentkezés, egészségbiztosítás, adózás, iskola, munka, lakásbérlés — kint élő magyaroknak (Svájc, Ausztria, Németország).",
 };
 
 export default function TudasbazisPage() {
