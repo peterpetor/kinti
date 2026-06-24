@@ -87,7 +87,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
           className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-pill border border-line bg-surface text-[13.5px] font-bold text-ink active:scale-[0.99]"
         >
           <Icon name="check" size={15} strokeWidth={2.6} />
-          Készülj fel: Svájci Kezdőcsomag
+          Készülj fel: Kezdőcsomag
         </Link>
       </div>
     );

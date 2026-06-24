@@ -71,3 +71,13 @@ export function countryAdjective(code: string | null | undefined): string {
 export function regionWord(code: string | null | undefined): string {
   return code && code !== "CH" ? "tartomány" : "kanton";
 }
+
+/** Az ország „-ba/-be" (irányultság) alakja. Pl. „Svájcba", „Németországba". */
+export function countryIllative(code: string | null | undefined): string {
+  switch (code) {
+    case "AT": return "Ausztriába";
+    case "DE": return "Németországba";
+    case "NL": return "Hollandiába";
+    default: return "Svájcba";
+  }
+}

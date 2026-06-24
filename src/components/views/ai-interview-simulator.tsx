@@ -124,7 +124,7 @@ export function AiInterviewSimulator() {
           AI Munkainterjú Szimulátor
         </h2>
         <p className="text-center text-[13px] leading-relaxed text-ink-muted mb-6">
-          Készülj fel {isAT ? "az osztrák" : "a svájci"} HR menedzserek kérdéseire! Az AI szerepjátékot játszik veled,
+          Készülj fel {country === "DE" ? "a német" : isAT ? "az osztrák" : "a svájci"} HR menedzserek kérdéseire! Az AI szerepjátékot játszik veled,
           hogy magabiztosabb legyél az éles interjún.
         </p>
 

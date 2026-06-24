@@ -6,7 +6,7 @@ import { Icon, SectionHeader } from "@/components/ui";
 import type { IconName } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryLocative, countryIllative } from "@/lib/countries";
 import { CountryFlag } from "@/components/ui/country-flag";
 import type { KintiEvent } from "@/lib/types";
 
@@ -82,7 +82,8 @@ export function HomeEvents({ events }: { events: KintiEvent[] }) {
 /** Kezdőlap-kártyák: a Kiköltözés Tracker minden országban (ország-tudatos szöveg),
  *  a Tudásbázis (svájci források) egyelőre csak CH-ban. */
 export function HomeChCards() {
-  const isCH = useEffectiveCountry() === "CH";
+  const country = useEffectiveCountry();
+  const isCH = country === "CH";
   return (
     <>
       <Link
@@ -95,7 +96,7 @@ export function HomeChCards() {
         <span className="min-w-0 flex-1">
           <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">Kiköltözés Tracker</span>
           <span className="block text-[12px] text-ink-muted">
-            Személyre szabott, lépésről-lépésre checklist {isCH ? "Svájcba" : "Ausztriába"} költözőknek
+            Személyre szabott, lépésről-lépésre checklist {countryIllative(country)} költözőknek
           </span>
         </span>
         <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-accent" />
@@ -111,7 +112,7 @@ export function HomeChCards() {
         <span className="min-w-0 flex-1">
           <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">Tudásbázis — hasznos tudnivalók</span>
           <span className="block text-[12px] text-ink-muted">
-            Bejelentkezés, {isCH ? "Krankenkasse" : "ÖGK"}, adó, iskola — hivatalos forrásból
+            Bejelentkezés, {country === "AT" ? "ÖGK" : "Krankenkasse"}, adó, iskola — hivatalos forrásból
           </span>
         </span>
         <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />

@@ -24,7 +24,10 @@ export function KvizDailyCard() {
 
   if (!state) return null;
 
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  // Csak CH/AT-nak van kvíz-bank — DE/NL-ben ne mutassunk svájci kvízt.
+  if (country !== "CH" && country !== "AT") return null;
+  const isAT = country === "AT";
   const played = !!state.today;
   const score = state.today?.score ?? 0;
 

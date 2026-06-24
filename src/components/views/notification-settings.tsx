@@ -93,7 +93,7 @@ export function NotificationSettings() {
   }
 
   async function disableAll() {
-    if (!confirm("Biztosan kikapcsolod az összes kanton-értesítést?")) return;
+    if (!confirm("Biztosan kikapcsolod az összes régió-értesítést?")) return;
     setBusy(true);
     try {
       const reg = await navigator.serviceWorker.ready;
@@ -180,7 +180,7 @@ export function NotificationSettings() {
               disabled={busy}
               className="mt-1 w-full rounded-pill border border-accent/40 bg-accent/10 px-4 py-2 text-[12.5px] font-bold text-accent"
             >
-              Összes kanton-értesítés kikapcsolása
+              Összes régió-értesítés kikapcsolása
             </button>
           </div>
         )}
@@ -215,7 +215,7 @@ export function NotificationSettings() {
           <InfoRow icon="🔔" title="Esemény-emlékeztető" desc="24h és 1h előtt, ha „Megyek”-et nyomsz egy eseményre. Automatikus." />
           <LinkRow href="/iranytu" icon="📊" title="Béradat-riasztás" desc="Szólunk, ha az iparágad átlagbére ±10%-ot mozdul." />
           <LinkRow href="/arfolyam" icon="💱" title="Árfolyam-riasztás" desc="Push, ha az EUR/HUF eléri az általad megadott szintet." />
-          <LinkRow href="/allasok" icon="🎯" title="Állás-riasztás (kulcsszó)" desc="Kulcsszó-alapú találat a szakmádban, bárhol — pontosabb, mint a kanton-kapcsoló (Kinti Radar)." />
+          <LinkRow href="/allasok" icon="🎯" title="Állás-riasztás (kulcsszó)" desc="Kulcsszó-alapú találat a szakmádban, bárhol — pontosabb, mint a régió-kapcsoló (Kinti Radar)." />
         </div>
       </section>
 
