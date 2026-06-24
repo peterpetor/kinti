@@ -15,6 +15,7 @@ import { RelocationReminderBanner } from "@/components/relocation-reminder-banne
 import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
 import { KvizDailyCard } from "@/components/kviz-daily-card";
 import { NapiSzoCard } from "@/components/napi-szo-card";
+import { HomePlatformGrid } from "@/components/home-platform-grid";
 import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
 import { getBusinesses, getEvents } from "@/lib/repo";
@@ -61,6 +62,9 @@ export default async function FeedPage() {
         <SectionHeader>Mit szeretnél?</SectionHeader>
         <HomePrimaryActions />
       </section>
+
+      {/* Teljes platform — a modulok szélessége egy helyen */}
+      <HomePlatformGrid />
 
       <section className="space-y-3">
         <SectionHeader
