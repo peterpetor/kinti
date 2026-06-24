@@ -3,9 +3,9 @@ import { Icon, KintiLogo } from "@/components/ui";
 import { SchoolSystem } from "@/components/views/school-system";
 
 export const metadata = {
-  title: "Svájci Iskolarendszer Útmutató",
+  title: "Iskolarendszer Útmutató — Svájc & Ausztria",
   description:
-    "Vizuális útmutató a svájci iskolarendszerhez kiköltöző szülőknek: Kindergarten, Primarschule, Sekundar és továbbtanulás, kantononkénti eltérésekkel.",
+    "Vizuális útmutató az iskolarendszerhez kiköltöző szülőknek. Svájc: Kindergarten, Primarschule, Sekundar, kantononkénti eltérésekkel. Ausztria: nemzeti rendszer (Volksschule, Mittelschule, AHS).",
 };
 
 export default function IskolarendszerPage() {
@@ -14,7 +14,7 @@ export default function IskolarendszerPage() {
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink truncate">
-          Svájci Iskolarendszer
+          Iskolarendszer
         </span>
         <Link
           href="/"

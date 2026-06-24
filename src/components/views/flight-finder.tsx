@@ -281,8 +281,8 @@ function PriceEstimateCard({
       </div>
       <p className="text-[11.5px] leading-relaxed text-ink-muted mb-3">{season.description}</p>
       <div className="space-y-2">
-        <PriceBar label="Low-cost (WizzAir, Ryanair…)" min={estimate.lowCostMin} max={estimate.lowCostMax} currency={currency} color="#16a34a" />
-        <PriceBar label="Full-service (Swiss, Austrian…)" min={estimate.fullServiceMin} max={estimate.fullServiceMax} currency={currency} color="#dc2626" />
+        <PriceBar label="Fapados (low-cost)" min={estimate.lowCostMin} max={estimate.lowCostMax} currency={currency} color="#16a34a" />
+        <PriceBar label="Hagyományos (full-service)" min={estimate.fullServiceMin} max={estimate.fullServiceMax} currency={currency} color="#dc2626" />
       </div>
       <p className="mt-3 text-[11.5px] text-ink-faint italic">
         Egyirányú, gazdaságos osztály, kézipoggyász alap. {fromCode} → {toCode}.{" "}
