@@ -31,7 +31,7 @@ export const LESSONS_AT: Lesson[] = [
     id: "al3", title: "Udvariasság", description: "Danke, Bitte, Entschuldigung.", chapter: 1, xpReward: 10,
     questions: [
       { id: "q7", type: "multiple_choice", prompt: "Hogy mondod: 'Elnézést'?", options: [{ id: "o1", text: "Entschuldigung" }, { id: "o2", text: "Scusi" }, { id: "o3", text: "Pardon" }], correctOptionId: "o1" },
-      { id: "q8", type: "flashcard", prompt: "'Szívesen' (válasz a köszönömre)?", backText: "Gern geschehen / Bitte", phonetic: "Gern gesehen" },
+      { id: "q8", type: "flashcard", prompt: "'Szívesen' (válasz a köszönömre)?", backText: "Gern geschehen / Bitte", phonetic: "Gern gesé-en" },
       { id: "q9", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "Köszönöm", right: "Danke" }, { id: "p2", left: "Kérlek / Tessék", right: "Bitte" }, { id: "p3", left: "Bocsánat", right: "Tschuldigung" }] },
     ],
   },
