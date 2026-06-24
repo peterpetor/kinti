@@ -60,6 +60,19 @@ export async function getSearchableWorkers(opts: SearchableWorkerFilter = {}): P
   return results.map(toWorkerProfile);
 }
 
+/**
+ * Aktív közvetítést kérő jelöltek (layer3_opt_in = 1) — a Feedback Jobs admin
+ * konzoljához. Ezek a jelöltek KIFEJEZETTEN hozzájárultak, hogy aktívan állást
+ * keressenek nekik és a CV-jüket átadják (külön a board-láthatóságtól).
+ */
+export async function getPlacementCandidates(limit = 500): Promise<WorkerProfile[]> {
+  const { results } = await getDB()
+    .prepare("SELECT * FROM worker_profiles WHERE layer3_opt_in = 1 ORDER BY updated_at DESC LIMIT ?")
+    .bind(limit)
+    .all<WorkerProfileRow>();
+  return results.map(toWorkerProfile);
+}
+
 export interface UpsertWorkerProfileInput {
   userId: string;
   fullName: string;

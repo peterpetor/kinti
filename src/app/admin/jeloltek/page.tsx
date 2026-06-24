@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminUserId } from "@/lib/admin";
-import { getSearchableWorkers } from "@/lib/repo";
+import { getPlacementCandidates } from "@/lib/repo";
 import { COUNTRIES } from "@/lib/countries";
 import { getRegions } from "@/lib/regions";
 import { jobCategoryLabel } from "@/lib/job-categories";
@@ -34,9 +34,9 @@ export default async function AdminJeloltekPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  // Csak az opt-inolt (searchable) jelöltek — GDPR-tiszta: ők hozzájárultak, hogy
-  // megtalálják őket. A Feedback Jobs közvetítői munka innen indul.
-  const candidates = await getSearchableWorkers({ limit: 500 });
+  // Csak az AKTÍV közvetítést kérő jelöltek (layer3_opt_in) — ők kifejezetten
+  // hozzájárultak, hogy a Feedback Jobs állást keressen nekik és átadja a CV-t.
+  const candidates = await getPlacementCandidates(500);
 
   return (
     <div className="mx-auto max-w-3xl space-y-5 px-5 py-6">
@@ -46,7 +46,7 @@ export default async function AdminJeloltekPage() {
         </Link>
         <h1 className="text-[26px] font-extrabold tracking-tight text-ink">Jelöltek (közvetítés)</h1>
         <p className="text-[12.5px] text-ink-muted">
-          A megosztásra <strong>opt-inolt</strong> jelöltek (Feedback Jobs). Töltsd le a CV-t, nézd meg a régiót/szakmát, és vedd fel velük a kapcsolatot.
+          Az <strong>aktív közvetítést kérő</strong> jelöltek (külön opt-in a Feedback Jobs-hoz). Töltsd le a CV-t, nézd meg a régiót/szakmát, és vedd fel velük a kapcsolatot.
         </p>
       </header>
 
@@ -56,7 +56,7 @@ export default async function AdminJeloltekPage() {
 
       {candidates.length === 0 ? (
         <div className="rounded-card border border-dashed border-line bg-surface px-4 py-10 text-center text-[13px] text-ink-muted">
-          Még nincs megosztásra opt-inolt jelölt. Amint feltöltenek CV-t és bekapcsolják a kereshetőséget, itt megjelennek.
+          Még nincs aktív közvetítést kérő jelölt. Amint valaki bepipálja az „Aktív állásközvetítés" opciót a CV-feltöltőn, itt megjelenik.
         </div>
       ) : (
         <>

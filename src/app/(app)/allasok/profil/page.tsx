@@ -96,6 +96,7 @@ export default async function WorkerProfilePage() {
             cantonCode: profile?.cantonCode ?? "",
             category: profile?.category ?? "",
             searchable: profile?.searchable ?? true,
+            placementOptIn: profile?.layer3OptIn ?? false,
             hasCv: !!profile?.cvKey,
           }}
         />

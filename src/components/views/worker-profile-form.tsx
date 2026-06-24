@@ -13,6 +13,8 @@ export interface WorkerProfileInitial {
   cantonCode: string;
   category: string;
   searchable: boolean;
+  /** Aktív közvetítés (Feedback Jobs) opt-in — a layer3_opt_in mezőből. */
+  placementOptIn: boolean;
   hasCv: boolean;
 }
 
@@ -29,6 +31,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
     cantonCode: initial.cantonCode,
     category: initial.category,
     searchable: initial.searchable,
+    placementOptIn: initial.placementOptIn,
   });
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -73,7 +76,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
           cantonCode: form.cantonCode || null,
           category: form.category || null,
           searchable: form.searchable,
-          layer3OptIn: form.searchable,
+          layer3OptIn: form.placementOptIn,
           ...(cvKey ? { cvKey } : {}),
         }),
       });
@@ -221,7 +224,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
         </button>
       </div>
 
-      <div className="pt-2">
+      <div className="pt-2 space-y-2.5">
         <label className="flex items-start gap-2.5">
           <input
             type="checkbox"
@@ -231,6 +234,18 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
           />
           <span className="text-[12.5px] leading-snug text-ink-muted">
             <strong className="font-semibold text-ink">Láthatóság:</strong> Hozzájárulok, hogy a profilom kereshető legyen a kinti.app munkáltatói hálózatában.
+          </span>
+        </label>
+
+        <label className="flex items-start gap-2.5 rounded-[12px] border border-primary/25 bg-primary-soft/40 p-2.5">
+          <input
+            type="checkbox"
+            checked={form.placementOptIn}
+            onChange={(e) => setForm({ ...form, placementOptIn: e.target.checked })}
+            className="mt-0.5 rounded border-line text-primary focus:ring-primary"
+          />
+          <span className="text-[12.5px] leading-snug text-ink-muted">
+            <strong className="font-semibold text-ink">🤝 Aktív állásközvetítés:</strong> Szeretném, hogy a <strong>Feedback Jobs</strong> (a Kinti üzemeltetője) aktívan állást keressen nekem EU-ban (AT/DE/NL), és e célból átadhatja a CV-met és adataimat a munkáltatóknak. A közvetítés <strong>ingyenes</strong> — a díjat a munkáltató fizeti. Bármikor visszavonható.
           </span>
         </label>
       </div>
