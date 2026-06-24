@@ -4,27 +4,22 @@ import { useMemo } from "react";
 import { usePersistedState } from "@/hooks/use-persisted-state";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 /**
- * Becsült díjak népszerű utalás-szolgáltatókhoz (CHF → HUF). A publikált
- * tarifák átlaga, NEM real-time. Az aktuális díjat a user a szolgáltatónál
- * ellenőrzi — itt csak nagyságrendi összehasonlításként szerepelnek.
- *
- * Számítás: net_received = amount * (rate * (1 - spread)) - fixedFee
- *   spread: a köztes árfolyam-különbség (0.5% = 0.005)
- *   fixedFee: CHF-ben, ha van
+ * Hazautalás-kalkulátor — ország-tudatos. CH: bázis CHF (CHF→HUF + CHF→EUR).
+ * Eurozóna (AT/DE): bázis EUR, csak EUR→HUF (az EUR→HUF a CHF-keresztből:
+ * chfToHuf / chfToEur). A díjak BECSÜLTEK (publikált átlag), nem real-time.
  */
 interface Provider {
   name: string;
   /** Spread (markup) a középárfolyamhoz képest, decimal (0.005 = 0.5%). */
   spread: number;
-  /** Fix díj CHF-ben (amount-tól független). */
+  /** Fix díj a bázis-pénznemben (amount-tól független). */
   fixedFee: number;
-  /** Becsült érkezési idő. */
   speed: string;
-  /** Egysoros leírás. */
   note: string;
-  /** Marketing szín (hex). */
   color: string;
   /** Referál/affiliate link — ha van, a kártya kattinthatóvá válik. */
   url?: string;
@@ -54,7 +49,7 @@ const PROVIDERS: Provider[] = [
     spread: 0.015,
     fixedFee: 5,
     speed: "1-2 munkanap",
-    note: "Tipikus svájci bank — drágább, de közvetlen.",
+    note: "Tipikus banki utalás — drágább, de közvetlen.",
     color: "#7f8c8d",
   },
 ];
@@ -68,17 +63,25 @@ export function ExchangeCalculator({
   chfToEur: number;
   date: string;
 }) {
-  const [chfAmount, setChfAmount] = usePersistedState("kinti_calc_exchange_amount", "100");
-  const [direction, setDirection] = usePersistedState<"to-huf" | "to-eur">("kinti_calc_exchange_dir", "to-huf");
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isEuro = country === "AT" || country === "DE";
+  const base = isEuro ? "EUR" : "CHF";
+  // Eurozónában a bázis EUR; az EUR→HUF a CHF-keresztből: chfToHuf / chfToEur.
+  const baseToHuf = isEuro ? (chfToEur > 0 ? chfToHuf / chfToEur : 0) : chfToHuf;
 
-  const chf = useMemo(() => {
-    const n = Number(chfAmount.replace(",", "."));
+  const [amount, setAmount] = usePersistedState("kinti_calc_exchange_amount", "100");
+  const [dirRaw, setDirection] = usePersistedState<"to-huf" | "to-eur">("kinti_calc_exchange_dir", "to-huf");
+  const direction = isEuro ? "to-huf" : dirRaw; // EUR-ban csak HUF-irány van értelme
+
+  const amt = useMemo(() => {
+    const n = Number(amount.replace(",", "."));
     return Number.isFinite(n) && n > 0 ? n : 0;
-  }, [chfAmount]);
+  }, [amount]);
 
-  const target = direction === "to-huf" ? chfToHuf : chfToEur;
+  const target = direction === "to-huf" ? baseToHuf : chfToEur;
   const targetSymbol = direction === "to-huf" ? "Ft" : "€";
-  const grossTarget = chf * target;
+  const grossTarget = amt * target;
   const grossTargetFmt = grossTarget.toLocaleString("hu-HU", {
     maximumFractionDigits: direction === "to-huf" ? 0 : 2,
   });
@@ -94,17 +97,15 @@ export function ExchangeCalculator({
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className={cn("grid gap-3", isEuro ? "grid-cols-1" : "grid-cols-2")}>
           <RateCard
-            label="1 CHF ="
-            value={chfToHuf.toLocaleString("hu-HU", { maximumFractionDigits: 2 })}
+            label={`1 ${base} =`}
+            value={baseToHuf.toLocaleString("hu-HU", { maximumFractionDigits: 2 })}
             unit="Ft"
           />
-          <RateCard
-            label="1 CHF ="
-            value={chfToEur.toFixed(4)}
-            unit="€"
-          />
+          {!isEuro && (
+            <RateCard label="1 CHF =" value={chfToEur.toFixed(4)} unit="€" />
+          )}
         </div>
 
         <p className="mt-3 text-[11.5px] leading-snug text-ink-muted">
@@ -119,29 +120,31 @@ export function ExchangeCalculator({
           <h2 className="text-[14px] font-extrabold text-ink">Hazautalás kalkulátor</h2>
         </div>
 
-        {/* Irány-toggle */}
-        <div className="flex gap-1 rounded-pill border border-line bg-surface-alt p-1">
-          <button
-            type="button"
-            onClick={() => setDirection("to-huf")}
-            className={cn(
-              "flex-1 rounded-pill px-3 py-1.5 text-[12px] font-bold transition",
-              direction === "to-huf" ? "bg-surface text-ink shadow-card" : "text-ink-muted",
-            )}
-          >
-            🇨🇭 CHF → 🇭🇺 HUF
-          </button>
-          <button
-            type="button"
-            onClick={() => setDirection("to-eur")}
-            className={cn(
-              "flex-1 rounded-pill px-3 py-1.5 text-[12px] font-bold transition",
-              direction === "to-eur" ? "bg-surface text-ink shadow-card" : "text-ink-muted",
-            )}
-          >
-            🇨🇭 CHF → 🇪🇺 EUR
-          </button>
-        </div>
+        {/* Irány-toggle — csak CH-ban (EUR-ban csak HUF-irány) */}
+        {!isEuro && (
+          <div className="flex gap-1 rounded-pill border border-line bg-surface-alt p-1">
+            <button
+              type="button"
+              onClick={() => setDirection("to-huf")}
+              className={cn(
+                "flex-1 rounded-pill px-3 py-1.5 text-[12px] font-bold transition",
+                direction === "to-huf" ? "bg-surface text-ink shadow-card" : "text-ink-muted",
+              )}
+            >
+              🇨🇭 CHF → 🇭🇺 HUF
+            </button>
+            <button
+              type="button"
+              onClick={() => setDirection("to-eur")}
+              className={cn(
+                "flex-1 rounded-pill px-3 py-1.5 text-[12px] font-bold transition",
+                direction === "to-eur" ? "bg-surface text-ink shadow-card" : "text-ink-muted",
+              )}
+            >
+              🇨🇭 CHF → 🇪🇺 EUR
+            </button>
+          </div>
+        )}
 
         {/* Bemenet */}
         <div>
@@ -152,15 +155,15 @@ export function ExchangeCalculator({
             <input
               type="number"
               inputMode="decimal"
-              value={chfAmount}
-              onChange={(e) => setChfAmount(e.target.value)}
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
               min="0"
               step="any"
               className="h-12 w-full rounded-[14px] border border-line bg-surface-alt px-3.5 pr-16 text-[18px] font-extrabold text-ink outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
               placeholder="100"
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[14px] font-bold text-ink-muted">
-              CHF
+              {base}
             </span>
           </div>
         </div>
@@ -181,16 +184,16 @@ export function ExchangeCalculator({
         </div>
 
         {/* Szolgáltatók */}
-        {chf > 0 && direction === "to-huf" && (
+        {amt > 0 && direction === "to-huf" && (
           <div className="space-y-2">
             <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
               Becsült érkező összeg szolgáltatónként
             </p>
             {PROVIDERS.map((p) => {
-              const actualRate = chfToHuf * (1 - p.spread);
-              const netChf = Math.max(0, chf - p.fixedFee);
-              const received = netChf * actualRate;
-              const fee = chf * chfToHuf - received;
+              const actualRate = baseToHuf * (1 - p.spread);
+              const netBase = Math.max(0, amt - p.fixedFee);
+              const received = netBase * actualRate;
+              const fee = amt * baseToHuf - received;
               const cardCls =
                 "flex items-center gap-3 rounded-[12px] border border-line bg-surface px-3 py-2.5";
               const inner = (
@@ -255,17 +258,17 @@ export function ExchangeCalculator({
           Gyors-konverzió
         </p>
         <div className="grid grid-cols-3 gap-2">
-          {[100, 500, 1000].map((amt) => (
+          {[100, 500, 1000].map((amount2) => (
             <button
-              key={amt}
+              key={amount2}
               type="button"
-              onClick={() => setChfAmount(String(amt))}
+              onClick={() => setAmount(String(amount2))}
               className="rounded-[10px] border border-line bg-surface-alt px-2 py-2 text-[11.5px] font-bold text-ink active:scale-95"
             >
-              {amt} CHF
+              {amount2} {base}
               <br />
               <span className="text-[11.5px] text-ink-muted font-medium">
-                = {(amt * chfToHuf).toLocaleString("hu-HU", { maximumFractionDigits: 0 })} Ft
+                = {(amount2 * baseToHuf).toLocaleString("hu-HU", { maximumFractionDigits: 0 })} Ft
               </span>
             </button>
           ))}

@@ -4,10 +4,12 @@ import { getCloudflareEnv } from "./cloudflare";
 import { safeLogError } from "./safe-log";
 
 /**
- * Triggerezi az Árfolyam radarokat, ha a beállított küszöböt átlépte a CHF/HUF árfolyam.
+ * Triggerezi az Árfolyam radarokat, ha a beállított küszöböt átlépte az árfolyam.
+ * A radar `currency` paramétere (CHF vagy EUR) dönti el, melyik rátához mérünk;
+ * régi (currency nélküli) radar = CHF. `rates`: { chf: CHF→HUF, eur: EUR→HUF }.
  */
-export async function triggerExchangeRateRadars(currentHuf: number) {
-  if (!currentHuf || currentHuf <= 0) return;
+export async function triggerExchangeRateRadars(rates: { chf: number; eur: number }) {
+  if ((!rates.chf || rates.chf <= 0) && (!rates.eur || rates.eur <= 0)) return;
   try {
     const radars = await getActiveRadarsByType("exchange_rate");
     if (radars.length === 0) return;
@@ -21,9 +23,10 @@ export async function triggerExchangeRateRadars(currentHuf: number) {
         const p = JSON.parse(r.parameters);
         const threshold = Number(p.threshold);
         const dir = p.direction;
-        if (!Number.isFinite(threshold)) return false;
-        if (dir === "above") return currentHuf >= threshold;
-        if (dir === "below") return currentHuf <= threshold;
+        const current = p.currency === "EUR" ? rates.eur : rates.chf;
+        if (!Number.isFinite(threshold) || !current || current <= 0) return false;
+        if (dir === "above") return current >= threshold;
+        if (dir === "below") return current <= threshold;
         return false;
       } catch {
         return false;

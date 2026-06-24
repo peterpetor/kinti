@@ -26,22 +26,24 @@ export async function GET(req: Request) {
   const type = url.searchParams.get("type");
 
   if (type === "exchange_rate") {
-    // Lekérdezzük a valós árfolyamot (cache nélkül!)
-    let huf: number;
+    // Valós árfolyam (cache nélkül): CHF→HUF és CHF→EUR; ebből EUR→HUF = HUF/EUR.
+    let chf: number;
+    let eur: number;
     try {
-      const res = await fetch("https://api.frankfurter.app/latest?from=CHF&to=HUF", {
+      const res = await fetch("https://api.frankfurter.app/latest?from=CHF&to=HUF,EUR", {
         cache: "no-store",
       });
       if (!res.ok) throw new Error("API hiba");
-      const data = await res.json() as { rates: { HUF: number } };
-      huf = data.rates.HUF;
+      const data = await res.json() as { rates: { HUF: number; EUR: number } };
+      chf = data.rates.HUF;
+      eur = data.rates.EUR > 0 ? data.rates.HUF / data.rates.EUR : 0;
     } catch {
       return NextResponse.json({ error: "Frankfurter API hiba" }, { status: 502 });
     }
 
     try {
-      await triggerExchangeRateRadars(huf);
-      return NextResponse.json({ ok: true, triggered: "exchange_rate", huf });
+      await triggerExchangeRateRadars({ chf, eur });
+      return NextResponse.json({ ok: true, triggered: "exchange_rate", chf, eur });
     } catch {
       return NextResponse.json({ error: "Hiba a radarok triggerezésekor" }, { status: 500 });
     }

@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 type State =
   | "checking"
@@ -21,7 +23,14 @@ interface Radar {
   createdAt: string;
 }
 
-export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
+export function KintiRadar({ chfToHuf, chfToEur }: { chfToHuf?: number; chfToEur?: number }) {
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isEuro = country === "AT" || country === "DE";
+  const base = isEuro ? "EUR" : "CHF";
+  // Eurozónában EUR→HUF (a CHF-keresztből), különben CHF→HUF.
+  const baseToHuf = isEuro ? (chfToEur && chfToEur > 0 ? (chfToHuf || 0) / chfToEur : 0) : (chfToHuf || 0);
+
   const [state, setState] = useState<State>("checking");
   const [subscription, setSubscription] = useState<PushSubscriptionJSON | null>(null);
   const [radars, setRadars] = useState<Radar[]>([]);
@@ -29,7 +38,7 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
   const [error, setError] = useState<string | null>(null);
 
   // Exchange Rate form
-  const [threshold, setThreshold] = useState<string>(String(Math.round((currentHufRate || 400) + 10)));
+  const [threshold, setThreshold] = useState<string>(String(Math.round((baseToHuf || 400) + 10)));
   const [direction, setDirection] = useState<"above" | "below">("above");
 
   const refreshRadars = useCallback(async (sub: PushSubscriptionJSON) => {
@@ -108,7 +117,7 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
       setError("Érvénytelen küszöb.");
       return;
     }
-    const parameters = { threshold: t, direction };
+    const parameters = { threshold: t, direction, currency: base };
 
     setState("busy");
     try {
@@ -182,7 +191,7 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
     try {
       const p = JSON.parse(r.parameters);
       if (r.radarType === "exchange_rate") {
-        return `${p.direction === "above" ? "≥" : "≤"} ${p.threshold} HUF / CHF`;
+        return `${p.direction === "above" ? "≥" : "≤"} ${p.threshold} HUF / ${p.currency === "EUR" ? "EUR" : "CHF"}`;
       }
     } catch {
       return "Ismeretlen radar";
@@ -210,7 +219,7 @@ export function KintiRadar({ currentHufRate }: { currentHufRate?: number }) {
       <div className="rounded-2xl border border-line bg-surface-alt/40 p-4 space-y-3">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-[13px]">
-            <span className="font-bold text-ink">Értesíts ha 1 CHF</span>
+            <span className="font-bold text-ink">Értesíts ha 1 {base}</span>
             <select
               value={direction}
               onChange={(e) => setDirection(e.target.value as "above" | "below")}

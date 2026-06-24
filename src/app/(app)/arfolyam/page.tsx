@@ -8,9 +8,9 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Árfolyam és hazautalás kalkulátor — CHF / HUF",
+  title: "Árfolyam és hazautalás kalkulátor — CHF/EUR → HUF",
   description:
-    "Aktuális CHF/HUF árfolyam és népszerű utalás-szolgáltatók díjkalkulátora — Wise, Revolut, banki utalás összehasonlítva.",
+    "Aktuális árfolyam és népszerű utalás-szolgáltatók díjkalkulátora (CHF vagy EUR → HUF) — Wise, Revolut, banki utalás összehasonlítva.",
 };
 
 interface ExchangeData {
@@ -52,7 +52,7 @@ export default async function ArfolyamPage() {
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink">
-          Árfolyam · CHF/HUF
+          Árfolyam · Hazautalás
         </span>
         <Link
           href="/"
@@ -70,7 +70,7 @@ export default async function ArfolyamPage() {
             chfToEur={rate.rates.EUR}
             date={rate.date}
           />
-          <KintiRadar currentHufRate={rate.rates.HUF} />
+          <KintiRadar chfToHuf={rate.rates.HUF} chfToEur={rate.rates.EUR} />
         </>
       ) : (
         <div className="rounded-card border border-accent/30 bg-accent-soft px-4 py-6 text-center text-[13px] text-ink-muted">
