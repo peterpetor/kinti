@@ -5,10 +5,34 @@ import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 export default function ProPage() {
   const { startCheckout, isLoading } = useCheckout();
   const { user } = useUser();
+  const [prefCountry] = usePreferredCountry();
+  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+
+  // A Kinti PRO funkciók ország-tudatosak. AT-n osztrák megfelelők (az AI-interjú,
+  // a nyelvkurzus és az állampolgárság-kvíz ország-tudatos a backenden is). A
+  // szakmai szótár egyelőre CH-only, ezért AT-n nem szerepel.
+  const proFeatures = isAT
+    ? [
+        "AI Interjú Szimulátor osztrák cégekhez",
+        "AI CV-audit — önéletrajz-elemzés és tippek",
+        "Teljes Osztrák Német kurzus",
+        "Staatsbürgerschaftstest (Állampolgárság) Szimulátor",
+        "Teljesen reklámmentes élmény",
+      ]
+    : [
+        "AI Interjú Szimulátor svájci cégekhez",
+        "AI CV-audit — önéletrajz-elemzés és tippek",
+        "Szakmai szótár — 500+ svájci kifejezés",
+        "Teljes Svájci Német (Mundart) kurzus",
+        "Einbürgerung (Állampolgárság) Szimulátor",
+        "Teljesen reklámmentes élmény",
+      ];
 
   const handleCheckout = (product: "kinti_pro_monthly" | "business_pro_monthly" | "job_featured") => {
     // PRO előfizetés a Clerk userId-hez kötődik — bejelentkezés nélkül nincs
@@ -49,7 +73,7 @@ export default function ProPage() {
           Lépj szintet a <span className="text-primary">Kinti PRO</span>-val
         </h1>
         <p className="text-[15px] text-ink-muted text-balance">
-          Svájci magyaroknak, szakembereknek és munkáltatóknak fejlesztett exkluzív csomagok, melyekkel maximalizálhatod a platform lehetőségeit.
+          {isAT ? "Ausztriában" : "Svájcban"} élő magyaroknak, szakembereknek és munkáltatóknak fejlesztett exkluzív csomagok, melyekkel maximalizálhatod a platform lehetőségeit.
         </p>
       </header>
 
@@ -67,17 +91,14 @@ export default function ProPage() {
           </p>
 
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">19 CHF</span>
+            <span className="text-3xl font-black text-ink">19 {isAT ? "€" : "CHF"}</span>
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
           </div>
 
           <ul className="space-y-3 mb-8 flex-1">
-            <FeatureItem text="AI Interjú Szimulátor svájci cégekhez" />
-            <FeatureItem text="AI CV-audit — önéletrajz-elemzés és tippek" />
-            <FeatureItem text="Szakmai szótár — 500+ svájci kifejezés" />
-            <FeatureItem text="Teljes Svájci Német (Mundart) kurzus" />
-            <FeatureItem text="Einbürgerung (Állampolgárság) Szimulátor" />
-            <FeatureItem text="Teljesen reklámmentes élmény" />
+            {proFeatures.map((t) => (
+              <FeatureItem key={t} text={t} />
+            ))}
           </ul>
 
           <button
