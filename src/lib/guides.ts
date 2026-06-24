@@ -1091,12 +1091,101 @@ export const GUIDES_AT: Guide[] = [
   },
 ];
 
+export const GUIDES_DE: Guide[] = [
+  {
+    slug: "de-bejelentkezes",
+    title: "Bejelentkezés (Anmeldung) és tartózkodás",
+    summary: "Anmeldung a Bürgeramtnál ~1-2 héten belül; EU-állampolgárként Freizügigkeit — nincs külön engedély.",
+    icon: "home",
+    sections: [
+      { heading: "Lakcímbejelentés (Anmeldung)", body: ["A beköltözéstől általában 1-2 héten belül (városonként eltér, pl. Berlin 14 nap) be kell jelentkezned a Bürgeramt / Einwohnermeldeamt-nál — Termin-foglalással (nagyvárosban hetekre előre telt!).", "Kell: a Wohnungsgeberbestätigung (a főbérlő/tulajdonos aláírt igazolása) + útlevél/igazolvány. A kapott Meldebescheinigung sok más ügyhöz kell (bankszámla, Steuer-ID, biztosítás)."] },
+      { heading: "Szabad mozgás (Freizügigkeit)", body: ["EU-állampolgárként szabad mozgásod van — NINCS szükség tartózkodási engedélyre. A korábbi Freizügigkeitsbescheinigungot 2013-ban eltörölték.", "3 hónapnál tovább a feltétel: munka / önfoglalkoztatás VAGY elég megélhetés + egészségbiztosítás."] },
+      { heading: "Hosszabb távon", bullets: ["5 év jogszerű tartózkodás → Daueraufenthalt-EU (tartós tartózkodás)", "Állampolgárság a 2024-es reform óta már 5 év után (kivételes integrációval 3) — és a KETTŐS állampolgárság ENGEDÉLYEZETT, NEM kell lemondani a magyarról!"] },
+    ],
+    sources: [{ label: "make-it-in-germany.com — Anmeldung", url: "https://www.make-it-in-germany.com/" }, { label: "BAMF", url: "https://www.bamf.de/" }],
+  },
+  {
+    slug: "de-egeszsegbiztositas",
+    title: "Egészségbiztosítás (Krankenversicherung)",
+    summary: "Kötelező; gesetzlich (GKV — AOK/TK/Barmer) vagy privat (PKV). A GKV-nál a pénztárt TE választod.",
+    icon: "heart",
+    sections: [
+      { heading: "Kötelező biztosítás", body: ["Németországban KÖTELEZŐ az egészségbiztosítás. A legtöbb munkavállaló a gesetzliche Krankenversicherung (GKV) tagja.", "A munkáltató bejelent, de a Krankenkassét TE választod (AOK, TK, Barmer, DAK…) — eltér a Zusatzbeitrag és a szolgáltatás. Svájccal ellentétben itt választani KELL pénztárt."] },
+      { heading: "GKV vs. PKV", body: ["A GKV-járulék kb. 14,6% + a pénztár Zusatzbeitragja (átlag ~2,5%), nagyjából fele-fele a munkáltatóval.", "Magas jövedelem felett (a Versicherungspflichtgrenze, ~73 800 €/év 2025) választható a magán (PKV) is — de oda visszalépni nehéz, jól gondold meg."] },
+      { heading: "Gyakorlat", bullets: ["A Gesundheitskarte (Versichertenkarte) a TB-kártyád", "A Hausarzt (háziorvos) az első kontakt", "Nem dolgozó házastárs + gyerekek a GKV-ban gyakran ingyen társbiztosítottak (Familienversicherung)"] },
+    ],
+    sources: [{ label: "make-it-in-germany.com — Krankenversicherung", url: "https://www.make-it-in-germany.com/" }, { label: "GKV-Spitzenverband", url: "https://www.gkv-spitzenverband.de/" }],
+  },
+  {
+    slug: "de-adozas",
+    title: "Adózás (Steuer / Lohnsteuer)",
+    summary: "Steuer-ID postán; a bérből vonják a Lohnsteuert; a Steuererklärung (ELSTER) gyakran visszatérítést hoz.",
+    icon: "document",
+    sections: [
+      { heading: "Steuer-ID és Steuerklasse", body: ["Az Anmeldung után postán kapsz egy Steuerliche Identifikationsnummert (Steuer-ID) — ez kell a munkához és a bankhoz.", "A Steuerklasse (I–VI) szabja a levont Lohnsteuert: I egyedülálló, III/V vagy IV/IV házasoknak, VI a második állásra."] },
+      { heading: "Levonások a bérből", body: ["A munkáltató automatikusan levonja a Lohnsteuert + a társadalombiztosítási járulékot (egészség, nyugdíj, ápolás, munkanélküli).", "A Solidaritätszuschlag (Soli) 2021 óta a dolgozók ~90%-ánál MEGSZŰNT. A Kirchensteuer (egyházi adó, 8–9%) CSAK akkor, ha bejelentett egyháztag vagy."] },
+      { heading: "Steuererklärung (adóbevallás)", body: ["Az éves bevallást az ELSTER portálon (vagy adós appal) adod be — sokszor VISSZAJÁR pénz (ingázás/Pendlerpauschale, home office, továbbképzés).", "Sok munkavállalónak önkéntes, de szinte mindig megéri beadni."] },
+    ],
+    sources: [{ label: "ELSTER — online adóportál", url: "https://www.elster.de/" }, { label: "BZSt — Bundeszentralamt für Steuern", url: "https://www.bzst.de/" }],
+  },
+  {
+    slug: "de-iskola",
+    title: "Iskola és gyerek (Schule)",
+    summary: "Tankötelezettség, ingyenes állami iskola; a rendszer tartományonként (Bundesland) eltér.",
+    icon: "bookmark",
+    sections: [
+      { heading: "Tankötelezettség", body: ["Általában 9–10 év Schulpflicht (kb. 6 éves kortól). Az állami iskola ingyenes.", "Ha a gyerek nem tud németül, Willkommensklasse / Sprachförderung segíti a felzárkózást."] },
+      { heading: "A rendszer (Bundesland-függő!)", bullets: ["Grundschule (1–4. osztály; Berlin/Brandenburg 1–6.)", "Utána: Gymnasium (Abitur felé), Realschule, Hauptschule vagy Gesamtschule", "A nevek és az átmenet tartományonként ELTÉRNEK — nézd a lakóhelyed Bundeslandját"] },
+      { heading: "Duális képzés", body: ["A híres Ausbildung (duális szakképzés): iskola + céges gyakorlat, fizetéssel. Erős, megbecsült út egy szakmához (kb. 3 év)."] },
+    ],
+    sources: [{ label: "make-it-in-germany.com — Schule", url: "https://www.make-it-in-germany.com/" }, { label: "KMK — Kultusministerkonferenz", url: "https://www.kmk.org/" }],
+  },
+  {
+    slug: "de-munkavallalas",
+    title: "Munkavállalás (Arbeit)",
+    summary: "EU-állampolgárként szabadon dolgozhatsz; Mindestlohn + írott Arbeitsvertrag véd.",
+    icon: "briefcase",
+    sections: [
+      { heading: "Szabad munkavállalás", body: ["EU-állampolgárként engedély nélkül, szabadon dolgozhatsz Németországban.", "Az írott Arbeitsvertrag (munkaszerződés) rögzíti a bért, a munkaidőt, a szabadságot és a felmondási időt."] },
+      { heading: "Bér és munkaidő", bullets: ["Törvényi Mindestlohn: kb. 13,90 €/óra (2026; évente emelkedik — ellenőrizd az aktuálisat)", "Sok ágazatban Tarifvertrag (kollektív szerződés) magasabb bért ad", "Min. évi 20 munkanap fizetett szabadság (5 napos hétnél); a gyakorlat gyakran 25–30"] },
+      { heading: "Felmondás és munkanélküliség", body: ["A Kündigung (felmondás) mindig ÍRÁSBAN, törvényi/szerződéses Kündigungsfrist-tel.", "Munkanélküliség esetén az Agentur für Arbeit-nál jelentkezz (Arbeitslosengeld) — lehetőleg már a felmondás napján."] },
+    ],
+    sources: [{ label: "make-it-in-germany.com — Arbeit", url: "https://www.make-it-in-germany.com/" }, { label: "Agentur für Arbeit", url: "https://www.arbeitsagentur.de/" }],
+  },
+  {
+    slug: "de-bankszamla",
+    title: "Bankszámla (Girokonto)",
+    summary: "A fizetéshez és a lakbérhez kell; banknál vagy online (N26, DKB, ING).",
+    icon: "trending",
+    sections: [
+      { heading: "Számlanyitás", body: ["Nyiss Girokonto-t (folyószámla) — Sparkasse, Volksbank, vagy online (N26, DKB, ING).", "Kell: útlevél/igazolvány + Meldebescheinigung (gyakran a Steuer-ID is). EU-ban jogod van Basiskonto-hoz akkor is, ha még nincs minden papírod."] },
+      { heading: "Fizetés", bullets: ["A kártya jellemzően Girocard (EC) vagy debit; az Überweisung (SEPA-átutalás) az alap", "A Lastschrift (beszedési megbízás) gyakori a rezsire/biztosításra", "Készpénz még sok helyen elterjedt — vigyél magaddal"] },
+      { heading: "Betétvédelem", body: ["Az EU-szabály szerint a betétek bankonként 100 000 €-ig védettek (Einlagensicherung)."] },
+    ],
+    sources: [{ label: "make-it-in-germany.com — Konto", url: "https://www.make-it-in-germany.com/" }],
+  },
+  {
+    slug: "de-lakasberles",
+    title: "Lakásbérlés (Wohnung)",
+    summary: "Mietvertrag, Kaution (max 3 havi Kaltmiete); figyelj a Warmmiete-re és a Schufa-ra.",
+    icon: "home",
+    sections: [
+      { heading: "Bérleti szerződés", body: ["A Mietvertrag rögzíti a Kaltmiete-t (hideg bérleti díj) + a Nebenkosten (rezsi/üzemeltetés) = Warmmiete (a TÉNYLEGES havi díj). Mindig az összköltséget nézd!", "Lehet határozott (befristet) vagy határozatlan (unbefristet) idejű."] },
+      { heading: "Költségek beköltözéskor", bullets: ["Kaution (kaució): max. 3 havi Kaltmiete", "Gyakran kell Schufa-Auskunft (hitelképességi igazolás) + Mietschuldenfreiheitsbescheinigung", "A Maklerprovision-t 2015 óta a megrendelő fizeti (Bestellerprinzip) — bérlőként ritkán a tiéd"] },
+      { heading: "Jogvédelem", body: ["A német Mietrecht erősen védi a bérlőt (felmondási védelem, sok városban Mietpreisbremse). Vitában a Mieterverein (Deutscher Mieterbund) segít."] },
+    ],
+    sources: [{ label: "make-it-in-germany.com — Wohnung", url: "https://www.make-it-in-germany.com/" }, { label: "Deutscher Mieterbund", url: "https://www.mieterbund.de/" }],
+  },
+];
+
 /** Az összes guide (statikus generáláshoz + slug-kereséshez). */
-export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT];
+export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT, ...GUIDES_DE];
 
 /** A választott ország guide-jai (a lista + kereső). */
 export function getGuides(country: string | null | undefined): Guide[] {
-  return country === "AT" ? GUIDES_AT : GUIDES_CH;
+  if (country === "AT") return GUIDES_AT;
+  if (country === "DE") return GUIDES_DE;
+  return GUIDES_CH;
 }
 
 export function getGuide(slug: string): Guide | undefined {
