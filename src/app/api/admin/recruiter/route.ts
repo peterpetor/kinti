@@ -3,6 +3,9 @@ import { getAdminUserId } from "@/lib/admin";
 import { getMediaBucket } from "@/lib/cloudflare";
 import {
   listRecruitingCandidates,
+  countRecruitingCandidates,
+  getRecruitingStatusCounts,
+  getRecruitingProfessions,
   createRecruitingCandidate,
   updateRecruitingCandidate,
   deleteRecruitingCandidate,
@@ -22,10 +25,31 @@ async function guard(): Promise<boolean> {
   return !!(await getAdminUserId());
 }
 
-export async function GET() {
+const PAGE_SIZE = 30;
+
+export async function GET(req: Request) {
   if (!(await guard())) return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  const [candidates, stats] = await Promise.all([listRecruitingCandidates(500), getRecruitingStats()]);
-  return NextResponse.json({ candidates, stats }, { headers: { "cache-control": "no-store" } });
+  const sp = new URL(req.url).searchParams;
+  const q = sp.get("q") ?? "";
+  const statusRaw = sp.get("status");
+  const countryRaw = sp.get("country");
+  const page = Math.max(1, parseInt(sp.get("page") ?? "1", 10) || 1);
+  const filter = {
+    q,
+    status: statusRaw && STATUSES.has(statusRaw as RecruitingStatus) ? (statusRaw as RecruitingStatus) : null,
+    country: countryRaw && COUNTRIES.has(countryRaw) ? countryRaw : null,
+  };
+  const [candidates, total, stats, statusCounts, professions] = await Promise.all([
+    listRecruitingCandidates({ ...filter, limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE }),
+    countRecruitingCandidates(filter),
+    getRecruitingStats(),
+    getRecruitingStatusCounts(),
+    getRecruitingProfessions(12),
+  ]);
+  return NextResponse.json(
+    { candidates, total, page, pageSize: PAGE_SIZE, stats, statusCounts, professions },
+    { headers: { "cache-control": "no-store" } },
+  );
 }
 
 export async function POST(req: Request) {

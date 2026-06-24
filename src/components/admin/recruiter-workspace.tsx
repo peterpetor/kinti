@@ -90,6 +90,11 @@ export function RecruiterWorkspace() {
   const [fStatus, setFStatus] = useState<RecruitingStatus | "all">("all");
   const [fCountry, setFCountry] = useState<string>("all");
   const [fSearch, setFSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [statusCounts, setStatusCounts] = useState<Record<string, number> | null>(null);
+  const [professions, setProfessions] = useState<{ keyword: string; count: number }[]>([]);
+  const [loadingList, setLoadingList] = useState(false);
 
   const [outreachFor, setOutreachFor] = useState<string | null>(null);
   const [outreachSubject, setOutreachSubject] = useState("");
@@ -98,18 +103,42 @@ export function RecruiterWorkspace() {
   const [sending, setSending] = useState(false);
   const [outreachResult, setOutreachResult] = useState<string | null>(null);
 
-  useEffect(() => { loadCandidates(); loadShortlist(); }, []);
+  // Szerveroldali keresés/szűrés/lapozás (több ezer jelöltnél is gyors). A szűrők/
+  // oldalszám változására 200ms debounce-szal újratölt (a keresőnél is sima).
+  useEffect(() => {
+    const h = setTimeout(() => { void loadCandidates(); }, 200);
+    return () => clearTimeout(h);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fStatus, fCountry, fSearch, page]);
+
   async function loadCandidates() {
+    setLoadingList(true);
     try {
-      const res = await fetch("/api/admin/recruiter");
-      const data = (await res.json().catch(() => ({}))) as { candidates?: RecruitingCandidate[]; stats?: typeof stats };
-      setCandidates(data.candidates ?? []);
+      const params = new URLSearchParams();
+      if (fSearch.trim()) params.set("q", fSearch.trim());
+      if (fStatus !== "all") params.set("status", fStatus);
+      if (fCountry !== "all") params.set("country", fCountry);
+      params.set("page", String(page));
+      const res = await fetch(`/api/admin/recruiter?${params.toString()}`);
+      const data = (await res.json().catch(() => ({}))) as {
+        candidates?: RecruitingCandidate[]; total?: number; stats?: typeof stats;
+        statusCounts?: Record<string, number>; professions?: { keyword: string; count: number }[];
+      };
+      const list = data.candidates ?? [];
+      setCandidates(list);
+      setTotal(data.total ?? list.length);
       setStats(data.stats ?? null);
+      setStatusCounts(data.statusCounts ?? null);
+      setProfessions(data.professions ?? []);
+      void loadShortlist(list.map((c) => c.id));
     } catch { /* ignore */ }
+    finally { setLoadingList(false); }
   }
-  async function loadShortlist() {
+  async function loadShortlist(ids?: string[]) {
+    const idList = ids ?? candidates.map((c) => c.id);
+    if (!idList.length) { setShortlist([]); return; }
     try {
-      const res = await fetch("/api/admin/recruiter/shortlist");
+      const res = await fetch(`/api/admin/recruiter/shortlist?candidateIds=${encodeURIComponent(idList.join(","))}`);
       const data = (await res.json().catch(() => ({}))) as { shortlist?: ShortlistJob[] };
       setShortlist(data.shortlist ?? []);
     } catch { /* ignore */ }
@@ -187,6 +216,7 @@ export function RecruiterWorkspace() {
     if (!confirm("Biztosan törlöd ezt a jelöltet?")) return;
     setCandidates((cs) => cs.filter((c) => c.id !== id));
     await fetch(`/api/admin/recruiter?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+    await loadCandidates();
   }
 
   // 🪄 AI: a CV-ből kulcsszó + skillek + összegzés, majd keresés azzal.
@@ -246,14 +276,11 @@ export function RecruiterWorkspace() {
   const enc = encodeURIComponent(q);
   const inputCls = "w-full rounded-[12px] border border-line bg-surface-alt px-3.5 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
 
-  const fq = fSearch.trim().toLowerCase();
-  const filtered = candidates.filter((c) => {
-    if (fStatus !== "all" && c.status !== fStatus) return false;
-    if (fCountry !== "all" && c.country !== fCountry) return false;
-    if (fq && !c.fullName.toLowerCase().includes(fq) && !(c.keyword ?? "").toLowerCase().includes(fq)) return false;
-    return true;
-  });
-  const showFilters = candidates.length > 4;
+  const pageSize = 30;
+  const statusTotal = statusCounts ? Object.values(statusCounts).reduce((a, b) => a + b, 0) : 0;
+  const anyCandidates = statusTotal > 0 || candidates.length > 0;
+  const filtersActive = fSearch.trim() !== "" || fStatus !== "all" || fCountry !== "all";
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="space-y-5">
@@ -293,26 +320,29 @@ export function RecruiterWorkspace() {
         </div>
       </section>
 
-      {candidates.length > 0 && (
+      {(anyCandidates || filtersActive) && (
         <section className="space-y-2">
-          <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">Jelöltek ({showFilters && filtered.length !== candidates.length ? `${filtered.length}/${candidates.length}` : candidates.length})</h3>
-          {showFilters && (
-            <div className="space-y-2 rounded-card border border-line bg-surface p-3 shadow-card">
-              <input value={fSearch} onChange={(e) => setFSearch(e.target.value)} placeholder="Keresés névre / szakmára…" className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none" />
-              <div className="flex flex-wrap gap-1.5">
-                <button type="button" onClick={() => setFStatus("all")} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fStatus === "all" ? "bg-primary text-white" : "border border-line bg-surface-alt text-ink-muted")}>Mind</button>
-                {STATUS.map((s) => <button key={s.id} type="button" onClick={() => setFStatus(s.id)} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fStatus === s.id ? "bg-primary text-white" : "border border-line bg-surface-alt text-ink-muted")}>{s.label}</button>)}
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                <button type="button" onClick={() => setFCountry("all")} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fCountry === "all" ? "bg-ink text-white" : "border border-line bg-surface-alt text-ink-muted")}>🌍 Mind</button>
-                {COUNTRIES.map((c) => <button key={c.code} type="button" onClick={() => setFCountry(c.code)} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fCountry === c.code ? "bg-ink text-white" : "border border-line bg-surface-alt text-ink-muted")}>{c.label}</button>)}
-              </div>
+          <div className="space-y-2 rounded-card border border-line bg-surface p-3 shadow-card">
+            <input value={fSearch} onChange={(e) => { setFSearch(e.target.value); setPage(1); }} placeholder="🔎 Keresés névre / szakmára…" className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none" />
+            <div className="flex flex-wrap gap-1.5">
+              <button type="button" onClick={() => { setFStatus("all"); setPage(1); }} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fStatus === "all" ? "bg-primary text-white" : "border border-line bg-surface-alt text-ink-muted")}>Mind{statusCounts ? ` (${statusTotal})` : ""}</button>
+              {STATUS.map((s) => <button key={s.id} type="button" onClick={() => { setFStatus(s.id); setPage(1); }} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fStatus === s.id ? "bg-primary text-white" : "border border-line bg-surface-alt text-ink-muted")}>{s.label}{statusCounts ? ` (${statusCounts[s.id] ?? 0})` : ""}</button>)}
             </div>
-          )}
-          {filtered.length === 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              <button type="button" onClick={() => { setFCountry("all"); setPage(1); }} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fCountry === "all" ? "bg-ink text-white" : "border border-line bg-surface-alt text-ink-muted")}>🌍 Mind</button>
+              {COUNTRIES.map((c) => <button key={c.code} type="button" onClick={() => { setFCountry(c.code); setPage(1); }} className={cn("rounded-pill px-2.5 py-1 text-[11.5px] font-bold transition", fCountry === c.code ? "bg-ink text-white" : "border border-line bg-surface-alt text-ink-muted")}>{c.label}</button>)}
+            </div>
+            {professions.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 border-t border-line pt-2">
+                <span className="text-[10.5px] font-bold uppercase tracking-wide text-ink-faint">Szakmák:</span>
+                {professions.map((p) => <button key={p.keyword} type="button" onClick={() => { setFSearch(fSearch === p.keyword ? "" : p.keyword); setPage(1); }} className={cn("rounded-pill px-2.5 py-1 text-[11px] font-bold transition", fSearch === p.keyword ? "bg-star/20 text-star" : "border border-line bg-surface-alt text-ink-muted")}>{p.keyword} ({p.count})</button>)}
+              </div>
+            )}
+          </div>
+          <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">Jelöltek — {total} db{loadingList ? " · frissítés…" : ""}</h3>
+          {candidates.length === 0 ? (
             <p className="rounded-card border border-dashed border-line bg-surface px-4 py-6 text-center text-[12.5px] text-ink-muted">Nincs a szűrőnek megfelelő jelölt.</p>
-          )}
-          {filtered.map((c) => {
+          ) : candidates.map((c) => {
             const b = briefs[c.id];
             return (
               <div key={c.id} className={cn("rounded-card border bg-surface p-3.5 shadow-card", active?.id === c.id ? "border-primary/40" : "border-line")}>
@@ -388,6 +418,13 @@ export function RecruiterWorkspace() {
               </div>
             );
           })}
+          {total > pageSize && (
+            <div className="flex items-center justify-center gap-3 pt-1">
+              <button type="button" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))} className="rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink disabled:opacity-40">‹ Előző</button>
+              <span className="text-[12px] font-semibold text-ink-muted">{page}. / {totalPages}. oldal</span>
+              <button type="button" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)} className="rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink disabled:opacity-40">Következő ›</button>
+            </div>
+          )}
         </section>
       )}
 

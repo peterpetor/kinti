@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminUserId } from "@/lib/admin";
-import { getPlacementCandidates } from "@/lib/repo";
+import { getPlacementCandidates, countPlacementCandidates } from "@/lib/repo";
 import { COUNTRIES } from "@/lib/countries";
 import { getRegions } from "@/lib/regions";
 import { jobCategoryLabel } from "@/lib/job-categories";
@@ -32,13 +32,26 @@ function fmtDate(iso: string): string {
   return d.toLocaleDateString("hu-HU", { year: "numeric", month: "short", day: "numeric" });
 }
 
-export default async function AdminJeloltekPage() {
+export default async function AdminJeloltekPage({
+  searchParams,
+}: {
+  searchParams: { q?: string; page?: string };
+}) {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
   // Csak az AKTÍV közvetítést kérő jelöltek (layer3_opt_in) — ők kifejezetten
   // hozzájárultak, hogy a Feedback Jobs állást keressen nekik és átadja a CV-t.
-  const candidates = await getPlacementCandidates(500);
+  // Szerveroldali keresés + lapozás (több ezernél is gyors).
+  const q = (searchParams.q ?? "").trim();
+  const pageSize = 30;
+  const page = Math.max(1, parseInt(searchParams.page ?? "1", 10) || 1);
+  const [candidates, total] = await Promise.all([
+    getPlacementCandidates({ q, limit: pageSize, offset: (page - 1) * pageSize }),
+    countPlacementCandidates({ q }),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const pageHref = (p: number) => `/admin/jeloltek?${new URLSearchParams({ ...(q ? { q } : {}), page: String(p) }).toString()}`;
 
   return (
     <div className="mx-auto max-w-3xl space-y-5 px-5 py-6">
@@ -56,13 +69,28 @@ export default async function AdminJeloltekPage() {
         ⚖️ Csak EU-országokba közvetíts (AT/DE/NL) — Svájc kimarad (SECO-engedély). A jelölttől díjat NEM szedünk, a munkáltató fizet.
       </div>
 
+      {/* Szerveroldali kereső (sima GET-form — JS nélkül is működik) */}
+      <form method="get" action="/admin/jeloltek" className="flex gap-2">
+        <input
+          type="search"
+          name="q"
+          defaultValue={q}
+          placeholder="🔎 Keresés névre / e-mailre…"
+          className="flex-1 rounded-[12px] border border-line bg-surface-alt px-3.5 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none"
+        />
+        <button type="submit" className="rounded-pill bg-primary px-4 py-2 text-[13px] font-extrabold text-white shadow-card">Keresés</button>
+        {q ? <Link href="/admin/jeloltek" className="self-center text-[12px] font-bold text-ink-muted hover:underline">Törlés</Link> : null}
+      </form>
+
       {candidates.length === 0 ? (
         <div className="rounded-card border border-dashed border-line bg-surface px-4 py-10 text-center text-[13px] text-ink-muted">
-          Még nincs aktív közvetítést kérő jelölt. Amint valaki bepipálja az „Aktív állásközvetítés" opciót a CV-feltöltőn, itt megjelenik.
+          {q
+            ? `Nincs találat erre: „${q}". Próbálj más kifejezést.`
+            : `Még nincs aktív közvetítést kérő jelölt. Amint valaki bepipálja az „Aktív állásközvetítés" opciót a CV-feltöltőn, itt megjelenik.`}
         </div>
       ) : (
         <>
-          <p className="text-[12px] font-bold text-ink-muted">{candidates.length} jelölt</p>
+          <p className="text-[12px] font-bold text-ink-muted">{total} jelölt{q ? ` · „${q}"` : ""}</p>
           <div className="space-y-2.5">
             {candidates.map((w) => (
               <div key={w.id} className="rounded-card border border-line bg-surface p-4 shadow-card">
@@ -101,6 +129,21 @@ export default async function AdminJeloltekPage() {
               </div>
             ))}
           </div>
+          {total > pageSize && (
+            <div className="flex items-center justify-center gap-3 pt-2">
+              {page > 1 ? (
+                <Link href={pageHref(page - 1)} className="rounded-pill border border-line bg-surface px-3.5 py-1.5 text-[12.5px] font-bold text-ink">‹ Előző</Link>
+              ) : (
+                <span className="rounded-pill border border-line bg-surface px-3.5 py-1.5 text-[12.5px] font-bold text-ink-faint opacity-40">‹ Előző</span>
+              )}
+              <span className="text-[12.5px] font-semibold text-ink-muted">{page}. / {totalPages}. oldal</span>
+              {page < totalPages ? (
+                <Link href={pageHref(page + 1)} className="rounded-pill border border-line bg-surface px-3.5 py-1.5 text-[12.5px] font-bold text-ink">Következő ›</Link>
+              ) : (
+                <span className="rounded-pill border border-line bg-surface px-3.5 py-1.5 text-[12.5px] font-bold text-ink-faint opacity-40">Következő ›</span>
+              )}
+            </div>
+          )}
         </>
       )}
     </div>

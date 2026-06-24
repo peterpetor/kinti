@@ -64,12 +64,58 @@ export async function getRecruitingStats(): Promise<RecruitingStats> {
   };
 }
 
-export async function listRecruitingCandidates(limit = 500): Promise<RecruitingCandidate[]> {
+export interface CandidateFilter {
+  q?: string;
+  status?: RecruitingStatus | null;
+  country?: string | null;
+}
+
+/** Dinamikus WHERE a szűrőkből (név/szakma keresés + státusz + ország). */
+function candidateWhere(f: CandidateFilter): { clause: string; binds: unknown[] } {
+  const cond: string[] = [];
+  const binds: unknown[] = [];
+  if (f.status) { cond.push("status = ?"); binds.push(f.status); }
+  if (f.country) { cond.push("country = ?"); binds.push(f.country); }
+  const q = (f.q ?? "").trim();
+  if (q) { const like = `%${q}%`; cond.push("(full_name LIKE ? OR keyword LIKE ?)"); binds.push(like, like); }
+  return { clause: cond.length ? `WHERE ${cond.join(" AND ")}` : "", binds };
+}
+
+/** Szűrt + LAPOZOTT jelölt-lista (szerveroldali keresés — több ezernél is gyors). */
+export async function listRecruitingCandidates(
+  opts: CandidateFilter & { limit?: number; offset?: number } = {},
+): Promise<RecruitingCandidate[]> {
+  const { clause, binds } = candidateWhere(opts);
+  const limit = Math.min(Math.max(opts.limit ?? 50, 1), 100);
+  const offset = Math.max(opts.offset ?? 0, 0);
   const { results } = await getDB()
-    .prepare("SELECT * FROM recruiting_candidates ORDER BY updated_at DESC LIMIT ?")
-    .bind(limit)
+    .prepare(`SELECT * FROM recruiting_candidates ${clause} ORDER BY updated_at DESC LIMIT ? OFFSET ?`)
+    .bind(...binds, limit, offset)
     .all<Row>();
   return results.map(toCandidate);
+}
+
+export async function countRecruitingCandidates(f: CandidateFilter = {}): Promise<number> {
+  const { clause, binds } = candidateWhere(f);
+  const row = await getDB().prepare(`SELECT COUNT(*) AS n FROM recruiting_candidates ${clause}`).bind(...binds).first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
+/** Státusz-bontás a funnel-áttekintőhöz. */
+export async function getRecruitingStatusCounts(): Promise<Record<RecruitingStatus, number>> {
+  const { results } = await getDB().prepare("SELECT status, COUNT(*) AS n FROM recruiting_candidates GROUP BY status").all<{ status: string; n: number }>();
+  const out: Record<RecruitingStatus, number> = { new: 0, contacted: 0, placed: 0, paid: 0, dropped: 0 };
+  for (const r of results) if (r.status in out) out[r.status as RecruitingStatus] = r.n;
+  return out;
+}
+
+/** Top szakmák (keyword) darabszámmal — a szakma-csoportosító chipekhez. */
+export async function getRecruitingProfessions(limit = 12): Promise<{ keyword: string; count: number }[]> {
+  const { results } = await getDB()
+    .prepare("SELECT keyword, COUNT(*) AS n FROM recruiting_candidates WHERE keyword IS NOT NULL AND keyword != '' GROUP BY keyword ORDER BY n DESC LIMIT ?")
+    .bind(Math.min(limit, 30))
+    .all<{ keyword: string; n: number }>();
+  return results.map((r) => ({ keyword: r.keyword, count: r.n }));
 }
 
 export async function getRecruitingCandidate(id: string): Promise<RecruitingCandidate | null> {
@@ -183,6 +229,17 @@ export async function updateShortlistStatus(id: string, status: ShortlistStatus)
 export async function updateShortlistEmail(id: string, email: string | null): Promise<boolean> {
   const res = await getDB().prepare("UPDATE recruiting_shortlist SET employer_email = ? WHERE id = ?").bind(email, id).run();
   return (res.meta.changes ?? 0) > 0;
+}
+
+/** Több jelölt shortlistje egyszerre (a látható oldalhoz — nem az ÖSSZES). */
+export async function listShortlistByCandidates(ids: string[]): Promise<ShortlistJob[]> {
+  if (!ids.length) return [];
+  const capped = ids.slice(0, 100);
+  const ph = capped.map(() => "?").join(",");
+  const { results } = await getDB()
+    .prepare(`SELECT * FROM recruiting_shortlist WHERE candidate_id IN (${ph}) ORDER BY created_at DESC`)
+    .bind(...capped).all<ShortlistRow>();
+  return results.map(toShortlist);
 }
 
 /** Egy jelölt shortlistje (a körlevél-kiküldéshez, szerveroldalon). */

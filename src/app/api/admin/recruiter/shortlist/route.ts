@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/admin";
 import {
   listAllShortlist,
+  listShortlistByCandidates,
   addShortlistJob,
   updateShortlistStatus,
   updateShortlistEmail,
@@ -16,9 +17,12 @@ const STATUSES = new Set<ShortlistStatus>(["saved", "contacted"]);
 
 async function guard() { return !!(await getAdminUserId()); }
 
-export async function GET() {
+export async function GET(req: Request) {
   if (!(await guard())) return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  const shortlist = await listAllShortlist();
+  const ids = (new URL(req.url).searchParams.get("candidateIds") ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+  // candidateIds adott → csak a látható oldal jelöltjeinek shortlistje (skálázható);
+  // különben (back-compat) az összes.
+  const shortlist = ids.length ? await listShortlistByCandidates(ids) : await listAllShortlist();
   return NextResponse.json({ shortlist }, { headers: { "cache-control": "no-store" } });
 }
 

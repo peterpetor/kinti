@@ -65,12 +65,34 @@ export async function getSearchableWorkers(opts: SearchableWorkerFilter = {}): P
  * konzoljához. Ezek a jelöltek KIFEJEZETTEN hozzájárultak, hogy aktívan állást
  * keressenek nekik és a CV-jüket átadják (külön a board-láthatóságtól).
  */
-export async function getPlacementCandidates(limit = 500): Promise<WorkerProfile[]> {
+export interface PlacementFilter { q?: string }
+
+function placementWhere(f: PlacementFilter): { clause: string; binds: unknown[] } {
+  const cond = ["layer3_opt_in = 1"];
+  const binds: unknown[] = [];
+  const q = (f.q ?? "").trim();
+  if (q) { const like = `%${q}%`; cond.push("(full_name LIKE ? OR email LIKE ? OR category LIKE ?)"); binds.push(like, like, like); }
+  return { clause: `WHERE ${cond.join(" AND ")}`, binds };
+}
+
+/** Szűrt + LAPOZOTT aktív-közvetítés-jelölt lista (több ezernél is gyors). */
+export async function getPlacementCandidates(
+  opts: PlacementFilter & { limit?: number; offset?: number } = {},
+): Promise<WorkerProfile[]> {
+  const { clause, binds } = placementWhere(opts);
+  const limit = Math.min(Math.max(opts.limit ?? 50, 1), 100);
+  const offset = Math.max(opts.offset ?? 0, 0);
   const { results } = await getDB()
-    .prepare("SELECT * FROM worker_profiles WHERE layer3_opt_in = 1 ORDER BY updated_at DESC LIMIT ?")
-    .bind(limit)
+    .prepare(`SELECT * FROM worker_profiles ${clause} ORDER BY updated_at DESC LIMIT ? OFFSET ?`)
+    .bind(...binds, limit, offset)
     .all<WorkerProfileRow>();
   return results.map(toWorkerProfile);
+}
+
+export async function countPlacementCandidates(f: PlacementFilter = {}): Promise<number> {
+  const { clause, binds } = placementWhere(f);
+  const row = await getDB().prepare(`SELECT COUNT(*) AS n FROM worker_profiles ${clause}`).bind(...binds).first<{ n: number }>();
+  return row?.n ?? 0;
 }
 
 export interface UpsertWorkerProfileInput {
