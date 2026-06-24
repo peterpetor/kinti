@@ -12,7 +12,11 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
  */
 export function CitizenshipQuizSection({ isPro }: { isPro: boolean }) {
   const [prefCountry] = usePreferredCountry();
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  // DE: az engedély-varázsló DE-kész, de a »Leben in Deutschland« kérdésbank még
+  // nincs meg — a svájci kvíz helyett inkább semmit mutatunk (nem félrevezetünk).
+  if (country === "DE") return null;
   const Quiz = isAT ? StaatsbuergerschaftQuiz : EinburgerungQuiz;
   const quizName = isAT ? "Staatsbürgerschaftstest-szimulátor" : "Einbürgerung-szimulátor";
 

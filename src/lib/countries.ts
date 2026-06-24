@@ -21,7 +21,7 @@ export interface Country {
 export const COUNTRIES: Country[] = [
   { code: "CH", name: "Svájc", flag: "🇨🇭", enabled: true },
   { code: "AT", name: "Ausztria", flag: "🇦🇹", enabled: true },
-  { code: "DE", name: "Németország", flag: "🇩🇪", enabled: false },
+  { code: "DE", name: "Németország", flag: "🇩🇪", enabled: true },
   { code: "NL", name: "Hollandia", flag: "🇳🇱", enabled: false },
 ];
 

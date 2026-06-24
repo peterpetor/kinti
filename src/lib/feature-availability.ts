@@ -20,8 +20,17 @@ import { DEFAULT_COUNTRY } from "./countries";
 export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "vam",               // vám-kalkulátor (svájci határ)
   "szolgaltato-valto", // szolgáltató-váltás (svájci szolgáltatók)
-  // "repulojegy" — már ország-tudatos (CH + AT, lib/flights.ts); a komponens a
-  // konfig nélküli országokat (DE/NL) „hamarosan" üzenettel kezeli.
+  // "repulojegy" — már ország-tudatos (CH + AT + DE, lib/flights.ts); a komponens a
+  // konfig nélküli országokat (NL) „hamarosan" üzenettel kezeli.
+]);
+
+/**
+ * Megvannak CH-ban ÉS AT-ban, de DE/NL-ben még NEM (hiányzik a kvíz-kérdésbank /
+ * a benchmark-seed). Ezeket DE/NL-ben rejtjük, amíg el nem készül a tartalmuk.
+ */
+export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
+  "kviz",     // napi kvíz — nincs DE/NL kérdésbank
+  "iranytu",  // Bér- és Lakbér Iránytű — nincs DE/NL benchmark-seed
 ]);
 
 /**
@@ -35,5 +44,8 @@ export function isFeatureAvailable(
 ): boolean {
   const c = country || DEFAULT_COUNTRY;
   if (c === "CH") return true; // Svájcban minden elérhető (a teljes meglévő app)
-  return !CH_ONLY_FEATURES.has(feature);
+  if (CH_ONLY_FEATURES.has(feature)) return false;
+  // DE/NL: a csak-CH+AT funkciók még nem elérhetők (AT-ban igen).
+  if (c !== "AT" && CH_AT_ONLY_FEATURES.has(feature)) return false;
+  return true;
 }
