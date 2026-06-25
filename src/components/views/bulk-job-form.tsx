@@ -36,7 +36,7 @@ export function BulkJobForm() {
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const regions = getRegions(country);
-  const cur = isAT ? "EUR" : "CHF";
+  const cur = country === "CH" ? "CHF" : "EUR";
   const [rows, setRows] = useState<Row[]>([emptyRow(), emptyRow(), emptyRow()]);
   const [legalAttested, setLegalAttested] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -148,7 +148,7 @@ export function BulkJobForm() {
               value={row.location}
               onChange={(e) => update(i, "location", e.target.value)}
               className={inputCls}
-              placeholder={isAT ? "Város (pl. Wien)" : "Város (pl. Zürich)"}
+              placeholder={country === "DE" ? "Város (pl. Berlin)" : isAT ? "Város (pl. Wien)" : "Város (pl. Zürich)"}
             />
             <select value={row.employmentType} onChange={(e) => update(i, "employmentType", e.target.value)} className={inputCls}>
               <option value="full-time">Teljes (100%)</option>
@@ -205,7 +205,7 @@ export function BulkJobForm() {
         />
         <span className="text-[12px] leading-snug text-ink-muted">
           <strong className="font-semibold text-ink">Nyilatkozom</strong>, hogy minden fenti hirdetés{" "}
-          <strong className="font-semibold text-ink">bejelentett, legális foglalkoztatás</strong> ({isAT ? "SV" : "AHV/SVA"}). A feketemunka hirdetése tilos.
+          <strong className="font-semibold text-ink">bejelentett, legális foglalkoztatás</strong> ({country === "CH" ? "AHV/SVA" : "SV"}). A feketemunka hirdetése tilos.
         </span>
       </label>
 

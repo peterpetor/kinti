@@ -22,6 +22,15 @@ const AT_GRID = [
   { c: "KTN", x: 3, y: 3 },
 ];
 
+/** DE-rács (6×5) — a 16 Bundesland nagyjából földrajzi elrendezése (észak→dél, nyugat→kelet). */
+const DE_GRID = [
+  { c: "SH", x: 3, y: 1 }, { c: "HH", x: 4, y: 1 }, { c: "MV", x: 5, y: 1 },
+  { c: "HB", x: 2, y: 2 }, { c: "NI", x: 3, y: 2 }, { c: "BB", x: 5, y: 2 }, { c: "BE", x: 6, y: 2 },
+  { c: "NW", x: 1, y: 3 }, { c: "HE", x: 3, y: 3 }, { c: "ST", x: 4, y: 3 }, { c: "SN", x: 5, y: 3 },
+  { c: "RP", x: 1, y: 4 }, { c: "TH", x: 3, y: 4 },
+  { c: "SL", x: 1, y: 5 }, { c: "BW", x: 2, y: 5 }, { c: "BY", x: 4, y: 5 },
+];
+
 interface HeatmapRow {
   canton_code: string;
   avg_salary: number;
@@ -50,11 +59,12 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
   const [selected, setSelected] = useState<string | null>(null);
 
   const isAT = country === "AT";
-  const grid = isAT ? AT_GRID : CH_GRID;
-  const cols = isAT ? 5 : 8;
-  const rows = isAT ? 3 : 6;
+  const isDE = country === "DE";
+  const grid = isDE ? DE_GRID : isAT ? AT_GRID : CH_GRID;
+  const cols = isDE ? 6 : isAT ? 5 : 8;
+  const rows = isDE ? 5 : isAT ? 3 : 6;
   const cur = benchCurrency(country);
-  const regionWord = isAT ? "Bundeslandonként" : "kantononként";
+  const regionWord = isAT || isDE ? "Bundeslandonként" : "kantononként";
 
   useEffect(() => {
     let active = true;
@@ -102,7 +112,7 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
         <>
           <div className="no-scrollbar overflow-x-auto">
             <div
-              className={cn("grid gap-1.5", isAT ? "w-full" : "min-w-[360px]")}
+              className={cn("grid gap-1.5", isAT || isDE ? "w-full" : "min-w-[360px]")}
               style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, 1fr)` }}
             >
               {grid.map((cell) => {
@@ -149,7 +159,7 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
                 </span>
               )
             ) : (
-              <span className="text-ink-faint">Koppints egy {isAT ? "tartományra" : "kantonra"} a részletekért</span>
+              <span className="text-ink-faint">Koppints egy {isAT || isDE ? "tartományra" : "kantonra"} a részletekért</span>
             )}
           </div>
 

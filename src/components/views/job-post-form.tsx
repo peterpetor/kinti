@@ -69,7 +69,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
   // Új hirdetésnél a pénznem alapból az ország szerinti; szerkesztésnél marad a meglévő.
   useEffect(() => {
     if (isEdit) return;
-    setForm((f) => ({ ...f, currency: country === "AT" ? "EUR" : "CHF" }));
+    setForm((f) => ({ ...f, currency: country === "CH" ? "CHF" : "EUR" }));
   }, [country, isEdit]);
 
   const handleSubmit = async (e: React.FormEvent) => {

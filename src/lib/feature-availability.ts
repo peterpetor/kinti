@@ -31,6 +31,7 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
 export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "kviz",          // napi kvíz — nincs DE/NL kérdésbank
   "allampolgarsag",// állampolgárság/Einbürgerung — CH/AT-specifikus (DE: /vizum + guide)
+  "lakberles",     // lakbér rejtett-költség kalk. — CH/AT Nebenkosten/Betriebskosten bázisráta (DE-hez külön logika kell)
   // "iranytu" — KIVÉVE: az Iránytű közösségi benchmark (a userek töltik), DE-tudatos
   // (region-util DE-ág), és fő nav-fül → ne tűnjön el DE-ben; üresen indul, mint AT.
 ]);

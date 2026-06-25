@@ -12,6 +12,7 @@ import "leaflet/dist/leaflet.css";
 
 const SWISS_CENTER: [number, number] = [46.82, 8.23];
 const AT_CENTER: [number, number] = [47.7, 13.9];
+const DE_CENTER: [number, number] = [51.1, 10.4];
 
 /** Osztrák Bundesland-centroidok (a regions.ts AT-kódjaival). A jobs/events
  *  ugyanezeket a kódokat tárolja, így a buborékok a megfelelő helyre kerülnek. */
@@ -25,6 +26,27 @@ const AT_BUNDESLAND_COORDS: Record<string, { lat: number; lng: number }> = {
   SBG: { lat: 47.45, lng: 13.05 },
   VBG: { lat: 47.25, lng: 9.90 },
   BGL: { lat: 47.55, lng: 16.45 },
+};
+
+/** Német Bundesland-centroidok (a regions.ts DE-kódjaival). A jobs/events
+ *  ugyanezeket a kódokat tárolják, így a buborékok a megfelelő helyre kerülnek. */
+const DE_BUNDESLAND_COORDS: Record<string, { lat: number; lng: number }> = {
+  BW: { lat: 48.66, lng: 9.35 },
+  BY: { lat: 48.79, lng: 11.50 },
+  BE: { lat: 52.52, lng: 13.40 },
+  BB: { lat: 52.41, lng: 13.06 },
+  HB: { lat: 53.08, lng: 8.80 },
+  HH: { lat: 53.55, lng: 9.99 },
+  HE: { lat: 50.65, lng: 9.16 },
+  MV: { lat: 53.61, lng: 12.43 },
+  NI: { lat: 52.64, lng: 9.85 },
+  NW: { lat: 51.43, lng: 7.66 },
+  RP: { lat: 49.91, lng: 7.45 },
+  SL: { lat: 49.38, lng: 6.96 },
+  SN: { lat: 51.05, lng: 13.74 },
+  ST: { lat: 51.95, lng: 11.69 },
+  SH: { lat: 54.22, lng: 9.70 },
+  TH: { lat: 50.90, lng: 11.03 },
 };
 
 /**
@@ -50,10 +72,11 @@ export function CantonBubbleMap({
 }) {
   const [fullscreen, setFullscreen] = useState(false);
 
-  // Ország-tudatos közép + koordináták (CH: kanton, AT: Bundesland).
+  // Ország-tudatos közép + koordináták (CH: kanton, AT/DE: Bundesland).
   const isAT = country === "AT";
-  const COORDS: Record<string, { lat: number; lng: number }> = isAT ? AT_BUNDESLAND_COORDS : CANTON_COORDS;
-  const center = isAT ? AT_CENTER : SWISS_CENTER;
+  const isDE = country === "DE";
+  const COORDS: Record<string, { lat: number; lng: number }> = isDE ? DE_BUNDESLAND_COORDS : isAT ? AT_BUNDESLAND_COORDS : CANTON_COORDS;
+  const center = isDE ? DE_CENTER : isAT ? AT_CENTER : SWISS_CENTER;
 
   useEffect(() => {
     if (!fullscreen) return;
@@ -70,7 +93,7 @@ export function CantonBubbleMap({
   const entries = useMemo(
     () => Object.entries(counts).filter(([code, n]) => n > 0 && COORDS[code]),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [counts, isAT],
+    [counts, country],
   );
   const maxCount = useMemo(() => Math.max(1, ...entries.map(([, n]) => n)), [entries]);
 
@@ -85,7 +108,7 @@ export function CantonBubbleMap({
     >
       <MapContainer
         center={center}
-        zoom={7}
+        zoom={isDE ? 6 : 7}
         scrollWheelZoom
         zoomControl={false}
         className="h-full w-full relative z-0"
@@ -115,7 +138,7 @@ export function CantonBubbleMap({
       <div className="pointer-events-none absolute left-3 top-3 z-[20] flex items-center gap-2">
         <span className="glass pointer-events-auto inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12px] font-bold text-ink shadow-card">
           <Icon name="pin" size={12} strokeWidth={2.2} className="text-accent" />
-          {selectedCanton ? regionName(country, selectedCanton) : (isAT ? "Koppints egy tartományra" : "Koppints egy kantonra")}
+          {selectedCanton ? regionName(country, selectedCanton) : (isAT || isDE ? "Koppints egy tartományra" : "Koppints egy kantonra")}
         </span>
         <button
           type="button"
