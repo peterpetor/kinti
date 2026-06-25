@@ -5,10 +5,12 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import {
-  DEAL_STORES,
+  getDealStores,
   DEAL_CATEGORIES,
   DEAL_DISCOUNTS,
 } from "@/lib/deals";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 /**
  * DealReporter — 3 lépéses modal:
@@ -26,6 +28,8 @@ export function DealReporter({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const [prefCountry] = usePreferredCountry();
+  const stores = getDealStores(prefCountry ?? DEFAULT_COUNTRY);
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [storeId, setStoreId] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -143,7 +147,7 @@ export function DealReporter({
               1/3 · Melyik bolt?
             </p>
             <div className="grid grid-cols-3 gap-2">
-              {DEAL_STORES.map((s) => (
+              {stores.map((s) => (
                 <button
                   key={s.id}
                   type="button"

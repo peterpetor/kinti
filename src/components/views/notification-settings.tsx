@@ -196,11 +196,11 @@ export function NotificationSettings() {
             <h2 className="text-[15px] font-extrabold tracking-tight text-ink">Napi emlékeztető</h2>
           </div>
           <p className="mb-3 text-[12.5px] leading-snug text-ink-muted">
-            Egy gyors napi nudge — mai kvíz, nyelvlecke, friss tartalom —, hogy tartsd a sorozatod.
+            Egy gyors napi emlékeztető — mai kvíz, nyelvlecke, friss tartalom —, hogy tartsd a sorozatod.
           </p>
           <ToggleRow
             icon="🎯"
-            label="Napi nudge"
+            label="Esti emlékeztető"
             hint="Naponta egyszer, este. Bármikor kikapcsolható."
             on={prefs.notifyDaily}
             onToggle={() => togglePref("notifyDaily")}

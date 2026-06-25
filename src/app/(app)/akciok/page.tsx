@@ -7,9 +7,9 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Akciók — Migros/Coop leárazások a térképen",
+  title: "Akciók — boltláncok leárazásai a térképen",
   description:
-    "Közösségi akció-térkép: hol vannak most -25% / -50% leárazások a Migros/Coop/Denner/Lidl boltokban Svájcban. Lejár éjfélkor.",
+    "Közösségi akció-térkép: hol vannak most -25% / -50% leárazások a környékbeli boltláncokban (CH: Migros/Coop, AT: Billa/Spar, DE: Rewe/Aldi). Lejár éjfélkor.",
 };
 
 export default function AkciokPage() {
