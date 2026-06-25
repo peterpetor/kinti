@@ -23,8 +23,8 @@ export function LegalPage({
           aria-label="Kezdőlap"
           className="inline-flex items-center gap-2 text-ink"
         >
-          <KintiLogo size={24} />
-          <span className="text-[16px] font-extrabold tracking-tight">kinti</span>
+          <KintiLogo size={28} />
+          <span className="text-[22px] font-extrabold tracking-tight">kinti</span>
         </Link>
         <span className="flex-1" />
         <Link
