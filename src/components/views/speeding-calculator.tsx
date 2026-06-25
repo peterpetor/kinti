@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import {
-  ROADS,
+  getRoads,
   calculateFine,
   calculateFineAT,
   calculateFineDE,
@@ -47,12 +47,21 @@ export function SpeedingCalculator() {
   const isAT = country === "AT";
   const isDE = country === "DE";
   const cur = isAT || isDE ? "EUR" : "CHF";
+  const roads = getRoads(country);
   const [roadType, setRoadType] = useState<RoadType>("highway");
   const [speedLimit, setSpeedLimit] = useState(120);
   const [actualSpeed, setActualSpeed] = useState(135);
   const [monthlyIncome, setMonthlyIncome] = useState(5500);
 
-  const road = ROADS.find((r) => r.type === roadType)!;
+  const road = roads.find((r) => r.type === roadType)!;
+
+  // Ország-váltáskor (és a kezdeti CH→AT hidratáláskor) a limit igazodjon az
+  // aktuális ország adott útjához (pl. AT autópálya = 130, nem a svájci 120).
+  useEffect(() => {
+    const r = getRoads(country).find((x) => x.type === roadType);
+    if (r) { setSpeedLimit(r.defaultSpeedLimit); setActualSpeed(r.defaultSpeedLimit + 15); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [country]);
 
   const result = useMemo(
     () =>
@@ -70,7 +79,7 @@ export function SpeedingCalculator() {
   );
 
   function changeRoadType(t: RoadType) {
-    const r = ROADS.find((x) => x.type === t)!;
+    const r = roads.find((x) => x.type === t)!;
     setRoadType(t);
     setSpeedLimit(r.defaultSpeedLimit);
     // Auto-állítás: az aktuális sebesség kicsit a limit fölé
@@ -108,7 +117,7 @@ export function SpeedingCalculator() {
           1. Hol történt?
         </label>
         <div className="grid grid-cols-3 gap-2">
-          {ROADS.map((r) => (
+          {roads.map((r) => (
             <button
               key={r.type}
               type="button"

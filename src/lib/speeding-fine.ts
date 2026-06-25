@@ -19,11 +19,33 @@ export interface RoadInfo {
   speedLimits: number[];
 }
 
+// Svájc: Autobahn 120, Ausserorts 80, Innerorts 50.
 export const ROADS: RoadInfo[] = [
   { type: "city",    label: "Településen belül",       emoji: "🏘️", defaultSpeedLimit: 50,  speedLimits: [30, 50] },
   { type: "rural",   label: "Lakott területen kívül",  emoji: "🛣️", defaultSpeedLimit: 80,  speedLimits: [60, 80, 100] },
   { type: "highway", label: "Autópálya",                emoji: "🛣️", defaultSpeedLimit: 120, speedLimits: [100, 120] },
 ];
+
+// Ausztria: Autobahn 130, Freiland 100, Ortsgebiet 50.
+export const ROADS_AT: RoadInfo[] = [
+  { type: "city",    label: "Településen belül",       emoji: "🏘️", defaultSpeedLimit: 50,  speedLimits: [30, 50] },
+  { type: "rural",   label: "Lakott területen kívül",  emoji: "🛣️", defaultSpeedLimit: 100, speedLimits: [70, 80, 100] },
+  { type: "highway", label: "Autópálya",                emoji: "🛣️", defaultSpeedLimit: 130, speedLimits: [100, 130] },
+];
+
+// Németország: Autobahn 130 (ahol korlátozott), Landstraße 100, Ortschaft 50.
+export const ROADS_DE: RoadInfo[] = [
+  { type: "city",    label: "Településen belül",       emoji: "🏘️", defaultSpeedLimit: 50,  speedLimits: [30, 50] },
+  { type: "rural",   label: "Lakott területen kívül",  emoji: "🛣️", defaultSpeedLimit: 100, speedLimits: [70, 80, 100] },
+  { type: "highway", label: "Autópálya",                emoji: "🛣️", defaultSpeedLimit: 130, speedLimits: [100, 120, 130] },
+];
+
+/** Az adott ország útjai (sebesség-limitekkel). */
+export function getRoads(country: string | null | undefined): RoadInfo[] {
+  if (country === "AT") return ROADS_AT;
+  if (country === "DE") return ROADS_DE;
+  return ROADS;
+}
 
 export type FineSeverity =
   | "no-fine"        // Tolerancián belül
