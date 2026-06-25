@@ -44,6 +44,7 @@ export const DEAL_STORES_AT: DealStore[] = [
   { id: "penny",  label: "Penny",   color: "#D40511", initial: "P" },
   { id: "merkur", label: "Merkur",  color: "#004F9F", initial: "M" },
   { id: "mpreis", label: "MPREIS",  color: "#E2001A", initial: "M" },
+  { id: "adeg",   label: "ADEG",    color: "#E30613", initial: "A" },
   OTHER_STORE,
 ];
 
