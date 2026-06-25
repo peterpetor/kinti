@@ -28,7 +28,16 @@ const TILE_ATTR =
 
 const CH_CENTER: [number, number] = [46.82, 8.23];
 const AT_CENTER: [number, number] = [47.59, 14.14];
+const DE_CENTER: [number, number] = [51.1, 10.4];
+const NL_CENTER: [number, number] = [52.13, 5.29];
 const CH_ZOOM = 7;
+
+function countryCenter(country: string): [number, number] {
+  if (country === "AT") return AT_CENTER;
+  if (country === "DE") return DE_CENTER;
+  if (country === "NL") return NL_CENTER;
+  return CH_CENTER;
+}
 
 /** Bolt-szín + kedvezmény-fokozat alapján generál egy egyedi pin-t. */
 function createDealIcon(storeColor: string, storeInitial: string, discountPct: number, emoji: string): L.DivIcon {
@@ -96,8 +105,8 @@ export function DealsMap({
     return map;
   }, [deals]);
 
-  // Ország-tudatos közép: akció nélkül a választott ország közepe (AT-ben NE Svájc).
-  const fallbackCenter = country === "AT" ? AT_CENTER : CH_CENTER;
+  // Ország-tudatos közép: akció nélkül a választott ország közepe (DE/AT/NL-ben NE Svájc).
+  const fallbackCenter = countryCenter(country);
   const center: [number, number] = deals.length > 0
     ? [deals[0].lat, deals[0].lng]
     : fallbackCenter;
@@ -106,7 +115,7 @@ export function DealsMap({
     <div className={className}>
       <MapContainer
         center={center}
-        zoom={deals.length > 0 ? 9 : CH_ZOOM}
+        zoom={deals.length > 0 ? 9 : country === "DE" ? 6 : CH_ZOOM}
         className="h-full w-full rounded-card z-0"
         scrollWheelZoom
       >

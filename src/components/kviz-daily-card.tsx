@@ -25,9 +25,9 @@ export function KvizDailyCard() {
   if (!state) return null;
 
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  // Csak CH/AT-nak van kvíz-bank — DE/NL-ben ne mutassunk svájci kvízt.
-  if (country !== "CH" && country !== "AT") return null;
-  const isAT = country === "AT";
+  // CH/AT/DE-nek van kvíz-bank — NL-ben (nincs bank) ne mutassunk kvízt.
+  if (country !== "CH" && country !== "AT" && country !== "DE") return null;
+  const quizLabel = country === "AT" ? "Mai Osztrák Kvíz" : country === "DE" ? "Mai Német Kvíz" : "Mai Svájci Kvíz";
   const played = !!state.today;
   const score = state.today?.score ?? 0;
 
@@ -59,7 +59,7 @@ export function KvizDailyCard() {
         ) : (
           <>
             <div className="text-[15px] font-extrabold tracking-tight text-ink">
-              {isAT ? "Mai Osztrák Kvíz" : "Mai Svájci Kvíz"}
+              {quizLabel}
             </div>
             <p className="text-[11px] text-ink-muted">
               3 kérdés · 30 másodperc · új kérdések naponta

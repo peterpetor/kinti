@@ -25,6 +25,8 @@ type ViewMode = "map" | "list";
 /** Durva ország-bbox — az akciók (lat/lng) ország szerinti szűréséhez. */
 function inCountryBox(lat: number, lng: number, country: string): boolean {
   if (country === "AT") return lat >= 46.3 && lat <= 49.1 && lng >= 9.5 && lng <= 17.2;
+  if (country === "DE") return lat >= 47.2 && lat <= 55.1 && lng >= 5.8 && lng <= 15.1;
+  if (country === "NL") return lat >= 50.7 && lat <= 53.6 && lng >= 3.3 && lng <= 7.3;
   return lat >= 45.7 && lat <= 47.9 && lng >= 5.8 && lng <= 10.6; // CH
 }
 
