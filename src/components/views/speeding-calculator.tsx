@@ -157,6 +157,12 @@ export function SpeedingCalculator() {
             ))}
           </div>
         </div>
+
+        {isDE && roadType === "highway" && (
+          <p className="mt-3 rounded-[10px] border border-star/30 bg-star/5 px-3 py-2 text-[11px] leading-snug text-ink-muted">
+            ℹ️ A német autópálya nagy részén <strong className="text-ink">nincs általános sebességkorlátozás</strong> — csak ajánlott sebesség („Richtgeschwindigkeit") 130 km/h. Ahol NINCS kitáblázott limit, a gyors hajtásért nincs bírság; de baleset esetén 130 km/h fölött <strong className="text-ink">részleges felelősség (Mithaftung)</strong> terhelhet. Ez a kalkulátor csak a <strong className="text-ink">kitáblázott</strong> (100/120/130) szakaszokra vonatkozik.
+          </p>
+        )}
       </section>
 
       {/* Actual speed slider */}
