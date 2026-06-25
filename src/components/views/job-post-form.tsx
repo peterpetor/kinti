@@ -124,7 +124,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
               isCheckoutLoading && "opacity-60 cursor-wait"
             )}
           >
-            {isCheckoutLoading ? "Töltés..." : "Hirdetés Kiemelése (49 CHF)"}
+            {isCheckoutLoading ? "Töltés..." : "Hirdetés Kiemelése (49 €)"}
           </button>
         </div>
       )}

@@ -92,7 +92,7 @@ export default function ProPage() {
           </p>
 
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">19 {isAT ? "€" : "CHF"}</span>
+            <span className="text-3xl font-black text-ink">19 €</span>
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
           </div>
 
@@ -130,7 +130,7 @@ export default function ProPage() {
           </p>
           
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">19 CHF</span>
+            <span className="text-3xl font-black text-ink">19 €</span>
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
           </div>
 
@@ -165,7 +165,7 @@ export default function ProPage() {
           </p>
           
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">49 CHF</span>
+            <span className="text-3xl font-black text-ink">49 €</span>
             <span className="text-[14px] font-bold text-ink-muted"> / hirdetés</span>
           </div>
 

@@ -214,7 +214,7 @@ export function ProfileEditor({
                 isCheckoutLoading && "opacity-60 cursor-wait translate-y-1 shadow-none"
               )}
             >
-              {isCheckoutLoading ? "Töltés..." : "Kiemelés Vásárlása (19 CHF/hó)"}
+              {isCheckoutLoading ? "Töltés..." : "Kiemelés Vásárlása (19 €/hó)"}
             </button>
           </div>
         )}

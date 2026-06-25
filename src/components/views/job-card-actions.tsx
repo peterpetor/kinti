@@ -100,7 +100,7 @@ export function JobCardActions({
           <BoostCheckoutButton
             product="job_featured"
             customData={{ type: "job_featured", jobId }}
-            label="🚀 Hirdetés kiemelése (49 CHF)"
+            label="🚀 Hirdetés kiemelése (49 €)"
             className="bg-ink text-surface hover:opacity-90"
           />
         )}
