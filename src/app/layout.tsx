@@ -4,7 +4,17 @@ import { huHU } from "@clerk/localizations";
 import { jakarta, jetbrains } from "@/lib/fonts";
 import { SWRegister } from "@/components/sw-register";
 import { LegalGatekeeper } from "@/components/legal-gatekeeper";
+import { CountryRevealer } from "@/components/country-revealer";
 import "./globals.css";
+
+/**
+ * Ország-feloldó boot-gate fej-szkript: még az első festés ELŐTT lefut. Ha a
+ * böngészőben tárolt ország nem a CH-alapértelmezett (amivel a statikus HTML
+ * renderelődik), beállítja a `data-country-pending`-et a <html>-re — a CSS addig
+ * rejti a body-t, amíg a kliens (CountryRevealer) a helyes országra nem vált.
+ * Biztonsági időzítő 1500 ms után mindenképp feloldja (ha a JS-hidratálás elmarad).
+ */
+const COUNTRY_GATE_SCRIPT = `(function(){try{var c=localStorage.getItem('kinti.country');if(c&&c!=='CH'){var d=document.documentElement;d.setAttribute('data-country-pending','');setTimeout(function(){d.removeAttribute('data-country-pending');},1500);}}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: {
@@ -83,8 +93,10 @@ export default function RootLayout({
   const cfBeaconToken = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
 
   return (
-    <html lang="hu" data-theme="warm" className={`${jakarta.variable} ${jetbrains.variable}`}>
+    <html lang="hu" data-theme="warm" suppressHydrationWarning className={`${jakarta.variable} ${jetbrains.variable}`}>
       <body className="min-h-dvh bg-bg font-sans text-ink antialiased">
+        {/* Ország-feloldó boot-gate — még a tartalom festése előtt fusson. */}
+        <script dangerouslySetInnerHTML={{ __html: COUNTRY_GATE_SCRIPT }} />
         <ClerkProvider
           localization={{
             ...huHU,
@@ -139,6 +151,7 @@ export default function RootLayout({
         {/* PWA — Service Worker regisztráció + frissítés-prompt (prod-only) */}
         <SWRegister />
         <LegalGatekeeper />
+        <CountryRevealer />
         {cfBeaconToken && (
           <script
             defer

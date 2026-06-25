@@ -64,6 +64,9 @@
 
   html {
     -webkit-tap-highlight-color: transparent;
+    /* A háttér a html-en is a márka-krém — így a (rövid) ország-feloldás alatti
+       rejtett fázisban nincs fehér villanás, hanem a megszokott háttér. */
+    background-color: rgb(var(--bg));
     /* Natív érzet: nincs gumi-rugózás / véletlen pull-to-refresh / scroll-chaining. */
     overscroll-behavior: none;
     /* A függőleges scrollbar MINDIG foglaljon helyet (rövid oldalon is), különben
@@ -71,6 +74,16 @@
        Desktopon látható sáv; mobilon overlay (úgyis nem tol). */
     overflow-y: scroll;
     scrollbar-gutter: stable;
+  }
+
+  /* Ország-feloldó boot-gate: a statikus HTML a CH-alapértelmezettel renderelődik
+     (a szerver nem tudja, melyik ország a tied — privacy). Ha a böngésződ tárolt
+     országa NEM CH, a fej-szkript beállítja a `data-country-pending`-et, és addig
+     rejtve tartjuk a tartalmat, amíg a kliens be nem állítja a helyes országot —
+     így nem villan be a svájci tartalom. A CH-usereknél (vagy ha nincs választás)
+     a szkript nem rejt semmit → azonnali tartalom. Biztonsági időzítő is feloldja. */
+  html[data-country-pending] body {
+    visibility: hidden;
   }
 
   body {
