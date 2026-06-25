@@ -606,12 +606,136 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
   },
 ];
 
+// ── Németország — német ügyintézési csekklisták (EU-fókusz). ──
+export const CHECKLISTS_DE: AdminChecklist[] = [
+  {
+    slug: "de-uj-bevandorlo",
+    title: "Most költöztem Németországba",
+    emoji: "🇩🇪",
+    summary: "Az első hetek lépései — Anmeldung, Steuer-ID, bankszámla, egészségbiztosítás.",
+    description: "EU-állampolgárként szabad mozgásod van (nem kell tartózkodási engedély!), de pár hivatalos lépés kell az első hetekben. A legfontosabb az Anmeldung — abból jön minden más (Steuer-ID, bank, biztosítás).",
+    deadline: "Anmeldung: a beköltözéstől 14 napon belül.",
+    totalDuration: "Kb. 2-4 hét",
+    steps: [
+      { title: "Lakcímbejelentés (Anmeldung)", body: "A beköltözéstől 14 napon belül a Bürgeramt / Einwohnermeldeamt-nál (foglalj időpontot online — nagyvárosokban hetekre előre telt!). Vidd: útlevél/igazolvány + Wohnungsgeberbestätigung (a főbérlő/tulajdonos aláírt igazolása).", link: { label: "Bürgeramt-időpont — pl. Berlin service.berlin.de", url: "https://service.berlin.de/dienstleistung/120686/" }, duration: "20-40 perc + várakozási idő az időpontra" },
+      { title: "Steuer-ID (adóazonosító) megérkezése", body: "Az Anmeldung után automatikusan postán kapod meg a steuerliche Identifikationsnummer-t (11 számjegy) — kb. 2-3 hét. A munkáltatódnak és a bérszámfejtéshez kell. NEM kell külön igényelni.", link: { label: "BZSt — Steuer-ID info", url: "https://www.bzst.de/DE/Privatpersonen/SteuerlicheIdentifikationsnummer/steuerlicheidentifikationsnummer_node.html" }, duration: "automatikus, 2-3 hét" },
+      { title: "Bankszámla (Girokonto) nyitása", body: "Sparkasse, Commerzbank, DKB vagy online (N26, ING, C24). Kell: Anmeldung (Meldebescheinigung) + útlevél. A fizetésedhez és a lakbérhez elengedhetetlen.", duration: "20-45 perc" },
+      { title: "Egészségbiztosítás (Krankenversicherung)", body: "Kötelező! Munkavállalóként a törvényes biztosítás (gesetzliche Krankenversicherung, GKV) az alap — válassz pénztárat (TK, AOK, Barmer, DAK). A munkáltató bejelent, a járulékot a bérből vonják. A díj mindenhol ~ugyanaz (14,6% + Zusatzbeitrag), a szolgáltatás/extra eltér.", link: { label: "Krankenkassen összehasonlító", url: "https://www.gesetzlichekrankenkassen.de/" }, duration: "30 perc (online belépés)" },
+      { title: "Sozialversicherungsnummer (TB-szám)", body: "A nyugdíjbiztosítási szám (Rentenversicherungsnummer / Sozialversicherungsausweis) — a munkáltatód igényli az első bejelentéskor, vagy automatikusan kapod a Deutsche Rentenversicherungtól postán.", duration: "automatikus, 2-4 hét" },
+    ],
+    warnings: ["EU-állampolgárként NINCS szükség tartózkodási engedélyre (a Freizügigkeitsbescheinigung-ot 2013-ban eltörölték) — elég az Anmeldung.", "Az Anmeldung-időpontot nagyvárosokban (Berlin, München) hetekkel előre kell foglalni — intézd amint megvan a lakás."],
+    sources: [{ label: "Make it in Germany — hivatalos portál", url: "https://www.make-it-in-germany.com/" }, { label: "BZSt — Steuer-ID", url: "https://www.bzst.de/" }],
+  },
+  {
+    slug: "de-anmeldung",
+    title: "Lakcímbejelentés (Anmeldung)",
+    emoji: "🏠",
+    summary: "Be- és átjelentkezés a Bürgeramt-nál — 14 napon belül kötelező.",
+    description: "Németországban minden beköltözést/költözést 14 napon belül be kell jelenteni a Bürgeramt-nál. Az Anmeldung-igazolás (Meldebescheinigung) sok más ügyhöz (bank, Steuer-ID, szerződések) is kell.",
+    deadline: "A beköltözéstől 14 napon belül.",
+    totalDuration: "20-40 perc (az időpontra várni kell)",
+    steps: [
+      { title: "Időpontfoglalás (Termin)", body: "Foglalj online időpontot a városod Bürgeramt / Bürgerbüro / KVR oldalán. Nagyvárosokban hetekre előre telt — intézd korán.", link: { label: "Berlin — Bürgeramt-időpont", url: "https://service.berlin.de/dienstleistung/120686/" }, duration: "5 perc" },
+      { title: "Wohnungsgeberbestätigung beszerzése", body: "A főbérlőtől/tulajdonostól kérj egy aláírt Wohnungsgeberbestätigung (Vermieterbescheinigung) igazolást — ez igazolja, hogy tényleg ott laksz. Az Anmeldung-hoz KÖTELEZŐ.", duration: "10 perc" },
+      { title: "Megjelenés a Bürgeramt-nál", body: "Vidd: kitöltött Anmeldung-űrlap, Wohnungsgeberbestätigung, útlevél/igazolvány (mindenkié, aki költözik). A helyszínen megkapod a Meldebescheinigung-ot.", duration: "20-30 perc" },
+    ],
+    warnings: ["Wohnungsgeberbestätigung nélkül elutasítják a bejelentést.", "Költözéskor Ummeldung (átjelentkezés), külföldre költözéskor Abmeldung is kell."],
+    sources: [{ label: "Make it in Germany — Anmeldung", url: "https://www.make-it-in-germany.com/de/leben-in-deutschland/ankommen/anmeldung" }],
+  },
+  {
+    slug: "de-krankenversicherung",
+    title: "Egészségbiztosítás (Krankenversicherung)",
+    emoji: "🏥",
+    summary: "Kötelező! Törvényes (GKV) pénztár választása — TK, AOK, Barmer.",
+    description: "Németországban az egészségbiztosítás kötelező. Munkavállalóként a törvényes (gesetzliche, GKV) rendszerbe tartozol; magas jövedelem felett választható a magán (PKV). A GKV-díj nagyjából mindenhol azonos — a pénztár szolgáltatása és a Zusatzbeitrag tér el.",
+    deadline: "A munkakezdéskor azonnal (a munkáltató bejelent).",
+    totalDuration: "30 perc (pénztár-választás)",
+    steps: [
+      { title: "GKV vagy PKV?", body: "Munkavállalóként ~69 300 €/év bruttó alatt KÖTELEZŐEN a törvényes GKV-ban vagy. E felett (vagy önállóként) választható a magán PKV. A legtöbb kezdőnek a GKV az alap.", duration: "—" },
+      { title: "Pénztár (Krankenkasse) választása", body: "Válassz egy törvényes pénztárat: Techniker Krankenkasse (TK), AOK, Barmer, DAK. A 14,6% alapjárulék mindenhol azonos, csak a Zusatzbeitrag (~1-2%) és a bónuszok térnek el.", link: { label: "Krankenkassen összehasonlító", url: "https://www.gesetzlichekrankenkassen.de/" }, duration: "20 perc" },
+      { title: "Belépés + Mitgliedsbescheinigung", body: "Online belépsz a pénztárba; kapsz egy Mitgliedsbescheinigung-ot, amit a munkáltatónak leadsz. A járulékot automatikusan a bérből vonják (fele munkáltató, fele te).", duration: "15 perc" },
+      { title: "Gesundheitskarte (kártya)", body: "Postán kapod meg az elektronikus egészségkártyát (eGK) — ezt viszed orvoshoz, gyógyszertárba.", duration: "automatikus, 2-3 hét" },
+    ],
+    warnings: ["A PKV-ből nehéz visszatérni a GKV-ba — alaposan mérlegelj, mielőtt magánra váltasz.", "A családtagok (nem dolgozó házastárs, gyerek) a GKV-ban INGYEN biztosítottak (Familienversicherung) — a PKV-ban mindenkiért külön fizetsz."],
+    sources: [{ label: "Make it in Germany — Krankenversicherung", url: "https://www.make-it-in-germany.com/de/leben-in-deutschland/versicherungen/krankenversicherung" }],
+  },
+  {
+    slug: "de-steuererklarung",
+    title: "Adóbevallás (Steuererklärung)",
+    emoji: "💶",
+    summary: "ELSTER-en online — gyakran VISSZAJÁR pénz! Határidő: a következő év júl. 31.",
+    description: "A bérből automatikusan vonják a Lohnsteuert (a Steuerklasse szerint). Az éves Steuererklärung gyakran visszatérítést hoz (átlag ~1000 €). Önállóan kitöltve a határidő a következő év július 31. — Steuerberaterrel később.",
+    deadline: "A következő év július 31. (önállóan); Steuerberaterrel hosszabb.",
+    totalDuration: "1-2 óra online",
+    steps: [
+      { title: "ELSTER-regisztráció", body: "Regisztrálj az ELSTER-en (a német adóhivatal hivatalos online portálja) a Steuer-ID-ddel. A regisztráció több lépés (aktivációs kód postán jön) — kezdd korán.", link: { label: "ELSTER — hivatalos portál", url: "https://www.elster.de/" }, duration: "20 perc + postai kód" },
+      { title: "Steuerklasse ellenőrzése", body: "Ellenőrizd az adóosztályodat (Steuerklasse I-VI). Házasoknak a III/V vagy IV/IV kombináció nagy különbséget jelenthet — érdemes optimalizálni.", duration: "10 perc" },
+      { title: "Levonások összegyűjtése", body: "Add meg a levonható tételeket: munkába járás (Pendlerpauschale, 0,30-0,38 €/km), home-office átalány, szakmai költségek (Werbungskosten), biztosítások, gyerek-költségek, áthelyezési költség.", duration: "30-60 perc" },
+      { title: "Beadás + visszatérítés", body: "A Finanzamt feldolgozza (4-12 hét), és a túlfizetést a számládra utalja (Steuerbescheid-del értesít).", duration: "néhány hét feldolgozás" },
+    ],
+    warnings: ["Munkavállalóként sokszor NEM kötelező a bevallás, de ha visszaigényelni akarsz, érdemes — átlag ~1000 € jár vissza.", "Bizonyos esetekben (több munkáltató, Steuerklasse-kombináció, mellékjövedelem) KÖTELEZŐ a bevallás — ilyenkor tartsd a júl. 31-i határidőt."],
+    sources: [{ label: "ELSTER — hivatalos", url: "https://www.elster.de/" }, { label: "Make it in Germany — Steuern", url: "https://www.make-it-in-germany.com/de/arbeiten-in-deutschland/steuern-finanzen" }],
+  },
+  {
+    slug: "de-fuhrerschein",
+    title: "Jogosítvány Németországban",
+    emoji: "🚗",
+    summary: "A magyar (EU) jogosítvány érvényes — általában NEM kell cserélni!",
+    description: "Jó hír: EU-állampolgárként a magyar jogosítványod Németországban korlátlanul érvényes a lejáratáig. Cserére általában nincs szükség (ellentétben Svájccal).",
+    deadline: "Nincs határidő — az EU-jogosítvány érvényes.",
+    totalDuration: "0 (általában nincs teendő)",
+    steps: [
+      { title: "EU-jogosítvány = érvényes", body: "A magyar jogosítvány EU-s, így Németországban is érvényes a rajta szereplő lejáratig. NEM kell németre cserélni a használathoz.", duration: "—" },
+      { title: "Opcionális csere / megújítás", body: "Ha lejár, elveszett, vagy német jogsit szeretnél, a Führerscheinstelle-nél (Fahrerlaubnisbehörde) intézed. Kell: Anmeldung, biometrikus fotó, a magyar jogosítvány, esetleg látásteszt.", link: { label: "Bürgerservice — Führerschein", url: "https://www.bmdv.bund.de/DE/Themen/Mobilitaet/Strasse/Fuehrerschein/fuehrerschein.html" }, duration: "ha kell: 1 óra + díj" },
+    ],
+    warnings: ["A magyar jogosítvány lejáratakor német lakosként már Németországban kell megújítani.", "Tehergépjármű/busz (C, D kategória) esetén lehetnek külön orvosi/időbeli feltételek."],
+    sources: [{ label: "BMDV — Führerschein", url: "https://www.bmdv.bund.de/DE/Themen/Mobilitaet/Strasse/Fuehrerschein/fuehrerschein.html" }],
+  },
+  {
+    slug: "de-kindergeld",
+    title: "Családi pótlék (Kindergeld)",
+    emoji: "👨‍👩‍👧",
+    summary: "Gyerek után járó német családi támogatás — havi 250 €/gyerek.",
+    description: "Ha Németországban dolgozol/laksz és gyereked van, jár a Kindergeld (2024-től 250 €/hó/gyerek) — akkor is, ha a gyerek Magyarországon él (EU-szabály, különbözeti összeg). A Familienkasse intézi.",
+    deadline: "Visszamenőleg 6 hónapra igényelhető.",
+    totalDuration: "30 perc + feldolgozás",
+    steps: [
+      { title: "Steuer-ID beszerzése (szülő + gyerek)", body: "A Kindergeld-igényléshez kell a saját ÉS a gyerek Steuer-ID-je. A gyereké az Anmeldung után automatikusan jön postán.", duration: "—" },
+      { title: "Igénylés a Familienkasse-nál", body: "Töltsd ki a Kindergeldantrag-ot (online vagy papíron) a Familienkasse-nál (a Bundesagentur für Arbeit része). Kell: a gyerek születési anyakönyve, Steuer-ID-k, Anmeldung.", link: { label: "Familienkasse — Kindergeld", url: "https://www.arbeitsagentur.de/familie-und-kinder/kindergeld-verstehen-beantragen" }, duration: "30 perc" },
+      { title: "Folyósítás", body: "Jóváhagyás után havonta a számládra utalják. Ha a gyerek másik EU-országban él, kiegészítő/különbözeti összeg jár.", duration: "néhány hét" },
+    ],
+    warnings: ["Ha a gyerek Magyarországon él és ott is kaptok családi pótlékot, Németország a KÜLÖNBÖZETET fizeti (EU-koordináció).", "18 év felett (tanulmányok alatt) is járhat 25 éves korig — külön igazolással."],
+    sources: [{ label: "Familienkasse — Kindergeld", url: "https://www.arbeitsagentur.de/familie-und-kinder/kindergeld-verstehen-beantragen" }],
+  },
+  {
+    slug: "de-hazakoltozes",
+    title: "Hazaköltözés Németországból (Abmeldung)",
+    emoji: "🏡",
+    summary: "Végleg elhagyod Németországot? Abmeldung, adók, bank, nyugdíj, Kindergeld leállítás.",
+    description: "A német hazaköltözésnek is van pár fontos lépése — az Abmeldungtól a nyugdíjbiztosításig. Ha nem intézed időben, gondok lehetnek a banki/adóügyekkel és elmaradhat a túlfizetett adó visszatérítése.",
+    deadline: "Az Abmeldung a kiköltözés körül (sok város 14 napos ablakot ad).",
+    totalDuration: "Kb. 2-4 hét intézés",
+    steps: [
+      { title: "Lakcím-kijelentés (Abmeldung)", body: "Külföldre költözéskor a Bürgeramt-nál kell kijelentkezned (a sima belföldi költözésnél NEM kell, csak külföldre vagy lakásmegszűnéskor). Sok város online/levélben is intézi. Kapsz egy Abmeldebestätigung-ot.", link: { label: "Make it in Germany — Abmeldung", url: "https://www.make-it-in-germany.com/de/leben-in-deutschland/ankommen/anmeldung" }, duration: "20-40 perc" },
+      { title: "Záró adóbevallás (Steuererklärung)", body: "A kiköltözés évére adj be egy Steuererklärung-ot az ELSTER-en — gyakran jelentős visszatérítés jár a részévre. Add meg a külföldi bankszámládat a Finanzamtnál.", link: { label: "ELSTER", url: "https://www.elster.de/" }, duration: "1-2 óra" },
+      { title: "Nyugdíjbiztosítás (Deutsche Rentenversicherung)", body: "A befizetett nyugdíjjárulékaid a német rendszerben maradnak, és a nyugdíjkorhatár elérésekor — EU-koordinációval, a magyar évekkel összeszámítva — járadékként kapod meg. EU-állampolgárként a járulék NEM vehető ki készpénzben. Jelentsd be a külföldi címedet, hogy tudják, hova írjanak.", link: { label: "Deutsche Rentenversicherung", url: "https://www.deutsche-rentenversicherung.de/" }, duration: "1 levél / online" },
+      { title: "Krankenversicherung felmondása", body: "Az Abmeldung-gal/munkaviszony-megszűnéssel értesítsd a Krankenkassét a kilépésről, hogy ne számlázzanak tovább. Add meg a pontos záró dátumot.", duration: "2-3 hét" },
+      { title: "Bankszámla és előfizetések", body: "Mielőtt zárod a Girokontót: töröld az állandó megbízásokat (Dauerauftrag) és a beszedési megbízásokat (SEPA-Lastschrift), utalj át mindent. Mondd fel a szerződéseket (telefon/internet — figyelem: gyakran 1-3 hó felmondási idő!), villany/gáz, biztosítások.", duration: "2-4 hét" },
+      { title: "Kindergeld leállítása", body: "Értesítsd a Familienkasse-t a kiköltözésről — különben túlfizetést kérhetnek vissza később. Ha Magyarországon élsz tovább, ott igényeld a magyar családi pótlékot.", duration: "10 perc" },
+    ],
+    warnings: ["A telefon/internet-szerződések felmondási ideje gyakran 1-3 hónap — intézd időben, különben tovább vonják.", "A nyugdíjjárulék EU-állampolgárként NEM vehető ki — a magyar és német évek összeszámítódnak a nyugdíjnál (EU-koordináció).", "Tartsd meg az összes Steuerbescheid-et és igazolást — később (pl. magyar nyugdíjnál) szükség lehet rá."],
+    sources: [{ label: "Make it in Germany", url: "https://www.make-it-in-germany.com/" }, { label: "Deutsche Rentenversicherung", url: "https://www.deutsche-rentenversicherung.de/" }],
+  },
+];
+
 /** Az összes csekklista (statikus generáláshoz + slug-kereséshez). */
-export const CHECKLISTS: AdminChecklist[] = [...CHECKLISTS_CH, ...CHECKLISTS_AT];
+export const CHECKLISTS: AdminChecklist[] = [...CHECKLISTS_CH, ...CHECKLISTS_AT, ...CHECKLISTS_DE];
 
 /** A választott ország csekklistái (a lista-nézethez). */
 export function getChecklists(country: string | null | undefined): AdminChecklist[] {
-  return country === "AT" ? CHECKLISTS_AT : CHECKLISTS_CH;
+  if (country === "AT") return CHECKLISTS_AT;
+  if (country === "DE") return CHECKLISTS_DE;
+  return CHECKLISTS_CH;
 }
 
 export function getChecklist(slug: string): AdminChecklist | null {

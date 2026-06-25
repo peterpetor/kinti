@@ -30,10 +30,17 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
  */
 export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "kviz",          // napi kvíz — nincs DE/NL kérdésbank
-  "ugyintezes",    // ügyintézés-csekklisták — CH/AT-specifikus (DE-bürokrácia: tudásbázis)
   "allampolgarsag",// állampolgárság/Einbürgerung — CH/AT-specifikus (DE: /vizum + guide)
   // "iranytu" — KIVÉVE: az Iránytű közösségi benchmark (a userek töltik), DE-tudatos
   // (region-util DE-ág), és fő nav-fül → ne tűnjön el DE-ben; üresen indul, mint AT.
+]);
+
+/**
+ * Megvannak CH+AT+DE-ben, de NL-ben még NEM (nincs holland csekklista-tartalom).
+ * Az ügyintézés-csekklisták mindhárom országra megírva (admin-checklists.ts).
+ */
+export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
+  "ugyintezes",    // ügyintézés-csekklisták — CH/AT/DE-specifikus tartalom megvan
 ]);
 
 /**
@@ -50,5 +57,7 @@ export function isFeatureAvailable(
   if (CH_ONLY_FEATURES.has(feature)) return false;
   // DE/NL: a csak-CH+AT funkciók még nem elérhetők (AT-ban igen).
   if (c !== "AT" && CH_AT_ONLY_FEATURES.has(feature)) return false;
+  // NL: a CH+AT+DE funkciók még nem elérhetők (CH/AT/DE-ben igen).
+  if (c !== "AT" && c !== "DE" && CH_AT_DE_ONLY_FEATURES.has(feature)) return false;
   return true;
 }

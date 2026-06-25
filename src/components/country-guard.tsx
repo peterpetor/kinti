@@ -30,12 +30,12 @@ export function CountryGuard({ feature }: { feature: string }) {
     <div className="fixed inset-0 z-[80] grid place-items-center bg-bg px-6 text-center">
       <div className="mx-auto max-w-xs space-y-4">
         <KintiLogo size={44} className="mx-auto" />
-        <div className="text-5xl" aria-hidden="true">🇨🇭</div>
+        <div className="text-5xl" aria-hidden="true">🧭</div>
         <h1 className="text-[19px] font-extrabold tracking-tight text-ink">
-          Ez a funkció Svájcban érhető el
+          Ez a funkció itt még nem elérhető
         </h1>
         <p className="text-[13.5px] leading-relaxed text-ink-muted">
-          A(z) <strong className="text-ink">{countryName}</strong> beállításodnál ez az eszköz nem elérhető — svájci-specifikus tudás. Bármikor válthatsz országot a menüből.
+          A(z) <strong className="text-ink">{countryName}</strong> beállításodnál ez az eszköz még nem érhető el — ország-specifikus tartalom, amin még dolgozunk. Bármikor válthatsz országot a menüből.
         </p>
         <Link
           href="/"

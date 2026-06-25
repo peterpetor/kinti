@@ -14,8 +14,10 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
  */
 export function ChecklistList() {
   const [prefCountry] = usePreferredCountry();
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
-  const checklists = getChecklists(isAT ? "AT" : "CH");
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
+  const isDE = country === "DE";
+  const checklists = getChecklists(country);
 
   return (
     <>
@@ -59,10 +61,15 @@ export function ChecklistList() {
         notAdviceFor="jogi vagy hatósági"
         extraWarning={isAT
           ? "Az osztrák ügyintézés részletei tartományonként (Bundesland) kissé eltérhetnek és időben változnak — a csekklisták általános minták. Mindig a lakhelyed szerinti hatóságnál (Magistrat / Gemeindeamt / Finanzamt) tájékozódj."
+          : isDE
+          ? "A német ügyintézés részletei tartományonként (Bundesland) és városonként kissé eltérhetnek és időben változnak — a csekklisták általános minták. Mindig a lakhelyed szerinti hatóságnál (Bürgeramt / Finanzamt / Familienkasse) tájékozódj."
           : "A svájci ügyintézés kantononként és községenként ELTÉR — a csekklisták általános minták, nem a te konkrét helyzeted. Mindig a lakhelyed kantoni Migrationsamt-jánál vagy a helyi Gemeinde-nél tájékozódj."}
         officialSources={isAT ? [
           { label: "oesterreich.gv.at — Hivatalos portál", url: "https://www.oesterreich.gv.at/" },
           { label: "migration.gv.at — Migráció", url: "https://www.migration.gv.at/" },
+        ] : isDE ? [
+          { label: "make-it-in-germany.com — Hivatalos portál", url: "https://www.make-it-in-germany.com/" },
+          { label: "ELSTER — Adóügyek", url: "https://www.elster.de/" },
         ] : [
           { label: "ch.ch — Hivatalos info-portál", url: "https://www.ch.ch/" },
           { label: "SEM — Migráció", url: "https://www.sem.admin.ch/" },

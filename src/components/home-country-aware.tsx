@@ -35,7 +35,7 @@ export function HomePrimaryActions() {
       <PrimaryAction href="/szaknevsor" icon="list" label="Szakembert keresek" tone="primary" />
       <PrimaryAction href="/allasok" icon="briefcase" label="Állást keresek" tone="primary" />
       <PrimaryAction href="/vallalkozo" icon="plus" label="Vállalkozásom felviszem" tone="accent" />
-      <PrimaryAction href={country === "DE" || country === "NL" ? "/tudasbazis" : "/ugyintezes"} icon="document" label={`Ügyintézés ${countryLocative(country)}`} tone="accent" />
+      <PrimaryAction href={country === "NL" ? "/tudasbazis" : "/ugyintezes"} icon="document" label={`Ügyintézés ${countryLocative(country)}`} tone="accent" />
     </div>
   );
 }

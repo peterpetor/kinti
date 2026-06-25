@@ -7,9 +7,9 @@ export const runtime = "edge";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Ügyintézés Varázsló — Svájci papírmunka",
+  title: "Ügyintézés Varázsló — Hivatalos papírmunka",
   description:
-    "Interaktív csekklisták a tipikus svájci adminisztratív ügyekhez: bejelentkezés, jogosítvány-csere, C-engedély, Krankenkasse, adóbevallás.",
+    "Interaktív csekklisták a tipikus adminisztratív ügyekhez Svájcban, Ausztriában és Németországban: lakcímbejelentés, jogosítvány, engedélyek, egészségbiztosítás, adóbevallás.",
 };
 
 export default function UgyintezesPage() {
