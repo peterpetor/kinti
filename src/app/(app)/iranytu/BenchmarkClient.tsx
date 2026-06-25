@@ -108,7 +108,7 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
               {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
             </select>
           </div>
-          <div><label className={labelCls}>Tapasztalat (év)</label><input type="number" min={0} max={50} value={exp} onChange={e => setExp(parseInt(e.target.value) || 0)} className={inputCls} /></div>
+          <div><label className={labelCls}>Tapasztalat (év)</label><input type="number" min={0} max={50} value={exp || ""} onChange={e => setExp(parseInt(e.target.value) || 0)} className={inputCls} /></div>
           <div><label className={labelCls}>Bruttó éves bér ({cur}){country === "AT" ? " · 14×" : ""}</label><input type="number" min={country === "AT" ? 15000 : 20000} max={country === "AT" ? 250000 : 300000} step={500} value={salary || ""} onChange={e => setSalary(parseInt(e.target.value) || 0)} required className={inputCls} /><p className="mt-1 text-[11px] leading-snug text-ink-faint">{country === "AT" ? "A teljes éves bruttó (Jahresbrutto) — a 13./14. havi fizetéssel együtt." : "A teljes éves bruttó — a 13. havi fizetéssel együtt, ha a szerződésedben van."}</p></div>
         </>) : (<>
           <div><label className={labelCls}>Szobák száma</label>

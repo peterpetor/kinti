@@ -46,7 +46,7 @@ export function SalaryCalculator({ salaryByExp, country = "CH" }: { salaryByExp:
         </div>
         <div>
           <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">Tapasztalat</label>
-          <input type="number" min={0} max={40} value={exp}
+          <input type="number" min={0} max={40} value={exp || ""}
             onChange={e => setExp(parseInt(e.target.value) || 0)}
             className={inputCls} />
         </div>
