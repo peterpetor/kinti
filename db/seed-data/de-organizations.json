@@ -55,6 +55,16 @@
 
     { "name": "Magyar Cserkészcsapat – Mainz (KMCSSZ)", "region": "RP", "city": "Mainz", "type": "cserkészet", "website": null },
 
-    { "name": "Ungarischer Kulturverein Chemnitz und Umgebung e.V.", "region": "SN", "city": "Chemnitz", "type": "kultúra", "website": "https://www.ungarn-in-sachsen.de" }
+    { "name": "Ungarischer Kulturverein Chemnitz und Umgebung e.V.", "region": "SN", "city": "Chemnitz", "type": "kultúra", "website": "https://www.ungarn-in-sachsen.de" },
+
+    { "name": "Hannoveri Magyar Egyesület (Ungarischer Verein Hannover)", "region": "NI", "city": "Hannover", "type": "egyesület", "website": "https://www.ungvh.com" },
+    { "name": "Egyetemi Magyar Klub Göttingen", "region": "NI", "city": "Göttingen", "type": "diák / egyetemi", "website": null },
+
+    { "name": "HAJNALI Magyar Néptáncegyüttes Hamburg", "region": "HH", "city": "Hamburg", "type": "néptánc", "website": null },
+
+    { "name": "Német-Magyar Társaság Rajna-Ruhr e.V.", "region": "NW", "city": "Düsseldorf", "type": "német-magyar társaság", "website": "https://www.deutsch-ungarische-gesellschaft-rhein-ruhr.de" },
+    { "name": "Rajna-Ruhr-vidéki Magyar Baráti Kör (UFRR)", "region": "NW", "city": "Essen", "type": "baráti kör", "website": "https://hunrheinruhr.jimdo.com" },
+
+    { "name": "Nürnbergi Magyar Hétvégi Iskola", "region": "BY", "city": "Nürnberg", "type": "iskola", "website": null }
   ]
 }
