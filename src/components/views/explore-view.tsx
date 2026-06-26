@@ -8,7 +8,9 @@ import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Business, Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
-import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode } from "@/lib/cantons";
+import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode, cantonPoint } from "@/lib/cantons";
+import { atPoint } from "@/lib/at-points";
+import { dePoint } from "@/lib/de-points";
 import { readPreferredCanton, setPreferredCanton } from "@/lib/canton-pref";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { getRegions, regionLabel } from "@/lib/regions";
@@ -21,6 +23,16 @@ import { PushOptin } from "@/components/push-optin";
 const RADIUS_OPTIONS_KM = [5, 10, 20, 50] as const;
 type RadiusKm = (typeof RADIUS_OPTIONS_KM)[number];
 const RADIUS_LS_KEY = "kinti_radius_km";
+
+// Ország-tudatos térkép-közép (ha nincs találat / „Egész ország" van kiválasztva).
+// Eddig fix Zürich volt → DE/AT/NL-en is Svájcot mutatott. Lásd deals-map.
+const COUNTRY_MAP_CENTER: Record<string, [number, number]> = {
+  CH: [46.82, 8.23],
+  AT: [47.59, 14.14],
+  DE: [51.1, 10.4],
+  NL: [52.13, 5.29],
+};
+const COUNTRY_MAP_ZOOM: Record<string, number> = { CH: 7, AT: 7, DE: 6, NL: 7 };
 
 /**
  * ExploreView (Szaknévsor) — szerverről kapja a teljes adatkészletet, és
@@ -98,6 +110,17 @@ export function ExploreView({
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const countryName = getCountry(country)?.name ?? "Svájc";
   const regions = useMemo(() => getRegions(country), [country]);
+
+  // Ország-/régió-tudatos térkép-közép a fallbackhez (találat nélkül se essen Svájcra).
+  const mapCenter = useMemo<[number, number]>(() => {
+    if (canton !== "all") {
+      if (country === "DE") { const p = dePoint(canton); return [p.lat, p.lng]; }
+      if (country === "AT") { const p = atPoint(canton); return [p.lat, p.lng]; }
+      const p = cantonPoint(canton); if (p) return [p.lat, p.lng];
+    }
+    return COUNTRY_MAP_CENTER[country] ?? COUNTRY_MAP_CENTER.CH;
+  }, [country, canton]);
+  const mapZoom = canton !== "all" ? 10 : (COUNTRY_MAP_ZOOM[country] ?? 7);
   // Ország-váltáskor a más országbeli régió-választás érvénytelen → vissza "all"-ra.
   useEffect(() => {
     if (canton !== "all" && !regions.some((r) => r.code === canton)) setCanton("all");
@@ -664,6 +687,8 @@ export function ExploreView({
               activeCat={cat}
               onSelectCat={setCat}
               locationLabel={locationLabel}
+              fallbackCenter={mapCenter}
+              fallbackZoom={mapZoom}
               className="mb-2 h-[calc(100dvh-300px)] min-h-[440px] max-h-[760px]"
             />
           </Suspense>
