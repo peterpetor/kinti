@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 interface CvIssue {
   section: string;
@@ -25,6 +27,7 @@ export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CvReview | null>(null);
+  const [prefCountry] = usePreferredCountry();
 
   async function run() {
     setBusy(true);
@@ -34,7 +37,7 @@ export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
       const res = await fetch("/api/ai/cv-review", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: "{}",
+        body: JSON.stringify({ country: prefCountry ?? DEFAULT_COUNTRY }),
       });
       const data = (await res.json().catch(() => ({}))) as CvReview & { error?: string };
       if (!res.ok) {

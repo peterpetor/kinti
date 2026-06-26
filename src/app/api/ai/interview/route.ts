@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
     const profession = typeof body.profession === "string" ? body.profession.trim() : "Allgemein";
     const language = typeof body.language === "string" ? body.language.trim() : "Hochdeutsch";
-    const country = body.country === "AT" ? "AT" : "CH";
+    const country = body.country === "AT" ? "AT" : body.country === "DE" ? "DE" : "CH";
     const messages = Array.isArray(body.messages) ? body.messages : [];
 
     if (messages.length === 0) {
@@ -34,11 +34,13 @@ export async function POST(req: Request) {
       );
     }
 
-    // System prompt: ország-tudatos HR-menedzser (CH / AT).
+    // System prompt: ország-tudatos HR-menedzser (CH / AT / DE).
     const ctx =
       country === "AT"
         ? { adj: "österreichischer", land: "Österreich", landDat: "in Österreich", motiv: "Motivation für Österreich" }
-        : { adj: "Schweizer", land: "der Schweiz", landDat: "in der Schweiz", motiv: "Motivation für die Schweiz" };
+        : country === "DE"
+          ? { adj: "deutscher", land: "Deutschland", landDat: "in Deutschland", motiv: "Motivation für Deutschland" }
+          : { adj: "Schweizer", land: "der Schweiz", landDat: "in der Schweiz", motiv: "Motivation für die Schweiz" };
     const systemPrompt = `Du bist Herr Müller (oder Frau Keller), ein strenger aber fairer ${ctx.adj} HR-Manager (Personalchef) in der Branche "${profession}".
 Du führst gerade ein Bewerbungsgespräch auf ${language}.
 Der Bewerber (User) kommt aus Ungarn und möchte ${ctx.landDat} arbeiten.

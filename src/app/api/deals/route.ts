@@ -66,12 +66,15 @@ export async function POST(req: Request) {
   if (!DEAL_DISCOUNTS.includes(discountPct as (typeof DEAL_DISCOUNTS)[number])) {
     return NextResponse.json({ error: "Érvénytelen kedvezmény." }, { status: 400 });
   }
+  // Engedélyezett régió: CH + AT + DE + NL együttes befoglaló doboza (a megjelenítés
+  // ország szerint szegmentál — lásd akciok-view inCountryBox). Eddig CH-only doboz
+  // volt (lat 45–48, lng 5–11) → DE/NL és Kelet-Ausztria (Bécs) beküldését elutasította.
   if (
     !Number.isFinite(lat) || !Number.isFinite(lng) ||
-    lat < 45 || lat > 48 || lng < 5 || lng > 11
+    lat < 45.5 || lat > 55.2 || lng < 3.2 || lng > 17.3
   ) {
     return NextResponse.json(
-      { error: "Érvénytelen koordináta (Svájcon belül)." },
+      { error: "Érvénytelen koordináta (a lefedett országokon kívül)." },
       { status: 400 },
     );
   }

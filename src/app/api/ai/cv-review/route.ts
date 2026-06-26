@@ -76,21 +76,35 @@ export async function POST(req: Request) {
     }
     const cvText = extracted.text;
 
-    const system = `Te a kinti.app SVÁJCI CV-szakértője vagy, magyar anyanyelvű, Svájcban álláskereső ügyfeleknek. A felhasználó nyers CV-szövegét kapod (PDF-ből kinyerve). Készíts MAGYAR nyelven egy komoly, konkrét auditot a SVÁJCI munkaerőpiac elvárásai szerint.
+    // Ország-tudatos audit: a választott ország munkaerőpiacára szabott (engedély-
+    // terminológia, szóhasználat). A kliens a body-ban küldi a country-t; default CH.
+    let country = "CH";
+    try {
+      const b = (await req.json()) as { country?: string };
+      if (b?.country === "AT" || b?.country === "DE") country = b.country;
+    } catch { /* üres/hibás body → CH */ }
+    const LAND: Record<string, { adj: string; loc: string; permit: string }> = {
+      CH: { adj: "svájci", loc: "Svájcban", permit: "Tartózkodási/munkavállalási engedély (B/C/L) feltüntetése — a HR ezt rögtön keresi." },
+      AT: { adj: "osztrák", loc: "Ausztriában", permit: "EU-állampolgárként NINCS szükség munkavállalási engedélyre — a CV-n nem kötelező feltüntetni (a Meldezettel legfeljebb említhető)." },
+      DE: { adj: "német", loc: "Németországban", permit: "EU-állampolgárként szabad mozgás (Freizügigkeit) — NINCS engedély, a CV-n NEM kell feltüntetni." },
+    };
+    const L = LAND[country];
 
-Vizsgáld kiemelten (svájci specifikumok):
-- Személyes adatok (név, születési év, lakhely/kanton, elérhetőség) és — CH-ban elvárt — szakmai fotó megléte.
-- Nyelvtudás CEFR-skálán (pl. német B2, francia A2) — a "jó/alap" megfogalmazás gyenge.
-- Tartózkodási/munkavállalási engedély (B/C/L) feltüntetése — a HR ezt rögtön keresi.
+    const system = `Te a kinti.app ${L.adj} CV-szakértője vagy, magyar anyanyelvű, ${L.loc} álláskereső ügyfeleknek. A felhasználó nyers CV-szövegét kapod (PDF-ből kinyerve). Készíts MAGYAR nyelven egy komoly, konkrét auditot a ${L.adj} munkaerőpiac elvárásai szerint.
+
+Vizsgáld kiemelten (${L.adj} specifikumok):
+- Személyes adatok (név, születési év, lakhely, elérhetőség) és — ${L.loc} elvárt — szakmai fotó megléte.
+- Nyelvtudás CEFR-skálán (pl. német B2) — a "jó/alap" megfogalmazás gyenge.
+- ${L.permit}
 - Eredmény-orientált tapasztalat (számszerű hatás), nem csak feladat-felsorolás.
-- Időrendi hézagok, túl hosszú szöveg, magyar-specifikus, CH-ban szokatlan elemek.
-- Munkáltatói referencia (Arbeitszeugnis) és motivációs levél utalás, releváns CH-képesítés-megfeleltetés.
+- Időrendi hézagok, túl hosszú szöveg, magyar-specifikus, ${L.adj} CV-n szokatlan elemek.
+- Munkáltatói referencia (Arbeitszeugnis) és motivációs levél utalás, releváns ${L.adj} képesítés-megfeleltetés.
 
 FONTOS: CSAK ÉRTÉKELSZ — NEM írsz újra szakaszokat, NEM generálsz új CV-szöveget.
 Szabályok:
-- MINDENT MAGYARUL írj — a "section" szakasz-nevek is MAGYARUL legyenek (pl. "Személyes adatok", "Nyelvtudás", "Tanulmányok"), NE németül (NE "Personalien", "Sprachkenntnisse"). Ha egy svájci szakszó fontos, a magyar megnevezés után zárójelben add meg (pl. "Munkáltatói referencia (Arbeitszeugnis)").
+- MINDENT MAGYARUL írj — a "section" szakasz-nevek is MAGYARUL legyenek (pl. "Személyes adatok", "Nyelvtudás", "Tanulmányok"), NE németül (NE "Personalien", "Sprachkenntnisse"). Ha egy ${L.adj} szakszó fontos, a magyar megnevezés után zárójelben add meg (pl. "Munkáltatói referencia (Arbeitszeugnis)").
 - KIZÁRÓLAG a megadott CV-tartalomból dolgozz — NE találj ki céget, évszámot, képesítést, eredményt. Ahol adat hiányzik, a "fix"-ben kérd be, ne pótold kitalálttal.
-- CSAK ÉRDEMI, a svájci álláspiacon SZOKÁSOS javaslatot adj. NE erőltess gyenge/triviális/szokatlan tippet csak a darabszámért — inkább kevesebb, de hasznos pont. Pl. a jogosítványnál legfeljebb a KATEGÓRIA feltüntetése indokolt, és CSAK ha a munkához releváns (sofőr, terepmunka); SOHA ne javasolj jármű-típus felsorolást vagy hasonló szokatlan részletet.
+- CSAK ÉRDEMI, a ${L.adj} álláspiacon SZOKÁSOS javaslatot adj. NE erőltess gyenge/triviális/szokatlan tippet csak a darabszámért — inkább kevesebb, de hasznos pont. Pl. a jogosítványnál legfeljebb a KATEGÓRIA feltüntetése indokolt, és CSAK ha a munkához releváns (sofőr, terepmunka); SOHA ne javasolj jármű-típus felsorolást vagy hasonló szokatlan részletet.
 - LÉGY TÖMÖR: max 4 strengths, max 5 issues; rövid, lényegre törő mondatok.
 - Pontozz reálisan, ne hízelegj.
 
