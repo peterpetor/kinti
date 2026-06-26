@@ -8,6 +8,7 @@ import { formatJobCurrency } from "@/lib/job-categories";
 import { computeSalary } from "@/lib/salary-calc";
 import { getSalaryStats } from "@/lib/benchmark";
 import { matchCantonByName, cantonFromAddress, cantonName as cantonNameByCode } from "@/lib/cantons";
+import { countryLocative } from "@/lib/countries";
 import { jobPostingJsonLd, safeJsonLdStringify } from "@/lib/json-ld";
 import { Icon } from "@/components/ui";
 import { Metadata } from "next";
@@ -19,10 +20,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const job = await getJobById(params.id);
   if (!job || job.moderationStatus !== 1) return { title: "Nem található állás" };
   const employer = await getEmployerById(job.employerId);
-  const company = employer?.companyName || "Svájci munka";
+  const company = employer?.companyName || "Munkalehetőség";
   const loc = job.location || (cantonFromAddress(job.location) || matchCantonByName(job.location))?.name || "";
   const title = `${job.title} — ${company}`;
-  const description = `${job.title} · ${company}${loc ? ` · ${loc}` : ""} — magyar munkalehetőség Svájcban (Kinti).`;
+  const description = `${job.title} · ${company}${loc ? ` · ${loc}` : ""} — magyar munkalehetőség ${countryLocative(job.country ?? "CH")} (Kinti).`;
   const image = "https://kinti.app/icons/og-default.png";
   const url = `https://kinti.app/allasok/${job.id}`;
   return {
@@ -60,8 +61,10 @@ export default async function JobDetailPage({ params }: { params: { id: string }
   const match = pro && hasMatchableProfile(matchProfile) ? jobMatchScore(matchProfile, job) : null;
 
   // Nettó-becslés: a bér középértékére, a profil kantonjában (vagy az állás kantonjában).
+  // CSAK svájci állásnál — a computeSalary svájci adó-/TB-logika; AT/DE-re hamis CHF-számot
+  // adna (külön ország-kalkuláció kellene). A bruttó-sávot a hirdetés saját pénznemében amúgy is látja.
   let netEstimate: { gross: number; net: number; cantonCode: string } | null = null;
-  if (pro && job.salaryMin && job.salaryMax) {
+  if (pro && (job.country ?? "CH") === "CH" && job.salaryMin && job.salaryMax) {
     const estCanton = workerProfile?.cantonCode ?? job.cantonCode ?? "ZH";
     const gross = Math.round((job.salaryMin + job.salaryMax) / 2);
     const r = computeSalary({ gross, period: "month", canton: estCanton, age: "25-34", civil: "A", kids: 0, churchTax: false, months: 12 });

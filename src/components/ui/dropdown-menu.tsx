@@ -158,6 +158,7 @@ export function DropdownMenu() {
                   AI CV-asszisztens
                   <ProBadge />
                 </Link>
+                {has("szakmai-szotar") && (
                 <Link href="/allasok/szakmai-szotar" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/10 text-star">
                     <Icon name="document" size={16} strokeWidth={2.4} />
@@ -165,6 +166,7 @@ export function DropdownMenu() {
                   Szakmai Gyors-Szótár
                   <ProBadge />
                 </Link>
+                )}
               </CollapsibleSection>
 
               <CollapsibleSection title="Tudás & Ügyintézés">

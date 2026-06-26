@@ -5,6 +5,7 @@ import { KintiLogo } from "@/components/ui/kinti-logo";
 import { cn } from "@/lib/cn";
 import { auth } from "@clerk/nextjs/server";
 import { isPro } from "@/lib/subscriptions";
+import { CountryGuard } from "@/components/country-guard";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -20,6 +21,7 @@ export default async function SzakmaiSzotarPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-24">
+      <CountryGuard feature="szakmai-szotar" />
       <div className="mb-4 flex justify-end">
         <Link
           href="/"
