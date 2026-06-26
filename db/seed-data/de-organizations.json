@@ -35,6 +35,26 @@
     { "name": "Ungarisch-Sächsischer Kulturverein Neustadt e.V.", "region": "SN", "city": "Neustadt in Sachsen", "type": "kultúra", "website": null },
     { "name": "Magyar Klub Dresden", "region": "SN", "city": "Dresden", "type": "klub / közösség", "website": null },
 
-    { "name": "Hamburgi Magyarok Közössége", "region": "HH", "city": "Hamburg", "type": "közösség", "website": "https://hamburgi-magyarok.com" }
+    { "name": "Hamburgi Magyarok Közössége", "region": "HH", "city": "Hamburg", "type": "közösség", "website": "https://hamburgi-magyarok.com" },
+
+    { "name": "Magyar Egyesület Berlin (Ungarn in Berlin e.V.)", "region": "BE", "city": "Berlin", "type": "egyesület", "website": "https://ungarn-in-berlin.de" },
+    { "name": "Brunszvik e.V. – Magyar Családi és Iskolaegyesület", "region": "BE", "city": "Berlin", "type": "iskola / család", "website": "https://brunszvik.de" },
+
+    { "name": "Regös Magyar Néptánc Egyesület München", "region": "BY", "city": "München", "type": "néptánc", "website": null },
+    { "name": "München Liszt Ferenc Cserkészcsapat", "region": "BY", "city": "München", "type": "cserkészet", "website": null },
+
+    { "name": "Rezeda Magyar Néptáncegyüttes Frankfurt", "region": "HE", "city": "Frankfurt am Main", "type": "néptánc", "website": null },
+    { "name": "Magyar Cserkészcsapat – Frankfurt (KMCSSZ)", "region": "HE", "city": "Frankfurt am Main", "type": "cserkészet", "website": null },
+
+    { "name": "Szent Gellért Magyar Katolikus Egyházközség Stuttgart", "region": "BW", "city": "Stuttgart", "type": "egyház", "website": "https://www.kath-kirche-stuttgart.de/ungarisch-1" },
+    { "name": "Stuttgarti Magyar Cserkészcsapat (KMCSSZ)", "region": "BW", "city": "Stuttgart", "type": "cserkészet", "website": null },
+    { "name": "Heidelbergi Magyar Cserkészcsapat (KMCSSZ)", "region": "BW", "city": "Heidelberg", "type": "cserkészet", "website": null },
+
+    { "name": "Kölni Főegyházmegye Magyar Katolikus Lelkészsége", "region": "NW", "city": "Köln", "type": "egyház", "website": null },
+    { "name": "Magyar Cserkészcsapat – Köln (KMCSSZ)", "region": "NW", "city": "Köln", "type": "cserkészet", "website": null },
+
+    { "name": "Magyar Cserkészcsapat – Mainz (KMCSSZ)", "region": "RP", "city": "Mainz", "type": "cserkészet", "website": null },
+
+    { "name": "Ungarischer Kulturverein Chemnitz und Umgebung e.V.", "region": "SN", "city": "Chemnitz", "type": "kultúra", "website": "https://www.ungarn-in-sachsen.de" }
   ]
 }
