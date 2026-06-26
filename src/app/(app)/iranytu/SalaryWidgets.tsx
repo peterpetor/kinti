@@ -4,12 +4,9 @@ import { useState, useEffect } from "react";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { benchRegions, benchCurrency, benchAllLabel, benchDefaultSalary, benchDefaultRent } from "./region-util";
+import { BENCHMARK_INDUSTRIES } from "@/lib/benchmark-meta";
 
-const INDUSTRIES = [
-  "Informatika (IT)", "Vendéglátás / Szálloda", "Építőipar",
-  "Egészségügy / Ápolás", "Pénzügy / Bank / Biztosítás", "Mérnök / Gyártás",
-  "Logisztika / Szállítás", "Oktatás / Tudomány", "Kereskedelem / Retail", "Egyéb",
-];
+const INDUSTRIES: readonly string[] = BENCHMARK_INDUSTRIES;
 
 interface SalaryExpRow { industry: string; exp_bucket: string; avg_salary: number; entry_count: number; }
 

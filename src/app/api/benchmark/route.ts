@@ -7,6 +7,8 @@ import {
 } from "@/lib/benchmark";
 import { hashIp } from "@/lib/security";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { getRegion } from "@/lib/regions";
+import { isValidBenchmarkIndustry, isValidBenchmarkRooms } from "@/lib/benchmark-meta";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -81,6 +83,15 @@ async function handleUpsert(mode: "insert" | "update", body: BenchmarkBody, ipHa
   if (body.type === "salary") {
     if (!body.cantonCode || !body.industry || typeof body.yearsExperience !== "number" || typeof body.grossSalaryChf !== "number")
       return NextResponse.json({ error: "Hiányzó bér adatok." }, { status: 400 });
+    // Közösségi adat — a kliensből jött iparág/régió-értéket szerveroldalon is
+    // validálni KELL (a legördülő megkerülhető), különben kamu adat pollutálná a
+    // mindenki által látott statisztikát.
+    if (!isValidBenchmarkIndustry(body.industry))
+      return NextResponse.json({ error: "Ismeretlen iparág." }, { status: 400 });
+    if (!getRegion(country, body.cantonCode))
+      return NextResponse.json({ error: "Érvénytelen régió." }, { status: 400 });
+    if (!Number.isInteger(body.yearsExperience) || body.yearsExperience < 0 || body.yearsExperience > 50)
+      return NextResponse.json({ error: "Érvénytelen tapasztalat (0–50 év)." }, { status: 400 });
     const minS = country !== "CH" ? 15000 : 20000;
     const maxS = country !== "CH" ? 250000 : 300000;
     if (body.grossSalaryChf < minS || body.grossSalaryChf > maxS)
@@ -92,6 +103,10 @@ async function handleUpsert(mode: "insert" | "update", body: BenchmarkBody, ipHa
   if (body.type === "rent") {
     if (!body.cantonCode || typeof body.rooms !== "number" || typeof body.rentChf !== "number")
       return NextResponse.json({ error: "Hiányzó lakbér adatok." }, { status: 400 });
+    if (!getRegion(country, body.cantonCode))
+      return NextResponse.json({ error: "Érvénytelen régió." }, { status: 400 });
+    if (!isValidBenchmarkRooms(body.rooms))
+      return NextResponse.json({ error: "Érvénytelen szobaszám." }, { status: 400 });
     const maxR = country !== "CH" ? 6000 : 10000;
     if (body.rentChf < 300 || body.rentChf > maxR)
       return NextResponse.json({ error: `Érvényes havi lakbér adatot adj meg (300–${maxR.toLocaleString("hu-HU")} ${cur} között).` }, { status: 400 });

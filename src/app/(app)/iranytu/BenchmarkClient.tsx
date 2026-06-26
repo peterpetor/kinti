@@ -13,12 +13,9 @@ import {
   benchRegions, benchRegionName, benchCurrency, benchAllLabel,
   benchDefaultRegion, benchDefaultSalary, benchDefaultRent,
 } from "./region-util";
+import { BENCHMARK_INDUSTRIES } from "@/lib/benchmark-meta";
 
-const INDUSTRIES = [
-  "Informatika (IT)", "Vendéglátás / Szálloda", "Építőipar",
-  "Egészségügy / Ápolás", "Pénzügy / Bank / Biztosítás", "Mérnök / Gyártás",
-  "Logisztika / Szállítás", "Oktatás / Tudomány", "Kereskedelem / Retail", "Egyéb",
-];
+const INDUSTRIES: readonly string[] = BENCHMARK_INDUSTRIES;
 const PERIODS = [
   { value: "3m", label: "3 hó" }, { value: "6m", label: "6 hó" },
   { value: "12m", label: "1 év" }, { value: "all", label: "Összes" },
