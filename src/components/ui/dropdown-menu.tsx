@@ -8,7 +8,7 @@ import { Icon } from "./icons";
 import { CountrySwitcher } from "./country-switcher";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 
 export function DropdownMenu() {
@@ -189,7 +189,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🪪
                   </span>
-                  {isCH ? "Tartózkodási engedély" : "Tartózkodás Ausztriában"}
+                  {isCH ? "Tartózkodási engedély" : `Tartózkodás ${countryLocative(country)}`}
                 </Link>
                 )}
                 {has("allampolgarsag") && (
