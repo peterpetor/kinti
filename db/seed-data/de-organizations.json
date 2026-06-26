@@ -1,0 +1,40 @@
+{
+  "_comment": "Valódi németországi magyar közösségi szervezetek (egyesületek, iskolák, egyházközségek, kulturális intézetek, képviseletek) — a kinti.app németországi (DE) induló tartalmának forrása. Források: BUOD (buod.de — Németországi Magyar Szervezetek Szövetsége), nemetorszagi-magyarok.de, a magyar főkonzulátusok (mfa.gov.hu), és az egyes szervezetek saját oldalai, 2026-06. country_code='DE', a region a lib/regions.ts DE-kódjaira leképezve (BW/BY/BE/BB/HB/HH/HE/MV/NI/NW/RP/SL/SN/ST/SH/TH). FELÜLVIZSGÁLANDÓ a seedelés előtt; a neveket, városokat és weboldalakat ellenőrizni kell. NEM kitalált adat — valós, nyilvános szervezetek; ahol a weboldal nem volt biztosan ellenőrizhető, ott null.",
+  "country": "DE",
+  "source": "https://nemetorszagi-magyarok.de/infok/magyar-szervezetek-intezmenyek-nemetorszagban , https://buod.de",
+  "organizations": [
+    { "name": "Liszt-Institut – Magyar Kulturális Intézet Stuttgart", "region": "BW", "city": "Stuttgart", "type": "kulturális intézet", "website": "https://culture.hu/de/stuttgart" },
+    { "name": "Deutsch-Ungarische Gesellschaft Stuttgart", "region": "BW", "city": "Stuttgart", "type": "német-magyar társaság", "website": "https://dug-stuttgart.de" },
+    { "name": "Deutsch-Ungarische Gesellschaft Pforzheim-Enzkreis", "region": "BW", "city": "Pforzheim", "type": "német-magyar társaság", "website": null },
+    { "name": "Baden-Württembergi Konzuli Magyar Iskola és Óvoda", "region": "BW", "city": "Stuttgart", "type": "iskola / óvoda", "website": "https://bwkmi.ulbe.org" },
+    { "name": "MANOKA Magyar Kulturális Egyesület", "region": "BW", "city": "Karlsruhe", "type": "kultúra / oktatás", "website": null },
+    { "name": "Magyarország Stuttgarti Főkonzulátusa", "region": "BW", "city": "Stuttgart", "type": "főkonzulátus", "website": "https://stuttgart.mfa.gov.hu" },
+
+    { "name": "Magyar Katolikus Misszió München", "region": "BY", "city": "München", "type": "egyház", "website": "https://www.ungarische-mission.de" },
+    { "name": "Szent László Magyar Katolikus Misszió Augsburg", "region": "BY", "city": "Augsburg", "type": "egyház", "website": "https://augsburgi-katolikusok.de" },
+    { "name": "Deutsch-Ungarische Gesellschaft München", "region": "BY", "city": "München", "type": "német-magyar társaság", "website": null },
+    { "name": "Bajorországi Konzuli Magyar Iskola", "region": "BY", "city": "München", "type": "iskola", "website": null },
+    { "name": "Magyarország Müncheni Főkonzulátusa", "region": "BY", "city": "München", "type": "főkonzulátus", "website": "https://munchen.mfa.gov.hu" },
+
+    { "name": "Collegium Hungaricum Berlin (Liszt Intézet)", "region": "BE", "city": "Berlin", "type": "kulturális intézet", "website": "https://culture.hu/de/berlin" },
+
+    { "name": "BUOD – Németországi Magyar Szervezetek Szövetsége", "region": "HE", "city": "Frankfurt am Main", "type": "ernyőszervezet", "website": "https://buod.de" },
+    { "name": "Lingua Hungarica – Magyar Hétvégi Iskola Frankfurt", "region": "HE", "city": "Frankfurt am Main", "type": "iskola", "website": null },
+    { "name": "Deutsch-Ungarische Gesellschaft Frankfurt", "region": "HE", "city": "Frankfurt am Main", "type": "német-magyar társaság", "website": null },
+    { "name": "Deutsch-Ungarische Gesellschaft Darmstadt", "region": "HE", "city": "Darmstadt", "type": "német-magyar társaság", "website": null },
+
+    { "name": "Deutsch-Ungarische Gesellschaft Hannover", "region": "NI", "city": "Hannover", "type": "német-magyar társaság", "website": null },
+
+    { "name": "Magyarország Düsseldorfi Főkonzulátusa", "region": "NW", "city": "Düsseldorf", "type": "főkonzulátus", "website": "https://dusseldorf.mfa.gov.hu" },
+    { "name": "Ungarnzentrum Köln – Magyar Központ", "region": "NW", "city": "Köln", "type": "közösségi központ", "website": "https://ungarnzentrum.de" },
+    { "name": "Észak-Rajna-Vesztfáliai Magyar Protestáns Gyülekezet", "region": "NW", "city": "Köln", "type": "egyház", "website": "https://ungarische-gemeinde.de" },
+    { "name": "Deutsch-Ungarische Gesellschaft Münster", "region": "NW", "city": "Münster", "type": "német-magyar társaság", "website": null },
+
+    { "name": "Deutsch-Ungarische Gesellschaft Kiel", "region": "SH", "city": "Kiel", "type": "német-magyar társaság", "website": null },
+
+    { "name": "Ungarisch-Sächsischer Kulturverein Neustadt e.V.", "region": "SN", "city": "Neustadt in Sachsen", "type": "kultúra", "website": null },
+    { "name": "Magyar Klub Dresden", "region": "SN", "city": "Dresden", "type": "klub / közösség", "website": null },
+
+    { "name": "Hamburgi Magyarok Közössége", "region": "HH", "city": "Hamburg", "type": "közösség", "website": "https://hamburgi-magyarok.com" }
+  ]
+}
