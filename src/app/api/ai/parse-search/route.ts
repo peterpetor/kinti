@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { getCategories } from "@/lib/repo";
 import { CANTONS } from "@/lib/cantons";
+import { AT_BUNDESLAENDER, DE_BUNDESLAENDER } from "@/lib/salary-calc";
 import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -30,8 +31,9 @@ interface ParsedFilter {
  */
 export async function POST(req: Request) {
   try {
-    const body = (await req.json().catch(() => ({}))) as { query?: string };
+    const body = (await req.json().catch(() => ({}))) as { query?: string; country?: string };
     const query = typeof body.query === "string" ? body.query.trim() : "";
+    const country = body.country === "AT" || body.country === "DE" ? body.country : "CH";
     if (!query || query.length < 3 || query.length > 200) {
       return NextResponse.json({ error: "Adj meg egy keresési szöveget." }, { status: 400 });
     }
@@ -48,17 +50,22 @@ export async function POST(req: Request) {
 
     const cats = await getCategories();
     const catList = cats.map((c) => `  • ${c.id} (${c.label})`).join("\n");
-    const cantonList = CANTONS.map((c) => `  • ${c.code} (${c.name})`).join("\n");
+    // Ország-tudatos régiólista (CH: kanton, AT/DE: Bundesland) — különben a német
+    // user keresésében pl. „Berlinben" nem mappelődne régióra (eddig csak CH-kantonok).
+    const regions = country === "AT" ? AT_BUNDESLAENDER : country === "DE" ? DE_BUNDESLAENDER : CANTONS;
+    const regionList = regions.map((r) => `  • ${r.code} (${r.name})`).join("\n");
+    const landLoc = country === "AT" ? "Ausztriában" : country === "DE" ? "Németországban" : "Svájcban";
+    const regionWord = country === "CH" ? "KANTON" : "BUNDESLAND";
 
     const system = `Te a kinti.app Szaknévsor keresési asszisztense vagy.
 A felhasználó természetes magyar nyelven leírja, hogy milyen vállalkozót keres
-Svájcban. A feladatod: kinyerni a strukturált szűrőket egy JSON objektumba.
+${landLoc}. A feladatod: kinyerni a strukturált szűrőket egy JSON objektumba.
 
 KATEGÓRIÁK (csak ezeket használhatod, az id mezőt írd vissza):
 ${catList}
 
-KANTON-KÓDOK (ISO 2 betűs, csak ezeket használhatod):
-${cantonList}
+${regionWord}-KÓDOK (csak ezeket használhatod):
+${regionList}
 
 NYELV-KÓDOK (csak ezek):
   • hu (magyar - alapból feltesszük, csak akkor jelezd ha külön említi)
@@ -98,7 +105,7 @@ Ha valamit nem értesz vagy nincs benne a query-ben, írj null-t. Ne találj ki!
 
     // Validálás: csak ismert id-ket/kódokat engedünk át.
     const validCategoryIds = new Set(cats.map((c) => c.id));
-    const validCantonCodes = new Set(CANTONS.map((c) => c.code));
+    const validCantonCodes = new Set(regions.map((r) => r.code));
     const validLangs = new Set(["hu", "de", "en", "fr", "it"]);
 
     const result: ParsedFilter = {

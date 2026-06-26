@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 /**
  * SmartSearchBar — EGY kereső, ami kétféleképp dolgozik:
@@ -42,6 +44,7 @@ export function SmartSearchBar({
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [prefCountry] = usePreferredCountry();
 
   async function runAi() {
     const q = value.trim();
@@ -57,7 +60,7 @@ export function SmartSearchBar({
       const res = await fetch("/api/ai/parse-search", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ query: q }),
+        body: JSON.stringify({ query: q, country: prefCountry ?? DEFAULT_COUNTRY }),
       });
       if (!res.ok) {
         const j = (await res.json().catch(() => ({}))) as { error?: string };
