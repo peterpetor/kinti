@@ -178,4 +178,130 @@ export const LESSONS_DE: Lesson[] = [
       { id: "dq60", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "vasút / vonat", right: "Bahn" }, { id: "p2", left: "pályaudvar", right: "Bahnhof" }, { id: "p3", left: "késés", right: "Verspätung" }] },
     ],
   },
+
+  // ══ 5. Fejezet: Család & Emberek ═════════════════════
+  {
+    id: "dl21", title: "Család", description: "Familie, Mutter, Vater, Kind.", chapter: 5, xpReward: 10,
+    questions: [
+      { id: "dq61", type: "multiple_choice", prompt: "Mit jelent 'Mutter'?", options: [{ id: "o1", text: "anya" }, { id: "o2", text: "apa" }, { id: "o3", text: "gyerek" }], correctOptionId: "o1" },
+      { id: "dq62", type: "flashcard", prompt: "'apa'?", backText: "Vater", phonetic: "Fáter" },
+      { id: "dq63", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "szülők", right: "Eltern" }, { id: "p2", left: "fiútestvér", right: "Bruder" }, { id: "p3", left: "gyerek", right: "Kind" }] },
+    ],
+  },
+  {
+    id: "dl22", title: "Emberek", description: "Mann, Frau, Freund, Nachbar.", chapter: 5, xpReward: 10,
+    questions: [
+      { id: "dq64", type: "multiple_choice", prompt: "Mit jelent 'Nachbar'?", options: [{ id: "o1", text: "szomszéd" }, { id: "o2", text: "barát" }, { id: "o3", text: "kolléga" }], correctOptionId: "o1" },
+      { id: "dq65", type: "flashcard", prompt: "'barátnő'?", backText: "Freundin", phonetic: "Frojndin" },
+      { id: "dq66", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "férfi", right: "Mann" }, { id: "p2", left: "nő", right: "Frau" }, { id: "p3", left: "emberek", right: "Leute" }] },
+    ],
+  },
+  {
+    id: "dl23", title: "Kor és állapot", description: "Wie alt bist du? verheiratet, ledig.", chapter: 5, xpReward: 15,
+    questions: [
+      { id: "dq67", type: "multiple_choice", prompt: "'Hány éves vagy?'", options: [{ id: "o1", text: "Wie alt bist du?" }, { id: "o2", text: "Wie geht's dir?" }, { id: "o3", text: "Wer bist du?" }], correctOptionId: "o1" },
+      { id: "dq68", type: "flashcard", prompt: "'házas'?", backText: "verheiratet", phonetic: "ferhájratet" },
+      { id: "dq69", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "… éves", right: "… Jahre alt" }, { id: "p2", left: "egyedülálló", right: "ledig" }, { id: "p3", left: "gyerekek", right: "Kinder" }] },
+    ],
+  },
+  {
+    id: "dl24", title: "Tulajdonságok", description: "groß, klein, nett, müde.", chapter: 5, xpReward: 10,
+    questions: [
+      { id: "dq70", type: "multiple_choice", prompt: "Mit jelent 'groß'?", options: [{ id: "o1", text: "nagy" }, { id: "o2", text: "kicsi" }, { id: "o3", text: "új" }], correctOptionId: "o1" },
+      { id: "dq71", type: "flashcard", prompt: "'fáradt'?", backText: "müde", phonetic: "müde" },
+      { id: "dq72", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "kicsi", right: "klein" }, { id: "p2", left: "kedves", right: "nett" }, { id: "p3", left: "új", right: "neu" }] },
+    ],
+  },
+  {
+    id: "dl25", title: "Érzések", description: "glücklich, traurig, Hunger, Durst.", chapter: 5, xpReward: 15,
+    questions: [
+      { id: "dq73", type: "multiple_choice", prompt: "'Éhes vagyok.' (Van éhségem)", options: [{ id: "o1", text: "Ich habe Hunger" }, { id: "o2", text: "Ich habe Durst" }, { id: "o3", text: "Ich habe Angst" }], correctOptionId: "o1" },
+      { id: "dq74", type: "flashcard", prompt: "'Szomjas vagyok.'", backText: "Ich habe Durst", phonetic: "Ih hábe Durszt" },
+      { id: "dq75", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "boldog", right: "glücklich" }, { id: "p2", left: "szomorú", right: "traurig" }, { id: "p3", left: "félelem", right: "Angst" }] },
+    ],
+  },
+
+  // ══ 6. Fejezet: Test & Egészség ══════════════════════
+  {
+    id: "dl26", title: "Testrészek", description: "Kopf, Hand, Bein, Auge.", chapter: 6, xpReward: 10,
+    questions: [
+      { id: "dq76", type: "multiple_choice", prompt: "Mit jelent 'Kopf'?", options: [{ id: "o1", text: "fej" }, { id: "o2", text: "kéz" }, { id: "o3", text: "láb" }], correctOptionId: "o1" },
+      { id: "dq77", type: "flashcard", prompt: "'kéz'?", backText: "Hand", phonetic: "Hand" },
+      { id: "dq78", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "láb (alsó végtag)", right: "Bein" }, { id: "p2", left: "szem", right: "Auge" }, { id: "p3", left: "hát", right: "Rücken" }] },
+    ],
+  },
+  {
+    id: "dl27", title: "Fájdalom", description: "Schmerzen, Kopfschmerzen, weh tun.", chapter: 6, xpReward: 15,
+    questions: [
+      { id: "dq79", type: "multiple_choice", prompt: "Mit jelent 'Kopfschmerzen'?", options: [{ id: "o1", text: "fejfájás" }, { id: "o2", text: "hasfájás" }, { id: "o3", text: "fogfájás" }], correctOptionId: "o1" },
+      { id: "dq80", type: "flashcard", prompt: "'Fáj.' (fáj nekem)", backText: "Es tut weh", phonetic: "Esz tút vé" },
+      { id: "dq81", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "fájdalom", right: "Schmerzen" }, { id: "p2", left: "hasfájás", right: "Bauchschmerzen" }, { id: "p3", left: "fogfájás", right: "Zahnschmerzen" }] },
+    ],
+  },
+  {
+    id: "dl28", title: "Tünetek", description: "Fieber, Husten, Erkältung.", chapter: 6, xpReward: 10,
+    questions: [
+      { id: "dq82", type: "multiple_choice", prompt: "Mit jelent 'Fieber'?", options: [{ id: "o1", text: "láz" }, { id: "o2", text: "köhögés" }, { id: "o3", text: "nátha" }], correctOptionId: "o1" },
+      { id: "dq83", type: "flashcard", prompt: "'megfázás'?", backText: "Erkältung", phonetic: "Erkeltung" },
+      { id: "dq84", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "köhögés", right: "Husten" }, { id: "p2", left: "nátha", right: "Schnupfen" }, { id: "p3", left: "láz", right: "Fieber" }] },
+    ],
+  },
+  {
+    id: "dl29", title: "Vészhelyzet", description: "Notruf 112, Hilfe, Polizei.", chapter: 6, xpReward: 15,
+    questions: [
+      { id: "dq85", type: "multiple_choice", prompt: "Mi a segélyhívó szám Németországban?", options: [{ id: "o1", text: "112" }, { id: "o2", text: "911" }, { id: "o3", text: "144" }], correctOptionId: "o1" },
+      { id: "dq86", type: "flashcard", prompt: "'Segítség!'", backText: "Hilfe!", phonetic: "Hilfe" },
+      { id: "dq87", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "rendőrség", right: "Polizei" }, { id: "p2", left: "mentő", right: "Krankenwagen" }, { id: "p3", left: "tűzoltóság", right: "Feuerwehr" }] },
+    ],
+  },
+  {
+    id: "dl30", title: "Gyógyszertár", description: "Apotheke, Medikament, Tablette.", chapter: 6, xpReward: 10,
+    questions: [
+      { id: "dq88", type: "multiple_choice", prompt: "Mit jelent 'Tablette'?", options: [{ id: "o1", text: "tabletta" }, { id: "o2", text: "recept" }, { id: "o3", text: "kötszer" }], correctOptionId: "o1" },
+      { id: "dq89", type: "flashcard", prompt: "'gyógyszer'?", backText: "Medikament", phonetic: "Medikáment" },
+      { id: "dq90", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "gyógyszertár", right: "Apotheke" }, { id: "p2", left: "recept", right: "Rezept" }, { id: "p3", left: "fájdalomcsillapító", right: "Schmerzmittel" }] },
+    ],
+  },
+
+  // ══ 7. Fejezet: Otthon & Kommunikáció ════════════════
+  {
+    id: "dl31", title: "A lakásban", description: "Küche, Bad, Schlafzimmer, Möbel.", chapter: 7, xpReward: 10,
+    questions: [
+      { id: "dq91", type: "multiple_choice", prompt: "Mit jelent 'Küche'?", options: [{ id: "o1", text: "konyha" }, { id: "o2", text: "fürdő" }, { id: "o3", text: "hálószoba" }], correctOptionId: "o1" },
+      { id: "dq92", type: "flashcard", prompt: "'fürdőszoba'?", backText: "Badezimmer", phonetic: "Bádecimmer" },
+      { id: "dq93", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "hálószoba", right: "Schlafzimmer" }, { id: "p2", left: "nappali", right: "Wohnzimmer" }, { id: "p3", left: "ajtó", right: "Tür" }] },
+    ],
+  },
+  {
+    id: "dl32", title: "Telefon & internet", description: "Handy, anrufen, WLAN, SMS.", chapter: 7, xpReward: 15,
+    questions: [
+      { id: "dq94", type: "multiple_choice", prompt: "Mit jelent 'Handy'?", options: [{ id: "o1", text: "mobiltelefon" }, { id: "o2", text: "töltő" }, { id: "o3", text: "wifi" }], correctOptionId: "o1" },
+      { id: "dq95", type: "flashcard", prompt: "'felhívni (telefonon)'?", backText: "anrufen", phonetic: "anrúfen" },
+      { id: "dq96", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "wifi", right: "WLAN" }, { id: "p2", left: "e-mail", right: "E-Mail" }, { id: "p3", left: "üzenet", right: "Nachricht" }] },
+    ],
+  },
+  {
+    id: "dl33", title: "Bank", description: "Konto, Geld, überweisen, abheben.", chapter: 7, xpReward: 15,
+    questions: [
+      { id: "dq97", type: "multiple_choice", prompt: "Mit jelent 'überweisen'?", options: [{ id: "o1", text: "utalni" }, { id: "o2", text: "felvenni" }, { id: "o3", text: "megtakarítani" }], correctOptionId: "o1" },
+      { id: "dq98", type: "flashcard", prompt: "'(bank)számla'?", backText: "Konto", phonetic: "Kontó" },
+      { id: "dq99", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "pénz", right: "Geld" }, { id: "p2", left: "készpénzt felvenni", right: "abheben" }, { id: "p3", left: "bankkártya", right: "EC-Karte" }] },
+    ],
+  },
+  {
+    id: "dl34", title: "Posta", description: "Post, Brief, Paket, Briefmarke.", chapter: 7, xpReward: 10,
+    questions: [
+      { id: "dq100", type: "multiple_choice", prompt: "Mit jelent 'Paket'?", options: [{ id: "o1", text: "csomag" }, { id: "o2", text: "levél" }, { id: "o3", text: "bélyeg" }], correctOptionId: "o1" },
+      { id: "dq101", type: "flashcard", prompt: "'bélyeg'?", backText: "Briefmarke", phonetic: "Brífmarke" },
+      { id: "dq102", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "levél", right: "Brief" }, { id: "p2", left: "posta", right: "Post" }, { id: "p3", left: "átvenni (csomagot)", right: "abholen" }] },
+    ],
+  },
+  {
+    id: "dl35", title: "Irányok", description: "links, rechts, geradeaus, Ampel.", chapter: 7, xpReward: 10,
+    questions: [
+      { id: "dq103", type: "multiple_choice", prompt: "Mit jelent 'rechts'?", options: [{ id: "o1", text: "jobbra" }, { id: "o2", text: "balra" }, { id: "o3", text: "egyenesen" }], correctOptionId: "o1" },
+      { id: "dq104", type: "flashcard", prompt: "'egyenesen (előre)'?", backText: "geradeaus", phonetic: "gerádeausz" },
+      { id: "dq105", type: "match", prompt: "Párosítsd!", pairs: [{ id: "p1", left: "balra", right: "links" }, { id: "p2", left: "sarok", right: "Ecke" }, { id: "p3", left: "jelzőlámpa", right: "Ampel" }] },
+    ],
+  },
 ];
