@@ -6,6 +6,7 @@ import { createSuggestedBusiness } from "@/lib/repo";
 import { assessSpam } from "@/lib/spam-score";
 import { cantonPoint } from "@/lib/cantons";
 import { atPoint } from "@/lib/at-points";
+import { dePoint } from "@/lib/de-points";
 import { getRegion } from "@/lib/regions";
 import { getCountry } from "@/lib/countries";
 import { sendEmail } from "@/lib/email";
@@ -60,7 +61,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Válassz régiót." }, { status: 400 });
     }
 
-    const pt = country === "AT" ? atPoint(cantonCode) : cantonPoint(cantonCode);
+    const pt = country === "AT" ? atPoint(cantonCode) : country === "DE" ? dePoint(cantonCode) : cantonPoint(cantonCode);
     const blurbParts = [note, website ? `Web: ${website}` : null].filter(Boolean);
 
     // AI-alapú spam-scoring (a website külön, legitim URL-mező → kihagyjuk).

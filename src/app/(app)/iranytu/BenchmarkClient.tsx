@@ -97,7 +97,7 @@ function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSite
         {onCancel && <button onClick={onCancel} className="text-[12px] text-ink-faint hover:text-ink">Mégse</button>}
       </div>
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div><label className={labelCls}>{country === "AT" ? "Bundesland" : "Kanton"}</label>
+        <div><label className={labelCls}>{country === "CH" ? "Kanton" : "Bundesland"}</label>
           <select value={canton} onChange={e => setCanton(e.target.value)} className={inputCls}>
             {benchRegions(country).map(r => <option key={r.code} value={r.code}>{r.name} ({r.code})</option>)}
           </select>
@@ -222,7 +222,7 @@ function RentStandingInsight({ cantonCode, rooms, rent, country }: { cantonCode:
 function MyDataCard({ tab, myData, onEdit, country }: { tab: Tab; myData: MyData; onEdit: () => void; country: string }) {
   const s = myData.salary, r = myData.rent;
   const cur = benchCurrency(country);
-  const regionLabel = country === "AT" ? "Bundesland" : "Kanton";
+  const regionLabel = country === "CH" ? "Kanton" : "Bundesland";
   if ((tab === "salary" && !s) || (tab === "rent" && !r)) return null;
 
   const lastUpdated = tab === "salary" ? s?.lastUpdatedAt ?? null : r?.lastUpdatedAt ?? null;
@@ -337,7 +337,8 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
   const [editingTab, setEditingTab] = useState<Tab | null>(null);
 
   const [prefCountry] = usePreferredCountry();
-  const country = (prefCountry ?? DEFAULT_COUNTRY) === "AT" ? "AT" : "CH";
+  const c = prefCountry ?? DEFAULT_COUNTRY;
+  const country = c === "AT" || c === "DE" ? c : "CH";
   const cur = benchCurrency(country);
 
   const fetchStats = useCallback(async () => {

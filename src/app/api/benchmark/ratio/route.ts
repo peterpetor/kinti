@@ -11,7 +11,8 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const canton = searchParams.get("canton") || "all";
-  const country = searchParams.get("country") === "AT" ? "AT" : "CH";
+  const cGet = searchParams.get("country");
+  const country = cGet === "AT" || cGet === "DE" ? cGet : "CH";
 
   const data = await getRentToSalaryRatio(country, canton);
   return NextResponse.json(data, { headers: { "cache-control": "no-store" } });

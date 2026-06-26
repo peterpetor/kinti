@@ -35,8 +35,8 @@ export function LeadRequestForm({ categories }: Props) {
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const countryName = getCountry(country)?.name ?? "Svájc";
   const regions = getRegions(country);
-  const cityExample = country === "AT" ? "Bécsben" : "Zürichben";
-  const phoneExample = country === "AT" ? "+43 660 123 4567" : "+41 79 123 45 67";
+  const cityExample = country === "AT" ? "Bécsben" : country === "DE" ? "Berlinben" : country === "NL" ? "Amszterdamban" : "Zürichben";
+  const phoneExample = country === "AT" ? "+43 660 123 4567" : country === "DE" ? "+49 151 23456789" : country === "NL" ? "+31 6 12345678" : "+41 79 123 45 67";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
