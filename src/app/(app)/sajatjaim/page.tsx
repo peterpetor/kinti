@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MyPostsManager } from "@/components/views/my-posts-manager";
 import { GamificationCard } from "@/components/views/gamification-card";
+import { ReferralHub } from "@/components/views/referral-hub";
 import { Icon, KintiLogo } from "@/components/ui";
 
 export const runtime = "edge";
@@ -44,6 +45,8 @@ export default function MyPostsPage() {
       </div>
 
       <GamificationCard />
+
+      <ReferralHub />
 
       <Link
         href="/ranglista"

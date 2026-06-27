@@ -6,7 +6,11 @@ import { loadMyPosts } from "@/lib/my-posts";
 import { computeGamification, type GamificationStats } from "@/lib/gamification";
 import { streakXp } from "@/lib/streak";
 import { gatherAchievementExtras } from "@/lib/achievements";
+import { getMyInviteCode, getReferredBy } from "@/lib/referral-client";
 import { haptic } from "@/lib/haptics";
+
+const REFERRAL_XP = 40; // XP behívott magyaronként
+const REFERRED_BONUS = 25; // egyszeri XP, ha meghívó-linkről érkeztél
 
 const SEEN_BADGES_KEY = "kinti.seenBadges";
 
@@ -22,28 +26,55 @@ export function GamificationCard() {
 
   // localStorage csak kliensen — useEffect a hidratációs eltérés elkerülésére.
   useEffect(() => {
-    const s = computeGamification(loadMyPosts(), streakXp(), gatherAchievementExtras());
-    setStats(s);
-
     // Új kitűző észlelése: a most megszerzett azonosítók összevetése a korábban
     // látottakkal. Az ELSŐ betöltéskor csak rögzítünk (nincs rezgés a meglévőkre).
-    try {
-      const earnedIds = s.badges.filter((b) => b.earned).map((b) => b.id);
-      const raw = localStorage.getItem(SEEN_BADGES_KEY);
-      if (raw == null) {
-        localStorage.setItem(SEEN_BADGES_KEY, JSON.stringify(earnedIds));
-      } else {
-        const seen = new Set<string>(JSON.parse(raw));
-        const fresh = earnedIds.filter((id) => !seen.has(id));
-        if (fresh.length > 0) {
-          haptic("success");
-          setFreshBadges(new Set(fresh));
+    const detectFresh = (s: GamificationStats) => {
+      try {
+        const earnedIds = s.badges.filter((b) => b.earned).map((b) => b.id);
+        const raw = localStorage.getItem(SEEN_BADGES_KEY);
+        if (raw == null) {
           localStorage.setItem(SEEN_BADGES_KEY, JSON.stringify(earnedIds));
+        } else {
+          const seen = new Set<string>(JSON.parse(raw));
+          const fresh = earnedIds.filter((id) => !seen.has(id));
+          if (fresh.length > 0) {
+            haptic("success");
+            setFreshBadges((prev) => new Set([...prev, ...fresh]));
+            localStorage.setItem(SEEN_BADGES_KEY, JSON.stringify(earnedIds));
+          }
         }
+      } catch {
+        /* localStorage nem elérhető — kihagyjuk */
       }
-    } catch {
-      /* localStorage nem elérhető — kihagyjuk */
-    }
+    };
+
+    const referredBonus = getReferredBy() ? REFERRED_BONUS : 0;
+    const compute = (referrals: number) =>
+      computeGamification(loadMyPosts(), streakXp() + referredBonus + referrals * REFERRAL_XP, {
+        ...gatherAchievementExtras(),
+        referrals,
+      });
+
+    // Azonnali render (referrals=0), majd a szerver-konverziószámmal finomítjuk.
+    const initial = compute(0);
+    setStats(initial);
+    detectFresh(initial);
+
+    const code = getMyInviteCode();
+    if (!code) return;
+    let active = true;
+    (async () => {
+      try {
+        const res = await fetch(`/api/referral?code=${code}`);
+        const data = (await res.json()) as { count?: number };
+        const referrals = data.count ?? 0;
+        if (!active || referrals === 0) return;
+        const refined = compute(referrals);
+        setStats(refined);
+        detectFresh(refined);
+      } catch { /* hálózati hiba → marad a kliens-érték */ }
+    })();
+    return () => { active = false; };
   }, []);
 
   if (!stats) {

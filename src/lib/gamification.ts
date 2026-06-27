@@ -23,7 +23,7 @@ const XP_BY_TYPE: Record<PostType, number> = {
 /** Egy kitűző mércéje: poszt-számláló, összpont, streak, kvíz, kedvencek stb. */
 export type BadgeMetric =
   | "total" | "review" | "event" | "business" | "points"
-  | "streak" | "quizPerfect" | "quizDays" | "appInstalled" | "favorites";
+  | "streak" | "quizPerfect" | "quizDays" | "appInstalled" | "favorites" | "referrals";
 
 export interface BadgeDef {
   id: string;
@@ -49,6 +49,8 @@ export interface GamificationExtras {
   appInstalled?: boolean;
   /** Mentett kedvenc vállalkozások száma. */
   favorites?: number;
+  /** Hány magyart hívtál be (a meghívó-kódod szerver-oldali, anonim konverziószáma). */
+  referrals?: number;
 }
 
 /** A kitűzők definíciói. A sorrend a megjelenítési sorrend is. */
@@ -77,6 +79,10 @@ export const BADGES: BadgeDef[] = [
   { id: "collector", label: "Gyűjtögető", icon: "💛", threshold: 5, countOf: "favorites" },
   { id: "curator", label: "Kurátor", icon: "📌", threshold: 15, countOf: "favorites", rare: true },
   { id: "xp_champ", label: "XP-bajnok", icon: "👑", threshold: 500, countOf: "points", rare: true },
+  // Referral — „Küldj egy magyart" (a legpresztízsesebb: társas, ritka)
+  { id: "referrer", label: "Küldtem egy magyart", icon: "🤝", threshold: 1, countOf: "referrals", rare: true },
+  { id: "connector", label: "Összekötő", icon: "🧲", threshold: 3, countOf: "referrals", rare: true },
+  { id: "ambassador", label: "Nagykövet", icon: "🎗️", threshold: 5, countOf: "referrals", rare: true },
 ];
 
 export interface BadgeState extends BadgeDef {
@@ -135,6 +141,7 @@ function metricValue(
     case "quizDays": return ctx.extras.quizDays ?? 0;
     case "appInstalled": return ctx.extras.appInstalled ? 1 : 0;
     case "favorites": return ctx.extras.favorites ?? 0;
+    case "referrals": return ctx.extras.referrals ?? 0;
   }
 }
 
