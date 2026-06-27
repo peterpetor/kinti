@@ -23,6 +23,7 @@ const TABLE_LABELS: Record<ModerationTable, string> = {
   reviews: "Vélemények",
   businesses: "Vállalkozások",
   events: "Események",
+  service_requests: "Keresések",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -71,11 +72,13 @@ export default async function ModerationPage({
     pendingReviews,
     pendingBusinesses,
     pendingEvents,
+    pendingRequests,
     items,
   ] = await Promise.all([
     moderationCount("reviews", 0),
     moderationCount("businesses", 0, country),
     moderationCount("events", 0, country),
+    moderationCount("service_requests", 0, country),
     listModerationQueue(typeParam, statusValue, 100, country),
   ]);
 
@@ -83,6 +86,7 @@ export default async function ModerationPage({
     reviews: pendingReviews,
     businesses: pendingBusinesses,
     events: pendingEvents,
+    service_requests: pendingRequests,
   };
 
   return (
@@ -280,6 +284,8 @@ function previewLink(table: ModerationTable, id: string): string {
       return `/kozosseg/esemeny/${id}`;
     case "reviews":
       return `/admin/moderation`; // vélemények csak a profil-page-en jelennek meg
+    case "service_requests":
+      return `/keresek`;
   }
 }
 

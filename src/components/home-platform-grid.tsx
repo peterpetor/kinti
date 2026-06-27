@@ -12,6 +12,7 @@ import type { IconName } from "@/components/ui/icons";
  */
 const MODULES: { href: string; icon: IconName; label: string }[] = [
   { href: "/szaknevsor", icon: "list", label: "Szaknévsor" },
+  { href: "/keresek", icon: "search", label: "Keresek" },
   { href: "/allasok", icon: "briefcase", label: "Állások" },
   { href: "/iranytu", icon: "compass", label: "Iránytű" },
   { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor" },

@@ -3,10 +3,10 @@
  */
 import { getDB } from "./cloudflare";
 
-export type ModerationTable = "reviews" | "businesses" | "events";
+export type ModerationTable = "reviews" | "businesses" | "events" | "service_requests";
 export type ModerationDecision = "approved" | "rejected" | "pending";
 
-const MODERATION_TABLE_WHITELIST: Set<ModerationTable> = new Set(["reviews", "businesses", "events"]);
+const MODERATION_TABLE_WHITELIST: Set<ModerationTable> = new Set(["reviews", "businesses", "events", "service_requests"]);
 
 function assertModerationTable(t: ModerationTable): void {
   if (!MODERATION_TABLE_WHITELIST.has(t)) throw new Error(`Ismeretlen moderation-tábla: ${t}`);
@@ -20,7 +20,7 @@ export interface ModerationQueueItem {
 
 /** A businesses/events táblának van country_code-ja; a reviews-nek nincs (ott a szűrő no-op). */
 function moderationHasCountry(table: ModerationTable): boolean {
-  return table === "businesses" || table === "events";
+  return table === "businesses" || table === "events" || table === "service_requests";
 }
 
 export async function listModerationQueue(table: ModerationTable, status: 0 | 1 | 2, limit = 50, country?: string | null): Promise<ModerationQueueItem[]> {
@@ -30,6 +30,7 @@ export async function listModerationQueue(table: ModerationTable, status: 0 | 1 
     reviews: { title: "reviewer_name", preview: "body", createdAt: "published_at", email: "email", ip: "ip_hash", image: "''" },
     businesses: { title: "name", preview: "COALESCE(blurb, address, '')", createdAt: "COALESCE(updated_at, '')", email: "COALESCE(contact_email, '')", ip: "''", image: "logo_key" },
     events: { title: "title", preview: "COALESCE(description, venue, '')", createdAt: "COALESCE(event_date, '')", email: "email", ip: "''", image: "image_key" },
+    service_requests: { title: "title", preview: "COALESCE(description, contact, '')", createdAt: "created_at", email: "''", ip: "ip_hash", image: "''" },
   };
   const f = fields[table];
   const useCountry = !!country && country !== "all" && moderationHasCountry(table);
