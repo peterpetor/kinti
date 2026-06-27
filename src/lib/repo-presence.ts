@@ -55,6 +55,12 @@ export async function getPresenceCounts(country: string): Promise<PresenceCount[
   return results ?? [];
 }
 
+/** Összes ping (minden ország) — a megosztó OG-előnézet számához. */
+export async function getPresenceTotal(): Promise<number> {
+  const row = await getDB().prepare(`SELECT COUNT(*) AS n FROM presence_pings`).first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
 /** Mai (24h) pingek száma egy ip_hash-ről — rate-limithez (háztartás-barát plafon). */
 export async function countPresenceByIpToday(ipHash: string | null): Promise<number> {
   if (!ipHash) return 0;
