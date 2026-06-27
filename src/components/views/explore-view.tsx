@@ -274,6 +274,47 @@ export function ExploreView({
 
   const filteredBusinesses = useMemo(() => filtered.map(({ b }) => b), [filtered]);
 
+  // „0 találat" fallback: ha a régió/sugár-szűrő miatt üres a lista, de van az
+  // adott KATEGÓRIÁRA/szövegre illeszkedő találat máshol, mutassuk a legközelebbieket
+  // (GPS-szel 50 km-en belül; nélküle a kategória legjobbjait az országban) — ne a
+  // semmit. Csak akkor, ha volt valódi keresési szándék (kategória vagy szöveg).
+  const nearbyFallback = useMemo(() => {
+    if (showFavs) return [] as { b: Business; dist: number | null }[];
+    const needle = q.trim().toLowerCase();
+    if (cat === "all" && !needle) return [];
+    const candidates = businesses.filter((b) => {
+      if ((b.country ?? "CH") !== country) return false;
+      if (cat !== "all" && b.categoryId !== cat) return false;
+      if (needle) {
+        const hit =
+          b.name.toLowerCase().includes(needle) ||
+          (b.categoryLabel ?? "").toLowerCase().includes(needle) ||
+          (b.blurb ?? "").toLowerCase().includes(needle) ||
+          (b.address ?? "").toLowerCase().includes(needle) ||
+          matchesCanton({ address: b.address ?? null }, needle);
+        if (!hit) return false;
+      }
+      return true;
+    });
+    const withDist = candidates.map((b) => ({
+      b,
+      dist: userPos && b.lat != null && b.lng != null ? haversineKm(userPos.lat, userPos.lng, b.lat, b.lng) : null,
+    }));
+    if (userPos) {
+      return withDist
+        .filter(({ dist }) => dist != null && dist <= 50)
+        .sort((a, b) => (a.dist ?? Infinity) - (b.dist ?? Infinity))
+        .slice(0, 6);
+    }
+    return withDist
+      .sort((a, b) =>
+        (Number(b.b.featured) - Number(a.b.featured)) ||
+        ((b.b.rating ?? 0) - (a.b.rating ?? 0)) ||
+        ((b.b.reviews ?? 0) - (a.b.reviews ?? 0)),
+      )
+      .slice(0, 6);
+  }, [businesses, country, cat, q, userPos, showFavs]);
+
   // Csak azokat a kategóriákat mutatjuk a pill-sorban, amikben TÉNYLEG van
   // vállalkozás (+ „Mind", + az épp kiválasztott) — így nincs üres, irreleváns
   // kategória, és a sor rövid/letisztult marad.
@@ -608,18 +649,56 @@ export function ExploreView({
             />
           ))}
 
-          {filtered.length === 0 && (
+          {/* „0 találat" fallback: a legközelebbi/hasonló találatok a semmi helyett */}
+          {filtered.length === 0 && nearbyFallback.length > 0 && (
             (() => {
               const cantonLabel = canton !== "all" ? regions.find((c) => c.code === canton)?.name ?? null : null;
+              const subject = cat !== "all" ? (categories.find((c) => c.id === cat)?.label ?? null) : (q.trim() || null);
+              return (
+                <>
+                  <div className="rounded-card border border-star/30 bg-star/5 px-4 py-3 text-[12.5px] leading-snug text-ink-muted">
+                    Nincs pontos találat{cantonLabel ? <> itt: <strong className="text-ink">{cantonLabel}</strong></> : null}
+                    {subject ? <> erre: <strong className="text-ink">„{subject}"</strong></> : null}. {userPos ? "A legközelebbiek (50 km-en belül):" : "Hasonló találatok az országban:"}
+                  </div>
+                  {nearbyFallback.map(({ b, dist }) => (
+                    <BusinessCard
+                      key={b.id}
+                      business={b}
+                      href={`/szaknevsor/${b.id}${q.trim() ? `?st=${encodeURIComponent(q.trim())}` : ""}`}
+                      distanceKm={dist}
+                      showFavorite
+                    />
+                  ))}
+                  <Link
+                    href="/szaknevsor/ajanlas"
+                    className="flex items-center gap-3 rounded-card border border-dashed border-line bg-surface px-4 py-3 text-left transition active:scale-[0.99]"
+                  >
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary"><Icon name="plus" size={16} strokeWidth={2.6} /></span>
+                    <span className="min-w-0">
+                      <span className="block text-[13.5px] font-bold text-ink">Ismersz egyet{cantonLabel ? ` ${cantonLabel} környékén` : ""}?</span>
+                      <span className="block text-[12px] text-ink-muted">Ajánlj egy magyar vállalkozót — pár kattintás, és felkerül.</span>
+                    </span>
+                  </Link>
+                </>
+              );
+            })()
+          )}
+
+          {filtered.length === 0 && nearbyFallback.length === 0 && (
+            (() => {
+              const cantonLabel = canton !== "all" ? regions.find((c) => c.code === canton)?.name ?? null : null;
+              const subject = !showFavs ? (cat !== "all" ? (categories.find((c) => c.id === cat)?.label ?? null) : (q.trim() || null)) : null;
               return (
             <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
               <Icon name={showFavs ? "heart" : "pin"} size={28} className="text-ink-faint" />
               <p className="text-[15px] font-extrabold text-ink">
                 {showFavs
                   ? "Nincs mentett kedvenced"
-                  : cantonLabel
-                    ? `Még nincs magyar vállalkozás itt: ${cantonLabel}`
-                    : "Még nincs itt magyar vállalkozás"}
+                  : subject
+                    ? `Nem találtunk: „${subject}"${cantonLabel ? ` — ${cantonLabel}` : ""}`
+                    : cantonLabel
+                      ? `Még nincs magyar vállalkozás itt: ${cantonLabel}`
+                      : "Még nincs itt magyar vállalkozás"}
               </p>
               <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-muted">
                 {showFavs
@@ -692,6 +771,24 @@ export function ExploreView({
               className="mb-2 h-[calc(100dvh-300px)] min-h-[440px] max-h-[760px]"
             />
           </Suspense>
+
+          {/* „0 térképi találat" fallback: a legközelebbiek lista a térkép alatt */}
+          {filtered.length === 0 && nearbyFallback.length > 0 && (
+            <div className="space-y-2.5 px-2 pb-2">
+              <div className="rounded-card border border-star/30 bg-star/5 px-4 py-3 text-[12.5px] leading-snug text-ink-muted">
+                Nincs pontos térképi találat itt — {userPos ? "a legközelebbiek (50 km-en belül):" : "hasonló találatok az országban:"}
+              </div>
+              {nearbyFallback.map(({ b, dist }) => (
+                <BusinessCard
+                  key={b.id}
+                  business={b}
+                  href={`/szaknevsor/${b.id}${q.trim() ? `?st=${encodeURIComponent(q.trim())}` : ""}`}
+                  distanceKm={dist}
+                  showFavorite
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
