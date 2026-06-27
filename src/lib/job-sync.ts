@@ -66,9 +66,9 @@ function chunk<T>(arr: T[], size: number): T[][] {
   return out;
 }
 
-/** AT/DE/NL mind EUR. */
-function currencyFor(): string {
-  return "EUR";
+/** CH → CHF, a többi (AT/DE/NL) → EUR. (Jooble amúgy nem ad bért, csak Adzuna.) */
+function currencyFor(country: string): string {
+  return country.toUpperCase() === "CH" ? "CHF" : "EUR";
 }
 
 interface SourcedJob { job: AdzunaJob; source: string }
@@ -122,7 +122,7 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
           category: sector.category,
           salaryMin: j.salaryMin,
           salaryMax: j.salaryMax,
-          currency: hasSalary ? currencyFor() : null,
+          currency: hasSalary ? currencyFor(cc) : null,
           postedAt: j.created,
         });
       }

@@ -7,7 +7,7 @@ import { safeLogError } from "@/lib/safe-log";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-const COUNTRIES = new Set(["AT", "DE", "NL"]);
+const COUNTRIES = new Set(["AT", "DE", "NL", "CH"]);
 
 /**
  * /api/cron/sync-jobs — a publikus „Élő állások" feltöltése jogtiszta aggregátor-

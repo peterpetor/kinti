@@ -12,6 +12,7 @@ const COUNTRY_LOCATION: Record<string, string> = {
   AT: "Österreich",
   DE: "Deutschland",
   NL: "Nederland",
+  CH: "Schweiz",
 };
 
 interface JoobleJob {
