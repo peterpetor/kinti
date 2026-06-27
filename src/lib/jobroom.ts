@@ -12,19 +12,23 @@ import type { ExternalJobInput } from "./repo-external-jobs";
 
 const SEARCH_URL = "https://www.job-room.ch/jobadservice/api/jobAdvertisements/_search";
 
-/** Cím-alapú best-effort besorolás a mi job-categories kategóriáinkba (CH német címek). */
+/**
+ * Cím-alapú best-effort besorolás a mi job-categories kategóriáinkba (CH német/svájci
+ * címek). Az első egyezés nyer → a sorrend számít (specifikus szakmák elöl, a tág
+ * gyűjtő-minták hátul). Találat nélkül null (a UI akkor nem tesz kategória-pillt).
+ */
 const CLASSIFY: [RegExp, string][] = [
-  [/pfleg|krankenschwest|krankenpfleg|altenpfleg|spitex|gesundheit|arzt|mediz|betreuung/i, "egeszsegugy"],
-  [/\bbau\b|maurer|maler|elektrik|installat|sanitär|spengler|gipser|schreiner|zimmer|dachdeck|polier|monteur/i, "epitoipar"],
-  [/koch|köch|gastro|restaurant|kellner|servicemitarb|küche|hotel|barkeep|buffet/i, "vendeglatas"],
-  [/lager|fahrer|chauffeur|logistik|stapler|kurier|transport|disponent/i, "logisztika"],
-  [/produktion|montage|schweiss|schweiß|mechanik|maschinen|fabrik|industrie|cnc|operator/i, "ipar-gyartas"],
-  [/reinig|putz|hauswart|hausmeister|gebäuderein|unterhaltsrein/i, "takaritas"],
-  [/verkauf|verkäufer|detailhandel|kassier|\bsales\b|filialleit/i, "kereskedelem"],
-  [/coiffeur|friseur|kosmetik|nageldesign|\bbeauty\b|barbier/i, "szepsegipar"],
-  [/landwirt|gärtner|\bgarten\b|ernte|florist|gemüse|winzer/i, "mezogazdasag"],
-  [/büro|administ|sekretär|sachbearbeit|buchhalt|kaufmann|kauffrau|empfang|hr-/i, "iroda"],
-  [/informatik|software|entwickl|developer|\bit-|applikation|system engineer|data\b/i, "it"],
+  [/pfleg|krankensch|krankenpfleg|altenpfleg|spitex|gesundheit|\barzt\b|mediz|betreuung|fage\b|fabe\b|sozialpäd|therapeut/i, "egeszsegugy"],
+  [/coiffe|friseur|kosmetik|nageldesign|barbier|beauty/i, "szepsegipar"],
+  [/koch|köch|gastro|restaurant|kellner|servicemit|küche|\bhotel|barkeep|buffet|bäcker|confis|metzger|pâtiss|chef de/i, "vendeglatas"],
+  [/lager|fahrer|chauffeur|logistik|stapler|kurier|\btransport|disponent|spediteur|kommission/i, "logisztika"],
+  [/reinig|putz|hauswart|hausmeist|gebäuderein|unterhaltsrein|raumpfleg/i, "takaritas"],
+  [/landwirt|gärtner|gartenbau|garten|ernte|florist|gemüse|winzer|landschaft|baumpfleg|forst/i, "mezogazdasag"],
+  [/verkauf|verkäuf|detailhandel|kassier|\bsales\b|filialleit|kundenberat|verkaufsber/i, "kereskedelem"],
+  [/informatik|software|entwickl|developer|applikation|system engineer|\bdata\b|\bict\b|programmier|\bit[\s-]/i, "it"],
+  [/büro|administ|sekretär|sachbearbeit|buchhalt|kaufmann|kauffrau|empfang|\bhr\b|personalwes|treuhand|assistent/i, "iroda"],
+  [/maurer|maler|elektrik|installat|sanitär|spengler|gipser|schreiner|zimmer|dachdeck|polier|gebäudetech|haustechn|hochbau|tiefbau|bauleit|bauarbeit|\bhlk|metallbau|schlosser|monteur|gerüst|bodenleg|plattenleg/i, "epitoipar"],
+  [/produktion|montage|schweiss|schweiß|mechanik|maschin|fabrik|industrie|\bcnc\b|operator|polymechan|metallarbeit|anlagenführ/i, "ipar-gyartas"],
 ];
 
 function classify(title: string): string | null {
