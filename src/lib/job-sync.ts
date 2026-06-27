@@ -13,19 +13,58 @@ import { searchJoobleJobs } from "./jooble";
 import { searchArbeitnowJobs } from "./arbeitnow";
 import { upsertExternalJobs, type ExternalJobInput } from "./repo-external-jobs";
 
-/** A szektor → lokális-nyelvű keresőszó (de: AT+DE német; nl: NL holland). */
+/**
+ * Szektor → lokális-nyelvű keresőszó (de: AT+DE német; nl: NL holland). Egy
+ * kategóriához több konkrét szakma is tartozhat (a kkint élő magyarok tipikus
+ * szakmáira fókuszálva) → szélesebb lefedés. Volumen: N × 3 ország × 2 forrás
+ * API-hívás futásonként; az Adzuna napi 250-es kvótáját szem előtt tartva ~22
+ * szektor a felső határ napi 2 futásnál.
+ */
 const SECTOR_QUERIES: { category: string; de: string; nl: string }[] = [
-  { category: "epitoipar",    de: "Bau",          nl: "Bouw" },
-  { category: "vendeglatas",  de: "Gastronomie",  nl: "Horeca" },
-  { category: "egeszsegugy",  de: "Pflege",       nl: "Zorg" },
-  { category: "logisztika",   de: "Lager",        nl: "Logistiek" },
-  { category: "ipar-gyartas", de: "Produktion",   nl: "Productie" },
-  { category: "takaritas",    de: "Reinigung",    nl: "Schoonmaak" },
-  { category: "kereskedelem", de: "Verkauf",      nl: "Verkoop" },
-  { category: "szepsegipar",  de: "Friseur",      nl: "Kapper" },
-  { category: "iroda",        de: "Büro",         nl: "Kantoor" },
-  { category: "it",           de: "IT",           nl: "IT" },
+  // Építőipar / szakmunkák
+  { category: "epitoipar",    de: "Bau",            nl: "Bouw" },
+  { category: "epitoipar",    de: "Maler",          nl: "Schilder" },
+  { category: "epitoipar",    de: "Elektriker",     nl: "Elektricien" },
+  { category: "epitoipar",    de: "Installateur",   nl: "Loodgieter" },
+  // Vendéglátás
+  { category: "vendeglatas",  de: "Gastronomie",    nl: "Horeca" },
+  { category: "vendeglatas",  de: "Koch",           nl: "Kok" },
+  { category: "vendeglatas",  de: "Kellner",        nl: "Ober" },
+  // Egészségügy / ápolás
+  { category: "egeszsegugy",  de: "Pflege",         nl: "Zorg" },
+  { category: "egeszsegugy",  de: "Altenpflege",    nl: "Verpleegkundige" },
+  // Logisztika / sofőr
+  { category: "logisztika",   de: "Lager",          nl: "Logistiek" },
+  { category: "logisztika",   de: "Fahrer",         nl: "Chauffeur" },
+  { category: "logisztika",   de: "Staplerfahrer",  nl: "Heftruckchauffeur" },
+  // Ipar / gyártás
+  { category: "ipar-gyartas", de: "Produktion",     nl: "Productie" },
+  { category: "ipar-gyartas", de: "Schweißer",      nl: "Lasser" },
+  { category: "ipar-gyartas", de: "Mechaniker",     nl: "Monteur" },
+  // Takarítás / háztartás
+  { category: "takaritas",    de: "Reinigung",      nl: "Schoonmaak" },
+  { category: "takaritas",    de: "Hausmeister",    nl: "Huismeester" },
+  // Kereskedelem
+  { category: "kereskedelem", de: "Verkauf",        nl: "Verkoop" },
+  // Szépségipar
+  { category: "szepsegipar",  de: "Friseur",        nl: "Kapper" },
+  // Mezőgazdaság / kertészet
+  { category: "mezogazdasag", de: "Landwirtschaft", nl: "Landbouw" },
+  { category: "mezogazdasag", de: "Gärtner",        nl: "Tuinder" },
+  // Iroda / adminisztráció
+  { category: "iroda",        de: "Büro",           nl: "Kantoor" },
+  // IT
+  { category: "it",           de: "IT",             nl: "IT" },
+  // Egyéb segéd / betanított
+  { category: "egyeb",        de: "Helfer",         nl: "Helper" },
 ];
+
+/** Tömb felaprózása N-es csoportokra (párhuzamos batch-futtatáshoz). */
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+}
 
 /** AT/DE/NL mind EUR. */
 function currencyFor(): string {
@@ -56,30 +95,37 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
   const isNL = cc === "NL";
   const byUrl = new Map<string, ExternalJobInput>();
 
-  for (const sector of SECTOR_QUERIES) {
-    const keyword = isNL ? sector.nl : sector.de;
-    let res: SourcedJob[];
-    try {
-      res = await searchSector(cc, keyword);
-    } catch {
-      continue; // egy szektor bukása ne állítsa le a többit
-    }
-    for (const { job: j, source } of res) {
-      if (!j.url || byUrl.has(j.url)) continue; // első kategória nyer
-      const hasSalary = j.salaryMin != null || j.salaryMax != null;
-      byUrl.set(j.url, {
-        source,
-        sourceUrl: j.url,
-        title: j.title,
-        company: j.company,
-        location: j.location,
-        country: cc,
-        category: sector.category,
-        salaryMin: j.salaryMin,
-        salaryMax: j.salaryMax,
-        currency: hasSalary ? currencyFor() : null,
-        postedAt: j.created,
-      });
+  // A szektorokat 6-os batch-ekben, párhuzamosan futtatjuk (a sok kulcsszó se
+  // nyújtsa el a futásidőt; a batch-méret tartja a rate-limit alatt a burst-öt).
+  for (const batch of chunk(SECTOR_QUERIES, 6)) {
+    const settled = await Promise.all(
+      batch.map(async (sector) => {
+        const keyword = isNL ? sector.nl : sector.de;
+        try {
+          return { sector, res: await searchSector(cc, keyword) };
+        } catch {
+          return { sector, res: [] as SourcedJob[] }; // egy szektor bukása ne állítsa le a többit
+        }
+      }),
+    );
+    for (const { sector, res } of settled) {
+      for (const { job: j, source } of res) {
+        if (!j.url || byUrl.has(j.url)) continue; // első kategória nyer
+        const hasSalary = j.salaryMin != null || j.salaryMax != null;
+        byUrl.set(j.url, {
+          source,
+          sourceUrl: j.url,
+          title: j.title,
+          company: j.company,
+          location: j.location,
+          country: cc,
+          category: sector.category,
+          salaryMin: j.salaryMin,
+          salaryMax: j.salaryMax,
+          currency: hasSalary ? currencyFor() : null,
+          postedAt: j.created,
+        });
+      }
     }
   }
 
