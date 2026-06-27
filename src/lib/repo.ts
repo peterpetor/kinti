@@ -20,4 +20,5 @@ export * from "./repo-misc";
 export * from "./repo-piac";
 export * from "./repo-newsletter";
 export * from "./repo-requests";
+export * from "./repo-external-jobs";
 export * from "./repo-leaderboard";
