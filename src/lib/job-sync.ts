@@ -11,6 +11,7 @@
 import { searchAdzunaJobs, type AdzunaJob } from "./adzuna";
 import { searchJoobleJobs } from "./jooble";
 import { searchArbeitnowJobs } from "./arbeitnow";
+import { fetchJobRoomJobs } from "./jobroom";
 import { upsertExternalJobs, type ExternalJobInput } from "./repo-external-jobs";
 
 /**
@@ -92,6 +93,14 @@ async function searchSector(country: string, keyword: string): Promise<SourcedJo
 /** Egy ország szinkronja: szektoronként keres, címkéz, upsertel. @returns upsertelt sorok száma. */
 export async function syncExternalJobsForCountry(country: string): Promise<number> {
   const cc = country.toUpperCase();
+
+  // CH: a hivatalos állami Job-Room (SECO) nyílt API-ja — nem az Adzuna/Jooble
+  // szektor-keresés (azok nem fedik CH-t). Egy permentes, nyílt állami forrás.
+  if (cc === "CH") {
+    const jobs = await fetchJobRoomJobs(3, 50);
+    return jobs.length === 0 ? 0 : upsertExternalJobs(jobs);
+  }
+
   const isNL = cc === "NL";
   const byUrl = new Map<string, ExternalJobInput>();
 
@@ -137,7 +146,7 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
 /** Az összes lefedett ország (AT/DE/NL) szinkronja. */
 export async function syncAllExternalJobs(): Promise<Record<string, number>> {
   const out: Record<string, number> = {};
-  for (const c of ["AT", "DE", "NL"]) {
+  for (const c of ["AT", "DE", "NL", "CH"]) {
     try {
       out[c] = await syncExternalJobsForCountry(c);
     } catch {

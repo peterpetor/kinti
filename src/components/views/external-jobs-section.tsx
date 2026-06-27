@@ -7,7 +7,7 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { JOB_CATEGORIES, jobCategoryLabel } from "@/lib/job-categories";
 import type { ExternalJob } from "@/lib/repo-external-jobs";
 
-const SOURCE_LABEL: Record<string, string> = { adzuna: "Adzuna", jooble: "Jooble", arbeitnow: "Arbeitnow" };
+const SOURCE_LABEL: Record<string, string> = { adzuna: "Adzuna", jooble: "Jooble", arbeitnow: "Arbeitnow", "job-room": "job-room.ch (SECO)" };
 
 function fmtSalary(j: ExternalJob): string | null {
   if (j.salaryMin == null && j.salaryMax == null) return null;
@@ -26,7 +26,6 @@ export function ExternalJobsSection() {
   const [filter, setFilter] = useState("all");
 
   const load = useCallback(async () => {
-    if (country === "CH") { setJobs([]); setLoading(false); return; }
     setLoading(true);
     try {
       const res = await fetch(`/api/jobs/external?country=${country}&category=${filter}`);
@@ -37,9 +36,6 @@ export function ExternalJobsSection() {
   }, [country, filter]);
   useEffect(() => { load(); }, [load]);
 
-  // CH-n nincs élő forrás (a források AT/DE/NL-t fednek) → nem jelenítjük meg.
-  if (country === "CH") return null;
-
   // Csak azok a kategóriák a szűrőben, amikben épp van találat (+ Mind).
   const presentCats = new Set(jobs.map((j) => j.category).filter(Boolean) as string[]);
   const cats = JOB_CATEGORIES.filter((c) => presentCats.has(c.id) || filter === c.id);
@@ -49,7 +45,9 @@ export function ExternalJobsSection() {
       <div>
         <h2 className="text-[16px] font-extrabold tracking-tight text-ink">Élő állások 🔴</h2>
         <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
-          Friss hirdetések partner-állásportálokról (Adzuna, Jooble) — naponta frissül. A „Megnézem" gomb a forrásoldalra visz, ott jelentkezhetsz.
+          {country === "CH"
+            ? "Friss hirdetések a hivatalos állami álláskeresőből (Job-Room / arbeit.swiss) — naponta frissül. A „Megnézem” gomb a forrásoldalra visz, ott jelentkezhetsz."
+            : "Friss hirdetések partner-állásportálokról (Adzuna, Jooble) — naponta frissül. A „Megnézem” gomb a forrásoldalra visz, ott jelentkezhetsz."}
         </p>
       </div>
 
