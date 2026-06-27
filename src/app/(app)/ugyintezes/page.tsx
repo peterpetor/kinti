@@ -46,6 +46,20 @@ export default function UgyintezesPage() {
         </div>
       </section>
 
+      <Link
+        href="/hivatalos"
+        className="flex items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-card transition active:scale-[0.99]"
+      >
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-xl">🇭🇺</span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] font-extrabold tracking-[-0.01em] text-ink">Hivatalos ügyek és konzulátus</p>
+          <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
+            Útlevél, jogsi, lakcím, adó: egy kattintással a helyes hivatalos oldalra — magyar konzulátus, időpontfoglalás.
+          </p>
+        </div>
+        <Icon name="arrowRight" size={16} strokeWidth={2.4} className="shrink-0 text-ink-muted" />
+      </Link>
+
       <ChecklistList />
     </div>
   );
