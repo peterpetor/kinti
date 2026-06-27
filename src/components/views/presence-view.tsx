@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react"
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
+import { usePreferredCanton } from "@/lib/canton-pref";
 import { DEFAULT_COUNTRY, getCountry, countryLocative } from "@/lib/countries";
 import { getRegions, getRegion } from "@/lib/regions";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
@@ -27,11 +28,20 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
   const countryName = getCountry(country)?.name ?? "";
   const regions = getRegions(country);
 
+  const [prefCanton, setPrefCanton] = usePreferredCanton();
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [recent, setRecent] = useState<Record<string, number>>({});
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState("");
   const [pinned, setPinned] = useState(false);
+
+  // „A te körzeted" = a megosztott régió-pref (időjárás stb.), ha a jelenlegi
+  // országhoz tartozik. Ping nélkül is működik; pingeléskor be is állítjuk.
+  const myRegion = prefCanton && getRegion(country, prefCanton) ? prefCanton : null;
+  const myName = myRegion ? getRegion(country, myRegion)?.name ?? "" : "";
+  const myCount = myRegion ? counts[myRegion] ?? 0 : 0;
+  const myRecent = myRegion ? recent[myRegion] ?? 0 : 0;
 
   // Modal állapot
   const [modal, setModal] = useState(false);
@@ -45,8 +55,9 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
     setLoading(true);
     try {
       const res = await fetch(`/api/presence?country=${country}`);
-      const data = (await res.json()) as { counts?: Record<string, number>; total?: number };
+      const data = (await res.json()) as { counts?: Record<string, number>; recent?: Record<string, number>; total?: number };
       setCounts(data.counts ?? {});
+      setRecent(data.recent ?? {});
       setTotal(data.total ?? 0);
     } catch {
       /* hálózati hiba → marad a régi */
@@ -76,7 +87,7 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ country, regionCode: region, turnstileToken: token }),
       });
-      const data = (await res.json().catch(() => ({}))) as { counts?: Record<string, number>; total?: number; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { counts?: Record<string, number>; recent?: Record<string, number>; total?: number; error?: string };
       if (!res.ok) {
         setErr(data.error ?? "Nem sikerült a beküldés.");
         turnstileRef.current?.reset();
@@ -85,7 +96,10 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
         return;
       }
       setCounts(data.counts ?? counts);
+      setRecent(data.recent ?? recent);
       setTotal(data.total ?? total);
+      // A beküldött régió legyen a „te körzeted" is (megosztott pref) → személyre szabott kártya.
+      setPrefCanton(region);
       try {
         const arr = JSON.parse(localStorage.getItem(LS_KEY) ?? "[]") as string[];
         if (!arr.includes(country)) arr.push(country);
@@ -111,6 +125,32 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
 
   return (
     <div className="space-y-4">
+      {/* Személyre szabott kártya — „a te körzeted" (a megosztott régió-pref alapján) */}
+      {myRegion && !loading && (
+        <section className="rounded-card border-2 border-accent/30 bg-accent/5 p-4 shadow-pop">
+          <div className="flex items-start gap-3">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-accent text-white text-xl">📍</span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-accent">A te körzeted · {myName}</p>
+              {myCount > 0 ? (
+                <>
+                  <p className="mt-1 text-[18px] font-extrabold leading-tight text-ink">
+                    <span className="text-accent">{myCount.toLocaleString("hu-HU")}</span> magyar él a körzetedben.
+                  </p>
+                  {myRecent > 0 && (
+                    <p className="mt-0.5 text-[13.5px] text-ink-muted">
+                      Közülük <strong className="text-ink">{myRecent.toLocaleString("hu-HU")}</strong> nemrég (az elmúlt hónapban) költözött ide. 👋
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="mt-1 text-[15px] font-bold text-ink">Még te lehetsz az első {myName}ban! 🎉</p>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Összesítő hero */}
       <section className="rounded-card border-2 border-primary/25 bg-gradient-to-br from-primary-soft to-surface p-5 shadow-pop text-center">
         <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Anonim jelenlét-térkép</p>

@@ -10,6 +10,8 @@ import { getDB } from "./cloudflare";
 export interface PresenceCount {
   regionCode: string;
   n: number;
+  /** Ebből az utolsó 30 napban érkezett (a „nemrég költöztek ide" kártyához). */
+  recent: number;
 }
 
 /** Egy anonim ping rögzítése. */
@@ -25,10 +27,13 @@ export async function addPresencePing(input: {
     .run();
 }
 
-/** Régiónkénti darabszám egy országban (a hőtérképhez + összesítéshez). */
+/**
+ * Régiónkénti darabszám egy országban (a hőtérképhez + összesítéshez), valamint
+ * az utolsó 30 napban érkezettek száma (a „nemrég költöztek ide" kártyához).
+ */
 export async function getPresenceCounts(country: string): Promise<PresenceCount[]> {
   const { results } = await getDB()
-    .prepare(`SELECT region_code AS regionCode, COUNT(*) AS n FROM presence_pings WHERE country = ? GROUP BY region_code ORDER BY n DESC`)
+    .prepare(`SELECT region_code AS regionCode, COUNT(*) AS n, SUM(CASE WHEN datetime(created_at) > datetime('now', '-30 days') THEN 1 ELSE 0 END) AS recent FROM presence_pings WHERE country = ? GROUP BY region_code ORDER BY n DESC`)
     .bind(country)
     .all<PresenceCount>();
   return results ?? [];

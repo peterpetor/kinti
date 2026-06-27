@@ -19,12 +19,13 @@ const DAILY_IP_LIMIT = 5;
 export async function GET(req: NextRequest) {
   const c = req.nextUrl.searchParams.get("country");
   const country = isValidCountry(c) ? c : "CH";
-  const counts = await getPresenceCounts(country);
-  const total = counts.reduce((s, r) => s + r.n, 0);
+  const rows = await getPresenceCounts(country);
+  const total = rows.reduce((s, r) => s + r.n, 0);
   const map: Record<string, number> = {};
-  for (const r of counts) map[r.regionCode] = r.n;
+  const recent: Record<string, number> = {};
+  for (const r of rows) { map[r.regionCode] = r.n; recent[r.regionCode] = r.recent; }
   return NextResponse.json(
-    { country, counts: map, total },
+    { country, counts: map, recent, total },
     { headers: { "cache-control": "public, max-age=60" } },
   );
 }
@@ -63,8 +64,8 @@ export async function POST(req: Request) {
   if (banned) return banned;
 
   const ipHash = await hashIp(ip);
-  const recent = await countPresenceByIpToday(ipHash);
-  if (recent >= DAILY_IP_LIMIT) {
+  const dayCount = await countPresenceByIpToday(ipHash);
+  if (dayCount >= DAILY_IP_LIMIT) {
     return NextResponse.json(
       { error: "Erről a hálózatról ma már többször bejelentkeztek. Köszönjük!" },
       { status: 429 },
@@ -74,9 +75,10 @@ export async function POST(req: Request) {
   await addPresencePing({ id: crypto.randomUUID(), country, regionCode, ipHash: ipHash ?? "unknown-ip" });
 
   // A friss összesítés rögtön vissza, hogy a UI azonnal frissülhessen.
-  const counts = await getPresenceCounts(country);
-  const total = counts.reduce((s, r) => s + r.n, 0);
+  const rows = await getPresenceCounts(country);
+  const total = rows.reduce((s, r) => s + r.n, 0);
   const map: Record<string, number> = {};
-  for (const r of counts) map[r.regionCode] = r.n;
-  return NextResponse.json({ ok: true, country, counts: map, total });
+  const recent: Record<string, number> = {};
+  for (const r of rows) { map[r.regionCode] = r.n; recent[r.regionCode] = r.recent; }
+  return NextResponse.json({ ok: true, country, counts: map, recent, total });
 }
