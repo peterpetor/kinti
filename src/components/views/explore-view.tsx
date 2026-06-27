@@ -332,6 +332,11 @@ export function ExploreView({
     return found ? `${found.name} (${found.code})` : canton;
   }, [canton, regions, countryName]);
 
+  // Kontextuális „kevés a találat" supply-CTA: szűrt nézetben, 1–4 találatnál. Ha
+  // ez látszik, a lista-alji általános ajánló-CTA-t elnyomjuk (különben duplikáció).
+  const showLowCountCta =
+    view === "list" && filtered.length > 0 && filtered.length <= 4 && (cat !== "all" || canton !== "all");
+
   return (
     <div className="space-y-3">
       {/* EGY kereső: kulcsszavas (élő) + ✨ AI (természetes nyelv → szűrők) */}
@@ -612,10 +617,7 @@ export function ExploreView({
 
       {/* Kontextuális supply-CTA: ha egy szűrt kategóriában/kantonban kevés a
           találat, ott a legnagyobb a hiányérzet → magas szándékú ajánlás-pont. */}
-      {view === "list" &&
-        filtered.length > 0 &&
-        filtered.length <= 4 &&
-        (cat !== "all" || canton !== "all") && (
+      {showLowCountCta && (
           <div className="px-5">
             <Link
               href="/szaknevsor/ajanlas"
@@ -730,8 +732,9 @@ export function ExploreView({
             })()
           )}
 
-          {/* Hiányzik valaki? — közösségi ajánlás a lista alján */}
-          {filtered.length > 0 && (
+          {/* Hiányzik valaki? — közösségi ajánlás a lista alján. A kontextuális
+              „kevés a találat" CTA-val kölcsönösen kizáró (nincs duplikáció). */}
+          {filtered.length > 0 && !showLowCountCta && (
             <Link
               href="/szaknevsor/ajanlas"
               className="flex items-center gap-3 rounded-card border border-dashed border-line bg-surface px-4 py-3 text-left transition active:scale-[0.99]"
