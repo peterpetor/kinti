@@ -13,27 +13,27 @@ import type { ExternalJobInput } from "./repo-external-jobs";
 const SEARCH_URL = "https://www.job-room.ch/jobadservice/api/jobAdvertisements/_search";
 
 /**
- * Cím-alapú best-effort besorolás a mi job-categories kategóriáinkba (CH német/svájci
- * címek). Az első egyezés nyer → a sorrend számít (specifikus szakmák elöl, a tág
- * gyűjtő-minták hátul). Találat nélkül null (a UI akkor nem tesz kategória-pillt).
+ * Cím-alapú best-effort besorolás a mi job-categories kategóriáinkba. CH TÖBBNYELVŰ
+ * (DE/FR/IT/EN), ezért a minták is azok. Az első egyezés nyer → a sorrend számít
+ * (specifikus szakmák elöl). Találat nélkül „egyéb" (minden kártya kap pillt).
  */
 const CLASSIFY: [RegExp, string][] = [
-  [/pfleg|krankensch|krankenpfleg|altenpfleg|spitex|gesundheit|\barzt\b|mediz|betreuung|fage\b|fabe\b|sozialpäd|therapeut/i, "egeszsegugy"],
-  [/coiffe|friseur|kosmetik|nageldesign|barbier|beauty/i, "szepsegipar"],
-  [/koch|köch|gastro|restaurant|kellner|servicemit|küche|\bhotel|barkeep|buffet|bäcker|confis|metzger|pâtiss|chef de/i, "vendeglatas"],
-  [/lager|fahrer|chauffeur|logistik|stapler|kurier|\btransport|disponent|spediteur|kommission/i, "logisztika"],
-  [/reinig|putz|hauswart|hausmeist|gebäuderein|unterhaltsrein|raumpfleg/i, "takaritas"],
-  [/landwirt|gärtner|gartenbau|garten|ernte|florist|gemüse|winzer|landschaft|baumpfleg|forst/i, "mezogazdasag"],
-  [/verkauf|verkäuf|detailhandel|kassier|\bsales\b|filialleit|kundenberat|verkaufsber/i, "kereskedelem"],
-  [/informatik|software|entwickl|developer|applikation|system engineer|\bdata\b|\bict\b|programmier|\bit[\s-]/i, "it"],
-  [/büro|administ|sekretär|sachbearbeit|buchhalt|kaufmann|kauffrau|empfang|\bhr\b|personalwes|treuhand|assistent/i, "iroda"],
-  [/maurer|maler|elektrik|installat|sanitär|spengler|gipser|schreiner|zimmer|dachdeck|polier|gebäudetech|haustechn|hochbau|tiefbau|bauleit|bauarbeit|\bhlk|metallbau|schlosser|monteur|gerüst|bodenleg|plattenleg/i, "epitoipar"],
-  [/produktion|montage|schweiss|schweiß|mechanik|maschin|fabrik|industrie|\bcnc\b|operator|polymechan|metallarbeit|anlagenführ/i, "ipar-gyartas"],
+  [/pfleg|krankensch|altenpfleg|spitex|gesundheit|\barzt\b|mediz|betreuung|\bfage\b|\bfabe\b|sozialpäd|therapeut|soins|infirm|aide-soign|santé|\bnurse|\bcare\b|infermier/i, "egeszsegugy"],
+  [/coiffe|friseur|kosmetik|nageldesign|barbier|beauty|esthét|estetist/i, "szepsegipar"],
+  [/koch|köch|gastro|restaur|kellner|servicemit|küche|\bhotel|buffet|bäcker|confis|metzger|pâtiss|cuisin|serveu|\bchef\b|\bcook|\bwaiter|cuoco|camerier/i, "vendeglatas"],
+  [/lager|fahrer|chauffeur|logistik|stapler|kurier|\btransport|disponent|spediteur|kommission|magasinier|\bdriver|warehouse|logistic|magazzin/i, "logisztika"],
+  [/reinig|\bputz|hauswart|hausmeist|gebäuderein|unterhaltsrein|raumpfleg|nettoy|propreté|cleaning|\bclean\b|pulizia/i, "takaritas"],
+  [/landwirt|gärtner|gartenbau|\bgarten|ernte|florist|gemüse|winzer|landschaft|baumpfleg|forst|jardin|agricol|\bgarden|\bfarm|agricol/i, "mezogazdasag"],
+  [/verkauf|verkäuf|detailhandel|kassier|\bsales\b|filialleit|kundenberat|verkaufsber|\bvente\b|vendeu|\bseller|\bretail/i, "kereskedelem"],
+  [/informatik|software|entwickl|developer|développeu|applikation|system engineer|\bdata\b|\bict\b|programmier|informatique|sviluppat|\bit[\s\-/]/i, "it"],
+  [/büro|administ|sekretär|sachbearbeit|buchhalt|kaufmann|kauffrau|empfang|\bhr\b|\brh\b|personalwes|treuhand|assistent|assistant|secrétaire|comptab|\boffice|accounting|impiegat/i, "iroda"],
+  [/maurer|maler|elektrik|installat|sanitär|spengler|gipser|schreiner|zimmer|dachdeck|polier|gebäudetech|haustechn|hochbau|tiefbau|bauleit|bauarbeit|\bhlk|metallbau|schlosser|monteur|gerüst|bodenleg|plattenleg|maçon|électric|plombier|construct|electric|plumber|edil|\bbau\b/i, "epitoipar"],
+  [/produktion|montage|schweiss|schweiß|mechanik|maschin|fabrik|industrie|industrial|\bcnc\b|operat|polymechan|metallarbeit|anlagenführ|soudeu|\bwelder|mechanical|machine|produzion/i, "ipar-gyartas"],
 ];
 
-function classify(title: string): string | null {
+function classify(title: string): string {
   for (const [re, cat] of CLASSIFY) if (re.test(title)) return cat;
-  return null;
+  return "egyeb";
 }
 
 interface JobRoomItem {
