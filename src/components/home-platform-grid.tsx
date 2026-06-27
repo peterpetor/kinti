@@ -19,6 +19,7 @@ const MODULES: { href: string; icon: IconName; label: string }[] = [
   { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke" },
   { href: "/kviz", icon: "star", label: "Kvíz" },
   { href: "/holvagyunk", icon: "pin", label: "Hol vagyunk?" },
+  { href: "/esemenyek", icon: "calendar", label: "Események" },
   { href: "/kozosseg", icon: "users", label: "Közösség" },
   { href: "/ugyintezes", icon: "document", label: "Ügyintézés" },
   { href: "/allampolgarsag", icon: "flag", label: "Állampolgárság" },

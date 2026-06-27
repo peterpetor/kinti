@@ -34,6 +34,8 @@ interface EventRow {
   moderation_decided_by?: string | null;
   canton_code?: string | null;
   country_code?: string | null;
+  lat?: number | null;
+  lng?: number | null;
 }
 
 interface EventFeedRow {
@@ -68,6 +70,8 @@ export function toEvent(r: EventRow): KintiEvent {
     moderationDecidedBy: r.moderation_decided_by,
     cantonCode: r.canton_code ?? null,
     country: r.country_code ?? "CH",
+    lat: r.lat ?? null,
+    lng: r.lng ?? null,
   };
 }
 
@@ -140,6 +144,66 @@ export async function getEventById(id: string): Promise<KintiEvent | null> {
 export async function getEventByToken(token: string): Promise<KintiEvent | null> {
   const row = await getDB().prepare("SELECT * FROM events WHERE token = ?").bind(token).first<EventRow>();
   return row ? toEvent(row) : null;
+}
+
+/** Jóváhagyott, KOORDINÁTÁS események a térképhez (közelgő + dátum nélküli „helyek"). */
+export async function getMapEvents(country: string): Promise<KintiEvent[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT e.*, COALESCE(r.cnt, 0) AS rsvp_count
+       FROM events e
+       LEFT JOIN (SELECT event_id, COUNT(*) AS cnt FROM event_rsvps GROUP BY event_id) r ON r.event_id = e.id
+       WHERE e.status = 'approved' AND e.moderation_status = 1
+         AND e.lat IS NOT NULL AND e.lng IS NOT NULL
+         AND COALESCE(e.country_code, 'CH') = ?
+         AND (e.event_date IS NULL OR e.event_date >= date('now'))
+       ORDER BY (e.event_date IS NULL), e.event_date ASC
+       LIMIT 300`,
+    )
+    .bind(country)
+    .all<EventRow>();
+  return results.map(toEvent);
+}
+
+const HU_MONTHS = ["jan", "feb", "márc", "ápr", "máj", "jún", "júl", "aug", "szept", "okt", "nov", "dec"];
+const HU_WEEKDAYS = ["vas", "hét", "kedd", "sze", "csüt", "pén", "szo"];
+const TAG_COLORS: Record<string, string> = {
+  koncert: "#8b5cf6", talalkozo: "#1d4434", bolt: "#c8392e", etterem: "#e2901a", egyeb: "#5c6d63",
+};
+
+/**
+ * Felhasználó által beküldött esemény — PENDING (moderation_status=0), így a meglévő
+ * admin-moderációs sorba kerül. Jóváhagyás után (moderation_status=1) jelenik meg.
+ */
+export async function createSubmittedEvent(input: {
+  title: string; eventDate: string | null; startTime: string | null;
+  venue: string | null; description: string | null; tag: string;
+  country: string; regionCode: string | null; lat: number; lng: number; ipHash: string;
+}): Promise<string> {
+  const id = crypto.randomUUID();
+  let dateDay: string | null = null, dateMonth: string | null = null, dateWeekday: string | null = null;
+  if (input.eventDate) {
+    const d = new Date(input.eventDate + "T00:00:00");
+    if (!Number.isNaN(d.getTime())) {
+      dateDay = String(d.getDate());
+      dateMonth = HU_MONTHS[d.getMonth()];
+      dateWeekday = HU_WEEKDAYS[d.getDay()];
+    }
+  }
+  await getDB()
+    .prepare(
+      `INSERT INTO events (id, title, event_date, date_day, date_month, date_weekday, start_time, venue,
+         going, tag, color, description, status, moderation_status, source, country_code, canton_code,
+         lat, lng, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 'approved', 0, 'user-submit', ?, ?, ?, ?, datetime('now'))`,
+    )
+    .bind(
+      id, input.title, input.eventDate, dateDay, dateMonth, dateWeekday, input.startTime, input.venue,
+      input.tag, TAG_COLORS[input.tag] ?? TAG_COLORS.egyeb, input.description,
+      input.country, input.regionCode, input.lat, input.lng,
+    )
+    .run();
+  return id;
 }
 
 export async function saveEvent(input: SaveEventInput): Promise<KintiEvent> {

@@ -98,6 +98,9 @@ export interface KintiEvent {
   cantonCode?: string | null;
   /** Ország-kód (CH/AT/…) — a 6-ország rendszerhez. Régi sorok: 'CH'. */
   country?: string;
+  /** Térkép-koordináta (felhasználó által beküldött eseményeknél; feed/seed: null). */
+  lat?: number | null;
+  lng?: number | null;
 }
 
 
