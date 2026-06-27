@@ -14,6 +14,8 @@ import {
   fmtDate,
   relLabel,
   parseYMD,
+  taskVisible,
+  type RelocationProfile,
 } from "@/lib/relocation";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
@@ -24,9 +26,13 @@ export default function RelocationTrackerPage() {
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [expandedPhase, setExpandedPhase] = useState<string>("phase-1");
   const [moveDate, setMoveDate] = useState<string>("");
+  const [profile, setProfile] = useState<RelocationProfile>({ family: false, eu: true });
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const PHASES = getPhases(country);
+  // Személyre szabott roadmap: csak a profilhoz illő feladatok (üres fázis kiesik).
+  const PHASES = getPhases(country)
+    .map((p) => ({ ...p, tasks: p.tasks.filter((t) => taskVisible(t, profile)) }))
+    .filter((p) => p.tasks.length > 0);
 
   useEffect(() => {
     const saved = localStorage.getItem("kinti_relocation_tasks");
@@ -39,8 +45,30 @@ export default function RelocationTrackerPage() {
     }
     const savedDate = localStorage.getItem("kinti_relocation_movedate");
     if (savedDate) setMoveDate(savedDate);
+    try {
+      const p = localStorage.getItem("kinti_relocation_profile");
+      if (p) setProfile({ family: false, eu: true, ...JSON.parse(p) });
+    } catch { /* ignore */ }
     setMounted(true);
   }, []);
+
+  const updateProfile = (patch: Partial<RelocationProfile>) => {
+    setProfile((prev) => {
+      const next = { ...prev, ...patch };
+      try { localStorage.setItem("kinti_relocation_profile", JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
+  };
+
+  const shareplan = () => {
+    const text = "Csinálok egy személyre szabott kiköltözési tervet a Kintin (checklist + határidők). Neked is jól jöhet, ha költözöl:";
+    const url = "https://kinti.app/kikoltozes";
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share({ title: "Kiköltözési terv", text, url }).catch(() => {});
+    } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(`${text} ${url}`).catch(() => {});
+    }
+  };
 
   const updateMoveDate = (v: string) => {
     setMoveDate(v);
@@ -92,6 +120,32 @@ export default function RelocationTrackerPage() {
             </Link>
           }
         />
+
+        {/* Személyre szabás — kinek tervezünk (szűri a checklistet) */}
+        <div className="mt-6 rounded-2xl border border-border-subtle bg-surface p-4 shadow-card">
+          <p className="mb-3 text-[13px] font-bold uppercase tracking-wide text-ink/70">Kinek tervezünk?</p>
+          <div className="flex flex-col gap-2.5">
+            <ToggleRow
+              label="Családdal / gyerekkel költözöm"
+              sub="Iskola, óvoda, családi pótlék lépésekkel"
+              on={profile.family}
+              onClick={() => updateProfile({ family: !profile.family })}
+            />
+            <ToggleRow
+              label="EU / EFTA-állampolgár vagyok"
+              sub={profile.eu ? "Szabad mozgás — nincs engedély-lépés" : "Tartózkodási / munkavállalási engedély is kell"}
+              on={profile.eu}
+              onClick={() => updateProfile({ eu: !profile.eu })}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={shareplan}
+            className="mt-3 w-full rounded-pill border border-border-subtle bg-surface py-2.5 text-[12.5px] font-bold text-ink/60 transition active:scale-[0.98]"
+          >
+            🔗 Küldd el egy barátnak, aki szintén költözik
+          </button>
+        </div>
 
         {/* Progress Bar */}
         <div className="mt-6 rounded-2xl border border-border-subtle bg-surface p-4 shadow-card">
@@ -285,5 +339,33 @@ export default function RelocationTrackerPage() {
         })}
       </div>
     </div>
+  );
+}
+
+/** Egy kapcsoló-sor a személyre szabó wizardhoz. */
+function ToggleRow({ label, sub, on, onClick }: { label: string; sub: string; on: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={on}
+      className={cn(
+        "flex items-center gap-3 rounded-2xl border-2 p-3 text-left transition active:scale-[0.99]",
+        on ? "border-primary bg-primary/5" : "border-border-subtle bg-surface",
+      )}
+    >
+      <span
+        className={cn(
+          "grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 transition-colors",
+          on ? "border-primary bg-primary text-white" : "border-ink/20 text-transparent",
+        )}
+      >
+        <Icon name="check" size={14} strokeWidth={3} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className={cn("block text-[14px] font-bold", on ? "text-ink" : "text-ink/80")}>{label}</span>
+        <span className="block text-[12px] leading-snug text-ink/55">{sub}</span>
+      </span>
+    </button>
   );
 }
