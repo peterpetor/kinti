@@ -14,17 +14,33 @@ export interface PresenceCount {
   recent: number;
 }
 
-/** Egy anonim ping rögzítése. */
+export interface PresenceCityCount {
+  city: string;
+  n: number;
+  recent: number;
+}
+
+/** Egy anonim ping rögzítése (város-szinten; a region_code a térkép-aggregáláshoz). */
 export async function addPresencePing(input: {
   id: string;
   country: string;
   regionCode: string;
+  city: string;
   ipHash: string;
 }): Promise<void> {
   await getDB()
-    .prepare(`INSERT INTO presence_pings (id, country, region_code, ip_hash) VALUES (?, ?, ?, ?)`)
-    .bind(input.id, input.country, input.regionCode, input.ipHash)
+    .prepare(`INSERT INTO presence_pings (id, country, region_code, city, ip_hash) VALUES (?, ?, ?, ?, ?)`)
+    .bind(input.id, input.country, input.regionCode, input.city, input.ipHash)
     .run();
+}
+
+/** Városonkénti darabszám (+ utolsó 30 nap) — a top-listához, személyes kártyához, város-buborékokhoz. */
+export async function getPresenceCityCounts(country: string): Promise<PresenceCityCount[]> {
+  const { results } = await getDB()
+    .prepare(`SELECT city, COUNT(*) AS n, SUM(CASE WHEN datetime(created_at) > datetime('now', '-30 days') THEN 1 ELSE 0 END) AS recent FROM presence_pings WHERE country = ? AND city IS NOT NULL GROUP BY city ORDER BY n DESC`)
+    .bind(country)
+    .all<PresenceCityCount>();
+  return results ?? [];
 }
 
 /**

@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react";
-import { Icon } from "@/components/ui";
+import { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from "react";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { usePreferredCanton } from "@/lib/canton-pref";
 import { DEFAULT_COUNTRY, getCountry, countryLocative } from "@/lib/countries";
-import { getRegions, getRegion } from "@/lib/regions";
+import { getPresenceCities } from "@/lib/presence-cities";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 
 // Leaflet csak kliensen (window-függő) → SSR-en () => null.
@@ -15,53 +13,52 @@ const CantonBubbleMap =
     ? lazy(() => import("./canton-bubble-map").then((m) => ({ default: m.CantonBubbleMap })))
     : () => null;
 
-const LS_KEY = "kinti_presence_pinged"; // melyik országokban jelzett már be ez a böngésző
+const LS_PINGED = "kinti_presence_pinged"; // string[]: mely országokban jelzett már be
+const LS_CITY = "kinti_presence_city";     // Record<country, city>: „a te körzeted"
 
 /**
- * PresenceView — „Ki költözött melléd?" anonim magyar jelenlét-hőtérkép.
- * Egyetlen kérdés (melyik régióban élsz?), nulla regisztráció. A számok „puhák"
- * (ezért „legalább X"), de rate-limit + Turnstile + localStorage-dedup védi.
+ * PresenceView — „Ki költözött melléd?" anonim magyar jelenlét-hőtérkép, VÁROS-szinten.
+ * Egy kérdés (melyik városban élsz?), nulla regisztráció. A számok „puhák" (ezért
+ * „legalább X"), de rate-limit + Turnstile + localStorage-dedup védi.
  */
 export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const countryName = getCountry(country)?.name ?? "";
-  const regions = getRegions(country);
+  const cityList = useMemo(() => getPresenceCities(country), [country]);
 
-  const [prefCanton, setPrefCanton] = usePreferredCanton();
-  const [counts, setCounts] = useState<Record<string, number>>({});
-  const [recent, setRecent] = useState<Record<string, number>>({});
+  const [cities, setCities] = useState<Record<string, number>>({});
+  const [cityRecent, setCityRecent] = useState<Record<string, number>>({});
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState("");
   const [pinned, setPinned] = useState(false);
+  const [myCity, setMyCity] = useState<string | null>(null);
 
-  // „A te körzeted" = a megosztott régió-pref (időjárás stb.), ha a jelenlegi
-  // országhoz tartozik. Ping nélkül is működik; pingeléskor be is állítjuk.
-  const myRegion = prefCanton && getRegion(country, prefCanton) ? prefCanton : null;
-  const myName = myRegion ? getRegion(country, myRegion)?.name ?? "" : "";
-  const myCount = myRegion ? counts[myRegion] ?? 0 : 0;
-  const myRecent = myRegion ? recent[myRegion] ?? 0 : 0;
-
-  // Modal állapot
+  // Modal
   const [modal, setModal] = useState(false);
-  const [region, setRegion] = useState("");
+  const [cityChoice, setCityChoice] = useState("");
   const [token, setToken] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
+  // Város-koordináták a buborék-térképhez (override a régió-default helyett).
+  const coords = useMemo(() => {
+    const m: Record<string, { lat: number; lng: number }> = {};
+    for (const c of cityList) m[c.name] = { lat: c.lat, lng: c.lng };
+    return m;
+  }, [cityList]);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/presence?country=${country}`);
-      const data = (await res.json()) as { counts?: Record<string, number>; recent?: Record<string, number>; total?: number };
-      setCounts(data.counts ?? {});
-      setRecent(data.recent ?? {});
+      const data = (await res.json()) as { cities?: Record<string, number>; cityRecent?: Record<string, number>; total?: number };
+      setCities(data.cities ?? {});
+      setCityRecent(data.cityRecent ?? {});
       setTotal(data.total ?? 0);
-    } catch {
-      /* hálózati hiba → marad a régi */
-    }
+    } catch { /* hálózati hiba → marad */ }
     setLoading(false);
   }, [country]);
 
@@ -69,25 +66,29 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
 
   useEffect(() => {
     try {
-      const arr = JSON.parse(localStorage.getItem(LS_KEY) ?? "[]") as string[];
+      const arr = JSON.parse(localStorage.getItem(LS_PINGED) ?? "[]") as string[];
       setPinned(Array.isArray(arr) && arr.includes(country));
-    } catch { setPinned(false); }
+      const cm = JSON.parse(localStorage.getItem(LS_CITY) ?? "{}") as Record<string, string>;
+      setMyCity(cm?.[country] ?? null);
+    } catch { setPinned(false); setMyCity(null); }
   }, [country]);
 
-  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const top = useMemo(() => Object.entries(cities).sort((a, b) => b[1] - a[1]).slice(0, 8), [cities]);
+  const myCount = myCity ? cities[myCity] ?? 0 : 0;
+  const myRecent = myCity ? cityRecent[myCity] ?? 0 : 0;
 
   async function submit() {
     setErr(null);
-    if (!region) { setErr("Válassz régiót."); return; }
+    if (!cityChoice) { setErr("Válassz várost."); return; }
     if (!token) { setErr("Várd meg a robot-ellenőrzést."); return; }
     setSubmitting(true);
     try {
       const res = await fetch("/api/presence", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ country, regionCode: region, turnstileToken: token }),
+        body: JSON.stringify({ country, city: cityChoice, turnstileToken: token }),
       });
-      const data = (await res.json().catch(() => ({}))) as { counts?: Record<string, number>; recent?: Record<string, number>; total?: number; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { cities?: Record<string, number>; cityRecent?: Record<string, number>; total?: number; error?: string };
       if (!res.ok) {
         setErr(data.error ?? "Nem sikerült a beküldés.");
         turnstileRef.current?.reset();
@@ -95,16 +96,18 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
         setSubmitting(false);
         return;
       }
-      setCounts(data.counts ?? counts);
-      setRecent(data.recent ?? recent);
+      setCities(data.cities ?? cities);
+      setCityRecent(data.cityRecent ?? cityRecent);
       setTotal(data.total ?? total);
-      // A beküldött régió legyen a „te körzeted" is (megosztott pref) → személyre szabott kártya.
-      setPrefCanton(region);
       try {
-        const arr = JSON.parse(localStorage.getItem(LS_KEY) ?? "[]") as string[];
+        const arr = JSON.parse(localStorage.getItem(LS_PINGED) ?? "[]") as string[];
         if (!arr.includes(country)) arr.push(country);
-        localStorage.setItem(LS_KEY, JSON.stringify(arr));
+        localStorage.setItem(LS_PINGED, JSON.stringify(arr));
+        const cm = JSON.parse(localStorage.getItem(LS_CITY) ?? "{}") as Record<string, string>;
+        cm[country] = cityChoice;
+        localStorage.setItem(LS_CITY, JSON.stringify(cm));
       } catch { /* private mode → ok */ }
+      setMyCity(cityChoice);
       setPinned(true);
       setModal(false);
     } catch {
@@ -125,13 +128,13 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
 
   return (
     <div className="space-y-4">
-      {/* Személyre szabott kártya — „a te körzeted" (a megosztott régió-pref alapján) */}
-      {myRegion && !loading && (
+      {/* Személyre szabott kártya — „a te körzeted" (a beküldött város alapján) */}
+      {myCity && !loading && (
         <section className="rounded-card border-2 border-accent/30 bg-accent/5 p-4 shadow-pop">
           <div className="flex items-start gap-3">
             <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-accent text-white text-xl">📍</span>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-accent">A te körzeted · {myName}</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-accent">A te körzeted · {myCity}</p>
               {myCount > 0 ? (
                 <>
                   <p className="mt-1 text-[18px] font-extrabold leading-tight text-ink">
@@ -144,7 +147,7 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
                   )}
                 </>
               ) : (
-                <p className="mt-1 text-[15px] font-bold text-ink">Még te lehetsz az első {myName}ban! 🎉</p>
+                <p className="mt-1 text-[15px] font-bold text-ink">Még te lehetsz az első {myCity}ban! 🎉</p>
               )}
             </div>
           </div>
@@ -165,21 +168,21 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
         </p>
       </section>
 
-      {/* Térkép */}
-      {total > 0 && (
+      {/* Város-buborék térkép */}
+      {total > 0 && Object.keys(cities).length > 0 && (
         <Suspense fallback={<div className="grid h-[320px] place-items-center rounded-card border border-line bg-surface text-[12.5px] text-ink-muted">Térkép betöltése…</div>}>
-          <CantonBubbleMap counts={counts} selectedCanton={selected} onSelectCanton={setSelected} country={country} />
+          <CantonBubbleMap counts={cities} selectedCanton={selected} onSelectCanton={setSelected} country={country} coordsOverride={coords} nameOf={(c) => c} />
         </Suspense>
       )}
 
-      {/* Top régiók */}
+      {/* Top városok */}
       {top.length > 0 && (
         <section className="rounded-card border border-line bg-surface p-4 shadow-card">
           <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted mb-2">Hol vagyunk a legtöbben?</h2>
           <ul className="space-y-1.5">
-            {top.map(([code, n]) => (
-              <li key={code} className="flex items-center justify-between text-[13.5px]">
-                <span className="font-semibold text-ink">{getRegion(country, code)?.name ?? code}</span>
+            {top.map(([city, n]) => (
+              <li key={city} className="flex items-center justify-between text-[13.5px]">
+                <span className="font-semibold text-ink">{city}</span>
                 <span className="font-extrabold text-primary">{n.toLocaleString("hu-HU")}</span>
               </li>
             ))}
@@ -220,20 +223,20 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
         <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 bg-ink/40 backdrop-blur-sm" onClick={() => !submitting && setModal(false)}>
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-card border border-line bg-surface p-5 shadow-card-strong space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-[16px] font-extrabold text-ink">📍 Melyik régióban élsz?</h3>
+              <h3 className="text-[16px] font-extrabold text-ink">📍 Melyik városban élsz?</h3>
               <button type="button" onClick={() => setModal(false)} className="grid h-8 w-8 place-items-center rounded-full bg-surface-alt text-ink-muted">✕</button>
             </div>
             <p className="text-[12px] leading-snug text-ink-muted">
               Teljesen anonim — csak egy pont a térképen, hogy lásd, hányan vagyunk. Nincs fiók, nincs email.
             </p>
             <select
-              value={region}
-              onChange={(e) => setRegion(e.target.value)}
+              value={cityChoice}
+              onChange={(e) => setCityChoice(e.target.value)}
               className="h-11 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[14px] text-ink"
             >
-              <option value="">Válassz régiót…</option>
-              {regions.map((r) => (
-                <option key={r.code} value={r.code}>{r.name}</option>
+              <option value="">Válassz várost…</option>
+              {cityList.map((c) => (
+                <option key={c.name} value={c.name}>{c.name}</option>
               ))}
             </select>
 
@@ -245,7 +248,7 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
             <button
               type="button"
               onClick={submit}
-              disabled={submitting || !region || !token}
+              disabled={submitting || !cityChoice || !token}
               className="w-full rounded-pill bg-primary py-3 text-[14px] font-black text-white shadow-card disabled:opacity-60"
             >
               {submitting ? "Felteszem…" : "Felteszem magam a térképre"}

@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { addPresencePing, getPresenceCounts, countPresenceByIpToday } from "@/lib/repo-presence";
+import { addPresencePing, getPresenceCounts, getPresenceCityCounts, countPresenceByIpToday } from "@/lib/repo-presence";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { hashIp } from "@/lib/security";
 import { isValidCountry } from "@/lib/countries";
-import { getRegion } from "@/lib/regions";
+import { findPresenceCity } from "@/lib/presence-cities";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -16,24 +16,34 @@ const DAILY_IP_LIMIT = 5;
  * GET /api/presence?country=CH — régiónkénti anonim jelenlét-darabszám + összesen.
  * A számok „puhák" (a UI „legalább X"-et ír), de rate-limit + Turnstile védi.
  */
+/** Közös összesítő payload egy országra (régió-szint a térkép-fallbackhez, város-szint a listához). */
+async function buildPayload(country: string) {
+  const [regionRows, cityRows] = await Promise.all([
+    getPresenceCounts(country),
+    getPresenceCityCounts(country),
+  ]);
+  const total = regionRows.reduce((s, r) => s + r.n, 0);
+  const counts: Record<string, number> = {};
+  const recent: Record<string, number> = {};
+  for (const r of regionRows) { counts[r.regionCode] = r.n; recent[r.regionCode] = r.recent; }
+  const cities: Record<string, number> = {};
+  const cityRecent: Record<string, number> = {};
+  for (const r of cityRows) { cities[r.city] = r.n; cityRecent[r.city] = r.recent; }
+  return { country, counts, recent, cities, cityRecent, total };
+}
+
 export async function GET(req: NextRequest) {
   const c = req.nextUrl.searchParams.get("country");
   const country = isValidCountry(c) ? c : "CH";
-  const rows = await getPresenceCounts(country);
-  const total = rows.reduce((s, r) => s + r.n, 0);
-  const map: Record<string, number> = {};
-  const recent: Record<string, number> = {};
-  for (const r of rows) { map[r.regionCode] = r.n; recent[r.regionCode] = r.recent; }
-  return NextResponse.json(
-    { country, counts: map, recent, total },
-    { headers: { "cache-control": "public, max-age=60" } },
-  );
+  return NextResponse.json(await buildPayload(country), {
+    headers: { "cache-control": "public, max-age=60" },
+  });
 }
 
 /**
  * POST /api/presence — egy anonim jelenlét-ping.
- * Body: { country, regionCode, turnstileToken }. NINCS account/email; az ip_hash
- * csak rate-limit (nem identitás).
+ * Body: { country, city, turnstileToken }. NINCS account/email; az ip_hash csak
+ * rate-limit (nem identitás). A régiót a városból vezetjük le (presence-cities).
  */
 export async function POST(req: Request) {
   let body: Record<string, unknown> = {};
@@ -44,14 +54,16 @@ export async function POST(req: Request) {
   }
 
   const country = typeof body.country === "string" ? body.country : "";
-  const regionCode = typeof body.regionCode === "string" ? body.regionCode.trim().slice(0, 8) : "";
+  const cityName = typeof body.city === "string" ? body.city.trim().slice(0, 60) : "";
   const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken : null;
 
   if (!isValidCountry(country)) {
     return NextResponse.json({ error: "Ismeretlen ország." }, { status: 400 });
   }
-  if (!getRegion(country, regionCode)) {
-    return NextResponse.json({ error: "Válassz régiót." }, { status: 400 });
+  // A várost szerveroldalon is validáljuk a kanonikus listából (a régiót innen vezetjük le).
+  const city = findPresenceCity(country, cityName);
+  if (!city) {
+    return NextResponse.json({ error: "Válassz várost a listából." }, { status: 400 });
   }
 
   const ip = req.headers.get("cf-connecting-ip") ?? null;
@@ -72,13 +84,13 @@ export async function POST(req: Request) {
     );
   }
 
-  await addPresencePing({ id: crypto.randomUUID(), country, regionCode, ipHash: ipHash ?? "unknown-ip" });
+  await addPresencePing({
+    id: crypto.randomUUID(),
+    country,
+    regionCode: city.region,
+    city: city.name,
+    ipHash: ipHash ?? "unknown-ip",
+  });
 
-  // A friss összesítés rögtön vissza, hogy a UI azonnal frissülhessen.
-  const rows = await getPresenceCounts(country);
-  const total = rows.reduce((s, r) => s + r.n, 0);
-  const map: Record<string, number> = {};
-  const recent: Record<string, number> = {};
-  for (const r of rows) { map[r.regionCode] = r.n; recent[r.regionCode] = r.recent; }
-  return NextResponse.json({ ok: true, country, counts: map, recent, total });
+  return NextResponse.json({ ok: true, ...(await buildPayload(country)) });
 }

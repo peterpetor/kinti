@@ -63,19 +63,25 @@ export function CantonBubbleMap({
   selectedCanton,
   onSelectCanton,
   country = "CH",
+  coordsOverride,
+  nameOf,
 }: {
   /** régió-kód → darabszám */
   counts: Record<string, number>;
   selectedCanton: string;
   onSelectCanton: (code: string) => void;
   country?: string;
+  /** Opcionális koordináta-térkép (pl. város-szintű buborékokhoz) — felülírja a régió-defaultot. */
+  coordsOverride?: Record<string, { lat: number; lng: number }>;
+  /** Opcionális név-feloldó a kiválasztott buborékhoz (különben régió-név). */
+  nameOf?: (code: string) => string;
 }) {
   const [fullscreen, setFullscreen] = useState(false);
 
-  // Ország-tudatos közép + koordináták (CH: kanton, AT/DE: Bundesland).
+  // Ország-tudatos közép + koordináták (CH: kanton, AT/DE: Bundesland) — vagy override.
   const isAT = country === "AT";
   const isDE = country === "DE";
-  const COORDS: Record<string, { lat: number; lng: number }> = isDE ? DE_BUNDESLAND_COORDS : isAT ? AT_BUNDESLAND_COORDS : CANTON_COORDS;
+  const COORDS: Record<string, { lat: number; lng: number }> = coordsOverride ?? (isDE ? DE_BUNDESLAND_COORDS : isAT ? AT_BUNDESLAND_COORDS : CANTON_COORDS);
   const center = isDE ? DE_CENTER : isAT ? AT_CENTER : SWISS_CENTER;
 
   useEffect(() => {
@@ -138,7 +144,7 @@ export function CantonBubbleMap({
       <div className="pointer-events-none absolute left-3 top-3 z-[20] flex items-center gap-2">
         <span className="glass pointer-events-auto inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12px] font-bold text-ink shadow-card">
           <Icon name="pin" size={12} strokeWidth={2.2} className="text-accent" />
-          {selectedCanton ? regionName(country, selectedCanton) : (isAT || isDE ? "Koppints egy tartományra" : "Koppints egy kantonra")}
+          {selectedCanton ? (nameOf ? nameOf(selectedCanton) : regionName(country, selectedCanton)) : (isAT || isDE ? "Koppints egy tartományra" : "Koppints egy kantonra")}
         </span>
         <button
           type="button"
