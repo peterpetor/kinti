@@ -14,6 +14,11 @@ const EventsMap =
     ? lazy(() => import("./events-map").then((m) => ({ default: m.EventsMap })))
     : () => null;
 
+const LocationPicker =
+  typeof window !== "undefined"
+    ? lazy(() => import("./location-picker").then((m) => ({ default: m.LocationPicker })))
+    : () => null;
+
 const TAG_KEYS = ["koncert", "talalkozo", "bolt", "etterem", "egyeb"] as const;
 
 export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
@@ -40,6 +45,7 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
   const [title, setTitle] = useState("");
   const [tag, setTag] = useState<string>("talalkozo");
   const [city, setCity] = useState("");
+  const [pin, setPin] = useState<{ lat: number; lng: number } | null>(null);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [venue, setVenue] = useState("");
@@ -66,6 +72,7 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
           country, city, title: title.trim(), tag,
           eventDate: date || null, startTime: time || null,
           venue: venue.trim() || null, description: desc.trim() || null,
+          lat: pin?.lat ?? null, lng: pin?.lng ?? null,
           turnstileToken: token,
         }),
       });
@@ -83,7 +90,7 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
   }
 
   function resetForm() {
-    setTitle(""); setTag("talalkozo"); setCity(""); setDate(""); setTime(""); setVenue(""); setDesc("");
+    setTitle(""); setTag("talalkozo"); setCity(""); setPin(null); setDate(""); setTime(""); setVenue(""); setDesc("");
     setToken(""); setErr(null); setDone(false); turnstileRef.current?.reset();
   }
 
@@ -148,10 +155,30 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
                   placeholder={tag === "bolt" || tag === "etterem" ? "Név (pl. Gulyás Bisztró)" : "Esemény címe"}
                   className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink" />
 
-                <select value={city} onChange={(e) => setCity(e.target.value)} className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink">
+                <select value={city} onChange={(e) => { setCity(e.target.value); setPin(null); }} className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink">
                   <option value="">Melyik városban?</option>
                   {cityList.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
                 </select>
+
+                {(() => {
+                  const sel = cityList.find((c) => c.name === city);
+                  if (!sel) return null;
+                  return (
+                    <div className="space-y-1">
+                      <Suspense fallback={<div className="grid h-[200px] place-items-center rounded-card border border-line bg-surface text-[12px] text-ink-muted">Térkép…</div>}>
+                        <LocationPicker
+                          center={[sel.lat, sel.lng]}
+                          value={pin}
+                          onChange={setPin}
+                          className="h-[200px] overflow-hidden rounded-card border border-line"
+                        />
+                      </Suspense>
+                      <p className="text-[11px] text-ink-faint">
+                        {pin ? "📍 Pontos hely kijelölve — koppints máshová a módosításhoz." : "Koppints a térképre a pontos helyhez (opcionális — alapból a város közepe)."}
+                      </p>
+                    </div>
+                  );
+                })()}
 
                 {needsDate && (
                   <div className="grid grid-cols-2 gap-2">

@@ -6,6 +6,7 @@ import { hashIp } from "@/lib/security";
 import { containsProfanity } from "@/lib/profanity";
 import { isValidCountry } from "@/lib/countries";
 import { findPresenceCity } from "@/lib/presence-cities";
+import { haversineKm } from "@/lib/distance";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -71,9 +72,20 @@ export async function POST(req: Request) {
   if (banned) return banned;
 
   const ipHash = await hashIp(ip);
+
+  // Precíz pin (v2): ha érvényes és a választott városhoz közeli (≤100 km) + a
+  // lefedett országok dobozán belül, azt használjuk; különben a város közepét.
+  let lat = city.lat, lng = city.lng;
+  const rawLat = typeof body.lat === "number" ? body.lat : null;
+  const rawLng = typeof body.lng === "number" ? body.lng : null;
+  if (rawLat != null && rawLng != null && Number.isFinite(rawLat) && Number.isFinite(rawLng)) {
+    const inBox = rawLat >= 45.5 && rawLat <= 55.2 && rawLng >= 3.2 && rawLng <= 17.3;
+    if (inBox && haversineKm(city.lat, city.lng, rawLat, rawLng) <= 100) { lat = rawLat; lng = rawLng; }
+  }
+
   await createSubmittedEvent({
     title, eventDate, startTime, venue, description, tag,
-    country, regionCode: city.region, lat: city.lat, lng: city.lng,
+    country, regionCode: city.region, lat, lng,
     ipHash: ipHash ?? "unknown-ip",
   });
 
