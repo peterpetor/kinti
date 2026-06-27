@@ -17,6 +17,7 @@ import { KvizDailyCard } from "@/components/kviz-daily-card";
 import { NapiSzoCard } from "@/components/napi-szo-card";
 import { HomePlatformGrid } from "@/components/home-platform-grid";
 import { PresenceHomeCard } from "@/components/presence-home-card";
+import { ReferralHomeCard } from "@/components/referral-home-card";
 import { TrustBar } from "@/components/trust-bar";
 import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
@@ -93,6 +94,9 @@ export default async function FeedPage() {
       <NapiSzoCard />
 
       <HomeChCards />
+
+      {/* Organikus növekedés — anonim meghívó-link megosztása */}
+      <ReferralHomeCard />
 
       <NewsletterCtaCard />
       <PwaInstallCard />
