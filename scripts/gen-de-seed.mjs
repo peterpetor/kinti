@@ -22,6 +22,8 @@ const data = JSON.parse(readFileSync(join(root, "db/seed-data/de-organizations.j
 const CITY_COORDS = {
   "stuttgart": [48.7758, 9.1829],
   "karlsruhe": [49.0069, 8.4037],
+  "freiburg": [47.9990, 7.8421],
+  "trier": [49.7490, 6.6371],
   "pforzheim": [48.8922, 8.6946],
   "heidelberg": [49.3988, 8.6724],
   "mainz": [49.9929, 8.2473],
