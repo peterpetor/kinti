@@ -135,6 +135,23 @@ export async function claimDailyNudge(day: string): Promise<boolean> {
 }
 
 /**
+ * Szezonális push kampány „lefoglalása" (évente egyszer). `true`, ha MOST foglalta le
+ * (még nem ment ki); `false`, ha már elküldve. Idempotens. Kulcs pl. "krankenkasse-2026".
+ * Lásd 0099 migráció.
+ */
+export async function claimSeasonalPush(key: string): Promise<boolean> {
+  try {
+    const res = await getDB()
+      .prepare("INSERT INTO seasonal_push_log (campaign_key) VALUES (?) ON CONFLICT(campaign_key) DO NOTHING")
+      .bind(key)
+      .run();
+    return (res.meta.changes ?? 0) > 0;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * A kliens szinkronizálja a (localStorage-beli) streak-jét a saját push-
  * feliratkozására, hogy a streak-mentő cron tudjon kinek szólni. Best-effort:
  * ha az oszlopok még hiányoznak (0085 előtt), csendben elnyeljük.
