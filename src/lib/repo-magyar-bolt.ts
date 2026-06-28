@@ -4,21 +4,11 @@
  * Modell: azonnali megjelenés (hidden=0) + közösségi jelentés → auto-hide. Lásd 0101.
  */
 import { getDB } from "./cloudflare";
+import type { BoltSpot } from "./magyar-bolt";
+
+export type { BoltSpot };
 
 const AUTOHIDE_REPORTS = 3; // ennyi jelentés után automatikusan elrejtjük
-
-export interface BoltSpot {
-  id: string;
-  name: string;
-  category: string | null;
-  locationName: string | null;
-  lat: number;
-  lng: number;
-  country: string;
-  cantonCode: string | null;
-  note: string | null;
-  createdAt: string;
-}
 
 interface Row {
   id: string; name: string; category: string | null; location_name: string | null;

@@ -8,8 +8,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { useMyLocation } from "@/lib/use-my-location";
-import { BOLT_CATEGORIES, boltCategory } from "@/lib/magyar-bolt";
-import type { BoltSpot } from "@/lib/repo-magyar-bolt";
+import { BOLT_CATEGORIES, boltCategory, type BoltSpot } from "@/lib/magyar-bolt";
 
 const ME_ICON = L.divIcon({ className: "", html: '<div class="kinti-me-dot"></div>', iconSize: [16, 16], iconAnchor: [8, 8] });
 const TILE_URL = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";

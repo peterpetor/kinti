@@ -4,8 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } fro
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
-import { BOLT_CATEGORIES } from "@/lib/magyar-bolt";
-import type { BoltSpot } from "@/lib/repo-magyar-bolt";
+import { BOLT_CATEGORIES, type BoltSpot } from "@/lib/magyar-bolt";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 
 const CENTERS: Record<string, [number, number]> = { CH: [46.82, 8.23], AT: [47.59, 14.14], DE: [51.1, 10.4], NL: [52.13, 5.29] };

@@ -9,6 +9,20 @@ export interface BoltCategory {
   color: string;
 }
 
+/** Egy térkép-hely (kliens+szerver közös típus — NE a repo-ból importáld kliensbe). */
+export interface BoltSpot {
+  id: string;
+  name: string;
+  category: string | null;
+  locationName: string | null;
+  lat: number;
+  lng: number;
+  country: string;
+  cantonCode: string | null;
+  note: string | null;
+  createdAt: string;
+}
+
 export const BOLT_CATEGORIES: BoltCategory[] = [
   { id: "pekseg",    label: "Pékség / kenyér",        emoji: "🥖", color: "#d97706" },
   { id: "hentes",    label: "Hentes / húsbolt",       emoji: "🥩", color: "#c8392e" },
