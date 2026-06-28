@@ -3,68 +3,418 @@
   "country": "AT",
   "source": "https://rolunk.at/ausztriai-magyar-egyesuletek/",
   "organizations": [
-    { "name": "Ausztriai Magyar Evangélikus Gyülekezet", "region": "W", "city": "Wien", "type": "egyház", "website": "https://evangelikus-at.com" },
-    { "name": "Ausztriai Magyar Diákok Egyesülete", "region": "W", "city": "Wien", "type": "diákszervezet", "website": null },
-    { "name": "Ausztriai Magyar Kutatóintézet", "region": "W", "city": "Wien", "type": "kutatóintézet", "website": "https://oeius.univie.ac.at" },
-    { "name": "AMAPED – Ausztriai Magyar Pedagógusok Egyesülete", "region": "W", "city": "Wien", "type": "oktatás", "website": "https://amaped.at" },
-    { "name": "Ausztriai Magyar Református Lelkigondozó Szolgálat", "region": "W", "city": "Wien", "type": "egyház", "website": "https://reformatus.at" },
-    { "name": "Ausztriai Magyar Szervezetek Központi Szövetsége", "region": "W", "city": "Wien", "type": "ernyőszervezet", "website": "https://kozpontiszovetseg.at" },
-    { "name": "Ausztriai Magyar Szervezetek Kerekasztala", "region": "W", "city": "Wien", "type": "ernyőszervezet", "website": "https://kerekasztal.at" },
-    { "name": "Bécsi Főegyházmegye Magyar Közössége", "region": "W", "city": "Wien", "type": "egyház", "website": "https://katolikus.at" },
-    { "name": "Bécsi Magyar Iskolaegyesület", "region": "W", "city": "Wien", "type": "iskola", "website": "https://ungarischlernen.at" },
-    { "name": "Bécsi Magyar Munkásegylet", "region": "W", "city": "Wien", "type": "egyesület", "website": null },
-    { "name": "Bornemisza Péter Társaság", "region": "W", "city": "Wien", "type": "irodalmi társaság", "website": "https://kozpontiszovetseg.at" },
-    { "name": "Brand Art Studio Wien", "region": "W", "city": "Wien", "type": "kultúra", "website": "https://brandart.studio" },
-    { "name": "Club Pannonia", "region": "W", "city": "Wien", "type": "klub", "website": "https://club-pannonia.at" },
-    { "name": "Délibáb Bécsi Magyar Kultúregyesület", "region": "W", "city": "Wien", "type": "kultúra", "website": "https://wukv.at" },
-    { "name": "Erdélyi Magyarok Ausztriai Egyesülete", "region": "W", "city": "Wien", "type": "egyesület", "website": null },
-    { "name": "EUROPA-CLUB", "region": "W", "city": "Wien", "type": "kultúra", "website": "https://europaclub.at" },
-    { "name": "Kaláka-Club", "region": "W", "city": "Wien", "type": "gazdasági érdekkör", "website": "https://kalaka-club.at" },
-    { "name": "Lean in Femspace", "region": "W", "city": "Wien", "type": "női közösség", "website": null },
-    { "name": "Napraforgók", "region": "W", "city": "Wien", "type": "néptánc / népzene", "website": "https://napraforgok.at" },
-    { "name": "Osztrák-Magyar Társaság", "region": "W", "city": "Wien", "type": "társaság", "website": "https://goeu.at" },
-    { "name": "SVUNG", "region": "W", "city": "Wien", "type": "művészet", "website": "https://svung.at" },
-    { "name": "72. sz. bécsi Széchenyi István Cserkészcsapat", "region": "W", "city": "Wien", "type": "cserkészet", "website": "https://cserkesz.at" },
-
-    { "name": "Alsóőri Énekkar", "region": "BGL", "city": "Alsóőr / Unterwart", "type": "kórus", "website": null },
-    { "name": "Alsóőri Katolikus Egyházközség", "region": "BGL", "city": "Alsóőr / Unterwart", "type": "egyház", "website": "https://martinus.at/unterwart" },
-    { "name": "Alsóőri Kétnyelvű Színjátszóegyesület", "region": "BGL", "city": "Alsóőr / Unterwart", "type": "színház", "website": "https://theaterverein-unterwart.at" },
-    { "name": "Alsóőri Otthon", "region": "BGL", "city": "Alsóőr / Unterwart", "type": "kultúrház", "website": null },
-    { "name": "Alsóőri-Vasjobbágyi Magyar Baráti Kör", "region": "BGL", "city": "Alsóőr", "type": "baráti kör", "website": null },
-    { "name": "Burgenlandi Magyar Kultúregyesület", "region": "BGL", "city": "Burgenland", "type": "kultúra", "website": "https://bukv.at" },
-    { "name": "Burgenlandi Magyarok Népfőiskolája", "region": "BGL", "city": "Burgenland", "type": "oktatás", "website": "https://vhs-ungarn.at" },
-    { "name": "Észak-burgenlandi Magyar Kulturális Egyesület", "region": "BGL", "city": "Észak-Burgenland", "type": "kultúra", "website": null },
-    { "name": "Felsőőri Katolikus Egyházközség", "region": "BGL", "city": "Felsőőr / Oberwart", "type": "egyház", "website": "https://martinus.at/oberwart" },
-    { "name": "Felsőőri Református Gyülekezet", "region": "BGL", "city": "Felsőőr / Oberwart", "type": "egyház", "website": "https://die-reformierten.at" },
-    { "name": "Közép-burgenlandi Magyar Kultúregyesület", "region": "BGL", "city": "Közép-Burgenland", "type": "kultúra", "website": null },
-    { "name": "Magyar Kultúr- és Táncegyesület Alsóőr", "region": "BGL", "city": "Alsóőr / Unterwart", "type": "tánc / kultúra", "website": null },
-    { "name": "Magyar Média és Információs Központ (UMIZ)", "region": "BGL", "city": "Burgenland", "type": "média / információ", "website": "https://umiz.at" },
-    { "name": "Őriszigeti Evangélikus Egyházközség", "region": "BGL", "city": "Őrisziget / Siget in der Wart", "type": "egyház", "website": "https://evang-bgld.at" },
-    { "name": "Református Ifjúsági Olvasókör", "region": "BGL", "city": "Felsőőr / Oberwart", "type": "ifjúsági", "website": null },
-
-    { "name": "Grazi Magyar Egyesület", "region": "STM", "city": "Graz", "type": "kultúra", "website": "https://grazimagyaregyesuelet.at" },
-    { "name": "Gráci Magyar Katolikus Közösség", "region": "STM", "city": "Graz", "type": "egyház", "website": null },
-    { "name": "HungaroMedia", "region": "STM", "city": "Graz", "type": "média", "website": null },
-    { "name": "Magyar Egyetemisták és Öregdiákok Klubja", "region": "STM", "city": "Graz", "type": "diák / öregdiák", "website": "https://meoek.at" },
-
-    { "name": "Felső-Ausztriai Magyarok Kultúregyesülete", "region": "OOE", "city": "Felső-Ausztria", "type": "kultúra", "website": null },
-    { "name": "Felső-Ausztriai Hétvégi Magyar Óvoda és Iskola", "region": "OOE", "city": "Felső-Ausztria", "type": "iskola / óvoda", "website": null },
-    { "name": "Linzi Magyar Katolikus Közösség", "region": "OOE", "city": "Linz", "type": "egyház", "website": null },
-    { "name": "Ne-Felejts! Néptáncegyüttes", "region": "OOE", "city": "Linz", "type": "néptánc", "website": "https://ne-felejts.weebly.com" },
-    { "name": "80. sz. Árpád Cserkészcsapat Wels", "region": "OOE", "city": "Wels", "type": "cserkészet", "website": "https://wels.cserkesz.eu" },
-
-    { "name": "Innsbrucki Magyar Diákotthon és Kultúrcentrum", "region": "TIR", "city": "Innsbruck", "type": "diákotthon / kultúra", "website": "https://magyarhaz.at" },
-    { "name": "Innsbrucki Magyar Egyetemisták és Akadémikusok Szövetsége", "region": "TIR", "city": "Innsbruck", "type": "diák / akadémiai", "website": null },
-    { "name": "Innsbrucki Magyar Ifjúsági és Kultúregyesület", "region": "TIR", "city": "Innsbruck", "type": "ifjúsági / kultúra", "website": null },
-    { "name": "79. sz. Dr. Kozma György SJ Cserkészcsapat", "region": "TIR", "city": "Innsbruck", "type": "cserkészet", "website": null },
-
-    { "name": "Salzburgi Magyar Egyesület", "region": "SBG", "city": "Salzburg", "type": "kultúra", "website": "https://salzung.com" },
-
-    { "name": "Mi Magyarok Egymásért", "region": "VBG", "city": "Vorarlberg", "type": "segélyegyesület", "website": null },
-    { "name": "Vorarlbergi Magyar Egyesület", "region": "VBG", "city": "Vorarlberg", "type": "kultúra", "website": null },
-
-    { "name": "Egyesület a Magyar Kultúráért Karintiában", "region": "KTN", "city": "Kärnten", "type": "kultúra", "website": null },
-
-    { "name": "Bécsújhely és környéki Magyarok Kulturális Egyesülete", "region": "NOE", "city": "Wiener Neustadt", "type": "kultúra", "website": null }
+    {
+      "name": "Ausztriai Magyar Evangélikus Gyülekezet",
+      "region": "W",
+      "city": "Wien",
+      "type": "egyház",
+      "website": "https://evangelikus-at.com"
+    },
+    {
+      "name": "Ausztriai Magyar Diákok Egyesülete",
+      "region": "W",
+      "city": "Wien",
+      "type": "diákszervezet",
+      "website": null
+    },
+    {
+      "name": "Ausztriai Magyar Kutatóintézet",
+      "region": "W",
+      "city": "Wien",
+      "type": "kutatóintézet",
+      "website": "https://oeius.univie.ac.at"
+    },
+    {
+      "name": "AMAPED – Ausztriai Magyar Pedagógusok Egyesülete",
+      "region": "W",
+      "city": "Wien",
+      "type": "oktatás",
+      "website": "https://amaped.at"
+    },
+    {
+      "name": "Ausztriai Magyar Református Lelkigondozó Szolgálat",
+      "region": "W",
+      "city": "Wien",
+      "type": "egyház",
+      "website": "https://reformatus.at"
+    },
+    {
+      "name": "Ausztriai Magyar Szervezetek Központi Szövetsége",
+      "region": "W",
+      "city": "Wien",
+      "type": "ernyőszervezet",
+      "website": "https://kozpontiszovetseg.at"
+    },
+    {
+      "name": "Ausztriai Magyar Szervezetek Kerekasztala",
+      "region": "W",
+      "city": "Wien",
+      "type": "ernyőszervezet",
+      "website": "https://kerekasztal.at"
+    },
+    {
+      "name": "Bécsi Főegyházmegye Magyar Közössége",
+      "region": "W",
+      "city": "Wien",
+      "type": "egyház",
+      "website": "https://katolikus.at"
+    },
+    {
+      "name": "Bécsi Magyar Iskolaegyesület",
+      "region": "W",
+      "city": "Wien",
+      "type": "iskola",
+      "website": "https://ungarischlernen.at"
+    },
+    {
+      "name": "Bécsi Magyar Munkásegylet",
+      "region": "W",
+      "city": "Wien",
+      "type": "egyesület",
+      "website": null
+    },
+    {
+      "name": "Bornemisza Péter Társaság",
+      "region": "W",
+      "city": "Wien",
+      "type": "irodalmi társaság",
+      "website": "https://kozpontiszovetseg.at"
+    },
+    {
+      "name": "Brand Art Studio Wien",
+      "region": "W",
+      "city": "Wien",
+      "type": "kultúra",
+      "website": "https://brandart.studio"
+    },
+    {
+      "name": "Club Pannonia",
+      "region": "W",
+      "city": "Wien",
+      "type": "klub",
+      "website": "https://club-pannonia.at"
+    },
+    {
+      "name": "Délibáb Bécsi Magyar Kultúregyesület",
+      "region": "W",
+      "city": "Wien",
+      "type": "kultúra",
+      "website": "https://wukv.at"
+    },
+    {
+      "name": "Erdélyi Magyarok Ausztriai Egyesülete",
+      "region": "W",
+      "city": "Wien",
+      "type": "egyesület",
+      "website": null
+    },
+    {
+      "name": "EUROPA-CLUB",
+      "region": "W",
+      "city": "Wien",
+      "type": "kultúra",
+      "website": "https://europaclub.at"
+    },
+    {
+      "name": "Kaláka-Club",
+      "region": "W",
+      "city": "Wien",
+      "type": "gazdasági érdekkör",
+      "website": "https://kalaka-club.at"
+    },
+    {
+      "name": "Lean in Femspace",
+      "region": "W",
+      "city": "Wien",
+      "type": "női közösség",
+      "website": null
+    },
+    {
+      "name": "Napraforgók",
+      "region": "W",
+      "city": "Wien",
+      "type": "néptánc / népzene",
+      "website": "https://napraforgok.at"
+    },
+    {
+      "name": "Osztrák-Magyar Társaság",
+      "region": "W",
+      "city": "Wien",
+      "type": "társaság",
+      "website": "https://goeu.at"
+    },
+    {
+      "name": "SVUNG",
+      "region": "W",
+      "city": "Wien",
+      "type": "művészet",
+      "website": "https://svung.at"
+    },
+    {
+      "name": "72. sz. bécsi Széchenyi István Cserkészcsapat",
+      "region": "W",
+      "city": "Wien",
+      "type": "cserkészet",
+      "website": "https://cserkesz.at"
+    },
+    {
+      "name": "Alsóőri Énekkar",
+      "region": "BGL",
+      "city": "Alsóőr / Unterwart",
+      "type": "kórus",
+      "website": null
+    },
+    {
+      "name": "Alsóőri Katolikus Egyházközség",
+      "region": "BGL",
+      "city": "Alsóőr / Unterwart",
+      "type": "egyház",
+      "website": "https://martinus.at/unterwart"
+    },
+    {
+      "name": "Alsóőri Kétnyelvű Színjátszóegyesület",
+      "region": "BGL",
+      "city": "Alsóőr / Unterwart",
+      "type": "színház",
+      "website": "https://theaterverein-unterwart.at"
+    },
+    {
+      "name": "Alsóőri Otthon",
+      "region": "BGL",
+      "city": "Alsóőr / Unterwart",
+      "type": "kultúrház",
+      "website": null
+    },
+    {
+      "name": "Alsóőri-Vasjobbágyi Magyar Baráti Kör",
+      "region": "BGL",
+      "city": "Alsóőr",
+      "type": "baráti kör",
+      "website": null
+    },
+    {
+      "name": "Burgenlandi Magyar Kultúregyesület",
+      "region": "BGL",
+      "city": "Burgenland",
+      "type": "kultúra",
+      "website": "https://bukv.at"
+    },
+    {
+      "name": "Burgenlandi Magyarok Népfőiskolája",
+      "region": "BGL",
+      "city": "Burgenland",
+      "type": "oktatás",
+      "website": "https://vhs-ungarn.at"
+    },
+    {
+      "name": "Észak-burgenlandi Magyar Kulturális Egyesület",
+      "region": "BGL",
+      "city": "Észak-Burgenland",
+      "type": "kultúra",
+      "website": null
+    },
+    {
+      "name": "Felsőőri Katolikus Egyházközség",
+      "region": "BGL",
+      "city": "Felsőőr / Oberwart",
+      "type": "egyház",
+      "website": "https://martinus.at/oberwart"
+    },
+    {
+      "name": "Felsőőri Református Gyülekezet",
+      "region": "BGL",
+      "city": "Felsőőr / Oberwart",
+      "type": "egyház",
+      "website": "https://die-reformierten.at"
+    },
+    {
+      "name": "Közép-burgenlandi Magyar Kultúregyesület",
+      "region": "BGL",
+      "city": "Közép-Burgenland",
+      "type": "kultúra",
+      "website": null
+    },
+    {
+      "name": "Magyar Kultúr- és Táncegyesület Alsóőr",
+      "region": "BGL",
+      "city": "Alsóőr / Unterwart",
+      "type": "tánc / kultúra",
+      "website": null
+    },
+    {
+      "name": "Magyar Média és Információs Központ (UMIZ)",
+      "region": "BGL",
+      "city": "Burgenland",
+      "type": "média / információ",
+      "website": "https://umiz.at"
+    },
+    {
+      "name": "Őriszigeti Evangélikus Egyházközség",
+      "region": "BGL",
+      "city": "Őrisziget / Siget in der Wart",
+      "type": "egyház",
+      "website": "https://evang-bgld.at"
+    },
+    {
+      "name": "Református Ifjúsági Olvasókör",
+      "region": "BGL",
+      "city": "Felsőőr / Oberwart",
+      "type": "ifjúsági",
+      "website": null
+    },
+    {
+      "name": "Grazi Magyar Egyesület",
+      "region": "STM",
+      "city": "Graz",
+      "type": "kultúra",
+      "website": "https://grazimagyaregyesuelet.at"
+    },
+    {
+      "name": "Gráci Magyar Katolikus Közösség",
+      "region": "STM",
+      "city": "Graz",
+      "type": "egyház",
+      "website": null
+    },
+    {
+      "name": "HungaroMedia",
+      "region": "STM",
+      "city": "Graz",
+      "type": "média",
+      "website": null
+    },
+    {
+      "name": "Magyar Egyetemisták és Öregdiákok Klubja",
+      "region": "STM",
+      "city": "Graz",
+      "type": "diák / öregdiák",
+      "website": "https://meoek.at"
+    },
+    {
+      "name": "Felső-Ausztriai Magyarok Kultúregyesülete",
+      "region": "OOE",
+      "city": "Felső-Ausztria",
+      "type": "kultúra",
+      "website": null
+    },
+    {
+      "name": "Felső-Ausztriai Hétvégi Magyar Óvoda és Iskola",
+      "region": "OOE",
+      "city": "Felső-Ausztria",
+      "type": "iskola / óvoda",
+      "website": null
+    },
+    {
+      "name": "Linzi Magyar Katolikus Közösség",
+      "region": "OOE",
+      "city": "Linz",
+      "type": "egyház",
+      "website": null
+    },
+    {
+      "name": "Ne-Felejts! Néptáncegyüttes",
+      "region": "OOE",
+      "city": "Linz",
+      "type": "néptánc",
+      "website": "https://ne-felejts.weebly.com"
+    },
+    {
+      "name": "80. sz. Árpád Cserkészcsapat Wels",
+      "region": "OOE",
+      "city": "Wels",
+      "type": "cserkészet",
+      "website": "https://wels.cserkesz.eu"
+    },
+    {
+      "name": "Innsbrucki Magyar Diákotthon és Kultúrcentrum",
+      "region": "TIR",
+      "city": "Innsbruck",
+      "type": "diákotthon / kultúra",
+      "website": "https://magyarhaz.at"
+    },
+    {
+      "name": "Innsbrucki Magyar Egyetemisták és Akadémikusok Szövetsége",
+      "region": "TIR",
+      "city": "Innsbruck",
+      "type": "diák / akadémiai",
+      "website": null
+    },
+    {
+      "name": "Innsbrucki Magyar Ifjúsági és Kultúregyesület",
+      "region": "TIR",
+      "city": "Innsbruck",
+      "type": "ifjúsági / kultúra",
+      "website": null
+    },
+    {
+      "name": "79. sz. Dr. Kozma György SJ Cserkészcsapat",
+      "region": "TIR",
+      "city": "Innsbruck",
+      "type": "cserkészet",
+      "website": null
+    },
+    {
+      "name": "Salzburgi Magyar Egyesület",
+      "region": "SBG",
+      "city": "Salzburg",
+      "type": "kultúra",
+      "website": "https://salzung.com"
+    },
+    {
+      "name": "Mi Magyarok Egymásért",
+      "region": "VBG",
+      "city": "Vorarlberg",
+      "type": "segélyegyesület",
+      "website": null
+    },
+    {
+      "name": "Vorarlbergi Magyar Egyesület",
+      "region": "VBG",
+      "city": "Vorarlberg",
+      "type": "kultúra",
+      "website": null
+    },
+    {
+      "name": "Egyesület a Magyar Kultúráért Karintiában",
+      "region": "KTN",
+      "city": "Kärnten",
+      "type": "kultúra",
+      "website": null
+    },
+    {
+      "name": "Bécsújhely és környéki Magyarok Kulturális Egyesülete",
+      "region": "NOE",
+      "city": "Wiener Neustadt",
+      "type": "kultúra",
+      "website": null
+    },
+    {
+      "name": "VIPACH – Bécsi Magyar Fotóklub",
+      "region": "W",
+      "city": "Wien",
+      "type": "fotóklub",
+      "website": "https://vipach.at"
+    },
+    {
+      "name": "Bécsi Napló",
+      "region": "W",
+      "city": "Wien",
+      "type": "magyar lap",
+      "website": "https://www.becsinaplo.at/"
+    },
+    {
+      "name": "Bécsi Szelet – Kulturális és Művészeti Magazin",
+      "region": "W",
+      "city": "Wien",
+      "type": "kulturális magazin",
+      "website": "https://becsiszelet.at"
+    },
+    {
+      "name": "Bécsi Magyar Musical Társulat",
+      "region": "W",
+      "city": "Wien",
+      "type": "musical társulat",
+      "website": "https://musicaltarsulat.at"
+    }
   ]
 }
