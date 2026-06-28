@@ -4,7 +4,7 @@ import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { hashIp } from "@/lib/security";
 import { isValidCountry } from "@/lib/countries";
-import { getPresenceCities, findPresenceCity } from "@/lib/presence-cities";
+import { getPresenceCities, matchCuratedCity } from "@/lib/presence-cities";
 import { geocodeCity } from "@/lib/geocode";
 import { haversineKm } from "@/lib/distance";
 
@@ -85,7 +85,7 @@ export async function POST(req: Request) {
   // Hely feloldása: 1) kanonikus kurált város (gyors út, geokódolás nélkül), különben
   // 2) bármely település geokódolása (pl. Grossarl) → precíz koordináta + a legközelebbi
   // régió. A geokódolás egyben anti-abuse gát is: csak valódi, az országban lévő helynév megy át.
-  const curated = findPresenceCity(country, cityName);
+  const curated = matchCuratedCity(country, cityName);
   let place: { name: string; region: string; lat: number; lng: number };
   if (curated) {
     place = { name: curated.name, region: curated.region, lat: curated.lat, lng: curated.lng };

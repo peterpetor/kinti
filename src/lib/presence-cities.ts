@@ -82,3 +82,25 @@ export function getPresenceCities(country: string): PresenceCity[] {
 export function findPresenceCity(country: string, name: string): PresenceCity | null {
   return getPresenceCities(country).find((c) => c.name === name) ?? null;
 }
+
+/** Ékezet/kisbetű-érzéketlen normalizálás az alias-egyezéshez. */
+function norm(s: string): string {
+  return s.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "").replace(/[.\s]+/g, " ").trim();
+}
+
+/**
+ * Lazább kurált-város egyezés: a teljes névre ÉS a név tokenjeire (zárójeles/elválasztott
+ * helyi nevek, pl. „Bécs (Wien)" → „bécs"/„wien"). Így a szabadon beírt „Wien"/„Genève"
+ * a kanonikus városhoz köt (nincs széttöredezés, és a HU-nyelvű geokódoló sem buktatja el
+ * a „Wien"→Bécs esetet). Csak az `api/presence` szabad-szöveges bevitelhez.
+ */
+export function matchCuratedCity(country: string, input: string): PresenceCity | null {
+  const q = norm(input);
+  if (!q) return null;
+  for (const c of getPresenceCities(country)) {
+    if (norm(c.name) === q) return c;
+    const tokens = c.name.split(/[(),/]/).map(norm).filter(Boolean);
+    if (tokens.includes(q)) return c;
+  }
+  return null;
+}
