@@ -1,0 +1,12 @@
+{
+  "_comment": "Valódi magyar vendéglátóhelyek/üzletek DACH-ban. NINCS egységes hivatalos registry → cégenként webről igazolva: MINDEN weboldal 2026-06-28-án 200-ra ellenőrizve ÉS az identitás a page-title alapján megerősítve (a hibás/átirányított domainek kihagyva, pl. balaton-retro.de egy másik céghez vezetett). category = lib/categories id. NE találj ki adatot — bővítéskor curl-öld az URL-t ÉS ellenőrizd a címet.",
+  "source": "webes keresés + cégenkénti URL/title-ellenőrzés",
+  "businesses": [
+    { "name": "Piroschka", "country": "AT", "region": "W", "city": "Wien", "category": "etterem", "label": "Étterem", "website": "https://www.piroschka.at/" },
+    { "name": "Ilona Stüberl", "country": "AT", "region": "W", "city": "Wien", "category": "etterem", "label": "Étterem", "website": "https://www.ilonastueberl.at/" },
+    { "name": "Budapest Bistro", "country": "AT", "region": "W", "city": "Wien", "category": "etterem", "label": "Étterem / reggeliző", "website": "https://budapestbistro.at/" },
+    { "name": "Ungarische Gaststätte Berlin", "country": "DE", "region": "BE", "city": "Berlin", "category": "etterem", "label": "Étterem", "website": "https://www.ungarische-gaststaette.de/" },
+    { "name": "Zum Ziehbrunnen – Ungarisches Restaurant", "country": "DE", "region": "BE", "city": "Berlin", "category": "etterem", "label": "Étterem / hotel", "website": "https://zumziehbrunnen.de/" },
+    { "name": "Szimpla Berlin", "country": "DE", "region": "BE", "city": "Berlin", "category": "etterem", "label": "Kávézó / bisztró", "website": "https://www.szimpla.de/" }
+  ]
+}
