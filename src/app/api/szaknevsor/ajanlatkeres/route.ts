@@ -6,6 +6,7 @@ import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { cantonFromAddress, matchCantonByName, CANTONS } from "@/lib/cantons";
 import {
   sendLeadRequestEmail,
+  sendLeadLockedEmail,
   sendLeadConfirmEmail,
 } from "@/lib/email";
 
@@ -218,20 +219,36 @@ export async function POST(req: Request) {
     const firstPingTargets = targets.filter((b) => !alreadyPingedSet.has(b.id));
     const digestOnlyTargets = targets.filter((b) => alreadyPingedSet.has(b.id));
 
-    // Email küldés — csak a first-ping célpontoknak, best-effort
+    // FREEMIUM-kapu: ha a cég NEM PRO (featured=0) és ebben a hónapban már elérte az
+    // 5 ingyenes ajánlatkérést → a lead ZÁROLT (a kontaktot se az email, se a digest
+    // nem küldi; PRO oldja fel). A featured cég mindig teljes leadet kap.
+    const { countBusinessLeadsThisMonth, FREE_LEADS_PER_MONTH } = await import("@/lib/repo");
+    const lockedByBiz = new Map<string, boolean>();
+    await Promise.all(
+      targets.map(async (b) => {
+        if (Number(b.featured) === 1) { lockedByBiz.set(b.id, false); return; }
+        const monthCount = await countBusinessLeadsThisMonth(b.id);
+        lockedByBiz.set(b.id, monthCount >= FREE_LEADS_PER_MONTH);
+      }),
+    );
+
+    // Email küldés — csak a first-ping célpontoknak, best-effort. Zárolt cégnek a
+    // kontakt-mentes „oldd fel PRO-val" értesítő megy.
     const emailResults = await Promise.allSettled(
       firstPingTargets.map((biz) =>
-        sendLeadRequestEmail({
-          senderName: name,
-          senderEmail: email,
-          senderPhone: phone,
-          categoryLabel: effectiveCategoryLabel,
-          message,
-          business: {
-            name: biz.name,
-            contactEmail: biz.contact_email!,
-          },
-        }),
+        lockedByBiz.get(biz.id)
+          ? sendLeadLockedEmail({
+              categoryLabel: effectiveCategoryLabel,
+              business: { name: biz.name, contactEmail: biz.contact_email! },
+            })
+          : sendLeadRequestEmail({
+              senderName: name,
+              senderEmail: email,
+              senderPhone: phone,
+              categoryLabel: effectiveCategoryLabel,
+              message,
+              business: { name: biz.name, contactEmail: biz.contact_email! },
+            }),
       ),
     );
 
@@ -250,6 +267,7 @@ export async function POST(req: Request) {
           categoryLabel: effectiveCategoryLabel,
           message,
           firstPingSent: true,
+          locked: lockedByBiz.get(biz.id) ?? false,
         }),
       ]),
       ...digestOnlyTargets.flatMap((biz) => [
@@ -262,6 +280,7 @@ export async function POST(req: Request) {
           categoryLabel: effectiveCategoryLabel,
           message,
           firstPingSent: false,
+          locked: lockedByBiz.get(biz.id) ?? false,
         }),
       ]),
     ]);

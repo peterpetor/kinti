@@ -41,6 +41,8 @@ export interface CreateBusinessLeadInput {
   message: string;
   /** true = azonnali first-ping email ment, false = csak digest-be kerül */
   firstPingSent?: boolean;
+  /** true = a havi ingyenes kereten felüli (kontakt elrejtve a nem-PRO cégtől) */
+  locked?: boolean;
 }
 
 /** Egy beérkező ajánlatkérés mentése. Best-effort: hibát NEM dob (az email amúgy is ment). */
@@ -49,13 +51,13 @@ export async function createBusinessLead(input: CreateBusinessLeadInput): Promis
     await getDB()
       .prepare(
         `INSERT INTO business_leads
-           (id, business_id, sender_name, sender_email, sender_phone, category_label, message, first_ping_sent)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+           (id, business_id, sender_name, sender_email, sender_phone, category_label, message, first_ping_sent, locked)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
         crypto.randomUUID(), input.businessId, input.senderName, input.senderEmail,
         input.senderPhone, input.categoryLabel, input.message,
-        input.firstPingSent ? 1 : 0,
+        input.firstPingSent ? 1 : 0, input.locked ? 1 : 0,
       )
       .run();
   } catch (err) {
@@ -70,6 +72,50 @@ export async function getBusinessLeads(businessId: string, limit = 100): Promise
     .bind(businessId, limit)
     .all<BusinessLeadRow>();
   return results.map(toLead);
+}
+
+/** A havi ingyenes lead-keret (efölött PRO kell a kontakt-adatok feloldásához). */
+export const FREE_LEADS_PER_MONTH = 5;
+
+/**
+ * Lead-darabszámok egy vállalkozáshoz: ebben a naptári hónapban és az elmúlt 7 napban.
+ * A freemium-keret (5/hó) és a dashboard FOMO-számláló forrása.
+ */
+export async function getLeadCounts(businessId: string): Promise<{ month: number; week: number }> {
+  try {
+    const row = await getDB()
+      .prepare(
+        `SELECT
+           SUM(CASE WHEN created_at >= strftime('%Y-%m-01 00:00:00','now') THEN 1 ELSE 0 END) AS month,
+           SUM(CASE WHEN created_at >= datetime('now','-7 days') THEN 1 ELSE 0 END) AS week
+         FROM business_leads WHERE business_id = ?`,
+      )
+      .bind(businessId)
+      .first<{ month: number | null; week: number | null }>();
+    return { month: row?.month ?? 0, week: row?.week ?? 0 };
+  } catch {
+    return { month: 0, week: 0 };
+  }
+}
+
+/**
+ * Egy vállalkozás ebben a naptári hónapban kapott lead-jeinek száma (a lead BESZÚRÁSA
+ * ELŐTT hívva → ha >= FREE_LEADS_PER_MONTH és nem PRO, az új lead már a kereten felüli).
+ * Az email-kapuhoz (locked vs teljes értesítő).
+ */
+export async function countBusinessLeadsThisMonth(businessId: string): Promise<number> {
+  try {
+    const row = await getDB()
+      .prepare(
+        `SELECT COUNT(*) AS n FROM business_leads
+         WHERE business_id = ? AND created_at >= strftime('%Y-%m-01 00:00:00','now')`,
+      )
+      .bind(businessId)
+      .first<{ n: number }>();
+    return row?.n ?? 0;
+  } catch {
+    return 0;
+  }
 }
 
 /** Új (még nem kezelt) ajánlatkérések száma egy vállalkozáshoz. */

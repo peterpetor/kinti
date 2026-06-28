@@ -19,7 +19,8 @@ import {
   DropdownMenu,
   KintiLogo,
 } from "@/components/ui";
-import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getTopSearchTerms } from "@/lib/repo";
+import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getLeadCounts, FREE_LEADS_PER_MONTH, getTopSearchTerms } from "@/lib/repo";
+import type { LeadCard } from "@/components/views/lead-inbox";
 import { mediaUrl } from "@/lib/media";
 import { handleFromId } from "@/lib/handle";
 import type { Business, Category } from "@/lib/types";
@@ -184,9 +185,31 @@ async function OwnerDashboard({
   const data = await getDashboard(business.id);
   if (!data) return null;
 
-  // Ajánlatkérés-postaláda (Szaknévsor PRO = business.featured).
+  // Ajánlatkérés-postaláda — FREEMIUM: havi 5 ingyenes lead teljesen látszik, a többi
+  // ZÁROLT (kontakt elrejtve) → PRO oldja fel. A szakember fizet (ő keres a leadekből).
+  const isPro = business.featured;
   const newLeadCount = await countNewBusinessLeads(business.id);
-  const leads = business.featured ? await getBusinessLeads(business.id) : [];
+  const [rawLeads, leadCounts] = await Promise.all([
+    getBusinessLeads(business.id),
+    getLeadCounts(business.id),
+  ]);
+  // Havi 5 ingyenes: egy lead INGYENES, ha a naptári hónapjában az első 5 között
+  // érkezett (kronologikus sorrend) — így a 6.+ (a legfrissebb) zárolt → erős FOMO,
+  // és egyezik az email-kapuval (létrehozáskori darabszám). A zárolt lead kontakt-
+  // adatát SZERVEROLDALON kiszedjük (valódi gate, nem csak vizuális).
+  const ascRank: Record<string, number> = {};
+  const lockedSet = new Set<string>();
+  for (const l of [...rawLeads].reverse()) {
+    const ym = l.createdAt.slice(0, 7);
+    const rank = (ascRank[ym] = (ascRank[ym] ?? 0) + 1);
+    if (!isPro && rank > FREE_LEADS_PER_MONTH) lockedSet.add(l.id);
+  }
+  const leads: LeadCard[] = rawLeads.map((l) =>
+    lockedSet.has(l.id)
+      ? { ...l, locked: true, senderName: "", senderEmail: "", senderPhone: null, message: "" }
+      : { ...l, locked: false },
+  );
+  const lockedCount = lockedSet.size;
 
   // Review Response Counter: megkeresések a vélemény-válaszadás óta.
 
@@ -255,18 +278,49 @@ async function OwnerDashboard({
         </div>
       </div>
 
-      {/* Szaknévsor PRO kiemelés — csak ha még nem kiemelt */}
-      {business.featured ? (
+      {/* Ajánlatkérés-postaláda — FREEMIUM (havi 5 ingyenes, felette PRO) */}
+      <section className="space-y-2">
+        <SectionHeader>
+          Ajánlatkérések{newLeadCount > 0 ? ` · ${newLeadCount} új` : ""}
+        </SectionHeader>
+
+        {/* FOMO-számláló */}
+        {leadCounts.month > 0 && (
+          <div className="rounded-card border border-line bg-surface px-4 py-3 shadow-card">
+            <p className="text-[13.5px] font-extrabold text-ink">
+              📥 {leadCounts.week} árajánlat-kérést kaptál ezen a héten
+            </p>
+            {!isPro ? (
+              leadCounts.month >= FREE_LEADS_PER_MONTH ? (
+                <p className="mt-0.5 text-[12px] font-bold text-pro">
+                  ⭐ Elérted a havi 5 ingyenes ajánlatkérést — {lockedCount} továbbit zároltunk. PRO-val mindet eléred.
+                </p>
+              ) : (
+                <p className="mt-0.5 text-[12px] text-ink-muted">
+                  Ebben a hónapban {leadCounts.month}/{FREE_LEADS_PER_MONTH} ingyenes ajánlatkérésed van — még {FREE_LEADS_PER_MONTH - leadCounts.month} fér bele.
+                </p>
+              )
+            ) : (
+              <p className="mt-0.5 text-[12px] font-semibold text-pro">PRO aktív — korlátlan ajánlatkérést fogadsz. 🚀</p>
+            )}
+          </div>
+        )}
+
+        <LeadInbox leads={leads} businessId={business.id} />
+      </section>
+
+      {/* Szaknévsor PRO — korlátlan lead + kiemelés (csak ha még nem PRO) */}
+      {isPro ? (
         <div className="flex items-center gap-2 rounded-card border border-pro/30 bg-pro/5 px-4 py-3 text-[13px] font-bold text-pro">
-          <Icon name="star" size={15} filled /> A vállalkozásod kiemelt a Szaknévsorban.
+          <Icon name="star" size={15} filled /> PRO aktív — korlátlan ajánlatkérés + kiemelés a Szaknévsorban.
         </div>
       ) : (
         <div className="rounded-card border border-pro/30 bg-pro/5 px-4 py-3">
-          <p className="text-[13px] font-bold text-ink">🚀 Szaknévsor PRO — több ügyfél, kiemelt láthatóság</p>
+          <p className="text-[13px] font-bold text-ink">🚀 Szaknévsor PRO — korlátlan ajánlatkérés + kiemelt láthatóság</p>
           <p className="mt-0.5 mb-2.5 text-[12px] text-ink-muted">
-            {newLeadCount > 0
-              ? `📥 ${newLeadCount} beérkezett ajánlatkérésed vár — PRO-val egy helyen kezeled. Plusz sárga kiemelés és top pozíció.`
-              : "Beérkező ajánlatkérések postaládája, sárga kiemelés, top pozíció a kategóriádban, bővített galéria."}
+            {lockedCount > 0
+              ? `🔒 ${lockedCount} ajánlatkérés zárolva vár rád. PRO-val mindet eléred — plusz sárga kiemelés és top pozíció.`
+              : "Az első 5 ajánlatkérés/hó ingyenes. PRO-val korlátlanul fogadod őket, sárga kiemelés, top pozíció a kategóriádban."}
           </p>
           <BoostCheckoutButton
             product="business_pro_monthly"
@@ -275,16 +329,6 @@ async function OwnerDashboard({
             className="bg-pro text-white hover:bg-[#e68600]"
           />
         </div>
-      )}
-
-      {/* Ajánlatkérés-postaláda — Szaknévsor PRO (business.featured) */}
-      {business.featured && (
-        <section className="space-y-2">
-          <SectionHeader>
-            Ajánlatkérések{newLeadCount > 0 ? ` · ${newLeadCount} új` : ""}
-          </SectionHeader>
-          <LeadInbox leads={leads} />
-        </section>
       )}
 
 

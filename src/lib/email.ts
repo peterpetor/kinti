@@ -942,6 +942,59 @@ Válaszolj közvetlenül erre az emailre, vagy vedd fel a kapcsolatot ${args.sen
 
 
 
+export interface LeadLockedEmailArgs {
+  categoryLabel: string;
+  business: LeadRequestBusiness;
+  /** Hány zárolt kérés (digestnél több is lehet); alapból 1. */
+  count?: number;
+}
+
+/**
+ * „Zárolt lead" értesítő — a vállalkozó elérte a havi 5 ingyenes ajánlatkérést, ezért
+ * a kérő ADATAIT NEM tartalmazza (valódi kapu). CTA: lépj PRO-ra a /profil oldalon.
+ */
+export async function sendLeadLockedEmail(args: LeadLockedEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const n = args.count ?? 1;
+  const subject = n > 1
+    ? `${n} új árajánlat-kérés vár — Szaknévsor PRO`
+    : `Új árajánlat-kérés vár: ${args.categoryLabel} — Szaknévsor PRO`;
+
+  const text = `Szia, ${args.business.name}!
+
+${n > 1 ? `${n} új árajánlat-kérés érkezett` : `Új árajánlat-kérés érkezett (${args.categoryLabel})`} a kinti.app-on.
+
+Ebben a hónapban elérted az 5 ingyenes ajánlatkérést, ezért ${n > 1 ? "ezek" : "ennek"} a kérő adatait (név, üzenet, elérhetőség) Szaknévsor PRO-val tudod feloldani.
+
+Oldd fel: https://kinti.app/profil
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `${n > 1 ? `${n} új árajánlat-kérés vár` : "Új árajánlat-kérés vár"} — oldd fel PRO-val`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Szaknévsor PRO</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">🔒 ${n > 1 ? `${n} új árajánlat-kérés vár rád!` : "Új árajánlat-kérésed érkezett!"}</p>
+      <div style="margin:0 0 20px;padding:16px;background:#fff7e6;border:1px solid #f0d8a0;border-radius:14px;">
+        <div style="font-size:13.5px;line-height:1.6;color:#0e1f17;">
+          Ebben a hónapban elérted az <strong>5 ingyenes ajánlatkérést</strong>. ${n > 1 ? "Ezek" : "Ez"} a kérő neve, üzenete és elérhetősége <strong>Szaknévsor PRO</strong>-val oldható fel — plusz sárga kiemelés és top pozíció a kategóriádban.
+        </div>
+      </div>
+      <p style="margin:0 0 20px;">
+        <a href="https://kinti.app/profil" style="display:inline-block;padding:13px 22px;background:#f59e0b;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Oldd fel PRO-val →</a>
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        A te ügyfeleid keresnek — a PRO-val egy fizető megrendelés bőven megtérül. A beérkezett kéréseket a /profil oldalon kezeled.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.business.contactEmail, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 export interface LeadConfirmEmailArgs {
   to: string;
   senderName: string;

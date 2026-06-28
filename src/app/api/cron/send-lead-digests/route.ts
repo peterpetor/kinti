@@ -1,7 +1,7 @@
 import { getDB, getCloudflareEnv } from "@/lib/cloudflare";
 import { getAdminUserId } from "@/lib/admin";
 import { safeLogError } from "@/lib/safe-log";
-import { sendLeadDigestEmail } from "@/lib/email";
+import { sendLeadDigestEmail, sendLeadLockedEmail } from "@/lib/email";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -15,6 +15,7 @@ interface LeadRow {
   category_label: string | null;
   message: string;
   created_at: string;
+  locked: number;
 }
 
 interface BusinessRow {
@@ -57,7 +58,8 @@ async function handle(req: Request): Promise<Response> {
       .prepare(
         `SELECT
            bl.id, bl.business_id, bl.sender_name, bl.sender_email,
-           bl.sender_phone, bl.category_label, bl.message, bl.created_at
+           bl.sender_phone, bl.category_label, bl.message, bl.created_at,
+           COALESCE(bl.locked, 0) AS locked
          FROM business_leads bl
          INNER JOIN businesses b ON b.id = bl.business_id
          WHERE bl.digest_sent_at IS NULL
@@ -106,18 +108,32 @@ async function handle(req: Request): Promise<Response> {
       if (!biz?.contact_email) continue;
 
       try {
-        await sendLeadDigestEmail({
-          to: biz.contact_email,
-          businessName: biz.name,
-          leads: leads.map((l) => ({
-            senderName: l.sender_name,
-            senderEmail: l.sender_email,
-            senderPhone: l.sender_phone,
-            categoryLabel: l.category_label,
-            message: l.message,
-            createdAt: l.created_at,
-          })),
-        });
+        // FREEMIUM-kapu: a zárolt lead-ek kontaktja NEM megy ki — helyettük egy
+        // „oldd fel PRO-val" összesítő. A nyitottak a szokásos digestben.
+        const openLeads = leads.filter((l) => Number(l.locked) !== 1);
+        const lockedLeads = leads.filter((l) => Number(l.locked) === 1);
+
+        if (openLeads.length > 0) {
+          await sendLeadDigestEmail({
+            to: biz.contact_email,
+            businessName: biz.name,
+            leads: openLeads.map((l) => ({
+              senderName: l.sender_name,
+              senderEmail: l.sender_email,
+              senderPhone: l.sender_phone,
+              categoryLabel: l.category_label,
+              message: l.message,
+              createdAt: l.created_at,
+            })),
+          });
+        }
+        if (lockedLeads.length > 0) {
+          await sendLeadLockedEmail({
+            categoryLabel: lockedLeads[0].category_label ?? "árajánlat-kérés",
+            business: { name: biz.name, contactEmail: biz.contact_email },
+            count: lockedLeads.length,
+          });
+        }
 
         // Összes lead digest_sent_at-jét beállítjuk
         const leadIds = leads.map((l) => l.id);
