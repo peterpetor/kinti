@@ -224,11 +224,14 @@ export async function POST(req: Request) {
     // nem küldi; PRO oldja fel). A featured cég mindig teljes leadet kap.
     const { countBusinessLeadsThisMonth, FREE_LEADS_PER_MONTH } = await import("@/lib/repo");
     const lockedByBiz = new Map<string, boolean>();
+    const lastFreeByBiz = new Map<string, boolean>();
     await Promise.all(
       targets.map(async (b) => {
         if (Number(b.featured) === 1) { lockedByBiz.set(b.id, false); return; }
         const monthCount = await countBusinessLeadsThisMonth(b.id);
         lockedByBiz.set(b.id, monthCount >= FREE_LEADS_PER_MONTH);
+        // Ez a havi UTOLSÓ ingyenes lead (létrehozás előtt 4 volt → ez az 5.).
+        lastFreeByBiz.set(b.id, monthCount === FREE_LEADS_PER_MONTH - 1);
       }),
     );
 
@@ -248,6 +251,7 @@ export async function POST(req: Request) {
               categoryLabel: effectiveCategoryLabel,
               message,
               business: { name: biz.name, contactEmail: biz.contact_email! },
+              lastFree: lastFreeByBiz.get(biz.id) ?? false,
             }),
       ),
     );

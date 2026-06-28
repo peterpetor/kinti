@@ -873,6 +873,8 @@ export interface LeadRequestEmailArgs {
   message: string;
   /** Az adott vállalkozás, amelynek az emailt küldjük. */
   business: LeadRequestBusiness;
+  /** true = ez a havi 5. (utolsó ingyenes) lead → figyelmeztető sáv az emailben. */
+  lastFree?: boolean;
 }
 
 /**
@@ -884,6 +886,16 @@ export async function sendLeadRequestEmail(args: LeadRequestEmailArgs): Promise<
   const env = getCloudflareEnv();
   const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
   const subject = `Új árajánlat-kérés: ${args.categoryLabel} — kinti.app`;
+
+  // Figyelmeztető sáv az utolsó ingyenes leadnél (konverzió: lépj PRO-ra a 6. ELŐTT).
+  const lastFreeBanner = args.lastFree
+    ? `<div style="margin:0 0 16px;padding:12px 14px;background:#fff7e6;border:1px solid #f0d8a0;border-radius:12px;font-size:13px;color:#0e1f17;line-height:1.5;">
+         ⭐ <strong>Ez a havi 5. (utolsó ingyenes) ajánlatkérésed.</strong> A következőt már Szaknévsor PRO-val kapod meg — <a href="https://kinti.app/profil" style="color:#1d4434;font-weight:700;">aktiváld itt</a>, hogy egy kérőt se hagyj ki.
+       </div>`
+    : "";
+  const lastFreeText = args.lastFree
+    ? `\n⭐ Ez a havi 5. (utolsó ingyenes) ajánlatkérésed. A következőt Szaknévsor PRO-val kapod: https://kinti.app/profil\n`
+    : "";
 
   const text = `Szia, ${args.business.name}!
 
@@ -898,7 +910,7 @@ Leírás / üzenet:
 ${args.message}
 
 Válaszolj közvetlenül erre az emailre, vagy vedd fel a kapcsolatot ${args.senderEmail} e-mail-en.
-
+${lastFreeText}
 — kinti.app`;
 
   const html = baseLayout({
@@ -906,6 +918,7 @@ Válaszolj közvetlenül erre az emailre, vagy vedd fel a kapcsolatot ${args.sen
     body: `
       <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Árajánlat-kérés</p>
       <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">Új árajánlat-kérés érkezett!</p>
+      ${lastFreeBanner}
       <div style="margin:0 0 20px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#94a097;margin-bottom:4px;">Keresett szolgáltatás</div>
         <div style="font-size:15px;font-weight:800;color:#0e1f17;margin-bottom:12px;">${escapeHtml(args.categoryLabel)}</div>
