@@ -27,10 +27,12 @@
     "db:seed:benchmark:de:remote": "wrangler d1 execute kinti-db --remote --file=./db/seed-benchmark-de.sql",
     "db:seed:org:at:remote": "wrangler d1 execute kinti-db --remote --file=./db/seed-at.sql",
     "db:seed:org:de:remote": "wrangler d1 execute kinti-db --remote --file=./db/seed-de.sql",
+    "db:seed:org:ch:remote": "wrangler d1 execute kinti-db --remote --file=./db/seed-ch.sql",
     "gen:benchmark-seed": "node scripts/gen-benchmark-seed.mjs",
     "gen:benchmark-seed:at": "node scripts/gen-at-benchmark-seed.mjs",
     "gen:benchmark-seed:de": "node scripts/gen-de-benchmark-seed.mjs",
     "gen:de-seed": "node scripts/gen-de-seed.mjs",
+    "gen:ch-seed": "node scripts/gen-ch-seed.mjs",
     "gen:icons": "node scripts/gen-icons.mjs"
   },
   "dependencies": {

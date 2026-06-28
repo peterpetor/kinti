@@ -1,0 +1,23 @@
+{
+  "_comment": "Valódi svájci magyar szervezetek (egyesületek, iskolák/óvodák, cserkészcsapatok, missziók). Forrás: Magyarország Nagykövetsége, Bern hivatalos jegyzéke (bern.mfa.gov.hu/hu/svajci-magyar-egyesueletek + aliroldalak). MINDEN bejegyzés weboldala 2026-06-28-án 200-ra ellenőrizve (a nem feloldódó oldalúak kihagyva). region = kanton-kód (lib/regions.ts). NE találj ki adatot — bővítéskor curl-öld az új URL-t.",
+  "country": "CH",
+  "source": "Magyarország Nagykövetsége, Bern — hivatalos egyesület-jegyzék",
+  "organizations": [
+    { "name": "Bázeli Katolikus Magyar Misszió", "region": "BS", "city": "Basel", "type": "katolikus misszió", "website": "https://www.ungarnmission.ch/" },
+    { "name": "Genfi Magyar Egyesület", "region": "GE", "city": "Genf", "type": "egyesület", "website": "http://ahg.ch/" },
+    { "name": "Genfi Magyar Kulturális Központ", "region": "GE", "city": "Genf", "type": "kulturális központ", "website": "https://www.genfimagyarkultura.com/" },
+    { "name": "Magyar Mérnökök és Építészek Svájci Egyesülete (MMÉSE)", "region": "ZH", "city": "Zürich", "type": "mérnök-egyesület", "website": "http://www.mmese.ch/" },
+    { "name": "Svájci Magyar Egyesület – Hagyományos Íjászat", "region": "ZH", "city": "Zürich", "type": "íjász-egyesület", "website": "https://www.ijaszat.ch/" },
+    { "name": "Svájci Magyarház Alapítvány", "region": "ZH", "city": "Zürich", "type": "magyar ház / alapítvány", "website": "http://www.magyarhaz.ch/" },
+    { "name": "Zürichi Magyar Történelmi Egyesület", "region": "ZH", "city": "Zürich", "type": "történelmi egyesület", "website": "http://www.zmte.org/" },
+    { "name": "Svájci Magyarnyelvű Protestáns Gyülekezetek Szövetsége", "region": "ZH", "city": "Zürich", "type": "protestáns gyülekezet", "website": "https://www.protestans.ch/" },
+    { "name": "Bázeli Magyar Iskola és Óvoda Egyesület", "region": "BS", "city": "Basel", "type": "iskola és óvoda", "website": "http://www.ovi-suli.ch/" },
+    { "name": "Genfi Magyar Iskola és Óvoda", "region": "GE", "city": "Genf", "type": "iskola és óvoda", "website": "https://genfimagyariskola.wixsite.com/website" },
+    { "name": "Thurgaui Magyar Iskola és Óvoda", "region": "TG", "city": "Kreuzlingen", "type": "iskola és óvoda", "website": "http://ungarischervereinthurgau.ch/" },
+    { "name": "Zürichi Magyar Iskola és Óvoda", "region": "ZH", "city": "Zürich", "type": "iskola és óvoda", "website": "http://www.magyar-iskola.ch/" },
+    { "name": "Berni Magyar Iskola és Óvoda", "region": "BE", "city": "Bern", "type": "iskola és óvoda", "website": "https://iskola.bernimagyarok.org/" },
+    { "name": "Berni Magyar Cserkészcsapat", "region": "BE", "city": "Bern", "type": "cserkészcsapat", "website": "https://cserkeszet.bernimagyarok.org/" },
+    { "name": "Badeni Magyar Óvoda és Iskola (Csillaghajó)", "region": "AG", "city": "Baden", "type": "óvoda és iskola", "website": "https://csillaghajo.ch/" },
+    { "name": "Zürichi Magyar Cserkészcsapat", "region": "ZH", "city": "Zürich", "type": "cserkészcsapat", "website": "http://cserkesz.ch/" }
+  ]
+}
