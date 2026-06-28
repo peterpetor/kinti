@@ -4,7 +4,21 @@ import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { hashIp } from "@/lib/security";
 import { isValidCountry } from "@/lib/countries";
-import { findPresenceCity } from "@/lib/presence-cities";
+import { getPresenceCities, findPresenceCity } from "@/lib/presence-cities";
+import { geocodeCity } from "@/lib/geocode";
+import { haversineKm } from "@/lib/distance";
+
+/** A geokódolt pont régió-kódja: a hozzá legközelebbi kurált város régiója (best-effort). */
+function nearestRegion(country: string, lat: number, lng: number): string {
+  const list = getPresenceCities(country);
+  let best = list[0]?.region ?? "";
+  let bestKm = Infinity;
+  for (const c of list) {
+    const km = haversineKm(lat, lng, c.lat, c.lng);
+    if (km < bestKm) { bestKm = km; best = c.region; }
+  }
+  return best;
+}
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -28,8 +42,13 @@ async function buildPayload(country: string) {
   for (const r of regionRows) { counts[r.regionCode] = r.n; recent[r.regionCode] = r.recent; }
   const cities: Record<string, number> = {};
   const cityRecent: Record<string, number> = {};
-  for (const r of cityRows) { cities[r.city] = r.n; cityRecent[r.city] = r.recent; }
-  return { country, counts, recent, cities, cityRecent, total };
+  const cityCoords: Record<string, { lat: number; lng: number }> = {};
+  for (const r of cityRows) {
+    cities[r.city] = r.n;
+    cityRecent[r.city] = r.recent;
+    if (r.lat != null && r.lng != null) cityCoords[r.city] = { lat: r.lat, lng: r.lng };
+  }
+  return { country, counts, recent, cities, cityRecent, cityCoords, total };
 }
 
 export async function GET(req: NextRequest) {
@@ -60,10 +79,22 @@ export async function POST(req: Request) {
   if (!isValidCountry(country)) {
     return NextResponse.json({ error: "Ismeretlen ország." }, { status: 400 });
   }
-  // A várost szerveroldalon is validáljuk a kanonikus listából (a régiót innen vezetjük le).
-  const city = findPresenceCity(country, cityName);
-  if (!city) {
-    return NextResponse.json({ error: "Válassz várost a listából." }, { status: 400 });
+  if (cityName.length < 2) {
+    return NextResponse.json({ error: "Írd be a városod vagy falud nevét." }, { status: 400 });
+  }
+  // Hely feloldása: 1) kanonikus kurált város (gyors út, geokódolás nélkül), különben
+  // 2) bármely település geokódolása (pl. Grossarl) → precíz koordináta + a legközelebbi
+  // régió. A geokódolás egyben anti-abuse gát is: csak valódi, az országban lévő helynév megy át.
+  const curated = findPresenceCity(country, cityName);
+  let place: { name: string; region: string; lat: number; lng: number };
+  if (curated) {
+    place = { name: curated.name, region: curated.region, lat: curated.lat, lng: curated.lng };
+  } else {
+    const geo = await geocodeCity(cityName, { countryCode: country });
+    if (!geo || (geo.countryCode && geo.countryCode.toUpperCase() !== country)) {
+      return NextResponse.json({ error: "Nem találtuk ezt a települést. Ellenőrizd a helyesírást, vagy írd a legközelebbi várost." }, { status: 400 });
+    }
+    place = { name: geo.name.slice(0, 60), region: nearestRegion(country, geo.lat, geo.lng), lat: geo.lat, lng: geo.lng };
   }
 
   const ip = req.headers.get("cf-connecting-ip") ?? null;
@@ -87,10 +118,12 @@ export async function POST(req: Request) {
   await addPresencePing({
     id: crypto.randomUUID(),
     country,
-    regionCode: city.region,
-    city: city.name,
+    regionCode: place.region,
+    city: place.name,
+    lat: place.lat,
+    lng: place.lng,
     ipHash: ipHash ?? "unknown-ip",
   });
 
-  return NextResponse.json({ ok: true, ...(await buildPayload(country)) });
+  return NextResponse.json({ ok: true, city: place.name, ...(await buildPayload(country)) });
 }

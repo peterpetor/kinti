@@ -29,6 +29,7 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
 
   const [cities, setCities] = useState<Record<string, number>>({});
   const [cityRecent, setCityRecent] = useState<Record<string, number>>({});
+  const [cityCoords, setCityCoords] = useState<Record<string, { lat: number; lng: number }>>({});
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState("");
@@ -43,20 +44,23 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
   const [err, setErr] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
-  // Város-koordináták a buborék-térképhez (override a régió-default helyett).
+  // Város-koordináták a buborék-térképhez: a kurált városok az alap, a DB-ből jövő
+  // precíz koordináták (bármely falu) felülírják → mindenki a saját helyén jelenik meg.
   const coords = useMemo(() => {
     const m: Record<string, { lat: number; lng: number }> = {};
     for (const c of cityList) m[c.name] = { lat: c.lat, lng: c.lng };
+    for (const [name, ll] of Object.entries(cityCoords)) m[name] = ll;
     return m;
-  }, [cityList]);
+  }, [cityList, cityCoords]);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/presence?country=${country}`);
-      const data = (await res.json()) as { cities?: Record<string, number>; cityRecent?: Record<string, number>; total?: number };
+      const data = (await res.json()) as { cities?: Record<string, number>; cityRecent?: Record<string, number>; cityCoords?: Record<string, { lat: number; lng: number }>; total?: number };
       setCities(data.cities ?? {});
       setCityRecent(data.cityRecent ?? {});
+      setCityCoords(data.cityCoords ?? {});
       setTotal(data.total ?? 0);
     } catch { /* hálózati hiba → marad */ }
     setLoading(false);
@@ -79,16 +83,16 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
 
   async function submit() {
     setErr(null);
-    if (!cityChoice) { setErr("Válassz várost."); return; }
+    if (cityChoice.trim().length < 2) { setErr("Írd be a városod vagy falud nevét."); return; }
     if (!token) { setErr("Várd meg a robot-ellenőrzést."); return; }
     setSubmitting(true);
     try {
       const res = await fetch("/api/presence", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ country, city: cityChoice, turnstileToken: token }),
+        body: JSON.stringify({ country, city: cityChoice.trim(), turnstileToken: token }),
       });
-      const data = (await res.json().catch(() => ({}))) as { cities?: Record<string, number>; cityRecent?: Record<string, number>; total?: number; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { city?: string; cities?: Record<string, number>; cityRecent?: Record<string, number>; cityCoords?: Record<string, { lat: number; lng: number }>; total?: number; error?: string };
       if (!res.ok) {
         setErr(data.error ?? "Nem sikerült a beküldés.");
         turnstileRef.current?.reset();
@@ -96,18 +100,21 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
         setSubmitting(false);
         return;
       }
+      // A szerver feloldotta a precíz helynevet (pl. „grossarl" → „Grossarl").
+      const resolved = data.city ?? cityChoice.trim();
       setCities(data.cities ?? cities);
       setCityRecent(data.cityRecent ?? cityRecent);
+      setCityCoords(data.cityCoords ?? cityCoords);
       setTotal(data.total ?? total);
       try {
         const arr = JSON.parse(localStorage.getItem(LS_PINGED) ?? "[]") as string[];
         if (!arr.includes(country)) arr.push(country);
         localStorage.setItem(LS_PINGED, JSON.stringify(arr));
         const cm = JSON.parse(localStorage.getItem(LS_CITY) ?? "{}") as Record<string, string>;
-        cm[country] = cityChoice;
+        cm[country] = resolved;
         localStorage.setItem(LS_CITY, JSON.stringify(cm));
       } catch { /* private mode → ok */ }
-      setMyCity(cityChoice);
+      setMyCity(resolved);
       setPinned(true);
       setModal(false);
     } catch {
@@ -223,22 +230,26 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
         <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 bg-ink/40 backdrop-blur-sm" onClick={() => !submitting && setModal(false)}>
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-card border border-line bg-surface p-5 shadow-card-strong space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-[16px] font-extrabold text-ink">📍 Melyik városban élsz?</h3>
+              <h3 className="text-[16px] font-extrabold text-ink">📍 Melyik városban / faluban élsz?</h3>
               <button type="button" onClick={() => setModal(false)} className="grid h-8 w-8 place-items-center rounded-full bg-surface-alt text-ink-muted">✕</button>
             </div>
             <p className="text-[12px] leading-snug text-ink-muted">
-              Teljesen anonim — csak egy pont a térképen, hogy lásd, hányan vagyunk. Nincs fiók, nincs email.
+              Írd be a saját településed — nem csak nagyvárost (pl. <strong>Grossarl</strong> is jó). A térképen a tényleges helyeden jelensz meg. Teljesen anonim, nincs fiók, nincs email.
             </p>
-            <select
+            <input
+              type="text"
+              list="presence-city-list"
               value={cityChoice}
               onChange={(e) => setCityChoice(e.target.value)}
+              placeholder="Város vagy falu neve…"
+              autoComplete="off"
               className="h-11 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[14px] text-ink"
-            >
-              <option value="">Válassz várost…</option>
+            />
+            <datalist id="presence-city-list">
               {cityList.map((c) => (
-                <option key={c.name} value={c.name}>{c.name}</option>
+                <option key={c.name} value={c.name} />
               ))}
-            </select>
+            </datalist>
 
             {turnstileSiteKey && (
               <TurnstileWidget ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setToken} />
