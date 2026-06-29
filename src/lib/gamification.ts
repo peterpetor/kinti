@@ -70,15 +70,19 @@ export const BADGES: BadgeDef[] = [
   { id: "streak_3", label: "Lendületben", icon: "🔥", threshold: 3, countOf: "streak" },
   { id: "streak_7", label: "Heti hős", icon: "🗓️", threshold: 7, countOf: "streak" },
   { id: "streak_30", label: "Hűséges", icon: "💞", threshold: 30, countOf: "streak", rare: true },
+  { id: "streak_100", label: "Százados", icon: "🏅", threshold: 100, countOf: "streak", rare: true },
+  { id: "streak_365", label: "Egész éves", icon: "🎂", threshold: 365, countOf: "streak", rare: true },
   // Kvíz
   { id: "quiz_first", label: "Kvíz-újonc", icon: "🧠", threshold: 1, countOf: "quizDays" },
   { id: "quiz_perfect", label: "Telitalálat", icon: "🎯", threshold: 1, countOf: "quizPerfect" },
   { id: "quiz_master", label: "Kvíz-mester", icon: "🦉", threshold: 30, countOf: "quizDays", rare: true },
+  { id: "quiz_century", label: "Kvíz-veterán", icon: "📚", threshold: 100, countOf: "quizDays", rare: true },
   // Elköteleződés
   { id: "installed", label: "Bennfentes", icon: "📲", threshold: 1, countOf: "appInstalled" },
   { id: "collector", label: "Gyűjtögető", icon: "💛", threshold: 5, countOf: "favorites" },
   { id: "curator", label: "Kurátor", icon: "📌", threshold: 15, countOf: "favorites", rare: true },
   { id: "xp_champ", label: "XP-bajnok", icon: "👑", threshold: 500, countOf: "points", rare: true },
+  { id: "xp_legend", label: "Legenda", icon: "🌟", threshold: 1500, countOf: "points", rare: true },
   // Referral — „Küldj egy magyart" (a legpresztízsesebb: társas, ritka)
   { id: "referrer", label: "Küldtem egy magyart", icon: "🤝", threshold: 1, countOf: "referrals", rare: true },
   { id: "connector", label: "Összekötő", icon: "🧲", threshold: 3, countOf: "referrals", rare: true },

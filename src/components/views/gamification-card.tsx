@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
+import { BadgeMedal } from "@/components/ui/badge-medal";
 import { loadMyPosts } from "@/lib/my-posts";
 import { computeGamification, type GamificationStats } from "@/lib/gamification";
 import { streakXp } from "@/lib/streak";
@@ -163,9 +164,7 @@ export function GamificationCard() {
                   ✦
                 </span>
               )}
-              <span className={cn("text-2xl leading-none", !b.earned && "opacity-30 grayscale")}>
-                {b.icon}
-              </span>
+              <BadgeMedal icon={b.icon} earned={b.earned} rare={b.rare} size={46} />
               <span
                 className={cn(
                   "text-[11.5px] font-bold leading-tight",
