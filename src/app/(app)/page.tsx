@@ -21,6 +21,7 @@ import { ReferralHomeCard } from "@/components/referral-home-card";
 import { TrustBar } from "@/components/trust-bar";
 import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
+import { HomeWidgets } from "@/components/home-widgets";
 import { getBusinesses, getEvents } from "@/lib/repo";
 import { cached } from "@/lib/edge-cache";
 
@@ -87,11 +88,15 @@ export default async function FeedPage() {
 
       <HomeEvents events={events} />
 
-      {/* Napi infó — másodlagos, a tartalom alatt */}
-      <WeatherWidget />
-      <ExchangeRateWidget />
-      <KvizDailyCard />
-      <NapiSzoCard />
+      {/* Napi infó — testreszabható: átrendezhető / elrejthető (kliensoldali) */}
+      <HomeWidgets
+        widgets={[
+          { id: "weather", label: "Időjárás", node: <WeatherWidget /> },
+          { id: "exchange", label: "Árfolyam", node: <ExchangeRateWidget /> },
+          { id: "kviz", label: "Napi kvíz", node: <KvizDailyCard /> },
+          { id: "napiszo", label: "Napi szó", node: <NapiSzoCard /> },
+        ]}
+      />
 
       <HomeChCards />
 
