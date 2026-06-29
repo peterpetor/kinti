@@ -436,3 +436,102 @@ export function salaryPercentileDE(grossMonthly: number, land: string): SalaryPe
   const p = Math.round(normalCdf(z) * 100);
   return { percentile: Math.min(99, Math.max(1, p)), median };
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HOLLANDIA (NL) — nettó-bér becslés (2025). Box 1 sávos jövedelemadó (benne a
+// premie volksverzekeringen) + algemene heffingskorting + arbeidskorting. A
+// holland SZJA NEMZETI (nincs provinciánkénti eltérés). BECSLÉS, nem hivatalos:
+// nem tartalmazza a munkáltató-specifikus nyugdíjlevonást (pensioenpremie), a
+// 30%-regelinget, és AOW-kor alattit feltételez.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Box 1 sávok 2025 (AOW-kor alatt) — a kulcs MÁR tartalmazza a premie volksverz.-t.
+const NL_BRACKETS_2025: { upTo: number; rate: number }[] = [
+  { upTo: 38441, rate: 0.3582 },
+  { upTo: 76817, rate: 0.3748 },
+  { upTo: Infinity, rate: 0.495 },
+];
+
+function nlBox1Tax(annual: number): number {
+  let tax = 0;
+  let last = 0;
+  for (const b of NL_BRACKETS_2025) {
+    if (annual <= last) break;
+    const slice = Math.min(annual, b.upTo) - last;
+    tax += slice * b.rate;
+    last = b.upTo;
+  }
+  return tax;
+}
+
+/** Algemene heffingskorting 2025 (általános adójóváírás), jövedelemfüggő. */
+function nlAlgemeneHeffingskorting(annual: number): number {
+  const MAX = 3068;
+  if (annual <= 28406) return MAX;
+  if (annual >= 76817) return 0;
+  return Math.max(0, MAX - 0.06337 * (annual - 28406));
+}
+
+/** Arbeidskorting 2025 (munkavállalói adójóváírás), jövedelemfüggő. */
+function nlArbeidskorting(annual: number): number {
+  if (annual <= 12169) return 0.08053 * annual;
+  if (annual <= 26288) return 980 + 0.30030 * (annual - 12169);
+  if (annual <= 43071) return 5220 + 0.02258 * (annual - 26288);
+  if (annual <= 129078) return Math.max(0, 5599 - 0.06510 * (annual - 43071));
+  return 0;
+}
+
+export interface SalaryCalcInputNL {
+  gross: number;
+  period: PayPeriod;
+  /** A 8% vakantiegeld (szabadságpénz) beleszámítson-e az éves bruttóba. */
+  holidayAllowance: boolean;
+}
+
+export interface SalaryCalcResultNL {
+  grossMonthly: number;        // a megadott havi bruttó (vakantiegeld nélkül)
+  grossYearly: number;         // éves bruttó (vakantiegelddel, ha bekapcsolt)
+  holidayPayYearly: number;    // 8% vakantiegeld éves összege
+  box1TaxYearly: number;       // sávos adó a jóváírások ELŐTT
+  algemeneKortingYearly: number;
+  arbeidskortingYearly: number;
+  loonheffingYearly: number;   // tényleges levonás (adó − jóváírások, min. 0)
+  netMonthly: number;          // éves nettó / 12 (átlag, a vakantiegeld elosztva)
+  netYearly: number;
+  effectiveRate: number;       // teljes levonás / bruttó (%)
+}
+
+/** Holland nettó-bér becslés — a kalkulátor magja. */
+export function computeSalaryNL(input: SalaryCalcInputNL): SalaryCalcResultNL {
+  const grossMonthly = input.period === "month" ? input.gross : input.gross / 12;
+  const regularYearly = grossMonthly * 12;
+  const holidayPayYearly = input.holidayAllowance ? regularYearly * 0.08 : 0;
+  const grossYearly = regularYearly + holidayPayYearly;
+
+  const box1TaxYearly = nlBox1Tax(grossYearly);
+  const algemeneKortingYearly = nlAlgemeneHeffingskorting(grossYearly);
+  const arbeidskortingYearly = nlArbeidskorting(grossYearly);
+  const loonheffingYearly = Math.max(0, box1TaxYearly - algemeneKortingYearly - arbeidskortingYearly);
+
+  const netYearly = grossYearly - loonheffingYearly;
+  const netMonthly = netYearly / 12;
+  const effectiveRate = grossYearly > 0 ? ((grossYearly - netYearly) / grossYearly) * 100 : 0;
+
+  return {
+    grossMonthly, grossYearly, holidayPayYearly, box1TaxYearly,
+    algemeneKortingYearly, arbeidskortingYearly, loonheffingYearly,
+    netMonthly, netYearly, effectiveRate,
+  };
+}
+
+/** Holland medián havi BRUTTÓ (teljes munkaidő) — CBS-becslés (tájékoztató). */
+export const NL_NATIONAL_MEDIAN_GROSS = 3300;
+
+/** Percentilis a holland nemzeti mediánhoz (log-normál becslés). */
+export function salaryPercentileNL(grossMonthly: number): SalaryPercentile {
+  const median = NL_NATIONAL_MEDIAN_GROSS;
+  const sigma = 0.32;
+  const z = (Math.log(Math.max(1, grossMonthly)) - Math.log(median)) / sigma;
+  const p = Math.round(normalCdf(z) * 100);
+  return { percentile: Math.min(99, Math.max(1, p)), median };
+}

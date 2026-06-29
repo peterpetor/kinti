@@ -4,8 +4,8 @@ import { SalaryCalculatorSwitch } from "@/components/views/salary-calculator-swi
 import { CountryGuard } from "@/components/country-guard";
 
 export const metadata = {
-  title: "Bérkalkulátor (Nettó-Bruttó) — Svájc, Ausztria, Németország",
-  description: "Számold ki a nettó fizetésed! Svájc: Quellensteuer/AHV/BVG kantononként. Ausztria: SV + Lohnsteuer + 13./14. havi. Németország: SV + Lohnsteuer (§32a) Steuerklasse szerint + Soli/Kirchensteuer.",
+  title: "Bérkalkulátor (Nettó-Bruttó) — Svájc, Ausztria, Németország, Hollandia",
+  description: "Számold ki a nettó fizetésed! Svájc: Quellensteuer/AHV/BVG kantononként. Ausztria: SV + Lohnsteuer + 13./14. havi. Németország: SV + Lohnsteuer (§32a) Steuerklasse szerint + Soli/Kirchensteuer. Hollandia: Box 1 sávok + algemene heffingskorting/arbeidskorting.",
 };
 
 export default function SalaryCalculatorPage() {

@@ -44,7 +44,6 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   // NL-en (egyelőre) rejtett: a tartalom CH/AT/DE-specifikus, nincs holland verzió.
   // Amint elkészül egy holland változat, vedd ki innen (vagy tedd per-ország listára).
   "iskolarendszer",// iskolarendszer — CH/AT/DE oktatási rendszer (NL nincs)
-  "berkalkulator", // bérkalkulátor — CH/AT/DE adó-logika (NL holland adó kell)
   "tudasbazis",    // tudásbázis — CH/AT/DE hivatalos források (NL-hez a /hivatalos van)
   "nyelvlecke",    // nyelvlecke — német nyelvű kurzus (CH/AT/DE); holland nincs
   "kozlekedes",    // tömegközlekedés — CH/AT/DE adat (NL nincs)

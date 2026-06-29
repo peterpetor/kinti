@@ -5,6 +5,7 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { SalaryCalculator } from "@/components/views/salary-calculator";
 import { SalaryCalculatorAT } from "@/components/views/salary-calculator-at";
 import { SalaryCalculatorDE } from "@/components/views/salary-calculator-de";
+import { SalaryCalculatorNL } from "@/components/views/salary-calculator-nl";
 
 /**
  * Ország-tudatos bérkalkulátor-választó. CH = svájci (Quellensteuer/AHV/BVG),
@@ -17,5 +18,6 @@ export function SalaryCalculatorSwitch() {
   const country = prefCountry ?? DEFAULT_COUNTRY;
   if (country === "AT") return <SalaryCalculatorAT />;
   if (country === "DE") return <SalaryCalculatorDE />;
+  if (country === "NL") return <SalaryCalculatorNL />;
   return <SalaryCalculator />;
 }
