@@ -408,8 +408,9 @@ export default async function BusinessPage({
           </div>
         )}
 
-        {/* Időpontfoglalás widget (PRO) — Calendly esetén beágyazott, egyébként CTA */}
-        {socials?.booking && (
+        {/* Időpontfoglalás widget (PRO) — Calendly esetén beágyazott, egyébként CTA.
+            Csak PRO (featured) cégnél jelenik meg → PRO-feature. */}
+        {b.featured && socials?.booking && (
           <section className="mt-6">
             <h2 className="mb-2 text-[14px] font-bold uppercase tracking-wide text-ink-muted">Időpontfoglalás</h2>
             {socials.booking.includes("calendly.com") ? (

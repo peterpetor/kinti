@@ -513,17 +513,28 @@ export function ProfileEditor({
               />
             </div>
 
+            {/* Időpontfoglalás = PRO-feature: csak kiemelt (featured) cég állíthatja be. */}
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider flex items-center gap-1">
                 <span className="text-primary"><Icon name="calendar" size={13} /></span> Foglalási rendszer (pl. Calendly)
+                {!isFeatured && (
+                  <span className="ml-1 rounded-full bg-pro px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-white">PRO</span>
+                )}
               </label>
-              <input
-                type="url"
-                value={socialLinks.booking}
-                onChange={(e) => handleSocialChange("booking", e.target.value)}
-                placeholder="https://calendly.com/fiókod"
-                className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-              />
+              {isFeatured ? (
+                <input
+                  type="url"
+                  value={socialLinks.booking}
+                  onChange={(e) => handleSocialChange("booking", e.target.value)}
+                  placeholder="https://calendly.com/fiókod"
+                  className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                />
+              ) : (
+                <div className="flex items-center gap-2 rounded-[12px] border border-dashed border-pro/40 bg-pro/5 px-3 py-2 text-[12px] font-semibold text-ink-muted">
+                  <Icon name="lock" size={13} className="shrink-0 text-pro" />
+                  Calendly-időpontfoglalás a Szaknévsor PRO-val.
+                </div>
+              )}
             </div>
           </div>
         </section>
