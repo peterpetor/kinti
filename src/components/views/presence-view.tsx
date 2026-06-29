@@ -53,20 +53,26 @@ export function PresenceView({ turnstileSiteKey }: { turnstileSiteKey: string })
     return m;
   }, [cityList, cityCoords]);
 
-  const load = useCallback(async () => {
+  // Az ország async oldódik fel (null→CH default→AT), ezért két fetch indulhat. A
+  // stale-guard (`ignore`) eldobja a régi (pl. CH=0) választ, ha közben országot
+  // váltottunk — különben a lassabb CH-válasz felülírná a helyes AT-számot (race-bug).
+  useEffect(() => {
+    let ignore = false;
     setLoading(true);
-    try {
-      const res = await fetch(`/api/presence?country=${country}`);
-      const data = (await res.json()) as { cities?: Record<string, number>; cityRecent?: Record<string, number>; cityCoords?: Record<string, { lat: number; lng: number }>; total?: number };
-      setCities(data.cities ?? {});
-      setCityRecent(data.cityRecent ?? {});
-      setCityCoords(data.cityCoords ?? {});
-      setTotal(data.total ?? 0);
-    } catch { /* hálózati hiba → marad */ }
-    setLoading(false);
+    (async () => {
+      try {
+        const res = await fetch(`/api/presence?country=${country}`);
+        const data = (await res.json()) as { cities?: Record<string, number>; cityRecent?: Record<string, number>; cityCoords?: Record<string, { lat: number; lng: number }>; total?: number };
+        if (ignore) return;
+        setCities(data.cities ?? {});
+        setCityRecent(data.cityRecent ?? {});
+        setCityCoords(data.cityCoords ?? {});
+        setTotal(data.total ?? 0);
+      } catch { /* hálózati hiba → marad */ }
+      if (!ignore) setLoading(false);
+    })();
+    return () => { ignore = true; };
   }, [country]);
-
-  useEffect(() => { load(); }, [load]);
 
   useEffect(() => {
     try {
