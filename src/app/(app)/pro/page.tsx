@@ -6,34 +6,34 @@ import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryLocative, countryAdjective } from "@/lib/countries";
 
 export default function ProPage() {
   const { startCheckout, isLoading } = useCheckout();
   const { user } = useUser();
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const isAT = country === "AT";
-
-  // A Kinti PRO funkciók ország-tudatosak. AT-n osztrák megfelelők (az AI-interjú,
-  // a nyelvkurzus és az állampolgárság-kvíz ország-tudatos a backenden is). A
-  // szakmai szótár egyelőre CH-only, ezért AT-n nem szerepel.
-  const proFeatures = isAT
-    ? [
-        "AI Interjú Szimulátor osztrák cégekhez",
-        "AI CV-audit — önéletrajz-elemzés és tippek",
-        "Teljes Osztrák Német kurzus",
-        "Staatsbürgerschaftstest (Állampolgárság) Szimulátor",
-        "Teljesen reklámmentes élmény",
-      ]
-    : [
-        "AI Interjú Szimulátor svájci cégekhez",
-        "AI CV-audit — önéletrajz-elemzés és tippek",
-        "Szakmai szótár — 500+ svájci kifejezés",
-        "Teljes Svájci Német (Mundart) kurzus",
-        "Einbürgerung (Állampolgárság) Szimulátor",
-        "Teljesen reklámmentes élmény",
-      ];
+  // A Kinti PRO funkciók ország-tudatosak MIND A 4 országra (nem bináris isAT/else,
+  // különben DE/NL a svájci listát kapná). A nyelvkurzus + állampolgárság-szimulátor
+  // csak ott szerepel, ahol tényleg van (CH/AT); a szakmai szótár CH-only. A
+  // „Teljesen reklámmentes" sor törölve — alapból sincs reklám, félrevezető lenne.
+  const adj = countryAdjective(country); // svájci / osztrák / német / holland
+  const langCourse =
+    country === "CH" ? "Teljes Svájci Német (Mundart) kurzus"
+    : country === "AT" ? "Teljes Osztrák Német kurzus"
+    : null;
+  const citizenshipSim =
+    country === "CH" ? "Einbürgerung (Állampolgárság) Szimulátor"
+    : country === "AT" ? "Staatsbürgerschaftstest (Állampolgárság) Szimulátor"
+    : null;
+  const proFeatures = [
+    `AI Interjú Szimulátor ${adj} cégekhez`,
+    "AI CV-audit — önéletrajz-elemzés és tippek",
+    ...(country === "CH" ? ["Szakmai szótár — 500+ svájci kifejezés"] : []),
+    ...(langCourse ? [langCourse] : []),
+    ...(citizenshipSim ? [citizenshipSim] : []),
+    "Minden prémium modul és kalkulátor",
+  ];
 
   const handleCheckout = (product: "kinti_pro_monthly" | "business_pro_monthly" | "job_featured") => {
     // PRO előfizetés a Clerk userId-hez kötődik — bejelentkezés nélkül nincs
