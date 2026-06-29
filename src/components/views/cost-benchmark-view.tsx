@@ -26,6 +26,8 @@ export function CostBenchmarkView({ turnstileSiteKey }: { turnstileSiteKey: stri
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const cur = country === "CH" ? "CHF" : "EUR";
   const regions = getRegions(country);
+  const countryRef = useRef(country);
+  countryRef.current = country;
 
   const [canton, setCanton] = useState("all");
   const [household, setHousehold] = useState<number | null>(null);
@@ -40,6 +42,7 @@ export function CostBenchmarkView({ turnstileSiteKey }: { turnstileSiteKey: stri
     try {
       const res = await fetch(`/api/benchmark/cost?country=${country}&canton=${canton}&household=${household ?? ""}`);
       const data = (await res.json()) as { results?: Result[]; householdSize?: number | null };
+      if (countryRef.current !== country) return; // stale (országváltás közben)
       setResults(data.results ?? []);
       // Első betöltéskor előkitöltjük a háztartásméretet a korábbi beküldésből.
       if (household == null && data.householdSize != null) setHousehold(data.householdSize);

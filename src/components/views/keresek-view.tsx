@@ -20,6 +20,8 @@ function fmtAgo(iso: string): string {
 export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
+  const countryRef = useRef(country);
+  countryRef.current = country;
   const cityList = getPresenceCities(country);
 
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
@@ -32,6 +34,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
     try {
       const res = await fetch(`/api/keresek?country=${country}&category=${filter}`);
       const data = (await res.json()) as { requests?: ServiceRequest[] };
+      if (countryRef.current !== country) return; // stale (országváltás közben)
       setRequests(data.requests ?? []);
     } catch { /* marad */ }
     setLoading(false);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -20,6 +20,8 @@ function fmtSalary(j: ExternalJob): string | null {
 export function ExternalJobsSection() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
+  const countryRef = useRef(country);
+  countryRef.current = country;
 
   const [jobs, setJobs] = useState<ExternalJob[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,6 +32,7 @@ export function ExternalJobsSection() {
     try {
       const res = await fetch(`/api/jobs/external?country=${country}&category=${filter}`);
       const data = (await res.json()) as { jobs?: ExternalJob[] };
+      if (countryRef.current !== country) return; // stale (országváltás közben)
       setJobs(data.jobs ?? []);
     } catch { /* marad */ }
     setLoading(false);

@@ -24,6 +24,8 @@ const TAG_KEYS = ["koncert", "talalkozo", "bolt", "etterem", "egyeb"] as const;
 export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
+  const countryRef = useRef(country);
+  countryRef.current = country;
   const cityList = getPresenceCities(country);
 
   const [events, setEvents] = useState<KintiEvent[]>([]);
@@ -35,6 +37,7 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
     try {
       const res = await fetch(`/api/events?map=1&country=${country}`);
       const data = (await res.json()) as { events?: KintiEvent[] };
+      if (countryRef.current !== country) return; // stale (országváltás közben)
       setEvents(data.events ?? []);
     } catch { /* hálózati hiba → marad */ }
     setLoading(false);

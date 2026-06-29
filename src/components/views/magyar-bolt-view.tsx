@@ -21,6 +21,8 @@ const LocationPicker =
 export function MagyarBoltView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
+  const countryRef = useRef(country);
+  countryRef.current = country;
 
   const [spots, setSpots] = useState<BoltSpot[]>([]);
   const [filter, setFilter] = useState("all");
@@ -30,6 +32,7 @@ export function MagyarBoltView({ turnstileSiteKey }: { turnstileSiteKey: string 
     try {
       const res = await fetch(`/api/magyarbolt?country=${country}`);
       const data = (await res.json()) as { spots?: BoltSpot[] };
+      if (countryRef.current !== country) return; // stale (országváltás közben)
       setSpots(data.spots ?? []);
     } catch { /* marad */ }
   }, [country]);
