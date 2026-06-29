@@ -14,6 +14,7 @@ import {
 import { QUIZ_CATEGORY_META, type QuizCategory, type QuizQuestion } from "@/lib/quiz-bank";
 import { AT_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-at";
 import { DE_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-de";
+import { NL_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-nl";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 
@@ -32,7 +33,7 @@ export function KvizGame() {
 
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const categoryMeta = country === "AT" ? AT_QUIZ_CATEGORY_META : country === "DE" ? DE_QUIZ_CATEGORY_META : QUIZ_CATEGORY_META;
+  const categoryMeta = country === "AT" ? AT_QUIZ_CATEGORY_META : country === "DE" ? DE_QUIZ_CATEGORY_META : country === "NL" ? NL_QUIZ_CATEGORY_META : QUIZ_CATEGORY_META;
 
   // Mount-on: load state
   useEffect(() => {

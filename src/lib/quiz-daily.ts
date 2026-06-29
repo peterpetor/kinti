@@ -8,6 +8,7 @@
 
 import { QUIZ_BANK, type QuizQuestion } from "./quiz-bank";
 import { AT_QUIZ_BANK } from "./quiz-bank-at";
+import { NL_QUIZ_BANK } from "./quiz-bank-nl";
 import { DE_QUIZ_BANK } from "./quiz-bank-de";
 
 const STORAGE_KEY = "kinti.quizState";
@@ -57,7 +58,7 @@ export function todayKey(): string {
  * Egyszerű hash → kiválaszt 3 különböző indexet a bankból.
  */
 export function getDailyQuestions(dateKey: string, country: string = "CH"): QuizQuestion[] {
-  const bank = country === "AT" ? AT_QUIZ_BANK : country === "DE" ? DE_QUIZ_BANK : QUIZ_BANK;
+  const bank = country === "AT" ? AT_QUIZ_BANK : country === "DE" ? DE_QUIZ_BANK : country === "NL" ? NL_QUIZ_BANK : QUIZ_BANK;
   // Hash: ország + YYYY-MM-DD → szám (FNV-1a-szerű). Az ország a seedben, hogy
   // CH és AT más napi szettet kapjon.
   const seedStr = `${country}:${dateKey}`;

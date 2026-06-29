@@ -42,7 +42,6 @@ export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
  */
 export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "ugyintezes",    // ügyintézés-csekklisták — CH/AT/DE-specifikus tartalom megvan
-  "kviz",          // napi kvíz — CH/AT/DE kérdésbank megvan (NL még nincs)
   // NL-en (egyelőre) rejtett: a tartalom CH/AT/DE-specifikus, nincs holland verzió.
   // Amint elkészül egy holland változat, vedd ki innen (vagy tedd per-ország listára).
   "iskolarendszer",// iskolarendszer — CH/AT/DE oktatási rendszer (NL nincs)
