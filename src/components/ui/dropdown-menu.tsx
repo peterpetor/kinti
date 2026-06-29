@@ -315,7 +315,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     📍
                   </span>
-                  Hol vagyunk? (jelenlét-térkép)
+                  Ki költözött melléd?
                 </Link>
                 <Link href="/akciok" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
