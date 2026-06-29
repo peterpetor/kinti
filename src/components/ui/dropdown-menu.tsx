@@ -209,6 +209,12 @@ export function DropdownMenu() {
                   Ügyintézés Varázsló
                 </Link>
                 )}
+                <Link href="/hivatalos" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                    🏛️
+                  </span>
+                  Hivatalos linkek
+                </Link>
                 {has("tudasbazis") && (
                 <Link href="/tudasbazis" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -242,6 +248,12 @@ export function DropdownMenu() {
                   Bér- és Lakbér Iránytű
                 </Link>
                 )}
+                <Link href="/mennyit-koltesz" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
+                    💸
+                  </span>
+                  Mennyit költesz?
+                </Link>
                 {has("lakberles") && (
                 <Link href="/lakberles" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
@@ -293,6 +305,12 @@ export function DropdownMenu() {
                   Gyorshajtás kalkulátor
                 </Link>
                 )}
+                <Link href="/holvagyunk" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
+                    📍
+                  </span>
+                  Hol vagyunk? (jelenlét-térkép)
+                </Link>
                 <Link href="/akciok" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     🏷️
