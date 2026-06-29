@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { LESSONS, Question } from "../data";
 import { LESSONS_AT } from "../data-at";
 import { LESSONS_DE } from "../data-de";
+import { LESSONS_NL } from "../data-nl";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
@@ -15,9 +16,9 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   
-  const lesson = [...LESSONS, ...LESSONS_AT, ...LESSONS_DE].find((l) => l.id === params.lessonId);
-  // A lecke-id előtagból az ország-megfelelő TTS-nyelv (dl=de-DE, al=de-AT, egyébként de-CH).
-  const ttsLang = params.lessonId.startsWith("dl") ? "de-DE" : params.lessonId.startsWith("al") ? "de-AT" : "de-CH";
+  const lesson = [...LESSONS, ...LESSONS_AT, ...LESSONS_DE, ...LESSONS_NL].find((l) => l.id === params.lessonId);
+  // A lecke-id előtagból az ország-megfelelő TTS-nyelv (nl=nl-NL, dl=de-DE, al=de-AT, egyébként de-CH).
+  const ttsLang = params.lessonId.startsWith("nl") ? "nl-NL" : params.lessonId.startsWith("dl") ? "de-DE" : params.lessonId.startsWith("al") ? "de-AT" : "de-CH";
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   
@@ -61,12 +62,13 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
     window.speechSynthesis.cancel(); // Stop current speech
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // Az ország-megfelelő német hangot keressük (de-DE / de-AT / de-CH), majd
-    // bármilyen német hangra esünk vissza.
+    // Az ország-megfelelő hangot keressük (pl. nl-NL / de-DE / de-AT / de-CH), majd
+    // bármilyen azonos nyelvű (nl/de) hangra esünk vissza.
     const want = ttsLang.toLowerCase();
+    const langPrefix = want.split("-")[0]; // "nl" vagy "de"
     let voice = voices.find(v => v.lang.toLowerCase() === want || v.lang.toLowerCase() === want.replace("-", "_"));
-    if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith("de-"));
-    if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith("de"));
+    if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith(`${langPrefix}-`));
+    if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith(langPrefix));
 
     if (voice) {
       utterance.voice = voice;
