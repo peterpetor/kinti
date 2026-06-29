@@ -7,7 +7,7 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { getPresenceCities } from "@/lib/presence-cities";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
-import { EVENT_TAGS } from "./events-map";
+import { EVENT_TAGS } from "./events-tags";
 
 const EventsMap =
   typeof window !== "undefined"

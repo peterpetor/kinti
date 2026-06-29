@@ -9,6 +9,7 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import type { KintiEvent } from "@/lib/types";
 import { useMyLocation } from "@/lib/use-my-location";
+import { EVENT_TAGS } from "./events-tags";
 
 const ME_ICON = L.divIcon({ className: "", html: '<div class="kinti-me-dot"></div>', iconSize: [16, 16], iconAnchor: [8, 8] });
 
@@ -17,14 +18,6 @@ const TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM<
 
 const CENTERS: Record<string, [number, number]> = {
   CH: [46.82, 8.23], AT: [47.59, 14.14], DE: [51.1, 10.4], NL: [52.13, 5.29],
-};
-
-export const EVENT_TAGS: Record<string, { label: string; emoji: string; color: string }> = {
-  koncert:   { label: "Koncert / fellépés", emoji: "🎵", color: "#8b5cf6" },
-  talalkozo: { label: "Találkozó / közösség", emoji: "🤝", color: "#1d4434" },
-  bolt:      { label: "Magyar bolt", emoji: "🛒", color: "#c8392e" },
-  etterem:   { label: "Magyar étterem", emoji: "🍽️", color: "#e2901a" },
-  egyeb:     { label: "Egyéb", emoji: "📌", color: "#5c6d63" },
 };
 
 function tagIcon(tag: string): L.DivIcon {
