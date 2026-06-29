@@ -30,6 +30,14 @@ const DE_GRID = [
   { c: "RP", x: 1, y: 4 }, { c: "TH", x: 3, y: 4 },
   { c: "SL", x: 1, y: 5 }, { c: "BW", x: 2, y: 5 }, { c: "BY", x: 4, y: 5 },
 ];
+// Hollandia — 12 provincia, kb. földrajzi elrendezésben (4 oszlop × 5 sor).
+const NL_GRID = [
+  { c: "FR", x: 2, y: 1 }, { c: "GR", x: 3, y: 1 },
+  { c: "NH", x: 1, y: 2 }, { c: "FL", x: 2, y: 2 }, { c: "DR", x: 3, y: 2 }, { c: "OV", x: 4, y: 2 },
+  { c: "ZH", x: 1, y: 3 }, { c: "UT", x: 2, y: 3 }, { c: "GE", x: 3, y: 3 },
+  { c: "ZE", x: 1, y: 4 }, { c: "NB", x: 2, y: 4 },
+  { c: "LI", x: 3, y: 5 },
+];
 
 interface HeatmapRow {
   canton_code: string;
@@ -60,11 +68,12 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
 
   const isAT = country === "AT";
   const isDE = country === "DE";
-  const grid = isDE ? DE_GRID : isAT ? AT_GRID : CH_GRID;
-  const cols = isDE ? 6 : isAT ? 5 : 8;
-  const rows = isDE ? 5 : isAT ? 3 : 6;
+  const isNL = country === "NL";
+  const grid = isDE ? DE_GRID : isAT ? AT_GRID : isNL ? NL_GRID : CH_GRID;
+  const cols = isDE ? 6 : isAT ? 5 : isNL ? 4 : 8;
+  const rows = isDE ? 5 : isAT ? 3 : isNL ? 5 : 6;
   const cur = benchCurrency(country);
-  const regionWord = isAT || isDE ? "Bundeslandonként" : "kantononként";
+  const regionWord = isNL ? "provinciánként" : isAT || isDE ? "Bundeslandonként" : "kantononként";
 
   useEffect(() => {
     let active = true;

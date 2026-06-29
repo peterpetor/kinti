@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Bér- és Lakbér Iránytű | Kinti",
-  description: "Közösségi, anonim adatbázis a kint élő magyarok fizetéséről és lakbéréről (Svájc & Ausztria). Nézd meg, mennyit keresnek a régiódban!",
+  description: "Közösségi, anonim adatbázis a kint élő magyarok fizetéséről és lakbéréről (Svájc, Ausztria, Németország, Hollandia). Nézd meg, mennyit keresnek a régiódban!",
 };
 
 export default async function BenchmarkPage() {

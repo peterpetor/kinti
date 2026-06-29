@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const canton = searchParams.get("canton") || "all";
   const cGet = searchParams.get("country");
-  const country = cGet === "AT" || cGet === "DE" ? cGet : "CH";
+  const country = cGet === "AT" || cGet === "DE" || cGet === "NL" ? cGet : "CH";
 
   const data = await getRentToSalaryRatio(country, canton);
   return NextResponse.json(data, { headers: { "cache-control": "no-store" } });

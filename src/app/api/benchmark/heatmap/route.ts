@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const industry = searchParams.get("industry") || "all";
   const period = searchParams.get("period") || "12m";
   const cGet = searchParams.get("country");
-  const country = cGet === "AT" || cGet === "DE" ? cGet : "CH";
+  const country = cGet === "AT" || cGet === "DE" || cGet === "NL" ? cGet : "CH";
 
   const heatmap = await getSalaryHeatmap(country, industry, period);
   return NextResponse.json({ heatmap }, { headers: { "cache-control": "no-store" } });

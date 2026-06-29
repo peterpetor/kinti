@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
   const canton = searchParams.get("canton") || "all";
   const period = searchParams.get("period") || "12m";
   const cGet = searchParams.get("country");
-  const country = cGet === "AT" || cGet === "DE" ? cGet : "CH";
+  const country = cGet === "AT" || cGet === "DE" || cGet === "NL" ? cGet : "CH";
 
   const [status, myData] = await Promise.all([
     getUserSubmissionStatus(ipHash, country),
@@ -78,7 +78,7 @@ export async function PUT(req: NextRequest) {
 }
 
 async function handleUpsert(mode: "insert" | "update", body: BenchmarkBody, ipHash: string) {
-  const country = body.country === "AT" || body.country === "DE" ? body.country : "CH";
+  const country = body.country === "AT" || body.country === "DE" || body.country === "NL" ? body.country : "CH";
   const cur = country !== "CH" ? "EUR" : "CHF";
   if (body.type === "salary") {
     if (!body.cantonCode || !body.industry || typeof body.yearsExperience !== "number" || typeof body.grossSalaryChf !== "number")

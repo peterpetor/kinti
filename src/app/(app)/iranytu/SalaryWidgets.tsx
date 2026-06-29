@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
-import { benchRegions, benchCurrency, benchAllLabel, benchDefaultSalary, benchDefaultRent } from "./region-util";
+import { benchRegions, benchCurrency, benchAllLabel, benchRegionLabel, benchDefaultSalary, benchDefaultRent } from "./region-util";
 import { BENCHMARK_INDUSTRIES } from "@/lib/benchmark-meta";
 
 const INDUSTRIES: readonly string[] = BENCHMARK_INDUSTRIES;
@@ -159,7 +159,7 @@ export function RentToSalaryCalculator({
           <p className="text-[13px] mt-1 flex items-center gap-2"><span className="animate-spin w-3 h-3 border-2 border-ink border-t-transparent rounded-full" /> Közösségi átlag számítása...</p>
         ) : avgRatio ? (
           <p className={`text-[13px] mt-1 ${isGood ? "text-primary" : "text-accent"}`}>
-            A {canton === "all" ? (country === "AT" ? "ausztriai" : country === "DE" ? "németországi" : "svájci") : `${canton} ${country === "CH" ? "kantonban" : "tartományban"} élő`} magyarok átlaga: <strong>{avgRatio}%</strong>.
+            A {canton === "all" ? (country === "AT" ? "ausztriai" : country === "DE" ? "németországi" : country === "NL" ? "hollandiai" : "svájci") : `${canton} ${country === "CH" ? "kantonban" : country === "NL" ? "provinciában" : "tartományban"} élő`} magyarok átlaga: <strong>{avgRatio}%</strong>.
             <br />
             {isGood ? "Jól gazdálkodsz, ez az átlag alatti teher!" : "Ez az átlagnál magasabb teher a fizetésedhez képest."}
           </p>
@@ -276,7 +276,7 @@ export function AlertSubscription({
             </select>
           </div>
           <div>
-            <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">{country === "CH" ? "Kanton" : "Bundesland"}</label>
+            <label className="block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide">{benchRegionLabel(country)}</label>
             <select value={canton} onChange={e => setCanton(e.target.value)} className={inputCls}>
               <option value="all">{benchAllLabel(country)}</option>
               {benchRegions(country).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
