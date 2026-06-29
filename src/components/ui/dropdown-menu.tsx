@@ -305,6 +305,12 @@ export function DropdownMenu() {
                   Gyorshajtás kalkulátor
                 </Link>
                 )}
+                <Link href="/magyarbolt" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
+                    🛒
+                  </span>
+                  Magyar bolt a sarkon
+                </Link>
                 <Link href="/holvagyunk" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     📍
