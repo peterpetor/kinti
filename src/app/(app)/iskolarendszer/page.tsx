@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { SchoolSystem } from "@/components/views/school-system";
+import { CountryGuard } from "@/components/country-guard";
 
 export const metadata = {
   title: "Iskolarendszer Útmutató — Svájc & Ausztria",
@@ -11,6 +12,7 @@ export const metadata = {
 export default function IskolarendszerPage() {
   return (
     <div className="mx-auto max-w-md space-y-5 px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
+      <CountryGuard feature="iskolarendszer" />
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink truncate">

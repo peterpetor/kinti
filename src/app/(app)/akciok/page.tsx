@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { AkciokView } from "./akciok-view";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { CountryGuard } from "@/components/country-guard";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ export default function AkciokPage() {
 
   return (
     <div className="space-y-4 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-12">
+      <CountryGuard feature="akciok" />
       <div className="px-5">
         <header className="flex items-center gap-3 mb-3">
           <KintiLogo size={28} />

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, ScreenHeader } from "@/components/ui";
 import { GuideList } from "./GuideList";
+import { CountryGuard } from "@/components/country-guard";
 
 export const runtime = "edge";
 
@@ -13,6 +14,7 @@ export const metadata = {
 export default function TudasbazisPage() {
   return (
     <div className="space-y-4 px-5 pb-8 pt-[calc(env(safe-area-inset-top)+2rem)]">
+      <CountryGuard feature="tudasbazis" />
       <ScreenHeader
         eyebrow="Tudásbázis"
         title={

@@ -12,6 +12,7 @@ import { LESSONS_DE } from "./data-de";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { cn } from "@/lib/cn";
+import { CountryGuard } from "@/components/country-guard";
 
 export default function LanguagePathPage() {
   const [mounted, setMounted] = useState(false);
@@ -59,6 +60,7 @@ export default function LanguagePathPage() {
 
   return (
     <div className="flex flex-col pb-24 min-h-screen bg-surface">
+      <CountryGuard feature="nyelvlecke" />
       {/* Sticky Header with Stats */}
       <div className="sticky top-0 z-20 bg-background/80 px-4 pb-4 pt-6 backdrop-blur-xl border-b border-border-subtle">
         <ScreenHeader 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { SalaryCalculatorSwitch } from "@/components/views/salary-calculator-switch";
-
+import { CountryGuard } from "@/components/country-guard";
 
 export const metadata = {
   title: "Bérkalkulátor (Nettó-Bruttó) — Svájc, Ausztria, Németország",
@@ -11,6 +11,7 @@ export const metadata = {
 export default function SalaryCalculatorPage() {
   return (
     <div className="mx-auto max-w-md space-y-5 px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
+      <CountryGuard feature="berkalkulator" />
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink truncate">
