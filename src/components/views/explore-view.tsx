@@ -260,8 +260,16 @@ export function ExploreView({
           return tsOf(b.b.createdAt) - tsOf(a.b.createdAt);
         case "relevant":
         default: {
-          const byDist = (a.dist ?? Infinity) - (b.dist ?? Infinity);
-          return byDist !== 0 ? byDist : (b.b.rating ?? 0) - (a.b.rating ?? 0);
+          // Igazi KOMBINÁLT pontszám: közelség ÉS értékelés EGYÜTT súlyozva (nem
+          // csak holtverseny-bontás) — így egy kicsit távolabbi, de sokkal jobban
+          // értékelt cég megelőzhet egy közeli gyengét. proximity: a sugáron belül
+          // közelebb = jobb; rating: értékelt cégnél a csillag, újnál semleges 0.6.
+          const score = (it: typeof a) => {
+            const prox = it.dist != null ? Math.max(0, 1 - it.dist / Math.max(radiusKm, 1)) : 0.4;
+            const rate = (it.b.reviews ?? 0) > 0 ? (it.b.rating ?? 0) / 5 : 0.6;
+            return 0.6 * prox + 0.4 * rate;
+          };
+          return score(b) - score(a);
         }
       }
     });

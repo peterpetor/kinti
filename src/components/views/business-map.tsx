@@ -234,10 +234,11 @@ function SelectedCard({ business: b }: { business: Business }) {
   const logoUrl = mediaImageUrl(b.logoKey, { width: 120 });
   const openStatus = calculateBusinessHoursStatus(parseWorkingHours(b.workingHours ?? null));
   return (
-    <Link
-      href={`/szaknevsor/${b.id}`}
-      className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-pop transition active:scale-[0.99]"
-    >
+    <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-pop">
+      <Link
+        href={`/szaknevsor/${b.id}`}
+        className="flex min-w-0 flex-1 items-center gap-3 transition active:scale-[0.99]"
+      >
       <div
         className="relative h-[52px] w-[52px] shrink-0 overflow-hidden rounded-[14px] bg-primary-soft"
         style={!logoUrl && b.photo ? { background: b.photo } : undefined}
@@ -270,10 +271,25 @@ function SelectedCard({ business: b }: { business: Business }) {
           </span>
         </div>
       </div>
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-primary text-white">
+      </Link>
+      {b.phone && (
+        <a
+          href={`tel:${b.phone}`}
+          aria-label={`${b.name} hívása`}
+          onClick={(e) => e.stopPropagation()}
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-success text-white active:scale-95"
+        >
+          <Icon name="phone" size={16} strokeWidth={2.4} />
+        </a>
+      )}
+      <Link
+        href={`/szaknevsor/${b.id}`}
+        aria-label="Részletek"
+        className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-primary text-white active:scale-95"
+      >
         <Icon name="arrowRight" size={16} strokeWidth={2.4} />
-      </span>
-    </Link>
+      </Link>
+    </div>
   );
 }
 
