@@ -12,9 +12,23 @@ import { cn } from "@/lib/cn";
  * és offline navigációnál kiszolgál (lásd public/sw.js). Nincs szerver-oldal.
  */
 const CACHE_NAME = "kinti-guides-offline";
-const LS_KEY = "kinti.guidesOfflineAt";
 
-export function OfflineGuidesButton({ paths }: { paths: string[] }) {
+export function OfflineGuidesButton({
+  paths,
+  idleTitle = "Olvasd offline is",
+  doneTitle = "Elérhető offline",
+  noun = "útmutató",
+  hint = "Internet nélkül is olvashatod az útmutatókat.",
+  storageKey = "kinti.guidesOfflineAt",
+}: {
+  paths: string[];
+  idleTitle?: string;
+  doneTitle?: string;
+  noun?: string;
+  hint?: string;
+  storageKey?: string;
+}) {
+  const LS_KEY = storageKey;
   const [status, setStatus] = useState<"idle" | "downloading" | "done" | "error">("idle");
   const [progress, setProgress] = useState(0);
   const [savedAt, setSavedAt] = useState<string | null>(null);
@@ -69,14 +83,14 @@ export function OfflineGuidesButton({ paths }: { paths: string[] }) {
       </span>
       <div className="min-w-0 flex-1">
         <p className="text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
-          {done ? "Elérhető offline" : "Olvasd offline is"}
+          {done ? doneTitle : idleTitle}
         </p>
         <p className="text-[11.5px] leading-snug text-ink-muted">
           {downloading
             ? `Letöltés… ${progress}%`
             : done
-              ? `${paths.length} útmutató a böngésződben${savedAt ? ` · ${new Date(savedAt).toLocaleDateString("hu-HU")}` : ""}`
-              : "Internet nélkül is olvashatod az útmutatókat."}
+              ? `${paths.length} ${noun} a böngésződben${savedAt ? ` · ${new Date(savedAt).toLocaleDateString("hu-HU")}` : ""}`
+              : hint}
         </p>
       </div>
       <button

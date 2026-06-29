@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 import { haptic } from "@/lib/haptics";
+import { cacheOfflinePaths, removeOfflinePath } from "@/lib/offline-cache";
 
 const LS_KEY = "kinti_favorites";
 /** Az esemény, amivel a lista-nézet (explore-view) szinkronban marad. */
@@ -42,13 +43,19 @@ export function FavoriteButton({ businessId, className }: { businessId: string; 
     e.stopPropagation();
     try {
       const favs = readFavorites();
-      const next = favs.includes(businessId)
-        ? favs.filter((id) => id !== businessId)
-        : [...favs, businessId];
+      const isAdding = !favs.includes(businessId);
+      const next = isAdding
+        ? [...favs, businessId]
+        : favs.filter((id) => id !== businessId);
       localStorage.setItem(LS_KEY, JSON.stringify(next));
       setFav(next.includes(businessId));
       haptic("tap");
       window.dispatchEvent(new CustomEvent(FAVORITES_CHANGED_EVENT));
+      // Kedvenc = offline is elérhető: a szakember profil-oldalának cache-elése
+      // (best-effort). Eltávolításnál töröljük a cache-ből.
+      const path = `/szaknevsor/${businessId}`;
+      if (isAdding) void cacheOfflinePaths([path]);
+      else void removeOfflinePath(path);
     } catch {
       /* localStorage letiltva — csendben elnyeljük */
     }

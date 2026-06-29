@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { HivatalosView } from "@/components/views/hivatalos-view";
+import { OfflineGuidesButton } from "@/components/offline-guides-button";
 
 export const dynamic = "force-static";
 
@@ -31,6 +32,15 @@ export default function HivatalosPage() {
           „Lejár az útlevelem", „át kell írni a jogsim" — nem mi mondjuk meg, mit csinálj, hanem egy kattintással a helyes hivatalos oldalra viszünk.
         </p>
       </section>
+
+      <OfflineGuidesButton
+        paths={["/hivatalos"]}
+        noun="oldal"
+        idleTitle="Mentsd offline-ra"
+        doneTitle="Offline elérhető"
+        hint="Internet nélkül is megnézheted a hivatalos címeket és linkeket (pl. a határon)."
+        storageKey="kinti.hivatalosOfflineAt"
+      />
 
       <HivatalosView />
     </div>
