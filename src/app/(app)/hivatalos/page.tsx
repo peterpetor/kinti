@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { HivatalosView } from "@/components/views/hivatalos-view";
 
-export const runtime = "edge";
 export const dynamic = "force-static";
 
 export const metadata = {

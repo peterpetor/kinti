@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 
-export const runtime = "edge";
 // FONTOS: statikusan prerendereljük, hogy a Service Worker az `install` lépésben
 // (még online) gyorsítótárba tudja tenni. Dynamic data tilos itt.
 export const dynamic = "force-static";

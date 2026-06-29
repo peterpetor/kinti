@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { CostBenchmarkView } from "@/components/views/cost-benchmark-view";
 
-export const runtime = "edge";
 export const dynamic = "force-static";
 
 export const metadata = {

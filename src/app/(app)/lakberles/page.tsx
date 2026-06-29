@@ -3,7 +3,6 @@ import { Icon, KintiLogo } from "@/components/ui";
 import { RentCostCalculator } from "@/components/views/rent-cost-calculator";
 import { CountryGuard } from "@/components/country-guard";
 
-export const runtime = "edge";
 export const dynamic = "force-static";
 
 export const metadata = {

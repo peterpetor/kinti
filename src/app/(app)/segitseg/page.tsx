@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 
-export const runtime = "edge";
 export const dynamic = "force-static";
 
 export const metadata = {
