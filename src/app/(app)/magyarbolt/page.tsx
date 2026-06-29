@@ -2,8 +2,7 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { MagyarBoltView } from "@/components/views/magyar-bolt-view";
 
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
 export const metadata = {
   title: "Magyar bolt a sarkon — otthoni ízek térképe",
