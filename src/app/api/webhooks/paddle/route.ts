@@ -64,9 +64,12 @@ export async function POST(req: Request) {
         if (entitlement === "job_featured") await activate("job_featured", customData, data);
         break;
 
-      // Előfizetés él → aktiválás.
+      // Előfizetés él / megújul / módosul → státusz + periódus-vég szinkronizálása.
+      // A `subscription.updated` a HAVI MEGÚJÍTÁSKOR is jön (új current_period_end);
+      // enélkül a lemondáskori „végéig jár" dátum elavult periódust használna.
       case "subscription.created":
       case "subscription.activated":
+      case "subscription.updated":
         if (entitlement === "business_pro" || entitlement === "user_pro") {
           await activate(entitlement, customData, data);
         }
