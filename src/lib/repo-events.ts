@@ -102,7 +102,10 @@ export interface SaveEventInput {
 
 export async function getEvents(opts: EventQuery = {}): Promise<KintiEvent[]> {
   const binds: unknown[] = [];
-  const where: string[] = ["e.status = 'approved'", "e.moderation_status = 1"];
+  // A naptár-lista CSAK dátumos eseményeket mutat; a dátum nélküli „hely"-pinek
+  // (pl. magyar bolt/étterem, közösségi horgonyok) kizárólag a térképre valók
+  // (getMapEvents), különben NULL-ként a lista elejére sorolódnának.
+  const where: string[] = ["e.status = 'approved'", "e.moderation_status = 1", "e.event_date IS NOT NULL"];
   if (opts.upcoming) {
     where.push("e.event_date >= date('now')");
   }
