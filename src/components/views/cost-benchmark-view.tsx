@@ -12,6 +12,7 @@ interface Result {
   category: string;
   count: number;
   scope: "canton" | "country";
+  sizeScoped: boolean;
   locked: boolean;
   median: number | null;
   p25: number | null;
@@ -27,6 +28,7 @@ export function CostBenchmarkView({ turnstileSiteKey }: { turnstileSiteKey: stri
   const regions = getRegions(country);
 
   const [canton, setCanton] = useState("all");
+  const [household, setHousehold] = useState<number | null>(null);
   const [results, setResults] = useState<Result[]>([]);
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [token, setToken] = useState("");
@@ -36,11 +38,13 @@ export function CostBenchmarkView({ turnstileSiteKey }: { turnstileSiteKey: stri
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch(`/api/benchmark/cost?country=${country}&canton=${canton}`);
-      const data = (await res.json()) as { results?: Result[] };
+      const res = await fetch(`/api/benchmark/cost?country=${country}&canton=${canton}&household=${household ?? ""}`);
+      const data = (await res.json()) as { results?: Result[]; householdSize?: number | null };
       setResults(data.results ?? []);
+      // Első betöltéskor előkitöltjük a háztartásméretet a korábbi beküldésből.
+      if (household == null && data.householdSize != null) setHousehold(data.householdSize);
     } catch { /* marad */ }
-  }, [country, canton]);
+  }, [country, canton, household]);
   useEffect(() => { load(); }, [load]);
 
   async function submit(category: string) {
@@ -55,7 +59,7 @@ export function CostBenchmarkView({ turnstileSiteKey }: { turnstileSiteKey: stri
       const res = await fetch("/api/benchmark/cost", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ country, cantonCode: canton, category, amount, turnstileToken: token }),
+        body: JSON.stringify({ country, cantonCode: canton, category, amount, householdSize: household, turnstileToken: token }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; results?: Result[]; error?: string };
       if (!res.ok) { setErr(data.error ?? "Nem sikerült."); turnstileRef.current?.reset(); setToken(""); setBusy(null); return; }
@@ -75,15 +79,35 @@ export function CostBenchmarkView({ turnstileSiteKey }: { turnstileSiteKey: stri
 
   return (
     <div className="space-y-4">
-      {/* Régió-választó */}
-      <div>
-        <label className="mb-1 block text-[12px] font-bold text-ink-muted">Hol élsz?</label>
-        <select value={canton} onChange={(e) => setCanton(e.target.value)}
-          className="h-11 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[14px] font-semibold text-ink">
-          <option value="all">Válassz régiót…</option>
-          {regions.map((r) => <option key={r.code} value={r.code}>{r.name}</option>)}
-        </select>
+      {/* Régió + háztartásméret-választó */}
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="mb-1 block text-[12px] font-bold text-ink-muted">Hol élsz?</label>
+          <select value={canton} onChange={(e) => setCanton(e.target.value)}
+            className="h-11 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[14px] font-semibold text-ink">
+            <option value="all">Válassz régiót…</option>
+            {regions.map((r) => <option key={r.code} value={r.code}>{r.name}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-[12px] font-bold text-ink-muted">Hányan éltek?</label>
+          <select value={household ?? ""} onChange={(e) => setHousehold(e.target.value ? Number(e.target.value) : null)}
+            className="h-11 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[14px] font-semibold text-ink">
+            <option value="">Háztartásméret…</option>
+            <option value="1">1 fő</option>
+            <option value="2">2 fő</option>
+            <option value="3">3 fő</option>
+            <option value="4">4 fő</option>
+            <option value="5">5 fő</option>
+            <option value="6">6+ fő</option>
+          </select>
+        </div>
       </div>
+      {household != null && (
+        <p className="-mt-1 text-[11px] text-ink-faint">
+          A {household === 6 ? "6+" : household}-fős háztartásokhoz hasonlítunk (ha kevés az adat, a régió/ország összesére esünk vissza).
+        </p>
+      )}
 
       {turnstileSiteKey && <TurnstileWidget ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setToken} />}
       {err && <p className="text-[12px] font-bold text-accent">{err}</p>}
@@ -169,7 +193,7 @@ function CostResult({ r, cur, regionLabel }: { r: Result; cur: string; regionLab
         <span>több ({fmt(r.p75)})</span>
       </div>
       <p className={cn("text-[12.5px] font-bold", verdict.cls)}>{verdict.text}</p>
-      <p className="text-[10.5px] text-ink-faint">{r.count} válaszból{r.scope === "country" ? " (országos)" : ""}.</p>
+      <p className="text-[10.5px] text-ink-faint">{r.count} válaszból{r.scope === "country" ? " (országos)" : ""}{r.sizeScoped ? " · azonos háztartásméret" : ""}.</p>
     </div>
   );
 }

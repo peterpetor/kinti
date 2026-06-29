@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getCostBenchmarks, getUserCostSubmissions, submitCostBenchmark } from "@/lib/cost-benchmark";
+import { getCostBenchmarks, getUserCostProfile, submitCostBenchmark, type CostBenchmarkResult } from "@/lib/cost-benchmark";
 import { isValidCostCategory, costCategory } from "@/lib/cost-categories";
 import { hashIp } from "@/lib/security";
 import { verifyTurnstile } from "@/lib/turnstile";
@@ -9,10 +9,23 @@ import { isValidCountry } from "@/lib/countries";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
+/** 1–6 (6 = „6+"), vagy null. */
+function parseHousehold(v: unknown): number | null {
+  const n = typeof v === "number" ? v : typeof v === "string" ? parseInt(v, 10) : NaN;
+  return Number.isInteger(n) && n >= 1 && n <= 6 ? n : null;
+}
+
+/** GIVE-TO-GET: a stat csak akkor látszik, ha a user beadta a sajátját (különben locked). */
+function toClient(r: CostBenchmarkResult) {
+  return r.yourAmount != null
+    ? { ...r, locked: false }
+    : { category: r.category, count: r.count, scope: r.scope, sizeScoped: r.sizeScoped, locked: true, median: null, p25: null, p75: null, percentile: null, yourAmount: null };
+}
+
 /**
- * GET /api/benchmark/cost?country=CH&canton=ZH — per-kategória megélhetési statisztika.
- * GIVE-TO-GET: egy kategória mediánja/percentilise csak akkor látszik, ha a user MÁR
- * beadta a sajátját (különben `locked:true` + a beküldések száma teaserként).
+ * GET /api/benchmark/cost?country=CH&canton=ZH&household=4 — per-kategória statisztika
+ * (régió + háztartásméret dimenzióval). Visszaadja a user saját háztartásméretét is
+ * (a szelektor előkitöltéséhez).
  */
 export async function GET(req: NextRequest) {
   const ip = req.headers.get("cf-connecting-ip") ?? null;
@@ -22,15 +35,14 @@ export async function GET(req: NextRequest) {
   const country = isValidCountry(c) ? c : "CH";
   const canton = sp.get("canton") || "all";
 
-  const userSubs = await getUserCostSubmissions(ipHash, country);
-  const all = await getCostBenchmarks(country, canton, userSubs);
+  const profile = await getUserCostProfile(ipHash, country);
+  const householdSize = parseHousehold(sp.get("household")) ?? profile.householdSize;
+  const all = await getCostBenchmarks(country, canton, profile, householdSize);
 
-  const results = all.map((r) =>
-    r.yourAmount != null
-      ? { ...r, locked: false }
-      : { category: r.category, count: r.count, scope: r.scope, locked: true, median: null, p25: null, p75: null, percentile: null, yourAmount: null },
+  return NextResponse.json(
+    { country, canton, householdSize, results: all.map(toClient) },
+    { headers: { "cache-control": "no-store" } },
   );
-  return NextResponse.json({ country, canton, results }, { headers: { "cache-control": "no-store" } });
 }
 
 /** POST /api/benchmark/cost — egy kategória beküldése (Turnstile + szerver-validáció). */
@@ -48,6 +60,7 @@ export async function POST(req: NextRequest) {
   const cantonCode = typeof body.cantonCode === "string" ? body.cantonCode : "";
   const category = typeof body.category === "string" ? body.category : "";
   const amount = typeof body.amount === "number" ? Math.round(body.amount) : NaN;
+  const householdSize = parseHousehold(body.householdSize);
 
   if (!getRegion(country, cantonCode)) return NextResponse.json({ error: "Válassz régiót." }, { status: 400 });
   if (!isValidCostCategory(category)) return NextResponse.json({ error: "Ismeretlen kategória." }, { status: 400 });
@@ -60,13 +73,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  await submitCostBenchmark({ country, cantonCode, category, amount, ipHash });
+  await submitCostBenchmark({ country, cantonCode, category, amount, householdSize, ipHash });
 
-  // Frissített, feloldott statisztika vissza (a beadott kategóriáé azonnal látszik).
-  const userSubs = await getUserCostSubmissions(ipHash, country);
-  const all = await getCostBenchmarks(country, cantonCode, userSubs);
-  const results = all.map((r) =>
-    r.yourAmount != null ? { ...r, locked: false } : { category: r.category, count: r.count, scope: r.scope, locked: true, median: null, p25: null, p75: null, percentile: null, yourAmount: null },
-  );
-  return NextResponse.json({ ok: true, country, canton: cantonCode, results });
+  const profile = await getUserCostProfile(ipHash, country);
+  const all = await getCostBenchmarks(country, cantonCode, profile, householdSize ?? profile.householdSize);
+  return NextResponse.json({ ok: true, country, canton: cantonCode, householdSize: profile.householdSize, results: all.map(toClient) });
 }
