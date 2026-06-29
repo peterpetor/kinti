@@ -85,10 +85,14 @@ export async function upsertLeaderboardEntry(input: UpsertLeaderboardInput): Pro
 
 export async function getTopLeaderboard(category: LeaderboardCategory = "overall", limit = 50): Promise<LeaderboardEntry[]> {
   const col = colFor(category);
+  // Kategória-boardon (nyelv/közösségi) csak a TÉNYLEG aktívak (>0) jelenjenek meg,
+  // különben a frissen 0-ra szinkronizált tagok elárasztanák nullákkal. Az
+  // összesített boardon mindenki látszik.
+  const where = category === "overall" ? "" : `WHERE ${col} > 0`;
   const { results } = await getDB()
     .prepare(
       `SELECT nickname, ${col} AS score, level, badges, updated_at
-       FROM leaderboard ORDER BY ${col} DESC, updated_at ASC LIMIT ?`,
+       FROM leaderboard ${where} ORDER BY ${col} DESC, updated_at ASC LIMIT ?`,
     )
     .bind(limit)
     .all<Row>();
