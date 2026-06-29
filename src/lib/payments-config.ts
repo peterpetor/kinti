@@ -4,18 +4,47 @@
 // csak CH aktív). Az értékek NEXT_PUBLIC env-ből jönnek (a Price ID nem titok).
 
 export type ProductType = "kinti_pro_monthly" | "business_pro_monthly" | "job_featured";
-export type CountryCode = "CH" | "AT" | "DE" | "HU"; // Bővíthető
+export type CountryCode = "CH" | "AT" | "DE" | "NL"; // Bővíthető
 
 /** Termék → ország → Paddle Price ID (`pri_...`). */
-export const PADDLE_PRICES: Record<ProductType, Partial<Record<CountryCode, string>>> = {
+// FALLBACK Price ID-k (ÉLES, 2026-06-29 a Paddle API-val létrehozva, mind EUR).
+// A Price ID NEM titok (NEXT_PUBLIC, úgyis a kliens-bundle-ben van). Azért
+// hardcode-oljuk tartaléknak, mert a `process.env.NEXT_PUBLIC_*` a Cloudflare
+// edge FUNCTION-ökben (szerveroldali checkout-route) NEM mindig oldódik fel
+// futásidőben → enélkül „Nincs beállítva Price ID" hiba. Az env felülírhatja.
+const FALLBACK_PRICES: Record<ProductType, Record<CountryCode, string>> = {
   kinti_pro_monthly: {
-    CH: process.env.NEXT_PUBLIC_PADDLE_PRICE_KINTI_PRO || "",
+    CH: "pri_01kw9ys53dvqc0tjpr17zay66t", AT: "pri_01kw9ys5act5k3fpy7v81263bx",
+    DE: "pri_01kw9ys5h35jxnfqckvf0sgne1", NL: "pri_01kw9ys5qr3x6dxn2j12chrft1",
   },
   business_pro_monthly: {
-    CH: process.env.NEXT_PUBLIC_PADDLE_PRICE_BIZ_PRO || "",
+    CH: "pri_01kw9ys5ys0h3gesm7pdpfz6h3", AT: "pri_01kw9ys65cps9xnyj9b74gfmy7",
+    DE: "pri_01kw9ys6edn7zeyw83s4hgqn9h", NL: "pri_01kw9ys6vrxs64rxtb33vfem8q",
   },
   job_featured: {
-    CH: process.env.NEXT_PUBLIC_PADDLE_PRICE_JOB || "",
+    CH: "pri_01kw9ys72bmkm2vh6bkvj7qy1p", AT: "pri_01kw9ys795nbhbkc5y4d7vrpjx",
+    DE: "pri_01kw9ys7ftvgb8hbb4jm9eeymf", NL: "pri_01kw9ys7qga63mtcv690vh5jaa",
+  },
+};
+
+export const PADDLE_PRICES: Record<ProductType, Partial<Record<CountryCode, string>>> = {
+  kinti_pro_monthly: {
+    CH: process.env.NEXT_PUBLIC_PADDLE_PRICE_KINTI_PRO_CH || FALLBACK_PRICES.kinti_pro_monthly.CH,
+    AT: process.env.NEXT_PUBLIC_PADDLE_PRICE_KINTI_PRO_AT || FALLBACK_PRICES.kinti_pro_monthly.AT,
+    DE: process.env.NEXT_PUBLIC_PADDLE_PRICE_KINTI_PRO_DE || FALLBACK_PRICES.kinti_pro_monthly.DE,
+    NL: process.env.NEXT_PUBLIC_PADDLE_PRICE_KINTI_PRO_NL || FALLBACK_PRICES.kinti_pro_monthly.NL,
+  },
+  business_pro_monthly: {
+    CH: process.env.NEXT_PUBLIC_PADDLE_PRICE_BIZ_PRO_CH || FALLBACK_PRICES.business_pro_monthly.CH,
+    AT: process.env.NEXT_PUBLIC_PADDLE_PRICE_BIZ_PRO_AT || FALLBACK_PRICES.business_pro_monthly.AT,
+    DE: process.env.NEXT_PUBLIC_PADDLE_PRICE_BIZ_PRO_DE || FALLBACK_PRICES.business_pro_monthly.DE,
+    NL: process.env.NEXT_PUBLIC_PADDLE_PRICE_BIZ_PRO_NL || FALLBACK_PRICES.business_pro_monthly.NL,
+  },
+  job_featured: {
+    CH: process.env.NEXT_PUBLIC_PADDLE_PRICE_JOB_CH || FALLBACK_PRICES.job_featured.CH,
+    AT: process.env.NEXT_PUBLIC_PADDLE_PRICE_JOB_AT || FALLBACK_PRICES.job_featured.AT,
+    DE: process.env.NEXT_PUBLIC_PADDLE_PRICE_JOB_DE || FALLBACK_PRICES.job_featured.DE,
+    NL: process.env.NEXT_PUBLIC_PADDLE_PRICE_JOB_NL || FALLBACK_PRICES.job_featured.NL,
   },
 };
 
