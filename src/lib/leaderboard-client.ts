@@ -33,10 +33,36 @@ export function isOnLeaderboard(): boolean {
   return !!getLeaderboardToken() && !!getMyNickname();
 }
 
-/** A saját, ranglistára küldendő statisztika a kliensoldali gamifikációból. */
-export function computeMyStats(): { score: number; level: number; badges: number } {
-  const g = computeGamification(loadMyPosts(), streakXp(), gatherAchievementExtras());
-  return { score: g.points, level: g.level, badges: g.earnedBadgeCount };
+/** A nyelvtanulási al-pont: a nyelvlecke-progress összegyűjtött XP-je (localStorage). */
+function languageXp(): number {
+  try {
+    const raw = ls()?.getItem("kinti_language_progress");
+    if (!raw) return 0;
+    const d = JSON.parse(raw) as { xp?: number };
+    return Math.max(0, Math.round(Number(d?.xp) || 0));
+  } catch {
+    return 0;
+  }
+}
+
+/** A saját, ranglistára küldendő statisztika a kliensoldali gamifikációból.
+ *  - score: összesített pont (poszt-hozzájárulás + streak)
+ *  - scoreLanguage: nyelvtanulás-XP
+ *  - scoreCommunity: KÖZÖSSÉGI hozzájárulás (csak a poszt-alapú pont, streak nélkül) */
+export function computeMyStats(): {
+  score: number; level: number; badges: number; scoreLanguage: number; scoreCommunity: number;
+} {
+  const posts = loadMyPosts();
+  const extras = gatherAchievementExtras();
+  const g = computeGamification(posts, streakXp(), extras);
+  const community = computeGamification(posts, 0, extras).points;
+  return {
+    score: g.points,
+    level: g.level,
+    badges: g.earnedBadgeCount,
+    scoreLanguage: languageXp(),
+    scoreCommunity: community,
+  };
 }
 
 function ensureToken(): string {

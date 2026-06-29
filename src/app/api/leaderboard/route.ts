@@ -7,6 +7,7 @@ import {
   getLeaderboardCount,
   rankForScore,
   deleteLeaderboardEntry,
+  parseLeaderboardCategory,
 } from "@/lib/repo";
 import { containsProfanity } from "@/lib/profanity";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
@@ -23,11 +24,13 @@ const NICK_MAX = 20;
 /** GET /api/leaderboard[?token=] — top 50 + (ha token) a saját rangod. */
 export async function GET(req: Request) {
   try {
-    const token = new URL(req.url).searchParams.get("token")?.trim() || null;
+    const url = new URL(req.url);
+    const token = url.searchParams.get("token")?.trim() || null;
+    const category = parseLeaderboardCategory(url.searchParams.get("category"));
     const [top, total, me] = await Promise.all([
-      getTopLeaderboard(50),
+      getTopLeaderboard(category, 50),
       getLeaderboardCount(),
-      token ? getLeaderboardByToken(token) : Promise.resolve(null),
+      token ? getLeaderboardByToken(category, token) : Promise.resolve(null),
     ]);
     return NextResponse.json(
       { entries: top, total, me },
@@ -44,6 +47,7 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json().catch(() => ({}))) as {
       clientToken?: string; nickname?: string; score?: number; level?: number; badges?: number;
+      scoreLanguage?: number; scoreCommunity?: number;
     };
 
     const clientToken = typeof body.clientToken === "string" ? body.clientToken.trim() : "";
@@ -65,6 +69,8 @@ export async function POST(req: Request) {
     const score = Math.max(0, Math.min(MAX_SCORE, Math.round(Number(body.score) || 0)));
     const level = Math.max(1, Math.min(999, Math.round(Number(body.level) || 1)));
     const badges = Math.max(0, Math.min(999, Math.round(Number(body.badges) || 0)));
+    const scoreLanguage = Math.max(0, Math.min(MAX_SCORE, Math.round(Number(body.scoreLanguage) || 0)));
+    const scoreCommunity = Math.max(0, Math.min(MAX_SCORE, Math.round(Number(body.scoreCommunity) || 0)));
 
     // Rate-limit (csatlakozás/szinkron spam ellen)
     const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
@@ -77,10 +83,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Ezt a becenevet már használják. Válassz másikat." }, { status: 409 });
     }
 
-    await upsertLeaderboardEntry({ clientToken, nickname, score, level, badges });
+    await upsertLeaderboardEntry({ clientToken, nickname, score, level, badges, scoreLanguage, scoreCommunity });
     await logAiRateLimit("leaderboard", ipHash);
 
-    const rank = await rankForScore(score);
+    const rank = await rankForScore("overall", score);
     return NextResponse.json({ ok: true, rank, nickname }, { headers: { "cache-control": "no-store" } });
   } catch (err) {
     safeLogError("api/leaderboard POST", err);

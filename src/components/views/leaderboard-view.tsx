@@ -24,6 +24,13 @@ interface Me extends Entry {
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 
+type Category = "overall" | "language" | "community";
+const CATEGORIES: { id: Category; label: string }[] = [
+  { id: "overall", label: "Összesített" },
+  { id: "language", label: "🦉 Nyelvtanuló" },
+  { id: "community", label: "🤝 Közösségi" },
+];
+
 export function LeaderboardView() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [total, setTotal] = useState(0);
@@ -33,11 +40,14 @@ export function LeaderboardView() {
   const [nick, setNick] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [category, setCategory] = useState<Category>("overall");
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (cat: Category) => {
     const token = getLeaderboardToken();
+    const qs = new URLSearchParams({ category: cat });
+    if (token) qs.set("token", token);
     try {
-      const res = await fetch(`/api/leaderboard${token ? `?token=${encodeURIComponent(token)}` : ""}`);
+      const res = await fetch(`/api/leaderboard?${qs.toString()}`);
       const data = (await res.json().catch(() => ({}))) as { entries?: Entry[]; total?: number; me?: Me | null };
       setEntries(data.entries ?? []);
       setTotal(data.total ?? 0);
@@ -51,11 +61,13 @@ export function LeaderboardView() {
 
   useEffect(() => {
     setJoined(isOnLeaderboard());
+    let alive = true;
     (async () => {
       if (isOnLeaderboard()) await syncLeaderboard(); // friss pont a szerverre
-      await refresh();
+      if (alive) await refresh(category);
     })();
-  }, [refresh]);
+    return () => { alive = false; };
+  }, [category, refresh]);
 
   async function handleJoin() {
     const name = nick.trim();
@@ -73,7 +85,7 @@ export function LeaderboardView() {
     }
     setJoined(true);
     setNick("");
-    await refresh();
+    await refresh(category);
   }
 
   async function handleLeave() {
@@ -83,7 +95,7 @@ export function LeaderboardView() {
     setBusy(false);
     setJoined(false);
     setMe(null);
-    await refresh();
+    await refresh(category);
   }
 
   const myNick = getMyNickname();
@@ -145,6 +157,23 @@ export function LeaderboardView() {
           </div>
         </section>
       )}
+
+      {/* Kategória-fülek */}
+      <div className="flex gap-1.5 overflow-x-auto pb-0.5">
+        {CATEGORIES.map((c) => (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => { if (c.id !== category) { setLoading(true); setCategory(c.id); } }}
+            className={cn(
+              "shrink-0 rounded-pill px-3.5 py-1.5 text-[12.5px] font-extrabold transition active:scale-95",
+              category === c.id ? "bg-primary text-white shadow-card" : "bg-surface-alt text-ink-muted",
+            )}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
 
       {/* Lista */}
       <section>
