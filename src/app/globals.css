@@ -127,6 +127,20 @@
     .kinti-page-in { animation: none; }
   }
 
+  /* „Pop" mikro-visszajelzés — kedvenc-szív, sikeres művelet (delight). */
+  @keyframes kintiPop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.32); }
+    70%  { transform: scale(0.92); }
+    100% { transform: scale(1); }
+  }
+  .kinti-pop {
+    animation: kintiPop 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kinti-pop { animation: none; }
+  }
+
   /* Rejtsük a vízszintes görgetők natív scrollbarját. A `.scrollbar-hide` alias,
      mert több helyen ezt használtuk (de nem volt definiálva → kilátszott a csúnya
      asztali scrollbar). */

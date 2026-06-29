@@ -27,6 +27,8 @@ function readFavorites(): string[] {
 export function FavoriteButton({ businessId, className }: { businessId: string; className?: string }) {
   const [mounted, setMounted] = useState(false);
   const [fav, setFav] = useState(false);
+  // „Pop" animáció re-triggere: a kulcs változása újra-mountolja az ikont.
+  const [popKey, setPopKey] = useState(0);
 
   useEffect(() => {
     setMounted(true);
@@ -49,6 +51,7 @@ export function FavoriteButton({ businessId, className }: { businessId: string; 
         : favs.filter((id) => id !== businessId);
       localStorage.setItem(LS_KEY, JSON.stringify(next));
       setFav(next.includes(businessId));
+      if (isAdding) setPopKey((k) => k + 1);
       haptic("tap");
       window.dispatchEvent(new CustomEvent(FAVORITES_CHANGED_EVENT));
       // Kedvenc = offline is elérhető: a szakember profil-oldalának cache-elése
@@ -74,7 +77,7 @@ export function FavoriteButton({ businessId, className }: { businessId: string; 
       )}
     >
       {/* mounted-guard: szerver-render mindig üres szív → nincs hidratációs eltérés */}
-      <Icon name="heart" size={16} strokeWidth={2.2} filled={mounted && fav} />
+      <Icon key={popKey} name="heart" size={16} strokeWidth={2.2} filled={mounted && fav} className={cn(popKey > 0 && "kinti-pop")} />
     </button>
   );
 }

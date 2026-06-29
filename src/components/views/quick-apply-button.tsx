@@ -43,7 +43,7 @@ export function QuickApplyButton({
 
   if (state === "done" || state === "dup") {
     return (
-      <div className="flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-success/15 text-[15px] font-extrabold text-success">
+      <div className="kinti-pop flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-success/15 text-[15px] font-extrabold text-success">
         <Icon name="check" size={18} strokeWidth={3} />
         {state === "done" ? "Jelentkezés elküldve!" : "Erre már jelentkeztél"}
       </div>
