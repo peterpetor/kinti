@@ -42,7 +42,10 @@ export async function POST(req: Request) {
   const socialLinks = typeof body.socialLinks === "string" ? body.socialLinks.trim() : "";
   
   const yearsHereRaw = body.yearsHere;
-  const yearsHere = typeof yearsHereRaw === "number" ? yearsHereRaw : yearsHereRaw ? parseInt(String(yearsHereRaw)) : null;
+  const yearsHereParsed = typeof yearsHereRaw === "number" ? yearsHereRaw : yearsHereRaw ? parseInt(String(yearsHereRaw), 10) : null;
+  // NaN-guard: a parseInt("abc") NaN-t ad, ami NEM null → bementene a DB-be és
+  // „NaN éve kint"-et mutatna. Csak véges szám mehet tovább, különben null.
+  const yearsHere = yearsHereParsed != null && Number.isFinite(yearsHereParsed) ? yearsHereParsed : null;
   
   const languagesRaw = body.languages;
   const languages = Array.isArray(languagesRaw) ? languagesRaw.map(l => String(l).trim()).filter(Boolean) : null;

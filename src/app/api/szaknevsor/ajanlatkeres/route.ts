@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDB } from "@/lib/cloudflare";
 import { safeLogError } from "@/lib/safe-log";
-import { hashIp } from "@/lib/security";
+import { hashIp, hashEmail } from "@/lib/security";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { cantonFromAddress, matchCantonByName, CANTONS } from "@/lib/cantons";
 import {
@@ -117,7 +117,7 @@ export async function POST(req: Request) {
     // ── Dedup: ugyanaz az email + kategória 24 órán belül? ──────────────────
     // Megakadályozza, hogy ugyanaz a személy ugyanabba a kategóriába 1 napon
     // belül többször is leadet küldjön (pl. véletlen dupla submit, vagy szándékos).
-    const emailHash = await hashIp(email); // sha-256 az emailre is
+    const emailHash = await hashEmail(email); // email-célú hash (NEM hashIp — az IPv6-ot normalizálna)
     const dedupKey = `lead-cat-${categoryId}-${emailHash}`;
     const dedupRow = await getDB()
       .prepare(

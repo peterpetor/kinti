@@ -3,8 +3,6 @@
  * Egy helyen, hogy a kliens-form és a szerver-route ugyanazt érvényesítse.
  */
 
-import { findProfanityInFields } from "./profanity";
-
 /** Megerősítő link érvényessége (ms). 24 óra — utána a piszkozat törlődik. */
 export const REVIEW_CONFIRM_TTL_MS = 24 * 60 * 60 * 1000;
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
 import { getBusinessById, getReviewsByBusiness, recordBusinessSearchTerm } from "@/lib/repo";
+import { parseDbDate, dbDateOnly } from "@/lib/dates";
 import { mediaUrl } from "@/lib/media";
 import { CategoryIcon } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
@@ -24,14 +25,16 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const HU_MONTHS = [
-  "január", "február", "március", "április", "május", "június",
-  "július", "augusztus", "szeptember", "október", "november", "december",
+  "jan", "feb", "márc", "ápr", "máj", "jún",
+  "júl", "aug", "szept", "okt", "nov", "dec",
 ];
 
 /** "2 órája" / "tegnap" / "2025. okt. 14." formátum a vélemény dátumához. */
 function fmtRelative(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
+  // parseDbDate: a szóközös SQLite-dátumot UTC-ként értelmezi (különben a relatív
+  // idő elcsúszna a szerver zónájával).
+  const d = parseDbDate(iso);
+  if (!d) return "";
   const now = Date.now();
   const diff = now - d.getTime();
   const mins = Math.floor(diff / 60000);
@@ -43,12 +46,14 @@ function fmtRelative(iso: string): string {
   if (days < 7) return `${days} napja`;
   if (days < 30) return `${Math.floor(days / 7)} hete`;
   if (days < 365) return `${Math.floor(days / 30)} hónapja`;
-  return `${d.getFullYear()}. ${HU_MONTHS[d.getMonth()].slice(0, 4)}. ${d.getDate()}.`;
+  return `${d.getUTCFullYear()}. ${HU_MONTHS[d.getUTCMonth()]}. ${d.getUTCDate()}.`;
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const b = await getBusinessById(params.id);
-  if (!b) return { title: "Vállalkozás" };
+  // Csak JÓVÁHAGYOTT profilhoz generálunk meta-adatot — különben a Google
+  // meta-adatot látna egy 404-es oldalhoz (a fő komponens notFound()-ol).
+  if (!b || (b.moderationStatus ?? 0) !== 1) return { title: "Vállalkozás" };
 
   const title = `${b.name}${b.categoryLabel ? ` — ${b.categoryLabel}` : ""}`;
   const ratingText = b.reviews > 0 ? ` ⭐ ${b.rating.toFixed(1)} (${b.reviews} vélemény)` : "";
@@ -159,7 +164,7 @@ export default async function BusinessPage({
             "@type": "Person",
             "name": authorName,
           },
-          "datePublished": r.publishedAt ? r.publishedAt.split("T")[0] : new Date().toISOString().split("T")[0],
+          "datePublished": dbDateOnly(r.publishedAt) || new Date().toISOString().slice(0, 10),
           "reviewBody": r.body,
           "reviewRating": {
             "@type": "Rating",
@@ -345,14 +350,16 @@ export default async function BusinessPage({
               <Icon name="phone" size={16} strokeWidth={2.2} /> Hívás
             </span>
           )}
-          <a
-            href={mapsHref}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(actionBtn, "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
-          >
-            <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
-          </a>
+          {mapsHref && (
+            <a
+              href={mapsHref}
+              target="_blank"
+              rel="noreferrer"
+              className={cn(actionBtn, "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
+            >
+              <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
+            </a>
+          )}
         </div>
 
         {/* "Kérj árajánlatot" email-relay forma ELTÁVOLÍTVA — a kapcsolat
@@ -468,7 +475,7 @@ export default async function BusinessPage({
           </p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             <Chip icon="clock">{b.workingHours ? `${status.statusText} · ${status.detailText}` : (b.openText || `${status.statusText} · ${status.detailText}`)}</Chip>
-            <Chip icon="globe">{b.languages.length ? b.languages.join(" · ") : "Magyar"}</Chip>
+            <Chip icon="globe">{b.languages?.length ? b.languages.join(" · ") : "Magyar"}</Chip>
             {b.yearsHere != null && <Chip>{b.yearsHere} éve kint</Chip>}
             {freshIso && <Chip icon="calendar">Frissítve {fmtRelative(freshIso)}</Chip>}
           </div>

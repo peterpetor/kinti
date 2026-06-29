@@ -467,7 +467,11 @@ function lastNDatesUtc(n: number): string[] {
 
 export async function getAdminTrends(): Promise<AdminTrends> {
   const db = getDB();
-  const since = `datetime('now', '-${TREND_DAYS} days')`;
+  // TREND_DAYS egész-szám konstans; a Math.trunc injektálás-biztossá teszi akkor is,
+  // ha valaha dinamikussá tennék. FONTOS: bemenet-alapú értéket SOHA ne interpolálj
+  // SQL-be — azt mindig `.bind()`-eld.
+  const trendDays = Math.max(1, Math.trunc(Number(TREND_DAYS) || 14));
+  const since = `datetime('now', '-${trendDays} days')`;
 
   // Napi bontású lekérdezések (UTC dátumkulcs). A hiányzó napokat JS-ben 0-zzuk.
   const dailyBusiness = db

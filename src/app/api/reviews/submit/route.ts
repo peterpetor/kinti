@@ -3,8 +3,10 @@ import {
   createReviewDraft,
   getBusinessById,
   hasReviewByEmail,
+  hasReviewByIpHash,
 } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { sendReviewConfirmationEmail } from "@/lib/email";
 import {
   validateReviewInput,
@@ -87,6 +89,17 @@ export async function POST(req: Request) {
   const ipHash = await hashIp(ip);
   const hasEmail = validation.value.email.length > 0;
 
+  // Rate-limit (a Turnstile MELLÉ): per-IP korlát az értékelés-spam / moderációs
+  // sor-elárasztás ellen — a Turnstile önmagában nem elég egy elszánt támadó ellen.
+  const rl = await checkAiRateLimit("review-submit", ipHash);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Túl sok értékelés erről a hálózatról. Próbáld újra később." },
+      { status: 429 },
+    );
+  }
+  await logAiRateLimit("review-submit", ipHash);
+
   // A vélemény CSAK csillagos (1–5) — nincs szöveges body vagy név (lásd
   // validateReviewInput), ezért szöveg-moderáció (moderateText) és spam-scoring
   // (assessSpam) sem szükséges. HA valaha visszajön a szöveges vélemény, itt kell
@@ -94,6 +107,14 @@ export async function POST(req: Request) {
 
   // === ÚJ FŐÚT (local-first) — azonnal publikálva, manage_token a kliensnek ===
   if (!hasEmail) {
+    // Dedup: egy hálózat (ipHash) ehhez a vállalkozáshoz csak EGYSZER értékelhet —
+    // az emailes ágon a hasReviewByEmail teszi ugyanezt.
+    if (ipHash && (await hasReviewByIpHash(business.id, ipHash))) {
+      return NextResponse.json(
+        { error: "Erről a hálózatról már értékelted ezt a vállalkozást." },
+        { status: 409 },
+      );
+    }
     const { publishReview } = await import("@/lib/repo");
     await publishReview({
       id,
@@ -117,7 +138,7 @@ export async function POST(req: Request) {
       title: `${validation.value.rating}★ — ${business.name}`,
       preview: "Csillagos értékelés — nincs szöveges tartalom.",
       submitterEmail: null,
-    }).catch(() => {});
+    }).catch((e) => safeLogError("reviews/submit:notifyAdmin", e));
     return NextResponse.json(
       {
         ok: true,

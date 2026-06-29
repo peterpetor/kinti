@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getBusinesses, getCategories, getJobs } from "@/lib/repo";
+import { parseDbDate } from "@/lib/dates";
 import { CANTONS, cantonFromAddress, cantonToSlug } from "@/lib/cantons";
 import { GUIDES } from "@/lib/guides";
 
@@ -91,7 +92,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const job of jobs) {
       items.push({
         url: `${BASE}/allasok/${job.id}`,
-        lastModified: job.updatedAt ? new Date(job.updatedAt) : now,
+        lastModified: parseDbDate(job.updatedAt) ?? now,
         changeFrequency: "weekly",
         priority: 0.65,
       });

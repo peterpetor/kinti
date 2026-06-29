@@ -81,6 +81,16 @@ export async function hasReviewByEmail(businessId: string, email: string): Promi
   return !!row;
 }
 
+/** Van-e már vélemény ugyanerről az ipHash-ről ehhez a vállalkozáshoz? Az email
+ *  nélküli („local-first") beküldés dedup-jához — különben egy hálózat korlátlanul
+ *  küldhet (a moderációs sort elárasztva). */
+export async function hasReviewByIpHash(businessId: string, ipHash: string): Promise<boolean> {
+  const row = await getDB()
+    .prepare(`SELECT 1 AS one FROM reviews WHERE business_id = ? AND ip_hash = ? LIMIT 1`)
+    .bind(businessId, ipHash).first<{ one: number }>();
+  return !!row;
+}
+
 export async function publishReview(input: PublishReviewInput): Promise<void> {
   await getDB()
     .prepare(
