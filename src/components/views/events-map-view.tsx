@@ -44,6 +44,14 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
   }, [country]);
   useEffect(() => { load(); }, [load]);
 
+  // Mély-link a beküldéshez: /esemenyek?submit=1 (pl. a Közösség oldal gombjáról) → azonnal nyílik a beküldő modal.
+  useEffect(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("submit") === "1") {
+      resetForm();
+      setModal(true);
+    }
+  }, []);
+
   // Beküldő-mező állapot
   const [title, setTitle] = useState("");
   const [tag, setTag] = useState<string>("talalkozo");

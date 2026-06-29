@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ScreenHeader } from "@/components/ui";
 import { CommunityView } from "@/components/views/community-view";
 import { PushOptin } from "@/components/push-optin";
@@ -34,6 +35,18 @@ export default async function KozossegPage() {
                 </>
               }
             />
+          </div>
+
+          {/* Esemény beküldése — a /esemenyek térkép-nézet beküldő modalját nyitja meg
+              (admin-jóváhagyás után jelenik meg). */}
+          <div className="px-5">
+            <Link
+              href="/esemenyek?submit=1"
+              className="flex items-center justify-center gap-2 rounded-pill bg-primary py-3.5 text-[14.5px] font-black text-white shadow-card transition active:scale-[0.98]"
+            >
+              ➕ Esemény beküldése
+            </Link>
+            <p className="mt-1.5 text-center text-[11px] text-ink-faint">Koncert, találkozó, magyar hely — jóváhagyás után felkerül a térképre és ide is.</p>
           </div>
 
           {/* Push-értesítés feliratkozás (új esemény a kantonodban) */}
