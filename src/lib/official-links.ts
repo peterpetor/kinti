@@ -60,7 +60,7 @@ export const KONZULI_SERVICE_URL = "https://konzuliszolgalat.kormany.hu/";
 /** A Konzuli Szolgálat 0–24 ügyelete (díjmentes). Forrás: konzuliszolgalat.kormany.hu. */
 export const KONZULI_EMERGENCY_PHONE = "+36 80 36 80 36";
 
-const OFFICIAL: Record<"CH" | "AT" | "DE", OfficialCountry> = {
+const OFFICIAL: Record<"CH" | "AT" | "DE" | "NL", OfficialCountry> = {
   CH: {
     consulate: {
       name: "Magyarország Nagykövetsége",
@@ -239,22 +239,78 @@ const OFFICIAL: Record<"CH" | "AT" | "DE", OfficialCountry> = {
       },
     ],
   },
+  NL: {
+    consulate: {
+      name: "Magyarország Nagykövetsége",
+      city: "Hága (Den Haag)",
+      website: "https://haga.mfa.gov.hu/",
+    },
+    emergency: [
+      { label: "Általános (EU)", number: "112" },
+      { label: "Rendőrség (nem sürgős)", number: "0900-8844" },
+    ],
+    links: [
+      {
+        trigger: "Útlevelem / személyim lejár",
+        explain: "Magyar okmányt (útlevél, személyi) a konzulátus állít ki — időpontot a Konzinfón foglalsz.",
+        url: KONZINFO_APPOINTMENT_URL, source: "konzinfoidopont.mfa.gov.hu", emoji: "🛂", category: "okmany",
+      },
+      {
+        trigger: "Anyakönyvi / állampolgársági ügy itthonról",
+        explain: "Születés, házasság, honosítás konzuli intézése — a Konzuli Szolgálat hivatalos oldalán.",
+        url: KONZULI_SERVICE_URL, source: "konzuliszolgalat.kormany.hu", emoji: "📜", category: "okmany",
+      },
+      {
+        trigger: "Most költöztem — EU-regisztráció / BRP",
+        explain: "EU-állampolgárként a községnél (gemeente) regisztrálsz a lakcímnyilvántartásba (BRP); a tartózkodás az IND-nél.",
+        url: "https://ind.nl/", source: "ind.nl", emoji: "🏠", category: "tartozkodas",
+      },
+      {
+        trigger: "DigiD — digitális azonosító",
+        explain: "Szinte minden holland hivatali ügyhöz DigiD kell — itt igényled.",
+        url: "https://www.digid.nl/", source: "digid.nl", emoji: "📱", category: "tartozkodas",
+      },
+      {
+        trigger: "Egészségbiztosítás (zorgverzekering)",
+        explain: "A holland egészségbiztosítás KÖTELEZŐ; a hivatalos tájékoztató a Zorgverzekeringslijn oldalán.",
+        url: "https://www.zorgverzekeringslijn.nl/", source: "zorgverzekeringslijn.nl", emoji: "🏥", category: "egeszseg",
+      },
+      {
+        trigger: "Elvesztettem a munkám (UWV)",
+        explain: "A munkanélküli-ellátás (WW) és az álláskeresés az UWV hivatalos oldalán.",
+        url: "https://www.uwv.nl/", source: "uwv.nl", emoji: "💼", category: "munka",
+      },
+      {
+        trigger: "Adó (Belastingdienst)",
+        explain: "Az adóügyeket a Belastingdienst intézi, online DigiD-vel.",
+        url: "https://www.belastingdienst.nl/", source: "belastingdienst.nl", emoji: "🧾", category: "munka",
+      },
+      {
+        trigger: "Családi pótlék (kinderbijslag)",
+        explain: "A kinderbijslagot az SVB (Sociale Verzekeringsbank) intézi.",
+        url: "https://www.svb.nl/nl", source: "svb.nl", emoji: "👶", category: "munka",
+      },
+    ],
+  },
 };
 
 export function getConsulate(country: string | null | undefined): Consulate {
   if (country === "AT") return OFFICIAL.AT.consulate;
   if (country === "DE") return OFFICIAL.DE.consulate;
+  if (country === "NL") return OFFICIAL.NL.consulate;
   return OFFICIAL.CH.consulate;
 }
 
 export function getEmergencyNumbers(country: string | null | undefined): EmergencyNumber[] {
   if (country === "AT") return OFFICIAL.AT.emergency;
   if (country === "DE") return OFFICIAL.DE.emergency;
+  if (country === "NL") return OFFICIAL.NL.emergency;
   return OFFICIAL.CH.emergency;
 }
 
 export function getOfficialLinks(country: string | null | undefined): OfficialLink[] {
   if (country === "AT") return OFFICIAL.AT.links;
   if (country === "DE") return OFFICIAL.DE.links;
+  if (country === "NL") return OFFICIAL.NL.links;
   return OFFICIAL.CH.links;
 }
