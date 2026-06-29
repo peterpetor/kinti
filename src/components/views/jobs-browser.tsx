@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, lazy, Suspense } from "react";
+import type { ExternalJob } from "@/lib/repo-external-jobs";
 import { usePersistedState } from "@/hooks/use-persisted-state";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
@@ -21,6 +22,16 @@ const CantonBubbleMap =
 export interface ProMatchContext {
   isPro: boolean;
   profile: MatchProfile | null;
+}
+
+const EXT_SOURCE_LABEL: Record<string, string> = { adzuna: "Adzuna", jooble: "Jooble", arbeitnow: "Arbeitnow", "job-room": "job-room.ch (SECO)" };
+
+function fmtExtSalary(j: ExternalJob): string | null {
+  if (j.salaryMin == null && j.salaryMax == null) return null;
+  const cur = j.currency ?? "EUR";
+  const n = (v: number) => Math.round(v).toLocaleString("hu-HU");
+  if (j.salaryMin != null && j.salaryMax != null) return `${n(j.salaryMin)}–${n(j.salaryMax)} ${cur}`;
+  return `${n((j.salaryMin ?? j.salaryMax)!)} ${cur}`;
 }
 
 /**
@@ -65,7 +76,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return jobsInCountry.filter((job) => {
+    const list = jobsInCountry.filter((job) => {
       if (canton && job.cantonCode !== canton) return false;
       if (category && job.category !== category) return false;
       if (q) {
@@ -74,7 +85,35 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
       }
       return true;
     });
+    // Kiemelt (featured) Kinti-hirdetések ELÖL; a többi marad a szerver-sorrendben (legújabb elöl).
+    return list.slice().sort((a, b) => (b.status === "featured" ? 1 : 0) - (a.status === "featured" ? 1 : 0));
   }, [jobsInCountry, query, canton, category]);
+
+  // — Élő (külső, API-ból aggregált) állások, ugyanebbe a listába fűzve —
+  const [externalJobs, setExternalJobs] = useState<ExternalJob[]>([]);
+  const [extLoading, setExtLoading] = useState(true);
+  useEffect(() => {
+    let ignore = false;
+    setExtLoading(true);
+    (async () => {
+      try {
+        const res = await fetch(`/api/jobs/external?country=${country}&category=${category || "all"}`);
+        const data = (await res.json()) as { jobs?: ExternalJob[] };
+        if (ignore) return; // ország/kategória-váltás közbeni elavult válasz eldobása
+        setExternalJobs(data.jobs ?? []);
+      } catch { /* marad */ }
+      if (!ignore) setExtLoading(false);
+    })();
+    return () => { ignore = true; };
+  }, [country, category]);
+
+  // A külső hirdetések nincsenek régióhoz (kantonhoz) kötve → ha régió-szűrő aktív, kihagyjuk őket.
+  const externalFiltered = useMemo(() => {
+    if (canton) return [];
+    const q = query.trim().toLowerCase();
+    if (!q) return externalJobs;
+    return externalJobs.filter((j) => `${j.title} ${j.company ?? ""} ${j.location ?? ""}`.toLowerCase().includes(q));
+  }, [externalJobs, query, canton]);
 
   const hasActiveFilter = canton !== "" || category !== "" || query.trim() !== "";
 
@@ -129,7 +168,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
             onClick={() => { setQuery(""); setCanton(""); setCategory(""); }}
             className="text-[12px] font-bold text-primary hover:underline"
           >
-            Szűrők törlése ({filtered.length} találat)
+            Szűrők törlése ({filtered.length + externalFiltered.length} találat)
           </button>
         )}
       </div>
@@ -197,7 +236,10 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
 
       {/* Találatok */}
       <section className="space-y-4">
-        {filtered.length === 0 ? (
+        {filtered.length === 0 && externalFiltered.length === 0 ? (
+          extLoading ? (
+            <p className="py-8 text-center text-[13px] text-ink-muted">Állások betöltése…</p>
+          ) : (
           <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
             <Icon name="search" size={28} className="text-ink-faint" />
             <p className="text-[15px] font-extrabold text-ink">
@@ -219,8 +261,10 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
               <Icon name="plus" size={14} strokeWidth={2.6} /> Hirdesd meg az állásod
             </Link>
           </div>
+          )
         ) : (
-          filtered.map((job) => {
+          <>
+            {filtered.map((job) => {
             const cat = jobCategoryLabel(job.category);
             const cant = regionName(job.country ?? "CH", job.cantonCode);
             return (
@@ -288,7 +332,44 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                 </div>
               </Link>
             );
-          })
+            })}
+
+            {externalFiltered.length > 0 && (
+              <>
+                <div className="flex items-center gap-2 pt-1">
+                  <span className="h-px flex-1 bg-line" />
+                  <span className="shrink-0 text-[11px] font-bold uppercase tracking-wider text-ink-faint">Élő hirdetések partnerektől 🔴</span>
+                  <span className="h-px flex-1 bg-line" />
+                </div>
+                {externalFiltered.map((j) => (
+                  <a
+                    key={j.id}
+                    href={j.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="block rounded-card border border-line bg-surface p-4 shadow-card transition active:scale-[0.99]"
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-[14.5px] font-extrabold leading-snug tracking-[-0.01em] text-ink">{j.title}</h3>
+                        <p className="mt-0.5 text-[12.5px] text-ink-muted">{[j.company, j.location].filter(Boolean).join(" · ") || "—"}</p>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                          {j.category && (
+                            <span className="rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">{jobCategoryLabel(j.category)}</span>
+                          )}
+                          {fmtExtSalary(j) && (
+                            <span className="rounded-pill bg-star/10 px-2 py-0.5 text-[11px] font-bold text-star">{fmtExtSalary(j)}</span>
+                          )}
+                          <span className="rounded-pill bg-surface-alt px-2 py-0.5 text-[10.5px] font-medium text-ink-faint">via {EXT_SOURCE_LABEL[j.source] ?? j.source}</span>
+                        </div>
+                      </div>
+                      <span className="shrink-0 rounded-pill bg-primary px-3 py-1.5 text-[12px] font-bold text-white">Megnézem ↗</span>
+                    </div>
+                  </a>
+                ))}
+              </>
+            )}
+          </>
         )}
       </section>
     </div>

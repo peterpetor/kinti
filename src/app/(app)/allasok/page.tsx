@@ -7,7 +7,6 @@ import { AllasokHeader } from "./AllasokHeader";
 import { JobAlertRadar } from "@/components/views/job-alert-radar";
 import { JobsBrowser } from "@/components/views/jobs-browser";
 import { JobSourcesSection } from "@/components/views/job-sources-section";
-import { ExternalJobsSection } from "@/components/views/external-jobs-section";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 
 export const runtime = "edge";
@@ -53,11 +52,9 @@ export default async function JobsPage() {
           <JobAlertRadar />
         </div>
 
-        {/* Kereső (szöveg + kanton + szakma) + találatok */}
+        {/* Kereső + EGYESÍTETT lista: kiemelt Kinti-hirdetések elöl, majd a többi Kinti
+            állás, végül az API-ból aggregált élő (kifelé linkelő) hirdetések — egy helyen. */}
         <JobsBrowser jobs={jobs} proMatch={proMatch} />
-
-        {/* Élő állások — API-ból aggregált, jogtiszta, KIFELÉ linkelő hirdetések (AT/DE/NL) */}
-        <ExternalJobsSection />
 
         {/* Hol keress még? — ország-tudatos hivatalos álláskereső-források (jogtiszta, link-out) */}
         <JobSourcesSection />
