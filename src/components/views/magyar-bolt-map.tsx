@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useEffect, useMemo, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import { cn } from "@/lib/cn";
 import { useMyLocation } from "@/lib/use-my-location";
 import { BOLT_CATEGORIES, boltCategory, type BoltSpot } from "@/lib/magyar-bolt";
 
@@ -25,10 +26,51 @@ function catIcon(category: string | null): L.DivIcon {
   });
 }
 
+/** A térkép-konténer méretváltása után (pl. fullscreen) a leaflet-nek újra kell
+ *  számolnia a csempéket, különben szürke/levágott marad. */
+function MapResizer({ trigger }: { trigger: boolean }) {
+  const map = useMap();
+  useEffect(() => {
+    const t = setTimeout(() => map.invalidateSize(), 220);
+    return () => clearTimeout(t);
+  }, [trigger, map]);
+  return null;
+}
+
+/** Popup-tartalom saját „jelentve" állapottal — a jelentés után azonnali visszajelzést ad. */
+function SpotPopupBody({ s, onReport }: { s: BoltSpot; onReport: (id: string) => void }) {
+  const [reported, setReported] = useState(false);
+  const c = boltCategory(s.category);
+  return (
+    <div style={{ fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif" }}>
+      {c && (
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: c.color, color: "white", padding: "3px 8px", borderRadius: 999, fontSize: 11, fontWeight: 800, marginBottom: 6 }}>
+          {c.emoji} {c.label}
+        </span>
+      )}
+      <div style={{ fontSize: 15, fontWeight: 800, color: "#0e1f17", margin: "4px 0" }}>{s.name}</div>
+      {s.locationName && <div style={{ fontSize: 12, color: "#5c6d63", marginBottom: 2 }}>📍 {s.locationName}</div>}
+      {s.note && <div style={{ fontSize: 12, color: "#0e1f17", marginTop: 4 }}>{s.note}</div>}
+      {reported ? (
+        <div style={{ marginTop: 8, fontSize: 11, fontWeight: 700, color: "#1d4434" }}>✓ Köszönjük, jeleztük! Ha többen is jelzik, levesszük.</div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => { onReport(s.id); setReported(true); }}
+          style={{ marginTop: 8, fontSize: 11, color: "#94a097", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+        >
+          🚩 Hibás / megszűnt? Jelentem
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function MagyarBoltMap({
   spots, country = "CH", className, onReport,
 }: { spots: BoltSpot[]; country?: string; className?: string; onReport: (id: string) => void }) {
   const myPos = useMyLocation();
+  const [fs, setFs] = useState(false);
   const icons = useMemo(() => {
     const m = new Map<string, L.DivIcon>();
     for (const c of BOLT_CATEGORIES) m.set(c.id, catIcon(c.id));
@@ -38,40 +80,39 @@ export function MagyarBoltMap({
 
   const center: [number, number] = spots.length > 0 ? [spots[0].lat, spots[0].lng] : CENTERS[country] ?? CENTERS.CH;
 
+  // ESC = kilépés a teljes képernyőből.
+  useEffect(() => {
+    if (!fs) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setFs(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [fs]);
+
   return (
-    <div className={className}>
+    <div className={fs ? "fixed inset-0 z-[1000] bg-white" : cn("relative", className)}>
       <MapContainer center={center} zoom={spots.length > 0 ? 8 : 7} className="h-full w-full rounded-card z-0" scrollWheelZoom>
         <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
+        <MapResizer trigger={fs} />
         {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
         <MarkerClusterGroup chunkedLoading showCoverageOnHover={false} maxClusterRadius={40}>
-          {spots.map((s) => {
-            const c = boltCategory(s.category);
-            return (
-              <Marker key={s.id} position={[s.lat, s.lng]} icon={icons.get(s.category ?? "__none") ?? icons.get("__none")!}>
-                <Popup maxWidth={260} minWidth={200}>
-                  <div style={{ fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif" }}>
-                    {c && (
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: c.color, color: "white", padding: "3px 8px", borderRadius: 999, fontSize: 11, fontWeight: 800, marginBottom: 6 }}>
-                        {c.emoji} {c.label}
-                      </span>
-                    )}
-                    <div style={{ fontSize: 15, fontWeight: 800, color: "#0e1f17", margin: "4px 0" }}>{s.name}</div>
-                    {s.locationName && <div style={{ fontSize: 12, color: "#5c6d63", marginBottom: 2 }}>📍 {s.locationName}</div>}
-                    {s.note && <div style={{ fontSize: 12, color: "#0e1f17", marginTop: 4 }}>{s.note}</div>}
-                    <button
-                      type="button"
-                      onClick={() => onReport(s.id)}
-                      style={{ marginTop: 8, fontSize: 11, color: "#94a097", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-                    >
-                      🚩 Hibás / megszűnt? Jelentem
-                    </button>
-                  </div>
-                </Popup>
-              </Marker>
-            );
-          })}
+          {spots.map((s) => (
+            <Marker key={s.id} position={[s.lat, s.lng]} icon={icons.get(s.category ?? "__none") ?? icons.get("__none")!}>
+              <Popup maxWidth={260} minWidth={200}>
+                <SpotPopupBody s={s} onReport={onReport} />
+              </Popup>
+            </Marker>
+          ))}
         </MarkerClusterGroup>
       </MapContainer>
+
+      <button
+        type="button"
+        onClick={() => setFs((v) => !v)}
+        aria-label={fs ? "Kilépés a teljes képernyőből" : "Teljes képernyő"}
+        className="absolute right-2 top-2 z-[1000] grid h-9 w-9 place-items-center rounded-[10px] border border-line bg-white/95 text-[16px] text-ink shadow-card active:scale-95"
+      >
+        {fs ? "✕" : "⛶"}
+      </button>
     </div>
   );
 }
