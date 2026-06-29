@@ -7,6 +7,7 @@ import type { IconName } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative, countryIllative } from "@/lib/countries";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { CountryFlag } from "@/components/ui/country-flag";
 import type { KintiEvent } from "@/lib/types";
 
@@ -35,7 +36,7 @@ export function HomePrimaryActions() {
       <PrimaryAction href="/szaknevsor" icon="list" label="Szakembert keresek" tone="primary" />
       <PrimaryAction href="/allasok" icon="briefcase" label="Állást keresek" tone="primary" />
       <PrimaryAction href="/vallalkozo" icon="plus" label="Vállalkozásom felviszem" tone="accent" />
-      <PrimaryAction href={country === "NL" ? "/tudasbazis" : "/ugyintezes"} icon="document" label={`Ügyintézés ${countryLocative(country)}`} tone="accent" />
+      <PrimaryAction href={country === "NL" ? "/hivatalos" : "/ugyintezes"} icon="document" label={`Ügyintézés ${countryLocative(country)}`} tone="accent" />
     </div>
   );
 }
@@ -102,21 +103,23 @@ export function HomeChCards() {
         <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-accent" />
       </Link>
 
-      <Link
-        href="/tudasbazis"
-        className="flex items-center gap-3 rounded-card border border-primary/20 bg-primary-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
-      >
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary text-white">
-          <Icon name="globe" size={19} strokeWidth={2.3} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">Tudásbázis — hasznos tudnivalók</span>
-          <span className="block text-[12px] text-ink-muted">
-            Bejelentkezés, {country === "AT" ? "ÖGK" : "Krankenkasse"}, adó, iskola — hivatalos forrásból
+      {isFeatureAvailable("tudasbazis", country) && (
+        <Link
+          href="/tudasbazis"
+          className="flex items-center gap-3 rounded-card border border-primary/20 bg-primary-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
+        >
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary text-white">
+            <Icon name="globe" size={19} strokeWidth={2.3} />
           </span>
-        </span>
-        <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
-      </Link>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">Tudásbázis — hasznos tudnivalók</span>
+            <span className="block text-[12px] text-ink-muted">
+              Bejelentkezés, {country === "AT" ? "ÖGK" : "Krankenkasse"}, adó, iskola — hivatalos forrásból
+            </span>
+          </span>
+          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+        </Link>
+      )}
     </>
   );
 }

@@ -1,14 +1,21 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon, SectionHeader } from "@/components/ui";
 import type { IconName } from "@/components/ui/icons";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 
 /**
  * HomePlatformGrid — „Mit tud a Kinti?" modul-rács a kezdőlapon.
  *
- * Egy helyen kirakja a platform TELJES szélességét → komoly, sokoldalú
- * platformnak látszik (nem egy-funkciós app). Minden modul CH-n és AT-n is
- * működik (a tartalom ország-tudatosan alkalmazkodik), ezért statikus, nincs
- * ország-szűrés. Csak valódi, kész funkciókra mutat — semmi „hamarosan".
+ * Ország-tudatos: a CH/AT/DE-specifikus eszközöket (amikhez nincs még holland
+ * tartalom) NL-en elrejtjük (feature-availability.ts) — ne mutasson svájci/osztrák
+ * tartalmat ott, ahol nincs hozzá holland verzió. A `feature` kulcs a route első
+ * szegmense (a href „/" nélkül). Hidratálás-biztos: mount előtt CH-default (az SSR
+ * is azt rendereli), mount után a választott ország.
  */
 const MODULES: { href: string; icon: IconName; label: string }[] = [
   { href: "/szaknevsor", icon: "list", label: "Szaknévsor" },
@@ -32,6 +39,12 @@ const MODULES: { href: string; icon: IconName; label: string }[] = [
 ];
 
 export function HomePlatformGrid() {
+  const [prefCountry] = usePreferredCountry();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
+  const modules = MODULES.filter((m) => isFeatureAvailable(m.href.slice(1), country));
+
   return (
     <section className="space-y-3">
       <SectionHeader>Mit tud a Kinti?</SectionHeader>
@@ -39,7 +52,7 @@ export function HomePlatformGrid() {
         Egy app — minden a kinti élethez: munka, pénz, nyelv, ügyintézés, közösség.
       </p>
       <div className="grid grid-cols-3 gap-2.5">
-        {MODULES.map((m) => (
+        {modules.map((m) => (
           <Link
             key={m.href}
             href={m.href}

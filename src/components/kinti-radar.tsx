@@ -26,7 +26,7 @@ interface Radar {
 export function KintiRadar({ chfToHuf, chfToEur }: { chfToHuf?: number; chfToEur?: number }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const isEuro = country === "AT" || country === "DE";
+  const isEuro = country !== "CH"; // AT/DE/NL eurozóna → EUR bázis; csak CH a CHF
   const base = isEuro ? "EUR" : "CHF";
   // Eurozónában EUR→HUF (a CHF-keresztből), különben CHF→HUF.
   const baseToHuf = isEuro ? (chfToEur && chfToEur > 0 ? (chfToHuf || 0) / chfToEur : 0) : (chfToHuf || 0);

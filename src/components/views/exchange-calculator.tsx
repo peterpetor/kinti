@@ -65,7 +65,7 @@ export function ExchangeCalculator({
 }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const isEuro = country === "AT" || country === "DE";
+  const isEuro = country !== "CH"; // AT/DE/NL eurozóna → EUR bázis; csak CH a CHF
   const base = isEuro ? "EUR" : "CHF";
   // Eurozónában a bázis EUR; az EUR→HUF a CHF-keresztből: chfToHuf / chfToEur.
   const baseToHuf = isEuro ? (chfToEur > 0 ? chfToHuf / chfToEur : 0) : chfToHuf;
