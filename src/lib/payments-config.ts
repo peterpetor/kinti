@@ -27,26 +27,12 @@ const FALLBACK_PRICES: Record<ProductType, Record<CountryCode, string>> = {
   },
 };
 
-export const PADDLE_PRICES: Record<ProductType, Partial<Record<CountryCode, string>>> = {
-  kinti_pro_monthly: {
-    CH: process.env.NEXT_PUBLIC_PADDLE_PRICE_KINTI_PRO_CH || FALLBACK_PRICES.kinti_pro_monthly.CH,
-    AT: process.env.NEXT_PUBLIC_PADDLE_PRICE_KINTI_PRO_AT || FALLBACK_PRICES.kinti_pro_monthly.AT,
-    DE: process.env.NEXT_PUBLIC_PADDLE_PRICE_KINTI_PRO_DE || FALLBACK_PRICES.kinti_pro_monthly.DE,
-    NL: process.env.NEXT_PUBLIC_PADDLE_PRICE_KINTI_PRO_NL || FALLBACK_PRICES.kinti_pro_monthly.NL,
-  },
-  business_pro_monthly: {
-    CH: process.env.NEXT_PUBLIC_PADDLE_PRICE_BIZ_PRO_CH || FALLBACK_PRICES.business_pro_monthly.CH,
-    AT: process.env.NEXT_PUBLIC_PADDLE_PRICE_BIZ_PRO_AT || FALLBACK_PRICES.business_pro_monthly.AT,
-    DE: process.env.NEXT_PUBLIC_PADDLE_PRICE_BIZ_PRO_DE || FALLBACK_PRICES.business_pro_monthly.DE,
-    NL: process.env.NEXT_PUBLIC_PADDLE_PRICE_BIZ_PRO_NL || FALLBACK_PRICES.business_pro_monthly.NL,
-  },
-  job_featured: {
-    CH: process.env.NEXT_PUBLIC_PADDLE_PRICE_JOB_CH || FALLBACK_PRICES.job_featured.CH,
-    AT: process.env.NEXT_PUBLIC_PADDLE_PRICE_JOB_AT || FALLBACK_PRICES.job_featured.AT,
-    DE: process.env.NEXT_PUBLIC_PADDLE_PRICE_JOB_DE || FALLBACK_PRICES.job_featured.DE,
-    NL: process.env.NEXT_PUBLIC_PADDLE_PRICE_JOB_NL || FALLBACK_PRICES.job_featured.NL,
-  },
-};
+// FORRÁS = a hardcode-olt FALLBACK_PRICES (NEM a process.env). A `NEXT_PUBLIC_*`
+// process.env a Cloudflare edge FUNCTION-ben megbízhatatlan: hol üres, hol egy
+// NEM LÉTEZŐ ID-t adott vissza (`transaction_price_not_found` a checkouton). A
+// Price ID-k publikusak és stabilak → a kódba égetett érték a megbízható forrás.
+// Ár-összeg módosítása a Paddle dashboardon (ugyanaz az ID marad) → nincs kódváltás.
+export const PADDLE_PRICES: Record<ProductType, Partial<Record<CountryCode, string>>> = FALLBACK_PRICES;
 
 /**
  * A megfelelő Paddle Price ID a termékhez és országhoz. Ha nincs beállítva
