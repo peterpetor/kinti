@@ -30,32 +30,41 @@ export async function POST(req: Request) {
 
     const radarType = typeof body.radarType === "string" ? body.radarType : "";
     const parameters = typeof body.parameters === "object" && body.parameters !== null ? JSON.stringify(body.parameters) : "{}";
+    const rawEmail = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    const email = rawEmail.includes("@") && rawEmail.length <= 200 ? rawEmail : null;
 
     if (!['exchange_rate', 'job_alert'].includes(radarType)) {
       return NextResponse.json({ error: "Érvénytelen radar típus." }, { status: 400 });
     }
 
-    if (!/^https:\/\//.test(endpoint) || !p256dh || !auth) {
-      return NextResponse.json({ error: "Hiányos feliratkozás." }, { status: 400 });
+    // Két értesítő-csatorna: push (teljes feliratkozás) ÉS/VAGY email. Legalább
+    // az egyik kell. Aki nem ad push-engedélyt, csak email-cím megadásával is kérhet
+    // riasztást (ekkor a radar push_endpoint-ja üres, és csak emailt kap).
+    const hasPush = /^https:\/\//.test(endpoint) && !!p256dh && !!auth;
+    if (!hasPush && !email) {
+      return NextResponse.json({ error: "Adj meg push-feliratkozást vagy email-címet." }, { status: 400 });
     }
 
-    await savePushSubscription({
-      id: crypto.randomUUID(),
-      endpoint,
-      p256dh,
-      auth,
-      cantonCode: null, // Radars handle canton specifically inside parameters JSON
-      // preserveCanton: a meglévő kanton-célzott push-feliratkozást nem töröljük
-      // (a radar null kantont küld, de nem akarjuk felülírni a korábbi választást).
-      preserveCanton: true,
-    });
+    if (hasPush) {
+      await savePushSubscription({
+        id: crypto.randomUUID(),
+        endpoint,
+        p256dh,
+        auth,
+        cantonCode: null, // Radars handle canton specifically inside parameters JSON
+        // preserveCanton: a meglévő kanton-célzott push-feliratkozást nem töröljük
+        // (a radar null kantont küld, de nem akarjuk felülírni a korábbi választást).
+        preserveCanton: true,
+      });
+    }
 
     const radarId = crypto.randomUUID();
     await saveRadar({
       id: radarId,
-      pushEndpoint: endpoint,
+      pushEndpoint: hasPush ? endpoint : "",
       radarType,
       parameters,
+      email,
     });
 
     await logAiRateLimit("radar-subscribe", ipHash);

@@ -34,6 +34,9 @@ export function JobAlertRadar() {
 
   const [cantonCode, setCantonCode] = useState<string>("all");
   const [category, setCategory] = useState<string>("");
+  // Email-csatorna: akinek nincs push-engedélye, email-cím megadásával is kérhet
+  // riasztást (email-only radar). Push + email együtt is mehet.
+  const [email, setEmail] = useState<string>("");
 
   // Ország-tudatos régiók (6-ország). A radar a választott ország régióira szól.
   const [prefCountry] = usePreferredCountry();
@@ -118,23 +121,31 @@ export function JobAlertRadar() {
     }
 
     const parameters = { cantonCode, category };
+    const trimmedEmail = email.trim();
 
     setState("busy");
     try {
-      const sub = subscription ?? (await ensureSubscription());
+      // Push best-effort: ha az eszköz támogatja és a user engedi. Ha nincs push,
+      // de van email → email-only radar (a push nem kötelező).
+      let sub: PushSubscriptionJSON | null = subscription;
       if (!sub) {
-        // ensureSubscription beállította a megfelelő state-et (denied/needs-permission).
-        // De ha valamiért még "busy" maradt, NE ragadjon ott a gomb örökre.
+        try { sub = await ensureSubscription(); } catch { sub = null; }
+      }
+      if (!sub && !trimmedEmail) {
+        // Se push, se email — kérjük legalább az egyiket. (ensureSubscription már
+        // beállította a denied/needs-permission állapotot, ha az volt a gond.)
+        setError("Engedélyezd a push-értesítést, vagy adj meg egy email-címet.");
         setState((s) => (s === "busy" ? "ready" : s));
         return;
       }
-      if (!subscription) setSubscription(sub);
+      if (sub && !subscription) setSubscription(sub);
 
       const res = await fetch("/api/radars", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          subscription: sub,
+          subscription: sub ?? undefined,
+          email: trimmedEmail || undefined,
           radarType: "job_alert",
           parameters,
         }),
@@ -146,7 +157,7 @@ export function JobAlertRadar() {
         setState("ready");
         return;
       }
-      await refreshRadars(sub);
+      if (sub) await refreshRadars(sub);
       setCategory("");
       setState("ready");
     } catch {
@@ -170,24 +181,18 @@ export function JobAlertRadar() {
     }
   }
 
-  if (state === "checking" || state === "unsupported") return null;
+  if (state === "checking") return null;
 
-  if (state === "ios-install") {
-    return (
-      <InfoCard>
-        Az Állás-riasztásokhoz iPhone-on tedd ki az appot a kezdőképernyőre
-        (Megosztás → „Főképernyőhöz adás").
-      </InfoCard>
-    );
-  }
-  if (state === "denied") {
-    return (
-      <InfoCard>
-        Az értesítések le vannak tiltva. Engedélyezd a böngésződ beállításaiban
-        a kinti.app-nak, hogy állás-riasztót tudj beállítani.
-      </InfoCard>
-    );
-  }
+  // Ha a push nem elérhető (denied / unsupported / iOS-nem-PWA), a form AKKOR is
+  // működik email-only módban — egy rövid jelzéssel kínáljuk az email-csatornát.
+  const pushNote =
+    state === "denied"
+      ? "A push-értesítés le van tiltva ezen az eszközön — add meg az emailed lent, és emailben szólunk az új állásról."
+      : state === "ios-install"
+        ? "iPhone-on a push-hoz tedd ki az appot a kezdőképernyőre — vagy add meg az emailed lent."
+        : state === "unsupported"
+          ? "Ezen az eszközön nincs push-értesítés — add meg az emailed, és emailben szólunk."
+          : null;
 
   function renderRadarSummary(r: Radar) {
     try {
@@ -216,13 +221,18 @@ export function JobAlertRadar() {
             Állás-riasztás (Job Alert)
           </h3>
           <p className="text-[12.5px] leading-snug text-ink-muted">
-            Kapj azonnali Push értesítést a legújabb munkákról!
+            Kapj értesítést a legújabb munkákról — push vagy email.
           </p>
         </div>
       </div>
 
       {/* Új riasztó form */}
       <div className="rounded-2xl border border-line bg-surface/80 p-4 space-y-3">
+        {pushNote && (
+          <div className="rounded-[10px] border border-pro/30 bg-pro/5 px-3 py-2 text-[11.5px] font-semibold leading-snug text-ink-muted">
+            {pushNote}
+          </div>
+        )}
         <div className="space-y-3">
           <div className="flex flex-col gap-1.5">
             <label className="text-[12px] font-bold text-ink">Régió</label>
@@ -255,6 +265,20 @@ export function JobAlertRadar() {
                 </option>
               ))}
             </select>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[12px] font-bold text-ink">
+              Email <span className="font-medium text-ink-muted">(opcionális — push nélkül is működik)</span>
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={state === "busy"}
+              placeholder="te@example.com"
+              autoComplete="email"
+              className="h-11 w-full rounded-[10px] border border-line bg-surface px-3 text-[14px] font-medium text-ink outline-none focus:border-primary/50"
+            />
           </div>
         </div>
 
@@ -307,10 +331,3 @@ export function JobAlertRadar() {
   );
 }
 
-function InfoCard({ children }: { children: React.ReactNode }) {
-  return (
-    <section className="rounded-card border border-line bg-surface-alt/60 p-4 text-[13px] font-medium leading-relaxed text-ink-muted">
-      {children}
-    </section>
-  );
-}

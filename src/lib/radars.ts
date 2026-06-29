@@ -102,14 +102,43 @@ export async function triggerJobAlertRadars(job: {
 
     await Promise.allSettled(
       targets.map(async (t) => {
-        try {
-          await sendPush(privKey, { endpoint: t.pushEndpoint });
-        } catch (e) {
-          // silent fail per endpoint
+        // Push — csak ha valódi endpoint van (az email-only radaré üres).
+        if (t.pushEndpoint) {
+          try { await sendPush(privKey, { endpoint: t.pushEndpoint }); } catch { /* per-endpoint */ }
+        }
+        // Email — ha a radarhoz email-cím tartozik (push nélkül is működik).
+        if (t.email) {
+          try { await sendJobAlertEmail(t.email, t.id, job); } catch { /* per-email */ }
         }
       })
     );
   } catch (err) {
     safeLogError("triggerJobAlertRadars", err);
   }
+}
+
+/** Egy találati email egy állás-radarhoz. Leiratkozó-linkkel (radar törlése id alapján). */
+async function sendJobAlertEmail(
+  to: string,
+  radarId: string,
+  job: { id: string; title: string; location: string },
+) {
+  const { sendEmail } = await import("./email");
+  const esc = (s: string) => s.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c] ?? c);
+  const title = esc(job.title);
+  const loc = esc(job.location || "");
+  const jobUrl = `https://kinti.app/allasok/${job.id}`;
+  const unsubUrl = `https://kinti.app/api/radars/unsubscribe?id=${encodeURIComponent(radarId)}`;
+  await sendEmail({
+    to,
+    subject: `Új állás a radarodon: ${job.title}`,
+    html: `<div style="font-family:system-ui,-apple-system,sans-serif;max-width:480px;margin:0 auto;padding:16px">
+      <p style="font-size:12px;color:#6b7280;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em">Kinti · Állás-radar</p>
+      <h2 style="font-size:19px;color:#1d4434;margin:0 0 4px">${title}</h2>
+      ${loc ? `<p style="font-size:14px;color:#374151;margin:0 0 16px">📍 ${loc}</p>` : ""}
+      <a href="${jobUrl}" style="display:inline-block;background:#1d4434;color:#fff;text-decoration:none;font-weight:700;padding:11px 20px;border-radius:999px;font-size:14px">Megnézem az állást</a>
+      <p style="font-size:11px;color:#9ca3af;margin:28px 0 0;line-height:1.5">Ezt azért kaptad, mert állás-radart állítottál be a Kintin. <a href="${unsubUrl}" style="color:#9ca3af">Leiratkozás erről a radarról</a>.</p>
+    </div>`,
+    text: `Új állás a radarodon: ${job.title}${loc ? ` (${job.location})` : ""}\n\n${jobUrl}\n\nLeiratkozás erről a radarról: ${unsubUrl}`,
+  });
 }

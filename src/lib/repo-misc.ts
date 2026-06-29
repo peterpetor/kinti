@@ -556,8 +556,8 @@ export async function deleteExchangeRateAlert(id: string, pushEndpoint: string):
 
 export interface KintiRadar { id: string; pushEndpoint: string; radarType: 'exchange_rate' | 'job_alert'; parameters: string; active: number; createdAt: string; }
 
-export async function saveRadar(data: { id: string; pushEndpoint: string; radarType: string; parameters: string; }) {
-  await getDB().prepare('INSERT INTO kinti_radars (id, push_endpoint, radar_type, parameters) VALUES (?, ?, ?, ?)').bind(data.id, data.pushEndpoint, data.radarType, data.parameters).run();
+export async function saveRadar(data: { id: string; pushEndpoint: string; radarType: string; parameters: string; email?: string | null }) {
+  await getDB().prepare('INSERT INTO kinti_radars (id, push_endpoint, radar_type, parameters, email) VALUES (?, ?, ?, ?, ?)').bind(data.id, data.pushEndpoint, data.radarType, data.parameters, data.email ?? null).run();
 }
 
 export async function listRadarsByEndpoint(endpoint: string): Promise<KintiRadar[]> {
@@ -572,7 +572,14 @@ export async function deleteRadar(id: string, endpoint: string): Promise<boolean
   return (res.meta.changes ?? 0) > 0;
 }
 
-export async function getActiveRadarsByType(radarType: string): Promise<{id: string, pushEndpoint: string, parameters: string}[]> {
-  const { results } = await getDB().prepare('SELECT id, push_endpoint, parameters FROM kinti_radars WHERE radar_type = ? AND active = 1').bind(radarType).all<{ id: string; push_endpoint: string; parameters: string }>();
-  return (results ?? []).map(r => ({ id: String(r.id), pushEndpoint: String(r.push_endpoint), parameters: String(r.parameters) }));
+/** Radar törlése CSAK id alapján — az email-leiratkozó linkhez (a radar id egy
+ *  kitalálhatatlan UUID, így alacsony tét mellett elég azonosító). */
+export async function deleteRadarById(id: string): Promise<boolean> {
+  const res = await getDB().prepare('DELETE FROM kinti_radars WHERE id = ?').bind(id).run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function getActiveRadarsByType(radarType: string): Promise<{id: string, pushEndpoint: string, parameters: string, email: string | null}[]> {
+  const { results } = await getDB().prepare('SELECT id, push_endpoint, parameters, email FROM kinti_radars WHERE radar_type = ? AND active = 1').bind(radarType).all<{ id: string; push_endpoint: string; parameters: string; email: string | null }>();
+  return (results ?? []).map(r => ({ id: String(r.id), pushEndpoint: String(r.push_endpoint), parameters: String(r.parameters), email: r.email ? String(r.email) : null }));
 }
