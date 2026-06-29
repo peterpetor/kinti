@@ -1,0 +1,25 @@
+{
+  "_comment": "Valódi hollandiai magyar közösségi szervezetek (egyesületek, hétvégi iskolák/óvodák, egyházközségek, klubok) — a kinti.app hollandiai (NL) induló tartalmának forrása. Források: Hollandiai Magyar Szövetség (hongaarsefederatie.nl), hollandiaimagyarok.nl, ungerska.se Hollandia-lista, és az egyes szervezetek saját oldalai, 2026-06. country_code='NL', a region a lib/regions.ts NL-kódjaira leképezve (NH/ZH/UT/NB/GE/OV/LI/FR/GR/DR/FL/ZE). NEM kitalált adat — valós, nyilvános szervezetek; ahol a weboldal nem volt 200-ra ellenőrizhető, ott null. Csak biztos várossal rendelkező szervezetek kerültek be (a régió a városból).",
+  "country": "NL",
+  "source": "https://www.hongaarsefederatie.nl , https://hollandiaimagyarok.nl/a-magyar-nyelv-apolasa-hollandiaban/ , http://ungerska.se (Hollandia: magyar egyesületek)",
+  "organizations": [
+    { "name": "Amszterdami Hungária Klub 1929", "type": "kulturális egyesület", "city": "Amsterdam", "region": "NH", "website": "https://hungariaclub1929.nl" },
+    { "name": "Amszterdami Magyar Óvoda és Iskola", "type": "hétvégi magyar iskola", "city": "Amsterdam", "region": "NH", "website": null },
+    { "name": "Baba-Mama Klub Amszterdam", "type": "baba-mama klub", "city": "Amsterdam", "region": "NH", "website": null },
+    { "name": "Amstelveeni Magyar Óvoda és Iskola", "type": "hétvégi magyar iskola", "city": "Amstelveen", "region": "NH", "website": "https://www.amstelveeni-magyariskola.nl" },
+    { "name": "Kölcsey Ferenc Magyar Egyesület", "type": "kulturális egyesület", "city": "Alkmaar", "region": "NH", "website": null },
+    { "name": "Hollandiai Magyar Szövetség", "type": "országos ernyőszervezet", "city": "Den Haag", "region": "ZH", "website": "https://www.hongaarsefederatie.nl" },
+    { "name": "Hágai Magyar Óvoda és Iskola", "type": "hétvégi magyar iskola", "city": "Den Haag", "region": "ZH", "website": null },
+    { "name": "Hágai Magyar Református Gyülekezet", "type": "református gyülekezet", "city": "Den Haag", "region": "ZH", "website": null },
+    { "name": "Hollandiai Magyar Római Katolikus Egyházközség", "type": "katolikus egyházközség", "city": "Den Haag", "region": "ZH", "website": null },
+    { "name": "Utrechti Magyar Klub", "type": "kulturális egyesület", "city": "Utrecht", "region": "UT", "website": null },
+    { "name": "Utrechti Magyar Iskola", "type": "hétvégi magyar iskola", "city": "Utrecht", "region": "UT", "website": null },
+    { "name": "Maarsseni Kincskereső Iskola", "type": "hétvégi magyar iskola", "city": "Maarssen", "region": "UT", "website": "https://kincskereso-oskola.nl" },
+    { "name": "Vianeni Magyar Otthon", "type": "közösségi ház", "city": "Vianen", "region": "UT", "website": null },
+    { "name": "Eindhoveni Magyar Óvoda-Suli", "type": "hétvégi magyar iskola", "city": "Eindhoven", "region": "NB", "website": "https://eindhoveni-ovisuli.nl" },
+    { "name": "Hengelói Magyar Iskola", "type": "hétvégi magyar iskola", "city": "Hengelo", "region": "OV", "website": null },
+    { "name": "Zwollei Magyar Református Egyházközség", "type": "református gyülekezet", "city": "Zwolle", "region": "OV", "website": "https://zwolleireformatus.nl" },
+    { "name": "Meppeli Magyar Iskola", "type": "hétvégi magyar iskola", "city": "Meppel", "region": "DR", "website": null },
+    { "name": "Limburgi Rákóczi Ferenc Magyar Klub", "type": "kulturális egyesület", "city": "Maastricht", "region": "LI", "website": null }
+  ]
+}

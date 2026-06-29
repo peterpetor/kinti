@@ -116,7 +116,9 @@ export function ExploreView({
     if (canton !== "all") {
       if (country === "DE") { const p = dePoint(canton); return [p.lat, p.lng]; }
       if (country === "AT") { const p = atPoint(canton); return [p.lat, p.lng]; }
-      const p = cantonPoint(canton); if (p) return [p.lat, p.lng];
+      // cantonPoint CH-specifikus; NL provincia-kódok (ZH/FR/GR/GE) ütköznek a svájci
+      // kantonokkal → csak CH-ra hívjuk, különben a nemzeti középre esünk vissza.
+      if (country === "CH") { const p = cantonPoint(canton); if (p) return [p.lat, p.lng]; }
     }
     return COUNTRY_MAP_CENTER[country] ?? COUNTRY_MAP_CENTER.CH;
   }, [country, canton]);
