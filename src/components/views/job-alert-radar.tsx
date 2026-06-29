@@ -125,10 +125,12 @@ export function JobAlertRadar() {
 
     setState("busy");
     try {
-      // Push best-effort: ha az eszköz támogatja és a user engedi. Ha nincs push,
-      // de van email → email-only radar (a push nem kötelező).
+      // Push best-effort. Push-engedélyt (promptot) CSAK akkor kérünk, ha NINCS
+      // email megadva — különben tiszteljük az email-only választást, és nem
+      // zaklatjuk a usert push-prompttal. Meglévő (már engedélyezett) feliratkozást
+      // viszont email mellett is használunk (push + email).
       let sub: PushSubscriptionJSON | null = subscription;
-      if (!sub) {
+      if (!sub && !trimmedEmail) {
         try { sub = await ensureSubscription(); } catch { sub = null; }
       }
       if (!sub && !trimmedEmail) {

@@ -13,7 +13,9 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const job = await getJobById(params.id);
   
-  if (!job || job.moderationStatus !== 1 || job.status !== "active") {
+  // A „Kiemelt Állás" status-a 'featured' — az is NYITOTT (lehet rá jelentkezni),
+  // különben a fizetett kiemelt hirdetésekre nem mehetne jelentkezés.
+  if (!job || job.moderationStatus !== 1 || (job.status !== "active" && job.status !== "featured")) {
     return NextResponse.json({ error: "Ez az álláshirdetés nem aktív." }, { status: 404 });
   }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import {
@@ -59,11 +59,17 @@ export function LeaderboardView() {
     }
   }, []);
 
+  const syncedRef = useRef(false);
   useEffect(() => {
     setJoined(isOnLeaderboard());
     let alive = true;
     (async () => {
-      if (isOnLeaderboard()) await syncLeaderboard(); // friss pont a szerverre
+      // Pont-szinkron CSAK egyszer (mountkor) — ne minden kategória-váltáskor,
+      // mert a /api/leaderboard POST rate-limitelt (a GET-es frissítés maradhat).
+      if (!syncedRef.current && isOnLeaderboard()) {
+        syncedRef.current = true;
+        await syncLeaderboard();
+      }
       if (alive) await refresh(category);
     })();
     return () => { alive = false; };
