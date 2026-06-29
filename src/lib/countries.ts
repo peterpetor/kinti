@@ -1,10 +1,11 @@
 /**
  * Kinti országok — a multi-ország rendszer egyetlen forrása.
  *
- * Svájc (CH) és Ausztria (AT) él (van tartalmuk); a többi ország `enabled:false`
- * („Hamarosan"), de már kiválasztható és localStorage-ban eltárolódik, hogy a
- * rendszer kész legyen a tartalom-bővítésre. A választást a `country-pref.ts`
- * kezeli (kliensoldali, GDPR-tiszta — nem kerül a szerverre).
+ * CH/AT/DE/NL mind él (van tartalmuk: szaknévsor, hivatalos linkek, közösségi
+ * funkciók). Az `enabled:false` jelölné a „Hamarosan" országokat (jelenleg nincs
+ * ilyen). A választást a `country-pref.ts` kezeli (kliensoldali, GDPR-tiszta —
+ * nem kerül a szerverre); az ország-specifikus funkció-elérhetőséget a
+ * `feature-availability.ts` finomítja (pl. CH-only eszközök rejtése).
  */
 
 export interface Country {
@@ -22,7 +23,7 @@ export const COUNTRIES: Country[] = [
   { code: "CH", name: "Svájc", flag: "🇨🇭", enabled: true },
   { code: "AT", name: "Ausztria", flag: "🇦🇹", enabled: true },
   { code: "DE", name: "Németország", flag: "🇩🇪", enabled: true },
-  { code: "NL", name: "Hollandia", flag: "🇳🇱", enabled: false },
+  { code: "NL", name: "Hollandia", flag: "🇳🇱", enabled: true },
 ];
 
 /** Alapértelmezett ország, ha a felhasználó még nem választott (vagy érvénytelen). */
