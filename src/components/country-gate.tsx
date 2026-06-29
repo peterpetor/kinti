@@ -66,11 +66,6 @@ export function CountryGate() {
             </button>
           ))}
         </div>
-
-        <p className="mt-6 text-center text-[11.5px] leading-relaxed text-white/70">
-          Svájc, Ausztria és Németország már él — Hollandia hamarosan.
-          A választásod elmentjük, és onnan folytatod, amint kész.
-        </p>
       </div>
     </div>
   );
