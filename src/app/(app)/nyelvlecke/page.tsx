@@ -11,6 +11,7 @@ import { LESSONS_AT } from "./data-at";
 import { LESSONS_DE } from "./data-de";
 import { LESSONS_NL } from "./data-nl";
 import { usePreferredCountry } from "@/lib/country-pref";
+import { useIsPro } from "@/lib/use-is-pro";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { cn } from "@/lib/cn";
 import { CountryGuard } from "@/components/country-guard";
@@ -21,6 +22,7 @@ export default function LanguagePathPage() {
   const [totalXp, setTotalXp] = useState(0);
   const [streak, setStreak] = useState(0);
   const [prefCountry] = usePreferredCountry();
+  const pro = useIsPro();
 
   useEffect(() => {
     const saved = localStorage.getItem("kinti_language_progress");
@@ -125,7 +127,10 @@ export default function LanguagePathPage() {
                   // Next lesson is unlocked if previous is completed (or if it's the first lesson)
                   const prevLessonIndex = lessons.findIndex(l => l.id === lesson.id) - 1;
                   const isUnlocked = prevLessonIndex < 0 || completedLessons.includes(lessons[prevLessonIndex].id);
-                  
+                  // PRO-zár: az 1. fejezet ingyen, a 2.+ fejezetek PRO-előfizetéshez kötöttek.
+                  // A `pro === false` (feloldva, NEM tölt) esetén a 2.+ leckék PRO-lakatot kapnak.
+                  const proLocked = lesson.chapter > 1 && pro === false;
+
                   // Zigzag offsets
                   const offsetClasses = [
                     "translate-x-0",
@@ -137,13 +142,24 @@ export default function LanguagePathPage() {
 
                   return (
                     <div key={lesson.id} className={cn("relative flex flex-col items-center", xOffset)}>
-                      {!isUnlocked && (
+                      {proLocked && (
+                        <Link
+                          href="/pro"
+                          aria-label="PRO lecke — válts Kinti PRO-ra"
+                          className="relative grid h-[70px] w-[70px] place-items-center rounded-full bg-pro/15 border-4 border-surface shadow-pop text-pro text-2xl hover:brightness-105 active:translate-y-1 transition-all"
+                        >
+                          🔒
+                          <span className="absolute -top-1.5 -right-1.5 rounded-full bg-pro px-1.5 py-0.5 text-[9px] font-black text-white shadow-sm">PRO</span>
+                        </Link>
+                      )}
+
+                      {!proLocked && !isUnlocked && (
                         <div className="grid h-[70px] w-[70px] place-items-center rounded-full bg-surface-alt border-4 border-surface shadow-pop text-ink-muted text-2xl">
                           🔒
                         </div>
                       )}
 
-                      {isUnlocked && isCompleted && (
+                      {!proLocked && isUnlocked && isCompleted && (
                         <Link 
                           href={`/nyelvlecke/${lesson.id}`}
                           className="grid h-[70px] w-[70px] place-items-center rounded-full bg-success border-4 border-surface shadow-[0_6px_0_0_rgb(20,80,45)] text-white hover:brightness-110 active:translate-y-1 active:shadow-[0_2px_0_0_rgb(20,80,45)] transition-all"
@@ -152,7 +168,7 @@ export default function LanguagePathPage() {
                         </Link>
                       )}
 
-                      {isUnlocked && !isCompleted && (
+                      {!proLocked && isUnlocked && !isCompleted && (
                         <div className="relative">
                           {/* Crown/Pulse for current active lesson */}
                           <div className="absolute -top-3 -right-3 text-2xl animate-bounce">👑</div>
