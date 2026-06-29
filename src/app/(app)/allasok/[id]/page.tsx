@@ -11,6 +11,7 @@ import { matchCantonByName, cantonFromAddress, cantonName as cantonNameByCode } 
 import { countryLocative } from "@/lib/countries";
 import { jobPostingJsonLd, safeJsonLdStringify } from "@/lib/json-ld";
 import { Icon } from "@/components/ui";
+import { QuickApplyButton } from "@/components/views/quick-apply-button";
 import { Metadata } from "next";
 
 export const runtime = "edge";
@@ -59,6 +60,9 @@ export default async function JobDetailPage({ params }: { params: { id: string }
     ? { category: workerProfile.category, cantonCode: workerProfile.cantonCode, expectedSalaryMin: workerProfile.expectedSalaryMin }
     : null;
   const match = pro && hasMatchableProfile(matchProfile) ? jobMatchScore(matchProfile, job) : null;
+  // Igazi 1-gombos jelentkezés: csak ha a bejelentkezett jelöltnek teljes a profilja
+  // (név + email + feltöltött CV) → űrlap nélkül beadható.
+  const canQuickApply = !!(workerProfile?.fullName && workerProfile?.email && workerProfile?.cvKey);
 
   // Nettó-becslés: a bér középértékére, a profil kantonjában (vagy az állás kantonjában).
   // CSAK svájci állásnál — a computeSalary svájci adó-/TB-logika; AT/DE-re hamis CHF-számot
@@ -278,12 +282,21 @@ export default async function JobDetailPage({ params }: { params: { id: string }
       {/* Rögzített CTA sáv alul */}
       <div className="fixed bottom-0 left-0 right-0 z-50 flex h-[80px] items-center justify-center border-t border-line/60 bg-surface/80 px-5 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
         <div className="w-full max-w-md">
-          <Link
-            href={`/allasok/${job.id}/jelentkezes`}
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-primary text-[16px] font-extrabold text-white shadow-card-hover transition-all active:scale-[0.98]"
-          >
-            Jelentkezem az állásra
-          </Link>
+          {canQuickApply ? (
+            <QuickApplyButton
+              jobId={job.id}
+              fullName={workerProfile!.fullName}
+              email={workerProfile!.email}
+              phone={workerProfile!.phone ?? null}
+            />
+          ) : (
+            <Link
+              href={`/allasok/${job.id}/jelentkezes`}
+              className="flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-primary text-[16px] font-extrabold text-white shadow-card-hover transition-all active:scale-[0.98]"
+            >
+              Jelentkezem az állásra
+            </Link>
+          )}
         </div>
       </div>
     </div>
