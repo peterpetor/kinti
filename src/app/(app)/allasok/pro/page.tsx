@@ -3,13 +3,14 @@ import { auth } from "@clerk/nextjs/server";
 import { Icon } from "@/components/ui/icons";
 import { KintiLogo } from "@/components/ui/kinti-logo";
 import { isPro } from "@/lib/subscriptions";
+import { ProFeatures } from "./ProFeatures";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Kinti Premium | Szakmai Nyelvlecke PRO",
-  description: "Oldd fel a több mint 500+ svájci szakmai kifejezést és párbeszédet!",
+  description: "Oldd fel az összes prémium modult — nyelvkurzus, AI munkainterjú-szimulátor, CV-audit és minden jövőbeni PRO funkció egy havidíjért.",
 };
 
 export default async function KintiProPage() {
@@ -35,36 +36,7 @@ export default async function KintiProPage() {
         <div className="bg-gradient-to-r from-star/10 to-transparent p-6 border-b border-line">
           <h2 className="text-[18px] font-extrabold text-ink">Mit tartalmaz a Kinti PRO?</h2>
         </div>
-        <ul className="p-6 space-y-4">
-          <li className="flex gap-3">
-            <span className="text-star shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
-            <div>
-              <strong className="text-[14px] text-ink block">Teljes Szakmai Gyors-Szótár</strong>
-              <span className="text-[13px] text-ink-muted">500+ svájci szakmai kifejezés és munkahelyi párbeszéd hanganyaggal.</span>
-            </div>
-          </li>
-          <li className="flex gap-3">
-            <span className="text-star shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
-            <div>
-              <strong className="text-[14px] text-ink block">AI Munkainterjú Szimulátor + CV-audit</strong>
-              <span className="text-[13px] text-ink-muted">Gyakorolj svájci cégek interjúira, és elemeztesd az önéletrajzod mesterséges intelligenciával.</span>
-            </div>
-          </li>
-          <li className="flex gap-3">
-            <span className="text-star shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
-            <div>
-              <strong className="text-[14px] text-ink block">Svájci Német (Mundart) mesterkurzus + Einbürgerung szimulátor</strong>
-              <span className="text-[13px] text-ink-muted">A teljes nyelvi és állampolgársági felkészülés egy helyen.</span>
-            </div>
-          </li>
-          <li className="flex gap-3">
-            <span className="text-star shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
-            <div>
-              <strong className="text-[14px] text-ink block">Reklámmentes élmény + minden jövőbeni PRO modul</strong>
-              <span className="text-[13px] text-ink-muted">Minden új funkció és frissítés az előfizetés része marad.</span>
-            </div>
-          </li>
-        </ul>
+        <ProFeatures />
 
         <div className="bg-surface-alt p-6 border-t border-line text-center">
           <p className="text-[13px] font-bold text-ink-muted uppercase tracking-wider mb-2">Kinti PRO előfizetés</p>

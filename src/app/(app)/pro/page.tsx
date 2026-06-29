@@ -21,6 +21,8 @@ export default function ProPage() {
   const langCourse =
     country === "CH" ? "Teljes Svájci Német (Mundart) kurzus"
     : country === "AT" ? "Teljes Osztrák Német kurzus"
+    : country === "DE" ? "Teljes Német (Hochdeutsch) kurzus"
+    : country === "NL" ? "Teljes Holland (Nederlands) kurzus"
     : null;
   const citizenshipSim =
     country === "CH" ? "Einbürgerung (Állampolgárság) Szimulátor"

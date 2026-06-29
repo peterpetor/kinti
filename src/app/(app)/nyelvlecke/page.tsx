@@ -9,6 +9,7 @@ import { Icon } from "@/components/ui/icons";
 import { LESSONS } from "./data";
 import { LESSONS_AT } from "./data-at";
 import { LESSONS_DE } from "./data-de";
+import { LESSONS_NL } from "./data-nl";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { cn } from "@/lib/cn";
@@ -53,7 +54,7 @@ export default function LanguagePathPage() {
   }
 
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const lessons = country === "AT" ? LESSONS_AT : country === "DE" ? LESSONS_DE : LESSONS;
+  const lessons = country === "AT" ? LESSONS_AT : country === "DE" ? LESSONS_DE : country === "NL" ? LESSONS_NL : LESSONS;
 
   // Group lessons by chapter dynamically
   const chapters = Array.from(new Set(lessons.map((l) => l.chapter))).sort((a, b) => a - b);
@@ -65,7 +66,7 @@ export default function LanguagePathPage() {
       <div className="sticky top-0 z-20 bg-background/80 px-4 pb-4 pt-6 backdrop-blur-xl border-b border-border-subtle">
         <ScreenHeader 
           eyebrow="Nyelvlecke" 
-          title={country === "AT" ? "Österreichisch" : country === "DE" ? "Hochdeutsch" : "Schwyzerdütsch"}
+          title={country === "AT" ? "Österreichisch" : country === "DE" ? "Hochdeutsch" : country === "NL" ? "Nederlands" : "Schwyzerdütsch"}
           back={
             <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-full bg-ink/5 text-ink hover:bg-ink/10 transition">
               <Icon name="arrowLeft" size={20} strokeWidth={2.5} />

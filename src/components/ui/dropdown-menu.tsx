@@ -333,7 +333,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🦉
                   </span>
-                  {isCH ? "Svájci Német (Mundart)" : country === "DE" ? "Német (Hochdeutsch)" : "Osztrák Német"}
+                  {isCH ? "Svájci Német (Mundart)" : country === "DE" ? "Német (Hochdeutsch)" : country === "NL" ? "Holland (Nederlands)" : "Osztrák Német"}
                 </Link>
                 )}
                 {has("kviz") && (
