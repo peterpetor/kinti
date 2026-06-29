@@ -34,7 +34,6 @@ export default function ProPage() {
     ...(country === "CH" ? ["Szakmai szótár — 500+ svájci kifejezés"] : []),
     ...(langCourse ? [langCourse] : []),
     ...(citizenshipSim ? [citizenshipSim] : []),
-    "Minden prémium modul és kalkulátor",
   ];
 
   const handleCheckout = (product: "kinti_pro_monthly" | "business_pro_monthly" | "job_featured") => {

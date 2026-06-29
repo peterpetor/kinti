@@ -334,6 +334,7 @@ export function DropdownMenu() {
                     🦉
                   </span>
                   {isCH ? "Svájci Német (Mundart)" : country === "DE" ? "Német (Hochdeutsch)" : country === "NL" ? "Holland (Nederlands)" : "Osztrák Német"}
+                  <ProBadge />
                 </Link>
                 )}
                 {has("kviz") && (
