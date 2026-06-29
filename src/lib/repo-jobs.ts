@@ -88,6 +88,22 @@ export async function getJobById(id: string): Promise<Job | null> {
   return row ? toJob(row) : null;
 }
 
+/**
+ * A LEJÁRT kiemelt állások visszaállítása 'active'-ra (a 30 napos „Kiemelt Állás"
+ * vége). Csak a NEM-null `featured_until`-lal rendelkező, lejárt sorokat érinti
+ * (a régi, lejárat nélküli kiemeléseket nem). Napi cronból hívva. Visszaadja a
+ * leváltott sorok számát.
+ */
+export async function unfeatureExpiredJobs(): Promise<number> {
+  const res = await getDB()
+    .prepare(
+      "UPDATE jobs SET status = 'active', featured_until = NULL, updated_at = datetime('now') " +
+      "WHERE status = 'featured' AND featured_until IS NOT NULL AND featured_until < datetime('now')",
+    )
+    .run();
+  return res.meta?.changes ?? 0;
+}
+
 export async function createJob(job: Omit<Job, "createdAt" | "updatedAt">): Promise<void> {
   await getDB().prepare(
     `INSERT INTO jobs (id, employer_id, title, description, location, canton_code, country_code, category, legal_attested, employment_type, salary_min, salary_max, currency, requirements, status, moderation_status, expires_at)

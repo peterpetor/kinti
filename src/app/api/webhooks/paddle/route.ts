@@ -96,8 +96,11 @@ async function activate(type: EntitlementType, customData: PaddleCustomData, dat
   const now = new Date().toISOString();
 
   if (type === "job_featured" && customData.jobId) {
-    await db.prepare("UPDATE jobs SET status = 'featured', updated_at = ? WHERE id = ?")
-      .bind(now, customData.jobId).run();
+    // A „Kiemelt Állás" 30 napig él; a featured_until lejárta után a napi cron
+    // (unfeatureExpiredJobs) állítja vissza 'active'-ra.
+    const featuredUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    await db.prepare("UPDATE jobs SET status = 'featured', featured_until = ?, updated_at = ? WHERE id = ?")
+      .bind(featuredUntil, now, customData.jobId).run();
   } else if (type === "business_pro" && customData.businessId) {
     await db.prepare("UPDATE businesses SET featured = 1, updated_at = ? WHERE id = ?")
       .bind(now, customData.businessId).run();
