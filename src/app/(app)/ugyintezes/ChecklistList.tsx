@@ -17,6 +17,7 @@ export function ChecklistList() {
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
+  const isNL = country === "NL";
   const checklists = getChecklists(country);
 
   return (
@@ -63,6 +64,8 @@ export function ChecklistList() {
           ? "Az osztrák ügyintézés részletei tartományonként (Bundesland) kissé eltérhetnek és időben változnak — a csekklisták általános minták. Mindig a lakhelyed szerinti hatóságnál (Magistrat / Gemeindeamt / Finanzamt) tájékozódj."
           : isDE
           ? "A német ügyintézés részletei tartományonként (Bundesland) és városonként kissé eltérhetnek és időben változnak — a csekklisták általános minták. Mindig a lakhelyed szerinti hatóságnál (Bürgeramt / Finanzamt / Familienkasse) tájékozódj."
+          : isNL
+          ? "A holland ügyintézés a gemeente (önkormányzat) szerint kissé eltérhet és időben változik — a csekklisták általános minták. Mindig a lakhelyed szerinti gemeente hivatalos oldalán vagy a rijksoverheid.nl-en tájékozódj."
           : "A svájci ügyintézés kantononként és községenként ELTÉR — a csekklisták általános minták, nem a te konkrét helyzeted. Mindig a lakhelyed kantoni Migrationsamt-jánál vagy a helyi Gemeinde-nél tájékozódj."}
         officialSources={isAT ? [
           { label: "oesterreich.gv.at — Hivatalos portál", url: "https://www.oesterreich.gv.at/" },
@@ -70,6 +73,9 @@ export function ChecklistList() {
         ] : isDE ? [
           { label: "make-it-in-germany.com — Hivatalos portál", url: "https://www.make-it-in-germany.com/" },
           { label: "ELSTER — Adóügyek", url: "https://www.elster.de/" },
+        ] : isNL ? [
+          { label: "rijksoverheid.nl — Hivatalos portál", url: "https://www.rijksoverheid.nl/" },
+          { label: "ind.nl — Bevándorlás", url: "https://ind.nl/" },
         ] : [
           { label: "ch.ch — Hivatalos info-portál", url: "https://www.ch.ch/" },
           { label: "SEM — Migráció", url: "https://www.sem.admin.ch/" },

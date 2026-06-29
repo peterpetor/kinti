@@ -41,7 +41,6 @@ export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
  * Az ügyintézés-csekklisták mindhárom országra megírva (admin-checklists.ts).
  */
 export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
-  "ugyintezes",    // ügyintézés-csekklisták — CH/AT/DE-specifikus tartalom megvan
   // NL-en (egyelőre) rejtett: a tartalom CH/AT/DE-specifikus, nincs holland verzió.
   // Amint elkészül egy holland változat, vedd ki innen (vagy tedd per-ország listára).
   "iskolarendszer",// iskolarendszer — CH/AT/DE oktatási rendszer (NL nincs)

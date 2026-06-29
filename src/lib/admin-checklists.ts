@@ -728,13 +728,113 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
   },
 ];
 
+export const CHECKLISTS_NL: AdminChecklist[] = [
+  {
+    slug: "nl-uj-bevandorlo",
+    title: "Most költöztem Hollandiába",
+    emoji: "🇳🇱",
+    summary: "Az első hetek lépései — inschrijving + BSN, DigiD, bankszámla, zorgverzekering.",
+    description: "EU-állampolgárként szabad mozgásod van (nem kell tartózkodási engedély!), de pár hivatalos lépés kell az első hetekben. A legfontosabb az inschrijving a gemeentén — abból jön a BSN, és arra épül minden más (DigiD, bank, biztosítás).",
+    deadline: "Inschrijving: ha 4 hónapnál tovább maradsz, az érkezéstől 5 napon belül.",
+    totalDuration: "Kb. 2-4 hét",
+    steps: [
+      { title: "Bejelentkezés a gemeentén (inschrijving / BRP)", body: "Foglalj időpontot a lakóhelyed gemeente (önkormányzat) oldalán, és jelentkezz be a lakcímnyilvántartásba (Basisregistratie Personen). Vidd: érvényes útlevél/igazolvány, bérleti szerződés vagy a lakásadó hozzájárulása, és (ha van) nemzetközi születési anyakönyvi kivonat. A regisztrációkor kapod a BSN-t.", link: { label: "rijksoverheid.nl — persoonsgegevens (BRP)", url: "https://www.rijksoverheid.nl/onderwerpen/persoonsgegevens" }, duration: "20-30 perc + időpont-várakozás" },
+      { title: "BSN (Burgerservicenummer) megérkezése", body: "A BSN a személyi azonosító szám — a regisztrációkor vagy pár napon belül megkapod. Szinte minden ügyhöz kell: munka, bank, zorgverzekering, adó.", duration: "azonnal / pár nap" },
+      { title: "DigiD igénylése", body: "A DigiD a digitális azonosítód a hivatali ügyintézéshez. A BSN birtokában igényeld a digid.nl-en; az aktiváló kód postán jön a regisztrált címedre (kb. 3-5 munkanap).", link: { label: "digid.nl", url: "https://www.digid.nl/" }, duration: "10 perc + postai kód" },
+      { title: "Bankszámla nyitása", body: "Holland bankszámla a fizetéshez és a lakbérhez. ING, ABN AMRO, Rabobank, vagy online bunq. Kell: BSN + útlevél/igazolvány + lakcím.", duration: "20-40 perc" },
+      { title: "Egészségbiztosítás (zorgverzekering)", body: "KÖTELEZŐ! A regisztrációtól/biztosítottá válástól 4 hónapon belül köss alap-egészségbiztosítást (basisverzekering) egy holland biztosítónál — visszamenőleg az érkezés napjáig. Kb. 140 EUR/hó.", link: { label: "rijksoverheid.nl — zorgverzekering", url: "https://www.rijksoverheid.nl/onderwerpen/zorgverzekering" }, duration: "30 perc (online)" },
+    ],
+    warnings: ["EU-állampolgárként NINCS szükség tartózkodási engedélyre — elég az inschrijving a gemeentén.", "Ha kihagyod a zorgverzekeringet, a CAK utólag büntetést és visszamenőleges díjat szabhat ki.", "Sok gemeentén hetekkel előre kell időpontot foglalni — intézd, amint megvan a lakás."],
+    sources: [{ label: "rijksoverheid.nl — bevándorlás", url: "https://www.rijksoverheid.nl/onderwerpen/immigratie-naar-nederland" }, { label: "ind.nl — EU-állampolgárok", url: "https://ind.nl/en" }],
+  },
+  {
+    slug: "nl-inschrijving-bsn",
+    title: "Bejelentkezés (inschrijving) + BSN",
+    emoji: "🏠",
+    summary: "Regisztráció a gemeentén (BRP) — ebből jön a BSN, minden más alapja.",
+    description: "Ha 4 hónapnál tovább élsz Hollandiában, be kell jelentkezned a gemeente lakcímnyilvántartásába (Basisregistratie Personen, BRP). A regisztráció adja a BSN-t, ami szinte minden hivatali és munkaügyi lépéshez kell.",
+    deadline: "Az érkezéstől 5 napon belül (ha 4 hónapnál tovább maradsz).",
+    totalDuration: "20-30 perc (időpontra várni kell)",
+    steps: [
+      { title: "Időpontfoglalás a gemeentén", body: "Keresd a lakóhelyed gemeente (pl. Amsterdam, Den Haag, Utrecht) hivatalos oldalát, és foglalj időpontot inschrijving / eerste inschrijving / vestiging vanuit het buitenland címszó alatt.", duration: "5 perc" },
+      { title: "Dokumentumok összeállítása", body: "Érvényes útlevél vagy személyi igazolvány; bérleti szerződés vagy a lakásadó írásos hozzájárulása (toestemmingsverklaring); ha külföldön születtél/házasodtál, nemzetközi (többnyelvű) vagy hitelesített, lefordított anyakönyvi kivonat is kellhet.", duration: "változó" },
+      { title: "Megjelenés és regisztráció", body: "A gemeentén személyesen regisztrálsz. A BSN-t a helyszínen vagy pár napon belül kapod meg. Ezzel bekerülsz a BRP-be.", duration: "20-30 perc" },
+    ],
+    warnings: ["Lakásadói hozzájárulás vagy bérleti szerződés nélkül elutasíthatják a bejelentést.", "Az anyakönyvi kivonatok fordítása/legalizálása időbe telhet — intézd előre."],
+    sources: [{ label: "rijksoverheid.nl — BSN", url: "https://www.rijksoverheid.nl/onderwerpen/persoonsgegevens/burgerservicenummer-bsn" }],
+  },
+  {
+    slug: "nl-digid",
+    title: "DigiD igénylése",
+    emoji: "🔐",
+    summary: "Digitális azonosító az állami és egészségügyi online ügyintézéshez.",
+    description: "A DigiD-vel lépsz be a holland hivatali online rendszerekbe: gemeente, Belastingdienst (adó), zorgverzekering, DUO, UWV. A BSN megléte után igényelheted.",
+    deadline: "Amint megvan a BSN.",
+    totalDuration: "10 perc + 3-5 munkanap (postai kód)",
+    steps: [
+      { title: "Igénylés online", body: "Menj a digid.nl oldalra, add meg a BSN-edet és az adataidat, válassz felhasználónevet és jelszót.", link: { label: "digid.nl", url: "https://www.digid.nl/" }, duration: "10 perc" },
+      { title: "Aktiváló kód postán", body: "Egy aktiváló kódot küldenek a regisztrált (BRP-) címedre, jellemzően 3-5 munkanapon belül.", duration: "3-5 munkanap" },
+      { title: "Aktiválás", body: "A kóddal aktiváld a DigiD-et a digid.nl-en. Érdemes a DigiD-appot is telepíteni a kényelmesebb és biztonságosabb belépéshez.", duration: "5 perc" },
+    ],
+    warnings: ["A DigiD csak a BRP-ben regisztrált címedre érkezik — előbb intézd az inschrijvinget.", "Soha ne add meg a DigiD-jelszavadat senkinek; a hivatalok sosem kérik telefonon."],
+    sources: [{ label: "digid.nl", url: "https://www.digid.nl/" }],
+  },
+  {
+    slug: "nl-zorgverzekering",
+    title: "Egészségbiztosítás (zorgverzekering)",
+    emoji: "🏥",
+    summary: "Kötelező alapbiztosítás 4 hónapon belül — + zorgtoeslag, ha alacsony a jövedelem.",
+    description: "Hollandiában, ha dolgozol vagy itt élsz, kötelező holland alap-egészségbiztosítást (basisverzekering) kötni egy magán biztosítónál. A díj és a fedezet alapja törvényileg azonos, az extrák (aanvullend) és az önrész-kezelés eltér.",
+    deadline: "A biztosítottá válástól (érkezés/regisztráció) 4 hónapon belül — visszamenőleg fizetsz.",
+    totalDuration: "30 perc (online kötés)",
+    steps: [
+      { title: "Biztosító és csomag választása", body: "Hasonlítsd össze a biztosítókat (pl. Zilveren Kruis, VGZ, CZ, Menzis). Az alap (basisverzekering) törvényileg azonos; figyelj az eigen risico (önrész, 2024-ben 385 EUR/év) és az esetleges aanvullend (kiegészítő, pl. fogászat) csomagra.", link: { label: "rijksoverheid.nl — zorgverzekering", url: "https://www.rijksoverheid.nl/onderwerpen/zorgverzekering" }, duration: "20 perc" },
+      { title: "Megkötés BSN-nel", body: "Online köthető; kell a BSN, lakcím, bankszámla (IBAN). A biztosítás visszamenőleg él az érkezés/biztosítottá válás napjáig.", duration: "10 perc" },
+      { title: "Zorgtoeslag igénylése (ha jogosult vagy)", body: "Alacsonyabb jövedelemnél állami hozzájárulás (zorgtoeslag) jár a díjhoz — a Belastingdienst/Toeslagen-nél igényled DigiD-vel. A jogosultság jövedelemhatárhoz kötött.", link: { label: "toeslagen.nl — zorgtoeslag", url: "https://www.toeslagen.nl/" }, duration: "15 perc" },
+    ],
+    warnings: ["Ha 4 hónapon túl sincs biztosításod, a CAK felszólít és bírságot/visszamenőleges díjat szabhat ki.", "A magyar EU-kártya (EHIC) csak ideiglenes/sürgősségi ellátásra jó — tartós ittlétnél holland biztosítás kell."],
+    sources: [{ label: "rijksoverheid.nl — zorgverzekering", url: "https://www.rijksoverheid.nl/onderwerpen/zorgverzekering" }, { label: "zorgverzekeringslijn.nl", url: "https://www.zorgverzekeringslijn.nl/" }],
+  },
+  {
+    slug: "nl-bank-belasting",
+    title: "Bankszámla + adózás (Belastingdienst)",
+    emoji: "🏦",
+    summary: "Holland IBAN-számla és a jövedelemadó / juttatások (toeslagen) alapjai.",
+    description: "A holland bankszámla (IBAN) a fizetéshez, lakbérhez és a legtöbb fizetéshez kell (sok helyen csak iDEAL/PIN megy). Az adót a Belastingdienst kezeli; alacsonyabb jövedelemnél juttatások (toeslagen) járhatnak.",
+    totalDuration: "Bankszámla: 20-40 perc; adóbevallás: évente",
+    steps: [
+      { title: "Bankszámla nyitása", body: "ING, ABN AMRO, Rabobank vagy online bunq. Kell: BSN, útlevél/igazolvány, lakcím. A legtöbb holland bolt iDEAL-t vagy PIN (maestro/V-pay) kártyát vár — a holland IBAN nagyon megkönnyíti az életet.", duration: "20-40 perc" },
+      { title: "Adóazonosítás (BSN = adószám)", body: "Hollandiában a BSN egyben az adóazonosítód. A munkáltató ez alapján vonja a bérből az adót/járulékot (loonheffing).", duration: "automatikus" },
+      { title: "Jövedelemadó-bevallás (aangifte)", body: "Az éves bevallást (inkomstenbelasting) a Belastingdienstnél, DigiD-vel teszed meg — jellemzően március 1. és május 1. között a Mijn Belastingdienst portálon.", link: { label: "belastingdienst.nl", url: "https://www.belastingdienst.nl/" }, duration: "30-60 perc" },
+      { title: "Toeslagen (juttatások) ellenőrzése", body: "Alacsonyabb jövedelemnél járhat zorgtoeslag (egészségbiztosítás), huurtoeslag (lakbér) vagy kinderopvangtoeslag (gyermekfelügyelet). DigiD-vel igényled.", link: { label: "toeslagen.nl", url: "https://www.toeslagen.nl/" }, duration: "15 perc / juttatás" },
+    ],
+    warnings: ["A toeslagen előleg-alapú: ha többet kapsz a jogosnál, vissza kell fizetni — mindig frissítsd a várható jövedelmet.", "A 30%-os szabály (30%-regeling) csak bizonyos kiküldött szakembereknek jár, és 2024-től szigorodik — kérdezd meg a munkáltatód/könyvelőd."],
+    sources: [{ label: "belastingdienst.nl", url: "https://www.belastingdienst.nl/" }, { label: "toeslagen.nl", url: "https://www.toeslagen.nl/" }],
+  },
+  {
+    slug: "nl-rijbewijs",
+    title: "Jogosítvány (rijbewijs)",
+    emoji: "🚗",
+    summary: "Magyar (EU) jogosítvány érvényes; csere opcionális a gemeentén.",
+    description: "EU-állampolgárként a magyar jogosítványod Hollandiában is érvényes a lejáratáig (legfeljebb 15 évig az adott kategóriától függően). Cserélni nem kötelező, de kérheted holland rijbewijsre.",
+    totalDuration: "Csere esetén: 1-2 hét",
+    steps: [
+      { title: "Érvényesség ellenőrzése", body: "A magyar (EU/EGT) jogosítvány Hollandiában érvényes a rajta szereplő lejáratig (max. 15 év a kiállítástól). Tartós ittlétnél érdemes lehet holland kártyára cserélni.", duration: "—" },
+      { title: "Csere a gemeentén (opcionális)", body: "Ha cserélni szeretnél: a gemeentén (rijbewijs-ügyintézés) intézed. Kell: jelenlegi jogosítvány, érvényes igazolvány, friss igazolványkép a holland szabvány szerint, és (esetenként) egészségügyi nyilatkozat a CBR-en (Gezondheidsverklaring).", link: { label: "rijksoverheid.nl — rijbewijs omwisselen", url: "https://www.rijksoverheid.nl/onderwerpen/rijbewijs" }, duration: "1-2 hét" },
+    ],
+    warnings: ["Csak EU/EGT jogosítványra igaz a problémamentes érvényesség — nem EU-s jogsit más szabályok szerint kell honosítani.", "70 év felett vagy bizonyos egészségi feltételeknél a CBR-nél egészségügyi nyilatkozat kellhet."],
+    sources: [{ label: "rijksoverheid.nl — rijbewijs", url: "https://www.rijksoverheid.nl/onderwerpen/rijbewijs" }],
+  },
+];
+
 /** Az összes csekklista (statikus generáláshoz + slug-kereséshez). */
-export const CHECKLISTS: AdminChecklist[] = [...CHECKLISTS_CH, ...CHECKLISTS_AT, ...CHECKLISTS_DE];
+export const CHECKLISTS: AdminChecklist[] = [...CHECKLISTS_CH, ...CHECKLISTS_AT, ...CHECKLISTS_DE, ...CHECKLISTS_NL];
 
 /** A választott ország csekklistái (a lista-nézethez). */
 export function getChecklists(country: string | null | undefined): AdminChecklist[] {
   if (country === "AT") return CHECKLISTS_AT;
   if (country === "DE") return CHECKLISTS_DE;
+  if (country === "NL") return CHECKLISTS_NL;
   return CHECKLISTS_CH;
 }
 
