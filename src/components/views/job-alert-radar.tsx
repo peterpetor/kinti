@@ -25,6 +25,23 @@ interface Radar {
   createdAt: string;
 }
 
+/**
+ * `navigator.serviceWorker.ready` SOHA nem oldódik fel, ha nincs (és nem is lesz)
+ * aktív service worker — ilyenkor a feliratkozás-ellenőrzés örökre „checking"
+ * állapotban ragadna (null render). Ezért: előbb `getRegistration()` (azonnal
+ * felel), és ha nincs regisztráció, nem várunk a `ready`-re; ha van, de még nem
+ * aktív, a `ready`-t timeout-tal versenyeztetjük, hogy ne tudjon befagyni.
+ */
+async function readyRegistration(timeoutMs = 5000): Promise<ServiceWorkerRegistration | null> {
+  const existing = await navigator.serviceWorker.getRegistration().catch(() => null);
+  if (existing?.active) return existing;
+  if (!existing) return null;
+  return Promise.race([
+    navigator.serviceWorker.ready,
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
+  ]);
+}
+
 export function JobAlertRadar() {
   const [state, setState] = useState<State>("checking");
   const [subscription, setSubscription] = useState<PushSubscriptionJSON | null>(null);
@@ -76,7 +93,14 @@ export function JobAlertRadar() {
           if (!cancelled) setState("denied");
           return;
         }
-        const reg = await navigator.serviceWorker.ready;
+        const reg = await readyRegistration();
+        if (cancelled) return;
+        if (!reg) {
+          // Nincs aktív SW (regisztráció meghiúsult/blokkolt) → push nem megy,
+          // de az email-only radar igen; a „unsupported" állapot kínálja az emailt.
+          setState("unsupported");
+          return;
+        }
         const existing = await reg.pushManager.getSubscription();
         if (cancelled) return;
         if (existing && Notification.permission === "granted") {
@@ -102,7 +126,8 @@ export function JobAlertRadar() {
       setState(perm === "denied" ? "denied" : "needs-permission");
       return null;
     }
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await readyRegistration();
+    if (!reg) return null; // nincs SW → push-feliratkozás nem lehetséges (email-only marad)
     let sub = await reg.pushManager.getSubscription();
     if (!sub) {
       sub = await reg.pushManager.subscribe({
