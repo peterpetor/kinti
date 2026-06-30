@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { syncDeadlineReminders, deleteDeadlineReminders } from "@/lib/repo";
 import { safeLogError } from "@/lib/safe-log";
+import { hashIp } from "@/lib/security";
+import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -34,9 +36,17 @@ export async function POST(req: Request) {
   const p256dh = sub?.keys?.p256dh ?? null;
   const auth = sub?.keys?.auth ?? null;
 
+  // Rate-limit (anti-spam) — IP/óra.
+  const ipHash = await hashIp(req.headers.get("cf-connecting-ip") ?? null);
+  const rl = await checkAiRateLimit("deadline-sync", ipHash);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Túl sok kérés — próbáld kicsit később." }, { status: 429 });
+  }
+
   try {
     if (body.enabled === false) {
       await deleteDeadlineReminders(endpoint);
+      await logAiRateLimit("deadline-sync", ipHash);
       return NextResponse.json({ ok: true, enabled: false });
     }
     const deadlines = (Array.isArray(body.deadlines) ? body.deadlines : [])
@@ -44,6 +54,7 @@ export async function POST(req: Request) {
       .map((d) => ({ title: String(d?.title ?? "").trim(), date: String(d?.date ?? "") }))
       .filter((d) => d.title && /^\d{4}-\d{2}-\d{2}$/.test(d.date));
     await syncDeadlineReminders(endpoint, p256dh, auth, deadlines);
+    await logAiRateLimit("deadline-sync", ipHash);
     return NextResponse.json({ ok: true, count: deadlines.length });
   } catch (e) {
     safeLogError("deadlines/sync", e);

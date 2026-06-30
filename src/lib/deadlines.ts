@@ -9,7 +9,7 @@
 import { getCloudflareEnv } from "./cloudflare";
 import { sendPush } from "./push";
 import { safeLogError } from "./safe-log";
-import { getDueDeadlineReminders, markDeadlineSent } from "./repo";
+import { getDueDeadlineReminders, markDeadlineSent, deleteDeadlineReminders } from "./repo";
 
 const THRESHOLDS = [14, 7, 1];
 
@@ -41,24 +41,33 @@ export async function processDeadlineReminders(): Promise<number> {
     const due = THRESHOLDS.filter((T) => d <= T && !already.has(T));
     if (!due.length) continue;
 
-    if (r.p256dh && r.auth) {
-      const when = d === 0 ? "MA" : d === 1 ? "holnap" : `${d} nap múlva`;
-      try {
-        await sendPush(
-          privKey,
-          { endpoint: r.endpoint, p256dh: r.p256dh, auth: r.auth },
-          { title: "⏰ Közeledő határidő", body: `${r.title} — ${when} lejár.`, url: "/hatarido" },
-        );
-        sent++;
-      } catch (e) {
-        safeLogError("processDeadlineReminders:push", e);
-      }
-    }
-    // Minden ELÉRT küszöböt jelölünk (a múltbelieket is), hogy ne fire-oljon utólag.
-    THRESHOLDS.forEach((T) => { if (d <= T) already.add(T); });
+    if (!r.p256dh || !r.auth) continue; // payload nélkül nincs értelmes push
+
+    const when = d === 0 ? "MA" : d === 1 ? "holnap" : `${d} nap múlva`;
+    let status = 0;
     try {
-      await markDeadlineSent(r.id, [...already].sort((a, b) => b - a).join(","));
-    } catch { /* best-effort */ }
+      status = await sendPush(
+        privKey,
+        { endpoint: r.endpoint, p256dh: r.p256dh, auth: r.auth },
+        { title: "⏰ Közeledő határidő", body: `${r.title} — ${when} lejár.`, url: "/hatarido" },
+      );
+    } catch (e) {
+      safeLogError("processDeadlineReminders:push", e);
+    }
+
+    // Halott feliratkozás (404/410) → az endpoint összes emlékeztetőjének törlése.
+    if (status === 404 || status === 410) {
+      try { await deleteDeadlineReminders(r.endpoint); } catch { /* best-effort */ }
+      continue;
+    }
+    // CSAK sikeres küldésnél jelöljük elküldöttnek (különben holnap újrapróbálja).
+    if (status >= 200 && status < 300) {
+      sent++;
+      THRESHOLDS.forEach((T) => { if (d <= T) already.add(T); });
+      try {
+        await markDeadlineSent(r.id, [...already].sort((a, b) => b - a).join(","));
+      } catch { /* best-effort */ }
+    }
   }
   return sent;
 }
