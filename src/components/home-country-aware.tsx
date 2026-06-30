@@ -62,7 +62,7 @@ export function HomeEvents({ events }: { events: KintiEvent[] }) {
           <Link
             key={e.id}
             href="/kozosseg"
-            className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-card transition active:scale-[0.99]"
+            className="flex min-w-0 items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-card transition active:scale-[0.99]"
           >
             <div className="w-[50px] shrink-0 rounded-xl border border-line bg-surface-alt py-1.5 text-center">
               <div className="text-[10px] font-extrabold uppercase tracking-wide text-primary">{e.dateMonth}</div>
@@ -70,7 +70,7 @@ export function HomeEvents({ events }: { events: KintiEvent[] }) {
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-[14.5px] font-bold tracking-[-0.01em] text-ink">{e.title}</div>
-              <div className="mt-0.5 text-xs text-ink-muted">{e.venue} · {e.going} fő megy</div>
+              <div className="truncate mt-0.5 text-xs text-ink-muted">{e.venue} · {e.going} fő megy</div>
             </div>
             <Icon name="chevR" size={14} className="text-ink-muted" />
           </Link>
