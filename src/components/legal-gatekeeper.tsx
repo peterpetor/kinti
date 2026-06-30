@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
 
 /**
  * A modálnak NEM szabad megjelennie azokon az oldalakon, amiket maga a modal
@@ -19,26 +18,49 @@ function pathIsExempt(pathname: string): boolean {
 }
 
 export function LegalGatekeeper() {
-  const { isLoaded, isSignedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [acceptAszf, setAcceptAszf] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded) return; // előbb tisztázódjon a Clerk auth-állapot
     if (pathIsExempt(window.location.pathname)) return;
-    // Bejelentkezett user a Clerk REGISZTRÁCIÓNÁL már elfogadta az ÁSZF-et és az
+    if (localStorage.getItem("kinti_legal_accepted")) return;
+
+    // Bejelentkezett user a Clerk REGISZTRÁCIÓNÁL már elfogadta az ÁSZF-et + az
     // Adatkezelési Tájékoztatót (és az ÁSZF kimondja a 18+ nagykorúsági kikötést)
-    // → a device-szintű kaput NEKI NE kérdezzük újra (redundáns). A kapu csak az
-    // ANONIM látogatóknak szól (akik bejelentkezés nélkül is használják az appot).
-    if (isSignedIn) return;
-    const accepted = localStorage.getItem("kinti_legal_accepted");
-    if (!accepted) {
+    // → a device-szintű kaput NEKI NE mutassuk (redundáns). A kapu csak az ANONIM
+    // látogatóknak szól. FONTOS: NEM Clerk-HOOK-ot használunk (az a globális
+    // layoutban elrontaná a force-static oldalak statikus exportját), hanem a
+    // futásidejű `window.Clerk`-et a useEffect-ben (SSG-biztos).
+    const getClerk = () =>
+      (window as unknown as { Clerk?: { loaded?: boolean; user?: unknown } }).Clerk;
+    let cancelled = false;
+    const decide = () => {
+      if (cancelled) return;
+      if (getClerk()?.user) return; // bejelentkezett → kihagyjuk
       setIsOpen(true);
       document.body.style.overflow = "hidden";
+    };
+
+    if (getClerk()?.loaded) {
+      decide();
+      return;
     }
-  }, [isLoaded, isSignedIn]);
+    // Megvárjuk, míg a Clerk betölt (max ~2,5s), hogy bejelentkezettnek ne
+    // villantsuk fel; ha addig nem tölt be, anonimnak tekintjük (mutatjuk).
+    const t0 = Date.now();
+    const iv = setInterval(() => {
+      if (getClerk()?.loaded || Date.now() - t0 > 2500) {
+        clearInterval(iv);
+        decide();
+      }
+    }, 150);
+    return () => {
+      cancelled = true;
+      clearInterval(iv);
+    };
+  }, []);
 
   const handleAccept = () => {
     if (ageConfirmed && acceptAszf && acceptPrivacy) {
