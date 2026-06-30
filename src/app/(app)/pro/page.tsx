@@ -19,6 +19,7 @@ export default function ProPage() {
   // (interjú, nyelvkurzus, állampolgárság-szimulátor). A szakmai szótár CH-only
   // valódi tartalom, ezért az marad CH-feltételes.
   const proFeatures = [
+    "Utalás-asszisztens — mérhető havi spórolás a hazautaláson",
     "AI Interjú Szimulátor — országod cégeihez (CH/AT/DE/NL)",
     "AI CV-audit — önéletrajz-elemzés és tippek",
     "Nyelvkurzus — svájci, osztrák, német és holland",

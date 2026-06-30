@@ -37,7 +37,42 @@ interface ExchangeResult {
  *
  * Cache: edge revalidate 1h. Ha a fetch elhasal, 503-mal válaszolunk a kliensnek.
  */
-export async function GET() {
+/** GET ?history=N — az utolsó N nap napi CHF→HUF/EUR idősora (a trend-jelzéshez). */
+async function getHistory(days: number): Promise<Response> {
+  const end = new Date();
+  const start = new Date(end.getTime() - days * 86_400_000);
+  const s = start.toISOString().slice(0, 10);
+  const e = end.toISOString().slice(0, 10);
+  try {
+    const res = await fetch(`https://api.frankfurter.app/${s}..${e}?from=CHF&to=HUF,EUR`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: "Az árfolyam-szolgáltatás nem érhető el." },
+        { status: 503, headers: { "cache-control": "no-store" } },
+      );
+    }
+    const data = (await res.json()) as { rates?: Record<string, { HUF?: number; EUR?: number }> };
+    const series = Object.entries(data.rates ?? {})
+      .map(([date, r]) => ({ date, huf: r.HUF ?? 0, eur: r.EUR ?? 0 }))
+      .filter((x) => x.huf > 0)
+      .sort((a, b) => a.date.localeCompare(b.date));
+    return NextResponse.json(
+      { base: "CHF", days, series },
+      { headers: { "cache-control": "public, max-age=3600, stale-while-revalidate=3600" } },
+    );
+  } catch {
+    return NextResponse.json(
+      { error: "Az árfolyam-szolgáltatás nem érhető el." },
+      { status: 502, headers: { "cache-control": "no-store" } },
+    );
+  }
+}
+
+export async function GET(request: Request) {
+  const days = Math.min(90, Math.max(0, parseInt(new URL(request.url).searchParams.get("history") ?? "0", 10) || 0));
+  if (days > 0) return getHistory(days);
   try {
     const res = await fetch("https://api.frankfurter.app/latest?from=CHF&to=HUF,EUR", {
       // Cloudflare edge cache — kibír 1 órát.

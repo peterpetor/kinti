@@ -63,6 +63,24 @@ export default async function ArfolyamPage() {
         </Link>
       </header>
 
+      {/* PRO upsell — az Utalás-asszisztens (mérhető havi spórolás) */}
+      <Link
+        href="/utalas"
+        className="flex items-center gap-3 rounded-card border-2 border-pro/30 bg-pro/5 p-4 shadow-card transition hover:border-pro/50 active:scale-[0.99]"
+      >
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-pro/15 text-xl">💸</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[14px] font-extrabold text-ink">Utalás-asszisztens</span>
+            <span className="rounded bg-pro/15 px-1.5 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wide text-pro">PRO</span>
+          </div>
+          <p className="text-[12px] leading-snug text-ink-muted">
+            Mikor és melyik szolgáltatóval utalj — és mennyit spóroltál. Mérhető havi megtakarítás.
+          </p>
+        </div>
+        <Icon name="chevR" size={16} className="shrink-0 text-ink-muted" />
+      </Link>
+
       {rate ? (
         <>
           <ExchangeCalculator
