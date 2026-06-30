@@ -40,6 +40,12 @@ export function spreadColocated(businesses: Business[]): Business[] {
     const key = `${b.lat.toFixed(5)},${b.lng.toFixed(5)}`;
     const g = groups.get(key)!;
     if (g.length <= 1) return b;
+    // NAGY csoport (4+ szervezet UGYANAZON város-koordinátán = VÁROS-szintű adat,
+    // nincs utca-cím) → NE szórd szét hamis egyedi pinekké (különben 4-27 ikon egy
+    // körben, akár vízbe lógva). Maradjon EGY klaszter-buborék a városnál (őszinte:
+    // „N szervezet ebben a városban"); a részletek a lista-nézeten. Kis csoportot
+    // (2-3) szűken szétpöckölünk, hogy külön kattinthatók legyenek.
+    if (g.length > 3) return b;
     const idx = g.indexOf(b);
     // Sugár a csoportmérettel skálázva, de SZŰK (max ~70 m) — a város-központra
     // geokódolt szervezetek (pl. 27 Bécs-központon) különben egy nagy körben, akár
