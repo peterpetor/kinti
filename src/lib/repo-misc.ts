@@ -593,6 +593,33 @@ export async function markRadarFired(radarId: string): Promise<void> {
   await getDB().prepare("UPDATE kinti_radars SET last_fired_at = datetime('now') WHERE id = ?").bind(radarId).run();
 }
 
+/** Email-cím felvétele a suppression-listára (Resend bounce/complaint webhook). */
+export async function suppressEmail(email: string, reason: string): Promise<void> {
+  await getDB()
+    .prepare("INSERT INTO email_suppressions (email, reason) VALUES (?, ?) ON CONFLICT(email) DO UPDATE SET reason = excluded.reason")
+    .bind(email.toLowerCase(), reason)
+    .run();
+}
+
+/** Le van-e tiltva a cím? FAIL-OPEN: hiba (pl. hiányzó tábla) esetén false → küldhető. */
+export async function isEmailSuppressed(email: string): Promise<boolean> {
+  try {
+    const row = await getDB()
+      .prepare("SELECT 1 AS x FROM email_suppressions WHERE email = ? LIMIT 1")
+      .bind(email.toLowerCase())
+      .first<{ x: number }>();
+    return !!row;
+  } catch {
+    return false;
+  }
+}
+
+/** Egy email-címhez tartozó összes radar törlése (spam-panasznál). A törölt sorok száma. */
+export async function deleteRadarsByEmail(email: string): Promise<number> {
+  const res = await getDB().prepare("DELETE FROM kinti_radars WHERE lower(email) = ?").bind(email.toLowerCase()).run();
+  return res.meta.changes ?? 0;
+}
+
 /** Egy (radar, job) pár betétele a digest-sorba (a napi összefoglalóhoz). */
 export async function enqueueRadarDigest(radarId: string, jobId: string): Promise<void> {
   await getDB().prepare("INSERT INTO radar_digest_queue (id, radar_id, job_id) VALUES (?, ?, ?)").bind(crypto.randomUUID(), radarId, jobId).run();

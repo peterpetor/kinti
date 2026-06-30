@@ -25,6 +25,20 @@ function getResend(): Resend {
   const resend = new Resend(env.RESEND_API_KEY);
   const originalSend = resend.emails.send.bind(resend.emails);
   resend.emails.send = (async (...args: Parameters<typeof originalSend>) => {
+    // Suppression-guard: bounce/complaint webhookból letiltott címre NEM küldünk
+    // (sender reputation védelem). Fail-open: a guard sosem törheti meg a küldést.
+    // (A batch-küldés — resend.batch.send — ezt kerüli; ott a hívó szűr.)
+    try {
+      const to = (args[0] as { to?: string | string[] } | undefined)?.to;
+      const addr = Array.isArray(to) ? to[0] : to;
+      if (typeof addr === "string" && addr) {
+        const { isEmailSuppressed } = await import("./repo-misc");
+        if (await isEmailSuppressed(addr.toLowerCase())) {
+          return { data: null, error: null } as unknown as Awaited<ReturnType<typeof originalSend>>;
+        }
+      }
+    } catch { /* fail-open */ }
+
     const res = await originalSend(...args);
     if (res && !res.error) {
       try {
