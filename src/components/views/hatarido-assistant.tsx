@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -8,6 +8,7 @@ import { usePersistedState } from "@/hooks/use-persisted-state";
 import { useIsPro } from "@/lib/use-is-pro";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 
 interface Deadline {
   id: string;
@@ -110,6 +111,68 @@ export function HataridoAssistant() {
     setItems((arr) => arr.filter((x) => x.id !== id));
   }
 
+  // — Push-emlékeztető (a határidőket az ANONIM push-endpointhoz kötjük; nincs
+  // user-azonosító — privacy-tiszta, mint a radarok). 14/7/1 nappal előtte szól. —
+  const [remindersOn, setRemindersOn] = usePersistedState<boolean>("kinti_deadlines_reminders", false);
+  const [subJson, setSubJson] = usePersistedState<PushSubscriptionJSON | null>("kinti_deadlines_sub", null);
+  const [busy, setBusy] = useState(false);
+  const [pushErr, setPushErr] = useState<string | null>(null);
+
+  async function getSub(): Promise<PushSubscriptionJSON | null> {
+    if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) return null;
+    if (Notification.permission === "denied") return null;
+    if ((await Notification.requestPermission()) !== "granted") return null;
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (!reg) return null;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
+      });
+    }
+    return sub.toJSON();
+  }
+
+  async function syncTo(sub: PushSubscriptionJSON, enabled: boolean, list: Deadline[]) {
+    await fetch("/api/deadlines/sync", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ subscription: sub, enabled, deadlines: list.map((d) => ({ title: d.title, date: d.date })) }),
+    });
+  }
+
+  async function enableReminders() {
+    setBusy(true);
+    setPushErr(null);
+    try {
+      const sub = await getSub();
+      if (!sub) { setPushErr("Engedélyezd az értesítéseket a böngészőben / appban."); return; }
+      setSubJson(sub);
+      await syncTo(sub, true, items);
+      setRemindersOn(true);
+    } catch {
+      setPushErr("Nem sikerült bekapcsolni — próbáld újra.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function disableReminders() {
+    setBusy(true);
+    try { if (subJson) await syncTo(subJson, false, []); } catch { /* best-effort */ }
+    setRemindersOn(false);
+    setBusy(false);
+  }
+
+  // Bekapcsolt emlékeztetőnél a határidők változásakor újraszinkronizálunk (debounce).
+  useEffect(() => {
+    if (!remindersOn || !subJson) return;
+    const t = setTimeout(() => { syncTo(subJson, true, items).catch(() => {}); }, 900);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, remindersOn, subJson]);
+
   if (isPro === null) {
     return <div className="rounded-card border border-line bg-surface p-6 text-center text-[13px] text-ink-muted">Betöltés…</div>;
   }
@@ -185,6 +248,37 @@ export function HataridoAssistant() {
             })}
           </div>
         )}
+      </section>
+
+      {/* Push-emlékeztető — a „működik, ha nem is nyitod meg" érték */}
+      <section className={cn("rounded-card border p-4 shadow-card", remindersOn ? "border-primary/40 bg-primary-soft/30" : "border-line bg-surface")}>
+        <div className="flex items-center gap-3">
+          <span className="text-xl shrink-0">{remindersOn ? "🔔" : "🔕"}</span>
+          <div className="min-w-0 flex-1">
+            <div className="text-[13.5px] font-extrabold text-ink">
+              {remindersOn ? "Emlékeztető bekapcsolva" : "Push-emlékeztető"}
+            </div>
+            <p className="text-[11.5px] leading-snug text-ink-muted">
+              {remindersOn
+                ? "14, 7 és 1 nappal a határidő előtt szólunk — akkor is, ha nem nyitod meg az appot."
+                : "Kapj értesítést a határidők előtt, app-megnyitás nélkül is."}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={remindersOn ? disableReminders : enableReminders}
+            disabled={busy}
+            className={cn(
+              "shrink-0 rounded-pill px-3.5 py-1.5 text-[12.5px] font-extrabold transition active:scale-95",
+              busy ? "bg-surface-alt text-ink-muted"
+              : remindersOn ? "border border-line bg-surface text-ink"
+              : "bg-primary text-white shadow-card",
+            )}
+          >
+            {busy ? "…" : remindersOn ? "Kikapcsolás" : "Bekapcsolom"}
+          </button>
+        </div>
+        {pushErr && <p className="mt-2 text-[11.5px] font-bold text-accent">{pushErr}</p>}
       </section>
 
       {/* Gyors hozzáadás — sablonok */}

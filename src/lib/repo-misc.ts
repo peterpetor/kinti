@@ -620,6 +620,76 @@ export async function deleteRadarsByEmail(email: string): Promise<number> {
   return res.meta.changes ?? 0;
 }
 
+// --- Határidő-emlékeztetők (push, anonim endpointhoz kötve) ------------------
+
+export interface DeadlineRow {
+  id: string; endpoint: string; p256dh: string | null; auth: string | null;
+  title: string; due_date: string; sent: string;
+}
+
+/**
+ * A felhasználó határidőinek szinkronja az endpointjához. Idempotens: a
+ * VÁLTOZATLAN tételeket (title+due_date) megőrzi a `sent` állapotukkal együtt
+ * (nincs duplikált emlékeztető újra-szinkronkor), az újakat beszúrja, a
+ * törölteket eltávolítja, a push-kulcsokat frissíti.
+ */
+export async function syncDeadlineReminders(
+  endpoint: string,
+  p256dh: string | null,
+  auth: string | null,
+  deadlines: { title: string; date: string }[],
+): Promise<void> {
+  const db = getDB();
+  const { results } = await db
+    .prepare("SELECT id, title, due_date FROM deadline_reminders WHERE endpoint = ?")
+    .bind(endpoint)
+    .all<{ id: string; title: string; due_date: string }>();
+  const existing = results ?? [];
+  const key = (t: string, d: string) => `${t} ${d}`;
+  const existingKeys = new Set(existing.map((r) => key(r.title, r.due_date)));
+  const incomingKeys = new Set(deadlines.map((d) => key(d.title, d.date)));
+
+  const stmts = [];
+  // Eltávolítjuk a már nem létező tételeket.
+  const toDelete = existing.filter((r) => !incomingKeys.has(key(r.title, r.due_date))).map((r) => r.id);
+  if (toDelete.length) {
+    stmts.push(db.prepare(`DELETE FROM deadline_reminders WHERE id IN (${toDelete.map(() => "?").join(",")})`).bind(...toDelete));
+  }
+  // Frissítjük a push-kulcsokat (a feliratkozás megújulhatott).
+  stmts.push(db.prepare("UPDATE deadline_reminders SET p256dh = ?, auth = ? WHERE endpoint = ?").bind(p256dh, auth, endpoint));
+  // Beszúrjuk az új tételeket (sent='').
+  for (const d of deadlines) {
+    if (existingKeys.has(key(d.title, d.date))) continue;
+    if (!d.title?.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(d.date)) continue;
+    stmts.push(
+      db.prepare("INSERT INTO deadline_reminders (id, endpoint, p256dh, auth, title, due_date, sent) VALUES (?, ?, ?, ?, ?, ?, '')")
+        .bind(crypto.randomUUID(), endpoint, p256dh, auth, d.title.trim().slice(0, 120), d.date),
+    );
+  }
+  if (stmts.length) await db.batch(stmts);
+}
+
+/** Az emlékeztetők kikapcsolása (az endpoint összes határidejének törlése). */
+export async function deleteDeadlineReminders(endpoint: string): Promise<void> {
+  await getDB().prepare("DELETE FROM deadline_reminders WHERE endpoint = ?").bind(endpoint).run();
+}
+
+/** A 14 napon belül esedékes (nem lejárt) határidők — a cron emlékeztetőjéhez. */
+export async function getDueDeadlineReminders(): Promise<DeadlineRow[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, endpoint, p256dh, auth, title, due_date, sent FROM deadline_reminders
+        WHERE due_date >= date('now') AND due_date <= date('now', '+14 days')`,
+    )
+    .all<DeadlineRow>();
+  return results ?? [];
+}
+
+/** Egy határidő `sent` (elküldött küszöbök) mezőjének frissítése. */
+export async function markDeadlineSent(id: string, sent: string): Promise<void> {
+  await getDB().prepare("UPDATE deadline_reminders SET sent = ? WHERE id = ?").bind(sent, id).run();
+}
+
 /** Egy (radar, job) pár betétele a digest-sorba (a napi összefoglalóhoz). */
 export async function enqueueRadarDigest(radarId: string, jobId: string): Promise<void> {
   await getDB().prepare("INSERT INTO radar_digest_queue (id, radar_id, job_id) VALUES (?, ?, ?)").bind(crypto.randomUUID(), radarId, jobId).run();
