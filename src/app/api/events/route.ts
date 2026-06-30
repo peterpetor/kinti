@@ -3,6 +3,7 @@ import { getEvents, getMapEvents, createSubmittedEvent } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { hashIp } from "@/lib/security";
+import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { containsProfanity } from "@/lib/profanity";
 import { isValidCountry } from "@/lib/countries";
 import { findPresenceCity } from "@/lib/presence-cities";
@@ -73,6 +74,13 @@ export async function POST(req: Request) {
 
   const ipHash = await hashIp(ip);
 
+  // Rate-limit (defense-in-depth a Turnstile mellett): egy IP ne tudja
+  // esemény-beküldésekkel elárasztani a moderációs sort (8/óra).
+  const rl = await checkAiRateLimit("event-submit", ipHash);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Túl sok beküldés rövid idő alatt. Próbáld kicsit később." }, { status: 429 });
+  }
+
   // Precíz pin (v2): ha érvényes és a választott városhoz közeli (≤100 km) + a
   // lefedett országok dobozán belül, azt használjuk; különben a város közepét.
   let lat = city.lat, lng = city.lng;
@@ -88,6 +96,8 @@ export async function POST(req: Request) {
     country, regionCode: city.region, lat, lng,
     ipHash: ipHash ?? "unknown-ip",
   });
+
+  await logAiRateLimit("event-submit", ipHash);
 
   return NextResponse.json({ ok: true, message: "Köszönjük! Az eseményt jóváhagyás után tesszük közzé a térképen." });
 }

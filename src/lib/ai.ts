@@ -209,6 +209,7 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "recruiter-match": { windowHours: 24, maxPerWindow: 300 }, // admin match+e-mail — runaway-guard
   "leaderboard": { windowHours: 1, maxPerWindow: 20 }, // ranglista csatlakozás/szinkron
   "business-suggest": { windowHours: 1, maxPerWindow: 10 }, // Közösségi vállalkozás-ajánlás spam-védelem
+  "event-submit": { windowHours: 1, maxPerWindow: 8 }, // Esemény-beküldés — moderációs-sor elárasztás védelem (Turnstile mellett)
   "lead-request": { windowHours: 1, maxPerWindow: 3 },     // Árajánlatkérés (lead) — max 3/IP/óra
   "lead-request-day": { windowHours: 24, maxPerWindow: 5 }, // Napi cap: max 5/IP/24h
   "job-apply": { windowHours: 1, maxPerWindow: 10 }, // Álláspályázat spam / employer-email-flood védelem
