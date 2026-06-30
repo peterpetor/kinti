@@ -9,6 +9,7 @@ import { useIsPro } from "@/lib/use-is-pro";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
+import { readyRegistration } from "@/lib/push-client";
 
 interface Deadline {
   id: string;
@@ -122,7 +123,7 @@ export function HataridoAssistant() {
     if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) return null;
     if (Notification.permission === "denied") return null;
     if ((await Notification.requestPermission()) !== "granted") return null;
-    const reg = await navigator.serviceWorker.getRegistration();
+    const reg = await readyRegistration(); // hang-biztos (nem fagy be, ha nincs aktív SW)
     if (!reg) return null;
     let sub = await reg.pushManager.getSubscription();
     if (!sub) {

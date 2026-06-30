@@ -8,6 +8,7 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
 import { getRegions } from "@/lib/regions";
 import { JOB_CATEGORIES, jobCategoryLabel } from "@/lib/job-categories";
+import { readyRegistration } from "@/lib/push-client";
 
 type State =
   | "checking"
@@ -23,23 +24,6 @@ interface Radar {
   radarType: "exchange_rate" | "job_alert";
   parameters: string;
   createdAt: string;
-}
-
-/**
- * `navigator.serviceWorker.ready` SOHA nem oldódik fel, ha nincs (és nem is lesz)
- * aktív service worker — ilyenkor a feliratkozás-ellenőrzés örökre „checking"
- * állapotban ragadna (null render). Ezért: előbb `getRegistration()` (azonnal
- * felel), és ha nincs regisztráció, nem várunk a `ready`-re; ha van, de még nem
- * aktív, a `ready`-t timeout-tal versenyeztetjük, hogy ne tudjon befagyni.
- */
-async function readyRegistration(timeoutMs = 5000): Promise<ServiceWorkerRegistration | null> {
-  const existing = await navigator.serviceWorker.getRegistration().catch(() => null);
-  if (existing?.active) return existing;
-  if (!existing) return null;
-  return Promise.race([
-    navigator.serviceWorker.ready,
-    new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
-  ]);
 }
 
 export function JobAlertRadar() {
