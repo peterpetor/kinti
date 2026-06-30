@@ -118,19 +118,17 @@ export function SmartSearchBar({
           type="button"
           onClick={runAi}
           disabled={busy}
-          aria-label="AI értelmezés"
-          title="Természetes nyelvű keresés — az AI beállítja a szűrőket"
+          aria-label="AI-mód — természetes nyelvű keresés"
+          title="AI-mód: írj természetes mondatot (pl. villanyszerelő Zürichben, aki angolul is tud) — az AI beállítja a szűrőket"
           className={cn(
-            "grid h-8 shrink-0 place-items-center gap-1 rounded-[10px] px-2.5 text-[11.5px] font-extrabold transition active:scale-95",
+            "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-[12.5px] font-bold transition active:scale-95",
             busy
-              ? "bg-surface-alt text-ink-muted cursor-wait"
-              : "bg-primary-soft/60 text-primary hover:bg-primary-soft",
+              ? "border-line bg-surface-alt text-ink-muted cursor-wait"
+              : "border-line bg-surface text-ink hover:bg-surface-alt",
           )}
         >
-          <span className="inline-flex items-center gap-1">
-            <Icon name="sparkles" size={14} strokeWidth={2.4} className={busy ? "animate-pulse" : ""} />
-            {busy ? "…" : "AI"}
-          </span>
+          <Icon name="sparkles" size={15} strokeWidth={2.4} className={busy ? "animate-pulse text-primary" : "text-primary"} />
+          {busy ? "…" : "AI-mód"}
         </button>
       </div>
 
