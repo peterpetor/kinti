@@ -149,6 +149,14 @@ export const CATEGORY_ICON_PATHS: Record<string, string[]> = {
   ugyved: PATHS_UGYVED,
   pek: PATHS_PEK,
   etterem: PATHS_ETTEREM,
+  // Magyar közösség / egyesület (a szaknévsor-szervezetek zöme) — „emberek/közösség"
+  // ikon (Lucide users). Enélkül 150+ szervezet-pin generikus pöttyként jelent meg.
+  "magyar-kozosseg": [
+    "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2",
+    "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z",
+    "M22 21v-2a4 4 0 0 0-3-3.87",
+    "M16 3.13a4 4 0 0 1 0 7.75",
+  ],
   villany: PATHS_VILLANY,
   fordito: PATHS_FORDITO,
   takarito: PATHS_TAKARITO,
