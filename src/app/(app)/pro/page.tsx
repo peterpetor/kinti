@@ -20,6 +20,7 @@ export default function ProPage() {
   // valódi tartalom, ezért az marad CH-feltételes.
   const proFeatures = [
     "Utalás-asszisztens — mérhető havi spórolás a hazautaláson",
+    "Határidő-asszisztens — soha ne maradj le (engedély, biztosítás, adó)",
     "AI Interjú Szimulátor — országod cégeihez (CH/AT/DE/NL)",
     "AI CV-audit — önéletrajz-elemzés és tippek",
     "Nyelvkurzus — svájci, osztrák, német és holland",

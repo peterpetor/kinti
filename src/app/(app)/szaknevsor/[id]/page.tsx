@@ -346,28 +346,27 @@ export default async function BusinessPage({
           </div>
         </div>
 
-        {/* akciók */}
-        <div className="mt-4 flex gap-2">
-          {b.phone ? (
-            <TelLink businessId={b.id} phone={b.phone} className={cn(actionBtn, "bg-primary text-white shadow-card-hover")}>
-              <Icon name="phone" size={16} strokeWidth={2.2} /> Hívás
-            </TelLink>
-          ) : (
-            <span className={cn(actionBtn, "bg-primary/40 text-white")}>
-              <Icon name="phone" size={16} strokeWidth={2.2} /> Hívás
-            </span>
-          )}
-          {mapsHref && (
-            <a
-              href={mapsHref}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(actionBtn, "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
-            >
-              <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
-            </a>
-          )}
-        </div>
+        {/* akciók — a Hívás CSAK ha van telefonszám (nincs letiltott „nem hívható"
+            gomb), az Útvonal CSAK utcaszintű címnél; a sor elrejtve, ha egyik sincs. */}
+        {(b.phone || mapsHref) && (
+          <div className="mt-4 flex gap-2">
+            {b.phone && (
+              <TelLink businessId={b.id} phone={b.phone} className={cn(actionBtn, "bg-primary text-white shadow-card-hover")}>
+                <Icon name="phone" size={16} strokeWidth={2.2} /> Hívás
+              </TelLink>
+            )}
+            {mapsHref && (
+              <a
+                href={mapsHref}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(actionBtn, "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
+              >
+                <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
+              </a>
+            )}
+          </div>
+        )}
 
         {/* "Kérj árajánlatot" email-relay forma ELTÁVOLÍTVA — a kapcsolat
             telefon/WhatsApp gombokkal megy közvetlenül (zero relay, zero
