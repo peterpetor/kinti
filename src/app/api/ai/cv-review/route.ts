@@ -81,28 +81,29 @@ export async function POST(req: Request) {
     let country = "CH";
     try {
       const b = (await req.json()) as { country?: string };
-      if (b?.country === "AT" || b?.country === "DE") country = b.country;
+      if (b?.country === "AT" || b?.country === "DE" || b?.country === "NL") country = b.country;
     } catch { /* üres/hibás body → CH */ }
-    const LAND: Record<string, { adj: string; loc: string; permit: string }> = {
-      CH: { adj: "svájci", loc: "Svájcban", permit: "Tartózkodási/munkavállalási engedély (B/C/L) feltüntetése — a HR ezt rögtön keresi." },
-      AT: { adj: "osztrák", loc: "Ausztriában", permit: "EU-állampolgárként NINCS szükség munkavállalási engedélyre — a CV-n nem kötelező feltüntetni (a Meldezettel legfeljebb említhető)." },
-      DE: { adj: "német", loc: "Németországban", permit: "EU-állampolgárként szabad mozgás (Freizügigkeit) — NINCS engedély, a CV-n NEM kell feltüntetni." },
+    const LAND: Record<string, { adj: string; loc: string; permit: string; lang: string; refDoc: string }> = {
+      CH: { adj: "svájci", loc: "Svájcban", permit: "Tartózkodási/munkavállalási engedély (B/C/L) feltüntetése — a HR ezt rögtön keresi.", lang: "német", refDoc: "Arbeitszeugnis" },
+      AT: { adj: "osztrák", loc: "Ausztriában", permit: "EU-állampolgárként NINCS szükség munkavállalási engedélyre — a CV-n nem kötelező feltüntetni (a Meldezettel legfeljebb említhető).", lang: "német", refDoc: "Arbeitszeugnis" },
+      DE: { adj: "német", loc: "Németországban", permit: "EU-állampolgárként szabad mozgás (Freizügigkeit) — NINCS engedély, a CV-n NEM kell feltüntetni.", lang: "német", refDoc: "Arbeitszeugnis" },
+      NL: { adj: "holland", loc: "Hollandiában", permit: "EU-állampolgárként szabad mozgás — NINCS munkavállalási engedély, a CV-n NEM kell feltüntetni (a BSN legfeljebb említhető).", lang: "holland vagy angol", refDoc: "referentie / getuigschrift" },
     };
-    const L = LAND[country];
+    const L = LAND[country] ?? LAND.CH;
 
     const system = `Te a kinti.app ${L.adj} CV-szakértője vagy, magyar anyanyelvű, ${L.loc} álláskereső ügyfeleknek. A felhasználó nyers CV-szövegét kapod (PDF-ből kinyerve). Készíts MAGYAR nyelven egy komoly, konkrét auditot a ${L.adj} munkaerőpiac elvárásai szerint.
 
 Vizsgáld kiemelten (${L.adj} specifikumok):
 - Személyes adatok (név, születési év, lakhely, elérhetőség) és — ${L.loc} elvárt — szakmai fotó megléte.
-- Nyelvtudás CEFR-skálán (pl. német B2) — a "jó/alap" megfogalmazás gyenge.
+- Nyelvtudás CEFR-skálán (pl. ${L.lang} B2) — a "jó/alap" megfogalmazás gyenge.
 - ${L.permit}
 - Eredmény-orientált tapasztalat (számszerű hatás), nem csak feladat-felsorolás.
 - Időrendi hézagok, túl hosszú szöveg, magyar-specifikus, ${L.adj} CV-n szokatlan elemek.
-- Munkáltatói referencia (Arbeitszeugnis) és motivációs levél utalás, releváns ${L.adj} képesítés-megfeleltetés.
+- Munkáltatói referencia (${L.refDoc}) és motivációs levél utalás, releváns ${L.adj} képesítés-megfeleltetés.
 
 FONTOS: CSAK ÉRTÉKELSZ — NEM írsz újra szakaszokat, NEM generálsz új CV-szöveget.
 Szabályok:
-- MINDENT MAGYARUL írj — a "section" szakasz-nevek is MAGYARUL legyenek (pl. "Személyes adatok", "Nyelvtudás", "Tanulmányok"), NE németül (NE "Personalien", "Sprachkenntnisse"). Ha egy ${L.adj} szakszó fontos, a magyar megnevezés után zárójelben add meg (pl. "Munkáltatói referencia (Arbeitszeugnis)").
+- MINDENT MAGYARUL írj — a "section" szakasz-nevek is MAGYARUL legyenek (pl. "Személyes adatok", "Nyelvtudás", "Tanulmányok"), NE a célország nyelvén. Ha egy ${L.adj} szakszó fontos, a magyar megnevezés után zárójelben add meg (pl. "Munkáltatói referencia (${L.refDoc})").
 - KIZÁRÓLAG a megadott CV-tartalomból dolgozz — NE találj ki céget, évszámot, képesítést, eredményt. Ahol adat hiányzik, a "fix"-ben kérd be, ne pótold kitalálttal.
 - CSAK ÉRDEMI, a ${L.adj} álláspiacon SZOKÁSOS javaslatot adj. NE erőltess gyenge/triviális/szokatlan tippet csak a darabszámért — inkább kevesebb, de hasznos pont. Pl. a jogosítványnál legfeljebb a KATEGÓRIA feltüntetése indokolt, és CSAK ha a munkához releváns (sofőr, terepmunka); SOHA ne javasolj jármű-típus felsorolást vagy hasonló szokatlan részletet.
 - LÉGY TÖMÖR: max 4 strengths, max 5 issues; rövid, lényegre törő mondatok.

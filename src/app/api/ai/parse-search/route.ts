@@ -3,6 +3,7 @@ import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "
 import { getCategories } from "@/lib/repo";
 import { CANTONS } from "@/lib/cantons";
 import { AT_BUNDESLAENDER, DE_BUNDESLAENDER } from "@/lib/salary-calc";
+import { getRegions } from "@/lib/regions";
 import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json().catch(() => ({}))) as { query?: string; country?: string };
     const query = typeof body.query === "string" ? body.query.trim() : "";
-    const country = body.country === "AT" || body.country === "DE" ? body.country : "CH";
+    const country = body.country === "AT" || body.country === "DE" || body.country === "NL" ? body.country : "CH";
     if (!query || query.length < 3 || query.length > 200) {
       return NextResponse.json({ error: "Adj meg egy keresési szöveget." }, { status: 400 });
     }
@@ -52,10 +53,10 @@ export async function POST(req: Request) {
     const catList = cats.map((c) => `  • ${c.id} (${c.label})`).join("\n");
     // Ország-tudatos régiólista (CH: kanton, AT/DE: Bundesland) — különben a német
     // user keresésében pl. „Berlinben" nem mappelődne régióra (eddig csak CH-kantonok).
-    const regions = country === "AT" ? AT_BUNDESLAENDER : country === "DE" ? DE_BUNDESLAENDER : CANTONS;
+    const regions = country === "AT" ? AT_BUNDESLAENDER : country === "DE" ? DE_BUNDESLAENDER : country === "NL" ? getRegions("NL") : CANTONS;
     const regionList = regions.map((r) => `  • ${r.code} (${r.name})`).join("\n");
-    const landLoc = country === "AT" ? "Ausztriában" : country === "DE" ? "Németországban" : "Svájcban";
-    const regionWord = country === "CH" ? "KANTON" : "BUNDESLAND";
+    const landLoc = country === "AT" ? "Ausztriában" : country === "DE" ? "Németországban" : country === "NL" ? "Hollandiában" : "Svájcban";
+    const regionWord = country === "CH" ? "KANTON" : country === "NL" ? "PROVINCIA" : "BUNDESLAND";
 
     const system = `Te a kinti.app Szaknévsor keresési asszisztense vagy.
 A felhasználó természetes magyar nyelven leírja, hogy milyen vállalkozót keres

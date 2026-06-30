@@ -32,13 +32,16 @@ export function AiInterviewSimulator() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
-  const languages = [
-    LANGUAGES[0],
-    isAT
-      ? { id: "Österreichisches Deutsch", label: "Österreichisches Deutsch (Osztrák német)" }
-      : LANGUAGES[1],
-    LANGUAGES[2],
-  ];
+  // NL → holland/angol (Hollandiában nem német nyelvű az interjú); CH/AT/DE → német variánsok + angol.
+  const languages = country === "NL"
+    ? [{ id: "Nederlands", label: "Nederlands (Holland)" }, LANGUAGES[2] /* Englisch */]
+    : [
+        LANGUAGES[0],
+        isAT
+          ? { id: "Österreichisches Deutsch", label: "Österreichisches Deutsch (Osztrák német)" }
+          : LANGUAGES[1],
+        LANGUAGES[2],
+      ];
 
   const [hasStarted, setHasStarted] = useState(false);
   const [profession, setProfession] = useState(PROFESSIONS[0]);
@@ -49,6 +52,13 @@ export function AiInterviewSimulator() {
   const [isLoading, setIsLoading] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Ha a választott nyelv nem érvényes a választott országra (pl. NL-re váltva a
+  // német „Hochdeutsch"), visszaállítjuk az ország első nyelvére.
+  useEffect(() => {
+    if (!languages.some((l) => l.id === language)) setLanguage(languages[0].id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [country]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -124,7 +134,7 @@ export function AiInterviewSimulator() {
           AI Munkainterjú Szimulátor
         </h2>
         <p className="text-center text-[13px] leading-relaxed text-ink-muted mb-6">
-          Készülj fel {country === "DE" ? "a német" : isAT ? "az osztrák" : "a svájci"} HR menedzserek kérdéseire! Az AI szerepjátékot játszik veled,
+          Készülj fel {country === "DE" ? "a német" : isAT ? "az osztrák" : country === "NL" ? "a holland" : "a svájci"} HR menedzserek kérdéseire! Az AI szerepjátékot játszik veled,
           hogy magabiztosabb legyél az éles interjún.
         </p>
 
