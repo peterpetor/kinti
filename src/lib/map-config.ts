@@ -13,12 +13,11 @@
  */
 export type MapEngine = "leaflet" | "maplibre";
 
-/** A fő térkép-engine.
- *  AKTIVÁLVA (2026-06-30): a MapLibre az ALAPÉRTELMEZETT (vektor-look). A csempe
- *  egyelőre OpenFreeMap (a self-hosted PMTiles@R2 a következő lépés — lásd runbook).
- *  Vissza Leafletre: `NEXT_PUBLIC_MAP_ENGINE="leaflet"`, vagy e sor visszaállítása. */
+/** A fő térkép-engine. Default: "leaflet" (a MapLibre üresen renderelt élesben —
+ *  vissza-állítva, amíg a vászon-méret/resize bug nincs javítva). MapLibre kézi
+ *  teszt: `?engine=maplibre`. Bekapcsolás: `NEXT_PUBLIC_MAP_ENGINE="maplibre"`. */
 export function mapEngine(): MapEngine {
-  return process.env.NEXT_PUBLIC_MAP_ENGINE === "leaflet" ? "leaflet" : "maplibre";
+  return process.env.NEXT_PUBLIC_MAP_ENGINE === "maplibre" ? "maplibre" : "leaflet";
 }
 
 /** A self-hosted PMTiles fájl publikus URL-je (R2 / custom domain). Üres = inaktív. */
