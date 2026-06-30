@@ -35,26 +35,25 @@ export function spreadColocated(businesses: Business[]): Business[] {
     if (!g) { g = []; groups.set(key, g); }
     g.push(b);
   }
+  // Arany szög (phyllotaxis) — a napraforgó-spirál egyenletes pont-eloszlása.
+  const GOLDEN = 2.399963229728653;
   return businesses.map((b) => {
     if (b.lat == null || b.lng == null) return b;
     const key = `${b.lat.toFixed(5)},${b.lng.toFixed(5)}`;
     const g = groups.get(key)!;
     if (g.length <= 1) return b;
-    // NAGY csoport (4+ szervezet UGYANAZON város-koordinátán = VÁROS-szintű adat,
-    // nincs utca-cím) → NE szórd szét hamis egyedi pinekké (különben 4-27 ikon egy
-    // körben, akár vízbe lógva). Maradjon EGY klaszter-buborék a városnál (őszinte:
-    // „N szervezet ebben a városban"); a részletek a lista-nézeten. Kis csoportot
-    // (2-3) szűken szétpöckölünk, hogy külön kattinthatók legyenek.
-    if (g.length > 3) return b;
     const idx = g.indexOf(b);
-    // Sugár a csoportmérettel skálázva, de SZŰK (max ~70 m) — a város-központra
-    // geokódolt szervezetek (pl. 27 Bécs-központon) különben egy nagy körben, akár
-    // VÍZBE/épületre lógva szóródnának szét. Szűk körön összetartanak (alacsony
-    // zoomon klaszter-buborék), és csak nagy zoomon válnak külön, kattinthatóan.
-    const radiusM = Math.min(70, Math.max(22, 6 * g.length));
-    const angle = (2 * Math.PI * idx) / g.length;
-    const dLat = (radiusM / 111320) * Math.cos(angle);
-    const dLng = (radiusM / (111320 * Math.cos((b.lat * Math.PI) / 180))) * Math.sin(angle);
+    // MINDEN azonos város-koordinátán álló csoportot napraforgó-SPIRÁLBA szórunk
+    // (r = step·√idx, szög = idx·aranyszög): egyenletes, KOMPAKT eloszlás a
+    // városközpont körül (pl. 60 szervezet ~155 m-en belül marad → nem lóg
+    // messzire vízbe), és NAGY zoomon külön, kattintható pinek (saját ikonnal).
+    // Alacsony zoomon a clusterBusinesses úgyis EGY buborékba vonja őket — így
+    // most már KIBONTHATÓ a klaszter (a kattintás rázoomol a spirálra).
+    const stepM = 20;
+    const r = idx === 0 ? 0 : stepM * Math.sqrt(idx);
+    const angle = idx * GOLDEN;
+    const dLat = (r / 111320) * Math.cos(angle);
+    const dLng = (r / (111320 * Math.cos((b.lat * Math.PI) / 180))) * Math.sin(angle);
     return { ...b, lat: b.lat + dLat, lng: b.lng + dLng };
   });
 }
