@@ -6,6 +6,7 @@ import type { Business } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
+import { pmtilesUrl, mapStyleUrl } from "@/lib/map-config";
 import { clusterBusinesses, clusterBounds, clusterSize } from "@/lib/cluster";
 import { useMyLocation } from "@/lib/use-my-location";
 import type { SosAlert } from "@/lib/sos-repo";
@@ -30,9 +31,13 @@ export interface MaplibreEngineProps {
 }
 
 const MAPTILER_KEY = process.env.NEXT_PUBLIC_MAPTILER_KEY;
-const MAP_STYLE = MAPTILER_KEY
-  ? `https://api.maptiler.com/maps/bright-v2/style.json?key=${MAPTILER_KEY}`
-  : "https://tiles.openfreemap.org/styles/liberty";
+// Self-hosted stílus (PMTiles@R2) elsőbbséget élvez, ha be van állítva (map-config).
+// Üres flag esetén marad a régi MapTiler/OpenFreeMap — azaz a PMTiles-út inaktív.
+const MAP_STYLE =
+  mapStyleUrl() ||
+  (MAPTILER_KEY
+    ? `https://api.maptiler.com/maps/bright-v2/style.json?key=${MAPTILER_KEY}`
+    : "https://tiles.openfreemap.org/styles/liberty");
 
 declare global {
   interface Window {
@@ -103,9 +108,25 @@ export function MaplibreEngine({
     }
 
     loadMaplibre()
-      .then((ml) => {
+      .then(async (ml) => {
         if (cancelled || !containerRef.current) return;
         mlRef.current = ml;
+
+        // PMTiles-protokoll regisztrálása, ha self-hosted PMTiles-t használunk
+        // (a stílus `pmtiles://` forrása enélkül nem oldódna fel). Best-effort:
+        // hiba esetén a térkép nem dől, csak a self-hosted forrás nem tölt.
+        if (pmtilesUrl()) {
+          try {
+            const { Protocol } = await import("pmtiles");
+            const protocol = new Protocol();
+            (ml as unknown as { addProtocol: (n: string, h: unknown) => void }).addProtocol(
+              "pmtiles",
+              protocol.tile,
+            );
+          } catch {
+            /* pmtiles betöltési hiba — a régi stílusra esik vissza */
+          }
+        }
 
         let map: MlMap;
         try {

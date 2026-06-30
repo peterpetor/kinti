@@ -11,6 +11,7 @@ import { cn } from "@/lib/cn";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
+import { mapEngine } from "@/lib/map-config";
 import { spreadColocated } from "@/lib/cluster";
 
 /**
@@ -78,8 +79,9 @@ export function BusinessMap({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = located.find((b) => b.id === selectedId) ?? defaultBiz ?? null;
 
-  // Engine választás — Leaflet a default, MapLibre csak ?engine=maplibre URL-re.
-  const [engine, setEngine] = useState<EngineChoice>("leaflet");
+  // Engine választás — a default a NEXT_PUBLIC_MAP_ENGINE flagből (alapból "leaflet",
+  // amíg be nem állítod). A `?engine=maplibre` URL felülírja (manuális teszt).
+  const [engine, setEngine] = useState<EngineChoice>(mapEngine());
   useEffect(() => {
     if (isMaplibreRequested()) setEngine("maplibre");
   }, []);
