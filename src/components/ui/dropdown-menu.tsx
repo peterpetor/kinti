@@ -195,10 +195,10 @@ export function DropdownMenu() {
                 {has("allampolgarsag") && (
                 <Link href="/allampolgarsag" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    {isCH ? "🇨🇭" : "🇦🇹"}
+                    {isCH ? "🇨🇭" : country === "AT" ? "🇦🇹" : country === "DE" ? "🇩🇪" : country === "NL" ? "🇳🇱" : "🌍"}
                   </span>
-                  {isCH ? "Einbürgerung-szimulátor" : country === "AT" ? "Állampolgárság-szimulátor" : "Állampolgárság"}
-                  {(isCH || country === "AT") && <ProBadge />}
+                  {isCH ? "Einbürgerung-szimulátor" : country === "DE" ? "Einbürgerungstest" : country === "NL" ? "Inburgering (KNM)" : "Állampolgárság-szimulátor"}
+                  <ProBadge />
                 </Link>
                 )}
                 {has("ugyintezes") && (

@@ -30,7 +30,8 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
  * a benchmark-seed). Ezeket DE/NL-ben rejtjük, amíg el nem készül a tartalmuk.
  */
 export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
-  "allampolgarsag",// állampolgárság/Einbürgerung — CH/AT-specifikus (DE: /vizum + guide)
+  // „allampolgarsag" KIVÉVE: mind a 4 országra van kérdésbank (CH Einbürgerung,
+  // AT Staatsbürgerschaft, DE Einbürgerungstest, NL inburgering/KNM) → minden országban él.
   "lakberles",     // lakbér rejtett-költség kalk. — CH/AT Nebenkosten/Betriebskosten bázisráta (DE-hez külön logika kell)
   // "iranytu" — KIVÉVE: az Iránytű közösségi benchmark (a userek töltik), DE-tudatos
   // (region-util DE-ág), és fő nav-fül → ne tűnjön el DE-ben; üresen indul, mint AT.

@@ -2,33 +2,40 @@
 
 import Link from "next/link";
 import { Icon } from "@/components/ui";
-import { EinburgerungQuiz, StaatsbuergerschaftQuiz } from "@/components/views/einburgerung-quiz";
+import {
+  EinburgerungQuiz, StaatsbuergerschaftQuiz, EinburgerungQuizDE, InburgeringQuizNL,
+} from "@/components/views/einburgerung-quiz";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 
+/** Ország → állampolgársági kvíz (mind a 4 országra; mind PRO-funkció). */
+const QUIZ_BY_COUNTRY: Record<string, { Quiz: () => JSX.Element; name: string; desc: string }> = {
+  CH: { Quiz: EinburgerungQuiz, name: "Einbürgerung-szimulátor",
+    desc: "Teszteld le, hogy átmennél-e a hivatalos Einbürgerung tudásfelmérőn! Svájci történelmi és politikai kérdésekkel." },
+  AT: { Quiz: StaatsbuergerschaftQuiz, name: "Staatsbürgerschaftstest-szimulátor",
+    desc: "Teszteld le a tudásod az osztrák Staatsbürgerschaftstest témáiból: demokrácia, történelem, földrajz + a választott Bundesland." },
+  DE: { Quiz: EinburgerungQuizDE, name: "Einbürgerungstest-szimulátor",
+    desc: "Teszteld le, hogy átmennél-e a német Einbürgerungstesten: politika és Grundgesetz, történelem, földrajz, alapjogok + a választott Bundesland." },
+  NL: { Quiz: InburgeringQuizNL, name: "Inburgering (KNM) szimulátor",
+    desc: "Teszteld le a holland inburgering (KNM) tudásod: államszervezet, történelem, földrajz és társadalmi normák." },
+};
+
 /**
- * Az állampolgársági kvíz-szekció — ország-tudatos. CH: Einbürgerung-szimulátor,
- * AT: Staatsbürgerschaftstest. Mindkettő PRO-funkció (a varázsló fent ingyenes).
+ * Az állampolgársági kvíz-szekció — ország-tudatos (CH/AT/DE/NL).
+ * Mindegyik PRO-funkció (az engedély-varázsló fent ingyenes).
  */
 export function CitizenshipQuizSection({ isPro }: { isPro: boolean }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const isAT = country === "AT";
-  // DE: az engedély-varázsló DE-kész, de a »Leben in Deutschland« kérdésbank még
-  // nincs meg — a svájci kvíz helyett inkább semmit mutatunk (nem félrevezetünk).
-  if (country === "DE") return null;
-  const Quiz = isAT ? StaatsbuergerschaftQuiz : EinburgerungQuiz;
-  const quizName = isAT ? "Staatsbürgerschaftstest-szimulátor" : "Einbürgerung-szimulátor";
+  const conf = QUIZ_BY_COUNTRY[country] ?? QUIZ_BY_COUNTRY.CH;
+  const Quiz = conf.Quiz;
+  const quizName = conf.name;
 
   return (
     <div className="pt-8 border-t border-line">
       <div className="mb-6 space-y-2">
         <h2 className="text-xl font-bold text-ink">Készen állsz az állampolgársági vizsgára?</h2>
-        <p className="text-sm text-ink-muted">
-          {isAT
-            ? "Teszteld le a tudásod az osztrák Staatsbürgerschaftstest témáiból: demokrácia, történelem, földrajz + a választott Bundesland kérdései."
-            : "Teszteld le, hogy átmennél-e a hivatalos Einbürgerung tudásfelmérőn! Svájci történelmi és politikai kérdésekkel."}
-        </p>
+        <p className="text-sm text-ink-muted">{conf.desc}</p>
       </div>
 
       {isPro ? (

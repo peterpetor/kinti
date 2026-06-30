@@ -27,6 +27,8 @@ export default function ProPage() {
   const citizenshipSim =
     country === "CH" ? "Einbürgerung (Állampolgárság) Szimulátor"
     : country === "AT" ? "Staatsbürgerschaftstest (Állampolgárság) Szimulátor"
+    : country === "DE" ? "Einbürgerungstest (Állampolgárság) Szimulátor"
+    : country === "NL" ? "Inburgering / KNM (Állampolgárság) Szimulátor"
     : null;
   const proFeatures = [
     `AI Interjú Szimulátor ${adj} cégekhez`,

@@ -19,6 +19,12 @@ import {
   AT_QUIZ_LENGTH,
   AT_PASS_THRESHOLD,
 } from "@/lib/staatsbuergerschaft-bank";
+import {
+  DE_BANK, DE_BUNDESLAENDER, DE_TOPIC_META, generateQuizDE, DE_QUIZ_LENGTH, DE_PASS_THRESHOLD,
+} from "@/lib/de-einburgerung-bank";
+import {
+  NL_BANK, NL_PROVINCES, NL_TOPIC_META, generateQuizNL, NL_QUIZ_LENGTH, NL_PASS_THRESHOLD,
+} from "@/lib/nl-inburgering-bank";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 type Phase = "intro" | "quiz" | "result";
@@ -79,6 +85,48 @@ const AT_CONFIG: QuizConfig = {
   },
 };
 
+const DE_CONFIG: QuizConfig = {
+  bank: DE_BANK,
+  regions: DE_BUNDESLAENDER,
+  topicMeta: DE_TOPIC_META,
+  generate: generateQuizDE,
+  flag: "🇩🇪",
+  title: "Einbürgerungstest-szimulátor",
+  intro: `${DE_QUIZ_LENGTH} kérdés: politika és Grundgesetz, történelem, földrajz, alapjogok + kérdés a választott Bundeslandra. A vizsga-küszöb: ${DE_PASS_THRESHOLD}%.`,
+  regionPrompt: "Melyik Bundeslandban élsz / mire készülsz?",
+  passThreshold: DE_PASS_THRESHOLD,
+  disclaimer: {
+    toolName: "Einbürgerungstest-szimulátor",
+    warning:
+      "Ez egy oktatási játék — NEM HIVATALOS VIZSGA. A valódi német Einbürgerungstest 33 kérdésből áll (hivatalos 300+10 katalógusból), és a feltételek időnként változnak. A szimulátor 'átmenő' eredménye semmilyen módon nem helyettesíti a tényleges vizsgát.",
+    sources: [
+      { label: "BAMF — Einbürgerungstest", url: "https://www.bamf.de/DE/Themen/Integration/ZugewanderteTeilnehmende/Einbuergerung/einbuergerung-node.html" },
+      { label: "Online-Testcenter (BAMF)", url: "https://www.bamf.de/DE/Themen/Integration/ZugewanderteTeilnehmende/Einbuergerung/Testfragen/testfragen-node.html" },
+    ],
+  },
+};
+
+const NL_CONFIG: QuizConfig = {
+  bank: NL_BANK,
+  regions: NL_PROVINCES,
+  topicMeta: NL_TOPIC_META,
+  generate: generateQuizNL,
+  flag: "🇳🇱",
+  title: "Inburgering (KNM) szimulátor",
+  intro: `${NL_QUIZ_LENGTH} kérdés: államszervezet, történelem, földrajz, társadalmi normák + kérdés a választott provinciára. A vizsga-küszöb: ${NL_PASS_THRESHOLD}%.`,
+  regionPrompt: "Melyik provinciában élsz / mire készülsz?",
+  passThreshold: NL_PASS_THRESHOLD,
+  disclaimer: {
+    toolName: "Inburgering (KNM) szimulátor",
+    warning:
+      "Ez egy oktatási játék — NEM HIVATALOS VIZSGA. A valódi holland beilleszkedési vizsga (inburgering) több részből áll (nyelv + KNM + ONA), és a feltételek időnként változnak. A szimulátor 'átmenő' eredménye semmilyen módon nem helyettesíti a tényleges vizsgát.",
+    sources: [
+      { label: "Inburgeren.nl — hivatalos", url: "https://www.inburgeren.nl/" },
+      { label: "DUO — Inburgering", url: "https://www.duo.nl/particulier/inburgeren/" },
+    ],
+  },
+};
+
 /** Svájci Einbürgerung-kvíz (változatlan viselkedés). */
 export function EinburgerungQuiz() {
   return <CitizenshipQuiz config={CH_CONFIG} />;
@@ -87,6 +135,16 @@ export function EinburgerungQuiz() {
 /** Osztrák Staatsbürgerschaftstest-kvíz. */
 export function StaatsbuergerschaftQuiz() {
   return <CitizenshipQuiz config={AT_CONFIG} />;
+}
+
+/** Német Einbürgerungstest-kvíz. */
+export function EinburgerungQuizDE() {
+  return <CitizenshipQuiz config={DE_CONFIG} />;
+}
+
+/** Holland inburgering (KNM) kvíz. */
+export function InburgeringQuizNL() {
+  return <CitizenshipQuiz config={NL_CONFIG} />;
 }
 
 function CitizenshipQuiz({ config }: { config: QuizConfig }) {

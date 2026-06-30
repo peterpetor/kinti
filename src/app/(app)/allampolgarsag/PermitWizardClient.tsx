@@ -6,8 +6,22 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 export function PermitWizardClient() {
   const [prefCountry] = usePreferredCountry();
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const isAT = country === "AT";
   const [arrivalDate, setArrivalDate] = useState<string>("");
+
+  // A részletes letelepedési/honosítási idővonal-varázsló egyelőre csak CH/AT-ra
+  // pontos. DE/NL-re NE a svájci tartalmat mutassuk (félrevezető) — rövid jelzés;
+  // a felkészítő kérdésbank (kvíz) alatta DE/NL-re is megy.
+  if (country === "DE" || country === "NL") {
+    return (
+      <div className="rounded-card border border-line bg-surface-alt/40 p-5 text-[13.5px] leading-relaxed text-ink-muted">
+        Az állampolgársági <strong className="text-ink">felkészítő kvíz</strong> (lent) erre az országra is elérhető. A
+        részletes letelepedési/honosítási idővonal-varázsló{" "}
+        {country === "DE" ? "Németországra" : "Hollandiára"} hamarosan.
+      </div>
+    );
+  }
 
   let arrival = new Date();
   let today = new Date();
