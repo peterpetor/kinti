@@ -5,6 +5,7 @@
 import { getDB } from "./cloudflare";
 import type { Business, Category, DashboardStats } from "./types";
 import { bool, jsonArray } from "./repo-shared";
+import { DEFAULT_COUNTRY } from "./countries";
 
 // --- Row types ---------------------------------------------------------------
 
@@ -64,7 +65,7 @@ export function toBusiness(r: BusinessRow): Business {
     createdAt: r.created_at ?? null,
     claimed: bool(r.claimed ?? 1),
     leadOptOut: bool(r.lead_opt_out ?? 0),
-    country: r.country_code ?? "CH",
+    country: r.country_code ?? DEFAULT_COUNTRY,
     canton: r.canton_code ?? null,
   };
 }
@@ -72,7 +73,7 @@ export function toBusiness(r: BusinessRow): Business {
 function toBusinessSubmission(r: BusinessSubmissionRow): BusinessSubmission {
   return {
     id: r.id, name: r.name, categoryId: r.category_id, categoryLabel: r.category_label,
-    address: r.address, cantonCode: r.canton_code, country: r.country_code ?? "CH", phone: r.phone, email: r.email,
+    address: r.address, cantonCode: r.canton_code, country: r.country_code ?? DEFAULT_COUNTRY, phone: r.phone, email: r.email,
     blurb: r.blurb, licenseNumber: r.license_number, ownerUserId: r.owner_user_id,
     manageToken: r.manage_token, confirmToken: r.confirm_token, expiresAt: r.expires_at,
   };
@@ -405,10 +406,10 @@ export async function createOwnerDraftBusiness(input: {
       `INSERT INTO businesses
        (id,name,category_id,country_code,category_label,address,phone,blurb,
         contact_email,source,languages,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,owner_user_id,manage_token)
-       VALUES (?,?,?,?,NULL,NULL,NULL,NULL,?,'owner_draft','["Magyar"]',?,?,50,50,0,0,0,0,?,?)`,
+       VALUES (?,?,?,?,NULL,NULL,NULL,NULL,?,'owner_draft',?,?,?,50,50,0,0,0,0,?,?)`,
     )
     .bind(input.id, input.name, input.categoryId, input.country, input.contactEmail.toLowerCase(),
-      input.lat, input.lng, input.ownerUserId, input.manageToken)
+      JSON.stringify(["Magyar"]), input.lat, input.lng, input.ownerUserId, input.manageToken)
     .run();
 }
 
@@ -437,11 +438,11 @@ export async function createSuggestedBusiness(input: SuggestBusinessInput): Prom
        (id,name,category_id,country_code,category_label,address,phone,blurb,
         source,languages,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,
         moderation_status,claimed)
-       VALUES (?,?,?,?,?,?,?,?,'community-suggestion','["Magyar"]',?,?,50,50,0,0,0,0,0,0)`,
+       VALUES (?,?,?,?,?,?,?,?,'community-suggestion',?,?,?,50,50,0,0,0,0,0,0)`,
     )
     .bind(
       id, input.name, input.categoryId, input.country, input.categoryLabel, input.address,
-      input.phone, input.blurb, input.lat, input.lng,
+      input.phone, input.blurb, JSON.stringify(["Magyar"]), input.lat, input.lng,
     )
     .run();
   return id;
