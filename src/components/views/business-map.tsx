@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Business, Category } from "@/lib/types";
 import { Icon } from "@/components/ui";
-import { categoryIconSvgString } from "@/components/ui/category-icon";
+import { categoryIconSvgString, CategoryIcon } from "@/components/ui/category-icon";
 import { mediaImageUrl } from "@/lib/media";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { cn } from "@/lib/cn";
@@ -253,9 +253,14 @@ function SelectedCard({ business: b }: { business: Business }) {
         className="relative h-[52px] w-[52px] shrink-0 overflow-hidden rounded-[14px] bg-primary-soft"
         style={!logoUrl && b.photo ? { background: b.photo } : undefined}
       >
-        {logoUrl && (
+        {logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={logoUrl} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" width={48} height={48} />
+        ) : (
+          // Nincs logó → kategória-ikon (ne legyen üres szürke doboz).
+          <div className="grid h-full w-full place-items-center text-primary/70">
+            <CategoryIcon categoryId={b.categoryId} categoryLabel={b.categoryLabel} size={26} aria-hidden="true" />
+          </div>
         )}
       </div>
       <div className="min-w-0 flex-1">

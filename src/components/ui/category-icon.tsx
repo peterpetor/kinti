@@ -461,7 +461,7 @@ export function categoryIconSvgString(categoryId: string | null, categoryLabel?:
     return `<svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>`;
   }
   const inner = paths.map((d) => `<path d="${d}"/>`).join("");
-  return `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+  return `<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
 }
 
 export interface CategoryIconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {

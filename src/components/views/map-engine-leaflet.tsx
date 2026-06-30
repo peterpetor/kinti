@@ -199,7 +199,9 @@ const SOS_ICON = L.divIcon({
 const PIN_CACHE = new Map<string, L.DivIcon>();
 
 function pinFor(b: Business, active: boolean): L.DivIcon {
-  const key = `${b.categoryId ?? "none"}-${b.featured ? "f" : "d"}-${active ? "a" : "n"}`;
+  // FONTOS: a categoryLabel is a kulcsban — a magyar-kozosseg pinek ikonja az
+  // altípus-labelből jön, enélkül minden szervezet az elsőként cache-elt ikont kapná.
+  const key = `${b.categoryId ?? "none"}|${b.categoryLabel ?? ""}|${b.featured ? "f" : "d"}|${active ? "a" : "n"}`;
   const cached = PIN_CACHE.get(key);
   if (cached) return cached;
   const icon = L.divIcon({
