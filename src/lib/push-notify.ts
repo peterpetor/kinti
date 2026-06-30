@@ -29,24 +29,32 @@ export async function notifyCanton(
   const subs = await listPushSubscriptions(cantonCode, category);
   let sent = 0, removed = 0, failed = 0;
 
-  await Promise.all(
-    subs.map(async (s) => {
-      try {
-        const status = await sendPush(
-          env.VAPID_PRIVATE_KEY!,
-          { endpoint: s.endpoint, p256dh: s.p256dh, auth: s.auth },
-          payload,
-        );
-        if (status >= 200 && status < 300) sent++;
-        else if (status === 404 || status === 410) {
-          await deletePushSubscription(s.endpoint);
-          removed++;
-        } else failed++;
-      } catch {
-        failed++;
-      }
-    }),
-  );
+  // Chunkolt fan-out: ~50-es kötegekben dolgozzuk fel a feliratkozókat, hogy ne
+  // indítsunk korlátlan számú EGYIDEJŰ subrequestet (a korlátlan Promise.all már
+  // pár száz feliratkozónál is connection-storm-ot okozhat). NAGY skálán (>~1000
+  // címzett, a Cloudflare per-invocation subrequest-plafonja közelében) ezt
+  // Cloudflare Queues-ra kell mozgatni — addig ez a köteg-feldolgozás biztonságos.
+  const CHUNK = 50;
+  for (let i = 0; i < subs.length; i += CHUNK) {
+    await Promise.all(
+      subs.slice(i, i + CHUNK).map(async (s) => {
+        try {
+          const status = await sendPush(
+            env.VAPID_PRIVATE_KEY!,
+            { endpoint: s.endpoint, p256dh: s.p256dh, auth: s.auth },
+            payload,
+          );
+          if (status >= 200 && status < 300) sent++;
+          else if (status === 404 || status === 410) {
+            await deletePushSubscription(s.endpoint);
+            removed++;
+          } else failed++;
+        } catch {
+          failed++;
+        }
+      }),
+    );
+  }
 
   return { total: subs.length, sent, removed, failed };
 }
