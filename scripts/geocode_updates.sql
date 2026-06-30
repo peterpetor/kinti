@@ -1,0 +1,26 @@
+-- scripts/geocode_updates.sql — AUTOGENERÁLT (geocode-imported.mjs). Pontos koordináták (Photon/OSM).
+UPDATE businesses SET lat=52.376642, lng=4.886602 WHERE id='nl-imp-lassus-tandartsen';
+UPDATE businesses SET lat=47.85375, lng=12.122826 WHERE id='de-imp-dr-csingar-peter';
+UPDATE businesses SET lat=50.111601, lng=8.660052 WHERE id='de-imp-optitax-trade-kft';
+UPDATE businesses SET lat=48.228644, lng=16.338953 WHERE id='at-imp-dr-neumann-michael-es-dr-neumann-etelka';
+UPDATE businesses SET lat=48.2157, lng=16.348231 WHERE id='at-imp-dr-rosta-klara-ph-d';
+UPDATE businesses SET lat=48.194352, lng=16.26295 WHERE id='at-imp-dr-lehner-gyorgy';
+UPDATE businesses SET lat=48.210808, lng=16.389739 WHERE id='at-imp-dentailor-dental-team';
+UPDATE businesses SET lat=48.227236, lng=16.401873 WHERE id='at-imp-mag-anita-weichberger';
+UPDATE businesses SET lat=52.553241, lng=13.467539 WHERE id='de-imp-dr-dajka-daniel';
+UPDATE businesses SET lat=52.427149, lng=13.760201 WHERE id='de-imp-sule-law-firm';
+UPDATE businesses SET lat=50.114776, lng=8.551266 WHERE id='de-imp-dr-mercz-agnes';
+UPDATE businesses SET lat=52.488171, lng=13.388521 WHERE id='de-imp-bo-merei';
+UPDATE businesses SET lat=51.945408, lng=4.473757 WHERE id='nl-imp-magyar-konyvelohaz';
+UPDATE businesses SET lat=48.190569, lng=16.36631 WHERE id='at-imp-dr-eniko-jozsa';
+UPDATE businesses SET lat=48.137333, lng=16.256648 WHERE id='at-imp-dr-andrea-dudas';
+UPDATE businesses SET lat=48.194263, lng=16.348213 WHERE id='at-imp-dr-csutak-rozalia';
+UPDATE businesses SET lat=48.22179, lng=16.365084 WHERE id='at-imp-dr-emese-szent-ivanyi';
+UPDATE businesses SET lat=48.208547, lng=16.369438 WHERE id='at-imp-ilona-stuberl';
+UPDATE businesses SET lat=48.226754, lng=16.355465 WHERE id='at-imp-magnolia-kosmetik-szalkai-zsanett';
+UPDATE businesses SET lat=48.211926, lng=16.368749 WHERE id='at-imp-banfai-erika';
+UPDATE businesses SET lat=47.409831, lng=16.507465 WHERE id='at-imp-pannonfinanz';
+UPDATE businesses SET lat=48.166674, lng=16.310652 WHERE id='at-imp-dr-vizvari-fruzsina';
+UPDATE businesses SET lat=48.174078, lng=16.375131 WHERE id='at-imp-dr-bernadette-vago';
+UPDATE businesses SET lat=47.432996, lng=8.564142 WHERE id='ch-imp-dr-med-phd-arpad-farkas';
+UPDATE businesses SET lat=48.215365, lng=16.370564 WHERE id='at-imp-dr-csehi-alisa-leila';
