@@ -18,6 +18,8 @@ import { BusinessGallery } from "@/components/views/business-gallery";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
 import { safeJsonLdStringify } from "@/lib/json-ld";
+import { hasStreetAddress } from "@/lib/address";
+import { getCountry } from "@/lib/countries";
 import { registryForCategory } from "@/lib/business-registry";
 import { guidesForCategory } from "@/lib/guides";
 
@@ -108,8 +110,13 @@ export default async function BusinessPage({
   const reviews = await getReviewsByBusiness(b.id);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
-  const mapsHref = b.address
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.address)}`
+  // Útvonal CSAK utcaszintű címnél — városközpontra (pl. „Bécs"/„Online") navigálni
+  // értelmetlen, nem vezet a tényleges helyre. Az országot is a query-be tesszük
+  // a pontosabb Google Maps-találatért.
+  const mapsHref = hasStreetAddress(b.address)
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        [b.address, getCountry(b.country)?.name].filter(Boolean).join(", "),
+      )}`
     : undefined;
   const heroUrl = mediaUrl(b.logoKey);
 
