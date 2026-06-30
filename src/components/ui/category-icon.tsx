@@ -418,9 +418,45 @@ export const CATEGORY_ICON_PATHS: Record<string, string[]> = {
   takaritas_irodai: PATHS_TAKARITO,
 };
 
+// — Magyar-közösség ALTÍPUS ikonok ——————————————————————————————————————
+// A ~150 „magyar-kozosseg" szervezet mind EGY kategória-ID-n osztozik, de a
+// category_label változatos (Egyház, Cserkészet, Iskola, Néptánc, Konzulátus…).
+// Ezért az altípust a label kulcsszavaiból vezetjük le → változatos pin/ikon,
+// nem mindenhol ugyanaz a „két ember" ikon.
+const PATHS_CHURCH = [
+  "m18 7 4 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9l4-2",
+  "M14 22v-4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v4",
+  "M18 22V5l-6-3-6 3v17",
+  "M12 7v5",
+  "M10 9h4",
+];
+const PATHS_TENT = ["M3.5 21 14 3", "M20.5 21 10 3", "M15.5 21 12 15l-3.5 6", "M2 21h20"];
+
+/** A magyar-kozosseg szervezet altípus-ikonja a category_label alapján (null → marad a „közösség" ikon). */
+function communitySubPaths(label: string | null | undefined): string[] | null {
+  if (!label) return null;
+  const l = label.toLowerCase();
+  if (/egyház|gyülekezet|reform|evangé|katoli|plébán|hitközség|lelkig/.test(l)) return PATHS_CHURCH;
+  if (/cserkész/.test(l)) return PATHS_TENT;
+  if (/iskola|óvoda|oktatás|pedagó|tanoda|tanár|képzés/.test(l)) return PATHS_TANAR;
+  if (/néptánc|tánc|zene|kórus|népdal|citera/.test(l)) return PATHS_ZENESZ;
+  if (/kultúr|művész|színház|galéria|könyvtár/.test(l)) return PATHS_ANIMATOR;
+  if (/konzul|követség|nagykövet|képviselet/.test(l)) return PATHS_INGATLAN;
+  if (/kutató|tudomány/.test(l)) return PATHS_TANAR;
+  return null; // egyesület / társaság / baráti kör / ernyőszervezet → „közösség" (emberek) ikon
+}
+
+/** A megjelenítendő ikon-path-ek: magyar-kozosseg esetén a label-altípus dönt. */
+function resolveIconPaths(categoryId: string | null, categoryLabel?: string | null): string[] | undefined {
+  if (categoryId === "magyar-kozosseg") {
+    return communitySubPaths(categoryLabel) ?? CATEGORY_ICON_PATHS["magyar-kozosseg"];
+  }
+  return categoryId ? CATEGORY_ICON_PATHS[categoryId] : undefined;
+}
+
 /** Térkép-pin HTML-stringje (Leaflet divIcon). */
-export function categoryIconSvgString(categoryId: string | null): string {
-  const paths = categoryId ? CATEGORY_ICON_PATHS[categoryId] : undefined;
+export function categoryIconSvgString(categoryId: string | null, categoryLabel?: string | null): string {
+  const paths = resolveIconPaths(categoryId, categoryLabel);
   if (!paths) {
     return `<svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>`;
   }
@@ -430,12 +466,14 @@ export function categoryIconSvgString(categoryId: string | null): string {
 
 export interface CategoryIconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {
   categoryId: string | null;
+  /** Magyar-közösség szervezeteknél az altípus-ikont a label adja (Egyház, Cserkészet…). */
+  categoryLabel?: string | null;
   size?: number;
 }
 
 /** React kategória-ikon (felület: pillek, kártyák). */
-export function CategoryIcon({ categoryId, size = 16, ...props }: CategoryIconProps) {
-  const paths = categoryId ? CATEGORY_ICON_PATHS[categoryId] : undefined;
+export function CategoryIcon({ categoryId, categoryLabel, size = 16, ...props }: CategoryIconProps) {
+  const paths = resolveIconPaths(categoryId, categoryLabel);
   if (!paths) {
     // Általános „szakma/üzlet" fallback (aktatáska) — nem üres pötty.
     return (

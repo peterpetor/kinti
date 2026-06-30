@@ -266,7 +266,7 @@ export default async function BusinessPage({
         {/* Üres borító → kategória-vízjel (nem fake fotó), hogy ne legyen csúnya az üres box */}
         {!heroUrl && !b.accentColor && !b.photo && (
           <div className="pointer-events-none absolute inset-0 grid place-items-center">
-            <CategoryIcon categoryId={b.categoryId} size={96} className="text-primary/20" />
+            <CategoryIcon categoryId={b.categoryId} categoryLabel={b.categoryLabel} size={96} className="text-primary/20" />
           </div>
         )}
         <div className="absolute inset-x-0 top-0 flex gap-2 bg-gradient-to-b from-black/30 to-transparent px-3.5 pb-3.5 pt-[calc(env(safe-area-inset-top)+0.75rem)]">

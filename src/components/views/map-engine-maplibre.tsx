@@ -204,7 +204,7 @@ export function MaplibreEngine({
         const b = pt.business;
         const el = document.createElement("div");
         el.className = `kinti-pin-v2 ${b.featured ? "kinti-pin-v2--featured" : ""}`;
-        el.innerHTML = `<span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId)}</span>`;
+        el.innerHTML = `<span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId, b.categoryLabel)}</span>`;
         el.addEventListener("click", (ev) => {
           ev.stopPropagation();
           onSelectMarker(b.id);
@@ -266,7 +266,7 @@ export function MaplibreEngine({
         const b = pt.business;
         const el = document.createElement("div");
         el.className = `kinti-pin-v2 ${b.featured ? "kinti-pin-v2--featured" : ""} ${b.id === selectedId ? "kinti-pin-v2--active" : ""}`;
-        el.innerHTML = `<span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId)}</span>`;
+        el.innerHTML = `<span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId, b.categoryLabel)}</span>`;
         el.addEventListener("click", (ev) => {
           ev.stopPropagation();
           onSelectMarker(b.id);

@@ -62,7 +62,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
           />
         ) : (
           // Nincs feltöltött logó → kategória-ikon (releváns, nem üres szürke doboz).
-          <CategoryIcon categoryId={b.categoryId} size={32} aria-hidden="true" />
+          <CategoryIcon categoryId={b.categoryId} categoryLabel={b.categoryLabel} size={32} aria-hidden="true" />
         )}
       </div>
 

@@ -245,7 +245,7 @@ function pinFor(b: Business, active: boolean): L.DivIcon {
   const icon = L.divIcon({
     className: "",
     html: `<div class="kinti-pin-v2 ${b.featured ? "kinti-pin-v2--featured" : ""} ${active ? "kinti-pin-v2--active" : ""}">
-             <span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId)}</span>
+             <span class="kinti-pin-v2__inner">${categoryIconSvgString(b.categoryId, b.categoryLabel)}</span>
            </div>`,
     iconSize: [32, 42],
     iconAnchor: [16, 42],
