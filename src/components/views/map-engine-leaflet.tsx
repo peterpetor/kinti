@@ -155,6 +155,42 @@ function ClusteredMarkers({
             eventHandlers={{
               click: () => {
                 const bounds = clusterBounds(located, pt.itemIds);
+                const sw = L.latLng(bounds[0][0], bounds[0][1]);
+                const ne = L.latLng(bounds[1][0], bounds[1][1]);
+                // Ha a tagok (közel) AZONOS koordinátán állnak (city-level
+                // geokódolás → sok cég egy városközpont-ponton), a fitBounds
+                // hatástalan (nulla-méretű terület): a klaszter „ragad", semmi
+                // sem látszik. Ilyenkor LISTA-popupot nyitunk a cégekkel.
+                if (map.distance(sw, ne) < 35) {
+                  const items = located.filter((b) => pt.itemIds.includes(b.id));
+                  const html =
+                    `<div class="kinti-cluster-list">` +
+                    items
+                      .map(
+                        (b) =>
+                          `<button type="button" class="kinti-cluster-list__item" data-id="${escHtml(b.id)}">` +
+                          `<span class="kinti-cluster-list__name">${escHtml(b.name)}</span>` +
+                          (b.categoryLabel ? `<span class="kinti-cluster-list__cat">${escHtml(b.categoryLabel)}</span>` : "") +
+                          `</button>`,
+                      )
+                      .join("") +
+                    `</div>`;
+                  const popup = L.popup({ maxHeight: 240, className: "kinti-cluster-popup", autoPanPadding: [24, 24] })
+                    .setLatLng([pt.lat, pt.lng])
+                    .setContent(html)
+                    .openOn(map);
+                  popup
+                    .getElement()
+                    ?.querySelectorAll<HTMLButtonElement>("button[data-id]")
+                    .forEach((btn) =>
+                      btn.addEventListener("click", () => {
+                        const id = btn.getAttribute("data-id");
+                        if (id) onSelectMarker(id);
+                        map.closePopup(popup);
+                      }),
+                    );
+                  return;
+                }
                 map.fitBounds(bounds, {
                   padding: [80, 80],
                   // 18: elég közeli, hogy az azonos koordinátáról szétpöckölt
@@ -169,6 +205,11 @@ function ClusteredMarkers({
       })}
     </>
   );
+}
+
+/** HTML-escape a klaszter-lista popup biztonságos beillesztéséhez. */
+function escHtml(s: string): string {
+  return String(s).replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c] ?? c));
 }
 
 // ---------------------------------------------------------------------------
