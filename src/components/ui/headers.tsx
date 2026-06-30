@@ -3,11 +3,17 @@ import { cn } from "@/lib/cn";
 import { DropdownMenu } from "./dropdown-menu";
 
 /**
- * ScreenHeader — nézet-fejléc nagy címmel + opcionális eyebrow-val és jobb
- * oldali akcióval (pl. ikongomb).
+ * ScreenHeader — nézet-fejléc nagy címmel + opcionális eyebrow-val.
  *
- * `back` — a jobb oldalra (a menü/right elé) kerülő vissza-gomb. Az `left`
- * prop megmaradt kompatibilitás miatt, de új oldalakon `back`-et használj.
+ * RENDSZER a jobb oldali gombokra (EGYSÉGES minden oldalon — ne térj el tőle):
+ *   • ROOT (felső szintű tab-)oldal → nincs `back`, a „…" menü LÁTSZIK.
+ *   • AL-oldal (drill-down) → adj `back`-et; ekkor CSAK a vissza-gomb látszik,
+ *     a menü NEM — a globális navigációt az alsó TabBar adja.
+ * Vagyis a menü megjelenése a `back` hiányából/ jelenlétéből KÖVETKEZIK, nem
+ * oldalanként ad-hoc. A `menu` proppal kivételesen felülírható.
+ *
+ * `right` — KIEGÉSZÍTŐ akció (pl. kereső ikon), a menü MELLETT jelenik meg
+ * (nem helyette). `back` — a vissza-gomb node-ja (al-oldalakon).
  */
 export function ScreenHeader({
   eyebrow,
@@ -15,6 +21,7 @@ export function ScreenHeader({
   left,
   right,
   back,
+  menu,
   className,
 }: {
   eyebrow?: ReactNode;
@@ -22,8 +29,12 @@ export function ScreenHeader({
   left?: ReactNode;
   right?: ReactNode;
   back?: ReactNode;
+  /** Felülírja a szabályt: explicit true → mindig menü; false → soha. Alapból: csak root-on. */
+  menu?: boolean;
   className?: string;
 }) {
+  // A szabály: menü a root oldalakon (nincs back); al-oldalon (van back) nincs.
+  const showMenu = menu ?? !back;
   return (
     <header className={cn("flex items-start justify-between gap-3", className)}>
       {left && <div className="shrink-0">{left}</div>}
@@ -35,11 +46,12 @@ export function ScreenHeader({
           {title}
         </h1>
       </div>
-      {/* A menü gomb a tartalom tetejéhez (content-top) igazodik — így MINDEN
-          oldalon ugyanazon a szinten van (a logó-soros oldalak is content-top-ok). */}
+      {/* A gombok a tartalom tetejéhez (content-top) igazodnak — minden oldalon
+          ugyanazon a szinten. Sorrend: [vissza] [kiegészítő akció] [menü]. */}
       <div className="flex shrink-0 items-center gap-2">
         {back}
-        {right !== undefined ? right : <DropdownMenu />}
+        {right}
+        {showMenu && <DropdownMenu />}
       </div>
     </header>
   );
