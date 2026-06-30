@@ -187,7 +187,15 @@ export function BusinessMap({
       {/* Alul: kategória-pillek + kiválasztott kártya. A térkép a lebegő alsó
           nav-sáv mögé nyúlik, ezért a tartalmat a nav (+ safe-area) fölé emeljük,
           különben a kategória-pillek kitakarnák a menü-ikonokat. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[10] flex flex-col gap-2 px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+5.5rem)]">
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-x-0 bottom-0 z-[10] flex flex-col gap-2 px-3 pt-3",
+          // Teljes-képernyőn a térkép a lebegő nav-sáv mögé nyúlik → a tartalmat
+          // a nav fölé emeljük. Beágyazott nézetben viszont a térkép a nav FÖLÖTT
+          // ér véget, így ott a tartalom a térkép aljára kerül (kis padding).
+          fullscreen ? "pb-[calc(env(safe-area-inset-bottom)+5.5rem)]" : "pb-3",
+        )}
+      >
         {categories && categories.length > 0 && (
           <div className="no-scrollbar pointer-events-auto -mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5">
             {categories.map((c) => {
