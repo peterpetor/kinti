@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
 
 /**
  * A modálnak NEM szabad megjelennie azokon az oldalakon, amiket maga a modal
@@ -18,19 +19,26 @@ function pathIsExempt(pathname: string): boolean {
 }
 
 export function LegalGatekeeper() {
+  const { isLoaded, isSignedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [acceptAszf, setAcceptAszf] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
 
   useEffect(() => {
+    if (!isLoaded) return; // előbb tisztázódjon a Clerk auth-állapot
     if (pathIsExempt(window.location.pathname)) return;
+    // Bejelentkezett user a Clerk REGISZTRÁCIÓNÁL már elfogadta az ÁSZF-et és az
+    // Adatkezelési Tájékoztatót (és az ÁSZF kimondja a 18+ nagykorúsági kikötést)
+    // → a device-szintű kaput NEKI NE kérdezzük újra (redundáns). A kapu csak az
+    // ANONIM látogatóknak szól (akik bejelentkezés nélkül is használják az appot).
+    if (isSignedIn) return;
     const accepted = localStorage.getItem("kinti_legal_accepted");
     if (!accepted) {
       setIsOpen(true);
       document.body.style.overflow = "hidden";
     }
-  }, []);
+  }, [isLoaded, isSignedIn]);
 
   const handleAccept = () => {
     if (ageConfirmed && acceptAszf && acceptPrivacy) {
