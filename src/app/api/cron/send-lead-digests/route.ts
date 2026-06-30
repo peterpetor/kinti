@@ -43,6 +43,16 @@ async function handle(req: Request): Promise<Response> {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  // Állás-radar napi digest (frequency capping) — független a lead-digesttől,
+  // ezért az esetleges korai return ELŐTT, saját try/catch-ben fut.
+  let radarDigests = 0;
+  try {
+    const { processRadarDigests } = await import("@/lib/radars");
+    radarDigests = await processRadarDigests();
+  } catch (e) {
+    safeLogError("send-lead-digests:radarDigest", e);
+  }
+
   // Mai nap kezdete UTC-ben. SZÓKÖZ-elválasztó (nem 'T'!) — a D1 datetime('now')
   // így tárol; 'T'-vel a string-összehasonlítás félrevisz (' ' < 'T').
   const todayStart = new Date().toISOString().slice(0, 10) + " 00:00:00";
@@ -74,7 +84,7 @@ async function handle(req: Request): Promise<Response> {
       .all<LeadRow>();
 
     if (pendingLeads.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0 });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests });
     }
 
     // Csoportosítás vállalkozónként
@@ -90,7 +100,7 @@ async function handle(req: Request): Promise<Response> {
     // Defenzív: üres tömbnél az IN () érvénytelen SQL — bár a pendingLeads>0
     // miatt ez gyakorlatilag elérhetetlen, expliciten kezeljük.
     if (businessIds.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0 });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests });
     }
     const { results: businesses } = await getDB()
       .prepare(
@@ -158,7 +168,7 @@ async function handle(req: Request): Promise<Response> {
     return Response.json({ ok: false, error: "internal" }, { status: 500 });
   }
 
-  return Response.json({ ok: true, digestsSent, leadsMarked, errors });
+  return Response.json({ ok: true, digestsSent, leadsMarked, errors, radarDigests });
 }
 
 export const GET = handle;

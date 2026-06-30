@@ -1,7 +1,8 @@
-import { getActiveRadarsByType } from "./repo";
+import { getActiveRadarsByType, markRadarFired, enqueueRadarDigest, getRadarDigestQueue, deleteRadarDigestItems } from "./repo";
 import { sendPush } from "./push";
 import { getCloudflareEnv } from "./cloudflare";
 import { safeLogError } from "./safe-log";
+import { parseDbDate } from "./dates";
 
 /**
  * Triggerezi az Árfolyam radarokat, ha a beállított küszöböt átlépte az árfolyam.
@@ -100,21 +101,103 @@ export async function triggerJobAlertRadars(job: {
       }
     });
 
+    // HIBRID értesítés (frequency capping): a nap ELSŐ illeszkedő állását a radar
+    // AZONNAL küldi (push + email), a többit a digest-sorba teszi → egy napi
+    // összefoglaló cron küldi ki (processRadarDigests). Így nincs 15-email-spam.
+    const todayStartMs = (() => { const d = new Date(); d.setUTCHours(0, 0, 0, 0); return d.getTime(); })();
     await Promise.allSettled(
       targets.map(async (t) => {
-        // Push — csak ha valódi endpoint van (az email-only radaré üres).
-        if (t.pushEndpoint) {
-          try { await sendPush(privKey, { endpoint: t.pushEndpoint }); } catch { /* per-endpoint */ }
+        const firedAt = parseDbDate(t.lastFiredAt);
+        const firedToday = firedAt ? firedAt.getTime() >= todayStartMs : false;
+        if (firedToday) {
+          // Ma már ment azonnali — a többi a napi digestbe gyűlik.
+          try { await enqueueRadarDigest(t.id, job.id); } catch { /* per-radar */ }
+          return;
         }
-        // Email — ha a radarhoz email-cím tartozik (push nélkül is működik).
-        if (t.email) {
-          try { await sendJobAlertEmail(t.email, t.id, job); } catch { /* per-email */ }
-        }
-      })
+        // A nap első találata → azonnal, majd jelöljük, hogy ma már kilőtt.
+        if (t.pushEndpoint) { try { await sendPush(privKey, { endpoint: t.pushEndpoint }); } catch { /* per-endpoint */ } }
+        if (t.email) { try { await sendJobAlertEmail(t.email, t.id, job); } catch { /* per-email */ } }
+        try { await markRadarFired(t.id); } catch { /* best-effort */ }
+      }),
     );
   } catch (err) {
     safeLogError("triggerJobAlertRadars", err);
   }
+}
+
+/**
+ * A digest-sor feldolgozása — a napi összefoglaló kiküldése radaronként.
+ * NAPI cronból hívva (send-lead-digests). A nap első találatát már azonnal
+ * elküldtük; itt a TÖBBIT küldjük egy összefoglalóban. Visszaadja a kiküldött
+ * digestek számát.
+ */
+export async function processRadarDigests(): Promise<number> {
+  let queue: Awaited<ReturnType<typeof getRadarDigestQueue>>;
+  try {
+    queue = await getRadarDigestQueue();
+  } catch (err) {
+    safeLogError("processRadarDigests:queue", err);
+    return 0;
+  }
+  if (queue.length === 0) return 0;
+
+  const privKey = getCloudflareEnv().VAPID_PRIVATE_KEY;
+  const { getJobById } = await import("./repo-jobs");
+
+  // Csoportosítás radaronként.
+  const byRadar = new Map<string, { pushEndpoint: string; email: string | null; queueIds: string[]; jobIds: string[] }>();
+  for (const q of queue) {
+    let g = byRadar.get(q.radarId);
+    if (!g) { g = { pushEndpoint: q.pushEndpoint, email: q.email, queueIds: [], jobIds: [] }; byRadar.set(q.radarId, g); }
+    g.queueIds.push(q.queueId);
+    g.jobIds.push(q.jobId);
+  }
+
+  let sent = 0;
+  for (const [radarId, g] of byRadar) {
+    try {
+      const jobsRaw = await Promise.all(g.jobIds.map((id) => getJobById(id).catch(() => null)));
+      const jobs = jobsRaw.filter((j): j is NonNullable<typeof j> => !!j && j.moderationStatus === 1);
+      if (jobs.length > 0) {
+        if (g.pushEndpoint && privKey) { try { await sendPush(privKey, { endpoint: g.pushEndpoint }); } catch { /* per-endpoint */ } }
+        if (g.email) { try { await sendJobAlertDigestEmail(g.email, radarId, jobs); } catch { /* per-email */ } }
+        sent++;
+      }
+    } catch (err) {
+      safeLogError("processRadarDigests:radar", err);
+    }
+    // A sort akkor is ürítjük, ha a job már nem aktív — ne ragadjon bent.
+    try { await deleteRadarDigestItems(g.queueIds); } catch { /* best-effort */ }
+  }
+  return sent;
+}
+
+/** Napi digest-email egy radarhoz — a nap (első utáni) találatainak listája. */
+async function sendJobAlertDigestEmail(
+  to: string,
+  radarId: string,
+  jobs: { id: string; title: string; location: string }[],
+) {
+  const { sendEmail } = await import("./email");
+  const esc = (s: string) => s.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c] ?? c);
+  const unsubUrl = `https://kinti.app/api/radars/unsubscribe?id=${encodeURIComponent(radarId)}`;
+  const items = jobs.slice(0, 25).map((j) => {
+    const url = `https://kinti.app/allasok/${j.id}`;
+    const loc = j.location ? ` <span style="color:#6b7280">· ${esc(j.location)}</span>` : "";
+    return `<li style="margin:0 0 9px"><a href="${url}" style="color:#1d4434;font-weight:700;text-decoration:none">${esc(j.title)}</a>${loc}</li>`;
+  }).join("");
+  await sendEmail({
+    to,
+    subject: `${jobs.length} új állás a radarodon`,
+    html: `<div style="font-family:system-ui,-apple-system,sans-serif;max-width:480px;margin:0 auto;padding:16px">
+      <p style="font-size:12px;color:#6b7280;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em">Kinti · Állás-radar (napi összefoglaló)</p>
+      <h2 style="font-size:18px;color:#1d4434;margin:0 0 12px">${jobs.length} új találat a radarodon</h2>
+      <ul style="padding-left:18px;margin:0 0 16px;font-size:14px;line-height:1.4">${items}</ul>
+      <a href="https://kinti.app/allasok" style="display:inline-block;background:#1d4434;color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px;font-size:14px">Összes állás</a>
+      <p style="font-size:11px;color:#9ca3af;margin:24px 0 0;line-height:1.5">Ezt azért kaptad, mert állás-radart állítottál be a Kintin. <a href="${unsubUrl}" style="color:#9ca3af">Leiratkozás erről a radarról</a>.</p>
+    </div>`,
+    text: `${jobs.length} új állás a radarodon:\n\n` + jobs.map((j) => `• ${j.title}${j.location ? ` (${j.location})` : ""} — https://kinti.app/allasok/${j.id}`).join("\n") + `\n\nLeiratkozás: ${unsubUrl}`,
+  });
 }
 
 /** Egy találati email egy állás-radarhoz. Leiratkozó-linkkel (radar törlése id alapján). */

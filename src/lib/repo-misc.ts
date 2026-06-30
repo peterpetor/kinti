@@ -583,7 +583,34 @@ export async function deleteRadarById(id: string): Promise<boolean> {
   return (res.meta.changes ?? 0) > 0;
 }
 
-export async function getActiveRadarsByType(radarType: string): Promise<{id: string, pushEndpoint: string, parameters: string, email: string | null}[]> {
-  const { results } = await getDB().prepare('SELECT id, push_endpoint, parameters, email FROM kinti_radars WHERE radar_type = ? AND active = 1').bind(radarType).all<{ id: string; push_endpoint: string; parameters: string; email: string | null }>();
-  return (results ?? []).map(r => ({ id: String(r.id), pushEndpoint: String(r.push_endpoint), parameters: String(r.parameters), email: r.email ? String(r.email) : null }));
+export async function getActiveRadarsByType(radarType: string): Promise<{id: string, pushEndpoint: string, parameters: string, email: string | null, lastFiredAt: string | null}[]> {
+  const { results } = await getDB().prepare('SELECT id, push_endpoint, parameters, email, last_fired_at FROM kinti_radars WHERE radar_type = ? AND active = 1').bind(radarType).all<{ id: string; push_endpoint: string; parameters: string; email: string | null; last_fired_at: string | null }>();
+  return (results ?? []).map(r => ({ id: String(r.id), pushEndpoint: String(r.push_endpoint), parameters: String(r.parameters), email: r.email ? String(r.email) : null, lastFiredAt: r.last_fired_at ? String(r.last_fired_at) : null }));
+}
+
+/** A radar „azonnali küldés" idejének frissítése (a napi első találat után). */
+export async function markRadarFired(radarId: string): Promise<void> {
+  await getDB().prepare("UPDATE kinti_radars SET last_fired_at = datetime('now') WHERE id = ?").bind(radarId).run();
+}
+
+/** Egy (radar, job) pár betétele a digest-sorba (a napi összefoglalóhoz). */
+export async function enqueueRadarDigest(radarId: string, jobId: string): Promise<void> {
+  await getDB().prepare("INSERT INTO radar_digest_queue (id, radar_id, job_id) VALUES (?, ?, ?)").bind(crypto.randomUUID(), radarId, jobId).run();
+}
+
+/** A digest-sor (csak AKTÍV radarokhoz), a radar push/email-csatornájával együtt. */
+export async function getRadarDigestQueue(): Promise<{ queueId: string; radarId: string; jobId: string; pushEndpoint: string; email: string | null }[]> {
+  const { results } = await getDB().prepare(
+    `SELECT q.id AS queue_id, q.radar_id, q.job_id, r.push_endpoint, r.email
+       FROM radar_digest_queue q JOIN kinti_radars r ON r.id = q.radar_id
+      WHERE r.active = 1`,
+  ).all<{ queue_id: string; radar_id: string; job_id: string; push_endpoint: string; email: string | null }>();
+  return (results ?? []).map(r => ({ queueId: String(r.queue_id), radarId: String(r.radar_id), jobId: String(r.job_id), pushEndpoint: String(r.push_endpoint), email: r.email ? String(r.email) : null }));
+}
+
+/** Feldolgozott digest-sorok törlése (id-lista). */
+export async function deleteRadarDigestItems(queueIds: string[]): Promise<void> {
+  if (queueIds.length === 0) return;
+  const placeholders = queueIds.map(() => "?").join(",");
+  await getDB().prepare(`DELETE FROM radar_digest_queue WHERE id IN (${placeholders})`).bind(...queueIds).run();
 }
