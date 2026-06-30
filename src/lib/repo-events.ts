@@ -645,25 +645,26 @@ export async function ensureFreshEvents(): Promise<void> {
 export async function ensureGeneratedEvents(force: boolean): Promise<number> {
   const db = getDB();
 
+  // Mely országokra generálunk magyar nemzeti megemlékezéseket (ország-tudatos
+  // felirat + country_code). A nemzeti napok MINDEN diaszpórának relevánsak (DE/NL is).
+  const GEN_COUNTRIES = ["CH", "AT", "DE", "NL"];
+
   if (!force) {
     const row = await db
       .prepare(`SELECT MAX(event_date) AS maxd FROM events WHERE source = ?`)
       .bind(GENERATED_SOURCE)
       .first<{ maxd: string | null }>();
-    // Az AT-jelenlétet külön nézzük: ha a CH már fedett, de AT-generált még nincs
-    // (pl. közvetlenül a többcountry-deploy után), akkor IS regenerálunk.
-    const atRow = await db
-      .prepare(`SELECT COUNT(*) AS c FROM events WHERE source = ? AND country_code = 'AT' AND event_date >= date('now')`)
+    // Hány országra van már JÖVŐBELI generált esemény? Ha nem MIND a GEN_COUNTRIES
+    // (pl. új ország bevezetése után: DE/NL), akkor regenerálunk.
+    const covRow = await db
+      .prepare(`SELECT COUNT(DISTINCT country_code) AS c FROM events WHERE source = ? AND event_date >= date('now')`)
       .bind(GENERATED_SOURCE)
       .first<{ c: number }>();
     const horizon = new Date();
     horizon.setUTCDate(horizon.getUTCDate() + 300);
     const horizonISO = horizon.toISOString().slice(0, 10);
-    if (row?.maxd && row.maxd >= horizonISO && (atRow?.c ?? 0) > 0) return 0; // már van bőven előre, mindkét országra
+    if (row?.maxd && row.maxd >= horizonISO && (covRow?.c ?? 0) >= GEN_COUNTRIES.length) return 0; // van bőven előre, minden országra
   }
-
-  // CH és AT generált megemlékezések (ország-tudatos felirat + country_code).
-  const GEN_COUNTRIES = ["CH", "AT"];
   const events = GEN_COUNTRIES.flatMap((c) =>
     generateRecurringEvents(new Date(), c).map((ev) => ({ ev, country: c })),
   );

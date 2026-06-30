@@ -16,6 +16,8 @@ export const GENERATED_SOURCE = "auto:hu-national";
 const COUNTRY_META: Record<string, { adj: string; venue: string }> = {
   CH: { adj: "svájci", venue: "Svájc-szerte" },
   AT: { adj: "osztrák", venue: "Ausztria-szerte" },
+  DE: { adj: "német", venue: "Németország-szerte" },
+  NL: { adj: "holland", venue: "Hollandia-szerte" },
 };
 
 interface RecurringDef {
