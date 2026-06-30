@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import { MapContainer, Marker, useMap } from "react-leaflet";
+import { FallbackTileLayer } from "./fallback-tile-layer";
 import { CANTON_COORDS } from "@/lib/cantons";
 import { regionName } from "@/lib/regions";
 import { Icon } from "@/components/ui";
@@ -120,7 +121,7 @@ export function CantonBubbleMap({
         className="h-full w-full relative z-0"
         style={{ background: "rgb(var(--map-land))" }}
       >
-        <TileLayer
+        <FallbackTileLayer
           attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           subdomains="abcd"

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, Marker, Popup, useMap } from "react-leaflet";
+import { FallbackTileLayer } from "./fallback-tile-layer";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -91,7 +92,7 @@ export function MagyarBoltMap({
   return (
     <div className={fs ? "fixed inset-0 z-[1000] bg-white" : cn("relative", className)}>
       <MapContainer center={center} zoom={spots.length > 0 ? 8 : 7} className="h-full w-full rounded-card z-0" scrollWheelZoom>
-        <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
+        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
         <MapResizer trigger={fs} />
         {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
         <MarkerClusterGroup chunkedLoading showCoverageOnHover={false} maxClusterRadius={40}>

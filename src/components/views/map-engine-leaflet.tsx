@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
-import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, Marker, useMap, useMapEvents } from "react-leaflet";
+import { FallbackTileLayer } from "./fallback-tile-layer";
 import type { Business } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
@@ -56,7 +57,7 @@ export function LeafletEngine({
       style={{ background: "rgb(var(--map-land))" }}
     >
       {/* CartoDB Voyager — meleg, prémium, licenc-mentes */}
-      <TileLayer
+      <FallbackTileLayer
         attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         subdomains="abcd"

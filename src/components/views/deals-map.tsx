@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, Marker, Popup } from "react-leaflet";
+import { FallbackTileLayer } from "./fallback-tile-layer";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -119,7 +120,7 @@ export function DealsMap({
         className="h-full w-full rounded-card z-0"
         scrollWheelZoom
       >
-        <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
+        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
         {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
         <MarkerClusterGroup chunkedLoading showCoverageOnHover={false} maxClusterRadius={40}>
           {deals.map((d) => {

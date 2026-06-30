@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, Marker, Popup } from "react-leaflet";
+import { FallbackTileLayer } from "./fallback-tile-layer";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -47,7 +48,7 @@ export function EventsMap({ events, className, country = "CH" }: { events: Kinti
   return (
     <div className={className}>
       <MapContainer center={center} zoom={withCoords.length > 0 ? 7 : country === "DE" ? 6 : 7} className="h-full w-full rounded-card z-0" scrollWheelZoom>
-        <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
+        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
         {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
         <MarkerClusterGroup chunkedLoading showCoverageOnHover={false} maxClusterRadius={40}>
           {withCoords.map((e) => {
