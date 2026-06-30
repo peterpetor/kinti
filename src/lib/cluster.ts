@@ -41,8 +41,11 @@ export function spreadColocated(businesses: Business[]): Business[] {
     const g = groups.get(key)!;
     if (g.length <= 1) return b;
     const idx = g.indexOf(b);
-    // Sugár a csoportmérettel skálázva (nagy zoomon szétválik), max ~220 m.
-    const radiusM = Math.min(220, Math.max(40, 9 * g.length));
+    // Sugár a csoportmérettel skálázva, de SZŰK (max ~70 m) — a város-központra
+    // geokódolt szervezetek (pl. 27 Bécs-központon) különben egy nagy körben, akár
+    // VÍZBE/épületre lógva szóródnának szét. Szűk körön összetartanak (alacsony
+    // zoomon klaszter-buborék), és csak nagy zoomon válnak külön, kattinthatóan.
+    const radiusM = Math.min(70, Math.max(22, 6 * g.length));
     const angle = (2 * Math.PI * idx) / g.length;
     const dLat = (radiusM / 111320) * Math.cos(angle);
     const dLng = (radiusM / (111320 * Math.cos((b.lat * Math.PI) / 180))) * Math.sin(angle);
