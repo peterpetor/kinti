@@ -6,36 +6,24 @@ import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY, countryLocative, countryAdjective } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 
 export default function ProPage() {
   const { startCheckout, isLoading } = useCheckout();
   const { user } = useUser();
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  // A Kinti PRO funkciók ország-tudatosak MIND A 4 országra (nem bináris isAT/else,
-  // különben DE/NL a svájci listát kapná). A nyelvkurzus + állampolgárság-szimulátor
-  // csak ott szerepel, ahol tényleg van (CH/AT); a szakmai szótár CH-only. A
-  // „Teljesen reklámmentes" sor törölve — alapból sincs reklám, félrevezető lenne.
-  const adj = countryAdjective(country); // svájci / osztrák / német / holland
-  const langCourse =
-    country === "CH" ? "Teljes Svájci Német (Mundart) kurzus"
-    : country === "AT" ? "Teljes Osztrák Német kurzus"
-    : country === "DE" ? "Teljes Német (Hochdeutsch) kurzus"
-    : country === "NL" ? "Teljes Holland (Nederlands) kurzus"
-    : null;
-  const citizenshipSim =
-    country === "CH" ? "Einbürgerung (Állampolgárság) Szimulátor"
-    : country === "AT" ? "Staatsbürgerschaftstest (Állampolgárság) Szimulátor"
-    : country === "DE" ? "Einbürgerungstest (Állampolgárság) Szimulátor"
-    : country === "NL" ? "Inburgering / KNM (Állampolgárság) Szimulátor"
-    : null;
+  // A Kinti PRO MIND A 4 országra szól (EGY előfizetés) — ezért a marketing-lista
+  // ország-SEMLEGES, nem írja ki egy ország nevét (különben Ausztria-specifikusnak
+  // tűnne, pedig nem az). A funkciók in-app úgyis a választott országhoz igazodnak
+  // (interjú, nyelvkurzus, állampolgárság-szimulátor). A szakmai szótár CH-only
+  // valódi tartalom, ezért az marad CH-feltételes.
   const proFeatures = [
-    `AI Interjú Szimulátor ${adj} cégekhez`,
+    "AI Interjú Szimulátor — országod cégeihez (CH/AT/DE/NL)",
     "AI CV-audit — önéletrajz-elemzés és tippek",
+    "Nyelvkurzus — svájci, osztrák, német és holland",
+    "Állampolgársági teszt-szimulátor — mind a 4 országra",
     ...(country === "CH" ? ["Szakmai szótár — 500+ svájci kifejezés"] : []),
-    ...(langCourse ? [langCourse] : []),
-    ...(citizenshipSim ? [citizenshipSim] : []),
   ];
 
   const handleCheckout = (product: "kinti_pro_monthly" | "business_pro_monthly" | "job_featured") => {
@@ -91,7 +79,8 @@ export default function ProPage() {
           </div>
           <h2 className="text-[22px] font-black text-ink">Kinti PRO</h2>
           <p className="text-[13px] text-ink-muted mt-2 mb-6 flex-1">
-            Magánszemélyeknek. AI-asszisztens, prémium modulok és kalkulátorok — egy havidíjért.
+            Magánszemélyeknek. AI-asszisztens, prémium modulok és kalkulátorok — egy havidíjért,
+            mind a 4 országra 🇨🇭 🇦🇹 🇩🇪 🇳🇱.
           </p>
 
           <div className="mb-6">
