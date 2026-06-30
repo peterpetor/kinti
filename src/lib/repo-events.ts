@@ -6,7 +6,7 @@ import type { KintiEvent, EventFeed } from "./types";
 import { parseIcal, huDateParts } from "./ical";
 import { cantonFromAddress } from "./cantons";
 import { generateRecurringEvents, GENERATED_SOURCE } from "./event-generator";
-import { fetchChwEvents, CHW_SOURCE } from "./chw-events";
+import { fetchInstituteEvents, LISZT_INSTITUTES } from "./chw-events";
 
 // --- Row types ---------------------------------------------------------------
 
@@ -583,11 +583,13 @@ async function claimStaleFeedSync(): Promise<boolean> {
   return (res.meta.changes ?? 0) > 0;
 }
 
-/** A CHW-szinkron elavult-e (a legutóbbi CHW-sor kora alapján, feed-független throttle). */
+/** Az intézet-szinkron elavult-e (a legutóbbi intézeti-sor kora alapján, feed-független throttle). */
 async function chwIsStale(): Promise<boolean> {
+  const sources = LISZT_INSTITUTES.map((i) => i.source);
+  const placeholders = sources.map(() => "?").join(",");
   const row = await getDB()
-    .prepare(`SELECT MAX(created_at) AS last FROM events WHERE source = ?`)
-    .bind(CHW_SOURCE)
+    .prepare(`SELECT MAX(created_at) AS last FROM events WHERE source IN (${placeholders})`)
+    .bind(...sources)
     .first<{ last: string | null }>();
   if (!row?.last) return true;
   const cutoff = new Date(Date.now() - FEED_SYNC_INTERVAL_HOURS * 3_600_000)
@@ -693,40 +695,45 @@ export async function ensureGeneratedEvents(force: boolean): Promise<number> {
 }
 
 /**
- * Collegium Hungaricum Wien (Bécs) valós eseményeinek szinkronja a publikus
- * culture.hu API-ból. Idempotens: a jövőbeli CHW-eseményeket törli + újraírja.
- * Az események country_code='AT', moderation 'approved' (hivatalos intézet).
+ * A Liszt Intézet-hálózat (Bécs/AT, Berlin/DE, Stuttgart/DE) valós eseményeinek
+ * szinkronja a publikus culture.hu API-ból. Idempotens: intézetenként a jövőbeli
+ * (és most is futó) eseményeket törli + újraírja, a megfelelő country_code-dal.
+ * moderation 'approved' (hivatalos intézet).
  */
 export async function syncChwEvents(): Promise<number> {
   const db = getDB();
-  let events: Awaited<ReturnType<typeof fetchChwEvents>>;
-  try {
-    events = await fetchChwEvents();
-  } catch {
-    return 0;
-  }
-
-  // Üres/API-hiba esetén NE töröljük a meglévőt (különben culture.hu-leállásnál eltűnne a
-  // CHW-esemény). A törlés + beszúrás EGY atomi tranzakcióban.
-  if (!events.length) return 0;
-  const del = db
-    .prepare(`DELETE FROM events WHERE source = ? AND event_date >= date('now')`)
-    .bind(CHW_SOURCE);
   const stmt = db.prepare(
     `INSERT OR REPLACE INTO events
        (id, title, event_date, date_day, date_month, date_weekday, start_time,
         venue, going, tag, color, description, country_code, source, status, moderation_status,
         moderation_decided_by, moderation_decision_at, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 'AT', ?, 'approved', 1, 'chw-api', datetime('now'), datetime('now'))`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, 'approved', 1, 'liszt-api', datetime('now'), datetime('now'))`,
   );
-  const inserts = events.map((e) =>
-    stmt.bind(
-      e.id, e.title, e.eventDate, e.dateDay, e.dateMonth, e.dateWeekday, e.startTime,
-      e.venue, e.tag, e.color, e.description, CHW_SOURCE,
-    ),
-  );
-  await db.batch([del, ...inserts]);
-  return inserts.length;
+
+  let total = 0;
+  for (const inst of LISZT_INSTITUTES) {
+    let events: Awaited<ReturnType<typeof fetchInstituteEvents>>;
+    try {
+      events = await fetchInstituteEvents(inst);
+    } catch {
+      continue;
+    }
+    // Üres/API-hiba esetén NE töröljük a meglévőt (különben az API-leállásnál eltűnnének).
+    // A törlés + beszúrás intézetenként EGY atomi tranzakcióban.
+    if (!events.length) continue;
+    const del = db
+      .prepare(`DELETE FROM events WHERE source = ? AND event_date >= date('now')`)
+      .bind(inst.source);
+    const inserts = events.map((e) =>
+      stmt.bind(
+        e.id, e.title, e.eventDate, e.dateDay, e.dateMonth, e.dateWeekday, e.startTime,
+        e.venue, e.tag, e.color, e.description, inst.country, inst.source,
+      ),
+    );
+    await db.batch([del, ...inserts]);
+    total += inserts.length;
+  }
+  return total;
 }
 
 /** Teljes szinkron (generált + CHW + feedek) — a /api/cron/sync-events endpointhoz. */
