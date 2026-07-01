@@ -256,6 +256,13 @@ async function OwnerDashboard({
   const { stats } = data;
   const total14 = stats.trend.reduce((sum, p) => sum + p.views, 0);
   const trendData = stats.trend.map((p) => p.views);
+  // VALÓS 14-napos változás: az utolsó 7 nap vs. az azt megelőző 7 nap. Csak akkor
+  // mutatjuk, ha van értelmes összevetés (a korábbi héten volt megtekintés) — így
+  // nincs beégetett "+41%" egy 0-megtekintésű, új profilon.
+  const _half = Math.floor(trendData.length / 2);
+  const _prevSum = trendData.slice(0, _half).reduce((a, b) => a + b, 0);
+  const _lastSum = trendData.slice(_half).reduce((a, b) => a + b, 0);
+  const trendDeltaPct = _prevSum > 0 ? Math.round(((_lastSum - _prevSum) / _prevSum) * 100) : null;
   // A tengelycímkék: első / középső / utolsó nap. Kevés adatnál (1-2 nap) az
   // indexek egybeesnének → ismétlődő dátumok ("Jún 20 · Jún 20"). Ezért az
   // index-halmazt deduplikáljuk, így csak a ténylegesen eltérő napok jelennek meg.
@@ -419,7 +426,11 @@ async function OwnerDashboard({
           </span>
           <p className="text-[13.5px] leading-snug opacity-90 text-pretty">
             <strong className="font-bold">{stats.weekViews} kinti</strong> nézte meg a profilodat az
-            elmúlt 7 napban. <strong>{stats.weekViewsDelta}</strong> a múlt héthez képest.
+            elmúlt 7 napban
+            {stats.weekViewsDelta ? (
+              <> — <strong>{stats.weekViewsDelta}</strong> a múlt héthez képest</>
+            ) : null}
+            .
           </p>
         </div>
       </section>
@@ -467,7 +478,15 @@ async function OwnerDashboard({
           </div>
           <div className="text-[22px] font-extrabold tracking-tight text-ink">
             {total14}
-            <span className="ml-1.5 text-[13px] font-bold text-success">↑ +41%</span>
+            {trendDeltaPct !== null && trendDeltaPct !== 0 && (
+              <span
+                className={`ml-1.5 text-[13px] font-bold ${
+                  trendDeltaPct > 0 ? "text-success" : "text-accent"
+                }`}
+              >
+                {trendDeltaPct > 0 ? `↑ +${trendDeltaPct}` : `↓ ${trendDeltaPct}`}%
+              </span>
+            )}
           </div>
         </div>
         <Sparkline data={trendData} />
