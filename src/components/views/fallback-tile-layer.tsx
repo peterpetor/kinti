@@ -17,7 +17,13 @@ import { TileLayer } from "react-leaflet";
 const FALLBACK_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
 const FALLBACK_ATTR = '© <a href="https://www.esri.com/">Esri</a> · © OpenStreetMap';
-const ERROR_THRESHOLD = 6;
+// Hány egymás utáni csempe-hiba (sikeres betöltés nélkül) után váltunk tartalékra.
+// FONTOS, hogy ALACSONY legyen: egy kis térkép (pl. a modal hely-választó, ~240px)
+// összesen csak ~4 csempét kér — ha CARTO blokkolva/elérhetetlen (ad-blocker, DNS),
+// egy magas küszöböt SOSEM ér el → örökre szürke marad (a nagy térkép már rég
+// tartalékra váltott). 3 minden térképméretnél kiváltja az Esri-fallbackot, és a
+// `tileload` nullázás miatt egy jó kapcsolaton nem okoz téves váltást.
+const ERROR_THRESHOLD = 3;
 
 interface Props {
   url: string;
