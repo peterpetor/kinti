@@ -41,7 +41,7 @@ export function ProLockOverlay({
           >
             Kinti PRO feloldása
           </Link>
-          <p className="mt-2 text-[11px] text-ink-faint">Így néz ki — a használathoz PRO kell.</p>
+          <p className="mt-2 text-[11px] text-ink-faint">A használathoz PRO kell.</p>
         </div>
       </div>
     </div>
