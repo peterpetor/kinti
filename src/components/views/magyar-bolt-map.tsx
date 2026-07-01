@@ -3,11 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, Popup, useMap } from "react-leaflet";
 import { FallbackTileLayer } from "./fallback-tile-layer";
-import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import "leaflet.markercluster/dist/MarkerCluster.css";
-import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { cn } from "@/lib/cn";
 import { useMyLocation } from "@/lib/use-my-location";
 import { BOLT_CATEGORIES, boltCategory, type BoltSpot } from "@/lib/magyar-bolt";
@@ -95,7 +92,7 @@ export function MagyarBoltMap({
         <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
         <MapResizer trigger={fs} />
         {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
-        <MarkerClusterGroup chunkedLoading showCoverageOnHover={false} maxClusterRadius={40}>
+        <>
           {spots.map((s) => (
             <Marker key={s.id} position={[s.lat, s.lng]} icon={icons.get(s.category ?? "__none") ?? icons.get("__none")!}>
               <Popup maxWidth={260} minWidth={200}>
@@ -103,7 +100,7 @@ export function MagyarBoltMap({
               </Popup>
             </Marker>
           ))}
-        </MarkerClusterGroup>
+        </>
       </MapContainer>
 
       <button

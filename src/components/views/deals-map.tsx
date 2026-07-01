@@ -3,11 +3,8 @@
 import { useMemo } from "react";
 import { MapContainer, Marker, Popup } from "react-leaflet";
 import { FallbackTileLayer } from "./fallback-tile-layer";
-import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import "leaflet.markercluster/dist/MarkerCluster.css";
-import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import type { DealReport } from "@/lib/repo";
 import {
   getStoreById,
@@ -122,7 +119,7 @@ export function DealsMap({
       >
         <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
         {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
-        <MarkerClusterGroup chunkedLoading showCoverageOnHover={false} maxClusterRadius={40}>
+        <>
           {deals.map((d) => {
             const store = getStoreById(d.storeId);
             const cat = getCategoryById(d.categoryId);
@@ -183,7 +180,7 @@ export function DealsMap({
               </Marker>
             );
           })}
-        </MarkerClusterGroup>
+        </>
       </MapContainer>
     </div>
   );
