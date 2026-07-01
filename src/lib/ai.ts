@@ -235,7 +235,9 @@ export async function checkAiRateLimit(
     console.warn(`[ai-rl] ismeretlen endpoint: ${endpoint}`);
     return { allowed: true, current: 0, max: 9999 };
   }
-  if (!ipHash) return { allowed: true, current: 0, max: cfg.maxPerWindow };
+  // Hiányzó IP (elvileg nem fordul elő CF mögött) → NEM korlátlan: közös „no-ip"
+  // bucketbe esik, így a limit ott is érvényes (fail-safe, nem fail-open).
+  const key = ipHash || "no-ip";
 
   try {
     const row = await getDB()
@@ -244,7 +246,7 @@ export async function checkAiRateLimit(
          WHERE ip_hash = ? AND endpoint = ?
            AND created_at >= datetime('now', '-' || ? || ' hours')`,
       )
-      .bind(ipHash, endpoint, cfg.windowHours)
+      .bind(key, endpoint, cfg.windowHours)
       .first<{ n: number }>();
     const current = row?.n ?? 0;
     return {
@@ -259,21 +261,39 @@ export async function checkAiRateLimit(
   }
 }
 
-/** Egy hívást naplóz a rate-limit táblába (sikeres AI-call után). */
+/** Egy hívást naplóz a rate-limit táblába (a slot LEFOGLALÁSA, a hívás előtt). */
 export async function logAiRateLimit(
   endpoint: string,
   ipHash: string | null,
 ): Promise<void> {
-  if (!ipHash) return;
+  const key = ipHash || "no-ip"; // egységes a checkAiRateLimit fallback-kulcsával
   try {
     await getDB()
       .prepare(
         `INSERT INTO ai_rate_limit_log (id, endpoint, ip_hash) VALUES (?, ?, ?)`,
       )
-      .bind(crypto.randomUUID(), endpoint, ipHash)
+      .bind(crypto.randomUUID(), endpoint, key)
       .run();
   } catch (err) {
     console.error("[ai-rl] log failed:", err);
+  }
+}
+
+/**
+ * Régi rate-limit sorok törlése. A COUNT ablakos (max 24h), de a SOROK
+ * megmaradnának → napi cronból hívva töröljük a `keepHours`-nál régebbieket
+ * (biztonsági ráhagyással a leghosszabb, 24h-s ablak fölött). Best-effort.
+ */
+export async function cleanupOldAiRateLimitLogs(keepHours = 48): Promise<number> {
+  try {
+    const res = await getDB()
+      .prepare(`DELETE FROM ai_rate_limit_log WHERE created_at < datetime('now', '-' || ? || ' hours')`)
+      .bind(keepHours)
+      .run();
+    return res.meta.changes ?? 0;
+  } catch (err) {
+    console.error("[ai-rl] cleanup failed:", err);
+    return 0;
   }
 }
 

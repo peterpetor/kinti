@@ -46,6 +46,8 @@ export async function POST(req: Request) {
         { status: 429 },
       );
     }
+    // A slot LEFOGLALÁSA a drága AI-hívás ELŐTT (TOCTOU-zárás).
+    await logAiRateLimit("interview-sim", ipHash);
 
     // System prompt: ország-tudatos HR-menedzser. CH/AT/DE → német nyelvű; NL →
     // holland/angol (a Netherlands munkaerőpiac nyelve), NL-kontextussal.
@@ -94,8 +96,6 @@ Beginne das Gespräch NICHT neu, wenn schon eine Historie existiert. Führe es e
     if (!finalRes.ok) {
       return NextResponse.json({ error: "Az AI jelenleg nem elérhető." }, { status: 503 });
     }
-
-    await logAiRateLimit("interview-sim", ipHash);
 
     return NextResponse.json({
       answer: finalRes.text,

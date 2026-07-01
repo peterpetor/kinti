@@ -62,6 +62,17 @@ async function handle(req: Request): Promise<Response> {
     safeLogError("send-lead-digests:deadlineReminders", e);
   }
 
+  // Karbantartás: régi rate-limit sorok törlése (a COUNT ablakos, a sorok nem) —
+  // különben a tábla korlátlanul nőne. 48h-nál (a leghosszabb, 24h-s ablak fölött)
+  // régebbieket törlünk. Best-effort, korai return előtt.
+  let rateLimitPurged = 0;
+  try {
+    const { cleanupOldAiRateLimitLogs } = await import("@/lib/ai");
+    rateLimitPurged = await cleanupOldAiRateLimitLogs(48);
+  } catch (e) {
+    safeLogError("send-lead-digests:rateLimitCleanup", e);
+  }
+
   // Mai nap kezdete UTC-ben. SZÓKÖZ-elválasztó (nem 'T'!) — a D1 datetime('now')
   // így tárol; 'T'-vel a string-összehasonlítás félrevisz (' ' < 'T').
   const todayStart = new Date().toISOString().slice(0, 10) + " 00:00:00";
@@ -93,7 +104,7 @@ async function handle(req: Request): Promise<Response> {
       .all<LeadRow>();
 
     if (pendingLeads.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, rateLimitPurged });
     }
 
     // Csoportosítás vállalkozónként
@@ -109,7 +120,7 @@ async function handle(req: Request): Promise<Response> {
     // Defenzív: üres tömbnél az IN () érvénytelen SQL — bár a pendingLeads>0
     // miatt ez gyakorlatilag elérhetetlen, expliciten kezeljük.
     if (businessIds.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, rateLimitPurged });
     }
     const { results: businesses } = await getDB()
       .prepare(
@@ -177,7 +188,7 @@ async function handle(req: Request): Promise<Response> {
     return Response.json({ ok: false, error: "internal" }, { status: 500 });
   }
 
-  return Response.json({ ok: true, digestsSent, leadsMarked, errors, radarDigests, deadlineReminders });
+  return Response.json({ ok: true, digestsSent, leadsMarked, errors, radarDigests, deadlineReminders, rateLimitPurged });
 }
 
 export const GET = handle;

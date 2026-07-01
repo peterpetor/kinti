@@ -118,6 +118,10 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
 }`;
 
     const userMsg = `CV-tartalom:\n"""\n${cvText}\n"""`;
+    // A slot LEFOGLALÁSA KÖZVETLENÜL az AI-hívás ELŐTT (TOCTOU-zárás) — de a CV-fetch/
+    // markdown VALIDÁCIÓ UTÁN, hogy a napi 5/user limitbe csak a tényleges AI-próbálkozás
+    // számítson (ne a „nincs feltöltött CV" típusú korai hibák).
+    await logAiRateLimit("cv-review", userKey);
     // Csak értékelés (nincs újraírás) → KICSI kimenet → gyors, nem fut „túlterhelt"-be.
     // 1) gyors modern modell; 2) ha nem ad választ → a bevált 8B.
     let ai = await runAiChat({
@@ -145,7 +149,6 @@ VÁLASZ KIZÁRÓLAG EZ A JSON (semmi más, semmi markdown):
         { status: 503 },
       );
     }
-    await logAiRateLimit("cv-review", userKey);
 
     const parsed = extractJsonObject<{
       score?: number;
