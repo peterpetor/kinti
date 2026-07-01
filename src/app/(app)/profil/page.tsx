@@ -7,7 +7,6 @@ import { ProfileEditor } from "@/components/views/profile-editor";
 import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
 import { LeadInbox } from "@/components/views/lead-inbox";
 import { InstallPrompt } from "@/components/install-prompt";
-import { KintiRadar } from "@/components/kinti-radar";
 import { HomeCountryFlag } from "@/components/home-country-aware";
 import {
   Icon,
@@ -101,14 +100,10 @@ export default async function ProfilPage({
       {/* PWA — telepítés a kezdőképernyőre (csak ha még nem standalone) */}
       <InstallPrompt />
 
-      <section className="space-y-4">
-        <SectionHeader>Személyes</SectionHeader>
-        <KintiRadar />
-      </section>
-
-      {/* Az alkalmazás-beállítások (Megjelenés, Hírlevél, Értesítések) a globális „…”
-          menübe kerültek (DropdownMenu → „Alkalmazás beállítások”), hogy ne terheljék
-          a vállalkozói dashboardot és minden oldalról elérhetők legyenek. */}
+      {/* A /profil kizárólag a vállalkozásodról szól. A személyes eszközök (Kinti
+          Radar / árfolyam-figyelő) a „…” menü → Pénzügyek → Árfolyam-figyelő alatt,
+          az alkalmazás-beállítások (Megjelenés, Hírlevél, Értesítések) a „…” menü →
+          Alkalmazás beállítások alatt érhetők el — ne terheljék a dashboardot. */}
     </div>
   );
 }

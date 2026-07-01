@@ -179,10 +179,12 @@ export function ProfileEditor({
   const daysOrder: (keyof WorkingHours)[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
   return (
-    <div className="grid gap-6 md:grid-cols-12 md:items-start">
-      {/* Bal oldali Szerkesztő Form (7 oszlop) */}
-      <div className="space-y-4 md:col-span-7">
-        
+    <div className="space-y-6">
+      {/* Szerkesztő Form — egyoszlopos (az app max-w-md kerete miatt a régi
+          2-oszlopos md:grid-cols-12 desktopon bezsúfolódott és „ketté törte” az
+          oldalt; az élő előnézet most a form ALATT jelenik meg, desktopon). */}
+      <div className="space-y-4">
+
         {/* A PRO-kiemelés CTA-t a /profil dashboard (OwnerDashboard) mutatja — itt
             SZÁNDÉKOSAN nincs, hogy ne jelenjen meg kétszer ugyanaz a kártya. */}
 
@@ -533,8 +535,8 @@ export function ProfileEditor({
       </form>
       </div>
 
-      {/* Jobb oldali Live Preview Mobil Mockup Device (5 oszlop) */}
-      <div className="hidden md:block md:col-span-5 md:sticky md:top-20">
+      {/* Élő előnézet — a form ALATT (desktop-only; mobilon úgyis maga az app a nézet). */}
+      <div className="hidden md:block">
         <div className="text-center mb-3">
           <span className="text-[11px] font-extrabold uppercase tracking-widest text-ink-faint bg-surface border border-line px-2.5 py-1 rounded-full shadow-sm">
             ✨ Élő Mobil Előnézet

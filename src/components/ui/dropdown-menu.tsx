@@ -96,6 +96,12 @@ export function DropdownMenu() {
                 </span>
                 Vidd fel a vállalkozásod
               </Link>
+              <Link href="/profil" onClick={close} className={linkClass}>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  🏪
+                </span>
+                Vállalkozásom (kezelés + statisztika)
+              </Link>
               <Link href="/szaknevsor/ajanlas" onClick={close} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
                   <Icon name="send" size={16} strokeWidth={2.4} />
