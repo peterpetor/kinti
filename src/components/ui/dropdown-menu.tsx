@@ -305,6 +305,20 @@ export function DropdownMenu() {
                   Gyorshajtás kalkulátor
                 </Link>
                 )}
+                <Link href="/utalas" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                    💸
+                  </span>
+                  Utalás-asszisztens
+                  <ProBadge />
+                </Link>
+                <Link href="/hatarido" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
+                    ⏰
+                  </span>
+                  Határidő-asszisztens
+                  <ProBadge />
+                </Link>
                 <Link href="/holvagyunk" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     📍
