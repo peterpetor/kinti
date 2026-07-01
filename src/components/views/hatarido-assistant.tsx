@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -18,6 +18,8 @@ interface Deadline {
   /** YYYY-MM-DD */
   date: string;
   emoji: string;
+  /** Fix éves határidő MM-DD-je → ismétlődő: lejárat után automatikusan a következő évre gördül. */
+  annual?: string;
 }
 
 interface Preset {
@@ -96,10 +98,10 @@ export function HataridoAssistant() {
     [items],
   );
 
-  function add(t: string, d: string, emoji: string) {
+  function add(t: string, d: string, emoji: string, annual?: string) {
     const tt = t.trim();
     if (!tt || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
-    setItems((arr) => [...arr, { id: crypto.randomUUID(), title: tt, date: d, emoji }]);
+    setItems((arr) => [...arr, { id: crypto.randomUUID(), title: tt, date: d, emoji, annual }]);
   }
   function addManual() {
     add(title, date, "🗓️");
@@ -107,8 +109,26 @@ export function HataridoAssistant() {
     setDate("");
   }
   function addPreset(p: Preset) {
-    add(p.title, p.annual ? nextAnnual(p.annual) : todayISO(), p.emoji);
+    // Fix éves sablon → ISMÉTLŐDŐ (annual): a lejárat után magától a következő évre gördül.
+    add(p.title, p.annual ? nextAnnual(p.annual) : todayISO(), p.emoji, p.annual);
   }
+
+  // ISMÉTLŐDŐ (annual) határidők automatikus továbbgördítése: ha egy éves tétel
+  // dátuma már elmúlt (pl. a tavalyi adóbevallás), betöltéskor a KÖVETKEZŐ
+  // előfordulásra ugrik (2027→2028…). Egyszer futtatjuk, betöltés után.
+  const rolledRef = useRef(false);
+  useEffect(() => {
+    if (rolledRef.current) return;
+    rolledRef.current = true;
+    setItems((arr) => {
+      let changed = false;
+      const next = arr.map((it) => {
+        if (it.annual && daysUntil(it.date) < 0) { changed = true; return { ...it, date: nextAnnual(it.annual) }; }
+        return it;
+      });
+      return changed ? next : arr;
+    });
+  }, [setItems]);
   function remove(id: string) {
     setItems((arr) => arr.filter((x) => x.id !== id));
   }
@@ -116,6 +136,7 @@ export function HataridoAssistant() {
   // — Push-emlékeztető (a határidőket az ANONIM push-endpointhoz kötjük; nincs
   // user-azonosító — privacy-tiszta, mint a radarok). 14/7/1 nappal előtte szól. —
   const [remindersOn, setRemindersOn] = usePersistedState<boolean>("kinti_deadlines_reminders", false);
+  const [emailOn, setEmailOn] = usePersistedState<boolean>("kinti_deadlines_email", false);
   const [subJson, setSubJson] = usePersistedState<PushSubscriptionJSON | null>("kinti_deadlines_sub", null);
   const [busy, setBusy] = useState(false);
   const [pushErr, setPushErr] = useState<string | null>(null);
@@ -136,11 +157,11 @@ export function HataridoAssistant() {
     return sub.toJSON();
   }
 
-  async function syncTo(sub: PushSubscriptionJSON, enabled: boolean, list: Deadline[]) {
+  async function syncTo(sub: PushSubscriptionJSON, enabled: boolean, list: Deadline[], emailReminders: boolean) {
     await fetch("/api/deadlines/sync", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ subscription: sub, enabled, deadlines: list.map((d) => ({ title: d.title, date: d.date })) }),
+      body: JSON.stringify({ subscription: sub, enabled, emailReminders, deadlines: list.map((d) => ({ title: d.title, date: d.date })) }),
     });
   }
 
@@ -151,7 +172,7 @@ export function HataridoAssistant() {
       const sub = await getSub();
       if (!sub) { setPushErr("Engedélyezd az értesítéseket a böngészőben / appban."); return; }
       setSubJson(sub);
-      await syncTo(sub, true, items);
+      await syncTo(sub, true, items, emailOn);
       setRemindersOn(true);
     } catch {
       setPushErr("Nem sikerült bekapcsolni — próbáld újra.");
@@ -162,18 +183,28 @@ export function HataridoAssistant() {
 
   async function disableReminders() {
     setBusy(true);
-    try { if (subJson) await syncTo(subJson, false, []); } catch { /* best-effort */ }
+    try { if (subJson) await syncTo(subJson, false, [], false); } catch { /* best-effort */ }
     setRemindersOn(false);
     setBusy(false);
   }
 
-  // Bekapcsolt emlékeztetőnél a határidők változásakor újraszinkronizálunk (debounce).
+  // Az emailes emlékeztető ki/bekapcsolása (a push emlékeztető mellé). A szerver a
+  // bejelentkezett user email-címét használja; a kliens csak a szándékot küldi.
+  async function toggleEmail() {
+    if (!remindersOn || !subJson) return;
+    const next = !emailOn;
+    setEmailOn(next);
+    try { await syncTo(subJson, true, items, next); } catch { /* a napi sync úgyis pótolja */ }
+  }
+
+  // Bekapcsolt emlékeztetőnél a határidők (és az email-kapcsoló) változásakor
+  // újraszinkronizálunk (debounce).
   useEffect(() => {
     if (!remindersOn || !subJson) return;
-    const t = setTimeout(() => { syncTo(subJson, true, items).catch(() => {}); }, 900);
+    const t = setTimeout(() => { syncTo(subJson, true, items, emailOn).catch(() => {}); }, 900);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, remindersOn, subJson]);
+  }, [items, remindersOn, subJson, emailOn]);
 
   if (isPro === null) {
     return <div className="rounded-card border border-line bg-surface p-6 text-center text-[13px] text-ink-muted">Betöltés…</div>;
@@ -264,6 +295,19 @@ export function HataridoAssistant() {
           </button>
         </div>
         {pushErr && <p className="mt-2 text-[11.5px] font-bold text-accent">{pushErr}</p>}
+
+        {/* Email-emlékeztető (opt-in) — a push mellé. Csak bekapcsolt push mellett. */}
+        {remindersOn && (
+          <label className="mt-3 flex cursor-pointer items-center gap-2.5 border-t border-line/60 pt-3">
+            <input type="checkbox" checked={emailOn} onChange={toggleEmail} className="h-4 w-4 shrink-0 rounded accent-primary" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-[12.5px] font-bold text-ink">📧 Emailben is emlékeztessen</span>
+              <span className="block text-[11px] leading-snug text-ink-muted">
+                A bejelentkezési email-címedre is küldünk a push mellé. Ehhez a határidőidet a szerveren tároljuk — bármikor kikapcsolhatod.
+              </span>
+            </span>
+          </label>
+        )}
       </section>
 
       {/* Gyors hozzáadás — sablonok */}

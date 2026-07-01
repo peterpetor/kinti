@@ -382,6 +382,32 @@ export default function AdatvedelemPage() {
           <a href="mailto:info@kinti.app">info@kinti.app</a> címen.</li>
       </ul>
 
+      <h3>2.19 Határidő-asszisztens (határidő-emlékeztetők)</h3>
+      <p>
+        A Határidő-asszisztensbe felvitt határidőid <strong>alapértelmezetten kizárólag a
+        böngésződben</strong> (<code>localStorage</code>) tárolódnak — ilyenkor semmilyen
+        adat nem kerül a szerverünkre.
+      </p>
+      <p>
+        Ha bekapcsolod a <strong>Push-emlékeztetőt</strong>, a határidőid <strong>címét és
+        dátumát</strong> eltároljuk az adatbázisunkban, a <strong>személytelen
+        push-feliratkozásodhoz</strong> kötve (user-azonosító nélkül — mint a 2.12 pont
+        push-értesítéseinél), hogy 14, 7 és 1 nappal a lejárat előtt értesítést küldhessünk.
+      </p>
+      <p>
+        Ha ezen felül bekapcsolod az <strong>emailes emlékeztetőt is</strong> (opcionális,
+        külön kapcsoló), akkor a fentiek mellé a <strong>bejelentkezési email-címedet</strong>{" "}
+        is eltároljuk ezekhez a határidőkhöz, és a lejárat előtt <strong>emailt</strong> is
+        küldünk (a Resend, Inc. szolgáltatásán keresztül — lásd 2.6). Ez kifejezett, külön
+        hozzájárulás; a kapcsolót bármikor kikapcsolhatod, amivel a szerveren tárolt
+        email-címed és a hozzá kötött határidők törlődnek.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a push-, illetve az email-kapcsolóval).</li>
+        <li><strong>Címzett:</strong> emailes emlékeztetőnél a Resend, Inc. (kiküldés) — lásd 2.6.</li>
+        <li><strong>Tárolási idő:</strong> amíg ki nem kapcsolod az emlékeztetőt, vagy a feliratkozásod érvénytelenné nem válik; a megszűnt feliratkozásokat automatikusan töröljük.</li>
+      </ul>
+
       <h2>3. Cookie-k</h2>
       <p>
         Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk: a Clerk session-cookie

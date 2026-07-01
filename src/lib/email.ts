@@ -273,6 +273,33 @@ export async function sendTestEmail(to: string): Promise<{ id: string | null }> 
   return { id: data?.id ?? null };
 }
 
+/**
+ * Határidő-emlékeztető email (OPT-IN). A Határidő-asszisztens napi cronja hívja a
+ * 14/7/1 napos küszöböknél, ha a felhasználó kérte az emailes emlékeztetőt is.
+ * Tranzakciós (nem hírlevél) — említi, hogy az appban bármikor kikapcsolható.
+ */
+export async function sendDeadlineReminderEmail(to: string, title: string, when: string): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const safeTitle = title.replace(/[<>]/g, "").slice(0, 120);
+  const html = `<div style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;color:#1a1a1a;max-width:520px;margin:0 auto;padding:8px">
+<p style="font-size:18px;font-weight:800;margin:0 0 6px">⏰ Közeledő határidő</p>
+<p style="margin:0 0 12px"><strong>${safeTitle}</strong> — <strong>${when}</strong> lejár.</p>
+<p style="margin:0 0 16px">Nézd meg a részleteket és a hivatalos linkeket a Kinti Határidő-asszisztensben.</p>
+<a href="https://kinti.app/hatarido" style="display:inline-block;background:#1d4434;color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px">Megnézem</a>
+<hr style="border:none;border-top:1px solid #e5e5e5;margin:20px 0"/>
+<p style="font-size:12px;color:#888;margin:0">Ezt az emlékeztetőt azért kapod, mert bekapcsoltad az emailes emlékeztetőt a Határidő-asszisztensben. Bármikor kikapcsolhatod ugyanott.</p>
+</div>`;
+  const { error } = await getResend().emails.send({
+    from,
+    to,
+    subject: `⏰ ${safeTitle} — ${when} lejár`,
+    html,
+    text: `Közeledő határidő: ${safeTitle} — ${when} lejár. Részletek: https://kinti.app/hatarido`,
+  });
+  if (error) throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+}
+
 /** A hírlevél-email HTML-layoutja: a szerkesztett törzs + KÖTELEZŐ leiratkozó-lábléc. */
 function newsletterHtml(bodyHtml: string, unsubscribeUrl: string): string {
   return `<div style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;color:#1a1a1a;max-width:560px;margin:0 auto;padding:8px">

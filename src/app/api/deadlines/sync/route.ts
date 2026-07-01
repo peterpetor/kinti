@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { syncDeadlineReminders, deleteDeadlineReminders } from "@/lib/repo";
 import { safeLogError } from "@/lib/safe-log";
 import { hashIp } from "@/lib/security";
@@ -8,16 +9,20 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
- * POST /api/deadlines/sync — a Határidő-asszisztens push-emlékeztetőjének
- * szinkronja. A határidők az ANONIM push-endpointhoz kötődnek (nincs user-
- * azonosító). Body: { subscription, deadlines:[{title,date}], enabled }.
+ * POST /api/deadlines/sync — a Határidő-asszisztens emlékeztetőjének szinkronja.
+ * A határidők a push-endpointhoz kötődnek. Body:
+ * { subscription, deadlines:[{title,date}], enabled, emailReminders }.
  *  - enabled=false → az endpoint emlékeztetőinek törlése (kikapcsolás).
- *  - egyébként → a határidők szinkronja (upsert, a változatlanok megőrződnek).
+ *  - emailReminders=true → a BEJELENTKEZETT (Clerk) user email-címét is eltároljuk
+ *    a sorokon (opt-in emailes emlékeztető). A címet SZERVER-oldalon vesszük az
+ *    auth-ból (nem a kliens küldi) → nem hamisítható idegen címre. Enélkül csak-push
+ *    (anonim). Lásd az Adatvédelmi Tájékoztatót a tárolás részleteiről.
  */
 interface Body {
   subscription?: { endpoint?: string; keys?: { p256dh?: string; auth?: string } };
   deadlines?: { title?: string; date?: string }[];
   enabled?: boolean;
+  emailReminders?: boolean;
 }
 
 export async function POST(req: Request) {
@@ -53,7 +58,20 @@ export async function POST(req: Request) {
       .slice(0, 50)
       .map((d) => ({ title: String(d?.title ?? "").trim(), date: String(d?.date ?? "") }))
       .filter((d) => d.title && /^\d{4}-\d{2}-\d{2}$/.test(d.date));
-    await syncDeadlineReminders(endpoint, p256dh, auth, deadlines);
+
+    // Emailes emlékeztető (opt-in): a címet a BEJELENTKEZETT userből vesszük (nem a
+    // kliensből → nem küldhető idegen címre). Ha nincs bejelentkezve vagy nem kérte,
+    // az email null marad → csak-push (anonim). Best-effort: az auth hibája ne
+    // buktassa a push-szinkront.
+    let email: string | null = null;
+    if (body.emailReminders === true) {
+      try {
+        const user = await currentUser();
+        email = user?.emailAddresses?.[0]?.emailAddress ?? null;
+      } catch (e) { safeLogError("deadlines/sync:currentUser", e); }
+    }
+
+    await syncDeadlineReminders(endpoint, p256dh, auth, deadlines, email);
     await logAiRateLimit("deadline-sync", ipHash);
     return NextResponse.json({ ok: true, count: deadlines.length });
   } catch (e) {

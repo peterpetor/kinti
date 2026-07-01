@@ -624,7 +624,7 @@ export async function deleteRadarsByEmail(email: string): Promise<number> {
 
 export interface DeadlineRow {
   id: string; endpoint: string; p256dh: string | null; auth: string | null;
-  title: string; due_date: string; sent: string;
+  title: string; due_date: string; sent: string; email: string | null;
 }
 
 /**
@@ -638,6 +638,7 @@ export async function syncDeadlineReminders(
   p256dh: string | null,
   auth: string | null,
   deadlines: { title: string; date: string }[],
+  email: string | null = null,
 ): Promise<void> {
   const db = getDB();
   const { results } = await db
@@ -655,15 +656,16 @@ export async function syncDeadlineReminders(
   if (toDelete.length) {
     stmts.push(db.prepare(`DELETE FROM deadline_reminders WHERE id IN (${toDelete.map(() => "?").join(",")})`).bind(...toDelete));
   }
-  // Frissítjük a push-kulcsokat (a feliratkozás megújulhatott).
-  stmts.push(db.prepare("UPDATE deadline_reminders SET p256dh = ?, auth = ? WHERE endpoint = ?").bind(p256dh, auth, endpoint));
+  // Frissítjük a push-kulcsokat (a feliratkozás megújulhatott) + az email-t
+  // (opt-in emailes emlékeztető; null = csak-push). Minden meglévő sort érint.
+  stmts.push(db.prepare("UPDATE deadline_reminders SET p256dh = ?, auth = ?, email = ? WHERE endpoint = ?").bind(p256dh, auth, email, endpoint));
   // Beszúrjuk az új tételeket (sent='').
   for (const d of deadlines) {
     if (existingKeys.has(key(d.title, d.date))) continue;
     if (!d.title?.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(d.date)) continue;
     stmts.push(
-      db.prepare("INSERT INTO deadline_reminders (id, endpoint, p256dh, auth, title, due_date, sent) VALUES (?, ?, ?, ?, ?, ?, '')")
-        .bind(crypto.randomUUID(), endpoint, p256dh, auth, d.title.trim().slice(0, 120), d.date),
+      db.prepare("INSERT INTO deadline_reminders (id, endpoint, p256dh, auth, title, due_date, sent, email) VALUES (?, ?, ?, ?, ?, ?, '', ?)")
+        .bind(crypto.randomUUID(), endpoint, p256dh, auth, d.title.trim().slice(0, 120), d.date, email),
     );
   }
   if (stmts.length) await db.batch(stmts);
@@ -678,7 +680,7 @@ export async function deleteDeadlineReminders(endpoint: string): Promise<void> {
 export async function getDueDeadlineReminders(): Promise<DeadlineRow[]> {
   const { results } = await getDB()
     .prepare(
-      `SELECT id, endpoint, p256dh, auth, title, due_date, sent FROM deadline_reminders
+      `SELECT id, endpoint, p256dh, auth, title, due_date, sent, email FROM deadline_reminders
         WHERE due_date >= date('now') AND due_date <= date('now', '+14 days')`,
     )
     .all<DeadlineRow>();

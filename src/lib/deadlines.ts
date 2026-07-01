@@ -8,6 +8,7 @@
  */
 import { getCloudflareEnv } from "./cloudflare";
 import { sendPush } from "./push";
+import { sendDeadlineReminderEmail } from "./email";
 import { safeLogError } from "./safe-log";
 import { getDueDeadlineReminders, markDeadlineSent, deleteDeadlineReminders } from "./repo";
 
@@ -44,6 +45,15 @@ export async function processDeadlineReminders(): Promise<number> {
     if (!r.p256dh || !r.auth) continue; // payload nélkül nincs értelmes push
 
     const when = d === 0 ? "MA" : d === 1 ? "holnap" : `${d} nap múlva`;
+
+    // Emailes emlékeztető (OPT-IN) — best-effort, a push MELLETT. Ugyanazok a
+    // `sent`-küszöbök gátolják az ismétlést (a push sikeres jelölésekor), így
+    // küszöbönként legfeljebb egyszer megy ki.
+    if (r.email) {
+      try { await sendDeadlineReminderEmail(r.email, r.title, when); }
+      catch (e) { safeLogError("processDeadlineReminders:email", e); }
+    }
+
     let status = 0;
     try {
       status = await sendPush(
