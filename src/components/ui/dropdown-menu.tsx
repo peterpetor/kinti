@@ -151,7 +151,7 @@ export function DropdownMenu() {
                   AI Interjú Szimulátor
                   <ProBadge />
                 </Link>
-                <Link href="/allasok/profil" onClick={close} className={linkClass}>
+                <Link href="/allasok/cv-audit" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
                     <Icon name="sparkles" size={16} strokeWidth={2.4} />
                   </span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -66,14 +67,15 @@ export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
         <div className="min-w-0 flex-1">
           <h3 className="text-[14px] font-extrabold tracking-tight text-ink">AI CV-audit</h3>
           <p className="text-[11.5px] text-ink-muted">
-            PRO — átnézi a feltöltött CV-det a svájci HR-elvárások szerint.
+            PRO — átnézi a feltöltött CV-det a helyi HR-elvárások szerint.
           </p>
         </div>
       </div>
 
       {!hasCv && !result && (
         <p className="mb-3 rounded-[12px] border border-accent/20 bg-accent/5 px-3 py-2 text-[12.5px] leading-snug text-ink-muted">
-          📄 Tölts fel egy <strong>szöveges (nem szkennelt) PDF</strong> CV-t fent, aztán
+          📄 Tölts fel egy <strong>szöveges (nem szkennelt) PDF</strong> CV-t a{" "}
+          <Link href="/allasok/profil" className="font-bold text-primary underline">profilodnál</Link>, aztán
           futtasd az auditot.
         </p>
       )}
