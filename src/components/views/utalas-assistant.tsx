@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { ProLockOverlay } from "@/components/pro-lock-overlay";
 import { cn } from "@/lib/cn";
 import { usePersistedState } from "@/hooks/use-persisted-state";
 import { useIsPro } from "@/lib/use-is-pro";
@@ -39,8 +39,8 @@ export function UtalasAssistant() {
   const [justLogged, setJustLogged] = useState(false);
 
   useEffect(() => {
-    if (isPro !== true) return; // csak PRO-nak töltjük az adatot
-    let on = true;
+    if (isPro === null) return; // előbb dőljön el a PRO-státusz; utána MINDENKINEK töltünk
+    let on = true;              // (nem-PRO is látja az előnézetet — árfolyam publikus)
     Promise.all([
       fetch("/api/exchange-rate").then((r) => (r.ok ? (r.json() as Promise<RateNow>) : null)),
       fetch("/api/exchange-rate?history=30").then((r) => (r.ok ? (r.json() as Promise<{ series: HistPoint[] }>) : null)),
@@ -111,25 +111,8 @@ export function UtalasAssistant() {
   if (isPro === null) {
     return <div className="rounded-card border border-line bg-surface p-6 text-center text-[13px] text-ink-muted">Betöltés…</div>;
   }
-  if (isPro === false) {
-    return (
-      <div className="rounded-card border-2 border-star/30 bg-star/5 p-6 text-center">
-        <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-[14px] bg-star text-white">
-          <Icon name="lock" size={22} strokeWidth={2.4} />
-        </div>
-        <p className="text-[15px] font-extrabold text-ink">Utalás-asszisztens — PRO funkció</p>
-        <p className="mx-auto mt-1 max-w-xs text-[13px] text-ink-muted">
-          Mérhető havi spórolás a hazautaláson: megmondja, mikor és melyik szolgáltatóval éri meg
-          utalni, és vezeti, mennyit spóroltál.
-        </p>
-        <Link href="/pro" className="mt-4 inline-flex items-center justify-center rounded-pill bg-star px-5 py-2.5 text-[14px] font-extrabold text-white transition hover:bg-[#d68f20] active:scale-[0.98]">
-          Kinti PRO feloldása
-        </Link>
-      </div>
-    );
-  }
 
-  return (
+  const content = (
     <div className="space-y-4">
       {/* Megtakarítás-számláló — a „miért éri meg" érték */}
       <section className="rounded-card border-2 border-primary/30 bg-gradient-to-br from-primary-soft to-surface p-5 shadow-pop">
@@ -288,4 +271,17 @@ export function UtalasAssistant() {
       )}
     </div>
   );
+
+  // Nem-PRO: LÁTJA a valódi asszisztenst (előnézet), de nem használhatja → paywall.
+  if (isPro === false) {
+    return (
+      <ProLockOverlay
+        title="Utalás-asszisztens — PRO"
+        subtitle="Mérhető havi spórolás a hazautaláson: mikor és melyik szolgáltatóval éri meg utalni, és mennyit spóroltál eddig."
+      >
+        {content}
+      </ProLockOverlay>
+    );
+  }
+  return content;
 }
