@@ -58,6 +58,16 @@ export const OFFICIAL_TERMS: Record<string, string> = {
   "verfügung": "Hatósági határozat (írásbeli döntés), amely ellen jellemzően megadott határidőn belül fellebbezhetsz.",
   "gesuch": "Kérelem/beadvány egy hatósághoz.",
   "vollmacht": "Meghatalmazás — felhatalmazol valakit, hogy a nevedben hivatalosan eljárjon.",
+  "vorsorgeauftrag": "Gondoskodási megbízás (Svájc) — előre kijelölöd, ki dönthet helyetted személyi és vagyoni ügyekben, ha cselekvőképtelenné válnál. NEM adóssággal kapcsolatos.",
+  "patientenverfügung": "Betegrendelkezés — előre leírod, milyen orvosi kezelést szeretnél vagy sem, ha már nem tudsz nyilatkozni.",
+  "kurzarbeit": "Rövidített munkaidő — a munkáltató gazdasági okból átmenetileg csökkenti a munkaidőt, az állam részben pótolja a kieső bért.",
+  "lohnfortzahlung": "Bérfolytatás — a munkáltató betegség/baleset esetén (törvényi vagy szerződéses ideig) tovább fizeti a béredet.",
+  "handelsregister": "Cégjegyzék — a bejegyzett cégek nyilvános nyilvántartása.",
+  "grundbuch": "Telekkönyv — az ingatlanok tulajdoni és teher-nyilvántartása.",
+  "zivilstandsamt": "Anyakönyvi hivatal — születés, házasság, haláleset, névváltoztatás ügyei.",
+  "familienzulage": "Családi pótlék — gyerek után járó rendszeres támogatás (a Kinderzulage tágabb neve).",
+  "erbschein": "Örökösödési bizonyítvány — igazolja, ki az örökös; bankokhoz, ingatlan-átíráshoz kérik.",
+  "betreibungsregister": "Az adósságbehajtási nyilvántartás — a Betreibungsamt vezeti; ebből készül a Betreibungsauszug.",
 
   // — Ausztria —
   "meldezettel": "Lakcímbejelentő lap (Ausztria) — a lakóhely bejelentésének/igazolásának hivatalos dokumentuma.",

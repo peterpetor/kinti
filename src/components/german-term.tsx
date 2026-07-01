@@ -17,6 +17,7 @@ import { Icon } from "@/components/ui";
 export function GermanTerm({ children }: { children: string }) {
   const [open, setOpen] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
+  const [source, setSource] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLSpanElement>(null);
@@ -46,9 +47,10 @@ export function GermanTerm({ children }: { children: string }) {
       const res = await fetch(
         `/api/ai/german-term?term=${encodeURIComponent(children)}`,
       );
-      const data = (await res.json()) as { explanation?: string | null; error?: string };
+      const data = (await res.json()) as { explanation?: string | null; error?: string; source?: string };
       if (data.explanation) {
         setExplanation(data.explanation);
+        setSource(data.source ?? "ai");
       } else {
         setError(data.error || "Nem tudtuk lekérni a magyarázatot.");
       }
@@ -75,7 +77,7 @@ export function GermanTerm({ children }: { children: string }) {
         <span className="absolute left-0 top-full z-20 mt-1 w-[260px] rounded-card border border-line bg-surface p-3 shadow-pop">
           <span className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary">
             <Icon name="sparkles" size={10} strokeWidth={2.4} />
-            AI magyarázat
+            {source === "curated" ? "Jelentés" : source ? "AI magyarázat (becslés)" : "Magyarázat"}
           </span>
           {loading && (
             <>
@@ -89,9 +91,13 @@ export function GermanTerm({ children }: { children: string }) {
           {explanation && (
             <span className="block text-[12px] leading-snug text-ink">{explanation}</span>
           )}
-          <span className="mt-2 block text-[10.5px] text-ink-faint italic">
-            Automatikus magyarázat, nem hivatalos forrás. Részletekért: ch.ch
-          </span>
+          {explanation && (
+            <span className="mt-2 block text-[10.5px] text-ink-faint italic">
+              {source === "curated"
+                ? "Kinti hivatali szótár — tájékoztató jellegű. Részletek: ch.ch"
+                : "AI-becslés, NEM hivatalos forrás — fontos ügyben ellenőrizd (pl. ch.ch)."}
+            </span>
+          )}
         </span>
       )}
     </span>
