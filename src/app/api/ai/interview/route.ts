@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { isPro } from "@/lib/subscriptions";
 import { runAiMultiTurnChat, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
@@ -8,6 +10,17 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
+    // PRO-kapu SZERVER-OLDALON: az interjú-szimulátor oldala mostantól nem-PRO
+    // usernek is betölt (előnézet + paywall), ezért a drága AI-hívást ITT kell
+    // védeni — a kliens előnézete nem tudja lefuttatni.
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Bejelentkezés szükséges." }, { status: 401 });
+    }
+    if (!(await isPro(userId))) {
+      return NextResponse.json({ error: "Ez PRO funkció — oldd fel a Kinti PRO-val." }, { status: 403 });
+    }
+
     const body = (await req.json().catch(() => ({}))) as {
       profession?: string;
       language?: string;

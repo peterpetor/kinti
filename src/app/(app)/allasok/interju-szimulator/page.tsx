@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 import { Icon } from "@/components/ui";
 import { AiInterviewSimulator } from "@/components/views/ai-interview-simulator";
-import { requirePro } from "@/lib/subscriptions";
+import { isPro } from "@/lib/subscriptions";
+import { ProLockOverlay } from "@/components/pro-lock-overlay";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -12,7 +14,10 @@ export const metadata = {
 };
 
 export default async function AiInterviewPage() {
-  await requirePro("/allasok/interju-szimulator", "/allasok/pro");
+  // Nem-PRO (és nem bejelentkezett) user is BELÉPHET és LÁTJA az előnézetet — a
+  // használatot az overlay + a szerver-oldali API-kapu (403) zárja.
+  const { userId } = await auth();
+  const pro = userId ? await isPro(userId) : false;
   return (
     <div className="mx-auto max-w-2xl px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-24">
       <div className="mb-4 flex justify-end">
@@ -34,7 +39,16 @@ export default async function AiInterviewPage() {
         </p>
       </header>
 
-      <AiInterviewSimulator />
+      {pro ? (
+        <AiInterviewSimulator />
+      ) : (
+        <ProLockOverlay
+          title="Interjú Szimulátor — PRO"
+          subtitle="Gyakorolj DACH munkainterjút AI HR-menedzserrel, németül/angolul — stresszmentesen, akárhányszor."
+        >
+          <AiInterviewSimulator />
+        </ProLockOverlay>
+      )}
     </div>
   );
 }

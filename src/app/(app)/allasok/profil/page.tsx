@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { WorkerProfileForm } from "@/components/views/worker-profile-form";
 import { CvAssistant } from "@/components/views/cv-assistant";
+import { ProLockOverlay } from "@/components/pro-lock-overlay";
 import { getWorkerProfileByUser } from "@/lib/repo";
 import { isPro } from "@/lib/subscriptions";
 import type { Metadata } from "next";
@@ -102,20 +103,16 @@ export default async function WorkerProfilePage() {
         />
       </section>
 
-      {/* AI CV-audit (PRO) */}
+      {/* AI CV-audit (PRO) — nem-PRO is LÁTJA (előnézet), de a használathoz PRO kell. */}
       {pro ? (
         <CvAssistant hasCv={!!profile?.cvKey} />
       ) : (
-        <Link
-          href="/pro"
-          className="flex items-center gap-3 rounded-card border border-pro/25 bg-pro/5 p-4 shadow-card transition active:scale-[0.99]"
+        <ProLockOverlay
+          title="AI CV-audit — PRO"
+          subtitle="Átnézi a feltöltött CV-det, pontozza a svájci HR-elvárások szerint, és konkrét javításokat + újraírt szakaszokat ad."
         >
-          <span className="text-xl">🔒</span>
-          <span className="min-w-0 flex-1 text-[13px] leading-snug text-ink">
-            <strong className="text-[#cc7700]">PRO — AI CV-audit:</strong> átnézi a feltöltött CV-det, pontozza a svájci HR-elvárások szerint, és konkrét javításokat + újraírt szakaszokat ad.
-          </span>
-          <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
-        </Link>
+          <CvAssistant hasCv={!!profile?.cvKey} />
+        </ProLockOverlay>
       )}
     </div>
   );
