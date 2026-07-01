@@ -320,7 +320,7 @@ export function ProfileEditor({
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
-                  Mióta élsz kint Svájcban? (év)
+                  Mióta élsz kint? (év)
                 </label>
                 <input
                   type="number"

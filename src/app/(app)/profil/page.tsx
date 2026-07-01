@@ -121,7 +121,7 @@ function OnboardingCTA({
   const features: { icon: IconName; title: string; body: string }[] = [
     { icon: "list", title: "Céges adatok", body: "Név, kategória, rövid bemutatkozás" },
     { icon: "phone", title: "Kapcsolat", body: "Telefon, e-mail, weboldal, közösségi linkek" },
-    { icon: "nav", title: "Cím + térkép", body: "Svájci cím, kanton, megjelenés a térképen" },
+    { icon: "nav", title: "Cím + térkép", body: "Cím, régió, megjelenés a térképen" },
     { icon: "calendar", title: "Nyitvatartás", body: "Heti beosztás, „nyitva most” jelző" },
     { icon: "globe", title: "Beszélt nyelvek", body: "Magyar + DE/FR/IT/EN jelzések" },
     { icon: "star", title: "Vélemények", body: "Csillagos értékelések, válaszadás" },
@@ -175,7 +175,7 @@ function OnboardingCTA({
           Hozd létre a vállalkozói profilod
         </h2>
         <p className="mt-1.5 text-[13.5px] leading-snug opacity-90 text-pretty">
-          Pár adat — név, kategória, kanton — és máris kész vagy. A részleteket
+          Pár adat — név, kategória, régió — és máris kész vagy. A részleteket
           (kapcsolat, nyitvatartás, nyelvek, logó) utána állítod be.
         </p>
       </div>
