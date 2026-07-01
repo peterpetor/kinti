@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { MapContainer, Marker, useMapEvents, useMap } from "react-leaflet";
 import { FallbackTileLayer } from "./fallback-tile-layer";
+import { MapAutoResize } from "./map-controls";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -47,6 +48,7 @@ export function LocationPicker({
     <div className={className}>
       <MapContainer center={value ? [value.lat, value.lng] : center} zoom={12} className="h-full w-full rounded-card z-0" scrollWheelZoom>
         <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
+        <MapAutoResize />
         <Recenter center={center} />
         <ClickCapture onPick={(lat, lng) => onChange({ lat, lng })} />
         {value && <Marker position={[value.lat, value.lng]} icon={PIN} />}

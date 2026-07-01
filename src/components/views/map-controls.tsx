@@ -22,7 +22,21 @@ import { cn } from "@/lib/cn";
 export function MapAutoResize({ trigger }: { trigger?: unknown }) {
   const map = useMap();
   useEffect(() => {
-    const timers = [60, 220, 450, 800].map((d) => setTimeout(() => map.invalidateSize(), d));
+    const safeInvalidate = () => {
+      try {
+        const c = map.getContainer();
+        // CSAK valós, nem-nulla méretnél mérünk újra. Ha a konténer épp 0/átmeneti
+        // méretű (a lazy-mount + layout még ül le), az `invalidateSize` a Leaflet
+        // belsejében „Attempted to load an infinite number of tiles" hibát dobhat,
+        // ami a route-error boundaryt („Hoppá") váltja ki. A méret-őr + try/catch
+        // garantálja, hogy egy átmeneti rossz állapot SOHA ne döntse le az oldalt;
+        // a következő (már stabil méretű) időzítés úgyis betölti a csempéket.
+        if (c && c.clientWidth > 0 && c.clientHeight > 0) {
+          map.invalidateSize({ animate: false });
+        }
+      } catch { /* átmeneti Leaflet-belső hiba — elnyeljük, a következő tick javít */ }
+    };
+    const timers = [80, 260, 500, 900].map((d) => setTimeout(safeInvalidate, d));
     return () => timers.forEach(clearTimeout);
   }, [trigger, map]);
   return null;
