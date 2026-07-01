@@ -58,6 +58,16 @@ export default async function JobsPage() {
 
         {/* Hol keress még? — ország-tudatos hivatalos álláskereső-források (jogtiszta, link-out) */}
         <JobSourcesSection />
+
+        <p className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11px] leading-relaxed text-ink-muted">
+          <strong className="text-ink">Jogi tájékoztató:</strong> a Kinti „Állások" modul egy{" "}
+          <strong>állás-lista / közvetítő platform</strong> — <strong>nem vagyunk a munkáltató</strong>,
+          és nem hozunk létre munkaviszonyt vagy más foglalkoztatási jogviszonyt a felek között.
+          A jelentkezésed közvetlenül a hirdetőhöz jut; a külső forrásból aggregált hirdetések
+          harmadik felek oldalaira mutatnak, amelyek tartalmáért nem felelünk. Kizárólag{" "}
+          <strong>bejelentett, legális foglalkoztatás</strong> hirdethető. Részletek:{" "}
+          <Link href="/aszf" className="underline font-semibold">ÁSZF 10.</Link>
+        </p>
       </main>
     </div>
       </PullToRefresh>

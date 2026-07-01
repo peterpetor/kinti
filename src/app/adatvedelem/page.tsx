@@ -408,12 +408,44 @@ export default function AdatvedelemPage() {
         <li><strong>Tárolási idő:</strong> amíg ki nem kapcsolod az emlékeztetőt, vagy a feliratkozásod érvénytelenné nem válik; a megszűnt feliratkozásokat automatikusan töröljük. Az emlékeztetők a <strong>Kinti PRO</strong>-hoz kötöttek: a szerveren tárolt adatok minden aktív-PRO szinkronnál megújulnak, és ha a PRO lejár (nincs több szinkron), <strong>kb. 40 napon belül automatikusan lejárnak</strong>.</li>
       </ul>
 
+      <h3>2.20 Hozzájárulás-napló (GDPR 7. cikk)</h3>
+      <p>
+        Amikor a belépéskor elfogadod a feltételeket (18+, ÁSZF, Adatkezelési Tájékoztató),
+        a hozzájárulás tényét a <strong>bizonyíthatóság</strong> érdekében (GDPR 7. cikk (1))
+        a szerverünkön is <strong>naplózzuk</strong>: az elfogadás <strong>időpontját</strong>, a
+        feltételek <strong>verzióját</strong>, a három elfogadott pontot, az (opcionális) választott
+        országot, és egy <strong>véletlenszerű, eszköz-szintű azonosítót</strong> (amit a böngésződ
+        generál). <strong>IP-címet és személyes adatot ehhez NEM tárolunk</strong> (az IP-t csak a
+        visszaélés elleni óradíj-limithez hasheljük, nem mentjük). Ez az azonosító nem szolgál
+        nyomon követésre.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) c) — jogi kötelezettség (a hozzájárulás igazolhatósága), illetve 6. cikk (1) f) — jogos érdek (visszaélés-megelőzés).</li>
+        <li><strong>Tárolási idő:</strong> a hozzájárulás bizonyíthatóságához szükséges ideig.</li>
+      </ul>
+
       <h2>3. Cookie-k</h2>
       <p>
-        Csak <strong>feltétlenül szükséges</strong> cookie-kat használunk: a Clerk session-cookie
-        az adminisztrátor belépéséhez és a PRO-előfizetők bejelentkezéséhez. A bejelentkezés
-        nélkül böngésző látogatóknak, vállalkozóknak, hirdetésfeladóknak <strong>nincs cookie-juk</strong>.
-        Marketing-, analitikai-, vagy 3rd-party tracking cookie-kat <strong>nem használunk</strong>.
+        Kizárólag <strong>feltétlenül szükséges</strong> (technikai és biztonsági) cookie-kat
+        használunk — ezekhez a GDPR/ePrivacy alapján NEM szükséges hozzájárulás, de a teljesség
+        kedvéért tájékoztatunk róluk. <strong>Marketing-, hirdetési- vagy nyomon követő (tracking)
+        cookie-t NEM használunk</strong>, és nem osztunk meg adatot hirdetési hálózatokkal.
+      </p>
+      <p>
+        A technikai/biztonsági cookie-k, amelyek <strong>már a bejelentkezés előtt</strong> is
+        beállítódhatnak (a szolgáltatás elé kapcsolt infrastruktúra miatt):
+      </p>
+      <ul>
+        <li><strong>Clerk (hitelesítés):</strong> <code>__client</code>, <code>__client_uat</code> — a
+          bejelentkezési rendszer működéséhez; a Clerk már a látogatáskor beállítja a munkamenet-állapot
+          kezeléséhez, a tényleges belépésnél pedig session-cookie társul (lásd 2.1).</li>
+        <li><strong>Cloudflare (biztonság / bot-védelem):</strong> <code>__cf_bm</code>, <code>_cfuvid</code> —
+          a szolgáltatásunk elé kapcsolt Cloudflare állítja be a robot- és visszaélés-védelemhez;
+          rövid élettartamú, kizárólag biztonsági célú (lásd 2.4).</li>
+      </ul>
+      <p>
+        Ezek harmadik felek (Clerk, Inc. és Cloudflare, Inc.) technikai cookie-jai, kizárólag a
+        szolgáltatás biztonságos működéséhez szükségesek.
       </p>
 
       <h3>3.1 Cloudflare Web Analytics (Beacon)</h3>

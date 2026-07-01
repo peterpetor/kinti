@@ -13,6 +13,10 @@ import Link from "next/link";
  */
 const EXEMPT_PATHS = ["/aszf", "/adatvedelem", "/impresszum"];
 
+/** A jogi feltételek verziója — a hozzájárulás-naplóhoz (GDPR demonstrálhatóság),
+ *  és a jövőbeli feltétel-változáskori újra-kéréshez. Feltétel-módosításkor emeld. */
+const LEGAL_VERSION = "2026-07-01";
+
 function pathIsExempt(pathname: string): boolean {
   return EXEMPT_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
@@ -65,6 +69,22 @@ export function LegalGatekeeper() {
   const handleAccept = () => {
     if (ageConfirmed && acceptAszf && acceptPrivacy) {
       localStorage.setItem("kinti_legal_accepted", "true");
+      // GDPR 7. cikk (1) — a hozzájárulás VERZIÓJÁT is eltároljuk (feltétel-változáskor
+      // újra-kérhető), és szerver-oldalon is NAPLÓZZUK (demonstrálhatóság). Privacy:
+      // véletlen, eszköz-szintű consentId (nem PII, nem tracking); best-effort küldés.
+      try {
+        localStorage.setItem("kinti_legal_version", LEGAL_VERSION);
+        let cid = localStorage.getItem("kinti_consent_id");
+        if (!cid) { cid = crypto.randomUUID(); localStorage.setItem("kinti_consent_id", cid); }
+        let country: string | null = null;
+        try { country = localStorage.getItem("kinti.country"); } catch { /* ignore */ }
+        void fetch("/api/consent", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          keepalive: true,
+          body: JSON.stringify({ consentId: cid, version: LEGAL_VERSION, age18: true, aszf: true, privacy: true, country }),
+        }).catch(() => { /* a napló hibája NE blokkolja a belépést */ });
+      } catch { /* localStorage/fetch hiánya ne törje a belépést */ }
       setIsOpen(false);
       document.body.style.overflow = "";
       // Az ország-választó kapu erre az eseményre vár (hogy ne villogjon a kettő
