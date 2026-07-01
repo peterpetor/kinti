@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "AI Munkainterjú Szimulátor | Kinti",
-  description: "Gyakorolj svájci munkainterjúkra mesterséges intelligenciával.",
+  description: "Gyakorolj külföldi munkainterjúkra mesterséges intelligenciával.",
 };
 
 export default async function AiInterviewPage() {
@@ -34,8 +34,8 @@ export default async function AiInterviewPage() {
           Munkainterjú Szimulátor 🤖
         </h1>
         <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
-          A svájci HR menedzserek más típusú kérdéseket tesznek fel, mint otthon. 
-          Gyakorold a bemutatkozást és a válaszadást németül, stresszmentesen!
+          A külföldi HR menedzserek más típusú kérdéseket tesznek fel, mint otthon.
+          Gyakorold a bemutatkozást és a válaszadást a helyi nyelven, stresszmentesen!
         </p>
       </header>
 
@@ -44,7 +44,7 @@ export default async function AiInterviewPage() {
       ) : (
         <ProLockOverlay
           title="Interjú Szimulátor — PRO"
-          subtitle="Gyakorolj DACH munkainterjút AI HR-menedzserrel, németül/angolul — stresszmentesen, akárhányszor."
+          subtitle="Gyakorolj külföldi munkainterjút AI HR-menedzserrel a helyi nyelven — stresszmentesen, akárhányszor."
         >
           <AiInterviewSimulator />
         </ProLockOverlay>
