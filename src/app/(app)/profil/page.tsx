@@ -405,6 +405,8 @@ async function OwnerDashboard({
         initialLogoKey={business.logoKey}
         initialGalleryKeys={business.galleryKeys}
         initialAccentColor={business.accentColor ?? null}
+        initialRating={business.rating}
+        initialReviews={business.reviews}
         isFeatured={business.featured}
       />
 

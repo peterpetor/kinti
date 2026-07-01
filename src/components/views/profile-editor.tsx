@@ -32,6 +32,9 @@ export interface ProfileEditorProps {
   initialLogoKey?: string | null;
   initialGalleryKeys?: string[] | null;
   initialAccentColor?: string | null;
+  /** Valós értékelés az élő előnézethez (ne hardcode-olt 5.0 / 12 legyen). */
+  initialRating?: number;
+  initialReviews?: number;
 }
 
 type Phase = "idle" | "saving" | "success" | "error";
@@ -51,6 +54,8 @@ export function ProfileEditor({
   initialLogoKey,
   initialGalleryKeys,
   initialAccentColor,
+  initialRating = 0,
+  initialReviews = 0,
   isFeatured,
 }: ProfileEditorProps & { isFeatured?: boolean }) {
   const [accentColor, setAccentColor] = useState(initialAccentColor ?? "");
@@ -584,16 +589,30 @@ export function ProfileEditor({
               {/* Meta sor */}
               <div className="flex items-center gap-3 border-y border-line/30 py-2 text-[10.px]">
                 <div className="flex-1">
-                  <div className="flex items-center gap-0.5 font-bold text-ink">
-                    <Icon name="star" size={10} filled className="text-star" />
-                    <span>5.0</span>
-                  </div>
-                  <div className="text-[10px] text-ink-muted">12 vélemény</div>
+                  {initialReviews > 0 ? (
+                    <>
+                      <div className="flex items-center gap-0.5 font-bold text-ink">
+                        <Icon name="star" size={10} filled className="text-star" />
+                        <span>{initialRating.toFixed(1)}</span>
+                      </div>
+                      <div className="text-[10px] text-ink-muted">{initialReviews} vélemény</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-0.5 font-bold text-ink">
+                        <Icon name="star" size={10} className="text-ink-faint" />
+                        <span className="text-ink-muted">Új</span>
+                      </div>
+                      <div className="text-[10px] text-ink-muted">nincs értékelés</div>
+                    </>
+                  )}
                 </div>
                 <span className="h-6 w-px bg-line/40" />
-                <div className="flex-1">
-                  <div className="font-bold text-ink">2.4 km</div>
-                  <div className="text-[10px] text-ink-muted">Zürich</div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-ink text-[10.5px] leading-tight truncate">
+                    {address || "Add meg a címed"}
+                  </div>
+                  <div className="text-[10px] text-ink-muted">A térképen</div>
                 </div>
                 <span className="h-6 w-px bg-line/40" />
                 <div className="flex-1">
