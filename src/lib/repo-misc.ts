@@ -657,14 +657,16 @@ export async function syncDeadlineReminders(
     stmts.push(db.prepare(`DELETE FROM deadline_reminders WHERE id IN (${toDelete.map(() => "?").join(",")})`).bind(...toDelete));
   }
   // Frissítjük a push-kulcsokat (a feliratkozás megújulhatott) + az email-t
-  // (opt-in emailes emlékeztető; null = csak-push). Minden meglévő sort érint.
-  stmts.push(db.prepare("UPDATE deadline_reminders SET p256dh = ?, auth = ?, email = ? WHERE endpoint = ?").bind(p256dh, auth, email, endpoint));
+  // (opt-in emailes emlékeztető; null = csak-push) + a keep-alive lejáratot (a
+  // szinkron CSAK aktív PRO-usertől jöhet → ha lejár a PRO, ~40 nap múlva magától
+  // leáll). Minden meglévő sort érint.
+  stmts.push(db.prepare("UPDATE deadline_reminders SET p256dh = ?, auth = ?, email = ?, expires_at = datetime('now','+40 days') WHERE endpoint = ?").bind(p256dh, auth, email, endpoint));
   // Beszúrjuk az új tételeket (sent='').
   for (const d of deadlines) {
     if (existingKeys.has(key(d.title, d.date))) continue;
     if (!d.title?.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(d.date)) continue;
     stmts.push(
-      db.prepare("INSERT INTO deadline_reminders (id, endpoint, p256dh, auth, title, due_date, sent, email) VALUES (?, ?, ?, ?, ?, ?, '', ?)")
+      db.prepare("INSERT INTO deadline_reminders (id, endpoint, p256dh, auth, title, due_date, sent, email, expires_at) VALUES (?, ?, ?, ?, ?, ?, '', ?, datetime('now','+40 days'))")
         .bind(crypto.randomUUID(), endpoint, p256dh, auth, d.title.trim().slice(0, 120), d.date, email),
     );
   }
@@ -681,7 +683,8 @@ export async function getDueDeadlineReminders(): Promise<DeadlineRow[]> {
   const { results } = await getDB()
     .prepare(
       `SELECT id, endpoint, p256dh, auth, title, due_date, sent, email FROM deadline_reminders
-        WHERE due_date >= date('now') AND due_date <= date('now', '+14 days')`,
+        WHERE due_date >= date('now') AND due_date <= date('now', '+14 days')
+          AND (expires_at IS NULL OR expires_at >= datetime('now'))`,
     )
     .all<DeadlineRow>();
   return results ?? [];

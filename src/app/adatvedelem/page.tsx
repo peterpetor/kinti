@@ -405,7 +405,7 @@ export default function AdatvedelemPage() {
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a push-, illetve az email-kapcsolóval).</li>
         <li><strong>Címzett:</strong> emailes emlékeztetőnél a Resend, Inc. (kiküldés) — lásd 2.6.</li>
-        <li><strong>Tárolási idő:</strong> amíg ki nem kapcsolod az emlékeztetőt, vagy a feliratkozásod érvénytelenné nem válik; a megszűnt feliratkozásokat automatikusan töröljük.</li>
+        <li><strong>Tárolási idő:</strong> amíg ki nem kapcsolod az emlékeztetőt, vagy a feliratkozásod érvénytelenné nem válik; a megszűnt feliratkozásokat automatikusan töröljük. Az emlékeztetők a <strong>Kinti PRO</strong>-hoz kötöttek: a szerveren tárolt adatok minden aktív-PRO szinkronnál megújulnak, és ha a PRO lejár (nincs több szinkron), <strong>kb. 40 napon belül automatikusan lejárnak</strong>.</li>
       </ul>
 
       <h2>3. Cookie-k</h2>

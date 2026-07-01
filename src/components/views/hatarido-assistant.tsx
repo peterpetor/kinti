@@ -308,6 +308,11 @@ export function HataridoAssistant() {
             </span>
           </label>
         )}
+        {remindersOn && (
+          <p className="mt-2.5 text-[10.5px] leading-snug text-ink-faint">
+            ℹ️ Az emlékeztetők a <strong>Kinti PRO</strong>-hoz tartoznak: aktív előfizetéssel működnek. Ha a PRO lejár, az emlékeztetők automatikusan leállnak.
+          </p>
+        )}
       </section>
 
       {/* Gyors hozzáadás — sablonok */}
