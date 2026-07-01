@@ -6,16 +6,11 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { BOLT_CATEGORIES, type BoltSpot } from "@/lib/magyar-bolt";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
-
-const CENTERS: Record<string, [number, number]> = { CH: [46.82, 8.23], AT: [47.59, 14.14], DE: [51.1, 10.4], NL: [52.13, 5.29] };
+import { getPresenceCities } from "@/lib/presence-cities";
 
 const MagyarBoltMap =
   typeof window !== "undefined"
     ? lazy(() => import("./magyar-bolt-map").then((m) => ({ default: m.MagyarBoltMap })))
-    : () => null;
-const LocationPicker =
-  typeof window !== "undefined"
-    ? lazy(() => import("./location-picker").then((m) => ({ default: m.LocationPicker })))
     : () => null;
 
 export function MagyarBoltView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
@@ -39,6 +34,7 @@ export function MagyarBoltView({ turnstileSiteKey }: { turnstileSiteKey: string 
   useEffect(() => { load(); }, [load]);
 
   const visible = useMemo(() => (filter === "all" ? spots : spots.filter((s) => s.category === filter)), [spots, filter]);
+  const cityList = useMemo(() => getPresenceCities(country), [country]);
 
   async function report(id: string) {
     try {
@@ -49,9 +45,9 @@ export function MagyarBoltView({ turnstileSiteKey }: { turnstileSiteKey: string 
   // Beküldő-állapot
   const [name, setName] = useState("");
   const [category, setCategory] = useState("pekseg");
+  const [city, setCity] = useState("");
   const [locName, setLocName] = useState("");
   const [note, setNote] = useState("");
-  const [pin, setPin] = useState<{ lat: number; lng: number } | null>(null);
   const [token, setToken] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -59,21 +55,22 @@ export function MagyarBoltView({ turnstileSiteKey }: { turnstileSiteKey: string 
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   function openModal() {
-    setName(""); setCategory("pekseg"); setLocName(""); setNote(""); setPin(null);
+    setName(""); setCategory("pekseg"); setCity(""); setLocName(""); setNote("");
     setToken(""); setErr(null); setDone(false); turnstileRef.current?.reset(); setModal(true);
   }
 
   async function submit() {
     setErr(null);
     if (name.trim().length < 2) { setErr("Add meg a hely nevét."); return; }
-    if (!pin) { setErr("Koppints a térképre a pontos helyhez."); return; }
+    const sel = cityList.find((c) => c.name === city);
+    if (!sel) { setErr("Válaszd ki a várost."); return; }
     if (!token) { setErr("Várd meg a robot-ellenőrzést."); return; }
     setSubmitting(true);
     try {
       const res = await fetch("/api/magyarbolt", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ country, category, name: name.trim(), locationName: locName.trim() || null, note: note.trim() || null, lat: pin.lat, lng: pin.lng, turnstileToken: token }),
+        body: JSON.stringify({ country, category, name: name.trim(), locationName: locName.trim() || sel.name, note: note.trim() || null, lat: sel.lat, lng: sel.lng, turnstileToken: token }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (!res.ok) { setErr(data.error ?? "Nem sikerült."); turnstileRef.current?.reset(); setToken(""); setSubmitting(false); return; }
@@ -107,10 +104,10 @@ export function MagyarBoltView({ turnstileSiteKey }: { turnstileSiteKey: string 
         ➕ Tudok egy magyar helyet — felteszem a térképre
       </button>
 
-      {/* NINCS backdrop-blur a modal-hátéren: a `backdrop-filter` GPU-kompozit réteget
-          hoz létre, amiben a Leaflet transzformált csempe-<img>-jei valós GPU-n
-          (Chrome/Opera) NEM rajzolódnak újra → a modal-térkép SZÜRKE marad (a vezérlők
-          látszanak). Szoftveres renderelésnél (headless) nem jön elő. Solid háttér. */}
+      {/* Beküldő-modal — a hely VÁROS-szinten megy (presence-cities legördülő), NINCS
+          benne térkép-picker: felesleges duplikálni a fő térképet, és a modalban a
+          Leaflet valós GPU-n megbízhatatlan volt (szürke). A város koordinátája elég a
+          pin-hez; pontos utca opcionális szövegként megy. */}
       {modal && (
         <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 bg-ink/60" onClick={() => !submitting && setModal(false)}>
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md max-h-[92vh] overflow-y-auto rounded-card border border-line bg-surface p-5 shadow-card-strong space-y-3">
@@ -132,18 +129,14 @@ export function MagyarBoltView({ turnstileSiteKey }: { turnstileSiteKey: string 
                 <select value={category} onChange={(e) => setCategory(e.target.value)} className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink">
                   {BOLT_CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>)}
                 </select>
+                <select value={city} onChange={(e) => setCity(e.target.value)} className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink">
+                  <option value="">📍 Melyik városban? (kötelező)</option>
+                  {cityList.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+                </select>
                 <input value={locName} onChange={(e) => setLocName(e.target.value)} maxLength={80}
-                  placeholder="Cím / város (opcionális)" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink" />
+                  placeholder="Pontos cím / utca (opcionális)" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink" />
                 <textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={300} rows={2}
                   placeholder="Tipp (pl. friss kenyér szombaton, magyar kolbász…)" className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink" />
-
-                <div>
-                  <p className="mb-1 text-[12px] font-bold text-ink-muted">Koppints a pontos helyre:</p>
-                  <Suspense fallback={<MapFallback small />}>
-                    <LocationPicker center={CENTERS[country] ?? CENTERS.CH} value={pin} onChange={setPin} className="h-[240px] w-full" />
-                  </Suspense>
-                  {pin && <p className="mt-1 text-[11px] text-success">✓ Hely kijelölve</p>}
-                </div>
 
                 {turnstileSiteKey && <TurnstileWidget ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setToken} />}
                 {err && <p className="text-[12px] font-bold text-accent">{err}</p>}
