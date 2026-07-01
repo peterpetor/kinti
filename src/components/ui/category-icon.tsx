@@ -96,6 +96,16 @@ const PATHS_ALLAT = [
   "M18 8c.55 0 1-.45 1-1s-.45-1-1-1s-1 .45-1 1s.45 1 1 1z",
   "M12 22a5 5 0 0 0 5-5c0-2-3-5-5-5s-5 3-5 5a5 5 0 0 0 5 5z",
 ];
+// Kutya (Lucide „dog") — állatorvos / kutyás szolgáltatások. Felismerhető
+// kutyafej lógó fülekkel, a formátlan mancs-blob helyett.
+const PATHS_KUTYA = [
+  "M11.25 16.25h1.5L12 17z",
+  "M16 14v.5",
+  "M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444c0-1.061-.162-2.2-.493-3.309m-9.243-6.082A8.801 8.801 0 0 1 12 5c.78 0 1.5.108 2.161.306",
+  "M8 14v.5",
+  "M8.5 8.5c-.384 1.05-1.083 2.028-2.344 2.5-1.931.722-3.576-.297-3.656-1-.113-.994 1.177-6.53 4-7 1.923-.321 3.5.782 3.5 2.172",
+  "M15.5 8.5c.384 1.05 1.083 2.028 2.344 2.5 1.931.722 3.576-.297 3.656-1 .113-.994-1.177-6.53-4-7-1.923-.321-3.5.782-3.5 2.172",
+];
 const PATHS_INGATLAN = [
   "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",
   "M9 22V12h6v10",
@@ -209,8 +219,8 @@ export const CATEGORY_ICON_PATHS: Record<string, string[]> = {
   gyogytornasz: PATHS_MASSZAZS,
   logopedus: PATHS_TANAR,
   szemesz: PATHS_ORVOS,
-  allatorvos: PATHS_ALLAT,
-  kutyafodrasz: PATHS_FODRASZ,
+  allatorvos: PATHS_KUTYA,
+  kutyafodrasz: PATHS_KUTYA,
   idegenvezeto: PATHS_TANAR,
   fotos: PATHS_MARKETING,
   grafikus: PATHS_MARKETING,
@@ -330,7 +340,7 @@ export const CATEGORY_ICON_PATHS: Record<string, string[]> = {
   korrepetitor: PATHS_TANAR,
   fejleszto_pedagogus: PATHS_TANAR,
   ovodapedagogus: PATHS_TANAR,
-  kutya_kikepzo: PATHS_ALLAT,
+  kutya_kikepzo: PATHS_KUTYA,
   allatszallito: PATHS_ALLAT,
   allatpanzio: PATHS_ALLAT,
   lovas_oktato: PATHS_ALLAT,
