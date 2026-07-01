@@ -16,6 +16,10 @@ import "./globals.css";
  */
 const COUNTRY_GATE_SCRIPT = `(function(){try{var c=localStorage.getItem('kinti.country');if(c&&c!=='CH'){var d=document.documentElement;d.setAttribute('data-country-pending','');setTimeout(function(){d.removeAttribute('data-country-pending');},1500);}}catch(e){}})();`;
 
+// A mentett témát (Meleg/Modern) még a festés előtt visszaállítjuk, hogy reload
+// után is éljen a választás, villanás (FOUC) nélkül. Lásd ThemeToggle.
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('kinti-theme');if(t==='modern'||t==='warm'){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
+
 export const metadata: Metadata = {
   title: {
     default: "kinti — Találj magyart a közeledben",
@@ -97,6 +101,8 @@ export default function RootLayout({
       <body className="min-h-dvh bg-bg font-sans text-ink antialiased">
         {/* Ország-feloldó boot-gate — még a tartalom festése előtt fusson. */}
         <script dangerouslySetInnerHTML={{ __html: COUNTRY_GATE_SCRIPT }} />
+        {/* Mentett téma visszaállítása festés előtt (Meleg/Modern perzisztencia). */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <ClerkProvider
           localization={{
             ...huHU,
