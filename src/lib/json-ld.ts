@@ -65,7 +65,7 @@ export function jobPostingJsonLd(opts: {
     datePosted: toIso(job.createdAt) ?? new Date().toISOString(),
     hiringOrganization: {
       "@type": "Organization",
-      name: employer?.companyName ?? "Magyar munk\u00e1ltat\u00f3 Sv\u00e1jcban",
+      name: employer?.companyName ?? "Magyar munk\u00e1ltat\u00f3",
       ...(employer?.website ? { sameAs: employer.website } : {}),
     },
     jobLocation: {
@@ -74,7 +74,9 @@ export function jobPostingJsonLd(opts: {
         "@type": "PostalAddress",
         addressLocality: job.location,
         ...(cantonRegion ? { addressRegion: cantonRegion } : {}),
-        addressCountry: "CH",
+        // A hirdet\u00e9s ORSZ\u00c1GA (CH/AT/DE/NL) \u2014 NEM hardcode CH, k\u00fcl\u00f6nben a nem-sv\u00e1jci
+        // \u00e1ll\u00e1sok rossz orsz\u00e1ggal ker\u00fclnek a Google for Jobs struktur\u00e1lt adatba.
+        addressCountry: (job.country || "CH").toUpperCase(),
       },
     },
     identifier: {
