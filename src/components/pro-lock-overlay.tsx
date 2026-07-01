@@ -22,8 +22,10 @@ export function ProLockOverlay({
 }) {
   return (
     <div className="relative">
-      {/* Előnézet: a VALÓDI funkció, de nem használható (elmosva, kattinthatatlan). */}
-      <div className="pointer-events-none select-none blur-[3px] saturate-[.85] opacity-70" aria-hidden="true">
+      {/* Előnézet: a VALÓDI funkció, de nem használható (elmosva, kattinthatatlan).
+          A min-h garantálja, hogy a rövid funkcióknál is legyen elég hely a paywall
+          kártyának (különben az overflow-hidden levágná a CTA-t). */}
+      <div className="pointer-events-none min-h-[340px] select-none blur-[3px] saturate-[.85] opacity-70" aria-hidden="true">
         {children}
       </div>
 
