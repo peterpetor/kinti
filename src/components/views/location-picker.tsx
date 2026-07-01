@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, Marker, useMapEvents, useMap } from "react-leaflet";
 import { FallbackTileLayer } from "./fallback-tile-layer";
 import { MapAutoResize } from "./map-controls";
@@ -22,10 +22,22 @@ function ClickCapture({ onPick }: { onPick: (lat: number, lng: number) => void }
   return null;
 }
 
-/** A térkép közepét a `center` propra állítja, amikor az változik (pl. város-váltás). */
+/** A térkép közepét a `center` propra állítja, amikor az VÁLTOZIK (pl. város-váltás). */
 function Recenter({ center }: { center: [number, number] }) {
   const map = useMap();
-  useEffect(() => { map.setView(center, map.getZoom()); }, [center, map]);
+  const first = useRef(true);
+  useEffect(() => {
+    // A kezdeti középre-állítást a MapContainer `center` propja MÁR elintézi. A
+    // mount-kori setView viszont akkor futna, amikor a modal-konténer még nincs
+    // beméretezve (0 méret) → a Leaflet „Attempted to load an infinite number of
+    // tiles" hibát dob a _resetView-ban → route-error („Hoppá"). Ezért az elsőt
+    // kihagyjuk, és csak VALÓDI center-változáskor, bemért konténernél állítunk.
+    if (first.current) { first.current = false; return; }
+    try {
+      const c = map.getContainer();
+      if (c && c.clientWidth > 0 && c.clientHeight > 0) map.setView(center, map.getZoom());
+    } catch { /* átmeneti Leaflet-belső hiba — ne döntse le az oldalt */ }
+  }, [center, map]);
   return null;
 }
 
