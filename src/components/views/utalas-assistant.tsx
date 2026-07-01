@@ -8,7 +8,7 @@ import { usePersistedState } from "@/hooks/use-persisted-state";
 import { useIsPro } from "@/lib/use-is-pro";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
-import { X_PROVIDERS, bestProvider, receivedAmount, savingsVsBank } from "@/lib/exchange-providers";
+import { rankedProviders, receivedAmount, savingsVsBank } from "@/lib/exchange-providers";
 
 interface RateNow { rates: { HUF: number; EUR: number }; date: string }
 interface HistPoint { date: string; huf: number; eur: number }
@@ -76,8 +76,8 @@ export function UtalasAssistant() {
     return { avg, pct };
   }, [hist, baseToHuf, isEuro]);
 
-  const best = useMemo(() => (baseToHuf ? bestProvider(amount, baseToHuf) : null), [amount, baseToHuf]);
-  const bestReceived = best ? receivedAmount(amount, baseToHuf, best) : 0;
+  const ranked = useMemo(() => (baseToHuf ? rankedProviders(amount, baseToHuf) : []), [amount, baseToHuf]);
+  const best = ranked[0] ?? null; // a legjobb (a lista élén) — az Elutaltam ehhez számol
   const bestSavings = best ? savingsVsBank(amount, baseToHuf, best) : 0;
 
   function logTransfer() {
@@ -188,30 +188,51 @@ export function UtalasAssistant() {
         </section>
       )}
 
-      {/* Legjobb szolgáltató + megtakarítás + Elutaltam */}
+      {/* Szolgáltató-összehasonlítás (rangsor) + megtakarítás + Elutaltam */}
       {now && best && amount > 0 && (
         <section className="rounded-card border border-line bg-surface p-5 shadow-card space-y-3">
           <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
-            A legjobb a(z) {amount} {base}-re
+            Melyikkel jársz jobban? · {amount} {base}
           </p>
-          <a
-            href={best.url ?? "#"}
-            target="_blank"
-            rel="sponsored nofollow noopener noreferrer"
-            className="flex items-center gap-3 rounded-[12px] border border-primary/30 bg-primary-soft/30 px-3 py-3 transition hover:bg-primary-soft/50 active:scale-[0.99]"
-          >
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] text-white text-[12px] font-extrabold" style={{ backgroundColor: best.color }}>
-              {best.name.charAt(0)}
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="text-[14px] font-extrabold text-ink">{best.name} · {best.speed}</div>
-              <div className="text-[11.5px] text-ink-muted truncate">{best.note}</div>
-            </div>
-            <div className="text-right shrink-0">
-              <div className="text-[15px] font-extrabold text-ink">{fmtHuf(bestReceived)} Ft</div>
-              {bestSavings > 0 && <div className="text-[11px] font-bold text-primary">+{fmtHuf(bestSavings)} Ft vs. bank</div>}
-            </div>
-          </a>
+
+          <div className="space-y-2">
+            {ranked.map((p, i) => {
+              const recv = receivedAmount(amount, baseToHuf, p);
+              const sav = savingsVsBank(amount, baseToHuf, p);
+              const isBest = i === 0;
+              const rowCls = cn(
+                "flex items-center gap-3 rounded-[12px] border px-3 py-3 transition",
+                isBest ? "border-primary/40 bg-primary-soft/30" : "border-line bg-surface-alt/40",
+                p.url && "hover:bg-primary-soft/50 active:scale-[0.99]",
+              );
+              const inner = (
+                <>
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] text-white text-[12px] font-extrabold" style={{ backgroundColor: p.color }}>
+                    {p.name.charAt(0)}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[14px] font-extrabold text-ink truncate">{p.name}</span>
+                      {isBest && <span className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-white">Legjobb</span>}
+                      {p.url && <Icon name="chevR" size={12} className="shrink-0 text-primary" />}
+                    </div>
+                    <div className="text-[11px] text-ink-muted truncate">{p.speed} · {p.note}</div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="text-[14.5px] font-extrabold text-ink">{fmtHuf(recv)} Ft</div>
+                    {sav > 0
+                      ? <div className="text-[11px] font-bold text-primary">+{fmtHuf(sav)} Ft vs. bank</div>
+                      : <div className="text-[10.5px] text-ink-faint">banki szint körül</div>}
+                  </div>
+                </>
+              );
+              return p.url ? (
+                <a key={p.name} href={p.url} target="_blank" rel="sponsored nofollow noopener noreferrer" className={rowCls}>{inner}</a>
+              ) : (
+                <div key={p.name} className={rowCls}>{inner}</div>
+              );
+            })}
+          </div>
 
           <button
             type="button"

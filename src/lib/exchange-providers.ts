@@ -36,6 +36,30 @@ export const X_PROVIDERS: XProvider[] = [
     url: "https://revolut.com/referral/?referral-code=pter9sxrh",
   },
   {
+    name: "PaySend",
+    spread: 0.009,
+    fixedFee: 1.5,
+    speed: "perceken belül",
+    note: "Kártyára utalás, alacsony fix díj.",
+    color: "#cc0066",
+  },
+  {
+    name: "Remitly",
+    spread: 0.012,
+    fixedFee: 0,
+    speed: "perctől órákig",
+    note: "Első utalásra gyakran kedvezőbb promo-árfolyam.",
+    color: "#1c7d5a",
+  },
+  {
+    name: "Western Union",
+    spread: 0.017,
+    fixedFee: 0,
+    speed: "perctől 1 napig",
+    note: "Készpénzfelvétel is — szélesebb árfolyam-rés.",
+    color: "#b8860b",
+  },
+  {
     name: "Bank SEPA",
     spread: 0.015,
     fixedFee: 5,
@@ -60,6 +84,18 @@ export function bestProvider(amount: number, baseToTarget: number): XProvider {
   return X_PROVIDERS.reduce((best, p) =>
     receivedAmount(amount, baseToTarget, p) > receivedAmount(amount, baseToTarget, best) ? p : best,
   );
+}
+
+/**
+ * A NEM-banki szolgáltatók a legtöbbet-adótól a legkevesebbig (érkező összeg
+ * szerint) — az összehasonlító listához. A banki utalás a referencia, nem
+ * szerepel a listában (ahhoz viszonyítjuk a megtakarítást).
+ */
+export function rankedProviders(amount: number, baseToTarget: number): XProvider[] {
+  return X_PROVIDERS
+    .filter((p) => p !== X_BANK)
+    .slice()
+    .sort((a, b) => receivedAmount(amount, baseToTarget, b) - receivedAmount(amount, baseToTarget, a));
 }
 
 /** Becsült megtakarítás a banki utaláshoz képest (cél-pénznemben), ha `p`-vel utalsz. */
