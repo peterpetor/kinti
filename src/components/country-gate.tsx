@@ -15,19 +15,42 @@ import { hasChosenCountry, setPreferredCountry } from "@/lib/country-pref";
  * „Hamarosan" — a választás eltárolódik, a tartalom addig a svájci.
  */
 export function CountryGate() {
-  const [chosen, setChosen] = useState(true); // SSR-biztos: kezdetben ne villanjon az overlay
-  const [mounted, setMounted] = useState(false);
+  const [show, setShow] = useState(false); // SSR-biztos: kezdetben ne villanjon az overlay
 
   useEffect(() => {
-    setMounted(true);
-    setChosen(hasChosenCountry());
+    let cancelled = false;
+    const getClerk = () =>
+      (window as unknown as { Clerk?: { loaded?: boolean; user?: unknown } }).Clerk;
+
+    // A JOGI KAPU MENJEN ELŐBB. Az ország-választót csak akkor mutatjuk, ha a jogi
+    // feltételek már rendben vannak (device-szinten elfogadva VAGY bejelentkezett
+    // user), különben a két teljes képernyős overlay egymásra villog (legal↔zöld).
+    const legalOk = () =>
+      !!localStorage.getItem("kinti_legal_accepted") || !!getClerk()?.user;
+    const evaluate = () => { if (!cancelled) setShow(!hasChosenCountry() && legalOk()); };
+
+    evaluate();
+    // A LegalGatekeeper az elfogadáskor ezt az eseményt küldi → ekkor jelenhet meg.
+    const onLegal = () => evaluate();
+    window.addEventListener("kinti:legal-accepted", onLegal);
+    // Bejelentkezett usernél a Clerk később tölthet be → rövid ideig pollozzuk.
+    const t0 = Date.now();
+    const iv = setInterval(() => {
+      if (cancelled) { clearInterval(iv); return; }
+      if (getClerk()?.loaded || Date.now() - t0 > 2500) { clearInterval(iv); evaluate(); }
+    }, 200);
+    return () => {
+      cancelled = true;
+      clearInterval(iv);
+      window.removeEventListener("kinti:legal-accepted", onLegal);
+    };
   }, []);
 
-  if (!mounted || chosen) return null;
+  if (!show) return null;
 
   const pick = (code: string) => {
     setPreferredCountry(code);
-    setChosen(true);
+    setShow(false);
   };
 
   return (

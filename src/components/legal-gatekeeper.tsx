@@ -67,6 +67,9 @@ export function LegalGatekeeper() {
       localStorage.setItem("kinti_legal_accepted", "true");
       setIsOpen(false);
       document.body.style.overflow = "";
+      // Az ország-választó kapu erre az eseményre vár (hogy ne villogjon a kettő
+      // egymásra): a jogi elfogadás UTÁN jelenhet meg.
+      window.dispatchEvent(new Event("kinti:legal-accepted"));
     }
   };
 
