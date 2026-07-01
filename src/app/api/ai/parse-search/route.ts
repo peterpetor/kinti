@@ -48,6 +48,9 @@ export async function POST(req: Request) {
         { status: 429 },
       );
     }
+    // A slot LEFOGLALÁSA a drága AI-hívás ELŐTT (TOCTOU-zárás): különben párhuzamos
+    // kérések mind átjutnának a count-ellenőrzésen, mielőtt bármelyik naplózna.
+    await logAiRateLimit("parse-search", ipHash);
 
     const cats = await getCategories();
     const catList = cats.map((c) => `  • ${c.id} (${c.label})`).join("\n");
@@ -96,8 +99,6 @@ Ha valamit nem értesz vagy nincs benne a query-ben, írj null-t. Ne találj ki!
       return NextResponse.json({ error: "Az AI nem elérhető." }, { status: 503 });
     }
 
-    // Sikeres AI-hívás után naplózzuk
-    await logAiRateLimit("parse-search", ipHash);
 
     const parsed = extractJsonObject<Partial<ParsedFilter>>(ai.text);
     if (!parsed) {

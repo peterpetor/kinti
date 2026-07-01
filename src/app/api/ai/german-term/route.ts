@@ -46,6 +46,8 @@ export async function GET(req: Request) {
         { status: 429 },
       );
     }
+    // A slot LEFOGLALÁSA a drága AI-hívás ELŐTT (TOCTOU-zárás).
+    await logAiRateLimit("german-term", ipHash);
 
     const system = `Te a kinti.app svájci ügyintézés-szótár AI-asszisztense vagy.
 A felhasználó egy svájci hivatali német vagy francia kifejezést ad meg, és te
@@ -73,7 +75,6 @@ SZABÁLYOK:
         { status: 503 },
       );
     }
-    await logAiRateLimit("german-term", ipHash);
 
     const explanation = ai.text.slice(0, 400);
     return NextResponse.json(

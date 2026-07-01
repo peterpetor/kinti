@@ -42,6 +42,8 @@ export async function POST(req: Request) {
         { status: 429 },
       );
     }
+    // A slot LEFOGLALÁSA a drága AI-hívás ELŐTT (TOCTOU-zárás).
+    await logAiRateLimit("business-helper", ipHash);
 
     const cats = await getCategories();
     const catList = cats.map((c) => `  • ${c.id} (${c.label})`).join("\n");
@@ -82,7 +84,6 @@ VÁLASZ FORMÁTUM (KIZÁRÓLAG JSON, semmi más):
         { status: 503 },
       );
     }
-    await logAiRateLimit("business-helper", ipHash);
 
     const parsed = extractJsonObject<{
       polishedDescription?: string;
