@@ -152,6 +152,32 @@ function OnboardingCTA({
     { icon: "star", title: "Vélemények", body: "Csillagos értékelések, válaszadás" },
   ];
 
+  // Akinek MÁR van Munkáltatói profilja, annak NEM mutatunk teljes „üdvözlő + hozd létre”
+  // onboardingot (az zavaró és redundánsnak hat). Helyette tömör „utolsó lépés” nézet:
+  // a cégadatokat átvettük, csak a Szaknévsorhoz szükséges 2 extra mező kell (kategória +
+  // régió), őszinte indoklással, félrevezető linkek nélkül.
+  if (employerName) {
+    return (
+      <section className="space-y-4">
+        <div className="rounded-card border border-pro/40 bg-pro/5 p-5">
+          <h2 className="text-[19px] font-extrabold leading-tight tracking-tight text-ink">
+            🚀 Utolsó lépés a Szaknévsorhoz
+          </h2>
+          <p className="mt-2 text-[13px] leading-relaxed text-ink-muted text-pretty">
+            A cégadataidat <strong className="text-ink">(„{employerName}")</strong> átvettük a
+            munkáltatói profilodból — <strong>nem kell újra begépelned</strong>, és ott nincs
+            semmi teendőd. A Szaknévsor viszont <strong>szakma- és hely-alapú</strong> (az ügyfelek
+            így keresnek: „magyar fodrász, Zürich”, és a térképen is látszol), ezért <strong>csak
+            ehhez</strong> kell még két adat: <strong>mivel foglalkozol</strong> és <strong>hol</strong>.
+            Ennyi — utána jön a PRO-előfizetés.
+          </p>
+        </div>
+
+        <OwnerDraftForm categories={categories} initialName={employerName} />
+      </section>
+    );
+  }
+
   return (
     <section className="space-y-4">
       {/* PRO-szándékkal érkezett (a /pro „Szaknévsor PRO” gombjáról): egyértelműsítjük,
@@ -162,21 +188,6 @@ function OnboardingCTA({
           <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
             A PRO a <strong>Szaknévsor-listázásodat</strong> emeli ki. Előbb hozd létre a
             vállalkozásod (lent, 1 perc) — utána egyetlen gombbal előfizethetsz a Kiemelésre.
-          </p>
-        </div>
-      )}
-
-      {/* A user Munkáltatóként regisztrált, de Szaknévsor-vállalkozása nincs: ez a
-          leggyakoribb keveredés (a Szaknévsor PRO ≠ álláshirdetés-kiemelés).
-          A cégnevet előtöltjük a munkáltatói profilból (adat-újrahasznosítás). */}
-      {employerName && (
-        <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3">
-          <p className="text-[12.5px] leading-snug text-ink-muted">
-            Van már <strong className="text-ink">Munkáltatói profilod</strong> („{employerName}") —
-            az az <strong>álláshirdetésekhez</strong> való. A Szaknévsorban való megjelenés (ügyfél-
-            szerzés) és a Szaknévsor PRO ettől <strong>külön</strong>, de <strong>egy cégé</strong>:
-            a nevet lent már be is hoztuk, csak válassz kategóriát + régiót.{" "}
-            <Link href="/munkaltato" className="font-bold text-primary underline">Munkáltatói irányítópult →</Link>
           </p>
         </div>
       )}
@@ -194,7 +205,7 @@ function OnboardingCTA({
         </p>
       </div>
 
-      <OwnerDraftForm categories={categories} initialName={employerName ?? ""} />
+      <OwnerDraftForm categories={categories} />
 
       <div className="rounded-card border border-line bg-surface p-4 shadow-card">
         <SectionHeader>Mit fogsz beállítani</SectionHeader>
