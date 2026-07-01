@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { getEmployerByOwner, getJobs, getApplicationCounts } from "@/lib/repo";
+import { getEmployerByOwner, getJobs, getApplicationCounts, getBusinessByOwner } from "@/lib/repo";
 import Link from "next/link";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 import { JobCardActions } from "@/components/views/job-card-actions";
@@ -28,6 +28,9 @@ export default async function EmployerDashboardPage() {
 
   const jobs = await getJobs({ employerId: employer.id, includeAllStatuses: true });
   const applicationCounts = await getApplicationCounts(employer.id);
+  // Egy cég, két kapcsoló: van-e már Szaknévsor-listázása is? Ha nincs, felkínáljuk
+  // (ügyfélszerzés) — a "van két profilom, minek?" keveredés feloldása.
+  const business = await getBusinessByOwner(userId);
 
   return (
     <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)] min-h-[calc(100dvh-70px)] flex flex-col">
@@ -100,6 +103,26 @@ export default async function EmployerDashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* Egy cég, két kapcsoló: ha nincs Szaknévsor-listázás, felkínáljuk (ügyfélszerzés).
+            A munkáltatói profil az álláshirdetéshez van — ez a másik "kapcsoló". */}
+        {!business && (
+          <Link
+            href="/profil"
+            className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3.5 shadow-card active:scale-[0.99] transition"
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[11px] bg-primary/10 text-primary">
+              <Icon name="search" size={16} strokeWidth={2.2} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <span className="block text-[13.5px] font-extrabold text-ink">Megjelennél a Szaknévsorban is?</span>
+              <span className="block text-[12px] leading-snug text-ink-muted">
+                Hogy ügyfelek is megtaláljanak (nem csak munkaerő). Ugyanez a cég — pár adat, 1 perc.
+              </span>
+            </div>
+            <Icon name="chevR" size={16} className="text-ink-faint shrink-0" />
+          </Link>
+        )}
 
         {/* Existing Jobs Section */}
         <div className="space-y-3">

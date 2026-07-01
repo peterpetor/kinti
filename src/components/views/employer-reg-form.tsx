@@ -5,17 +5,24 @@ import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
-export function EmployerRegForm() {
+export function EmployerRegForm({
+  initial,
+  prefillFrom,
+}: {
+  initial?: { companyName?: string; contactEmail?: string; description?: string };
+  /** Ha a Szaknévsor-vállalkozásból hoztuk be az adatokat: a cég neve (banner). */
+  prefillFrom?: string | null;
+} = {}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
-    companyName: "",
-    contactEmail: "",
+    companyName: initial?.companyName ?? "",
+    contactEmail: initial?.contactEmail ?? "",
     website: "",
     companyUid: "",
-    description: "",
+    description: initial?.description ?? "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,6 +57,13 @@ export function EmployerRegForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {prefillFrom && (
+        <div className="rounded-[12px] border border-primary/20 bg-primary/5 px-4 py-3 text-[12.5px] leading-snug text-ink">
+          <span className="font-bold">Ugyanaz a cég?</span> A(z){" "}
+          <strong>„{prefillFrom}"</strong> adatait behoztuk a Szaknévsor-profilodból — csak nézd
+          át, és kész. (A Szaknévsor-listázásod és az álláshirdetés külön funkció, de egy cégé.)
+        </div>
+      )}
       {error && (
         <div className="rounded-[12px] bg-accent/10 px-4 py-3 text-[13px] font-semibold text-accent">
           {error}

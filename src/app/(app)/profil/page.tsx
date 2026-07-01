@@ -65,10 +65,11 @@ export default async function ProfilPage({
 
   const business = await getBusinessByOwner(userId);
   const categories = business ? [] : (await getCategories()).filter((c) => c.id !== "all");
-  // Ha a usernek MÉG nincs Szaknévsor-vállalkozása, de VAN Munkáltatói profilja,
-  // szinte biztos összekeverte a kettőt (a Szaknévsor PRO ≠ Munkáltató/álláshirdetés).
-  // A ?pro=1 jelzi, hogy a /pro "Szaknévsor PRO" gombjáról érkezett — vásárlási szándékkal.
-  const employer = business ? null : await getEmployerByOwner(userId);
+  // Közös cégprofil-élmény: mindig tudjuk, van-e Munkáltatói profil is. Ha nincs
+  // Szaknévsor-vállalkozás, de VAN munkáltatói profil, a user szinte biztos összekeverte
+  // a kettőt (a Szaknévsor PRO ≠ álláshirdetés). Ha VAN vállalkozás de nincs munkáltató,
+  // felkínáljuk az állás-hirdetést is (egy cég, két kapcsoló).
+  const employer = await getEmployerByOwner(userId);
   const proIntent = !business && searchParams?.pro === "1";
 
   return (
@@ -93,7 +94,7 @@ export default async function ProfilPage({
         * megőrizve azoknak, akik még Clerk-fiókkal lépnek be (pl. te magad).
         */}
       {business ? (
-        <OwnerDashboard business={business} />
+        <OwnerDashboard business={business} hasEmployer={!!employer} />
       ) : (
         <OnboardingCTA categories={categories} proIntent={proIntent} employerName={employer?.companyName ?? null} />
       )}
@@ -166,13 +167,15 @@ function OnboardingCTA({
       )}
 
       {/* A user Munkáltatóként regisztrált, de Szaknévsor-vállalkozása nincs: ez a
-          leggyakoribb keveredés (a Szaknévsor PRO ≠ álláshirdetés-kiemelés). */}
+          leggyakoribb keveredés (a Szaknévsor PRO ≠ álláshirdetés-kiemelés).
+          A cégnevet előtöltjük a munkáltatói profilból (adat-újrahasznosítás). */}
       {employerName && (
         <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3">
           <p className="text-[12.5px] leading-snug text-ink-muted">
             Van már <strong className="text-ink">Munkáltatói profilod</strong> („{employerName}") —
-            az az <strong>álláshirdetésekhez</strong> való. A Szaknévsorban való megjelenés és a
-            Szaknévsor PRO ettől <strong>külön</strong>: azt itt, alább hozod létre.{" "}
+            az az <strong>álláshirdetésekhez</strong> való. A Szaknévsorban való megjelenés (ügyfél-
+            szerzés) és a Szaknévsor PRO ettől <strong>külön</strong>, de <strong>egy cégé</strong>:
+            a nevet lent már be is hoztuk, csak válassz kategóriát + régiót.{" "}
             <Link href="/munkaltato" className="font-bold text-primary underline">Munkáltatói irányítópult →</Link>
           </p>
         </div>
@@ -191,7 +194,7 @@ function OnboardingCTA({
         </p>
       </div>
 
-      <OwnerDraftForm categories={categories} />
+      <OwnerDraftForm categories={categories} initialName={employerName ?? ""} />
 
       <div className="rounded-card border border-line bg-surface p-4 shadow-card">
         <SectionHeader>Mit fogsz beállítani</SectionHeader>
@@ -225,8 +228,10 @@ function OnboardingCTA({
 // --- A tulajdonos saját dashboardja (valós D1-adat) -------------------------
 async function OwnerDashboard({
   business,
+  hasEmployer = false,
 }: {
   business: Business;
+  hasEmployer?: boolean;
 }) {
   const data = await getDashboard(business.id);
   if (!data) return null;
@@ -377,6 +382,26 @@ async function OwnerDashboard({
         </div>
       )}
 
+
+      {/* Egy cég, két kapcsoló: ha még nincs Munkáltatói profil, felkínáljuk az
+          álláshirdetést is — a cég adatait átvisszük (adat-újrahasznosítás). */}
+      {!hasEmployer && (
+        <Link
+          href="/munkaltato/regisztracio"
+          className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3.5 shadow-card active:scale-[0.99] transition"
+        >
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[11px] bg-accent/10 text-accent">
+            <Icon name="users" size={16} strokeWidth={2.2} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <span className="block text-[13.5px] font-extrabold text-ink">Állást is hirdetnél?</span>
+            <span className="block text-[12px] leading-snug text-ink-muted">
+              Ugyanennek a cégnek feladhatsz álláshirdetést — a „{business.name}" adatait átvisszük.
+            </span>
+          </div>
+          <Icon name="chevR" size={16} className="text-ink-faint shrink-0" />
+        </Link>
+      )}
 
       {/* Vállalkozói adatok szerkesztése form */}
       <ProfileEditor

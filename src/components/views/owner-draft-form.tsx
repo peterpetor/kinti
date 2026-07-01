@@ -14,12 +14,19 @@ import type { Category } from "@/lib/types";
  * (név + kategória + kanton) azonnal létrehozza a publikus vállalkozói rekordot.
  * A részleteket utána a ProfileEditor-en pótolja.
  */
-export function OwnerDraftForm({ categories }: { categories: Category[] }) {
+export function OwnerDraftForm({
+  categories,
+  initialName = "",
+}: {
+  categories: Category[];
+  /** Előtöltött cégnév (pl. a meglévő Munkáltatói profilból) — adat-újrahasznosítás. */
+  initialName?: string;
+}) {
   const router = useRouter();
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const regions = getRegions(country);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(initialName);
   const [categoryId, setCategoryId] = useState("");
   const [cantonCode, setCantonCode] = useState("");
   const [phase, setPhase] = useState<"idle" | "submitting" | "error">("idle");

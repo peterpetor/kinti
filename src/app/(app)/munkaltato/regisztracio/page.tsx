@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { getEmployerByOwner } from "@/lib/repo";
+import { getEmployerByOwner, getBusinessByOwner } from "@/lib/repo";
 import { KintiLogo } from "@/components/ui";
 import { EmployerRegForm } from "@/components/views/employer-reg-form";
 
@@ -21,6 +21,10 @@ export default async function EmployerRegistrationPage() {
     redirect("/munkaltato");
   }
 
+  // Közös cégprofil-élmény: ha a usernek már van Szaknévsor-vállalkozása, az adatait
+  // behozzuk ide (adat-újrahasznosítás) — így egy cégnek nem kell mindent újra beírnia.
+  const business = await getBusinessByOwner(userId);
+
   return (
     <div className="mx-auto max-w-md space-y-6 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <header className="flex items-center gap-2">
@@ -38,7 +42,18 @@ export default async function EmployerRegistrationPage() {
         </p>
 
         <div className="mt-5">
-          <EmployerRegForm />
+          <EmployerRegForm
+            initial={
+              business
+                ? {
+                    companyName: business.name,
+                    contactEmail: business.contactEmail ?? "",
+                    description: business.blurb ?? "",
+                  }
+                : undefined
+            }
+            prefillFrom={business?.name ?? null}
+          />
         </div>
       </section>
     </div>
