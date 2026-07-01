@@ -26,7 +26,11 @@ interface Props {
   maxZoom?: number;
 }
 
-export function FallbackTileLayer({ url, attribution, subdomains, maxZoom }: Props) {
+export function FallbackTileLayer({ url, attribution, subdomains = "abc", maxZoom }: Props) {
+  // FONTOS: a CARTO alap-URL `{s}` alrész-helyőrzőt tartalmaz, ezért a Leafletnek
+  // KELL egy `subdomains` érték. Ha a hívó nem ad meg (undefined), az FELÜLÍRNÁ a
+  // Leaflet beépített 'abc' alapértékét → `_getSubdomain` az undefined.length-en
+  // elhasal (fehér „Hoppá" hiba-kártya). Ezért itt „abc"-re esik vissza.
   const [active, setActive] = useState<{ url: string; attribution?: string }>({ url, attribution });
   const errors = useRef(0);
   const switched = useRef(false);
