@@ -15,6 +15,10 @@ import { isFeatureAvailable } from "@/lib/feature-availability";
 export function DropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
+  // Tulajdonosi állapot: van-e már Szaknévsor-vállalkozása? (egy fiók = egy cég)
+  // Ez alapján a menü VAGY a „Vidd fel a vállalkozásod”, VAGY a „Vállalkozásom”
+  // pontot mutatja — sose mindkettőt. Nyitáskor, egyszer töltjük be.
+  const [hasBusiness, setHasBusiness] = useState<boolean | null>(null);
   // A menü kattintásra (mount után) renderel → az ország közvetlenül olvasható.
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
@@ -31,6 +35,21 @@ export function DropdownMenu() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  // Menü megnyitásakor (bejelentkezett usernél, egyszer) lekérjük: van-e vállalkozása.
+  useEffect(() => {
+    if (!isOpen || !isSignedIn || hasBusiness !== null) return;
+    let cancelled = false;
+    fetch("/api/owner/status")
+      .then((r) => (r.ok ? (r.json() as Promise<{ hasBusiness?: boolean }>) : null))
+      .then((d) => {
+        if (!cancelled && d) setHasBusiness(!!d.hasBusiness);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, isSignedIn, hasBusiness]);
 
   const close = () => setIsOpen(false);
 
@@ -90,18 +109,24 @@ export function DropdownMenu() {
               </Link>
 
               {/* ── Gyors elérés (mindig látszik) ──────── */}
-              <Link href="/vallalkozo" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                  <Icon name="plus" size={16} strokeWidth={2.6} />
-                </span>
-                Vidd fel a vállalkozásod
-              </Link>
-              <Link href="/profil" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                  🏪
-                </span>
-                Vállalkozásom (kezelés + statisztika)
-              </Link>
+              {/* Egy fiók = egy cég: akinek MÁR van vállalkozása, annak a kezelő
+                  pontot mutatjuk; akinek nincs, a felvitel-CTA-t. Amíg tölt
+                  (hasBusiness === null), a felvitel-CTA az alapértelmezett. */}
+              {hasBusiness ? (
+                <Link href="/profil" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                    🏪
+                  </span>
+                  Vállalkozásom (kezelés + statisztika)
+                </Link>
+              ) : (
+                <Link href="/vallalkozo" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <Icon name="plus" size={16} strokeWidth={2.6} />
+                  </span>
+                  Vidd fel a vállalkozásod
+                </Link>
+              )}
               <Link href="/szaknevsor/ajanlas" onClick={close} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
                   <Icon name="send" size={16} strokeWidth={2.4} />
