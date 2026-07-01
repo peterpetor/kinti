@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoUploader } from "@/components/views/logo-uploader";
 import { OwnerDraftForm } from "@/components/views/owner-draft-form";
 import { ProfileEditor } from "@/components/views/profile-editor";
@@ -107,28 +106,9 @@ export default async function ProfilPage({
         <KintiRadar />
       </section>
 
-      <section className="space-y-2 mt-4">
-        <SectionHeader>Alkalmazás Beállítások</SectionHeader>
-        <div className="flex items-center justify-between rounded-card border border-line bg-surface p-4 shadow-card">
-          <span className="text-sm font-semibold text-ink">Megjelenés</span>
-          <ThemeToggle />
-        </div>
-        <Link
-          href="/hirlevel"
-          className="flex items-center justify-between rounded-card border border-line bg-surface p-4 shadow-card active:scale-[0.99] transition"
-        >
-          <div className="flex items-center gap-3">
-            <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary-soft text-primary">
-              <Icon name="send" size={15} strokeWidth={2.2} />
-            </span>
-            <div>
-              <span className="block text-sm font-semibold text-ink">Hírlevél</span>
-              <span className="block text-[11.5px] text-ink-muted">Hírek és események országodra szabva</span>
-            </div>
-          </div>
-          <Icon name="chevR" size={16} className="text-ink-faint" />
-        </Link>
-      </section>
+      {/* Az alkalmazás-beállítások (Megjelenés, Hírlevél, Értesítések) a globális „…”
+          menübe kerültek (DropdownMenu → „Alkalmazás beállítások”), hogy ne terheljék
+          a vállalkozói dashboardot és minden oldalról elérhetők legyenek. */}
     </div>
   );
 }

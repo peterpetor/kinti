@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon } from "./icons";
 import { CountrySwitcher } from "./country-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
@@ -122,12 +123,6 @@ export function DropdownMenu() {
               <Link href="/ranglista" onClick={close} className={linkClass}>
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🏆</span>
                 Közösségi ranglista
-              </Link>
-              <Link href="/ertesitesek" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                  <Icon name="bell" size={16} strokeWidth={2.4} />
-                </span>
-                Értesítések
               </Link>
 
               {/* ── Összecsukható szekciók (alapból zárva) ── */}
@@ -353,6 +348,31 @@ export function DropdownMenu() {
                   {isCH ? "Napi Svájci Kvíz" : country === "DE" ? "Napi Német Kvíz" : "Napi Osztrák Kvíz"}
                 </Link>
                 )}
+              </CollapsibleSection>
+
+              <CollapsibleSection title="Alkalmazás beállítások">
+                {/* Megjelenés — nem link, hanem téma-váltó vezérlő */}
+                <div className="flex items-center justify-between gap-3 px-4 py-3.5">
+                  <span className="flex items-center gap-3 text-[15px] font-bold text-ink">
+                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                      🎨
+                    </span>
+                    Megjelenés
+                  </span>
+                  <ThemeToggle />
+                </div>
+                <Link href="/hirlevel" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <Icon name="send" size={16} strokeWidth={2.4} />
+                  </span>
+                  Hírlevél
+                </Link>
+                <Link href="/ertesitesek" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <Icon name="bell" size={16} strokeWidth={2.4} />
+                  </span>
+                  Értesítések
+                </Link>
               </CollapsibleSection>
 
               <CollapsibleSection title="Jogi & Segítség">
