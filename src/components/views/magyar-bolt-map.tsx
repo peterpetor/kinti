@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, Marker, Popup } from "react-leaflet";
 import { FallbackTileLayer } from "./fallback-tile-layer";
+import { MapAutoResize, MapZoomControls } from "./map-controls";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { cn } from "@/lib/cn";
@@ -22,17 +23,6 @@ function catIcon(category: string | null): L.DivIcon {
     html: `<div style="width:38px;height:38px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.22);border:2.5px solid white;">${c.emoji}</div>`,
     iconSize: [38, 38], iconAnchor: [19, 19], popupAnchor: [0, -19],
   });
-}
-
-/** A térkép-konténer méretváltása után (pl. fullscreen) a leaflet-nek újra kell
- *  számolnia a csempéket, különben szürke/levágott marad. */
-function MapResizer({ trigger }: { trigger: boolean }) {
-  const map = useMap();
-  useEffect(() => {
-    const t = setTimeout(() => map.invalidateSize(), 220);
-    return () => clearTimeout(t);
-  }, [trigger, map]);
-  return null;
 }
 
 /** Popup-tartalom saját „jelentve" állapottal — a jelentés után azonnali visszajelzést ad. */
@@ -88,9 +78,10 @@ export function MagyarBoltMap({
 
   return (
     <div className={fs ? "fixed inset-0 z-[1000] bg-white" : cn("relative", className)}>
-      <MapContainer center={center} zoom={spots.length > 0 ? 8 : 7} className="h-full w-full rounded-card z-0" scrollWheelZoom>
-        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
-        <MapResizer trigger={fs} />
+      <MapContainer center={center} zoom={spots.length > 0 ? 8 : 7} className="h-full w-full rounded-card z-0" scrollWheelZoom zoomControl={false}>
+        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} maxZoom={19} />
+        <MapAutoResize trigger={fs} />
+        <MapZoomControls />
         {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
         <>
           {spots.map((s) => (
@@ -107,7 +98,7 @@ export function MagyarBoltMap({
         type="button"
         onClick={() => setFs((v) => !v)}
         aria-label={fs ? "Kilépés a teljes képernyőből" : "Teljes képernyő"}
-        className="absolute right-2 top-2 z-[1000] grid h-9 w-9 place-items-center rounded-[10px] border border-line bg-white/95 text-[16px] text-ink shadow-card active:scale-95"
+        className="absolute bottom-7 right-2 z-[1000] grid h-9 w-9 place-items-center rounded-[10px] border border-line bg-white/95 text-[16px] text-ink shadow-card active:scale-95"
       >
         {fs ? "✕" : "⛶"}
       </button>

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { MapContainer, Marker, Popup } from "react-leaflet";
 import { FallbackTileLayer } from "./fallback-tile-layer";
+import { MapAutoResize, MapZoomControls } from "./map-controls";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { DealReport } from "@/lib/repo";
@@ -116,8 +117,11 @@ export function DealsMap({
         zoom={deals.length > 0 ? 9 : country === "DE" ? 6 : CH_ZOOM}
         className="h-full w-full rounded-card z-0"
         scrollWheelZoom
+        zoomControl={false}
       >
-        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
+        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} maxZoom={19} />
+        <MapAutoResize />
+        <MapZoomControls />
         {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
         <>
           {deals.map((d) => {

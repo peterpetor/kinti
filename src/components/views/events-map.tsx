@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { MapContainer, Marker, Popup } from "react-leaflet";
 import { FallbackTileLayer } from "./fallback-tile-layer";
+import { MapAutoResize, MapZoomControls } from "./map-controls";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { KintiEvent } from "@/lib/types";
@@ -44,8 +45,10 @@ export function EventsMap({ events, className, country = "CH" }: { events: Kinti
 
   return (
     <div className={className}>
-      <MapContainer center={center} zoom={withCoords.length > 0 ? 7 : country === "DE" ? 6 : 7} className="h-full w-full rounded-card z-0" scrollWheelZoom>
-        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
+      <MapContainer center={center} zoom={withCoords.length > 0 ? 7 : country === "DE" ? 6 : 7} className="h-full w-full rounded-card z-0" scrollWheelZoom zoomControl={false}>
+        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} maxZoom={19} />
+        <MapAutoResize />
+        <MapZoomControls />
         {myPos && <Marker position={myPos} icon={ME_ICON} interactive={false} />}
         <>
           {withCoords.map((e) => {
