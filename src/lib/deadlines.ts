@@ -46,11 +46,12 @@ export async function processDeadlineReminders(): Promise<number> {
 
     const when = d === 0 ? "MA" : d === 1 ? "holnap" : `${d} nap múlva`;
 
-    // Emailes emlékeztető (OPT-IN) — best-effort, a push MELLETT. Ugyanazok a
-    // `sent`-küszöbök gátolják az ismétlést (a push sikeres jelölésekor), így
-    // küszöbönként legfeljebb egyszer megy ki.
+    // Emailes emlékeztető (OPT-IN) — best-effort, a push MELLETT. A sikerét külön
+    // követjük: ha az email KIMENT, a küszöböt akkor is elküldöttnek jelöljük, ha a
+    // push átmenetileg hibázik → nem küld a cron NAPONTA ismételt emailt.
+    let emailOk = false;
     if (r.email) {
-      try { await sendDeadlineReminderEmail(r.email, r.title, when); }
+      try { await sendDeadlineReminderEmail(r.email, r.title, when); emailOk = true; }
       catch (e) { safeLogError("processDeadlineReminders:email", e); }
     }
 
@@ -70,8 +71,9 @@ export async function processDeadlineReminders(): Promise<number> {
       try { await deleteDeadlineReminders(r.endpoint); } catch { /* best-effort */ }
       continue;
     }
-    // CSAK sikeres küldésnél jelöljük elküldöttnek (különben holnap újrapróbálja).
-    if (status >= 200 && status < 300) {
+    // Elküldöttnek jelöljük, ha a push VAGY az email sikeres volt (különben holnap
+    // újrapróbálja — de az email-ismétlést az `emailOk`-jelölés megakadályozza).
+    if ((status >= 200 && status < 300) || emailOk) {
       sent++;
       THRESHOLDS.forEach((T) => { if (d <= T) already.add(T); });
       try {
