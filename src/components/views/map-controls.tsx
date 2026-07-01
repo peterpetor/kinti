@@ -37,7 +37,22 @@ export function MapAutoResize({ trigger }: { trigger?: unknown }) {
       } catch { /* átmeneti Leaflet-belső hiba — elnyeljük, a következő tick javít */ }
     };
     const timers = [80, 260, 500, 900].map((d) => setTimeout(safeInvalidate, d));
-    return () => timers.forEach(clearTimeout);
+
+    // ResizeObserver: a modal/lazy-konténer VÉGLEGES mérete gyakran akkor ül le,
+    // amikor a fix időzítők MÁR lefutottak (lassabb eszközön/hálózaton) → a térkép
+    // rossz mérettel indul és a csempék félrecsúsznak (SZÜRKE, zoomra sem javul).
+    // A méretváltozás közvetlen figyelése a megbízható jel: pontosan akkor mérünk
+    // újra, amikor a konténer 0→valós méretre vált.
+    let ro: ResizeObserver | undefined;
+    try {
+      const c = map.getContainer();
+      if (c && typeof ResizeObserver !== "undefined") {
+        ro = new ResizeObserver(() => safeInvalidate());
+        ro.observe(c);
+      }
+    } catch { /* ResizeObserver hiánya nem kritikus — marad az időzítős fallback */ }
+
+    return () => { timers.forEach(clearTimeout); ro?.disconnect(); };
   }, [trigger, map]);
   return null;
 }
