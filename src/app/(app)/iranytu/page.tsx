@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import BenchmarkClient from "./BenchmarkClient";
 import { ScreenHeader } from "@/components/ui";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -42,6 +43,13 @@ export default async function BenchmarkPage() {
         </div>
 
         <BenchmarkClient turnstileSiteKey={turnstileSiteKey} />
+
+        <LegalDisclaimer
+          toolName="Bér- és Lakbér Iránytű"
+          variant="legal"
+          notAdviceFor="pénzügyi, munkajogi vagy adóügyi"
+          extraWarning="A bér- és lakbér-adatok anonim közösségi beküldésekből és referencia-szintekből származó BECSLÉSEK — nem garantált piaci értékek, és nem helyettesítik a konkrét ajánlatot, szerződést vagy szakértői tanácsot."
+        />
       </div>
     </div>
   );

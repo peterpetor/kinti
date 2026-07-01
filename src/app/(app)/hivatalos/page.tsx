@@ -43,6 +43,15 @@ export default function HivatalosPage() {
       />
 
       <HivatalosView />
+
+      <p className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11px] leading-relaxed text-ink-muted">
+        <strong className="text-ink">Jogi tájékoztató:</strong> ez a gyűjtemény <strong>tájékoztató jellegű</strong>, NEM
+        jogi, adó- vagy ügyintézési tanácsadás. A hivatkozások harmadik felek (hatóságok,
+        hivatalos szervek) oldalaira mutatnak, amelyek tartalmáért és elérhetőségéért nem
+        vállalunk felelősséget. Az eljárás pontos menetét, díjait és határidőit mindig a{" "}
+        <strong>hivatalos oldalon</strong> ellenőrizd. Részletek:{" "}
+        <Link href="/aszf" className="underline font-semibold">ÁSZF</Link>.
+      </p>
     </div>
   );
 }
