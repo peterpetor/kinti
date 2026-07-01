@@ -19,7 +19,7 @@ import {
   DropdownMenu,
   KintiLogo,
 } from "@/components/ui";
-import { getBusinessByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getLeadCounts, FREE_LEADS_PER_MONTH, getTopSearchTerms } from "@/lib/repo";
+import { getBusinessByOwner, getEmployerByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getLeadCounts, FREE_LEADS_PER_MONTH, getTopSearchTerms } from "@/lib/repo";
 import type { LeadCard } from "@/components/views/lead-inbox";
 import { mediaUrl } from "@/lib/media";
 import { handleFromId } from "@/lib/handle";
@@ -55,12 +55,21 @@ function getRelativeTime(isoString: string | null): string {
   return `${diffDays} napja`;
 }
 
-export default async function ProfilPage() {
+export default async function ProfilPage({
+  searchParams,
+}: {
+  searchParams?: { pro?: string };
+}) {
   const { userId } = await auth();
   if (!userId) redirect("/belepes");
 
   const business = await getBusinessByOwner(userId);
   const categories = business ? [] : (await getCategories()).filter((c) => c.id !== "all");
+  // Ha a usernek MÉG nincs Szaknévsor-vállalkozása, de VAN Munkáltatói profilja,
+  // szinte biztos összekeverte a kettőt (a Szaknévsor PRO ≠ Munkáltató/álláshirdetés).
+  // A ?pro=1 jelzi, hogy a /pro "Szaknévsor PRO" gombjáról érkezett — vásárlási szándékkal.
+  const employer = business ? null : await getEmployerByOwner(userId);
+  const proIntent = !business && searchParams?.pro === "1";
 
   return (
     <div className="space-y-4 px-[18px] pt-[calc(env(safe-area-inset-top)+2rem)] pb-28">
@@ -83,7 +92,11 @@ export default async function ProfilPage() {
         * Ez a /profil oldal egy Clerk-belépést igénylő admin/legacy dashboard,
         * megőrizve azoknak, akik még Clerk-fiókkal lépnek be (pl. te magad).
         */}
-      {business ? <OwnerDashboard business={business} /> : <OnboardingCTA categories={categories} />}
+      {business ? (
+        <OwnerDashboard business={business} />
+      ) : (
+        <OnboardingCTA categories={categories} proIntent={proIntent} employerName={employer?.companyName ?? null} />
+      )}
 
       {/* PWA — telepítés a kezdőképernyőre (csak ha még nem standalone) */}
       <InstallPrompt />
@@ -120,7 +133,15 @@ export default async function ProfilPage() {
 }
 
 // --- Onboarding: belépett userhez még nincs vállalkozás --------------------
-function OnboardingCTA({ categories }: { categories: Category[] }) {
+function OnboardingCTA({
+  categories,
+  proIntent = false,
+  employerName = null,
+}: {
+  categories: Category[];
+  proIntent?: boolean;
+  employerName?: string | null;
+}) {
   const features: { icon: IconName; title: string; body: string }[] = [
     { icon: "list", title: "Céges adatok", body: "Név, kategória, rövid bemutatkozás" },
     { icon: "phone", title: "Kapcsolat", body: "Telefon, e-mail, weboldal, közösségi linkek" },
@@ -132,6 +153,31 @@ function OnboardingCTA({ categories }: { categories: Category[] }) {
 
   return (
     <section className="space-y-4">
+      {/* PRO-szándékkal érkezett (a /pro „Szaknévsor PRO” gombjáról): egyértelműsítjük,
+          hogy előbb a listázás kell, utána egy gombbal előfizethet — ne fusson körbe. */}
+      {proIntent && (
+        <div className="rounded-card border border-pro/40 bg-pro/5 px-4 py-3">
+          <p className="text-[13.5px] font-extrabold text-ink">🚀 Már csak egy lépés a Szaknévsor PRO</p>
+          <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
+            A PRO a <strong>Szaknévsor-listázásodat</strong> emeli ki. Előbb hozd létre a
+            vállalkozásod (lent, 1 perc) — utána egyetlen gombbal előfizethetsz a Kiemelésre.
+          </p>
+        </div>
+      )}
+
+      {/* A user Munkáltatóként regisztrált, de Szaknévsor-vállalkozása nincs: ez a
+          leggyakoribb keveredés (a Szaknévsor PRO ≠ álláshirdetés-kiemelés). */}
+      {employerName && (
+        <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3">
+          <p className="text-[12.5px] leading-snug text-ink-muted">
+            Van már <strong className="text-ink">Munkáltatói profilod</strong> („{employerName}") —
+            az az <strong>álláshirdetésekhez</strong> való. A Szaknévsorban való megjelenés és a
+            Szaknévsor PRO ettől <strong>külön</strong>: azt itt, alább hozod létre.{" "}
+            <Link href="/munkaltato" className="font-bold text-primary underline">Munkáltatói irányítópult →</Link>
+          </p>
+        </div>
+      )}
+
       <div className="rounded-card border border-line bg-gradient-to-br from-primary to-accent p-5 text-white shadow-card">
         <span className="inline-flex items-center gap-1.5 rounded-pill bg-white/20 px-2.5 py-1 text-[11.5px] font-extrabold uppercase tracking-wide">
           Üdvözlünk! 👋

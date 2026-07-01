@@ -140,12 +140,14 @@ export default function ProPage() {
           </ul>
 
           <Link
-            href="/profil"
+            href="/profil?pro=1"
             className="block w-full rounded-pill bg-pro py-3.5 text-center text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]"
           >
             Kiemelés Vásárlása
           </Link>
-          <p className="mt-2 text-center text-[11px] text-ink-faint">A vállalkozásod kezelőjében véglegesíted.</p>
+          <p className="mt-2 text-center text-[11px] text-ink-faint">
+            A vállalkozásod kezelőjében véglegesíted. Ha még nincs Szaknévsor-listázásod, ott 1 perc alatt létrehozod — utána fizethetsz elő.
+          </p>
         </div>
 
         {/* Kiemelt Állás (Employers) */}
