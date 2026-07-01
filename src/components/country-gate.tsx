@@ -54,7 +54,7 @@ export function CountryGate() {
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex flex-col overflow-y-auto bg-gradient-to-b from-primary to-[#23533d] px-6 pb-10 pt-[calc(env(safe-area-inset-top)+3rem)] text-white">
+    <div className="fixed inset-0 z-[9990] flex flex-col overflow-y-auto bg-gradient-to-b from-primary to-[#23533d] px-6 pb-10 pt-[calc(env(safe-area-inset-top)+3rem)] text-white">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
         <header className="text-center">
           <KintiLogo size={48} className="mx-auto" />

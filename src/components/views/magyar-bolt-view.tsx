@@ -108,7 +108,11 @@ export function MagyarBoltView({ turnstileSiteKey }: { turnstileSiteKey: string 
       </button>
 
       {modal && (
-        <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 bg-ink/40 backdrop-blur-sm" onClick={() => !submitting && setModal(false)}>
+        {/* NINCS backdrop-blur: a `backdrop-filter` egy GPU-kompozit réteget hoz létre,
+            amiben a Leaflet transzformált csempe-<img>-jei valós GPU-n (Chrome/Opera)
+            NEM rajzolódnak újra → a modal-térkép SZÜRKE marad (a vezérlők látszanak).
+            Szoftveres renderelésnél (headless) nem jön elő. Solid, átlátszó háttér. */}
+        <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 bg-ink/60" onClick={() => !submitting && setModal(false)}>
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md max-h-[92vh] overflow-y-auto rounded-card border border-line bg-surface p-5 shadow-card-strong space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-[16px] font-extrabold text-ink">➕ Magyar hely felvétele</h3>
