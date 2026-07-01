@@ -694,9 +694,11 @@ export function ProfileEditor({
                   <Icon name="clock" size={9} className="text-primary" />
                   {openText || `${previewStatus.statusText} · ${previewStatus.detailText}`}
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] font-bold text-ink">
-                  <Icon name="globe" size={9} className="text-primary" /> Magyar
-                </span>
+                {(languages.length ? languages : ["Magyar"]).map((lang) => (
+                  <span key={lang} className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] font-bold text-ink">
+                    <Icon name="globe" size={9} className="text-primary" /> {lang}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
