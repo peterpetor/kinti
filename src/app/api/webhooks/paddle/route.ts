@@ -33,6 +33,7 @@ interface PaddleEventData {
 }
 
 interface PaddleEvent {
+  event_id?: string;
   event_type?: string;
   data?: PaddleEventData;
 }
@@ -52,8 +53,22 @@ export async function POST(req: Request) {
   }
 
   const eventType = event?.event_type as string | undefined;
+  const eventId = typeof event?.event_id === "string" ? event.event_id : null;
   const data = event?.data ?? {};
   const customData = data.custom_data ?? {};
+
+  // IDEMPOTENCIA / replay-védelem: ha ezt az event_id-t MÁR sikeresen feldolgoztuk,
+  // kihagyjuk (a job_featured kiemelés-meghosszabbítás ismétlés ellen). A retry-t
+  // nem töri: meghiúsult esemény 500-zal tér vissza a jegyzés ELŐTT → újrafut.
+  if (eventId) {
+    try {
+      const seen = await getDB().prepare("SELECT 1 AS x FROM webhook_events WHERE event_id = ? LIMIT 1").bind(eventId).first<{ x: number }>();
+      if (seen) return NextResponse.json({ ok: true, duplicate: true });
+    } catch (e) {
+      safeLogError("[webhooks/paddle] idempotency-check", e);
+      // a tábla hiánya/hiba ne blokkolja a feldolgozást (fail-open)
+    }
+  }
   const priceId = data.items?.[0]?.price?.id ?? data.items?.[0]?.price_id;
   const entitlement = entitlementFromPriceId(priceId);
 
@@ -86,6 +101,14 @@ export async function POST(req: Request) {
       default:
         // egyéb esemény → no-op
         break;
+    }
+    // SIKERES feldolgozás után jegyezzük az event_id-t (a duplikátum-kihagyáshoz).
+    if (eventId) {
+      try {
+        await getDB().prepare("INSERT OR IGNORE INTO webhook_events (event_id) VALUES (?)").bind(eventId).run();
+      } catch (e) {
+        safeLogError("[webhooks/paddle] idempotency-record", e);
+      }
     }
     return NextResponse.json({ ok: true });
   } catch (err) {
