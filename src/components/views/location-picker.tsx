@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, useMapEvents, useMap } from "react-leaflet";
 import { FallbackTileLayer } from "./fallback-tile-layer";
 import { MapAutoResize } from "./map-controls";
@@ -56,6 +56,23 @@ export function LocationPicker({
   onChange: (v: { lat: number; lng: number }) => void;
   className?: string;
 }) {
+  // A térképet CSAK a modal beméreteződése UTÁN hozzuk létre. Ha a Leaflet egy
+  // még 0/átmeneti méretű modal-konténerbe indul, a csempéket rossz mérethez kéri
+  // le → a térkép SZÜRKE marad (a fő térképek jók, mert nem modalban vannak, és az
+  // invalidateSize/ResizeObserver sem mindig kapja el időben valós eszközön). Egy
+  // RAF + rövid késleltetés garantálja, hogy a konténer már a végleges 240px legyen,
+  // amikor a MapContainer létrejön.
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    const raf = requestAnimationFrame(() => { t = setTimeout(() => setReady(true), 80); });
+    return () => { cancelAnimationFrame(raf); clearTimeout(t); };
+  }, []);
+
+  if (!ready) {
+    return <div className={`${className ?? ""} grid place-items-center rounded-card bg-surface text-[12px] text-ink-muted`}>Térkép…</div>;
+  }
+
   return (
     <div className={className}>
       <MapContainer center={value ? [value.lat, value.lng] : center} zoom={12} className="h-full w-full rounded-card z-0" scrollWheelZoom>
