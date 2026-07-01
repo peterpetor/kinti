@@ -7,6 +7,8 @@ export interface XProvider {
   name: string;
   /** Spread (markup) a középárfolyamhoz képest, decimal (0.005 = 0.5%). */
   spread: number;
+  /** Hétvégi spread, ha eltér (pl. Revolut standard fiók pótfelára). */
+  weekendSpread?: number;
   /** Fix díj a bázis-pénznemben (amount-tól független). */
   fixedFee: number;
   speed: string;
@@ -29,6 +31,7 @@ export const X_PROVIDERS: XProvider[] = [
   {
     name: "Revolut",
     spread: 0.005,
+    weekendSpread: 0.015, // standard fiók hétvégi pótfelára a devizaváltásra
     fixedFee: 0,
     speed: "azonnali",
     note: "Standard fiók — hétvégén magasabb spread (~1.5%).",
@@ -72,17 +75,22 @@ export const X_PROVIDERS: XProvider[] = [
 /** A „referencia" banki utalás (ehhez viszonyítjuk a megtakarítást). */
 export const X_BANK: XProvider = X_PROVIDERS.find((p) => p.name === "Bank SEPA")!;
 
+/** A ténylegesen alkalmazandó spread — hétvégén a `weekendSpread`, ha van. */
+export function effectiveSpread(p: XProvider, weekend = false): number {
+  return weekend && p.weekendSpread != null ? p.weekendSpread : p.spread;
+}
+
 /** Egy szolgáltatónál érkező összeg (bázis-pénznem → cél, baseToTarget középárfolyamon). */
-export function receivedAmount(amount: number, baseToTarget: number, p: XProvider): number {
+export function receivedAmount(amount: number, baseToTarget: number, p: XProvider, weekend = false): number {
   if (!(amount > 0) || !(baseToTarget > 0)) return 0;
-  const rate = baseToTarget * (1 - p.spread);
+  const rate = baseToTarget * (1 - effectiveSpread(p, weekend));
   return Math.max(0, amount - p.fixedFee) * rate;
 }
 
 /** A legtöbbet adó szolgáltató a megadott összegre (érkező összeg szerint). */
-export function bestProvider(amount: number, baseToTarget: number): XProvider {
+export function bestProvider(amount: number, baseToTarget: number, weekend = false): XProvider {
   return X_PROVIDERS.reduce((best, p) =>
-    receivedAmount(amount, baseToTarget, p) > receivedAmount(amount, baseToTarget, best) ? p : best,
+    receivedAmount(amount, baseToTarget, p, weekend) > receivedAmount(amount, baseToTarget, best, weekend) ? p : best,
   );
 }
 
@@ -91,14 +99,14 @@ export function bestProvider(amount: number, baseToTarget: number): XProvider {
  * szerint) — az összehasonlító listához. A banki utalás a referencia, nem
  * szerepel a listában (ahhoz viszonyítjuk a megtakarítást).
  */
-export function rankedProviders(amount: number, baseToTarget: number): XProvider[] {
+export function rankedProviders(amount: number, baseToTarget: number, weekend = false): XProvider[] {
   return X_PROVIDERS
     .filter((p) => p !== X_BANK)
     .slice()
-    .sort((a, b) => receivedAmount(amount, baseToTarget, b) - receivedAmount(amount, baseToTarget, a));
+    .sort((a, b) => receivedAmount(amount, baseToTarget, b, weekend) - receivedAmount(amount, baseToTarget, a, weekend));
 }
 
 /** Becsült megtakarítás a banki utaláshoz képest (cél-pénznemben), ha `p`-vel utalsz. */
-export function savingsVsBank(amount: number, baseToTarget: number, p: XProvider): number {
-  return Math.max(0, receivedAmount(amount, baseToTarget, p) - receivedAmount(amount, baseToTarget, X_BANK));
+export function savingsVsBank(amount: number, baseToTarget: number, p: XProvider, weekend = false): number {
+  return Math.max(0, receivedAmount(amount, baseToTarget, p, weekend) - receivedAmount(amount, baseToTarget, X_BANK, weekend));
 }

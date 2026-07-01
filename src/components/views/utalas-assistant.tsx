@@ -8,7 +8,7 @@ import { usePersistedState } from "@/hooks/use-persisted-state";
 import { useIsPro } from "@/lib/use-is-pro";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
-import { rankedProviders, receivedAmount, savingsVsBank } from "@/lib/exchange-providers";
+import { rankedProviders, receivedAmount, savingsVsBank, effectiveSpread } from "@/lib/exchange-providers";
 
 interface RateNow { rates: { HUF: number; EUR: number }; date: string }
 interface HistPoint { date: string; huf: number; eur: number }
@@ -76,9 +76,27 @@ export function UtalasAssistant() {
     return { avg, pct };
   }, [hist, baseToHuf, isEuro]);
 
-  const ranked = useMemo(() => (baseToHuf ? rankedProviders(amount, baseToHuf) : []), [amount, baseToHuf]);
+  // Hétvégén több szolgáltató (pl. Revolut standard) pótfelárat tesz a váltásra —
+  // ilyenkor a rangsor is másképp alakul, ezért nap-tudatosan számolunk.
+  const weekend = useMemo(() => [0, 6].includes(new Date().getDay()), []);
+  const ranked = useMemo(() => (baseToHuf ? rankedProviders(amount, baseToHuf, weekend) : []), [amount, baseToHuf, weekend]);
   const best = ranked[0] ?? null; // a legjobb (a lista élén) — az Elutaltam ehhez számol
-  const bestSavings = best ? savingsVsBank(amount, baseToHuf, best) : 0;
+  const second = ranked[1] ?? null;
+  const bestSavings = best ? savingsVsBank(amount, baseToHuf, best, weekend) : 0;
+
+  // „Miért ez?" — dinamikus indoklás a legjobb szolgáltatóra.
+  const bestReason = useMemo(() => {
+    if (!best || !baseToHuf) return "";
+    const spreadPct = (effectiveSpread(best, weekend) * 100).toFixed(1).replace(".", ",");
+    const parts = [`a legkisebb árfolyam-felár (${spreadPct}%)`];
+    if (best.fixedFee === 0) parts.push("és nincs fix díj");
+    let s = `Nála érkezik a legtöbb forint: ${parts.join(" ")}.`;
+    if (second) {
+      const diff = Math.round(receivedAmount(amount, baseToHuf, best, weekend) - receivedAmount(amount, baseToHuf, second, weekend));
+      if (diff > 0) s += ` ${fmtHuf(diff)} Ft-tal a második (${second.name}) előtt.`;
+    }
+    return s;
+  }, [best, second, amount, baseToHuf, weekend]);
 
   function logTransfer() {
     if (bestSavings <= 0) return;
@@ -195,10 +213,16 @@ export function UtalasAssistant() {
             Melyikkel jársz jobban? · {amount} {base}
           </p>
 
+          {weekend && (
+            <p className="rounded-[10px] bg-star/10 px-3 py-2 text-[11px] font-semibold leading-snug text-ink-muted">
+              📅 Hétvége van — a Revolut standard fiók most ~1,5% pótfelárral számol, ezért ilyenkor gyakran más a legjobb.
+            </p>
+          )}
+
           <div className="space-y-2">
             {ranked.map((p, i) => {
-              const recv = receivedAmount(amount, baseToHuf, p);
-              const sav = savingsVsBank(amount, baseToHuf, p);
+              const recv = receivedAmount(amount, baseToHuf, p, weekend);
+              const sav = savingsVsBank(amount, baseToHuf, p, weekend);
               const isBest = i === 0;
               const rowCls = cn(
                 "flex items-center gap-3 rounded-[12px] border px-3 py-3 transition",
@@ -233,6 +257,14 @@ export function UtalasAssistant() {
               );
             })}
           </div>
+
+          {/* „Miért ez?" — átlátható indoklás a választásra */}
+          {bestReason && (
+            <div className="rounded-[10px] bg-surface-alt/60 px-3 py-2.5 text-[11.5px] leading-snug text-ink-muted">
+              <strong className="text-ink">Miért a {best.name}?</strong> {bestReason} A rangsort a beírt összegre a{" "}
+              <strong className="text-ink">ténylegesen megérkező forint</strong> szerint állítom fel (árfolyam-felár és fix díj együtt).
+            </div>
+          )}
 
           <button
             type="button"
