@@ -21,7 +21,7 @@ const LocationPicker =
     : () => null;
 
 // Csak esemény küldhető be — a hely-kategóriák (bolt/etterem) megszűntek (2026-07-03).
-const TAG_KEYS = ["koncert", "talalkozo", "egyeb"] as const;
+const TAG_KEYS = ["koncert", "talalkozo", "kozosseg", "egyeb"] as const;
 
 /** Sentinel a város-legördülőben: a listán kívüli (falu/kisváros) település. */
 const CUSTOM_CITY = "__mas";
@@ -72,7 +72,7 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
-  const needsDate = tag === "koncert" || tag === "talalkozo";
+  const needsDate = tag === "koncert" || tag === "talalkozo" || tag === "kozosseg";
 
   async function submit() {
     setErr(null);

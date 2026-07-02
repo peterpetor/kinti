@@ -78,8 +78,15 @@ export function LocationPicker({
 
   return (
     <div className={className}>
-      <MapContainer center={value ? [value.lat, value.lng] : center} zoom={zoom} className="h-full w-full rounded-card z-0" scrollWheelZoom>
-        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
+      {/* zoomAnimation KIKAPCSOLVA: a modal-környezetben a zoom-átmenet
+          `transitionend` eseménye nem érkezik meg (a proxy-elem CSS-átmenete nem
+          érvényesül) → a Leaflet örökre `_animatingZoom` állapotban ragad, és a
+          +/− / dupla-katt / pinch zoom NÉMÁN elhal (élesben mérve: beragadt
+          scale(64) proxy-transform). Animáció nélkül a zoom szinkron — nincs mire
+          várni, nem tud beragadni. A maxZoom=19 az Esri-fallback plafonja (a
+          fölötti szint szürke csempéket adna). */}
+      <MapContainer center={value ? [value.lat, value.lng] : center} zoom={zoom} maxZoom={19} zoomAnimation={false} className="h-full w-full rounded-card z-0" scrollWheelZoom>
+        <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} maxZoom={19} />
         <MapAutoResize />
         <Recenter center={center} />
         <ClickCapture onPick={(lat, lng) => onChange({ lat, lng })} />

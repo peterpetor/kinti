@@ -13,7 +13,8 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 // Csak ESEMÉNY küldhető be — a hely-kategóriák (bolt/etterem) 2026-07-03-án megszűntek.
-const TAGS = new Set(["koncert", "talalkozo", "egyeb"]);
+// A „talalkozo" és „kozosseg" külön kategória (2026-07-03-án kettébontva).
+const TAGS = new Set(["koncert", "talalkozo", "kozosseg", "egyeb"]);
 
 // GET /api/events?upcoming=1&limit=10  — vagy  ?map=1&country=CH (térkép-pinek)
 export async function GET(req: NextRequest) {
@@ -69,8 +70,8 @@ export async function POST(req: Request) {
   if (!city && !pinInBox) {
     return NextResponse.json({ error: "Ismeretlen település — jelöld meg a helyét a térképen." }, { status: 400 });
   }
-  // Dátumos típusoknál (koncert/találkozó) kérünk dátumot.
-  if ((tag === "koncert" || tag === "talalkozo") && !eventDate) {
+  // Dátumos típusoknál (koncert/találkozó/közösségi program) kérünk dátumot.
+  if ((tag === "koncert" || tag === "talalkozo" || tag === "kozosseg") && !eventDate) {
     return NextResponse.json({ error: "Adj meg egy dátumot." }, { status: 400 });
   }
   if (eventDate && eventDate < new Date().toISOString().slice(0, 10)) {
