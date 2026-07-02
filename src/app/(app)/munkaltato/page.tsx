@@ -50,8 +50,11 @@ export default async function EmployerDashboardPage() {
               <h1 className="text-[20px] font-extrabold tracking-tight text-ink">
                 {employer.companyName}
               </h1>
+              {/* A "Csomag: FREE" felirat félrevezető volt (a munkáltatónál nincs
+                  előfizetés — az álláshirdetés kiemelése hirdetésenként történik,
+                  a Szaknévsor PRO pedig külön termék), ezért teljesen levéve. */}
               <p className="mt-1 text-[13px] text-ink-muted">
-                {employer.contactEmail} · Csomag: <span className="font-bold text-ink">{employer.subscriptionTier.toUpperCase()}</span>
+                {employer.contactEmail}
               </p>
             </div>
             <Link
