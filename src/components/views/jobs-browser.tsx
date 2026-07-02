@@ -227,7 +227,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
           >
             <span className="text-lg">🔒</span>
             <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
-              <strong className="text-[#cc7700]">PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% match</strong> minden hirdetésnél.
+              <strong className="text-[#cc7700]">Kinti PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% match</strong> minden hirdetésnél. <span className="text-ink-muted">(Ez a Kinti PRO álláskereső funkciója — <strong>nem</strong> a Szaknévsor PRO, amit a vállalkozásodhoz vehetsz.)</span>
             </span>
             <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
           </Link>

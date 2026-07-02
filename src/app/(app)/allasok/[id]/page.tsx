@@ -236,7 +236,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
         >
           <span className="text-xl">🔒</span>
           <span className="min-w-0 flex-1 text-[13px] leading-snug text-ink">
-            <strong className="text-[#cc7700]">PRO:</strong> lásd, hány %-ban illik ez az állás a profilodhoz, és a becsült <strong>nettó bért</strong> a régiódban.
+            <strong className="text-[#cc7700]">Kinti PRO:</strong> lásd, hány %-ban illik ez az állás a profilodhoz, és a becsült <strong>nettó bért</strong> a régiódban. <span className="text-ink-muted">(Ez a Kinti PRO álláskereső funkciója — <strong>nem</strong> a Szaknévsor PRO, amit a vállalkozásodhoz vehetsz.)</span>
           </span>
           <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
         </Link>
