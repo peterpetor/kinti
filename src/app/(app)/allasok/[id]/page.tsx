@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-import { getJobById, getEmployerById, getWorkerProfileByUser } from "@/lib/repo";
+import { getJobById, getEmployerById, getWorkerProfileByUser, getBusinessByOwner } from "@/lib/repo";
 import { isPro } from "@/lib/subscriptions";
 import { jobMatchScore, hasMatchableProfile } from "@/lib/job-match";
 import { formatJobCurrency } from "@/lib/job-categories";
@@ -51,6 +51,11 @@ export default async function JobDetailPage({ params }: { params: { id: string }
   }
 
   const employer = await getEmployerById(job.employerId);
+  // Ha a munkáltatónak van Szaknévsor-listázása is (ugyanaz a tulajdonos), átlinkelünk
+  // rá — így az álláskereső TÖBBET tud meg a cégről (profil, cím, vélemények).
+  const companyBusiness = employer?.ownerUserId
+    ? await getBusinessByOwner(employer.ownerUserId)
+    : null;
 
   // === PRO: match-score + nettó-becslés ===
   const { userId } = await auth();
@@ -259,22 +264,36 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           </div>
         )}
 
-        {employer?.description && (
+        {(employer?.description || employer?.website || companyBusiness) && (
           <div className="rounded-card bg-surface-alt border border-line p-4">
             <h2 className="text-[14px] font-bold uppercase tracking-wide text-ink-muted mb-2">A cégről</h2>
-            <div className="text-[14px] leading-relaxed text-ink-muted whitespace-pre-wrap text-pretty">
-              {employer.description}
-            </div>
-            {employer.website && (
-              <a 
-                href={employer.website} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 mt-3 text-[13px] font-bold text-primary hover:underline"
-              >
-                Weboldal megtekintése <Icon name="arrowRight" size={12} strokeWidth={3} />
-              </a>
+            {employer?.description && (
+              <div className="text-[14px] leading-relaxed text-ink-muted whitespace-pre-wrap text-pretty">
+                {employer.description}
+              </div>
             )}
+            <div className="mt-3 flex flex-col gap-2">
+              {/* Ha a cég szerepel a Szaknévsorban is, oda linkelünk — ott többet tud
+                  meg róla az álláskereső (profil, cím, vélemények, kapcsolat). */}
+              {companyBusiness && (
+                <Link
+                  href={`/szaknevsor/${companyBusiness.id}`}
+                  className="inline-flex items-center gap-1 text-[13px] font-bold text-primary hover:underline"
+                >
+                  A cég a Szaknévsorban — profil, cím, vélemények <Icon name="arrowRight" size={12} strokeWidth={3} />
+                </Link>
+              )}
+              {employer?.website && (
+                <a
+                  href={employer.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[13px] font-bold text-primary hover:underline"
+                >
+                  Weboldal megtekintése <Icon name="arrowRight" size={12} strokeWidth={3} />
+                </a>
+              )}
+            </div>
           </div>
         )}
       </section>

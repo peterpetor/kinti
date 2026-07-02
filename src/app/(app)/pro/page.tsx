@@ -166,7 +166,7 @@ export default function ProPage() {
           </div>
 
           <ul className="space-y-3 mb-8 flex-1">
-            <FeatureItem text="30 napos sárga kiemelés a Job Boardon" />
+            <FeatureItem text="30 napos piros kiemelés a Job Boardon" />
             <FeatureItem text="Rögzített hely a lista legelején" />
             <FeatureItem text="Egyedi céges arculat megjelenítése" />
             <FeatureItem text="Azonnali értesítés a releváns jelölteknek" />

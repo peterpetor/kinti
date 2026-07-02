@@ -173,8 +173,10 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
         )}
       </div>
 
-      {/* Térkép: hol vannak az állások (kanton-buborékok) — koppintásra szűr */}
-      {jobsInCountry.length > 0 && Object.keys(cantonCounts).length > 0 && (
+      {/* Térkép: hol vannak az állások (kanton-buborékok) — koppintásra szűr.
+          CSAK ha legalább 3 régióban van állás: 1-2 régiónál a térkép értelmetlen
+          (egy buborék), a régió-legördülő úgyis elég. */}
+      {jobsInCountry.length > 0 && Object.keys(cantonCounts).length >= 3 && (
         <div className="space-y-2">
           <button
             type="button"
