@@ -101,9 +101,20 @@ export function validateReviewInput(
     }
   }
 
-  // reviewerName MEZŐ ELTÁVOLÍTVA — auto-generált handle a megjelenítéshez.
-  // Üres string a backend felé, csendben ignorálva.
-  const reviewerName = "";
+  // Becenév / keresztnév — OPCIONÁLIS (2026-07-03 óta újra kérhető). Üresen
+  // hagyva a megjelenítés auto-generált álnevet kap (handleFromId, pl.
+  // „GyorsSün_15"). Teljes nevet szándékosan nem kérünk (first-name-only elv).
+  const reviewerName = str(input.reviewerName);
+  if (reviewerName) {
+    if (reviewerName.length > REVIEW_LIMITS.reviewerNameMax) {
+      errors.push({ field: "reviewerName", message: `Túl hosszú név (max. ${REVIEW_LIMITS.reviewerNameMax} karakter).` });
+    } else if (reviewerName.length < REVIEW_LIMITS.reviewerNameMin) {
+      errors.push({ field: "reviewerName", message: "Túl rövid név — vagy hagyd üresen." });
+    }
+    if (containsProfanity(reviewerName).hit) {
+      errors.push({ field: "reviewerName", message: "Ez a név nem megfelelő — kérjük, válassz másikat." });
+    }
+  }
 
   if (input.acceptTerms !== true) {
     errors.push({

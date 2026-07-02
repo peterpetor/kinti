@@ -153,4 +153,28 @@ describe("POST /api/reviews/submit", () => {
     expect(res.status).toBe(400);
     expect(publishReview).not.toHaveBeenCalled();
   });
+
+  it("becenév → 200, eljut a publishReview-ig", async () => {
+    const res = await POST(req({ ...validBody, reviewerName: "Kata" }));
+    expect(res.status).toBe(200);
+    expect(publishReview).toHaveBeenCalledWith(
+      expect.objectContaining({ reviewerName: "Kata" }),
+    );
+  });
+
+  it("trágár becenév → 400 (reviewerName mező-hiba)", async () => {
+    const res = await POST(req({ ...validBody, reviewerName: "FosPista" }));
+    expect(res.status).toBe(400);
+    const json = (await res.json()) as { details?: { field: string }[] };
+    expect(json.details?.some((d) => d.field === "reviewerName")).toBe(true);
+    expect(publishReview).not.toHaveBeenCalled();
+  });
+
+  it("üres becenév → 200 (auto-álnév a megjelenítésben)", async () => {
+    const res = await POST(req({ ...validBody, reviewerName: "" }));
+    expect(res.status).toBe(200);
+    expect(publishReview).toHaveBeenCalledWith(
+      expect.objectContaining({ reviewerName: "" }),
+    );
+  });
 });

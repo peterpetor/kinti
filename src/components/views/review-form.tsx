@@ -237,8 +237,26 @@ export function ReviewForm({
         </p>
       </Section>
 
-      {/* Email — OPCIONÁLIS. Auto-generált handle ("VidámPék_42") kerül a publikus
-          vélemény mellé. Zéró tárolt PII. */}
+      {/* Becenév — OPCIONÁLIS. Üresen hagyva auto-generált álnév (GyorsSün_15
+          stílus) kerül a publikus vélemény mellé. Teljes nevet nem kérünk. */}
+      <Section title="Becenév / keresztnév (opcionális)">
+        <input
+          type="text"
+          value={form.reviewerName}
+          onChange={(e) => setField("reviewerName", e.target.value)}
+          placeholder="Pl. Kata — vagy hagyd üresen"
+          autoComplete="given-name"
+          maxLength={REVIEW_LIMITS.reviewerNameMax}
+          className={inputCls(errors.reviewerName)}
+        />
+        <FieldError msg={errors.reviewerName} />
+        <p className="mt-2 text-[11px] leading-snug text-ink-muted">
+          Ez jelenik meg az értékelésed mellett. Üresen hagyva egy játékos álnevet
+          kapsz (pl. „GyorsSün_15"). Elég egy keresztnév vagy becenév.
+        </p>
+      </Section>
+
+      {/* Email — OPCIONÁLIS. Zéró tárolt PII. */}
       <Section title="Email (opcionális)">
         <div>
           <div>
