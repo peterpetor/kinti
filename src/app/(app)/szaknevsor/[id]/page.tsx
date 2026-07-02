@@ -19,7 +19,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { hasStreetAddress } from "@/lib/address";
-import { getCountry } from "@/lib/countries";
+import { getCountry, countryLocative } from "@/lib/countries";
 import { registryForCategory } from "@/lib/business-registry";
 import { guidesForCategory } from "@/lib/guides";
 
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   const ratingText = b.reviews > 0 ? ` ⭐ ${b.rating.toFixed(1)} (${b.reviews} vélemény)` : "";
   const description = b.blurb
     ? b.blurb.slice(0, 160)
-    : `${b.name} · ${b.categoryLabel ?? "Magyar szakember"} Svájcban.${ratingText}`;
+    : `${b.name} · ${b.categoryLabel ?? "Magyar szakember"} ${countryLocative(b.country)}.${ratingText}`;
   const url = `https://kinti.app/szaknevsor/${b.id}`;
   const image = mediaUrl(b.logoKey) ?? "https://kinti.app/icons/og-default.png";
 
@@ -208,7 +208,7 @@ export default async function BusinessPage({
     jsonLd.address = {
       "@type": "PostalAddress",
       streetAddress: b.address,
-      addressCountry: "CH",
+      addressCountry: (b.country || "CH").toUpperCase(),
     };
   }
   if (b.lat != null && b.lng != null) {

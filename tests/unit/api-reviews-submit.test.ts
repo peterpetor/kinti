@@ -17,6 +17,7 @@ vi.mock("@/lib/repo", () => ({
   createReviewDraft: vi.fn(),
   getBusinessById: vi.fn(),
   hasReviewByEmail: vi.fn(),
+  hasReviewByIpHash: vi.fn(),
   logModerationStrike: vi.fn(),
   publishReview: vi.fn(),
   recomputeBusinessRating: vi.fn(),
@@ -30,6 +31,7 @@ import { hashIp } from "@/lib/security";
 import {
   getBusinessById,
   hasReviewByEmail,
+  hasReviewByIpHash,
   publishReview,
   createReviewDraft,
 } from "@/lib/repo";
@@ -61,6 +63,7 @@ beforeEach(() => {
   vi.mocked(hashIp).mockResolvedValue("iphash" as never);
   vi.mocked(getBusinessById).mockResolvedValue({ id: "biz1", name: "Teszt Bt" } as never);
   vi.mocked(hasReviewByEmail).mockResolvedValue(false as never);
+  vi.mocked(hasReviewByIpHash).mockResolvedValue(false as never);
   vi.mocked(publishReview).mockResolvedValue(undefined as never);
 });
 
@@ -108,5 +111,12 @@ describe("POST /api/reviews/submit", () => {
     const res = await POST(req({ ...validBody, email: "a@b.ch" }));
     expect(res.status).toBe(409);
     expect(createReviewDraft).not.toHaveBeenCalled();
+  });
+
+  it("duplikált vélemény ugyanarról a hálózatról (ipHash, email nélkül) → 409", async () => {
+    vi.mocked(hasReviewByIpHash).mockResolvedValue(true as never);
+    const res = await POST(req(validBody));
+    expect(res.status).toBe(409);
+    expect(publishReview).not.toHaveBeenCalled();
   });
 });

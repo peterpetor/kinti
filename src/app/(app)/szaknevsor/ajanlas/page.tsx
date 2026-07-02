@@ -33,7 +33,7 @@ export default async function AjanlasPage() {
       />
 
       <div className="mb-4 rounded-card border border-line bg-surface-alt px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted">
-        Ismersz egy <strong className="text-ink">magyar vállalkozást</strong> Svájcban, ami hiányzik
+        Ismersz egy <strong className="text-ink">magyar vállalkozást</strong> a környékeden, ami hiányzik
         a Szaknévsorból? Ajánld 30 másodperc alatt — mi ellenőrizzük és felvesszük. A tulajdonos
         később <strong className="text-ink">átveheti</strong> a profilt.
       </div>

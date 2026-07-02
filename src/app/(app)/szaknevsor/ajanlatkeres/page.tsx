@@ -41,7 +41,7 @@ export default async function AjanlatkeresPage() {
           Kérj árajánlatot egyszerre több vállalkozótól
         </h1>
         <p className="text-[14px] leading-relaxed text-ink-muted text-balance">
-          Töltsd ki az alábbi űrlapot egyszer, és az összes releváns svájci-magyar vállalkozó megkapja a kérésedet. Ők keresnek meg téged — nem kell mindenkinek külön írni!
+          Töltsd ki az alábbi űrlapot egyszer, és az összes releváns magyar vállalkozó megkapja a kérésedet a környékeden. Ők keresnek meg téged — nem kell mindenkinek külön írni!
         </p>
       </section>
 

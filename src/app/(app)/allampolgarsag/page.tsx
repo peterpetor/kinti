@@ -10,10 +10,12 @@ import { isPro } from "@/lib/subscriptions";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
+// A funkció mind a 4 országban él (CH/AT/DE/NL kérdésbank) — a metadata statikus
+// (minden országnak ugyanaz az URL), ezért ország-SEMLEGES, nem svájci copy.
 export const metadata = {
   title: "Engedély Varázsló & Kvíz | Kinti",
   description:
-    "Mikor kaphatsz C-engedélyt vagy svájci útlevelet? Számold ki a varázslóval, és teszteld a tudásod a kvízzel!",
+    "Mikor kaphatsz letelepedési engedélyt vagy állampolgárságot az országodban? Számold ki a varázslóval, és teszteld a tudásod a kvízzel!",
 };
 
 export default async function AllampolgarsagPage() {

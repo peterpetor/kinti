@@ -94,7 +94,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
     jsonLd.location = {
       "@type": "Place",
       name: e.venue,
-      address: { "@type": "PostalAddress", addressCountry: "CH" },
+      address: { "@type": "PostalAddress", addressCountry: (e.country || "CH").toUpperCase() },
     };
   }
   // RSVP count → InteractionStatistic
