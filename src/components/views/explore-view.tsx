@@ -361,13 +361,15 @@ export function ExploreView({
         />
       </div>
 
-      {/* Szűrők sor (Kanton + Mentett kedvencek) */}
-      <div className="flex flex-wrap items-center gap-2 px-5">
+      {/* Szűrők sor (Kanton + Mentett kedvencek) — egysoros, vízszintesen görgethető
+          chip-sor (a wrap 2-3 szabálytalan sorba tördelt). A py/-my a shadow-card
+          levágása ellen ad teret az overflow-konténerben. */}
+      <div className="no-scrollbar -my-2 flex items-center gap-2 overflow-x-auto px-5 py-2">
         {/* Kanton szűrő — natív alsó lap (BottomSheet) */}
         <button
           type="button"
           onClick={() => setCantonSheetOpen(true)}
-          className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card transition hover:bg-surface-alt active:scale-[0.97]"
+          className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border border-line bg-surface px-3 py-2 shadow-card transition hover:bg-surface-alt active:scale-[0.97]"
         >
           <Icon name="pin" size={14} strokeWidth={2.2} className="shrink-0 text-accent" />
           <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Kanton</span>
@@ -410,7 +412,7 @@ export function ExploreView({
           type="button"
           onClick={() => setShowFavs(!showFavs)}
           className={cn(
-            "inline-flex items-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             showFavs
               ? "bg-accent/10 border-accent/30 text-accent font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt"
@@ -434,7 +436,7 @@ export function ExploreView({
           onClick={() => setOpenNow((v) => !v)}
           aria-pressed={openNow}
           className={cn(
-            "inline-flex items-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             openNow
               ? "bg-success/10 border-success/30 text-success font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
@@ -457,7 +459,7 @@ export function ExploreView({
           onChange={(e) => setMinYears(Number(e.target.value))}
           aria-label="Szűrés tapasztalatra"
           className={cn(
-            "inline-flex items-center rounded-pill border px-3 py-2 text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
+            "inline-flex shrink-0 items-center rounded-pill border px-3 py-2 text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
             minYears > 0
               ? "bg-primary/10 border-primary/30 text-primary"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
@@ -476,7 +478,7 @@ export function ExploreView({
           aria-pressed={userPos != null}
           disabled={geoState === "loading"}
           className={cn(
-            "inline-flex items-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             userPos
               ? "bg-primary/10 border-primary/30 text-primary font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
@@ -500,7 +502,7 @@ export function ExploreView({
 
         {/* Radius választó — csak ha aktív a helymeghatározás */}
         {userPos && (
-          <label className="relative inline-flex items-center gap-2 rounded-pill border border-primary/30 bg-primary/5 px-3 py-2 shadow-card cursor-pointer transition hover:bg-primary/10">
+          <label className="relative inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border border-primary/30 bg-primary/5 px-3 py-2 shadow-card cursor-pointer transition hover:bg-primary/10">
             <span className="text-[11px] font-bold uppercase tracking-wide text-primary/70 select-none">
               Sugár
             </span>

@@ -75,7 +75,7 @@ export function TabBar() {
               aria-current={active ? "page" : undefined}
               className={cn(
                 "relative z-[1] flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11.5px] transition",
-                active ? "text-primary" : "text-ink-faint",
+                active ? "bg-primary/10 text-primary" : "text-ink-faint",
               )}
             >
               <Icon name={t.icon} size={24} strokeWidth={active ? 2.2 : 1.7} />

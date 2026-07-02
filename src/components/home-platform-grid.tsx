@@ -17,24 +17,34 @@ import { isFeatureAvailable } from "@/lib/feature-availability";
  * szegmense (a href „/" nélkül). Hidratálás-biztos: mount előtt CH-default (az SSR
  * is azt rendereli), mount után a választott ország.
  */
-const MODULES: { href: string; icon: IconName; label: string }[] = [
-  { href: "/szaknevsor", icon: "list", label: "Szaknévsor" },
-  { href: "/keresek", icon: "search", label: "Keresek" },
-  { href: "/allasok", icon: "briefcase", label: "Állások" },
-  { href: "/iranytu", icon: "compass", label: "Iránytű" },
-  { href: "/mennyit-koltesz", icon: "trending", label: "Mennyit költesz?" },
-  { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor" },
-  { href: "/arfolyam", icon: "trending", label: "Árfolyam" },
-  { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke" },
-  { href: "/kviz", icon: "star", label: "Kvíz" },
-  { href: "/holvagyunk", icon: "pin", label: "Hol vagyunk?" },
-  { href: "/esemenyek", icon: "calendar", label: "Események" },
-  { href: "/kozosseg", icon: "users", label: "Közösség" },
-  { href: "/ugyintezes", icon: "document", label: "Ügyintézés" },
-  { href: "/hivatalos", icon: "flag", label: "Hivatalos linkek" },
-  { href: "/allampolgarsag", icon: "flag", label: "Állampolgárság" },
-  { href: "/kikoltozes", icon: "check", label: "Kiköltözés" },
-  { href: "/repulojegy", icon: "send", label: "Repülőjegy" },
+/** Domain-árnyalat: a rács így színnel is csoportosít (munka/pénz/tanulás/közösség),
+ *  nem 17 egyforma szürke chip. A stringek teljesek (nincs cn-merge — lásd cn.ts). */
+type Tone = "work" | "money" | "learn" | "social";
+const TONE_CHIP: Record<Tone, string> = {
+  work: "bg-primary/10 text-primary",
+  money: "bg-gold/10 text-gold",
+  learn: "bg-accent/10 text-accent",
+  social: "bg-info/10 text-info",
+};
+
+const MODULES: { href: string; icon: IconName; label: string; tone: Tone }[] = [
+  { href: "/szaknevsor", icon: "list", label: "Szaknévsor", tone: "work" },
+  { href: "/keresek", icon: "search", label: "Keresek", tone: "work" },
+  { href: "/allasok", icon: "briefcase", label: "Állások", tone: "work" },
+  { href: "/iranytu", icon: "compass", label: "Iránytű", tone: "money" },
+  { href: "/mennyit-koltesz", icon: "trending", label: "Mennyit költesz?", tone: "money" },
+  { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor", tone: "money" },
+  { href: "/arfolyam", icon: "trending", label: "Árfolyam", tone: "money" },
+  { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke", tone: "learn" },
+  { href: "/kviz", icon: "star", label: "Kvíz", tone: "learn" },
+  { href: "/holvagyunk", icon: "pin", label: "Hol vagyunk?", tone: "social" },
+  { href: "/esemenyek", icon: "calendar", label: "Események", tone: "social" },
+  { href: "/kozosseg", icon: "users", label: "Közösség", tone: "social" },
+  { href: "/ugyintezes", icon: "document", label: "Ügyintézés", tone: "work" },
+  { href: "/hivatalos", icon: "flag", label: "Hivatalos linkek", tone: "work" },
+  { href: "/allampolgarsag", icon: "flag", label: "Állampolgárság", tone: "learn" },
+  { href: "/kikoltozes", icon: "check", label: "Kiköltözés", tone: "work" },
+  { href: "/repulojegy", icon: "send", label: "Repülőjegy", tone: "social" },
 ];
 
 export function HomePlatformGrid() {
@@ -57,7 +67,7 @@ export function HomePlatformGrid() {
             href={m.href}
             className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-2 py-3.5 text-center shadow-card transition active:scale-[0.97]"
           >
-            <span className="grid h-10 w-10 place-items-center rounded-[12px] bg-primary/10 text-primary">
+            <span className={`grid h-10 w-10 place-items-center rounded-[12px] ${TONE_CHIP[m.tone]}`}>
               <Icon name={m.icon} size={19} strokeWidth={2.2} />
             </span>
             <span className="text-[11.5px] font-bold leading-tight text-ink">{m.label}</span>

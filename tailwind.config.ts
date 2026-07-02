@@ -57,6 +57,10 @@ const config: Config = {
         success: "rgb(29 106 60 / <alpha-value>)",   // #1d6a3c — "Nyitva"
         star: "rgb(240 162 58 / <alpha-value>)",     // #f0a23a — értékelés / arany kiemelés
         pro: "rgb(255 150 0 / <alpha-value>)",       // #ff9600 — Szaknévsor PRO / kiemelt állás
+        // Domain-árnyalatok az ikon-chipekhez (kezdőlap-rács) — a star túl világos
+        // vonalas ikonnak, ezért a "pénz" chip a sötétebb gold-ot kapja.
+        gold: "rgb(180 106 14 / <alpha-value>)",     // #b46a0e — pénz-domain (olvasható borostyán)
+        info: "rgb(66 103 156 / <alpha-value>)",     // #42679c — közösség/utazás-domain (nyugodt acélkék)
       },
       borderColor: {
         DEFAULT: "rgb(var(--border-channel) / var(--border-alpha))",
