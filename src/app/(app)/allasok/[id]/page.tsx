@@ -10,6 +10,8 @@ import { getSalaryStats } from "@/lib/benchmark";
 import { matchCantonByName, cantonFromAddress, cantonName as cantonNameByCode } from "@/lib/cantons";
 import { countryLocative } from "@/lib/countries";
 import { jobPostingJsonLd, safeJsonLdStringify } from "@/lib/json-ld";
+import { mediaUrl } from "@/lib/media";
+import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { Icon } from "@/components/ui";
 import { QuickApplyButton } from "@/components/views/quick-apply-button";
 import { Metadata } from "next";
@@ -52,9 +54,22 @@ export default async function JobDetailPage({ params }: { params: { id: string }
 
   const employer = await getEmployerById(job.employerId);
   // Ha a munkáltatónak van Szaknévsor-listázása is (ugyanaz a tulajdonos), átlinkelünk
-  // rá — így az álláskereső TÖBBET tud meg a cégről (profil, cím, vélemények).
-  const companyBusiness = employer?.ownerUserId
+  // rá. CSAK JÓVÁHAGYOTT (moderation_status=1) céghez linkelünk — különben a publikus
+  // /szaknevsor/[id] 404-el ("nem élő link").
+  const ownerBusiness = employer?.ownerUserId
     ? await getBusinessByOwner(employer.ownerUserId)
+    : null;
+  const companyBusiness = ownerBusiness && ownerBusiness.moderationStatus === 1 ? ownerBusiness : null;
+  // A hirdetés a munkáltató-profilt mutatja (sovány). Ha van jóváhagyott Szaknévsor-cég,
+  // annak GAZDAG adatait is behozzuk: logó (profilkép), nyitvatartás, közösségi linkek.
+  const companyLogo = mediaUrl(companyBusiness?.logoKey);
+  const companyAvatar = companyLogo ?? employer?.logoKey ?? null;
+  let companySocials: Record<string, string> | null = null;
+  try {
+    companySocials = companyBusiness?.socialLinks ? JSON.parse(companyBusiness.socialLinks) : null;
+  } catch {}
+  const companyHours = companyBusiness?.workingHours
+    ? calculateBusinessHoursStatus(parseWorkingHours(companyBusiness.workingHours))
     : null;
 
   // === PRO: match-score + nettó-becslés ===
@@ -130,10 +145,10 @@ export default async function JobDetailPage({ params }: { params: { id: string }
       </header>
 
       <section className="animate-fade-up">
-        {employer?.logoKey ? (
+        {companyAvatar ? (
           <div className="mb-4 h-16 w-16 overflow-hidden rounded-[14px] bg-surface-alt shadow-sm border border-line">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={employer.logoKey} alt={employer.companyName} className="h-full w-full object-cover" />
+            <img src={companyAvatar} alt={employer?.companyName ?? "Cég"} className="h-full w-full object-cover" />
           </div>
         ) : (
           <div className="mb-4 grid h-16 w-16 place-items-center rounded-[14px] bg-surface-alt text-ink-muted shadow-sm border border-line text-[24px] font-bold uppercase">
@@ -272,15 +287,43 @@ export default async function JobDetailPage({ params }: { params: { id: string }
                 {employer.description}
               </div>
             )}
+
+            {/* Gazdag cég-adatok a linkelt (jóváhagyott) Szaknévsor-profilból:
+                nyitvatartás + közösségi linkek — így az álláskereső itt is lát valamit,
+                a teljes profil pedig egy koppintásra elérhető. */}
+            {companyBusiness && (companyHours || companySocials) && (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                {companyHours && (
+                  <span className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1 text-[12px] font-semibold text-ink">
+                    <Icon name="clock" size={12} className="text-primary" /> {companyHours.statusText} · {companyHours.detailText}
+                  </span>
+                )}
+                {companySocials?.facebook && (
+                  <a href={companySocials.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="grid h-8 w-8 place-items-center rounded-xl border border-line bg-surface text-[#1877F2]">
+                    <Icon name="facebook" size={15} />
+                  </a>
+                )}
+                {companySocials?.instagram && (
+                  <a href={companySocials.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid h-8 w-8 place-items-center rounded-xl border border-line bg-surface text-[#E4405F]">
+                    <Icon name="instagram" size={15} />
+                  </a>
+                )}
+                {companySocials?.linkedin && (
+                  <a href={companySocials.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="grid h-8 w-8 place-items-center rounded-xl border border-line bg-surface text-[#0A66C2]">
+                    <Icon name="linkedin" size={15} />
+                  </a>
+                )}
+              </div>
+            )}
+
             <div className="mt-3 flex flex-col gap-2">
-              {/* Ha a cég szerepel a Szaknévsorban is, oda linkelünk — ott többet tud
-                  meg róla az álláskereső (profil, cím, vélemények, kapcsolat). */}
+              {/* A teljes cég-adatlap (logó, cím, nyitvatartás, vélemények) a Szaknévsorban. */}
               {companyBusiness && (
                 <Link
                   href={`/szaknevsor/${companyBusiness.id}`}
                   className="inline-flex items-center gap-1 text-[13px] font-bold text-primary hover:underline"
                 >
-                  A cég a Szaknévsorban — profil, cím, vélemények <Icon name="arrowRight" size={12} strokeWidth={3} />
+                  A cég teljes adatlapja a Szaknévsorban <Icon name="arrowRight" size={12} strokeWidth={3} />
                 </Link>
               )}
               {employer?.website && (

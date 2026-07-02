@@ -322,6 +322,27 @@ async function OwnerDashboard({
         </div>
       </div>
 
+      {/* Moderáció-állapot: a publikus /szaknevsor/[id] CSAK jóváhagyott (ms=1) profilt
+          mutat — függőben/elutasítva a profil NEM látható és a nyilvános link 404-el.
+          Enélkül a tulaj azt hiszi, „nem működik” a PRO (pedig csak jóváhagyásra vár). */}
+      {(business.moderationStatus ?? 1) !== 1 && (
+        <div className="rounded-card border border-accent/40 bg-accent/5 px-4 py-3 text-[13px] leading-snug text-ink">
+          {business.moderationStatus === 2 ? (
+            <>
+              <strong className="text-accent">A profilod elutasításra került.</strong> Emiatt még nem
+              látható a Szaknévsorban. Ha szerinted tévedés, írj az <a href="mailto:info@kinti.app" className="font-bold underline">info@kinti.app</a>-ra.
+            </>
+          ) : (
+            <>
+              <strong className="text-accent">A profilod jóváhagyásra vár.</strong> Amíg jóvá nem hagyjuk,
+              a vállalkozásod (a logóddal, nyitvatartással, linkekkel, PRO-kiemeléssel együtt) <strong>még
+              nem látható</strong> a Szaknévsorban, és a nyilvános linkje sem él. A szerkesztéseid
+              mentődnek — a jóváhagyás után minden megjelenik.
+            </>
+          )}
+        </div>
+      )}
+
       {/* Ajánlatkérés-postaláda — FREEMIUM (havi 5 ingyenes, felette PRO) */}
       <section className="space-y-2">
         <SectionHeader>

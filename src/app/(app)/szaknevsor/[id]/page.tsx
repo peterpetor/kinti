@@ -587,8 +587,11 @@ export default async function BusinessPage({
           </div>
         </section>
 
-        {/* SEO belső link a kategória×kanton landing oldalra */}
-        {(() => {
+        {/* SEO belső link a kategória×kanton landing oldalra (más magyar szakemberekhez).
+            PRO (featured) cégnél NEM jelenik meg → „Konkurencia kizárása a profilodról"
+            (a Szaknévsor PRO ígért funkciója): a saját profilodról nem viszünk el
+            versenytársakhoz. */}
+        {!b.featured && (() => {
           const lc = cantonFromAddress(b.address ?? null);
           if (!lc || !b.categoryId) return null;
           // Ne legyen „magyar magyar …", ha a kategória neve maga is „magyar"-ral
