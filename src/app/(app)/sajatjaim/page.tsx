@@ -4,8 +4,9 @@ import { GamificationCard } from "@/components/views/gamification-card";
 import { ReferralHub } from "@/components/views/referral-hub";
 import { Icon, KintiLogo } from "@/components/ui";
 
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
+// Kliens-shell: nulla szerver-adat (mindent a kliens olvas localStorage-ból),
+// ezért statikus — NEM fogyaszt edge-route-ot (~205-ös deploy-plafon!).
+export const dynamic = "force-static";
 
 export const metadata = {
   title: "Saját posztjaim",
@@ -17,7 +18,7 @@ export const metadata = {
  * /sajatjaim — a felhasználó lokálisan tárolt poszt-tokenjeinek kezelője.
  *
  * Nincs szerver-oldali adat. A teljes tartalmat a kliens olvassa be a
- * localStorage-ból. Az oldal force-static — semmilyen Edge-erőforrás nem fogyy.
+ * localStorage-ból. Az oldal force-static — semmilyen Edge-erőforrás nem fogy.
  */
 export default function MyPostsPage() {
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
