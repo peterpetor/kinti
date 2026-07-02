@@ -58,10 +58,10 @@ const CATEGORY = {
   kozmetikus: ["szepseg", "Kozmetikus"],
   szemelyiedzo: ["szemelyi_edzo", "Személyi edző"],
   biztosito: ["biztositas", "Biztosítás"],
-  // FIGYELEM: az `elelmiszerbolt` SZÁNDÉKOSAN nincs itt — a magyar élelmiszer-
-  // boltok/webshopok a dedikált /magyarbolt funkcióba kerülnek (hofladen_spots,
-  // category="bolt"), nem a szaknévsorba (ott nincs jó grocery kategória). Az
-  // ilyen sorokat a script kihagyja (lásd a [KIHAGYVA] logot).
+  // FIGYELEM: az `elelmiszerbolt` SZÁNDÉKOSAN nincs itt — a szaknévsorban nincs
+  // jó grocery kategória, a korábbi dedikált /magyarbolt funkció pedig megszűnt
+  // (2026-07-01). Az ilyen sorokat a script kihagyja (lásd a [KIHAGYVA] logot);
+  // ha valaha lesz élelmiszer-kategória, itt kell felvenni a mappinget.
   allatorvos: ["allatorvos", "Állatorvos"],
   borgyogyasz: ["borgyogyasz", "Bőrgyógyász"],
   alternativgyogyasz: ["termeszetgyogyasz", "Természetgyógyász"],

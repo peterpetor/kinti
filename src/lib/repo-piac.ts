@@ -1,46 +1,11 @@
 /**
- * repo-piac.ts — Közösségi apró: határátkelő-jelentések és bolt-akciók.
+ * repo-piac.ts — Közösségi apró: bolt-akciók (deal reports).
  *
- * (A Spontán meetup, Hofladen és a régi SOS-duplikátum réteg megszűnt — a SOS
- * élő rétege a sos-repo.ts.)
+ * (A Spontán meetup, Hofladen, a határátkelő-jelentések és a régi SOS-duplikátum
+ * réteg megszűnt — a border_reports táblát a 0057 ejtette; a SOS élő rétege a
+ * sos-repo.ts.)
  */
 import { getDB } from "./cloudflare";
-
-// --- Border reports (4h TTL) -------------------------------------------------
-
-export type BorderStatus = "strict" | "moderate" | "easy" | "closed" | "traffic";
-
-export interface BorderReport { id: string; crossingId: string; status: BorderStatus; note: string | null; createdAt: string; expiresAt: string; }
-
-export interface CreateBorderReportInput {
-  id: string; crossingId: string; status: BorderStatus; note: string | null;
-  ipHash: string | null; expiresAt: string;
-}
-
-interface BorderReportRow {
-  id: string; crossing_id: string; status: string; note: string | null;
-  created_at: string; expires_at: string;
-}
-
-export async function createBorderReport(input: CreateBorderReportInput): Promise<void> {
-  await getDB().prepare(`INSERT INTO border_reports (id, crossing_id, status, note, ip_hash, expires_at) VALUES (?, ?, ?, ?, ?, ?)`).bind(input.id, input.crossingId, input.status, input.note, input.ipHash, input.expiresAt).run();
-}
-
-export async function getActiveBorderReports(): Promise<BorderReport[]> {
-  const { results } = await getDB().prepare(`SELECT * FROM border_reports WHERE datetime(expires_at) > datetime('now') ORDER BY created_at DESC`).all<BorderReportRow>();
-  return results.map((r) => ({ id: r.id, crossingId: r.crossing_id, status: r.status as BorderStatus, note: r.note, createdAt: r.created_at, expiresAt: r.expires_at }));
-}
-
-export async function countRecentBorderReports(ipHash: string | null): Promise<number> {
-  if (!ipHash) return 0;
-  const row = await getDB().prepare(`SELECT COUNT(*) AS n FROM border_reports WHERE ip_hash = ? AND datetime(created_at) > datetime('now', '-1 hour')`).bind(ipHash).first<{ n: number }>();
-  return row?.n ?? 0;
-}
-
-export async function purgeExpiredBorderReports(): Promise<number> {
-  const res = await getDB().prepare("DELETE FROM border_reports WHERE datetime(expires_at) <= datetime('now')").run();
-  return res.meta.changes ?? 0;
-}
 
 // --- Deal reports (24h TTL) --------------------------------------------------
 
