@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
@@ -17,8 +17,18 @@ export function DropdownMenu() {
   const { isSignedIn, isLoaded } = useAuth();
   // Tulajdonosi állapot: van-e már Szaknévsor-vállalkozása? (egy fiók = egy cég)
   // Ez alapján a menü VAGY a „Vidd fel a vállalkozásod”, VAGY a „Vállalkozásom”
-  // pontot mutatja — sose mindkettőt. Nyitáskor, egyszer töltjük be.
-  const [hasBusiness, setHasBusiness] = useState<boolean | null>(null);
+  // pontot mutatja — sose mindkettőt. A legutóbbi ismert értéket localStorage-ból
+  // indítjuk (azonnal a HELYES pont látszik, nincs téves villanás), nyitáskor
+  // pedig a háttérben frissítjük a szerverről.
+  const [hasBusiness, setHasBusiness] = useState<boolean | null>(() => {
+    try {
+      const v = typeof window !== "undefined" ? localStorage.getItem("kinti_has_business") : null;
+      return v === "1" ? true : v === "0" ? false : null;
+    } catch {
+      return null;
+    }
+  });
+  const statusFetched = useRef(false);
   // A menü kattintásra (mount után) renderel → az ország közvetlenül olvasható.
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
@@ -36,20 +46,30 @@ export function DropdownMenu() {
     };
   }, [isOpen]);
 
-  // Menü megnyitásakor (bejelentkezett usernél, egyszer) lekérjük: van-e vállalkozása.
+  // Menü megnyitásakor (bejelentkezett usernél, mount-onként egyszer) frissítjük
+  // a szerverről — a cache-elt érték így sosem ragad be (pl. közben létrehozta
+  // vagy másik fiókkal lépett be). Hibánál a következő nyitáskor újrapróbáljuk.
   useEffect(() => {
-    if (!isOpen || !isSignedIn || hasBusiness !== null) return;
+    if (!isOpen || !isSignedIn || statusFetched.current) return;
+    statusFetched.current = true;
     let cancelled = false;
     fetch("/api/owner/status")
       .then((r) => (r.ok ? (r.json() as Promise<{ hasBusiness?: boolean }>) : null))
       .then((d) => {
-        if (!cancelled && d) setHasBusiness(!!d.hasBusiness);
+        if (cancelled || !d) return;
+        const v = !!d.hasBusiness;
+        setHasBusiness(v);
+        try {
+          localStorage.setItem("kinti_has_business", v ? "1" : "0");
+        } catch {}
       })
-      .catch(() => {});
+      .catch(() => {
+        statusFetched.current = false;
+      });
     return () => {
       cancelled = true;
     };
-  }, [isOpen, isSignedIn, hasBusiness]);
+  }, [isOpen, isSignedIn]);
 
   const close = () => setIsOpen(false);
 
@@ -110,9 +130,16 @@ export function DropdownMenu() {
 
               {/* ── Gyors elérés (mindig látszik) ──────── */}
               {/* Egy fiók = egy cég: akinek MÁR van vállalkozása, annak a kezelő
-                  pontot mutatjuk; akinek nincs, a felvitel-CTA-t. Amíg tölt
-                  (hasBusiness === null), a felvitel-CTA az alapértelmezett. */}
-              {hasBusiness ? (
+                  pontot mutatjuk; akinek nincs, a felvitel-CTA-t — sose a rosszat.
+                  Bejelentkezve, amíg az első állapot-lekérés fut (nincs még cache),
+                  semleges skeleton (ne villanjon téves menüpont). Kijelentkezve
+                  mindig a felvitel-CTA (a /vallalkozo flow úgyis beléptet). */}
+              {isSignedIn && hasBusiness === null ? (
+                <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl" aria-hidden>
+                  <span className="h-8 w-8 shrink-0 rounded-xl bg-surface-alt animate-pulse" />
+                  <span className="h-4 w-44 rounded-md bg-surface-alt animate-pulse" />
+                </div>
+              ) : isSignedIn && hasBusiness ? (
                 <Link href="/profil" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🏪
