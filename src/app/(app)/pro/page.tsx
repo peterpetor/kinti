@@ -21,6 +21,7 @@ export default function ProPage() {
   const proFeatures = [
     "Utalás-asszisztens — mérhető havi spórolás a hazautaláson",
     "Határidő-asszisztens — soha ne maradj le (engedély, biztosítás, adó)",
+    "Állás-találat (% match) — melyik állás illik a profilodhoz + becsült nettó bér a régiódban",
     "AI Interjú Szimulátor — országod cégeihez (CH/AT/DE/NL)",
     "AI CV-audit — önéletrajz-elemzés és tippek",
     "Nyelvkurzus — svájci, osztrák, német és holland",
