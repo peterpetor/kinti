@@ -163,8 +163,10 @@ export default function ProPage() {
         {/* Szaknévsor PRO (Businesses) */}
         <div className="flex flex-col rounded-[32px] border-2 border-pro bg-surface p-6 shadow-pop relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-pro/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+          {/* „Legnépszerűbb” tényállítás volt (bizonyíthatónak kellene lennie) —
+              szubjektív ajánlás megengedett, szuperlatívusz-tényállítás nem. */}
           <div className="absolute top-4 right-4 bg-pro text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-pill shadow-sm">
-            Legnépszerűbb
+            Ajánlott
           </div>
           
           <div className="mb-3 inline-flex items-center justify-center rounded-full bg-pro/10 w-14 h-14 text-pro text-2xl">
@@ -188,7 +190,7 @@ export default function ProPage() {
 
           <ul className="space-y-3 mb-8 flex-1">
             <FeatureItem text="Sárga PRO kiemelés a találati listákban" />
-            <FeatureItem text="Garantált Top pozíció a kategóriádban" />
+            <FeatureItem text="A lista elején jelensz meg a kategóriádban (a kiemelt cégek között)" />
             <FeatureItem text="Egyedi profil borítókép és arculat-szín" />
             <FeatureItem text="Analytics: profil-megtekintések, CTR, keresőszavak" />
             <FeatureItem text="Időpontfoglalás widget (Calendly-beágyazás)" />

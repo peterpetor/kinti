@@ -15,7 +15,7 @@ const EXEMPT_PATHS = ["/aszf", "/adatvedelem", "/impresszum"];
 
 /** A jogi feltételek verziója — a hozzájárulás-naplóhoz (GDPR demonstrálhatóság),
  *  és a jövőbeli feltétel-változáskori újra-kéréshez. Feltétel-módosításkor emeld. */
-const LEGAL_VERSION = "2026-07-01";
+const LEGAL_VERSION = "2026-07-02"; // ÁSZF 10/A rangsor-átláthatóság (P2B) + Omnibus-tájékoztatók
 
 function pathIsExempt(pathname: string): boolean {
   return EXEMPT_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));

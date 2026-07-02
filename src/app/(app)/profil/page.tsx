@@ -384,8 +384,8 @@ async function OwnerDashboard({
           <p className="text-[13px] font-bold text-ink">🚀 Szaknévsor PRO — korlátlan ajánlatkérés + kiemelt láthatóság</p>
           <p className="mt-0.5 mb-2.5 text-[12px] text-ink-muted">
             {lockedCount > 0
-              ? `🔒 ${lockedCount} ajánlatkérés zárolva vár rád. PRO-val mindet eléred — plusz sárga kiemelés és top pozíció.`
-              : "Az első 5 ajánlatkérés/hó ingyenes. PRO-val korlátlanul fogadod őket, sárga kiemelés, top pozíció a kategóriádban."}
+              ? `🔒 ${lockedCount} ajánlatkérés zárolva vár rád. PRO-val mindet eléred — plusz sárga kiemelés és hely a lista elején.`
+              : "Az első 5 ajánlatkérés/hó ingyenes. PRO-val korlátlanul fogadod őket, sárga kiemelés, hely a lista elején a kategóriádban."}
           </p>
           <BoostCheckoutButton
             product="business_pro_monthly"

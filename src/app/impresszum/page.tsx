@@ -87,6 +87,20 @@ export default function ImpresszumPage() {
         megjelenítéshez szükséges, nem kizárólagos licencet kap ezek közlésére.
       </p>
 
+      <h2>Adatforrások</h2>
+      <p>
+        A Szaknévsor egyes bejegyzéseinek alapadatai (név, cím, koordináta) részben az{" "}
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">
+          OpenStreetMap
+        </a>{" "}
+        adatbázisából származnak — © OpenStreetMap közreműködők, az{" "}
+        <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener noreferrer">
+          ODbL licenc
+        </a>{" "}
+        szerint. A térképcsempéket a CARTO / Esri szolgáltatja. Az árfolyam-adatok
+        tájékoztató jellegűek, harmadik féltől származnak.
+      </p>
+
       <h2>Online vitarendezés (ODR)</h2>
       <p>
         Az Európai Bizottság korábbi online vitarendezési (ODR) platformja{" "}

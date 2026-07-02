@@ -264,8 +264,9 @@ export function UtalasAssistant() {
           </button>
           <p className="text-[10.5px] leading-snug text-ink-faint">
             A megtakarítás BECSÜLT (publikált átlag-spread a banki utaláshoz viszonyítva), nem real-time.
-            A Wise/Revolut kártya referál-link — ha rajta keresztül utalsz, a Kintit is támogatod.
-            Nem pénzügyi tanácsadás.
+            A Wise/Revolut kártya ajánlói (referral) link — ha rajta keresztül regisztrálsz, az üzemeltető
+            juttatást kaphat; a szolgáltatók rangsorát ez NEM befolyásolja (az kizárólag a megérkező
+            összeg szerint áll fel). Nem pénzügyi tanácsadás.
           </p>
         </section>
       )}

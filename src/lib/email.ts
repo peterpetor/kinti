@@ -1032,7 +1032,7 @@ Oldd fel: https://kinti.app/profil
       <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">🔒 ${n > 1 ? `${n} új árajánlat-kérés vár rád!` : "Új árajánlat-kérésed érkezett!"}</p>
       <div style="margin:0 0 20px;padding:16px;background:#fff7e6;border:1px solid #f0d8a0;border-radius:14px;">
         <div style="font-size:13.5px;line-height:1.6;color:#0e1f17;">
-          Ebben a hónapban elérted az <strong>5 ingyenes ajánlatkérést</strong>. ${n > 1 ? "Ezek" : "Ez"} a kérő neve, üzenete és elérhetősége <strong>Szaknévsor PRO</strong>-val oldható fel — plusz sárga kiemelés és top pozíció a kategóriádban.
+          Ebben a hónapban elérted az <strong>5 ingyenes ajánlatkérést</strong>. ${n > 1 ? "Ezek" : "Ez"} a kérő neve, üzenete és elérhetősége <strong>Szaknévsor PRO</strong>-val oldható fel — plusz sárga kiemelés és megjelenés a lista elején, a kiemelt cégek között.
         </div>
       </div>
       <p style="margin:0 0 20px;">

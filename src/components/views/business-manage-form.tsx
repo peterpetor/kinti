@@ -111,7 +111,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           <div className="mb-2 text-3xl">🚀</div>
           <h3 className="mb-1 text-[17px] font-black text-pro tracking-tight">Válts Szaknévsor PRO-ba!</h3>
           <p className="mb-3 text-[13px] font-medium text-ink-muted leading-snug">
-            Tűnj ki a sárga kiemeléssel, kerülj a listák legtetejére, és{" "}
+            Tűnj ki a sárga kiemeléssel, kerülj a lista elejére (a kiemelt cégek közé), és{" "}
             <strong className="text-ink">lásd, hányan nézték meg és hívták</strong> a vállalkozásod —
             több magyar ügyfélért.
           </p>

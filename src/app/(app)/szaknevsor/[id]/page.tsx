@@ -512,6 +512,14 @@ export default async function BusinessPage({
             />
           </div>
 
+          {/* Omnibus-irányelv: a vélemények MELLETT kell közölni, hogyan (nem)
+              ellenőrizzük az eredetüket — nem elég az ÁSZF 7. pontja. */}
+          <p className="mt-2 text-[11px] leading-snug text-ink-faint">
+            ⓘ Az értékelések a felhasználók szubjektív véleményei. Közzététel előtt
+            visszaélés-szűrésen esnek át (moderáció), de azt <strong>nem ellenőrizzük</strong>,
+            hogy az értékelő valóban igénybe vette-e a szolgáltatást.
+          </p>
+
           <div className="mt-2.5 space-y-2.5">
             {reviews.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-line bg-surface-alt px-4 py-6 text-center text-[13px] text-ink-muted">

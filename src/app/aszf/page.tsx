@@ -6,7 +6,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-06-17">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-02">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -352,6 +352,20 @@ export default function AszfPage() {
           értesítés vagy saját észlelés alapján eltávolítjuk.
         </li>
       </ul>
+
+      <h2>10/A. Rangsorolás és fizetett kiemelés (átláthatóság)</h2>
+      <p>
+        A keresési találatok és listák <strong>fő rangsorolási paraméterei</strong>: (1) a{" "}
+        <strong>fizetett kiemelés</strong> (Szaknévsor PRO, illetve Kiemelt Állás — a kiemelt
+        bejegyzések a lista <strong>elején</strong> jelennek meg), (2) a keresési feltételeknek
+        (kategória, kulcsszó, régió) való megfelelés, (3) a <strong>földrajzi közelség</strong>.
+        A fizetett kiemelés tehát <strong>befolyásolja a megjelenési sorrendet</strong>; a kiemelt
+        bejegyzéseket a felületen minden esetben <strong>jól látható jelöléssel</strong>{" "}
+        („PRO” / „Kiemelt állás” címke, eltérő keret) különböztetjük meg a nem fizetett
+        találatoktól. A kiemelés a nem fizetett találatok egymás közötti (relevancia- és
+        közelség-alapú) sorrendjét nem változtatja meg, és nem minősül az adott vállalkozás
+        vagy hirdetés minőségére vonatkozó ajánlásnak.
+      </p>
 
       <h2>11. A Szolgáltatás rendelkezésre állása, Adatbiztonság és Vis Maior</h2>
       <p>
