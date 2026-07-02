@@ -1,26 +1,34 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getBusinessByOwner, getEmployerByOwner } from "@/lib/repo";
+import { isPro } from "@/lib/subscriptions";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
- * GET /api/owner/status → { hasBusiness, hasEmployer }
+ * GET /api/owner/status → { hasBusiness, hasEmployer, kintiPro, businessPro }
  *
- * A bejelentkezett user SAJÁT tulajdonosi állapota (van-e már Szaknévsor-
- * vállalkozása / Munkáltatói profilja). Csak boolean-öket ad vissza (nincs PII),
- * a menü ez alapján dönti el, a „Vidd fel a vállalkozásod” vagy a „Vállalkozásom”
- * pontot mutassa — egy fiók = egy cég, ezért ne jelenjen meg mindkettő.
+ * A bejelentkezett user SAJÁT állapota. Csak boolean-öket ad vissza (nincs PII):
+ *  - hasBusiness / hasEmployer: a menü ez alapján dönt (egy fiók = egy cég).
+ *  - kintiPro:   van-e aktív Kinti PRO (user-előfizetés).
+ *  - businessPro: a vállalkozása PRO-e (business.featured = Szaknévsor PRO).
+ * A /pro oldal ez alapján jelzi, MELYIK csomag AKTÍV már — átláthatóság.
  */
 export async function GET() {
   const { userId } = await auth();
   if (!userId) {
-    return NextResponse.json({ hasBusiness: false, hasEmployer: false });
+    return NextResponse.json({ hasBusiness: false, hasEmployer: false, kintiPro: false, businessPro: false });
   }
-  const [business, employer] = await Promise.all([
+  const [business, employer, kintiPro] = await Promise.all([
     getBusinessByOwner(userId),
     getEmployerByOwner(userId),
+    isPro(userId),
   ]);
-  return NextResponse.json({ hasBusiness: !!business, hasEmployer: !!employer });
+  return NextResponse.json({
+    hasBusiness: !!business,
+    hasEmployer: !!employer,
+    kintiPro,
+    businessPro: !!business?.featured,
+  });
 }
