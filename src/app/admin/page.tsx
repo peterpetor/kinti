@@ -9,6 +9,7 @@ import { AdminVerifyToggle } from "@/components/views/admin-verify-toggle";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { AdminCopyManageButton } from "@/components/admin/admin-copy-manage-button";
 import { ModerationDecideButtons } from "@/components/admin/moderation-decide-buttons";
+import { ReindexSearchButton } from "@/components/admin/reindex-search-button";
 import {
   getAdminStats,
   getAdminTrends,
@@ -437,6 +438,8 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
           >
             📋 Audit log (idővonal)
           </Link>
+          {/* Szemantikus kereső: teljes Vectorize-újraindexelés (seed-import után kell) */}
+          <ReindexSearchButton />
         </div>
       </section>
     </div>
