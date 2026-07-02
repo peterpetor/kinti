@@ -7,7 +7,7 @@
 export const EVENT_TAGS: Record<string, { label: string; emoji: string; color: string }> = {
   koncert:   { label: "Koncert / fellépés", emoji: "🎵", color: "#8b5cf6" },
   talalkozo: { label: "Találkozó / közösség", emoji: "🤝", color: "#1d4434" },
-  bolt:      { label: "Magyar bolt", emoji: "🛒", color: "#c8392e" },
-  etterem:   { label: "Magyar étterem", emoji: "🍽️", color: "#e2901a" },
+  // A „bolt" / „etterem" HELY-kategóriák megszűntek (2026-07-03, csak esemény
+  // küldhető be); a térkép az ismeretlen/régi tageket az `egyeb`-re ejti vissza.
   egyeb:     { label: "Egyéb", emoji: "📌", color: "#5c6d63" },
 };

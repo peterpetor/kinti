@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Magyar események a térképen",
   description:
-    "Magyar vonatkozású események, koncertek, találkozók, boltok és éttermek a térképen — Svájcban, Ausztriában, Németországban. Küldj be te is egyet (jóváhagyással).",
+    "Magyar vonatkozású események, koncertek és találkozók a térképen — Svájcban, Ausztriában, Németországban. Küldj be te is egyet (jóváhagyással).",
 };
 
 export default function EsemenyekPage() {
@@ -28,7 +28,7 @@ export default function EsemenyekPage() {
       </header>
 
       <p className="text-[12.5px] leading-snug text-ink-muted">
-        Koncertek, találkozók, magyar boltok és éttermek a környékeden. Ismersz egyet? Küldd be — jóváhagyás után felkerül.
+        Koncertek, találkozók, magyar események a környékeden. Tudsz egyről? Küldd be — jóváhagyás után felkerül.
       </p>
 
       <EventsMapView turnstileSiteKey={turnstileSiteKey} />

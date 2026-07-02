@@ -50,11 +50,14 @@ export function LocationPicker({
   value,
   onChange,
   className,
+  zoom = 12,
 }: {
   center: [number, number];
   value: { lat: number; lng: number } | null;
   onChange: (v: { lat: number; lng: number }) => void;
   className?: string;
+  /** Kezdő zoom — város-szinthez 12 (default); ország-áttekintéshez (pl. falu kijelölése) 7. */
+  zoom?: number;
 }) {
   // A térképet CSAK a modal beméreteződése UTÁN hozzuk létre. Ha a Leaflet egy
   // még 0/átmeneti méretű modal-konténerbe indul, a csempéket rossz mérethez kéri
@@ -75,7 +78,7 @@ export function LocationPicker({
 
   return (
     <div className={className}>
-      <MapContainer center={value ? [value.lat, value.lng] : center} zoom={12} className="h-full w-full rounded-card z-0" scrollWheelZoom>
+      <MapContainer center={value ? [value.lat, value.lng] : center} zoom={zoom} className="h-full w-full rounded-card z-0" scrollWheelZoom>
         <FallbackTileLayer url={TILE_URL} attribution={TILE_ATTR} />
         <MapAutoResize />
         <Recenter center={center} />

@@ -46,7 +46,7 @@ export default async function KozossegPage() {
             >
               ➕ Esemény beküldése
             </Link>
-            <p className="mt-1.5 text-center text-[11px] text-ink-faint">Koncert, találkozó, magyar hely — jóváhagyás után felkerül a térképre és ide is.</p>
+            <p className="mt-1.5 text-center text-[11px] text-ink-faint">Koncert, találkozó, közösségi program — jóváhagyás után felkerül a térképre és ide is.</p>
           </div>
 
           {/* Push-értesítés feliratkozás (új esemény a kantonodban) */}

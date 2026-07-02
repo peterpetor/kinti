@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 import type { KintiEvent } from "@/lib/types";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -19,7 +20,11 @@ const LocationPicker =
     ? lazy(() => import("./location-picker").then((m) => ({ default: m.LocationPicker })))
     : () => null;
 
-const TAG_KEYS = ["koncert", "talalkozo", "bolt", "etterem", "egyeb"] as const;
+// Csak esemény küldhető be — a hely-kategóriák (bolt/etterem) megszűntek (2026-07-03).
+const TAG_KEYS = ["koncert", "talalkozo", "egyeb"] as const;
+
+/** Sentinel a város-legördülőben: a listán kívüli (falu/kisváros) település. */
+const CUSTOM_CITY = "__mas";
 
 export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [prefCountry] = usePreferredCountry();
@@ -56,6 +61,7 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
   const [title, setTitle] = useState("");
   const [tag, setTag] = useState<string>("talalkozo");
   const [city, setCity] = useState("");
+  const [customCity, setCustomCity] = useState("");
   const [pin, setPin] = useState<{ lat: number; lng: number } | null>(null);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -71,7 +77,9 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
   async function submit() {
     setErr(null);
     if (title.trim().length < 3) { setErr("Adj egy címet (min. 3 karakter)."); return; }
-    if (!city) { setErr("Válassz várost."); return; }
+    if (!city) { setErr("Válassz települést."); return; }
+    if (city === CUSTOM_CITY && customCity.trim().length < 2) { setErr("Add meg a település nevét."); return; }
+    if (city === CUSTOM_CITY && !pin) { setErr("Jelöld meg a település helyét a térképen."); return; }
     if (needsDate && !date) { setErr("Adj meg egy dátumot."); return; }
     if (!token) { setErr("Várd meg a robot-ellenőrzést."); return; }
     setSubmitting(true);
@@ -80,7 +88,7 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          country, city, title: title.trim(), tag,
+          country, city: city === CUSTOM_CITY ? customCity.trim() : city, title: title.trim(), tag,
           eventDate: date || null, startTime: time || null,
           venue: venue.trim() || null, description: desc.trim() || null,
           lat: pin?.lat ?? null, lng: pin?.lng ?? null,
@@ -101,7 +109,7 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
   }
 
   function resetForm() {
-    setTitle(""); setTag("talalkozo"); setCity(""); setPin(null); setDate(""); setTime(""); setVenue(""); setDesc("");
+    setTitle(""); setTag("talalkozo"); setCity(""); setCustomCity(""); setPin(null); setDate(""); setTime(""); setVenue(""); setDesc("");
     setToken(""); setErr(null); setDone(false); turnstileRef.current?.reset();
   }
 
@@ -132,16 +140,18 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
         onClick={() => { resetForm(); setModal(true); }}
         className="w-full rounded-pill bg-primary py-3.5 text-[15px] font-black text-white shadow-card transition active:scale-[0.98]"
       >
-        ➕ Esemény / hely beküldése
+        ➕ Esemény beküldése
       </button>
       <p className="text-center text-[11px] text-ink-faint">A beküldött eseményeket jóváhagyás után tesszük közzé.</p>
 
-      {/* Beküldő modal */}
-      {modal && (
+      {/* Beküldő modal — PORTÁLLAL a body-ra (BottomSheet-minta): a page-fa
+          space-y-* konténerei margin-t tennének a fixed backdropra (csík a
+          viewport tetején), és a stacking is tisztább body-szinten. */}
+      {modal && typeof document !== "undefined" && createPortal(
         <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 bg-ink/40 backdrop-blur-sm" onClick={() => !submitting && setModal(false)}>
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-card border border-line bg-surface p-5 shadow-card-strong space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-[16px] font-extrabold text-ink">➕ Esemény / hely beküldése</h3>
+              <h3 className="text-[16px] font-extrabold text-ink">➕ Esemény beküldése</h3>
               <button type="button" onClick={() => setModal(false)} className="grid h-8 w-8 place-items-center rounded-full bg-surface-alt text-ink-muted">✕</button>
             </div>
 
@@ -163,29 +173,45 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
                 </div>
 
                 <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120}
-                  placeholder={tag === "bolt" || tag === "etterem" ? "Név (pl. Gulyás Bisztró)" : "Esemény címe"}
+                  placeholder="Esemény címe (pl. Magyar bográcsozás)"
                   className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink" />
 
                 <select value={city} onChange={(e) => { setCity(e.target.value); setPin(null); }} className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink">
-                  <option value="">Melyik városban?</option>
+                  <option value="">Melyik településen?</option>
                   {cityList.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+                  <option value={CUSTOM_CITY}>Más település (falu/kisváros)…</option>
                 </select>
+
+                {city === CUSTOM_CITY && (
+                  <input value={customCity} onChange={(e) => setCustomCity(e.target.value)} maxLength={60}
+                    placeholder="Település neve (pl. Wangen an der Aare)"
+                    className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink" />
+                )}
 
                 {(() => {
                   const sel = cityList.find((c) => c.name === city);
-                  if (!sel) return null;
+                  const isCustom = city === CUSTOM_CITY;
+                  if (!sel && !isCustom) return null;
+                  // Falu/kisváros: nincs ismert koordináta → ország-áttekintésről indulunk,
+                  // és a pin KÖTELEZŐ (a szerver is megköveteli).
+                  const center: [number, number] = sel ? [sel.lat, sel.lng] : [cityList[0].lat, cityList[0].lng];
                   return (
                     <div className="space-y-1">
                       <Suspense fallback={<div className="grid h-[200px] place-items-center rounded-card border border-line bg-surface text-[12px] text-ink-muted">Térkép…</div>}>
                         <LocationPicker
-                          center={[sel.lat, sel.lng]}
+                          center={center}
+                          zoom={isCustom ? 7 : 12}
                           value={pin}
                           onChange={setPin}
                           className="h-[200px] overflow-hidden rounded-card border border-line"
                         />
                       </Suspense>
                       <p className="text-[11px] text-ink-faint">
-                        {pin ? "📍 Pontos hely kijelölve — koppints máshová a módosításhoz." : "Koppints a térképre a pontos helyhez (opcionális — alapból a város közepe)."}
+                        {pin
+                          ? "📍 Hely kijelölve — koppints máshová a módosításhoz."
+                          : isCustom
+                            ? "Koppints a térképre a település helyéhez (kötelező) — zoomolj rá nyugodtan."
+                            : "Koppints a térképre a pontos helyhez (opcionális — alapból a város közepe)."}
                       </p>
                     </div>
                   );
@@ -210,11 +236,12 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
                   className="w-full rounded-pill bg-primary py-3 text-[14px] font-black text-white shadow-card disabled:opacity-60">
                   {submitting ? "Beküldés…" : "Beküldöm jóváhagyásra"}
                 </button>
-                <p className="text-[11px] leading-snug text-ink-faint">A helyet a város szintjén jelöljük. Anonim — nincs fiók, az IP-t nem tároljuk (csak spam ellen).</p>
+                <p className="text-[11px] leading-snug text-ink-faint">Falu vagy kisváros? Válaszd a „Más település…" opciót, és jelöld a térképen. Anonim — nincs fiók, az IP-t nem tároljuk (csak spam ellen).</p>
               </>
             )}
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );
