@@ -547,6 +547,12 @@ export default async function BusinessPage({
                     </div>
                   </div>
 
+                  {r.body?.trim() && (
+                    <p className="whitespace-pre-line text-[13px] leading-relaxed text-ink">
+                      {r.body.trim()}
+                    </p>
+                  )}
+
                   <div className="mt-2.5 flex items-center justify-end border-t border-line/30 pt-2">
                     <ReportButton contentType="review" contentId={r.id} variant="link" />
                   </div>

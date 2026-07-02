@@ -2,6 +2,7 @@
  * Account nélküli vélemény-rendszer — közös konstansok + validáció.
  * Egy helyen, hogy a kliens-form és a szerver-route ugyanazt érvényesítse.
  */
+import { containsProfanity } from "./profanity";
 
 /** Megerősítő link érvényessége (ms). 24 óra — utána a piszkozat törlődik. */
 export const REVIEW_CONFIRM_TTL_MS = 24 * 60 * 60 * 1000;
@@ -85,8 +86,20 @@ export function validateReviewInput(
     errors.push({ field: "rating", message: "Adj 1–5 csillagot." });
   }
 
-  const body = ""; // rating-only
-
+  // Szöveges vélemény — OPCIONÁLIS (2026-07-03 óta újra). Minden vélemény
+  // admin-moderált (kézi ellenőrzés), de a trágárságot már beküldéskor
+  // elutasítjuk (lib/profanity — magyar-tudatos prefix-match).
+  const body = str(input.body);
+  if (body) {
+    if (body.length > REVIEW_LIMITS.bodyMax) {
+      errors.push({ field: "body", message: `Túl hosszú szöveg (max. ${REVIEW_LIMITS.bodyMax} karakter).` });
+    } else if (body.length < REVIEW_LIMITS.bodyMin) {
+      errors.push({ field: "body", message: "Túl rövid szöveg — írj legalább pár szót, vagy hagyd üresen." });
+    }
+    if (containsProfanity(body).hit) {
+      errors.push({ field: "body", message: "A szöveg trágár kifejezést tartalmaz — kérjük, fogalmazd át." });
+    }
+  }
 
   // reviewerName MEZŐ ELTÁVOLÍTVA — auto-generált handle a megjelenítéshez.
   // Üres string a backend felé, csendben ignorálva.
@@ -105,8 +118,6 @@ export function validateReviewInput(
         "A Szolgáltatás csak 18. életévét betöltött személyek által vehető igénybe.",
     });
   }
-
-  // Profanity check nem kell, mert nincs szöveges tartalom.
 
   if (errors.length) return { ok: false, errors };
 

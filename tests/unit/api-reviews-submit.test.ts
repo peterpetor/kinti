@@ -119,4 +119,38 @@ describe("POST /api/reviews/submit", () => {
     expect(res.status).toBe(409);
     expect(publishReview).not.toHaveBeenCalled();
   });
+
+  it("szöveges vélemény → 200, a body eljut a publishReview-ig", async () => {
+    const res = await POST(req({ ...validBody, body: "Nagyon korrekt, pontos munka, ajánlom." }));
+    expect(res.status).toBe(200);
+    expect(publishReview).toHaveBeenCalledWith(
+      expect.objectContaining({ body: "Nagyon korrekt, pontos munka, ajánlom." }),
+    );
+  });
+
+  it("trágár szöveg → 400 (body mező-hiba), nem publikálódik", async () => {
+    const res = await POST(req({ ...validBody, body: "Szar volt az egész, kurva drága." }));
+    expect(res.status).toBe(400);
+    const json = (await res.json()) as { details?: { field: string }[] };
+    expect(json.details?.some((d) => d.field === "body")).toBe(true);
+    expect(publishReview).not.toHaveBeenCalled();
+  });
+
+  it("ragozott trágárság is fennakad (prefix-match) → 400", async () => {
+    const res = await POST(req({ ...validBody, body: "Ez egy fostalicska hely, kurvára ne gyere ide." }));
+    expect(res.status).toBe(400);
+    expect(publishReview).not.toHaveBeenCalled();
+  });
+
+  it("ártalmatlan hasonló szó (szarvas) NEM akad fenn → 200", async () => {
+    const res = await POST(req({ ...validBody, body: "A szarvasgombás pizzájuk kiváló volt!" }));
+    expect(res.status).toBe(200);
+    expect(publishReview).toHaveBeenCalledTimes(1);
+  });
+
+  it("túl rövid (de nem üres) szöveg → 400", async () => {
+    const res = await POST(req({ ...validBody, body: "ok" }));
+    expect(res.status).toBe(400);
+    expect(publishReview).not.toHaveBeenCalled();
+  });
 });

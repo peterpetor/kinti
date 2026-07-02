@@ -206,9 +206,14 @@ export function containsProfanity(text: string | null | undefined): ProfanityRes
     }
   }
 
-  // 2) Szótő-prefix illesztés
-  for (const token of tokens) {
-    if (WHITELIST_TOKENS.has(token)) continue;
+  // 2) Szótő-prefix illesztés. A whitelist is PREFIX-alapú: a „szarvas" nemcsak
+  // önmagát engedi át, hanem az összetételeit/ragozott alakjait is
+  // (szarvasgombás, szarvasokkal, …) — különben minden összetételt listázni
+  // kellene (a „szarvasgombás" hamis pozitív volt).
+  outer: for (const token of tokens) {
+    for (const safe of WHITELIST_TOKENS) {
+      if (token.startsWith(safe)) continue outer;
+    }
     for (const stem of BLOCKED_STEMS) {
       if (token.startsWith(stem)) {
         return { hit: true, matched: token };

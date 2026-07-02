@@ -211,7 +211,7 @@ export function ReviewForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-3" noValidate>
       {/* Csillag-választó — ez a kötelező rész (a „kötelező" jelzés a csillagokra
-          vonatkozik, NEM az emailre). A vélemény csak csillagból áll. */}
+          vonatkozik, NEM az emailre/szövegre). */}
       <Section title="Hány csillagot adsz?" required>
         <RatingPicker
           value={form.rating}
@@ -220,7 +220,22 @@ export function ReviewForm({
         <FieldError msg={errors.rating} />
       </Section>
 
-
+      {/* Szöveges vélemény — OPCIONÁLIS. Minden vélemény kézi jóváhagyás után
+          jelenik meg; a trágár szöveget a szerver beküldéskor elutasítja. */}
+      <Section title="Írnál róla pár mondatot? (opcionális)">
+        <textarea
+          value={form.body}
+          onChange={(e) => setField("body", e.target.value)}
+          placeholder="Pl. Pontos volt, korrekt áron dolgozott, magyarul intéztünk mindent…"
+          maxLength={REVIEW_LIMITS.bodyMax}
+          rows={3}
+          className={cn(inputCls(errors.body), "resize-y")}
+        />
+        <FieldError msg={errors.body} />
+        <p className="mt-1.5 text-[11px] leading-snug text-ink-muted">
+          Jóváhagyás után jelenik meg a vállalkozás oldalán, a csillagod mellett.
+        </p>
+      </Section>
 
       {/* Email — OPCIONÁLIS. Auto-generált handle ("VidámPék_42") kerül a publikus
           vélemény mellé. Zéró tárolt PII. */}

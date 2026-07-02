@@ -100,10 +100,9 @@ export async function POST(req: Request) {
   }
   await logAiRateLimit("review-submit", ipHash);
 
-  // A vélemény CSAK csillagos (1–5) — nincs szöveges body vagy név (lásd
-  // validateReviewInput), ezért szöveg-moderáció (moderateText) és spam-scoring
-  // (assessSpam) sem szükséges. HA valaha visszajön a szöveges vélemény, itt kell
-  // újra bevezetni a moderateText + assessSpam guardot a beküldött szövegre.
+  // Csillag (1–5) + OPCIONÁLIS szöveg. A trágárság-szűrő a validateReviewInput-ban
+  // fut (lib/profanity, beküldéskor elutasít); AI-moderáció szándékosan nincs —
+  // minden vélemény admin-jóváhagyásra vár (kézi ellenőrzés), az elég.
 
   // === ÚJ FŐÚT (local-first) — azonnal publikálva, manage_token a kliensnek ===
   if (!hasEmail) {
@@ -136,7 +135,9 @@ export async function POST(req: Request) {
     notifyAdminContentPending({
       contentType: "vélemény",
       title: `${validation.value.rating}★ — ${business.name}`,
-      preview: "Csillagos értékelés — nincs szöveges tartalom.",
+      preview: validation.value.body
+        ? validation.value.body.slice(0, 140)
+        : "Csillagos értékelés — nincs szöveges tartalom.",
       submitterEmail: null,
     }).catch((e) => safeLogError("reviews/submit:notifyAdmin", e));
     return NextResponse.json(
