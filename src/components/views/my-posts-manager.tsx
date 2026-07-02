@@ -14,6 +14,8 @@ import {
   type MyPostEntry,
   type PostType,
 } from "@/lib/my-posts";
+import { handleFromId } from "@/lib/handle";
+import { REVIEW_LIMITS } from "@/lib/reviews";
 
 const TYPE_META: Record<PostType, { label: string; icon: string; color: string }> = {
   event:    { label: "Esemény",      icon: "📅", color: "#E4405F" },
@@ -297,6 +299,14 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
                     🗑 Listából
                   </button>
                 </div>
+                {/* Vélemény: megjelenő név átírása helyben (a manage-token a jog) */}
+                {it.type === "review" && (
+                  <ReviewNameInline
+                    token={it.manageToken}
+                    fallback={handleFromId(it.id)}
+                    onSaved={(n) => showMsg(`Megjelenő név átírva: ${n}`)}
+                  />
+                )}
               </div>
             );
           })}
@@ -315,6 +325,97 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * Inline név-átíró a vélemény-sorokhoz: „✏️ Megjelenő név" → input + Mentem.
+ * A PATCH /api/reviews/manage/<token> validál (max 40 kar. + trágárság-szűrő);
+ * üresre mentve visszaáll az auto-álnév.
+ */
+function ReviewNameInline({
+  token,
+  fallback,
+  onSaved,
+}: {
+  token: string;
+  fallback: string;
+  onSaved: (name: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function save() {
+    setErr(null);
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/reviews/manage/${token}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ reviewerName: name }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setErr(data.error ?? "A mentés nem sikerült.");
+        return;
+      }
+      onSaved(name.trim() || `„${fallback}" (álnév)`);
+      setOpen(false);
+      setName("");
+    } catch {
+      setErr("Hálózati hiba — próbáld újra.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="mt-2 inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[11.5px] font-bold text-ink active:scale-95"
+      >
+        ✏️ Megjelenő név átírása
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-2 space-y-1.5">
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => { setName(e.target.value); setErr(null); }}
+          placeholder={`Új név — üresen: „${fallback}"`}
+          maxLength={REVIEW_LIMITS.reviewerNameMax}
+          autoFocus
+          className="h-9 min-w-0 flex-1 rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/30"
+        />
+        <button
+          type="button"
+          onClick={save}
+          disabled={busy}
+          className={cn(
+            "h-9 shrink-0 rounded-pill bg-primary px-3.5 text-[12px] font-bold text-white active:scale-95",
+            busy && "cursor-wait opacity-60",
+          )}
+        >
+          {busy ? "Mentés…" : "Mentem"}
+        </button>
+        <button
+          type="button"
+          onClick={() => { setOpen(false); setErr(null); }}
+          className="h-9 shrink-0 rounded-pill border border-line bg-surface px-3 text-[12px] font-bold text-ink-muted active:scale-95"
+        >
+          Mégse
+        </button>
+      </div>
+      {err && <p className="text-[11.5px] font-semibold text-accent">{err}</p>}
     </div>
   );
 }
