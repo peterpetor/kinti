@@ -124,6 +124,12 @@ export async function deleteReviewByManageToken(manageToken: string): Promise<st
   return row.business_id;
 }
 
+/** A megjelenő név átírása a kezelő-tokennel (üres név = vissza az auto-álnévre). */
+export async function updateReviewNameByManageToken(manageToken: string, reviewerName: string): Promise<boolean> {
+  const res = await getDB().prepare("UPDATE reviews SET reviewer_name = ? WHERE manage_token = ?").bind(reviewerName, manageToken).run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
 export async function getReviewByManageToken(manageToken: string): Promise<(Review & { businessName: string | null; email: string; manageToken: string; }) | null> {
   const row = await getDB()
     .prepare(

@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon, KintiLogo } from "@/components/ui";
 import { getReviewByManageToken } from "@/lib/repo";
+import { handleFromId } from "@/lib/handle";
 import { ReviewManageActions } from "@/components/views/review-manage-actions";
+import { ReviewNameEditor } from "@/components/views/review-name-editor";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -55,9 +57,17 @@ export default async function VelemenyKezelesPage({
 
         <p className="mt-3 text-[11.5px] text-ink-faint">
           Megjelenő név:{" "}
-          <span className="font-semibold text-ink-muted">{review.reviewerName}</span>
+          <span className="font-semibold text-ink-muted">
+            {review.reviewerName?.trim() || handleFromId(review.id)}
+          </span>
         </p>
       </section>
+
+      <ReviewNameEditor
+        token={params.token}
+        currentName={review.reviewerName?.trim() ?? ""}
+        fallbackHandle={handleFromId(review.id)}
+      />
 
       <ReviewManageActions token={params.token} />
 
