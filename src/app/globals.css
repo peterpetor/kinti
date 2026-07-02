@@ -86,6 +86,23 @@
     visibility: hidden;
   }
 
+  /* Jogi boot-gate: ha az eszközön nincs jogi elfogadás, a fej-szkript
+     (lib/legal-gate.ts) beállítja a `data-legal-pending`-et — a tartalom addig
+     rejtve, amíg a LegalGatekeeper modal a DOM-ba nem kerül. Így a főoldal nem
+     villan be a kapu előtt. Biztonsági időzítő itt is felold. */
+  html[data-legal-pending] body {
+    visibility: hidden;
+  }
+
+  /* Teljes-képernyős overlay-védőháló: a `space-y-*` szülő margin-top-ot tesz
+     MINDEN gyerekre — a `position:fixed; inset:0` backdropokra is, amitől az
+     overlay 16px-szel lejjebb kezdődik (krém „csík" a viewport tetején, az
+     esemény-beküldő modalnál jelentkezett). Egy overlay-nek sosem értelmes a
+     külső margin → nullázzuk. */
+  .fixed.inset-0 {
+    margin: 0 !important;
+  }
+
   body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;

@@ -5,6 +5,7 @@ import { jakarta, jetbrains } from "@/lib/fonts";
 import { SWRegister } from "@/components/sw-register";
 import { LegalGatekeeper } from "@/components/legal-gatekeeper";
 import { CountryRevealer } from "@/components/country-revealer";
+import { buildLegalGateScript } from "@/lib/legal-gate";
 import "./globals.css";
 
 /**
@@ -15,6 +16,13 @@ import "./globals.css";
  * Biztonsági időzítő 1500 ms után mindenképp feloldja (ha a JS-hidratálás elmarad).
  */
 const COUNTRY_GATE_SCRIPT = `(function(){try{var c=localStorage.getItem('kinti.country');if(c&&c!=='CH'){var d=document.documentElement;d.setAttribute('data-country-pending','');setTimeout(function(){d.removeAttribute('data-country-pending');},1500);}}catch(e){}})();`;
+
+/**
+ * Jogi boot-gate fej-szkript: ha a jogi elfogadás hiányzik, a tartalom NEM
+ * villanhat be a LegalGatekeeper modal előtt — a body rejtve marad, amíg a
+ * modal a DOM-ba nem kerül (lásd lib/legal-gate.ts + globals.css).
+ */
+const LEGAL_GATE_SCRIPT = buildLegalGateScript();
 
 // A mentett témát (Meleg/Modern) még a festés előtt visszaállítjuk, hogy reload
 // után is éljen a választás, villanás (FOUC) nélkül. Lásd ThemeToggle.
@@ -101,6 +109,8 @@ export default function RootLayout({
       <body className="min-h-dvh bg-bg font-sans text-ink antialiased">
         {/* Ország-feloldó boot-gate — még a tartalom festése előtt fusson. */}
         <script dangerouslySetInnerHTML={{ __html: COUNTRY_GATE_SCRIPT }} />
+        {/* Jogi boot-gate — a tartalom ne villanjon be a legal-modal előtt. */}
+        <script dangerouslySetInnerHTML={{ __html: LEGAL_GATE_SCRIPT }} />
         {/* Mentett téma visszaállítása festés előtt (Meleg/Modern perzisztencia). */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <ClerkProvider

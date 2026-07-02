@@ -2,16 +2,22 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { LEGAL_ACCEPTED_KEY, LEGAL_EXEMPT_PATHS } from "@/lib/legal-gate";
 
 /**
- * A modálnak NEM szabad megjelennie azokon az oldalakon, amiket maga a modal
- * linkel be (különben az új tab-ban is letakarná a tartalmat). Az olvasáshoz
- * szükséges jogi oldalakat itt kizárjuk.
+ * A kivétel-útvonalak és a localStorage-kulcs a lib/legal-gate.ts-ben élnek,
+ * mert a root layout boot-szkriptjének (data-legal-pending) ugyanazokkal a
+ * szabályokkal kell dolgoznia — ott van elmagyarázva a villanás-mentes minta.
  *
  * `window.location.pathname` használunk (nem usePathname) — egyszerűbb,
  * nem igényel Suspense-boundary-t, és a komponens már client-component.
  */
-const EXEMPT_PATHS = ["/aszf", "/adatvedelem", "/impresszum"];
+const EXEMPT_PATHS = LEGAL_EXEMPT_PATHS;
+
+/** A boot-gate feloldása: a body újra látható (globals.css rejti addig). */
+function releaseBootGate() {
+  document.documentElement.removeAttribute("data-legal-pending");
+}
 
 /** A jogi feltételek verziója — a hozzájárulás-naplóhoz (GDPR demonstrálhatóság),
  *  és a jövőbeli feltétel-változáskori újra-kéréshez. Feltétel-módosításkor emeld. */
@@ -27,9 +33,21 @@ export function LegalGatekeeper() {
   const [acceptAszf, setAcceptAszf] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
 
+  // A modal DOM-ba kerülése UTÁN oldjuk fel a boot-gate-et (commit után fut),
+  // így a reveal pillanatában már a kapu látszik — a tartalom nem villan be.
   useEffect(() => {
-    if (pathIsExempt(window.location.pathname)) return;
-    if (localStorage.getItem("kinti_legal_accepted")) return;
+    if (isOpen) releaseBootGate();
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (pathIsExempt(window.location.pathname)) {
+      releaseBootGate(); // védőháló — a boot-szkript kivétel-oldalon nem rejt
+      return;
+    }
+    if (localStorage.getItem(LEGAL_ACCEPTED_KEY)) {
+      releaseBootGate(); // védőháló — elfogadott eszközön a szkript nem rejtett
+      return;
+    }
 
     // Bejelentkezett user a Clerk REGISZTRÁCIÓNÁL már elfogadta az ÁSZF-et + az
     // Adatkezelési Tájékoztatót (és az ÁSZF kimondja a 18+ nagykorúsági kikötést)
@@ -42,17 +60,24 @@ export function LegalGatekeeper() {
     let cancelled = false;
     const decide = () => {
       if (cancelled) return;
-      if (getClerk()?.user) return; // bejelentkezett → kihagyjuk
+      if (getClerk()?.user) {
+        releaseBootGate(); // bejelentkezett → nincs kapu, a tartalom jöhet
+        return;
+      }
       setIsOpen(true);
       document.body.style.overflow = "hidden";
     };
 
-    if (getClerk()?.loaded) {
+    // Ha nincs Clerk session-cookie, biztosan anonim → nem várunk a Clerkre
+    // (a 2,5s várakozás alatt a boot-gate miatt üres lenne az oldal).
+    const hasSessionCookie = document.cookie.includes("__session=");
+    if (!hasSessionCookie || getClerk()?.loaded) {
       decide();
       return;
     }
-    // Megvárjuk, míg a Clerk betölt (max ~2,5s), hogy bejelentkezettnek ne
-    // villantsuk fel; ha addig nem tölt be, anonimnak tekintjük (mutatjuk).
+    // Session-cookie van → megvárjuk, míg a Clerk betölt (max ~2,5s), hogy
+    // bejelentkezettnek ne villantsuk fel; ha addig nem tölt be, anonimnak
+    // tekintjük (mutatjuk).
     const t0 = Date.now();
     const iv = setInterval(() => {
       if (getClerk()?.loaded || Date.now() - t0 > 2500) {
@@ -68,7 +93,7 @@ export function LegalGatekeeper() {
 
   const handleAccept = () => {
     if (ageConfirmed && acceptAszf && acceptPrivacy) {
-      localStorage.setItem("kinti_legal_accepted", "true");
+      localStorage.setItem(LEGAL_ACCEPTED_KEY, "true");
       // GDPR 7. cikk (1) — a hozzájárulás VERZIÓJÁT is eltároljuk (feltétel-változáskor
       // újra-kérhető), és szerver-oldalon is NAPLÓZZUK (demonstrálhatóság). Privacy:
       // véletlen, eszköz-szintű consentId (nem PII, nem tracking); best-effort küldés.
