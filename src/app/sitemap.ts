@@ -24,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/szaknevsor", priority: 0.9, changeFrequency: "daily" },
     { path: "/kozosseg", priority: 0.9, changeFrequency: "daily" },
     { path: "/allasok", priority: 0.8, changeFrequency: "daily" },
+    { path: "/kozvetites", priority: 0.8, changeFrequency: "monthly" },
     { path: "/tudasbazis", priority: 0.8, changeFrequency: "weekly" },
     { path: "/hirlevel", priority: 0.6, changeFrequency: "monthly" },
     { path: "/szaknevsor/uj", priority: 0.6, changeFrequency: "monthly" },

@@ -52,6 +52,24 @@ export default async function JobsPage() {
           <JobAlertRadar />
         </div>
 
+        {/* B2B jelölt-tölcsér: ingyenes aktív közvetítés (layer3 opt-in a profilban) */}
+        <Link
+          href="/allasok/profil"
+          className="flex items-center gap-3 rounded-card border-2 border-primary/25 bg-gradient-to-br from-primary/5 to-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary text-white text-xl">🤝</span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[11px] font-bold uppercase tracking-wider text-primary">Ingyenes állásközvetítés</span>
+            <span className="block text-[14.5px] font-extrabold leading-tight tracking-[-0.01em] text-ink">
+              Mi keressük az állást — neked
+            </span>
+            <span className="block text-[11.5px] text-ink-muted">
+              Töltsd ki a profilod, pipáld be a közvetítést — a többi a mi dolgunk. AT/DE/NL, a díjat a munkáltató fizeti.
+            </span>
+          </span>
+          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+        </Link>
+
         {/* Kereső + EGYESÍTETT lista: kiemelt Kinti-hirdetések elöl, majd a többi Kinti
             állás, végül az API-ból aggregált élő (kifelé linkelő) hirdetések — egy helyen. */}
         <JobsBrowser jobs={jobs} proMatch={proMatch} />
