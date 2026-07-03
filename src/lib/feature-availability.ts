@@ -50,6 +50,8 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "bussen",        // bírság-becslő (Bussen) — CH/AT/DE szabálysértés (NL nincs)
   "akciok",        // akció-térkép — CH/AT/DE boltláncok (NL holland láncok kellenek)
   "repulojegy",    // repülőjegy-figyelő — CH/AT/DE konfig (NL nincs; ne mutasson „hamarosan"-t)
+  "vizum",         // engedély-varázsló — CH/AT/DE lépéssorok; NL-nek svájci tartalmat adott volna
+  "berkalkulator", // nettó bérkalkulátor — CH/AT/DE adótáblák (NL nincs)
 ]);
 
 /**
