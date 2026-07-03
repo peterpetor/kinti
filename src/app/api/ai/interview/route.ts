@@ -77,8 +77,16 @@ Do NOT restart the conversation if a history already exists. Just continue it.`;
           : country === "DE"
             ? { adj: "deutscher", land: "Deutschland", landDat: "in Deutschland", motiv: "Motivation für Deutschland" }
             : { adj: "Schweizer", land: "der Schweiz", landDat: "in der Schweiz", motiv: "Motivation für die Schweiz" };
+      // Nyelvi variáns-útmutató: az „osztrák német"/„svájci német" ne csak címke
+      // legyen — a modell ténylegesen a variánst beszélje.
+      const langNote =
+        language === "Österreichisches Deutsch"
+          ? `\nSprach-Hinweis: Verwende österreichisches Standarddeutsch — österreichische Begrüßungen und Wendungen (z.B. "Grüß Gott"), österreichisches Vokabular (z.B. Jänner, heuer, Karenz), österreichische Arbeitswelt-Begriffe. Bleib dabei gut verständlich.`
+          : language === "Schweizerdeutsch"
+            ? `\nSprach-Hinweis: Führe das Gespräch auf Schweizerdeutsch (Dialekt, z.B. "Grüezi"), aber halte es für einen Lernenden verständlich. Das Abschluss-Feedback bleibt auf Ungarisch.`
+            : "";
       systemPrompt = `Du bist Herr Müller (oder Frau Keller), ein strenger aber fairer ${ctx.adj} HR-Manager (Personalchef) in der Branche "${profession}".
-Du führst gerade ein Bewerbungsgespräch auf ${language}.
+Du führst gerade ein Bewerbungsgespräch auf ${language}.${langNote}
 Der Bewerber (User) kommt aus Ungarn und möchte ${ctx.landDat} arbeiten.
 
 Regeln für dich:

@@ -21,31 +21,30 @@ const PROFESSIONS = [
   "Általános (Allgemein)",
 ];
 
-const LANGUAGES = [
-  { id: "Hochdeutsch", label: "Hochdeutsch (Sztenderd német)" },
-  { id: "Schweizerdeutsch", label: "Schweizerdeutsch (Svájci német dialect)" },
-  { id: "Englisch", label: "Angol" },
-];
+const HOCHDEUTSCH = { id: "Hochdeutsch", label: "Hochdeutsch (Sztenderd német)" };
+const AT_DEUTSCH = { id: "Österreichisches Deutsch", label: "Österreichisches Deutsch (Osztrák német)" };
+const CH_DEUTSCH = { id: "Schweizerdeutsch", label: "Schweizerdeutsch (Svájci német dialektus)" };
+const ENGLISCH = { id: "Englisch", label: "Angol" };
 
 export function AiInterviewSimulator() {
   // Ország-tudatos: a dialektus-opció és a HR-kontextus a választott országhoz.
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
-  // NL → holland/angol (Hollandiában nem német nyelvű az interjú); CH/AT/DE → német variánsok + angol.
+  // NL → holland/angol (Hollandiában nem német nyelvű az interjú). CH/AT/DE →
+  // MINDHÁROM német variáns választható (pl. Svájcban élő is készülhet osztrák
+  // interjúra), a helyi variáns előre sorolva.
   const languages = country === "NL"
-    ? [{ id: "Nederlands", label: "Nederlands (Holland)" }, LANGUAGES[2] /* Englisch */]
-    : [
-        LANGUAGES[0],
-        isAT
-          ? { id: "Österreichisches Deutsch", label: "Österreichisches Deutsch (Osztrák német)" }
-          : LANGUAGES[1],
-        LANGUAGES[2],
-      ];
+    ? [{ id: "Nederlands", label: "Nederlands (Holland)" }, ENGLISCH]
+    : isAT
+      ? [AT_DEUTSCH, HOCHDEUTSCH, CH_DEUTSCH, ENGLISCH]
+      : country === "CH"
+        ? [HOCHDEUTSCH, CH_DEUTSCH, AT_DEUTSCH, ENGLISCH]
+        : [HOCHDEUTSCH, AT_DEUTSCH, CH_DEUTSCH, ENGLISCH];
 
   const [hasStarted, setHasStarted] = useState(false);
   const [profession, setProfession] = useState(PROFESSIONS[0]);
-  const [language, setLanguage] = useState(LANGUAGES[0].id);
+  const [language, setLanguage] = useState(languages[0].id);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
