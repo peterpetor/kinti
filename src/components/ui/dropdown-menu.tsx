@@ -372,12 +372,6 @@ export function DropdownMenu() {
                   Határidő-asszisztens
                   <ProBadge />
                 </Link>
-                <Link href="/holvagyunk" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
-                    📍
-                  </span>
-                  Ki költözött melléd?
-                </Link>
                 {has("akciok") && (
                 <Link href="/akciok" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">

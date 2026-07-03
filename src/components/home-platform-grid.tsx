@@ -37,7 +37,6 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone }[] = [
   { href: "/arfolyam", icon: "trending", label: "Árfolyam", tone: "money" },
   { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke", tone: "learn" },
   { href: "/kviz", icon: "star", label: "Kvíz", tone: "learn" },
-  { href: "/holvagyunk", icon: "pin", label: "Hol vagyunk?", tone: "social" },
   { href: "/esemenyek", icon: "calendar", label: "Események", tone: "social" },
   { href: "/kozosseg", icon: "users", label: "Közösség", tone: "social" },
   { href: "/ugyintezes", icon: "document", label: "Ügyintézés", tone: "work" },
