@@ -1,0 +1,198 @@
+{
+ "CH|Mittlere Mühlestrasse 3, 8598 Bottighofen": {
+  "lat": 47.638879,
+  "lng": 9.205483
+ },
+ "CH|Schaffhauserstrasse 75, 8057 Zürich": {
+  "lat": 47.3925999,
+  "lng": 8.5386969
+ },
+ "NL|Keizersgracht 132": {
+  "lat": 52.3651768,
+  "lng": 4.90686
+ },
+ "DE|Münchener Str. 30, 83022 Rosenheim": {
+  "lat": 47.8537151,
+  "lng": 12.1227562
+ },
+ "DE|Münchnerstraße 18, 85774 Unterföhring": {
+  "lat": 48.1817871,
+  "lng": 11.6329124
+ },
+ "DE|Bettinastr. 30, 60325 Frankfurt am Main": {
+  "lat": 50.1116014,
+  "lng": 8.6600523
+ },
+ "AT|Hofstattgasse 17/3 (18. ker)": {
+  "lat": 48.2286442,
+  "lng": 16.3389532
+ },
+ "AT|Pelikangasse 4/3 (9. ker)": {
+  "lat": 48.2157005,
+  "lng": 16.3482312
+ },
+ "AT|Auhofstraße 189 (13. ker)": {
+  "lat": 48.1943519,
+  "lng": 16.2629505
+ },
+ "AT|Radetzkyplatz 2, 1030 Wien": {
+  "lat": 48.2108075,
+  "lng": 16.3897393
+ },
+ "AT|Wehlistraße 131-143/18/3, 1020 Wien": {
+  "lat": 48.2272304,
+  "lng": 16.4019987
+ },
+ "AT|Ramperstorffergasse 8-12/1/25, 1050 Wien": {
+  "lat": 48.1851051,
+  "lng": 16.3602833
+ },
+ "AT|Zimmermannplatz 4/27, 1090 Wien": {
+  "lat": 48.217135,
+  "lng": 16.3438929
+ },
+ "AT|Linzerstr. 373, 14. ker": {
+  "lat": 48.2011991,
+  "lng": 16.2635403
+ },
+ "AT|Volkertplatz 5/27, 1020 Wien": {
+  "lat": 48.2225972,
+  "lng": 16.3864344
+ },
+ "DE|Berliner Allee 170, 13088 Berlin": {
+  "lat": 52.5532408,
+  "lng": 13.4675394
+ },
+ "DE|Scharnweberstraße 9, 15537 Erkner": {
+  "lat": 52.4271489,
+  "lng": 13.7602009
+ },
+ "DE|Karl-Blum-Allee 123, 65929 Frankfurt-Höchst": {
+  "lat": 50.1147762,
+  "lng": 8.5512656
+ },
+ "DE|Tempelhofer Berg 7D": {
+  "lat": 52.4881707,
+  "lng": 13.3885213
+ },
+ "NL|Kleiweg 185A, Rotterdam": {
+  "lat": 51.9454085,
+  "lng": 4.4737573
+ },
+ "NL|'s-Gravelandseweg 258, 3125 BK Schiedam": {
+  "lat": 51.9340929,
+  "lng": 4.4000036
+ },
+ "NL|Sarphatistraat 14, 1017 WS Amsterdam": {
+  "lat": 52.3598563,
+  "lng": 4.9025575
+ },
+ "NL|Oude Ebbingestraat 79 c, 9712 HG Groningen": {
+  "lat": 53.2215262,
+  "lng": 6.5658974
+ },
+ "NL|Nieuwegracht 29, 3512 LD Utrecht": {
+  "lat": 52.0888011,
+  "lng": 5.124078
+ },
+ "NL|Morsweg 44, 2312AE Leiden": {
+  "lat": 52.1610101,
+  "lng": 4.4792482
+ },
+ "AT|Mariahilferstraße 64/9, 1070 Wien": {
+  "lat": 48.1998864,
+  "lng": 16.3544176
+ },
+ "AT|Breitenfurter Straße 479/4/1, 1230 Wien": {
+  "lat": 48.137333,
+  "lng": 16.256648
+ },
+ "AT|Liniengasse 2B/3, 1060 Wien": {
+  "lat": 48.1931616,
+  "lng": 16.3462038
+ },
+ "AT|Hahngasse 27, 1090 Wien": {
+  "lat": 48.2217905,
+  "lng": 16.3650836
+ },
+ "AT|Delsenbachgasse 7–11/3/8, 1110 Wien": {
+  "lat": 48.1791643,
+  "lng": 16.4148639
+ },
+ "AT|Museumstraße 5/19, 1070 Wien": {
+  "lat": 48.2062243,
+  "lng": 16.3565939
+ },
+ "AT|Am langen Felde 24/1/16, 1220 Wien": {
+  "lat": 48.2495699,
+  "lng": 16.4477539
+ },
+ "DE|Konrad-Zuse-Platz 8, 81829 München": {
+  "lat": 48.1374794,
+  "lng": 11.6892295
+ },
+ "AT|Bräunerstraße 2, 1010 Wien": {
+  "lat": 48.2084093,
+  "lng": 16.3692787
+ },
+ "AT|Pilgramgasse 10, 1050 Wien": {
+  "lat": 48.1920233,
+  "lng": 16.3569452
+ },
+ "AT|Nussdorfer Straße 42-44, 1090 Wien": {
+  "lat": 48.2266626,
+  "lng": 16.3554843
+ },
+ "AT|Ledererhof 7/4/4, 1010 Wien": {
+  "lat": 48.2117923,
+  "lng": 16.3687524
+ },
+ "AT|Schönbrunner Straße 201, 1120 Wien": {
+  "lat": 48.1849776,
+  "lng": 16.3364878
+ },
+ "AT|Hauptplatz 11, 7400 Oberwart": {
+  "lat": 47.2875151,
+  "lng": 16.2138587
+ },
+ "AT|Bahnhof Straße 82/6, 7443 Rattersdorf": {
+  "lat": 47.4109107,
+  "lng": 16.5007483
+ },
+ "NL|Kreekweg 8 N, 3133 AZ Vlaardingen": {
+  "lat": 51.8997747,
+  "lng": 4.3298864
+ },
+ "NL|Neckerdijk 2f, 1441 GX Purmerend": {
+  "lat": 52.5102965,
+  "lng": 4.9437413
+ },
+ "AT|Hetzendorfer Str. 75, 1120 Wien": {
+  "lat": 48.1666742,
+  "lng": 16.3106519
+ },
+ "AT|Rotenhofgasse 14, 1100 Wien": {
+  "lat": 48.1740775,
+  "lng": 16.3751312
+ },
+ "AT|Karl-Popper-Straße 8 / Top 203, 1100 Wien": {
+  "lat": 48.1857299,
+  "lng": 16.3800251
+ },
+ "CH|Schaffhauserstrasse 99, 8152 Glattbrugg": {
+  "lat": 47.4329961,
+  "lng": 8.5641416
+ },
+ "AT|Währingerstraße 153/13, 1180 Wien": {
+  "lat": 48.2284121,
+  "lng": 16.3344022
+ },
+ "AT|Brahmsplatz 7/Top 12, 1040 Wien": {
+  "lat": 48.1941248,
+  "lng": 16.3692006
+ },
+ "AT|Gonzagagasse 14/10, 1010 Wien": {
+  "lat": 48.2159953,
+  "lng": 16.3697093
+ }
+}
