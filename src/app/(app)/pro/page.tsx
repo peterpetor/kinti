@@ -145,8 +145,8 @@ export default function ProPage() {
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.kinti_pro_monthly
-                ? "Végső ár — az áfát tartalmazza. Havonta automatikusan megújul, bármikor lemondható."
-                : "Tájékoztató ár — a végső, áfás árat a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
+                ? "Bruttó ár — az áfát tartalmazza. Havonta automatikusan megújul, bármikor lemondható."
+                : "Tájékoztató ár — a végső bruttó (áfás) árat a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
             </p>
           </div>
 
@@ -203,8 +203,8 @@ export default function ProPage() {
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.business_pro_monthly
-                ? "Végső ár — az áfát tartalmazza. Havonta automatikusan megújul, bármikor lemondható."
-                : "Tájékoztató ár — a végső, áfás árat a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
+                ? "Bruttó ár — az áfát tartalmazza. Havonta automatikusan megújul, bármikor lemondható."
+                : "Tájékoztató ár — a végső bruttó (áfás) árat a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
             </p>
           </div>
 
@@ -268,8 +268,8 @@ export default function ProPage() {
             <span className="text-[14px] font-bold text-ink-muted"> / hirdetés</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.job_featured
-                ? "Végső ár — az áfát tartalmazza. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."
-                : "Tájékoztató ár — a végső, áfás árat a pénztár mutatja. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."}
+                ? "Bruttó ár — az áfát tartalmazza. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."
+                : "Tájékoztató ár — a végső bruttó (áfás) árat a pénztár mutatja. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."}
             </p>
           </div>
 
