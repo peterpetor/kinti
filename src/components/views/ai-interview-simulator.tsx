@@ -204,10 +204,15 @@ export function AiInterviewSimulator() {
       </header>
 
       {/* Chat Area */}
-      <div 
+      <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f8f9fb]"
       >
+        {/* AI-átláthatóság: állandó jelölés a beszélgetés tetején (EU AI Act 50. cikk) */}
+        <p className="text-center text-[10.5px] leading-snug text-ink-faint">
+          🤖 A beszélgetőpartnered és minden visszajelzés AI-generált — hibázhat.
+          Gyakorlási segédlet, nem valós értékelés.
+        </p>
         {messages.filter(m => !(m.role === "user" && m.content.startsWith("Hallo! Ich bin bereit"))).map((msg, i) => (
           <div key={i} className={cn("flex w-full", msg.role === "user" ? "justify-end" : "justify-start")}>
             <div

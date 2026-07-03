@@ -481,7 +481,7 @@ export function RecruiterWorkspace() {
                     <p className="mt-0.5 text-[12px] text-ink-muted">{[j.company, j.location].filter(Boolean).join(" · ") || "—"}{(j.salaryMin || j.salaryMax) && <span className="text-ink-faint"> · {j.salaryMin?.toLocaleString("de-AT") ?? "?"}–{j.salaryMax?.toLocaleString("de-AT") ?? "?"}</span>}</p>
                   </a>
                   {m?.score != null ? (
-                    <span className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[12px] font-extrabold", m.score >= 70 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-star/15 text-star" : "bg-accent/10 text-accent")}>{m.score}%</span>
+                    <span title="AI-becslés — csak rendezési segédlet, nem döntés" className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[12px] font-extrabold", m.score >= 70 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-star/15 text-star" : "bg-accent/10 text-accent")}>🤖 {m.score}%</span>
                   ) : pre >= 0 ? (
                     <span className="shrink-0 rounded-pill border border-line px-2 py-0.5 text-[11px] font-bold text-ink-faint" title="Durva relevancia (AI nélkül)">≈{pre}%</span>
                   ) : null}
@@ -502,6 +502,11 @@ export function RecruiterWorkspace() {
                     {m.reason && <p className="text-[11.5px] text-ink-muted">💡 {m.reason}</p>}
                     <textarea readOnly value={m.email} rows={8} className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[12px] leading-relaxed text-ink" />
                     <button type="button" onClick={() => navigator.clipboard?.writeText(m.email)} className="rounded-pill bg-primary px-3 py-1 text-[11.5px] font-bold text-white shadow-card">📋 Másol</button>
+                    {/* EU AI Act — emberi felügyelet: az AI-kimenet javaslat, a döntés emberi. */}
+                    <p className="text-[10px] leading-snug text-ink-faint">
+                      🤖 AI-javaslat (pont + indoklás + levél-piszkozat) — hibázhat. A jelöltről
+                      és a küldésről MINDIG te döntesz; küldés előtt ellenőrizd és igazítsd.
+                    </p>
                   </div>
                 )}
               </div>

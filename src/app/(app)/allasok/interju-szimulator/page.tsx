@@ -4,6 +4,7 @@ import { Icon } from "@/components/ui";
 import { AiInterviewSimulator } from "@/components/views/ai-interview-simulator";
 import { isPro } from "@/lib/subscriptions";
 import { ProLockOverlay } from "@/components/pro-lock-overlay";
+import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -49,6 +50,17 @@ export default async function AiInterviewPage() {
           <AiInterviewSimulator />
         </ProLockOverlay>
       )}
+
+      {/* AI-átláthatóság (EU AI Act 50. cikk): a teljes beszélgetés AI-generált,
+          a visszajelzés gyakorlási segédlet — nem valós munkáltatói értékelés. */}
+      <div className="mt-6">
+        <LegalDisclaimer
+          toolName="AI interjú-szimulátor"
+          variant="info"
+          notAdviceFor="karrier- vagy munkajogi"
+          extraWarning="Minden kérdés és visszajelzés mesterséges intelligencia által generált — hibázhat és torzíthat. A visszajelzés gyakorlási segédlet a felkészülésedhez, nem valós munkáltatói értékelés, és semmilyen felvételi döntésre nincs hatása. Részletek: kinti.app/ai-atlathatosag"
+        />
+      </div>
     </div>
   );
 }

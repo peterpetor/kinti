@@ -28,6 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/tudasbazis", priority: 0.8, changeFrequency: "weekly" },
     { path: "/hirlevel", priority: 0.6, changeFrequency: "monthly" },
     { path: "/szaknevsor/uj", priority: 0.6, changeFrequency: "monthly" },
+    { path: "/ai-atlathatosag", priority: 0.4, changeFrequency: "monthly" },
     { path: "/impresszum", priority: 0.3, changeFrequency: "yearly" },
     { path: "/adatvedelem", priority: 0.3, changeFrequency: "monthly" },
     { path: "/aszf", priority: 0.3, changeFrequency: "yearly" },

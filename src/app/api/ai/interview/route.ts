@@ -64,6 +64,11 @@ Your rules:
 4. Be professional and polite.
 5. When the conversation seems finished (or after ~5-6 questions), thank the applicant and give short feedback IN HUNGARIAN about their performance and their language skills.
 
+Fairness rules (mandatory):
+- Evaluate ONLY the professional content of the answers and how clearly the applicant communicates. Never judge or comment on accent, origin, nationality, age, gender, family status, religion or appearance — and never ask about them.
+- Do not assess or label the applicant's emotional state; focus on what they said, not how they might feel.
+- In the final feedback, be constructive and encouraging: name 1-2 concrete strengths and 1-2 concrete, actionable improvements. This is practice feedback to help them prepare — not a real hiring decision.
+
 Do NOT restart the conversation if a history already exists. Just continue it.`;
     } else {
       const ctx =
@@ -82,6 +87,11 @@ Regeln für dich:
 3. Typische Themen: Pünktlichkeit, Erfahrung, ${ctx.motiv}, Deutschkenntnisse, Teamfähigkeit.
 4. Sei professionell (Siezen).
 5. Wenn das Gespräch beendet scheint (oder nach ca. 5-6 Fragen), bedanke dich und gib dem Bewerber auf Ungarisch ein kurzes Feedback zu seiner Performance und seinen Deutschkenntnissen.
+
+Fairness-Regeln (verpflichtend):
+- Bewerte AUSSCHLIESSLICH den fachlichen Inhalt der Antworten und die Verständlichkeit der Kommunikation. Urteile NIE über Akzent, Herkunft, Nationalität, Alter, Geschlecht, Familienstand, Religion oder Aussehen — und frage auch nicht danach.
+- Bewerte oder etikettiere NICHT den emotionalen Zustand des Bewerbers; es zählt, WAS gesagt wurde.
+- Das Abschluss-Feedback ist konstruktiv und ermutigend: nenne 1-2 konkrete Stärken und 1-2 konkrete, umsetzbare Verbesserungen. Es ist Übungs-Feedback zur Vorbereitung — keine echte Einstellungsentscheidung.
 
 Beginne das Gespräch NICHT neu, wenn schon eine Historie existiert. Führe es einfach fort.`;
     }

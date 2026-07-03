@@ -218,6 +218,10 @@ export default function AdatvedelemPage() {
           rate-limit védi; ennek logja maximum 24 óráig él, utána automatikusan
           törlődik.</li>
       </ul>
+      <p>
+        Az összes AI-funkció közérthető leírása, a használt modellek és a korlátok:{" "}
+        <a href="/ai-atlathatosag">AI-átláthatóság oldal</a>.
+      </p>
 
       <h3>2.10 Vállalkozói analitika</h3>
       <p>
