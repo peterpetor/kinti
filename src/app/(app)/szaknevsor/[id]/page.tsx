@@ -93,7 +93,7 @@ export default async function BusinessPage({
   searchParams,
 }: {
   params: { id: string };
-  searchParams: { st?: string };
+  searchParams: { st?: string; ertekeles?: string };
 }) {
   const b = await getBusinessById(params.id);
   if (!b) notFound();
@@ -508,12 +508,14 @@ export default async function BusinessPage({
 
 
 
-          {/* Vélemény-írás CTA + form (account nélküli, email-megerősítéses) */}
-          <div className="mt-2.5">
+          {/* Vélemény-írás CTA + form (account nélküli, email-megerősítéses).
+              A #ertekeles horgony + ?ertekeles=1 a vélemény-nudge email mélylinkje. */}
+          <div id="ertekeles" className="mt-2.5 scroll-mt-24">
             <ReviewForm
               businessId={b.id}
               businessName={b.name}
               turnstileSiteKey={turnstileSiteKey}
+              initialOpen={searchParams.ertekeles === "1"}
             />
           </div>
 

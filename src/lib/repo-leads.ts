@@ -65,6 +65,52 @@ export async function createBusinessLead(input: CreateBusinessLeadInput): Promis
   }
 }
 
+/** Vélemény-nudge-ra esedékes lead (3–10 napja kelt, még nem nudge-olt). */
+export interface ReviewNudgeLead {
+  id: string;
+  businessId: string;
+  businessName: string;
+  senderName: string;
+  senderEmail: string;
+}
+
+/**
+ * A vélemény-gyűjtő nudge-ra esedékes leadek: 3 napnál régebbi, 10 napnál
+ * frissebb (a nagyon régi lead-eket nem zaklatjuk), még nudge-olatlan, és a
+ * vállalkozás látható. A limit a Resend napi keret védelme (a hívó dedupol
+ * email+business szinten és a meglévő véleményt is kihagyja).
+ */
+export async function getLeadsDueReviewNudge(limit = 40): Promise<ReviewNudgeLead[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT l.id, l.business_id, l.sender_name, l.sender_email, b.name AS business_name
+       FROM business_leads l
+       JOIN businesses b ON b.id = l.business_id AND b.moderation_status = 1 AND b.hidden = 0
+       WHERE l.review_nudge_at IS NULL
+         AND l.created_at <= datetime('now', '-3 days')
+         AND l.created_at >= datetime('now', '-10 days')
+       ORDER BY l.created_at ASC
+       LIMIT ?`,
+    )
+    .bind(limit)
+    .all<{ id: string; business_id: string; sender_name: string; sender_email: string; business_name: string }>();
+  return results.map((r) => ({
+    id: r.id,
+    businessId: r.business_id,
+    businessName: r.business_name,
+    senderName: r.sender_name,
+    senderEmail: r.sender_email,
+  }));
+}
+
+/** A nudge kiküldésének (vagy kihagyásának) rögzítése — lead-enként EGYSZER fut. */
+export async function markLeadReviewNudged(leadId: string): Promise<void> {
+  await getDB()
+    .prepare("UPDATE business_leads SET review_nudge_at = datetime('now') WHERE id = ?")
+    .bind(leadId)
+    .run();
+}
+
 /** Egy vállalkozás beérkezett ajánlatkérései, legújabb elöl. */
 export async function getBusinessLeads(businessId: string, limit = 100): Promise<BusinessLead[]> {
   const { results } = await getDB()

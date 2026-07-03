@@ -25,6 +25,8 @@ export interface ReviewFormProps {
   businessId: string;
   businessName: string;
   turnstileSiteKey: string;
+  /** true = azonnal nyitva (vélemény-nudge email ?ertekeles=1 mélylinkje). */
+  initialOpen?: boolean;
 }
 
 type Phase = "idle" | "submitting" | "sent" | "error";
@@ -53,8 +55,9 @@ export function ReviewForm({
   businessId,
   businessName,
   turnstileSiteKey,
+  initialOpen = false,
 }: ReviewFormProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initialOpen);
   const [form, setForm] = useState<FormState>(INITIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [global, setGlobal] = useState<string | null>(null);

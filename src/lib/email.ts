@@ -300,6 +300,39 @@ export async function sendDeadlineReminderEmail(to: string, title: string, when:
   if (error) throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
 }
 
+/**
+ * Vélemény-gyűjtő nudge: 3 nappal az ajánlatkérés után — „Milyen volt? Írj pár
+ * mondatot", mélylinkkel a cégoldal értékelő-űrlapjára. Lead-enként egyszer megy.
+ */
+export async function sendReviewNudgeEmail(args: {
+  to: string;
+  senderName: string;
+  businessName: string;
+  businessId: string;
+}): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const safeName = args.senderName.replace(/[<>]/g, "").slice(0, 60);
+  const safeBiz = args.businessName.replace(/[<>]/g, "").slice(0, 120);
+  const url = `https://kinti.app/szaknevsor/${encodeURIComponent(args.businessId)}?ertekeles=1#ertekeles`;
+  const html = `<div style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;color:#1a1a1a;max-width:520px;margin:0 auto;padding:8px">
+<p style="font-size:18px;font-weight:800;margin:0 0 6px">⭐ Milyen volt? Segíts a többi kintinek!</p>
+<p style="margin:0 0 12px">Szia${safeName ? ` ${safeName}` : ""}! Pár napja árajánlatot kértél tőle: <strong>${safeBiz}</strong>.</p>
+<p style="margin:0 0 16px">Írnál róla pár mondatot? A valódi magyar vélemények segítenek a többieknek jó szakembert találni — 30 másodperc, se fiók, se regisztráció.</p>
+<a href="${url}" style="display:inline-block;background:#1d4434;color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px">Értékelést írok</a>
+<hr style="border:none;border-top:1px solid #e5e5e5;margin:20px 0"/>
+<p style="font-size:12px;color:#888;margin:0">Ezt az egyszeri emlékeztetőt azért kapod, mert a kintin ajánlatot kértél ettől a vállalkozástól. Több ilyet nem küldünk ehhez a kéréshez.</p>
+</div>`;
+  const { error } = await getResend().emails.send({
+    from,
+    to: args.to,
+    subject: `⭐ Milyen volt: ${safeBiz}? Írj pár mondatot`,
+    html,
+    text: `Szia! Pár napja ajánlatot kértél tőle: ${safeBiz}. Írnál róla pár mondatot? ${url}`,
+  });
+  if (error) throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+}
+
 /** A hírlevél-email HTML-layoutja: a szerkesztett törzs + KÖTELEZŐ leiratkozó-lábléc. */
 function newsletterHtml(bodyHtml: string, unsubscribeUrl: string): string {
   return `<div style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;color:#1a1a1a;max-width:560px;margin:0 auto;padding:8px">

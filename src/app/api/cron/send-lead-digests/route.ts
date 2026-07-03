@@ -62,6 +62,16 @@ async function handle(req: Request): Promise<Response> {
     safeLogError("send-lead-digests:deadlineReminders", e);
   }
 
+  // Vélemény-gyűjtő nudge: 3 nappal az ajánlatkérés után „Milyen volt?" email
+  // a lead-küldőnek (lead-enként egyszer). Független, saját try/catch.
+  let reviewNudges = 0;
+  try {
+    const { processReviewNudges } = await import("@/lib/review-nudge");
+    reviewNudges = await processReviewNudges();
+  } catch (e) {
+    safeLogError("send-lead-digests:reviewNudges", e);
+  }
+
   // Karbantartás: régi rate-limit sorok törlése (a COUNT ablakos, a sorok nem) —
   // különben a tábla korlátlanul nőne. 48h-nál (a leghosszabb, 24h-s ablak fölött)
   // régebbieket törlünk. Best-effort, korai return előtt.
@@ -104,7 +114,7 @@ async function handle(req: Request): Promise<Response> {
       .all<LeadRow>();
 
     if (pendingLeads.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, rateLimitPurged });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, rateLimitPurged });
     }
 
     // Csoportosítás vállalkozónként
@@ -120,7 +130,7 @@ async function handle(req: Request): Promise<Response> {
     // Defenzív: üres tömbnél az IN () érvénytelen SQL — bár a pendingLeads>0
     // miatt ez gyakorlatilag elérhetetlen, expliciten kezeljük.
     if (businessIds.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, rateLimitPurged });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, rateLimitPurged });
     }
     const { results: businesses } = await getDB()
       .prepare(
@@ -188,7 +198,7 @@ async function handle(req: Request): Promise<Response> {
     return Response.json({ ok: false, error: "internal" }, { status: 500 });
   }
 
-  return Response.json({ ok: true, digestsSent, leadsMarked, errors, radarDigests, deadlineReminders, rateLimitPurged });
+  return Response.json({ ok: true, digestsSent, leadsMarked, errors, radarDigests, deadlineReminders, reviewNudges, rateLimitPurged });
 }
 
 export const GET = handle;
