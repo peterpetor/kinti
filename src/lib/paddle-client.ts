@@ -9,6 +9,22 @@ interface PaddleInstance {
   Environment: { set: (env: string) => void };
   Initialize: (opts: { token?: string }) => void;
   Checkout: { open: (opts: Record<string, unknown>) => void };
+  /** Lokalizált ár-előnézet (Paddle.js v2) — a /pro oldal ÉLŐ árkijelzéséhez,
+   *  hogy a feltüntetett ár mindig a pénztárral egyezzen (fogyasztóvédelem). */
+  PricePreview?: (req: {
+    items: { priceId: string; quantity: number }[];
+    address?: { countryCode?: string };
+  }) => Promise<{
+    data?: {
+      currencyCode?: string;
+      details?: {
+        lineItems?: Array<{
+          price?: { id?: string };
+          formattedTotals?: { total?: string };
+        }>;
+      };
+    };
+  }>;
 }
 
 declare global {

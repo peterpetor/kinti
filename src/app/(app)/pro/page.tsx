@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useCheckout } from "@/hooks/useCheckout";
+import { usePaddlePrices } from "@/hooks/usePaddlePrices";
+import type { CountryCode } from "@/lib/payments-config";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryLocative, isValidCountry } from "@/lib/countries";
 
 type OwnerStatus = { kintiPro?: boolean; businessPro?: boolean };
 
@@ -16,6 +18,11 @@ export default function ProPage() {
   const { user } = useUser();
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
+  // ÉLŐ, lokalizált (áfás) árak a Paddle-től — a feltüntetett ár a pénztárral
+  // egyezik (a fix EUR-ár CH-ban félrevezető volt). Hiba esetén statikus
+  // tájékoztató ár + „a végső árat a pénztár mutatja" jelzés.
+  const paddleCountry: CountryCode = isValidCountry(country) ? (country as CountryCode) : "CH";
+  const livePrices = usePaddlePrices(paddleCountry);
   // Melyik csomag AKTÍV már nálad? (átláthatóság — a kártyák „Aktív” jelzést kapnak)
   const [status, setStatus] = useState<OwnerStatus | null>(null);
   useEffect(() => {
@@ -42,7 +49,9 @@ export default function ProPage() {
     "AI CV-audit — önéletrajz-elemzés és tippek",
     "Nyelvkurzus — svájci, osztrák, német és holland",
     "Állampolgársági teszt-szimulátor — mind a 4 országra",
-    ...(country === "CH" ? ["Szakmai szótár — 500+ svájci kifejezés"] : []),
+    // Tényállítás-fegyelem: az „500+ kifejezés" NEM volt igaz (a leckékben ennek
+    // töredéke van) — csak bizonyítható állítást írunk ki.
+    ...(country === "CH" ? ["Szakmai gyors-szótár — iparági svájci-német leckék"] : []),
   ];
 
   const handleCheckout = (product: "kinti_pro_monthly" | "business_pro_monthly" | "job_featured") => {
@@ -132,8 +141,13 @@ export default function ProPage() {
           </p>
 
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">19 €</span>
+            <span className="text-3xl font-black text-ink">{livePrices?.total.kinti_pro_monthly ?? "19 €"}</span>
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
+            <p className="mt-1 text-[11px] text-ink-faint">
+              {livePrices?.total.kinti_pro_monthly
+                ? "Végső ár — az áfát tartalmazza. Havonta automatikusan megújul, bármikor lemondható."
+                : "Tájékoztató ár — a végső, áfás árat a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
+            </p>
           </div>
 
           <ul className="space-y-3 mb-8 flex-1">
@@ -180,12 +194,18 @@ export default function ProPage() {
             {businessProActive && <ActiveBadge />}
           </div>
           <p className="text-[13px] text-ink-muted mt-2 mb-6 flex-1">
-            Vállalkozóknak és szakembereknek. Szerezz több ügyfelet prémium láthatósággal.
+            Vállalkozóknak és szakembereknek. Szerezz több ügyfelet prémium láthatósággal —
+            a Szaknévsor mind a 4 országban él 🇨🇭 🇦🇹 🇩🇪 🇳🇱.
           </p>
-          
+
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">19 €</span>
+            <span className="text-3xl font-black text-ink">{livePrices?.total.business_pro_monthly ?? "19 €"}</span>
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
+            <p className="mt-1 text-[11px] text-ink-faint">
+              {livePrices?.total.business_pro_monthly
+                ? "Végső ár — az áfát tartalmazza. Havonta automatikusan megújul, bármikor lemondható."
+                : "Tájékoztató ár — a végső, áfás árat a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
+            </p>
           </div>
 
           <ul className="space-y-3 mb-8 flex-1">
@@ -196,8 +216,14 @@ export default function ProPage() {
             <FeatureItem text="Időpontfoglalás widget (Calendly-beágyazás)" />
             <FeatureItem text="Ajánlatkérő postafiók (lead-kezelő)" />
             <FeatureItem text="Bővített referenciagaléria" />
-            <FeatureItem text="Konkurencia kizárása a profilodról" />
+            <FeatureItem text="Nem jelenik meg „hasonló vállalkozások” ajánló a profilodon" />
           </ul>
+          {/* P2B rangsor-átláthatóság: a fizetett kiemelés előre sorol és JELÖLT. */}
+          <p className="mb-4 text-[11px] leading-snug text-ink-faint">
+            A kiemelt találatok a listában <strong>„PRO" jelöléssel</strong>, a nem fizetett
+            találatok előtt jelennek meg — a rangsorolás elveiről az{" "}
+            <Link href="/aszf" target="_blank" className="underline">ÁSZF 10/A</Link> ad tájékoztatást.
+          </p>
 
           {businessProActive ? (
             <>
@@ -233,19 +259,25 @@ export default function ProPage() {
           </span>
           <h2 className="text-[22px] font-black text-ink">Kiemelt Állás</h2>
           <p className="text-[13px] text-ink-muted mt-2 mb-6 flex-1">
-            Munkáltatóknak. Találj gyorsabban megbízható magyar munkaerőt.
+            Munkáltatóknak. Találj gyorsabban megbízható magyar munkaerőt —
+            hirdetés a 4 ország magyar közösségének 🇨🇭 🇦🇹 🇩🇪 🇳🇱.
           </p>
-          
+
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">49 €</span>
+            <span className="text-3xl font-black text-ink">{livePrices?.total.job_featured ?? "49 €"}</span>
             <span className="text-[14px] font-bold text-ink-muted"> / hirdetés</span>
+            <p className="mt-1 text-[11px] text-ink-faint">
+              {livePrices?.total.job_featured
+                ? "Végső ár — az áfát tartalmazza. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."
+                : "Tájékoztató ár — a végső, áfás árat a pénztár mutatja. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."}
+            </p>
           </div>
 
           <ul className="space-y-3 mb-8 flex-1">
             <FeatureItem text="30 napos piros kiemelés a Job Boardon" />
-            <FeatureItem text="Rögzített hely a lista legelején" />
+            <FeatureItem text="A kiemelt hirdetések a lista elején, jelölten jelennek meg" />
             <FeatureItem text="Egyedi céges arculat megjelenítése" />
-            <FeatureItem text="Azonnali értesítés a releváns jelölteknek" />
+            <FeatureItem text="Azonnali push-értesítés a releváns jelölteknek" />
           </ul>
 
           <Link
@@ -259,17 +291,33 @@ export default function ProPage() {
 
       </div>
 
-      {/* FAQ / Trust section */}
+      {/* FAQ / Trust / jogi szekció */}
       <div className="mt-16 text-center">
         <p className="text-[13px] font-semibold text-ink-muted">
           A fizetéseket a biztonságos <strong className="text-ink">Paddle</strong> (Merchant of
-          Record) dolgozza fel. Bármikor lemondható.
+          Record) dolgozza fel — a számlát is ő állítja ki.
+        </p>
+        <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
+          <strong>Lemondás:</strong> az előfizetés bármikor lemondható a Paddle
+          vásárlás-visszaigazoló emailjében kapott linken, vagy írj az{" "}
+          <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a> címre — a már
+          kifizetett időszak végéig a PRO aktív marad.
         </p>
         <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
           A vásárlással kéred a PRO <strong>azonnali aktiválását</strong>, és tudomásul veszed, hogy a
           teljesítéssel elveszíted a 14 napos elállási jogod (EU/EGT fogyasztók — lásd{" "}
           <Link href="/aszf" target="_blank" className="underline">ÁSZF 1.1</Link>).
         </p>
+        <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
+          Az AI-alapú funkciók (interjú-szimulátor, CV-audit) működéséről és korlátairól:{" "}
+          <Link href="/ai-atlathatosag" className="underline">AI-átláthatóság</Link>.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] font-semibold text-ink-faint">
+          <Link href="/aszf" className="underline">ÁSZF</Link>
+          <Link href="/adatvedelem" className="underline">Adatvédelem</Link>
+          <Link href="/visszateres" className="underline">Visszatérítés</Link>
+          <Link href="/impresszum" className="underline">Impresszum</Link>
+        </div>
       </div>
     </div>
   );
