@@ -4,6 +4,7 @@ import { useState } from "react";
 import QRCode from "qrcode";
 import { Icon } from "@/components/ui";
 import { BottomSheet, SheetRow } from "./bottom-sheet";
+import { renderBusinessCard, shareOrDownloadCard, type ShareCardData } from "@/lib/share-card";
 import {
   whatsappShareUrl,
   viberShareUrl,
@@ -25,16 +26,34 @@ export function ShareSheet({
   url,
   title,
   text,
+  card,
 }: {
   open: boolean;
   onClose: () => void;
   url: string;
   title: string;
   text?: string;
+  /** Ha megadva: branded képkártya (név+kategória+cím+QR) is megosztható. */
+  card?: Omit<ShareCardData, "url">;
 }) {
   const [copied, setCopied] = useState(false);
   const [qrDownloaded, setQrDownloaded] = useState(false);
+  const [cardState, setCardState] = useState<"idle" | "busy" | "done">("idle");
   const msg = text ?? title;
+
+  const shareCard = async () => {
+    if (!card || cardState === "busy") return;
+    setCardState("busy");
+    try {
+      const dataUrl = await renderBusinessCard({ ...card, url });
+      const safeName = card.name.replace(/[^a-zA-Z0-9_-]/g, "_").replace(/_+/g, "_").slice(0, 40);
+      await shareOrDownloadCard(dataUrl, `kinti_${safeName}.png`, title);
+      setCardState("done");
+      setTimeout(() => { setCardState("idle"); onClose(); }, 1200);
+    } catch {
+      setCardState("idle");
+    }
+  };
 
   const downloadQR = async () => {
     try {
@@ -64,6 +83,20 @@ export function ShareSheet({
   return (
     <BottomSheet open={open} onClose={onClose} title="Megosztás">
       <div className="space-y-2">
+        {card && (
+          <SheetRow
+            onClick={shareCard}
+            badgeColor="#c8392e"
+            icon={<Icon name={cardState === "done" ? "check" : "qrCode"} size={16} strokeWidth={2.2} />}
+            label={
+              cardState === "busy"
+                ? "Kártya készítése…"
+                : cardState === "done"
+                  ? "Kész! ✓"
+                  : "Képkártya megosztása (név + QR)"
+            }
+          />
+        )}
         <SheetRow
           href={whatsappShareUrl(url, msg)}
           onClick={onClose}

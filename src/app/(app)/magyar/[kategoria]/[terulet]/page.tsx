@@ -155,14 +155,22 @@ export default async function MagyarLanding({ params }: { params: Params }) {
             Még nincs magyar {category.label.toLowerCase()} {area.locative}
           </p>
           <p className="text-[12.5px] text-ink-muted">
-            Te vagy az első? Add hozzá ingyen, 1 perc alatt.
+            Te vagy az első? Add hozzá ingyen — vagy ajánld be, akit ismersz.
           </p>
-          <Link
-            href="/szaknevsor/uj"
-            className="mt-2 inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12.5px] font-bold text-white"
-          >
-            Vállalkozásod hozzáadása <Icon name="arrowRight" size={13} strokeWidth={2.4} />
-          </Link>
+          <div className="mt-2 flex flex-wrap justify-center gap-2">
+            <Link
+              href="/szaknevsor/uj"
+              className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12.5px] font-bold text-white"
+            >
+              Vállalkozásod hozzáadása <Icon name="arrowRight" size={13} strokeWidth={2.4} />
+            </Link>
+            <Link
+              href="/szaknevsor/ajanlas"
+              className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-4 py-2 text-[12.5px] font-bold text-ink"
+            >
+              <Icon name="plus" size={13} strokeWidth={2.6} /> Ismerek egyet — beajánlom
+            </Link>
+          </div>
         </div>
       ) : (
         <>

@@ -9,9 +9,12 @@ import { ReportButton } from "@/components/report-button";
 interface ProfileActionButtonsProps {
   businessId: string;
   businessName: string;
+  /** A képkártyához (ShareSheet `card`): kategória-címke + cím. */
+  categoryLabel?: string;
+  address?: string | null;
 }
 
-export function ProfileHeaderActions({ businessId, businessName }: ProfileActionButtonsProps) {
+export function ProfileHeaderActions({ businessId, businessName, categoryLabel, address }: ProfileActionButtonsProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
@@ -100,7 +103,8 @@ export function ProfileHeaderActions({ businessId, businessName }: ProfileAction
         onClose={() => setShareOpen(false)}
         url={typeof window !== "undefined" ? window.location.href : ""}
         title={`${businessName} · Kinti`}
-        text={`Találd meg a magyar szakembert Svájcban: ${businessName}`}
+        text={`Magyar ${categoryLabel ? categoryLabel.toLowerCase() : "szakember"} a kintin: ${businessName}`}
+        card={categoryLabel ? { name: businessName, categoryLabel, address } : undefined}
       />
     </>
   );
