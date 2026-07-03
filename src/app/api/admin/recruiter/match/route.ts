@@ -16,8 +16,15 @@ const LANG: Record<string, string> = { AT: "német", DE: "német", NL: "holland 
 
 /**
  * POST /api/admin/recruiter/match — admin. Egy jelölt profilját + EGY hirdetést
- * kap, és AI-val ad: illeszkedés-pontot (0-100), rövid indoklást, és egy KÉSZ
- * megkereső e-mailt a hirdetőnek a célország nyelvén (Feedback Jobs nevében).
+ * kap, és AI-val egy KÉSZ megkereső e-mail PISZKOZATOT ad a hirdetőnek a
+ * célország nyelvén (Feedback Jobs nevében).
+ *
+ * ⚖️ EU AI Act (A-út, 2026-07-03): az AI ILLESZKEDÉS-PONTOZÁSA ELTÁVOLÍTVA —
+ * a jelölt AI általi értékelése/rangsorolása az Annex III 4. (magas kockázatú
+ * toborzási) sáv triggere volt. Az AI itt kizárólag SZÖVEGEZŐ asszisztens
+ * (levél-piszkozat); az alkalmasságról a közvetítő (ember) dönt. Lásd
+ * docs/AI_ACT_KLASSZIFIKACIO.md 3. pont.
+ *
  * Body: { brief?, cvKey?, country, job: { title, company?, location? } }.
  * Ha `brief` van (a cv-parse összegzése), abból dolgozik (gyors); különben a CV-t
  * olvassa ki a cvKey-ből.
@@ -63,10 +70,10 @@ Az "email" mező felépítése (${lang} nyelven, ehhez igazítva a megszólítá
 6. Felhívás: érdeklődés esetén válaszoljanak erre az e-mailre.
 7. Zárás aláírással, a végén pontosan ezzel a kitöltendő hellyel: "[Az Ön neve] – Feedback Jobs".
 
+FONTOS korlát: te KIZÁRÓLAG szövegező asszisztens vagy. NE értékeld, NE pontozd és NE rangsorold a jelöltet, és ne minősítsd az alkalmasságát — arról a közvetítő munkatárs dönt. A levélben csak a profil TÉNYEIT használd.
+
 Add vissza KIZÁRÓLAG ezt a JSON-t (semmi más):
 {
-  "score": <0-100 egész: mennyire illik a jelölt erre az állásra>,
-  "reason": "<1 rövid mondat MAGYARUL, miért ennyi a pont>",
   "email": "<a fenti felépítésű, kész ${lang} nyelvű megkereső e-mail>"
 }
 Csak a megadott profilból és hirdetésből dolgozz, ne találj ki konkrétumot (céget, évszámot).`;
@@ -79,14 +86,10 @@ Csak a megadott profilból és hirdetésből dolgozz, ne találj ki konkrétumot
     if (!ai.ok) return NextResponse.json({ error: "Az AI épp túlterhelt — próbáld újra." }, { status: 503 });
     await logAiRateLimit("recruiter-match", rlKey);
 
-    const p = extractJsonObject<{ score?: number; reason?: string; email?: string }>(ai.text);
+    const p = extractJsonObject<{ email?: string }>(ai.text);
     if (!p) return NextResponse.json({ error: "Nem értelmezhető AI-válasz." }, { status: 502 });
 
-    const scoreRaw = typeof p.score === "number" ? p.score : Number(p.score);
-    const score = Number.isFinite(scoreRaw) ? Math.max(0, Math.min(100, Math.round(scoreRaw))) : null;
     return NextResponse.json({
-      score,
-      reason: String(p.reason ?? "").slice(0, 300).trim(),
       email: String(p.email ?? "").slice(0, 2500).trim(),
     });
   } catch (err) {

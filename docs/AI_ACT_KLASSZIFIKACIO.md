@@ -41,27 +41,31 @@ kötelezettségei érvényesek és teljesítve vannak.
   explicit tiltja az érzelmi állapot minősítését).
 - Social scoring, manipulatív/kihasználó technikák, valós idejű biometria: NINCS.
 
-## 3. ⚠️ Magas kockázat-közeli terület — recruiter-oldali AI (admin /kozvetites)
+## 3. Recruiter-oldali AI (admin /kozvetites) — **A-ÚT VÉGREHAJTVA (2026-07-03)**
 
-A Feedback Jobs belső közvetítő-konzolján az AI: (a) CV-ből kulcsszó/összegzés,
-(b) hirdetés↔jelölt **illeszkedés-pont**, (c) megkereső-levél piszkozat. Mivel ez
-VALÓS kiválasztási folyamatban, jelöltek értékelésére használható, az Annex III
-4. pont hatókörébe eshet (határidő: **2026-08-02**).
+A korábbi kockázat: az AI hirdetés↔jelölt **illeszkedés-pontot** (0–100%) adott —
+jelöltek AI általi értékelése valós kiválasztási folyamatban = az Annex III 4.
+pont (magas kockázatú toborzási rendszerek) triggere, 2026-08-02-i határidővel.
 
-**Jelenlegi kockázatcsökkentés (bevezetve 2026-07-03):**
-- Minden AI-kimenet a konzolon „🤖 AI-javaslat — a döntés a tiéd" jelölést kap;
-  a pontszám tooltipje: „csak rendezési segédlet, nem döntés".
-- A folyamatban MINDEN érdemi lépés emberi: a recruiter választja ki a jelöltet,
-  ellenőrzi/átírja a levelet, és ő dönt a megkeresésről (human-in-the-loop).
+**Elvégzett átalakítás (A-út):** az AI jelölt-értékelő kimenete MEGSZŰNT.
+- A `/api/admin/recruiter/match` NEM ad pontot és indoklást — kizárólag
+  megkereső-levél PISZKOZATOT generál; a prompt explicit tiltja a jelölt
+  értékelését/pontozását/rangsorolását („te kizárólag szövegező asszisztens vagy").
+- A konzol nem jelenít meg semmilyen AI-pontszámot (a régi, mentett shortlist
+  match-% is elrejtve); a hirdetés-lista rendezése determinisztikus, kézzel írt
+  kulcsszó-átfedésen alapul (nem AI-rendszer, nem következtető komponens).
+- A CV-elemzés (cv-parse) TÉNYBELI összegzést ad (kulcsszó, skillek, nyelvek) —
+  nem minősít; a levél-piszkozat alatt explicit felirat: az AI nem értékel,
+  az alkalmasságról és a küldésről az ember dönt.
 - A jelölt kifejezett hozzájárulással (layer3_opt_in) kerül a poolba; opt-out él.
 
-**Nyitott döntés (jogásszal egyeztetendő 2026-08-02 ELŐTT):**
-1. **A-út**: az illeszkedés-% eltávolítása / tisztán szöveges összegzésre
-   szűkítés → a rendszer érvelhetően nem „jelölt-értékelő", hanem
-   szöveg-asszisztens (alacsonyabb kockázati profil), VAGY
-2. **B-út**: a magas kockázatú megfelelés felvállalása (kockázatkezelési
-   rendszer, műszaki dokumentáció, naplózás, regisztráció) — egyszemélyes
-   működésnél aránytalan teher.
+**Maradék besorolás:** a rendszer AI-komponensei szövegező/összegző asszisztensek
+(50. cikk szerinti átláthatóság: teljesítve, jelölésekkel); a jelölt-értékelés és
+-rangsorolás kizárólag emberi. Jogász-megerősítés továbbra is AJÁNLOTT a
+2026-08-02-es dátum előtt, de az Annex III-trigger (AI általi jelölt-értékelés)
+technikailag megszüntetve. Ha a jövőben bárki pontozást/rangsorolást akarna
+visszaépíteni: az a magas kockázatú sávba lépés — előtte ezt a dokumentumot és
+jogászt kell elővenni.
 
 ## 4. AI-jártasság (4. cikk)
 

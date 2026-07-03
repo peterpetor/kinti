@@ -27,7 +27,9 @@ const STATUS: { id: RecruitingStatus; label: string }[] = [
 ];
 type Phase = "idle" | "loading" | "done" | "error";
 interface Brief { keyword: string; skills: string[]; languages: string[]; summary: string }
-interface Match { score: number | null; reason: string; email: string }
+/** AI-kimenet: KIZÁRÓLAG levél-piszkozat. Pontozás/indoklás nincs — az AI általi
+ *  jelölt-értékelés az AI Act Annex III (magas kockázat) triggere volt (A-út). */
+interface Match { email: string }
 
 /** Körlevél alap-sablon a célország nyelvén ({{pozicio}}, {{ceg}} helyettesítőkkel). */
 function defaultTemplate(country: string): { subject: string; body: string } {
@@ -159,8 +161,8 @@ export function RecruiterWorkspace() {
   }
   async function saveToShortlist(job: AdzunaJob) {
     if (!active) return;
-    const matchScore = matches[job.url]?.score ?? undefined;
-    await fetch("/api/admin/recruiter/shortlist", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ candidateId: active.id, job: { title: job.title, company: job.company, location: job.location, url: job.url }, matchScore }) });
+    // matchScore szándékosan NEM megy (AI-pontozás megszűnt — AI Act A-út).
+    await fetch("/api/admin/recruiter/shortlist", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ candidateId: active.id, job: { title: job.title, company: job.company, location: job.location, url: job.url } }) });
     await loadShortlist();
   }
   async function setShortStatus(id: string, status: ShortlistStatus) {
@@ -264,7 +266,7 @@ export function RecruiterWorkspace() {
       const res = await fetch("/api/admin/recruiter/match", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ brief: briefText || undefined, cvKey: active.cvKey, country: active.country, job: { title: job.title, company: job.company, location: job.location } }) });
       const data = (await res.json().catch(() => ({}))) as Match & { error?: string };
       if (!res.ok) { alert(data.error || "A megkeresés generálása nem sikerült."); return; }
-      setMatches((m) => ({ ...m, [job.url]: { score: data.score ?? null, reason: data.reason ?? "", email: data.email ?? "" } }));
+      setMatches((m) => ({ ...m, [job.url]: { email: data.email ?? "" } }));
       setOpenEmail(job.url);
     } finally { setMatching(null); }
   }
@@ -409,7 +411,8 @@ export function RecruiterWorkspace() {
                           <div className="flex items-center gap-2">
                             <a href={s.jobUrl} target="_blank" rel="noopener noreferrer" className="min-w-0 flex-1 hover:underline">
                               <span className="block truncate text-[12px] font-bold text-ink">{s.jobTitle}</span>
-                              <span className="block truncate text-[11px] text-ink-muted">{[s.jobCompany, s.jobLocation].filter(Boolean).join(" · ")}{s.matchScore != null ? ` · ${s.matchScore}%` : ""}</span>
+                              {/* A régi AI match-% szándékosan NEM jelenik meg (AI Act A-út). */}
+                              <span className="block truncate text-[11px] text-ink-muted">{[s.jobCompany, s.jobLocation].filter(Boolean).join(" · ")}</span>
                             </a>
                             <button type="button" onClick={() => setShortStatus(s.id, s.status === "contacted" ? "saved" : "contacted")} className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[10.5px] font-bold", s.status === "contacted" ? "bg-success/15 text-success" : "border border-line text-ink-muted")}>{s.status === "contacted" ? "✓ Megkeresve" : "Megkeresve?"}</button>
                             <button type="button" onClick={() => removeShort(s.id)} aria-label="Törlés" className="shrink-0 text-ink-faint hover:text-accent">✕</button>
@@ -471,7 +474,7 @@ export function RecruiterWorkspace() {
           <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">💼 Konkrét hirdetések — „{q}" · {ctry.label}{region ? ` · ${region}` : ""} ({jobs.length})</h3>
           {jobs.length === 0 ? (
             <p className="rounded-card border border-dashed border-line bg-surface px-4 py-6 text-center text-[12.5px] text-ink-muted">Nincs találat. Próbálj más/tágabb kifejezést, vagy a kézi kereséseket lent.</p>
-          ) : rankedJobs.map(({ j, pre }) => {
+          ) : rankedJobs.map(({ j }) => {
             const m = matches[j.url];
             return (
               <div key={j.url} className="rounded-card border border-line bg-surface p-3.5 shadow-card">
@@ -480,15 +483,15 @@ export function RecruiterWorkspace() {
                     <p className="text-[13.5px] font-extrabold text-ink">{j.title}</p>
                     <p className="mt-0.5 text-[12px] text-ink-muted">{[j.company, j.location].filter(Boolean).join(" · ") || "—"}{(j.salaryMin || j.salaryMax) && <span className="text-ink-faint"> · {j.salaryMin?.toLocaleString("de-AT") ?? "?"}–{j.salaryMax?.toLocaleString("de-AT") ?? "?"}</span>}</p>
                   </a>
-                  {m?.score != null ? (
-                    <span title="AI-becslés — csak rendezési segédlet, nem döntés" className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[12px] font-extrabold", m.score >= 70 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-star/15 text-star" : "bg-accent/10 text-accent")}>🤖 {m.score}%</span>
-                  ) : pre >= 0 ? (
-                    <span className="shrink-0 rounded-pill border border-line px-2 py-0.5 text-[11px] font-bold text-ink-faint" title="Durva relevancia (AI nélkül)">≈{pre}%</span>
+                  {/* AI-pontozás ELTÁVOLÍTVA (AI Act A-út) — a lista determinisztikus
+                      kulcsszó-átfedés szerint rendeződik, szám nélkül; a döntés emberi. */}
+                  {m?.email ? (
+                    <span className="shrink-0 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">✉️ piszkozat kész</span>
                   ) : null}
                 </div>
                 {active && (
                   <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <button type="button" onClick={() => matchJob(j)} disabled={matching === j.url} className="rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary disabled:opacity-50">{matching === j.url ? "AI…" : m ? "↻ Újra" : "✉️ Megkeresés + pont"}</button>
+                    <button type="button" onClick={() => matchJob(j)} disabled={matching === j.url} className="rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary disabled:opacity-50">{matching === j.url ? "AI…" : m ? "↻ Újra" : "✉️ Megkeresés-piszkozat"}</button>
                     {m && <button type="button" onClick={() => setOpenEmail(openEmail === j.url ? null : j.url)} className="text-[11.5px] font-bold text-primary hover:underline">{openEmail === j.url ? "Levél elrejt" : "Levél mutat"}</button>}
                     {shortlist.some((s) => s.candidateId === active.id && s.jobUrl === j.url) ? (
                       <span className="rounded-pill bg-success/15 px-3 py-1 text-[11.5px] font-bold text-success">✓ Shortlist</span>
@@ -499,13 +502,13 @@ export function RecruiterWorkspace() {
                 )}
                 {m && openEmail === j.url && (
                   <div className="mt-2 space-y-1.5">
-                    {m.reason && <p className="text-[11.5px] text-ink-muted">💡 {m.reason}</p>}
                     <textarea readOnly value={m.email} rows={8} className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[12px] leading-relaxed text-ink" />
                     <button type="button" onClick={() => navigator.clipboard?.writeText(m.email)} className="rounded-pill bg-primary px-3 py-1 text-[11.5px] font-bold text-white shadow-card">📋 Másol</button>
-                    {/* EU AI Act — emberi felügyelet: az AI-kimenet javaslat, a döntés emberi. */}
+                    {/* EU AI Act — emberi felügyelet: az AI csak szövegez, nem értékel. */}
                     <p className="text-[10px] leading-snug text-ink-faint">
-                      🤖 AI-javaslat (pont + indoklás + levél-piszkozat) — hibázhat. A jelöltről
-                      és a küldésről MINDIG te döntesz; küldés előtt ellenőrizd és igazítsd.
+                      🤖 AI-írta levél-PISZKOZAT — hibázhat. Az AI nem értékeli és nem
+                      pontozza a jelöltet; az alkalmasságról és a küldésről TE döntesz.
+                      Küldés előtt ellenőrizd és igazítsd.
                     </p>
                   </div>
                 )}
