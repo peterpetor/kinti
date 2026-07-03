@@ -66,11 +66,25 @@ export function AiInterviewSimulator() {
     }
   }, [messages, isLoading]);
 
+  // Nyelv-tudatos UI: a HR-persona és a szövegek a választott országhoz/nyelvhez
+  // igazodnak (NL → De Vries + holland; angol nyelvnél angol). Korábban minden
+  // németre volt égetve („Írd ide a válaszod németül" a holland interjúban is).
+  const isNL = country === "NL";
+  const hrName = isNL ? "Dhr. De Vries (HR)" : "Herr Müller (HR)";
+  const answerLangLabel =
+    language === "Nederlands" ? "hollandul" : language === "Englisch" ? "angolul" : "németül";
+  const seedContent =
+    language === "Nederlands"
+      ? "Goedemiddag! Ik ben klaar voor het sollicitatiegesprek."
+      : language === "Englisch"
+        ? "Hello! I am ready for the job interview."
+        : "Hallo! Ich bin bereit für das Vorstellungsgespräch.";
+
   const startInterview = async () => {
     setHasStarted(true);
     setIsLoading(true);
 
-    const initialMsg: Message = { role: "user", content: "Hallo! Ich bin bereit für das Vorstellungsgespräch." };
+    const initialMsg: Message = { role: "user", content: seedContent };
     setMessages([initialMsg]);
 
     try {
@@ -190,7 +204,7 @@ export function AiInterviewSimulator() {
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-success border-2 border-surface"></span>
           </div>
           <div>
-            <h3 className="text-[14px] font-bold text-ink">Herr Müller (HR)</h3>
+            <h3 className="text-[14px] font-bold text-ink">{hrName}</h3>
             <p className="text-[11px] text-ink-muted">{profession} • {language}</p>
           </div>
         </div>
@@ -212,7 +226,7 @@ export function AiInterviewSimulator() {
           🤖 A beszélgetőpartnered és minden visszajelzés AI-generált — hibázhat.
           Gyakorlási segédlet, nem valós értékelés.
         </p>
-        {messages.filter(m => !(m.role === "user" && m.content.startsWith("Hallo! Ich bin bereit"))).map((msg, i) => (
+        {messages.filter(m => !(m.role === "user" && (m.content.startsWith("Hallo! Ich bin bereit") || m.content.startsWith("Goedemiddag! Ik ben klaar") || m.content.startsWith("Hello! I am ready")))).map((msg, i) => (
           <div key={i} className={cn("flex w-full", msg.role === "user" ? "justify-end" : "justify-start")}>
             <div
               className={cn(
@@ -245,7 +259,7 @@ export function AiInterviewSimulator() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isLoading}
-            placeholder={isLoading ? "Herr Müller gépel..." : "Írd ide a válaszod németül..."}
+            placeholder={isLoading ? `${isNL ? "De Vries" : "Herr Müller"} gépel...` : `Írd ide a válaszod ${answerLangLabel}...`}
             className="w-full rounded-pill border-2 border-line bg-surface-alt py-3 pl-4 pr-12 text-[14px] font-medium text-ink outline-none focus:border-primary disabled:opacity-50"
             autoFocus
           />
