@@ -3,44 +3,51 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { BusinessCard, Icon, ScreenHeader } from "@/components/ui";
 import { getBusinesses, getCategories } from "@/lib/repo";
-import { CANTONS, cantonFromSlug, cantonFromAddress, cantonToSlug } from "@/lib/cantons";
+import { areaFromSlug, businessInArea, areasForBusiness, COUNTRY_NAMES } from "@/lib/seo-areas";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
- * /magyar/[kategoria]/[kanton] — SEO landing oldal:
- *   pl. /magyar/fodrasz/zurich, /magyar/orvos/bern.
+ * /magyar/[kategoria]/[terulet] — SEO landing oldal:
+ *   pl. /magyar/fodrasz/zurich, /magyar/pszichologus/becs, /magyar/ugyved/nemetorszag.
  *
- * Cél: a Google-keresésre ("magyar fodrász Zürich") találatként megjelenni.
- * Statikusan generált / cache-elhető lista a meglévő businesses adatból,
- * proper title/description + canonical metaadattal.
+ * Cél: a Google-keresésre ("magyar fodrász Zürich", "magyar pszichológus Bécs")
+ * találatként megjelenni. 2026-07-03-tól ORSZÁG-TUDATOS (lib/seo-areas.ts):
+ * a svájci kanton-URL-ek változatlanok, plusz AT/DE/NL területek és
+ * ország-szintű oldalak. Üres kombó: noindex (thin content ellen), de él a
+ * „add hozzá a vállalkozásod" CTA-val.
  */
 
 interface Params {
   kategoria: string;
-  kanton: string;
+  terulet: string;
 }
 
 async function resolve(params: Params) {
   const categories = await getCategories();
   const category = categories.find((c) => c.id === params.kategoria);
-  const canton = cantonFromSlug(params.kanton);
-  return { category, canton };
+  const area = areaFromSlug(params.terulet);
+  return { category, area, categories };
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { category, canton } = await resolve(params);
-  if (!category || !canton) return { title: "Magyar szakember — kinti" };
+  const { category, area } = await resolve(params);
+  if (!category || !area) return { title: "Magyar szakember — kinti" };
 
-  const title = `Magyar ${category.label} — ${canton.name} kanton`;
-  const description = `Magyar nyelven beszélő ${category.label.toLowerCase()} ${canton.name} kantonban (Svájc). A kintik által ajánlott, ellenőrzött szakemberek egy helyen.`;
+  const title = `Magyar ${category.label} ${area.locative}`;
+  const description = `Magyar nyelven beszélő ${category.label.toLowerCase()} ${area.locative} (${COUNTRY_NAMES[area.country]}). A kintik által ajánlott, ellenőrzött szakemberek egy helyen.`;
+
+  // Üres kombó → noindex (thin content ellen); a linkek követhetők maradnak.
+  const all = await getBusinesses({ category: category.id });
+  const hasContent = all.some((b) => businessInArea(b, area));
 
   return {
     title,
     description,
-    alternates: { canonical: `/magyar/${params.kategoria}/${params.kanton}` },
+    alternates: { canonical: `/magyar/${params.kategoria}/${params.terulet}` },
+    robots: hasContent ? undefined : { index: false, follow: true },
     openGraph: {
       title,
       description,
@@ -50,32 +57,39 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function MagyarLanding({ params }: { params: Params }) {
-  const { category, canton } = await resolve(params);
-  if (!category || !canton) notFound();
+  const { category, area, categories } = await resolve(params);
+  if (!category || !area) notFound();
 
-  // A kanton-szűrés a cím PLZ-ből történik (mint a Szaknévsorban).
-  const all = await getBusinesses({ category: category.id });
-  const businesses = all.filter((b) => cantonFromAddress(b.address ?? null)?.code === canton.code);
+  // EGY lekérdezésből dolgozik minden szekció (lista + kapcsolódó linkek).
+  const everything = await getBusinesses();
+  const byCategory = everything.filter((b) => b.categoryId === category.id);
+  const businesses = byCategory.filter((b) => businessInArea(b, area));
 
-  // Kapcsolódó kantonok: CSAK azok, ahol tényleg van ilyen vállalkozás (nincs
-  // „thin content" link üres oldalakra). A kategória összes találatából vesszük.
-  const cantonCodesWithBiz = new Set<string>();
-  for (const b of all) {
-    const c = cantonFromAddress(b.address ?? null);
-    if (c && c.code !== canton.code) cantonCodesWithBiz.add(c.code);
+  // Kapcsolódó területek ugyanebben a kategóriában — CSAK ahol van találat
+  // (nincs „thin content" link üres oldalakra).
+  const otherAreaSlugs = new Map<string, string>(); // slug → name
+  for (const b of byCategory) {
+    for (const a of areasForBusiness(b)) {
+      if (a.slug !== area.slug) otherAreaSlugs.set(a.slug, a.name);
+    }
   }
-  const otherCantons = CANTONS.filter((c) => cantonCodesWithBiz.has(c.code)).slice(0, 8);
-  const categories = await getCategories();
-  const otherCategories = categories.filter((c) => c.id !== category.id && c.id !== "all").slice(0, 8);
+  const otherAreas = [...otherAreaSlugs.entries()].slice(0, 10);
+
+  // Más szakmák EZEN a területen — csak ahol tényleg van találat.
+  const inArea = everything.filter((b) => businessInArea(b, area));
+  const otherCatIds = new Set(inArea.map((b) => b.categoryId));
+  const otherCategories = categories
+    .filter((c) => otherCatIds.has(c.id) && c.id !== category.id && c.id !== "all")
+    .slice(0, 10);
 
   // Strukturált adat: a találatok ItemList-je + breadcrumb (rich result jelöltek).
   const base = "https://kinti.app";
-  const pageUrl = `${base}/magyar/${params.kategoria}/${params.kanton}`;
+  const pageUrl = `${base}/magyar/${params.kategoria}/${params.terulet}`;
   const itemListJsonLd = businesses.length
     ? {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        name: `Magyar ${category.label} — ${canton.name} kanton`,
+        name: `Magyar ${category.label} — ${area.name}`,
         numberOfItems: businesses.length,
         itemListElement: businesses.map((b, i) => ({
           "@type": "ListItem",
@@ -91,7 +105,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Szaknévsor", item: `${base}/szaknevsor` },
       { "@type": "ListItem", position: 2, name: category.label, item: pageUrl },
-      { "@type": "ListItem", position: 3, name: canton.name, item: pageUrl },
+      { "@type": "ListItem", position: 3, name: area.name, item: pageUrl },
     ],
   };
 
@@ -114,22 +128,22 @@ export default async function MagyarLanding({ params }: { params: Params }) {
         <Icon name="chevR" size={11} className="text-ink-faint" />
         <span className="text-ink">{category.label}</span>
         <Icon name="chevR" size={11} className="text-ink-faint" />
-        <span className="text-ink">{canton.name}</span>
+        <span className="text-ink">{area.name}</span>
       </nav>
 
       <ScreenHeader
-        eyebrow={`Szaknévsor · ${canton.name} (${canton.code})`}
+        eyebrow={`Szaknévsor · ${area.name} (${COUNTRY_NAMES[area.country]})`}
         title={
           <>
             Magyar {category.label}
             <br />
-            {canton.name} kantonban
+            {area.locative}
           </>
         }
       />
 
       <p className="text-[13.5px] leading-relaxed text-ink-muted">
-        Magyar nyelven beszélő {category.label.toLowerCase()} {canton.name} kantonban. A kintik
+        Magyar nyelven beszélő {category.label.toLowerCase()} {area.locative}. A kintik
         által ajánlott szakemberek — anyanyelven, helyben.
       </p>
 
@@ -138,7 +152,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
         <div className="flex flex-col items-center gap-2 rounded-card border border-dashed border-line bg-surface-alt px-6 py-10 text-center">
           <Icon name="search" size={26} className="text-ink-faint" />
           <p className="text-[13.5px] font-semibold text-ink">
-            Még nincs magyar {category.label.toLowerCase()} {canton.name} kantonban
+            Még nincs magyar {category.label.toLowerCase()} {area.locative}
           </p>
           <p className="text-[12.5px] text-ink-muted">
             Te vagy az első? Add hozzá ingyen, 1 perc alatt.
@@ -182,36 +196,37 @@ export default async function MagyarLanding({ params }: { params: Params }) {
         <Icon name="chevR" size={16} strokeWidth={2.4} className="text-primary" />
       </Link>
 
-      {/* Kapcsolódó kantonok ugyanebben a kategóriában (csak ahol van találat) */}
-      {otherCantons.length > 0 && (
+      {/* Kapcsolódó területek ugyanebben a kategóriában (csak ahol van találat) */}
+      {otherAreas.length > 0 && (
       <section className="space-y-2">
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
-          Magyar {category.label.toLowerCase()} más kantonokban
+          Magyar {category.label.toLowerCase()} máshol
         </h2>
         <div className="flex flex-wrap gap-1.5">
-          {otherCantons.map((c) => (
+          {otherAreas.map(([slug, name]) => (
             <Link
-              key={c.code}
-              href={`/magyar/${category.id}/${cantonToSlug(c.name)}`}
+              key={slug}
+              href={`/magyar/${category.id}/${slug}`}
               className="rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink hover:bg-surface-alt transition"
             >
-              {c.name}
+              {name}
             </Link>
           ))}
         </div>
       </section>
       )}
 
-      {/* Más szakmák ebben a kantonban */}
+      {/* Más szakmák ezen a területen (csak ahol van találat) */}
+      {otherCategories.length > 0 && (
       <section className="space-y-2">
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
-          Más szakmák {canton.name} kantonban
+          Más szakmák {area.locative}
         </h2>
         <div className="flex flex-wrap gap-1.5">
           {otherCategories.map((c) => (
             <Link
               key={c.id}
-              href={`/magyar/${c.id}/${cantonToSlug(canton.name)}`}
+              href={`/magyar/${c.id}/${area.slug}`}
               className="rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink hover:bg-surface-alt transition"
             >
               {c.label}
@@ -219,6 +234,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
           ))}
         </div>
       </section>
+      )}
     </div>
   );
 }

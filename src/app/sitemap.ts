@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getBusinesses, getCategories, getJobs } from "@/lib/repo";
 import { parseDbDate } from "@/lib/dates";
-import { CANTONS, cantonFromAddress, cantonToSlug } from "@/lib/cantons";
+import { areasForBusiness } from "@/lib/seo-areas";
 import { GUIDES } from "@/lib/guides";
 
 export const runtime = "edge";
@@ -62,21 +62,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
 
-    // SEO landing oldalak: csak azokat a kanton×kategória kombókat, ahol van
-    // legalább 1 vállalkozás (különben "thin content" lenne).
+    // SEO landing oldalak: kategória×terület kombók MIND A 4 ORSZÁGRA
+    // (lib/seo-areas.ts: CH-kantonok + AT/DE/NL területek + ország-oldalak) —
+    // csak ahol van legalább 1 vállalkozás (különben "thin content" lenne).
     const combos = new Set<string>();
     for (const b of businesses) {
-      const canton = cantonFromAddress(b.address ?? null);
-      if (!canton) continue;
-      combos.add(`${b.categoryId}|${canton.code}`);
+      if (!categories.some((c) => c.id === b.categoryId)) continue;
+      for (const area of areasForBusiness(b)) {
+        combos.add(`${b.categoryId}|${area.slug}`);
+      }
     }
     for (const combo of combos) {
-      const [catId, cantonCode] = combo.split("|");
-      const cat = categories.find((c) => c.id === catId);
-      const canton = CANTONS.find((c) => c.code === cantonCode);
-      if (!cat || !canton) continue;
+      const [catId, areaSlug] = combo.split("|");
       items.push({
-        url: `${BASE}/magyar/${catId}/${cantonToSlug(canton.name)}`,
+        url: `${BASE}/magyar/${catId}/${areaSlug}`,
         lastModified: now,
         changeFrequency: "weekly",
         priority: 0.7,
