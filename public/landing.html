@@ -1,379 +1,2354 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="hu">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>kinti — Találj magyart a közeledben. Svájc · Ausztria · Németország · Hollandia</title>
-<meta name="description" content="A kint élő magyarok mindennapi appja: magyar szaknévsor 250+ ellenőrzött bejegyzéssel, állások és munkaerő-közvetítés, bér- és lakbér-benchmark, események, ügyintézés-segédek és AI-eszközök — Svájcban, Ausztriában, Németországban és Hollandiában.">
-<link rel="canonical" href="https://kinti.app/landing.html">
-<meta property="og:title" content="kinti — Találj magyart a közeledben">
-<meta property="og:description" content="Magyar szaknévsor, állások, bér-benchmark, események és ügyintézés-segédek — CH · AT · DE · NL. Az alap örökre ingyenes.">
-<meta property="og:url" content="https://kinti.app/landing.html">
-<meta property="og:type" content="website">
-<meta property="og:image" content="https://kinti.app/icons/og-default.png">
-<link rel="icon" href="/icons/kinti-logo.svg" type="image/svg+xml">
-<link rel="icon" href="/icons/kinti-logo-32.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="/icons/kinti-logo-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#f4ede0; --surface:#fff; --surface-alt:#fbf7ee;
-    --primary:#1d4434; --primary-soft:#e6ebe5;
-    --accent:#c8392e; --accent-soft:#fbe8e5;
-    --gold:#b46a0e; --info:#42679c; --pro:#ff9600;
-    --ink:#0e1f17; --muted:#5c6d63; --faint:#94a097;
-    --line:rgba(28,61,46,.12);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
-  a{color:inherit}
-  .wrap{max-width:1060px;margin:0 auto;padding:0 20px}
-  .topbar{position:sticky;top:0;z-index:50;background:rgba(244,237,224,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .topbar .wrap{display:flex;align-items:center;gap:12px;height:64px}
-  .wordmark{font-weight:800;font-size:22px;letter-spacing:-.02em;text-decoration:none;display:flex;align-items:center;gap:6px}
-  .wordmark .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);display:inline-block}
-  .topnav{margin-left:auto;display:flex;gap:16px;align-items:center;font-size:13.5px;font-weight:700}
-  .topnav a{text-decoration:none;color:var(--muted)}
-  .topnav a:hover{color:var(--ink)}
-  .btn{display:inline-block;background:var(--primary);color:#fff;text-decoration:none;font-weight:800;padding:12px 22px;border-radius:999px;font-size:15px;transition:transform .1s}
-  .btn:active{transform:scale(.97)}
-  .btn.ghost{background:var(--surface);color:var(--ink);border:1.5px solid var(--line)}
-  .btn.small{padding:8px 16px;font-size:13px}
-  section{padding:56px 0}
-  h1{font-size:clamp(34px,6vw,54px);line-height:1.1;letter-spacing:-.03em;font-weight:800}
-  h2{font-size:clamp(24px,4vw,32px);letter-spacing:-.02em;font-weight:800;margin-bottom:8px}
-  h3{font-size:17px;font-weight:800;letter-spacing:-.01em}
-  .lead{font-size:17px;color:var(--muted);max-width:640px}
-  .eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-  .hero{padding:72px 0 56px;text-align:center}
-  .hero .lead{margin:18px auto 26px}
-  .flags{font-size:26px;letter-spacing:6px;margin-bottom:14px}
-  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-  .chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:28px}
-  .chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700;color:var(--muted)}
-  .chip b{color:var(--ink)}
-  .grid{display:grid;gap:14px}
-  @media(min-width:720px){.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 1px 2px rgba(14,31,23,.04),0 4px 16px rgba(14,31,23,.06)}
-  .card h3{margin-bottom:6px}
-  .card p{font-size:13.5px;color:var(--muted)}
-  .cc{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.04em;background:var(--primary-soft);color:var(--primary);border-radius:999px;padding:2px 8px;vertical-align:middle;margin-left:6px;white-space:nowrap}
-  .cc.some{background:#f3e8d4;color:var(--gold)}
-  .cc.pro{background:#fff0d9;color:var(--pro)}
-  .feat-group{margin-top:26px}
-  .feat-group h3{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:15px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-  .feat-group h3 .ic{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:14px}
-  ul.feats{list-style:none;display:grid;gap:8px}
-  @media(min-width:720px){ul.feats{grid-template-columns:1fr 1fr}}
-  ul.feats li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;font-weight:600}
-  ul.feats li span.d{display:block;font-size:12.5px;font-weight:500;color:var(--muted);margin-top:2px}
-  .price-grid{display:grid;gap:16px;margin-top:24px}
-  @media(min-width:860px){.price-grid{grid-template-columns:repeat(3,1fr)}}
-  .price-card{background:var(--surface);border:2px solid var(--line);border-radius:26px;padding:26px;display:flex;flex-direction:column}
-  .price-card.hot{border-color:var(--pro)}
-  .price-card .tag{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;padding:4px 10px;width:fit-content;margin-bottom:10px}
-  .price{font-size:34px;font-weight:800;margin:10px 0 2px}
-  .price small{font-size:14px;color:var(--muted);font-weight:700}
-  .price-note{font-size:11px;color:var(--faint);margin-bottom:14px;line-height:1.45}
-  .price-card ul{list-style:none;display:grid;gap:8px;font-size:13.5px;font-weight:600;margin:8px 0 18px}
-  .price-card ul li::before{content:"✓";color:#1d6a3c;font-weight:800;margin-right:8px}
-  .price-card .btn{margin-top:auto;text-align:center}
-  .free-banner{background:var(--primary-soft);border:1px solid var(--line);border-radius:20px;padding:18px 22px;font-size:14.5px;margin-top:18px}
-  .faq details{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:10px}
-  .faq summary{font-weight:800;font-size:15px;cursor:pointer}
-  .faq p{font-size:13.5px;color:var(--muted);margin-top:8px}
-  footer{background:var(--primary);color:#e6ebe5;padding:44px 0;margin-top:40px;font-size:13px}
-  footer a{color:#fff}
-  footer .links{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0}
-  footer .fine{color:rgba(230,235,229,.75);font-size:11.5px;line-height:1.6;max-width:760px}
-  .ai-note{font-size:12px;color:var(--faint);margin-top:14px}
-  .country-card b{display:block;font-size:16px;margin-bottom:4px}
-  .country-card p{font-size:12.5px}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>kinti — Találj magyart a közeledben.</title>
+
+  <link rel="icon" href="/icons/kinti-logo.svg" type="image/svg+xml">
+  <link rel="icon" href="/icons/kinti-logo-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/icons/kinti-logo-16.png" sizes="16x16" type="image/png">
+  <link rel="icon" href="/icons/kinti-logo.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/icons/kinti-logo-180.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f4ede0;
+      --bg-deep: #ede4d2;
+      --surface: #ffffff;
+      --surface-alt: #fbf7ee;
+      --primary: #1d4434;
+      --primary-soft: #e6ebe5;
+      --primary-deep: #0e2a1f;
+      --accent: #c8392e;
+      --accent-soft: #fbe8e5;
+      --text: #0e1f17;
+      --text-muted: #5c6d63;
+      --text-faint: #94a097;
+      --border: rgba(28, 61, 46, 0.10);
+      --border-strong: rgba(28, 61, 46, 0.20);
+      --shadow-card: 0 1px 2px rgba(14,31,23,0.04), 0 4px 16px rgba(14,31,23,0.06);
+      --shadow-pop: 0 8px 28px rgba(14,31,23,0.16), 0 2px 6px rgba(14,31,23,0.06);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.5; }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+    @media (max-width: 720px) { .wrap { padding: 0 20px; } }
+
+    /* ─── NAV ──────────────────────────────────────── */
+    nav.top {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(244, 237, 224, 0.85);
+      backdrop-filter: saturate(160%) blur(14px);
+      -webkit-backdrop-filter: saturate(160%) blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    nav.top .wrap {
+      display: flex; align-items: center; gap: 24px;
+      padding-top: 14px; padding-bottom: 14px;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--text);
+    }
+    .nav-links {
+      display: flex; gap: 28px; margin-left: 8px;
+      font-size: 14.5px; font-weight: 600; color: var(--text);
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-spacer { flex: 1; }
+    .nav-lang {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: 13px; font-weight: 600;
+    }
+    .nav-cta {
+      padding: 10px 18px; border-radius: 12px;
+      background: var(--primary); color: #fff; border: none;
+      font-weight: 700; font-size: 14px; letter-spacing: -0.1px;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: var(--shadow-pop); }
+    .mobile-only { display: none; }
+    @media (max-width: 820px) {
+      .nav-links, .nav-lang { display: none; }
+    }
+
+    /* ─── HERO ─────────────────────────────────────── */
+    section.hero {
+      position: relative;
+      padding: 64px 0 80px;
+      overflow: hidden;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.05fr 1fr;
+      gap: 48px; align-items: center;
+    }
+    @media (max-width: 980px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: 12.5px; font-weight: 700; color: var(--primary);
+      letter-spacing: 0.2px;
+    }
+    .hero-eyebrow .dot { color: var(--accent); }
+    .hero-eyebrow .dot::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 6px; vertical-align: middle; animation: pulseDot 1.8s ease-out infinite; }
+    @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    h1.hero-title {
+      margin: 18px 0 0;
+      font-size: clamp(44px, 7vw, 84px); line-height: 0.96;
+      letter-spacing: -3px; font-weight: 800;
+      text-wrap: balance;
+    }
+    h1.hero-title em {
+      font-style: italic; color: var(--accent); font-weight: 800;
+    }
+    .hero-sub {
+      margin: 22px 0 0; max-width: 540px;
+      font-size: 18px; line-height: 1.5; color: var(--text-muted);
+      text-wrap: pretty;
+    }
+    .hero-actions { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 16px 22px; border-radius: 14px; border: none;
+      background: var(--primary); color: #fff;
+      font-weight: 700; font-size: 15.5px; letter-spacing: -0.1px;
+      box-shadow: var(--shadow-card);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 16px 22px; border-radius: 14px; background: transparent;
+      border: 1.5px solid var(--border-strong); color: var(--text);
+      font-weight: 700; font-size: 15.5px; letter-spacing: -0.1px;
+    }
+    .btn-ghost:hover { background: var(--surface); }
+
+    .hero-proof {
+      margin-top: 30px; display: flex; align-items: center; gap: 14px;
+      padding: 12px 16px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; max-width: 460px;
+    }
+    .avatar-stack { display: flex; }
+    .avatar-stack > div {
+      width: 34px; height: 34px; border-radius: 50%; border: 2.5px solid #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 13.5px; font-weight: 700; letter-spacing: -0.2px;
+    }
+    .avatar-stack > div + div { margin-left: -10px; }
+    .hero-proof-text { font-size: 13.5px; color: var(--text-muted); line-height: 1.35; }
+    .hero-proof-text strong { color: var(--text); font-weight: 700; }
+
+    /* hero phone */
+    .hero-phone-stage {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 620px;
+    }
+    .hero-phone-stage::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(200,57,46,0.12) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(29,68,52,0.15) 0%, transparent 55%);
+      filter: blur(20px);
+    }
+    .hero-phone-stage::after {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: radial-gradient(rgba(28,61,46,0.18) 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: radial-gradient(ellipse at center, #000 30%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 70%);
+      opacity: 0.5;
+    }
+    .hero-phone {
+      position: relative; z-index: 1;
+      transform: rotate(-3deg);
+      filter: drop-shadow(0 20px 50px rgba(14,31,23,0.18)) drop-shadow(0 6px 18px rgba(14,31,23,0.12));
+    }
+
+    /* floating chips around phone */
+    .float {
+      position: absolute; z-index: 2;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px 14px;
+      box-shadow: var(--shadow-pop);
+      font-weight: 600; font-size: 13px; color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+      animation: floaty 6s ease-in-out infinite;
+    }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .float .float-ico {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--primary-soft); color: var(--primary);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 800;
+    }
+    .float .float-ico.accent { background: var(--accent-soft); color: var(--accent); }
+    .float-1 { top: 12%; left: -2%; animation-delay: 0s; }
+    .float-2 { top: 36%; right: -2%; animation-delay: 1.4s; }
+    .float-3 { bottom: 18%; left: 4%; animation-delay: 2.8s; }
+
+    @media (max-width: 980px) {
+      .hero-phone-stage { min-height: 540px; }
+      .float-1 { left: 4%; }
+      .float-3 { left: 8%; }
+    }
+    @media (max-width: 520px) {
+      .float { font-size: 11.5px; padding: 8px 10px; }
+      .float-1 { top: 6%; left: 2%; }
+      .float-2 { top: 28%; right: 2%; }
+      .float-3 { bottom: 12%; left: 4%; }
+    }
+
+    /* ─── STATS STRIP ─────────────────────────────── */
+    section.stats {
+      padding: 28px 0 40px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-deep);
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    @media (max-width: 720px) { .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
+    .stat .num {
+      font-size: clamp(32px, 4.5vw, 48px); font-weight: 800; letter-spacing: -1.5px;
+      color: var(--text); line-height: 1;
+    }
+    .stat .num em { font-style: italic; color: var(--accent); font-weight: 800; }
+    .stat .label { margin-top: 8px; font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+    /* ─── SECTION HEAD ────────────────────────────── */
+    section { padding: 96px 0; }
+    @media (max-width: 720px) { section { padding: 72px 0; } }
+    .sec-eyebrow {
+      display: inline-block;
+      font-size: 12px; font-weight: 800; color: var(--accent);
+      letter-spacing: 1.4px; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .sec-title {
+      margin: 0; font-size: clamp(34px, 4.8vw, 54px);
+      font-weight: 800; letter-spacing: -1.6px; line-height: 1.02;
+      max-width: 740px; text-wrap: balance;
+    }
+    .sec-title em { font-style: italic; color: var(--accent); font-weight: 800; }
+    .sec-sub {
+      margin: 18px 0 0; max-width: 600px;
+      font-size: 17px; color: var(--text-muted); line-height: 1.5;
+      text-wrap: pretty;
+    }
+
+    /* ─── COUNTRY MAP (Európai bővítés) ───────────── */
+    section.geomap { background: var(--surface-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .geomap-panel {
+      position: relative; margin: 44px auto 0; max-width: 540px; aspect-ratio: 4 / 3.5;
+      border-radius: 26px; border: 1px solid var(--border);
+      background:
+        radial-gradient(circle, rgba(29,68,52,.08) 1.3px, transparent 1.5px) -8px -8px / 26px 26px,
+        linear-gradient(180deg, #ffffff, var(--surface-alt));
+      box-shadow: 0 22px 50px -28px rgba(14,42,31,.45);
+      overflow: hidden;
+    }
+    .geo-node {
+      position: absolute; transform: translate(-50%, -50%);
+      display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center;
+    }
+    .geo-pin {
+      display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%;
+      font-size: 24px; line-height: 1; background: #fff; border: 2px solid var(--border);
+      box-shadow: 0 7px 16px -8px rgba(14,42,31,.55);
+    }
+    .geo-node.live .geo-pin {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft), 0 7px 16px -8px rgba(200,57,46,.6);
+      animation: geoPulse 2.2s ease-out infinite;
+    }
+    .geo-name { font-size: 12px; font-weight: 800; color: var(--text); letter-spacing: -.2px; }
+    .geo-status {
+      font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+      padding: 2px 7px; border-radius: 999px;
+    }
+    .geo-node.live .geo-status { color: #fff; background: var(--accent); }
+    .geo-node.soon { opacity: .85; }
+    .geo-node.soon .geo-status { color: var(--text-muted); background: var(--primary-soft); }
+    @keyframes geoPulse {
+      0%   { box-shadow: 0 0 0 0 var(--accent-soft), 0 7px 16px -8px rgba(200,57,46,.6); }
+      70%  { box-shadow: 0 0 0 12px rgba(200,57,46,0), 0 7px 16px -8px rgba(200,57,46,.6); }
+      100% { box-shadow: 0 0 0 0 rgba(200,57,46,0), 0 7px 16px -8px rgba(200,57,46,.6); }
+    }
+    .geo-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 30px; }
+    .geo-chip {
+      display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px;
+      background: #fff; border: 1px solid var(--border); font-size: 13px; font-weight: 700; color: var(--text);
+    }
+    .geo-chip.live { border-color: var(--accent); color: var(--accent); }
+    .geo-chip .s { font-size: 10px; font-weight: 800; color: var(--text-faint); text-transform: uppercase; letter-spacing: .03em; }
+    @media (max-width: 480px) {
+      .geo-pin { width: 40px; height: 40px; font-size: 21px; }
+      .geo-name { font-size: 11px; }
+    }
+
+    /* ─── HOW IT WORKS ────────────────────────────── */
+    section.how { background: var(--bg); }
+    .steps {
+      margin-top: 56px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+      counter-reset: step;
+    }
+    @media (max-width: 880px) { .steps { grid-template-columns: 1fr; } }
+    .step {
+      position: relative; padding: 28px 24px 24px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 22px; box-shadow: var(--shadow-card);
+    }
+    .step::before {
+      counter-increment: step;
+      content: "0" counter(step);
+      position: absolute; top: 20px; right: 22px;
+      font-family: 'Plus Jakarta Sans'; font-style: italic;
+      font-size: 44px; font-weight: 700; color: var(--bg-deep); letter-spacing: -1.5px;
+      line-height: 1;
+    }
+    .step-ico {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: var(--primary-soft); color: var(--primary);
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+    }
+    .step:nth-child(2) .step-ico { background: var(--accent-soft); color: var(--accent); }
+    .step h3 {
+      margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.4px;
+    }
+    .step p {
+      margin: 10px 0 0; font-size: 14.5px; color: var(--text-muted); line-height: 1.5;
+      text-wrap: pretty;
+    }
+
+    /* ─── CATEGORIES ──────────────────────────────── */
+    section.cats { background: var(--surface-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .cat-grid {
+      margin-top: 56px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    @media (max-width: 880px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 560px) { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+    .cat {
+      padding: 22px 18px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; transition: transform .15s, box-shadow .15s, border-color .15s;
+      display: flex; flex-direction: column; gap: 14px;
+      cursor: pointer;
+    }
+    .cat:hover { transform: translateY(-3px); box-shadow: var(--shadow-pop); border-color: var(--primary); }
+    .cat-glyph {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--primary-soft); color: var(--primary);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 20px;
+    }
+    .cat:nth-child(3n) .cat-glyph { background: var(--accent-soft); color: var(--accent); }
+    .cat .cat-label { font-weight: 700; font-size: 15.5px; letter-spacing: -0.2px; }
+    .cat .cat-count { font-size: 12.5px; color: var(--text-muted); margin-top: -8px; font-weight: 500; }
+
+    .cat-more {
+      grid-column: span 1; padding: 22px 18px;
+      border: 1.5px dashed var(--border-strong);
+      border-radius: 18px; background: transparent;
+      display: flex; flex-direction: column; justify-content: center;
+      font-weight: 700; color: var(--text-muted);
+    }
+    .cat-more span { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 4px; }
+
+    /* ─── COMMUNITY (split) ───────────────────────── */
+    section.community { background: var(--bg); }
+    .comm-grid {
+      margin-top: 56px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+    }
+    @media (max-width: 880px) { .comm-grid { grid-template-columns: 1fr; } }
+    .comm-card {
+      padding: 28px; border-radius: 24px;
+      background: var(--surface); border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .comm-card.dark {
+      background: var(--primary); color: #fff; border: none;
+      position: relative; overflow: hidden;
+    }
+    .comm-card.dark::after {
+      content: ""; position: absolute; right: -60px; bottom: -60px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .comm-card.dark .comm-eyebrow { color: rgba(255,255,255,0.85); }
+    .comm-card.dark .comm-title { color: #fff; }
+    .comm-card.dark .comm-body { color: rgba(255,255,255,0.85); }
+    .comm-eyebrow {
+      font-size: 11.5px; font-weight: 800; color: var(--accent);
+      letter-spacing: 1.2px; text-transform: uppercase;
+    }
+    .comm-title {
+      margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.6px;
+      line-height: 1.1; color: var(--text); text-wrap: balance;
+      overflow-wrap: break-word; word-break: break-word; hyphens: auto;
+    }
+    .comm-body { font-size: 14.5px; line-height: 1.55; color: var(--text-muted); text-wrap: pretty; }
+
+    .event-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px; border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      position: relative; z-index: 1;
+    }
+    .event-row + .event-row { margin-top: 8px; }
+    .event-date {
+      width: 54px; flex-shrink: 0; text-align: center;
+      padding: 7px 0; border-radius: 10px; background: #fff; color: var(--primary);
+    }
+    .event-date .m { font-size: 9.5px; font-weight: 800; letter-spacing: 0.5px; color: var(--accent); }
+    .event-date .d { font-size: 22px; font-weight: 800; line-height: 1; color: var(--text); }
+    .event-info { flex: 1; min-width: 0; }
+    .event-info .t { font-weight: 700; font-size: 14px; line-height: 1.2; }
+    .event-info .v { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+
+    .board-list { display: flex; flex-direction: column; gap: 10px; }
+    .board-item {
+      padding: 14px 16px; border-radius: 14px;
+      border: 1px solid var(--border); background: var(--surface-alt);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .board-kind {
+      font-size: 10px; font-weight: 800; letter-spacing: 0.4px;
+      padding: 3px 8px; border-radius: 6px;
+      background: var(--accent-soft); color: var(--accent);
+      flex-shrink: 0;
+    }
+    .board-item:nth-child(2) .board-kind { background: var(--primary-soft); color: var(--primary); }
+    .board-item:nth-child(3) .board-kind { background: #f0e2c5; color: #8a6418; }
+    .board-info { flex: 1; min-width: 0; }
+    .board-info .t {
+      font-weight: 700; font-size: 14px; letter-spacing: -0.1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .board-info .m { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ─── BUSINESS PITCH ─────────────────────────── */
+    section.biz { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .biz-grid {
+      display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: center;
+    }
+    @media (max-width: 980px) { .biz-grid { grid-template-columns: 1fr; gap: 40px; } }
+    .biz-features { margin-top: 36px; display: flex; flex-direction: column; gap: 18px; }
+    .biz-feat { display: flex; gap: 14px; align-items: flex-start; }
+    .biz-feat-num {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: var(--primary); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 13px; flex-shrink: 0;
+    }
+    .biz-feat-text strong { display: block; font-weight: 700; font-size: 16px; letter-spacing: -0.2px; margin-bottom: 3px; }
+    .biz-feat-text span { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+    .biz-actions { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* dashboard mockup */
+    .dash-mock {
+      padding: 24px; border-radius: 24px;
+      background: var(--bg); border: 1px solid var(--border);
+      box-shadow: var(--shadow-pop);
+      max-width: 460px;
+    }
+    .dash-hero {
+      padding: 16px 18px; border-radius: 16px;
+      background: var(--primary); color: #fff;
+      position: relative; overflow: hidden;
+    }
+    .dash-hero::after { content: ""; position: absolute; right: -30px; bottom: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+    .dash-hero .eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 0.5px; opacity: 0.85; }
+    .dash-hero .big { font-size: 32px; font-weight: 800; letter-spacing: -1px; line-height: 1; margin-top: 4px; }
+    .dash-hero .delta { display: inline-block; font-size: 11px; font-weight: 700; color: #aef0c6; margin-left: 6px; vertical-align: middle; }
+    .dash-hero .body { font-size: 13px; opacity: 0.9; margin-top: 6px; }
+    .dash-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .dash-stat {
+      padding: 10px 12px; background: #fff; border-radius: 12px; border: 1px solid var(--border);
+    }
+    .dash-stat .label { font-size: 9.5px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.3px; text-transform: uppercase; }
+    .dash-stat .v { font-size: 20px; font-weight: 800; color: var(--text); line-height: 1; margin-top: 4px; letter-spacing: -0.5px; }
+    .dash-stat .d { font-size: 11px; font-weight: 700; color: #1d6a3c; margin-top: 4px; }
+    .dash-spark { margin-top: 12px; padding: 14px; background: #fff; border-radius: 12px; border: 1px solid var(--border); }
+    .dash-spark .label { font-size: 9.5px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.3px; text-transform: uppercase; }
+    .dash-spark svg { width: 100%; height: 64px; margin-top: 8px; }
+
+    /* ─── TESTIMONIALS ────────────────────────────── */
+    section.voices { background: var(--bg); }
+    .quote-grid {
+      margin-top: 56px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+    }
+    @media (max-width: 880px) { .quote-grid { grid-template-columns: 1fr; } }
+    .quote {
+      padding: 26px; border-radius: 20px;
+      background: var(--surface); border: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+    .quote::before {
+      content: "„"; position: absolute; top: -6px; right: 22px;
+      font-size: 110px; line-height: 1; color: var(--accent); opacity: 0.18;
+      font-family: 'Plus Jakarta Sans'; font-weight: 800;
+    }
+    .quote p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--text); text-wrap: pretty; }
+    .quote .who { margin-top: 20px; display: flex; align-items: center; gap: 12px; }
+    .quote .who .av {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 14px;
+    }
+    .quote .who .n { font-weight: 700; font-size: 13.5px; }
+    .quote .who .l { font-size: 11.5px; color: var(--text-muted); }
+
+    /* ─── FAQ ─────────────────────────────────────── */
+    section.faq { background: var(--surface-alt); border-top: 1px solid var(--border); }
+    .faq-list { margin-top: 48px; max-width: 760px; }
+    .faq-item {
+      padding: 22px 0; border-bottom: 1px solid var(--border);
+      display: flex; gap: 24px; align-items: flex-start;
+    }
+    .faq-q {
+      font-weight: 700; font-size: 18px; letter-spacing: -0.3px;
+      flex: 1; text-wrap: balance;
+    }
+    .faq-a { font-size: 14.5px; color: var(--text-muted); line-height: 1.55; flex: 1.2; text-wrap: pretty; }
+    @media (max-width: 720px) {
+      .faq-item { flex-direction: column; gap: 8px; }
+    }
+
+    /* ─── FINAL CTA ───────────────────────────────── */
+    section.cta {
+      background: var(--bg);
+      padding-bottom: 0;
+    }
+    .cta-card {
+      position: relative; overflow: hidden;
+      padding: 80px 56px; border-radius: 32px;
+      background: var(--primary); color: #fff;
+      text-align: center;
+    }
+    @media (max-width: 720px) { .cta-card { padding: 64px 28px; border-radius: 24px; } }
+    .cta-card::before {
+      content: ""; position: absolute; top: -120px; left: -80px;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,57,46,0.4) 0%, transparent 60%);
+    }
+    .cta-card::after {
+      content: ""; position: absolute; bottom: -100px; right: -60px;
+      width: 280px; height: 280px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.10) 0%, transparent 60%);
+    }
+    .cta-card .inner { position: relative; z-index: 1; }
+    .cta-eyebrow {
+      display: inline-block; padding: 6px 14px; border-radius: 999px;
+      background: rgba(255,255,255,0.16); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.4px; margin-bottom: 22px;
+    }
+    .cta-title {
+      margin: 0; font-size: clamp(38px, 5.5vw, 62px);
+      font-weight: 800; letter-spacing: -2px; line-height: 1.02;
+      text-wrap: balance;
+    }
+    .cta-title em { font-style: italic; color: #f0b1aa; font-weight: 800; }
+    .cta-sub {
+      margin: 18px auto 0; max-width: 540px;
+      font-size: 17px; opacity: 0.88; line-height: 1.5;
+    }
+    .cta-actions { margin-top: 36px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .cta-actions .btn-primary {
+      background: #fff; color: var(--primary);
+    }
+    .cta-actions .btn-ghost {
+      border-color: rgba(255,255,255,0.35); color: #fff;
+    }
+    .cta-actions .btn-ghost:hover { background: rgba(255,255,255,0.10); }
+
+    /* ─── FOOTER ──────────────────────────────────── */
+    footer {
+      padding: 72px 0 36px; background: var(--bg);
+      border-top: 1px solid var(--border); margin-top: 80px;
+    }
+    .foot-grid {
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 36px;
+      padding-bottom: 48px; border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 720px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 28px; } }
+    .foot-about p {
+      max-width: 320px; font-size: 14px; line-height: 1.55; color: var(--text-muted);
+      margin: 14px 0 0;
+    }
+    .foot-col h4 {
+      margin: 0 0 14px; font-size: 12px; font-weight: 800; color: var(--text);
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    .foot-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    .foot-col a { font-size: 14px; color: var(--text-muted); }
+    .foot-col a:hover { color: var(--text); }
+    .foot-bottom {
+      padding-top: 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      font-size: 12.5px; color: var(--text-muted); flex-wrap: wrap;
+    }
+
+    /* phone mockup styles (reused from app palette) */
+    .phone-frame {
+      width: 320px; height: 660px; border-radius: 44px;
+      background: #000; padding: 8px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+    .phone-screen {
+      width: 100%; height: 100%; border-radius: 36px;
+      background: var(--bg);
+      overflow: hidden; position: relative;
+    }
+
+    /* small pin (for floats / map preview) */
+    .pin {
+      width: 28px; height: 28px; border-radius: 50% 50% 50% 4px;
+      background: #fff; border: 2.5px solid var(--primary);
+      transform: rotate(-45deg); position: relative;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 8px rgba(14,31,23,0.22);
+    }
+    .pin.featured { background: var(--accent); border-color: var(--accent); }
+    .pin span {
+      transform: rotate(45deg); font-weight: 800; font-size: 12px; color: var(--primary);
+      line-height: 1;
+    }
+    .pin.featured span { color: #fff; }
+
+    /* ───── hero phone — animated ──────────────────────────── */
+    .hero-search-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; background: #fff;
+      border-radius: 14px; box-shadow: var(--shadow-card);
+    }
+    .hero-search-text {
+      flex: 1; font-size: 13px; font-weight: 600; color: var(--text);
+      min-height: 16px; display: flex; align-items: center;
+    }
+    .hero-search-text .placeholder { color: #94a097; font-weight: 500; }
+    .hero-caret {
+      display: inline-block; width: 2px; height: 14px; background: var(--accent);
+      margin-left: 2px; animation: caretBlink 0.85s steps(2) infinite;
+    }
+    @keyframes caretBlink { 50% { opacity: 0; } }
+
+    #heroPins { position: absolute; inset: 0; pointer-events: none; }
+    .h-pin-wrap {
+      position: absolute; transform: translate(-50%, -80%) scale(0.4);
+      opacity: 0; transition: opacity 0.35s ease-out, transform 0.45s cubic-bezier(0.5, 1.6, 0.4, 1);
+    }
+    .h-pin-wrap.in { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+
+    .hero-card {
+      position: absolute; left: 12px; right: 12px; bottom: 18px;
+      padding: 10px; background: #fff; border-radius: 16px;
+      box-shadow: var(--shadow-pop);
+      display: flex; gap: 10px; align-items: center;
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.4s ease-out, transform 0.5s cubic-bezier(0.5, 1.4, 0.4, 1);
+    }
+    .hero-card.in { opacity: 1; transform: translateY(0); }
+    .hero-card-ph {
+      width: 50px; height: 50px; border-radius: 11px; flex-shrink: 0;
+      position: relative; transition: background 0.4s; overflow: hidden;
+    }
+    .hero-card-ph .hcard-ico {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: rgba(255,255,255,0.95); pointer-events: none;
+    }
+    .hero-card-ph .hbadge {
+      position: absolute; top: 3px; left: 3px; padding: 1px 5px; border-radius: 4px;
+      background: var(--accent); color: #fff;
+      font-size: 7.5px; font-weight: 800; letter-spacing: 0.3px;
+    }
+    .hero-card-cta {
+      width: 36px; height: 36px; border-radius: 11px; flex-shrink: 0;
+      background: var(--primary); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* floating chips — sync with hero query */
+    .float { transition: opacity 0.5s, transform 0.5s, box-shadow 0.5s; }
+    .float.dim { opacity: 0.45; transform: scale(0.96); }
+    .float.active {
+      box-shadow: 0 0 0 2px var(--accent), var(--shadow-pop);
+    }
+
+    /* ───── demo section ──────────────────────────────────── */
+    section.demo { background: var(--bg-deep); border-bottom: 1px solid var(--border); }
+    .demo-frame {
+      margin-top: 48px; padding: 16px;
+      background: var(--surface); border-radius: 28px;
+      border: 1px solid var(--border); box-shadow: var(--shadow-pop);
+    }
+    .demo-search {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; background: var(--surface-alt);
+      border-radius: 16px; border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .demo-search > svg { color: var(--text-muted); flex-shrink: 0; }
+    .demo-search input {
+      flex: 1; border: none; background: transparent; outline: none;
+      font-family: inherit; font-size: 16px; font-weight: 600;
+      color: var(--text); min-width: 0;
+    }
+    .demo-search input::placeholder { color: var(--text-faint); font-weight: 500; }
+    .demo-search .clear {
+      width: 28px; height: 28px; border-radius: 8px; border: none;
+      background: rgba(28,61,46,0.10); color: var(--text-muted);
+      display: none; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .demo-search .clear.show { display: inline-flex; }
+
+    .demo-chips {
+      display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 6px;
+      margin-bottom: 14px; scrollbar-width: none;
+    }
+    .demo-chips::-webkit-scrollbar { display: none; }
+    .demo-chip {
+      flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 14px; border-radius: 999px; border: none; cursor: pointer;
+      background: var(--surface-alt); color: var(--text);
+      font-family: inherit; font-weight: 600; font-size: 13.5px;
+      box-shadow: inset 0 0 0 1px var(--border);
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .demo-chip:hover { background: var(--surface); }
+    .demo-chip.active {
+      background: var(--primary); color: #fff;
+      box-shadow: var(--shadow-card);
+    }
+    .demo-chip .gly {
+      width: 18px; height: 18px; border-radius: 5px;
+      background: var(--primary-soft); color: var(--primary);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800;
+    }
+    .demo-chip.active .gly { background: rgba(255,255,255,0.18); color: #fff; }
+
+    .demo-body { display: grid; grid-template-columns: 1.05fr 1fr; gap: 14px; }
+    @media (max-width: 880px) { .demo-body { grid-template-columns: 1fr; } }
+
+    .demo-map {
+      position: relative; height: 420px; border-radius: 18px; overflow: hidden;
+      background: #f0e9da; border: 1px solid var(--border);
+    }
+    .demo-map svg.basemap { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .demo-map .me-dot {
+      position: absolute; left: 50%; top: 56%; transform: translate(-50%, -50%);
+      width: 18px; height: 18px; border-radius: 50%; background: #3884ff;
+      border: 3px solid #fff; box-shadow: 0 2px 6px rgba(56,132,255,0.45); z-index: 5;
+    }
+    .demo-map .me-pulse {
+      position: absolute; left: 50%; top: 56%;
+      width: 18px; height: 18px; border-radius: 50%; background: rgba(56,132,255,0.30);
+      animation: kintiPulseDemo 2.4s ease-out infinite; z-index: 4;
+    }
+    @keyframes kintiPulseDemo {
+      0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0.8; }
+      100% { transform: translate(-50%, -50%) scale(4.5); opacity: 0; }
+    }
+    .demo-pin {
+      position: absolute;
+      transform: translate(-50%, -100%) scale(1);
+      transition: opacity 0.4s, transform 0.45s cubic-bezier(0.5, 1.6, 0.4, 1);
+      opacity: 1; z-index: 3;
+    }
+    .demo-pin.hidden { opacity: 0; transform: translate(-50%, -80%) scale(0.4); pointer-events: none; }
+    .demo-pin.dim { opacity: 0.3; }
+
+    .demo-list {
+      height: 420px; overflow-y: auto;
+      background: var(--surface-alt); border-radius: 18px;
+      border: 1px solid var(--border); padding: 10px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .demo-list::-webkit-scrollbar { width: 6px; }
+    .demo-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+    .demo-result-head {
+      font-size: 11.5px; font-weight: 700; color: var(--text-muted);
+      letter-spacing: 0.4px; text-transform: uppercase;
+      padding: 6px 8px 4px; flex-shrink: 0;
+    }
+    .demo-result-head strong { color: var(--text); }
+    .demo-row {
+      display: flex; gap: 12px; align-items: center;
+      background: #fff; border-radius: 14px; padding: 10px;
+      border: 1px solid var(--border);
+      animation: rowIn 0.35s ease-out backwards;
+    }
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .demo-row .ph {
+      width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
+      position: relative;
+    }
+    .demo-row .ph .badge {
+      position: absolute; top: 3px; left: 3px; padding: 1px 5px; border-radius: 4px;
+      background: var(--accent); color: #fff;
+      font-size: 7.5px; font-weight: 800; letter-spacing: 0.3px;
+    }
+    .demo-row .info { flex: 1; min-width: 0; }
+    .demo-row .cat {
+      font-size: 9.5px; font-weight: 800; color: var(--primary); letter-spacing: 0.4px;
+      text-transform: uppercase;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .demo-row .star { color: var(--text); font-weight: 700; font-size: 11px; text-transform: none; }
+    .demo-row .star span { color: #f0a23a; }
+    .demo-row .name {
+      font-size: 14px; font-weight: 700; letter-spacing: -0.2px; margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .demo-row .meta { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    .demo-row .open { color: #1d6a3c; font-weight: 600; }
+
+    .demo-empty {
+      padding: 50px 20px; text-align: center;
+      color: var(--text-muted); font-size: 14px;
+    }
+    .demo-empty .big { font-size: 36px; margin-bottom: 8px; }
+
+    .demo-hint {
+      margin: 22px 0 0; text-align: center; font-size: 13.5px; color: var(--text-muted);
+    }
+    .demo-hint kbd {
+      display: inline-block; padding: 3px 9px; border-radius: 7px;
+      background: var(--surface); border: 1px solid var(--border-strong);
+      border-bottom-width: 2px;
+      font-family: inherit; font-weight: 700; font-size: 12px; color: var(--text);
+      margin: 0 2px; cursor: pointer; transition: transform 0.1s;
+    }
+    .demo-hint kbd:hover { transform: translateY(-1px); }
+    .demo-hint kbd:active { transform: translateY(0); }
+
+    /* ───── carousel section ──────────────────────────────── */
+    .carousel-wrap { margin-top: 48px; position: relative; }
+    .carousel-head {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 22px;
+    }
+    .carousel-filter {
+      flex: 1; min-width: 0;
+      display: flex; gap: 8px; overflow-x: auto; padding: 4px 0;
+      scrollbar-width: none;
+    }
+    .carousel-filter::-webkit-scrollbar { display: none; }
+    .cf-chip {
+      flex: 0 0 auto; padding: 8px 14px; border-radius: 999px; border: none;
+      background: var(--surface); color: var(--text);
+      font-family: inherit; font-weight: 600; font-size: 13px;
+      box-shadow: inset 0 0 0 1px var(--border);
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .cf-chip:hover { background: var(--surface-alt); }
+    .cf-chip.active { background: var(--primary); color: #fff; box-shadow: none; }
+
+    .carousel-controls { display: flex; gap: 6px; flex-shrink: 0; }
+    .cc-btn {
+      width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer;
+      background: var(--surface); box-shadow: var(--shadow-card);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--text);
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .cc-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .cc-btn:hover:not(:disabled) { background: var(--bg); }
+    .cc-btn:active:not(:disabled) { transform: translateY(1px); }
+
+    .carousel {
+      display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+      padding: 4px 4px 18px;
+      margin: 0 -4px;
+      scrollbar-width: none;
+      scroll-behavior: smooth;
+    }
+    .carousel::-webkit-scrollbar { display: none; }
+
+    .biz-card {
+      flex: 0 0 280px; scroll-snap-align: start;
+      background: var(--surface); border-radius: 20px; overflow: hidden;
+      border: 1px solid var(--border); box-shadow: var(--shadow-card);
+      display: flex; flex-direction: column;
+      transition: transform 0.18s, box-shadow 0.18s;
+      cursor: pointer;
+    }
+    .biz-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-pop); }
+    .biz-card .ph { height: 150px; position: relative; }
+    .biz-card .ph .badge {
+      position: absolute; top: 12px; left: 12px;
+      padding: 4px 10px; border-radius: 999px;
+      background: var(--accent); color: #fff;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.4px;
+    }
+    .biz-card .ph .save {
+      position: absolute; top: 12px; right: 12px;
+      width: 32px; height: 32px; border-radius: 10px;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text);
+    }
+    .biz-card .info { padding: 16px; }
+    .biz-card .info .row1 {
+      display: flex; align-items: center; gap: 7px; margin-bottom: 6px;
+      font-size: 10.5px; font-weight: 800; letter-spacing: 0.4px;
+      text-transform: uppercase; color: var(--primary);
+    }
+    .biz-card .info .row1 .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-faint); }
+    .biz-card .info .row1 .star { color: var(--text); display: inline-flex; align-items: center; gap: 3px; text-transform: none; }
+    .biz-card .info .row1 .star .s { color: #f0a23a; }
+    .biz-card .info .name {
+      font-size: 17px; font-weight: 700; letter-spacing: -0.3px;
+      margin: 0 0 8px; text-wrap: balance; line-height: 1.2;
+    }
+    .biz-card .info .meta {
+      font-size: 13px; color: var(--text-muted);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .biz-card .info .meta .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-faint); }
+    .biz-card .info .meta .open { color: #1d6a3c; font-weight: 600; }
+    .biz-card .info .langs { display: flex; gap: 6px; margin-top: 14px; }
+    .biz-card .info .lang {
+      font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+      background: var(--primary-soft); color: var(--primary);
+    }
+    .biz-card .info .lang.de { background: var(--surface-alt); color: var(--text-muted); border: 1px solid var(--border); }
+
+    .carousel-foot {
+      margin-top: 18px; text-align: center; font-size: 13.5px; color: var(--text-muted);
+    }
+    .carousel-foot a { color: var(--primary); font-weight: 700; }
+    .carousel-foot a:hover { color: var(--accent); }
+  </style>
+  <style>
+    .biz-card .ph { overflow: hidden; }
+    .biz-card .ph .ph-ico { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 58px; font-weight: 800; color: rgba(255,255,255,0.92); text-shadow: 0 2px 10px rgba(14,31,23,0.18); pointer-events: none; }
+    .demo-row .ph { overflow: hidden; }
+    .demo-row .ph .ph-ico { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: rgba(255,255,255,0.94); pointer-events: none; }
+  </style>
 </head>
 <body>
 
-<div class="topbar">
+<!-- ─── NAV ───────────────────────────────────── -->
+<nav class="top">
   <div class="wrap">
-    <a class="wordmark" href="https://kinti.app/">kinti<span class="dot"></span></a>
-    <nav class="topnav">
-      <a href="#funkciok">Funkciók</a>
-      <a href="#orszagok">Országok</a>
-      <a href="#arak">Árak</a>
-      <a class="btn small" href="https://kinti.app/">App megnyitása</a>
-    </nav>
+    <a class="brand" href="#">
+      <svg width="32" height="38" viewBox="0 0 40 47" fill="none">
+        <defs>
+          <clipPath id="navpin"><path d="M20 1.5C9.8 1.5 2.5 9.4 2.5 19.4c0 9 8.2 18 14.8 24.3a3.8 3.8 0 0 0 5.4 0c6.6-6.3 14.8-15.3 14.8-24.3 0-10-7.3-17.9-17.5-17.9z"/></clipPath>
+        </defs>
+        <g clip-path="url(#navpin)">
+          <rect x="0" y="0" width="40" height="16" fill="#c8392e"/>
+          <rect x="0" y="16" width="40" height="16" fill="#f4ede0"/>
+          <rect x="0" y="32" width="40" height="15" fill="#1d4434"/>
+        </g>
+        <path d="M20 1.5C9.8 1.5 2.5 9.4 2.5 19.4c0 9 8.2 18 14.8 24.3a3.8 3.8 0 0 0 5.4 0c6.6-6.3 14.8-15.3 14.8-24.3 0-10-7.3-17.9-17.5-17.9z" fill="none" stroke="#1d4434" stroke-width="2.2"/>
+        <circle cx="20" cy="19" r="5" fill="#f4ede0" stroke="#1d4434" stroke-width="2.2"/>
+      </svg>
+      kinti
+    </a>
+    <div class="nav-links">
+      <a href="#hogyan">Hogyan működik</a>
+      <a href="#eszkozok">Eszközök</a>
+      <a href="#ai">AI</a>
+      <a href="#kozosseg">Közösség</a>
+      <a href="#vallalkozok">Vállalkozóknak</a>
+      <a href="#pro">PRO</a>
+      <a href="#gyik">GYIK</a>
+    </div>
+    <div class="nav-spacer"></div>
+    <button class="nav-cta">Letöltöm</button>
   </div>
-</div>
+</nav>
 
-<!-- HERO -->
+<!-- ─── HERO ──────────────────────────────────── -->
 <section class="hero">
   <div class="wrap">
-    <div class="flags">🇨🇭 🇦🇹 🇩🇪 🇳🇱</div>
-    <h1>Találj magyart a közeledben.</h1>
-    <p class="lead">A kint élő magyarok mindennapi appja: ellenőrzött magyar szakemberek, állások és közvetítés,
-      valós bér- és lakbér-adatok, események és ügyintézés-segédek — anyanyelven, négy országban.</p>
-    <div class="cta-row">
-      <a class="btn" href="https://kinti.app/">Megnyitom az appot — ingyenes</a>
-      <a class="btn ghost" href="#arak">Prémium csomagok</a>
-    </div>
-    <div class="chips">
-      <span class="chip"><b>250+</b> ellenőrzött bejegyzés</span>
-      <span class="chip"><b>24</b> szakma-kategória</span>
-      <span class="chip"><b>4</b> ország</span>
-      <span class="chip"><b>50+</b> magyar esemény</span>
-      <span class="chip">Az alap <b>örökre ingyenes</b></span>
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow">
+          <span class="dot">Európa-szerte élőben · egy térkép, anyanyelven</span>
+        </div>
+        <h1 class="hero-title">Találj <em>magyart</em> a közeledben.</h1>
+        <p class="hero-sub">
+          Fodrász, autószerelő, orvos, ügyvéd, pék — bármi. Egy térkép. Anyanyelven. A kinti GPS-alapú szakember kereső a külföldön élő magyaroknak.
+        </p>
+        <div class="hero-actions">
+          <button class="btn-primary">
+            Letöltöm — ingyenes
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7l-7 7"/></svg>
+          </button>
+          <button class="btn-ghost">Vállalkozó vagyok</button>
+        </div>
+        <div class="hero-proof">
+          <div class="avatar-stack">
+            <div style="background: linear-gradient(135deg,#1d4434,#3a6e54)">K</div>
+            <div style="background: linear-gradient(135deg,#c8392e,#e0654b)">A</div>
+            <div style="background: linear-gradient(135deg,#d8a32a,#b9831a)">P</div>
+            <div style="background: linear-gradient(135deg,#5c6d63,#3a463f)">E</div>
+          </div>
+          <div class="hero-proof-text">
+            <strong>Magyar szakemberek</strong> és közösség<br>
+            Európa-szerte — egy térképen, anyanyelven.
+          </div>
+        </div>
+      </div>
+
+      <!-- phone mockup -->
+      <div class="hero-phone-stage">
+        <div class="float float-1">
+          <div class="float-ico accent">✂</div>
+          <span>Kovács Anna<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Fodrász · 4 perc</span></span>
+        </div>
+        <div class="float float-2">
+          <div class="float-ico">⚙</div>
+          <span>Horváth szerviz<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Autószerelő · 11 perc</span></span>
+        </div>
+        <div class="float float-3">
+          <div class="float-ico accent">◐</div>
+          <span>Nagy pékség<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Pék · 6 perc</span></span>
+        </div>
+
+        <div class="hero-phone">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <!-- stylized map -->
+              <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+                <rect width="100" height="100" fill="#f0e9da"/>
+                <path d="M-5 -5 Q15 8, 22 22 Q12 30, -2 28 Z" fill="#dde6d5"/>
+                <path d="M70 -2 Q88 6, 105 10 L 105 26 Q 88 30, 76 22 Q 70 14, 70 -2 Z" fill="#dde6d5"/>
+                <ellipse cx="18" cy="78" rx="22" ry="14" fill="#dde6d5"/>
+                <ellipse cx="84" cy="82" rx="18" ry="12" fill="#dde6d5"/>
+                <path d="M-4 64 Q 18 60, 32 66 Q 50 74, 64 68 Q 82 60, 104 66 L 104 76 Q 82 70, 64 78 Q 48 84, 32 76 Q 16 70, -4 74 Z" fill="#cfe1d8"/>
+                <g stroke="#ffffff" fill="none" stroke-linecap="round">
+                  <path d="M-2 28 L 102 32" stroke-width="3.6"/>
+                  <path d="M-2 44 Q 50 42, 102 46" stroke-width="2.8"/>
+                  <path d="M22 -4 L 26 102" stroke-width="3.0"/>
+                  <path d="M48 -4 Q 50 50, 52 102" stroke-width="2.6"/>
+                  <path d="M72 -4 L 76 102" stroke-width="2.4"/>
+                  <path d="M-2 88 Q 50 86, 102 90" stroke-width="2.4"/>
+                </g>
+              </svg>
+              <!-- top search bar (typed by JS) -->
+              <div style="position: absolute; left: 0; right: 0; top: 0; padding: 50px 14px 14px; z-index: 6;">
+                <div class="hero-search-bar">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5c6d63" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+                  <div class="hero-search-text">
+                    <span id="heroTyped"></span><span class="hero-caret"></span>
+                  </div>
+                  <div style="width: 26px; height: 26px; border-radius: 8px; background: var(--primary-soft); display: flex; align-items: center; justify-content: center;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1d4434" stroke-width="2.2"><path d="M4 6h10"/><path d="M18 6h2"/><path d="M4 12h4"/><path d="M12 12h8"/><path d="M4 18h12"/></svg>
+                  </div>
+                </div>
+              </div>
+              <!-- pins (injected by JS into #heroPins) -->
+              <div id="heroPins"></div>
+              <!-- me dot -->
+              <div style="position: absolute; left: 50%; top: 56%; transform: translate(-50%, -50%); width: 16px; height: 16px; border-radius: 50%; background: rgba(56,132,255,0.30); animation: kintiPulseDemo 2.4s ease-out infinite; z-index: 1;"></div>
+              <div style="position: absolute; left: 50%; top: 56%; transform: translate(-50%, -50%); width: 16px; height: 16px; border-radius: 50%; background: #3884ff; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(56,132,255,0.45); z-index: 2;"></div>
+
+              <!-- bottom card (content swapped by JS) -->
+              <div class="hero-card" id="heroCard">
+                <div class="hero-card-ph" id="heroCardPh" style="background: linear-gradient(135deg, #d6b89a, #8c5e3c);">
+                  <div class="hbadge">KIEMELT</div>
+                  <div class="hcard-ico" id="heroCardIco">✂</div>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 9px; font-weight: 800; letter-spacing: 0.4px; color: var(--primary); text-transform: uppercase;" id="heroCardCat">Fodrász · ★ 4.9</div>
+                  <div style="font-size: 13px; font-weight: 800; letter-spacing: -0.2px; margin-top: 2px;" id="heroCardName">Kovács Anna fodrászat</div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" id="heroCardMeta">4 perc · Nyitva</div>
+                </div>
+                <div class="hero-card-cta">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8l-8 18l-2-8z"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ORSZÁGOK -->
-<section id="orszagok" style="padding-top:20px">
+<!-- ─── STATS STRIP ──────────────────────────── -->
+<section class="stats">
   <div class="wrap">
-    <span class="eyebrow">Hol működik?</span>
-    <h2>Négy ország, egy app.</h2>
-    <p class="lead">A tartalom a választott országodhoz igazodik — a szaknévsor, az állások, a benchmark-adatok
-      és az események mind a négy országban élnek. Néhány eszköz egyelőre ország-specifikus; ezt mindenhol jelöljük.</p>
-    <div class="grid g4" style="margin-top:22px">
-      <div class="card country-card"><b>🇨🇭 Svájc</b><p>A teljes eszköztár: szaknévsor, állások, Iránytű, bérkalkulátor, vám-kalkulátor, szolgáltató-váltó, Einbürgerung-szimulátor, svájci német leckék.</p></div>
-      <div class="card country-card"><b>🇦🇹 Ausztria</b><p>Szaknévsor, állások + közvetítés, Iránytű, bérkalkulátor, ügyintézés-csekklisták, Staatsbürgerschaft-teszt, osztrák német leckék és napi kvíz.</p></div>
-      <div class="card country-card"><b>🇩🇪 Németország</b><p>Szaknévsor, állások + közvetítés, Iránytű, bérkalkulátor (Lohnsteuer), Einbürgerungstest, ügyintézés-csekklisták, német kvíz.</p></div>
-      <div class="card country-card"><b>🇳🇱 Hollandia</b><p>Szaknévsor, állások + közvetítés, Iránytű, inburgering (KNM) felkészítő, holland nyelvlecke és kvíz, események, hivatalos linkek.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- FŐ MODULOK -->
-<section style="padding-top:8px">
-  <div class="wrap">
-    <span class="eyebrow">A négy pillér</span>
-    <h2>Amire tényleg szükséged lesz kint.</h2>
-    <div class="grid g2" style="margin-top:22px">
-      <div class="card">
-        <h3>🔎 Magyar Szaknévsor <span class="cc">4 ORSZÁG</span></h3>
-        <p>250+ ellenőrzött magyar vállalkozás és szervezet 24 kategóriában — fodrásztól a fogorvosig, pszichológustól
-          az ügyvédig. Térképen és listában, valódi magyar véleményekkel, ajánlatkéréssel. Kereshetsz természetes
-          nyelven is („magyar villanyszerelő Bécsben aki angolul is tud”). Minden beküldést kézzel moderálunk.</p>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="num">500<em>k</em>+</div>
+        <div class="label">külföldön élő magyar Európában</div>
       </div>
-      <div class="card">
-        <h3>💼 Állások + közvetítés <span class="cc">4 ORSZÁG</span></h3>
-        <p>Magyar-barát álláshirdetések egy helyen: ellenőrzött hirdetések + élő aggregált listák + hivatalos
-          álláskereső-források. Állás-radar értesít az új találatokról. Ha szeretnéd, a Feedback Jobs
-          <a href="https://kinti.app/kozvetites">aktívan közvetít</a> is — a jelöltnek ingyen (AT/DE/NL).</p>
+      <div class="stat">
+        <div class="num">4</div>
+        <div class="label">európai ország<br>— mind élőben</div>
       </div>
-      <div class="card">
-        <h3>🧭 Iránytű — bér &amp; lakbér <span class="cc">4 ORSZÁG</span></h3>
-        <p>Mennyit keresnek a szakmádban a kint élő magyarok, és mennyi egy reális lakbér? Valós referencia-adatok +
-          a közösség anonim beküldései, régiónként. Párja a „Mennyit költesz?” megélhetési benchmark. Nem tanácsadás —
-          közösségi adat, döntéstámogatásra.</p>
+      <div class="stat">
+        <div class="num">20<em>+</em></div>
+        <div class="label">eszköz, kalkulátor, varázsló<br>— magyarul, ingyen</div>
       </div>
-      <div class="card">
-        <h3>📅 Események &amp; közösség <span class="cc">4 ORSZÁG</span></h3>
-        <p>Magyar koncertek, találkozók és közösségi programok térképen — intézetek, gyülekezetek, egyesületek
-          eseményei és a közösség beküldései (moderálva). A „Keresek” táblán igényt is hirdethetsz, a szakik
-          megtalálnak.</p>
+      <div class="stat">
+        <div class="num"><em>Ingyenes</em></div>
+        <div class="label">a keresés — felhasználói díj<br>nincs, egyik országban sem</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- TELJES FUNKCIÓ-KATALÓGUS -->
-<section id="funkciok" style="padding-top:8px">
+<!-- ─── INTERACTIVE DEMO ──────────────────────── -->
+<section class="demo" id="hogyan">
   <div class="wrap">
-    <span class="eyebrow">Teljes lista</span>
-    <h2>Minden funkció, egy helyen.</h2>
-    <p class="lead">Az ország-jelzés mutatja, hol érhető el. A <span class="cc pro">PRO</span> jelzésű eszközök a Kinti PRO előfizetés részei — minden más ingyenes.</p>
+    <div class="sec-eyebrow">Próbáld ki — most</div>
+    <h2 class="sec-title">Élőben — <em>egyetlen érintés</em> a magyar segítségig.</h2>
+    <p class="sec-sub">Tényleg így működik. Gépelj a keresőbe vagy válassz kategóriát, és nézd ahogy real-time változnak a pinek és a lista.</p>
 
-    <div class="feat-group">
-      <h3><span class="ic" style="background:var(--primary-soft);color:var(--primary)">💼</span> Munka &amp; karrier</h3>
-      <ul class="feats">
-        <li>Magyar állásbörze <span class="cc">4 ORSZÁG</span><span class="d">Ellenőrzött hirdetések + élő aggregált listák + link a hivatalos álláskeresőkhöz.</span></li>
-        <li>Állás-radar <span class="cc">4 ORSZÁG</span><span class="d">Mentett keresés — email/push az új találatokról (első találat azonnal).</span></li>
-        <li>Munkaerő-közvetítés (Feedback Jobs) <span class="cc some">AT · DE · NL</span><span class="d">CV-vel jelentkezel, mi keressük az állást — a jelöltnek ingyenes.</span></li>
-        <li>Állás-találat (% match) <span class="cc pro">PRO</span><span class="d">Melyik állás illik a profilodhoz + becsült nettó bér a régiódban. Szabály-alapú, nem AI.</span></li>
-        <li>AI Interjú-szimulátor <span class="cc">4 ORSZÁG</span> <span class="cc pro">PRO</span><span class="d">Gyakorló interjú Hochdeutsch / osztrák / svájci német / holland / angol nyelven, magyar visszajelzéssel.</span></li>
-        <li>AI CV-audit <span class="cc pro">PRO</span><span class="d">Önéletrajz-elemzés és javítási tippek a helyi elvárásokhoz.</span></li>
-        <li>Nettó bérkalkulátor <span class="cc some">CH · AT · DE</span><span class="d">Bruttó→nettó a helyi adó- és járulékszabályokkal, ajánlat-összehasonlítással.</span></li>
-        <li>Szakmai gyors-szótár <span class="cc some">CH</span> <span class="cc pro">PRO</span><span class="d">Iparági svájci-német kifejezés-leckék.</span></li>
-        <li>Kiemelt Állás munkáltatóknak<span class="d">30 napos, jelölt kiemelés a job boardon + push a releváns jelölteknek.</span></li>
-      </ul>
+    <div class="demo-frame">
+      <!-- search bar -->
+      <div class="demo-search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+        <input id="demoInput" type="text" placeholder="Mit keresel? pl. fodrász, autószerelő, magyar orvos…" autocomplete="off">
+        <button class="clear" id="demoClear" aria-label="Törlés">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12"/><path d="M18 6l-12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- chips -->
+      <div class="demo-chips" id="demoChips">
+        <button class="demo-chip active" data-cat="all"><span class="gly">◯</span>Mind</button>
+        <button class="demo-chip" data-cat="fodrasz"><span class="gly">✂</span>Fodrász</button>
+        <button class="demo-chip" data-cat="auto"><span class="gly">⚙</span>Autószerelő</button>
+        <button class="demo-chip" data-cat="orvos"><span class="gly">＋</span>Orvos</button>
+        <button class="demo-chip" data-cat="ugyved"><span class="gly">§</span>Ügyvéd</button>
+        <button class="demo-chip" data-cat="pek"><span class="gly">◐</span>Pék</button>
+        <button class="demo-chip" data-cat="etterem"><span class="gly">◍</span>Étterem</button>
+        <button class="demo-chip" data-cat="villany"><span class="gly">⚡</span>Villany</button>
+        <button class="demo-chip" data-cat="takarito"><span class="gly">✦</span>Takarítás</button>
+        <button class="demo-chip" data-cat="fordito"><span class="gly">A</span>Fordító</button>
+        <button class="demo-chip" data-cat="tanar"><span class="gly">♪</span>Tanár</button>
+      </div>
+
+      <!-- map | list -->
+      <div class="demo-body">
+        <div class="demo-map" id="demoMap">
+          <svg class="basemap" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+            <rect width="100" height="100" fill="#ece3d2"/>
+            <path d="M-4 -4 Q14 6 20 20 Q10 30 -4 26 Z" fill="#d6e2c9"/>
+            <ellipse cx="13" cy="82" rx="20" ry="13" fill="#d6e2c9"/>
+            <ellipse cx="90" cy="18" rx="16" ry="13" fill="#d6e2c9"/>
+            <path d="M61 71 Q73 65 87 71 Q91 81 81 89 Q69 91 61 83 Z" fill="#d6e2c9"/>
+            <path d="M-4 60 Q20 56 34 64 Q52 74 70 66 Q86 60 104 68 L104 84 Q86 75 70 81 Q52 89 34 78 Q20 70 -4 75 Z" fill="#cadfe0"/>
+            <path d="M44 -4 Q48 16 42 30 Q36 44 47 58 L53 58 Q43 44 50 30 Q56 16 52 -4 Z" fill="#cadfe0" opacity="0.9"/>
+            <g fill="#e1d7c1" opacity="0.85">
+              <rect x="6" y="8" width="9" height="7" rx="1.2"/>
+              <rect x="58" y="11" width="8" height="9" rx="1.2"/>
+              <rect x="73" y="40" width="9" height="8" rx="1.2"/>
+              <rect x="29" y="40" width="8" height="7" rx="1.2"/>
+              <rect x="84" y="53" width="9" height="9" rx="1.2"/>
+              <rect x="12" y="49" width="8" height="8" rx="1.2"/>
+              <rect x="63" y="34" width="7" height="6" rx="1.2"/>
+              <rect x="34" y="14" width="8" height="7" rx="1.2"/>
+            </g>
+            <g stroke="#ffffff" fill="none" stroke-linecap="round">
+              <path d="M-2 26 L102 30" stroke-width="3.4"/>
+              <path d="M-2 46 Q50 44 102 50" stroke-width="2.8"/>
+              <path d="M24 -4 L28 104" stroke-width="3.0"/>
+              <path d="M70 -4 L74 104" stroke-width="2.6"/>
+              <path d="M-2 90 Q50 88 102 92" stroke-width="2.4"/>
+              <path d="M-2 8 Q40 14 60 8 Q82 2 104 10" stroke-width="2.0"/>
+            </g>
+            <g stroke="#ffffff" fill="none" stroke-width="1.3" stroke-linecap="round" opacity="0.85">
+              <path d="M48 -4 L52 104"/>
+              <path d="M-2 16 L102 20"/>
+              <path d="M-2 38 L102 42"/>
+              <path d="M-2 64 L102 68"/>
+              <path d="M12 -4 L16 104"/>
+              <path d="M36 -4 L40 104"/>
+              <path d="M60 -4 L64 104"/>
+              <path d="M86 -4 L90 104"/>
+            </g>
+            <g stroke="rgba(28,61,46,0.10)" fill="none" stroke-width="0.4" stroke-linecap="round" stroke-dasharray="2 2">
+              <path d="M-2 28 L102 32"/>
+              <path d="M26 -4 L30 104"/>
+              <path d="M72 -4 L76 104"/>
+            </g>
+          </svg>
+          <div class="me-pulse"></div>
+          <div class="me-dot"></div>
+          <!-- pins injected by JS -->
+        </div>
+        <div class="demo-list" id="demoList">
+          <!-- result-head + rows injected by JS -->
+        </div>
+      </div>
     </div>
 
-    <div class="feat-group">
-      <h3><span class="ic" style="background:#f3e8d4;color:var(--gold)">💰</span> Pénzügyek</h3>
-      <ul class="feats">
-        <li>Iránytű — bér &amp; lakbér benchmark <span class="cc">4 ORSZÁG</span><span class="d">Valós referencia-adatok + anonim közösségi beküldések, régiós hőtérképpel.</span></li>
-        <li>Mennyit költesz? <span class="cc">4 ORSZÁG</span><span class="d">Anonim megélhetési benchmark — medián és percentilisek régiónként.</span></li>
-        <li>Árfolyam-kalkulátor + riasztó<span class="d">CHF/EUR → HUF, push-riasztás a beállított árfolyamnál. Referál-linkek jelölve.</span></li>
-        <li>Utalás-asszisztens <span class="cc pro">PRO</span><span class="d">Hazautalás-összehasonlító — mérhető havi spórolás.</span></li>
-        <li>Lakásbérlés rejtett-költség kalkulátor <span class="cc some">CH · AT</span><span class="d">Kaució, Nebenkosten/Betriebskosten — a hirdetési áron túli valóság.</span></li>
-        <li>Vám- és határinfó kalkulátor <span class="cc some">CH</span><span class="d">Mit hozhatsz be Svájcba, mennyi vámmal.</span></li>
-      </ul>
-    </div>
-
-    <div class="feat-group">
-      <h3><span class="ic" style="background:var(--accent-soft);color:var(--accent)">📋</span> Ügyintézés &amp; papírmunka</h3>
-      <ul class="feats">
-        <li>Ügyintézés-varázsló csekklisták <span class="cc">4 ORSZÁG</span><span class="d">Lakcímbejelentéstől a jogosítvány-cseréig, lépésről lépésre.</span></li>
-        <li>Engedély-varázsló <span class="cc some">CH · AT · DE</span><span class="d">Melyik tartózkodási státusz vonatkozik rád — interaktív kérdéssor.</span></li>
-        <li>Határidő-asszisztens <span class="cc pro">PRO</span><span class="d">Engedély, biztosítás, adó — push-emlékeztető 14/7/1 nappal előtte.</span></li>
-        <li>Hivatalos linkek + konzulátus <span class="cc">4 ORSZÁG</span><span class="d">Ellenőrzött hivatalos ügyintézési linkek és konzuli időpontfoglalás.</span></li>
-        <li>Hivatali szótár<span class="d">Mit jelent a Betreibung vagy a Karenz? Kézzel ellenőrzött magyarázatok (AI-kiegészítés jelölve).</span></li>
-        <li>Tudásbázis <span class="cc some">CH · AT · DE</span><span class="d">Bejelentkezés, egészségbiztosítás, adó, iskola — hivatalos forrásokból.</span></li>
-        <li>Iskolarendszer-kalauz <span class="cc some">CH · AT · DE</span><span class="d">Hogyan működik a helyi oktatás, mikor mit kell intézni.</span></li>
-        <li>Szolgáltató-váltó <span class="cc some">CH</span><span class="d">Krankenkasse, internet, mobil, bank — váltás-varázsló.</span></li>
-        <li>Kiköltözés Tracker <span class="cc">4 ORSZÁG</span><span class="d">Személyre szabott költözés-csekklista az első naptól.</span></li>
-      </ul>
-    </div>
-
-    <div class="feat-group">
-      <h3><span class="ic" style="background:#e3eaf3;color:var(--info)">🌍</span> Mindennapok &amp; közösség</h3>
-      <ul class="feats">
-        <li>Magyar események térképen <span class="cc">4 ORSZÁG</span><span class="d">Koncertek, találkozók, közösségi programok — beküldés moderálással.</span></li>
-        <li>„Keresek” igény-tábla <span class="cc">4 ORSZÁG</span><span class="d">Írd ki, mire van szükséged — a magyar szakik jelentkeznek.</span></li>
-        <li>Nyelvlecke <span class="cc">4 ORSZÁG</span><span class="d">Svájci német, osztrák német, Hochdeutsch és holland — a kinti hétköznapokra.</span></li>
-        <li>Napi kvíz + napi szó<span class="d">Országismereti kvíz mind a 4 országra; napi szó kiejtéssel (CH/AT).</span></li>
-        <li>Állampolgárság-szimulátor <span class="cc">4 ORSZÁG</span><span class="d">Einbürgerung, Staatsbürgerschaft, Einbürgerungstest, inburgering (KNM) gyakorló.</span></li>
-        <li>Közlekedés-kalauz <span class="cc some">CH · AT · DE</span><span class="d">Bérletek, zónák, mit érdemes venni.</span></li>
-        <li>Akció-térkép <span class="cc some">CH · AT · DE</span><span class="d">A közösség által jelzett bolti akciók a környékeden.</span></li>
-        <li>Repülőjegy-figyelő <span class="cc some">CH · AT · DE</span><span class="d">Hazaút-figyelő a fő útvonalakra.</span></li>
-        <li>Gyorshajtás-bírság becslő <span class="cc some">CH · AT · DE</span><span class="d">Mennyibe fájna — tájékoztató jelleggel.</span></li>
-        <li>Küldj egy magyart 🤝<span class="d">Anonim meghívó-link — hozd be az ismerőseid, gyűjts kitűzőket.</span></li>
-        <li>Push-értesítések + offline mód<span class="d">Telepíthető alkalmazás (PWA) — a fontos útmutatók net nélkül is olvashatók.</span></li>
-        <li>Hírlevél<span class="d">Országodra szabott összefoglaló — csak ha kéred.</span></li>
-      </ul>
-    </div>
-
-    <p class="ai-note">🤖 Az AI-jelzésű funkciók mesterséges intelligenciát használnak — mindig jelöljük, hibázhatnak,
-      és rólad soha nem döntenek. Részletek: <a href="https://kinti.app/ai-atlathatosag">AI-átláthatóság</a>.</p>
+    <p class="demo-hint">
+      Próbáld: <kbd data-fill="fodrász">fodrász</kbd>
+      <kbd data-fill="autószerelő">autószerelő</kbd>
+      <kbd data-fill="orvos">orvos</kbd>
+      <kbd data-fill="pék">pék</kbd>
+      — vagy kattints egy kategória chipre ↑
+    </p>
   </div>
 </section>
 
-<!-- ÁRAK -->
-<section id="arak" style="padding-top:8px">
+<!-- ─── TOP KINTIEK CAROUSEL ─────────────────── -->
+<section class="cats" id="kategoriak">
   <div class="wrap">
-    <span class="eyebrow">Árak</span>
-    <h2>Az alap örökre ingyenes. A prémium opcionális.</h2>
-    <p class="lead">A keresés, a szaknévsor, az állásböngészés, az Iránytű és a közösségi funkciók ingyenesek maradnak.
-      Három külön prémium csomag van, három célra — nem kell mind.</p>
+    <div class="sec-eyebrow">Top kintiek Zürichben — a közösség kedvencei</div>
+    <h2 class="sec-title">Konkrét nevek, <em>konkrét emberek.</em></h2>
+    <p class="sec-sub">Nem absztrakt kategória, hanem valódi szakember, akit egy érintéssel hívhatsz. Magyarul. Ezen a héten ők a legkeresettebbek.</p>
+
+    <div class="carousel-wrap">
+      <div class="carousel-head">
+        <div class="carousel-filter" id="carouselFilter">
+          <button class="cf-chip active" data-cat="all">Mind</button>
+          <button class="cf-chip" data-cat="fodrasz">Fodrász</button>
+          <button class="cf-chip" data-cat="auto">Autószerelő</button>
+          <button class="cf-chip" data-cat="orvos">Orvos</button>
+          <button class="cf-chip" data-cat="ugyved">Ügyvéd</button>
+          <button class="cf-chip" data-cat="pek">Pék</button>
+          <button class="cf-chip" data-cat="etterem">Étterem</button>
+          <button class="cf-chip" data-cat="villany">Villany</button>
+          <button class="cf-chip" data-cat="takarito">Takarítás</button>
+          <button class="cf-chip" data-cat="fordito">Fordító</button>
+          <button class="cf-chip" data-cat="tanar">Tanár</button>
+        </div>
+        <div class="carousel-controls">
+          <button class="cc-btn" id="carPrev" aria-label="Előző">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 5l-7 7l7 7"/></svg>
+          </button>
+          <button class="cc-btn" id="carNext" aria-label="Következő">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5l7 7l-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="carousel" id="carousel">
+        <!-- cards injected by JS -->
+      </div>
+
+      <div class="carousel-foot">
+        Hiányzik egy szakember vagy egy kategória? <a href="#">Szólj nekünk →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ESZKÖZÖK / MODULOK ─────────────────────── -->
+<section class="community" id="eszkozok">
+  <div class="wrap">
+    <div class="sec-eyebrow">Több, mint kereső</div>
+    <h2 class="sec-title">Eszközök — <em>magyarul</em> a kinti hétköznapokhoz.</h2>
+    <p class="sec-sub">Bérkalkulátor, árfolyam-riasztó, ügyintézés-varázsló, engedély-kalauz, állásbörze — minden, amit egy újonnan érkezett magyarnak külföldön tudni érdemes. Hat európai országban, egy appban.</p>
+
+    <div class="comm-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">💰 Pénz</div>
+        <h3 class="comm-title" style="font-size: 18px;">Bérkalkulátor + Ajánlataim</h3>
+        <p class="comm-body">Nettó-bér becslés Quellensteuer + AHV + BVG-vel. Interjún kapott ajánlatokat elmenthet és összehasonlíthat.</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">💱 Árfolyam</div>
+        <h3 class="comm-title" style="font-size: 18px;">CHF / HUF push-riasztó</h3>
+        <p class="comm-body">Beállítasz egy küszöböt („értesíts ha 1 CHF ≥ 410 HUF"), és a böngésződ riaszt — bejelentkezés és email-cím nélkül.</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">🏠 Lakhatás</div>
+        <h3 class="comm-title" style="font-size: 18px;">Lakásbérlés rejtett-költség</h3>
+        <p class="comm-body">Kaució (Mietkaution) blokkolása + Nebenkosten év-végi elszámolás becslése. Mire számíts havonta valójában?</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">🛂 Vám</div>
+        <h3 class="comm-title" style="font-size: 18px;">Vám- és határinfó</h3>
+        <p class="comm-body">300 CHF értékhatár, 1 kg/fő húskorlát, 5 l bor, 1 l pálinka. Mi van a kocsiban — mit deklarálj?</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">🚓 Bírság</div>
+        <h3 class="comm-title" style="font-size: 18px;">Gyorshajtás-bírság becslő</h3>
+        <p class="comm-body">A svájci gyorshajtási bírság-rendszer (Tagessätze, Raserdelikt). Mennyit fog fájni a 200 km/h?</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">🚆 Közlekedés</div>
+        <h3 class="comm-title" style="font-size: 18px;">Tömegközlekedés-kalauz</h3>
+        <p class="comm-body">ZVV / Libero / TNW zónarendszerek + GA vs Halbtax kalkulátor + mobil-appok (SBB, FAIRTIQ).</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">🔄 Szolgáltató</div>
+        <h3 class="comm-title" style="font-size: 18px;">Szolgáltató-váltó</h3>
+        <p class="comm-body">Krankenkasse, áram, internet, mobil, bank — mikor és hogyan érdemes váltani. Német felmondó-sablon is.</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">📋 Ügyintézés</div>
+        <h3 class="comm-title" style="font-size: 18px;">Ügyintézés varázsló</h3>
+        <p class="comm-body">Az érkezéstől az állampolgárságig — csekklisták az Anmeldung-tól a Niederlassungsbewilligung-ig.</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">🪪 Engedély</div>
+        <h3 class="comm-title" style="font-size: 18px;">Melyik engedély kell?</h3>
+        <p class="comm-body">B, C, L, G, S, F — interaktív varázsló, ami megmondja melyik tartózkodási engedély vonatkozik rád.</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">✈️ Repjegy</div>
+        <h3 class="comm-title" style="font-size: 18px;">Budapest ↔ Zürich figyelő</h3>
+        <p class="comm-body">Becsült ár-sávok mindkét irányban + szezonális tippek + közvetlen link a foglalási oldalakra.</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">💼 Munka</div>
+        <h3 class="comm-title" style="font-size: 18px;">Magyar állásbörze</h3>
+        <p class="comm-body">Svájci állások magyaroknak — bérsáv-benchmarkkal, egykattintásos jelentkezéssel és CV-profillal.</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">🏷️ Akciók</div>
+        <h3 class="comm-title" style="font-size: 18px;">Migros/Coop akció-térkép</h3>
+        <p class="comm-body">Közösségi -25/-50%-os akciók térképen, éjfélig. Közvetlenül a magyar közösségtől, nem reklámból.</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">🇨🇭 Polgárság</div>
+        <h3 class="comm-title" style="font-size: 18px;">Einbürgerung-szimulátor</h3>
+        <p class="comm-body">Állampolgárság-felkészítő kvíz (10+ év kint). Hivatalos vizsgát nem helyettesít, de jó felkészülés.</p>
+      </div>
+      <div class="comm-card" style="background: #fbf7ee;">
+        <div class="comm-eyebrow">🎯 Tudás</div>
+        <h3 class="comm-title" style="font-size: 18px;">Napi svájci kvíz</h3>
+        <p class="comm-body">Egy kérdés naponta — kultúra, történelem, gasztronómia. Lazító ismeret-szerzés.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMMUNITY ────────────────────────────── -->
+<section class="community" id="kozosseg">
+  <div class="wrap">
+    <div class="sec-eyebrow">Kint vagy, de nem vagy egyedül</div>
+    <h2 class="sec-title">A kinti több, mint <em>egy kereső.</em></h2>
+    <p class="sec-sub">Események, állásbörze, beilleszkedési útmutatók — minden, amit a magyar közösségnek kint adni tud.</p>
+
+    <div class="comm-grid">
+      <div class="comm-card dark">
+        <div>
+          <div class="comm-eyebrow">Események</div>
+          <h3 class="comm-title">Magyar események egy érintésre.</h3>
+          <p class="comm-body">Bál, focimeccs, irodalmi est, piknik. Lásd, ki megy, jelezd, hogy te is ott leszel.</p>
+        </div>
+        <div>
+          <div class="event-row">
+            <div class="event-date"><div class="m">NOV</div><div class="d">14</div></div>
+            <div class="event-info"><div class="t">Zürichi Magyar Bál 2026</div><div class="v">Volkshaus · 187 megy</div></div>
+          </div>
+          <div class="event-row">
+            <div class="event-date"><div class="m">JÚN</div><div class="d">07</div></div>
+            <div class="event-info"><div class="t">Magyar piknik a Sihl-parton</div><div class="v">Allmend · 64 megy</div></div>
+          </div>
+          <div class="event-row">
+            <div class="event-date"><div class="m">JÚL</div><div class="d">03</div></div>
+            <div class="event-info"><div class="t">Irodalmi est — Esterházy</div><div class="v">Kafi Schoffel · 22 megy</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comm-card">
+        <div>
+          <div class="comm-eyebrow">Állásbörze</div>
+          <h3 class="comm-title">Magyar állások — egy helyen.</h3>
+          <p class="comm-body">Munkaadók és magyar munkavállalók kint egymásra találnak. Nyilvánosan, kategorizálva, magyarul — és német-tudás szerint szűrve.</p>
+        </div>
+        <div class="board-list">
+          <div class="board-item">
+            <div class="board-kind">TELJES</div>
+            <div class="board-info"><div class="t">Magyarul beszélő pincér — belváros</div><div class="m">Zürich · 4 200 CHF / hó · ma</div></div>
+          </div>
+          <div class="board-item">
+            <div class="board-kind">RÉSZMUNKA</div>
+            <div class="board-info"><div class="t">Bébiszittert keresek heti 2x</div><div class="m">Wollishofen · 28 CHF/óra · 5 órája</div></div>
+          </div>
+          <div class="board-item">
+            <div class="board-kind">ALKALMI</div>
+            <div class="board-info"><div class="t">Költöztetéshez segítség, szombat</div><div class="m">Oerlikon · 30 CHF/óra · tegnap</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── AI ESZKÖZÖK ──────────────────────────── -->
+<section class="community" id="ai" style="background: linear-gradient(180deg, #fbf7ee, #f4ede0);">
+  <div class="wrap">
+    <div class="sec-eyebrow">✨ AI a magyaroknak</div>
+    <h2 class="sec-title">Mesterséges intelligencia — <em>magyar nyelven.</em></h2>
+    <p class="sec-sub">Cloudflare Workers AI (nyílt forrású Meta Llama). Európai szervereken, training nélkül, a kérdésed sose hagyja el az EU-t.</p>
+
+    <div class="comm-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
+      <div class="comm-card">
+        <div>
+          <div class="comm-eyebrow">🤖 AI interjú-szimulátor</div>
+          <h3 class="comm-title">„Gyakorolj svájci állásinterjút."</h3>
+          <p class="comm-body">Az AI svájci munkainterjút szimulál magyarul — kérdez, te válaszolsz, és visszajelzést kapsz. (Kinti PRO.)</p>
+        </div>
+      </div>
+      <div class="comm-card">
+        <div>
+          <div class="comm-eyebrow">🔍 Természetes nyelvű keresés</div>
+          <h3 class="comm-title">„Magyar villanyszerelő AG-ban aki angolul is tud."</h3>
+          <p class="comm-body">Mondatba írod amit keresel — az AI strukturált szűrőkre fordítja és automatikusan beállítja.</p>
+        </div>
+      </div>
+      <div class="comm-card">
+        <div>
+          <div class="comm-eyebrow">✍️ Leírás-asszisztens</div>
+          <h3 class="comm-title">„Vállalkozói profil csiszolva."</h3>
+          <p class="comm-body">A vállalkozó beírja a leírást, az AI helyesírás-ellenőriz + tömörebbé tesz + kategóriát javasol. Te döntesz, elfogadod-e.</p>
+        </div>
+      </div>
+      <div class="comm-card">
+        <div>
+          <div class="comm-eyebrow">📖 Német szó-szótár</div>
+          <h3 class="comm-title">„Mit jelent az Aufenthaltsbewilligung?"</h3>
+          <p class="comm-body">Az ügyintézés-csekklistákban a svájci hivatali kifejezések kattinthatóak — AI 2-3 mondatos magyar magyarázat tooltip-ben.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="demo-hint" style="text-align: center; max-width: 700px; margin: 24px auto 0;">
+      Minden AI-generált tartalom <strong>✨ ikonnal</strong> van jelölve. Tényszerű hibákat is tartalmazhat — a hivatalos forrást mindig külön ellenőrizd.
+    </p>
+  </div>
+</section>
+
+<!-- ─── BUSINESS PITCH ───────────────────────── -->
+<section class="biz" id="vallalkozok">
+  <div class="wrap">
+    <div class="biz-grid">
+      <div>
+        <div class="sec-eyebrow">Magyar vállalkozóknak kint</div>
+        <h2 class="sec-title">A magyar közösség <em>megtalál.</em></h2>
+        <p class="sec-sub">Több százezer magyar él Európa-szerte. Sokuknak te lehetsz <em>az</em> első hívás. Csak meg kell találniuk.</p>
+
+        <div class="biz-features">
+          <div class="biz-feat">
+            <div class="biz-feat-num">1</div>
+            <div class="biz-feat-text">
+              <strong>Teljes profil — ingyen, fiók nélkül.</strong>
+              <span>Név, kategória, cím, nyitvatartás, telefon, galéria, social linkek. Nincs regisztráció — kezelő-linket kapsz, és admin-jóváhagyás (kb. 24 óra) után élesedik.</span>
+            </div>
+          </div>
+          <div class="biz-feat">
+            <div class="biz-feat-num">2</div>
+            <div class="biz-feat-text">
+              <strong>Anonim statisztikák — látod, ki keresett rád.</strong>
+              <span>Profil-megtekintések + telefonszám-kattintások (utolsó 7 / 30 nap). Anonim, IP nélkül. A kezelő-linkkel bármikor.</span>
+            </div>
+          </div>
+          <div class="biz-feat">
+            <div class="biz-feat-num">3</div>
+            <div class="biz-feat-text">
+              <strong>AI-segéd a feladásnál.</strong>
+              <span>Leírás csiszolása + kategória-javaslat + német szótár az ügyintézés-csekklistákon. Te döntesz, elfogadod-e.</span>
+            </div>
+          </div>
+          <div class="biz-feat">
+            <div class="biz-feat-num">4</div>
+            <div class="biz-feat-text">
+              <strong>„Hiteles" badge — admin-ellenőrzés után.</strong>
+              <span>A magyarul beszélő vállalkozók ✓ Hiteles jelölést kapnak. Ez nem minőségi garancia — csak nyelvi hitelesítés.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="biz-actions">
+          <button class="btn-primary">Regisztrálok — ingyen</button>
+          <button class="btn-ghost">Tudj meg többet</button>
+        </div>
+      </div>
+
+      <!-- mini dashboard mockup -->
+      <div class="dash-mock">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #d6b89a, #8c5e3c);"></div>
+          <div>
+            <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 600;">Szia,</div>
+            <div style="font-size: 14px; font-weight: 800;">Kovács Anna 👋</div>
+          </div>
+          <div style="flex: 1;"></div>
+          <div style="font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); letter-spacing: 0.3px;">★ KIEMELT</div>
+        </div>
+
+        <div class="dash-hero">
+          <div class="eyebrow">EZ A HÉT</div>
+          <div class="big">248 <span class="delta">↑ +34%</span></div>
+          <div class="body">kinti nézte meg a profilodat</div>
+        </div>
+
+        <div class="dash-stats">
+          <div class="dash-stat"><div class="label">Megtekintés</div><div class="v">248</div><div class="d">↑ +34%</div></div>
+          <div class="dash-stat"><div class="label">Megnyitás</div><div class="v">71</div><div class="d">↑ +22%</div></div>
+          <div class="dash-stat"><div class="label">Hívás</div><div class="v">19</div><div class="d">↑ +58%</div></div>
+        </div>
+
+        <div class="dash-spark">
+          <div class="label">14 napos trend</div>
+          <svg viewBox="0 0 300 64" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="sparkg" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#1d4434" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#1d4434" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M4 50 Q 25 46, 47 42 Q 70 38, 90 36 Q 112 33, 135 30 Q 158 26, 180 22 Q 200 18, 222 14 Q 246 10, 270 8 L 296 6" stroke="#1d4434" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 50 Q 25 46, 47 42 Q 70 38, 90 36 Q 112 33, 135 30 Q 158 26, 180 22 Q 200 18, 222 14 Q 246 10, 270 8 L 296 6 L 296 64 L 4 64 Z" fill="url(#sparkg)"/>
+            <circle cx="296" cy="6" r="4" fill="#c8392e" stroke="#fff" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── KINTI PRO / PRICING ─────────────────── -->
+<style>
+  section.pricing { background: var(--bg-deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .price-grid { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+  @media (max-width: 980px) { .price-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; } }
+  .price-card { position: relative; display: flex; flex-direction: column; gap: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 30px 26px 26px; box-shadow: var(--shadow-card); }
+  .price-card .price-top { position: absolute; top: 0; left: 26px; right: 26px; height: 4px; border-radius: 0 0 4px 4px; }
+  .price-card.green .price-top { background: var(--primary); }
+  .price-card.gold  .price-top { background: #cda434; }
+  .price-card.red   .price-top { background: var(--accent); }
+  .price-card.featured { border: 1.5px solid var(--primary); box-shadow: var(--shadow-pop); }
+  .price-card.gold.featured { border-color: #cda434; }
+  .price-ribbon { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); padding: 6px 16px; border-radius: 999px; background: #cda434; color: #fff; font-size: 11.5px; font-weight: 800; letter-spacing: 0.4px; white-space: nowrap; box-shadow: var(--shadow-card); }
+  .price-head { display: flex; align-items: center; gap: 13px; }
+  .price-ico { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; }
+  .price-card.green .price-ico { background: var(--primary-soft); color: var(--primary); }
+  .price-card.gold  .price-ico { background: #f6ead0; color: #a87f1e; }
+  .price-card.red   .price-ico { background: var(--accent-soft); color: var(--accent); }
+  .price-name { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; line-height: 1.1; }
+  .price-aud { font-size: 12.5px; font-weight: 700; color: var(--text-muted); margin-top: 3px; }
+  .price-desc { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.5; min-height: 42px; text-wrap: pretty; }
+  .price-amount { display: flex; align-items: baseline; gap: 6px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .price-amount .amt { font-size: 44px; font-weight: 800; letter-spacing: -1.8px; line-height: 1; color: var(--text); }
+  .price-amount .cur { font-size: 18px; font-weight: 800; color: var(--text); }
+  .price-amount .per { font-size: 13.5px; font-weight: 600; color: var(--text-muted); }
+  .price-rule { height: 1px; background: var(--border); margin: 2px 0; }
+  .price-feats { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; flex: 1; }
+  .price-feats li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.4; color: var(--text); }
+  .price-feats li svg { flex-shrink: 0; margin-top: 1px; }
+  .price-card.green .price-feats li svg { color: var(--primary); }
+  .price-card.gold  .price-feats li svg { color: #b6891f; }
+  .price-card.red   .price-feats li svg { color: var(--accent); }
+  .price-cta { width: 100%; padding: 14px 18px; border-radius: 13px; border: none; font-family: inherit; font-weight: 700; font-size: 14.5px; letter-spacing: -0.1px; cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .price-card.green .price-cta { background: var(--primary); color: #fff; }
+  .price-card.gold  .price-cta { background: #cda434; color: #2a230c; }
+  .price-card.red   .price-cta { background: var(--accent); color: #fff; }
+  .price-cta:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); }
+  .price-foot { font-size: 11.5px; color: var(--text-faint); text-align: center; margin: -6px 0 0; line-height: 1.4; }
+</style>
+<section class="pricing" id="pro">
+  <div class="wrap">
+    <div class="sec-eyebrow">Kinti PRO · opcionális</div>
+    <h2 class="sec-title">Az alap ingyenes. A <em>PRO</em> még többet ad.</h2>
+    <p class="sec-sub">A keresés, a profilok böngészése és a hívás örökre ingyenes marad. Ha mélyebbre mennél — vagy magyar ügyfeleket, munkaerőt szereznél — itt vannak az opcionális prémium csomagok. Az árazás országonként eltér — a pontos összeget az appban, a saját országodban látod.</p>
 
     <div class="price-grid">
-      <div class="price-card">
-        <span class="tag" style="background:var(--primary-soft);color:var(--primary)">🧑 Magánszemélyeknek</span>
-        <h3>Kinti PRO</h3>
-        <div class="price">19 €<small> / hó</small></div>
-        <p class="price-note">Tájékoztató bruttó ár — a végső, áfás árat a pénztár mutatja.
-          Havonta automatikusan megújul, bármikor lemondható. Egy előfizetés, mind a 4 országra.</p>
-        <ul>
-          <li>Állás-találat (% match) + becsült nettó bér</li>
-          <li>AI Interjú-szimulátor (CH/AT/DE/NL)</li>
-          <li>AI CV-audit</li>
-          <li>Utalás-asszisztens</li>
-          <li>Határidő-asszisztens push-emlékeztetővel</li>
-          <li>Teljes nyelvkurzus + állampolgárság-szimulátor</li>
+
+      <div class="price-card green">
+        <div class="price-top"></div>
+        <div class="price-head">
+          <div class="price-ico">★</div>
+          <div>
+            <div class="price-name">Kinti PRO</div>
+            <div class="price-aud">Magánszemélyeknek</div>
+          </div>
+        </div>
+        <p class="price-desc">Nyisd meg az összes prémium modult és kalkulátort.</p>
+        <div class="price-rule"></div>
+        <ul class="price-feats">
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Állás-találat (% match) + becsült nettó bér</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>AI Interjú Szimulátor svájci cégekhez</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>AI CV-audit — önéletrajz-elemzés</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Teljes Svájci Német (Mundart) kurzus + Einbürgerung</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Teljes szakmai szótár — 500+ kifejezés</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Teljesen reklámmentes élmény</span></li>
         </ul>
-        <a class="btn" href="https://kinti.app/pro">Részletek és előfizetés</a>
+        <button class="price-cta">Válts Kinti PRO-ba</button>
       </div>
 
-      <div class="price-card hot">
-        <span class="tag" style="background:#fff0d9;color:var(--pro)">🏪 Vállalkozásoknak · Ajánlott</span>
-        <h3>Szaknévsor PRO</h3>
-        <div class="price">19 €<small> / hó</small></div>
-        <p class="price-note">Tájékoztató bruttó ár — a végső, áfás árat a pénztár mutatja.
-          Havonta automatikusan megújul, bármikor lemondható.</p>
-        <ul>
-          <li>Kiemelt megjelenés a találati listák elején — „PRO” jelöléssel</li>
-          <li>Egyedi borítókép és arculat-szín</li>
-          <li>Analytics: megtekintések, CTR, keresőszavak</li>
-          <li>Ajánlatkérő postafiók (korlátlan lead)</li>
-          <li>Időpontfoglalás-widget + bővített galéria</li>
+      <div class="price-card gold featured">
+        <div class="price-top"></div>
+        <div class="price-ribbon">★ Legnépszerűbb</div>
+        <div class="price-head">
+          <div class="price-ico">🚀</div>
+          <div>
+            <div class="price-name">Szaknévsor PRO</div>
+            <div class="price-aud">Vállalkozóknak és szakembereknek</div>
+          </div>
+        </div>
+        <p class="price-desc">Szerezz több ügyfelet prémium láthatósággal.</p>
+        <div class="price-rule"></div>
+        <ul class="price-feats">
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Sárga PRO kiemelés a találati listákban</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>A lista elején jelensz meg a kategóriádban (a kiemelt cégek között)</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Egyedi profil borítókép és arculat-szín</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Analytics: megtekintések, CTR, keresőszavak</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Időpontfoglalás widget (Calendly-beágyazás)</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Ajánlatkérő postafiók (lead-kezelő)</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Bővített referenciagaléria</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Konkurencia kizárása a profilodról</span></li>
         </ul>
-        <a class="btn" style="background:var(--pro)" href="https://kinti.app/pro">Részletek és előfizetés</a>
+        <button class="price-cta">Kiemelés vásárlása</button>
+        <p class="price-foot">A vállalkozásod kezelőjében véglegesíted.</p>
       </div>
 
-      <div class="price-card">
-        <span class="tag" style="background:var(--accent-soft);color:var(--accent)">💼 Munkáltatóknak</span>
-        <h3>Kiemelt Állás</h3>
-        <div class="price">49 €<small> / hirdetés</small></div>
-        <p class="price-note">Tájékoztató bruttó ár — a végső, áfás árat a pénztár mutatja.
-          Egyszeri díj: 30 napig él, NEM újul meg automatikusan.</p>
-        <ul>
-          <li>30 napos kiemelés a job boardon, jelölten</li>
-          <li>A lista elején, céges arculattal</li>
-          <li>Azonnali push a releváns jelölteknek</li>
+      <div class="price-card red">
+        <div class="price-top"></div>
+        <div class="price-head">
+          <div class="price-ico">💼</div>
+          <div>
+            <div class="price-name">Kiemelt Állás</div>
+            <div class="price-aud">Munkáltatóknak</div>
+          </div>
+        </div>
+        <p class="price-desc">Találj gyorsabban megbízható magyar munkaerőt.</p>
+        <div class="price-rule"></div>
+        <ul class="price-feats">
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>30 napos piros kiemelés a Job Boardon</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Rögzített hely a lista legelején</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Egyedi céges arculat megjelenítése</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Azonnali értesítés a releváns jelölteknek</span></li>
         </ul>
-        <a class="btn ghost" href="https://kinti.app/pro">Részletek</a>
+        <button class="price-cta">Hirdetés kiemelése</button>
+        <p class="price-foot">A hirdetésednél, a munkáltató kezelőben véglegesíted.</p>
       </div>
+
     </div>
-
-    <div class="free-banner">
-      💚 <b>Mi marad ingyen?</b> Minden alap: szaknévsor-keresés és -listázás, vélemények, állásböngészés és radar,
-      Iránytű és Mennyit költesz, események, kvízek, ügyintézés-csekklisták, hivatalos linkek, árfolyam-kalkulátor —
-      és vállalkozásod alaplistázása is. A munkaerő-közvetítés a jelöltnek szintén ingyenes.
-    </div>
-    <p class="ai-note">A fizetéseket a Paddle (Merchant of Record) kezeli és számlázza. A vásárlással kérheted az
-      azonnali aktiválást — ilyenkor a teljesítéssel az EU-s 14 napos elállási jog megszűnik (részletek:
-      <a href="https://kinti.app/aszf">ÁSZF</a>). A kiemelt találatok rangsorolásáról az ÁSZF 10/A pontja ad tájékoztatást.
-      Pontos, élő árak: <a href="https://kinti.app/pro">kinti.app/pro</a>.</p>
   </div>
 </section>
 
-<!-- BIZALOM -->
-<section style="padding-top:8px">
+<!-- ─── TESTIMONIALS ─────────────────────────── -->
+<section class="voices">
   <div class="wrap">
-    <span class="eyebrow">Miben bízhatsz?</span>
-    <h2>Magyaroktól, magyaroknak — átláthatóan.</h2>
-    <div class="grid g3" style="margin-top:22px">
-      <div class="card"><h3>✅ Moderált tartalom</h3><p>Minden vállalkozás-beküldést, eseményt és véleményt kézzel hagyunk jóvá — az új bejegyzés jellemzően 24 órán belül jelenik meg. A vélemények pénzért nem törölhetők.</p></div>
-      <div class="card"><h3>🔒 Adatvédelem alapból</h3><p>Nincs hirdetési követés, nincs profilépítés. A benchmark-adatok anonimok, a szerver nem köt hozzád azonosítót. GDPR-megfelelő működés.</p></div>
-      <div class="card"><h3>🤖 Őszinte AI</h3><p>Ahol AI dolgozik, jelöljük. Az AI nálunk segéd: rólad nem dönt, a moderáció emberi. Működés és korlátok: <a href="https://kinti.app/ai-atlathatosag">AI-átláthatóság</a>.</p></div>
+    <div class="sec-eyebrow">Mit mondanak rólunk</div>
+    <h2 class="sec-title">Magyaroktól. <em>Magyaroknak.</em></h2>
+
+    <div class="quote-grid">
+      <div class="quote">
+        <p>„Anyukámat is hozzá viszem, ha Pestről jön. Anna érti, mit jelent magyarul fésülködni — nem kell elmagyarázni."</p>
+        <div class="who">
+          <div class="av" style="background: linear-gradient(135deg, #1d4434, #c8392e);">E</div>
+          <div>
+            <div class="n">Eszter T.</div>
+            <div class="l">Zürich · 4 éve kint</div>
+          </div>
+        </div>
+      </div>
+      <div class="quote">
+        <p>„Másnap reggel már 12 megtekintésem volt. Egy hét alatt 4 új vendég. Tényleg az történik, amit ígértek."</p>
+        <div class="who">
+          <div class="av" style="background: linear-gradient(135deg, #c8392e, #f0a23a);">P</div>
+          <div>
+            <div class="n">Péter M.</div>
+            <div class="l">Autószerelő · Zürich</div>
+          </div>
+        </div>
+      </div>
+      <div class="quote">
+        <p>„A piknikre is itt jöttem el először. Kint elszigetelődsz — ez visszahozott a közösségbe."</p>
+        <div class="who">
+          <div class="av" style="background: linear-gradient(135deg, #f0c14a, #8c5e3c);">A</div>
+          <div>
+            <div class="n">Andrea K.</div>
+            <div class="l">Wollishofen · 1 éve kint</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- GYIK -->
-<section class="faq" style="padding-top:8px">
+<!-- ─── FAQ ──────────────────────────────────── -->
+<section class="faq" id="gyik">
   <div class="wrap">
-    <span class="eyebrow">GYIK</span>
-    <h2>Amit tudni akarsz.</h2>
-    <div style="margin-top:18px">
-      <details><summary>Tényleg ingyenes?</summary><p>Igen — az alap funkciók (keresés, szaknévsor, állások, Iránytű, események, csekklisták) örökre ingyenesek. A három prémium csomag opcionális, és mindig egyértelműen jelölt.</p></details>
-      <details><summary>Mely országokban működik?</summary><p>Svájc, Ausztria, Németország és Hollandia. A tartalom a választott országodhoz igazodik; néhány eszköz egyelőre ország-specifikus — ezt a funkció-listában jelöljük.</p></details>
-      <details><summary>Hogyan kerül be a vállalkozásom a Szaknévsorba?</summary><p>Az appban 1 perc alatt beküldöd, mi kézzel ellenőrizzük, és jóváhagyás után — jellemzően 24 órán belül — megjelenik. Az alaplistázás ingyenes.</p></details>
-      <details><summary>Hogyan mondhatom le a PRO-t?</summary><p>Bármikor: a Paddle vásárlás-visszaigazoló emailjében kapott linken vagy az info@kinti.app címen. A már kifizetett időszak végéig a PRO aktív marad.</p></details>
-      <details><summary>Mi történik az adataimmal?</summary><p>Csak a működéshez szükséges adatokat kezeljük, hirdetési célra semmit nem adunk át. Részletek az <a href="https://kinti.app/adatvedelem">Adatkezelési Tájékoztatóban</a>.</p></details>
-      <details><summary>Ki áll az app mögött?</summary><p>A kinti.app-ot a Feedback Jobs S.R.L. üzemelteti (adatok: <a href="https://kinti.app/impresszum">Impresszum</a>). A munkaerő-közvetítést is a Feedback Jobs végzi — a jelöltnek ingyenesen.</p></details>
-    </div>
-    <div class="cta-row" style="margin-top:28px">
-      <a class="btn" href="https://kinti.app/">Megnyitom az appot</a>
+    <div class="sec-eyebrow">Gyakori kérdések</div>
+    <h2 class="sec-title">Amit <em>tudni</em> akarsz.</h2>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">Tényleg ingyenes a felhasználóknak?</div>
+        <div class="faq-a">A keresés, a profilok böngészése és a hívás <strong>örökre ingyenes</strong> — ehhez fiók sem kell. A <strong>Kinti PRO</strong> (prémium modulok, kalkulátorok, AI-szimulátorok, reklámmentes élmény) opcionális felár, ahogy a vállalkozói és munkaadói kiemelés is. A fizetett kiemelés (PRO / Kiemelt állás) a lista elején jelenik meg, és minden esetben jól látható jelölést kap — a nem fizetett találatok egymás közötti, közelség-alapú sorrendjét nem változtatja meg.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Mit ad a Kinti PRO?</div>
+        <div class="faq-a">A <strong>Kinti PRO</strong> magánszemélyeknek a teljes prémium réteget nyitja meg: AI interjú-szimulátor és CV-audit, teljes szakmai szótár, Svájci Német (Mundart) kurzus, Einbürgerung-szimulátor, teljesen reklámmentes élmény. Vállalkozóknak a <strong>Szaknévsor PRO</strong> ad kiemelést és analitikát, munkaadóknak pedig a <strong>Kiemelt Állás</strong> a job boardon. Az árak országonként eltérnek — a pontos összeget az appban látod. Az alap funkciók PRO nélkül is ingyenesek maradnak.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Kell-e regisztráció / fiók?</div>
+        <div class="faq-a"><strong>Nem.</strong> Sem hirdetés, sem értékelés, sem vállalkozói profil feladásához nem kell fiók. Beküldés után <strong>azonnal kapsz egy kezelő-linket</strong> (manage-token) — ezzel bármikor szerkesztheted vagy törölheted a tartalmadat, jelszó nélkül. E-mailt megadhatsz, de nem kötelező.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Hogyan kerülnek fel a vállalkozók?</div>
+        <div class="faq-a">Maguk küldik be — fiók nélkül; azonnal kezelő-linket kapnak (e-mail nem kötelező). Az adminisztrátor 24 órán belül ellenőrzi és aktiválja. A „✓ Hiteles" badge külön nyelvi hitelesítést jelent — NEM minőségi garancia.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Mi a tartalom-moderációs eljárás?</div>
+        <div class="faq-a"><strong>Minden hirdetés, értékelés, vállalkozói profil és esemény admin-jóváhagyásra vár</strong> (típikusan 24 órán belül). Az idő-érzékeny tartalmak (pl. térképes akciók) automatikus AI-moderáció után azonnal megjelennek. Llama AI szűri a szöveg + képtartalmat.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Mely országokban érhető el?</div>
+        <div class="faq-a">Mind a négy országban <strong>élőben</strong>: Svájc, Ausztria, Németország és Hollandia — régió- és város-szintű szűrővel. Válaszd ki a menüből, melyikben vagy kint, és a térkép, a szakemberek és a tartalom helyre igazodik.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Adatvédelem? Geolokáció? Cookie?</div>
+        <div class="faq-a">A GPS pozíciód a böngészőben marad — szerverre nem küldjük. Csak a <strong>működéshez szükséges sütiket</strong> használjuk (pl. a bejelentkezett funkciókhoz Clerk-session) — marketing- vagy nyomkövető sütit nem. GDPR + svájci revFADP-kompatibilis, Cloudflare EU-edge szervereken. Az IP-címet csak SHA-256 hash-ként tároljuk; az e-mail-címed a megerősítéshez és a kapcsolatfelvételhez kerül tárolásra.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Mit jelentenek az ✨ AI-jelölt funkciók?</div>
+        <div class="faq-a">A Cloudflare Workers AI (Llama modell, EU-szervereken) használjuk: természetes nyelvű kereső, vállalkozói leírás-csiszolás, német szó-magyarázat. <strong>Automatikus becslés, nem szakvélemény</strong> — minden AI-output ✨ ikonnal jelölve.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">A kalkulátorok pontosak?</div>
+        <div class="faq-a">Bér-, vám-, gyorshajtás-, lakhatás-, repjegy-kalkulátorok mind <strong>BECSLŐK</strong>. Publikus forrásokat (ECB, ESTV, BAZG) és általános mintákat használnak. Hivatalos döntéshez (pl. nettó-bér, adóvallás) mindig a hivatalos forrás kell.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Push-értesítéseket (Kinti Radar) hogyan kapok?</div>
+        <div class="faq-a">A böngésződ engedélyt kér. Email-cím nélkül, anonim módon — csak az endpoint-od (anonim URL) van tárolva. Két radar: új magyar állás a környékeden, és CHF/HUF árfolyam-küszöb (te állítod be).</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Lesz iOS és Android app is?</div>
+        <div class="faq-a">A kinti PWA-ként minden telefonra települ. Androidon a <strong>Google Play Store</strong>-ban is megtalálod; iPhone-on a Safari „Hozzáadás a kezdőképernyőhöz" gombbal teszed a kezdőképernyődre (App Store-jelenlét nincs). Így a felhasználóknak sosem kell store-díjat fizetniük.</div>
+      </div>
     </div>
   </div>
 </section>
 
+<!-- ─── COUNTRY MAP (Európai bővítés) ─────────── -->
+<section class="geomap" id="orszagok">
+  <div class="wrap">
+    <div class="sec-eyebrow">Európai közösség</div>
+    <h2 class="sec-title">Ott, ahol <em>magyarok</em> élnek.</h2>
+    <p class="sec-sub">Négy országban, egy térképen, anyanyelven. Válaszd ki, hol vagy kint — a magyar közösség már ott van.</p>
+
+    <style>
+      .ctry-grid { margin: 50px auto 0; max-width: 880px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      @media (max-width: 820px) { .ctry-grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 520px) { .ctry-grid { grid-template-columns: 1fr; } }
+      .ctry { display: flex; align-items: center; gap: 13px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-card); transition: transform .15s, box-shadow .15s; }
+      .ctry:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); }
+      .ctry-flag { width: 48px; height: 48px; border-radius: 13px; background: var(--surface-alt); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 26px; line-height: 1; flex-shrink: 0; }
+      .ctry-name { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+      .ctry-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; font-weight: 600; }
+      .ctry-pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 10px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; background: #e3efe5; color: #1d6a3c; }
+      .ctry-pill .pd { width: 6px; height: 6px; border-radius: 50%; background: #1d6a3c; animation: pulseDot 1.6s ease-out infinite; }
+      .ctry-note { margin: 28px 0 0; text-align: center; font-size: 13.5px; color: var(--text-muted); }
+    </style>
+    <div class="ctry-grid">
+      <div class="ctry">
+        <div class="ctry-flag">🇨🇭</div>
+        <div>
+          <div class="ctry-name">Svájc</div>
+          <div class="ctry-sub">Zürich · Genf · Basel</div>
+          <div class="ctry-pill"><span class="pd"></span>Élőben</div>
+        </div>
+      </div>
+      <div class="ctry">
+        <div class="ctry-flag">🇦🇹</div>
+        <div>
+          <div class="ctry-name">Ausztria</div>
+          <div class="ctry-sub">Bécs · Graz · Linz</div>
+          <div class="ctry-pill"><span class="pd"></span>Élőben</div>
+        </div>
+      </div>
+      <div class="ctry">
+        <div class="ctry-flag">🇩🇪</div>
+        <div>
+          <div class="ctry-name">Németország</div>
+          <div class="ctry-sub">Berlin · München · Frankfurt</div>
+          <div class="ctry-pill"><span class="pd"></span>Élőben</div>
+        </div>
+      </div>
+      <div class="ctry">
+        <div class="ctry-flag">🇳🇱</div>
+        <div>
+          <div class="ctry-name">Hollandia</div>
+          <div class="ctry-sub">Amszterdam · Rotterdam · Hága</div>
+          <div class="ctry-pill"><span class="pd"></span>Élőben</div>
+        </div>
+      </div>
+    </div>
+    <p class="ctry-note">Válaszd ki a menüből, melyik országban vagy kint — a térkép és a tartalom oda igazodik.</p>
+  </div>
+</section>
+
+<!-- ─── FINAL CTA ────────────────────────────── -->
+<section class="cta">
+  <div class="wrap">
+    <div class="cta-card">
+      <div class="inner">
+        <div class="cta-eyebrow">★ INGYENES · 2026 ÓTA ÉL</div>
+        <h2 class="cta-title">Egy térkép. Egy közösség.<br><em>Az otthon, ami kint maradt.</em></h2>
+        <p class="cta-sub">Töltsd le, és csatlakozz a magyar közösséghez — Európa négy országában, egy térképen. Első 1000 felhasználónk kapja a „korai kinti" jelvényt.</p>
+        <div class="cta-actions">
+          <button class="btn-primary">Letöltöm — ingyenes</button>
+          <button class="btn-ghost">Iratkozz fel az értesítésre</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ───────────────────────────────── -->
 <footer>
   <div class="wrap">
-    <a class="wordmark" href="https://kinti.app/" style="color:#fff">kinti<span class="dot"></span></a>
-    <p style="margin-top:8px">Találj magyart a közeledben — 🇨🇭 Svájc · 🇦🇹 Ausztria · 🇩🇪 Németország · 🇳🇱 Hollandia</p>
-    <div class="links">
-      <a href="https://kinti.app/impresszum">Impresszum</a>
-      <a href="https://kinti.app/aszf">ÁSZF</a>
-      <a href="https://kinti.app/adatvedelem">Adatvédelem</a>
-      <a href="https://kinti.app/visszateres">Visszatérítés</a>
-      <a href="https://kinti.app/ai-atlathatosag">AI-átláthatóság</a>
-      <a href="https://kinti.app/kozvetites">Munkáltatóknak: közvetítés</a>
-      <a href="https://kinti.app/pro">Csomagok</a>
+    <div class="foot-grid">
+      <div class="foot-about">
+        <div class="brand">
+          <svg width="28" height="33" viewBox="0 0 40 47" fill="none">
+            <g clip-path="url(#navpin)">
+              <rect x="0" y="0" width="40" height="16" fill="#c8392e"/>
+              <rect x="0" y="16" width="40" height="16" fill="#f4ede0"/>
+              <rect x="0" y="32" width="40" height="15" fill="#1d4434"/>
+            </g>
+            <path d="M20 1.5C9.8 1.5 2.5 9.4 2.5 19.4c0 9 8.2 18 14.8 24.3a3.8 3.8 0 0 0 5.4 0c6.6-6.3 14.8-15.3 14.8-24.3 0-10-7.3-17.9-17.5-17.9z" fill="none" stroke="#1d4434" stroke-width="2.2"/>
+            <circle cx="20" cy="19" r="5" fill="#f4ede0" stroke="#1d4434" stroke-width="2.2"/>
+          </svg>
+          kinti
+        </div>
+        <p>GPS-alapú magyar szakember- és állás-kereső a külföldön élő magyaroknak. Hat európai országban, ott, ahol kint élsz.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Termék</h4>
+        <ul>
+          <li><a href="#hogyan">Hogyan működik</a></li>
+          <li><a href="#kategoriak">Kategóriák</a></li>
+          <li><a href="#kozosseg">Közösség</a></li>
+          <li><a href="#">Letöltés</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Vállalkozóknak</h4>
+        <ul>
+          <li><a href="#vallalkozok">Regisztráció</a></li>
+          <li><a href="#">Kiemelt csomag</a></li>
+          <li><a href="#">Dashboard belépés</a></li>
+          <li><a href="#">Partnerprogram</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Cég</h4>
+        <ul>
+          <li><a href="/impresszum">Impresszum</a></li>
+          <li><a href="/adatvedelem">Adatvédelem</a></li>
+          <li><a href="/aszf">Felhasználási feltételek</a></li>
+          <li><a href="/cdn-cgi/l/email-protection#0b62656d644b6062657f62256a7b7b">Kapcsolat</a></li>
+        </ul>
+      </div>
     </div>
-    <p class="fine">Üzemeltető: Feedback Jobs S.R.L. (Románia) — elérhetőségek az Impresszumban. Az appban elérhető
-      kalkulátorok, csekklisták és útmutatók gondosan összeállított, tájékoztató jellegű tartalmak — nem minősülnek
-      jogi, adó-, pénzügyi vagy egészségügyi tanácsadásnak; hivatalos ügyben mindig az illetékes hatóság az irányadó.
-      A közösségi benchmark-adatok (Iránytű, Mennyit költesz?) referencia-értékek és anonim beküldések, nem hivatalos
-      statisztikák. A feltüntetett árak tájékoztató bruttó árak; a mindenkori végső árat a kinti.app/pro oldal és a
-      Paddle-pénztár mutatja. Az árfolyam-eszközben szereplő szolgáltató-linkek egy része jelölt referál-link.
-      A térképi adatok © OpenStreetMap közreműködők (ODbL). © 2025–2026 Feedback Jobs S.R.L. · kinti.app</p>
+    <div class="foot-bottom">
+      <div>© 2026 kinti.app · Üzemelteti: <strong>Feedback Jobs S.R.L.</strong> — Made with ♥ for kintiek</div>
+      <div style="display: flex; gap: 18px;">
+        <a href="#"><span class="__cf_email__" data-cfemail="5139343d3d3e113a383f25387f302121">[email&#160;protected]</span></a>
+        <a href="/impresszum">Impresszum</a>
+      </div>
+    </div>
   </div>
 </footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function () {
+  'use strict';
+
+  // ─── shared data ─────────────────────────────
+  const CAT_GLYPHS = {
+    fodrasz: '✂', auto: '⚙', orvos: '＋', pek: '◐', ugyved: '§',
+    etterem: '◍', villany: '⚡', takarito: '✦', fordito: 'A', tanar: '♪', it: '⌘',
+  };
+
+  // Sample businesses across Zürich (normalized 0..100 map coords; you-are-here at 50,56)
+  // Real product fills this from Postgres + PostGIS.
+  const BUSINESSES = [
+    { id: 'kovacs',    name: 'Kovács Anna fodrászat',         cat: 'fodrasz',  catLabel: 'Fodrász',        rating: 4.9, dist: '4 perc',  x: 53, y: 49, featured: true,  photo: 'linear-gradient(135deg,#d6b89a,#8c5e3c)', addr: 'Birmensdorferstr. 142' },
+    { id: 'szabo',     name: 'Dr. Szabó Eszter — fogorvos',   cat: 'orvos',    catLabel: 'Fogorvos',       rating: 5.0, dist: '7 perc',  x: 58, y: 62, featured: true,  photo: 'linear-gradient(135deg,#e9d8c0,#c8392e)', addr: 'Seebahnstr. 231' },
+    { id: 'nagy',      name: 'Nagy pékség',                   cat: 'pek',      catLabel: 'Pék',            rating: 4.7, dist: '6 perc',  x: 44, y: 55, featured: false, photo: 'linear-gradient(135deg,#f0d9b5,#c89a5c)', addr: 'Albisriederpl. 4' },
+    { id: 'horvath',   name: 'Horváth autószerviz',           cat: 'auto',     catLabel: 'Autószerelő',    rating: 4.8, dist: '11 perc', x: 36, y: 38, featured: false, photo: 'linear-gradient(135deg,#5c6d63,#2e3f33)', addr: 'Letzigraben 89' },
+    { id: 'kiskocsma', name: 'Kiskocsma — magyar étterem',    cat: 'etterem',  catLabel: 'Étterem',        rating: 4.6, dist: '9 perc',  x: 60, y: 44, featured: false, photo: 'linear-gradient(135deg,#c8392e,#6b1d18)', addr: 'Langstr. 152' },
+    { id: 'molnar',    name: 'Molnár & Partner ügyvédi iroda',cat: 'ugyved',   catLabel: 'Ügyvéd',         rating: 4.9, dist: '14 perc', x: 68, y: 32, featured: true,  photo: 'linear-gradient(135deg,#1d4434,#0e1f17)', addr: 'Bahnhofstr. 88' },
+    { id: 'toth',      name: 'Tóth villanyszerelő',           cat: 'villany',  catLabel: 'Villanyszerelő', rating: 4.8, dist: '15 perc', x: 30, y: 22, featured: false, photo: 'linear-gradient(135deg,#f0c14a,#8c5e1a)', addr: 'Hardturmstr. 11' },
+    { id: 'lakatos',   name: 'Lakatos Krisztina takarítás',   cat: 'takarito', catLabel: 'Takarítás',      rating: 4.9, dist: '12 perc', x: 22, y: 60, featured: false, photo: 'linear-gradient(135deg,#cfe1d8,#6a8e7a)', addr: 'Wollishofen' },
+    { id: 'farkas',    name: 'Farkas István — fordító',       cat: 'fordito',  catLabel: 'Fordító',        rating: 5.0, dist: '8 perc',  x: 72, y: 58, featured: false, photo: 'linear-gradient(135deg,#dde6d5,#7a8f6f)', addr: 'Enge' },
+    { id: 'kiss',      name: 'Kiss Bence — matek korrep.',    cat: 'tanar',    catLabel: 'Tanár',          rating: 4.8, dist: '10 perc', x: 40, y: 28, featured: false, photo: 'linear-gradient(135deg,#f0b1aa,#a8483d)', addr: 'Oerlikon' },
+    { id: 'varga',     name: 'Varga Péter — háziorvos',       cat: 'orvos',    catLabel: 'Háziorvos',      rating: 4.8, dist: '13 perc', x: 76, y: 46, featured: false, photo: 'linear-gradient(135deg,#e8d4b8,#a8765a)', addr: 'Hottingen' },
+    { id: 'kerteszgar',name: 'Kertész garage',                cat: 'auto',     catLabel: 'Autószerelő',    rating: 4.5, dist: '18 perc', x: 14, y: 32, featured: false, photo: 'linear-gradient(135deg,#7d6a52,#3e3527)', addr: 'Altstetten' },
+  ];
+
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  // ═════════════════════════════════════════════════════════════
+  // 1. HERO PHONE — looped 3-query animation
+  // ═════════════════════════════════════════════════════════════
+  const HERO_QUERIES = [
+    {
+      text: 'fodrász',
+      floatIdx: 0, // float-1 (Kovács Anna)
+      pins: [
+        { x: 53, y: 49, g: '✂', featured: true },
+        { x: 30, y: 36, g: '✂' },
+        { x: 70, y: 60, g: '✂' },
+        { x: 40, y: 72, g: '✂' },
+      ],
+      card: { cat: 'Fodrász · ★ 4.9', name: 'Kovács Anna fodrászat', meta: '4 perc · Nyitva', photo: 'linear-gradient(135deg,#d6b89a,#8c5e3c)', g: '✂', featured: true },
+    },
+    {
+      text: 'autószerelő',
+      floatIdx: 1, // float-2 (Horváth)
+      pins: [
+        { x: 36, y: 38, g: '⚙', featured: true },
+        { x: 60, y: 28, g: '⚙' },
+        { x: 72, y: 64, g: '⚙' },
+      ],
+      card: { cat: 'Autószerelő · ★ 4.8', name: 'Horváth autószerviz', meta: '11 perc · Nyitva', photo: 'linear-gradient(135deg,#5c6d63,#2e3f33)', g: '⚙', featured: false },
+    },
+    {
+      text: 'pék',
+      floatIdx: 2, // float-3 (Nagy pékség)
+      pins: [
+        { x: 44, y: 55, g: '◐', featured: true },
+        { x: 65, y: 40, g: '◐' },
+        { x: 28, y: 64, g: '◐' },
+      ],
+      card: { cat: 'Pék · ★ 4.7', name: 'Nagy pékség', meta: '6 perc · Nyitva', photo: 'linear-gradient(135deg,#f0d9b5,#c89a5c)', g: '◐', featured: false },
+    },
+  ];
+
+  async function runHeroLoop() {
+    const typedEl = document.getElementById('heroTyped');
+    const pinsCt  = document.getElementById('heroPins');
+    const card    = document.getElementById('heroCard');
+    const cardCat  = document.getElementById('heroCardCat');
+    const cardName = document.getElementById('heroCardName');
+    const cardMeta = document.getElementById('heroCardMeta');
+    const cardPh   = document.getElementById('heroCardPh');
+    const floats   = [...document.querySelectorAll('.hero-phone-stage .float')];
+    if (!typedEl) return;
+
+    let qi = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const q = HERO_QUERIES[qi];
+
+      // float chip states
+      floats.forEach((f, i) => {
+        f.classList.toggle('active', i === q.floatIdx);
+        f.classList.toggle('dim',    i !== q.floatIdx);
+      });
+
+      // 1. type the query character by character
+      typedEl.textContent = '';
+      for (const ch of q.text) {
+        typedEl.textContent += ch;
+        await sleep(85);
+      }
+      await sleep(350);
+
+      // 2. drop in pins, staggered
+      pinsCt.innerHTML = '';
+      const pinEls = q.pins.map((p) => {
+        const w = document.createElement('div');
+        w.className = 'h-pin-wrap';
+        w.style.left = p.x + '%';
+        w.style.top  = p.y + '%';
+        w.innerHTML = '<div class="pin' + (p.featured ? ' featured' : '') + '"><span>' + p.g + '</span></div>';
+        pinsCt.appendChild(w);
+        return w;
+      });
+      for (let i = 0; i < pinEls.length; i++) {
+        setTimeout(() => pinEls[i].classList.add('in'), i * 90);
+      }
+      await sleep(pinEls.length * 90 + 350);
+
+      // 3. card slide up (featured photo)
+      cardCat.textContent  = q.card.cat;
+      cardName.textContent = q.card.name;
+      cardMeta.textContent = q.card.meta;
+      cardPh.style.background = q.card.photo;
+      document.getElementById('heroCardIco').textContent = q.card.g || '';
+      cardPh.querySelector('.hbadge').style.display = q.card.featured ? '' : 'none';
+      card.classList.add('in');
+
+      // 4. hold
+      await sleep(2800);
+
+      // 5. fade out card, then pins
+      card.classList.remove('in');
+      await sleep(220);
+      pinEls.forEach((w, i) => setTimeout(() => w.classList.remove('in'), i * 50));
+      await sleep(pinEls.length * 50 + 400);
+
+      qi = (qi + 1) % HERO_QUERIES.length;
+    }
+  }
+
+  // ═════════════════════════════════════════════════════════════
+  // 2. INTERACTIVE DEMO — search + chips → pins + list
+  // ═════════════════════════════════════════════════════════════
+  let demoCat = 'all';
+
+  function initDemo() {
+    const map = document.getElementById('demoMap');
+    if (!map) return;
+
+    // Render all pins once; toggle visibility later.
+    BUSINESSES.forEach((b) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'demo-pin';
+      wrap.dataset.id = b.id;
+      wrap.style.left = b.x + '%';
+      wrap.style.top  = b.y + '%';
+      wrap.innerHTML = '<div class="pin' + (b.featured ? ' featured' : '') + '"><span>' + (CAT_GLYPHS[b.cat] || '●') + '</span></div>';
+      map.appendChild(wrap);
+    });
+
+    const input = document.getElementById('demoInput');
+    const clear = document.getElementById('demoClear');
+
+    document.querySelectorAll('.demo-chip').forEach((c) => {
+      c.addEventListener('click', () => {
+        document.querySelectorAll('.demo-chip').forEach(x => x.classList.remove('active'));
+        c.classList.add('active');
+        demoCat = c.dataset.cat;
+        renderDemo();
+      });
+    });
+
+    input.addEventListener('input', () => {
+      clear.classList.toggle('show', input.value.length > 0);
+      renderDemo();
+    });
+    clear.addEventListener('click', () => {
+      input.value = '';
+      clear.classList.remove('show');
+      input.focus();
+      renderDemo();
+    });
+
+    // kbd shortcut clicks fill the input
+    document.querySelectorAll('.demo-hint kbd').forEach((k) => {
+      k.addEventListener('click', () => {
+        input.value = k.dataset.fill || k.textContent;
+        clear.classList.add('show');
+        // also reset cat to all so the keyword doesn't get over-filtered
+        demoCat = 'all';
+        document.querySelectorAll('.demo-chip').forEach(x => x.classList.toggle('active', x.dataset.cat === 'all'));
+        renderDemo();
+        input.focus();
+      });
+    });
+
+    renderDemo();
+  }
+
+  function fuzzyMatch(b, q) {
+    if (!q) return true;
+    const hay = (b.name + ' ' + b.catLabel).toLowerCase();
+    return hay.includes(q);
+  }
+
+  function renderDemo() {
+    const input = document.getElementById('demoInput');
+    const q = (input.value || '').toLowerCase().trim();
+
+    const filtered = BUSINESSES.filter((b) => {
+      const catOk = demoCat === 'all' || b.cat === demoCat;
+      const qOk = fuzzyMatch(b, q);
+      return catOk && qOk;
+    });
+
+    // toggle pin visibility (and dim non-matches)
+    document.querySelectorAll('.demo-pin').forEach((p) => {
+      const visible = filtered.some(b => b.id === p.dataset.id);
+      p.classList.toggle('hidden', !visible);
+    });
+
+    // list
+    const list = document.getElementById('demoList');
+    list.innerHTML = '';
+
+    const head = document.createElement('div');
+    head.className = 'demo-result-head';
+    if (filtered.length === 0) {
+      head.innerHTML = '<strong>0 találat</strong> · próbálj rá másra';
+    } else {
+      head.innerHTML = '<strong>' + filtered.length + '</strong> találat · közelség szerint';
+    }
+    list.appendChild(head);
+
+    if (filtered.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'demo-empty';
+      empty.innerHTML = '<div class="big">🤷</div>Hopp — erre még nincs találat. Légy az első, aki regisztrál a kategóriába!';
+      list.appendChild(empty);
+      return;
+    }
+
+    filtered.forEach((b, i) => {
+      const row = document.createElement('div');
+      row.className = 'demo-row';
+      row.style.animationDelay = (i * 45) + 'ms';
+      row.innerHTML =
+        '<div class="ph" style="background: ' + b.photo + '">' +
+          '<div class="ph-ico">' + (CAT_GLYPHS[b.cat] || '\u25CF') + '</div>' +
+          (b.featured ? '<div class="badge">KIEMELT</div>' : '') +
+        '</div>' +
+        '<div class="info">' +
+          '<div class="cat">' + b.catLabel + ' <span class="star"><span>★</span> ' + b.rating.toFixed(1) + '</span></div>' +
+          '<div class="name">' + b.name + '</div>' +
+          '<div class="meta">' + b.dist + ' · <span class="open">Nyitva</span></div>' +
+        '</div>';
+      list.appendChild(row);
+    });
+  }
+
+  // ═════════════════════════════════════════════════════════════
+  // 3. TOP KINTIEK CAROUSEL
+  // ═════════════════════════════════════════════════════════════
+  let carCat = 'all';
+
+  function initCarousel() {
+    const car = document.getElementById('carousel');
+    if (!car) return;
+
+    document.querySelectorAll('.cf-chip').forEach((c) => {
+      c.addEventListener('click', () => {
+        document.querySelectorAll('.cf-chip').forEach(x => x.classList.remove('active'));
+        c.classList.add('active');
+        carCat = c.dataset.cat;
+        renderCarousel();
+      });
+    });
+
+    const prev = document.getElementById('carPrev');
+    const next = document.getElementById('carNext');
+    const step = 296; // card width + gap
+
+    prev.addEventListener('click', () => car.scrollBy({ left: -step, behavior: 'smooth' }));
+    next.addEventListener('click', () => car.scrollBy({ left:  step, behavior: 'smooth' }));
+
+    const updateArrows = () => {
+      prev.disabled = car.scrollLeft <= 4;
+      next.disabled = car.scrollLeft + car.clientWidth >= car.scrollWidth - 4;
+    };
+    car.addEventListener('scroll', updateArrows);
+
+    renderCarousel();
+    requestAnimationFrame(updateArrows);
+  }
+
+  function renderCarousel() {
+    const car = document.getElementById('carousel');
+    const list = carCat === 'all' ? BUSINESSES : BUSINESSES.filter(b => b.cat === carCat);
+
+    car.innerHTML = '';
+    list.forEach((b) => {
+      const card = document.createElement('div');
+      card.className = 'biz-card';
+      card.innerHTML =
+        '<div class="ph" style="background: ' + b.photo + '">' +
+          '<div class="ph-ico">' + (CAT_GLYPHS[b.cat] || '\u25CF') + '</div>' +
+          (b.featured ? '<div class="badge">★ KIEMELT</div>' : '') +
+          '<div class="save">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>' +
+          '</div>' +
+        '</div>' +
+        '<div class="info">' +
+          '<div class="row1">' +
+            '<span>' + b.catLabel + '</span>' +
+            '<span class="sep"></span>' +
+            '<span class="star"><svg class="s" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6l6.3.9l-4.5 4.4l1 6.1L12 17.5l-5.5 2.5l1-6.1L3 9.5l6.3-.9z"/></svg> ' + b.rating.toFixed(1) + '</span>' +
+          '</div>' +
+          '<h3 class="name">' + b.name + '</h3>' +
+          '<div class="meta">' +
+            '<span>📍 ' + b.dist + '</span>' +
+            '<span class="sep"></span>' +
+            '<span class="open">Nyitva</span>' +
+          '</div>' +
+          '<div class="langs">' +
+            '<span class="lang">magyarul</span>' +
+            '<span class="lang de">DE</span>' +
+          '</div>' +
+        '</div>';
+      car.appendChild(card);
+    });
+
+    // reset scroll on filter change + arrow refresh
+    car.scrollTo({ left: 0, behavior: 'auto' });
+    requestAnimationFrame(() => {
+      const prev = document.getElementById('carPrev');
+      const next = document.getElementById('carNext');
+      if (prev && next) {
+        prev.disabled = car.scrollLeft <= 4;
+        next.disabled = car.scrollLeft + car.clientWidth >= car.scrollWidth - 4;
+      }
+    });
+  }
+
+  // ─── boot ────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    initDemo();
+    initCarousel();
+    runHeroLoop();
+
+    // Cookie consent logic
+    const banner = document.getElementById('cookieConsentBanner');
+    const acceptBtn = document.getElementById('cookieAcceptBtn');
+    if (banner && acceptBtn) {
+      if (!localStorage.getItem('cookieConsent')) {
+        banner.style.display = 'block';
+      }
+      acceptBtn.addEventListener('click', () => {
+        localStorage.setItem('cookieConsent', 'accepted');
+        banner.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        banner.style.opacity = '0';
+        banner.style.transform = 'translateY(16px)';
+        setTimeout(() => {
+          banner.style.display = 'none';
+        }, 300);
+      });
+    }
+  });
+})();
+</script>
+
+<!-- COOKIE CONSENT STYLE -->
+<style>
+  .cookie-banner-wrap {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    right: 24px;
+    z-index: 1000;
+    background: var(--primary);
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 16px 24px;
+    box-shadow: 0 10px 30px rgba(14,31,23,0.22);
+    display: none;
+    animation: cookieSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  @keyframes cookieSlideIn {
+    from { transform: translateY(32px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  .cookie-banner-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .cookie-banner-text {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+  }
+  
+  .cookie-link {
+    color: #f0b1aa;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+  .cookie-link:hover {
+    color: #ffffff;
+  }
+  
+  .cookie-btn {
+    padding: 10px 20px;
+    background: #ffffff;
+    color: var(--primary);
+    border: none;
+    border-radius: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.15s, background-color 0.15s;
+  }
+  .cookie-btn:hover {
+    transform: translateY(-1px);
+    background: #fbf7ee;
+  }
+  
+  @media (max-width: 640px) {
+    .cookie-banner-wrap {
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      padding: 14px 18px;
+      border-radius: 16px;
+    }
+    .cookie-banner-inner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    .cookie-banner-text {
+      font-size: 12.5px;
+    }
+    .cookie-btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+
+<!-- COOKIE CONSENT BANNER HTML -->
+<div id="cookieConsentBanner" class="cookie-banner-wrap">
+  <div class="cookie-banner-inner">
+    <div class="cookie-banner-text">
+      🍪 <strong>A kinti.app sütiket használ.</strong> A Clerk (bejelentkezés) és az alapvető működési sütik segítségével biztosítjuk a platform biztonságát és megfelelő működését. Marketing- vagy nyomkövető sütiket nem használunk. Részletes tájékoztató: <a href="/adatvedelem" class="cookie-link">Adatkezelési tájékoztató</a>.
+    </div>
+    <div class="cookie-banner-actions">
+      <button id="cookieAcceptBtn" class="cookie-btn">Elfogadom</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
