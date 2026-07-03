@@ -5,8 +5,13 @@ import { Icon } from "@/components/ui";
 import { getChecklist, CHECKLISTS } from "@/lib/admin-checklists";
 import { AdminChecklistView } from "@/components/views/admin-checklist-view";
 
-export const runtime = "edge";
+// Tisztán statikus tartalom (admin-checklists.ts) + generateStaticParams →
+// SSG, edge runtime NÉLKÜL (a runtime="edge" + force-static kombó incompatible-
+// warningot adott, és feleslegesen edge function-ként emittálta — lásd a
+// deploy-edge-route-plafon tanulságot). A dynamicParams=false kell: ismeretlen
+// slug statikus 404-et kap, nem próbál runtime-renderelést (aminek lambda kellene).
 export const dynamic = "force-static";
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return CHECKLISTS.map((c) => ({ slug: c.slug }));

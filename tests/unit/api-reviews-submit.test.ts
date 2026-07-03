@@ -13,6 +13,12 @@ vi.mock("@/lib/disposable-emails", () => ({ isDisposableEmail: vi.fn() }));
 vi.mock("@/lib/safe-log", () => ({ safeLogError: vi.fn() }));
 vi.mock("@/lib/security", () => ({ hashIp: vi.fn(), TERMS_VERSION: "test-terms-1" }));
 vi.mock("@/lib/cloudflare", () => ({ getCloudflareEnv: vi.fn(() => ({})) }));
+// A route rate-limitje (lib/ai) getDB-t hívna — mock nélkül a vitest stderr-re
+// írta: `No "getDB" export is defined on the "@/lib/cloudflare" mock`.
+vi.mock("@/lib/ai", () => ({
+  checkAiRateLimit: vi.fn(async () => ({ allowed: true })),
+  logAiRateLimit: vi.fn(async () => {}),
+}));
 vi.mock("@/lib/repo", () => ({
   createReviewDraft: vi.fn(),
   getBusinessById: vi.fn(),

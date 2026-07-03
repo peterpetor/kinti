@@ -40,7 +40,7 @@ export function OfflineGuidesButton({
     } catch {
       /* ignore */
     }
-  }, []);
+  }, [LS_KEY]);
 
   async function download() {
     if (typeof caches === "undefined") { setStatus("error"); return; }
