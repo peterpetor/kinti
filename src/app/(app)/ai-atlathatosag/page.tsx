@@ -141,6 +141,12 @@ export default function AiAtlathatosagPage() {
           AI-gyakorlatot (érzelem-felismerés, social scoring, manipuláció) nem
           alkalmazunk.
         </p>
+        <p className="text-[12.5px] leading-relaxed text-ink-muted">
+          Ami <strong className="text-ink">nem</strong> AI: az állás-kereső
+          „% match" pontszáma egyszerű, szabály-alapú számítás (a szakmád, a
+          régiód és a bér-elvárásod egyezése a hirdetéssel) — nem gépi tanulás,
+          és kizárólag neked segít rangsorolni; munkáltató nem lát belőle semmit.
+        </p>
       </section>
 
       {/* Hibajelzés */}

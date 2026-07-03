@@ -67,6 +67,16 @@ technikailag megszüntetve. Ha a jövőben bárki pontozást/rangsorolást akarn
 visszaépíteni: az a magas kockázatú sávba lépés — előtte ezt a dokumentumot és
 jogászt kell elővenni.
 
+## 3/b. Hatókörön KÍVÜLI funkció — felhasználói „% match" (/allasok, PRO)
+
+A PRO állás-match (`lib/job-match.ts`) **nem AI-rendszer**: determinisztikus,
+kézzel írt szabály-alapú függvény (szakma + kanton + bér-elvárás egyezés,
+LLM/ML nélkül) → kívül esik az AI Act AI-rendszer definícióján. Iránya is
+fordított, mint az Annex III 4. ponté: az ÁLLÁSKERESŐ rangsorol állásokat
+SAJÁT magának; munkáltató nem látja, jelölt-értékelés nem történik. A /pro
+oldal copy-ja korrekt (a %-match-et nem nevezi AI-nak); a /ai-atlathatosag
+oldalon explicit „ami nem AI" bekezdés tisztázza.
+
 ## 4. AI-jártasság (4. cikk)
 
 Az üzemeltető (egyszemélyes) maga fejleszti és felügyeli az AI-funkciókat; a
