@@ -12,6 +12,11 @@ export interface SosAlert {
   expiresAt: string;
 }
 
+/** Beküldéskor generált titok a lezáráshoz — a kliens tartja (localStorage). */
+export interface SosAlertCreateInput extends Omit<SosAlert, "createdAt" | "resolved"> {
+  resolveToken: string;
+}
+
 interface SosAlertRow {
   id: string;
   lat: number;
@@ -38,12 +43,12 @@ function toSosAlert(r: SosAlertRow): SosAlert {
   };
 }
 
-export async function createSosAlert(input: Omit<SosAlert, "createdAt" | "resolved">): Promise<void> {
+export async function createSosAlert(input: SosAlertCreateInput): Promise<void> {
   await getDB()
     .prepare(
       `INSERT INTO sos_alerts
-       (id, lat, lng, description, contact_phone, poster_user_id, expires_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
+       (id, lat, lng, description, contact_phone, poster_user_id, expires_at, resolve_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .bind(
       input.id,
@@ -52,7 +57,8 @@ export async function createSosAlert(input: Omit<SosAlert, "createdAt" | "resolv
       input.description,
       input.contactPhone,
       input.posterUserId,
-      input.expiresAt
+      input.expiresAt,
+      input.resolveToken
     )
     .run();
 }
@@ -78,10 +84,25 @@ export async function getActiveAlertCountForUser(userId: string): Promise<number
   return results[0]?.count ?? 0;
 }
 
-export async function resolveSosAlert(id: string, posterUserId: string): Promise<boolean> {
+/**
+ * Lezárás tulajdonlás-ellenőrzéssel: token-es riasztásnál KIZÁRÓLAG a
+ * beküldéskor kapott resolve_token számít (IP-változás-immún, és azonos
+ * CGNAT-IP mögül sem zárhatja le idegen). Az IP-hash (poster_user_id) csak a
+ * token ELŐTTI riasztások fallbackje (max 3 órás élettartam → gyorsan kihal).
+ * Az üres stringgé normalizált token sosem matchel NULL/valós tokenre.
+ */
+export async function resolveSosAlert(
+  id: string,
+  ownership: { resolveToken: string | null; posterUserId: string },
+): Promise<boolean> {
   const res = await getDB()
-    .prepare("UPDATE sos_alerts SET resolved = 1 WHERE id = ? AND poster_user_id = ?")
-    .bind(id, posterUserId)
+    .prepare(
+      `UPDATE sos_alerts SET resolved = 1
+       WHERE id = ?
+         AND ((resolve_token IS NOT NULL AND resolve_token = ?)
+           OR (resolve_token IS NULL AND poster_user_id = ?))`
+    )
+    .bind(id, ownership.resolveToken || "", ownership.posterUserId)
     .run();
   return (res.meta.changes ?? 0) > 0;
 }

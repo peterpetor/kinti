@@ -117,6 +117,9 @@ export async function POST(req: Request) {
   }
 
   const id = crypto.randomUUID();
+  // Lezárás-titok: a válaszban visszaadjuk, a kliens tárolja — a lezárás ezzel
+  // megy, nem IP-egyezéssel (mobilon az IP hálózat-váltáskor változik).
+  const resolveToken = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString();
 
   // Profanity-szűrő: blokkolás rasszista/trágár tartalom esetén
@@ -136,10 +139,11 @@ export async function POST(req: Request) {
     contactPhone: phoneStr,
     posterUserId: userId,
     expiresAt,
+    resolveToken,
   });
 
   // 6) Rate-limit napló (fire-and-forget)
   logSpamSubmit("sos", ipHash).catch(() => { /* silent */ });
 
-  return NextResponse.json({ ok: true, id });
+  return NextResponse.json({ ok: true, id, resolveToken });
 }
