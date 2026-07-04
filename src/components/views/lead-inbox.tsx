@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
+import { parseDbDate } from "@/lib/dates";
 import type { BusinessLead } from "@/lib/repo-leads";
 
 const STATUS_META: Record<string, { label: string; cls: string }> = {
@@ -92,7 +93,7 @@ function LockedLeadCard({ lead, businessId }: { lead: LeadCard; businessId: stri
         />
       </div>
       <p className="mt-1.5 text-[10.5px] text-ink-faint">
-        {new Date(lead.createdAt + "Z").toLocaleDateString("hu-HU")} · a havi 5 ingyenes ajánlatkérésen felül érkezett
+        {parseDbDate(lead.createdAt)?.toLocaleDateString("hu-HU") ?? ""} · a havi 5 ingyenes ajánlatkérésen felül érkezett
       </p>
     </article>
   );
@@ -137,7 +138,7 @@ function UnlockedLeadCard({
 
       <div className="mt-3 flex items-center justify-between gap-2 border-t border-line/60 pt-2.5">
         <span className="text-[11px] font-semibold text-ink-faint">
-          {new Date(lead.createdAt + "Z").toLocaleDateString("hu-HU")}
+          {parseDbDate(lead.createdAt)?.toLocaleDateString("hu-HU") ?? ""}
         </span>
         <div className="flex items-center gap-2 text-[12px] font-bold">
           {lead.status !== "contacted" && (

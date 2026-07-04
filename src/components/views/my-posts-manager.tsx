@@ -16,6 +16,7 @@ import {
 } from "@/lib/my-posts";
 import { handleFromId } from "@/lib/handle";
 import { REVIEW_LIMITS } from "@/lib/reviews";
+import { parseDbDate } from "@/lib/dates";
 
 const TYPE_META: Record<PostType, { label: string; icon: string; color: string }> = {
   event:    { label: "Esemény",      icon: "📅", color: "#E4405F" },
@@ -436,8 +437,11 @@ function FilterPill({ active, onClick, label }: { active: boolean; onClick: () =
 }
 
 function fmtRel(iso: string): string {
-  const t = Date.parse(iso);
-  if (Number.isNaN(t)) return "";
+  // SQLite "YYYY-MM-DD HH:MM:SS" (UTC, zóna nélkül): a nyers Date.parse Safarin
+  // NaN-t, Chrome-ban lokálként értelmezve zóna-eltolt relatív időt adna.
+  const parsed = parseDbDate(iso);
+  if (!parsed) return "";
+  const t = parsed.getTime();
   const diff = Date.now() - t;
   const mins = Math.floor(diff / 60000);
   if (mins < 60) return mins <= 1 ? "az imént" : `${mins} perce`;

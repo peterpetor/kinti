@@ -114,10 +114,16 @@ function isGermanCoord(lat: number, lng: number): boolean {
   return lat >= 47.2 && lat <= 55.1 && lng >= 5.8 && lng <= 15.1;
 }
 
-/** Ország-tudatos koordináta-épelméjűség (CH/AT/DE). */
+/** Holland bounding box (európai szárazföld). */
+function isDutchCoord(lat: number, lng: number): boolean {
+  return lat >= 50.7 && lat <= 53.7 && lng >= 3.2 && lng <= 7.3;
+}
+
+/** Ország-tudatos koordináta-épelméjűség (CH/AT/DE/NL). */
 export function isInCountryCoord(country: string, lat: number, lng: number): boolean {
   if (country === "AT") return isAustrianCoord(lat, lng);
   if (country === "DE") return isGermanCoord(lat, lng);
+  if (country === "NL") return isDutchCoord(lat, lng);
   return isSwissCoord(lat, lng);
 }
 

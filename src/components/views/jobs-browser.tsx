@@ -11,6 +11,7 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { getRegions, regionName } from "@/lib/regions";
 import { JOB_CATEGORIES, jobCategoryLabel, formatJobCurrency } from "@/lib/job-categories";
 import { jobMatchScore, hasMatchableProfile, type MatchProfile } from "@/lib/job-match";
+import { parseDbDate } from "@/lib/dates";
 import type { Job } from "@/lib/types";
 
 // Leaflet csak kliensen (window-függő) → SSR-en () => null.
@@ -327,7 +328,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                 </p>
 
                 <div className="mt-4 border-t border-line/60 pt-3 flex items-center justify-between text-[11px] font-bold text-ink-faint uppercase tracking-wide">
-                  <span>Dátum: {new Date(job.createdAt).toLocaleDateString('hu-HU')}</span>
+                  <span>Dátum: {parseDbDate(job.createdAt)?.toLocaleDateString("hu-HU") ?? ""}</span>
                   <span className="text-primary flex items-center gap-1">
                     Részletek <Icon name="chevR" size={12} strokeWidth={3} />
                   </span>

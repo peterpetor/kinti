@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { getEmployerByOwner, getJobById, getJobApplications } from "@/lib/repo";
+import { parseDbDate } from "@/lib/dates";
 import { Icon } from "@/components/ui";
 
 export const runtime = "edge";
@@ -56,7 +57,7 @@ export default async function JobApplicantsPage({ params }: { params: { id: stri
               <div className="flex items-start justify-between gap-2">
                 <h2 className="text-[15px] font-extrabold text-ink">{app.fullName}</h2>
                 <span className="shrink-0 text-[11px] font-semibold text-ink-faint">
-                  {new Date(app.submittedAt).toLocaleDateString("hu-HU")}
+                  {parseDbDate(app.submittedAt)?.toLocaleDateString("hu-HU") ?? ""}
                 </span>
               </div>
 

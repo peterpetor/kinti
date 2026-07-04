@@ -14,6 +14,7 @@ import "leaflet/dist/leaflet.css";
 const SWISS_CENTER: [number, number] = [46.82, 8.23];
 const AT_CENTER: [number, number] = [47.7, 13.9];
 const DE_CENTER: [number, number] = [51.1, 10.4];
+const NL_CENTER: [number, number] = [52.2, 5.4];
 
 /** Osztrák Bundesland-centroidok (a regions.ts AT-kódjaival). A jobs/events
  *  ugyanezeket a kódokat tárolja, így a buborékok a megfelelő helyre kerülnek. */
@@ -50,6 +51,23 @@ const DE_BUNDESLAND_COORDS: Record<string, { lat: number; lng: number }> = {
   TH: { lat: 50.90, lng: 11.03 },
 };
 
+/** Holland provincia-centroidok (a regions.ts NL-kódjaival). Az NL "ZH" itt
+ *  Zuid-Holland — ez a tábla CSAK country="NL" mellett kerül elő. */
+const NL_PROVINCE_COORDS: Record<string, { lat: number; lng: number }> = {
+  NH: { lat: 52.60, lng: 4.92 },
+  ZH: { lat: 52.02, lng: 4.49 },
+  UT: { lat: 52.09, lng: 5.16 },
+  NB: { lat: 51.56, lng: 5.20 },
+  GE: { lat: 52.06, lng: 5.94 },
+  OV: { lat: 52.44, lng: 6.44 },
+  LI: { lat: 51.21, lng: 5.94 },
+  FR: { lat: 53.11, lng: 5.75 },
+  GR: { lat: 53.22, lng: 6.74 },
+  DR: { lat: 52.86, lng: 6.62 },
+  FL: { lat: 52.53, lng: 5.60 },
+  ZE: { lat: 51.49, lng: 3.85 },
+};
+
 /**
  * Kanton-buborék térkép — kantononként EGY buborék a centroidján (CANTON_COORDS),
  * a darabszámmal. Olyan adatokhoz, amiknek nincs precíz lat/lng-jük, csak
@@ -79,11 +97,13 @@ export function CantonBubbleMap({
 }) {
   const [fullscreen, setFullscreen] = useState(false);
 
-  // Ország-tudatos közép + koordináták (CH: kanton, AT/DE: Bundesland) — vagy override.
+  // Ország-tudatos közép + koordináták (CH: kanton, AT/DE: Bundesland, NL: provincia) — vagy override.
   const isAT = country === "AT";
   const isDE = country === "DE";
-  const COORDS: Record<string, { lat: number; lng: number }> = coordsOverride ?? (isDE ? DE_BUNDESLAND_COORDS : isAT ? AT_BUNDESLAND_COORDS : CANTON_COORDS);
-  const center = isDE ? DE_CENTER : isAT ? AT_CENTER : SWISS_CENTER;
+  const isNL = country === "NL";
+  const COORDS: Record<string, { lat: number; lng: number }> =
+    coordsOverride ?? (isDE ? DE_BUNDESLAND_COORDS : isAT ? AT_BUNDESLAND_COORDS : isNL ? NL_PROVINCE_COORDS : CANTON_COORDS);
+  const center = isDE ? DE_CENTER : isAT ? AT_CENTER : isNL ? NL_CENTER : SWISS_CENTER;
 
   useEffect(() => {
     if (!fullscreen) return;
