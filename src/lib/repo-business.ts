@@ -590,19 +590,34 @@ export interface AdminBusinessRow {
   rating: number; reviews: number; source: string | null; createdAt: string; manageToken: string | null;
 }
 
-export async function listBusinessesForAdmin(country?: string | null): Promise<AdminBusinessRow[]> {
+export const ADMIN_BUSINESS_PAGE_SIZE = 100;
+
+export async function listBusinessesForAdmin(
+  country?: string | null,
+  page = 1,
+): Promise<{ rows: AdminBusinessRow[]; total: number; page: number; pages: number }> {
   // A függőben lévőket (moderation_status=0) előre rendezzük, hogy az admin
-  // azonnal lássa, mi vár jóváhagyásra. Opcionális ország-szűrő (admin tab).
+  // azonnal lássa, mi vár jóváhagyásra. Opcionális ország-szűrő (admin tab) +
+  // lapozás (100/oldal) — eddig a 100 fölötti sorok elérhetetlenek voltak.
   const filter = !!country && country !== "all";
-  const sql = `SELECT id,name,category_label,verified,moderation_status,rating,reviews,source,created_at,manage_token FROM businesses ${filter ? "WHERE country_code = ?" : ""} ORDER BY moderation_status ASC, created_at DESC LIMIT 100`;
-  const stmt = getDB().prepare(sql);
-  const { results } = await (filter ? stmt.bind(country) : stmt)
+  const db = getDB();
+
+  const countStmt = db.prepare(`SELECT COUNT(*) AS n FROM businesses ${filter ? "WHERE country_code = ?" : ""}`);
+  const total = (await (filter ? countStmt.bind(country) : countStmt).first<{ n: number }>())?.n ?? 0;
+  const pages = Math.max(1, Math.ceil(total / ADMIN_BUSINESS_PAGE_SIZE));
+  const p = Math.min(Math.max(1, Math.floor(page) || 1), pages);
+  const offset = (p - 1) * ADMIN_BUSINESS_PAGE_SIZE;
+
+  const sql = `SELECT id,name,category_label,verified,moderation_status,rating,reviews,source,created_at,manage_token FROM businesses ${filter ? "WHERE country_code = ?" : ""} ORDER BY moderation_status ASC, created_at DESC LIMIT ? OFFSET ?`;
+  const stmt = db.prepare(sql);
+  const { results } = await (filter ? stmt.bind(country, ADMIN_BUSINESS_PAGE_SIZE, offset) : stmt.bind(ADMIN_BUSINESS_PAGE_SIZE, offset))
     .all<{ id: string; name: string; category_label: string | null; verified: number; moderation_status: number | null; rating: number; reviews: number; source: string | null; created_at: string; manage_token: string | null }>();
-  return results.map((r) => ({
+  const rows = results.map((r) => ({
     id: r.id, name: r.name, categoryLabel: r.category_label, verified: r.verified === 1,
     moderationStatus: r.moderation_status ?? 0,
     rating: r.rating, reviews: r.reviews, source: r.source, createdAt: r.created_at, manageToken: r.manage_token,
   }));
+  return { rows, total, page: p, pages };
 }
 
 export async function deleteBusinessAsAdmin(id: string): Promise<boolean> {

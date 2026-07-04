@@ -27,7 +27,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Admin — kinti", robots: { index: false, follow: false } };
 
-export default async function AdminPage({ searchParams }: { searchParams: { c?: string } }) {
+export default async function AdminPage({ searchParams }: { searchParams: { c?: string; p?: string } }) {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
@@ -35,6 +35,8 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
   // se legyen káosz. "all" = összes ország.
   const country = searchParams?.c && searchParams.c !== "all" ? searchParams.c : "all";
   const countryName = country === "all" ? "összes ország" : getCountry(country)?.name ?? country;
+  // Vállalkozás-lista lapozása (100/oldal): ?p=2 → második 100, stb.
+  const bizPage = Math.max(1, parseInt(searchParams?.p ?? "1", 10) || 1);
 
   const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, pendingEvents, businesses, events] =
     await Promise.all([
@@ -45,7 +47,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
       getFeatureUsageStats(7),
       listOpenReports(),
       listPendingEvents(country),
-      listBusinessesForAdmin(country),
+      listBusinessesForAdmin(country, bizPage),
       listEventsForAdmin(country),
     ]);
 
@@ -304,16 +306,21 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
         )}
       </section>
 
-      {/* Businesses + verify toggle + delete */}
+      {/* Businesses + verify toggle + delete — lapozva (100/oldal) */}
       <section className="space-y-2">
         <h2 className="text-[14px] font-extrabold text-ink">
-          Vállalkozások — Verified + törlés ({businesses.length}) · {countryName}
+          Vállalkozások — Verified + törlés ({businesses.total}) · {countryName}
+          {businesses.pages > 1 && (
+            <span className="ml-1.5 text-[11.5px] font-semibold text-ink-muted">
+              · {(businesses.page - 1) * 100 + 1}–{Math.min(businesses.page * 100, businesses.total)}. ({businesses.page}/{businesses.pages}. oldal)
+            </span>
+          )}
         </h2>
-        {businesses.length === 0 ? (
+        {businesses.rows.length === 0 ? (
           <Empty label="Nincs vállalkozás a Szaknévsorban." />
         ) : (
           <div className="space-y-1.5">
-            {businesses.map((b) => {
+            {businesses.rows.map((b) => {
               const st =
                 b.moderationStatus === 1
                   ? { label: "Jóváhagyva", bg: "#dcfce7", fg: "#15803d", border: "#22c55e" }
@@ -364,6 +371,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
             })}
           </div>
         )}
+        <Pager current={businesses.page} pages={businesses.pages} country={country} />
       </section>
 
       {/* Események — törlés (a status független) */}
@@ -516,6 +524,30 @@ function GlobalTag() {
     <span className="ml-2 align-middle rounded-full bg-surface-alt px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-faint">
       🌍 globális
     </span>
+  );
+}
+
+/** Lapozó a vállalkozás-listához (100/oldal) — az ország-szűrőt megtartja. */
+function Pager({ current, pages, country }: { current: number; pages: number; country: string }) {
+  if (pages <= 1) return null;
+  return (
+    <nav aria-label="Vállalkozás-lista lapozás" className="flex flex-wrap items-center gap-1.5 pt-1">
+      {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
+        <Link
+          key={n}
+          href={`/admin?c=${country}&p=${n}`}
+          aria-current={n === current ? "page" : undefined}
+          className={cn(
+            "inline-flex min-w-[36px] items-center justify-center rounded-pill px-3 py-1.5 text-[12px] font-bold transition",
+            n === current
+              ? "bg-primary text-white shadow-card"
+              : "border border-line bg-surface text-ink hover:bg-surface-alt",
+          )}
+        >
+          {n}
+        </Link>
+      ))}
+    </nav>
   );
 }
 
