@@ -4,17 +4,42 @@ import { useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import {
-  PROVIDER_CATEGORIES,
+  getProviderCategories,
   getCategoryInfo,
   formatDateDe,
   type ProviderCategory,
   type CategoryInfo,
 } from "@/lib/provider-switch";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+
+// Ország-specifikus disclaimer-forrás (semleges összehasonlítók).
+const DISCLAIMER_SOURCES: Record<string, { label: string; url: string }[]> = {
+  CH: [
+    { label: "Comparis — Összehasonlító", url: "https://www.comparis.ch/" },
+    { label: "Priminfo — Krankenkasse", url: "https://www.priminfo.admin.ch/" },
+  ],
+  AT: [
+    { label: "durchblicker — Összehasonlító", url: "https://durchblicker.at/" },
+    { label: "E-Control — Strom Tarifkalkulator", url: "https://www.e-control.at/" },
+  ],
+  DE: [
+    { label: "Check24 — Összehasonlító", url: "https://www.check24.de/" },
+    { label: "Verivox — Strom/Gas", url: "https://www.verivox.de/" },
+  ],
+  NL: [
+    { label: "Independer — Vergelijken", url: "https://www.independer.nl/" },
+    { label: "Pricewise — Vergelijken", url: "https://www.pricewise.nl/" },
+  ],
+};
 
 export function ProviderSwitchWizard() {
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
   const [selectedId, setSelectedId] = useState<ProviderCategory | null>(null);
-  const selected = selectedId ? getCategoryInfo(selectedId) : null;
+  const selected = selectedId ? getCategoryInfo(selectedId, country) : null;
+  const sources = DISCLAIMER_SOURCES[country] ?? DISCLAIMER_SOURCES.CH;
 
   return (
     <div className="space-y-4">
@@ -27,9 +52,9 @@ export function ProviderSwitchWizard() {
               Szolgáltató Váltó
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              Mikor és hogyan érdemes <strong className="text-ink">Krankenkasse</strong>,{" "}
-              <strong className="text-ink">Internet</strong>, <strong className="text-ink">Mobil</strong>{" "}
-              és <strong className="text-ink">Bank</strong> szolgáltatót váltani — felmondási idők, levél-minták.
+              Mikor és hogyan érdemes <strong className="text-ink">egészségbiztosítót</strong>,{" "}
+              <strong className="text-ink">internetet</strong>, <strong className="text-ink">mobilt</strong>,{" "}
+              <strong className="text-ink">bankot</strong> és <strong className="text-ink">áramot</strong> váltani — felmondási idők, levél-minták.
             </p>
           </div>
         </div>
@@ -37,9 +62,9 @@ export function ProviderSwitchWizard() {
 
       {/* Kategória-választó */}
       {!selected ? (
-        <CategoryPicker onSelect={setSelectedId} />
+        <CategoryPicker country={country} onSelect={setSelectedId} />
       ) : (
-        <CategoryDetail category={selected} onBack={() => setSelectedId(null)} />
+        <CategoryDetail category={selected} country={country} onBack={() => setSelectedId(null)} />
       )}
 
       {/* Disclaimer (mindig látszik) */}
@@ -47,24 +72,21 @@ export function ProviderSwitchWizard() {
         toolName="Szolgáltató Váltó"
         variant="legal"
         notAdviceFor="jogi, pénzügyi vagy szerződéses"
-        extraWarning="A felmondási feltételek szerződésenként és szolgáltatónként eltérőek lehetnek. A megjelölt felmondási idők ÁLTALÁNOS svájci szabályok — a TE konkrét szerződésed eltérő pontokat is tartalmazhat (különösen ha hűségidőben vagy, készülék-bérleted van, vagy promóciós csomag). Felmondás előtt mindig ellenőrizd a szerződésed eredeti dokumentumát. A megjelölt szolgáltatókkal NEM állunk affiliate vagy kereskedelmi kapcsolatban."
-        officialSources={[
-          { label: "Comparis — Összehasonlító", url: "https://www.comparis.ch/" },
-          { label: "Priminfo — Krankenkasse", url: "https://www.priminfo.admin.ch/" },
-        ]}
+        extraWarning="A felmondási feltételek szerződésenként és szolgáltatónként eltérőek lehetnek. A megjelölt felmondási idők ÁLTALÁNOS, országos szabályok — a TE konkrét szerződésed eltérő pontokat is tartalmazhat (különösen ha hűségidőben vagy, készülék-bérleted van, vagy promóciós csomag). Felmondás előtt mindig ellenőrizd a szerződésed eredeti dokumentumát. A megjelölt szolgáltatókkal NEM állunk affiliate vagy kereskedelmi kapcsolatban."
+        officialSources={sources}
       />
     </div>
   );
 }
 
-function CategoryPicker({ onSelect }: { onSelect: (id: ProviderCategory) => void }) {
+function CategoryPicker({ country, onSelect }: { country: string; onSelect: (id: ProviderCategory) => void }) {
   return (
     <section className="rounded-card border border-line bg-surface p-4 shadow-card">
       <label className="block mb-3 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
         Melyik szolgáltatót váltanád?
       </label>
       <div className="space-y-2">
-        {PROVIDER_CATEGORIES.map((c) => (
+        {getProviderCategories(country).map((c) => (
           <button
             key={c.id}
             type="button"
@@ -88,9 +110,11 @@ function CategoryPicker({ onSelect }: { onSelect: (id: ProviderCategory) => void
 
 function CategoryDetail({
   category,
+  country,
   onBack,
 }: {
   category: CategoryInfo;
+  country: string;
   onBack: () => void;
 }) {
   return (
@@ -128,7 +152,7 @@ function CategoryDetail({
         <div className="space-y-2">
           <RuleRow label="Felmondási idő" value={category.noticePeriod} icon="⏰" />
           <RuleRow label="Határidő" value={category.deadline} icon="📅" highlight />
-          <RuleRow label="Hűségidő (Mindestlaufzeit)" value={category.minContract} icon="🔒" />
+          <RuleRow label="Hűségidő" value={category.minContract} icon="🔒" />
           <RuleRow label="Új szolgáltató indulása" value={category.newProviderStarts} icon="🆕" />
           <RuleRow label="Optimális váltási ablak" value={category.bestSwitchWindow} icon="🎯" />
         </div>
@@ -150,7 +174,7 @@ function CategoryDetail({
       </section>
 
       {/* Felmondási levél generátor */}
-      <TemplateGenerator category={category} />
+      <TemplateGenerator category={category} country={country} />
 
       {/* Top szolgáltatók */}
       <section className="space-y-2">
@@ -250,7 +274,13 @@ function RuleRow({
   );
 }
 
-function TemplateGenerator({ category }: { category: CategoryInfo }) {
+function TemplateGenerator({ category, country }: { category: CategoryInfo; country: string }) {
+  const isNL = country === "NL";
+  const langLabel = isNL ? "holland" : "német";
+  const langTag = isNL ? "NL" : "DE";
+  const registeredPost = isNL
+    ? "Ajánlott (aangetekend) postai levélként küldd — a feladás dátuma a határidő bizonyítéka."
+    : "Postán Einschreiben (tértivevényes) ajánlott levélként küldd — a feladás dátuma a határidő bizonyítéka.";
   const [customerName, setCustomerName] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [providerName, setProviderName] = useState("");
@@ -284,11 +314,11 @@ function TemplateGenerator({ category }: { category: CategoryInfo }) {
   return (
     <section className="rounded-card border-2 border-success/30 bg-success/5 p-4 shadow-card space-y-3">
       <h3 className="flex items-center gap-1.5 text-[12px] font-extrabold uppercase tracking-wide text-success">
-        ✍️ Felmondási levél (DE)
+        ✍️ Felmondási levél ({langTag})
       </h3>
       <p className="text-[11px] leading-snug text-ink-muted">
-        Töltsd ki az adatokat — generáljuk a felmondási levelet német nyelven, amit
-        kinyomtatva tértivevényes ajánlott levélként küldhetsz.
+        Töltsd ki az adatokat — generáljuk a felmondási levelet {langLabel} nyelven, amit
+        kinyomtatva ajánlott levélként küldhetsz.
       </p>
 
       <div className="grid grid-cols-1 gap-2">
@@ -343,8 +373,7 @@ function TemplateGenerator({ category }: { category: CategoryInfo }) {
       </button>
 
       <p className="text-[11.5px] leading-snug text-ink-faint">
-        💡 Postán <strong>Einschreiben</strong> (tértivevényes) ajánlott levélként küldd — a
-        feladás dátuma a határidő bizonyítéka.
+        💡 {registeredPost}
       </p>
     </section>
   );

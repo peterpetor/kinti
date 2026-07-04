@@ -6,9 +6,9 @@ import { CountryGuard } from "@/components/country-guard";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Szolgáltató Váltó — Krankenkasse, Internet, Mobil, Bank",
+  title: "Szolgáltató Váltó — egészségbiztosítás, internet, mobil, bank, áram",
   description:
-    "Mikor és hogyan érdemes svájci szolgáltatót váltani — felmondási idők, levél-minták és alternatív szolgáltatók Krankenkasse, Internet (Swisscom/Salt/Sunrise), Mobil és Bank kategóriában.",
+    "Mikor és hogyan érdemes szolgáltatót váltani Svájcban, Ausztriában, Németországban és Hollandiában — felmondási idők, levél-minták és alternatív szolgáltatók egészségbiztosítás, internet, mobil, bank és áram kategóriában.",
 };
 
 export default function SzolgaltatoValtoPage() {

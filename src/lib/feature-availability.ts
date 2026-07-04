@@ -19,7 +19,9 @@ import { DEFAULT_COUNTRY } from "./countries";
  */
 export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "vam",               // vám-kalkulátor (svájci határ)
-  "szolgaltato-valto", // szolgáltató-váltás (svájci szolgáltatók)
+  // "szolgaltato-valto" — KIVÉVE (2026-07-05): mind a 4 országra van szolgáltató-
+  //   adat (provider-switch PROVIDER_CATEGORIES_BY_COUNTRY CH/AT/DE/NL: valós
+  //   szolgáltatók + felmondási szabályok + német/holland levél-sablon).
   // "szakmai-szotar" — KIVÉVE (2026-07-04): mind a 4 országra van szótár-bank
   //   (data.ts INDUSTRY_LESSONS + _AT/_DE/_NL, ország-tudatos TTS-nyelvvel).
   // "repulojegy" — már ország-tudatos (CH + AT + DE, lib/flights.ts); a komponens a
