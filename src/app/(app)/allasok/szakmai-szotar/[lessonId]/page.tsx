@@ -4,7 +4,7 @@ export const runtime = "edge";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { INDUSTRY_LESSONS as LESSONS, Question } from "../data";
+import { findLessonById } from "../data";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
@@ -12,8 +12,8 @@ import { cn } from "@/lib/cn";
 export default function LessonPage({ params }: { params: { lessonId: string } }) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  
-  const lesson = LESSONS.find((l) => l.id === params.lessonId);
+
+  const lesson = findLessonById(params.lessonId);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   
@@ -48,8 +48,8 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
     if (e) e.stopPropagation();
     if (!window.speechSynthesis) return;
     const utterance = new SpeechSynthesisUtterance(text);
-    // Prefer Swiss German (de-CH) if available, otherwise fallback to German (de-DE)
-    utterance.lang = "de-CH"; 
+    // A lecke nyelve szerint (de-CH / de-AT / de-DE / nl-NL); default svájci német.
+    utterance.lang = lesson?.lang ?? "de-CH";
     utterance.rate = 0.85; // slightly slower for learners
     window.speechSynthesis.speak(utterance);
   };

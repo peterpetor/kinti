@@ -50,8 +50,9 @@ export default function ProPage() {
     "Nyelvkurzus — svájci, osztrák, német és holland",
     "Állampolgársági teszt-szimulátor — mind a 4 országra",
     // Tényállítás-fegyelem: az „500+ kifejezés" NEM volt igaz (a leckékben ennek
-    // töredéke van) — csak bizonyítható állítást írunk ki.
-    ...(country === "CH" ? ["Szakmai gyors-szótár — iparági svájci-német leckék"] : []),
+    // töredéke van) — csak bizonyítható állítást írunk ki. A szótár mind a 4
+    // országra elérhető (CH svájci-német, AT/DE/NL a helyi nyelven).
+    "Szakmai gyors-szótár — iparági leckék kiejtéssel (mind a 4 ország)",
   ];
 
   const handleCheckout = (product: "kinti_pro_monthly" | "business_pro_monthly" | "job_featured") => {
