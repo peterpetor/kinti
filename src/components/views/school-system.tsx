@@ -176,15 +176,35 @@ const DE_TIPS = [
   { icon: "🔄", text: "Az iskolatípusok közti átjárás lehetséges — a gyerek nincs véglegesen »beskatulyázva«." },
 ];
 
+// ── Hollandia: NEMZETI iskolarendszer (országosan egységes struktúra, de az iskolák ──
+// ── nagy pedagógiai szabadsággal — vrijheid van onderwijs). ──
+const NL_NOTE = "Hollandiában az oktatás nemzeti keretű — a struktúra országosan egységes, de az iskolák nagy szabadsággal működnek (vrijheid van onderwijs: sok pedagógiai irány). A leerplicht (tankötelezettség) 5–16 éves korig tart, utána 18-ig kwalificatieplicht. Az osztályzás 1–10-ig megy, ahol a 10 a legjobb és 5,5 az átmenő — egészen más, mint a magyar 1–5!";
+const NL_LEVELS: SchoolLevel[] = [
+  { name: "Kinderopvang / peuterspeelzaal", emoji: "🎨", ages: "0–4 év", years: "0–4", color: "text-[#f59e0b]", bg: "bg-[#fef3c7]", description: "Bölcsőde/óvoda — NEM kötelező, de elterjedt. A VVE (voor- en vroegschoolse educatie) program a nyelvi felzárkózást segíti.", tip: "A kinderopvang drága, de a kinderopvangtoeslag (a Belastingdiensttől) a jövedelem szerint jelentős részét visszatéríti dolgozó szülőknek." },
+  { name: "Basisschool", emoji: "📚", ages: "4–12 év", years: 8, color: "text-[#10b981]", bg: "bg-[#d1fae5]", description: "8 éves alapiskola (groep 1–8). A gyerekek már 4 évesen kezdik (a leerplicht 5-től). A groep 8 végén doorstroomtoets méri a szintet.", tip: "A 8. csoport végi tanári javaslat (schooladvies) + a doorstroomtoets együtt dönti el a középiskola szintjét." },
+  { name: "Voortgezet onderwijs", nameDe: "VMBO / HAVO / VWO", emoji: "🏫", ages: "12–16/18 év", years: "4–6", color: "text-[#6366f1]", bg: "bg-[#ede9fe]", description: "Három fő irány a schooladvies alapján. Az átjárás felfelé lehetséges (»stapelen«).", tracks: ["VWO (6 év, benne gymnasium latin/göröggel) → WO (kutatóegyetem)", "HAVO (5 év) → HBO (alkalmazott egyetem)", "VMBO (4 év, szakmai) → MBO (szakképzés)"], tip: "A »brugklas« (1. év) gyakran vegyes szintű — az első év után pontosít a szint." },
+  { name: "Vervolgonderwijs (MBO / HBO / WO)", emoji: "🎓", ages: "16/18+ év", years: "1–6", color: "text-[#0ea5e9]", bg: "bg-[#e0f2fe]", description: "A középiskola után a szint szerinti továbbtanulás.", tracks: ["MBO (szakképzés, niveau 1–4) — VMBO után", "HBO (hogeschool, alkalmazott felsőoktatás) — HAVO után", "WO (universiteit, kutatóegyetem) — VWO után"] },
+];
+const NL_TIPS = [
+  { icon: "📝", text: "Beiratkozáshoz: útlevél/igazolvány, BSN, uittreksel BRP (lakcím-kivonat), és az előző iskola bizonyítványa (lehetőleg hitelesített fordítással)." },
+  { icon: "🗣️", text: "Ha a gyerek nem tud hollandul: nieuwkomersklas / taalklas (középiskolában ISK — internationale schakelklas) segíti a felzárkózást — ingyenes." },
+  { icon: "🎓", text: "A szintet a schooladvies (tanári javaslat, groep 8) + a doorstroomtoets adja; ha a toets magasabb, a javaslat FELFELÉ módosítható." },
+  { icon: "🏫", text: "Szabad iskolaválasztás (vrijheid van onderwijs): openbaar (állami) vagy bijzonder (felekezeti / Montessori / Dalton / Jenaplan) — mind állami finanszírozású, ingyenes." },
+  { icon: "🍱", text: "A finanszírozott iskola ingyenes; van egy ÖNKÉNTES ouderbijdrage (szülői hozzájárulás). Az ebéd (overblijven / TSO) és a kirándulások külön fizethetők." },
+  { icon: "🔄", text: "Az átjárás felfelé lehetséges (»stapelen«: VMBO → HAVO → VWO) — a gyerek nincs véglegesen »beskatulyázva«." },
+];
+
 export function SchoolSystem() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
+  const isNL = country === "NL";
+  const isNational = isAT || isDE || isNL; // nemzeti rendszer (nincs régió-választó)
   const [selected, setSelected] = useState<CantonCode>("ZH");
   const canton = CANTONS[selected];
-  const levels = isDE ? DE_LEVELS : isAT ? AT_LEVELS : canton.levels;
-  const regionTitle = isDE ? "Németország" : isAT ? "Ausztria" : canton.name;
+  const levels = isNL ? NL_LEVELS : isDE ? DE_LEVELS : isAT ? AT_LEVELS : canton.levels;
+  const regionTitle = isNL ? "Hollandia" : isDE ? "Németország" : isAT ? "Ausztria" : canton.name;
 
   const langLabel: Record<string, string> = { de: "🇩🇪 Német", fr: "🇫🇷 Francia", it: "🇮🇹 Olasz" };
 
@@ -195,9 +215,11 @@ export function SchoolSystem() {
         <div className="flex items-start gap-3">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary text-white text-2xl">🏫</span>
           <div>
-            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">{isDE ? "Német Iskolarendszer" : isAT ? "Osztrák Iskolarendszer" : "Svájci Iskolarendszer"}</h1>
+            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">{isNL ? "Holland Iskolarendszer" : isDE ? "Német Iskolarendszer" : isAT ? "Osztrák Iskolarendszer" : "Svájci Iskolarendszer"}</h1>
             <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
-              {isDE
+              {isNL
+                ? "A holland iskolarendszer szintjei kiköltöző szülőknek — a basisschooltól a VMBO/HAVO/VWO-n át az MBO/HBO/WO-ig."
+                : isDE
                 ? "A német iskolarendszer szintjei kiköltöző szülőknek — a Kitától az Abiturig és az Ausbildungig (Bundeslandonként eltér)."
                 : isAT
                 ? "Az osztrák iskolarendszer szintjei kiköltöző szülőknek — a Kindergartentől a Maturáig és a Lehréig."
@@ -207,8 +229,8 @@ export function SchoolSystem() {
         </div>
       </section>
 
-      {/* Régió-választó — csak CH (AT/DE nemzeti rendszer, nincs választó). */}
-      {!isAT && !isDE && (
+      {/* Régió-választó — csak CH (AT/DE/NL nemzeti rendszer, nincs választó). */}
+      {!isNational && (
       <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
         <label className="block text-[12px] font-bold uppercase tracking-wide text-ink-muted">Válaszd ki a kantont</label>
         <div className="grid grid-cols-3 gap-2">
@@ -237,10 +259,10 @@ export function SchoolSystem() {
         <div className="flex items-center gap-2 mb-2">
           <span className="text-[14px] font-extrabold text-ink">{regionTitle}</span>
           <span className="rounded-pill bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-muted">
-            {isAT || isDE ? "🇩🇪 Német nyelvű" : `${langLabel[canton.lang]} nyelvű`}
+            {isNL ? "🇳🇱 Holland nyelvű" : isAT || isDE ? "🇩🇪 Német nyelvű" : `${langLabel[canton.lang]} nyelvű`}
           </span>
         </div>
-        <p className="text-[12.5px] leading-snug text-ink-muted">{isDE ? DE_NOTE : isAT ? AT_NOTE : canton.note}</p>
+        <p className="text-[12.5px] leading-snug text-ink-muted">{isNL ? NL_NOTE : isDE ? DE_NOTE : isAT ? AT_NOTE : canton.note}</p>
       </div>
 
       {/* Vizuális szintlépők */}
@@ -301,7 +323,7 @@ export function SchoolSystem() {
       {/* Általános tippek */}
       <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
         <h2 className="text-[13px] font-extrabold text-ink">📌 Amit minden szülőnek tudni kell</h2>
-        {(isDE ? DE_TIPS : isAT ? AT_TIPS : [
+        {(isNL ? NL_TIPS : isDE ? DE_TIPS : isAT ? AT_TIPS : [
           { icon: "📝", text: "Beiratkozáshoz: útlevél, tartózkodási engedély, és az előző iskola bizonyítványa (lehetőleg hitelesített fordítással)." },
           { icon: "🗣️", text: "Ha a gyerek nem tud svájcin / franciául / olaszul: a legtöbb kanton ingyenes INTENSIVKURS-t (felzárkóztató tanfolyamot) biztosít." },
           { icon: "🚌", text: "Az iskolabusz (Schulbus) sok helyen ingyenes — a körzet határolja meg. A lakcím megválasztása kulcsfontosságú." },
@@ -320,12 +342,17 @@ export function SchoolSystem() {
         toolName="iskolarendszer útmutató"
         variant="info"
         notAdviceFor="jogi vagy oktatási hatósági"
-        extraWarning={isDE
+        extraWarning={isNL
+          ? "A holland iskolarendszer szabályai és a felvételi menete (schooladvies, doorstroomtoets) évente változhatnak, és az iskolák nagy önállósággal működnek. Beiratkozás előtt mindig ellenőrizd a konkrét iskola és a Rijksoverheid / DUO aktuális tájékoztatóját."
+          : isDE
           ? "A német iskolarendszer szabályai tartományonként (Bundesland) JELENTŐSEN eltérnek, és évente változhatnak. Beiratkozás előtt ellenőrizd a lakhely szerinti tartomány oktatási minisztériumának (Kultusministerium) aktuális tájékoztatóját."
           : isAT
           ? "Az osztrák iskolarendszer szabályai tartományonként kis eltéréssel és évente változhatnak. Beiratkozás előtt ellenőrizd a lakhely szerinti tartományi oktatási igazgatóság (Bildungsdirektion) aktuális tájékoztatóját."
           : "A svájci iskolarendszer szabályai kantononként és évente változhatnak. Mindig ellenőrizd a lakhely szerinti kanton oktatási hivatal (Volksschulamt / Service de l'enseignement) aktuális tájékoztatóját beiratkozás előtt."}
-        officialSources={isDE ? [
+        officialSources={isNL ? [
+          { label: "Rijksoverheid — Basisonderwijs", url: "https://www.rijksoverheid.nl/onderwerpen/basisonderwijs" },
+          { label: "DUO — Dienst Uitvoering Onderwijs", url: "https://www.duo.nl/" },
+        ] : isDE ? [
           { label: "KMK — Kultusministerkonferenz", url: "https://www.kmk.org/" },
           { label: "make-it-in-germany.com — Schule", url: "https://www.make-it-in-germany.com/" },
         ] : isAT ? [

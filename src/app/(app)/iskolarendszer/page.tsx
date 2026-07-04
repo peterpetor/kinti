@@ -4,9 +4,9 @@ import { SchoolSystem } from "@/components/views/school-system";
 import { CountryGuard } from "@/components/country-guard";
 
 export const metadata = {
-  title: "Iskolarendszer Útmutató — Svájc & Ausztria",
+  title: "Iskolarendszer Útmutató — Svájc, Ausztria, Németország, Hollandia",
   description:
-    "Vizuális útmutató az iskolarendszerhez kiköltöző szülőknek. Svájc: Kindergarten, Primarschule, Sekundar, kantononkénti eltérésekkel. Ausztria: nemzeti rendszer (Volksschule, Mittelschule, AHS).",
+    "Vizuális útmutató az iskolarendszerhez kiköltöző szülőknek. Svájc: Kindergarten/Primarschule/Sekundar (kantononként). Ausztria: Volksschule/Mittelschule/AHS. Németország: Grundschule/Gymnasium/Ausbildung. Hollandia: basisschool/VMBO/HAVO/VWO.",
 };
 
 export default function IskolarendszerPage() {

@@ -46,7 +46,8 @@ export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
 export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   // NL-en (egyelőre) rejtett: a tartalom CH/AT/DE-specifikus, nincs holland verzió.
   // Amint elkészül egy holland változat, vedd ki innen (vagy tedd per-ország listára).
-  "iskolarendszer",// iskolarendszer — CH/AT/DE oktatási rendszer (NL nincs)
+  // "iskolarendszer" — KIVÉVE (2026-07-05): VAN holland változat (school-system
+  //   NL_LEVELS: basisschool → VMBO/HAVO/VWO → MBO/HBO/WO) — mind a 4 országra él.
   // "tudasbazis" — KIVÉVE (2026-07-05): VAN holland guide-bank (GUIDES_NL,
   //   7 cikk: BRP+BSN / zorgverzekering / belasting+DigiD / school / werk /
   //   betaalrekening / huren) — mind a 4 országra él.
