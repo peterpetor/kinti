@@ -14,7 +14,9 @@ export type PermitType =
   // Ausztria (EU-fókusz: szabad mozgás → regisztráció → tartós; RWR nem-EU-nak)
   | "at-freizug" | "at-anmeldung" | "at-dauer" | "at-rwr"
   // Németország (EU: Freizügigkeit → Anmeldung → Daueraufenthalt; Blaue Karte nem-EU-nak)
-  | "de-freizug" | "de-anmeldung" | "de-dauer" | "de-aufenthalt";
+  | "de-freizug" | "de-anmeldung" | "de-dauer" | "de-aufenthalt"
+  // Hollandia (EU: vrij verkeer → BRP-inschrijving/BSN → duurzaam verblijf; verblijfsvergunning nem-EU-nak)
+  | "nl-vrijverkeer" | "nl-inschrijving" | "nl-duurzaam" | "nl-verblijf";
 
 export interface PermitInfo {
   type: PermitType;
@@ -311,6 +313,66 @@ export const PERMITS: Record<PermitType, PermitInfo> = {
     applyTo: "Német külképviselet (vízum) + a lakóhely szerinti Ausländerbehörde.",
     links: [{ label: "make-it-in-germany.com — Blaue Karte", url: "https://www.make-it-in-germany.com/" }],
   },
+  "nl-vrijverkeer": {
+    type: "nl-vrijverkeer",
+    name: "Vrij verkeer (EU) — nincs engedély",
+    emoji: "✅",
+    color: "#16a34a",
+    shortDesc: "EU-állampolgárként engedély nélkül élhetsz és dolgozhatsz Hollandiában",
+    duration: "Korlátlan — a személyek szabad mozgása alapján.",
+    workPermitted: "Igen, azonnal és szabadon (EU-állampolgár).",
+    cantonChange: "Szabad — Hollandián belül bárhova költözhetsz.",
+    familyReunion: "EU-családtag szabadon; nem-EU családtagnak IND-verblijfsdocument.",
+    pros: ["Nincs engedély-kérelem", "Szabad munkavállalás az első naptól", "Szabad költözés Hollandián belül"],
+    cons: ["A gemeenténél be kell jelentkezned (BRP) — a BSN mindenhez kell", "Az EU-verblijfsdocument opcionális (2014 óta nem kötelező)"],
+    applyTo: "Nincs hova — érvényes útlevél/igazolvány elég. A gyakorlati lépés a BRP-regisztráció a gemeenténél.",
+    links: [{ label: "IND — EU/EER-burgers", url: "https://ind.nl/en/eu-eea-and-swiss-citizens" }],
+  },
+  "nl-inschrijving": {
+    type: "nl-inschrijving",
+    name: "Inschrijving BRP + BSN (bejelentkezés)",
+    emoji: "🪪",
+    color: "#1d4434",
+    shortDesc: "A kötelező gemeente-regisztráció (BRP) — a BSN mindenhez kell",
+    duration: "A lakcím érvényességéig; költözéskor újra bejelentkezés.",
+    workPermitted: "Igen, szabadon (EU-állampolgár).",
+    cantonChange: "Szabad; új lakcímnél újra-regisztráció a gemeenténél.",
+    familyReunion: "Igen (EU-családtag); nem-EU családtagnak IND-verblijfsvergunning.",
+    pros: ["A BSN kell a munkához, bankszámlához, zorgverzekeringhez és az adóhoz", "4+ hónap tartózkodásnál a BRP-regisztráció kötelező", "5 év után duurzaam verblijf-jogosultság"],
+    cons: ["Időpont (afspraak) kell a gemeenténél — nagyvárosban hetekre előre telt", "4 hónapnál rövidebb tartózkodásnál RNI-regisztráció kell a BSN-hez"],
+    applyTo: "A lakóhely szerinti gemeente (önkormányzat), időpontfoglalással.",
+    links: [{ label: "Rijksoverheid — BSN", url: "https://www.government.nl/topics/personal-data/citizen-service-number-bsn" }],
+  },
+  "nl-duurzaam": {
+    type: "nl-duurzaam",
+    name: "Duurzaam verblijfsrecht (tartós tartózkodás)",
+    emoji: "🆔",
+    color: "#7f4a1d",
+    shortDesc: "5 év jogszerű EU-tartózkodás után — megerősített státusz",
+    duration: "Határozatlan — 5 év folyamatos jogszerű tartózkodás után.",
+    workPermitted: "Igen, korlátlanul.",
+    cantonChange: "Szabad.",
+    familyReunion: "Igen.",
+    pros: ["5 év folyamatos jogszerű tartózkodás után jár", "Erősebb védelem a kiutasítás ellen", "Kérhető a »duurzaam verblijfsdocument« az IND-nél"],
+    cons: ["5 év folyamatos tartózkodás kell", "A dokumentumot kérni kell (nem automatikus)"],
+    applyTo: "Immigratie- en Naturalisatiedienst (IND).",
+    links: [{ label: "IND — Duurzaam verblijf EU", url: "https://ind.nl/en/eu-eea-and-swiss-citizens" }],
+  },
+  "nl-verblijf": {
+    type: "nl-verblijf",
+    name: "Verblijfsvergunning / kennismigrant (nem-EU)",
+    emoji: "🌍",
+    color: "#dc2626",
+    shortDesc: "Harmadik országbeli (nem-EU) — verblijfsvergunning / kennismigrant / EU Blue Card",
+    duration: "Határozott (verblijfsvergunning); 5 év után onbepaalde tijd.",
+    workPermitted: "Igen — a kennismigrant / EU Blue Card képzett munkaerőnek, jövedelmi küszöbbel.",
+    cantonChange: "Hollandián belül szabad.",
+    familyReunion: "Igen (kedvező a kennismigrant / Blue Card esetén).",
+    pros: ["Kennismigrantenregeling (highly skilled migrant) elismert munkáltatóval (erkende referent)", "Gyors IND-eljárás elismert referens esetén", "EU Blue Card is elérhető"],
+    cons: ["Csak harmadik országbeli (nem-EU) állampolgárnak", "MVV-vízum + jövedelmi küszöb + elismert munkáltató kell", "Az eljárás az IND-en keresztül megy"],
+    applyTo: "Holland külképviselet (MVV) + Immigratie- en Naturalisatiedienst (IND).",
+    links: [{ label: "IND — Working in the Netherlands", url: "https://ind.nl/en/work" }],
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -339,6 +401,7 @@ export interface WizardResult {
 export function evaluatePermit(a: WizardAnswers, country: string = "CH"): WizardResult {
   if (country === "AT") return evaluatePermitAT(a);
   if (country === "DE") return evaluatePermitDE(a);
+  if (country === "NL") return evaluatePermitNL(a);
   // 1. Cross-border (G-engedély) — különleges eset
   if (a.purpose === "cross-border") {
     return {
@@ -574,4 +637,69 @@ function evaluatePermitDE(a: WizardAnswers): WizardResult {
   else if (a.purpose === "family") notes.push("Családtagként: az EU-s rokon státusza + házassági/születési anyakönyvi kivonat kell.");
   else if (a.purpose === "retired") notes.push("Nyugdíjasként: elég jövedelem + egészségbiztosítás igazolása.");
   return { primary: "de-anmeldung", alternatives: ["de-freizug"], notes };
+}
+
+/** Hollandia — EU-fókuszú döntési fa (vrij verkeer / BRP-inschrijving+BSN / duurzaam verblijf / kennismigrant). */
+function evaluatePermitNL(a: WizardAnswers): WizardResult {
+  // Harmadik országbeli (nem-EU)
+  if (a.citizenship === "non-eu") {
+    if (a.duration === "short") {
+      return {
+        primary: "nl-verblijf",
+        alternatives: [],
+        notes: [
+          "Rövid (max 90 nap) tartózkodáshoz harmadik országbeliként Schengen-vízum kell a holland képviseleten.",
+          "Munkavállaláshoz / hosszabb tartózkodáshoz verblijfsvergunning (pl. kennismigrant, EU Blue Card) szükséges.",
+        ],
+      };
+    }
+    return {
+      primary: "nl-verblijf",
+      alternatives: [],
+      notes: [
+        "Harmadik országbeliként a kennismigrantenregeling (highly skilled migrant) a fő út — elismert munkáltatóval (erkende referent).",
+        "MVV-vízum + jövedelmi küszöb + munkaszerződés kell; alternatíva az EU Blue Card.",
+        "Az eljárás a holland külképviseleten (MVV) és az IND-en keresztül megy.",
+      ],
+    };
+  }
+
+  // EU-állampolgár (magyar) — szabad mozgás
+  if (a.duration === "short" || a.purpose === "cross-border") {
+    return {
+      primary: "nl-vrijverkeer",
+      alternatives: ["nl-inschrijving"],
+      notes: [
+        "EU-állampolgárként szabad mozgásod van — nincs szükség tartózkodási engedélyre.",
+        a.purpose === "cross-border"
+          ? "Ingázóként sem kell külön engedély; a munkához azonban BSN kell (RNI-regisztráció, ha nem laksz Hollandiában)."
+          : "4 hónapnál hosszabb tartózkodásnál a gemeenténél BRP-regisztráció kell (BSN-nel).",
+        "A BSN (burgerservicenummer) kell a munkához, a bankszámlához és a kötelező zorgverzekeringhez.",
+      ],
+    };
+  }
+
+  // 5+ év jogszerű tartózkodás → duurzaam verblijf
+  if (a.duration === "permanent" && a.previousStay === "5-or-more") {
+    return {
+      primary: "nl-duurzaam",
+      alternatives: ["nl-inschrijving"],
+      notes: [
+        "5 év folyamatos jogszerű tartózkodás után tartós tartózkodási jog (duurzaam verblijfsrecht) jár.",
+        "Kérheted a »duurzaam verblijfsdocument«-et az IND-nél (nem automatikus).",
+        "Megerősített védelem és letelepedési státusz.",
+      ],
+    };
+  }
+
+  // EU, 3+ hónap (de még nincs 5 év) → BRP-inschrijving + szabad mozgás
+  const notes: string[] = [
+    "EU-állampolgárként a személyek szabad mozgása alapján élhetsz és dolgozhatsz — nincs engedély-kérelem.",
+    "A gyakorlati lépés a BRP-regisztráció a gemeenténél (afspraak-kal), ami a BSN-t adja.",
+    "A BSN kell a munkához, a bankszámlához, az adóhoz és a kötelező zorgverzekeringhez.",
+  ];
+  if (a.purpose === "study") notes.push("Tanulóként: beiratkozási igazolás + megélhetés + zorgverzekering kell.");
+  else if (a.purpose === "family") notes.push("Családtagként: az EU-s rokon státusza + házassági/születési anyakönyvi kivonat kell.");
+  else if (a.purpose === "retired") notes.push("Nyugdíjasként: elég jövedelem + egészségbiztosítás igazolása.");
+  return { primary: "nl-inschrijving", alternatives: ["nl-vrijverkeer"], notes };
 }

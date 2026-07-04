@@ -211,12 +211,55 @@ const STEPS_DE: Step[] = [
   },
 ];
 
+// Hollandia — EU-fókuszú lépések (vrij verkeer; a BRP-inschrijving + BSN a kulcs).
+const STEPS_NL: Step[] = [
+  {
+    id: "citizenship",
+    question: "Honnan jössz?",
+    options: [
+      { value: "eu", label: "🇭🇺 Magyarország / 🇪🇺 EU / 🇮🇸 EFTA", emoji: "🇪🇺", hint: "Szabad mozgás (vrij verkeer) — nincs szükség tartózkodási engedélyre." },
+      { value: "non-eu", label: "🌍 Nem-EU ország (USA, India, UK, stb.)", emoji: "🌍", hint: "Harmadik országbeli — verblijfsvergunning / kennismigrant." },
+    ],
+  },
+  {
+    id: "duration",
+    question: "Mennyi időre tervezed Hollandiában tartózkodni?",
+    options: [
+      { value: "short", label: "< 3 hónap (turizmus, üzleti út, családlátogatás)", emoji: "✈️" },
+      { value: "medium", label: "3-12 hónap (szezonális munka, csere, kurzus)", emoji: "📅" },
+      { value: "long", label: "1-5 év (munkavállalás, családi)", emoji: "🏠" },
+      { value: "permanent", label: "5+ év / végleges letelepedés", emoji: "🏡" },
+    ],
+  },
+  {
+    id: "purpose",
+    question: "Mi a fő célod?",
+    options: [
+      { value: "work", label: "Munkavállalás Hollandiában", emoji: "💼" },
+      { value: "study", label: "Tanulás (egyetem, kurzus, csere)", emoji: "🎓" },
+      { value: "family", label: "Családi okok (házasság, családtag)", emoji: "👨‍👩‍👧" },
+      { value: "retired", label: "Nyugdíjasként, anyagi-független", emoji: "🏖️" },
+      { value: "cross-border", label: "Másik országban élek, csak Hollandiában dolgozom", emoji: "🚗", hint: "Ingázó — EU-állampolgárként szabad." },
+    ],
+  },
+  {
+    id: "previousStay",
+    question: "Mióta élsz (jogszerűen) Hollandiában?",
+    options: [
+      { value: "5-or-more", label: "Már 5+ éve folyamatosan itt élek", emoji: "🪪", hint: "Duurzaam verblijf-re jogosult lehetsz." },
+      { value: "less-than-5", label: "Kevesebb mint 5 éve", emoji: "📅" },
+      { value: "none", label: "Most érkezem / első alkalom", emoji: "✨" },
+    ],
+  },
+];
+
 export function PermitWizard() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
-  const STEPS = isDE ? STEPS_DE : isAT ? STEPS_AT : STEPS_CH;
+  const isNL = country === "NL";
+  const STEPS = isNL ? STEPS_NL : isDE ? STEPS_DE : isAT ? STEPS_AT : STEPS_CH;
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<WizardAnswers>>({});
   const [result, setResult] = useState<WizardResult | null>(null);
@@ -262,7 +305,7 @@ export function PermitWizard() {
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
               4 gyors kérdés alapján megmondjuk, mi a legrelevánsabb a{" "}
-              {isDE ? "németországi" : isAT ? "ausztriai" : "svájci"} tartózkodási helyzetedhez.
+              {isNL ? "hollandiai" : isDE ? "németországi" : isAT ? "ausztriai" : "svájci"} tartózkodási helyzetedhez.
             </p>
           </div>
         </div>
@@ -328,12 +371,17 @@ export function PermitWizard() {
         toolName="engedély-varázsló"
         variant="legal"
         notAdviceFor="jogi vagy bevándorlási"
-        extraWarning={isDE
+        extraWarning={isNL
+          ? "A pontos eljárás és feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó státuszt a lakóhely szerinti gemeente, az IND (Immigratie- en Naturalisatiedienst) vagy szakképzett ügyvéd határozza meg."
+          : isDE
           ? "A pontos eljárás és feltételek időnként változnak, és a határidők városonként (Bundesland) eltérnek. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó státuszt a helyi Bürgeramt / Ausländerbehörde vagy szakképzett ügyvéd határozza meg."
           : isAT
           ? "A pontos eljárás és feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó státuszt a tartózkodási hatóság (Bécsben MA 35, tartományokban Landeshauptmann/BH) vagy szakképzett ügyvéd határozza meg."
           : "Az engedély-eljárás kantonok közt eltér, és a feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó engedélyt mindig a kantoni Migrationsamt vagy szakképzett ügyvéd határozza meg."}
-        officialSources={isDE ? [
+        officialSources={isNL ? [
+          { label: "IND — Immigratie- en Naturalisatiedienst", url: "https://ind.nl/en" },
+          { label: "Rijksoverheid — BSN", url: "https://www.government.nl/topics/personal-data/citizen-service-number-bsn" },
+        ] : isDE ? [
           { label: "make-it-in-germany.com — hivatalos portál", url: "https://www.make-it-in-germany.com/" },
           { label: "BAMF — Migráció", url: "https://www.bamf.de/" },
         ] : isAT ? [
@@ -351,6 +399,7 @@ export function PermitWizard() {
 function ResultView({ result, onRestart, country }: { result: WizardResult; onRestart: () => void; country: string }) {
   const isAT = country === "AT";
   const isDE = country === "DE";
+  const isNL = country === "NL";
   const primary = PERMITS[result.primary];
   const alternatives = result.alternatives.map((t) => PERMITS[t]);
 
@@ -402,7 +451,7 @@ function ResultView({ result, onRestart, country }: { result: WizardResult; onRe
         <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
           <DetailRow label="Időtartam" value={primary.duration} />
           <DetailRow label="Munkavállalás" value={primary.workPermitted} />
-          <DetailRow label={isAT || isDE ? "Költözés" : "Kanton-váltás"} value={primary.cantonChange} />
+          <DetailRow label={isAT || isDE || isNL ? "Költözés" : "Kanton-váltás"} value={primary.cantonChange} />
           <DetailRow label="Családtag-egyesítés" value={primary.familyReunion} />
         </div>
       </section>
@@ -501,7 +550,9 @@ function ResultView({ result, onRestart, country }: { result: WizardResult; onRe
         variant="legal"
         notAdviceFor="jogi vagy bevándorlási"
         extraWarning="A varázsló javaslata egyszerű, általános minták alapján készült. A te konkrét helyzetedet (családi állapot, munkaadói támogatás, korábbi tartózkodás, büntetett előélet) csak az illetékes hatóság és/vagy szakképzett ügyvéd tudja értékelni."
-        officialSources={isDE ? [
+        officialSources={isNL ? [
+          { label: "IND — Immigratie- en Naturalisatiedienst", url: "https://ind.nl/en" },
+        ] : isDE ? [
           { label: "make-it-in-germany.com", url: "https://www.make-it-in-germany.com/" },
         ] : isAT ? [
           { label: "migration.gv.at — Migráció", url: "https://www.migration.gv.at/" },

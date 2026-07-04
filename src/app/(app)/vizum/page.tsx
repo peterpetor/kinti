@@ -6,9 +6,9 @@ import { PermitWizard } from "@/components/views/permit-wizard";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Engedély-varázsló — tartózkodás Svájcban, Ausztriában, Németországban",
+  title: "Engedély-varázsló — tartózkodás Svájcban, Ausztriában, Németországban, Hollandiában",
   description:
-    "Interaktív kérdés-sor, ami megmondja, melyik tartózkodási státusz releváns a helyzetedre. Svájc (L/B/C/G), Ausztria (Anmeldebescheinigung/Daueraufenthalt), Németország (Freizügigkeit/Anmeldung/Daueraufenthalt).",
+    "Interaktív kérdés-sor, ami megmondja, melyik tartózkodási státusz releváns a helyzetedre. Svájc (L/B/C/G), Ausztria (Anmeldebescheinigung/Daueraufenthalt), Németország (Freizügigkeit/Anmeldung), Hollandia (vrij verkeer/BRP-inschrijving/BSN/duurzaam verblijf).",
 };
 
 export default function VizumPage() {
