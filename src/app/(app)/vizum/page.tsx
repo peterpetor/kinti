@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
+import { CountryGuard } from "@/components/country-guard";
 import { PermitWizard } from "@/components/views/permit-wizard";
 
 export const dynamic = "force-static";
@@ -13,6 +14,7 @@ export const metadata = {
 export default function VizumPage() {
   return (
     <div className="mx-auto max-w-md space-y-5 px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
+      <CountryGuard feature="vizum" />
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="text-[16px] font-extrabold tracking-tight text-ink">
