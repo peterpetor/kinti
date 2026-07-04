@@ -217,6 +217,13 @@
   }
 }
 
+/* A logó fix márka-színű (minden témában azonos — lásd ui/logo.tsx); sötét
+   háttéren a fenyőzöld kontúr beleolvadna, ezért CSAK sötét módban kap egy
+   leheletnyi világos élt. A logó maga változatlan. */
+[data-theme="dark"] .kinti-logo {
+  filter: drop-shadow(0 0 1.5px rgb(236 231 220 / 0.45));
+}
+
 /* ===========================================================================
    "Liquid Glass" segéd-réteg — a IOSGlassPill / IOSKeyboard üveghatás Tailwind
    utility-kkel nehezen kifejezhető részei (belső fény + finom keret).

@@ -5,10 +5,17 @@ import { cn } from "@/lib/cn";
 
 /**
  * KintiLogo — térkép-pin három vízszintes sávval (piros/krém/zöld), de inkább
- * absztrakt márkajel, mint zászló. A színek Tailwind `fill-*`/`stroke-*`
- * tokeneken keresztül jönnek (primary/accent/bg) → automatikusan téma-reaktív.
+ * absztrakt márkajel, mint zászló. A színek SZÁNDÉKOSAN fix márka-hexek (a
+ * világos téma palettája), NEM téma-tokenek: a logónak minden témában
+ * ugyanúgy kell kinéznie (sötét módban a token-alapú változat krém sávja
+ * feketévé vált — user-visszajelzés, 2026-07-04).
  * `useId()` miatt kliens-komponens (egyedi clipPath id minden példánynak).
  */
+const BRAND = {
+  red: "#c8392e",
+  cream: "#f4ede0",
+  green: "#1d4434",
+} as const;
 export interface KintiLogoProps {
   size?: number;
   withFlag?: boolean;
@@ -28,7 +35,7 @@ export function KintiLogo({ size = 36, withFlag = true, className }: KintiLogoPr
       fill="none"
       role="img"
       aria-label="kinti"
-      className={cn("block", className)}
+      className={cn("block kinti-logo", className)}
     >
       <defs>
         <clipPath id={clipId}>
@@ -37,17 +44,17 @@ export function KintiLogo({ size = 36, withFlag = true, className }: KintiLogoPr
       </defs>
       {withFlag ? (
         <g clipPath={`url(#${clipId})`}>
-          <rect x="0" y="0" width="40" height="16" className="fill-accent" />
-          <rect x="0" y="16" width="40" height="16" className="fill-bg" />
-          <rect x="0" y="32" width="40" height="15" className="fill-primary" />
+          <rect x="0" y="0" width="40" height="16" fill={BRAND.red} />
+          <rect x="0" y="16" width="40" height="16" fill={BRAND.cream} />
+          <rect x="0" y="32" width="40" height="15" fill={BRAND.green} />
         </g>
       ) : (
         <g clipPath={`url(#${clipId})`}>
-          <rect x="0" y="0" width="40" height="47" className="fill-primary" />
+          <rect x="0" y="0" width="40" height="47" fill={BRAND.green} />
         </g>
       )}
-      <path d={PIN} fill="none" className="stroke-primary" strokeWidth="2.2" />
-      <circle cx="20" cy="19" r="5" className="fill-bg stroke-primary" strokeWidth="2.2" />
+      <path d={PIN} fill="none" stroke={BRAND.green} strokeWidth="2.2" />
+      <circle cx="20" cy="19" r="5" fill={BRAND.cream} stroke={BRAND.green} strokeWidth="2.2" />
     </svg>
   );
 }
