@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getEventById, createEventReminder } from "@/lib/repo";
+import { getEventById, createEventReminder, countRecentSpamLog, logSpamSubmit } from "@/lib/repo";
+import { getClientIp, hashIp } from "@/lib/security";
 import { swissLocalToUtc } from "@/lib/swiss-time";
 
 export const runtime = "edge";
@@ -18,7 +19,16 @@ export const dynamic = "force-dynamic";
  */
 const REMINDER_LEADS_MIN = [1440, 60]; // 24 óra és 1 óra (perc)
 
+/** Napi keret / IP — szkriptelt event_reminders-árasztás ellen. */
+const REMINDER_DAILY_LIMIT = 20;
+
 export async function POST(req: Request, { params }: { params: { id: string } }) {
+  const ipHash = await hashIp(getClientIp(req));
+  const recent = await countRecentSpamLog("event-reminder", ipHash, 24 * 60);
+  if (recent >= REMINDER_DAILY_LIMIT) {
+    return NextResponse.json({ error: "Napi limit elérve — próbáld holnap." }, { status: 429 });
+  }
+
   let body: { endpoint?: unknown } = {};
   try {
     body = (await req.json()) as { endpoint?: unknown };
@@ -61,6 +71,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     });
     scheduled++;
   }
+
+  // Csak a tényleg létrehozott emlékeztető fogyasztja a keretet.
+  if (scheduled > 0) logSpamSubmit("event-reminder", ipHash).catch(() => { /* silent */ });
 
   return NextResponse.json(
     { ok: true, scheduled: scheduled > 0, count: scheduled },

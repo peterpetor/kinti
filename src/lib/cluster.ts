@@ -110,12 +110,17 @@ export function clusterBusinesses(
   return result;
 }
 
-/** Klaszter befoglaló téglalapja — Leaflet fitBounds / MapLibre fitBounds-hoz. */
+/**
+ * Klaszter befoglaló téglalapja — Leaflet fitBounds / MapLibre fitBounds-hoz.
+ * Üres találatnál null (Math.min(...[]) Infinity-t adna → fitBounds-crash);
+ * a hívó ilyenkor egyszerűen nem zoomol.
+ */
 export function clusterBounds(
   businesses: Business[],
   itemIds: string[],
-): [[number, number], [number, number]] {
+): [[number, number], [number, number]] | null {
   const pts = businesses.filter((b) => itemIds.includes(b.id));
+  if (pts.length === 0) return null;
   const lats = pts.map((b) => b.lat!);
   const lngs = pts.map((b) => b.lng!);
   return [

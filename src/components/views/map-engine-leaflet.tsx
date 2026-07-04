@@ -158,11 +158,14 @@ function ClusteredMarkers({
                 // szór → a klaszter bounds-a nem nulla-méretű, így a kattintás
                 // RÁZOOMOL és a pinek (saját ikonnal) külön válnak. maxZoom 19,
                 // hogy a sűrű városközpont-spirálok is jól szétnyíljanak.
-                map.fitBounds(clusterBounds(located, pt.itemIds), {
-                  padding: [60, 60],
-                  maxZoom: 19,
-                  animate: true,
-                });
+                const b = clusterBounds(located, pt.itemIds);
+                if (b) {
+                  map.fitBounds(b, {
+                    padding: [60, 60],
+                    maxZoom: 19,
+                    animate: true,
+                  });
+                }
               },
             }}
           />

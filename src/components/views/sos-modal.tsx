@@ -56,7 +56,7 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
             }),
           });
 
-          const data = await res.json() as { error?: string; id?: string };
+          const data = await res.json() as { error?: string; id?: string; resolveToken?: string };
           if (!res.ok) {
             turnstileRef.current?.reset();
             setTurnstileToken("");
@@ -64,9 +64,18 @@ export function SosModal({ onClose, onSuccess }: SosModalProps) {
           }
 
           if (data.id && typeof window !== 'undefined') {
-            const myAlerts = JSON.parse(localStorage.getItem('mySosAlerts') || '[]');
-            myAlerts.push(data.id);
-            localStorage.setItem('mySosAlerts', JSON.stringify(myAlerts));
+            let myAlerts: unknown;
+            try { myAlerts = JSON.parse(localStorage.getItem('mySosAlerts') || '[]'); } catch { myAlerts = []; }
+            const list = Array.isArray(myAlerts) ? myAlerts : [];
+            list.push(data.id);
+            localStorage.setItem('mySosAlerts', JSON.stringify(list));
+            // Lezárás-titok riasztásonként — a "Megoldódott" gomb ezzel hitelesít.
+            if (data.resolveToken) {
+              let tokens: Record<string, string>;
+              try { tokens = JSON.parse(localStorage.getItem('kinti_sos_tokens') || '{}') || {}; } catch { tokens = {}; }
+              tokens[data.id] = data.resolveToken;
+              localStorage.setItem('kinti_sos_tokens', JSON.stringify(tokens));
+            }
           }
 
           if (typeof window !== 'undefined') {

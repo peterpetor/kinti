@@ -223,6 +223,7 @@ export function MaplibreEngine({
         el.addEventListener("click", (ev) => {
           ev.stopPropagation();
           const bounds = clusterBounds(located, pt.itemIds);
+          if (!bounds) return;
           // MapLibre [lng, lat] sorrendben vár
           map.fitBounds(
             [
@@ -284,6 +285,7 @@ export function MaplibreEngine({
         el.addEventListener("click", (ev) => {
           ev.stopPropagation();
           const bounds = clusterBounds(located, pt.itemIds);
+          if (!bounds) return;
           map.fitBounds(
             [[bounds[0][1], bounds[0][0]], [bounds[1][1], bounds[1][0]]],
             { padding: 80, maxZoom: 15, duration: 600 },

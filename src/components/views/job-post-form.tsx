@@ -8,7 +8,7 @@ import { JOB_CATEGORIES } from "@/lib/job-categories";
 import { useCheckout } from "@/hooks/useCheckout";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
-import { getRegions } from "@/lib/regions";
+import { getRegions, regionLabel } from "@/lib/regions";
 
 export interface JobFormInitial {
   title?: string;
@@ -169,7 +169,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
         </div>
         <div>
           <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-            {country === "AT" ? "Bundesland" : "Kanton"} *
+            {regionLabel(country).charAt(0).toUpperCase() + regionLabel(country).slice(1)} *
           </label>
           <select
             required

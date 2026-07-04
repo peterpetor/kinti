@@ -17,8 +17,12 @@ export function SosDetailsCard({ sos, onClose }: { sos: SosAlert; onClose: () =>
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const myAlerts = JSON.parse(localStorage.getItem("mySosAlerts") || "[]");
-      if (myAlerts.includes(sos.id)) setIsMine(true);
+      try {
+        const myAlerts = JSON.parse(localStorage.getItem("mySosAlerts") || "[]");
+        if (Array.isArray(myAlerts) && myAlerts.includes(sos.id)) setIsMine(true);
+      } catch {
+        /* sérült storage → nem az enyém */
+      }
     }
   }, [sos.id]);
 
@@ -26,14 +30,34 @@ export function SosDetailsCard({ sos, onClose }: { sos: SosAlert; onClose: () =>
     if (resolving) return;
     setResolving(true);
     try {
-      const res = await fetch(`/api/sos/${sos.id}/resolve`, { method: "POST" });
+      // A beküldéskor kapott lezárás-titok — IP-változástól függetlenül hitelesít.
+      let token: string | null = null;
+      try {
+        const tokens = JSON.parse(localStorage.getItem("kinti_sos_tokens") || "{}");
+        if (tokens && typeof tokens[sos.id] === "string") token = tokens[sos.id];
+      } catch {
+        /* nincs token → a szerver IP-fallbackje dönt (régi riasztás) */
+      }
+      const res = await fetch(`/api/sos/${sos.id}/resolve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
       if (res.ok) {
         if (typeof window !== "undefined") {
-          const myAlerts = JSON.parse(localStorage.getItem("mySosAlerts") || "[]");
-          localStorage.setItem(
-            "mySosAlerts",
-            JSON.stringify(myAlerts.filter((id: string) => id !== sos.id)),
-          );
+          try {
+            const myAlerts = JSON.parse(localStorage.getItem("mySosAlerts") || "[]");
+            if (Array.isArray(myAlerts)) {
+              localStorage.setItem("mySosAlerts", JSON.stringify(myAlerts.filter((id: string) => id !== sos.id)));
+            }
+            const tokens = JSON.parse(localStorage.getItem("kinti_sos_tokens") || "{}");
+            if (tokens && typeof tokens === "object") {
+              delete tokens[sos.id];
+              localStorage.setItem("kinti_sos_tokens", JSON.stringify(tokens));
+            }
+          } catch {
+            /* takarítás best-effort */
+          }
           window.dispatchEvent(new Event("sos-submitted"));
         }
         onClose();
