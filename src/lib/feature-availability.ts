@@ -51,7 +51,9 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "akciok",        // akció-térkép — CH/AT/DE boltláncok (NL holland láncok kellenek)
   "repulojegy",    // repülőjegy-figyelő — CH/AT/DE konfig (NL nincs; ne mutasson „hamarosan"-t)
   "vizum",         // engedély-varázsló — CH/AT/DE lépéssorok; NL-nek svájci tartalmat adott volna
-  "berkalkulator", // nettó bérkalkulátor — CH/AT/DE adótáblák (NL nincs)
+  // "berkalkulator" — KIVÉVE (2026-07-04): VAN holland verzió (computeSalaryNL,
+  // 2025 Box 1 + heffingskortingen, c8bb005 óta él) — a 07-04-i vissza-gate-elés
+  // tévedés volt („NL nincs" feltételezéssel).
 ]);
 
 /**
