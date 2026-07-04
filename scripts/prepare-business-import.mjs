@@ -62,8 +62,25 @@ const CATEGORY = {
   // INSERT OR IGNORE) — a magyar boltok a szaknévsorban kereshetők, ahogy a
   // /magyarbolt kivezetésekor a döntés szólt.
   elelmiszerbolt: ["elelmiszer", "Élelmiszerbolt"],
+  // "bolt" alias — a CSV-ben így is szerepel; a kulcs hiánya miatt 14 bolt-sor
+  // csendben kimaradt a korábbi importokból (2026-07-04-ig).
+  bolt: ["elelmiszer", "Élelmiszerbolt"],
   allatorvos: ["allatorvos", "Állatorvos"],
   borgyogyasz: ["borgyogyasz", "Bőrgyógyász"],
+  // 2026-07-04: a CSV-ben régóta használt, de eddig leképezetlen kulcsok —
+  // 42 sor (orvosok, pékségek, takarítók, szerelők…) maradt ki emiatt minden
+  // korábbi importból. Kanonikus ID-k a prod `categories` ellen ellenőrizve.
+  orvos: ["orvos", "Orvos"],
+  pekseg: ["pek", "Pékség"],
+  festo: ["festo", "Szobafestő"],
+  takaritas: ["takarito", "Takarítás"],
+  vizszerelo: ["gazvez", "Víz-gáz szerelő"],
+  komuves: ["kőműves", "Kőműves"],
+  kertesz: ["kertesz", "Kertész"],
+  felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
+  epites: ["epitoipar", "Építőipar"],
+  fizioterap: ["gyogytornasz", "Fizioterapeuta"],
+  allatgyogyasz: ["allatorvos", "Állatorvos"],
   alternativgyogyasz: ["termeszetgyogyasz", "Természetgyógyász"],
   ingatlan: ["ingatlan", "Ingatlan"],
 };
@@ -91,14 +108,41 @@ const CITY = {
   "utrecht": ["UT", 52.0907, 5.1214],
   "groningen": ["GR", 53.2194, 6.5665],
   "purmerend": ["NH", 52.505, 4.9592],
+  // 2026-07-04 bővítés — a CSV-ben szereplő, addig hiányzó városok:
+  "graz": ["STM", 47.0707, 15.4395],
+  "linz": ["OOE", 48.3069, 14.2858],
+  "innsbruck": ["TIR", 47.2692, 11.4041],
+  "köln": ["NW", 50.9375, 6.9603],
+  "düsseldorf": ["NW", 51.2277, 6.7735],
+  "leverkusen": ["NW", 51.0459, 6.9853],
+  "bergisch gladbach": ["NW", 50.9856, 7.1324],
+  "stuttgart": ["BW", 48.7758, 9.1829],
+  "mannheim": ["BW", 49.4875, 8.466],
+  "hamburg": ["HH", 53.5511, 9.9937],
+  "hannover": ["NI", 52.3759, 9.732],
+  "leipzig": ["SN", 51.3397, 12.3731],
+  "nürnberg": ["BY", 49.4521, 11.0767],
+  "basel": ["BS", 47.5596, 7.5886],
+  "arbon": ["TG", 47.5136, 9.434],
+  "den haag": ["ZH", 52.0705, 4.3007],
+  "breda": ["NB", 51.5719, 4.7683],
+  "almere": ["FL", 52.3508, 5.2647],
+  "de rijp": ["NH", 52.5583, 4.8447],
+  "alkmaar": ["NH", 52.6324, 4.7534],
+  "tresdorf": ["NOE", 48.3936, 16.3521],
+  "geisenfeld": ["BY", 48.6851, 11.6136],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
 
 // A régió/fallback-koordináta a városból VAGY a cím szövegéből (a CSV-ben a
 // city néha csak „Hollandia", de a cím tartalmazza a valódi települést).
+// ELŐBB a city-mező önmagában — az utcanév becsaphat (a nürnbergi
+// „Düsseldorfer Straße" a cím-szövegben Düsseldorfra illeszkedett).
 function resolveCity(city, address, country) {
-  const c = `${city || ""} ${address || ""}`.toLowerCase();
+  const cityOnly = (city || "").toLowerCase();
+  for (const k of Object.keys(CITY)) if (cityOnly.includes(k)) return CITY[k];
+  const c = `${cityOnly} ${(address || "").toLowerCase()}`;
   for (const k of Object.keys(CITY)) if (c.includes(k)) return CITY[k];
   const f = COUNTRY_FALLBACK[country] || [47.3769, 8.5417];
   return [null, f[0], f[1]];
