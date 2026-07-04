@@ -6,9 +6,9 @@ import { CountryGuard } from "@/components/country-guard";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Tömegközlekedési Kalauz — Svájc, Ausztria, Németország",
+  title: "Tömegközlekedési Kalauz — Svájc, Ausztria, Németország, Hollandia",
   description:
-    "Zóna- és Verkehrsverbund-rendszerek egyszerűen: SBB/ZVV (CH), ÖBB/Wiener Linien (AT), DB/VBB/MVV (DE). Jegytípusok, mobilappok, GA/Klimaticket/Deutschlandticket kalkulátor.",
+    "Zóna- és Verkehrsverbund-rendszerek egyszerűen: SBB/ZVV (CH), ÖBB/Wiener Linien (AT), DB/VBB/MVV (DE), OVpay/NS/GVB (NL). Jegytípusok, mobilappok, GA/Klimaticket/Deutschlandticket/Dal Voordeel kalkulátor.",
 };
 
 export default function KozlekedesPage() {

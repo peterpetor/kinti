@@ -53,7 +53,9 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   // "tudasbazis" — KIVÉVE (2026-07-05): VAN holland guide-bank (GUIDES_NL,
   //   7 cikk: BRP+BSN / zorgverzekering / belasting+DigiD / school / werk /
   //   betaalrekening / huren) — mind a 4 országra él.
-  "kozlekedes",    // tömegközlekedés — CH/AT/DE adat (NL nincs)
+  // "kozlekedes" — KIVÉVE (2026-07-05): VAN holland verzió (transport NL_TARIF_
+  //   SYSTEMS/NL_TICKET_TYPES + calculateNlTransport: OVpay/OV-chipkaart, NS,
+  //   GVB/RET/HTM, Dal Voordeel) — mind a 4 országra él.
   "bussen",        // bírság-becslő (Bussen) — CH/AT/DE szabálysértés (NL nincs)
   "akciok",        // akció-térkép — CH/AT/DE boltláncok (NL holland láncok kellenek)
   "repulojegy",    // repülőjegy-figyelő — CH/AT/DE konfig (NL nincs; ne mutasson „hamarosan"-t)

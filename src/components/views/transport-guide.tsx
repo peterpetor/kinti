@@ -19,6 +19,11 @@ import {
   DE_MOBILE_APPS,
   DE_TRANSPORT_TIPS,
   calculateDeTransport,
+  NL_TARIF_SYSTEMS,
+  NL_TICKET_TYPES,
+  NL_MOBILE_APPS,
+  NL_TRANSPORT_TIPS,
+  calculateNlTransport,
 } from "@/lib/transport";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -29,11 +34,12 @@ export function TransportGuide() {
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
-  const cur = isAT || isDE ? "EUR" : "CHF";
-  const tarifSystems = isDE ? DE_TARIF_SYSTEMS : isAT ? AT_TARIF_SYSTEMS : TARIF_SYSTEMS;
-  const ticketTypes = isDE ? DE_TICKET_TYPES : isAT ? AT_TICKET_TYPES : TICKET_TYPES;
-  const mobileApps = isDE ? DE_MOBILE_APPS : isAT ? AT_MOBILE_APPS : MOBILE_APPS;
-  const tips = isDE ? DE_TRANSPORT_TIPS : isAT ? AT_TRANSPORT_TIPS : TRANSPORT_TIPS;
+  const isNL = country === "NL";
+  const cur = country === "CH" ? "CHF" : "EUR";
+  const tarifSystems = isNL ? NL_TARIF_SYSTEMS : isDE ? DE_TARIF_SYSTEMS : isAT ? AT_TARIF_SYSTEMS : TARIF_SYSTEMS;
+  const ticketTypes = isNL ? NL_TICKET_TYPES : isDE ? DE_TICKET_TYPES : isAT ? AT_TICKET_TYPES : TICKET_TYPES;
+  const mobileApps = isNL ? NL_MOBILE_APPS : isDE ? DE_MOBILE_APPS : isAT ? AT_MOBILE_APPS : MOBILE_APPS;
+  const tips = isNL ? NL_TRANSPORT_TIPS : isDE ? DE_TRANSPORT_TIPS : isAT ? AT_TRANSPORT_TIPS : TRANSPORT_TIPS;
   return (
     <div className="space-y-4">
       {/* Hero */}
@@ -42,10 +48,12 @@ export function TransportGuide() {
           <span className="text-4xl shrink-0">🚆</span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[20px] font-extrabold leading-tight tracking-tight text-ink">
-              {isDE ? "Német Tömegközlekedés" : isAT ? "Osztrák Tömegközlekedés" : "Svájci Tömegközlekedés"}
+              {isNL ? "Holland Tömegközlekedés" : isDE ? "Német Tömegközlekedés" : isAT ? "Osztrák Tömegközlekedés" : "Svájci Tömegközlekedés"}
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              {isDE
+              {isNL
+                ? "OVpay / OV-chipkaart (in- és uitchecken), NS-vonatok, GVB/RET/HTM, jegytípusok, appok (NS, 9292) és Dal Voordeel-kalkulátor — egyszerűen elmagyarázva."
+                : isDE
                 ? "Deutsche Bahn, Verkehrsverbünde (VBB, MVV, HVV), jegytípusok, DB Navigator és Deutschlandticket-kalkulátor — egyszerűen elmagyarázva."
                 : isAT
                 ? "Wiener Linien, ÖBB, VOR, jegytípusok, mobilappok és Klimaticket-kalkulátor — egyszerűen elmagyarázva."
@@ -58,10 +66,20 @@ export function TransportGuide() {
       {/* Hogyan működik a zóna-rendszer */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card space-y-3">
         <h2 className="text-[14px] font-extrabold text-ink flex items-center gap-1.5">
-          📍 Hogy működik a zónarendszer?
+          📍 {isNL ? "Hogy működik a fizetés (OVpay)?" : "Hogy működik a zónarendszer?"}
         </h2>
         <div className="space-y-2 text-[12.5px] leading-relaxed text-ink-muted">
-          {isDE ? (
+          {isNL ? (
+            <>
+              <p>Hollandiában NINCS zóna-jegy — a rendszer <strong className="text-ink">táv-alapú (per km)</strong>, és az <strong className="text-ink">OVpay / OV-chipkaart</strong> köré épül.</p>
+              <ul className="space-y-1 ml-4 list-disc">
+                <li>Beszálláskor <strong className="text-ink">BE-jelentkezel (inchecken)</strong>, kiszálláskor <strong className="text-ink">KI (uitchecken)</strong> — érintős bankkártyával/telefonnal (OVpay) vagy OV-chipkaarttal.</li>
+                <li>Ha elfelejtesz kijelentkezni, a rendszer magas <strong className="text-ink">büntetődíjat</strong> von le (~4–20 €) — a felét sokszor visszaigényelheted az appban.</li>
+                <li>A vonat (<strong className="text-ink">NS</strong>) és a városi közlekedés (<strong className="text-ink">GVB / RET / HTM</strong>) is ugyanígy, táv-alapon megy.</li>
+                <li>Kedvezményhez / bérlethez (pl. <strong className="text-ink">Dal Voordeel</strong>) névre szóló (persoonlijke) OV-chipkaart kell; a <strong className="text-ink">9292</strong> app tervez door-to-door.</li>
+              </ul>
+            </>
+          ) : isDE ? (
             <>
               <p>Németországban minden régiónak van <strong className="text-ink">Verkehrsverbundja</strong> (pl. VBB Berlin, MVV München) — a helyi jegy zóna/ár-fokozat alapú. Az országos szuper-ajánlat a <strong className="text-ink">Deutschlandticket</strong>.</p>
               <ul className="space-y-1 ml-4 list-disc">
@@ -213,7 +231,13 @@ export function TransportGuide() {
           Hivatalos források
         </h3>
         <ul className="space-y-1.5">
-          {isDE ? (
+          {isNL ? (
+            <>
+              <li><a href="https://www.ns.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 NS — Nederlandse Spoorwegen</a></li>
+              <li><a href="https://www.ovpay.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 OVpay — érintős fizetés</a></li>
+              <li><a href="https://9292.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 9292 — országos útvonaltervező</a></li>
+            </>
+          ) : isDE ? (
             <>
               <li><a href="https://www.bahn.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Deutsche Bahn (DB)</a></li>
               <li><a href="https://www.deutschlandticket.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Deutschlandticket — hivatalos info</a></li>
@@ -241,7 +265,10 @@ export function TransportGuide() {
         variant="info"
         notAdviceFor="utazási, jegyügyi vagy szerződéses"
         extraWarning="A megjelölt árak és zónák a tájékoztató publikálásakor érvényesek — időnként változnak. Jegyvásárlás előtt mindig ellenőrizd a hivatalos szolgáltató oldalán vagy alkalmazásában. A megjelölt szolgáltatókkal NEM állunk affiliate vagy kereskedelmi kapcsolatban."
-        officialSources={isDE ? [
+        officialSources={isNL ? [
+          { label: "NS — Nederlandse Spoorwegen", url: "https://www.ns.nl/" },
+          { label: "OVpay", url: "https://www.ovpay.nl/" },
+        ] : isDE ? [
           { label: "Deutsche Bahn", url: "https://www.bahn.de/" },
           { label: "Deutschlandticket", url: "https://www.deutschlandticket.de/" },
         ] : isAT ? [
@@ -299,7 +326,7 @@ function TarifCard({ system, cur }: { system: typeof TARIF_SYSTEMS[number]; cur:
         </div>
         <div className="rounded-md bg-success/10 px-2 py-1.5 text-[11.5px]">
           <p className="font-bold uppercase tracking-wide text-success">Napijegy</p>
-          <p className="font-extrabold text-ink">{system.dailyPrice.toFixed(2)} {cur}</p>
+          <p className="font-extrabold text-ink">{system.dailyPrice > 0 ? `${system.dailyPrice.toFixed(2)} ${cur}` : "—"}</p>
         </div>
       </div>
 
@@ -320,16 +347,23 @@ function GaVsHalbtaxCalculator() {
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
-  const cur = isAT || isDE ? "EUR" : "CHF";
-  const [avgTripPrice, setAvgTripPrice] = useState(isDE ? 3.5 : isAT ? 3 : 12);
+  const isNL = country === "NL";
+  const cur = country === "CH" ? "CHF" : "EUR";
+  const [avgTripPrice, setAvgTripPrice] = useState(isDE ? 3.5 : isAT ? 3 : isNL ? 4 : 12);
   const [tripsPerWeek, setTripsPerWeek] = useState(5);
 
   const chResult = useMemo(() => calculateGaVsHalbtax({ avgTripPrice, tripsPerWeek }), [avgTripPrice, tripsPerWeek]);
   const atResult = useMemo(() => calculateAtTransport({ avgTripPrice, tripsPerWeek }), [avgTripPrice, tripsPerWeek]);
   const deResult = useMemo(() => calculateDeTransport({ avgTripPrice, tripsPerWeek }), [avgTripPrice, tripsPerWeek]);
-  const yearlyTrips = isDE ? deResult.yearlyTrips : isAT ? atResult.yearlyTrips : chResult.yearlyTrips;
+  const nlResult = useMemo(() => calculateNlTransport({ avgTripPrice, tripsPerWeek }), [avgTripPrice, tripsPerWeek]);
+  const yearlyTrips = isNL ? nlResult.yearlyTrips : isDE ? deResult.yearlyTrips : isAT ? atResult.yearlyTrips : chResult.yearlyTrips;
 
-  const rec = isDE
+  const rec = isNL
+    ? ({
+        "full-price":   { emoji: "🎫", label: "Maradj a losse rittennél", color: "#9a6b00" },
+        "dal-voordeel": { emoji: "✂️", label: "Dal Voordeel éri meg!",     color: "#1d4434" },
+      } as const)[nlResult.recommendation]
+    : isDE
     ? ({
         "full-price":       { emoji: "🎫", label: "Maradj az egyes jegyeknél", color: "#9a6b00" },
         deutschlandticket:  { emoji: "🇩🇪", label: "Deutschlandticket éri meg!", color: "#1d4434" },
@@ -351,7 +385,7 @@ function GaVsHalbtaxCalculator() {
       <div className="flex items-center gap-2">
         <span className="text-3xl">🧮</span>
         <div>
-          <h2 className="text-[15px] font-extrabold text-ink">{isDE ? "Deutschlandticket kalkulátor" : isAT ? "Klimaticket kalkulátor" : "GA vs Halbtax kalkulátor"}</h2>
+          <h2 className="text-[15px] font-extrabold text-ink">{isNL ? "Dal Voordeel kalkulátor" : isDE ? "Deutschlandticket kalkulátor" : isAT ? "Klimaticket kalkulátor" : "GA vs Halbtax kalkulátor"}</h2>
           <p className="text-[11.5px] text-ink-muted">Add meg a tipikus utazásod adatait — kiszámoljuk, megéri-e</p>
         </div>
       </div>
@@ -421,7 +455,12 @@ function GaVsHalbtaxCalculator() {
 
       {/* Részletes táblázat */}
       <div className="space-y-1.5">
-        {isDE ? (
+        {isNL ? (
+          <>
+            <CostRow label="Losse ritten (egyes utak)" cost={nlResult.fullPriceCost} highlight={nlResult.recommendation === "full-price"} cur={cur} />
+            <CostRow label="NS Dal Voordeel (-40%)" cost={nlResult.dalVoordeelCost} highlight={nlResult.recommendation === "dal-voordeel"} subtitle="~5,60 € / hó + a jegyek 60%-a (40% kedvezmény csúcsidőn kívül)" cur={cur} />
+          </>
+        ) : isDE ? (
           <>
             <CostRow label="Egyes jegyekkel" cost={deResult.fullPriceCost} highlight={deResult.recommendation === "full-price"} cur={cur} />
             <CostRow label="Deutschlandticket" cost={deResult.deutschlandticketCost} highlight={deResult.recommendation === "deutschlandticket"} subtitle="58 € / hó = 696 € / év — egész Németország (helyi+regionális)" cur={cur} />
@@ -442,7 +481,7 @@ function GaVsHalbtaxCalculator() {
       </div>
 
       <p className="text-[11px] leading-snug text-ink-faint">
-        Ebben az évben: {yearlyTrips} utazás. {isDE ? "A Deutschlandticket csak helyi+regionális; ICE/IC-hez külön DB-jegy (Sparpreis/BahnCard)." : isAT ? "Számolj még kedvezményekkel (Vorteilscard, fiatal/szenior tarifák)." : "Számolj még gyermek-, hétvégi és family-tarifákkal."}
+        Ebben az évben: {yearlyTrips} utazás. {isNL ? "A Dal Voordeel csak csúcsidőn KÍVÜL (dal) és hétvégén ad 40%-ot; a napi ingázónak a Traject Vrij útvonal-bérlet lehet jobb." : isDE ? "A Deutschlandticket csak helyi+regionális; ICE/IC-hez külön DB-jegy (Sparpreis/BahnCard)." : isAT ? "Számolj még kedvezményekkel (Vorteilscard, fiatal/szenior tarifák)." : "Számolj még gyermek-, hétvégi és family-tarifákkal."}
       </p>
     </section>
   );

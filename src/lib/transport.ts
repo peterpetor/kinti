@@ -531,3 +531,88 @@ export function calculateDeTransport(input: GaVsHalbtaxInput): DeTransportResult
     recommendation: deutschlandticketCost < fullPriceCost ? "deutschlandticket" : "full-price",
   };
 }
+
+// ════════════════════ HOLLANDIA ════════════════════
+// Holland tömegközlekedés: OVpay / OV-chipkaart (in- és uitchecken), TÁV-alapú
+// (per km, nem zóna!), NS-vonatok + regionális operátorok (GVB/RET/HTM). A
+// „féláras" analóg az NS Dal Voordeel (40% kedvezmény csúcsidőn kívül). EUR.
+
+export const NL_TARIF_SYSTEMS: TarifSystem[] = [
+  {
+    id: "ovpay", name: "OVpay / OV-chipkaart (országos)", abbreviation: "OVpay", region: "Egész Hollandia", emoji: "💳",
+    zonesCount: 0, description: "NEM zóna-alapú! Beszállásnál BE- (inchecken), kiszállásnál KI-jelentkezel (uitchecken) az érintős bankkártyáddal/telefonoddal (OVpay) vagy az OV-chipkaarttal. A díj a megtett TÁV szerint (alapdíj + km-díj).",
+    exampleZones: [{ name: "Beszállás (instaptarief)", zones: "~1,10 €" }, { name: "Városi villamos/busz-út", zones: "~2–3 €" }, { name: "Elfelejtett uitchecken", zones: "büntetődíj (~4–20 €)!" }],
+    singleZonePrice: 2.5, dailyPrice: 8.0, websiteUrl: "https://www.ovpay.nl/", color: "#0090D2",
+  },
+  {
+    id: "ns", name: "NS (Nederlandse Spoorwegen)", abbreviation: "NS", region: "Országos vonat", emoji: "🚆",
+    zonesCount: 0, description: "A holland vasút. A jegy táv-alapú (per km); nincs kötött »Sparpreis«, de a Dal Voordeel abbonnement 40% kedvezményt ad csúcsidőn kívül.",
+    exampleZones: [{ name: "Amsterdam → Utrecht", zones: "~8,90 €" }, { name: "Amsterdam → Rotterdam", zones: "~17 €" }, { name: "Schiphol → Amsterdam CS", zones: "~5,40 €" }],
+    singleZonePrice: 8.9, dailyPrice: 0, websiteUrl: "https://www.ns.nl/", color: "#FFC917",
+  },
+  {
+    id: "gvb", name: "GVB (Amsterdam)", abbreviation: "GVB", region: "Amszterdam (metró/villamos/busz)", emoji: "🚇",
+    zonesCount: 0, description: "Amszterdam városi közlekedése. OVpay-jel táv-alapú, vagy vehetsz GVB-dagkaartot (napijegy) korlátlan utazásra a városban.",
+    exampleZones: [{ name: "1 órás jegy", zones: "~3,40 €" }, { name: "1 napos GVB-dagkaart", zones: "~9 €" }, { name: "Reptér (Schiphol) — NS-vonat", zones: "külön NS-jegy" }],
+    singleZonePrice: 3.4, dailyPrice: 9.0, websiteUrl: "https://www.gvb.nl/", color: "#EC0000",
+  },
+  {
+    id: "ret", name: "RET (Rotterdam)", abbreviation: "RET", region: "Rotterdam (metró/villamos/busz)", emoji: "🚊",
+    zonesCount: 0, description: "Rotterdam városi közlekedése. OVpay-jel táv-alapú; van 1/2/3 napos turista-dagkaart is.",
+    exampleZones: [{ name: "1 órás jegy", zones: "~3,50 €" }, { name: "1 napos dagkaart", zones: "~8,50 €" }],
+    singleZonePrice: 3.5, dailyPrice: 8.5, websiteUrl: "https://www.ret.nl/", color: "#00A03C",
+  },
+  {
+    id: "htm", name: "HTM (Den Haag)", abbreviation: "HTM", region: "Hága + környék (villamos/busz)", emoji: "🚍",
+    zonesCount: 0, description: "Hága városi közlekedése (villamos + busz). OVpay-jel táv-alapú; van dagkaart is.",
+    exampleZones: [{ name: "1 órás jegy", zones: "~3,50 €" }, { name: "1 napos dagkaart", zones: "~7,50 €" }],
+    singleZonePrice: 3.5, dailyPrice: 7.5, websiteUrl: "https://www.htm.nl/", color: "#E30613",
+  },
+];
+
+export const NL_TICKET_TYPES: TicketType[] = [
+  { id: "ovpay", name: "OVpay (érintős fizetés)", emoji: "💳", description: "A legegyszerűbb: érintős bankkártya/telefon a beszálláskor (inchecken) ÉS a kiszálláskor (uitchecken). A díj automatikusan a megtett táv szerint. Nem kell külön jegyet venni.", price: "táv-alapú (alapdíj ~1,10 € + km)", validity: "Utanként (be+ki kell jelentkezni!)", bestFor: "Alkalmi utazás, turista" },
+  { id: "ovchip", name: "OV-chipkaart (anoniem/persoonlijk)", emoji: "🪪", description: "Feltölthető chipkártya. Az anoniem bárkinek jó; a persoonlijke a kedvezményekhez és abbonnementekhez kell (fényképes, névre szóló).", price: "kártya ~7,50 € + feltöltés", validity: "5 év (a kártya)", bestFor: "Rendszeres utazás + kedvezmények" },
+  { id: "dagkaart", name: "Dagkaart (napijegy)", emoji: "📅", description: "Korlátlan utazás egy napra egy operátornál (pl. GVB Amsterdam, RET Rotterdam). Turistáknak intenzív napra megéri.", price: "~7,5–9 € (városonként)", validity: "1 nap", bestFor: "Turista / intenzív városi nap" },
+  { id: "dalvoordeel", name: "NS Dal Voordeel (40% kedvezmény)", emoji: "✂️", description: "A »féláras« analógja: 40% kedvezmény az NS-vonatjegyekre csúcsidőn KÍVÜL (dal) és hétvégén. Havi előfizetés — gyorsan megtérül, ha nem csúcsban utazol.", price: "~5,60 € / hó", validity: "Havi (felmondható)", bestFor: "Aki csúcsidőn kívül vonatozik" },
+  { id: "trajectvrij", name: "NS Traject Vrij (útvonal-bérlet)", emoji: "🎟️", description: "Egy fix útvonalra (pl. otthon↔munkahely) korlátlan vonat — a napi ingázók bérlete. A táv szerint árazva.", price: "táv szerint (havi/éves)", validity: "1 hó / 1 év", bestFor: "Napi vonatos ingázó fix útvonalon" },
+  { id: "kidsvrij", name: "NS Kids Vrij", emoji: "👨‍👩‍👧", description: "0–3 év ingyen; a 4–11 éves gyerekek INGYEN utaznak NS-vonaton egy felnőtt mellett (a Kids Vrij ingyenes beállítással).", price: "ingyenes (0 €)", validity: "Folyamatos", bestFor: "Családok" },
+];
+
+export const NL_MOBILE_APPS: MobileApp[] = [
+  { id: "ns", name: "NS", emoji: "🚉", description: "A holland vasút hivatalos appja. Menetrend, jegyvásárlás, real-time késés/vágány, Dal Voordeel + abbonnementek kezelése.", iosUrl: "https://apps.apple.com/nl/app/ns/id1069773781", androidUrl: "https://play.google.com/store/apps/details?id=nl.ns.android.activity", pros: ["Országos vonat", "Real-time info", "Dal Voordeel / abbonnement"] },
+  { id: "9292", name: "9292", emoji: "🗺️", description: "A HIVATALOS országos útvonaltervező — MINDEN közlekedési mód (vonat, metró, villamos, busz, hajó) egy helyen, door-to-door.", iosUrl: "https://apps.apple.com/nl/app/9292/id300794322", androidUrl: "https://play.google.com/store/apps/details?id=nl.negentwee", pros: ["Minden mód egyben", "Door-to-door tervező", "Real-time"] },
+  { id: "ovpay", name: "OVpay", emoji: "💳", description: "Az OVpay hivatalos appja: az utazásaid és a levont díjak áttekintése, elfelejtett uitchecken korrekció.", iosUrl: "https://apps.apple.com/nl/app/ovpay/id6444311309", androidUrl: "https://play.google.com/store/apps/details?id=nl.translink.ovpay", pros: ["Utazás-áttekintés", "Uitcheck-korrekció", "Nincs külön kártya"] },
+];
+
+export const NL_TRANSPORT_TIPS: { emoji: string; title: string; body: string }[] = [
+  { emoji: "⚠️", title: "Uitchecken — NE felejtsd el!", body: "Be- ÉS kijelentkezés kötelező (inchecken + uitchecken). Ha elfelejtesz kijelentkezni, a rendszer magas büntetődíjat (~4–20 €) von le — a felét sokszor visszaigényelheted az OVpay/NS appban." },
+  { emoji: "📏", title: "Táv-alapú, nem zóna", body: "Hollandiában nincs »zóna-jegy« mint Németországban — a díj a megtett km szerint (alapdíj + km-díj). Ezért fontos a pontos be/kijelentkezés." },
+  { emoji: "✂️", title: "Dal Voordeel = 40% csúcsidőn kívül", body: "Ha nem a spits-ben (reggel ~6:30–9:00, délután ~16:00–18:30) utazol, az NS Dal Voordeel (~5,60 €/hó) 40%-ot lehúz a vonatjegyekből — gyorsan megtérül." },
+  { emoji: "🚲", title: "OV-fiets — az utolsó km", body: "Az állomásokon OV-fiets (kölcsönbringa, ~4,55 €/nap) a híres megoldás az állomástól a célig. Az NS persoonlijke OV-chipkaart/abbonnement kell hozzá." },
+  { emoji: "💳", title: "OVpay: elég a bankkártyád", body: "Nem kell OV-chipkaartot venni — érintős bankkártya vagy telefon (OVpay) elég a be/kijelentkezéshez. Kedvezményekhez / abbonnementhez viszont persoonlijke OV-chipkaart kell." },
+  { emoji: "👨‍👩‍👧", title: "Gyerekek ingyen (Kids Vrij)", body: "0–3 év mindig ingyen; a 4–11 évesek az NS Kids Vrij ingyenes beállítással INGYEN vonatoznak egy felnőtt mellett — állítsd be a persoonlijke kártyán." },
+];
+
+const NL_DALVOORDEEL_MONTHLY = 5.6;
+
+export interface NlTransportResult {
+  yearlyTrips: number;
+  fullPriceCost: number;
+  dalVoordeelCost: number;
+  recommendation: "full-price" | "dal-voordeel";
+}
+
+/** Hollandia: losse ritten vs NS Dal Voordeel (40% kedvezmény csúcsidőn kívül + havidíj). */
+export function calculateNlTransport(input: GaVsHalbtaxInput): NlTransportResult {
+  const yearlyTrips = input.tripsPerWeek * 52;
+  const fullPriceCost = Math.round(yearlyTrips * input.avgTripPrice);
+  // Dal Voordeel: havidíj egész évre + a jegyek 60%-a (40% kedvezmény).
+  const dalVoordeelCost = Math.round(NL_DALVOORDEEL_MONTHLY * 12 + yearlyTrips * input.avgTripPrice * 0.6);
+  return {
+    yearlyTrips,
+    fullPriceCost,
+    dalVoordeelCost,
+    recommendation: dalVoordeelCost < fullPriceCost ? "dal-voordeel" : "full-price",
+  };
+}
