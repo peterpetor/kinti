@@ -57,7 +57,9 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   //   SYSTEMS/NL_TICKET_TYPES + calculateNlTransport: OVpay/OV-chipkaart, NS,
   //   GVB/RET/HTM, Dal Voordeel) — mind a 4 országra él.
   "bussen",        // bírság-becslő (Bussen) — CH/AT/DE szabálysértés (NL nincs)
-  "akciok",        // akció-térkép — CH/AT/DE boltláncok (NL holland láncok kellenek)
+  // "akciok" — KIVÉVE (2026-07-05): VAN holland boltlánc-lista (DEAL_STORES_NL:
+  //   Albert Heijn/Jumbo/Lidl/Aldi/PLUS/Dirk/Spar/Vomar); a geo-bbox + térkép-
+  //   középpont már NL-kész — mind a 4 országra él.
   "repulojegy",    // repülőjegy-figyelő — CH/AT/DE konfig (NL nincs; ne mutasson „hamarosan"-t)
   // "vizum" — KIVÉVE (2026-07-05): VAN holland verzió (permit-wizard STEPS_NL +
   //   evaluatePermitNL: vrij verkeer / BRP-inschrijving+BSN / duurzaam verblijf /

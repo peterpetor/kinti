@@ -8,7 +8,7 @@ import type { DealReport } from "@/lib/repo";
 import {
   getStoreById,
   getCategoryById,
-  DEAL_STORES,
+  getDealStores,
 } from "@/lib/deals";
 import { DealReporter } from "@/components/views/deal-reporter";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -87,7 +87,7 @@ export function AkciokView({ turnstileSiteKey }: { turnstileSiteKey: string }) {
       {/* Filter pillek — boltok */}
       <div className="no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-6 pb-0.5">
         <FilterPill active={filterStore === "all"} onClick={() => setFilterStore("all")} label={`Mind (${countryDeals.length})`} />
-        {DEAL_STORES.map((s) => {
+        {getDealStores(country).map((s) => {
           const count = countryDeals.filter((d) => d.storeId === s.id).length;
           if (count === 0) return null;
           return (

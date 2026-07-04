@@ -60,6 +60,19 @@ export const DEAL_STORES_DE: DealStore[] = [
   OTHER_STORE,
 ];
 
+/** Holland bolt-láncok. */
+export const DEAL_STORES_NL: DealStore[] = [
+  { id: "albert-heijn", label: "Albert Heijn", color: "#0AACE3", initial: "A" },
+  { id: "jumbo",        label: "Jumbo",        color: "#E9B200", initial: "J" },
+  { id: "lidl",         label: "Lidl",         color: "#0050AA", initial: "L" },
+  { id: "aldi-nl",      label: "Aldi",         color: "#001E5A", initial: "A" },
+  { id: "plus",         label: "PLUS",         color: "#E30613", initial: "P" },
+  { id: "dirk",         label: "Dirk",         color: "#D2202E", initial: "D" },
+  { id: "spar",         label: "Spar",         color: "#1A8A3E", initial: "S" },
+  { id: "vomar",        label: "Vomar",        color: "#005CA9", initial: "V" },
+  OTHER_STORE,
+];
+
 /** Vissza-kompat: a régi `DEAL_STORES` = svájci lista. */
 export const DEAL_STORES = DEAL_STORES_CH;
 
@@ -67,13 +80,14 @@ export const DEAL_STORES = DEAL_STORES_CH;
 export function getDealStores(country: string | null | undefined): DealStore[] {
   if (country === "AT") return DEAL_STORES_AT;
   if (country === "DE") return DEAL_STORES_DE;
+  if (country === "NL") return DEAL_STORES_NL;
   return DEAL_STORES_CH;
 }
 
 // Lookup minden ország boltjaiból (a térkép a régi/más-országú jelzéseket is
 // helyesen jeleníti meg). Ütközésnél az első nyer (azonos brand → mindegy).
 const STORE_BY_ID = new Map<string, DealStore>();
-for (const s of [...DEAL_STORES_CH, ...DEAL_STORES_AT, ...DEAL_STORES_DE]) {
+for (const s of [...DEAL_STORES_CH, ...DEAL_STORES_AT, ...DEAL_STORES_DE, ...DEAL_STORES_NL]) {
   if (!STORE_BY_ID.has(s.id)) STORE_BY_ID.set(s.id, s);
 }
 
