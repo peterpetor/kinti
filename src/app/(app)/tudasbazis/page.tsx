@@ -8,7 +8,7 @@ export const runtime = "edge";
 export const metadata = {
   title: "Tudásbázis — útmutatók kint élő magyaroknak",
   description:
-    "Hivatalos forrásból: bejelentkezés, egészségbiztosítás, adózás, iskola, munka, lakásbérlés — kint élő magyaroknak (Svájc, Ausztria, Németország).",
+    "Hivatalos forrásból: bejelentkezés, egészségbiztosítás, adózás, iskola, munka, lakásbérlés — kint élő magyaroknak (Svájc, Ausztria, Németország, Hollandia).",
 };
 
 export default function TudasbazisPage() {

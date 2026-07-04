@@ -1178,13 +1178,101 @@ export const GUIDES_DE: Guide[] = [
   },
 ];
 
+export const GUIDES_NL: Guide[] = [
+  {
+    slug: "nl-bejelentkezes",
+    title: "Bejelentkezés (inschrijving BRP) és BSN",
+    summary: "4+ hónap tartózkodásnál a gemeenténél BRP-regisztráció → BSN; EU-állampolgárként vrij verkeer — nincs engedély.",
+    icon: "home",
+    sections: [
+      { heading: "BRP-regisztráció + BSN", body: ["Ha 4 hónapnál tovább maradsz, a lakóhelyed szerinti gemeenténél (önkormányzat) be kell jelentkezned a BRP-be (Basisregistratie Personen) — időpontfoglalással (afspraak), a beköltözéstől néhány napon belül.", "Ekkor kapod a BSN-t (burgerservicenummer), ami MINDENHEZ kell: munka, bankszámla, zorgverzekering, adó. 4 hónapnál rövidebb tartózkodásnál RNI-regisztrációval kaphatsz BSN-t."] },
+      { heading: "Szabad mozgás (vrij verkeer)", body: ["EU-állampolgárként szabad mozgásod van — NINCS szükség tartózkodási engedélyre. Az IND EU-verblijfsdocumentje 2014 óta opcionális.", "3 hónapnál tovább a feltétel: munka / önfoglalkoztatás VAGY elég megélhetés + zorgverzekering."] },
+      { heading: "Hosszabb távon", bullets: ["5 év jogszerű tartózkodás → duurzaam verblijfsrecht (tartós tartózkodás), kérhető dokumentummal az IND-nél", "Állampolgárság (naturalisatie) 5 év után, inburgering (A2 nyelv + KNM) vizsgával — FIGYELEM: Hollandia fő szabály szerint a korábbi állampolgárság LEMONDÁSÁT kéri (sok kivétellel, pl. holland házastárs)"] },
+    ],
+    sources: [{ label: "IND — EU/EER-burgers", url: "https://ind.nl/en/eu-eea-and-swiss-citizens" }, { label: "Rijksoverheid — BSN", url: "https://www.government.nl/topics/personal-data/citizen-service-number-bsn" }],
+  },
+  {
+    slug: "nl-egeszsegbiztositas",
+    title: "Egészségbiztosítás (zorgverzekering)",
+    summary: "Kötelező basisverzekering (~140 €/hó) a biztosítás/munka kezdetétől 4 hónapon belül; a biztosítót TE választod.",
+    icon: "heart",
+    sections: [
+      { heading: "Kötelező alapbiztosítás", body: ["Hollandiában KÖTELEZŐ a basisverzekering (alap-egészségbiztosítás), ha itt laksz vagy dolgozol — jellemzően a start-tól számított 4 hónapon belül kell megkötnöd (visszamenőleg is fizetendő).", "A zorgverzekeraart TE választod (Zilveren Kruis, VGZ, CZ, Menzis…) — az alapcsomag tartalma törvényi, de az ár és a szolgáltatás eltér. Havidíj ~140 €/hó (2025)."] },
+      { heading: "Eigen risico és zorgtoeslag", body: ["Van egy éves eigen risico (önrész, ~385 €/év) — bizonyos költségeknél előbb ezt fizeted, mielőtt a biztosító fizet (a háziorvos és a gyerekek mentesek).", "Alacsony jövedelemnél a Belastingdienst zorgtoeslag (egészségügyi hozzájárulás) támogatást ad — igényelhető."] },
+      { heading: "Gyakorlat", bullets: ["A huisarts (háziorvos) az első kontakt és a „kapuőr” a szakorvoshoz", "18 év alatti gyerekek díjmentesen biztosítottak a szülő csomagjában", "Fogászat és fizioterápia jellemzően NEM az alapcsomagban — kiegészítő (aanvullend) kell"] },
+    ],
+    sources: [{ label: "Rijksoverheid — Zorgverzekering", url: "https://www.government.nl/topics/health-insurance" }, { label: "Zorgverzekeringslijn", url: "https://www.zorgverzekeringslijn.nl/" }],
+  },
+  {
+    slug: "nl-adozas",
+    title: "Adózás (belasting) és DigiD",
+    summary: "A bérből loonheffing; éves aangifte a Belastingdiensten DigiD-vel; expatnak 30%-regeling.",
+    icon: "document",
+    sections: [
+      { heading: "DigiD és a BSN", body: ["A DigiD a holland digitális azonosítód — ezzel intézed online a hivatali ügyeket (adó, gemeente, egészségügy). A BRP-regisztráció (BSN) után igényelhető.", "A jövedelemadó a Box 1 (munka/otthon) progresszív sávjaiban működik; a munkáltató a bérből vonja a loonheffinget."] },
+      { heading: "30%-regeling (expat-kedvezmény)", body: ["Külföldről toborzott, képzett munkavállalóknak a bér max. 30%-a adómentesen fizethető (belastingdienst-engedéllyel, 150 km-szabály + bérküszöb). A kulcs 2027-től 27%-ra csökken.", "A kedvezményt a munkáltatóddal együtt igényled az IND/Belastingdienst felé."] },
+      { heading: "Aangifte (adóbevallás)", body: ["Az éves aangifte-t a Mijn Belastingdienst portálon (DigiD-vel) adod be — a heffingskortingen (algemene + arbeidskorting) miatt gyakran VISSZAJÁR pénz.", "Határidő jellemzően május 1.; halasztás kérhető."] },
+    ],
+    sources: [{ label: "Belastingdienst", url: "https://www.belastingdienst.nl/" }, { label: "DigiD", url: "https://www.digid.nl/en" }],
+  },
+  {
+    slug: "nl-iskola",
+    title: "Iskola és gyerek (school)",
+    summary: "Leerplicht 5–16 év, ingyenes állami iskola; a nieuwkomers-osztály segít a holland nyelvvel.",
+    icon: "bookmark",
+    sections: [
+      { heading: "Tankötelezettség (leerplicht)", body: ["A leerplicht 5 éves kortól 16 éves korig tart (utána 18-ig kwalificatieplicht, amíg nincs startkwalificatie). Az állami iskola ingyenes (kis önkéntes hozzájárulás lehet).", "A legtöbb gyerek már 4 évesen kezdi a basisschoolt."] },
+      { heading: "A rendszer", bullets: ["Basisschool (4–12 év, 8 csoport)", "A végén doorstroomtoets (korábban CITO) segíti a középiskola-szintet", "Középiskola: VMBO (szakmai), HAVO, VWO (egyetem felé) — a szint a toets + tanári javaslat alapján"] },
+      { heading: "Újonnan érkező gyerek", body: ["Ha a gyerek nem tud hollandul, nieuwkomersklas / schakelklas (felzárkóztató osztály) segíti a nyelvet, mielőtt a rendes osztályba kerül."] },
+    ],
+    sources: [{ label: "Rijksoverheid — Onderwijs", url: "https://www.government.nl/topics/primary-education" }, { label: "Rijksoverheid — Leerplicht", url: "https://www.rijksoverheid.nl/onderwerpen/leerplicht" }],
+  },
+  {
+    slug: "nl-munkavallalas",
+    title: "Munkavállalás (werk)",
+    summary: "EU-állampolgárként szabadon dolgozhatsz; minimumloon + 8% vakantiegeld + írott arbeidsovereenkomst véd.",
+    icon: "briefcase",
+    sections: [
+      { heading: "Szabad munkavállalás", body: ["EU-állampolgárként engedély nélkül, szabadon dolgozhatsz Hollandiában — csak BSN kell.", "Az írott arbeidsovereenkomst (munkaszerződés) rögzíti a bért, a munkaidőt és a felmondási feltételeket. Gyakori a láncszerződés (max 3 határozott idejű, utána határozatlan)."] },
+      { heading: "Bér és juttatások", bullets: ["Törvényi minimumloon: órabérben megadva (2024 óta egységes óradíj), ~14 €/óra körül (2025 — ellenőrizd az aktuálisat)", "8% vakantiegeld (szabadságpénz), jellemzően májusban kifizetve", "Min. évi 4× a heti munkaóraszám fizetett szabadság (teljes munkaidőnél ~20 nap)"] },
+      { heading: "Felmondás és WW", body: ["Az ontslag (felmondás) útja az UWV-n vagy a kantonrechteren keresztül megy; jár transitievergoeding (végkielégítés).", "Munkanélküliség esetén az UWV-nél igényelhető WW (werkloosheidsuitkering) — bizonyos munkahónapok után."] },
+    ],
+    sources: [{ label: "Rijksoverheid — Minimumloon", url: "https://www.government.nl/topics/minimum-wage" }, { label: "UWV", url: "https://www.uwv.nl/" }],
+  },
+  {
+    slug: "nl-bankszamla",
+    title: "Bankszámla (betaalrekening)",
+    summary: "A fizetéshez és a lakbérhez kell; ING/Rabobank/ABN AMRO vagy online (bunq). iDEAL a fő fizetőmód.",
+    icon: "trending",
+    sections: [
+      { heading: "Számlanyitás", body: ["Nyiss betaalrekeninget (folyószámla) — ING, Rabobank, ABN AMRO, vagy online (bunq, Revolut, N26).", "Kell: BSN + útlevél/igazolvány (gyakran lakcím-igazolás). EU-ban jogod van alap-fizetési számlához akkor is, ha még nincs minden papírod."] },
+      { heading: "Fizetés", bullets: ["Az iDEAL a domináns online fizetés (banki átutalás alapú)", "A PIN (debit/betaalpas) mindenhol elfogadott; hitelkártya kevésbé elterjedt — vigyél debitet", "SEPA-átutalás (overschrijving) az alap; automatische incasso a rezsire/biztosításra"] },
+      { heading: "Betétvédelem", body: ["Az EU-szabály szerint a betétek bankonként 100 000 €-ig védettek (depositogarantiestelsel)."] },
+    ],
+    sources: [{ label: "Rijksoverheid — Bankrekening", url: "https://www.government.nl/topics/banking" }],
+  },
+  {
+    slug: "nl-lakasberles",
+    title: "Lakásbérlés (huren)",
+    summary: "Huurcontract; waarborgsom max 2 havi (2023); figyelj a servicekosten-re és a lakáshiányra.",
+    icon: "home",
+    sections: [
+      { heading: "Bérleti szerződés", body: ["A huurcontract rögzíti a kale huurt (csupasz bér) + a servicekosten-t (rezsi/szolgáltatás). Mindig az összköltséget nézd!", "2023 óta (Wet goed verhuurderschap) a waarborgsom (kaució) max 2 havi bér lehet, és a kiköltözés után max 14 napon belül vissza kell adni."] },
+      { heading: "Bérfajták és plafon", bullets: ["Sociale huur (szociális, ponthatár alatt) vs. vrije sector (piaci)", "A puntensysteem (WWS) a lakás pontszáma alapján maximalizálja a bért — a Huurcommissie ellenőrzi", "Bérlőként 2015 óta általában NEM fizetsz bemiddelingskosten-t (ügynöki díjat), ha az ügynök a bérbeadónak dolgozik"] },
+      { heading: "Lakáshiány és jogvédelem", body: ["Hollandiában SÚLYOS a lakáshiány, főleg a Randstadban — nehéz és versengő a keresés. Vigyázz a csalókkal (előre kért kaució lakásnézés nélkül).", "Bérleti vitában vagy túl magas bér gyanújánál a Huurcommissie, jogi kérdésben a Juridisch Loket segít."] },
+    ],
+    sources: [{ label: "Rijksoverheid — Huurwoning", url: "https://www.rijksoverheid.nl/onderwerpen/huurwoning" }, { label: "Huurcommissie", url: "https://www.huurcommissie.nl/" }],
+  },
+];
+
 /** Az összes guide (statikus generáláshoz + slug-kereséshez). */
-export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT, ...GUIDES_DE];
+export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT, ...GUIDES_DE, ...GUIDES_NL];
 
 /** A választott ország guide-jai (a lista + kereső). */
 export function getGuides(country: string | null | undefined): Guide[] {
   if (country === "AT") return GUIDES_AT;
   if (country === "DE") return GUIDES_DE;
+  if (country === "NL") return GUIDES_NL;
   return GUIDES_CH;
 }
 
