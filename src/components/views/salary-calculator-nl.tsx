@@ -6,22 +6,25 @@ import { cn } from "@/lib/cn";
 import {
   computeSalaryNL,
   salaryPercentileNL,
+  NL_PROVINCES,
   type SalaryCalcInputNL,
 } from "@/lib/salary-calc";
 
 export function SalaryCalculatorNL() {
-  const [form, setForm] = useState<SalaryCalcInputNL>({
+  const [form, setForm] = useState<SalaryCalcInputNL & { province: string }>({
     gross: 3300,
     period: "month",
     holidayAllowance: true,
+    province: "NH",
   });
 
-  function setField<K extends keyof SalaryCalcInputNL>(k: K, v: SalaryCalcInputNL[K]) {
+  function setField<K extends keyof typeof form>(k: K, v: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [k]: v }));
   }
 
   const r = computeSalaryNL(form);
-  const { percentile, median } = salaryPercentileNL(r.grossMonthly);
+  const { percentile, median } = salaryPercentileNL(r.grossMonthly, form.province);
+  const provinceName = NL_PROVINCES.find((p) => p.code === form.province)?.name ?? "Hollandia";
   const fmt = (n: number) => Math.round(n).toLocaleString("nl-NL") + " €";
   const inputCls = "w-full rounded-[12px] border border-line bg-surface-alt px-3 py-3 text-[14px] font-semibold text-ink outline-none focus:border-primary focus:ring-1 focus:ring-primary";
 
@@ -76,6 +79,22 @@ export function SalaryCalculatorNL() {
         <p className="-mt-2 text-[11px] leading-snug text-ink-faint">
           A holland havi bruttó általában NEM tartalmazza a 8% vakantiegeldet — azt jellemzően májusban fizetik ki. Ez az éves összegbe számít bele.
         </p>
+
+        {/* Provincia (benchmark) — az adó ORSZÁGOS, csak a „Jó ez a fizetés?" viszonyítást állítja */}
+        <div>
+          <label className="mb-1.5 block text-[12px] font-bold uppercase tracking-wide text-ink-muted">
+            Provincia (bér-összehasonlításhoz)
+          </label>
+          <select
+            value={form.province}
+            onChange={(e) => setField("province", e.target.value)}
+            className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-3 text-[14px] font-semibold text-ink outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          >
+            {NL_PROVINCES.map((p) => (
+              <option key={p.code} value={p.code}>{p.name}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Eredmény */}
@@ -120,8 +139,8 @@ export function SalaryCalculatorNL() {
           <h3 className="text-[15px] font-extrabold tracking-tight text-ink">Jó ez a fizetés?</h3>
         </div>
         <p className="text-[13px] leading-relaxed text-ink-muted">
-          A <strong className="text-ink">{fmt(r.grossMonthly)}</strong> havi bruttó a holland nemzeti medián
-          (<strong className="text-ink">{fmt(median)}</strong>) felett/alatt van — a becslés szerint a teljes munkaidős keresők
+          A <strong className="text-ink">{fmt(r.grossMonthly)}</strong> havi bruttó a(z) <strong className="text-ink">{provinceName}</strong> provincia
+          becsült mediánjához (<strong className="text-ink">{fmt(median)}</strong>) képest — a becslés szerint az ottani teljes munkaidős keresők
           kb. <strong className="text-ink">{percentile}%</strong>-a keres ennél kevesebbet.
         </p>
         <div className="h-2.5 overflow-hidden rounded-pill bg-surface-alt">

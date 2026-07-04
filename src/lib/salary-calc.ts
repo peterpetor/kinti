@@ -527,9 +527,43 @@ export function computeSalaryNL(input: SalaryCalcInputNL): SalaryCalcResultNL {
 /** Holland medián havi BRUTTÓ (teljes munkaidő) — CBS-becslés (tájékoztató). */
 export const NL_NATIONAL_MEDIAN_GROSS = 3300;
 
-/** Percentilis a holland nemzeti mediánhoz (log-normál becslés). */
-export function salaryPercentileNL(grossMonthly: number): SalaryPercentile {
-  const median = NL_NATIONAL_MEDIAN_GROSS;
+/** Provincia-medián havi BRUTTÓ — a CBS regionális kereseti statisztikáiból
+ *  származtatott becslés (a Randstad-provinciák a nemzeti medián felett).
+ *  FONTOS: a kódok a regions.ts NL-kódjaival EGYEZNEK (NH/ZH/UT/NB/GE/OV/LI/FR/GR/DR/FL/ZE). */
+export const NL_PROVINCE_MEDIAN_GROSS: Record<string, number> = {
+  NH: 3600, // Noord-Holland (Amszterdam)
+  UT: 3550, // Utrecht
+  ZH: 3450, // Zuid-Holland (Rotterdam/Hága)
+  NB: 3300, // Noord-Brabant (Eindhoven)
+  FL: 3250, // Flevoland (Randstad-ingázók)
+  GE: 3200, // Gelderland
+  OV: 3150, // Overijssel
+  LI: 3150, // Limburg
+  GR: 3100, // Groningen
+  ZE: 3100, // Zeeland
+  DR: 3050, // Drenthe
+  FR: 3050, // Friesland
+};
+
+/** Provincia-lista a kalkulátor-választóhoz (regions.ts NL-kódok). */
+export const NL_PROVINCES: { code: string; name: string }[] = [
+  { code: "NH", name: "Noord-Holland (Amszterdam)" },
+  { code: "ZH", name: "Zuid-Holland (Rotterdam/Hága)" },
+  { code: "UT", name: "Utrecht" },
+  { code: "NB", name: "Noord-Brabant (Eindhoven)" },
+  { code: "GE", name: "Gelderland" },
+  { code: "OV", name: "Overijssel" },
+  { code: "LI", name: "Limburg" },
+  { code: "FR", name: "Friesland" },
+  { code: "GR", name: "Groningen" },
+  { code: "DR", name: "Drenthe" },
+  { code: "FL", name: "Flevoland" },
+  { code: "ZE", name: "Zeeland" },
+];
+
+/** Percentilis a provincia- (vagy nemzeti) mediánhoz (log-normál becslés). */
+export function salaryPercentileNL(grossMonthly: number, province?: string): SalaryPercentile {
+  const median = (province && NL_PROVINCE_MEDIAN_GROSS[province]) || NL_NATIONAL_MEDIAN_GROSS;
   const sigma = 0.32;
   const z = (Math.log(Math.max(1, grossMonthly)) - Math.log(median)) / sigma;
   const p = Math.round(normalCdf(z) * 100);
