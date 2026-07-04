@@ -1027,8 +1027,3 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('nl-imp-tamas-magyar-bolt', 'Tamás Magyar Bolt', 'elelmiszer', 'Élelmiszerbolt', 'Valkenboslaan 302, 2563 ED Den Haag', '+31 70 346 4474', 'Magyar élelmiszerbolt Den Haagban. Hazai ízek: felvágottak, tejtermékek, füstölt áruk, édességek. · www.magyarbolthaga.nl', '["Magyar"]', 52.0703922, 4.2757576, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'NL', 'ZH')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';

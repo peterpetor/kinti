@@ -203,4 +203,3 @@ name,category_id,country_code,city,address,phone,website,description
 "Ungarischer Shop",bolt,AT,"Wels","Steiningerweg 24, 4600 Wels","","","Magyar élelmiszerbolt Welsben (Felső-Ausztria). Hazai ízek és termékek."
 "Auto Merienn",autoszerelo,DE,"Rosenheim","Kolbermoorer Str. 12, 83026 Rosenheim","","","Autószerviz Rosenheimben (Bajorország). Általános javítás, karbantartás, diagnosztika."
 "Kfz Werkstätte Aslan",autoszerelo,AT,"Innsbruck","Viaduktbögen 121/123, 6020 Innsbruck","","","Autószerviz Innsbruckban (viadukt-ívek). Javítás, karbantartás, diagnosztika."
-"Tamás Magyar Bolt",elelmiszerbolt,NL,"Den Haag","Valkenboslaan 302, 2563 ED Den Haag","+31 70 346 4474","https://www.magyarbolthaga.nl/","Magyar élelmiszerbolt Den Haagban. Hazai ízek: felvágottak, tejtermékek, füstölt áruk, édességek."
