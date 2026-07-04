@@ -6,12 +6,12 @@
    Kinti téma-tokenek — a prototípus PALETTES objektumából (kinti-tokens.jsx).
    Minden solid szín RGB-csatornaként (szóközzel) van tárolva, hogy a Tailwind
    `rgb(... / <alpha-value>)` mintája megőrizze az opacity-módosítókat.
-   Téma váltása: <html data-theme="warm | modern">.
+   Téma váltása: <html data-theme="warm | dark"> (Világos / Sötét).
    =========================================================================== */
 @layer base {
   :root,
   [data-theme="warm"] {
-    /* Meleg (krémszínű papír + fenyőzöld + paprikapiros) */
+    /* Világos (krémszínű papír + fenyőzöld + paprikapiros) */
     --bg: 244 237 224;            /* #f4ede0 */
     --surface: 255 255 255;       /* #ffffff */
     --surface-alt: 251 247 238;   /* #fbf7ee */
@@ -37,29 +37,54 @@
     --shadow-card-hover: 0 2px 6px rgba(14, 31, 23, 0.06), 0 12px 32px rgba(14, 31, 23, 0.1);
     --shadow-pop: 0 8px 28px rgba(14, 31, 23, 0.16), 0 2px 6px rgba(14, 31, 23, 0.06);
     --shadow-pin: 0 3px 8px rgba(14, 31, 23, 0.22), 0 1px 2px rgba(14, 31, 23, 0.18);
+
+    /* Glass-réteg fényei (lásd .glass) */
+    --glass-hi: 0.7;
+    --glass-hi2: 0.4;
+    --glass-edge: 0 0 0;
+    --glass-edge-a: 0.06;
+
+    /* Natív vezérlők (form, scrollbar) színsémája */
+    color-scheme: light;
   }
 
-  [data-theme="modern"] {
-    /* Modern (hűvösebb szürke + sötétebb zöld) */
-    --bg: 245 245 243;            /* #f5f5f3 */
-    --surface: 255 255 255;       /* #ffffff */
-    --surface-alt: 250 250 248;   /* #fafaf8 */
-    --primary: 13 47 35;          /* #0d2f23 */
-    --primary-soft: 232 236 233;  /* #e8ece9 */
-    --accent: 214 59 48;          /* #d63b30 */
-    --accent-soft: 251 230 227;   /* #fbe6e3 */
-    --text: 10 10 8;              /* #0a0a08 */
-    --text-muted: 82 86 79;       /* #52564f */
-    --text-faint: 138 143 134;    /* #8a8f86 */
-    --border-channel: 10 10 8;
-    --border-alpha: 0.08;
-    --border-strong-alpha: 0.15;
-    --map-land: 237 237 234;      /* #ededea */
-    --map-water: 221 231 226;     /* #dde7e2 */
-    --map-green: 226 232 219;     /* #e2e8db */
-    --map-road: 255 255 255;      /* #ffffff */
-    --map-road-line: 10 10 8;
-    --map-road-line-alpha: 0.08;
+  [data-theme="dark"] {
+    /* Sötét (mély fenyő-fekete papír + világosabb fenyőzöld + paprika) —
+       ugyanaz a márka-karakter, éjszakai olvasásra: meleg törtfehér szöveg,
+       zöld-árnyalatú sötét felületek. */
+    --bg: 16 20 17;               /* #101411 */
+    --surface: 26 32 28;          /* #1a201c */
+    --surface-alt: 21 27 23;      /* #151b17 */
+    --primary: 70 128 98;         /* #468062 — világosabb fenyő: fehér felirat ÉS sötét háttér mellett is olvasható */
+    --primary-soft: 32 44 37;     /* #202c25 */
+    --accent: 224 90 78;          /* #e05a4e */
+    --accent-soft: 58 32 29;      /* #3a201d */
+    --text: 236 231 220;          /* #ece7dc — meleg törtfehér (a krém-papír inverze) */
+    --text-muted: 156 168 159;    /* #9ca89f */
+    --text-faint: 110 121 113;    /* #6e7971 */
+    --border-channel: 236 231 220;
+    --border-alpha: 0.1;
+    --border-strong-alpha: 0.2;
+    --map-land: 27 33 29;         /* #1b211d */
+    --map-water: 22 30 32;        /* #161e20 */
+    --map-green: 30 42 34;        /* #1e2a22 */
+    --map-road: 42 51 45;         /* #2a332d */
+    --map-road-line: 236 231 220;
+    --map-road-line-alpha: 0.1;
+
+    /* Árnyék sötét felületen: mélyebb, fekete-alapú */
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.35);
+    --shadow-card-hover: 0 2px 6px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.45);
+    --shadow-pop: 0 8px 28px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+    --shadow-pin: 0 3px 8px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.5);
+
+    /* Glass: visszafogott belső fény + világos él (a fehér 0.7 itt vakítana) */
+    --glass-hi: 0.08;
+    --glass-hi2: 0.04;
+    --glass-edge: 255 255 255;
+    --glass-edge-a: 0.08;
+
+    color-scheme: dark;
   }
 
   html {
@@ -208,10 +233,11 @@
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
+    /* A fények téma-tokenekből jönnek (sötétben a 0.7-es fehér vakítana). */
     box-shadow:
-      inset 1.5px 1.5px 1px rgb(255 255 255 / 0.7),
-      inset -1px -1px 1px rgb(255 255 255 / 0.4);
-    border: 0.5px solid rgb(0 0 0 / 0.06);
+      inset 1.5px 1.5px 1px rgb(255 255 255 / var(--glass-hi, 0.7)),
+      inset -1px -1px 1px rgb(255 255 255 / var(--glass-hi2, 0.4));
+    border: 0.5px solid rgb(var(--glass-edge, 0 0 0) / var(--glass-edge-a, 0.06));
   }
 }
 

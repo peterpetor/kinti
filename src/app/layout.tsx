@@ -24,9 +24,10 @@ const COUNTRY_GATE_SCRIPT = `(function(){try{var c=localStorage.getItem('kinti.c
  */
 const LEGAL_GATE_SCRIPT = buildLegalGateScript();
 
-// A mentett témát (Meleg/Modern) még a festés előtt visszaállítjuk, hogy reload
-// után is éljen a választás, villanás (FOUC) nélkül. Lásd ThemeToggle.
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('kinti-theme');if(t==='modern'||t==='warm'){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
+// A mentett témát (Világos/Sötét) még a festés előtt visszaállítjuk, hogy reload
+// után is éljen a választás, villanás (FOUC) nélkül. A régi „modern" mentett
+// értéket sötétre migráljuk (a Modern skin helyére a Sötét mód lépett). Lásd ThemeToggle.
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('kinti-theme');if(t==='modern'){t='dark';localStorage.setItem('kinti-theme','dark');}if(t==='dark'||t==='warm'){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: {
@@ -111,7 +112,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: COUNTRY_GATE_SCRIPT }} />
         {/* Jogi boot-gate — a tartalom ne villanjon be a legal-modal előtt. */}
         <script dangerouslySetInnerHTML={{ __html: LEGAL_GATE_SCRIPT }} />
-        {/* Mentett téma visszaállítása festés előtt (Meleg/Modern perzisztencia). */}
+        {/* Mentett téma visszaállítása festés előtt (Világos/Sötét perzisztencia). */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <ClerkProvider
           localization={{
