@@ -15,6 +15,7 @@ export function SalaryCalculatorNL() {
     gross: 3300,
     period: "month",
     holidayAllowance: true,
+    ruling30: false,
     province: "NH",
   });
 
@@ -80,6 +81,20 @@ export function SalaryCalculatorNL() {
           A holland havi bruttó általában NEM tartalmazza a 8% vakantiegeldet — azt jellemzően májusban fizetik ki. Ez az éves összegbe számít bele.
         </p>
 
+        {/* 30%-regeling (expat-kedvezmény) */}
+        <label className="flex cursor-pointer items-center justify-between rounded-[12px] border border-line bg-surface-alt px-4 py-3">
+          <span className="min-w-0 flex-1 pr-3 text-[13.5px] font-semibold text-ink">30%-regeling (expat-kedvezmény)</span>
+          <input type="checkbox" checked={!!form.ruling30} onChange={(e) => setField("ruling30", e.target.checked)} className="h-5 w-5 cursor-pointer accent-primary" />
+        </label>
+        {form.ruling30 && (
+          <p className="-mt-2 text-[11px] leading-snug text-ink-faint">
+            Külföldről toborzott munkavállalóknak, belastingdienst-engedéllyel (150 km-szabály + bérküszöb). A bér max. 30%-a adómentes úgy, hogy az adóköteles rész a küszöb ({(46660).toLocaleString("nl-NL")} €/év) felett marad. 2027-től a kulcs 27%.
+            {r.taxFreeYearly === 0 && (
+              <strong className="text-accent"> Ennél a bérnél a bérküszöb miatt nincs kihasználható kedvezmény.</strong>
+            )}
+          </p>
+        )}
+
         {/* Provincia (benchmark) — az adó ORSZÁGOS, csak a „Jó ez a fizetés?" viszonyítást állítja */}
         <div>
           <label className="mb-1.5 block text-[12px] font-bold uppercase tracking-wide text-ink-muted">
@@ -119,6 +134,12 @@ export function SalaryCalculatorNL() {
 
         {/* Részletes bontás (éves) */}
         <div className="mt-1 space-y-1 rounded-[10px] bg-surface-alt px-3 py-2.5 text-[12px]">
+          {r.taxFreeYearly > 0 && (
+            <>
+              <Row label="Adómentes rész (30%-regeling)" value={fmt(r.taxFreeYearly)} sign="+" />
+              <Row label="Adóköteles bér (a regeling után)" value={fmt(r.taxableYearly)} sign="" />
+            </>
+          )}
           <Row label="Box 1 jövedelemadó + premies" value={fmt(r.box1TaxYearly)} sign="−" />
           <Row label="Algemene heffingskorting" value={fmt(r.algemeneKortingYearly)} sign="+" />
           <Row label="Arbeidskorting" value={fmt(r.arbeidskortingYearly)} sign="+" />
@@ -152,7 +173,7 @@ export function SalaryCalculatorNL() {
         toolName="bérkalkulátor (NL)"
         variant="legal"
         notAdviceFor="adózási vagy pénzügyi"
-        extraWarning="Az eredmények BECSLÉSEK a 2025-ös Box 1 adótarif és heffingskortingen alapján, AOW-kor alatti munkavállalóra. A tényleges nettó függ a munkáltatói pensioenpremie-től, a 30%-regelingtől, az egyéni levonásoktól és a pontos helyzettől. A pontos összeget a loonstrook (bérpapír) tartalmazza; az éves aangifte-vel gyakran visszajár vagy pótlandó adó."
+        extraWarning="Az eredmények BECSLÉSEK a 2025-ös Box 1 adótarif és heffingskortingen alapján, AOW-kor alatti munkavállalóra. A 30%-regeling becslése az általános bérküszöbbel számol (a 30 év alatti mesterdiplomás alacsonyabb küszöbét nem modellezi), és belastingdienst-engedélyt feltételez. A tényleges nettó függ a munkáltatói pensioenpremie-től, az egyéni levonásoktól és a pontos helyzettől. A pontos összeget a loonstrook (bérpapír) tartalmazza; az éves aangifte-vel gyakran visszajár vagy pótlandó adó."
         officialSources={[
           { label: "belastingdienst.nl — Loonheffingen", url: "https://www.belastingdienst.nl/" },
           { label: "rijksoverheid.nl — Inkomstenbelasting", url: "https://www.rijksoverheid.nl/onderwerpen/inkomstenbelasting" },
@@ -177,7 +198,7 @@ function Legend({ color, label, amount }: { color: string; label: string; amount
   );
 }
 
-function Row({ label, value, sign }: { label: string; value: string; sign: "−" | "+" }) {
+function Row({ label, value, sign }: { label: string; value: string; sign: "−" | "+" | "" }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-ink-muted">{label}</span>

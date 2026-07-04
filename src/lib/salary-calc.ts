@@ -481,17 +481,28 @@ function nlArbeidskorting(annual: number): number {
   return 0;
 }
 
+// 30%-regeling (expat-kedvezmény) 2025 — a bér max 30%-a adómentesen fizethető,
+// DE a MARADÓ adóköteles bérnek el kell érnie a bérküszöböt (általános norma;
+// 30 év alatti mesterdiplomásoknak alacsonyabb — ezt a becslés nem modellezi),
+// és az alap a WNT-normáig (246 000 €) számít. 2027-től a kulcs 27%-ra csökken.
+export const NL_RULING_NORM_2025 = 46660;      // maradó adóköteles bér minimuma (€/év)
+export const NL_RULING_SALARY_CAP = 246000;    // WNT-norm: e fölötti bérrészre nem jár
+
 export interface SalaryCalcInputNL {
   gross: number;
   period: PayPeriod;
   /** A 8% vakantiegeld (szabadságpénz) beleszámítson-e az éves bruttóba. */
   holidayAllowance: boolean;
+  /** 30%-regeling (expat-kedvezmény) — belastingdienst-engedélyhez kötött. */
+  ruling30?: boolean;
 }
 
 export interface SalaryCalcResultNL {
   grossMonthly: number;        // a megadott havi bruttó (vakantiegeld nélkül)
   grossYearly: number;         // éves bruttó (vakantiegelddel, ha bekapcsolt)
   holidayPayYearly: number;    // 8% vakantiegeld éves összege
+  taxFreeYearly: number;       // 30%-regeling adómentes rész (0, ha nincs/nem fér bele)
+  taxableYearly: number;       // adóalap a regeling után (= gross − taxFree)
   box1TaxYearly: number;       // sávos adó a jóváírások ELŐTT
   algemeneKortingYearly: number;
   arbeidskortingYearly: number;
@@ -508,9 +519,18 @@ export function computeSalaryNL(input: SalaryCalcInputNL): SalaryCalcResultNL {
   const holidayPayYearly = input.holidayAllowance ? regularYearly * 0.08 : 0;
   const grossYearly = regularYearly + holidayPayYearly;
 
-  const box1TaxYearly = nlBox1Tax(grossYearly);
-  const algemeneKortingYearly = nlAlgemeneHeffingskorting(grossYearly);
-  const arbeidskortingYearly = nlArbeidskorting(grossYearly);
+  // 30%-regeling: legfeljebb a bér 30%-a (a WNT-plafonig), de csak annyi,
+  // hogy az adóköteles rész a bérküszöb FELETT maradjon. Alacsony bérnél így
+  // 0 a kihasználható kedvezmény — ez a valódi mechanika, nem hiba.
+  const taxFreeYearly = input.ruling30
+    ? Math.max(0, Math.min(0.3 * Math.min(grossYearly, NL_RULING_SALARY_CAP), grossYearly - NL_RULING_NORM_2025))
+    : 0;
+  const taxableYearly = grossYearly - taxFreeYearly;
+
+  // Az adó ÉS a jóváírások is az adóköteles bérből számolnak (loonheffing-alap).
+  const box1TaxYearly = nlBox1Tax(taxableYearly);
+  const algemeneKortingYearly = nlAlgemeneHeffingskorting(taxableYearly);
+  const arbeidskortingYearly = nlArbeidskorting(taxableYearly);
   const loonheffingYearly = Math.max(0, box1TaxYearly - algemeneKortingYearly - arbeidskortingYearly);
 
   const netYearly = grossYearly - loonheffingYearly;
@@ -518,7 +538,7 @@ export function computeSalaryNL(input: SalaryCalcInputNL): SalaryCalcResultNL {
   const effectiveRate = grossYearly > 0 ? ((grossYearly - netYearly) / grossYearly) * 100 : 0;
 
   return {
-    grossMonthly, grossYearly, holidayPayYearly, box1TaxYearly,
+    grossMonthly, grossYearly, holidayPayYearly, taxFreeYearly, taxableYearly, box1TaxYearly,
     algemeneKortingYearly, arbeidskortingYearly, loonheffingYearly,
     netMonthly, netYearly, effectiveRate,
   };
