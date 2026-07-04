@@ -40,10 +40,19 @@ export const ROADS_DE: RoadInfo[] = [
   { type: "highway", label: "Autópálya",                emoji: "🛣️", defaultSpeedLimit: 130, speedLimits: [100, 120, 130] },
 ];
 
+// Hollandia: autosnelweg NAPPAL 100 (6–19h), éjjel egyes szakaszokon 120/130;
+// buiten de bebouwde kom 80; binnen de bebouwde kom 50 (sok helyen 30).
+export const ROADS_NL: RoadInfo[] = [
+  { type: "city",    label: "Lakott területen belül (bebouwde kom)", emoji: "🏘️", defaultSpeedLimit: 50,  speedLimits: [30, 50] },
+  { type: "rural",   label: "Lakott területen kívül",                emoji: "🛣️", defaultSpeedLimit: 80,  speedLimits: [60, 80] },
+  { type: "highway", label: "Autópálya (autosnelweg)",               emoji: "🛣️", defaultSpeedLimit: 100, speedLimits: [100, 120, 130] },
+];
+
 /** Az adott ország útjai (sebesség-limitekkel). */
 export function getRoads(country: string | null | undefined): RoadInfo[] {
   if (country === "AT") return ROADS_AT;
   if (country === "DE") return ROADS_DE;
+  if (country === "NL") return ROADS_NL;
   return ROADS;
 }
 
@@ -374,4 +383,71 @@ export function calculateFineDE(input: { roadType: RoadType; speedLimit: number;
   return { ...base, severity: "ordnungsbusse", estimatedFineChf: t.eur, licenseSuspension: null,
     description: "Verwarnungsgeld (csekély túllépés) — nincs pont, nincs Fahrverbot.",
     legalNote: "55 €-ig Verwarnungsgeld (pont nélkül), postán/online fizethető. Nincs hatása a büntetett-előéletre." };
+}
+
+// ── Hollandia (boetes — OM/CJIB, WAHV/Mulder) ─────────────────────────────
+// A holland boete FIX (nem jövedelem-arányos) + ~9 € administratiekosten.
+// Meetcorrectie: 3 km/h a mért 100 km/h-ig, felette 3%. 30 km/h fölötti túllépés
+// → strafrecht (OM/rechter), rijontzegging (OBM) lehet. 50 km/h+ → a rendőr a
+// helyszínen elveszi a jogosítványt (rijbewijs ingevorderd). Hollandia bírságai
+// Európa legmagasabbjai közé tartoznak.
+const NL_ADMIN_FEE = 9;
+
+export function calculateFineNL(input: { roadType: RoadType; speedLimit: number; actualSpeed: number }): FineResult {
+  // Meetcorrectie: 3 km/h a mért ≤100 km/h-ig, felette a mért sebesség 3%-a.
+  const tolerance = input.actualSpeed <= 100 ? 3 : Math.round(input.actualSpeed * 0.03);
+  const overage = Math.max(0, Math.max(0, input.actualSpeed - input.speedLimit) - tolerance);
+  const innerorts = input.roadType === "city";
+  const base = { effectiveOverage: overage, tagessatzChf: null, daysOfFine: null, prisonInfo: null as string | null };
+
+  if (overage === 0) {
+    return {
+      ...base,
+      severity: "no-fine",
+      estimatedFineChf: 0,
+      licenseSuspension: null,
+      description: "A sebesség a megengedett kereten belül van (a meetcorrectie utáni túllépés 0).",
+      legalNote: "A rendőrség meetcorrectie-t von le: 3 km/h a mért 100 km/h-ig, felette a mért sebesség 3%-a.",
+    };
+  }
+
+  // Boetetabel 2025 (€, +9 € administratiekosten), túllépés km/h → boete.
+  const tiers: { max: number; eur: number }[] = innerorts
+    ? [
+        { max: 4, eur: 37 }, { max: 5, eur: 43 }, { max: 10, eur: 85 }, { max: 15, eur: 150 },
+        { max: 20, eur: 231 }, { max: 25, eur: 300 }, { max: 30, eur: 377 },
+      ]
+    : [
+        { max: 4, eur: 31 }, { max: 5, eur: 39 }, { max: 10, eur: 73 }, { max: 15, eur: 131 },
+        { max: 20, eur: 202 }, { max: 25, eur: 265 }, { max: 30, eur: 335 },
+      ];
+
+  const adminNote = "A holland boete FIX (nem jövedelem-arányos), + ~9 € administratiekosten. Hollandia bírságai Európa legmagasabbjai közé tartoznak; a CJIB szedi be. Iskola/30-as zóna környékén szigorúbb.";
+
+  // 50 km/h+ túllépés → a rendőr a helyszínen elveszi a jogosítványt.
+  if (overage >= 50) {
+    return { ...base, severity: "raser", estimatedFineChf: 0, licenseSuspension: "rijbewijs a helyszínen ingevorderd (elvéve)",
+      description: "Rendkívül nagy túllépés (50 km/h+): a rendőr a HELYSZÍNEN elveszi a jogosítványt.",
+      legalNote: `${adminNote} 50 km/h vagy afeletti túllépésnél a rijbewijs azonnal ingevorderd; az ügy a bíróságra (OM) kerül, tényleges rijontzegging (eltiltás) várható.` };
+  }
+  // 30 km/h fölött → strafrecht (bíróság), OBM lehetséges.
+  if (overage > 30) {
+    return { ...base, severity: "schwer", estimatedFineChf: 0, licenseSuspension: "rijontzegging (OBM) lehetséges a bíróságon",
+      description: "30 km/h fölötti túllépés: az ügy a bíróságra (OM/strafrecht) kerül — dagvaarding.",
+      legalNote: `${adminNote} 30 km/h fölött már NEM fix WAHV-boete, hanem a bíróság szab ki büntetést; rijontzegging (vezetéstől eltiltás) is lehet.` };
+  }
+
+  const t = tiers.find((x) => overage <= x.max) ?? tiers[tiers.length - 1];
+  const total = t.eur + NL_ADMIN_FEE;
+
+  // 25-30 közötti túllépés — magas boete, közelít a strafrechthez.
+  if (overage > 20) {
+    return { ...base, severity: "mittelschwer", estimatedFineChf: total, licenseSuspension: null,
+      description: "Jelentős túllépés — magas WAHV-boete, de még adminisztratív (nincs bírósági ügy 30 km/h-ig).",
+      legalNote: adminNote };
+  }
+
+  return { ...base, severity: "ordnungsbusse", estimatedFineChf: total, licenseSuspension: null,
+    description: "Adminisztratív boete (WAHV/Mulder) — a CJIB postázza, online fizethető.",
+    legalNote: adminNote };
 }

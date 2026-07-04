@@ -8,6 +8,7 @@ import {
   calculateFine,
   calculateFineAT,
   calculateFineDE,
+  calculateFineNL,
   type RoadType,
   type FineResult,
 } from "@/lib/speeding-fine";
@@ -41,12 +42,22 @@ const DE_LABELS: Record<FineResult["severity"], string> = {
   "raser":         "Magas sáv + Fahrverbot",
 };
 
+/** Holland súlyossági címkék. */
+const NL_LABELS: Record<FineResult["severity"], string> = {
+  "no-fine":       "Nincs büntetés",
+  "ordnungsbusse": "Boete (WAHV)",
+  "mittelschwer":  "Magas boete",
+  "schwer":        "Strafrecht (bíróság)",
+  "raser":         "Rijbewijs ingevorderd",
+};
+
 export function SpeedingCalculator() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
-  const cur = isAT || isDE ? "EUR" : "CHF";
+  const isNL = country === "NL";
+  const cur = country === "CH" ? "CHF" : "EUR";
   const roads = getRoads(country);
   const [roadType, setRoadType] = useState<RoadType>("highway");
   const [speedLimit, setSpeedLimit] = useState(120);
@@ -65,7 +76,9 @@ export function SpeedingCalculator() {
 
   const result = useMemo(
     () =>
-      isDE
+      isNL
+        ? calculateFineNL({ roadType, speedLimit, actualSpeed })
+        : isDE
         ? calculateFineDE({ roadType, speedLimit, actualSpeed })
         : isAT
         ? calculateFineAT({ roadType, speedLimit, actualSpeed })
@@ -75,7 +88,7 @@ export function SpeedingCalculator() {
             actualSpeed,
             monthlyNetIncomeChf: monthlyIncome,
           }),
-    [isDE, isAT, roadType, speedLimit, actualSpeed, monthlyIncome],
+    [isNL, isDE, isAT, roadType, speedLimit, actualSpeed, monthlyIncome],
   );
 
   function changeRoadType(t: RoadType) {
@@ -99,7 +112,9 @@ export function SpeedingCalculator() {
               Gyorshajtás bírság-BECSLŐ
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              {isDE ? (
+              {isNL ? (
+                <>Tájékoztató becslés a publikus holland boetetabel (WAHV / OM) alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót a hatóság (CJIB / OM) szabja meg.</>
+              ) : isDE ? (
                 <>Tájékoztató becslés a publikus német Bußgeldkatalog alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót a hatóság (Bußgeldstelle) szabja meg.</>
               ) : isAT ? (
                 <>Tájékoztató becslés a publikus osztrák szabályok (StVO / FSG) alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót a hatóság (Bezirkshauptmannschaft / LPD) szabja meg.</>
@@ -189,13 +204,13 @@ export function SpeedingCalculator() {
           <span>Limit: {speedLimit} km/h</span>
           <span className="font-bold">
             Túllépés: +{actualSpeed - speedLimit} km/h
-            <span className="text-ink-faint ml-1">(−{isDE ? 3 : 5} tolerancia)</span>
+            <span className="text-ink-faint ml-1">(−{isDE || isNL ? 3 : 5} tolerancia)</span>
           </span>
         </div>
       </section>
 
-      {/* Income — csak CH (AT/DE: a bírság NEM jövedelem-arányos) */}
-      {!isAT && !isDE && (
+      {/* Income — csak CH (AT/DE/NL: a bírság NEM jövedelem-arányos) */}
+      {!isAT && !isDE && !isNL && (
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
         <label className="block mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
           3. Havi nettó jövedelem (CHF)
@@ -235,12 +250,14 @@ export function SpeedingCalculator() {
           <span className="text-4xl shrink-0">{meta.emoji}</span>
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: meta.color }}>
-              {isDE ? DE_LABELS[result.severity] : isAT ? AT_LABELS[result.severity] : meta.label}
+              {isNL ? NL_LABELS[result.severity] : isDE ? DE_LABELS[result.severity] : isAT ? AT_LABELS[result.severity] : meta.label}
             </p>
             <h2 className="mt-1 text-[20px] font-extrabold leading-tight tracking-tight text-ink">
               {result.severity === "no-fine"
                 ? "Rendben — nincs büntetés"
-                : `~ ${result.estimatedFineChf.toLocaleString("hu-HU")} ${cur} bírság`}
+                : result.estimatedFineChf > 0
+                ? `~ ${result.estimatedFineChf.toLocaleString("hu-HU")} ${cur} bírság`
+                : "Bíróság / jogosítvány-elvétel"}
             </h2>
             <p className="mt-2 text-[12.5px] leading-relaxed text-ink">
               {result.description}
@@ -296,7 +313,14 @@ export function SpeedingCalculator() {
           Hogyan számolódik?
         </h3>
         <ul className="space-y-1.5 text-[11.5px] leading-relaxed text-ink-muted">
-          {isDE ? (
+          {isNL ? (
+            <>
+              <li><strong className="text-ink">Mért sebesség − meetcorrectie</strong> (3 km/h a 100 km/h-ig, felette 3%) = tényleges túllépés.</li>
+              <li><strong className="text-ink">Boete (WAHV/Mulder)</strong>: max 30 km/h túllépés — FIX bírság + ~9 € administratiekosten, a CJIB szedi be. Nem jövedelem-arányos.</li>
+              <li><strong className="text-ink">Strafrecht (bíróság)</strong>: 30 km/h fölött az OM/rechter dönt — dagvaarding, rijontzegging (OBM) is lehet.</li>
+              <li><strong className="text-ink">Rijbewijs ingevorderd</strong>: 50 km/h fölötti túllépésnél a rendőr a HELYSZÍNEN elveszi a jogosítványt. Hollandia bírságai Európa legmagasabbjai közé tartoznak.</li>
+            </>
+          ) : isDE ? (
             <>
               <li><strong className="text-ink">Mért sebesség − ~3 km/h tolerancia</strong> (100 km/h felett 3%) = tényleges túllépés.</li>
               <li><strong className="text-ink">Verwarnungsgeld</strong>: max 20 km/h túllépés — fix bírság (≤55 €), pont és Fahrverbot nélkül.</li>
@@ -348,12 +372,17 @@ export function SpeedingCalculator() {
         toolName="gyorshajtás bírság-becslő"
         variant="legal"
         notAdviceFor="jogi vagy büntetőjogi"
-        extraWarning={isDE
+        extraWarning={isNL
+          ? "A tényleges büntetést a hatóság (CJIB / OM) szabja meg, az enyhítő/súlyosító körülmények (visszaesés, iskola/30-as zóna, baleset, alkohol) figyelembevételével. A boetetabel sávjai tájékoztató jellegűek és évente változnak. 30 km/h fölötti túllépésnél az ügy bíróságra kerül — az eszköz NEM helyettesít ügyvédet (advocaat)."
+          : isDE
           ? "A tényleges büntetést a hatóság (Bußgeldstelle) szabja meg, az enyhítő/súlyosító körülmények (visszaesés, Probezeit, baleset, alkohol) figyelembevételével. A Bußgeldkatalog sávjai tájékoztató jellegűek és időnként változnak. Az eszköz NEM helyettesít ügyvédet."
           : isAT
           ? "A tényleges büntetést a hatóság (Bezirkshauptmannschaft / LPD) szabja meg, az enyhítő/súlyosító körülmények (visszaesés, Vormerkung, baleset, alkohol) figyelembevételével. A sávok tájékoztató jellegűek és időben változnak. Az eszköz NEM helyettesít ügyvédet."
           : "A tényleges büntetést a kantoni hatóság szabja meg, figyelembe véve enyhítő/súlyosító körülményeket (visszaesés, próbaidő, baleset, alkohol). Az eszköz NEM helyettesít ügyvédet — büntetőeljárás esetén fordulj ügyvédhez."}
-        officialSources={isDE ? [
+        officialSources={isNL ? [
+          { label: "OM — Boetes (Feiten & tarieven)", url: "https://www.om.nl/onderwerpen/verkeer" },
+          { label: "CJIB — Verkeersboetes", url: "https://www.cjib.nl/" },
+        ] : isDE ? [
           { label: "Bußgeldkatalog (bmdv / hivatalos)", url: "https://www.bmdv.bund.de/" },
           { label: "Kraftfahrt-Bundesamt (Flensburg)", url: "https://www.kba.de/" },
         ] : isAT ? [

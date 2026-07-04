@@ -56,7 +56,9 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   // "kozlekedes" — KIVÉVE (2026-07-05): VAN holland verzió (transport NL_TARIF_
   //   SYSTEMS/NL_TICKET_TYPES + calculateNlTransport: OVpay/OV-chipkaart, NS,
   //   GVB/RET/HTM, Dal Voordeel) — mind a 4 országra él.
-  "bussen",        // bírság-becslő (Bussen) — CH/AT/DE szabálysértés (NL nincs)
+  // "bussen" — KIVÉVE (2026-07-05): VAN holland verzió (speeding-fine
+  //   calculateFineNL: WAHV-boete + CJIB, 30 km/h fölött strafrecht, 50 km/h+
+  //   rijbewijs ingevorderd) — mind a 4 országra él.
   // "akciok" — KIVÉVE (2026-07-05): VAN holland boltlánc-lista (DEAL_STORES_NL:
   //   Albert Heijn/Jumbo/Lidl/Aldi/PLUS/Dirk/Spar/Vomar); a geo-bbox + térkép-
   //   középpont már NL-kész — mind a 4 országra él.

@@ -6,9 +6,9 @@ import { CountryGuard } from "@/components/country-guard";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Gyorshajtás-bírság kalkulátor — Svájc, Ausztria, Németország",
+  title: "Gyorshajtás-bírság kalkulátor — Svájc, Ausztria, Németország, Hollandia",
   description:
-    "Gyorshajtás-bírság becslő: Svájc (Ordnungsbusse + jövedelem-arányos Tagessatz), Ausztria (Organmandat + Führerscheinentzug), Németország (Bußgeldkatalog + Punkte + Fahrverbot). Csak becslés!",
+    "Gyorshajtás-bírság becslő: Svájc (Ordnungsbusse + jövedelem-arányos Tagessatz), Ausztria (Organmandat + Führerscheinentzug), Németország (Bußgeldkatalog + Punkte + Fahrverbot), Hollandia (WAHV-boete + CJIB, rijbewijs ingevorderd). Csak becslés!",
 };
 
 export default function BussenPage() {
