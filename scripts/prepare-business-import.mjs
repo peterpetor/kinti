@@ -131,6 +131,12 @@ const CITY = {
   "alkmaar": ["NH", 52.6324, 4.7534],
   "tresdorf": ["NOE", 48.3936, 16.3521],
   "geisenfeld": ["BY", 48.6851, 11.6136],
+  // 2026-07-05 bővítés — új autószervizek/boltok városai:
+  "deutsch-wagram": ["NOE", 48.2986, 16.5583],
+  "velden": ["KTN", 46.6114, 14.0417], // Velden am Wörthersee (9220), Karintia
+  "salzburg": ["SBG", 47.8095, 13.0550],
+  "eisenstadt": ["BGL", 47.8457, 16.5278],
+  "wels": ["OOE", 48.1575, 14.0289],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };

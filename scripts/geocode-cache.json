@@ -668,5 +668,58 @@
  "DE|Merheimer Straße 221-223, 50733 Köln": {
   "lat": 50.9669681,
   "lng": 6.9471043
- }
+ },
+ "CH|Rathausgasse 4, 9320 Arbon": {
+  "lat": 47.5151359,
+  "lng": 9.4346519
+ },
+ "CH|Landquartstrasse 34, 9320 Arbon": {
+  "lat": 47.5085453,
+  "lng": 9.4277461
+ },
+ "CH|Hauptstrasse 1, 9320 Arbon": {
+  "lat": 47.5154504,
+  "lng": 9.4362446
+ },
+ "CH|Bahnhofstrasse 40, 9320 Arbon": {
+  "lat": 47.511785,
+  "lng": 9.4333698
+ },
+ "AT|Lessinggasse 12, 2232 Deutsch-Wagram": {
+  "lat": 48.3084604,
+  "lng": 16.5672104
+ },
+ "AT|Weinzierler Str. 30, 9220 Velden am Wörthersee": {
+  "lat": 46.6159361,
+  "lng": 14.004171
+ },
+ "AT|Bachstraße 68, 5023 Salzburg": {
+  "lat": 47.8237128,
+  "lng": 13.0646859
+ },
+ "AT|Mattersburger Str. 5, 7000 Eisenstadt": {
+  "lat": 47.8362392,
+  "lng": 16.5245753
+ },
+ "AT|Am Andritzbach 34, 8045 Graz": {
+  "lat": 47.1051399,
+  "lng": 15.4150618
+ },
+ "AT|Wegscheider Str. 3, 4020 Linz": {
+  "lat": 48.2537766,
+  "lng": 14.2801349
+ },
+ "AT|Brixner Str. 1, 6020 Innsbruck": {
+  "lat": 47.2650154,
+  "lng": 11.3993145
+ },
+ "AT|Steiningerweg 24, 4600 Wels": {
+  "lat": 48.1678568,
+  "lng": 14.0406736
+ },
+ "DE|Kolbermoorer Str. 12, 83026 Rosenheim": {
+  "lat": 47.8493672,
+  "lng": 12.0876275
+ },
+ "AT|Viaduktbögen 121/123, 6020 Innsbruck": null
 }
