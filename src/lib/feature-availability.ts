@@ -33,7 +33,8 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
 export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
   // „allampolgarsag" KIVÉVE: mind a 4 országra van kérdésbank (CH Einbürgerung,
   // AT Staatsbürgerschaft, DE Einbürgerungstest, NL inburgering/KNM) → minden országban él.
-  "lakberles",     // lakbér rejtett-költség kalk. — CH/AT Nebenkosten/Betriebskosten bázisráta (DE-hez külön logika kell)
+  // „lakberles" KIVÉVE (2026-07-04): mind a 4 országra van rent-konfig (RENT_CONFIG
+  //   CH/AT/DE/NL — kaució-szabály, rezsi-alapráta, tippek, hivatalos források).
   // "iranytu" — KIVÉVE: az Iránytű közösségi benchmark (a userek töltik), DE-tudatos
   // (region-util DE-ág), és fő nav-fül → ne tűnjön el DE-ben; üresen indul, mint AT.
 ]);

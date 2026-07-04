@@ -6,9 +6,9 @@ import { CountryGuard } from "@/components/country-guard";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Lakásbérlés rejtett-költség kalkulátor — Kaúció + Nebenkosten",
+  title: "Lakásbérlés rejtett-költség kalkulátor — Kaúció + rezsi",
   description:
-    "Mietkaution blokkolása + Nebenkosten év végi elszámolásának becslése Svájcban. Tájékoztató kalkulátor — NEM jogi tanács.",
+    "Kaució blokkolása + rezsi (Nebenkosten / Betriebskosten / Servicekosten) év végi elszámolásának becslése Svájcban, Ausztriában, Németországban és Hollandiában. Tájékoztató kalkulátor — NEM jogi tanács.",
 };
 
 export default function LakberlesPage() {

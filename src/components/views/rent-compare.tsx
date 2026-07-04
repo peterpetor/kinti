@@ -7,6 +7,7 @@ import {
   HEATING_TYPES,
   regionsFor,
   calculateRentCost,
+  getRentConfig,
   type FlatSize,
   type HeatingType,
   type Region,
@@ -40,9 +41,10 @@ function fmt(n: number, cur: string) {
 
 export function RentCompare() {
   const [prefCountry] = usePreferredCountry();
-  const isAT = (prefCountry ?? DEFAULT_COUNTRY) === "AT";
-  const cur = isAT ? "EUR" : "CHF";
-  const regionOptions = regionsFor(isAT ? "AT" : "CH");
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const cfg = getRentConfig(country);
+  const cur = cfg.currency;
+  const regionOptions = regionsFor(country);
   // Ha a mentett régió másik országé, az aktuális ország első régiójára esünk vissza.
   const coerceRegion = (r: Region): Region => (regionOptions.some((x) => x.id === r) ? r : regionOptions[0].id);
 
@@ -51,14 +53,14 @@ export function RentCompare() {
   const [years, setYears] = useState(3);
 
   const ra = useMemo(
-    () => calculateRentCost({ monthlyRentChf: a.monthlyRent, size: a.size, heating: a.heating, region: coerceRegion(a.region), acontoNebenkostenChf: a.aconto, yearsToCalculate: years }),
+    () => calculateRentCost({ monthlyRentChf: a.monthlyRent, size: a.size, heating: a.heating, region: coerceRegion(a.region), acontoNebenkostenChf: a.aconto, yearsToCalculate: years, depositMonths: cfg.depositMonths, baseNebenkostenPerM2: cfg.baseNkPerM2 }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [a, years, isAT],
+    [a, years, country],
   );
   const rb = useMemo(
-    () => calculateRentCost({ monthlyRentChf: b.monthlyRent, size: b.size, heating: b.heating, region: coerceRegion(b.region), acontoNebenkostenChf: b.aconto, yearsToCalculate: years }),
+    () => calculateRentCost({ monthlyRentChf: b.monthlyRent, size: b.size, heating: b.heating, region: coerceRegion(b.region), acontoNebenkostenChf: b.aconto, yearsToCalculate: years, depositMonths: cfg.depositMonths, baseNebenkostenPerM2: cfg.baseNkPerM2 }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [b, years, isAT],
+    [b, years, country],
   );
 
   const totalA = ra.firstYearTotalCost;
@@ -70,8 +72,8 @@ export function RentCompare() {
     <div className="space-y-4">
       {/* Input oszlopok */}
       <div className="grid grid-cols-2 gap-3">
-        <FlatColumn tag="A" cfg={a} onChange={setA} highlight={cheaper === "A"} cur={cur} isAT={isAT} regionOptions={regionOptions} coerceRegion={coerceRegion} />
-        <FlatColumn tag="B" cfg={b} onChange={setB} highlight={cheaper === "B"} cur={cur} isAT={isAT} regionOptions={regionOptions} coerceRegion={coerceRegion} />
+        <FlatColumn tag="A" cfg={a} onChange={setA} highlight={cheaper === "A"} cur={cur} nkShort={cfg.nkShort} regionOptions={regionOptions} coerceRegion={coerceRegion} />
+        <FlatColumn tag="B" cfg={b} onChange={setB} highlight={cheaper === "B"} cur={cur} nkShort={cfg.nkShort} regionOptions={regionOptions} coerceRegion={coerceRegion} />
       </div>
 
       {/* Évek (közös) */}
@@ -121,15 +123,15 @@ export function RentCompare() {
           <span className="w-[5.5rem] text-right">Lakás B</span>
         </div>
         <CmpRow label="Havi fix (bér + akontó)" a={a.monthlyRent + a.aconto} b={b.monthlyRent + b.aconto} cur={cur} />
-        <CmpRow label={`Becsült ${isAT ? "BK" : "NK"} / év`} a={ra.estimatedActualNebenkostenPerYear} b={rb.estimatedActualNebenkostenPerYear} cur={cur} />
+        <CmpRow label={`Becsült ${cfg.nkShort} / év`} a={ra.estimatedActualNebenkostenPerYear} b={rb.estimatedActualNebenkostenPerYear} cur={cur} />
         <CmpRow label="Kaúció (lekötött pénz)" a={ra.kautionAmount} b={rb.kautionAmount} cur={cur} />
         <CmpRow label="Teljes 1. éves költség" a={totalA} b={totalB} cur={cur} strong />
         <CmpRow label={`Rejtett költség / ${years} év`} a={ra.totalHiddenCostOverPeriod} b={rb.totalHiddenCostOverPeriod} cur={cur} />
       </section>
 
       <p className="px-1 text-[11px] leading-snug text-ink-faint">
-        A zölddel jelölt érték az olcsóbb az adott sorban. A becslés átlagos {isAT ? "" : "svájci "}adatokon alapul
-        ({isAT ? "Betriebskosten" : "32 CHF/m²/év NK"}-becslés, 4% feltételezett hozam) — a tényleges költség eltérhet. Nem jogi vagy pénzügyi tanács.
+        A zölddel jelölt érték az olcsóbb az adott sorban. A becslés átlagos adatokon alapul
+        ({cfg.baseNkPerM2} {cur}/m²/év {cfg.nkShort}-becslés, 4% feltételezett hozam) — a tényleges költség eltérhet. Nem jogi vagy pénzügyi tanács.
       </p>
     </div>
   );
@@ -141,7 +143,7 @@ function FlatColumn({
   onChange,
   highlight,
   cur,
-  isAT,
+  nkShort,
   regionOptions,
   coerceRegion,
 }: {
@@ -150,7 +152,7 @@ function FlatColumn({
   onChange: (c: FlatCfg) => void;
   highlight: boolean;
   cur: string;
-  isAT: boolean;
+  nkShort: string;
   regionOptions: { id: Region; label: string; emoji: string }[];
   coerceRegion: (r: Region) => Region;
 }) {
@@ -198,7 +200,7 @@ function FlatColumn({
         ))}
       </select>
 
-      <label className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Akontó {isAT ? "BK" : "NK"} ({cur}/hó)</label>
+      <label className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Akontó {nkShort} ({cur}/hó)</label>
       <input
         type="number"
         min={0}
