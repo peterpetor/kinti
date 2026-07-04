@@ -165,6 +165,35 @@ export const FLIGHT_CONFIG: Record<string, FlightConfig> = {
       { emoji: "🚆", title: "Vonat csak rövid távon éri meg", body: "München → Budapest DB+ÖBB ~7–8 óra, Frankfurtból még több. Repülni általában gyorsabb és olcsóbb — a vonat inkább Bécs-közeli német határvárosokból." },
     ],
   },
+  NL: {
+    country: "NL",
+    origins: [
+      { code: "AMS", name: "Amsterdam Schiphol", city: "Amszterdam", emoji: "🇳🇱" },
+      { code: "EIN", name: "Eindhoven Airport", city: "Eindhoven", emoji: "🇳🇱" },
+      { code: "RTM", name: "Rotterdam The Hague", city: "Rotterdam", emoji: "🇳🇱" },
+    ],
+    home: BUD,
+    originFlag: "🇳🇱",
+    homeFlag: "🇭🇺",
+    currency: "€",
+    roundStep: 10,
+    airlines: [
+      { id: "klm", name: "KLM", type: "full-service", routes: ["AMS"], color: "#00A1DE", emoji: "🇳🇱", notes: "Schipholról NAPI direkt BUD-ra. 23 kg poggyász az alapcsomagban (a legolcsóbb Light-tarifon nem), gyakori és kényelmes.", url: "https://www.klm.nl/" },
+      { id: "transavia", name: "Transavia", type: "low-cost", routes: ["AMS", "EIN", "RTM"], color: "#00D1B0", emoji: "💚", notes: "Holland low-cost (KLM-leány). Schiphol/Eindhoven/Rotterdam bázis, szezonálisan BUD. Kézipoggyász díjas.", url: "https://www.transavia.com/" },
+      { id: "wizzair", name: "WizzAir", type: "low-cost", routes: ["EIN"], color: "#C6037E", emoji: "💜", notes: "Nagy eindhoveni bázis, gyakori EIN↔BUD. Olcsó alap-ár, minden extra fizetős.", url: "https://wizzair.com/" },
+      { id: "ryanair", name: "Ryanair", type: "low-cost", routes: ["EIN"], color: "#073590", emoji: "💙", notes: "Eindhovenből nagyon olcsó alap-ár. Online check-in kötelező, minden extra fizetős.", url: "https://www.ryanair.com/" },
+    ],
+    // Hollandia távolabb (AMS–BUD ~1150 km), de erős low-cost Eindhovenből.
+    seasons: seasons("€", [[30, 100], [45, 150], [75, 230], [150, 400]]),
+    tips: [
+      { emoji: "🛫", title: "Eindhoven (EIN) a low-cost gyöngyszem", body: "WizzAir/Ryanair/Transavia bázis — gyakran feleannyi, mint a Schiphol. Ha az ország déli felén laksz, EIN-ből indulj." },
+      { emoji: "✈️", title: "Schipholról KLM direkt", body: "AMS→BUD napi direkt (KLM); Transavia szezonálisan. Kényelmes, de a low-cost Eindhovenből általában olcsóbb." },
+      { emoji: "📅", title: "Foglalj 6–8 héttel előre", body: "A 6–8 hetes ablak a legjobb. Túl korán (5+ hó) még magas, túl későn (2 hét) drága." },
+      { emoji: "🗓️", title: "Hét közepe = olcsóbb", body: "Kedd–szerda jellemzően 15–20%-kal olcsóbb, mint csütörtök–péntek–vasárnap." },
+      { emoji: "🎒", title: "Ryanair / WizzAir / Transavia trükkök", body: "Az alap-jegy CSAK egy kis táskát enged. Plus poggyász = +20–45 €. Online check-in kötelező, különben reptéri díj." },
+      { emoji: "🚆", title: "Vonat Hollandiából nem alternatíva", body: "Amszterdam → Budapest vonattal 15+ óra, több átszállással (Németországon/Ausztrián át). BUD-ra repülni gyorsabb és olcsóbb; a vonat inkább Bécs/München felé jó." },
+    ],
+  },
 };
 
 /** Egy ország járat-konfigja (vagy null, ha nincs felvéve). */

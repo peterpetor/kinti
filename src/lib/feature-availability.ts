@@ -60,7 +60,8 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   // "akciok" — KIVÉVE (2026-07-05): VAN holland boltlánc-lista (DEAL_STORES_NL:
   //   Albert Heijn/Jumbo/Lidl/Aldi/PLUS/Dirk/Spar/Vomar); a geo-bbox + térkép-
   //   középpont már NL-kész — mind a 4 országra él.
-  "repulojegy",    // repülőjegy-figyelő — CH/AT/DE konfig (NL nincs; ne mutasson „hamarosan"-t)
+  // "repulojegy" — KIVÉVE (2026-07-05): VAN holland konfig (flights.ts FLIGHT_
+  //   CONFIG.NL: AMS/EIN/RTM ↔ BUD, KLM/Transavia/WizzAir/Ryanair) — mind a 4 ország.
   // "vizum" — KIVÉVE (2026-07-05): VAN holland verzió (permit-wizard STEPS_NL +
   //   evaluatePermitNL: vrij verkeer / BRP-inschrijving+BSN / duurzaam verblijf /
   //   kennismigrant) — mind a 4 országra él.
