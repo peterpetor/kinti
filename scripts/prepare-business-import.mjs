@@ -207,6 +207,21 @@ const CITY = {
   "ebeleben": ["TH", 51.2, 10.8],
   "gaggenau": ["BW", 48.8069, 8.3197],
   "herrenberg": ["BW", 48.5958, 8.8664],
+  // 2026-07-06 bővítés (8. kör) — nőgyógyász-katalógus 2-4. oldala:
+  "bonn": ["NW", 50.7374, 7.0982],
+  "wegberg": ["NW", 51.1461, 6.2778],
+  "marktredwitz": ["BY", 50.0, 12.0833],
+  "ulm": ["BW", 48.4011, 9.9876],
+  "saarlouis": ["SL", 49.3144, 6.7519],
+  "augsburg": ["BY", 48.3705, 10.8978],
+  "wiesbaden": ["HE", 50.0782, 8.2398],
+  "heidelberg": ["BW", 49.3988, 8.6724],
+  "backnang": ["BW", 48.9439, 9.4308],
+  "ludwigsburg": ["BW", 48.8974, 9.1917],
+  "kernen": ["BW", 48.8, 9.3167],
+  "münchberg": ["BY", 50.1878, 11.7856],
+  "marktheidenfeld": ["BY", 49.85, 9.6],
+  "bad aibling": ["BY", 47.8667, 12.0],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
