@@ -278,7 +278,7 @@ export function SchoolSystem() {
                 <div className={cn("mt-1 rounded-pill px-2 py-0.5 text-[11px] font-black", level.color, "bg-white/60")}>
                   {level.ages}
                 </div>
-                <div className="text-[11px] font-semibold text-ink-muted mt-0.5">{level.years} év</div>
+                <div className="text-[11px] font-semibold text-slate-500 mt-0.5">{level.years} év</div>
               </div>
 
               {/* Tartalom */}
@@ -286,15 +286,15 @@ export function SchoolSystem() {
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <h3 className={cn("text-[15px] font-extrabold tracking-tight", level.color)}>{level.name}</h3>
                   {level.nameDe && (
-                    <span className="text-[11px] font-bold text-ink-muted">({level.nameDe})</span>
+                    <span className="text-[11px] font-bold text-slate-500">({level.nameDe})</span>
                   )}
                 </div>
-                <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">{level.description}</p>
+                <p className="mt-1 text-[12.5px] leading-snug text-slate-600">{level.description}</p>
 
                 {level.tracks && (
                   <div className="mt-2 space-y-1">
                     {level.tracks.map((track, ti) => (
-                      <div key={ti} className="flex items-center gap-1.5 text-[11.5px] font-semibold text-ink">
+                      <div key={ti} className="flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-800">
                         <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", level.color.replace("text-", "bg-"))} />
                         {track}
                       </div>
@@ -303,7 +303,7 @@ export function SchoolSystem() {
                 )}
 
                 {level.tip && (
-                  <div className="mt-2 rounded-[10px] bg-white/70 px-2.5 py-1.5 text-[11.5px] font-semibold text-ink-muted">
+                  <div className="mt-2 rounded-[10px] bg-white/70 px-2.5 py-1.5 text-[11.5px] font-semibold text-slate-600">
                     💡 {level.tip}
                   </div>
                 )}
@@ -313,7 +313,7 @@ export function SchoolSystem() {
             {/* Szintek összekötője */}
             {idx < levels.length - 1 && (
               <div className="flex justify-center mt-2">
-                <span className="text-ink-muted text-lg">↓</span>
+                <span className="text-slate-400 text-lg">↓</span>
               </div>
             )}
           </div>

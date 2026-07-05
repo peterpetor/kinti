@@ -234,7 +234,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#fef3c7] text-[#d97706] text-base">
                     🏢
                   </span>
-                  {isCH ? "Svájci Iskolarendszer" : country === "DE" ? "Német Iskolarendszer" : "Osztrák Iskolarendszer"}
+                  {isCH ? "Svájci Iskolarendszer" : country === "DE" ? "Német Iskolarendszer" : country === "NL" ? "Holland Iskolarendszer" : "Osztrák Iskolarendszer"}
                 </Link>
                 )}
                 {has("vizum") && (
@@ -397,7 +397,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     🎯
                   </span>
-                  {isCH ? "Napi Svájci Kvíz" : country === "DE" ? "Napi Német Kvíz" : "Napi Osztrák Kvíz"}
+                  {isCH ? "Napi Svájci Kvíz" : country === "DE" ? "Napi Német Kvíz" : country === "NL" ? "Napi Holland Kvíz" : "Napi Osztrák Kvíz"}
                 </Link>
                 )}
               </CollapsibleSection>
