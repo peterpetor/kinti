@@ -203,6 +203,10 @@ const CITY = {
   "beuron": ["BW", 48.05, 8.9833],
   "reutlingen": ["BW", 48.4919, 9.2042],
   "bobenheim-roxheim": ["RP", 49.5333, 8.3333],
+  // 2026-07-06 bővítés (7. kör) — magyar könyvelő-katalógus városai:
+  "ebeleben": ["TH", 51.2, 10.8],
+  "gaggenau": ["BW", 48.8069, 8.3197],
+  "herrenberg": ["BW", 48.5958, 8.8664],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
