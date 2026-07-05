@@ -222,6 +222,12 @@ const CITY = {
   "münchberg": ["BY", 50.1878, 11.7856],
   "marktheidenfeld": ["BY", 49.85, 9.6],
   "bad aibling": ["BY", 47.8667, 12.0],
+  // 2026-07-06 bővítés (9. kör):
+  "solingen": ["NW", 51.1657, 7.0674],
+  "ichenhausen": ["BY", 48.3667, 10.3],
+  "maintal": ["HE", 50.15, 8.8333],
+  "mainz-ebersheim": ["RP", 49.95, 8.2833],
+  "freiburg": ["BW", 47.9959, 7.8522],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
