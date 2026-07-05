@@ -63,3 +63,10 @@ dummy_data/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# üzleti adat — a TELJES cég/vállalkozás-lista (nevek, címek, telefonok).
+# NE kerüljön a publikus repóba. Lokálisan megmarad, a pipeline (prepare-business-
+# import.mjs) továbbra is működik; az SQL/cache regenerálható a CSV-ből.
+scripts/businesses.csv
+scripts/import_businesses.sql
+scripts/geocode-cache.json
