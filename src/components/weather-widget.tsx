@@ -69,7 +69,7 @@ export function WeatherWidget() {
   const cond = data ? describeWeather(data.code) : null;
 
   return (
-    <section className="relative flex items-center gap-3 overflow-hidden rounded-card border border-line bg-surface px-4 py-3 shadow-card">
+    <section className="weather-widget relative flex items-center gap-3 overflow-hidden rounded-card border border-line bg-surface px-4 py-3 shadow-card">
       {/* bal: emoji + hőfok */}
       <div className="flex items-center gap-2.5">
         <span className="text-[30px] leading-none" aria-hidden>

@@ -27,7 +27,10 @@ const LEGAL_GATE_SCRIPT = buildLegalGateScript();
 // A mentett témát (Világos/Sötét) még a festés előtt visszaállítjuk, hogy reload
 // után is éljen a választás, villanás (FOUC) nélkül. A régi „modern" mentett
 // értéket sötétre migráljuk (a Modern skin helyére a Sötét mód lépett). Lásd ThemeToggle.
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('kinti-theme');if(t==='modern'){t='dark';localStorage.setItem('kinti-theme','dark');}if(t==='dark'||t==='warm'){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
+// A mentett országot is kitesszük data-country-ba (whitelist!) — így a csak
+// CH/AT-ban élő elemek (pl. weather-widget) CSS-ből már az ELSŐ frame-ben
+// rejthetők DE/NL-ben, hidratálás-villanás nélkül (a JS-guard marad a döntő).
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('kinti-theme');if(t==='modern'){t='dark';localStorage.setItem('kinti-theme','dark');}if(t==='dark'||t==='warm'){document.documentElement.dataset.theme=t;}var c=localStorage.getItem('kinti.country');if(c==='CH'||c==='AT'||c==='DE'||c==='NL'){document.documentElement.dataset.country=c;}}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: {

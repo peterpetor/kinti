@@ -571,3 +571,11 @@ input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
   appearance: none;
 }
+
+/* Weather-widget: csak CH/AT-ban él — DE/NL-ben már az ELSŐ (hidratálás előtti)
+   frame-ben rejtve, hogy ne villanjon fel a CH-default skeleton (a data-country-t
+   a layout inline init-szkriptje állítja be a festés előtt; a JS-guard a döntő). */
+html[data-country="DE"] .weather-widget,
+html[data-country="NL"] .weather-widget {
+  display: none;
+}

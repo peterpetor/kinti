@@ -70,8 +70,8 @@ export function SalaryOffersView() {
         </h2>
         <p className="mt-2 text-[13px] leading-relaxed text-ink-muted">
           Az ajánlat-összehasonlítás a svájci nettó-bér modelljére épül (Quellensteuer,
-          kanton, egyházi adó). Az osztrák Bérkalkulátor más adórendszerrel (Lohnsteuer,
-          SV) számol, és nem ment ajánlatot.
+          kanton, egyházi adó). A többi ország Bérkalkulátora (osztrák, német, holland)
+          a saját adórendszerével számol, és egyelőre nem ment ajánlatot.
         </p>
         <Link
           href="/berkalkulator"
