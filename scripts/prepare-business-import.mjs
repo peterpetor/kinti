@@ -228,6 +228,14 @@ const CITY = {
   "maintal": ["HE", 50.15, 8.8333],
   "mainz-ebersheim": ["RP", 49.95, 8.2833],
   "freiburg": ["BW", 47.9959, 7.8522],
+  // 2026-07-06 bővítés (10. kör):
+  "aachen": ["NW", 50.7753, 6.0839],
+  "erding": ["BY", 48.3058, 11.9075],
+  "weidenstetten": ["BW", 48.5333, 9.9667],
+  "hausham": ["BY", 47.7333, 11.8333],
+  "neufra": ["BW", 48.2833, 9.1],
+  "mettmann": ["NW", 51.25, 6.9667],
+  "garching": ["BY", 48.2489, 11.6511],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
