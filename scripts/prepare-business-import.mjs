@@ -161,6 +161,16 @@ const CITY = {
   "groß-gerau": ["HE", 49.9167, 8.4833], // Wallerstädten (Groß-Gerau városrésze)
   "dornstadt": ["BW", 48.4453, 9.9394],
   "fichtenberg": ["BW", 49.0167, 9.65],
+  // 2026-07-06 bővítés (3. kör) — nőgyógyászok + biztosítási tanácsadó városai:
+  "karlsruhe": ["BW", 49.0069, 8.4037],
+  "achern": ["BW", 48.6297, 8.0781],
+  "überlingen": ["BW", 47.7686, 9.1697],
+  "senden": ["BY", 48.3667, 10.05], // Senden bei Neu-Ulm (Bajorország)
+  "bad windsheim": ["BY", 49.5019, 10.4022],
+  "heilbronn": ["BW", 49.1427, 9.2109],
+  "lauf an der pegnitz": ["BY", 49.5089, 11.2803],
+  "regensburg": ["BY", 49.0134, 12.1016],
+  "gräfelfing": ["BY", 48.1167, 11.4333],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
