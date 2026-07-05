@@ -149,6 +149,28 @@ export async function getCategories(): Promise<Category[]> {
 
 // --- Queries: Businesses -----------------------------------------------------
 
+/**
+ * Publikus szerializáló: a `Business`-ből NULL-ozza azokat a mezőket, amiknek
+ * SOHA nem szabad a böngészőbe (RSC-payload / JSON-API) jutniuk:
+ *   • manageToken   — tulajdonosi szerkesztő-kulcs (átvétel!) → csak a beküldés
+ *                     saját POST-válaszában és az admin-nézetben szabad látszania.
+ *   • ownerUserId   — Clerk belső azonosító.
+ *   • contactEmail  — a tulaj privát e-mailje (a lead/digest e-mailek SZERVER-
+ *                     oldalon használják; a publikus kártyának nem kell).
+ *   • moderationDecidedBy — belső admin-audit.
+ * A lista- és részletoldal-megjelenítés egyik mezőt sem olvassa, így a kiszűrés
+ * nem tör el semmit — viszont megszünteti a tömeges átvétel/PII-scrape esélyét.
+ */
+export function toPublicBusiness(b: Business): Business {
+  return {
+    ...b,
+    manageToken: null,
+    ownerUserId: null,
+    contactEmail: null,
+    moderationDecidedBy: null,
+  };
+}
+
 export async function getBusinesses(opts: BusinessQuery = {}): Promise<Business[]> {
   const where: string[] = ["COALESCE(hidden, 0) = 0", "moderation_status = 1"];
   const binds: unknown[] = [];
@@ -159,7 +181,8 @@ export async function getBusinesses(opts: BusinessQuery = {}): Promise<Business[
   sql += " ORDER BY featured DESC, dist_meters ASC";
   if (opts.limit) { sql += " LIMIT ?"; binds.push(opts.limit); }
   const { results } = await getDB().prepare(sql).bind(...binds).all<BusinessRow>();
-  return results.map(toBusiness);
+  // A lista MINDIG publikus felületre megy → érzékeny mezők nélkül.
+  return results.map((r) => toPublicBusiness(toBusiness(r)));
 }
 
 export async function getBusinessById(id: string): Promise<Business | null> {

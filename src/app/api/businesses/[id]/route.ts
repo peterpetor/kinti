@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getBusinessById } from "@/lib/repo";
+import { getBusinessById, toPublicBusiness } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -10,5 +10,6 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   if (!business) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
-  return NextResponse.json({ business }, { headers: { "cache-control": "no-store" } });
+  // Publikus válasz → érzékeny mezők (manageToken/ownerUserId/contactEmail) nélkül.
+  return NextResponse.json({ business: toPublicBusiness(business) }, { headers: { "cache-control": "no-store" } });
 }

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
-import { getBusinessById, getReviewsByBusiness, recordBusinessSearchTerm } from "@/lib/repo";
+import { getBusinessById, getReviewsByBusiness, recordBusinessSearchTerm, toPublicBusiness } from "@/lib/repo";
 import { parseDbDate, dbDateOnly } from "@/lib/dates";
 import { mediaUrl } from "@/lib/media";
 import { CategoryIcon } from "@/components/ui/category-icon";
@@ -95,8 +95,11 @@ export default async function BusinessPage({
   params: { id: string };
   searchParams: { st?: string; ertekeles?: string };
 }) {
-  const b = await getBusinessById(params.id);
-  if (!b) notFound();
+  const raw = await getBusinessById(params.id);
+  if (!raw) notFound();
+  // Publikus profil-oldal → érzékeny mezők (manageToken/ownerUserId/contactEmail)
+  // NÉLKÜL, hogy semmiképp ne kerüljenek az RSC-payloadba (átvétel/PII-védelem).
+  const b = toPublicBusiness(raw);
 
   // „Honnan jönnek" — ha a keresőből érkezett (?st=...), rögzítjük a keresőszót.
   if (typeof searchParams.st === "string" && searchParams.st.trim()) {
