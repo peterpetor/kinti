@@ -189,6 +189,20 @@ const CITY = {
   "sulzbach an der murr": ["BW", 49.0167, 9.4833],
   "germering": ["BY", 48.1333, 11.35],
   "dingolfing": ["BY", 48.6386, 12.4894],
+  // 2026-07-06 bővítés (6. kör) — magyar ügyvéd-katalógus (nemetorszagi-magyarok.de) városai:
+  "rheda-wiedenbrück": ["NW", 51.8419, 8.3],
+  "ostfildern": ["BW", 48.7167, 9.2667],
+  "göppingen": ["BW", 48.7028, 9.6522],
+  "pforzheim": ["BW", 48.8922, 8.6946],
+  "berchtesgaden": ["BY", 47.63, 13.0025],
+  "leichlingen": ["NW", 51.1, 7.0167],
+  "riedstadt": ["HE", 49.85, 8.5],
+  "siegen": ["NW", 50.8747, 8.0243],
+  "paderborn": ["NW", 51.7189, 8.7544],
+  "merzenich": ["NW", 50.8167, 6.5667],
+  "beuron": ["BW", 48.05, 8.9833],
+  "reutlingen": ["BW", 48.4919, 9.2042],
+  "bobenheim-roxheim": ["RP", 49.5333, 8.3333],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
