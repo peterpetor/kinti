@@ -150,6 +150,17 @@ const CITY = {
   "glattpark": ["ZH", 47.4308, 8.5611], // Glattpark/Opfikon, Zürich mellett
   "opfikon": ["ZH", 47.4308, 8.5611],
   "gouda": ["ZH", 52.0116, 4.7106],
+  // 2026-07-06 bővítés (2. kör) — további szakemberek városai:
+  "krimpen aan den ijssel": ["ZH", 51.9167, 4.6167],
+  "waalwijk": ["NB", 51.6858, 5.0725],
+  "heerlen": ["LI", 50.8882, 5.9795],
+  "apeldoorn": ["GE", 52.2112, 5.9699],
+  "horb am neckar": ["BW", 48.4453, 8.6844],
+  "metzingen": ["BW", 48.5372, 9.2814],
+  "schillingsfürst": ["BY", 49.2925, 10.4667],
+  "groß-gerau": ["HE", 49.9167, 8.4833], // Wallerstädten (Groß-Gerau városrésze)
+  "dornstadt": ["BW", 48.4453, 9.9394],
+  "fichtenberg": ["BW", 49.0167, 9.65],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
