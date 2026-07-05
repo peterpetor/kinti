@@ -29,7 +29,9 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
   const classes = cn(
     "relative flex min-w-0 gap-3 rounded-card border bg-surface p-3",
     b.featured ? "border-2 border-pro shadow-pop bg-pro/[0.02]" : "border-line shadow-card",
-    href && "transition hover:shadow-card-hover active:scale-[0.99]",
+    // Desktop-hoveren a meglévő árnyék-emelés mellé egy leheletnyi (2px) lift —
+    // „premium" érzet; érintőn (mobil) nincs hover, így ott változatlan.
+    href && "transition hover:shadow-card-hover md:hover:-translate-y-0.5 active:scale-[0.99]",
     className,
   );
 

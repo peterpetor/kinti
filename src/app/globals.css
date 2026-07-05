@@ -215,6 +215,23 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: rgb(var(--primary) / 0.5);
   }
+
+  /* Billentyűzet-fókusz gyűrű — CSAK billentyűzet-navigációnál (:focus-visible)
+     látszik, egérrel/érintéssel NEM, így a vizuális design változatlan marad,
+     de a Tab-bal navigálás (accessibility) végre láthatóvá válik. Márka-zöld,
+     az elem lekerekítését követi. Ahol szándékosan `outline-none` van (pl. saját
+     aktív-állapotú chip), ott a Tailwind utility felülírja — ez a kívánt. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* Szövegkijelölés a márka hangján (a natív böngésző-kék helyett) — finom
+     fenyőzöld fátyol, a téma-szöveg olvasható marad rajta (light + dark). */
+  ::selection {
+    background: rgb(var(--primary) / 0.22);
+    color: rgb(var(--text));
+  }
 }
 
 /* A logó fix márka-színű (minden témában azonos — lásd ui/logo.tsx); sötét
