@@ -721,5 +721,29 @@
   "lat": 47.8493672,
   "lng": 12.0876275
  },
- "AT|Viaduktbögen 121/123, 6020 Innsbruck": null
+ "AT|Viaduktbögen 121/123, 6020 Innsbruck": null,
+ "AT|Innsbrucker Bundesstraße 41, 5020 Salzburg": {
+  "lat": 47.803668,
+  "lng": 13.0187014
+ },
+ "AT|Moosstraße 133, 5020 Salzburg": {
+  "lat": 47.7605548,
+  "lng": 13.0168763
+ },
+ "AT|Eichetstraße 4, 5020 Salzburg": {
+  "lat": 47.7984992,
+  "lng": 13.0188547
+ },
+ "AT|Saint-Julien-Straße 15/I, 5020 Salzburg": {
+  "lat": 47.8109244,
+  "lng": 13.0384295
+ },
+ "AT|Eberhard-Fugger-Straße 3, 5020 Salzburg": {
+  "lat": 47.802494,
+  "lng": 13.0664964
+ },
+ "AT|Neutorstraße 21, 5020 Salzburg": {
+  "lat": 47.7973489,
+  "lng": 13.0339355
+ }
 }

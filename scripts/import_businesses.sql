@@ -52,11 +52,6 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-frank-automento', 'Frank Autómentő', 'autoszer', 'Autószerelő', 'Mobil', '+436601234567', '0-24 autómentés, defektjavítás, helyszíni gyorssegély Bécs és környékén. · frankautomento.hu', '["Magyar"]', 48.2082, 16.3738, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'W')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-dentailor-dental-team', 'Dentailor Dental Team', 'fogorvos', 'Fogorvos', 'Radetzkyplatz 2, 1030 Wien', NULL, 'Magyar-osztrák fogászat Bécsben és Sopronban. Implantológia, esztétikai fogászat. · dentailor.at', '["Magyar"]', 48.2108075, 16.3897393, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'W')
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
@@ -133,11 +128,6 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('nl-imp-morocz-agnes', 'Mórocz Ágnes', 'pszichologus', 'Pszichológus / Coach', 'Morsweg 44, 2312AE Leiden', NULL, 'Tanácsadó szakpszichológus és terapeuta magyarul Hollandiában. · psycholeiden.com', '["Magyar"]', 52.1610101, 4.4792482, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'NL', 'ZH')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('nl-imp-erdody-nagy-edit', 'Erdődy-Nagy Edit', 'pszichologus', 'Pszichológus / Coach', 'Hollandia', NULL, 'Pszichoterápiás szolgáltatások magyar nyelven Hollandiában. · pszichologus.nl', '["Magyar"]', 52.13, 5.29, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'NL', NULL)
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
@@ -318,11 +308,6 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-dull-hairdressers-dominik-dull', 'Dull Hairdressers – Dominik Dull', 'fodrasz', 'Fodrász', 'St. Peter Hauptstraße 61/1. OG/36, 8042 Graz', NULL, 'Magyarul is beszélő fodrász Grazban. Precíz vágások, festések, modern frizurák. Online foglalás Treatwellen.', '["Magyar"]', 47.0707, 15.4395, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'STM')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-haarstudio-alex-rudi', 'Haarstudio Alex Rudi', 'fodrasz', 'Fodrász', 'Urfahr, Linz', NULL, 'Magyar fodrász Linzben (Urfahr). Balayage, hajfestés, vágás — magyarul, németül és angolul. Trammal könnyen elérhető. · www.hairstudioalexrudi.com', '["Magyar"]', 48.3069, 14.2858, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'OOE')
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
@@ -722,17 +707,7 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('ch-imp-dr-illes-klara-svajci-ugyved', 'Dr. Illés Klára – Svájci ügyvéd', 'ugyved', 'Ügyvéd', 'Svájc (mobil iroda)', '+41 79 660 5617', 'Magyar ügyvéd egész Svájcra. Tartózkodási engedély, munkajog, polgári jog, öröklési jog — mobilon elérhető. · www.illesugyved.com', '["Magyar"]', 47.3769, 8.5417, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'CH', 'ZH')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-becsi-ingatlanok-becsingatlan-com', 'Bécsi Ingatlanok – becsingatlan.com', 'ingatlan', 'Ingatlan', 'Brahmsplatz 7/3/Top 12A, 1040 Wien', '+43 1 963 9900', 'Magyar ingatlanközvetítő Bécsben (4. ker.). Ingatlanvásárlás, bérbeadás, befektetési tanácsadás — magyarul. · www.becsingatlan.com', '["Magyar"]', 48.1941248, 16.3692006, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'W')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('nl-imp-remport-vastgoed-holland-ingatlan', 'Remport Vastgoed – Holland ingatlan', 'ingatlan', 'Ingatlan', 'Hollandia (mobil iroda)', '+31 6 57431907', 'Magyar ingatlanközvetítő Hollandiában. Lakásvásárlás, jelzáloghitel, jogi tanácsadás magyaroknak egész NL-ben. · www.remport.net', '["Magyar"]', 52.13, 5.29, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'NL', NULL)
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
@@ -748,16 +723,6 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('de-imp-gasthaus-goldener-anker-heroldsberg', 'Gasthaus Goldener Anker – Heroldsberg', 'etterem', 'Étterem', 'Oberer Markt 19, 90562 Heroldsberg', '+49 911 5188719', 'Magyar ételeket kínáló vendéglő Nürnberg közelében. Gulyás, halászlé, töltött káposzta — magyar zene is.', '["Magyar"]', 49.5340886, 11.1580796, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'DE', 'BY')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('de-imp-optitax-magyar-nemet-adotanacsadas', 'Optitax – Magyar-Német adótanácsadás', 'konyveles', 'Könyvelés', 'Online iroda, Németország egész területén', NULL, 'Magyar-német határokon átnyúló adótanácsadás. Cégalapítás, áfa, jövedelemadó, bérszámfejtés — online is. · www.optitax.eu', '["Magyar"]', 51.1, 10.4, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'DE', NULL)
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('de-imp-halasbau-gmbh-del-bajororszag', 'Halasbau GmbH – Dél-Bajorország', 'epitoipar', 'Építőipar', 'Halasbau GmbH, München és Bajorország', NULL, 'Magyar építőipari vállalat Bajorországban. Magas- és mélyépítés, projektmenedzsment — München környékén aktív. · www.halasbau.de', '["Magyar"]', 48.1351, 11.582, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'DE', 'BY')
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
@@ -798,11 +763,6 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-dr-eva-domjan-rechtsanwaltin-graz', 'Dr. Eva Domjan – Rechtsanwältin Graz', 'ugyved', 'Ügyvéd', 'Steinbergstraße 56, 8052 Graz', '+43 316 689420', 'Magyar ügyvéd Grazban. Gazdasági, ingatlan, családi jog + hitelesített német-magyar bírósági tolmács. · www.domjan.at', '["Magyar"]', 47.0552289, 15.3731261, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'STM')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-tierordination-hetzendorf-wien', 'Tierordination Hetzendorf – Wien', 'allatorvos', 'Állatorvos', 'Hetzendorf körzet, 1130 Wien', NULL, 'Magyar állatorvos Bécsben. Kisállat-rendelő, állatfogászat, általános állatorvosi ellátás. · www.tierordination-hetzendorf.at', '["Magyar"]', 48.2082, 16.3738, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'W')
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
@@ -877,11 +837,6 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('de-imp-gmp-nord-audit-magyar-konyvelo-hamburg', 'GMP Nord Audit – Magyar könyvelő Hamburg', 'konyveles', 'Könyvelés', 'Tornesch, Hamburg körzete', '+49 40 5719 4360', 'Magyar nyelvű könyvelés és adótanácsadás Hamburg és Schleswig-Holstein területén — kifejezetten magyar ügyfeleknek. · www.gmp-nord-audit-gmbh.de', '["Magyar"]', 53.5511, 9.9937, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'DE', 'HH')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('de-imp-paprika-am-ring-mannheim', 'Paprika am Ring – Mannheim', 'etterem', 'Étterem', 'U4, 13, 68161 Mannheim', NULL, 'Autentikus magyar és olasz konyha Mannheimben (belváros). Gulyás, lángos, paprikás schnitzel — helyi kedvenc. · www.paprika-am-ring.de', '["Magyar"]', 49.4917235, 8.4734902, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'DE', 'BW')
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
@@ -903,16 +858,6 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('de-imp-molnar-auto-service-offenbach', 'Molnar Auto Service – Offenbach', 'autoszer', 'Autószerelő', 'Obere Grenzstraße 60, 63071 Offenbach am Main', '+49 69 37404820', 'Magyar autószerelő Offenbachban (Frankfurt közelében). Kfz-Meisterbetrieb — elektronika, motor, sebességváltó, fogasszíj. · www.molnarautoservice.de', '["Magyar"]', 50.0982599, 8.7861429, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'DE', 'HE')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('nl-imp-tandartspraktijk-faunabuurt-almere', 'Tandartspraktijk Faunabuurt – Almere', 'fogorvos', 'Fogorvos', 'Almere, Faunabuurt', '+31 36 539 0000', 'Magyar fogszakértőt (Dr. Pocsai Dóra) foglalkoztató rendelő Almereben. Általános fogászat — hollandul és magyarul. · www.tandartspraktijkfaunabuurt.nl', '["Magyar"]', 52.3508, 5.2647, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'NL', 'FL')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('de-imp-sb-kfztechnik-munchen-korzete', 'SB-Kfztechnik – München körzete', 'autoszer', 'Autószerelő', 'Geisenfeld, München és Bajorország körzete', '+49 8452 7367816', 'Magyar autószerelő Münchentől 50 km-re. Általános Kfz-javítás, diagnosztika, időpontfoglalás telefonon. · www.sb-kfztechnik.de', '["Magyar"]', 48.1351, 11.582, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'DE', 'BY')
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
@@ -952,11 +897,6 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
-INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('de-imp-zahnarztpraxis-torok-thumm-nurnberg', 'Zahnarztpraxis Török & Thumm – Nürnberg', 'fogorvos', 'Fogorvos', 'Nürnberg', NULL, 'Magyar fogszakértő (Dr. Melinda Török) Nürnbergben. Általános fogászat, fogpótlás — pontos cím weboldalon. · www.zahnarzt-toeroek-thumm.de', '["Magyar"]', 49.4521, 11.0767, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'DE', 'BY')
-  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
-    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
-    category_label=excluded.category_label, canton_code=excluded.canton_code
-  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('ch-imp-cut-style', 'Cut & Style', 'fodrasz', 'Fodrász', 'Rathausgasse 4, 9320 Arbon', NULL, 'Coiffeur Arbonban. Hajvágás, hajápolás és styling kisebb településen, pontos cím alapján.', '["Magyar"]', 47.5151359, 9.4346519, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'CH', 'TG')
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
@@ -988,6 +928,36 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
     category_label=excluded.category_label, canton_code=excluded.canton_code
   WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-car-experts-gmbh', 'Car-Experts GmbH', 'autoszer', 'Autószerelő', 'Bachstraße 68, 5023 Salzburg', NULL, 'Autószerviz Salzburgban. Általános javítás, diagnosztika, karbantartás.', '["Magyar"]', 47.8237128, 13.0646859, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'SBG')
+  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
+    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
+    category_label=excluded.category_label, canton_code=excluded.canton_code
+  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
+INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-eva-s-ungarischer-schmankerlmarkt', 'Eva''s Ungarischer Schmankerlmarkt', 'elelmiszer', 'Élelmiszerbolt', 'Innsbrucker Bundesstraße 41, 5020 Salzburg', NULL, 'Magyar élelmiszer- és különlegességbolt Salzburgban. Fűszerek, felvágottak, édességek és hazai termékek.', '["Magyar"]', 47.803668, 13.0187014, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'SBG')
+  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
+    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
+    category_label=excluded.category_label, canton_code=excluded.canton_code
+  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
+INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-magyaros-etterem', 'Magyaros Étterem', 'etterem', 'Étterem', 'Moosstraße 133, 5020 Salzburg', NULL, 'Magyaros ételeket kínáló étterem Salzburgban. Hagyományos ízek és helyi vendéglátás.', '["Magyar"]', 47.7605548, 13.0168763, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'SBG')
+  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
+    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
+    category_label=excluded.category_label, canton_code=excluded.canton_code
+  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
+INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-dr-med-univ-sturm-heinz-christian', 'Dr. med. univ. Sturm Heinz Christian', 'orvos', 'Orvos', 'Eichetstraße 4, 5020 Salzburg', '+43 662 8295260', 'Hals-, nasen- és fülgyógyászati szakrendelés Salzburgban. Magyarul is elérhető.', '["Magyar"]', 47.7984992, 13.0188547, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'SBG')
+  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
+    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
+    category_label=excluded.category_label, canton_code=excluded.canton_code
+  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
+INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-dr-mierl-peter-markus', 'Dr. Mierl Peter Markus', 'fogorvos', 'Fogorvos', 'Saint-Julien-Straße 15/I, 5020 Salzburg', '+43 662 874636', 'Magyarul is elérhető fogászati praxis Salzburgban. Általános fogászat és fogpótlás.', '["Magyar"]', 47.8109244, 13.0384295, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'SBG')
+  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
+    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
+    category_label=excluded.category_label, canton_code=excluded.canton_code
+  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
+INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-dr-prutzek-sandra', 'Dr. Prutzek Sandra', 'fogorvos', 'Fogorvos', 'Eberhard-Fugger-Straße 3, 5020 Salzburg', '+43 662 625211', 'Magyarul is elérhető fogorvos Salzburgban. Általános fogászat, fogpótlás és preventív ellátás. · mailto:dr.prutzek@aon.at', '["Magyar"]', 47.802494, 13.0664964, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'SBG')
+  ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
+    blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
+    category_label=excluded.category_label, canton_code=excluded.canton_code
+  WHERE businesses.claimed = 0 AND businesses.source = 'csv-import';
+INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES ('at-imp-meszaros-tamas-friseur', 'Mészáros Tamás – Friseur', 'fodrasz', 'Fodrász', 'Neutorstraße 21, 5020 Salzburg', '+43 662 876 30 21', 'Magyarul is beszélő fodrász Salzburgban. Hajvágás, festés és styling szolgáltatások.', '["Magyar"]', 47.7973489, 13.0339355, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'csv-import', 'AT', 'SBG')
   ON CONFLICT(id) DO UPDATE SET address=excluded.address, lat=excluded.lat, lng=excluded.lng,
     blurb=excluded.blurb, phone=excluded.phone, category_id=excluded.category_id,
     category_label=excluded.category_label, canton_code=excluded.canton_code
