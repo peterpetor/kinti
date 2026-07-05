@@ -171,6 +171,20 @@ const CITY = {
   "lauf an der pegnitz": ["BY", 49.5089, 11.2803],
   "regensburg": ["BY", 49.0134, 12.1016],
   "gräfelfing": ["BY", 48.1167, 11.4333],
+  // 2026-07-06 bővítés (4. kör) — magyar fogorvos-katalógus (nemetorszagi-magyarok.de) városai:
+  "otterstadt": ["RP", 49.3667, 8.4167],
+  "bammental": ["BW", 49.3667, 8.7667],
+  "erbach": ["BW", 48.3167, 9.9], // Erbach (Alb-Donau-Kreis, BW) — nem a hesseni Erbach
+  "böfingen": ["BW", 48.4167, 9.9833], // Ulm városrésze
+  "gernsbach": ["BW", 48.8, 8.35],
+  "schwäbisch gmünd": ["BW", 48.7994, 9.7981],
+  "mühlacker": ["BW", 48.9483, 8.8419],
+  "wartenberg": ["BY", 48.4667, 12.05],
+  "neu-ulm": ["BY", 48.3967, 10.0122],
+  "fürth": ["BY", 49.4783, 10.9903],
+  "kaufbeuren": ["BY", 47.8803, 10.6197],
+  "zirndorf": ["BY", 49.4453, 10.9553],
+  "freising": ["BY", 48.4028, 11.7489],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
