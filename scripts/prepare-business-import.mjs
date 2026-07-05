@@ -185,6 +185,10 @@ const CITY = {
   "kaufbeuren": ["BY", 47.8803, 10.6197],
   "zirndorf": ["BY", 49.4453, 10.9553],
   "freising": ["BY", 48.4028, 11.7489],
+  // 2026-07-06 bővítés (5. kör):
+  "sulzbach an der murr": ["BW", 49.0167, 9.4833],
+  "germering": ["BY", 48.1333, 11.35],
+  "dingolfing": ["BY", 48.6386, 12.4894],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
