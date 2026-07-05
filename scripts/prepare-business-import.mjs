@@ -137,6 +137,19 @@ const CITY = {
   "salzburg": ["SBG", 47.8095, 13.0550],
   "eisenstadt": ["BGL", 47.8457, 16.5278],
   "wels": ["OOE", 48.1575, 14.0289],
+  // 2026-07-06 bővítés — új szakemberek városai (mind a 4 országra):
+  "dachau": ["BY", 48.2604, 11.4342],
+  "schriesheim": ["BW", 49.4692, 8.6667],
+  "hilden": ["NW", 51.1682, 6.9337],
+  "röhrmoos": ["BY", 48.3167, 11.4167],
+  "wallersdorf": ["BY", 48.7167, 12.75],
+  "altdorf": ["BY", 48.6167, 12.1], // Altdorf bei Landshut (nem az Altdorf UR/Nürnberg)
+  "rastatt": ["BW", 48.8589, 8.2072],
+  "hockenheim": ["BW", 49.3167, 8.55],
+  "zug": ["ZG", 47.1662, 8.5155],
+  "glattpark": ["ZH", 47.4308, 8.5611], // Glattpark/Opfikon, Zürich mellett
+  "opfikon": ["ZH", 47.4308, 8.5611],
+  "gouda": ["ZH", 52.0116, 4.7106],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
