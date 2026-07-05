@@ -236,6 +236,13 @@ const CITY = {
   "neufra": ["BW", 48.2833, 9.1],
   "mettmann": ["NW", 51.25, 6.9667],
   "garching": ["BY", 48.2489, 11.6511],
+  // 2026-07-06 bővítés (11. kör):
+  "offenbach am main": ["HE", 50.1055, 8.7761],
+  "mülheim an der ruhr": ["NW", 51.4266, 6.8825],
+  "straelen": ["NW", 51.4436, 6.2667],
+  "starnberg": ["BY", 47.9975, 11.3428],
+  "mendig": ["RP", 50.3667, 7.3],
+  "worms": ["RP", 49.6333, 8.3667],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
