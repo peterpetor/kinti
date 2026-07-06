@@ -92,6 +92,7 @@ const CATEGORY = {
   karszakerto: ["karszakerto", "Kárszakértő"],
   hotelpanzio: ["szallas", "Szálláshely / Panzió"],
   szemesz: ["szemesz", "Szemész / Optikus"],
+  masszazs: ["masszazs", "Masszázs"],
   ortopedus: ["ortopedus", "Ortopédorvos / Sebész"],
   pszichiater: ["pszichiater", "Pszichiáter"],
   sebesz: ["sebesz", "Sebész"],
@@ -425,6 +426,7 @@ const CITY = {
   "romanshorn": ["TG", 47.5661, 9.3792],
   "salmsach": ["TG", 47.5701, 9.3618],
   "berg tg": ["TG", 47.6367, 9.2489],
+  "oetwil am see": ["ZH", 47.2394, 8.6961],
   "baden": ["AG", 47.4744, 8.3059],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
