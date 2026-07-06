@@ -1253,7 +1253,26 @@
     border-radius: 18px; overflow: hidden; background: #000;
   }
   .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  @media (max-width: 720px) { .video-shell { border-radius: 22px; padding: 10px; } }
+  .video-poster {
+    position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; border: 0; padding: 0;
+    background-size: cover; background-position: center; display: block;
+  }
+  .video-poster::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.35));
+    transition: background .2s;
+  }
+  .video-poster:hover::after { background: linear-gradient(180deg, rgba(0,0,0,0.10), rgba(0,0,0,0.45)); }
+  .video-play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 84px; height: 84px; border-radius: 50%;
+    background: var(--primary); color: #fff; z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.35); transition: transform .2s, background .2s;
+  }
+  .video-poster:hover .video-play { transform: translate(-50%,-50%) scale(1.06); }
+  .video-play svg { width: 30px; height: 30px; margin-left: 4px; }
+  @media (max-width: 720px) { .video-shell { border-radius: 22px; padding: 10px; } .video-play { width: 64px; height: 64px; } .video-play svg { width: 24px; height: 24px; } }
 </style>
 <section class="video-sec" id="video">
   <div class="wrap">
@@ -1262,13 +1281,12 @@
     <p class="sec-sub">Rövid bemutató a kintiről — hogyan találsz magyar szakembert vagy munkát pár érintéssel, ott ahol kint élsz.</p>
     <div class="video-shell">
       <div class="video-frame">
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/1_6SXxeMQyc?rel=0"
-          title="kinti bemutató videó"
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen></iframe>
+        <button class="video-poster" id="videoPoster" type="button"
+          aria-label="Videó lejátszása"
+          style="background-image: url('https://i.ytimg.com/vi/1_6SXxeMQyc/maxresdefault.jpg');"
+          onclick="var f=document.createElement('iframe');f.src='https://www.youtube.com/embed/1_6SXxeMQyc?rel=0&autoplay=1';f.title='kinti bemutató videó';f.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');f.setAttribute('allowfullscreen','');f.setAttribute('referrerpolicy','strict-origin-when-cross-origin');this.parentNode.appendChild(f);this.remove();">
+          <span class="video-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        </button>
       </div>
     </div>
   </div>
@@ -1993,7 +2011,7 @@
           <li><a href="/aszf">Felhasználási feltételek</a></li>
           <li><a href="/visszateres">Visszatérítés és elállás</a></li>
           <li><a href="/ai-atlathatosag">AI-átláthatóság</a></li>
-          <li><a href="/cdn-cgi/l/email-protection#5a33343c351a3133342e33743b2a2a">Kapcsolat</a></li>
+          <li><a href="/cdn-cgi/l/email-protection#7c15121a133c1715120815521d0c0c">Kapcsolat</a></li>
         </ul>
       </div>
     </div>
@@ -2001,7 +2019,7 @@
     <div class="foot-bottom">
       <div>© 2026 kinti.app · Üzemelteti: <strong>Feedback Jobs S.R.L.</strong> — Made with ♥ for kintiek</div>
       <div style="display: flex; gap: 18px;">
-        <a href="/cdn-cgi/l/email-protection#a7cec9c1c8e7cccec9d3ce89c6d7d7"><span class="__cf_email__" data-cfemail="d3babdb5bc93b8babda7bafdb2a3a3">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#2e474048416e4547405a47004f5e5e"><span class="__cf_email__" data-cfemail="f1989f979eb19a989f8598df908181">[email&#160;protected]</span></a>
         <a href="/impresszum">Impresszum</a>
       </div>
     </div>
