@@ -94,6 +94,7 @@ const CATEGORY = {
   hotelpanzio: ["szallas", "Szálláshely / Panzió"],
   szemesz: ["szemesz", "Szemész / Optikus"],
   masszazs: ["masszazs", "Masszázs"],
+  legkondiszerelo: ["haztartasigep_szerelo", "Háztartásigép- / Légkondiszerelő"],
   ortopedus: ["ortopedus", "Ortopédorvos / Sebész"],
   pszichiater: ["pszichiater", "Pszichiáter"],
   sebesz: ["sebesz", "Sebész"],
@@ -446,6 +447,12 @@ const CITY = {
   "marxzell": ["BW", 48.8833, 8.4833],
   "großschirma": ["SN", 50.9333, 13.2833],
   "bad herrenalb": ["BW", 48.8, 8.4333],
+  // 2026-07-06 bővítés (15. kör) — szaknevsor.hollandhirek.nl + hollandhirek.nl cikk:
+  "swalmen": ["LI", 51.2167, 6.0333],
+  "scherpenzeel": ["GE", 52.1167, 5.5833],
+  "vlissingen": ["ZE", 51.4426, 3.5736],
+  "delft": ["ZH", 52.0116, 4.3571],
+  "moerdijk": ["NB", 51.6833, 4.6167],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
@@ -560,6 +567,7 @@ const lines = [
   "-- ÚJ kategóriák (a user 2026-07-06-i engedélyével, korábban nem volt hova kötni ezeket):",
   "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('autokereskedes', 'Autókereskedés', '🚗', 903);",
   "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('karszakerto', 'Kárszakértő', '🔍', 904);",
+  "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('haztartasigep_szerelo', 'Háztartásigép- / Légkondiszerelő', '🔧', 905);",
   "",
 ];
 let count = 0, geocoded = 0;
