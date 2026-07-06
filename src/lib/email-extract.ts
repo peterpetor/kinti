@@ -123,15 +123,73 @@ function companyTokens(company: string): string[] {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
+    .replace(/ß/g, "ss")
     .replace(/[^a-z0-9\s-]/g, " ")
     .split(/[\s-]+/)
-    .filter((t) => t.length >= 3 && !COMPANY_STOPWORDS.has(t));
+    .filter((t) => t.length >= 2 && !COMPANY_STOPWORDS.has(t));
+}
+
+/** Ország → preferált TLD-k a domain-tippekhez (a saját TLD elöl, majd .com). */
+const COUNTRY_TLDS: Record<string, string[]> = {
+  DE: [".de", ".com"],
+  AT: [".at", ".com", ".co.at"],
+  NL: [".nl", ".com"],
+};
+
+/**
+ * A cégnévből ész­szerű weboldal-domain TIPPEK (a hirdetésen sokszor nincs e-mail,
+ * de a cég saját Impressumában kötelező — oda a domainen át jutunk). Pl.
+ * „Rommelag CDMO" + DE → [rommelag.de, rommelag.com, rommelagcdmo.de, …];
+ * „Meica" → meica.de. Nem tökéletes (a route ellenőrzi, létezik-e + van-e email),
+ * de a kis cégek nagy részét eltalálja. Tiszta függvény → tesztelhető.
+ */
+export function companyDomainCandidates(company: string | null | undefined, country?: string | null): string[] {
+  if (!company) return [];
+  const tokens = companyTokens(company);
+  if (tokens.length === 0) return [];
+  // A legjobb tippek elöl: első-két-szó összefűzve („eurocheese"), első szó
+  // („rommelag", „meica"), első-két-szó kötőjellel („euro-cheese").
+  const bases: string[] = [];
+  if (tokens.length > 1) bases.push(tokens.slice(0, 2).join(""));
+  bases.push(tokens[0]);
+  if (tokens.length > 1) bases.push(tokens.slice(0, 2).join("-"));
+  const tlds = COUNTRY_TLDS[(country ?? "DE").toUpperCase()] ?? COUNTRY_TLDS.DE;
+  const out: string[] = [];
+  for (const base of bases) {
+    if (base.length < 2) continue;
+    for (const tld of tlds) out.push(base + tld);
+  }
+  return [...new Set(out)].slice(0, 6);
 }
 
 function domainMatchesCompany(domain: string, company: string): boolean {
   const host = domain.split(".").slice(0, -1).join(""); // TLD nélkül, összefűzve
   const tokens = companyTokens(company);
   return tokens.some((t) => host.includes(t) || t.includes(host));
+}
+
+/**
+ * A cég főoldalának HTML-jéből az Impressum/Kontakt oldal ABSZOLÚT URL-je (oda
+ * kötelező kiírni az e-mailt). A hivatkozás szövegét/href-jét is nézzük
+ * (impressum/imprint/kontakt/contact). `null`, ha nincs ilyen link.
+ */
+export function findImpressumLink(html: string, baseUrl: string): string | null {
+  const LINK_RE = /<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  const KEY = /impressum|imprint|kontakt|contact|mentions-legales|colofon/i;
+  let best: string | null = null;
+  for (const m of html.matchAll(LINK_RE)) {
+    const href = m[1];
+    const text = m[2].replace(/<[^>]*>/g, " ");
+    if (KEY.test(href) || KEY.test(text)) {
+      try {
+        const abs = new URL(href, baseUrl).toString();
+        // Impressum előnyben a kontakt fölött (ott biztosabb az e-mail).
+        if (/impressum|imprint/i.test(abs)) return abs;
+        if (!best) best = abs;
+      } catch { /* rossz href → skip */ }
+    }
+  }
+  return best;
 }
 
 const FREE_MAIL_RE = /@(gmail|googlemail|hotmail|outlook|live|yahoo|ymail|gmx|web\.de|t-online|aol|icloud|me\.com|freenet|mail\.com)\./i;

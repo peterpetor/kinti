@@ -302,7 +302,7 @@ export function RecruiterWorkspace() {
     if (jobs.length === 0 || extracting) return;
     setExtracting(true); setExtractMsg(null);
     try {
-      const payload = jobs.map((j) => ({ url: j.url, company: j.company }));
+      const payload = jobs.map((j) => ({ url: j.url, company: j.company, country }));
       const res = await fetch("/api/admin/recruiter/extract-emails", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jobs: payload }) });
       const data = (await res.json().catch(() => ({}))) as { results?: { url: string; email: string | null }[]; found?: number; total?: number; error?: string };
       if (!res.ok) { setExtractMsg(`❌ ${data.error || "Nem sikerült."}`); return; }
