@@ -403,6 +403,12 @@ const CITY = {
   "langenthal": ["BE", 47.2144, 7.7936],
   "abtwil": ["SG", 47.4183, 9.3103],
   "magden": ["AG", 47.5469, 7.8306],
+  "karlstein": ["BY", 50.0167, 9.1333],
+  "eichenau": ["BY", 48.1667, 11.3167],
+  "neutraubling": ["BY", 48.9667, 12.2],
+  "lichtenfels": ["BY", 50.1333, 11.05],
+  "feldkirchen-westerham": ["BY", 47.8833, 12.0167],
+  "feldkirchen": ["BY", 48.15, 11.7167],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
