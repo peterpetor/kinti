@@ -30,6 +30,12 @@ describe("extractEmails", () => {
     const html = `background:url(logo@2x.png); valos@ceg.de`;
     expect(extractEmails(html).map((e) => e.email)).toEqual(["valos@ceg.de"]);
   });
+
+  it("obfuszkált formákat visszafejt: (at), [dot], (punkt)", () => {
+    expect(extractEmails(`bewerbung(at)firma(dot)de`).map((e) => e.email)).toContain("bewerbung@firma.de");
+    expect(extractEmails(`info [at] cegnev [dot] de`).map((e) => e.email)).toContain("info@cegnev.de");
+    expect(extractEmails(`jobs(at)firma(punkt)at`).map((e) => e.email)).toContain("jobs@firma.at");
+  });
 });
 
 describe("pickBestEmail — rangsor + szűrés", () => {

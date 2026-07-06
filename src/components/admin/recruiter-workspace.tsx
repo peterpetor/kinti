@@ -520,27 +520,37 @@ export function RecruiterWorkspace() {
         <section className="space-y-2">
           <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">💼 Konkrét hirdetések — „{q}" · {ctry.label}{region ? ` · ${region}` : ""} ({jobs.length})</h3>
 
-          {/* ⚡ Gyors-flow: e-mailek AUTOMATIKUS kinyerése + tömeges shortlist (a
-              kézi, egyesével-keresgélés kiváltására). Csak aktív jelölttel. */}
-          {jobs.length > 0 && active && (() => {
+          {/* ⚡ Gyors-flow: e-mailek AUTOMATIKUS kinyerése + (aktív jelöltnél) tömeges
+              shortlist. A kinyerés SIMA keresésben is elérhető — akkor „összes cím
+              másolása" gombbal viheted (aktív jelölt kell a körlevélhez). */}
+          {jobs.length > 0 && (() => {
             const emailCount = jobs.filter((j) => emails[j.url]).length;
+            const foundEmails = jobs.map((j) => emails[j.url]).filter((e): e is string => !!e);
             const extractedAny = Object.keys(emails).length > 0;
             return (
               <div className="space-y-2 rounded-card border border-primary/30 bg-primary-soft/40 p-3">
-                <p className="text-[11.5px] font-extrabold text-ink">⚡ Automatikus megkeresés — {active.fullName}</p>
+                <p className="text-[11.5px] font-extrabold text-ink">⚡ Automatikus megkeresés{active ? ` — ${active.fullName}` : ""}</p>
                 <div className="flex flex-wrap items-center gap-2">
                   <button type="button" onClick={() => void extractEmails()} disabled={extracting} className="rounded-pill bg-primary px-3.5 py-1.5 text-[12px] font-extrabold text-white shadow-card disabled:opacity-60">
                     {extracting ? "Keresés a hirdetésekben…" : `📧 E-mailek automatikus keresése (${jobs.length})`}
                   </button>
-                  {extractedAny && (
+                  {extractedAny && emailCount > 0 && (
+                    <button type="button" onClick={() => { navigator.clipboard?.writeText(foundEmails.join(", ")); setExtractMsg(`📋 ${foundEmails.length} cím a vágólapon (vesszővel elválasztva).`); }} className="rounded-pill border border-primary/40 bg-surface px-3.5 py-1.5 text-[12px] font-bold text-primary">
+                      📋 Összes cím másolása ({emailCount})
+                    </button>
+                  )}
+                  {extractedAny && active && (
                     <button type="button" onClick={() => void saveAllWithEmail()} disabled={savingBulk || emailCount === 0} className="rounded-pill bg-success px-3.5 py-1.5 text-[12px] font-extrabold text-white shadow-card disabled:opacity-50">
                       {savingBulk ? "Mentés…" : `➕ Mind mentése e-maillel (${emailCount})`}
                     </button>
                   )}
                 </div>
+                {extractedAny && !active && emailCount > 0 && (
+                  <p className="text-[11px] font-semibold text-primary">💡 A körlevélhez / tömeges mentéshez válassz ki egy jelöltet fent (🔎 Keres), vagy másold a címeket a saját levelezőbe.</p>
+                )}
                 {extractMsg && <p className="text-[11.5px] leading-snug text-ink">{extractMsg}</p>}
                 <p className="text-[10px] leading-snug text-ink-faint">
-                  ⚖️ A hirdető által a nyitott pozícióhoz KÖZZÉTETT kapcsolat-címet olvassuk ki (B2B, jogtiszta). Nem minden hirdetésnél van e-mail az oldalon — a többihez a hirdetést megnyitva, kézzel add meg a Shortlistben. A CV-t nem csatoljuk a hideg levélhez; a hirdető válaszára küldöd.
+                  ⚖️ A hirdető által a nyitott pozícióhoz KÖZZÉTETT kapcsolat-címet olvassuk ki (B2B, jogtiszta). Nem minden hirdetésnél van e-mail az oldalon (a nagy portálok elrejtik) — a többihez a hirdetést megnyitva, kézzel add meg. A CV-t nem csatoljuk a hideg levélhez; a hirdető válaszára küldöd.
                 </p>
               </div>
             );

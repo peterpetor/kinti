@@ -58,6 +58,19 @@ function decodeEntities(s: string): string {
     .replace(/&amp;/gi, "&");
 }
 
+/**
+ * Spam-védelmi obfuszkáció visszafejtése (német/EU oldalakon gyakori):
+ * „info(at)firma(dot)de", „info [at] firma . de", „info&#64;firma.de".
+ * CSAK az egyértelmű, zárójeles/kapcsos formákat cseréljük — a nyers „ at "/
+ * „ dot " túl kockázatos (prózában is előfordul), azt nem bántjuk.
+ */
+function deobfuscate(s: string): string {
+  return s
+    .replace(/\s*[([{]\s*at\s*[)\]}]\s*/gi, "@")
+    .replace(/\s*[([{]\s*dot\s*[)\]}]\s*/gi, ".")
+    .replace(/\s*[([{]\s*punkt\s*[)\]}]\s*/gi, ".");
+}
+
 const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
 
 /** Egy e-mail „józan ész" ellenőrzése (nem kép-fájl, nem tört töredék). */
@@ -87,8 +100,8 @@ export function extractEmails(html: string): ExtractedEmail[] {
     EMAIL_RE.lastIndex = 0;
   }
 
-  // 2) nyers szöveges e-mailek
-  const decoded = decodeEntities(html);
+  // 2) nyers szöveges e-mailek (entitás-dekódolás + obfuszkáció-visszafejtés után)
+  const decoded = deobfuscate(decodeEntities(html));
   for (const m of decoded.matchAll(EMAIL_RE)) {
     const e = m[0].trim().toLowerCase().replace(/[.,;:]+$/, "");
     if (isPlausible(e) && !byEmail.has(e)) byEmail.set(e, false);
