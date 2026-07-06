@@ -135,7 +135,7 @@ export default async function BusinessPage({
   // Hivatalos nyilvántartás-link (csak ha van engedélyszám) — fél-automata ellenőrzés.
   const registry = b.licenseNumber ? registryForCategory(b.categoryId, b.name) : null;
   // Kapcsolódó tudásbázis-cikkek (belső link a kategória alapján).
-  const relatedGuides = guidesForCategory(b.categoryId).slice(0, 3);
+  const relatedGuides = guidesForCategory(b.categoryId, b.country).slice(0, 3);
 
   // Live státusz CSAK ismert (strukturált) nyitvatartásnál — ismeretlennél nem
   // találunk ki 8–18 default-státuszt (fabricated precision); a szabad-szöveges

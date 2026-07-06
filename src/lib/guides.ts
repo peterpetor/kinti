@@ -1333,15 +1333,55 @@ const GUIDE_RELATED_CATEGORIES: Record<string, RelatedCategory[]> = {
   ],
 };
 
-/** Egy cikkhez kapcsolódó Szaknévsor-kategóriák (üres tömb, ha nincs). */
-export function relatedCategoriesForGuide(slug: string): RelatedCategory[] {
-  return GUIDE_RELATED_CATEGORIES[slug] ?? [];
+/**
+ * Slug → ország-semleges "topic"-kulcs a GUIDE_RELATED_CATEGORIES-hoz. A svájci
+ * (előtag nélküli) slug MAGA a topic-kulcs (pl. "iskola-es-gyerek"); az
+ * AT/DE/NL megfelelőjük ("at-iskola", "de-iskola", "nl-iskola") ugyanarra a
+ * kulcsra képződik, hogy egy osztrák/német/holland vállalkozásnál is a SAJÁT
+ * országának cikke linkelődjön be, ne a svájci (lásd: gyermekorvos AT-nál
+ * korábban a "kantononként szervezve" / ch.ch-s cikkre mutatott).
+ */
+const GUIDE_TOPIC: Record<string, string> = {
+  "at-bejelentkezes": "bejelentkezes-letelepedes",
+  "de-bejelentkezes": "bejelentkezes-letelepedes",
+  "nl-bejelentkezes": "bejelentkezes-letelepedes",
+  "at-egeszsegbiztositas": "egeszsegbiztositas-krankenkasse",
+  "de-egeszsegbiztositas": "egeszsegbiztositas-krankenkasse",
+  "nl-egeszsegbiztositas": "egeszsegbiztositas-krankenkasse",
+  "at-adozas": "adozas-quellensteuer",
+  "de-adozas": "adozas-quellensteuer",
+  "nl-adozas": "adozas-quellensteuer",
+  "at-iskola": "iskola-es-gyerek",
+  "de-iskola": "iskola-es-gyerek",
+  "nl-iskola": "iskola-es-gyerek",
+  "at-munkavallalas": "munkavallalas",
+  "de-munkavallalas": "munkavallalas",
+  "nl-munkavallalas": "munkavallalas",
+  "at-bankszamla": "bankszamla",
+  "de-bankszamla": "bankszamla",
+  "nl-bankszamla": "bankszamla",
+  "at-nyugdij": "ahv-nyugdij",
+  "at-lakasberles": "lakasberles",
+  "de-lakasberles": "lakasberles",
+  "nl-lakasberles": "lakasberles",
+};
+function guideTopic(slug: string): string {
+  return GUIDE_TOPIC[slug] ?? slug;
 }
 
-/** Egy Szaknévsor-kategóriához kapcsolódó útmutatók (fordított irány). */
-export function guidesForCategory(categoryId: string): Guide[] {
+/** Egy cikkhez kapcsolódó Szaknévsor-kategóriák (üres tömb, ha nincs). */
+export function relatedCategoriesForGuide(slug: string): RelatedCategory[] {
+  return GUIDE_RELATED_CATEGORIES[guideTopic(slug)] ?? [];
+}
+
+/**
+ * Egy Szaknévsor-kategóriához kapcsolódó útmutatók (fordított irány) — CSAK a
+ * vállalkozás országának saját cikkei közül (lásd guideTopic fenti kommentje).
+ */
+export function guidesForCategory(categoryId: string, country?: string | null): Guide[] {
   if (!categoryId) return [];
-  return GUIDES.filter((g) =>
-    (GUIDE_RELATED_CATEGORIES[g.slug] ?? []).some((c) => c.id === categoryId),
+  const pool = getGuides(country);
+  return pool.filter((g) =>
+    (GUIDE_RELATED_CATEGORIES[guideTopic(g.slug)] ?? []).some((c) => c.id === categoryId),
   );
 }
