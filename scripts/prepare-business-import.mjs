@@ -175,7 +175,7 @@ const CITY = {
   "alkmaar": ["NH", 52.6324, 4.7534],
   "tresdorf": ["NOE", 48.3936, 16.3521],
   "geisenfeld": ["BY", 48.6851, 11.6136],
-  "st. anton am arlberg": ["T", 47.1297, 10.2657],
+  "st. anton am arlberg": ["TIR", 47.1297, 10.2657], // javítva: "T" nem a kanonikus AT-kód (TIR az)
   "gloggnitz": ["NOE", 47.6764, 15.9382],
   // 2026-07-05 bővítés — új autószervizek/boltok városai:
   "deutsch-wagram": ["NOE", 48.2986, 16.5583],
@@ -507,6 +507,9 @@ const CITY = {
   // REST-endpoint, 85 valódi bejegyzés) + arkadasi.hu/belgium-hollandia-luxemburg;
   // Flevoland eddig teljesen üres tartomány volt:
   "milsbeek": ["LI", 51.7303, 5.9533],
+  // 2026-07-07 bővítés (21. kör) — nemetorszagi-magyarok.de Drupal JSON:API
+  // (jsonapi/node/szolgaltatok, 823 valódi bejegyzés) — pontos utcacímes találatok:
+  "pfarrkirchen": ["BY", 48.4167, 12.9333],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
