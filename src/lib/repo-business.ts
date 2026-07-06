@@ -192,6 +192,36 @@ export async function getBusinessById(id: string): Promise<Business | null> {
   return row ? toBusiness(row) : null;
 }
 
+/**
+ * „Hasonló magyar szakemberek" a részlet-oldal aljára: ugyanaz a kategória +
+ * ország, önmaga nélkül. Rangsor: azonos kanton/tartomány előre, azon belül
+ * koordináta-közelség a megnézett céghez (durva sík-közelítés — rangsoroláshoz
+ * elég), majd PRO/értékelés. GPS nem kell hozzá: a viszonyítási pont maga a cég.
+ */
+export async function getSimilarBusinesses(b: Business, limit = 3): Promise<Business[]> {
+  const hasCoord = b.lat != null && b.lng != null;
+  const { results } = await getDB()
+    .prepare(
+      `SELECT * FROM businesses
+       WHERE COALESCE(hidden, 0) = 0 AND moderation_status = 1
+         AND id != ? AND category_id = ? AND country_code = ?
+       ORDER BY (canton_code = ?) DESC, featured DESC,
+         CASE WHEN ? = 1 AND lat IS NOT NULL
+              THEN (lat - ?) * (lat - ?) + 0.5 * (lng - ?) * (lng - ?)
+              ELSE 9999 END ASC,
+         rating DESC
+       LIMIT ?`,
+    )
+    .bind(
+      b.id, b.categoryId, b.country,
+      b.canton ?? "",
+      hasCoord ? 1 : 0, b.lat ?? 0, b.lat ?? 0, b.lng ?? 0, b.lng ?? 0,
+      limit,
+    )
+    .all<BusinessRow>();
+  return results.map((r) => toPublicBusiness(toBusiness(r)));
+}
+
 export async function getBusinessByOwner(ownerUserId: string): Promise<Business | null> {
   const row = await getDB()
     .prepare("SELECT * FROM businesses WHERE owner_user_id = ? AND COALESCE(hidden, 0) = 0 LIMIT 1")

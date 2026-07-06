@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
-import { getBusinessById, getReviewsByBusiness, recordBusinessSearchTerm, toPublicBusiness } from "@/lib/repo";
+import { BusinessCard, Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
+import { getBusinessById, getReviewsByBusiness, getSimilarBusinesses, recordBusinessSearchTerm, toPublicBusiness } from "@/lib/repo";
 import { parseDbDate, dbDateOnly } from "@/lib/dates";
 import { mediaUrl } from "@/lib/media";
 import { CategoryIcon } from "@/components/ui/category-icon";
@@ -112,7 +112,12 @@ export default async function BusinessPage({
   // manage-link szerkesztő-oldalán látja az állapotot.
   if ((b.moderationStatus ?? 0) !== 1) notFound();
 
-  const reviews = await getReviewsByBusiness(b.id);
+  // „Hasonló magyar szakemberek" — PRO (featured) cégnél NEM töltjük be: a
+  // Szaknévsor PRO ígérete a konkurencia kizárása a saját profilról.
+  const [reviews, similar] = await Promise.all([
+    getReviewsByBusiness(b.id),
+    b.featured ? Promise.resolve([]) : getSimilarBusinesses(b, 3),
+  ]);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   // Útvonal CSAK utcaszintű címnél — városközpontra (pl. „Bécs"/„Online") navigálni
@@ -653,6 +658,21 @@ export default async function BusinessPage({
             </ListGroup>
           </div>
         </section>
+
+        {/* Hasonló magyar szakemberek (azonos kategória+ország, kanton/közelség
+            szerint rangsorolva) — zsákutca-mentesítés: ha ez a szaki nem elérhető
+            vagy nem válaszol, innen egy koppintással van alternatíva. PRO cégnél
+            nem jelenik meg (konkurencia-kizárás, ld. lent). */}
+        {similar.length > 0 && (
+          <section className="mt-6">
+            <SectionHeader>Hasonló magyar szakemberek</SectionHeader>
+            <div className="mt-2.5 grid gap-2.5">
+              {similar.map((s) => (
+                <BusinessCard key={s.id} business={s} href={`/szaknevsor/${s.id}`} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* SEO belső link a kategória×kanton landing oldalra (más magyar szakemberekhez).
             PRO (featured) cégnél NEM jelenik meg → „Konkurencia kizárása a profilodról"
