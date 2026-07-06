@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDB } from "@/lib/cloudflare";
-import { foldSearchText, hungarianFoldSql } from "@/lib/sql-fold";
+import { hungarianFoldSql, tokenizeFolded } from "@/lib/sql-fold";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -10,13 +10,17 @@ interface SearchResult {
   events: Array<{ id: string; title: string; eventDate: string | null; venue: string | null }>;
 }
 
+const EMPTY: SearchResult = { businesses: [], events: [] };
+
 /**
  * GET /api/search?q=...  — globális kereső 2 entitásban (vállalkozás + esemény).
  *
- * ÉKEZET-ÉRZÉKETLEN: a needle-t és az oszlopokat is accent-foldoljuk (lib/sql-fold),
- * így a „fodrasz" a „Fodrász"-t, a „zurich" a „Zürich"-et is megtalálja. A cég-
- * keresés a KATEGÓRIANÉVRE is illeszt (pl. „ügyvéd" → az ügyvéd-kategóriájú cégek),
- * nemcsak a névre/leírásra. Limit per entitás: 5. Min. 2 karakter.
+ * ÉKEZET-ÉRZÉKETLEN + TÖBB-SZAVAS: a keresőszót foldolt tokenekre bontjuk
+ * (lib/sql-fold), és MINDEN tokennek illeszkednie kell (AND) — bárhol a
+ * névben/kategóriában/leírásban. Így a „fodrász zürich" vagy „magyar orvos bécs"
+ * is működik, nem csak az összefüggő szó-részlet. A cég-találatokat relevancia
+ * szerint rangsoroljuk: névtalálat (2 pont) > kategóriatalálat (1 pont), a PRO
+ * (featured) mindig elöl. Limit per entitás: 5. Min. 2 karakter / 1 érdemi token.
  */
 
 // Az oszlop-oldali accent-fold kifejezések (egyszer felépítve, nem per-kérés).
@@ -29,45 +33,54 @@ const FOLD_EV_VENUE = hungarianFoldSql("COALESCE(venue, '')");
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const q = (url.searchParams.get("q") ?? "").trim();
-
   if (q.length < 2) {
-    return NextResponse.json({ businesses: [], events: [] } satisfies SearchResult, {
-      headers: { "cache-control": "no-store" },
-    });
+    return NextResponse.json(EMPTY, { headers: { "cache-control": "no-store" } });
   }
 
-  // A needle ugyanazzal a fold-dal normalizálva, mint az oszlopok — így a LIKE két
-  // oldala egyezik. A LIKE-metakaraktereket (% _) kivágjuk, hogy ne legyenek jokerek.
-  const needle = `%${foldSearchText(q).replace(/[%_]/g, "")}%`;
+  // Foldolt tokenek (AND-illesztéshez). Ha nincs érdemi token (pl. csak írásjel),
+  // úgy kezeljük, mint a túl rövid keresést.
+  const tokens = tokenizeFolded(q);
+  if (tokens.length === 0) {
+    return NextResponse.json(EMPTY, { headers: { "cache-control": "no-store" } });
+  }
+  const likes = tokens.map((t) => `%${t}%`);
   const db = getDB();
 
+  // --- Vállalkozás-lekérdezés (token-AND + relevancia-rangsor) ---------------
+  // WHERE: minden token illeszkedjen névre VAGY leírásra VAGY kategóriára.
+  const bizWhere = tokens.map(() => `(${FOLD_BIZ_NAME} LIKE ? OR ${FOLD_BIZ_BLURB} LIKE ? OR ${FOLD_BIZ_CAT} LIKE ?)`).join(" AND ");
+  // Relevancia: tokenenként névtalálat=2, kategóriatalálat=1 (SQLite-ban a
+  // `X LIKE Y` 1/0-t ad, így összeadható).
+  const bizScore = tokens.map(() => `((${FOLD_BIZ_NAME} LIKE ?) * 2 + (${FOLD_BIZ_CAT} LIKE ?))`).join(" + ");
+  const bizSql =
+    `SELECT b.id, b.name, b.category_label
+     FROM businesses b
+     WHERE COALESCE(b.hidden, 0) = 0 AND b.moderation_status = 1
+       AND ${bizWhere}
+     ORDER BY b.featured DESC, (${bizScore}) DESC, b.name ASC
+     LIMIT 5`;
+  // Bind-sorrend = a ?-ek megjelenési sorrendje: előbb a WHERE (tokenenként
+  // name, blurb, cat), majd az ORDER BY score (tokenenként name, cat).
+  const bizBinds: string[] = [];
+  for (const l of likes) bizBinds.push(l, l, l);
+  for (const l of likes) bizBinds.push(l, l);
+
+  // --- Esemény-lekérdezés (token-AND) ----------------------------------------
+  // A láthatóság-feltétel zárójelezve (az AND/OR precedencia miatt), + token-AND
+  // a címre/helyszínre.
+  const evWhere = tokens.map(() => `(${FOLD_EV_TITLE} LIKE ? OR ${FOLD_EV_VENUE} LIKE ?)`).join(" AND ");
+  const evSql =
+    `SELECT id, title, event_date, venue
+     FROM events
+     WHERE (status IS NULL OR status = 'approved')
+       AND ${evWhere}
+     ORDER BY event_date ASC LIMIT 5`;
+  const evBinds: string[] = [];
+  for (const l of likes) evBinds.push(l, l);
+
   const [biz, ev] = await Promise.all([
-    db
-      .prepare(
-        // Csak PUBLIKUS cég: nem-rejtett + admin-jóváhagyott (moderation_status=1) —
-        // különben a kereső elrejtett/duplikált/pending sorokat is felhozna, amikre
-        // kattintva a /szaknevsor/[id] 404-el (döglött link).
-        `SELECT b.id, b.name, b.category_label
-         FROM businesses b
-         WHERE COALESCE(b.hidden, 0) = 0 AND b.moderation_status = 1
-           AND (${FOLD_BIZ_NAME} LIKE ? OR ${FOLD_BIZ_BLURB} LIKE ? OR ${FOLD_BIZ_CAT} LIKE ?)
-         ORDER BY b.featured DESC, b.name ASC LIMIT 5`,
-      )
-      .bind(needle, needle, needle)
-      .all<{ id: string; name: string; category_label: string | null }>(),
-    db
-      .prepare(
-        // A láthatóság-feltételt ZÁRÓJELEZZÜK: az AND erősebben köt mint az OR,
-        // ezért zárójel nélkül a `status IS NULL` sorok a keresőszótól függetlenül
-        // mind visszajöttek volna.
-        `SELECT id, title, event_date, venue
-         FROM events
-         WHERE (status IS NULL OR status = 'approved')
-           AND (${FOLD_EV_TITLE} LIKE ? OR ${FOLD_EV_VENUE} LIKE ?)
-         ORDER BY event_date ASC LIMIT 5`,
-      )
-      .bind(needle, needle)
-      .all<{ id: string; title: string; event_date: string | null; venue: string | null }>(),
+    db.prepare(bizSql).bind(...bizBinds).all<{ id: string; name: string; category_label: string | null }>(),
+    db.prepare(evSql).bind(...evBinds).all<{ id: string; title: string; event_date: string | null; venue: string | null }>(),
   ]);
 
   const result: SearchResult = {

@@ -97,3 +97,27 @@ export function hungarianFoldSql(column: string): string {
   }
   return `LOWER(${expr})`;
 }
+
+/**
+ * A keresőszót foldolt, LIKE-metakarakter-mentes TOKENEKRE bontja (szóközök
+ * mentén), hogy a több-szavas keresés AND-logikával működjön: „fodrász zürich"
+ * → ["fodrasz", "zurich"], és mindkettőnek illeszkednie kell (bárhol a névben/
+ * kategóriában/leírásban). Duplikátumok kiszűrve, max `maxTokens` (a dinamikus
+ * SQL méretét korlátozza), a 2 karakternél rövidebb zaj-tokenek elhagyva.
+ *
+ * Üres eredmény (pl. csak írásjel / 1-betűs szavak) → a hívó ugyanúgy kezeli,
+ * mint a „túl rövid" keresést (nincs találat).
+ */
+export function tokenizeFolded(q: string, maxTokens = 6): string[] {
+  const folded = foldSearchText(q).replace(/[%_]/g, " ");
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of folded.split(/\s+/)) {
+    const t = raw.trim();
+    if (t.length < 2 || seen.has(t)) continue;
+    seen.add(t);
+    out.push(t);
+    if (out.length >= maxTokens) break;
+  }
+  return out;
+}

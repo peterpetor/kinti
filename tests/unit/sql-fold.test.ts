@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { foldSearchText, hungarianFoldSql, FOLD_PAIRS } from "@/lib/sql-fold";
+import { foldSearchText, hungarianFoldSql, tokenizeFolded, FOLD_PAIRS } from "@/lib/sql-fold";
 
 /**
  * A globális kereső (/api/search) ékezet-érzéketlenségének magja. A needle-t a
@@ -69,5 +69,30 @@ describe("needle ⇄ oszlop illesztés (a két oldal nem csúszhat szét)", () =
     const stored = simulateSql("Dr. Fülöp Alexander");
     const needle = foldSearchText("fulop");
     expect(stored.includes(needle)).toBe(true);
+  });
+});
+
+describe("tokenizeFolded (több-szavas AND-keresés)", () => {
+  it("szóközök mentén foldolt tokenekre bont", () => {
+    expect(tokenizeFolded("fodrász Zürich")).toEqual(["fodrasz", "zurich"]);
+    expect(tokenizeFolded("magyar  orvos   Bécs")).toEqual(["magyar", "orvos", "becs"]);
+  });
+
+  it("kiszűri a duplikátumokat és a 2-nél rövidebb zaj-tokeneket", () => {
+    expect(tokenizeFolded("a fodrász a Zürich")).toEqual(["fodrasz", "zurich"]);
+    expect(tokenizeFolded("bolt bolt bolt")).toEqual(["bolt"]);
+  });
+
+  it("csak írásjel / 1-betűs szavak → üres (a hívó „nincs találat”-ként kezeli)", () => {
+    expect(tokenizeFolded("! ? .")).toEqual([]);
+    expect(tokenizeFolded("a b c")).toEqual([]);
+  });
+
+  it("a LIKE-metakaraktereket nem engedi tokenbe (nincs jocker-injektálás)", () => {
+    expect(tokenizeFolded("100%_akció")).toEqual(["100", "akcio"]);
+  });
+
+  it("maxTokens korlátozza a tokenek számát (SQL-méret védelem)", () => {
+    expect(tokenizeFolded("egy ketto harom negy ot hat het nyolc", 3)).toEqual(["egy", "ketto", "harom"]);
   });
 });
