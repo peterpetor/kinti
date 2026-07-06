@@ -56,7 +56,7 @@ function buildStrictCsp(nonce: string): string {
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
     "connect-src 'self' https://api.frankfurter.app https://challenges.cloudflare.com https://cloudflareinsights.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.kinti.app https://api.maptiler.com https://tiles.openfreemap.org https://*.basemaps.cartocdn.com https://*.paddle.com",
-    "frame-src 'self' https://challenges.cloudflare.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.kinti.app https://*.paddle.com https://www.youtube-nocookie.com",
+    "frame-src 'self' https://challenges.cloudflare.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.kinti.app https://*.paddle.com https://www.youtube-nocookie.com https://www.youtube.com",
     "worker-src 'self' blob:",
     "manifest-src 'self'",
     "base-uri 'self'",
