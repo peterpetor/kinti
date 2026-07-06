@@ -87,6 +87,14 @@ const CATEGORY = {
 
 // Város (kisbetűs részlet) → [régiókód, lat, lng].
 const CITY = {
+  // Ezt a kettőt ELŐRE kell venni: a kulcsuk másik, később definiált kulcs
+  // ALSTRINGJE is (pl. "bellinzona" tartalmazza a "linz" szót) — a resolveCity
+  // az ELSŐ substring-találatot fogadja el, sorrend-függő, ezért muszáj előbbre.
+  "altdorf ur": ["UR", 46.8781, 8.6431], // Altdorf UR (nem a bajor Altdorf bei Landshut)
+  "bellinzona": ["TI", 46.1944, 9.0175], // ne a "linz" (AT) kulcs egyezzen bele
+  // Élő bug volt: "überlingen" tartalmazza a "berlin" alstringet → BW-s orvos
+  // Berlin (BE) régiókódot kapott. Előre kell venni, hogy előbb saját magára illeszkedjen.
+  "überlingen": ["BW", 47.7686, 9.1758],
   "tägerwilen": ["TG", 47.651, 9.176],
   "bottighofen": ["TG", 47.6423, 9.2153],
   "zürich": ["ZH", 47.3769, 8.5417],
@@ -164,7 +172,6 @@ const CITY = {
   // 2026-07-06 bővítés (3. kör) — nőgyógyászok + biztosítási tanácsadó városai:
   "karlsruhe": ["BW", 49.0069, 8.4037],
   "achern": ["BW", 48.6297, 8.0781],
-  "überlingen": ["BW", 47.7686, 9.1697],
   "senden": ["BY", 48.3667, 10.05], // Senden bei Neu-Ulm (Bajorország)
   "bad windsheim": ["BY", 49.5019, 10.4022],
   "heilbronn": ["BW", 49.1427, 9.2109],
@@ -305,6 +312,31 @@ const CITY = {
   "munich": ["BY", 48.1371, 11.5754],
   "grünwald": ["BY", 48.0487, 11.5301],
   "baden-baden": ["BW", 48.7606, 8.2422],
+  // 2026-07-06 bővítés — CH kantonális lefedettség (eddig Zürich/Basel/Arbon-heavy volt):
+  "muri bei bern": ["BE", 46.9276, 7.4901],
+  "bern": ["BE", 46.948, 7.4474],
+  "genève": ["GE", 46.2044, 6.1432],
+  "geneve": ["GE", 46.2044, 6.1432],
+  "carouge": ["GE", 46.1817, 6.1367],
+  "lausanne": ["VD", 46.5197, 6.6323],
+  "luzern": ["LU", 47.0502, 8.3093],
+  "rapperswil": ["SG", 47.2266, 8.8184],
+  "gächlingen": ["SH", 47.7167, 8.5],
+  "reinach bl": ["BL", 47.4922, 7.5919],
+  "davos": ["GR", 46.8027, 9.8361],
+  "martigny": ["VS", 46.1027, 7.0736],
+  "flamatt": ["FR", 46.8888, 7.3306],
+  "gebenstorf": ["AG", 47.4715, 8.2455],
+  "lugano": ["TI", 46.0037, 8.9511],
+  "muralto": ["TI", 46.1745, 8.7998],
+  "le locle": ["NE", 47.0567, 6.7503],
+  "delémont": ["JU", 47.365, 7.3444],
+  "delemont": ["JU", 47.365, 7.3444],
+  "netstal": ["GL", 47.0619, 9.0644],
+  "sarnen": ["OW", 46.8969, 8.2458],
+  "stans": ["NW", 46.9581, 8.3661],
+  "oberdorf bl": ["BL", 47.4325, 7.6875],
+  "olten": ["SO", 47.3518, 7.9046],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
