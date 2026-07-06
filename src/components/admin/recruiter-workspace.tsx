@@ -101,6 +101,13 @@ export function RecruiterWorkspace() {
   const [source, setSource] = useState<string>("");
   const resultsRef = useRef<HTMLDivElement>(null);
 
+  // Auto e-mail-kinyerés a találati hirdetésekből (a kézi, egyesével-keresgélés
+  // kiváltására): url → kinyert e-mail (vagy null, ha nem találtunk).
+  const [emails, setEmails] = useState<Record<string, string | null>>({});
+  const [extracting, setExtracting] = useState(false);
+  const [extractMsg, setExtractMsg] = useState<string | null>(null);
+  const [savingBulk, setSavingBulk] = useState(false);
+
   const [shortlist, setShortlist] = useState<ShortlistJob[]>([]);
   const [stats, setStats] = useState<{ total: number; placed: number; paid: number; revenueTotal: number; revenueMonth: number; conversionPct: number } | null>(null);
   const [fStatus, setFStatus] = useState<RecruitingStatus | "all">("all");
@@ -161,8 +168,10 @@ export function RecruiterWorkspace() {
   }
   async function saveToShortlist(job: AdzunaJob) {
     if (!active) return;
-    // matchScore szándékosan NEM megy (AI-pontozás megszűnt — AI Act A-út).
-    await fetch("/api/admin/recruiter/shortlist", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ candidateId: active.id, job: { title: job.title, company: job.company, location: job.location, url: job.url } }) });
+    // A kinyert e-mailt (ha van) rögtön visszük — a bulk PUT-on át, hogy a
+    // munkáltatói cím eleve kitöltve kerüljön a shortlistre.
+    const email = emails[job.url] ?? undefined;
+    await fetch("/api/admin/recruiter/shortlist", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ candidateId: active.id, jobs: [{ title: job.title, company: job.company, location: job.location, url: job.url, email }] }) });
     await loadShortlist();
   }
   async function setShortStatus(id: string, status: ShortlistStatus) {
@@ -278,13 +287,51 @@ export function RecruiterWorkspace() {
   }
   async function runSearch(c: string, kw: string, reg: string = region) {
     if (!kw.trim()) return;
-    setPhase("loading"); setMatches({}); setOpenEmail(null);
+    setPhase("loading"); setMatches({}); setOpenEmail(null); setEmails({}); setExtractMsg(null);
     try {
       const regParam = reg.trim() ? `&region=${encodeURIComponent(reg.trim())}` : "";
       const res = await fetch(`/api/admin/recruiter/jobs?country=${c}&q=${encodeURIComponent(kw.trim())}${regParam}`);
       const data = (await res.json().catch(() => ({}))) as { jobs?: AdzunaJob[]; source?: string };
       setJobs(data.jobs ?? []); setSource(data.source ?? ""); setPhase("done");
     } catch { setPhase("error"); }
+  }
+
+  // 📧 Automatikus e-mail-kinyerés: a találati hirdetések oldalait a szerver
+  // letölti és kiszedi belőlük a legjobb kapcsolattartó címet — egyszerre.
+  async function extractEmails() {
+    if (jobs.length === 0 || extracting) return;
+    setExtracting(true); setExtractMsg(null);
+    try {
+      const payload = jobs.map((j) => ({ url: j.url, company: j.company }));
+      const res = await fetch("/api/admin/recruiter/extract-emails", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jobs: payload }) });
+      const data = (await res.json().catch(() => ({}))) as { results?: { url: string; email: string | null }[]; found?: number; total?: number; error?: string };
+      if (!res.ok) { setExtractMsg(`❌ ${data.error || "Nem sikerült."}`); return; }
+      const map: Record<string, string | null> = {};
+      for (const r of data.results ?? []) map[r.url] = r.email;
+      setEmails(map);
+      setExtractMsg(`✅ ${data.found ?? 0} / ${data.total ?? jobs.length} hirdetésnél találtunk e-mailt. A többihez nyisd meg a hirdetést, és írd be kézzel a Shortlistben.`);
+    } catch { setExtractMsg("❌ Hálózati hiba a kinyerésnél."); }
+    finally { setExtracting(false); }
+  }
+
+  // ➕ Mind mentése e-maillel: a kinyert e-mailes hirdetéseket egyszerre a
+  // shortlistre teszi (előre kitöltött munkáltatói címmel), majd megnyitja a körlevelet.
+  async function saveAllWithEmail() {
+    if (!active || savingBulk) return;
+    const withEmail = jobs.filter((j) => emails[j.url]);
+    if (withEmail.length === 0) return;
+    setSavingBulk(true);
+    try {
+      const payload = withEmail.map((j) => ({ title: j.title, company: j.company, location: j.location, url: j.url, email: emails[j.url] }));
+      const res = await fetch("/api/admin/recruiter/shortlist", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ candidateId: active.id, jobs: payload }) });
+      const data = (await res.json().catch(() => ({}))) as { saved?: number; withEmail?: number; error?: string };
+      if (!res.ok) { setExtractMsg(`❌ ${data.error || "Mentés sikertelen."}`); return; }
+      await loadShortlist();
+      setExtractMsg(`✅ ${data.saved ?? withEmail.length} hirdetés a shortlistre került (${data.withEmail ?? withEmail.length} e-maillel). Görgess a jelölthöz → „📧 Körlevél".`);
+      openOutreach(active);
+      setTimeout(() => document.getElementById(`cand-${active.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
+    } catch { setExtractMsg("❌ Hálózati hiba a mentésnél."); }
+    finally { setSavingBulk(false); }
   }
 
   const ctry = COUNTRIES.find((c) => c.code === country)!;
@@ -369,7 +416,7 @@ export function RecruiterWorkspace() {
           ) : candidates.map((c) => {
             const b = briefs[c.id];
             return (
-              <div key={c.id} className={cn("rounded-card border bg-surface p-3.5 shadow-card", active?.id === c.id ? "border-primary/40" : "border-line")}>
+              <div key={c.id} id={`cand-${c.id}`} className={cn("rounded-card border bg-surface p-3.5 shadow-card", active?.id === c.id ? "border-primary/40" : "border-line")}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <p className="text-[14px] font-extrabold text-ink">{c.fullName}</p>
@@ -472,6 +519,33 @@ export function RecruiterWorkspace() {
       {phase === "done" && (
         <section className="space-y-2">
           <h3 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">💼 Konkrét hirdetések — „{q}" · {ctry.label}{region ? ` · ${region}` : ""} ({jobs.length})</h3>
+
+          {/* ⚡ Gyors-flow: e-mailek AUTOMATIKUS kinyerése + tömeges shortlist (a
+              kézi, egyesével-keresgélés kiváltására). Csak aktív jelölttel. */}
+          {jobs.length > 0 && active && (() => {
+            const emailCount = jobs.filter((j) => emails[j.url]).length;
+            const extractedAny = Object.keys(emails).length > 0;
+            return (
+              <div className="space-y-2 rounded-card border border-primary/30 bg-primary-soft/40 p-3">
+                <p className="text-[11.5px] font-extrabold text-ink">⚡ Automatikus megkeresés — {active.fullName}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button type="button" onClick={() => void extractEmails()} disabled={extracting} className="rounded-pill bg-primary px-3.5 py-1.5 text-[12px] font-extrabold text-white shadow-card disabled:opacity-60">
+                    {extracting ? "Keresés a hirdetésekben…" : `📧 E-mailek automatikus keresése (${jobs.length})`}
+                  </button>
+                  {extractedAny && (
+                    <button type="button" onClick={() => void saveAllWithEmail()} disabled={savingBulk || emailCount === 0} className="rounded-pill bg-success px-3.5 py-1.5 text-[12px] font-extrabold text-white shadow-card disabled:opacity-50">
+                      {savingBulk ? "Mentés…" : `➕ Mind mentése e-maillel (${emailCount})`}
+                    </button>
+                  )}
+                </div>
+                {extractMsg && <p className="text-[11.5px] leading-snug text-ink">{extractMsg}</p>}
+                <p className="text-[10px] leading-snug text-ink-faint">
+                  ⚖️ A hirdető által a nyitott pozícióhoz KÖZZÉTETT kapcsolat-címet olvassuk ki (B2B, jogtiszta). Nem minden hirdetésnél van e-mail az oldalon — a többihez a hirdetést megnyitva, kézzel add meg a Shortlistben. A CV-t nem csatoljuk a hideg levélhez; a hirdető válaszára küldöd.
+                </p>
+              </div>
+            );
+          })()}
+
           {jobs.length === 0 ? (
             <p className="rounded-card border border-dashed border-line bg-surface px-4 py-6 text-center text-[12.5px] text-ink-muted">Nincs találat. Próbálj más/tágabb kifejezést, vagy a kézi kereséseket lent.</p>
           ) : rankedJobs.map(({ j }) => {
@@ -489,6 +563,16 @@ export function RecruiterWorkspace() {
                     <span className="shrink-0 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">✉️ piszkozat kész</span>
                   ) : null}
                 </div>
+                {/* Automatikusan kinyert kapcsolattartó e-mail (ha lefutott a kinyerés). */}
+                {j.url in emails && (
+                  emails[j.url] ? (
+                    <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-[8px] bg-success/10 px-2 py-1 text-[11.5px] font-bold text-success">
+                      📧 {emails[j.url]}
+                    </p>
+                  ) : (
+                    <p className="mt-1.5 text-[11px] text-ink-faint">📭 Nincs e-mail az oldalon — nyisd meg és add meg kézzel.</p>
+                  )
+                )}
                 {active && (
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <button type="button" onClick={() => matchJob(j)} disabled={matching === j.url} className="rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary disabled:opacity-50">{matching === j.url ? "AI…" : m ? "↻ Újra" : "✉️ Megkeresés-piszkozat"}</button>

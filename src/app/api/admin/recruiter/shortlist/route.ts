@@ -4,10 +4,12 @@ import {
   listAllShortlist,
   listShortlistByCandidates,
   addShortlistJob,
+  addShortlistJobsBulk,
   updateShortlistStatus,
   updateShortlistEmail,
   removeShortlistJob,
   type ShortlistStatus,
+  type AddShortlistInput,
 } from "@/lib/repo-recruiting";
 
 export const runtime = "edge";
@@ -42,6 +44,41 @@ export async function POST(req: Request) {
     matchScore: typeof body.matchScore === "number" ? Math.max(0, Math.min(100, Math.round(body.matchScore))) : null,
   });
   return NextResponse.json({ ok: true, id });
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * PUT /api/admin/recruiter/shortlist — TÖMEGES mentés előre kinyert e-maillel
+ * (a „mind mentése e-maillel" gombhoz). Body: { candidateId, jobs: [{ title,
+ * company?, location?, url, email? }] }.
+ */
+export async function PUT(req: Request) {
+  if (!(await guard())) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  const body = (await req.json().catch(() => ({}))) as {
+    candidateId?: string;
+    jobs?: Array<{ title?: string; company?: string; location?: string; url?: string; email?: string | null }>;
+  };
+  if (!body.candidateId || !Array.isArray(body.jobs) || body.jobs.length === 0) {
+    return NextResponse.json({ error: "Hiányzó jelölt vagy hirdetés-lista." }, { status: 400 });
+  }
+  const items: AddShortlistInput[] = body.jobs
+    .filter((j) => j && typeof j.title === "string" && typeof j.url === "string" && j.title && j.url)
+    .map((j) => {
+      const raw = (j.email ?? "").trim();
+      return {
+        candidateId: body.candidateId!,
+        jobTitle: String(j.title).slice(0, 200),
+        jobCompany: j.company ? String(j.company).slice(0, 160) : null,
+        jobLocation: j.location ? String(j.location).slice(0, 160) : null,
+        jobUrl: String(j.url).slice(0, 600),
+        matchScore: null,
+        employerEmail: raw && EMAIL_RE.test(raw) ? raw.slice(0, 200) : null,
+      };
+    });
+  if (items.length === 0) return NextResponse.json({ error: "Nincs érvényes hirdetés." }, { status: 400 });
+  const { saved, withEmail } = await addShortlistJobsBulk(items);
+  return NextResponse.json({ ok: true, saved, withEmail });
 }
 
 export async function PATCH(req: Request) {

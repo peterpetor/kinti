@@ -200,10 +200,12 @@ export async function listAllShortlist(limit = 1000): Promise<ShortlistJob[]> {
 export interface AddShortlistInput {
   candidateId: string; jobTitle: string; jobCompany: string | null;
   jobLocation: string | null; jobUrl: string; matchScore: number | null;
+  /** Opcionális, előre kinyert munkáltatói e-mail (a tömeges mentéshez). */
+  employerEmail?: string | null;
 }
 
 export async function addShortlistJob(input: AddShortlistInput): Promise<string> {
-  // Ne duplikáljunk: ugyanaz a jelölt + URL → frissítjük a pontot.
+  // Ne duplikáljunk: ugyanaz a jelölt + URL → frissítjük a pontot / e-mailt.
   const existing = await getDB()
     .prepare("SELECT id FROM recruiting_shortlist WHERE candidate_id = ? AND job_url = ? LIMIT 1")
     .bind(input.candidateId, input.jobUrl).first<{ id: string }>();
@@ -211,14 +213,33 @@ export async function addShortlistJob(input: AddShortlistInput): Promise<string>
     if (input.matchScore != null) {
       await getDB().prepare("UPDATE recruiting_shortlist SET match_score = ? WHERE id = ?").bind(input.matchScore, existing.id).run();
     }
+    // Csak akkor írjuk felül az e-mailt, ha most kaptunk egyet (nem törlünk kézit).
+    if (input.employerEmail) {
+      await getDB().prepare("UPDATE recruiting_shortlist SET employer_email = ? WHERE id = ?").bind(input.employerEmail, existing.id).run();
+    }
     return existing.id;
   }
   const id = crypto.randomUUID();
   await getDB()
-    .prepare("INSERT INTO recruiting_shortlist (id, candidate_id, job_title, job_company, job_location, job_url, match_score) VALUES (?, ?, ?, ?, ?, ?, ?)")
-    .bind(id, input.candidateId, input.jobTitle, input.jobCompany, input.jobLocation, input.jobUrl, input.matchScore)
+    .prepare("INSERT INTO recruiting_shortlist (id, candidate_id, job_title, job_company, job_location, job_url, match_score, employer_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+    .bind(id, input.candidateId, input.jobTitle, input.jobCompany, input.jobLocation, input.jobUrl, input.matchScore, input.employerEmail ?? null)
     .run();
   return id;
+}
+
+/**
+ * Több hirdetés mentése a shortlistre EGYSZERRE, előre kinyert e-maillel — a
+ * közvetítői „mind mentése e-maillel" gombhoz. Visszaadja, hány sor jött létre/
+ * frissült és ezekből hánynál van munkáltatói e-mail.
+ */
+export async function addShortlistJobsBulk(items: AddShortlistInput[]): Promise<{ saved: number; withEmail: number }> {
+  const capped = items.slice(0, 60);
+  let withEmail = 0;
+  for (const it of capped) {
+    await addShortlistJob(it);
+    if (it.employerEmail) withEmail++;
+  }
+  return { saved: capped.length, withEmail };
 }
 
 export async function updateShortlistStatus(id: string, status: ShortlistStatus): Promise<boolean> {
