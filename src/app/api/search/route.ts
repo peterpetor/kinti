@@ -66,13 +66,16 @@ export async function GET(req: Request) {
   for (const l of likes) bizBinds.push(l, l);
 
   // --- Esemény-lekérdezés (token-AND) ----------------------------------------
-  // A láthatóság-feltétel zárójelezve (az AND/OR precedencia miatt), + token-AND
-  // a címre/helyszínre.
+  // Láthatóság a lista-nézet (getEvents) KANONIKUS feltételéhez igazítva:
+  // jóváhagyott + moderált + CSAK JÖVŐBELI. Enélkül a kereső rég lejárt, sőt
+  // moderálatlan (pending) eseményeket is felhozott, amikre kattintva a
+  // /kozosseg/esemeny/[id] amúgy is „nem élő" tartalom. A token-AND a címre/
+  // helyszínre illeszt; az event_date ASC így a legközelebbi jövőbeli elöl.
   const evWhere = tokens.map(() => `(${FOLD_EV_TITLE} LIKE ? OR ${FOLD_EV_VENUE} LIKE ?)`).join(" AND ");
   const evSql =
     `SELECT id, title, event_date, venue
      FROM events
-     WHERE (status IS NULL OR status = 'approved')
+     WHERE status = 'approved' AND moderation_status = 1 AND event_date >= date('now')
        AND ${evWhere}
      ORDER BY event_date ASC LIMIT 5`;
   const evBinds: string[] = [];

@@ -18,7 +18,9 @@ export default async function KozossegPage() {
   await ensureFreshEvents();
   getCloudflareCtx()?.waitUntil(kickoffEventFeedSync());
 
-  const events = await getEvents();
+  // CSAK jövőbeli események: a forward-looking esemény-feed ne a rég lejárt
+  // programokat mutassa a lista elején (event_date ASC).
+  const events = await getEvents({ upcoming: true });
 
   return (
     <div className="pt-[calc(env(safe-area-inset-top)+2rem)]">

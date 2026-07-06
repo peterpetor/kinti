@@ -34,7 +34,9 @@ const HOME_TTL_MS = 300_000; // 5 perc
 export default async function FeedPage() {
   const [allBusinesses, events] = await Promise.all([
     cached("home:businesses", HOME_TTL_MS, () => getBusinesses()),
-    cached("home:events:12", HOME_TTL_MS, () => getEvents({ limit: 12 })),
+    // CSAK jövőbeli események (upcoming): a szűrő nélkül a legrégebbi, akár rég
+    // lejárt események kerültek a blokk elejére (event_date ASC).
+    cached("home:events:12", HOME_TTL_MS, () => getEvents({ limit: 12, upcoming: true })),
   ]);
   // „A közeledben" csak a koordinátával rendelkezőkből válogat (kliensoldali
   // GPS-rendezéshez). Trükkös payload-méret ellen: max 200 rekord.
