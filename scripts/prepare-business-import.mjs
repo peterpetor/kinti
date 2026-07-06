@@ -83,6 +83,7 @@ const CATEGORY = {
   allatgyogyasz: ["allatorvos", "Állatorvos"],
   alternativgyogyasz: ["termeszetgyogyasz", "Természetgyógyász"],
   ingatlan: ["ingatlan", "Ingatlan"],
+  it: ["it", "Informatikus"],
 };
 
 // Város (kisbetűs részlet) → [régiókód, lat, lng].
@@ -342,6 +343,8 @@ const CITY = {
   "capelle aan den ijssel": ["ZH", 51.9297, 4.5764],
   "beverwijk": ["NH", 52.4864, 4.6573],
   "rupperswil": ["AG", 47.3852, 8.1875],
+  "sirnach": ["TG", 47.5219, 9.0],
+  "thun": ["BE", 46.7580, 7.6280],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
@@ -449,6 +452,8 @@ const lines = [
   "",
   "-- Élelmiszer-kategória (a /magyarbolt kivezetésekor a döntés: a boltok a szaknévsorban kereshetők)",
   "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('elelmiszer', 'Élelmiszerbolt', '🛒', 900);",
+  "-- 'it' kategória már létezik ('Informatikus', csak 1 teszt-sora volt) — csak dokumentáló bootstrap, nem ír felül.",
+  "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('it', 'Informatikus', '⌘', 901);",
   "",
 ];
 let count = 0, geocoded = 0;
