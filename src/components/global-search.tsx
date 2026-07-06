@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import type { IconName } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { searchDestinations } from "@/lib/app-destinations";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 interface SearchResults {
   businesses: Array<{ id: string; name: string; categoryLabel: string | null }>;
@@ -13,8 +17,10 @@ interface SearchResults {
 const EMPTY: SearchResults = { businesses: [], events: [] };
 
 /**
- * GlobalSearch — fixed modal egy nagy kereső-mezővel, ami 2 entitásban keres
- * (vállalkozás, esemény). Kliens komponens, /api/search-ot hív.
+ * GlobalSearch — fixed modal egy nagy kereső-mezővel, ami 3 domainben keres:
+ *   • Az appban — eszközök/oldalak (kliensoldalon, azonnal — lib/app-destinations)
+ *   • Vállalkozások + Események — a /api/search-ból (ékezet-érzéketlen, több-szavas)
+ * Kliens komponens.
  */
 export function GlobalSearch() {
   const [open, setOpen] = useState(false);
@@ -23,6 +29,15 @@ export function GlobalSearch() {
   const [busy, setBusy] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // App-célok (eszközök/oldalak) — kliensoldalon AZONNAL számolódnak, a szerveres
+  // cég/esemény-keresés BETÖLTÉSE ELŐTT megjelennek. Ország-tudatos.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const destinations = useMemo(
+    () => (q.trim().length >= 2 ? searchDestinations(q, country) : []),
+    [q, country],
+  );
 
   // Debounced fetch
   useEffect(() => {
@@ -74,7 +89,7 @@ export function GlobalSearch() {
   }, [open]);
 
   const total =
-    results.businesses.length + results.events.length;
+    destinations.length + results.businesses.length + results.events.length;
 
   return (
     <>
@@ -126,15 +141,29 @@ export function GlobalSearch() {
               {q.trim().length < 2 ? (
                 <div className="px-3 py-8 text-center text-[12.5px] text-ink-muted">
                   Írj legalább 2 karaktert.<br />
-                  Keresel <strong className="text-ink">vállalkozást</strong> vagy{" "}
+                  Keresel <strong className="text-ink">eszközt</strong>,{" "}
+                  <strong className="text-ink">vállalkozást</strong> vagy{" "}
                   <strong className="text-ink">eseményt</strong>?
                 </div>
-              ) : total === 0 ? (
+              ) : total === 0 && !busy ? (
                 <div className="px-3 py-8 text-center text-[12.5px] text-ink-muted">
                   Nincs találat „<strong className="text-ink">{q}</strong>" kifejezésre.
                 </div>
               ) : (
                 <div className="space-y-3">
+                  {/* Az appban (eszközök/oldalak) — azonnal, kliensoldalon. */}
+                  <ResultSection
+                    label="Az appban"
+                    emoji="🧭"
+                    items={destinations.map((d) => ({
+                      key: d.href,
+                      href: d.href,
+                      title: d.title,
+                      subtitle: d.subtitle,
+                      icon: d.icon,
+                    }))}
+                    onNavigate={() => setOpen(false)}
+                  />
                   <ResultSection
                     label="Vállalkozások"
                     emoji="📑"
@@ -172,6 +201,8 @@ interface SearchItem {
   href: string;
   title: string;
   subtitle: string | null;
+  /** Opcionális vezető-ikon (az „Az appban" céloknál); cégnél/eseménynél nincs. */
+  icon?: IconName;
 }
 
 function ResultSection({
@@ -200,10 +231,15 @@ function ResultSection({
               href={it.href}
               onClick={onNavigate}
               className={cn(
-                "flex items-center gap-2 rounded-[10px] px-2.5 py-2 transition",
+                "flex items-center gap-2.5 rounded-[10px] px-2.5 py-2 transition",
                 "hover:bg-surface-alt active:scale-[0.99]",
               )}
             >
+              {it.icon && (
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary">
+                  <Icon name={it.icon} size={16} strokeWidth={2.2} />
+                </span>
+              )}
               <div className="min-w-0 flex-1">
                 <div className="truncate text-[13.5px] font-bold text-ink">{it.title}</div>
                 {it.subtitle && (
