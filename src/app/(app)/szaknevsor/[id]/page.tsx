@@ -11,7 +11,7 @@ import { areasForBusiness } from "@/lib/seo-areas";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
 import { BusinessClaimCard } from "@/components/views/business-claim-card";
-import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
+import { parseWorkingHoursStrict, calculateBusinessHoursStatus } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { BusinessGallery } from "@/components/views/business-gallery";
@@ -137,8 +137,12 @@ export default async function BusinessPage({
   // Kapcsolódó tudásbázis-cikkek (belső link a kategória alapján).
   const relatedGuides = guidesForCategory(b.categoryId).slice(0, 3);
 
-  const wh = parseWorkingHours(b.workingHours ?? null);
-  const status = calculateBusinessHoursStatus(wh);
+  // Live státusz CSAK ismert (strukturált) nyitvatartásnál — ismeretlennél nem
+  // találunk ki 8–18 default-státuszt (fabricated precision); a szabad-szöveges
+  // openText-et mutatjuk helyette, vagy semmit.
+  const wh = parseWorkingHoursStrict(b.workingHours ?? null);
+  const status = wh ? calculateBusinessHoursStatus(wh) : null;
+  const openTextTrim = b.openText?.trim() || null;
 
   let socials: Record<string, string> | null = null;
   try {
@@ -360,13 +364,26 @@ export default async function BusinessPage({
           </div>
           <span className="h-8 w-px self-stretch bg-line" />
           <div>
-            <div className={cn("text-[15px] font-bold flex items-center gap-1.5", status.isOpen ? "text-success" : "text-accent")}>
-              <span className={cn("h-2 w-2 rounded-full", status.isOpen ? "bg-success animate-pulse" : "bg-accent")} />
-              {status.statusText}
-            </div>
-            <div className="text-[11px] font-medium text-ink-muted capitalize">
-              {status.detailText}
-            </div>
+            {status ? (
+              <>
+                <div className={cn("text-[15px] font-bold flex items-center gap-1.5", status.isOpen ? "text-success" : "text-accent")}>
+                  <span className={cn("h-2 w-2 rounded-full", status.isOpen ? "bg-success animate-pulse" : "bg-accent")} />
+                  {status.statusText}
+                </div>
+                <div className="text-[11px] font-medium text-ink-muted capitalize">
+                  {status.detailText}
+                </div>
+              </>
+            ) : (
+              // Nincs strukturált nyitvatartás → nem találunk ki státuszt; a valódi
+              // openText-et mutatjuk (ha van), vagy „Nyitvatartás nem ismert".
+              <>
+                <div className="text-[15px] font-bold text-ink-muted">Nyitvatartás</div>
+                <div className="text-[11px] font-medium text-ink-muted">
+                  {openTextTrim ?? "nem ismert"}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -524,7 +541,13 @@ export default async function BusinessPage({
             Hivatalos adatokat (engedélyszám, cégjegyzékszám) közvetlenül a hatóságoknál erősíts meg.
           </p>
           <div className="mt-3 flex flex-wrap gap-1.5">
-            <Chip icon="clock">{b.workingHours ? `${status.statusText} · ${status.detailText}` : (b.openText || `${status.statusText} · ${status.detailText}`)}</Chip>
+            {/* Nyitvatartás-chip: ismert strukturált → élő státusz; egyébként a valódi
+                openText; ha egyik sincs, a chip kimarad (nincs kitalált státusz). */}
+            {status ? (
+              <Chip icon="clock">{`${status.statusText} · ${status.detailText}`}</Chip>
+            ) : openTextTrim ? (
+              <Chip icon="clock">{openTextTrim}</Chip>
+            ) : null}
             <Chip icon="globe">{b.languages?.length ? b.languages.join(" · ") : "Magyar"}</Chip>
             {b.yearsHere != null && <Chip>{b.yearsHere} éve kint</Chip>}
             {freshIso && <Chip icon="calendar">Frissítve {fmtRelative(freshIso)}</Chip>}

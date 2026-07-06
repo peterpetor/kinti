@@ -6,7 +6,7 @@ import type { Business, Category } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString, CategoryIcon } from "@/components/ui/category-icon";
 import { mediaImageUrl } from "@/lib/media";
-import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
+import { parseWorkingHoursStrict, calculateBusinessHoursStatus } from "@/lib/hours";
 import { cn } from "@/lib/cn";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LeafletEngine } from "./map-engine-leaflet";
@@ -242,7 +242,10 @@ export function BusinessMap({
 
 function SelectedCard({ business: b }: { business: Business }) {
   const logoUrl = mediaImageUrl(b.logoKey, { width: 120 });
-  const openStatus = calculateBusinessHoursStatus(parseWorkingHours(b.workingHours ?? null));
+  // Live státusz CSAK ismert nyitvatartásnál (nincs kitalált 8–18 default).
+  const knownHours = parseWorkingHoursStrict(b.workingHours ?? null);
+  const openStatus = knownHours ? calculateBusinessHoursStatus(knownHours) : null;
+  const openTextTrim = b.openText?.trim() || null;
   return (
     <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-pop">
       <Link
@@ -279,11 +282,16 @@ function SelectedCard({ business: b }: { business: Business }) {
         <div className="mt-0.5 truncate text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
           {b.name}
         </div>
-        <div className="mt-0.5 text-[11.5px] text-ink-muted">
-          {/* A distText prototípus-placeholder → nem mutatjuk; csak a valós státusz. */}
-          <span className={openStatus.isOpen ? "font-semibold text-success" : "text-accent"}>
-            {openStatus.isOpen ? "Nyitva" : "Zárva"}
-          </span>
+        <div className="mt-0.5 truncate text-[11.5px] text-ink-muted">
+          {/* Csak VALÓS státusz: ismert nyitvatartásnál nyitva/zárva; egyébként a
+              szabad-szöveges openText, vagy semmi (nincs kitalált státusz). */}
+          {openStatus ? (
+            <span className={openStatus.isOpen ? "font-semibold text-success" : "text-accent"}>
+              {openStatus.isOpen ? "Nyitva" : "Zárva"}
+            </span>
+          ) : openTextTrim ? (
+            <span>{openTextTrim}</span>
+          ) : null}
         </div>
       </div>
       </Link>

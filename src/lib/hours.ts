@@ -149,6 +149,32 @@ export function parseWorkingHours(jsonStr: string | null): WorkingHours {
   }
 }
 
+/**
+ * SZIGORÚ parse: `null`, ha NINCS valódi strukturált nyitvatartási adat
+ * (hiányzó / üres / rossz JSON / nap-objektum nélküli). Így a megjelenítő réteg
+ * megkülönböztetheti a „nem ismerjük a nyitvatartást" esetet az „ismerjük"-től,
+ * és nem mutat KITALÁLT „Nyitva/Zárva" státuszt a default 8–18 alapján (fabricated
+ * precision — az app elve, hogy ilyet nem teszünk: vö. távolság-gating, „Csak
+ * névre ismert"). Ha van legalább egy valódi nap, a teljes hetet a
+ * `parseWorkingHours` normalizálja (a hiányzó napok defaultra esnek — a strukturált
+ * szerkesztő amúgy is mind a 7 napot beállítja).
+ */
+export function parseWorkingHoursStrict(jsonStr: string | null): WorkingHours | null {
+  if (!jsonStr) return null;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(jsonStr);
+  } catch {
+    return null;
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+  const obj = parsed as Record<string, unknown>;
+  const hasAnyDay = (Object.keys(DEFAULT_WORKING_HOURS) as (keyof WorkingHours)[])
+    .some((k) => obj[k] != null && typeof obj[k] === "object");
+  if (!hasAnyDay) return null;
+  return parseWorkingHours(jsonStr);
+}
+
 export function calculateBusinessHoursStatus(
   workingHours: WorkingHours,
   currentTime: Date = new Date(),

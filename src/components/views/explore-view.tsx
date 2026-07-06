@@ -15,7 +15,7 @@ import { readPreferredCanton, setPreferredCanton } from "@/lib/canton-pref";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { getRegions, regionLabel } from "@/lib/regions";
 import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
-import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
+import { calculateBusinessHoursStatus, parseWorkingHoursStrict } from "@/lib/hours";
 import { haversineKm } from "@/lib/distance";
 import { hasStreetAddress } from "@/lib/address";
 import { SmartSearchBar } from "./smart-search-bar";
@@ -217,10 +217,11 @@ export function ExploreView({
             (cantonFromAddress(b.address ?? null)?.code === canton ||
               (b.lat != null && b.lng != null && nearestCantonCode(b.lat, b.lng).code === canton)));
         const byFav = !showFavs || favoriteIds.includes(b.id);
-        // Ugyanaz a DEFAULT-fallback, mint a kártyán (parseWorkingHours null → 8–18),
-        // különben egy üzlet a kártyán "Nyitva", de a "Nyitva most" szűrő kidobná.
-        const byOpen =
-          !openNow || calculateBusinessHoursStatus(parseWorkingHours(b.workingHours ?? null)).isOpen;
+        // „Most nyitva" = TÉNYLEGESEN ismert-nyitva. Ismeretlen nyitvatartásnál
+        // nem találunk ki „nyitva"-t (a kártya sem mutat státuszt ilyenkor) —
+        // őszinte szűrő, összhangban a kártya megjelenítésével.
+        const wh = parseWorkingHoursStrict(b.workingHours ?? null);
+        const byOpen = !openNow || (wh != null && calculateBusinessHoursStatus(wh).isOpen);
         const byYears = minYears === 0 || (b.yearsHere ?? 0) >= minYears;
         const byText =
           !needle ||

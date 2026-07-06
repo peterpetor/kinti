@@ -7,7 +7,7 @@ import { mediaImageUrl } from "@/lib/media";
 import { OwnPostBadge } from "@/components/own-post-badge";
 import { FavoriteButton } from "./favorite-button";
 import { formatDistanceKm } from "@/lib/distance";
-import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
+import { parseWorkingHoursStrict, calculateBusinessHoursStatus } from "@/lib/hours";
 import { hasContactInfo } from "@/lib/address";
 
 /**
@@ -38,9 +38,12 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
 
   const logoUrl = mediaImageUrl(b.logoKey, { width: 160 });
 
-  // Élő nyitva/zárva a tényleges nyitvatartásból (svájci idő) — NEM a statikus
-  // open_now DB-flagből, ami mindig "Zárva"-t mutatott. (Mint a részlet-oldalon.)
-  const openStatus = calculateBusinessHoursStatus(parseWorkingHours(b.workingHours ?? null));
+  // Élő nyitva/zárva CSAK ismert (strukturált) nyitvatartásból — ha nincs adat,
+  // nem találunk ki 8–18 default-státuszt (fabricated precision). Ismeretlen
+  // nyitvatartásnál a valódi openText szabad-szöveget mutatjuk, vagy semmit.
+  const knownHours = parseWorkingHoursStrict(b.workingHours ?? null);
+  const openStatus = knownHours ? calculateBusinessHoursStatus(knownHours) : null;
+  const openTextTrim = b.openText?.trim() || null;
 
   const inner = (
     <>
@@ -116,22 +119,35 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
                 <Icon name="nav" size={11} strokeWidth={2.2} />
                 {formatDistanceKm(distanceKm)}
               </span>
-              <span className="h-[3px] w-[3px] rounded-full bg-ink-faint" />
+              {/* Pont-szeparátor CSAK ha van utána státusz/nyitvatartás (különben lógna). */}
+              {(openStatus || openTextTrim) && (
+                <span className="h-[3px] w-[3px] rounded-full bg-ink-faint" />
+              )}
             </>
           )}
-          <span
-            className={cn(
-              "font-semibold",
-              openStatus.isOpen ? (openStatus.closingSoon ? "text-star" : "text-success") : "text-accent",
-            )}
-          >
-            {openStatus.isOpen ? "Nyitva" : "Zárva"}
-          </span>
-          {/* Cselekvésre ösztönző relatív időzítés CSAK ha hamarosan vált (zár/nyit) —
-              különben tiszta marad a kártya (nincs abszolút „zár 18:00-kor" zaj). */}
-          {(openStatus.closingSoon || openStatus.openingSoon) && (
-            <span className="truncate text-[12px] text-ink-muted">{openStatus.detailText}</span>
-          )}
+          {openStatus ? (
+            <>
+              <span
+                className={cn(
+                  "font-semibold",
+                  openStatus.isOpen ? (openStatus.closingSoon ? "text-star" : "text-success") : "text-accent",
+                )}
+              >
+                {openStatus.isOpen ? "Nyitva" : "Zárva"}
+              </span>
+              {/* Cselekvésre ösztönző relatív időzítés CSAK ha hamarosan vált (zár/nyit) —
+                  különben tiszta marad a kártya (nincs abszolút „zár 18:00-kor" zaj). */}
+              {(openStatus.closingSoon || openStatus.openingSoon) && (
+                <span className="truncate text-[12px] text-ink-muted">{openStatus.detailText}</span>
+              )}
+            </>
+          ) : openTextTrim ? (
+            // Nincs strukturált nyitvatartás, de van szabad-szöveges (seed) → azt mutatjuk.
+            <span className="inline-flex items-center gap-1 truncate text-ink-muted">
+              <Icon name="clock" size={11} strokeWidth={2.2} />
+              {openTextTrim}
+            </span>
+          ) : null}
         </div>
 
         <div className="flex gap-1.5">

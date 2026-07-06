@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   calculateBusinessHoursStatus,
   parseWorkingHours,
+  parseWorkingHoursStrict,
   DEFAULT_WORKING_HOURS,
   type WorkingHours,
 } from "@/lib/hours";
@@ -80,6 +81,33 @@ describe("calculateBusinessHoursStatus", () => {
   it("parseWorkingHours: nem-objektum JSON (tömb / szám) → default, nem dob", () => {
     expect(parseWorkingHours("[1,2,3]")).toEqual(DEFAULT_WORKING_HOURS);
     expect(parseWorkingHours("42")).toEqual(DEFAULT_WORKING_HOURS);
+  });
+});
+
+describe("parseWorkingHoursStrict — ismerjuk-e a nyitvatartast (nincs kitalalt statusz)", () => {
+  it("nincs adat (null / üres / üres objektum) → null", () => {
+    expect(parseWorkingHoursStrict(null)).toBeNull();
+    expect(parseWorkingHoursStrict("")).toBeNull();
+    expect(parseWorkingHoursStrict("{}")).toBeNull();
+  });
+
+  it("hibás JSON / nem-objektum → null (nem dob)", () => {
+    expect(parseWorkingHoursStrict("{nem json")).toBeNull();
+    expect(parseWorkingHoursStrict("[1,2,3]")).toBeNull();
+    expect(parseWorkingHoursStrict("42")).toBeNull();
+  });
+
+  it("legalább egy valódi nap → normalizált WorkingHours (nem null)", () => {
+    const wh = parseWorkingHoursStrict(JSON.stringify({ mon: { open: "09:00", close: "17:00", closed: false } }));
+    expect(wh).not.toBeNull();
+    expect(wh!.mon).toEqual({ open: "09:00", close: "17:00", closed: false });
+    // a meg nem adott napok a defaultra esnek (a strukturált szerkesztő amúgy mind a 7-et beállítja)
+    expect(wh!.sun).toEqual(DEFAULT_WORKING_HOURS.sun);
+  });
+
+  it("a default-oló parseWorkingHours továbbra is teljes hetet ad ugyanerre", () => {
+    // (Kontraszt: parseWorkingHours SOSE null — ott ez a szándék; a strict a megkülönböztető.)
+    expect(parseWorkingHours(null)).toEqual(DEFAULT_WORKING_HOURS);
   });
 });
 
