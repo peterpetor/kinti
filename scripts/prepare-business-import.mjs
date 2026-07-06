@@ -382,6 +382,10 @@ const CITY = {
   "penzberg": ["BY", 47.75, 11.3833],
   "unterschleißheim": ["BY", 48.2775, 11.5747],
   "landshut": ["BY", 48.5372, 12.1522],
+  "st. pölten": ["NOE", 48.2, 15.6167],
+  "neusiedl am see": ["BGL", 47.95, 16.8333],
+  "ebreichsdorf": ["NOE", 47.9667, 16.4],
+  "mödling": ["NOE", 48.0858, 16.2833],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
