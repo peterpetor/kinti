@@ -454,6 +454,9 @@ const CITY = {
   "delft": ["ZH", 52.0116, 4.3571],
   "moerdijk": ["NB", 51.6833, 4.6167],
   "krumbach": ["BY", 48.2489, 10.3653],
+  "eindhoven": ["NB", 51.4416, 5.4697],
+  "voorburg": ["ZH", 52.0716, 4.3644],
+  "tilburg": ["NB", 51.5555, 5.0913],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
