@@ -96,6 +96,11 @@ const CATEGORY = {
   pszichiater: ["pszichiater", "Pszichiáter"],
   sebesz: ["sebesz", "Sebész"],
   urologus: ["urologus", "Urológus"],
+  belgyogyasz: ["belgyogyasz", "Belgyógyász"],
+  fulorrgege: ["fül_orr_gege", "Fül-orr-gégész"],
+  ideggyogyasz: ["epileptologus", "Neurológus / Ideggyógyász"],
+  pedikur: ["pedikur", "Pedikűr / Lábápolás"],
+  gyogyszeresz: ["gyogyszeresz", "Gyógyszerész"],
   komuves: ["kőműves", "Kőműves"],
   kertesz: ["kertesz", "Kertész"],
   felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
@@ -118,6 +123,7 @@ const CITY = {
   // Berlin (BE) régiókódot kapott. Előre kell venni, hogy előbb saját magára illeszkedjen.
   "überlingen": ["BW", 47.7686, 9.1758],
   "münchenstein": ["BL", 47.5219, 7.6236], // ne a "münchen" (DE) kulcs egyezzen bele
+  "wiener neustadt": ["NOE", 47.8151, 16.2436], // ne a "wien"/"bécs" (W) kulcs egyezzen bele — más tartomány!
   "tägerwilen": ["TG", 47.651, 9.176],
   "bottighofen": ["TG", 47.6423, 9.2153],
   "zürich": ["ZH", 47.3769, 8.5417],
@@ -157,12 +163,16 @@ const CITY = {
   "arbon": ["TG", 47.5136, 9.434],
   "den haag": ["ZH", 52.0705, 4.3007],
   "arnhem": ["GE", 51.9851, 5.8987],
+  "thalheim bei wels": ["OOE", 48.1611, 14.0264],
+  "pernitz": ["NOE", 47.9, 15.9333],
   "breda": ["NB", 51.5719, 4.7683],
   "almere": ["FL", 52.3508, 5.2647],
   "de rijp": ["NH", 52.5583, 4.8447],
   "alkmaar": ["NH", 52.6324, 4.7534],
   "tresdorf": ["NOE", 48.3936, 16.3521],
   "geisenfeld": ["BY", 48.6851, 11.6136],
+  "st. anton am arlberg": ["T", 47.1297, 10.2657],
+  "gloggnitz": ["NOE", 47.6764, 15.9382],
   // 2026-07-05 bővítés — új autószervizek/boltok városai:
   "deutsch-wagram": ["NOE", 48.2986, 16.5583],
   "velden": ["KTN", 46.6114, 14.0417], // Velden am Wörthersee (9220), Karintia
