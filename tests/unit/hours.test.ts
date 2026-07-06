@@ -60,4 +60,25 @@ describe("calculateBusinessHoursStatus", () => {
     const s = calculateBusinessHoursStatus(parseWorkingHours(null), swissMondayAt(15));
     expect(s.isOpen).toBe(true);
   });
+
+  // Regresszió: egy hiányos nap-objektum (close nélkül) korábban .split(":")-nél
+  // TypeError-t dobott, ami a BusinessCard-on át az egész listát megdöntötte.
+  it("parseWorkingHours: hiányos nap (nincs close) → nem dob, a napot a defaultból pótolja", () => {
+    const wh = parseWorkingHours(JSON.stringify({ mon: { open: "09:00", closed: false } }));
+    expect(wh.mon.close).toBe(DEFAULT_WORKING_HOURS.mon.close);
+    // A státusz-számítás sem hasal el a normalizált napon.
+    expect(() => calculateBusinessHoursStatus(wh, swissMondayAt(14))).not.toThrow();
+    expect(calculateBusinessHoursStatus(wh, swissMondayAt(14)).isOpen).toBe(true);
+  });
+
+  it("parseWorkingHours: rossz típusú mezők (open szám, close null) → default-ra esik, nem dob", () => {
+    const wh = parseWorkingHours(JSON.stringify({ tue: { open: 9, close: null, closed: false } }));
+    expect(wh.tue).toEqual(DEFAULT_WORKING_HOURS.tue);
+    expect(() => calculateBusinessHoursStatus(wh, swissMondayAt(14))).not.toThrow();
+  });
+
+  it("parseWorkingHours: nem-objektum JSON (tömb / szám) → default, nem dob", () => {
+    expect(parseWorkingHours("[1,2,3]")).toEqual(DEFAULT_WORKING_HOURS);
+    expect(parseWorkingHours("42")).toEqual(DEFAULT_WORKING_HOURS);
+  });
 });

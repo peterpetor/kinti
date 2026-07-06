@@ -93,7 +93,24 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
   }
 
   if ("openText" in body) fields.openText = str(body.openText);
-  if ("workingHours" in body) fields.workingHours = str(body.workingHours);
+  if ("workingHours" in body) {
+    const wh = str(body.workingHours);
+    // A tárolt string parse-olható JSON kell legyen, ésszerű hosszkorláttal —
+    // különben a megjelenítő réteg (lib/hours) hibás alakon elhasalhatna. NULL =
+    // törlés (vissza a default nyitvatartásra).
+    if (wh === null) {
+      fields.workingHours = null;
+    } else if (wh.length > 2000) {
+      errors.push({ field: "workingHours", message: "A nyitvatartási adatok túl hosszúak." });
+    } else {
+      try {
+        JSON.parse(wh);
+        fields.workingHours = wh;
+      } catch {
+        errors.push({ field: "workingHours", message: "Érvénytelen nyitvatartás-formátum." });
+      }
+    }
+  }
   if ("socialLinks" in body) {
     const raw = str(body.socialLinks);
     if (raw === null) {

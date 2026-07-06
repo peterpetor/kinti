@@ -45,8 +45,8 @@ export function DynamicDistance({ lat, lng, address, precise }: DynamicDistanceP
 
   useEffect(() => {
     // Házszám nélküli cím esetén a lat/lng csak városközpont — a km/perc-számítás
-    // félrevezető lenne, marad a városnév.
-    if (!precise || !lat || !lng || typeof navigator === "undefined" || !navigator.geolocation) {
+    // félrevezető lenne, marad a városnév. (== null: a 0 érvényes koordináta, nem hiány.)
+    if (!precise || lat == null || lng == null || typeof navigator === "undefined" || !navigator.geolocation) {
       return;
     }
 

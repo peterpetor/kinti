@@ -31,19 +31,26 @@ export async function GET(req: Request) {
   const [biz, ev] = await Promise.all([
     db
       .prepare(
+        // Csak PUBLIKUS cég: nem-rejtett + admin-jóváhagyott (moderation_status=1) —
+        // különben a kereső elrejtett/duplikált/pending sorokat is felhozna, amikre
+        // kattintva a /szaknevsor/[id] 404-el (döglött link).
         `SELECT b.id, b.name, b.category_label
          FROM businesses b
-         WHERE LOWER(b.name) LIKE LOWER(?) OR LOWER(COALESCE(b.blurb, '')) LIKE LOWER(?)
+         WHERE COALESCE(b.hidden, 0) = 0 AND b.moderation_status = 1
+           AND (LOWER(b.name) LIKE LOWER(?) OR LOWER(COALESCE(b.blurb, '')) LIKE LOWER(?))
          ORDER BY b.featured DESC, b.name ASC LIMIT 5`,
       )
       .bind(needle, needle)
       .all<{ id: string; name: string; category_label: string | null }>(),
     db
       .prepare(
+        // A láthatóság-feltételt ZÁRÓJELEZZÜK: az AND erősebben köt mint az OR,
+        // ezért zárójel nélkül a `status IS NULL` sorok a keresőszótól függetlenül
+        // mind visszajöttek volna.
         `SELECT id, title, event_date, venue
          FROM events
-         WHERE status IS NULL OR status = 'approved'
-         AND (LOWER(title) LIKE LOWER(?) OR LOWER(COALESCE(venue, '')) LIKE LOWER(?))
+         WHERE (status IS NULL OR status = 'approved')
+           AND (LOWER(title) LIKE LOWER(?) OR LOWER(COALESCE(venue, '')) LIKE LOWER(?))
          ORDER BY event_date ASC LIMIT 5`,
       )
       .bind(needle, needle)

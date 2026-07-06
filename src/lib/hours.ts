@@ -94,15 +94,39 @@ export interface StatusResult {
   detailText: string; // Pl: "zár 19:00-kor", "nyit holnap 8:00-kor"
 }
 
+/** HH:MM-formátumú-e (különben a downstream .split(":") megbízhatatlan). */
+function isValidTime(v: unknown): v is string {
+  return typeof v === "string" && /^\d{1,2}:\d{2}$/.test(v);
+}
+
+/**
+ * Egy nap-objektum biztonságos normalizálása. A tárolt JSON lehet hiányos (pl.
+ * `{ open: "09:00" }` close nélkül) vagy rossz típusú — ilyenkor a downstream
+ * `.close.split(":")` `undefined`-on hívódna és TypeError-t dobna, ami a
+ * BusinessCard-on át az EGÉSZ lista/oldal renderjét megdöntené. Ezért itt
+ * garantáljuk, hogy minden nap teljes, érvényes `DayHours`.
+ */
+function normalizeDay(raw: unknown, fallback: DayHours): DayHours {
+  if (!raw || typeof raw !== "object") return fallback;
+  const d = raw as Partial<DayHours>;
+  if (d.closed === true) return { open: fallback.open, close: fallback.close, closed: true };
+  const open = isValidTime(d.open) ? d.open : fallback.open;
+  const close = isValidTime(d.close) ? d.close : fallback.close;
+  return { open, close, closed: false };
+}
+
 export function parseWorkingHours(jsonStr: string | null): WorkingHours {
   if (!jsonStr) return DEFAULT_WORKING_HOURS;
   try {
     const parsed = JSON.parse(jsonStr);
-    // Merge-öljük a default-tal a biztonság kedvéért
-    return {
-      ...DEFAULT_WORKING_HOURS,
-      ...parsed,
-    };
+    if (!parsed || typeof parsed !== "object") return DEFAULT_WORKING_HOURS;
+    // Naponként normalizálunk (nem sekély-merge): egy hiányos/rossz nap sose
+    // hagyjon hátra érvénytelen open/close-t, ami a státusz-számítást elhasalná.
+    const out = {} as WorkingHours;
+    for (const key of Object.keys(DEFAULT_WORKING_HOURS) as (keyof WorkingHours)[]) {
+      out[key] = normalizeDay((parsed as Record<string, unknown>)[key], DEFAULT_WORKING_HOURS[key]);
+    }
+    return out;
   } catch {
     return DEFAULT_WORKING_HOURS;
   }
