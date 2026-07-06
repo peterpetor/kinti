@@ -80,6 +80,7 @@ const CATEGORY = {
   autosiskola: ["gepijarmu_oktato", "Autósiskola / Oktató"],
   kerekparszerelo: ["kerekpar", "Kerékpárszerviz"],
   cukraszda: ["cukrasz", "Cukrász / Torták"],
+  belsoepitesz: ["lakberendezes", "Belsőépítészet"],
   komuves: ["kőműves", "Kőműves"],
   kertesz: ["kertesz", "Kertész"],
   felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
