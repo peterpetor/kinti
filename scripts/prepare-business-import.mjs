@@ -498,6 +498,11 @@ const CITY = {
   "norderstedt": ["SH", 53.6883, 9.9761],
   "saalfeld": ["TH", 50.6503, 11.3667],
   "berga": ["TH", 50.7333, 11.7667],
+  // 2026-07-06 bővítés (19. kör) — arkadasi.hu/ausztria Salzburg-szekciója
+  // (a korábbi Vorarlberg/Kärnten körben kimaradt, pedig már megvolt az adat):
+  "zell am see": ["SBG", 47.3244, 12.7972],
+  "tamsweg": ["SBG", 47.1281, 13.8114],
+  "bruck an der großglocknerstraße": ["SBG", 47.2833, 12.8333],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
