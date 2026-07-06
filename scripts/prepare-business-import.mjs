@@ -91,6 +91,11 @@ const CATEGORY = {
   autokereskedes: ["autokereskedes", "Autókereskedés"],
   karszakerto: ["karszakerto", "Kárszakértő"],
   hotelpanzio: ["szallas", "Szálláshely / Panzió"],
+  szemesz: ["szemesz", "Szemész / Optikus"],
+  ortopedus: ["ortopedus", "Ortopédorvos / Sebész"],
+  pszichiater: ["pszichiater", "Pszichiáter"],
+  sebesz: ["sebesz", "Sebész"],
+  urologus: ["urologus", "Urológus"],
   komuves: ["kőműves", "Kőműves"],
   kertesz: ["kertesz", "Kertész"],
   felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
@@ -112,6 +117,7 @@ const CITY = {
   // Élő bug volt: "überlingen" tartalmazza a "berlin" alstringet → BW-s orvos
   // Berlin (BE) régiókódot kapott. Előre kell venni, hogy előbb saját magára illeszkedjen.
   "überlingen": ["BW", 47.7686, 9.1758],
+  "münchenstein": ["BL", 47.5219, 7.6236], // ne a "münchen" (DE) kulcs egyezzen bele
   "tägerwilen": ["TG", 47.651, 9.176],
   "bottighofen": ["TG", 47.6423, 9.2153],
   "zürich": ["ZH", 47.3769, 8.5417],
@@ -386,6 +392,14 @@ const CITY = {
   "neusiedl am see": ["BGL", 47.95, 16.8333],
   "ebreichsdorf": ["NOE", 47.9667, 16.4],
   "mödling": ["NOE", 48.0858, 16.2833],
+  "stettlen": ["BE", 46.9647, 7.5153],
+  "gümligen": ["BE", 46.9270, 7.4854],
+  "schlieren": ["ZH", 47.3967, 8.4472],
+  "döttingen": ["AG", 47.5731, 8.2517],
+  "kloten": ["ZH", 47.4508, 8.5825],
+  "baar": ["ZG", 47.1961, 8.5297],
+  "allschwil": ["BL", 47.5511, 7.5486],
+  "bülach": ["ZH", 47.5219, 8.5406],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
