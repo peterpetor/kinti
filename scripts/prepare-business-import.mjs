@@ -503,6 +503,10 @@ const CITY = {
   "zell am see": ["SBG", 47.3244, 12.7972],
   "tamsweg": ["SBG", 47.1281, 13.8114],
   "bruck an der großglocknerstraße": ["SBG", 47.2833, 12.8333],
+  // 2026-07-06 bővítés (20. kör) — hollandhirek.nl szaknévsor API-ból (Directorist
+  // REST-endpoint, 85 valódi bejegyzés) + arkadasi.hu/belgium-hollandia-luxemburg;
+  // Flevoland eddig teljesen üres tartomány volt:
+  "milsbeek": ["LI", 51.7303, 5.9533],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
