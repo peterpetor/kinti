@@ -39,12 +39,22 @@ export default async function JobsPage() {
             Magyar-barát munkalehetőségek külföldön. Böngéssz az ellenőrzött állások között, vagy
             készülj fel az interjúra!
           </p>
-          <Link
-            href="/allasok/profil"
-            className="inline-flex items-center gap-2 rounded-pill bg-primary/10 px-4 py-2 text-[13.5px] font-bold text-primary transition-all active:scale-[0.98]"
-          >
-            <Icon name="upload" size={16} strokeWidth={2.4} /> Töltsd fel a CV-det
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/allasok/profil"
+              className="inline-flex items-center gap-2 rounded-pill bg-primary/10 px-4 py-2 text-[13.5px] font-bold text-primary transition-all active:scale-[0.98]"
+            >
+              <Icon name="upload" size={16} strokeWidth={2.4} /> Töltsd fel a CV-det
+            </Link>
+            <Link
+              href="/munkaltato/uj-hirdetes"
+              aria-label="Álláshirdetés feladása munkáltatóként"
+              title="Álláshirdetés feladása"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-muted shadow-card transition-all active:scale-[0.95]"
+            >
+              <Icon name="plus" size={16} strokeWidth={2.4} />
+            </Link>
+          </div>
         </section>
 
         {/* Állás-riasztás modul */}
