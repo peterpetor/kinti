@@ -84,6 +84,9 @@ const CATEGORY = {
   manikurpedikur: ["manikur", "Manikűr / Műköröm"],
   tolmacs: ["nemet_tolmacs", "Tolmács / Konferenciatolmács"],
   penzugyitanacsadas: ["penzugyi_tanacsado", "Pénzügyi tanácsadó"],
+  adotanacsado: ["adotanacsado", "Adótanácsadó"],
+  napelemszerelo: ["solar_technikus", "Napelem technikus / Szerelő"],
+  kutyafodrasz: ["kutyafodrasz", "Kutyafodrász"],
   komuves: ["kőműves", "Kőműves"],
   kertesz: ["kertesz", "Kertész"],
   felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
@@ -370,6 +373,8 @@ const CITY = {
   "altötting": ["BY", 48.2264, 12.6789],
   "alfdorf": ["BW", 48.8167, 9.7167],
   "burladingen": ["BW", 48.2667, 9.1],
+  "st. johann im pongau": ["SBG", 47.35, 13.2],
+  "bad wimsbach-neydharting": ["OOE", 48.05, 13.9],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
