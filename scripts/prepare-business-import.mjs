@@ -75,6 +75,7 @@ const CATEGORY = {
   festo: ["festo", "Szobafestő"],
   takaritas: ["takarito", "Takarítás"],
   vizszerelo: ["gazvez", "Víz-gáz szerelő"],
+  villanyszerelo: ["villany", "Villanyszerelő"],
   komuves: ["kőműves", "Kőműves"],
   kertesz: ["kertesz", "Kertész"],
   felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
@@ -345,6 +346,8 @@ const CITY = {
   "rupperswil": ["AG", 47.3852, 8.1875],
   "sirnach": ["TG", 47.5219, 9.0],
   "thun": ["BE", 46.7580, 7.6280],
+  "heidenheim": ["BW", 48.6763, 10.1526],
+  "karlsfeld": ["BY", 48.2478, 11.4645],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
@@ -454,6 +457,8 @@ const lines = [
   "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('elelmiszer', 'Élelmiszerbolt', '🛒', 900);",
   "-- 'it' kategória már létezik ('Informatikus', csak 1 teszt-sora volt) — csak dokumentáló bootstrap, nem ír felül.",
   "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('it', 'Informatikus', '⌘', 901);",
+  "-- 'villany' kategória: a category-icon.tsx már régóta ismeri az ikonját (villám), a categories tábla eddig nem.",
+  "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('villany', 'Villanyszerelő', '⚡', 902);",
   "",
 ];
 let count = 0, geocoded = 0;
