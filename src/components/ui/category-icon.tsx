@@ -146,6 +146,30 @@ const PATHS_FOGORVOS = [
   // Fog: két korona-csúcs fent, két lefelé szűkülő gyökér.
   "M12 3c-2 0-2.5 1-4.5 1S5 3.5 5 6.5c0 2 .7 3.5 1.2 5.5.4 1.6.6 3.5 1.3 5 .3.7.6 1.5 1.2 1.5.7 0 .8-1 1-2 .3-1.5.5-3.5 1.3-3.5s1 2 1.3 3.5c.2 1 .3 2 1 2 .6 0 .9-.8 1.2-1.5.7-1.5.9-3.4 1.3-5 .5-2 1.2-3.5 1.2-5.5C19 3.5 17 4 15.5 4S14 3 12 3Z",
 ];
+// Kenyér (kovász-boule): kupola tetejű cipó lapos aljjal + bevagdosás-vonalak —
+// felismerhető "kenyér" sziluett, nem az elvont búzakéve (ami kicsiben pötty).
+const PATHS_KENYER = [
+  "M4 12a8 5 0 0 1 16 0v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z",
+  "M9 9.5l1 2",
+  "M12 8.5l1.2 2.5",
+  "M15 9.5l1 2",
+];
+// Bevásárlókocsi (Lucide shopping-cart mintájára, kör-kerekek path-arc-ként,
+// hogy a komponens <path>-only renderelője is megjelenítse).
+const PATHS_BEVASARLOKOCSI = [
+  "M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12",
+  "M9 21a1 1 0 1 1-2 0a1 1 0 0 1 2 0",
+  "M20 21a1 1 0 1 1-2 0a1 1 0 0 1 2 0",
+];
+// Takarítás: felmosóvödör (trapéz test + fogantyú) + ferde felmosónyél —
+// felismerhető "takarítás" sziluett kártya-méretben is.
+const PATHS_FELMOSOVODOR = [
+  "M5 9h14l-1.3 10.2a2 2 0 0 1-2 1.8H8.3a2 2 0 0 1-2-1.8z",
+  "M4 9h16",
+  "M8 9V7.5a4 4 0 0 1 8 0V9",
+  "M18 2L10 14",
+  "M8.7 14q1.8 1 0 3",
+];
 
 /**
  * Kategória-ikonok — egy helyen a térkép-pinekhez (HTML-string) ÉS a
@@ -157,7 +181,7 @@ export const CATEGORY_ICON_PATHS: Record<string, string[]> = {
   autoszer: PATHS_AUTOSZER,
   orvos: PATHS_ORVOS,
   ugyved: PATHS_UGYVED,
-  pek: PATHS_PEK,
+  pek: PATHS_KENYER,
   etterem: PATHS_ETTEREM,
   // Magyar közösség / egyesület (a szaknévsor-szervezetek zöme) — „emberek/közösség"
   // ikon (Lucide users). Enélkül 150+ szervezet-pin generikus pöttyként jelent meg.
@@ -169,7 +193,8 @@ export const CATEGORY_ICON_PATHS: Record<string, string[]> = {
   ],
   villany: PATHS_VILLANY,
   fordito: PATHS_FORDITO,
-  takarito: PATHS_TAKARITO,
+  takarito: PATHS_FELMOSOVODOR,
+  elelmiszer: PATHS_BEVASARLOKOCSI,
   it: PATHS_IT,
   tanar: PATHS_TANAR,
   konyveles: PATHS_KONYVELES,
