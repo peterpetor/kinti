@@ -81,6 +81,7 @@ const CATEGORY = {
   kerekparszerelo: ["kerekpar", "Kerékpárszerviz"],
   cukraszda: ["cukrasz", "Cukrász / Torták"],
   belsoepitesz: ["lakberendezes", "Belsőépítészet"],
+  manikurpedikur: ["manikur", "Manikűr / Műköröm"],
   komuves: ["kőműves", "Kőműves"],
   kertesz: ["kertesz", "Kertész"],
   felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
@@ -363,6 +364,8 @@ const CITY = {
   "sankt augustin": ["NW", 50.7706, 7.1922],
   "saulheim": ["RP", 49.9, 8.15],
   "neuhof an der zenn": ["BY", 49.4167, 10.6667],
+  "reichertshofen": ["BY", 48.6667, 11.5833],
+  "altötting": ["BY", 48.2264, 12.6789],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
