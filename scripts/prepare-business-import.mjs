@@ -74,6 +74,7 @@ const CATEGORY = {
   pekseg: ["pek", "Pékség"],
   festo: ["festo", "Szobafestő"],
   takaritas: ["takarito", "Takarítás"],
+  fuvarozas: ["futas", "Fuvarozás"],
   vizszerelo: ["gazvez", "Víz-gáz szerelő"],
   villanyszerelo: ["villany", "Villanyszerelő"],
   szabo: ["varrono", "Varrónő"],
@@ -427,6 +428,9 @@ const CITY = {
   "salmsach": ["TG", 47.5701, 9.3618],
   "berg tg": ["TG", 47.6367, 9.2489],
   "oetwil am see": ["ZH", 47.2394, 8.6961],
+  "lutzenberg": ["AR", 47.4419, 9.5883],
+  "reichenburg": ["SZ", 47.1667, 8.9833],
+  "niederbipp": ["BE", 47.2833, 7.65],
   "baden": ["AG", 47.4744, 8.3059],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
