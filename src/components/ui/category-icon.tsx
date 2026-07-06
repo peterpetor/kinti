@@ -179,6 +179,8 @@ const PATHS_FELMOSOVODOR = [
 export const CATEGORY_ICON_PATHS: Record<string, string[]> = {
   fodrasz: PATHS_FODRASZ,
   autoszer: PATHS_AUTOSZER,
+  autokereskedes: PATHS_AUTOSZER,
+  karszakerto: PATHS_AUTOSZER,
   orvos: PATHS_ORVOS,
   ugyved: PATHS_UGYVED,
   pek: PATHS_KENYER,

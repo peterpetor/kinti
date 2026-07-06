@@ -87,6 +87,9 @@ const CATEGORY = {
   adotanacsado: ["adotanacsado", "Adótanácsadó"],
   napelemszerelo: ["solar_technikus", "Napelem technikus / Szerelő"],
   kutyafodrasz: ["kutyafodrasz", "Kutyafodrász"],
+  kozjegyzo: ["kozjegyzo", "Közjegyző"],
+  autokereskedes: ["autokereskedes", "Autókereskedés"],
+  karszakerto: ["karszakerto", "Kárszakértő"],
   komuves: ["kőműves", "Kőműves"],
   kertesz: ["kertesz", "Kertész"],
   felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
@@ -375,6 +378,8 @@ const CITY = {
   "burladingen": ["BW", 48.2667, 9.1],
   "st. johann im pongau": ["SBG", 47.35, 13.2],
   "bad wimsbach-neydharting": ["OOE", 48.05, 13.9],
+  "penzberg": ["BY", 47.75, 11.3833],
+  "unterschleißheim": ["BY", 48.2775, 11.5747],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
@@ -486,6 +491,9 @@ const lines = [
   "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('it', 'Informatikus', '⌘', 901);",
   "-- 'villany' kategória: a category-icon.tsx már régóta ismeri az ikonját (villám), a categories tábla eddig nem.",
   "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('villany', 'Villanyszerelő', '⚡', 902);",
+  "-- ÚJ kategóriák (a user 2026-07-06-i engedélyével, korábban nem volt hova kötni ezeket):",
+  "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('autokereskedes', 'Autókereskedés', '🚗', 903);",
+  "INSERT OR IGNORE INTO categories (id, label, glyph, sort_order) VALUES ('karszakerto', 'Kárszakértő', '🔍', 904);",
   "",
 ];
 let count = 0, geocoded = 0;
