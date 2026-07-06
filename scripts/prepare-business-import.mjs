@@ -337,6 +337,11 @@ const CITY = {
   "stans": ["NW", 46.9581, 8.3661],
   "oberdorf bl": ["BL", 47.4325, 7.6875],
   "olten": ["SO", 47.3518, 7.9046],
+  "wil sg": ["SG", 47.4642, 9.0459],
+  "schönbühl": ["BE", 47.0, 7.4667],
+  "capelle aan den ijssel": ["ZH", 51.9297, 4.5764],
+  "beverwijk": ["NH", 52.4864, 4.6573],
+  "rupperswil": ["AG", 47.3852, 8.1875],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
