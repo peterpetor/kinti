@@ -67,7 +67,7 @@ async function fetchHtml(url: string): Promise<string | null> {
 
 /** 2. lépcső: cégnév → domain-tippek → főoldal → Impressum → e-mail. */
 async function fromCompanyImpressum(company: string, country: string | null | undefined, budget: { n: number }): Promise<string | null> {
-  const domains = companyDomainCandidates(company, country).slice(0, 3);
+  const domains = companyDomainCandidates(company, country).slice(0, 2);
   for (const domain of domains) {
     if (budget.n <= 0) return null;
     // Főoldal (www-vel) — sok kis cég a láblécben is kiírja az e-mailt.
@@ -114,9 +114,11 @@ export async function POST(req: Request) {
     const jobs = Array.isArray(body.jobs) ? body.jobs.filter((j) => j && typeof j.url === "string").slice(0, MAX_JOBS) : [];
     if (jobs.length === 0) return NextResponse.json({ results: [] });
 
-    // Globális letöltés-keret (subrequest-plafon + idő ellen): a mélyebb
-    // Impressum-lookup ne pörögjön el. ~4 fetch/hirdetés átlag.
-    const budget = { n: jobs.length * 4 + 20 };
+    // Globális letöltés-keret. FONTOS: a Cloudflare subrequest-limit (ingyenes
+    // csomagon 50/kérés) alatt kell maradni (+ a Clerk-auth is fogyaszt párat) —
+    // ezért fix ~44-es plafon. A korai kilépés (találatnál azonnal visszatér)
+    // miatt így is a legtöbb hirdetés feldolgozódik; ha kifogy, a maradék null.
+    const budget = { n: 44 };
     const settled = await Promise.allSettled(jobs.map((j) => resolveEmail(j, budget)));
     const results = jobs.map((j, i) => ({
       url: j.url,
