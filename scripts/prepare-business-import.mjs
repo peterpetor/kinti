@@ -126,6 +126,7 @@ const CITY = {
   "überlingen": ["BW", 47.7686, 9.1758],
   "münchenstein": ["BL", 47.5219, 7.6236], // ne a "münchen" (DE) kulcs egyezzen bele
   "wiener neustadt": ["NOE", 47.8151, 16.2436], // ne a "wien"/"bécs" (W) kulcs egyezzen bele — más tartomány!
+  "weilheim in oberbayern": ["BY", 47.8395, 11.1416], // ne a "weilheim" (BW, Weilheim an der Teck) kulcs egyezzen bele — más tartomány!
   "tägerwilen": ["TG", 47.651, 9.176],
   "bottighofen": ["TG", 47.6423, 9.2153],
   "zürich": ["ZH", 47.3769, 8.5417],
@@ -298,7 +299,7 @@ const CITY = {
   "esslingen am neckar": ["BW", 48.7428, 9.3072],
   "nürtingen": ["BW", 48.6266, 9.3365],
   "kirchheim unter teck": ["BW", 48.6481, 9.451],
-  "weilheim": ["BW", 47.8395, 11.1416],
+  "weilheim": ["BW", 48.6167, 9.5333], // Weilheim an der Teck (javítva: korábban tévesen a bajor Weilheim koordinátái szerepeltek itt)
   "geislingen": ["BW", 48.623, 9.8357],
   "winterlingen": ["BW", 48.1782, 9.1144],
   "sigmaringen": ["BW", 48.0869, 9.2165],
@@ -417,6 +418,8 @@ const CITY = {
   "abtwil": ["SG", 47.4183, 9.3103],
   "magden": ["AG", 47.5469, 7.8306],
   "karlstein": ["BY", 50.0167, 9.1333],
+  "groß-bieberau": ["HE", 49.7969, 8.8181],
+  "hochheim am main": ["HE", 50.0122, 8.3489],
   "eichenau": ["BY", 48.1667, 11.3167],
   "neutraubling": ["BY", 48.9667, 12.2],
   "lichtenfels": ["BY", 50.1333, 11.05],
@@ -432,6 +435,17 @@ const CITY = {
   "reichenburg": ["SZ", 47.1667, 8.9833],
   "niederbipp": ["BE", 47.2833, 7.65],
   "baden": ["AG", 47.4744, 8.3059],
+  // 2026-07-06 bővítés (14. kör) — nemetorszagi-magyarok.de fodrász/bolt/étterem katalógusa:
+  "leimen": ["BW", 49.3489, 8.6858],
+  "michelfeld": ["BW", 49.1167, 9.6333],
+  "burgau": ["BY", 48.4333, 10.4],
+  "essen": ["NRW", 51.4556, 7.0116],
+  "frickenhausen": ["BW", 48.6167, 9.3833],
+  "radolfzell am bodensee": ["BW", 47.7333, 8.9667],
+  "haigerloch": ["BW", 48.3667, 8.8],
+  "marxzell": ["BW", 48.8833, 8.4833],
+  "großschirma": ["SN", 50.9333, 13.2833],
+  "bad herrenalb": ["BW", 48.8, 8.4333],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
