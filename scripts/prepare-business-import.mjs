@@ -90,6 +90,7 @@ const CATEGORY = {
   kozjegyzo: ["kozjegyzo", "Közjegyző"],
   autokereskedes: ["autokereskedes", "Autókereskedés"],
   karszakerto: ["karszakerto", "Kárszakértő"],
+  hotelpanzio: ["szallas", "Szálláshely / Panzió"],
   komuves: ["kőműves", "Kőműves"],
   kertesz: ["kertesz", "Kertész"],
   felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
@@ -380,6 +381,7 @@ const CITY = {
   "bad wimsbach-neydharting": ["OOE", 48.05, 13.9],
   "penzberg": ["BY", 47.75, 11.3833],
   "unterschleißheim": ["BY", 48.2775, 11.5747],
+  "landshut": ["BY", 48.5372, 12.1522],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
