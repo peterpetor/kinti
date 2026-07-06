@@ -348,6 +348,12 @@ const CITY = {
   "thun": ["BE", 46.7580, 7.6280],
   "heidenheim": ["BW", 48.6763, 10.1526],
   "karlsfeld": ["BY", 48.2478, 11.4645],
+  "bad liebenzell": ["BW", 48.7597, 8.7297],
+  "büren": ["NW", 51.5333, 8.5667],
+  "bretten": ["BW", 49.0333, 8.7167],
+  "westerheim": ["BY", 47.9333, 10.3167], // Westerheim (Unterallgäu, Bajorország) — nem a BW-i azonos nevű falu
+  "butzbach": ["HE", 50.4333, 8.6667],
+  "leinfelden": ["BW", 48.6967, 9.16],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
