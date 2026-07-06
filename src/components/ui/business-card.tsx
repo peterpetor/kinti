@@ -8,6 +8,7 @@ import { OwnPostBadge } from "@/components/own-post-badge";
 import { FavoriteButton } from "./favorite-button";
 import { formatDistanceKm } from "@/lib/distance";
 import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
+import { hasContactInfo } from "@/lib/address";
 
 /**
  * BusinessCard — a Szaknévsor / találati lista kártyája. Fotó/logó placeholder
@@ -130,6 +131,14 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
           {b.languages?.includes("Deutsch") && (
             <span className="rounded-md border border-line bg-surface-alt px-2 py-0.5 text-[11px] font-semibold text-ink-muted">
               DE
+            </span>
+          )}
+          {!hasContactInfo(b) && (
+            <span
+              title="Se pontos cím, se telefon, se weboldal nem ismert erről a bejegyzésről — csak a névre és a városra bukkantunk."
+              className="rounded-md border border-dashed border-line px-2 py-0.5 text-[11px] font-semibold text-ink-faint"
+            >
+              Csak névre ismert
             </span>
           )}
         </div>

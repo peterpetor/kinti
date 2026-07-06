@@ -18,7 +18,7 @@ import { BusinessGallery } from "@/components/views/business-gallery";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
 import { safeJsonLdStringify } from "@/lib/json-ld";
-import { hasStreetAddress } from "@/lib/address";
+import { hasStreetAddress, hasContactInfo } from "@/lib/address";
 import { getCountry, countryLocative } from "@/lib/countries";
 import { registryForCategory } from "@/lib/business-registry";
 import { guidesForCategory } from "@/lib/guides";
@@ -493,6 +493,18 @@ export default async function BusinessPage({
             {b.yearsHere != null && <Chip>{b.yearsHere} éve kint</Chip>}
             {freshIso && <Chip icon="calendar">Frissítve {fmtRelative(freshIso)}</Chip>}
           </div>
+          {!hasContactInfo(b) && (
+            <p className="mt-2 text-[11.5px] leading-snug text-ink-faint">
+              ⓘ Erről a bejegyzésről csak a nevet és a várost ismerjük — nincs pontos cím, telefon vagy
+              weboldal.
+              {b.claimed === false && (
+                <>
+                  {" "}
+                  Ha a tiéd, <span className="font-semibold text-ink-muted">vedd át és egészítsd ki</span> fent.
+                </>
+              )}
+            </p>
+          )}
         </section>
 
         {/* Galéria — granuláris hiba-határ: ha a képnézegető elhasal, csak ez a

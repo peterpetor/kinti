@@ -18,3 +18,23 @@ export function hasStreetAddress(address: string | null | undefined): boolean {
   if (/^(mobil|online)$/i.test(cleaned)) return false; // „Mobil" / „Online"
   return cleaned.length > 4;
 }
+
+/** A blurb-be ágyazott weboldal-domain felismerése (a seed-pipeline-ok a
+ * "leírás · domain.tld" formátumban tárolják, http(s):// nélkül). */
+function hasWebsiteInBlurb(blurb: string | null | undefined): boolean {
+  if (!blurb) return false;
+  return /\b[a-z0-9-]+\.(com|org|net|at|ch|de|nl|hu|eu|info|shop|store|io|nl)\b/i.test(blurb);
+}
+
+/**
+ * Van-e BÁRMILYEN mód elérni a vállalkozást (utcaszintű cím, telefon, vagy
+ * weboldal a blurb-ben) — enélkül a bejegyzés csak névre ismert, semmilyen
+ * konkrét akcióhoz (Útvonal, Hívás, Weboldal) nem vezet.
+ */
+export function hasContactInfo(b: {
+  address?: string | null;
+  phone?: string | null;
+  blurb?: string | null;
+}): boolean {
+  return hasStreetAddress(b.address) || !!b.phone?.trim() || hasWebsiteInBlurb(b.blurb);
+}
