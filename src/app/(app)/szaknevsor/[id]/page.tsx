@@ -7,7 +7,7 @@ import { mediaUrl } from "@/lib/media";
 import { CategoryIcon } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
 import { ReviewForm } from "@/components/views/review-form";
-import { cantonFromAddress, cantonToSlug } from "@/lib/cantons";
+import { areasForBusiness } from "@/lib/seo-areas";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
 import { BusinessClaimCard } from "@/components/views/business-claim-card";
@@ -674,22 +674,29 @@ export default async function BusinessPage({
           </section>
         )}
 
-        {/* SEO belső link a kategória×kanton landing oldalra (más magyar szakemberekhez).
+        {/* SEO belső link a kategória×terület landing oldalra (más magyar szakemberekhez).
             PRO (featured) cégnél NEM jelenik meg → „Konkurencia kizárása a profilodról"
             (a Szaknévsor PRO ígért funkciója): a saját profilodról nem viszünk el
-            versenytársakhoz. */}
+            versenytársakhoz.
+            ORSZÁG-TUDATOS (ld. [[binary-country-fallthrough]]): korábban a
+            cantonFromAddress ment minden országra, és a bécsi „1150" PLZ-t a
+            svájci 1xxx-sávba (Vaud!) sorolta — a seo-areas terület-modell viszont
+            a business.canton + ország párost nézi, ország-oldal fallbackkel. */}
         {!b.featured && (() => {
-          const lc = cantonFromAddress(b.address ?? null);
-          if (!lc || !b.categoryId) return null;
+          if (!b.categoryId) return null;
+          const areas = areasForBusiness(b);
+          // A legspecifikusabb terület (régió-kódos), különben az ország-oldal.
+          const area = areas.find((a) => a.code !== null) ?? areas[0];
+          if (!area) return null;
           // Ne legyen „magyar magyar …", ha a kategória neve maga is „magyar"-ral
           // kezdődik (pl. „Magyar bolt, pékség" → „magyar bolt, pékség").
           const catLabel = (b.categoryLabel || "szakember").toLowerCase().replace(/^magyar\s+/i, "");
           return (
             <Link
-              href={`/magyar/${b.categoryId}/${cantonToSlug(lc.name)}`}
+              href={`/magyar/${b.categoryId}/${area.slug}`}
               className="mt-6 flex items-center gap-2 text-[13px] font-bold text-primary"
             >
-              Több magyar {catLabel} {lc.name} kantonban
+              Több magyar {catLabel} {area.locative}
               <Icon name="arrowRight" size={14} strokeWidth={2.4} />
             </Link>
           );
