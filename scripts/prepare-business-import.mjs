@@ -490,6 +490,14 @@ const CITY = {
   "grenchen": ["SO", 47.1917, 7.3958],
   "oesingen": ["SO", 47.2333, 7.7167],
   "dornach": ["SO", 47.4833, 7.6167],
+  // 2026-07-06 bővítés (18. kör) — nemetorszagi-magyarok.de tartomány-szűrős
+  // orvos-katalógusa (Sachsen-Anhalt/Schleswig-Holstein/Thüringen, eddig üres/gyér):
+  "halle": ["ST", 51.4825, 11.9699],
+  "osterburg": ["ST", 52.7864, 11.7539],
+  "merseburg": ["ST", 51.3541, 11.9973],
+  "norderstedt": ["SH", 53.6883, 9.9761],
+  "saalfeld": ["TH", 50.6503, 11.3667],
+  "berga": ["TH", 50.7333, 11.7667],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
