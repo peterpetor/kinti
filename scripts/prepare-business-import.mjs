@@ -400,6 +400,9 @@ const CITY = {
   "baar": ["ZG", 47.1961, 8.5297],
   "allschwil": ["BL", 47.5511, 7.5486],
   "bülach": ["ZH", 47.5219, 8.5406],
+  "langenthal": ["BE", 47.2144, 7.7936],
+  "abtwil": ["SG", 47.4183, 9.3103],
+  "magden": ["AG", 47.5469, 7.8306],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
