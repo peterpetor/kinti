@@ -19,6 +19,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { hasStreetAddress, hasContactInfo } from "@/lib/address";
+import { extractContactFromBlurb } from "@/lib/contact-links";
 import { getCountry, countryLocative } from "@/lib/countries";
 import { registryForCategory } from "@/lib/business-registry";
 import { guidesForCategory } from "@/lib/guides";
@@ -59,8 +60,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
   const title = `${b.name}${b.categoryLabel ? ` — ${b.categoryLabel}` : ""}`;
   const ratingText = b.reviews > 0 ? ` ⭐ ${b.rating.toFixed(1)} (${b.reviews} vélemény)` : "";
-  const description = b.blurb
-    ? b.blurb.slice(0, 160)
+  const metaBlurb = extractContactFromBlurb(b.blurb).blurb;
+  const description = metaBlurb
+    ? metaBlurb.slice(0, 160)
     : `${b.name} · ${b.categoryLabel ?? "Magyar szakember"} ${countryLocative(b.country)}.${ratingText}`;
   const url = `https://kinti.app/szaknevsor/${b.id}`;
   const image = mediaUrl(b.logoKey) ?? "https://kinti.app/icons/og-default.png";
@@ -140,6 +142,13 @@ export default async function BusinessPage({
   // A booking-nak külön „Időpontfoglalás" szekciója van, ezért itt nem számít.
   const hasSocials = socials && (socials.facebook || socials.instagram || socials.linkedin);
 
+  // A weboldalt/emailt a seed/CSV-import a blurb végére fűzi ` · ` szeparátorral —
+  // NYERS szöveg helyett gombként jelenítjük meg, a leírásból pedig kivágjuk.
+  const contact = extractContactFromBlurb(b.blurb);
+  const website = socials?.website ?? contact.website;
+  const email = socials?.email ?? contact.email;
+  const displayBlurb = contact.blurb;
+
   // JSON-LD strukturált adat — Schema.org LocalBusiness (Google rich snippets)
   const schemaDays: Record<string, string> = {
     mon: "Monday",
@@ -187,6 +196,7 @@ export default async function BusinessPage({
     : undefined;
 
   const sameAsArray: string[] = [];
+  if (website) sameAsArray.push(website);
   if (socials) {
     if (socials.facebook) sameAsArray.push(socials.facebook);
     if (socials.instagram) sameAsArray.push(socials.instagram);
@@ -201,7 +211,8 @@ export default async function BusinessPage({
     url: `https://kinti.app/szaknevsor/${b.id}`,
     priceRange: "$$",
   };
-  if (b.blurb) jsonLd.description = b.blurb;
+  if (displayBlurb) jsonLd.description = displayBlurb;
+  if (email) jsonLd.email = email;
   if (b.phone) jsonLd.telephone = b.phone;
   if (heroUrl) {
     jsonLd.image = heroUrl;
@@ -355,11 +366,13 @@ export default async function BusinessPage({
         </div>
 
         {/* akciók — a Hívás CSAK ha van telefonszám (nincs letiltott „nem hívható"
-            gomb), az Útvonal CSAK utcaszintű címnél; a sor elrejtve, ha egyik sincs. */}
-        {(b.phone || mapsHref) && (
-          <div className="mt-4 flex gap-2">
+            gomb), az Útvonal CSAK utcaszintű címnél, a Weboldal/Email pedig ha a
+            leírásból kinyert (vagy social) érték van. Flex-wrap: 2 gomb/sor mobilon,
+            a sor elrejtve, ha egyik sincs. */}
+        {(b.phone || mapsHref || website || email) && (
+          <div className="mt-4 flex flex-wrap gap-2">
             {b.phone && (
-              <TelLink businessId={b.id} phone={b.phone} className={cn(actionBtn, "bg-primary text-white shadow-card-hover")}>
+              <TelLink businessId={b.id} phone={b.phone} className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-primary text-white shadow-card-hover")}>
                 <Icon name="phone" size={16} strokeWidth={2.2} /> Hívás
               </TelLink>
             )}
@@ -368,9 +381,27 @@ export default async function BusinessPage({
                 href={mapsHref}
                 target="_blank"
                 rel="noreferrer"
-                className={cn(actionBtn, "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
+                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
               >
                 <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
+              </a>
+            )}
+            {website && (
+              <a
+                href={website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
+              >
+                <Icon name="globe" size={16} strokeWidth={2.2} /> Weboldal
+              </a>
+            )}
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
+              >
+                <Icon name="mail" size={16} strokeWidth={2.2} /> Email
               </a>
             )}
           </div>
@@ -459,7 +490,7 @@ export default async function BusinessPage({
         {/* erről a helyről */}
         <section className="mt-6">
           <SectionHeader>Erről a helyről</SectionHeader>
-          <p className="mt-2 text-[14.5px] leading-relaxed text-ink text-pretty">{b.blurb}</p>
+          <p className="mt-2 text-[14.5px] leading-relaxed text-ink text-pretty">{displayBlurb}</p>
           
           {b.licenseNumber && (
             <div className="mt-3 rounded-[12px] border border-star/40 bg-[#fff8ed] px-3 py-2 flex items-start gap-2">

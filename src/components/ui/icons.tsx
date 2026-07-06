@@ -13,7 +13,7 @@ export type IconName =
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "shoppingBag" | "briefcase"
   | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock"
-  | "compass";
+  | "compass" | "mail";
 
 const PATHS: Record<IconName, string[]> = {
   lock: ["M6 10h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z", "M8 10V7a4 4 0 0 1 8 0v3"],
@@ -26,6 +26,7 @@ const PATHS: Record<IconName, string[]> = {
   home: ["M3 11l9-7l9 7", "M5 10v10h14V10", "M10 20v-6h4v6"],
   phone: ["M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"],
   nav: ["M3 11l18-8l-8 18l-2-8z"],
+  mail: ["M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z", "M3.5 6.5l8.5 6l8.5-6"],
   globe: ["M12 3a9 9 0 1 1 0 18a9 9 0 0 1 0-18", "M3 12h18", "M12 3a14 14 0 0 1 0 18", "M12 3a14 14 0 0 0 0 18"],
   star: ["M12 3l2.7 5.6l6.3.9l-4.5 4.4l1 6.1L12 17.5l-5.5 2.5l1-6.1L3 9.5l6.3-.9z"],
   heart: ["M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"],
