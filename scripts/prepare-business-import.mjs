@@ -420,6 +420,12 @@ const CITY = {
   "lichtenfels": ["BY", 50.1333, 11.05],
   "feldkirchen-westerham": ["BY", 47.8833, 12.0167],
   "feldkirchen": ["BY", 48.15, 11.7167],
+  // 2026-07-06 bővítés (13. kör) — svájcinfo.ch étel-ital katalógusa; "baden" a végén, hogy
+  // NE előzze meg a wiesbaden/baden-baden (DE) kulcsokat:
+  "romanshorn": ["TG", 47.5661, 9.3792],
+  "salmsach": ["TG", 47.5701, 9.3618],
+  "berg tg": ["TG", 47.6367, 9.2489],
+  "baden": ["AG", 47.4744, 8.3059],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
