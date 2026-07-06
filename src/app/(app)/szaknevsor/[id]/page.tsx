@@ -11,7 +11,7 @@ import { areasForBusiness } from "@/lib/seo-areas";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
 import { BusinessClaimCard } from "@/components/views/business-claim-card";
-import { parseWorkingHoursStrict, calculateBusinessHoursStatus } from "@/lib/hours";
+import { parseWorkingHoursStrict, calculateBusinessHoursStatus, formatWeeklyHours, swissWeekdayKey } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { BusinessGallery } from "@/components/views/business-gallery";
@@ -667,6 +667,42 @@ export default async function BusinessPage({
             </div>
           </section>
         )}
+
+        {/* Nyitvatartás — CSAK ismert (strukturált) heti nyitvatartásnál; a mai nap
+            kiemelve. Ismeretlennél nincs szekció (nem találunk ki 8–18 default-ot). */}
+        {wh && (() => {
+          const rows = formatWeeklyHours(wh);
+          const todayKey = swissWeekdayKey();
+          return (
+            <section className="mt-6">
+              <SectionHeader>Nyitvatartás</SectionHeader>
+              <div className="mt-2.5 overflow-hidden rounded-card border border-line bg-surface shadow-card">
+                {rows.map((row, i) => {
+                  const isToday = row.dayKeys.includes(todayKey);
+                  const isClosed = row.value === "Zárva";
+                  return (
+                    <div
+                      key={row.label}
+                      className={cn(
+                        "flex items-center justify-between px-4 py-2.5 text-[13.5px]",
+                        i > 0 && "border-t border-line/60",
+                        isToday && "bg-primary-soft/60",
+                      )}
+                    >
+                      <span className={cn("font-bold", isToday ? "text-primary" : "text-ink")}>
+                        {row.label}
+                        {isToday && <span className="ml-1.5 text-[11px] font-semibold text-primary/80">· ma</span>}
+                      </span>
+                      <span className={cn("font-semibold tabular-nums", isClosed ? "text-ink-faint" : "text-ink-muted")}>
+                        {row.value}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })()}
 
         {/* cím */}
         <section className="mt-6">

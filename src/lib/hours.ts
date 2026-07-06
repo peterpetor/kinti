@@ -265,3 +265,58 @@ export function calculateBusinessHoursStatus(
     minutesUntilChange: null,
   };
 }
+
+// --- Heti nyitvatartás emberi olvasásra ------------------------------------
+
+/** Hét sorrendje magyar konvenció szerint (hétfővel kezdve). */
+const WEEK_ORDER = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+
+/** Rövid nap-címke a kompakt táblához. */
+const SHORT_DAY: Record<keyof WorkingHours, string> = {
+  mon: "H", tue: "K", wed: "Sze", thu: "Cs", fri: "P", sat: "Szo", sun: "V",
+};
+
+export interface WeeklyHoursRow {
+  /** Nap(ok) címkéje, pl. „H–P", „Szo", „V". */
+  label: string;
+  /** Nyitvatartás, pl. „09:00–18:00" vagy „Zárva". */
+  value: string;
+  /** A csoportba tartozó nap-kulcsok (a mai nap kiemeléséhez). */
+  dayKeys: (keyof WorkingHours)[];
+}
+
+function dayValueText(d: DayHours): string {
+  return d.closed ? "Zárva" : `${d.open}–${d.close}`;
+}
+
+/**
+ * A heti nyitvatartás KOMPAKT, emberi olvasásra szánt formája: az EGYMÁST KÖVETŐ,
+ * AZONOS idejű napokat egy sorba vonja (pl. H–P 09:00–18:00, Szo 09:00–13:00,
+ * V Zárva). A hét hétfővel kezdődik. Csak ISMERT (strukturált) nyitvatartásra
+ * hívd — a default-oló parseWorkingHours-t NE add ide, mert az kitalált 8–18-at
+ * mutatna (fabricated). A publikus részletoldal ezzel jeleníti meg a heti tervet.
+ */
+export function formatWeeklyHours(wh: WorkingHours): WeeklyHoursRow[] {
+  const groups: WeeklyHoursRow[] = [];
+  for (const key of WEEK_ORDER) {
+    const value = dayValueText(wh[key]);
+    const last = groups[groups.length - 1];
+    if (last && last.value === value) {
+      last.dayKeys.push(key);
+    } else {
+      groups.push({ value, dayKeys: [key], label: "" });
+    }
+  }
+  // Címke: egy nap → rövid név; több egymást követő → „első–utolsó".
+  for (const g of groups) {
+    const first = SHORT_DAY[g.dayKeys[0]];
+    const lastDay = SHORT_DAY[g.dayKeys[g.dayKeys.length - 1]];
+    g.label = g.dayKeys.length === 1 ? first : `${first}–${lastDay}`;
+  }
+  return groups;
+}
+
+/** A MAI nap kulcsa svájci idő szerint (a heti tábla mai sorának kiemeléséhez). */
+export function swissWeekdayKey(currentTime: Date = new Date()): keyof WorkingHours {
+  return DAYS[getSwissDateTime(currentTime).dayOfWeek];
+}

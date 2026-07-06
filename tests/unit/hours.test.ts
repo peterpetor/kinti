@@ -3,6 +3,8 @@ import {
   calculateBusinessHoursStatus,
   parseWorkingHours,
   parseWorkingHoursStrict,
+  formatWeeklyHours,
+  swissWeekdayKey,
   DEFAULT_WORKING_HOURS,
   type WorkingHours,
 } from "@/lib/hours";
@@ -150,5 +152,52 @@ describe("calculateBusinessHoursStatus — cselekvésre ösztönző relatív id�
     expect(s.openingSoon).toBe(false);
     expect(s.minutesUntilChange).toBeNull();
     expect(s.detailText).toContain("nyit holnap");
+  });
+});
+
+describe("formatWeeklyHours — kompakt heti nyitvatartás (egymást követő azonos napok összevonva)", () => {
+  it("default nyitvatartás → H–P, Szo, V három sorba", () => {
+    const rows = formatWeeklyHours(DEFAULT_WORKING_HOURS);
+    expect(rows).toEqual([
+      { label: "H–P", value: "08:00–18:00", dayKeys: ["mon", "tue", "wed", "thu", "fri"] },
+      { label: "Szo", value: "09:00–16:00", dayKeys: ["sat"] },
+      { label: "V", value: "Zárva", dayKeys: ["sun"] },
+    ]);
+  });
+
+  it("mind a 7 nap azonos → egyetlen H–V sor", () => {
+    const wh = Object.fromEntries(
+      (["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const).map((k) => [k, { open: "10:00", close: "20:00", closed: false }]),
+    ) as WorkingHours;
+    const rows = formatWeeklyHours(wh);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ label: "H–V", value: "10:00–20:00" });
+  });
+
+  it("nem-egymást-követő azonos napokat NEM von össze (H nyit, K zárva, Sze nyit → 3 sor)", () => {
+    const wh: WorkingHours = {
+      ...DEFAULT_WORKING_HOURS,
+      mon: { open: "09:00", close: "17:00", closed: false },
+      tue: { open: "00:00", close: "00:00", closed: true },
+      wed: { open: "09:00", close: "17:00", closed: false },
+      thu: { open: "00:00", close: "00:00", closed: true },
+      fri: { open: "00:00", close: "00:00", closed: true },
+      sat: { open: "00:00", close: "00:00", closed: true },
+      sun: { open: "00:00", close: "00:00", closed: true },
+    };
+    const rows = formatWeeklyHours(wh);
+    // H(09–17), K(Zárva), Sze(09–17), Cs–V(Zárva összevonva)
+    expect(rows.map((r) => r.label)).toEqual(["H", "K", "Sze", "Cs–V"]);
+    expect(rows[0].value).toBe("09:00–17:00");
+    expect(rows[3].value).toBe("Zárva");
+  });
+});
+
+describe("swissWeekdayKey — a mai nap kulcsa (kiemeléshez)", () => {
+  it("2024-01-08 (hétfő) → mon", () => {
+    expect(swissWeekdayKey(new Date(Date.UTC(2024, 0, 8, 11, 0)))).toBe("mon");
+  });
+  it("2024-01-07 (vasárnap) → sun", () => {
+    expect(swissWeekdayKey(new Date(Date.UTC(2024, 0, 7, 11, 0)))).toBe("sun");
   });
 });
