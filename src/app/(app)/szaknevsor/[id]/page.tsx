@@ -340,7 +340,7 @@ export default async function BusinessPage({
           </div>
           <span className="h-8 w-px self-stretch bg-line" />
           <div>
-            <DynamicDistance lat={b.lat} lng={b.lng} address={b.address} />
+            <DynamicDistance lat={b.lat} lng={b.lng} address={b.address} precise={hasStreetAddress(b.address)} />
           </div>
           <span className="h-8 w-px self-stretch bg-line" />
           <div>

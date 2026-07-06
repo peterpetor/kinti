@@ -7,6 +7,9 @@ interface DynamicDistanceProps {
   lat: number | null;
   lng: number | null;
   address: string | null;
+  /** Van-e utcaszintű (házszámos) cím — enélkül a lat/lng csak városközpont,
+   * a km/perc-számítás megtévesztő lenne (ld. hasStreetAddress). */
+  precise: boolean;
 }
 
 /** Haversine formula két GPS koordináta távolságának kiszámítására méterben */
@@ -34,14 +37,16 @@ function getCityFromAddress(address: string | null): string {
   return match ? match[1].trim() : lastPart;
 }
 
-export function DynamicDistance({ lat, lng, address }: DynamicDistanceProps) {
+export function DynamicDistance({ lat, lng, address, precise }: DynamicDistanceProps) {
   const city = getCityFromAddress(address);
   const [distanceText, setDistanceText] = useState<string>(city);
   const [subText, setSubText] = useState<string>("Helyi vállalkozás");
   const [hasLocation, setHasLocation] = useState(false);
 
   useEffect(() => {
-    if (!lat || !lng || typeof navigator === "undefined" || !navigator.geolocation) {
+    // Házszám nélküli cím esetén a lat/lng csak városközpont — a km/perc-számítás
+    // félrevezető lenne, marad a városnév.
+    if (!precise || !lat || !lng || typeof navigator === "undefined" || !navigator.geolocation) {
       return;
     }
 
@@ -68,7 +73,7 @@ export function DynamicDistance({ lat, lng, address }: DynamicDistanceProps) {
       },
       { enableHighAccuracy: false, timeout: 5000 }
     );
-  }, [lat, lng, city]);
+  }, [lat, lng, city, precise]);
 
   return (
     <div>

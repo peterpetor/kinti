@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { BusinessCard, Icon } from "@/components/ui";
 import { haversineKm } from "@/lib/distance";
+import { hasStreetAddress } from "@/lib/address";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import type { Business } from "@/lib/types";
@@ -53,8 +54,10 @@ export function NearbyBusinesses({ businesses }: { businesses: Business[] }) {
 
   const items = useMemo(() => {
     if (pos) {
-      // Valódi legközelebbi 3, távolsággal.
+      // Valódi legközelebbi 3, távolsággal — házszám nélküli (városközpontra eső)
+      // cím nem versenyezhet "legközelebbi"-ként, mert a koordinátája nem valós.
       return countryBusinesses
+        .filter((b) => hasStreetAddress(b.address))
         .map((b) => ({ b, dist: haversineKm(pos.lat, pos.lng, b.lat as number, b.lng as number) }))
         .sort((a, b) => a.dist - b.dist)
         .slice(0, 3);

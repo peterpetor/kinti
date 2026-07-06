@@ -17,6 +17,7 @@ import { getRegions, regionLabel } from "@/lib/regions";
 import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 import { calculateBusinessHoursStatus, parseWorkingHours } from "@/lib/hours";
 import { haversineKm } from "@/lib/distance";
+import { hasStreetAddress } from "@/lib/address";
 import { SmartSearchBar } from "./smart-search-bar";
 import { PushOptin } from "@/components/push-optin";
 
@@ -233,8 +234,10 @@ export function ExploreView({
         return byCountry && byCat && byCanton && byFav && byOpen && byYears && byText;
       })
       .map((b) => {
+        // Házszám nélküli cím (pl. csak "Wien") esetén a lat/lng városközpont —
+        // a táv/sugár-szűrés/rendezés ettől félrevezető lenne, marad koordináta nélkülinek.
         const dist =
-          userPos && b.lat != null && b.lng != null
+          userPos && b.lat != null && b.lng != null && hasStreetAddress(b.address)
             ? haversineKm(userPos.lat, userPos.lng, b.lat, b.lng)
             : null;
         return { b, dist };
