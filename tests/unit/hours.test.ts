@@ -19,10 +19,10 @@ const NINE_TO_FIVE: WorkingHours = {
   mon: { open: "08:00", close: "18:00", closed: false },
 };
 
-/** Adott svájci helyi óra egy hétfőn → UTC Date (télen UTC+1). */
-function swissMondayAt(hour: number): Date {
+/** Adott svájci helyi óra:perc egy hétfőn → UTC Date (télen UTC+1). */
+function swissMondayAt(hour: number, minute = 0): Date {
   // 2024-01-08 hétfő. Svájc télen UTC+1 → a megadott helyi óra = UTC (hour-1).
-  return new Date(Date.UTC(2024, 0, 8, hour - 1, 0));
+  return new Date(Date.UTC(2024, 0, 8, hour - 1, minute));
 }
 
 describe("calculateBusinessHoursStatus", () => {
@@ -80,5 +80,47 @@ describe("calculateBusinessHoursStatus", () => {
   it("parseWorkingHours: nem-objektum JSON (tömb / szám) → default, nem dob", () => {
     expect(parseWorkingHours("[1,2,3]")).toEqual(DEFAULT_WORKING_HOURS);
     expect(parseWorkingHours("42")).toEqual(DEFAULT_WORKING_HOURS);
+  });
+});
+
+describe("calculateBusinessHoursStatus — cselekvésre ösztönző relatív időzítés", () => {
+  it("hamarosan zár (17:30, zár 18:00) → closingSoon + relatív detail", () => {
+    const s = calculateBusinessHoursStatus(NINE_TO_FIVE, swissMondayAt(17, 30));
+    expect(s.isOpen).toBe(true);
+    expect(s.closingSoon).toBe(true);
+    expect(s.openingSoon).toBe(false);
+    expect(s.minutesUntilChange).toBe(30);
+    expect(s.detailText).toBe("zár 30 perc múlva");
+  });
+
+  it("nem hamarosan zár (14:00, zár 18:00) → NEM closingSoon, abszolút detail", () => {
+    const s = calculateBusinessHoursStatus(NINE_TO_FIVE, swissMondayAt(14));
+    expect(s.isOpen).toBe(true);
+    expect(s.closingSoon).toBe(false);
+    expect(s.detailText).toBe("zár 18:00-kor");
+    expect(s.minutesUntilChange).toBe(240);
+  });
+
+  it("hamarosan nyit (7:20, nyit 8:00) → openingSoon + relatív detail", () => {
+    const s = calculateBusinessHoursStatus(NINE_TO_FIVE, swissMondayAt(7, 20));
+    expect(s.isOpen).toBe(false);
+    expect(s.openingSoon).toBe(true);
+    expect(s.minutesUntilChange).toBe(40);
+    expect(s.detailText).toBe("nyit 40 perc múlva");
+  });
+
+  it("nem hamarosan nyit (6:00, nyit 8:00) → abszolút detail, nincs jelzés", () => {
+    const s = calculateBusinessHoursStatus(NINE_TO_FIVE, swissMondayAt(6));
+    expect(s.isOpen).toBe(false);
+    expect(s.openingSoon).toBe(false);
+    expect(s.detailText).toBe("nyit ma 08:00-kor");
+  });
+
+  it("zárás után → holnap nyit, nincs relatív jelzés", () => {
+    const s = calculateBusinessHoursStatus(NINE_TO_FIVE, swissMondayAt(20));
+    expect(s.isOpen).toBe(false);
+    expect(s.openingSoon).toBe(false);
+    expect(s.minutesUntilChange).toBeNull();
+    expect(s.detailText).toContain("nyit holnap");
   });
 });

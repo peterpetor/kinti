@@ -91,7 +91,24 @@ export function getSwissDateTime(date: Date = new Date()) {
 export interface StatusResult {
   isOpen: boolean;
   statusText: string; // Pl: "Most nyitva", "Zárva"
-  detailText: string; // Pl: "zár 19:00-kor", "nyit holnap 8:00-kor"
+  detailText: string; // Pl: "zár 19:00-kor", "zár 20 perc múlva", "nyit holnap 8:00-kor"
+  /** Nyitva ÉS legfeljebb `SOON_MINUTES` perc múlva zár — a UI figyelmeztetheti a usert. */
+  closingSoon: boolean;
+  /** Zárva ÉS ma, legfeljebb `SOON_MINUTES` perc múlva nyit. */
+  openingSoon: boolean;
+  /** Percek a következő állapotváltásig (nyitásig/zárásig), ha ma ismert; különben null. */
+  minutesUntilChange: number | null;
+}
+
+/** Ezen a horizonton belül „hamarosan" (relatív időt + jelzést mutatunk). */
+export const SOON_MINUTES = 60;
+
+/** Percek → köznyelvi relatív alak: „1 perc múlva", „20 perc múlva", „1 óra múlva". */
+function relativeMinutes(m: number): string {
+  if (m <= 1) return "1 perc múlva";
+  if (m < 60) return `${m} perc múlva`;
+  const h = Math.round(m / 60);
+  return `${h} óra múlva`;
 }
 
 /** HH:MM-formátumú-e (különben a downstream .split(":") megbízhatatlan). */
@@ -149,10 +166,16 @@ export function calculateBusinessHoursStatus(
     const closeMins = closeH * 60 + closeM;
 
     if (currentMins >= openMins && currentMins < closeMins) {
+      const toClose = closeMins - currentMins;
+      const closingSoon = toClose <= SOON_MINUTES;
       return {
         isOpen: true,
         statusText: "Most nyitva",
-        detailText: `zár ${todayHours.close}-kor`,
+        // Hamarosan zár → cselekvésre ösztönző relatív idő; különben abszolút.
+        detailText: closingSoon ? `zár ${relativeMinutes(toClose)}` : `zár ${todayHours.close}-kor`,
+        closingSoon,
+        openingSoon: false,
+        minutesUntilChange: toClose,
       };
     }
   }
@@ -171,10 +194,15 @@ export function calculateBusinessHoursStatus(
     if (i === 0) {
       // Ma nyit ki később
       if (currentMins < openMins) {
+        const toOpen = openMins - currentMins;
+        const openingSoon = toOpen <= SOON_MINUTES;
         return {
           isOpen: false,
           statusText: "Zárva",
-          detailText: `nyit ma ${nextHours.open}-kor`,
+          detailText: openingSoon ? `nyit ${relativeMinutes(toOpen)}` : `nyit ma ${nextHours.open}-kor`,
+          closingSoon: false,
+          openingSoon,
+          minutesUntilChange: toOpen,
         };
       }
     } else if (i === 1) {
@@ -183,6 +211,9 @@ export function calculateBusinessHoursStatus(
         isOpen: false,
         statusText: "Zárva",
         detailText: `nyit holnap ${nextHours.open}-kor`,
+        closingSoon: false,
+        openingSoon: false,
+        minutesUntilChange: null,
       };
     } else {
       // Egy későbbi napon nyit ki
@@ -191,6 +222,9 @@ export function calculateBusinessHoursStatus(
         isOpen: false,
         statusText: "Zárva",
         detailText: `nyit ${dayName} ${nextHours.open}-kor`,
+        closingSoon: false,
+        openingSoon: false,
+        minutesUntilChange: null,
       };
     }
   }
@@ -200,5 +234,8 @@ export function calculateBusinessHoursStatus(
     isOpen: false,
     statusText: "Zárva",
     detailText: "tartósan zárva",
+    closingSoon: false,
+    openingSoon: false,
+    minutesUntilChange: null,
   };
 }

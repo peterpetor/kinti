@@ -119,9 +119,19 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
               <span className="h-[3px] w-[3px] rounded-full bg-ink-faint" />
             </>
           )}
-          <span className={cn("font-semibold", openStatus.isOpen ? "text-success" : "text-accent")}>
+          <span
+            className={cn(
+              "font-semibold",
+              openStatus.isOpen ? (openStatus.closingSoon ? "text-star" : "text-success") : "text-accent",
+            )}
+          >
             {openStatus.isOpen ? "Nyitva" : "Zárva"}
           </span>
+          {/* Cselekvésre ösztönző relatív időzítés CSAK ha hamarosan vált (zár/nyit) —
+              különben tiszta marad a kártya (nincs abszolút „zár 18:00-kor" zaj). */}
+          {(openStatus.closingSoon || openStatus.openingSoon) && (
+            <span className="truncate text-[12px] text-ink-muted">{openStatus.detailText}</span>
+          )}
         </div>
 
         <div className="flex gap-1.5">
