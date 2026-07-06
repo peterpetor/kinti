@@ -480,6 +480,16 @@ const CITY = {
   "eindhoven": ["NB", 51.4416, 5.4697],
   "voorburg": ["ZH", 52.0716, 4.3644],
   "tilburg": ["NB", 51.5555, 5.0913],
+  // 2026-07-06 bővítés (17. kör) — a korábbi kantonális-lefedettség forrásból
+  // (arkadasi.hu/svajc) eddig kihagyott Solothurn/Appenzell szekciók pótlása:
+  "appenzell": ["AI", 47.3316, 9.4092],
+  "schönengrund": ["AR", 47.2833, 9.2000],
+  "herisau": ["AR", 47.3833, 9.2833],
+  "teufen": ["AR", 47.3667, 9.3500],
+  "solothurn": ["SO", 47.2088, 7.5323],
+  "grenchen": ["SO", 47.1917, 7.3958],
+  "oesingen": ["SO", 47.2333, 7.7167],
+  "dornach": ["SO", 47.4833, 7.6167],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
