@@ -13,6 +13,7 @@ import { LeafletEngine } from "./map-engine-leaflet";
 import { MaplibreEngine } from "./map-engine-maplibre";
 import { mapEngine } from "@/lib/map-config";
 import { spreadColocated } from "@/lib/cluster";
+import { haversineKm, formatDistanceKm } from "@/lib/distance";
 
 /**
  * BusinessMap — wrapper: WebGL-detektálás + motor-választás + közös overlay-ek.
@@ -30,6 +31,8 @@ export interface BusinessMapProps {
   activeCat?: string;
   onSelectCat?: (id: string) => void;
   locationLabel?: string;
+  /** GPS-pozíció, ha a user engedélyezte — a lenti kártya ekkor a legközelebbit mutatja. */
+  userPos?: { lat: number; lng: number } | null;
   /** [lat, lng] (wrapper konvenció — a maplibre motor belül konvertál). */
   fallbackCenter?: [number, number];
   fallbackZoom?: number;
@@ -61,6 +64,7 @@ export function BusinessMap({
   activeCat = "all",
   onSelectCat,
   locationLabel = "Zürich · Kreis 3",
+  userPos = null,
   fallbackCenter = ZURICH_CENTER,
   fallbackZoom = 13,
   className,
@@ -72,12 +76,34 @@ export function BusinessMap({
     [businesses],
   );
 
-  const defaultBiz = useMemo(
-    () => located.find((b) => b.featured) ?? located[0] ?? null,
-    [located],
-  );
+  // Alapértelmezett (kiválasztás előtti) kártya: a kiemelt (PRO) mindig elöl
+  // (P2B-átláthatóság), utána — ha van GPS-pozíció — a TÉNYLEGESEN legközelebbi,
+  // nem csak "az első a listában" (ami korábban gyakorlatilag véletlenszerű volt,
+  // ha nem volt sem kiemelt, sem eltérő értékelésű találat).
+  const defaultBiz = useMemo(() => {
+    const featuredBiz = located.find((b) => b.featured);
+    if (featuredBiz) return featuredBiz;
+    if (userPos) {
+      let nearest: Business | null = null;
+      let nearestDist = Infinity;
+      for (const b of located) {
+        if (b.lat == null || b.lng == null) continue;
+        const d = haversineKm(userPos.lat, userPos.lng, b.lat, b.lng);
+        if (d < nearestDist) {
+          nearestDist = d;
+          nearest = b;
+        }
+      }
+      if (nearest) return nearest;
+    }
+    return located[0] ?? null;
+  }, [located, userPos]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = located.find((b) => b.id === selectedId) ?? defaultBiz ?? null;
+  const selectedDist =
+    selected && userPos && selected.lat != null && selected.lng != null
+      ? haversineKm(userPos.lat, userPos.lng, selected.lat, selected.lng)
+      : null;
 
   // Engine választás — a default a NEXT_PUBLIC_MAP_ENGINE flagből (alapból "leaflet",
   // amíg be nem állítod). A `?engine=maplibre` URL felülírja (manuális teszt).
@@ -224,7 +250,7 @@ export function BusinessMap({
           </div>
         )}
 
-        {selected && <SelectedCard business={selected} />}
+        {selected && <SelectedCard business={selected} distanceKm={selectedDist} />}
       </div>
 
       {located.length === 0 && (
@@ -240,7 +266,7 @@ export function BusinessMap({
 
 // --- alsó vállalkozás-kártya ------------------------------------------------
 
-function SelectedCard({ business: b }: { business: Business }) {
+function SelectedCard({ business: b, distanceKm }: { business: Business; distanceKm?: number | null }) {
   const logoUrl = mediaImageUrl(b.logoKey, { width: 120 });
   // Live státusz CSAK ismert nyitvatartásnál (nincs kitalált 8–18 default).
   const knownHours = parseWorkingHoursStrict(b.workingHours ?? null);
@@ -282,15 +308,26 @@ function SelectedCard({ business: b }: { business: Business }) {
         <div className="mt-0.5 truncate text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">
           {b.name}
         </div>
-        <div className="mt-0.5 truncate text-[11.5px] text-ink-muted">
+        <div className="mt-0.5 flex items-center gap-1.5 truncate text-[11.5px] text-ink-muted">
+          {/* Táv CSAK valódi GPS-számolásból (a user pozíciójából) — ez mutatja
+              meg, hogy a kártyán látott hely valójában hol van hozzá képest. */}
+          {distanceKm != null && (
+            <>
+              <span className="inline-flex shrink-0 items-center gap-0.5">
+                <Icon name="nav" size={10} strokeWidth={2.2} />
+                {formatDistanceKm(distanceKm)}
+              </span>
+              {(openStatus || openTextTrim) && <span className="h-[3px] w-[3px] shrink-0 rounded-full bg-ink-faint" />}
+            </>
+          )}
           {/* Csak VALÓS státusz: ismert nyitvatartásnál nyitva/zárva; egyébként a
               szabad-szöveges openText, vagy semmi (nincs kitalált státusz). */}
           {openStatus ? (
-            <span className={openStatus.isOpen ? "font-semibold text-success" : "text-accent"}>
+            <span className={cn("truncate", openStatus.isOpen ? "font-semibold text-success" : "text-accent")}>
               {openStatus.isOpen ? "Nyitva" : "Zárva"}
             </span>
           ) : openTextTrim ? (
-            <span>{openTextTrim}</span>
+            <span className="truncate">{openTextTrim}</span>
           ) : null}
         </div>
       </div>

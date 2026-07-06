@@ -785,6 +785,7 @@ export function ExploreView({
               activeCat={cat}
               onSelectCat={setCat}
               locationLabel={locationLabel}
+              userPos={userPos}
               fallbackCenter={mapCenter}
               fallbackZoom={mapZoom}
               className="mb-2 h-[calc(100dvh-300px)] min-h-[440px] max-h-[760px]"
