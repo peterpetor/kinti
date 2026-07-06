@@ -607,6 +607,20 @@
       max-width: 320px; font-size: 14px; line-height: 1.55; color: var(--text-muted);
       margin: 14px 0 0;
     }
+    .foot-social {
+      display: flex; gap: 10px; margin: 20px 0 0; flex-wrap: wrap;
+    }
+    .foot-social a {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface); border: 1px solid var(--border); color: var(--primary);
+      transition: transform .15s, background .15s, color .15s, box-shadow .15s, border-color .15s;
+    }
+    .foot-social a:hover {
+      transform: translateY(-2px); background: var(--primary); color: #fff;
+      border-color: var(--primary); box-shadow: var(--shadow-pop);
+    }
+    .foot-social a svg { width: 19px; height: 19px; display: block; }
     .foot-col h4 {
       margin: 0 0 14px; font-size: 12px; font-weight: 800; color: var(--text);
       letter-spacing: 1px; text-transform: uppercase;
@@ -1040,7 +1054,7 @@
           <span>Horváth szerviz<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Autószerelő · 11 perc</span></span>
         </div>
         <div class="float float-3">
-          <div class="float-ico accent">◐</div>
+          <div class="float-ico accent"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M3 14c0-3.9 4-7 9-7s9 3.1 9 7v1.8A1.7 1.7 0 0 1 19.3 17.5H4.7A1.7 1.7 0 0 1 3 15.8z"/><path d="M9 10.6l-1.4 4M13 10.2l-1.4 4.4M17 10.6l-1.4 4"/></svg></div>
           <span>Nagy pékség<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Pék · 6 perc</span></span>
         </div>
 
@@ -1153,10 +1167,10 @@
         <button class="demo-chip" data-cat="auto"><span class="gly">⚙</span>Autószerelő</button>
         <button class="demo-chip" data-cat="orvos"><span class="gly">＋</span>Orvos</button>
         <button class="demo-chip" data-cat="ugyved"><span class="gly">§</span>Ügyvéd</button>
-        <button class="demo-chip" data-cat="pek"><span class="gly">◐</span>Pék</button>
-        <button class="demo-chip" data-cat="etterem"><span class="gly">◍</span>Étterem</button>
+        <button class="demo-chip" data-cat="pek"><span class="gly"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M3 14c0-3.9 4-7 9-7s9 3.1 9 7v1.8A1.7 1.7 0 0 1 19.3 17.5H4.7A1.7 1.7 0 0 1 3 15.8z"/><path d="M9 10.6l-1.4 4M13 10.2l-1.4 4.4M17 10.6l-1.4 4"/></svg></span>Pék</button>
+        <button class="demo-chip" data-cat="etterem"><span class="gly"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M3 11.5h18"/><path d="M5 11.5a7 7 0 0 0 14 0"/><path d="M9 3.4c.9.8.9 1.9 0 2.7M13 3.4c.9.8.9 1.9 0 2.7M16.8 4.6c.7.6.7 1.4 0 2"/></svg></span>Étterem</button>
         <button class="demo-chip" data-cat="villany"><span class="gly">⚡</span>Villany</button>
-        <button class="demo-chip" data-cat="takarito"><span class="gly">✦</span>Takarítás</button>
+        <button class="demo-chip" data-cat="takarito"><span class="gly"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M5.4 8.5h13.2l-1.2 10.3a1.3 1.3 0 0 1-1.3 1.2H7.9a1.3 1.3 0 0 1-1.3-1.2z"/><path d="M7 8.5a5 4.6 0 0 1 10 0"/></svg></span>Takarítás</button>
         <button class="demo-chip" data-cat="fordito"><span class="gly">A</span>Fordító</button>
         <button class="demo-chip" data-cat="tanar"><span class="gly">♪</span>Tanár</button>
       </div>
@@ -1223,6 +1237,40 @@
       <kbd data-fill="pék">pék</kbd>
       — vagy kattints egy kategória chipre ↑
     </p>
+  </div>
+</section>
+
+<!-- ─── VIDEÓ ─────────────────────────────────── -->
+<style>
+  section.video-sec { background: var(--bg-deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .video-shell {
+    margin-top: 44px; position: relative;
+    padding: 16px; background: var(--surface); border-radius: 28px;
+    border: 1px solid var(--border); box-shadow: var(--shadow-pop);
+  }
+  .video-frame {
+    position: relative; width: 100%; aspect-ratio: 16 / 9;
+    border-radius: 18px; overflow: hidden; background: #000;
+  }
+  .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  @media (max-width: 720px) { .video-shell { border-radius: 22px; padding: 10px; } }
+</style>
+<section class="video-sec" id="video">
+  <div class="wrap">
+    <div class="sec-eyebrow">Nézd meg élőben</div>
+    <h2 class="sec-title">Egy perc, és <em>érted is</em> hogyan működik.</h2>
+    <p class="sec-sub">Rövid bemutató a kintiről — hogyan találsz magyar szakembert vagy munkát pár érintéssel, ott ahol kint élsz.</p>
+    <div class="video-shell">
+      <div class="video-frame">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/1_6SXxeMQyc?rel=0"
+          title="kinti bemutató videó"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen></iframe>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1539,7 +1587,7 @@
       <!-- mini dashboard mockup -->
       <div class="dash-mock">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
-          <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #d6b89a, #8c5e3c);"></div>
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #d6b89a, #8c5e3c); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px;">✂</div>
           <div>
             <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 600;">Szia,</div>
             <div style="font-size: 14px; font-weight: 800;">Kovács Anna 👋</div>
@@ -1691,6 +1739,9 @@
           <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>A lista elején, jól látható „Kiemelt" jelöléssel</span></li>
           <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Egyedi céges arculat megjelenítése</span></li>
           <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Azonnali értesítés a releváns jelölteknek</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Jelentkezők egy helyen — beépített lead-kezelő postafiók</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Push-riasztás a környéken élő magyaroknak (Kinti Radar)</span></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Teljesítmény-statisztika: megtekintések és jelentkezések</span></li>
         </ul>
         <button class="price-cta">Hirdetés kiemelése</button>
         <p class="price-foot">A hirdetésednél, a munkáltató kezelőben véglegesíted. Egyszeri díj — 30 napig él, és NEM újul meg automatikusan.</p>
@@ -1712,7 +1763,7 @@
 
     <div class="quote-grid">
       <div class="quote">
-        <p>„Anyukámat is hozzá viszem, ha Pestről jön. Anna érti, mit jelent magyarul fésülködni — nem kell elmagyarázni."</p>
+        <p>„Régóta kerestem magyarul beszélő fodrászt Zürichben. Öt perc alatt megvolt a telefonszáma, másnap már oda is ültem. Végre nem kell németül elmagyaráznom, mit szeretnék."</p>
         <div class="who">
           <div class="av" style="background: linear-gradient(135deg, #1d4434, #c8392e);">E</div>
           <div>
@@ -1722,7 +1773,7 @@
         </div>
       </div>
       <div class="quote">
-        <p>„Másnap reggel már 12 megtekintésem volt. Egy hét alatt 4 új vendég. Tényleg az történik, amit ígértek."</p>
+        <p>„Feltettem a szervizemet, és pár nap alatt jöttek az első magyar ügyfelek a környékről. Nekik jó, hogy anyanyelvükön intézhetik, nekem meg új vendégeket hoz."</p>
         <div class="who">
           <div class="av" style="background: linear-gradient(135deg, #c8392e, #f0a23a);">P</div>
           <div>
@@ -1732,7 +1783,7 @@
         </div>
       </div>
       <div class="quote">
-        <p>„A piknikre is itt jöttem el először. Kint elszigetelődsz — ez visszahozott a közösségbe."</p>
+        <p>„Frissen költöztem ki, és elég magányos volt az első pár hónap. Itt találtam egy magyar közösségi programot a közelben — azóta van kikkel összejárni."</p>
         <div class="who">
           <div class="av" style="background: linear-gradient(135deg, #f0c14a, #8c5e3c);">A</div>
           <div>
@@ -1901,6 +1952,20 @@
           kinti
         </div>
         <p>GPS-alapú magyar szakember- és állás-kereső a külföldön élő magyaroknak. Négy országban — Svájc, Ausztria, Németország, Hollandia —, ott, ahol kint élsz.</p>
+        <div class="foot-social">
+          <a href="https://www.facebook.com/profile.php?id=61591833836890" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8.5V6.9c0-.7.5-.9 .8-.9H16V3.1L13.8 3C11.3 3 10.7 4.9 10.7 6.1v2.4H9V11h1.7v10H14v-10h2.2l.3-2.5H14z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/company/kintiapp" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM6.6 8.5H3.3V21h3.3V8.5zM12 8.5H8.8V21h3.28v-6.56c0-1.73.33-3.4 2.47-3.4 2.11 0 2.14 1.97 2.14 3.51V21H20v-7.06c0-2.86-.62-5.06-3.96-5.06-1.6 0-2.68.88-3.12 1.72h-.05V8.5H12z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@kintiapp" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 7.2a2.7 2.7 0 0 0-1.9-1.9C18.9 4.8 12 4.8 12 4.8s-6.9 0-8.6.5A2.7 2.7 0 0 0 1.5 7.2C1 8.9 1 12 1 12s0 3.1.5 4.8a2.7 2.7 0 0 0 1.9 1.9c1.7.5 8.6.5 8.6.5s6.9 0 8.6-.5a2.7 2.7 0 0 0 1.9-1.9c.5-1.7.5-4.8.5-4.8s0-3.1-.5-4.8zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@kintiapp" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8a4.3 4.3 0 0 1-1-2.8h-3.1v12.4a2.4 2.4 0 1 1-1.7-2.3V9.9a5.5 5.5 0 1 0 4.8 5.4V9.3a7.2 7.2 0 0 0 4.2 1.3V7.5a4.3 4.3 0 0 1-3.2-1.7z"/></svg>
+          </a>
+        </div>
       </div>
       <div class="foot-col">
         <h4>Termék</h4>
@@ -1928,7 +1993,7 @@
           <li><a href="/aszf">Felhasználási feltételek</a></li>
           <li><a href="/visszateres">Visszatérítés és elállás</a></li>
           <li><a href="/ai-atlathatosag">AI-átláthatóság</a></li>
-          <li><a href="/cdn-cgi/l/email-protection#0b62656d644b6062657f62256a7b7b">Kapcsolat</a></li>
+          <li><a href="/cdn-cgi/l/email-protection#5a33343c351a3133342e33743b2a2a">Kapcsolat</a></li>
         </ul>
       </div>
     </div>
@@ -1936,21 +2001,24 @@
     <div class="foot-bottom">
       <div>© 2026 kinti.app · Üzemelteti: <strong>Feedback Jobs S.R.L.</strong> — Made with ♥ for kintiek</div>
       <div style="display: flex; gap: 18px;">
-        <a href="#"><span class="__cf_email__" data-cfemail="5139343d3d3e113a383f25387f302121">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#a7cec9c1c8e7cccec9d3ce89c6d7d7"><span class="__cf_email__" data-cfemail="d3babdb5bc93b8babda7bafdb2a3a3">[email&#160;protected]</span></a>
         <a href="/impresszum">Impresszum</a>
       </div>
     </div>
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function () {
   'use strict';
 
   // ─── shared data ─────────────────────────────
+  const ICO_BREAD  = '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M3 14c0-3.9 4-7 9-7s9 3.1 9 7v1.8A1.7 1.7 0 0 1 19.3 17.5H4.7A1.7 1.7 0 0 1 3 15.8z"/><path d="M9 10.6l-1.4 4M13 10.2l-1.4 4.4M17 10.6l-1.4 4"/></svg>';
+  const ICO_BOWL   = '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M3 11.5h18"/><path d="M5 11.5a7 7 0 0 0 14 0"/><path d="M9 3.4c.9.8.9 1.9 0 2.7M13 3.4c.9.8.9 1.9 0 2.7M16.8 4.6c.7.6.7 1.4 0 2"/></svg>';
+  const ICO_BUCKET = '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M5.4 8.5h13.2l-1.2 10.3a1.3 1.3 0 0 1-1.3 1.2H7.9a1.3 1.3 0 0 1-1.3-1.2z"/><path d="M7 8.5a5 4.6 0 0 1 10 0"/></svg>';
   const CAT_GLYPHS = {
-    fodrasz: '✂', auto: '⚙', orvos: '＋', pek: '◐', ugyved: '§',
-    etterem: '◍', villany: '⚡', takarito: '✦', fordito: 'A', tanar: '♪', it: '⌘',
+    fodrasz: '✂', auto: '⚙', orvos: '＋', pek: ICO_BREAD, ugyved: '§',
+    etterem: ICO_BOWL, villany: '⚡', takarito: ICO_BUCKET, fordito: 'A', tanar: '♪', it: '⌘',
   };
 
   // Sample businesses across Zürich (normalized 0..100 map coords; you-are-here at 50,56)
@@ -1967,7 +2035,7 @@
     { id: 'farkas',    name: 'Farkas István — fordító',       cat: 'fordito',  catLabel: 'Fordító',        rating: 5.0, dist: '8 perc',  x: 72, y: 58, featured: false, photo: 'linear-gradient(135deg,#dde6d5,#7a8f6f)', addr: 'Enge' },
     { id: 'kiss',      name: 'Kiss Bence — matek korrep.',    cat: 'tanar',    catLabel: 'Tanár',          rating: 4.8, dist: '10 perc', x: 40, y: 28, featured: false, photo: 'linear-gradient(135deg,#f0b1aa,#a8483d)', addr: 'Oerlikon' },
     { id: 'varga',     name: 'Varga Péter — háziorvos',       cat: 'orvos',    catLabel: 'Háziorvos',      rating: 4.8, dist: '13 perc', x: 76, y: 46, featured: false, photo: 'linear-gradient(135deg,#e8d4b8,#a8765a)', addr: 'Hottingen' },
-    { id: 'kerteszgar',name: 'Kertész garage',                cat: 'auto',     catLabel: 'Autószerelő',    rating: 4.5, dist: '18 perc', x: 14, y: 32, featured: false, photo: 'linear-gradient(135deg,#7d6a52,#3e3527)', addr: 'Altstetten' },
+    { id: 'kerteszgar',name: 'Bátori autószerviz',          cat: 'auto',     catLabel: 'Autószerelő',    rating: 4.5, dist: '18 perc', x: 14, y: 32, featured: false, photo: 'linear-gradient(135deg,#7d6a52,#3e3527)', addr: 'Altstetten' },
   ];
 
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -2001,11 +2069,11 @@
       text: 'pék',
       floatIdx: 2, // float-3 (Nagy pékség)
       pins: [
-        { x: 44, y: 55, g: '◐', featured: true },
-        { x: 65, y: 40, g: '◐' },
-        { x: 28, y: 64, g: '◐' },
+        { x: 44, y: 55, g: ICO_BREAD, featured: true },
+        { x: 65, y: 40, g: ICO_BREAD },
+        { x: 28, y: 64, g: ICO_BREAD },
       ],
-      card: { cat: 'Pék · ★ 4.7', name: 'Nagy pékség', meta: '6 perc · Nyitva', photo: 'linear-gradient(135deg,#f0d9b5,#c89a5c)', g: '◐', featured: false },
+      card: { cat: 'Pék · ★ 4.7', name: 'Nagy pékség', meta: '6 perc · Nyitva', photo: 'linear-gradient(135deg,#f0d9b5,#c89a5c)', g: ICO_BREAD, featured: false },
     },
   ];
 
@@ -2060,7 +2128,7 @@
       cardName.textContent = q.card.name;
       cardMeta.textContent = q.card.meta;
       cardPh.style.background = q.card.photo;
-      document.getElementById('heroCardIco').textContent = q.card.g || '';
+      document.getElementById('heroCardIco').innerHTML = q.card.g || '';
       cardPh.querySelector('.hbadge').style.display = q.card.featured ? '' : 'none';
       card.classList.add('in');
 
