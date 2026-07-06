@@ -76,6 +76,10 @@ const CATEGORY = {
   takaritas: ["takarito", "Takarítás"],
   vizszerelo: ["gazvez", "Víz-gáz szerelő"],
   villanyszerelo: ["villany", "Villanyszerelő"],
+  szabo: ["varrono", "Varrónő"],
+  autosiskola: ["gepijarmu_oktato", "Autósiskola / Oktató"],
+  kerekparszerelo: ["kerekpar", "Kerékpárszerviz"],
+  cukraszda: ["cukrasz", "Cukrász / Torták"],
   komuves: ["kőműves", "Kőműves"],
   kertesz: ["kertesz", "Kertész"],
   felujitas: ["lakasfelujitas", "Felújítás / Kivitelezés"],
@@ -354,6 +358,10 @@ const CITY = {
   "westerheim": ["BY", 47.9333, 10.3167], // Westerheim (Unterallgäu, Bajorország) — nem a BW-i azonos nevű falu
   "butzbach": ["HE", 50.4333, 8.6667],
   "leinfelden": ["BW", 48.6967, 9.16],
+  "günzburg": ["BY", 48.4569, 10.2765],
+  "sankt augustin": ["NW", 50.7706, 7.1922],
+  "saulheim": ["RP", 49.9, 8.15],
+  "neuhof an der zenn": ["BY", 49.4167, 10.6667],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
