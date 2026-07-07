@@ -1,7 +1,7 @@
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { getAdminUserId } from "@/lib/admin";
 import { claimDailyNudge } from "@/lib/repo-misc";
-import { unfeatureExpiredJobs } from "@/lib/repo-jobs";
+import { unfeatureExpiredJobs, expireOldJobs } from "@/lib/repo-jobs";
 import { notifyCanton } from "@/lib/push-notify";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -37,9 +37,13 @@ async function handle(req: Request): Promise<Response> {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  // Piggyback: a LEJÁRT „Kiemelt Állás"-ok visszaállítása 'active'-ra (30 nap után).
-  // Saját try/catch — sose törheti a napi nudge-ot; a push-konfigtól független.
+  // Piggyback: a LEJÁRT „Kiemelt Állás"-ok visszaállítása 'active'-ra (30 nap után),
+  // majd a LEJÁRT hirdetések lezárása ('expired' — kikerülnek a publikus listából,
+  // de a munkáltató 1 kattintással megújíthatja). Sorrend fontos: az imént
+  // demote-olt 'active' sor is elbírálásra kerül ugyanebben a körben, ha az
+  // expires_at is lejárt már. Saját try/catch — sose törheti a napi nudge-ot.
   try { await unfeatureExpiredJobs(); } catch (err) { safeLogError("daily-nudge:unfeature", err); }
+  try { await expireOldJobs(); } catch (err) { safeLogError("daily-nudge:expire", err); }
 
   if (!env.VAPID_PRIVATE_KEY) {
     return Response.json({ ok: false, error: "VAPID_PRIVATE_KEY missing" }, { status: 503 });

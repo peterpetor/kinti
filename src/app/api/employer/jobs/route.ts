@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { createJob, getEmployerByOwner } from "@/lib/repo";
+import { createJob, getEmployerByOwner, jobExpiryIso } from "@/lib/repo";
 import { getRegion } from "@/lib/regions";
 import { getCountry } from "@/lib/countries";
 import { isValidJobCategory } from "@/lib/job-categories";
@@ -83,10 +83,6 @@ export async function POST(req: Request) {
   }
 
   const id = crypto.randomUUID();
-  
-  // Lejárat: 30 nap múlva
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 30);
 
   try {
     await createJob({
@@ -106,7 +102,7 @@ export async function POST(req: Request) {
       requirements,
       status: "active", // Vagy "draft", ha később akarnánk publikálni
       moderationStatus: 0, // 0 = pending, mert minden új hirdetést adminnak kell jóváhagynia
-      expiresAt: expiresAt.toISOString(),
+      expiresAt: jobExpiryIso(),
     });
     
     return NextResponse.json({ ok: true, id });

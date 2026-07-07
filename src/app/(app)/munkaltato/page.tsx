@@ -165,7 +165,11 @@ export default async function EmployerDashboardPage() {
                     <h3 className="text-[15px] font-extrabold text-ink">{job.title}</h3>
                     <p className="text-[12.5px] text-ink-muted mt-0.5">{job.location} · {job.employmentType}</p>
                   </div>
-                  {job.moderationStatus === 1 ? (
+                  {job.status === "expired" ? (
+                    <span className="rounded-full bg-accent/15 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-accent">
+                      Lejárt
+                    </span>
+                  ) : job.moderationStatus === 1 ? (
                     <span className="rounded-full bg-success/15 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-success">
                       Aktív
                     </span>
@@ -179,7 +183,12 @@ export default async function EmployerDashboardPage() {
                     </span>
                   )}
                 </div>
-                <JobCardActions jobId={job.id} applicantCount={applicationCounts[job.id] ?? 0} featured={job.status === "featured"} />
+                <JobCardActions
+                  jobId={job.id}
+                  applicantCount={applicationCounts[job.id] ?? 0}
+                  featured={job.status === "featured"}
+                  expired={job.status === "expired"}
+                />
               </div>
             ));
           })()}

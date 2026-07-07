@@ -366,7 +366,13 @@ export default async function JobDetailPage({ params }: { params: { id: string }
       {/* Rögzített CTA sáv alul */}
       <div className="fixed bottom-0 left-0 right-0 z-50 flex h-[80px] items-center justify-center border-t border-line/60 bg-surface/80 px-5 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
         <div className="w-full max-w-md">
-          {canQuickApply ? (
+          {job.status === "expired" ? (
+            // Lejárt hirdetés — a linket direktben (bookmark/megosztás) elérők se
+            // jelentkezhessenek egy már nem élő állásra (a szerver úgyis elutasítaná).
+            <div className="flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-surface-alt text-[14px] font-bold text-ink-muted">
+              ⏳ Ez a hirdetés lejárt — jelentkezés már nem lehetséges
+            </div>
+          ) : canQuickApply ? (
             <QuickApplyButton
               jobId={job.id}
               fullName={workerProfile!.fullName}

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { createJob, getEmployerByOwner } from "@/lib/repo";
+import { createJob, getEmployerByOwner, jobExpiryIso } from "@/lib/repo";
 import { getRegion } from "@/lib/regions";
 import { getCountry } from "@/lib/countries";
 import { isValidJobCategory } from "@/lib/job-categories";
@@ -89,9 +89,6 @@ export async function POST(req: Request) {
       continue;
     }
 
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 30);
-
     try {
       await createJob({
         id: crypto.randomUUID(),
@@ -101,7 +98,7 @@ export async function POST(req: Request) {
         employmentType, salaryMin, salaryMax, currency, requirements,
         status: "active",
         moderationStatus: 0,
-        expiresAt: expiresAt.toISOString(),
+        expiresAt: jobExpiryIso(),
       });
       created++;
     } catch {

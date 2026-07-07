@@ -5,6 +5,19 @@ import { getDB } from "./cloudflare";
 import { bool } from "./repo-shared";
 import type { Employer, Job } from "./types";
 
+/** Egy hirdetés (és a "Kiemelt Állás" boost) élettartama napokban — ugyanaz a
+ *  szám mindkettőhöz, hogy egy friss kiemelés-vásárlás a teljes hirdetést is
+ *  frissen tartsa (lásd a paddle webhook job_featured ágát). */
+export const JOB_LISTING_DAYS = 30;
+
+/** ISO időbélyeg `JOB_LISTING_DAYS` nap múlva — hirdetés létrehozásakor,
+ *  megújításkor és kiemelés-vásárláskor egyaránt ezt használjuk. */
+export function jobExpiryIso(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + JOB_LISTING_DAYS);
+  return d.toISOString();
+}
+
 interface EmployerRow {
   id: string; owner_user_id: string; company_name: string; logo_key: string | null;
   description: string | null; website: string | null; contact_email: string;
@@ -73,8 +86,15 @@ export async function setEmployerVerified(id: string, verified: boolean): Promis
 export async function getJobs(opts: { status?: string; employerId?: string; includeAllStatuses?: boolean } = {}): Promise<Job[]> {
   const where: string[] = [];
   const binds: unknown[] = [];
-  if (!opts.includeAllStatuses) { where.push("moderation_status = 1"); }
-  if (opts.status) { where.push("status = ?"); binds.push(opts.status); }
+  if (!opts.includeAllStatuses) {
+    where.push("moderation_status = 1");
+    if (opts.status) { where.push("status = ?"); binds.push(opts.status); }
+    // Nincs explicit status-szűrés → a publikus lista alapértelmezetten CSAK
+    // a látható állapotokat adja (a 'expired' NEM publikus, lásd expireOldJobs).
+    else { where.push("status IN ('active', 'featured')"); }
+  } else if (opts.status) {
+    where.push("status = ?"); binds.push(opts.status);
+  }
   if (opts.employerId) { where.push("employer_id = ?"); binds.push(opts.employerId); }
   let sql = "SELECT * FROM jobs";
   if (where.length > 0) sql += " WHERE " + where.join(" AND ");
@@ -102,6 +122,41 @@ export async function unfeatureExpiredJobs(): Promise<number> {
     )
     .run();
   return res.meta?.changes ?? 0;
+}
+
+/**
+ * A LEJÁRT hirdetések lezárása (`JOB_LISTING_DAYS` nap a feladás/utolsó
+ * megújítás óta). A `status='expired'` sor mostantól kiesik a publikus
+ * listából (lásd getJobs default szűrője), de NEM törlődik — a munkáltató a
+ * dashboardján egy kattintással megújíthatja (renewJob), tartalom-szerkesztés
+ * nélkül. Napi cronból hívva, `unfeatureExpiredJobs` UTÁN (hogy egy frissen
+ * lejárt kiemelés ne kerülje el ugyanebben a körben az expirálást).
+ */
+export async function expireOldJobs(): Promise<number> {
+  const res = await getDB()
+    .prepare(
+      "UPDATE jobs SET status = 'expired', updated_at = datetime('now') " +
+      "WHERE status IN ('active', 'featured') AND expires_at IS NOT NULL AND expires_at < datetime('now')",
+    )
+    .run();
+  return res.meta?.changes ?? 0;
+}
+
+/**
+ * Lejárt hirdetés ingyenes megújítása — a munkáltató saját tartalma
+ * változatlan marad (nincs újra-moderáció, hisz semmi nem módosult), csak a
+ * láthatóság és a lejárat éled újra. Csak 'expired' státuszból engedett (egy
+ * még élő hirdetésen a gomb nem is jelenik meg, lásd JobCardActions).
+ */
+export async function renewJob(id: string, employerId: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare(
+      "UPDATE jobs SET status = 'active', expires_at = ?, updated_at = datetime('now') " +
+      "WHERE id = ? AND employer_id = ? AND status = 'expired'",
+    )
+    .bind(jobExpiryIso(), id, employerId)
+    .run();
+  return (res.meta?.changes ?? 0) > 0;
 }
 
 export async function createJob(job: Omit<Job, "createdAt" | "updatedAt">): Promise<void> {

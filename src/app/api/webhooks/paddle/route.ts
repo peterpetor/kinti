@@ -3,6 +3,7 @@ import { verifyPaddleSignature } from "@/lib/paddle";
 import { entitlementFromPriceId, type EntitlementType } from "@/lib/payments-config";
 import { getDB } from "@/lib/cloudflare";
 import { upsertSubscription } from "@/lib/subscriptions";
+import { jobExpiryIso } from "@/lib/repo-jobs";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -123,10 +124,13 @@ async function activate(type: EntitlementType, customData: PaddleCustomData, dat
 
   if (type === "job_featured" && customData.jobId) {
     // A „Kiemelt Állás" 30 napig él; a featured_until lejárta után a napi cron
-    // (unfeatureExpiredJobs) állítja vissza 'active'-ra.
-    const featuredUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-    await db.prepare("UPDATE jobs SET status = 'featured', featured_until = ?, updated_at = ? WHERE id = ?")
-      .bind(featuredUntil, now, customData.jobId).run();
+    // (unfeatureExpiredJobs) állítja vissza 'active'-ra. A kiemelés a teljes
+    // hirdetés lejáratát (expires_at) is felfrissíti ugyanennyivel — egy
+    // lejáró/lejárt hirdetés kiemelés-vásárlással is újraéled, nem csak az
+    // ingyenes megújítás gombbal (renewJob).
+    const featuredUntil = jobExpiryIso();
+    await db.prepare("UPDATE jobs SET status = 'featured', featured_until = ?, expires_at = ?, updated_at = ? WHERE id = ?")
+      .bind(featuredUntil, featuredUntil, now, customData.jobId).run();
   } else if (type === "business_pro" && customData.businessId) {
     await db.prepare("UPDATE businesses SET featured = 1, updated_at = ? WHERE id = ?")
       .bind(now, customData.businessId).run();

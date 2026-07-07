@@ -14,15 +14,35 @@ export function JobCardActions({
   jobId,
   applicantCount,
   featured = false,
+  expired = false,
 }: {
   jobId: string;
   applicantCount: number;
   featured?: boolean;
+  /** A hirdetés lejárt (nincs a publikus listában) — ingyenes megújítás kínálva. */
+  expired?: boolean;
 }) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [renewing, setRenewing] = useState(false);
+
+  const handleRenew = async () => {
+    setRenewing(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/employer/jobs/${jobId}/renew`, { method: "POST" });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(data.error || "A megújítás nem sikerült.");
+      }
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "A megújítás nem sikerült.");
+      setRenewing(false);
+    }
+  };
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -92,7 +112,21 @@ export function JobCardActions({
       {error && <p className="mt-2 text-[12px] font-semibold text-accent">{error}</p>}
 
       <div className="mt-2.5 flex items-center justify-between gap-2">
-        {featured ? (
+        {expired ? (
+          <div className="flex w-full items-center justify-between gap-2 rounded-[12px] bg-accent/10 px-3 py-2">
+            <span className="text-[11.5px] font-bold text-accent">
+              ⏳ Lejárt — nem látszik a jelölteknek
+            </span>
+            <button
+              type="button"
+              onClick={handleRenew}
+              disabled={renewing}
+              className="shrink-0 rounded-pill bg-primary px-3 py-1.5 text-[12px] font-bold text-white active:scale-95 disabled:opacity-60"
+            >
+              {renewing ? "Megújítás…" : "🔄 Megújítás (ingyenes)"}
+            </button>
+          </div>
+        ) : featured ? (
           <span className="inline-flex items-center gap-1 rounded-pill bg-accent/15 px-2.5 py-1 text-[11px] font-bold text-accent">
             <Icon name="star" size={11} filled /> Kiemelt hirdetés
           </span>
