@@ -20,6 +20,13 @@ const isProtectedApi = createRouteMatcher([
 ]);
 
 /**
+ * A /profil alatt él, de PUBLIKUS: a Kinti Pass kedvezménykártya. Teljesen
+ * kliensoldali (név/kód localStorage), fiók nélkül működik — login-fal nélkül
+ * kell elérnie minden felhasználónak.
+ */
+const isPublicProfilPage = createRouteMatcher(["/profil/kinti-pass"]);
+
+/**
  * Karbantartási mód — jelenleg csak admin éri el a teljes oldalt. Ezek a
  * route-ok mindenki számára elérhetők maradnak (különben nem tud belépni
  * az admin, és nem érkezik be webhook).
@@ -104,7 +111,7 @@ export default clerkMiddleware(async (auth, req) => {
     return;
   }
 
-  if (isProtectedPage(req)) {
+  if (isProtectedPage(req) && !isPublicProfilPage(req)) {
     const { userId } = await auth();
     if (!userId) {
       const signInUrl = new URL("/belepes", req.url);
