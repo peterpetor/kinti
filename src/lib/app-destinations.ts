@@ -52,6 +52,8 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "banki utalas iban sepa atutalas overweisung utalasi megbizas" },
   { href: "/hatarido", title: "Határidő-asszisztens", subtitle: "Emlékeztetők a fontos határidőkre", icon: "clock",
     keywords: "hatarido emlekezteto krankenkasse adobevallas felmondas naptar teendo" },
+  { href: "/profil/kinti-pass", title: "Kinti Pass", subtitle: "Digitális kedvezménykártya az elfogadóhelyekhez", icon: "star",
+    keywords: "kinti pass kedvezmeny kedvezmenykartya kartya kupon husegkartya torzsvasarlo elfogadohely akcio" },
   { href: "/vizum", title: "Engedély-varázsló", subtitle: "Melyik tartózkodási státusz kell neked?", icon: "flag", feature: "vizum",
     keywords: "vizum tartozkodasi engedely letelepedes anmeldung bewilligung permit b c engedely bevandorlas" },
   { href: "/nyelvlecke", title: "Nyelvlecke", subtitle: "Helyi nyelv/dialektus napi adagban", icon: "sparkles", feature: "nyelvlecke",

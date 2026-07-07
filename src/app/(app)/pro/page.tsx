@@ -217,6 +217,7 @@ export default function ProPage() {
             <FeatureItem text="Időpontfoglalás widget (Calendly-beágyazás)" />
             <FeatureItem text="Ajánlatkérő postafiók — a beérkező érdeklődők egy helyen (lead-kezelő)" />
             <FeatureItem text="Bővített referenciagaléria (több fotó a munkáidról)" />
+            <FeatureItem text="🎟️ Kinti Pass elfogadóhely: kedvezményt kínálhatsz a felhasználóknak — arany jelvény a profilodon + külön „Csak Kinti Pass helyek” szűrő a keresőben" />
             <FeatureItem text="Nem jelenik meg „hasonló vállalkozások” ajánló a profilodon (nem küldünk konkurenshez)" />
           </ul>
           {/* P2B rangsor-átláthatóság: a fizetett kiemelés előre sorol és JELÖLT. */}

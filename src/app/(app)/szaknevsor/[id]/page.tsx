@@ -509,6 +509,33 @@ export default async function BusinessPage({
           </section>
         )}
 
+        {/* Kinti Pass kedvezmény — arany doboz + link a felhasználó saját kártyájához. */}
+        {b.kintiPassActive && (
+          <div className="mt-4 rounded-card border border-star/40 bg-star/10 p-4 shadow-card">
+            <div className="flex items-start gap-2.5">
+              <span aria-hidden className="mt-0.5 text-[20px] leading-none">🎟️</span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-[#b8860b]">
+                  Kinti Pass elfogadóhely
+                </p>
+                <p className="mt-0.5 text-[14px] font-extrabold leading-snug text-ink">
+                  {b.kintiPassOffer ?? "Kedvezmény a Kinti Pass kártyával"}
+                </p>
+                <p className="mt-1 text-[12px] leading-snug text-ink-muted">
+                  Mutasd fel a digitális kártyád fizetéskor. A kedvezményt a vállalkozás adja és
+                  váltja be.
+                </p>
+                <Link
+                  href="/profil/kinti-pass"
+                  className="mt-2 inline-flex items-center gap-1 text-[12.5px] font-bold text-[#b8860b] underline underline-offset-2 active:opacity-80"
+                >
+                  Kinti Pass kártyám megnyitása →
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* erről a helyről */}
         <section className="mt-6">
           <SectionHeader>Erről a helyről</SectionHeader>

@@ -71,6 +71,10 @@ export interface Business {
   country: string;
   /** Régió-kód az országon belül (CH: kanton, AT: Bundesland, …) vagy null. */
   canton: string | null;
+  /** Kinti Pass elfogadóhely (Szaknévsor PRO funkció) — kedvezmény a kártyát felmutatóknak. */
+  kintiPassActive?: boolean;
+  /** A Kinti Pass ajánlat szövege (pl. „10% kedvezmény minden főételre") vagy null. */
+  kintiPassOffer?: string | null;
 }
 
 export interface KintiEvent {

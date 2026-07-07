@@ -31,6 +31,7 @@ interface BusinessRow {
   moderation_decided_by: string | null; created_at: string | null; updated_at: string | null;
   claimed: number | null; lead_opt_out: number | null;
   country_code: string | null; canton_code: string | null;
+  kinti_pass_active: number | null; kinti_pass_offer: string | null;
 }
 
 interface BusinessSubmissionRow {
@@ -67,6 +68,8 @@ export function toBusiness(r: BusinessRow): Business {
     leadOptOut: bool(r.lead_opt_out ?? 0),
     country: r.country_code ?? DEFAULT_COUNTRY,
     canton: r.canton_code ?? null,
+    kintiPassActive: bool(r.kinti_pass_active ?? 0),
+    kintiPassOffer: r.kinti_pass_offer ?? null,
   };
 }
 
@@ -115,6 +118,10 @@ export interface UpdateBusinessFields {
   workingHours?: string | null; socialLinks?: string | null; languages?: string[] | null;
   /** Árajánlat-kérések fogadásának kikapcsolása (lead_opt_out). */
   leadOptOut?: boolean;
+  /** Kinti Pass elfogadóhely be/ki (CSAK Szaknévsor PRO — az API gate-eli). */
+  kintiPassActive?: boolean;
+  /** Kinti Pass ajánlat-szöveg (null = törlés). */
+  kintiPassOffer?: string | null;
 }
 
 export interface CreateBusinessFromSubmissionInput {
@@ -335,6 +342,14 @@ export async function updateBusinessByManageToken(token: string, fields: UpdateB
   if (fields.leadOptOut !== undefined) {
     sets.push("lead_opt_out = ?");
     values.push(fields.leadOptOut ? 1 : 0);
+  }
+  if (fields.kintiPassActive !== undefined) {
+    sets.push("kinti_pass_active = ?");
+    values.push(fields.kintiPassActive ? 1 : 0);
+  }
+  if (fields.kintiPassOffer !== undefined) {
+    sets.push("kinti_pass_offer = ?");
+    values.push(fields.kintiPassOffer);
   }
   if (sets.length === 0) return true;
   const contentSensitive: (keyof UpdateBusinessFields)[] = ["name", "blurb", "categoryLabel", "address"];

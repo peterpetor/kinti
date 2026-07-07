@@ -25,6 +25,8 @@ export function BusinessManageForm({ business, token }: { business: Business; to
     openText: business.openText ?? "",
     languages: business.languages ?? ["Magyar"],
     leadOptOut: business.leadOptOut ?? false,
+    kintiPassActive: business.kintiPassActive ?? false,
+    kintiPassOffer: business.kintiPassOffer ?? "",
   });
   // Strukturált nyitvatartás — ez hajtja a "Most nyitva" szűrőt és a státuszt.
   const [hours, setHours] = useState<WorkingHours>(() =>
@@ -66,6 +68,13 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           workingHours: JSON.stringify(hours),
           languages: form.languages,
           leadOptOut: form.leadOptOut,
+          // Kinti Pass mezőket CSAK PRO-nak küldjük (a szerver úgyis 403-mal védi).
+          ...(business.featured
+            ? {
+                kintiPassActive: form.kintiPassActive,
+                kintiPassOffer: form.kintiPassActive ? form.kintiPassOffer || null : null,
+              }
+            : {}),
         }),
       });
       const data = (await res.json().catch(() => ({}))) as {
@@ -241,6 +250,66 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           </span>
         </label>
       </Section>
+
+      {/* Kinti Pass — digitális kedvezménykártya elfogadóhely (Szaknévsor PRO). */}
+      {business.featured ? (
+        <Section title="🎟️ Kinti Pass elfogadóhely">
+          <label className="flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              checked={form.kintiPassActive}
+              onChange={(e) => set("kintiPassActive", e.target.checked)}
+              className="mt-0.5 h-5 w-5 shrink-0 accent-primary"
+            />
+            <span className="text-[13px] leading-snug text-ink-muted">
+              <strong className="text-ink">Kinti Pass Elfogadóhely vagyok.</strong> A Kinti
+              felhasználói digitális kártyát mutathatnak fel nálad — te pedig kedvezményt adsz
+              nekik. A profilod arany „Kinti Pass" jelvényt kap a Szaknévsorban, és megjelenik a
+              „Csak Kinti Pass helyek" szűrőben.
+            </span>
+          </label>
+          {form.kintiPassActive && (
+            <div className="mt-3 border-t border-line/60 pt-3">
+              <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+                Mit kínálsz a Kinti felhasználóknak?
+              </label>
+              <input
+                type="text"
+                value={form.kintiPassOffer}
+                onChange={(e) => set("kintiPassOffer", e.target.value)}
+                placeholder="Pl. 10% kedvezmény minden főételre"
+                className={inputCls()}
+                maxLength={120}
+              />
+              <p className="mt-1 text-[11.5px] leading-snug text-ink-faint">
+                Ez a szöveg jelenik meg a profilodon és a találati kártyádon. Az ajánlatot te
+                adod és te váltod be — a Kinti csak megjeleníti.
+              </p>
+            </div>
+          )}
+        </Section>
+      ) : (
+        <div className="rounded-card border border-star/40 bg-star/10 p-4 shadow-card">
+          <h3 className="text-[14.5px] font-extrabold tracking-tight text-ink">
+            🎟️ Légy Kinti Pass elfogadóhely!
+          </h3>
+          <p className="mt-1 mb-3 text-[13px] leading-snug text-ink-muted">
+            A PRO csomaggal kedvezményt kínálhatsz a felhasználóknak, és kiemelt helyre kerülsz a
+            keresőben. A Kinti Pass helyeket a felhasználók külön szűrővel is keresik.
+          </p>
+          <button
+            type="button"
+            onClick={handleUpgrade}
+            disabled={isCheckoutLoading}
+            className={cn(
+              "flex w-full items-center justify-center gap-2 rounded-pill bg-pro px-4 py-2.5 text-[13.5px] font-black text-white shadow-card transition active:scale-[0.99] hover:bg-[#e68600]",
+              isCheckoutLoading && "opacity-60 cursor-wait",
+            )}
+          >
+            {isCheckoutLoading ? "Töltés..." : "Előfizetés — Szaknévsor PRO (19 €/hó)"}
+          </button>
+        </div>
+      )}
 
       {error && (
         <div className="rounded-card border border-accent/30 bg-accent-soft px-4 py-3 text-[12.5px] font-semibold text-accent">

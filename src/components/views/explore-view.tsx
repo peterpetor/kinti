@@ -80,12 +80,14 @@ export function ExploreView({
   const initialCanton = searchParams?.get("canton") ?? "all";
   const initialFav = searchParams?.get("fav") === "1";
   const initialCat = searchParams?.get("cat") ?? "all";
+  const initialPass = searchParams?.get("pass") === "1";
 
   const [cat, setCat] = useState(initialCat);
   const [q, setQ] = useState(initialQ);
   const [canton, setCanton] = useState(initialCanton);
   const [showFavs, setShowFavs] = useState(initialFav);
   const [openNow, setOpenNow] = useState(false);
+  const [passOnly, setPassOnly] = useState(initialPass);
   const [minYears, setMinYears] = useState(0);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   // Alapból LISTA (gyors pásztázás + SEO + nincs hydration-mismatch: az SSR és az
@@ -223,6 +225,8 @@ export function ExploreView({
         const wh = parseWorkingHoursStrict(b.workingHours ?? null);
         const byOpen = !openNow || (wh != null && calculateBusinessHoursStatus(wh).isOpen);
         const byYears = minYears === 0 || (b.yearsHere ?? 0) >= minYears;
+        // Kinti Pass elfogadóhely-szűrő (a kedvezménykártyát elfogadó helyek).
+        const byPass = !passOnly || b.kintiPassActive === true;
         const byText =
           !needle ||
           b.name.toLowerCase().includes(needle) ||
@@ -232,7 +236,7 @@ export function ExploreView({
           (b.address ?? "").toLowerCase().includes(needle) ||
           // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
           matchesCanton({ address: b.address ?? null }, needle);
-        return byCountry && byCat && byCanton && byFav && byOpen && byYears && byText;
+        return byCountry && byCat && byCanton && byFav && byOpen && byYears && byPass && byText;
       })
       .map((b) => {
         // Házszám nélküli cím (pl. csak "Wien") esetén a lat/lng városközpont —
@@ -279,7 +283,7 @@ export function ExploreView({
     });
 
     return radiusFiltered;
-  }, [businesses, country, cat, canton, q, showFavs, openNow, minYears, favoriteIds, userPos, radiusKm, sortBy]);
+  }, [businesses, country, cat, canton, q, showFavs, openNow, minYears, passOnly, favoriteIds, userPos, radiusKm, sortBy]);
 
   const locatedCount = useMemo(
     () => filtered.filter(({ b }) => b.lat != null && b.lng != null).length,
@@ -434,6 +438,24 @@ export function ExploreView({
           </span>
         </button>
 
+        {/* Kinti Pass elfogadóhely-szűrő (arany) */}
+        <button
+          type="button"
+          onClick={() => setPassOnly((v) => !v)}
+          aria-pressed={passOnly}
+          className={cn(
+            "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            passOnly
+              ? "bg-star/15 border-star/50 text-ink font-bold"
+              : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
+          )}
+        >
+          <span aria-hidden className="text-[13px] leading-none">🎟️</span>
+          <span className="text-[11.5px] font-bold tracking-wide select-none">
+            Csak Kinti Pass helyek
+          </span>
+        </button>
+
         {/* Most nyitva szűrő */}
         <button
           type="button"
@@ -529,6 +551,29 @@ export function ExploreView({
           </label>
         )}
       </div>
+
+      {/* Kinti Pass szűrő aktív → emlékeztető a saját digitális kártyára */}
+      {passOnly && (
+        <div className="px-5">
+          <Link
+            href="/profil/kinti-pass"
+            className="flex items-center gap-3 rounded-card border border-star/40 bg-star/10 px-4 py-3 shadow-card transition active:scale-[0.99]"
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-star/20 text-[18px]">
+              🎟️
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
+                Ezeken a helyeken kedvezményt kapsz
+              </span>
+              <span className="block text-[11.5px] text-ink-muted">
+                Mutasd fel a Kinti Pass digitális kártyád fizetéskor — itt nyitod meg.
+              </span>
+            </span>
+            <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-ink-muted" />
+          </Link>
+        </div>
+      )}
 
       {/* Geo-hiba visszajelzés */}
       {(geoState === "denied" || geoState === "error") && (

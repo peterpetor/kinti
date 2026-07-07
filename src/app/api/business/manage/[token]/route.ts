@@ -142,6 +142,27 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
     fields.leadOptOut = body.leadOptOut === true || body.leadOptOut === 1;
   }
 
+  // Kinti Pass (elfogadóhely + ajánlat) — Szaknévsor PRO funkció, SZERVER-oldali
+  // gate: nem-PRO kliens hiába küldi, elutasítjuk (a UI paywall csak előnézet).
+  if ("kintiPassActive" in body || "kintiPassOffer" in body) {
+    if (!business.featured) {
+      return NextResponse.json({ error: "pro_required" }, { status: 403 });
+    }
+    if ("kintiPassActive" in body) {
+      fields.kintiPassActive = body.kintiPassActive === true || body.kintiPassActive === 1;
+    }
+    if ("kintiPassOffer" in body) {
+      const v = str(body.kintiPassOffer);
+      if (v && v.length > BUSINESS_LIMITS.passOfferMax) {
+        errors.push({ field: "kintiPassOffer", message: `Legfeljebb ${BUSINESS_LIMITS.passOfferMax} karakter.` });
+      } else fields.kintiPassOffer = v;
+    }
+    // Kikapcsolt Pass mellett ne maradjon árva ajánlat-szöveg a publikus felületen.
+    if (fields.kintiPassActive === false && fields.kintiPassOffer === undefined) {
+      fields.kintiPassOffer = null;
+    }
+  }
+
   if (errors.length) {
     return NextResponse.json({ error: "validation", details: errors }, { status: 400 });
   }
@@ -152,6 +173,7 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
   const updatedTextParts: string[] = [];
   if (fields.name) updatedTextParts.push(fields.name);
   if (fields.blurb) updatedTextParts.push(fields.blurb);
+  if (fields.kintiPassOffer) updatedTextParts.push(fields.kintiPassOffer);
   if (updatedTextParts.length > 0) {
     const textMod = await moderateText(updatedTextParts.join("\n"));
     if (textMod.action === "block") {

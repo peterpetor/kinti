@@ -24,6 +24,7 @@ export const BUSINESS_LIMITS = {
   blurbMax: 600,
   emailMax: 254,
   licenseNumberMax: 120,
+  passOfferMax: 120,
 } as const;
 
 /**
