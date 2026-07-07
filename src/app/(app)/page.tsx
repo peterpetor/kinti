@@ -10,6 +10,7 @@ import { HomeCountryFlag, HomePrimaryActions, HomeEvents, HomeChCards } from "@/
 import { MyPostsBanner } from "@/components/my-posts-banner";
 import { DailyStreak } from "@/components/daily-streak";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
+import { ReviewFollowupCard } from "@/components/review-followup-card";
 import { GlobalSearch } from "@/components/global-search";
 import { PwaInstallCard } from "@/components/pwa-install-card";
 import { RelocationReminderBanner } from "@/components/relocation-reminder-banner";
@@ -63,6 +64,8 @@ export default async function FeedPage() {
       {/* Aktivációs checklist — az új felhasználót 3 lépésben teszi „lakóvá"
           (régió → push → első kedvenc); kész/bezárt állapotban null. */}
       <OnboardingChecklist />
+      {/* Hívás-utáni vélemény-kérő (2 óra – 14 nap ablak, cégenként egyszer). */}
+      <ReviewFollowupCard />
       <DailyStreak />
       <RelocationReminderBanner />
 

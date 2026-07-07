@@ -14,6 +14,7 @@ import { MaplibreEngine } from "./map-engine-maplibre";
 import { mapEngine } from "@/lib/map-config";
 import { spreadColocated } from "@/lib/cluster";
 import { haversineKm, formatDistanceKm } from "@/lib/distance";
+import { TelLink } from "@/components/business-analytics-tracker";
 
 /**
  * BusinessMap — wrapper: WebGL-detektálás + motor-választás + közös overlay-ek.
@@ -333,14 +334,18 @@ function SelectedCard({ business: b, distanceKm }: { business: Business; distanc
       </div>
       </Link>
       {b.phone && (
-        <a
-          href={`tel:${b.phone}`}
+        // TelLink: a térképi hívás is számítson az analitikába (phoneClicks) és
+        // a hívás-utáni vélemény-kérőbe — eddig sima <a> volt, egyik sem futott.
+        <TelLink
+          businessId={b.id}
+          phone={b.phone}
+          businessName={b.name}
+          stopPropagation
           aria-label={`${b.name} hívása`}
-          onClick={(e) => e.stopPropagation()}
           className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-success text-white active:scale-95"
         >
           <Icon name="phone" size={16} strokeWidth={2.4} />
-        </a>
+        </TelLink>
       )}
       <Link
         href={`/szaknevsor/${b.id}`}

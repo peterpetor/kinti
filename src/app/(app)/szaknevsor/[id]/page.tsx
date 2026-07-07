@@ -394,7 +394,7 @@ export default async function BusinessPage({
         {(b.phone || mapsHref || website || email) && (
           <div className="mt-4 flex flex-wrap gap-2">
             {b.phone && (
-              <TelLink businessId={b.id} phone={b.phone} className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-primary text-white shadow-card-hover")}>
+              <TelLink businessId={b.id} phone={b.phone} businessName={b.name} className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-primary text-white shadow-card-hover")}>
                 <Icon name="phone" size={16} strokeWidth={2.2} /> Hívás
               </TelLink>
             )}
