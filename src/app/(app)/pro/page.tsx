@@ -42,17 +42,17 @@ export default function ProPage() {
   // (interjú, nyelvkurzus, állampolgárság-szimulátor). A szakmai szótár CH-only
   // valódi tartalom, ezért az marad CH-feltételes.
   const proFeatures = [
-    "Utalás-asszisztens — mérhető havi spórolás a hazautaláson",
-    "Határidő-asszisztens — soha ne maradj le (engedély, biztosítás, adó)",
-    "Állás-találat (% match) — melyik állás illik a profilodhoz + becsült nettó bér a régiódban",
-    "AI Interjú Szimulátor — országod cégeihez (CH/AT/DE/NL)",
-    "AI CV-audit — önéletrajz-elemzés és tippek",
-    "Nyelvkurzus — svájci, osztrák, német és holland",
+    "Állás-találat (%-egyezés) — melyik állás illik a profilodhoz + becsült nettó bér a régiódban",
+    "AI Interjú Szimulátor — országod cégeihez, magyarul kiértékelve (CH/AT/DE/NL)",
+    "AI CV-audit — önéletrajz-elemzés, konkrét javítási tippekkel",
+    "Utalás-asszisztens — árfolyam-figyelés + szolgáltató-összevetés a hazautaláshoz",
+    "Határidő-asszisztens — push-emlékeztető 14/7/1 nappal a fontos határidők előtt",
+    "Nyelvkurzus — 100-100 lecke kiejtéssel, mind a 4 országra (Mundart/osztrák/német/holland)",
     "Állampolgársági teszt-szimulátor — mind a 4 országra",
     // Tényállítás-fegyelem: az „500+ kifejezés" NEM volt igaz (a leckékben ennek
     // töredéke van) — csak bizonyítható állítást írunk ki. A szótár mind a 4
     // országra elérhető (CH svájci-német, AT/DE/NL a helyi nyelven).
-    "Szakmai gyors-szótár — iparági leckék kiejtéssel (mind a 4 ország)",
+    "Szakmai gyors-szótár — iparági szakszavak leckékben, kiejtéssel (mind a 4 ország)",
   ];
 
   const handleCheckout = (product: "kinti_pro_monthly" | "business_pro_monthly" | "job_featured") => {
@@ -213,11 +213,11 @@ export default function ProPage() {
             <FeatureItem text="Sárga PRO kiemelés a találati listákban" />
             <FeatureItem text="A lista elején jelensz meg a kategóriádban (a kiemelt cégek között)" />
             <FeatureItem text="Egyedi profil borítókép és arculat-szín" />
-            <FeatureItem text="Analytics: profil-megtekintések, CTR, keresőszavak" />
+            <FeatureItem text="Analytics-műszerfal: profil-megtekintések, hívások és ajánlatkérők (7/30 napos bontásban, konverzióval)" />
             <FeatureItem text="Időpontfoglalás widget (Calendly-beágyazás)" />
-            <FeatureItem text="Ajánlatkérő postafiók (lead-kezelő)" />
-            <FeatureItem text="Bővített referenciagaléria" />
-            <FeatureItem text="Nem jelenik meg „hasonló vállalkozások” ajánló a profilodon" />
+            <FeatureItem text="Ajánlatkérő postafiók — a beérkező érdeklődők egy helyen (lead-kezelő)" />
+            <FeatureItem text="Bővített referenciagaléria (több fotó a munkáidról)" />
+            <FeatureItem text="Nem jelenik meg „hasonló vállalkozások” ajánló a profilodon (nem küldünk konkurenshez)" />
           </ul>
           {/* P2B rangsor-átláthatóság: a fizetett kiemelés előre sorol és JELÖLT. */}
           <p className="mb-4 text-[11px] leading-snug text-ink-faint">
@@ -277,8 +277,10 @@ export default function ProPage() {
           <ul className="space-y-3 mb-8 flex-1">
             <FeatureItem text="30 napos piros kiemelés a Job Boardon" />
             <FeatureItem text="A kiemelt hirdetések a lista elején, jelölten jelennek meg" />
-            <FeatureItem text="Egyedi céges arculat megjelenítése" />
-            <FeatureItem text="Azonnali push-értesítés a releváns jelölteknek" />
+            <FeatureItem text="Egyedi céges arculat megjelenítése a hirdetésen" />
+            <FeatureItem text="Push-riasztás a régiód magyar jelöltjeinek (Kinti Radar — kanton + szakma szerint)" />
+            <FeatureItem text="Jelentkezők egy helyen — beépített kezelő-felület, semmi nem vész el" />
+            <FeatureItem text="E-mail minden új jelentkezésről + jelentkezés-számláló hirdetésenként" />
           </ul>
 
           <Link
