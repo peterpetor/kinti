@@ -9,6 +9,7 @@ import { WeatherWidget } from "@/components/weather-widget";
 import { HomeCountryFlag, HomePrimaryActions, HomeEvents, HomeChCards } from "@/components/home-country-aware";
 import { MyPostsBanner } from "@/components/my-posts-banner";
 import { DailyStreak } from "@/components/daily-streak";
+import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { GlobalSearch } from "@/components/global-search";
 import { PwaInstallCard } from "@/components/pwa-install-card";
 import { RelocationReminderBanner } from "@/components/relocation-reminder-banner";
@@ -59,6 +60,9 @@ export default async function FeedPage() {
       </header>
 
       <MyPostsBanner />
+      {/* Aktivációs checklist — az új felhasználót 3 lépésben teszi „lakóvá"
+          (régió → push → első kedvenc); kész/bezárt állapotban null. */}
+      <OnboardingChecklist />
       <DailyStreak />
       <RelocationReminderBanner />
 
