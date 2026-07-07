@@ -671,7 +671,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
 
       {/* Engedélyköteles kategória — hatósági engedélyszám */}
       {isLicensedCategory(form.categoryId) && (
-        <section className="rounded-card border-2 border-star/50 bg-[#fff8ed] p-4 shadow-card space-y-3">
+        <section className="rounded-card border-2 border-star/50 bg-[#fff8ed] dark:bg-[#241d10] p-4 shadow-card space-y-3">
           <div className="flex items-start gap-2.5">
             <span className="text-xl shrink-0">⚠️</span>
             <div className="min-w-0">

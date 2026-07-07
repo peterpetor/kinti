@@ -560,15 +560,15 @@ export function ProfileEditor({
               <span className="text-ink-muted/30"><Icon name="globe" size={36} /></span>
               {/* Kis vissza nyíl és megosztók a telefonon */}
               <div className="absolute inset-x-0 top-6 flex gap-1.5 px-3">
-                <span className="grid h-[24px] w-[24px] place-items-center rounded-lg bg-white/90 text-ink text-[11px]">
+                <span className="grid h-[24px] w-[24px] place-items-center rounded-lg bg-surface/90 text-ink text-[11px]">
                   <Icon name="arrowLeft" size={12} />
                 </span>
                 <span className="flex-1" />
                 <div className="flex gap-1">
-                  <span className="grid h-[24px] w-[24px] place-items-center rounded-lg bg-white/90 text-ink">
+                  <span className="grid h-[24px] w-[24px] place-items-center rounded-lg bg-surface/90 text-ink">
                     <Icon name="share" size={11} />
                   </span>
-                  <span className="grid h-[24px] w-[24px] place-items-center rounded-lg bg-white/90 text-accent">
+                  <span className="grid h-[24px] w-[24px] place-items-center rounded-lg bg-surface/90 text-accent">
                     <Icon name="heart" size={11} />
                   </span>
                 </div>

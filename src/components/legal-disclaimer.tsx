@@ -29,10 +29,14 @@ interface LegalDisclaimerProps {
   extraWarning?: string;
 }
 
+// FONTOS: a `bg` téma-tudatos kell legyen. A `legal` krém háttere (`#fff8ed`)
+// sötét módban a világos `text-ink`-kel olvashatatlan volt → `dark:` párral egy
+// sötét meleg-barna árnyalatra vált. Az `info`/`critical` már tokenből (surface-alt,
+// accent-soft) dolgozik, azok maguktól követik a témát.
 const VARIANT_STYLE: Record<NonNullable<LegalDisclaimerProps["variant"]>, { border: string; bg: string; icon: string }> = {
-  info:     { border: "border-line",          bg: "bg-surface-alt/60",    icon: "ℹ️" },
-  legal:    { border: "border-star/40",  bg: "bg-[#fff8ed]",         icon: "⚠️" },
-  critical: { border: "border-accent/30",     bg: "bg-accent-soft",       icon: "🚨" },
+  info:     { border: "border-line",          bg: "bg-surface-alt/60",                    icon: "ℹ️" },
+  legal:    { border: "border-star/40",       bg: "bg-[#fff8ed] dark:bg-[#241d10]",       icon: "⚠️" },
+  critical: { border: "border-accent/30",     bg: "bg-accent-soft",                       icon: "🚨" },
 };
 
 export function LegalDisclaimer({
@@ -99,7 +103,7 @@ export function LegalDisclaimer({
       </ul>
 
       {extraWarning && (
-        <p className="rounded-md bg-white/60 px-2.5 py-1.5 text-[11.5px] font-semibold">
+        <p className="rounded-md bg-white/60 px-2.5 py-1.5 text-[11.5px] font-semibold dark:bg-white/10">
           {extraWarning}
         </p>
       )}

@@ -288,18 +288,18 @@ export function RentCostCalculator() {
         </div>
 
         {cfg.depositNote && (
-          <div className="mt-2 rounded-[10px] bg-white/50 px-3 py-2 text-[11.5px] leading-relaxed text-ink-muted">
+          <div className="mt-2 rounded-[10px] bg-white/50 dark:bg-white/10 px-3 py-2 text-[11.5px] leading-relaxed text-ink-muted">
             ℹ️ {cfg.depositNote}
           </div>
         )}
 
-        <div className="mt-3 rounded-[10px] bg-white/60 px-3 py-2 text-[11.5px] leading-relaxed text-ink">
+        <div className="mt-3 rounded-[10px] bg-white/60 dark:bg-white/10 px-3 py-2 text-[11.5px] leading-relaxed text-ink">
           💡 <strong>Tipp:</strong> {cfg.depositTip}
         </div>
       </section>
 
       {/* Rezsi kártya */}
-      <section className="rounded-card border-2 border-star/40 bg-[#fff8ed] p-5 shadow-pop">
+      <section className="rounded-card border-2 border-star/40 bg-[#fff8ed] dark:bg-[#241d10] p-5 shadow-pop">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-3xl">🌡️</span>
           <div>
@@ -343,7 +343,7 @@ export function RentCostCalculator() {
           </div>
         </div>
 
-        <div className="mt-3 rounded-[10px] bg-white/60 px-3 py-2 text-[11.5px] leading-relaxed text-ink">
+        <div className="mt-3 rounded-[10px] bg-white/60 dark:bg-white/10 px-3 py-2 text-[11.5px] leading-relaxed text-ink">
           💡 <strong>Tipp:</strong> {cfg.nkTip}
         </div>
       </section>

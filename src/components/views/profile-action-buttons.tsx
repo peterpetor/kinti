@@ -62,13 +62,13 @@ export function ProfileHeaderActions({ businessId, businessName, categoryLabel, 
         <ReportButton
           contentType="business"
           contentId={businessId}
-          className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-white/95 text-ink shadow-card backdrop-blur-md transition hover:bg-white hover:text-accent active:scale-95"
+          className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-surface/95 text-ink shadow-card backdrop-blur-md transition hover:bg-surface hover:text-accent active:scale-95"
         />
         <button
           type="button"
           onClick={() => setShareOpen(true)}
           aria-label="Megosztás"
-          className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-white/95 text-ink shadow-card backdrop-blur-md transition hover:bg-white active:scale-95"
+          className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-surface/95 text-ink shadow-card backdrop-blur-md transition hover:bg-surface active:scale-95"
         >
           <Icon name="share" size={17} strokeWidth={2.2} />
         </button>
@@ -76,7 +76,7 @@ export function ProfileHeaderActions({ businessId, businessName, categoryLabel, 
           type="button"
           onClick={toggleFavorite}
           aria-label={isFavorite ? "Eltávolítás a kedvencek közül" : "Kedvencekhez adás"}
-          className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-white/95 text-accent shadow-card backdrop-blur-md transition hover:bg-white active:scale-95"
+          className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-surface/95 text-accent shadow-card backdrop-blur-md transition hover:bg-surface active:scale-95"
         >
           <Icon
             name="heart"

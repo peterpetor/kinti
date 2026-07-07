@@ -310,7 +310,7 @@ export default async function BusinessPage({
           <Link
             href="/szaknevsor"
             aria-label="Vissza"
-            className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-white/90 text-ink backdrop-blur-md"
+            className="grid h-[38px] w-[38px] place-items-center rounded-[12px] bg-surface/90 text-ink backdrop-blur-md"
           >
             <Icon name="arrowLeft" size={18} strokeWidth={2.2} />
           </Link>

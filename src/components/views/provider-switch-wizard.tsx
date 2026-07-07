@@ -159,7 +159,7 @@ function CategoryDetail({
       </section>
 
       {/* Tippek */}
-      <section className="rounded-card border-2 border-star/30 bg-[#fff8ed] p-4 shadow-card">
+      <section className="rounded-card border-2 border-star/30 bg-[#fff8ed] dark:bg-[#241d10] p-4 shadow-card">
         <h3 className="mb-2 flex items-center gap-1.5 text-[12px] font-extrabold uppercase tracking-wide text-[#9a6b00]">
           💡 Tippek
         </h3>
