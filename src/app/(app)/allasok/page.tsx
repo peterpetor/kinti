@@ -39,7 +39,7 @@ export default async function JobsPage() {
             Magyar-barát munkalehetőségek külföldön. Böngéssz az ellenőrzött állások között, vagy
             készülj fel az interjúra!
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Link
               href="/allasok/profil"
               className="inline-flex items-center gap-2 rounded-pill bg-primary/10 px-4 py-2 text-[13.5px] font-bold text-primary transition-all active:scale-[0.98]"
@@ -48,11 +48,9 @@ export default async function JobsPage() {
             </Link>
             <Link
               href="/munkaltato/uj-hirdetes"
-              aria-label="Álláshirdetés feladása munkáltatóként"
-              title="Álláshirdetés feladása"
-              className="grid h-9 w-9 shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-muted shadow-card transition-all active:scale-[0.95]"
+              className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-4 py-2 text-[13.5px] font-bold text-ink transition-all active:scale-[0.98]"
             >
-              <Icon name="plus" size={16} strokeWidth={2.4} />
+              <Icon name="plus" size={16} strokeWidth={2.4} /> Álláshirdetés feladása
             </Link>
           </div>
         </section>
