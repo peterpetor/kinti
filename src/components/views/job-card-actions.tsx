@@ -32,7 +32,11 @@ export function JobCardActions({
     setRenewing(true);
     setError(null);
     try {
-      const res = await fetch(`/api/employer/jobs/${jobId}/renew`, { method: "POST" });
+      const res = await fetch(`/api/employer/jobs/${jobId}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action: "renew" }),
+      });
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(data.error || "A megújítás nem sikerült.");

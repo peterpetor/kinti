@@ -4,8 +4,8 @@ import { AkciokView } from "./akciok-view";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { CountryGuard } from "@/components/country-guard";
 
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
+// Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
+export const dynamic = "force-static";
 
 export const metadata = {
   title: "Akciók — boltláncok leárazásai a térképen",

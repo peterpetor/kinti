@@ -1,6 +1,7 @@
 "use client";
 
-export const runtime = "edge";
+// A segment-config (force-static + generateStaticParams) a layout.tsx-ben él —
+// kliens-komponensből nem exportálható. Az oldal SSG-prerenderelt (400 lecke).
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";

@@ -3,8 +3,8 @@ import BenchmarkClient from "./BenchmarkClient";
 import { ScreenHeader } from "@/components/ui";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
+// Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
+export const dynamic = "force-static";
 
 export const metadata: Metadata = {
   title: "Bér- és Lakbér Iránytű | Kinti",

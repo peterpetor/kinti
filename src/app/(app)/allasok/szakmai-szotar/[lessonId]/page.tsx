@@ -1,6 +1,7 @@
 "use client";
 
-export const runtime = "edge";
+// FIGYELEM: ez a segment NEM statikusítható — a layout.tsx per-request PRO-gate-et
+// futtat (auth + isPro + redirect), ezért edge-route marad (lásd deploy-plafon).
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";

@@ -1,6 +1,7 @@
 "use client";
 
-export const runtime = "edge";
+// Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
+export const dynamic = "force-static";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";

@@ -3,7 +3,8 @@ import { Icon, ScreenHeader } from "@/components/ui";
 import { GuideList } from "./GuideList";
 import { CountryGuard } from "@/components/country-guard";
 
-export const runtime = "edge";
+// Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
+export const dynamic = "force-static";
 
 export const metadata = {
   title: "Tudásbázis — útmutatók kint élő magyaroknak",

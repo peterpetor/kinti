@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { LeaderboardView } from "@/components/views/leaderboard-view";
 
-export const runtime = "edge";
+// Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
+export const dynamic = "force-static";
 
 export const metadata = { title: "Közösségi ranglista" };
 

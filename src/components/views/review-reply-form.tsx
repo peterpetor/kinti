@@ -20,7 +20,7 @@ export function ReviewReplyForm({
   initialResponse,
 }: {
   reviewId: string;
-  /** A POST végpont (pl. `/api/business/manage/<token>/review-response`). */
+  /** A POST végpont (a kezelt cég manage-route-ja: `/api/business/manage/<token>`). */
   endpoint: string;
   initialResponse?: string | null;
 }) {
@@ -39,7 +39,8 @@ export function ReviewReplyForm({
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ reviewId, response: nextText }),
+        // action: a konszolidált manage POST route akció-diszpécseréhez.
+        body: JSON.stringify({ action: "review-response", reviewId, response: nextText }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {

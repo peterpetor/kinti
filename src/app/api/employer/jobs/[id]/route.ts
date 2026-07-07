@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { deleteJob, updateJob, getEmployerByOwner } from "@/lib/repo";
+import { deleteJob, updateJob, renewJob, getEmployerByOwner } from "@/lib/repo";
 import { isValidCantonCode } from "@/lib/cantons";
 import { isValidJobCategory } from "@/lib/job-categories";
 import { moderateText } from "@/lib/text-moderation";
@@ -9,6 +9,48 @@ import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
+
+// POST /api/employer/jobs/:id  { action: "renew" } — lejárt hirdetés INGYENES
+// megújítása. Tartalom-szerkesztés nincs (a meglévő adatok változatlanok), ezért
+// nincs újra-moderáció sem — csak a láthatóság ('expired' → 'active') és a
+// lejárat (+JOB_LISTING_DAYS) éled újra. Csak 'expired' hirdetésen működik.
+// (Korábban külön /renew al-route volt — a deploy edge-route-plafon miatt
+// konszolidálva ide.)
+export async function POST(req: Request, { params }: { params: { id: string } }) {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const employer = await getEmployerByOwner(userId);
+  if (!employer) {
+    return NextResponse.json({ error: "Nincs munkáltatói fiókod." }, { status: 403 });
+  }
+
+  let body: Record<string, unknown> = {};
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+  if (body.action !== "renew") {
+    return NextResponse.json({ error: "Ismeretlen művelet." }, { status: 400 });
+  }
+
+  try {
+    const renewed = await renewJob(params.id, employer.id);
+    if (!renewed) {
+      return NextResponse.json(
+        { error: "A hirdetés nem található, nem a tiéd, vagy nem lejárt." },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    safeLogError("[employer/jobs/:id POST renew]", err);
+    return NextResponse.json({ error: "Belső hiba történt a megújítás során." }, { status: 500 });
+  }
+}
 
 // PATCH /api/employer/jobs/:id — a munkáltató saját hirdetésének szerkesztése.
 // Szerkesztés után a hirdetés újra admin-jóváhagyásra vár (moderation_status=0).

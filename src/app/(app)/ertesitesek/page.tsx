@@ -2,7 +2,8 @@ import { KintiLogo } from "@/components/ui";
 import { BackButton } from "@/components/back-button";
 import { NotificationSettings } from "@/components/views/notification-settings";
 
-export const runtime = "edge";
+// Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
+export const dynamic = "force-static";
 
 export const metadata = { title: "Értesítések" };
 

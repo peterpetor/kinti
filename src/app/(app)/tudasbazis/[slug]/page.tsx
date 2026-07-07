@@ -4,7 +4,15 @@ import type { Metadata } from "next";
 import { Icon } from "@/components/ui";
 import { getGuide, GUIDES, GUIDES_DISCLAIMER, relatedCategoriesForGuide } from "@/lib/guides";
 
-export const runtime = "edge";
+// Tisztán statikus tartalom (lib/guides.ts) + generateStaticParams → SSG:
+// minden cikk build-time prerenderelt, NEM fogyaszt edge-route-ot
+// (deploy-plafon). dynamicParams=false: ismeretlen slug → 404 build-listából.
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return GUIDES.map((g) => ({ slug: g.slug }));
+}
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const guide = getGuide(params.slug);

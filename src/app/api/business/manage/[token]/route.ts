@@ -10,6 +10,7 @@ import { BUSINESS_LIMITS } from "@/lib/business";
 import { isSwissAddress } from "@/lib/cantons";
 import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
 import { moderateText } from "@/lib/text-moderation";
+import { applyOwnerResponse } from "@/lib/review-response";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -31,6 +32,37 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   return NextResponse.json({ business }, { headers: { "cache-control": "no-store" } });
+}
+
+/**
+ * POST — akció-műveletek a kezelt vállalkozáson. Jelenleg:
+ *   { action: "review-response", reviewId, response } — nyilvános tulajdonosi
+ *   válasz egy véleményre (üres response = a válasz törlése).
+ * (Korábban külön /review-response al-route volt — a deploy edge-route-plafon
+ * miatt konszolidálva ide.)
+ */
+export async function POST(req: Request, { params }: { params: { token: string } }) {
+  const business = await getBusinessByManageToken(params.token);
+  if (!business) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
+  let body: Record<string, unknown> = {};
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+  }
+
+  if (body.action !== "review-response") {
+    return NextResponse.json({ error: "Ismeretlen művelet." }, { status: 400 });
+  }
+
+  const result = await applyOwnerResponse(business.id, body.reviewId, body.response);
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+  return NextResponse.json({ ok: true }, { headers: { "cache-control": "no-store" } });
 }
 
 export async function PATCH(req: Request, { params }: { params: { token: string } }) {

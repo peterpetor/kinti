@@ -1,8 +1,8 @@
 /**
  * review-response.ts — a tulajdonosi vélemény-válasz KÖZÖS logikája (validáció +
- * AI-moderáció + írás). Két végpont hívja, csak a tulajdonjog-igazolás tér el:
- *   • /api/business/manage/[token]/review-response — email-only (manage-token)
- *   • /api/owner/review-response                   — Clerk-belépett tulajdonos
+ * AI-moderáció + írás). A konszolidált manage-akció hívja (edge-route-plafon):
+ *   • POST /api/business/manage/[token]  { action: "review-response", ... }
+ * A /profil (Clerk-tulajdonos) is ezt használja a saját cége manage-tokenjével.
  * A hívó a már IGAZOLT saját `businessId`-t adja át.
  */
 import { setReviewOwnerResponse } from "./repo";

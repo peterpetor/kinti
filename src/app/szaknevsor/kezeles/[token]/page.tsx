@@ -112,7 +112,7 @@ export default async function BusinessManagePage({ params }: { params: { token: 
                 )}
                 <ReviewReplyForm
                   reviewId={r.id}
-                  endpoint={`/api/business/manage/${params.token}/review-response`}
+                  endpoint={`/api/business/manage/${params.token}`}
                   initialResponse={r.ownerResponse}
                 />
               </article>

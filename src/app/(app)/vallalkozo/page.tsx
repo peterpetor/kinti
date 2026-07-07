@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 import { HomeCountryFlag } from "@/components/home-country-aware";
 
-export const runtime = "edge";
+// Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
+export const dynamic = "force-static";
 
 export const metadata = { title: "Vállalkozói felület" };
 

@@ -558,11 +558,17 @@ async function OwnerDashboard({
                 {r.body?.trim() && (
                   <p className="mt-2 whitespace-pre-line text-[13px] leading-relaxed text-ink">{r.body.trim()}</p>
                 )}
-                <ReviewReplyForm
-                  reviewId={r.id}
-                  endpoint="/api/owner/review-response"
-                  initialResponse={r.ownerResponse}
-                />
+                {/* A válasz a cég manage-route-ján megy (a külön Clerk-os
+                    /api/owner/review-response a deploy edge-route-plafon miatt
+                    konszolidálva). A manageToken itt a BEJELENTKEZETT tulajdonos
+                    saját kulcsa a saját auth-védett oldalán — nem szivárgás. */}
+                {business.manageToken && (
+                  <ReviewReplyForm
+                    reviewId={r.id}
+                    endpoint={`/api/business/manage/${business.manageToken}`}
+                    initialResponse={r.ownerResponse}
+                  />
+                )}
               </div>
             );
           })}
