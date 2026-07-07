@@ -350,6 +350,14 @@ export function GlobalSearchOverlay() {
         aria-label="Keresés a kintin"
         className="w-full max-w-md animate-fade-up rounded-card border border-line bg-surface shadow-pop overflow-hidden flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          // Escape a dialógus BÁRMELY pontjáról zár (ne csak az input-fókuszból —
+          // egy találat-sorra tabolva is működjön).
+          if (e.key === "Escape") {
+            e.preventDefault();
+            close();
+          }
+        }}
       >
         {/* Kereső input */}
         <div className="flex items-center gap-2 border-b border-line px-3 py-2.5">
@@ -370,7 +378,10 @@ export function GlobalSearchOverlay() {
           />
           {busy && <span className="text-[11px] text-ink-faint shrink-0" aria-live="polite">keresek…</span>}
           <kbd className="hidden sm:flex shrink-0 items-center gap-0.5 rounded-md border border-line bg-surface-alt px-1.5 py-0.5 text-[10px] font-bold text-ink-faint">
-            Ctrl K
+            {/* Az overlay csak kliens-interakció után renderel → a navigator biztonságos. */}
+            {typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)
+              ? "⌘ K"
+              : "Ctrl K"}
           </kbd>
           <button
             type="button"

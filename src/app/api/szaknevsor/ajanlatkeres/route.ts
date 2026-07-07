@@ -31,6 +31,8 @@ interface BusinessContactRow {
   category_id: string;
   category_label: string | null;
   featured: number;
+  canton_code: string | null;
+  country_code: string | null;
 }
 
 /**
@@ -139,7 +141,7 @@ export async function POST(req: Request) {
     const { results: allBusinesses } = await getDB()
       .prepare(
         `SELECT id, name, contact_email, address, category_id, category_label,
-                COALESCE(featured, 0) AS featured
+                COALESCE(featured, 0) AS featured, canton_code, country_code
          FROM businesses
          WHERE category_id = ?
            AND COALESCE(hidden, 0) = 0
@@ -153,10 +155,14 @@ export async function POST(req: Request) {
       .bind(categoryId)
       .all<BusinessContactRow>();
 
-    // Kanton szűrés JS-ben (nincs canton_code oszlop a táblában)
+    // Régió-szűrés: elsősorban a TÁROLT canton_code (minden országra helyes);
+    // a cím-alapú PLZ/név-feloldás CSAK svájci cégre fut fallbackként — a
+    // svájci PLZ-táblán egy osztrák/holland cím álpozitív kantont adna.
     let filtered = allBusinesses;
     if (cantonCode !== "all") {
       filtered = allBusinesses.filter((b) => {
+        if (b.canton_code) return b.canton_code === cantonCode;
+        if ((b.country_code ?? "CH") !== "CH") return false;
         const canton = cantonFromAddress(b.address) || matchCantonByName(b.address ?? "");
         return canton?.code === cantonCode;
       });

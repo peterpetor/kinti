@@ -15,9 +15,17 @@ import type { KintiEvent } from "@/lib/types";
  * A jóváhagyást SOHA nem töri meg, ha a push hibázik (try/catch a hívónál).
  */
 async function notifyNewEvent(event: KintiEvent): Promise<void> {
-  const cantonCode = event.cantonCode ?? cantonFromAddress(event.venue)?.code ?? null;
+  // A helyszín-szöveges PLZ-feloldás CSAK svájci eseményre hívható — a svájci
+  // PLZ-táblán egy osztrák irányítószám álpozitív kantont adna (a dokumentált
+  // „1150 Wien → Vaud" csapda). Strukturált cantonCode nélküli nem-CH esemény
+  // → kanton-szűretlen push.
+  const country = event.country ?? "CH";
+  const cantonCode =
+    event.cantonCode ?? (country === "CH" ? cantonFromAddress(event.venue)?.code ?? null : null);
+  const regionWord =
+    country === "CH" ? "a kantonodban" : country === "NL" ? "a provinciádban" : "a tartományodban";
   await notifyCanton(cantonCode, {
-    title: "Új esemény a kantonodban 📅",
+    title: `Új esemény ${cantonCode ? regionWord : "a közeledben"} 📅`,
     body: event.title,
     url: "/kozosseg",
   }, "event");

@@ -8,6 +8,7 @@ import { formatJobCurrency } from "@/lib/job-categories";
 import { computeSalary } from "@/lib/salary-calc";
 import { getSalaryStats } from "@/lib/benchmark";
 import { matchCantonByName, cantonFromAddress, cantonName as cantonNameByCode } from "@/lib/cantons";
+import { regionName } from "@/lib/regions";
 import { countryLocative } from "@/lib/countries";
 import { jobPostingJsonLd, safeJsonLdStringify } from "@/lib/json-ld";
 import { mediaUrl } from "@/lib/media";
@@ -95,36 +96,56 @@ export default async function JobDetailPage({ params }: { params: { id: string }
     netEstimate = { gross, net: Math.round(r.netMonthly), cantonCode: estCanton };
   }
 
-  // 1. Iránytű Benchmark Widget Számolás
+  // 1. Iránytű Benchmark Widget Számolás — ORSZÁG-TUDATOS.
+  //
+  // Történet: a korábbi kód (a) a getSalaryStats-ot RÉGI szignatúrával hívta
+  // (a kanton-kód ment country-ként → garantáltan 0 sor, a widget némán halott
+  // volt), (b) bármely ország címét a SVÁJCI PLZ-táblával oldotta fel (a
+  // dokumentált „1010 Wien → Vaud" csapda), (c) a HAVI hirdetés-bért az ÉVES
+  // benchmark-mediánhoz mérte volna. Most: régió a hirdetés strukturált
+  // mezőjéből (ország-helyes kód), Iránytű-lekérdezés országgal, a havi bér
+  // évesítve (AT: ×14 a 13./14. havi miatt — az Iránytű is Jahresbruttót kér;
+  // máshol ×12). Óradíjas hirdetésnél (CHF_HOUR/EUR_HOUR) nincs megbízható
+  // évesítés → a widget kimarad.
+  const jobCountry = job.country ?? "CH";
   let cantonMedian: number | null = null;
   let diffPercent: number | null = null;
   let cantonName: string | null = null;
 
-  if (job.salaryMin && job.salaryMax) {
-    const jobMedian = (job.salaryMin + job.salaryMax) / 2;
-    // Megpróbáljuk a kantont PLZ, majd egyszerű név alapján meghatározni
-    const canton = cantonFromAddress(job.location) || matchCantonByName(job.location);
-    if (canton) {
-      cantonName = canton.name;
-      const stats = await getSalaryStats(canton.code, "12m");
-      let totalEntries = 0;
-      let weightedMedianSum = 0;
-      for (const s of stats) {
-        totalEntries += s.entry_count;
-        weightedMedianSum += (s.median_salary * s.entry_count);
-      }
-      if (totalEntries > 0) {
-        cantonMedian = Math.round(weightedMedianSum / totalEntries);
-        diffPercent = Math.round(((jobMedian - cantonMedian) / cantonMedian) * 100);
-      }
+  const isMonthlySalary = job.currency === "CHF" || job.currency === "EUR";
+  // Régió: a strukturált kód az igazság; a cím-alapú PLZ/név-feloldás CSAK
+  // svájci címre hívható (AT/HU irányítószámok álpozitívak lennének).
+  const regionCode =
+    job.cantonCode ??
+    (jobCountry === "CH"
+      ? (cantonFromAddress(job.location) || matchCantonByName(job.location))?.code ?? null
+      : null);
+
+  if (job.salaryMin && job.salaryMax && isMonthlySalary && regionCode) {
+    const monthlyMedian = (job.salaryMin + job.salaryMax) / 2;
+    const yearFactor = jobCountry === "AT" ? 14 : 12;
+    const jobYearly = monthlyMedian * yearFactor;
+    const stats = await getSalaryStats(jobCountry, regionCode, "12m");
+    let totalEntries = 0;
+    let weightedMedianSum = 0;
+    for (const s of stats) {
+      totalEntries += s.entry_count;
+      weightedMedianSum += (s.median_salary * s.entry_count);
+    }
+    if (totalEntries > 0) {
+      cantonName = regionName(jobCountry, regionCode);
+      cantonMedian = Math.round(weightedMedianSum / totalEntries);
+      diffPercent = Math.round(((jobYearly - cantonMedian) / cantonMedian) * 100);
     }
   }
 
-  // Google for Jobs strukturált adat — a kanton elsősorban a strukturált mezőből.
+  // Google for Jobs strukturált adat — a régió a strukturált mezőből,
+  // ORSZÁG-helyes névvel (a cím-feloldás itt is csak svájci címre fut).
   const cantonRegion =
-    cantonNameByCode(job.cantonCode) ??
-    (cantonFromAddress(job.location) || matchCantonByName(job.location))?.name ??
-    null;
+    (job.cantonCode ? regionName(jobCountry, job.cantonCode) : null) ??
+    (jobCountry === "CH"
+      ? (cantonFromAddress(job.location) || matchCantonByName(job.location))?.name ?? null
+      : null);
   const jobJsonLd = jobPostingJsonLd({ job, employer, cantonRegion });
 
   return (
@@ -199,11 +220,12 @@ export default async function JobDetailPage({ params }: { params: { id: string }
                 Kinti Iránytű Benchmark
               </h3>
               <p className="mt-1 text-[13.5px] leading-snug text-ink-muted text-balance">
-                A(z) <strong>{cantonName} kantonbeli</strong> becsült átlagfizetés jelenleg <strong>{cantonMedian.toLocaleString('de-CH')} CHF</strong>. 
-                Ez az állásajánlat <strong>{Math.abs(diffPercent)}%-kal </strong> 
+                A(z) <strong>{cantonName}</strong> régióban a kintiek becsült éves bruttó mediánja{" "}
+                <strong>{cantonMedian.toLocaleString("de-CH")} {jobCountry === "CH" ? "CHF" : "EUR"}</strong>.
+                Ez az állás (évesítve) <strong>{Math.abs(diffPercent)}%-kal </strong>
                 <strong className={diffPercent >= 0 ? "text-success" : "text-accent"}>
                   {diffPercent >= 0 ? "magasabb" : "alacsonyabb"}
-                </strong> a kantonális átlagnál.
+                </strong> ennél.
               </p>
               <Link href="/iranytu" className="inline-flex items-center gap-1 mt-2 text-[12.5px] font-bold text-primary hover:underline">
                 Részletes bérstatisztikák <Icon name="arrowRight" size={12} strokeWidth={3} />

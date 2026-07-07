@@ -13,6 +13,7 @@ import { safeLogError } from "@/lib/safe-log";
 import { logAdminAction } from "@/lib/audit";
 import { notifyCanton } from "@/lib/push-notify";
 import { cantonFromAddress, nearestCantonCode, CANTONS } from "@/lib/cantons";
+import { regionName } from "@/lib/regions";
 import { getCloudflareCtx } from "@/lib/cloudflare";
 import { upsertBusinessVector } from "@/lib/vector-search";
 
@@ -108,23 +109,33 @@ export async function POST(req: Request) {
       const biz = await getBusinessById(id);
       // Szemantikus index frissítése (no-op, ha a Vectorize nincs beüzemelve).
       if (biz) getCloudflareCtx()?.waitUntil(upsertBusinessVector(biz));
-      // Kanton a címből; ha nincs cím (kanton-választós felvitel), a koordinátából.
-      // Így az address nélküli vállalkozások jóváhagyása is értesít (nem vész el).
-      let cantonCode: string | null = null;
-      let cantonName: string | null = null;
-      const fromAddr = cantonFromAddress(biz?.address ?? null);
-      if (fromAddr) {
-        cantonCode = fromAddr.code;
-        cantonName = fromAddr.name;
-      } else if (biz?.lat != null && biz?.lng != null) {
-        const near = nearestCantonCode(biz.lat, biz.lng);
-        cantonCode = near.code;
-        cantonName = CANTONS.find((c) => c.code === near.code)?.name ?? near.code;
+      // Régió-célzás: a TÁROLT régiókód (biz.canton) az igazság — minden
+      // országra helyes (a push-feliratkozás kanton-mezője a canton-pref óta
+      // szintén országfüggő kódot hordoz). A cím-PLZ / legközelebbi-kanton
+      // feloldás CSAK svájci cégre futhat: a svájci PLZ-táblával egy bécsi
+      // „1160" cím Vaud-ra illeszkedett → svájci feliratkozók kaptak volna
+      // pushot osztrák cégről. (Ismert korlát: a ritka régiókód-ütközés,
+      // pl. CH BE ↔ DE BE — a tárolt kóddal így is jobb, mint a feloldás.)
+      const bizCountry = biz?.country ?? "CH";
+      let cantonCode: string | null = biz?.canton ?? null;
+      let cantonName: string | null = cantonCode ? regionName(bizCountry, cantonCode) : null;
+      if (!cantonCode && bizCountry === "CH") {
+        const fromAddr = cantonFromAddress(biz?.address ?? null);
+        if (fromAddr) {
+          cantonCode = fromAddr.code;
+          cantonName = fromAddr.name;
+        } else if (biz?.lat != null && biz?.lng != null) {
+          const near = nearestCantonCode(biz.lat, biz.lng);
+          cantonCode = near.code;
+          cantonName = CANTONS.find((c) => c.code === near.code)?.name ?? near.code;
+        }
       }
       if (biz && cantonCode) {
+        const regionWord =
+          bizCountry === "CH" ? "a kantonodban" : bizCountry === "NL" ? "a provinciádban" : "a tartományodban";
         getCloudflareCtx()?.waitUntil(
           notifyCanton(cantonCode, {
-            title: "Új magyar vállalkozás a kantonodban 🎉",
+            title: `Új magyar vállalkozás ${regionWord} 🎉`,
             body: `${biz.name}${biz.categoryLabel ? " — " + biz.categoryLabel : ""}${cantonName ? " · " + cantonName : ""}`,
             url: `/szaknevsor/${biz.id}`,
           }, "business"),
