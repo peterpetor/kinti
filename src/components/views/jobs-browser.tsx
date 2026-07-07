@@ -41,7 +41,7 @@ function fmtExtSalary(j: ExternalJob): string | null {
  * szűrés a böngészőben történik — a jelenlegi listaméretnél ez azonnali.
  *
  * `proMatch` (PRO funkció): ha az előfizető profilja kitöltött, minden álláshoz
- * megjelenik a „X% match" jelvény.
+ * megjelenik a „X% egyezés" jelvény.
  */
 export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMatchContext }) {
   const canMatch = !!proMatch?.isPro && hasMatchableProfile(proMatch.profile);
@@ -219,7 +219,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
           >
             <span className="text-lg">🎯</span>
             <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
-              <strong className="text-ink">Tölts ki egy munkavállalói profilt</strong> (szakma + kanton), és minden álláshoz látod a <strong className="text-primary">% match-et</strong>.
+              <strong className="text-ink">Tölts ki egy munkavállalói profilt</strong> (szakma + kanton), és minden álláshoz látod a <strong className="text-primary">% egyezést</strong>.
             </span>
             <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-primary" />
           </Link>
@@ -230,7 +230,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
           >
             <span className="text-lg">🔒</span>
             <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
-              <strong className="text-[#cc7700]">Kinti PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% match</strong> minden hirdetésnél. <span className="text-ink-muted">(Ez a Kinti PRO álláskereső funkciója — <strong>nem</strong> a Szaknévsor PRO, amit a vállalkozásodhoz vehetsz.)</span>
+              <strong className="text-[#cc7700]">Kinti PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% egyezés</strong> minden hirdetésnél. <span className="text-ink-muted">(Ez a Kinti PRO álláskereső funkciója — <strong>nem</strong> a Szaknévsor PRO, amit a vállalkozásodhoz vehetsz.)</span>
             </span>
             <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
           </Link>
@@ -300,7 +300,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                       const tone = m.score >= 66 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-star/15 text-[#b8860b]" : "bg-surface-alt text-ink-muted";
                       return (
                         <span className={cn("rounded-full px-2.5 py-1 text-[11px] font-black", tone)}>
-                          {m.score}% match
+                          {m.score}% egyezés
                         </span>
                       );
                     })()}
