@@ -483,8 +483,11 @@ function DateChip({ event, solid = false }: { event: KintiEvent; solid?: boolean
       <div className={cn("text-[10px] font-extrabold uppercase tracking-wide", solid ? "text-accent" : "text-primary")}>
         {event.dateMonth}
       </div>
-      <div className="text-xl font-extrabold leading-none text-ink">{event.dateDay}</div>
-      {solid && <div className="mt-0.5 text-[8.5px] font-bold uppercase text-ink-muted">{event.dateWeekday?.slice(0, 3)}</div>}
+      {/* FONTOS: a `solid` badge háttere MINDIG fehér (bg-white, a zöld hero-kártyán
+          "naptárlap"). Ezért a nap száma / nap neve FIX SÖTÉT szín kell legyen — a
+          téma-váltó text-ink sötét módban világosra vált → fehéren olvashatatlan volt. */}
+      <div className={cn("text-xl font-extrabold leading-none", solid ? "text-[#0e1f17]" : "text-ink")}>{event.dateDay}</div>
+      {solid && <div className="mt-0.5 text-[8.5px] font-bold uppercase text-[#5c6d63]">{event.dateWeekday?.slice(0, 3)}</div>}
     </div>
   );
 }

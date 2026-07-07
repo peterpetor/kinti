@@ -140,7 +140,7 @@ export function EventsMapView({ turnstileSiteKey }: { turnstileSiteKey: string }
         onClick={() => { resetForm(); setModal(true); }}
         className="w-full rounded-pill bg-primary py-3.5 text-[15px] font-black text-white shadow-card transition active:scale-[0.98]"
       >
-        ➕ Esemény beküldése
+        <span aria-hidden className="text-[17px] leading-none">+</span> Esemény beküldése
       </button>
       <p className="text-center text-[11px] text-ink-faint">A beküldött eseményeket jóváhagyás után tesszük közzé.</p>
 

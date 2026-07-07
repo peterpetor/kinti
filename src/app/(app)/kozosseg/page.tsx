@@ -46,7 +46,7 @@ export default async function KozossegPage() {
               href="/esemenyek?submit=1"
               className="flex items-center justify-center gap-2 rounded-pill bg-primary py-3.5 text-[14.5px] font-black text-white shadow-card transition active:scale-[0.98]"
             >
-              ➕ Esemény beküldése
+              <span aria-hidden className="text-[17px] leading-none">+</span> Esemény beküldése
             </Link>
             <p className="mt-1.5 text-center text-[11px] text-ink-faint">Koncert, találkozó, közösségi program — jóváhagyás után felkerül a térképre és ide is.</p>
           </div>
