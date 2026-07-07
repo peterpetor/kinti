@@ -1,11 +1,12 @@
 /**
- * napi-szo.ts — „Napi szó": napi nyelvjárási kifejezés a kezdőlapon, a napi
+ * napi-szo.ts — „Napi szó": napi helyi kifejezés a kezdőlapon, a napi
  * szokás tartalom-horga. Ország-tudatos: CH = svájci német (Mundart), AT =
- * osztrák német. A választás determinisztikus a nap sorszámából (nincs
- * Math.random — SSR-stabil), így mindenkinek ugyanaz a szó aznap.
+ * osztrák német, DE = hétköznapi/hivatali német, NL = hétköznapi holland.
+ * A választás determinisztikus a nap sorszámából (nincs Math.random —
+ * SSR-stabil), így mindenkinek ugyanaz a szó aznap.
  *
- * Hang: a kártya böngésző-TTS-t használ (speechSynthesis, de-CH / de-AT) —
- * nincs hangfájl, és kecsesen elmarad, ha a böngésző nem támogatja.
+ * Hang: a kártya böngésző-TTS-t használ (speechSynthesis, de-CH / de-AT /
+ * de-DE / nl-NL) — nincs hangfájl, és kecsesen elmarad, ha nem támogatott.
  */
 
 export interface DailyWord {
@@ -15,7 +16,7 @@ export interface DailyWord {
   word: string;
   /** Egyszerű, magyaros kiejtés. */
   phonetic: string;
-  /** Irodalmi német (Hochdeutsch) megfelelő. */
+  /** Sztenderd megfelelő (CH/AT/DE: Hochdeutsch; NL: formális/teljes alak), vagy „—". */
   standard: string;
   /** Rövid használati tipp (opcionális). */
   note?: string;
@@ -123,7 +124,45 @@ const DE_WORDS: DailyWord[] = [
   { hu: "Mellékköltség (rezsi)", word: "Nebenkosten", phonetic: "nébenkoszten", standard: "Betriebskosten", note: "A Kaltmiete + Nebenkosten = Warmmiete (a tényleges havi díj)." },
 ];
 
-const LISTS: Record<string, DailyWord[]> = { CH: CH_WORDS, AT: AT_WORDS, DE: DE_WORDS };
+/**
+ * Hollandia — hétköznapi + hivatali holland. A szókincs a nyelvlecke-modul
+ * kurált NL-tananyagából (data-nl.ts) és az NL-útmutatók (BRP/BSN, huren,
+ * zorgverzekering) kulcsszavaiból válogat — nem gépi fordítás.
+ */
+const NL_WORDS: DailyWord[] = [
+  { hu: "Jó napot", word: "Goedendag", phonetic: "hudendah", standard: "—", note: "Semleges, egész nap használható köszönés." },
+  { hu: "Szia (köszönés)", word: "Hallo", phonetic: "halló", standard: "Goedendag" },
+  { hu: "Jó reggelt", word: "Goedemorgen", phonetic: "hudemorhe", standard: "—" },
+  { hu: "Jó estét", word: "Goedenavond", phonetic: "hudenávond", standard: "—" },
+  { hu: "Szia (búcsúzás)", word: "Doei", phonetic: "dúj", standard: "Tot ziens", note: "Informális — boltban, ismerősöknek; a „Tot ziens\" az udvarias." },
+  { hu: "Viszontlátásra", word: "Tot ziens", phonetic: "tot zíensz", standard: "—" },
+  { hu: "Köszönöm szépen", word: "Dank je wel", phonetic: "dank je vel", standard: "Dank u wel", note: "Magázva: „Dank u wel\" — hivatalban, idősebbeknek." },
+  { hu: "Kérlek / tessék", word: "Alsjeblieft", phonetic: "alsjeblíft", standard: "Alstublieft", note: "Magázva: „Alstublieft\" — a pénztáros is ezzel ad át mindent." },
+  { hu: "Elnézést", word: "Sorry", phonetic: "szorri", standard: "Excuses", note: "A hollandok is simán az angol „sorry\"-t használják." },
+  { hu: "Szívesen (válasz)", word: "Graag gedaan", phonetic: "hráh hedán", standard: "—" },
+  { hu: "Finom / kellemes", word: "Lekker", phonetic: "lekker", standard: "—", note: "Mindenre: étel, idő, alvás — „lekker weer\" = jó idő. Nagyon holland." },
+  { hu: "Hangulatos / otthonos", word: "Gezellig", phonetic: "hezellih", standard: "—", note: "A hollandok kedvenc lefordíthatatlan szava — társaság, hely, este is lehet az." },
+  { hu: "Bicikli", word: "Fiets", phonetic: "fíc", standard: "—", note: "Több bicikli van, mint ember — a fietspad (bicikliút) szent." },
+  { hu: "Bevásárlás", word: "Boodschappen", phonetic: "bótszhappe", standard: "—", note: "„Boodschappen doen\" = bevásárolni menni." },
+  { hu: "Kedvezmény / akció", word: "Korting", phonetic: "korting", standard: "—", note: "A Bonuskaart/app-os akciók kulcsszava az Albert Heijnben." },
+  { hu: "Önkormányzat", word: "Gemeente", phonetic: "hemejnte", standard: "—", note: "Itt intézed a BRP-regisztrációt és a legtöbb hivatali ügyet." },
+  { hu: "Időpont", word: "Afspraak", phonetic: "afszprák", standard: "—", note: "„Afspraak maken\" — orvoshoz, gemeentéhez szinte mindig kell." },
+  { hu: "Lakbér", word: "Huur", phonetic: "hűr", standard: "—", note: "Huurcontract = bérleti szerződés; huurtoeslag = lakbér-támogatás." },
+  { hu: "Kaució", word: "Borg", phonetic: "borh", standard: "Waarborgsom", note: "Jellemzően 1–2 havi lakbér." },
+  { hu: "Állás / munkahely", word: "Baan", phonetic: "bán", standard: "—" },
+  { hu: "Fizetés", word: "Salaris", phonetic: "szaláris", standard: "—", note: "A loonstrook a fizetési papír — érdemes érteni a levonásokat." },
+  { hu: "Adó", word: "Belasting", phonetic: "belaszting", standard: "—", note: "Belastingdienst = adóhivatal; az éves bevallás a „aangifte\"." },
+  { hu: "Biztosítás", word: "Verzekering", phonetic: "ferzékering", standard: "—", note: "A zorgverzekering (egészségbiztosítás) kötelező, 4 hónapon belül." },
+  { hu: "Háziorvos", word: "Huisarts", phonetic: "höüszarc", standard: "—", note: "Mindig ő az első — szakorvoshoz csak beutalóval (verwijzing) mész." },
+  { hu: "Gyógyszertár", word: "Apotheek", phonetic: "apoték", standard: "—" },
+  { hu: "Vonat", word: "Trein", phonetic: "trejn", standard: "—", note: "NS = a holland vasút; OVpay-jel bankkártyával is csekkolhatsz." },
+  { hu: "Pályaudvar / állomás", word: "Station", phonetic: "sztasjon", standard: "—" },
+  { hu: "Talán", word: "Misschien", phonetic: "miszhín", standard: "—" },
+  { hu: "Ma", word: "Vandaag", phonetic: "fandáh", standard: "—" },
+  { hu: "Beszél angolul?", word: "Spreekt u Engels?", phonetic: "szprékt ü engelsz", standard: "—", note: "Szinte mindenki igen — de a holland próbálkozást nagyon értékelik." },
+];
+
+const LISTS: Record<string, DailyWord[]> = { CH: CH_WORDS, AT: AT_WORDS, DE: DE_WORDS, NL: NL_WORDS };
 
 /** Van-e napi szó az adott országhoz? (Csak az élő nyelvi tartalmú országok.) */
 export function hasDailyWord(country: string): boolean {
@@ -134,6 +173,7 @@ export function hasDailyWord(country: string): boolean {
 export function ttsLang(country: string): string {
   if (country === "AT") return "de-AT";
   if (country === "DE") return "de-DE";
+  if (country === "NL") return "nl-NL";
   return "de-CH";
 }
 

@@ -6,10 +6,11 @@ import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
 import { getDailyWord, hasDailyWord, ttsLang, type DailyWord } from "@/lib/napi-szo";
 
 /**
- * NapiSzoCard — „Napi szó": napi nyelvjárási kifejezés a kezdőlapon, a napi
- * szokás tartalom-horga. Ország-tudatos (CH=Mundart, AT=osztrák), determinisztikus
- * a nap sorszámából. Hang böngésző-TTS-sel; csak az élő nyelvi országoknak (CH/AT)
- * jelenik meg. Hidratálás-biztos: mount előtt nem renderel.
+ * NapiSzoCard — „Napi szó": napi helyi kifejezés a kezdőlapon, a napi
+ * szokás tartalom-horga. Ország-tudatos (CH=Mundart, AT=osztrák, DE=német,
+ * NL=holland), determinisztikus a nap sorszámából. Hang böngésző-TTS-sel;
+ * csak a szó-bankkal rendelkező országoknak jelenik meg (hasDailyWord).
+ * Hidratálás-biztos: mount előtt nem renderel.
  */
 export function NapiSzoCard() {
   const [prefCountry] = usePreferredCountry();
