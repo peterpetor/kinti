@@ -21,7 +21,7 @@ function releaseBootGate() {
 
 /** A jogi feltételek verziója — a hozzájárulás-naplóhoz (GDPR demonstrálhatóság),
  *  és a jövőbeli feltétel-változáskori újra-kéréshez. Feltétel-módosításkor emeld. */
-const LEGAL_VERSION = "2026-07-02"; // ÁSZF 10/A rangsor-átláthatóság (P2B) + Omnibus-tájékoztatók
+const LEGAL_VERSION = "2026-07-07"; // ÁSZF 17: fenntartás-jog — a Szolgáltatás/funkciók bármikori módosítása, szüneteltetése, megszüntetése + „további használat = elfogadás"
 
 function pathIsExempt(pathname: string): boolean {
   return EXEMPT_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));

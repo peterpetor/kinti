@@ -6,7 +6,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-02">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-07">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -631,12 +631,61 @@ export default function AszfPage() {
         és jogi költséget azonnal megtéríteni</strong>.
       </p>
 
-      <h2>17. Módosítás és adatok változása</h2>
+      <h2>17. A Szolgáltatás és a feltételek módosítása</h2>
       <p>
-        Az üzemeltető fenntartja a jogot, hogy ezeket a feltételeket egyoldalúan módosítsa.
-        A módosítás a közzétételkor lép hatályba; lényeges változásokról a vállalkozói
-        regisztráltakat emailben is értesítjük.
+        Az üzemeltető fenntartja a jogot, hogy a jelen Felhasználási Feltételeket (ÁSZF){" "}
+        <strong>bármikor, egyoldalúan módosítsa</strong>. A módosítás a jelen oldalon való
+        közzétételkor (a frissített „utolsó módosítás" dátummal) lép hatályba; a{" "}
+        <strong>lényeges</strong> változásokról a vállalkozói és munkáltatói regisztráltakat
+        e-mailben is értesítjük, illetve a felületen figyelmeztetést jeleníthetünk meg és a
+        hozzájárulást ismételten bekérhetjük. <strong>A Szolgáltatás módosítás utáni további
+        használata a megváltozott feltételek elfogadását jelenti.</strong> Ha a felhasználó a
+        módosított feltételekkel nem ért egyet, köteles a Szolgáltatás használatát megszüntetni;
+        díjköteles előfizetés esetén azt az 1.1 pont szerint bármikor lemondhatja.
       </p>
+
+      <h3>17.1 A Szolgáltatás és az egyes funkciók módosítása, szüneteltetése és megszüntetése</h3>
+      <p>
+        A Szolgáltatás folyamatos fejlesztés alatt álló, <strong>„adott állapotában" és
+        „elérhetőség szerint" (as is / as available) nyújtott</strong> platform. Az üzemeltető{" "}
+        <strong>fenntartja a jogot, hogy saját belátása szerint, bármikor, előzetes értesítés
+        és indoklási kötelezettség nélkül</strong>:
+      </p>
+      <ul>
+        <li>
+          a Szolgáltatás egészét vagy annak bármely funkcióját, modulját, tartalmát vagy elemét
+          (különösen, de nem kizárólagosan: Szaknévsor, Állások / állásbörze, események,
+          kalkulátorok és varázslók, térképek, AI-funkciók, Kinti Pass, Kinti Radar /
+          push-értesítések, hírlevél) <strong>módosítsa, korlátozza, átalakítsa, ideiglenesen
+          szüneteltesse vagy véglegesen megszüntesse</strong>;
+        </li>
+        <li>
+          új funkciókat vezessen be, meglévőket összevonjon, átnevezzen vagy eltávolítson, és a
+          tartalmi vagy technikai feltételeket megváltoztassa;
+        </li>
+        <li>
+          egy addig ingyenesen elérhető funkciót <strong>díjkötelessé tegyen</strong>, illetve a
+          díjköteles szolgáltatások (Kinti PRO, Szaknévsor-kiemelés, Kiemelt Állás) árát,
+          tartalmát, terjedelmét vagy igénybevételi feltételeit megváltoztassa. A már megkezdett
+          és kifizetett előfizetési / kiemelési időszakot az árváltozás nem érinti — a változás a
+          következő megújításkor, illetve új megrendeléskor lép hatályba;
+        </li>
+        <li>
+          a Szolgáltatás elérhetőségét földrajzilag, felhasználói kör szerint, mennyiségi
+          korlátokkal (pl. kvóta, rate-limit) vagy egyéb módon korlátozza.
+        </li>
+      </ul>
+      <p>
+        A fenti intézkedések — mivel a Szolgáltatás alapvetően ingyenes és önkéntesen igénybe vett —{" "}
+        <strong>nem keletkeztetnek a felhasználó részéről kártérítési, kártalanítási vagy
+        visszatérítési igényt</strong>, ide nem értve a díjköteles szolgáltatás már kifizetett, de
+        a végleges megszüntetés miatt fel nem használható időszakának az 1.1 pont szerinti méltányos
+        kezelését. A funkció módosítása vagy megszüntetése miatt esetlegesen elvesző, kizárólag a
+        felhasználó böngészőjében (localStorage) tárolt adatokért az üzemeltető a 11. pont szerint
+        nem felel.
+      </p>
+
+      <h3>17.2 Az adatok, díjak és jogszabályi feltételek változása</h3>
       <p>
         A platformon megjelenő <strong>adatok, szabályok, díjak, árfolyamok, hatósági
         eljárások és jogszabályi előírások bármikor megváltozhatnak, előzetes értesítés
@@ -649,7 +698,7 @@ export default function AszfPage() {
       <p>
         A felhasználó <strong>kizárólagos felelőssége</strong>, hogy a platformon talált
         információkat a döntés meghozatala előtt a hatályos, aktuális hivatalos forrásokkal
-        összevetse. Az elavult vagy megváltozott adatokon alapuló döntésekből eredő
+        összevesse. Az elavult vagy megváltozott adatokon alapuló döntésekből eredő
         <strong>bármilyen kárért az üzemeltető felelőssége teljes körűen kizárt.</strong>
       </p>
 
