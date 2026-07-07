@@ -49,7 +49,14 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
   // ?q= mélylink (pl. a Mindenkereső / megosztott link) → előtöltött keresés.
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams?.get("q") ?? "");
-  const [canton, setCanton] = usePersistedState("kinti_jobs_canton", "");
+  // Régió-szűrő ORSZÁG-HATÓKÖRÖS perzisztálással: a mentett érték "CC:CODE"
+  // formátumú, és csak akkor él, ha a tárolt ország = az aktuális ország. Ezért a
+  // más országbeli választás nem szivárog át ország-váltáskor: AT „W" nem üríti ki
+  // némán a svájci listát, és az NL „ZH" (Zuid-Holland) nem szűr a svájci „ZH"
+  // (Zürich)-re. Az explore-view reset-guardjának testvér-megoldása — itt a kódok
+  // országok közti ütközése miatt érték-hatókörös perzisztálással (nem elég a
+  // „létezik-e a kód az új országban" ellenőrzés, mert ZH mindkét országban létezik).
+  const [cantonPref, setCantonPref] = usePersistedState("kinti_jobs_canton", "");
   const [category, setCategory] = usePersistedState("kinti_jobs_category", "");
   const [showMap, setShowMap] = useState(false);
 
@@ -60,6 +67,14 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
   useEffect(() => setMounted(true), []);
   const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
   const regions = useMemo(() => getRegions(country), [country]);
+
+  // A tárolt "CC:CODE"-ból az aktuális országra érvényes régió-kód (különben "").
+  const canton = useMemo(() => {
+    const sep = cantonPref.indexOf(":");
+    if (sep < 0) return ""; // üres vagy régi (ország nélküli) formátum → nincs szűrő
+    return cantonPref.slice(0, sep) === country ? cantonPref.slice(sep + 1) : "";
+  }, [cantonPref, country]);
+  const setCanton = (code: string) => setCantonPref(code ? `${country}:${code}` : "");
   const jobsInCountry = useMemo(() => jobs.filter((j) => (j.country ?? "CH") === country), [jobs, country]);
 
   // Kanton-térképhez: darabszám kantononként, a kanton-szűrőt KIVÉVE (hogy a
