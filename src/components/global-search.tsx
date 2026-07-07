@@ -43,9 +43,11 @@ export function openGlobalSearch() {
 interface SearchResults {
   businesses: Array<{ id: string; name: string; categoryLabel: string | null }>;
   events: Array<{ id: string; title: string; eventDate: string | null; venue: string | null }>;
+  /** Kinti-állások (a rollout alatt hiányozhat a régi API-válaszból → opcionális). */
+  jobs?: Array<{ id: string; title: string; location: string | null; category: string | null }>;
 }
 
-const EMPTY: SearchResults = { businesses: [], events: [] };
+const EMPTY: SearchResults = { businesses: [], events: [], jobs: [] };
 
 /** Egy navigálható találat-sor (bármely szekcióból) — a billentyű-nav közös listája. */
 interface Row {
@@ -54,7 +56,7 @@ interface Row {
   title: string;
   subtitle: string | null;
   icon?: IconName;
-  section: "recent" | "quick" | "app" | "guide" | "business" | "event" | "cta";
+  section: "recent" | "quick" | "app" | "guide" | "job" | "business" | "event" | "cta";
 }
 
 interface RecentItem { href: string; title: string; icon?: IconName; }
@@ -255,6 +257,11 @@ export function GlobalSearchOverlay() {
       ...guideHits.map<Row>((g) => ({
         key: `guide:${g.slug}`, href: `/tudasbazis/${g.slug}`, title: g.title, subtitle: g.summary, icon: g.icon, section: "guide",
       })),
+      ...(results.jobs ?? []).map<Row>((j) => ({
+        key: `job:${j.id}`, href: `/allasok/${j.id}`, title: j.title,
+        subtitle: [j.location, j.category].filter(Boolean).join(" · ") || null,
+        icon: "briefcase", section: "job",
+      })),
       ...results.businesses.map<Row>((b) => ({
         key: `biz:${b.id}`, href: `/szaknevsor/${b.id}`, title: b.name, subtitle: b.categoryLabel, section: "business",
       })),
@@ -263,11 +270,17 @@ export function GlobalSearchOverlay() {
         subtitle: [e.eventDate, e.venue].filter(Boolean).join(" · ") || null, section: "event",
       })),
     ];
-    // Zsákutca-mentesítés: a Szaknévsor teljes keresője mindig egy Enterre van.
+    // Zsákutca-mentesítés: a Szaknévsor és az Állások teljes keresője mindig
+    // egy Enterre van (mindkét oldal olvassa a ?q= mélylinket).
     list.push({
       key: "cta:szaknevsor", href: `/szaknevsor?q=${encodeURIComponent(q.trim())}`,
       title: `„${q.trim()}" keresése a Szaknévsorban`, subtitle: "Teljes kereső szűrőkkel, térképpel",
       icon: "search", section: "cta",
+    });
+    list.push({
+      key: "cta:allasok", href: `/allasok?q=${encodeURIComponent(q.trim())}`,
+      title: `„${q.trim()}" keresése az Állások között`, subtitle: "Kinti-hirdetések + élő külső források",
+      icon: "briefcase", section: "cta",
     });
     return list;
   }, [hasQuery, recents, country, destinations, guideHits, results, q]);
@@ -311,6 +324,7 @@ export function GlobalSearchOverlay() {
     ? [
         { id: "app", label: "Az appban", emoji: "🧭" },
         { id: "guide", label: "Útmutatók", emoji: "📖" },
+        { id: "job", label: "Állások", emoji: "💼" },
         { id: "business", label: "Vállalkozások", emoji: "📑" },
         { id: "event", label: "Események", emoji: "📅" },
         { id: "cta", label: "", emoji: "" },
@@ -320,8 +334,10 @@ export function GlobalSearchOverlay() {
         { id: "quick", label: "Gyorsműveletek", emoji: "⚡" },
       ];
 
-  const showEmptyHint = hasQuery && rows.length <= 1 && !busy; // csak a CTA-sor maradt
-  const showSkeleton = hasQuery && busy && results.businesses.length === 0 && results.events.length === 0;
+  const showEmptyHint = hasQuery && rows.length <= 2 && !busy; // csak a 2 CTA-sor maradt
+  const showSkeleton =
+    hasQuery && busy &&
+    results.businesses.length === 0 && results.events.length === 0 && (results.jobs ?? []).length === 0;
 
   return (
     <div

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, lazy, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import type { ExternalJob } from "@/lib/repo-external-jobs";
 import { usePersistedState } from "@/hooks/use-persisted-state";
 import Link from "next/link";
@@ -45,7 +46,9 @@ function fmtExtSalary(j: ExternalJob): string | null {
  */
 export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMatchContext }) {
   const canMatch = !!proMatch?.isPro && hasMatchableProfile(proMatch.profile);
-  const [query, setQuery] = useState("");
+  // ?q= mélylink (pl. a Mindenkereső / megosztott link) → előtöltött keresés.
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(searchParams?.get("q") ?? "");
   const [canton, setCanton] = usePersistedState("kinti_jobs_canton", "");
   const [category, setCategory] = usePersistedState("kinti_jobs_category", "");
   const [showMap, setShowMap] = useState(false);

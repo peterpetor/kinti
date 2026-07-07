@@ -8,12 +8,14 @@ export const dynamic = "force-dynamic";
 interface SearchResult {
   businesses: Array<{ id: string; name: string; categoryLabel: string | null }>;
   events: Array<{ id: string; title: string; eventDate: string | null; venue: string | null }>;
+  jobs: Array<{ id: string; title: string; location: string | null; category: string | null }>;
 }
 
-const EMPTY: SearchResult = { businesses: [], events: [] };
+const EMPTY: SearchResult = { businesses: [], events: [], jobs: [] };
 
 /**
- * GET /api/search?q=...  — globális kereső 2 entitásban (vállalkozás + esemény).
+ * GET /api/search?q=...  — globális kereső 3 entitásban (vállalkozás + esemény
+ * + Kinti-állás).
  *
  * ÉKEZET-ÉRZÉKETLEN + TÖBB-SZAVAS: a keresőszót foldolt tokenekre bontjuk
  * (lib/sql-fold), és MINDEN tokennek illeszkednie kell (AND) — bárhol a
@@ -29,6 +31,10 @@ const FOLD_BIZ_BLURB = hungarianFoldSql("COALESCE(b.blurb, '')");
 const FOLD_BIZ_CAT = hungarianFoldSql("COALESCE(b.category_label, '')");
 const FOLD_EV_TITLE = hungarianFoldSql("title");
 const FOLD_EV_VENUE = hungarianFoldSql("COALESCE(venue, '')");
+const FOLD_JOB_TITLE = hungarianFoldSql("title");
+const FOLD_JOB_LOC = hungarianFoldSql("COALESCE(location, '')");
+const FOLD_JOB_CAT = hungarianFoldSql("COALESCE(category, '')");
+const FOLD_JOB_DESC = hungarianFoldSql("COALESCE(description, '')");
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -81,14 +87,35 @@ export async function GET(req: Request) {
   const evBinds: string[] = [];
   for (const l of likes) evBinds.push(l, l);
 
-  const [biz, ev] = await Promise.all([
+  // --- Állás-lekérdezés (token-AND + relevancia) ------------------------------
+  // Láthatóság a publikus lista (getJobs) KANONIKUS feltételéhez igazítva:
+  // moderation_status = 1. Rangsor: kiemelt (featured) elöl, majd cím-találat
+  // (2 pont) > kategória-találat (1 pont), végül a legfrissebb.
+  const jobWhere = tokens.map(() =>
+    `(${FOLD_JOB_TITLE} LIKE ? OR ${FOLD_JOB_LOC} LIKE ? OR ${FOLD_JOB_CAT} LIKE ? OR ${FOLD_JOB_DESC} LIKE ?)`,
+  ).join(" AND ");
+  const jobScore = tokens.map(() => `((${FOLD_JOB_TITLE} LIKE ?) * 2 + (${FOLD_JOB_CAT} LIKE ?))`).join(" + ");
+  const jobSql =
+    `SELECT id, title, location, category
+     FROM jobs
+     WHERE moderation_status = 1
+       AND ${jobWhere}
+     ORDER BY (status = 'featured') DESC, (${jobScore}) DESC, created_at DESC
+     LIMIT 5`;
+  const jobBinds: string[] = [];
+  for (const l of likes) jobBinds.push(l, l, l, l);
+  for (const l of likes) jobBinds.push(l, l);
+
+  const [biz, ev, job] = await Promise.all([
     db.prepare(bizSql).bind(...bizBinds).all<{ id: string; name: string; category_label: string | null }>(),
     db.prepare(evSql).bind(...evBinds).all<{ id: string; title: string; event_date: string | null; venue: string | null }>(),
+    db.prepare(jobSql).bind(...jobBinds).all<{ id: string; title: string; location: string | null; category: string | null }>(),
   ]);
 
   const result: SearchResult = {
     businesses: biz.results.map((r) => ({ id: r.id, name: r.name, categoryLabel: r.category_label })),
     events: ev.results.map((r) => ({ id: r.id, title: r.title, eventDate: r.event_date, venue: r.venue })),
+    jobs: job.results.map((r) => ({ id: r.id, title: r.title, location: r.location, category: r.category })),
   };
 
   return NextResponse.json(result, { headers: { "cache-control": "no-store" } });
