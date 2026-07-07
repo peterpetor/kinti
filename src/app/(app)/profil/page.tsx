@@ -6,6 +6,7 @@ import { OwnerDraftForm } from "@/components/views/owner-draft-form";
 import { ProfileEditor } from "@/components/views/profile-editor";
 import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
 import { LeadInbox } from "@/components/views/lead-inbox";
+import { ReviewReplyForm } from "@/components/views/review-reply-form";
 import { InstallPrompt } from "@/components/install-prompt";
 import { HomeCountryFlag } from "@/components/home-country-aware";
 import {
@@ -554,6 +555,14 @@ async function OwnerDashboard({
                     ))}
                   </div>
                 </div>
+                {r.body?.trim() && (
+                  <p className="mt-2 whitespace-pre-line text-[13px] leading-relaxed text-ink">{r.body.trim()}</p>
+                )}
+                <ReviewReplyForm
+                  reviewId={r.id}
+                  endpoint="/api/owner/review-response"
+                  initialResponse={r.ownerResponse}
+                />
               </div>
             );
           })}

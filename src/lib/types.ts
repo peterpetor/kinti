@@ -131,6 +131,10 @@ export interface Review {
   body: string;
   reviewerName: string;
   publishedAt: string;
+  /** A vállalkozás tulajdonosának nyilvános válasza a véleményre (vagy null). */
+  ownerResponse?: string | null;
+  /** A tulajdonosi válasz ISO időbélyege (vagy null). */
+  ownerRespondedAt?: string | null;
 }
 
 /** Megerősítésre váró vélemény (review_drafts). */

@@ -661,6 +661,21 @@ export default async function BusinessPage({
                     </p>
                   )}
 
+                  {/* A vállalkozás nyilvános válasza (Google-stílusú bizalmi jel). */}
+                  {r.ownerResponse?.trim() && (
+                    <div className="mt-2.5 rounded-[12px] border-l-2 border-primary/40 bg-primary-soft/50 px-3 py-2.5">
+                      <div className="mb-1 flex items-center gap-1.5">
+                        <span className="text-[13px]">💬</span>
+                        <span className="text-[11.5px] font-bold uppercase tracking-wide text-primary">
+                          {b.name} válasza
+                        </span>
+                      </div>
+                      <p className="whitespace-pre-line text-[13px] leading-relaxed text-ink">
+                        {r.ownerResponse.trim()}
+                      </p>
+                    </div>
+                  )}
+
                   <div className="mt-2.5 flex items-center justify-end border-t border-line/30 pt-2">
                     <ReportButton contentType="review" contentId={r.id} variant="link" />
                   </div>

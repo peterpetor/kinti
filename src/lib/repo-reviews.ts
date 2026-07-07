@@ -27,12 +27,14 @@ interface ReviewRow {
   reviewer_name: string; published_at: string; manage_token: string;
   moderation_status: number; moderation_decision_at: string | null;
   moderation_decided_by: string | null; hidden: number;
+  owner_response: string | null; owner_responded_at: string | null;
 }
 
 function toReview(r: ReviewRow): Review {
   return {
     id: r.id, businessId: r.business_id, rating: r.rating,
     body: r.body, reviewerName: r.reviewer_name, publishedAt: r.published_at,
+    ownerResponse: r.owner_response ?? null, ownerRespondedAt: r.owner_responded_at ?? null,
   };
 }
 
@@ -108,13 +110,38 @@ export async function publishReview(input: PublishReviewInput): Promise<void> {
 export async function getReviewsByBusiness(businessId: string): Promise<Review[]> {
   const { results } = await getDB()
     .prepare(
-      `SELECT r.id, r.business_id, r.rating, r.body, r.reviewer_name, r.published_at
+      `SELECT r.id, r.business_id, r.rating, r.body, r.reviewer_name, r.published_at,
+              r.owner_response, r.owner_responded_at
        FROM reviews r
        WHERE r.business_id = ? AND r.hidden = 0 AND r.moderation_status = 1
        ORDER BY r.published_at DESC`,
     )
     .bind(businessId).all<ReviewRow>();
   return results.map(toReview);
+}
+
+/**
+ * A vállalkozás tulajdonosának nyilvános válasza egy véleményre (Google-stílusú
+ * bizalmi jel). A hívó FELELŐSSÉGE a tulajdonjog igazolása (manage-token vagy
+ * Clerk owner) — ez a fn a `businessId`-re is szűr, hogy idegen vélemény ne
+ * legyen módosítható. `response === null` → a válasz törlése.
+ * @returns true, ha a vélemény a céghez tartozott és frissült.
+ */
+export async function setReviewOwnerResponse(
+  reviewId: string,
+  businessId: string,
+  response: string | null,
+): Promise<boolean> {
+  const trimmed = response?.trim() || null;
+  const res = await getDB()
+    .prepare(
+      `UPDATE reviews
+         SET owner_response = ?, owner_responded_at = ${trimmed ? "datetime('now')" : "NULL"}
+       WHERE id = ? AND business_id = ? AND hidden = 0 AND moderation_status = 1`,
+    )
+    .bind(trimmed, reviewId, businessId)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
 }
 
 export async function deleteReviewByManageToken(manageToken: string): Promise<string | null> {

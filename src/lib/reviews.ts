@@ -15,6 +15,8 @@ export const REVIEW_LIMITS = {
   emailMax: 254,
   ratingMin: 1,
   ratingMax: 5,
+  /** Tulajdonosi válasz max. hossza. */
+  ownerResponseMax: 1000,
 } as const;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

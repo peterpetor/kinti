@@ -5,10 +5,13 @@ import { LogoUploader } from "@/components/views/logo-uploader";
 import { GalleryUploader } from "@/components/views/gallery-uploader";
 import { BusinessManageForm } from "@/components/views/business-manage-form";
 import { BusinessAnalyticsDashboard } from "@/components/views/business-analytics-card";
+import { ReviewReplyForm } from "@/components/views/review-reply-form";
+import { handleFromId } from "@/lib/handle";
 import {
   getBusinessAnalytics,
   getBusinessByManageToken,
   getBusinessSubmissionByManageToken,
+  getReviewsByBusiness,
 } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -41,6 +44,8 @@ export default async function BusinessManagePage({ params }: { params: { token: 
 
   // A statisztika Szaknévsor PRO (featured) funkció — csak nekik kérjük le/mutatjuk.
   const analytics = business.featured ? await getBusinessAnalytics(business.id) : null;
+  // Vélemények — a tulajdonos nyilvánosan válaszolhat rájuk (ingyenes bizalmi jel).
+  const reviews = await getReviewsByBusiness(business.id);
 
   return (
     <div className="mx-auto max-w-md space-y-5 px-5 pt-[calc(env(safe-area-inset-top)+2rem)] pb-12">
@@ -77,6 +82,44 @@ export default async function BusinessManagePage({ params }: { params: { token: 
       )}
 
       <BusinessManageForm business={business} token={params.token} />
+
+      {/* Vélemények — nyilvános válaszadás (ingyenes; a válasz a publikus profilon
+          is megjelenik). */}
+      {reviews.length > 0 && (
+        <section className="space-y-2.5">
+          <h2 className="text-[13px] font-bold uppercase tracking-wide text-ink-muted">
+            Vélemények — válaszolj nyilvánosan
+          </h2>
+          {reviews.map((r) => {
+            const who = r.reviewerName?.trim() || handleFromId(r.id);
+            return (
+              <article key={r.id} className="rounded-card border border-line bg-surface p-3.5 shadow-card">
+                <div className="mb-1.5 flex items-center gap-2.5">
+                  <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-white">
+                    {who.charAt(0).toUpperCase()}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13.5px] font-bold text-ink">{who}</div>
+                  </div>
+                  <div className="flex gap-px text-star">
+                    {Array.from({ length: r.rating }).map((_, i) => (
+                      <Icon key={i} name="star" size={12} filled />
+                    ))}
+                  </div>
+                </div>
+                {r.body?.trim() && (
+                  <p className="whitespace-pre-line text-[13px] leading-relaxed text-ink">{r.body.trim()}</p>
+                )}
+                <ReviewReplyForm
+                  reviewId={r.id}
+                  endpoint={`/api/business/manage/${params.token}/review-response`}
+                  initialResponse={r.ownerResponse}
+                />
+              </article>
+            );
+          })}
+        </section>
+      )}
 
       <Link
         href="/szaknevsor"
