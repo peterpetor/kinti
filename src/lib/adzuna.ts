@@ -14,6 +14,10 @@ export interface AdzunaJob {
   title: string;
   company: string | null;
   location: string | null;
+  /** Strukturált hely-hierarchia (Adzuna `location.area`), pl.
+   *  ["Österreich","Oberösterreich","Linz"] — a régió-feloldás fő forrása.
+   *  Más forrásoknál (Jooble/Arbeitnow) hiányzik → a resolver a location-ra esik. */
+  area?: string[];
   salaryMin: number | null;
   salaryMax: number | null;
   url: string;
@@ -26,7 +30,7 @@ const ADZUNA_COUNTRIES = new Set(["at", "de", "nl"]);
 interface AdzunaResult {
   title?: string;
   company?: { display_name?: string };
-  location?: { display_name?: string };
+  location?: { display_name?: string; area?: string[] };
   salary_min?: number;
   salary_max?: number;
   redirect_url?: string;
@@ -66,6 +70,7 @@ export async function searchAdzunaJobs(country: string, keyword: string, limit =
         title: String(r.title ?? "").replace(/<[^>]*>/g, "").trim(),
         company: r.company?.display_name ?? null,
         location: r.location?.display_name ?? null,
+        area: Array.isArray(r.location?.area) ? r.location!.area!.filter((s) => typeof s === "string") : undefined,
         salaryMin: typeof r.salary_min === "number" ? Math.round(r.salary_min) : null,
         salaryMax: typeof r.salary_max === "number" ? Math.round(r.salary_max) : null,
         url: String(r.redirect_url ?? ""),

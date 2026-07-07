@@ -9,6 +9,7 @@
  * — üres body `{}` a legfrissebbeket adja, page/size lapozással.
  */
 import type { ExternalJobInput } from "./repo-external-jobs";
+import { isValidCantonCode } from "./cantons";
 
 const SEARCH_URL = "https://www.job-room.ch/jobadservice/api/jobAdvertisements/_search";
 
@@ -86,6 +87,9 @@ export async function fetchJobRoomJobs(pages = 3, size = 50): Promise<ExternalJo
       if (!title) continue;
       seen.add(url);
       const city = loc.city ?? null;
+      // A Job-Room a HIVATALOS kanton-kódot adja (loc.cantonCode) → strukturáltan
+      // is eltároljuk (a régió-szűrőhöz), validálva (ismeretlen kód → null).
+      const canton = isValidCantonCode(loc.cantonCode) ? loc.cantonCode : null;
       out.push({
         source: "job-room",
         sourceUrl: url,
@@ -93,6 +97,7 @@ export async function fetchJobRoomJobs(pages = 3, size = 50): Promise<ExternalJo
         company: jc.company?.name ?? null,
         location: city ? (loc.cantonCode ? `${city} (${loc.cantonCode})` : city) : (loc.cantonCode ?? null),
         country: "CH",
+        cantonCode: canton,
         category: classify(title),
         salaryMin: null,
         salaryMax: null,

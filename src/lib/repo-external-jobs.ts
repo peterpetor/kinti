@@ -13,6 +13,8 @@ export interface ExternalJob {
   company: string | null;
   location: string | null;
   country: string;
+  /** Régió-kód (AT Bundesland / DE Land / NL provincia / CH kanton) vagy null. */
+  cantonCode: string | null;
   category: string | null;
   salaryMin: number | null;
   salaryMax: number | null;
@@ -23,7 +25,7 @@ export interface ExternalJob {
 
 interface Row {
   id: string; source: string; source_url: string; title: string; company: string | null;
-  location: string | null; country_code: string; category: string | null;
+  location: string | null; country_code: string; canton_code: string | null; category: string | null;
   salary_min: number | null; salary_max: number | null; currency: string | null;
   posted_at: string | null; fetched_at: string;
 }
@@ -31,7 +33,7 @@ interface Row {
 function toJob(r: Row): ExternalJob {
   return {
     id: r.id, source: r.source, sourceUrl: r.source_url, title: r.title, company: r.company,
-    location: r.location, country: r.country_code, category: r.category,
+    location: r.location, country: r.country_code, cantonCode: r.canton_code ?? null, category: r.category,
     salaryMin: r.salary_min, salaryMax: r.salary_max, currency: r.currency,
     postedAt: r.posted_at, fetchedAt: r.fetched_at,
   };
@@ -44,6 +46,8 @@ export interface ExternalJobInput {
   company: string | null;
   location: string | null;
   country: string;
+  /** Feloldott régió-kód (lib/region-resolve) vagy null. */
+  cantonCode: string | null;
   category: string | null;
   salaryMin: number | null;
   salaryMax: number | null;
@@ -61,33 +65,37 @@ export async function upsertExternalJobs(jobs: ExternalJobInput[]): Promise<numb
   const db = getDB();
   const stmt = db.prepare(
     `INSERT INTO external_jobs
-       (id, source, source_url, title, company, location, country_code, category,
+       (id, source, source_url, title, company, location, country_code, canton_code, category,
         salary_min, salary_max, currency, posted_at, fetched_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
      ON CONFLICT(source_url) DO UPDATE SET
        title = excluded.title, company = excluded.company, location = excluded.location,
-       category = excluded.category, salary_min = excluded.salary_min,
+       canton_code = excluded.canton_code, category = excluded.category, salary_min = excluded.salary_min,
        salary_max = excluded.salary_max, currency = excluded.currency,
        posted_at = excluded.posted_at, fetched_at = datetime('now')`,
   );
   const batch = jobs.map((j) =>
     stmt.bind(
       crypto.randomUUID(), j.source, j.sourceUrl, j.title, j.company, j.location,
-      j.country, j.category, j.salaryMin, j.salaryMax, j.currency, j.postedAt,
+      j.country, j.cantonCode, j.category, j.salaryMin, j.salaryMax, j.currency, j.postedAt,
     ),
   );
   await db.batch(batch);
   return jobs.length;
 }
 
-/** Friss külső állások egy országban (opcionális kategória-szűrő). */
+/** Friss külső állások egy országban (opcionális kategória- és régió-szűrő). */
 export async function getExternalJobs(
   country: string,
-  opts: { category?: string | null; limit?: number } = {},
+  opts: { category?: string | null; cantonCode?: string | null; limit?: number } = {},
 ): Promise<ExternalJob[]> {
   const binds: unknown[] = [country];
   let where = "country_code = ?";
   if (opts.category && opts.category !== "all") { where += " AND category = ?"; binds.push(opts.category); }
+  // Régió-szűrő: CSAK a feloldott (canton_code IS NOT NULL) sorokra illeszt —
+  // a fel nem oldott (null régió) sorok régió-választáskor kiesnek (nem tudjuk,
+  // hova valók), de „egész ország" nézetben továbbra is megjelennek.
+  if (opts.cantonCode && opts.cantonCode !== "all") { where += " AND canton_code = ?"; binds.push(opts.cantonCode); }
   const limit = Math.min(opts.limit ?? 60, 100);
   const { results } = await getDB()
     .prepare(

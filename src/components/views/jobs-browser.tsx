@@ -94,6 +94,8 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
   }, [jobsInCountry, query, canton, category]);
 
   // — Élő (külső, API-ból aggregált) állások, ugyanebbe a listába fűzve —
+  // A régió-szűrést a SZERVER végzi (a feloldott canton_code alapján): a canton is
+  // a fetch paramétere, hogy régió-választáskor a helyes szeletet kapjuk.
   const [externalJobs, setExternalJobs] = useState<ExternalJob[]>([]);
   const [extLoading, setExtLoading] = useState(true);
   useEffect(() => {
@@ -101,23 +103,25 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
     setExtLoading(true);
     (async () => {
       try {
-        const res = await fetch(`/api/jobs/external?country=${country}&category=${category || "all"}`);
+        const res = await fetch(
+          `/api/jobs/external?country=${country}&category=${category || "all"}&canton=${canton || "all"}`,
+        );
         const data = (await res.json()) as { jobs?: ExternalJob[] };
-        if (ignore) return; // ország/kategória-váltás közbeni elavult válasz eldobása
+        if (ignore) return; // ország/kategória/régió-váltás közbeni elavult válasz eldobása
         setExternalJobs(data.jobs ?? []);
       } catch { /* marad */ }
       if (!ignore) setExtLoading(false);
     })();
     return () => { ignore = true; };
-  }, [country, category]);
+  }, [country, category, canton]);
 
-  // A külső hirdetések nincsenek régióhoz (kantonhoz) kötve → ha régió-szűrő aktív, kihagyjuk őket.
+  // A szerver már ország + kategória + régió szerint szűrt; itt csak a szabad-
+  // szöveges keresést alkalmazzuk a külső hirdetésekre.
   const externalFiltered = useMemo(() => {
-    if (canton) return [];
     const q = query.trim().toLowerCase();
     if (!q) return externalJobs;
     return externalJobs.filter((j) => `${j.title} ${j.company ?? ""} ${j.location ?? ""}`.toLowerCase().includes(q));
-  }, [externalJobs, query, canton]);
+  }, [externalJobs, query]);
 
   const hasActiveFilter = canton !== "" || category !== "" || query.trim() !== "";
 

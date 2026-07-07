@@ -13,6 +13,7 @@ import { searchJoobleJobs } from "./jooble";
 import { searchArbeitnowJobs } from "./arbeitnow";
 import { fetchJobRoomJobs } from "./jobroom";
 import { upsertExternalJobs, type ExternalJobInput } from "./repo-external-jobs";
+import { regionCodeFromLocation } from "./region-resolve";
 
 /**
  * Szektor → lokális-nyelvű keresőszó (de: AT+DE német; nl: NL holland). Egy
@@ -128,6 +129,8 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
           company: j.company,
           location: j.location,
           country: cc,
+          // Régió-feloldás a strukturált area-ból (Adzuna), különben a location-ból.
+          cantonCode: regionCodeFromLocation(cc, j.location, j.area),
           category: sector.category,
           salaryMin: j.salaryMin,
           salaryMax: j.salaryMax,
