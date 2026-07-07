@@ -2,7 +2,8 @@ import { ExploreView } from "@/components/views/explore-view";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { PushOptin } from "@/components/push-optin";
 import { SzaknevsorHeader } from "./SzaknevsorHeader";
-import { getBusinesses, getCategories } from "@/lib/repo";
+import { getBusinessesForList, getCategories } from "@/lib/repo";
+import { cached } from "@/lib/edge-cache";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -10,7 +11,13 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Szaknévsor" };
 
 export default async function SzaknevsorPage() {
-  const [categories, businesses] = await Promise.all([getCategories(), getBusinesses()]);
+  // Payload-diéta + izolátum-cache: a lista karcsú vetület (getBusinessesForList,
+  // benne 3 perces cache — a kezdőlappal KÖZÖS kulcson), a kategória-tábla pedig
+  // gyakorlatilag statikus seed → 10 percig nem kell újra D1-re menni.
+  const [categories, businesses] = await Promise.all([
+    cached("szaknevsor:categories", 600_000, () => getCategories()),
+    getBusinessesForList(),
+  ]);
 
   return (
     <div className="pt-[calc(env(safe-area-inset-top)+2rem)]">

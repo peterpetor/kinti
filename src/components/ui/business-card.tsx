@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Business } from "@/lib/types";
+import type { ListBusiness } from "@/lib/types";
 import { Icon } from "./icons";
 import { CategoryIcon } from "./category-icon";
 import { cn } from "@/lib/cn";
@@ -17,7 +17,8 @@ import { hasContactInfo } from "@/lib/address";
  * lekerekített sarok, finom keret (border-line) és lágy árnyék (shadow-card).
  */
 export interface BusinessCardProps {
-  business: Business;
+  /** Karcsú lista-vetület — a teljes Business strukturálisan megfelel neki. */
+  business: ListBusiness;
   href?: string;
   className?: string;
   /** A tényleges Haversine-távolság km-ben (GPS-szel). Csak ezt mutatjuk — null esetén nincs táv-címke. */

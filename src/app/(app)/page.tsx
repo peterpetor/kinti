@@ -23,7 +23,7 @@ import { TrustBar } from "@/components/trust-bar";
 import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
 import { HomeWidgets } from "@/components/home-widgets";
-import { getBusinesses, getEvents } from "@/lib/repo";
+import { getBusinessesForList, getEvents } from "@/lib/repo";
 import { cached } from "@/lib/edge-cache";
 
 export const runtime = "edge";
@@ -35,7 +35,9 @@ const HOME_TTL_MS = 300_000; // 5 perc
 
 export default async function FeedPage() {
   const [allBusinesses, events] = await Promise.all([
-    cached("home:businesses", HOME_TTL_MS, () => getBusinesses()),
+    // Karcsú vetület + saját (3 perces) cache a repóban — a /szaknevsor oldallal
+    // KÖZÖS kulcson, így a két oldal TTL-enként EGYSZER megy D1-re.
+    getBusinessesForList(),
     // CSAK jövőbeli események (upcoming): a szűrő nélkül a legrégebbi, akár rég
     // lejárt események kerültek a blokk elejére (event_date ASC).
     cached("home:events:12", HOME_TTL_MS, () => getEvents({ limit: 12, upcoming: true })),

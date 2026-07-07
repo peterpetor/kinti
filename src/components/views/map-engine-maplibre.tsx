@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Map as MlMap, Marker as MlMarker } from "maplibre-gl";
-import type { Business } from "@/lib/types";
+import type { ListBusiness } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
@@ -20,7 +20,7 @@ import type { SosAlert } from "@/lib/sos-repo";
  * `onFail` callback hívja a wrappert, ami átvált Leaflet-re.
  */
 export interface MaplibreEngineProps {
-  located: Business[];
+  located: ListBusiness[];
   selectedId: string | null;
   onSelectMarker: (id: string) => void;
   fallbackCenter: [number, number]; // [lat, lng] (wrapper-konvenció)

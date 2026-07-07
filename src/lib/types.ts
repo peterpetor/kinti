@@ -77,6 +77,21 @@ export interface Business {
   kintiPassOffer?: string | null;
 }
 
+/**
+ * A lista-/térkép-nézetek KARCSÚ vetülete — csak amit a kártya, a térkép és a
+ * kliens-oldali szűrők ténylegesen olvasnak. A /szaknevsor 1000+ rekordot küld
+ * a kliensre; a teljes Business-szel az RSC-payload ~1,7 MB volt — ez a vetület
+ * felezi/harmadolja. A teljes Business a részlet-oldalé (külön fetch).
+ * A teljes Business strukturálisan megfelel ennek → a régi hívók változatlanok.
+ */
+export type ListBusiness = Pick<
+  Business,
+  | "id" | "name" | "categoryId" | "categoryLabel" | "rating" | "reviews"
+  | "address" | "phone" | "lat" | "lng" | "featured" | "verified" | "blurb"
+  | "openText" | "workingHours" | "yearsHere" | "languages" | "photo" | "logoKey"
+  | "country" | "canton" | "kintiPassActive" | "kintiPassOffer" | "createdAt"
+>;
+
 export interface KintiEvent {
   id: string;
   title: string;

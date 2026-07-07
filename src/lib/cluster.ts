@@ -1,4 +1,4 @@
-import type { Business } from "@/lib/types";
+import type { ListBusiness } from "@/lib/types";
 
 export interface ClusterGroup {
   type: "cluster";
@@ -11,7 +11,7 @@ export interface ClusterGroup {
 
 export interface SinglePoint {
   type: "single";
-  business: Business;
+  business: ListBusiness;
 }
 
 export type MapPoint = ClusterGroup | SinglePoint;
@@ -26,8 +26,8 @@ export type MapPoint = ClusterGroup | SinglePoint;
  * csoportban), így stabil renderek közt. A CH (valós geokód) jellemzően egyedi
  * koordinátájú → csoportméret 1 → érintetlen.
  */
-export function spreadColocated(businesses: Business[]): Business[] {
-  const groups = new Map<string, Business[]>();
+export function spreadColocated(businesses: ListBusiness[]): ListBusiness[] {
+  const groups = new Map<string, ListBusiness[]>();
   for (const b of businesses) {
     if (b.lat == null || b.lng == null) continue;
     const key = `${b.lat.toFixed(5)},${b.lng.toFixed(5)}`;
@@ -68,7 +68,7 @@ export function spreadColocated(businesses: Business[]): Business[] {
  * felvesszük a `threshold` fokos sugarú körbe eső összes szabad pontot.
  */
 export function clusterBusinesses(
-  businesses: Business[],
+  businesses: ListBusiness[],
   zoom: number,
   clusterPx = 56,
 ): MapPoint[] {
@@ -116,7 +116,7 @@ export function clusterBusinesses(
  * a hívó ilyenkor egyszerűen nem zoomol.
  */
 export function clusterBounds(
-  businesses: Business[],
+  businesses: ListBusiness[],
   itemIds: string[],
 ): [[number, number], [number, number]] | null {
   const pts = businesses.filter((b) => itemIds.includes(b.id));

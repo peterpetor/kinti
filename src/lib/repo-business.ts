@@ -3,9 +3,10 @@
  * Tartalmazza: kategóriák, vállalkozások, beküldési folyamat, analitika.
  */
 import { getDB } from "./cloudflare";
-import type { Business, Category, DashboardStats } from "./types";
+import type { Business, Category, DashboardStats, ListBusiness } from "./types";
 import { bool, jsonArray } from "./repo-shared";
 import { DEFAULT_COUNTRY } from "./countries";
+import { cached } from "./edge-cache";
 
 // --- Row types ---------------------------------------------------------------
 
@@ -190,6 +191,59 @@ export async function getBusinesses(opts: BusinessQuery = {}): Promise<Business[
   const { results } = await getDB().prepare(sql).bind(...binds).all<BusinessRow>();
   // A lista MINDIG publikus felületre megy → érzékeny mezők nélkül.
   return results.map((r) => toPublicBusiness(toBusiness(r)));
+}
+
+// --- Karcsú lista-vetület (payload-diéta) -------------------------------------
+
+/** A ListBusiness-hez szükséges oszlopok — SELECT * helyett (kevesebb D1-olvasás
+ *  és fele/harmada RSC-payload; a blurb marad, mert a kliens-kereső abban is keres). */
+const LIST_COLUMNS =
+  "id,name,category_id,category_label,rating,reviews,address,phone,lat,lng," +
+  "featured,verified,blurb,open_text,working_hours,years_here,languages,photo," +
+  "logo_key,country_code,canton_code,kinti_pass_active,kinti_pass_offer,created_at";
+
+type ListBusinessRow = Pick<
+  BusinessRow,
+  | "id" | "name" | "category_id" | "category_label" | "rating" | "reviews"
+  | "address" | "phone" | "lat" | "lng" | "featured" | "verified" | "blurb"
+  | "open_text" | "working_hours" | "years_here" | "languages" | "photo"
+  | "logo_key" | "country_code" | "canton_code" | "kinti_pass_active"
+  | "kinti_pass_offer" | "created_at"
+>;
+
+function toListBusiness(r: ListBusinessRow): ListBusiness {
+  return {
+    id: r.id, name: r.name, categoryId: r.category_id, categoryLabel: r.category_label,
+    rating: r.rating, reviews: r.reviews, address: r.address, phone: r.phone,
+    lat: r.lat, lng: r.lng, featured: bool(r.featured), verified: bool(r.verified),
+    blurb: r.blurb, openText: r.open_text, workingHours: r.working_hours,
+    yearsHere: r.years_here, languages: jsonArray(r.languages), photo: r.photo,
+    logoKey: r.logo_key, country: r.country_code ?? DEFAULT_COUNTRY,
+    canton: r.canton_code ?? null, kintiPassActive: bool(r.kinti_pass_active ?? 0),
+    kintiPassOffer: r.kinti_pass_offer ?? null, createdAt: r.created_at ?? null,
+  };
+}
+
+/** A teljes publikus lista élettartama az izolátum-cache-ben (lásd edge-cache.ts). */
+const LIST_TTL_MS = 180_000; // 3 perc
+
+/**
+ * A teljes publikus vállalkozás-lista a lista-/térkép-nézeteknek — karcsú
+ * vetülettel ÉS izolátum-cache-sel (a kezdőlap és a /szaknevsor OSZTOZIK a
+ * kulcson, így TTL-enként egyszer megy D1-re). Érzékeny mező (manage_token,
+ * contact_email, owner) be sem kerül a SELECT-be → toPublicBusiness sem kell.
+ */
+export async function getBusinessesForList(): Promise<ListBusiness[]> {
+  return cached("biz:list-v1", LIST_TTL_MS, async () => {
+    const { results } = await getDB()
+      .prepare(
+        `SELECT ${LIST_COLUMNS} FROM businesses
+         WHERE COALESCE(hidden, 0) = 0 AND moderation_status = 1
+         ORDER BY featured DESC, rating DESC`,
+      )
+      .all<ListBusinessRow>();
+    return results.map(toListBusiness);
+  });
 }
 
 export async function getBusinessById(id: string): Promise<Business | null> {

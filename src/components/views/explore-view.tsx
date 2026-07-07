@@ -6,7 +6,7 @@ import Link from "next/link";
 import { BusinessCard, CategoryPills, Icon } from "@/components/ui";
 import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
-import type { Business, Category } from "@/lib/types";
+import type { Category, ListBusiness } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode, cantonPoint } from "@/lib/cantons";
 import { atPoint } from "@/lib/at-points";
@@ -72,7 +72,8 @@ export function ExploreView({
   businesses,
 }: {
   categories: Category[];
-  businesses: Business[];
+  /** Karcsú lista-vetület — a szűrők/kártyák/térkép csak ezeket olvassák. */
+  businesses: ListBusiness[];
 }) {
   // ?q és ?canton URL-paraméterek (a főoldalról / keresőből érkezve) → kezdő szűrők
   const searchParams = useSearchParams();
@@ -297,7 +298,7 @@ export function ExploreView({
   // (GPS-szel 50 km-en belül; nélküle a kategória legjobbjait az országban) — ne a
   // semmit. Csak akkor, ha volt valódi keresési szándék (kategória vagy szöveg).
   const nearbyFallback = useMemo(() => {
-    if (showFavs) return [] as { b: Business; dist: number | null }[];
+    if (showFavs) return [] as { b: ListBusiness; dist: number | null }[];
     const needle = q.trim().toLowerCase();
     if (cat === "all" && !needle) return [];
     const candidates = businesses.filter((b) => {

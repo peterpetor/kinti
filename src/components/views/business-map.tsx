@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import type { Business, Category } from "@/lib/types";
+import type { ListBusiness, Category } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString, CategoryIcon } from "@/components/ui/category-icon";
 import { mediaImageUrl } from "@/lib/media";
@@ -27,7 +27,8 @@ import { TelLink } from "@/components/business-analytics-tracker";
  * lokáció/zoom vezérlőket adja.
  */
 export interface BusinessMapProps {
-  businesses: Business[];
+  /** Karcsú lista-vetület — a térkép csak ezeket a mezőket olvassa. */
+  businesses: ListBusiness[];
   categories?: Category[];
   activeCat?: string;
   onSelectCat?: (id: string) => void;
@@ -85,7 +86,7 @@ export function BusinessMap({
     const featuredBiz = located.find((b) => b.featured);
     if (featuredBiz) return featuredBiz;
     if (userPos) {
-      let nearest: Business | null = null;
+      let nearest: ListBusiness | null = null;
       let nearestDist = Infinity;
       for (const b of located) {
         if (b.lat == null || b.lng == null) continue;
@@ -267,7 +268,7 @@ export function BusinessMap({
 
 // --- alsó vállalkozás-kártya ------------------------------------------------
 
-function SelectedCard({ business: b, distanceKm }: { business: Business; distanceKm?: number | null }) {
+function SelectedCard({ business: b, distanceKm }: { business: ListBusiness; distanceKm?: number | null }) {
   const logoUrl = mediaImageUrl(b.logoKey, { width: 120 });
   // Live státusz CSAK ismert nyitvatartásnál (nincs kitalált 8–18 default).
   const knownHours = parseWorkingHoursStrict(b.workingHours ?? null);

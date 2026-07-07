@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import { MapContainer, Marker, useMap, useMapEvents } from "react-leaflet";
 import { FallbackTileLayer } from "./fallback-tile-layer";
-import type { Business } from "@/lib/types";
+import type { ListBusiness } from "@/lib/types";
 import { Icon } from "@/components/ui";
 import { categoryIconSvgString } from "@/components/ui/category-icon";
 import { cn } from "@/lib/cn";
@@ -20,7 +20,7 @@ import "leaflet/dist/leaflet.css";
  * Klaszterezés: zoom-szinthez igazított greedy geo-klaszter, külső csomag nélkül.
  */
 export interface MapEngineProps {
-  located: Business[];
+  located: ListBusiness[];
   selectedId: string | null;
   onSelectMarker: (id: string) => void;
   fallbackCenter: [number, number]; // [lat, lng]
@@ -115,7 +115,7 @@ function ClusteredMarkers({
   selectedId,
   onSelectMarker,
 }: {
-  located: Business[];
+  located: ListBusiness[];
   selectedId: string | null;
   onSelectMarker: (id: string) => void;
 }) {
@@ -201,7 +201,7 @@ const SOS_ICON = L.divIcon({
 
 const PIN_CACHE = new Map<string, L.DivIcon>();
 
-function pinFor(b: Business, active: boolean): L.DivIcon {
+function pinFor(b: ListBusiness, active: boolean): L.DivIcon {
   // FONTOS: a categoryLabel is a kulcsban — a magyar-kozosseg pinek ikonja az
   // altípus-labelből jön, enélkül minden szervezet az elsőként cache-elt ikont kapná.
   const key = `${b.categoryId ?? "none"}|${b.categoryLabel ?? ""}|${b.featured ? "f" : "d"}|${active ? "a" : "n"}`;
@@ -248,7 +248,7 @@ function clusterIconFor(count: number, sz: "sm" | "md" | "lg"): L.DivIcon {
 // Helper komponensek
 // ---------------------------------------------------------------------------
 
-function FitToMarkers({ businesses, sosAlerts = [] }: { businesses: Business[], sosAlerts?: SosAlert[] }) {
+function FitToMarkers({ businesses, sosAlerts = [] }: { businesses: ListBusiness[], sosAlerts?: SosAlert[] }) {
   const map = useMap();
   const lastSig = useRef<string>("");
 
@@ -261,7 +261,7 @@ function FitToMarkers({ businesses, sosAlerts = [] }: { businesses: Business[], 
     // elszállhatott → null lat/lng. Ilyen értékekkel az L.latLngBounds érvénytelen
     // argumentumot kapna és szétfagyasztaná a térképet (és a React-fát).
     const geoBiz = businesses.filter(
-      (b): b is Business & { lat: number; lng: number } =>
+      (b): b is ListBusiness & { lat: number; lng: number } =>
         typeof b.lat === "number" && typeof b.lng === "number",
     );
 

@@ -7,7 +7,7 @@ import { haversineKm } from "@/lib/distance";
 import { hasStreetAddress } from "@/lib/address";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
-import type { Business } from "@/lib/types";
+import type { ListBusiness } from "@/lib/types";
 
 /**
  * „A közeledben" — a felhasználó GPS-helyéhez legközelebbi 3 vállalkozás, valódi
@@ -15,7 +15,7 @@ import type { Business } from "@/lib/types";
  * jelenik meg km nélkül, így a szekció sosem üres. A teljes lista a szülőtől jön
  * (csak a koordinátával rendelkezők), a legközelebbieket kliensoldalon válogatjuk.
  */
-export function NearbyBusinesses({ businesses }: { businesses: Business[] }) {
+export function NearbyBusinesses({ businesses }: { businesses: ListBusiness[] }) {
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(true);
 
