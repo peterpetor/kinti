@@ -86,7 +86,97 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "akcio akciok bolt kedvezmeny learazas prospektus szorolap" },
   { href: "/pro", title: "Kinti PRO", subtitle: "Prémium funkciók", icon: "star",
     keywords: "pro elofizetes premium kinti pro upgrade" },
+  { href: "/bussen", title: "Gyorshajtás-bírság becslő", subtitle: "Mennyi büntetés jár a gyorshajtásért?", icon: "car",
+    keywords: "gyorshajtas birsag buntetes trafipax radar villogtak bussen boete sebesseg tullepes ordnungswidrigkeit" },
+  { href: "/segitseg", title: "Segítség (GYIK)", subtitle: "Hogyan használd a kinti-t — gyakori kérdések", icon: "question",
+    keywords: "segitseg gyik faq kerdes hasznalat sugo help hogyan mukodik" },
+  { href: "/allasok/szakmai-szotar", title: "Szakmai szótár", subtitle: "Munkahelyi szakszavak leckékben", icon: "sparkles",
+    keywords: "szakmai szotar szakszavak nemet szavak kifejezes munkaszo tanulas lecke" },
+  { href: "/ranglista", title: "Közösségi ranglista", subtitle: "Kvíz-pontok és helyezések", icon: "trending",
+    keywords: "ranglista toplista helyezes pontok verseny kviz eredmeny" },
+  { href: "/ertesitesek", title: "Értesítések", subtitle: "Push-riasztások és üzenetek", icon: "bell",
+    keywords: "ertesites push riasztas uzenet radar beallitas" },
+  { href: "/sajatjaim", title: "Saját posztjaim", subtitle: "Beküldött hirdetéseid, eseményeid kezelése", icon: "user",
+    keywords: "sajat posztjaim bekuldott hirdetesem esemenyem kezeles szerkesztes" },
 ];
+
+/**
+ * A kereső ÜRES állapotának gyorsműveletei — kurált, ország-tudatos válogatás
+ * a leggyakoribb célokból („mit nyitnak meg legtöbbször"). A sorrend szándékos.
+ */
+const QUICK_ACTION_HREFS = [
+  "/szaknevsor", "/allasok", "/berkalkulator", "/arfolyam", "/hatarido", "/kviz",
+] as const;
+
+export function quickActions(country: string | null | undefined): AppDestination[] {
+  const byHref = new Map(APP_DESTINATIONS.map((d) => [d.href, d]));
+  const out: AppDestination[] = [];
+  for (const href of QUICK_ACTION_HREFS) {
+    const d = byHref.get(href);
+    if (!d) continue;
+    if (d.feature && !isFeatureAvailable(d.feature, country)) continue;
+    out.push(d);
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Találat-kiemelés: a cím mely szakaszai illeszkednek a kereső-tokenekre.
+// Fold-tudatos (ékezet-érzéketlen): a „Bérkalkulátor" címben a „berkalk" needle
+// szakaszát is megtalálja. A ß→ss expanzió miatt index-térképpel dolgozunk.
+// ---------------------------------------------------------------------------
+
+export interface TitleSegment { text: string; hit: boolean; }
+
+/**
+ * A címet illeszkedő/nem-illeszkedő szakaszokra bontja a foldolt tokenek szerint
+ * (a kereső ezt szedi <mark>-szerű kiemelésre). Átfedő találatok összeolvadnak.
+ * Token nélkül egyetlen, kiemelés-mentes szakasz.
+ */
+export function highlightTitle(title: string, tokens: string[]): TitleSegment[] {
+  if (tokens.length === 0 || title.length === 0) return [{ text: title, hit: false }];
+
+  // Foldolt szöveg + foldolt-index → eredeti-index térkép (ß→ss: mindkét „s" a ß-re mutat).
+  let folded = "";
+  const map: number[] = [];
+  for (let i = 0; i < title.length; i++) {
+    const f = foldSearchText(title[i]);
+    for (let k = 0; k < f.length; k++) { folded += f[k]; map.push(i); }
+  }
+
+  // Minden token minden előfordulása → eredeti [start, end) sávok.
+  const hits: Array<[number, number]> = [];
+  for (const t of tokens) {
+    if (!t) continue;
+    let from = 0;
+    for (;;) {
+      const at = folded.indexOf(t, from);
+      if (at === -1) break;
+      hits.push([map[at], map[at + t.length - 1] + 1]);
+      from = at + 1;
+    }
+  }
+  if (hits.length === 0) return [{ text: title, hit: false }];
+
+  // Átfedő/érintkező sávok összeolvasztása.
+  hits.sort((a, b) => a[0] - b[0]);
+  const merged: Array<[number, number]> = [hits[0]];
+  for (const [s, e] of hits.slice(1)) {
+    const last = merged[merged.length - 1];
+    if (s <= last[1]) last[1] = Math.max(last[1], e);
+    else merged.push([s, e]);
+  }
+
+  const out: TitleSegment[] = [];
+  let cursor = 0;
+  for (const [s, e] of merged) {
+    if (s > cursor) out.push({ text: title.slice(cursor, s), hit: false });
+    out.push({ text: title.slice(s, e), hit: true });
+    cursor = e;
+  }
+  if (cursor < title.length) out.push({ text: title.slice(cursor), hit: false });
+  return out;
+}
 
 interface Scored { d: AppDestination; score: number; }
 
