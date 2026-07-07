@@ -89,8 +89,11 @@ export async function GET(req: Request) {
 
   // --- Állás-lekérdezés (token-AND + relevancia) ------------------------------
   // Láthatóság a publikus lista (getJobs) KANONIKUS feltételéhez igazítva:
-  // moderation_status = 1. Rangsor: kiemelt (featured) elöl, majd cím-találat
-  // (2 pont) > kategória-találat (1 pont), végül a legfrissebb.
+  // moderation_status = 1 ÉS status IN ('active','featured') — a LEJÁRT ('expired')
+  // állás ne bukkanjon fel a keresőben (különben a /allasok-ból már eltűnt hirdetésre
+  // kattintva a „lejárt, nem jelentkezhetsz" oldalra jutna a felhasználó).
+  // Rangsor: kiemelt (featured) elöl, majd cím-találat (2 pont) > kategória-találat
+  // (1 pont), végül a legfrissebb.
   const jobWhere = tokens.map(() =>
     `(${FOLD_JOB_TITLE} LIKE ? OR ${FOLD_JOB_LOC} LIKE ? OR ${FOLD_JOB_CAT} LIKE ? OR ${FOLD_JOB_DESC} LIKE ?)`,
   ).join(" AND ");
@@ -99,6 +102,7 @@ export async function GET(req: Request) {
     `SELECT id, title, location, category
      FROM jobs
      WHERE moderation_status = 1
+       AND status IN ('active', 'featured')
        AND ${jobWhere}
      ORDER BY (status = 'featured') DESC, (${jobScore}) DESC, created_at DESC
      LIMIT 5`;

@@ -149,7 +149,13 @@ export default async function EmployerDashboardPage() {
           <h2 className="text-[16px] font-extrabold tracking-tight text-ink px-1">
             Álláshirdetéseim
           </h2>
-          
+          {jobs.length > 0 && (
+            <p className="px-1 -mt-1 text-[12px] leading-snug text-ink-muted">
+              A hirdetés 30 napig aktív, utána lejár. A <strong className="text-ink">lejárt</strong> hirdetést
+              egyetlen kattintással, ingyen megújíthatod itt — nem kell újra begépelned.
+            </p>
+          )}
+
           {(() => {
             if (jobs.length === 0) {
               return (
