@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect, lazy, Suspense } from "react";
+import { useMemo, useState, useEffect, useRef, lazy, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BusinessCard, CategoryPills, Icon } from "@/components/ui";
@@ -67,14 +67,42 @@ function tsOf(s?: string | null): number {
   return Number.isNaN(t) ? 0 : t;
 }
 
+/** Egyszerre ennyi kártya kerül a DOM-ba — görgetésre (vagy gombbal) bővül.
+ *  1000+ kártya egyszerre = több másodperces main-thread blokk mobilon. */
+const RENDER_STEP = 60;
+
 export function ExploreView({
   categories,
-  businesses,
+  businesses: initialBusinesses,
 }: {
   categories: Category[];
-  /** Karcsú lista-vetület — a szűrők/kártyák/térkép csak ezeket olvassák. */
+  /** Az SSR-ből érkező ELSŐ KÉPERNYŐNYI szelet (országonként limitált) — a
+   *  teljes listát mount után töltjük be a /api/businesses/list-ből. */
   businesses: ListBusiness[];
 }) {
+  // Teljes lista aszinkron betöltése — amíg nincs meg, az SSR-szelet szolgálja
+  // ki a szűrőket/keresőt (a leggyakoribb use-case-t, a böngészést az lefedi).
+  const [fullList, setFullList] = useState<ListBusiness[] | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/businesses/list")
+      .then((r) => (r.ok ? (r.json() as Promise<{ businesses?: ListBusiness[] }>) : null))
+      .then((d) => {
+        if (!cancelled && d?.businesses?.length) setFullList(d.businesses);
+      })
+      .catch(() => {
+        /* hálózati hiba → marad az SSR-szelet (működő, csak rövidebb lista) */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const businesses = fullList ?? initialBusinesses;
+
+  // Render-sapka: egyszerre legfeljebb ennyi kártya van a DOM-ban; a lista alján
+  // lévő sentinel (vagy a gomb) bővíti. Szűrő-váltásra visszaáll az alapra.
+  const [visibleCount, setVisibleCount] = useState(RENDER_STEP);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   // ?q és ?canton URL-paraméterek (a főoldalról / keresőből érkezve) → kezdő szűrők
   const searchParams = useSearchParams();
   const initialQ = searchParams?.get("q") ?? "";
@@ -292,6 +320,27 @@ export function ExploreView({
   );
 
   const filteredBusinesses = useMemo(() => filtered.map(({ b }) => b), [filtered]);
+
+  // Szűrő-váltás → a sapka visszaáll (ne rendereljünk azonnal több százat).
+  useEffect(() => {
+    setVisibleCount(RENDER_STEP);
+  }, [cat, canton, q, showFavs, openNow, minYears, passOnly, sortBy, country]);
+
+  // Görgetés a lista aljára → automatikus bővítés (a gomb a fallback).
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setVisibleCount((c) => c + RENDER_STEP);
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [filtered.length, visibleCount, view]);
 
   // „0 találat" fallback: ha a régió/sugár-szűrő miatt üres a lista, de van az
   // adott KATEGÓRIÁRA/szövegre illeszkedő találat máshol, mutassuk a legközelebbieket
@@ -641,6 +690,12 @@ export function ExploreView({
       <div className="flex items-center justify-between gap-3 px-5">
         <p className="text-[11.5px] font-semibold uppercase tracking-wide text-ink-muted">
           {filtered.length} találat
+          {/* Amíg a teljes lista töltődik, jelezzük, hogy a szám még bővülhet. */}
+          {!fullList && (
+            <span className="ml-1 normal-case tracking-normal text-ink-faint">
+              (teljes lista töltődik…)
+            </span>
+          )}
           {view === "map" && locatedCount < filtered.length && (
             <span className="ml-1 normal-case tracking-normal text-ink-faint">
               ({locatedCount} térképen)
@@ -703,7 +758,7 @@ export function ExploreView({
 
       {view === "list" ? (
         <div className="grid gap-2.5 px-5">
-          {filtered.map(({ b, dist }) => (
+          {filtered.slice(0, visibleCount).map(({ b, dist }) => (
             <BusinessCard
               key={b.id}
               business={b}
@@ -712,6 +767,19 @@ export function ExploreView({
               showFavorite
             />
           ))}
+
+          {/* Render-sapka bővítő: görgetésre automatikus (sentinel), gombbal kézi. */}
+          {filtered.length > visibleCount && (
+            <div ref={loadMoreRef} className="grid place-items-center py-1">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((c) => c + RENDER_STEP)}
+                className="rounded-pill border border-line bg-surface px-4 py-2 text-[12.5px] font-bold text-ink shadow-card active:scale-95"
+              >
+                További találatok betöltése ({filtered.length - visibleCount})
+              </button>
+            </div>
+          )}
 
           {/* „0 találat" fallback: a legközelebbi/hasonló találatok a semmi helyett */}
           {filtered.length === 0 && nearbyFallback.length > 0 && (
