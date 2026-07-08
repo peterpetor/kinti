@@ -153,6 +153,12 @@ export function DropdownMenu() {
                     Bejelentkezve, amíg az első állapot-lekérés fut (nincs még cache),
                     semleges skeleton (ne villanjon téves menüpont). Kijelentkezve
                     mindig a felvitel-CTA (a /vallalkozo flow úgyis beléptet). */}
+                <Link href="/szaknevsor/ajanlas" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <Icon name="send" size={16} strokeWidth={2.4} />
+                  </span>
+                  Ajánlj egy magyar vállalkozást
+                </Link>
                 {isSignedIn && hasBusiness === null ? (
                   <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl" aria-hidden>
                     <span className="h-8 w-8 shrink-0 rounded-xl bg-surface-alt animate-pulse" />
@@ -174,12 +180,6 @@ export function DropdownMenu() {
                     Vidd fel a vállalkozásod
                   </Link>
                 )}
-                <Link href="/szaknevsor/ajanlas" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                    <Icon name="send" size={16} strokeWidth={2.4} />
-                  </span>
-                  Ajánlj egy magyar vállalkozást
-                </Link>
                 <Link href="/allasok" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                     <Icon name="briefcase" size={16} strokeWidth={2.4} />
