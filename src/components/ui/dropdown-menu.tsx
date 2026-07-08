@@ -76,9 +76,13 @@ export function DropdownMenu() {
   const linkClass =
     "flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] font-bold text-ink hover:bg-surface-alt transition-all active:scale-[0.98]";
 
+  // A menü ÖSSZES lakatolt eleme a Kinti PRO (magánszemély) csomaghoz tartozik —
+  // a badge ezt KI is mondja (nem csak „PRO"), különben a régi arany „PRO" badge
+  // összemosódott a Szaknévsor PRO arany márkaszínével. Zöld = primary = Kinti PRO
+  // (a /pro oldal szín-kódját követve).
   const ProBadge = () => (
-    <span className="ml-auto rounded-full bg-star/15 px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-star">
-      PRO
+    <span className="ml-auto shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-primary">
+      Kinti PRO
     </span>
   );
 
@@ -113,18 +117,66 @@ export function DropdownMenu() {
               {/* ── Ország-váltó ───────────────────────── */}
               <CountrySwitcher />
 
-              {/* ── PRO csomagok (kiemelt) ─────────────── */}
+              {/* ── PRO csomagok — a HÁROM külön termék egyértelműen elkülönítve.
+                  A /pro „Melyik csomag kell nekem?" blokk szín-kódját tükrözi
+                  (primary=Kinti PRO, pro=Szaknévsor PRO, accent=Kiemelt Állás),
+                  hogy a menüből is látszódjon, mi mihez tartozik. Mindhárom sor a
+                  /pro-ra visz, ahol a részletes összevetés + fizetés van. ─────── */}
+              <div className="mb-2 rounded-2xl border border-line bg-surface-alt/40 p-2.5">
+                <div className="mb-1.5 flex items-center gap-2 px-1.5">
+                  <Icon name="sparkles" size={13} strokeWidth={2.6} className="text-star" />
+                  <span className="text-[10.5px] font-black uppercase tracking-widest text-ink-faint">
+                    PRO csomagok — melyik kinek?
+                  </span>
+                </div>
+                <div className="space-y-0.5">
+                  <ProProductRow
+                    href="/pro"
+                    onClick={close}
+                    dotClass="bg-primary"
+                    name="Kinti PRO"
+                    who="neked, ha kint élsz (AI-eszközök, %-egyezés, kalkulátorok)"
+                  />
+                  <ProProductRow
+                    href="/pro"
+                    onClick={close}
+                    dotClass="bg-pro"
+                    name="Szaknévsor PRO"
+                    who="a vállalkozásodnak (kiemelés, több ügyfél)"
+                  />
+                  <ProProductRow
+                    href="/pro"
+                    onClick={close}
+                    dotClass="bg-accent"
+                    name="Kiemelt Állás"
+                    who="ha munkáltatóként állást hirdetsz"
+                  />
+                </div>
+              </div>
+
+              {/* ── Kinti Pass — INGYENES tagsági kedvezménykártya. Szándékosan a
+                  fizetős PRO-blokk ALATT, „Ingyenes" jelzéssel, hogy a kettő
+                  vizuálisan is elkülönüljön. ─────────────────────────────────── */}
               <Link
-                href="/pro"
+                href="/profil/kinti-pass"
                 onClick={close}
-                className="mb-2 flex items-center gap-3 rounded-xl border border-star/30 bg-star/10 px-4 py-3.5 text-[15px] font-black text-star transition-all hover:bg-star/15 active:scale-[0.98]"
+                className="mb-2 flex items-start gap-3 rounded-2xl border border-star/30 bg-star/10 px-4 py-3.5 transition-all hover:bg-star/15 active:scale-[0.98]"
               >
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/20 text-star">
-                  <Icon name="sparkles" size={16} strokeWidth={2.6} />
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-star/20 text-base">
+                  🎟️
                 </span>
-                Kinti PRO csomagok
-                <span className="ml-auto rounded-full bg-star px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white">
-                  PRO
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2 text-[15px] font-black text-ink">
+                    Kinti Pass
+                    <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-success">
+                      Ingyenes
+                    </span>
+                  </span>
+                  <span className="mt-1 block text-[12px] font-medium leading-snug text-ink-muted">
+                    Mutasd fel ezt a kártyát a Kinti Pass elfogadóhelyeken (magyar vállalkozások a
+                    Szaknévsorból) — ők kedvezményt adnak a Kinti közösség tagjainak. Ingyenes,
+                    regisztráció nélkül.
+                  </span>
                 </span>
               </Link>
 
@@ -474,6 +526,39 @@ export function DropdownMenu() {
         document.body
       )}
     </div>
+  );
+}
+
+/**
+ * Egy PRO-termék sora a felső legendában — szín-kódolt pont + név + kinek szól.
+ * A /pro „Melyik csomag kell nekem?" blokk kompakt megfelelője a menüben.
+ */
+function ProProductRow({
+  href,
+  onClick,
+  dotClass,
+  name,
+  who,
+}: {
+  href: string;
+  onClick: () => void;
+  dotClass: string;
+  name: string;
+  who: string;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 transition-colors hover:bg-surface active:scale-[0.98]"
+    >
+      <span className={cn("h-2.5 w-2.5 shrink-0 rounded-full", dotClass)} />
+      <span className="min-w-0 flex-1 text-[13px] leading-snug">
+        <span className="font-black text-ink">{name}</span>
+        <span className="font-medium text-ink-muted"> — {who}</span>
+      </span>
+      <Icon name="chevR" size={14} strokeWidth={2.6} className="shrink-0 text-ink-faint" />
+    </Link>
   );
 }
 
