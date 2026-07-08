@@ -186,6 +186,19 @@ export function DropdownMenu() {
                   </span>
                   Álláshirdetések
                 </Link>
+                <Link href="/allasok/profil" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <Icon name="user" size={16} strokeWidth={2.4} />
+                  </span>
+                  Munkavállalói profil
+                </Link>
+                <Link href="/munkaltato" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <Icon name="user" size={16} strokeWidth={2.4} />
+                  </span>
+                  Munkáltatói Irányítópult
+                  <JobFeaturedBadge />
+                </Link>
               </CollapsibleSection>
 
               <CollapsibleSection title="Közösség & Profilom">
@@ -211,21 +224,12 @@ export function DropdownMenu() {
                 </Link>
               </CollapsibleSection>
 
-              {/* ── Összecsukható szekciók (alapból zárva) ── */}
-              <CollapsibleSection title="Toborzás & AI">
-                <Link href="/allasok/profil" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                    <Icon name="user" size={16} strokeWidth={2.4} />
-                  </span>
-                  Munkavállalói profil
-                </Link>
-                <Link href="/munkaltato" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                    <Icon name="user" size={16} strokeWidth={2.4} />
-                  </span>
-                  Munkáltatói Irányítópult
-                  <JobFeaturedBadge />
-                </Link>
+              {/* ── Összecsukható szekciók (alapból zárva) ──
+                  A munkakeresés/-adás pontjai (Munkavállalói profil, Munkáltatói
+                  Irányítópult) átkerültek a „Szaknévsor & Állások" szekcióba —
+                  itt már csak az AI-alapú felkészülő eszközök maradtak, ezért a
+                  cím „Toborzás & AI" → „Felkészülés & AI". */}
+              <CollapsibleSection title="Felkészülés & AI">
                 <Link href="/allasok/interju-szimulator" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                     <Icon name="sparkles" size={16} strokeWidth={2.4} />
