@@ -76,13 +76,18 @@ export function DropdownMenu() {
   const linkClass =
     "flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] font-bold text-ink hover:bg-surface-alt transition-all active:scale-[0.98]";
 
-  // A menü ÖSSZES lakatolt eleme a Kinti PRO (magánszemély) csomaghoz tartozik —
-  // a badge ezt KI is mondja (nem csak „PRO"), különben a régi arany „PRO" badge
-  // összemosódott a Szaknévsor PRO arany márkaszínével. Zöld = primary = Kinti PRO
-  // (a /pro oldal szín-kódját követve).
+  // A menü lakatolt elemei két külön termékhez tartoznak — a badge KI is mondja,
+  // MELYIKhez (nem csak „PRO"), a /pro oldal szín-kódját követve:
+  //   • Kinti PRO  → zöld (primary) — magánszemély-funkciók (AI, kalkulátorok)
+  //   • Szaknévsor PRO → arany (pro) — a vállalkozásod kiemelése/statisztikája
   const ProBadge = () => (
     <span className="ml-auto shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-primary">
       Kinti PRO
+    </span>
+  );
+  const BizProBadge = () => (
+    <span className="ml-auto shrink-0 rounded-full bg-pro/15 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-pro">
+      Szaknévsor PRO
     </span>
   );
 
@@ -145,10 +150,11 @@ export function DropdownMenu() {
                 </div>
               ) : isSignedIn && hasBusiness ? (
                 <Link href="/profil" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-pro/10 text-pro text-base">
                     🏪
                   </span>
-                  Vállalkozásom (kezelés + statisztika)
+                  Vállalkozásom
+                  <BizProBadge />
                 </Link>
               ) : (
                 <Link href="/vallalkozo" onClick={close} className={linkClass}>
