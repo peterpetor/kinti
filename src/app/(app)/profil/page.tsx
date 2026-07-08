@@ -426,6 +426,8 @@ async function OwnerDashboard({
         initialPhone={business.phone}
         initialBlurb={business.blurb}
         initialAddress={business.address}
+        initialLat={business.lat}
+        initialLng={business.lng}
         initialCategoryLabel={business.categoryLabel}
         initialOpenText={business.openText}
         initialWorkingHours={business.workingHours ?? null}

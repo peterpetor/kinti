@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui";
 import { LogoUploader } from "./logo-uploader";
 import { BUSINESS_ACCENT_COLORS } from "@/lib/business-branding";
 import { GalleryUploader } from "./gallery-uploader";
+import { AddressFields, parseSwissAddress, composeAddress } from "./address-fields";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { isSwissAddress } from "@/lib/cantons";
@@ -27,6 +28,11 @@ export interface ProfileEditorProps {
   initialPhone: string | null;
   initialBlurb: string | null;
   initialAddress: string | null;
+  /** A térkép-pin koordinátái (a szöveges címtől FÜGGETLEN tárolt mező). A
+   *  szerkesztő csak akkor írja felül, ha a tulaj a cím-keresőből pontos
+   *  találatot választ; kézi cím-gépelés nem mozdítja a meglévő pin-t. */
+  initialLat?: number | null;
+  initialLng?: number | null;
   initialCategoryLabel: string | null;
   initialOpenText: string | null;
   initialWorkingHours: string | null;
@@ -53,6 +59,8 @@ export function ProfileEditor({
   initialPhone,
   initialBlurb,
   initialAddress,
+  initialLat,
+  initialLng,
   initialCategoryLabel,
   initialOpenText,
   initialWorkingHours,
@@ -75,7 +83,19 @@ export function ProfileEditor({
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState(initialPhone ?? "");
   const [blurb, setBlurb] = useState(initialBlurb ?? "");
-  const [address, setAddress] = useState(initialAddress ?? "");
+  // Strukturált cím (utca / ir.szám / helység) — a tárolt egységes címből bontva.
+  // A pontos térkép-pin (lat/lng) külön mező: csak cím-kereső találat-választáskor
+  // frissül, kézi gépeléskor null-ra ürül → mentéskor NEM küldjük (megőrizzük a
+  // meglévő pin-t, nem töröljük némán).
+  const [addressParts, setAddressParts] = useState(() => parseSwissAddress(initialAddress ?? ""));
+  const [lat, setLat] = useState<number | null>(initialLat ?? null);
+  const [lng, setLng] = useState<number | null>(initialLng ?? null);
+  // Csak akkor küldjük a koordinátát mentéskor, ha EBBEN a munkamenetben friss
+  // találatot választott — a változatlan (örökölt) pin-t nem küldjük/validáljuk
+  // újra (különben egy határ menti / régi közelítő koordináta minden mentést
+  // 400-zal blokkolna).
+  const [coordPicked, setCoordPicked] = useState(false);
+  const address = composeAddress(addressParts);
   const [categoryLabel, setCategoryLabel] = useState(initialCategoryLabel ?? "");
   const [openText, setOpenText] = useState(initialOpenText ?? "");
   const [yearsHere, setYearsHere] = useState(initialYearsHere != null ? String(initialYearsHere) : "");
@@ -174,6 +194,10 @@ export function ProfileEditor({
           phone,
           blurb,
           address,
+          // Pontos térkép-koordinátát CSAK friss, cím-keresőből választott
+          // találatnál küldünk; kézi gépelésnél / változatlan pin-nél kihagyjuk,
+          // és a szerver megőrzi a meglévő koordinátát.
+          ...(coordPicked && lat != null && lng != null ? { lat, lng } : {}),
           categoryLabel,
           openText,
           workingHours: JSON.stringify(workingHours),
@@ -288,7 +312,15 @@ export function ProfileEditor({
                 </label>
                 <select
                   value={country}
-                  onChange={(e) => setCountry(e.target.value)}
+                  onChange={(e) => {
+                    setCountry(e.target.value);
+                    // Ország-váltáskor a régi ország koordinátája érvénytelen →
+                    // ürítjük, hogy ne küldjük más országba (400) és a tulaj
+                    // válasszon új pontos helyet.
+                    setLat(null);
+                    setLng(null);
+                    setCoordPicked(false);
+                  }}
                   className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                 >
                   {COUNTRIES.map((c) => (
@@ -310,31 +342,58 @@ export function ProfileEditor({
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
-                  Cím {isCH && <span className="text-ink-faint normal-case font-medium">(csak svájci 🇨🇭)</span>}
-                </label>
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder={isCH ? "Pl. Bahnhofstrasse 10, 8001 Zürich" : "Pl. utca, házszám, irányítószám, város"}
-                  aria-invalid={addressInvalid}
-                  className={cn(
-                    "w-full rounded-[12px] border bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 transition-all",
-                    addressInvalid
-                      ? "border-accent/60 focus:ring-accent/30"
-                      : "border-line focus:ring-primary/30",
-                  )}
-                />
-                {addressInvalid && (
-                  <p className="flex items-start gap-1 text-[11px] font-semibold text-accent">
-                    <Icon name="close" size={12} strokeWidth={2.4} className="mt-0.5 shrink-0" />
-                    Csak svájci cím adható meg — tüntesd fel a svájci várost és
-                    irányítószámot (pl. 8001 Zürich).
-                  </p>
-                )}
-              </div>
+            </div>
+
+            {/* Cím — strukturált mezők (utca / ir.szám / helység) + térképes
+                találat-választó. Kiválasztáskor PONTOS koordináta (lat/lng)
+                rögzül → a cég pontosan a térképre kerül. A cég VALÓS országát
+                adjuk át (nem a böngészőét), így a kereső a helyes országban keres. */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
+                Cím a térképen
+              </label>
+              <AddressFields
+                country={country}
+                value={addressParts}
+                invalid={addressInvalid}
+                onChange={(parts) => {
+                  // Kézi szerkesztésnél elavul a pontos koordináta → null (mentéskor
+                  // nem küldjük, a meglévő pin megmarad, amíg nem választ újat).
+                  setAddressParts(parts);
+                  setLat(null);
+                  setLng(null);
+                  setCoordPicked(false);
+                }}
+                onGeocode={(hit) => {
+                  setLat(hit.lat);
+                  setLng(hit.lng);
+                  setCoordPicked(true);
+                }}
+              />
+              {coordPicked && lat != null && lng != null ? (
+                <p className="flex items-center gap-1 px-0.5 text-[11.5px] font-semibold text-success">
+                  <Icon name="check" size={12} strokeWidth={2.6} className="shrink-0" />
+                  Pontos hely rögzítve — mentés után ide kerül a térkép-pin.
+                </p>
+              ) : lat != null && lng != null ? (
+                <p className="px-0.5 text-[11.5px] leading-snug text-ink-faint">
+                  Már van térkép-helyed. Ha pontosítanád, írd be a címet és{" "}
+                  <strong className="text-ink-muted">válassz a felkínált találatok közül</strong>.
+                </p>
+              ) : (
+                <p className="px-0.5 text-[11.5px] leading-snug text-ink-faint">
+                  Írd be a címet és <strong className="text-ink-muted">válassz a felkínált találatok
+                  közül</strong> — így pontosan a térképre kerülsz. (Ha csak gépelsz, a korábbi
+                  térkép-helyed marad.)
+                </p>
+              )}
+              {addressInvalid && (
+                <p className="flex items-start gap-1 text-[11px] font-semibold text-accent">
+                  <Icon name="close" size={12} strokeWidth={2.4} className="mt-0.5 shrink-0" />
+                  Csak svájci cím adható meg — válassz a felkínált találatok közül
+                  (svájci város + irányítószám).
+                </p>
+              )}
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">

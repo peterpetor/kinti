@@ -115,6 +115,10 @@ export interface UpdateBusinessProfileInput {
   country?: string;
   /** Régió-kód; ország-váltáskor a route null-ra állítja (más országban érvénytelen). */
   cantonCode?: string | null;
+  /** Térkép-pin koordináta (a cím-keresőből). A route csak érvényes, ország-beli
+   *  párnál frissíti; egyébként a meglévő értéket adja vissza (nem null-oz). */
+  lat?: number | null;
+  lng?: number | null;
   /** Kinti Pass elfogadóhely be/ki (CSAK Szaknévsor PRO — a route gate-eli). */
   kintiPassActive?: boolean;
   /** Kinti Pass ajánlat-szöveg (null = törlés). */
@@ -336,7 +340,7 @@ export async function updateBusinessProfile(
     .prepare(
       `UPDATE businesses SET name=?,phone=?,blurb=?,address=?,category_label=?,open_text=?,
        working_hours=?,social_links=?,years_here=?,languages=?,accent_color=?,
-       country_code=?,canton_code=?,kinti_pass_active=?,kinti_pass_offer=?,updated_at=datetime('now')
+       country_code=?,canton_code=?,lat=?,lng=?,kinti_pass_active=?,kinti_pass_offer=?,updated_at=datetime('now')
        WHERE id=? AND owner_user_id=?`,
     )
     .bind(input.name, input.phone, input.blurb, input.address, input.categoryLabel,
@@ -344,6 +348,7 @@ export async function updateBusinessProfile(
       input.yearsHere ?? null, input.languages ? JSON.stringify(input.languages) : null,
       input.accentColor ?? null,
       input.country ?? "CH", input.cantonCode ?? null,
+      input.lat ?? null, input.lng ?? null,
       input.kintiPassActive ? 1 : 0, input.kintiPassOffer ?? null,
       businessId, ownerUserId)
     .run();

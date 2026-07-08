@@ -47,11 +47,16 @@ export function AddressFields({
   onChange,
   onGeocode,
   invalid,
+  country: countryProp,
 }: {
   value: AddressParts;
   onChange: (next: AddressParts) => void;
   onGeocode: (hit: GeoHit) => void;
   invalid?: boolean;
+  /** A cég VALÓS országa (pl. /profil szerkesztő). Ha nincs megadva, a böngésző
+   *  ország-preferenciájára esik vissza (regisztrációnál ez egyezik). Fontos: a
+   *  szerkesztőnél a cég országát KELL átadni, nem a nézegetett tartalomét. */
+  country?: string;
 }) {
   const [hits, setHits] = useState<GeoHit[]>([]);
   const [open, setOpen] = useState(false);
@@ -61,7 +66,7 @@ export function AddressFields({
   const seq = useRef(0);
   // Ország-tudatos geokóder (CH: geo.admin.ch, AT/egyéb: Photon/OSM) + példák.
   const [prefCountry] = usePreferredCountry();
-  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const country = countryProp ?? prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
   const zipLen = isDE ? 5 : 4; // DE PLZ 5 jegyű, CH/AT 4

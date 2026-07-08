@@ -4,7 +4,7 @@ import { getBusinessByOwner, updateBusinessProfile } from "@/lib/repo";
 import { isSwissAddress } from "@/lib/cantons";
 import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
 import { isValidAccentColor } from "@/lib/business-branding";
-import { BUSINESS_LIMITS } from "@/lib/business";
+import { BUSINESS_LIMITS, isInCountryCoord } from "@/lib/business";
 import { isValidCountry } from "@/lib/countries";
 
 export const runtime = "edge";
@@ -80,6 +80,30 @@ export async function POST(req: Request) {
   const newCountry = isValidCountry(countryRaw) ? countryRaw : business.country;
   const countryChanged = newCountry !== business.country;
   const cantonCode = countryChanged ? null : business.canton;
+
+  // Térkép-pin koordináta a strukturált cím-keresőből. A kliens CSAK akkor küld
+  // lat/lng-t, ha a tulaj a felkínált találatból választott (pontos hely) —
+  // kézi gépelésnél nem, hogy a meglévő pin-t ne írjuk némán felül. Ha érkezik
+  // pár, ellenőrizzük, hogy a kiválasztott országon belül van (a kereső
+  // ország-szűrt, ez csak védelem a manipulált kérés ellen). Egyébként a
+  // meglévő koordinátát tartjuk meg.
+  const latRaw = typeof body.lat === "number" && Number.isFinite(body.lat) ? body.lat : null;
+  const lngRaw = typeof body.lng === "number" && Number.isFinite(body.lng) ? body.lng : null;
+  let newLat = business.lat;
+  let newLng = business.lng;
+  if (latRaw != null && lngRaw != null) {
+    if (!isInCountryCoord(newCountry, latRaw, lngRaw)) {
+      return NextResponse.json(
+        {
+          error:
+            "A kiválasztott hely nem a megadott országban van. Válassz a felkínált címtalálatok közül.",
+        },
+        { status: 400 },
+      );
+    }
+    newLat = latRaw;
+    newLng = lngRaw;
+  }
 
   // A szigorú svájci cím-formátum csak CH-ban REGISZTRÁLT cégnél kötelező; AT/DE/NL
   // szabad szöveg. Az ÚJ (épp mentett) országot nézzük, nem a régit — különben
@@ -191,6 +215,8 @@ export async function POST(req: Request) {
     accentColor,
     country: newCountry,
     cantonCode,
+    lat: newLat,
+    lng: newLng,
     kintiPassActive,
     kintiPassOffer,
   });
