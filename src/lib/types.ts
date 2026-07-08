@@ -171,13 +171,16 @@ export interface EventFeed {
 }
 
 export interface DashboardStats {
+  /** Profil-megtekintések (view) — az elmúlt 7 nap. */
   weekViews: number;
   weekViewsDelta: string | null;
-  weekClicks: number;
-  weekClicksDelta: string | null;
+  /** Árajánlat-kérések (lead) — az elmúlt 7 nap. */
+  weekLeads: number;
+  weekLeadsDelta: string | null;
+  /** Telefon-kattintások (phone) — az elmúlt 7 nap. */
   weekCalls: number;
   weekCallsDelta: string | null;
-  /** 14 napos trendvonal a Sparkline-hoz. */
+  /** 14 napos megtekintés-trendvonal a Sparkline-hoz. */
   trend: { date: string; views: number }[];
 }
 

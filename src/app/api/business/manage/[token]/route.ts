@@ -6,7 +6,7 @@ import {
   logModerationStrike,
   type UpdateBusinessFields,
 } from "@/lib/repo";
-import { BUSINESS_LIMITS } from "@/lib/business";
+import { BUSINESS_LIMITS, isInCountryCoord } from "@/lib/business";
 import { isSwissAddress } from "@/lib/cantons";
 import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
 import { moderateText } from "@/lib/text-moderation";
@@ -108,6 +108,25 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
     if (v && (v.length > BUSINESS_LIMITS.addressMax || (business.country === "CH" && !isSwissAddress(v)))) {
       errors.push({ field: "address", message: "Csak svájci cím adható meg (pl. 8001 Zürich)." });
     } else fields.address = v;
+  }
+
+  // Térkép-pin koordináta (a cím-keresőből). A kliens CSAK friss, kiválasztott
+  // találatnál küldi. Csak a cég országán belüli, érvényes párt fogadunk el;
+  // egyébként a meglévő pin marad (nem null-ozzuk).
+  if ("lat" in body || "lng" in body) {
+    const latNum = typeof body.lat === "number" && Number.isFinite(body.lat) ? body.lat : null;
+    const lngNum = typeof body.lng === "number" && Number.isFinite(body.lng) ? body.lng : null;
+    if (latNum != null && lngNum != null) {
+      if (!isInCountryCoord(business.country, latNum, lngNum)) {
+        errors.push({
+          field: "address",
+          message: "A kiválasztott hely nem a cég országában van. Válassz a felkínált találatok közül.",
+        });
+      } else {
+        fields.lat = latNum;
+        fields.lng = lngNum;
+      }
+    }
   }
 
   if ("phone" in body) {

@@ -131,6 +131,10 @@ export interface UpdateBusinessFields {
   workingHours?: string | null; socialLinks?: string | null; languages?: string[] | null;
   /** Árajánlat-kérések fogadásának kikapcsolása (lead_opt_out). */
   leadOptOut?: boolean;
+  /** Térkép-pin koordináta (cím-keresőből); az API csak érvényes ország-beli
+   *  párnál küldi, egyébként a meglévő pin marad. */
+  lat?: number | null;
+  lng?: number | null;
   /** Kinti Pass elfogadóhely be/ki (CSAK Szaknévsor PRO — az API gate-eli). */
   kintiPassActive?: boolean;
   /** Kinti Pass ajánlat-szöveg (null = törlés). */
@@ -413,6 +417,8 @@ export async function updateBusinessByManageToken(token: string, fields: UpdateB
     sets.push("lead_opt_out = ?");
     values.push(fields.leadOptOut ? 1 : 0);
   }
+  if (fields.lat !== undefined) { sets.push("lat = ?"); values.push(fields.lat); }
+  if (fields.lng !== undefined) { sets.push("lng = ?"); values.push(fields.lng); }
   if (fields.kintiPassActive !== undefined) {
     sets.push("kinti_pass_active = ?");
     values.push(fields.kintiPassActive ? 1 : 0);
@@ -704,18 +710,65 @@ export async function getDashboard(businessId: string): Promise<DashboardResult 
   const business = await getBusinessById(businessId);
   if (!business) return null;
   const db = getDB();
-  const statsRow = await db
-    .prepare("SELECT * FROM business_stats WHERE business_id = ?")
-    .bind(businessId)
-    .first<{ week_views: number; week_views_delta: string | null; week_clicks: number; week_clicks_delta: string | null; week_calls: number; week_calls_delta: string | null }>();
-  const { results: trendRows } = await db
-    .prepare("SELECT stat_date, views FROM business_daily_views WHERE business_id = ? ORDER BY stat_date ASC")
-    .bind(businessId).all<{ stat_date: string; views: number }>();
+
+  // VALÓS forrás: a `business_analytics_daily`-t a /api/businesses/[id]/track tölti
+  // (view = profil-megnyitás, phone = telefon-kattintás, lead = árajánlat-kérés).
+  // A régi `business_stats` / `business_daily_views` táblákat futásidőben SEMMI nem
+  // írta (csak a demo-seed) → valós cégnél örökre 0-t mutattak. Ezért kötjük át ide,
+  // ugyanarra a forrásra, amit a kezelő-oldali analitika is használ.
+  let rows: { day: string; views: number; phone: number; leads: number }[] = [];
+  try {
+    const res = await db
+      .prepare(
+        `SELECT day, view_count AS views, phone_click_count AS phone, lead_count AS leads
+         FROM business_analytics_daily
+         WHERE business_id=? AND day>=date('now','-13 days') ORDER BY day ASC`,
+      )
+      .bind(businessId)
+      .all<{ day: string; views: number; phone: number; leads: number }>();
+    rows = res.results;
+  } catch {
+    rows = [];
+  }
+
+  const iso = (n: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.toISOString().slice(0, 10);
+  };
+  const d6 = iso(6);   // az elmúlt 7 nap kezdete (ma is beleértve)
+  const d7 = iso(7);   // az előző hét vége
+  const d13 = iso(13); // az előző hét kezdete
+
+  const cur = { views: 0, phone: 0, leads: 0 }; // utolsó 7 nap
+  const prev = { views: 0, phone: 0, leads: 0 }; // az azt megelőző 7 nap (delta-hoz)
+  for (const r of rows) {
+    if (r.day >= d6) {
+      cur.views += r.views ?? 0; cur.phone += r.phone ?? 0; cur.leads += r.leads ?? 0;
+    } else if (r.day >= d13 && r.day <= d7) {
+      prev.views += r.views ?? 0; prev.phone += r.phone ?? 0; prev.leads += r.leads ?? 0;
+    }
+  }
+
+  const delta = (a: number, b: number): string | null => {
+    const diff = a - b;
+    if (diff === 0) return null;
+    return diff > 0 ? `+${diff}` : `${diff}`;
+  };
+
+  // 14 napos megtekintés-trend, minden napra 0-kitöltve (folytonos Sparkline).
+  const viewsByDay = new Map(rows.map((r) => [r.day, r.views ?? 0]));
+  const trend: { date: string; views: number }[] = [];
+  for (let i = 13; i >= 0; i--) {
+    const day = iso(i);
+    trend.push({ date: day, views: viewsByDay.get(day) ?? 0 });
+  }
+
   const stats: DashboardStats = {
-    weekViews: statsRow?.week_views ?? 0, weekViewsDelta: statsRow?.week_views_delta ?? null,
-    weekClicks: statsRow?.week_clicks ?? 0, weekClicksDelta: statsRow?.week_clicks_delta ?? null,
-    weekCalls: statsRow?.week_calls ?? 0, weekCallsDelta: statsRow?.week_calls_delta ?? null,
-    trend: trendRows.map((r) => ({ date: r.stat_date, views: r.views })),
+    weekViews: cur.views, weekViewsDelta: delta(cur.views, prev.views),
+    weekLeads: cur.leads, weekLeadsDelta: delta(cur.leads, prev.leads),
+    weekCalls: cur.phone, weekCallsDelta: delta(cur.phone, prev.phone),
+    trend,
   };
   return { business, stats };
 }

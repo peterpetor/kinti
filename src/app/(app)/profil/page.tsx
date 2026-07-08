@@ -465,7 +465,7 @@ async function OwnerDashboard({
       {/* KPI trió */}
       <section className="grid grid-cols-3 gap-2">
         <StatCard icon="eye" value={stats.weekViews} label="Megtekintés" delta={stats.weekViewsDelta} />
-        <StatCard icon="cursor" value={stats.weekClicks} label="Profil-megnyitás" delta={stats.weekClicksDelta} />
+        <StatCard icon="send" value={stats.weekLeads} label="Árajánlat" delta={stats.weekLeadsDelta} />
         <StatCard icon="phone" value={stats.weekCalls} label="Hívás" delta={stats.weekCallsDelta} accent />
       </section>
 
@@ -473,11 +473,11 @@ async function OwnerDashboard({
       {stats.weekViews > 0 && (
         <div className="rounded-card border border-line bg-surface px-4 py-3 flex items-center justify-between">
           <div>
-            <p className="text-[12.5px] font-bold text-ink">Hívási arány (CTR)</p>
-            <p className="text-[11.5px] text-ink-muted">A megtekintők hány %-a hívott / nyitotta meg a profilt.</p>
+            <p className="text-[12.5px] font-bold text-ink">Aktivitási arány</p>
+            <p className="text-[11.5px] text-ink-muted">A megtekintők hány %-a hívott vagy kért árajánlatot.</p>
           </div>
           <span className="text-[22px] font-black text-primary">
-            {Math.round(((stats.weekCalls + stats.weekClicks) / stats.weekViews) * 100)}%
+            {Math.round(((stats.weekCalls + stats.weekLeads) / stats.weekViews) * 100)}%
           </span>
         </div>
       )}

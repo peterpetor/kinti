@@ -8,6 +8,7 @@ import { cn } from "@/lib/cn";
 import type { Business } from "@/lib/types";
 import { useCheckout } from "@/hooks/useCheckout";
 import { LanguagePicker, WorkingHoursEditor } from "@/components/views/business-fields";
+import { AddressFields, parseSwissAddress, composeAddress } from "@/components/views/address-fields";
 import { parseWorkingHours, type WorkingHours } from "@/lib/hours";
 
 /**
@@ -19,7 +20,6 @@ export function BusinessManageForm({ business, token }: { business: Business; to
   const [form, setForm] = useState({
     name: business.name,
     categoryLabel: business.categoryLabel ?? "",
-    address: business.address ?? "",
     phone: business.phone ?? "",
     blurb: business.blurb ?? "",
     openText: business.openText ?? "",
@@ -32,6 +32,12 @@ export function BusinessManageForm({ business, token }: { business: Business; to
   const [hours, setHours] = useState<WorkingHours>(() =>
     parseWorkingHours(business.workingHours ?? null),
   );
+  // Strukturált cím + pontos térkép-pin. A koordinátát CSAK friss találat-
+  // választáskor küldjük (coordPicked); kézi gépelésnél a meglévő pin marad.
+  const [addressParts, setAddressParts] = useState(() => parseSwissAddress(business.address ?? ""));
+  const [lat, setLat] = useState<number | null>(business.lat ?? null);
+  const [lng, setLng] = useState<number | null>(business.lng ?? null);
+  const [coordPicked, setCoordPicked] = useState(false);
   const [phase, setPhase] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const { startCheckout, isLoading: isCheckoutLoading } = useCheckout();
@@ -61,7 +67,10 @@ export function BusinessManageForm({ business, token }: { business: Business; to
         body: JSON.stringify({
           name: form.name,
           categoryLabel: form.categoryLabel || null,
-          address: form.address || null,
+          address: composeAddress(addressParts) || null,
+          // Pontos koordinátát csak friss cím-választáskor küldünk (a szerver
+          // ország-beli párnál frissíti a pint, egyébként a meglévő marad).
+          ...(coordPicked && lat != null && lng != null ? { lat, lng } : {}),
           phone: form.phone || null,
           blurb: form.blurb || null,
           openText: form.openText || null,
@@ -169,15 +178,40 @@ export function BusinessManageForm({ business, token }: { business: Business; to
         />
       </Section>
 
-      <Section title="Cím">
-        <input
-          type="text"
-          value={form.address}
-          onChange={(e) => set("address", e.target.value)}
-          placeholder="Pl. utca, házszám, irányítószám, város"
-          className={inputCls()}
-          maxLength={200}
+      <Section title="Cím a térképen">
+        <AddressFields
+          country={business.country}
+          value={addressParts}
+          onChange={(parts) => {
+            setAddressParts(parts);
+            setLat(null);
+            setLng(null);
+            setCoordPicked(false);
+            setPhase("idle");
+          }}
+          onGeocode={(hit) => {
+            setLat(hit.lat);
+            setLng(hit.lng);
+            setCoordPicked(true);
+            setPhase("idle");
+          }}
         />
+        {coordPicked && lat != null && lng != null ? (
+          <p className="mt-2 flex items-center gap-1 text-[11.5px] font-semibold text-success">
+            <Icon name="check" size={12} strokeWidth={2.6} className="shrink-0" />
+            Pontos hely rögzítve — mentés után ide kerül a térkép-pin.
+          </p>
+        ) : lat != null && lng != null ? (
+          <p className="mt-2 text-[11.5px] leading-snug text-ink-faint">
+            Már van térkép-helyed. Ha pontosítanád, írd be a címet és{" "}
+            <strong className="text-ink-muted">válassz a felkínált találatok közül</strong>.
+          </p>
+        ) : (
+          <p className="mt-2 text-[11.5px] leading-snug text-ink-faint">
+            Írd be a címet és <strong className="text-ink-muted">válassz a felkínált találatok
+            közül</strong> — így pontosan a térképre kerülsz.
+          </p>
+        )}
       </Section>
 
       <Section title="Telefonszám">
