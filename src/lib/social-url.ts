@@ -11,7 +11,10 @@
  * előtt — ha érvénytelen, mentés helyett 400-as hibát adunk.
  */
 
-const ALLOWED_DOMAINS: Record<keyof SocialLinks, RegExp[]> = {
+/** Az URL-alapú (domain-allowlistes) social-kulcsok — az `email` NEM ilyen. */
+type UrlSocialKind = "facebook" | "instagram" | "linkedin" | "booking";
+
+const ALLOWED_DOMAINS: Record<UrlSocialKind, RegExp[]> = {
   facebook: [/^(.+\.)?facebook\.com$/, /^fb\.com$/, /^(.+\.)?fb\.me$/],
   instagram: [/^(.+\.)?instagram\.com$/, /^instagr\.am$/],
   linkedin: [/^(.+\.)?linkedin\.com$/, /^lnkd\.in$/],
@@ -31,6 +34,17 @@ export interface SocialLinks {
   instagram?: string;
   linkedin?: string;
   booking?: string;
+  /** Publikus kapcsolattartó e-mail (NEM URL — külön, egyszerű e-mail-validációval). */
+  email?: string;
+}
+
+/** Egyszerű, konzervatív e-mail-validáció (nem RFC-teljes, de a phishing/XSS-t kizárja). */
+export function validateEmail(raw: string): string | null {
+  const trimmed = (raw ?? "").trim();
+  if (!trimmed || trimmed.length > 254) return null;
+  // egy @, ésszerű local + domain, legalább egy pont a domainben, nincs whitespace/<>
+  if (!/^[^\s<>@]+@[^\s<>@.]+(\.[^\s<>@.]+)+$/.test(trimmed)) return null;
+  return trimmed.toLowerCase();
 }
 
 /**
@@ -39,7 +53,7 @@ export interface SocialLinks {
  */
 export function validateSocialUrl(
   raw: string,
-  kind: keyof SocialLinks,
+  kind: UrlSocialKind,
 ): string | null {
   const trimmed = (raw ?? "").trim();
   if (!trimmed) return null;
@@ -73,7 +87,7 @@ export function validateSocialUrl(
 export function validateSocialLinks(input: Partial<SocialLinks>): SocialLinks | null {
   const out: SocialLinks = {};
   let hasAny = false;
-  (Object.keys(ALLOWED_DOMAINS) as Array<keyof SocialLinks>).forEach((kind) => {
+  (Object.keys(ALLOWED_DOMAINS) as UrlSocialKind[]).forEach((kind) => {
     const raw = input[kind];
     if (typeof raw !== "string" || !raw.trim()) return;
     const ok = validateSocialUrl(raw, kind);
@@ -82,5 +96,13 @@ export function validateSocialLinks(input: Partial<SocialLinks>): SocialLinks | 
       hasAny = true;
     }
   });
+  // E-mail: külön ág (nem URL-allowlist, hanem e-mail-formátum).
+  if (typeof input.email === "string" && input.email.trim()) {
+    const okEmail = validateEmail(input.email);
+    if (okEmail) {
+      out.email = okEmail;
+      hasAny = true;
+    }
+  }
   return hasAny ? out : null;
 }

@@ -5,6 +5,7 @@ import { isSwissAddress } from "@/lib/cantons";
 import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
 import { isValidAccentColor } from "@/lib/business-branding";
 import { BUSINESS_LIMITS } from "@/lib/business";
+import { isValidCountry } from "@/lib/countries";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -70,13 +71,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "A cím legfeljebb 200 karakter lehet." }, { status: 400 });
   }
 
-  // A szigorú svájci cím-formátum csak CH-ban kötelező; AT/DE/NL-ben a cím
-  // szabad szöveg (a hely/régió a koordinátából/geokóderből jön).
-  if (business.country === "CH" && address && !isSwissAddress(address)) {
+  // A vállalkozás országa — a tulaj módosíthatja (pl. rossz országgal jött létre).
+  // Csak érvényes (enabled) országot fogadunk el; hiányzó/érvénytelen → marad a
+  // jelenlegi. Ország-váltáskor a canton_code érvénytelenné válik (más ország
+  // régió-kódjai ütköznek), ezért null-ra állítjuk — a régiót a következő
+  // geokódolás/felvitel tölti újra.
+  const countryRaw = typeof body.country === "string" ? body.country : null;
+  const newCountry = isValidCountry(countryRaw) ? countryRaw : business.country;
+  const countryChanged = newCountry !== business.country;
+  const cantonCode = countryChanged ? null : business.canton;
+
+  // A szigorú svájci cím-formátum csak CH-ban REGISZTRÁLT cégnél kötelező; AT/DE/NL
+  // szabad szöveg. Az ÚJ (épp mentett) országot nézzük, nem a régit — különben
+  // CH→DE váltáskor tévesen svájci címet követelnénk.
+  if (newCountry === "CH" && address && !isSwissAddress(address)) {
     return NextResponse.json(
       {
         error:
-          "Csak svájci cím adható meg. Tüntesd fel a svájci várost és irányítószámot (pl. Bahnhofstrasse 10, 8001 Zürich).",
+          "Svájci vállalkozásnál svájci cím adható meg. Tüntesd fel a svájci várost és irányítószámot (pl. Bahnhofstrasse 10, 8001 Zürich).",
       },
       { status: 400 },
     );
@@ -177,6 +189,8 @@ export async function POST(req: Request) {
     yearsHere,
     languages,
     accentColor,
+    country: newCountry,
+    cantonCode,
     kintiPassActive,
     kintiPassOffer,
   });

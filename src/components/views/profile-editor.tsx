@@ -5,9 +5,10 @@ import { Icon } from "@/components/ui";
 import { LogoUploader } from "./logo-uploader";
 import { BUSINESS_ACCENT_COLORS } from "@/lib/business-branding";
 import { GalleryUploader } from "./gallery-uploader";
+import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { isSwissAddress } from "@/lib/cantons";
-import { getCountry } from "@/lib/countries";
+import { COUNTRIES } from "@/lib/countries";
 import {
   type WorkingHours,
   type DayHours,
@@ -70,6 +71,7 @@ export function ProfileEditor({
   const [accentColor, setAccentColor] = useState(initialAccentColor ?? "");
   const [kintiPassActive, setKintiPassActive] = useState(initialKintiPassActive);
   const [kintiPassOffer, setKintiPassOffer] = useState(initialKintiPassOffer ?? "");
+  const [country, setCountry] = useState(businessCountry);
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState(initialPhone ?? "");
   const [blurb, setBlurb] = useState(initialBlurb ?? "");
@@ -94,7 +96,7 @@ export function ProfileEditor({
     parseWorkingHours(initialWorkingHours)
   );
 
-  // Közösségi linkek
+  // Közösségi linkek + publikus kapcsolattartó e-mail
   const [socialLinks, setSocialLinks] = useState(() => {
     try {
       const parsed = initialSocialLinks ? JSON.parse(initialSocialLinks) : {};
@@ -103,9 +105,10 @@ export function ProfileEditor({
         instagram: parsed.instagram ?? "",
         linkedin: parsed.linkedin ?? "",
         booking: parsed.booking ?? "",
+        email: parsed.email ?? "",
       };
     } catch {
-      return { facebook: "", instagram: "", linkedin: "", booking: "" };
+      return { facebook: "", instagram: "", linkedin: "", booking: "", email: "" };
     }
   });
 
@@ -144,7 +147,7 @@ export function ProfileEditor({
   // tartalom országa, semmi köze a cégedhez —, ezért egy AT/DE/NL-es cég
   // tulajdonosa, ha épp CH-t böngészett, sosem tudta elmenteni a valós (nem
   // "svájci formátumú") címét: a Mentés gomb kikapcsolt állapotban ragadt.
-  const isCH = businessCountry === "CH";
+  const isCH = country === "CH";
   const addressInvalid = isCH && address.trim().length > 0 && !isSwissAddress(address);
 
   async function handleSave(e: React.FormEvent) {
@@ -167,6 +170,7 @@ export function ProfileEditor({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           name,
+          country,
           phone,
           blurb,
           address,
@@ -274,21 +278,25 @@ export function ProfileEditor({
               />
             </div>
 
-            {/* Ország — NEM szerkeszthető itt: az ország-váltás a régiót/kantont,
-                a térkép-koordinátát és a kategória-elérhetőséget is érinti, ezért
-                nem önkiszolgáló mező. De MEG KELL mutatni, hogy a user lássa, mi
-                van rögzítve (korábban ez sehol sem látszott — összezavaró volt). */}
-            <div className="flex items-center gap-2 rounded-[12px] border border-line bg-surface-alt px-3 py-2.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">Ország</span>
-              <span className="text-[13.5px] font-bold text-ink">
-                {getCountry(businessCountry)?.flag ?? "🌍"} {getCountry(businessCountry)?.name ?? businessCountry}
-              </span>
-              <span className="ml-auto text-[11px] text-ink-faint">
-                Hibás? Írj: <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a>
-              </span>
-            </div>
-
             <div className="grid gap-3 sm:grid-cols-2">
+              {/* Ország — a vállalkozás VALÓS országa (ez dönti el, melyik ország
+                  Szaknévsorában és térképén jelensz meg). Váltáskor a régió/kanton
+                  nullázódik, mert más ország kódjai ütköznek. */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
+                  Ország <strong className="text-accent">*</strong>
+                </label>
+                <select
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                >
+                  {COUNTRIES.map((c) => (
+                    <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+                  ))}
+                </select>
+              </div>
+
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
                   Telefonszám
@@ -343,17 +351,20 @@ export function ProfileEditor({
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider flex items-center justify-between">
-                  <span>Alternatív nyitvatartás szöveg</span>
-                  <span className="text-[10px] text-ink-faint font-medium">ha nem nap alapú</span>
+                <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider block">
+                  Nyitvatartás — rövid megjegyzés
                 </label>
                 <input
                   type="text"
                   value={openText}
                   onChange={(e) => setOpenText(e.target.value)}
-                  placeholder="Pl. Bejelentkezés alapján"
+                  placeholder="Pl. Csak előzetes egyeztetéssel"
                   className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                 />
+                <p className="text-[10.5px] leading-snug text-ink-faint">
+                  Ha nincs fix heti beosztásod (lejjebb), ide írhatod pár szóban — pl. „Csak
+                  bejelentkezésre" vagy „Hétvégén zárva".
+                </p>
               </div>
             </div>
 
@@ -474,12 +485,27 @@ export function ProfileEditor({
           </div>
         </section>
 
-        {/* Közösségi és foglalási linkek szekció */}
+        {/* Kapcsolat + közösségi/foglalási linkek szekció */}
         <section className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
           <div className="flex items-center justify-between border-b border-line pb-2 mb-1">
             <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted flex items-center gap-1.5">
-              <Icon name="globe" size={12} strokeWidth={2.4} className="text-primary" /> Közösségi Linkek
+              <Icon name="globe" size={12} strokeWidth={2.4} className="text-primary" /> Kapcsolat & Linkek
             </h3>
+          </div>
+
+          {/* Publikus kapcsolattartó e-mail — a profilodon jelenik meg (nem a
+              bejelentkezési/kezelő e-mailed). Opcionális. */}
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider flex items-center gap-1">
+              <span className="text-primary"><Icon name="send" size={13} /></span> Kapcsolattartó e-mail (publikus)
+            </label>
+            <input
+              type="email"
+              value={socialLinks.email}
+              onChange={(e) => handleSocialChange("email", e.target.value)}
+              placeholder="pl. kapcsolat@vallalkozasod.hu"
+              className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+            />
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
@@ -595,6 +621,24 @@ export function ProfileEditor({
                   </p>
                 </div>
               )}
+
+              {/* Hogyan működik + a SAJÁT publikus listázásod előnézete. Ez oldja a
+                  szerep-zavart: a KÁRTYA a vásárlóé (/profil/kinti-pass), NEKED
+                  (elfogadóhely) a saját nyilvános profilodat kell nézned. */}
+              <div className="rounded-[12px] border border-line bg-surface-alt/60 px-3 py-2.5 text-[11.5px] leading-relaxed text-ink-muted">
+                <strong className="text-ink">Így működik:</strong> a Kinti-tag fizetéskor felmutatja a
+                telefonján a digitális Kinti Pass kártyáját (élő órával, hogy lásd: valódi, élő app).
+                Nincs beolvasás vagy kód-ellenőrzés — bizalmi alapon adod a fenti kedvezményt. Mentés
+                után a jelvényed <strong className="text-ink">azonnal</strong> látszik a nyilvános
+                profilodon és a „Csak Kinti Pass helyek" szűrőben.
+              </div>
+              <Link
+                href={`/szaknevsor/${businessId}`}
+                target="_blank"
+                className="flex items-center justify-center gap-1.5 rounded-pill border border-line bg-surface px-4 py-2 text-[12.5px] font-bold text-ink active:scale-95"
+              >
+                <Icon name="globe" size={13} strokeWidth={2.2} /> Nézd meg a nyilvános profilod (új lap)
+              </Link>
             </>
           ) : (
             <div className="flex items-center gap-2 rounded-[12px] border border-dashed border-pro/40 bg-pro/5 px-3 py-2 text-[12px] font-semibold text-ink-muted">

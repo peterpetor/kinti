@@ -10,7 +10,7 @@ export interface AccentColor {
 }
 
 export const BUSINESS_ACCENT_COLORS: AccentColor[] = [
-  { id: "default", hex: "", label: "Alap" },
+  { id: "default", hex: "", label: "Nincs" },
   { id: "orange", hex: "#ff9600", label: "Narancs" },
   { id: "blue", hex: "#2563eb", label: "Kék" },
   { id: "green", hex: "#1d8a4e", label: "Zöld" },
