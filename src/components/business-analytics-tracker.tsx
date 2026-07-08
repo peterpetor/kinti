@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { recordCallForReview } from "@/lib/review-prompt";
+import { decodeContact } from "@/lib/contact-obfuscate";
+import { Icon } from "@/components/ui/icons";
 
 /**
  * Best-effort, fire-and-forget POST-ek a vállalkozói analitikához:
@@ -72,5 +74,76 @@ export function TelLink({
     >
       {children}
     </a>
+  );
+}
+
+/**
+ * PhoneReveal — scrape-védett telefonszám-felfedés. A szám NINCS benne a HTML-ben:
+ * kattintásra kéri le a rate-limitelt /api/businesses/[id]?contact=1 végpontról
+ * (elhomályosítva), dekódolja, majd rendes tel:-linkké (TelLink) alakul, ami a
+ * hívást az analitikába és a vélemény-kérőbe is beszámítja.
+ *
+ *   • variant="button" — feliratos gomb (cégoldal): „Telefonszám mutatása" → a szám
+ *   • variant="icon"   — csak ikon (térkép-kártya): felfedés után hívható ikon
+ */
+export function PhoneReveal({
+  businessId,
+  businessName,
+  variant = "button",
+  className,
+}: {
+  businessId: string;
+  businessName?: string;
+  variant?: "button" | "icon";
+  className?: string;
+}) {
+  const [phone, setPhone] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function reveal() {
+    if (loading || phone) return;
+    setLoading(true);
+    try {
+      const r = await fetch(`/api/businesses/${businessId}?contact=1`);
+      if (r.ok) {
+        const d = (await r.json()) as { phone?: string | null };
+        if (d.phone) setPhone(decodeContact(d.phone));
+      }
+    } catch {
+      // néma — a felhasználó újrapróbálhatja
+    }
+    setLoading(false);
+  }
+
+  if (phone) {
+    return (
+      <TelLink
+        businessId={businessId}
+        phone={phone}
+        businessName={businessName}
+        stopPropagation={variant === "icon"}
+        aria-label={variant === "icon" ? `${businessName ?? "Vállalkozás"} hívása` : undefined}
+        className={className}
+      >
+        <Icon name="phone" size={16} strokeWidth={2.2} />
+        {variant === "button" && <span>{phone}</span>}
+      </TelLink>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        if (variant === "icon") e.stopPropagation();
+        void reveal();
+      }}
+      disabled={loading}
+      aria-label={variant === "icon" ? "Telefonszám mutatása" : undefined}
+      className={className}
+    >
+      <Icon name="phone" size={16} strokeWidth={2.2} />
+      {variant === "button" && <span>{loading ? "Betöltés…" : "Telefonszám mutatása"}</span>}
+    </button>
   );
 }

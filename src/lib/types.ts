@@ -87,10 +87,15 @@ export interface Business {
 export type ListBusiness = Pick<
   Business,
   | "id" | "name" | "categoryId" | "categoryLabel" | "rating" | "reviews"
-  | "address" | "phone" | "lat" | "lng" | "featured" | "verified" | "blurb"
+  | "address" | "lat" | "lng" | "featured" | "verified" | "blurb"
   | "openText" | "workingHours" | "yearsHere" | "languages" | "photo" | "logoKey"
   | "country" | "canton" | "kintiPassActive" | "kintiPassOffer" | "createdAt"
->;
+> & {
+  /** Scrape-védelem: a bulk lista NEM adja ki a nyers telefonszámot — csak azt,
+   *  HOGY van-e (a „nincs elérhetőség" jelzéshez / hívás-gomb megjelenítéséhez).
+   *  A számot igény szerint a /api/businesses/[id]?contact=1 adja, rate-limittel. */
+  hasPhone: boolean;
+};
 
 export interface KintiEvent {
   id: string;

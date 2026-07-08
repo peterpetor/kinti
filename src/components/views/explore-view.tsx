@@ -407,6 +407,21 @@ export function ExploreView({
 
   return (
     <div className="space-y-3">
+      {/* Honeypot (mézesbödön) — a felhasználó elől elrejtve (off-screen), de a
+          HTML-t linkről linkre fésülő scraper-botok követik. Aki lekéri, az IP-je
+          a tiltólistára kerül (a jó keresőrobotokat a robots.txt + UA-fehérlista
+          védi). Lásd docs/anti-scraping.md. */}
+      <a
+        href="/api/businesses/honeypot-trigger"
+        aria-hidden="true"
+        tabIndex={-1}
+        rel="nofollow"
+        className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0"
+        style={{ left: "-9999px", top: "-9999px" }}
+      >
+        Teljes vállalkozás-lista
+      </a>
+
       {/* EGY kereső: kulcsszavas (élő) + ✨ AI (természetes nyelv → szűrők) */}
       <div className="px-5">
         <SmartSearchBar

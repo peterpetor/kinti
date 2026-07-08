@@ -34,7 +34,11 @@ function hasWebsiteInBlurb(blurb: string | null | undefined): boolean {
 export function hasContactInfo(b: {
   address?: string | null;
   phone?: string | null;
+  /** A bulk lista-vetület (ListBusiness) a nyers szám helyett CSAK ezt adja
+   *  (scrape-védelem) — a telefon meglétét így is figyelembe vesszük. */
+  hasPhone?: boolean;
   blurb?: string | null;
 }): boolean {
-  return hasStreetAddress(b.address) || !!b.phone?.trim() || hasWebsiteInBlurb(b.blurb);
+  const phonePresent = !!b.phone?.trim() || b.hasPhone === true;
+  return hasStreetAddress(b.address) || phonePresent || hasWebsiteInBlurb(b.blurb);
 }

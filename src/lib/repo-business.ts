@@ -230,13 +230,33 @@ type ListBusinessRow = Pick<
 function toListBusiness(r: ListBusinessRow): ListBusiness {
   return {
     id: r.id, name: r.name, categoryId: r.category_id, categoryLabel: r.category_label,
-    rating: r.rating, reviews: r.reviews, address: r.address, phone: r.phone,
+    rating: r.rating, reviews: r.reviews, address: r.address,
+    // Scrape-védelem: a nyers számot NEM adjuk ki a bulk listában, csak a meglétét.
+    hasPhone: !!(r.phone && r.phone.trim()),
     lat: r.lat, lng: r.lng, featured: bool(r.featured), verified: bool(r.verified),
     blurb: r.blurb, openText: r.open_text, workingHours: r.working_hours,
     yearsHere: r.years_here, languages: jsonArray(r.languages), photo: r.photo,
     logoKey: r.logo_key, country: r.country_code ?? DEFAULT_COUNTRY,
     canton: r.canton_code ?? null, kintiPassActive: bool(r.kinti_pass_active ?? 0),
     kintiPassOffer: r.kinti_pass_offer ?? null, createdAt: r.created_at ?? null,
+  };
+}
+
+/**
+ * Full `Business` → karcsú `ListBusiness` (kártyákhoz). Scrape-védelem: a nyers
+ * telefonszám NEM kerül át (csak `hasPhone`), így a kliensnek átadott lista-
+ * elemek (pl. „hasonló szakemberek", SEO-céloldal) sem szivárogtatják a számot.
+ */
+export function businessToListItem(b: Business): ListBusiness {
+  return {
+    id: b.id, name: b.name, categoryId: b.categoryId, categoryLabel: b.categoryLabel,
+    rating: b.rating, reviews: b.reviews, address: b.address,
+    hasPhone: !!(b.phone && b.phone.trim()),
+    lat: b.lat, lng: b.lng, featured: b.featured, verified: b.verified,
+    blurb: b.blurb, openText: b.openText, workingHours: b.workingHours,
+    yearsHere: b.yearsHere, languages: b.languages, photo: b.photo,
+    logoKey: b.logoKey, country: b.country, canton: b.canton,
+    kintiPassActive: b.kintiPassActive, kintiPassOffer: b.kintiPassOffer, createdAt: b.createdAt,
   };
 }
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BusinessCard, Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
-import { getBusinessById, getReviewsByBusiness, getSimilarBusinesses, recordBusinessSearchTerm, toPublicBusiness } from "@/lib/repo";
+import { getBusinessById, getReviewsByBusiness, getSimilarBusinesses, recordBusinessSearchTerm, toPublicBusiness, businessToListItem } from "@/lib/repo";
 import { parseDbDate, dbDateOnly } from "@/lib/dates";
 import { mediaUrl } from "@/lib/media";
 import { CategoryIcon } from "@/components/ui/category-icon";
@@ -16,7 +16,7 @@ import { handleFromId } from "@/lib/handle";
 import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { BusinessGallery } from "@/components/views/business-gallery";
 import { ErrorBoundary } from "@/components/error-boundary";
-import { TrackBusinessView, TelLink } from "@/components/business-analytics-tracker";
+import { TrackBusinessView, PhoneReveal } from "@/components/business-analytics-tracker";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { hasStreetAddress, hasContactInfo } from "@/lib/address";
 import { extractContactFromBlurb } from "@/lib/contact-links";
@@ -222,7 +222,9 @@ export default async function BusinessPage({
   };
   if (displayBlurb) jsonLd.description = displayBlurb;
   if (email) jsonLd.email = email;
-  if (b.phone) jsonLd.telephone = b.phone;
+  // A telefonszám SZÁNDÉKOSAN kimarad a JSON-LD-ből (scrape-védelem): a
+  // strukturált adatból a botok nyersen kiolvasnák. A számot a felhasználó a
+  // „Telefonszám mutatása" gombbal, a rate-limitelt kontakt-végpontról kapja.
   if (heroUrl) {
     jsonLd.image = heroUrl;
     jsonLd.logo = heroUrl;
@@ -394,9 +396,9 @@ export default async function BusinessPage({
         {(b.phone || mapsHref || website || email) && (
           <div className="mt-4 flex flex-wrap gap-2">
             {b.phone && (
-              <TelLink businessId={b.id} phone={b.phone} businessName={b.name} className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-primary text-white shadow-card-hover")}>
-                <Icon name="phone" size={16} strokeWidth={2.2} /> Hívás
-              </TelLink>
+              // Scrape-védelem: a szám NINCS a HTML-ben — a PhoneReveal a
+              // rate-limitelt kontakt-végpontról kéri le kattintásra.
+              <PhoneReveal businessId={b.id} businessName={b.name} variant="button" className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-primary text-white shadow-card-hover")} />
             )}
             {mapsHref && (
               <a
@@ -769,7 +771,7 @@ export default async function BusinessPage({
             <SectionHeader>Hasonló magyar szakemberek</SectionHeader>
             <div className="mt-2.5 grid gap-2.5">
               {similar.map((s) => (
-                <BusinessCard key={s.id} business={s} href={`/szaknevsor/${s.id}`} />
+                <BusinessCard key={s.id} business={businessToListItem(s)} href={`/szaknevsor/${s.id}`} />
               ))}
             </div>
           </section>

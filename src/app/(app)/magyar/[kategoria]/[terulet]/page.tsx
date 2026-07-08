@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { BusinessCard, Icon, ScreenHeader } from "@/components/ui";
-import { getBusinesses, getCategories } from "@/lib/repo";
+import { getBusinesses, getCategories, businessToListItem } from "@/lib/repo";
 import { areaFromSlug, businessInArea, areasForBusiness, COUNTRY_NAMES } from "@/lib/seo-areas";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 
@@ -179,7 +179,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
           </p>
           <div className="grid gap-2.5">
             {businesses.map((b) => (
-              <BusinessCard key={b.id} business={b} href={`/szaknevsor/${b.id}`} />
+              <BusinessCard key={b.id} business={businessToListItem(b)} href={`/szaknevsor/${b.id}`} />
             ))}
           </div>
         </>

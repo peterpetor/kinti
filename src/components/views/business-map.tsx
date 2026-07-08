@@ -14,7 +14,7 @@ import { MaplibreEngine } from "./map-engine-maplibre";
 import { mapEngine } from "@/lib/map-config";
 import { spreadColocated } from "@/lib/cluster";
 import { haversineKm, formatDistanceKm } from "@/lib/distance";
-import { TelLink } from "@/components/business-analytics-tracker";
+import { PhoneReveal } from "@/components/business-analytics-tracker";
 
 /**
  * BusinessMap — wrapper: WebGL-detektálás + motor-választás + közös overlay-ek.
@@ -334,19 +334,16 @@ function SelectedCard({ business: b, distanceKm }: { business: ListBusiness; dis
         </div>
       </div>
       </Link>
-      {b.phone && (
-        // TelLink: a térképi hívás is számítson az analitikába (phoneClicks) és
-        // a hívás-utáni vélemény-kérőbe — eddig sima <a> volt, egyik sem futott.
-        <TelLink
+      {b.hasPhone && (
+        // Scrape-védelem: a szám NINCS a lista-adatban — a PhoneReveal kattintásra
+        // kéri le a rate-limitelt kontakt-végpontról, majd hívhatóvá válik (a
+        // hívás az analitikába és a vélemény-kérőbe is beszámít).
+        <PhoneReveal
           businessId={b.id}
-          phone={b.phone}
           businessName={b.name}
-          stopPropagation
-          aria-label={`${b.name} hívása`}
+          variant="icon"
           className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-success text-white active:scale-95"
-        >
-          <Icon name="phone" size={16} strokeWidth={2.4} />
-        </TelLink>
+        />
       )}
       <Link
         href={`/szaknevsor/${b.id}`}
