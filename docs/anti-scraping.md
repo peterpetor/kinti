@@ -27,13 +27,21 @@ Google-indexeltek maradnak).
   - a kliens dekódolja, majd rendes `tel:` linkké alakul (a hívás az analitikába
     és a vélemény-kérőbe is beszámít, mint eddig).
 
-### B. Honeypot (mézesbödön) + IP-tiltólista
+### B. Honeypot (mézesbödön) + IP-tiltólista (a MEGLÉVŐ blocklistra kötve)
 - A szaknévsor oldalba beágyazott, **CSS-sel elrejtett** link
   (`/api/businesses/honeypot-trigger`). Valódi user sose kattint rá; a HTML-t
   linkről linkre fésülő scraper igen.
-- A csapdába lépő **IP-hashe** a `scrape_blocklist` táblába kerül (0121 migráció;
-  **PII-mentes**, csak hash). A védett végpontok (`/list`, `/businesses`,
-  `/[id]`) ezután **403**-at adnak neki.
+- A csapdába lépő **IP-hashe** a **közös `blocklist` táblába** kerül (ugyanaz,
+  amit az admin ban-rendszer használ — **PII-mentes**, csak hash). A védett
+  végpontok (`/list`, `/businesses`, `/[id]`) ezután **403**-at adnak neki.
+  Így a honeypot-tiltások **megjelennek az admin felületen** (`/admin/blocklist`),
+  és **1 kattintással feloldhatók** (a meglévő „ban feloldása" gomb).
+- **TTL (biztonsági szelep):** a honeypot auto-tiltása **7 nap** múlva lejár
+  (`expires_at`, 0122 migráció) — így egy megosztott IP (céges/CGNAT-proxy)
+  mögötti valódi user nem ragad örökre 403-ban. A **kézi admin-tiltás VÉGLEGES**
+  marad (`expires_at = NULL`); a honeypot újra-triggerelése csúszóablakként
+  hosszabbít, de egy kézi permabant sose downgrade-el. A lejárt sorokat a napi
+  cron (`send-lead-digests`) törli; a read-oldali szűrő addig is ignorálja őket.
 - **SEO-védelem:** a jó keresőrobotok NEM eshetnek csapdába — (1) a `robots.txt`
   tiltja a teljes `/api/`-t (a jó bot le se kéri), (2) a honeypot-handler
   **User-Agent fehérlistája** (Googlebot, Bingbot, közösségi preview-botok…)
@@ -85,7 +93,8 @@ Ezeket a Cloudflare dashboardon kell beállítani (Pages/DNS zóna: `kinti.app`)
 | Réteg | Fájl |
 | :-- | :-- |
 | Obfuscation (pure) | `src/lib/contact-obfuscate.ts` |
-| Blocklist repo | `src/lib/repo-blocklist.ts` (+ `0121` migráció) |
+| Blocklist (közös) + TTL | `src/lib/repo-spam.ts` (`isBlocked`/`addToBlocklist` ttlDays/`purgeExpiredBlocklist`; `0122` migráció) |
+| Blocklist admin UI | `src/app/admin/blocklist/page.tsx` (lista + 1-kattintásos feloldás + lejárat) |
 | Reveal komponens | `src/components/business-analytics-tracker.tsx` (`PhoneReveal`) |
 | Kontakt + strip | `src/app/api/businesses/[id]/route.ts` |
 | Bulk lista védelem | `src/app/api/businesses/list/route.ts`, `.../businesses/route.ts` |

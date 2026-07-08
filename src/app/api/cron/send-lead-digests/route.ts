@@ -83,6 +83,16 @@ async function handle(req: Request): Promise<Response> {
     safeLogError("send-lead-digests:rateLimitCleanup", e);
   }
 
+  // Karbantartás: a LEJÁRT auto-tiltások (pl. honeypot) végleges törlése — a
+  // kézi (végleges) tiltásokat nem érinti. A read-oldali szűrő amúgy is ignorálja
+  // őket, ez csak a tábla-higiéniáért van.
+  try {
+    const { purgeExpiredBlocklist } = await import("@/lib/repo");
+    await purgeExpiredBlocklist();
+  } catch (e) {
+    safeLogError("send-lead-digests:blocklistPurge", e);
+  }
+
   // Mai nap kezdete UTC-ben. SZÓKÖZ-elválasztó (nem 'T'!) — a D1 datetime('now')
   // így tárol; 'T'-vel a string-összehasonlítás félrevisz (' ' < 'T').
   const todayStart = new Date().toISOString().slice(0, 10) + " 00:00:00";

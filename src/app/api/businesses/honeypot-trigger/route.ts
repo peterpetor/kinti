@@ -1,6 +1,9 @@
 import { hashIp } from "@/lib/security";
-import { blockIpHash } from "@/lib/repo";
+import { addToBlocklist } from "@/lib/repo";
 import { safeLogError } from "@/lib/safe-log";
+
+/** A honeypot auto-tiltás élettartama napokban (false-positive önjavítás). */
+const HONEYPOT_TTL_DAYS = 7;
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -41,7 +44,17 @@ async function handle(req: Request): Promise<Response> {
     if (isGoodBot(ua)) return innocuous;
 
     const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
-    if (ipHash) await blockIpHash(ipHash, "honeypot");
+    if (ipHash) {
+      // A közös blocklist-be (admin-feloldó UI már van); AUTO-lejárattal, hogy egy
+      // megosztott IP mögötti valódi user ne ragadjon örökre 403-ban.
+      await addToBlocklist({
+        kind: "ip_hash",
+        value: ipHash,
+        reason: "Auto-ban: honeypot-csapda (scraper-bot rejtett linket követett).",
+        adminUserId: "system-auto-ban",
+        ttlDays: HONEYPOT_TTL_DAYS,
+      });
+    }
   } catch (err) {
     safeLogError("honeypot-trigger", err);
   }

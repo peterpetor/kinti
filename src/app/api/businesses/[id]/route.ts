@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getBusinessById, toPublicBusiness, isIpBlocked } from "@/lib/repo";
+import { getBusinessById, toPublicBusiness, isBlocked } from "@/lib/repo";
 import { hashIp } from "@/lib/security";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { encodeContact } from "@/lib/contact-obfuscate";
@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
-  if (await isIpBlocked(ipHash)) {
+  if (await isBlocked("ip_hash", ipHash)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 

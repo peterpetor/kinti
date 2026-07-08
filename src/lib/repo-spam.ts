@@ -75,21 +75,29 @@ export type BlocklistKind = "ip_hash" | "email_hash";
 export interface BlocklistEntry {
   id: string; kind: BlocklistKind; value: string; reason: string | null;
   createdAt: string; createdBy: string; active: boolean;
+  /** null = végleges (kézi admin-tiltás); dátum = auto-lejáró (pl. honeypot 7 nap). */
+  expiresAt: string | null;
 }
 
 interface BlocklistRow {
   id: string; kind: string; value: string; reason: string | null;
-  created_at: string; created_by: string; active: number;
+  created_at: string; created_by: string; active: number; expires_at: string | null;
 }
 
 function toBlocklistEntry(r: BlocklistRow): BlocklistEntry {
-  return { id: r.id, kind: r.kind as BlocklistKind, value: r.value, reason: r.reason, createdAt: r.created_at, createdBy: r.created_by, active: r.active === 1 };
+  return { id: r.id, kind: r.kind as BlocklistKind, value: r.value, reason: r.reason, createdAt: r.created_at, createdBy: r.created_by, active: r.active === 1, expiresAt: r.expires_at ?? null };
 }
 
 export async function isBlocked(kind: BlocklistKind, value: string | null): Promise<boolean> {
   if (!value) return false;
   try {
-    const row = await getDB().prepare(`SELECT 1 AS x FROM blocklist WHERE kind = ? AND value = ? AND active = 1 LIMIT 1`).bind(kind, value).first<{ x: number }>();
+    // A lejárt auto-tiltás (expires_at a múltban) MÁR NEM blokkol (biztonsági szelep).
+    const row = await getDB().prepare(
+      `SELECT 1 AS x FROM blocklist
+        WHERE kind = ? AND value = ? AND active = 1
+          AND (expires_at IS NULL OR expires_at > datetime('now'))
+        LIMIT 1`,
+    ).bind(kind, value).first<{ x: number }>();
     return !!row;
   } catch { return false; }
 }
@@ -107,13 +115,37 @@ export async function listBlocklist(): Promise<BlocklistEntry[]> {
   } catch { return []; }
 }
 
-export async function addToBlocklist(params: { kind: BlocklistKind; value: string; reason: string | null; adminUserId: string }): Promise<BlocklistEntry | null> {
+export async function addToBlocklist(params: {
+  kind: BlocklistKind;
+  value: string;
+  reason: string | null;
+  adminUserId: string;
+  /** Auto-lejárat napokban (pl. honeypot 7). Elhagyva/0 → VÉGLEGES (expires_at NULL). */
+  ttlDays?: number | null;
+}): Promise<BlocklistEntry | null> {
   const id = crypto.randomUUID();
+  const hasTtl = typeof params.ttlDays === "number" && params.ttlDays > 0;
+  // A TTL-t a DB számolja (konzisztens óra, azonos datetime-formátum a compare-hez).
+  const expiresExpr = hasTtl ? "datetime('now', '+' || ? || ' days')" : "NULL";
   try {
-    await getDB().prepare(
-      `INSERT INTO blocklist (id, kind, value, reason, created_by, active) VALUES (?, ?, ?, ?, ?, 1)
-       ON CONFLICT(kind, value) DO UPDATE SET reason = excluded.reason, active = 1, created_at = datetime('now'), created_by = excluded.created_by`
-    ).bind(id, params.kind, params.value, params.reason, params.adminUserId).run();
+    // ON CONFLICT: egy meglévő tiltást SOHA nem rövidítünk — ha bármelyik oldal
+    // VÉGLEGES (NULL), végleges marad; két auto-tiltásnál a KÉSŐBBI lejárat nyer
+    // (a honeypot újra-triggerelése így csúszóablakként meghosszabbít, de egy kézi
+    // admin-permabant nem downgrade-el).
+    const sql =
+      `INSERT INTO blocklist (id, kind, value, reason, created_by, active, expires_at)
+       VALUES (?, ?, ?, ?, ?, 1, ${expiresExpr})
+       ON CONFLICT(kind, value) DO UPDATE SET
+         reason = excluded.reason, active = 1,
+         created_at = datetime('now'), created_by = excluded.created_by,
+         expires_at = CASE
+           WHEN blocklist.expires_at IS NULL OR excluded.expires_at IS NULL THEN NULL
+           ELSE MAX(blocklist.expires_at, excluded.expires_at)
+         END`;
+    const binds = hasTtl
+      ? [id, params.kind, params.value, params.reason, params.adminUserId, params.ttlDays]
+      : [id, params.kind, params.value, params.reason, params.adminUserId];
+    await getDB().prepare(sql).bind(...binds).run();
   } catch { return null; }
   const row = await getDB().prepare(`SELECT * FROM blocklist WHERE kind = ? AND value = ? LIMIT 1`).bind(params.kind, params.value).first<BlocklistRow>();
   return row ? toBlocklistEntry(row) : null;
@@ -122,6 +154,17 @@ export async function addToBlocklist(params: { kind: BlocklistKind; value: strin
 export async function deactivateBlocklistEntry(id: string): Promise<boolean> {
   const res = await getDB().prepare(`UPDATE blocklist SET active = 0 WHERE id = ?`).bind(id).run();
   return (res.meta.changes ?? 0) > 0;
+}
+
+/** Lejárt AUTO-tiltások (expires_at a múltban) végleges törlése — napi cronból.
+ *  A kézi (végleges, expires_at NULL) és az aktív auto-tiltásokat nem érinti. */
+export async function purgeExpiredBlocklist(): Promise<number> {
+  try {
+    const res = await getDB().prepare(
+      `DELETE FROM blocklist WHERE expires_at IS NOT NULL AND expires_at <= datetime('now')`,
+    ).run();
+    return res.meta.changes ?? 0;
+  } catch { return 0; }
 }
 
 export async function logModerationStrike(ipHash: string | null, reason: string): Promise<void> {

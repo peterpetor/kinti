@@ -23,4 +23,3 @@ export * from "./repo-requests";
 export * from "./repo-external-jobs";
 export * from "./repo-leaderboard";
 export * from "./repo-quiz-stats";
-export * from "./repo-blocklist";

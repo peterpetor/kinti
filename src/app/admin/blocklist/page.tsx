@@ -18,7 +18,11 @@ export default async function BlocklistPage() {
   if (!adminId) notFound();
 
   const entries = await listBlocklist();
-  const active = entries.filter((e) => e.active);
+  // A lejárt AUTO-tiltás (expires_at a múltban) MÁR NEM blokkol → külön csoport.
+  const expired = (e: (typeof entries)[number]) =>
+    e.expiresAt != null && sqlToMs(e.expiresAt) <= Date.now();
+  const active = entries.filter((e) => e.active && !expired(e));
+  const expiredActive = entries.filter((e) => e.active && expired(e));
   const inactive = entries.filter((e) => !e.active);
 
   return (
@@ -71,6 +75,13 @@ export default async function BlocklistPage() {
                         „{e.reason}"
                       </p>
                     )}
+                    <p className="mt-1 text-[10.5px] font-bold uppercase tracking-wide">
+                      {e.expiresAt == null ? (
+                        <span className="text-ink-faint">Végleges</span>
+                      ) : (
+                        <span className="text-primary">Auto · lejár {fmtExpiry(e.expiresAt)}</span>
+                      )}
+                    </p>
                   </div>
                   <BlocklistRemoveButton id={e.id} />
                 </div>
@@ -79,6 +90,29 @@ export default async function BlocklistPage() {
           </div>
         )}
       </section>
+
+      {expiredActive.length > 0 && (
+        <section className="space-y-2">
+          <h2 className="text-[14px] font-extrabold text-ink-muted">
+            Lejárt auto-tiltások ({expiredActive.length})
+          </h2>
+          <p className="text-[11.5px] text-ink-faint">
+            Ezek MÁR NEM blokkolnak (a lejárati idő letelt) — a napi karbantartás törli őket.
+          </p>
+          <div className="space-y-1">
+            {expiredActive.slice(0, 20).map((e) => (
+              <div
+                key={e.id}
+                className="rounded-[10px] border border-line bg-surface-alt/60 px-3 py-1.5 text-[11.5px] text-ink-muted"
+              >
+                <span className="font-mono">{e.value.slice(0, 12)}…</span>
+                {e.reason && <> · „{e.reason}"</>}
+                <span className="text-ink-faint"> · lejárt {fmtAgo(e.expiresAt!)}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {inactive.length > 0 && (
         <section className="space-y-2">
@@ -111,10 +145,13 @@ function Empty({ label }: { label: string }) {
   );
 }
 
+/** D1 „YYYY-MM-DD HH:MM:SS" (UTC) → ms. */
+function sqlToMs(iso: string): number {
+  return new Date(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z")).getTime();
+}
+
 function fmtAgo(iso: string): string {
-  const t = new Date(
-    iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z"),
-  ).getTime();
+  const t = sqlToMs(iso);
   if (Number.isNaN(t)) return iso;
   const diff = Date.now() - t;
   const min = Math.floor(diff / 60000);
@@ -122,4 +159,15 @@ function fmtAgo(iso: string): string {
   const h = Math.floor(min / 60);
   if (h < 24) return `${h} órája`;
   return `${Math.floor(h / 24)} napja`;
+}
+
+/** Jövőbeli időpont → „X nap/óra múlva". */
+function fmtExpiry(iso: string): string {
+  const t = sqlToMs(iso);
+  if (Number.isNaN(t)) return iso;
+  const diff = t - Date.now();
+  if (diff <= 0) return "hamarosan";
+  const h = Math.floor(diff / 3_600_000);
+  if (h < 24) return `${h} óra múlva`;
+  return `${Math.floor(h / 24)} nap múlva`;
 }

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getBusinesses, isIpBlocked } from "@/lib/repo";
+import { getBusinesses, isBlocked } from "@/lib/repo";
 import { hashIp } from "@/lib/security";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   // limit a botok ellen. A telefonszámot itt is kiszűrjük (a szám csak a
   // rate-limitelt /[id]?contact=1 végpontról jön). Lásd docs/anti-scraping.md.
   const ipHash = await hashIp(req.headers.get("cf-connecting-ip") ?? null);
-  if (await isIpBlocked(ipHash)) {
+  if (await isBlocked("ip_hash", ipHash)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
   const rl = await checkAiRateLimit("businesses-list", ipHash);

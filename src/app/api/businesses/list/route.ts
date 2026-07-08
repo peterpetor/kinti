@@ -1,4 +1,4 @@
-import { getBusinessesForList, isIpBlocked } from "@/lib/repo";
+import { getBusinessesForList, isBlocked } from "@/lib/repo";
 import { cached } from "@/lib/edge-cache";
 import { hashIp } from "@/lib/security";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
@@ -24,8 +24,8 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
 
-  // 1) Honeypot-csapdába lépett robot → azonnali tiltás.
-  if (await isIpBlocked(ipHash)) {
+  // 1) Honeypot-csapdába lépett (vagy admin-tiltott) robot → azonnali tiltás.
+  if (await isBlocked("ip_hash", ipHash)) {
     return new Response(JSON.stringify({ error: "forbidden" }), {
       status: 403,
       headers: { "content-type": "application/json; charset=utf-8" },
