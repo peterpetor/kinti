@@ -7,8 +7,7 @@ import { BUSINESS_ACCENT_COLORS } from "@/lib/business-branding";
 import { GalleryUploader } from "./gallery-uploader";
 import { cn } from "@/lib/cn";
 import { isSwissAddress } from "@/lib/cantons";
-import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { getCountry } from "@/lib/countries";
 import {
   type WorkingHours,
   type DayHours,
@@ -19,6 +18,10 @@ import {
 
 export interface ProfileEditorProps {
   businessId: string;
+  /** A vállalkozás VALÓS, tárolt országa (business.country) — a szigorú svájci
+   *  cím-validáció ehhez van kötve, NEM a böngésző ország-tab-preferenciájához
+   *  (ami a nézegetett tartalom országa, teljesen független a cégedétől). */
+  businessCountry: string;
   initialName: string;
   initialPhone: string | null;
   initialBlurb: string | null;
@@ -44,6 +47,7 @@ type Phase = "idle" | "saving" | "success" | "error";
 
 export function ProfileEditor({
   businessId,
+  businessCountry,
   initialName,
   initialPhone,
   initialBlurb,
@@ -134,11 +138,14 @@ export function ProfileEditor({
     }));
   };
 
-  // A szigorú svájci cím-formátum csak CH-ban kötelező; AT/DE/NL-ben a cím
-  // szabad szöveg (a régiót/helyet a beküldéskor a geokóder fedi le).
-  const [prefCountry] = usePreferredCountry();
-  const isCHpref = (prefCountry ?? DEFAULT_COUNTRY) === "CH";
-  const addressInvalid = isCHpref && address.trim().length > 0 && !isSwissAddress(address);
+  // A szigorú svájci cím-formátum csak CH-ban REGISZTRÁLT vállalkozásnál
+  // kötelező; AT/DE/NL-ben a cím szabad szöveg. Korábban ez a böngésző
+  // ország-tab-preferenciáján (usePreferredCountry) múlt — ami a NÉZEGETETT
+  // tartalom országa, semmi köze a cégedhez —, ezért egy AT/DE/NL-es cég
+  // tulajdonosa, ha épp CH-t böngészett, sosem tudta elmenteni a valós (nem
+  // "svájci formátumú") címét: a Mentés gomb kikapcsolt állapotban ragadt.
+  const isCH = businessCountry === "CH";
+  const addressInvalid = isCH && address.trim().length > 0 && !isSwissAddress(address);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -267,6 +274,20 @@ export function ProfileEditor({
               />
             </div>
 
+            {/* Ország — NEM szerkeszthető itt: az ország-váltás a régiót/kantont,
+                a térkép-koordinátát és a kategória-elérhetőséget is érinti, ezért
+                nem önkiszolgáló mező. De MEG KELL mutatni, hogy a user lássa, mi
+                van rögzítve (korábban ez sehol sem látszott — összezavaró volt). */}
+            <div className="flex items-center gap-2 rounded-[12px] border border-line bg-surface-alt px-3 py-2.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">Ország</span>
+              <span className="text-[13.5px] font-bold text-ink">
+                {getCountry(businessCountry)?.flag ?? "🌍"} {getCountry(businessCountry)?.name ?? businessCountry}
+              </span>
+              <span className="ml-auto text-[11px] text-ink-faint">
+                Hibás? Írj: <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a>
+              </span>
+            </div>
+
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
@@ -283,13 +304,13 @@ export function ProfileEditor({
 
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
-                  Cím {isCHpref && <span className="text-ink-faint normal-case font-medium">(csak svájci 🇨🇭)</span>}
+                  Cím {isCH && <span className="text-ink-faint normal-case font-medium">(csak svájci 🇨🇭)</span>}
                 </label>
                 <input
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder={isCHpref ? "Pl. Bahnhofstrasse 10, 8001 Zürich" : "Pl. utca, házszám, irányítószám, város"}
+                  placeholder={isCH ? "Pl. Bahnhofstrasse 10, 8001 Zürich" : "Pl. utca, házszám, irányítószám, város"}
                   aria-invalid={addressInvalid}
                   className={cn(
                     "w-full rounded-[12px] border bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 transition-all",

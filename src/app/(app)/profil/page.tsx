@@ -421,6 +421,7 @@ async function OwnerDashboard({
       {/* Vállalkozói adatok szerkesztése form */}
       <ProfileEditor
         businessId={business.id}
+        businessCountry={business.country}
         initialName={business.name}
         initialPhone={business.phone}
         initialBlurb={business.blurb}
