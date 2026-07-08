@@ -8,7 +8,7 @@ import { DEFAULT_COUNTRY, countryAdjective } from "@/lib/countries";
  * A Kinti PRO előnyök ország-tudatos listája (a /allasok/pro upsell-oldalhoz).
  * Eddig fixen svájci tartalom volt — DE/NL-en is „svájci" jelent meg. Most a
  * választott ország szerint helyes (nyelvkurzus + interjú-szöveg), és csak a
- * tényleg létező elemeket mutatja (szakmai szótár CH-only, Einbürgerung CH/AT).
+ * tényleg létező elemeket mutatja (szakmai szótár CH-only, állampolgársági teszt mind a 4 országra).
  */
 export function ProFeatures() {
   const [prefCountry] = usePreferredCountry();
@@ -21,10 +21,7 @@ export function ProFeatures() {
     : country === "DE" ? "Német (Hochdeutsch)"
     : country === "NL" ? "Holland (Nederlands)"
     : "Nyelvi";
-  const citizenship =
-    country === "CH" ? " + Einbürgerung szimulátor"
-    : country === "AT" ? " + Staatsbürgerschaftstest szimulátor"
-    : "";
+  const citizenship = " + Állampolgársági teszt szimulátor";
 
   const items: { title: string; desc: string }[] = [];
   if (country === "CH") {

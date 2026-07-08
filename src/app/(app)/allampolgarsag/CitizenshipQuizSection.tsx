@@ -10,14 +10,14 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 /** Ország → állampolgársági kvíz (mind a 4 országra; mind PRO-funkció). */
 const QUIZ_BY_COUNTRY: Record<string, { Quiz: () => JSX.Element; name: string; desc: string }> = {
-  CH: { Quiz: EinburgerungQuiz, name: "Einbürgerung-szimulátor",
-    desc: "Teszteld le, hogy átmennél-e a hivatalos Einbürgerung tudásfelmérőn! Svájci történelmi és politikai kérdésekkel." },
-  AT: { Quiz: StaatsbuergerschaftQuiz, name: "Staatsbürgerschaftstest-szimulátor",
-    desc: "Teszteld le a tudásod az osztrák Staatsbürgerschaftstest témáiból: demokrácia, történelem, földrajz + a választott Bundesland." },
-  DE: { Quiz: EinburgerungQuizDE, name: "Einbürgerungstest-szimulátor",
-    desc: "Teszteld le, hogy átmennél-e a német Einbürgerungstesten: politika és Grundgesetz, történelem, földrajz, alapjogok + a választott Bundesland." },
-  NL: { Quiz: InburgeringQuizNL, name: "Inburgering (KNM) szimulátor",
-    desc: "Teszteld le a holland inburgering (KNM) tudásod: államszervezet, történelem, földrajz és társadalmi normák." },
+  CH: { Quiz: EinburgerungQuiz, name: "Állampolgársági teszt",
+    desc: "Teszteld le, hogy átmennél-e a hivatalos svájci állampolgársági (Einbürgerung) tudásfelmérőn! Svájci történelmi és politikai kérdésekkel." },
+  AT: { Quiz: StaatsbuergerschaftQuiz, name: "Állampolgársági teszt",
+    desc: "Teszteld le a tudásod az osztrák állampolgársági vizsga (Staatsbürgerschaftstest) témáiból: demokrácia, történelem, földrajz + a választott Bundesland." },
+  DE: { Quiz: EinburgerungQuizDE, name: "Állampolgársági teszt",
+    desc: "Teszteld le, hogy átmennél-e a német állampolgársági vizsgán (Einbürgerungstest): politika és Grundgesetz, történelem, földrajz, alapjogok + a választott Bundesland." },
+  NL: { Quiz: InburgeringQuizNL, name: "Állampolgársági teszt",
+    desc: "Teszteld le a holland beilleszkedési vizsga (inburgering, KNM) tudásod: államszervezet, történelem, földrajz és társadalmi normák." },
 };
 
 /**
@@ -45,7 +45,7 @@ export function CitizenshipQuizSection({ isPro }: { isPro: boolean }) {
           <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-[14px] bg-star text-white">
             <Icon name="lock" size={22} strokeWidth={2.4} />
           </div>
-          <p className="text-[15px] font-extrabold text-ink">A {quizName} PRO funkció</p>
+          <p className="text-[15px] font-extrabold text-ink">Az {quizName} PRO funkció</p>
           <p className="mx-auto mt-1 max-w-xs text-[13px] text-ink-muted">
             A teljes állampolgársági kérdésbank a Kinti PRO előfizetéssel érhető el. Az engedély-varázsló fent ingyenes marad.
           </p>

@@ -283,7 +283,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     {isCH ? "🇨🇭" : country === "AT" ? "🇦🇹" : country === "DE" ? "🇩🇪" : country === "NL" ? "🇳🇱" : "🌍"}
                   </span>
-                  {isCH ? "Einbürgerung-szimulátor" : country === "DE" ? "Einbürgerungstest" : country === "NL" ? "Inburgering (KNM)" : "Állampolgárság-szimulátor"}
+                  Állampolgársági teszt
                   <ProBadge />
                 </Link>
                 )}

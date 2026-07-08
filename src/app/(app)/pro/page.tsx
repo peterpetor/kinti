@@ -47,7 +47,7 @@ export default function ProPage() {
     "AI CV-audit — önéletrajz-elemzés, konkrét javítási tippekkel",
     "Utalás-asszisztens — árfolyam-figyelés + szolgáltató-összevetés a hazautaláshoz",
     "Határidő-asszisztens — push-emlékeztető 14/7/1 nappal a fontos határidők előtt",
-    "Nyelvkurzus — 100-100 lecke kiejtéssel, mind a 4 országra (Mundart/osztrák/német/holland)",
+    "Nyelvkurzus — 100-100 lecke kiejtéssel, mind a 4 országra (svájci német/osztrák/német/holland)",
     "Állampolgársági teszt-szimulátor — mind a 4 országra",
     // Tényállítás-fegyelem: az „500+ kifejezés" NEM volt igaz (a leckékben ennek
     // töredéke van) — csak bizonyítható állítást írunk ki. A szótár mind a 4
