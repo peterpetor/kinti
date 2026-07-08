@@ -76,10 +76,11 @@ export function DropdownMenu() {
   const linkClass =
     "flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] font-bold text-ink hover:bg-surface-alt transition-all active:scale-[0.98]";
 
-  // A menü lakatolt elemei két külön termékhez tartoznak — a badge KI is mondja,
-  // MELYIKhez (nem csak „PRO"), a /pro oldal szín-kódját követve:
+  // A menü lakatolt/prémium elemei HÁROM külön termékhez tartoznak — a badge KI is
+  // mondja, MELYIKhez (nem csak „PRO"), a /pro oldal szín-kódját követve:
   //   • Kinti PRO  → zöld (primary) — magánszemély-funkciók (AI, kalkulátorok)
   //   • Szaknévsor PRO → arany (pro) — a vállalkozásod kiemelése/statisztikája
+  //   • Kiemelt Állás → piros (accent) — a munkáltatói hirdetés kiemelése (egyszeri)
   const ProBadge = () => (
     <span className="ml-auto shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-primary">
       Kinti PRO
@@ -88,6 +89,11 @@ export function DropdownMenu() {
   const BizProBadge = () => (
     <span className="ml-auto shrink-0 rounded-full bg-pro/15 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-pro">
       Szaknévsor PRO
+    </span>
+  );
+  const JobFeaturedBadge = () => (
+    <span className="ml-auto shrink-0 rounded-full bg-accent/15 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-accent">
+      Kiemelt Állás
     </span>
   );
 
@@ -206,10 +212,11 @@ export function DropdownMenu() {
                   Munkavállalói profil
                 </Link>
                 <Link href="/munkaltato" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
                     <Icon name="user" size={16} strokeWidth={2.4} />
                   </span>
                   Munkáltatói Irányítópult
+                  <JobFeaturedBadge />
                 </Link>
                 <Link href="/allasok/interju-szimulator" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
