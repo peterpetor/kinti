@@ -143,65 +143,73 @@ export function DropdownMenu() {
                 </span>
               </Link>
 
-              {/* ── Gyors elérés (mindig látszik) ──────── */}
-              {/* Egy fiók = egy cég: akinek MÁR van vállalkozása, annak a kezelő
-                  pontot mutatjuk; akinek nincs, a felvitel-CTA-t — sose a rosszat.
-                  Bejelentkezve, amíg az első állapot-lekérés fut (nincs még cache),
-                  semleges skeleton (ne villanjon téves menüpont). Kijelentkezve
-                  mindig a felvitel-CTA (a /vallalkozo flow úgyis beléptet). */}
-              {isSignedIn && hasBusiness === null ? (
-                <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl" aria-hidden>
-                  <span className="h-8 w-8 shrink-0 rounded-xl bg-surface-alt animate-pulse" />
-                  <span className="h-4 w-44 rounded-md bg-surface-alt animate-pulse" />
-                </div>
-              ) : isSignedIn && hasBusiness ? (
-                <Link href="/profil" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-pro/10 text-pro text-base">
-                    🏪
+              {/* ── Gyors elérés — a korábban fejléc nélkül „lógó" pontok most
+                  fejléces szekciókba rendezve (mint a többi lenti szekció).
+                  Alapból NYITVA (CollapsibleSection default), így semmi nem tűnik
+                  el, csak csoportosított és átlátható. ─────────────────────────── */}
+              <CollapsibleSection title="Szaknévsor & Állások">
+                {/* Egy fiók = egy cég: akinek MÁR van vállalkozása, annak a kezelő
+                    pontot mutatjuk; akinek nincs, a felvitel-CTA-t — sose a rosszat.
+                    Bejelentkezve, amíg az első állapot-lekérés fut (nincs még cache),
+                    semleges skeleton (ne villanjon téves menüpont). Kijelentkezve
+                    mindig a felvitel-CTA (a /vallalkozo flow úgyis beléptet). */}
+                {isSignedIn && hasBusiness === null ? (
+                  <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl" aria-hidden>
+                    <span className="h-8 w-8 shrink-0 rounded-xl bg-surface-alt animate-pulse" />
+                    <span className="h-4 w-44 rounded-md bg-surface-alt animate-pulse" />
+                  </div>
+                ) : isSignedIn && hasBusiness ? (
+                  <Link href="/profil" onClick={close} className={linkClass}>
+                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-pro/10 text-pro text-base">
+                      🏪
+                    </span>
+                    Vállalkozásom
+                    <BizProBadge />
+                  </Link>
+                ) : (
+                  <Link href="/vallalkozo" onClick={close} className={linkClass}>
+                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                      <Icon name="plus" size={16} strokeWidth={2.6} />
+                    </span>
+                    Vidd fel a vállalkozásod
+                  </Link>
+                )}
+                <Link href="/szaknevsor/ajanlas" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <Icon name="send" size={16} strokeWidth={2.4} />
                   </span>
-                  Vállalkozásom
-                  <BizProBadge />
+                  Ajánlj egy magyar vállalkozást
                 </Link>
-              ) : (
-                <Link href="/vallalkozo" onClick={close} className={linkClass}>
+                <Link href="/allasok" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Icon name="plus" size={16} strokeWidth={2.6} />
+                    <Icon name="briefcase" size={16} strokeWidth={2.4} />
                   </span>
-                  Vidd fel a vállalkozásod
+                  Álláshirdetések
                 </Link>
-              )}
-              <Link href="/szaknevsor/ajanlas" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                  <Icon name="send" size={16} strokeWidth={2.4} />
-                </span>
-                Ajánlj egy magyar vállalkozást
-              </Link>
-              <Link href="/allasok" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                  <Icon name="briefcase" size={16} strokeWidth={2.4} />
-                </span>
-                Álláshirdetések
-              </Link>
-              <Link href="/szaknevsor?fav=1" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                  <Icon name="heart" size={16} strokeWidth={2.4} filled={true} />
-                </span>
-                Kedvenceim
-              </Link>
-              <Link href="/sajatjaim" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                  <Icon name="bookmark" size={16} strokeWidth={2.4} />
-                </span>
-                Saját posztjaim
-              </Link>
-              <Link href="/ranglista" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🏆</span>
-                Közösségi ranglista
-              </Link>
-              <Link href="/profil/kinti-pass" onClick={close} className={linkClass}>
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🎟️</span>
-                Kinti Pass (kedvezménykártya)
-              </Link>
+              </CollapsibleSection>
+
+              <CollapsibleSection title="Közösség & Profilom">
+                <Link href="/szaknevsor?fav=1" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <Icon name="heart" size={16} strokeWidth={2.4} filled={true} />
+                  </span>
+                  Kedvenceim
+                </Link>
+                <Link href="/sajatjaim" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <Icon name="bookmark" size={16} strokeWidth={2.4} />
+                  </span>
+                  Saját posztjaim
+                </Link>
+                <Link href="/ranglista" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🏆</span>
+                  Közösségi ranglista
+                </Link>
+                <Link href="/profil/kinti-pass" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🎟️</span>
+                  Kinti Pass (kedvezménykártya)
+                </Link>
+              </CollapsibleSection>
 
               {/* ── Összecsukható szekciók (alapból zárva) ── */}
               <CollapsibleSection title="Toborzás & AI">
