@@ -83,7 +83,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Ezt a becenevet már használják. Válassz másikat." }, { status: 409 });
     }
 
-    await upsertLeaderboardEntry({ clientToken, nickname, score, level, badges, scoreLanguage, scoreCommunity });
+    // A fenti ellenőrzés + írás nem atomi: két egyidejű kérés (más token, azonos
+    // becenév) mindkettő "szabad"-nak látja a nevet, majd a `nickname` egyedi
+    // indexébe (COLLATE NOCASE) az egyik ütközik. Duplikátum így sem jöhet létre —
+    // de a vesztesnek a helyes válasz 409 (foglalt), nem 500 (belső hiba).
+    try {
+      await upsertLeaderboardEntry({ clientToken, nickname, score, level, badges, scoreLanguage, scoreCommunity });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (/UNIQUE/i.test(msg)) {
+        return NextResponse.json({ error: "Ezt a becenevet már használják. Válassz másikat." }, { status: 409 });
+      }
+      throw err;
+    }
     await logAiRateLimit("leaderboard", ipHash);
 
     const rank = await rankForScore("overall", score);

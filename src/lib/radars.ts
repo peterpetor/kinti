@@ -57,6 +57,8 @@ export async function triggerJobAlertRadars(job: {
   description: string;
   location: string;
   cantonCode?: string | null;
+  /** Régi (migráció előtti) sornál hiányozhat → CH-nak vesszük (mindig az volt). */
+  country?: string | null;
   category?: string | null;
 }) {
   try {
@@ -70,9 +72,11 @@ export async function triggerJobAlertRadars(job: {
     const jobText = (job.title + " " + job.description).toLowerCase();
 
     // A kanton elsősorban a strukturált mezőből jön; régi (migráció előtti)
-    // hirdetésnél a szabad-szöveges helyből próbáljuk kitalálni.
+    // hirdetésnél a szabad-szöveges helyből próbáljuk kitalálni. A svájci
+    // PLZ/kanton-feloldó (cantonFromAddress) CSAK CH-állásra hívható — AT/DE/NL
+    // irányítószámok álpozitívat adnának (lásd a PLZ-csapda korábbi eseteit).
     let jobCantonCode = job.cantonCode ?? null;
-    if (!jobCantonCode) {
+    if (!jobCantonCode && (job.country ?? "CH") === "CH") {
       const { cantonFromAddress, matchCantonByName } = await import("./cantons");
       jobCantonCode = (cantonFromAddress(job.location) || matchCantonByName(job.location))?.code ?? null;
     }

@@ -73,7 +73,7 @@ export async function POST(req: Request) {
 
     // Ha az állást most hagyták jóvá, triggerek futtatása a háttérben
     if (table === "jobs" && statusValue === 1) {
-      const jobRow = await getDB().prepare("SELECT id, title, description, location, canton_code, category FROM jobs WHERE id = ?").bind(id).first<{id:string, title:string, description:string, location:string, canton_code:string|null, category:string|null}>();
+      const jobRow = await getDB().prepare("SELECT id, title, description, location, canton_code, country_code, category FROM jobs WHERE id = ?").bind(id).first<{id:string, title:string, description:string, location:string, canton_code:string|null, country_code:string|null, category:string|null}>();
       if (jobRow) {
         // Háttér-értesítések a válasz UTÁN: ctx.waitUntil tartja életben a Workert,
         // különben az edge runtime megszakíthatja a fire-and-forget promise-okat
@@ -93,6 +93,7 @@ export async function POST(req: Request) {
             description: jobRow.description,
             location: jobRow.location,
             cantonCode: jobRow.canton_code,
+            country: jobRow.country_code,
             category: jobRow.category,
           }).catch(err => safeLogError("triggerJobAlertRadars.background", err)),
         );

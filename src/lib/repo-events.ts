@@ -5,6 +5,7 @@ import { getDB } from "./cloudflare";
 import type { KintiEvent, EventFeed } from "./types";
 import { parseIcal, huDateParts } from "./ical";
 import { cantonFromAddress } from "./cantons";
+import { isValidCountry, DEFAULT_COUNTRY } from "./countries";
 import { generateRecurringEvents, GENERATED_SOURCE } from "./event-generator";
 import { fetchInstituteEvents, LISZT_INSTITUTES } from "./chw-events";
 
@@ -40,7 +41,7 @@ interface EventRow {
 
 interface EventFeedRow {
   id: string; url: string; label: string | null; enabled: number;
-  source_id: string; last_synced_at: string | null; last_error: string | null;
+  source_id: string; country_code: string; last_synced_at: string | null; last_error: string | null;
   events_count: number; created_at: string;
 }
 
@@ -78,7 +79,8 @@ export function toEvent(r: EventRow): KintiEvent {
 function toEventFeed(r: EventFeedRow): EventFeed {
   return {
     id: r.id, url: r.url, label: r.label, enabled: r.enabled === 1,
-    sourceId: r.source_id, lastSyncedAt: r.last_synced_at, lastError: r.last_error,
+    sourceId: r.source_id, country: r.country_code ?? "CH",
+    lastSyncedAt: r.last_synced_at, lastError: r.last_error,
     eventsCount: r.events_count, createdAt: r.created_at,
   };
 }
@@ -421,14 +423,17 @@ export async function listEventFeeds(): Promise<EventFeed[]> {
   return results.map(toEventFeed);
 }
 
-export async function createEventFeed(input: { url: string; label: string | null }): Promise<EventFeed | { error: string }> {
+export async function createEventFeed(
+  input: { url: string; label: string | null; country?: string | null },
+): Promise<EventFeed | { error: string }> {
   const url = input.url.trim();
   if (!/^https?:\/\//i.test(url)) return { error: "Az URL http(s):// kezdetű legyen." };
+  const country = isValidCountry(input.country) ? input.country : DEFAULT_COUNTRY;
   const sourceId = await feedSourceId(url);
   const id = crypto.randomUUID();
   try {
-    await getDB().prepare("INSERT INTO event_feeds (id, url, label, enabled, source_id) VALUES (?, ?, ?, 1, ?)")
-      .bind(id, url, input.label ?? null, sourceId).run();
+    await getDB().prepare("INSERT INTO event_feeds (id, url, label, enabled, source_id, country_code) VALUES (?, ?, ?, 1, ?, ?)")
+      .bind(id, url, input.label ?? null, sourceId, country).run();
   } catch (err) {
     const m = err instanceof Error ? err.message : String(err);
     if (/UNIQUE/.test(m)) return { error: "Ez az URL már fel van véve." };
@@ -438,11 +443,17 @@ export async function createEventFeed(input: { url: string; label: string | null
   return row ? toEventFeed(row) : { error: "Mentés után nem volt visszaolvasható." };
 }
 
-export async function updateEventFeed(id: string, patch: { enabled?: boolean; label?: string | null }): Promise<boolean> {
+export async function updateEventFeed(
+  id: string,
+  patch: { enabled?: boolean; label?: string | null; country?: string },
+): Promise<boolean> {
   const sets: string[] = [];
   const binds: unknown[] = [];
   if (typeof patch.enabled === "boolean") { sets.push("enabled = ?"); binds.push(patch.enabled ? 1 : 0); }
   if (patch.label !== undefined) { sets.push("label = ?"); binds.push(patch.label); }
+  if (patch.country !== undefined && isValidCountry(patch.country)) {
+    sets.push("country_code = ?"); binds.push(patch.country);
+  }
   if (!sets.length) return false;
   binds.push(id);
   const res = await getDB().prepare(`UPDATE event_feeds SET ${sets.join(", ")} WHERE id = ?`).bind(...binds).run();
@@ -525,10 +536,15 @@ export async function syncEventFeeds(): Promise<FeedSyncResult[]> {
         const stmt = db.prepare(
           `INSERT OR REPLACE INTO events
              (id, title, event_date, date_day, date_month, date_weekday, start_time,
-              venue, going, tag, color, description, source, canton_code, status, moderation_status,
+              venue, going, tag, color, description, source, country_code, canton_code, status, moderation_status,
               moderation_decided_by, moderation_decision_at, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, 'approved', 1, 'ical-sync', datetime('now'), datetime('now'))`,
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, 'approved', 1, 'ical-sync', datetime('now'), datetime('now'))`,
         );
+        // A svájci PLZ/kanton-feloldó (cantonFromAddress) CSAK CH-forrásra hívható —
+        // AT/DE/NL irányítószámok álpozitívat adnának (lásd a PLZ-csapda korábbi
+        // eseteit). A feed.country_code most már ismert (0119 migráció), ezért
+        // gate-elhető, ahelyett hogy feltétel nélkül minden feedre lefutna.
+        const feedCountry = feed.country_code ?? "CH";
         const batch = future.map((ev) => {
           const { day, month, weekday } = huDateParts(ev.dateISO);
           // URL-biztos ID (NINCS kettőspont — a source_id "ical:..." kettőspontját is cseréljük).
@@ -546,7 +562,8 @@ export async function syncEventFeeds(): Promise<FeedSyncResult[]> {
             "#5b4a8c",
             ev.description?.slice(0, 1000) ?? null,
             feed.source_id,
-            cantonFromAddress(ev.location ?? null)?.code ?? null,
+            feedCountry,
+            feedCountry === "CH" ? cantonFromAddress(ev.location ?? null)?.code ?? null : null,
           );
         });
         await db.batch(batch);

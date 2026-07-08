@@ -4,13 +4,18 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import type { EventFeed } from "@/lib/types";
+import { COUNTRIES, DEFAULT_COUNTRY } from "@/lib/countries";
 import { cn } from "@/lib/cn";
 
 /**
  * Kliens-oldali admin felület az iCal feedek kezeléséhez. Az API:
- *   POST    /api/admin/feeds         { url, label } → add
- *   PATCH   /api/admin/feeds/:id     { enabled?, label? } → toggle / rename
+ *   POST    /api/admin/feeds         { url, label, country } → add
+ *   PATCH   /api/admin/feeds/:id     { enabled?, label?, country? } → toggle / rename / ország
  *   DELETE  /api/admin/feeds/:id     → eseményekkel együtt
+ *
+ * Az ország azért kötelező mező (nem szabad szöveg): a szinkron a kanton-
+ * feloldást (cantonFromAddress) ehhez gate-eli — CSAK CH-forrásnál fut, mert
+ * AT/DE/NL irányítószámok a svájci feloldóval álpozitívat adnának.
  *
  * Sikeres mutáció után `router.refresh()` újraolvassa a szerver-komponensből
  * a friss listát (force-dynamic).
@@ -48,12 +53,12 @@ export function FeedsManager({ initialFeeds }: { initialFeeds: EventFeed[] }) {
     setFeeds((cur) => cur.map((f) => (f.id === id ? { ...f, ...p } : f)));
   }
 
-  async function add(url: string, label: string) {
+  async function add(url: string, label: string, country: string) {
     setError(null);
     const res = await fetch("/api/admin/feeds", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ url, label }),
+      body: JSON.stringify({ url, label, country }),
     });
     const data = (await res.json().catch(() => ({}))) as {
       error?: string;
@@ -88,6 +93,20 @@ export function FeedsManager({ initialFeeds }: { initialFeeds: EventFeed[] }) {
       body: JSON.stringify({ label }),
     });
     if (!res.ok) setError("A címke mentése nem sikerült.");
+  }
+
+  async function changeCountry(id: string, country: string) {
+    const prev = feeds.find((f) => f.id === id)?.country;
+    patchLocal(id, { country });
+    const res = await fetch(`/api/admin/feeds/${id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ country }),
+    });
+    if (!res.ok) {
+      patchLocal(id, { country: prev });
+      setError("Az ország mentése nem sikerült.");
+    }
   }
 
   async function remove(id: string) {
@@ -146,6 +165,7 @@ export function FeedsManager({ initialFeeds }: { initialFeeds: EventFeed[] }) {
                 feed={f}
                 onToggle={(v) => toggle(f.id, v)}
                 onRename={(v) => rename(f.id, v)}
+                onCountryChange={(v) => changeCountry(f.id, v)}
                 onDelete={() => remove(f.id)}
               />
             ))}
@@ -160,19 +180,21 @@ function AddForm({
   onAdd,
   busy,
 }: {
-  onAdd: (url: string, label: string) => void;
+  onAdd: (url: string, label: string, country: string) => void;
   busy: boolean;
 }) {
   const [url, setUrl] = useState("");
   const [label, setLabel] = useState("");
+  const [country, setCountry] = useState(DEFAULT_COUNTRY);
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         if (!url.trim()) return;
-        onAdd(url.trim(), label.trim());
+        onAdd(url.trim(), label.trim(), country);
         setUrl("");
         setLabel("");
+        setCountry(DEFAULT_COUNTRY);
       }}
       className="space-y-2 rounded-card border border-line bg-surface p-4 shadow-card"
     >
@@ -195,6 +217,18 @@ function AddForm({
         maxLength={80}
         className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
+      <label className="block text-[11.5px] font-semibold text-ink-muted">
+        Ország — a helyszín-feloldás ehhez igazodik
+        <select
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+          className="mt-1 w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30"
+        >
+          {COUNTRIES.map((c) => (
+            <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+          ))}
+        </select>
+      </label>
       <button
         type="submit"
         disabled={busy || !url.trim()}
@@ -213,11 +247,13 @@ function FeedRow({
   feed,
   onToggle,
   onRename,
+  onCountryChange,
   onDelete,
 }: {
   feed: EventFeed;
   onToggle: (v: boolean) => void;
   onRename: (v: string) => void;
+  onCountryChange: (v: string) => void;
   onDelete: () => void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -282,6 +318,19 @@ function FeedRow({
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-muted">
+        <label className="flex items-center gap-1">
+          Ország:
+          <select
+            value={feed.country}
+            onChange={(e) => onCountryChange(e.target.value)}
+            className="rounded-md border border-line bg-surface-alt px-1.5 py-0.5 text-[11px] font-semibold text-ink outline-none"
+            title="A helyszín-feloldás (kanton/tartomány) ehhez az országhoz van gate-elve"
+          >
+            {COUNTRIES.map((c) => (
+              <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+            ))}
+          </select>
+        </label>
         <span>
           Utolsó sync: <span className="font-semibold text-ink">{synced}</span>
         </span>

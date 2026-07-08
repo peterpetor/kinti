@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   if (!job || job.moderationStatus !== 1) return { title: "Nem található állás" };
   const employer = await getEmployerById(job.employerId);
   const company = employer?.companyName || "Munkalehetőség";
-  const loc = job.location || (cantonFromAddress(job.location) || matchCantonByName(job.location))?.name || "";
+  const loc = job.location || "";
   const title = `${job.title} — ${company}`;
   const description = `${job.title} · ${company}${loc ? ` · ${loc}` : ""} — magyar munkalehetőség ${countryLocative(job.country ?? "CH")} (Kinti).`;
   const image = "https://kinti.app/icons/og-default.png";

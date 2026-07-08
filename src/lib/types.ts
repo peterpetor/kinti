@@ -162,6 +162,8 @@ export interface EventFeed {
   label: string | null;
   enabled: boolean;
   sourceId: string; // ical:<hash>
+  /** A forrás országa (CH/AT/DE/NL) — a kanton-feloldás ehhez van gate-elve. */
+  country: string;
   lastSyncedAt: string | null;
   lastError: string | null;
   eventsCount: number;
