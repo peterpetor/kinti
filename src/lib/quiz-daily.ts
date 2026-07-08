@@ -33,7 +33,13 @@ export interface QuizState {
   totalDays: number;
   /** Valaha elért legjobb napi eredmény (0-3) — a „Telitalálat" kitűzőhöz. */
   bestScore: number;
+  /** Utolsó ~14 nap (date + score) — a személyes HETI stat fallbackhez, amikor
+   *  még nincs elég közösségi minta a percentilishez. Csak localStorage. */
+  history?: { date: string; score: number }[];
 }
+
+/** Ennyi napnyi eredményt tartunk meg a személyes heti statokhoz (7 + ráhagyás). */
+const HISTORY_CAP = 14;
 
 const DEFAULT_STATE: QuizState = {
   today: null,
@@ -42,6 +48,7 @@ const DEFAULT_STATE: QuizState = {
   totalScore: 0,
   totalDays: 0,
   bestScore: 0,
+  history: [],
 };
 
 /** Mai dátum YYYY-MM-DD (Europe/Zurich-szerű egyszerűsítés). */
@@ -142,6 +149,12 @@ export function recordResult(answers: number[], country: string = "CH"): QuizSta
     else if (diffDays === 0) newStreak = state.streak;
   }
 
+  // Napi eredmény a személyes history-ba (dedup mai napra, utolsó HISTORY_CAP nap).
+  const history = [
+    ...(state.history ?? []).filter((h) => h.date !== today),
+    { date: today, score },
+  ].slice(-HISTORY_CAP);
+
   const next: QuizState = {
     today: {
       date: today,
@@ -154,8 +167,34 @@ export function recordResult(answers: number[], country: string = "CH"): QuizSta
     totalScore: state.totalScore + score,
     totalDays: state.totalDays + 1,
     bestScore: Math.max(state.bestScore ?? 0, score),
+    history,
   };
 
   saveState(next);
   return next;
+}
+
+/**
+ * PURE — személyes HETI statok a history-ból (az utolsó 7 naptári nap, a mai
+ * napot is beleértve). A percentilis fallbackje: amikor még nincs elég közösségi
+ * minta, a saját heti teljesítményt mutatjuk (őszinte, backend nélkül).
+ */
+export function weeklyPersonalStats(
+  history: { date: string; score: number }[] | undefined,
+  today: string = todayKey(),
+): { days: number; accuracyPct: number } {
+  if (!history || history.length === 0) return { days: 0, accuracyPct: 0 };
+  // A mai naptól visszafelé 7 nap ablak (today-6 .. today), string-összevetéssel.
+  // A dátumot kézzel bontjuk (nem `new Date("YYYY-MM-DD")`, ami UTC-t parse-olna
+  // és időzónánként off-by-one lehetne) — a streak.ts mintáját követve.
+  const [ty, tm, td] = today.split("-").map(Number);
+  const fromDt = new Date(ty, tm - 1, td);
+  fromDt.setDate(fromDt.getDate() - 6);
+  const fromKey = `${fromDt.getFullYear()}-${String(fromDt.getMonth() + 1).padStart(2, "0")}-${String(fromDt.getDate()).padStart(2, "0")}`;
+  const inWeek = history.filter((h) => h.date >= fromKey && h.date <= today);
+  const days = inWeek.length;
+  if (days === 0) return { days: 0, accuracyPct: 0 };
+  const correct = inWeek.reduce((s, h) => s + h.score, 0);
+  const accuracyPct = Math.round((correct / (days * 3)) * 100);
+  return { days, accuracyPct };
 }

@@ -9,6 +9,7 @@ import {
   getTodayState,
   recordResult,
   todayKey,
+  weeklyPersonalStats,
   type QuizState,
 } from "@/lib/quiz-daily";
 import { QUIZ_CATEGORY_META, type QuizCategory, type QuizQuestion } from "@/lib/quiz-bank";
@@ -53,7 +54,7 @@ export function KvizGame() {
 
   // ÁLLAPOT 1: ma már játszott → eredmény-képernyő
   if (state.today) {
-    return <ResultScreen state={state} questions={questions} />;
+    return <ResultScreen state={state} questions={questions} country={country} />;
   }
 
   // ÁLLAPOT 2: játék folyamatban
@@ -220,7 +221,15 @@ function QuestionCard({
   );
 }
 
-function ResultScreen({ state, questions }: { state: QuizState; questions: QuizQuestion[] }) {
+function ResultScreen({
+  state,
+  questions,
+  country,
+}: {
+  state: QuizState;
+  questions: QuizQuestion[];
+  country: string;
+}) {
   if (!state.today) return null;
 
   const { score, answers } = state.today;
@@ -261,6 +270,10 @@ function ResultScreen({ state, questions }: { state: QuizState; questions: QuizQ
           })}
         </div>
       </section>
+
+      {/* Heti összevetés: valós anonim percentilis (elég mintától), addig a saját
+          heti statod. Lásd /api/kviz/percentile + weeklyPersonalStats. */}
+      <WeeklyCompareBanner state={state} country={country} score={score} />
 
       {/* Kérdés-áttekintő */}
       <section className="space-y-2">
@@ -320,6 +333,109 @@ function StatCard({ label, value }: { label: string; value: string }) {
     <div className="rounded-card border border-line bg-surface p-3 text-center shadow-card">
       <p className="text-[10.5px] font-bold uppercase tracking-wider text-ink-muted">{label}</p>
       <p className="mt-1 text-[16px] font-extrabold text-ink">{value}</p>
+    </div>
+  );
+}
+
+/** Ország → „a <hol> élők" magyar kifejezés a percentilis-mondatba. */
+const COUNTRY_PHRASE: Record<string, string> = {
+  CH: "a Svájcban élők",
+  AT: "az Ausztriában élők",
+  DE: "a Németországban élők",
+  NL: "a Hollandiában élők",
+};
+
+/**
+ * Heti összevető sáv. Első megnyitáskor (aznap) anonim módon beszámítja a mai
+ * eredményt (POST), és lekéri a heti percentilist; újranyitáskor csak lekéri
+ * (GET). Ha van elég közösségi minta → valós percentilis; ha nincs → a SAJÁT
+ * heti statod (backend-független, sose „reklámozza az ürességet").
+ */
+function WeeklyCompareBanner({
+  state,
+  country,
+  score,
+}: {
+  state: QuizState;
+  country: string;
+  score: number;
+}) {
+  const [pct, setPct] = useState<{ percentile: number | null; total: number } | null>(null);
+  const day = state.today?.date ?? "";
+
+  useEffect(() => {
+    if (!day) return;
+    let cancelled = false;
+    const flagKey = `kinti.quizStat.${day}`;
+    let submitted = false;
+    try {
+      submitted = localStorage.getItem(flagKey) === "1";
+    } catch {
+      /* private mode → mindig POST-olunk (idempotenciát a szerver napi-limit fedi) */
+    }
+
+    (async () => {
+      try {
+        const res = submitted
+          ? await fetch(`/api/kviz/percentile?country=${encodeURIComponent(country)}&score=${score}`)
+          : await fetch(`/api/kviz/percentile`, {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ country, score }),
+            });
+        if (!submitted && res.ok) {
+          try {
+            localStorage.setItem(flagKey, "1");
+          } catch {
+            /* ignore */
+          }
+        }
+        const data = res.ok ? ((await res.json()) as { percentile?: number | null; total?: number }) : null;
+        if (!cancelled) {
+          setPct(data ? { percentile: data.percentile ?? null, total: data.total ?? 0 } : { percentile: null, total: 0 });
+        }
+      } catch {
+        if (!cancelled) setPct({ percentile: null, total: 0 });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [day, country, score]);
+
+  // Töltés közben low-key placeholder (ne ugráljon a layout).
+  if (pct === null) {
+    return (
+      <div className="rounded-card border border-line bg-surface px-4 py-3 text-center text-[12px] text-ink-faint shadow-card">
+        Heti összevetés…
+      </div>
+    );
+  }
+
+  // Van elég közösségi minta → valós, anonim percentilis.
+  if (pct.percentile !== null) {
+    const phrase = COUNTRY_PHRASE[country] ?? "a közösség";
+    return (
+      <div className="rounded-card border-2 border-primary/30 bg-primary-soft/60 px-4 py-3.5 text-center shadow-card">
+        <p className="text-[13.5px] font-extrabold leading-snug text-ink">
+          📊 Ezen a héten {phrase} <span className="text-primary">{pct.percentile}%-ánál</span> jobb eredményt értél el!
+        </p>
+        <p className="mt-1 text-[11px] text-ink-muted">heti {pct.total} játék alapján · anonim</p>
+      </div>
+    );
+  }
+
+  // Nincs elég minta → SAJÁT heti stat (őszinte fallback).
+  const weekly = weeklyPersonalStats(state.history, day);
+  return (
+    <div className="rounded-card border border-line bg-surface px-4 py-3.5 text-center shadow-card">
+      <p className="text-[13px] font-extrabold text-ink">
+        📅 Ezen a héten: {weekly.days}/7 nap · {weekly.accuracyPct}% pontosság
+      </p>
+      <p className="mt-1 text-[11px] text-ink-muted">
+        A közösségi rangsor hamarosan — gyűlik a heti mezőny.
+      </p>
     </div>
   );
 }

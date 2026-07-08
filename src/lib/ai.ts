@@ -216,6 +216,7 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "lead-request-day": { windowHours: 24, maxPerWindow: 5 }, // Napi cap: max 5/IP/24h
   "job-apply": { windowHours: 1, maxPerWindow: 10 }, // Álláspályázat spam / employer-email-flood védelem
   "businesses-list": { windowHours: 1, maxPerWindow: 15 }, // Tömeges szaknévsor-dump scrape-védelem (a valódi lista SSR-ből jön, usert nem érint)
+  "kviz-stat": { windowHours: 1, maxPerWindow: 10 }, // Napi kvíz anonim pont-beküldés — hisztogram-flood védelem (napi 1 legit/eszköz)
 };
 
 /**
