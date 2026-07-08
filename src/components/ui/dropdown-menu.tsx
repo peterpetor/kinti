@@ -460,6 +460,58 @@ export function DropdownMenu() {
                 </Link>
               </CollapsibleSection>
 
+              {/* ── Közösségi média — kövess minket a platformokon ─────────── */}
+              <CollapsibleSection title="Kövess minket">
+                <a
+                  href="https://www.facebook.com/profile.php?id=61591833836890"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                  className={linkClass}
+                >
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#1877F2]/10 text-[#1877F2]">
+                    <Icon name="facebook" size={16} strokeWidth={2.2} />
+                  </span>
+                  Facebook
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/kintiapp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                  className={linkClass}
+                >
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#0A66C2]/10 text-[#0A66C2]">
+                    <Icon name="linkedin" size={16} strokeWidth={2.2} />
+                  </span>
+                  LinkedIn
+                </a>
+                <a
+                  href="https://www.youtube.com/@kintiapp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                  className={linkClass}
+                >
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#FF0000]/10 text-[#FF0000]">
+                    <Icon name="youtube" size={16} strokeWidth={2.2} />
+                  </span>
+                  YouTube
+                </a>
+                <a
+                  href="https://www.tiktok.com/@kintiapp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                  className={linkClass}
+                >
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#FE2C55]/10 text-[#FE2C55]">
+                    <Icon name="tiktok" size={16} strokeWidth={2.2} />
+                  </span>
+                  TikTok
+                </a>
+              </CollapsibleSection>
+
               <CollapsibleSection title="Jogi & Segítség">
                 <Link href="/segitseg" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
