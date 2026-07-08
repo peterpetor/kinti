@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { heuristicParseSearch, type HeuristicCategory } from "@/lib/search-heuristic";
 
 /**
  * SmartSearchBar — EGY kereső, ami kétféleképp dolgozik:
@@ -28,6 +29,10 @@ interface Props {
   onApplyCategory: (id: string) => void;
   onApplyCanton: (code: string) => void;
   onApplyQuery: (q: string) => void;
+  /** A Szaknévsor kategóriái — a kliens-oldali heurisztika ezekre képez le
+   *  (pl. „fodrász" → Fodrász), hogy a gyakori „kat + hely" keresés AI-hívás
+   *  nélkül feloldódjon. Üresen hagyva mindig az AI-hoz fordulunk. */
+  categories?: HeuristicCategory[];
   placeholder?: string;
   className?: string;
 }
@@ -38,6 +43,7 @@ export function SmartSearchBar({
   onApplyCategory,
   onApplyCanton,
   onApplyQuery,
+  categories,
   placeholder = "Mit keresel? Pl. villanyszerelő Zürichben",
   className,
 }: Props) {
@@ -53,6 +59,22 @@ export function SmartSearchBar({
       setNote(null);
       return;
     }
+
+    // 1) Kliens-oldali heurisztika ELŐSZŐR: a gyakori „kategória + helyszín" mintát
+    //    (pl. „fodrász Zürich", „orvos Bécsben") helyben, azonnal, AI-hívás nélkül
+    //    oldjuk fel. Csak a bonyolultabb, természetes nyelvi kérés jut az AI-hoz —
+    //    így a hálózati késleltetés és a szigorú AI-kvóta (20/óra/IP) megspórolható.
+    const heur = heuristicParseSearch(q, prefCountry ?? DEFAULT_COUNTRY, categories ?? []);
+    if (heur) {
+      if (heur.categoryId) onApplyCategory(heur.categoryId);
+      if (heur.cantonCode) onApplyCanton(heur.cantonCode);
+      onApplyQuery(heur.keywords);
+      setError(null);
+      setNote(heur.explanation);
+      return;
+    }
+
+    // 2) Csak ha a heurisztika bizonytalan (természetes nyelv) → valódi AI-hívás.
     setBusy(true);
     setError(null);
     setNote(null);
