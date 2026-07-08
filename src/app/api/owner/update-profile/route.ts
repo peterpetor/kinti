@@ -4,6 +4,7 @@ import { getBusinessByOwner, updateBusinessProfile } from "@/lib/repo";
 import { isSwissAddress } from "@/lib/cantons";
 import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
 import { isValidAccentColor } from "@/lib/business-branding";
+import { BUSINESS_LIMITS } from "@/lib/business";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -140,6 +141,30 @@ export async function POST(req: Request) {
     accentColor = null; // explicit törlés / nem-PRO / érvénytelen
   }
 
+  // Kinti Pass elfogadóhely — CSAK Szaknévsor PRO (business.featured) állíthatja be,
+  // ugyanaz a szerver-oldali gate, mint a manage-token route-on (business-manage-form.tsx
+  // párja). Ha a mező hiányzik a payloadból, megőrizzük a korábbi értéket (ne törölje
+  // némán egy olyan mentés, ami csak pl. a telefonszámot módosítja).
+  let kintiPassActive: boolean;
+  let kintiPassOffer: string | null;
+  if (body.kintiPassActive === undefined) {
+    kintiPassActive = business.kintiPassActive ?? false;
+    kintiPassOffer = business.kintiPassOffer ?? null;
+  } else if (business.featured) {
+    kintiPassActive = body.kintiPassActive === true;
+    const offerRaw = typeof body.kintiPassOffer === "string" ? body.kintiPassOffer.trim() : "";
+    if (offerRaw.length > BUSINESS_LIMITS.passOfferMax) {
+      return NextResponse.json(
+        { error: `A Kinti Pass ajánlat legfeljebb ${BUSINESS_LIMITS.passOfferMax} karakter lehet.` },
+        { status: 400 },
+      );
+    }
+    kintiPassOffer = kintiPassActive ? offerRaw || null : null;
+  } else {
+    kintiPassActive = false; // nem-PRO → nem állítható be
+    kintiPassOffer = null;
+  }
+
   const ok = await updateBusinessProfile(business.id, userId, {
     name,
     phone: phone || null,
@@ -152,6 +177,8 @@ export async function POST(req: Request) {
     yearsHere,
     languages,
     accentColor,
+    kintiPassActive,
+    kintiPassOffer,
   });
 
   if (!ok) {

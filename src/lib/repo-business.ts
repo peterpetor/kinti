@@ -111,6 +111,10 @@ export interface UpdateBusinessProfileInput {
   categoryLabel: string | null; openText: string | null; workingHours?: string | null;
   socialLinks?: string | null; yearsHere?: number | null; languages?: string[] | null;
   accentColor?: string | null;
+  /** Kinti Pass elfogadóhely be/ki (CSAK Szaknévsor PRO — a route gate-eli). */
+  kintiPassActive?: boolean;
+  /** Kinti Pass ajánlat-szöveg (null = törlés). */
+  kintiPassOffer?: string | null;
 }
 
 export interface UpdateBusinessFields {
@@ -327,13 +331,15 @@ export async function updateBusinessProfile(
   const res = await getDB()
     .prepare(
       `UPDATE businesses SET name=?,phone=?,blurb=?,address=?,category_label=?,open_text=?,
-       working_hours=?,social_links=?,years_here=?,languages=?,accent_color=?,updated_at=datetime('now')
+       working_hours=?,social_links=?,years_here=?,languages=?,accent_color=?,
+       kinti_pass_active=?,kinti_pass_offer=?,updated_at=datetime('now')
        WHERE id=? AND owner_user_id=?`,
     )
     .bind(input.name, input.phone, input.blurb, input.address, input.categoryLabel,
       input.openText, input.workingHours ?? null, input.socialLinks ?? null,
       input.yearsHere ?? null, input.languages ? JSON.stringify(input.languages) : null,
       input.accentColor ?? null,
+      input.kintiPassActive ? 1 : 0, input.kintiPassOffer ?? null,
       businessId, ownerUserId)
     .run();
   return (res.meta.changes ?? 0) > 0;

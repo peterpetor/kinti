@@ -35,6 +35,9 @@ export interface ProfileEditorProps {
   /** Valós értékelés az élő előnézethez (ne hardcode-olt 5.0 / 12 legyen). */
   initialRating?: number;
   initialReviews?: number;
+  /** Kinti Pass elfogadóhely — CSAK Szaknévsor PRO (isFeatured) állíthatja be. */
+  initialKintiPassActive?: boolean;
+  initialKintiPassOffer?: string | null;
 }
 
 type Phase = "idle" | "saving" | "success" | "error";
@@ -56,9 +59,13 @@ export function ProfileEditor({
   initialAccentColor,
   initialRating = 0,
   initialReviews = 0,
+  initialKintiPassActive = false,
+  initialKintiPassOffer = null,
   isFeatured,
 }: ProfileEditorProps & { isFeatured?: boolean }) {
   const [accentColor, setAccentColor] = useState(initialAccentColor ?? "");
+  const [kintiPassActive, setKintiPassActive] = useState(initialKintiPassActive);
+  const [kintiPassOffer, setKintiPassOffer] = useState(initialKintiPassOffer ?? "");
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState(initialPhone ?? "");
   const [blurb, setBlurb] = useState(initialBlurb ?? "");
@@ -163,6 +170,13 @@ export function ProfileEditor({
           yearsHere: yearsHere ? parseInt(yearsHere) : null,
           languages,
           accentColor: accentColor || null,
+          // Kinti Pass mezőket CSAK PRO-nak küldjük (a szerver úgyis gate-eli).
+          ...(isFeatured
+            ? {
+                kintiPassActive,
+                kintiPassOffer: kintiPassActive ? kintiPassOffer || null : null,
+              }
+            : {}),
         }),
       });
 
@@ -511,6 +525,62 @@ export function ProfileEditor({
               )}
             </div>
           </div>
+        </section>
+
+        {/* Kinti Pass — digitális kedvezménykártya elfogadóhely (Szaknévsor PRO).
+            A business-manage-form.tsx (token-alapú kezelő) párja — eddig CSAK ott
+            volt elérhető, a Clerk-es /profil dashboardon hiányzott. */}
+        <section className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
+          <div className="flex items-center justify-between border-b border-line pb-2 mb-1">
+            <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted flex items-center gap-1.5">
+              🎟️ Kinti Pass elfogadóhely
+              {!isFeatured && (
+                <span className="ml-1 rounded-full bg-pro px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-white">PRO</span>
+              )}
+            </h3>
+          </div>
+          {isFeatured ? (
+            <>
+              <label className="flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={kintiPassActive}
+                  onChange={(e) => setKintiPassActive(e.target.checked)}
+                  className="mt-0.5 h-5 w-5 shrink-0 accent-primary"
+                />
+                <span className="text-[13px] leading-snug text-ink-muted">
+                  <strong className="text-ink">Kinti Pass Elfogadóhely vagyok.</strong> A Kinti
+                  felhasználói digitális kártyát mutathatnak fel nálad — te pedig kedvezményt adsz
+                  nekik. A profilod arany „Kinti Pass" jelvényt kap a Szaknévsorban, és megjelenik a
+                  „Csak Kinti Pass helyek" szűrőben.
+                </span>
+              </label>
+              {kintiPassActive && (
+                <div className="border-t border-line/60 pt-3">
+                  <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+                    Mit kínálsz a Kinti felhasználóknak?
+                  </label>
+                  <input
+                    type="text"
+                    value={kintiPassOffer}
+                    onChange={(e) => setKintiPassOffer(e.target.value)}
+                    placeholder="Pl. 10% kedvezmény minden főételre"
+                    maxLength={120}
+                    className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                  />
+                  <p className="mt-1 text-[11.5px] leading-snug text-ink-faint">
+                    Ez a szöveg jelenik meg a profilodon és a találati kártyádon. Az ajánlatot te
+                    adod és te váltod be — a Kinti csak megjeleníti.
+                  </p>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex items-center gap-2 rounded-[12px] border border-dashed border-pro/40 bg-pro/5 px-3 py-2 text-[12px] font-semibold text-ink-muted">
+              <Icon name="lock" size={13} className="shrink-0 text-pro" />
+              Kedvezmény-kínálás a Kinti Pass tagoknak a Szaknévsor PRO-val.
+            </div>
+          )}
         </section>
 
         {/* Mentés visszajelzés */}

@@ -436,6 +436,8 @@ async function OwnerDashboard({
         initialAccentColor={business.accentColor ?? null}
         initialRating={business.rating}
         initialReviews={business.reviews}
+        initialKintiPassActive={business.kintiPassActive}
+        initialKintiPassOffer={business.kintiPassOffer}
         isFeatured={business.featured}
       />
 
