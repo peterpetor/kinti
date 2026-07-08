@@ -510,6 +510,43 @@ const CITY = {
   // 2026-07-07 bővítés (21. kör) — nemetorszagi-magyarok.de Drupal JSON:API
   // (jsonapi/node/szolgaltatok, 823 valódi bejegyzés) — pontos utcacímes találatok:
   "pfarrkirchen": ["BY", 48.4167, 12.9333],
+  // 2026-07-08 bővítés (22. kör) — arkadasi.hu/belgium-hollandia-luxemburg +
+  // szaknevsor.hollandhirek.nl (Directorist REST API, saját geokóddal) — NL volt
+  // a leggyengébb ország (67 cég) és 0 orvos/fogorvos-eltolódás nélküli tartomány;
+  // Flevoland/Friesland eddig üres/gyér tartományok is bővültek:
+  "wateringen": ["ZH", 52.0167, 4.2667],
+  "veenendaal": ["UT", 52.0382, 5.5363],
+  "amstelveen": ["NH", 52.3014, 4.8687],
+  "zaandam": ["NH", 52.4396, 4.8236],
+  "bergen op zoom": ["NB", 51.4948, 4.2897],
+  "bosschenhoofd": ["NB", 51.5667, 4.5333],
+  "nagele": ["FL", 52.6389, 5.7256],
+  "koudum": ["FR", 52.9167, 5.4667],
+  "maastricht": ["LI", 50.8514, 5.6910],
+  "zwolle": ["OV", 52.5090, 6.0944],
+  // 2026-07-08 bővítés (23. kör) — arkadasi.hu/svajc: CH „bolt" (élelmiszer) kategória
+  // volt a legalulreprezentáltabb az 5 prioritás-kategória közül (1 db a 182-ből):
+  "deitingen": ["SO", 47.2167, 7.6167],
+  "widen": ["AG", 47.2967, 8.4192],
+  "salez": ["SG", 47.1667, 9.4667],
+  "wädenswil": ["ZH", 47.2297, 8.6725],
+  "waedenswil": ["ZH", 47.2297, 8.6725],
+  "horgenberg": ["ZH", 47.2578, 8.5987],
+  // 2026-07-08 bővítés (24. kör) — arkadasi.hu/ausztria-_liechtenstein: AT fodrász-
+  // aránya volt a legalacsonyabb a 4 ország közül (6/280); fodrászt/éttermet nem
+  // találtam ÚJ, ellenőrizhető cím alatt (a legtöbb arkadasi-jelölt már bent volt
+  // korábbi körökből) — bolt+szépség kategóriában maradt valódi, új tétel:
+  "steyr": ["OOE", 48.0453, 14.4211],
+  // 2026-07-08 bővítés (25. kör) — nemetorszagi-magyarok.de JSON:API (Drupal
+  // jsonapi/node/szolgaltatok) TELJES lapozása (99 bejegyzés — a korábban
+  // feljegyzett "823" elavult/téves szám volt) — a fodrász/étterem/bolt
+  // kategóriák eddig alig lettek innen merítve (a korábbi körök inkább
+  // orvos/ügyvéd/fogorvos-ra fókuszáltak ugyanebből a forrásból):
+  "höhenkirchen": ["BY", 48.0333, 11.6833],
+  "ittlingen": ["BW", 49.1967, 8.9333],
+  "büchlberg": ["BY", 48.6167, 13.5667],
+  "muhr am see": ["BY", 49.1667, 10.8500],
+  "bad wörishofen": ["BY", 48.0000, 10.6000],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
