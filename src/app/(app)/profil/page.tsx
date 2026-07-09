@@ -5,6 +5,7 @@ import { LogoUploader } from "@/components/views/logo-uploader";
 import { OwnerDraftForm } from "@/components/views/owner-draft-form";
 import { ProfileEditor } from "@/components/views/profile-editor";
 import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
+import { B2bTeaser } from "@/components/views/b2b-teaser";
 import { LeadInbox } from "@/components/views/lead-inbox";
 import { ReviewReplyForm } from "@/components/views/review-reply-form";
 import { InstallPrompt } from "@/components/install-prompt";
@@ -18,7 +19,7 @@ import {
   DropdownMenu,
   KintiLogo,
 } from "@/components/ui";
-import { getBusinessByOwner, getEmployerByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getLeadCounts, FREE_LEADS_PER_MONTH, getTopSearchTerms } from "@/lib/repo";
+import { getBusinessByOwner, getEmployerByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getLeadCounts, FREE_LEADS_PER_MONTH, getTopSearchTerms, countOpenB2bProjects } from "@/lib/repo";
 import type { LeadCard } from "@/components/views/lead-inbox";
 import { mediaUrl } from "@/lib/media";
 import { handleFromId } from "@/lib/handle";
@@ -254,6 +255,9 @@ async function OwnerDashboard({
   // Analytics: top keresőszavak ("honnan jönnek") — PRO.
   const topSearchTerms = business.featured ? await getTopSearchTerms(business.id) : [];
 
+  // B2B Hub marketing-teaser: nyitott projektek száma (a részletek zártak).
+  const b2bOpenCount = await countOpenB2bProjects();
+
   const { stats } = data;
   const total14 = stats.trend.reduce((sum, p) => sum + p.views, 0);
   const trendData = stats.trend.map((p) => p.views);
@@ -396,6 +400,10 @@ async function OwnerDashboard({
           />
         </div>
       )}
+
+      {/* B2B Hub — zárt projektpiac (PRO perk). A teaser csak a nyitott projektek
+          SZÁMÁT mutatja; a részletekhez PRO kell (a /b2b maga kapuzza). */}
+      <B2bTeaser count={b2bOpenCount} isPro={Boolean(isPro)} />
 
 
       {/* Egy cég, két kapcsoló: ha még nincs Munkáltatói profil, felkínáljuk az

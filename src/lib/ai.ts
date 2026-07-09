@@ -217,6 +217,7 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "job-apply": { windowHours: 1, maxPerWindow: 10 }, // Álláspályázat spam / employer-email-flood védelem
   "businesses-list": { windowHours: 1, maxPerWindow: 15 }, // Tömeges szaknévsor-dump scrape-védelem (a valódi lista SSR-ből jön, usert nem érint)
   "kviz-stat": { windowHours: 1, maxPerWindow: 10 }, // Napi kvíz anonim pont-beküldés — hisztogram-flood védelem (napi 1 legit/eszköz)
+  "b2b-create": { windowHours: 1, maxPerWindow: 10 }, // B2B projekt-kiírás — anti-spam (a modul már PRO-gated: fizető cég/IP/óra)
   "biz-list": { windowHours: 1, maxPerWindow: 60 },   // Bulk szaknévsor-lista JSON — anti-hammer (böngésző-cache 120s miatt valós user ritkán üti; NAT-tűrő)
   "biz-contact": { windowHours: 1, maxPerWindow: 40 }, // Telefonszám-felfedés (reveal) — a botok tömeges szám-leszedése ellen (valós user ritkán kér 40+ számot/óra)
 };
