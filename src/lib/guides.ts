@@ -1176,6 +1176,48 @@ export const GUIDES_DE: Guide[] = [
     ],
     sources: [{ label: "make-it-in-germany.com — Wohnung", url: "https://www.make-it-in-germany.com/" }, { label: "Deutscher Mieterbund", url: "https://www.mieterbund.de/" }],
   },
+  {
+    slug: "de-csaladi-potlek",
+    title: "Kindergeld (családi pótlék) Németországban",
+    summary:
+      "A német családi pótlék (Kindergeld) minden Németországban adóköteles szülőnek járhat — a jogosultságot a lakóhely és a munkaviszony alapozza meg, nem az állampolgárság.",
+    icon: "users",
+    sections: [
+      {
+        heading: "Mi az a Kindergeld és ki jogosult rá?",
+        body: [
+          "A Kindergeld a német családi pótlék, amelyet a gyermek után havonta fizetnek. Általában az a szülő jogosult rá, aki Németországban él és adóköteles (bejelentett lakóhely + korlátlan adókötelezettség), vagy itt dolgozik. EU-állampolgárként magyarként is igényelheted.",
+          "Egy gyermek után jellemzően csak egy országból jár családi támogatás; ha Magyarországon is kapnál, a két rendszer közötti különbözetet koordinálják. Ezt a Familienkasse vizsgálja.",
+        ],
+      },
+      {
+        heading: "Szükséges dokumentumok magyar igénylőknek",
+        bullets: [
+          "A gyermek(ek) nemzetközi születési anyakönyvi kivonata",
+          "Házassági anyakönyvi kivonat (ha releváns)",
+          "Német lakcímbejelentő (Anmeldung / Meldebescheinigung)",
+          "Adóazonosító (steuerliche Identifikationsnummer) — a tiéd és a gyermeké",
+          "Igazolás arról, kaptok-e Magyarországon családi támogatást (a koordinációhoz)",
+        ],
+      },
+      {
+        heading: "Hogyan nyújtsd be a kérelmet?",
+        body: [
+          "A kérelmet (Antrag auf Kindergeld) a lakóhelyed szerinti Familienkasse felé kell benyújtani, plusz az Anlage Kind mellékletet gyermekenként. Ma már online is intézhető a Bundesagentur für Arbeit felületén.",
+          "A nemzetközi anyakönyvi kivonatokat érdemes előre beszerezni — ez a leggyakoribb csúszás oka.",
+        ],
+      },
+      {
+        heading: "Mennyi idő, és mire figyelj?",
+        body: [
+          "Az ügyintézés jellemzően néhány hét, de EU-s koordinációnál hosszabb is lehet. Visszamenőleg csak korlátozottan igényelhető, ezért a jogosultság kezdetétől mielőbb add be. A pontos, aktuális összegeket mindig a hivatalos oldalon ellenőrizd.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Familienkasse (Bundesagentur für Arbeit) — Kindergeld", url: "https://www.arbeitsagentur.de/familie-und-kinder/kindergeld" },
+    ],
+  },
 ];
 
 export const GUIDES_NL: Guide[] = [
@@ -1280,6 +1322,14 @@ export function getGuide(slug: string): Guide | undefined {
   return GUIDES.find((g) => g.slug === slug);
 }
 
+/** A cikk országa a slug-előtagból (at-/de-/nl-, egyébként CH). */
+export function guideCountry(slug: string): "CH" | "AT" | "DE" | "NL" {
+  if (slug.startsWith("at-")) return "AT";
+  if (slug.startsWith("de-")) return "DE";
+  if (slug.startsWith("nl-")) return "NL";
+  return "CH";
+}
+
 // ---------------------------------------------------------------------------
 // Belső linkelés: Tudásbázis ↔ Szaknévsor (SEO + konverzió).
 // A cikk-slug → kapcsolódó Szaknévsor-kategóriák; az {id} a /szaknevsor?cat=<id>
@@ -1361,6 +1411,7 @@ const GUIDE_TOPIC: Record<string, string> = {
   "de-bankszamla": "bankszamla",
   "nl-bankszamla": "bankszamla",
   "at-nyugdij": "ahv-nyugdij",
+  "de-csaladi-potlek": "csaladi-potlek",
   "at-lakasberles": "lakasberles",
   "de-lakasberles": "lakasberles",
   "nl-lakasberles": "lakasberles",

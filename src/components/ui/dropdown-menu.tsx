@@ -309,12 +309,6 @@ export function DropdownMenu() {
                   Tudásbázis
                 </Link>
                 )}
-                <Link href="/tudastar" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Icon name="document" size={16} strokeWidth={2.4} />
-                  </span>
-                  Tudástár — expat útmutatók
-                </Link>
               </CollapsibleSection>
 
               <CollapsibleSection title="Pénzügyek & Kalkulátorok">
