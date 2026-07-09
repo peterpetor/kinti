@@ -14,6 +14,7 @@ import {
   benchDefaultRegion, benchDefaultSalary, benchDefaultRent,
 } from "./region-util";
 import { BENCHMARK_INDUSTRIES } from "@/lib/benchmark-meta";
+import { RemittanceAffiliateCta } from "@/components/views/remittance-affiliate-cta";
 
 const INDUSTRIES: readonly string[] = BENCHMARK_INDUSTRIES;
 const PERIODS = [
@@ -451,6 +452,9 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
                 {salaryByExp.length > 0 && <SalaryCalculator salaryByExp={salaryByExp} country={country} />}
                 {/* Email értesítés */}
                 <AlertSubscription defaultIndustry={topIndustry?.industry} defaultAvg={topIndustry?.avg_salary} turnstileSiteKey={turnstileSiteKey} country={country} />
+                {/* Kontextus-tudatos ajánló: a kint keresett bért haza is kell utalni →
+                    a banki árfolyam-rés a szivárgás. Wise referral (jelölve). */}
+                <RemittanceAffiliateCta currency={cur} />
               </div>
             ) : (
               rentStats.length === 0 ? (
