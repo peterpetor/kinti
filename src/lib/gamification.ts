@@ -17,12 +17,11 @@ import type { MyPostEntry, PostType } from "./my-posts";
 const XP_BY_TYPE: Record<PostType, number> = {
   business: 50, // vállalkozás regisztrálása — a legnagyobb hozzájárulás
   review: 20, // vélemény írása
-  event: 10, // esemény szervezése
 };
 
 /** Egy kitűző mércéje: poszt-számláló, összpont, streak, kvíz, kedvencek stb. */
 export type BadgeMetric =
-  | "total" | "review" | "event" | "business" | "points"
+  | "total" | "review" | "business" | "points"
   | "streak" | "quizPerfect" | "quizDays" | "appInstalled" | "favorites" | "referrals";
 
 export interface BadgeDef {
@@ -58,9 +57,7 @@ export const BADGES: BadgeDef[] = [
   // Közösségi hozzájárulás
   { id: "early_adopter", label: "Úttörő", icon: "🚀", threshold: 1, countOf: "total" },
   { id: "first_voice", label: "Első szó", icon: "⭐", threshold: 1, countOf: "review" },
-  { id: "host", label: "Házigazda", icon: "📅", threshold: 1, countOf: "event" },
   { id: "entrepreneur", label: "Vállalkozó", icon: "🏪", threshold: 1, countOf: "business" },
-  { id: "event_master", label: "Programszervező", icon: "🎉", threshold: 5, countOf: "event" },
   { id: "business_booster", label: "Cégépítő", icon: "🏗️", threshold: 3, countOf: "business" },
   { id: "pro_reviewer", label: "Profi véleményező", icon: "🏆", threshold: 5, countOf: "review" },
   { id: "super_contributor", label: "Oszlop", icon: "💎", threshold: 10, countOf: "total" },
@@ -137,7 +134,6 @@ function metricValue(
   switch (metric) {
     case "total": return ctx.total;
     case "review":
-    case "event":
     case "business": return ctx.countsByType[metric];
     case "points": return ctx.points;
     case "streak": return ctx.extras.streakLongest ?? 0;
@@ -160,7 +156,7 @@ export function computeGamification(
   bonusXp = 0,
   extras: GamificationExtras = {},
 ): GamificationStats {
-  const countsByType: Record<PostType, number> = { event: 0, review: 0, business: 0 };
+  const countsByType: Record<PostType, number> = { review: 0, business: 0 };
   let points = Math.max(0, Math.round(bonusXp));
   for (const p of posts) {
     if (p.type in countsByType) {

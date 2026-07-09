@@ -17,9 +17,7 @@ import {
   getEmailUsageStats,
   getFeatureUsageStats,
   listOpenReports,
-  listPendingEvents,
   listBusinessesForAdmin,
-  listEventsForAdmin,
 } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -38,7 +36,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
   // Vállalkozás-lista lapozása (100/oldal): ?p=2 → második 100, stb.
   const bizPage = Math.max(1, parseInt(searchParams?.p ?? "1", 10) || 1);
 
-  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, pendingEvents, businesses, events] =
+  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, businesses] =
     await Promise.all([
       getAdminStats(country),
       getAdminTrends(),
@@ -46,9 +44,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
       getEmailUsageStats(),
       getFeatureUsageStats(7),
       listOpenReports(),
-      listPendingEvents(country),
       listBusinessesForAdmin(country, bizPage),
-      listEventsForAdmin(country),
     ]);
 
   const fmt = (n: number) => n.toLocaleString("hu-HU");
@@ -83,7 +79,6 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
       {/* Stats */}
       <section className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Stat label="Vállalkozás" value={stats.businesses} sub={`${stats.businessesVerified} verified`} />
-        <Stat label="Esemény" value={stats.eventsApproved} sub="jóváhagyva" />
         <Stat label="Vélemény" value={stats.reviews} />
         <Stat label="Push" value={stats.pushSubscriptions} sub="feliratkozó" />
         <Stat label="Állás" value={stats.jobs} sub="aktív" />
@@ -266,45 +261,6 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
         )}
       </section>
 
-      {/* Pending events */}
-      <section className="space-y-2">
-        <h2 className="text-[14px] font-extrabold text-ink">
-          Jóváhagyásra váró események ({pendingEvents.length}) · {countryName}
-        </h2>
-        {pendingEvents.length === 0 ? (
-          <Empty label="Nincs várakozó esemény." />
-        ) : (
-          <div className="space-y-2">
-            {pendingEvents.map((e) => (
-              <div key={e.id} className="rounded-card border border-line bg-surface p-3 shadow-card">
-                <p className="text-[13.5px] font-bold text-ink">{e.title}</p>
-                <p className="mt-0.5 text-[11.5px] text-ink-muted">
-                  📅 {e.eventDate ?? "?"}
-                  {e.startTime ? ` ${e.startTime}` : ""}
-                  {e.venue ? ` · 📍 ${e.venue}` : ""}
-                  {e.submitterEmail ? ` · ${e.submitterEmail}` : ""}
-                </p>
-                {e.token && (
-                  <div className="mt-2 flex gap-2">
-                    <a
-                      href={`/api/events/moderate/${e.token}?action=approve`}
-                      className="inline-flex items-center gap-1 rounded-pill bg-primary px-3 py-1 text-[11.5px] font-bold text-white"
-                    >
-                      ✅ Jóváhagyás
-                    </a>
-                    <a
-                      href={`/api/events/moderate/${e.token}?action=reject`}
-                      className="inline-flex items-center gap-1 rounded-pill bg-accent px-3 py-1 text-[11.5px] font-bold text-white"
-                    >
-                      ❌ Elutasítás
-                    </a>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
 
       {/* Businesses + verify toggle + delete — lapozva (100/oldal) */}
       <section className="space-y-2">
@@ -374,18 +330,6 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
         <Pager current={businesses.page} pages={businesses.pages} country={country} />
       </section>
 
-      {/* Események — törlés (a status független) */}
-      <section className="space-y-2">
-        <h2 className="text-[14px] font-extrabold text-ink">
-          Események — törlés ({events.length}) · {countryName}
-        </h2>
-        {events.length === 0 ? (
-          <Empty label="Nincs esemény." />
-        ) : (
-          <ContentList items={events} type="events" />
-        )}
-      </section>
-
 
       {/* Egyéb admin linkek */}
       <section className="space-y-2 border-t border-line pt-4">
@@ -423,12 +367,6 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
           </Link>
 
           <Link
-            href="/admin/feeds"
-            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
-          >
-            <Icon name="calendar" size={13} strokeWidth={2.4} /> Esemény-feedek (iCal/RSS)
-          </Link>
-          <Link
             href="/admin/claims"
             className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
           >
@@ -450,37 +388,6 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
           <ReindexSearchButton />
         </div>
       </section>
-    </div>
-  );
-}
-
-function ContentList({
-  items,
-  type,
-}: {
-  items: { id: string; title: string; meta: string | null; createdAt: string | null; manageToken: string | null }[];
-  type: "events";
-}) {
-  return (
-    <div className="space-y-1.5">
-      {items.map((it) => (
-        <div key={it.id} className="flex items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card">
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-bold text-ink">{it.title}</p>
-            <p className="truncate text-[11px] text-ink-muted">
-              {it.meta ?? ""}
-              {it.createdAt ? ` · ${fmtAgo(it.createdAt)}` : ""}
-            </p>
-          </div>
-          <AdminCopyManageButton type={type} manageToken={it.manageToken} />
-          <AdminDeleteButton
-            type={type}
-            id={it.id}
-            small
-            confirmText={`Biztos törlöd: "${it.title}"?`}
-          />
-        </div>
-      ))}
     </div>
   );
 }

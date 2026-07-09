@@ -15,9 +15,8 @@ import { isImmersiveRoute } from "@/lib/immersive-routes";
  * TabBar — alsó, lebegő üveg-navigáció. Stabil fülek, auth-független label:
  *   1) Főoldal    — dashboard
  *   2) Szaknévsor — vállalkozás-kereső
- *   3) Közösség   — események (alfülekkel)
- *   4) Állások    — álláshirdetések / munkáltató
- *   5) Iránytű    — ingyenes bér- és lakbér-benchmark
+ *   3) Állások    — álláshirdetések / munkáltató
+ *   4) Iránytű    — ingyenes bér- és lakbér-benchmark
  */
 interface Tab {
   href: string;
@@ -32,11 +31,6 @@ interface Tab {
 const TABS: Tab[] = [
   { href: "/", label: "Főoldal", icon: "home" },
   { href: "/szaknevsor", label: "Szaknévsor", icon: "list" },
-  {
-    href: "/kozosseg",
-    label: "Közösség",
-    icon: "users",
-  },
   { href: "/allasok", label: "Állások", icon: "briefcase", alsoMatch: ["/munkaltato"] },
   // Iránytű = svájci bér/lakbér-benchmark → csak CH (lib/feature-availability).
   { href: "/iranytu", label: "Iránytű", icon: "compass", feature: "iranytu" },

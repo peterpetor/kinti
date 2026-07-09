@@ -212,9 +212,7 @@ export function NotificationSettings() {
       <section>
         <h3 className="mb-2 px-1 text-[12px] font-bold uppercase tracking-wide text-ink-muted">Egyéb értesítések</h3>
         <div className="space-y-2">
-          <InfoRow icon="🔔" title="Esemény-emlékeztető" desc="24h és 1h előtt, ha „Megyek”-et nyomsz egy eseményre. Automatikus." />
           <LinkRow href="/iranytu" icon="📊" title="Béradat-riasztás" desc="Szólunk, ha az iparágad átlagbére ±10%-ot mozdul." />
-          <LinkRow href="/arfolyam" icon="💱" title="Árfolyam-riasztás" desc="Push, ha az EUR/HUF eléri az általad megadott szintet." />
           <LinkRow href="/allasok" icon="🎯" title="Állás-riasztás (kulcsszó)" desc="Kulcsszó-alapú találat a szakmádban, bárhol — pontosabb, mint a régió-kapcsoló (Kinti Radar)." />
         </div>
       </section>
@@ -247,18 +245,6 @@ function ToggleRow({ icon, label, hint, on, onToggle }: { icon: string; label: s
       >
         <span className={cn("absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all", on ? "left-[18px]" : "left-0.5")} />
       </button>
-    </div>
-  );
-}
-
-function InfoRow({ icon, title, desc }: { icon: string; title: string; desc: string }) {
-  return (
-    <div className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card">
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-surface-alt text-lg">{icon}</span>
-      <div className="min-w-0 flex-1">
-        <p className="text-[13.5px] font-bold text-ink">{title}</p>
-        <p className="text-[11.5px] leading-snug text-ink-muted">{desc}</p>
-      </div>
     </div>
   );
 }

@@ -75,7 +75,7 @@ export const PHASES_CH: RoadmapPhase[] = [
     title: "Integráció (3-6 hónap)",
     icon: "users",
     tasks: [
-      { id: "kozosseg", title: "Magyar közösség megtalálása", description: "Csatlakozz eseményekhez.", linkHref: "/kozosseg", linkLabel: "Közösség", linkIcon: "users" },
+      { id: "kozosseg", title: "Magyar közösség megtalálása", description: "Keress magyar szervezeteket, egyesületeket a Szaknévsorban.", linkHref: "/szaknevsor", linkLabel: "Szaknévsor", linkIcon: "list" },
       { id: "nyelv", title: "Nyelvtanfolyam", description: "A beilleszkedés kulcsa a helyi nyelv.", linkHref: "/tudasbazis", linkLabel: "Nyelvtanulás", linkIcon: "magic" },
     ],
   },
@@ -121,7 +121,7 @@ export const PHASES_AT: RoadmapPhase[] = [
     title: "Integráció (3-6 hónap)",
     icon: "users",
     tasks: [
-      { id: "at-kozosseg", title: "Magyar közösség megtalálása", description: "Csatlakozz osztrák magyar egyesületekhez, eseményekhez.", linkHref: "/kozosseg", linkLabel: "Közösség", linkIcon: "users" },
+      { id: "at-kozosseg", title: "Magyar közösség megtalálása", description: "Keresd az osztrák magyar egyesületeket a Szaknévsorban.", linkHref: "/szaknevsor", linkLabel: "Szaknévsor", linkIcon: "list" },
       { id: "at-nyelv", title: "Németkurzus (Deutschkurs)", description: "ÖIF-elismert kurzus a beilleszkedéshez — és gyakorolj a Kinti Osztrák Német leckékkel.", linkHref: "/nyelvlecke", linkLabel: "Osztrák Német", linkIcon: "magic" },
     ],
   },
@@ -168,7 +168,7 @@ export const PHASES_DE: RoadmapPhase[] = [
     title: "Integráció (3-6 hónap)",
     icon: "users",
     tasks: [
-      { id: "de-kozosseg", title: "Magyar közösség megtalálása", description: "Csatlakozz németországi magyar egyesületekhez, eseményekhez.", linkHref: "/kozosseg", linkLabel: "Közösség", linkIcon: "users" },
+      { id: "de-kozosseg", title: "Magyar közösség megtalálása", description: "Keresd a németországi magyar egyesületeket a Szaknévsorban.", linkHref: "/szaknevsor", linkLabel: "Szaknévsor", linkIcon: "list" },
       { id: "de-nyelv", title: "Németkurzus (Deutschkurs)", description: "Integrationskurs / VHS a beilleszkedéshez — és gyakorolj a Kinti Német (Hochdeutsch) leckékkel.", linkHref: "/nyelvlecke", linkLabel: "Német nyelvlecke", linkIcon: "magic" },
     ],
   },

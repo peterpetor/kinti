@@ -9,7 +9,6 @@
 
 export * from "./repo-shared";
 export * from "./repo-business";
-export * from "./repo-events";
 export * from "./repo-reviews";
 export * from "./repo-jobs";
 export * from "./repo-workers";
@@ -17,7 +16,6 @@ export * from "./repo-leads";
 export * from "./repo-claims";
 export * from "./repo-spam";
 export * from "./repo-misc";
-export * from "./repo-piac";
 export * from "./repo-newsletter";
 export * from "./repo-requests";
 export * from "./repo-external-jobs";

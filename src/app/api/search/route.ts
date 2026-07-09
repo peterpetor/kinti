@@ -7,15 +7,13 @@ export const dynamic = "force-dynamic";
 
 interface SearchResult {
   businesses: Array<{ id: string; name: string; categoryLabel: string | null }>;
-  events: Array<{ id: string; title: string; eventDate: string | null; venue: string | null }>;
   jobs: Array<{ id: string; title: string; location: string | null; category: string | null }>;
 }
 
-const EMPTY: SearchResult = { businesses: [], events: [], jobs: [] };
+const EMPTY: SearchResult = { businesses: [], jobs: [] };
 
 /**
- * GET /api/search?q=...  — globális kereső 3 entitásban (vállalkozás + esemény
- * + Kinti-állás).
+ * GET /api/search?q=...  — globális kereső 2 entitásban (vállalkozás + Kinti-állás).
  *
  * ÉKEZET-ÉRZÉKETLEN + TÖBB-SZAVAS: a keresőszót foldolt tokenekre bontjuk
  * (lib/sql-fold), és MINDEN tokennek illeszkednie kell (AND) — bárhol a
@@ -29,8 +27,6 @@ const EMPTY: SearchResult = { businesses: [], events: [], jobs: [] };
 const FOLD_BIZ_NAME = hungarianFoldSql("b.name");
 const FOLD_BIZ_BLURB = hungarianFoldSql("COALESCE(b.blurb, '')");
 const FOLD_BIZ_CAT = hungarianFoldSql("COALESCE(b.category_label, '')");
-const FOLD_EV_TITLE = hungarianFoldSql("title");
-const FOLD_EV_VENUE = hungarianFoldSql("COALESCE(venue, '')");
 const FOLD_JOB_TITLE = hungarianFoldSql("title");
 const FOLD_JOB_LOC = hungarianFoldSql("COALESCE(location, '')");
 const FOLD_JOB_CAT = hungarianFoldSql("COALESCE(category, '')");
@@ -71,22 +67,6 @@ export async function GET(req: Request) {
   for (const l of likes) bizBinds.push(l, l, l);
   for (const l of likes) bizBinds.push(l, l);
 
-  // --- Esemény-lekérdezés (token-AND) ----------------------------------------
-  // Láthatóság a lista-nézet (getEvents) KANONIKUS feltételéhez igazítva:
-  // jóváhagyott + moderált + CSAK JÖVŐBELI. Enélkül a kereső rég lejárt, sőt
-  // moderálatlan (pending) eseményeket is felhozott, amikre kattintva a
-  // /kozosseg/esemeny/[id] amúgy is „nem élő" tartalom. A token-AND a címre/
-  // helyszínre illeszt; az event_date ASC így a legközelebbi jövőbeli elöl.
-  const evWhere = tokens.map(() => `(${FOLD_EV_TITLE} LIKE ? OR ${FOLD_EV_VENUE} LIKE ?)`).join(" AND ");
-  const evSql =
-    `SELECT id, title, event_date, venue
-     FROM events
-     WHERE status = 'approved' AND moderation_status = 1 AND event_date >= date('now')
-       AND ${evWhere}
-     ORDER BY event_date ASC LIMIT 5`;
-  const evBinds: string[] = [];
-  for (const l of likes) evBinds.push(l, l);
-
   // --- Állás-lekérdezés (token-AND + relevancia) ------------------------------
   // Láthatóság a publikus lista (getJobs) KANONIKUS feltételéhez igazítva:
   // moderation_status = 1 ÉS status IN ('active','featured') — a LEJÁRT ('expired')
@@ -110,15 +90,13 @@ export async function GET(req: Request) {
   for (const l of likes) jobBinds.push(l, l, l, l);
   for (const l of likes) jobBinds.push(l, l);
 
-  const [biz, ev, job] = await Promise.all([
+  const [biz, job] = await Promise.all([
     db.prepare(bizSql).bind(...bizBinds).all<{ id: string; name: string; category_label: string | null }>(),
-    db.prepare(evSql).bind(...evBinds).all<{ id: string; title: string; event_date: string | null; venue: string | null }>(),
     db.prepare(jobSql).bind(...jobBinds).all<{ id: string; title: string; location: string | null; category: string | null }>(),
   ]);
 
   const result: SearchResult = {
     businesses: biz.results.map((r) => ({ id: r.id, name: r.name, categoryLabel: r.category_label })),
-    events: ev.results.map((r) => ({ id: r.id, title: r.title, eventDate: r.event_date, venue: r.venue })),
     jobs: job.results.map((r) => ({ id: r.id, title: r.title, location: r.location, category: r.category })),
   };
 

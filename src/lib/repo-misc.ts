@@ -229,7 +229,7 @@ export async function deleteDigestSubscriberByUnsubToken(token: string): Promise
 
 // --- Admin Stats -------------------------------------------------------------
 
-export interface AdminStats { businesses: number; businessesVerified: number; eventsApproved: number; reviews: number; digestSubscribersConfirmed: number; pushSubscriptions: number; jobs: number; employers: number; }
+export interface AdminStats { businesses: number; businessesVerified: number; reviews: number; digestSubscribersConfirmed: number; pushSubscriptions: number; jobs: number; employers: number; }
 
 export async function getAdminStats(country?: string | null): Promise<AdminStats> {
   const db = getDB();
@@ -240,10 +240,9 @@ export async function getAdminStats(country?: string | null): Promise<AdminStats
   const cc = filter ? " AND country_code = ?" : "";
   const ccW = filter ? " WHERE country_code = ?" : "";
   const a = filter ? [country] : [];
-  const [businesses, verified, events, reviews, push, jobs, employers] = await Promise.all([
+  const [businesses, verified, reviews, push, jobs, employers] = await Promise.all([
     q(`SELECT COUNT(*) AS n FROM businesses${ccW}`, ...a),
     q(`SELECT COUNT(*) AS n FROM businesses WHERE verified = 1${cc}`, ...a),
-    q(`SELECT COUNT(*) AS n FROM events WHERE status = 'approved'${cc}`, ...a),
     q("SELECT COUNT(*) AS n FROM reviews WHERE hidden = 0"),
     q("SELECT COUNT(*) AS n FROM push_subscriptions"),
     q(`SELECT COUNT(*) AS n FROM jobs WHERE status = 'active' AND moderation_status = 1${cc}`, ...a),
@@ -259,7 +258,6 @@ export async function getAdminStats(country?: string | null): Promise<AdminStats
   return {
     businesses: businesses?.n ?? 0,
     businessesVerified: verified?.n ?? 0,
-    eventsApproved: events?.n ?? 0,
     reviews: reviews?.n ?? 0,
     digestSubscribersConfirmed: newsletter?.n ?? 0,
     pushSubscriptions: push?.n ?? 0,
@@ -532,28 +530,6 @@ export async function getAdminTrends(): Promise<AdminTrends> {
     newBenchmark7d: sumLast7(benchmarkSubmissions),
     activeContributors7d: a7?.n ?? 0,
   };
-}
-
-// --- Exchange Rate Alerts ----------------------------------------------------
-
-export type ExchangeRateDirection = "above" | "below";
-
-export interface ExchangeRateAlert { id: string; pushEndpoint: string; thresholdHuf: number; direction: ExchangeRateDirection; active: boolean; createdAt: string; lastFiredAt: string | null; }
-
-export async function saveExchangeRateAlert(params: { id: string; pushEndpoint: string; thresholdHuf: number; direction: ExchangeRateDirection; }): Promise<void> {
-  await getDB().prepare(`INSERT INTO exchange_rate_alerts (id, push_endpoint, threshold_huf, direction, active) VALUES (?, ?, ?, ?, 1)`).bind(params.id, params.pushEndpoint, params.thresholdHuf, params.direction).run();
-}
-
-export async function listExchangeRateAlertsByEndpoint(pushEndpoint: string): Promise<ExchangeRateAlert[]> {
-  const { results } = await getDB().prepare(`SELECT * FROM exchange_rate_alerts WHERE push_endpoint = ? AND active = 1 ORDER BY created_at DESC`).bind(pushEndpoint).all<{
-    id: string; push_endpoint: string; threshold_huf: number; direction: string; active: number; created_at: string; last_fired_at: string | null;
-  }>();
-  return results.map(r => ({ id: r.id, pushEndpoint: r.push_endpoint, thresholdHuf: r.threshold_huf, direction: r.direction === "below" ? "below" : "above", active: !!r.active, createdAt: r.created_at, lastFiredAt: r.last_fired_at }));
-}
-
-export async function deleteExchangeRateAlert(id: string, pushEndpoint: string): Promise<boolean> {
-  const res = await getDB().prepare(`DELETE FROM exchange_rate_alerts WHERE id = ? AND push_endpoint = ?`).bind(id, pushEndpoint).run();
-  return (res.meta.changes ?? 0) > 0;
 }
 
 // --- Radars ------------------------------------------------------------------

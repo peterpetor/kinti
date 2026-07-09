@@ -12,7 +12,6 @@ import { Icon } from "@/components/ui";
  */
 const QUICK_LINKS: { href: string; label: string }[] = [
   { href: "/szaknevsor", label: "Szaknévsor" },
-  { href: "/kozosseg", label: "Közösség" },
   { href: "/tudasbazis", label: "Tudásbázis" },
   { href: "/allasok", label: "Állások" },
 ];

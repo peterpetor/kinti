@@ -12,7 +12,6 @@ const STORAGE_KEY = "kinti.myPosts";
 const STORAGE_VERSION = 1;
 
 export type PostType =
-  | "event"     // esemény
   | "review"    // vélemény
   | "business"; // vállalkozás (szaknévsor)
 

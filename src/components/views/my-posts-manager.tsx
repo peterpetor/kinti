@@ -19,7 +19,6 @@ import { REVIEW_LIMITS } from "@/lib/reviews";
 import { parseDbDate } from "@/lib/dates";
 
 const TYPE_META: Record<PostType, { label: string; icon: string; color: string }> = {
-  event:    { label: "Esemény",      icon: "📅", color: "#E4405F" },
   review:   { label: "Vélemény",     icon: "⭐", color: "#f1c40f" },
   business: { label: "Vállalkozás",  icon: "🏪", color: "#1d4434" },
 };
@@ -79,11 +78,13 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
   }
 
   useEffect(() => {
-    setItems(loadMyPosts());
+    // Ismeretlen típusú (pl. régi „event") lokális bejegyzéseket kiszűrjük.
+    setItems(loadMyPosts().filter((it) => it.type in TYPE_META));
   }, []);
 
   function refresh() {
-    setItems(loadMyPosts());
+    // Ismeretlen típusú (pl. régi „event") lokális bejegyzéseket kiszűrjük.
+    setItems(loadMyPosts().filter((it) => it.type in TYPE_META));
   }
 
   function showMsg(s: string) {
@@ -141,7 +142,7 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
   }
 
   const filtered = filter === "all" ? items : items.filter((it) => it.type === filter);
-  const totals: Record<PostType | "all", number> = { all: items.length, event: 0, review: 0, business: 0 };
+  const totals: Record<PostType | "all", number> = { all: items.length, review: 0, business: 0 };
   for (const it of items) totals[it.type]++;
 
   return (

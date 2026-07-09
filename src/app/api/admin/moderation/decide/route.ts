@@ -23,14 +23,12 @@ export const dynamic = "force-dynamic";
 const VALID_TABLES: ModerationTable[] = [
   "reviews",
   "businesses",
-  "events",
   "service_requests",
 ];
 
 const TABLE_LABELS: Record<ModerationTable, string> = {
   reviews: "vélemény",
   businesses: "vállalkozás",
-  events: "esemény",
   service_requests: "keresés",
 };
 

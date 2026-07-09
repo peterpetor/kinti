@@ -60,7 +60,7 @@ describe("computeGamification", () => {
   });
 
   it("levelProgress 0..1 között marad", () => {
-    const s = computeGamification(mkPosts(["event"])); // 10 XP, L1
+    const s = computeGamification(mkPosts(["review"])); // 20 XP, L1
     expect(s.levelProgress).toBeGreaterThan(0);
     expect(s.levelProgress).toBeLessThanOrEqual(1);
   });

@@ -42,12 +42,11 @@ export function openGlobalSearch() {
 
 interface SearchResults {
   businesses: Array<{ id: string; name: string; categoryLabel: string | null }>;
-  events: Array<{ id: string; title: string; eventDate: string | null; venue: string | null }>;
   /** Kinti-állások (a rollout alatt hiányozhat a régi API-válaszból → opcionális). */
   jobs?: Array<{ id: string; title: string; location: string | null; category: string | null }>;
 }
 
-const EMPTY: SearchResults = { businesses: [], events: [], jobs: [] };
+const EMPTY: SearchResults = { businesses: [], jobs: [] };
 
 /** Egy navigálható találat-sor (bármely szekcióból) — a billentyű-nav közös listája. */
 interface Row {
@@ -56,7 +55,7 @@ interface Row {
   title: string;
   subtitle: string | null;
   icon?: IconName;
-  section: "recent" | "quick" | "app" | "guide" | "job" | "business" | "event" | "cta";
+  section: "recent" | "quick" | "app" | "guide" | "job" | "business" | "cta";
 }
 
 interface RecentItem { href: string; title: string; icon?: IconName; }
@@ -265,10 +264,6 @@ export function GlobalSearchOverlay() {
       ...results.businesses.map<Row>((b) => ({
         key: `biz:${b.id}`, href: `/szaknevsor/${b.id}`, title: b.name, subtitle: b.categoryLabel, section: "business",
       })),
-      ...results.events.map<Row>((e) => ({
-        key: `event:${e.id}`, href: `/kozosseg/esemeny/${e.id}`, title: e.title,
-        subtitle: [e.eventDate, e.venue].filter(Boolean).join(" · ") || null, section: "event",
-      })),
     ];
     // Zsákutca-mentesítés: a Szaknévsor és az Állások teljes keresője mindig
     // egy Enterre van (mindkét oldal olvassa a ?q= mélylinket).
@@ -326,7 +321,6 @@ export function GlobalSearchOverlay() {
         { id: "guide", label: "Útmutatók", emoji: "📖" },
         { id: "job", label: "Állások", emoji: "💼" },
         { id: "business", label: "Vállalkozások", emoji: "📑" },
-        { id: "event", label: "Események", emoji: "📅" },
         { id: "cta", label: "", emoji: "" },
       ]
     : [
@@ -337,7 +331,7 @@ export function GlobalSearchOverlay() {
   const showEmptyHint = hasQuery && rows.length <= 2 && !busy; // csak a 2 CTA-sor maradt
   const showSkeleton =
     hasQuery && busy &&
-    results.businesses.length === 0 && results.events.length === 0 && (results.jobs ?? []).length === 0;
+    results.businesses.length === 0 && (results.jobs ?? []).length === 0;
 
   return (
     <div

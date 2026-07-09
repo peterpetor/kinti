@@ -6,7 +6,7 @@ import {
   DropdownMenu,
 } from "@/components/ui";
 import { WeatherWidget } from "@/components/weather-widget";
-import { HomeCountryFlag, HomePrimaryActions, HomeEvents, HomeChCards } from "@/components/home-country-aware";
+import { HomeCountryFlag, HomePrimaryActions, HomeChCards } from "@/components/home-country-aware";
 import { MyPostsBanner } from "@/components/my-posts-banner";
 import { DailyStreak } from "@/components/daily-streak";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
@@ -23,25 +23,15 @@ import { TrustBar } from "@/components/trust-bar";
 import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
 import { HomeWidgets } from "@/components/home-widgets";
-import { getBusinessesForList, getEvents } from "@/lib/repo";
-import { cached } from "@/lib/edge-cache";
+import { getBusinessesForList } from "@/lib/repo";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-/** A kezdőlap listái mindenkinek azonosak (nincs per-user szerver-adat) →
- *  izolátum-szintű TTL-cache, hogy ne minden kérés érje a D1-et. */
-const HOME_TTL_MS = 300_000; // 5 perc
-
 export default async function FeedPage() {
-  const [allBusinesses, events] = await Promise.all([
-    // Karcsú vetület + saját (3 perces) cache a repóban — a /szaknevsor oldallal
-    // KÖZÖS kulcson, így a két oldal TTL-enként EGYSZER megy D1-re.
-    getBusinessesForList(),
-    // CSAK jövőbeli események (upcoming): a szűrő nélkül a legrégebbi, akár rég
-    // lejárt események kerültek a blokk elejére (event_date ASC).
-    cached("home:events:12", HOME_TTL_MS, () => getEvents({ limit: 12, upcoming: true })),
-  ]);
+  // Karcsú vetület + saját (3 perces) cache a repóban — a /szaknevsor oldallal
+  // KÖZÖS kulcson, így a két oldal TTL-enként EGYSZER megy D1-re.
+  const allBusinesses = await getBusinessesForList();
   // „A közeledben" csak a koordinátával rendelkezőkből válogat (kliensoldali
   // GPS-rendezéshez). Trükkös payload-méret ellen: max 200 rekord.
   const nearby = allBusinesses
@@ -92,8 +82,6 @@ export default async function FeedPage() {
         </SectionHeader>
         <NearbyBusinesses businesses={nearby} />
       </section>
-
-      <HomeEvents events={events} />
 
       {/* Napi infó — testreszabható: átrendezhető / elrejthető (kliensoldali) */}
       <HomeWidgets

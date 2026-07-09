@@ -37,8 +37,6 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone }[] = [
   { href: "/arfolyam", icon: "trending", label: "Árfolyam", tone: "money" },
   { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke", tone: "learn" },
   { href: "/kviz", icon: "star", label: "Kvíz", tone: "learn" },
-  { href: "/esemenyek", icon: "calendar", label: "Események", tone: "social" },
-  { href: "/kozosseg", icon: "users", label: "Közösség", tone: "social" },
   { href: "/ugyintezes", icon: "document", label: "Ügyintézés", tone: "work" },
   { href: "/hivatalos", icon: "flag", label: "Hivatalos linkek", tone: "work" },
   { href: "/allampolgarsag", icon: "flag", label: "Állampolgárság", tone: "learn" },
@@ -57,7 +55,7 @@ export function HomePlatformGrid() {
     <section className="space-y-3">
       <SectionHeader>Mit tud a Kinti?</SectionHeader>
       <p className="-mt-1.5 text-[12.5px] leading-snug text-ink-muted">
-        Egy app — minden a kinti élethez: munka, pénz, nyelv, ügyintézés, közösség.
+        Egy app — minden a kinti élethez: munka, pénz, nyelv, ügyintézés.
       </p>
       <div className="grid grid-cols-3 gap-2.5">
         {modules.map((m) => (
