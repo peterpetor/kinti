@@ -10,7 +10,8 @@ import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { getRegions, regionName } from "@/lib/regions";
-import { JOB_CATEGORIES, jobCategoryLabel, formatJobCurrency } from "@/lib/job-categories";
+import { jobCategoryLabel, formatJobCurrency } from "@/lib/job-categories";
+import { JobCategoryOptions } from "@/components/views/job-category-options";
 import { jobMatchScore, hasMatchableProfile, type MatchProfile } from "@/lib/job-match";
 import { parseDbDate } from "@/lib/dates";
 import type { Job } from "@/lib/types";
@@ -165,9 +166,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
             )}
           >
             <option value="">Összes szakma</option>
-            {JOB_CATEGORIES.map((c) => (
-              <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
-            ))}
+            <JobCategoryOptions />
           </select>
 
           <select

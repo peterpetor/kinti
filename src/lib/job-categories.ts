@@ -3,16 +3,23 @@
  *
  * Stabil `id` kerül a DB-be (jobs.category), a `label` jelenik meg a UI-ban.
  * A lista a kint (CH/AT/DE/NL) dolgozó magyarok tipikus szektoraira ÉS gyakori
- * konkrét szakmáira fókuszál (finomabb bontás: festő, villanyszerelő, gondozás
- * stb.). Bővíthető, de a meglévő `id`-ket NE írd át (a régi hirdetések
- * elvesztenék a szakmájukat). Sorrend = megjelenítési sorrend (rokon szakmák
- * egy csoportban); nincs DB-CHECK, a validáció app-szintű (isValidJobCategory).
+ * konkrét szakmáira fókuszál. Bővíthető, de a meglévő `id`-ket NE írd át (a régi
+ * hirdetések elvesztenék a szakmájukat). Nincs DB-CHECK, a validáció app-szintű
+ * (isValidJobCategory). A `group` a legördülő <optgroup> fejlécet adja — a hosszú
+ * lista így böngészhető marad (lásd JobCategoryOptions komponens).
  */
 
 export interface JobCategory {
   id: string;
   label: string;
   emoji: string;
+  /** Melyik szektor-csoportba (optgroup) tartozik — a JOB_CATEGORY_GROUP_ORDER id-je. */
+  group: string;
+}
+
+export interface JobCategoryGroup {
+  id: string;
+  label: string;
 }
 
 /** A tárolt bér-pénznem kód → megjelenítendő címke (pl. CHF_HOUR → „CHF/óra"). */
@@ -26,38 +33,101 @@ export function formatJobCurrency(currency: string): string {
   }
 }
 
-export const JOB_CATEGORIES: JobCategory[] = [
-  // Építőipar + kapcsolódó szakiparok
-  { id: "epitoipar",         label: "Építőipar",                emoji: "🏗️" },
-  { id: "villanyszerelo",    label: "Villanyszerelő / Elektro", emoji: "⚡" },
-  { id: "vizszerelo",        label: "Víz- / Fűtésszerelő",      emoji: "🚿" },
-  { id: "festo",             label: "Festő / Mázoló",           emoji: "🎨" },
-  { id: "asztalos",          label: "Asztalos / Ács",           emoji: "🪚" },
-  { id: "hegeszto",          label: "Hegesztő / Lakatos",       emoji: "🔩" },
-  // Vendéglátás
-  { id: "vendeglatas",       label: "Vendéglátás / Gastro",     emoji: "🍽️" },
-  // Egészségügy + gondozás
-  { id: "egeszsegugy",       label: "Egészségügy / Ápolás",     emoji: "🩺" },
-  { id: "idosgondozas",      label: "Idős- / Beteggondozás",    emoji: "🧓" },
-  { id: "gyermekfelugyelet", label: "Gyermekfelügyelet / Au pair", emoji: "🧸" },
-  // Szállítás + ipar
-  { id: "logisztika",        label: "Logisztika / Sofőr",       emoji: "🚚" },
-  { id: "gepjarmu",          label: "Autószerelő / Gépjármű",   emoji: "🚗" },
-  { id: "ipar-gyartas",      label: "Ipar / Gyártás",           emoji: "🏭" },
-  // Szolgáltatás + kereskedelem
-  { id: "takaritas",         label: "Takarítás / Háztartás",    emoji: "🧹" },
-  { id: "kereskedelem",      label: "Kereskedelem / Eladó",     emoji: "🛒" },
-  { id: "mezogazdasag",      label: "Mezőgazdaság",             emoji: "🌱" },
-  { id: "kertesz",           label: "Kertészet / Zöldterület",  emoji: "🌳" },
-  { id: "szepsegipar",       label: "Szépségipar",              emoji: "💇" },
-  // Iroda / szellemi
-  { id: "iroda",             label: "Iroda / Adminisztráció",   emoji: "💼" },
-  { id: "penzugy",           label: "Pénzügy / Könyvelés",      emoji: "📊" },
-  { id: "it",                label: "Informatika (IT)",         emoji: "💻" },
-  { id: "oktatas",           label: "Oktatás / Nevelés",        emoji: "🎓" },
-  { id: "biztonsag",         label: "Biztonság / Őrzés",        emoji: "🛡️" },
-  { id: "egyeb",             label: "Egyéb",                    emoji: "🔧" },
+/** Szektor-csoportok megjelenítési sorrendben (a legördülő <optgroup> fejlécek). */
+export const JOB_CATEGORY_GROUP_ORDER: JobCategoryGroup[] = [
+  { id: "epitoipar",    label: "Építőipar & szakiparok" },
+  { id: "ipar",         label: "Ipar, gyártás, technika" },
+  { id: "jarmu",        label: "Jármű & szállítás" },
+  { id: "vendeglatas",  label: "Vendéglátás & turizmus" },
+  { id: "egeszsegugy",  label: "Egészségügy & gondozás" },
+  { id: "szepseg",      label: "Szépség & wellness" },
+  { id: "kereskedelem", label: "Kereskedelem & ügyfélszolgálat" },
+  { id: "szolgaltatas", label: "Szolgáltatás & háztartás" },
+  { id: "mezogazdasag", label: "Mezőgazdaság & kertészet" },
+  { id: "iroda",        label: "Iroda, pénzügy, jog" },
+  { id: "it",           label: "IT & média" },
+  { id: "oktatas",      label: "Oktatás & nyelvek" },
+  { id: "egyeb",        label: "Egyéb" },
 ];
+
+export const JOB_CATEGORIES: JobCategory[] = [
+  // Építőipar & szakiparok
+  { id: "epitoipar",         label: "Építőipar (általános)",     emoji: "🏗️", group: "epitoipar" },
+  { id: "komuves",           label: "Kőműves / Betonozó",        emoji: "🧱", group: "epitoipar" },
+  { id: "burkolo",           label: "Burkoló / Csempéző",        emoji: "🟫", group: "epitoipar" },
+  { id: "festo",             label: "Festő / Mázoló",            emoji: "🎨", group: "epitoipar" },
+  { id: "asztalos",          label: "Asztalos / Ács",            emoji: "🪚", group: "epitoipar" },
+  { id: "tetofedo",          label: "Tetőfedő / Bádogos",        emoji: "🏠", group: "epitoipar" },
+  { id: "gipszkarton",       label: "Gipszkarton / Szárazépítő", emoji: "🔨", group: "epitoipar" },
+  { id: "villanyszerelo",    label: "Villanyszerelő / Elektro",  emoji: "⚡", group: "epitoipar" },
+  { id: "vizszerelo",        label: "Víz- / Fűtésszerelő (SHK)", emoji: "🚿", group: "epitoipar" },
+  { id: "hegeszto",          label: "Hegesztő / Lakatos",        emoji: "🔩", group: "epitoipar" },
+  // Ipar, gyártás, technika
+  { id: "ipar-gyartas",      label: "Ipar / Gyártás (általános)", emoji: "🏭", group: "ipar" },
+  { id: "cnc",               label: "CNC / Gépkezelő",           emoji: "⚙️", group: "ipar" },
+  { id: "gepesz",            label: "Gépész / Karbantartó",      emoji: "🛠️", group: "ipar" },
+  { id: "elektronika",       label: "Elektronika / Automatizálás", emoji: "🔌", group: "ipar" },
+  // Jármű & szállítás
+  { id: "logisztika",        label: "Logisztika / Raktár",       emoji: "🚚", group: "jarmu" },
+  { id: "sofor",             label: "Kamionsofőr (C/CE)",        emoji: "🚛", group: "jarmu" },
+  { id: "futar",             label: "Futár / Kézbesítő",         emoji: "📦", group: "jarmu" },
+  { id: "gepjarmu",          label: "Autószerelő / Gépjármű",    emoji: "🚗", group: "jarmu" },
+  // Vendéglátás & turizmus
+  { id: "vendeglatas",       label: "Vendéglátás (általános)",   emoji: "🍽️", group: "vendeglatas" },
+  { id: "szakacs",           label: "Szakács / Konyhafőnök",     emoji: "👨‍🍳", group: "vendeglatas" },
+  { id: "pincer",            label: "Pincér / Felszolgáló",      emoji: "🍷", group: "vendeglatas" },
+  { id: "konyhai",           label: "Konyhai kisegítő",          emoji: "🍴", group: "vendeglatas" },
+  { id: "pek",               label: "Pék / Cukrász",             emoji: "🥐", group: "vendeglatas" },
+  { id: "hotel",             label: "Szálloda / Recepció",       emoji: "🏨", group: "vendeglatas" },
+  // Egészségügy & gondozás
+  { id: "egeszsegugy",       label: "Egészségügy / Ápolás",      emoji: "🩺", group: "egeszsegugy" },
+  { id: "idosgondozas",      label: "Idős- / Beteggondozás",     emoji: "🧓", group: "egeszsegugy" },
+  { id: "gyermekfelugyelet", label: "Gyermekfelügyelet / Au pair", emoji: "🧸", group: "egeszsegugy" },
+  { id: "fogaszat",          label: "Fogászati asszisztens",     emoji: "🦷", group: "egeszsegugy" },
+  { id: "gyogyszertar",      label: "Gyógyszertár / Asszisztens", emoji: "💊", group: "egeszsegugy" },
+  { id: "massaz",            label: "Masszőr / Gyógytornász",    emoji: "💆", group: "egeszsegugy" },
+  // Szépség & wellness
+  { id: "szepsegipar",       label: "Szépségipar (általános)",   emoji: "💇", group: "szepseg" },
+  { id: "fodrasz",           label: "Fodrász",                   emoji: "✂️", group: "szepseg" },
+  { id: "kozmetikus",        label: "Kozmetikus",                emoji: "💄", group: "szepseg" },
+  { id: "mukormos",          label: "Műkörmös / Nail",           emoji: "💅", group: "szepseg" },
+  // Kereskedelem & ügyfélszolgálat
+  { id: "kereskedelem",      label: "Kereskedelem / Eladó",      emoji: "🛒", group: "kereskedelem" },
+  { id: "penztaros",         label: "Pénztáros / Kassza",        emoji: "🧾", group: "kereskedelem" },
+  { id: "ugyfelszolgalat",   label: "Ügyfélszolgálat / Call center", emoji: "📞", group: "kereskedelem" },
+  { id: "ertekesites",       label: "Értékesítés / Sales",       emoji: "🤝", group: "kereskedelem" },
+  // Szolgáltatás & háztartás
+  { id: "takaritas",         label: "Takarítás / Háztartás",     emoji: "🧹", group: "szolgaltatas" },
+  { id: "biztonsag",         label: "Biztonság / Őrzés",         emoji: "🛡️", group: "szolgaltatas" },
+  { id: "karbantartas",      label: "Házmester / Karbantartó",   emoji: "🪛", group: "szolgaltatas" },
+  { id: "mosoda",            label: "Mosoda / Vegytisztító",     emoji: "🧺", group: "szolgaltatas" },
+  // Mezőgazdaság & kertészet
+  { id: "mezogazdasag",      label: "Mezőgazdaság",              emoji: "🌱", group: "mezogazdasag" },
+  { id: "kertesz",           label: "Kertészet / Zöldterület",   emoji: "🌳", group: "mezogazdasag" },
+  { id: "allattenyesztes",   label: "Állattenyésztés / Farm",    emoji: "🐄", group: "mezogazdasag" },
+  // Iroda, pénzügy, jog
+  { id: "iroda",             label: "Iroda / Adminisztráció",    emoji: "💼", group: "iroda" },
+  { id: "penzugy",           label: "Pénzügy / Könyvelés",       emoji: "📊", group: "iroda" },
+  { id: "hr",                label: "HR / Toborzás",             emoji: "🧑‍💼", group: "iroda" },
+  { id: "jog",               label: "Jog / Ügyvéd",              emoji: "⚖️", group: "iroda" },
+  // IT & média
+  { id: "it",                label: "Informatika (IT)",          emoji: "💻", group: "it" },
+  { id: "media",             label: "Marketing / Média",         emoji: "📣", group: "it" },
+  { id: "grafikus",          label: "Grafikus / Design",         emoji: "🖌️", group: "it" },
+  // Oktatás & nyelvek
+  { id: "oktatas",           label: "Oktatás / Nevelés",         emoji: "🎓", group: "oktatas" },
+  { id: "ovoda",             label: "Óvoda / Bölcsőde",          emoji: "🧑‍🏫", group: "oktatas" },
+  { id: "nyelvtanar",        label: "Nyelvtanár / Fordító",      emoji: "🗣️", group: "oktatas" },
+  // Egyéb
+  { id: "egyeb",             label: "Egyéb",                     emoji: "🔧", group: "egyeb" },
+];
+
+/** A szakmák szektor-csoportokba rendezve (a legördülő <optgroup>-okhoz). Üres
+ *  csoport nem kerül bele. */
+export const JOB_CATEGORY_GROUPS: (JobCategoryGroup & { items: JobCategory[] })[] =
+  JOB_CATEGORY_GROUP_ORDER
+    .map((g) => ({ ...g, items: JOB_CATEGORIES.filter((c) => c.group === g.id) }))
+    .filter((g) => g.items.length > 0);
 
 const BY_ID = new Map(JOB_CATEGORIES.map((c) => [c.id, c]));
 

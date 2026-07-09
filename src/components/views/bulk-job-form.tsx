@@ -7,7 +7,7 @@ import { Icon } from "@/components/ui";
 import { getRegions, regionLabel } from "@/lib/regions";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
-import { JOB_CATEGORIES } from "@/lib/job-categories";
+import { JobCategoryOptions } from "@/components/views/job-category-options";
 
 interface Row {
   title: string;
@@ -131,9 +131,7 @@ export function BulkJobForm() {
           <div className="grid grid-cols-2 gap-2">
             <select value={row.category} onChange={(e) => update(i, "category", e.target.value)} className={inputCls}>
               <option value="">Szakma…</option>
-              {JOB_CATEGORIES.map((c) => (
-                <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
-              ))}
+              <JobCategoryOptions />
             </select>
             <select value={row.cantonCode} onChange={(e) => update(i, "cantonCode", e.target.value)} className={inputCls}>
               <option value="">{regionLabel(country)}…</option>

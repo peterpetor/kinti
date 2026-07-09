@@ -7,7 +7,8 @@ import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
 import { getRegions } from "@/lib/regions";
-import { JOB_CATEGORIES, jobCategoryLabel } from "@/lib/job-categories";
+import { jobCategoryLabel } from "@/lib/job-categories";
+import { JobCategoryOptions } from "@/components/views/job-category-options";
 import { readyRegistration } from "@/lib/push-client";
 
 type State =
@@ -270,11 +271,7 @@ export function JobAlertRadar() {
               className="h-11 w-full rounded-[10px] border border-line bg-surface px-3 text-[14px] font-medium text-ink outline-none focus:border-primary/50"
             >
               <option value="">Minden szakma</option>
-              {JOB_CATEGORIES.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.emoji} {c.label}
-                </option>
-              ))}
+              <JobCategoryOptions />
             </select>
           </div>
           <div className="flex flex-col gap-1.5">

@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { CANTONS } from "@/lib/cantons";
-import { JOB_CATEGORIES } from "@/lib/job-categories";
+import { JobCategoryOptions } from "@/components/views/job-category-options";
 
 export interface WorkerProfileInitial {
   fullName: string;
@@ -185,9 +185,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
             className={inputCls}
           >
             <option value="">Nincs megadva</option>
-            {JOB_CATEGORIES.map((c) => (
-              <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
-            ))}
+            <JobCategoryOptions />
           </select>
         </div>
         <div>

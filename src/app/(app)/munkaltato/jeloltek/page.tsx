@@ -4,7 +4,8 @@ import Link from "next/link";
 import { getEmployerByOwner, getSearchableWorkers } from "@/lib/repo";
 import { Icon } from "@/components/ui";
 import { CANTONS, cantonName, isValidCantonCode } from "@/lib/cantons";
-import { JOB_CATEGORIES, jobCategoryLabel, isValidJobCategory } from "@/lib/job-categories";
+import { jobCategoryLabel, isValidJobCategory } from "@/lib/job-categories";
+import { JobCategoryOptions } from "@/components/views/job-category-options";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -59,9 +60,7 @@ export default async function CandidatesPage({
               className="h-11 rounded-[12px] border border-line bg-surface-alt px-3 text-[13.5px] font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
               <option value="">Összes szakma</option>
-              {JOB_CATEGORIES.map((c) => (
-                <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
-              ))}
+              <JobCategoryOptions />
             </select>
             <select
               name="canton"

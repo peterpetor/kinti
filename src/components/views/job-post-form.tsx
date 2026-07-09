@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui";
-import { JOB_CATEGORIES } from "@/lib/job-categories";
+import { JobCategoryOptions } from "@/components/views/job-category-options";
 import { useCheckout } from "@/hooks/useCheckout";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -162,9 +162,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
             className={inputCls}
           >
             <option value="" disabled>Válassz szakmát…</option>
-            {JOB_CATEGORIES.map((c) => (
-              <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
-            ))}
+            <JobCategoryOptions />
           </select>
         </div>
         <div>
