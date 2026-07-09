@@ -544,14 +544,26 @@ export function DropdownMenu() {
                 </a>
               </CollapsibleSection>
 
-              {isLoaded && isSignedIn && (
+              {/* Belépés (kijelentkezve) / Kijelentkezés (bejelentkezve). Amíg a
+                  Clerk töltődik (isLoaded=false) egyiket sem mutatjuk, hogy ne
+                  villanjon téves gomb. */}
+              {isLoaded && (isSignedIn ? (
                 <SignOutButton redirectUrl="/">
                   <button className="flex w-full items-center justify-center gap-2.5 mt-3 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
                     <Icon name="user" size={16} strokeWidth={2.4} />
                     Kijelentkezés
                   </button>
                 </SignOutButton>
-              )}
+              ) : (
+                <Link
+                  href="/belepes"
+                  onClick={close}
+                  className="flex w-full items-center justify-center gap-2.5 mt-3 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-white bg-primary hover:opacity-90 transition-all active:scale-[0.98]"
+                >
+                  <Icon name="user" size={16} strokeWidth={2.4} />
+                  Belépés / Regisztráció
+                </Link>
+              ))}
             </div>
           </div>
         </div>,
