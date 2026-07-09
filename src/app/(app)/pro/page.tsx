@@ -210,6 +210,7 @@ export default function ProPage() {
           </div>
 
           <ul className="space-y-3 mb-8 flex-1">
+            <FeatureItem text="🤝 B2B Hub — zárt projektpiac: alvállalkozói munkát írhatsz ki, és jelentkezhetsz más magyar PRO cégek projektjeire (jutalék nélkül)" />
             <FeatureItem text="Sárga PRO kiemelés a találati listákban" />
             <FeatureItem text="A lista elején jelensz meg a kategóriádban (a kiemelt cégek között)" />
             <FeatureItem text="Egyedi profil borítókép és arculat-szín" />
