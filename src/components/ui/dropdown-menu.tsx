@@ -180,6 +180,13 @@ export function DropdownMenu() {
                     Vidd fel a vállalkozásod
                   </Link>
                 )}
+                <Link href="/b2b" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-pro/10 text-base">
+                    🤝
+                  </span>
+                  B2B Hub — projektpiac
+                  <BizProBadge />
+                </Link>
                 <Link href="/allasok" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                     <Icon name="briefcase" size={16} strokeWidth={2.4} />

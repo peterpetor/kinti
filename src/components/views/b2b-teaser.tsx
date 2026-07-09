@@ -6,12 +6,11 @@ import { Icon } from "@/components/ui";
  * mutatja (részleteket sose), hogy PRO-ra váltásra ösztönözzön. A projektek
  * tartalma zárt marad — csak a darabszám a csali.
  *
- * „Ne reklámozd az ürességet": nem-PRO cégnek 0 projektnél nem jelenik meg
- * (különben üres piacot hirdetne). PRO cégnek 0-nál „legyél te az első".
+ * „Ne reklámozd az ürességet": 0 projektnél SOSE mutatunk csupasz „0"-t, hanem
+ * koncepció-szöveget („legyél te az első" / „PRO-val nyílik") — így a belépő
+ * mindig ott van a cég-műszerfalon (a modul enélkül gyakorlatilag láthatatlan).
  */
 export function B2bTeaser({ count, isPro }: { count: number; isPro: boolean }) {
-  if (count === 0 && !isPro) return null;
-
   return (
     <Link
       href="/b2b"
