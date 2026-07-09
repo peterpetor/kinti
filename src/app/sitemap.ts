@@ -3,6 +3,7 @@ import { getBusinesses, getCategories, getJobs } from "@/lib/repo";
 import { parseDbDate } from "@/lib/dates";
 import { areasForBusiness } from "@/lib/seo-areas";
 import { GUIDES } from "@/lib/guides";
+import { GUIDES as TUDASTAR_GUIDES } from "@/lib/tudastar";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/allasok", priority: 0.8, changeFrequency: "daily" },
     { path: "/kozvetites", priority: 0.8, changeFrequency: "monthly" },
     { path: "/tudasbazis", priority: 0.8, changeFrequency: "weekly" },
+    { path: "/tudastar", priority: 0.8, changeFrequency: "weekly" },
     { path: "/hirlevel", priority: 0.6, changeFrequency: "monthly" },
     { path: "/szaknevsor/uj", priority: 0.6, changeFrequency: "monthly" },
     { path: "/ai-atlathatosag", priority: 0.4, changeFrequency: "monthly" },
@@ -36,10 +38,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     items.push({ url: `${BASE}${p.path}`, lastModified: now, changeFrequency: p.changeFrequency, priority: p.priority });
   }
 
-  // 2) Tudásbázis cikkek
+  // 2) Tudásbázis cikkek (CH) + Tudástár cikkek (ország × slug, mind a 4 ország)
   for (const g of GUIDES) {
     items.push({
       url: `${BASE}/tudasbazis/${g.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+  }
+  for (const g of TUDASTAR_GUIDES) {
+    items.push({
+      url: `${BASE}/tudastar/${g.country}/${g.slug}`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.7,
