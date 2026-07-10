@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Icon } from "@/components/ui";
 import { getGuide, guideCountry, GUIDES, GUIDES_DISCLAIMER, isMoneyGuide, relatedCategoriesForGuide, relatedGuides } from "@/lib/guides";
 import { GuideProCta } from "./GuideProCta";
+import { GuideFeedback } from "@/components/views/guide-feedback";
 import { GuideNewsletterCta } from "@/components/views/guide-newsletter-cta";
 import { GuideShareButton } from "@/components/views/guide-share-button";
 import { RemittanceAffiliateCta } from "@/components/views/remittance-affiliate-cta";
@@ -175,6 +176,9 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       </section>
 
       <p className="px-1 text-[11px] leading-relaxed text-ink-faint">{GUIDES_DISCLAIMER}</p>
+
+      {/* Anonim hasznosság-szavazás → tartalom-roadmap adat (usage-analytics). */}
+      <GuideFeedback slug={guide.slug} />
 
       {/* Hírlevél-feliratkozó — az SEO-olvasó visszahívhatóvá tétele (a cikk
           országának hírlevelére, inline, double-opt-in). */}
