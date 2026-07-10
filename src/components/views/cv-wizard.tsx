@@ -26,6 +26,8 @@ interface FormState {
   skills: string;
   /** Igazolványkép data URL-ként (35:45 arányra vágva) — CSAK a PDF-be, sehová fel nem töltjük. */
   photo: string;
+  /** A PDF kiemelőszíne (hex) — szakaszjelölők, fejléc-vonal, szakma-sor. */
+  accent: string;
 }
 
 /**
@@ -64,6 +66,14 @@ const emptyEdu: CvEducation = { school: "", qualification: "", from: "", to: "" 
 
 const STEPS = ["Adatok", "Szakma", "Tapasztalat", "Végzettség", "Nyelvek & PDF"];
 
+/** PDF-kiemelőszínek — visszafogott, nyomtatásbarát árnyalatok (német HR-konform). */
+const ACCENTS: { hex: string; label: string }[] = [
+  { hex: "#1d4434", label: "Zöld (klasszikus)" },
+  { hex: "#212b36", label: "Antracit" },
+  { hex: "#1e4f7a", label: "Kék" },
+  { hex: "#6b2233", label: "Bordó" },
+];
+
 export function CvWizard() {
   const [step, setStep] = useState(0);
   const [f, setF] = useState<FormState>({
@@ -77,6 +87,7 @@ export function CvWizard() {
     ],
     skills: "",
     photo: "",
+    accent: ACCENTS[0].hex,
   });
   const [busy, setBusy] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
@@ -106,6 +117,7 @@ export function CvWizard() {
       education: f.education,
       languages: f.languages,
       skills: f.skills.trim(),
+      accent: f.accent,
     };
   }
 
@@ -167,15 +179,22 @@ export function CvWizard() {
 
   return (
     <div className="rounded-card border border-line bg-surface p-4 shadow-card sm:p-5">
-      {/* Lépés-jelző */}
+      {/* Lépés-jelző — a sáv-szegmensek KATTINTHATÓK (szabad oda-vissza ugrás) */}
       <div className="mb-4">
         <div className="mb-2 flex items-center justify-between text-[11px] font-bold text-ink-muted">
           <span>{step + 1}. lépés / {STEPS.length}</span>
           <span className="text-primary">{STEPS[step]}</span>
         </div>
         <div className="flex gap-1">
-          {STEPS.map((_, i) => (
-            <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= step ? "bg-primary" : "bg-surface-alt"}`} />
+          {STEPS.map((label, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setStep(i)}
+              aria-label={`${i + 1}. lépés: ${label}`}
+              aria-current={i === step ? "step" : undefined}
+              className={`h-2 flex-1 rounded-full transition ${i <= step ? "bg-primary" : "bg-surface-alt"} ${i === step ? "" : "opacity-90 hover:opacity-100"}`}
+            />
           ))}
         </div>
       </div>
@@ -345,6 +364,52 @@ export function CvWizard() {
           <div>
             <label className={labelCls}>Egyéb készségek (Weitere Kenntnisse, opcionális)</label>
             <textarea className={`${inputCls} min-h-[60px] resize-y`} value={f.skills} onChange={(e) => set("skills", e.target.value)} placeholder="pl. Führerschein C+E, Staplerschein, MS Office, EDV-Grundkenntnisse" maxLength={400} />
+          </div>
+
+          {/* PDF-megjelenés: kiemelőszín + élő fejléc-előnézet */}
+          <div>
+            <label className={labelCls}>A PDF kiemelőszíne</label>
+            <div className="flex items-center gap-2.5">
+              {ACCENTS.map((a) => (
+                <button
+                  key={a.hex}
+                  type="button"
+                  onClick={() => set("accent", a.hex)}
+                  aria-label={a.label}
+                  aria-pressed={f.accent === a.hex}
+                  title={a.label}
+                  className={`h-8 w-8 rounded-full transition active:scale-95 ${f.accent === a.hex ? "ring-2 ring-primary ring-offset-2 ring-offset-surface scale-110" : "opacity-80 hover:opacity-100"}`}
+                  style={{ backgroundColor: a.hex }}
+                />
+              ))}
+            </div>
+          </div>
+          {/* Papír-előnézet: SZÁNDÉKOSAN fix fehér + fix sötét szöveg (a PDF-lapot
+              mutatja) — sötét módban is fehér marad, minden szín hardcode-olt. */}
+          <div className="overflow-hidden rounded-xl border border-line bg-white p-4 shadow-card" aria-hidden="true">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#8a939c]">PDF-előnézet (fejléc)</p>
+            <div className="flex items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[17px] font-extrabold leading-tight text-[#212b36]">
+                  {f.fullName.trim() || "Vor- und Nachname"}
+                </p>
+                {professionDe && (
+                  <p className="mt-0.5 truncate text-[12.5px] font-bold" style={{ color: f.accent }}>
+                    {professionDe}
+                  </p>
+                )}
+                {(f.phone.trim() || f.email.trim()) && (
+                  <p className="mt-1 truncate text-[10.5px] text-[#6e7882]">
+                    {[f.phone.trim(), f.email.trim()].filter(Boolean).join("   ·   ")}
+                  </p>
+                )}
+              </div>
+              {f.photo && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={f.photo} alt="" className="h-[54px] w-[42px] shrink-0 rounded-[3px] border border-[#c8ced4] object-cover" />
+              )}
+            </div>
+            <div className="mt-3 h-[3px] w-full rounded-full" style={{ backgroundColor: f.accent }} />
           </div>
 
           {/* PDF letöltés */}

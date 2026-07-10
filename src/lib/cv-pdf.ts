@@ -41,6 +41,9 @@ export interface CvData {
   /** Opcionális fejléc-fotó (data URL, JPEG). CSAK a PDF-be kerül — a szerverre/D1-be
    *  SOHA nem töltjük fel (a wizard a mentés-payloadból kihagyja). */
   photo?: string;
+  /** Kiemelőszín hex-ben (pl. "#1d4434") — szakaszcím-jelölők, fejléc-vonal, szakma-sor.
+   *  Visszafogott, nyomtatásbarát; érvénytelen/hiányzó érték → antracit alapszín. */
+  accent?: string;
 }
 
 // DIN-5008 A4 margók (mm)
@@ -59,6 +62,14 @@ const BODY_W = CONTENT_W - DATE_COL_W - 4;
 const INK: [number, number, number] = [33, 43, 54];
 const MUTED: [number, number, number] = [110, 120, 130];
 const RULE: [number, number, number] = [200, 206, 212];
+
+function hexToRgb(hex: string | undefined): [number, number, number] | null {
+  if (!hex) return null;
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
 
 function todayDe(): string {
   const d = new Date();
@@ -80,8 +91,12 @@ export async function generateCvPdf(data: CvData): Promise<void> {
 
   let y = M_TOP;
 
+  // Kiemelőszín: a felhasználó választása, vagy visszafogott antracit alapérték.
+  const ACCENT: [number, number, number] = hexToRgb(data.accent) ?? INK;
+
   const setInk = () => doc.setTextColor(INK[0], INK[1], INK[2]);
   const setMuted = () => doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
+  const setAccent = () => doc.setTextColor(ACCENT[0], ACCENT[1], ACCENT[2]);
 
   /** Oldaltörés, ha a következő blokknak nincs elég hely. */
   function ensure(need: number) {
@@ -91,14 +106,16 @@ export async function generateCvPdf(data: CvData): Promise<void> {
     }
   }
 
-  /** Szakasz-cím + alatta vékony vonal. */
+  /** Szakasz-cím accent-jelölő sávval + alatta vékony vonal. */
   function sectionTitle(title: string) {
     ensure(12);
     y += 3;
+    doc.setFillColor(ACCENT[0], ACCENT[1], ACCENT[2]);
+    doc.rect(M_LEFT, y - 3.2, 1.4, 4.3, "F");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     setInk();
-    doc.text(title.toUpperCase(), M_LEFT, y);
+    doc.text(title.toUpperCase(), M_LEFT + 3.8, y);
     y += 1.8;
     doc.setDrawColor(RULE[0], RULE[1], RULE[2]);
     doc.setLineWidth(0.3);
@@ -128,44 +145,55 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   }
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
+  doc.setFontSize(23);
   setInk();
   const nameLines = doc.splitTextToSize(data.fullName || "Vor- und Nachname", textMaxW) as string[];
   doc.text(nameLines, M_LEFT, y + 6);
-  y += 6 + (nameLines.length - 1) * lh(22) + 3;
+  y += 6 + (nameLines.length - 1) * lh(23) + 3.5;
   if (data.professionDe) {
-    doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    setMuted();
+    setAccent();
     const profLines = doc.splitTextToSize(data.professionDe, textMaxW) as string[];
     doc.text(profLines, M_LEFT, y + 2);
-    y += 2 + (profLines.length - 1) * lh(12) + 3;
+    y += 2 + (profLines.length - 1) * lh(12) + 3.5;
+  }
+  // Kompakt kontakt-sor a név alatt (modern német CV-fejléc) — a Wohnort/
+  // Geburtsjahr a Persönliche Daten blokkban marad (nincs duplikáció).
+  const contact = [data.phone.trim(), data.email.trim()].filter(Boolean).join("   ·   ");
+  if (contact) {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    setMuted();
+    const cLines = doc.splitTextToSize(contact, textMaxW) as string[];
+    doc.text(cLines, M_LEFT, y + 1.5);
+    y += 1.5 + (cLines.length - 1) * lh(9.5) + 3;
   }
   // A fejléc alja a szöveg VAGY a fotó alja közül a lejjebbi.
   if (hasPhoto) y = Math.max(y, headerTop + PHOTO_H);
-  y += 2;
-  doc.setDrawColor(INK[0], INK[1], INK[2]);
-  doc.setLineWidth(0.6);
+  y += 2.5;
+  doc.setDrawColor(ACCENT[0], ACCENT[1], ACCENT[2]);
+  doc.setLineWidth(0.9);
   doc.line(M_LEFT, y, M_LEFT + CONTENT_W, y);
   y += 2;
 
-  // ── Persönliche Daten ───────────────────────────────────────────────────
-  sectionTitle("Persönliche Daten");
+  // ── Persönliche Daten (a kontakt már a fejlécben — itt a stabil törzsadatok) ──
   const personal: [string, string][] = [];
   if (data.birthYear) personal.push(["Geburtsjahr", data.birthYear]);
   if (data.city) personal.push(["Wohnort", data.city]);
-  if (data.phone) personal.push(["Telefon", data.phone]);
-  if (data.email) personal.push(["E-Mail", data.email]);
-  doc.setFontSize(10.5);
-  for (const [label, value] of personal) {
-    ensure(6);
-    doc.setFont("helvetica", "normal");
-    setMuted();
-    doc.text(label, M_LEFT, y);
-    doc.setFont("helvetica", "normal");
-    setInk();
-    doc.text(value, BODY_X, y);
-    y += 5.5;
+  if (personal.length) {
+    sectionTitle("Persönliche Daten");
+    doc.setFontSize(10.5);
+    for (const [label, value] of personal) {
+      ensure(6);
+      doc.setFont("helvetica", "normal");
+      setMuted();
+      doc.text(label, M_LEFT, y);
+      doc.setFont("helvetica", "normal");
+      setInk();
+      doc.text(value, BODY_X, y);
+      y += 5.5;
+    }
   }
 
   // ── Kurzprofil (opcionális) ─────────────────────────────────────────────
