@@ -18,6 +18,7 @@ import { BusinessGallery } from "@/components/views/business-gallery";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { TrackBusinessView, PhoneReveal } from "@/components/business-analytics-tracker";
 import { BusinessLeadCta } from "@/components/views/business-lead-cta";
+import { RecentBusinessRecorder } from "@/components/views/recent-businesses";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { hasStreetAddress, hasContactInfo } from "@/lib/address";
 import { extractContactFromBlurb } from "@/lib/contact-links";
@@ -263,11 +264,27 @@ export default async function BusinessPage({
     <div>
       {/* Anonim view-tracker — page-load-on egyszer POST-ol az analitikának. */}
       <TrackBusinessView businessId={b.id} />
+      {/* „Legutóbb megnézted" rögzítés — TISZTÁN kliens-oldali (localStorage). */}
+      <RecentBusinessRecorder id={b.id} name={b.name} categoryLabel={b.categoryLabel} />
       {/* SEO: Google rich snippets a vállalkozóhoz */}
       {/* eslint-disable-next-line @next/next/no-head-element */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(jsonLd) }}
+      />
+      {/* SEO: morzsasor a SERP-hez (a Tudásbázis-cikkek mintája). */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: safeJsonLdStringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Szaknévsor", item: "https://kinti.app/szaknevsor" },
+              { "@type": "ListItem", position: 2, name: b.name, item: `https://kinti.app/szaknevsor/${b.id}` },
+            ],
+          }),
+        }}
       />
       {/* hero fotó + lebegő vezérlők — R2-kép, ha van; különben PRO accent szín, vagy gradiens placeholder */}
       <div

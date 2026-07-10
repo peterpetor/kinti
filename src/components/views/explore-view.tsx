@@ -16,6 +16,7 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { getRegions, regionLabel } from "@/lib/regions";
 import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 import { calculateBusinessHoursStatus, parseWorkingHoursStrict } from "@/lib/hours";
+import { RecentBusinessesStrip } from "@/components/views/recent-businesses";
 import { haversineKm } from "@/lib/distance";
 import { hasStreetAddress } from "@/lib/address";
 import { SmartSearchBar } from "./smart-search-bar";
@@ -774,6 +775,9 @@ export function ExploreView({
 
       {view === "list" ? (
         <div className="grid gap-2.5 px-5">
+          {/* „Legutóbb megnézted" — csak az alap-nézetben (keresés/szűrés közben
+              nem tolakszik a találatok elé). Kliens-oldali, hidratálás-biztos. */}
+          {!q.trim() && cat === "all" && !showFavs && <RecentBusinessesStrip />}
           {filtered.slice(0, visibleCount).map(({ b, dist }) => (
             <BusinessCard
               key={b.id}
