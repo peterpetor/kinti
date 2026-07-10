@@ -398,7 +398,17 @@ export default async function BusinessPage({
             {b.phone && (
               // Scrape-védelem: a szám NINCS a HTML-ben — a PhoneReveal a
               // rate-limitelt kontakt-végpontról kéri le kattintásra.
-              <PhoneReveal businessId={b.id} businessName={b.name} variant="button" className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-primary text-white shadow-card-hover")} />
+              <PhoneReveal
+                businessId={b.id}
+                businessName={b.name}
+                variant="button"
+                country={b.country}
+                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-primary text-white shadow-card-hover")}
+                // WhatsApp — a felfedés után második gombként (fix márka-zöld +
+                // fix fehér szöveg = téma-biztos pár; a szám ország-tudatosan
+                // normalizálódik, bizonytalan formátumnál a gomb el sem készül).
+                waClassName={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-[#25D366] text-white shadow-card-hover")}
+              />
             )}
             {mapsHref && (
               <a

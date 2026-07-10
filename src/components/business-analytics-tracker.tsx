@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { recordCallForReview } from "@/lib/review-prompt";
 import { decodeContact } from "@/lib/contact-obfuscate";
+import { waNumber, WA_PREFILL } from "@/lib/wa-phone";
 import { Icon } from "@/components/ui/icons";
 
 /**
@@ -30,6 +31,41 @@ async function track(businessId: string, kind: "view" | "phone"): Promise<void> 
   } catch {
     // szándékos némaság
   }
+}
+
+export function WaLink({
+  businessId,
+  phone,
+  country,
+  businessName,
+  className,
+  children,
+}: {
+  businessId: string;
+  phone: string;
+  country?: string | null;
+  businessName?: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  const num = waNumber(phone, country);
+  if (!num) return null;
+  return (
+    <a
+      href={`https://wa.me/${num}?text=${encodeURIComponent(WA_PREFILL)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => {
+        // A WhatsApp-kontakt is kapcsolatfelvétel → ugyanaz az analitika-kind
+        // (nincs séma-változás) + a hívás-utáni vélemény-kérő is jár érte.
+        void track(businessId, "phone");
+        if (businessName) recordCallForReview(businessId, businessName);
+      }}
+      className={className}
+    >
+      {children}
+    </a>
+  );
 }
 
 export function TrackBusinessView({ businessId }: { businessId: string }) {
@@ -91,11 +127,17 @@ export function PhoneReveal({
   businessName,
   variant = "button",
   className,
+  country,
+  waClassName,
 }: {
   businessId: string;
   businessName?: string;
   variant?: "button" | "icon";
   className?: string;
+  /** A cég országa (CH/AT/DE/NL) — a helyi formátumú szám WhatsApp-konverziójához. */
+  country?: string | null;
+  /** Ha megadva (button variantnál), felfedés után WhatsApp-gomb is megjelenik. */
+  waClassName?: string;
 }) {
   const [phone, setPhone] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -117,17 +159,33 @@ export function PhoneReveal({
 
   if (phone) {
     return (
-      <TelLink
-        businessId={businessId}
-        phone={phone}
-        businessName={businessName}
-        stopPropagation={variant === "icon"}
-        aria-label={variant === "icon" ? `${businessName ?? "Vállalkozás"} hívása` : undefined}
-        className={className}
-      >
-        <Icon name="phone" size={16} strokeWidth={2.2} />
-        {variant === "button" && <span>{phone}</span>}
-      </TelLink>
+      <>
+        <TelLink
+          businessId={businessId}
+          phone={phone}
+          businessName={businessName}
+          stopPropagation={variant === "icon"}
+          aria-label={variant === "icon" ? `${businessName ?? "Vállalkozás"} hívása` : undefined}
+          className={className}
+        >
+          <Icon name="phone" size={16} strokeWidth={2.2} />
+          {variant === "button" && <span>{phone}</span>}
+        </TelLink>
+        {/* WhatsApp — a kinti magyar közösség fő csatornája. Csak akkor jelenik
+            meg, ha a szám biztonsággal nemzetközi alakra hozható (waNumber). */}
+        {variant === "button" && waClassName && (
+          <WaLink
+            businessId={businessId}
+            phone={phone}
+            country={country}
+            businessName={businessName}
+            className={waClassName}
+          >
+            <Icon name="whatsapp" size={16} strokeWidth={2.1} />
+            <span>WhatsApp</span>
+          </WaLink>
+        )}
+      </>
     );
   }
 

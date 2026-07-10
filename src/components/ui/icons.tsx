@@ -13,7 +13,7 @@ export type IconName =
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "youtube" | "tiktok" | "shoppingBag" | "briefcase"
   | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock"
-  | "compass" | "mail" | "shareIos";
+  | "compass" | "mail" | "shareIos" | "whatsapp";
 
 const PATHS: Record<IconName, string[]> = {
   lock: ["M6 10h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z", "M8 10V7a4 4 0 0 1 8 0v3"],
@@ -54,6 +54,11 @@ const PATHS: Record<IconName, string[]> = {
   // az iOS "Hozzáadás a főképernyőhöz" oktatóban használjuk (install-prompt),
   // mert ott a BÖNGÉSZŐ gombjára mutatunk rá.
   shareIos: ["M12 4v12", "M7 9l5-5l5 5", "M5 16v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3"],
+  // WhatsApp: beszéd-buborék farokkal + kagyló-ív (stroke-stílusban).
+  whatsapp: [
+    "M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.3A9 9 0 1 0 12 3",
+    "M9.2 8.4l1 1.9-0.9 1a7.5 7.5 0 0 0 3.4 3.4l1-0.9 1.9 1c0.5 0.3 0.6 0.9 0.2 1.3-0.7 0.7-1.7 1-2.6 0.6a10.5 10.5 0 0 1-4.9-4.9c-0.4-0.9-0.1-1.9 0.6-2.6 0.4-0.4 1-0.3 1.3 0.2",
+  ],
   bookmark: ["M6 4h12v17l-6-4l-6 4z"],
   chevR: ["M9 5l7 7l-7 7"],
   chevD: ["M5 9l7 7l7-7"],
