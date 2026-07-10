@@ -414,6 +414,42 @@ export interface FeatureUsageStats {
   total: number;
 }
 
+export interface GuideFeedbackRow {
+  slug: string;
+  up: number;
+  down: number;
+}
+
+/**
+ * A Tudásbázis „Hasznos volt?" szavazatainak cikk-szintű aggregálása (az
+ * `action:gfb-up-<slug>` / `gfb-dn-<slug>` usage-eseményekből) — a nyers
+ * esemény-lista 81 cikknél olvashatatlan, ez a tartalom-roadmap nézet.
+ */
+export async function getGuideFeedbackStats(days = 30): Promise<GuideFeedbackRow[]> {
+  const since = new Date(Date.now() - (days - 1) * 86_400_000).toISOString().slice(0, 10);
+  try {
+    const { results } = await getDB()
+      .prepare(
+        `SELECT event, SUM(count) AS count FROM feature_usage_daily
+         WHERE day >= ? AND event LIKE 'action:gfb-%' GROUP BY event`,
+      )
+      .bind(since)
+      .all<UsageRow>();
+    const bySlug = new Map<string, GuideFeedbackRow>();
+    for (const r of results ?? []) {
+      const m = /^action:gfb-(up|dn)-([a-z0-9_-]+)$/.exec(r.event);
+      if (!m) continue;
+      const row = bySlug.get(m[2]) ?? { slug: m[2], up: 0, down: 0 };
+      if (m[1] === "up") row.up += r.count ?? 0;
+      else row.down += r.count ?? 0;
+      bySlug.set(m[2], row);
+    }
+    return [...bySlug.values()].sort((a, b) => b.up + b.down - (a.up + a.down));
+  } catch {
+    return []; // tábla még nincs (0079 migráció előtt)
+  }
+}
+
 /** Az elmúlt N nap eseményei darabszám szerint csökkenőben (admin nézet). */
 export async function getFeatureUsageStats(days = 7): Promise<FeatureUsageStats> {
   const since = new Date(Date.now() - (days - 1) * 86_400_000).toISOString().slice(0, 10);
@@ -622,7 +658,7 @@ export async function syncDeadlineReminders(
     .bind(endpoint)
     .all<{ id: string; title: string; due_date: string }>();
   const existing = results ?? [];
-  const key = (t: string, d: string) => `${t} ${d}`;
+  const key = (t: string, d: string) => `${t}\u0000${d}`;
   const existingKeys = new Set(existing.map((r) => key(r.title, r.due_date)));
   const incomingKeys = new Set(deadlines.map((d) => key(d.title, d.date)));
 

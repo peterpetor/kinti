@@ -20,7 +20,10 @@ import {
   listBusinessesForAdmin,
   listB2bProjectsForAdmin,
   listCvSubmissionsForAdmin,
+  getGuideFeedbackStats,
 } from "@/lib/repo";
+import { countConfirmedNewsletterSubscribersByCountry } from "@/lib/repo-newsletter";
+import { getGuide } from "@/lib/guides";
 import { relTimeFromIso, relTimeFromMs } from "@/lib/relative-time";
 
 export const runtime = "edge";
@@ -39,7 +42,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
   // Vállalkozás-lista lapozása (100/oldal): ?p=2 → második 100, stb.
   const bizPage = Math.max(1, parseInt(searchParams?.p ?? "1", 10) || 1);
 
-  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, businesses, b2bProjects, cvSubmissions] =
+  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, businesses, b2bProjects, cvSubmissions, guideFeedback, newsletterByCountry] =
     await Promise.all([
       getAdminStats(country),
       getAdminTrends(),
@@ -50,7 +53,15 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
       listBusinessesForAdmin(country, bizPage),
       listB2bProjectsForAdmin(),
       listCvSubmissionsForAdmin(),
+      getGuideFeedbackStats(30),
+      countConfirmedNewsletterSubscribersByCountry(),
     ]);
+
+  // Cikk-visszajelzések két nézete: legtöbb 👍, és ahol a 👎 dominál (átdolgozandó).
+  const fbTop = guideFeedback.filter((g) => g.up > 0).sort((a, b) => b.up - a.up).slice(0, 5);
+  const fbFlop = guideFeedback.filter((g) => g.down > g.up).sort((a, b) => b.down - a.down).slice(0, 5);
+  const guideTitle = (slug: string) => getGuide(slug)?.title ?? slug;
+  const newsletterTotal = Object.values(newsletterByCountry).reduce((s, n) => s + n, 0);
 
   const fmt = (n: number) => n.toLocaleString("hu-HU");
   const emailPct = Math.min(100, Math.round((emailUsage.todayCount / emailUsage.dailyFreeLimit) * 100));
@@ -158,6 +169,73 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
           Csak a sikeres küldések számítanak (megerősítők, lead-ek, digest, admin-értesítők). A 0078 migráció
           aktiválja; addig 0-t mutat.
         </p>
+      </section>
+
+      {/* Hírlevél-növekedés országonként (a lista a growth-hurok gerince) */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">
+          Hírlevél-feliratkozók ({fmt(newsletterTotal)} megerősített){country !== "all" && <GlobalTag />}
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {COUNTRIES.map((c) => (
+            <span key={c.code} className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink">
+              {c.flag} {c.name}
+              <span className="text-ink-muted">{fmt(newsletterByCountry[c.code] ?? 0)}</span>
+            </span>
+          ))}
+          <Link
+            href="/admin/newsletter"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-3 py-1.5 text-[12px] font-extrabold text-white shadow-card"
+          >
+            ✉️ Küldés / heti vázlat
+          </Link>
+        </div>
+      </section>
+
+      {/* Cikk-visszajelzések — a Tudásbázis „Hasznos volt?" szavazatai cikkenként
+          (tartalom-roadmap: mit bővítsünk, mit dolgozzunk át). */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">Cikk-visszajelzések (30 nap){country !== "all" && <GlobalTag />}</h2>
+        {guideFeedback.length === 0 ? (
+          <Empty label="Még nincs cikk-szavazat — a 👍/👎 minden Tudásbázis-cikk alján gyűlik." />
+        ) : (
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div className="rounded-card border border-line bg-surface p-3 shadow-card">
+              <p className="mb-2 text-[11.5px] font-bold uppercase tracking-wide text-success">Leghasznosabbak</p>
+              {fbTop.length === 0 ? (
+                <p className="text-[12px] text-ink-muted">Még nincs 👍.</p>
+              ) : (
+                <ul className="space-y-1.5">
+                  {fbTop.map((g) => (
+                    <li key={g.slug} className="flex items-baseline justify-between gap-2 text-[12.5px]">
+                      <Link href={`/tudasbazis/${g.slug}`} className="min-w-0 truncate font-semibold text-ink hover:text-primary">
+                        {guideTitle(g.slug)}
+                      </Link>
+                      <span className="shrink-0 font-bold text-ink-muted">👍 {g.up}{g.down > 0 ? ` · 👎 ${g.down}` : ""}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="rounded-card border border-line bg-surface p-3 shadow-card">
+              <p className="mb-2 text-[11.5px] font-bold uppercase tracking-wide text-accent">Átdolgozandó (👎 &gt; 👍)</p>
+              {fbFlop.length === 0 ? (
+                <p className="text-[12px] text-ink-muted">Nincs ilyen — minden cikk pozitív. 🎉</p>
+              ) : (
+                <ul className="space-y-1.5">
+                  {fbFlop.map((g) => (
+                    <li key={g.slug} className="flex items-baseline justify-between gap-2 text-[12.5px]">
+                      <Link href={`/tudasbazis/${g.slug}`} className="min-w-0 truncate font-semibold text-ink hover:text-primary">
+                        {guideTitle(g.slug)}
+                      </Link>
+                      <span className="shrink-0 font-bold text-ink-muted">👎 {g.down} · 👍 {g.up}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Funkció-használat — melyik modult használják (privacy-first, azonosító nélkül) */}
