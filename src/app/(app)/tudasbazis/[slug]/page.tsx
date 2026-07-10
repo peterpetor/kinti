@@ -23,6 +23,9 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   if (!guide) return { title: "Tudásbázis" };
   const path = `/tudasbazis/${guide.slug}`;
   const title = `${guide.title} — Kinti Tudásbázis`;
+  // OG-kép: a megosztott link (WhatsApp/FB-kártya) kép nélkül „csupasz" — a
+  // branded default drasztikusan emeli a kattintást (a jobs-oldal mintája).
+  const image = "https://kinti.app/icons/og-default.png";
   return {
     title,
     description: guide.summary,
@@ -33,8 +36,9 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
       url: path,
       type: "article",
       siteName: "Kinti",
+      images: [{ url: image, width: 1200, height: 630, alt: guide.title }],
     },
-    twitter: { card: "summary", title, description: guide.summary },
+    twitter: { card: "summary_large_image", title, description: guide.summary, images: [image] },
   };
 }
 

@@ -17,7 +17,7 @@ import { AT_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-at";
 import { DE_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-de";
 import { NL_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-nl";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryAdjective } from "@/lib/countries";
 
 /**
  * KvizGame — interaktív napi 3 kérdéses kvíz játék.
@@ -269,6 +269,10 @@ function ResultScreen({
             );
           })}
         </div>
+
+        {/* Viral kör a napi-frekvenciájú felületen: az eredmény egy tappal megy a
+            WhatsApp/Messenger-csoportba (Web Share), asztalon vágólapra. */}
+        <QuizShareButton score={score} streak={state.streak} country={country} />
       </section>
 
       {/* Heti összevetés: valós anonim percentilis (elég mintától), addig a saját
@@ -437,5 +441,48 @@ function WeeklyCompareBanner({
         A közösségi rangsor hamarosan — gyűlik a heti mezőny.
       </p>
     </div>
+  );
+}
+
+/**
+ * QuizShareButton — az eredmény natív megosztása (Web Share; asztali fallback:
+ * vágólap). A napi kvíz a legmagasabb frekvenciájú felület → itt ér a legtöbbet
+ * a viral kör: a szöveg kihívás-jellegű, a link a /kviz-re hoz új játékost.
+ */
+function QuizShareButton({ score, streak, country }: { score: number; streak: number; country: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function share() {
+    const text = `🎯 ${score}/3 lett a mai ${countryAdjective(country)} kvízem a Kintin${
+      streak >= 2 ? ` — ${streak} napos sorozat 🔥` : ""
+    }! Te mennyit tudsz a választott hazádról?`;
+    const url = "https://kinti.app/kviz";
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Napi Kinti Kvíz", text, url });
+        return;
+      }
+    } catch {
+      /* a user bezárta a megosztót → nem hiba */
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard-engedély hiánya — csendben elnyeljük */
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={share}
+      className="mt-4 inline-flex items-center gap-1.5 rounded-pill border border-primary/30 bg-surface px-4 py-2 text-[12.5px] font-bold text-primary transition active:scale-[0.97]"
+    >
+      <Icon name="share" size={14} strokeWidth={2.4} />
+      {copied ? "Kimásolva ✓" : "Megosztom az eredményem"}
+    </button>
   );
 }
