@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { Category } from "@/lib/types";
@@ -12,15 +12,18 @@ interface Props {
   categories: Category[];
   /** Előre kiválasztott kategória (pl. a Szaknévsor üres-találat CTA-jából, ?cat=). */
   initialCategoryId?: string;
+  /** Előre kiválasztott régió (a Szaknévsor csoportos-CTA-jából, ?canton=). */
+  initialCantonCode?: string;
 }
 
 type Step = "form" | "success";
 
-export function LeadRequestForm({ categories, initialCategoryId }: Props) {
+export function LeadRequestForm({ categories, initialCategoryId, initialCantonCode }: Props) {
   const [step, setStep] = useState<Step>("form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sentCount, setSentCount] = useState(0);
+  const [extraCount, setExtraCount] = useState(0);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,7 +31,7 @@ export function LeadRequestForm({ categories, initialCategoryId }: Props) {
   const [categoryId, setCategoryId] = useState(
     initialCategoryId && categories.some((c) => c.id === initialCategoryId) ? initialCategoryId : "",
   );
-  const [cantonCode, setCantonCode] = useState("all");
+  const [cantonCode, setCantonCode] = useState(initialCantonCode || "all");
   const [message, setMessage] = useState("");
   const [honeypot, setHoneypot] = useState(""); // bot-szűrő
 
@@ -39,6 +42,11 @@ export function LeadRequestForm({ categories, initialCategoryId }: Props) {
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const countryName = getCountry(country)?.name ?? "Svájc";
   const regions = getRegions(country);
+  // Más ország régió-kódja (URL-ből / ország-váltás után) érvénytelen → vissza "all"-ra.
+  useEffect(() => {
+    if (cantonCode !== "all" && !regions.some((r) => r.code === cantonCode)) setCantonCode("all");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [country]);
   const cityExample = country === "AT" ? "Bécsben" : country === "DE" ? "Berlinben" : country === "NL" ? "Amszterdamban" : "Zürichben";
   const phoneExample = country === "AT" ? "+43 660 123 4567" : country === "DE" ? "+49 151 23456789" : country === "NL" ? "+31 6 12345678" : "+41 79 123 45 67";
 
@@ -66,6 +74,7 @@ export function LeadRequestForm({ categories, initialCategoryId }: Props) {
           categoryId,
           categoryLabel: selectedCategory?.label ?? categoryId,
           cantonCode,
+          country, // fan-out ország-célzás (a kérő app-országa)
           message: message.trim(),
           _hp: honeypot, // honeypot mező — bot detektálás
         }),
@@ -74,6 +83,7 @@ export function LeadRequestForm({ categories, initialCategoryId }: Props) {
       const data = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
         sent?: number;
+        extra?: number;
         error?: string;
       };
 
@@ -83,6 +93,7 @@ export function LeadRequestForm({ categories, initialCategoryId }: Props) {
       }
 
       setSentCount(data.sent ?? 1);
+      setExtraCount(data.extra ?? 0);
       setStep("success");
     } catch {
       setError("Hálózati hiba. Ellenőrizd az internetkapcsolatot.");
@@ -102,8 +113,11 @@ export function LeadRequestForm({ categories, initialCategoryId }: Props) {
             Kérésed elküldve! 🎉
           </h2>
           <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
-            <strong className="text-success">{sentCount} vállalkozó</strong> kapta meg az
-            árajánlat-kérésed.
+            <strong className="text-success">{sentCount} vállalkozó</strong> kapta meg azonnal az
+            árajánlat-kérésed{extraCount > 0 ? (
+              <>, és <strong className="text-ink">további {extraCount} helyi szakember</strong> a
+              napi értesítőjében látja</>
+            ) : null}.
             <br />
             Hamarosan keresni fognak e-mailben vagy telefonon!
           </p>
@@ -133,7 +147,7 @@ export function LeadRequestForm({ categories, initialCategoryId }: Props) {
             setStep("form");
             setName(""); setEmail(""); setPhone("");
             setCategoryId(""); setCantonCode("all"); setMessage("");
-            setSentCount(0);
+            setSentCount(0); setExtraCount(0);
           }}
           className="text-[13px] font-bold text-primary hover:underline"
         >

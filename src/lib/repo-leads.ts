@@ -145,16 +145,19 @@ export async function getLeadCounts(businessId: string): Promise<{ month: number
 }
 
 /**
- * Egy vállalkozás ebben a naptári hónapban kapott lead-jeinek száma (a lead BESZÚRÁSA
- * ELŐTT hívva → ha >= FREE_LEADS_PER_MONTH és nem PRO, az új lead már a kereten felüli).
- * Az email-kapuhoz (locked vs teljes értesítő).
+ * Egy vállalkozás ebben a naptári hónapban kapott FELOLDOTT lead-jeinek száma (a lead
+ * BESZÚRÁSA ELŐTT hívva → ha >= FREE_LEADS_PER_MONTH és nem PRO, az új lead már a
+ * kereten felüli). Az email-kapuhoz (locked vs teljes értesítő). A zárolt leadek
+ * SZÁNDÉKOSAN nem számítanak bele: a csoportos ajánlatkérés extra (mindig zárolt)
+ * címzettjei nem fogyaszthatják el a cég havi 5 ingyenes keretét.
  */
 export async function countBusinessLeadsThisMonth(businessId: string): Promise<number> {
   try {
     const row = await getDB()
       .prepare(
         `SELECT COUNT(*) AS n FROM business_leads
-         WHERE business_id = ? AND created_at >= strftime('%Y-%m-01 00:00:00','now')`,
+         WHERE business_id = ? AND created_at >= strftime('%Y-%m-01 00:00:00','now')
+           AND COALESCE(locked, 0) = 0`,
       )
       .bind(businessId)
       .first<{ n: number }>();

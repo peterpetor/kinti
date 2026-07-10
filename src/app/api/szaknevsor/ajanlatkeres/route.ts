@@ -3,7 +3,9 @@ import { getDB } from "@/lib/cloudflare";
 import { safeLogError } from "@/lib/safe-log";
 import { hashIp, hashEmail } from "@/lib/security";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
-import { cantonFromAddress, matchCantonByName, CANTONS } from "@/lib/cantons";
+import { cantonFromAddress, matchCantonByName } from "@/lib/cantons";
+import { REGIONS, getRegions } from "@/lib/regions";
+import { isValidCountry } from "@/lib/countries";
 import {
   sendLeadRequestEmail,
   sendLeadLockedEmail,
@@ -22,6 +24,11 @@ const MAX_BUSINESSES = 3;
 // legalább ennyi árajánlatot (különben holt a funkció, és nincs mit eladni).
 const LEAD_MIN_RECIPIENTS = 2;
 const MIN_MESSAGE_LENGTH = 20;
+// A top-3 emailes címzetten FELÜL ennyi további kategóriabeli cég kapja meg a leadet
+// DB-be mentve (email NÉLKÜL — a reggeli digest értesíti őket, 1 email/nap/cég).
+// Nem-PRO extra címzettnek MINDIG zárolt (kontakt rejtve → Szaknévsor PRO-upsell),
+// és a zárolt lead nem fogyasztja a havi 5 ingyenes keretet (countBusinessLeadsThisMonth).
+const EXTRA_LOCKED_MAX = 7;
 
 interface BusinessContactRow {
   id: string;
@@ -44,7 +51,8 @@ interface BusinessContactRow {
  *   phone?: string,
  *   categoryId: string,
  *   categoryLabel: string,
- *   cantonCode?: string,   // 2-betűs kód vagy "all"
+ *   cantonCode?: string,   // régió-kód (ország-tudatos: kanton/Bundesland/provincia) vagy "all"
+ *   country?: string,      // CH/AT/DE/NL — a fan-out erre az országra célzódik
  *   message: string,
  *   _hp?: string,          // honeypot — botok kitöltik, emberek nem
  * }
@@ -91,6 +99,11 @@ export async function POST(req: Request) {
     const categoryId = typeof body.categoryId === "string" ? body.categoryId.trim() : "";
     const categoryLabel = typeof body.categoryLabel === "string" ? body.categoryLabel.trim() : "";
     const cantonCode = typeof body.cantonCode === "string" ? body.cantonCode.trim() : "all";
+    // Ország a fan-out célzásához (a kérő app-országa). Régi kliens nem küldi →
+    // null = nincs ország-szűrés (a korábbi viselkedés), de a régió-kód akkor is
+    // mind a 4 ország kódkészlete ellen validálódik (ne 400-azzon az AT Bundesland).
+    const rawCountry = typeof body.country === "string" ? body.country.trim() : null;
+    const country = isValidCountry(rawCountry) ? rawCountry : null;
     const message = typeof body.message === "string" ? body.message.trim() : "";
     // DIREKT mód: a cégprofil „Árajánlat" gombja EGY konkrét cégnek küld —
     // ilyenkor nincs kategória/kanton fan-out, a kategória a cégből jön.
@@ -113,10 +126,16 @@ export async function POST(req: Request) {
       );
     }
 
-    // Kanton validáció
-    const validCantonCodes = new Set(["all", ...CANTONS.map((c) => c.code)]);
-    if (!validCantonCodes.has(cantonCode)) {
-      return NextResponse.json({ error: "Érvénytelen kanton-kód." }, { status: 400 });
+    // Régió-validáció — ORSZÁG-TUDATOS (a régi, csak-svájci CANTONS-lista 400-at
+    // dobott minden AT/DE/NL régió-választásra — binary-country-fallthrough eset).
+    const validRegionCodes = new Set([
+      "all",
+      ...(country
+        ? getRegions(country).map((r) => r.code)
+        : Object.values(REGIONS).flatMap((rs) => rs.map((r) => r.code))),
+    ]);
+    if (!validRegionCodes.has(cantonCode)) {
+      return NextResponse.json({ error: "Érvénytelen régió-kód." }, { status: 400 });
     }
 
     // ── Dedup: ugyanaz az email + kategória 24 órán belül? ──────────────────
@@ -141,6 +160,9 @@ export async function POST(req: Request) {
     }
 
     let targets: BusinessContactRow[];
+    // Csoportos mód: a top címzetteken FELÜLI kategóriabeli cégek (email nélkül,
+    // digest-értesítéssel; nem-PRO-nak zárolt). Direkt módban üres marad.
+    let extras: BusinessContactRow[] = [];
 
     if (businessId) {
       // ── DIREKT mód: a profil-oldalról EGY konkrét cégnek ────────────────────
@@ -169,12 +191,15 @@ export async function POST(req: Request) {
     } else {
     // Vállalkozások lekérése kategória + email szűrővel
     // lead_opt_out = 0 → csak azok kapják, akik nem iratkoztak le
+    // Ország-szűrő: a kérő országának cégei (nélküle egy berlini kérés a DE „BE"
+    // régió-kóddal a berni „BE" kantonba is routolhatott — cross-country lead-bug).
     const { results: allBusinesses } = await getDB()
       .prepare(
         `SELECT id, name, contact_email, address, category_id, category_label,
                 COALESCE(featured, 0) AS featured, canton_code, country_code
          FROM businesses
          WHERE category_id = ?
+           AND (? IS NULL OR COALESCE(country_code, 'CH') = ?)
            AND COALESCE(hidden, 0) = 0
            AND moderation_status = 1
            AND contact_email IS NOT NULL
@@ -183,7 +208,7 @@ export async function POST(req: Request) {
          ORDER BY featured DESC, rating DESC
          LIMIT 200`,
       )
-      .bind(categoryId)
+      .bind(categoryId, country, country)
       .all<BusinessContactRow>();
 
     // Régió-szűrés: elsősorban a TÁROLT canton_code (minden országra helyes);
@@ -220,6 +245,12 @@ export async function POST(req: Request) {
         targets = [...targets, ...otherBiz.slice(0, LEAD_MIN_RECIPIENTS - targets.length)];
       }
     }
+
+    // EXTRA címzettek: a maradék (legjobb) kategóriabeli cégek is megkapják a leadet,
+    // de csak DB-be mentve — azonnali email NINCS (Resend-kvóta), a reggeli digest
+    // értesíti őket. Így minden helyi releváns cég versenyezhet a leadért.
+    const targetIds = new Set(targets.map((t) => t.id));
+    extras = filtered.filter((b) => !targetIds.has(b.id)).slice(0, EXTRA_LOCKED_MAX);
     } // fan-out mód vége
 
     if (targets.length === 0) {
@@ -272,6 +303,9 @@ export async function POST(req: Request) {
         lastFreeByBiz.set(b.id, monthCount === FREE_LEADS_PER_MONTH - 1);
       }),
     );
+    // Extra címzett: PRO (featured) teljes leadet kap a digestben; nem-PRO MINDIG
+    // zároltat (kontakt rejtve → PRO-upsell) — és a zárolt nem fogyasztja a havi keretet.
+    for (const b of extras) lockedByBiz.set(b.id, Number(b.featured) !== 1);
 
     // Email küldés — csak a first-ping célpontoknak, best-effort. Zárolt cégnek a
     // kontakt-mentes „oldd fel PRO-val" értesítő megy.
@@ -325,6 +359,19 @@ export async function POST(req: Request) {
           locked: lockedByBiz.get(biz.id) ?? false,
         }),
       ]),
+      ...extras.flatMap((biz) => [
+        incrementBusinessAnalytic(biz.id, "lead", null),
+        createBusinessLead({
+          businessId: biz.id,
+          senderName: name,
+          senderEmail: email,
+          senderPhone: phone,
+          categoryLabel: effectiveCategoryLabel,
+          message,
+          firstPingSent: false,
+          locked: lockedByBiz.get(biz.id) ?? true,
+        }),
+      ]),
     ]);
 
     // Visszaigazolás a kérező felhasználónak
@@ -333,7 +380,8 @@ export async function POST(req: Request) {
         to: email,
         senderName: name,
         categoryLabel: effectiveCategoryLabel,
-        businessCount: targets.length,
+        // Teljes elérés: azonnali címzettek + a digestben értesülő extra cégek.
+        businessCount: targets.length + extras.length,
       });
     } catch (confirmErr) {
       safeLogError("lead-request/confirm-email", confirmErr);
@@ -354,7 +402,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { ok: true, sent: sentCount, total: targets.length },
+      { ok: true, sent: sentCount, total: targets.length, extra: extras.length },
       { headers: { "cache-control": "no-store" } },
     );
   } catch (err) {

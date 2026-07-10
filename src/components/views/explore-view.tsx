@@ -422,9 +422,15 @@ export function ExploreView({
     return found ? `${found.name} (${found.code})` : canton;
   }, [canton, regions, countryName]);
 
+  // Csoportos ajánlatkérés CTA: kategória-szűrt lista-nézetben, ha van legalább 2
+  // szolgáltató, akitől érdemes EGYSZERRE ajánlatot kérni (1-nél a kártya közvetlen
+  // „Árajánlat" gombja a jobb út). A ?canton= továbbmegy az űrlap előválasztásába.
+  const showGroupLeadCta = view === "list" && cat !== "all" && !showFavs && filtered.length >= 2;
+
   // Kontextuális „kevés a találat" supply-CTA: szűrt nézetben, 1–4 találatnál. Ha
-  // ez látszik, a lista-alji általános ajánló-CTA-t elnyomjuk (különben duplikáció).
+  // ez vagy a csoportos-CTA látszik, a másik/általános CTA-t elnyomjuk (banner-halmozás ellen).
   const showLowCountCta =
+    !showGroupLeadCta &&
     view === "list" && filtered.length > 0 && filtered.length <= 4 && (cat !== "all" || canton !== "all");
 
   return (
@@ -799,6 +805,29 @@ export function ExploreView({
           {/* „Legutóbb megnézted" — csak az alap-nézetben (keresés/szűrés közben
               nem tolakszik a találatok elé). Kliens-oldali, hidratálás-biztos. */}
           {!q.trim() && cat === "all" && !showFavs && <RecentBusinessesStrip />}
+
+          {/* Csoportos ajánlatkérés — a user-pitch: „ne kelljen egyenként mindenkinek
+              írni"; egy űrlap → az összes helyi releváns cég versenyzik a leadért. */}
+          {showGroupLeadCta && (
+            <Link
+              href={`/szaknevsor/ajanlatkeres?cat=${encodeURIComponent(cat)}${canton !== "all" ? `&canton=${encodeURIComponent(canton)}` : ""}`}
+              onClick={() => trackAction("lead-group-cta")}
+              className="flex items-center gap-3 rounded-card border-2 border-primary/25 bg-gradient-to-br from-primary/5 to-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
+            >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary text-xl text-white">📨</span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[11px] font-bold uppercase tracking-wider text-primary">Csoportos árajánlat</span>
+                <span className="block text-[14.5px] font-extrabold leading-tight tracking-[-0.01em] text-ink">
+                  Ne írj mindenkinek külön — kérj ajánlatot egyszerre
+                </span>
+                <span className="block text-[11.5px] text-ink-muted">
+                  Írd le egyszer, mire van szükséged — a helyi magyar szakik keresnek meg téged.
+                </span>
+              </span>
+              <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+            </Link>
+          )}
+
           {filtered.slice(0, visibleCount).map(({ b, dist }) => (
             <BusinessCard
               key={b.id}
