@@ -32,7 +32,9 @@ describe("isValidJobCategory", () => {
 
 describe("jobCategoryLabel", () => {
   it("ismert id → label", () => {
-    expect(jobCategoryLabel("vendeglatas")).toBe("Vendéglátás / Gastro");
+    // A label átnevezhető (az id a védett) — a 103-szakmás bővítés óta ez az alak.
+    expect(jobCategoryLabel("vendeglatas")).toBe("Vendéglátás (általános)");
+    expect(jobCategoryLabel("targoncas")).toBe("Targoncavezető / Raktári gépkezelő");
   });
 
   it("ismeretlen / null → null", () => {

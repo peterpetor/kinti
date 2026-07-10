@@ -4,7 +4,7 @@ import { CountryBanner } from "@/components/country-banner";
 import { ScrollRestorer } from "@/components/page-transition";
 import { AppMain } from "@/components/app-main";
 import { UsageTracker } from "@/components/usage-tracker";
-import { GlobalSearchOverlay } from "@/components/global-search";
+import { GlobalSearchOverlayLazy } from "@/components/global-search-lazy";
 
 /**
  * Az alkalmazás-nézetek közös kerete: mobil-first, középre zárt max-w-md
@@ -24,8 +24,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Privacy-first oldal-használat mérés (aggregált, azonosító nélkül). */}
       <UsageTracker />
       {/* Mindenkereső (command palette) — bármely oldalról: Ctrl/⌘+K, „/",
-          vagy a fejléc keresés-gombja (kinti:open-global-search esemény). */}
-      <GlobalSearchOverlay />
+          vagy a fejléc keresés-gombja (kinti:open-global-search esemény).
+          LAZY: külön chunk, a kezdő render után töltődik (first-load spórolás). */}
+      <GlobalSearchOverlayLazy />
       {/* Őszinte „Hamarosan" sáv, ha nem-CH ország van kiválasztva. */}
       <CountryBanner />
       {/* Belépés előtti ország-választó (csak ha még nincs választott ország). */}

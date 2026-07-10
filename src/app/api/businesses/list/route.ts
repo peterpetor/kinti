@@ -50,8 +50,10 @@ export async function GET(req: Request) {
   return new Response(body, {
     headers: {
       "content-type": "application/json; charset=utf-8",
-      // Böngésző-cache: 2 percig újrahasznosítható (vissza-navigálás, tab-váltás).
-      "cache-control": "public, max-age=120",
+      // Böngésző: 2 perc friss + további 10 percig stale-while-revalidate (azonnali
+      // render a régiből, háttérben frissít). s-maxage: köztes/megosztott cache-nek
+      // (és ha valaha CDN Cache Rule kerül a route elé, kódváltás nélkül él).
+      "cache-control": "public, max-age=120, s-maxage=180, stale-while-revalidate=600",
     },
   });
 }
