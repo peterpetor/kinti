@@ -24,6 +24,39 @@ interface FormState {
   education: CvEducation[];
   languages: CvLanguage[];
   skills: string;
+  /** Igazolványkép data URL-ként (35:45 arányra vágva) — CSAK a PDF-be, sehová fel nem töltjük. */
+  photo: string;
+}
+
+/**
+ * Böngészőben feldolgozott igazolványkép: 35:45 (portré) arányra vág (crop-to-fill),
+ * JPEG-re tömörít. A fájl SOHA nem hagyja el az eszközt — csak a kész data URL kerül
+ * (a PDF-be). Hibánál üres stringgel/„error"-ral tér vissza.
+ */
+function processPhoto(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("read"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("decode"));
+      img.onload = () => {
+        const targetRatio = 35 / 45;
+        const srcRatio = img.width / img.height;
+        let sw = img.width, sh = img.height, sx = 0, sy = 0;
+        if (srcRatio > targetRatio) { sw = img.height * targetRatio; sx = (img.width - sw) / 2; }
+        else { sh = img.width / targetRatio; sy = (img.height - sh) / 2; }
+        const canvas = document.createElement("canvas");
+        canvas.width = 350; canvas.height = 450; // ~254 dpi @ 35×45 mm
+        const ctx = canvas.getContext("2d");
+        if (!ctx) { reject(new Error("canvas")); return; }
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 350, 450);
+        resolve(canvas.toDataURL("image/jpeg", 0.85));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 const emptyExp: CvExperience = { role: "", employer: "", from: "", to: "", desc: "" };
@@ -43,9 +76,11 @@ export function CvWizard() {
       { name: "Deutsch", level: "B1 (Fortgeschritten)" },
     ],
     skills: "",
+    photo: "",
   });
   const [busy, setBusy] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
   const [consent, setConsent] = useState(false);
   const [hp, setHp] = useState("");
   const [saveState, setSaveState] = useState<"idle" | "saving" | "done" | "error">("idle");
@@ -79,11 +114,24 @@ export function CvWizard() {
     if (f.fullName.trim().length < 2) { setPdfError("A PDF-hez add meg a neved (1. lépés)."); return; }
     setBusy(true);
     try {
-      await generateCvPdf(toCvData());
+      // A fotó CSAK itt, a PDF-be kerül — a mentés-payload (toCvData) nem tartalmazza.
+      await generateCvPdf({ ...toCvData(), photo: f.photo || undefined });
     } catch {
       setPdfError("Nem sikerült a PDF készítése. Próbáld újra.");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function onPhotoFile(file: File | null) {
+    if (!file) return;
+    setPhotoError(null);
+    if (!file.type.startsWith("image/")) { setPhotoError("Csak képfájl tölthető fel (JPG/PNG)."); return; }
+    if (file.size > 12 * 1024 * 1024) { setPhotoError("A kép túl nagy (max. 12 MB)."); return; }
+    try {
+      set("photo", await processPhoto(file));
+    } catch {
+      setPhotoError("Nem sikerült feldolgozni a képet. Próbálj másik fájlt.");
     }
   }
 
@@ -159,10 +207,36 @@ export function CvWizard() {
               <input className={inputCls} inputMode="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+49 …" maxLength={40} />
             </div>
           </div>
-          <p className="text-[11.5px] leading-snug text-ink-faint">
-            Német CV-ben a fotó ma már opcionális — a modern, diszkrimináció-mentes „anonymer Lebenslauf"
-            terjed, ezért ez a sablon fotó nélkül készül.
-          </p>
+          {/* Profilkép (Bewerbungsfoto) — opcionális, a böngészőben vágódik 35:45-re */}
+          <div>
+            <label className={labelCls}>Profilkép (opcionális)</label>
+            <div className="flex items-center gap-3">
+              <div className="grid h-[60px] w-[47px] shrink-0 place-items-center overflow-hidden rounded-lg border border-line bg-surface-alt">
+                {f.photo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={f.photo} alt="Profilkép előnézet" className="h-full w-full object-cover" />
+                ) : (
+                  <Icon name="user" size={20} className="text-ink-faint" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-2 text-[12.5px] font-bold text-ink transition active:scale-[0.98]">
+                  <Icon name="upload" size={14} strokeWidth={2.4} />
+                  {f.photo ? "Másik kép" : "Kép feltöltése"}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => { onPhotoFile(e.target.files?.[0] ?? null); e.target.value = ""; }} />
+                </label>
+                {f.photo && (
+                  <button type="button" onClick={() => { set("photo", ""); setPhotoError(null); }} className="ml-2 text-[12px] font-bold text-accent">
+                    Eltávolítás
+                  </button>
+                )}
+                {photoError && <p className="mt-1 text-[11.5px] font-semibold text-accent">{photoError}</p>}
+              </div>
+            </div>
+            <p className="mt-1.5 text-[11px] leading-snug text-ink-faint">
+              A kép a böngésződben 35×45 mm-es igazolványkép-arányra vágódik, és <strong>nem töltődik fel sehová</strong> — csak a PDF-be kerül. Sok modern német CV szándékosan fotó nélküli (anonymer Lebenslauf) — nyugodtan kihagyhatod.
+            </p>
+          </div>
         </div>
       )}
 

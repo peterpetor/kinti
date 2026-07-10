@@ -38,6 +38,9 @@ export interface CvData {
   education: CvEducation[];
   languages: CvLanguage[];
   skills: string;
+  /** Opcionális fejléc-fotó (data URL, JPEG). CSAK a PDF-be kerül — a szerverre/D1-be
+   *  SOHA nem töltjük fel (a wizard a mentés-payloadból kihagyja). */
+  photo?: string;
 }
 
 // DIN-5008 A4 margók (mm)
@@ -103,19 +106,43 @@ export async function generateCvPdf(data: CvData): Promise<void> {
     y += 4.5;
   }
 
-  // ── Fejléc: név + szakma ────────────────────────────────────────────────
+  // ── Fejléc: név + szakma (+ opcionális igazolványkép jobbra fent) ────────
+  // pt → mm sortávolság (jsPDF alap lineHeightFactor 1.15).
+  const lh = (pt: number) => pt * 1.15 * 0.3528;
+  const PHOTO_W = 35; // DIN-igazodású Bewerbungsfoto (35×45 mm)
+  const PHOTO_H = 45;
+  const hasPhoto = typeof data.photo === "string" && data.photo.startsWith("data:image");
+  const photoX = M_LEFT + CONTENT_W - PHOTO_W;
+  const headerTop = y;
+  const textMaxW = hasPhoto ? photoX - M_LEFT - 6 : CONTENT_W;
+
+  if (hasPhoto) {
+    try {
+      doc.addImage(data.photo as string, "JPEG", photoX, headerTop, PHOTO_W, PHOTO_H);
+      doc.setDrawColor(RULE[0], RULE[1], RULE[2]);
+      doc.setLineWidth(0.3);
+      doc.rect(photoX, headerTop, PHOTO_W, PHOTO_H);
+    } catch {
+      /* hibás kép → kihagyjuk, a CV így is elkészül */
+    }
+  }
+
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
   setInk();
-  doc.text(data.fullName || "Vor- und Nachname", M_LEFT, y + 4);
-  y += 9;
+  const nameLines = doc.splitTextToSize(data.fullName || "Vor- und Nachname", textMaxW) as string[];
+  doc.text(nameLines, M_LEFT, y + 6);
+  y += 6 + (nameLines.length - 1) * lh(22) + 3;
   if (data.professionDe) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
     setMuted();
-    doc.text(data.professionDe, M_LEFT, y + 2);
-    y += 6;
+    const profLines = doc.splitTextToSize(data.professionDe, textMaxW) as string[];
+    doc.text(profLines, M_LEFT, y + 2);
+    y += 2 + (profLines.length - 1) * lh(12) + 3;
   }
+  // A fejléc alja a szöveg VAGY a fotó alja közül a lejjebbi.
+  if (hasPhoto) y = Math.max(y, headerTop + PHOTO_H);
   y += 2;
   doc.setDrawColor(INK[0], INK[1], INK[2]);
   doc.setLineWidth(0.6);
