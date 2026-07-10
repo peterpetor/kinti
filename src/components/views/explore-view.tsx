@@ -817,6 +817,21 @@ export function ExploreView({
                       showFavorite
                     />
                   ))}
+                  {/* Kereslet-befogás: a zsákutca-pillanatban ajánlatkérésre
+                      fordítjuk a szándékot (a fan-out kategória-szinten céloz,
+                      kanton nélkül országosan is). */}
+                  {cat !== "all" && (
+                    <Link
+                      href={`/szaknevsor/ajanlatkeres?cat=${encodeURIComponent(cat)}`}
+                      className="flex items-center gap-3 rounded-card border border-pro/30 bg-pro/5 px-4 py-3 text-left transition active:scale-[0.99]"
+                    >
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-pro text-white"><Icon name="send" size={15} strokeWidth={2.4} /></span>
+                      <span className="min-w-0">
+                        <span className="block text-[13.5px] font-bold text-ink">Kérj árajánlatot — ők keresnek meg</span>
+                        <span className="block text-[12px] text-ink-muted">Egy űrlap, és a kategória magyar vállalkozói e-mailben kapják az igényed.</span>
+                      </span>
+                    </Link>
+                  )}
                   <Link
                     href="/szaknevsor/ajanlas"
                     className="flex items-center gap-3 rounded-card border border-dashed border-line bg-surface px-4 py-3 text-left transition active:scale-[0.99]"
@@ -859,6 +874,23 @@ export function ExploreView({
               </p>
               {!showFavs && (
                 <div className="mt-2 flex w-full max-w-xs flex-col gap-2">
+                  {/* Kereslet-befogás a teljes zsákutcában is: kategória-választásnál
+                      ajánlatkérés (a fan-out országosan céloz), egyébként Keresek-poszt. */}
+                  {cat !== "all" ? (
+                    <Link
+                      href={`/szaknevsor/ajanlatkeres?cat=${encodeURIComponent(cat)}`}
+                      className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-pro px-4 py-2.5 text-[13px] font-extrabold text-white shadow-card-hover active:scale-[0.98]"
+                    >
+                      <Icon name="send" size={14} strokeWidth={2.4} /> Kérj árajánlatot — ők keresnek meg
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/keresek"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-pro px-4 py-2.5 text-[13px] font-extrabold text-white shadow-card-hover active:scale-[0.98]"
+                    >
+                      <Icon name="send" size={14} strokeWidth={2.4} /> Add fel a Keresek-be — jelentkeznek
+                    </Link>
+                  )}
                   <Link
                     href="/szaknevsor/uj"
                     className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-primary px-4 py-2.5 text-[13px] font-extrabold text-white shadow-card-hover active:scale-[0.98]"

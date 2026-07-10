@@ -13,8 +13,15 @@ export const metadata: Metadata = {
     "Egyetlen űrlappal kérj árajánlatot Svájc összes magyar vállalkozójától. Könyvelő, fodrász, költöztető — add meg, mit keresel, és a vállalkozók megkeresnek téged!",
 };
 
-export default async function AjanlatkeresPage() {
+export default async function AjanlatkeresPage({
+  searchParams,
+}: {
+  searchParams: { cat?: string };
+}) {
   const categories = await getCategories();
+  // Előválasztott kategória a Szaknévsor üres-találat CTA-jából (?cat=…) —
+  // a form maga is validálja a létező kategóriák ellen.
+  const initialCategoryId = typeof searchParams?.cat === "string" ? searchParams.cat : undefined;
 
   return (
     <div className="mx-auto max-w-md space-y-6 px-5 pb-24 pt-[calc(env(safe-area-inset-top)+2rem)]">
@@ -70,7 +77,7 @@ export default async function AjanlatkeresPage() {
       <section className="animate-fade-up animate-delay-100">
         <div className="rounded-card border border-line bg-surface p-5 shadow-card">
           <h2 className="mb-4 text-[15px] font-extrabold text-ink">Az árajánlat-kérés részletei</h2>
-          <LeadRequestForm categories={categories} />
+          <LeadRequestForm categories={categories} initialCategoryId={initialCategoryId} />
         </div>
       </section>
 

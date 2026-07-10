@@ -10,11 +10,13 @@ import { getRegions } from "@/lib/regions";
 
 interface Props {
   categories: Category[];
+  /** Előre kiválasztott kategória (pl. a Szaknévsor üres-találat CTA-jából, ?cat=). */
+  initialCategoryId?: string;
 }
 
 type Step = "form" | "success";
 
-export function LeadRequestForm({ categories }: Props) {
+export function LeadRequestForm({ categories, initialCategoryId }: Props) {
   const [step, setStep] = useState<Step>("form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +25,9 @@ export function LeadRequestForm({ categories }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState(
+    initialCategoryId && categories.some((c) => c.id === initialCategoryId) ? initialCategoryId : "",
+  );
   const [cantonCode, setCantonCode] = useState("all");
   const [message, setMessage] = useState("");
   const [honeypot, setHoneypot] = useState(""); // bot-szűrő
