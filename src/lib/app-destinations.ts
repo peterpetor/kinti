@@ -38,6 +38,8 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "magyar vallalkozas szakember fodrasz orvos ugyved bolt szolgaltato ceg cegek kereso" },
   { href: "/allasok", title: "Állások", subtitle: "Magyaroknak szóló munkalehetőségek", icon: "briefcase",
     keywords: "munka allas melo job karrier munkahely allasok allaskereses" },
+  { href: "/nemet-oneletrajz", title: "Német önéletrajz készítő", subtitle: "Ingyenes Lebenslauf PDF magyar → német szakmanévvel", icon: "document",
+    keywords: "onéletrajz oneletrajz cv lebenslauf nemet pdf allas munka jelentkezes bewerbung szakma forditas" },
   { href: "/keresek", title: "Keresek", subtitle: "Igény-hirdetés — jelentkezzenek rád a szakik", icon: "search",
     keywords: "keresek igeny hirdetes keres kerdes szukseg" },
   { href: "/berkalkulator", title: "Bérkalkulátor", subtitle: "Nettó fizetés becslése", icon: "sliders",

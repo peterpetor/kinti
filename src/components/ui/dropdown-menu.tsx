@@ -199,6 +199,15 @@ export function DropdownMenu() {
                   </span>
                   Munkavállalói profil
                 </Link>
+                <Link href="/nemet-oneletrajz" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
+                    <Icon name="document" size={16} strokeWidth={2.4} />
+                  </span>
+                  Német önéletrajz készítő
+                  <span className="ml-auto shrink-0 rounded-full bg-success/15 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-success">
+                    Ingyenes
+                  </span>
+                </Link>
                 <Link href="/munkaltato" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
                     <Icon name="user" size={16} strokeWidth={2.4} />

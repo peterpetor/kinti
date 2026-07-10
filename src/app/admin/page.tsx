@@ -19,6 +19,7 @@ import {
   listOpenReports,
   listBusinessesForAdmin,
   listB2bProjectsForAdmin,
+  listCvSubmissionsForAdmin,
 } from "@/lib/repo";
 import { relTimeFromMs } from "@/lib/relative-time";
 
@@ -38,7 +39,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
   // Vállalkozás-lista lapozása (100/oldal): ?p=2 → második 100, stb.
   const bizPage = Math.max(1, parseInt(searchParams?.p ?? "1", 10) || 1);
 
-  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, businesses, b2bProjects] =
+  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, businesses, b2bProjects, cvSubmissions] =
     await Promise.all([
       getAdminStats(country),
       getAdminTrends(),
@@ -48,6 +49,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
       listOpenReports(),
       listBusinessesForAdmin(country, bizPage),
       listB2bProjectsForAdmin(),
+      listCvSubmissionsForAdmin(),
     ]);
 
   const fmt = (n: number) => n.toLocaleString("hu-HU");
@@ -299,6 +301,41 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
                   id={p.id}
                   small
                   confirmText={`Biztos törlöd a(z) "${p.title}" B2B projektet? Ez nem visszavonható.`}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Önéletrajz-profilok — a Német CV-készítőből hozzájárulással mentett jelöltek
+          (közvetítési lead). PII → GDPR-törlés gombbal. */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">
+          Önéletrajz-profilok (CV-lead) ({cvSubmissions.length})
+        </h2>
+        {cvSubmissions.length === 0 ? (
+          <Empty label="Nincs mentett önéletrajz-profil." />
+        ) : (
+          <div className="space-y-1.5">
+            {cvSubmissions.map((c) => (
+              <div key={c.id} className="flex flex-wrap items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[13px] font-bold text-ink">
+                    {c.fullName}
+                    {c.professionDe ? <span className="font-normal text-ink-muted"> · {c.professionDe}</span> : null}
+                  </p>
+                  <p className="truncate text-[11px] text-ink-muted">
+                    {[c.city, c.yearsExperience != null ? `${c.yearsExperience} év tap.` : null, c.email, c.phone]
+                      .filter(Boolean)
+                      .join(" · ")} · {fmtAgo(c.createdAt)}
+                  </p>
+                </div>
+                <AdminDeleteButton
+                  type="cv"
+                  id={c.id}
+                  small
+                  confirmText={`Törlöd a(z) "${c.fullName}" mentett önéletrajz-profilját? (GDPR törlés)`}
                 />
               </div>
             ))}

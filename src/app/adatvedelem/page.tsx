@@ -445,6 +445,22 @@ export default function AdatvedelemPage() {
         <li><strong>Címzettek:</strong> a többi Szaknévsor PRO tag (a kiírás tartalma); adatfeldolgozó: Cloudflare (tárolás).</li>
       </ul>
 
+      <h3>2.22 Német Önéletrajz Készítő</h3>
+      <p>
+        A Német Önéletrajz Készítővel készített PDF <strong>kizárólag a böngésződben</strong> jön
+        létre — az önéletrajzod adatai alapesetben <strong>nem kerülnek fel a szerverünkre</strong>.
+        A profil elmentése <strong>opcionális</strong>, és kizárólag akkor történik, ha a végén{" "}
+        <strong>kifejezetten bepipálod</strong> a „Keressenek meg állással" jelölőnégyzetet. Ebben az
+        esetben elmentjük: a neved, elérhetőséged (e-mail és/vagy telefon), lakóhelyed, a szakmád és a
+        kitöltött önéletrajz-adatok — <strong>a magyar munkaközvetítés (Feedback Jobs) céljából</strong>.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — a te <strong>hozzájárulásod</strong> (a jelölőnégyzet). Enélkül nem mentünk semmit.</li>
+        <li><strong>Visszavonás / törlés:</strong> a hozzájárulás bármikor visszavonható; a mentett profil törlését az <a href="mailto:info@kinti.app">info@kinti.app</a> címen kérheted.</li>
+        <li><strong>Tárolási idő:</strong> a közvetítési cél megszűnéséig, illetve a törlési kérésedig.</li>
+        <li><strong>Adatfeldolgozó:</strong> Cloudflare (D1 adatbázis, tárolás). A profilt nyilvánosan nem tesszük közzé.</li>
+      </ul>
+
       <h2>3. Cookie-k</h2>
       <p>
         Kizárólag <strong>feltétlenül szükséges</strong> (technikai és biztonsági) cookie-kat

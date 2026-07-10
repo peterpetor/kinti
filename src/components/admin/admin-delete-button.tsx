@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 
 /**
  * Admin törlés gomb. A `type` adja meg az API-csoportot:
- *   businesses | events | b2b
+ *   businesses | events | b2b | cv
  * Sikerre a `router.refresh()` újraolvassa az oldalt.
  */
 export function AdminDeleteButton({
@@ -16,7 +16,7 @@ export function AdminDeleteButton({
   confirmText,
   small = false,
 }: {
-  type: "businesses" | "events" | "b2b";
+  type: "businesses" | "events" | "b2b" | "cv";
   id: string;
   label?: string;
   confirmText?: string;
