@@ -6,7 +6,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-06-18">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-10">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -428,6 +428,23 @@ export default function AdatvedelemPage() {
         <li><strong>Tárolási idő:</strong> a hozzájárulás bizonyíthatóságához szükséges ideig.</li>
       </ul>
 
+      <h3>2.21 B2B Hub (zárt vállalkozói projektpiac)</h3>
+      <p>
+        A B2B Hubban Szaknévsor PRO vállalkozások projekt-kiírásokat tehetnek közzé. A kiíráshoz
+        a következő adatokat kezeljük: a kiíró <strong>vállalkozásának neve</strong>, a kiírás
+        szövege (cím, leírás, célország/város, keresett szakma), a kiíró által megadott{" "}
+        <strong>kapcsolattartási telefonszám</strong>, valamint — kizárólag szerveroldalon, a
+        jogosultság-ellenőrzéshez — a kiíró fiók-azonosítója. A kiírás (a telefonszámmal együtt){" "}
+        <strong>csak a bejelentkezett, aktív Szaknévsor PRO előfizetéssel rendelkező
+        vállalkozásoknak</strong> jelenik meg — nyilvánosan nem érhető el, keresők nem indexelik.
+        A fiók-azonosítót a többi tag felé nem fedjük fel.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — a szolgáltatás (előfizetés) teljesítése; a telefonszám megadása a kiíró döntése.</li>
+        <li><strong>Tárolási idő:</strong> a kiírás lezárásáig/eltávolításáig; a kiíró a saját kiírását bármikor lezárhatja, törlést az info@kinti.app címen kérhet.</li>
+        <li><strong>Címzettek:</strong> a többi Szaknévsor PRO tag (a kiírás tartalma); adatfeldolgozó: Cloudflare (tárolás).</li>
+      </ul>
+
       <h2>3. Cookie-k</h2>
       <p>
         Kizárólag <strong>feltétlenül szükséges</strong> (technikai és biztonsági) cookie-kat
@@ -514,6 +531,16 @@ export default function AdatvedelemPage() {
         Mindezt bármikor <strong>véglegesen törölheted</strong> a böngésződ tárolójának
         (sütik és webhelyadatok) ürítésével. A választott ország és régió pusztán
         UX-segéd: nem azonosít téged, és nincs hozzá fiók.
+      </p>
+
+      <h3>3.4 Ajánlói (referral / affiliate) linkek</h3>
+      <p>
+        A platform egyes felületein <strong>„Ajánló" jelzéssel</strong> ellátott külső linkek
+        találhatók (pl. pénzküldő szolgáltatók). Ezekhez <strong>mi semmilyen követési
+        technológiát nem használunk</strong>: nem teszünk le cookie-t, nem mérjük a kattintást,
+        és nem adunk át rólad adatot a partnernek. A linkre kattintva a külső szolgáltató
+        oldalára kerülsz, ahol már az ő adatkezelési szabályzata érvényes (a hivatkozás az
+        ajánlói kódunkat tartalmazza, ami rólad semmilyen adatot nem hordoz).
       </p>
 
       <h2>4. Adatok továbbítása harmadik országba</h2>

@@ -6,6 +6,8 @@ import {
   recomputeBusinessRating,
   setBusinessHidden,
   deleteBusinessById,
+  setB2bProjectStatus,
+  deleteB2bProjectAsAdmin,
 } from "@/lib/repo";
 
 export const runtime = "edge";
@@ -43,6 +45,8 @@ export async function GET(req: Request, { params }: { params: { token: string } 
     } else if (report.contentType === "sos") {
       const { unresolveSosAlert } = await import("@/lib/sos-repo");
       await unresolveSosAlert(report.contentId);
+    } else if (report.contentType === "b2b") {
+      await setB2bProjectStatus(report.contentId, "open");
     }
     await updateContentReportStatus(params.token, "kept");
     return html(
@@ -61,6 +65,8 @@ export async function GET(req: Request, { params }: { params: { token: string } 
   } else if (report.contentType === "sos") {
     const { deleteSosAlert } = await import("@/lib/sos-repo");
     await deleteSosAlert(report.contentId);
+  } else if (report.contentType === "b2b") {
+    await deleteB2bProjectAsAdmin(report.contentId);
   }
   await updateContentReportStatus(params.token, "removed");
   return html("Véglegesen törölve 🗑", "A bejelentett tartalmat véglegesen töröltük.", true);

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
+import { ReportButton } from "@/components/report-button";
 import { getCountry } from "@/lib/countries";
 import { relTimeFromMs } from "@/lib/relative-time";
 import type { B2bProjectView } from "@/lib/repo-b2b";
@@ -113,6 +114,14 @@ export function B2bProjectCard({
           </button>
         )}
       </div>
+
+      {/* DSA (Art. 16) bejelentés: jogsértő tartalom jelzése — beküldésre a poszt
+          azonnal rejtve, admin dönt. Saját posztnál nem kell (arra Lezárás van). */}
+      {!isMine && (
+        <div className="mt-2 flex justify-end">
+          <ReportButton contentType="b2b" contentId={project.id} variant="link" />
+        </div>
+      )}
     </div>
   );
 }

@@ -181,8 +181,8 @@ export async function logModerationStrike(ipHash: string | null, reason: string)
 
 // --- Content Reports (Notice & Takedown) -------------------------------------
 
-export interface ContentReportInput { id: string; contentType: "business" | "review" | "sos"; contentId: string; reason: string | null; reporterIpHash: string | null; moderateToken: string; }
-export interface ContentReport { id: string; contentType: "business" | "review" | "sos"; contentId: string; status: string; }
+export interface ContentReportInput { id: string; contentType: "business" | "review" | "sos" | "b2b"; contentId: string; reason: string | null; reporterIpHash: string | null; moderateToken: string; }
+export interface ContentReport { id: string; contentType: "business" | "review" | "sos" | "b2b"; contentId: string; status: string; }
 
 export async function createContentReport(input: ContentReportInput): Promise<void> {
   await getDB().prepare(`INSERT INTO content_reports (id, content_type, content_id, reason, reporter_ip_hash, moderate_token) VALUES (?, ?, ?, ?, ?, ?)`)
@@ -223,7 +223,7 @@ export async function logSpamSubmit(kind: string, ipHash: string | null): Promis
     .run();
 }
 
-export interface OpenReport { id: string; contentType: "review" | "sos" | "business"; contentId: string; reason: string | null; moderateToken: string; createdAt: string; excerpt: string | null; }
+export interface OpenReport { id: string; contentType: "review" | "sos" | "business" | "b2b"; contentId: string; reason: string | null; moderateToken: string; createdAt: string; excerpt: string | null; }
 
 export async function listOpenReports(): Promise<OpenReport[]> {
   const db = getDB();
@@ -242,6 +242,9 @@ export async function listOpenReports(): Promise<OpenReport[]> {
     } else if (r.content_type === "sos") {
       const row = await db.prepare("SELECT id FROM sos_alerts WHERE id = ?").bind(r.content_id).first<{ id: string }>();
       contentExists = !!row;
+    } else if (r.content_type === "b2b") {
+      const row = await db.prepare("SELECT title FROM b2b_projects WHERE id = ?").bind(r.content_id).first<{ title: string }>();
+      excerpt = row?.title ?? null; contentExists = !!row;
     }
     if (!contentExists) {
       await db.prepare("UPDATE content_reports SET status = 'dismissed' WHERE id = ?").bind(r.id).run();

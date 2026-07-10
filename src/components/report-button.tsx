@@ -17,7 +17,7 @@ export function ReportButton({
   variant = "icon",
   className,
 }: {
-  contentType: "business" | "review" | "sos";
+  contentType: "business" | "review" | "sos" | "b2b";
   contentId: string;
   variant?: "icon" | "link";
   /** Az „icon" variáns gomb-stílusának felülírása (pl. fehér-pill a profil-fejlécben). */

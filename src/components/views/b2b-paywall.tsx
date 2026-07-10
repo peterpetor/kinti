@@ -66,10 +66,12 @@ export function B2bPaywall({ businessId }: { businessId: string | null }) {
               Ez a funkció csak Szaknévsor PRO cégeknek érhető el.
             </p>
 
+            {/* Tényállítás-fegyelem: nem ígérünk „megbízhatóságot" (nem garantálható
+                minőség-állítás lenne) — az „ellenőrzött" a valós admin-moderációra utal. */}
             <ul className="mx-auto mt-3 max-w-xs space-y-1.5 text-left">
               {[
-                "Találj megbízható magyar alvállalkozókat",
-                "Szerezz azonnali projekteket más magyar cégektől",
+                "Találj magyar alvállalkozókat — ellenőrzött, előfizető cégek",
+                "Szerezz projekteket más magyar cégektől",
                 "Nincs jutalék, csak tiszta üzlet",
               ].map((b) => (
                 <li key={b} className="flex items-start gap-2 text-[12.5px] font-semibold text-ink">
@@ -101,6 +103,10 @@ export function B2bPaywall({ businessId }: { businessId: string | null }) {
                 </>
               )}
             </div>
+            {/* Omnibus-elv (landing-precedens): az elmosott minta-feed nem valódi kiírás. */}
+            <p className="mt-3 text-[10px] leading-snug text-ink-faint">
+              A háttérben látható kiírások illusztrációk, nem valódi projektek.
+            </p>
           </div>
         </div>
       </div>

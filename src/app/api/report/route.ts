@@ -7,6 +7,8 @@ import {
   setBusinessHidden,
   createContentReport,
   countRecentReports,
+  getB2bProjectBasic,
+  setB2bProjectStatus,
 } from "@/lib/repo";
 import { hashIp } from "@/lib/security";
 import { sendContentReportEmail } from "@/lib/email";
@@ -18,8 +20,9 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
- * POST /api/report — egy vállalkozás, vélemény vagy SOS bejelentése (Notice & Takedown).
- * Body: { contentType: "business" | "review" | "sos", contentId, reason }
+ * POST /api/report — vállalkozás, vélemény, SOS vagy B2B projekt bejelentése
+ * (Notice & Takedown, DSA Art. 16).
+ * Body: { contentType: "business" | "review" | "sos" | "b2b", contentId, reason }
  *
  * Hatás: a tartalmat AZONNAL elrejtjük a publikum elől (hidden=1), és értesítjük
  * az admint (visszaállítás / végleges törlés linkekkel). Abuse ellen IP-alapú
@@ -35,7 +38,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }
 
-  const contentType = body.contentType === "business" || body.contentType === "review" || body.contentType === "sos"
+  const contentType = body.contentType === "business" || body.contentType === "review" || body.contentType === "sos" || body.contentType === "b2b"
     ? body.contentType
     : null;
   const contentId = typeof body.contentId === "string" ? body.contentId.trim() : "";
@@ -90,6 +93,15 @@ export async function POST(req: Request) {
       contentLabel = "S.O.S. Riasztás";
       contentExcerpt = `Tel: ${sos.contactPhone} - ${sos.description.slice(0, 160)}`;
       await hideSosAlert(contentId);
+    }
+  } else if (contentType === "b2b") {
+    const project = await getB2bProjectBasic(contentId);
+    if (project) {
+      found = true;
+      contentLabel = "B2B projekt";
+      contentExcerpt = project.title.slice(0, 160);
+      // Azonnali rejtés a feedből ('closed'); admin „keep" visszanyitja.
+      await setB2bProjectStatus(contentId, "closed");
     }
   }
 

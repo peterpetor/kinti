@@ -250,3 +250,30 @@ export async function deleteB2bProjectAsAdmin(projectId: string): Promise<boolea
     .run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+/** Minimál-lekérés a bejelentés-rendszernek (létezés-ellenőrzés + kivonat). */
+export async function getB2bProjectBasic(
+  projectId: string,
+): Promise<{ id: string; title: string; status: string } | null> {
+  const row = await getDB()
+    .prepare("SELECT id, title, status FROM b2b_projects WHERE id = ?")
+    .bind(projectId)
+    .first<{ id: string; title: string; status: string }>();
+  return row ?? null;
+}
+
+/**
+ * Státusz-állítás a moderációhoz (bejelentés → 'closed' = azonnali rejtés a
+ * feedből; admin „keep" → vissza 'open'). A user-oldali lezárás a
+ * closeB2bProject (author-ellenőrzéssel) — ez az admin/report útvonal.
+ */
+export async function setB2bProjectStatus(
+  projectId: string,
+  status: "open" | "closed",
+): Promise<boolean> {
+  const res = await getDB()
+    .prepare("UPDATE b2b_projects SET status = ? WHERE id = ?")
+    .bind(status, projectId)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}

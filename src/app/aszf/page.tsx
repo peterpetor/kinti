@@ -6,7 +6,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-07">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-10">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -271,13 +271,41 @@ export default function AszfPage() {
         felelősségre nem vonható.
       </p>
 
-      <h2>9. Események és Közösségi Találkozók</h2>
+      <h2>9. B2B Hub (zárt vállalkozói projektpiac)</h2>
       <p>
-        A platformon meghirdetett eseményeket a felhasználók maguk szervezik. Az üzemeltető <strong>nem 
-        rendezvényszervező</strong>. Az eseményeken bekövetkező esetleges balesetekért, vagyoni károkért, 
-        elmaradt rendezvényekért vagy a résztvevők közötti konfliktusokért az üzemeltető semmilyen felelősséget 
-        nem vállal. A részvétel minden esetben a felhasználó saját felelősségére történik.
+        A B2B Hub a Szaknévsor PRO előfizetéssel rendelkező vállalkozások zárt felülete, ahol
+        alvállalkozói/projekt-kiírásokat tehetnek közzé és jelentkezhetnek egymás kiírásaira.
+        A kiírások <strong>időrendben</strong> jelennek meg — a B2B Hubon belül fizetett
+        rangsorolás vagy kiemelés <strong>nincs</strong>.
       </p>
+      <ul>
+        <li>
+          <strong>Kiírás feltétele:</strong> aktív Szaknévsor PRO előfizetés ÉS admin által
+          jóváhagyott (moderált) vállalkozói profil. A kiíró felel a kiírás tartalmáért és
+          valóságtartalmáért.
+        </li>
+        <li>
+          <strong>Az üzemeltető nem fél a tagok közötti ügyletekben</strong> (lásd 8. pont):
+          nem közvetít, nem kezel fizetést, nem vállal garanciát a tagok megbízhatóságáért,
+          fizetőképességéért vagy az elvégzett munka minőségéért. A tagok közötti megállapodás,
+          teljesítés és vita kizárólag a felek ügye.
+        </li>
+        <li>
+          <strong>Kapcsolati adatok:</strong> a kiírásban megadott elérhetőség kizárólag az adott
+          projekttel kapcsolatos megkeresésre használható — marketing-célú felhasználása,
+          gyűjtése vagy továbbadása tilos.
+        </li>
+        <li>
+          <strong>A 10. pont (feketemunka tilalma) a B2B Hubra is teljeskörűen vonatkozik:</strong>
+          be nem jelentett munkavégzésre irányuló kiírást az üzemeltető eltávolít, és a kiíró
+          hozzáférését megszüntetheti.
+        </li>
+        <li>
+          <strong>Moderáció és bejelentés:</strong> minden kiírás bejelenthető (5.1 pont, DSA
+          Art. 16); a bejelentett kiírás a döntésig azonnal rejtésre kerül. Az üzemeltető a
+          jogsértő vagy a jelen feltételekbe ütköző kiírást indokolás mellett eltávolíthatja.
+        </li>
+      </ul>
 
       <h2>10. Vállalkozói Szolgáltatások és Feketemunka Tilalma</h2>
       <p>
@@ -567,41 +595,42 @@ export default function AszfPage() {
 
       <h2>14. Közösségi jelentések</h2>
       <p>
-        A platformon a felhasználók által beadott <strong>közösségi jelentések</strong>{" "}
-        (akció-térkép, határátkelő-figyelő, vélemény stb.)
+        A platformon a felhasználók által beadott <strong>közösségi adatok</strong>{" "}
+        (pl. vélemények, anonim bér- és lakbér-adatok, megélhetési-költség beküldések)
         a feladó felhasználó saját megfigyelései — az üzemeltető <strong>nem ellenőrzi
         ezek pontosságát</strong>. A felhasználó saját felelősségére használja a
-        közösségi jelentéseket; ezekre alapozott döntésekért az üzemeltető és más
+        közösségi adatokat; ezekre alapozott döntésekért az üzemeltető és más
         felhasználók nem felelnek.
       </p>
 
-      <h3>14.1 Akció-térkép (bolt-akciók)</h3>
+      <h3>14.1 Kinti Radar (Push Értesítések)</h3>
       <p>
-        Az akció-térkéren megjelenő akciós árak és kedvezmények a közösség tagjainak
-        saját megfigyelésén alapulnak. Az üzemeltető <strong>nem garantálja</strong> az árak,
-        kedvezmények vagy készletkészletek pontosságát, érvényességét, időbeli relevanciáját.
-        Vásárlási döntést kizárólag a saját felelősségére alapíthatsz ezen adatokra.
-        Az üzemeltető nem minősül kereskedelmi partnernek, közvetítőnek vagy fogyasztóvédelmi
-        eljárás félként.
-      </p>
-
-      <h3>14.2 Kinti Radar (Push Értesítések)</h3>
-      <p>
-        A "Kinti Radar" funkció segítségével a felhasználók (böngészőjük beállításaitól függően) Push értesítéseket 
-        kérhetnek bizonyos eseményekről (pl. árfolyamváltozás). Az üzemeltető <strong>kifejezetten kizárja a felelősségét</strong>
+        A "Kinti Radar" funkció segítségével a felhasználók (böngészőjük beállításaitól függően) Push értesítéseket
+        kérhetnek bizonyos eseményekről (pl. a szakmájukban megjelenő új álláshirdetésről). Az üzemeltető <strong>kifejezetten kizárja a felelősségét</strong>
         az értesítések késedelmes kézbesítéséből, technikai hiba miatti elmaradásából, vagy az azokban szereplő (harmadik féltől származó)
-        adatok pontatlanságából eredő <strong>bármilyen anyagi vagy nem vagyoni kárért, elmaradt haszonért</strong>. Az árfolyam riasztások
+        adatok pontatlanságából eredő <strong>bármilyen anyagi vagy nem vagyoni kárért, elmaradt haszonért</strong>. Az értesítések
         kizárólag kényelmi és tájékoztató célt szolgálnak, ezek alapján hivatalos vagy pénzügyi döntést hozni a felhasználó
         kizárólagos kockázata.
       </p>
 
       <h2>15. Külső Linkekért Való Felelősség</h2>
       <p>
-        A platformon a felhasználók és vállalkozások által megosztott külső weblapokra mutató 
-        hivatkozások (linkek) tartalmáért az üzemeltető nem vállal felelősséget. Az üzemeltető nem 
-        ellenőrzi a külső oldalak tartalmát, adatvédelmi gyakorlatát vagy biztonságát. A külső 
-        linkek megnyitása a felhasználó saját felelősségére történik. Bármilyen károkozás 
+        A platformon a felhasználók és vállalkozások által megosztott külső weblapokra mutató
+        hivatkozások (linkek) tartalmáért az üzemeltető nem vállal felelősséget. Az üzemeltető nem
+        ellenőrzi a külső oldalak tartalmát, adatvédelmi gyakorlatát vagy biztonságát. A külső
+        linkek megnyitása a felhasználó saját felelősségére történik. Bármilyen károkozás
         (pl. adathalászat, vírusok) esetén az üzemeltető felelőssége kizárt.
+      </p>
+      <h3>15.1 Ajánlói (referral / affiliate) linkek</h3>
+      <p>
+        A platform egyes felületein <strong>jelölt</strong> ajánlói linkek találhatók (pl. pénzküldő
+        szolgáltatókra mutató „Ajánló" jelzésű hivatkozások): ha rajtuk keresztül regisztrálsz vagy
+        vásárolsz, az üzemeltető a partnertől juttatást kaphat — <strong>neked ez nem jelent
+        többletköltséget</strong>. Az ajánlói kapcsolat a hivatkozás mellett minden esetben fel van
+        tüntetve. A hivatkozott szolgáltatás feltételeiért, díjaiért, árfolyamaiért és teljesítéséért
+        kizárólag a külső szolgáltató felel; az ilyen linkek elhelyezése nem minősül pénzügyi
+        tanácsadásnak, és az összehasonlító eszközök rangsorát a jutalék <strong>nem
+        befolyásolja</strong>.
       </p>
 
       <h2>16. Szellemi tulajdon, Adatbázisjog és Kártalanítás (Mentesítés)</h2>
