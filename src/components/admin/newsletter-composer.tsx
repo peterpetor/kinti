@@ -29,6 +29,32 @@ export function NewsletterComposer({
   const [phase, setPhase] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [result, setResult] = useState<{ sent: number; skipped: number; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [drafting, setDrafting] = useState(false);
+
+  /** Heti vázlat generálása valós adatokból (0 AI) — a szerkesztés/küldés kézi marad. */
+  async function generateDraft() {
+    if ((subject.trim() || body.trim()) && !confirm("A generált vázlat felülírja a jelenlegi tárgyat és szöveget. Folytatod?")) return;
+    setDrafting(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/newsletter/draft", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ country }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string; subject?: string; body?: string };
+      if (!res.ok || !data.subject || !data.body) {
+        setError(data.error ?? "Nem sikerült a vázlat generálása.");
+        return;
+      }
+      setSubject(data.subject);
+      setBody(data.body);
+    } catch {
+      setError("Hálózati hiba a vázlat-generálásnál.");
+    } finally {
+      setDrafting(false);
+    }
+  }
 
   const recipientCount = options.find((o) => o.code === country)?.count ?? 0;
   const willSend = Math.min(recipientCount, dailyRemaining, 100);
@@ -79,6 +105,21 @@ export function NewsletterComposer({
           ))}
         </div>
       </div>
+
+      {/* Heti vázlat valós adatokból (új cégek + friss állások + a hét útmutatói).
+          Csak konkrét ország-szegmensre értelmes (a tartalom országonként eltér). */}
+      <button
+        type="button"
+        onClick={generateDraft}
+        disabled={drafting || country === "all"}
+        title={country === "all" ? "Előbb válassz konkrét országot" : undefined}
+        className={cn(
+          "flex w-full items-center justify-center gap-1.5 rounded-[12px] border border-primary/30 bg-primary-soft/40 px-3 py-2.5 text-[13px] font-bold text-primary transition active:scale-[0.99]",
+          (drafting || country === "all") && "cursor-not-allowed opacity-50",
+        )}
+      >
+        ✨ {drafting ? "Vázlat készül…" : "Heti vázlat generálása a friss adatokból"}
+      </button>
 
       <div className="space-y-1.5">
         <label className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Tárgy</label>
