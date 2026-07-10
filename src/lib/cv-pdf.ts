@@ -71,12 +71,6 @@ function hexToRgb(hex: string | undefined): [number, number, number] | null {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
-function todayDe(): string {
-  const d = new Date();
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()}`;
-}
-
 function dateRange(from: string, to: string): string {
   const f = from.trim();
   const t = to.trim();
@@ -307,22 +301,9 @@ export async function generateCvPdf(data: CvData): Promise<void> {
     }
   }
 
-  // ── Ort, Datum + Unterschrift ───────────────────────────────────────────
-  ensure(24);
-  y += 10;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10.5);
-  setInk();
-  const place = data.city.trim() ? data.city.trim() : "Ort";
-  doc.text(`${place}, den ${todayDe()}`, M_LEFT, y);
-  y += 12;
-  doc.setDrawColor(RULE[0], RULE[1], RULE[2]);
-  doc.setLineWidth(0.3);
-  doc.line(M_LEFT, y, M_LEFT + 60, y);
-  y += 4;
-  setMuted();
-  doc.setFontSize(9);
-  doc.text("Unterschrift", M_LEFT, y);
+  // Ort/Datum + Unterschrift blokk SZÁNDÉKOSAN NINCS (user-döntés, 2026-07-10):
+  // a digitálisan beadott CV-knél az aláírás-sor felesleges, és üresen hagyva
+  // befejezetlennek tűnt a PDF alja.
 
   // ── Diszkrét lábléc minden oldalon ──────────────────────────────────────
   const pages = doc.getNumberOfPages();

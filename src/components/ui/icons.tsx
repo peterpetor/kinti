@@ -13,7 +13,7 @@ export type IconName =
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "youtube" | "tiktok" | "shoppingBag" | "briefcase"
   | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock"
-  | "compass" | "mail";
+  | "compass" | "mail" | "shareIos";
 
 const PATHS: Record<IconName, string[]> = {
   lock: ["M6 10h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z", "M8 10V7a4 4 0 0 1 8 0v3"],
@@ -40,7 +40,20 @@ const PATHS: Record<IconName, string[]> = {
   filter: ["M3 5h18", "M6 12h12", "M10 19h4"],
   clock: ["M12 3a9 9 0 1 1 0 18a9 9 0 0 1 0-18", "M12 7v5l3 2"],
   calendar: ["M4 7h16v13H4z", "M4 7l0-2h16v2", "M9 3v4", "M15 3v4", "M4 11h16"],
-  share: ["M12 4v12", "M7 9l5-5l5 5", "M5 16v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3"],
+  // share = a széles körben ismert „három pötty + vonalak" (Android/Material)
+  // megosztás-ikon — a régi iOS-stílusú (doboz+nyíl) glyph nem volt felismerhető
+  // (user-visszajelzés, 2026-07-10). Az iOS-oktatóhoz a shareIos maradt.
+  share: [
+    "M18 8a3 3 0 1 0 0-6a3 3 0 0 0 0 6",
+    "M6 15a3 3 0 1 0 0-6a3 3 0 0 0 0 6",
+    "M18 22a3 3 0 1 0 0-6a3 3 0 0 0 0 6",
+    "M8.7 10.7l6.6-3.9",
+    "M8.7 13.3l6.6 3.9",
+  ],
+  // A Safari valódi megosztás-gombjának glyph-je (doboz + felfelé nyíl) — CSAK
+  // az iOS "Hozzáadás a főképernyőhöz" oktatóban használjuk (install-prompt),
+  // mert ott a BÖNGÉSZŐ gombjára mutatunk rá.
+  shareIos: ["M12 4v12", "M7 9l5-5l5 5", "M5 16v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3"],
   bookmark: ["M6 4h12v17l-6-4l-6 4z"],
   chevR: ["M9 5l7 7l-7 7"],
   chevD: ["M5 9l7 7l7-7"],
