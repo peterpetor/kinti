@@ -994,6 +994,20 @@ export function ExploreView({
                   showFavorite
                 />
               ))}
+              {/* Kereslet-befogás a térkép-nézet zsákutcájában is (a lista-nézet
+                  párja) — a fan-out kategória-szinten országosan is céloz. */}
+              {cat !== "all" && (
+                <Link
+                  href={`/szaknevsor/ajanlatkeres?cat=${encodeURIComponent(cat)}`}
+                  className="flex items-center gap-3 rounded-card border border-pro/30 bg-pro/5 px-4 py-3 text-left transition active:scale-[0.99]"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-pro text-white"><Icon name="send" size={15} strokeWidth={2.4} /></span>
+                  <span className="min-w-0">
+                    <span className="block text-[13.5px] font-bold text-ink">Kérj árajánlatot — ők keresnek meg</span>
+                    <span className="block text-[12px] text-ink-muted">Egy űrlap, és a kategória magyar vállalkozói e-mailben kapják az igényed.</span>
+                  </span>
+                </Link>
+              )}
             </div>
           )}
         </div>
