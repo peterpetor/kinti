@@ -1721,6 +1721,47 @@ export function isMoneyGuide(slug: string): boolean {
   return MONEY_GUIDE_SLUGS.has(slug);
 }
 
+/** Apró, determinisztikus string-hash (FNV-szerű) — a kapcsolódó-cikk forgatáshoz. */
+function slugHash(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/**
+ * „További útmutatók" — topikusan rokon, oldalanként VÁLTOZATOS ajánló.
+ *
+ * Korábban minden cikk az ország ELSŐ 3 cikkét ajánlotta (azonos blokk minden
+ * oldalon → gyenge belső linkelés SEO-ban, unalmas UX-ben). Most:
+ *   1. pont: azonos topik-család (pl. szülés ↔ családi pótlék) +1, azonos
+ *      pénz-jelleg +1 → a tartalmilag rokon cikkek előre;
+ *   2. az azonos pontszámúak közt a cikk-slugból képzett determinisztikus
+ *      forgatás dönt → MINDEN cikk MÁS hármast linkel (SSG-stabil, nem véletlen),
+ *      így a 66 cikk belső link-gráfja szétterül.
+ */
+export function relatedGuides(slug: string, count = 3): Guide[] {
+  const country = guideCountry(slug);
+  const pool = getGuides(country).filter((g) => g.slug !== slug);
+  if (pool.length <= count) return pool;
+  const myTopic = guideTopic(slug);
+  const myMoney = isMoneyGuide(slug);
+  const h = slugHash(slug);
+  return pool
+    .map((g) => ({
+      g,
+      score:
+        (guideTopic(g.slug) === myTopic ? 2 : 0) +
+        (isMoneyGuide(g.slug) === myMoney ? 1 : 0),
+      tie: slugHash(g.slug) ^ h,
+    }))
+    .sort((a, b) => b.score - a.score || a.tie - b.tie)
+    .slice(0, count)
+    .map((x) => x.g);
+}
+
 /**
  * Egy Szaknévsor-kategóriához kapcsolódó útmutatók (fordított irány) — CSAK a
  * vállalkozás országának saját cikkei közül (lásd guideTopic fenti kommentje).

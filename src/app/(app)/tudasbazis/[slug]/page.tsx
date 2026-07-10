@@ -2,8 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Icon } from "@/components/ui";
-import { getGuide, getGuides, guideCountry, GUIDES, GUIDES_DISCLAIMER, isMoneyGuide, relatedCategoriesForGuide } from "@/lib/guides";
+import { getGuide, guideCountry, GUIDES, GUIDES_DISCLAIMER, isMoneyGuide, relatedCategoriesForGuide, relatedGuides } from "@/lib/guides";
 import { GuideProCta } from "./GuideProCta";
+import { GuideNewsletterCta } from "@/components/views/guide-newsletter-cta";
 import { RemittanceAffiliateCta } from "@/components/views/remittance-affiliate-cta";
 
 // Tisztán statikus tartalom (lib/guides.ts) + generateStaticParams → SSG:
@@ -52,13 +53,28 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
   if (!guide) notFound();
 
   const country = guideCountry(guide.slug);
-  // Kapcsolódó cikkek CSAK a cikk országából (nem keveredik AT/DE/NL a CH-val).
-  const related = getGuides(country).filter((g) => g.slug !== guide.slug).slice(0, 3);
+  // Kapcsolódó cikkek: topikusan rokon + oldalanként változatos (belső link-gráf
+  // szétterítése SEO-hoz) — csak a cikk országából.
+  const related = relatedGuides(guide.slug);
   const relatedPros = relatedCategoriesForGuide(guide.slug);
   const toc = guide.sections.map((s, i) => ({ id: sectionId(s.heading, i), heading: s.heading }));
 
+  // Strukturált adat a SERP-hez (morzsasor) — csak kurált, statikus mezők.
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Tudásbázis", item: "https://kinti.app/tudasbazis" },
+      { "@type": "ListItem", position: 2, name: guide.title, item: `https://kinti.app/tudasbazis/${guide.slug}` },
+    ],
+  };
+
   return (
     <div className="space-y-5 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <header className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -150,6 +166,10 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       </section>
 
       <p className="px-1 text-[11px] leading-relaxed text-ink-faint">{GUIDES_DISCLAIMER}</p>
+
+      {/* Hírlevél-feliratkozó — az SEO-olvasó visszahívhatóvá tétele (a cikk
+          országának hírlevelére, inline, double-opt-in). */}
+      <GuideNewsletterCta country={country} />
 
       {/* Pénz-témájú cikkeken: jelölt hazautalás-affiliate CTA (kontextus-tudatos
           monetizáció — aki a kinti fizetésről/ellátásról olvas, annak releváns). */}
