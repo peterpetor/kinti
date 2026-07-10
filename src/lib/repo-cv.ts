@@ -4,6 +4,11 @@
  * Csak akkor ír, ha a felhasználó kifejezetten hozzájárult (opt-in). A PDF a
  * böngészőben készül, ez a réteg kizárólag a (hozzájárulás-alapú) közvetítési
  * profil rögzítéséért felel.
+ *
+ * manage_token: JÖVŐBELI önkiszolgáló-törlés horog — jelenleg NEM kerül vissza
+ * a felhasználóhoz és nincs hozzá endpoint; a törlési út MA: info@kinti.app
+ * (admin gomb) — az Adatvédelem 2.22 és a wizard-copy is ezt mondja. Ha
+ * önkiszolgáló törlést építesz, a token már ott van minden soron.
  */
 import { getDB } from "./cloudflare";
 
