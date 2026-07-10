@@ -9,7 +9,9 @@ export function Skeleton({ className }: { className?: string }) {
   return (
     <div
       aria-hidden
-      className={cn("animate-pulse rounded-md bg-[rgba(28,61,46,0.08)]", className)}
+      // bg-ink/10: téma-token (a fix sötétzöld rgba sötét módban LÁTHATATLAN
+      // volt a sötét felületen — a dark-mode hardcode bug-osztály).
+      className={cn("animate-pulse rounded-md bg-ink/10", className)}
     />
   );
 }
