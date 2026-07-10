@@ -111,27 +111,35 @@
     visibility: hidden;
   }
 
-  /* A rejtett fázisban márka-színű, pulzáló töltés-jelző — így a (jellemzően
-     <1 mp) ország-feloldás szándékos betöltésnek tűnik, nem üres/tört oldalnak.
-     A body rejtett, ezért a jelző a <html>-en ül. */
+  /* A rejtett fázisban pulzáló MAGYAR ZÁSZLÓ töltés-jelző (user-kérés,
+     2026-07-10) — így a (jellemzően <1 mp) ország-feloldás szándékos
+     betöltésnek tűnik, nem üres/tört oldalnak. A body rejtett, ezért a jelző
+     a <html>-en ül. A hajszál-keret tartja láthatóan a fehér sávot a világos
+     (krém) háttéren is; sötét módban a zászló önmagában kiugrik. */
   html[data-country-pending]::after {
     content: "";
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 28px;
+    width: 42px;
     height: 28px;
-    margin: -14px 0 0 -14px;
-    border-radius: 9px;
-    background: rgb(var(--primary));
+    margin: -14px 0 0 -21px;
+    border-radius: 6px;
+    background: linear-gradient(
+      to bottom,
+      #cd2a3e 0 33.4%,
+      #ffffff 33.4% 66.7%,
+      #436f4d 66.7% 100%
+    );
+    box-shadow: 0 0 0 1px rgb(var(--ink) / 0.18), 0 4px 14px rgb(0 0 0 / 0.12);
     animation: kintiBootPulse 1s ease-in-out infinite;
   }
   @keyframes kintiBootPulse {
-    0%, 100% { opacity: 0.35; transform: scale(0.88); }
+    0%, 100% { opacity: 0.45; transform: scale(0.9); }
     50% { opacity: 1; transform: scale(1); }
   }
   @media (prefers-reduced-motion: reduce) {
-    html[data-country-pending]::after { animation: none; opacity: 0.7; }
+    html[data-country-pending]::after { animation: none; opacity: 1; }
   }
 
   /* Jogi boot-gate: ha az eszközön nincs jogi elfogadás, a fej-szkript
