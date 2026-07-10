@@ -1157,6 +1157,102 @@ export const GUIDES_AT: Guide[] = [
     ],
     sources: [{ label: "ORF-Beitrag — hivatalos oldal", url: "https://orf.beitrag.at/" }],
   },
+  {
+    slug: "at-orvos",
+    title: "Orvos és e-card Ausztriában",
+    summary: "Az e-card a kulcs mindenhez; Kassenarzt ingyen, Wahlarzt részben térített — sürgősségnél 1450.",
+    icon: "heart",
+    sections: [
+      { heading: "Az e-card", body: ["A munkaviszonnyal automatikusan biztosított vagy (ÖGK), és postán kapod az e-cardot — ezt VIDD MAGADDAL minden orvoshoz, enélkül készpénzt kérhetnek.", "Az e-card hátoldala az európai betegbiztosítási kártya (EKVK) is — az EU-ban, így Magyarországon is véd sürgősségnél."] },
+      { heading: "Kassenarzt vs. Wahlarzt", body: ["A Kassenarzt (szerződött orvos) az e-carddal INGYENES; a Wahlarzt (magánorvos) számláját kifizeted, és a pénztár utólag a tarifa egy részét (jellemzően a szerződéses díj ~80%-át) téríti.", "Háziorvost (Hausarzt) érdemes hamar választani — nagyvárosban a magyarul beszélő orvosokat a Kinti Szaknévsorban is megtalálod."] },
+      { heading: "Sürgősség", bullets: ["1450 — egészségügyi tanácsadó telefonszám (mit tegyek, hova menjek?)", "141 — orvosi ügyelet (Ärztefunkdienst), 144 — mentő", "Hétvégén/éjjel: ügyeletes gyógyszertárak listája a gyógyszertár-ajtókon és online"] },
+    ],
+    sources: [{ label: "gesundheit.gv.at — hivatalos egészségügyi portál", url: "https://www.gesundheit.gv.at/" }],
+  },
+  {
+    slug: "at-geringfugig",
+    title: "Geringfügige Beschäftigung (kis-munka)",
+    summary: "Az osztrák „minijob”: a havi határ alatt csak baleset-biztosítás jár — de olcsón beléphetsz a teljes TB-be.",
+    icon: "briefcase",
+    sections: [
+      { heading: "Mi az?", body: ["A geringfügige Beschäftigung a havi Geringfügigkeitsgrenze alatti kereset (évente emelik — az aktuális összeget a hivatalos oldalon találod). Ilyenkor a munkáltató csak BALESET-biztosítást fizet utánad.", "FONTOS: eü- és nyugdíjbiztosítás e munkából alapból NINCS — főállás vagy más biztosítás mellett kiegészítésnek jó, egyedüli munkaként kockázatos."] },
+      { heading: "A titkos jó opció: önkéntes belépés", body: ["Havi pár tízezer forintnyi fix díjért (Selbstversicherung, §19a ASVG) TELJES egészség- ÉS nyugdíjbiztosítást kapsz a kis-munka mellé — az ÖGK-nál kérheted. Ha ez az egyetlen munkád, szinte mindig megéri.", "Több kis-munka keresete ÖSSZEADÓDIK — a határ átlépésével automatikusan teljes biztosítási kötelezettség (és utólagos járulék) jöhet."] },
+      { heading: "Jó tudni", bullets: ["A kis-munka is BEJELENTETT munka — szerződéssel, minimálbér-szabályokkal (kollektívszerződés)", "Jár: arányos szabadság + jellemzően 13./14. havi juttatás (kollektívszerződés szerint)", "A feketemunka Ausztriában is súlyos bírsággal jár — ragaszkodj a bejelentéshez"] },
+    ],
+    sources: [{ label: "oesterreich.gv.at — geringfügige Beschäftigung", url: "https://www.oesterreich.gv.at/" }, { label: "Arbeiterkammer (AK)", url: "https://www.arbeiterkammer.at/" }],
+  },
+  {
+    slug: "at-vallalkozas",
+    title: "Vállalkozásindítás Ausztriában",
+    summary: "Gewerbeschein a Bezirkshauptmannschaftnál/WKO-nál; automatikus WKO-tagság + SVS-biztosítás.",
+    icon: "trending",
+    sections: [
+      { heading: "Gewerbe bejelentése", body: ["EU-állampolgárként ugyanúgy alapíthatsz, mint egy osztrák. A „szabad” szakmák (freies Gewerbe) bejelentéssel indulnak; a „szabályozott” szakmákhoz (reglementiertes Gewerbe — pl. építőmester, villanyszerelő) képesítés-igazolás (Befähigungsnachweis) kell.", "A bejelentés a kerületi hatóságnál (BH/Magistrat) vagy a WKO Gründerservice-en keresztül megy — a NeuFöG-kedvezménnyel az alapítási illetékek jelentős része elengedhető."] },
+      { heading: "Ami automatikusan jön", bullets: ["WKO-tagság (kamara) — kötelező, éves díjjal (Grundumlage)", "SVS — a vállalkozói társadalombiztosítás (eü + nyugdíj), a járulék a nyereség után", "Adószám a Finanzamttól (FinanzOnline) — Kleinunternehmer-áfamentesség az éves forgalomhatárig (az aktuálisat a hivatalos oldalon)"] },
+      { heading: "Magyar vállalkozóként", body: ["Ha Ausztriában élsz és itt dolgozol, itt kell a tevékenységet bejelenteni — a magyar ev./kata NEM helyettesíti. Határon átnyúló munkánál (pl. magyar cégként osztrák megrendelés) a kiküldetési szabályok (Entsendung, LSD-BG) szigorúak — adótanácsadó erősen ajánlott."] },
+    ],
+    sources: [{ label: "WKO Gründerservice", url: "https://www.wko.at/" }, { label: "SVS — vállalkozói TB", url: "https://www.svs.at/" }],
+  },
+  {
+    slug: "at-felmondas",
+    title: "Felmondás és végkielégítés (Abfertigung Neu)",
+    summary: "A felmondási idő Angestellte-nél törvényi; az Abfertigung Neu a BV-kasszában gyűlik — munkahelyváltásnál NEM vész el.",
+    icon: "document",
+    sections: [
+      { heading: "Felmondási szabályok", body: ["Angestellte-ként (alkalmazott) a munkáltatói felmondási idő a szolgálati idővel nő (6 hét → 5 hónap), és jellemzően negyedév-végére szól; munkavállalóként alap esetben 1 hónap. 2021 óta az Arbeiter-ekre (fizikai) is a törvényi Angestellte-szabályok érvényesek, kollektívszerződés eltérhet.", "A felmondás Ausztriában szóban is érvényes lehet — de MINDIG kérj/adj írásosat a bizonyíthatóságért."] },
+      { heading: "Abfertigung Neu (végkielégítés)", body: ["2003 óta a munkáltató a bruttó 1,53%-át fizeti egy Betriebliche Vorsorgekasse-ba (BV-kassza) — ez a TIÉD, munkahelyváltásnál is gyűlik tovább.", "3 év befizetés után felmondáskor (ha nem te mondtál fel) kiveheted, vagy hagyhatod tovább gyűlni nyugdíjig — hazaköltözésnél is igényelhető."] },
+      { heading: "Mit tegyél felmondáskor?", bullets: ["MÉG AZNAP jelentkezz az AMS-nél (lásd a munkanélküli-cikket)", "Kérd ki: Dienstzeugnis (munkabizonyítvány) + Arbeitsbescheinigung", "Vitás ügyben az Arbeiterkammer (AK) INGYENES jogi segítséget ad a tagoknak — a tagság a munkaviszonnyal automatikus", "A ki nem vett szabadság pénzbeli megváltása (Urlaubsersatzleistung) jár"] },
+    ],
+    sources: [{ label: "Arbeiterkammer — munkajogi tájékoztatók", url: "https://www.arbeiterkammer.at/" }, { label: "oesterreich.gv.at", url: "https://www.oesterreich.gv.at/" }],
+  },
+  {
+    slug: "at-ksv",
+    title: "KSV1870 — hitelképesség Ausztriában",
+    summary: "Az osztrák „SCHUFA”: lakásbérlésnél, hitelnél, részletvételnél nézik; évente ingyenes önlekérdezés jár.",
+    icon: "document",
+    sections: [
+      { heading: "Mi az a KSV?", body: ["A KSV1870 a legnagyobb osztrák hitelinformációs iroda: bankok, mobilszolgáltatók és főbérlők ellenőrzik rajta a fizetési megbízhatóságod.", "Frissen érkezőként még nincs osztrák hiteltörténeted — ez nem negatív, de az elején kérhetnek kauciót/előrefizetést."] },
+      { heading: "Önlekérdezés és javítás", bullets: ["GDPR (Art. 15) alapján ÉVENTE EGYSZER INGYEN lekérheted a saját adataid (ksv.at)", "Hibás bejegyzést (pl. rendezett, mégis nyitottként szereplő tartozás) írásban vitathatsz — kötelesek javítani", "A rendezett tartozások bejegyzései idővel törlődnek — a pontos határidőket a KSV oldala közli"] },
+      { heading: "Így marad jó", body: ["Számlák határidőre (a Mahnung utáni késedelem bejegyzést szülhet), ne halmozz párhuzamos részleteket/hitelkereteket, és költözéskor minden szerződést (áram, mobil, internet) zárj le rendben — az „elfelejtett” számla a leggyakoribb csapda."] },
+    ],
+    sources: [{ label: "KSV1870", url: "https://www.ksv.at/" }],
+  },
+  {
+    slug: "at-13-14-fizetes",
+    title: "13. és 14. havi fizetés (Urlaubs- és Weihnachtsgeld)",
+    summary: "Ausztriában a legtöbb dolgozó ÉVI 14 havi bért kap — a két extra hónap adózása kedvezményes.",
+    icon: "trending",
+    sections: [
+      { heading: "Mi ez és kinek jár?", body: ["Az Urlaubsgeld (nyáron) és a Weihnachtsgeld (novemberben) NEM törvényi, hanem KOLLEKTÍVSZERZŐDÉSES juttatás — de mivel Ausztriában szinte minden ágazatnak van kollektívszerződése, a munkavállalók túlnyomó többsége megkapja.", "Év közben belépve/kilépve IDŐARÁNYOSAN jár. Nézd meg a szerződésed/kollektívszerződésed — az álláshirdetések bruttó havi bére általában a 14×-es rendszerre értendő."] },
+      { heading: "Miért éri meg?", bullets: ["A két extra havi bér KEDVEZMÉNYES adókulccsal adózik (jelentős részük 6%-kal) — nettóban többet ér, mint egy normál hónap", "Éves összehasonlításnál (pl. német ajánlattal) mindig az ÉVES bruttót hasonlítsd: AT havi bér × 14", "A Kinti Bér-Iránytű osztrák adatai a teljes éves bruttót (14×) kérik — így összevethető"] },
+      { heading: "Hazautalásnál", body: ["A júniusi/novemberi „dupla” fizetés a legjobb alkalom a nagyobb összegű hazautalásra — árfolyam-tudatosan (lásd az árfolyam-kalkulátort a Kintin)."] },
+    ],
+    sources: [{ label: "Arbeiterkammer — Urlaubs-/Weihnachtsgeld", url: "https://www.arbeiterkammer.at/" }],
+  },
+  {
+    slug: "at-klimaticket",
+    title: "KlimaTicket — közlekedés egész Ausztriában",
+    summary: "EGY bérlet az ország ÖSSZES vonatára, buszára, villamosára — ingázóknak szinte mindig megéri.",
+    icon: "nav",
+    sections: [
+      { heading: "Mi az a KlimaTicket?", body: ["A KlimaTicket Österreich az ország TELJES menetrend szerinti tömegközlekedésére érvényes — vonat (ÖBB, Westbahn), busz, villamos, metró, minden tartományban.", "Éves konstrukció (havi részletfizetés is lehet); kedvezmény jár 26 alatt, 65 fölött és fogyatékkal élőknek. Az aktuális árakat a hivatalos oldalon találod."] },
+      { heading: "Kinek éri meg?", bullets: ["Ha VÁROSOK KÖZÖTT ingázol (pl. lakás Burgenlandban, munka Bécsben) — pár hónapnyi vonatbérlet árából kijön az egész éves", "Léteznek olcsóbb REGIONÁLIS KlimaTicketek is (egy-két tartományra) — ha csak egy régión belül mozogsz", "Csak Bécsen belül a bécsi éves bérlet (Wiener Linien) az olcsóbb"] },
+      { heading: "Tipp", body: ["A munkáltatód adómentesen átvállalhatja vagy támogathatja (Öffi-Ticket / Jobticket) — kérdezz rá, sok cég adja béren kívüli juttatásként."] },
+    ],
+    sources: [{ label: "klimaticket.at — hivatalos oldal", url: "https://www.klimaticket.at/" }],
+  },
+  {
+    slug: "at-id-austria",
+    title: "ID Austria — az osztrák digitális azonosító",
+    summary: "A digitális ügyintézés kulcsa (FinanzOnline, Digitales Amt, e-aláírás) — EU-állampolgárként is igényelhető.",
+    icon: "lock",
+    sections: [
+      { heading: "Mi az az ID Austria?", body: ["Az ID Austria az osztrák állami digitális azonosító (a korábbi Handy-Signatur utódja): ezzel lépsz be a FinanzOnline-ba (adó, Familienbeihilfe), a Digitales Amt appba, és ezzel írhatsz alá TELJES ÉRTÉKŰ elektronikus aláírással szerződéseket, kérelmeket.", "Magyarként, osztrák lakcímmel (Meldezettel) is igényelheted — a legtöbb hivatali ügyet utána sorban állás nélkül, telefonról intézed."] },
+      { heading: "Hogyan igényeld?", bullets: ["Személyesen egy regisztrációs hatóságnál (jellemzően a Passamt / kerületi hatóság — vigyél fényképes igazolványt)", "A régi Handy-Signatur felhasználók egyszerűsítve válthattak át", "Két szint van: az alap- és a teljes funkciós — a teljeshez fényképes okmány-ellenőrzés kell, cserébe e-aláírásra is jó", "A telefonodon az „Digitales Amt” app + PIN/ujjlenyomat a mindennapi használat"] },
+      { heading: "Mire jó a gyakorlatban?", bullets: ["FinanzOnline: adóbevallás (Arbeitnehmerveranlagung — gyakran visszajár!), Familienbeihilfe", "Meldebestätigung, anyakönyvi kivonatok letöltése sorban állás nélkül", "Ajánlott levelek digitális átvétele (elektronische Zustellung)", "E-Rezept és eü-ügyek (ELGA) elérése"] },
+    ],
+    sources: [{ label: "id-austria.gv.at — hivatalos oldal", url: "https://www.id-austria.gv.at/" }, { label: "oesterreich.gv.at — ID Austria", url: "https://www.oesterreich.gv.at/id-austria.html" }],
+  },
 ];
 
 export const GUIDES_DE: Guide[] = [
@@ -1561,6 +1657,90 @@ export const GUIDES_NL: Guide[] = [
     ],
     sources: [{ label: "SVB — AOW", url: "https://www.svb.nl/nl/" }, { label: "mijnpensioenoverzicht.nl", url: "https://www.mijnpensioenoverzicht.nl/" }],
   },
+  {
+    slug: "nl-orvos",
+    title: "Huisarts — az orvosi rendszer kulcsa",
+    summary: "Hollandiában MINDEN a háziorvosnál kezdődik — regisztrálj az első hetekben, ne várd meg, míg beteg leszel.",
+    icon: "heart",
+    sections: [
+      { heading: "Miért sürgős regisztrálni?", body: ["Hollandiában szakorvoshoz CSAK a huisarts (háziorvos) beutalójával jutsz — háziorvos nélkül gyakorlatilag nincs belépésed az egészségügybe.", "A praxisok gyakran teltek, a felvétel lakóhely-alapú — a beköltözés utáni ELSŐ HETEKBEN regisztrálj (BSN + biztosítás kell hozzá), ne az első betegségnél keress."] },
+      { heading: "Mire számíts?", body: ["A holland háziorvos visszafogottabban gyógyszerez, mint amit otthonról megszokhattál („paracetamol-kultúra”) — ez tudatos protokoll, nem nemtörődömség. Ha nem javulsz, menj vissza, kérj újraértékelést.", "A vizit a háziorvosnál az alapbiztosításból jár, és NEM terheli az eigen risico-t (önrészt) — a szakorvosi/kórházi ellátás viszont igen (az önrész éves összegét a biztosítód oldalán találod)."] },
+      { heading: "Ügyelet és sürgősség", bullets: ["Este/hétvégén: huisartsenpost (ügyeleti központ) — ELŐBB TELEFONÁLJ, időpontot adnak", "112 — életveszély; 0900-8844 — rendőrség nem-sürgős", "Gyógyszertár (apotheek): a recepteket automatikusan a regisztrált gyógyszertáradba küldik"] },
+    ],
+    sources: [{ label: "Rijksoverheid — huisarts", url: "https://www.rijksoverheid.nl/" }],
+  },
+  {
+    slug: "nl-vallalkozas",
+    title: "Vállalkozás (ZZP) Hollandiában — KVK-regisztráció",
+    summary: "A KVK-bejegyzés fél óra; utána BTW-szám, adminisztrációs kötelezettség és adókedvezmények (zelfstandigenaftrek).",
+    icon: "trending",
+    sections: [
+      { heading: "KVK-regisztráció", body: ["Önállóként (zzp'er / eenmanszaak) a Kamer van Koophandel-nél (KVK) regisztrálsz — online időpont + személyes megjelenés, egyszeri díjjal. Kell: BSN, cím, tevékenység-leírás.", "A KVK továbbítja az adatokat a Belastingdienstnek → BTW-azonosítót (áfa-szám) kapsz. A kisvállalkozói áfamentesség (KOR) az éves forgalomhatárig választható — az aktuális határt a Belastingdienst oldala közli."] },
+      { heading: "Adók és kedvezmények", bullets: ["Jövedelemadó-bevallás évente (aangifte) — a vállalkozói kedvezmények (zelfstandigenaftrek, startersaftrek) jelentősek, de a zelfstandigenaftrek évről évre CSÖKKEN — az aktuális összeget ellenőrizd", "Az óraszám-feltétel (urencriterium, 1225 óra/év) sok kedvezmény kapuja — vezess óranyilvántartást", "Számláidon kötelező elemek: KVK-szám, BTW-szám, sorszám", "Adminisztráció-megőrzés: 7 év"] },
+      { heading: "Amire kevesen számítanak", body: ["Betegség esetén zzp-ként NINCS automatikus táppénz — mérlegeld az AOV-t (jövedelembiztosítás) vagy a broodfonds-t. A látszat-önállóság (schijnzelfstandigheid — egy megbízó, alkalmazotti viszonyszerű munka) ellenőrzését szigorították — több lábon állj."] },
+    ],
+    sources: [{ label: "KVK — Kamer van Koophandel", url: "https://www.kvk.nl/" }, { label: "Belastingdienst", url: "https://www.belastingdienst.nl/" }],
+  },
+  {
+    slug: "nl-bkr",
+    title: "BKR — a holland hitelnyilvántartás",
+    summary: "Már egy telefon-részletvétel is BKR-bejegyzés — hitelnél, jelzálognál számít; az önlekérdezés ingyenes.",
+    icon: "document",
+    sections: [
+      { heading: "Mi az a BKR?", body: ["A Stichting BKR nyilvántart MINDEN hitelviszonyt: személyi kölcsön, hitelkártya, folyószámla-hitelkeret, sőt a RÉSZLETRE VETT TELEFON is — ezek jelzáloghitel-igénylésnél mind számítanak.", "Negatív bejegyzés (fizetési késedelem) évekig látszik és komolyan nehezíti a hitelfelvételt."] },
+      { heading: "Önlekérdezés és javítás", bullets: ["A bkr.nl-en INGYEN lekérheted a saját nyilvántartásod (GDPR)", "Hibás bejegyzést a hitelezőnél vitathatsz — nem javításnál a BKR panasz-útja (Geschillencommissie) következik", "Jelzálog-tervezésnél ELŐRE nézd meg: a telefon-részlet lezárása hónapokkal emelheti a hitelkeretet"] },
+      { heading: "Tipp", body: ["Ha teheted, a telefont vedd egy összegben (vagy a részletet tartsd a bejegyzési küszöb alatt), és kerüld a folyószámla „piros” használatát — a rendezett, kevés hitelviszony a legjobb profil."] },
+    ],
+    sources: [{ label: "BKR — hivatalos oldal", url: "https://www.bkr.nl/" }],
+  },
+  {
+    slug: "nl-felmondas",
+    title: "Felmondás Hollandiában — a jogaid",
+    summary: "A munkáltató NEM mondhat fel csak úgy (UWV/bíróság kell); transitievergoeteség az 1. naptól jár.",
+    icon: "document",
+    sections: [
+      { heading: "Erős felmondás-védelem", body: ["Hollandiában a munkáltató határozatlan idejű szerződést egyoldalúan NEM szüntethet meg: vagy az UWV engedélye (gazdasági ok/tartós betegség), vagy a kantonrechter (bíróság) döntése kell — vagy KÖZÖS megegyezés.", "A leggyakoribb út a vaststellingsovereenkomst (megszüntető megállapodás): SOHA ne írd alá azonnal — 14 napos elállási jogod van, és a feltételek (felmondási idő, végkielégítés, WW-jogosultság megőrzése) tárgyalhatók. Kérj jogi tanácsot (a jogvédelmi biztosítás vagy a Juridisch Loket ingyen segít)."] },
+      { heading: "Transitievergoeding (végkielégítés)", body: ["Munkáltatói kezdeményezésű megszűnésnél a törvényi végkielégítés a MUNKAVISZONY ELSŐ NAPJÁTÓL jár: évente a havi bruttó 1/3-a (arányosítva) — próbaidő után is.", "Határozott idejű szerződés le nem hosszabbításánál IS jár!"] },
+      { heading: "Jó tudni", bullets: ["Felmondási idő (opzegtermijn): munkavállalóként alap 1 hónap; munkáltatónál a szolgálati idővel nő", "Határozott szerződéseknél az aanzegtermijn: a munkáltatónak 1 hónappal a lejárat előtt ÍRÁSBAN jeleznie kell, hosszabbít-e — ha elmulasztja, kártérítés jár", "Beteg munkavállalónak 2 évig felmondási tilalom + bérfizetés (min. 70%)", "Utána azonnal: WW-igénylés az UWV-nél (lásd a munkanélküli-cikket)"] },
+    ],
+    sources: [{ label: "Rijksoverheid — ontslag", url: "https://www.rijksoverheid.nl/" }, { label: "UWV", url: "https://www.uwv.nl/" }],
+  },
+  {
+    slug: "nl-30-ruling",
+    title: "30%-os adókedvezmény (30% ruling)",
+    summary: "Külföldről toborzott szakembereknek a bér egy része ADÓMENTES lehet — a munkáltatóval KÖZÖSEN kell kérni.",
+    icon: "trending",
+    sections: [
+      { heading: "Mi ez és ki kaphatja?", body: ["A 30% ruling (expatregeling) a külföldről toborzott munkavállalók kedvezménye: a bruttó bér egy része adómentesen fizethető ki — jelentős nettó-többlet.", "Fő feltételek: a felvétel előtt a holland határtól legalább 150 km-re éltél (a magyarok jellemzően megfelelnek), és a béred elér egy szakértelmi küszöböt (fiatal mesterdiplomásoknak alacsonyabb) — az aktuális összegeket és a kedvezmény éppen érvényes mértékét/időtartamát a Belastingdienst oldalán ellenőrizd, mert a szabályt az utóbbi években többször szigorították."] },
+      { heading: "Hogyan igényeld?", bullets: ["A MUNKÁLTATÓVAL KÖZÖSEN adjátok be a Belastingdiensthez — magadban nem megy", "A felvételtől számított 4 HÓNAPON BELÜL beadva visszamenőleg a kezdéstől jár", "Munkahelyváltásnál átvihető, ha 3 hónapon belül van az új szerződés", "Már a SZERZŐDÉS-TÁRGYALÁSNÁL hozd szóba — a munkáltatónak is adminisztrációs feltételei vannak"] },
+      { heading: "Amire figyelj", body: ["A kedvezmény a szociális ellátás-alapokat (pl. WW, nyugdíj-alap) is érintheti, és a partner-jövedelemtől független. Nagy összegű döntés — a részletekhez adótanácsadó ajánlott."] },
+    ],
+    sources: [{ label: "Belastingdienst — 30% ruling", url: "https://www.belastingdienst.nl/" }],
+  },
+  {
+    slug: "nl-auto",
+    title: "Autó Hollandiában",
+    summary: "RDW-átírás, éves APK, wegenbelasting — és behozatalnál BPM: sokszor NEM éri meg autót hozni.",
+    icon: "car",
+    sections: [
+      { heading: "Behozatal Magyarországról — számolj!", body: ["EU-n belül vám nincs, DE Hollandia BPM-et (regisztrációs adót) vet ki a behozott autóra — a CO2-kibocsátás alapján, ami régebbi/nagyobb motoros autónál NAGYON magas lehet. A wegenbelasting (súlyadó) is a súly+üzemanyag szerint megy.", "Behozatal előtt számold ki a BPM-et a Belastingdienst kalkulátorával — gyakran olcsóbb kint eladni és Hollandiában venni."] },
+      { heading: "Kötelezettségek", bullets: ["Átírás/regisztráció az RDW-nél (kentekenbewijs) — behozatalnál RDW-vizsgálat is", "APK — éves műszaki vizsga (új autónál az első 4 év után)", "WA-verzekering (kötelező felelősségbiztosítás) nélkül az RDW automatikus bírságot küld — a be nem biztosított REGISZTRÁLT autó önmagában bírságolható!", "Wegenbelasting automatikusan, negyedévente"] },
+      { heading: "Városban", body: ["A nagyvárosokban (Amszterdam, Utrecht) a parkolás extrém drága és engedély-köteles (várólistával) — sok kint élő magyar városban AUTÓ NÉLKÜL él (lásd a kerékpár-cikket), és megosztó-szolgáltatást használ, ha mégis kell."] },
+    ],
+    sources: [{ label: "RDW", url: "https://www.rdw.nl/" }, { label: "Belastingdienst — BPM", url: "https://www.belastingdienst.nl/" }],
+  },
+  {
+    slug: "nl-kerekpar",
+    title: "Kerékpár Hollandiában — a valódi közlekedés",
+    summary: "A bicikli itt nem hobbi, hanem infrastruktúra — szabályok, lopás-védelem és OV-fiets egy helyen.",
+    icon: "nav",
+    sections: [
+      { heading: "Az alapok", body: ["Hollandiában több bicikli van, mint ember — a munkába járás, bevásárlás, ovi-vitel alapjárműve. Külön kerékpárút-hálózat (fietspad), saját lámpák, saját szabályok.", "Használt bringát vegyél megbízható helyről (bike shop, Marktplaats óvatosan) — a LOPOTT bicikli vásárlása is büntethető, kérd el az eredetigazolást/számlát."] },
+      { heading: "Szabályok, amiket tényleg büntetnek", bullets: ["Világítás: első fehér + hátsó piros KÖTELEZŐ sötétben — helyszíni bírság jár érte", "Telefon a kézben bringázás közben: TILOS és bírságolják", "Alkohol: a biciklire is vonatkozik az ittas vezetés szabálya", "A körforgalomban és a fietspad-on a bringás gyakran előnyt élvez — autósként is tanuld meg a helyi reflexeket"] },
+      { heading: "Lopás-védelem és OV-fiets", bullets: ["KÉT zár a minimum (váz+kerék az utcabútorhoz) — a bringalopás népbetegség", "A jobb zárak ART-tanúsítványosak; biztosítás (fietsverzekering) drágább bringánál megéri", "OV-fiets: az NS vasúti bérlethez kapcsolódó megosztott bringa a legtöbb állomáson — ingázóknak aranyat ér"] },
+    ],
+    sources: [{ label: "Rijksoverheid — fiets", url: "https://www.rijksoverheid.nl/" }],
+  },
 ];
 
 /** Az összes guide (statikus generáláshoz + slug-kereséshez). */
@@ -1679,10 +1859,22 @@ const GUIDE_TOPIC: Record<string, string> = {
   "at-munkanelkuli": "munkanelkuli-biztositas",
   "nl-munkanelkuli": "munkanelkuli-biztositas",
   "de-felmondas": "munkavallalas",
+  "at-felmondas": "munkavallalas",
+  "nl-felmondas": "munkavallalas",
   "de-minijob": "munkavallalas",
+  "at-geringfugig": "munkavallalas",
+  "at-13-14-fizetes": "munkavallalas",
   "de-schufa": "bankszamla",
+  "at-ksv": "bankszamla",
+  "nl-bkr": "bankszamla",
   "de-vallalkozas": "adozas-quellensteuer",
+  "at-vallalkozas": "adozas-quellensteuer",
+  "nl-vallalkozas": "adozas-quellensteuer",
+  "nl-30-ruling": "adozas-quellensteuer",
+  "at-orvos": "egeszsegbiztositas-krankenkasse",
+  "nl-orvos": "egeszsegbiztositas-krankenkasse",
   "nl-digid": "bejelentkezes-letelepedes",
+  "at-id-austria": "bejelentkezes-letelepedes",
   "at-lakasberles": "lakasberles",
   "de-lakasberles": "lakasberles",
   "nl-lakasberles": "lakasberles",
@@ -1708,13 +1900,14 @@ const MONEY_GUIDE_SLUGS = new Set<string>([
   // AT
   "at-bankszamla", "at-adozas", "at-munkavallalas", "at-nyugdij",
   "at-csaladi-potlek", "at-munkanelkuli", "at-szules",
+  "at-geringfugig", "at-13-14-fizetes",
   // DE
   "de-bankszamla", "de-adozas", "de-munkavallalas", "de-nyugdij",
   "de-csaladi-potlek", "de-munkanelkuli", "de-szules-elterngeld",
   "de-minijob", "de-schufa",
   // NL
   "nl-bankszamla", "nl-adozas", "nl-munkavallalas", "nl-nyugdij",
-  "nl-csaladi-potlek", "nl-munkanelkuli", "nl-toeslagen",
+  "nl-csaladi-potlek", "nl-munkanelkuli", "nl-toeslagen", "nl-30-ruling",
 ]);
 
 export function isMoneyGuide(slug: string): boolean {
