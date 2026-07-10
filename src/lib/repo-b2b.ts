@@ -69,17 +69,40 @@ function toB2bProject(r: B2bProjectRow): B2bProject {
 }
 
 /**
- * B2B-hozzáférés a bejelentkezett userre: a hozzá tartozó cég + PRO-e (featured).
- * Ezt hívja a layout/page (paywall-döntés) ÉS minden API-mutáció (szerver-gate).
+ * B2B-hozzáférés a bejelentkezett userre: a hozzá tartozó cég + PRO-e (featured)
+ * + admin-jóváhagyott-e. Ezt hívja a page (paywall-döntés) ÉS minden API-mutáció
+ * (szerver-gate). Az isApproved külön mező: a Paddle webhook moderációs státusztól
+ * függetlenül ad featured=1-et, de a zárt feedbe POSZTOLNI csak jóváhagyott
+ * (moderation_status=1) cég tud — különben a friss, még nem ellenőrzött regisztráció
+ * fizetéssel azonnal moderálatlan tartalmat tolhatna a többi PRO tag elé.
  */
 export interface B2bAccess {
   business: Business | null;
   isPro: boolean;
+  isApproved: boolean;
 }
 
 export async function getB2bAccess(userId: string): Promise<B2bAccess> {
   const business = await getBusinessByOwner(userId);
-  return { business, isPro: Boolean(business?.featured) };
+  return {
+    business,
+    isPro: Boolean(business?.featured),
+    isApproved: business ? (business.moderationStatus ?? 1) === 1 : false,
+  };
+}
+
+/**
+ * Kliensnek szánt projekt-alak: az authorId-t NEM tartalmazza (a Clerk user-id
+ * ne szivárogjon minden B2B tag böngészőjébe) — helyette a szerveren számított
+ * `isMine` mondja meg, lezárhatja-e a néző.
+ */
+export interface B2bProjectView extends Omit<B2bProject, "authorId"> {
+  isMine: boolean;
+}
+
+export function toB2bProjectView(p: B2bProject, viewerId: string): B2bProjectView {
+  const { authorId, ...rest } = p;
+  return { ...rest, isMine: authorId === viewerId };
 }
 
 export interface CreateB2bProjectInput {
@@ -119,10 +142,17 @@ export interface B2bProjectFilters {
 
 /**
  * Nyitott projektek, legfrissebb elöl. JOIN a businesses-re: a kiíró (ellenőrzött)
- * cég nevét/logóját/kiemelt-státuszát is visszaadja a trust badge-hez.
+ * cég nevét/logóját/kiemelt-státuszát is visszaadja a trust badge-hez. A kódbázis
+ * konvenciója szerint (repo-business) a rejtett (hidden=1) vagy nem-jóváhagyott
+ * cég posztjai NEM jelennek meg — így az admin cég-elrejtése a B2B posztjait is
+ * azonnal eltünteti.
  */
 export async function getB2bProjects(filters: B2bProjectFilters = {}): Promise<B2bProject[]> {
-  const where: string[] = ["p.status = 'open'"];
+  const where: string[] = [
+    "p.status = 'open'",
+    "COALESCE(b.hidden, 0) = 0",
+    "b.moderation_status = 1",
+  ];
   const binds: unknown[] = [];
   if (filters.country && filters.country !== "all") {
     where.push("p.target_country = ?");
@@ -162,17 +192,61 @@ export async function closeB2bProject(projectId: string, authorId: string): Prom
   return (res.meta.changes ?? 0) > 0;
 }
 
-/** Nyitott projektek száma (marketing-teaser; opcionális ország-szűrővel). */
+/** Nyitott projektek száma (marketing-teaser; opcionális ország-szűrővel).
+ *  Ugyanazokkal a cég-szűrőkkel, mint a feed — a teaser ne ígérjen olyan
+ *  projektet, amit a feed már nem mutat. */
 export async function countOpenB2bProjects(country?: string): Promise<number> {
-  const where: string[] = ["status = 'open'"];
+  const where: string[] = [
+    "p.status = 'open'",
+    "COALESCE(b.hidden, 0) = 0",
+    "b.moderation_status = 1",
+  ];
   const binds: unknown[] = [];
   if (country && country !== "all") {
-    where.push("target_country = ?");
+    where.push("p.target_country = ?");
     binds.push(country);
   }
   const row = await getDB()
-    .prepare(`SELECT COUNT(*) AS n FROM b2b_projects WHERE ${where.join(" AND ")}`)
+    .prepare(
+      `SELECT COUNT(*) AS n FROM b2b_projects p
+       JOIN businesses b ON b.id = p.business_id
+       WHERE ${where.join(" AND ")}`,
+    )
     .bind(...binds)
     .first<{ n: number }>();
   return row?.n ?? 0;
+}
+
+/**
+ * Admin-lista: MINDEN projekt (nyitott+lezárt, rejtett/függő cégé is — pont a
+ * problémásakat kell látnia), legfrissebb elöl. LEFT JOIN: a cég törlése után
+ * árván maradt posztok is látszanak (és törölhetők).
+ */
+export async function listB2bProjectsForAdmin(limit = 50): Promise<B2bProject[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT p.id, p.author_id, p.business_id, p.title, p.description,
+              p.target_country, p.target_city, p.category_needed, p.contact_phone,
+              p.status, p.created_at,
+              b.name AS business_name,
+              COALESCE(b.featured, 0) AS business_featured,
+              b.logo_key AS business_logo_key,
+              b.category_label AS business_category_label
+       FROM b2b_projects p
+       LEFT JOIN businesses b ON b.id = p.business_id
+       ORDER BY p.created_at DESC
+       LIMIT ?`,
+    )
+    .bind(Math.min(Math.max(limit, 1), 200))
+    .all<B2bProjectRow>();
+  return results.map(toB2bProject);
+}
+
+/** Admin-törlés (moderáció): bármely projekt végleges eltávolítása. */
+export async function deleteB2bProjectAsAdmin(projectId: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare("DELETE FROM b2b_projects WHERE id = ?")
+    .bind(projectId)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
 }

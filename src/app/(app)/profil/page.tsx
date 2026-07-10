@@ -228,9 +228,12 @@ async function OwnerDashboard({
   // ZÁROLT (kontakt elrejtve) → PRO oldja fel. A szakember fizet (ő keres a leadekből).
   const isPro = business.featured;
   const newLeadCount = await countNewBusinessLeads(business.id);
-  const [rawLeads, leadCounts] = await Promise.all([
+  // A B2B-teaser számlálója is itt fut (párhuzamosan) — külön sorban plusz egy
+  // soros D1 kör-utat adna ennek az amúgy is lekérdezés-nehéz oldalnak.
+  const [rawLeads, leadCounts, b2bOpenCount] = await Promise.all([
     getBusinessLeads(business.id),
     getLeadCounts(business.id),
+    countOpenB2bProjects(),
   ]);
   // Havi 5 ingyenes: egy lead INGYENES, ha a naptári hónapjában az első 5 között
   // érkezett (kronologikus sorrend) — így a 6.+ (a legfrissebb) zárolt → erős FOMO,
@@ -254,9 +257,6 @@ async function OwnerDashboard({
 
   // Analytics: top keresőszavak ("honnan jönnek") — PRO.
   const topSearchTerms = business.featured ? await getTopSearchTerms(business.id) : [];
-
-  // B2B Hub marketing-teaser: nyitott projektek száma (a részletek zártak).
-  const b2bOpenCount = await countOpenB2bProjects();
 
   const { stats } = data;
   const total14 = stats.trend.reduce((sum, p) => sum + p.views, 0);

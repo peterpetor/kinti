@@ -4,20 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { getCountry } from "@/lib/countries";
-import type { B2bProject } from "@/lib/repo-b2b";
-
-/** Relatív idő (epoch ms) röviden, magyarul. */
-function ago(ms: number): string {
-  const diff = Date.now() - ms;
-  const min = Math.floor(diff / 60000);
-  if (min < 1) return "most";
-  if (min < 60) return `${min} perce`;
-  const h = Math.floor(min / 60);
-  if (h < 24) return `${h} órája`;
-  const d = Math.floor(h / 24);
-  if (d < 30) return `${d} napja`;
-  return `${Math.floor(d / 30)} hónapja`;
-}
+import { relTimeFromMs } from "@/lib/relative-time";
+import type { B2bProjectView } from "@/lib/repo-b2b";
 
 /**
  * B2bProjectCard — egyetlen projekt (LinkedIn Jobs-szerű, letisztult). A kiíró
@@ -28,16 +16,15 @@ function ago(ms: number): string {
 export function B2bProjectCard({
   project,
   categoryLabel,
-  myUserId,
 }: {
-  project: B2bProject;
+  project: B2bProjectView;
   categoryLabel: string | null;
-  myUserId: string;
 }) {
   const router = useRouter();
   const [revealed, setRevealed] = useState(false);
   const [closing, setClosing] = useState(false);
-  const isMine = project.authorId === myUserId;
+  // A szerver számolja (authorId nem kerül a kliensre).
+  const isMine = project.isMine;
   const flag = getCountry(project.targetCountry)?.flag ?? "";
 
   async function close() {
@@ -70,7 +57,7 @@ export function B2bProjectCard({
             <Icon name="check" size={10} strokeWidth={3} /> PRO
           </span>
         )}
-        <span className="ml-auto shrink-0 text-[11px] text-ink-faint">{ago(project.createdAt)}</span>
+        <span className="ml-auto shrink-0 text-[11px] text-ink-faint">{relTimeFromMs(project.createdAt)}</span>
       </div>
 
       <h3 className="text-[15px] font-extrabold leading-snug text-ink">{project.title}</h3>

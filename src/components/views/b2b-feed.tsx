@@ -5,7 +5,7 @@ import { Icon } from "@/components/ui";
 import { COUNTRIES } from "@/lib/countries";
 import { cn } from "@/lib/cn";
 import type { Category } from "@/lib/types";
-import type { B2bProject } from "@/lib/repo-b2b";
+import type { B2bProjectView } from "@/lib/repo-b2b";
 import { B2bProjectCard } from "@/components/views/b2b-project-card";
 
 /**
@@ -16,11 +16,9 @@ import { B2bProjectCard } from "@/components/views/b2b-project-card";
 export function B2bFeed({
   projects,
   categories,
-  myUserId,
 }: {
-  projects: B2bProject[];
+  projects: B2bProjectView[];
   categories: Category[];
-  myUserId: string;
 }) {
   const [country, setCountry] = useState<string>("all");
   const [category, setCategory] = useState<string>("all");
@@ -98,7 +96,6 @@ export function B2bFeed({
               key={p.id}
               project={p}
               categoryLabel={p.categoryNeeded ? catLabel.get(p.categoryNeeded) ?? null : null}
-              myUserId={myUserId}
             />
           ))}
         </div>

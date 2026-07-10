@@ -18,7 +18,9 @@ import {
   getFeatureUsageStats,
   listOpenReports,
   listBusinessesForAdmin,
+  listB2bProjectsForAdmin,
 } from "@/lib/repo";
+import { relTimeFromMs } from "@/lib/relative-time";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -36,7 +38,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
   // Vállalkozás-lista lapozása (100/oldal): ?p=2 → második 100, stb.
   const bizPage = Math.max(1, parseInt(searchParams?.p ?? "1", 10) || 1);
 
-  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, businesses] =
+  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, businesses, b2bProjects] =
     await Promise.all([
       getAdminStats(country),
       getAdminTrends(),
@@ -45,6 +47,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
       getFeatureUsageStats(7),
       listOpenReports(),
       listBusinessesForAdmin(country, bizPage),
+      listB2bProjectsForAdmin(),
     ]);
 
   const fmt = (n: number) => n.toLocaleString("hu-HU");
@@ -261,6 +264,47 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
         )}
       </section>
 
+
+      {/* B2B projektpiac — moderáció: a zárt feed posztjai admin-szemmel (rejtett/
+          függő cégé is), törlés-gombbal. A feed maga csak jóváhagyott cég posztját
+          mutatja; itt a problémás tartalom is látszik és eltávolítható. */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">
+          B2B projektpiac ({b2bProjects.length})
+        </h2>
+        {b2bProjects.length === 0 ? (
+          <Empty label="Nincs B2B projekt." />
+        ) : (
+          <div className="space-y-1.5">
+            {b2bProjects.map((p) => (
+              <div key={p.id} className="flex flex-wrap items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="shrink-0 rounded-full px-1.5 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wide"
+                      style={p.status === "open"
+                        ? { backgroundColor: "#dcfce7", color: "#15803d" }
+                        : { backgroundColor: "#f1f5f9", color: "#64748b" }}
+                    >
+                      {p.status === "open" ? "Nyitott" : "Lezárt"}
+                    </span>
+                    <span className="truncate text-[13px] font-bold text-ink">{p.title}</span>
+                  </div>
+                  <p className="truncate text-[11px] text-ink-muted">
+                    {p.businessName ?? "⚠️ törölt cég"} · {getCountry(p.targetCountry)?.flag ?? ""} {p.targetCity ?? p.targetCountry} · {relTimeFromMs(p.createdAt)}
+                  </p>
+                </div>
+                <AdminDeleteButton
+                  type="b2b"
+                  id={p.id}
+                  small
+                  confirmText={`Biztos törlöd a(z) "${p.title}" B2B projektet? Ez nem visszavonható.`}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Businesses + verify toggle + delete — lapozva (100/oldal) */}
       <section className="space-y-2">

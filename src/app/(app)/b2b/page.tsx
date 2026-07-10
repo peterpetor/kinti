@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { Icon } from "@/components/ui";
-import { getB2bAccess, getB2bProjects, getCategories } from "@/lib/repo";
+import { getB2bAccess, getB2bProjects, getCategories, toB2bProjectView } from "@/lib/repo";
 import { countryAdjective } from "@/lib/countries";
 import { B2bPaywall } from "@/components/views/b2b-paywall";
 import { B2bComposer } from "@/components/views/b2b-composer";
@@ -23,15 +23,46 @@ export default async function B2bPage() {
 
   // ── SZERVER-GATE: a hozzáférést a CÉG-szintű PRO (featured=1) adja. ──────────
   // Nem-PRO (vagy cég nélküli) user a paywallt látja — a valódi feedet NEM.
-  const { business, isPro } = await getB2bAccess(userId);
+  const { business, isPro, isApproved } = await getB2bAccess(userId);
   if (!business || !isPro) {
     return <B2bPaywall businessId={business?.id ?? null} />;
   }
 
-  const [projects, categories] = await Promise.all([
+  // PRO, de a cégprofil még admin-jóváhagyásra vár → nem a paywall (már fizetett!),
+  // hanem türelmi képernyő. Az API-oldali gate ugyanezt kényszeríti ki.
+  if (!isApproved) {
+    return (
+      <div className="space-y-4 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
+        <header className="flex items-center gap-2">
+          <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary text-white">
+            <Icon name="briefcase" size={16} strokeWidth={2.4} />
+          </span>
+          <h1 className="text-[20px] font-extrabold tracking-tight text-ink">B2B Hub</h1>
+          <Link
+            href="/profil"
+            aria-label="Vissza"
+            className="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink"
+          >
+            <Icon name="arrowLeft" size={16} strokeWidth={2.2} />
+          </Link>
+        </header>
+        <div className="rounded-card border border-star/30 bg-star/10 p-4 text-[13px] leading-snug text-ink">
+          <strong>A cégprofilod jóváhagyásra vár.</strong> A PRO csomagod aktív, de a zárt
+          projektpiacra a moderáció után léphetsz be — jellemzően 24 órán belül megtörténik.
+          Addig a <Link href="/profil" className="font-bold underline">műszerfaladon</Link> mindent
+          előkészíthetsz.
+        </div>
+      </div>
+    );
+  }
+
+  const [rawProjects, categories] = await Promise.all([
     getB2bProjects({ limit: 100 }),
     getCategories(),
   ]);
+  // Kliens-alak: authorId nélkül (Clerk user-id ne kerüljön más tagok böngészőjébe),
+  // az isMine-t itt, a szerveren számoljuk.
+  const projects = rawProjects.map((p) => toB2bProjectView(p, userId));
   const cats = categories.filter((c) => c.id !== "all");
 
   return (
@@ -81,7 +112,7 @@ export default async function B2bPage() {
       <B2bComposer categories={cats} defaultCountry={business.country} defaultPhone={business.phone} />
 
       {/* Feed — nyitott projektek, kliens-oldali ország/szakma szűrővel */}
-      <B2bFeed projects={projects} categories={cats} myUserId={userId} />
+      <B2bFeed projects={projects} categories={cats} />
     </div>
   );
 }

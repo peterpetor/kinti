@@ -13,6 +13,12 @@ const TITLE_MIN = 6;
 const TITLE_MAX = 120;
 const DESC_MIN = 20;
 const DESC_MAX = 2000;
+// Az opcionális mezők szerveroldali sapkái — a kliens maxLength megkerülhető,
+// a sapkátlan mező DB-t hizlalna és minden tag feed-payloadját duzzasztaná.
+const CITY_MAX = 80;
+const PHONE_MAX = 40;
+// A szakma-id a categories(id) slug-formátuma; más formátum = kézzel gyártott kérés.
+const CATEGORY_ID_RE = /^[a-z0-9_-]{1,64}$/;
 
 function str(v: unknown): string {
   return typeof v === "string" ? v.trim() : "";
@@ -35,10 +41,19 @@ export async function POST(req: Request) {
     if (!userId) {
       return NextResponse.json({ error: "Bejelentkezés szükséges." }, { status: 401 });
     }
-    const { business, isPro } = await getB2bAccess(userId);
+    const { business, isPro, isApproved } = await getB2bAccess(userId);
     if (!business || !isPro) {
       return NextResponse.json(
         { error: "A B2B Hub csak Szaknévsor PRO cégeknek érhető el." },
+        { status: 403 },
+      );
+    }
+    // Moderációs kapu: a Paddle-fizetés azonnal featured=1-et ad, de a zárt
+    // feedbe kiírni csak admin-jóváhagyott cég tud (a friss, még nem ellenőrzött
+    // regisztráció ne tolhasson moderálatlan tartalmat a többi PRO tag elé).
+    if (!isApproved) {
+      return NextResponse.json(
+        { error: "A projekt-kiíráshoz a cégprofilod admin-jóváhagyása szükséges (jellemzően 24 órán belül megtörténik)." },
         { status: 403 },
       );
     }
@@ -82,6 +97,15 @@ export async function POST(req: Request) {
     }
     if (!isValidCountry(targetCountry)) {
       return NextResponse.json({ error: "Érvénytelen célország." }, { status: 400 });
+    }
+    if (targetCity && targetCity.length > CITY_MAX) {
+      return NextResponse.json({ error: `A város legfeljebb ${CITY_MAX} karakter lehet.` }, { status: 400 });
+    }
+    if (contactPhone && contactPhone.length > PHONE_MAX) {
+      return NextResponse.json({ error: `A telefonszám legfeljebb ${PHONE_MAX} karakter lehet.` }, { status: 400 });
+    }
+    if (categoryNeeded && !CATEGORY_ID_RE.test(categoryNeeded)) {
+      return NextResponse.json({ error: "Érvénytelen szakma-azonosító." }, { status: 400 });
     }
 
     const id = await createB2bProject({

@@ -13,8 +13,9 @@ export interface JobCategory {
   id: string;
   label: string;
   emoji: string;
-  /** Melyik szektor-csoportba (optgroup) tartozik — a JOB_CATEGORY_GROUP_ORDER id-je. */
-  group: string;
+  /** Melyik szektor-csoportba (optgroup) tartozik. Union-típus: elgépelt
+   *  csoport-id fordítási hiba — nem némán eltűnő kategória a legördülőkből. */
+  group: JobCategoryGroupId;
 }
 
 export interface JobCategoryGroup {
@@ -33,8 +34,10 @@ export function formatJobCurrency(currency: string): string {
   }
 }
 
-/** Szektor-csoportok megjelenítési sorrendben (a legördülő <optgroup> fejlécek). */
-export const JOB_CATEGORY_GROUP_ORDER: JobCategoryGroup[] = [
+/** Szektor-csoportok megjelenítési sorrendben (a legördülő <optgroup> fejlécek).
+ *  `as const satisfies`: a shape-et ellenőrzi, de az id-k literál-típusa megmarad
+ *  → ebből származik a JobCategoryGroupId union. */
+export const JOB_CATEGORY_GROUP_ORDER = [
   { id: "epitoipar",    label: "Építőipar & szakiparok" },
   { id: "ipar",         label: "Ipar, gyártás, technika" },
   { id: "jarmu",        label: "Jármű & szállítás" },
@@ -48,7 +51,10 @@ export const JOB_CATEGORY_GROUP_ORDER: JobCategoryGroup[] = [
   { id: "it",           label: "IT & média" },
   { id: "oktatas",      label: "Oktatás & nyelvek" },
   { id: "egyeb",        label: "Egyéb" },
-];
+] as const satisfies readonly JobCategoryGroup[];
+
+/** Érvényes csoport-id-k union-ja — a JobCategory.group ezt kényszeríti ki. */
+export type JobCategoryGroupId = (typeof JOB_CATEGORY_GROUP_ORDER)[number]["id"];
 
 export const JOB_CATEGORIES: JobCategory[] = [
   // Építőipar & szakiparok
