@@ -12,10 +12,16 @@ import "./globals.css";
  * Ország-feloldó boot-gate fej-szkript: még az első festés ELŐTT lefut. Ha a
  * böngészőben tárolt ország nem a CH-alapértelmezett (amivel a statikus HTML
  * renderelődik), beállítja a `data-country-pending`-et a <html>-re — a CSS addig
- * rejti a body-t, amíg a kliens (CountryRevealer) a helyes országra nem vált.
- * Biztonsági időzítő 1500 ms után mindenképp feloldja (ha a JS-hidratálás elmarad).
+ * rejti a body-t (és márka-spinnert mutat, lásd globals.css), amíg a kliens
+ * (CountryRevealer) a helyes országra nem vált.
+ *
+ * Biztonsági időzítő: 4500 ms (1500 volt) — mobilon a teljes újratöltés +
+ * hidratálás gyakran túllépte az 1,5 mp-et, így a gate KORÁN feloldott, és a
+ * svájci tartalom bevillant az osztrák/német/holland váltás előtt (user-bug,
+ * 2026-07-10). A normál út továbbra is a CountryRevealer (hidratáláskor azonnal
+ * felold); az időzítő csak a törött-JS védőháló.
  */
-const COUNTRY_GATE_SCRIPT = `(function(){try{var c=localStorage.getItem('kinti.country');if(c&&c!=='CH'){var d=document.documentElement;d.setAttribute('data-country-pending','');setTimeout(function(){d.removeAttribute('data-country-pending');},1500);}}catch(e){}})();`;
+const COUNTRY_GATE_SCRIPT = `(function(){try{var c=localStorage.getItem('kinti.country');if(c&&c!=='CH'){var d=document.documentElement;d.setAttribute('data-country-pending','');setTimeout(function(){d.removeAttribute('data-country-pending');},4500);}}catch(e){}})();`;
 
 /**
  * Jogi boot-gate fej-szkript: ha a jogi elfogadás hiányzik, a tartalom NEM

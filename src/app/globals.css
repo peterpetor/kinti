@@ -111,6 +111,29 @@
     visibility: hidden;
   }
 
+  /* A rejtett fázisban márka-színű, pulzáló töltés-jelző — így a (jellemzően
+     <1 mp) ország-feloldás szándékos betöltésnek tűnik, nem üres/tört oldalnak.
+     A body rejtett, ezért a jelző a <html>-en ül. */
+  html[data-country-pending]::after {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 28px;
+    height: 28px;
+    margin: -14px 0 0 -14px;
+    border-radius: 9px;
+    background: rgb(var(--primary));
+    animation: kintiBootPulse 1s ease-in-out infinite;
+  }
+  @keyframes kintiBootPulse {
+    0%, 100% { opacity: 0.35; transform: scale(0.88); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html[data-country-pending]::after { animation: none; opacity: 0.7; }
+  }
+
   /* Jogi boot-gate: ha az eszközön nincs jogi elfogadás, a fej-szkript
      (lib/legal-gate.ts) beállítja a `data-legal-pending`-et — a tartalom addig
      rejtve, amíg a LegalGatekeeper modal a DOM-ba nem kerül. Így a főoldal nem
