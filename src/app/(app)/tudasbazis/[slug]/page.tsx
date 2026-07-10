@@ -2,8 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Icon } from "@/components/ui";
-import { getGuide, getGuides, guideCountry, GUIDES, GUIDES_DISCLAIMER, relatedCategoriesForGuide } from "@/lib/guides";
+import { getGuide, getGuides, guideCountry, GUIDES, GUIDES_DISCLAIMER, isMoneyGuide, relatedCategoriesForGuide } from "@/lib/guides";
 import { GuideProCta } from "./GuideProCta";
+import { RemittanceAffiliateCta } from "@/components/views/remittance-affiliate-cta";
 
 // Tisztán statikus tartalom (lib/guides.ts) + generateStaticParams → SSG:
 // minden cikk build-time prerenderelt, NEM fogyaszt edge-route-ot
@@ -149,6 +150,12 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       </section>
 
       <p className="px-1 text-[11px] leading-relaxed text-ink-faint">{GUIDES_DISCLAIMER}</p>
+
+      {/* Pénz-témájú cikkeken: jelölt hazautalás-affiliate CTA (kontextus-tudatos
+          monetizáció — aki a kinti fizetésről/ellátásról olvas, annak releváns). */}
+      {isMoneyGuide(guide.slug) && (
+        <RemittanceAffiliateCta currency={country === "CH" ? "CHF" : "EUR"} />
+      )}
 
       {/* Kapcsolódó szakemberek a Szaknévsorban (belső link → konverzió).
           Ország-tudatos: kattintáskor a cikk országára állítja a keresőt. */}
