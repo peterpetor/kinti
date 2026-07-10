@@ -4,6 +4,7 @@ import { cn } from "@/lib/cn";
 import { COUNTRIES } from "@/lib/countries";
 import { getAdminUserId } from "@/lib/admin";
 import { getDB } from "@/lib/cloudflare";
+import { relTimeFromIso } from "@/lib/relative-time";
 import { JobBoardDecideButtons } from "@/components/admin/job-board-decide-buttons";
 import { EmployerVerifyButton } from "@/components/admin/employer-verify-button";
 
@@ -225,7 +226,7 @@ export default async function JobBoardAdminPage({
                         )}
                         <p className="mt-1 text-[11px] text-ink-faint">
                           Csomag: <strong className="text-ink">{emp.subscription_tier.toUpperCase()}</strong>
-                          {" · "}Regisztrálva: {fmtAgo(emp.created_at)}
+                          {" · "}Regisztrálva: {relTimeFromIso(emp.created_at)}
                         </p>
                         <div className="mt-2 flex items-center gap-2">
                           <span className="text-[11.5px] text-ink-muted">
@@ -263,7 +264,7 @@ export default async function JobBoardAdminPage({
                         </p>
                         <div className="mt-2 flex items-center gap-2">
                           <p className="text-[11px] text-ink-faint">
-                            Feladva: {fmtAgo(job.created_at)}
+                            Feladva: {relTimeFromIso(job.created_at)}
                           </p>
                           <Link
                             href={`/allasok/${job.id}`}
@@ -304,16 +305,3 @@ function CountryTab({ code, label, active, status, live = true }: { code: string
   );
 }
 
-function fmtAgo(iso: string | null): string {
-  if (!iso) return "";
-  const t = new Date(
-    iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z")
-  ).getTime();
-  if (Number.isNaN(t)) return iso;
-  const diff = Date.now() - t;
-  const min = Math.floor(diff / 60000);
-  if (min < 60) return `${min} perce`;
-  const h = Math.floor(min / 60);
-  if (h < 24) return `${h} órája`;
-  return `${Math.floor(h / 24)} napja`;
-}

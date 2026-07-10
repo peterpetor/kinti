@@ -21,7 +21,7 @@ import {
   listB2bProjectsForAdmin,
   listCvSubmissionsForAdmin,
 } from "@/lib/repo";
-import { relTimeFromMs } from "@/lib/relative-time";
+import { relTimeFromIso, relTimeFromMs } from "@/lib/relative-time";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -238,7 +238,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
               <div key={r.id} className="rounded-card border border-line bg-surface p-3 shadow-card">
                 <div className="flex flex-wrap items-center gap-2 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
                   <span className="rounded-pill bg-accent-soft px-2 py-0.5 text-accent">{r.contentType}</span>
-                  <span className="text-ink-faint">{fmtAgo(r.createdAt)}</span>
+                  <span className="text-ink-faint">{relTimeFromIso(r.createdAt)}</span>
                 </div>
                 {r.excerpt && (
                   <p className="mt-1.5 text-[13px] font-semibold text-ink truncate">{r.excerpt}</p>
@@ -328,7 +328,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
                   <p className="truncate text-[11px] text-ink-muted">
                     {[c.city, c.yearsExperience != null ? `${c.yearsExperience} év tap.` : null, c.email, c.phone]
                       .filter(Boolean)
-                      .join(" · ")} · {fmtAgo(c.createdAt)}
+                      .join(" · ")} · {relTimeFromIso(c.createdAt)}
                   </p>
                 </div>
                 <AdminDeleteButton
@@ -565,12 +565,3 @@ function Empty({ label }: { label: string }) {
   );
 }
 
-function fmtAgo(iso: string): string {
-  const diffMs = Date.now() - new Date(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z")).getTime();
-  if (Number.isNaN(diffMs)) return iso;
-  const min = Math.floor(diffMs / 60000);
-  if (min < 60) return `${min}p`;
-  const h = Math.floor(min / 60);
-  if (h < 24) return `${h}h`;
-  return `${Math.floor(h / 24)}n`;
-}

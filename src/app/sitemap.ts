@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getBusinesses, getCategories, getJobs } from "@/lib/repo";
 import { parseDbDate } from "@/lib/dates";
 import { areasForBusiness } from "@/lib/seo-areas";
-import { GUIDES } from "@/lib/guides";
+import { GUIDES, GUIDES_UPDATED_AT } from "@/lib/guides";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -36,11 +36,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     items.push({ url: `${BASE}${p.path}`, lastModified: now, changeFrequency: p.changeFrequency, priority: p.priority });
   }
 
-  // 2) Tudásbázis cikkek (mind a 4 ország: CH/AT/DE/NL, slug-előtaggal)
+  // 2) Tudásbázis cikkek (mind a 4 ország: CH/AT/DE/NL, slug-előtaggal).
+  // lastModified = a bank VALÓDI frissítés-dátuma (a korábbi `now` minden
+  // crawlnál „most változott"-at hazudott → a Google elengedi a lastmodot).
   for (const g of GUIDES) {
     items.push({
       url: `${BASE}/tudasbazis/${g.slug}`,
-      lastModified: now,
+      lastModified: GUIDES_UPDATED_AT,
       changeFrequency: "monthly",
       priority: 0.7,
     });

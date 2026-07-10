@@ -22,6 +22,7 @@ import {
 import { getBusinessByOwner, getEmployerByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getLeadCounts, FREE_LEADS_PER_MONTH, getTopSearchTerms, countOpenB2bProjects } from "@/lib/repo";
 import type { LeadCard } from "@/components/views/lead-inbox";
 import { mediaUrl } from "@/lib/media";
+import { relTimeFromIso } from "@/lib/relative-time";
 import { handleFromId } from "@/lib/handle";
 import type { Business, Category } from "@/lib/types";
 
@@ -38,22 +39,6 @@ function fmtDate(iso: string): string {
   return `${HU_MONTH[Number(m) - 1] ?? ""} ${Number(d)}`;
 }
 
-function getRelativeTime(isoString: string | null): string {
-  if (!isoString) return "nemrég";
-  const formatted = isoString.includes("T") ? isoString : `${isoString.replace(" ", "T")}Z`;
-  const date = new Date(formatted);
-  const diffMs = Date.now() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (isNaN(date.getTime())) return "nemrég";
-  if (diffMins < 1) return "épp most";
-  if (diffMins < 60) return `${diffMins} perce`;
-  if (diffHours < 24) return `${diffHours} órája`;
-  if (diffDays === 1) return "tegnap";
-  return `${diffDays} napja`;
-}
 
 export default async function ProfilPage({
   searchParams,
@@ -289,7 +274,7 @@ async function OwnerDashboard({
     activities.push({
       icon: "star",
       text: `Új ${r.rating}★ vélemény tőle: ${r.reviewerName?.trim() || handleFromId(r.id)}`,
-      time: getRelativeTime(r.publishedAt),
+      time: relTimeFromIso(r.publishedAt),
     });
   });
 
@@ -560,7 +545,7 @@ async function OwnerDashboard({
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="text-[13.5px] font-bold text-ink">{reviewerHandle}</div>
-                    <div className="text-[11px] text-ink-muted">{getRelativeTime(r.publishedAt)}</div>
+                    <div className="text-[11px] text-ink-muted">{relTimeFromIso(r.publishedAt)}</div>
                   </div>
                   <div className="flex gap-px text-star">
                     {Array.from({ length: r.rating }).map((_, i) => (

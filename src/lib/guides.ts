@@ -29,6 +29,11 @@ export interface Guide {
   sources: GuideSource[];
 }
 
+/** A guide-bank utolsó tartalmi frissítése — a sitemap lastModified-je (bump
+ *  cikk-bővítéskor/-átíráskor). Korábban `now` ment MINDEN crawlnál → a Google
+ *  megtanulja figyelmen kívül hagyni a hazug lastmodot. */
+export const GUIDES_UPDATED_AT = new Date("2026-07-10");
+
 export const GUIDES_DISCLAIMER =
   "Ez általános tájékoztatás hivatalos forrásokból, nem jogi tanács. A részletek kantononként és időben változnak — a pontos, rád vonatkozó információért mindig a hivatalos oldalt és a lakóhelyed kantonját nézd.";
 

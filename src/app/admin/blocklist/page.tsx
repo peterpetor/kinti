@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminUserId } from "@/lib/admin";
 import { listBlocklist } from "@/lib/repo";
+import { relTimeFromIso } from "@/lib/relative-time";
 import { BlocklistForm } from "@/components/admin/blocklist-form";
 import { BlocklistRemoveButton } from "@/components/admin/blocklist-remove-button";
 
@@ -65,7 +66,7 @@ export default async function BlocklistPage() {
                       <span className="rounded-pill bg-accent/15 px-2 py-0.5 text-accent">
                         {e.kind === "ip_hash" ? "IP-hash" : "Email-hash"}
                       </span>
-                      <span className="text-ink-faint">{fmtAgo(e.createdAt)}</span>
+                      <span className="text-ink-faint">{relTimeFromIso(e.createdAt)}</span>
                     </p>
                     <p className="mt-1 truncate font-mono text-[11px] text-ink-muted">
                       {e.value.slice(0, 16)}…
@@ -107,7 +108,7 @@ export default async function BlocklistPage() {
               >
                 <span className="font-mono">{e.value.slice(0, 12)}…</span>
                 {e.reason && <> · „{e.reason}"</>}
-                <span className="text-ink-faint"> · lejárt {fmtAgo(e.expiresAt!)}</span>
+                <span className="text-ink-faint"> · lejárt {relTimeFromIso(e.expiresAt!)}</span>
               </div>
             ))}
           </div>
@@ -127,7 +128,7 @@ export default async function BlocklistPage() {
               >
                 <span className="font-mono">{e.value.slice(0, 12)}…</span>
                 {e.reason && <> · „{e.reason}"</>}
-                <span className="text-ink-faint"> · {fmtAgo(e.createdAt)}</span>
+                <span className="text-ink-faint"> · {relTimeFromIso(e.createdAt)}</span>
               </div>
             ))}
           </div>
@@ -150,16 +151,6 @@ function sqlToMs(iso: string): number {
   return new Date(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z")).getTime();
 }
 
-function fmtAgo(iso: string): string {
-  const t = sqlToMs(iso);
-  if (Number.isNaN(t)) return iso;
-  const diff = Date.now() - t;
-  const min = Math.floor(diff / 60000);
-  if (min < 60) return `${min} perce`;
-  const h = Math.floor(min / 60);
-  if (h < 24) return `${h} órája`;
-  return `${Math.floor(h / 24)} napja`;
-}
 
 /** Jövőbeli időpont → „X nap/óra múlva". */
 function fmtExpiry(iso: string): string {

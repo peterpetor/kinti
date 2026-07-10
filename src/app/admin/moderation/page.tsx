@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { COUNTRIES, getCountry } from "@/lib/countries";
 import { getAdminUserId } from "@/lib/admin";
+import { relTimeFromIso } from "@/lib/relative-time";
 import {
   listModerationQueue,
   moderationCount,
@@ -219,12 +220,12 @@ export default async function ModerationPage({
                         {it.submitterEmail && (
                           <>📧 {it.submitterEmail} · </>
                         )}
-                        {it.createdAt && <>{fmtAgo(it.createdAt)}</>}
+                        {it.createdAt && <>{relTimeFromIso(it.createdAt)}</>}
                         {statusParam !== "pending" && it.moderationDecisionAt && (
                           <>
                             {" · "}
                             <span className="italic">
-                              döntve: {fmtAgo(it.moderationDecisionAt)}
+                              döntve: {relTimeFromIso(it.moderationDecisionAt)}
                             </span>
                           </>
                         )}
@@ -283,16 +284,3 @@ function previewLink(table: ModerationTable, id: string): string {
   }
 }
 
-function fmtAgo(iso: string | null): string {
-  if (!iso) return "";
-  const t = new Date(
-    iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z"),
-  ).getTime();
-  if (Number.isNaN(t)) return iso;
-  const diff = Date.now() - t;
-  const min = Math.floor(diff / 60000);
-  if (min < 60) return `${min} perce`;
-  const h = Math.floor(min / 60);
-  if (h < 24) return `${h} órája`;
-  return `${Math.floor(h / 24)} napja`;
-}
