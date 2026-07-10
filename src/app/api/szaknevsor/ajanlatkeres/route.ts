@@ -92,6 +92,9 @@ export async function POST(req: Request) {
     const categoryLabel = typeof body.categoryLabel === "string" ? body.categoryLabel.trim() : "";
     const cantonCode = typeof body.cantonCode === "string" ? body.cantonCode.trim() : "all";
     const message = typeof body.message === "string" ? body.message.trim() : "";
+    // DIREKT mód: a cégprofil „Árajánlat" gombja EGY konkrét cégnek küld —
+    // ilyenkor nincs kategória/kanton fan-out, a kategória a cégből jön.
+    const businessId = typeof body.businessId === "string" ? body.businessId.trim() : "";
 
     // Validáció
     if (!name || name.length < 2) {
@@ -100,7 +103,7 @@ export async function POST(req: Request) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: "Érvénytelen e-mail-cím." }, { status: 400 });
     }
-    if (!categoryId) {
+    if (!businessId && !categoryId) {
       return NextResponse.json({ error: "Válassz kategóriát." }, { status: 400 });
     }
     if (message.length < MIN_MESSAGE_LENGTH) {
@@ -120,7 +123,8 @@ export async function POST(req: Request) {
     // Megakadályozza, hogy ugyanaz a személy ugyanabba a kategóriába 1 napon
     // belül többször is leadet küldjön (pl. véletlen dupla submit, vagy szándékos).
     const emailHash = await hashEmail(email); // email-célú hash (NEM hashIp — az IPv6-ot normalizálna)
-    const dedupKey = `lead-cat-${categoryId}-${emailHash}`;
+    // Direkt módban cégenként dedupolunk (ugyanannak a cégnek 24h-n belül egyszer).
+    const dedupKey = businessId ? `lead-biz-${businessId}-${emailHash}` : `lead-cat-${categoryId}-${emailHash}`;
     const dedupRow = await getDB()
       .prepare(
         `SELECT COUNT(*) AS n FROM ai_rate_limit_log
@@ -136,6 +140,33 @@ export async function POST(req: Request) {
       );
     }
 
+    let targets: BusinessContactRow[];
+
+    if (businessId) {
+      // ── DIREKT mód: a profil-oldalról EGY konkrét cégnek ────────────────────
+      const row = await getDB()
+        .prepare(
+          `SELECT id, name, contact_email, address, category_id, category_label,
+                  COALESCE(featured, 0) AS featured, canton_code, country_code
+           FROM businesses
+           WHERE id = ?
+             AND COALESCE(hidden, 0) = 0
+             AND moderation_status = 1
+             AND contact_email IS NOT NULL
+             AND length(trim(contact_email)) > 0
+             AND COALESCE(lead_opt_out, 0) = 0
+           LIMIT 1`,
+        )
+        .bind(businessId)
+        .first<BusinessContactRow>();
+      if (!row) {
+        return NextResponse.json(
+          { error: "Ez a vállalkozás jelenleg nem fogad ajánlatkérést a Kintin." },
+          { status: 404 },
+        );
+      }
+      targets = [row];
+    } else {
     // Vállalkozások lekérése kategória + email szűrővel
     // lead_opt_out = 0 → csak azok kapják, akik nem iratkoztak le
     const { results: allBusinesses } = await getDB()
@@ -181,7 +212,6 @@ export async function POST(req: Request) {
     const featuredBiz = filtered.filter((b) => Number(b.featured) === 1);
     const otherBiz = filtered.filter((b) => Number(b.featured) !== 1);
 
-    let targets: BusinessContactRow[];
     if (featuredBiz.length === 0) {
       targets = otherBiz.slice(0, MAX_BUSINESSES);
     } else {
@@ -190,6 +220,7 @@ export async function POST(req: Request) {
         targets = [...targets, ...otherBiz.slice(0, LEAD_MIN_RECIPIENTS - targets.length)];
       }
     }
+    } // fan-out mód vége
 
     if (targets.length === 0) {
       return NextResponse.json(
@@ -201,7 +232,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const effectiveCategoryLabel = categoryLabel || targets[0]?.category_label || categoryId;
+    const effectiveCategoryLabel =
+      categoryLabel || targets[0]?.category_label || targets[0]?.category_id || categoryId;
 
     // ── First-ping logika: minden vállalkozónak csak 1 azonnali email/nap ───
     // Ha az adott vállalkozónak aznap már ment azonnali email (first_ping_sent=1),

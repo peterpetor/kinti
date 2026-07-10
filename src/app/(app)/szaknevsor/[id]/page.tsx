@@ -17,6 +17,7 @@ import { DynamicDistance } from "@/components/views/dynamic-distance";
 import { BusinessGallery } from "@/components/views/business-gallery";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { TrackBusinessView, PhoneReveal } from "@/components/business-analytics-tracker";
+import { BusinessLeadCta } from "@/components/views/business-lead-cta";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { hasStreetAddress, hasContactInfo } from "@/lib/address";
 import { extractContactFromBlurb } from "@/lib/contact-links";
@@ -395,6 +396,17 @@ export default async function BusinessPage({
             a sor elrejtve, ha egyik sincs. */}
         {(b.phone || mapsHref || website || email) && (
           <div className="mt-4 flex flex-wrap gap-2">
+            {/* Árajánlatkérés — a lead a monetizált akció (inbox→freemium→PRO),
+                ezért az akció-sor ELSŐ gombja. Szerver-oldali kapu: csak ha a
+                cég fogad leadet (van kontakt-email, nincs lead_opt_out) — az
+                email-cím maga NEM kerül a kliensre. */}
+            {b.contactEmail && !b.leadOptOut && (
+              <BusinessLeadCta
+                businessId={b.id}
+                businessName={b.name}
+                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-pro text-white shadow-card-hover")}
+              />
+            )}
             {b.phone && (
               // Scrape-védelem: a szám NINCS a HTML-ben — a PhoneReveal a
               // rate-limitelt kontakt-végpontról kéri le kattintásra.
