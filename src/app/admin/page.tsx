@@ -21,6 +21,8 @@ import {
   listB2bProjectsForAdmin,
   listCvSubmissionsForAdmin,
   getGuideFeedbackStats,
+  getCoverageGapStats,
+  getCategories,
 } from "@/lib/repo";
 import { countConfirmedNewsletterSubscribersByCountry } from "@/lib/repo-newsletter";
 import { getGuide } from "@/lib/guides";
@@ -42,7 +44,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
   // Vállalkozás-lista lapozása (100/oldal): ?p=2 → második 100, stb.
   const bizPage = Math.max(1, parseInt(searchParams?.p ?? "1", 10) || 1);
 
-  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, businesses, b2bProjects, cvSubmissions, guideFeedback, newsletterByCountry] =
+  const [stats, trends, aiUsage, emailUsage, featureUsage, openReports, businesses, b2bProjects, cvSubmissions, guideFeedback, newsletterByCountry, coverageGaps, allCategories] =
     await Promise.all([
       getAdminStats(country),
       getAdminTrends(),
@@ -55,7 +57,13 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
       listCvSubmissionsForAdmin(),
       getGuideFeedbackStats(30),
       countConfirmedNewsletterSubscribersByCountry(),
+      getCoverageGapStats(30),
+      getCategories(),
     ]);
+
+  // Lefedettségi rések: kategória-címke feloldás + top 10.
+  const catLabelById = new Map(allCategories.map((c) => [c.id, c.label]));
+  const topGaps = coverageGaps.slice(0, 10);
 
   // Cikk-visszajelzések két nézete: legtöbb 👍, és ahol a 👎 dominál (átdolgozandó).
   const fbTop = guideFeedback.filter((g) => g.up > 0).sort((a, b) => b.up - a.up).slice(0, 5);
@@ -190,6 +198,32 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
             ✉️ Küldés / heti vázlat
           </Link>
         </div>
+      </section>
+
+      {/* Lefedettségi rések — nulla-találatos kategória-keresések ország szerint:
+          HOL van kereslet kínálat nélkül (seed-prioritás). */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">Lefedettségi rések (30 nap){country !== "all" && <GlobalTag />}</h2>
+        {topGaps.length === 0 ? (
+          <Empty label="Nincs rögzített üres keresés — vagy tele a kínálat, vagy még gyűlik az adat." />
+        ) : (
+          <div className="rounded-card border border-line bg-surface p-3 shadow-card">
+            <ul className="space-y-1.5">
+              {topGaps.map((g) => (
+                <li key={`${g.country}-${g.categoryId}`} className="flex items-baseline justify-between gap-2 text-[12.5px]">
+                  <span className="min-w-0 truncate font-semibold text-ink">
+                    {getCountry(g.country)?.flag ?? "🌍"} {catLabelById.get(g.categoryId) ?? g.categoryId}
+                  </span>
+                  <span className="shrink-0 font-bold text-ink-muted">{fmt(g.count)} üres keresés</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 text-[11px] leading-snug text-ink-faint">
+              Ezekben a kategória–ország kombókban kerestek a userek, de NULLA pontos találatot kaptak —
+              ide érdemes legközelebb vállalkozásokat seedelni.
+            </p>
+          </div>
+        )}
       </section>
 
       {/* Cikk-visszajelzések — a Tudásbázis „Hasznos volt?" szavazatai cikkenként

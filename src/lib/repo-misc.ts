@@ -450,6 +450,39 @@ export async function getGuideFeedbackStats(days = 30): Promise<GuideFeedbackRow
   }
 }
 
+export interface CoverageGapRow {
+  country: string; // CH/AT/DE/NL
+  categoryId: string;
+  count: number;
+}
+
+/**
+ * Lefedettségi rések: a Szaknévsor NULLA-találatos kategória-keresései
+ * (`action:zero-<cc>-<kategória>` usage-eseményekből) ország+kategória szerint —
+ * megmutatja, HOL van kereslet kínálat nélkül (seed-prioritás az operátornak).
+ */
+export async function getCoverageGapStats(days = 30): Promise<CoverageGapRow[]> {
+  const since = new Date(Date.now() - (days - 1) * 86_400_000).toISOString().slice(0, 10);
+  try {
+    const { results } = await getDB()
+      .prepare(
+        `SELECT event, SUM(count) AS count FROM feature_usage_daily
+         WHERE day >= ? AND event LIKE 'action:zero-%' GROUP BY event`,
+      )
+      .bind(since)
+      .all<UsageRow>();
+    const out: CoverageGapRow[] = [];
+    for (const r of results ?? []) {
+      const m = /^action:zero-([a-z]{2})-([a-z0-9_-]+)$/.exec(r.event);
+      if (!m) continue;
+      out.push({ country: m[1].toUpperCase(), categoryId: m[2], count: r.count ?? 0 });
+    }
+    return out.sort((a, b) => b.count - a.count);
+  } catch {
+    return []; // tábla még nincs (0079 migráció előtt)
+  }
+}
+
 /** Az elmúlt N nap eseményei darabszám szerint csökkenőben (admin nézet). */
 export async function getFeatureUsageStats(days = 7): Promise<FeatureUsageStats> {
   const since = new Date(Date.now() - (days - 1) * 86_400_000).toISOString().slice(0, 10);

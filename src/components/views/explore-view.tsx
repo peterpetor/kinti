@@ -17,6 +17,7 @@ import { getRegions, regionLabel } from "@/lib/regions";
 import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 import { calculateBusinessHoursStatus, parseWorkingHoursStrict } from "@/lib/hours";
 import { RecentBusinessesStrip } from "@/components/views/recent-businesses";
+import { trackAction } from "@/components/usage-tracker";
 import { haversineKm } from "@/lib/distance";
 import { hasStreetAddress } from "@/lib/address";
 import { SmartSearchBar } from "./smart-search-bar";
@@ -383,6 +384,26 @@ export function ExploreView({
       )
       .slice(0, 6);
   }, [businesses, country, cat, q, userPos, showFavs]);
+
+  // Kereslet-rés jel: a kategória-szűrős NULLA pontos találat eddig csak a
+  // kliensen látszott — a szerver (és az operátor) semmit nem tudott róla.
+  // Anonim, aggregált esemény a meglévő usage-csatornán (zero-<cc>-<kategória>),
+  // sessionönként egyszer kulcsonként; az admin „Lefedettségi rések" panelje
+  // ebből mutatja, HOVA kell kínálatot építeni. Csak betöltött adatnál mérünk
+  // (átmeneti üres állapotra nem), és csak explicit kategória-választásnál.
+  useEffect(() => {
+    if (cat === "all" || showFavs || businesses.length === 0) return;
+    if (filtered.length > 0) return;
+    const key = `zero-${country.toLowerCase()}-${cat}`;
+    try {
+      const sk = `kinti_tracked:action:${key}`;
+      if (sessionStorage.getItem(sk)) return;
+      sessionStorage.setItem(sk, "1");
+    } catch {
+      /* private mode → mérés kihagyva */
+    }
+    trackAction(key);
+  }, [cat, country, showFavs, businesses.length, filtered.length]);
 
   // Csak azokat a kategóriákat mutatjuk a pill-sorban, amikben TÉNYLEG van
   // vállalkozás (+ „Mind", + az épp kiválasztott) — így nincs üres, irreleváns
