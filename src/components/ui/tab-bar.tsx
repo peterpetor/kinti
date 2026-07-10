@@ -68,11 +68,15 @@ export function TabBar() {
               onClick={() => { if (!active) haptic("selection"); }}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative z-[1] flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11.5px] transition",
-                active ? "bg-primary/10 text-primary" : "text-ink-faint",
+                "relative z-[1] flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11.5px] transition duration-200 active:scale-[0.94]",
+                active ? "bg-primary/10 text-primary" : "text-ink-faint hover:text-ink-muted",
               )}
             >
-              <Icon name={t.icon} size={24} strokeWidth={active ? 2.2 : 1.7} />
+              {/* Aktívvá váláskor a meglévő kinti-pop mikro-animáció fut le az ikonon
+                  (a class megjelenése indítja — reduced-motion alatt kikapcsol). */}
+              <span className={cn("grid place-items-center", active && "kinti-pop")}>
+                <Icon name={t.icon} size={24} strokeWidth={active ? 2.2 : 1.7} />
+              </span>
               <span className={active ? "font-bold" : "font-medium"}>{t.label}</span>
             </Link>
           );

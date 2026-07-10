@@ -280,7 +280,7 @@ export function DropdownMenu() {
                 </Link>
                 {has("iskolarendszer") && (
                 <Link href="/iskolarendszer" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#fef3c7] text-[#d97706] text-base">
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-star text-base">
                     🏢
                   </span>
                   {isCH ? "Svájci Iskolarendszer" : country === "DE" ? "Német Iskolarendszer" : country === "NL" ? "Holland Iskolarendszer" : "Osztrák Iskolarendszer"}

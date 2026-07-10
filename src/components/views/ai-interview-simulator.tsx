@@ -242,7 +242,7 @@ export function AiInterviewSimulator() {
         ))}
         {isLoading && (
           <div className="flex w-full justify-start">
-            <div className="flex items-center gap-1.5 rounded-[18px] rounded-bl-sm bg-white border border-line px-4 py-3 shadow-sm">
+            <div className="flex items-center gap-1.5 rounded-[18px] rounded-bl-sm bg-surface border border-line px-4 py-3 shadow-sm">
               <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-faint"></span>
               <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-faint" style={{ animationDelay: "0.2s" }}></span>
               <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-faint" style={{ animationDelay: "0.4s" }}></span>

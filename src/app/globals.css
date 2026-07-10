@@ -157,6 +157,29 @@
     transition: transform 0.08s ease;
   }
 
+  /* Billentyűzetes fókusz-gyűrű (a11y + polish) — CSAK :focus-visible-re, tehát
+     egér/tap nem villantja. A form-mezőket kihagyjuk: azoknak saját, egyedi
+     focus:ring/border stílusuk van (dupla jelzés kerülése). A modern böngészők
+     az outline-t követik a border-radius-hoz. */
+  :focus-visible:not(input):not(textarea):not(select) {
+    outline: 2px solid rgb(var(--primary) / 0.65);
+    outline-offset: 2px;
+  }
+
+  /* Márka-színű szöveg-kijelölés — apró, de mindenhol látszó minőség-jel. */
+  ::selection {
+    background: rgb(var(--primary) / 0.22);
+  }
+
+  /* Sima téma-váltás: csak a body alap bg/color úszik át (elemenkénti globális
+     transition jank-veszélyes lenne). Reduced motion → azonnali váltás. */
+  body {
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body { transition: none; }
+  }
+
   /* Oldal-átmenet (PageTransition) — natív-szerű belépés minden route-váltáskor. */
   @keyframes kintiPageIn {
     from { opacity: 0; transform: translateY(10px); }

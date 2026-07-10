@@ -414,7 +414,7 @@ function ResultRow({
   negative?: boolean;
 }) {
   return (
-    <div className="rounded-[10px] bg-white/60 px-3 py-2">
+    <div className="rounded-[10px] bg-surface/60 px-3 py-2">
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-[11.5px] font-bold text-ink">{label}</span>
         <span className={cn("text-[14px] font-extrabold whitespace-nowrap", negative ? "text-accent" : "text-ink")}>

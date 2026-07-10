@@ -703,7 +703,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
             </p>
           </div>
 
-          <label className="flex cursor-pointer items-start gap-2.5 rounded-[10px] border border-star/40 bg-white/60 px-3 py-2">
+          <label className="flex cursor-pointer items-start gap-2.5 rounded-[10px] border border-star/40 bg-surface/60 px-3 py-2">
             <input
               type="checkbox"
               checked={form.licenseAccepted}

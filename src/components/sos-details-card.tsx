@@ -92,7 +92,7 @@ export function SosDetailsCard({ sos, onClose }: { sos: SosAlert; onClose: () =>
         </div>
       </div>
 
-      <div className="mb-6 rounded-xl bg-red-50 p-4 text-[14px] leading-relaxed text-red-900 border border-red-100">
+      <div className="mb-6 rounded-xl bg-accent/10 p-4 text-[14px] leading-relaxed text-ink border border-accent/25">
         {sos.description}
       </div>
 
