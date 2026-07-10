@@ -44,6 +44,8 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "keresek igeny hirdetes keres kerdes szukseg" },
   { href: "/berkalkulator", title: "Bérkalkulátor", subtitle: "Nettó fizetés becslése", icon: "sliders",
     keywords: "fizetes ber netto brutto kalkulator szamologep jovedelem berkalkulator adolevonas" },
+  { href: "/mennyi-marad", title: "Mennyi marad?", subtitle: "Kiköltözési tervező — nettó + megélhetés + megtakarítás", icon: "trending",
+    keywords: "megelhetes koltseg kikoltozes koltsegvetes mennyi marad megtakaritas rezsi kaja budget tervezo kalkulator kijovok" },
   { href: "/iranytu", title: "Iránytű", subtitle: "Mennyit keresnek mások — közösségi bér-benchmark", icon: "compass",
     keywords: "mennyit keresnek atlagber osszehasonlitas statisztika median berstatisztika iranytu benchmark" },
   { href: "/arfolyam", title: "Hazautalás / Árfolyam", subtitle: "CHF/EUR → HUF + utalási díjak", icon: "send",

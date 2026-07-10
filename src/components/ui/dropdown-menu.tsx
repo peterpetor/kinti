@@ -339,6 +339,12 @@ export function DropdownMenu() {
                   {isCH ? "Svájci Bérkalkulátor" : "Bérkalkulátor"}
                 </Link>
                 )}
+                <Link href="/mennyi-marad" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
+                    🧮
+                  </span>
+                  Mennyi marad? — költözés-tervező
+                </Link>
                 {has("iranytu") && (
                 <Link href="/iranytu" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
