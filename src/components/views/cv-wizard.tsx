@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { JobCategoryOptions } from "@/components/views/job-category-options";
+import { CvJobMatch } from "@/components/views/cv-job-match";
 import { cvProfessionDe, CV_LANGUAGE_LEVELS } from "@/lib/cv-professions";
 import { generateCvPdf, type CvData, type CvExperience, type CvEducation, type CvLanguage } from "@/lib/cv-pdf";
 
@@ -96,6 +97,8 @@ export function CvWizard() {
   const [hp, setHp] = useState("");
   const [saveState, setSaveState] = useState<"idle" | "saving" | "done" | "error">("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
+  // Az első sikeres PDF-letöltés élesíti az állásajánlót (CvJobMatch).
+  const [pdfDone, setPdfDone] = useState(false);
 
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setF((s) => ({ ...s, [k]: v }));
 
@@ -128,6 +131,7 @@ export function CvWizard() {
     try {
       // A fotó CSAK itt, a PDF-be kerül — a mentés-payload (toCvData) nem tartalmazza.
       await generateCvPdf({ ...toCvData(), photo: f.photo || undefined });
+      setPdfDone(true);
     } catch {
       setPdfError("Nem sikerült a PDF készítése. Próbáld újra.");
     } finally {
@@ -419,6 +423,10 @@ export function CvWizard() {
           </button>
           {pdfError && <p className="text-[12.5px] font-semibold text-accent">{pdfError}</p>}
           <p className="text-center text-[11px] text-ink-faint">A PDF a böngésződben készül — az adataid nem hagyják el az eszközöd.</p>
+
+          {/* Intelligens állásajánló: a kész CV szakmájára illő aktív hirdetések. */}
+          <CvJobMatch categoryId={f.categoryId} armed={pdfDone} />
+
 
           {/* Opcionális, hozzájárulás-alapú mentés */}
           {saveState === "done" ? (

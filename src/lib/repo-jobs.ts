@@ -211,6 +211,42 @@ export async function deleteJob(id: string, employerId: string): Promise<boolean
   return (res.meta?.changes ?? 0) > 0;
 }
 
+// --- CV → állás illesztés (Job Matching) -------------------------------------
+
+/** Egy illesztett Kinti-hirdetés lean, publikus szelete (cégnévvel, kontakt nélkül). */
+export interface JobMatch {
+  id: string;
+  title: string;
+  location: string;
+  companyName: string | null;
+  featured: boolean;
+}
+
+/**
+ * Aktív, moderált Kinti-hirdetések egy szakma-kategóriára + országra — a CV-készítő
+ * „hozzád illő állások" ajánlójához. A fizetett kiemelés itt is érvényesül
+ * (featured elöl), utána a legfrissebb. A kategória-id a job-categories.ts kulcsa,
+ * ugyanaz, amire a CV-varázsló szakma-választója is épül.
+ */
+export async function getMatchingJobs(country: string, category: string, limit = 5): Promise<JobMatch[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT j.id, j.title, j.location, j.status, e.company_name
+         FROM jobs j
+         LEFT JOIN employers e ON e.id = j.employer_id
+        WHERE j.moderation_status = 1 AND j.status IN ('active', 'featured')
+          AND j.category = ? AND COALESCE(j.country_code, 'CH') = ?
+        ORDER BY (j.status = 'featured') DESC, j.created_at DESC
+        LIMIT ?`,
+    )
+    .bind(category, country, Math.min(Math.max(1, limit), 10))
+    .all<{ id: string; title: string; location: string; status: string; company_name: string | null }>();
+  return (results ?? []).map((r) => ({
+    id: r.id, title: r.title, location: r.location,
+    companyName: r.company_name, featured: r.status === "featured",
+  }));
+}
+
 // --- Jelentkezések (job_applications) ---------------------------------------
 
 export interface JobApplication {

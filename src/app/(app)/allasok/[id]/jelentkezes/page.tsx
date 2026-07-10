@@ -56,6 +56,14 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
       <section className="rounded-card border border-line bg-surface p-5 shadow-card animate-fade-up animate-delay-100">
         <ApplicationForm jobId={job.id} jobTitle={job.title} prefill={prefill} />
       </section>
+
+      {/* Fordított tölcsér: jelentkezés közben derül ki, hogy nincs német CV. */}
+      <p className="text-center text-[12.5px] text-ink-muted">
+        Nincs még német önéletrajzod?{" "}
+        <Link href="/nemet-oneletrajz" className="font-bold text-primary underline">
+          Készítsd el pár perc alatt →
+        </Link>
+      </p>
     </div>
   );
 }
