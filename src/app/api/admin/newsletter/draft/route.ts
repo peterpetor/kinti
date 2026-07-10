@@ -3,6 +3,7 @@ import { getAdminUserId } from "@/lib/admin";
 import { getDB } from "@/lib/cloudflare";
 import { getCountry, isValidCountry } from "@/lib/countries";
 import { buildNewsletterText, isoWeek, pickWeeklyGuides } from "@/lib/newsletter-draft";
+import { activeSeasonalCampaigns } from "@/lib/seasonal-push";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -66,6 +67,7 @@ export async function POST(req: Request) {
       newBusinessTotal: bizCount?.n ?? bizRows.results.length,
       newJobs: jobRows.results.map((r) => ({ title: r.title, location: r.location })),
       guides: guides.map((g) => ({ title: g.title, slug: g.slug })),
+      seasonal: activeSeasonalCampaigns().map((c) => ({ title: c.title, body: c.body, url: c.url })),
     });
     return NextResponse.json(draft, { headers: { "cache-control": "no-store" } });
   } catch (err) {

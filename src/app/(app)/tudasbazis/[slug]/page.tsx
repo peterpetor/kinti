@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui";
 import { getGuide, guideCountry, GUIDES, GUIDES_DISCLAIMER, isMoneyGuide, relatedCategoriesForGuide, relatedGuides } from "@/lib/guides";
 import { GuideProCta } from "./GuideProCta";
 import { GuideNewsletterCta } from "@/components/views/guide-newsletter-cta";
+import { GuideShareButton } from "@/components/views/guide-share-button";
 import { RemittanceAffiliateCta } from "@/components/views/remittance-affiliate-cta";
 
 // Tisztán statikus tartalom (lib/guides.ts) + generateStaticParams → SSG:
@@ -87,13 +88,17 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
           </div>
           <p className="mt-1.5 text-[13px] leading-snug text-ink-muted">{guide.summary}</p>
         </div>
-        <Link
-          href="/tudasbazis"
-          aria-label="Vissza a Tudásbázishoz"
-          className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink"
-        >
-          <Icon name="arrowLeft" size={16} strokeWidth={2.2} />
-        </Link>
+        <div className="mt-0.5 flex shrink-0 flex-col gap-1.5">
+          <Link
+            href="/tudasbazis"
+            aria-label="Vissza a Tudásbázishoz"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink"
+          >
+            <Icon name="arrowLeft" size={16} strokeWidth={2.2} />
+          </Link>
+          {/* Megosztás (Web Share / vágólap) — a diaszpóra-csoportokba egy tap. */}
+          <GuideShareButton title={guide.title} />
+        </div>
       </header>
 
       {/* Tartalomjegyzék (a fejezet-címekből, horgony-linkekkel) */}

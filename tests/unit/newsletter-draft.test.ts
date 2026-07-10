@@ -50,4 +50,16 @@ describe("buildNewsletterText", () => {
     expect(body).not.toContain("FRISS ÁLLÁSOK");
     expect(body).toContain("A HÉT ÚTMUTATÓI");
   });
+
+  it("aktív szezonális téma az IDŐSZERŰ blokkban, elöl; enélkül a blokk kimarad", () => {
+    const withSeasonal = buildNewsletterText({
+      ...base,
+      seasonal: [{ title: "⏰ Krankenkasse-váltás", body: "November 30. a határidő.", url: "/szolgaltato-valto" }],
+    });
+    expect(withSeasonal.body).toContain("IDŐSZERŰ MOST");
+    expect(withSeasonal.body).toContain("https://kinti.app/szolgaltato-valto");
+    // A blokk a szaknévsor-szekció ELŐTT áll (a határidő a legértékesebb sor).
+    expect(withSeasonal.body.indexOf("IDŐSZERŰ MOST")).toBeLessThan(withSeasonal.body.indexOf("ÚJ A SZAKNÉVSORBAN"));
+    expect(buildNewsletterText(base).body).not.toContain("IDŐSZERŰ MOST");
+  });
 });

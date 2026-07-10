@@ -43,6 +43,8 @@ export interface NewsletterDraftData {
   newBusinessTotal: number;
   newJobs: { title: string; location: string }[];
   guides: { title: string; slug: string }[];
+  /** Épp aktív szezonális témák (seasonal-push naptárból) — időszerű blokk. */
+  seasonal?: { title: string; body: string; url: string }[];
 }
 
 /** A vázlat-szöveg összeállítása (tiszta függvény — unit-tesztelhető). */
@@ -56,6 +58,15 @@ export function buildNewsletterText(d: NewsletterDraftData): { subject: string; 
       : `Kinti hírek — ${d.countryName}: a hét útmutatói`;
 
   const parts: string[] = [`Szia! 👋`, ``, `Ez történt a Kintin az elmúlt két hétben (${d.countryName}):`];
+
+  // Időszerű blokk ELÖL — a szezonális határidő (pl. Krankenkasse nov. 30.) a
+  // legértékesebb sor, amikor épp aktuális.
+  if (d.seasonal && d.seasonal.length > 0) {
+    parts.push(``, `📅 IDŐSZERŰ MOST`);
+    for (const s of d.seasonal) {
+      parts.push(`• ${s.title} — ${s.body} → https://kinti.app${s.url}`);
+    }
+  }
 
   if (d.newBusinessTotal > 0) {
     parts.push(``, `🏪 ÚJ A SZAKNÉVSORBAN (${d.newBusinessTotal} új)`);
