@@ -23,9 +23,22 @@ export function CountryRevealer() {
   const [country] = usePreferredCountry();
 
   useEffect(() => {
-    if (country) {
-      document.documentElement.removeAttribute("data-country-pending");
-    }
+    if (!country) return;
+    // KÉT animációs frame türelem a feloldás előtt (user-bug 2026-07-12: ~1
+    // frame-nyi svájci villanás frissítéskor). Az ország-váltás fő tömege ebben
+    // a commitban van, de a kaszkád-második-lépcsős komponensek (mounted-gate →
+    // country-derivált effekt) EGY commituval később érnek célba — a dupla rAF
+    // alatt ezek is kifestenek, még a rejtett fázisban. Ára ~32 ms zászló-idő.
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        document.documentElement.removeAttribute("data-country-pending");
+      });
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
+    };
   }, [country]);
 
   return null;
