@@ -20,9 +20,9 @@ export function CategoryPills({ categories, active, onSelect, className }: Categ
   return (
     <div
       className={cn(
-        "no-scrollbar flex gap-2 overflow-x-auto px-4 pb-1",
-        // Jobb oldali elhalványodó maszk → jelzi, hogy a sáv jobbra görgethető.
-        "[mask-image:linear-gradient(to_right,#000_calc(100%-1.75rem),transparent)] [-webkit-mask-image:linear-gradient(to_right,#000_calc(100%-1.75rem),transparent)]",
+        // kinti-hfade: MINDKÉT él elhalványul (globals.css) — az egyoldali maszkot
+        // váltotta, hogy visszagörgetéskor balra is legyen "van még" jelzés.
+        "no-scrollbar kinti-hfade flex gap-2 overflow-x-auto px-4 pb-1",
         className,
       )}
     >

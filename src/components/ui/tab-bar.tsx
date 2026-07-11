@@ -53,11 +53,41 @@ export function TabBar() {
   const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
   const tabs = TABS.filter((t) => !t.feature || isFeatureAvailable(t.feature, country));
 
+  // Natív minta: lefelé görgetésnél a TabBar kiúszik alul (több hely a tartalomnak),
+  // felfelé görgetésre / az oldal tetején-alján azonnal visszaúszik. Reduced-motion
+  // alatt ki van kapcsolva (mindig látható). A layout-padding nem függ tőle
+  // (fixed elem), így a tartalom nem ugrál.
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = y - lastY;
+      lastY = y;
+      const nearBottom = y + window.innerHeight >= document.documentElement.scrollHeight - 60;
+      if (y < 120 || nearBottom) setHidden(false);
+      else if (dy > 8) setHidden(true);
+      else if (dy < -8) setHidden(false);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  // Route-váltásra mindig visszaúszik (új oldal teteje).
+  useEffect(() => setHidden(false), [pathname]);
+
   // Lecke-lejátszó (immerzív): ne lógjon rá a navigáció az alsó CTA-ra.
   if (isImmersiveRoute(pathname)) return null;
 
   return (
-    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-[calc(env(safe-area-inset-bottom)+12px)]">
+    <nav
+      aria-hidden={hidden || undefined}
+      className={cn(
+        "pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-[calc(env(safe-area-inset-bottom)+12px)]",
+        "transition-transform duration-300 ease-out",
+        hidden && "translate-y-[150%]",
+      )}
+    >
       <div className="glass pointer-events-auto flex w-full max-w-md items-stretch gap-1 rounded-[22px] border border-line p-1.5 shadow-pop">
         {tabs.map((t) => {
           const active = isActive(pathname, t);

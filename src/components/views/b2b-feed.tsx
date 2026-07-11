@@ -54,7 +54,7 @@ export function B2bFeed({
   return (
     <section className="space-y-3">
       {/* Ország-szűrő */}
-      <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="kinti-hfade -mx-5 flex gap-2 overflow-x-auto px-5 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <button type="button" onClick={() => setCountry("all")} className={pill(country === "all")}>
           Minden ország
         </button>
@@ -67,7 +67,7 @@ export function B2bFeed({
 
       {/* Szakma-szűrő — csak ha van rá nyitott projekt */}
       {usedCategories.length > 0 && (
-        <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="kinti-hfade -mx-5 flex gap-2 overflow-x-auto px-5 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <button type="button" onClick={() => setCategory("all")} className={pill(category === "all")}>
             Minden szakma
           </button>

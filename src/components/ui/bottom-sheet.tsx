@@ -70,7 +70,8 @@ export function BottomSheet({
         type="button"
         aria-label="Bezárás"
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 animate-in fade-in duration-300"
+        // backdrop-blur: a mögöttes tartalom finoman elmosódik (natív sheet-érzet).
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
       />
       <div
         role="dialog"

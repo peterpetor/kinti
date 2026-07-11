@@ -85,7 +85,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
   return (
     <div className="space-y-4">
       {/* Kategória-szűrő */}
-      <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5">
+      <div className="no-scrollbar kinti-hfade -mx-5 flex gap-2 overflow-x-auto px-5">
         <FilterPill active={filter === "all"} onClick={() => setFilter("all")} label="Mind" />
         {SERVICE_CATEGORIES.map((c) => (
           <FilterPill key={c.id} active={filter === c.id} onClick={() => setFilter(c.id)} label={`${c.emoji} ${c.label}`} />

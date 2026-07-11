@@ -253,6 +253,27 @@
     .kinti-shimmer::after { animation: none; opacity: 0; }
   }
 
+  /* Él-fade a vízszintes görgethető sorokon (chip-sorok, kategória-pillek):
+     a tartalom a széleken finoman elhalványul — natív jelzés, hogy "van még".
+     A px-4/px-5 belső padding miatt a 18px-es fade jellemzően a paddingre esik,
+     a chipek olvashatók maradnak. */
+  .kinti-hfade {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 18px,
+      black calc(100% - 18px),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 18px,
+      black calc(100% - 18px),
+      transparent
+    );
+  }
+
   /* „Pop" mikro-visszajelzés — kedvenc-szív, sikeres művelet (delight). */
   @keyframes kintiPop {
     0%   { transform: scale(1); }

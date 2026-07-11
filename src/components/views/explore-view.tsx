@@ -470,7 +470,7 @@ export function ExploreView({
       {/* Szűrők sor (Kanton + Mentett kedvencek) — egysoros, vízszintesen görgethető
           chip-sor (a wrap 2-3 szabálytalan sorba tördelt). A py/-my a shadow-card
           levágása ellen ad teret az overflow-konténerben. */}
-      <div className="no-scrollbar -my-2 flex items-center gap-2 overflow-x-auto px-5 py-2">
+      <div className="no-scrollbar kinti-hfade -my-2 flex items-center gap-2 overflow-x-auto px-5 py-2">
         {/* Kanton szűrő — natív alsó lap (BottomSheet) */}
         <button
           type="button"
@@ -755,7 +755,7 @@ export function ExploreView({
 
       {/* Rendezés (csak lista-nézetben, ha van mit rendezni) */}
       {view === "list" && filtered.length > 1 && (
-        <div className="no-scrollbar flex items-center gap-2 overflow-x-auto px-5">
+        <div className="no-scrollbar kinti-hfade flex items-center gap-2 overflow-x-auto px-5">
           <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-ink-faint">Rendezés</span>
           {SORT_OPTIONS.map((o) => {
             if (o.id === "distance" && !userPos) return null;

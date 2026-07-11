@@ -81,7 +81,7 @@ export function HivatalosView() {
       {/* „Itt intézheted" — trigger-indexelt hivatalos linkek */}
       <div>
         <h3 className="mb-2 text-[14px] font-extrabold text-ink">Mit szeretnél elintézni?</h3>
-        <div className="no-scrollbar -mx-5 mb-3 flex gap-2 overflow-x-auto px-5">
+        <div className="no-scrollbar kinti-hfade -mx-5 mb-3 flex gap-2 overflow-x-auto px-5">
           <FilterPill active={filter === "all"} onClick={() => setFilter("all")} label="Mind" />
           {OFFICIAL_CATEGORIES.map((c) => (
             <FilterPill key={c.id} active={filter === c.id} onClick={() => setFilter(c.id)} label={`${c.emoji} ${c.label}`} />
