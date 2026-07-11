@@ -46,11 +46,15 @@ function hasSubmitted(): boolean {
 
 export function PushOptin({
   title = "Szólunk, ha új a régiódban",
-  subtitle = "Engedélyezd, és értesítünk az új magyar vállalkozásokról, állásokról és eseményekről a környékeden.",
+  subtitle = "Engedélyezd, és értesítünk az új magyar vállalkozásokról és állásokról a környékeden.",
+  eager = false,
 }: {
   /** A feliratkozás-kártya címe (idle állapot) — felületenként testreszabható. */
   title?: string;
   subtitle?: string;
+  /** true = a „2+ látogatás" időzítés-kapu átugrása — MAGAS-szándékú pillanatokra
+   *  (pl. kvíz-eredmény, sikeres művelet után), ahol a kérés kontextusa adott. */
+  eager?: boolean;
 } = {}) {
   const [state, setState] = useState<State>("checking");
 
@@ -58,10 +62,11 @@ export function PushOptin({
     let cancelled = false;
     (async () => {
       try {
-        // Timing guard: csak a 2+ látogatás után VAGY ha már sikeresen feladott valamit
+        // Timing guard: csak a 2+ látogatás után VAGY ha már sikeresen feladott
+        // valamit. `eager` helyeken (magas-szándékú pillanat) átugorjuk.
         const visits = bumpVisits();
         const submitted = hasSubmitted();
-        if (visits < 2 && !submitted) {
+        if (!eager && visits < 2 && !submitted) {
           if (!cancelled) setState("too-early");
           return;
         }
@@ -93,7 +98,7 @@ export function PushOptin({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [eager]);
 
   async function subscribe() {
     setState("busy");
@@ -179,7 +184,7 @@ export function PushOptin({
         </p>
         <p className="text-[11.5px] leading-snug text-ink-muted">
           {subscribed
-            ? "Értesítünk az új vállalkozásokról, állásokról és eseményekről a régiódban."
+            ? "Értesítünk az új vállalkozásokról és állásokról a régiódban."
             : subtitle}
         </p>
       </div>

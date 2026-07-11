@@ -15,6 +15,7 @@ import {
 import { QUIZ_CATEGORY_META, type QuizCategory, type QuizQuestion } from "@/lib/quiz-bank";
 import { BattleBoard, type BattleData } from "@/components/views/quiz-battle-board";
 import { readPreferredCanton } from "@/lib/canton-pref";
+import { PushOptin } from "@/components/push-optin";
 import { AT_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-at";
 import { DE_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-de";
 import { NL_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-nl";
@@ -280,6 +281,15 @@ function ResultScreen({
       {/* Heti összevetés: valós anonim percentilis (elég mintától), addig a saját
           heti statod. Lásd /api/kviz/percentile + weeklyPersonalStats. */}
       <WeeklyCompareBanner state={state} country={country} score={score} />
+
+      {/* Push-engedély a LEGJOBB pillanatban: most játszott, él a sorozata — a
+          streak-mentő esti push pontosan ezt védi. Engedélyezettnél / nem
+          támogatott környezetben a kártya magától elrejtőzik. */}
+      <PushOptin
+        eager
+        title="🔥 Védd a sorozatod!"
+        subtitle="Este szólunk, ha aznap még nem játszottál — így nem törik meg a széria."
+      />
 
       {/* Kérdés-áttekintő */}
       <section className="space-y-2">
