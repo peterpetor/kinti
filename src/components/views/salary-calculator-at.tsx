@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Icon } from "@/components/ui";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { SalaryJobsCta } from "@/components/views/salary-jobs-cta";
 import { cn } from "@/lib/cn";
 import {
   computeSalaryAT,
@@ -269,6 +270,9 @@ export function SalaryCalculatorAT() {
           </p>
         )}
       </section>
+
+      {/* Bérkalkulátor → állások tölcsér (kiemelt elöl; 0 találat = láthatatlan). */}
+      <SalaryJobsCta country="AT" grossMonthly={r.grossMonthly} />
 
       <LegalDisclaimer
         toolName="bérkalkulátor"

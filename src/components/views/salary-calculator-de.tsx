@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { SalaryJobsCta } from "@/components/views/salary-jobs-cta";
 import { cn } from "@/lib/cn";
 import {
   computeSalaryDE,
@@ -165,6 +166,9 @@ export function SalaryCalculatorDE() {
           <div className="h-full rounded-pill bg-success" style={{ width: `${percentile}%` }} />
         </div>
       </section>
+
+      {/* Bérkalkulátor → állások tölcsér (kiemelt elöl; 0 találat = láthatatlan). */}
+      <SalaryJobsCta country="DE" grossMonthly={r.grossMonthly} />
 
       <LegalDisclaimer
         toolName="bérkalkulátor (DE)"

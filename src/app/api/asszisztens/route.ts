@@ -36,7 +36,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Írd le 3–300 karakterben, miben segítsünk." }, { status: 400 });
     }
 
-    const categories = await getCategories();
+    // Az "all" pszeudo-kategória (a szűrő-UI sora) NEM valódi szakma — se a
+    // promptba, se a validációba nem kerülhet (élesben az AI visszaadta).
+    const categories = (await getCategories()).filter((c) => c.id !== "all");
 
     // 1) Heurisztika (ingyenes, determinisztikus) — tiszta „szakma+hely" mintára.
     let categoryId: string | null = null;

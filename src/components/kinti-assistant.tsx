@@ -136,7 +136,9 @@ export function KintiAssistant() {
 
       {result && (
         <div className="mt-3 space-y-3">
-          {result.explanation && (
+          {/* A magyarázat csak TALÁLAT mellett hasznos — üres eredménynél a
+              (néha sután fogalmazó) AI-mondat többet árt, mint segít. */}
+          {hasHits && result.explanation && (
             <p className="text-[12px] italic text-ink-muted">💡 {result.explanation}</p>
           )}
 

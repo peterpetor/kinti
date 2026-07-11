@@ -247,6 +247,53 @@ export async function getMatchingJobs(country: string, category: string, limit =
   }));
 }
 
+/** Bérsáv-illesztett hirdetés a bérkalkulátor tölcséréhez (fizetés-mezőkkel). */
+export interface SalaryJobMatch extends JobMatch {
+  salaryMin: number | null;
+  salaryMax: number | null;
+  currency: string;
+}
+
+/**
+ * Aktív, moderált Kinti-hirdetések a felhasználó BÉRSÁVJÁBAN (havi bruttó ±20%,
+ * sáv-átfedéssel) — a bérkalkulátor → állások tölcsérhez. Csak a fizetést
+ * FELTÜNTETŐ hirdetések játszanak; a kiemelt (fizetett) hirdetés itt is elöl —
+ * ez a „szponzorált hely a kalkulátor végén" értéke.
+ */
+export async function getMatchingJobsBySalary(
+  country: string,
+  grossMonthly: number,
+  limit = 3,
+): Promise<SalaryJobMatch[]> {
+  const lo = Math.round(grossMonthly * 0.8);
+  const hi = Math.round(grossMonthly * 1.2);
+  const { results } = await getDB()
+    .prepare(
+      `SELECT j.id, j.title, j.location, j.status, j.salary_min, j.salary_max, j.currency,
+              e.company_name
+         FROM jobs j
+         LEFT JOIN employers e ON e.id = j.employer_id
+        WHERE j.moderation_status = 1 AND j.status IN ('active', 'featured')
+          AND COALESCE(j.country_code, 'CH') = ?
+          AND (j.salary_min IS NOT NULL OR j.salary_max IS NOT NULL)
+          AND COALESCE(j.salary_min, 0) <= ?
+          AND COALESCE(j.salary_max, j.salary_min) >= ?
+        ORDER BY (j.status = 'featured') DESC, j.created_at DESC
+        LIMIT ?`,
+    )
+    .bind(country, hi, lo, Math.min(Math.max(1, limit), 10))
+    .all<{
+      id: string; title: string; location: string; status: string;
+      salary_min: number | null; salary_max: number | null; currency: string;
+      company_name: string | null;
+    }>();
+  return (results ?? []).map((r) => ({
+    id: r.id, title: r.title, location: r.location,
+    companyName: r.company_name, featured: r.status === "featured",
+    salaryMin: r.salary_min, salaryMax: r.salary_max, currency: r.currency,
+  }));
+}
+
 // --- Jelentkezések (job_applications) ---------------------------------------
 
 export interface JobApplication {

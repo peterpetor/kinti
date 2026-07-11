@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { SalaryJobsCta } from "@/components/views/salary-jobs-cta";
 import { CANTONS } from "@/lib/cantons";
 import { cn } from "@/lib/cn";
 import {
@@ -494,6 +495,10 @@ export function SalaryCalculator() {
           Csak a böngésződben tárolva — sem mi, sem mások nem látják.
         </p>
       </section>
+
+      {/* Bérkalkulátor → állások tölcsér: a számolt bruttó ±20%-os sávjának
+          hirdetései (kiemelt elöl); 0 találatnál láthatatlan. */}
+      <SalaryJobsCta country="CH" grossMonthly={grossMonthly} />
 
       <LegalDisclaimer
         toolName="bérkalkulátor"
