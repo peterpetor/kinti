@@ -82,15 +82,18 @@ export const COST_BASELINE: Record<BudgetCountry, CostBaselineRule[]> = {
 };
 
 // ─── Gyermek utáni juttatás (havi/gyerek, becslés) ───────────────────────────
-// DE: Kindergeld 255 € (2025). AT: Familienbeihilfe (korfüggő ~138–172 €) +
-// Kinderabsetzbetrag ~71 € → ~220 € átlag. CH: Kinderzulage szövetségi minimum
-// (kantononként több lehet) ~215 CHF. NL: kinderbijslag (korfüggő, negyedéves)
-// ~110 €/hó átlag (a jövedelemfüggő kindgebonden budget NINCS benne).
+// ⚠️ ÉVES PARAMÉTER-FRISSÍTÉS KELL (user-kérés, 2026-07-11): januárban nézd át a
+// négy ország juttatás-összegeit ÉS a salary-calc.ts adó/járulék-paramétereit.
+// 2026-os szintek: DE — Kindergeld 259 € (2026-01-től, 2025: 255). AT — indexált
+// Familienbeihilfe (korfüggő ~144–179 €) + Kinderabsetzbetrag ~74 € → ~230 € átlag.
+// CH — Kinderzulage szövetségi minimum (kantononként több lehet) ~215 CHF.
+// NL — kinderbijslag (korfüggő, negyedéves) ~115 €/hó átlag (a jövedelemfüggő
+// kindgebonden budget NINCS benne).
 export const CHILD_BENEFIT_MONTHLY: Record<BudgetCountry, number> = {
-  DE: 255,
-  AT: 220,
+  DE: 259,
+  AT: 230,
   CH: 215,
-  NL: 110,
+  NL: 115,
 };
 
 export function childBenefit(country: BudgetCountry, kids: number): number {

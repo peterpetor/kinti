@@ -90,27 +90,39 @@ export function BudgetPlannerView() {
   const [data, setData] = useState<CostApiData | null>(null);
   const hydrated = useRef(false);
   const trackedRef = useRef(false);
+  const urlParsed = useRef(false);
+  const sawCountryParam = useRef(false);
+  const countryTouched = useRef(false);
 
   // ── URL-állapot beolvasása mounton (megosztott link) + ország-default ─────
+  // Az ország-preferencia KÉSVE (mount-effektből) érkezik, közben az URL-szinkron
+  // már ?c=DE-t ír a címsorba — ezért az URL-t csak EGYSZER, az EREDETI
+  // paraméterekből olvassuk, és a preferencia-default külön ágon, csak akkor fut,
+  // ha se eredeti c-param, se kézi ország-választás nem előzte meg (audit #1).
   useEffect(() => {
-    const p = new URLSearchParams(window.location.search);
-    const c = p.get("c");
-    if (isBudgetCountry(c)) setCountry(c);
-    else if (isBudgetCountry(prefCountry)) setCountry(prefCountry);
-    const b = p.get("b"); if (b && /^\d{2,7}$/.test(b)) setGross(b);
-    const r = p.get("r"); if (r) setRegion(r);
-    const a = Number(p.get("a")); if (a === 2) setAdults(2);
-    const k = Number(p.get("k")); if (Number.isInteger(k) && k >= 0 && k <= 6) setKids(k);
-    const rm = Number(p.get("rm")); if (Number.isInteger(rm) && rm >= 1 && rm <= 6) { setRooms(rm); setRoomsTouched(true); }
-    const skP = Number(p.get("sk")); if ([1, 2, 3, 4].includes(skP)) setSk(skP as Steuerklasse);
-    if (p.get("pw") === "1") setPartnerWorks(true);
-    if (p.get("ch") === "1") setChurch(true);
-    if (p.get("m14") === "0") setM14(false);
-    if (p.get("m13") === "0") setM13(false);
-    if (p.get("vk") === "0") setVakantie(false);
-    if (p.get("r30") === "1") setRuling30(true);
-    hydrated.current = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!urlParsed.current) {
+      urlParsed.current = true;
+      const p = new URLSearchParams(window.location.search);
+      const c = p.get("c");
+      sawCountryParam.current = isBudgetCountry(c);
+      if (isBudgetCountry(c)) setCountry(c);
+      const b = p.get("b"); if (b && /^\d{2,7}$/.test(b)) setGross(b);
+      const r = p.get("r"); if (r) setRegion(r);
+      const a = Number(p.get("a")); if (a === 2) setAdults(2);
+      const k = Number(p.get("k")); if (Number.isInteger(k) && k >= 0 && k <= 6) setKids(k);
+      const rm = Number(p.get("rm")); if (Number.isInteger(rm) && rm >= 1 && rm <= 6) { setRooms(rm); setRoomsTouched(true); }
+      const skP = Number(p.get("sk")); if ([1, 2, 3, 4].includes(skP)) setSk(skP as Steuerklasse);
+      if (p.get("pw") === "1") setPartnerWorks(true);
+      if (p.get("ch") === "1") setChurch(true);
+      if (p.get("m14") === "0") setM14(false);
+      if (p.get("m13") === "0") setM13(false);
+      if (p.get("vk") === "0") setVakantie(false);
+      if (p.get("r30") === "1") setRuling30(true);
+      hydrated.current = true;
+    }
+    if (!sawCountryParam.current && !countryTouched.current && isBudgetCountry(prefCountry)) {
+      setCountry(prefCountry);
+    }
   }, [prefCountry]);
 
   const regions = useMemo(() => getRegions(country), [country]);
@@ -232,7 +244,8 @@ export function BudgetPlannerView() {
           <span className={labelCls}>Hová költöznél?</span>
           <div className="flex flex-wrap gap-2">
             {(["DE", "AT", "CH", "NL"] as const).map((c) => (
-              <button key={c} type="button" onClick={() => setCountry(c)}
+              <button key={c} type="button"
+                onClick={() => { countryTouched.current = true; setCountry(c); }}
                 className={cn(pillBase, country === c ? pillOn : pillOff)}>
                 {getCountry(c)?.flag} {getCountry(c)?.name}
               </button>
@@ -259,6 +272,12 @@ export function BudgetPlannerView() {
             <option value="all">Országos átlag</option>
             {regions.map((r) => <option key={r.code} value={r.code}>{r.name}</option>)}
           </select>
+          {country === "CH" && region === "all" && (
+            <p className="mt-1 text-[11px] text-ink-muted">
+              Svájcban az adó kantononként eltér — kanton nélkül zürichi (ZH) kulccsal
+              becslünk. Válassz kantont a pontosabb nettóhoz.
+            </p>
+          )}
         </div>
 
         {/* Háztartás */}

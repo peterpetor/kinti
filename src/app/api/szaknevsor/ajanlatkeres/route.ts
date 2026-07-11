@@ -328,7 +328,13 @@ export async function POST(req: Request) {
       ),
     );
 
-    const sentCount = emailResults.filter((r) => r.status === "fulfilled").length;
+    // Őszinte számla (audit #6): „azonnal megkapta" = TELJES (nem zárolt) azonnali
+    // email. A zárolt-értesítős, a digest-re várakozó és az extra címzettek a
+    // „később/értesítést kap" vödörbe kerülnek — a siker-képernyő nem ígér túl.
+    const sentCount = emailResults.filter(
+      (r, i) => r.status === "fulfilled" && !lockedByBiz.get(firstPingTargets[i].id),
+    ).length;
+    const laterCount = Math.max(0, targets.length + extras.length - sentCount);
 
     // Lead mentése DB-be minden célpontnál (best-effort)
     const { incrementBusinessAnalytic, createBusinessLead } = await import("@/lib/repo");
@@ -402,7 +408,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { ok: true, sent: sentCount, total: targets.length, extra: extras.length },
+      { ok: true, sent: sentCount, total: targets.length, extra: laterCount },
       { headers: { "cache-control": "no-store" } },
     );
   } catch (err) {

@@ -54,7 +54,7 @@ export default function BudgetPlannerPage() {
         toolName="Kiköltözési költségvetés-tervező"
         variant="info"
         notAdviceFor="adóügyi, pénzügyi vagy munkajogi"
-        extraWarning="A nettó bér 2025-ös adó- és járulék-paraméterekkel készült EGYSZERŰSÍTETT becslés (a tényleges levonás munkáltatónként/községenként eltérhet); a költségek közösségi beküldésekből és referencia-szintekből származó BECSLÉSEK. A tényleges béredről mindig a munkaszerződés és a bérjegyzék dönt."
+        extraWarning="A nettó bér 2025/2026-os adó- és járulék-paraméterekkel készült EGYSZERŰSÍTETT becslés (a tényleges levonás munkáltatónként/községenként eltérhet); a költségek és a gyerek-juttatások közösségi beküldésekből és referencia-szintekből származó BECSLÉSEK. A tényleges béredről mindig a munkaszerződés és a bérjegyzék dönt."
         officialSources={[
           { label: "Lohnsteuer (DE) — BMF", url: "https://www.bmf-steuerrechner.de" },
           { label: "Brutto-Netto (AT) — BMF", url: "https://onlinerechner.haude.at/bmf/brutto-netto-rechner.html" },

@@ -158,10 +158,14 @@ export function ExploreView({
   }, [country, canton]);
   const mapZoom = canton !== "all" ? 10 : (COUNTRY_MAP_ZOOM[country] ?? 7);
   // Ország-váltáskor a más országbeli régió-választás érvénytelen → vissza "all"-ra.
+  // ⚠️ Az ország-preferencia KÉSVE érkezik (null = még töltődik): amíg nincs meg, NEM
+  // törlünk — különben egy megosztott ?canton=W link régió-szűrője nem-CH usernél a
+  // mount CH-default régiólistáján elveszne (audit-hiba, 2026-07-11).
   useEffect(() => {
+    if (prefCountry === null) return;
     if (canton !== "all" && !regions.some((r) => r.code === canton)) setCanton("all");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [country]);
+  }, [country, prefCountry]);
 
   // Ha nem URL-ből érkezett kanton, a felhasználó preferált kantonjára szűrünk
   // alapból (kanton-személyre szabás). A hidratálás után, hogy ne legyen mismatch.

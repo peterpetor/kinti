@@ -15,7 +15,7 @@ import { cn } from "@/lib/cn";
 import { trackAction } from "@/components/usage-tracker";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { readPreferredCanton } from "@/lib/canton-pref";
-import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
+import { getCountry } from "@/lib/countries";
 import { getRegions } from "@/lib/regions";
 import { battlePlace, type BattleRow } from "@/lib/quiz-battle";
 
@@ -169,14 +169,16 @@ export function BattleBoard({
 /** Önállóan töltő szekció a /ranglista oldalra (score nélküli battle-GET). */
 export function QuizBattleSection() {
   const [prefCountry] = usePreferredCountry();
-  const country = prefCountry ?? DEFAULT_COUNTRY;
   const [battle, setBattle] = useState<BattleData | null>(null);
   const [canton, setCanton] = useState<string | null>(null);
 
   useEffect(() => {
+    // Az ország-preferencia KÉSVE érkezik — megvárjuk, különben előbb a CH-default
+    // országra megy egy felesleges kérés, aztán a valósra még egy (audit #5).
+    if (prefCountry === null) return;
     setCanton(readPreferredCanton());
     let cancelled = false;
-    fetch(`/api/kviz/percentile?country=${encodeURIComponent(country)}`)
+    fetch(`/api/kviz/percentile?country=${encodeURIComponent(prefCountry)}`)
       .then((r) => (r.ok ? (r.json() as Promise<{ battle?: BattleData }>) : null))
       .then((d) => {
         if (!cancelled && d?.battle) setBattle(d.battle);
@@ -185,8 +187,8 @@ export function QuizBattleSection() {
     return () => {
       cancelled = true;
     };
-  }, [country]);
+  }, [prefCountry]);
 
-  if (!battle) return null;
-  return <BattleBoard battle={battle} country={country} canton={canton} />;
+  if (!battle || prefCountry === null) return null;
+  return <BattleBoard battle={battle} country={prefCountry} canton={canton} />;
 }

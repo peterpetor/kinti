@@ -43,10 +43,14 @@ export function LeadRequestForm({ categories, initialCategoryId, initialCantonCo
   const countryName = getCountry(country)?.name ?? "Svájc";
   const regions = getRegions(country);
   // Más ország régió-kódja (URL-ből / ország-váltás után) érvénytelen → vissza "all"-ra.
+  // ⚠️ Az ország-preferencia KÉSVE érkezik (null = még töltődik): amíg nincs meg, NEM
+  // törlünk — különben a ?canton= előválasztás minden nem-CH usernél elveszne, mert a
+  // mount-render még a CH-default régiólistával fut (audit-hiba, 2026-07-11).
   useEffect(() => {
+    if (prefCountry === null) return;
     if (cantonCode !== "all" && !regions.some((r) => r.code === cantonCode)) setCantonCode("all");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [country]);
+  }, [country, prefCountry]);
   const cityExample = country === "AT" ? "Bécsben" : country === "DE" ? "Berlinben" : country === "NL" ? "Amszterdamban" : "Zürichben";
   const phoneExample = country === "AT" ? "+43 660 123 4567" : country === "DE" ? "+49 151 23456789" : country === "NL" ? "+31 6 12345678" : "+41 79 123 45 67";
 
@@ -113,11 +117,20 @@ export function LeadRequestForm({ categories, initialCategoryId, initialCantonCo
             Kérésed elküldve! 🎉
           </h2>
           <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
-            <strong className="text-success">{sentCount} vállalkozó</strong> kapta meg azonnal az
-            árajánlat-kérésed{extraCount > 0 ? (
-              <>, és <strong className="text-ink">további {extraCount} helyi szakember</strong> a
-              napi értesítőjében látja</>
-            ) : null}.
+            {sentCount > 0 ? (
+              <>
+                <strong className="text-success">{sentCount} vállalkozó</strong> kapta meg azonnal az
+                árajánlat-kérésed{extraCount > 0 ? (
+                  <>, és <strong className="text-ink">további {extraCount} helyi vállalkozó</strong> kap
+                  értesítést róla</>
+                ) : null}.
+              </>
+            ) : (
+              <>
+                <strong className="text-success">{extraCount} helyi vállalkozó</strong> kap értesítést
+                az árajánlat-kérésedről.
+              </>
+            )}
             <br />
             Hamarosan keresni fognak e-mailben vagy telefonon!
           </p>

@@ -50,8 +50,8 @@ describe("budget-plan", () => {
     expect(zero.savingsRate).toBe(0);
   });
 
-  it("childBenefit országonként, gyerekszámmal szorozva", () => {
-    expect(childBenefit("DE", 2)).toBe(510);
+  it("childBenefit országonként, gyerekszámmal szorozva (2026-os szintek)", () => {
+    expect(childBenefit("DE", 2)).toBe(518); // Kindergeld 259 €/gyerek (2026)
     expect(childBenefit("AT", 0)).toBe(0);
     expect(childBenefit("CH", 1)).toBe(215);
     expect(childBenefit("NL", -1)).toBe(0); // negatív input nem ad negatív juttatást
