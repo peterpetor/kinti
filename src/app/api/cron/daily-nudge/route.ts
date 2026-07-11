@@ -1,7 +1,9 @@
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { getAdminUserId } from "@/lib/admin";
-import { claimDailyNudge } from "@/lib/repo-misc";
+import { claimDailyNudge, getWeeklyOpsCounts, getFeatureUsageStats } from "@/lib/repo-misc";
 import { getWeeklyCountryScoreCounts } from "@/lib/repo-quiz-stats";
+import { buildWeeklyReport } from "@/lib/weekly-report";
+import { sendWeeklyOpsReportEmail } from "@/lib/email";
 import { unfeatureExpiredJobs, expireOldJobs } from "@/lib/repo-jobs";
 import { battleRanking, BATTLE_MIN_COUNTRY } from "@/lib/quiz-battle";
 import { notifyCanton } from "@/lib/push-notify";
@@ -59,6 +61,27 @@ async function handle(req: Request): Promise<Response> {
   if (!force) {
     const claimed = await claimDailyNudge(day);
     if (!claimed) return Response.json({ ok: true, skipped: "already-sent-today", day });
+  }
+
+  // HÉTFŐ: heti operátori pulzus-email az adminnak (a claim UTÁN vagyunk → napi
+  // egyszer fut). Best-effort: sose törheti a napi nudge-ot. Címzett az
+  // ADMIN_EMAILS első címe (az admin-notify mintája).
+  if (now.getUTCDay() === 1) {
+    try {
+      const envFull = getCloudflareEnv() as unknown as { ADMIN_EMAILS?: string; RESEND_API_KEY?: string };
+      const adminEmail = (envFull.ADMIN_EMAILS ?? "").split(",").map((s) => s.trim()).filter(Boolean)[0];
+      if (adminEmail && envFull.RESEND_API_KEY) {
+        const [counts, usage] = await Promise.all([getWeeklyOpsCounts(), getFeatureUsageStats(7)]);
+        const report = buildWeeklyReport(
+          counts,
+          usage.rows.map((r) => ({ event: r.event, count: r.count ?? 0 })),
+          now,
+        );
+        await sendWeeklyOpsReportEmail({ to: adminEmail, report });
+      }
+    } catch (err) {
+      safeLogError("daily-nudge:weekly-report", err);
+    }
   }
 
   // Üzenet-rotáció a nap sorszáma szerint (determinisztikus, nincs Math.random).

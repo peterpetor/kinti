@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { getCloudflareEnv } from "./cloudflare";
+import type { WeeklyReport } from "./weekly-report";
 
 /**
  * Resend SDK wrapper — tranzakciós emailek edge-kompatibilisen.
@@ -1255,6 +1256,51 @@ kinti.app`;
   });
 
   const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
+// --- Admin: heti operátori pulzus-jelentés (weekly-report) -------------------
+
+/**
+ * A hétfői pulzus-email az adminnak — a heti kulcsszámok + top oldalak/akciók.
+ * A tartalmat a lib/weekly-report.ts állítja össze (tiszta, tesztelt); itt csak
+ * a kézbesítés és a HTML-keret él.
+ */
+export async function sendWeeklyOpsReportEmail(args: { to: string; report: WeeklyReport }): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const { report } = args;
+
+  const rowsText = report.rows.map((r) => `• ${r.label}: ${r.value}`).join("\n");
+  const pagesText = report.topPages.map((p) => `  ${p.count}× ${p.name}`).join("\n");
+  const actionsText = report.topActions.map((a) => `  ${a.count}× ${a.name}`).join("\n");
+  const text = `Kinti heti pulzus\n\n${rowsText}\n\nTop oldalak (7 nap):\n${pagesText}\n\nTop akciók (7 nap):\n${actionsText}\n\nRészletek: https://kinti.app/admin`;
+
+  const rowsHtml = report.rows
+    .map(
+      (r) =>
+        `<tr><td style="padding:5px 0;font-weight:600;color:#5c6d63;">${escapeHtml(r.label)}</td><td style="padding:5px 0;text-align:right;font-weight:800;color:#0e1f17;">${escapeHtml(r.value)}</td></tr>`,
+    )
+    .join("");
+  const listHtml = (items: { name: string; count: number }[]) =>
+    items.map((i) => `<div style="font-size:13px;color:#5c6d63;padding:2px 0;">${i.count}× ${escapeHtml(i.name)}</div>`).join("");
+
+  const html = baseLayout({
+    preheader: "A Kinti heti kulcsszámai egy percben.",
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti Admin — heti pulzus</p>
+      <table style="border-collapse:collapse;width:100%;font-size:14px;margin:0 0 18px;">${rowsHtml}</table>
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#94a097;">TOP OLDALAK (7 NAP)</p>
+      ${listHtml(report.topPages)}
+      <p style="margin:14px 0 4px;font-size:12px;font-weight:700;color:#94a097;">TOP AKCIÓK (7 NAP)</p>
+      ${listHtml(report.topActions)}
+      <p style="margin:18px 0 0;font-size:13px;"><a href="https://kinti.app/admin" style="color:#1d4434;font-weight:700;">Teljes admin-panel →</a></p>
+    `,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject: report.subject, html, text });
   if (error) {
     throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
   }

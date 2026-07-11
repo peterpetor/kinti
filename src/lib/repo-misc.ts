@@ -483,6 +483,57 @@ export async function getCoverageGapStats(days = 30): Promise<CoverageGapRow[]> 
   }
 }
 
+// --- Heti operátori jelentés (weekly-report) ---------------------------------
+
+export interface WeeklyOpsCounts {
+  leads7: number;
+  lockedLeads7: number;
+  cv7: number;
+  quizPlays7: number;
+  jobApps7: number;
+  b2bNew7: number;
+  pushSubsTotal: number;
+  newsletterSubsTotal: number;
+}
+
+/**
+ * A hétfői operátori pulzus-email számai egyetlen lekérdezésben (skalár
+ * al-selectek). 7-napos ablakok + két állomány-jellegű összlétszám.
+ * b2b_projects.created_at EPOCH MS (integer!) — a többi datetime-szöveg.
+ */
+export async function getWeeklyOpsCounts(): Promise<WeeklyOpsCounts> {
+  try {
+    const row = await getDB()
+      .prepare(
+        `SELECT
+           (SELECT COUNT(*) FROM business_leads WHERE created_at >= datetime('now','-7 days')) AS leads7,
+           (SELECT COUNT(*) FROM business_leads WHERE created_at >= datetime('now','-7 days') AND COALESCE(locked,0)=1) AS locked7,
+           (SELECT COUNT(*) FROM cv_submissions WHERE created_at >= datetime('now','-7 days')) AS cv7,
+           (SELECT COALESCE(SUM(count),0) FROM quiz_daily_stats WHERE day >= date('now','-6 days')) AS quiz7,
+           (SELECT COUNT(*) FROM job_applications WHERE submitted_at >= datetime('now','-7 days')) AS apps7,
+           (SELECT COUNT(*) FROM b2b_projects WHERE created_at >= (strftime('%s','now') - 604800) * 1000) AS b2b7,
+           (SELECT COUNT(*) FROM push_subscriptions) AS push_total,
+           (SELECT COUNT(*) FROM newsletter_subscribers) AS nl_total`,
+      )
+      .first<{
+        leads7: number; locked7: number; cv7: number; quiz7: number;
+        apps7: number; b2b7: number; push_total: number; nl_total: number;
+      }>();
+    return {
+      leads7: row?.leads7 ?? 0,
+      lockedLeads7: row?.locked7 ?? 0,
+      cv7: row?.cv7 ?? 0,
+      quizPlays7: row?.quiz7 ?? 0,
+      jobApps7: row?.apps7 ?? 0,
+      b2bNew7: row?.b2b7 ?? 0,
+      pushSubsTotal: row?.push_total ?? 0,
+      newsletterSubsTotal: row?.nl_total ?? 0,
+    };
+  } catch {
+    return { leads7: 0, lockedLeads7: 0, cv7: 0, quizPlays7: 0, jobApps7: 0, b2bNew7: 0, pushSubsTotal: 0, newsletterSubsTotal: 0 };
+  }
+}
+
 /** Az elmúlt N nap eseményei darabszám szerint csökkenőben (admin nézet). */
 export async function getFeatureUsageStats(days = 7): Promise<FeatureUsageStats> {
   const since = new Date(Date.now() - (days - 1) * 86_400_000).toISOString().slice(0, 10);
