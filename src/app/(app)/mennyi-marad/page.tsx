@@ -50,6 +50,29 @@ export default function BudgetPlannerPage() {
         <BudgetPlannerView />
       </div>
 
+      {/* Ország-céloldalak (SEO belső linkháló + gyors ország-ugrás). */}
+      <section className="space-y-2">
+        <h2 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
+          Országonként, gyakori kérdésekkel
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { slug: "nemetorszag", label: "🇩🇪 Németország" },
+            { slug: "ausztria", label: "🇦🇹 Ausztria" },
+            { slug: "svajc", label: "🇨🇭 Svájc" },
+            { slug: "hollandia", label: "🇳🇱 Hollandia" },
+          ].map((o) => (
+            <Link
+              key={o.slug}
+              href={`/mennyi-marad/${o.slug}`}
+              className="rounded-pill border border-line bg-surface px-3.5 py-2 text-[13px] font-bold text-ink transition active:scale-95"
+            >
+              {o.label}
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <LegalDisclaimer
         toolName="Kiköltözési költségvetés-tervező"
         variant="info"

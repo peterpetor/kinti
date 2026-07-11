@@ -8,6 +8,8 @@ import { GuideFeedback } from "@/components/views/guide-feedback";
 import { GuideNewsletterCta } from "@/components/views/guide-newsletter-cta";
 import { GuideShareButton } from "@/components/views/guide-share-button";
 import { RemittanceAffiliateCta } from "@/components/views/remittance-affiliate-cta";
+import { BudgetToolCta } from "@/components/views/budget-tool-cta";
+import { isBudgetCountry } from "@/lib/budget-plan";
 
 // Tisztán statikus tartalom (lib/guides.ts) + generateStaticParams → SSG:
 // minden cikk build-time prerenderelt, NEM fogyaszt edge-route-ot
@@ -188,6 +190,12 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
           monetizáció — aki a kinti fizetésről/ellátásról olvas, annak releváns). */}
       {isMoneyGuide(guide.slug) && (
         <RemittanceAffiliateCta currency={country === "CH" ? "CHF" : "EUR"} />
+      )}
+
+      {/* Pénz-cikkeken: karcsú belső CTA a „Mennyi marad?" ország-céloldalára
+          (a bér/megélhetés-olvasó következő kérdése + belső linkháló az SEO-hoz). */}
+      {isMoneyGuide(guide.slug) && isBudgetCountry(country) && (
+        <BudgetToolCta country={country} />
       )}
 
       {/* Kapcsolódó szakemberek a Szaknévsorban (belső link → konverzió).

@@ -94,7 +94,7 @@ function pickRent(data: CostApiData | null, rooms: number): { amount: number; sc
   return null;
 }
 
-export function BudgetPlannerView() {
+export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetCountry } = {}) {
   const [prefCountry] = usePreferredCountry();
 
   // ── Állapot ───────────────────────────────────────────────────────────────
@@ -140,6 +140,12 @@ export function BudgetPlannerView() {
       const c = p.get("c");
       sawCountryParam.current = isBudgetCountry(c);
       if (isBudgetCountry(c)) setCountry(c);
+      // Ország-céloldal (pl. /mennyi-marad/ausztria): az oldal országa a default,
+      // és a preferencia NEM írja felül (a látogató kifejezetten erre az országra jött).
+      else if (initialCountry) {
+        setCountry(initialCountry);
+        sawCountryParam.current = true;
+      }
       const b = p.get("b"); if (b && /^\d{2,7}$/.test(b)) setGross(b);
       const r = p.get("r"); if (r) setRegion(r);
       const a = Number(p.get("a")); if (a === 2) setAdults(2);
@@ -167,7 +173,7 @@ export function BudgetPlannerView() {
     if (!sawCountryParam.current && !countryTouched.current && isBudgetCountry(prefCountry)) {
       setCountry(prefCountry);
     }
-  }, [prefCountry]);
+  }, [prefCountry, initialCountry]);
 
   const regions = useMemo(() => getRegions(country), [country]);
   // Ország-váltásra a más országbeli régió érvénytelen → vissza "all"-ra.
