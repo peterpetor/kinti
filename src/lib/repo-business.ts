@@ -837,3 +837,45 @@ export async function deleteBusinessAsAdmin(id: string): Promise<boolean> {
   const res = await db.prepare("DELETE FROM businesses WHERE id = ?").bind(id).run();
   return (res.meta.changes ?? 0) > 0;
 }
+
+// --- „Kvízből Lead" ajánló (quiz-pro-map) ------------------------------------
+
+export interface QuizCtaBusiness {
+  id: string;
+  name: string;
+  categoryLabel: string | null;
+  featured: boolean;
+}
+
+/**
+ * Karcsú cég-ajánló a kvíz-eredmény kártyájához: az adott ország + szakma-lista
+ * legjobb 1-2 cége, KIEMELT (Szaknévsor PRO) elöl — ez a fizetett elhelyezés
+ * értéke. Kontakt-mező NINCS a vetületben (anti-scraping elv).
+ */
+export async function getQuizCtaBusinesses(
+  country: string,
+  cats: string[],
+  limit = 2,
+): Promise<QuizCtaBusiness[]> {
+  if (cats.length === 0) return [];
+  const placeholders = cats.map(() => "?").join(",");
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, name, category_label, COALESCE(featured, 0) AS featured
+         FROM businesses
+        WHERE category_id IN (${placeholders})
+          AND COALESCE(country_code, 'CH') = ?
+          AND COALESCE(hidden, 0) = 0
+          AND moderation_status = 1
+        ORDER BY COALESCE(featured, 0) DESC, COALESCE(rating, 0) DESC
+        LIMIT ?`,
+    )
+    .bind(...cats, country, Math.min(Math.max(1, limit), 4))
+    .all<{ id: string; name: string; category_label: string | null; featured: number }>();
+  return (results ?? []).map((r) => ({
+    id: r.id,
+    name: r.name,
+    categoryLabel: r.category_label,
+    featured: r.featured === 1,
+  }));
+}

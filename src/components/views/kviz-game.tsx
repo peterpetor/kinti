@@ -16,6 +16,8 @@ import { QUIZ_CATEGORY_META, type QuizCategory, type QuizQuestion } from "@/lib/
 import { BattleBoard, type BattleData } from "@/components/views/quiz-battle-board";
 import { readPreferredCanton } from "@/lib/canton-pref";
 import { PushOptin } from "@/components/push-optin";
+import { QuizProCta } from "@/components/views/quiz-pro-cta";
+import { pickQuizProTarget } from "@/lib/quiz-pro-map";
 import { AT_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-at";
 import { DE_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-de";
 import { NL_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-nl";
@@ -290,6 +292,14 @@ function ResultScreen({
         title="🔥 Védd a sorozatod!"
         subtitle="Este szólunk, ha aznap még nem játszottál — így nem törik meg a széria."
       />
+
+      {/* „Kvízből Lead": a rontott téma szakértője a Szaknévsorból (kurált pár,
+          kiemelt=PRO cég elöl). Hibátlan kvíz / nem-párosított téma / 0 találat
+          → a kártya meg sem jelenik. */}
+      {(() => {
+        const proTarget = pickQuizProTarget(questions, answers);
+        return proTarget ? <QuizProCta target={proTarget} country={country} /> : null;
+      })()}
 
       {/* Kérdés-áttekintő */}
       <section className="space-y-2">
