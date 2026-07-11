@@ -1,8 +1,11 @@
 /**
- * cost-benchmark.ts — „Mennyit költesz?" megélhetési-benchmark adatréteg.
- * Anonim, közösségi: medián + kvartilisek + a saját érték percentilise. Két dimenzió:
- * RÉGIÓ (kanton→ország fallback) és HÁZTARTÁSMÉRET (azonos méretű háztartásokhoz hasonlít,
- * fallbackkel, ha kevés az adat). Lásd 0100 + 0102 migráció, [[benchmark-stats]] minta.
+ * cost-benchmark.ts — közösségi megélhetési-költség aggregátumok (cost_benchmarks).
+ *
+ * ⚠️ A „Mennyit költesz?" beküldő-felület 2026-07-11-én KIVEZETVE (user-döntés:
+ * a /mennyi-marad tervező váltja ki) — a beküldő-függvények törölve. Az OLVASÓ
+ * (getCostBenchmarks) MARAD: a /api/koltsegvetes a meglévő közösségi mediánokkal
+ * pontosítja a tervező kurált referencia-szintjeit. A cost_benchmarks tábla és a
+ * felgyűlt adat NEM lett eldobva. Lásd 0100 + 0102 migráció.
  */
 import { getDB } from "./cloudflare";
 import { COST_CATEGORIES } from "./cost-categories";
@@ -35,44 +38,7 @@ function quantile(sorted: number[], q: number): number {
   return Math.round(sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo));
 }
 
-/** Egy beküldés mentése (upsert: 1 adat per ip+ország+kategória). A háztartásméretet a
- *  user ÖSSZES sorára szinkronizáljuk (konzisztens profil). */
-export async function submitCostBenchmark(input: {
-  country: string; cantonCode: string; category: string; amount: number; householdSize: number | null; ipHash: string;
-}): Promise<void> {
-  const db = getDB();
-  await db
-    .prepare("DELETE FROM cost_benchmarks WHERE ip_hash = ? AND country_code = ? AND category = ?")
-    .bind(input.ipHash, input.country, input.category)
-    .run();
-  await db
-    .prepare("INSERT INTO cost_benchmarks (id, country_code, canton_code, category, amount, household_size, ip_hash) VALUES (?, ?, ?, ?, ?, ?, ?)")
-    .bind(crypto.randomUUID(), input.country, input.cantonCode, input.category, input.amount, input.householdSize, input.ipHash)
-    .run();
-  if (input.householdSize != null) {
-    await db
-      .prepare("UPDATE cost_benchmarks SET household_size = ? WHERE ip_hash = ? AND country_code = ?")
-      .bind(input.householdSize, input.ipHash, input.country)
-      .run();
-  }
-}
-
 export interface UserCostProfile { amounts: Record<string, number>; householdSize: number | null }
-
-/** A user saját beküldései + háztartásmérete egy országban. */
-export async function getUserCostProfile(ipHash: string, country: string): Promise<UserCostProfile> {
-  const { results } = await getDB()
-    .prepare("SELECT category, amount, household_size FROM cost_benchmarks WHERE ip_hash = ? AND country_code = ?")
-    .bind(ipHash, country)
-    .all<Row>();
-  const amounts: Record<string, number> = {};
-  let householdSize: number | null = null;
-  for (const r of results ?? []) {
-    amounts[r.category] = r.amount;
-    if (r.household_size != null) householdSize = r.household_size;
-  }
-  return { amounts, householdSize };
-}
 
 /**
  * Per-kategória statisztika. 4-szintű fallback a legszűkebb→legtágabb halmazig:

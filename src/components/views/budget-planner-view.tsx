@@ -548,10 +548,7 @@ export function BudgetPlannerView() {
           <Icon name="compass" size={15} strokeWidth={2.2} className="text-primary" />
           Jó ez az ajánlat? Nézd meg, mennyit keresnek mások <Icon name="chevR" size={14} className="ml-auto text-ink-faint" />
         </Link>
-        <Link href="/mennyit-koltesz" className="flex items-center gap-2 rounded-card border border-line bg-surface px-4 py-3 text-[13px] font-bold text-ink transition active:scale-[0.99]">
-          <Icon name="trending" size={15} strokeWidth={2.2} className="text-primary" />
-          Kint élsz? Oszd meg, mennyit költesz — pontosabb lesz a tervező <Icon name="chevR" size={14} className="ml-auto text-ink-faint" />
-        </Link>
+        {/* A „Mennyit költesz?" kereszt-link 2026-07-11-én kivezetve a modullal együtt. */}
       </section>
     </div>
   );

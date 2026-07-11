@@ -355,12 +355,8 @@ export function DropdownMenu() {
                   Bér- és Lakbér Iránytű
                 </Link>
                 )}
-                <Link href="/mennyit-koltesz" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
-                    💸
-                  </span>
-                  Mennyit költesz?
-                </Link>
+                {/* A „Mennyit költesz?" 2026-07-11-én kivezetve (user-döntés) —
+                    a szerepét a „Mennyi marad?" tervező vette át (feljebb). */}
                 {has("lakberles") && (
                 <Link href="/lakberles" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">

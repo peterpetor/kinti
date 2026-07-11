@@ -1,0 +1,3 @@
+# Cloudflare Pages redirects — kivezetett útvonalak továbbirányítása.
+# A „Mennyit költesz?" modult a „Mennyi marad?" tervező váltotta ki (2026-07-11).
+/mennyit-koltesz /mennyi-marad 301

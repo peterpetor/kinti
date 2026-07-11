@@ -32,7 +32,7 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone }[] = [
   { href: "/keresek", icon: "search", label: "Keresek", tone: "work" },
   { href: "/allasok", icon: "briefcase", label: "Állások", tone: "work" },
   { href: "/iranytu", icon: "compass", label: "Iránytű", tone: "money" },
-  { href: "/mennyit-koltesz", icon: "trending", label: "Mennyit költesz?", tone: "money" },
+  { href: "/mennyi-marad", icon: "trending", label: "Mennyi marad?", tone: "money" },
   { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor", tone: "money" },
   { href: "/arfolyam", icon: "trending", label: "Árfolyam", tone: "money" },
   { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke", tone: "learn" },

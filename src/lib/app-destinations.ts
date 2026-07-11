@@ -66,8 +66,6 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "hivatal ugyintezes papirmunka bejelentkezes regisztracio csekklista teendok" },
   { href: "/hivatalos", title: "Hivatalos linkek", subtitle: "Konzulátus, nagykövetség, hivatalok", icon: "globe",
     keywords: "hivatalos konzulatus nagykovetseg hivatal linkek kepviselet" },
-  { href: "/mennyit-koltesz", title: "Mennyit költesz?", subtitle: "Közösségi megélhetési benchmark", icon: "trending",
-    keywords: "megelhetes koltseg mennyibe kerul arak kiadas megelhetesi koltsegek" },
   { href: "/lakberles", title: "Lakásbérlés", subtitle: "Kaució, rezsi, tippek", icon: "home",
     keywords: "lakas alberlet lakber berles kaucio ingatlan berleti lakhatas" },
   { href: "/vam", title: "Vám-kalkulátor", subtitle: "Behozatal a svájci határon", icon: "shoppingBag", feature: "vam",
