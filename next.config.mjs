@@ -28,6 +28,14 @@ const nextConfig = {
         destination: 'https://wise.com/invite/dic/peterp286',
         permanent: false,
       },
+      {
+        // „Mennyit költesz?" kivezetve (2026-07-11) — a tervező váltja ki.
+        // (A public/_redirects a next-on-pages kimenetben NEM működött — a
+        // Next redirects() a hiteles mechanizmus ezen a stacken.)
+        source: '/mennyit-koltesz',
+        destination: '/mennyi-marad',
+        permanent: true,
+      },
     ];
   },
   // Globális biztonsági fejlécek minden válaszra. Tudatosan KÖNNYŰ CSP: csak
