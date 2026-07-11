@@ -18,6 +18,7 @@ import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
 import { KvizDailyCard } from "@/components/kviz-daily-card";
 import { NapiSzoCard } from "@/components/napi-szo-card";
 import { HomePlatformGrid } from "@/components/home-platform-grid";
+import { KintiAssistant } from "@/components/kinti-assistant";
 import { ReferralHomeCard } from "@/components/referral-home-card";
 import { TrustBar } from "@/components/trust-bar";
 import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
@@ -60,6 +61,10 @@ export default async function FeedPage() {
       <ReviewFollowupCard />
       <DailyStreak />
       <RelocationReminderBanner />
+
+      {/* Kinti Asszisztens — szabad szöveges probléma → útmutató + szakember.
+          Irányít, nem tanácsol (a motor: heurisztika-először, AI csak értelmez). */}
+      <KintiAssistant />
 
       {/* Fő belépési pontok — „mit hol találok" (nagy, érthető célok) */}
       <section className="space-y-3">

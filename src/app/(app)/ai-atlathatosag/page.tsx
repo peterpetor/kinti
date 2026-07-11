@@ -28,6 +28,13 @@ const FEATURES: AiFeature[] = [
     limits: "Félreértheti a keresést — a szűrők kézzel mindig felülbírálhatók.",
   },
   {
+    emoji: "💬",
+    name: "Kinti Asszisztens (kezdőlap)",
+    what: "A szabad szövegben leírt problémádból kinyeri, milyen szakember-kategória és régió segíthet, majd VALÓDI útmutató-cikkeket és szaknévsor-bejegyzéseket ajánl. Szöveges tanácsot, választ NEM generál — csak irányít. Egyszerű kereséseknél AI-hívás sincs (szabály-alapú értelmezés).",
+    model: "Meta Llama 3.1 8B (Cloudflare Workers AI) — csak az értelmezéshez",
+    limits: "Félreértheti a kérdést — az ajánlott cikk/szakember ilyenkor mellé mehet. Nem ad jogi, pénzügyi vagy egészségügyi tanácsot.",
+  },
+  {
     emoji: "🧭",
     name: "Szemantikus keresés",
     what: "A kereséseket és a szaknévsor-bejegyzéseket jelentés-vektorokká alakítja, hogy rokon értelmű találatokat is megtaláljon. Ha nem elérhető, sima kulcsszavas keresésre vált.",
