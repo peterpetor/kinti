@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import BenchmarkClient from "./BenchmarkClient";
-import { ScreenHeader } from "@/components/ui";
+import { Icon, ScreenHeader } from "@/components/ui";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 // Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
@@ -43,6 +44,25 @@ export default async function BenchmarkPage() {
         </div>
 
         <BenchmarkClient turnstileSiteKey={turnstileSiteKey} />
+
+        {/* Kereszt-tölcsér: aki a béreket böngészi, annak a következő kérdése
+            „és ebből mennyi marad?" — az Iránytű a legforgalmasabb eszközünk,
+            innen kötjük be a tervezőt. */}
+        <Link
+          href="/mennyi-marad"
+          className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
+        >
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-lg">🧮</span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[13.5px] font-extrabold leading-tight text-ink">
+              És ebből mennyi marad?
+            </span>
+            <span className="block text-[11.5px] text-ink-muted">
+              Bruttó bér + család + város → nettó, lakbér, megélhetés — egy kalkulátorban.
+            </span>
+          </span>
+          <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-primary" />
+        </Link>
 
         <LegalDisclaimer
           toolName="Bér- és Lakbér Iránytű"

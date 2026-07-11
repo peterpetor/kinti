@@ -15,7 +15,9 @@ export const metadata = {
     title: "Mennyi marad a fizetésedből külföldön?",
     description:
       "Bruttó bér + család + város → ennyi marad a hónap végén. Számold ki Svájcra, Ausztriára, Németországra vagy Hollandiára!",
+    images: [{ url: "/icons/og-mennyi-marad.png", width: 1200, height: 630, alt: "Mennyi marad a fizetésedből? — kinti.app" }],
   },
+  twitter: { card: "summary_large_image", images: ["/icons/og-mennyi-marad.png"] },
 };
 
 export default function BudgetPlannerPage() {

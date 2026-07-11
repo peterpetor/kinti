@@ -31,6 +31,9 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone }[] = [
   { href: "/szaknevsor", icon: "list", label: "Szaknévsor", tone: "work" },
   { href: "/keresek", icon: "search", label: "Keresek", tone: "work" },
   { href: "/allasok", icon: "briefcase", label: "Állások", tone: "work" },
+  // A CV-készítő a mérés szerint alul-exponált volt (csak menüből ért el) —
+  // a kezdőlap a legerősebb felület, ide való a zászlós ingyenes eszköz.
+  { href: "/nemet-oneletrajz", icon: "document", label: "Német CV", tone: "work" },
   { href: "/iranytu", icon: "compass", label: "Iránytű", tone: "money" },
   { href: "/mennyi-marad", icon: "trending", label: "Mennyi marad?", tone: "money" },
   { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor", tone: "money" },
