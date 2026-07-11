@@ -434,8 +434,8 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🦉
                   </span>
+                  {/* Nyelvlecke 2026-07-11 óta ingyenes — nincs ProBadge. */}
                   {isCH ? "Svájci Német (Mundart)" : country === "DE" ? "Német (Hochdeutsch)" : country === "NL" ? "Holland (Nederlands)" : "Osztrák Német"}
-                  <ProBadge />
                 </Link>
                 )}
                 {has("kviz") && (
