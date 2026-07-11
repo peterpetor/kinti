@@ -82,6 +82,9 @@ export function TabBar() {
   return (
     <nav
       aria-hidden={hidden || undefined}
+      // inert: elrejtve a linkjei billentyűzettel se legyenek elérhetők (a11y).
+      // React 18-ban az inert prop nincs a típusokban — attribútumként szórjuk.
+      {...(hidden ? ({ inert: "" } as unknown as Record<string, string>) : {})}
       className={cn(
         "pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-[calc(env(safe-area-inset-bottom)+12px)]",
         "transition-transform duration-300 ease-out",

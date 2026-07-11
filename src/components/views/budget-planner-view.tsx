@@ -17,7 +17,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { trackAction } from "@/components/usage-tracker";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { getRegions, REGION_LABEL } from "@/lib/regions";
+import { getRegions, REGIONS, REGION_LABEL } from "@/lib/regions";
 import { getCountry } from "@/lib/countries";
 import {
   computeSalary, computeSalaryAT, computeSalaryDE, computeSalaryNL,
@@ -147,7 +147,10 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
         sawCountryParam.current = true;
       }
       const b = p.get("b"); if (b && /^\d{2,7}$/.test(b)) setGross(b);
-      const r = p.get("r"); if (r) setRegion(r);
+      // Régió csak a 4 ország VALÓS kódkészletéből (kézzel írt hibás link ne
+      // ragadjon üresen a lenyílóban — audit #4).
+      const r = p.get("r");
+      if (r && Object.values(REGIONS).some((rs) => rs.some((reg) => reg.code === r))) setRegion(r);
       const a = Number(p.get("a")); if (a === 2) setAdults(2);
       const k = Number(p.get("k")); if (Number.isInteger(k) && k >= 0 && k <= 6) setKids(k);
       const rm = Number(p.get("rm")); if (Number.isInteger(rm) && rm >= 1 && rm <= 6) { setRooms(rm); setRoomsTouched(true); }

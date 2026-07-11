@@ -16,7 +16,10 @@
  * akar-e azonnal frissíteni.
  */
 
-const VERSION = "kinti-v11";
+// v12: manifest-változás (shortcut-csere, theme_color, Play-link törlés) — a
+// manifest cache-first precache-ben ül, verzió-bump nélkül a telepített appok
+// a régit látnák.
+const VERSION = "kinti-v12";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGES_CACHE = `${VERSION}-pages`;
 const MEDIA_CACHE = `${VERSION}-media`;

@@ -11,7 +11,7 @@
   "lang": "hu",
   "dir": "ltr",
   "background_color": "#f4ede0",
-  "theme_color": "#1d4434",
+  "theme_color": "#f4ede0",
   "categories": ["lifestyle", "social", "business"],
   "icons": [
     {
@@ -60,26 +60,18 @@
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Események",
-      "short_name": "Események",
-      "description": "Közösségi események és meetupok",
-      "url": "/kozosseg?source=pwa-shortcut",
+      "name": "Állások",
+      "short_name": "Állások",
+      "description": "Magyar-barát munkalehetőségek külföldön",
+      "url": "/allasok?source=pwa-shortcut",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Kvíz",
       "short_name": "Kvíz",
-      "description": "Svájci beilleszkedési kvíz",
+      "description": "Napi beilleszkedési kvíz a választott országodról",
       "url": "/kviz?source=pwa-shortcut",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
-  ],
-  "related_applications": [
-    {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=app.kinti.android",
-      "id": "app.kinti.android"
-    }
-  ],
-  "prefer_related_applications": false
+  ]
 }
