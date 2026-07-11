@@ -6,53 +6,25 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { trackAction } from "@/components/usage-tracker";
+import Link from "next/link";
+import {
+  X_BANK,
+  rankedProviders,
+  receivedAmount,
+  bestProvider,
+  savingsVsBank,
+} from "@/lib/exchange-providers";
 
 /**
  * Hazautalás-kalkulátor — ország-tudatos. CH: bázis CHF (CHF→HUF + CHF→EUR).
  * Eurozóna (AT/DE): bázis EUR, csak EUR→HUF (az EUR→HUF a CHF-keresztből:
  * chfToHuf / chfToEur). A díjak BECSÜLTEK (publikált átlag), nem real-time.
+ *
+ * A szolgáltató-adatok a KÖZÖS lib/exchange-providers-ből jönnek (a korábbi
+ * lokális 3-elemű duplikátum a Revolut hétvégi felárát sem tudta) — így a
+ * kalkulátor és a PRO Utalás-asszisztens ugyanabból az igazságból számol.
  */
-interface Provider {
-  name: string;
-  /** Spread (markup) a középárfolyamhoz képest, decimal (0.005 = 0.5%). */
-  spread: number;
-  /** Fix díj a bázis-pénznemben (amount-tól független). */
-  fixedFee: number;
-  speed: string;
-  note: string;
-  color: string;
-  /** Referál/affiliate link — ha van, a kártya kattinthatóvá válik. */
-  url?: string;
-}
-
-const PROVIDERS: Provider[] = [
-  {
-    name: "Wise",
-    spread: 0.005,
-    fixedFee: 0.5,
-    speed: "néhány óra",
-    note: "Mid-market rate + transparens díj.",
-    color: "#00b9ff",
-    url: "https://wise.com/invite/dic/peterp286",
-  },
-  {
-    name: "Revolut",
-    spread: 0.005,
-    fixedFee: 0,
-    speed: "azonnali",
-    note: "Standard fiók — hétvégén magasabb spread (~1.5%).",
-    color: "#0075eb",
-    url: "https://revolut.com/referral/?referral-code=pter9sxrh",
-  },
-  {
-    name: "Bank SEPA",
-    spread: 0.015,
-    fixedFee: 5,
-    speed: "1-2 munkanap",
-    note: "Tipikus banki utalás — drágább, de közvetlen.",
-    color: "#7f8c8d",
-  },
-];
 
 export function ExchangeCalculator({
   chfToHuf,
@@ -183,16 +155,40 @@ export function ExchangeCalculator({
           </p>
         </div>
 
-        {/* Szolgáltatók */}
+        {/* Veszteség-averziós fejsor: bank vs a legjobb szolgáltató különbsége —
+            jelölt, tipikus díjszintekből számolt BECSLÉS (nem tényállítás a te
+            bankodról). Ez a szem-felnyitó pillanat az affiliate-lista előtt. */}
+        {amt > 0 && direction === "to-huf" && (() => {
+          const weekend = [0, 6].includes(new Date().getDay());
+          const best = bestProvider(amt, baseToHuf, weekend);
+          const loss = savingsVsBank(amt, baseToHuf, best, weekend);
+          if (loss < 500) return null;
+          return (
+            <div className="rounded-[14px] border-2 border-accent/30 bg-accent/5 p-3">
+              <p className="text-[13px] font-extrabold leading-snug text-ink">
+                💸 Tipikus banki utalással kb.{" "}
+                <span className="text-accent">{Math.round(loss).toLocaleString("hu-HU")} Ft-tal kevesebb</span>{" "}
+                érkezne meg, mint a legjobb szolgáltatóval ({best.name}).
+              </p>
+              <p className="mt-0.5 text-[10.5px] text-ink-faint">
+                Becsült, tipikus díjszintekből számolva — a pontos összeget az adott bank/szolgáltató mutatja.
+              </p>
+            </div>
+          );
+        })()}
+
+        {/* Szolgáltatók — a közös libből, hétvége-tudatosan; a bank referencia-sor a végén. */}
         {amt > 0 && direction === "to-huf" && (
           <div className="space-y-2">
             <p className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
-              Becsült érkező összeg szolgáltatónként
+              Becsült érkező összeg szolgáltatónként <span className="normal-case text-ink-faint">· támogatott linkekkel</span>
             </p>
-            {PROVIDERS.map((p) => {
-              const actualRate = baseToHuf * (1 - p.spread);
-              const netBase = Math.max(0, amt - p.fixedFee);
-              const received = netBase * actualRate;
+            {(() => {
+              const weekend = [0, 6].includes(new Date().getDay());
+              return [...rankedProviders(amt, baseToHuf, weekend), X_BANK];
+            })().map((p) => {
+              const weekend = [0, 6].includes(new Date().getDay());
+              const received = receivedAmount(amt, baseToHuf, p, weekend);
               const fee = amt * baseToHuf - received;
               const cardCls =
                 "flex items-center gap-3 rounded-[12px] border border-line bg-surface px-3 py-2.5";
@@ -230,6 +226,7 @@ export function ExchangeCalculator({
                   href={p.url}
                   target="_blank"
                   rel="sponsored nofollow noopener noreferrer"
+                  onClick={() => trackAction("fx-affiliate-click")}
                   className={cn(
                     cardCls,
                     "transition hover:border-primary/40 hover:bg-surface-alt active:scale-[0.99]",
@@ -248,6 +245,17 @@ export function ExchangeCalculator({
               regisztrálsz, a Kintit is támogatod. A díjak becsültek, az aktuálisat a
               szolgáltatónál ellenőrizd.
             </p>
+
+            {/* PRO-tölcsér: a mély funkciók (árfolyam-figyelés, időzítés, teljes
+                asszisztens-flow) a PRO Utalás-asszisztensben élnek. */}
+            <Link
+              href="/utalas"
+              className="flex items-center gap-2 rounded-[12px] border border-primary/25 bg-primary-soft/40 px-3.5 py-2.5 text-[12.5px] font-bold text-primary transition active:scale-[0.99]"
+            >
+              <Icon name="bell" size={14} strokeWidth={2.2} />
+              Szólj, ha jó az árfolyam — Utalás-asszisztens
+              <Icon name="chevR" size={14} strokeWidth={2.2} className="ml-auto" />
+            </Link>
           </div>
         )}
       </section>
