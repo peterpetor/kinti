@@ -172,7 +172,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
                   className="w-full rounded-pill bg-primary py-3 text-[14px] font-black text-white shadow-card disabled:opacity-60">
                   {submitting ? "Beküldés…" : "Beküldöm jóváhagyásra"}
                 </button>
-                <p className="text-[11px] leading-snug text-ink-faint">A hirdetést jóváhagyás után tesszük közzé, és 30 nap után lejár.</p>
+                <p className="text-[11px] leading-snug text-ink-faint">A hirdetést jóváhagyás után tesszük közzé, és 30 nap után lejár. Jóváhagyáskor a kategóriádba vágó magyar vállalkozásokat értesítjük is róla — így gyorsabban jelentkeznek.</p>
               </>
             )}
           </div>

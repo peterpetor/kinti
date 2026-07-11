@@ -141,6 +141,16 @@ export async function POST(req: Request) {
       }
     }
 
+    // „Keresek" jóváhagyása → fordított lead-routing a kategóriabeli cégeknek
+    // (PRO teljes kontakttal, nem-PRO zárolt teaserrel). Háttérben, best-effort;
+    // a routed_at claim idempotenssé teszi (újra-jóváhagyás nem küld duplán).
+    if (table === "service_requests" && statusValue === 1) {
+      const { routeServiceRequest } = await import("@/lib/keresek-routing");
+      const ctx = getCloudflareCtx();
+      if (ctx) ctx.waitUntil(routeServiceRequest(id));
+      else await routeServiceRequest(id);
+    }
+
     // Ban-flow csak rejected esetén
     let bannedIp = false;
     let bannedEmail = false;

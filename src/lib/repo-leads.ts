@@ -16,19 +16,23 @@ export interface BusinessLead {
   message: string;
   status: string;
   createdAt: string;
+  /** Keletkezéskor zároltnak jelölt (kereten felüli / rendszer-osztott — pl.
+   *  csoportos-extra vagy Keresek-routolt) lead. Nem-PRO cégnél az inbox ezt
+   *  a havi rangtól FÜGGETLENÜL zárva tartja; PRO mindent felold. */
+  lockedStored: boolean;
 }
 
 interface BusinessLeadRow {
   id: string; business_id: string; sender_name: string; sender_email: string;
   sender_phone: string | null; category_label: string | null; message: string;
-  status: string; created_at: string;
+  status: string; created_at: string; locked: number | null;
 }
 
 function toLead(r: BusinessLeadRow): BusinessLead {
   return {
     id: r.id, businessId: r.business_id, senderName: r.sender_name, senderEmail: r.sender_email,
     senderPhone: r.sender_phone, categoryLabel: r.category_label, message: r.message,
-    status: r.status, createdAt: r.created_at,
+    status: r.status, createdAt: r.created_at, lockedStored: Number(r.locked ?? 0) === 1,
   };
 }
 
@@ -78,7 +82,9 @@ export interface ReviewNudgeLead {
  * A vélemény-gyűjtő nudge-ra esedékes leadek: 3 napnál régebbi, 10 napnál
  * frissebb (a nagyon régi lead-eket nem zaklatjuk), még nudge-olatlan, és a
  * vállalkozás látható. A limit a Resend napi keret védelme (a hívó dedupol
- * email+business szinten és a meglévő véleményt is kihagyja).
+ * email+business szinten és a meglévő véleményt is kihagyja). A sender_email
+ * szűrő a Keresek-routolt leadeket védi ki: ott a kontakt lehet csak-telefon,
+ * a sender_email üres — arra nudge nem küldhető.
  */
 export async function getLeadsDueReviewNudge(limit = 40): Promise<ReviewNudgeLead[]> {
   const { results } = await getDB()
@@ -87,6 +93,7 @@ export async function getLeadsDueReviewNudge(limit = 40): Promise<ReviewNudgeLea
        FROM business_leads l
        JOIN businesses b ON b.id = l.business_id AND b.moderation_status = 1 AND b.hidden = 0
        WHERE l.review_nudge_at IS NULL
+         AND l.sender_email LIKE '%_@_%'
          AND l.created_at <= datetime('now', '-3 days')
          AND l.created_at >= datetime('now', '-10 days')
        ORDER BY l.created_at ASC
@@ -125,14 +132,17 @@ export const FREE_LEADS_PER_MONTH = 5;
 
 /**
  * Lead-darabszámok egy vállalkozáshoz: ebben a naptári hónapban és az elmúlt 7 napban.
- * A freemium-keret (5/hó) és a dashboard FOMO-számláló forrása.
+ * A freemium-keret (5/hó) és a dashboard FOMO-számláló forrása. A HAVI szám csak a
+ * keretet fogyasztó (nem-zárolt) leadeket számolja — a countBusinessLeadsThisMonth-tal
+ * azonosan —, különben a rendszer-osztott zárolt leadek hamisan „elfogyasztanák"
+ * a kijelzőn a havi 5 ingyenest. A heti FOMO-szám mindent számol (az is érkezett kérés).
  */
 export async function getLeadCounts(businessId: string): Promise<{ month: number; week: number }> {
   try {
     const row = await getDB()
       .prepare(
         `SELECT
-           SUM(CASE WHEN created_at >= strftime('%Y-%m-01 00:00:00','now') THEN 1 ELSE 0 END) AS month,
+           SUM(CASE WHEN created_at >= strftime('%Y-%m-01 00:00:00','now') AND COALESCE(locked, 0) = 0 THEN 1 ELSE 0 END) AS month,
            SUM(CASE WHEN created_at >= datetime('now','-7 days') THEN 1 ELSE 0 END) AS week
          FROM business_leads WHERE business_id = ?`,
       )

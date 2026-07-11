@@ -225,12 +225,17 @@ async function OwnerDashboard({
   // érkezett (kronologikus sorrend) — így a 6.+ (a legfrissebb) zárolt → erős FOMO,
   // és egyezik az email-kapuval (létrehozáskori darabszám). A zárolt lead kontakt-
   // adatát SZERVEROLDALON kiszedjük (valódi gate, nem csak vizuális).
+  // A keletkezéskor zároltnak jelölt (rendszer-osztott: csoportos-extra / Keresek-
+  // routolt) lead a rangtól FÜGGETLENÜL zárolt, és a havi rangba sem számít bele
+  // (az email-kapu, a countBusinessLeadsThisMonth, ugyanígy számol). PRO mindent felold.
   const ascRank: Record<string, number> = {};
   const lockedSet = new Set<string>();
   for (const l of [...rawLeads].reverse()) {
+    if (isPro) break;
+    if (l.lockedStored) { lockedSet.add(l.id); continue; }
     const ym = l.createdAt.slice(0, 7);
     const rank = (ascRank[ym] = (ascRank[ym] ?? 0) + 1);
-    if (!isPro && rank > FREE_LEADS_PER_MONTH) lockedSet.add(l.id);
+    if (rank > FREE_LEADS_PER_MONTH) lockedSet.add(l.id);
   }
   const leads: LeadCard[] = rawLeads.map((l) =>
     lockedSet.has(l.id)
@@ -340,8 +345,9 @@ async function OwnerDashboard({
           Ajánlatkérések{newLeadCount > 0 ? ` · ${newLeadCount} új` : ""}
         </SectionHeader>
 
-        {/* FOMO-számláló */}
-        {leadCounts.month > 0 && (
+        {/* FOMO-számláló — a heti szám a zárolt (pl. Keresek-routolt) leadeket is
+            számolja, a havi kvóta-kijelző csak a keretet fogyasztókat */}
+        {(leadCounts.month > 0 || leadCounts.week > 0) && (
           <div className="rounded-card border border-line bg-surface px-4 py-3 shadow-card">
             <p className="text-[13.5px] font-extrabold text-ink">
               📥 {leadCounts.week} árajánlat-kérést kaptál ezen a héten

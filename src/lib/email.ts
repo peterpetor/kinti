@@ -1030,6 +1030,132 @@ ${lastFreeText}
 
 
 
+export interface KeresekLeadEmailArgs {
+  business: LeadRequestBusiness;
+  title: string;
+  description: string | null;
+  city: string | null;
+  whenText: string | null;
+  /** A hirdető nyilvános, szabad-szöveges elérhetősége (telefon/WhatsApp/email). */
+  contact: string;
+}
+
+/**
+ * „Keresek"-lead a Szaknévsor PRO cégnek — a jóváhagyott igény-hirdetés TELJES
+ * tartalma a hirdető elérhetőségével (a kontakt a Keresek-táblán nyilvános,
+ * a hirdető kifejezetten azért adta meg, hogy a szakik elérjék).
+ */
+export async function sendKeresekLeadEmail(args: KeresekLeadEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const shortTitle = args.title.length > 60 ? args.title.slice(0, 57) + "…" : args.title;
+  const subject = `Új munka: ${shortTitle}${args.city ? ` — ${args.city}` : ""} — kinti.app`;
+  const metaLine = [args.city ? `📍 ${args.city}` : null, args.whenText ? `🗓️ ${args.whenText}` : null]
+    .filter(Boolean)
+    .join(" · ");
+
+  const text = `Szia, ${args.business.name}!
+
+Egy ügyfél éppen a te szakmádban keres segítséget a kinti.app Keresek-tábláján:
+
+${args.title}
+${args.description ? "\n" + args.description + "\n" : ""}${metaLine ? metaLine + "\n" : ""}
+Elérhetőség: ${args.contact}
+
+Vedd fel vele a kapcsolatot közvetlenül — aki elsőként jelentkezik, jó eséllyel viszi a munkát.
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Új munka a Keresek-tábláról: ${shortTitle}`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Keresek-tábla</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">Egy ügyfél éppen téged keres!</p>
+      <div style="margin:0 0 20px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:15px;font-weight:800;color:#0e1f17;margin-bottom:6px;">${escapeHtml(args.title)}</div>
+        ${args.description ? `<div style="font-size:13.5px;line-height:1.6;color:#5c6d63;white-space:pre-wrap;margin-bottom:10px;">${escapeHtml(args.description)}</div>` : ""}
+        ${metaLine ? `<div style="font-size:12.5px;font-weight:700;color:#5c6d63;margin-bottom:10px;">${escapeHtml(metaLine)}</div>` : ""}
+        <div style="padding:12px;background:#f0ebe0;border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a097;margin-bottom:4px;">A hirdető elérhetősége</div>
+          <div style="font-size:14px;font-weight:800;color:#0e1f17;">${escapeHtml(args.contact)}</div>
+        </div>
+      </div>
+      <p style="margin:0 0 20px;">
+        <a href="https://kinti.app/keresek" style="display:inline-block;padding:13px 22px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Keresek-tábla megnyitása →</a>
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        A kérés a kinti.app nyilvános Keresek-táblájáról érkezett — a hirdető azért adta meg az elérhetőségét, hogy a szakik közvetlenül elérjék. Aki elsőként jelentkezik, jó eséllyel viszi a munkát.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.business.contactEmail, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
+export interface KeresekLockedEmailArgs {
+  business: LeadRequestBusiness;
+  title: string;
+  city: string | null;
+  whenText: string | null;
+}
+
+/**
+ * „Keresek"-teaser a nem-PRO cégnek — a munka LÁTSZIK (cím/város/mikor), a
+ * hirdető elérhetősége NEM (FOMO → Szaknévsor PRO). A copy őszinte: a PRO
+ * ígérete az azonnali, elérhetőséggel együtt érkező értesítés + inbox-feloldás,
+ * NEM kizárólagosság (a tábla nyilvános).
+ */
+export async function sendKeresekLockedEmail(args: KeresekLockedEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const shortTitle = args.title.length > 60 ? args.title.slice(0, 57) + "…" : args.title;
+  const subject = `Új munka a szakmádban${args.city ? ` — ${args.city}` : ""}: várja az ajánlatod`;
+  const metaLine = [args.city ? `📍 ${args.city}` : null, args.whenText ? `🗓️ ${args.whenText}` : null]
+    .filter(Boolean)
+    .join(" · ");
+
+  const text = `Szia, ${args.business.name}!
+
+Egy ügyfél éppen a te szakmádban keres segítséget a kinti.app-on:
+
+${args.title}
+${metaLine ? metaLine + "\n" : ""}
+A hirdető elérhetőségét Szaknévsor PRO-val kapod meg: a postaládádban azonnal feloldódik, a jövőbeni kéréseket pedig e-mailben, elérhetőséggel együtt kapod — elsőként.
+
+Oldd fel: https://kinti.app/profil
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Új munka: ${shortTitle} — oldd fel PRO-val`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Szaknévsor PRO</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">💼 Egy ügyfél éppen téged keres!</p>
+      <div style="margin:0 0 16px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:15px;font-weight:800;color:#0e1f17;margin-bottom:6px;">${escapeHtml(args.title)}</div>
+        ${metaLine ? `<div style="font-size:12.5px;font-weight:700;color:#5c6d63;">${escapeHtml(metaLine)}</div>` : ""}
+      </div>
+      <div style="margin:0 0 20px;padding:14px;background:#fff7e6;border:1px solid #f0d8a0;border-radius:14px;">
+        <div style="font-size:13.5px;line-height:1.6;color:#0e1f17;">
+          🔒 A hirdető <strong>elérhetőségét Szaknévsor PRO-val</strong> kapod meg: a postaládádban azonnal feloldódik, a jövőbeni kéréseket pedig e-mailben, elérhetőséggel együtt kapod — elsőként. Plusz sárga kiemelés és hely a lista elején.
+        </div>
+      </div>
+      <p style="margin:0 0 20px;">
+        <a href="https://kinti.app/profil" style="display:inline-block;padding:13px 22px;background:#f59e0b;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Oldd fel PRO-val →</a>
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        Aki elsőként jelentkezik, jó eséllyel viszi a munkát — a PRO-val egyetlen fizető megrendelés bőven megtérül. A beérkezett kéréseket a /profil oldalon kezeled.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.business.contactEmail, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 export interface LeadLockedEmailArgs {
   categoryLabel: string;
   business: LeadRequestBusiness;

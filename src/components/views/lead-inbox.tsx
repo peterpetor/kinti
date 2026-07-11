@@ -92,8 +92,10 @@ function LockedLeadCard({ lead, businessId }: { lead: LeadCard; businessId: stri
           className="bg-pro text-white hover:bg-[#e68600]"
         />
       </div>
+      {/* Univerzálisan igaz láb: a zár oka lehet kereten-felüliség VAGY rendszer-
+          osztott (csoportos-extra / Keresek-routolt) lead — nem részletezzük. */}
       <p className="mt-1.5 text-[10.5px] text-ink-faint">
-        {parseDbDate(lead.createdAt)?.toLocaleDateString("hu-HU") ?? ""} · a havi 5 ingyenes ajánlatkérésen felül érkezett
+        {parseDbDate(lead.createdAt)?.toLocaleDateString("hu-HU") ?? ""} · Szaknévsor PRO-val feloldható
       </p>
     </article>
   );
@@ -126,9 +128,12 @@ function UnlockedLeadCard({
       </p>
 
       <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1.5">
-        <a href={`mailto:${lead.senderEmail}`} className="flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
-          <Icon name="send" size={13} strokeWidth={2.2} /> {lead.senderEmail}
-        </a>
+        {/* A Keresek-routolt leadnél a kontakt lehet csak-telefon → az email üres */}
+        {lead.senderEmail && (
+          <a href={`mailto:${lead.senderEmail}`} className="flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
+            <Icon name="send" size={13} strokeWidth={2.2} /> {lead.senderEmail}
+          </a>
+        )}
         {lead.senderPhone && (
           <a href={`tel:${lead.senderPhone}`} className="flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
             <Icon name="phone" size={13} strokeWidth={2.2} /> {lead.senderPhone}
