@@ -167,6 +167,26 @@ export async function countBusinessLeadsThisMonth(businessId: string): Promise<n
   }
 }
 
+/**
+ * A cég ZÁROLT (kereten felüli / extra-címzettes) leadjeinek száma — a /pro
+ * személyre szabott sürgetéséhez („N ajánlatkérés vár feloldásra"). A tárolt
+ * `locked` flag a keletkezéskori kapu-állapot; PRO-ra váltáskor az inbox
+ * visszamenőleg feloldja mindet (dinamikus számítás), így a szám őszinte ígéret.
+ */
+export async function countLockedBusinessLeads(businessId: string): Promise<number> {
+  try {
+    const row = await getDB()
+      .prepare(
+        "SELECT COUNT(*) AS n FROM business_leads WHERE business_id = ? AND COALESCE(locked, 0) = 1",
+      )
+      .bind(businessId)
+      .first<{ n: number }>();
+    return row?.n ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
 /** Új (még nem kezelt) ajánlatkérések száma egy vállalkozáshoz. */
 export async function countNewBusinessLeads(businessId: string): Promise<number> {
   try {

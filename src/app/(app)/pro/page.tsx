@@ -11,7 +11,7 @@ import { useUser } from "@clerk/nextjs";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative, isValidCountry } from "@/lib/countries";
 
-type OwnerStatus = { kintiPro?: boolean; businessPro?: boolean };
+type OwnerStatus = { kintiPro?: boolean; businessPro?: boolean; lockedLeads?: number };
 
 export default function ProPage() {
   const { startCheckout, isLoading } = useCheckout();
@@ -98,6 +98,23 @@ export default function ProPage() {
           {countryLocative(country)} élő magyaroknak, szakembereknek és munkáltatóknak fejlesztett exkluzív csomagok, melyekkel maximalizálhatod a platform lehetőségeit.
         </p>
       </header>
+
+      {/* Személyre szabott sürgetés: ha a SAJÁT cégednél zárolt ajánlatkérések
+          várnak, azt itt fekete-fehéren látod — ez a legerősebb, mert VALÓS,
+          már megtörtént kereslet (nem általános marketing-ígéret). */}
+      {(status?.lockedLeads ?? 0) > 0 && !businessProActive && (
+        <div className="mb-8 rounded-3xl border-2 border-pro/40 bg-pro/10 p-5">
+          <p className="text-[15px] font-black leading-snug text-ink">
+            🔒 {status!.lockedLeads} zárolt ajánlatkérés vár a cégednél
+          </p>
+          <p className="mt-1.5 text-[12.5px] leading-snug text-ink-muted">
+            Valódi ügyfelek kerestek meg a Szaknévsorban, de az elérhetőségük a havi
+            ingyenes kereten felül zárolva van. A <strong className="text-pro">Szaknévsor
+            PRO</strong> aktiválása <strong>visszamenőleg mindet feloldja</strong> —
+            lentebb találod a csomagot.
+          </p>
+        </div>
+      )}
 
       {/* Orientáció: HÁROM külön csomag, HÁROM célra — szín-kód, hogy egyértelmű
           legyen, melyik kinek szól és hogy nem kell mind. */}
