@@ -7,6 +7,7 @@ import { ProfileEditor } from "@/components/views/profile-editor";
 import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
 import { B2bTeaser } from "@/components/views/b2b-teaser";
 import { LeadInbox } from "@/components/views/lead-inbox";
+import { ReviewInviteCard } from "@/components/views/review-invite-card";
 import { ReviewReplyForm } from "@/components/views/review-reply-form";
 import { InstallPrompt } from "@/components/install-prompt";
 import { HomeCountryFlag } from "@/components/home-country-aware";
@@ -473,6 +474,12 @@ async function OwnerDashboard({
             {Math.round(((stats.weekCalls + stats.weekLeads) / stats.weekViews) * 100)}%
           </span>
         </div>
+      )}
+
+      {/* Vélemény-lendkerék: kevés értékelésnél a tulaj kezébe adjuk a kérő-üzenetet
+          (ő motivált + megvannak az ügyfelei — a leggyorsabb vélemény-forrás). */}
+      {reviews.length < 3 && (
+        <ReviewInviteCard businessId={business.id} businessName={business.name} />
       )}
 
       {/* Honnan jönnek — top keresőszavak (PRO) */}

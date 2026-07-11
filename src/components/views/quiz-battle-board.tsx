@@ -11,6 +11,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { trackAction } from "@/components/usage-tracker";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -153,6 +154,16 @@ export function BattleBoard({
         Heti átlagpont, anonim játékokból. Régió-csapatba a Szaknévsorban választott
         {" "}régiód alapján kerülsz.
       </p>
+      {/* Onboarding: régió nélkül a játékos csak ország-csapatban van — egy
+          koppintás a Szaknévsor régió-szűrője, és a következő játéktól számít. */}
+      {!canton && (
+        <Link
+          href="/szaknevsor"
+          className="block rounded-pill border border-line bg-surface px-4 py-2 text-center text-[12.5px] font-bold text-ink transition active:scale-[0.98]"
+        >
+          📍 Válassz régiót a Szaknévsorban — és a régiód csapatában játszol
+        </Link>
+      )}
       {badge && (
         <button
           type="button"
