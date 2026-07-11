@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { LeaderboardView } from "@/components/views/leaderboard-view";
+import { QuizBattleSection } from "@/components/views/quiz-battle-board";
 
 // Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
 export const dynamic = "force-static";
@@ -22,6 +23,10 @@ export default function LeaderboardPage() {
           <h1 className="text-[18px] font-extrabold tracking-tight text-ink">Közösségi ranglista</h1>
         </div>
       </header>
+
+      {/* „Országok és Régiók Harca" — a napi kvíz heti csapat-versenye (anonim
+          aggregátum; kevés adatnál magától elrejtőzik). */}
+      <QuizBattleSection />
 
       <LeaderboardView />
     </div>

@@ -13,6 +13,8 @@ import {
   type QuizState,
 } from "@/lib/quiz-daily";
 import { QUIZ_CATEGORY_META, type QuizCategory, type QuizQuestion } from "@/lib/quiz-bank";
+import { BattleBoard, type BattleData } from "@/components/views/quiz-battle-board";
+import { readPreferredCanton } from "@/lib/canton-pref";
 import { AT_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-at";
 import { DE_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-de";
 import { NL_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-nl";
@@ -365,6 +367,8 @@ function WeeklyCompareBanner({
   score: number;
 }) {
   const [pct, setPct] = useState<{ percentile: number | null; total: number } | null>(null);
+  const [battle, setBattle] = useState<BattleData | null>(null);
+  const [canton, setCanton] = useState<string | null>(null);
   const day = state.today?.date ?? "";
 
   useEffect(() => {
@@ -378,6 +382,10 @@ function WeeklyCompareBanner({
       /* private mode → mindig POST-olunk (idempotenciát a szerver napi-limit fedi) */
     }
 
+    // Régió-csapat (Régiók Harca): a szaknévsoros régió-preferencia, önkéntes/anonim.
+    const preferredCanton = readPreferredCanton();
+    setCanton(preferredCanton);
+
     (async () => {
       try {
         const res = submitted
@@ -385,7 +393,7 @@ function WeeklyCompareBanner({
           : await fetch(`/api/kviz/percentile`, {
               method: "POST",
               headers: { "content-type": "application/json" },
-              body: JSON.stringify({ country, score }),
+              body: JSON.stringify({ country, score, canton: preferredCanton ?? undefined }),
             });
         if (!submitted && res.ok) {
           try {
@@ -394,9 +402,12 @@ function WeeklyCompareBanner({
             /* ignore */
           }
         }
-        const data = res.ok ? ((await res.json()) as { percentile?: number | null; total?: number }) : null;
+        const data = res.ok
+          ? ((await res.json()) as { percentile?: number | null; total?: number; battle?: BattleData })
+          : null;
         if (!cancelled) {
           setPct(data ? { percentile: data.percentile ?? null, total: data.total ?? 0 } : { percentile: null, total: 0 });
+          if (data?.battle) setBattle(data.battle);
         }
       } catch {
         if (!cancelled) setPct({ percentile: null, total: 0 });
@@ -417,30 +428,41 @@ function WeeklyCompareBanner({
     );
   }
 
+  // Az „Országok és Régiók Harca" tábla a percentilis-sáv alatt (ha van verseny).
+  const battleBoard = battle ? (
+    <BattleBoard battle={battle} country={country} canton={canton} score={score} />
+  ) : null;
+
   // Van elég közösségi minta → valós, anonim percentilis.
   if (pct.percentile !== null) {
     const phrase = COUNTRY_PHRASE[country] ?? "a közösség";
     return (
-      <div className="rounded-card border-2 border-primary/30 bg-primary-soft/60 px-4 py-3.5 text-center shadow-card">
-        <p className="text-[13.5px] font-extrabold leading-snug text-ink">
-          📊 Ezen a héten {phrase} <span className="text-primary">{pct.percentile}%-ánál</span> jobb eredményt értél el!
-        </p>
-        <p className="mt-1 text-[11px] text-ink-muted">heti {pct.total} játék alapján · anonim</p>
-      </div>
+      <>
+        <div className="rounded-card border-2 border-primary/30 bg-primary-soft/60 px-4 py-3.5 text-center shadow-card">
+          <p className="text-[13.5px] font-extrabold leading-snug text-ink">
+            📊 Ezen a héten {phrase} <span className="text-primary">{pct.percentile}%-ánál</span> jobb eredményt értél el!
+          </p>
+          <p className="mt-1 text-[11px] text-ink-muted">heti {pct.total} játék alapján · anonim</p>
+        </div>
+        {battleBoard}
+      </>
     );
   }
 
   // Nincs elég minta → SAJÁT heti stat (őszinte fallback).
   const weekly = weeklyPersonalStats(state.history, day);
   return (
-    <div className="rounded-card border border-line bg-surface px-4 py-3.5 text-center shadow-card">
-      <p className="text-[13px] font-extrabold text-ink">
-        📅 Ezen a héten: {weekly.days}/7 nap · {weekly.accuracyPct}% pontosság
-      </p>
-      <p className="mt-1 text-[11px] text-ink-muted">
-        A közösségi rangsor hamarosan — gyűlik a heti mezőny.
-      </p>
-    </div>
+    <>
+      <div className="rounded-card border border-line bg-surface px-4 py-3.5 text-center shadow-card">
+        <p className="text-[13px] font-extrabold text-ink">
+          📅 Ezen a héten: {weekly.days}/7 nap · {weekly.accuracyPct}% pontosság
+        </p>
+        <p className="mt-1 text-[11px] text-ink-muted">
+          A közösségi rangsor hamarosan — gyűlik a heti mezőny.
+        </p>
+      </div>
+      {battleBoard}
+    </>
   );
 }
 
