@@ -70,6 +70,11 @@ ${catList}
 RÉGIÓK (csak ezek kódját; ha nem említ helyet, null):
 ${regionList}
 
+FONTOS: a városnevet a RÉGIÓJÁRA képezd le (például Ausztriában „Bécs/Bécsben" → "W",
+Németországban „München" → "BY", Svájcban „Zürich" → "ZH"). Ha nem vagy BIZTOS a
+régióban, a cantonCode legyen null — a rossz régió rosszabb, mint a semmi.
+Az explanation legfeljebb 12 szó.
+
 Válaszolj KIZÁRÓLAG ezzel a JSON-nal:
 {"categoryId": "…"|null, "cantonCode": "…"|null, "explanation": "1 rövid magyar mondat, mit értettél meg"}`;
           const raw = await runAiChat({ system, user: query, maxTokens: 200, temperature: 0 });
