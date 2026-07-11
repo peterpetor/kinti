@@ -8,8 +8,8 @@ import { Icon } from "@/components/ui";
  * ProLockOverlay — a PRO-funkciók „előnézet + paywall" kapuja. A hard-block
  * (a funkció teljes elrejtése) helyett a nem-PRO user LÁTJA a valódi funkciót
  * (elmosva, nem interaktívan), így érti, MI EZ — de a használathoz meg kell
- * vennie a PRO-t. Kivétel az oktató anyag (nyelvlecke): ott az 1. fejezet ingyen,
- * ezért az a saját, fejezet-szintű freemium-kapuját tartja meg, nem ezt.
+ * vennie a PRO-t. (A nyelvlecke 2026-07-11 óta TELJESEN ingyenes, user-döntés —
+ * se ez az overlay, se fejezet-kapu nem vonatkozik rá.)
  */
 export function ProLockOverlay({
   title,

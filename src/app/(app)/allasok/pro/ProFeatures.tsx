@@ -15,20 +15,14 @@ export function ProFeatures() {
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const adj = countryAdjective(country); // svájci / osztrák / német / holland
 
-  const langLabel =
-    country === "CH" ? "Svájci Német (Mundart)"
-    : country === "AT" ? "Osztrák Német"
-    : country === "DE" ? "Német (Hochdeutsch)"
-    : country === "NL" ? "Holland (Nederlands)"
-    : "Nyelvi";
-  const citizenship = " + Állampolgársági teszt szimulátor";
-
+  // A nyelvkurzus 2026-07-11 óta INGYENES mind a 4 országban (user-döntés) —
+  // ezért NEM szerepel a PRO-értékajánlatban; ne tedd vissza.
   const items: { title: string; desc: string }[] = [];
   if (country === "CH") {
     items.push({ title: "Teljes Szakmai Gyors-Szótár", desc: "500+ svájci szakmai kifejezés és munkahelyi párbeszéd hanganyaggal." });
   }
   items.push({ title: "AI Munkainterjú Szimulátor + CV-audit", desc: `Gyakorolj ${adj} cégek interjúira, és elemeztesd az önéletrajzod mesterséges intelligenciával.` });
-  items.push({ title: `${langLabel} mesterkurzus${citizenship}`, desc: "A teljes nyelvi felkészülés egy helyen, lépésről lépésre." });
+  items.push({ title: "Állampolgársági teszt-szimulátor", desc: "Vizsga-szimuláció a saját országod kérdéssorával — mind a 4 országra." });
   items.push({ title: "Minden prémium modul + jövőbeni PRO funkció", desc: "Minden új funkció és frissítés az előfizetés része marad." });
 
   return (

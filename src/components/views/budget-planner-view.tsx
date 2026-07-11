@@ -77,6 +77,10 @@ export function BudgetPlannerView() {
   const [rooms, setRooms] = useState(2);
   const [roomsTouched, setRoomsTouched] = useState(false);
   const [manualRent, setManualRent] = useState("");
+  // Kategóriánkénti SAJÁT összeg-felülírás (üres = a becslés marad). A user-panasz
+  // (2026-07-11) nyomán: a becsült sorok „kamu adatnak" tűntek — mostantól minden
+  // sor átírható, és a becslés-forrás jelölve van.
+  const [overrides, setOverrides] = useState<Record<string, string>>({});
   // Ország-specifikus adó-részletek
   const [sk, setSk] = useState<Steuerklasse>(1);        // DE
   const [church, setChurch] = useState(false);           // DE + CH
@@ -118,6 +122,16 @@ export function BudgetPlannerView() {
       if (p.get("m13") === "0") setM13(false);
       if (p.get("vk") === "0") setVakantie(false);
       if (p.get("r30") === "1") setRuling30(true);
+      const mr = p.get("mr"); if (mr && /^\d{1,7}$/.test(mr)) setManualRent(mr);
+      const o = p.get("o");
+      if (o) {
+        const map: Record<string, string> = {};
+        for (const part of o.split("~")) {
+          const [id, val] = part.split(".");
+          if (id && /^[a-z_]{1,24}$/.test(id) && /^\d{1,6}$/.test(val ?? "")) map[id] = val;
+        }
+        setOverrides(map);
+      }
       hydrated.current = true;
     }
     if (!sawCountryParam.current && !countryTouched.current && isBudgetCountry(prefCountry)) {
@@ -165,8 +179,14 @@ export function BudgetPlannerView() {
     if (country === "CH" && !m13) p.set("m13", "0");
     if (country === "NL" && !vakantie) p.set("vk", "0");
     if (country === "NL" && ruling30) p.set("r30", "1");
+    // Saját lakbér + kategória-felülírások — a megosztott link a TELJES számítást viszi.
+    if (manualRent.trim() !== "" && /^\d{1,7}$/.test(manualRent.trim())) p.set("mr", manualRent.trim());
+    const oParts = Object.entries(overrides)
+      .filter(([, v]) => v.trim() !== "" && /^\d{1,6}$/.test(v.trim()))
+      .map(([id, v]) => `${id}.${v.trim()}`);
+    if (oParts.length > 0) p.set("o", oParts.join("~"));
     window.history.replaceState(null, "", `${window.location.pathname}?${p.toString()}`);
-  }, [country, grossNum, region, adults, partnerWorks, kids, rooms, roomsTouched, sk, church, m14, m13, vakantie, ruling30]);
+  }, [country, grossNum, region, adults, partnerWorks, kids, rooms, roomsTouched, sk, church, m14, m13, vakantie, ruling30, manualRent, overrides]);
 
   // ── Nettó bér (havi ÁTLAG — a 13./14. havi szétosztva) ────────────────────
   const netMonthly = useMemo(() => {
@@ -191,12 +211,26 @@ export function BudgetPlannerView() {
   }, [country, grossNum, region, adults, partnerWorks, kids, age, church, m13, m14, sk, vakantie, ruling30]);
 
   // ── Költségek: lakbér + kevert (közösségi/referencia) kategóriák ──────────
-  const manualRentNum = Number(manualRent) || 0;
+  // A „Saját lakbér" a 0-t is elfogadja (céges szállás / rokonoknál lakás — gyakori
+  // eset): üres mező = medián-becslés, beírt szám (a 0 is!) = a te összeged.
+  const manualRentSet = manualRent.trim() !== "" && Number.isFinite(Number(manualRent));
   const rentPick = useMemo(() => pickRent(data, rooms), [data, rooms]);
-  const rentAmount = manualRentNum > 0 ? manualRentNum : rentPick?.amount ?? 0;
-  const costs: BudgetCostItem[] = useMemo(
+  const rentAmount = manualRentSet ? Math.max(0, Math.round(Number(manualRent))) : rentPick?.amount ?? 0;
+  const estimatedCosts: BudgetCostItem[] = useMemo(
     () => blendCosts(baselineCosts(country, adults, kids), data?.costs ?? {}),
     [country, adults, kids, data],
+  );
+  // Saját felülírások alkalmazása (üres/érvénytelen = a becslés marad).
+  const costs: BudgetCostItem[] = useMemo(
+    () =>
+      estimatedCosts.map((c) => {
+        const raw = overrides[c.id];
+        if (raw != null && raw.trim() !== "" && Number.isFinite(Number(raw))) {
+          return { ...c, amount: Math.max(0, Math.round(Number(raw))), source: "user" as const };
+        }
+        return c;
+      }),
+    [estimatedCosts, overrides],
   );
   const benefit = childBenefit(country, kids);
   const summary = useMemo(
@@ -207,7 +241,9 @@ export function BudgetPlannerView() {
   const currency = budgetCurrency(country);
   const nf = useMemo(() => new Intl.NumberFormat("hu-HU", { maximumFractionDigits: 0 }), []);
   const fmt = (n: number) => `${nf.format(Math.round(n))} ${currency === "CHF" ? "CHF" : "€"}`;
-  const showResult = grossNum > 0 && rentAmount > 0;
+  // Lakbér 0-val is van eredmény (saját megadás) — csak akkor nincs, ha se medián,
+  // se saját összeg nem áll rendelkezésre.
+  const showResult = grossNum > 0 && (manualRentSet || rentPick != null);
   const verdict = VERDICT_COPY[summary.verdict];
   const regionName = region !== "all" ? regions.find((r) => r.code === region)?.name ?? region : null;
   const countryName = getCountry(country)?.name ?? country;
@@ -245,7 +281,14 @@ export function BudgetPlannerView() {
           <div className="flex flex-wrap gap-2">
             {(["DE", "AT", "CH", "NL"] as const).map((c) => (
               <button key={c} type="button"
-                onClick={() => { countryTouched.current = true; setCountry(c); }}
+                onClick={() => {
+                  countryTouched.current = true;
+                  setCountry(c);
+                  // Kézi ország-váltásnál a saját összegek törlődnek (más pénznem /
+                  // más árszint) — URL-ből jövő megosztott számításnál maradnak.
+                  setOverrides({});
+                  setManualRent("");
+                }}
                 className={cn(pillBase, country === c ? pillOn : pillOff)}>
                 {getCountry(c)?.flag} {getCountry(c)?.name}
               </button>
@@ -331,9 +374,9 @@ export function BudgetPlannerView() {
           </div>
           <div>
             <label htmlFor="bp-rent" className={labelCls}>
-              Saját lakbér <span className="font-medium text-ink-muted">(ha már kinézted)</span>
+              Saját lakbér <span className="font-medium text-ink-muted">(0 = nem fizetsz, pl. céges szállás)</span>
             </label>
-            <input id="bp-rent" type="number" inputMode="numeric" min={0} placeholder="medián helyett"
+            <input id="bp-rent" type="number" inputMode="numeric" min={0} placeholder="üresen: medián"
               value={manualRent} onChange={(e) => setManualRent(e.target.value)} className={inputCls} />
           </div>
         </div>
@@ -421,19 +464,31 @@ export function BudgetPlannerView() {
             <p className="mx-auto mt-1 max-w-sm text-[12px] leading-snug text-ink-muted">{verdict.sub}</p>
           </div>
 
-          {/* Bontás */}
-          <div className="space-y-2 rounded-card border border-line bg-surface p-4 shadow-card">
+          {/* Bontás — MINDEN költség-sor átírható (a becslés csak kiindulópont). */}
+          <div className="space-y-2.5 rounded-card border border-line bg-surface p-4 shadow-card">
             <p className="text-[12px] font-bold uppercase tracking-wide text-ink-muted">Havi bontás (átlag)</p>
+            <p className="rounded-lg bg-surface-alt/70 px-3 py-2 text-[11.5px] leading-snug text-ink-muted">
+              ✏️ A költségek <strong className="text-ink">tipikus becslések</strong> (nem a te
+              adataid) — írd át bármelyik összeget a sajátodra, azzal számolunk. A 0 is
+              érvényes (pl. ha nem költesz rá).
+            </p>
             <Row label={`💰 Nettó bér${(country === "AT" && m14) || (country === "CH" && m13) ? " (13./14. havival elosztva)" : ""}`}
               amount={fmt(netMonthly)} strong />
             {benefit > 0 && <Row label="👶 Gyerek utáni juttatás (becslés)" amount={`+${fmt(benefit)}`} strong />}
             <div className="my-2 border-t border-line" />
-            <CostRow label={`🏠 Albérlet (${rooms} szoba${manualRentNum > 0 ? ", saját" : rentPick?.scope === "country" ? ", országos medián" : ", régió-medián"})`}
+            <CostRow
+              label={`🏠 Albérlet (${rooms} szoba${manualRentSet ? " · saját adat" : rentPick?.scope === "country" ? " · országos medián" : " · régió-medián"})`}
+              sub={manualRentSet ? (rentAmount === 0 ? "0 = nem fizetsz lakbért" : undefined) : "átírható fent, a Saját lakbér mezőben (0 = nem fizetsz)"}
               amount={rentAmount} total={summary.incomeTotal} fmt={fmt} />
-            {costs.map((c) => (
-              <CostRow key={c.id}
-                label={`${c.emoji} ${c.label}${c.source === "community" ? " · közösségi medián" : ""}`}
-                amount={c.amount} total={summary.incomeTotal} fmt={fmt} />
+            {costs.map((c, i) => (
+              <EditableCostRow key={c.id}
+                item={c}
+                estimate={estimatedCosts[i].amount}
+                value={overrides[c.id] ?? ""}
+                onChange={(v) => setOverrides((s) => ({ ...s, [c.id]: v }))}
+                total={summary.incomeTotal}
+                currency={currency}
+              />
             ))}
             <div className="my-2 border-t border-line" />
             <Row label="Összes költség" amount={`−${fmt(summary.costTotal)}`} strong />
@@ -479,13 +534,69 @@ function Row({ label, amount, strong }: { label: string; amount: string; strong?
   );
 }
 
-function CostRow({ label, amount, total, fmt }: { label: string; amount: number; total: number; fmt: (n: number) => string }) {
+function CostRow({ label, sub, amount, total, fmt }: { label: string; sub?: string; amount: number; total: number; fmt: (n: number) => string }) {
   const pct = total > 0 ? Math.min(100, Math.round((amount / total) * 100)) : 0;
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3">
-        <span className="min-w-0 truncate text-[13px] text-ink-muted">{label}</span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[13px] text-ink-muted">{label}</span>
+          {sub && <span className="block text-[10.5px] text-ink-faint">{sub}</span>}
+        </span>
         <span className="shrink-0 text-[13.5px] font-bold text-ink">−{fmt(amount)}</span>
+      </div>
+      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-ink/10">
+        <div className="h-full rounded-full bg-primary/60" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+/** Szerkeszthető költség-sor: az input üresen a becslést mutatja (placeholder),
+ *  beírt értékkel (a 0-val is) a SAJÁT összeg számít. */
+function EditableCostRow({
+  item,
+  estimate,
+  value,
+  onChange,
+  total,
+  currency,
+}: {
+  item: BudgetCostItem;
+  estimate: number;
+  value: string;
+  onChange: (v: string) => void;
+  total: number;
+  currency: "CHF" | "EUR";
+}) {
+  const pct = total > 0 ? Math.min(100, Math.round((item.amount / total) * 100)) : 0;
+  const srcLabel =
+    item.source === "user" ? "saját adat"
+    : item.source === "community" ? "közösségi medián · átírható"
+    : "becslés · átírható";
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3">
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[13px] text-ink">{item.emoji} {item.label}</span>
+          <span className={cn("block text-[10.5px]", item.source === "user" ? "font-bold text-primary" : "text-ink-faint")}>
+            {srcLabel}
+          </span>
+        </span>
+        <span className="flex shrink-0 items-center gap-1.5">
+          <span className="text-[13px] font-bold text-ink-muted">−</span>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            value={value}
+            placeholder={String(estimate)}
+            onChange={(e) => onChange(e.target.value)}
+            aria-label={`${item.label} havi összege`}
+            className="h-9 w-[84px] rounded-lg border border-line bg-surface px-2 text-right text-[13.5px] font-bold text-ink outline-none placeholder:text-ink-faint focus:border-primary/50"
+          />
+          <span className="text-[12px] font-bold text-ink-muted">{currency === "CHF" ? "CHF" : "€"}</span>
+        </span>
       </div>
       <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-ink/10">
         <div className="h-full rounded-full bg-primary/60" style={{ width: `${pct}%` }} />

@@ -199,12 +199,6 @@ export function DropdownMenu() {
                   </span>
                   Munkavállalói profil
                 </Link>
-                <Link href="/nemet-oneletrajz" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
-                    <Icon name="document" size={16} strokeWidth={2.4} />
-                  </span>
-                  Német önéletrajz készítő
-                </Link>
                 <Link href="/munkaltato" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
                     <Icon name="user" size={16} strokeWidth={2.4} />
@@ -243,6 +237,14 @@ export function DropdownMenu() {
                   itt már csak az AI-alapú felkészülő eszközök maradtak, ezért a
                   cím „Toborzás & AI" → „Felkészülés & AI". */}
               <CollapsibleSection title="Felkészülés & AI">
+                {/* A CV-készítő ide való (user-kérés, 2026-07-11): felkészülő eszköz,
+                    nem állás-listázás — a „Szaknévsor & Állások"-ból került át. */}
+                <Link href="/nemet-oneletrajz" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
+                    <Icon name="document" size={16} strokeWidth={2.4} />
+                  </span>
+                  Német önéletrajz készítő
+                </Link>
                 <Link href="/allasok/interju-szimulator" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                     <Icon name="sparkles" size={16} strokeWidth={2.4} />

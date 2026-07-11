@@ -11,7 +11,6 @@ import { LESSONS_DE } from "../data-de";
 import { LESSONS_NL } from "../data-nl";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
-import { useIsPro } from "@/lib/use-is-pro";
 import { cn } from "@/lib/cn";
 
 export default function LessonPage({ params }: { params: { lessonId: string } }) {
@@ -40,7 +39,6 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   const [isLessonComplete, setIsLessonComplete] = useState(false);
   const [sessionStreak, setSessionStreak] = useState(0);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const pro = useIsPro();
 
   useEffect(() => {
     setMounted(true);
@@ -54,40 +52,9 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   if (!mounted) return <div className="p-4">Betöltés...</div>;
   if (!lesson) return <div className="p-4">Lecke nem található.</div>;
 
-  // PRO-zár: az 1. fejezet ingyen, a 2.+ fejezet PRO-előfizetéshez kötött.
-  // A gated leckén megvárjuk a PRO-státusz feloldását (ne villanjon be a tartalom),
-  // majd nem-PRO usernek paywallt mutatunk a /pro CTA-val (NEM login-fal).
-  const isProLesson = lesson.chapter > 1;
-  if (isProLesson && pro === null) return <div className="p-4">Betöltés...</div>;
-  if (isProLesson && pro === false) {
-    return (
-      <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-6 bg-surface px-6 text-center">
-        <div className="relative grid h-24 w-24 place-items-center rounded-full bg-pro/15 text-pro text-5xl shadow-pop">
-          🔒
-          <span className="absolute -top-1 -right-1 rounded-full bg-pro px-2 py-0.5 text-[11px] font-black text-white shadow-sm">PRO</span>
-        </div>
-        <h1 className="text-2xl font-black tracking-tight text-ink">Ez egy PRO lecke</h1>
-        <p className="max-w-sm text-[15px] text-ink-muted">
-          Az 1. fejezet ingyenes — a teljes tanfolyam (100+ lecke, kiejtéssel) a
-          Kinti PRO-val nyílik meg. Egy előfizetés, minden eszközödön.
-        </p>
-        <div className="flex w-full max-w-sm flex-col gap-3">
-          <Button
-            fullWidth
-            size="lg"
-            variant="primary"
-            onClick={() => router.push("/pro")}
-            className="text-[17px] bg-pro hover:bg-[#e68600] text-white border-none shadow-[0_6px_0_0_#cc7700] active:shadow-[0_2px_0_0_#cc7700]"
-          >
-            Válts Kinti PRO-ra
-          </Button>
-          <Button fullWidth size="lg" variant="ghost" onClick={() => router.push("/nyelvlecke")} className="text-[15px]">
-            Vissza a leckékhez
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // A nyelvtanulás INGYENES mind a 4 országban (user-döntés, 2026-07-11): a korábbi
+  // fejezet-freemium (1. fejezet ingyen, 2.+ PRO) KIVEZETVE — ne tedd vissza. A PRO
+  // értékajánlatból is kikerült (/pro + landing.html ugyanebben a körben frissült).
 
   const question = lesson.questions[currentQuestionIdx];
   const isLastQuestion = currentQuestionIdx === lesson.questions.length - 1;

@@ -107,8 +107,9 @@ export interface BudgetCostItem {
   label: string;
   emoji: string;
   amount: number;
-  /** community = közösségi medián; reference = kurált becslés; rent = lakbér-medián. */
-  source: "community" | "reference" | "rent";
+  /** community = közösségi medián; reference = kurált becslés; rent = lakbér-medián;
+   *  user = a felhasználó SAJÁT felülírása (a becslés minden sorban átírható). */
+  source: "community" | "reference" | "rent" | "user";
 }
 
 /** Kurált referencia-költségek a háztartás-összetételre skálázva. */
