@@ -36,6 +36,14 @@ const nextConfig = {
         destination: '/mennyi-marad',
         permanent: true,
       },
+      // A 2026-07-09-es funkció-leépítés (események/akciók/telekocsi/közösség-hub)
+      // után a régi könyvjelzők/PWA-indítók 404-be futottak (a mérés szerint a
+      // /kozosseg-re heti ~32 látogató érkezett!) — értelmes utódra irányítjuk őket.
+      { source: '/kozosseg', destination: '/', permanent: true },
+      { source: '/esemenyek', destination: '/', permanent: true },
+      { source: '/esemenyek/:path*', destination: '/', permanent: true },
+      { source: '/akciok', destination: '/szaknevsor', permanent: true },
+      { source: '/telekocsi', destination: '/', permanent: true },
     ];
   },
   // Globális biztonsági fejlécek minden válaszra. Tudatosan KÖNNYŰ CSP: csak

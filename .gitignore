@@ -70,3 +70,6 @@ dummy_data/
 scripts/businesses.csv
 scripts/import_businesses.sql
 scripts/geocode-cache.json
+
+# D1 adatbazis-mentesek — PII-t tartalmaznak, SOHA ne keruljenek a repoba
+backups/
