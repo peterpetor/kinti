@@ -44,7 +44,7 @@
     "@clerk/nextjs": "^7.4.1",
     "@types/leaflet.markercluster": "^1.5.6",
     "aws4fetch": "^1.0.20",
-    "jspdf": "^2.5.2",
+    "jspdf": "^4.2.1",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
     "maplibre-gl": "^5.24.0",
