@@ -138,6 +138,15 @@ export function CvJobMatch({ categoryId, armed }: { categoryId: string; armed: b
           >
             Összes állás böngészése
           </Link>
+          {/* Tölcsér következő lépcsője: állás-radar a CV szakmájára előtöltve —
+              az első találat azonnali push/email, a többi napi digest. */}
+          <Link
+            href={`/allasok?radarcat=${encodeURIComponent(categoryId)}#radar`}
+            onClick={() => trackAction("cv-match-radar")}
+            className="block rounded-pill border border-primary/30 bg-primary-soft/40 px-4 py-2.5 text-center text-[13.5px] font-bold text-primary transition active:scale-[0.98]"
+          >
+            🔔 Szóljunk, ha új állás jön a szakmádban?
+          </Link>
           {data.external.length > 0 && (
             <p className="text-[10.5px] leading-snug text-ink-faint">
               A „külső forrás" jelölésű hirdetések harmadik felek oldalaira mutatnak,

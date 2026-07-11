@@ -1,7 +1,9 @@
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { getAdminUserId } from "@/lib/admin";
 import { claimDailyNudge } from "@/lib/repo-misc";
+import { getWeeklyCountryScoreCounts } from "@/lib/repo-quiz-stats";
 import { unfeatureExpiredJobs, expireOldJobs } from "@/lib/repo-jobs";
+import { battleRanking, BATTLE_MIN_COUNTRY } from "@/lib/quiz-battle";
 import { notifyCanton } from "@/lib/push-notify";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -23,7 +25,7 @@ export const dynamic = "force-dynamic";
 const NUDGES = [
   { title: "🎯 Mai kvíz vár!", body: "3 kérdés, 30 másodperc — tartsd a sorozatod!", url: "/kviz" },
   { title: "🔥 Ne szakadjon meg a sorozat", body: "Egy gyors kvíz, és ma is megvan.", url: "/kviz" },
-  { title: "📅 Mi újság ma a Kintin?", body: "Friss állások, események és hírek a környékeden.", url: "/" },
+  { title: "📅 Mi újság ma a Kintin?", body: "Friss állások, szakik és hírek a környékeden.", url: "/" },
   { title: "🇨🇭 Napi 2 perc német?", body: "Egy mondat Mundartul közelebb visz a beilleszkedéshez.", url: "/nyelvlecke" },
   { title: "📰 Itt a napi adag", body: "Nézd meg, mi történt ma a magyar közösségben.", url: "/" },
 ];
@@ -61,7 +63,27 @@ async function handle(req: Request): Promise<Response> {
 
   // Üzenet-rotáció a nap sorszáma szerint (determinisztikus, nincs Math.random).
   const dayIndex = Math.floor(now.getTime() / 86_400_000);
-  const payload = NUDGES[dayIndex % NUDGES.length];
+  let payload = NUDGES[dayIndex % NUDGES.length];
+
+  // VASÁRNAP: a nudge a heti Kvíz-csata összefoglalója (közösségi büszkeség-hurok,
+  // az Országok/Régiók Harca visszahívója) — de CSAK ha van kimutatható verseny
+  // (min-minta kapun átjutó ≥2 ország), különben marad a sima rotáció. Üres
+  // táblára sosem hívunk (presence-heatmap tanulság). Plusz push-volumen nincs:
+  // a napi egy nudge-ot váltja, nem tetézi.
+  if (now.getUTCDay() === 0) {
+    try {
+      const ranking = battleRanking(await getWeeklyCountryScoreCounts(), BATTLE_MIN_COUNTRY);
+      if (ranking.length >= 2) {
+        payload = {
+          title: "🏆 Heti Kvíz-csata: így áll a csapatod!",
+          body: "Országok és régiók harca — nézd meg az állást, és erősíts rá egy játékkal!",
+          url: "/ranglista",
+        };
+      }
+    } catch (err) {
+      safeLogError("daily-nudge:battle", err);
+    }
+  }
 
   try {
     const res = await notifyCanton(null, payload, "daily");

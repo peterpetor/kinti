@@ -46,6 +46,18 @@ export function JobAlertRadar() {
   const regions = getRegions(country);
   const countryName = getCountry(country)?.name ?? "Svájc";
 
+  // ?radarcat= előtöltés (a CV-készítő állás-ajánlójából jövet a szakma már ki
+  // van választva — csak az engedélyezés marad). window.location-minta, nem
+  // useSearchParams (a komponens statikus oldalra is kerülhet).
+  useEffect(() => {
+    try {
+      const cat = new URLSearchParams(window.location.search).get("radarcat");
+      if (cat && /^[a-z0-9_-]{1,64}$/.test(cat)) setCategory(cat);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   const refreshRadars = useCallback(async (sub: PushSubscriptionJSON) => {
     if (!sub.endpoint) return;
     try {
@@ -223,7 +235,7 @@ export function JobAlertRadar() {
   }
 
   return (
-    <section className="rounded-card border border-primary/20 bg-primary/5 p-5 shadow-sm">
+    <section id="radar" className="scroll-mt-4 rounded-card border border-primary/20 bg-primary/5 p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-3">
         <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 text-primary shadow-inner">
           <Icon name="bell" size={20} strokeWidth={2.4} />
