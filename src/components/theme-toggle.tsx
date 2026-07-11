@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { applyThemeColor } from "@/lib/theme-color";
 
 type Theme = "warm" | "dark";
 
@@ -28,6 +29,8 @@ export function ThemeToggle() {
   const choose = (t: Theme) => {
     setTheme(t);
     document.documentElement.dataset.theme = t;
+    // A böngésző-króm (címsor/PWA-fejléc) színe is átvált — natív érzet.
+    applyThemeColor(t);
     try {
       localStorage.setItem(STORAGE_KEY, t);
     } catch {

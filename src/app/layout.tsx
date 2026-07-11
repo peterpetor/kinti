@@ -36,7 +36,12 @@ const LEGAL_GATE_SCRIPT = buildLegalGateScript();
 // A mentett országot is kitesszük data-country-ba (whitelist!) — így a csak
 // CH/AT-ban élő elemek (pl. weather-widget) CSS-ből már az ELSŐ frame-ben
 // rejthetők DE/NL-ben, hidratálás-villanás nélkül (a JS-guard marad a döntő).
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('kinti-theme');if(t==='modern'){t='dark';localStorage.setItem('kinti-theme','dark');}if(t==='dark'||t==='warm'){document.documentElement.dataset.theme=t;}var c=localStorage.getItem('kinti.country');if(c==='CH'||c==='AT'||c==='DE'||c==='NL'){document.documentElement.dataset.country=c;}}catch(e){}})();`;
+// + theme-color szinkron: a böngésző-króm (címsor/állapotsor, PWA-címsor) színe
+// kövesse az AKTUÁLIS témát — sötét módban is (a data-theme kézi váltó miatt a
+// statikus media-query-s meta nem elég). A setThemeColor a meglévő metákat írja
+// át, vagy (ha a szkript előbb fut) a head végére tesz egyet (a Chrome az utolsó
+// érvényeset használja). Ugyanez fut a ThemeToggle-ból váltáskor (lib/theme-color).
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('kinti-theme');if(t==='modern'){t='dark';localStorage.setItem('kinti-theme','dark');}if(t==='dark'||t==='warm'){document.documentElement.dataset.theme=t;}var col=(t==='dark')?'#101411':'#f4ede0';var ms=document.querySelectorAll('meta[name="theme-color"]');if(ms.length){for(var i=0;i<ms.length;i++){ms[i].setAttribute('content',col);}}else{var m=document.createElement('meta');m.name='theme-color';m.content=col;document.head.appendChild(m);}var c=localStorage.getItem('kinti.country');if(c==='CH'||c==='AT'||c==='DE'||c==='NL'){document.documentElement.dataset.country=c;}}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: {
@@ -97,9 +102,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // A króm-szín a LAP HÁTTERÉVEL egyezik (natív, „egybefolyó" érzet) — nem a
+  // márka-zölddel (az színes sávot rajzolt a krém tartalom fölé). A data-theme
+  // kézi váltását a THEME_INIT_SCRIPT + lib/theme-color futásidőben követi.
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#1d4434" },
-    { media: "(prefers-color-scheme: dark)", color: "#1d4434" },
+    { media: "(prefers-color-scheme: light)", color: "#f4ede0" },
+    { media: "(prefers-color-scheme: dark)", color: "#101411" },
   ],
   width: "device-width",
   initialScale: 1,

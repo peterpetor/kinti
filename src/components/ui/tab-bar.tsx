@@ -65,7 +65,18 @@ export function TabBar() {
             <Link
               key={t.href}
               href={t.href}
-              onClick={() => { if (!active) haptic("selection"); }}
+              onClick={(e) => {
+                if (active) {
+                  // Natív minta: az AKTÍV fül újra-koppintása az oldal tetejére
+                  // görget (navigáció helyett) — reduced-motion alatt ugrással.
+                  e.preventDefault();
+                  haptic("tap");
+                  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                  window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+                } else {
+                  haptic("selection");
+                }
+              }}
               aria-current={active ? "page" : undefined}
               className={cn(
                 "relative z-[1] flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11.5px] transition duration-200 active:scale-[0.94]",

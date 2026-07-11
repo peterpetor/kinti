@@ -223,6 +223,36 @@
     .kinti-page-in { animation: none; }
   }
 
+  /* Shimmer-skeleton: a betöltő blokkokon átfutó finom fény-söprés (prémiumabb,
+     mint a sima pulzálás). A söprés erőssége téma-függő (--shimmer-a): világosban
+     jól látszó fehér, sötétben visszafogott (a vakítás ellen). A blokk maga
+     bg-ink/10 (lásd skeleton.tsx). Reduced-motion → statikus blokk. */
+  :root, [data-theme="warm"] { --shimmer-a: 0.55; }
+  [data-theme="dark"] { --shimmer-a: 0.06; }
+  .kinti-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .kinti-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgb(255 255 255 / var(--shimmer-a)) 50%,
+      transparent 80%
+    );
+    transform: translateX(-100%);
+    animation: kintiShimmer 1.5s ease-in-out infinite;
+  }
+  @keyframes kintiShimmer {
+    100% { transform: translateX(100%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kinti-shimmer::after { animation: none; opacity: 0; }
+  }
+
   /* „Pop" mikro-visszajelzés — kedvenc-szív, sikeres művelet (delight). */
   @keyframes kintiPop {
     0%   { transform: scale(1); }

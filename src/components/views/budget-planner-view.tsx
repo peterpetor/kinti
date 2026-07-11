@@ -43,6 +43,36 @@ const pillBase =
 const pillOn = "border-primary bg-primary text-white";
 const pillOff = "border-line bg-surface text-ink-muted";
 
+/**
+ * Szám-felpörgés a nagy eredmény-számhoz (delight a megosztható képernyőn):
+ * érték-VÁLTOZÁSKOR ease-out görbével pörög az új értékre (első render azonnali).
+ * Reduced-motion → ugrás animáció nélkül.
+ */
+function useCountUp(value: number, ms = 550): number {
+  const [display, setDisplay] = useState(value);
+  const prev = useRef(value);
+  useEffect(() => {
+    const from = prev.current;
+    prev.current = value;
+    if (from === value) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplay(value);
+      return;
+    }
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / ms);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplay(Math.round(from + (value - from) * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, ms]);
+  return display;
+}
+
 /** A legjobb lakbér-medián a kért szobaszámhoz: régió pontos → régió legközelebbi
  *  → országos pontos → országos legközelebbi. */
 function pickRent(data: CostApiData | null, rooms: number): { amount: number; scope: "region" | "country" } | null {
@@ -244,6 +274,8 @@ export function BudgetPlannerView() {
   // Lakbér 0-val is van eredmény (saját megadás) — csak akkor nincs, ha se medián,
   // se saját összeg nem áll rendelkezésre.
   const showResult = grossNum > 0 && (manualRentSet || rentPick != null);
+  // A nagy szám input-változásra „felpörög" az új értékre.
+  const animatedLeftover = useCountUp(summary.leftover);
   const verdict = VERDICT_COPY[summary.verdict];
   const regionName = region !== "all" ? regions.find((r) => r.code === region)?.name ?? region : null;
   const countryName = getCountry(country)?.name ?? country;
@@ -454,8 +486,8 @@ export function BudgetPlannerView() {
             <p className="text-[12px] font-bold uppercase tracking-wide text-ink-muted">
               Ennyi marad a hónap végén{regionName ? ` — ${regionName}` : ` — ${countryName}`}
             </p>
-            <p className={cn("mt-1 text-[36px] font-extrabold tracking-tight", summary.leftover >= 0 ? "text-primary" : "text-accent")}>
-              {summary.leftover >= 0 ? "~" : "−"}{fmt(Math.abs(summary.leftover))}
+            <p className={cn("mt-1 text-[36px] font-extrabold tracking-tight tabular-nums", summary.leftover >= 0 ? "text-primary" : "text-accent")}>
+              {animatedLeftover >= 0 ? "~" : "−"}{fmt(Math.abs(animatedLeftover))}
             </p>
             <p className="text-[13px] font-bold text-ink">
               {verdict.emoji} {verdict.title}

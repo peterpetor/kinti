@@ -11,7 +11,9 @@ export function Skeleton({ className }: { className?: string }) {
       aria-hidden
       // bg-ink/10: téma-token (a fix sötétzöld rgba sötét módban LÁTHATATLAN
       // volt a sötét felületen — a dark-mode hardcode bug-osztály).
-      className={cn("animate-pulse rounded-md bg-ink/10", className)}
+      // kinti-shimmer: átfutó fény-söprés (globals.css) — prémiumabb, mint a
+      // pulzálás; reduced-motion alatt statikus blokk.
+      className={cn("kinti-shimmer rounded-md bg-ink/10", className)}
     />
   );
 }
