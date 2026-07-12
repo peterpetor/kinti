@@ -216,7 +216,9 @@ export async function countRecentSpamLog(kind: string, ipHash: string | null, wi
   if (!ipHash) return 0;
   const res = await getDB()
     .prepare(`SELECT COUNT(*) AS n FROM spam_log WHERE kind = ? AND ip_hash = ? AND created_at >= datetime('now', ?)`)
-    .bind(kind, ipHash, `-${Math.max(1, windowMinutes)} minutes`)
+    // Egész percre kerekítve: tört érték („-60.5 minutes") érvénytelen SQLite
+    // datetime-modifier lenne → NULL → a limit NÉMÁN kikapcsolna.
+    .bind(kind, ipHash, `-${Math.max(1, Math.round(windowMinutes))} minutes`)
     .first<{ n: number }>();
   return res?.n ?? 0;
 }

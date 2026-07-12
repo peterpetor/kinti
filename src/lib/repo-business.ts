@@ -116,6 +116,9 @@ export interface UpdateBusinessProfileInput {
   categoryLabel: string | null; openText: string | null; workingHours?: string | null;
   socialLinks?: string | null; yearsHere?: number | null; languages?: string[] | null;
   accentColor?: string | null;
+  /** true = tartalom-érzékeny mező VÁLTOZOTT → az admin „ellenőrzött" jelvény
+   *  visszavonása (a manage-token út `verified = 0` szabályának párja). */
+  resetVerified?: boolean;
   /** A vállalkozás országa (CH/AT/DE/NL) — a route validálja. */
   country?: string;
   /** Régió-kód; ország-váltáskor a route null-ra állítja (más országban érvénytelen). */
@@ -333,12 +336,9 @@ export async function getBusinessByOwner(ownerUserId: string): Promise<Business 
   return row ? toBusiness(row) : null;
 }
 
-export async function claimBusiness(businessId: string, ownerUserId: string): Promise<boolean> {
-  const res = await getDB()
-    .prepare("UPDATE businesses SET owner_user_id = ?, updated_at = datetime('now') WHERE id = ? AND owner_user_id IS NULL")
-    .bind(ownerUserId, businessId).run();
-  return (res.meta.changes ?? 0) > 0;
-}
+// A korábbi claimBusiness() (közvetlen owner_user_id-átírás) HALOTT KÓD volt és
+// törölve lett (audit-lelet #8): az élő claim-út az admin-moderált
+// createBusinessClaim/approveBusinessClaim (repo-claims.ts), ami hidden-re is szűr.
 
 export async function setBusinessHidden(id: string, hidden: boolean): Promise<void> {
   await getDB()
@@ -371,7 +371,9 @@ export async function updateBusinessProfile(
     .prepare(
       `UPDATE businesses SET name=?,phone=?,blurb=?,address=?,category_label=?,open_text=?,
        working_hours=?,social_links=?,years_here=?,languages=?,accent_color=?,
-       country_code=?,canton_code=?,lat=?,lng=?,kinti_pass_active=?,kinti_pass_offer=?,updated_at=datetime('now')
+       country_code=?,canton_code=?,lat=?,lng=?,kinti_pass_active=?,kinti_pass_offer=?,
+       verified = CASE WHEN ? = 1 THEN 0 ELSE verified END,
+       updated_at=datetime('now')
        WHERE id=? AND owner_user_id=?`,
     )
     .bind(input.name, input.phone, input.blurb, input.address, input.categoryLabel,
@@ -381,6 +383,7 @@ export async function updateBusinessProfile(
       input.country ?? "CH", input.cantonCode ?? null,
       input.lat ?? null, input.lng ?? null,
       input.kintiPassActive ? 1 : 0, input.kintiPassOffer ?? null,
+      input.resetVerified ? 1 : 0,
       businessId, ownerUserId)
     .run();
   return (res.meta.changes ?? 0) > 0;

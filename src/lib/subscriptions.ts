@@ -15,6 +15,10 @@ export interface Subscription {
   userId: string;
   status: string;
   plan: string | null;
+  /** ⚠️ Az `ls` prefix ÖRÖKSÉG (LemonSqueezy, a korábbi fizetési szolgáltató) —
+   *  ma a PADDLE subscription/customer id-ját tárolja. A DB-oszlopok
+   *  (ls_subscription_id / ls_customer_id) átnevezése destruktív migrációt
+   *  igényelne élő előfizetés-sorokon → tudatosan maradt, csak dokumentáljuk. */
   lsSubscriptionId: string | null;
   lsCustomerId: string | null;
   currentPeriodEnd: string | null;

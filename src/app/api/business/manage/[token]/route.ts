@@ -224,6 +224,8 @@ export async function PATCH(req: Request, { params }: { params: { token: string 
   const updatedTextParts: string[] = [];
   if (fields.name) updatedTextParts.push(fields.name);
   if (fields.blurb) updatedTextParts.push(fields.blurb);
+  if (fields.categoryLabel) updatedTextParts.push(fields.categoryLabel);
+  if (fields.address) updatedTextParts.push(fields.address);
   if (fields.kintiPassOffer) updatedTextParts.push(fields.kintiPassOffer);
   if (updatedTextParts.length > 0) {
     const textMod = await moderateText(updatedTextParts.join("\n"));

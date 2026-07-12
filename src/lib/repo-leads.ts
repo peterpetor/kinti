@@ -3,6 +3,7 @@
  * A vállalkozó in-app „Ajánlatkérés-postaládájához" (Szaknévsor PRO).
  */
 import { getDB } from "./cloudflare";
+import { safeLogError } from "./safe-log";
 
 export type LeadStatus = "new" | "contacted" | "archived";
 
@@ -49,8 +50,14 @@ export interface CreateBusinessLeadInput {
   locked?: boolean;
 }
 
-/** Egy beérkező ajánlatkérés mentése. Best-effort: hibát NEM dob (az email amúgy is ment). */
-export async function createBusinessLead(input: CreateBusinessLeadInput): Promise<void> {
+/**
+ * Egy beérkező ajánlatkérés mentése. Best-effort: hibát NEM dob (a hívók
+ * kötegelt/allSettled folyamai nem törhetnek egy soron), DE a hiba a
+ * safeLogError-on át a hiba-webhookra megy — a „fantom lead" (email kiment,
+ * inbox-sor nincs) így nem néma adatvesztés, hanem riasztott esemény.
+ * Visszatérés: sikerült-e az INSERT.
+ */
+export async function createBusinessLead(input: CreateBusinessLeadInput): Promise<boolean> {
   try {
     await getDB()
       .prepare(
@@ -64,8 +71,10 @@ export async function createBusinessLead(input: CreateBusinessLeadInput): Promis
         input.firstPingSent ? 1 : 0, input.locked ? 1 : 0,
       )
       .run();
+    return true;
   } catch (err) {
-    console.error("[repo-leads] createBusinessLead failed:", err);
+    safeLogError(`repo-leads/createBusinessLead [biz=${input.businessId}]`, err);
+    return false;
   }
 }
 

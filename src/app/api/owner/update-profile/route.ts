@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { getBusinessByOwner, updateBusinessProfile } from "@/lib/repo";
+import { getBusinessByOwner, updateBusinessProfile, logModerationStrike } from "@/lib/repo";
+import { moderateText } from "@/lib/text-moderation";
+import { hashIp } from "@/lib/security";
 import { isSwissAddress } from "@/lib/cantons";
 import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
 import { isValidAccentColor } from "@/lib/business-branding";
@@ -201,6 +203,34 @@ export async function POST(req: Request) {
     kintiPassOffer = null;
   }
 
+  // AI szöveg-moderáció a VÁLTOZOTT tartalom-érzékeny mezőkön (a manage-token
+  // route párja — eddig ez az út moderálatlan volt, audit-lelet #7). Csak a
+  // ténylegesen módosult szöveget küldjük az AI-nak (kvóta-kímélés); blokknál
+  // strike-log + 400. Változás esetén az admin „ellenőrzött" jelvény is
+  // visszavonásra kerül (resetVerified) — a manage-út `verified = 0` párja.
+  const changedTextParts: string[] = [];
+  if (name !== business.name) changedTextParts.push(name);
+  if (blurb && (blurb || null) !== (business.blurb ?? null)) changedTextParts.push(blurb);
+  if (categoryLabel && (categoryLabel || null) !== (business.categoryLabel ?? null)) changedTextParts.push(categoryLabel);
+  if (address && (address || null) !== (business.address ?? null)) changedTextParts.push(address);
+  if (kintiPassOffer && kintiPassOffer !== (business.kintiPassOffer ?? null)) changedTextParts.push(kintiPassOffer);
+  if (changedTextParts.length > 0) {
+    const textMod = await moderateText(changedTextParts.join("\n"));
+    if (textMod.action === "block") {
+      const ipHash = await hashIp(req.headers.get("cf-connecting-ip") ?? null);
+      await logModerationStrike(ipHash, "Business owner-edit text moderation failed: " + textMod.reason);
+      return NextResponse.json(
+        { error: textMod.reason || "A módosított szöveg nem felel meg a közösségi irányelveknek." },
+        { status: 400 },
+      );
+    }
+  }
+  const contentChanged =
+    name !== business.name ||
+    (blurb || null) !== (business.blurb ?? null) ||
+    (categoryLabel || null) !== (business.categoryLabel ?? null) ||
+    (address || null) !== (business.address ?? null);
+
   const ok = await updateBusinessProfile(business.id, userId, {
     name,
     phone: phone || null,
@@ -219,6 +249,7 @@ export async function POST(req: Request) {
     lng: newLng,
     kintiPassActive,
     kintiPassOffer,
+    resetVerified: contentChanged,
   });
 
   if (!ok) {
