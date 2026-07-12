@@ -7,6 +7,8 @@ import { containsProfanity } from "@/lib/profanity";
 import { isValidCountry } from "@/lib/countries";
 import { isValidServiceCategory } from "@/lib/service-categories";
 import { findPresenceCity } from "@/lib/presence-cities";
+import { notifyAdminContentPending } from "@/lib/admin-notify";
+import { getCloudflareCtx } from "@/lib/cloudflare";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -66,6 +68,17 @@ export async function POST(req: Request) {
     city: city?.name ?? (cityName || null), whenText, contact,
     ipHash: ipHash ?? "unknown-ip",
   });
+
+  // Azonnali admin-értesítő (best-effort): a Keresek-jóváhagyás bevétel-kritikus
+  // (az indítja a lead-routingot), ne a napi benézésen múljon az átfutás.
+  const notify = notifyAdminContentPending({
+    contentType: "keresés",
+    title,
+    preview: [description, city?.name ?? cityName, whenText].filter(Boolean).join(" · ") || title,
+    submitterEmail: null,
+  });
+  const ctx = getCloudflareCtx();
+  if (ctx) ctx.waitUntil(notify); else await notify;
 
   return NextResponse.json({ ok: true, message: "Köszönjük! A hirdetést jóváhagyás után tesszük közzé." });
 }

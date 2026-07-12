@@ -1030,6 +1030,65 @@ ${lastFreeText}
 
 
 
+export interface ModerationReminderEmailArgs {
+  to: string;
+  reviews: number;
+  businesses: number;
+  requests: number;
+  stories: number;
+  moderationUrl: string;
+}
+
+/**
+ * Napi moderációs emlékeztető az adminnak — CSAK ha van várakozó tétel.
+ * Az ÁSZF „tipikusan 24 órán belül" ígéretének motorja; a Keresek-jóváhagyás
+ * ráadásul lead-routingot indít (kiadatlan lead = kiadatlan bevétel).
+ */
+export async function sendModerationReminderEmail(args: ModerationReminderEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const total = args.reviews + args.businesses + args.requests + args.stories;
+  const subject = `⏳ ${total} tétel vár moderációra — kinti.app`;
+
+  const lines = [
+    args.requests > 0 ? `• ${args.requests} Keresek-hirdetés (jóváhagyása lead-routingot indít!)` : null,
+    args.stories > 0 ? `• ${args.stories} élettörténet` : null,
+    args.businesses > 0 ? `• ${args.businesses} vállalkozás` : null,
+    args.reviews > 0 ? `• ${args.reviews} vélemény` : null,
+  ].filter(Boolean) as string[];
+
+  const text = `Szia!
+
+${total} tétel vár a moderációs sorban:
+
+${lines.join("\n")}
+
+Moderáció: ${args.moderationUrl}
+
+— kinti.app (napi emlékeztető — csak akkor jön, ha van várakozó tétel)`;
+
+  const html = baseLayout({
+    preheader: `${total} tétel vár moderációra`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Moderáció</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">⏳ ${total} tétel vár jóváhagyásra</p>
+      <ul style="margin:0 0 20px;padding-left:18px;font-size:13.5px;line-height:1.8;color:#0e1f17;">
+        ${lines.map((l) => `<li>${escapeHtml(l.replace(/^• /, ""))}</li>`).join("")}
+      </ul>
+      <p style="margin:0 0 20px;">
+        <a href="${escapeAttr(args.moderationUrl)}" style="display:inline-block;padding:13px 22px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Moderációs sor megnyitása →</a>
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        Napi emlékeztető — csak akkor érkezik, ha van várakozó tétel. A Keresek-hirdetés jóváhagyása indítja a lead-routingot a cégek felé.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 export interface StoryPublishedEmailArgs {
   to: string;
   title: string;

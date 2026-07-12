@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getDB, getCloudflareEnv } from "@/lib/cloudflare";
 import { safeLogError } from "@/lib/safe-log";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
-import { getCategories } from "@/lib/repo";
+import { getCategories, recordUsage } from "@/lib/repo";
 import {
   parseBotQuery,
   formatBotReply,
@@ -144,6 +144,8 @@ export async function POST(req: Request) {
         const rl = await checkAiRateLimit("telegram-bot", `tg:${update.inline_query.from.id}`);
         if (rl.allowed) {
           await logAiRateLimit("telegram-bot", `tg:${update.inline_query.from.id}`);
+          // Anonim napi számláló a heti ops-reporthoz (nincs user-adat).
+          await recordUsage("action:telegram-query");
           const categories = await getCategories();
           const outcome = parseBotQuery(q, categories);
           if (outcome.parsed) {
@@ -206,6 +208,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
     await logAiRateLimit("telegram-bot", `tg:${msg.from?.id ?? msg.chat.id}`);
+    // Anonim napi számláló a heti ops-reporthoz (nincs user-adat).
+    await recordUsage("action:telegram-query");
 
     const categories = await getCategories();
     const outcome = parseBotQuery(query, categories);

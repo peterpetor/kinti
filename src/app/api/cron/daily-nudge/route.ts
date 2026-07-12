@@ -1,6 +1,8 @@
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { getAdminUserId } from "@/lib/admin";
 import { claimDailyNudge, getWeeklyOpsCounts, getFeatureUsageStats } from "@/lib/repo-misc";
+import { moderationCount } from "@/lib/repo-spam";
+import { sendModerationReminderEmail } from "@/lib/email";
 import { getWeeklyCountryScoreCounts } from "@/lib/repo-quiz-stats";
 import { buildWeeklyReport } from "@/lib/weekly-report";
 import { sendWeeklyOpsReportEmail } from "@/lib/email";
@@ -82,6 +84,33 @@ async function handle(req: Request): Promise<Response> {
     } catch (err) {
       safeLogError("daily-nudge:weekly-report", err);
     }
+  }
+
+  // NAPI moderációs emlékeztető (a claim után → naponta egyszer): ha bármi vár
+  // a sorban, rövid email az adminnak — az ÁSZF „tipikusan 24 órán belül"
+  // ígéretének motorja; a Keresek-jóváhagyás ráadásul lead-routingot indít.
+  // Üres sornál CSEND (nincs email-zaj). Best-effort, sose töri a nudge-ot.
+  try {
+    const envFull = getCloudflareEnv() as unknown as { ADMIN_EMAILS?: string; RESEND_API_KEY?: string; PUBLIC_BASE_URL?: string };
+    const adminEmail = (envFull.ADMIN_EMAILS ?? "").split(",").map((s) => s.trim()).filter(Boolean)[0];
+    if (adminEmail && envFull.RESEND_API_KEY) {
+      const [reviews, businesses, requests, stories] = await Promise.all([
+        moderationCount("reviews", 0),
+        moderationCount("businesses", 0),
+        moderationCount("service_requests", 0),
+        moderationCount("stories", 0),
+      ]);
+      if (reviews + businesses + requests + stories > 0) {
+        const base = envFull.PUBLIC_BASE_URL?.replace(/\/$/, "") || "https://kinti.app";
+        await sendModerationReminderEmail({
+          to: adminEmail,
+          reviews, businesses, requests, stories,
+          moderationUrl: `${base}/admin/moderation`,
+        });
+      }
+    }
+  } catch (err) {
+    safeLogError("daily-nudge:moderation-reminder", err);
   }
 
   // Üzenet-rotáció a nap sorszáma szerint (determinisztikus, nincs Math.random).

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getMediaBucket } from "@/lib/cloudflare";
+import { getMediaBucket, getCloudflareCtx } from "@/lib/cloudflare";
+import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { getPublishedStories, createStory, countStoriesByIp } from "@/lib/repo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
@@ -131,6 +132,16 @@ export async function POST(req: Request) {
       if (imageKey) await getMediaBucket().delete(imageKey).catch(() => { /* silent */ });
       throw insertErr;
     }
+
+    // Azonnali admin-értesítő (best-effort) — a 24 órás moderációs ígéret motorja.
+    const notify = notifyAdminContentPending({
+      contentType: "élettörténet",
+      title,
+      preview: storyExcerpt(bodyMd, 300),
+      submitterEmail: contactEmail || null,
+    });
+    const ctx = getCloudflareCtx();
+    if (ctx) ctx.waitUntil(notify); else await notify;
 
     return NextResponse.json({
       ok: true,

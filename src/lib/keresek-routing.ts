@@ -176,6 +176,10 @@ export async function routeServiceRequest(requestId: string): Promise<{ routed: 
       ]);
     }
 
+    // Anonim napi számláló a heti ops-reporthoz (nincs user-adat).
+    const { recordUsage } = await import("./repo-misc");
+    await recordUsage("action:keresek-lead-routed");
+
     return { routed: recipients.length, emailed };
   } catch (err) {
     safeLogError("keresek-routing", err);
