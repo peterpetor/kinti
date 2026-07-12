@@ -21,7 +21,7 @@ function releaseBootGate() {
 
 /** A jogi feltételek verziója — a hozzájárulás-naplóhoz (GDPR demonstrálhatóság),
  *  és a jövőbeli feltétel-változáskori újra-kéréshez. Feltétel-módosításkor emeld. */
-const LEGAL_VERSION = "2026-07-10"; // ÁSZF 9: B2B Hub szakasz + 15.1 ajánlói linkek; kivezetett funkciók (események, akció-térkép) szakaszainak frissítése; Adatvédelem 2.21 (B2B) + 3.4 (affiliate)
+const LEGAL_VERSION = "2026-07-12"; // ÁSZF 3.2 frissítés + 3.3 Élettörténetek-licenc + 8.1 Keresek-továbbítás + 13.4 Telegram-bot; Adatvédelem 2.23 (történetek) + 2.24 (Telegram-bot) + 2.25 (Keresek-továbbítás) + 3.3 (personalize)
 
 function pathIsExempt(pathname: string): boolean {
   return EXEMPT_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));

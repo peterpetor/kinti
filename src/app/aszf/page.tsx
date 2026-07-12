@@ -6,7 +6,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-10">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-12">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -137,22 +137,55 @@ export default function AszfPage() {
       </p>
       <ul>
         <li>vállalkozói profilok a Szaknévsorban;</li>
-        <li>közösségi események.</li>
+        <li>felhasználói vélemények (értékelések);</li>
+        <li>„Keresek" igény-hirdetések;</li>
+        <li>Élettörténetek (felhasználói történetek, 3.3 pont).</li>
       </ul>
       <p>
-        Az alábbi idő-érzékeny tartalmak <strong>automatikus AI-moderáció után
-        azonnal megjelennek</strong> (Cloudflare Workers AI szöveg- és
-        képmoderáció):
+        A feltöltött képeket a kézi jóváhagyást megelőzően automatikus
+        képmoderáció (Cloudflare Workers AI) is szűri.
       </p>
-      <ul>
-        <li>akciók a térképen (lejár éjfélkor).</li>
-      </ul>
       <p>
         Az üzemeltető a hirdetéseket / értékeléseket / vállalkozói profilokat /
-        eseményeket <strong>indoklás nélkül elutasíthatja</strong>, ha
+        történeteket <strong>indoklás nélkül elutasíthatja</strong>, ha
         valószínűsíthetően sérti a jelen ÁSZF 3., 3.1 vagy a vonatkozó
         jogszabályok rendelkezéseit. Az elutasított tartalmakat az 5.2 pont
         szerinti emailes csatornán lehet fellebbezve vitatni.
+      </p>
+
+      <h3>3.3 Élettörténetek (felhasználói történetek) és tartalmi licenc</h3>
+      <p>
+        Az „Élettörténetek" modulban a felhasználó saját, kiköltözéssel/külföldi
+        élettel kapcsolatos írását küldheti be közzétételre. A beküldéssel a
+        felhasználó:
+      </p>
+      <ul>
+        <li>
+          <strong>nem-kizárólagos, területi korlátozás nélküli, ingyenes
+          felhasználási engedélyt</strong> ad az üzemeltetőnek a történet (és az
+          opcionális borítókép) kinti.app-on való közzétételére, tárolására,
+          megjelenítésére és a szolgáltatás népszerűsítésében részletként való
+          idézésére — a szerzői minőség a megadott néven/becenéven feltüntetve;
+        </li>
+        <li>
+          <strong>szavatolja</strong>, hogy a történet a saját szellemi terméke, és
+          nem sérti harmadik személy szerzői, személyiségi vagy egyéb jogát —
+          különösen: más, azonosítható személyekről csak azok hozzájárulásával
+          vagy felismerhetetlenné téve írjon;
+        </li>
+        <li>
+          tudomásul veszi, hogy a történet <strong>szerkesztői (kézi) jóváhagyás
+          után</strong> jelenik meg, és az üzemeltető azt a 3.2 és 4. pont szerint
+          elutasíthatja vagy eltávolíthatja.
+        </li>
+      </ul>
+      <p>
+        A közzétett történet a szerző <strong>személyes tapasztalata és
+        véleménye</strong> — nem az üzemeltető álláspontja, és nem minősül
+        tanácsadásnak (13. pont). A szerző a történet törlését bármikor kérheti
+        az <a href="mailto:info@kinti.app">info@kinti.app</a> címen (az
+        Adatvédelmi tájékoztató 5. pontja szerint), a beküldött történethez
+        megadott (nem nyilvános) e-mail-címéről.
       </p>
 
       <h2>4. Szolgáltatásmegtagadás és Kitiltás joga</h2>
@@ -269,6 +302,19 @@ export default function AszfPage() {
         és nem vállal felelősséget a termékek vagy szolgáltatások minőségéért, eredetiségéért, biztonságáért
         vagy a megosztott információk valóságtartalmáért. Bármilyen anyagi kár vagy csalás esetén az üzemeltető
         felelősségre nem vonható.
+      </p>
+
+      <h3>8.1 „Keresek" igény-hirdetések és továbbításuk</h3>
+      <p>
+        A „Keresek" táblán a felhasználó szolgáltatás-igényt tehet közzé. A
+        hirdetésben megadott elérhetőség a felhasználó döntése alapján{" "}
+        <strong>nyilvánosan megjelenik</strong> (ezt a beküldő űrlap előzetesen
+        jelzi), hogy a szakemberek közvetlenül jelentkezhessenek. A jóváhagyott
+        hirdetést az üzemeltető emellett <strong>továbbítja a kategóriába vágó,
+        Szaknévsorban szereplő vállalkozásoknak</strong> — ez a szolgáltatás
+        rendeltetése. A hirdetés 30 nap után automatikusan lejár. A hirdető és a
+        jelentkező szakember közötti megállapodásra a 8. pont irányadó: az
+        üzemeltető a felek közötti ügyletben nem vesz részt.
       </p>
 
       <h2>9. B2B Hub (zárt vállalkozói projektpiac)</h2>
@@ -592,6 +638,17 @@ export default function AszfPage() {
           és személyes körülmények szerint.
         </li>
       </ul>
+
+      <h3>13.4 Kinti Telegram-bot</h3>
+      <p>
+        A Kinti a Telegram platformon botot üzemeltet (@KintiSzaknevsorBot),
+        amely a <strong>nyilvános Szaknévsor-adatokból</strong> ad kereső-találatot
+        (vállalkozás neve, kategóriája, régiója, értékelése és profil-linkje —
+        közvetlen elérhetőséget a bot nem ad ki). A bot használatára a Telegram
+        saját feltételei is vonatkoznak; a Telegram platform működéséért az
+        üzemeltető nem felel. A bot a beszélgetések tartalmát nem tárolja
+        (részletek az Adatvédelmi tájékoztatóban).
+      </p>
 
       <h2>14. Közösségi jelentések</h2>
       <p>

@@ -186,7 +186,9 @@ export function StorySubmitForm({ turnstileSiteKey }: { turnstileSiteKey: string
         {submitting ? "Beküldés…" : "Beküldöm szerkesztői ellenőrzésre"}
       </button>
       <p className="text-[11px] leading-snug text-ink-faint">
-        Minden történetet személyesen ellenőrzünk megjelenés előtt. A beküldéssel hozzájárulsz, hogy a történeted a kinti.app-on megjelenjen.
+        Minden történetet személyesen ellenőrzünk megjelenés előtt. A beküldéssel hozzájárulsz,
+        hogy a történeted a kinti.app-on megjelenjen (<a href="/aszf" target="_blank" className="underline underline-offset-2">ÁSZF 3.3</a>),
+        és megerősíted, hogy a saját írásod. Adatkezelés: <a href="/adatvedelem" target="_blank" className="underline underline-offset-2">tájékoztató 2.23</a>.
       </p>
     </div>
   );

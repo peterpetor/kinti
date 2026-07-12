@@ -6,7 +6,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-10">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-12">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -461,6 +461,43 @@ export default function AdatvedelemPage() {
         <li><strong>Adatfeldolgozó:</strong> Cloudflare (D1 adatbázis, tárolás). A profilt nyilvánosan nem tesszük közzé.</li>
       </ul>
 
+      <h3>2.23 Élettörténetek (felhasználói történetek)</h3>
+      <p>
+        Az „Élettörténetek" modulban beküldött történetnél a következő adatokat
+        kezeljük:
+      </p>
+      <ul>
+        <li><strong>Nyilvánosan megjelenik</strong> (a te döntésed alapján): a megadott név/becenév, az ország és a város, a történet szövege és az opcionális borítókép.</li>
+        <li><strong>Nem nyilvános:</strong> az opcionálisan megadott e-mail-cím — kizárólag a megjelenésről szóló értesítéshez és a történeteddel kapcsolatos kapcsolattartáshoz használjuk.</li>
+        <li><strong>Technikai:</strong> a beküldő IP-címének visszafejthetetlen hash-e, kizárólag visszaélés-védelemhez (napi beküldési korlát) — nem azonosításra.</li>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — a beküldéssel adott hozzájárulásod; a moderáció és visszaélés-védelem: 6. cikk (1) f) — jogos érdek.</li>
+        <li><strong>Tárolási idő:</strong> a történeted kérésedre bármikor véglegesen töröljük (<a href="mailto:info@kinti.app">info@kinti.app</a>); a képet a történettel együtt töröljük.</li>
+        <li><strong>Moderáció:</strong> minden történet kézi, szerkesztői jóváhagyás után jelenik meg; a képeket automatikus képmoderáció (Cloudflare Workers AI) is szűri.</li>
+      </ul>
+
+      <h3>2.24 Kinti Telegram-bot</h3>
+      <p>
+        A @KintiSzaknevsorBot Telegram-bot használatakor a Telegramtól kapott
+        üzenetből <strong>kizárólag a kereséshez szükséges szöveget dolgozzuk fel
+        átmenetileg</strong> — a beszélgetések tartalmát <strong>nem tároljuk</strong>.
+        A visszaélés-védelemhez (óránkénti keresési korlát) a Telegram-azonosítódból
+        képzett kulcsot naplózzuk rövid ideig (legfeljebb 48 óra), más adatot nem.
+        A találatok a nyilvános Szaknévsor-adatokból származnak. A Telegram platform
+        (Telegram FZ-LLC) a saját adatkezelési szabályzata szerint önálló adatkezelő.
+      </p>
+
+      <h3>2.25 „Keresek" hirdetések továbbítása</h3>
+      <p>
+        A „Keresek" táblára beküldött hirdetésed elérhetőség-mezője — ahogy a
+        beküldő űrlap előzetesen jelzi — <strong>nyilvánosan megjelenik</strong>,
+        és a jóváhagyott hirdetést a kategóriába vágó, Szaknévsorban szereplő
+        vállalkozásoknak <strong>továbbítjuk</strong>, hogy jelentkezhessenek
+        (ez a szolgáltatás rendeltetése — GDPR 6. cikk (1) b) szerinti
+        szerződés-teljesítés). A hirdetés 30 nap után automatikusan lejár és
+        lekerül a tábláról; törlését korábban is kérheted az{" "}
+        <a href="mailto:info@kinti.app">info@kinti.app</a> címen.
+      </p>
+
       <h2>3. Cookie-k</h2>
       <p>
         Kizárólag <strong>feltétlenül szükséges</strong> (technikai és biztonsági) cookie-kat
@@ -538,6 +575,7 @@ export default function AdatvedelemPage() {
         <li><strong>Választott ország</strong> (<code>kinti.country</code>) — melyik ország Kintijét nézed (Svájc, Ausztria, Németország, Hollandia). A térkép és a tartalom ehhez igazodik.</li>
         <li><strong>Választott régió / kanton</strong> (<code>kinti.canton</code>) — a helyi szűréshez és a kanton-célzott push-hoz.</li>
         <li><strong>Nézet- és szűrő-preferenciák</strong> — pl. lista vagy térkép nézet, a kalkulátorokba (bér, vám, lakhatás, árfolyam) utoljára beírt értékek, kiválasztott szűrők.</li>
+        <li><strong>Kezdőlapi személyre szabás</strong> (<code>kinti.personalize</code>) — a „Szabjuk rád" varázsló válaszai (mióta élsz kint, mi a fő kihívásod); kizárólag az eszközödön, a kezdőlapi ajánló ehhez igazodik.</li>
         <li><strong>Mentett bér-ajánlatok</strong> — lásd a 2.11 pontot.</li>
         <li><strong>Látogatás-számláló és állapotjelzők</strong> — pl. hányadszor jársz itt (a feliratkozás-felkérés időzítéséhez), illetve hogy beküldtél-e már tartalmat.</li>
         <li><strong>Tartalom-kezelő tokenek</strong> — a saját vállalkozásod/eseményed/hirdetésed utólagos szerkesztéséhez (lásd 2.1).</li>
