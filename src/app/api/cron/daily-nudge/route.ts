@@ -113,6 +113,45 @@ async function handle(req: Request): Promise<Response> {
     safeLogError("daily-nudge:moderation-reminder", err);
   }
 
+  // Munkáltatói lejárat-értesítők (a fenti expireOldJobs UTÁN fut, így a ma
+  // lejártak még ma kapnak „újítsd meg" emailt): (1) 3 napon belül lejáró
+  // aktív hirdetés → figyelmeztető; (2) frissen lejárt → megújítás-hívó.
+  // Mindkettő EGYSZER megy hirdetésenként (időbélyeg-őr, kudarcnál is jelölünk
+  // — a napi újra-próbálkozó spam ellen); a limit a Resend-keret védelme.
+  try {
+    const { getJobsExpiringSoon, markJobExpiryWarned, getJobsJustExpired, markJobExpiryNotified } =
+      await import("@/lib/repo-jobs");
+    const { sendJobExpiryWarningEmail, sendJobExpiredEmail } = await import("@/lib/email");
+    const fmtHu = (iso: string | null) => {
+      const d = iso ? new Date(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z")) : null;
+      return d && !Number.isNaN(d.getTime())
+        ? d.toLocaleDateString("hu-HU", { year: "numeric", month: "long", day: "numeric" })
+        : undefined;
+    };
+    for (const j of await getJobsExpiringSoon(15)) {
+      try {
+        await sendJobExpiryWarningEmail({
+          to: j.employerEmail, companyName: j.companyName, jobTitle: j.title, expiresOn: fmtHu(j.expiresAt),
+        });
+      } catch (e) {
+        safeLogError(`daily-nudge:job-expiry-warn [${j.id}]`, e);
+      } finally {
+        await markJobExpiryWarned(j.id);
+      }
+    }
+    for (const j of await getJobsJustExpired(15)) {
+      try {
+        await sendJobExpiredEmail({ to: j.employerEmail, companyName: j.companyName, jobTitle: j.title });
+      } catch (e) {
+        safeLogError(`daily-nudge:job-expired [${j.id}]`, e);
+      } finally {
+        await markJobExpiryNotified(j.id);
+      }
+    }
+  } catch (err) {
+    safeLogError("daily-nudge:job-expiry", err);
+  }
+
   // Üzenet-rotáció a nap sorszáma szerint (determinisztikus, nincs Math.random).
   const dayIndex = Math.floor(now.getTime() / 86_400_000);
   let payload = NUDGES[dayIndex % NUDGES.length];

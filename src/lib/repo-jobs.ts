@@ -142,6 +142,80 @@ export async function expireOldJobs(): Promise<number> {
   return res.meta?.changes ?? 0;
 }
 
+/** Lejárat-értesítőre esedékes hirdetés (a munkáltató email-címével). */
+export interface JobExpiryItem {
+  id: string;
+  title: string;
+  expiresAt: string | null;
+  employerEmail: string;
+  companyName: string;
+}
+
+/**
+ * Hamarosan (≤3 nap) lejáró, még nem figyelmeztetett AKTÍV hirdetések — a
+ * lejárat-előtti emlékeztető email címzett-listája. A limit a Resend-keret őre.
+ */
+export async function getJobsExpiringSoon(limit = 15): Promise<JobExpiryItem[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT j.id, j.title, j.expires_at, e.contact_email, e.company_name
+       FROM jobs j
+       JOIN employers e ON e.id = j.employer_id
+       WHERE j.status IN ('active', 'featured')
+         AND j.moderation_status = 1
+         AND j.expiry_warned_at IS NULL
+         AND j.expires_at IS NOT NULL
+         AND j.expires_at > datetime('now')
+         AND j.expires_at <= datetime('now', '+3 days')
+         AND e.contact_email IS NOT NULL AND length(trim(e.contact_email)) > 0
+       ORDER BY j.expires_at ASC
+       LIMIT ?`,
+    )
+    .bind(limit)
+    .all<{ id: string; title: string; expires_at: string | null; contact_email: string; company_name: string }>();
+  return (results ?? []).map((r) => ({
+    id: r.id, title: r.title, expiresAt: r.expires_at,
+    employerEmail: r.contact_email, companyName: r.company_name,
+  }));
+}
+
+/** A figyelmeztető kiküldésének rögzítése — hirdetésenként EGYSZER fut. */
+export async function markJobExpiryWarned(id: string): Promise<void> {
+  await getDB().prepare("UPDATE jobs SET expiry_warned_at = datetime('now') WHERE id = ?").bind(id).run();
+}
+
+/**
+ * Frissen (≤7 napja) LEJÁRT, még nem értesített hirdetések — a „újítsd meg
+ * egy kattintással" email címzett-listája. A 7 napos alsó határ a régi,
+ * történelmi lejárt sorok utólagos spammelése ellen véd.
+ */
+export async function getJobsJustExpired(limit = 15): Promise<JobExpiryItem[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT j.id, j.title, j.expires_at, e.contact_email, e.company_name
+       FROM jobs j
+       JOIN employers e ON e.id = j.employer_id
+       WHERE j.status = 'expired'
+         AND j.expiry_notified_at IS NULL
+         AND j.expires_at IS NOT NULL
+         AND j.expires_at >= datetime('now', '-7 days')
+         AND e.contact_email IS NOT NULL AND length(trim(e.contact_email)) > 0
+       ORDER BY j.expires_at DESC
+       LIMIT ?`,
+    )
+    .bind(limit)
+    .all<{ id: string; title: string; expires_at: string | null; contact_email: string; company_name: string }>();
+  return (results ?? []).map((r) => ({
+    id: r.id, title: r.title, expiresAt: r.expires_at,
+    employerEmail: r.contact_email, companyName: r.company_name,
+  }));
+}
+
+/** A lejárat-értesítő kiküldésének rögzítése — hirdetésenként EGYSZER fut. */
+export async function markJobExpiryNotified(id: string): Promise<void> {
+  await getDB().prepare("UPDATE jobs SET expiry_notified_at = datetime('now') WHERE id = ?").bind(id).run();
+}
+
 /**
  * Lejárt hirdetés ingyenes megújítása — a munkáltató saját tartalma
  * változatlan marad (nincs újra-moderáció, hisz semmi nem módosult), csak a

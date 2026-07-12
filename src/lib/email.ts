@@ -1030,6 +1030,119 @@ ${lastFreeText}
 
 
 
+export interface JobExpiryEmailArgs {
+  to: string;
+  companyName: string;
+  jobTitle: string;
+  /** Lejárat-dátum ember-olvashatóan (pl. „2026. július 16.") — csak a figyelmeztetőnél. */
+  expiresOn?: string;
+}
+
+/** Közös upsell-blokk: Kiemelt Állás — a megújítás pillanata a legjobb ajánlat-pont. */
+const JOB_FEATURED_UPSELL_HTML = `
+      <div style="margin:0 0 20px;padding:14px;background:#fff7e6;border:1px solid #f0d8a0;border-radius:14px;">
+        <div style="font-size:13.5px;line-height:1.6;color:#0e1f17;">
+          ⭐ <strong>Tipp: Kiemelt Állás</strong> — a hirdetésed a lista tetejére kerül,
+          jól látható „Kiemelt" jelöléssel, 30 napig. Tájékoztató ár: 49 € (egyszeri) —
+          a pontos összeget a pénztár mutatja. Beállítás a munkáltatói irányítópulton.
+        </div>
+      </div>`;
+const JOB_FEATURED_UPSELL_TEXT =
+  "Tipp: a Kiemelt Állás a lista tetejére emeli a hirdetésed 30 napra (tájékoztató ár: 49 €, egyszeri — a pontos összeget a pénztár mutatja).";
+
+/**
+ * Lejárat-ELŐTTI figyelmeztető (≤3 nap): a hirdetés hamarosan eltűnik a
+ * listából — a munkáltató időben tud hosszabbítani (és itt a legjobb pont a
+ * Kiemelt Állás upsellnek is).
+ */
+export async function sendJobExpiryWarningEmail(args: JobExpiryEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = `⏳ Hamarosan lejár a hirdetésed: ${args.jobTitle.slice(0, 60)}`;
+
+  const text = `Szia, ${args.companyName}!
+
+A hirdetésed hamarosan lejár${args.expiresOn ? ` (${args.expiresOn})` : ""}:
+
+${args.jobTitle}
+
+Lejárat után lekerül a publikus listáról — de a munkáltatói irányítópulton EGY kattintással, ingyen megújíthatod: https://kinti.app/munkaltato
+
+${JOB_FEATURED_UPSELL_TEXT}
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Hamarosan lejár: ${args.jobTitle}`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Állások</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">⏳ Hamarosan lejár a hirdetésed</p>
+      <div style="margin:0 0 16px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:15px;font-weight:800;color:#0e1f17;">${escapeHtml(args.jobTitle)}</div>
+        ${args.expiresOn ? `<div style="margin-top:4px;font-size:12.5px;color:#5c6d63;">Lejárat: <strong>${escapeHtml(args.expiresOn)}</strong></div>` : ""}
+      </div>
+      <p style="margin:0 0 16px;font-size:13.5px;line-height:1.6;color:#5c6d63;">
+        Lejárat után a hirdetés lekerül a publikus listáról — de az irányítópulton
+        <strong>egy kattintással, ingyen</strong> meghosszabbíthatod.
+      </p>
+      ${JOB_FEATURED_UPSELL_HTML}
+      <p style="margin:0 0 20px;">
+        <a href="https://kinti.app/munkaltato" style="display:inline-block;padding:13px 22px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Irányítópult megnyitása →</a>
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
+/**
+ * Lejárat-UTÁNI értesítő: a hirdetés lekerült a listáról — egy kattintásos
+ * ingyenes megújítás-hívó + Kiemelt Állás upsell.
+ */
+export async function sendJobExpiredEmail(args: JobExpiryEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = `⏰ Lejárt a hirdetésed — egy kattintással megújíthatod`;
+
+  const text = `Szia, ${args.companyName}!
+
+A 30 nap letelt, a hirdetésed lejárt és lekerült a publikus listáról:
+
+${args.jobTitle}
+
+Egy kattintással, INGYEN megújíthatod a munkáltatói irányítópulton — a tartalomhoz nem kell hozzányúlnod: https://kinti.app/munkaltato
+
+${JOB_FEATURED_UPSELL_TEXT}
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Lejárt: ${args.jobTitle} — újítsd meg egy kattintással`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Állások</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">⏰ Lejárt a hirdetésed</p>
+      <div style="margin:0 0 16px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:15px;font-weight:800;color:#0e1f17;">${escapeHtml(args.jobTitle)}</div>
+        <div style="margin-top:4px;font-size:12.5px;color:#5c6d63;">A hirdetés lekerült a publikus listáról.</div>
+      </div>
+      <p style="margin:0 0 16px;font-size:13.5px;line-height:1.6;color:#5c6d63;">
+        Az irányítópulton <strong>egy kattintással, ingyen</strong> megújíthatod —
+        a tartalomhoz nem kell hozzányúlnod, és újra 30 napig él.
+      </p>
+      ${JOB_FEATURED_UPSELL_HTML}
+      <p style="margin:0 0 20px;">
+        <a href="https://kinti.app/munkaltato" style="display:inline-block;padding:13px 22px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Megújítom a hirdetést →</a>
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 export interface ModerationReminderEmailArgs {
   to: string;
   reviews: number;
