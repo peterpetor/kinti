@@ -6,6 +6,7 @@ import type { ServiceRequest } from "@/lib/repo-requests";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { getPresenceCities } from "@/lib/presence-cities";
+import { getRegions, regionName, REGION_LABEL } from "@/lib/regions";
 import { SERVICE_CATEGORIES, serviceCategory } from "@/lib/service-categories";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ReportButton } from "@/components/report-button";
@@ -26,6 +27,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
   const countryRef = useRef(country);
   countryRef.current = country;
   const cityList = getPresenceCities(country);
+  const regions = getRegions(country);
 
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +49,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
   // Beküldő-mező állapot
   const [category, setCategory] = useState("villanyszerelo");
   const [title, setTitle] = useState("");
+  const [region, setRegion] = useState("");
   const [city, setCity] = useState("");
   const [whenText, setWhenText] = useState("");
   const [desc, setDesc] = useState("");
@@ -58,7 +61,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   function resetForm() {
-    setCategory("villanyszerelo"); setTitle(""); setCity(""); setWhenText(""); setDesc(""); setContact("");
+    setCategory("villanyszerelo"); setTitle(""); setRegion(""); setCity(""); setWhenText(""); setDesc(""); setContact("");
     setToken(""); setErr(null); setDone(false); turnstileRef.current?.reset();
   }
 
@@ -74,7 +77,8 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           country, category, title: title.trim(), description: desc.trim() || null,
-          city: city || null, whenText: whenText.trim() || null, contact: contact.trim(),
+          regionCode: region || null, city: city.trim() || null,
+          whenText: whenText.trim() || null, contact: contact.trim(),
           turnstileToken: token,
         }),
       });
@@ -127,11 +131,14 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
         <div className="space-y-2.5">
           {requests.map((r) => {
             const cat = serviceCategory(r.category ?? "");
+            // Hely-címke: település ha van; különben a régió neve (falu/kisváros
+            // beküldésnél gyakran csak a régió ismert).
+            const place = r.city ?? (r.regionCode ? regionName(r.country, r.regionCode) : null);
             return (
               <article key={r.id} className="rounded-card border border-line bg-surface p-4 shadow-card">
                 <div className="flex items-center gap-2 flex-wrap mb-1.5">
                   {cat && <span className="inline-flex items-center gap-1 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">{cat.emoji} {cat.label}</span>}
-                  {r.city && <span className="inline-flex items-center gap-1 rounded-pill bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-muted">📍 {r.city}</span>}
+                  {place && <span className="inline-flex items-center gap-1 rounded-pill bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-muted">📍 {place}</span>}
                   {r.whenText && <span className="inline-flex items-center gap-1 rounded-pill bg-star/10 px-2 py-0.5 text-[11px] font-bold text-star">🗓️ {r.whenText}</span>}
                   <span className="ml-auto text-[10.5px] text-ink-faint">{fmtAgo(r.createdAt)}</span>
                 </div>
@@ -172,14 +179,22 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
                 </select>
                 <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120}
                   placeholder="Pl. Magyarul beszélő villanyszerelőt keresek" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink" />
+                {/* Hely: régió-választó (a szakik régió-célzott értesítéséhez) +
+                    SZABAD-SZÖVEGES település — falu/kisváros is (user-visszajelzés:
+                    a zárt város-lista kizárta a kisebb településeket). */}
                 <div className="grid grid-cols-2 gap-2">
-                  <select value={city} onChange={(e) => setCity(e.target.value)} className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink">
-                    <option value="">Hol? (város)</option>
-                    {cityList.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+                  <select value={region} onChange={(e) => setRegion(e.target.value)} className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink">
+                    <option value="">Melyik {REGION_LABEL[country] ?? "régió"}?</option>
+                    {regions.map((r) => <option key={r.code} value={r.code}>{r.name}</option>)}
                   </select>
-                  <input value={whenText} onChange={(e) => setWhenText(e.target.value)} maxLength={60}
-                    placeholder="Mikorra? (pl. jövő hét)" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink" />
+                  <input value={city} onChange={(e) => setCity(e.target.value)} maxLength={60} list="keresek-telepules"
+                    placeholder="Település (falu is)" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink" />
+                  <datalist id="keresek-telepules">
+                    {cityList.map((c) => <option key={c.name} value={c.name} />)}
+                  </datalist>
                 </div>
+                <input value={whenText} onChange={(e) => setWhenText(e.target.value)} maxLength={60}
+                  placeholder="Mikorra? (pl. jövő hét)" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink" />
                 <textarea value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={600} rows={2}
                   placeholder="Részletek (opcionális)" className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink" />
                 <div>

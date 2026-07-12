@@ -7,6 +7,7 @@ import { containsProfanity } from "@/lib/profanity";
 import { isValidCountry } from "@/lib/countries";
 import { isValidServiceCategory } from "@/lib/service-categories";
 import { findPresenceCity } from "@/lib/presence-cities";
+import { getRegion } from "@/lib/regions";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
 import { getCloudflareCtx } from "@/lib/cloudflare";
 
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
   const title = typeof body.title === "string" ? body.title.trim().slice(0, 120) : "";
   const description = typeof body.description === "string" ? body.description.trim().slice(0, 600) : null;
   const cityName = typeof body.city === "string" ? body.city.trim().slice(0, 60) : "";
+  const rawRegion = typeof body.regionCode === "string" ? body.regionCode.trim().slice(0, 8) : "";
   const whenText = typeof body.whenText === "string" ? body.whenText.trim().slice(0, 60) : null;
   const contact = typeof body.contact === "string" ? body.contact.trim().slice(0, 120) : "";
   const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken : null;
@@ -46,8 +48,13 @@ export async function POST(req: Request) {
   if (!isValidServiceCategory(category)) return NextResponse.json({ error: "Válassz kategóriát." }, { status: 400 });
   if (title.length < 5) return NextResponse.json({ error: "Írd le, mit keresel (min. 5 karakter)." }, { status: 400 });
   if (contact.length < 3) return NextResponse.json({ error: "Adj meg egy elérhetőséget (telefon, WhatsApp, e-mail…)." }, { status: 400 });
+  // Település SZABAD SZÖVEG (falu/kisváros is — user-visszajelzés); a régió-kód
+  // a kliens régió-választójából jön (validálva), a régió-célzott szaki-push és a
+  // lead-routing régió-egyezés ezen múlik. Ha nincs explicit régió, a nagyváros-
+  // listáról még levezetjük (visszafelé kompatibilis út).
   const city = cityName ? findPresenceCity(country, cityName) : null;
-  for (const t of [title, description ?? "", contact, whenText ?? ""]) {
+  const regionCode = getRegion(country, rawRegion)?.code ?? city?.region ?? null;
+  for (const t of [title, description ?? "", contact, whenText ?? "", cityName]) {
     if (t && containsProfanity(t).hit) return NextResponse.json({ error: "Nem megfelelő szöveg." }, { status: 400 });
   }
 
@@ -64,7 +71,7 @@ export async function POST(req: Request) {
   }
 
   await createServiceRequest({
-    country, regionCode: city?.region ?? null, category, title, description,
+    country, regionCode, category, title, description,
     city: city?.name ?? (cityName || null), whenText, contact,
     ipHash: ipHash ?? "unknown-ip",
   });
