@@ -49,6 +49,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     categoryLabel: sub.categoryLabel,
     address: sub.address,
     country: sub.country,
+    cantonCode: sub.cantonCode || null,
     phone: sub.phone,
     blurb: sub.blurb,
     licenseNumber: sub.licenseNumber,

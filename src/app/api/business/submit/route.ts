@@ -147,6 +147,7 @@ export async function POST(req: Request) {
       categoryLabel: validation.value.categoryLabel,
       address: validation.value.address,
       country: validation.value.country,
+      cantonCode: validation.value.cantonCode || null,
       phone: validation.value.phone,
       blurb: validation.value.blurb,
       licenseNumber: validation.value.licenseNumber,

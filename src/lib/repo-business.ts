@@ -155,6 +155,8 @@ export interface CreateBusinessFromSubmissionInput {
   licenseNumber: string | null; contactEmail: string; lat: number | null;
   lng: number | null; ownerUserId: string | null; manageToken: string;
   languages?: string[] | null; workingHours?: string | null;
+  /** Régió-kód (kanton/tartomány) — e nélkül a cég kimarad a régió-szűrőből. */
+  cantonCode?: string | null;
 }
 
 export type BusinessAnalyticsKind = "view" | "phone" | "lead";
@@ -558,12 +560,12 @@ export async function createBusinessFromSubmission(input: CreateBusinessFromSubm
   await getDB()
     .prepare(
       `INSERT INTO businesses
-       (id,name,category_id,category_label,address,country_code,phone,blurb,license_number,
+       (id,name,category_id,category_label,address,country_code,canton_code,phone,blurb,license_number,
         contact_email,source,languages,working_hours,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,owner_user_id,manage_token)
-       VALUES (?,?,?,?,?,?,?,?,?,?,'self_submitted',?,?,?,?,50,50,0,0,0,0,?,?)`,
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,'self_submitted',?,?,?,?,50,50,0,0,0,0,?,?)`,
     )
     .bind(input.id, input.name, input.categoryId, input.categoryLabel, input.address,
-      input.country, input.phone, input.blurb, input.licenseNumber, input.contactEmail.toLowerCase(),
+      input.country, input.cantonCode ?? null, input.phone, input.blurb, input.licenseNumber, input.contactEmail.toLowerCase(),
       JSON.stringify(input.languages?.length ? input.languages : ["Magyar"]),
       input.workingHours ?? null,
       input.lat, input.lng, input.ownerUserId, input.manageToken)
@@ -578,11 +580,12 @@ export async function createOwnerDraftBusiness(input: {
   await getDB()
     .prepare(
       `INSERT INTO businesses
-       (id,name,category_id,country_code,category_label,address,phone,blurb,
+       (id,name,category_id,country_code,canton_code,category_label,address,phone,blurb,
         contact_email,source,languages,lat,lng,pin_x,pin_y,rating,reviews,featured,open_now,owner_user_id,manage_token)
-       VALUES (?,?,?,?,NULL,NULL,NULL,NULL,?,'owner_draft',?,?,?,50,50,0,0,0,0,?,?)`,
+       VALUES (?,?,?,?,?,NULL,NULL,NULL,NULL,?,'owner_draft',?,?,?,50,50,0,0,0,0,?,?)`,
     )
-    .bind(input.id, input.name, input.categoryId, input.country, input.contactEmail.toLowerCase(),
+    .bind(input.id, input.name, input.categoryId, input.country, input.cantonCode || null,
+      input.contactEmail.toLowerCase(),
       JSON.stringify(["Magyar"]), input.lat, input.lng, input.ownerUserId, input.manageToken)
     .run();
 }
