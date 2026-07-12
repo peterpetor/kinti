@@ -9,6 +9,10 @@ import type { ModerationTable } from "@/lib/repo";
  *
  * "Ban IP" / "Ban email" checkbox-okkal: ha a Reject pillanatában aktívak,
  * az adott IP-hash és/vagy email-cím automatikusan a tiltólistára kerül.
+ *
+ * `askRejectReason` (történeteknél): elutasítás előtt indok-mező nyílik —
+ * az indokot a szerző emailben megkapja (DSA Art. 17 indokolás-közlés),
+ * ha a beküldéskor megadta a címét. Üresen hagyható → általános indok megy.
  */
 export function ModerationDecideButtons({
   table,
@@ -16,6 +20,7 @@ export function ModerationDecideButtons({
   current,
   submitterIpHash,
   submitterEmail,
+  askRejectReason = false,
 }: {
   table: ModerationTable;
   id: string;
@@ -23,18 +28,27 @@ export function ModerationDecideButtons({
   current: number;
   submitterIpHash: string | null;
   submitterEmail: string | null;
+  askRejectReason?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
   const [banIp, setBanIp] = useState(false);
   const [banEmail, setBanEmail] = useState(false);
+  const [reasonOpen, setReasonOpen] = useState(false);
+  const [reason, setReason] = useState("");
 
   async function decide(decision: "approved" | "rejected") {
+    // Történet-elutasításnál előbb az indok-mező nyílik (egyszeri kapu).
+    if (decision === "rejected" && askRejectReason && !reasonOpen) {
+      setReasonOpen(true);
+      return;
+    }
     setBusy(true);
     try {
       const payload: Record<string, unknown> = { table, id, decision };
       if (decision === "rejected") {
         if (banIp && submitterIpHash) payload.banIpHash = submitterIpHash;
         if (banEmail && submitterEmail) payload.banEmail = submitterEmail;
+        if (askRejectReason && reason.trim()) payload.reason = reason.trim();
       }
       const res = await fetch("/api/admin/moderation/decide", {
         method: "POST",
@@ -90,6 +104,20 @@ export function ModerationDecideButtons({
         </div>
       )}
 
+      {/* Elutasítás-indok (DSA Art. 17): a szerző emailben kapja, ha adott címet. */}
+      {reasonOpen && current !== 2 && (
+        <div className="w-full max-w-xs space-y-1">
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            maxLength={500}
+            rows={2}
+            placeholder="Elutasítás indoka (a szerző emailben megkapja) — üresen hagyva általános indok megy"
+            className="w-full rounded-[10px] border border-line bg-surface-alt px-2.5 py-1.5 text-[11.5px] text-ink"
+          />
+        </div>
+      )}
+
       <div className="flex gap-1.5">
         {current !== 1 && (
           <button
@@ -113,7 +141,7 @@ export function ModerationDecideButtons({
             }
             className="rounded-pill bg-accent px-3 py-1 text-[11px] font-bold text-white shadow-card active:scale-95 disabled:opacity-50"
           >
-            {anyBanChecked ? "🚫 Elutasít + Ban" : "❌ Elutasít"}
+            {reasonOpen ? "❌ Elutasítás küldése" : anyBanChecked ? "🚫 Elutasít + Ban" : "❌ Elutasít"}
           </button>
         )}
       </div>

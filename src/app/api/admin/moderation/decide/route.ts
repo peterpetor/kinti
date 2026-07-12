@@ -62,6 +62,8 @@ export async function POST(req: Request) {
       decision?: string;
       banIpHash?: string;
       banEmail?: string;
+      /** Elutasítás-indok (történeteknél) — a szerző DSA Art. 17 értesítőjébe. */
+      reason?: string;
     };
     const table = body.table as ModerationTable;
     const id = body.id;
@@ -163,9 +165,27 @@ export async function POST(req: Request) {
             }).catch((e) => safeLogError("moderation/story-published-email", e));
             if (ctx) ctx.waitUntil(send); else await send;
           }
-        } else if (statusValue === 2 && story?.imageKey) {
-          const { getMediaBucket } = await import("@/lib/cloudflare");
-          await getMediaBucket().delete(story.imageKey).catch(() => { /* silent */ });
+        } else if (statusValue === 2) {
+          if (story?.imageKey) {
+            const { getMediaBucket } = await import("@/lib/cloudflare");
+            await getMediaBucket().delete(story.imageKey).catch(() => { /* silent */ });
+          }
+          // DSA Art. 17 indokolás-közlés: ha a szerző adott emailt, megkapja az
+          // elutasítás indokát (admin-indok vagy általános) + a fellebbezési utat.
+          if (story?.contactEmail) {
+            const reason =
+              typeof body.reason === "string" && body.reason.trim()
+                ? body.reason.trim().slice(0, 500)
+                : null;
+            const { sendStoryRejectedEmail } = await import("@/lib/email");
+            const ctx = getCloudflareCtx();
+            const send = sendStoryRejectedEmail({
+              to: story.contactEmail,
+              title: story.title,
+              reason,
+            }).catch((e) => safeLogError("moderation/story-rejected-email", e));
+            if (ctx) ctx.waitUntil(send); else await send;
+          }
         }
       } catch (e) {
         safeLogError("moderation/story-decide", e);

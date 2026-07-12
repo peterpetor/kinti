@@ -1075,6 +1075,62 @@ Oszd meg a linket a barátaiddal, a Facebook-csoportodban — hadd olvassák min
   }
 }
 
+export interface StoryRejectedEmailArgs {
+  to: string;
+  title: string;
+  /** Az admin által megadott indok; üres/null → általános indok. */
+  reason: string | null;
+}
+
+/**
+ * Indokolás-közlés a történet szerzőjének elutasításkor (DSA Art. 17):
+ * mi történt + miért (konkrét vagy általános indok) + hogy EMBERI (szerkesztői)
+ * döntés volt + a jogorvoslati út (válasz-email / fellebbezés, ÁSZF 5.2).
+ */
+export async function sendStoryRejectedEmail(args: StoryRejectedEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = "A történeted most nem jelent meg — kinti.app";
+  const reasonText = args.reason?.trim()
+    ? args.reason.trim()
+    : "a történet a jelenlegi formájában nem felelt meg a közzétételi feltételeknek (ÁSZF 3. pont).";
+
+  const text = `Szia!
+
+Köszönjük, hogy megírtad a történeted („${args.title}"). A szerkesztői ellenőrzés után úgy döntöttünk, hogy most nem tesszük közzé.
+
+Indok: ${reasonText}
+
+A döntést emberi szerkesztő hozta (nem automatizált rendszer). Ha nem értesz egyet vele, válaszolj erre az emailre, vagy írj az info@kinti.app címre — a fellebbezést megvizsgáljuk (ÁSZF 5.2). Javított változatot bármikor újra beküldhetsz.
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: "A történeted szerkesztői döntés után most nem jelent meg",
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Élettörténetek</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">A történeted most nem jelent meg</p>
+      <p style="margin:0 0 14px;font-size:13.5px;line-height:1.6;color:#5c6d63;">
+        Köszönjük, hogy megírtad a történeted (<strong style="color:#0e1f17;">${escapeHtml(args.title)}</strong>).
+        A szerkesztői ellenőrzés után úgy döntöttünk, hogy most nem tesszük közzé.
+      </p>
+      <div style="margin:0 0 16px;padding:14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a097;margin-bottom:4px;">Indok</div>
+        <div style="font-size:13.5px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">${escapeHtml(reasonText)}</div>
+      </div>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.6;">
+        A döntést emberi szerkesztő hozta (nem automatizált rendszer). Ha nem értesz egyet vele,
+        válaszolj erre az emailre vagy írj az <a href="mailto:info@kinti.app" style="color:#1d4434;">info@kinti.app</a>
+        címre — a fellebbezést megvizsgáljuk. Javított változatot bármikor újra beküldhetsz.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 export interface KeresekLeadEmailArgs {
   business: LeadRequestBusiness;
   title: string;

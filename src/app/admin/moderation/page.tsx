@@ -250,6 +250,9 @@ export default async function ModerationPage({
                       current={it.moderationStatus}
                       submitterIpHash={it.submitterIpHash}
                       submitterEmail={it.submitterEmail}
+                      // Történet-elutasításnál indok-mező (DSA Art. 17): a
+                      // szerző emailben kapja az indokot, ha adott címet.
+                      askRejectReason={typeParam === "stories"}
                     />
                   </div>
                 </article>
