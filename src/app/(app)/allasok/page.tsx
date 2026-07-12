@@ -67,7 +67,7 @@ export default async function JobsPage() {
               className="rounded-xl border border-line bg-surface p-3 transition active:scale-[0.98]"
             >
               <span className="text-lg">🎤</span>
-              <span className="mt-1 block text-[13px] font-extrabold leading-tight text-ink">AI interjú-gyakorló</span>
+              <span className="mt-1 block text-[13px] font-extrabold leading-tight text-ink">AI interjú-szimulátor</span>
               <span className="mt-0.5 block text-[11px] leading-snug text-ink-muted">
                 Próbainterjú a helyi kérdésekkel — visszajelzéssel
               </span>
