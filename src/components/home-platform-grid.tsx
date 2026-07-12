@@ -27,7 +27,7 @@ const TONE_CHIP: Record<Tone, string> = {
   social: "bg-info/10 text-info",
 };
 
-const MODULES: { href: string; icon: IconName; label: string; tone: Tone }[] = [
+const MODULES: { href: string; icon: IconName; label: string; tone: Tone; external?: boolean }[] = [
   { href: "/szaknevsor", icon: "list", label: "Szaknévsor", tone: "work" },
   { href: "/keresek", icon: "search", label: "Keresek", tone: "work" },
   { href: "/allasok", icon: "briefcase", label: "Állások", tone: "work" },
@@ -38,14 +38,27 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone }[] = [
   { href: "/mennyi-marad", icon: "trending", label: "Mennyi marad?", tone: "money" },
   { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor", tone: "money" },
   { href: "/arfolyam", icon: "trending", label: "Árfolyam", tone: "money" },
+  { href: "/lakberles", icon: "home", label: "Lakásbérlés", tone: "money" },
+  { href: "/szolgaltato-valto", icon: "filter", label: "Szolgáltató-váltó", tone: "money" },
+  { href: "/utalas", icon: "send", label: "Utalás", tone: "money" },
   { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke", tone: "learn" },
   { href: "/kviz", icon: "star", label: "Kvíz", tone: "learn" },
   { href: "/ugyintezes", icon: "document", label: "Ügyintézés", tone: "work" },
   { href: "/hivatalos", icon: "flag", label: "Hivatalos linkek", tone: "work" },
+  { href: "/hatarido", icon: "clock", label: "Határidők", tone: "work" },
+  { href: "/kozlekedes", icon: "nav", label: "Közlekedés", tone: "work" },
+  { href: "/bussen", icon: "car", label: "Bírság-becslő", tone: "work" },
+  // CH-only — a feature-availability a többi országban elrejti.
+  { href: "/vam", icon: "shoppingBag", label: "Vám-kalkulátor", tone: "work" },
   { href: "/allampolgarsag", icon: "flag", label: "Állampolgárság", tone: "learn" },
+  { href: "/iskolarendszer", icon: "users", label: "Iskolarendszer", tone: "learn" },
+  { href: "/allasok/szakmai-szotar", icon: "bookmark", label: "Szakmai szótár", tone: "learn" },
   { href: "/kikoltozes", icon: "check", label: "Kiköltözés", tone: "work" },
   { href: "/repulojegy", icon: "send", label: "Repülőjegy", tone: "social" },
   { href: "/tortenetek", icon: "heart", label: "Élettörténetek", tone: "social" },
+  { href: "/profil/kinti-pass", icon: "qrCode", label: "Kinti Pass", tone: "social" },
+  // A papírrepülő a Telegram saját logó-motívuma — külső deep-link a bothoz.
+  { href: "https://t.me/KintiSzaknevsorBot", icon: "send", label: "Telegram-bot", tone: "social", external: true },
 ];
 
 export function HomePlatformGrid() {
@@ -53,7 +66,20 @@ export function HomePlatformGrid() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
-  const modules = MODULES.filter((m) => isFeatureAvailable(m.href.slice(1), country));
+  const modules = MODULES.filter(
+    (m) => m.external || isFeatureAvailable(m.href.slice(1), country),
+  );
+
+  const tileCls =
+    "flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-2 py-3.5 text-center shadow-card transition active:scale-[0.97]";
+  const tileInner = (m: (typeof MODULES)[number]) => (
+    <>
+      <span className={`grid h-10 w-10 place-items-center rounded-[12px] ${TONE_CHIP[m.tone]}`}>
+        <Icon name={m.icon} size={19} strokeWidth={2.2} />
+      </span>
+      <span className="text-[11.5px] font-bold leading-tight text-ink">{m.label}</span>
+    </>
+  );
 
   return (
     <section className="space-y-3">
@@ -62,18 +88,17 @@ export function HomePlatformGrid() {
         Egy app — minden a kinti élethez: munka, pénz, nyelv, ügyintézés.
       </p>
       <div className="grid grid-cols-3 gap-2.5">
-        {modules.map((m) => (
-          <Link
-            key={m.href}
-            href={m.href}
-            className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-2 py-3.5 text-center shadow-card transition active:scale-[0.97]"
-          >
-            <span className={`grid h-10 w-10 place-items-center rounded-[12px] ${TONE_CHIP[m.tone]}`}>
-              <Icon name={m.icon} size={19} strokeWidth={2.2} />
-            </span>
-            <span className="text-[11.5px] font-bold leading-tight text-ink">{m.label}</span>
-          </Link>
-        ))}
+        {modules.map((m) =>
+          m.external ? (
+            <a key={m.href} href={m.href} target="_blank" rel="noopener noreferrer" className={tileCls}>
+              {tileInner(m)}
+            </a>
+          ) : (
+            <Link key={m.href} href={m.href} className={tileCls}>
+              {tileInner(m)}
+            </Link>
+          ),
+        )}
       </div>
     </section>
   );
