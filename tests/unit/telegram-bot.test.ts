@@ -70,6 +70,13 @@ describe("formatBotReply — kontakt-mentes, HTML-biztos", () => {
     expect(out).not.toMatch(/\+43|tel:|mailto:/);
   });
 
+  it("fizetett kiemelés (featured) láthatóan jelölve — P2B átláthatóság", () => {
+    const out = formatBotReply(parsed, [{ ...biz[0], featured: true }, biz[1]]);
+    expect(out).toContain("⭐ Kiemelt");
+    // A nem-kiemelt sorban nincs jelölés
+    expect(out.split("Hajas Ház")[1]).not.toContain("Kiemelt");
+  });
+
   it("üres találat → beajánló CTA", () => {
     const out = formatBotReply(parsed, []);
     expect(out).toContain("/szaknevsor/uj");

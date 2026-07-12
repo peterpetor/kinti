@@ -73,6 +73,8 @@ export interface BotBusiness {
   cantonCode: string | null;
   rating: number | null;
   reviews: number | null;
+  /** Szaknévsor PRO (fizetett kiemelés) — a válaszban JELÖLNI kell (P2B/UCP). */
+  featured?: boolean;
 }
 
 const BASE = "https://kinti.app";
@@ -126,7 +128,9 @@ export function formatBotReply(
   const rows = businesses
     .map((b, i) => {
       const region = b.cantonCode ? regionName(parsed.country, b.cantonCode) : null;
-      const meta = [b.categoryLabel, region].filter(Boolean).join(" · ");
+      // A fizetett kiemelés (featured) láthatóan jelölve — mint az appban a
+      // „Szaknévsor PRO" badge (P2B rangsor-átláthatóság, ÁSZF 10/A).
+      const meta = [b.featured ? "⭐ Kiemelt" : null, b.categoryLabel, region].filter(Boolean).join(" · ");
       return `${i + 1}. <b>${escapeTgHtml(b.name)}</b>${ratingText(b)}${meta ? `\n   ${escapeTgHtml(meta)}` : ""}\n   <a href="${businessProfileUrl(b.id)}">Profil megnyitása →</a>`;
     })
     .join("\n\n");

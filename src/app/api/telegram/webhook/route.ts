@@ -56,6 +56,7 @@ interface BizRow {
   canton_code: string | null;
   rating: number | null;
   reviews: number | null;
+  featured: number;
 }
 
 async function tgApi(token: string, method: string, payload: unknown): Promise<void> {
@@ -80,7 +81,7 @@ async function findBusinesses(parsed: BotParse, limit = 3): Promise<{ items: Bot
     binds.push(limit);
     const { results } = await getDB()
       .prepare(
-        `SELECT id, name, category_label, canton_code, rating, reviews
+        `SELECT id, name, category_label, canton_code, rating, reviews, COALESCE(featured,0) AS featured
          FROM businesses WHERE ${where}
          ORDER BY COALESCE(featured,0) DESC, COALESCE(rating,0) DESC, COALESCE(reviews,0) DESC
          LIMIT ?`,
@@ -101,6 +102,7 @@ async function findBusinesses(parsed: BotParse, limit = 3): Promise<{ items: Bot
     items: rows.map((r) => ({
       id: r.id, name: r.name, categoryLabel: r.category_label,
       cantonCode: r.canton_code, rating: r.rating, reviews: r.reviews,
+      featured: Number(r.featured) === 1,
     })),
     countryWide,
   };
