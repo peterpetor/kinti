@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   }
   const description = story.summary ?? storyExcerpt(story.bodyMd);
   return {
-    title: `${story.title} — Expat Élettörténetek | kinti.app`,
+    title: `${story.title} — Élettörténetek | kinti.app`,
     description,
     alternates: { canonical: `/tortenetek/${story.slug}` },
     openGraph: {

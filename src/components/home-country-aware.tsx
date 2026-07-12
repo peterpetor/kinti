@@ -40,8 +40,8 @@ export function HomePrimaryActions() {
   );
 }
 
-/** Kezdőlap-kártyák: a Kiköltözés Tracker minden országban (ország-tudatos szöveg),
- *  a Tudásbázis (svájci források) egyelőre csak CH-ban. */
+/** Kezdőlap-kártyák: a Kiköltözési teendőlista minden országban (ország-tudatos
+ *  szöveg), a Tudásbázis (svájci források) egyelőre csak CH-ban. */
 export function HomeChCards() {
   const country = useEffectiveCountry();
   const isCH = country === "CH";
@@ -55,9 +55,9 @@ export function HomeChCards() {
           <Icon name="check" size={19} strokeWidth={2.3} />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">Kiköltözés Tracker</span>
+          <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">Kiköltözési teendőlista</span>
           <span className="block text-[12px] text-ink-muted">
-            Személyre szabott, lépésről-lépésre checklist {countryIllative(country)} költözőknek
+            Személyre szabott, lépésről-lépésre teendők {countryIllative(country)} költözőknek
           </span>
         </span>
         <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-accent" />

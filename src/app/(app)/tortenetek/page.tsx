@@ -11,12 +11,12 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Expat Élettörténetek — magyarok külföldön | kinti.app",
+  title: "Élettörténetek — magyarok külföldön | kinti.app",
   description:
     "Valódi kiköltözési történetek magyaroktól: hogyan találtak munkát, lakást, közösséget Svájcban, Ausztriában, Németországban és Hollandiában. Írd meg a sajátod!",
   alternates: { canonical: "/tortenetek" },
   openGraph: {
-    title: "Expat Élettörténetek — magyarok külföldön",
+    title: "Élettörténetek — magyarok külföldön",
     description: "Valódi kiköltözési történetek magyaroktól — és tér a tiédnek is.",
     url: "/tortenetek",
     type: "website",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * /tortenetek — „Expat Élettörténetek" UGC-blog listaoldala.
+ * /tortenetek — „Élettörténetek" UGC-blog listaoldala.
  * Minden publikált (admin-jóváhagyott) sztori egy organikus SEO-céloldal;
  * a lista maga is indexelt belépési pont. A beküldés Turnstile-védett,
  * szerkesztői ellenőrzéssel.
@@ -37,7 +37,7 @@ export default async function StoriesPage() {
     <div className="space-y-5 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
-        <ScreenHeader eyebrow="Kinti · Közösség" title="Expat Élettörténetek" />
+        <ScreenHeader eyebrow="Kinti · Közösség" title="Élettörténetek" />
       </header>
 
       <p className="text-[13px] leading-relaxed text-ink-muted">

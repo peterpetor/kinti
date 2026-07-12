@@ -111,9 +111,9 @@ export default function RelocationTrackerPage() {
   return (
     <div className="flex flex-col pb-24">
       <div className="px-4 pb-4 pt-6">
-        <ScreenHeader 
-          eyebrow="Tervező" 
-          title="Kiköltözés Tracker" 
+        <ScreenHeader
+          eyebrow="Tervező"
+          title="Kiköltözési teendőlista"
           back={
             <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-full bg-ink/5 text-ink hover:bg-ink/10 transition">
               <Icon name="arrowLeft" size={20} strokeWidth={2.5} />

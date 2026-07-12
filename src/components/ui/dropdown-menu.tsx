@@ -159,6 +159,12 @@ export function DropdownMenu() {
                   </span>
                   Ajánlj egy magyar vállalkozást
                 </Link>
+                <Link href="/keresek" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <Icon name="search" size={16} strokeWidth={2.4} />
+                  </span>
+                  Keresek — igény-hirdetés
+                </Link>
                 {isSignedIn && hasBusiness === null ? (
                   <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl" aria-hidden>
                     <span className="h-8 w-8 shrink-0 rounded-xl bg-surface-alt animate-pulse" />
@@ -203,7 +209,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
                     <Icon name="user" size={16} strokeWidth={2.4} />
                   </span>
-                  Munkáltatói Irányítópult
+                  Munkáltatói irányítópult
                   <JobFeaturedBadge />
                 </Link>
               </CollapsibleSection>
@@ -225,9 +231,13 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🏆</span>
                   Közösségi ranglista
                 </Link>
+                <Link href="/tortenetek" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-base">✍️</span>
+                  Élettörténetek
+                </Link>
                 <Link href="/profil/kinti-pass" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🎟️</span>
-                  Kinti Pass (kedvezménykártya)
+                  Kinti Pass — kedvezménykártya
                 </Link>
               </CollapsibleSection>
 
@@ -243,13 +253,13 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
                     <Icon name="document" size={16} strokeWidth={2.4} />
                   </span>
-                  Német önéletrajz készítő
+                  Német önéletrajz-készítő
                 </Link>
                 <Link href="/allasok/interju-szimulator" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
                     <Icon name="sparkles" size={16} strokeWidth={2.4} />
                   </span>
-                  AI Interjú Szimulátor
+                  AI interjú-szimulátor
                   <ProBadge />
                 </Link>
                 <Link href="/allasok/cv-audit" onClick={close} className={linkClass}>
@@ -264,7 +274,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/10 text-star">
                     <Icon name="document" size={16} strokeWidth={2.4} />
                   </span>
-                  Szakmai Gyors-Szótár
+                  Szakmai szótár
                   <ProBadge />
                 </Link>
                 )}
@@ -275,14 +285,14 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
                     <Icon name="check" size={16} strokeWidth={2.4} />
                   </span>
-                  Kiköltözés Tracker
+                  Kiköltözési teendőlista
                 </Link>
                 {has("iskolarendszer") && (
                 <Link href="/iskolarendszer" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-star text-base">
                     🏢
                   </span>
-                  {isCH ? "Svájci Iskolarendszer" : country === "DE" ? "Német Iskolarendszer" : country === "NL" ? "Holland Iskolarendszer" : "Osztrák Iskolarendszer"}
+                  {isCH ? "Svájci iskolarendszer" : country === "DE" ? "Német iskolarendszer" : country === "NL" ? "Holland iskolarendszer" : "Osztrák iskolarendszer"}
                 </Link>
                 )}
                 {has("vizum") && (
@@ -307,9 +317,18 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     📋
                   </span>
-                  Ügyintézés Varázsló
+                  Ügyintézés-varázsló
                 </Link>
                 )}
+                {/* Határidő-asszisztens: ügyintézési eszköz — az „Utazás" szekcióból
+                    került ide (menü-rendezés, user-kérés 2026-07-12). */}
+                <Link href="/hatarido" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
+                    ⏰
+                  </span>
+                  Határidő-asszisztens
+                  <ProBadge />
+                </Link>
                 <Link href="/hivatalos" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🏛️
@@ -331,14 +350,23 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     💱
                   </span>
-                  Árfolyam-figyelő
+                  Árfolyam
+                </Link>
+                {/* Utalás-asszisztens: pénzügyi eszköz — az „Utazás" szekcióból
+                    került ide (menü-rendezés, user-kérés 2026-07-12). */}
+                <Link href="/utalas" onClick={close} className={linkClass}>
+                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
+                    💸
+                  </span>
+                  Utalás-asszisztens
+                  <ProBadge />
                 </Link>
                 {has("berkalkulator") && (
                 <Link href="/berkalkulator" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
                     💰
                   </span>
-                  {isCH ? "Svájci Bérkalkulátor" : "Bérkalkulátor"}
+                  {isCH ? "Svájci bérkalkulátor" : "Bérkalkulátor"}
                 </Link>
                 )}
                 <Link href="/mennyi-marad" onClick={close} className={linkClass}>
@@ -352,7 +380,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
                     📊
                   </span>
-                  Bér- és Lakbér Iránytű
+                  Iránytű — bérek és lakbérek
                 </Link>
                 )}
                 {/* A „Mennyit költesz?" 2026-07-11-én kivezetve (user-döntés) —
@@ -362,7 +390,7 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
                     🏠
                   </span>
-                  Bérlés rejtett-költség
+                  Lakásbérlés — rejtett költségek
                 </Link>
                 )}
                 {has("szolgaltato-valto") && (
@@ -370,12 +398,12 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
                     🔄
                   </span>
-                  Szolgáltató Váltó
+                  Szolgáltató-váltó
                 </Link>
                 )}
               </CollapsibleSection>
 
-              <CollapsibleSection title="Utazás & Térkép">
+              <CollapsibleSection title="Utazás & Autó">
                 {has("kozlekedes") && (
                 <Link href="/kozlekedes" onClick={close} className={linkClass}>
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
@@ -405,23 +433,11 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     🚓
                   </span>
-                  Gyorshajtás kalkulátor
+                  Gyorshajtás-kalkulátor
                 </Link>
                 )}
-                <Link href="/utalas" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    💸
-                  </span>
-                  Utalás-asszisztens
-                  <ProBadge />
-                </Link>
-                <Link href="/hatarido" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
-                    ⏰
-                  </span>
-                  Határidő-asszisztens
-                  <ProBadge />
-                </Link>
+                {/* Az Utalás- és Határidő-asszisztens a Pénzügyek / Ügyintézés
+                    szekcióba került (oda való — menü-rendezés 2026-07-12). */}
               </CollapsibleSection>
 
               <CollapsibleSection title="Játék">
@@ -431,7 +447,7 @@ export function DropdownMenu() {
                     🦉
                   </span>
                   {/* Nyelvlecke 2026-07-11 óta ingyenes — nincs ProBadge. */}
-                  {isCH ? "Svájci Német (Mundart)" : country === "DE" ? "Német (Hochdeutsch)" : country === "NL" ? "Holland (Nederlands)" : "Osztrák Német"}
+                  {isCH ? "Nyelvlecke — svájci német" : country === "DE" ? "Nyelvlecke — német" : country === "NL" ? "Nyelvlecke — holland" : "Nyelvlecke — osztrák német"}
                 </Link>
                 )}
                 {has("kviz") && (
@@ -439,12 +455,12 @@ export function DropdownMenu() {
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
                     🎯
                   </span>
-                  {isCH ? "Napi Svájci Kvíz" : country === "DE" ? "Napi Német Kvíz" : country === "NL" ? "Napi Holland Kvíz" : "Napi Osztrák Kvíz"}
+                  Napi kvíz
                 </Link>
                 )}
               </CollapsibleSection>
 
-              <CollapsibleSection title="Alkalmazás beállítások">
+              <CollapsibleSection title="Beállítások">
                 {/* Megjelenés — nem link, hanem téma-váltó vezérlő */}
                 <div className="flex items-center justify-between gap-3 px-4 py-3.5">
                   <span className="flex items-center gap-3 text-[15px] font-bold text-ink">

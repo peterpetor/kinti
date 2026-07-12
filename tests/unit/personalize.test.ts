@@ -60,7 +60,7 @@ describe("buildPersonalizedItems", () => {
     }
   });
 
-  it("tervező: Kiköltözés Tracker az első + Mennyi marad? bekerül", () => {
+  it("tervező: Kiköltözési teendőlista az első + Mennyi marad? bekerül", () => {
     const items = buildPersonalizedItems("AT", "planning", "munka");
     expect(items[0].href).toBe("/kikoltozes");
     expect(items.map((i) => i.href)).toContain("/mennyi-marad");

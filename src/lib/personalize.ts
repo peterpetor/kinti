@@ -109,7 +109,7 @@ const MAX_ITEMS = 4;
 
 /**
  * A rád-hangolt gyorslinkek: a fókusz adja a törzset, az életszakasz hangolja
- * (tervező → Kiköltözés Tracker elöl; friss → bejelentkezés-cikk elöl; régóta
+ * (tervező → Kiköltözési teendőlista elöl; friss → bejelentkezés-cikk elöl; régóta
  * kint → Kinti Pass a végén). Href-dedup + max 4 elem. Minden cél MEGLÉVŐ
  * modul — a lista kurált, nem generált (ai-content-accuracy elv).
  */
@@ -155,7 +155,7 @@ export function buildPersonalizedItems(
   let items = [...byFocus[focus]];
 
   if (stage === "planning") {
-    items.unshift({ emoji: "✈️", title: "Kiköltözés Tracker", desc: "Lépésről-lépésre checklist az indulásig", href: "/kikoltozes" });
+    items.unshift({ emoji: "✈️", title: "Kiköltözési teendőlista", desc: "Lépésről-lépésre teendők az indulásig", href: "/kikoltozes" });
     // Tervezőnek a „mennyiből jövök ki kint?" az első pénz-kérdés — fókusztól függetlenül.
     if (focus !== "penzugy") {
       items.splice(2, 0, { emoji: "💶", title: "Mennyi marad? — tervező", desc: "Kinti bér és megélhetés még indulás előtt", href: "/mennyi-marad" });

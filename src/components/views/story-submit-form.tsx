@@ -5,6 +5,14 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { COUNTRIES, DEFAULT_COUNTRY } from "@/lib/countries";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 
+/** Ország-illő példa-város a cím-placeholderhez (Svájcban ne Bécs legyen). */
+const EXAMPLE_CITY: Record<string, string> = {
+  CH: "Zürichben",
+  AT: "Bécsben",
+  DE: "Münchenben",
+  NL: "Amszterdamban",
+};
+
 /**
  * StorySubmitForm — „Írd meg a történeted" beküldő (admin-moderált UGC).
  * Egyszerű markdown-részhalmaz (## alcím, **félkövér**, - lista) + opcionális
@@ -25,8 +33,34 @@ export function StorySubmitForm({ turnstileSiteKey }: { turnstileSiteKey: string
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const turnstileRef = useRef<TurnstileWidgetRef>(null);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   const effCountry = country ?? prefCountry ?? DEFAULT_COUNTRY;
+
+  // Formázó-gombok: a kurzornál/kijelölésen dolgoznak (nem kell markdown-t tudni).
+  function applyFormat(kind: "h2" | "bold" | "list") {
+    const ta = bodyRef.current;
+    if (!ta) return;
+    const { selectionStart: s, selectionEnd: e, value } = ta;
+    let next = value;
+    let caret = e;
+    if (kind === "bold") {
+      const sel = value.slice(s, e) || "fontos rész";
+      next = `${value.slice(0, s)}**${sel}**${value.slice(e)}`;
+      caret = s + sel.length + 4;
+    } else {
+      // Sor-eleji jelölés: a kurzor sorának elejére kerül a prefix.
+      const lineStart = value.lastIndexOf("\n", Math.max(0, s - 1)) + 1;
+      const prefix = kind === "h2" ? "## " : "- ";
+      next = value.slice(0, lineStart) + prefix + value.slice(lineStart);
+      caret = e + prefix.length;
+    }
+    setBodyMd(next);
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.setSelectionRange(caret, caret);
+    });
+  }
 
   async function submit() {
     setErr(null);
@@ -94,7 +128,7 @@ export function StorySubmitForm({ turnstileSiteKey }: { turnstileSiteKey: string
       </div>
 
       <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120}
-        placeholder="Cím — pl. Hogyan lettem autószerelő Zürichben" className={inputCls} />
+        placeholder={`Cím — pl. Hogyan lettem autószerelő ${EXAMPLE_CITY[effCountry] ?? EXAMPLE_CITY[DEFAULT_COUNTRY]}`} className={inputCls} />
       <div className="grid grid-cols-2 gap-2">
         <input value={authorName} onChange={(e) => setAuthorName(e.target.value)} maxLength={60}
           placeholder="Neved / beceneved" className={inputCls} />
@@ -105,14 +139,29 @@ export function StorySubmitForm({ turnstileSiteKey }: { turnstileSiteKey: string
       <input value={city} onChange={(e) => setCity(e.target.value)} maxLength={60}
         placeholder="Város (opcionális)" className={inputCls} />
       <div>
-        <textarea value={bodyMd} onChange={(e) => setBodyMd(e.target.value)} maxLength={20000} rows={12}
-          placeholder={"Meséld el a saját szavaiddal…\n\n## Alcímeket így írhatsz\nFélkövér: **így**, lista: soreleji kötőjellel."}
+        {/* Formázó-gombok — nem kell markdown-t ismerni (user-kérés). */}
+        <div className="mb-1.5 flex gap-1.5">
+          <button type="button" onClick={() => applyFormat("h2")}
+            className="rounded-pill border border-line bg-surface-alt px-3 py-1.5 text-[12px] font-bold text-ink transition active:scale-95">
+            Alcím
+          </button>
+          <button type="button" onClick={() => applyFormat("bold")}
+            className="rounded-pill border border-line bg-surface-alt px-3 py-1.5 text-[12px] font-black text-ink transition active:scale-95">
+            F <span className="font-bold text-ink-muted">félkövér</span>
+          </button>
+          <button type="button" onClick={() => applyFormat("list")}
+            className="rounded-pill border border-line bg-surface-alt px-3 py-1.5 text-[12px] font-bold text-ink transition active:scale-95">
+            • Lista
+          </button>
+        </div>
+        <textarea ref={bodyRef} value={bodyMd} onChange={(e) => setBodyMd(e.target.value)} maxLength={20000} rows={12}
+          placeholder={"Meséld el a saját szavaiddal — hogyan indultál, mi volt nehéz, mi segített…"}
           className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] leading-relaxed text-ink" />
         <p className="mt-1 text-[11px] text-ink-faint">
           {bodyMd.trim().length < 400
             ? `Még ${400 - bodyMd.trim().length} karakter a minimumhoz.`
             : `${bodyMd.length.toLocaleString("hu-HU")} karakter.`}{" "}
-          Formázás: <strong>## alcím</strong>, <strong>**félkövér**</strong>, <strong>- lista</strong>.
+          Jelöld ki a szöveget, és koppints a gombokra a formázáshoz.
         </p>
       </div>
 

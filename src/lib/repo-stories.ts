@@ -1,5 +1,5 @@
 /**
- * repo-stories.ts — „Expat Élettörténetek" UGC-blog adatrétege (0128 migráció).
+ * repo-stories.ts — „Élettörténetek" UGC-blog adatrétege (0128 migráció).
  *
  * A publikus vetületben SOHA nincs ip_hash / contact_email (privacy). A
  * moderáció a közös rendszeren fut (repo-spam: ModerationTable "stories");
