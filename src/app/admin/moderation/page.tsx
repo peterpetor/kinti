@@ -24,6 +24,7 @@ const TABLE_LABELS: Record<ModerationTable, string> = {
   reviews: "Vélemények",
   businesses: "Vállalkozások",
   service_requests: "Keresések",
+  stories: "Élettörténetek",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -72,11 +73,13 @@ export default async function ModerationPage({
     pendingReviews,
     pendingBusinesses,
     pendingRequests,
+    pendingStories,
     items,
   ] = await Promise.all([
     moderationCount("reviews", 0),
     moderationCount("businesses", 0, country),
     moderationCount("service_requests", 0, country),
+    moderationCount("stories", 0, country),
     listModerationQueue(typeParam, statusValue, 100, country),
   ]);
 
@@ -84,6 +87,7 @@ export default async function ModerationPage({
     reviews: pendingReviews,
     businesses: pendingBusinesses,
     service_requests: pendingRequests,
+    stories: pendingStories,
   };
 
   return (
@@ -281,6 +285,10 @@ function previewLink(table: ModerationTable, id: string): string {
       return `/admin/moderation`; // vélemények csak a profil-page-en jelennek meg
     case "service_requests":
       return `/keresek`;
+    case "stories":
+      // A történet-oldal id-vel is felold, de NEM-publikáltat csak adminnak
+      // mutat (teljes szöveg a döntés előtt — „én ellenőrzöm mindet" flow).
+      return `/tortenetek/${id}`;
   }
 }
 

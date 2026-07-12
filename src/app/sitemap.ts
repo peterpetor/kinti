@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getBusinesses, getCategories, getJobs } from "@/lib/repo";
+import { getBusinesses, getCategories, getJobs, getPublishedStories } from "@/lib/repo";
 import { parseDbDate } from "@/lib/dates";
 import { areasForBusiness } from "@/lib/seo-areas";
 import { GUIDES, GUIDES_UPDATED_AT } from "@/lib/guides";
@@ -97,7 +97,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* ha a DB nem elérhető, a statikus oldalak akkor is jönnek */
   }
 
-  // 4) Álláshirdetések (job board)
+  // 4) Élettörténetek (UGC-blog): a lista-oldal + minden publikált sztori.
+  try {
+    const stories = await getPublishedStories(null, 500);
+    items.push({ url: `${BASE}/tortenetek`, lastModified: now, changeFrequency: "weekly", priority: 0.7 });
+    for (const s of stories) {
+      items.push({
+        url: `${BASE}/tortenetek/${s.slug}`,
+        lastModified: parseDbDate(s.publishedAt ?? "") ?? now,
+        changeFrequency: "monthly",
+        priority: 0.65,
+      });
+    }
+  } catch {
+    /* ha a DB nem elérhető, kihagyjuk */
+  }
+
+  // 5) Álláshirdetések (job board)
   try {
     const jobs = await getJobs({ status: "active" });
     for (const job of jobs) {

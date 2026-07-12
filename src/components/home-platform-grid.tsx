@@ -45,6 +45,7 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone }[] = [
   { href: "/allampolgarsag", icon: "flag", label: "Állampolgárság", tone: "learn" },
   { href: "/kikoltozes", icon: "check", label: "Kiköltözés", tone: "work" },
   { href: "/repulojegy", icon: "send", label: "Repülőjegy", tone: "social" },
+  { href: "/tortenetek", icon: "heart", label: "Élettörténetek", tone: "social" },
 ];
 
 export function HomePlatformGrid() {

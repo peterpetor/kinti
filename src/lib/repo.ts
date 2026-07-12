@@ -18,6 +18,7 @@ export * from "./repo-spam";
 export * from "./repo-misc";
 export * from "./repo-newsletter";
 export * from "./repo-requests";
+export * from "./repo-stories";
 export * from "./repo-external-jobs";
 export * from "./repo-leaderboard";
 export * from "./repo-quiz-stats";

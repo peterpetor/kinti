@@ -1030,6 +1030,51 @@ ${lastFreeText}
 
 
 
+export interface StoryPublishedEmailArgs {
+  to: string;
+  title: string;
+  url: string;
+}
+
+/** Értesítő a történet szerzőjének: megjelent — oszd meg (organikus terjedés). */
+export async function sendStoryPublishedEmail(args: StoryPublishedEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = "Megjelent a történeted a Kintin! 🎉";
+
+  const text = `Szia!
+
+A történeted átment a szerkesztői ellenőrzésen, és megjelent a Kintin:
+
+${args.title}
+${args.url}
+
+Oszd meg a linket a barátaiddal, a Facebook-csoportodban — hadd olvassák minél többen!
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `Megjelent: ${args.title}`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Élettörténetek</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">🎉 Megjelent a történeted!</p>
+      <div style="margin:0 0 20px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:15px;font-weight:800;color:#0e1f17;">${escapeHtml(args.title)}</div>
+      </div>
+      <p style="margin:0 0 20px;">
+        <a href="${escapeAttr(args.url)}" style="display:inline-block;padding:13px 22px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Megnézem →</a>
+      </p>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
+        Oszd meg a linket a barátaiddal vagy a Facebook-csoportodban — hadd olvassák minél többen! Köszönjük, hogy írtál.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 export interface KeresekLeadEmailArgs {
   business: LeadRequestBusiness;
   title: string;

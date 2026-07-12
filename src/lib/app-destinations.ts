@@ -42,6 +42,8 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "onéletrajz oneletrajz cv lebenslauf nemet pdf allas munka jelentkezes bewerbung szakma forditas" },
   { href: "/keresek", title: "Keresek", subtitle: "Igény-hirdetés — jelentkezzenek rád a szakik", icon: "search",
     keywords: "keresek igeny hirdetes keres kerdes szukseg" },
+  { href: "/tortenetek", title: "Élettörténetek", subtitle: "Valódi kiköltözési sztorik magyaroktól — írd meg a tiédet", icon: "heart",
+    keywords: "tortenet sztori elettortenet blog kikoltozes-sztori" },
   { href: "/berkalkulator", title: "Bérkalkulátor", subtitle: "Nettó fizetés becslése", icon: "sliders",
     keywords: "fizetes ber netto brutto kalkulator szamologep jovedelem berkalkulator adolevonas" },
   { href: "/mennyi-marad", title: "Mennyi marad?", subtitle: "Kiköltözési tervező — nettó + megélhetés + megtakarítás", icon: "trending",

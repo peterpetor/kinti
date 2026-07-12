@@ -24,12 +24,14 @@ const VALID_TABLES: ModerationTable[] = [
   "reviews",
   "businesses",
   "service_requests",
+  "stories",
 ];
 
 const TABLE_LABELS: Record<ModerationTable, string> = {
   reviews: "vélemény",
   businesses: "vállalkozás",
   service_requests: "keresés",
+  stories: "élettörténet",
 };
 
 /**
@@ -138,6 +140,33 @@ export async function POST(req: Request) {
             url: `/szaknevsor/${biz.id}`,
           }, "business"),
         );
+      }
+    }
+
+    // Élettörténet: jóváhagyáskor publikálás-dátum + (ha adott emailt) értesítő;
+    // elutasításkor a borítókép R2-takarítása (orphan-fájl ellen). Best-effort.
+    if (table === "stories") {
+      try {
+        const { markStoryPublished, getStoryAdminById } = await import("@/lib/repo");
+        const story = await getStoryAdminById(id);
+        if (statusValue === 1) {
+          await markStoryPublished(id);
+          if (story?.contactEmail) {
+            const { sendStoryPublishedEmail } = await import("@/lib/email");
+            const ctx = getCloudflareCtx();
+            const send = sendStoryPublishedEmail({
+              to: story.contactEmail,
+              title: story.title,
+              url: `https://kinti.app/tortenetek/${story.slug}`,
+            }).catch((e) => safeLogError("moderation/story-published-email", e));
+            if (ctx) ctx.waitUntil(send); else await send;
+          }
+        } else if (statusValue === 2 && story?.imageKey) {
+          const { getMediaBucket } = await import("@/lib/cloudflare");
+          await getMediaBucket().delete(story.imageKey).catch(() => { /* silent */ });
+        }
+      } catch (e) {
+        safeLogError("moderation/story-decide", e);
       }
     }
 
