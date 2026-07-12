@@ -18,11 +18,12 @@ import { haptic } from "@/lib/haptics";
  *
  *  • Menü-szűrő felül: ékezet-független azonnali keresés a ~35 elem között —
  *    gépelésre csak a találatok látszanak, a szekcióik kinyílnak.
- *  • Okos alapállapot: a két legértékesebb szekció (Szaknévsor & Állások,
- *    Pénzügyek) nyitva indul, a többi összecsukva — a menü egy képernyőnyi,
- *    nem görgető-fal.
- *  • A nyit/zár állapotot a menü MEGJEGYZI (localStorage kinti.menu.sec.*) —
- *    ki-ki a saját használatához igazíthatja, mint egy natív beállítás-app.
+ *  • MINDEN szekció alapból NYITVA (user-kérés, 2026-07-12 — a korábbi
+ *    „csak a két fő nyitva" alapállapotot váltotta): semmi nincs elrejtve,
+ *    a gyors elérést a szűrő adja.
+ *  • A nyit/zár állapotot a menü MEGJEGYZI (localStorage kinti.menu.sec2.* —
+ *    a kulcs-névtér verziózott, hogy a korábbi alapállapot tárolt „csukva"
+ *    értékei ne ragadjanak be) — aki becsuk valamit, annak úgy marad.
  *
  * Felirat-szabályok: [[ui-naming-rules]] (mondatkezdő nagybetű, kötőjeles
  * összetétel, nincs angol szó). Új menüpont = egy sor az items-listában.
@@ -179,7 +180,7 @@ export function DropdownMenu() {
     {
       id: "tudas",
       title: "Tudás & Ügyintézés",
-      defaultOpen: false,
+      defaultOpen: true,
       items: [
         { key: "kikoltozes", label: "Kiköltözési teendőlista", href: "/kikoltozes", tint: "bg-accent/10 text-accent", icon: { name: "check" } },
         ...(has("iskolarendszer")
@@ -215,7 +216,7 @@ export function DropdownMenu() {
     {
       id: "kozosseg",
       title: "Közösség & Profilom",
-      defaultOpen: false,
+      defaultOpen: true,
       items: [
         { key: "kedvencek", label: "Kedvenceim", href: "/szaknevsor?fav=1", tint: "bg-accent/10 text-accent", icon: { name: "heart", filled: true } },
         { key: "sajat", label: "Saját posztjaim", href: "/sajatjaim", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
@@ -227,7 +228,7 @@ export function DropdownMenu() {
     {
       id: "ai",
       title: "Felkészülés & AI",
-      defaultOpen: false,
+      defaultOpen: true,
       items: [
         { key: "cv", label: "Német önéletrajz-készítő", href: "/nemet-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" } },
         { key: "interju", label: "AI interjú-szimulátor", href: "/allasok/interju-szimulator", tint: "bg-primary/10 text-primary", icon: { name: "sparkles" }, badge: "pro" },
@@ -240,7 +241,7 @@ export function DropdownMenu() {
     {
       id: "utazas",
       title: "Utazás & Autó",
-      defaultOpen: false,
+      defaultOpen: true,
       items: [
         ...(has("kozlekedes") ? [{ key: "kozlekedes", label: "Tömegközlekedés", href: "/kozlekedes", tint: "bg-primary/10", icon: { emoji: "🚆" } } as MenuItem] : []),
         ...(has("repulojegy") ? [{ key: "repjegy", label: "Repülőjegy-figyelő", href: "/repulojegy", tint: "bg-primary/10", icon: { emoji: "✈️" } } as MenuItem] : []),
@@ -251,7 +252,7 @@ export function DropdownMenu() {
     {
       id: "jatek",
       title: "Nyelv & Játék",
-      defaultOpen: false,
+      defaultOpen: true,
       items: [
         ...(has("nyelvlecke")
           ? [{
@@ -266,7 +267,7 @@ export function DropdownMenu() {
     {
       id: "beallitasok",
       title: "Beállítások",
-      defaultOpen: false,
+      defaultOpen: true,
       items: [
         {
           key: "tema",
@@ -290,7 +291,7 @@ export function DropdownMenu() {
     {
       id: "kovess",
       title: "Kövess minket",
-      defaultOpen: false,
+      defaultOpen: true,
       items: [
         { key: "fb", label: "Facebook", href: "https://www.facebook.com/profile.php?id=61591833836890", external: true, tint: "bg-[#1877F2]/10 text-[#1877F2]", icon: { name: "facebook" } },
         { key: "li", label: "LinkedIn", href: "https://www.linkedin.com/company/kintiapp", external: true, tint: "bg-[#0A66C2]/10 text-[#0A66C2]", icon: { name: "linkedin" } },
@@ -301,7 +302,7 @@ export function DropdownMenu() {
     {
       id: "jogi",
       title: "Jogi & Segítség",
-      defaultOpen: false,
+      defaultOpen: true,
       items: [
         { key: "segitseg", label: "Segítség és GYIK", href: "/segitseg", tint: "bg-success/10 text-success", icon: { name: "question" } },
         { key: "impresszum", label: "Impresszum", href: "/impresszum", tint: "bg-ink-muted/10 text-ink-muted", icon: { name: "flag" } },
@@ -493,7 +494,7 @@ function CollapsibleSection({
 }) {
   const [open, setOpen] = useState<boolean>(() => {
     try {
-      const v = typeof window !== "undefined" ? localStorage.getItem(`kinti.menu.sec.${id}`) : null;
+      const v = typeof window !== "undefined" ? localStorage.getItem(`kinti.menu.sec2.${id}`) : null;
       return v === "1" ? true : v === "0" ? false : defaultOpen;
     } catch {
       return defaultOpen;
@@ -505,7 +506,7 @@ function CollapsibleSection({
     setOpen((o) => {
       const next = !o;
       try {
-        localStorage.setItem(`kinti.menu.sec.${id}`, next ? "1" : "0");
+        localStorage.setItem(`kinti.menu.sec2.${id}`, next ? "1" : "0");
       } catch { /* privát mód — csak a munkamenetre él */ }
       return next;
     });
