@@ -147,10 +147,11 @@ export function DropdownMenu() {
       defaultOpen: true,
       items: [
         { key: "ajanlas", label: "Ajánlj egy magyar vállalkozást", href: "/szaknevsor/ajanlas", tint: "bg-accent/10 text-accent", icon: { name: "send" } },
-        { key: "keresek", label: "Keresek — igény-hirdetés", href: "/keresek", tint: "bg-primary/10 text-primary", icon: { name: "search" } },
         businessItem,
         { key: "b2b", label: "B2B Hub — projektpiac", href: "/b2b", tint: "bg-pro/10", icon: { emoji: "🤝" }, badge: "bizpro" },
         { key: "allasok", label: "Álláshirdetések", href: "/allasok", tint: "bg-primary/10 text-primary", icon: { name: "briefcase" } },
+        // A Keresek az Álláshirdetések ALATT (user-kérés 2026-07-13).
+        { key: "keresek", label: "Keresek — igény-hirdetés", href: "/keresek", tint: "bg-primary/10 text-primary", icon: { name: "search" } },
         { key: "mv-profil", label: "Munkavállalói profil", href: "/allasok/profil", tint: "bg-accent/10 text-accent", icon: { name: "user" } },
         { key: "munkaltato", label: "Munkáltatói irányítópult", href: "/munkaltato", tint: "bg-accent/10 text-accent", icon: { name: "user" }, badge: "job" },
       ],
