@@ -20,6 +20,7 @@ import { NapiSzoCard } from "@/components/napi-szo-card";
 import { HomePlatformGrid } from "@/components/home-platform-grid";
 import { KintiAssistant } from "@/components/kinti-assistant";
 import { PersonalizedHome } from "@/components/personalized-home";
+import { HomeGreeting } from "@/components/home-greeting";
 import { ReferralHomeCard } from "@/components/referral-home-card";
 import { TrustBar } from "@/components/trust-bar";
 import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
@@ -54,32 +55,45 @@ export default async function FeedPage() {
         <DropdownMenu />
       </header>
 
+      {/* Napszak-köszöntés — natív app melegség, fix magasság (CLS-mentes). */}
+      <HomeGreeting />
+
+      {/* ── 1. STÁTUSZ-SÁV: kontextuális bannerek (többnyire null-t adnak,
+          csak akkor jelennek meg, ha VAN mondanivalójuk — így elöl állhatnak
+          anélkül, hogy a hétköznapi nyitóképet terhelnék). ─────────────────── */}
       <MyPostsBanner />
-      {/* Aktivációs checklist — az új felhasználót 3 lépésben teszi „lakóvá"
-          (régió → push → első kedvenc); kész/bezárt állapotban null. */}
-      <OnboardingChecklist />
       {/* Hívás-utáni vélemény-kérő (2 óra – 14 nap ablak, cégenként egyszer). */}
       <ReviewFollowupCard />
-      <DailyStreak />
       <RelocationReminderBanner />
 
-      {/* Kinti Asszisztens — szabad szöveges probléma → útmutató + szakember.
-          Irányít, nem tanácsol (a motor: heurisztika-először, AI csak értelmez). */}
+      {/* ── 2. HERO: az asszisztens a nyitó-elem — „mi a kérdésed?" a
+          legerősebb belépő (irányít, nem tanácsol). ─────────────────────────── */}
       <KintiAssistant />
 
-      {/* Személyre szabott irányítópult — 2-3 gyors kérdés → rád-hangolt
-          gyorslinkek. Kliensoldali (localStorage) — privacy-elv. */}
-      <PersonalizedHome />
-
-      {/* Fő belépési pontok — „mit hol találok" (nagy, érthető célok) */}
+      {/* ── 3. FŐ CÉLOK — a 4 nagy cselekvés még az első képernyőn. ────────── */}
       <section className="space-y-3">
         <SectionHeader>Mit szeretnél?</SectionHeader>
         <HomePrimaryActions />
       </section>
 
-      {/* Teljes platform — a modulok szélessége egy helyen */}
-      <HomePlatformGrid />
+      {/* ── 4. SZEMÉLYES RÉTEG: rád-hangolt ajánló + aktivációs checklist —
+          a cselekvő-zóna UTÁN (nem tolja le a fő célokat), de még elöl. ─────── */}
+      <PersonalizedHome />
+      <OnboardingChecklist />
 
+      {/* ── 5. NAPI RITMUS: sorozat + testreszabható napi widgetek — a
+          visszatérés-motorok egy blokkban. ──────────────────────────────────── */}
+      <DailyStreak />
+      <HomeWidgets
+        widgets={[
+          { id: "weather", label: "Időjárás", node: <WeatherWidget /> },
+          { id: "exchange", label: "Árfolyam", node: <ExchangeRateWidget /> },
+          { id: "kviz", label: "Napi kvíz", node: <KvizDailyCard /> },
+          { id: "napiszo", label: "Napi szó", node: <NapiSzoCard /> },
+        ]}
+      />
+
+      {/* ── 6. FELFEDEZÉS: a környék + a két nagy belépő-kártya. ───────────── */}
       <section className="space-y-3">
         <SectionHeader
           right={
@@ -93,21 +107,15 @@ export default async function FeedPage() {
         <NearbyBusinesses businesses={nearby} />
       </section>
 
-      {/* Napi infó — testreszabható: átrendezhető / elrejthető (kliensoldali) */}
-      <HomeWidgets
-        widgets={[
-          { id: "weather", label: "Időjárás", node: <WeatherWidget /> },
-          { id: "exchange", label: "Árfolyam", node: <ExchangeRateWidget /> },
-          { id: "kviz", label: "Napi kvíz", node: <KvizDailyCard /> },
-          { id: "napiszo", label: "Napi szó", node: <NapiSzoCard /> },
-        ]}
-      />
-
       <HomeChCards />
 
-      {/* Organikus növekedés — anonim meghívó-link megosztása */}
-      <ReferralHomeCard />
+      {/* ── 7. TELJES KATALÓGUS — a 27-csempés modul-térkép a böngészőknek;
+          lentebb a helye, mint a cselekvő-zónának (a gyakori célok fent vannak,
+          a menü-szűrő és a kereső is odavisz). ──────────────────────────────── */}
+      <HomePlatformGrid />
 
+      {/* ── 8. NÖVEKEDÉS: meghívó, hírlevél, telepítés, bizalom. ───────────── */}
+      <ReferralHomeCard />
       <NewsletterCtaCard />
       <PwaInstallCard />
       <TrustBar />
