@@ -845,6 +845,10 @@ export interface QuizCtaBusiness {
   name: string;
   categoryLabel: string | null;
   featured: boolean;
+  /** Fogad-e ajánlatkérést (van kontakt-email ÉS nem opt-outolt) — CSAK boolean,
+   *  a kontakt maga NEM kerül a vetületbe (anti-scraping). Az asszisztens
+   *  inline „Ajánlatot kérek" gombjának kapuja. */
+  leadCapable: boolean;
 }
 
 /**
@@ -861,7 +865,9 @@ export async function getQuizCtaBusinesses(
   const placeholders = cats.map(() => "?").join(",");
   const { results } = await getDB()
     .prepare(
-      `SELECT id, name, category_label, COALESCE(featured, 0) AS featured
+      `SELECT id, name, category_label, COALESCE(featured, 0) AS featured,
+              (CASE WHEN contact_email IS NOT NULL AND length(trim(contact_email)) > 0
+                     AND COALESCE(lead_opt_out, 0) = 0 THEN 1 ELSE 0 END) AS lead_capable
          FROM businesses
         WHERE category_id IN (${placeholders})
           AND COALESCE(country_code, 'CH') = ?
@@ -871,11 +877,12 @@ export async function getQuizCtaBusinesses(
         LIMIT ?`,
     )
     .bind(...cats, country, Math.min(Math.max(1, limit), 4))
-    .all<{ id: string; name: string; category_label: string | null; featured: number }>();
+    .all<{ id: string; name: string; category_label: string | null; featured: number; lead_capable: number }>();
   return (results ?? []).map((r) => ({
     id: r.id,
     name: r.name,
     categoryLabel: r.category_label,
     featured: r.featured === 1,
+    leadCapable: r.lead_capable === 1,
   }));
 }

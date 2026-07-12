@@ -69,6 +69,29 @@ export async function routeServiceRequest(requestId: string): Promise<{ routed: 
       .first<RequestRow>();
     if (!req?.category) return none;
 
+    // Régió-célzott push a „keresek" kategória feliratkozóinak (0129 pref):
+    // „valaki szakembert keres a régiódban — hátha épp te vagy az". CSAK ha van
+    // régió-kód (régió nélkül a notifyCanton MINDEN feliratkozónak menne —
+    // országhatáron át is; azt nem engedjük). Best-effort, a lead-routingtól
+    // független (kategória-térkép nélküli kérésről is mehet push).
+    if (req.region_code) {
+      try {
+        const { notifyCanton } = await import("./push-notify");
+        const cat = serviceCategory(req.category ?? "");
+        await notifyCanton(
+          req.region_code,
+          {
+            title: "🙋 Valaki szakembert keres a régiódban",
+            body: `${cat ? cat.label + ": " : ""}${req.title.slice(0, 90)}`,
+            url: "/keresek",
+          },
+          "keresek",
+        );
+      } catch (e) {
+        safeLogError("keresek-routing/push", e);
+      }
+    }
+
     const cats = KERESEK_BUSINESS_CATS[req.category as keyof typeof KERESEK_BUSINESS_CATS];
     if (!cats || cats.length === 0) return none;
 

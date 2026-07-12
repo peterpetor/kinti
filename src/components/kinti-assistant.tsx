@@ -17,13 +17,14 @@ import { cn } from "@/lib/cn";
 import { trackAction } from "@/components/usage-tracker";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { BusinessLeadCta } from "@/components/views/business-lead-cta";
 
 interface AssistantResult {
   categoryId: string | null;
   cantonCode: string | null;
   explanation: string;
   guides: { slug: string; title: string }[];
-  businesses: { id: string; name: string; categoryLabel: string | null; featured: boolean }[];
+  businesses: { id: string; name: string; categoryLabel: string | null; featured: boolean; leadCapable?: boolean }[];
 }
 
 const EXAMPLES = [
@@ -167,25 +168,50 @@ export function KintiAssistant() {
               <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted">Magyar szakemberek</p>
               <div className="space-y-1.5">
                 {result.businesses.map((b) => (
-                  <Link
-                    key={b.id}
-                    href={`/szaknevsor/${b.id}`}
-                    onClick={() => trackAction("assistant-click")}
-                    className="flex items-center gap-2.5 rounded-xl border border-line bg-surface px-3.5 py-2.5 transition active:scale-[0.99]"
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-bold text-ink">{b.name}</span>
-                      {b.categoryLabel && (
-                        <span className="block truncate text-[11px] text-ink-muted">{b.categoryLabel}</span>
+                  <div key={b.id} className="rounded-xl border border-line bg-surface px-3.5 py-2.5">
+                    <Link
+                      href={`/szaknevsor/${b.id}`}
+                      onClick={() => trackAction("assistant-click")}
+                      className="flex items-center gap-2.5 transition active:scale-[0.99]"
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[13px] font-bold text-ink">{b.name}</span>
+                        {b.categoryLabel && (
+                          <span className="block truncate text-[11px] text-ink-muted">{b.categoryLabel}</span>
+                        )}
+                      </span>
+                      {b.featured && (
+                        <span className="shrink-0 rounded-pill bg-star/15 px-2 py-0.5 text-[10px] font-bold text-star">Kiemelt</span>
                       )}
-                    </span>
-                    {b.featured && (
-                      <span className="shrink-0 rounded-pill bg-star/15 px-2 py-0.5 text-[10px] font-bold text-star">Kiemelt</span>
+                      <Icon name="chevR" size={14} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
+                    </Link>
+                    {/* Inline ajánlatkérés — a szándék (leírt probléma) + a szakember
+                        + az egy-kattintásos kapcsolat itt találkozik. Csak lead-képes
+                        cégnél (a szerver-vetület boolean-ja; kontakt nem szivárog). */}
+                    {b.leadCapable && (
+                      <div onClickCapture={() => trackAction("assistant-lead")}>
+                        <BusinessLeadCta
+                          businessId={b.id}
+                          businessName={b.name}
+                          className="mt-2 inline-flex items-center gap-1.5 rounded-pill bg-primary px-3.5 py-1.5 text-[12px] font-bold text-white transition active:scale-95"
+                        />
+                      </div>
                     )}
-                    <Icon name="chevR" size={14} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
-                  </Link>
+                  </div>
                 ))}
               </div>
+              {/* Csoportos ajánlatkérés — kategória-találatnál a fan-out űrlapra
+                  visz előtöltve (ez akkor is működik, ha az egyes cégek nem
+                  lead-képesek: a digest/extra-routing viszi a kérést). */}
+              {result.categoryId && (
+                <Link
+                  href={`/szaknevsor/ajanlatkeres?cat=${encodeURIComponent(result.categoryId)}${result.cantonCode ? `&canton=${encodeURIComponent(result.cantonCode)}` : ""}`}
+                  onClick={() => trackAction("assistant-lead-group")}
+                  className="mt-2 flex items-center justify-center gap-1.5 rounded-pill bg-pro px-4 py-2.5 text-[12.5px] font-extrabold text-white transition active:scale-[0.98]"
+                >
+                  📨 Kérj ajánlatot több szakitól egyszerre
+                </Link>
+              )}
               <Link
                 href={szaknevsorHref}
                 onClick={() => trackAction("assistant-click")}

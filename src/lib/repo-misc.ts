@@ -49,7 +49,7 @@ export async function getPushKeysByEndpoint(endpoint: string): Promise<{ p256dh:
   return row ?? null;
 }
 
-export type PushCategory = "business" | "event" | "job" | "daily";
+export type PushCategory = "business" | "event" | "job" | "daily" | "keresek";
 
 export async function listPushSubscriptions(
   cantonCode?: string | null,
@@ -68,13 +68,14 @@ export async function listPushSubscriptions(
   else if (category === "event") conds.push("COALESCE(notify_event, 1) = 1");
   else if (category === "job") conds.push("COALESCE(notify_job, 1) = 1");
   else if (category === "daily") conds.push("COALESCE(notify_daily, 1) = 1");
+  else if (category === "keresek") conds.push("COALESCE(notify_keresek, 1) = 1");
 
   const where = conds.length ? ` WHERE ${conds.join(" AND ")}` : "";
   const { results } = await getDB().prepare(`SELECT * FROM push_subscriptions${where}`).bind(...binds).all<PushSubscriptionRow>();
   return results;
 }
 
-export interface PushPreferences { notifyBusiness: boolean; notifyEvent: boolean; notifyJob: boolean; notifyDaily: boolean; }
+export interface PushPreferences { notifyBusiness: boolean; notifyEvent: boolean; notifyJob: boolean; notifyDaily: boolean; notifyKeresek: boolean; }
 
 /**
  * A feliratkozás kategória-preferenciái endpoint alapján (a beállítások UI-hoz).
@@ -84,31 +85,36 @@ export interface PushPreferences { notifyBusiness: boolean; notifyEvent: boolean
 export async function getPushPreferences(endpoint: string): Promise<PushPreferences | null> {
   try {
     const row = await getDB()
-      .prepare("SELECT notify_business, notify_event, notify_job, notify_daily FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
+      .prepare("SELECT notify_business, notify_event, notify_job, notify_daily, notify_keresek FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
       .bind(endpoint)
-      .first<{ notify_business: number; notify_event: number; notify_job: number; notify_daily: number }>();
+      .first<{ notify_business: number; notify_event: number; notify_job: number; notify_daily: number; notify_keresek: number }>();
     if (!row) return null;
-    return { notifyBusiness: row.notify_business === 1, notifyEvent: row.notify_event === 1, notifyJob: row.notify_job === 1, notifyDaily: row.notify_daily === 1 };
+    return {
+      notifyBusiness: row.notify_business === 1, notifyEvent: row.notify_event === 1,
+      notifyJob: row.notify_job === 1, notifyDaily: row.notify_daily === 1,
+      notifyKeresek: row.notify_keresek === 1,
+    };
   } catch {
-    // A notify_daily (0084) / notify_job (0080) oszlop még hiányozhat — alapból bekapcsoltnak vesszük.
+    // A notify_keresek (0129) / notify_daily (0084) / notify_job (0080) oszlop
+    // még hiányozhat — a hiányzókat alapból bekapcsoltnak vesszük.
     const row = await getDB()
       .prepare("SELECT notify_business, notify_event FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
       .bind(endpoint)
       .first<{ notify_business: number; notify_event: number }>();
     if (!row) return null;
-    return { notifyBusiness: row.notify_business === 1, notifyEvent: row.notify_event === 1, notifyJob: true, notifyDaily: true };
+    return { notifyBusiness: row.notify_business === 1, notifyEvent: row.notify_event === 1, notifyJob: true, notifyDaily: true, notifyKeresek: true };
   }
 }
 
 export async function updatePushPreferences(endpoint: string, prefs: PushPreferences): Promise<boolean> {
   try {
     const res = await getDB()
-      .prepare("UPDATE push_subscriptions SET notify_business = ?, notify_event = ?, notify_job = ?, notify_daily = ? WHERE endpoint = ?")
-      .bind(prefs.notifyBusiness ? 1 : 0, prefs.notifyEvent ? 1 : 0, prefs.notifyJob ? 1 : 0, prefs.notifyDaily ? 1 : 0, endpoint)
+      .prepare("UPDATE push_subscriptions SET notify_business = ?, notify_event = ?, notify_job = ?, notify_daily = ?, notify_keresek = ? WHERE endpoint = ?")
+      .bind(prefs.notifyBusiness ? 1 : 0, prefs.notifyEvent ? 1 : 0, prefs.notifyJob ? 1 : 0, prefs.notifyDaily ? 1 : 0, prefs.notifyKeresek ? 1 : 0, endpoint)
       .run();
     return (res.meta.changes ?? 0) > 0;
   } catch {
-    // notify_daily/notify_job oszlop még hiányozhat (migráció előtt) — a régi oszlopokat frissítjük.
+    // Újabb oszlopok még hiányozhatnak (migráció előtt) — a régi oszlopokat frissítjük.
     const res = await getDB()
       .prepare("UPDATE push_subscriptions SET notify_business = ?, notify_event = ? WHERE endpoint = ?")
       .bind(prefs.notifyBusiness ? 1 : 0, prefs.notifyEvent ? 1 : 0, endpoint)

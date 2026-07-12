@@ -10,6 +10,7 @@ import {
   parseLeaderboardCategory,
 } from "@/lib/repo";
 import { containsProfanity } from "@/lib/profanity";
+import { getReferralCount } from "@/lib/repo-referral";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json().catch(() => ({}))) as {
       clientToken?: string; nickname?: string; score?: number; level?: number; badges?: number;
-      scoreLanguage?: number; scoreCommunity?: number;
+      scoreLanguage?: number; scoreCommunity?: number; referralCode?: string;
     };
 
     const clientToken = typeof body.clientToken === "string" ? body.clientToken.trim() : "";
@@ -72,6 +73,15 @@ export async function POST(req: Request) {
     const scoreLanguage = Math.max(0, Math.min(MAX_SCORE, Math.round(Number(body.scoreLanguage) || 0)));
     const scoreCommunity = Math.max(0, Math.min(MAX_SCORE, Math.round(Number(body.scoreCommunity) || 0)));
 
+    // „Meghívók" pont: NEM önbevallás — a kliens csak a saját meghívó-KÓDJÁT
+    // küldi, a konverzió-számot a szerver számolja a referral_conversions-ből
+    // (anonim kód, identitás nélkül; a kód-formátum a referral route-tal azonos).
+    let scoreReferral = 0;
+    const referralCode = typeof body.referralCode === "string" ? body.referralCode.trim() : "";
+    if (/^[a-z0-9]{4,16}$/i.test(referralCode)) {
+      scoreReferral = Math.min(MAX_SCORE, await getReferralCount(referralCode));
+    }
+
     // Rate-limit (csatlakozás/szinkron spam ellen)
     const ipHash = await hashIp(req.headers.get("cf-connecting-ip"));
     const rl = await checkAiRateLimit("leaderboard", ipHash);
@@ -88,7 +98,7 @@ export async function POST(req: Request) {
     // indexébe (COLLATE NOCASE) az egyik ütközik. Duplikátum így sem jöhet létre —
     // de a vesztesnek a helyes válasz 409 (foglalt), nem 500 (belső hiba).
     try {
-      await upsertLeaderboardEntry({ clientToken, nickname, score, level, badges, scoreLanguage, scoreCommunity });
+      await upsertLeaderboardEntry({ clientToken, nickname, score, level, badges, scoreLanguage, scoreCommunity, scoreReferral });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       if (/UNIQUE/i.test(msg)) {

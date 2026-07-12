@@ -8,11 +8,11 @@ import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { readPreferredCanton } from "@/lib/canton-pref";
 
 type Status = "checking" | "unsupported" | "ios-install" | "denied" | "unsubscribed" | "subscribed";
-interface Prefs { notifyBusiness: boolean; notifyEvent: boolean; notifyJob: boolean; notifyDaily: boolean }
+interface Prefs { notifyBusiness: boolean; notifyEvent: boolean; notifyJob: boolean; notifyDaily: boolean; notifyKeresek: boolean }
 
 export function NotificationSettings() {
   const [status, setStatus] = useState<Status>("checking");
-  const [prefs, setPrefs] = useState<Prefs>({ notifyBusiness: true, notifyEvent: true, notifyJob: true, notifyDaily: true });
+  const [prefs, setPrefs] = useState<Prefs>({ notifyBusiness: true, notifyEvent: true, notifyJob: true, notifyDaily: true, notifyKeresek: true });
   const [busy, setBusy] = useState(false);
 
   async function loadPrefs(endpoint: string) {
@@ -173,6 +173,13 @@ export function NotificationSettings() {
               hint="Ha új álláshirdetést hagynak jóvá a régiódban."
               on={prefs.notifyJob}
               onToggle={() => togglePref("notifyJob")}
+            />
+            <ToggleRow
+              icon="🙋"
+              label="Új Keresek-hirdetés"
+              hint="Ha valaki szakembert keres a régiódban — hátha épp téged."
+              on={prefs.notifyKeresek}
+              onToggle={() => togglePref("notifyKeresek")}
             />
             <button
               type="button"

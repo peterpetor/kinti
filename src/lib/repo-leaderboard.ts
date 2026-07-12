@@ -9,13 +9,14 @@
  */
 import { getDB } from "./cloudflare";
 
-export type LeaderboardCategory = "overall" | "language" | "community";
+export type LeaderboardCategory = "overall" | "language" | "community" | "referral";
 
 /** Kategória → rendezési oszlop. FIX whitelist → biztonságos SQL-interpoláció. */
 const SCORE_COLUMN: Record<LeaderboardCategory, string> = {
   overall: "score",
   language: "score_language",
   community: "score_community",
+  referral: "score_referral",
 };
 function colFor(category: LeaderboardCategory): string {
   return SCORE_COLUMN[category] ?? "score";
@@ -23,7 +24,7 @@ function colFor(category: LeaderboardCategory): string {
 
 /** Tetszőleges bemenetből érvényes kategória (default: overall). */
 export function parseLeaderboardCategory(v: unknown): LeaderboardCategory {
-  return v === "language" || v === "community" ? v : "overall";
+  return v === "language" || v === "community" || v === "referral" ? v : "overall";
 }
 
 export interface LeaderboardEntry {
@@ -51,6 +52,8 @@ export interface UpsertLeaderboardInput {
   badges: number;
   scoreLanguage: number;
   scoreCommunity: number;
+  /** SZERVER-hitelesített meghívó-pont (a route számolja a referral-kódból). */
+  scoreReferral: number;
 }
 
 /** Foglalt-e a becenév MÁS token által? (case-insensitive). */
@@ -63,42 +66,76 @@ export async function isNicknameTaken(nickname: string, exceptToken: string): Pr
 }
 
 export async function upsertLeaderboardEntry(input: UpsertLeaderboardInput): Promise<void> {
-  await getDB()
-    .prepare(
-      `INSERT INTO leaderboard (id, client_token, nickname, score, level, badges, score_language, score_community, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
-       ON CONFLICT(client_token) DO UPDATE SET
-         nickname = excluded.nickname,
-         score = excluded.score,
-         level = excluded.level,
-         badges = excluded.badges,
-         score_language = excluded.score_language,
-         score_community = excluded.score_community,
-         updated_at = datetime('now')`,
-    )
-    .bind(
-      crypto.randomUUID(), input.clientToken, input.nickname, input.score, input.level, input.badges,
-      input.scoreLanguage, input.scoreCommunity,
-    )
-    .run();
+  try {
+    await getDB()
+      .prepare(
+        `INSERT INTO leaderboard (id, client_token, nickname, score, level, badges, score_language, score_community, score_referral, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+         ON CONFLICT(client_token) DO UPDATE SET
+           nickname = excluded.nickname,
+           score = excluded.score,
+           level = excluded.level,
+           badges = excluded.badges,
+           score_language = excluded.score_language,
+           score_community = excluded.score_community,
+           score_referral = excluded.score_referral,
+           updated_at = datetime('now')`,
+      )
+      .bind(
+        crypto.randomUUID(), input.clientToken, input.nickname, input.score, input.level, input.badges,
+        input.scoreLanguage, input.scoreCommunity, input.scoreReferral,
+      )
+      .run();
+  } catch (err) {
+    // UNIQUE (becenév-ütközés) → tovább kell dobni (a route 409-et ad rá);
+    // minden más (pl. a score_referral oszlop még hiányzik — 0130 migráció
+    // előtt) → fallback a régi oszlop-készletre, a szinkron ne törjön.
+    const msg = err instanceof Error ? err.message : String(err);
+    if (/UNIQUE/i.test(msg)) throw err;
+    await getDB()
+      .prepare(
+        `INSERT INTO leaderboard (id, client_token, nickname, score, level, badges, score_language, score_community, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+         ON CONFLICT(client_token) DO UPDATE SET
+           nickname = excluded.nickname,
+           score = excluded.score,
+           level = excluded.level,
+           badges = excluded.badges,
+           score_language = excluded.score_language,
+           score_community = excluded.score_community,
+           updated_at = datetime('now')`,
+      )
+      .bind(
+        crypto.randomUUID(), input.clientToken, input.nickname, input.score, input.level, input.badges,
+        input.scoreLanguage, input.scoreCommunity,
+      )
+      .run();
+  }
 }
 
 export async function getTopLeaderboard(category: LeaderboardCategory = "overall", limit = 50): Promise<LeaderboardEntry[]> {
   const col = colFor(category);
-  // Kategória-boardon (nyelv/közösségi) csak a TÉNYLEG aktívak (>0) jelenjenek meg,
-  // különben a frissen 0-ra szinkronizált tagok elárasztanák nullákkal. Az
-  // összesített boardon mindenki látszik.
+  // Kategória-boardon (nyelv/közösségi/meghívó) csak a TÉNYLEG aktívak (>0)
+  // jelenjenek meg, különben a frissen 0-ra szinkronizált tagok elárasztanák
+  // nullákkal. Az összesített boardon mindenki látszik.
   const where = category === "overall" ? "" : `WHERE ${col} > 0`;
-  const { results } = await getDB()
-    .prepare(
-      `SELECT nickname, ${col} AS score, level, badges, updated_at
-       FROM leaderboard ${where} ORDER BY ${col} DESC, updated_at ASC LIMIT ?`,
-    )
-    .bind(limit)
-    .all<Row>();
-  return results.map((r) => ({
-    nickname: r.nickname, score: r.score, level: r.level, badges: r.badges, updatedAt: r.updated_at,
-  }));
+  try {
+    const { results } = await getDB()
+      .prepare(
+        `SELECT nickname, ${col} AS score, level, badges, updated_at
+         FROM leaderboard ${where} ORDER BY ${col} DESC, updated_at ASC LIMIT ?`,
+      )
+      .bind(limit)
+      .all<Row>();
+    return results.map((r) => ({
+      nickname: r.nickname, score: r.score, level: r.level, badges: r.badges, updatedAt: r.updated_at,
+    }));
+  } catch (err) {
+    // A score_referral oszlop a 0130 migráció előtt még hiányozhat — az új
+    // kategória üres boardot ad, a többi kategóriánál a hiba valódi.
+    if (category === "referral") return [];
+    throw err;
+  }
 }
 
 export async function getLeaderboardByToken(

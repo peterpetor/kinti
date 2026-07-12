@@ -55,6 +55,36 @@ export default async function JobsPage() {
           </div>
         </section>
 
+        {/* PRO álláskeresési eszközök — a két kész AI-eszköz eddig csak a
+            menüből volt elérhető; ez a fő PRO-konverziós horgony (user-kérés). */}
+        <section className="rounded-card border border-primary/25 bg-gradient-to-br from-primary/5 to-surface p-4 shadow-card">
+          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+            <Icon name="sparkles" size={13} strokeWidth={2.4} /> PRO álláskeresési eszközök
+          </p>
+          <div className="mt-2.5 grid grid-cols-2 gap-2">
+            <Link
+              href="/allasok/interju-szimulator"
+              className="rounded-xl border border-line bg-surface p-3 transition active:scale-[0.98]"
+            >
+              <span className="text-lg">🎤</span>
+              <span className="mt-1 block text-[13px] font-extrabold leading-tight text-ink">AI interjú-gyakorló</span>
+              <span className="mt-0.5 block text-[11px] leading-snug text-ink-muted">
+                Próbainterjú a helyi kérdésekkel — visszajelzéssel
+              </span>
+            </Link>
+            <Link
+              href="/allasok/cv-audit"
+              className="rounded-xl border border-line bg-surface p-3 transition active:scale-[0.98]"
+            >
+              <span className="text-lg">🔍</span>
+              <span className="mt-1 block text-[13px] font-extrabold leading-tight text-ink">AI CV-asszisztens</span>
+              <span className="mt-0.5 block text-[11px] leading-snug text-ink-muted">
+                Átnézi az önéletrajzod, mielőtt elküldöd
+              </span>
+            </Link>
+          </div>
+        </section>
+
         {/* Állás-riasztás modul */}
         <div className="animate-fade-up animate-delay-100">
           <JobAlertRadar />

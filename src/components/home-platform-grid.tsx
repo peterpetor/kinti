@@ -34,6 +34,8 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone; extern
   // A CV-készítő a mérés szerint alul-exponált volt (csak menüből ért el) —
   // a kezdőlap a legerősebb felület, ide való a zászlós ingyenes eszköz.
   { href: "/nemet-oneletrajz", icon: "document", label: "Német CV", tone: "work" },
+  { href: "/allasok/interju-szimulator", icon: "sparkles", label: "AI interjú-gyakorló", tone: "work" },
+  { href: "/allasok/cv-audit", icon: "magic", label: "AI CV-asszisztens", tone: "work" },
   { href: "/iranytu", icon: "compass", label: "Iránytű", tone: "money" },
   { href: "/mennyi-marad", icon: "trending", label: "Mennyi marad?", tone: "money" },
   { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor", tone: "money" },
@@ -57,11 +59,12 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone; extern
   { href: "/repulojegy", icon: "send", label: "Repülőjegy", tone: "social" },
   { href: "/tortenetek", icon: "heart", label: "Élettörténetek", tone: "social" },
   { href: "/profil/kinti-pass", icon: "qrCode", label: "Kinti Pass", tone: "social" },
+  { href: "/b2b", icon: "briefcase", label: "B2B Hub", tone: "work" },
   // A papírrepülő a Telegram saját logó-motívuma — külső deep-link a bothoz.
   { href: "https://t.me/KintiSzaknevsorBot", icon: "send", label: "Telegram-bot", tone: "social", external: true },
 ];
 
-export function HomePlatformGrid() {
+export function HomePlatformGrid({ b2bOpenCount = 0 }: { b2bOpenCount?: number }) {
   const [prefCountry] = usePreferredCountry();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -70,10 +73,19 @@ export function HomePlatformGrid() {
     (m) => m.external || isFeatureAvailable(m.href.slice(1), country),
   );
 
+  // Élő szám-badge csempénként (üresség-elv: 0-nál NEM jelenik meg badge —
+  // üres állapotot nem hirdetünk). Bővítés: új élő szám = egy sor ide.
+  const liveBadge: Record<string, number> = { "/b2b": b2bOpenCount };
+
   const tileCls =
-    "flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-2 py-3.5 text-center shadow-card transition active:scale-[0.97]";
+    "relative flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-2 py-3.5 text-center shadow-card transition active:scale-[0.97]";
   const tileInner = (m: (typeof MODULES)[number]) => (
     <>
+      {(liveBadge[m.href] ?? 0) > 0 && (
+        <span className="absolute right-1.5 top-1.5 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-extrabold leading-none text-white">
+          {liveBadge[m.href]}
+        </span>
+      )}
       <span className={`grid h-10 w-10 place-items-center rounded-[12px] ${TONE_CHIP[m.tone]}`}>
         <Icon name={m.icon} size={19} strokeWidth={2.2} />
       </span>

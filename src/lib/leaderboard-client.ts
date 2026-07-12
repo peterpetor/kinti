@@ -4,6 +4,7 @@ import { loadMyPosts } from "./my-posts";
 import { computeGamification } from "./gamification";
 import { streakXp } from "./streak";
 import { gatherAchievementExtras } from "./achievements";
+import { getMyInviteCode } from "./referral-client";
 
 /**
  * leaderboard-client.ts — opt-in ranglista kliens-oldala. A pontszám a meglévő
@@ -82,7 +83,8 @@ export async function joinLeaderboard(nickname: string): Promise<{ ok: boolean; 
     const res = await fetch("/api/leaderboard", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ clientToken, nickname, ...stats }),
+      // referralCode: a Meghívók-pontot a SZERVER számolja a kódból (hiteles).
+      body: JSON.stringify({ clientToken, nickname, ...stats, referralCode: getMyInviteCode() }),
     });
     const data = (await res.json().catch(() => ({}))) as { rank?: number; error?: string };
     if (!res.ok) {
@@ -108,7 +110,8 @@ export async function syncLeaderboard(): Promise<void> {
     await fetch("/api/leaderboard", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ clientToken, nickname, ...stats }),
+      // referralCode: a Meghívók-pontot a SZERVER számolja a kódból (hiteles).
+      body: JSON.stringify({ clientToken, nickname, ...stats, referralCode: getMyInviteCode() }),
     });
   } catch {
     /* best-effort */

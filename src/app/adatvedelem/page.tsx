@@ -255,8 +255,10 @@ export default function AdatvedelemPage() {
       <h3>2.12 Push értesítések (kanton-célzott)</h3>
       <p>
         A böngésződben engedélyezheted a Push értesítéseket, hogy szóljunk az új
-        vállalkozásokról, állásokról és eseményekről a kantonodban (illetve bizonyos
-        témákban, pl. árfolyam-radar). A feliratkozáskor a következőket tároljuk az
+        vállalkozásokról, állásokról és „Keresek" igény-hirdetésekről a kantonodban
+        (illetve bizonyos témákban, pl. árfolyam-radar, napi emlékeztető). A
+        kategóriák egyenként ki-be kapcsolhatók az Értesítések oldalon. A
+        feliratkozáskor a következőket tároljuk az
         adatbázisunkban: a böngésződ által generált, személytelen feliratkozási
         <code>endpoint</code> URL, a hozzá tartozó nyilvános titkosító kulcsok
         (<code>p256dh</code>, <code>auth</code> — ezekkel titkosítjuk neked az értesítést),
@@ -497,6 +499,21 @@ export default function AdatvedelemPage() {
         lekerül a tábláról; törlését korábban is kérheted az{" "}
         <a href="mailto:info@kinti.app">info@kinti.app</a> címen.
       </p>
+
+      <h3>2.26 Közösségi ranglista (opt-in)</h3>
+      <p>
+        A ranglistához önkéntesen, <strong>szabadon választott becenévvel</strong>{" "}
+        csatlakozhatsz — valódi nevet, e-mail-címet vagy fiók-azonosítót nem tárolunk
+        hozzá. Tárolt adatok: a becenév (nyilvánosan megjelenik), a pontszámok
+        (a saját eszközöd gamifikációjából önbevallottan; a „Meghívók" pontot a
+        meghívó-kódod konverzió-számából a szerver számolja — magát a kódot a
+        ranglistán nem tároljuk), és egy véletlen, eszköz-oldali token, ami a
+        bejegyzésed szerkesztésének bizonyítéka.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a csatlakozás gombbal).</li>
+        <li><strong>Tárolási idő / törlés:</strong> a ranglistáról bármikor kiléphetsz a Ranglista oldalon — a bejegyzésed (becenév + pontok) azonnal, véglegesen törlődik.</li>
+      </ul>
 
       <h2>3. Cookie-k</h2>
       <p>

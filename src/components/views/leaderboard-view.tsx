@@ -24,11 +24,14 @@ interface Me extends Entry {
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 
-type Category = "overall" | "language" | "community";
+type Category = "overall" | "language" | "community" | "referral";
 const CATEGORIES: { id: Category; label: string }[] = [
   { id: "overall", label: "Összesített" },
   { id: "language", label: "🦉 Nyelvtanuló" },
   { id: "community", label: "🤝 Közösségi" },
+  // Meghívók: szerver-hitelesített pont (a meghívó-kód konverziói) — a top 3
+  // „Kinti-nagykövet" jelölést kap a soron.
+  { id: "referral", label: "💌 Meghívók" },
 ];
 
 export function LeaderboardView() {
@@ -215,12 +218,22 @@ export function LeaderboardView() {
                   <span className="min-w-0 flex-1 truncate text-[14px] font-bold text-ink">
                     {e.nickname}
                     {isMe && <span className="ml-1.5 text-[11px] font-bold text-success">(te)</span>}
+                    {/* A top 3 meghívó „Kinti-nagykövet" jelölést kap. */}
+                    {category === "referral" && i < 3 && (
+                      <span className="ml-1.5 rounded-pill bg-star/15 px-1.5 py-0.5 text-[10px] font-extrabold text-star">
+                        🏅 Kinti-nagykövet
+                      </span>
+                    )}
                   </span>
-                  <span className="shrink-0 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">
-                    Lv {e.level}
-                  </span>
+                  {category !== "referral" && (
+                    <span className="shrink-0 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">
+                      Lv {e.level}
+                    </span>
+                  )}
                   <span className="shrink-0 text-[13.5px] font-extrabold text-ink">{e.score}</span>
-                  <span className="shrink-0 text-[10px] font-bold uppercase text-ink-faint">XP</span>
+                  <span className="shrink-0 text-[10px] font-bold uppercase text-ink-faint">
+                    {category === "referral" ? "meghívott" : "XP"}
+                  </span>
                 </li>
               );
             })}
@@ -230,8 +243,9 @@ export function LeaderboardView() {
 
       <p className="flex items-start gap-1.5 px-1 text-[11px] leading-snug text-ink-faint">
         <Icon name="lock" size={11} strokeWidth={2.2} className="mt-0.5 shrink-0" />
-        A pontszám a saját eszközöd gamifikációjából származik (önbevallott). Nincs valódi név vagy e-mail — csak a
-        becenév és a pont. A részvétel önkéntes; bármikor kiléphetsz.
+        A pontszám a saját eszközöd gamifikációjából származik (önbevallott); a 💌 Meghívók pontot a
+        meghívó-kódod alapján a szerver számolja. Nincs valódi név vagy e-mail — csak a becenév és a
+        pont. A részvétel önkéntes; bármikor kiléphetsz.
       </p>
     </div>
   );

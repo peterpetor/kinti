@@ -26,7 +26,8 @@ import { TrustBar } from "@/components/trust-bar";
 import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
 import { NearbyBusinesses } from "@/components/nearby-businesses";
 import { HomeWidgets } from "@/components/home-widgets";
-import { getBusinessesForList } from "@/lib/repo";
+import { getBusinessesForList, countOpenB2bProjects } from "@/lib/repo";
+import { cached } from "@/lib/edge-cache";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -34,7 +35,12 @@ export const dynamic = "force-dynamic";
 export default async function FeedPage() {
   // Karcsú vetület + saját (3 perces) cache a repóban — a /szaknevsor oldallal
   // KÖZÖS kulcson, így a két oldal TTL-enként EGYSZER megy D1-re.
-  const allBusinesses = await getBusinessesForList();
+  // A B2B nyitott-projekt szám 5 percig cache-elt (élő badge a rácson,
+  // TTL-enként egy skalár-query — nem terheli a főoldal-rendert).
+  const [allBusinesses, b2bOpenCount] = await Promise.all([
+    getBusinessesForList(),
+    cached("home:b2b-open", 300_000, () => countOpenB2bProjects()),
+  ]);
   // „A közeledben" csak a koordinátával rendelkezőkből válogat (kliensoldali
   // GPS-rendezéshez). Trükkös payload-méret ellen: max 200 rekord.
   const nearby = allBusinesses
@@ -112,7 +118,7 @@ export default async function FeedPage() {
       {/* ── 7. TELJES KATALÓGUS — a 27-csempés modul-térkép a böngészőknek;
           lentebb a helye, mint a cselekvő-zónának (a gyakori célok fent vannak,
           a menü-szűrő és a kereső is odavisz). ──────────────────────────────── */}
-      <HomePlatformGrid />
+      <HomePlatformGrid b2bOpenCount={b2bOpenCount} />
 
       {/* ── 8. NÖVEKEDÉS: meghívó, hírlevél, telepítés, bizalom. ───────────── */}
       <ReferralHomeCard />
