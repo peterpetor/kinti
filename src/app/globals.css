@@ -162,6 +162,25 @@
     overscroll-behavior: none;
   }
 
+  /* Notch-scrim (telepített PWA): standalone módban a tartalom a status bar
+     ALÁ görget (viewport-fit: cover) — egy finom, lap-háttér→átlátszó gradiens
+     a felső safe-area sávban olvashatóan tartja az órát/ikonokat, és a natív
+     appok „fejléc alá úszó tartalom" érzetét adja. Böngészőben (nem-standalone)
+     a safe-area-inset-top 0 → a scrim láthatatlan, nincs mellékhatás. */
+  @media (display-mode: standalone) {
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: calc(env(safe-area-inset-top) + 8px);
+      z-index: 80;
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgb(var(--bg) / 0.92), rgb(var(--bg) / 0));
+    }
+  }
+
   /* Natív-szerű interakció az UI-vezérlőkön — NEM jelölhetők ki a feliratai
      (mint egy weboldalon), és nincs 300ms tap-késleltetés / dupla-tap zoom.
      A tartalom-szöveg (p, h1–h6, span, input…) továbbra is kijelölhető marad. */

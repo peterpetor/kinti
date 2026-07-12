@@ -6,6 +6,7 @@ import { getCountry } from "@/lib/countries";
 import { mediaUrl } from "@/lib/media";
 import { parseDbDate } from "@/lib/dates";
 import { StorySubmitForm } from "@/components/views/story-submit-form";
+import { PullToRefresh } from "@/components/pull-to-refresh";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -34,6 +35,7 @@ export default async function StoriesPage() {
   const stories = await getPublishedStories(null, 100);
 
   return (
+    <PullToRefresh>
     <div className="space-y-5 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
@@ -88,5 +90,6 @@ export default async function StoriesPage() {
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }

@@ -11,6 +11,7 @@ import { renderStoryMarkdown, storyExcerpt } from "@/lib/story-md";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { GuideShareButton } from "@/components/views/guide-share-button";
 import { ReportButton } from "@/components/report-button";
+import { ReadingProgress } from "@/components/reading-progress";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -89,6 +90,8 @@ export default async function StoryPage({ params }: { params: Params }) {
 
   return (
     <div className="space-y-5 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
+      {/* Olvasás-folyamat sáv — hosszú cikkeknél a natív olvasó-minta. */}
+      <ReadingProgress />
       {!isPreviewAccess && (
         <>
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(articleJsonLd) }} />

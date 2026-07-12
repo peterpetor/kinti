@@ -9,6 +9,7 @@ import { GuideNewsletterCta } from "@/components/views/guide-newsletter-cta";
 import { GuideShareButton } from "@/components/views/guide-share-button";
 import { RemittanceAffiliateCta } from "@/components/views/remittance-affiliate-cta";
 import { BudgetToolCta } from "@/components/views/budget-tool-cta";
+import { ReadingProgress } from "@/components/reading-progress";
 import { isBudgetCountry } from "@/lib/budget-plan";
 
 // Tisztán statikus tartalom (lib/guides.ts) + generateStaticParams → SSG:
@@ -79,6 +80,8 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
 
   return (
     <div className="space-y-5 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
+      {/* Olvasás-folyamat sáv — hosszú útmutatóknál a natív olvasó-minta. */}
+      <ReadingProgress />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}

@@ -10,6 +10,7 @@ import { SERVICE_CATEGORIES, serviceCategory } from "@/lib/service-categories";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ReportButton } from "@/components/report-button";
 import { Skeleton } from "@/components/skeleton";
+import { PullToRefresh } from "@/components/pull-to-refresh";
 
 function fmtAgo(iso: string): string {
   const t = Date.parse(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z"));
@@ -85,6 +86,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
   }
 
   return (
+    <PullToRefresh onRefresh={load}>
     <div className="space-y-4">
       {/* Kategória-szűrő */}
       <div className="no-scrollbar kinti-hfade -mx-5 flex gap-2 overflow-x-auto px-5">
@@ -200,6 +202,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }
 
