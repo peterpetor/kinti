@@ -16,7 +16,11 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    const { email, country } = (await req.json()) as { email?: string; country?: string };
+    // Érvénytelen JSON → 400 (ne 500-as „belső hiba" — a route-konvenció szerint).
+    let body: { email?: string; country?: string };
+    try { body = (await req.json()) as { email?: string; country?: string }; }
+    catch { return NextResponse.json({ error: "Érvénytelen kérés." }, { status: 400 }); }
+    const { email, country } = body;
 
     if (!email || !country) {
       return NextResponse.json({ error: "Hiányzó mezők." }, { status: 400 });

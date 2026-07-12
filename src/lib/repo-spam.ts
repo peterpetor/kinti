@@ -236,33 +236,55 @@ export async function listOpenReports(): Promise<OpenReport[]> {
   const { results } = await db.prepare(`SELECT id, content_type, content_id, reason, moderate_token, created_at FROM content_reports WHERE status = 'open' ORDER BY created_at DESC LIMIT 100`).all<{
     id: string; content_type: string; content_id: string; reason: string | null; moderate_token: string; created_at: string;
   }>();
-  const out: OpenReport[] = [];
+  if (results.length === 0) return [];
+
+  // A hivatkozott tartalmak TÍPUSONKÉNT CSOPORTOSÍTVA (N+1 helyett max 6 query).
+  // ⚠️ ÚJ report-típusnál ide IS vegyél fel ágat — ismeretlen típus „nem létező
+  // tartalomnak" számít, és a reportja CSENDBEN dismisselődik!
+  const idsByType = new Map<string, Set<string>>();
   for (const r of results) {
-    let excerpt: string | null = null; let contentExists = false;
-    if (r.content_type === "review") {
-      const row = await db.prepare("SELECT reviewer_name, body FROM reviews WHERE id = ?").bind(r.content_id).first<{ reviewer_name: string; body: string }>();
-      excerpt = row ? `${row.reviewer_name}: ${row.body.slice(0, 100)}` : null; contentExists = !!row;
-    } else if (r.content_type === "business") {
-      const row = await db.prepare("SELECT name FROM businesses WHERE id = ?").bind(r.content_id).first<{ name: string }>();
-      excerpt = row?.name ?? null; contentExists = !!row;
-    } else if (r.content_type === "sos") {
-      const row = await db.prepare("SELECT id FROM sos_alerts WHERE id = ?").bind(r.content_id).first<{ id: string }>();
-      contentExists = !!row;
-    } else if (r.content_type === "b2b") {
-      const row = await db.prepare("SELECT title FROM b2b_projects WHERE id = ?").bind(r.content_id).first<{ title: string }>();
-      excerpt = row?.title ?? null; contentExists = !!row;
-    } else if (r.content_type === "story") {
-      const row = await db.prepare("SELECT title FROM stories WHERE id = ?").bind(r.content_id).first<{ title: string }>();
-      excerpt = row?.title ?? null; contentExists = !!row;
-    } else if (r.content_type === "request") {
-      const row = await db.prepare("SELECT title FROM service_requests WHERE id = ?").bind(r.content_id).first<{ title: string }>();
-      excerpt = row?.title ?? null; contentExists = !!row;
-    }
-    if (!contentExists) {
-      await db.prepare("UPDATE content_reports SET status = 'dismissed' WHERE id = ?").bind(r.id).run();
-      continue;
-    }
-    out.push({ id: r.id, contentType: r.content_type as OpenReport["contentType"], contentId: r.content_id, reason: r.reason, moderateToken: r.moderate_token, createdAt: r.created_at, excerpt });
+    const set = idsByType.get(r.content_type) ?? new Set<string>();
+    set.add(r.content_id);
+    idsByType.set(r.content_type, set);
+  }
+  // `${type}:${id}` → excerpt; a kulcs MEGLÉTE = a tartalom létezik (a null
+  // excerpt is érvényes, pl. sos).
+  const found = new Map<string, string | null>();
+  const fetchBatch = async (
+    type: string,
+    columns: string,
+    table: string,
+    toExcerpt: (row: Record<string, string | null>) => string | null,
+  ) => {
+    const list = [...(idsByType.get(type) ?? [])];
+    if (list.length === 0) return;
+    const ph = list.map(() => "?").join(",");
+    const { results: rows } = await db
+      .prepare(`SELECT ${columns} FROM ${table} WHERE id IN (${ph})`)
+      .bind(...list)
+      .all<Record<string, string | null>>();
+    for (const row of rows) found.set(`${type}:${row.id}`, toExcerpt(row));
+  };
+  await Promise.all([
+    fetchBatch("review", "id, reviewer_name, body", "reviews", (r) => `${r.reviewer_name}: ${(r.body ?? "").slice(0, 100)}`),
+    fetchBatch("business", "id, name", "businesses", (r) => r.name ?? null),
+    fetchBatch("sos", "id", "sos_alerts", () => null),
+    fetchBatch("b2b", "id, title", "b2b_projects", (r) => r.title ?? null),
+    fetchBatch("story", "id, title", "stories", (r) => r.title ?? null),
+    fetchBatch("request", "id, title", "service_requests", (r) => r.title ?? null),
+  ]);
+
+  const out: OpenReport[] = [];
+  const dismissIds: string[] = [];
+  for (const r of results) {
+    const key = `${r.content_type}:${r.content_id}`;
+    if (!found.has(key)) { dismissIds.push(r.id); continue; }
+    out.push({ id: r.id, contentType: r.content_type as OpenReport["contentType"], contentId: r.content_id, reason: r.reason, moderateToken: r.moderate_token, createdAt: r.created_at, excerpt: found.get(key) ?? null });
+  }
+  // Törölt tartalmú reportok kötegelt lezárása (egy UPDATE a soronkénti helyett).
+  if (dismissIds.length > 0) {
+    const ph = dismissIds.map(() => "?").join(",");
+    await db.prepare(`UPDATE content_reports SET status = 'dismissed' WHERE id IN (${ph})`).bind(...dismissIds).run();
   }
   return out;
 }

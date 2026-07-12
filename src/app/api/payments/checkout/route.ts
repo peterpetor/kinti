@@ -22,7 +22,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Bejelentkezés szükséges a vásárláshoz." }, { status: 401 });
     }
 
-    const body = await req.json();
+    let body: unknown;
+    try { body = await req.json(); }
+    catch { return NextResponse.json({ error: "Érvénytelen kérés." }, { status: 400 }); }
     const { product, country, customData, customerEmail } = body as {
       product: ProductType;
       country?: CountryCode;
@@ -33,6 +35,13 @@ export async function POST(req: Request) {
     const type = product ? PRODUCT_ENTITLEMENT[product] : undefined;
     if (!product || !type) {
       return NextResponse.json({ error: "Ismeretlen termék." }, { status: 400 });
+    }
+
+    // Ország-validáció: ismeretlen kódnál a getPriceId dobna (500 lenne) —
+    // helyette tiszta 400. Hiányzó országnál a CH a default (eddigi viselkedés).
+    const VALID_COUNTRIES: readonly CountryCode[] = ["CH", "AT", "DE", "NL"];
+    if (country !== undefined && !VALID_COUNTRIES.includes(country)) {
+      return NextResponse.json({ error: "Érvénytelen ország." }, { status: 400 });
     }
 
     const priceId = getPriceId(product, country || "CH");

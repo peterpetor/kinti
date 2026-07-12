@@ -69,7 +69,12 @@ export function toBusiness(r: BusinessRow): Business {
     leadOptOut: bool(r.lead_opt_out ?? 0),
     country: r.country_code ?? DEFAULT_COUNTRY,
     canton: r.canton_code ?? null,
-    kintiPassActive: bool(r.kinti_pass_active ?? 0),
+    // Kinti Pass = Szaknévsor PRO perk: a jelvény CSAK aktív featured mellett él.
+    // A tárolt kinti_pass_active flag szándékosan megmarad lemondáskor (a Paddle-
+    // webhook csak featured=0-t ír) — így vissza-előfizetésnél az ajánlat-szöveg
+    // automatikusan visszakapcsol; a projekció-szintű ÉS-kapu miatt közben a
+    // nem-fizető cég sosem viseli a jelvényt (webhook + admin kézi elvétel egyaránt).
+    kintiPassActive: bool(r.kinti_pass_active ?? 0) && bool(r.featured),
     kintiPassOffer: r.kinti_pass_offer ?? null,
   };
 }
@@ -237,7 +242,9 @@ function toListBusiness(r: ListBusinessRow): ListBusiness {
     blurb: r.blurb, openText: r.open_text, workingHours: r.working_hours,
     yearsHere: r.years_here, languages: jsonArray(r.languages), photo: r.photo,
     logoKey: r.logo_key, country: r.country_code ?? DEFAULT_COUNTRY,
-    canton: r.canton_code ?? null, kintiPassActive: bool(r.kinti_pass_active ?? 0),
+    canton: r.canton_code ?? null,
+    // Kinti Pass CSAK aktív featured mellett (lásd toBusiness — ugyanaz a kapu).
+    kintiPassActive: bool(r.kinti_pass_active ?? 0) && bool(r.featured),
     kintiPassOffer: r.kinti_pass_offer ?? null, createdAt: r.created_at ?? null,
   };
 }
