@@ -107,14 +107,39 @@ export async function markStoryPublished(id: string): Promise<void> {
     .run();
 }
 
+/**
+ * DSA notice-and-action: bejelentéskor a történet azonnal eltűnik a publikumból
+ * (moderation_status=0 — vissza a moderációs sorba is), keep visszaállítja.
+ */
+export async function setStoryPublicVisibility(id: string, visible: boolean): Promise<void> {
+  await getDB()
+    .prepare("UPDATE stories SET moderation_status = ? WHERE id = ?")
+    .bind(visible ? 1 : 0, id)
+    .run();
+}
+
+/** Végleges törlés (DSA remove) — a hívó felel az R2-borítókép takarításáért. */
+export async function deleteStoryById(id: string): Promise<string | null> {
+  const row = await getDB()
+    .prepare("SELECT image_key FROM stories WHERE id = ?")
+    .bind(id)
+    .first<{ image_key: string | null }>();
+  await getDB().prepare("DELETE FROM stories WHERE id = ?").bind(id).run();
+  return row?.image_key ?? null;
+}
+
 /** A decide route-nak: privát mezőkkel (email-értesítés + R2-takarítás). */
 export async function getStoryAdminById(id: string): Promise<{
   id: string; slug: string; title: string; imageKey: string | null; contactEmail: string | null;
+  publishedAt: string | null;
 } | null> {
   const r = await getDB()
-    .prepare("SELECT id, slug, title, image_key, contact_email FROM stories WHERE id = ?")
+    .prepare("SELECT id, slug, title, image_key, contact_email, published_at FROM stories WHERE id = ?")
     .bind(id)
-    .first<{ id: string; slug: string; title: string; image_key: string | null; contact_email: string | null }>();
+    .first<{ id: string; slug: string; title: string; image_key: string | null; contact_email: string | null; published_at: string | null }>();
   if (!r) return null;
-  return { id: r.id, slug: r.slug, title: r.title, imageKey: r.image_key, contactEmail: r.contact_email };
+  return {
+    id: r.id, slug: r.slug, title: r.title, imageKey: r.image_key,
+    contactEmail: r.contact_email, publishedAt: r.published_at,
+  };
 }

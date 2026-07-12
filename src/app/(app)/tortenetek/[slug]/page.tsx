@@ -10,6 +10,7 @@ import { parseDbDate } from "@/lib/dates";
 import { renderStoryMarkdown, storyExcerpt } from "@/lib/story-md";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { GuideShareButton } from "@/components/views/guide-share-button";
+import { ReportButton } from "@/components/report-button";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -131,9 +132,13 @@ export default async function StoryPage({ params }: { params: Params }) {
         dangerouslySetInnerHTML={{ __html: html }}
       />
 
-      <p className="rounded-card border border-line bg-surface-alt px-4 py-3 text-[11.5px] leading-snug text-ink-muted">
-        A történet a szerző személyes tapasztalata és véleménye — nem jogi, pénzügyi vagy egészségügyi tanácsadás.
-      </p>
+      <div className="flex items-start justify-between gap-3 rounded-card border border-line bg-surface-alt px-4 py-3">
+        <p className="text-[11.5px] leading-snug text-ink-muted">
+          A történet a szerző személyes tapasztalata és véleménye — nem jogi, pénzügyi vagy egészségügyi tanácsadás.
+        </p>
+        {/* DSA notice-and-action: publikus UGC-n kötelező bejelentő-út. */}
+        <ReportButton contentType="story" contentId={story.id} variant="link" />
+      </div>
 
       {/* Írd meg a tiédet — a UGC-hurok motorja */}
       <Link

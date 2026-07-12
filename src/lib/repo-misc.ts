@@ -494,6 +494,10 @@ export interface WeeklyOpsCounts {
   b2bNew7: number;
   pushSubsTotal: number;
   newsletterSubsTotal: number;
+  /** Moderációra váró Keresek-hirdetés (a jóváhagyás indítja a lead-routingot!). */
+  pendingRequests: number;
+  /** Moderációra váró élettörténet. */
+  pendingStories: number;
 }
 
 /**
@@ -513,11 +517,14 @@ export async function getWeeklyOpsCounts(): Promise<WeeklyOpsCounts> {
            (SELECT COUNT(*) FROM job_applications WHERE submitted_at >= datetime('now','-7 days')) AS apps7,
            (SELECT COUNT(*) FROM b2b_projects WHERE created_at >= (strftime('%s','now') - 604800) * 1000) AS b2b7,
            (SELECT COUNT(*) FROM push_subscriptions) AS push_total,
-           (SELECT COUNT(*) FROM newsletter_subscribers) AS nl_total`,
+           (SELECT COUNT(*) FROM newsletter_subscribers) AS nl_total,
+           (SELECT COUNT(*) FROM service_requests WHERE moderation_status = 0) AS pending_req,
+           (SELECT COUNT(*) FROM stories WHERE moderation_status = 0) AS pending_story`,
       )
       .first<{
         leads7: number; locked7: number; cv7: number; quiz7: number;
         apps7: number; b2b7: number; push_total: number; nl_total: number;
+        pending_req: number; pending_story: number;
       }>();
     return {
       leads7: row?.leads7 ?? 0,
@@ -528,9 +535,14 @@ export async function getWeeklyOpsCounts(): Promise<WeeklyOpsCounts> {
       b2bNew7: row?.b2b7 ?? 0,
       pushSubsTotal: row?.push_total ?? 0,
       newsletterSubsTotal: row?.nl_total ?? 0,
+      pendingRequests: row?.pending_req ?? 0,
+      pendingStories: row?.pending_story ?? 0,
     };
   } catch {
-    return { leads7: 0, lockedLeads7: 0, cv7: 0, quizPlays7: 0, jobApps7: 0, b2bNew7: 0, pushSubsTotal: 0, newsletterSubsTotal: 0 };
+    return {
+      leads7: 0, lockedLeads7: 0, cv7: 0, quizPlays7: 0, jobApps7: 0, b2bNew7: 0,
+      pushSubsTotal: 0, newsletterSubsTotal: 0, pendingRequests: 0, pendingStories: 0,
+    };
   }
 }
 

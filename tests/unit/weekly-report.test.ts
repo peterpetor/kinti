@@ -4,6 +4,7 @@ import { buildWeeklyReport, splitUsageRows } from "@/lib/weekly-report";
 const COUNTS = {
   leads7: 12, lockedLeads7: 4, cv7: 3, quizPlays7: 58,
   jobApps7: 7, b2bNew7: 1, pushSubsTotal: 21, newsletterSubsTotal: 40,
+  pendingRequests: 2, pendingStories: 1,
 };
 
 describe("weekly-report", () => {
@@ -26,6 +27,9 @@ describe("weekly-report", () => {
     expect(r.subject).toBe("📊 Kinti heti pulzus (2026-07-06 – 2026-07-13)");
     expect(r.rows.find((x) => x.label.includes("lead"))?.value).toBe("12 db — ebből zárolt: 4");
     expect(r.rows.find((x) => x.label.includes("Push"))?.value).toBe("21 fő");
+    expect(r.rows.find((x) => x.label.includes("Moderációra"))?.value).toBe(
+      "2 Keresek-hirdetés · 1 élettörténet",
+    );
     expect(r.topPages).toEqual([{ name: "home", count: 10 }]);
     expect(r.topActions).toEqual([]);
   });

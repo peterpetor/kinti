@@ -165,6 +165,11 @@ export async function POST(req: Request) {
         inline_query_id: update.inline_query.id,
         results,
         cache_time: 300,
+        // Üres panelnél az inline-válasz nem tud szöveget mutatni — a gomb ad
+        // kiutat: privátra vált és a /start súgót adja (példa-querykkel).
+        ...(results.length === 0 && q.length >= 3
+          ? { button: { text: "Nincs találat — így keress ✍️", start_parameter: "sugo" } }
+          : {}),
       });
       return NextResponse.json({ ok: true });
     }

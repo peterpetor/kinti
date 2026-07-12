@@ -182,8 +182,13 @@ export async function logModerationStrike(ipHash: string | null, reason: string)
 
 // --- Content Reports (Notice & Takedown) -------------------------------------
 
-export interface ContentReportInput { id: string; contentType: "business" | "review" | "sos" | "b2b"; contentId: string; reason: string | null; reporterIpHash: string | null; moderateToken: string; }
-export interface ContentReport { id: string; contentType: "business" | "review" | "sos" | "b2b"; contentId: string; status: string; }
+/** DSA-bejelenthető tartalom-típusok — bővítésnél MIND a report route, a
+ *  moderate route ÉS a lenti listOpenReports ágait is bővítsd (különben az
+ *  ismeretlen típusú nyitott bejelentést a lista auto-dismissed-re tenné). */
+export type ReportContentType = "business" | "review" | "sos" | "b2b" | "story" | "request";
+
+export interface ContentReportInput { id: string; contentType: ReportContentType; contentId: string; reason: string | null; reporterIpHash: string | null; moderateToken: string; }
+export interface ContentReport { id: string; contentType: ReportContentType; contentId: string; status: string; }
 
 export async function createContentReport(input: ContentReportInput): Promise<void> {
   await getDB().prepare(`INSERT INTO content_reports (id, content_type, content_id, reason, reporter_ip_hash, moderate_token) VALUES (?, ?, ?, ?, ?, ?)`)
@@ -224,7 +229,7 @@ export async function logSpamSubmit(kind: string, ipHash: string | null): Promis
     .run();
 }
 
-export interface OpenReport { id: string; contentType: "review" | "sos" | "business" | "b2b"; contentId: string; reason: string | null; moderateToken: string; createdAt: string; excerpt: string | null; }
+export interface OpenReport { id: string; contentType: ReportContentType; contentId: string; reason: string | null; moderateToken: string; createdAt: string; excerpt: string | null; }
 
 export async function listOpenReports(): Promise<OpenReport[]> {
   const db = getDB();
@@ -245,6 +250,12 @@ export async function listOpenReports(): Promise<OpenReport[]> {
       contentExists = !!row;
     } else if (r.content_type === "b2b") {
       const row = await db.prepare("SELECT title FROM b2b_projects WHERE id = ?").bind(r.content_id).first<{ title: string }>();
+      excerpt = row?.title ?? null; contentExists = !!row;
+    } else if (r.content_type === "story") {
+      const row = await db.prepare("SELECT title FROM stories WHERE id = ?").bind(r.content_id).first<{ title: string }>();
+      excerpt = row?.title ?? null; contentExists = !!row;
+    } else if (r.content_type === "request") {
+      const row = await db.prepare("SELECT title FROM service_requests WHERE id = ?").bind(r.content_id).first<{ title: string }>();
       excerpt = row?.title ?? null; contentExists = !!row;
     }
     if (!contentExists) {

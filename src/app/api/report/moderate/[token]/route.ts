@@ -8,7 +8,12 @@ import {
   deleteBusinessById,
   setB2bProjectStatus,
   deleteB2bProjectAsAdmin,
+  setStoryPublicVisibility,
+  deleteStoryById,
+  setServiceRequestVisibility,
+  deleteServiceRequestById,
 } from "@/lib/repo";
+import { getMediaBucket } from "@/lib/cloudflare";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -47,6 +52,10 @@ export async function GET(req: Request, { params }: { params: { token: string } 
       await unresolveSosAlert(report.contentId);
     } else if (report.contentType === "b2b") {
       await setB2bProjectStatus(report.contentId, "open");
+    } else if (report.contentType === "story") {
+      await setStoryPublicVisibility(report.contentId, true);
+    } else if (report.contentType === "request") {
+      await setServiceRequestVisibility(report.contentId, true);
     }
     await updateContentReportStatus(params.token, "kept");
     return html(
@@ -67,6 +76,12 @@ export async function GET(req: Request, { params }: { params: { token: string } 
     await deleteSosAlert(report.contentId);
   } else if (report.contentType === "b2b") {
     await deleteB2bProjectAsAdmin(report.contentId);
+  } else if (report.contentType === "story") {
+    // A törléssel az R2-borítókép is takarítandó (orphan-fájl ellen).
+    const imageKey = await deleteStoryById(report.contentId);
+    if (imageKey) await getMediaBucket().delete(imageKey).catch(() => { /* silent */ });
+  } else if (report.contentType === "request") {
+    await deleteServiceRequestById(report.contentId);
   }
   await updateContentReportStatus(params.token, "removed");
   return html("Véglegesen törölve 🗑", "A bejelentett tartalmat véglegesen töröltük.", true);

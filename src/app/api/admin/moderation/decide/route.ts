@@ -151,7 +151,9 @@ export async function POST(req: Request) {
         const story = await getStoryAdminById(id);
         if (statusValue === 1) {
           await markStoryPublished(id);
-          if (story?.contactEmail) {
+          // Email CSAK az első publikáláskor (újra-jóváhagyás — pl. bejelentés
+          // utáni visszaállítás — ne duplázza a szerző értesítőjét).
+          if (story?.contactEmail && !story.publishedAt) {
             const { sendStoryPublishedEmail } = await import("@/lib/email");
             const ctx = getCloudflareCtx();
             const send = sendStoryPublishedEmail({

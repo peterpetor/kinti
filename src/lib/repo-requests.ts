@@ -45,6 +45,31 @@ export async function getServiceRequests(country: string, category?: string | nu
   return (results ?? []).map(toReq);
 }
 
+/** Egy kérés alap-adatai (DSA-bejelentés létezés-ellenőrzés + kivonat). */
+export async function getServiceRequestBasic(id: string): Promise<{ id: string; title: string } | null> {
+  const row = await getDB()
+    .prepare("SELECT id, title FROM service_requests WHERE id = ?")
+    .bind(id)
+    .first<{ id: string; title: string }>();
+  return row ?? null;
+}
+
+/**
+ * DSA notice-and-action: bejelentéskor a hirdetés azonnal eltűnik a tábláról
+ * (moderation_status=0 — vissza a moderációs sorba is), keep visszaállítja.
+ */
+export async function setServiceRequestVisibility(id: string, visible: boolean): Promise<void> {
+  await getDB()
+    .prepare("UPDATE service_requests SET moderation_status = ? WHERE id = ?")
+    .bind(visible ? 1 : 0, id)
+    .run();
+}
+
+/** Végleges törlés (DSA remove). */
+export async function deleteServiceRequestById(id: string): Promise<void> {
+  await getDB().prepare("DELETE FROM service_requests WHERE id = ?").bind(id).run();
+}
+
 /** Mai (24h) beküldések egy ip_hash-ről — rate-limit. */
 export async function countServiceRequestByIp(ipHash: string | null): Promise<number> {
   if (!ipHash) return 0;

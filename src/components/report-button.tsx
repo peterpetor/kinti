@@ -6,8 +6,9 @@ import { cn } from "@/lib/cn";
 import { BottomSheet } from "./bottom-sheet";
 
 /**
- * ReportButton — „Jelentem" gomb vállalkozásokhoz, véleményekhez és SOS-hez
- * (Notice & Takedown). Megnyit egy alsó lapot, ahol a felhasználó megadja az indokot;
+ * ReportButton — „Jelentem" gomb vállalkozásokhoz, véleményekhez, SOS-hez,
+ * B2B-projekthez, élettörténethez és Keresek-hirdetéshez (Notice & Takedown,
+ * DSA Art. 16). Megnyit egy alsó lapot, ahol a felhasználó megadja az indokot;
  * beküldés után a tartalom AZONNAL elrejtődik a publikum elől, amíg az admin
  * dönt róla. Vezérelt nélkül, önállóan használható.
  */
@@ -17,7 +18,7 @@ export function ReportButton({
   variant = "icon",
   className,
 }: {
-  contentType: "business" | "review" | "sos" | "b2b";
+  contentType: "business" | "review" | "sos" | "b2b" | "story" | "request";
   contentId: string;
   variant?: "icon" | "link";
   /** Az „icon" variáns gomb-stílusának felülírása (pl. fehér-pill a profil-fejlécben). */

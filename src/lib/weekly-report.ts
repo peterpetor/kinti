@@ -53,6 +53,12 @@ export function buildWeeklyReport(
       { label: "Kvíz-játék", value: `${counts.quizPlays7} db` },
       { label: "Push-feliratkozó (összesen)", value: `${counts.pushSubsTotal} fő` },
       { label: "Hírlevél-feliratkozó (összesen)", value: `${counts.newsletterSubsTotal} fő` },
+      // Moderációs sor — a Keresek-jóváhagyás indítja a lead-routingot, a
+      // várakozó tétel = kiadatlan lead; a történet = kiadatlan SEO-oldal.
+      {
+        label: "⏳ Moderációra vár",
+        value: `${counts.pendingRequests} Keresek-hirdetés · ${counts.pendingStories} élettörténet`,
+      },
     ],
     topPages,
     topActions,

@@ -8,6 +8,7 @@ import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { getPresenceCities } from "@/lib/presence-cities";
 import { SERVICE_CATEGORIES, serviceCategory } from "@/lib/service-categories";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
+import { ReportButton } from "@/components/report-button";
 
 function fmtAgo(iso: string): string {
   const t = Date.parse(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z"));
@@ -120,6 +121,10 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
                 {r.description && <p className="mt-0.5 text-[12.5px] leading-snug text-ink-muted">{r.description}</p>}
                 <div className="mt-2 flex items-center gap-1.5 rounded-[10px] bg-primary-soft/60 px-3 py-2 text-[12.5px] font-bold text-primary">
                   📞 {r.contact}
+                </div>
+                {/* DSA notice-and-action: publikus hirdetésen bejelentő-út. */}
+                <div className="mt-1.5 flex justify-end">
+                  <ReportButton contentType="request" contentId={r.id} variant="link" />
                 </div>
               </article>
             );

@@ -9,6 +9,10 @@ import {
   countRecentReports,
   getB2bProjectBasic,
   setB2bProjectStatus,
+  getStoryAdminById,
+  setStoryPublicVisibility,
+  getServiceRequestBasic,
+  setServiceRequestVisibility,
 } from "@/lib/repo";
 import { hashIp } from "@/lib/security";
 import { sendContentReportEmail } from "@/lib/email";
@@ -20,9 +24,9 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
- * POST /api/report — vállalkozás, vélemény, SOS vagy B2B projekt bejelentése
- * (Notice & Takedown, DSA Art. 16).
- * Body: { contentType: "business" | "review" | "sos" | "b2b", contentId, reason }
+ * POST /api/report — vállalkozás, vélemény, SOS, B2B projekt, élettörténet vagy
+ * Keresek-hirdetés bejelentése (Notice & Takedown, DSA Art. 16).
+ * Body: { contentType: "business" | "review" | "sos" | "b2b" | "story" | "request", contentId, reason }
  *
  * Hatás: a tartalmat AZONNAL elrejtjük a publikum elől (hidden=1), és értesítjük
  * az admint (visszaállítás / végleges törlés linkekkel). Abuse ellen IP-alapú
@@ -38,9 +42,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Érvénytelen JSON." }, { status: 400 });
   }
 
-  const contentType = body.contentType === "business" || body.contentType === "review" || body.contentType === "sos" || body.contentType === "b2b"
-    ? body.contentType
-    : null;
+  const contentType =
+    body.contentType === "business" || body.contentType === "review" || body.contentType === "sos" ||
+    body.contentType === "b2b" || body.contentType === "story" || body.contentType === "request"
+      ? body.contentType
+      : null;
   const contentId = typeof body.contentId === "string" ? body.contentId.trim() : "";
   const reason = typeof body.reason === "string" ? body.reason.trim() : "";
 
@@ -102,6 +108,24 @@ export async function POST(req: Request) {
       contentExcerpt = project.title.slice(0, 160);
       // Azonnali rejtés a feedből ('closed'); admin „keep" visszanyitja.
       await setB2bProjectStatus(contentId, "closed");
+    }
+  } else if (contentType === "story") {
+    const story = await getStoryAdminById(contentId);
+    if (story) {
+      found = true;
+      contentLabel = "Élettörténet";
+      contentExcerpt = story.title.slice(0, 160);
+      // Azonnali rejtés (vissza a moderációs sorba); admin „keep" visszaállítja.
+      await setStoryPublicVisibility(contentId, false);
+    }
+  } else if (contentType === "request") {
+    const request = await getServiceRequestBasic(contentId);
+    if (request) {
+      found = true;
+      contentLabel = "Keresek-hirdetés";
+      contentExcerpt = request.title.slice(0, 160);
+      // Azonnali rejtés a tábláról; a routed_at claim marad (keep nem routol újra).
+      await setServiceRequestVisibility(contentId, false);
     }
   }
 

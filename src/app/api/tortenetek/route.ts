@@ -111,13 +111,26 @@ export async function POST(req: Request) {
       });
     }
 
-    const slug = storySlug(title);
-    await createStory({
-      slug, title, authorName, country, city: city || null,
+    const storyInput = {
+      title, authorName, country, city: city || null,
       // Kivonat a kártyákhoz + meta descriptionhöz (a törzs első mondataiból).
       summary: storyExcerpt(bodyMd, 200), bodyMd, imageKey,
       contactEmail: contactEmail || null, ipHash: ipHash ?? "unknown-ip",
-    });
+    };
+    try {
+      try {
+        await createStory({ ...storyInput, slug: storySlug(title) });
+      } catch {
+        // Slug-ütközés a UNIQUE-on (valószínűtlen, de lehetséges) → egyszeri
+        // retry ÚJ random utótaggal, ne 500-at kapjon a beküldő.
+        await createStory({ ...storyInput, slug: storySlug(title) });
+      }
+    } catch (insertErr) {
+      // Az insert végleg elbukott → a már feltöltött borítókép ne maradjon
+      // orphan-fájlként az R2-ben.
+      if (imageKey) await getMediaBucket().delete(imageKey).catch(() => { /* silent */ });
+      throw insertErr;
+    }
 
     return NextResponse.json({
       ok: true,

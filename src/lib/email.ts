@@ -1333,28 +1333,44 @@ export async function sendLeadDigestEmail(args: LeadDigestEmailArgs): Promise<vo
   const n = args.leads.length;
   const subject = `${n} árajánlat-kérés érkezett tegnap — kinti.app`;
 
+  // A Keresek-routolt leadnél a kontakt lehet CSAK telefon (sender_email üres) —
+  // az email-sor/CTA feltételes, telefonnál tel:-CTA megy helyette.
   const itemsText = args.leads
     .map((l, i) => {
       const cat = l.categoryLabel ? `${l.categoryLabel} · ` : "";
-      return `${i + 1}. ${cat}${l.senderName}\n   📧 ${l.senderEmail}${l.senderPhone ? `  📞 ${l.senderPhone}` : ""}\n   ${l.message.slice(0, 120)}${l.message.length > 120 ? "…" : ""}`;
+      const contact = [l.senderEmail ? `📧 ${l.senderEmail}` : null, l.senderPhone ? `📞 ${l.senderPhone}` : null]
+        .filter(Boolean)
+        .join("  ");
+      return `${i + 1}. ${cat}${l.senderName}\n   ${contact || "(elérhetőség az üzenetben)"}\n   ${l.message.slice(0, 120)}${l.message.length > 120 ? "…" : ""}`;
     })
     .join("\n\n");
 
-  const text = `Szia, ${args.businessName}!\n\nTegnap ${n} árajánlat-kérés érkezett hozzád a kinti.app-on:\n\n${itemsText}\n\nVálaszolj közvetlenül az egyes kérők e-mail-jére.\n\nSzaknévsor: https://kinti.app/szaknevsor\n\n— kinti.app`;
+  const text = `Szia, ${args.businessName}!\n\nTegnap ${n} árajánlat-kérés érkezett hozzád a kinti.app-on:\n\n${itemsText}\n\nVálaszolj közvetlenül a kérők megadott elérhetőségén.\n\nSzaknévsor: https://kinti.app/szaknevsor\n\n— kinti.app`;
 
   const itemsHtml = args.leads
     .map((l, i) => {
       const cat = l.categoryLabel ? escapeHtml(l.categoryLabel) : "Árajánlat-kérés";
+      const emailRow = l.senderEmail
+        ? `<tr><td style="padding:2px 0;font-weight:600;">E-mail:</td><td><a href="mailto:${escapeAttr(l.senderEmail)}" style="color:#1d4434;">${escapeHtml(l.senderEmail)}</a></td></tr>`
+        : "";
+      const phoneRow = l.senderPhone
+        ? `<tr><td style="padding:2px 0;font-weight:600;">Telefon:</td><td>${escapeHtml(l.senderPhone)}</td></tr>`
+        : "";
+      const cta = l.senderEmail
+        ? `<p style="margin:10px 0 0;"><a href="mailto:${escapeAttr(l.senderEmail)}" style="display:inline-block;padding:9px 16px;background:#1d4434;color:#fff;text-decoration:none;border-radius:999px;font-size:13px;font-weight:700;">Válasz küldése →</a></p>`
+        : l.senderPhone
+          ? `<p style="margin:10px 0 0;"><a href="tel:${escapeAttr(l.senderPhone.replace(/[^+\d]/g, ""))}" style="display:inline-block;padding:9px 16px;background:#1d4434;color:#fff;text-decoration:none;border-radius:999px;font-size:13px;font-weight:700;">Hívás →</a></p>`
+          : "";
       return `
       <div style="margin:0 0 14px;padding:14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#94a097;margin-bottom:4px;">${i + 1}. kérés · ${cat}</div>
         <table style="border-collapse:collapse;width:100%;font-size:13px;color:#5c6d63;margin-bottom:10px;">
           <tr><td style="padding:2px 0;font-weight:600;width:70px;">Kérező:</td><td>${escapeHtml(l.senderName)}</td></tr>
-          <tr><td style="padding:2px 0;font-weight:600;">E-mail:</td><td><a href="mailto:${escapeAttr(l.senderEmail)}" style="color:#1d4434;">${escapeHtml(l.senderEmail)}</a></td></tr>
-          ${l.senderPhone ? `<tr><td style="padding:2px 0;font-weight:600;">Telefon:</td><td>${escapeHtml(l.senderPhone)}</td></tr>` : ""}
+          ${emailRow}
+          ${phoneRow}
         </table>
         <div style="padding:10px;background:#f0ebe0;border-radius:10px;font-size:13px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">${escapeHtml(l.message.slice(0, 300))}${l.message.length > 300 ? "…" : ""}</div>
-        <p style="margin:10px 0 0;"><a href="mailto:${escapeAttr(l.senderEmail)}" style="display:inline-block;padding:9px 16px;background:#1d4434;color:#fff;text-decoration:none;border-radius:999px;font-size:13px;font-weight:700;">Válasz küldése →</a></p>
+        ${cta}
       </div>`;
     })
     .join("");
@@ -1364,7 +1380,7 @@ export async function sendLeadDigestEmail(args: LeadDigestEmailArgs): Promise<vo
     body: `
       <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Napi összefoglaló</p>
       <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">Tegnap ${n} árajánlat-kérés érkezett!</p>
-      <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#5c6d63;">Szia, <strong style="color:#0e1f17;">${escapeHtml(args.businessName)}</strong>! Az alábbi ügyfelek kértek tőled árajánlatot tegnap. Válaszolj közvetlenül az e-mail-jükre.</p>
+      <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#5c6d63;">Szia, <strong style="color:#0e1f17;">${escapeHtml(args.businessName)}</strong>! Az alábbi ügyfelek kértek tőled árajánlatot tegnap. Válaszolj közvetlenül a megadott elérhetőségükön.</p>
       ${itemsHtml}
       <p style="margin:16px 0 0;"><a href="https://kinti.app/szaknevsor" style="display:inline-block;padding:12px 20px;background:#f0ebe0;color:#1d4434;text-decoration:none;border-radius:999px;font-size:13px;font-weight:700;">Szaknévsor megtekintése →</a></p>
       <p style="margin:14px 0 0;font-size:11.5px;color:#94a097;line-height:1.5;">Ha nem szeretnél ilyen értesítőket kapni, a vállalkozásod kezelő oldalán kikapcsolhatod az árajánlat-kéréseket.</p>`,
