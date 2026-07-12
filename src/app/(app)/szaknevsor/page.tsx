@@ -1,6 +1,7 @@
 import { ExploreView } from "@/components/views/explore-view";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { PushOptin } from "@/components/push-optin";
+import { TelegramBotCard } from "@/components/telegram-bot-card";
 import { SzaknevsorHeader } from "./SzaknevsorHeader";
 import { getBusinessesForList, getCategories } from "@/lib/repo";
 import { cached } from "@/lib/edge-cache";
@@ -50,6 +51,11 @@ export default async function SzaknevsorPage() {
             />
           </div>
           <ExploreView categories={categories} businesses={businesses} />
+          {/* Telegram-bot promó — a Szaknévsor ott is él, ahol a csoportok:
+              inline mód (@botnév + keresés) bármely chatben, hozzáadás nélkül. */}
+          <div className="px-5">
+            <TelegramBotCard />
+          </div>
         </div>
       </PullToRefresh>
     </div>

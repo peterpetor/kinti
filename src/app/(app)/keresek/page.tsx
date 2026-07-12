@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { KeresekView } from "@/components/views/keresek-view";
+import { TelegramBotCard } from "@/components/telegram-bot-card";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -32,6 +33,9 @@ export default function KeresekPage() {
       </p>
 
       <KeresekView turnstileSiteKey={turnstileSiteKey} />
+
+      {/* Telegram-bot promó — ugyanez a kereső a csoportjaidban is él. */}
+      <TelegramBotCard />
     </div>
   );
 }
