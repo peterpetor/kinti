@@ -26,53 +26,57 @@ export const REGION_LABEL: Record<string, string> = {
   NL: "provincia",
 };
 
-// Ausztria — 9 Bundesland.
+// Ausztria — 9 Bundesland. Az aliasok közt a NAGYVÁROSOK is (a szabad-szöveges
+// hely-feloldáshoz: kereső-heurisztika, Telegram-bot, külső állás-szinkron) —
+// egy város CSAK a saját tartományánál szerepelhet (a feloldás egyértelmű marad).
 const AT_REGIONS: Region[] = [
   { code: "W", name: "Wien", aliases: ["bécs", "vienna"] },
-  { code: "NOE", name: "Niederösterreich", aliases: ["alsó-ausztria", "lower austria"] },
-  { code: "OOE", name: "Oberösterreich", aliases: ["felső-ausztria", "upper austria"] },
-  { code: "STM", name: "Steiermark", aliases: ["stájerország", "styria"] },
-  { code: "TIR", name: "Tirol", aliases: ["tyrol"] },
-  { code: "KTN", name: "Kärnten", aliases: ["karintia", "carinthia"] },
+  { code: "NOE", name: "Niederösterreich", aliases: ["alsó-ausztria", "lower austria", "st pölten", "sankt pölten", "wiener neustadt"] },
+  { code: "OOE", name: "Oberösterreich", aliases: ["felső-ausztria", "upper austria", "linz", "wels", "steyr"] },
+  { code: "STM", name: "Steiermark", aliases: ["stájerország", "styria", "graz", "leoben"] },
+  { code: "TIR", name: "Tirol", aliases: ["tyrol", "innsbruck", "kufstein"] },
+  { code: "KTN", name: "Kärnten", aliases: ["karintia", "carinthia", "klagenfurt", "villach"] },
   { code: "SBG", name: "Salzburg", aliases: [] },
-  { code: "VBG", name: "Vorarlberg", aliases: [] },
-  { code: "BGL", name: "Burgenland", aliases: [] },
+  { code: "VBG", name: "Vorarlberg", aliases: ["bregenz", "dornbirn", "feldkirch"] },
+  { code: "BGL", name: "Burgenland", aliases: ["eisenstadt"] },
 ];
 
-// Németország — 16 Land (hivatalos kódok).
+// Németország — 16 Land (hivatalos kódok). Város-aliasok: lásd az AT-megjegyzést.
+// Frankfurt SZÁNDÉKOSAN a HE-nél (Frankfurt am Main — az Oder-parti kicsi);
+// Freiburg SZÁNDÉKOSAN kimarad (ütközne a svájci Freiburg kantonnal).
 const DE_REGIONS: Region[] = [
-  { code: "BW", name: "Baden-Württemberg", aliases: [] },
-  { code: "BY", name: "Bayern", aliases: ["bajorország", "bavaria"] },
+  { code: "BW", name: "Baden-Württemberg", aliases: ["stuttgart", "karlsruhe", "mannheim", "heidelberg", "ulm"] },
+  { code: "BY", name: "Bayern", aliases: ["bajorország", "bavaria", "münchen", "munich", "nürnberg", "augsburg", "regensburg", "ingolstadt"] },
   { code: "BE", name: "Berlin", aliases: [] },
-  { code: "BB", name: "Brandenburg", aliases: [] },
-  { code: "HB", name: "Bremen", aliases: [] },
+  { code: "BB", name: "Brandenburg", aliases: ["potsdam"] },
+  { code: "HB", name: "Bremen", aliases: ["bréma"] },
   { code: "HH", name: "Hamburg", aliases: [] },
-  { code: "HE", name: "Hessen", aliases: ["hesse"] },
-  { code: "MV", name: "Mecklenburg-Vorpommern", aliases: [] },
-  { code: "NI", name: "Niedersachsen", aliases: ["alsó-szászország", "lower saxony"] },
-  { code: "NW", name: "Nordrhein-Westfalen", aliases: ["észak-rajna-vesztfália"] },
-  { code: "RP", name: "Rheinland-Pfalz", aliases: [] },
-  { code: "SL", name: "Saarland", aliases: [] },
-  { code: "SN", name: "Sachsen", aliases: ["szászország", "saxony"] },
-  { code: "ST", name: "Sachsen-Anhalt", aliases: [] },
-  { code: "SH", name: "Schleswig-Holstein", aliases: [] },
-  { code: "TH", name: "Thüringen", aliases: ["türingia", "thuringia"] },
+  { code: "HE", name: "Hessen", aliases: ["hesse", "frankfurt", "wiesbaden", "darmstadt", "kassel"] },
+  { code: "MV", name: "Mecklenburg-Vorpommern", aliases: ["rostock", "schwerin"] },
+  { code: "NI", name: "Niedersachsen", aliases: ["alsó-szászország", "lower saxony", "hannover", "braunschweig", "osnabrück"] },
+  { code: "NW", name: "Nordrhein-Westfalen", aliases: ["észak-rajna-vesztfália", "köln", "cologne", "düsseldorf", "dortmund", "essen", "bonn", "duisburg", "aachen", "bochum", "wuppertal", "bielefeld", "münster"] },
+  { code: "RP", name: "Rheinland-Pfalz", aliases: ["mainz", "koblenz", "trier"] },
+  { code: "SL", name: "Saarland", aliases: ["saarbrücken"] },
+  { code: "SN", name: "Sachsen", aliases: ["szászország", "saxony", "dresden", "drezda", "leipzig", "lipcse", "chemnitz"] },
+  { code: "ST", name: "Sachsen-Anhalt", aliases: ["magdeburg"] },
+  { code: "SH", name: "Schleswig-Holstein", aliases: ["kiel", "lübeck"] },
+  { code: "TH", name: "Thüringen", aliases: ["türingia", "thuringia", "erfurt", "jena"] },
 ];
 
-// Hollandia — 12 provincia (ISO 3166-2 kódok).
+// Hollandia — 12 provincia (ISO 3166-2 kódok). Város-aliasok: lásd az AT-megjegyzést.
 const NL_REGIONS: Region[] = [
-  { code: "NH", name: "Noord-Holland", aliases: ["amszterdam", "amsterdam"] },
-  { code: "ZH", name: "Zuid-Holland", aliases: ["rotterdam", "hága", "den haag"] },
-  { code: "UT", name: "Utrecht", aliases: [] },
-  { code: "NB", name: "Noord-Brabant", aliases: ["eindhoven"] },
-  { code: "GE", name: "Gelderland", aliases: [] },
-  { code: "OV", name: "Overijssel", aliases: [] },
-  { code: "LI", name: "Limburg", aliases: [] },
-  { code: "FR", name: "Friesland", aliases: ["fryslân"] },
+  { code: "NH", name: "Noord-Holland", aliases: ["amszterdam", "amsterdam", "haarlem", "alkmaar", "zaandam"] },
+  { code: "ZH", name: "Zuid-Holland", aliases: ["rotterdam", "hága", "den haag", "leiden", "delft", "dordrecht"] },
+  { code: "UT", name: "Utrecht", aliases: ["amersfoort"] },
+  { code: "NB", name: "Noord-Brabant", aliases: ["eindhoven", "tilburg", "breda", "den bosch", "s-hertogenbosch"] },
+  { code: "GE", name: "Gelderland", aliases: ["arnhem", "nijmegen", "apeldoorn"] },
+  { code: "OV", name: "Overijssel", aliases: ["enschede", "zwolle", "deventer"] },
+  { code: "LI", name: "Limburg", aliases: ["maastricht", "venlo"] },
+  { code: "FR", name: "Friesland", aliases: ["fryslân", "leeuwarden"] },
   { code: "GR", name: "Groningen", aliases: [] },
-  { code: "DR", name: "Drenthe", aliases: [] },
-  { code: "FL", name: "Flevoland", aliases: [] },
-  { code: "ZE", name: "Zeeland", aliases: [] },
+  { code: "DR", name: "Drenthe", aliases: ["assen", "emmen"] },
+  { code: "FL", name: "Flevoland", aliases: ["almere", "lelystad"] },
+  { code: "ZE", name: "Zeeland", aliases: ["middelburg"] },
 ];
 
 /** Ország → régiók. A CH a meglévő CANTONS-ra mutat (egyetlen forrás). */

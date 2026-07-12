@@ -135,11 +135,13 @@ describe("heuristicParseSearch — bonyolult → null (menjen az AI-hoz)", () =>
 });
 
 describe("heuristicParseSearch — token-határ / hamis pozitív védelem", () => {
-  it("„Wien” NEM illeszkedik a „Wiener Neustadt”-ra (suffix-fehérlista) → null", () => {
-    // „wiener” maradéka „er”, ami nincs a magyar-toldalék listán → nem lesz W;
-    // a „neustadt” pedig ismeretlen marad → az egész az AI-hoz kerül.
+  it("„Wiener Neustadt” NEM lesz Bécs (W) — a helyes NÖ-re oldódik", () => {
+    // A „wiener" maradéka „er" nincs a toldalék-listán → a W hamis pozitív
+    // továbbra is kizárt. 2026-07-12 óta viszont a „wiener neustadt" NOE-alias
+    // (város-aliasok a regions.ts-ben) → helyesen Niederösterreichre oldódik.
     const r = heuristicParseSearch("orvos Wiener Neustadt", "AT", CATS);
-    expect(r).toBeNull();
+    expect(r?.cantonCode).toBe("NOE");
+    expect(r?.cantonCode).not.toBe("W");
   });
 
   it("túl rövid query → null", () => {

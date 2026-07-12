@@ -222,6 +222,7 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "biz-list": { windowHours: 1, maxPerWindow: 60 },   // Bulk szaknévsor-lista JSON — anti-hammer (böngésző-cache 120s miatt valós user ritkán üti; NAT-tűrő)
   "biz-contact": { windowHours: 1, maxPerWindow: 40 }, // Telefonszám-felfedés (reveal) — a botok tömeges szám-leszedése ellen (valós user ritkán kér 40+ számot/óra)
   assistant: { windowHours: 1, maxPerWindow: 10 }, // Kinti Asszisztens — csak az AI-értelmező ág fogyasztja (a heurisztika-út ingyenes)
+  "telegram-bot": { windowHours: 1, maxPerWindow: 30 }, // Telegram-bot keresés — per-user kulcs (tg:<id>), D1-flood védelem
 };
 
 /**

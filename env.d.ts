@@ -66,6 +66,19 @@ interface CloudflareEnv {
   ERROR_WEBHOOK_URL?: string;
 
   /**
+   * Telegram-bot (BotFather-től kapott) API-token. Ha üres → a
+   * /api/telegram/webhook 503-at ad (a bot nincs beüzemelve).
+   */
+  TELEGRAM_BOT_TOKEN?: string;
+
+  /**
+   * A setWebhook-nál megadott secret_token — a Telegram minden webhook-hívásban
+   * visszaküldi (X-Telegram-Bot-Api-Secret-Token fejléc), ezzel hitelesítjük,
+   * hogy a kérés tényleg a Telegramtól jön. A token mellé KÖTELEZŐ beállítani.
+   */
+  TELEGRAM_WEBHOOK_SECRET?: string;
+
+  /**
    * Az az email-cím, ahova az esemény-jóváhagyási értesítők mennek.
    * Ha nincs megadva, a ADMIN_EMAILS első eleme, vagy info@kinti.app.
    */

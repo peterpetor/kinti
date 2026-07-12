@@ -9,9 +9,13 @@ describe("regionCodeFromLocation", () => {
     expect(regionCodeFromLocation("AT", "Salzburg")).toBe("SBG");
   });
 
-  it("AT: csak városnév (nincs régió) → null", () => {
+  it("AT: ismeretlen városnév → null; ismert város-alias → régió", () => {
     expect(regionCodeFromLocation("AT", "Korneuburg")).toBeNull();
-    expect(regionCodeFromLocation("AT", "Dornbirn")).toBeNull();
+    // 2026-07-12: a nagyvárosok régió-aliasok lettek (Telegram-bot + kereső +
+    // állás-szinkron) — a Dornbirn már Vorarlbergre oldódik.
+    expect(regionCodeFromLocation("AT", "Dornbirn")).toBe("VBG");
+    expect(regionCodeFromLocation("AT", "Graz")).toBe("STM");
+    expect(regionCodeFromLocation("DE", "München")).toBe("BY");
   });
 
   it("strukturált area a specifikusabb régiót adja (Wien-Umgebung → NÖ)", () => {
