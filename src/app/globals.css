@@ -111,27 +111,24 @@
     visibility: hidden;
   }
 
-  /* A rejtett fázisban pulzáló MAGYAR ZÁSZLÓ töltés-jelző (user-kérés,
-     2026-07-10) — így a (jellemzően <1 mp) ország-feloldás szándékos
-     betöltésnek tűnik, nem üres/tört oldalnak. A body rejtett, ezért a jelző
-     a <html>-en ül. A hajszál-keret tartja láthatóan a fehér sávot a világos
-     (krém) háttéren is; sötét módban a zászló önmagában kiugrik. */
+  /* A rejtett fázisban pulzáló KINTI LOGÓ töltés-jelző (user-kérés, 2026-07-12:
+     „olyan legyen, mint a favicon/logó" — a korábbi sima zászló-téglalapot
+     váltja). A logó (ui/logo.tsx) 1:1 mása inline SVG-ként: sávos térkép-pin a
+     fix márka-hexekkel (a logó témafüggetlen). A body rejtett, ezért a jelző a
+     <html>-en ül; a drop-shadow emeli le a háttérről mindkét témában.
+     Ha a logó valaha változik, EZT a data-URI-t is frissítsd (ui/logo.tsx a
+     kanonikus forrás). */
   html[data-country-pending]::after {
     content: "";
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 42px;
-    height: 28px;
-    margin: -14px 0 0 -21px;
-    border-radius: 6px;
-    background: linear-gradient(
-      to bottom,
-      #cd2a3e 0 33.4%,
-      #ffffff 33.4% 66.7%,
-      #436f4d 66.7% 100%
-    );
-    box-shadow: 0 0 0 1px rgb(var(--ink) / 0.18), 0 4px 14px rgb(0 0 0 / 0.12);
+    width: 44px;
+    height: 52px;
+    margin: -26px 0 0 -22px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 47'%3E%3Cdefs%3E%3CclipPath id='p'%3E%3Cpath d='M20 1.5C9.8 1.5 2.5 9.4 2.5 19.4c0 9 8.2 18 14.8 24.3a3.8 3.8 0 0 0 5.4 0c6.6-6.3 14.8-15.3 14.8-24.3 0-10-7.3-17.9-17.5-17.9z'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23p)'%3E%3Crect width='40' height='16' fill='%23c8392e'/%3E%3Crect y='16' width='40' height='16' fill='%23f4ede0'/%3E%3Crect y='32' width='40' height='15' fill='%231d4434'/%3E%3C/g%3E%3Cpath d='M20 1.5C9.8 1.5 2.5 9.4 2.5 19.4c0 9 8.2 18 14.8 24.3a3.8 3.8 0 0 0 5.4 0c6.6-6.3 14.8-15.3 14.8-24.3 0-10-7.3-17.9-17.5-17.9z' fill='none' stroke='%231d4434' stroke-width='2.2'/%3E%3Ccircle cx='20' cy='19' r='5' fill='%23f4ede0' stroke='%231d4434' stroke-width='2.2'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    filter: drop-shadow(0 4px 14px rgb(0 0 0 / 0.18));
     animation: kintiBootPulse 1s ease-in-out infinite;
   }
   @keyframes kintiBootPulse {
