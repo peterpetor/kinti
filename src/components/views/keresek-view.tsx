@@ -9,6 +9,7 @@ import { getPresenceCities } from "@/lib/presence-cities";
 import { SERVICE_CATEGORIES, serviceCategory } from "@/lib/service-categories";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ReportButton } from "@/components/report-button";
+import { Skeleton } from "@/components/skeleton";
 
 function fmtAgo(iso: string): string {
   const t = Date.parse(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z"));
@@ -100,7 +101,22 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
 
       {/* Lista */}
       {loading ? (
-        <p className="py-8 text-center text-[13px] text-ink-muted">Betöltés…</p>
+        // Shimmer-skeleton kártyák a szöveges loader helyett (natív minta:
+        // a váz a valódi kártya-elrendezést követi, nincs tartalom-ugrás).
+        <div className="space-y-2.5" aria-busy="true">
+          <span className="sr-only">Betöltés…</span>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-card border border-line bg-surface p-4 shadow-card">
+              <div className="mb-2 flex gap-2">
+                <Skeleton className="h-5 w-20 rounded-pill" />
+                <Skeleton className="h-5 w-16 rounded-pill" />
+              </div>
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="mt-2 h-3 w-1/2" />
+              <Skeleton className="mt-3 h-9 w-full rounded-[10px]" />
+            </div>
+          ))}
+        </div>
       ) : requests.length === 0 ? (
         <div className="rounded-card border border-dashed border-line bg-surface px-6 py-10 text-center text-[13px] text-ink-muted">
           Még nincs nyitott keresés {countryLocative(country)}. Legyél te az első — add fel, mit keresel!

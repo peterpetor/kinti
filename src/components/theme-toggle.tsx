@@ -28,9 +28,24 @@ export function ThemeToggle() {
 
   const choose = (t: Theme) => {
     setTheme(t);
-    document.documentElement.dataset.theme = t;
-    // A böngésző-króm (címsor/PWA-fejléc) színe is átvált — natív érzet.
-    applyThemeColor(t);
+    const apply = () => {
+      document.documentElement.dataset.theme = t;
+      // A böngésző-króm (címsor/PWA-fejléc) színe is átvált — natív érzet.
+      applyThemeColor(t);
+    };
+    // View Transition: a TELJES oldal (szöveg, kártyák, képek) puha átúszása a
+    // két téma között — natív téma-váltás érzet. Progressive enhancement:
+    // támogatás nélkül / reduced-motion alatt azonnali váltás (a body
+    // háttér-átúszása akkor is megvan).
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+    if (!reduce && typeof doc.startViewTransition === "function") {
+      doc.startViewTransition(apply);
+    } else {
+      apply();
+    }
     try {
       localStorage.setItem(STORAGE_KEY, t);
     } catch {

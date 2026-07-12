@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "@/components/ui/icons";
+import { haptic } from "@/lib/haptics";
 
 /**
  * Egyszerű mobil-barát alsó lap (bottom sheet). A megosztás- és naptár-választó
- * használja. Háttérre kattintva / Esc-re zár.
+ * használja. Háttérre kattintva / Esc-re zár, mobilon a natív mintát követve
+ * LEHÚZÁSSAL is (a lap az ujjat követi; ~90px felett elenged és zár, alatta
+ * visszaugrik). A közvetlen ujj-követés nem animáció, ezért nem igényel
+ * reduced-motion guardot; a visszaugró transition rövid és funkcionális.
  */
 export function BottomSheet({
   open,
@@ -20,9 +24,21 @@ export function BottomSheet({
   children: React.ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
+  const [dragY, setDragY] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const dragStart = useRef<number | null>(null);
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Új nyitáskor a húzás-állapot nullázása (ne "félig lehúzva" nyíljon).
+  useEffect(() => {
+    if (open) {
+      setDragY(0);
+      setDragging(false);
+      dragStart.current = null;
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -33,6 +49,28 @@ export function BottomSheet({
 
   if (!open || !mounted) return null;
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    dragStart.current = e.touches[0]?.clientY ?? null;
+    setDragging(true);
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (dragStart.current === null) return;
+    const dy = (e.touches[0]?.clientY ?? dragStart.current) - dragStart.current;
+    // Csak lefelé követünk; felfelé nem mozdul (natív sheet-viselkedés).
+    setDragY(dy > 0 ? dy : 0);
+  };
+  const onTouchEnd = () => {
+    setDragging(false);
+    dragStart.current = null;
+    if (dragY > 90) {
+      haptic("tap");
+      setDragY(0);
+      onClose();
+    } else {
+      setDragY(0);
+    }
+  };
+
   const content = (
     <div className="fixed inset-0 z-[9998] flex sm:items-center items-end justify-center sm:p-4" role="dialog" aria-modal="true">
       <button
@@ -40,8 +78,26 @@ export function BottomSheet({
         aria-label="Bezárás"
         onClick={onClose}
         className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
+        style={{ opacity: dragY > 0 ? Math.max(0.25, 1 - dragY / 300) : undefined }}
       />
-      <div className="relative z-[1] w-full max-w-md sm:rounded-[24px] rounded-t-[24px] border border-line bg-surface p-5 sm:pb-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-pop animate-fade-up">
+      <div
+        className="relative z-[1] w-full max-w-md sm:rounded-[24px] rounded-t-[24px] border border-line bg-surface p-5 sm:pb-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-pop animate-fade-up"
+        style={{
+          transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
+          transition: dragging ? "none" : "transform .25s cubic-bezier(.2,.8,.2,1)",
+        }}
+      >
+        {/* Húzás-zóna: CSAK a fogantyú-sáv — a tartalomban görgetés/kijelölés
+            (pl. textarea) ne mozgassa a lapot. touch-none: a zónán a böngésző
+            ne görgessen, az ujj a lapot vezesse. */}
+        <div
+          className="absolute inset-x-0 top-0 h-9 cursor-grab touch-none sm:hidden"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          onTouchCancel={onTouchEnd}
+          aria-hidden
+        />
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-line sm:hidden" />
         {/* Egyértelmű bezáró gomb — mobilon nem volt nyilvánvaló, hogy a háttérre
             koppintva lehet kilépni. */}

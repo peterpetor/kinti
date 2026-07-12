@@ -55,7 +55,15 @@ export function SalaryOffersView() {
 
   if (!hydrated) {
     return (
-      <p className="text-center text-[13px] text-ink-muted">Betöltés…</p>
+      <div className="space-y-2.5" aria-busy="true">
+        <span className="sr-only">Betöltés…</span>
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div key={i} className="rounded-card border border-line bg-surface p-4 shadow-card">
+            <div className="kinti-shimmer h-4 w-1/2 rounded-md bg-ink/10" />
+            <div className="kinti-shimmer mt-2 h-3 w-1/3 rounded-md bg-ink/10" />
+          </div>
+        ))}
+      </div>
     );
   }
 

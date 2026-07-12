@@ -223,6 +223,15 @@
     .kinti-page-in { animation: none; }
   }
 
+  /* Téma-váltás View Transition (ThemeToggle hívja startViewTransition-nel,
+     reduced-motion alatt NEM indítja): a teljes oldal puha cross-fade-je.
+     A rövid időzítés a natív érzet — a hosszú fade "webes"-nek hat. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+  }
+
   /* Shimmer-skeleton: a betöltő blokkokon átfutó finom fény-söprés (prémiumabb,
      mint a sima pulzálás). A söprés erőssége téma-függő (--shimmer-a): világosban
      jól látszó fehér, sötétben visszafogott (a vakítás ellen). A blokk maga

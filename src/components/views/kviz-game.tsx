@@ -51,8 +51,12 @@ export function KvizGame() {
 
   if (state === null) {
     return (
-      <div className="rounded-card border border-line bg-surface px-4 py-8 text-center text-[12.5px] text-ink-muted">
-        Betöltés…
+      <div className="space-y-3 rounded-card border border-line bg-surface p-5 shadow-card" aria-busy="true">
+        <span className="sr-only">Betöltés…</span>
+        <div className="kinti-shimmer h-4 w-1/2 rounded-md bg-ink/10" />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="kinti-shimmer h-11 w-full rounded-[12px] bg-ink/10" />
+        ))}
       </div>
     );
   }

@@ -207,7 +207,14 @@ export function HataridoAssistant() {
   }, [items, remindersOn, subJson, emailOn]);
 
   if (isPro === null) {
-    return <div className="rounded-card border border-line bg-surface p-6 text-center text-[13px] text-ink-muted">Betöltés…</div>;
+    return (
+      <div className="space-y-2 rounded-card border border-line bg-surface p-5 shadow-card" aria-busy="true">
+        <span className="sr-only">Betöltés…</span>
+        <div className="kinti-shimmer h-4 w-2/5 rounded-md bg-ink/10" />
+        <div className="kinti-shimmer h-3 w-3/5 rounded-md bg-ink/10" />
+        <div className="kinti-shimmer mt-3 h-10 w-full rounded-[12px] bg-ink/10" />
+      </div>
+    );
   }
 
   const presets = [...(PRESETS[country] ?? PRESETS.CH), ...COMMON];

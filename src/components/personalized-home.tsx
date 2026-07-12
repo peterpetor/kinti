@@ -9,6 +9,7 @@ import { usePreferredCanton } from "@/lib/canton-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { getRegions } from "@/lib/regions";
 import { trackAction } from "@/components/usage-tracker";
+import { haptic } from "@/lib/haptics";
 import {
   PERSONALIZE_KEY,
   PERSONALIZE_DISMISS_KEY,
@@ -131,10 +132,12 @@ export function PersonalizedHome() {
       localStorage.setItem(PERSONALIZE_KEY, JSON.stringify(p));
       localStorage.removeItem(PERSONALIZE_DISMISS_KEY);
     } catch { /* ignore */ }
+    haptic("success");
     trackAction("personalize-done");
   };
 
   const pickFocus = (f: PersonalizeFocus) => {
+    haptic("selection");
     setFocus(f);
     // Ha nincs régió-kérdés, a fókusszal kész is vagyunk.
     if (!askRegion && stage) save(stage, f);
@@ -177,7 +180,7 @@ export function PersonalizedHome() {
             <button
               key={o.id}
               type="button"
-              onClick={() => setStage(o.id)}
+              onClick={() => { haptic("selection"); setStage(o.id); }}
               className="flex w-full items-center gap-2.5 rounded-[12px] border border-line bg-surface px-3 py-2.5 text-left transition active:scale-[0.99] hover:border-primary/40"
             >
               <span className="text-[18px]" aria-hidden>{o.emoji}</span>
