@@ -1,25 +1,75 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
-import { Icon } from "./icons";
+import { Icon, type IconName } from "./icons";
 import { CountrySwitcher } from "./country-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
+import { haptic } from "@/lib/haptics";
+
+/**
+ * Főmenü („…") — ADAT-VEZÉRELT szerkezet (2026-07-12-i átalakítás):
+ *
+ *  • Menü-szűrő felül: ékezet-független azonnali keresés a ~35 elem között —
+ *    gépelésre csak a találatok látszanak, a szekcióik kinyílnak.
+ *  • Okos alapállapot: a két legértékesebb szekció (Szaknévsor & Állások,
+ *    Pénzügyek) nyitva indul, a többi összecsukva — a menü egy képernyőnyi,
+ *    nem görgető-fal.
+ *  • A nyit/zár állapotot a menü MEGJEGYZI (localStorage kinti.menu.sec.*) —
+ *    ki-ki a saját használatához igazíthatja, mint egy natív beállítás-app.
+ *
+ * Felirat-szabályok: [[ui-naming-rules]] (mondatkezdő nagybetű, kötőjeles
+ * összetétel, nincs angol szó). Új menüpont = egy sor az items-listában.
+ */
+
+type Badge = "pro" | "bizpro" | "job";
+
+interface MenuItem {
+  key: string;
+  label: string;
+  href?: string;
+  external?: boolean;
+  /** Ikon-doboz tint-osztályai (bg + szöveg-szín). */
+  tint: string;
+  icon: { name: IconName; filled?: boolean } | { emoji: string };
+  badge?: Badge;
+  /** Egyedi render (pl. téma-váltó sor, cég-állapot skeleton) — a label a szűrőhöz kell. */
+  custom?: ReactNode;
+}
+
+interface MenuSection {
+  id: string;
+  title: string;
+  defaultOpen: boolean;
+  items: MenuItem[];
+}
+
+/** Ékezet-hajtás a menü-szűrőhöz („kalkulator" találja a „kalkulátor"-t). */
+function fold(s: string): string {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+const BADGE_META: Record<Badge, { label: string; cls: string }> = {
+  // HÁROM külön termék — a badge KI is mondja, melyikhez tartozik a lakat
+  // (nem csak „PRO"), a /pro oldal szín-kódját követve.
+  pro: { label: "Kinti PRO", cls: "bg-primary/10 text-primary" },
+  bizpro: { label: "Szaknévsor PRO", cls: "bg-pro/15 text-pro" },
+  job: { label: "Kiemelt Állás", cls: "bg-accent/15 text-accent" },
+};
 
 export function DropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const { isSignedIn, isLoaded } = useAuth();
   // Tulajdonosi állapot: van-e már Szaknévsor-vállalkozása? (egy fiók = egy cég)
-  // Ez alapján a menü VAGY a „Vidd fel a vállalkozásod”, VAGY a „Vállalkozásom”
-  // pontot mutatja — sose mindkettőt. A legutóbbi ismert értéket localStorage-ból
-  // indítjuk (azonnal a HELYES pont látszik, nincs téves villanás), nyitáskor
-  // pedig a háttérben frissítjük a szerverről.
+  // A legutóbbi ismert értéket localStorage-ból indítjuk (azonnal a HELYES pont
+  // látszik), nyitáskor a háttérben frissítjük a szerverről.
   const [hasBusiness, setHasBusiness] = useState<boolean | null>(() => {
     try {
       const v = typeof window !== "undefined" ? localStorage.getItem("kinti_has_business") : null;
@@ -29,26 +79,23 @@ export function DropdownMenu() {
     }
   });
   const statusFetched = useRef(false);
-  // A menü kattintásra (mount után) renderel → az ország közvetlenül olvasható.
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isCH = country === "CH";
   const has = (feature: string) => isFeatureAvailable(feature, country);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
 
-  // Menü megnyitásakor (bejelentkezett usernél, mount-onként egyszer) frissítjük
-  // a szerverről — a cache-elt érték így sosem ragad be (pl. közben létrehozta
-  // vagy másik fiókkal lépett be). Hibánál a következő nyitáskor újrapróbáljuk.
+  // Nyitáskor a szűrő tisztán indul.
+  useEffect(() => {
+    if (isOpen) setQuery("");
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen || !isSignedIn || statusFetched.current) return;
     statusFetched.current = true;
@@ -73,29 +120,206 @@ export function DropdownMenu() {
 
   const close = () => setIsOpen(false);
 
-  const linkClass =
-    "flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] font-bold text-ink hover:bg-surface-alt transition-all active:scale-[0.98]";
+  // ── A menü tartalma (ország- és fiók-tudatos) ─────────────────────────────
+  const businessItem: MenuItem =
+    isSignedIn && hasBusiness === null
+      ? {
+          key: "biz",
+          label: "Vállalkozásom",
+          tint: "bg-pro/10 text-pro",
+          icon: { emoji: "🏪" },
+          custom: (
+            <div key="biz" className="flex items-center gap-3 px-4 py-3.5 rounded-xl" aria-hidden>
+              <span className="h-8 w-8 shrink-0 rounded-xl bg-surface-alt animate-pulse" />
+              <span className="h-4 w-44 rounded-md bg-surface-alt animate-pulse" />
+            </div>
+          ),
+        }
+      : isSignedIn && hasBusiness
+        ? { key: "biz", label: "Vállalkozásom", href: "/profil", tint: "bg-pro/10 text-pro", icon: { emoji: "🏪" }, badge: "bizpro" }
+        : { key: "biz", label: "Vidd fel a vállalkozásod", href: "/vallalkozo", tint: "bg-primary/10 text-primary", icon: { name: "plus" } };
 
-  // A menü lakatolt/prémium elemei HÁROM külön termékhez tartoznak — a badge KI is
-  // mondja, MELYIKhez (nem csak „PRO"), a /pro oldal szín-kódját követve:
-  //   • Kinti PRO  → zöld (primary) — magánszemély-funkciók (AI, kalkulátorok)
-  //   • Szaknévsor PRO → arany (pro) — a vállalkozásod kiemelése/statisztikája
-  //   • Kiemelt Állás → piros (accent) — a munkáltatói hirdetés kiemelése (egyszeri)
-  const ProBadge = () => (
-    <span className="ml-auto shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-primary">
-      Kinti PRO
-    </span>
-  );
-  const BizProBadge = () => (
-    <span className="ml-auto shrink-0 rounded-full bg-pro/15 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-pro">
-      Szaknévsor PRO
-    </span>
-  );
-  const JobFeaturedBadge = () => (
-    <span className="ml-auto shrink-0 rounded-full bg-accent/15 px-2 py-0.5 text-[10.5px] font-black tracking-wide text-accent">
-      Kiemelt Állás
-    </span>
-  );
+  const sections: MenuSection[] = [
+    {
+      id: "szaknevsor",
+      title: "Szaknévsor & Állások",
+      defaultOpen: true,
+      items: [
+        { key: "ajanlas", label: "Ajánlj egy magyar vállalkozást", href: "/szaknevsor/ajanlas", tint: "bg-accent/10 text-accent", icon: { name: "send" } },
+        { key: "keresek", label: "Keresek — igény-hirdetés", href: "/keresek", tint: "bg-primary/10 text-primary", icon: { name: "search" } },
+        businessItem,
+        { key: "b2b", label: "B2B Hub — projektpiac", href: "/b2b", tint: "bg-pro/10", icon: { emoji: "🤝" }, badge: "bizpro" },
+        { key: "allasok", label: "Álláshirdetések", href: "/allasok", tint: "bg-primary/10 text-primary", icon: { name: "briefcase" } },
+        { key: "mv-profil", label: "Munkavállalói profil", href: "/allasok/profil", tint: "bg-accent/10 text-accent", icon: { name: "user" } },
+        { key: "munkaltato", label: "Munkáltatói irányítópult", href: "/munkaltato", tint: "bg-accent/10 text-accent", icon: { name: "user" }, badge: "job" },
+      ],
+    },
+    {
+      id: "penzugy",
+      title: "Pénzügyek & Kalkulátorok",
+      defaultOpen: true,
+      items: [
+        { key: "arfolyam", label: "Árfolyam", href: "/arfolyam", tint: "bg-primary/10", icon: { emoji: "💱" } },
+        { key: "utalas", label: "Utalás-asszisztens", href: "/utalas", tint: "bg-primary/10", icon: { emoji: "💸" }, badge: "pro" },
+        ...(has("berkalkulator")
+          ? [{ key: "ber", label: isCH ? "Svájci bérkalkulátor" : "Bérkalkulátor", href: "/berkalkulator", tint: "bg-success/10", icon: { emoji: "💰" } } as MenuItem]
+          : []),
+        { key: "mennyi", label: "Mennyi marad? — költözés-tervező", href: "/mennyi-marad", tint: "bg-success/10", icon: { emoji: "🧮" } },
+        ...(has("iranytu")
+          ? [{ key: "iranytu", label: "Iránytű — bérek és lakbérek", href: "/iranytu", tint: "bg-success/10", icon: { emoji: "📊" } } as MenuItem]
+          : []),
+        ...(has("lakberles")
+          ? [{ key: "lakber", label: "Lakásbérlés — rejtett költségek", href: "/lakberles", tint: "bg-primary/10", icon: { emoji: "🏠" } } as MenuItem]
+          : []),
+        ...(has("szolgaltato-valto")
+          ? [{ key: "valto", label: "Szolgáltató-váltó", href: "/szolgaltato-valto", tint: "bg-success/10", icon: { emoji: "🔄" } } as MenuItem]
+          : []),
+      ],
+    },
+    {
+      id: "tudas",
+      title: "Tudás & Ügyintézés",
+      defaultOpen: false,
+      items: [
+        { key: "kikoltozes", label: "Kiköltözési teendőlista", href: "/kikoltozes", tint: "bg-accent/10 text-accent", icon: { name: "check" } },
+        ...(has("iskolarendszer")
+          ? [{
+              key: "iskola",
+              label: isCH ? "Svájci iskolarendszer" : country === "DE" ? "Német iskolarendszer" : country === "NL" ? "Holland iskolarendszer" : "Osztrák iskolarendszer",
+              href: "/iskolarendszer", tint: "bg-star/15 text-star", icon: { emoji: "🏢" },
+            } as MenuItem]
+          : []),
+        ...(has("vizum")
+          ? [{
+              key: "vizum",
+              label: isCH ? "Tartózkodási engedély" : `Tartózkodás ${countryLocative(country)}`,
+              href: "/vizum", tint: "bg-primary/10", icon: { emoji: "🪪" },
+            } as MenuItem]
+          : []),
+        ...(has("allampolgarsag")
+          ? [{
+              key: "polgar", label: "Állampolgársági teszt", href: "/allampolgarsag", tint: "bg-primary/10",
+              icon: { emoji: isCH ? "🇨🇭" : country === "AT" ? "🇦🇹" : country === "DE" ? "🇩🇪" : "🇳🇱" }, badge: "pro",
+            } as MenuItem]
+          : []),
+        ...(has("ugyintezes")
+          ? [{ key: "ugyintezes", label: "Ügyintézés-varázsló", href: "/ugyintezes", tint: "bg-primary/10", icon: { emoji: "📋" } } as MenuItem]
+          : []),
+        { key: "hatarido", label: "Határidő-asszisztens", href: "/hatarido", tint: "bg-accent/10", icon: { emoji: "⏰" }, badge: "pro" },
+        { key: "hivatalos", label: "Hivatalos linkek", href: "/hivatalos", tint: "bg-primary/10", icon: { emoji: "🏛️" } },
+        ...(has("tudasbazis")
+          ? [{ key: "tudasbazis", label: "Tudásbázis", href: "/tudasbazis", tint: "bg-primary/10 text-primary", icon: { name: "globe" } } as MenuItem]
+          : []),
+      ],
+    },
+    {
+      id: "kozosseg",
+      title: "Közösség & Profilom",
+      defaultOpen: false,
+      items: [
+        { key: "kedvencek", label: "Kedvenceim", href: "/szaknevsor?fav=1", tint: "bg-accent/10 text-accent", icon: { name: "heart", filled: true } },
+        { key: "sajat", label: "Saját posztjaim", href: "/sajatjaim", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
+        { key: "ranglista", label: "Közösségi ranglista", href: "/ranglista", tint: "bg-star/15", icon: { emoji: "🏆" } },
+        { key: "tortenetek", label: "Élettörténetek", href: "/tortenetek", tint: "bg-accent/10", icon: { emoji: "✍️" } },
+        { key: "pass", label: "Kinti Pass — kedvezménykártya", href: "/profil/kinti-pass", tint: "bg-star/15", icon: { emoji: "🎟️" } },
+      ],
+    },
+    {
+      id: "ai",
+      title: "Felkészülés & AI",
+      defaultOpen: false,
+      items: [
+        { key: "cv", label: "Német önéletrajz-készítő", href: "/nemet-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" } },
+        { key: "interju", label: "AI interjú-szimulátor", href: "/allasok/interju-szimulator", tint: "bg-primary/10 text-primary", icon: { name: "sparkles" }, badge: "pro" },
+        { key: "cvaudit", label: "AI CV-asszisztens", href: "/allasok/cv-audit", tint: "bg-success/10 text-success", icon: { name: "sparkles" }, badge: "pro" },
+        ...(has("szakmai-szotar")
+          ? [{ key: "szotar", label: "Szakmai szótár", href: "/allasok/szakmai-szotar", tint: "bg-star/10 text-star", icon: { name: "document" }, badge: "pro" } as MenuItem]
+          : []),
+      ],
+    },
+    {
+      id: "utazas",
+      title: "Utazás & Autó",
+      defaultOpen: false,
+      items: [
+        ...(has("kozlekedes") ? [{ key: "kozlekedes", label: "Tömegközlekedés", href: "/kozlekedes", tint: "bg-primary/10", icon: { emoji: "🚆" } } as MenuItem] : []),
+        ...(has("repulojegy") ? [{ key: "repjegy", label: "Repülőjegy-figyelő", href: "/repulojegy", tint: "bg-primary/10", icon: { emoji: "✈️" } } as MenuItem] : []),
+        ...(has("vam") ? [{ key: "vam", label: "Vám-kalkulátor", href: "/vam", tint: "bg-primary/10", icon: { emoji: "🛂" } } as MenuItem] : []),
+        ...(has("bussen") ? [{ key: "bussen", label: "Gyorshajtás-kalkulátor", href: "/bussen", tint: "bg-accent/10", icon: { emoji: "🚓" } } as MenuItem] : []),
+      ],
+    },
+    {
+      id: "jatek",
+      title: "Nyelv & Játék",
+      defaultOpen: false,
+      items: [
+        ...(has("nyelvlecke")
+          ? [{
+              key: "nyelv",
+              label: isCH ? "Nyelvlecke — svájci német" : country === "DE" ? "Nyelvlecke — német" : country === "NL" ? "Nyelvlecke — holland" : "Nyelvlecke — osztrák német",
+              href: "/nyelvlecke", tint: "bg-primary/10", icon: { emoji: "🦉" },
+            } as MenuItem]
+          : []),
+        ...(has("kviz") ? [{ key: "kviz", label: "Napi kvíz", href: "/kviz", tint: "bg-accent/10", icon: { emoji: "🎯" } } as MenuItem] : []),
+      ],
+    },
+    {
+      id: "beallitasok",
+      title: "Beállítások",
+      defaultOpen: false,
+      items: [
+        {
+          key: "tema",
+          label: "Megjelenés — világos/sötét téma",
+          tint: "bg-primary/10",
+          icon: { emoji: "🎨" },
+          custom: (
+            <div key="tema" className="flex items-center justify-between gap-3 px-4 py-3.5">
+              <span className="flex items-center gap-3 text-[15px] font-bold text-ink">
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-base">🎨</span>
+                Megjelenés
+              </span>
+              <ThemeToggle />
+            </div>
+          ),
+        },
+        { key: "hirlevel", label: "Hírlevél", href: "/hirlevel", tint: "bg-primary/10 text-primary", icon: { name: "send" } },
+        { key: "ertesitesek", label: "Értesítések", href: "/ertesitesek", tint: "bg-primary/10 text-primary", icon: { name: "bell" } },
+      ],
+    },
+    {
+      id: "kovess",
+      title: "Kövess minket",
+      defaultOpen: false,
+      items: [
+        { key: "fb", label: "Facebook", href: "https://www.facebook.com/profile.php?id=61591833836890", external: true, tint: "bg-[#1877F2]/10 text-[#1877F2]", icon: { name: "facebook" } },
+        { key: "li", label: "LinkedIn", href: "https://www.linkedin.com/company/kintiapp", external: true, tint: "bg-[#0A66C2]/10 text-[#0A66C2]", icon: { name: "linkedin" } },
+        { key: "yt", label: "YouTube", href: "https://www.youtube.com/@kintiapp", external: true, tint: "bg-[#FF0000]/10 text-[#FF0000]", icon: { name: "youtube" } },
+        { key: "tt", label: "TikTok", href: "https://www.tiktok.com/@kintiapp", external: true, tint: "bg-[#FE2C55]/10 text-[#FE2C55]", icon: { name: "tiktok" } },
+      ],
+    },
+    {
+      id: "jogi",
+      title: "Jogi & Segítség",
+      defaultOpen: false,
+      items: [
+        { key: "segitseg", label: "Segítség és GYIK", href: "/segitseg", tint: "bg-success/10 text-success", icon: { name: "question" } },
+        { key: "impresszum", label: "Impresszum", href: "/impresszum", tint: "bg-ink-muted/10 text-ink-muted", icon: { name: "flag" } },
+        { key: "adatvedelem", label: "Adatvédelem", href: "/adatvedelem", tint: "bg-ink-muted/10 text-ink-muted", icon: { name: "bookmark" } },
+        { key: "aszf", label: "ÁSZF", href: "/aszf", tint: "bg-ink-muted/10 text-ink-muted", icon: { name: "list" } },
+        { key: "abuse", label: "Visszaélés-bejelentés", href: "mailto:abuse@kinti.app", external: true, tint: "bg-accent/10 text-accent", icon: { name: "bell" } },
+      ],
+    },
+  ];
+
+  // ── Szűrés ────────────────────────────────────────────────────────────────
+  const q = fold(query.trim());
+  const filtering = q.length > 0;
+  const visibleSections = filtering
+    ? sections
+        .map((s) => ({ ...s, items: s.items.filter((it) => fold(it.label).includes(q)) }))
+        .filter((s) => s.items.length > 0)
+    : sections;
 
   return (
     <div className="relative shrink-0">
@@ -113,467 +337,81 @@ export function DropdownMenu() {
       {isOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex justify-center sm:items-center bg-surface sm:bg-black/50 sm:backdrop-blur-sm animate-in fade-in duration-300">
           <div className="flex w-full max-w-md flex-col bg-surface h-full sm:h-auto sm:max-h-[90vh] sm:rounded-3xl sm:shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300">
-            <div className="flex items-center justify-between px-5 py-4 sm:px-6 sm:py-5 border-b border-line shrink-0">
-              <h2 className="text-xl font-black text-ink tracking-tight">Menü</h2>
-              <button
-                onClick={close}
-                className="grid h-10 w-10 place-items-center rounded-full bg-surface-alt text-ink transition-transform hover:rotate-90 hover:bg-line active:scale-90"
-              >
-                ✕
-              </button>
+            <div className="shrink-0 border-b border-line px-5 py-4 sm:px-6 sm:py-5">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-black text-ink tracking-tight">Menü</h2>
+                <button
+                  onClick={close}
+                  aria-label="Menü bezárása"
+                  className="grid h-10 w-10 place-items-center rounded-full bg-surface-alt text-ink transition-transform hover:rotate-90 hover:bg-line active:scale-90"
+                >
+                  ✕
+                </button>
+              </div>
+              {/* Menü-szűrő: 35+ elemnél a gépelés a leggyorsabb út. */}
+              <div className="relative mt-3">
+                <Icon name="search" size={15} strokeWidth={2.4} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-faint" />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Keresés a menüben…"
+                  aria-label="Keresés a menüben"
+                  className="h-11 w-full rounded-[14px] border border-line bg-surface-alt pl-10 pr-9 text-[14px] font-semibold text-ink placeholder:font-normal placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/25"
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    aria-label="Szűrő törlése"
+                    className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full bg-line/60 text-[11px] text-ink-muted active:scale-90"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-1 custom-scrollbar">
+              {!filtering && (
+                <>
+                  {/* ── Ország-váltó ───────────────────────── */}
+                  <CountrySwitcher />
 
-              {/* ── Ország-váltó ───────────────────────── */}
-              <CountrySwitcher />
-
-              {/* ── PRO csomagok (kiemelt) ─────────────── */}
-              <Link
-                href="/pro"
-                onClick={close}
-                className="mb-2 flex items-center gap-3 rounded-xl border border-star/30 bg-star/10 px-4 py-3.5 text-[15px] font-black text-star transition-all hover:bg-star/15 active:scale-[0.98]"
-              >
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/20 text-star">
-                  <Icon name="sparkles" size={16} strokeWidth={2.6} />
-                </span>
-                Kinti PRO csomagok
-                <span className="ml-auto rounded-full bg-star px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white">
-                  PRO
-                </span>
-              </Link>
-
-              {/* ── Gyors elérés — a korábban fejléc nélkül „lógó" pontok most
-                  fejléces szekciókba rendezve (mint a többi lenti szekció).
-                  Alapból NYITVA (CollapsibleSection default), így semmi nem tűnik
-                  el, csak csoportosított és átlátható. ─────────────────────────── */}
-              <CollapsibleSection title="Szaknévsor & Állások">
-                {/* Egy fiók = egy cég: akinek MÁR van vállalkozása, annak a kezelő
-                    pontot mutatjuk; akinek nincs, a felvitel-CTA-t — sose a rosszat.
-                    Bejelentkezve, amíg az első állapot-lekérés fut (nincs még cache),
-                    semleges skeleton (ne villanjon téves menüpont). Kijelentkezve
-                    mindig a felvitel-CTA (a /vallalkozo flow úgyis beléptet). */}
-                <Link href="/szaknevsor/ajanlas" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                    <Icon name="send" size={16} strokeWidth={2.4} />
-                  </span>
-                  Ajánlj egy magyar vállalkozást
-                </Link>
-                <Link href="/keresek" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Icon name="search" size={16} strokeWidth={2.4} />
-                  </span>
-                  Keresek — igény-hirdetés
-                </Link>
-                {isSignedIn && hasBusiness === null ? (
-                  <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl" aria-hidden>
-                    <span className="h-8 w-8 shrink-0 rounded-xl bg-surface-alt animate-pulse" />
-                    <span className="h-4 w-44 rounded-md bg-surface-alt animate-pulse" />
-                  </div>
-                ) : isSignedIn && hasBusiness ? (
-                  <Link href="/profil" onClick={close} className={linkClass}>
-                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-pro/10 text-pro text-base">
-                      🏪
+                  {/* ── PRO csomagok (kiemelt) ─────────────── */}
+                  <Link
+                    href="/pro"
+                    onClick={close}
+                    className="mb-2 flex items-center gap-3 rounded-xl border border-star/30 bg-star/10 px-4 py-3.5 text-[15px] font-black text-star transition-all hover:bg-star/15 active:scale-[0.98]"
+                  >
+                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/20 text-star">
+                      <Icon name="sparkles" size={16} strokeWidth={2.6} />
                     </span>
-                    Vállalkozásom
-                    <BizProBadge />
+                    Kinti PRO csomagok
+                    <span className="ml-auto rounded-full bg-star px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white">
+                      PRO
+                    </span>
                   </Link>
-                ) : (
-                  <Link href="/vallalkozo" onClick={close} className={linkClass}>
-                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                      <Icon name="plus" size={16} strokeWidth={2.6} />
-                    </span>
-                    Vidd fel a vállalkozásod
-                  </Link>
-                )}
-                <Link href="/b2b" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-pro/10 text-base">
-                    🤝
-                  </span>
-                  B2B Hub — projektpiac
-                  <BizProBadge />
-                </Link>
-                <Link href="/allasok" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Icon name="briefcase" size={16} strokeWidth={2.4} />
-                  </span>
-                  Álláshirdetések
-                </Link>
-                <Link href="/allasok/profil" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                    <Icon name="user" size={16} strokeWidth={2.4} />
-                  </span>
-                  Munkavállalói profil
-                </Link>
-                <Link href="/munkaltato" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                    <Icon name="user" size={16} strokeWidth={2.4} />
-                  </span>
-                  Munkáltatói irányítópult
-                  <JobFeaturedBadge />
-                </Link>
-              </CollapsibleSection>
+                </>
+              )}
 
-              <CollapsibleSection title="Közösség & Profilom">
-                <Link href="/szaknevsor?fav=1" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                    <Icon name="heart" size={16} strokeWidth={2.4} filled={true} />
-                  </span>
-                  Kedvenceim
-                </Link>
-                <Link href="/sajatjaim" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Icon name="bookmark" size={16} strokeWidth={2.4} />
-                  </span>
-                  Saját posztjaim
-                </Link>
-                <Link href="/ranglista" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🏆</span>
-                  Közösségi ranglista
-                </Link>
-                <Link href="/tortenetek" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-base">✍️</span>
-                  Élettörténetek
-                </Link>
-                <Link href="/profil/kinti-pass" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-base">🎟️</span>
-                  Kinti Pass — kedvezménykártya
-                </Link>
-              </CollapsibleSection>
+              {visibleSections.length === 0 ? (
+                <p className="px-4 py-10 text-center text-[13px] text-ink-muted">
+                  Nincs találat a menüben erre: „{query.trim()}".
+                </p>
+              ) : (
+                visibleSections.map((s) => (
+                  <CollapsibleSection key={s.id} id={s.id} title={s.title} defaultOpen={s.defaultOpen} forceOpen={filtering}>
+                    {s.items.map((it) => (
+                      <MenuRow key={it.key} item={it} onNavigate={close} />
+                    ))}
+                  </CollapsibleSection>
+                ))
+              )}
 
-              {/* ── Összecsukható szekciók (alapból zárva) ──
-                  A munkakeresés/-adás pontjai (Munkavállalói profil, Munkáltatói
-                  Irányítópult) átkerültek a „Szaknévsor & Állások" szekcióba —
-                  itt már csak az AI-alapú felkészülő eszközök maradtak, ezért a
-                  cím „Toborzás & AI" → „Felkészülés & AI". */}
-              <CollapsibleSection title="Felkészülés & AI">
-                {/* A CV-készítő ide való (user-kérés, 2026-07-11): felkészülő eszköz,
-                    nem állás-listázás — a „Szaknévsor & Állások"-ból került át. */}
-                <Link href="/nemet-oneletrajz" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
-                    <Icon name="document" size={16} strokeWidth={2.4} />
-                  </span>
-                  Német önéletrajz-készítő
-                </Link>
-                <Link href="/allasok/interju-szimulator" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Icon name="sparkles" size={16} strokeWidth={2.4} />
-                  </span>
-                  AI interjú-szimulátor
-                  <ProBadge />
-                </Link>
-                <Link href="/allasok/cv-audit" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
-                    <Icon name="sparkles" size={16} strokeWidth={2.4} />
-                  </span>
-                  AI CV-asszisztens
-                  <ProBadge />
-                </Link>
-                {has("szakmai-szotar") && (
-                <Link href="/allasok/szakmai-szotar" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/10 text-star">
-                    <Icon name="document" size={16} strokeWidth={2.4} />
-                  </span>
-                  Szakmai szótár
-                  <ProBadge />
-                </Link>
-                )}
-              </CollapsibleSection>
-
-              <CollapsibleSection title="Tudás & Ügyintézés">
-                <Link href="/kikoltozes" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                    <Icon name="check" size={16} strokeWidth={2.4} />
-                  </span>
-                  Kiköltözési teendőlista
-                </Link>
-                {has("iskolarendszer") && (
-                <Link href="/iskolarendszer" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/15 text-star text-base">
-                    🏢
-                  </span>
-                  {isCH ? "Svájci iskolarendszer" : country === "DE" ? "Német iskolarendszer" : country === "NL" ? "Holland iskolarendszer" : "Osztrák iskolarendszer"}
-                </Link>
-                )}
-                {has("vizum") && (
-                <Link href="/vizum" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    🪪
-                  </span>
-                  {isCH ? "Tartózkodási engedély" : `Tartózkodás ${countryLocative(country)}`}
-                </Link>
-                )}
-                {has("allampolgarsag") && (
-                <Link href="/allampolgarsag" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    {isCH ? "🇨🇭" : country === "AT" ? "🇦🇹" : country === "DE" ? "🇩🇪" : country === "NL" ? "🇳🇱" : "🌍"}
-                  </span>
-                  Állampolgársági teszt
-                  <ProBadge />
-                </Link>
-                )}
-                {has("ugyintezes") && (
-                <Link href="/ugyintezes" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    📋
-                  </span>
-                  Ügyintézés-varázsló
-                </Link>
-                )}
-                {/* Határidő-asszisztens: ügyintézési eszköz — az „Utazás" szekcióból
-                    került ide (menü-rendezés, user-kérés 2026-07-12). */}
-                <Link href="/hatarido" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
-                    ⏰
-                  </span>
-                  Határidő-asszisztens
-                  <ProBadge />
-                </Link>
-                <Link href="/hivatalos" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    🏛️
-                  </span>
-                  Hivatalos linkek
-                </Link>
-                {has("tudasbazis") && (
-                <Link href="/tudasbazis" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Icon name="globe" size={16} strokeWidth={2.4} />
-                  </span>
-                  Tudásbázis
-                </Link>
-                )}
-              </CollapsibleSection>
-
-              <CollapsibleSection title="Pénzügyek & Kalkulátorok">
-                <Link href="/arfolyam" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    💱
-                  </span>
-                  Árfolyam
-                </Link>
-                {/* Utalás-asszisztens: pénzügyi eszköz — az „Utazás" szekcióból
-                    került ide (menü-rendezés, user-kérés 2026-07-12). */}
-                <Link href="/utalas" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    💸
-                  </span>
-                  Utalás-asszisztens
-                  <ProBadge />
-                </Link>
-                {has("berkalkulator") && (
-                <Link href="/berkalkulator" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
-                    💰
-                  </span>
-                  {isCH ? "Svájci bérkalkulátor" : "Bérkalkulátor"}
-                </Link>
-                )}
-                <Link href="/mennyi-marad" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
-                    🧮
-                  </span>
-                  Mennyi marad? — költözés-tervező
-                </Link>
-                {has("iranytu") && (
-                <Link href="/iranytu" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
-                    📊
-                  </span>
-                  Iránytű — bérek és lakbérek
-                </Link>
-                )}
-                {/* A „Mennyit költesz?" 2026-07-11-én kivezetve (user-döntés) —
-                    a szerepét a „Mennyi marad?" tervező vette át (feljebb). */}
-                {has("lakberles") && (
-                <Link href="/lakberles" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    🏠
-                  </span>
-                  Lakásbérlés — rejtett költségek
-                </Link>
-                )}
-                {has("szolgaltato-valto") && (
-                <Link href="/szolgaltato-valto" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success text-base">
-                    🔄
-                  </span>
-                  Szolgáltató-váltó
-                </Link>
-                )}
-              </CollapsibleSection>
-
-              <CollapsibleSection title="Utazás & Autó">
-                {has("kozlekedes") && (
-                <Link href="/kozlekedes" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    🚆
-                  </span>
-                  Tömegközlekedés
-                </Link>
-                )}
-                {has("repulojegy") && (
-                <Link href="/repulojegy" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    ✈️
-                  </span>
-                  Repülőjegy-figyelő
-                </Link>
-                )}
-                {has("vam") && (
-                <Link href="/vam" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    🛂
-                  </span>
-                  Vám-kalkulátor
-                </Link>
-                )}
-                {has("bussen") && (
-                <Link href="/bussen" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
-                    🚓
-                  </span>
-                  Gyorshajtás-kalkulátor
-                </Link>
-                )}
-                {/* Az Utalás- és Határidő-asszisztens a Pénzügyek / Ügyintézés
-                    szekcióba került (oda való — menü-rendezés 2026-07-12). */}
-              </CollapsibleSection>
-
-              <CollapsibleSection title="Játék">
-                {has("nyelvlecke") && (
-                <Link href="/nyelvlecke" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                    🦉
-                  </span>
-                  {/* Nyelvlecke 2026-07-11 óta ingyenes — nincs ProBadge. */}
-                  {isCH ? "Nyelvlecke — svájci német" : country === "DE" ? "Nyelvlecke — német" : country === "NL" ? "Nyelvlecke — holland" : "Nyelvlecke — osztrák német"}
-                </Link>
-                )}
-                {has("kviz") && (
-                <Link href="/kviz" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent text-base">
-                    🎯
-                  </span>
-                  Napi kvíz
-                </Link>
-                )}
-              </CollapsibleSection>
-
-              <CollapsibleSection title="Beállítások">
-                {/* Megjelenés — nem link, hanem téma-váltó vezérlő */}
-                <div className="flex items-center justify-between gap-3 px-4 py-3.5">
-                  <span className="flex items-center gap-3 text-[15px] font-bold text-ink">
-                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary text-base">
-                      🎨
-                    </span>
-                    Megjelenés
-                  </span>
-                  <ThemeToggle />
-                </div>
-                <Link href="/hirlevel" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Icon name="send" size={16} strokeWidth={2.4} />
-                  </span>
-                  Hírlevél
-                </Link>
-                <Link href="/ertesitesek" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Icon name="bell" size={16} strokeWidth={2.4} />
-                  </span>
-                  Értesítések
-                </Link>
-              </CollapsibleSection>
-
-              {/* ── Közösségi média — kövess minket a platformokon ─────────── */}
-              <CollapsibleSection title="Kövess minket">
-                <a
-                  href="https://www.facebook.com/profile.php?id=61591833836890"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={close}
-                  className={linkClass}
-                >
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#1877F2]/10 text-[#1877F2]">
-                    <Icon name="facebook" size={16} strokeWidth={2.2} />
-                  </span>
-                  Facebook
-                </a>
-                <a
-                  href="https://www.linkedin.com/company/kintiapp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={close}
-                  className={linkClass}
-                >
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#0A66C2]/10 text-[#0A66C2]">
-                    <Icon name="linkedin" size={16} strokeWidth={2.2} />
-                  </span>
-                  LinkedIn
-                </a>
-                <a
-                  href="https://www.youtube.com/@kintiapp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={close}
-                  className={linkClass}
-                >
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#FF0000]/10 text-[#FF0000]">
-                    <Icon name="youtube" size={16} strokeWidth={2.2} />
-                  </span>
-                  YouTube
-                </a>
-                <a
-                  href="https://www.tiktok.com/@kintiapp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={close}
-                  className={linkClass}
-                >
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#FE2C55]/10 text-[#FE2C55]">
-                    <Icon name="tiktok" size={16} strokeWidth={2.2} />
-                  </span>
-                  TikTok
-                </a>
-              </CollapsibleSection>
-
-              <CollapsibleSection title="Jogi & Segítség">
-                <Link href="/segitseg" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-success/10 text-success">
-                    <Icon name="question" size={16} strokeWidth={2.4} />
-                  </span>
-                  Segítség és GYIK
-                </Link>
-                <Link href="/impresszum" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
-                    <Icon name="flag" size={16} strokeWidth={2.4} />
-                  </span>
-                  Impresszum
-                </Link>
-                <Link href="/adatvedelem" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
-                    <Icon name="bookmark" size={16} strokeWidth={2.4} />
-                  </span>
-                  Adatvédelem
-                </Link>
-                <Link href="/aszf" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink-muted/10 text-ink-muted">
-                    <Icon name="list" size={16} strokeWidth={2.4} />
-                  </span>
-                  ÁSZF
-                </Link>
-                <a href="mailto:abuse@kinti.app" onClick={close} className={linkClass}>
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/10 text-accent">
-                    <Icon name="bell" size={16} strokeWidth={2.4} />
-                  </span>
-                  Visszaélés-bejelentés
-                </a>
-              </CollapsibleSection>
-
-              {/* Belépés (kijelentkezve) / Kijelentkezés (bejelentkezve). Amíg a
-                  Clerk töltődik (isLoaded=false) egyiket sem mutatjuk, hogy ne
-                  villanjon téves gomb. */}
-              {isLoaded && (isSignedIn ? (
+              {/* Belépés / Kijelentkezés — amíg a Clerk töltődik, egyiket sem
+                  mutatjuk (ne villanjon téves gomb). */}
+              {!filtering && isLoaded && (isSignedIn ? (
                 <SignOutButton redirectUrl="/">
                   <button className="flex w-full items-center justify-center gap-2.5 mt-3 px-4 py-3.5 rounded-2xl text-[14.5px] font-black text-ink bg-surface-alt hover:bg-line transition-all active:scale-[0.98]">
                     <Icon name="user" size={16} strokeWidth={2.4} />
@@ -599,25 +437,85 @@ export function DropdownMenu() {
   );
 }
 
+const linkClass =
+  "flex items-center gap-3 px-4 py-3.5 rounded-xl text-[15px] font-bold text-ink hover:bg-surface-alt transition-all active:scale-[0.98]";
+
+/** Egy menüsor — Link / külső <a> / egyedi node, közös ikon-doboz + badge. */
+function MenuRow({ item, onNavigate }: { item: MenuItem; onNavigate: () => void }) {
+  if (item.custom) return <>{item.custom}</>;
+  const inner = (
+    <>
+      <span className={cn("grid h-8 w-8 place-items-center rounded-xl text-base", item.tint)}>
+        {"emoji" in item.icon ? (
+          item.icon.emoji
+        ) : (
+          <Icon name={item.icon.name} size={16} strokeWidth={2.4} filled={item.icon.filled} />
+        )}
+      </span>
+      {item.label}
+      {item.badge && (
+        <span className={cn("ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-black tracking-wide", BADGE_META[item.badge].cls)}>
+          {BADGE_META[item.badge].label}
+        </span>
+      )}
+    </>
+  );
+  if (item.external) {
+    return (
+      <a href={item.href} target={item.href?.startsWith("mailto:") ? undefined : "_blank"} rel="noopener noreferrer" onClick={onNavigate} className={linkClass}>
+        {inner}
+      </a>
+    );
+  }
+  return (
+    <Link href={item.href ?? "/"} onClick={onNavigate} className={linkClass}>
+      {inner}
+    </Link>
+  );
+}
+
 /**
- * Összecsukható menü-szekció — alapból zárva, hogy a ~30 elemes menü ne legyen
- * áttekinthetetlen. A fejléc-gombra koppintva nyílik/zárul.
+ * Összecsukható menü-szekció — a nyit/zár állapotot MEGJEGYZI (localStorage),
+ * így a menü a felhasználó saját használatához idomul. Szűréskor kényszer-nyitva.
  */
 function CollapsibleSection({
+  id,
   title,
+  defaultOpen,
+  forceOpen,
   children,
 }: {
+  id: string;
   title: string;
+  defaultOpen: boolean;
+  forceOpen?: boolean;
   children: React.ReactNode;
 }) {
-  // Alapból NYITVA — a felhasználó ne kelljen minden szekciót külön kinyitnia.
-  // (A fejléc-gombbal továbbra is összecsukható, ha valaki mégis szeretné.)
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState<boolean>(() => {
+    try {
+      const v = typeof window !== "undefined" ? localStorage.getItem(`kinti.menu.sec.${id}`) : null;
+      return v === "1" ? true : v === "0" ? false : defaultOpen;
+    } catch {
+      return defaultOpen;
+    }
+  });
+  const effectiveOpen = forceOpen || open;
+  const toggle = () => {
+    haptic("selection");
+    setOpen((o) => {
+      const next = !o;
+      try {
+        localStorage.setItem(`kinti.menu.sec.${id}`, next ? "1" : "0");
+      } catch { /* privát mód — csak a munkamenetre él */ }
+      return next;
+    });
+  };
   return (
     <div className="pt-1.5">
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
+        aria-expanded={effectiveOpen}
         className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-surface-alt"
       >
         <span className="flex-1 text-[11px] font-black uppercase tracking-widest text-ink-faint">
@@ -627,10 +525,10 @@ function CollapsibleSection({
           name="chevR"
           size={15}
           strokeWidth={2.6}
-          className={cn("text-ink-faint transition-transform", open && "rotate-90")}
+          className={cn("text-ink-faint transition-transform", effectiveOpen && "rotate-90")}
         />
       </button>
-      {open && <div className="space-y-1">{children}</div>}
+      {effectiveOpen && <div className="space-y-1">{children}</div>}
     </div>
   );
 }
