@@ -20,7 +20,7 @@ import {
   DropdownMenu,
   KintiLogo,
 } from "@/components/ui";
-import { getBusinessByOwner, getEmployerByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getLeadCounts, FREE_LEADS_PER_MONTH, getTopSearchTerms, countOpenB2bProjects } from "@/lib/repo";
+import { getBusinessByOwner, getEmployerByOwner, getCategories, getDashboard, getReviewsByBusiness, getBusinessLeads, countNewBusinessLeads, getLeadCounts, FREE_LEADS_PER_MONTH, getTopSearchTerms, countOpenB2bProjects, getB2bTeaserMatch } from "@/lib/repo";
 import type { LeadCard } from "@/components/views/lead-inbox";
 import { mediaUrl } from "@/lib/media";
 import { relTimeFromIso } from "@/lib/relative-time";
@@ -214,12 +214,16 @@ async function OwnerDashboard({
   // ZÁROLT (kontakt elrejtve) → PRO oldja fel. A szakember fizet (ő keres a leadekből).
   const isPro = business.featured;
   const newLeadCount = await countNewBusinessLeads(business.id);
-  // A B2B-teaser számlálója is itt fut (párhuzamosan) — külön sorban plusz egy
-  // soros D1 kör-utat adna ennek az amúgy is lekérdezés-nehéz oldalnak.
-  const [rawLeads, leadCounts, b2bOpenCount] = await Promise.all([
+  // A B2B-teaser lekérdezése is itt fut (párhuzamosan) — külön sorban plusz egy
+  // soros D1 kör-utat adna ennek az amúgy is lekérdezés-nehéz oldalnak. PRO-nak
+  // elég a globális darabszám (neki nyitva a /b2b); nem-PRO-nak a cég szakmájára/
+  // országára illesztett teaser megy (getB2bTeaserMatch szűkülő körei).
+  const [rawLeads, leadCounts, b2bMatch] = await Promise.all([
     getBusinessLeads(business.id),
     getLeadCounts(business.id),
-    countOpenB2bProjects(),
+    isPro
+      ? countOpenB2bProjects().then((n) => ({ scope: "global" as const, count: n, items: [] }))
+      : getB2bTeaserMatch({ categoryId: business.categoryId, country: business.country }),
   ]);
   // Havi 5 ingyenes: egy lead INGYENES, ha a naptári hónapjában az első 5 között
   // érkezett (kronologikus sorrend) — így a 6.+ (a legfrissebb) zárolt → erős FOMO,
@@ -393,9 +397,10 @@ async function OwnerDashboard({
         </div>
       )}
 
-      {/* B2B Hub — zárt projektpiac (PRO perk). A teaser csak a nyitott projektek
-          SZÁMÁT mutatja; a részletekhez PRO kell (a /b2b maga kapuzza). */}
-      <B2bTeaser count={b2bOpenCount} isPro={Boolean(isPro)} />
+      {/* B2B Hub — zárt projektpiac (PRO perk). Nem-PRO cégnek a szakmájára/
+          országára illő projektek teasere (szám + szakma + város — cím SOHA);
+          a részletekhez PRO kell (a /b2b maga kapuzza). */}
+      <B2bTeaser match={b2bMatch} isPro={Boolean(isPro)} />
 
 
       {/* Egy cég, két kapcsoló: ha még nincs Munkáltatói profil, felkínáljuk az

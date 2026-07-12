@@ -16,6 +16,7 @@ import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { trackAction } from "@/components/usage-tracker";
+import { SalaryJobsCta } from "@/components/views/salary-jobs-cta";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { getRegions, REGIONS, REGION_LABEL } from "@/lib/regions";
 import { getCountry } from "@/lib/countries";
@@ -534,6 +535,10 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
             <div className="my-2 border-t border-line" />
             <Row label="Összes költség" amount={`−${fmt(summary.costTotal)}`} strong />
           </div>
+
+          {/* „Kontextus-híd": aktív Kinti-állások a beírt bruttó ±20%-os sávjában
+              (a bérkalkulátorok kész SalaryJobsCta-ja — 0 találatnál semmi). */}
+          <SalaryJobsCta country={country} grossMonthly={grossNum} />
 
           {/* Megosztás */}
           <button type="button" onClick={share}

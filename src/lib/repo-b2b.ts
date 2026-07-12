@@ -218,6 +218,82 @@ export async function countOpenB2bProjects(country?: string): Promise<number> {
 }
 
 /**
+ * Cég-illesztett teaser a NEM-PRO cég műszerfalára („híd" a B2B Hub felé):
+ * a cég kategóriájára + országára illő nyitott projektek. A visszaadott
+ * mezők SZÁNDÉKOSAN karcsúak — város, keresett-szakma címke, kor — cím/leírás/
+ * kontakt SOHA (a tartalom a Szaknévsor PRO szerver-gate mögött marad; a
+ * teaser-sor a kliensen homályosított placeholder, nem valódi elrejtett adat).
+ *
+ * Szűkülő körök: (1) pont a cég szakmáját keresik a cég országában →
+ * (2) bármilyen projekt a cég országában → (3) globális darabszám. Így a
+ * teaser mindig a legerősebb ŐSZINTE állítást mutatja.
+ */
+export interface B2bTeaserItem {
+  targetCity: string | null;
+  neededLabel: string | null;
+  createdAt: number; // epoch ms
+}
+
+export interface B2bTeaserMatch {
+  scope: "category" | "country" | "global";
+  count: number;
+  items: B2bTeaserItem[];
+}
+
+export async function getB2bTeaserMatch(biz: {
+  categoryId: string;
+  country: string;
+}): Promise<B2bTeaserMatch> {
+  const db = getDB();
+  const feedWhere =
+    "p.status = 'open' AND COALESCE(b.hidden, 0) = 0 AND b.moderation_status = 1";
+
+  const probe = async (extra: string, binds: unknown[]) => {
+    const [cnt, rows] = await Promise.all([
+      db
+        .prepare(
+          `SELECT COUNT(*) AS n FROM b2b_projects p
+           JOIN businesses b ON b.id = p.business_id
+           WHERE ${feedWhere}${extra}`,
+        )
+        .bind(...binds)
+        .first<{ n: number }>(),
+      db
+        .prepare(
+          `SELECT p.target_city, p.created_at, c.label AS needed_label
+           FROM b2b_projects p
+           JOIN businesses b ON b.id = p.business_id
+           LEFT JOIN categories c ON c.id = p.category_needed
+           WHERE ${feedWhere}${extra}
+           ORDER BY p.created_at DESC
+           LIMIT 3`,
+        )
+        .bind(...binds)
+        .all<{ target_city: string | null; created_at: number; needed_label: string | null }>(),
+    ]);
+    return {
+      count: cnt?.n ?? 0,
+      items: rows.results.map((r) => ({
+        targetCity: r.target_city,
+        neededLabel: r.needed_label,
+        createdAt: Number(r.created_at),
+      })),
+    };
+  };
+
+  const byCategory = await probe(" AND p.target_country = ? AND p.category_needed = ?", [
+    biz.country,
+    biz.categoryId,
+  ]);
+  if (byCategory.count > 0) return { scope: "category", ...byCategory };
+
+  const byCountry = await probe(" AND p.target_country = ?", [biz.country]);
+  if (byCountry.count > 0) return { scope: "country", ...byCountry };
+
+  return { scope: "global", count: await countOpenB2bProjects(), items: [] };
+}
+
+/**
  * Admin-lista: MINDEN projekt (nyitott+lezárt, rejtett/függő cégé is — pont a
  * problémásakat kell látnia), legfrissebb elöl. LEFT JOIN: a cég törlése után
  * árván maradt posztok is látszanak (és törölhetők).

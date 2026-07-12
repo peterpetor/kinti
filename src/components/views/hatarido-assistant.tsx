@@ -11,6 +11,7 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { readyRegistration } from "@/lib/push-client";
 import { ProLockOverlay } from "@/components/pro-lock-overlay";
+import { DeadlineProCta } from "@/components/views/deadline-pro-cta";
 
 interface Deadline {
   id: string;
@@ -272,6 +273,14 @@ export function HataridoAssistant() {
           </div>
         )}
       </section>
+
+      {/* „Pánik-konverzió" híd: a legsürgősebb, kurált témájú határidő mellé
+          magyar szakértőt ajánl a Szaknévsorból (adó → könyvelő, engedély →
+          ügyvéd). Csak illő téma + találat esetén jelenik meg (üresség-elv). */}
+      <DeadlineProCta
+        deadlines={sorted.map((d) => ({ title: d.title, daysLeft: daysUntil(d.date) }))}
+        country={country}
+      />
 
       {/* Push-emlékeztető — a „működik, ha nem is nyitod meg" érték */}
       <section className={cn("rounded-card border p-4 shadow-card", remindersOn ? "border-primary/40 bg-primary-soft/30" : "border-line bg-surface")}>
