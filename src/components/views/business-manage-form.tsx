@@ -152,8 +152,12 @@ export function BusinessManageForm({ business, token }: { business: Business; to
               isCheckoutLoading && "opacity-60 cursor-wait translate-y-1 shadow-none"
             )}
           >
-            {isCheckoutLoading ? "Töltés..." : "Kiemelés Vásárlása (19 €/hó)"}
+            {isCheckoutLoading ? "Töltés…" : "Kiemelés vásárlása (19 €/hó)"}
           </button>
+          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár tájékoztató. */}
+          <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
+            Tájékoztató ár — a végső bruttó (áfás) árat a pénztár mutatja. Havonta megújul, bármikor lemondható.
+          </p>
         </div>
       )}
 
@@ -340,8 +344,12 @@ export function BusinessManageForm({ business, token }: { business: Business; to
               isCheckoutLoading && "opacity-60 cursor-wait",
             )}
           >
-            {isCheckoutLoading ? "Töltés..." : "Előfizetés — Szaknévsor PRO (19 €/hó)"}
+            {isCheckoutLoading ? "Töltés…" : "Előfizetés — Szaknévsor PRO (19 €/hó)"}
           </button>
+          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár tájékoztató. */}
+          <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
+            Tájékoztató ár — a végső bruttó (áfás) árat a pénztár mutatja. Havonta megújul, bármikor lemondható.
+          </p>
         </div>
       )}
 

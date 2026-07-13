@@ -6,7 +6,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-12">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-13">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -439,6 +439,16 @@ export default function AszfPage() {
         találatoktól. A kiemelés a nem fizetett találatok egymás közötti (relevancia- és
         közelség-alapú) sorrendjét nem változtatja meg, és nem minősül az adott vállalkozás
         vagy hirdetés minőségére vonatkozó ajánlásnak.
+      </p>
+      <p>
+        Ugyanezek a szabályok vonatkoznak a Szolgáltatás eszközeibe ágyazott{" "}
+        <strong>ajánló-modulokra</strong> is (például a kalkulátorok, a kvíz, a
+        határidő-asszisztens, az asszisztens vagy a Telegram-bot felületén megjelenő
+        vállalkozás- és állás-ajánlókra): ott is a fizetett kiemelés kerül előre, a kiemelt
+        elem minden esetben <strong>„Kiemelt” jelölést</strong> visel, és a megjelenés nem
+        minősül az adott vállalkozás vagy hirdetés minőségére, alkalmasságára vonatkozó
+        ajánlásnak, sem szakmai (adó-, jogi vagy egyéb) tanácsadásnak — a szakember
+        kiválasztása és megbízása a Felhasználó saját döntése és felelőssége.
       </p>
 
       <h2>11. A Szolgáltatás rendelkezésre állása, Adatbiztonság és Vis Maior</h2>
