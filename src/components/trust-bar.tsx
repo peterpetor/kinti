@@ -20,7 +20,16 @@ export function TrustBar() {
     <section className="mt-2 rounded-card border border-line bg-surface-alt/50 px-4 py-4">
       <div className="grid grid-cols-3 gap-2">
         <TrustItem icon="briefcase" title="Bejegyzett cég" sub="Feedback Jobs S.R.L." />
-        <TrustItem icon="lock" title="Biztonságos fizetés" sub="Paddle · Merchant of Record" />
+        {/* A fizetési szolgáltató kontextusfüggő: weben Paddle, az Android-appban
+            Google Play (a Play szabályzata a webes fizetés említését is tiltja). */}
+        <div className="flex flex-col items-center gap-1 text-center">
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-primary">
+            <Icon name="lock" size={16} strokeWidth={2.2} />
+          </span>
+          <span className="text-[11px] font-extrabold leading-tight text-ink">Biztonságos fizetés</span>
+          <span className="web-only-payment text-[10.5px] leading-tight text-ink-muted">Paddle · Merchant of Record</span>
+          <span className="android-only-payment text-[10.5px] leading-tight text-ink-muted">Google Play fizetés</span>
+        </div>
         <TrustItem icon="check" title="GDPR-kompatibilis" sub="Adataid védve" />
       </div>
 

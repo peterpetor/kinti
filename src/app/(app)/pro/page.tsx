@@ -314,18 +314,35 @@ export default function ProPage() {
 
       </div>
 
-      {/* FAQ / Trust / jogi szekció */}
+      {/* FAQ / Trust / jogi szekció — a fizetési szolgáltató kontextusfüggő:
+          weben Paddle, az Android-appban KIZÁRÓLAG Google Play (a Play
+          szabályzata szerint ott a webes fizetés említése is tilos). A váltást
+          a globals.css .web-only-payment / .android-only-payment osztályai
+          végzik, villanásmentesen. */}
       <div className="mt-16 text-center">
-        <p className="text-[13px] font-semibold text-ink-muted">
-          A fizetéseket a biztonságos <strong className="text-ink">Paddle</strong> (Merchant of
-          Record) dolgozza fel — a számlát is ő állítja ki.
-        </p>
-        <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
-          <strong>Lemondás:</strong> az előfizetés bármikor lemondható a Paddle
-          vásárlás-visszaigazoló emailjében kapott linken, vagy írj az{" "}
-          <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a> címre — a már
-          kifizetett időszak végéig a PRO aktív marad.
-        </p>
+        <div className="web-only-payment">
+          <p className="text-[13px] font-semibold text-ink-muted">
+            A fizetéseket a biztonságos <strong className="text-ink">Paddle</strong> (Merchant of
+            Record) dolgozza fel — a számlát is ő állítja ki.
+          </p>
+          <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
+            <strong>Lemondás:</strong> az előfizetés bármikor lemondható a Paddle
+            vásárlás-visszaigazoló emailjében kapott linken, vagy írj az{" "}
+            <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a> címre — a már
+            kifizetett időszak végéig a PRO aktív marad.
+          </p>
+        </div>
+        <div className="android-only-payment">
+          <p className="text-[13px] font-semibold text-ink-muted">
+            A fizetéseket a <strong className="text-ink">Google Play</strong> fizetési rendszere
+            dolgozza fel — a számlát is a Google állítja ki.
+          </p>
+          <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
+            <strong>Lemondás:</strong> az előfizetés bármikor lemondható a Google Play
+            Áruház → Előfizetések menüjében — a már kifizetett időszak végéig a PRO
+            aktív marad.
+          </p>
+        </div>
         <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
           A vásárlással kéred a PRO <strong>azonnali aktiválását</strong>, és tudomásul veszed, hogy a
           teljesítéssel elveszíted a 14 napos elállási jogod (EU/EGT fogyasztók — lásd{" "}

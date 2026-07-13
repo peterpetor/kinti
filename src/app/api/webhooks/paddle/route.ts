@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyPaddleSignature } from "@/lib/paddle";
 import { entitlementFromPriceId, type EntitlementType } from "@/lib/payments-config";
 import { getDB } from "@/lib/cloudflare";
-import { upsertSubscription } from "@/lib/subscriptions";
-import { jobExpiryIso } from "@/lib/repo-jobs";
+import { activateEntitlement, deactivateEntitlement } from "@/lib/entitlements";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -118,49 +117,22 @@ export async function POST(req: Request) {
   }
 }
 
+// Az aktiválás/deaktiválás közös libben él (lib/entitlements.ts) — a Google
+// Play útvonalak (verify + RTDN) is ugyanazt hívják, viselkedés-azonosan.
 async function activate(type: EntitlementType, customData: PaddleCustomData, data: PaddleEventData) {
-  const db = getDB();
-  const now = new Date().toISOString();
-
-  if (type === "job_featured" && customData.jobId) {
-    // A „Kiemelt Állás" 30 napig él; a featured_until lejárta után a napi cron
-    // (unfeatureExpiredJobs) állítja vissza 'active'-ra. A kiemelés a teljes
-    // hirdetés lejáratát (expires_at) is felfrissíti ugyanennyivel — egy
-    // lejáró/lejárt hirdetés kiemelés-vásárlással is újraéled, nem csak az
-    // ingyenes megújítás gombbal (renewJob).
-    const featuredUntil = jobExpiryIso();
-    await db.prepare("UPDATE jobs SET status = 'featured', featured_until = ?, expires_at = ?, updated_at = ? WHERE id = ?")
-      .bind(featuredUntil, featuredUntil, now, customData.jobId).run();
-  } else if (type === "business_pro" && customData.businessId) {
-    await db.prepare("UPDATE businesses SET featured = 1, updated_at = ? WHERE id = ?")
-      .bind(now, customData.businessId).run();
-  } else if (type === "user_pro" && customData.userId) {
-    await upsertSubscription({
-      userId: customData.userId,
-      status: data.status || "active",
-      plan: "kinti_pro",
-      lsSubscriptionId: data.id?.toString() ?? null,
-      lsCustomerId: data.customer_id?.toString() ?? null,
-      currentPeriodEnd: data.current_billing_period?.ends_at || data.next_billed_at || null,
-    });
-  }
+  await activateEntitlement(type, customData, {
+    status: data.status,
+    subscriptionId: data.id?.toString() ?? null,
+    customerId: data.customer_id?.toString() ?? null,
+    currentPeriodEnd: data.current_billing_period?.ends_at || data.next_billed_at || null,
+  });
 }
 
 async function deactivate(type: EntitlementType, customData: PaddleCustomData, data: PaddleEventData) {
-  const db = getDB();
-  const now = new Date().toISOString();
-
-  if (type === "business_pro" && customData.businessId) {
-    await db.prepare("UPDATE businesses SET featured = 0, updated_at = ? WHERE id = ?")
-      .bind(now, customData.businessId).run();
-  } else if (type === "user_pro" && customData.userId) {
-    await upsertSubscription({
-      userId: customData.userId,
-      status: data.status || "canceled",
-      plan: "kinti_pro",
-      lsSubscriptionId: data.id?.toString() ?? null,
-      lsCustomerId: data.customer_id?.toString() ?? null,
-      currentPeriodEnd: data.current_billing_period?.ends_at || new Date().toISOString(),
-    });
-  }
+  await deactivateEntitlement(type, customData, {
+    status: data.status,
+    subscriptionId: data.id?.toString() ?? null,
+    customerId: data.customer_id?.toString() ?? null,
+    currentPeriodEnd: data.current_billing_period?.ends_at || new Date().toISOString(),
+  });
 }

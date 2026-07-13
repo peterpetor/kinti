@@ -113,4 +113,16 @@ interface CloudflareEnv {
    * Cloudflare Pages secret. Amíg nincs beállítva, a webhook 401-et ad (inaktív).
    */
   PADDLE_WEBHOOK_SECRET?: string;
+
+  // Google Play Billing (az Android-app fizetései — lásd android/README.md).
+  // Amíg nincsenek beállítva, a /api/payments/play/verify 503-at ad (inaktív);
+  // a webes Paddle-fizetést nem érinti.
+  /** Az Android-app package neve (pl. app.kinti.twa). */
+  GOOGLE_PLAY_PACKAGE_NAME?: string;
+  /** Play Console service account email. TITOK — Cloudflare Pages secret. */
+  GOOGLE_PLAY_SA_EMAIL?: string;
+  /** Service account privát kulcs (PKCS8 PEM, a JSON "private_key" mezője). TITOK. */
+  GOOGLE_PLAY_SA_KEY?: string;
+  /** RTDN (Pub/Sub push) webhook titok — a /api/webhooks/play?key= értéke. TITOK. */
+  PLAY_RTDN_SECRET?: string;
 }

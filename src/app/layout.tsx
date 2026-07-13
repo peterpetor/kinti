@@ -30,6 +30,16 @@ const COUNTRY_GATE_SCRIPT = `(function(){try{var c=localStorage.getItem('kinti.c
  */
 const LEGAL_GATE_SCRIPT = buildLegalGateScript();
 
+/**
+ * Android-app (TWA / Google Play) detektálás — még az első festés ELŐTT.
+ * A Play-ből telepített app `/?source=twa`-val indul (twa-manifest.json), vagy
+ * a referrer `android-app://`-val kezdődik. Észleléskor tartós flag
+ * (localStorage) + `data-android-app` a <html>-en → a CSS a webes (Paddle)
+ * fizetési szövegeket rejti, az Android-alternatívát mutatja (globals.css),
+ * a useCheckout pedig Google Play Billingre vált. Lásd lib/android-app.ts.
+ */
+const ANDROID_APP_SCRIPT = `(function(){try{var t=location.search.indexOf('source=twa')>-1;var r=document.referrer&&document.referrer.indexOf('android-app://')===0;var s=localStorage.getItem('kinti.androidApp')==='1';if(t||r){localStorage.setItem('kinti.androidApp','1');s=true;}if(s){document.documentElement.setAttribute('data-android-app','');}}catch(e){}})();`;
+
 // A mentett témát (Világos/Sötét) még a festés előtt visszaállítjuk, hogy reload
 // után is éljen a választás, villanás (FOUC) nélkül. A régi „modern" mentett
 // értéket sötétre migráljuk (a Modern skin helyére a Sötét mód lépett). Lásd ThemeToggle.
@@ -131,6 +141,8 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: LEGAL_GATE_SCRIPT }} />
         {/* Mentett téma visszaállítása festés előtt (Világos/Sötét perzisztencia). */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* Android-app (Google Play) kontextus — a Paddle-t rejtő CSS-hez. */}
+        <script dangerouslySetInnerHTML={{ __html: ANDROID_APP_SCRIPT }} />
         <ClerkProvider
           localization={{
             ...huHU,

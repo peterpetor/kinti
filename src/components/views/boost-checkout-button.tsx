@@ -47,12 +47,15 @@ export function BoostCheckoutButton({
       </button>
       {error && <p className="mt-1 text-[11.5px] font-semibold text-accent">{error}</p>}
       {/* Fogyasztói nyilatkozat: a digitális szolgáltatás azonnali teljesítése +
-          a 14 napos elállási jog elvesztésének tudomásulvétele (CRD 16(m)). */}
+          a 14 napos elállási jog elvesztésének tudomásulvétele (CRD 16(m)).
+          A fizetési szolgáltató kontextusfüggő: weben Paddle, az Android-appban
+          Google Play (a .web-only-payment/.android-only-payment CSS váltja). */}
       <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
         A vásárlással kéred {subjectNoun[product]} <strong>azonnali aktiválását</strong>, és tudomásul veszed, hogy a
         teljesítéssel elveszíted a 14 napos elállási jogod (
-        <Link href="/aszf" target="_blank" className="underline">ÁSZF 1.1</Link>). A fizetést a
-        Paddle (Merchant of Record) bonyolítja.
+        <Link href="/aszf" target="_blank" className="underline">ÁSZF 1.1</Link>).{" "}
+        <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja.</span>
+        <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
       </p>
     </div>
   );

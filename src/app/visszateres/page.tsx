@@ -16,18 +16,34 @@ export default function VisszateresPage() {
       </p>
 
       <h2>1. Fizetés és a számla kibocsátója (Merchant of Record)</h2>
-      <p>
-        A díjköteles előfizetéseket és kiemeléseket a{" "}
-        <strong>Paddle.com Market Limited</strong> (a továbbiakban:{" "}
-        <strong>„Paddle"</strong>) mint <em>Merchant of Record</em> — azaz a
-        vásárlás szerződő eladója és számlakibocsátója — bonyolítja. Ennek
-        megfelelően:
-      </p>
-      <ul>
-        <li>a vásárlásra a <strong>Paddle szerződési és visszatérítési feltételei is</strong> irányadók;</li>
-        <li>a vonatkozó <strong>adó (pl. ÁFA / MWST)</strong> felszámítása, beszedése és a <strong>számla kiállítása</strong> a Paddle-nél történik;</li>
-        <li>a fizetési bizonylatot / számlát a Paddle e-mailben küldi meg a vásárlónak.</li>
-      </ul>
+      {/* Kontextusfüggő fizetési szolgáltató: weben Paddle, a Google Play-ből
+          telepített Android-appban a Google Play (a .web-only-payment /
+          .android-only-payment CSS-osztályok váltják, lásd globals.css). */}
+      <div className="web-only-payment">
+        <p>
+          A díjköteles előfizetéseket és kiemeléseket a{" "}
+          <strong>Paddle.com Market Limited</strong> (a továbbiakban:{" "}
+          <strong>„Paddle"</strong>) mint <em>Merchant of Record</em> — azaz a
+          vásárlás szerződő eladója és számlakibocsátója — bonyolítja. Ennek
+          megfelelően:
+        </p>
+        <ul>
+          <li>a vásárlásra a <strong>Paddle szerződési és visszatérítési feltételei is</strong> irányadók;</li>
+          <li>a vonatkozó <strong>adó (pl. ÁFA / MWST)</strong> felszámítása, beszedése és a <strong>számla kiállítása</strong> a Paddle-nél történik;</li>
+          <li>a fizetési bizonylatot / számlát a Paddle e-mailben küldi meg a vásárlónak.</li>
+        </ul>
+      </div>
+      <div className="android-only-payment">
+        <p>
+          Az alkalmazásban a díjköteles előfizetéseket és kiemeléseket a{" "}
+          <strong>Google Play fizetési rendszere</strong> bonyolítja. Ennek megfelelően:
+        </p>
+        <ul>
+          <li>a vásárlásra a <strong>Google Play szerződési és visszatérítési feltételei is</strong> irányadók;</li>
+          <li>a vonatkozó <strong>adó (pl. ÁFA / MWST)</strong> felszámítása, beszedése és a <strong>bizonylat kiállítása</strong> a Google-nál történik;</li>
+          <li>a fizetési bizonylatot a Google e-mailben küldi meg a vásárlónak.</li>
+        </ul>
+      </div>
       <p>
         Az árak a megrendeléskor feltüntetett pénznemben és összegben, az
         alkalmazandó adóval értendők.
@@ -47,8 +63,11 @@ export default function VisszateresPage() {
         <strong>tudomásul veszed, hogy a szolgáltatás teljes körű
         teljesítésével elveszíted az elállási jogodat</strong> (az irányelv 16.
         cikk m) pontja). A részben igénybe vett időszakra az ellenérték arányos
-        része számítható fel. Az elállási / visszatérítési kérelmet a{" "}
-        <strong>Paddle-nél</strong> (a fizetési visszaigazoló e-mailből), illetve
+        része számítható fel. Az elállási / visszatérítési kérelmet{" "}
+        <span className="web-only-payment">a <strong>Paddle-nél</strong> (a fizetési
+        visszaigazoló e-mailből), illetve</span>
+        <span className="android-only-payment">a <strong>Google Play-nél</strong> (Play
+        Áruház → Fizetések és előfizetések), illetve</span>{" "}
         az <a href="mailto:info@kinti.app">info@kinti.app</a> címen jelezheted.
       </p>
 
@@ -61,16 +80,20 @@ export default function VisszateresPage() {
       <p>
         A lemondás a már kiszámlázott, megkezdett időszakra — a 2. pont szerinti
         elállási jogon túl — <strong>nem keletkeztet automatikus visszatérítési
-        igényt</strong>. Méltányossági (goodwill) visszatérítésről a Paddle
-        feltételei és az üzemeltető egyedi mérlegelése szerint dönthetünk.
+        igényt</strong>. Méltányossági (goodwill) visszatérítésről{" "}
+        <span className="web-only-payment">a Paddle feltételei</span>
+        <span className="android-only-payment">a Google Play feltételei</span> és az
+        üzemeltető egyedi mérlegelése szerint dönthetünk.
       </p>
 
       <h2>4. Hibás teljesítés / téves díjterhelés</h2>
       <p>
         Ha úgy ítéled meg, hogy a szolgáltatás lényegesen hibás, vagy téves
         díjterhelés történt, írj az <a href="mailto:info@kinti.app">info@kinti.app</a>{" "}
-        címre (vagy fordulj közvetlenül a Paddle ügyfélszolgálatához a
-        visszaigazoló e-mailből). Az ilyen eseteket egyedileg, jóhiszeműen
+        címre <span className="web-only-payment">(vagy fordulj közvetlenül a Paddle
+        ügyfélszolgálatához a visszaigazoló e-mailből)</span>
+        <span className="android-only-payment">(vagy fordulj közvetlenül a Google Play
+        ügyfélszolgálatához)</span>. Az ilyen eseteket egyedileg, jóhiszeműen
         vizsgáljuk ki, és indokolt esetben teljes vagy arányos visszatérítést
         adunk.
       </p>
@@ -86,9 +109,11 @@ export default function VisszateresPage() {
       <h2>6. Kapcsolat</h2>
       <p>
         Visszatérítési és számlázási kérdések:{" "}
-        <a href="mailto:info@kinti.app">info@kinti.app</a>. A fizetés
-        lebonyolítójának (Paddle) ügyfélszolgálata a fizetési visszaigazoló
-        e-mailből érhető el.
+        <a href="mailto:info@kinti.app">info@kinti.app</a>.{" "}
+        <span className="web-only-payment">A fizetés lebonyolítójának (Paddle)
+        ügyfélszolgálata a fizetési visszaigazoló e-mailből érhető el.</span>
+        <span className="android-only-payment">A fizetés lebonyolítójának (Google Play)
+        ügyfélszolgálata a Play Áruházból érhető el.</span>
       </p>
     </LegalPage>
   );

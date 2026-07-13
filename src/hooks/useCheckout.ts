@@ -3,6 +3,8 @@ import { ProductType, CountryCode } from "@/lib/payments-config";
 import { loadPaddle } from "@/lib/paddle-client";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { isValidCountry } from "@/lib/countries";
+import { isAndroidApp } from "@/lib/android-app";
+import { purchaseOnPlay } from "@/lib/play-billing";
 
 interface CheckoutOptions {
   product: ProductType;
@@ -13,8 +15,14 @@ interface CheckoutOptions {
 }
 
 /**
- * A szerver létrehoz egy Paddle transactiont (a validált adatokkal), a kliens
- * pedig a Paddle.js overlay-ben megnyitja — a felhasználó a kinti.app-on marad.
+ * Webes út: a szerver létrehoz egy Paddle transactiont (a validált adatokkal),
+ * a kliens pedig a Paddle.js overlay-ben megnyitja — a felhasználó a
+ * kinti.app-on marad.
+ *
+ * ANDROID-APP (Google Play / TWA) út: a Play szabályzata szerint az appban
+ * KIZÁRÓLAG a Google Play fizetési rendszere használható — a Paddle ott soha
+ * nem nyílhat meg. Ilyenkor a vásárlás a Play Billingen fut
+ * (lib/play-billing.ts), a purchaseTokent a szerver ellenőrzi és aktiválja.
  */
 export function useCheckout() {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,12 +33,24 @@ export function useCheckout() {
     setIsLoading(true);
     setError(null);
 
-    // A user választott országa adja a Price ID-t (országonkénti ár), ha a hívó
-    // nem ad meg explicit országot. Így mindenki a saját országa árát kapja.
-    const country: CountryCode =
-      options.country ?? (isValidCountry(prefCountry) ? (prefCountry as CountryCode) : "CH");
-
     try {
+      // Android-app: Google Play Billing — Paddle TILOS ebben a kontextusban.
+      if (isAndroidApp()) {
+        const result = await purchaseOnPlay(options.product, options.customData ?? {});
+        if (result.ok) {
+          // Az aktiválás szerver-oldalon megtörtént — friss státusz betöltése.
+          window.location.reload();
+        } else if (result.error) {
+          setError(result.error);
+        }
+        return;
+      }
+
+      // Webes út (Paddle). A user választott országa adja a Price ID-t
+      // (országonkénti ár), ha a hívó nem ad meg explicit országot.
+      const country: CountryCode =
+        options.country ?? (isValidCountry(prefCountry) ? (prefCountry as CountryCode) : "CH");
+
       const res = await fetch("/api/payments/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

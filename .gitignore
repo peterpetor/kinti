@@ -73,3 +73,12 @@ scripts/geocode-cache.json
 
 # D1 adatbazis-mentesek — PII-t tartalmaznak, SOHA ne keruljenek a repoba
 backups/
+
+# Android (TWA) build — az aláíró kulcs és a build-kimenetek SOHA ne kerüljenek gitbe
+android.keystore
+*.keystore
+app-release-*.aab
+app-release-*.apk
+android/app/
+android/build/
+android/.gradle/

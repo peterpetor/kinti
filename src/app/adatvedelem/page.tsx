@@ -291,27 +291,54 @@ export default function AdatvedelemPage() {
         <li><strong>Nyilvánosság:</strong> az akció pontosan a bejelentő GPS-pozícióján jelenik meg a nyilvános térképen</li>
       </ul>
 
-      <h3>2.14 Kinti PRO előfizetés és fizetés (Paddle)</h3>
-      <p>
-        A <strong>Kinti PRO</strong> (és a Szaknévsor-kiemelés / kiemelt állás) előfizetés
-        megvásárlásakor a fizetést a <strong>Paddle</strong> (Paddle.com Market Limited, Egyesült Királyság)
-        mint <em>Merchant of Record</em> bonyolítja. A bankkártya- és számlázási adataidat
-        közvetlenül a Paddle kezeli — <strong>a kinti.app nem látja és nem tárolja a
-        kártyaadatokat</strong>.
-      </p>
-      <p>
-        A mi adatbázisunkban kizárólag az előfizetés <strong>állapotát</strong> tároljuk a
-        funkciók feloldásához, a bejelentkezett felhasználói fiókhoz (Clerk userId) kötve:
-        az előfizetés státusza, a csomag típusa, a Paddle előfizetés- és vásárló-
-        azonosítója, valamint a következő számlázási időszak vége. Számlaadatot/kártyaadatot
-        nem tárolunk.
-      </p>
-      <ul>
-        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — szerződés teljesítése (az előfizetés nyújtása); a számviteli bizonylatok megőrzése: 6. cikk (1) c) — jogi kötelezettség.</li>
-        <li><strong>Tárolási idő:</strong> az előfizetés fennállásáig, illetve a számviteli/adójogi megőrzési határidőig.</li>
-        <li><strong>Adatfeldolgozó / Merchant of Record:</strong> Paddle.com Market Limited —{" "}
-          <a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noreferrer">privacy policy</a>.</li>
-      </ul>
+      {/* Kontextusfüggő fizetési szolgáltató: weben Paddle, a Google Play-ből
+          telepített Android-appban a Google Play (a szakasz-számozás közös). */}
+      <div className="web-only-payment">
+        <h3>2.14 Kinti PRO előfizetés és fizetés (Paddle)</h3>
+        <p>
+          A <strong>Kinti PRO</strong> (és a Szaknévsor-kiemelés / kiemelt állás) előfizetés
+          megvásárlásakor a fizetést a <strong>Paddle</strong> (Paddle.com Market Limited, Egyesült Királyság)
+          mint <em>Merchant of Record</em> bonyolítja. A bankkártya- és számlázási adataidat
+          közvetlenül a Paddle kezeli — <strong>a kinti.app nem látja és nem tárolja a
+          kártyaadatokat</strong>.
+        </p>
+        <p>
+          A mi adatbázisunkban kizárólag az előfizetés <strong>állapotát</strong> tároljuk a
+          funkciók feloldásához, a bejelentkezett felhasználói fiókhoz (Clerk userId) kötve:
+          az előfizetés státusza, a csomag típusa, a Paddle előfizetés- és vásárló-
+          azonosítója, valamint a következő számlázási időszak vége. Számlaadatot/kártyaadatot
+          nem tárolunk.
+        </p>
+        <ul>
+          <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — szerződés teljesítése (az előfizetés nyújtása); a számviteli bizonylatok megőrzése: 6. cikk (1) c) — jogi kötelezettség.</li>
+          <li><strong>Tárolási idő:</strong> az előfizetés fennállásáig, illetve a számviteli/adójogi megőrzési határidőig.</li>
+          <li><strong>Adatfeldolgozó / Merchant of Record:</strong> Paddle.com Market Limited —{" "}
+            <a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noreferrer">privacy policy</a>.</li>
+        </ul>
+      </div>
+      <div className="android-only-payment">
+        <h3>2.14 Kinti PRO előfizetés és fizetés (Google Play)</h3>
+        <p>
+          A <strong>Kinti PRO</strong> (és a Szaknévsor-kiemelés / kiemelt állás) előfizetés
+          az alkalmazásban a <strong>Google Play fizetési rendszerén</strong> (Google Ireland
+          Limited) keresztül vásárolható meg. A bankkártya- és számlázási adataidat
+          közvetlenül a Google kezeli — <strong>a kinti.app nem látja és nem tárolja a
+          kártyaadatokat</strong>.
+        </p>
+        <p>
+          A mi adatbázisunkban kizárólag az előfizetés <strong>állapotát</strong> tároljuk a
+          funkciók feloldásához, a bejelentkezett felhasználói fiókhoz (Clerk userId) kötve:
+          az előfizetés státusza, a csomag típusa, a Google Play vásárlás-azonosítója
+          (purchase token), valamint a következő számlázási időszak vége.
+          Számlaadatot/kártyaadatot nem tárolunk.
+        </p>
+        <ul>
+          <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — szerződés teljesítése (az előfizetés nyújtása); a számviteli bizonylatok megőrzése: 6. cikk (1) c) — jogi kötelezettség.</li>
+          <li><strong>Tárolási idő:</strong> az előfizetés fennállásáig, illetve a számviteli/adójogi megőrzési határidőig.</li>
+          <li><strong>Adatfeldolgozó:</strong> Google Ireland Limited —{" "}
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">privacy policy</a>.</li>
+        </ul>
+      </div>
 
       <h3>2.15 Ajánlatkérés és kapcsolatfelvétel (lead)</h3>
       <p>
@@ -619,10 +646,12 @@ export default function AdatvedelemPage() {
         A Clerk, a Cloudflare és a Resend USA-ban bejegyzett, ottani szervereket
         is használó vállalatok. Az EU–USA adattranszferek a 2023-as EU–US Data Privacy Framework
         (DPF), illetve az Európai Bizottság által elfogadott általános adatvédelmi kikötések (SCC)
-        alapján történnek, amelyek biztosítják a GDPR-nak megfelelő magas szintű adatvédelmet.
-        A fizetést bonyolító <strong>Paddle</strong> az <strong>Egyesült Királyságban</strong>{" "}
-        bejegyzett; az EU–UK adattovábbítást az Európai Bizottság UK-ra vonatkozó megfelelőségi
-        határozata fedi.
+        alapján történnek, amelyek biztosítják a GDPR-nak megfelelő magas szintű adatvédelmet.{" "}
+        <span className="web-only-payment">A fizetést bonyolító <strong>Paddle</strong> az{" "}
+        <strong>Egyesült Királyságban</strong> bejegyzett; az EU–UK adattovábbítást az Európai
+        Bizottság UK-ra vonatkozó megfelelőségi határozata fedi.</span>
+        <span className="android-only-payment">A fizetést bonyolító <strong>Google Play</strong>{" "}
+        szolgáltatója (Google Ireland Limited) az <strong>EU-ban (Írország)</strong> bejegyzett.</span>
       </p>
       <p>
         <strong>Svájci érintettek</strong>: a Svájcból az USA-ba történő adattovábbításra a{" "}

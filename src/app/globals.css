@@ -726,3 +726,17 @@ html[data-country="DE"] .weather-widget,
 html[data-country="NL"] .weather-widget {
   display: none;
 }
+
+/* Android-app (Google Play / TWA) fizetési kontextus — a Play szabályzata
+   szerint az appban a webes (Paddle) fizetés ÉS annak említése is tilos.
+   A data-android-app attribútumot a layout fej-szkriptje állítja be az első
+   festés ELŐTT (villanásmentes) — így a jogi/marketing szövegek szerver-oldali
+   oldalakon is helyesen váltanak, kliens-JS nélkül. Használat:
+   .web-only-payment = csak weben látszik (Paddle-szöveg/checkout);
+   .android-only-payment = csak az Android-appban látszik (Google Play szöveg). */
+html[data-android-app] .web-only-payment {
+  display: none !important;
+}
+html:not([data-android-app]) .android-only-payment {
+  display: none !important;
+}

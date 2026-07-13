@@ -19,8 +19,9 @@ export default function AszfPage() {
         üzemeltetője a <strong>Feedback Jobs S.R.L.</strong> Az <strong>alapszolgáltatások</strong>{" "}
         (kereső, regisztráció, hirdetésfeladás, események, állásbörze, kalkulátorok) <strong>ingyenesek</strong>;
         egyes <strong>prémium funkciók opcionális, díjköteles PRO-előfizetés</strong> keretében
-        érhetők el, amelyet a Paddle fizetési szolgáltatón keresztül lehet megrendelni és
-        bármikor lemondani.
+        érhetők el, amelyet <span className="web-only-payment">a Paddle fizetési szolgáltatón
+        keresztül</span><span className="android-only-payment">a Google Play fizetési rendszerén
+        keresztül</span> lehet megrendelni és bármikor lemondani.
       </p>
       <p>
         A Szolgáltatás <strong>közvetítő platform</strong>: nem vagyunk fél a felhasználók és
@@ -29,13 +30,25 @@ export default function AszfPage() {
       </p>
 
       <h3>1.1 Kinti PRO előfizetés: fizetés, elállás és visszatérítés</h3>
-      <p>
+      {/* A fizetési szolgáltató kontextusfüggő: a weben Paddle, a Google Play
+          áruházból telepített Android-appban a Google Play fizetési rendszere
+          (a Play szabályzata az appban a webes fizetés említését is tiltja).
+          A szakasz-SZÁMOZÁS változatlan — a kód hivatkozik rá (ÁSZF 1.1). */}
+      <p className="web-only-payment">
         A díjköteles <strong>Kinti PRO</strong> (és a Szaknévsor-kiemelés / kiemelt állás)
         előfizetést a <strong>Paddle</strong> (Paddle.com Market Limited) mint{" "}
         <em>Merchant of Record</em> (a vásárlás szerződő eladója és számlakibocsátója)
         bonyolítja. A vásárlásra így a <strong>Paddle szerződési és visszatérítési
         feltételei is</strong> irányadók; az adó (pl. ÁFA/MWST) felszámítása és a számlázás
         is a Paddle-nél történik. Az árak a megrendeléskor feltüntetett pénznemben és
+        összegben, az alkalmazandó adóval értendők.
+      </p>
+      <p className="android-only-payment">
+        A díjköteles <strong>Kinti PRO</strong> (és a Szaknévsor-kiemelés / kiemelt állás)
+        előfizetés az alkalmazásban a <strong>Google Play fizetési rendszerén</strong> keresztül
+        vásárolható meg. A vásárlásra a <strong>Google Play szerződési és visszatérítési
+        feltételei is</strong> irányadók; az adó (pl. ÁFA/MWST) felszámítása és a számlázás
+        a Google-nál történik. Az árak a megrendeléskor feltüntetett pénznemben és
         összegben, az alkalmazandó adóval értendők.
       </p>
       <p>
@@ -47,15 +60,19 @@ export default function AszfPage() {
         14 napon belüli megkezdését</strong>, és <strong>tudomásul veszed, hogy a szolgáltatás
         teljes körű teljesítésével elveszíted az elállási jogodat</strong> (az irányelv 16. cikk
         m) pontja). A részben igénybe vett időszakra az ellenérték arányos része számítható fel.
-        Az elállási / visszatérítési kérelmet a Paddle-nél, illetve az{" "}
+        Az elállási / visszatérítési kérelmet{" "}
+        <span className="web-only-payment">a Paddle-nél, illetve</span>
+        <span className="android-only-payment">a Google Play-nél, illetve</span> az{" "}
         <a href="mailto:info@kinti.app">info@kinti.app</a> címen jelezheted.
       </p>
       <p>
         <strong>Lemondás és megújulás.</strong> Az előfizetés <strong>bármikor lemondható</strong>;
         a lemondás a folyó számlázási időszak végén lép hatályba, addig a PRO funkciók elérhetők
         maradnak. A lemondás a már kiszámlázott, megkezdett időszakra — a fenti elállási jogon
-        túl — nem keletkeztet automatikus visszatérítési igényt. Méltányossági visszatérítésről a
-        Paddle feltételei és az üzemeltető egyedi mérlegelése szerint dönthetünk.
+        túl — nem keletkeztet automatikus visszatérítési igényt. Méltányossági visszatérítésről{" "}
+        <span className="web-only-payment">a Paddle feltételei</span>
+        <span className="android-only-payment">a Google Play feltételei</span> és az üzemeltető
+        egyedi mérlegelése szerint dönthetünk.
       </p>
       <p style={{ fontStyle: "italic" }}>
         Svájci fogyasztóként a svájci jog az online/digitális vásárlásokra általában nem ír elő
