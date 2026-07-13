@@ -1,0 +1,47 @@
+{
+  "packageId": "app.kinti.twa",
+  "host": "kinti.app",
+  "name": "kinti — Találj magyart a közeledben",
+  "launcherName": "kinti",
+  "display": "standalone",
+  "themeColor": "#F4EDE0",
+  "themeColorDark": "#101411",
+  "navigationColor": "#F4EDE0",
+  "navigationColorDark": "#101411",
+  "navigationDividerColor": "#F4EDE0",
+  "navigationDividerColorDark": "#101411",
+  "backgroundColor": "#F4EDE0",
+  "enableNotifications": true,
+  "startUrl": "/?source=twa",
+  "iconUrl": "https://kinti.app/icons/icon-512.png",
+  "maskableIconUrl": "https://kinti.app/icons/icon-maskable-512.png",
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1.0",
+  "appVersionCode": 2,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://kinti.app/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {
+    "playBilling": {
+      "enabled": true
+    }
+  },
+  "alphaDependencies": {
+    "enabled": true
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://kinti.app/",
+  "minSdkVersion": 23,
+  "orientation": "portrait",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "displayOverride": [],
+  "appVersion": "1.0"
+}

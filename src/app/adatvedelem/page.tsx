@@ -689,6 +689,12 @@ export default function AdatvedelemPage() {
         <li>
           <strong>Kézi törlési kérelem (E-mailben)</strong>: Ha a fenti automatizált linkek már nem állnak rendelkezésedre, bármikor írhatsz nekünk az <a href="mailto:info@kinti.app">info@kinti.app</a> címre a beküldéskor használt e-mail címedről, és kérésedre munkatársaink haladéktalanul (legfeljebb 5 munkanapon belül) véglegesen törlik a véleményeidet vagy vállalkozói profilodat.
         </li>
+        <li>
+          <strong>Bejelentkezési fiók (Clerk) törlése</strong>: a fiókod és a
+          hozzá kapcsolódó adatok törlésének lépéseit — a törölt és megőrzött
+          adattípusokkal együtt — külön oldalon foglaltuk össze:{" "}
+          <a href="/fiok-torles">kinti.app/fiok-torles</a>.
+        </li>
       </ul>
 
       <h2>6. Panasz</h2>

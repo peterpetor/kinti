@@ -19,7 +19,10 @@ termék KIZÁRÓLAG a Play fizetési rendszerén át árulható. Ezért:
 Előfeltétel: Node.js. A Bubblewrap magától letölti a JDK-t és az Android SDK-t.
 
 ```bash
-# a repo gyökerében (ahol a twa-manifest.json van):
+# EBBEN a mappában (android/ — itt van a twa-manifest.json), NE a repo gyökerében!
+# (A gyökérben futtatva a generált app/ mappa kiütné a Next.js src/app routerét,
+#  és az egész weboldal eltűnne a buildből.)
+cd android
 npx @bubblewrap/cli build
 ```
 
