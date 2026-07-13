@@ -8,6 +8,7 @@ import { validateSocialLinks, type SocialLinks } from "@/lib/social-url";
 import { isValidAccentColor } from "@/lib/business-branding";
 import { BUSINESS_LIMITS, isInCountryCoord } from "@/lib/business";
 import { isValidCountry } from "@/lib/countries";
+import { regionCodeFromLocation } from "@/lib/region-resolve";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -81,7 +82,14 @@ export async function POST(req: Request) {
   const countryRaw = typeof body.country === "string" ? body.country : null;
   const newCountry = isValidCountry(countryRaw) ? countryRaw : business.country;
   const countryChanged = newCountry !== business.country;
-  const cantonCode = countryChanged ? null : business.canton;
+  // Régió-öngyógyítás (audit #14 folyománya): ország-váltáskor a régi kód
+  // érvénytelen, ÉS a régió-hiányos (legacy) sorok is gyógyulnak — a KURÁLT
+  // cím-feloldó (regionCodeFromLocation) a cím/név szövegéből vezeti le a
+  // régiót; ha nem ismeri fel, marad null (nem tippelünk). E nélkül a cég
+  // kimarad a régió-szűrőből / SEO-régióoldalakból / Keresek-egyezésből.
+  const cantonCode = countryChanged
+    ? regionCodeFromLocation(newCountry, address, [name])
+    : business.canton ?? regionCodeFromLocation(newCountry, address, [name]);
 
   // Térkép-pin koordináta a strukturált cím-keresőből. A kliens CSAK akkor küld
   // lat/lng-t, ha a tulaj a felkínált találatból választott (pontos hely) —
