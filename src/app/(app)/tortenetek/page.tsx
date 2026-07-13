@@ -39,7 +39,7 @@ export default async function StoriesPage() {
     <div className="space-y-5 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
-        <ScreenHeader eyebrow="Kinti · Közösség" title="Élettörténetek" />
+        <ScreenHeader className="min-w-0 flex-1" eyebrow="Kinti · Közösség" title="Élettörténetek" />
       </header>
 
       <p className="text-[13px] leading-relaxed text-ink-muted">
