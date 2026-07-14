@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { loadPaddle } from "@/lib/paddle-client";
 import { getPriceId, type CountryCode, type ProductType } from "@/lib/payments-config";
 import { isAndroidApp } from "@/lib/android-app";
-import { getPlayPrices } from "@/lib/play-billing";
 
 const PRODUCTS: ProductType[] = ["kinti_pro_monthly", "business_pro_monthly", "job_featured"];
 
@@ -30,15 +29,13 @@ export function usePaddlePrices(country: CountryCode): LivePrices | null {
     let cancelled = false;
     (async () => {
       try {
-        // Android-app (Google Play): a Paddle.js NEM töltődhet be — az árak a
-        // Play Billingtől jönnek (Digital Goods API), ha elérhető.
-        if (isAndroidApp()) {
-          const total = await getPlayPrices(PRODUCTS);
-          if (!cancelled && Object.keys(total).length > 0) {
-            setPrices({ total, currency: null });
-          }
-          return;
-        }
+        // Android-app: a Google Play a KÉSZÜLÉK Play-régiója szerint konvertál
+        // (pl. magyar Play-fiók → HUF „8690 Ft"), ami félrevezető a CH/AT/DE/NL
+        // célközönségnek — ott EUR/CHF az elvárt. A Play Billing valutáját nem
+        // tudjuk EUR-ra kényszeríteni, ezért az appban a STATIKUS EUR tájékoztató
+        // árat mutatjuk (mint a Kiemelt Állásnál), a pontos, lokalizált végösszeget
+        // a Play pénztár mutatja vásárláskor. → null: a UI a statikus „19 €"-t adja.
+        if (isAndroidApp()) return;
         const ids = PRODUCTS.map((p) => {
           try { return getPriceId(p, country); } catch { return ""; }
         });

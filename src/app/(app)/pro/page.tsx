@@ -164,7 +164,7 @@ export default function ProPage() {
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.kinti_pro_monthly
-                ? "Nettó ár — az ÁFÁ-t a pénztár (Paddle / Google Play) az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható."
+                ? "Nettó ár — az ÁFÁ-t a pénztár az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható."
                 : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
             </p>
           </div>
@@ -222,7 +222,7 @@ export default function ProPage() {
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.business_pro_monthly
-                ? "Nettó ár — az ÁFÁ-t a pénztár (Paddle / Google Play) az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható."
+                ? "Nettó ár — az ÁFÁ-t a pénztár az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható."
                 : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
             </p>
           </div>
@@ -289,7 +289,7 @@ export default function ProPage() {
             <span className="text-[14px] font-bold text-ink-muted"> / hirdetés</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.job_featured
-                ? "Nettó ár — az ÁFÁ-t a pénztár (Paddle / Google Play) az országod szabályai szerint adja hozzá. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."
+                ? "Nettó ár — az ÁFÁ-t a pénztár az országod szabályai szerint adja hozzá. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."
                 : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."}
             </p>
           </div>
