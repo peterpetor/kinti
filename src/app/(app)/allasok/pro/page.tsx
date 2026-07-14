@@ -45,7 +45,9 @@ export default async function KintiProPage() {
           </div>
           <p className="text-[12px] text-ink-muted mt-1 mb-6">
             Egy díj, minden PRO funkció. Bármikor lemondható. Tájékoztató nettó ár (ÁFA nélkül) —
-            a végső, áfával együttes összeget a pénztár mutatja.
+            a végső, áfával együttes összeget a pénztár mutatja.{" "}
+            <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
+            <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
           </p>
           
           {alreadyPro ? (

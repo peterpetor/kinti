@@ -165,7 +165,10 @@ export default function ProPage() {
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.kinti_pro_monthly
                 ? "Nettó ár — az ÁFÁ-t a pénztár az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható."
-                : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
+                : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}{" "}
+              {/* Szolgáltató-feltüntetés kontextusfüggő: weben Paddle (+ Android-app-megjegyzés), appban CSAK Google Play. */}
+              <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
+              <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
             </p>
           </div>
 
@@ -223,7 +226,9 @@ export default function ProPage() {
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.business_pro_monthly
                 ? "Nettó ár — az ÁFÁ-t a pénztár az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható."
-                : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
+                : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}{" "}
+              <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
+              <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
             </p>
           </div>
 
@@ -290,7 +295,9 @@ export default function ProPage() {
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.job_featured
                 ? "Nettó ár — az ÁFÁ-t a pénztár az országod szabályai szerint adja hozzá. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."
-                : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."}
+                : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."}{" "}
+              <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
+              <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
             </p>
           </div>
 
@@ -330,6 +337,13 @@ export default function ProPage() {
             vásárlás-visszaigazoló emailjében kapott linken, vagy írj az{" "}
             <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a> címre — a már
             kifizetett időszak végéig a PRO aktív marad.
+          </p>
+          {/* User-kérés (2026-07-14): a WEBES leírásban jelezzük, hogy az Android-appból
+              vásárlókra a Google Play fizetés vonatkozik. */}
+          <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
+            Ha a Kinti <strong>Android-alkalmazásból</strong> vásárolsz (Google Play-ből letöltve),
+            a fizetést a <strong>Google Play fizetési rendszere</strong> kezeli — a lemondás ott a
+            Play Áruház → Előfizetések menüben történik.
           </p>
         </div>
         <div className="android-only-payment">

@@ -156,7 +156,9 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           </button>
           {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár tájékoztató nettó. */}
           <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
-            Tájékoztató nettó ár (ÁFA nélkül) — a végső, áfával együttes összeget a pénztár mutatja. Havonta megújul, bármikor lemondható.
+            Tájékoztató nettó ár (ÁFA nélkül) — a végső, áfával együttes összeget a pénztár mutatja. Havonta megújul, bármikor lemondható.{" "}
+            <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
+            <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
           </p>
         </div>
       )}
@@ -348,7 +350,9 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           </button>
           {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár tájékoztató nettó. */}
           <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
-            Tájékoztató nettó ár (ÁFA nélkül) — a végső, áfával együttes összeget a pénztár mutatja. Havonta megújul, bármikor lemondható.
+            Tájékoztató nettó ár (ÁFA nélkül) — a végső, áfával együttes összeget a pénztár mutatja. Havonta megújul, bármikor lemondható.{" "}
+            <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
+            <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
           </p>
         </div>
       )}
