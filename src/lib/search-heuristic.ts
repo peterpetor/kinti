@@ -275,6 +275,36 @@ function matchCategory(
 }
 
 /**
+ * Vészhelyzet-kulcsszó → kategória, MÉG a teljes „kat+hely" heurisztika és az
+ * AI előtt. Ok: pár gyakori háztartási vészhelyzet (pl. „Csőtörés van, a
+ * főbérlő nem veszi fel — ki segít?") szabad MONDATBAN jelenik meg, nem tiszta
+ * „kat+hely" mintában, ezért a fenti token-elnyelős heurisztika null-t ad rá →
+ * eddig ilyenkor az AI döntött, és a „cső" szót néha tévesen a Bádogos
+ * (tetőfedés/ereszcsatorna) kategóriához társította a Víz-gáz szerelő helyett.
+ * Csak akkor ad vissza találatot, ha a kategória TÉNYLEG szerepel a hívó
+ * categories listájában (ne törjön el, ha egy kategória törlődik/átnevezik).
+ */
+function matchEmergencyKeyword(
+  rawQuery: string,
+  categories: HeuristicCategory[],
+): { categoryId: string; explanation: string } | null {
+  const folded = fold(rawQuery ?? "");
+  const rules: { re: RegExp; categoryId: string; explanation: string }[] = [
+    {
+      re: /csotores|csorepedt|repedt cso|(cso|vizvezetek).{0,20}(szivarog|torott|repedt)|szivarog.{0,20}viz/,
+      categoryId: "gazvez",
+      explanation: "Csőtörésnél/vízszivárgásnál a víz-gáz szerelő segíthet.",
+    },
+  ];
+  for (const r of rules) {
+    if (r.re.test(folded) && categories.some((c) => c.id === r.categoryId)) {
+      return { categoryId: r.categoryId, explanation: r.explanation };
+    }
+  }
+  return null;
+}
+
+/**
  * A kliens-oldali heurisztikus előszűrő fő belépője.
  *
  * @returns HeuristicResult, ha a query TISZTA „kategória + helyszín" minta
@@ -288,6 +318,23 @@ export function heuristicParseSearch(
 ): HeuristicResult | null {
   const q = (rawQuery ?? "").trim();
   if (q.length < 3 || q.length > 200) return null;
+
+  // Vészhelyzet-kulcsszó akkor is talál, ha a mondat egyébként TERMÉSZETES
+  // NYELV (a lenti token-elnyelős minta ilyenkor úgyis null-t adna) — ezért ez
+  // FÜGGETLENÜL fut a token-hosszkorláttól/maradék-kaputól, csak régiót próbál
+  // még hozzáilleszteni, ha van.
+  const emergency = matchEmergencyKeyword(q, categories);
+  if (emergency) {
+    const emergencyTokens = tokenize(q);
+    const emergencyConsumed = new Array<boolean>(emergencyTokens.length).fill(false);
+    const emergencyRegion = matchRegion(country, emergencyTokens, emergencyConsumed);
+    return {
+      categoryId: emergency.categoryId,
+      cantonCode: emergencyRegion?.code ?? null,
+      keywords: "",
+      explanation: emergency.explanation,
+    };
+  }
 
   const tokens = tokenize(q);
   if (tokens.length === 0 || tokens.length > 12) return null;

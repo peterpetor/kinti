@@ -152,3 +152,28 @@ describe("heuristicParseSearch — token-határ / hamis pozitív védelem", () =
     expect(heuristicParseSearch("fodrász Zürich", "CH", [])).toBeNull();
   });
 });
+
+describe("heuristicParseSearch — vészhelyzet-kulcsszó szabad mondatban (AI-kikerülés)", () => {
+  const CATS_WITH_GAZVEZ: HeuristicCategory[] = [...CATS, { id: "gazvez", label: "Víz-gáz szerelő" }, { id: "badoogos", label: "Bádogos" }];
+
+  it("„Csőtörés van, a főbérlő nem veszi fel — ki segít?” → gazvez, NEM bádogos", () => {
+    const r = heuristicParseSearch("Csőtörés van, a főbérlő nem veszi fel — ki segít?", "AT", CATS_WITH_GAZVEZ);
+    expect(r).not.toBeNull();
+    expect(r!.categoryId).toBe("gazvez");
+  });
+
+  it("„szivárog a víz a fürdőszobában” → gazvez", () => {
+    const r = heuristicParseSearch("szivárog a víz a fürdőszobában, mit tegyek", "CH", CATS_WITH_GAZVEZ);
+    expect(r?.categoryId).toBe("gazvez");
+  });
+
+  it("régióval kombinálva is felismeri: „csőtörés van Bécsben” → gazvez + W", () => {
+    const r = heuristicParseSearch("csőtörés van Bécsben, ki tud jönni", "AT", CATS_WITH_GAZVEZ);
+    expect(r?.categoryId).toBe("gazvez");
+    expect(r?.cantonCode).toBe("W");
+  });
+
+  it("ha a kategórialistából hiányzik a gazvez → null (nem kényszerít rossz id-t)", () => {
+    expect(heuristicParseSearch("csőtörés van, ki segít?", "AT", CATS)).toBeNull();
+  });
+});
