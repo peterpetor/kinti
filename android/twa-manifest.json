@@ -1,8 +1,8 @@
 {
   "packageId": "app.kinti.twa",
   "host": "kinti.app",
-  "name": "kinti — Találj magyart a közeledben",
-  "launcherName": "kinti",
+  "name": "Kinti — Találj magyart a közeledben",
+  "launcherName": "Kinti",
   "display": "standalone",
   "themeColor": "#F4EDE0",
   "themeColorDark": "#101411",
@@ -15,12 +15,13 @@
   "startUrl": "/?source=twa",
   "iconUrl": "https://kinti.app/icons/icon-512.png",
   "maskableIconUrl": "https://kinti.app/icons/icon-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
   "signingKey": {
     "path": "./android.keystore",
     "alias": "android"
   },
-  "appVersionName": "1.1",
-  "appVersionCode": 3,
+  "appVersionName": "1.2",
+  "appVersionCode": 5,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://kinti.app/manifest.webmanifest",
@@ -43,6 +44,5 @@
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
   "displayOverride": [],
-  "appVersion": "1.1",
-  "splashScreenFadeOutDuration": 300
+  "appVersion": "1.2"
 }
