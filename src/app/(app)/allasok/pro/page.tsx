@@ -44,8 +44,8 @@ export default async function KintiProPage() {
             19 <span className="text-[20px] text-ink-muted font-bold">€ / hó</span>
           </div>
           <p className="text-[12px] text-ink-muted mt-1 mb-6">
-            Egy díj, minden PRO funkció. Bármikor lemondható. Tájékoztató ár — a végső bruttó
-            (áfás) árat a pénztár mutatja.
+            Egy díj, minden PRO funkció. Bármikor lemondható. Tájékoztató nettó ár (ÁFA nélkül) —
+            a végső, áfával együttes összeget a pénztár mutatja.
           </p>
           
           {alreadyPro ? (

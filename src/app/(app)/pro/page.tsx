@@ -18,9 +18,9 @@ export default function ProPage() {
   const { user } = useUser();
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  // ÉLŐ, lokalizált (áfás) árak a Paddle-től — a feltüntetett ár a pénztárral
-  // egyezik (a fix EUR-ár CH-ban félrevezető volt). Hiba esetén statikus
-  // tájékoztató ár + „a végső árat a pénztár mutatja" jelzés.
+  // ÉLŐ, lokalizált NETTÓ árak a Paddle-től (az ÁFÁ-t a pénztár adja hozzá) —
+  // a feltüntetett ár a pénztárral egyezik (a fix EUR-ár CH-ban félrevezető volt).
+  // Hiba esetén statikus tájékoztató ár + „a végső árat a pénztár mutatja" jelzés.
   const paddleCountry: CountryCode = isValidCountry(country) ? (country as CountryCode) : "CH";
   const livePrices = usePaddlePrices(paddleCountry);
   // Melyik csomag AKTÍV már nálad? (átláthatóság — a kártyák „Aktív” jelzést kapnak)
@@ -164,8 +164,8 @@ export default function ProPage() {
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.kinti_pro_monthly
-                ? "Bruttó ár — az áfát tartalmazza. Havonta automatikusan megújul, bármikor lemondható."
-                : "Tájékoztató ár — a végső bruttó (áfás) árat a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
+                ? "Nettó ár — az ÁFÁ-t a pénztár (Paddle / Google Play) az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható."
+                : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
             </p>
           </div>
 
@@ -222,8 +222,8 @@ export default function ProPage() {
             <span className="text-[14px] font-bold text-ink-muted"> / hó</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.business_pro_monthly
-                ? "Bruttó ár — az áfát tartalmazza. Havonta automatikusan megújul, bármikor lemondható."
-                : "Tájékoztató ár — a végső bruttó (áfás) árat a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
+                ? "Nettó ár — az ÁFÁ-t a pénztár (Paddle / Google Play) az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható."
+                : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható."}
             </p>
           </div>
 
@@ -289,8 +289,8 @@ export default function ProPage() {
             <span className="text-[14px] font-bold text-ink-muted"> / hirdetés</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.job_featured
-                ? "Bruttó ár — az áfát tartalmazza. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."
-                : "Tájékoztató ár — a végső bruttó (áfás) árat a pénztár mutatja. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."}
+                ? "Nettó ár — az ÁFÁ-t a pénztár (Paddle / Google Play) az országod szabályai szerint adja hozzá. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."
+                : "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan."}
             </p>
           </div>
 

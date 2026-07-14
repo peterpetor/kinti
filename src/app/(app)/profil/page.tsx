@@ -394,9 +394,9 @@ async function OwnerDashboard({
             label="Kiemelés vásárlása (19 € / hó)"
             className="bg-pro text-white hover:bg-[#e68600]"
           />
-          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár tájékoztató. */}
+          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár tájékoztató nettó. */}
           <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
-            Tájékoztató ár — a végső bruttó (áfás) árat a pénztár mutatja. Havonta megújul, bármikor lemondható.
+            Tájékoztató nettó ár (ÁFA nélkül) — a végső, áfával együttes összeget a pénztár mutatja. Havonta megújul, bármikor lemondható.
           </p>
         </div>
       )}

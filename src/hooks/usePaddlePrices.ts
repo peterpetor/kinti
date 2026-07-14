@@ -1,12 +1,13 @@
 "use client";
 
 /**
- * usePaddlePrices — a 3 termék ÉLŐ, lokalizált (áfás) ára a Paddle-től
- * (PricePreview), a user országának Price ID-jára. Így a /pro oldalon
- * feltüntetett ár garantáltan egyezik a pénztárral (a fix „19 €" félrevezető
+ * usePaddlePrices — a 3 termék ÉLŐ, lokalizált NETTÓ ára a Paddle-től
+ * (PricePreview), a user országának Price ID-jára — az ÁFÁ-t a pénztár adja
+ * hozzá az adott ország szabályai szerint. Így a /pro oldalon feltüntetett
+ * ár garantáltan egyezik a pénztári nettó árral (a fix „19 €" félrevezető
  * volt pl. CH-ban, ahol a checkout CHF-ben terhelhet). Hiba esetén `null`
- * — a UI ilyenkor a statikus tájékoztató árat mutatja „a végső árat a
- * pénztár mutatja" jelzéssel.
+ * — a UI ilyenkor a statikus tájékoztató nettó árat mutatja „a végső,
+ * áfával együttes árat a pénztár mutatja" jelzéssel.
  */
 import { useEffect, useState } from "react";
 import { loadPaddle } from "@/lib/paddle-client";
@@ -17,7 +18,7 @@ import { getPlayPrices } from "@/lib/play-billing";
 const PRODUCTS: ProductType[] = ["kinti_pro_monthly", "business_pro_monthly", "job_featured"];
 
 export interface LivePrices {
-  /** Formázott VÉGSŐ (áfás) ár termékenként, pl. "CHF 19.00" / "19,00 €". */
+  /** Formázott nettó ár termékenként (ÁFA nélkül), pl. "CHF 19.00" / "19,00 €". */
   total: Partial<Record<ProductType, string>>;
   currency: string | null;
 }
