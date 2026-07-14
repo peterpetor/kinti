@@ -75,8 +75,11 @@ export default function FiokTorlesPage() {
       <h2>3. Mely adatokat őrizzük meg, és meddig?</h2>
       <ul>
         <li>
-          <strong>Fizetési / számviteli bizonylatok</strong> (a Paddle, illetve
-          a Google Play által kiállított bizonylatok adatai): a számviteli és
+          {/* Fizetési szolgáltató kontextusfüggő: weben Paddle, az Android-appban
+              csak a Google Play említhető (.web-only-payment, lásd globals.css). */}
+          <strong>Fizetési / számviteli bizonylatok</strong> (a{" "}
+          <span className="web-only-payment">Paddle, illetve a </span>
+          Google Play által kiállított bizonylatok adatai): a számviteli és
           adójogi <strong>jogszabályi megőrzési kötelezettség</strong> idejéig
           — jellemzően legfeljebb <strong>10 év</strong>. Ezeket kizárólag a
           jogi kötelezettség teljesítésére használjuk.
@@ -102,7 +105,7 @@ export default function FiokTorlesPage() {
           <strong>Google Play-vásárlás esetén:</strong> Play Áruház →
           Előfizetések menüpont.
         </li>
-        <li>
+        <li className="web-only-payment">
           <strong>Webes (Paddle) vásárlás esetén:</strong> a vásárlási
           visszaigazoló e-mailben kapott lemondó link, vagy írj az{" "}
           <a href="mailto:info@kinti.app">info@kinti.app</a> címre.
@@ -129,8 +132,9 @@ export default function FiokTorlesPage() {
         are kept for up to 30 days. Payment/accounting records are retained
         only as long as legally required (up to 10 years). Deleting the
         account does <strong>not</strong> cancel an active subscription —
-        cancel it in Google Play (Subscriptions) or via the Paddle
-        confirmation e-mail first.
+        cancel it in Google Play (Subscriptions)
+        <span className="web-only-payment"> or via the Paddle confirmation
+        e-mail</span> first.
       </p>
 
       <h2>6. Kapcsolat</h2>
