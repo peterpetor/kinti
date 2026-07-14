@@ -1,6 +1,6 @@
 {
-  "name": "kinti — Találj magyart a közeledben",
-  "short_name": "kinti",
+  "name": "Kinti — Találj magyart a közeledben",
+  "short_name": "Kinti",
   "description": "GPS-alapú magyar szakemberkereső. Fodrász, autószerelő, orvos, ügyvéd, pék — bármi. Egy térkép. Anyanyelven.",
   "id": "/",
   "start_url": "/?source=pwa",

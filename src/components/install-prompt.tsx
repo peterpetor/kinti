@@ -141,7 +141,7 @@ export function InstallPrompt({ className }: { className?: string }) {
             </p>
           ) : (
             <p className="mt-1 text-pretty text-[12.5px] leading-relaxed text-ink-muted">
-              Egy érintéssel teljes képernyős kinti — gyorsabb indulás, offline mód, push-előkészített.
+              Egy érintéssel teljes képernyős Kinti — gyorsabb indulás, offline mód, push-előkészített.
             </p>
           )}
 

@@ -33,7 +33,7 @@ export default async function AdminClaimsPage() {
     <main className="mx-auto min-h-dvh max-w-2xl px-5 pb-16 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
       <header className="flex items-center gap-3">
         <KintiLogo size={26} />
-        <span className="text-[16px] font-extrabold tracking-tight">kinti · admin</span>
+        <span className="text-[16px] font-extrabold tracking-tight">Kinti · admin</span>
         <span className="ml-auto rounded-pill bg-accent/10 px-2.5 py-1 text-[11.5px] font-bold uppercase tracking-wide text-accent">
           Admin
         </span>

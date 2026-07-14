@@ -34,10 +34,10 @@ async function resolve(params: Params) {
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { category, area } = await resolve(params);
-  if (!category || !area) return { title: "Magyar szakember — kinti" };
+  if (!category || !area) return { title: "Magyar szakember — Kinti" };
 
   const title = `Magyar ${category.label} ${area.locative}`;
-  const description = `Magyar nyelven beszélő ${category.label.toLowerCase()} ${area.locative} (${COUNTRY_NAMES[area.country]}). A kintik által ajánlott, ellenőrzött szakemberek egy helyen.`;
+  const description = `Magyar nyelven beszélő ${category.label.toLowerCase()} ${area.locative} (${COUNTRY_NAMES[area.country]}). A Kintik által ajánlott, ellenőrzött szakemberek egy helyen.`;
 
   // Üres kombó → noindex (thin content ellen); a linkek követhetők maradnak.
   const all = await getBusinesses({ category: category.id });
@@ -143,7 +143,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
       />
 
       <p className="text-[13.5px] leading-relaxed text-ink-muted">
-        Magyar nyelven beszélő {category.label.toLowerCase()} {area.locative}. A kintik
+        Magyar nyelven beszélő {category.label.toLowerCase()} {area.locative}. A Kintik
         által ajánlott szakemberek — anyanyelven, helyben.
       </p>
 

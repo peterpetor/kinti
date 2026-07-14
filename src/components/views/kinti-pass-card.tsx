@@ -153,7 +153,7 @@ export function KintiPassCard() {
         {/* fejléc: logó + élő/ellenőrzött jelzés */}
         <div className="relative flex items-center gap-2.5">
           <KintiLogo size={26} />
-          <span className="text-[17px] font-extrabold tracking-tight">kinti</span>
+          <span className="text-[17px] font-extrabold tracking-tight">Kinti</span>
           <span className="ml-auto inline-flex items-center gap-1.5 rounded-pill bg-white/15 px-2.5 py-1 text-[10.5px] font-black uppercase tracking-wider">
             {verify ? (
               <>✓ Felmutatott kártya</>

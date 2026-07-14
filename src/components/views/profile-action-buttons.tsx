@@ -103,7 +103,7 @@ export function ProfileHeaderActions({ businessId, businessName, categoryLabel, 
         onClose={() => setShareOpen(false)}
         url={typeof window !== "undefined" ? window.location.href : ""}
         title={`${businessName} · Kinti`}
-        text={`Magyar ${categoryLabel ? categoryLabel.toLowerCase() : "szakember"} a kintin: ${businessName}`}
+        text={`Magyar ${categoryLabel ? categoryLabel.toLowerCase() : "szakember"} a Kintin: ${businessName}`}
         card={categoryLabel ? { name: businessName, categoryLabel, address } : undefined}
       />
     </>

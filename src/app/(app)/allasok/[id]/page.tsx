@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       title,
       description,
       url,
-      siteName: "kinti",
+      siteName: "Kinti",
       type: "article",
       images: [{ url: image, width: 1200, height: 630, alt: job.title }],
     },
@@ -220,7 +220,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
                 Kinti Iránytű Benchmark
               </h3>
               <p className="mt-1 text-[13.5px] leading-snug text-ink-muted text-balance">
-                A(z) <strong>{cantonName}</strong> régióban a kintiek becsült éves bruttó mediánja{" "}
+                A(z) <strong>{cantonName}</strong> régióban a Kintiek becsült éves bruttó mediánja{" "}
                 <strong>{cantonMedian.toLocaleString("de-CH")} {jobCountry === "CH" ? "CHF" : "EUR"}</strong>.
                 Ez az állás (évesítve) <strong>{Math.abs(diffPercent)}%-kal </strong>
                 <strong className={diffPercent >= 0 ? "text-success" : "text-accent"}>

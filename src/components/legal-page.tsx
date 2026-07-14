@@ -24,7 +24,7 @@ export function LegalPage({
           className="inline-flex items-center gap-2 text-ink"
         >
           <KintiLogo size={28} />
-          <span className="text-[22px] font-extrabold tracking-tight">kinti</span>
+          <span className="text-[22px] font-extrabold tracking-tight">Kinti</span>
         </Link>
         <span className="flex-1" />
         <Link

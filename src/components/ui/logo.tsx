@@ -34,7 +34,7 @@ export function KintiLogo({ size = 36, withFlag = true, className }: KintiLogoPr
       viewBox="0 0 40 47"
       fill="none"
       role="img"
-      aria-label="kinti"
+      aria-label="Kinti"
       className={cn("block kinti-logo", className)}
     >
       <defs>

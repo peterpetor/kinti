@@ -148,7 +148,7 @@ export function PersonalizedHome() {
   return (
     <section
       className="animate-fade-up rounded-card border border-primary/25 bg-primary-soft/50 p-4 shadow-card"
-      aria-label="Szabjuk rád a kintit"
+      aria-label="Szabjuk rád a Kintit"
     >
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">

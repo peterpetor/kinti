@@ -41,7 +41,7 @@ function buildWebhookBody(url: string, event: MonitoringEvent): string {
   // Ember-olvasható, egysoros összefoglaló a chat-platformokhoz (PII-mentes,
   // a hívó már redaktálta). Discord content-limit 2000 → 1800-ra vágjuk.
   const summary = [
-    "🔴 **kinti**",
+    "🔴 **Kinti**",
     `\`${event.source}\``,
     event.prefix,
     event.name ? `· ${event.name}` : "",

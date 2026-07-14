@@ -53,7 +53,7 @@ export default async function FeedPage() {
       <header className="flex items-center gap-2.5">
         <div className="flex items-center gap-2">
           <KintiLogo size={28} />
-          <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
+          <span className="text-[22px] font-extrabold tracking-tight text-ink">Kinti</span>
           <HomeCountryFlag />
         </div>
         <div className="flex-1" />

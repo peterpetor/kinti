@@ -80,7 +80,7 @@ function LockedLeadCard({ lead, businessId }: { lead: LeadCard; businessId: stri
         <div className="h-3 w-3/4 rounded bg-ink/10" />
         <div className="mt-1.5 h-3 w-1/2 rounded bg-ink/10" />
         <p className="mt-2 text-[12px] font-semibold text-ink-muted">
-          🔒 Egy kinti árajánlatot kér tőled. <span className="text-ink">PRO-val</span> látod a nevét, üzenetét és elérhetőségét.
+          🔒 Egy Kinti árajánlatot kér tőled. <span className="text-ink">PRO-val</span> látod a nevét, üzenetét és elérhetőségét.
         </p>
       </div>
 

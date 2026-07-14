@@ -78,7 +78,7 @@ export default function GlobalError({
                 Nem támogatott böngésző-környezet
               </h1>
               <p style={{ fontSize: 14, lineHeight: 1.55, color: "#5c6d63", margin: "0 0 16px" }}>
-                Úgy tűnik, a kinti egy korlátozott környezetben (pl. egy alkalmazás
+                Úgy tűnik, a Kinti egy korlátozott környezetben (pl. egy alkalmazás
                 beépített böngészőjében vagy egy kiegészítő előnézetében) nyílt meg,
                 ahol a tárhely-hozzáférés tiltott. Nyisd meg{" "}
                 <strong style={{ color: "#0e1f17" }}>rendes böngészőben</strong>{" "}

@@ -33,7 +33,7 @@ export function NewsletterToggle() {
       <div className="flex-1">
         <h3 className="text-sm font-bold text-ink">Hírlevél és ajánlatok</h3>
         <p className="mt-1 text-[12px] leading-snug text-ink-muted">
-          Szeretnék értesülni a kinti újdonságairól, tippekről és exkluzív marketing anyagokról.
+          Szeretnék értesülni a Kinti újdonságairól, tippekről és exkluzív marketing anyagokról.
         </p>
       </div>
 

@@ -145,7 +145,7 @@ self.addEventListener("message", (event) => {
 // Payload NÉLKÜLI push (a szerver a kanton-célzást már elvégezte). Ha valaha
 // titkosított payloadot küldenénk, itt olvasnánk az `event.data`-ból.
 self.addEventListener("push", (event) => {
-  let title = "kinti";
+  let title = "Kinti";
   let body = "Új esemény vagy hirdetés a közösségben! — nézd meg az appban 🎉";
   let url = "/";
 

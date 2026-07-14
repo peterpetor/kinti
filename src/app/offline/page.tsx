@@ -51,7 +51,7 @@ export default function OfflinePage() {
       </div>
 
       <p className="text-[11px] text-ink-faint">
-        Tipp: ha telepítve van a kinti a kezdőképernyődre, offline is elindul.
+        Tipp: ha telepítve van a Kinti a kezdőképernyődre, offline is elindul.
       </p>
     </div>
   );

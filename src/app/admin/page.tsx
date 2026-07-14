@@ -31,7 +31,7 @@ import { relTimeFromIso, relTimeFromMs } from "@/lib/relative-time";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Admin — kinti", robots: { index: false, follow: false } };
+export const metadata = { title: "Admin — Kinti", robots: { index: false, follow: false } };
 
 export default async function AdminPage({ searchParams }: { searchParams: { c?: string; p?: string } }) {
   const adminId = await getAdminUserId();

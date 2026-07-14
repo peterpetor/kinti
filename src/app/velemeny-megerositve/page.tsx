@@ -81,7 +81,7 @@ export default function VelemenyMegerositvePage({
             Kint van a véleményed!
           </h1>
           <p className="text-pretty text-[14px] leading-relaxed text-ink-muted">
-            Köszönjük — segítesz a kinti közösségnek, hogy jobban válasszanak.
+            Köszönjük — segítesz a Kinti közösségnek, hogy jobban válasszanak.
             A megerősítő emailedben őrizd meg a kezelő linket: onnan tudod
             később törölni.
           </p>

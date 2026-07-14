@@ -39,7 +39,7 @@ export default function MyPostsPage() {
       </header>
 
       <div className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[12px] leading-relaxed text-ink-muted">
-        <strong className="text-ink">Csak a böngésződben látható.</strong> A kinti szerveren nincs felhasználói azonosítód —
+        <strong className="text-ink">Csak a böngésződben látható.</strong> A Kinti szerveren nincs felhasználói azonosítód —
         ezt a listát a böngésző localStorage-ja tárolja. Ha cache-t törölsz vagy másik eszközön nyitod meg,
         eltűnik. Másik eszközhöz: <strong className="text-ink">letöltés / import</strong> vagy{" "}
         <strong className="text-ink">email-küldés</strong>.

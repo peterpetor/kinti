@@ -115,7 +115,7 @@ export function PwaInstallCard() {
             Tedd a kezdőképernyődre!
           </p>
           <p className="text-[11.5px] leading-snug text-ink-muted">
-            1 érintés, és a kinti olyan, mint egy igazi app.
+            1 érintés, és a Kinti olyan, mint egy igazi app.
           </p>
         </div>
         <button

@@ -124,7 +124,7 @@ export function OnboardingChecklist() {
         <div className="flex items-center gap-3">
           <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-success text-xl text-white kinti-pop">🎉</span>
           <div className="min-w-0 flex-1">
-            <p className="text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">A kinti mostantól a tiéd!</p>
+            <p className="text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">A Kinti mostantól a tiéd!</p>
             <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
               Régió beállítva, értesítések élnek, az első kedvenced mentve. Jó kintlétet!
             </p>
@@ -164,7 +164,7 @@ export function OnboardingChecklist() {
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Kezdd itt</p>
           <h2 className="text-[15.5px] font-extrabold tracking-[-0.01em] text-ink">
-            Tedd magadévá a kintit — {progress.done}/{progress.total} kész
+            Tedd magadévá a Kintit — {progress.done}/{progress.total} kész
           </h2>
         </div>
         <button

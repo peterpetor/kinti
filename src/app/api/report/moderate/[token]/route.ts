@@ -95,7 +95,7 @@ function html(title: string, message: string, success: boolean): Response {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${title} — kinti Admin</title>
+  <title>${title} — Kinti Admin</title>
   <style>
     body { margin: 0; background: #f4ede0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100dvh; padding: 24px; box-sizing: border-box; }
     .card { background: #fff; border-radius: 20px; box-shadow: 0 4px 24px rgba(14,31,23,.08); max-width: 420px; width: 100%; padding: 36px 32px; text-align: center; }
@@ -109,7 +109,7 @@ function html(title: string, message: string, success: boolean): Response {
 </head>
 <body>
   <div class="card">
-    <div class="logo"><div class="logo-dot"></div>kinti Admin</div>
+    <div class="logo"><div class="logo-dot"></div>Kinti Admin</div>
     <div class="icon">${icon}</div>
     <h1>${title}</h1>
     <p>${message}</p>

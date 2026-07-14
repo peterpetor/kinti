@@ -49,7 +49,7 @@ export function ReviewFollowupCard() {
             Nemrég hívtad: {candidate.name}
           </p>
           <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
-            Milyen volt? Egy rövid értékeléssel sokat segítesz a többi kintinek
+            Milyen volt? Egy rövid értékeléssel sokat segítesz a többi Kintinek
             — pár másodperc, regisztráció nélkül.
           </p>
           <div className="mt-2.5 flex items-center gap-2">

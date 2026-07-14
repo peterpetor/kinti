@@ -64,7 +64,7 @@ export default async function ProfilPage({
       <header className="flex items-center gap-2.5">
         <div className="flex items-center gap-2">
           <KintiLogo size={28} />
-          <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
+          <span className="text-[22px] font-extrabold tracking-tight text-ink">Kinti</span>
           <HomeCountryFlag />
         </div>
         <div className="flex-1" />
@@ -292,7 +292,7 @@ async function OwnerDashboard({
   if (stats.weekViews > 0) {
     activities.push({
       icon: "eye",
-      text: `${stats.weekViews} kinti kereste fel a profilodat ezen a héten`,
+      text: `${stats.weekViews} Kinti kereste fel a profilodat ezen a héten`,
       time: "ezen a héten",
     });
   }
@@ -461,7 +461,7 @@ async function OwnerDashboard({
             <Icon name="trending" size={11} strokeWidth={2.4} /> Ez a hét
           </span>
           <p className="text-[13.5px] leading-snug opacity-90 text-pretty">
-            <strong className="font-bold">{stats.weekViews} kinti</strong> nézte meg a profilodat az
+            <strong className="font-bold">{stats.weekViews} Kinti</strong> nézte meg a profilodat az
             elmúlt 7 napban
             {stats.weekViewsDelta ? (
               <> — <strong>{stats.weekViewsDelta}</strong> a múlt héthez képest</>

@@ -5,7 +5,7 @@ export const dynamic = "force-static";
 export const metadata = {
   title: "Fiók és adatok törlése",
   description:
-    "Így kérheted a kinti (kinti.app) fiókod és a hozzá kapcsolódó adatok végleges törlését.",
+    "Így kérheted a Kinti (kinti.app) fiókod és a hozzá kapcsolódó adatok végleges törlését.",
 };
 
 /**
@@ -19,7 +19,7 @@ export default function FiokTorlesPage() {
   return (
     <LegalPage title="Fiók és adatok törlése" updatedAt="2026-07-13">
       <p>
-        Ez az oldal a <strong>kinti — Találj magyart a közeledben</strong>{" "}
+        Ez az oldal a <strong>Kinti — Találj magyart a közeledben</strong>{" "}
         alkalmazásra és a <strong>kinti.app</strong> webhelyre vonatkozik
         (üzemeltető: <strong>Feedback Jobs S.R.L.</strong>, Románia). Itt
         találod, hogyan kérheted a fiókod és a hozzá kapcsolódó adatok{" "}
@@ -116,7 +116,7 @@ export default function FiokTorlesPage() {
       <h2>5. Account deletion (English summary)</h2>
       <p style={{ fontStyle: "italic" }}>
         This page applies to the app{" "}
-        <strong>„kinti — Találj magyart a közeledben"</strong> (kinti.app). To
+        <strong>„Kinti — Találj magyart a közeledben"</strong> (kinti.app). To
         request the permanent deletion of your account and associated data,
         e-mail{" "}
         <a href="mailto:info@kinti.app?subject=Account%20deletion">

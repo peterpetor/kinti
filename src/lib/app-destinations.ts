@@ -90,7 +90,7 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "pro elofizetes premium kinti pro upgrade" },
   { href: "/bussen", title: "Gyorshajtás-bírság becslő", subtitle: "Mennyi büntetés jár a gyorshajtásért?", icon: "car",
     keywords: "gyorshajtas birsag buntetes trafipax radar villogtak bussen boete sebesseg tullepes ordnungswidrigkeit" },
-  { href: "/segitseg", title: "Segítség (GYIK)", subtitle: "Hogyan használd a kinti-t — gyakori kérdések", icon: "question",
+  { href: "/segitseg", title: "Segítség (GYIK)", subtitle: "Hogyan használd a Kinti-t — gyakori kérdések", icon: "question",
     keywords: "segitseg gyik faq kerdes hasznalat sugo help hogyan mukodik" },
   { href: "/allasok/szakmai-szotar", title: "Szakmai szótár", subtitle: "Munkahelyi szakszavak leckékben", icon: "sparkles",
     keywords: "szakmai szotar szakszavak nemet szavak kifejezes munkaszo tanulas lecke" },

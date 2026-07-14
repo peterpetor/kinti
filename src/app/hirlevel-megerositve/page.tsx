@@ -25,7 +25,7 @@ export default function HirlevelMegerositvePage({
 
   if (status === "unsubscribed") {
     title = "Leiratkoztál ✓";
-    message = "Sikeresen leiratkoztál a kinti heti hírlevelünkről. Nem fogsz több emailt kapni. Bármikor visszairatkozhatsz, ha mégis szeretnéd.";
+    message = "Sikeresen leiratkoztál a Kinti heti hírlevelünkről. Nem fogsz több emailt kapni. Bármikor visszairatkozhatsz, ha mégis szeretnéd.";
   } else if (status === "expired") {
     title = "Lejárt vagy érvénytelen link";
     message = "Ez a link már nem érvényes — előfordulhat, hogy időközben leiratkoztál, vagy a megerősítő link elavult. Iratkozz fel újra, ha szeretnéd.";

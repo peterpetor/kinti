@@ -80,7 +80,7 @@ export function PostSavePrompt({
     if (typeof navigator === "undefined" || typeof navigator.share !== "function") return;
     try {
       await navigator.share({
-        title: `kinti — ${title}`,
+        title: `Kinti — ${title}`,
         text: "Kezelő-link a posztomhoz (kinti.app):",
         url: fullUrl,
       });

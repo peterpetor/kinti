@@ -80,9 +80,9 @@ export async function renderBusinessCard(data: ShareCardData): Promise<string> {
   ctx.fillStyle = "#ffffff";
   ctx.font = `800 84px ${FONT}`;
   ctx.textBaseline = "middle";
-  ctx.fillText("kinti", 72, 96);
+  ctx.fillText("Kinti", 72, 96);
   // paprika-piros pötty a wordmark után (pin-utalás)
-  const dotX = 72 + ctx.measureText("kinti").width + 26;
+  const dotX = 72 + ctx.measureText("Kinti").width + 26;
   ctx.fillStyle = PAPRIKA;
   ctx.beginPath();
   ctx.arc(dotX, 118, 12, 0, Math.PI * 2);
@@ -149,7 +149,7 @@ export async function renderBusinessCard(data: ShareCardData): Promise<string> {
   ctx.fillStyle = INK;
   ctx.font = `800 44px ${FONT}`;
   ctx.fillText("Szkenneld be, és", textX, boxY + 110);
-  ctx.fillText("nézd meg a kintin", textX, boxY + 168);
+  ctx.fillText("nézd meg a Kintin", textX, boxY + 168);
   ctx.fillStyle = MUTED;
   ctx.font = `500 32px ${FONT}`;
   const shortUrl = data.url.replace(/^https?:\/\//, "");

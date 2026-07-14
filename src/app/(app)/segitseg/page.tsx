@@ -4,9 +4,9 @@ import { Icon, KintiLogo } from "@/components/ui";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Segítség — kinti",
+  title: "Segítség — Kinti",
   description:
-    "Hogyan használd a kinti-t — gyakori kérdések, magyarázatok egyszerűen.",
+    "Hogyan használd a Kinti-t — gyakori kérdések, magyarázatok egyszerűen.",
 };
 
 interface FaqItem {
@@ -25,7 +25,7 @@ const FAQS: FaqItem[] = [
     q: "Kell-e regisztrálni vagy email-cím?",
     a: (
       <>
-        <strong>Nem.</strong> A kinti egyik fő ígérete, hogy nincs fiók és nincs
+        <strong>Nem.</strong> A Kinti egyik fő ígérete, hogy nincs fiók és nincs
         email-kérés. Csak nyisd meg, és használd. Amikor feladsz egy eseményt,
         a böngésződ automatikusan megjegyzi a posztodat —
         és bármikor megnyithatod a <Link href="/sajatjaim" className="text-primary underline font-bold">Saját posztjaim</Link> oldalon.
@@ -55,7 +55,7 @@ const FAQS: FaqItem[] = [
       <>
         Egy hosszú URL, ami a posztodhoz tartozik. <strong>Olyan, mint egy
         kulcs:</strong> aki megnyitja, az tudja szerkeszteni vagy törölni a posztot.
-        Ezért ne oszd meg senkivel — a kinti-n senki nem lát „felhasználói fiókokat”,
+        Ezért ne oszd meg senkivel — a Kinti-n senki nem lát „felhasználói fiókokat”,
         a kezelő-link a te egyetlen hozzáférésed.
       </>
     ),
@@ -83,7 +83,7 @@ const FAQS: FaqItem[] = [
     q: "Hogyan tudom telefonomra tenni az alkalmazást?",
     a: (
       <>
-        A kinti egy <strong>PWA</strong> (telepíthető webalkalmazás):
+        A Kinti egy <strong>PWA</strong> (telepíthető webalkalmazás):
         <ul className="ml-4 mt-1 list-disc space-y-0.5">
           <li>
             <strong>iPhone (Safari):</strong> Megosztás ▸ „Hozzáadás a Főképernyőhöz"
@@ -108,7 +108,7 @@ const FAQS: FaqItem[] = [
     ),
   },
   {
-    q: "Milyen adataimat tárolja a kinti?",
+    q: "Milyen adataimat tárolja a Kinti?",
     a: (
       <>
         Csak amit te magad megadsz a posztodban (cím, leírás, telefon ha
@@ -153,7 +153,7 @@ export default function SegitsegPage() {
     <div className="space-y-6 px-5 pb-8 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <header className="flex items-center gap-2.5">
         <KintiLogo size={28} />
-        <span className="text-[22px] font-extrabold tracking-tight text-ink">kinti</span>
+        <span className="text-[22px] font-extrabold tracking-tight text-ink">Kinti</span>
         <span className="text-[16px] font-extrabold text-ink-muted">·</span>
         <span className="text-[16px] font-extrabold text-ink-muted">segítség</span>
         <Link
@@ -173,7 +173,7 @@ export default function SegitsegPage() {
           </span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[20px] font-extrabold tracking-tight text-ink">
-              Hogyan használd a kinti-t?
+              Hogyan használd a Kinti-t?
             </h1>
             <p className="mt-1 text-[13px] leading-snug text-ink-muted">
               Gyors válaszok a leggyakoribb kérdésekre. Egyszerűen.

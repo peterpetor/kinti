@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
       title,
       description,
       url,
-      siteName: "kinti",
+      siteName: "Kinti",
       type: "profile",
       images: [{ url: image, width: 1200, height: 630, alt: b.name }],
     },

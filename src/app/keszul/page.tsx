@@ -5,7 +5,7 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Hamarosan érkezünk — kinti",
+  title: "Hamarosan érkezünk — Kinti",
   robots: { index: false, follow: false },
 };
 
@@ -15,7 +15,7 @@ export default function ComingSoonPage() {
       <div className="flex items-center gap-3">
         <KintiLogo size={48} />
         <span className="text-[34px] font-extrabold tracking-tight text-ink">
-          kinti
+          Kinti
         </span>
       </div>
 

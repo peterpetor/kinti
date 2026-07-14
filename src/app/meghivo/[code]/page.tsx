@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: "Egy magyar meghívott a Kintire 🇭🇺",
     description: "Szakember-kereső, állások, ügyintézés, közösség — kint élő magyaroknak. Ingyen, anonim.",
     url: "https://kinti.app/meghivo",
-    siteName: "kinti",
+    siteName: "Kinti",
     type: "website",
     images: [{ url: "https://kinti.app/icons/og-meghivo.png", width: 1200, height: 630, type: "image/png", alt: "Küldj egy magyart — Kinti" }],
   },

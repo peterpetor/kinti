@@ -205,7 +205,7 @@ export async function sendBackupEmail(args: BackupEmailArgs): Promise<void> {
     })
     .join("");
 
-  const subject = `kinti backup — ${args.items.length} kezelő-link`;
+  const subject = `Kinti backup — ${args.items.length} kezelő-link`;
   const text = `Szia!
 
 Ezt a backup-emailt te kérted a kinti.app /sajatjaim oldalán.
@@ -263,7 +263,7 @@ export async function sendTestEmail(to: string): Promise<{ id: string | null }> 
   const { data, error } = await getResend().emails.send({
     from,
     to,
-    subject: "kinti — Resend teszt",
+    subject: "Kinti — Resend teszt",
     html: "<p>Sikerült! A Resend integráció <strong>működik</strong>.</p>",
     text: "Sikerült! A Resend integráció működik.",
   });
@@ -317,12 +317,12 @@ export async function sendReviewNudgeEmail(args: {
   const safeBiz = args.businessName.replace(/[<>]/g, "").slice(0, 120);
   const url = `https://kinti.app/szaknevsor/${encodeURIComponent(args.businessId)}?ertekeles=1#ertekeles`;
   const html = `<div style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;color:#1a1a1a;max-width:520px;margin:0 auto;padding:8px">
-<p style="font-size:18px;font-weight:800;margin:0 0 6px">⭐ Milyen volt? Segíts a többi kintinek!</p>
+<p style="font-size:18px;font-weight:800;margin:0 0 6px">⭐ Milyen volt? Segíts a többi Kintinek!</p>
 <p style="margin:0 0 12px">Szia${safeName ? ` ${safeName}` : ""}! Pár napja árajánlatot kértél tőle: <strong>${safeBiz}</strong>.</p>
 <p style="margin:0 0 16px">Írnál róla pár mondatot? A valódi magyar vélemények segítenek a többieknek jó szakembert találni — 30 másodperc, se fiók, se regisztráció.</p>
 <a href="${url}" style="display:inline-block;background:#1d4434;color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px">Értékelést írok</a>
 <hr style="border:none;border-top:1px solid #e5e5e5;margin:20px 0"/>
-<p style="font-size:12px;color:#888;margin:0">Ezt az egyszeri emlékeztetőt azért kapod, mert a kintin ajánlatot kértél ettől a vállalkozástól. Több ilyet nem küldünk ehhez a kéréshez.</p>
+<p style="font-size:12px;color:#888;margin:0">Ezt az egyszeri emlékeztetőt azért kapod, mert a Kintin ajánlatot kértél ettől a vállalkozástól. Több ilyet nem küldünk ehhez a kéréshez.</p>
 </div>`;
   const { error } = await getResend().emails.send({
     from,
@@ -445,7 +445,7 @@ function baseLayout({ preheader, body }: { preheader: string; body: string }): s
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>kinti</title>
+  <title>Kinti</title>
 </head>
 <body style="margin:0;padding:0;background:#f4ede0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">
   <span style="display:none!important;opacity:0;color:transparent;height:0;width:0;overflow:hidden;">
@@ -458,10 +458,10 @@ function baseLayout({ preheader, body }: { preheader: string; body: string }): s
           <table role="presentation" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td style="vertical-align:middle;padding-right:10px;">
-                <img src="https://kinti.app/favicon.ico" width="28" height="28" alt="kinti logo" style="display:block; border-radius:8px; background:#ffffff;" />
+                <img src="https://kinti.app/favicon.ico" width="28" height="28" alt="Kinti logo" style="display:block; border-radius:8px; background:#ffffff;" />
               </td>
               <td style="vertical-align:middle;font-size:18px;font-weight:800;color:#0e1f17;letter-spacing:-0.02em;">
-                kinti
+                Kinti
               </td>
             </tr>
           </table>
@@ -650,7 +650,7 @@ export async function sendBusinessConfirmationEmail(
 
   const text = `Szia!
 
-Megkaptuk a vállalkozásod a kinti Szaknévsorba:
+Megkaptuk a vállalkozásod a Kinti Szaknévsorba:
   "${args.businessName}"
 
 A publikáláshoz erősítsd meg egy kattintással:
@@ -679,7 +679,7 @@ kinti.app`;
         Szia 👋
       </p>
       <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
-        Megkaptuk a vállalkozásod a kinti <strong>Szaknévsorba</strong>:
+        Megkaptuk a vállalkozásod a Kinti <strong>Szaknévsorba</strong>:
       </p>
       <p style="margin:0 0 20px;padding:12px 14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;font-size:14.5px;font-weight:700;color:#0e1f17;">
         ${escapeHtml(args.businessName)}

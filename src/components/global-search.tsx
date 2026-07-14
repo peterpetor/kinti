@@ -341,7 +341,7 @@ export function GlobalSearchOverlay() {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Keresés a kintin"
+        aria-label="Keresés a Kintin"
         className="w-full max-w-md animate-fade-up rounded-card border border-line bg-surface shadow-pop overflow-hidden flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => {

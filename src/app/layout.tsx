@@ -55,33 +55,33 @@ const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('kinti-the
 
 export const metadata: Metadata = {
   title: {
-    default: "kinti — Találj magyart a közeledben",
-    template: "%s · kinti",
+    default: "Kinti — Találj magyart a közeledben",
+    template: "%s · Kinti",
   },
   description:
     "GPS-alapú magyar szakemberkereső. Fodrász, autószerelő, orvos, ügyvéd, pék — bármi. Egy térkép. Anyanyelven.",
-  applicationName: "kinti",
+  applicationName: "Kinti",
   manifest: "/manifest.webmanifest",
   metadataBase: new URL("https://kinti.app"),
   openGraph: {
-    title: "kinti — Találj magyart a közeledben",
+    title: "Kinti — Találj magyart a közeledben",
     description: "GPS-alapú magyar szakemberkereső Svájcban. Fodrász, autószerelő, orvos, ügyvéd — bármi. Egy térkép. Anyanyelven.",
     url: "https://kinti.app",
-    siteName: "kinti",
+    siteName: "Kinti",
     type: "website",
     locale: "hu_HU",
-    images: [{ url: "/icons/og-default.png", width: 1200, height: 630, alt: "kinti — Találj magyart a közeledben" }],
+    images: [{ url: "/icons/og-default.png", width: 1200, height: 630, alt: "Kinti — Találj magyart a közeledben" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "kinti — Találj magyart a közeledben",
+    title: "Kinti — Találj magyart a közeledben",
     description: "GPS-alapú magyar szakemberkereső Svájcban.",
     images: ["/icons/og-default.png"],
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "kinti",
+    title: "Kinti",
     // iOS PWA indító-képernyők (scripts/gen-splash.mjs) — nincs fehér villanás.
     startupImage: [
       { url: "/icons/splash/splash-1290x2796.png", media: "(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" },
