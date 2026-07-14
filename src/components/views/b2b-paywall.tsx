@@ -54,7 +54,7 @@ export function B2bPaywall({ businessId }: { businessId: string | null }) {
         </div>
 
         {/* Fizetőfal — a feed fölé simuló CTA-kártya. */}
-        <div className="absolute inset-0 flex items-start justify-center overflow-hidden rounded-card bg-gradient-to-b from-bg/10 via-bg/60 to-bg/95 p-4">
+        <div className="absolute inset-0 flex items-start justify-center rounded-card bg-gradient-to-b from-bg/10 via-bg/60 to-bg/95 p-4">
           <div className="mt-4 w-full max-w-sm rounded-card border-2 border-star/40 bg-surface p-5 text-center shadow-pop">
             <div className="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-[15px] bg-star text-white">
               <Icon name="briefcase" size={22} strokeWidth={2.4} />
