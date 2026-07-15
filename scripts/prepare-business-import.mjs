@@ -602,6 +602,13 @@ const CITY = {
   "'s-hertogenbosch": ["NB", 51.6978, 5.3037],
   "geleen": ["LI", 50.9750, 5.8283],
   "haarlem": ["NH", 52.3874, 4.6462],
+  // 2026-07-16 bővítés (28. kör) — DE, nemetorszagi-magyarok.de JSON:API,
+  // München környéki autószerelő-kategória (autoszer=0 volt a nagyvárosi
+  // audit szerint München/Berlin/Hamburg/Köln/Frankfurt/Düsseldorfban):
+  "riemerling": ["BY", 48.0522, 11.6667],
+  "geretsried": ["BY", 47.8667, 11.4833],
+  "schondorf am ammersee": ["BY", 47.9667, 11.1833],
+  "warngau": ["BY", 47.7667, 11.7333],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
