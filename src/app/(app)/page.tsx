@@ -41,11 +41,20 @@ export default async function FeedPage() {
     getBusinessesForList(),
     cached("home:b2b-open", 300_000, () => countOpenB2bProjects()),
   ]);
-  // „A közeledben" csak a koordinátával rendelkezőkből válogat (kliensoldali
-  // GPS-rendezéshez). Trükkös payload-méret ellen: max 200 rekord.
-  const nearby = allBusinesses
-    .filter((b) => b.lat != null && b.lng != null)
-    .slice(0, 200);
+  // „A közeledben" — PAYLOAD-DIÉTA: a szerver csak a fallback-kártyákat adja át
+  // (3/ország, ≤12 rekord ≈ pár KB). Korábban 200 TELJES rekord ment az RSC-be
+  // (~200 KB), miközben a kártya 3-at mutat. GPS-engedély után a kliens a teljes
+  // listát a cache-elt /api/businesses/list-ből kéri (jobb "legközelebbi" is:
+  // teljes pool a 200-as szelet helyett). A lista featured→rating rendezett, így
+  // az országonkénti első 3 = a fallback-nézet top-3-a.
+  const nearbyPerCountry = new Map<string, number>();
+  const nearby = allBusinesses.filter((b) => {
+    if (b.lat == null || b.lng == null) return false;
+    const c = b.country ?? "CH";
+    const n = (nearbyPerCountry.get(c) ?? 0) + 1;
+    nearbyPerCountry.set(c, n);
+    return n <= 3;
+  });
 
   return (
     <>

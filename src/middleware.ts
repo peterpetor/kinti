@@ -151,6 +151,23 @@ export default clerkMiddleware(async (auth, req) => {
     requestHeaders.set("Content-Security-Policy", csp);
     const res = NextResponse.next({ request: { headers: requestHeaders } });
     res.headers.set("Content-Security-Policy-Report-Only", csp);
+
+    // ── Anonim HTML edge-cache ────────────────────────────────────────────────
+    // A kezdőlap és a szaknévsor SSR-je FELHASZNÁLÓ-FÜGGETLEN (nincs auth()/
+    // cookies() a render-útvonalukban; a személyre szabás kliens-oldali — lásd a
+    // privacy-elvet: a szerver nem köt per-user azonosítót). A HTML így a CDN-en
+    // cache-elhető: s-maxage=60 + stale-while-revalidate=300 → meleg TTFB ~50 ms,
+    // és a worker-hidegindítást sosem látja felhasználó. A nonce-os CSP-fejléc a
+    // HTML-lel EGYÜTT cache-elődik (konzisztens marad). MIDDLEWARE-ben (nem a
+    // next.config headers()-ben), mert a force-dynamic oldalak Next-féle
+    // Cache-Control-ját csak itt lehet megbízhatóan felülírni ezen a stacken.
+    // ⚠️ Éles hatáshoz a kinti.app zónán Cache Rule kell (HTML alapból nem
+    // cache-elhető a Cloudflare-nél): "/" és "/szaknevsor" → Eligible for cache,
+    // origin TTL tisztelete. A szabály nélkül a fejléc hatástalan (ártalmatlan).
+    const cachePath = req.nextUrl.pathname;
+    if (cachePath === "/" || cachePath === "/szaknevsor") {
+      res.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+    }
     return res;
   }
 });

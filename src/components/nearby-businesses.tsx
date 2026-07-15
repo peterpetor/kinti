@@ -12,12 +12,19 @@ import type { ListBusiness } from "@/lib/types";
 /**
  * „A közeledben" — a felhasználó GPS-helyéhez legközelebbi 3 vállalkozás, valódi
  * km-távolsággal. Helymeghatározás nélkül (vagy amíg az betölt) a kiemelt/első 3
- * jelenik meg km nélkül, így a szekció sosem üres. A teljes lista a szülőtől jön
- * (csak a koordinátával rendelkezők), a legközelebbieket kliensoldalon válogatjuk.
+ * jelenik meg km nélkül, így a szekció sosem üres.
+ *
+ * PAYLOAD-DIÉTA: a szülő (kezdőlap RSC) csak a fallback-kártyákat adja át
+ * (3/ország) — a teljes koordinátás listát GPS-engedély UTÁN kérjük le a
+ * cache-elt /api/businesses/list-ből (edge + böngésző-cache; a Szaknévsor is
+ * ugyanezt használja, így gyakran már meleg). GPS-elutasításnál nincs extra
+ * kérés, marad a fallback.
  */
 export function NearbyBusinesses({ businesses }: { businesses: ListBusiness[] }) {
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(true);
+  // A teljes lista (GPS-ág) — csak engedély után töltjük.
+  const [all, setAll] = useState<ListBusiness[] | null>(null);
 
   // Ország-szűrés (6-ország). Hidratálás-biztos: mount ELŐTT nincs szűrés (egyezik
   // az SSR-rel, ami minden országot átad), mount UTÁN a választott ország (default CH).
@@ -25,9 +32,11 @@ export function NearbyBusinesses({ businesses }: { businesses: ListBusiness[] })
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const country = mounted ? prefCountry ?? DEFAULT_COUNTRY : null;
+  // GPS-ág: a teljes (kliens-oldalon letöltött) pool; egyébként a fallback.
+  const pool = all ?? businesses;
   const countryBusinesses = useMemo(
-    () => (country == null ? businesses : businesses.filter((b) => (b.country ?? "CH") === country)),
-    [businesses, country],
+    () => (country == null ? pool : pool.filter((b) => (b.country ?? "CH") === country)),
+    [pool, country],
   );
 
   useEffect(() => {
@@ -41,6 +50,14 @@ export function NearbyBusinesses({ businesses }: { businesses: ListBusiness[] })
         if (done) return;
         setPos({ lat: p.coords.latitude, lng: p.coords.longitude });
         setLocating(false);
+        // GPS megvan → a teljes koordinátás lista a pontos "legközelebbi 3"-hoz.
+        // Best-effort: hibánál marad a fallback (a szekció sosem üres).
+        fetch("/api/businesses/list")
+          .then((r) => (r.ok ? (r.json() as Promise<{ businesses?: ListBusiness[] }>) : null))
+          .then((d) => {
+            if (!done && d?.businesses?.length) setAll(d.businesses);
+          })
+          .catch(() => {});
       },
       () => {
         if (!done) setLocating(false);
@@ -57,7 +74,9 @@ export function NearbyBusinesses({ businesses }: { businesses: ListBusiness[] })
       // Valódi legközelebbi 3, távolsággal — házszám nélküli (városközpontra eső)
       // cím nem versenyezhet "legközelebbi"-ként, mert a koordinátája nem valós.
       return countryBusinesses
-        .filter((b) => hasStreetAddress(b.address))
+        // Koordináta-szűrés itt (nem csak a szülőben): az API-ból töltött teljes
+        // pool koordináta nélküli rekordokat is tartalmazhat.
+        .filter((b) => b.lat != null && b.lng != null && hasStreetAddress(b.address))
         .map((b) => ({ b, dist: haversineKm(pos.lat, pos.lng, b.lat as number, b.lng as number) }))
         .sort((a, b) => a.dist - b.dist)
         .slice(0, 3);
