@@ -127,6 +127,11 @@ const CITY = {
   "überlingen": ["BW", 47.7686, 9.1758],
   "münchenstein": ["BL", 47.5219, 7.6236], // ne a "münchen" (DE) kulcs egyezzen bele
   "wiener neustadt": ["NOE", 47.8151, 16.2436], // ne a "wien"/"bécs" (W) kulcs egyezzen bele — más tartomány!
+  // 2026-07-16: "Bernstein" (Burgenland) tartalmazza a "bern" (CH) alstringet;
+  // "Baden bei Wien" (NOE) tartalmazza a "wien"-t ÉS a "baden" (CH, AG) kulcsot is —
+  // mindkettő élő bug volt (rossz kanton/canton_code egy valós AT orvosnál).
+  "bernstein": ["BGL", 47.4056116, 16.2582365],
+  "baden bei wien": ["NOE", 48.0045, 16.2313],
   "weilheim in oberbayern": ["BY", 47.8395, 11.1416], // ne a "weilheim" (BW, Weilheim an der Teck) kulcs egyezzen bele — más tartomány!
   "tägerwilen": ["TG", 47.651, 9.176],
   "bottighofen": ["TG", 47.6423, 9.2153],
@@ -547,6 +552,45 @@ const CITY = {
   "büchlberg": ["BY", 48.6167, 13.5667],
   "muhr am see": ["BY", 49.1667, 10.8500],
   "bad wörishofen": ["BY", 48.0000, 10.6000],
+  // 2026-07-16 bővítés (26. kör) — arkadasi.hu/ausztria-_liechtenstein: a
+  // leggyérebb AT tartományok (Kärnten/Tirol/Vorarlberg) + Burgenland/Alsó-
+  // Ausztria/Felső-Ausztria/Stájerország eddig hiányzó városai. "schladming",
+  // "braunau am inn" és "gänserndorf" SZÁNDÉKOSAN önálló kulcsok (nem csak a
+  // COUNTRY_FALLBACK-ra hagyva) — élő bug volt, hogy a cím szövegében szereplő
+  // utcanév ("Salzburger Straße", "Wiener Straße") tévesen a "salzburg"/"wien"
+  // kulcsra illesztett rossz tartományt adva.
+  "seiersberg": ["STM", 47.0086779, 15.3996846],
+  "weiz": ["STM", 47.2184821, 15.6297247],
+  "schladming": ["STM", 47.3914551, 13.6755975],
+  "matrei in osttirol": ["TIR", 47.0035971, 12.5392621],
+  "rum": ["TIR", 47.2875296, 11.4583051],
+  "kitzbühel": ["TIR", 47.4492104, 12.3920215],
+  "hall in tirol": ["TIR", 47.2834143, 11.5084233],
+  "deutsch tschantschendorf": ["BGL", 47.1084801, 16.2861123],
+  "wolfau": ["BGL", 47.2814, 16.1315],
+  "horitschon": ["BGL", 47.5918178, 16.5385309],
+  "frauenkirchen": ["BGL", 47.8358262, 16.9255664],
+  "mönchhof": ["BGL", 47.8823505, 16.9361618],
+  "rechnitz": ["BGL", 47.305217, 16.4411963],
+  "marz": ["BGL", 47.7193518, 16.4155333],
+  "nikitsch": ["BGL", 47.5226278, 16.6422628],
+  "schattendorf": ["BGL", 47.7132474, 16.513704],
+  "güssing": ["BGL", 47.0589336, 16.3221597],
+  "andau": ["BGL", 47.7756211, 17.0325576],
+  "kittsee": ["BGL", 48.0901584, 17.0660273],
+  "bruck an der leitha": ["NOE", 48.0243071, 16.7794963],
+  "bad tatzmannsdorf": ["BGL", 47.3339539, 16.230238],
+  "oberpullendorf": ["BGL", 47.4952149, 16.5059755],
+  "wagram": ["NOE", 48.4338521, 15.7761423],
+  "aspang-markt": ["NOE", 47.558371, 16.0914643],
+  "zwettl": ["NOE", 48.6034264, 15.1655621],
+  "gänserndorf": ["NOE", 48.35, 16.7167],
+  "gallneukirchen": ["OOE", 48.349664, 14.4127334],
+  "marchtrenk": ["OOE", 48.1946007, 14.1124927],
+  "braunau am inn": ["OOE", 48.2575, 13.0389],
+  "mondsee": ["OOE", 47.8572837, 13.3487084],
+  "gallspach": ["OOE", 48.2084689, 13.8109364],
+  "pramet": ["OOE", 48.1333, 13.4667],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
