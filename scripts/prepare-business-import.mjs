@@ -609,6 +609,8 @@ const CITY = {
   "geretsried": ["BY", 47.8667, 11.4833],
   "schondorf am ammersee": ["BY", 47.9667, 11.1833],
   "warngau": ["BY", 47.7667, 11.7333],
+  "grevenbroich": ["NW", 51.0908, 6.5828],
+  "königsfeld": ["NW", 50.6167, 6.9333],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
