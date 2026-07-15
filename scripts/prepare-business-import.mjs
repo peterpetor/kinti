@@ -591,6 +591,17 @@ const CITY = {
   "mondsee": ["OOE", 47.8572837, 13.3487084],
   "gallspach": ["OOE", 48.2084689, 13.8109364],
   "pramet": ["OOE", 48.1333, 13.4667],
+  // 2026-07-16 bővítés (27. kör) — NL, katalogus.nl + szaknevsor.hollandhirek.nl
+  // (Directorist-forrás), a leggyérebb NL tartományok (Overijssel/Limburg/
+  // Noord-Brabant) eddig hiányzó városai:
+  "hengelo": ["OV", 52.2659, 6.7930],
+  "almelo": ["OV", 52.3567, 6.6625],
+  "roosendaal": ["NB", 51.5326, 4.4653],
+  "middelbeers": ["NB", 51.5167, 5.2667],
+  "helmond": ["NB", 51.4793, 5.6572],
+  "'s-hertogenbosch": ["NB", 51.6978, 5.3037],
+  "geleen": ["LI", 50.9750, 5.8283],
+  "haarlem": ["NH", 52.3874, 4.6462],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
