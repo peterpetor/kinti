@@ -60,8 +60,10 @@ export async function POST(req: Request) {
         await logAiRateLimit("assistant", ipHash);
         usedAi = true;
         try {
-          const catList = categories.map((c) => `  • ${c.id} (${c.label})`).join("\n");
-          const regionList = getRegions(country).map((r) => `  • ${r.code} (${r.name})`).join("\n");
+          // Kompakt formátum (`id=label;`): a 249 kategóriás lista a korábbi
+          // bullet-soros alakban hívásonként ~900 felesleges prompt-tokent égetett.
+          const catList = categories.map((c) => `${c.id}=${c.label}`).join("; ");
+          const regionList = getRegions(country).map((r) => `${r.code}=${r.name}`).join("; ");
           const system = `Te a kinti.app asszisztense vagy. A felhasználó egy külföldön élő magyar,
 aki leír egy problémát. A feladatod KIZÁRÓLAG strukturált szűrők kinyerése JSON-ba:
 melyik SZAKEMBER-kategória segíthet neki, és melyik régióban van (ha említi).

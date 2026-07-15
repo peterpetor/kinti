@@ -53,11 +53,14 @@ export async function POST(req: Request) {
     await logAiRateLimit("parse-search", ipHash);
 
     const cats = await getCategories();
-    const catList = cats.map((c) => `  • ${c.id} (${c.label})`).join("\n");
+    // Kompakt formátum (`id=label;` sortörés nélkül): 249 kategóriánál a korábbi
+    // „  • id (label)\n" alak hívásonként ~900+ felesleges prompt-tokent égetett
+    // (ez volt a legnagyobb AI-token-fogyasztó az appban) — a tartalom ugyanaz.
+    const catList = cats.map((c) => `${c.id}=${c.label}`).join("; ");
     // Ország-tudatos régiólista (CH: kanton, AT/DE: Bundesland) — különben a német
     // user keresésében pl. „Berlinben" nem mappelődne régióra (eddig csak CH-kantonok).
     const regions = country === "AT" ? AT_BUNDESLAENDER : country === "DE" ? DE_BUNDESLAENDER : country === "NL" ? getRegions("NL") : CANTONS;
-    const regionList = regions.map((r) => `  • ${r.code} (${r.name})`).join("\n");
+    const regionList = regions.map((r) => `${r.code}=${r.name}`).join("; ");
     const landLoc = country === "AT" ? "Ausztriában" : country === "DE" ? "Németországban" : country === "NL" ? "Hollandiában" : "Svájcban";
     const regionWord = country === "CH" ? "KANTON" : country === "NL" ? "PROVINCIA" : "BUNDESLAND";
 

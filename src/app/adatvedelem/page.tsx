@@ -6,7 +6,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-12">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-15">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -540,6 +540,27 @@ export default function AdatvedelemPage() {
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a csatlakozás gombbal).</li>
         <li><strong>Tárolási idő / törlés:</strong> a ranglistáról bármikor kiléphetsz a Ranglista oldalon — a bejegyzésed (becenév + pontok) azonnal, véglegesen törlődik.</li>
+      </ul>
+
+      <h3>2.27 Állás-radar e-mail riasztások</h3>
+      <p>
+        Az Állások modulban beállíthatsz <strong>állás-radart</strong>: megadod a
+        keresési feltételeidet (pl. kategória, régió, kulcsszó), és az új, illeszkedő
+        hirdetésekről értesítést kapsz. Két csatorna választható: <strong>push-értesítés</strong>{" "}
+        (annak adatkezelését a 2.12 pont írja le) és/vagy <strong>e-mail riasztás</strong>.
+        Az e-mail csatornához a következőket tároljuk: az általad megadott{" "}
+        <strong>e-mail-címet</strong>, a radar <strong>keresési feltételeit</strong>, valamint a
+        küldés-vezérléshez szükséges technikai időbélyegeket (utolsó riasztás ideje, a napi
+        összefoglalóra váró találatok listája) — így naponta legfeljebb egy azonnali riasztást
+        és egy összefoglalót kapsz (spam-védelem).
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a radar beállításával; az e-mail-cím megadása önkéntes).</li>
+        <li><strong>Adatfeldolgozó:</strong> Cloudflare (tárolás, lásd 2.4) és Resend (e-mail-kiküldés, lásd 2.6).</li>
+        <li><strong>Tárolási idő / törlés:</strong> a radar törléséig. <strong>Minden riasztó
+          e-mail alján egy kattintásos leiratkozó link van</strong> — a leiratkozás a radart
+          (az e-mail-címeddel és a feltételekkel együtt) <strong>azonnal és véglegesen törli</strong>.
+          A radarjaidat az Állások oldalon is kezelheted és törölheted.</li>
       </ul>
 
       <h2>3. Cookie-k</h2>

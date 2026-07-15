@@ -263,8 +263,10 @@ export function SpeedingCalculator() {
               {result.description}
             </p>
 
+            {/* bg-surface/60 (nem bg-white/60): a text-ink sötét módban világos,
+                fix fehéres dobozon olvashatatlan lenne. */}
             {result.daysOfFine && result.tagessatzChf && (
-              <div className="mt-3 rounded-[10px] bg-white/60 px-3 py-2 text-[11.5px]">
+              <div className="mt-3 rounded-[10px] bg-surface/60 px-3 py-2 text-[11.5px]">
                 <strong className="text-ink">{result.daysOfFine} napi pénz</strong> × {result.tagessatzChf} CHF =
                 <strong> {result.estimatedFineChf.toLocaleString("hu-HU")} CHF</strong>
               </div>
