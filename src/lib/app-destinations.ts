@@ -44,21 +44,20 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "keresek igeny hirdetes keres kerdes szukseg" },
   { href: "/tortenetek", title: "Élettörténetek", subtitle: "Valódi kiköltözési sztorik magyaroktól — írd meg a tiédet", icon: "heart",
     keywords: "tortenet sztori elettortenet blog kikoltozes-sztori" },
-  { href: "/berkalkulator", title: "Bérkalkulátor", subtitle: "Nettó fizetés becslése", icon: "sliders",
-    keywords: "fizetes ber netto brutto kalkulator szamologep jovedelem berkalkulator adolevonas" },
-  { href: "/mennyi-marad", title: "Mennyi marad?", subtitle: "Kiköltözési tervező — nettó + megélhetés + megtakarítás", icon: "trending",
-    keywords: "megelhetes koltseg kikoltozes koltsegvetes mennyi marad megtakaritas rezsi kaja budget tervezo kalkulator kijovok" },
+  // Kalkulátor-összevonás (2026-07-16): a „Mennyi marad?" a Bérkalkulátorba
+  // olvadt — EGY cél, a kulcsszavak egyesítve (a kereső mindkét szándékra találja).
+  { href: "/berkalkulator", title: "Bérkalkulátor — mennyi marad?", subtitle: "Nettó fizetés + megélhetés + ami a hónap végén marad", icon: "sliders",
+    keywords: "fizetes ber netto brutto kalkulator szamologep jovedelem berkalkulator adolevonas megelhetes koltseg koltsegvetes mennyi marad megtakaritas rezsi budget tervezo kijovok" },
   { href: "/iranytu", title: "Iránytű", subtitle: "Mennyit keresnek mások — közösségi bér-benchmark", icon: "compass",
     keywords: "mennyit keresnek atlagber osszehasonlitas statisztika median berstatisztika iranytu benchmark" },
-  { href: "/arfolyam", title: "Hazautalás / Árfolyam", subtitle: "CHF/EUR → HUF + utalási díjak", icon: "send",
-    keywords: "utalas penzkuldes hazautalas forint huf arfolyam wise revolut valuta atvaltas chf eur" },
-  { href: "/utalas", title: "Utalás-asszisztens", subtitle: "Banki utalás lépésről lépésre", icon: "document",
-    keywords: "banki utalas iban sepa atutalas overweisung utalasi megbizas" },
+  // Árfolyam+utalás összevonás (2026-07-16): EGY cél, egyesített kulcsszavakkal.
+  { href: "/utalas", title: "Utalás / Árfolyam", subtitle: "CHF/EUR → HUF árfolyam, utalási díjak + asszisztens", icon: "send",
+    keywords: "utalas penzkuldes hazautalas forint huf arfolyam wise revolut valuta atvaltas chf eur banki iban sepa atutalas overweisung utalasi megbizas" },
   { href: "/hatarido", title: "Határidő-asszisztens", subtitle: "Emlékeztetők a fontos határidőkre", icon: "clock",
     keywords: "hatarido emlekezteto krankenkasse adobevallas felmondas naptar teendo" },
   { href: "/profil/kinti-pass", title: "Kinti Pass", subtitle: "Digitális kedvezménykártya az elfogadóhelyekhez", icon: "star",
     keywords: "kinti pass kedvezmeny kedvezmenykartya kartya kupon husegkartya torzsvasarlo elfogadohely akcio" },
-  { href: "/vizum", title: "Engedély-varázsló", subtitle: "Melyik tartózkodási státusz kell neked?", icon: "flag", feature: "vizum",
+  { href: "/tudasbazis/vizum", title: "Engedély-varázsló", subtitle: "Melyik tartózkodási státusz kell neked?", icon: "flag", feature: "vizum",
     keywords: "vizum tartozkodasi engedely letelepedes anmeldung bewilligung permit b c engedely bevandorlas" },
   { href: "/nyelvlecke", title: "Nyelvlecke", subtitle: "Helyi nyelv/dialektus napi adagban", icon: "sparkles", feature: "nyelvlecke",
     keywords: "nemet tanulas nyelv mundart dialektus nyelvlecke schwiizerdutsch hollandtanulas" },
@@ -66,13 +65,14 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "kviz jatek napi kerdes vetelkedo quiz" },
   { href: "/ugyintezes", title: "Ügyintézés", subtitle: "Csekklisták a hivatali ügyekhez", icon: "document",
     keywords: "hivatal ugyintezes papirmunka bejelentkezes regisztracio csekklista teendok" },
-  { href: "/hivatalos", title: "Hivatalos linkek", subtitle: "Konzulátus, nagykövetség, hivatalok", icon: "globe",
+  { href: "/tudasbazis/hivatalos", title: "Hivatalos linkek", subtitle: "Konzulátus, nagykövetség, hivatalok", icon: "globe",
     keywords: "hivatalos konzulatus nagykovetseg hivatal linkek kepviselet" },
-  { href: "/lakberles", title: "Lakásbérlés", subtitle: "Kaució, rezsi, tippek", icon: "home",
-    keywords: "lakas alberlet lakber berles kaucio ingatlan berleti lakhatas" },
-  { href: "/vam", title: "Vám-kalkulátor", subtitle: "Behozatal a svájci határon", icon: "shoppingBag", feature: "vam",
+  // Piactér-összevonás (2026-07-16): börze + lakbér-kalkulátor egy oldalon.
+  { href: "/piacter", title: "Piactér — albérlet-börze", subtitle: "Kiadó szobák, albérletek + lakbér-kalkulátor", icon: "house",
+    keywords: "lakas alberlet lakber berles kaucio ingatlan berleti lakhatas szoba kiado borze piacter hirdetes zwischenmiete untermiete wg" },
+  { href: "/tudasbazis/vam", title: "Vám-kalkulátor", subtitle: "Behozatal a svájci határon", icon: "shoppingBag", feature: "vam",
     keywords: "vam behozatal csomag import hatar zoll vamkalkulator" },
-  { href: "/iskolarendszer", title: "Iskolarendszer", subtitle: "Hogyan épül fel az oktatás", icon: "bookmark",
+  { href: "/tudasbazis/iskolarendszer", title: "Iskolarendszer", subtitle: "Hogyan épül fel az oktatás", icon: "bookmark",
     keywords: "iskola oktatas gyerek tanulas iskolarendszer ovoda egyetem" },
   { href: "/kozlekedes", title: "Közlekedés", subtitle: "Bérletek, jegyek, jogosítvány", icon: "car",
     keywords: "kozlekedes jogositvany auto bringa berlet jegy tomegkozlekedes vonat busz" },
@@ -80,15 +80,15 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "repulojegy repjegy repulo utazas haza budapest jarat legitarsasag" },
   { href: "/tudasbazis", title: "Tudásbázis", subtitle: "Útmutatók a kinti élethez: ügyintézés, adózás, család, egészségügy", icon: "bookmark",
     keywords: "utmutato guide tudasbazis wiki cikk segitseg hogyan tudnivalo kindergeld adobevallas krankenkasse zorgverzekering bsn anmeldung quellensteuer csaladi potlek ugyintezes adozas egeszsegugy" },
-  { href: "/allampolgarsag", title: "Állampolgársági teszt", subtitle: "Honosítási felkészítő kvíz", icon: "flag",
+  { href: "/tudasbazis/allampolgarsag", title: "Állampolgársági teszt", subtitle: "Honosítási felkészítő kvíz", icon: "flag",
     keywords: "allampolgarsag honositas einburgerung teszt vizsga staatsburgerschaft inburgering" },
-  { href: "/kikoltozes", title: "Kiköltözési terv", subtitle: "Személyre szabott checklist", icon: "check",
+  { href: "/tudasbazis/kikoltozes", title: "Kiköltözési terv", subtitle: "Személyre szabott checklist", icon: "check",
     keywords: "kikoltozes koltozes checklist teendok kikoltozesi terv kivandorlas" },
   { href: "/szolgaltato-valto", title: "Szolgáltatóváltás", subtitle: "Felmondás-segéd (telefon, internet, biztosítás)", icon: "sliders",
     keywords: "szolgaltato valtas felmondas telefon internet biztositas aram gaz kundigung" },
   { href: "/pro", title: "Kinti PRO", subtitle: "Prémium funkciók", icon: "star",
     keywords: "pro elofizetes premium kinti pro upgrade" },
-  { href: "/bussen", title: "Gyorshajtás-bírság becslő", subtitle: "Mennyi büntetés jár a gyorshajtásért?", icon: "car",
+  { href: "/tudasbazis/bussen", title: "Gyorshajtás-bírság becslő", subtitle: "Mennyi büntetés jár a gyorshajtásért?", icon: "car",
     keywords: "gyorshajtas birsag buntetes trafipax radar villogtak bussen boete sebesseg tullepes ordnungswidrigkeit" },
   { href: "/segitseg", title: "Segítség (GYIK)", subtitle: "Hogyan használd a Kinti-t — gyakori kérdések", icon: "question",
     keywords: "segitseg gyik faq kerdes hasznalat sugo help hogyan mukodik" },
@@ -98,8 +98,8 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "ranglista toplista helyezes pontok verseny kviz eredmeny" },
   { href: "/ertesitesek", title: "Értesítések", subtitle: "Push-riasztások és üzenetek", icon: "bell",
     keywords: "ertesites push riasztas uzenet radar beallitas" },
-  { href: "/sajatjaim", title: "Saját posztjaim", subtitle: "Beküldött hirdetéseid, eseményeid kezelése", icon: "user",
-    keywords: "sajat posztjaim bekuldott hirdetesem esemenyem kezeles szerkesztes" },
+  { href: "/piacter?tab=sajatjaim", title: "Saját posztjaim", subtitle: "Beküldött hirdetéseid kezelése", icon: "user",
+    keywords: "sajat posztjaim bekuldott hirdetesem kezeles szerkesztes" },
 ];
 
 /**
@@ -107,7 +107,7 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
  * a leggyakoribb célokból („mit nyitnak meg legtöbbször"). A sorrend szándékos.
  */
 const QUICK_ACTION_HREFS = [
-  "/szaknevsor", "/allasok", "/berkalkulator", "/arfolyam", "/hatarido", "/kviz",
+  "/szaknevsor", "/allasok", "/berkalkulator", "/utalas", "/hatarido", "/kviz",
 ] as const;
 
 export function quickActions(country: string | null | undefined): AppDestination[] {

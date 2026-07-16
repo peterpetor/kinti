@@ -115,7 +115,7 @@ export function PostSavePrompt({
           </p>
           <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
             <strong className="text-ink">A böngésződ már megjegyezte</strong> — bármikor
-            megtalálod a <a href="/sajatjaim" className="text-primary font-bold underline">Saját posztjaim</a> oldalon.
+            megtalálod a <a href="/piacter?tab=sajatjaim" className="text-primary font-bold underline">Saját posztjaim</a> oldalon.
           </p>
         </div>
       </div>
@@ -123,7 +123,7 @@ export function PostSavePrompt({
       {/* Gamifikáció: XP / szint / kitűző visszajelzés (csak ha tényleg nőtt) */}
       {gain && gain.xpGained > 0 && (
         <a
-          href="/sajatjaim"
+          href="/piacter?tab=sajatjaim"
           className="mt-3 flex flex-wrap items-center gap-2 rounded-[12px] border border-primary/25 bg-primary/10 px-3 py-2.5 transition active:scale-[0.99]"
         >
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-white text-[13px] font-black">

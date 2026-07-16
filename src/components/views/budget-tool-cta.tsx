@@ -19,7 +19,7 @@ const SLUG_BY_CC: Record<BudgetCountry, string> = {
 export function BudgetToolCta({ country }: { country: BudgetCountry }) {
   return (
     <Link
-      href={`/mennyi-marad/${SLUG_BY_CC[country]}`}
+      href={`/berkalkulator/${SLUG_BY_CC[country]}`}
       className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
     >
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-lg">🧮</span>

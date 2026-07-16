@@ -34,7 +34,7 @@ export default function HivatalosPage() {
       </section>
 
       <OfflineGuidesButton
-        paths={["/hivatalos"]}
+        paths={["/tudasbazis/hivatalos"]}
         noun="oldal"
         idleTitle="Mentsd offline-ra"
         doneTitle="Offline elérhető"

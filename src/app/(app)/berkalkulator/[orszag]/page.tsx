@@ -11,6 +11,8 @@ import { safeJsonLdStringify } from "@/lib/json-ld";
 // keresési szándékra célzott, országonként EGYEDI tartalommal + FAQ rich-snippet
 // adattal. A [param] route-oknak általában edge-runtime kell — az SSG
 // (force-static + generateStaticParams + dynamicParams=false) a kivétel.
+// 2026-07-16: a /mennyi-marad/[orszag] alól költözött ide (kalkulátor-összevonás);
+// a régi URL-ekről permanent redirect él (next.config).
 export const dynamic = "force-static";
 export const dynamicParams = false;
 
@@ -20,11 +22,11 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { orszag: string } }): Metadata {
   const l = budgetLandingBySlug(params.orszag);
-  if (!l) return { title: "Mennyi marad?" };
+  if (!l) return { title: "Bérkalkulátor" };
   return {
-    title: `${l.title} — Mennyi marad?`,
+    title: `${l.title} — Bérkalkulátor`,
     description: l.description,
-    alternates: { canonical: `https://kinti.app/mennyi-marad/${l.slug}` },
+    alternates: { canonical: `https://kinti.app/berkalkulator/${l.slug}` },
     openGraph: {
       title: l.title,
       description: l.description,
@@ -58,10 +60,10 @@ export default function BudgetCountryPage({ params }: { params: { orszag: string
       <header className="flex items-center gap-3">
         <KintiLogo size={28} />
         <span className="truncate text-[16px] font-extrabold tracking-tight text-ink">
-          Mennyi marad?
+          Bérkalkulátor
         </span>
         <Link
-          href="/mennyi-marad"
+          href="/berkalkulator"
           aria-label="Vissza a kalkulátorhoz"
           className="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink transition-transform active:scale-95"
         >
@@ -106,7 +108,7 @@ export default function BudgetCountryPage({ params }: { params: { orszag: string
           {BUDGET_LANDINGS.filter((o) => o.slug !== l.slug).map((o) => (
             <Link
               key={o.slug}
-              href={`/mennyi-marad/${o.slug}`}
+              href={`/berkalkulator/${o.slug}`}
               className="rounded-pill border border-line bg-surface px-3.5 py-2 text-[13px] font-bold text-ink transition active:scale-95"
             >
               {o.flag} {o.name}
@@ -116,7 +118,7 @@ export default function BudgetCountryPage({ params }: { params: { orszag: string
       </section>
 
       <LegalDisclaimer
-        toolName="Kiköltözési költségvetés-tervező"
+        toolName="Bérkalkulátor és költségvetés-tervező"
         variant="info"
         notAdviceFor="adóügyi, pénzügyi vagy munkajogi"
         extraWarning="A nettó bér 2025/2026-os adó- és járulék-paraméterekkel készült EGYSZERŰSÍTETT becslés (a tényleges levonás munkáltatónként/községenként eltérhet); a költségek és a gyerek-juttatások közösségi beküldésekből és referencia-szintekből származó BECSLÉSEK. A tényleges béredről mindig a munkaszerződés és a bérjegyzék dönt."

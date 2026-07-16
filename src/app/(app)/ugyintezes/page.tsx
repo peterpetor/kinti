@@ -46,7 +46,7 @@ export default function UgyintezesPage() {
       </section>
 
       <Link
-        href="/hivatalos"
+        href="/tudasbazis/hivatalos"
         className="flex items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-card transition active:scale-[0.99]"
       >
         <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-xl">🇭🇺</span>

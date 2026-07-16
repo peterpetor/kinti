@@ -37,7 +37,7 @@ export function HousingCard({
 
   async function reveal() {
     if (!signedIn) {
-      window.location.href = "/belepes?redirect_url=/szallas-borze";
+      window.location.href = "/belepes?redirect_url=/piacter";
       return;
     }
     if (!isPro) {

@@ -9,7 +9,7 @@ import { CountrySwitcher } from "./country-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { haptic } from "@/lib/haptics";
 
@@ -161,18 +161,17 @@ export function DropdownMenu() {
       title: "Pénzügyek & Kalkulátorok",
       defaultOpen: true,
       items: [
-        { key: "arfolyam", label: "Árfolyam", href: "/arfolyam", tint: "bg-primary/10", icon: { emoji: "💱" } },
-        { key: "utalas", label: "Utalás-asszisztens", href: "/utalas", tint: "bg-primary/10", icon: { emoji: "💸" }, badge: "pro" },
+        // Összevonások (2026-07-16): árfolyam → az Utalás oldalán él;
+        // „Mennyi marad?" → a Bérkalkulátorba olvadt. Egy-egy menüpont maradt.
+        { key: "utalas", label: "Utalás / Árfolyam", href: "/utalas", tint: "bg-primary/10", icon: { emoji: "💱" } },
         ...(has("berkalkulator")
-          ? [{ key: "ber", label: isCH ? "Svájci bérkalkulátor" : "Bérkalkulátor", href: "/berkalkulator", tint: "bg-success/10", icon: { emoji: "💰" } } as MenuItem]
+          ? [{ key: "ber", label: "Bérkalkulátor — mennyi marad?", href: "/berkalkulator", tint: "bg-success/10", icon: { emoji: "💰" } } as MenuItem]
           : []),
-        { key: "mennyi", label: "Mennyi marad? — költözés-tervező", href: "/mennyi-marad", tint: "bg-success/10", icon: { emoji: "🧮" } },
         ...(has("iranytu")
           ? [{ key: "iranytu", label: "Iránytű — bérek és lakbérek", href: "/iranytu", tint: "bg-success/10", icon: { emoji: "📊" } } as MenuItem]
           : []),
-        ...(has("lakberles")
-          ? [{ key: "lakber", label: "Lakásbérlés — rejtett költségek", href: "/lakberles", tint: "bg-primary/10", icon: { emoji: "🏠" } } as MenuItem]
-          : []),
+        // Piactér-összevonás (2026-07-16): a lakbér-kalkulátor a Piactér füle.
+        { key: "piacter", label: "Piactér — albérlet-börze", href: "/piacter", tint: "bg-primary/10", icon: { emoji: "🏠" } },
         ...(has("szolgaltato-valto")
           ? [{ key: "valto", label: "Szolgáltató-váltó", href: "/szolgaltato-valto", tint: "bg-success/10", icon: { emoji: "🔄" } } as MenuItem]
           : []),
@@ -183,35 +182,15 @@ export function DropdownMenu() {
       title: "Tudás & Ügyintézés",
       defaultOpen: true,
       items: [
-        { key: "kikoltozes", label: "Kiköltözési teendőlista", href: "/kikoltozes", tint: "bg-accent/10 text-accent", icon: { name: "check" } },
-        ...(has("iskolarendszer")
-          ? [{
-              key: "iskola",
-              label: isCH ? "Svájci iskolarendszer" : country === "DE" ? "Német iskolarendszer" : country === "NL" ? "Holland iskolarendszer" : "Osztrák iskolarendszer",
-              href: "/iskolarendszer", tint: "bg-star/15 text-star", icon: { emoji: "🏢" },
-            } as MenuItem]
-          : []),
-        ...(has("vizum")
-          ? [{
-              key: "vizum",
-              label: isCH ? "Tartózkodási engedély" : `Tartózkodás ${countryLocative(country)}`,
-              href: "/vizum", tint: "bg-primary/10", icon: { emoji: "🪪" },
-            } as MenuItem]
-          : []),
-        ...(has("allampolgarsag")
-          ? [{
-              key: "polgar", label: "Állampolgársági teszt", href: "/allampolgarsag", tint: "bg-primary/10",
-              icon: { emoji: isCH ? "🇨🇭" : country === "AT" ? "🇦🇹" : country === "DE" ? "🇩🇪" : "🇳🇱" }, badge: "pro",
-            } as MenuItem]
-          : []),
+        // Tudásbázis-konszolidáció (2026-07-16, user-döntés): a téma-oldalak
+        // (kiköltözés, vízum, vám, állampolgárság, hivatalos linkek, bírság,
+        // iskolarendszer) a /tudasbazis alá költöztek — a menüben EGY belépő
+        // van, a Tudásbázis-oldal eszköz-szekciója sorolja fel őket.
+        { key: "tudasbazis", label: "Tudásbázis — minden útmutató és eszköz", href: "/tudasbazis", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
         ...(has("ugyintezes")
           ? [{ key: "ugyintezes", label: "Ügyintézés-varázsló", href: "/ugyintezes", tint: "bg-primary/10", icon: { emoji: "📋" } } as MenuItem]
           : []),
         { key: "hatarido", label: "Határidő-asszisztens", href: "/hatarido", tint: "bg-accent/10", icon: { emoji: "⏰" }, badge: "pro" },
-        { key: "hivatalos", label: "Hivatalos linkek", href: "/hivatalos", tint: "bg-primary/10", icon: { emoji: "🏛️" } },
-        ...(has("tudasbazis")
-          ? [{ key: "tudasbazis", label: "Tudásbázis", href: "/tudasbazis", tint: "bg-primary/10 text-primary", icon: { name: "globe" } } as MenuItem]
-          : []),
       ],
     },
     {
@@ -220,7 +199,7 @@ export function DropdownMenu() {
       defaultOpen: true,
       items: [
         { key: "kedvencek", label: "Kedvenceim", href: "/szaknevsor?fav=1", tint: "bg-accent/10 text-accent", icon: { name: "heart", filled: true } },
-        { key: "sajat", label: "Saját posztjaim", href: "/sajatjaim", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
+        { key: "sajat", label: "Saját posztjaim", href: "/piacter?tab=sajatjaim", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
         { key: "ranglista", label: "Közösségi ranglista", href: "/ranglista", tint: "bg-star/15", icon: { emoji: "🏆" } },
         { key: "tortenetek", label: "Élettörténetek", href: "/tortenetek", tint: "bg-accent/10", icon: { emoji: "✍️" } },
         { key: "pass", label: "Kinti Pass — kedvezménykártya", href: "/profil/kinti-pass", tint: "bg-star/15", icon: { emoji: "🎟️" } },
@@ -246,8 +225,8 @@ export function DropdownMenu() {
       items: [
         ...(has("kozlekedes") ? [{ key: "kozlekedes", label: "Tömegközlekedés", href: "/kozlekedes", tint: "bg-primary/10", icon: { emoji: "🚆" } } as MenuItem] : []),
         ...(has("repulojegy") ? [{ key: "repjegy", label: "Repülőjegy-figyelő", href: "/repulojegy", tint: "bg-primary/10", icon: { emoji: "✈️" } } as MenuItem] : []),
-        ...(has("vam") ? [{ key: "vam", label: "Vám-kalkulátor", href: "/vam", tint: "bg-primary/10", icon: { emoji: "🛂" } } as MenuItem] : []),
-        ...(has("bussen") ? [{ key: "bussen", label: "Gyorshajtás-kalkulátor", href: "/bussen", tint: "bg-accent/10", icon: { emoji: "🚓" } } as MenuItem] : []),
+        ...(has("vam") ? [{ key: "vam", label: "Vám-kalkulátor", href: "/tudasbazis/vam", tint: "bg-primary/10", icon: { emoji: "🛂" } } as MenuItem] : []),
+        ...(has("bussen") ? [{ key: "bussen", label: "Gyorshajtás-kalkulátor", href: "/tudasbazis/bussen", tint: "bg-accent/10", icon: { emoji: "🚓" } } as MenuItem] : []),
       ],
     },
     {

@@ -298,8 +298,8 @@ function previewLink(table: ModerationTable, id: string): string {
       return `/tortenetek/${id}`;
     case "kinti_housing_listings":
       // Pending hirdetés a publikus börzén nem látszik — a queue-sor previewje
-      // (teljes leírás + ár) elegendő a döntéshez; a link a börzére visz.
-      return `/szallas-borze`;
+      // (teljes leírás + ár) elegendő a döntéshez; a link a Piactérre visz.
+      return `/piacter`;
   }
 }
 

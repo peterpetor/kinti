@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { getEmployerByOwner, getJobs, getApplicationCounts, getBusinessByOwner } from "@/lib/repo";
 import Link from "next/link";
@@ -8,29 +7,34 @@ import { JobCardActions } from "@/components/views/job-card-actions";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Munkáltatói Irányítópult" };
+export const metadata = {
+  title: "Munkáltatóknak — álláshirdetés vagy közvetítés",
+  description:
+    "Magyar munkaerőt keresel? Add fel a hirdetésed önkiszolgálón, vagy bízd a Kintire a közvetítést — előszűrt jelöltek, sikerdíjas modell (AT/DE/NL).",
+};
 
+/**
+ * /munkaltato — a munkáltatói belépő EGY helyen (2026-07-16 összevonás,
+ * user-döntés): akinek még nincs munkáltatói fiókja (vagy nincs belépve), az
+ * egy NYILVÁNOS választó-oldalt lát két nagy úttal — (1) önkiszolgáló
+ * álláshirdetés-feladás, (2) sikerdíjas közvetítés (a korábbi /kozvetites,
+ * most /munkaltato/kozvetites). A meglévő munkáltató továbbra is azonnal a
+ * megszokott irányítópultját kapja.
+ */
 export default async function EmployerDashboardPage() {
   const { userId } = await auth();
-  
-  if (!userId) {
-    // Ha nincs bejelentkezve, Clerk login oldalra irányítjuk (vagy sign-in urlre)
-    // De ideális esetben ez már middleware-rel is védve lenne, de biztos ami biztos:
-    redirect("/belepes?redirect_url=/munkaltato");
-  }
-
-  const employer = await getEmployerByOwner(userId);
+  const employer = userId ? await getEmployerByOwner(userId) : null;
 
   if (!employer) {
-    // Ha be van jelentkezve, de nincs munkáltatói profilja, regisztrációs oldalra küldjük
-    redirect("/munkaltato/regisztracio");
+    return <EmployerLanding signedIn={!!userId} />;
   }
 
   const jobs = await getJobs({ employerId: employer.id, includeAllStatuses: true });
   const applicationCounts = await getApplicationCounts(employer.id);
   // Egy cég, két kapcsoló: van-e már Szaknévsor-listázása is? Ha nincs, felkínáljuk
   // (ügyfélszerzés) — a "van két profilom, minek?" keveredés feloldása.
-  const business = await getBusinessByOwner(userId);
+  // (employer != null ⇒ userId != null — a fenti ág garantálja.)
+  const business = await getBusinessByOwner(userId as string);
 
   return (
     <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)] min-h-[calc(100dvh-70px)] flex flex-col">
@@ -109,7 +113,7 @@ export default async function EmployerDashboardPage() {
 
         {/* B2B: nem akarsz hirdetni és szűrögetni? Bízd ránk — sikerdíjas közvetítés. */}
         <Link
-          href="/kozvetites"
+          href="/munkaltato/kozvetites"
           className="flex items-center gap-3 rounded-card border border-primary/25 bg-primary-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
         >
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary text-white text-lg">🤝</span>
@@ -200,6 +204,87 @@ export default async function EmployerDashboardPage() {
           })()}
         </div>
       </main>
+    </div>
+  );
+}
+
+/**
+ * Nyilvános munkáltatói belépő — két nagy út: önkiszolgáló hirdetés-feladás
+ * VAGY sikerdíjas közvetítés. Bejelentkezés csak az önkiszolgáló úthoz kell
+ * (a gomb odáig viszi); a közvetítés-ajánlatkérés fiók nélkül is megy.
+ */
+function EmployerLanding({ signedIn }: { signedIn: boolean }) {
+  const selfServiceHref = signedIn
+    ? "/munkaltato/regisztracio"
+    : "/belepes?redirect_url=/munkaltato/regisztracio";
+
+  return (
+    <div className="mx-auto max-w-md space-y-5 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+2rem)]">
+      <header className="flex items-center gap-3">
+        <KintiLogo size={28} />
+        <span className="text-[16px] font-extrabold tracking-tight text-ink truncate">
+          Munkáltatóknak
+        </span>
+        <Link
+          href="/"
+          aria-label="Vissza a Főoldalra"
+          className="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink active:scale-95"
+        >
+          <Icon name="arrowLeft" size={16} strokeWidth={2.4} />
+        </Link>
+      </header>
+
+      <section className="space-y-2">
+        <h1 className="text-[24px] font-extrabold leading-tight tracking-tight text-ink text-balance">
+          Magyar munkaerőt keresel?
+        </h1>
+        <p className="text-[14px] leading-relaxed text-ink-muted">
+          Két út közül választhatsz — hirdess magad, vagy bízd ránk a keresést.
+        </p>
+      </section>
+
+      {/* 1. nagy út: önkiszolgáló hirdetés-feladás */}
+      <Link
+        href={selfServiceHref}
+        className="block rounded-card border-2 border-primary/30 bg-surface p-5 shadow-card transition hover:border-primary/50 active:scale-[0.99]"
+      >
+        <span className="grid h-12 w-12 place-items-center rounded-[14px] bg-primary text-white text-2xl">📝</span>
+        <span className="mt-3 block text-[17px] font-extrabold tracking-tight text-ink">
+          Feladok egy hirdetést
+        </span>
+        <span className="mt-1 block text-[13px] leading-snug text-ink-muted">
+          Önkiszolgáló: te írod a hirdetést, hozzád jönnek a jelentkezések. Az alap-hirdetés
+          ingyenes, 30 napig aktív.
+        </span>
+        <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-extrabold text-primary">
+          Kezdés (kb. 2 perc) <Icon name="arrowRight" size={14} strokeWidth={2.6} />
+        </span>
+      </Link>
+
+      {/* 2. nagy út: sikerdíjas közvetítés */}
+      <Link
+        href="/munkaltato/kozvetites"
+        className="block rounded-card border-2 border-pro/30 bg-pro/5 p-5 shadow-card transition hover:border-pro/50 active:scale-[0.99]"
+      >
+        <span className="grid h-12 w-12 place-items-center rounded-[14px] bg-pro/15 text-2xl">🤝</span>
+        <span className="mt-3 block text-[17px] font-extrabold tracking-tight text-ink">
+          Rábízom a Kintire a közvetítést
+        </span>
+        <span className="mt-1 block text-[13px] leading-snug text-ink-muted">
+          Előszűrt, motivált magyar jelölteket közvetítünk (AT/DE/NL). Nincs hirdetési díj —
+          csak sikeres felvételnél fizetsz.
+        </span>
+        <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-extrabold text-pro">
+          Ajánlatot kérek <Icon name="arrowRight" size={14} strokeWidth={2.6} />
+        </span>
+      </Link>
+
+      {signedIn && (
+        <p className="px-1 text-[12px] leading-relaxed text-ink-muted">
+          Volt már munkáltatói fiókod? Ha a hirdetés-feladást választod, a meglévő céged
+          adataival folytathatod.
+        </p>
+      )}
     </div>
   );
 }

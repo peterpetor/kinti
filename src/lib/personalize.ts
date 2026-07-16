@@ -135,8 +135,8 @@ export function buildPersonalizedItems(
       { emoji: "⏰", title: "Határidő-asszisztens", desc: "Push-emlékeztető, hogy ne csússz le semmiről", href: "/hatarido" },
     ],
     penzugy: [
-      { emoji: "💶", title: "Mennyi marad? — tervező", desc: "Bér és megélhetés együtt, a te számaiddal", href: "/mennyi-marad" },
-      { emoji: "💱", title: "Árfolyam + hazautalás", desc: "Melyik szolgáltatóval jár a legtöbb forint?", href: "/arfolyam" },
+      { emoji: "💶", title: "Mennyi marad? — tervező", desc: "Bér és megélhetés együtt, a te számaiddal", href: "/berkalkulator" },
+      { emoji: "💱", title: "Árfolyam + hazautalás", desc: "Melyik szolgáltatóval jár a legtöbb forint?", href: "/utalas" },
       guideItem("bankszamla", country, "🏦", "Bankszámlanyitás", "Mi kell hozzá, mire figyelj — hivatalos forrásból"),
       { emoji: "🧭", title: "Iránytű — árak és bérek", desc: "Mennyibe kerül az élet nálatok? Közösségi adatok", href: "/iranytu" },
     ],
@@ -155,10 +155,10 @@ export function buildPersonalizedItems(
   let items = [...byFocus[focus]];
 
   if (stage === "planning") {
-    items.unshift({ emoji: "✈️", title: "Kiköltözési teendőlista", desc: "Lépésről-lépésre teendők az indulásig", href: "/kikoltozes" });
+    items.unshift({ emoji: "✈️", title: "Kiköltözési teendőlista", desc: "Lépésről-lépésre teendők az indulásig", href: "/tudasbazis/kikoltozes" });
     // Tervezőnek a „mennyiből jövök ki kint?" az első pénz-kérdés — fókusztól függetlenül.
     if (focus !== "penzugy") {
-      items.splice(2, 0, { emoji: "💶", title: "Mennyi marad? — tervező", desc: "Kinti bér és megélhetés még indulás előtt", href: "/mennyi-marad" });
+      items.splice(2, 0, { emoji: "💶", title: "Mennyi marad? — tervező", desc: "Kinti bér és megélhetés még indulás előtt", href: "/berkalkulator" });
     }
   } else if (stage === "fresh") {
     items.unshift(guideItem("bejelentkezes", country, "🏛️", "Bejelentkezés lépésről lépésre", "Az első hetek legfontosabb hivatali köre"));

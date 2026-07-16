@@ -48,7 +48,7 @@ export function HomeChCards() {
   return (
     <>
       <Link
-        href="/kikoltozes"
+        href="/tudasbazis/kikoltozes"
         className="flex items-center gap-3 rounded-card border border-accent/20 bg-accent-soft px-4 py-3.5 shadow-card transition active:scale-[0.99]"
       >
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-accent text-white">

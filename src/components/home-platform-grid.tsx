@@ -37,26 +37,22 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone; extern
   { href: "/allasok/interju-szimulator", icon: "sparkles", label: "AI interjú-szimulátor", tone: "work" },
   { href: "/allasok/cv-audit", icon: "magic", label: "AI CV-asszisztens", tone: "work" },
   { href: "/iranytu", icon: "compass", label: "Iránytű", tone: "money" },
-  { href: "/mennyi-marad", icon: "trending", label: "Mennyi marad?", tone: "money" },
   { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor", tone: "money" },
-  { href: "/arfolyam", icon: "trending", label: "Árfolyam", tone: "money" },
-  { href: "/lakberles", icon: "home", label: "Lakásbérlés", tone: "money" },
-  { href: "/szallas-borze", icon: "house", label: "Albérlet-börze", tone: "money" },
+  // Piactér-összevonás (2026-07-16): börze + lakbér-kalkulátor + sajátjaim egy csempén.
+  { href: "/piacter", icon: "house", label: "Piactér", tone: "money" },
   { href: "/szolgaltato-valto", icon: "filter", label: "Szolgáltató-váltó", tone: "money" },
   { href: "/utalas", icon: "send", label: "Utalás", tone: "money" },
   { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke", tone: "learn" },
   { href: "/kviz", icon: "star", label: "Kvíz", tone: "learn" },
   { href: "/ugyintezes", icon: "document", label: "Ügyintézés", tone: "work" },
-  { href: "/hivatalos", icon: "flag", label: "Hivatalos linkek", tone: "work" },
+  // Tudásbázis-konszolidáció (2026-07-16): a téma-csempék (hivatalos linkek,
+  // bírság-becslő, vám, állampolgárság, iskolarendszer, kiköltözés, vízum) a
+  // /tudasbazis alá költöztek — a rácson EGY belépő, az oldal eszköz-szekciója
+  // sorolja fel őket.
+  { href: "/tudasbazis", icon: "bookmark", label: "Tudásbázis", tone: "learn" },
   { href: "/hatarido", icon: "clock", label: "Határidők", tone: "work" },
   { href: "/kozlekedes", icon: "nav", label: "Közlekedés", tone: "work" },
-  { href: "/bussen", icon: "car", label: "Bírság-becslő", tone: "work" },
-  // CH-only — a feature-availability a többi országban elrejti.
-  { href: "/vam", icon: "shoppingBag", label: "Vám-kalkulátor", tone: "work" },
-  { href: "/allampolgarsag", icon: "flag", label: "Állampolgárság", tone: "learn" },
-  { href: "/iskolarendszer", icon: "users", label: "Iskolarendszer", tone: "learn" },
   { href: "/allasok/szakmai-szotar", icon: "bookmark", label: "Szakmai szótár", tone: "learn" },
-  { href: "/kikoltozes", icon: "check", label: "Kiköltözés", tone: "work" },
   { href: "/repulojegy", icon: "send", label: "Repülőjegy", tone: "social" },
   { href: "/tortenetek", icon: "heart", label: "Élettörténetek", tone: "social" },
   { href: "/profil/kinti-pass", icon: "qrCode", label: "Kinti Pass", tone: "social" },

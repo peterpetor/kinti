@@ -386,7 +386,7 @@ export function HataridoAssistant() {
 
       {/* Hivatalos linkek */}
       <Link
-        href="/hivatalos"
+        href="/tudasbazis/hivatalos"
         className="flex items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-card transition hover:border-primary/30 active:scale-[0.99]"
       >
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary text-lg">🏛️</span>

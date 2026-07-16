@@ -12,6 +12,21 @@ export const metadata = {
     "Hivatalos forrásból: bejelentkezés, egészségbiztosítás, adózás, iskola, munka, lakásbérlés — kint élő magyaroknak (Svájc, Ausztria, Németország, Hollandia).",
 };
 
+/**
+ * Eszközök és kalauzok — a 2026-07-16-i konszolidációval a korábbi önálló
+ * téma-oldalak (menüpontok) ide, a Tudásbázis alá költöztek. A menükben csak
+ * a Tudásbázis szerepel; ez a szekció a belépő hozzájuk, témába rendezve.
+ */
+const TOOLS: { href: string; emoji: string; label: string; desc: string }[] = [
+  { href: "/tudasbazis/kikoltozes", emoji: "✈️", label: "Kiköltözési teendőlista", desc: "Lépésről lépésre az indulásig — idővonallal" },
+  { href: "/tudasbazis/vizum", emoji: "🪪", label: "Tartózkodás és engedélyek", desc: "Engedély-varázsló: mi kell, mikor, hova" },
+  { href: "/tudasbazis/hivatalos", emoji: "🏛️", label: "Hivatalos linkek", desc: "Konzulátus, hivatalok — egy kattintásra" },
+  { href: "/tudasbazis/iskolarendszer", emoji: "🎒", label: "Iskolarendszer", desc: "Óvodától az egyetemig, országonként" },
+  { href: "/tudasbazis/allampolgarsag", emoji: "🏅", label: "Állampolgárság", desc: "Honosítási felkészítő és teszt" },
+  { href: "/tudasbazis/bussen", emoji: "🚗", label: "Bírság-becslő", desc: "Gyorshajtás: mennyi büntetés jár?" },
+  { href: "/tudasbazis/vam", emoji: "📦", label: "Vám-kalkulátor", desc: "Behozatal a svájci határon" },
+];
+
 export default function TudasbazisPage() {
   return (
     <div className="space-y-4 px-5 pb-8 pt-[calc(env(safe-area-inset-top)+2rem)]">
@@ -26,6 +41,29 @@ export default function TudasbazisPage() {
           </>
         }
       />
+
+      {/* Eszközök és kalauzok — a korábbi önálló menüpontok új otthona. */}
+      <section className="space-y-2">
+        <h2 className="px-1 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
+          Eszközök és kalauzok
+        </h2>
+        <div className="grid gap-2">
+          {TOOLS.map((t) => (
+            <Link
+              key={t.href}
+              href={t.href}
+              className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
+            >
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-lg">{t.emoji}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">{t.label}</span>
+                <span className="block text-[11.5px] leading-snug text-ink-muted">{t.desc}</span>
+              </span>
+              <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <GuideList />
 

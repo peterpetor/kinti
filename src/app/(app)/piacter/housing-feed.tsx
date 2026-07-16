@@ -67,7 +67,7 @@ export function HousingFeed({
         </button>
       ) : (
         <Link
-          href="/belepes?redirect_url=/szallas-borze"
+          href="/belepes?redirect_url=/piacter"
           className="flex w-full items-center justify-center gap-2 rounded-pill border border-line bg-surface py-3 text-[14px] font-bold text-ink shadow-card transition active:scale-[0.98]"
         >
           <Icon name="user" size={16} strokeWidth={2.4} /> Hirdetés feladásához jelentkezz be

@@ -45,7 +45,7 @@ export const PHASES_CH: RoadmapPhase[] = [
       { id: "cv", title: "Svájci önéletrajz (CV) elkészítése", description: "A svájci munkáltatók specifikus formátumot várnak el.", linkHref: "/tudasbazis", linkLabel: "Tudásbázis", linkIcon: "bookmark" },
       { id: "ber", title: "Bérszint ellenőrzése", description: "Nézd meg a célkantonod átlagos fizetéseit.", linkHref: "/iranytu", linkLabel: "Bérkalkulátor", linkIcon: "trending" },
       { id: "megtakaritas", title: "Megtakarítás kalkuláció", description: "Számolj legalább 3 havi kaucióval és 2 hónapnyi megélhetéssel.", linkHref: "/tudasbazis", linkLabel: "Kiköltözési cikkek", linkIcon: "bookmark" },
-      { id: "ch-permit", title: "Munkavállalási / tartózkodási engedély", description: "Nem EU/EFTA-állampolgárként a munkáltatód intézi a B-engedélyt (kvótás, hosszabb átfutás) — kezdd korán. EU/EFTA-soknak elég a helyi bejelentkezés.", tags: ["noneu"], linkHref: "/vizum", linkLabel: "Engedély-varázsló", linkIcon: "bookmark" },
+      { id: "ch-permit", title: "Munkavállalási / tartózkodási engedély", description: "Nem EU/EFTA-állampolgárként a munkáltatód intézi a B-engedélyt (kvótás, hosszabb átfutás) — kezdd korán. EU/EFTA-soknak elég a helyi bejelentkezés.", tags: ["noneu"], linkHref: "/tudasbazis/vizum", linkLabel: "Engedély-varázsló", linkIcon: "bookmark" },
     ],
   },
   {
@@ -66,7 +66,7 @@ export const PHASES_CH: RoadmapPhase[] = [
       { id: "krankenkasse", title: "Betegbiztosítás (Krankenkasse)", description: "Kötelező megkötni 3 hónapon belül.", linkHref: "/szolgaltato-valto", linkLabel: "Krankenkasse", linkIcon: "heart" },
       { id: "lakas", title: "Albérlet keresés és Kaució", description: "Állandó lakás keresése.", linkHref: "/tudasbazis", linkLabel: "Tudásbázis: Albérlet", linkIcon: "bookmark" },
       { id: "ado", title: "Adózás (Quellensteuer)", description: "Külföldiként forrásadót vonnak a fizetésedből.", linkHref: "/szaknevsor", linkLabel: "Könyvelők", linkIcon: "users" },
-      { id: "ch-iskola", title: "Iskola / óvoda beíratás", description: "A gyerekeket a lakóhely szerinti köriskolába kell beíratni; az óvoda (Kita/Kindergarten) helyenként várólistás — intézd korán.", tags: ["family"], linkHref: "/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
+      { id: "ch-iskola", title: "Iskola / óvoda beíratás", description: "A gyerekeket a lakóhely szerinti köriskolába kell beíratni; az óvoda (Kita/Kindergarten) helyenként várólistás — intézd korán.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
       { id: "ch-csaladi", title: "Családi pótlék (Familienzulagen)", description: "Gyerek után járó támogatás — a munkáltatón/kantonon keresztül igényelhető.", tags: ["family"] },
     ],
   },
@@ -90,8 +90,8 @@ export const PHASES_AT: RoadmapPhase[] = [
     tasks: [
       { id: "at-cv", title: "Osztrák önéletrajz (Lebenslauf)", description: "Az osztrák munkáltatók fényképes, részletes Lebenslaufot várnak. Töltsd fel a CV-d az állás-profilodhoz.", linkHref: "/allasok/profil", linkLabel: "CV-profil", linkIcon: "user" },
       { id: "at-ber", title: "Bérszint tájékozódás", description: "Nézd meg a szakmád kollektív szerződés (Kollektivvertrag) szerinti minimálbérét, és a hirdetett béreket.", linkHref: "/allasok", linkLabel: "Állások", linkIcon: "briefcase" },
-      { id: "at-megtakaritas", title: "Megtakarítás kalkuláció", description: "Számolj kaucióval (jellemzően 3 havi bruttó lakbér), esetleg ingatlanos jutalékkal (Provision) és 2 hónap megélhetéssel.", linkHref: "/arfolyam", linkLabel: "Árfolyam", linkIcon: "trending" },
-      { id: "at-permit", title: "Tartózkodási engedély (nem EU)", description: "Nem EU-állampolgárként Rot-Weiß-Rot Karte / Aufenthaltstitel kell — kezdd korán. EU-soknak elég a Meldezettel + Anmeldebescheinigung.", tags: ["noneu"], linkHref: "/vizum", linkLabel: "Engedély-varázsló", linkIcon: "bookmark" },
+      { id: "at-megtakaritas", title: "Megtakarítás kalkuláció", description: "Számolj kaucióval (jellemzően 3 havi bruttó lakbér), esetleg ingatlanos jutalékkal (Provision) és 2 hónap megélhetéssel.", linkHref: "/utalas", linkLabel: "Árfolyam", linkIcon: "trending" },
+      { id: "at-permit", title: "Tartózkodási engedély (nem EU)", description: "Nem EU-állampolgárként Rot-Weiß-Rot Karte / Aufenthaltstitel kell — kezdd korán. EU-soknak elég a Meldezettel + Anmeldebescheinigung.", tags: ["noneu"], linkHref: "/tudasbazis/vizum", linkLabel: "Engedély-varázsló", linkIcon: "bookmark" },
     ],
   },
   {
@@ -112,7 +112,7 @@ export const PHASES_AT: RoadmapPhase[] = [
       { id: "at-ecard", title: "e-card / egészségbiztosítás", description: "A munkaviszonnyal AUTOMATIKUSAN biztosított leszel (ÖGK); az e-card postán érkezik. Itt NEM kell pénztárt választani, mint Svájcban." },
       { id: "at-lakas", title: "Albérlet és bérleti szerződés", description: "Hauptmietvertrag, Kaution, esetleg Provision. Figyelj a Betriebskostenre (rezsi) a lakbéren felül.", linkHref: "/szaknevsor", linkLabel: "Szakemberek", linkIcon: "users" },
       { id: "at-ado", title: "Adózás (Lohnsteuer)", description: "A bérből automatikusan vonják a Lohnsteuert és a társadalombiztosítást. Év végén az Arbeitnehmerveranlagás (adóbevallás) gyakran visszatérítést hoz!", linkHref: "/szaknevsor", linkLabel: "Könyvelők", linkIcon: "users" },
-      { id: "at-iskola", title: "Iskola / óvoda (Kindergarten)", description: "Gyerek beíratása a lakóhely szerinti iskolába/óvodába.", tags: ["family"], linkHref: "/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
+      { id: "at-iskola", title: "Iskola / óvoda (Kindergarten)", description: "Gyerek beíratása a lakóhely szerinti iskolába/óvodába.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
       { id: "at-familienbeihilfe", title: "Familienbeihilfe (családi pótlék)", description: "Gyerek után járó osztrák családi támogatás — a Finanzamtnál igényelhető (visszamenőleg is).", tags: ["family"], linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "bookmark" },
     ],
   },
@@ -137,8 +137,8 @@ export const PHASES_DE: RoadmapPhase[] = [
     tasks: [
       { id: "de-cv", title: "Német önéletrajz (Lebenslauf)", description: "A német munkáltatók tabellás, gyakran fényképes Lebenslaufot várnak. Töltsd fel a CV-d az állás-profilodhoz.", linkHref: "/allasok/profil", linkLabel: "CV-profil", linkIcon: "user" },
       { id: "de-ber", title: "Bérszint tájékozódás", description: "Nézd meg a szakmád szokásos bruttó éves bérét a célországban.", linkHref: "/iranytu", linkLabel: "Iránytű", linkIcon: "trending" },
-      { id: "de-megtakaritas", title: "Megtakarítás kalkuláció", description: "Számolj kaucióval (max 3 havi Kaltmiete), esetleg ingatlanos jutalékkal és 2-3 hónap megélhetéssel.", linkHref: "/lakberles", linkLabel: "Lakbér-kalkulátor", linkIcon: "bookmark" },
-      { id: "de-permit", title: "Tartózkodási / munkavállalási engedély (nem EU)", description: "Nem EU-állampolgárként Aufenthaltstitel / munkavízum (pl. Blaue Karte EU) kell — kezdd korán. EU-soknak szabad mozgás (Freizügigkeit), nincs engedély.", tags: ["noneu"], linkHref: "/vizum", linkLabel: "Engedély-varázsló", linkIcon: "bookmark" },
+      { id: "de-megtakaritas", title: "Megtakarítás kalkuláció", description: "Számolj kaucióval (max 3 havi Kaltmiete), esetleg ingatlanos jutalékkal és 2-3 hónap megélhetéssel.", linkHref: "/piacter?tab=kalkulator", linkLabel: "Lakbér-kalkulátor", linkIcon: "bookmark" },
+      { id: "de-permit", title: "Tartózkodási / munkavállalási engedély (nem EU)", description: "Nem EU-állampolgárként Aufenthaltstitel / munkavízum (pl. Blaue Karte EU) kell — kezdd korán. EU-soknak szabad mozgás (Freizügigkeit), nincs engedély.", tags: ["noneu"], linkHref: "/tudasbazis/vizum", linkLabel: "Engedély-varázsló", linkIcon: "bookmark" },
     ],
   },
   {
@@ -159,7 +159,7 @@ export const PHASES_DE: RoadmapPhase[] = [
       { id: "de-krankenversicherung", title: "Egészségbiztosítás (Krankenkasse)", description: "Kötelező! Válassz törvényes pénztárat (TK, AOK, Barmer). A munkáltató bejelent, a járulékot a bérből vonják.", linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "heart" },
       { id: "de-steuerid", title: "Steuer-ID (adóazonosító)", description: "Az Anmeldung után automatikusan postán jön (~2-3 hét). A munkáltatódnak kell a bérszámfejtéshez." },
       { id: "de-lakas", title: "Állandó lakás és Mietvertrag", description: "Hosszú távú lakás keresése; figyelj a Nebenkostenre (rezsi) a Kaltmieten felül.", linkHref: "/szaknevsor", linkLabel: "Szakemberek", linkIcon: "users" },
-      { id: "de-iskola", title: "Kita / iskola beíratás", description: "Gyerek beíratása óvodába (Kita — gyakran várólistás, intézd korán) vagy iskolába a lakóhely szerint.", tags: ["family"], linkHref: "/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
+      { id: "de-iskola", title: "Kita / iskola beíratás", description: "Gyerek beíratása óvodába (Kita — gyakran várólistás, intézd korán) vagy iskolába a lakóhely szerint.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
       { id: "de-kindergeld", title: "Kindergeld (családi pótlék)", description: "Havi 250 €/gyerek — a Familienkasse-nál igényelhető. Kell a szülő és a gyerek Steuer-ID-je.", tags: ["family"], linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "bookmark" },
     ],
   },

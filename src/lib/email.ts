@@ -208,7 +208,7 @@ export async function sendBackupEmail(args: BackupEmailArgs): Promise<void> {
   const subject = `Kinti backup — ${args.items.length} kezelő-link`;
   const text = `Szia!
 
-Ezt a backup-emailt te kérted a kinti.app /sajatjaim oldalán.
+Ezt a backup-emailt te kérted a kinti.app Piactér → Sajátjaim oldalán.
 
 Az alábbi kezelő-linkekkel bármikor visszatérhetsz a posztjaidhoz (szerkesztés vagy törlés). Tedd biztonságos helyre — nálunk NEM marad meg semmilyen másolat erről az email-küldésről.
 

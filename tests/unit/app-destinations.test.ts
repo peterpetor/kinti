@@ -8,11 +8,12 @@ import { searchDestinations, APP_DESTINATIONS, quickActions, highlightTitle } fr
 
 describe("searchDestinations — alap illesztés", () => {
   it("hivatalos névre és köznyelvi szinonimára is talál", () => {
-    expect(searchDestinations("engedély", "CH").map((d) => d.href)).toContain("/vizum");
-    expect(searchDestinations("vízum", "CH").map((d) => d.href)).toContain("/vizum");
-    expect(searchDestinations("tartózkodási", "CH").map((d) => d.href)).toContain("/vizum");
-    expect(searchDestinations("hazautalás", "CH").map((d) => d.href)).toContain("/arfolyam");
-    expect(searchDestinations("wise", "CH").map((d) => d.href)).toContain("/arfolyam");
+    expect(searchDestinations("engedély", "CH").map((d) => d.href)).toContain("/tudasbazis/vizum");
+    expect(searchDestinations("vízum", "CH").map((d) => d.href)).toContain("/tudasbazis/vizum");
+    expect(searchDestinations("tartózkodási", "CH").map((d) => d.href)).toContain("/tudasbazis/vizum");
+    // 2026-07-16: az árfolyam az /utalas-ba olvadt (összevonás).
+    expect(searchDestinations("hazautalás", "CH").map((d) => d.href)).toContain("/utalas");
+    expect(searchDestinations("wise", "CH").map((d) => d.href)).toContain("/utalas");
   });
 
   it("ékezet-érzéketlen (accentes és accent-mentes needle is talál)", () => {
@@ -45,7 +46,7 @@ describe("searchDestinations — rangsor (title-találat > kulcsszó-találat)",
 
 describe("searchDestinations — ország-tudatos (nincs zsákutca)", () => {
   it("a CH-only vám-kalkulátor csak CH-ban jelenik meg", () => {
-    expect(searchDestinations("vám", "CH").map((d) => d.href)).toContain("/vam");
+    expect(searchDestinations("vám", "CH").map((d) => d.href)).toContain("/tudasbazis/vam");
     expect(searchDestinations("vám", "AT")).toEqual([]);
     expect(searchDestinations("vám", "DE")).toEqual([]);
     expect(searchDestinations("vám", "NL")).toEqual([]);
@@ -61,13 +62,14 @@ describe("searchDestinations — ország-tudatos (nincs zsákutca)", () => {
 
 describe("searchDestinations — 2026-07 bővítés (mindenkereső)", () => {
   it("az újonnan felvett célok kereshetők", () => {
-    expect(searchDestinations("gyorshajtás", "DE").map((d) => d.href)).toContain("/bussen");
-    expect(searchDestinations("trafipax", "AT").map((d) => d.href)).toContain("/bussen");
+    expect(searchDestinations("gyorshajtás", "DE").map((d) => d.href)).toContain("/tudasbazis/bussen");
+    expect(searchDestinations("trafipax", "AT").map((d) => d.href)).toContain("/tudasbazis/bussen");
     expect(searchDestinations("gyik", "CH").map((d) => d.href)).toContain("/segitseg");
     expect(searchDestinations("szakmai szótár", "DE").map((d) => d.href)).toContain("/allasok/szakmai-szotar");
     expect(searchDestinations("ranglista", "CH").map((d) => d.href)).toContain("/ranglista");
     expect(searchDestinations("értesítés", "NL").map((d) => d.href)).toContain("/ertesitesek");
-    expect(searchDestinations("saját posztjaim", "CH").map((d) => d.href)).toContain("/sajatjaim");
+    // 2026-07-16: a Sajátjaim a Piactér füle (piactér-összevonás).
+    expect(searchDestinations("saját posztjaim", "CH").map((d) => d.href)).toContain("/piacter?tab=sajatjaim");
   });
 });
 

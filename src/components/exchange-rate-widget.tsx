@@ -14,7 +14,8 @@ interface ExchangeData {
 
 /**
  * ExchangeRateWidget — kompakt árfolyam-jelző a főoldalon.
- * 1 CHF = X HUF, klikkre megy a /arfolyam oldalra a kalkulátorhoz.
+ * 1 CHF = X HUF, klikkre megy az /utalas oldalra a kalkulátorhoz
+ * (az árfolyam+utalás összevonás óta ott él az árfolyam-kalkulátor).
  */
 export function ExchangeRateWidget() {
   const [data, setData] = useState<ExchangeData | null>(null);
@@ -50,7 +51,7 @@ export function ExchangeRateWidget() {
 
   return (
     <Link
-      href="/arfolyam"
+      href="/utalas"
       className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
     >
       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-primary text-lg">

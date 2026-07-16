@@ -33,9 +33,34 @@ const nextConfig = {
         // (A public/_redirects a next-on-pages kimenetben NEM működött — a
         // Next redirects() a hiteles mechanizmus ezen a stacken.)
         source: '/mennyit-koltesz',
-        destination: '/mennyi-marad',
+        destination: '/berkalkulator',
         permanent: true,
       },
+      // Kalkulátor-összevonás (2026-07-16): a „Mennyi marad?" a Bérkalkulátorba
+      // olvadt — a query-paramok (megosztott számítások: ?c=&b=&k=…) átmennek,
+      // a BudgetPlannerView az új útvonalon ugyanúgy beolvassa őket.
+      { source: '/mennyi-marad', destination: '/berkalkulator', permanent: true },
+      { source: '/mennyi-marad/:orszag', destination: '/berkalkulator/:orszag', permanent: true },
+      // Árfolyam+utalás összevonás (2026-07-16): az árfolyam-kalkulátor az
+      // Utalás oldal tetején él tovább.
+      { source: '/arfolyam', destination: '/utalas', permanent: true },
+      // Piactér-összevonás (2026-07-16): börze + lakbér-kalkulátor + sajátjaim
+      // egy füles felületen.
+      { source: '/szallas-borze', destination: '/piacter', permanent: true },
+      { source: '/lakberles', destination: '/piacter?tab=kalkulator', permanent: true },
+      { source: '/sajatjaim', destination: '/piacter?tab=sajatjaim', permanent: true },
+      // Tudásbázis-konszolidáció (2026-07-16): a téma-oldalak a /tudasbazis alá
+      // költöztek — a régi könyvjelzők/PWA-indítók ne fussanak 404-be.
+      { source: '/vizum', destination: '/tudasbazis/vizum', permanent: true },
+      { source: '/vam', destination: '/tudasbazis/vam', permanent: true },
+      { source: '/kikoltozes', destination: '/tudasbazis/kikoltozes', permanent: true },
+      { source: '/allampolgarsag', destination: '/tudasbazis/allampolgarsag', permanent: true },
+      { source: '/hivatalos', destination: '/tudasbazis/hivatalos', permanent: true },
+      { source: '/bussen', destination: '/tudasbazis/bussen', permanent: true },
+      { source: '/iskolarendszer', destination: '/tudasbazis/iskolarendszer', permanent: true },
+      // Munkáltató-összevonás (2026-07-16): a közvetítés-pitch a munkáltatói
+      // belépő alá költözött (két-utas választó a /munkaltato-n).
+      { source: '/kozvetites', destination: '/munkaltato/kozvetites', permanent: true },
       // A 2026-07-09-es funkció-leépítés (események/akciók/telekocsi/közösség-hub)
       // után a régi könyvjelzők/PWA-indítók 404-be futottak (a mérés szerint a
       // /kozosseg-re heti ~32 látogató érkezett!) — értelmes utódra irányítjuk őket.

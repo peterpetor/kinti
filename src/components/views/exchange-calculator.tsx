@@ -7,7 +7,6 @@ import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { trackAction } from "@/components/usage-tracker";
-import Link from "next/link";
 import {
   X_BANK,
   rankedProviders,
@@ -246,16 +245,16 @@ export function ExchangeCalculator({
               szolgáltatónál ellenőrizd.
             </p>
 
-            {/* PRO-tölcsér: a mély funkciók (árfolyam-figyelés, időzítés, teljes
-                asszisztens-flow) a PRO Utalás-asszisztensben élnek. */}
-            <Link
-              href="/utalas"
+            {/* PRO-tölcsér: az asszisztens az árfolyam+utalás összevonás óta
+                UGYANEZEN az oldalon él lentebb → horgony-link (nem route). */}
+            <a
+              href="#utalas-asszisztens"
               className="flex items-center gap-2 rounded-[12px] border border-primary/25 bg-primary-soft/40 px-3.5 py-2.5 text-[12.5px] font-bold text-primary transition active:scale-[0.99]"
             >
               <Icon name="bell" size={14} strokeWidth={2.2} />
               Szólj, ha jó az árfolyam — Utalás-asszisztens
               <Icon name="chevR" size={14} strokeWidth={2.2} className="ml-auto" />
-            </Link>
+            </a>
           </div>
         )}
       </section>

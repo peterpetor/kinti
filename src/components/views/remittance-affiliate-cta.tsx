@@ -45,7 +45,7 @@ export function RemittanceAffiliateCta({ currency }: { currency: string }) {
             >
               Utalás Wise-zal →
             </a>
-            <Link href="/arfolyam" className="text-[12px] font-bold text-ink-muted underline underline-offset-2">
+            <Link href="/utalas" className="text-[12px] font-bold text-ink-muted underline underline-offset-2">
               Előbb hasonlítsd össze
             </Link>
           </div>

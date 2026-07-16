@@ -46,8 +46,8 @@ export default function KozvetitesPage() {
           Munkaerő-közvetítés
         </span>
         <Link
-          href="/"
-          aria-label="Vissza a Főoldalra"
+          href="/munkaltato"
+          aria-label="Vissza a munkáltatói oldalra"
           className="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink active:scale-95"
         >
           <Icon name="arrowLeft" size={16} strokeWidth={2.4} />

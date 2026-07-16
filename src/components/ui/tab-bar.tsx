@@ -16,7 +16,7 @@ import { isImmersiveRoute } from "@/lib/immersive-routes";
  *   1) Főoldal    — dashboard
  *   2) Szaknévsor — vállalkozás-kereső
  *   3) Állások    — álláshirdetések / munkáltató
- *   4) Albérlet   — szoba- és albérlet-börze (a korábbi Iránytű-fül helyén)
+ *   4) Albérlet   — Piactér: börze + lakbér-kalkulátor + sajátjaim (a korábbi Iránytű-fül helyén)
  */
 interface Tab {
   href: string;
@@ -32,10 +32,10 @@ const TABS: Tab[] = [
   { href: "/", label: "Főoldal", icon: "home" },
   { href: "/szaknevsor", label: "Szaknévsor", icon: "list" },
   { href: "/allasok", label: "Állások", icon: "briefcase", alsoMatch: ["/munkaltato"] },
-  // 2026-07-16 (user-döntés): az Iránytű fül helyét a Szoba- és albérlet-börze
-  // vette át (mind a 4 országban él → nincs feature-kapu). Az Iránytű a
-  // kezdőlapi modul-rácsról továbbra is elérhető (home-platform-grid).
-  { href: "/szallas-borze", label: "Albérlet", icon: "house" },
+  // 2026-07-16 (user-döntés): az Iránytű fül helyét a Piactér vette át
+  // (börze + lakbér-kalkulátor + sajátjaim; mind a 4 országban él → nincs
+  // feature-kapu). Az Iránytű a kezdőlapi modul-rácsról továbbra is elérhető.
+  { href: "/piacter", label: "Albérlet", icon: "house" },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {

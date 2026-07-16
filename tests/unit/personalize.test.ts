@@ -62,8 +62,9 @@ describe("buildPersonalizedItems", () => {
 
   it("tervező: Kiköltözési teendőlista az első + Mennyi marad? bekerül", () => {
     const items = buildPersonalizedItems("AT", "planning", "munka");
-    expect(items[0].href).toBe("/kikoltozes");
-    expect(items.map((i) => i.href)).toContain("/mennyi-marad");
+    expect(items[0].href).toBe("/tudasbazis/kikoltozes");
+    // 2026-07-16: a „Mennyi marad?" a /berkalkulator-ba olvadt (kalkulátor-összevonás).
+    expect(items.map((i) => i.href)).toContain("/berkalkulator");
   });
 
   it("friss érkező: bejelentkezés-cikk az első (ország-helyes sluggal)", () => {

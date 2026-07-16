@@ -23,7 +23,7 @@ export function MyPostsBanner() {
 
   return (
     <Link
-      href="/sajatjaim"
+      href="/piacter?tab=sajatjaim"
       className="flex items-center gap-3 rounded-card border border-primary/30 bg-primary-soft px-4 py-3 shadow-card transition active:scale-[0.99]"
     >
       {/* Szint-jelvény + haladás-gyűrű helyett kompakt szint-badge */}
