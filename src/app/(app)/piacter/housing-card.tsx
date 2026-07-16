@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import { COUNTRIES } from "@/lib/countries";
 import { regionName } from "@/lib/regions";
 import { ReportButton } from "@/components/report-button";
-import { formatHousingPrice, housingAgeLabel, HOUSING_TYPE_LABELS } from "@/lib/housing";
+import { formatHousingPrice, housingAgeLabel, HOUSING_TYPE_LABELS, HOUSING_REVEAL_CAUTION } from "@/lib/housing";
 import type { HousingListing } from "@/lib/repo-housing";
 import { ProPaywallModal } from "./pro-paywall-modal";
 
@@ -87,6 +87,11 @@ export function HousingCard({
               <Icon name="clock" size={10} strokeWidth={2.6} /> Jóváhagyásra vár
             </span>
           )}
+          {listing.own && listing.rejected && (
+            <span className="inline-flex items-center gap-1 rounded-pill bg-accent/15 px-2 py-0.5 text-[10.5px] font-extrabold text-accent">
+              <Icon name="close" size={10} strokeWidth={2.8} /> Elutasítva — nem jelenik meg
+            </span>
+          )}
           {listing.own && (
             <button
               type="button"
@@ -144,6 +149,13 @@ export function HousingCard({
         )}
       </div>
       {error && <p className="mt-2 text-right text-[11.5px] font-semibold text-accent">{error}</p>}
+      {/* Csalás-figyelmeztetés PONT a kapcsolatfelvétel pillanatában — akkor
+          számít, amikor a user épp írni/hívni készül. */}
+      {contact && (
+        <p className="mt-2 flex items-start gap-1.5 text-[11px] leading-snug text-ink-muted">
+          <span aria-hidden>⚠️</span> {HOUSING_REVEAL_CAUTION}
+        </p>
+      )}
 
       <ProPaywallModal open={paywallOpen} onClose={() => setPaywallOpen(false)} />
     </article>

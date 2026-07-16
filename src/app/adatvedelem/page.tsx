@@ -570,7 +570,7 @@ export default function AdatvedelemPage() {
         nyilvánossá. A hirdetéshez a következőket tároljuk:
         a fiókod <strong>azonosítóját</strong> (Clerk userId — a hirdetés hozzád kötéséhez,
         a saját hirdetésed törléséhez és a napi feladási limithez), a hirdetés{" "}
-        <strong>tartalmát</strong> (típus, ország, település, ár, leírás), valamint az általad{" "}
+        <strong>tartalmát</strong> (típus, ország, régió, település, ár, leírás), valamint az általad{" "}
         <strong>kapcsolatfelvételre megadott elérhetőséget</strong> (e-mail vagy telefonszám).
         Az elérhetőséged <strong>nem nyilvános</strong>: a hirdetés-listában nem jelenik meg,
         kizárólag bejelentkezett Kinti PRO-tagok kérhetik le, kifejezetten a veled való

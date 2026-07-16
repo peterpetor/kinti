@@ -24,6 +24,9 @@ export interface HousingListing {
   own?: boolean;
   /** Jóváhagyásra vár — CSAK a feladó látja a sajátját így (0134 moderáció). */
   pending?: boolean;
+  /** Elutasított — CSAK a feladó látja a sajátját (DSA-átláthatóság: tudja,
+   *  hogy a hirdetése NEM jelenik meg, és le tudja venni / újat adhat fel). */
+  rejected?: boolean;
 }
 
 interface Row {
@@ -42,6 +45,7 @@ function toListing(r: Row, viewerUserId?: string | null): HousingListing {
     regionCode: r.region_code, price: r.price, currency: r.currency, description: r.description,
     createdAt: r.created_at, own: viewerUserId != null && r.user_id === viewerUserId,
     pending: r.moderation_status === 0,
+    rejected: r.moderation_status === 2,
   };
 }
 
@@ -59,7 +63,9 @@ export async function getHousingListings(
   const binds: unknown[] = [];
   let visibility = "moderation_status = 1";
   if (viewerUserId) {
-    visibility = "(moderation_status = 1 OR (moderation_status = 0 AND user_id = ?))";
+    // A feladó a saját FÜGGŐ és ELUTASÍTOTT hirdetését is látja (badge-dzsel) —
+    // DSA-átláthatóság: tudja, mi történt vele, és le tudja venni.
+    visibility = "(moderation_status = 1 OR (moderation_status IN (0, 2) AND user_id = ?))";
     binds.push(viewerUserId);
   }
   let where = `is_active = 1 AND ${visibility} AND created_at > unixepoch('now', '-60 days')`;

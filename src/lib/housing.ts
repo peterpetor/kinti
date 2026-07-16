@@ -28,6 +28,20 @@ export const HOUSING_DISCLAIMER =
   "A Kinti kizárólag hirdetési felületet biztosít. A hirdetések tartalmáért, a bérlő/kiadó " +
   "megbízhatóságáért, vagy a bérleti díjhoz kapcsolódó kérdésekért semmilyen felelősséget nem vállalunk.";
 
+/** Kaució-csalás elleni tippek (platform-gondossági kör — a lakhatási
+ *  hirdetések a leggyakoribb csalás-terep; a figyelmeztetés kötelező elem). */
+export const HOUSING_SAFETY_TIPS: string[] = [
+  "Soha ne utalj kauciót vagy bérleti díjat, amíg nem láttad a lakást (személyesen vagy élő videóhívásban) és nem találkoztál a kiadóval.",
+  "Gyanús, ha a „kiadó” külföldön van, sürget, vagy csak e-mailben kommunikál — a valódi kiadó megmutatja a lakást.",
+  "Ne küldj személyes iratot (útlevél-másolat, bankkártya-adat) a szerződéskötés előtt.",
+  "Túl szép, hogy igaz? A piaci árnál jóval olcsóbb hirdetés a leggyakoribb csali.",
+  "Ha csalást gyanítasz, jelentsd a hirdetést a „Jelentés” gombbal — azonnal levesszük, amíg megvizsgáljuk.",
+];
+
+/** Rövid figyelmeztetés a kontakt-felfedés mellé. */
+export const HOUSING_REVEAL_CAUTION =
+  "Sose utalj pénzt a lakás megtekintése előtt — a kaució-csalás a leggyakoribb átverés.";
+
 export interface HousingInput {
   type: HousingType;
   country: string;
