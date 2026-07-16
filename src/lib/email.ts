@@ -500,130 +500,9 @@ function escapeAttr(s: string): string {
 // email-relay flow megszűnt. A kapcsolat zero-relay: a vállalkozó telefonja
 // jelenik meg, a látogató közvetlenül hív vagy WhatsApp-ol.
 
-// --- Esemény beküldő: megerősítő email -------------------------------------
-
-interface EventConfirmEmailArgs {
-  to: string;
-  title: string;
-  eventDate: string;
-  venue: string;
-  confirmUrl: string;
-  /** Manage URL — a feladó ezzel szerkesztheti/törölheti később. */
-  manageUrl: string;
-}
-
-export async function sendEventConfirmationEmail(args: EventConfirmEmailArgs): Promise<void> {
-  const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-  const subject = "Erősítsd meg az eseményedet – kinti.app";
-
-  const text = `Szia!\n\nMegkaptuk az eseménybeküldésedet a kinti.app-on:\n  Cím: ${args.title}\n  Dátum: ${args.eventDate}\n  Helyszín: ${args.venue}\n\nAz eseményt moderátor ellenőrzi, és hamarosan megjelenik az oldalon.\n\nAmíg erre várnál, erősítsd meg az email-címedet egy kattintással:\n  ${args.confirmUrl}\n\n—————————————————\n\nEsemény kezelése (szerkesztés, törlés):\n  ${args.manageUrl}\nTedd el ezt a linket — bármikor onnan tudod módosítani.\n\nHa nem te küldted be ezt az eseményt, hagyd figyelmen kívül.\n\nÜdv,\nkinti.app`;
-
-  const html = baseLayout({
-    preheader: `Esemény beküldve: ${args.title} – várd meg a moderátor jóváhagyását!`,
-    body: `
-      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#0e1f17;">
-        Szia 👋
-      </p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0e1f17;">
-        Megkaptuk az eseménybeküldésedet:
-      </p>
-      <div style="margin:0 0 20px;padding:14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
-        <div style="font-size:14.5px;font-weight:700;color:#0e1f17;margin-bottom:6px;">${escapeHtml(args.title)}</div>
-        <div style="font-size:13px;color:#5c6d63;">📅 ${escapeHtml(args.eventDate)} &nbsp;·&nbsp; 📍 ${escapeHtml(args.venue)}</div>
-      </div>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#5c6d63;">
-        Egy moderátor hamarosan <strong>jóváhagyja</strong> – és az esemény azonnal megjelenik a kinti.app naptárban.
-      </p>
-      <p style="margin:0 0 20px;">
-        ${button(args.confirmUrl, "Email megerősítése →")}
-      </p>
-      <hr style="border:none;border-top:1px solid #e6ebe5;margin:24px 0;" />
-      <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#0e1f17;">
-        Esemény kezelése (szerkesztés, törlés)
-      </p>
-      <p style="margin:0 0 12px;font-size:12.5px;line-height:1.6;color:#5c6d63;">
-        Ezt a linket <strong>tedd el</strong> — bármikor itt módosíthatod, regisztráció nélkül:
-      </p>
-      <p style="margin:0 0 16px;">
-        <a href="${args.manageUrl}" style="display:inline-block;font-size:12.5px;color:#0e7c5b;word-break:break-all;text-decoration:underline;">${escapeHtml(args.manageUrl)}</a>
-      </p>
-      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.5;">
-        Ha nem te küldted be ezt az eseményt, hagyd figyelmen kívül. Semmi sem kerül ki a weboldalra a moderátor jóváhagyása nélkül.
-      </p>`,
-  });
-
-  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
-  if (error) {
-    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
-  }
-}
-
-// --- Admin: jóváhagyó/elutasító email (1 kattintásos moderáció) ------------
-
-interface EventAdminModerationEmailArgs {
-  adminEmail: string;
-  eventId: string;
-  title: string;
-  eventDate: string;
-  startTime: string;
-  venue: string;
-  description: string | null;
-  tag: string | null;
-  submitterEmail: string;
-  approveUrl: string;
-  rejectUrl: string;
-}
-
-export async function sendEventAdminModerationEmail(
-  args: EventAdminModerationEmailArgs,
-): Promise<void> {
-  const env = getCloudflareEnv();
-  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-  const subject = `⚠️ Új esemény jóváhagyásra vár: „${args.title}"`;
-
-  const text = `Kinti Admin\n\nÚj eseményt küldtek be, amit jóvá kell hagynod:\n\nCím: ${args.title}\nDátum: ${args.eventDate} ${args.startTime}\nHelyszín: ${args.venue}\nTípus: ${args.tag ?? "–"}\nLeírás: ${args.description ?? "(nincs)"}\nBeküldő: ${args.submitterEmail}\n\n✅ JÓVÁHAGYÁS:\n${args.approveUrl}\n\n❌ ELUTASÍTÁS (törlés):\n${args.rejectUrl}`;
-
-  const html = baseLayout({
-    preheader: `Moderálandó esemény: ${args.title} – ${args.eventDate}`,
-    body: `
-      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti Admin értesítő</p>
-      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">Új esemény jóváhagyásra vár</p>
-      <div style="margin:0 0 20px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
-        <div style="font-size:15px;font-weight:800;color:#0e1f17;margin-bottom:8px;">${escapeHtml(args.title)}</div>
-        <table style="border-collapse:collapse;width:100%;font-size:13px;color:#5c6d63;">
-          <tr><td style="padding:3px 0;font-weight:600;width:80px;">Dátum:</td><td>${escapeHtml(args.eventDate)} ${escapeHtml(args.startTime)}</td></tr>
-          <tr><td style="padding:3px 0;font-weight:600;">Helyszín:</td><td>${escapeHtml(args.venue)}</td></tr>
-          <tr><td style="padding:3px 0;font-weight:600;">Típus:</td><td>${escapeHtml(args.tag ?? "–")}</td></tr>
-          <tr><td style="padding:3px 0;font-weight:600;">Beküldő:</td><td>${escapeHtml(args.submitterEmail)}</td></tr>
-        </table>
-        ${args.description ? `<div style="margin-top:12px;padding:10px;background:#f0ebe0;border-radius:10px;font-size:13px;line-height:1.5;color:#0e1f17;">${escapeHtml(args.description)}</div>` : ""}
-      </div>
-      <p style="margin:0 0 12px;font-size:14px;font-weight:600;color:#0e1f17;">Döntsd el egy kattintással:</p>
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
-        <tr>
-          <td style="padding-right:10px;">
-            <a href="${escapeAttr(args.approveUrl)}" style="display:inline-block;padding:13px 22px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">✅ Jóváhagyás</a>
-          </td>
-          <td>
-            <a href="${escapeAttr(args.rejectUrl)}" style="display:inline-block;padding:13px 22px;background:#c8392e;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">❌ Elutasítás</a>
-          </td>
-        </tr>
-      </table>
-      <p style="margin:0;font-size:11.5px;color:#94a097;">Ez az esemény addig NEM látható a kinti.app-on, amíg jóvá nem hagyod.</p>`,
-  });
-
-  const { error } = await getResend().emails.send({
-    from,
-    to: args.adminEmail,
-    subject,
-    html,
-    text,
-  });
-  if (error) {
-    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
-  }
-}
+// `sendEventConfirmationEmail` és `sendEventAdminModerationEmail` ELTÁVOLÍTVA —
+// az esemény-modul kivezetve (2026-07-09, ld. feature-bloat), a függvényeket
+// semmi nem hívta (2026-07-17 mély-audit).
 
 // `sendDigestConfirmEmail` ELTÁVOLÍTVA — a heti hírlevél email-feliratkozás
 // megszűnt (digest_subscribers tábla droppolva). Helyette Web Push.
@@ -1354,6 +1233,67 @@ A döntést emberi szerkesztő hozta (nem automatizált rendszer). Ha nem értes
       </div>
       <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.6;">
         A döntést emberi szerkesztő hozta (nem automatizált rendszer). Ha nem értesz egyet vele,
+        válaszolj erre az emailre vagy írj az <a href="mailto:info@kinti.app" style="color:#1d4434;">info@kinti.app</a>
+        címre — a fellebbezést megvizsgáljuk. Javított változatot bármikor újra beküldhetsz.
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
+export interface ContentRejectedEmailArgs {
+  to: string;
+  /** Modul-név a fejlécbe, pl. "Szaknévsor" / "Keresek-tábla". */
+  moduleLabel: string;
+  /** A beküldött tartalom címe/megnevezése. */
+  title: string;
+  /** Az admin által megadott indok; üres/null → általános indok. */
+  reason: string | null;
+  /** Feltétel-hivatkozás az általános indokhoz, pl. "ÁSZF 7. pont". */
+  aszfRef: string;
+}
+
+/**
+ * DSA Art. 17 indokolás-közlés elutasításkor — a story-minta általánosítása
+ * a cég- és Keresek-beküldésekre: mi történt + miért (konkrét vagy általános
+ * indok) + hogy EMBERI döntés volt + a jogorvoslati út.
+ */
+export async function sendContentRejectedEmail(args: ContentRejectedEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const subject = "A beküldésed most nem jelent meg — kinti.app";
+  const reasonText = args.reason?.trim()
+    ? args.reason.trim()
+    : `a beküldés a jelenlegi formájában nem felelt meg a közzétételi feltételeknek (${args.aszfRef}).`;
+
+  const text = `Szia!
+
+Köszönjük a beküldésedet („${args.title}"). Az ellenőrzés után úgy döntöttünk, hogy most nem tesszük közzé.
+
+Indok: ${reasonText}
+
+A döntést emberi moderátor hozta (nem automatizált rendszer). Ha nem értesz egyet vele, válaszolj erre az emailre, vagy írj az info@kinti.app címre — a fellebbezést megvizsgáljuk. Javított változatot bármikor újra beküldhetsz.
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: "A beküldésed moderátori döntés után most nem jelent meg",
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · ${escapeHtml(args.moduleLabel)}</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">A beküldésed most nem jelent meg</p>
+      <p style="margin:0 0 14px;font-size:13.5px;line-height:1.6;color:#5c6d63;">
+        Köszönjük a beküldésedet (<strong style="color:#0e1f17;">${escapeHtml(args.title)}</strong>).
+        Az ellenőrzés után úgy döntöttünk, hogy most nem tesszük közzé.
+      </p>
+      <div style="margin:0 0 16px;padding:14px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a097;margin-bottom:4px;">Indok</div>
+        <div style="font-size:13.5px;line-height:1.6;color:#0e1f17;white-space:pre-wrap;">${escapeHtml(reasonText)}</div>
+      </div>
+      <p style="margin:0;font-size:11.5px;color:#94a097;line-height:1.6;">
+        A döntést emberi moderátor hozta (nem automatizált rendszer). Ha nem értesz egyet vele,
         válaszolj erre az emailre vagy írj az <a href="mailto:info@kinti.app" style="color:#1d4434;">info@kinti.app</a>
         címre — a fellebbezést megvizsgáljuk. Javított változatot bármikor újra beküldhetsz.
       </p>`,

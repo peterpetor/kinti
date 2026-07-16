@@ -345,7 +345,9 @@ export default function AdatvedelemPage() {
       </p>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás (a megkeresés elküldésével).</li>
-        <li><strong>Tárolási idő:</strong> a megkeresés kezeléséig; törlést az <a href="mailto:info@kinti.app">info@kinti.app</a> címen kérhetsz.</li>
+        <li><strong>Tárolási idő:</strong> a beküldéstől számított <strong>legfeljebb 12 hónap</strong> — utána
+          a megkeresés-adatokat automatikusan, véglegesen töröljük; korábbi törlést bármikor kérhetsz az{" "}
+          <a href="mailto:info@kinti.app">info@kinti.app</a> címen.</li>
         <li><strong>Címzett:</strong> a megkeresett vállalkozó (lead), illetve a moderáló adminisztrátor (claim) — az e-mail-továbbítás a Resend-en keresztül történik (lásd 2.6).</li>
       </ul>
 

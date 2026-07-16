@@ -10,7 +10,7 @@ import type { ModerationTable } from "@/lib/repo";
  * "Ban IP" / "Ban email" checkbox-okkal: ha a Reject pillanatában aktívak,
  * az adott IP-hash és/vagy email-cím automatikusan a tiltólistára kerül.
  *
- * `askRejectReason` (történeteknél): elutasítás előtt indok-mező nyílik —
+ * `askRejectReason` (történet/cég/Keresek): elutasítás előtt indok-mező nyílik —
  * az indokot a szerző emailben megkapja (DSA Art. 17 indokolás-közlés),
  * ha a beküldéskor megadta a címét. Üresen hagyható → általános indok megy.
  */

@@ -46,11 +46,11 @@ export async function getServiceRequests(country: string, category?: string | nu
 }
 
 /** Egy kérés alap-adatai (DSA-bejelentés létezés-ellenőrzés + kivonat). */
-export async function getServiceRequestBasic(id: string): Promise<{ id: string; title: string } | null> {
+export async function getServiceRequestBasic(id: string): Promise<{ id: string; title: string; contact: string | null } | null> {
   const row = await getDB()
-    .prepare("SELECT id, title FROM service_requests WHERE id = ?")
+    .prepare("SELECT id, title, contact FROM service_requests WHERE id = ?")
     .bind(id)
-    .first<{ id: string; title: string }>();
+    .first<{ id: string; title: string; contact: string | null }>();
   return row ?? null;
 }
 

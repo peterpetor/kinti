@@ -254,9 +254,13 @@ export default async function ModerationPage({
                       current={it.moderationStatus}
                       submitterIpHash={it.submitterIpHash}
                       submitterEmail={it.submitterEmail}
-                      // Történet-elutasításnál indok-mező (DSA Art. 17): a
-                      // szerző emailben kapja az indokot, ha adott címet.
-                      askRejectReason={typeParam === "stories"}
+                      // Elutasításnál indok-mező (DSA Art. 17): a beküldő emailben
+                      // kapja az indokot, ha van email-elérhetősége (történet:
+                      // contactEmail; cég: kapcsolati email; Keresek: email-formájú
+                      // kontakt). A housing-nál a kártyán van in-app indoklás.
+                      askRejectReason={
+                        typeParam === "stories" || typeParam === "businesses" || typeParam === "service_requests"
+                      }
                     />
                   </div>
                 </article>

@@ -187,6 +187,15 @@ async function handle(req: Request): Promise<Response> {
     safeLogError("daily-nudge:housing-expiry", err);
   }
 
+  // GDPR lead-retenció: a 12 hónapnál régebbi ajánlatkérés-leadek (PII!)
+  // végleges törlése — az adatvédelmi 2.15 tárolási-idő pontja ezt közli.
+  try {
+    const { purgeOldBusinessLeads } = await import("@/lib/repo");
+    await purgeOldBusinessLeads();
+  } catch (err) {
+    safeLogError("daily-nudge:lead-retention", err);
+  }
+
   // Üzenet-rotáció a nap sorszáma szerint (determinisztikus, nincs Math.random).
   const dayIndex = Math.floor(now.getTime() / 86_400_000);
   let payload = NUDGES[dayIndex % NUDGES.length];

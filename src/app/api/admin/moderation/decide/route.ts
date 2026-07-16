@@ -194,6 +194,47 @@ export async function POST(req: Request) {
       }
     }
 
+    // DSA Art. 17 indokolás CÉG- és KERESEK-elutasításnál is (a story-minta
+    // általánosítása): ha van email-elérhetőség, a beküldő megkapja az indokot
+    // (admin indok-mező vagy általános) + a fellebbezési utat. Best-effort.
+    if (statusValue === 2 && (table === "businesses" || table === "service_requests")) {
+      try {
+        const rejectReason =
+          typeof body.reason === "string" && body.reason.trim() ? body.reason.trim().slice(0, 500) : null;
+        const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        let to: string | null = null;
+        let title = "";
+        let moduleLabel = "";
+        let aszfRef = "";
+        if (table === "businesses") {
+          const biz = await getBusinessById(id);
+          const contactEmail = biz?.contactEmail?.trim() ?? "";
+          to = EMAIL_RE.test(contactEmail) ? contactEmail : null;
+          title = biz?.name ?? "vállalkozás-adatlap";
+          moduleLabel = "Szaknévsor";
+          aszfRef = "ÁSZF 3. pont";
+        } else {
+          const { getServiceRequestBasic } = await import("@/lib/repo");
+          const reqRow = await getServiceRequestBasic(id);
+          const contact = reqRow?.contact?.trim() ?? "";
+          to = EMAIL_RE.test(contact) ? contact : null;
+          title = reqRow?.title ?? "Keresek-hirdetés";
+          moduleLabel = "Keresek-tábla";
+          aszfRef = "ÁSZF 8.1 pont";
+        }
+        if (to) {
+          const { sendContentRejectedEmail } = await import("@/lib/email");
+          const ctx = getCloudflareCtx();
+          const send = sendContentRejectedEmail({ to, moduleLabel, title, reason: rejectReason, aszfRef }).catch(
+            (e) => safeLogError("moderation/content-rejected-email", e),
+          );
+          if (ctx) ctx.waitUntil(send); else await send;
+        }
+      } catch (e) {
+        safeLogError("moderation/reject-notify", e);
+      }
+    }
+
     // Albérlet-hirdetés jóváhagyása → régió-célzott push a „housing" kategória
     // feliratkozóinak (0136 pref): „új albérlet a régiódban". CSAK kiadó
     // hirdetésről (a kereső hirdetés nem esemény a lakást keresőknek), és CSAK

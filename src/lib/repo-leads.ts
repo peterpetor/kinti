@@ -234,3 +234,21 @@ export async function setBusinessLeadStatus(
     .run();
   return (res.meta?.changes ?? 0) > 0;
 }
+
+/**
+ * GDPR tárolás-korlátozás (napi cron): a 12 hónapnál régebbi lead-ek végleges
+ * törlése — a lead PII-t hordoz (név, email, telefon, üzenet), és a megkeresés
+ * kezelése ennyi idő után lezártnak tekinthető. Az adatvédelmi 2.15 pont a
+ * konkrét időt közli; korábbi törlés emailben kérhető.
+ */
+export async function purgeOldBusinessLeads(): Promise<number> {
+  try {
+    const res = await getDB()
+      .prepare("DELETE FROM business_leads WHERE created_at < datetime('now', '-12 months')")
+      .run();
+    return res.meta?.changes ?? 0;
+  } catch (err) {
+    safeLogError("purgeOldBusinessLeads", err);
+    return 0;
+  }
+}
