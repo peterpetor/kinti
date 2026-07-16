@@ -50,6 +50,7 @@ export function buildWeeklyReport(
       { label: "Állás-jelentkezés", value: `${counts.jobApps7} db` },
       { label: "CV-profil mentés", value: `${counts.cv7} db` },
       { label: "Új B2B projekt", value: `${counts.b2bNew7} db` },
+      { label: "Albérlet-börze", value: `${counts.housingNew7} új hirdetés a héten · ${counts.housingLive} élő` },
       { label: "Kvíz-játék", value: `${counts.quizPlays7} db` },
       { label: "Push-feliratkozó (összesen)", value: `${counts.pushSubsTotal} fő` },
       { label: "Hírlevél-feliratkozó (összesen)", value: `${counts.newsletterSubsTotal} fő` },
@@ -57,7 +58,7 @@ export function buildWeeklyReport(
       // várakozó tétel = kiadatlan lead; a történet = kiadatlan SEO-oldal.
       {
         label: "⏳ Moderációra vár",
-        value: `${counts.pendingRequests} Keresek-hirdetés · ${counts.pendingStories} élettörténet`,
+        value: `${counts.pendingRequests} Keresek-hirdetés · ${counts.pendingStories} élettörténet · ${counts.pendingHousing} albérlet-hirdetés`,
       },
     ],
     topPages,

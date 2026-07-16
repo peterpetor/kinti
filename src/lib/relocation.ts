@@ -64,7 +64,7 @@ export const PHASES_CH: RoadmapPhase[] = [
     icon: "home",
     tasks: [
       { id: "krankenkasse", title: "Betegbiztosítás (Krankenkasse)", description: "Kötelező megkötni 3 hónapon belül.", linkHref: "/szolgaltato-valto", linkLabel: "Krankenkasse", linkIcon: "heart" },
-      { id: "lakas", title: "Albérlet keresés és Kaució", description: "Állandó lakás keresése.", linkHref: "/tudasbazis", linkLabel: "Tudásbázis: Albérlet", linkIcon: "bookmark" },
+      { id: "lakas", title: "Albérlet keresés és Kaució", description: "Állandó lakás keresése — nézd meg a kinti magyarok albérlet-börzéjét is.", linkHref: "/piacter", linkLabel: "Albérlet-börze", linkIcon: "key" },
       { id: "ado", title: "Adózás (Quellensteuer)", description: "Külföldiként forrásadót vonnak a fizetésedből.", linkHref: "/szaknevsor", linkLabel: "Könyvelők", linkIcon: "users" },
       { id: "ch-iskola", title: "Iskola / óvoda beíratás", description: "A gyerekeket a lakóhely szerinti köriskolába kell beíratni; az óvoda (Kita/Kindergarten) helyenként várólistás — intézd korán.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
       { id: "ch-csaladi", title: "Családi pótlék (Familienzulagen)", description: "Gyerek után járó támogatás — a munkáltatón/kantonon keresztül igényelhető.", tags: ["family"] },
@@ -110,7 +110,7 @@ export const PHASES_AT: RoadmapPhase[] = [
     icon: "home",
     tasks: [
       { id: "at-ecard", title: "e-card / egészségbiztosítás", description: "A munkaviszonnyal AUTOMATIKUSAN biztosított leszel (ÖGK); az e-card postán érkezik. Itt NEM kell pénztárt választani, mint Svájcban." },
-      { id: "at-lakas", title: "Albérlet és bérleti szerződés", description: "Hauptmietvertrag, Kaution, esetleg Provision. Figyelj a Betriebskostenre (rezsi) a lakbéren felül.", linkHref: "/szaknevsor", linkLabel: "Szakemberek", linkIcon: "users" },
+      { id: "at-lakas", title: "Albérlet és bérleti szerződés", description: "Hauptmietvertrag, Kaution, esetleg Provision. Figyelj a Betriebskostenre (rezsi) a lakbéren felül — és nézd meg a kinti magyarok albérlet-börzéjét is.", linkHref: "/piacter", linkLabel: "Albérlet-börze", linkIcon: "key" },
       { id: "at-ado", title: "Adózás (Lohnsteuer)", description: "A bérből automatikusan vonják a Lohnsteuert és a társadalombiztosítást. Év végén az Arbeitnehmerveranlagás (adóbevallás) gyakran visszatérítést hoz!", linkHref: "/szaknevsor", linkLabel: "Könyvelők", linkIcon: "users" },
       { id: "at-iskola", title: "Iskola / óvoda (Kindergarten)", description: "Gyerek beíratása a lakóhely szerinti iskolába/óvodába.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
       { id: "at-familienbeihilfe", title: "Familienbeihilfe (családi pótlék)", description: "Gyerek után járó osztrák családi támogatás — a Finanzamtnál igényelhető (visszamenőleg is).", tags: ["family"], linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "bookmark" },
@@ -158,7 +158,7 @@ export const PHASES_DE: RoadmapPhase[] = [
     tasks: [
       { id: "de-krankenversicherung", title: "Egészségbiztosítás (Krankenkasse)", description: "Kötelező! Válassz törvényes pénztárat (TK, AOK, Barmer). A munkáltató bejelent, a járulékot a bérből vonják.", linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "heart" },
       { id: "de-steuerid", title: "Steuer-ID (adóazonosító)", description: "Az Anmeldung után automatikusan postán jön (~2-3 hét). A munkáltatódnak kell a bérszámfejtéshez." },
-      { id: "de-lakas", title: "Állandó lakás és Mietvertrag", description: "Hosszú távú lakás keresése; figyelj a Nebenkostenre (rezsi) a Kaltmieten felül.", linkHref: "/szaknevsor", linkLabel: "Szakemberek", linkIcon: "users" },
+      { id: "de-lakas", title: "Állandó lakás és Mietvertrag", description: "Hosszú távú lakás keresése; figyelj a Nebenkostenre (rezsi) a Kaltmieten felül — és nézd meg a kinti magyarok albérlet-börzéjét is.", linkHref: "/piacter", linkLabel: "Albérlet-börze", linkIcon: "key" },
       { id: "de-iskola", title: "Kita / iskola beíratás", description: "Gyerek beíratása óvodába (Kita — gyakran várólistás, intézd korán) vagy iskolába a lakóhely szerint.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
       { id: "de-kindergeld", title: "Kindergeld (családi pótlék)", description: "Havi 250 €/gyerek — a Familienkasse-nál igényelhető. Kell a szülő és a gyerek Steuer-ID-je.", tags: ["family"], linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "bookmark" },
     ],

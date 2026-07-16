@@ -505,6 +505,12 @@ export interface WeeklyOpsCounts {
   pendingRequests: number;
   /** Moderációra váró élettörténet. */
   pendingStories: number;
+  /** Új albérlet-hirdetés a héten (beküldött, státusztól függetlenül). */
+  housingNew7: number;
+  /** Élő (jóváhagyott, aktív, le nem járt) albérlet-hirdetés — állomány. */
+  housingLive: number;
+  /** Moderációra váró albérlet-hirdetés (időérzékeny!). */
+  pendingHousing: number;
 }
 
 /**
@@ -526,12 +532,16 @@ export async function getWeeklyOpsCounts(): Promise<WeeklyOpsCounts> {
            (SELECT COUNT(*) FROM push_subscriptions) AS push_total,
            (SELECT COUNT(*) FROM newsletter_subscribers) AS nl_total,
            (SELECT COUNT(*) FROM service_requests WHERE moderation_status = 0) AS pending_req,
-           (SELECT COUNT(*) FROM stories WHERE moderation_status = 0) AS pending_story`,
+           (SELECT COUNT(*) FROM stories WHERE moderation_status = 0) AS pending_story,
+           (SELECT COUNT(*) FROM kinti_housing_listings WHERE created_at >= unixepoch('now','-7 days')) AS housing7,
+           (SELECT COUNT(*) FROM kinti_housing_listings WHERE is_active = 1 AND moderation_status = 1 AND created_at > unixepoch('now','-60 days')) AS housing_live,
+           (SELECT COUNT(*) FROM kinti_housing_listings WHERE moderation_status = 0) AS pending_housing`,
       )
       .first<{
         leads7: number; locked7: number; cv7: number; quiz7: number;
         apps7: number; b2b7: number; push_total: number; nl_total: number;
         pending_req: number; pending_story: number;
+        housing7: number; housing_live: number; pending_housing: number;
       }>();
     return {
       leads7: row?.leads7 ?? 0,
@@ -544,11 +554,15 @@ export async function getWeeklyOpsCounts(): Promise<WeeklyOpsCounts> {
       newsletterSubsTotal: row?.nl_total ?? 0,
       pendingRequests: row?.pending_req ?? 0,
       pendingStories: row?.pending_story ?? 0,
+      housingNew7: row?.housing7 ?? 0,
+      housingLive: row?.housing_live ?? 0,
+      pendingHousing: row?.pending_housing ?? 0,
     };
   } catch {
     return {
       leads7: 0, lockedLeads7: 0, cv7: 0, quizPlays7: 0, jobApps7: 0, b2bNew7: 0,
       pushSubsTotal: 0, newsletterSubsTotal: 0, pendingRequests: 0, pendingStories: 0,
+      housingNew7: 0, housingLive: 0, pendingHousing: 0,
     };
   }
 }

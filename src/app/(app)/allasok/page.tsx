@@ -115,6 +115,24 @@ export default async function JobsPage() {
         {/* Hol keress még? — ország-tudatos hivatalos álláskereső-források (jogtiszta, link-out) */}
         <JobSourcesSection />
 
+        {/* Állás→lakhatás híd: az új munka gyakran költözéssel jár — a börze
+            a természetes következő lépés (és a börze kínálat-építése is). */}
+        <Link
+          href="/piacter"
+          className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-star/15 text-xl">🔑</span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[14.5px] font-extrabold leading-tight tracking-[-0.01em] text-ink">
+              Új munka, új város? Nézd az albérlet-börzét
+            </span>
+            <span className="block text-[11.5px] text-ink-muted">
+              Kiadó szobák és albérletek magyaroktól magyaroknak — vagy add fel, mit keresel.
+            </span>
+          </span>
+          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
+        </Link>
+
         <p className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[11px] leading-relaxed text-ink-muted">
           <strong className="text-ink">Jogi tájékoztató:</strong> a Kinti „Állások" modul egy{" "}
           <strong>állás-lista / közvetítő platform</strong> — <strong>nem vagyunk a munkáltató</strong>,

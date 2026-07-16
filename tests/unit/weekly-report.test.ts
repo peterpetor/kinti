@@ -5,6 +5,7 @@ const COUNTS = {
   leads7: 12, lockedLeads7: 4, cv7: 3, quizPlays7: 58,
   jobApps7: 7, b2bNew7: 1, pushSubsTotal: 21, newsletterSubsTotal: 40,
   pendingRequests: 2, pendingStories: 1,
+  housingNew7: 5, housingLive: 9, pendingHousing: 3,
 };
 
 describe("weekly-report", () => {
@@ -28,7 +29,10 @@ describe("weekly-report", () => {
     expect(r.rows.find((x) => x.label.includes("lead"))?.value).toBe("12 db — ebből zárolt: 4");
     expect(r.rows.find((x) => x.label.includes("Push"))?.value).toBe("21 fő");
     expect(r.rows.find((x) => x.label.includes("Moderációra"))?.value).toBe(
-      "2 Keresek-hirdetés · 1 élettörténet",
+      "2 Keresek-hirdetés · 1 élettörténet · 3 albérlet-hirdetés",
+    );
+    expect(r.rows.find((x) => x.label.includes("Albérlet-börze"))?.value).toBe(
+      "5 új hirdetés a héten · 9 élő",
     );
     expect(r.topPages).toEqual([{ name: "home", count: 10 }]);
     expect(r.topActions).toEqual([]);
