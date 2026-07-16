@@ -199,7 +199,7 @@ export function DropdownMenu() {
       defaultOpen: true,
       items: [
         { key: "kedvencek", label: "Kedvenceim", href: "/szaknevsor?fav=1", tint: "bg-accent/10 text-accent", icon: { name: "heart", filled: true } },
-        { key: "sajat", label: "Saját posztjaim", href: "/piacter?tab=sajatjaim", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
+        { key: "sajat", label: "Saját posztjaim", href: "/sajatjaim", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
         { key: "ranglista", label: "Közösségi ranglista", href: "/ranglista", tint: "bg-star/15", icon: { emoji: "🏆" } },
         { key: "tortenetek", label: "Élettörténetek", href: "/tortenetek", tint: "bg-accent/10", icon: { emoji: "✍️" } },
         { key: "pass", label: "Kinti Pass — kedvezménykártya", href: "/profil/kinti-pass", tint: "bg-star/15", icon: { emoji: "🎟️" } },

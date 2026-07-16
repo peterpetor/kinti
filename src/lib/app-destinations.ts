@@ -70,6 +70,8 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
   // Piactér-összevonás (2026-07-16): börze + lakbér-kalkulátor egy oldalon.
   { href: "/piacter", title: "Piactér — albérlet-börze", subtitle: "Kiadó szobák, albérletek + lakbér-kalkulátor", icon: "house",
     keywords: "lakas alberlet lakber berles kaucio ingatlan berleti lakhatas szoba kiado borze piacter hirdetes zwischenmiete untermiete wg" },
+  { href: "/piacter?tab=koltoztetes", title: "Költöztetés", subtitle: "Árajánlat magyar költöztetőktől + tippek", icon: "truck",
+    keywords: "koltoztetes koltozes fuvar fuvarozas szallitas butorszallitas teherauto umzug" },
   { href: "/tudasbazis/vam", title: "Vám-kalkulátor", subtitle: "Behozatal a svájci határon", icon: "shoppingBag", feature: "vam",
     keywords: "vam behozatal csomag import hatar zoll vamkalkulator" },
   { href: "/tudasbazis/iskolarendszer", title: "Iskolarendszer", subtitle: "Hogyan épül fel az oktatás", icon: "bookmark",
@@ -98,7 +100,7 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "ranglista toplista helyezes pontok verseny kviz eredmeny" },
   { href: "/ertesitesek", title: "Értesítések", subtitle: "Push-riasztások és üzenetek", icon: "bell",
     keywords: "ertesites push riasztas uzenet radar beallitas" },
-  { href: "/piacter?tab=sajatjaim", title: "Saját posztjaim", subtitle: "Beküldött hirdetéseid kezelése", icon: "user",
+  { href: "/sajatjaim", title: "Saját posztjaim", subtitle: "Beküldött hirdetéseid kezelése", icon: "user",
     keywords: "sajat posztjaim bekuldott hirdetesem kezeles szerkesztes" },
 ];
 

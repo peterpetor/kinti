@@ -11,22 +11,25 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Piactér — albérlet-börze, lakbér-kalkulátor és saját hirdetéseid",
+  title: "Piactér — albérlet-börze, lakbér-kalkulátor és költöztetés",
   description:
-    "Kiadó szobák és albérletek a kinti magyar közösségtől, lakásbérlés rejtett-költség kalkulátor, és a saját hirdetéseid kezelése — egy helyen.",
+    "Kiadó szobák és albérletek a kinti magyar közösségtől, lakásbérlés rejtett-költség kalkulátor, és segítség a költöztetéshez — egy helyen.",
 };
 
 /**
  * Piactér — a „keres-kínál" funkciók KÖZÖS oldala (2026-07-16 összevonás,
  * user-döntés): Börze (a korábbi /szallas-borze), Lakbér-kalkulátor (a korábbi
- * /lakberles) és Sajátjaim (a korábbi /sajatjaim) egy füles felületen. A régi
- * útvonalak permanent redirecttel ide érkeznek (?tab=…). A börze-adat + PRO-
- * státusz szerveren számolódik (a kontakt-kapuőr változatlan).
+ * /lakberles) és Költöztetés-hub egy füles felületen. A régi útvonalak
+ * permanent redirecttel ide érkeznek (?tab=…). A börze-adat + PRO-státusz
+ * szerveren számolódik (a kontakt-kapuőr változatlan).
  */
 /** A ?tab= validálása ITT (szerver-oldalon) — a piacter-tabs "use client"
- *  modul függvényei client reference-ként nem hívhatók szerver-komponensből. */
+ *  modul függvényei client reference-ként nem hívhatók szerver-komponensből.
+ *  A kivezetett ?tab=sajatjaim (a rövid életű redirect-célpont) a Börzére
+ *  esik vissza — a Saját posztjaim újra a /sajatjaim oldalon él; ide NEM
+ *  redirectelünk vissza, mert a böngészőben cache-elt 308 végtelen hurkot adna. */
 function parseTab(v: string | undefined): PiacterTab {
-  return v === "kalkulator" || v === "sajatjaim" ? v : "borze";
+  return v === "kalkulator" || v === "koltoztetes" ? v : "borze";
 }
 
 export default function PiacterPage({ searchParams }: { searchParams: { tab?: string } }) {
@@ -39,7 +42,6 @@ async function PiacterContent({ tab }: { tab: PiacterTab }) {
     getHousingListings(null, userId),
     isPro(userId),
   ]);
-  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   return (
     <PullToRefresh>
@@ -63,7 +65,6 @@ async function PiacterContent({ tab }: { tab: PiacterTab }) {
           listings={listings}
           isPro={pro}
           signedIn={!!userId}
-          turnstileSiteKey={turnstileSiteKey}
         />
       </div>
     </PullToRefresh>

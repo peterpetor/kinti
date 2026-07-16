@@ -17,7 +17,7 @@ interface FaqItem {
 const QUICK_LINKS: { href: string; label: string; emoji: string }[] = [
   { href: "/szaknevsor", label: "Szakembereket keresek", emoji: "🔍" },
   { href: "/allasok", label: "Állást keresek", emoji: "💼" },
-  { href: "/piacter?tab=sajatjaim", label: "Saját posztjaim", emoji: "📌" },
+  { href: "/sajatjaim", label: "Saját posztjaim", emoji: "📌" },
 ];
 
 const FAQS: FaqItem[] = [
@@ -28,7 +28,7 @@ const FAQS: FaqItem[] = [
         <strong>Nem.</strong> A Kinti egyik fő ígérete, hogy nincs fiók és nincs
         email-kérés. Csak nyisd meg, és használd. Amikor feladsz egy eseményt,
         a böngésződ automatikusan megjegyzi a posztodat —
-        és bármikor megnyithatod a <Link href="/piacter?tab=sajatjaim" className="text-primary underline font-bold">Saját posztjaim</Link> oldalon.
+        és bármikor megnyithatod a <Link href="/sajatjaim" className="text-primary underline font-bold">Saját posztjaim</Link> oldalon.
       </>
     ),
   },
@@ -39,7 +39,7 @@ const FAQS: FaqItem[] = [
         Két út van:
         <ol className="ml-4 mt-1 list-decimal space-y-0.5">
           <li>
-            Nyisd meg a <Link href="/piacter?tab=sajatjaim" className="text-primary underline font-bold">Saját posztjaim</Link> oldalt — ott találsz egy listát.
+            Nyisd meg a <Link href="/sajatjaim" className="text-primary underline font-bold">Saját posztjaim</Link> oldalt — ott találsz egy listát.
           </li>
           <li>
             Vagy nyisd meg a <strong>kezelő-linket</strong>, amit beküldés után

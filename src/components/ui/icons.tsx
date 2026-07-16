@@ -13,7 +13,7 @@ export type IconName =
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "youtube" | "tiktok" | "shoppingBag" | "briefcase"
   | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock"
-  | "compass" | "mail" | "shareIos" | "whatsapp" | "bed" | "house" | "key";
+  | "compass" | "mail" | "shareIos" | "whatsapp" | "bed" | "house" | "key" | "truck";
 
 const PATHS: Record<IconName, string[]> = {
   bed: ["M2 18v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8", "M2 14h20", "M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"],
@@ -24,6 +24,8 @@ const PATHS: Record<IconName, string[]> = {
   // túl hasonló volt a Főoldal "home"-jához; a kulcs félreérthetetlenül más
   // sziluett, és a kiadó szoba/kulcsátadás jelentéshez is illik).
   key: ["M7.5 12a4.5 4.5 0 1 0 0 9a4.5 4.5 0 0 0 0-9", "M10.8 13.2L21 3", "M18 5.5l2.5 2.5", "M14.8 8.7l2.3 2.3"],
+  // Költöztető-teherautó — a Piactér Költöztetés-fül ikonja.
+  truck: ["M2 7h12v9H2z", "M14 10h4l3 3v3h-7z", "M7 18.5a1.8 1.8 0 1 0 0-3.6a1.8 1.8 0 0 0 0 3.6", "M17.5 18.5a1.8 1.8 0 1 0 0-3.6a1.8 1.8 0 0 0 0 3.6"],
   lock: ["M6 10h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z", "M8 10V7a4 4 0 0 1 8 0v3"],
   search: ["M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14", "M16.5 16.5L21 21"],
   pin: ["M12 22s-7-7.5-7-13a7 7 0 0 1 14 0c0 5.5-7 13-7 13z", "M12 11.5a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5z"],

@@ -69,7 +69,7 @@ describe("searchDestinations — 2026-07 bővítés (mindenkereső)", () => {
     expect(searchDestinations("ranglista", "CH").map((d) => d.href)).toContain("/ranglista");
     expect(searchDestinations("értesítés", "NL").map((d) => d.href)).toContain("/ertesitesek");
     // 2026-07-16: a Sajátjaim a Piactér füle (piactér-összevonás).
-    expect(searchDestinations("saját posztjaim", "CH").map((d) => d.href)).toContain("/piacter?tab=sajatjaim");
+    expect(searchDestinations("saját posztjaim", "CH").map((d) => d.href)).toContain("/sajatjaim");
   });
 });
 

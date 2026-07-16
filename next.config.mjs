@@ -44,11 +44,11 @@ const nextConfig = {
       // Árfolyam+utalás összevonás (2026-07-16): az árfolyam-kalkulátor az
       // Utalás oldal tetején él tovább.
       { source: '/arfolyam', destination: '/utalas', permanent: true },
-      // Piactér-összevonás (2026-07-16): börze + lakbér-kalkulátor + sajátjaim
-      // egy füles felületen.
+      // Piactér-összevonás (2026-07-16): börze + lakbér-kalkulátor egy füles
+      // felületen. (A /sajatjaim visszakapta a saját oldalát — a harmadik fül
+      // 2026-07-16 óta a Költöztetés-hub.)
       { source: '/szallas-borze', destination: '/piacter', permanent: true },
       { source: '/lakberles', destination: '/piacter?tab=kalkulator', permanent: true },
-      { source: '/sajatjaim', destination: '/piacter?tab=sajatjaim', permanent: true },
       // Tudásbázis-konszolidáció (2026-07-16): a téma-oldalak a /tudasbazis alá
       // költöztek — a régi könyvjelzők/PWA-indítók ne fussanak 404-be.
       { source: '/vizum', destination: '/tudasbazis/vizum', permanent: true },

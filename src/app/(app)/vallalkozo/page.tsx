@@ -62,7 +62,7 @@ export default function VallalkozoPage() {
         <div className="w-full max-w-sm mx-auto mt-8 rounded-card border border-line bg-surface-alt/60 p-4 animate-fade-up animate-delay-200">
           <p className="text-[12.5px] leading-relaxed text-ink-muted">
             <strong className="text-ink">Elveszítetted a kezelő-linket?</strong> Először nézd
-            meg a böngésződ <Link href="/piacter?tab=sajatjaim" className="font-bold text-primary underline">Saját posztjaim</Link>{" "}
+            meg a böngésződ <Link href="/sajatjaim" className="font-bold text-primary underline">Saját posztjaim</Link>{" "}
             oldalát (ott automatikusan elmentődik). Ha az is üres, írj az{" "}
             <a href="mailto:info@kinti.app" className="font-bold text-primary underline">
               info@kinti.app

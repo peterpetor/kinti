@@ -13,7 +13,7 @@ export default function LeaderboardPage() {
     <div className="mx-auto max-w-md space-y-5 px-5 pb-24 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <header className="flex items-center gap-3">
         <Link
-          href="/piacter?tab=sajatjaim"
+          href="/sajatjaim"
           className="ml-auto order-last grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition-all active:scale-95"
         >
           <Icon name="arrowLeft" size={18} strokeWidth={2.4} />
