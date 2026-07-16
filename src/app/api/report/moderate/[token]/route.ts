@@ -12,6 +12,8 @@ import {
   deleteStoryById,
   setServiceRequestVisibility,
   deleteServiceRequestById,
+  setHousingListingVisibility,
+  deleteHousingListingById,
 } from "@/lib/repo";
 import { getMediaBucket } from "@/lib/cloudflare";
 
@@ -56,6 +58,8 @@ export async function GET(req: Request, { params }: { params: { token: string } 
       await setStoryPublicVisibility(report.contentId, true);
     } else if (report.contentType === "request") {
       await setServiceRequestVisibility(report.contentId, true);
+    } else if (report.contentType === "housing") {
+      await setHousingListingVisibility(report.contentId, true);
     }
     await updateContentReportStatus(params.token, "kept");
     return html(
@@ -82,6 +86,8 @@ export async function GET(req: Request, { params }: { params: { token: string } 
     if (imageKey) await getMediaBucket().delete(imageKey).catch(() => { /* silent */ });
   } else if (report.contentType === "request") {
     await deleteServiceRequestById(report.contentId);
+  } else if (report.contentType === "housing") {
+    await deleteHousingListingById(report.contentId);
   }
   await updateContentReportStatus(params.token, "removed");
   return html("Véglegesen törölve 🗑", "A bejelentett tartalmat véglegesen töröltük.", true);

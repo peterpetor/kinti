@@ -11,7 +11,7 @@ import { safeLogError } from "./safe-log";
  * (pending) állapotban van a DB-ben, és a publikus query-k szűrik.
  */
 export async function notifyAdminContentPending(params: {
-  contentType: "vélemény" | "vállalkozás" | "esemény" | "keresés" | "élettörténet";
+  contentType: "vélemény" | "vállalkozás" | "esemény" | "keresés" | "élettörténet" | "albérlet-hirdetés";
   title: string;
   preview: string;
   submitterEmail: string | null;

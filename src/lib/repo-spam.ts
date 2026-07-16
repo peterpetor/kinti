@@ -185,7 +185,7 @@ export async function logModerationStrike(ipHash: string | null, reason: string)
 /** DSA-bejelenthető tartalom-típusok — bővítésnél MIND a report route, a
  *  moderate route ÉS a lenti listOpenReports ágait is bővítsd (különben az
  *  ismeretlen típusú nyitott bejelentést a lista auto-dismissed-re tenné). */
-export type ReportContentType = "business" | "review" | "sos" | "b2b" | "story" | "request";
+export type ReportContentType = "business" | "review" | "sos" | "b2b" | "story" | "request" | "housing";
 
 export interface ContentReportInput { id: string; contentType: ReportContentType; contentId: string; reason: string | null; reporterIpHash: string | null; moderateToken: string; }
 export interface ContentReport { id: string; contentType: ReportContentType; contentId: string; status: string; }

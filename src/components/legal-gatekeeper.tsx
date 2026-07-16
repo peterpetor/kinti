@@ -21,7 +21,7 @@ function releaseBootGate() {
 
 /** A jogi feltételek verziója — a hozzájárulás-naplóhoz (GDPR demonstrálhatóság),
  *  és a jövőbeli feltétel-változáskori újra-kéréshez. Feltétel-módosításkor emeld. */
-const LEGAL_VERSION = "2026-07-15"; // Adatvédelem 2.27 (állás-radar e-mail riasztások — eddig hiányzó adatkezelési szakasz)
+const LEGAL_VERSION = "2026-07-16"; // Adatvédelem 2.28 + ÁSZF 8.2 (Szoba- és albérlet-börze)
 
 function pathIsExempt(pathname: string): boolean {
   return EXEMPT_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));

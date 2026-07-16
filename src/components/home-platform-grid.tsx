@@ -41,6 +41,7 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone; extern
   { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor", tone: "money" },
   { href: "/arfolyam", icon: "trending", label: "Árfolyam", tone: "money" },
   { href: "/lakberles", icon: "home", label: "Lakásbérlés", tone: "money" },
+  { href: "/szallas-borze", icon: "bed", label: "Albérlet-börze", tone: "money" },
   { href: "/szolgaltato-valto", icon: "filter", label: "Szolgáltató-váltó", tone: "money" },
   { href: "/utalas", icon: "send", label: "Utalás", tone: "money" },
   { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke", tone: "learn" },

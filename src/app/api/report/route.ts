@@ -13,6 +13,8 @@ import {
   setStoryPublicVisibility,
   getServiceRequestBasic,
   setServiceRequestVisibility,
+  getHousingListingBasic,
+  setHousingListingVisibility,
 } from "@/lib/repo";
 import { hashIp } from "@/lib/security";
 import { sendContentReportEmail } from "@/lib/email";
@@ -44,7 +46,8 @@ export async function POST(req: Request) {
 
   const contentType =
     body.contentType === "business" || body.contentType === "review" || body.contentType === "sos" ||
-    body.contentType === "b2b" || body.contentType === "story" || body.contentType === "request"
+    body.contentType === "b2b" || body.contentType === "story" || body.contentType === "request" ||
+    body.contentType === "housing"
       ? body.contentType
       : null;
   const contentId = typeof body.contentId === "string" ? body.contentId.trim() : "";
@@ -126,6 +129,15 @@ export async function POST(req: Request) {
       contentExcerpt = request.title.slice(0, 160);
       // Azonnali rejtés a tábláról; a routed_at claim marad (keep nem routol újra).
       await setServiceRequestVisibility(contentId, false);
+    }
+  } else if (contentType === "housing") {
+    const listing = await getHousingListingBasic(contentId);
+    if (listing) {
+      found = true;
+      contentLabel = "Albérlet-hirdetés";
+      contentExcerpt = `${listing.city}: ${listing.description.slice(0, 160)}`;
+      // Azonnali levétel a börzéről; admin „keep" visszaállítja.
+      await setHousingListingVisibility(contentId, false);
     }
   }
 

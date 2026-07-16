@@ -16,7 +16,7 @@ import { isImmersiveRoute } from "@/lib/immersive-routes";
  *   1) Főoldal    — dashboard
  *   2) Szaknévsor — vállalkozás-kereső
  *   3) Állások    — álláshirdetések / munkáltató
- *   4) Iránytű    — ingyenes bér- és lakbér-benchmark
+ *   4) Albérlet   — szoba- és albérlet-börze (a korábbi Iránytű-fül helyén)
  */
 interface Tab {
   href: string;
@@ -32,8 +32,10 @@ const TABS: Tab[] = [
   { href: "/", label: "Főoldal", icon: "home" },
   { href: "/szaknevsor", label: "Szaknévsor", icon: "list" },
   { href: "/allasok", label: "Állások", icon: "briefcase", alsoMatch: ["/munkaltato"] },
-  // Iránytű = svájci bér/lakbér-benchmark → csak CH (lib/feature-availability).
-  { href: "/iranytu", label: "Iránytű", icon: "compass", feature: "iranytu" },
+  // 2026-07-16 (user-döntés): az Iránytű fül helyét a Szoba- és albérlet-börze
+  // vette át (mind a 4 országban él → nincs feature-kapu). Az Iránytű a
+  // kezdőlapi modul-rácsról továbbra is elérhető (home-platform-grid).
+  { href: "/szallas-borze", label: "Albérlet", icon: "bed" },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {

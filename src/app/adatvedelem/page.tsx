@@ -6,7 +6,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-15">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-16">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -561,6 +561,29 @@ export default function AdatvedelemPage() {
           e-mail alján egy kattintásos leiratkozó link van</strong> — a leiratkozás a radart
           (az e-mail-címeddel és a feltételekkel együtt) <strong>azonnal és véglegesen törli</strong>.
           A radarjaidat az Állások oldalon is kezelheted és törölheted.</li>
+      </ul>
+
+      <h3>2.28 Szoba- és albérlet-börze</h3>
+      <p>
+        Az Albérlet-börzén bejelentkezett felhasználóként lakhatási hirdetést adhatsz fel
+        (kiadó szoba/lakás vagy kereső hirdetés). A hirdetéshez a következőket tároljuk:
+        a fiókod <strong>azonosítóját</strong> (Clerk userId — a hirdetés hozzád kötéséhez,
+        a saját hirdetésed törléséhez és a napi feladási limithez), a hirdetés{" "}
+        <strong>tartalmát</strong> (típus, ország, település, ár, leírás), valamint az általad{" "}
+        <strong>kapcsolatfelvételre megadott elérhetőséget</strong> (e-mail vagy telefonszám).
+        Az elérhetőséged <strong>nem nyilvános</strong>: a hirdetés-listában nem jelenik meg,
+        kizárólag bejelentkezett Kinti PRO-tagok kérhetik le, kifejezetten a veled való
+        kapcsolatfelvétel céljából.
+      </p>
+      <ul>
+        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — a hirdetés közzététele mint általad
+          kért szolgáltatás; az elérhetőség megadása a hirdetés feladásának feltétele (enélkül
+          a hirdetők nem tudnának válaszolni).</li>
+        <li><strong>Adatfeldolgozó:</strong> Cloudflare (tárolás, lásd 2.4).</li>
+        <li><strong>Tárolási idő / törlés:</strong> a hirdetésed a feladástól 60 nap után
+          automatikusan lekerül a listáról; a hirdetés melletti „Levétel" gombbal bármikor{" "}
+          <strong>azonnal és véglegesen törölheted</strong>. Bejelentett (jogsértőnek jelzett)
+          hirdetést a vizsgálat idejére azonnal elrejtünk (lásd a DSA-bejelentési pontot).</li>
       </ul>
 
       <h2>3. Cookie-k</h2>

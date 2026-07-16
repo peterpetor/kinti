@@ -6,7 +6,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-13">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-16">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -333,6 +333,43 @@ export default function AszfPage() {
         jelentkező szakember közötti megállapodásra a 8. pont irányadó: az
         üzemeltető a felek közötti ügyletben nem vesz részt.
       </p>
+
+      <h3>8.2 Szoba- és albérlet-börze</h3>
+      <p>
+        Az Albérlet-börze felhasználók közötti <strong>hirdetőtábla</strong> lakhatási
+        hirdetésekhez (kiadó szoba/lakás, illetve kereső hirdetés). Az üzemeltető{" "}
+        <strong>kizárólag a hirdetési felületet biztosítja</strong>: nem ingatlanközvetítő,
+        nem szed jutalékot, nem kezel bérleti díjat vagy kauciót, és nem részese a hirdető
+        és az érdeklődő közötti semmilyen megállapodásnak — a felek közötti ügyletre a 8.
+        pont felelősség-kizárása teljeskörűen irányadó.
+      </p>
+      <ul>
+        <li>
+          <strong>A hirdető nyilatkozata:</strong> kiadó hirdetés feladásának feltétele a
+          hirdető kifejezett nyilatkozata arról, hogy rendelkezik a tulajdonos/főbérlő
+          írásos engedélyével a lakás/szoba albérletbe (Untermiete) adásához. A nyilatkozat
+          valóságtartalmáért kizárólag a hirdető felel; valótlan nyilatkozat esetén az
+          üzemeltető a hirdetést eltávolítja, és a felhasználó hozzáférését megszüntetheti.
+        </li>
+        <li>
+          <strong>Közzététel:</strong> a börze-hirdetés a 3.2 ponttól eltérően előzetes
+          jóváhagyás nélkül, azonnal megjelenik (a lakhatási hirdetés időérzékeny) — a
+          bejelentett (jogsértőnek jelzett) hirdetést az üzemeltető a DSA szerinti
+          bejelentés-kezelés keretében a vizsgálat idejére azonnal elrejti. A hirdetés a
+          feladástól 60 nap után automatikusan lekerül a listáról.
+        </li>
+        <li>
+          <strong>Elérhetőség:</strong> a hirdetésben megadott elérhetőség nem nyilvános —
+          kizárólag bejelentkezett Kinti PRO-előfizetők kérhetik le, kizárólag az adott
+          hirdetéssel kapcsolatos kapcsolatfelvételre; gyűjtése, marketing-célú
+          felhasználása vagy továbbadása tilos.
+        </li>
+        <li>
+          <strong>A 10. pont (feketemunka tilalma) mintájára</strong> a jogszabályba ütköző
+          (pl. engedély nélküli, uzsora-jellegű vagy megtévesztő) hirdetés tilos, és
+          eltávolításra kerül.
+        </li>
+      </ul>
 
       <h2>9. B2B Hub (zárt vállalkozói projektpiac)</h2>
       <p>
