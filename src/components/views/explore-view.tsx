@@ -467,20 +467,20 @@ export function ExploreView({
         />
       </div>
 
-      {/* Szűrők sor (Kanton + Mentett kedvencek) — egysoros, vízszintesen görgethető
-          chip-sor (a wrap 2-3 szabálytalan sorba tördelt). A py/-my a shadow-card
-          levágása ellen ad teret az overflow-konténerben. */}
-      <div className="no-scrollbar kinti-hfade -my-2 flex items-center gap-2 overflow-x-auto px-5 py-2">
+      {/* Szűrők — 2 oszlopos rács (kettesével egymás alatt), hogy MINDEGYIK
+          látszódjon egyszerre (a korábbi vízszintesen görgethető chip-sor
+          végét a képernyő levágta — user-visszajelzés). */}
+      <div className="grid grid-cols-2 gap-2 px-5 py-2">
         {/* Kanton szűrő — natív alsó lap (BottomSheet) */}
         <button
           type="button"
           onClick={() => setCantonSheetOpen(true)}
-          className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border border-line bg-surface px-3 py-2 shadow-card transition hover:bg-surface-alt active:scale-[0.97]"
+          className="inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card transition hover:bg-surface-alt active:scale-[0.97]"
         >
           <Icon name="pin" size={14} strokeWidth={2.2} className="shrink-0 text-accent" />
-          <span className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Kanton</span>
-          <span className="text-[13.5px] font-bold tracking-[-0.01em] text-ink">{locationLabel}</span>
-          <Icon name="chevD" size={13} strokeWidth={2.2} className="text-ink-muted shrink-0" />
+          <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-ink-muted">Kanton</span>
+          <span className="truncate text-[13.5px] font-bold tracking-[-0.01em] text-ink">{locationLabel}</span>
+          <Icon name="chevD" size={13} strokeWidth={2.2} className="shrink-0 text-ink-muted" />
         </button>
         <BottomSheet open={cantonSheetOpen} onClose={() => setCantonSheetOpen(false)} title={`Válassz ${regionLabel(country)}t`}>
           <div className="grid grid-cols-2 gap-2 pt-1">
@@ -518,7 +518,7 @@ export function ExploreView({
           type="button"
           onClick={() => setShowFavs(!showFavs)}
           className={cn(
-            "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            "inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             showFavs
               ? "bg-accent/10 border-accent/30 text-accent font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt"
@@ -531,7 +531,7 @@ export function ExploreView({
             filled={showFavs}
             className={cn("shrink-0", showFavs ? "text-accent" : "text-ink-muted")}
           />
-          <span className="text-[11.5px] font-bold tracking-wide select-none">
+          <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
             Mentett kedvencek
           </span>
         </button>
@@ -542,14 +542,14 @@ export function ExploreView({
           onClick={() => setPassOnly((v) => !v)}
           aria-pressed={passOnly}
           className={cn(
-            "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            "inline-flex min-w-0 items-center justify-center gap-1.5 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             passOnly
               ? "bg-star/15 border-star/50 text-ink font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
           )}
         >
-          <span aria-hidden className="text-[13px] leading-none">🎟️</span>
-          <span className="text-[11.5px] font-bold tracking-wide select-none">
+          <span aria-hidden className="shrink-0 text-[13px] leading-none">🎟️</span>
+          <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
             Csak Kinti Pass helyek
           </span>
         </button>
@@ -560,7 +560,7 @@ export function ExploreView({
           onClick={() => setOpenNow((v) => !v)}
           aria-pressed={openNow}
           className={cn(
-            "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            "inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             openNow
               ? "bg-success/10 border-success/30 text-success font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
@@ -568,11 +568,11 @@ export function ExploreView({
         >
           <span
             className={cn(
-              "h-1.5 w-1.5 rounded-full",
+              "h-1.5 w-1.5 shrink-0 rounded-full",
               openNow ? "bg-success animate-pulse" : "bg-ink-faint",
             )}
           />
-          <span className="text-[11.5px] font-bold tracking-wide select-none">
+          <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
             Most nyitva
           </span>
         </button>
@@ -583,7 +583,7 @@ export function ExploreView({
           onChange={(e) => setMinYears(Number(e.target.value))}
           aria-label="Szűrés tapasztalatra"
           className={cn(
-            "inline-flex shrink-0 items-center rounded-pill border px-3 py-2 text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
+            "inline-flex min-w-0 items-center justify-center rounded-pill border px-3 py-2 text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
             minYears > 0
               ? "bg-primary/10 border-primary/30 text-primary"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
@@ -602,7 +602,7 @@ export function ExploreView({
           aria-pressed={userPos != null}
           disabled={geoState === "loading"}
           className={cn(
-            "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            "inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             userPos
               ? "bg-primary/10 border-primary/30 text-primary font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
@@ -615,7 +615,7 @@ export function ExploreView({
             strokeWidth={2.4}
             className={cn("shrink-0", userPos ? "text-primary" : "text-ink-muted")}
           />
-          <span className="text-[11.5px] font-bold tracking-wide select-none">
+          <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
             {geoState === "loading"
               ? "Helymeghatározás…"
               : userPos
@@ -626,14 +626,14 @@ export function ExploreView({
 
         {/* Radius választó — csak ha aktív a helymeghatározás */}
         {userPos && (
-          <label className="relative inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border border-primary/30 bg-primary/5 px-3 py-2 shadow-card cursor-pointer transition hover:bg-primary/10">
-            <span className="text-[11px] font-bold uppercase tracking-wide text-primary/70 select-none">
+          <label className="relative inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border border-primary/30 bg-primary/5 px-3 py-2 shadow-card cursor-pointer transition hover:bg-primary/10">
+            <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-primary/70 select-none">
               Sugár
             </span>
-            <span className="text-[13px] font-bold tracking-[-0.01em] text-primary pr-1">
+            <span className="shrink-0 text-[13px] font-bold tracking-[-0.01em] text-primary">
               {radiusKm} km
             </span>
-            <Icon name="chevD" size={13} strokeWidth={2.2} className="text-primary/70 shrink-0" />
+            <Icon name="chevD" size={13} strokeWidth={2.2} className="shrink-0 text-primary/70" />
             <select
               value={radiusKm}
               onChange={(e) => handleRadiusChange(Number(e.target.value) as RadiusKm)}
