@@ -239,6 +239,26 @@ export function taskDeadline(taskId: string, moveDateObj: Date | null): { date: 
   return { date, days: daysFromToday(date), hard: !!def.hard };
 }
 
+/**
+ * Természetes nyelvű címke a költözés dátumához KÉPESTI eltolásra (idővonal-nézet).
+ * A nyers T-eltolás (TASK_DEADLINES[id].days) → olvasható magyar mondat.
+ * Szándékosan NEM „T-30" jelölés (érthetőség a szintaxis-tipp helyett).
+ */
+export function moveOffsetLabel(offsetDays: number): string {
+  if (offsetDays === 0) return "A költözés napján";
+  if (offsetDays < 0) return `${Math.abs(offsetDays)} nappal a költözés előtt`;
+  return `${offsetDays} nappal a költözés után`;
+}
+
+/** Az idővonal-nézet szakaszába sorolás a költözéshez képesti eltolás alapján. */
+export function moveBucket(offsetDays: number): { id: string; title: string } {
+  if (offsetDays < 0) return { id: "before", title: "A költözés előtt" };
+  if (offsetDays <= 7) return { id: "arrival", title: "Az érkezés hete" };
+  if (offsetDays <= 30) return { id: "first-month", title: "Az első hónap" };
+  if (offsetDays <= 90) return { id: "settle", title: "1–3 hónap" };
+  return { id: "later", title: "Később" };
+}
+
 export function relLabel(days: number): string {
   if (days < 0) return `${Math.abs(days)} napja lejárt`;
   if (days === 0) return "ma esedékes";

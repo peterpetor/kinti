@@ -20,12 +20,16 @@ import {
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { CountryFlag } from "@/components/ui/country-flag";
+import { RelocationTimeline } from "@/components/relocation-timeline";
+
+type RelocationView = "phases" | "timeline";
 
 export default function RelocationTrackerPage() {
   const [mounted, setMounted] = useState(false);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [expandedPhase, setExpandedPhase] = useState<string>("phase-1");
   const [moveDate, setMoveDate] = useState<string>("");
+  const [view, setView] = useState<RelocationView>("phases");
   const [profile, setProfile] = useState<RelocationProfile>({ family: false, eu: true });
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
@@ -45,6 +49,8 @@ export default function RelocationTrackerPage() {
     }
     const savedDate = localStorage.getItem("kinti_relocation_movedate");
     if (savedDate) setMoveDate(savedDate);
+    const savedView = localStorage.getItem("kinti_relocation_view");
+    if (savedView === "timeline" || savedView === "phases") setView(savedView);
     try {
       const p = localStorage.getItem("kinti_relocation_profile");
       if (p) setProfile({ family: false, eu: true, ...JSON.parse(p) });
@@ -74,6 +80,15 @@ export default function RelocationTrackerPage() {
     setMoveDate(v);
     try {
       localStorage.setItem("kinti_relocation_movedate", v);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const changeView = (v: RelocationView) => {
+    setView(v);
+    try {
+      localStorage.setItem("kinti_relocation_view", v);
     } catch {
       /* ignore */
     }
@@ -218,7 +233,27 @@ export default function RelocationTrackerPage() {
         )}
       </div>
 
-      <div className="px-4 py-2 space-y-4">
+      {/* Nézet-váltó: szakaszok (téma szerint) vagy idővonal (dátum szerint) */}
+      <div className="mt-2 flex items-center justify-between px-4">
+        <h2 className="text-[13px] font-bold uppercase tracking-wide text-ink/70">Teendők</h2>
+        <div role="tablist" aria-label="Nézet" className="inline-flex rounded-pill border border-border-subtle bg-surface p-0.5 text-[11.5px] font-bold shadow-card">
+          <ViewTab active={view === "phases"} onClick={() => changeView("phases")} label="Szakaszok" icon="list" />
+          <ViewTab active={view === "timeline"} onClick={() => changeView("timeline")} label="Idővonal" icon="calendar" />
+        </div>
+      </div>
+
+      {view === "timeline" && (
+        <div className="px-4 py-3">
+          <RelocationTimeline
+            tasks={PHASES.flatMap((p) => p.tasks)}
+            completed={completedTasks}
+            onToggle={toggleTask}
+            moveDate={moveDateObj}
+          />
+        </div>
+      )}
+
+      <div className={cn("px-4 py-2 space-y-4", view === "timeline" && "hidden")}>
         {PHASES.map((phase, index) => {
           const isExpanded = expandedPhase === phase.id;
           const phaseTasksCompleted = phase.tasks.filter((t) => completedTasks.includes(t.id)).length;
@@ -339,6 +374,25 @@ export default function RelocationTrackerPage() {
         })}
       </div>
     </div>
+  );
+}
+
+/** Nézet-váltó fül (szakaszok / idővonal). */
+function ViewTab({ active, onClick, label, icon }: { active: boolean; onClick: () => void; label: string; icon: IconName }) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 transition",
+        active ? "bg-primary text-white shadow-card" : "text-ink/60 hover:text-ink",
+      )}
+    >
+      <Icon name={icon} size={12} strokeWidth={2.2} />
+      {label}
+    </button>
   );
 }
 
