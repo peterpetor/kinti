@@ -391,6 +391,18 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                     </div>
                   </a>
                 ))}
+                {/* Forrás-attribúció (API-feltétel, pl. Adzuna): kattintható
+                    forrás-linkek a lista alatt — a kártya-link maga a forrásra
+                    mutat, ez a sor a formális „powered by" követelményt fedi. */}
+                <p className="px-1 text-[10.5px] leading-snug text-ink-faint">
+                  Az élő hirdetések forrása:{" "}
+                  <a href="https://www.adzuna.at/" target="_blank" rel="noopener noreferrer" className="underline">Adzuna</a>,{" "}
+                  <a href="https://jooble.org/" target="_blank" rel="noopener noreferrer" className="underline">Jooble</a>,{" "}
+                  <a href="https://www.arbeitnow.com/" target="_blank" rel="noopener noreferrer" className="underline">Arbeitnow</a>{" "}
+                  és a hivatalos{" "}
+                  <a href="https://www.job-room.ch/" target="_blank" rel="noopener noreferrer" className="underline">job-room.ch</a>{" "}
+                  (SECO). A találat a forrás oldalán nyílik meg — tartalmáért a forrás, illetve az eredeti hirdető felel.
+                </p>
               </>
             )}
           </>

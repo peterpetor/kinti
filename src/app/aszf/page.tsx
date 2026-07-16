@@ -6,7 +6,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-16">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-17">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -479,6 +479,17 @@ export default function AszfPage() {
           adatvédelmi előírásoknak, és nem irányul be nem jelentett (Schwarzarbeit) vagy
           engedély nélküli foglalkoztatásra (lásd 10. pont). A jogsértő hirdetéseket
           értesítés vagy saját észlelés alapján eltávolítjuk.
+        </li>
+        <li>
+          <strong>Külső (aggregált) hirdetések.</strong> Az Állások modul harmadik
+          felek erre szolgáló aggregátor-API-jaiból (pl. Adzuna, Jooble, Arbeitnow,
+          job-room.ch) származó hirdetéseket is megjeleníthet. Ezek látható
+          forrás-jelöléssel („via …") jelennek meg, és a forrás oldalára mutatnak;
+          tartalmukért, frissességükért és jogszerűségükért a forrás, illetve az
+          eredeti hirdető felel. Az üzemeltető ezekből kizárólag alap-metaadatot
+          (cím, cég, település, bér-sáv, forrás-link) tárol átmenetileg a lista
+          megjelenítéséhez — a hirdetés szövegét nem veszi át, a régóta nem frissülő
+          tételeket automatikusan törli.
         </li>
       </ul>
 
