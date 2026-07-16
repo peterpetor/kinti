@@ -122,6 +122,17 @@ export function HousingCard({
 
       <p className="mt-1 line-clamp-3 text-[12.5px] leading-snug text-ink-muted">{listing.description}</p>
 
+      {/* DSA 17. cikk (indokolás): az elutasítás oka + jogorvoslati kontakt a
+          feladónak — a moderáció nem tárol egyedi indokot, ezért a feltétel-
+          hivatkozás a hiteles közlés. */}
+      {listing.own && listing.rejected && (
+        <p className="mt-2 rounded-card bg-accent/5 px-3 py-2 text-[11px] leading-snug text-ink-muted">
+          A hirdetést az adminisztrátor nem hagyta jóvá, mert nem felelt meg a hirdetési
+          feltételeknek (ÁSZF 8.2). Ha szerinted tévedés történt, írj nekünk:{" "}
+          <a href="mailto:info@kinti.app" className="font-bold text-primary underline">info@kinti.app</a>.
+        </p>
+      )}
+
       <div className="mt-3 flex items-center justify-between gap-2">
         <span className="text-[11px] font-semibold text-ink-faint">
           Feladva: {housingAgeLabel(listing.createdAt)}

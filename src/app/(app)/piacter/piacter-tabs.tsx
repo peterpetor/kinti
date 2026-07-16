@@ -177,6 +177,10 @@ export function PiacterTabs({
                 </span>
               </li>
             </ul>
+            <p className="mt-2 text-[10.5px] leading-snug text-ink-faint">
+              A tippek tájékoztató jellegűek, nem minősülnek jogi tanácsadásnak — a pontos
+              szabályok városonként és kantononként/tartományonként eltérhetnek.
+            </p>
           </details>
         </div>
       )}
