@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Icon, type IconName } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { RentCostCalculator } from "@/components/views/rent-cost-calculator";
+import { HousingSourcesSection } from "@/components/views/housing-sources-section";
 import { HOUSING_DISCLAIMER, HOUSING_SAFETY_TIPS } from "@/lib/housing";
 import type { HousingListing } from "@/lib/repo-housing";
 import { HousingFeed } from "./housing-feed";
@@ -122,6 +123,10 @@ export function PiacterTabs({
             </ul>
           </details>
           <HousingFeed listings={listings} isPro={isPro} signedIn={signedIn} />
+          {/* Link-out a fő portálokra — a börze így sosem „üres" (jogtiszta:
+              csak kilinkelünk, idegen hirdetést nem tárolunk/mutatunk —
+              részletek a lib/housing-sources fejlécében). */}
+          <HousingSourcesSection />
         </div>
       )}
 
