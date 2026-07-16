@@ -297,9 +297,10 @@ function previewLink(table: ModerationTable, id: string): string {
       // mutat (teljes szöveg a döntés előtt — „én ellenőrzöm mindet" flow).
       return `/tortenetek/${id}`;
     case "kinti_housing_listings":
-      // Pending hirdetés a publikus börzén nem látszik — a queue-sor previewje
-      // (teljes leírás + ár) elegendő a döntéshez; a link a Piactérre visz.
-      return `/piacter`;
+      // Jóváhagyott hirdetésnél a mély-link odagörget + kiemel; pending a
+      // publikus börzén nem látszik (ott a queue-preview elegendő a döntéshez),
+      // ilyenkor a link egyszerűen a Piactéren landol.
+      return `/piacter?hirdetes=${id}`;
   }
 }
 

@@ -188,14 +188,15 @@ export async function purgeExpiredHousing(): Promise<number> {
   return res.meta?.changes ?? 0;
 }
 
-/** Push-értesítéshez szükséges mezők (kontakt NÉLKÜL) — a moderációs
- *  jóváhagyás-hook hívja. */
+/** Publikus alap-mezők (kontakt NÉLKÜL, csak JÓVÁHAGYOTT hirdetésről) — a
+ *  moderációs jóváhagyás-hook (push) és a megosztott link OG-metája hívja.
+ *  (A decide-hook a status=1 beállítása UTÁN fut, így a szűrő ott is helyes.) */
 export async function getHousingListingForNotify(id: string): Promise<{
   type: string; country: string; city: string; regionCode: string | null;
   price: number; currency: string;
 } | null> {
   const row = await getDB()
-    .prepare("SELECT type, country, city, region_code, price, currency FROM kinti_housing_listings WHERE id = ? AND is_active = 1")
+    .prepare("SELECT type, country, city, region_code, price, currency FROM kinti_housing_listings WHERE id = ? AND is_active = 1 AND moderation_status = 1")
     .bind(id)
     .first<{ type: string; country: string; city: string; region_code: string | null; price: number; currency: string }>();
   if (!row) return null;

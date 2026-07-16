@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -184,6 +185,15 @@ export function HousingFeed({
               </p>
             </>
           )}
+          {/* Az üres állapot ne zsákutca legyen: a régió-push feliratkozás a
+              „gyere vissza"-hurok — szólunk, amint jön ide hirdetés. */}
+          <Link
+            href="/ertesitesek"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-pill border border-primary/40 bg-primary/10 px-4 py-2 text-[12px] font-extrabold text-primary transition active:scale-[0.98]"
+          >
+            <Icon name="bell" size={13} strokeWidth={2.4} />
+            Szólunk, ha új hirdetés érkezik a régiódba
+          </Link>
         </div>
       ) : (
         <div className="grid gap-2.5">
