@@ -5,6 +5,7 @@ import {
   createHousingListing,
   countRecentHousingByUser,
   deleteOwnHousingListing,
+  renewOwnHousingListing,
 } from "@/lib/repo";
 import { validateHousingInput } from "@/lib/housing";
 import { isValidCountry } from "@/lib/countries";
@@ -78,6 +79,26 @@ export async function POST(req: Request) {
   if (ctx) ctx.waitUntil(notify); else await notify;
 
   return NextResponse.json({ ok: true, id, message: "Köszönjük! A hirdetést jóváhagyás után tesszük közzé." });
+}
+
+/**
+ * PATCH /api/housing?id=… — saját hirdetés MEGÚJÍTÁSA (csak a feladó, csak a
+ * lejárat-ablakban: ≤7 nap hátra vagy már lejárt). A tartalom nem változik,
+ * ezért nem megy újra moderációba; a created_at új 60 napos ciklust indít.
+ */
+export async function PATCH(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: "Jelentkezz be." }, { status: 401 });
+  const id = req.nextUrl.searchParams.get("id")?.trim() ?? "";
+  if (!id) return NextResponse.json({ error: "Hiányzó azonosító." }, { status: 400 });
+  const renewed = await renewOwnHousingListing(id, userId);
+  if (!renewed) {
+    return NextResponse.json(
+      { error: "A hirdetés még nem újítható meg (csak a lejárat előtti héten), vagy nem a tiéd." },
+      { status: 409 },
+    );
+  }
+  return NextResponse.json({ ok: true, message: "A hirdetés újabb 60 napig látható." });
 }
 
 /** DELETE /api/housing?id=… — saját hirdetés levétele (csak a feladó). */

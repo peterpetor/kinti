@@ -194,6 +194,30 @@ export async function POST(req: Request) {
       }
     }
 
+    // Albérlet-hirdetés jóváhagyása → régió-célzott push a „housing" kategória
+    // feliratkozóinak (0136 pref): „új albérlet a régiódban". CSAK kiadó
+    // hirdetésről (a kereső hirdetés nem esemény a lakást keresőknek), és CSAK
+    // ha van régió-kód (régió nélkül minden feliratkozónak menne — országhatáron
+    // át is; azt nem engedjük, 0129-minta). Best-effort, háttérben.
+    if (table === "kinti_housing_listings" && statusValue === 1) {
+      try {
+        const { getHousingListingForNotify } = await import("@/lib/repo");
+        const listing = await getHousingListingForNotify(id);
+        if (listing && listing.regionCode && listing.type !== "looking_for_room") {
+          const typeWord = listing.type === "room_offered" ? "Kiadó szoba" : "Kiadó lakás";
+          getCloudflareCtx()?.waitUntil(
+            notifyCanton(listing.regionCode, {
+              title: "🔑 Új albérlet-hirdetés a régiódban",
+              body: `${typeWord} — ${listing.city}, ${listing.price} ${listing.currency}/hó`,
+              url: "/piacter",
+            }, "housing"),
+          );
+        }
+      } catch (e) {
+        safeLogError("moderation/housing-push", e);
+      }
+    }
+
     // „Keresek" jóváhagyása → fordított lead-routing a kategóriabeli cégeknek
     // (PRO teljes kontakttal, nem-PRO zárolt teaserrel). Háttérben, best-effort;
     // a routed_at claim idempotenssé teszi (újra-jóváhagyás nem küld duplán).

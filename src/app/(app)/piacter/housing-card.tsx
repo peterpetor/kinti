@@ -7,7 +7,8 @@ import { cn } from "@/lib/cn";
 import { COUNTRIES } from "@/lib/countries";
 import { regionName } from "@/lib/regions";
 import { ReportButton } from "@/components/report-button";
-import { formatHousingPrice, housingAgeLabel, HOUSING_TYPE_LABELS, HOUSING_REVEAL_CAUTION } from "@/lib/housing";
+import { trackAction } from "@/components/usage-tracker";
+import { formatHousingPrice, housingAgeLabel, housingDaysLeft, HOUSING_TYPE_LABELS, HOUSING_REVEAL_CAUTION } from "@/lib/housing";
 import type { HousingListing } from "@/lib/repo-housing";
 import { ProPaywallModal } from "./pro-paywall-modal";
 
@@ -32,9 +33,14 @@ export function HousingCard({
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [removing, setRemoving] = useState(false);
+  const [renewing, setRenewing] = useState(false);
 
   const flag = COUNTRIES.find((c) => c.code === listing.country)?.flag ?? "";
   const offer = listing.type !== "looking_for_room";
+  // Lejárat-jelzés CSAK a saját hirdetésen: az utolsó héten megújítható,
+  // lejárat után „Lejárt" badge-dzsel marad látható a feladónak.
+  const daysLeft = housingDaysLeft(listing.createdAt);
+  const renewable = listing.own && !listing.pending && !listing.rejected && daysLeft <= 7;
 
   async function reveal() {
     if (!signedIn) {
@@ -42,6 +48,7 @@ export function HousingCard({
       return;
     }
     if (!isPro) {
+      trackAction("housing-paywall"); // PRO-tölcsér: paywall-megnyitás
       setPaywallOpen(true);
       return;
     }
@@ -52,6 +59,7 @@ export function HousingCard({
       const data = (await res.json().catch(() => ({}))) as { contact?: string; error?: string };
       if (res.status === 403) { setPaywallOpen(true); return; } // szerver a hiteles forrás
       if (!res.ok || !data.contact) { setError(data.error ?? "Nem sikerült betölteni."); return; }
+      trackAction("housing-reveal"); // PRO-tölcsér: sikeres kontakt-felfedés
       setContact(data.contact);
     } catch {
       setError("Hálózati hiba. Próbáld újra.");
@@ -67,6 +75,25 @@ export function HousingCard({
       if (res.ok) router.refresh();
     } finally {
       setRemoving(false);
+    }
+  }
+
+  async function renewOwn() {
+    setRenewing(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/housing?id=${encodeURIComponent(listing.id)}`, { method: "PATCH" });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (res.ok) {
+        trackAction("housing-renew");
+        router.refresh();
+      } else {
+        setError(data.error ?? "Nem sikerült a megújítás.");
+      }
+    } catch {
+      setError("Hálózati hiba. Próbáld újra.");
+    } finally {
+      setRenewing(false);
     }
   }
 
@@ -90,6 +117,11 @@ export function HousingCard({
           {listing.own && listing.rejected && (
             <span className="inline-flex items-center gap-1 rounded-pill bg-accent/15 px-2 py-0.5 text-[10.5px] font-extrabold text-accent">
               <Icon name="close" size={10} strokeWidth={2.8} /> Elutasítva — nem jelenik meg
+            </span>
+          )}
+          {listing.own && listing.expired && !listing.pending && !listing.rejected && (
+            <span className="inline-flex items-center gap-1 rounded-pill bg-star/15 px-2 py-0.5 text-[10.5px] font-extrabold text-star">
+              <Icon name="clock" size={10} strokeWidth={2.6} /> Lejárt — nem látható
             </span>
           )}
           {listing.own && (
@@ -138,7 +170,25 @@ export function HousingCard({
           Feladva: {housingAgeLabel(listing.createdAt)}
         </span>
 
-        {listing.own ? null : contact ? (
+        {listing.own ? (
+          renewable ? (
+            /* Megújítás az utolsó héten / lejárat után — a tartalom nem változik,
+               nem megy újra moderációba (a szerver a hiteles kapu: 409 ha korai). */
+            <button
+              type="button"
+              onClick={renewOwn}
+              disabled={renewing}
+              className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12.5px] font-extrabold text-white shadow-card-hover transition active:scale-[0.98] disabled:opacity-60"
+            >
+              <Icon name="clock" size={13} strokeWidth={2.4} />
+              {renewing
+                ? "Megújítás…"
+                : listing.expired
+                  ? "Újra közzéteszem (60 nap)"
+                  : `Meghosszabbítás (még ${Math.max(daysLeft, 0)} nap)`}
+            </button>
+          ) : null
+        ) : contact ? (
           <ContactValue value={contact} />
         ) : loading ? (
           /* Skeleton a kontakt betöltése alatt */

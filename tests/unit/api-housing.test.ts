@@ -19,6 +19,7 @@ vi.mock("@/lib/repo", () => ({
   countRecentHousingByUser: vi.fn(),
   deleteOwnHousingListing: vi.fn(),
   getHousingContactInfo: vi.fn(),
+  renewOwnHousingListing: vi.fn(),
 }));
 
 import { NextRequest } from "next/server";
@@ -31,8 +32,9 @@ import {
   countRecentHousingByUser,
   getHousingContactInfo,
   deleteOwnHousingListing,
+  renewOwnHousingListing,
 } from "@/lib/repo";
-import { POST, DELETE } from "@/app/api/housing/route";
+import { POST, DELETE, PATCH } from "@/app/api/housing/route";
 import { GET as GET_CONTACT } from "@/app/api/housing/contact/route";
 
 function postReq(body: unknown) {
@@ -168,6 +170,36 @@ describe("DELETE /api/housing — saját hirdetés levétele", () => {
   it("saját hirdetés → 200", async () => {
     vi.mocked(deleteOwnHousingListing).mockResolvedValue(true);
     const res = await DELETE(req());
+    expect(res.status).toBe(200);
+  });
+});
+
+describe("PATCH /api/housing — megújítás a lejárat-ablakban", () => {
+  const req = (id = "listing-1") =>
+    new NextRequest(`https://kinti.app/api/housing?id=${id}`, { method: "PATCH" });
+
+  it("belépés nélkül → 401, nincs UPDATE", async () => {
+    vi.mocked(auth).mockResolvedValue({ userId: null } as never);
+    const res = await PATCH(req());
+    expect(res.status).toBe(401);
+    expect(renewOwnHousingListing).not.toHaveBeenCalled();
+  });
+
+  it("hiányzó id → 400", async () => {
+    const res = await PATCH(new NextRequest("https://kinti.app/api/housing", { method: "PATCH" }));
+    expect(res.status).toBe(400);
+  });
+
+  it("korai megújítás / idegen hirdetés → 409 (a repo-őr a hiteles kapu)", async () => {
+    vi.mocked(renewOwnHousingListing).mockResolvedValue(false);
+    const res = await PATCH(req());
+    expect(res.status).toBe(409);
+    expect(renewOwnHousingListing).toHaveBeenCalledWith("listing-1", "user_1");
+  });
+
+  it("saját hirdetés a lejárat-ablakban → 200", async () => {
+    vi.mocked(renewOwnHousingListing).mockResolvedValue(true);
+    const res = await PATCH(req());
     expect(res.status).toBe(200);
   });
 });

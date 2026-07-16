@@ -139,6 +139,15 @@ export function formatHousingPrice(type: HousingType, price: number, currency: s
   return type === "looking_for_room" ? `max ${base}` : base;
 }
 
+/** A hirdetés élettartama napokban — utána lejár (a feladó megújíthatja).
+ *  A repo-housing lista-szűrője és a kártya lejárat-jelzése is ezt használja. */
+export const HOUSING_TTL_DAYS = 60;
+
+/** Hátralévő láthatóság egész napokban (0 = ma jár le, negatív = lejárt). */
+export function housingDaysLeft(createdAtSec: number, nowMs: number = Date.now()): number {
+  return Math.ceil((createdAtSec + HOUSING_TTL_DAYS * 86_400 - nowMs / 1000) / 86_400);
+}
+
 /** Relatív feladás-idő címke unixepoch (mp) alapján: „ma", „3 napja"… */
 export function housingAgeLabel(createdAtSec: number, nowMs: number = Date.now()): string {
   const days = Math.floor((nowMs / 1000 - createdAtSec) / 86_400);

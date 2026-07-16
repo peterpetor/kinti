@@ -3,6 +3,8 @@ import {
   validateHousingInput,
   formatHousingPrice,
   housingAgeLabel,
+  housingDaysLeft,
+  HOUSING_TTL_DAYS,
   HOUSING_TYPE_LABELS,
   HOUSING_TYPES,
 } from "@/lib/housing";
@@ -116,5 +118,21 @@ describe("housingAgeLabel", () => {
     expect(housingAgeLabel(daysAgo(3), now)).toBe("3 napja");
     expect(housingAgeLabel(daysAgo(14), now)).toBe("2 hete");
     expect(housingAgeLabel(daysAgo(45), now)).toBe("2 hónapja");
+  });
+});
+
+describe("housingDaysLeft — a lejárat-ablak számítása", () => {
+  const now = Date.now();
+  const daysAgo = (d: number) => Math.floor(now / 1000) - d * 86_400;
+  it("friss hirdetés: a teljes élettartam van hátra", () => {
+    expect(housingDaysLeft(daysAgo(0), now)).toBe(HOUSING_TTL_DAYS);
+  });
+  it("az utolsó héten: pontos hátralévő napok (megújítás-gomb feltétele: ≤7)", () => {
+    expect(housingDaysLeft(daysAgo(HOUSING_TTL_DAYS - 7), now)).toBe(7);
+    expect(housingDaysLeft(daysAgo(HOUSING_TTL_DAYS - 1), now)).toBe(1);
+  });
+  it("lejárt hirdetés: nulla vagy negatív", () => {
+    expect(housingDaysLeft(daysAgo(HOUSING_TTL_DAYS), now)).toBeLessThanOrEqual(0);
+    expect(housingDaysLeft(daysAgo(HOUSING_TTL_DAYS + 30), now)).toBe(-30);
   });
 });

@@ -18,14 +18,14 @@ export async function GET(req: Request) {
   }
   const prefs = await getPushPreferences(endpoint);
   return NextResponse.json(
-    { subscribed: !!prefs, preferences: prefs ?? { notifyBusiness: true, notifyEvent: true, notifyJob: true, notifyDaily: true, notifyKeresek: true } },
+    { subscribed: !!prefs, preferences: prefs ?? { notifyBusiness: true, notifyEvent: true, notifyJob: true, notifyDaily: true, notifyKeresek: true, notifyHousing: true } },
     { headers: { "cache-control": "no-store" } },
   );
 }
 
 export async function PATCH(req: Request) {
   const body = (await req.json().catch(() => ({}))) as {
-    endpoint?: string; notifyBusiness?: boolean; notifyEvent?: boolean; notifyJob?: boolean; notifyDaily?: boolean; notifyKeresek?: boolean;
+    endpoint?: string; notifyBusiness?: boolean; notifyEvent?: boolean; notifyJob?: boolean; notifyDaily?: boolean; notifyKeresek?: boolean; notifyHousing?: boolean;
   };
   const endpoint = typeof body.endpoint === "string" ? body.endpoint.trim() : "";
   if (!/^https:\/\//.test(endpoint)) {
@@ -37,6 +37,7 @@ export async function PATCH(req: Request) {
     notifyJob: body.notifyJob !== false,
     notifyDaily: body.notifyDaily !== false,
     notifyKeresek: body.notifyKeresek !== false,
+    notifyHousing: body.notifyHousing !== false,
   });
   if (!ok) {
     return NextResponse.json({ error: "Nincs ilyen feliratkozás." }, { status: 404 });

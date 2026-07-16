@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { trackAction } from "@/components/usage-tracker";
 import { COUNTRIES } from "@/lib/countries";
 import { getRegions, regionLabel } from "@/lib/regions";
 import {
@@ -73,6 +74,7 @@ export function ComposerModal({
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) { setError(data.error ?? "Nem sikerült feladni a hirdetést."); return; }
+      trackAction("housing-submit"); // tölcsér-mérés: sikeres feladás
       // Siker: űrlap-nullázás a következő nyitáshoz.
       setCity(""); setPrice(""); setDescription(""); setContact(""); setConsent(false);
       onCreated();

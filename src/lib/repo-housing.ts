@@ -7,6 +7,7 @@
  * felvételekor ezt a határt tartsd meg.
  */
 import { getDB } from "./cloudflare";
+import { HOUSING_TTL_DAYS } from "./housing";
 import type { HousingInput, HousingType } from "./housing";
 
 export interface HousingListing {
@@ -27,6 +28,9 @@ export interface HousingListing {
   /** Elutasított — CSAK a feladó látja a sajátját (DSA-átláthatóság: tudja,
    *  hogy a hirdetése NEM jelenik meg, és le tudja venni / újat adhat fel). */
   rejected?: boolean;
+  /** Lejárt (60 napnál régebbi) — CSAK a feladó látja a sajátját, megújítás-
+   *  gombbal; másnak nem jelenik meg. */
+  expired?: boolean;
 }
 
 interface Row {
@@ -46,6 +50,7 @@ function toListing(r: Row, viewerUserId?: string | null): HousingListing {
     createdAt: r.created_at, own: viewerUserId != null && r.user_id === viewerUserId,
     pending: r.moderation_status === 0,
     rejected: r.moderation_status === 2,
+    expired: r.created_at <= Math.floor(Date.now() / 1000) - HOUSING_TTL_DAYS * 86_400,
   };
 }
 
@@ -62,13 +67,18 @@ export async function getHousingListings(
 ): Promise<HousingListing[]> {
   const binds: unknown[] = [];
   let visibility = "moderation_status = 1";
+  let freshness = `created_at > unixepoch('now', '-${HOUSING_TTL_DAYS} days')`;
   if (viewerUserId) {
     // A feladó a saját FÜGGŐ és ELUTASÍTOTT hirdetését is látja (badge-dzsel) —
     // DSA-átláthatóság: tudja, mi történt vele, és le tudja venni.
     visibility = "(moderation_status = 1 OR (moderation_status IN (0, 2) AND user_id = ?))";
     binds.push(viewerUserId);
+    // A LEJÁRT saját hirdetés is látszik a feladónak („Lejárt" badge +
+    // megújítás-gomb) — másnak nem; így a hirdetés nem tűnik el némán.
+    freshness = `(${freshness} OR user_id = ?)`;
+    binds.push(viewerUserId);
   }
-  let where = `is_active = 1 AND ${visibility} AND created_at > unixepoch('now', '-60 days')`;
+  let where = `is_active = 1 AND ${visibility} AND ${freshness}`;
   if (country) { where += " AND country = ?"; binds.push(country); }
   const { results } = await getDB()
     .prepare(`SELECT ${PUBLIC_COLS} FROM kinti_housing_listings WHERE ${where} ORDER BY created_at DESC LIMIT 100`)
@@ -95,13 +105,53 @@ export async function createHousingListing(input: HousingInput & { userId: strin
 }
 
 /** A kontakt — KIZÁRÓLAG a PRO-gated /api/housing/contact hívja (szerver-kapu).
- *  Csak jóváhagyott hirdetésé adható ki (pending/elutasított → null). */
+ *  Csak jóváhagyott ÉS le nem járt hirdetésé adható ki (pending/elutasított/
+ *  lejárt → null — lejárt hirdetés kontaktja azonosító birtokában se szivárogjon). */
 export async function getHousingContactInfo(id: string): Promise<string | null> {
   const row = await getDB()
-    .prepare("SELECT contact_info FROM kinti_housing_listings WHERE id = ? AND is_active = 1 AND moderation_status = 1")
+    .prepare(
+      `SELECT contact_info FROM kinti_housing_listings
+       WHERE id = ? AND is_active = 1 AND moderation_status = 1
+         AND created_at > unixepoch('now', '-${HOUSING_TTL_DAYS} days')`,
+    )
     .bind(id)
     .first<{ contact_info: string }>();
   return row?.contact_info ?? null;
+}
+
+/**
+ * Saját hirdetés megújítása: a created_at MOST-ra áll (új 60 napos ciklus).
+ * Csak a feladó, csak jóváhagyott+aktív hirdetésre, és csak a lejárat-ablakban
+ * (≤7 nap hátralévő vagy már lejárt) — a tartalom nem változik, ezért NEM megy
+ * újra moderációba. A friss hirdetés megújítása tiltott (lista-élre ugrálás ellen).
+ */
+export async function renewOwnHousingListing(id: string, userId: string): Promise<boolean> {
+  const res = await getDB()
+    .prepare(
+      `UPDATE kinti_housing_listings SET created_at = unixepoch('now')
+       WHERE id = ? AND user_id = ? AND is_active = 1 AND moderation_status = 1
+         AND created_at <= unixepoch('now', '-${HOUSING_TTL_DAYS - 7} days')`,
+    )
+    .bind(id, userId)
+    .run();
+  return (res.meta?.changes ?? 0) > 0;
+}
+
+/** Push-értesítéshez szükséges mezők (kontakt NÉLKÜL) — a moderációs
+ *  jóváhagyás-hook hívja. */
+export async function getHousingListingForNotify(id: string): Promise<{
+  type: string; country: string; city: string; regionCode: string | null;
+  price: number; currency: string;
+} | null> {
+  const row = await getDB()
+    .prepare("SELECT type, country, city, region_code, price, currency FROM kinti_housing_listings WHERE id = ? AND is_active = 1")
+    .bind(id)
+    .first<{ type: string; country: string; city: string; region_code: string | null; price: number; currency: string }>();
+  if (!row) return null;
+  return {
+    type: row.type, country: row.country, city: row.city,
+    regionCode: row.region_code, price: row.price, currency: row.currency,
+  };
 }
 
 /** Mai (24h) feladások egy felhasználótól — napi rate-limit. */
