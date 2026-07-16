@@ -41,7 +41,7 @@ export default function VelemenyMegerositvePage({
             A vélemény-megerősítő link 24 óráig érvényes, és ez letelt — vagy
             a link már felhasználásra került.
             <br/><br/>
-            <strong>Tipp:</strong> Bizonyos levelezők (pl. Gmail) automatikusan rákattintanak a linkekre biztonsági ellenőrzés céljából. Ha ez történt, a véleményed <strong>már sikeresen megjelent</strong>! Nézd meg a vállalkozás adatlapját.
+            <strong>Tipp:</strong> Bizonyos levelezők (pl. Gmail) automatikusan rákattintanak a linkekre biztonsági ellenőrzés céljából. Ha ez történt, a véleményed <strong>már megerősítésre került</strong>, és jóváhagyás után megjelenik a vállalkozás adatlapján.
           </p>
           <Link
             href="/szaknevsor"
@@ -78,10 +78,11 @@ export default function VelemenyMegerositvePage({
             <Icon name="check" size={22} strokeWidth={2.4} />
           </div>
           <h1 className="text-balance text-[22px] font-extrabold tracking-tight text-ink">
-            Kint van a véleményed!
+            Megerősítve — köszönjük!
           </h1>
           <p className="text-pretty text-[14px] leading-relaxed text-ink-muted">
-            Köszönjük — segítesz a Kinti közösségnek, hogy jobban válasszanak.
+            Az értékelésed egy rövid jóváhagyás után jelenik meg (jellemzően 24 órán
+            belül) — segítesz a Kinti közösségnek, hogy jobban válasszanak.
             A megerősítő emailedben őrizd meg a kezelő linket: onnan tudod
             később törölni.
           </p>

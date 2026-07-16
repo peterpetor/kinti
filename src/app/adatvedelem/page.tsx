@@ -6,7 +6,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-16">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-17">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -255,8 +255,9 @@ export default function AdatvedelemPage() {
       <h3>2.12 Push értesítések (kanton-célzott)</h3>
       <p>
         A böngésződben engedélyezheted a Push értesítéseket, hogy szóljunk az új
-        vállalkozásokról, állásokról és „Keresek" igény-hirdetésekről a kantonodban
-        (illetve bizonyos témákban, pl. árfolyam-radar, napi emlékeztető). A
+        vállalkozásokról, állásokról, „Keresek" igény-hirdetésekről és kiadó
+        albérlet-hirdetésekről a régiódban (illetve bizonyos témákban, pl. napi
+        emlékeztető, szezonális teendők). A
         kategóriák egyenként ki-be kapcsolhatók az Értesítések oldalon. A
         feliratkozáskor a következőket tároljuk az
         adatbázisunkban: a böngésződ által generált, személytelen feliratkozási
@@ -276,20 +277,14 @@ export default function AdatvedelemPage() {
         <li><strong>Jogi nyilatkozat (Árfolyam):</strong> Az értesítések tartalmáért (különösen a pénzügyi, árfolyami adatokért) felelősséget nem vállalunk. Az adatok tájékoztató jellegűek, a késésekből vagy pontatlanságokból eredő anyagi károkért a kinti.app nem perelhető.</li>
       </ul>
 
-      <h3>2.13 Akció-térkép (bolt-akció bejelentés)</h3>
+      <h3>2.13 Akció-térkép (bolt-akció bejelentés) — MEGSZŰNT</h3>
       <p>
-        Az akció bejelentésekor az alábbi adatok kerülnek rögzítésre:
+        Az Akció-térkép funkció <strong>2026. július 9-én megszűnt</strong>. A hozzá
+        tartozó bejelentés-adatok (GPS-koordináta, bolt, kedvezmény, megjegyzés) a
+        működés alatt is aznap éjfélig, automatikusan törlődtek; a funkció
+        kivezetésével a kapcsolódó adatállomány véglegesen törlésre került, új adat
+        nem gyűlik. (A szakaszt a számozás folytonossága miatt őrizzük meg.)
       </p>
-      <ul>
-        <li><strong>GPS koordináta</strong> — a bejelentés helye a térképen</li>
-        <li><strong>Bolt lánca, kategória, kedvezmény mértéke</strong></li>
-        <li><strong>Opcionális:</strong> bolt neve, megjegyzés szövege</li>
-      </ul>
-      <ul>
-        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) a) — hozzájárulás</li>
-        <li><strong>Tárolási idő:</strong> aznap éjfélig, automatikus törlés</li>
-        <li><strong>Nyilvánosság:</strong> az akció pontosan a bejelentő GPS-pozícióján jelenik meg a nyilvános térképen</li>
-      </ul>
 
       {/* Kontextusfüggő fizetési szolgáltató: weben Paddle, a Google Play-ből
           telepített Android-appban a Google Play (a szakasz-számozás közös). */}

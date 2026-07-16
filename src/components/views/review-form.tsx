@@ -167,7 +167,8 @@ export function ReviewForm({
         </h3>
         <p className="mx-auto mt-2 max-w-sm text-pretty text-[13px] leading-relaxed text-ink-muted">
           Küldtünk egy emailt a <strong className="text-ink">{form.email}</strong> címre.
-          A megerősítő linkre kattintva azonnal megjelenik az értékelésed itt,{" "}
+          A megerősítő linkre kattintás után az értékelésed egy rövid jóváhagyást
+          követően jelenik meg itt,{" "}
           <strong className="text-ink">{businessName}</strong> oldalán. A link 24
           órán át érvényes.
         </p>
@@ -277,9 +278,9 @@ export function ReviewForm({
         </div>
         <p className="mt-2 text-[11px] leading-snug text-ink-muted">
           <strong className="text-ink">Email nem szükséges.</strong> Email nélkül az értékelés
-          azonnal megjelenik, és kapsz egy kezelő-linket. Ha emailt is megadsz, először egy
-          megerősítő linket küldünk rá — csak miután rákattintasz, jelenik meg az értékelés.
-          Az email sehol nem publikus, csak nálunk látható.
+          beküldés után rövid jóváhagyásra kerül, és kapsz egy kezelő-linket. Ha emailt is
+          megadsz, először egy megerősítő linket küldünk rá — az értékelés a kattintás és a
+          jóváhagyás után jelenik meg. Az email sehol nem publikus, csak nálunk látható.
         </p>
       </Section>
 
