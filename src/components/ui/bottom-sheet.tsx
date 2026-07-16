@@ -3,21 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { haptic } from "@/lib/haptics";
+import { Icon } from "./icons";
 
 /**
  * BottomSheet — natív-szerű alsó lap (húzd-le-bezár). Portálon a body szintjén
  * jelenik meg, alulról felcsúszik, a fogantyút lehúzva (vagy a háttérre koppintva)
  * bezárul. Mobil-first natív minta a szűrőkhöz / választókhoz, teljes oldal helyett.
+ * `showClose`: látható ✕ gomb a jobb felső sarokban (hosszú űrlap-sheeteknél,
+ * ahol a húzd-le/backdrop gesztus nem elég felfedezhető).
  */
 export function BottomSheet({
   open,
   onClose,
   title,
+  showClose = false,
   children,
 }: {
   open: boolean;
   onClose: () => void;
   title?: string;
+  showClose?: boolean;
   children: React.ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
@@ -97,6 +102,16 @@ export function BottomSheet({
             </h2>
           )}
         </div>
+        {showClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Bezárás"
+            className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-surface-alt text-ink-muted transition hover:text-ink active:scale-90"
+          >
+            <Icon name="close" size={15} strokeWidth={2.6} />
+          </button>
+        )}
         <div
           className="overflow-y-auto px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]"
           style={{ maxHeight: "calc(88vh - 56px)" }}

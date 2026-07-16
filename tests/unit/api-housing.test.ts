@@ -107,6 +107,15 @@ describe("POST /api/housing", () => {
     const res = await POST(postReq({ ...validBody, type: "looking_for_room", consent: false }));
     expect(res.status).toBe(200);
   });
+
+  it("regionCode: valós kód (ZH) átmegy, kamu kód null-ra esik (nem utasít el)", async () => {
+    await POST(postReq({ ...validBody, regionCode: "ZH" }));
+    expect(createHousingListing).toHaveBeenCalledWith(expect.objectContaining({ regionCode: "ZH" }));
+    vi.mocked(createHousingListing).mockClear();
+    const res = await POST(postReq({ ...validBody, regionCode: "KAMU" }));
+    expect(res.status).toBe(200);
+    expect(createHousingListing).toHaveBeenCalledWith(expect.objectContaining({ regionCode: null }));
+  });
 });
 
 describe("GET /api/housing/contact — a PRO-kapuőr", () => {

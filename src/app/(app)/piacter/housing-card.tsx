@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { COUNTRIES } from "@/lib/countries";
+import { regionName } from "@/lib/regions";
 import { ReportButton } from "@/components/report-button";
 import { formatHousingPrice, housingAgeLabel, HOUSING_TYPE_LABELS } from "@/lib/housing";
 import type { HousingListing } from "@/lib/repo-housing";
@@ -103,6 +104,11 @@ export function HousingCard({
       <div className="mt-2 flex items-baseline justify-between gap-2">
         <h3 className="min-w-0 truncate text-[15px] font-extrabold tracking-[-0.01em] text-ink">
           {flag} {listing.city}
+          {listing.regionCode && (
+            <span className="text-[12px] font-semibold text-ink-muted">
+              {" "}· {regionName(listing.country, listing.regionCode)}
+            </span>
+          )}
         </h3>
         <p className="shrink-0 text-[14px] font-extrabold text-primary">
           {formatHousingPrice(listing.type, listing.price, listing.currency)}

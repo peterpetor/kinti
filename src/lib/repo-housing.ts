@@ -14,6 +14,8 @@ export interface HousingListing {
   type: HousingType;
   country: string;
   city: string;
+  /** Kanton/tartomány-kód (0135) — null a régió nélküli hirdetésnél. */
+  regionCode: string | null;
   price: number;
   currency: string;
   description: string;
@@ -26,17 +28,18 @@ export interface HousingListing {
 
 interface Row {
   id: string; user_id: string; type: string; country: string; city: string;
+  region_code: string | null;
   price: number; currency: string; description: string; created_at: number;
   moderation_status: number;
 }
 
 const PUBLIC_COLS =
-  "id, user_id, type, country, city, price, currency, description, created_at, moderation_status";
+  "id, user_id, type, country, city, region_code, price, currency, description, created_at, moderation_status";
 
 function toListing(r: Row, viewerUserId?: string | null): HousingListing {
   return {
     id: r.id, type: r.type as HousingType, country: r.country, city: r.city,
-    price: r.price, currency: r.currency, description: r.description,
+    regionCode: r.region_code, price: r.price, currency: r.currency, description: r.description,
     createdAt: r.created_at, own: viewerUserId != null && r.user_id === viewerUserId,
     pending: r.moderation_status === 0,
   };
@@ -74,11 +77,11 @@ export async function createHousingListing(input: HousingInput & { userId: strin
   await getDB()
     .prepare(
       `INSERT INTO kinti_housing_listings
-         (id, user_id, type, country, city, price, currency, description, contact_info, is_active, moderation_status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0)`,
+         (id, user_id, type, country, city, region_code, price, currency, description, contact_info, is_active, moderation_status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0)`,
     )
     .bind(
-      id, input.userId, input.type, input.country, input.city,
+      id, input.userId, input.type, input.country, input.city, input.regionCode,
       input.price, input.currency, input.description, input.contact,
     )
     .run();

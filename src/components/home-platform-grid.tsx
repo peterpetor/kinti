@@ -39,7 +39,7 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone; extern
   { href: "/iranytu", icon: "compass", label: "Iránytű", tone: "money" },
   { href: "/berkalkulator", icon: "sliders", label: "Bérkalkulátor", tone: "money" },
   // Piactér-összevonás (2026-07-16): börze + lakbér-kalkulátor + sajátjaim egy csempén.
-  { href: "/piacter", icon: "house", label: "Piactér", tone: "money" },
+  { href: "/piacter", icon: "key", label: "Piactér", tone: "money" },
   { href: "/szolgaltato-valto", icon: "filter", label: "Szolgáltató-váltó", tone: "money" },
   { href: "/utalas", icon: "send", label: "Utalás", tone: "money" },
   { href: "/nyelvlecke", icon: "globe", label: "Nyelvlecke", tone: "learn" },

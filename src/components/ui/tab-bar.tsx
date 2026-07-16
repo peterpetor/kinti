@@ -35,7 +35,8 @@ const TABS: Tab[] = [
   // 2026-07-16 (user-döntés): az Iránytű fül helyét a Piactér vette át
   // (börze + lakbér-kalkulátor + sajátjaim; mind a 4 országban él → nincs
   // feature-kapu). Az Iránytű a kezdőlapi modul-rácsról továbbra is elérhető.
-  { href: "/piacter", label: "Albérlet", icon: "house" },
+  // Ikon: kulcs (user-visszajelzés — a ház túl hasonló volt a Főoldal-fülhöz).
+  { href: "/piacter", label: "Albérlet", icon: "key" },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {

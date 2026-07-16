@@ -32,6 +32,10 @@ export interface HousingInput {
   type: HousingType;
   country: string;
   city: string;
+  /** Kanton/tartomány/provincia-kód — opcionális; a route validálja a
+   *  lib/regions készlete ellen (itt csak forma-ellenőrzés, ország-kontextus
+   *  nélkül nem dönthető el az érvényesség). */
+  regionCode: string | null;
   price: number;
   currency: HousingCurrency;
   description: string;
@@ -65,6 +69,11 @@ export function validateHousingInput(body: Record<string, unknown>): HousingVali
   if (city.length < 2) {
     return { ok: false, error: "Add meg a települést." };
   }
+
+  // Régió: opcionális, forma-ellenőrzés (a valódi kód-készletet a route
+  // ellenőrzi a lib/regions ellen — érvénytelen kód ott null-ra esik).
+  const rawRegion = typeof body.regionCode === "string" ? body.regionCode.trim().slice(0, 8) : "";
+  const regionCode = rawRegion !== "" ? rawRegion : null;
 
   const price = typeof body.price === "number" ? body.price : Number(body.price);
   if (!Number.isFinite(price) || price <= 0 || price > 20000) {
@@ -100,6 +109,7 @@ export function validateHousingInput(body: Record<string, unknown>): HousingVali
       type: type as HousingType,
       country,
       city,
+      regionCode,
       price: Math.round(price),
       currency: currency as HousingCurrency,
       description,

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { COUNTRIES } from "@/lib/countries";
+import { getRegions, regionLabel } from "@/lib/regions";
 import {
   HOUSING_CONSENT_TEXT,
   HOUSING_CURRENCIES,
@@ -32,6 +33,7 @@ export function ComposerModal({
 }) {
   const [type, setType] = useState<HousingType>("room_offered");
   const [country, setCountry] = useState(defaultCountry);
+  const [region, setRegion] = useState("");
   const [city, setCity] = useState("");
   const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState("EUR");
@@ -46,10 +48,17 @@ export function ComposerModal({
   const needsConsent = type !== "looking_for_room";
   const submitDisabled = sending || (needsConsent && !consent);
 
+  const regions = getRegions(country);
+  // Ország-váltásra a másik ország régió-kódja érvénytelen → vissza üresre.
+  useEffect(() => {
+    if (region && !regions.some((r) => r.code === region)) setRegion("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [country]);
+
   async function submit() {
     setError(null);
     const body = {
-      type, country, city, price: Number(price), currency,
+      type, country, city, regionCode: region || null, price: Number(price), currency,
       description, contact, consent,
     };
     const v = validateHousingInput(body);
@@ -79,7 +88,7 @@ export function ComposerModal({
   const labelCls = "mb-1 block text-[11.5px] font-bold uppercase tracking-wide text-ink-muted";
 
   return (
-    <BottomSheet open={open} onClose={onClose} title="Új hirdetés feladása">
+    <BottomSheet open={open} onClose={onClose} title="Új hirdetés feladása" showClose>
       <div className="space-y-3 pb-2">
         <div>
           <label htmlFor="h-type" className={labelCls}>Típus</label>
@@ -104,6 +113,21 @@ export function ComposerModal({
             <input id="h-city" value={city} onChange={(e) => setCity(e.target.value)} maxLength={60}
               placeholder="pl. Zürich" className={fieldCls} />
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="h-region" className={labelCls}>
+            {regionLabel(country).charAt(0).toUpperCase() + regionLabel(country).slice(1)}
+          </label>
+          <select id="h-region" value={region} onChange={(e) => setRegion(e.target.value)} className={fieldCls}>
+            <option value="">Nincs megadva</option>
+            {regions.map((r) => (
+              <option key={r.code} value={r.code}>{r.name}</option>
+            ))}
+          </select>
+          <p className="mt-1 text-[11px] leading-snug text-ink-faint">
+            A régió segít a keresőknek szűrni — kis falunál is érdemes megadni.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-2">

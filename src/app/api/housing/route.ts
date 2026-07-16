@@ -8,6 +8,7 @@ import {
 } from "@/lib/repo";
 import { validateHousingInput } from "@/lib/housing";
 import { isValidCountry } from "@/lib/countries";
+import { getRegion } from "@/lib/regions";
 import { containsProfanity } from "@/lib/profanity";
 import { checkBlocklistOrReject } from "@/lib/blocklist-guard";
 import { notifyAdminContentPending } from "@/lib/admin-notify";
@@ -44,6 +45,9 @@ export async function POST(req: Request) {
 
   const v = validateHousingInput(body);
   if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 });
+  // Régió-kód a VALÓDI régió-készlet ellen (lib/regions) — érvénytelen → null
+  // (a hirdetés régió-szűrő nélkül él tovább, nem utasítjuk el miatta).
+  const regionCode = v.value.regionCode ? getRegion(v.value.country, v.value.regionCode)?.code ?? null : null;
 
   for (const t of [v.value.city, v.value.description, v.value.contact]) {
     if (containsProfanity(t).hit) {
@@ -59,7 +63,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Ma már több hirdetést adtál fel. Próbáld holnap." }, { status: 429 });
   }
 
-  const id = await createHousingListing({ ...v.value, userId });
+  const id = await createHousingListing({ ...v.value, regionCode, userId });
 
   // Azonnali admin-értesítő (best-effort): a hirdetés MODERÁLT (0134) — a
   // lakhatási hirdetés időérzékeny, ezért a jóváhagyás ne a napi emlékeztetőn

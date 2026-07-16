@@ -69,6 +69,17 @@ describe("validateHousingInput", () => {
     expect(v.ok).toBe(true);
   });
 
+  it("regionCode: opcionális — üres/hiányzó → null, megadva átmegy (max 8 char)", () => {
+    const nincs = validateHousingInput(valid);
+    expect(nincs.ok && nincs.value.regionCode).toBe(null);
+    const ures = validateHousingInput({ ...valid, regionCode: "  " });
+    expect(ures.ok && ures.value.regionCode).toBe(null);
+    const van = validateHousingInput({ ...valid, regionCode: "ZH" });
+    expect(van.ok && van.value.regionCode).toBe("ZH");
+    const hosszu = validateHousingInput({ ...valid, regionCode: "TULHOSSZUKOD" });
+    expect(hosszu.ok && hosszu.value.regionCode).toBe("TULHOSSZ");
+  });
+
   it("hosszú mezők levágva (city 60 / description 1200 / contact 200)", () => {
     const v = validateHousingInput({
       ...valid,
