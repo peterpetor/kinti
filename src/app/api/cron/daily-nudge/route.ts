@@ -153,6 +153,40 @@ async function handle(req: Request): Promise<Response> {
     safeLogError("daily-nudge:job-expiry", err);
   }
 
+  // Albérlet-börze: (1) lejárat-előtti értesítő a hirdetés kontakt-emailjére
+  // (≤3 nap; 0137 egyszeri-küldés őr — nem-email kontaktot is bélyegzünk, hogy
+  // ne nézzük újra naponta), (2) GDPR tárolás-korlátozás: a lejárt+30 nap /
+  // elutasított+30 nap hirdetések végleges törlése. Saját try/catch — sose
+  // törheti a napi nudge-ot; a limit a Resend-keret védelme.
+  try {
+    const { getHousingExpiringSoon, markHousingExpiryWarned, purgeExpiredHousing } =
+      await import("@/lib/repo");
+    const { sendHousingExpiryWarningEmail } = await import("@/lib/email");
+    const { HOUSING_TYPE_LABELS, housingDaysLeft } = await import("@/lib/housing");
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    for (const h of await getHousingExpiringSoon(15)) {
+      try {
+        if (EMAIL_RE.test(h.contact)) {
+          const typeLabel =
+            HOUSING_TYPE_LABELS[h.type as keyof typeof HOUSING_TYPE_LABELS] ?? "Hirdetés";
+          await sendHousingExpiryWarningEmail({
+            to: h.contact,
+            listingLabel: `${typeLabel} — ${h.city}, ${h.price} ${h.currency}/hó`,
+            daysLeft: Math.max(housingDaysLeft(h.createdAt), 0),
+            url: `https://kinti.app/piacter?hirdetes=${h.id}`,
+          });
+        }
+      } catch (e) {
+        safeLogError(`daily-nudge:housing-expiry-warn [${h.id}]`, e);
+      } finally {
+        await markHousingExpiryWarned(h.id);
+      }
+    }
+    await purgeExpiredHousing();
+  } catch (err) {
+    safeLogError("daily-nudge:housing-expiry", err);
+  }
+
   // Üzenet-rotáció a nap sorszáma szerint (determinisztikus, nincs Math.random).
   const dayIndex = Math.floor(now.getTime() / 86_400_000);
   let payload = NUDGES[dayIndex % NUDGES.length];

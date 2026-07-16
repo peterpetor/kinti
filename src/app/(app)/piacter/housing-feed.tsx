@@ -48,6 +48,25 @@ export function HousingFeed({
 
   const [composerOpen, setComposerOpen] = useState(false);
   const [justPosted, setJustPosted] = useState(false);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+
+  // Megosztott mély-link (?hirdetes=<id>): a szűrőt a cél-hirdetés országára
+  // állítjuk (különben az alap ország-szűrő elrejthetné), kiemeljük és
+  // odagörgetünk. Egyszer fut, mount után (a lista SSR-ből már megvan).
+  useEffect(() => {
+    try {
+      const id = new URLSearchParams(window.location.search).get("hirdetes");
+      if (!id) return;
+      const target = listings.find((l) => l.id === id);
+      if (!target) return;
+      setFilter(target.country);
+      setHighlightId(id);
+      setTimeout(() => {
+        document.getElementById(`hirdetes-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 250);
+    } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Ország-váltásra a másik ország régiója érvénytelen → vissza „mind"-re.
   const regions = country ? getRegions(country) : [];
@@ -169,7 +188,7 @@ export function HousingFeed({
       ) : (
         <div className="grid gap-2.5">
           {visible.map((l) => (
-            <HousingCard key={l.id} listing={l} isPro={isPro} signedIn={signedIn} />
+            <HousingCard key={l.id} listing={l} isPro={isPro} signedIn={signedIn} highlighted={l.id === highlightId} />
           ))}
         </div>
       )}

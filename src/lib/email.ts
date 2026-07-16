@@ -1143,6 +1143,64 @@ ${JOB_FEATURED_UPSELL_TEXT}
   }
 }
 
+export interface HousingExpiryEmailArgs {
+  to: string;
+  /** Pl. „Kiadó szoba — Bern, 800 CHF/hó". */
+  listingLabel: string;
+  /** Hátralévő napok (0 = ma jár le). */
+  daysLeft: number;
+  /** Mély-link a hirdetésre (?hirdetes=<id>) — ott a Meghosszabbítás-gomb. */
+  url: string;
+}
+
+/**
+ * Albérlet-hirdetés lejárat-ELŐTTI figyelmeztetője (≤3 nap; 0137 egyszeri-
+ * küldés őr). A hirdetés kontakt-emailjére megy — a saját hirdetés állapotáról
+ * szóló szolgáltatás-üzenet (adatvédelmi 2.28). Nincs upsell: a megújítás
+ * ingyenes, a cél a hirdetés-állomány frissen tartása.
+ */
+export async function sendHousingExpiryWarningEmail(args: HousingExpiryEmailArgs): Promise<void> {
+  const env = getCloudflareEnv();
+  const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
+  const daysWord = args.daysLeft <= 0 ? "ma" : args.daysLeft === 1 ? "holnap" : `${args.daysLeft} nap múlva`;
+  const subject = `⏳ Az albérlet-hirdetésed ${daysWord} lejár — hosszabbítsd meg egy kattintással`;
+
+  const text = `Szia!
+
+Az albérlet-hirdetésed ${daysWord} lejár, és lekerül a Kinti börzéjéről:
+
+${args.listingLabel}
+
+Ha még aktuális, EGY kattintással, ingyen meghosszabbíthatod (bejelentkezés után a hirdetés melletti Meghosszabbítás-gombbal): ${args.url}
+
+Ha már nem aktuális, nincs teendőd — a hirdetés lejárat után automatikusan lekerül, majd törlődik.
+
+— kinti.app`;
+
+  const html = baseLayout({
+    preheader: `${daysWord} lejár: ${args.listingLabel}`,
+    body: `
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a097;">Kinti · Albérlet-börze</p>
+      <p style="margin:0 0 16px;font-size:15px;font-weight:800;color:#0e1f17;">⏳ A hirdetésed ${escapeHtml(daysWord)} lejár</p>
+      <div style="margin:0 0 16px;padding:16px;background:#fbf7ee;border:1px solid #e6ebe5;border-radius:14px;">
+        <div style="font-size:15px;font-weight:800;color:#0e1f17;">${escapeHtml(args.listingLabel)}</div>
+      </div>
+      <p style="margin:0 0 16px;font-size:13.5px;line-height:1.6;color:#5c6d63;">
+        Ha még aktuális, bejelentkezés után <strong>egy kattintással, ingyen</strong> meghosszabbíthatod
+        a hirdetés melletti Meghosszabbítás-gombbal — a tartalomhoz nem kell hozzányúlnod.
+        Ha már nem aktuális, nincs teendőd: lejárat után automatikusan lekerül, majd törlődik.
+      </p>
+      <p style="margin:0 0 20px;">
+        <a href="${escapeHtml(args.url)}" style="display:inline-block;padding:13px 22px;background:#1d4434;color:#ffffff;text-decoration:none;border-radius:999px;font-size:14px;font-weight:800;">Megnyitom a hirdetésem →</a>
+      </p>`,
+  });
+
+  const { error } = await getResend().emails.send({ from, to: args.to, subject, html, text });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? "hiba"} — ${error.message ?? "ismeretlen"}`);
+  }
+}
+
 export interface ModerationReminderEmailArgs {
   to: string;
   reviews: number;

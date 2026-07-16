@@ -128,13 +128,64 @@ export async function getHousingContactInfo(id: string): Promise<string | null> 
 export async function renewOwnHousingListing(id: string, userId: string): Promise<boolean> {
   const res = await getDB()
     .prepare(
-      `UPDATE kinti_housing_listings SET created_at = unixepoch('now')
+      `UPDATE kinti_housing_listings SET created_at = unixepoch('now'), expiry_warned_at = NULL
        WHERE id = ? AND user_id = ? AND is_active = 1 AND moderation_status = 1
          AND created_at <= unixepoch('now', '-${HOUSING_TTL_DAYS - 7} days')`,
     )
     .bind(id, userId)
     .run();
   return (res.meta?.changes ?? 0) > 0;
+}
+
+/**
+ * Lejárat-előtti (≤3 nap) hirdetések, amik még nem kaptak figyelmeztetőt
+ * (0137 expiry_warned_at őr). A kontaktot a NAPI CRON használja az email-
+ * küldéshez (szerver-oldal) — a lista-payload anti-leak szabályát nem érinti.
+ */
+export async function getHousingExpiringSoon(limit = 15): Promise<{
+  id: string; city: string; country: string; type: string;
+  price: number; currency: string; contact: string; createdAt: number;
+}[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, city, country, type, price, currency, contact_info, created_at
+       FROM kinti_housing_listings
+       WHERE is_active = 1 AND moderation_status = 1 AND expiry_warned_at IS NULL
+         AND created_at <= unixepoch('now', '-${HOUSING_TTL_DAYS - 3} days')
+         AND created_at > unixepoch('now', '-${HOUSING_TTL_DAYS} days')
+       ORDER BY created_at ASC LIMIT ?`,
+    )
+    .bind(limit)
+    .all<{ id: string; city: string; country: string; type: string; price: number; currency: string; contact_info: string; created_at: number }>();
+  return (results ?? []).map((r) => ({
+    id: r.id, city: r.city, country: r.country, type: r.type,
+    price: r.price, currency: r.currency, contact: r.contact_info, createdAt: r.created_at,
+  }));
+}
+
+/** Egyszeri-küldés bélyeg — kudarcnál is hívjuk (a napi újra-spam ellen). */
+export async function markHousingExpiryWarned(id: string): Promise<void> {
+  await getDB()
+    .prepare("UPDATE kinti_housing_listings SET expiry_warned_at = datetime('now') WHERE id = ?")
+    .bind(id)
+    .run();
+}
+
+/**
+ * GDPR tárolás-korlátozás (napi cron): a lejárat után 30 nappal meg nem újított
+ * hirdetés VÉGLEGESEN törlődik (a feladónak 30 nap türelmi ideje van a
+ * megújításra); az elutasított hirdetés 30 nap után törlődik (addig a feladó
+ * látja a DSA-indoklást). Az adatvédelmi 2.28 tárolási-idő pontja ezt közli.
+ */
+export async function purgeExpiredHousing(): Promise<number> {
+  const res = await getDB()
+    .prepare(
+      `DELETE FROM kinti_housing_listings
+       WHERE created_at <= unixepoch('now', '-${HOUSING_TTL_DAYS + 30} days')
+          OR (moderation_status = 2 AND created_at <= unixepoch('now', '-30 days'))`,
+    )
+    .run();
+  return res.meta?.changes ?? 0;
 }
 
 /** Push-értesítéshez szükséges mezők (kontakt NÉLKÜL) — a moderációs

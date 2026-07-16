@@ -22,10 +22,13 @@ export function HousingCard({
   listing,
   isPro,
   signedIn,
+  highlighted,
 }: {
   listing: HousingListing;
   isPro: boolean;
   signedIn: boolean;
+  /** Megosztott mély-linkkel (?hirdetes=<id>) érkező néző cél-hirdetése. */
+  highlighted?: boolean;
 }) {
   const router = useRouter();
   const [contact, setContact] = useState<string | null>(null);
@@ -34,6 +37,7 @@ export function HousingCard({
   const [error, setError] = useState<string | null>(null);
   const [removing, setRemoving] = useState(false);
   const [renewing, setRenewing] = useState(false);
+  const [shareDone, setShareDone] = useState(false);
 
   const flag = COUNTRIES.find((c) => c.code === listing.country)?.flag ?? "";
   const offer = listing.type !== "looking_for_room";
@@ -78,6 +82,23 @@ export function HousingCard({
     }
   }
 
+  async function share() {
+    const url = `https://kinti.app/piacter?hirdetes=${listing.id}`;
+    const title = `${HOUSING_TYPE_LABELS[listing.type]} — ${listing.city} (Kinti)`;
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share({ title, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setShareDone(true);
+        setTimeout(() => setShareDone(false), 2000);
+      }
+      trackAction("housing-share");
+    } catch {
+      /* a user megszakította a megosztást — nem hiba */
+    }
+  }
+
   async function renewOwn() {
     setRenewing(true);
     setError(null);
@@ -98,7 +119,13 @@ export function HousingCard({
   }
 
   return (
-    <article className="rounded-card border border-line bg-surface p-4 shadow-card">
+    <article
+      id={`hirdetes-${listing.id}`}
+      className={cn(
+        "rounded-card border border-line bg-surface p-4 shadow-card",
+        highlighted && "border-primary/50 ring-2 ring-primary/40",
+      )}
+    >
       <div className="flex items-start justify-between gap-2">
         <span
           className={cn(
@@ -132,6 +159,17 @@ export function HousingCard({
               className="inline-flex items-center gap-1 text-[11px] font-bold text-ink-faint transition hover:text-accent disabled:opacity-50"
             >
               <Icon name="trash" size={11} strokeWidth={2.4} /> {removing ? "Törlés…" : "Levétel"}
+            </button>
+          )}
+          {/* Megosztás — csak élő (jóváhagyott, nem lejárt) hirdetésre; a link
+              a ?hirdetes= mély-linkre mutat (oda-görgetés + kiemelés). */}
+          {!listing.pending && !listing.rejected && !listing.expired && (
+            <button
+              type="button"
+              onClick={share}
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-ink-faint transition hover:text-primary"
+            >
+              <Icon name="share" size={11} strokeWidth={2.4} /> {shareDone ? "Link másolva" : "Megosztás"}
             </button>
           )}
           <ReportButton contentType="housing" contentId={listing.id} variant="link" />

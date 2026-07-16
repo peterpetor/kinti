@@ -574,7 +574,9 @@ export default function AdatvedelemPage() {
         <strong>kapcsolatfelvételre megadott elérhetőséget</strong> (e-mail vagy telefonszám).
         Az elérhetőséged <strong>nem nyilvános</strong>: a hirdetés-listában nem jelenik meg,
         kizárólag bejelentkezett Kinti PRO-tagok kérhetik le, kifejezetten a veled való
-        kapcsolatfelvétel céljából.
+        kapcsolatfelvétel céljából. Ha az elérhetőséged e-mail-cím, arra a{" "}
+        <strong>saját hirdetésed állapotáról</strong> küldhetünk szolgáltatás-üzenetet
+        (pl. lejárat-előtti emlékeztetőt a meghosszabbításhoz) — marketing-célra nem használjuk.
       </p>
       <ul>
         <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — a hirdetés közzététele mint általad
