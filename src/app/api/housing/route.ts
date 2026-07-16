@@ -61,9 +61,9 @@ export async function POST(req: Request) {
 
   const id = await createHousingListing({ ...v.value, userId });
 
-  // Azonnali admin-értesítő (best-effort): a hirdetés moderálás NÉLKÜL él
-  // (időérzékeny lakhatási piac) → az admin utólagos rálátása ezen az emailen
-  // + a DSA-jelentéseken múlik, ne vesszen el.
+  // Azonnali admin-értesítő (best-effort): a hirdetés MODERÁLT (0134) — a
+  // lakhatási hirdetés időérzékeny, ezért a jóváhagyás ne a napi emlékeztetőn
+  // múljon: minden beküldésről azonnali email megy az adminnak.
   const notify = notifyAdminContentPending({
     contentType: "albérlet-hirdetés",
     title: `${v.value.city} (${v.value.country}) — ${v.value.price} ${v.value.currency}/hó`,
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
   const ctx = getCloudflareCtx();
   if (ctx) ctx.waitUntil(notify); else await notify;
 
-  return NextResponse.json({ ok: true, id, message: "A hirdetésed megjelent a börzén." });
+  return NextResponse.json({ ok: true, id, message: "Köszönjük! A hirdetést jóváhagyás után tesszük közzé." });
 }
 
 /** DELETE /api/housing?id=… — saját hirdetés levétele (csak a feladó). */

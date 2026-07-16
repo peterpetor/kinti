@@ -156,7 +156,8 @@ export default function AszfPage() {
         <li>vállalkozói profilok a Szaknévsorban;</li>
         <li>felhasználói vélemények (értékelések);</li>
         <li>„Keresek" igény-hirdetések;</li>
-        <li>Élettörténetek (felhasználói történetek, 3.3 pont).</li>
+        <li>Élettörténetek (felhasználói történetek, 3.3 pont);</li>
+        <li>Albérlet-börze hirdetései (8.2 pont).</li>
       </ul>
       <p>
         A feltöltött képeket a kézi jóváhagyást megelőzően automatikus
@@ -352,9 +353,9 @@ export default function AszfPage() {
           üzemeltető a hirdetést eltávolítja, és a felhasználó hozzáférését megszüntetheti.
         </li>
         <li>
-          <strong>Közzététel:</strong> a börze-hirdetés a 3.2 ponttól eltérően előzetes
-          jóváhagyás nélkül, azonnal megjelenik (a lakhatási hirdetés időérzékeny) — a
-          bejelentett (jogsértőnek jelzett) hirdetést az üzemeltető a DSA szerinti
+          <strong>Közzététel:</strong> a börze-hirdetés a 3.2 pont szerinti előzetes
+          admin-jóváhagyás után jelenik meg (tipikusan 24 órán belül); a bejelentett
+          (jogsértőnek jelzett) hirdetést az üzemeltető emellett a DSA szerinti
           bejelentés-kezelés keretében a vizsgálat idejére azonnal elrejti. A hirdetés a
           feladástól 60 nap után automatikusan lekerül a listáról.
         </li>

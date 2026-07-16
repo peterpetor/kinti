@@ -1149,6 +1149,8 @@ export interface ModerationReminderEmailArgs {
   businesses: number;
   requests: number;
   stories: number;
+  /** Albérlet-börze hirdetések (0134) — időérzékeny, elöl a listában. */
+  housing?: number;
   moderationUrl: string;
 }
 
@@ -1160,10 +1162,12 @@ export interface ModerationReminderEmailArgs {
 export async function sendModerationReminderEmail(args: ModerationReminderEmailArgs): Promise<void> {
   const env = getCloudflareEnv();
   const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-  const total = args.reviews + args.businesses + args.requests + args.stories;
+  const housing = args.housing ?? 0;
+  const total = args.reviews + args.businesses + args.requests + args.stories + housing;
   const subject = `⏳ ${total} tétel vár moderációra — kinti.app`;
 
   const lines = [
+    housing > 0 ? `• ${housing} albérlet-hirdetés (időérzékeny — a hirdető várja!)` : null,
     args.requests > 0 ? `• ${args.requests} Keresek-hirdetés (jóváhagyása lead-routingot indít!)` : null,
     args.stories > 0 ? `• ${args.stories} élettörténet` : null,
     args.businesses > 0 ? `• ${args.businesses} vállalkozás` : null,

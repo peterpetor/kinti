@@ -76,7 +76,8 @@ export function HousingFeed({
 
       {justPosted && (
         <div className="flex items-center gap-2 rounded-card border border-success/30 bg-success/10 p-3 text-[12.5px] font-bold text-success">
-          <Icon name="check" size={15} strokeWidth={2.6} /> A hirdetésed megjelent a börzén.
+          <Icon name="check" size={15} strokeWidth={2.6} />
+          Köszönjük! A hirdetésed jóváhagyás után jelenik meg (tipikusan 24 órán belül).
         </div>
       )}
 

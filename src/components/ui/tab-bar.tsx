@@ -35,7 +35,7 @@ const TABS: Tab[] = [
   // 2026-07-16 (user-döntés): az Iránytű fül helyét a Szoba- és albérlet-börze
   // vette át (mind a 4 országban él → nincs feature-kapu). Az Iránytű a
   // kezdőlapi modul-rácsról továbbra is elérhető (home-platform-grid).
-  { href: "/szallas-borze", label: "Albérlet", icon: "bed" },
+  { href: "/szallas-borze", label: "Albérlet", icon: "house" },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {

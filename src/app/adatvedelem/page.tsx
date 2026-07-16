@@ -566,7 +566,8 @@ export default function AdatvedelemPage() {
       <h3>2.28 Szoba- és albérlet-börze</h3>
       <p>
         Az Albérlet-börzén bejelentkezett felhasználóként lakhatási hirdetést adhatsz fel
-        (kiadó szoba/lakás vagy kereső hirdetés). A hirdetéshez a következőket tároljuk:
+        (kiadó szoba/lakás vagy kereső hirdetés); a hirdetés admin-jóváhagyás után válik
+        nyilvánossá. A hirdetéshez a következőket tároljuk:
         a fiókod <strong>azonosítóját</strong> (Clerk userId — a hirdetés hozzád kötéséhez,
         a saját hirdetésed törléséhez és a napi feladási limithez), a hirdetés{" "}
         <strong>tartalmát</strong> (típus, ország, település, ár, leírás), valamint az általad{" "}

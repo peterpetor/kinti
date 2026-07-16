@@ -3,10 +3,10 @@
  */
 import { getDB } from "./cloudflare";
 
-export type ModerationTable = "reviews" | "businesses" | "service_requests" | "stories";
+export type ModerationTable = "reviews" | "businesses" | "service_requests" | "stories" | "kinti_housing_listings";
 export type ModerationDecision = "approved" | "rejected" | "pending";
 
-const MODERATION_TABLE_WHITELIST: Set<ModerationTable> = new Set(["reviews", "businesses", "service_requests", "stories"]);
+const MODERATION_TABLE_WHITELIST: Set<ModerationTable> = new Set(["reviews", "businesses", "service_requests", "stories", "kinti_housing_listings"]);
 
 function assertModerationTable(t: ModerationTable): void {
   if (!MODERATION_TABLE_WHITELIST.has(t)) throw new Error(`Ismeretlen moderation-tábla: ${t}`);
@@ -20,7 +20,13 @@ export interface ModerationQueueItem {
 
 /** A businesses táblának van country_code-ja; a reviews-nek nincs (ott a szűrő no-op). */
 function moderationHasCountry(table: ModerationTable): boolean {
-  return table === "businesses" || table === "service_requests" || table === "stories";
+  return table === "businesses" || table === "service_requests" || table === "stories" ||
+    table === "kinti_housing_listings";
+}
+
+/** Az ország-oszlop neve — a housing-tábla `country`-t használ (0133), a többi country_code-ot. */
+function moderationCountryCol(table: ModerationTable): string {
+  return table === "kinti_housing_listings" ? "country" : "country_code";
 }
 
 export async function listModerationQueue(table: ModerationTable, status: 0 | 1 | 2, limit = 50, country?: string | null): Promise<ModerationQueueItem[]> {
@@ -31,6 +37,13 @@ export async function listModerationQueue(table: ModerationTable, status: 0 | 1 
     businesses: { title: "name", preview: "COALESCE(blurb, address, '')", createdAt: "COALESCE(updated_at, '')", email: "COALESCE(contact_email, '')", ip: "''", image: "logo_key" },
     service_requests: { title: "title", preview: "COALESCE(description, contact, '')", createdAt: "created_at", email: "''", ip: "ip_hash", image: "''" },
     stories: { title: "title", preview: "COALESCE(summary, substr(body_md, 1, 200))", createdAt: "created_at", email: "COALESCE(contact_email, '')", ip: "ip_hash", image: "image_key" },
+    // Cím-kifejezés: "CH · Zürich — 950 CHF" (a sorban azonnal látszik a lényeg);
+    // a created_at unixepoch (INTEGER) → datetime-re alakítva a közös relTime-hoz.
+    kinti_housing_listings: {
+      title: "country || ' · ' || city || ' — ' || CAST(price AS INTEGER) || ' ' || currency",
+      preview: "description", createdAt: "datetime(created_at, 'unixepoch')",
+      email: "''", ip: "''", image: "''",
+    },
   };
   const f = fields[table];
   const useCountry = !!country && country !== "all" && moderationHasCountry(table);
@@ -38,7 +51,7 @@ export async function listModerationQueue(table: ModerationTable, status: 0 | 1 
                       ${f.email} AS submitterEmail, ${f.ip} AS submitterIpHash, ${f.image} AS imageKey,
                       moderation_status AS moderationStatus, moderation_decision_at AS moderationDecisionAt,
                       moderation_decided_by AS moderationDecidedBy
-               FROM ${table} WHERE moderation_status = ? ${useCountry ? "AND country_code = ?" : ""} ORDER BY createdAt DESC LIMIT ?`;
+               FROM ${table} WHERE moderation_status = ? ${useCountry ? `AND ${moderationCountryCol(table)} = ?` : ""} ORDER BY createdAt DESC LIMIT ?`;
   const binds = useCountry ? [status, country, limit] : [status, limit];
   const { results } = await db.prepare(sql).bind(...binds).all<{
     id: string; title: string | null; preview: string | null; createdAt: string | null;
@@ -56,7 +69,7 @@ export async function listModerationQueue(table: ModerationTable, status: 0 | 1 
 export async function moderationCount(table: ModerationTable, status: 0 | 1 | 2, country?: string | null): Promise<number> {
   assertModerationTable(table);
   const useCountry = !!country && country !== "all" && moderationHasCountry(table);
-  const sql = `SELECT COUNT(*) AS n FROM ${table} WHERE moderation_status = ? ${useCountry ? "AND country_code = ?" : ""}`;
+  const sql = `SELECT COUNT(*) AS n FROM ${table} WHERE moderation_status = ? ${useCountry ? `AND ${moderationCountryCol(table)} = ?` : ""}`;
   const binds = useCountry ? [status, country] : [status];
   const row = await getDB().prepare(sql).bind(...binds).first<{ n: number }>();
   return row?.n ?? 0;

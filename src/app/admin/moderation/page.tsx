@@ -25,6 +25,7 @@ const TABLE_LABELS: Record<ModerationTable, string> = {
   businesses: "Vállalkozások",
   service_requests: "Keresések",
   stories: "Élettörténetek",
+  kinti_housing_listings: "Albérlet-hirdetések",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -74,12 +75,14 @@ export default async function ModerationPage({
     pendingBusinesses,
     pendingRequests,
     pendingStories,
+    pendingHousing,
     items,
   ] = await Promise.all([
     moderationCount("reviews", 0),
     moderationCount("businesses", 0, country),
     moderationCount("service_requests", 0, country),
     moderationCount("stories", 0, country),
+    moderationCount("kinti_housing_listings", 0, country),
     listModerationQueue(typeParam, statusValue, 100, country),
   ]);
 
@@ -88,6 +91,7 @@ export default async function ModerationPage({
     businesses: pendingBusinesses,
     service_requests: pendingRequests,
     stories: pendingStories,
+    kinti_housing_listings: pendingHousing,
   };
 
   return (
@@ -292,6 +296,10 @@ function previewLink(table: ModerationTable, id: string): string {
       // A történet-oldal id-vel is felold, de NEM-publikáltat csak adminnak
       // mutat (teljes szöveg a döntés előtt — „én ellenőrzöm mindet" flow).
       return `/tortenetek/${id}`;
+    case "kinti_housing_listings":
+      // Pending hirdetés a publikus börzén nem látszik — a queue-sor previewje
+      // (teljes leírás + ár) elegendő a döntéshez; a link a börzére visz.
+      return `/szallas-borze`;
   }
 }
 

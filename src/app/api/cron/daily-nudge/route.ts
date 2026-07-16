@@ -94,17 +94,18 @@ async function handle(req: Request): Promise<Response> {
     const envFull = getCloudflareEnv() as unknown as { ADMIN_EMAILS?: string; RESEND_API_KEY?: string; PUBLIC_BASE_URL?: string };
     const adminEmail = (envFull.ADMIN_EMAILS ?? "").split(",").map((s) => s.trim()).filter(Boolean)[0];
     if (adminEmail && envFull.RESEND_API_KEY) {
-      const [reviews, businesses, requests, stories] = await Promise.all([
+      const [reviews, businesses, requests, stories, housing] = await Promise.all([
         moderationCount("reviews", 0),
         moderationCount("businesses", 0),
         moderationCount("service_requests", 0),
         moderationCount("stories", 0),
+        moderationCount("kinti_housing_listings", 0),
       ]);
-      if (reviews + businesses + requests + stories > 0) {
+      if (reviews + businesses + requests + stories + housing > 0) {
         const base = envFull.PUBLIC_BASE_URL?.replace(/\/$/, "") || "https://kinti.app";
         await sendModerationReminderEmail({
           to: adminEmail,
-          reviews, businesses, requests, stories,
+          reviews, businesses, requests, stories, housing,
           moderationUrl: `${base}/admin/moderation`,
         });
       }

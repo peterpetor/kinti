@@ -25,6 +25,7 @@ const VALID_TABLES: ModerationTable[] = [
   "businesses",
   "service_requests",
   "stories",
+  "kinti_housing_listings",
 ];
 
 const TABLE_LABELS: Record<ModerationTable, string> = {
@@ -32,6 +33,7 @@ const TABLE_LABELS: Record<ModerationTable, string> = {
   businesses: "vállalkozás",
   service_requests: "keresés",
   stories: "élettörténet",
+  kinti_housing_listings: "albérlet-hirdetés",
 };
 
 /**

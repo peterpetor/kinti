@@ -20,34 +20,46 @@ export interface HousingListing {
   createdAt: number; // unixepoch (mp)
   /** A néző saját hirdetése-e (a lista-API tölti ki, kontakt nélkül is hasznos). */
   own?: boolean;
+  /** Jóváhagyásra vár — CSAK a feladó látja a sajátját így (0134 moderáció). */
+  pending?: boolean;
 }
 
 interface Row {
   id: string; user_id: string; type: string; country: string; city: string;
   price: number; currency: string; description: string; created_at: number;
+  moderation_status: number;
 }
 
-const PUBLIC_COLS = "id, user_id, type, country, city, price, currency, description, created_at";
+const PUBLIC_COLS =
+  "id, user_id, type, country, city, price, currency, description, created_at, moderation_status";
 
 function toListing(r: Row, viewerUserId?: string | null): HousingListing {
   return {
     id: r.id, type: r.type as HousingType, country: r.country, city: r.city,
     price: r.price, currency: r.currency, description: r.description,
     createdAt: r.created_at, own: viewerUserId != null && r.user_id === viewerUserId,
+    pending: r.moderation_status === 0,
   };
 }
 
 /**
- * Aktív hirdetések (kontakt NÉLKÜL), legfrissebb elöl. A 60 napnál régebbi
- * hirdetés nem jelenik meg (a lakhatási hirdetés gyorsan avul; az adat marad,
- * csak a lista szűri — nincs törlés/lejárat-infra a v1-ben).
+ * Hirdetések (kontakt NÉLKÜL), legfrissebb elöl. Publikusan CSAK a jóváhagyott
+ * (moderation_status=1) látszik; a néző a SAJÁT függőben lévő hirdetését is
+ * látja („jóváhagyásra vár" jelöléssel — így nem adja fel duplán). A 60 napnál
+ * régebbi hirdetés nem jelenik meg (a lakhatási hirdetés gyorsan avul; az adat
+ * marad, csak a lista szűri — nincs törlés/lejárat-infra a v1-ben).
  */
 export async function getHousingListings(
   country?: string | null,
   viewerUserId?: string | null,
 ): Promise<HousingListing[]> {
   const binds: unknown[] = [];
-  let where = "is_active = 1 AND created_at > unixepoch('now', '-60 days')";
+  let visibility = "moderation_status = 1";
+  if (viewerUserId) {
+    visibility = "(moderation_status = 1 OR (moderation_status = 0 AND user_id = ?))";
+    binds.push(viewerUserId);
+  }
+  let where = `is_active = 1 AND ${visibility} AND created_at > unixepoch('now', '-60 days')`;
   if (country) { where += " AND country = ?"; binds.push(country); }
   const { results } = await getDB()
     .prepare(`SELECT ${PUBLIC_COLS} FROM kinti_housing_listings WHERE ${where} ORDER BY created_at DESC LIMIT 100`)
@@ -56,14 +68,14 @@ export async function getHousingListings(
   return (results ?? []).map((r) => toListing(r, viewerUserId));
 }
 
-/** Új hirdetés — azonnal él (is_active=1); a DSA-jelentés / admin veszi le. */
+/** Új hirdetés — PENDING (moderation_status=0, 0134): admin-jóváhagyás után jelenik meg. */
 export async function createHousingListing(input: HousingInput & { userId: string }): Promise<string> {
   const id = crypto.randomUUID();
   await getDB()
     .prepare(
       `INSERT INTO kinti_housing_listings
-         (id, user_id, type, country, city, price, currency, description, contact_info, is_active)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+         (id, user_id, type, country, city, price, currency, description, contact_info, is_active, moderation_status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0)`,
     )
     .bind(
       id, input.userId, input.type, input.country, input.city,
@@ -73,10 +85,11 @@ export async function createHousingListing(input: HousingInput & { userId: strin
   return id;
 }
 
-/** A kontakt — KIZÁRÓLAG a PRO-gated /api/housing/contact hívja (szerver-kapu). */
+/** A kontakt — KIZÁRÓLAG a PRO-gated /api/housing/contact hívja (szerver-kapu).
+ *  Csak jóváhagyott hirdetésé adható ki (pending/elutasított → null). */
 export async function getHousingContactInfo(id: string): Promise<string | null> {
   const row = await getDB()
-    .prepare("SELECT contact_info FROM kinti_housing_listings WHERE id = ? AND is_active = 1")
+    .prepare("SELECT contact_info FROM kinti_housing_listings WHERE id = ? AND is_active = 1 AND moderation_status = 1")
     .bind(id)
     .first<{ contact_info: string }>();
   return row?.contact_info ?? null;

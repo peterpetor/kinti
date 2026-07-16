@@ -81,6 +81,11 @@ export function HousingCard({
           {offer ? "🔑" : "🔎"} {HOUSING_TYPE_LABELS[listing.type]}
         </span>
         <div className="flex items-center gap-2">
+          {listing.own && listing.pending && (
+            <span className="inline-flex items-center gap-1 rounded-pill bg-star/15 px-2 py-0.5 text-[10.5px] font-extrabold text-star">
+              <Icon name="clock" size={10} strokeWidth={2.6} /> Jóváhagyásra vár
+            </span>
+          )}
           {listing.own && (
             <button
               type="button"
@@ -111,7 +116,7 @@ export function HousingCard({
           Feladva: {housingAgeLabel(listing.createdAt)}
         </span>
 
-        {contact ? (
+        {listing.own ? null : contact ? (
           <ContactValue value={contact} />
         ) : loading ? (
           /* Skeleton a kontakt betöltése alatt */

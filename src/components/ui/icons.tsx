@@ -13,10 +13,13 @@ export type IconName =
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "youtube" | "tiktok" | "shoppingBag" | "briefcase"
   | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock"
-  | "compass" | "mail" | "shareIos" | "whatsapp" | "bed";
+  | "compass" | "mail" | "shareIos" | "whatsapp" | "bed" | "house";
 
 const PATHS: Record<IconName, string[]> = {
   bed: ["M2 18v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8", "M2 14h20", "M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"],
+  // Albérlet/piactér ház — SZÁNDÉKOSAN más sziluett, mint a "home" (Főoldal-fül):
+  // meredekebb tető + kör-ablak, ajtó nélkül, hogy a TabBaron ne legyen két egyforma ikon.
+  house: ["M3 11.5L12 4l9 7.5", "M5.5 10.5V20h13v-9.5", "M12 16.5a2 2 0 1 0 0-4a2 2 0 0 0 0 4"],
   lock: ["M6 10h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z", "M8 10V7a4 4 0 0 1 8 0v3"],
   search: ["M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14", "M16.5 16.5L21 21"],
   pin: ["M12 22s-7-7.5-7-13a7 7 0 0 1 14 0c0 5.5-7 13-7 13z", "M12 11.5a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5z"],

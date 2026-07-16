@@ -95,9 +95,12 @@ describe("POST /api/housing", () => {
       expect.objectContaining({ userId: "user_1", city: "Zürich", price: 850 }),
     );
     expect(notifyAdminContentPending).toHaveBeenCalled();
-    // A válasz NEM tartalmazza a kontaktot (anti-leak).
     const data = (await res.json()) as Record<string, unknown>;
+    // A válasz NEM tartalmazza a kontaktot (anti-leak).
     expect(JSON.stringify(data)).not.toContain("teszt@example.com");
+    // Copy-őr (business-submission szabály): SOSE ígérjünk azonnali megjelenést —
+    // a hirdetés moderált (0134), a válasz a jóváhagyást kommunikálja.
+    expect(String(data.message)).toContain("jóváhagyás");
   });
 
   it("kereső hirdetés nyilatkozat nélkül is feladható", async () => {
