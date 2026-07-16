@@ -22,7 +22,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
     { path: "/", priority: 1.0, changeFrequency: "daily" },
     { path: "/szaknevsor", priority: 0.9, changeFrequency: "daily" },
+    // A kategória×terület landing-fa index-hubja (belső-link architektúra).
+    { path: "/magyar", priority: 0.8, changeFrequency: "weekly" },
     { path: "/allasok", priority: 0.8, changeFrequency: "daily" },
+    // Albérlet-börze + Keresek-tábla + utalás-kalauz (publikus tartalom-oldalak).
+    { path: "/piacter", priority: 0.7, changeFrequency: "daily" },
+    { path: "/keresek", priority: 0.6, changeFrequency: "daily" },
+    { path: "/utalas", priority: 0.6, changeFrequency: "monthly" },
     { path: "/munkaltato/kozvetites", priority: 0.8, changeFrequency: "monthly" },
     { path: "/tudasbazis", priority: 0.8, changeFrequency: "weekly" },
     // Kereshető eszköz-oldalak (long-tail SEO): kalkulátorok + CV-készítő.
@@ -31,7 +37,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/berkalkulator/ausztria", priority: 0.75, changeFrequency: "weekly" },
     { path: "/berkalkulator/svajc", priority: 0.75, changeFrequency: "weekly" },
     { path: "/berkalkulator/hollandia", priority: 0.75, changeFrequency: "weekly" },
-    { path: "/berkalkulator", priority: 0.7, changeFrequency: "monthly" },
     { path: "/nemet-oneletrajz", priority: 0.7, changeFrequency: "monthly" },
     { path: "/iranytu", priority: 0.6, changeFrequency: "weekly" },
     { path: "/hirlevel", priority: 0.6, changeFrequency: "monthly" },
