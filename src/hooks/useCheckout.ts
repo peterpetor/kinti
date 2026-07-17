@@ -60,6 +60,13 @@ export function useCheckout() {
       const data = (await res.json()) as { transactionId?: string; error?: string };
 
       if (!res.ok) {
+        // Nincs bejelentkezve → ne hibaüzenet legyen, hanem vigyük a belépésre,
+        // és hozzuk vissza ide (minden vásárlás-gombra egységesen).
+        if (res.status === 401) {
+          const back = encodeURIComponent(window.location.pathname + window.location.search);
+          window.location.href = `/belepes?redirect_url=${back}`;
+          return;
+        }
         throw new Error(data.error || "Hiba történt a fizetés inicializálásakor");
       }
 
