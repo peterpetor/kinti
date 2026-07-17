@@ -6,7 +6,37 @@ import { SWRegister } from "@/components/sw-register";
 import { LegalGatekeeper } from "@/components/legal-gatekeeper";
 import { CountryRevealer } from "@/components/country-revealer";
 import { buildLegalGateScript } from "@/lib/legal-gate";
+import { safeJsonLdStringify } from "@/lib/json-ld";
 import "./globals.css";
+
+/**
+ * Site-szintű Organization + WebSite JSON-LD (AEO entitás-megerősítés): a
+ * válaszgépek/keresők asszociációs hálójában a „Kinti" ↔ „külföldön élő
+ * magyarok" kapcsolat így minden oldalról egyértelmű. ⚠️ Copy-szabály: NINCS
+ * bizonyíthatatlan felsőfok („legnagyobb") — ld. rangsor-átláthatóság precedens.
+ */
+const ORG_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://kinti.app/#organization",
+  name: "Kinti",
+  url: "https://kinti.app",
+  logo: "https://kinti.app/icons/icon-512.png",
+  description:
+    "A Kinti a külföldön élő magyarok platformja: ellenőrzött, magyarul beszélő szakemberek szaknévsora, albérlet-börze, állás-kereső és hivatali-ügyintézés segítség Svájcban, Ausztriában, Németországban és Hollandiában.",
+  areaServed: ["CH", "AT", "DE", "NL"],
+  knowsLanguage: ["hu", "de", "nl"],
+  email: "info@kinti.app",
+};
+const WEBSITE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://kinti.app/#website",
+  name: "Kinti",
+  url: "https://kinti.app",
+  inLanguage: "hu",
+  publisher: { "@id": "https://kinti.app/#organization" },
+};
 
 /**
  * Ország-feloldó boot-gate fej-szkript: még az első festés ELŐTT lefut. Ha a
@@ -143,6 +173,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         {/* Android-app (Google Play) kontextus — a Paddle-t rejtő CSS-hez. */}
         <script dangerouslySetInnerHTML={{ __html: ANDROID_APP_SCRIPT }} />
+        {/* AEO: site-szintű entitás-séma (Organization + WebSite). */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(ORG_JSON_LD) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(WEBSITE_JSON_LD) }} />
         <ClerkProvider
           localization={{
             ...huHU,

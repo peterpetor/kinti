@@ -3,6 +3,7 @@ import { getBusinesses, getCategories, getJobs, getPublishedStories } from "@/li
 import { parseDbDate } from "@/lib/dates";
 import { areasForBusiness } from "@/lib/seo-areas";
 import { GUIDES, GUIDES_UPDATED_AT } from "@/lib/guides";
+import { FAQ_PAGES } from "@/lib/faq-pages";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -48,6 +49,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
   for (const p of staticPages) {
     items.push({ url: `${BASE}${p.path}`, lastModified: now, changeFrequency: p.changeFrequency, priority: p.priority });
+  }
+
+  // 1/b) AEO GYIK-oldalak (FAQPage-sémával — a válaszgépek fő beszálló-pontjai).
+  items.push({ url: `${BASE}/gyik`, lastModified: now, changeFrequency: "weekly", priority: 0.75 });
+  for (const p of FAQ_PAGES) {
+    items.push({
+      url: `${BASE}/gyik/${p.slug}`,
+      lastModified: new Date(p.updatedAt),
+      changeFrequency: "monthly",
+      priority: 0.75,
+    });
   }
 
   // 2) Tudásbázis cikkek (mind a 4 ország: CH/AT/DE/NL, slug-előtaggal).

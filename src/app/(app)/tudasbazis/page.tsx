@@ -32,6 +32,21 @@ export default function TudasbazisPage() {
           (ország-tudatos kliens-lista, ld. ToolsList). */}
       <ToolsList />
 
+      {/* AEO GYIK-belépő: a leggyakoribb kérdés-témák válaszgép-barát oldalai. */}
+      <Link
+        href="/gyik"
+        className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
+      >
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-lg">❓</span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">Gyakori kérdések</span>
+          <span className="block text-[11.5px] leading-snug text-ink-muted">
+            Lakásbérlés, szakember-keresés, hivatali ügyek — azonnali válaszokkal.
+          </span>
+        </span>
+        <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
+      </Link>
+
       <GuideList />
 
       {/* Cross-link: Ügyintézés Varázsló */}

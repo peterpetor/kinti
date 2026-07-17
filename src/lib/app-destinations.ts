@@ -74,6 +74,8 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "koltoztetes koltozes fuvar fuvarozas szallitas butorszallitas teherauto umzug" },
   { href: "/tudasbazis/vam", title: "Vám-kalkulátor", subtitle: "Behozatal a svájci határon", icon: "shoppingBag", feature: "vam",
     keywords: "vam behozatal csomag import hatar zoll vamkalkulator" },
+  { href: "/gyik", title: "Gyakori kérdések", subtitle: "Lakásbérlés, szakember, hivatali ügyek — válaszokkal", icon: "question",
+    keywords: "gyik gyakori kerdesek valaszok kaucio alberlet szakember ugyintezes anmeldung meldezettel" },
   { href: "/tudasbazis/iskolarendszer", title: "Iskolarendszer", subtitle: "Hogyan épül fel az oktatás", icon: "bookmark",
     keywords: "iskola oktatas gyerek tanulas iskolarendszer ovoda egyetem" },
   { href: "/kozlekedes", title: "Közlekedés", subtitle: "Bérletek, jegyek, jogosítvány", icon: "car",
