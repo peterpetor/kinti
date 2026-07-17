@@ -71,7 +71,9 @@ function tsOf(s?: string | null): number {
 
 /** Egyszerre ennyi kártya kerül a DOM-ba — görgetésre (vagy gombbal) bővül.
  *  1000+ kártya egyszerre = több másodperces main-thread blokk mobilon. */
-const RENDER_STEP = 60;
+/** Találatok laponként — lapozott lista (user-kérés: „az első százat mutassa
+ *  1 oldalon, a második százat a másodikon", ne egy végtelen tekerés legyen). */
+const PAGE_SIZE = 100;
 
 export function ExploreView({
   categories,
@@ -103,8 +105,8 @@ export function ExploreView({
 
   // Render-sapka: egyszerre legfeljebb ennyi kártya van a DOM-ban; a lista alján
   // lévő sentinel (vagy a gomb) bővíti. Szűrő-váltásra visszaáll az alapra.
-  const [visibleCount, setVisibleCount] = useState(RENDER_STEP);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const [page, setPage] = useState(1);
+  const listTopRef = useRef<HTMLDivElement | null>(null);
   // ?q és ?canton URL-paraméterek (a főoldalról / keresőből érkezve) → kezdő szűrők
   const searchParams = useSearchParams();
   const initialQ = searchParams?.get("q") ?? "";
@@ -327,26 +329,18 @@ export function ExploreView({
 
   const filteredBusinesses = useMemo(() => filtered.map(({ b }) => b), [filtered]);
 
-  // Szűrő-váltás → a sapka visszaáll (ne rendereljünk azonnal több százat).
+  // Szűrő-váltás → vissza az 1. oldalra (a lapozás ne ragadjon be).
   useEffect(() => {
-    setVisibleCount(RENDER_STEP);
+    setPage(1);
   }, [cat, canton, q, showFavs, openNow, minYears, passOnly, sortBy, country]);
 
-  // Görgetés a lista aljára → automatikus bővítés (a gomb a fallback).
-  useEffect(() => {
-    const el = loadMoreRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setVisibleCount((c) => c + RENDER_STEP);
-        }
-      },
-      { rootMargin: "600px 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [filtered.length, visibleCount, view]);
+  // Lapozás: oldal-váltáskor vissza a lista tetejére (a user ne a 100. kártya
+  // után találja magát).
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const goToPage = (p: number) => {
+    setPage(Math.min(Math.max(1, p), totalPages));
+    listTopRef.current?.scrollIntoView({ block: "start" });
+  };
 
   // „0 találat" fallback: ha a régió/sugár-szűrő miatt üres a lista, de van az
   // adott KATEGÓRIÁRA/szövegre illeszkedő találat máshol, mutassuk a legközelebbieket
@@ -755,7 +749,7 @@ export function ExploreView({
 
       {/* Rendezés (csak lista-nézetben, ha van mit rendezni) */}
       {view === "list" && filtered.length > 1 && (
-        <div className="no-scrollbar kinti-hfade flex items-center gap-2 overflow-x-auto px-5">
+        <div className="flex flex-wrap items-center gap-2 px-5">
           <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-ink-faint">Rendezés</span>
           {SORT_OPTIONS.map((o) => {
             if (o.id === "distance" && !userPos) return null;
@@ -805,7 +799,7 @@ export function ExploreView({
         )}
 
       {view === "list" ? (
-        <div className="grid gap-2.5 px-5">
+        <div ref={listTopRef} className="grid gap-2.5 px-5 scroll-mt-4">
           {/* „Legutóbb megnézted" — csak az alap-nézetben (keresés/szűrés közben
               nem tolakszik a találatok elé). Kliens-oldali, hidratálás-biztos. */}
           {!q.trim() && cat === "all" && !showFavs && <RecentBusinessesStrip />}
@@ -832,7 +826,7 @@ export function ExploreView({
             </Link>
           )}
 
-          {filtered.slice(0, visibleCount).map(({ b, dist }) => (
+          {filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map(({ b, dist }) => (
             <BusinessCard
               key={b.id}
               business={b}
@@ -842,15 +836,27 @@ export function ExploreView({
             />
           ))}
 
-          {/* Render-sapka bővítő: görgetésre automatikus (sentinel), gombbal kézi. */}
-          {filtered.length > visibleCount && (
-            <div ref={loadMoreRef} className="grid place-items-center py-1">
+          {/* Lapozó — 100 találat / oldal (Előző · „x/y. oldal" · Következő). */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between gap-2 py-1">
               <button
                 type="button"
-                onClick={() => setVisibleCount((c) => c + RENDER_STEP)}
-                className="rounded-pill border border-line bg-surface px-4 py-2 text-[12.5px] font-bold text-ink shadow-card active:scale-95"
+                onClick={() => goToPage(page - 1)}
+                disabled={page <= 1}
+                className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface px-4 py-2 text-[12.5px] font-bold text-ink shadow-card transition active:scale-95 disabled:opacity-40"
               >
-                További találatok betöltése ({filtered.length - visibleCount})
+                <Icon name="arrowLeft" size={13} strokeWidth={2.4} /> Előző
+              </button>
+              <span className="text-[12px] font-bold text-ink-muted">
+                {page}. oldal · összesen {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => goToPage(page + 1)}
+                disabled={page >= totalPages}
+                className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface px-4 py-2 text-[12.5px] font-bold text-ink shadow-card transition active:scale-95 disabled:opacity-40"
+              >
+                Következő <Icon name="arrowRight" size={13} strokeWidth={2.4} />
               </button>
             </div>
           )}
