@@ -18,6 +18,13 @@
  *
  * A flag TARTÓS (localStorage): a TWA minden navigációja app-kontextus marad,
  * akkor is, ha a source= paraméter az első oldal után eltűnik.
+ *
+ * ⚠️ A TWA a Chrome-mal KÖZÖS site-tárhelyen fut → a tartós flag önmagában a
+ * sima böngésző-fülekre is "ráragadna" (ott Paddle helyett Play-hibát adna).
+ * Ezért app-kontextus CSAK a flag ÉS az élő `display-mode: standalone` jel
+ * együttesénél áll fenn — normál fülben (display-mode: browser) mindig web/
+ * Paddle az út, a Play-appban (standalone) mindig Play Billing. Ugyanez a
+ * feltétel fut a layout.tsx ANDROID_APP_SCRIPT boot-szkriptjében.
  */
 import { useEffect, useState } from "react";
 
@@ -27,7 +34,11 @@ const STORAGE_KEY = "kinti.androidApp";
 export function isAndroidApp(): boolean {
   if (typeof window === "undefined") return false;
   try {
-    return localStorage.getItem(STORAGE_KEY) === "1";
+    const flagged = localStorage.getItem(STORAGE_KEY) === "1";
+    const standalone =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(display-mode: standalone)").matches;
+    return flagged && standalone;
   } catch {
     return false;
   }

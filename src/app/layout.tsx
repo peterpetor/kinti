@@ -67,8 +67,16 @@ const LEGAL_GATE_SCRIPT = buildLegalGateScript();
  * (localStorage) + `data-android-app` a <html>-en → a CSS a webes (Paddle)
  * fizetési szövegeket rejti, az Android-alternatívát mutatja (globals.css),
  * a useCheckout pedig Google Play Billingre vált. Lásd lib/android-app.ts.
+ *
+ * FONTOS: a TWA a Chrome-mal KÖZÖS site-tárhelyen fut, ezért a tartós flag
+ * önmagában átszivárogna a sima böngésző-fülekbe is (user-bug: böngészőben
+ * "Play-fizetés nem támogatott" a Paddle helyett). Ezért az app-kontextushoz
+ * a flag MELLETT élő jel is kell: `display-mode: standalone` (a TWA-ablakban
+ * igaz, normál fülben hamis). Az irány aszimmetrikus: appban Paddle = Play-
+ * szabályzatsértés, böngészőben Play-út = csak hibás UX — a standalone-feltétel
+ * mindkettőt helyesen kezeli. Ugyanez a feltétel él a lib/android-app.ts-ben.
  */
-const ANDROID_APP_SCRIPT = `(function(){try{var t=location.search.indexOf('source=twa')>-1;var r=document.referrer&&document.referrer.indexOf('android-app://')===0;var s=localStorage.getItem('kinti.androidApp')==='1';if(t||r){localStorage.setItem('kinti.androidApp','1');s=true;}if(s){document.documentElement.setAttribute('data-android-app','');}}catch(e){}})();`;
+const ANDROID_APP_SCRIPT = `(function(){try{var t=location.search.indexOf('source=twa')>-1;var r=document.referrer&&document.referrer.indexOf('android-app://')===0;var s=localStorage.getItem('kinti.androidApp')==='1';if(t||r){localStorage.setItem('kinti.androidApp','1');s=true;}var sa=window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches;if(s&&sa){document.documentElement.setAttribute('data-android-app','');}}catch(e){}})();`;
 
 // A mentett témát (Világos/Sötét) még a festés előtt visszaállítjuk, hogy reload
 // után is éljen a választás, villanás (FOUC) nélkül. A régi „modern" mentett
