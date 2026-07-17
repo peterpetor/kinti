@@ -50,6 +50,9 @@ export default function ProPage() {
     // A nyelvkurzus 2026-07-11 óta INGYENES mind a 4 országban (user-döntés) —
     // ezért NEM szerepel a PRO-listában; ne tedd vissza.
     "Állampolgársági teszt-szimulátor — mind a 4 országra",
+    // Albérlet-börze: a hirdetések böngészése ingyenes, a hirdető elérhetőségének
+    // megnyitása PRO (szerver-gate: /api/housing/contact) — a lista ezt tükrözze.
+    "Albérlet-börze kapcsolatfelvétel — a hirdetők elérhetőségének megnyitása",
     // Tényállítás-fegyelem: az „500+ kifejezés" NEM volt igaz (a leckékben ennek
     // töredéke van) — csak bizonyítható állítást írunk ki. A szótár mind a 4
     // országra elérhető (CH svájci-német, AT/DE/NL a helyi nyelven).
