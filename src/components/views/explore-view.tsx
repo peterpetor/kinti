@@ -572,14 +572,15 @@ export function ExploreView({
           </span>
         </button>
 
-        {/* Tapasztalat (év) szűrő — Advanced search. text-center: a select
-            szövege is középre kerüljön, mint a többi rács-elemé (user-jelzés). */}
+        {/* Tapasztalat (év) szűrő — Advanced search. text-center + appearance-none:
+            a natív select nyíl aszimmetrikus helyfoglalása nélkül a szöveg
+            valóban középre kerül, mint a többi rács-elemé (user-jelzés). */}
         <select
           value={minYears}
           onChange={(e) => setMinYears(Number(e.target.value))}
           aria-label="Szűrés tapasztalatra"
           className={cn(
-            "inline-flex min-w-0 items-center justify-center rounded-pill border px-3 py-2 text-center text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
+            "inline-flex min-w-0 items-center justify-center appearance-none rounded-pill border px-3 py-2 text-center text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
             minYears > 0
               ? "bg-primary/10 border-primary/30 text-primary"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",

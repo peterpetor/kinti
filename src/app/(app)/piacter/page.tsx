@@ -77,7 +77,7 @@ async function PiacterContent({ tab }: { tab: PiacterTab }) {
 
   return (
     <PullToRefresh>
-      <div className="mx-auto max-w-md space-y-4 px-4 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
+      <div className="mx-auto max-w-md space-y-4 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+2rem)]">
         {/* ROOT tab-oldal (TabBar 4. fül) → nincs back, a „…" menü látszik —
             ugyanaz a gomb, ugyanott, mint a többi fő oldalon (user-jelzés;
             a ScreenHeader root-szabálya adja automatikusan). */}
