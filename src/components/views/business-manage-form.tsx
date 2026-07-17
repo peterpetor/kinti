@@ -45,6 +45,9 @@ export function BusinessManageForm({ business, token }: { business: Business; to
   const handleUpgrade = () => {
     startCheckout({
       product: "business_pro_monthly",
+      // Token-os (Clerk-mentes) vásárlás: a szerver a manageTokenből oldja fel
+      // a céget — az email-only tulajdonos belépés nélkül vehet Szaknévsor PRO-t.
+      manageToken: token,
       customData: {
         type: "business_pro",
         businessId: business.id

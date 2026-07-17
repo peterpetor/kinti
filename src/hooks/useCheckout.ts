@@ -12,6 +12,12 @@ interface CheckoutOptions {
   customData?: Record<string, string>;
   customerEmail?: string;
   customerName?: string;
+  /** Email-only cégkezelő út: a /szaknevsor/kezeles/<token> oldal tokene —
+   *  Clerk-bejelentkezés nélkül vásárolható vele Szaknévsor PRO (a szerver a
+   *  tokenből oldja fel a céget; kizárólag business_pro-ra érvényes).
+   *  Android-appban a token-os út nem él (a Play Billing fiókhoz köt) — ott
+   *  a szokásos bejelentkezős út marad. */
+  manageToken?: string;
 }
 
 /**
