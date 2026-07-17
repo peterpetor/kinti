@@ -472,7 +472,8 @@ export function ExploreView({
           className="inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card transition hover:bg-surface-alt active:scale-[0.97]"
         >
           <Icon name="pin" size={14} strokeWidth={2.2} className="shrink-0 text-accent" />
-          <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-ink-muted">Kanton</span>
+          {/* Ország-illő régió-megnevezés (user-jelzés: Ausztriában nincs kanton). */}
+          <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-ink-muted">{regionLabel(country)}</span>
           <span className="truncate text-[13.5px] font-bold tracking-[-0.01em] text-ink">{locationLabel}</span>
           <Icon name="chevD" size={13} strokeWidth={2.2} className="shrink-0 text-ink-muted" />
         </button>
@@ -571,13 +572,14 @@ export function ExploreView({
           </span>
         </button>
 
-        {/* Tapasztalat (év) szűrő — Advanced search */}
+        {/* Tapasztalat (év) szűrő — Advanced search. text-center: a select
+            szövege is középre kerüljön, mint a többi rács-elemé (user-jelzés). */}
         <select
           value={minYears}
           onChange={(e) => setMinYears(Number(e.target.value))}
           aria-label="Szűrés tapasztalatra"
           className={cn(
-            "inline-flex min-w-0 items-center justify-center rounded-pill border px-3 py-2 text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
+            "inline-flex min-w-0 items-center justify-center rounded-pill border px-3 py-2 text-center text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
             minYears > 0
               ? "bg-primary/10 border-primary/30 text-primary"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",

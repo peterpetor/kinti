@@ -4,6 +4,17 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import type { IconName } from "@/components/ui/icons";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
+
+/** Ország-illő kereső-példák (user-hiba-jelzés 2026-07-17: a vám-példa csak
+ *  Svájcra igaz — EU-n belül, pl. Ausztriába, nincs vám Magyarországról). */
+const SEARCH_EXAMPLES: Record<string, { hints: string; placeholder: string }> = {
+  CH: { hints: "„vám bor”, „jogosítvány”, „adó”", placeholder: "pl. mennyi vám 5 liter borra?" },
+  AT: { hints: "„Meldezettel”, „e-card”, „adó”", placeholder: "pl. mi az a Meldezettel?" },
+  DE: { hints: "„Anmeldung”, „Krankenkasse”, „adó”", placeholder: "pl. mi kell az Anmeldunghoz?" },
+  NL: { hints: "„BSN”, „zorgverzekering”, „adó”", placeholder: "pl. hogyan igényelek BSN-t?" },
+};
 
 /** A kereséshez átadott könnyű guide-index (a teljes body is benne a hay-ben). */
 export interface GuideSearchItem {
@@ -23,6 +34,8 @@ export interface GuideSearchItem {
  */
 export function GuideSearch({ guides }: { guides: GuideSearchItem[] }) {
   const [q, setQ] = useState("");
+  const [prefCountry] = usePreferredCountry();
+  const examples = SEARCH_EXAMPLES[prefCountry ?? DEFAULT_COUNTRY] ?? SEARCH_EXAMPLES[DEFAULT_COUNTRY];
 
   const matches = useMemo(() => {
     const tokens = q
@@ -55,7 +68,7 @@ export function GuideSearch({ guides }: { guides: GuideSearchItem[] }) {
             Keresés a tudásbázisban
           </h3>
           <p className="text-[12.5px] leading-snug text-ink-muted">
-            Írd be, mi érdekel (pl. „vám bor", „jogosítvány", „adó") — és rögtön a
+            Írd be, mi érdekel (pl. {examples.hints}) — és rögtön a
             megfelelő, hiteles leíráshoz viszünk.
           </p>
         </div>
@@ -66,7 +79,7 @@ export function GuideSearch({ guides }: { guides: GuideSearchItem[] }) {
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="pl. mennyi vám 5 liter borra?"
+          placeholder={examples.placeholder}
           className="h-[46px] w-full rounded-2xl border border-line bg-surface pl-4 pr-12 text-[14px] font-medium text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
         />
         <span className="absolute right-3 grid h-[30px] w-[30px] place-items-center text-ink-faint">

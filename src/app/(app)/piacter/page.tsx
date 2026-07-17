@@ -1,7 +1,5 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
-import { Icon } from "@/components/ui";
 import { ScreenHeader } from "@/components/ui/headers";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { getHousingListings, getHousingListingForNotify } from "@/lib/repo";
@@ -80,19 +78,10 @@ async function PiacterContent({ tab }: { tab: PiacterTab }) {
   return (
     <PullToRefresh>
       <div className="mx-auto max-w-md space-y-4 px-4 pb-12 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
-        <ScreenHeader
-          eyebrow="Piactér"
-          title="Albérlet és hirdetések"
-          back={
-            <Link
-              href="/"
-              aria-label="Vissza a Főoldalra"
-              className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border border-line bg-surface text-ink active:scale-95"
-            >
-              <Icon name="arrowLeft" size={16} strokeWidth={2.4} />
-            </Link>
-          }
-        />
+        {/* ROOT tab-oldal (TabBar 4. fül) → nincs back, a „…" menü látszik —
+            ugyanaz a gomb, ugyanott, mint a többi fő oldalon (user-jelzés;
+            a ScreenHeader root-szabálya adja automatikusan). */}
+        <ScreenHeader eyebrow="Piactér" title="Albérlet és hirdetések" />
 
         <PiacterTabs
           initialTab={tab}
