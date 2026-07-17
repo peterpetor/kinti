@@ -68,7 +68,11 @@ export function RecentBusinessesStrip() {
   if (items.length === 0) return null;
 
   return (
-    <div className="space-y-1.5">
+    /* min-w-0: grid/flex-elemként zsugorodhasson a tartalma alá — enélkül a
+       belső vízszintes scroller SZÉTFESZÍTI a szülő grid-oszlopot, és a lista
+       ÖSSZES kártyája a képernyőn túlra szélesedik (2026-07-17 user-bug:
+       „levágva látom" — a kártyák 1600px+ szélesek lettek). */
+    <div className="min-w-0 max-w-full space-y-1.5">
       <p className="px-1 text-[11px] font-bold uppercase tracking-wide text-ink-faint">
         Legutóbb megnézted
       </p>

@@ -801,7 +801,10 @@ export function ExploreView({
         )}
 
       {view === "list" ? (
-        <div ref={listTopRef} className="grid gap-2.5 px-5 scroll-mt-4">
+        /* grid-cols-[minmax(0,1fr)]: az oszlop SOSEM nőhet a konténer fölé —
+           mélységi védelem a „széles gyerek szétfeszíti a trackot, minden
+           kártya levágódik" hiba-osztály ellen (ld. recent-businesses). */
+        <div ref={listTopRef} className="grid grid-cols-[minmax(0,1fr)] gap-2.5 px-5 scroll-mt-4">
           {/* „Legutóbb megnézted" — csak az alap-nézetben (keresés/szűrés közben
               nem tolakszik a találatok elé). Kliens-oldali, hidratálás-biztos. */}
           {!q.trim() && cat === "all" && !showFavs && <RecentBusinessesStrip />}
