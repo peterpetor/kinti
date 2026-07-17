@@ -266,6 +266,7 @@ export function DropdownMenu() {
         },
         { key: "hirlevel", label: "Hírlevél", href: "/hirlevel", tint: "bg-primary/10 text-primary", icon: { name: "send" } },
         { key: "ertesitesek", label: "Értesítések", href: "/ertesitesek", tint: "bg-primary/10 text-primary", icon: { name: "bell" } },
+        { key: "helymeghatarozas", label: "Helymeghatározás", href: "/helymeghatarozas", tint: "bg-primary/10 text-primary", icon: { name: "pin" } },
       ],
     },
     {

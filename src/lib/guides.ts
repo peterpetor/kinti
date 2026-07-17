@@ -1018,10 +1018,10 @@ export const GUIDES_AT: Guide[] = [
     icon: "heart",
     sections: [
       { heading: "Automatikus biztosítás", body: ["Ha munkaviszonyban állsz, a munkáltató bejelent az ÖGK-hoz (Österreichische Gesundheitskasse), és AUTOMATIKUSAN biztosított leszel. Az e-card postán érkezik.", "Itt NEM kell biztosítót választani és külön díjat fizetni, mint a svájci Krankenkasse-nál — a járulékot a bérből vonják."] },
-      { heading: "e-card", body: ["Az e-card a TB-kártyád: orvosnál, gyógyszertárban, kórházban ezt mutatod fel.", "A háziorvos (Hausarzt) az első kontakt; beutalóval mész szakorvoshoz."] },
+      { heading: "e-card — már csak fényképpel", body: ["Az e-card a TB-kártyád: orvosnál, gyógyszertárban, kórházban ezt mutatod fel.", "FONTOS: az e-card ma már csak fényképpel készül (14 év felett). Osztrák útlevél/személyi híján — tehát magyar állampolgárként jellemzően — a fotódat NEKED kell regisztráltatnod, különben a kártyát nem tudják legyártani.", "Fotó-regisztráció: személyesen, útlevél-minőségű fényképpel és úti okmánnyal — külföldi állampolgárként a tartományi rendőr-igazgatóságokon (Landespolizeidirektion) vagy a kijelölt községi hivatalokban. Részletek: chipkarte.at/foto.", "A háziorvos (Hausarzt) az első kontakt; beutalóval mész szakorvoshoz."] },
       { heading: "Családtagok", bullets: ["A nem dolgozó házastárs és a gyerekek jellemzően társbiztosítottak (mitversichert)", "Önfoglalkoztatóknak az SVS (Sozialversicherung der Selbständigen)"] },
     ],
-    sources: [{ label: "gesundheitskasse.at — ÖGK", url: "https://www.gesundheitskasse.at/" }, { label: "oesterreich.gv.at — e-card", url: "https://www.oesterreich.gv.at/themen/gesundheit_und_notfaelle.html" }],
+    sources: [{ label: "gesundheitskasse.at — ÖGK", url: "https://www.gesundheitskasse.at/" }, { label: "oesterreich.gv.at — e-card", url: "https://www.oesterreich.gv.at/themen/gesundheit_und_notfaelle.html" }, { label: "chipkarte.at — e-card fotó-regisztráció", url: "https://www.chipkarte.at/foto" }],
   },
   {
     slug: "at-adozas",
@@ -1065,7 +1065,7 @@ export const GUIDES_AT: Guide[] = [
     summary: "A fizetésedhez és a lakbérhez kell; a Meldezettel + útlevél elég a nyitáshoz.",
     icon: "trending",
     sections: [
-      { heading: "Számlanyitás", body: ["Nyiss Girokonto-t (folyószámla) banknál (Erste, Bank Austria, BAWAG, Raiffeisen) vagy online (N26, bank99).", "Általában kell: érvényes útlevél/igazolvány + Meldezettel. A bérutaláshoz és a Daueraufträge (állandó megbízás, pl. lakbér) beállításához is ez kell."] },
+      { heading: "Számlanyitás", body: ["Nyiss Girokonto-t (folyószámla) banknál (Erste Bank/Sparkasse — Bécsben Erste, vidéken a helyi Sparkasse, egy csoport —, Bank Austria, BAWAG, Raiffeisen) vagy online (N26, bank99).", "Általában kell: érvényes útlevél/igazolvány + Meldezettel. A bérutaláshoz és a Daueraufträge (állandó megbízás, pl. lakbér) beállításához is ez kell."] },
       { heading: "Fizetés", bullets: ["A kártya = Bankomatkarte (debit); a Bankomat = ATM", "Erlagschein / Zahlschein = sárga csekk (számlák befizetése)", "Sok helyen kártya/kontaktless; piacon, kis boltban inkább készpénz"] },
       { heading: "Betétvédelem", body: ["Az EU-szabály szerint a betétek bankonként 100 000 €-ig védettek (Einlagensicherung)."] },
     ],
@@ -1168,11 +1168,11 @@ export const GUIDES_AT: Guide[] = [
     summary: "Az e-card a kulcs mindenhez; Kassenarzt ingyen, Wahlarzt részben térített — sürgősségnél 1450.",
     icon: "heart",
     sections: [
-      { heading: "Az e-card", body: ["A munkaviszonnyal automatikusan biztosított vagy (ÖGK), és postán kapod az e-cardot — ezt VIDD MAGADDAL minden orvoshoz, enélkül készpénzt kérhetnek.", "Az e-card hátoldala az európai betegbiztosítási kártya (EKVK) is — az EU-ban, így Magyarországon is véd sürgősségnél."] },
+      { heading: "Az e-card", body: ["A munkaviszonnyal automatikusan biztosított vagy (ÖGK), és postán kapod az e-cardot — ezt VIDD MAGADDAL minden orvoshoz, enélkül készpénzt kérhetnek.", "Az e-card ma már csak FÉNYKÉPPEL érvényes (14 év felett). Magyar állampolgárként a fotód jellemzően nincs az osztrák nyilvántartásokban — személyesen kell regisztráltatnod (útlevél-minőségű fotó + úti okmány) a tartományi rendőr-igazgatóságon vagy a kijelölt községi hivatalokban, különben nem tudják legyártani a kártyát. Részletek: chipkarte.at/foto.", "Az e-card hátoldala az európai betegbiztosítási kártya (EKVK) is — az EU-ban, így Magyarországon is véd sürgősségnél."] },
       { heading: "Kassenarzt vs. Wahlarzt", body: ["A Kassenarzt (szerződött orvos) az e-carddal INGYENES; a Wahlarzt (magánorvos) számláját kifizeted, és a pénztár utólag a tarifa egy részét (jellemzően a szerződéses díj ~80%-át) téríti.", "Háziorvost (Hausarzt) érdemes hamar választani — nagyvárosban a magyarul beszélő orvosokat a Kinti Szaknévsorban is megtalálod."] },
       { heading: "Sürgősség", bullets: ["1450 — egészségügyi tanácsadó telefonszám (mit tegyek, hova menjek?)", "141 — orvosi ügyelet (Ärztefunkdienst), 144 — mentő", "Hétvégén/éjjel: ügyeletes gyógyszertárak listája a gyógyszertár-ajtókon és online"] },
     ],
-    sources: [{ label: "gesundheit.gv.at — hivatalos egészségügyi portál", url: "https://www.gesundheit.gv.at/" }],
+    sources: [{ label: "gesundheit.gv.at — hivatalos egészségügyi portál", url: "https://www.gesundheit.gv.at/" }, { label: "chipkarte.at — e-card fotó-regisztráció", url: "https://www.chipkarte.at/foto" }],
   },
   {
     slug: "at-geringfugig",

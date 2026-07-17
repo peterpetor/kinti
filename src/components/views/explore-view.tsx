@@ -673,9 +673,16 @@ export function ExploreView({
       {/* Geo-hiba visszajelzés */}
       {(geoState === "denied" || geoState === "error") && (
         <div className="mx-5 rounded-card border border-accent/30 bg-accent/5 px-4 py-2 text-[12px] text-accent">
-          {geoState === "denied"
-            ? "Helymeghatározás letiltva. Engedélyezd a böngésződ beállításaiban, hogy a közeli vállalkozásokat lásd."
-            : "Nem sikerült lekérni a helyzeted. Próbáld újra később."}
+          {geoState === "denied" ? (
+            <>
+              Helymeghatározás letiltva.{" "}
+              <Link href="/helymeghatarozas" className="font-bold underline">
+                Így engedélyezed újra →
+              </Link>
+            </>
+          ) : (
+            "Nem sikerült lekérni a helyzeted. Próbáld újra később."
+          )}
         </div>
       )}
 

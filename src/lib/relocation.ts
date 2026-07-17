@@ -101,7 +101,7 @@ export const PHASES_AT: RoadmapPhase[] = [
     tasks: [
       { id: "at-meldezettel", title: "Lakcímbejelentés (Meldezettel)", description: "A beköltözéstől számított 3 NAPON BELÜL kötelező a Meldeamtban/Magistratban! (Szigorúbb, mint Svájcban.)" },
       { id: "at-sim", title: "Osztrák SIM kártya", description: "A1, Magenta vagy Drei — szükséged lesz osztrák számra a hivatali ügyekhez." },
-      { id: "at-bank", title: "Bankszámlanyitás", description: "Erste, Bank Austria vagy BAWAG — a fizetésed fogadásához. A Meldezettel kelleni fog hozzá." },
+      { id: "at-bank", title: "Bankszámlanyitás", description: "Erste Bank/Sparkasse, Bank Austria vagy BAWAG — a fizetésed fogadásához. A Meldezettel kelleni fog hozzá." },
     ],
   },
   {
@@ -109,7 +109,7 @@ export const PHASES_AT: RoadmapPhase[] = [
     title: "Berendezkedés (1. hónap)",
     icon: "home",
     tasks: [
-      { id: "at-ecard", title: "e-card / egészségbiztosítás", description: "A munkaviszonnyal AUTOMATIKUSAN biztosított leszel (ÖGK); az e-card postán érkezik. Itt NEM kell pénztárt választani, mint Svájcban." },
+      { id: "at-ecard", title: "e-card / egészségbiztosítás", description: "A munkaviszonnyal AUTOMATIKUSAN biztosított leszel (ÖGK). Az e-card már csak FÉNYKÉPPEL készül — magyar állampolgárként a fotódat személyesen kell regisztráltatnod (chipkarte.at/foto), utána postán jön a kártya." },
       { id: "at-lakas", title: "Albérlet és bérleti szerződés", description: "Hauptmietvertrag, Kaution, esetleg Provision. Figyelj a Betriebskostenre (rezsi) a lakbéren felül — és nézd meg a kinti magyarok albérlet-börzéjét is.", linkHref: "/piacter", linkLabel: "Albérlet-börze", linkIcon: "key" },
       { id: "at-ado", title: "Adózás (Lohnsteuer)", description: "A bérből automatikusan vonják a Lohnsteuert és a társadalombiztosítást. Év végén az Arbeitnehmerveranlagás (adóbevallás) gyakran visszatérítést hoz!", linkHref: "/szaknevsor", linkLabel: "Könyvelők", linkIcon: "users" },
       { id: "at-iskola", title: "Iskola / óvoda (Kindergarten)", description: "Gyerek beíratása a lakóhely szerinti iskolába/óvodába.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
