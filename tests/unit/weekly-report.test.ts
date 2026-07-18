@@ -6,6 +6,7 @@ const COUNTS = {
   jobApps7: 7, b2bNew7: 1, pushSubsTotal: 21, newsletterSubsTotal: 40,
   pendingRequests: 2, pendingStories: 1,
   housingNew7: 5, housingLive: 9, pendingHousing: 3,
+  dataHealthIssues: 0,
 };
 
 describe("weekly-report", () => {
@@ -36,5 +37,17 @@ describe("weekly-report", () => {
     );
     expect(r.topPages).toEqual([{ name: "home", count: 10 }]);
     expect(r.topActions).toEqual([]);
+  });
+
+  it("buildWeeklyReport: adat-integritási sor CSAK hibánál jelenik meg", () => {
+    const now = new Date("2026-07-13T06:00:00Z");
+    // Egészséges (0 hiba) → nincs 🩺 sor.
+    const healthy = buildWeeklyReport(COUNTS, [], now);
+    expect(healthy.rows.find((x) => x.label.includes("adat-hiba"))).toBeUndefined();
+    // Van hiba → megjelenik a sor a db:health utalással.
+    const broken = buildWeeklyReport({ ...COUNTS, dataHealthIssues: 5 }, [], now);
+    const row = broken.rows.find((x) => x.label.includes("adat-hiba"));
+    expect(row?.value).toContain("5 kritikus");
+    expect(row?.value).toContain("npm run db:health");
   });
 });

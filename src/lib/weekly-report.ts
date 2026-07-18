@@ -60,6 +60,14 @@ export function buildWeeklyReport(
         label: "⏳ Moderációra vár",
         value: `${counts.pendingRequests} Keresek-hirdetés · ${counts.pendingStories} élettörténet · ${counts.pendingHousing} albérlet-hirdetés`,
       },
+      // Adat-integritási pulzus — CSAK ha van hiba (0-nál nincs sor, ne zajongjon).
+      // A részletekhez: `npm run db:health`. A hiba magától nem áll helyre.
+      ...(counts.dataHealthIssues > 0
+        ? [{
+            label: "🩺 Szaknévsor adat-hiba",
+            value: `${counts.dataHealthIssues} kritikus (rossz pin / hiányzó tartomány) — futtasd: npm run db:health`,
+          }]
+        : []),
     ],
     topPages,
     topActions,

@@ -511,6 +511,61 @@ export interface WeeklyOpsCounts {
   housingLive: number;
   /** Moderációra váró albérlet-hirdetés (időérzékeny!). */
   pendingHousing: number;
+  /** Kritikus szaknévsor adat-integritási hiba (rossz pin / idegen-országbeli
+   *  vagy hiányzó tartomány / bbox-on kívüli koord). 0 = egészséges. Ld.
+   *  `npm run db:health` a részletes, sor-szintű ellenőrzéshez. */
+  dataHealthIssues: number;
+}
+
+/** A négy ország geokód-fallback középpontja (prepare-business-import.mjs). */
+const HEALTH_CENTERS: Record<string, [number, number]> = {
+  CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29],
+};
+/** Ország-bbox [latMin, latMax, lngMin, lngMax] (prepare-business-import.mjs). */
+const HEALTH_BBOX: Record<string, [number, number, number, number]> = {
+  CH: [45.8, 47.9, 5.9, 10.6], AT: [46.3, 49.1, 9.4, 17.2],
+  DE: [47.2, 55.1, 5.8, 15.1], NL: [50.7, 53.6, 3.3, 7.3],
+};
+/** Érvényes tartomány-kódok országonként (regions.ts / cantons.ts tükre). */
+const HEALTH_CANTONS: Record<string, string[]> = {
+  AT: ["W", "NOE", "OOE", "STM", "TIR", "KTN", "SBG", "VBG", "BGL"],
+  DE: ["BW", "BY", "BE", "BB", "HB", "HH", "HE", "MV", "NI", "NW", "RP", "SL", "SN", "ST", "SH", "TH"],
+  NL: ["NH", "ZH", "UT", "NB", "GE", "OV", "LI", "FR", "GR", "DR", "FL", "ZE"],
+  CH: ["ZH", "BE", "LU", "UR", "SZ", "OW", "NW", "GL", "ZG", "FR", "SO", "BS", "BL", "SH", "AR", "AI", "SG", "GR", "AG", "TG", "TI", "VD", "VS", "NE", "GE", "JU"],
+};
+
+/**
+ * A látható szaknévsor KRITIKUS adat-integritási hibáinak száma egyetlen
+ * lekérdezésben — a `scripts/db-health.mjs` CLI edge-kompatibilis, aggregált
+ * párja (a heti operátori emailhez). Ugyanaz a három kritikus feltétel:
+ * ország-közép/hiányzó pin, idegen-országbeli vagy hiányzó tartomány,
+ * bbox-on kívüli koordináta. Best-effort: hibánál 0 (a riportot sose töri).
+ */
+export async function getDataHealthCount(): Promise<number> {
+  const conds: string[] = [];
+  // 1) Ország-közép vagy hiányzó pin.
+  conds.push("lat IS NULL OR lat = 0");
+  for (const [, [lat, lng]] of Object.entries(HEALTH_CENTERS)) {
+    conds.push(`(lat BETWEEN ${(lat - 0.01).toFixed(2)} AND ${(lat + 0.01).toFixed(2)} AND lng BETWEEN ${(lng - 0.01).toFixed(2)} AND ${(lng + 0.01).toFixed(2)})`);
+  }
+  // 2) Hiányzó VAGY idegen-országbeli (a saját ország érvényes halmazán kívüli) tartomány.
+  conds.push("canton_code IS NULL OR canton_code = ''");
+  for (const [cc, codes] of Object.entries(HEALTH_CANTONS)) {
+    const inList = codes.map((c) => `'${c}'`).join(",");
+    conds.push(`(country_code = '${cc}' AND canton_code NOT IN (${inList}))`);
+  }
+  // 3) Ország bbox-án kívüli koordináta.
+  for (const [cc, [latMin, latMax, lngMin, lngMax]] of Object.entries(HEALTH_BBOX)) {
+    conds.push(`(country_code = '${cc}' AND lat IS NOT NULL AND lat != 0 AND (lat < ${latMin} OR lat > ${latMax} OR lng < ${lngMin} OR lng > ${lngMax}))`);
+  }
+  try {
+    const row = await getDB()
+      .prepare(`SELECT COUNT(*) AS n FROM businesses WHERE COALESCE(hidden,0)=0 AND (${conds.join(" OR ")})`)
+      .first<{ n: number }>();
+    return row?.n ?? 0;
+  } catch {
+    return 0;
+  }
 }
 
 /**
@@ -543,6 +598,9 @@ export async function getWeeklyOpsCounts(): Promise<WeeklyOpsCounts> {
         pending_req: number; pending_story: number;
         housing7: number; housing_live: number; pending_housing: number;
       }>();
+    // Adat-integritási pulzus — KÜLÖN best-effort, hogy egy health-query hiba
+    // ne nullázza az egész pulzus-riportot.
+    const dataHealthIssues = await getDataHealthCount();
     return {
       leads7: row?.leads7 ?? 0,
       lockedLeads7: row?.locked7 ?? 0,
@@ -557,12 +615,13 @@ export async function getWeeklyOpsCounts(): Promise<WeeklyOpsCounts> {
       housingNew7: row?.housing7 ?? 0,
       housingLive: row?.housing_live ?? 0,
       pendingHousing: row?.pending_housing ?? 0,
+      dataHealthIssues,
     };
   } catch {
     return {
       leads7: 0, lockedLeads7: 0, cv7: 0, quizPlays7: 0, jobApps7: 0, b2bNew7: 0,
       pushSubsTotal: 0, newsletterSubsTotal: 0, pendingRequests: 0, pendingStories: 0,
-      housingNew7: 0, housingLive: 0, pendingHousing: 0,
+      housingNew7: 0, housingLive: 0, pendingHousing: 0, dataHealthIssues: 0,
     };
   }
 }
