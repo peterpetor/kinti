@@ -36,6 +36,32 @@ export default function ProPage() {
   }, [user?.id]);
   const kintiProActive = !!status?.kintiPro;
   const businessProActive = !!status?.businessPro;
+
+  // Előfizetés-kezelő (lemondás/számlák) — Paddle customer portal. A gomb csak
+  // aktív Kinti PRO-nál látszik; a portál-URL rövid életű, kattintáskor kérjük.
+  const [portalBusy, setPortalBusy] = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
+  const openPortal = async () => {
+    setPortalBusy(true);
+    setPortalError(null);
+    try {
+      const res = await fetch("/api/payments/portal");
+      const data = (await res.json()) as { provider?: string; url?: string; error?: string };
+      if (data.provider === "play") {
+        window.location.href = "https://play.google.com/store/account/subscriptions";
+        return;
+      }
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      setPortalError(data.error || "Az előfizetés-kezelő megnyitása nem sikerült.");
+    } catch {
+      setPortalError("Az előfizetés-kezelő megnyitása nem sikerült. Próbáld újra később.");
+    } finally {
+      setPortalBusy(false);
+    }
+  };
   // A Kinti PRO MIND A 4 országra szól (EGY előfizetés) — ezért a marketing-lista
   // ország-SEMLEGES, nem írja ki egy ország nevét (különben Ausztria-specifikusnak
   // tűnne, pedig nem az). A funkciók in-app úgyis a választott országhoz igazodnak
@@ -331,14 +357,35 @@ export default function ProPage() {
           végzik, villanásmentesen. */}
       <div className="mt-16 text-center">
         <div className="web-only-payment">
+          {/* Előfizetés-kezelés (lemondás, számlák) — aktív Kinti PRO-nál, CSAK
+              weben (a Paddle portal az Android-appban Play-szabályzatot sértene).
+              A portál lemondás mély-linkkel nyílik (német § 312k
+              Kündigungsbutton-elvárás); Play-es előfizetőt a Play Előfizetések
+              oldalára visz. Az app-nézet külön Play-linket kap lentebb. */}
+          {kintiProActive && (
+            <div className="mb-6">
+              <button
+                type="button"
+                onClick={openPortal}
+                disabled={portalBusy}
+                className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-5 py-2.5 text-[13px] font-bold text-ink shadow-card transition active:scale-[0.98] disabled:opacity-60"
+              >
+                {portalBusy ? "Megnyitás…" : "Előfizetésem kezelése — lemondás, számlák"}
+              </button>
+              {portalError && (
+                <p className="mx-auto mt-2 max-w-md text-[11.5px] leading-snug text-accent">{portalError}</p>
+              )}
+            </div>
+          )}
           <p className="text-[13px] font-semibold text-ink-muted">
             A fizetéseket a biztonságos <strong className="text-ink">Paddle</strong> (Merchant of
             Record) dolgozza fel — a számlát is ő állítja ki.
           </p>
           <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
-            <strong>Lemondás:</strong> az előfizetés bármikor lemondható a Paddle
-            vásárlás-visszaigazoló emailjében kapott linken, vagy írj az{" "}
-            <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a> címre — a már
+            <strong>Lemondás:</strong> aktív előfizetésnél a fenti „Előfizetésem
+            kezelése" gombbal, a Paddle vásárlás-visszaigazoló emailjében kapott
+            linken, vagy az{" "}
+            <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a> címen — a már
             kifizetett időszak végéig a PRO aktív marad.
           </p>
           {/* User-kérés (2026-07-14): a WEBES leírásban jelezzük, hogy az Android-appból
@@ -350,13 +397,23 @@ export default function ProPage() {
           </p>
         </div>
         <div className="android-only-payment">
+          {kintiProActive && (
+            <div className="mb-6">
+              <a
+                href="https://play.google.com/store/account/subscriptions"
+                className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-5 py-2.5 text-[13px] font-bold text-ink shadow-card transition active:scale-[0.98]"
+              >
+                Előfizetésem kezelése a Google Play-ben
+              </a>
+            </div>
+          )}
           <p className="text-[13px] font-semibold text-ink-muted">
             A fizetéseket a <strong className="text-ink">Google Play</strong> fizetési rendszere
             dolgozza fel — a számlát is a Google állítja ki.
           </p>
           <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
-            <strong>Lemondás:</strong> az előfizetés bármikor lemondható a Google Play
-            Áruház → Előfizetések menüjében — a már kifizetett időszak végéig a PRO
+            <strong>Lemondás:</strong> az előfizetés bármikor lemondható a fenti gombbal vagy a
+            Google Play Áruház → Előfizetések menüjében — a már kifizetett időszak végéig a PRO
             aktív marad.
           </p>
         </div>

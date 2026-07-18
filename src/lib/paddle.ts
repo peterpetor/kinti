@@ -50,6 +50,48 @@ export async function createTransaction(
 }
 
 /**
+ * Paddle customer-portal session létrehozása — az előfizetés-kezelés
+ * (lemondás, számlák, fizetési mód) a Paddle hosztolt felületén történik.
+ * A visszaadott URL rövid életű; minden megnyitáskor frissen kérjük.
+ * Ha van subscription id, a lemondás mély-linkjét adjuk vissza (a német
+ * § 312k „Kündigungsbutton" szellemében a lehető legkevesebb kattintás),
+ * egyébként az áttekintő oldalt.
+ */
+export async function createPortalSession(
+  customerId: string,
+  subscriptionId?: string | null,
+): Promise<string> {
+  const apiKey = getCloudflareEnv().PADDLE_API_KEY;
+  if (!apiKey) throw new Error("Missing PADDLE_API_KEY");
+
+  const res = await fetch(`${PADDLE_API_BASE}/customers/${encodeURIComponent(customerId)}/portal-sessions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(subscriptionId ? { subscription_ids: [subscriptionId] } : {}),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Paddle portal error: ${res.status} ${text.slice(0, 300)}`);
+  }
+  const data = (await res.json()) as {
+    data?: {
+      urls?: {
+        general?: { overview?: string };
+        subscriptions?: Array<{ id?: string; cancel_subscription?: string }>;
+      };
+    };
+  };
+  const cancelUrl = data.data?.urls?.subscriptions?.[0]?.cancel_subscription;
+  const overview = data.data?.urls?.general?.overview;
+  const url = cancelUrl || overview;
+  if (!url) throw new Error("Paddle portal: missing url");
+  return url;
+}
+
+/**
  * Paddle webhook aláírás-ellenőrzés. A `Paddle-Signature` fejléc formátuma:
  *   `ts=<unix>;h1=<hex hmac>`
  * ahol h1 = HMAC-SHA256(secret, `${ts}:${rawBody}`). Constant-time összevetés
