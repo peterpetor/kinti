@@ -4,6 +4,7 @@ import {
   createBusinessFromSubmission,
   deleteBusinessSubmission,
   getBusinessById,
+  findLikelyDuplicates,
 } from "@/lib/repo";
 import { slugifyBusinessName, approxCoordsForRegion } from "@/lib/business";
 import { getCloudflareEnv } from "@/lib/cloudflare";
@@ -42,6 +43,19 @@ export async function GET(_req: Request, { params }: { params: { token: string }
   // is működik.
   const manageToken = sub.manageToken ?? crypto.randomUUID().replace(/-/g, "");
 
+  // Duplikátum-jelzés a LÉTREHOZÁS ELŐTT (különben a most publikált saját sort
+  // is „duplikátumnak" látná) — TELEFON alapján, az admin moderálásához. NEM
+  // blokkol; best-effort. Ugyanaz a védelem, mint a local-first submit-útban.
+  let dupHint = "";
+  try {
+    const dups = await findLikelyDuplicates(sub.phone);
+    if (dups.length > 0) {
+      dupHint = `⚠️ LEHET DUPLIKÁTUM (azonos telefonszám): ${dups.map((d) => d.name).join(", ")} — ellenőrizd jóváhagyás előtt.\n\n`;
+    }
+  } catch {
+    /* a dup-jelzés best-effort — sose törheti a megerősítést */
+  }
+
   await createBusinessFromSubmission({
     id,
     name: sub.name,
@@ -65,7 +79,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
   notifyAdminContentPending({
     contentType: "vállalkozás",
     title: sub.name,
-    preview: sub.blurb ?? sub.address ?? "",
+    preview: dupHint + (sub.blurb ?? sub.address ?? ""),
     submitterEmail: sub.email,
   }).catch(() => {});
 
