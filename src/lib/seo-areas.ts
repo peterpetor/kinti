@@ -138,7 +138,13 @@ export function areaFromSlug(slug: string): SeoArea | null {
 }
 
 /** Egy vállalkozás ebbe a területbe tartozik-e. */
-export function businessInArea(b: Business, area: SeoArea): boolean {
+/** A terület-illesztéshez elég ennyi mező — a teljes Business ÉS a karcsú
+ *  ListBusiness is strukturálisan megfelel neki (Pick-alapú), így mindkét
+ *  hívó-oldal (részletoldal teljes Business / SEO-landing karcsú lista)
+ *  típus-hiba nélkül hívhatja. */
+type AreaMatchable = Pick<Business, "country" | "canton" | "address">;
+
+export function businessInArea(b: AreaMatchable, area: SeoArea): boolean {
   if ((b.country || "CH") !== area.country) return false;
   if (area.code === null) return true;
   let inRegion = b.canton === area.code;
@@ -153,6 +159,6 @@ export function businessInArea(b: Business, area: SeoArea): boolean {
 }
 
 /** Az összes terület, amibe a vállalkozás beleesik (sitemap-kombókhoz). */
-export function areasForBusiness(b: Business): SeoArea[] {
+export function areasForBusiness(b: AreaMatchable): SeoArea[] {
   return SEO_AREAS.filter((a) => businessInArea(b, a));
 }

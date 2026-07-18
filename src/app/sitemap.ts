@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getBusinesses, getCategories, getJobs, getPublishedStories } from "@/lib/repo";
+import { getBusinessesForList, getCategories, getJobs, getPublishedStories } from "@/lib/repo";
 import { parseDbDate } from "@/lib/dates";
 import { areasForBusiness } from "@/lib/seo-areas";
 import { GUIDES, GUIDES_UPDATED_AT } from "@/lib/guides";
@@ -76,8 +76,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // 3) Vállalkozások + kanton×kategória landing oldalak
   try {
+    // Karcsú, cache-elt vetület — csak id/categoryId/terület-illesztő mező kell
+    // (2026-07-19 audit: a sitemap minden crawler-hívásnál teljes, uncached
+    // SELECT *-ot futtatott a businesses táblán).
     const [businesses, categories] = await Promise.all([
-      getBusinesses(),
+      getBusinessesForList(),
       getCategories(),
     ]);
 

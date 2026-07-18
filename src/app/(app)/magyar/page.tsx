@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Icon, ScreenHeader } from "@/components/ui";
-import { getBusinesses, getCategories } from "@/lib/repo";
+import { getBusinessesForList, getCategories } from "@/lib/repo";
 import { areasForBusiness, COUNTRY_NAMES, type SeoArea } from "@/lib/seo-areas";
 
 export const runtime = "edge";
@@ -27,7 +27,10 @@ export const metadata: Metadata = {
 const COUNTRY_ORDER = ["CH", "AT", "DE", "NL"] as const;
 
 export default async function MagyarHub() {
-  const [businesses, categories] = await Promise.all([getBusinesses(), getCategories()]);
+  // Karcsú, cache-elt vetület (getBusinessesForList) — csak categoryId +
+  // terület-illesztő mezők kellenek, ld. a /magyar/[kategoria]/[terulet]
+  // melletti jegyzetet (2026-07-19 audit, uncached SELECT * kiváltása).
+  const [businesses, categories] = await Promise.all([getBusinessesForList(), getCategories()]);
   const catLabel = new Map(categories.map((c) => [c.id, c.label] as const));
 
   // terület → (kategória → darabszám); csak létező kategóriájú cégekből.

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { BusinessCard, Icon, ScreenHeader } from "@/components/ui";
-import { getBusinesses, getCategories, businessToListItem } from "@/lib/repo";
+import { getBusinessesForList, getCategories } from "@/lib/repo";
 import { areaFromSlug, businessInArea, areasForBusiness, COUNTRY_NAMES } from "@/lib/seo-areas";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 
@@ -40,7 +40,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const description = `Magyar nyelven beszélő ${category.label.toLowerCase()} ${area.locative} (${COUNTRY_NAMES[area.country]}). A Kintik által ajánlott, ellenőrzött szakemberek egy helyen.`;
 
   // Üres kombó → noindex (thin content ellen); a linkek követhetők maradnak.
-  const all = await getBusinesses({ category: category.id });
+  // A karcsú, cache-elt lista-vetületet használjuk (getBusinessesForList) —
+  // ugyanaz az adatforrás, mint a lenti oldal-render, hogy ne fusson kétszer
+  // teljes SELECT * a businesses táblán minden metaadat-generáláskor (37+ SEO
+  // régió-oldal, gyakran botok/AI-crawlerek látogatják — 2026-07-19 audit).
+  const all = (await getBusinessesForList()).filter((b) => b.categoryId === category.id);
   const hasContent = all.some((b) => businessInArea(b, area));
 
   const url = `https://kinti.app/magyar/${params.kategoria}/${params.terulet}`;
@@ -67,8 +71,9 @@ export default async function MagyarLanding({ params }: { params: Params }) {
   const { category, area, categories } = await resolve(params);
   if (!category || !area) notFound();
 
-  // EGY lekérdezésből dolgozik minden szekció (lista + kapcsolódó linkek).
-  const everything = await getBusinesses();
+  // EGY (cache-elt, karcsú) lekérdezésből dolgozik minden szekció (lista +
+  // kapcsolódó linkek) — ld. a generateMetadata melletti jegyzetet.
+  const everything = await getBusinessesForList();
   const byCategory = everything.filter((b) => b.categoryId === category.id);
   const businesses = byCategory.filter((b) => businessInArea(b, area));
 
@@ -186,7 +191,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
           </p>
           <div className="grid gap-2.5">
             {businesses.map((b) => (
-              <BusinessCard key={b.id} business={businessToListItem(b)} href={`/szaknevsor/${b.id}`} />
+              <BusinessCard key={b.id} business={b} href={`/szaknevsor/${b.id}`} />
             ))}
           </div>
         </>
