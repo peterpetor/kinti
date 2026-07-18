@@ -747,6 +747,13 @@ for (const r of records) {
   const lat = geo?.lat ?? cityLat;
   const lng = geo?.lng ?? cityLng;
   if (geo) geocoded++;
+  else if (region === null) {
+    // Se Nominatim, se ismert város → ORSZÁG-KÖZÉP koordináta + NULL canton.
+    // Ez a pin a térképen az ország kellős közepén jelenne meg (2026-07-18-i
+    // audit: 9 ilyen élő sort kellett kézzel javítani) — hangosan, KÜLÖN
+    // jelöljük, hogy az alkalmazás előtt kézzel geokódolható legyen.
+    skipped.push(`!! ORSZÁG-KÖZÉP FALLBACK (HIBÁS PIN + nincs canton — kézi geokódolás kell): ${r.name} — ${r.address || r.city}`);
+  }
   else if (r.address && /\d/.test(r.address)) skipped.push(`(geokód-fallback, város-pont) ${r.name} — ${r.address}`);
 
   let id = slugify(country, r.name);
