@@ -159,6 +159,29 @@ section("5. Azonos cím + azonos név (duplikátum-gyanú)");
   }
 }
 
+// 6) FIGYELEM — azonos UTCACÍM + azonos kategória (név-eltérő duplikátum-gyanú).
+// Ezt a #5 (pontos név+cím) NEM fogja meg, ha ugyanaz az üzlet MÁS néven szerepel
+// (pl. „Spájz Rotterdami Magyar Bolt" vs „Spájz-Hollandia Magyar Bolt", azonos
+// cím). Csak utcaszintű címnél (van házszám) — a csak-városnál tömeges álpozitív
+// lenne. Csoportpraxisnál (több azonos szakmájú orvos egy klinikán) LEGITIM is
+// lehet → emberi átnézés.
+section("6. Azonos utcacím + azonos kategória (név-eltérő duplikátum-gyanú)");
+{
+  const rows = q(
+    `SELECT LOWER(TRIM(address)) a, category_id, COUNT(*) n, GROUP_CONCAT(name, ' | ') names
+     FROM businesses
+     WHERE COALESCE(hidden,0)=0 AND address IS NOT NULL AND address GLOB '*[0-9]*'
+     GROUP BY LOWER(TRIM(address)), category_id HAVING n > 1 ORDER BY n DESC`,
+  );
+  if (rows.length === 0) console.log("  ✓ nincs azonos cím+kategória csoport");
+  else {
+    warnings += rows.length;
+    console.log(`  ⚠ ${rows.length} cím+kategória csoport (lehet csoportpraxis is — nézd át):`);
+    for (const r of rows.slice(0, 15)) console.log(`    ${r.a} [${r.category_id}] ${r.n}×: ${String(r.names).slice(0, 80)}`);
+    if (rows.length > 15) console.log(`    … és további ${rows.length - 15} csoport`);
+  }
+}
+
 // Összegzés + exit-kód.
 console.log(`\n${"=".repeat(52)}`);
 console.log(`KRITIKUS: ${critical}  |  FIGYELEM: ${warnings}`);
