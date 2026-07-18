@@ -8,6 +8,7 @@ import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Category, ListBusiness } from "@/lib/types";
 import { cn } from "@/lib/cn";
+import { foldForSearch } from "@/lib/fold";
 import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode, cantonPoint } from "@/lib/cantons";
 import { atPoint } from "@/lib/at-points";
 import { dePoint } from "@/lib/de-points";
@@ -240,8 +241,21 @@ export function ExploreView({
     }
   }
 
+  // Ékezet-hajtott kereső-index: cégenként egyszer előállított, normalizált blob
+  // (név + kategória + bemutatkozó + cím) — így "becs"/"fodrasz"/"zurich" is
+  // illeszkedik "Bécs"/"fodrász"/"Zürich"-re. Csak a `businesses` változásakor
+  // épül újra, NEM minden billentyűleütésre.
+  const searchIndex = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const b of businesses) {
+      m.set(b.id, foldForSearch([b.name, b.categoryLabel, b.blurb, b.address].filter(Boolean).join(" ")));
+    }
+    return m;
+  }, [businesses]);
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
+    const foldedNeedle = foldForSearch(q.trim());
     const withDistance = businesses
       .filter((b) => {
         // Ország-szűrés (6-ország): a választott ország tartalma. Régi sorok: 'CH'.
@@ -266,11 +280,8 @@ export function ExploreView({
         const byPass = !passOnly || b.kintiPassActive === true;
         const byText =
           !needle ||
-          b.name.toLowerCase().includes(needle) ||
-          (b.categoryLabel ?? "").toLowerCase().includes(needle) ||
-          // Specialitás-keresés a bemutatkozó szövegben is.
-          (b.blurb ?? "").toLowerCase().includes(needle) ||
-          (b.address ?? "").toLowerCase().includes(needle) ||
+          // Ékezet-hajtott, előszámolt blob (név+kategória+bemutatkozó+cím).
+          (searchIndex.get(b.id)?.includes(foldedNeedle) ?? false) ||
           // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
           matchesCanton({ address: b.address ?? null }, needle);
         return byCountry && byCat && byCanton && byFav && byOpen && byYears && byPass && byText;
@@ -320,7 +331,7 @@ export function ExploreView({
     });
 
     return radiusFiltered;
-  }, [businesses, country, cat, canton, q, showFavs, openNow, minYears, passOnly, favoriteIds, userPos, radiusKm, sortBy]);
+  }, [businesses, searchIndex, country, cat, canton, q, showFavs, openNow, minYears, passOnly, favoriteIds, userPos, radiusKm, sortBy]);
 
   const locatedCount = useMemo(
     () => filtered.filter(({ b }) => b.lat != null && b.lng != null).length,
@@ -349,16 +360,15 @@ export function ExploreView({
   const nearbyFallback = useMemo(() => {
     if (showFavs) return [] as { b: ListBusiness; dist: number | null }[];
     const needle = q.trim().toLowerCase();
+    const foldedNeedle = foldForSearch(q.trim());
     if (cat === "all" && !needle) return [];
     const candidates = businesses.filter((b) => {
       if ((b.country ?? "CH") !== country) return false;
       if (cat !== "all" && b.categoryId !== cat) return false;
       if (needle) {
+        // Ékezet-hajtott illesztés (ld. searchIndex) + kanton-szöveg keresés.
         const hit =
-          b.name.toLowerCase().includes(needle) ||
-          (b.categoryLabel ?? "").toLowerCase().includes(needle) ||
-          (b.blurb ?? "").toLowerCase().includes(needle) ||
-          (b.address ?? "").toLowerCase().includes(needle) ||
+          (searchIndex.get(b.id)?.includes(foldedNeedle) ?? false) ||
           matchesCanton({ address: b.address ?? null }, needle);
         if (!hit) return false;
       }
@@ -381,7 +391,7 @@ export function ExploreView({
         ((b.b.reviews ?? 0) - (a.b.reviews ?? 0)),
       )
       .slice(0, 6);
-  }, [businesses, country, cat, q, userPos, showFavs]);
+  }, [businesses, searchIndex, country, cat, q, userPos, showFavs]);
 
   // Kereslet-rés jel: a kategória-szűrős NULLA pontos találat eddig csak a
   // kliensen látszott — a szerver (és az operátor) semmit nem tudott róla.
