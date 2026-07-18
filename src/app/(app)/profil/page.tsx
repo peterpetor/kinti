@@ -8,6 +8,7 @@ import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
 import { B2bTeaser } from "@/components/views/b2b-teaser";
 import { LeadInbox } from "@/components/views/lead-inbox";
 import { ReviewInviteCard } from "@/components/views/review-invite-card";
+import { SubscriptionManageButton } from "@/components/views/subscription-manage-button";
 import { ReviewReplyForm } from "@/components/views/review-reply-form";
 import { InstallPrompt } from "@/components/install-prompt";
 import { HomeCountryFlag } from "@/components/home-country-aware";
@@ -377,8 +378,12 @@ async function OwnerDashboard({
 
       {/* Szaknévsor PRO — korlátlan lead + kiemelés (csak ha még nem PRO) */}
       {isPro ? (
-        <div className="flex items-center gap-2 rounded-card border border-pro/30 bg-pro/5 px-4 py-3 text-[13px] font-bold text-pro">
-          <Icon name="star" size={15} filled /> PRO aktív — korlátlan ajánlatkérés + kiemelés a Szaknévsorban.
+        <div className="rounded-card border border-pro/30 bg-pro/5 px-4 py-3">
+          <div className="flex items-center gap-2 text-[13px] font-bold text-pro">
+            <Icon name="star" size={15} filled /> PRO aktív — korlátlan ajánlatkérés + kiemelés a Szaknévsorban.
+          </div>
+          {/* Előfizetés-kezelés/lemondás (Paddle portal) — csak weben. */}
+          <SubscriptionManageButton className="web-only-payment mt-2.5" />
         </div>
       ) : (
         <div className="rounded-card border border-pro/30 bg-pro/5 px-4 py-3">

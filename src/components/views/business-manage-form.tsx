@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { Business } from "@/lib/types";
 import { useCheckout } from "@/hooks/useCheckout";
+import { SubscriptionManageButton } from "@/components/views/subscription-manage-button";
 import { LanguagePicker, WorkingHoursEditor } from "@/components/views/business-fields";
 import { AddressFields, parseSwissAddress, composeAddress } from "@/components/views/address-fields";
 import { parseWorkingHours, type WorkingHours } from "@/lib/hours";
@@ -126,6 +127,17 @@ export function BusinessManageForm({ business, token }: { business: Business; to
 
   return (
     <div className="space-y-4">
+      {/* Aktív Szaknévsor PRO: előfizetés-kezelés/lemondás (Paddle portal —
+          token-os úton is, Clerk nélkül). Csak weben (.web-only-payment):
+          a Paddle-portál az Android-appban Play-szabályzatot sértene. */}
+      {business.featured && (
+        <div className="web-only-payment rounded-[14px] border border-pro/25 bg-pro/5 px-4 py-3">
+          <p className="mb-2 text-[13px] font-bold text-ink">
+            ⭐ Szaknévsor PRO aktív ezen a vállalkozáson.
+          </p>
+          <SubscriptionManageButton manageToken={token} />
+        </div>
+      )}
       {!business.featured && (
         <div className="rounded-[20px] border-2 border-pro/20 bg-pro/5 p-5 text-center shadow-sm relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-pro/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />

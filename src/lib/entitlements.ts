@@ -47,6 +47,36 @@ export async function activateEntitlement(
       .prepare("UPDATE businesses SET featured = 1, updated_at = ? WHERE id = ?")
       .bind(now, target.businessId)
       .run();
+    // Az előfizetés-metaadat (sub/customer id) tárolása — ebből él a céges
+    // „Előfizetésem kezelése / lemondás" portál-gomb. Best-effort: a tábla
+    // hiánya (migráció előtt) nem törheti az aktiválást.
+    if (meta.subscriptionId) {
+      try {
+        await db
+          .prepare(
+            `INSERT INTO business_subscriptions
+               (business_id, provider_sub_id, provider_customer_id, status, current_period_end, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?)
+             ON CONFLICT(business_id) DO UPDATE SET
+               provider_sub_id = excluded.provider_sub_id,
+               provider_customer_id = excluded.provider_customer_id,
+               status = excluded.status,
+               current_period_end = excluded.current_period_end,
+               updated_at = excluded.updated_at`,
+          )
+          .bind(
+            target.businessId,
+            meta.subscriptionId,
+            meta.customerId ?? null,
+            meta.status || "active",
+            meta.currentPeriodEnd ?? null,
+            now,
+          )
+          .run();
+      } catch {
+        /* metaadat-tárolás sosem törheti az aktiválást */
+      }
+    }
   } else if (type === "user_pro" && target.userId) {
     await upsertSubscription({
       userId: target.userId,
@@ -72,6 +102,14 @@ export async function deactivateEntitlement(
       .prepare("UPDATE businesses SET featured = 0, updated_at = ? WHERE id = ?")
       .bind(now, target.businessId)
       .run();
+    try {
+      await db
+        .prepare("UPDATE business_subscriptions SET status = ?, updated_at = ? WHERE business_id = ?")
+        .bind(meta.status || "canceled", now, target.businessId)
+        .run();
+    } catch {
+      /* metaadat-frissítés best-effort */
+    }
   } else if (type === "user_pro" && target.userId) {
     await upsertSubscription({
       userId: target.userId,
