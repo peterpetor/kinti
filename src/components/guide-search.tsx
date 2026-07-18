@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui";
 import type { IconName } from "@/components/ui/icons";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { tokenizeFolded } from "@/lib/sql-fold";
 
 /** Ország-illő kereső-példák (user-hiba-jelzés 2026-07-17: a vám-példa csak
  *  Svájcra igaz — EU-n belül, pl. Ausztriába, nincs vám Magyarországról). */
@@ -38,11 +39,7 @@ export function GuideSearch({ guides }: { guides: GuideSearchItem[] }) {
   const examples = SEARCH_EXAMPLES[prefCountry ?? DEFAULT_COUNTRY] ?? SEARCH_EXAMPLES[DEFAULT_COUNTRY];
 
   const matches = useMemo(() => {
-    const tokens = q
-      .toLowerCase()
-      .split(/\s+/)
-      .map((t) => t.trim())
-      .filter((t) => t.length >= 2);
+    const tokens = tokenizeFolded(q);
     if (tokens.length === 0) return [];
     return guides
       .map((g) => ({

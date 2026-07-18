@@ -7,6 +7,7 @@ import { GuideSearch } from "@/components/guide-search";
 import { OfflineGuidesButton } from "@/components/offline-guides-button";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { foldSearchText } from "@/lib/sql-fold";
 
 /**
  * Ország-tudatos tudásbázis-lista + kereső. Hidratálás-biztos: mount előtt CH
@@ -22,13 +23,13 @@ export function GuideList() {
     title: g.title,
     summary: g.summary,
     icon: g.icon,
-    hay: [
-      g.title,
-      g.summary,
-      ...g.sections.flatMap((s) => [s.heading, s.body?.join(" ") ?? "", s.bullets?.join(" ") ?? ""]),
-    ]
-      .join(" ")
-      .toLowerCase(),
+    hay: foldSearchText(
+      [
+        g.title,
+        g.summary,
+        ...g.sections.flatMap((s) => [s.heading, s.body?.join(" ") ?? "", s.bullets?.join(" ") ?? ""]),
+      ].join(" "),
+    ),
   }));
 
   return (
