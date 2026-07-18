@@ -7,6 +7,7 @@ import { usePersistedState } from "@/hooks/use-persisted-state";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { foldSearchText } from "@/lib/sql-fold";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { getRegions, regionName } from "@/lib/regions";
@@ -81,12 +82,12 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
   // Kanton-térképhez: darabszám kantononként, a kanton-szűrőt KIVÉVE (hogy a
   // térképen minden kanton látsszon, amiből választani lehet).
   const cantonCounts = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = foldSearchText(query.trim());
     const counts: Record<string, number> = {};
     for (const job of jobsInCountry) {
       if (category && job.category !== category) continue;
       if (q) {
-        const haystack = `${job.title} ${job.description} ${job.location}`.toLowerCase();
+        const haystack = foldSearchText(`${job.title} ${job.description} ${job.location}`);
         if (!haystack.includes(q)) continue;
       }
       if (job.cantonCode) counts[job.cantonCode] = (counts[job.cantonCode] ?? 0) + 1;
@@ -95,12 +96,12 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
   }, [jobsInCountry, query, category]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = foldSearchText(query.trim());
     const list = jobsInCountry.filter((job) => {
       if (canton && job.cantonCode !== canton) return false;
       if (category && job.category !== category) return false;
       if (q) {
-        const haystack = `${job.title} ${job.description} ${job.location}`.toLowerCase();
+        const haystack = foldSearchText(`${job.title} ${job.description} ${job.location}`);
         if (!haystack.includes(q)) return false;
       }
       return true;
@@ -134,9 +135,9 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
   // A szerver már ország + kategória + régió szerint szűrt; itt csak a szabad-
   // szöveges keresést alkalmazzuk a külső hirdetésekre.
   const externalFiltered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = foldSearchText(query.trim());
     if (!q) return externalJobs;
-    return externalJobs.filter((j) => `${j.title} ${j.company ?? ""} ${j.location ?? ""}`.toLowerCase().includes(q));
+    return externalJobs.filter((j) => foldSearchText(`${j.title} ${j.company ?? ""} ${j.location ?? ""}`).includes(q));
   }, [externalJobs, query]);
 
   const hasActiveFilter = canton !== "" || category !== "" || query.trim() !== "";

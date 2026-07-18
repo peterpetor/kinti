@@ -6,6 +6,7 @@ import { SalaryCard } from "./SalaryCard";
 import { SalaryCalculator, AlertSubscription, RentToSalaryCalculator } from "./SalaryWidgets";
 import { SwissHeatmap } from "./SwissHeatmap";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { foldSearchText } from "@/lib/sql-fold";
 import { salaryStanding, rentStanding, type SalaryStanding } from "@/lib/benchmark-stats";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -365,7 +366,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
 
   const isLocked = lock[tab];
   const isEditing = editingTab === tab;
-  const filtered = salaryStats.filter(s => s.industry.toLowerCase().includes(search.toLowerCase()));
+  const filtered = salaryStats.filter(s => foldSearchText(s.industry).includes(foldSearchText(search)));
   const topIndustry = salaryStats[0];
 
   return (

@@ -8,7 +8,7 @@ import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Category, ListBusiness } from "@/lib/types";
 import { cn } from "@/lib/cn";
-import { foldForSearch } from "@/lib/fold";
+import { foldSearchText } from "@/lib/sql-fold";
 import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode, cantonPoint } from "@/lib/cantons";
 import { atPoint } from "@/lib/at-points";
 import { dePoint } from "@/lib/de-points";
@@ -248,14 +248,14 @@ export function ExploreView({
   const searchIndex = useMemo(() => {
     const m = new Map<string, string>();
     for (const b of businesses) {
-      m.set(b.id, foldForSearch([b.name, b.categoryLabel, b.blurb, b.address].filter(Boolean).join(" ")));
+      m.set(b.id, foldSearchText([b.name, b.categoryLabel, b.blurb, b.address].filter(Boolean).join(" ")));
     }
     return m;
   }, [businesses]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    const foldedNeedle = foldForSearch(q.trim());
+    const foldedNeedle = foldSearchText(q.trim());
     const withDistance = businesses
       .filter((b) => {
         // Ország-szűrés (6-ország): a választott ország tartalma. Régi sorok: 'CH'.
@@ -360,7 +360,7 @@ export function ExploreView({
   const nearbyFallback = useMemo(() => {
     if (showFavs) return [] as { b: ListBusiness; dist: number | null }[];
     const needle = q.trim().toLowerCase();
-    const foldedNeedle = foldForSearch(q.trim());
+    const foldedNeedle = foldSearchText(q.trim());
     if (cat === "all" && !needle) return [];
     const candidates = businesses.filter((b) => {
       if ((b.country ?? "CH") !== country) return false;
