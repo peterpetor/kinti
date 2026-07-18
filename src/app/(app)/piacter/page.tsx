@@ -6,6 +6,7 @@ import { getHousingListings, getHousingListingForNotify } from "@/lib/repo";
 import { isPro } from "@/lib/subscriptions";
 import { formatHousingPrice, HOUSING_TYPE_LABELS, type HousingType } from "@/lib/housing";
 import { regionName } from "@/lib/regions";
+import { housingListingJsonLd, safeJsonLdStringify } from "@/lib/json-ld";
 import { PiacterTabs, type PiacterTab } from "./piacter-tabs";
 
 export const runtime = "edge";
@@ -64,11 +65,45 @@ function parseTab(v: string | undefined): PiacterTab {
   return v === "kalkulator" || v === "koltoztetes" ? v : "borze";
 }
 
-export default function PiacterPage({ searchParams }: { searchParams: { tab?: string } }) {
-  return <PiacterContent tab={parseTab(searchParams.tab)} />;
+export default function PiacterPage({
+  searchParams,
+}: {
+  searchParams: { tab?: string; hirdetes?: string };
+}) {
+  return (
+    <PiacterContent
+      tab={parseTab(searchParams.tab)}
+      hirdetesId={typeof searchParams.hirdetes === "string" ? searchParams.hirdetes : null}
+    />
+  );
 }
 
-async function PiacterContent({ tab }: { tab: PiacterTab }) {
+/** RealEstateListing JSON-LD a megosztott ?hirdetes= mély-linkhez — csak a
+ *  FELKÍNÁLT típusokra (nem a "keresek" hirdetésre, az nem ingatlan-ajánlat).
+ *  AEO-stratégia 2. pontja, ld. memória [[aeo-strategy]]. */
+async function HousingListingJsonLd({ id }: { id: string }) {
+  const l = await getHousingListingForNotify(id);
+  if (!l || (l.type !== "room_offered" && l.type !== "apartment_offered")) return null;
+  const jsonLd = housingListingJsonLd({
+    id,
+    type: l.type,
+    city: l.city,
+    regionName: l.regionCode ? regionName(l.country, l.regionCode) : null,
+    country: l.country,
+    price: l.price,
+    currency: l.currency,
+    createdAt: l.createdAt,
+    url: `https://kinti.app/piacter?hirdetes=${encodeURIComponent(id)}`,
+  });
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(jsonLd) }}
+    />
+  );
+}
+
+async function PiacterContent({ tab, hirdetesId }: { tab: PiacterTab; hirdetesId: string | null }) {
   const { userId } = await auth();
   const [listings, pro] = await Promise.all([
     getHousingListings(null, userId),
@@ -78,6 +113,7 @@ async function PiacterContent({ tab }: { tab: PiacterTab }) {
   return (
     <PullToRefresh>
       <div className="mx-auto max-w-md space-y-4 px-5 pb-12 pt-[calc(env(safe-area-inset-top)+2rem)]">
+        {hirdetesId && <HousingListingJsonLd id={hirdetesId} />}
         {/* ROOT tab-oldal (TabBar 4. fül) → nincs back, a „…" menü látszik —
             ugyanaz a gomb, ugyanott, mint a többi fő oldalon (user-jelzés;
             a ScreenHeader root-szabálya adja automatikusan). */}

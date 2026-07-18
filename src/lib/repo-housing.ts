@@ -193,16 +193,17 @@ export async function purgeExpiredHousing(): Promise<number> {
  *  (A decide-hook a status=1 beállítása UTÁN fut, így a szűrő ott is helyes.) */
 export async function getHousingListingForNotify(id: string): Promise<{
   type: string; country: string; city: string; regionCode: string | null;
-  price: number; currency: string;
+  price: number; currency: string; createdAt: number;
 } | null> {
   const row = await getDB()
-    .prepare("SELECT type, country, city, region_code, price, currency FROM kinti_housing_listings WHERE id = ? AND is_active = 1 AND moderation_status = 1")
+    .prepare("SELECT type, country, city, region_code, price, currency, created_at FROM kinti_housing_listings WHERE id = ? AND is_active = 1 AND moderation_status = 1")
     .bind(id)
-    .first<{ type: string; country: string; city: string; region_code: string | null; price: number; currency: string }>();
+    .first<{ type: string; country: string; city: string; region_code: string | null; price: number; currency: string; created_at: number }>();
   if (!row) return null;
   return {
     type: row.type, country: row.country, city: row.city,
     regionCode: row.region_code, price: row.price, currency: row.currency,
+    createdAt: row.created_at,
   };
 }
 

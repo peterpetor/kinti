@@ -42,6 +42,70 @@ function toIso(value: string | null | undefined): string | null {
   return Number.isNaN(t) ? null : new Date(t).toISOString();
 }
 
+const HOUSING_TYPE_NAME: Record<string, string> = {
+  room_offered: "Kiad\u00f3 szoba",
+  apartment_offered: "Kiad\u00f3 lak\u00e1s",
+};
+
+const HOUSING_ACCOMMODATION_TYPE: Record<string, string> = {
+  room_offered: "Room",
+  apartment_offered: "Apartment",
+};
+
+/**
+ * schema.org RealEstateListing egy alb\u00e9rlet-b\u00f6rze hirdet\u00e9shez (AEO-strat\u00e9gia,
+ * ld. mem\u00f3ria [[aeo-strategy]] 2. pont). CSAK a felk\u00edn\u00e1lt t\u00edpusokra
+ * ("room_offered"/"apartment_offered") \u00e9rtelmes \u2014 a "looking_for_room" (keres\u00e9s)
+ * NEM ing\u00e1tlan-hirdet\u00e9s, arra a h\u00edv\u00f3 ne h\u00edvja ezt.
+ *
+ * \u26a0\ufe0f ANTI-LEAK: a hirdet\u00e9s kontaktja SOSEM ker\u00fcl ide (a repo-housing.ts
+ * kapu\u0151r-szab\u00e1lya szerint a lista-vet\u00fclet is kontakt n\u00e9lk\u00fcli) \u2014 csak
+ * v\u00e1ros/r\u00e9gi\u00f3/orsz\u00e1g + \u00e1r + t\u00edpus, ami m\u00e1r a lista-k\u00e1rty\u00e1n is publikus.
+ */
+export function housingListingJsonLd(opts: {
+  id: string;
+  type: string;
+  city: string;
+  regionName: string | null;
+  country: string;
+  price: number;
+  currency: string;
+  createdAt: number; // unixepoch (mp)
+  url: string;
+}): Record<string, unknown> {
+  const { id, type, city, regionName, country, price, currency, createdAt, url } = opts;
+  const accommodationType = HOUSING_ACCOMMODATION_TYPE[type] ?? "Accommodation";
+  const name = `${HOUSING_TYPE_NAME[type] ?? "Hirdet\u00e9s"} \u2014 ${city}`;
+
+  return {
+    "@context": "https://schema.org/",
+    "@type": "RealEstateListing",
+    name,
+    url,
+    datePosted: new Date(createdAt * 1000).toISOString(),
+    identifier: {
+      "@type": "PropertyValue",
+      name: "kinti.app",
+      value: id,
+    },
+    about: {
+      "@type": accommodationType,
+      name,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: city,
+        ...(regionName ? { addressRegion: regionName } : {}),
+        addressCountry: country.toUpperCase(),
+      },
+    },
+    offers: {
+      "@type": "Offer",
+      price,
+      priceCurrency: currency,
+    },
+  };
+}
+
 /**
  * Google for Jobs (schema.org JobPosting) struktur\u00e1lt adat egy \u00e1ll\u00e1shirdet\u00e9shez.
  * A `cantonRegion` a kanton megjelen\u00edtend\u0151 neve (ha ismert) az addressRegion-h\u00f6z.
