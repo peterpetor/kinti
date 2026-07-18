@@ -757,10 +757,13 @@ export function ExploreView({
         <ViewSwitch value={view} onChange={setViewPersist} />
       </div>
 
-      {/* Rendezés (csak lista-nézetben, ha van mit rendezni) */}
+      {/* Rendezés (csak lista-nézetben, ha van mit rendezni). A címke KÜLÖN
+          sorban a pillek fölött — egy sorban a pillekkel a „Legújabb" 390px-es
+          mobilon kicsordult és egyedül tört új sorba (user-jelzés). */}
       {view === "list" && filtered.length > 1 && (
-        <div className="flex flex-wrap items-center gap-2 px-5">
-          <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-ink-faint">Rendezés</span>
+        <div className="px-5">
+          <span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide text-ink-faint">Rendezés</span>
+          <div className="flex flex-wrap items-center gap-2">
           {SORT_OPTIONS.map((o) => {
             if (o.id === "distance" && !userPos) return null;
             const on = sortBy === o.id;
@@ -781,6 +784,7 @@ export function ExploreView({
               </button>
             );
           })}
+          </div>
         </div>
       )}
 
