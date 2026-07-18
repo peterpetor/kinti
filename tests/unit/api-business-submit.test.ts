@@ -24,6 +24,7 @@ vi.mock("@/lib/repo", () => ({
   logModerationStrike: vi.fn(),
   createBusinessFromSubmission: vi.fn(),
   getBusinessById: vi.fn(),
+  findLikelyDuplicates: vi.fn(),
 }));
 
 import { verifyTurnstile } from "@/lib/turnstile";
@@ -39,6 +40,7 @@ import {
   logModerationStrike,
   createBusinessFromSubmission,
   getBusinessById,
+  findLikelyDuplicates,
 } from "@/lib/repo";
 import { POST } from "@/app/api/business/submit/route";
 
@@ -74,6 +76,7 @@ beforeEach(() => {
   vi.mocked(moderateText).mockResolvedValue({ action: "allow" } as never);
   vi.mocked(getBusinessById).mockResolvedValue(null as never);
   vi.mocked(createBusinessFromSubmission).mockResolvedValue(undefined as never);
+  vi.mocked(findLikelyDuplicates).mockResolvedValue([] as never);
 });
 
 describe("POST /api/business/submit", () => {
@@ -84,6 +87,17 @@ describe("POST /api/business/submit", () => {
     expect(json.published).toBe(true);
     expect(json.manageToken).toBeTruthy();
     expect(createBusinessFromSubmission).toHaveBeenCalledTimes(1);
+  });
+
+  it("valószínű duplikátumnál a moderátor-értesítő preview-ja figyelmeztet (de a beküldés átmegy)", async () => {
+    vi.mocked(findLikelyDuplicates).mockResolvedValue([
+      { id: "de-imp-dr-x", name: "Dr. Nagy Péter – Fogorvos", address: "Fő u. 1" },
+    ] as never);
+    const res = await POST(req(validBody));
+    expect(res.status).toBe(200); // NEM blokkol
+    const call = vi.mocked(notifyAdminContentPending).mock.calls[0][0];
+    expect(call.preview).toContain("LEHET DUPLIKÁTUM");
+    expect(call.preview).toContain("Dr. Nagy Péter – Fogorvos");
   });
 
   it("honeypot (website kitöltve) → 400, nincs INSERT", async () => {

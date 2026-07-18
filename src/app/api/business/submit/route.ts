@@ -130,11 +130,23 @@ export async function POST(req: Request) {
   // === ÚJ FŐÚT (local-first, no-email) ===
   // Ha nincs email: azonnal publikáljuk a vállalkozást és visszaadjuk a manage_token-t.
   if (!hasEmail) {
-    const { createBusinessFromSubmission, getBusinessById } = await import("@/lib/repo");
+    const { createBusinessFromSubmission, getBusinessById, findLikelyDuplicates } = await import("@/lib/repo");
     const { slugifyBusinessName, approxCoordsForRegion } = await import("@/lib/business");
     let bizId = `${slugifyBusinessName(validation.value.name)}-${crypto.randomUUID().slice(0, 6)}`;
     if (await getBusinessById(bizId)) {
       bizId = `${slugifyBusinessName(validation.value.name)}-${crypto.randomUUID().slice(0, 8)}`;
+    }
+    // Duplikátum-jelzés a LÉTREHOZÁS ELŐTT (különben a most publikált saját sort
+    // is „duplikátumnak" látná) — TELEFON alapján, az admin moderálásához. NEM
+    // blokkol; best-effort. A 2026-07-18-i audit dup-osztálya ellen.
+    let dupHint = "";
+    try {
+      const dups = await findLikelyDuplicates(validation.value.phone);
+      if (dups.length > 0) {
+        dupHint = `⚠️ LEHET DUPLIKÁTUM (azonos telefonszám): ${dups.map((d) => d.name).join(", ")} — ellenőrizd jóváhagyás előtt.\n\n`;
+      }
+    } catch {
+      /* a dup-jelzés best-effort — sose törheti a beküldést */
     }
     // Pontos koordináta a térképes címkeresőből; ha nincs, régió-közelítés (ország-tudatos).
     const approx = approxCoordsForRegion(validation.value.country, validation.value.cantonCode);
@@ -163,7 +175,7 @@ export async function POST(req: Request) {
     notifyAdminContentPending({
       contentType: "vállalkozás",
       title: validation.value.name,
-      preview: validation.value.blurb ?? validation.value.address ?? "",
+      preview: dupHint + (validation.value.blurb ?? validation.value.address ?? ""),
       submitterEmail: null,
     }).catch(() => {});
     return NextResponse.json(

@@ -356,6 +356,40 @@ export async function getPracticeColleagues(b: Business, limit = 4): Promise<Bus
   return results.map((r) => toPublicBusiness(toBusiness(r)));
 }
 
+/**
+ * Beküldés-idejű duplikátum-jelzés az ADMIN moderálásához (NEM blokkol): egy új
+ * beküldés valószínű meglévő párját keresi TELEFONSZÁM alapján. A telefon a
+ * legmegbízhatóbb dup-jel (a 2026-07-18-i audit szerint az azonos szám ~mindig
+ * ugyanaz a praxis/üzlet) — a névre szűrés túl zajos (a gyakori Nagy/Kovács
+ * vezetéknevek sok álpozitívot adnának). Telefon nélküli beküldésnél üres
+ * (a névtelen dupokat a db:health post-hoc úgyis fogja).
+ *
+ * A szám normalizálása: nem-számjegyek eldobása, majd az utolsó 7 jegy LIKE-ja
+ * (a formátum-eltéréseket — szóköz/kötőjel/(0)/ország-előhívó — így hidalja át).
+ */
+export async function findLikelyDuplicates(
+  phone: string | null | undefined,
+  limit = 3,
+): Promise<Array<{ id: string; name: string; address: string | null }>> {
+  const digits = (phone ?? "").replace(/\D/g, "");
+  if (digits.length < 7) return [];
+  const suffix = digits.slice(-7);
+  // A tárolt telefon számjegyekre redukálása SQL-ben (a gyakori elválasztók
+  // eltávolításával), majd suffix-illesztés.
+  const norm =
+    "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(phone,''),' ',''),'-',''),'(',''),')',''),'/',''),'.',''),'+','')";
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, name, address FROM businesses
+       WHERE COALESCE(hidden, 0) = 0 AND phone IS NOT NULL AND phone != ''
+         AND ${norm} LIKE ?
+       LIMIT ?`,
+    )
+    .bind(`%${suffix}`, limit)
+    .all<{ id: string; name: string; address: string | null }>();
+  return results;
+}
+
 export async function getBusinessByOwner(ownerUserId: string): Promise<Business | null> {
   const row = await getDB()
     .prepare("SELECT * FROM businesses WHERE owner_user_id = ? AND COALESCE(hidden, 0) = 0 LIMIT 1")
