@@ -43,6 +43,9 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const all = await getBusinesses({ category: category.id });
   const hasContent = all.some((b) => businessInArea(b, area));
 
+  const url = `https://kinti.app/magyar/${params.kategoria}/${params.terulet}`;
+  const image = "https://kinti.app/icons/og-default.png";
+
   return {
     title,
     description,
@@ -51,8 +54,12 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     openGraph: {
       title,
       description,
+      url,
+      siteName: "Kinti",
       type: "website",
+      images: [{ url: image, width: 1200, height: 630, alt: title }],
     },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
   };
 }
 

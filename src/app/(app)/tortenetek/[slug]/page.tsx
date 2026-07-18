@@ -35,6 +35,9 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     return { title: "Élettörténet — kinti.app", robots: { index: false, follow: false } };
   }
   const description = story.summary ?? storyExcerpt(story.bodyMd);
+  const image = story.imageKey
+    ? `https://kinti.app${mediaUrl(story.imageKey)}`
+    : "https://kinti.app/icons/og-default.png";
   return {
     title: `${story.title} — Élettörténetek | kinti.app`,
     description,
@@ -42,10 +45,12 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     openGraph: {
       title: story.title,
       description,
-      url: `/tortenetek/${story.slug}`,
+      url: `https://kinti.app/tortenetek/${story.slug}`,
+      siteName: "Kinti",
       type: "article",
-      ...(story.imageKey ? { images: [{ url: `https://kinti.app${mediaUrl(story.imageKey)}` }] } : {}),
+      images: [{ url: image, width: 1200, height: 630, alt: story.title }],
     },
+    twitter: { card: "summary_large_image", title: story.title, description, images: [image] },
   };
 }
 

@@ -24,11 +24,21 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const page = getFaqPage(params.slug);
   if (!page) return { title: "Gyakori kérdések — Kinti" };
+  const url = `https://kinti.app/gyik/${page.slug}`;
+  const image = "https://kinti.app/icons/og-default.png";
   return {
     title: page.title,
     description: page.description,
     alternates: { canonical: `/gyik/${page.slug}` },
-    openGraph: { title: page.title, description: page.description, type: "article" },
+    openGraph: {
+      title: page.title,
+      description: page.description,
+      url,
+      siteName: "Kinti",
+      type: "article",
+      images: [{ url: image, width: 1200, height: 630, alt: page.title }],
+    },
+    twitter: { card: "summary_large_image", title: page.title, description: page.description, images: [image] },
   };
 }
 

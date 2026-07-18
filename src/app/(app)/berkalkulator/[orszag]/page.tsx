@@ -30,9 +30,17 @@ export function generateMetadata({ params }: { params: { orszag: string } }): Me
     openGraph: {
       title: l.title,
       description: l.description,
-      images: [{ url: "/icons/og-mennyi-marad.png", width: 1200, height: 630, alt: `${l.title} — kinti.app` }],
+      url: `https://kinti.app/berkalkulator/${l.slug}`,
+      siteName: "Kinti",
+      type: "website",
+      images: [{ url: "https://kinti.app/icons/og-mennyi-marad.png", width: 1200, height: 630, alt: `${l.title} — kinti.app` }],
     },
-    twitter: { card: "summary_large_image", images: ["/icons/og-mennyi-marad.png"] },
+    twitter: {
+      card: "summary_large_image",
+      title: l.title,
+      description: l.description,
+      images: ["https://kinti.app/icons/og-mennyi-marad.png"],
+    },
   };
 }
 
