@@ -487,7 +487,11 @@ export function ExploreView({
                   type="button"
                   onClick={() => {
                     setCanton(c.code);
-                    setPreferredCanton(c.code); // az app tanul a kézi választásból
+                    // Csak VALÓDI régióból tanulunk. Az „Egész ország" itt
+                    // nézet-szűrő, nem lakhely-nyilatkozat — a "all" a tárolóban
+                    // törlésként viselkedne, és némán kiütné a mentett
+                    // tartomány-preferenciát (onboarding-lépés + push-célzás).
+                    if (c.code !== "all") setPreferredCanton(c.code);
                     setCantonSheetOpen(false);
                   }}
                   className={cn(
