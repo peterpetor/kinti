@@ -333,25 +333,44 @@ export async function getSimilarBusinesses(b: Business, limit = 3): Promise<Busi
 
 /**
  * „Ugyanennél a praxisnál / rendelőnél" — a részlet-oldalra: azonos TELEFONSZÁM
- * (= ugyanaz a csoportpraxis / közös iroda), önmaga nélkül. Ez KIEGÉSZÍTI a
- * getSimilarBusinesses-t (az azonos kategória MÁS helyen; ez ugyanaz a hely, más
- * szakma — pl. bőrgyógyász + kardiológus egy klinikán). A telefonszám a
- * megbízható csoport-jel: a közös praxist együtt vitték fel, azonos formátumú
- * számmal. A PRO-kizárás itt NEM alkalmazandó: a kollégák nem versenytársak,
- * a klinikának előny, ha minden szakembere látszik.
+ * VAGY azonos UTCACÍM (= ugyanaz a csoportpraxis / közös iroda), önmaga nélkül.
+ * Ez KIEGÉSZÍTI a getSimilarBusinesses-t (az azonos kategória MÁS helyen; ez
+ * ugyanaz a hely, más szakma — pl. bőrgyógyász + kardiológus egy klinikán).
+ * A PRO-kizárás itt NEM alkalmazandó: a kollégák nem versenytársak, a
+ * klinikának előny, ha minden szakembere látszik.
+ *
+ * A cím-egyezés a db:health #6 leletéből ered (2026-07-19): sok közös irodájú
+ * szakembernek (pl. ügyvédi iroda) SAJÁT mellékszáma van (azonos alapszám,
+ * eltérő extension vagy teljesen külön direktszám) — a puszta telefon-egyezés
+ * ezeket átsiklotta. Csak UTCASZINTŰ címnél él (van házszám) — a csak-városnál
+ * tömeges álpozitív lenne.
  */
 export async function getPracticeColleagues(b: Business, limit = 4): Promise<Business[]> {
   const phone = (b.phone ?? "").trim();
-  if (!phone) return [];
+  const address = (b.address ?? "").trim();
+  const hasStreetAddress = address.length > 0 && /\d/.test(address);
+  if (!phone && !hasStreetAddress) return [];
+
+  const clauses: string[] = [];
+  const binds: unknown[] = [];
+  if (phone) {
+    clauses.push("phone = ?");
+    binds.push(phone);
+  }
+  if (hasStreetAddress) {
+    clauses.push("LOWER(TRIM(address)) = LOWER(TRIM(?))");
+    binds.push(address);
+  }
+
   const { results } = await getDB()
     .prepare(
       `SELECT * FROM businesses
        WHERE COALESCE(hidden, 0) = 0 AND moderation_status = 1
-         AND id != ? AND phone = ? AND country_code = ?
+         AND id != ? AND country_code = ? AND (${clauses.join(" OR ")})
        ORDER BY featured DESC, rating DESC
        LIMIT ?`,
     )
-    .bind(b.id, phone, b.country, limit)
+    .bind(b.id, b.country, ...binds, limit)
     .all<BusinessRow>();
   return results.map((r) => toPublicBusiness(toBusiness(r)));
 }
