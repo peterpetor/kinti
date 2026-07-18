@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BusinessCard, Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
-import { getBusinessById, getReviewsByBusiness, getSimilarBusinesses, recordBusinessSearchTerm, toPublicBusiness, businessToListItem } from "@/lib/repo";
+import { getBusinessById, getReviewsByBusiness, getSimilarBusinesses, getPracticeColleagues, recordBusinessSearchTerm, toPublicBusiness, businessToListItem } from "@/lib/repo";
 import { parseDbDate, dbDateOnly } from "@/lib/dates";
 import { mediaUrl } from "@/lib/media";
 import { CategoryIcon } from "@/components/ui/category-icon";
@@ -116,10 +116,17 @@ export default async function BusinessPage({
 
   // „Hasonló magyar szakemberek" — PRO (featured) cégnél NEM töltjük be: a
   // Szaknévsor PRO ígérete a konkurencia kizárása a saját profilról.
-  const [reviews, similar] = await Promise.all([
+  // „Ugyanennél a praxisnál" — azonos telefon (csoportpraxis kollégái); ez PRO
+  // cégnél IS megy, mert a kollégák nem versenytársak (ugyanaz a klinika).
+  const [reviews, similarRaw, colleagues] = await Promise.all([
     getReviewsByBusiness(b.id),
     b.featured ? Promise.resolve([]) : getSimilarBusinesses(b, 3),
+    getPracticeColleagues(b, 4),
   ]);
+  // Egy azonos-kategóriájú kolléga mindkét listába kerülhetne — a „praxis"
+  // szekció erősebb kontextus, onnan hagyjuk; a „hasonló"-ból kiszűrjük.
+  const colleagueIds = new Set(colleagues.map((c) => c.id));
+  const similar = similarRaw.filter((s) => !colleagueIds.has(s.id));
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   // Útvonal CSAK utcaszintű címnél — városközpontra (pl. „Bécs"/„Online") navigálni
@@ -800,6 +807,20 @@ export default async function BusinessPage({
             </ListGroup>
           </div>
         </section>
+
+        {/* Ugyanennél a praxisnál / rendelőnél (azonos telefonszám = csoportpraxis
+            kollégái) — a megbízható helyen belül a kellő szakember megtalálása.
+            Nem versenytárs → PRO cégnél is megjelenik. */}
+        {colleagues.length > 0 && (
+          <section className="mt-6">
+            <SectionHeader>Ugyanennél a praxisnál</SectionHeader>
+            <div className="mt-2.5 grid gap-2.5">
+              {colleagues.map((c) => (
+                <BusinessCard key={c.id} business={businessToListItem(c)} href={`/szaknevsor/${c.id}`} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Hasonló magyar szakemberek (azonos kategória+ország, kanton/közelség
             szerint rangsorolva) — zsákutca-mentesítés: ha ez a szaki nem elérhető

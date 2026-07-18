@@ -331,6 +331,31 @@ export async function getSimilarBusinesses(b: Business, limit = 3): Promise<Busi
   return results.map((r) => toPublicBusiness(toBusiness(r)));
 }
 
+/**
+ * „Ugyanennél a praxisnál / rendelőnél" — a részlet-oldalra: azonos TELEFONSZÁM
+ * (= ugyanaz a csoportpraxis / közös iroda), önmaga nélkül. Ez KIEGÉSZÍTI a
+ * getSimilarBusinesses-t (az azonos kategória MÁS helyen; ez ugyanaz a hely, más
+ * szakma — pl. bőrgyógyász + kardiológus egy klinikán). A telefonszám a
+ * megbízható csoport-jel: a közös praxist együtt vitték fel, azonos formátumú
+ * számmal. A PRO-kizárás itt NEM alkalmazandó: a kollégák nem versenytársak,
+ * a klinikának előny, ha minden szakembere látszik.
+ */
+export async function getPracticeColleagues(b: Business, limit = 4): Promise<Business[]> {
+  const phone = (b.phone ?? "").trim();
+  if (!phone) return [];
+  const { results } = await getDB()
+    .prepare(
+      `SELECT * FROM businesses
+       WHERE COALESCE(hidden, 0) = 0 AND moderation_status = 1
+         AND id != ? AND phone = ? AND country_code = ?
+       ORDER BY featured DESC, rating DESC
+       LIMIT ?`,
+    )
+    .bind(b.id, phone, b.country, limit)
+    .all<BusinessRow>();
+  return results.map((r) => toPublicBusiness(toBusiness(r)));
+}
+
 export async function getBusinessByOwner(ownerUserId: string): Promise<Business | null> {
   const row = await getDB()
     .prepare("SELECT * FROM businesses WHERE owner_user_id = ? AND COALESCE(hidden, 0) = 0 LIMIT 1")
