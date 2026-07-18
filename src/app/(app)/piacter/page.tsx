@@ -40,7 +40,21 @@ export async function generateMetadata({
         const description = `${formatHousingPrice(l.type as HousingType, l.price, l.currency)}${
           region ? ` · ${region}` : ""
         } · Albérlet-börze a kinti magyar közösségtől.`;
-        return { title, description, openGraph: { title, description } };
+        const image = "https://kinti.app/icons/og-default.png";
+        const url = `https://kinti.app/piacter?hirdetes=${encodeURIComponent(id)}`;
+        return {
+          title,
+          description,
+          openGraph: {
+            title,
+            description,
+            url,
+            siteName: "Kinti",
+            type: "website",
+            images: [{ url: image, width: 1200, height: 630, alt: title }],
+          },
+          twitter: { card: "summary_large_image", title, description, images: [image] },
+        };
       }
     } catch {
       /* hibánál az alap meta */
