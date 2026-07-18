@@ -69,8 +69,11 @@ async function l2Set(key: string, value: unknown, expires: number, ttlMs: number
         },
       }),
     );
-  } catch {
-    /* nem szerializálható érték / cache-hiba → az L1 még véd, a hívó nem sérül */
+  } catch (err) {
+    // Nem szerializálható érték / Cache API-hiba → az L1 még véd, a hívó nem
+    // sérül. DE nem nyeljük némán: ha a POP-cache tartósan kiesik, minden új
+    // izolátum a D1-re jár (stampede-kockázat) — ez látszódjon a logban.
+    console.error("[edge-cache] l2Set failed (L1-only mód):", err instanceof Error ? err.message : String(err));
   }
 }
 

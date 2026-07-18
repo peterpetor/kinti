@@ -1,4 +1,5 @@
-import { getCloudflareEnv, getDB } from "./cloudflare";
+import { getCloudflareEnv, getCloudflareCtx, getDB } from "./cloudflare";
+import { safeLogError } from "./safe-log";
 
 /**
  * Központi Cloudflare Workers AI hívó wrapper. Egységes timeout, error-kezelés,
@@ -78,14 +79,31 @@ export async function recordAiUsage(
   }
 }
 
-/** Promise timeout-tal — ha az AI elakad, ne hagyjuk a worker-t a falig futni. */
+/**
+ * A usage-könyvelés a válasz elküldése UTÁN, a háttérben fusson (waitUntil) —
+ * a felhasználó ne várjon a D1 INSERT-re. Ha nincs kérés-kontextus (teszt,
+ * build), szinkron fallback awaittel — fire-and-forget waitUntil nélkül
+ * Workers-ben elveszhetne az írás (az izolátum a válasz után leállhat).
+ */
+function deferAiUsage(model: string, pt: number, ct: number): Promise<void> {
+  const ctx = getCloudflareCtx();
+  if (ctx) {
+    ctx.waitUntil(recordAiUsage(model, pt, ct));
+    return Promise.resolve();
+  }
+  return recordAiUsage(model, pt, ct);
+}
+
+/** Promise timeout-tal — ha az AI elakad, ne hagyjuk a worker-t a falig futni.
+ *  A timert lefutáskor töröljük (ne tartsa ébren az izolátumot feleslegesen). */
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
   return Promise.race([
     p,
-    new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("ai-timeout")), ms),
-    ),
-  ]);
+    new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error("ai-timeout")), ms);
+    }),
+  ]).finally(() => clearTimeout(timer));
 }
 
 export async function runAiChat(params: {
@@ -122,7 +140,7 @@ export async function runAiChat(params: {
       const model = params.model ?? DEFAULT_MODEL;
       const pt = response?.usage?.prompt_tokens ?? estTokens(params.system) + estTokens(params.user);
       const ct = response?.usage?.completion_tokens ?? estTokens(text);
-      await recordAiUsage(model, pt, ct);
+      await deferAiUsage(model, pt, ct);
     }
     return text ? { ok: true, text } : { ok: false, text: "" };
   };
@@ -136,7 +154,17 @@ export async function runAiChat(params: {
   } catch (err) {
     const isTimeout = err instanceof Error && err.message === "ai-timeout";
     console.error(`[ai] runAiChat 1. próba hiba${isTimeout ? " (timeout)" : ""}:`, err);
-    if (isTimeout) return { ok: false, text: "" };
+    if (isTimeout) {
+      // Az env.AI.run a timeout után is TOVÁBB futhat a háttérben (a binding
+      // nem szakítható meg AbortControllerrel) → a token-fogyás így is
+      // megtörténik. Hogy az admin-monitor ne mérjen alul, becsléssel
+      // könyveljük: prompt + a kért max_tokens (az árva inferencia felső
+      // korlátja). Háttérben (waitUntil), a hibaválaszt nem késlelteti.
+      const model = params.model ?? DEFAULT_MODEL;
+      const pt = estTokens(params.system) + estTokens(params.user);
+      await deferAiUsage(model, pt, params.maxTokens ?? 256);
+      return { ok: false, text: "" };
+    }
     try {
       return await call();
     } catch (err2) {
@@ -171,7 +199,7 @@ export async function runAiMultiTurnChat(params: {
     if (!text) return { ok: false, text: "" };
     const model = params.model ?? DEFAULT_MODEL;
     const ptAll = params.messages.reduce((n, m) => n + estTokens(m.content), 0);
-    await recordAiUsage(
+    await deferAiUsage(
       model,
       response?.usage?.prompt_tokens ?? estTokens(params.system) + ptAll,
       response?.usage?.completion_tokens ?? estTokens(text),
@@ -264,8 +292,11 @@ export async function checkAiRateLimit(
       max: cfg.maxPerWindow,
     };
   } catch (err) {
-    // Ha a tábla még nem létezik (migration nem futott), nem blokkolunk.
-    console.error("[ai-rl] check failed:", err);
+    // SZÁNDÉKOS fail-open: D1-hiba esetén nem blokkoljuk az összes AI-funkciót
+    // (elérhetőség > szigor). CSERÉBE a hiba a riasztó-webhookra megy
+    // (safeLogError → ERROR_WEBHOOK_URL), hogy a kiesett rate-limit ne
+    // maradjon észrevétlen — tartós D1-gond esetén az admin értesül.
+    safeLogError("[ai-rl] check failed (fail-open)", err);
     return { allowed: true, current: 0, max: cfg.maxPerWindow };
   }
 }
@@ -284,7 +315,8 @@ export async function logAiRateLimit(
       .bind(crypto.randomUUID(), endpoint, key)
       .run();
   } catch (err) {
-    console.error("[ai-rl] log failed:", err);
+    // A slot-foglalás kiesése = a limit alul-számol (fail-open) — riasztásra megy.
+    safeLogError("[ai-rl] log failed (fail-open)", err);
   }
 }
 
