@@ -111,6 +111,20 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
         </div>
       </header>
 
+      {/* TL;DR — featured-snippet / AI-idézhetőség (AEO), csak ahol van tartalom. */}
+      {guide.tldr && guide.tldr.length > 0 && (
+        <section className="rounded-card border border-primary/25 bg-primary-soft/40 p-4">
+          <h2 className="text-[12px] font-bold uppercase tracking-wide text-primary">Röviden</h2>
+          <ul className="mt-2 space-y-1.5">
+            {guide.tldr.map((t) => (
+              <li key={t} className="flex gap-1.5 text-[13px] leading-relaxed text-ink">
+                <span className="shrink-0 text-primary" aria-hidden>•</span> {t}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {/* Tartalomjegyzék (a fejezet-címekből, horgony-linkekkel) */}
       {toc.length > 1 && (
         <details className="group rounded-card border border-line bg-surface shadow-card" open>

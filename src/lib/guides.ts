@@ -25,6 +25,10 @@ export interface Guide {
   title: string;
   summary: string;
   icon: IconName;
+  /** Opcionális „Röviden" bullet-lista a cikk tetején (AEO: featured-snippet /
+   *  AI-válasz-idézhetőség) — a MEGLÉVŐ sections-tartalom tömör összefoglalója,
+   *  nem új tényállítás. Fokozatosan bővítve, ld. [[aeo-strategy]]. */
+  tldr?: string[];
   sections: GuideSection[];
   sources: GuideSource[];
 }
@@ -32,7 +36,7 @@ export interface Guide {
 /** A guide-bank utolsó tartalmi frissítése — a sitemap lastModified-je (bump
  *  cikk-bővítéskor/-átíráskor). Korábban `now` ment MINDEN crawlnál → a Google
  *  megtanulja figyelmen kívül hagyni a hazug lastmodot. */
-export const GUIDES_UPDATED_AT = new Date("2026-07-10");
+export const GUIDES_UPDATED_AT = new Date("2026-07-19");
 
 export const GUIDES_DISCLAIMER =
   "Ez általános tájékoztatás hivatalos forrásokból, nem jogi tanács. A részletek kantononként és időben változnak — a pontos, rád vonatkozó információért mindig a hivatalos oldalt és a lakóhelyed kantonját nézd.";
@@ -43,6 +47,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Bejelentkezés és letelepedés",
     summary:
       "Költözés után 14 napon belül be kell jelentkezned a községnél, és 3 hónapnál hosszabb tartózkodáshoz engedély kell.",
+    tldr: [
+      "Költözés után 14 napon belül jelentkezz be a lakóhelyed szerinti községi hivatalnál (Gemeinde/commune/comune) — sok helyen online is, az eMovingCH-val.",
+      "3 hónapnál hosszabb tartózkodáshoz engedély kell; munkát csak a bejelentkezés UTÁN kezdhetsz.",
+      "4 fő engedélytípus: L (rövid távú), B (huzamos), C (letelepedési), G (határ menti ingázó).",
+    ],
     icon: "home",
     sections: [
       {
@@ -89,6 +98,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Egészségbiztosítás (Krankenkasse)",
     summary:
       "Az alapbiztosítás mindenkinek kötelező, aki Svájcban lakik — az érkezéstől számított 3 hónapon belül meg kell kötnöd.",
+    tldr: [
+      "Az alapbiztosítás (KVG/LAMal) mindenkinek kötelező, aki Svájcban lakik — 3 hónapon belül kösd meg (a fedezet visszamenőleg az érkezés napjától él).",
+      "Bármelyik engedélyezett biztosítót választhatod — felvételi kötelezettséggel, kizárás és várakozási idő nélkül.",
+      "A szolgáltatás mindenhol azonos, csak a havi díj tér el biztosítónként és kantononként — a hivatalos priminfo.admin.ch kalkulátorral érdemes összehasonlítani.",
+    ],
     icon: "heart",
     sections: [
       {
@@ -133,6 +147,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Adózás és adóbevallás",
     summary:
       "B/L engedéllyel a munkáltató forrásadót von le; C engedéllyel rendes adóbevallást adsz be, mint a svájciak.",
+    tldr: [
+      "B/L engedéllyel a munkáltató havonta forrásadót (Quellensteuer) von le a fizetésből — ez fedezi a szövetségi, kantoni és községi adót.",
+      "C (letelepedési) engedéllyel — vagy svájci/C-engedélyes házastárssal — rendes adóbevallást adsz be, mint a svájci állampolgárok.",
+      "Az adó mértéke kantononként és községenként eltér — a pontos adatért a lakóhelyed adóhivatalát nézd.",
+    ],
     icon: "trending",
     sections: [
       {

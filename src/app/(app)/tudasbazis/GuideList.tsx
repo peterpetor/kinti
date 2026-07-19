@@ -27,6 +27,7 @@ export function GuideList() {
       [
         g.title,
         g.summary,
+        ...(g.tldr ?? []),
         ...g.sections.flatMap((s) => [s.heading, s.body?.join(" ") ?? "", s.bullets?.join(" ") ?? ""]),
       ].join(" "),
     ),
