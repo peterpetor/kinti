@@ -144,6 +144,95 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       { label: "Online portál", ch: "Kantoni adóhivatal", at: "FinanzOnline", de: "ELSTER", nl: "Mijn Belastingdienst (DigiD)" },
     ],
   },
+  {
+    id: "lakasberles",
+    caption: "Lakásbérlés — egy pillantásra",
+    intro:
+      "A kaució felső határa és a bérlővédelem országonként más — a hirdetett díj pedig sehol sem a teljes költség.",
+    slugs: {
+      ch: "lakasberles",
+      at: "at-lakasberles",
+      de: "de-lakasberles",
+      nl: "nl-lakasberles",
+    },
+    rows: [
+      { label: "Kaució felső határa", ch: "max. 3 havi (nettó) bér", at: "~3 havi (bruttó, bevett)", de: "max. 3 havi hideg bér (Kaltmiete)", nl: "max. 2 havi (2023 óta)" },
+      { label: "A teljes havi költség", ch: "bér + Nebenkosten", at: "bér + Betriebskosten (kérd a Bruttomiete-t)", de: "Warmmiete (Kaltmiete + Nebenkosten)", nl: "kale huur + servicekosten" },
+      { label: "Ingatlanos jutalék a bérlőnek", ch: "—", at: "max. 2 havi (ha rajta keresztül)", de: "Ritkán — a megrendelő fizeti (2015 óta)", nl: "Jellemzően nem (ha a bérbeadónak dolgozik)" },
+      { label: "Bérlővédelem / vitarendezés", ch: "Egyeztető hatóság (Schlichtungsbehörde)", at: "MRG + Arbeiterkammer / Mietervereinigung", de: "Mietrecht + Mieterverein", nl: "Huurcommissie / Juridisch Loket" },
+    ],
+  },
+  {
+    id: "auto",
+    caption: "Autó a 4 országban — egy pillantásra",
+    intro:
+      "EU-n belül nincs vám, de a behozatali adók és a műszaki-vizsga rendje élesen eltér — Hollandiában a BPM miatt sokszor nem éri meg autót hozni.",
+    slugs: {
+      ch: "auto-svajcban",
+      at: "at-auto",
+      de: "de-auto",
+      nl: "nl-auto",
+    },
+    rows: [
+      { label: "Behozatali teher (magyar autó)", ch: "Vám + import-eljárás (nem EU)", at: "NoVA (normfogyasztási adó)", de: "Nincs vám (EU) — csak regisztráció", nl: "BPM (CO2-alapú — magas lehet!)" },
+      { label: "Forgalomba helyezés", ch: "Kantoni közúti hivatal (Strassenverkehrsamt)", at: "Biztosító Zulassungsstelle-je", de: "Zulassungsstelle", nl: "RDW" },
+      { label: "Kötelező felelősségbiztosítás", ch: "Haftpflicht (a regisztráció előtt)", at: "Haftpflicht (előbb, utána rendszám)", de: "Kfz-Haftpflicht (nélküle nincs rendszám)", nl: "WA-verzekering (a be nem biztosított autó bírságolható!)" },
+      { label: "Időszakos műszaki vizsga", ch: "MFK", at: "§57a Pickerl (évente)", de: "HU / „TÜV” (2 évente)", nl: "APK (évente)" },
+    ],
+  },
+  {
+    id: "nyugdij",
+    caption: "Nyugdíj a 4 országban — egy pillantásra",
+    intro:
+      "A fő különbség: Svájc, Ausztria és Németország a bérből vont járulékra épít, Hollandia (AOW) a lakóhelyen töltött évekre.",
+    slugs: {
+      ch: "ahv-nyugdij",
+      at: "at-nyugdij",
+      de: "de-nyugdij",
+      nl: "nl-nyugdij",
+    },
+    rows: [
+      { label: "Állami pillér", ch: "AHV (1. pillér)", at: "Pensionsversicherung (PVA)", de: "Gesetzliche Rentenversicherung", nl: "AOW" },
+      { label: "Mi alapján épül", ch: "Bérből vont járulék", at: "Bérből vont járulék", de: "Bérből vont járulék (18,6%, fele-fele)", nl: "Lakóhely — minden itt-töltött év ~2%" },
+      { label: "Kiegészítő pillér", ch: "2. foglalkoztatói (22 680 CHF felett kötelező) + 3. magán", at: "Vállalati + magán (opcionális)", de: "Üzemi + magán (opcionális)", nl: "Munkahelyi pensioenfonds (jellemzően kötelező)" },
+    ],
+  },
+  {
+    id: "felmondas",
+    caption: "Felmondás és a jogaid — egy pillantásra",
+    intro:
+      "A felmondás-védelem országonként nagyon eltér — és Németországban, Hollandiában kemény határidők köthetik a kezed.",
+    slugs: {
+      ch: "felmondas-munkabizonyitvany",
+      at: "at-felmondas",
+      de: "de-felmondas",
+      nl: "nl-felmondas",
+    },
+    rows: [
+      { label: "Felmondási idő (munkáltatói)", ch: "1–3 hó (szolgálati idő szerint)", at: "6 hét – 5 hó (Angestellte)", de: "4 hét, majd a szolg. idővel nő", nl: "Alap 1 hó, szolg. idővel nő" },
+      { label: "Fő szabály", ch: "Védett időszakokban tilos a felmondás", at: "Erős végkielégítés-rendszer; kérj írásosat", de: "Csak írásban érvényes; Kündigungsschutz véd", nl: "A munkáltató nem mondhat fel egyoldalúan (UWV / bíróság)" },
+      { label: "Ha vitatnál / segítség", ch: "Egyes esetek az egyeztető hatóságnál", at: "Arbeiterkammer — ingyenes jogi segítség", de: "3 HÉTEN belül keresetet kell adni!", nl: "Megállapodásnál 14 nap elállási jog" },
+      { label: "Végkielégítés", ch: "—", at: "Abfertigung Neu (az 1. naptól gyűlik)", de: "Nem automatikus", nl: "Transitievergoeding (az 1. naptól jár)" },
+    ],
+  },
+  {
+    id: "vallalkozas",
+    caption: "Vállalkozásindítás — egy pillantásra",
+    intro:
+      "A bejelentés helye, a kötelező társadalombiztosítás és az áfa-küszöb országonként más — a magyar ev./kata sehol nem helyettesíti a helyi bejelentést.",
+    slugs: {
+      ch: "vallalkozasinditas-svajcban",
+      at: "at-vallalkozas",
+      de: "de-vallalkozas",
+      nl: "nl-vallalkozas",
+    },
+    rows: [
+      { label: "Legegyszerűbb forma", ch: "Egyéni cég (Einzelfirma)", at: "Gewerbe", de: "Gewerbe vagy Freiberufler", nl: "Eenmanszaak (zzp)" },
+      { label: "Hol jelented be", ch: "Kompenzációs pénztár (AHV)", at: "BH / Magistrat vagy WKO Gründerservice", de: "Gewerbeamt (v. Finanzamt szabadfoglalkozásnál)", nl: "KVK (Kamer van Koophandel)" },
+      { label: "Társadalombiztosítás önállóként", ch: "AHV önálló státusz; nincs munkanélküli (ALV)", at: "SVS (kötelező eü + nyugdíj)", de: "Magadnak kell (GKV önkéntes v. PKV)", nl: "Nincs automatikus táppénz (AOV / broodfonds)" },
+      { label: "Áfa-küszöb", ch: "ÁFA (MWST) 100 000 CHF árbevétel felett", at: "Kleinunternehmer-mentesség a forgalomhatárig", de: "Kleinunternehmerregelung a forgalomhatárig", nl: "KOR a forgalomhatárig" },
+    ],
+  },
 ];
 
 /** Slug → a hozzá tartozó összehasonlítás (bármelyik ország cikke a kulcs). */
