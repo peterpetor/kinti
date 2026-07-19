@@ -12,6 +12,8 @@
  * (nem tippelünk értéket, ld. a precise-address / no-new-claim fegyelem).
  */
 
+import type { IconName } from "@/components/ui";
+
 export interface ComparisonRow {
   label: string;
   ch: string;
@@ -22,6 +24,8 @@ export interface ComparisonRow {
 
 export interface GuideComparison {
   id: string;
+  /** Téma-ikon (a cím elé + a hub ugró-navjába) — wayfinding a hosszú listában. */
+  icon: IconName;
   /** A táblázat címe (H2). */
   caption: string;
   /** Egy mondat kontextus a táblázat fölé. */
@@ -35,6 +39,7 @@ export interface GuideComparison {
 export const GUIDE_COMPARISONS: GuideComparison[] = [
   {
     id: "egeszsegbiztositas",
+    icon: "heart",
     caption: "Egészségbiztosítás a 4 országban — egy pillantásra",
     intro:
       "A fő szerkezeti különbség: Svájcban és Hollandiában fix havi díjat fizetsz és biztosítót választasz, Ausztriában és Németországban a bérből vont járulék fedezi.",
@@ -54,6 +59,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "bejelentkezes",
+    icon: "home",
     caption: "Bejelentkezés és tartózkodás — egy pillantásra",
     intro:
       "EU-állampolgárként mind a 4 országban szabadon letelepedhetsz — a határidők és a kapott azonosítók viszont eltérnek.",
@@ -73,6 +79,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "munkavallalas",
+    icon: "briefcase",
     caption: "Munka és bér a 4 országban — egy pillantásra",
     intro:
       "EU-állampolgárként mindenhol engedély nélkül dolgozhatsz — a szabadság, a minimálbér és a 13.–14. havi juttatás viszont országonként más.",
@@ -92,6 +99,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "munkanelkuli",
+    icon: "search",
     caption: "Munkanélküli-ellátás — egy pillantásra",
     intro:
       "A hivatal és a jogosultsági minimum országonként más, de közös: a magyar biztosítási idők U1-igazolással mindenhol beszámíthatnak.",
@@ -111,6 +119,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "csaladi-potlek",
+    icon: "users",
     caption: "Családi pótlék — egy pillantásra",
     intro:
       "Ha a gyerek Magyarországon él, mind a 4 országban EU-koordináció szerint, különbözet-elszámolással jár az ellátás.",
@@ -129,6 +138,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "adozas",
+    icon: "document",
     caption: "Adózás és adóbevallás — egy pillantásra",
     intro:
       "A bérből mindenhol vonják az adót — a különbség, hogy az éves bevallás mikor kötelező, és hol jár vissza gyakran pénz.",
@@ -146,6 +156,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "lakasberles",
+    icon: "key",
     caption: "Lakásbérlés — egy pillantásra",
     intro:
       "A kaució felső határa és a bérlővédelem országonként más — a hirdetett díj pedig sehol sem a teljes költség.",
@@ -164,6 +175,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "auto",
+    icon: "car",
     caption: "Autó a 4 országban — egy pillantásra",
     intro:
       "EU-n belül nincs vám, de a behozatali adók és a műszaki-vizsga rendje élesen eltér — Hollandiában a BPM miatt sokszor nem éri meg autót hozni.",
@@ -182,6 +194,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "nyugdij",
+    icon: "clock",
     caption: "Nyugdíj a 4 országban — egy pillantásra",
     intro:
       "A fő különbség: Svájc, Ausztria és Németország a bérből vont járulékra épít, Hollandia (AOW) a lakóhelyen töltött évekre.",
@@ -199,6 +212,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "felmondas",
+    icon: "send",
     caption: "Felmondás és a jogaid — egy pillantásra",
     intro:
       "A felmondás-védelem országonként nagyon eltér — és Németországban, Hollandiában kemény határidők köthetik a kezed.",
@@ -217,6 +231,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   },
   {
     id: "vallalkozas",
+    icon: "trending",
     caption: "Vállalkozásindítás — egy pillantásra",
     intro:
       "A bejelentés helye, a kötelező társadalombiztosítás és az áfa-küszöb országonként más — a magyar ev./kata sehol nem helyettesíti a helyi bejelentést.",

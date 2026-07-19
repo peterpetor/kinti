@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Icon, ScreenHeader } from "@/components/ui";
+import { CountryFlag } from "@/components/ui/country-flag";
+import { COUNTRIES } from "@/lib/countries";
 import { GUIDE_COMPARISONS } from "@/lib/guide-comparisons";
 import { ComparisonTable } from "@/components/comparison-table";
 
@@ -69,14 +71,25 @@ export default function OsszehasonlitasPage() {
         részletes cikkek tömör kivonata; a táblázatok alól a teljes, országra szabott útmutatóra lépsz tovább.
       </p>
 
-      {/* Ugró-navigáció a 11 táblázathoz. */}
+      {/* A 4 ország — a lap tézise egy pillantásra. */}
+      <div className="grid grid-cols-4 gap-2 rounded-card border border-line bg-surface p-3 shadow-card">
+        {COUNTRIES.map((c) => (
+          <div key={c.code} className="flex flex-col items-center gap-1.5">
+            <CountryFlag code={c.code} className="h-[22px] w-[32px]" />
+            <span className="text-[10.5px] font-bold tracking-tight text-ink-muted">{c.name}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Ugró-navigáció a 11 táblázathoz (téma-ikonnal a wayfindinghez). */}
       <nav className="flex flex-wrap gap-1.5">
         {GUIDE_COMPARISONS.map((c) => (
           <a
             key={c.id}
             href={`#${c.id}`}
-            className="rounded-full border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink transition active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink transition active:scale-95"
           >
+            <Icon name={c.icon} size={13} strokeWidth={2.4} className="text-primary" />
             {c.caption.split(" — ")[0]}
           </a>
         ))}
