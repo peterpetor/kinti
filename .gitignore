@@ -71,6 +71,9 @@ scripts/businesses.csv
 scripts/import_businesses.sql
 scripts/geocode-cache.json
 
+# Egyszeri diagnosztikai/munkafájlok (pl. szaknévsor-dedup export) — ne kerüljenek gitbe
+hidden_rows.json
+
 # D1 adatbazis-mentesek — PII-t tartalmaznak, SOHA ne keruljenek a repoba
 backups/
 

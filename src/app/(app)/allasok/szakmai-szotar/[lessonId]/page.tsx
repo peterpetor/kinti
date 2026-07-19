@@ -83,10 +83,6 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   };
 
   const handleNext = () => {
-    if (!isCorrect && question.type === "multiple_choice") {
-      // In a real app we might put the question at the end of the queue. For MVP, we just move on.
-    }
-
     if (isLastQuestion) {
       // Save progress
       const saved = localStorage.getItem("kinti_language_progress");
@@ -96,7 +92,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
       if (saved) {
         try {
           data = { ...data, ...JSON.parse(saved) };
-        } catch (e) {}
+        } catch { /* hibás/korrupt localStorage → az alapérték marad */ }
       }
       
       const todayDate = new Date();
