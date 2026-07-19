@@ -191,6 +191,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Iskola és gyerek",
     summary:
       "A kötelező oktatás 11 év és ingyenes; a gyerekek kb. 4 évesen kezdik, a beiratkozás határideje általában július 31.",
+    tldr: [
+      "A kötelező oktatás 11 évig tart és minden gyereknek ingyenes; a gyerekek jellemzően 4 évesen kezdik (óvoda / Kindergarten).",
+      "A beiratkozás határideje általában július 31. — a lakóhelyed községénél / a helyi iskolánál intézed.",
+      "Az iskolarendszert a kantonok szervezik, így az oktatási nyelv, a struktúra és a részletek kantononként eltérnek.",
+    ],
     icon: "users",
     sections: [
       {
@@ -234,6 +239,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Munkavállalás Svájcban",
     summary:
       "Heti max. 45 óra a legtöbb ágazatban, évi minimum 4 hét szabadság, alapból 1 hónap próbaidő — a részleteket a munkaszerződés adja.",
+    tldr: [
+      "A legtöbb ágazatban a törvényi felső határ heti 45 óra; a pontos munkaidőt a munkaszerződés (és a kollektív szerződés, GAV/CCT) adja.",
+      "Minden dolgozónak évi legalább 4 hét szabadság jár; egyetlen országos ünnepnap van (augusztus 1.), a többit a kantonok szabják (max. 8).",
+      "Határozatlan szerződésnél a próbaidő alapból 1 hónap, alatta 7 nap a felmondási idő mindkét félnek.",
+    ],
     icon: "trending",
     sections: [
       {
@@ -288,6 +298,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Bankszámla nyitása",
     summary:
       "Bármelyik banknál nyithatsz számlát; a betétek bankonként és ügyfelenként 100 000 CHF-ig törvényileg védettek.",
+    tldr: [
+      "A számlanyitáshoz általában érvényes okmány, svájci tartózkodási engedély és lakcímigazolás kell.",
+      "Több banktípus közül választhatsz (PostFinance, kantoni bankok, nagybankok) — a díjak eltérnek, érdemes összehasonlítani.",
+      "A betétek ügyfelenként és bankonként 100 000 CHF-ig törvényileg védettek (esisuisse; a bankokat a FINMA felügyeli).",
+    ],
     icon: "send",
     sections: [
       {
@@ -321,6 +336,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Nyugdíj és AHV",
     summary:
       "Három pillér: az 1. (AHV, állami) kötelező; a 2. (foglalkoztatói) évi kb. 22 680 CHF kereset felett kötelező; a 3. önkéntes magánmegtakarítás.",
+    tldr: [
+      "A svájci nyugdíj három pilléren áll: 1. AHV (állami, kötelező), 2. foglalkoztatói, 3. önkéntes magánmegtakarítás.",
+      "Az 1. pillér az alapszükségleteket fedezi; egyedülállónál a minimális öregségi nyugdíj havi 1 260, a maximális 2 520 CHF.",
+      "A 2. pillér akkor kötelező, ha fix munkaviszonyban évente legalább 22 680 CHF-et keresel.",
+    ],
     icon: "clock",
     sections: [
       {
@@ -374,6 +394,10 @@ export const GUIDES_CH: Guide[] = [
     title: "Magyar képviselet és vészhelyzet",
     summary:
       "Konzuli ügyek a berni magyar nagykövetségen (előzetes időpontfoglalással); vészhelyzetben Svájcban a 112 a központi segélyhívó.",
+    tldr: [
+      "Konzuli ügyeket (útlevél, okmányok, állampolgári segítségnyújtás) a berni magyar nagykövetség intéz, kizárólag előzetes időpontfoglalással (Konzinfo).",
+      "Vészhelyzetben a 112 az általános segélyhívó; 117 rendőrség, 144 mentő, 118 tűzoltóság, 1414 Rega (légi mentés).",
+    ],
     icon: "flag",
     sections: [
       {
@@ -410,6 +434,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Családi pótlék (Kinderzulage)",
     summary:
       "Gyerekenként havi 215 CHF (0–16 év), tanuló gyereknél 268 CHF (max. 25 évig) — alkalmazottként a munkáltatón keresztül igényled.",
+    tldr: [
+      "Gyerekenként havi 215 CHF jár (0–16 év), tanuló gyerek után havi 268 CHF (max. 25 évig) — egyes kantonok többet is adhatnak.",
+      "Alkalmazottként a munkáltatódon keresztül igényled (a fizetéssel fizeti ki), önállóként a saját családi pótlék pénztáradnál.",
+      "Ha lemaradtál róla, akár 5 évre visszamenőleg is igényelheted.",
+    ],
     icon: "users",
     sections: [
       {
@@ -453,6 +482,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Munkanélküli biztosítás (ALV)",
     summary:
       "Munkanélküliség esetén jelentkezz a RAV-nál; ellátás jár, ha 2 éven belül legalább 12 hónapot dolgoztál Svájcban.",
+    tldr: [
+      "Munkanélküliségkor mielőbb — legkésőbb az első ellátásra jogosult napon — jelentkezz be a regionális munkaügyi központban (RAV).",
+      "Ellátás annak jár, aki a bejelentkezés előtti 2 évben legalább 12 hónapot dolgozott (járulékot fizetett) Svájcban.",
+      "Az önálló vállalkozók nem fizetnek ALV-járulékot, így nem jogosultak; külföldiként B vagy C engedély kell.",
+    ],
     icon: "search",
     sections: [
       {
@@ -494,6 +528,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Jogosítvány átírása",
     summary:
       "Külföldi jogsival 12 hónapig vezethetsz; utána svájci jogosítványra kell cserélni — EU/EGT (így magyar) jogsi vizsga nélkül.",
+    tldr: [
+      "Külföldi jogsival 12 hónapig vezethetsz, utána svájci jogosítványra kell cserélni (a határidő után bírság járhat).",
+      "EU/EGT jogsi (így a magyar is): vezetési vizsga nélkül kapsz svájci jogosítványt; más országoknál jellemzően vizsga kell.",
+      "A cserét a lakóhelyed kantonjának közúti hivatala (Strassenverkehrsamt) intézi, látásvizsgálattal.",
+    ],
     icon: "nav",
     sections: [
       {
@@ -536,6 +575,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Lakásbérlés Svájcban",
     summary:
       "A lakáspiac feszes: erős jelentkezési dosszié, legfeljebb 3 havi kaució külön letéti számlán, és kötött felmondási idők jellemzik.",
+    tldr: [
+      "A lakáspiac feszes, főleg a nagyvárosokban — erős, hiánytalan jelentkezési dosszié (Bewerbungsdossier) számít sokat.",
+      "A kaució legfeljebb 3 havi nettó bér, és törvény szerint a bérlő nevére szóló, elkülönített letéti számlán kell tartani.",
+      "A felmondási idő gyakran 3 hónap; korábbi kiköltözésnél megfelelő utódbérlő (Nachmieter) állításával szabadulhatsz.",
+    ],
     icon: "home",
     sections: [
       {
@@ -602,6 +646,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Mobil- és internet-előfizetés",
     summary:
       "A svájci telekom drága, de a kötöttség oldódott: gyakran havi felmondású csomagok és olcsóbb másodmárkák között válogathatsz — érdemes összehasonlítani.",
+    tldr: [
+      "Három nagy hálózat van (Swisscom, Sunrise, Salt); a lefedettség mindnél jó, a különbség inkább az árban.",
+      "A nagyok olcsóbb másodmárkái (Wingo, yallo, Lebara, Aldi Suisse Mobile) ugyanazon a hálózaton adnak jóval olcsóbb csomagot.",
+      "Sok új csomag már havi felmondású — mindig a hűségidővel EGYÜTT vett tényleges havidíjat hasonlítsd össze.",
+    ],
     icon: "phone",
     sections: [
       {
@@ -651,6 +700,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Autó Svájcban",
     summary:
       "A forgalomba helyezéshez kötelező felelősségbiztosítás és kantonális regisztráció kell, a nemzeti utakra autópálya-matrica, az autót pedig időszakosan műszakira (MFK) viszik.",
+    tldr: [
+      "A forgalomba helyezés a lakóhelyed kantonjának közúti hivatalánál megy; előbb kötelező felelősségbiztosítást (Haftpflicht) kell kötni.",
+      "Külföldről behozott autót általában 1 hónapon belül forgalomba kell helyezni (vámkezelés + gyakran MFK-vizsga).",
+      "A nemzeti autópályákhoz éves matrica (Vignette) kötelező; a járműveket időszakosan műszakira (MFK) hívják be.",
+    ],
     icon: "car",
     sections: [
       {
@@ -703,6 +757,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Serafe — rádió- és TV-díj",
     summary:
       "Svájcban minden háztartás kötelező rádió- és televízió-díjat fizet (a Serafe szedi), függetlenül attól, hogy van-e otthon készüléked.",
+    tldr: [
+      "A média-díjat háztartásonként (nem személyenként) kell fizetni, akkor is, ha nincs tévéd vagy rádiód.",
+      "A díjat a Serafe szedi; a községi bejelentkezés után automatikusan küldik a számlát — külön regisztrálni nem kell.",
+      "Kiegészítő ellátásban (EL) részesülők kérhetnek mentességet.",
+    ],
     icon: "home",
     sections: [
       {
@@ -743,6 +802,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Szülési és apasági szabadság",
     summary:
       "Az anya 14 hét anyasági szabadságra és a kereset 80%-ára jogosult, a másik szülő 2 hét apasági szabadságra — a jövedelemkiesést a keresetpótló rendszer (EO/APG) fedezi.",
+    tldr: [
+      "Az anya 14 hét (98 nap) anyasági szabadságra és a korábbi kereset 80%-ára jogosult (napi felső határig).",
+      "A másik szülő 2 hét szabadságra jogosult (a szülés utáni 6 hónapon belül), szintén a kereset 80%-ával.",
+      "A juttatást általában a munkáltatón keresztül igényled a kompenzációs pénztárnál (Ausgleichskasse).",
+    ],
     icon: "heart",
     sections: [
       {
@@ -789,6 +853,11 @@ export const GUIDES_CH: Guide[] = [
     title: "3. pillér (Säule 3a)",
     summary:
       "A svájci nyugdíj 3 pilléren áll; a 3. pillér önkéntes magán-előtakarékosság. A kötött 3a adókedvezményes, de a pénz jellemzően a nyugdíjig le van kötve.",
+    tldr: [
+      "A 3. pillér önkéntes magán-előtakarékosság, ami az állami (AHV) és a foglalkoztatói (BVG) nyugdíjat egészíti ki.",
+      "A kötött 3a adókedvezményes: az évi befizetés (törvényi plafonig) levonható az adóköteles jövedelemből.",
+      "A 3a pénzhez jellemzően csak meghatározott esetekben férsz (nyugdíj előtt, saját lakás, önálló vállalkozás, végleges kivándorlás).",
+    ],
     icon: "trending",
     sections: [
       {
@@ -839,6 +908,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Felmondás és munkabizonyítvány",
     summary:
       "A felmondási idő a ledolgozott évektől függ (próbaidő után jellemzően 1–3 hónap), bizonyos időszakokban a munkáltató nem mondhat fel, és jogod van munkabizonyítványra.",
+    tldr: [
+      "A felmondási idő a ledolgozott évekkel nő: 1. évben ~1 hónap, 2–9. évben ~2, 10. évtől ~3 hónap (a szerződés/GAV eltérhet).",
+      "Védett időszakokban (betegség, baleset, terhesség, katonai szolgálat) a munkáltatói felmondás érvénytelen.",
+      "A munkaviszony végén jogod van munkabizonyítványra (Arbeitszeugnis) — teljes vagy egyszerű formában.",
+    ],
     icon: "send",
     sections: [
       {
@@ -892,6 +966,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Hulladék és újrahasznosítás",
     summary:
       "Sok községben a háztartási szemetet csak hivatalos, díjköteles zsákban szabad kitenni, és a papír, üveg, PET, zöldhulladék szelektíven megy — a rossz kukázásért bírság jár.",
+    tldr: [
+      "Sok községben a vegyes szemetet csak hivatalos, díjköteles zsákban (Gebührensack) szabad kitenni — másban nem viszik el, és bírság járhat.",
+      "A papír, üveg (szín szerint), PET, fém és a zöldhulladék szelektíven, gyűjtőpontokra vagy a naptár szerinti napokon megy.",
+      "Minden község kiad egy hulladéknaptárat (Abfuhrkalender); a pontos szabályok községenként eltérnek.",
+    ],
     icon: "home",
     sections: [
       {
@@ -930,6 +1009,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Lakásvásárlás és jelzálog",
     summary:
       "Saját lakáshoz jellemzően a vételár legalább 20%-a önerő kell (ennek fele kemény saját pénz), a jelzálog tarthatóságát pedig kalkulált kamattal vizsgálja a bank.",
+    tldr: [
+      "Általában a vételár legalább 20%-a önerő kell, aminek fele (~10%) „kemény” saját pénz legyen, ne a 2. pillérből.",
+      "A bank a jelzálog tarthatóságát egy magasabb, kalkulált kamattal számolja — ökölszabály: az éves lakásköltség ne haladja meg a bruttó jövedelmed harmadát.",
+      "A 2. jelzálogot meghatározott időn belül vissza kell fizetni (amortizáció).",
+    ],
     icon: "trending",
     sections: [
       {
@@ -971,6 +1055,11 @@ export const GUIDES_CH: Guide[] = [
     title: "Vállalkozásindítás Svájcban",
     summary:
       "A legegyszerűbb forma az egyéni cég (Einzelfirma); az AHV-nál önállóként be kell jelentkezned, és 100 000 CHF árbevétel felett cégjegyzék és ÁFA (MWST) is kötelező.",
+    tldr: [
+      "A legegyszerűbb forma az egyéni cég (Einzelfirma, nincs minimáltőke, teljes vagyoni felelősség); a GmbH ~20 000, az AG ~100 000 CHF tőke.",
+      "Önállóként be kell jelentkezned a kompenzációs pénztárhoz (Ausgleichskasse), ami elismeri az önálló státuszt és beszedi a járulékot.",
+      "100 000 CHF éves árbevétel felett a cégjegyzék (Handelsregister) és az ÁFA (MWST) is kötelező.",
+    ],
     icon: "users",
     sections: [
       {
@@ -1022,6 +1111,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-bejelentkezes",
     title: "Bejelentkezés és tartózkodás",
     summary: "Meldezettel 3 napon belül; 3 hónapnál hosszabb tartózkodáshoz Anmeldebescheinigung (EU-regisztráció).",
+    tldr: [
+      "A beköltözéstől 3 napon belül jelentkezz be a Meldeamtnál — a Meldezettelt a szállásadónak is alá kell írnia.",
+      "3 hónapnál hosszabb tartózkodáshoz EU-regisztráció (Anmeldebescheinigung) kell, a beköltözéstől 4 hónapon belül.",
+      "5 év jogszerű tartózkodás után tartós tartózkodás (Daueraufenthalt) jár; az állampolgársághoz le kell mondani a magyarról.",
+    ],
     icon: "home",
     sections: [
       { heading: "Lakcímbejelentés (Meldezettel)", body: ["A beköltözéstől 3 NAPON belül be kell jelentkezned a Meldeamtnál (Bécsben a kerületi Magistratisches Bezirksamt, tartományokban a Gemeindeamt).", "A Meldezettel-űrlapot a szállásadónak (Unterkunftgeber) is alá kell írnia. A kapott Meldebestätigung sok más ügyhöz kell."] },
@@ -1034,6 +1128,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-egeszsegbiztositas",
     title: "Egészségbiztosítás (ÖGK / e-card)",
     summary: "A munkaviszonnyal automatikusan biztosított vagy — nem kell pénztárt választani, mint Svájcban.",
+    tldr: [
+      "Munkaviszonyban a munkáltató bejelent az ÖGK-hoz és automatikusan biztosított leszel — nem kell pénztárt választani, mint Svájcban.",
+      "Az e-card ma már csak fényképpel készül (14 év felett) — magyar állampolgárként a fotódat neked kell regisztráltatnod (chipkarte.at/foto).",
+      "A háziorvos (Hausarzt) az első kontakt; a nem dolgozó házastárs és a gyerekek jellemzően társbiztosítottak.",
+    ],
     icon: "heart",
     sections: [
       { heading: "Automatikus biztosítás", body: ["Ha munkaviszonyban állsz, a munkáltató bejelent az ÖGK-hoz (Österreichische Gesundheitskasse), és AUTOMATIKUSAN biztosított leszel. Az e-card postán érkezik.", "Itt NEM kell biztosítót választani és külön díjat fizetni, mint a svájci Krankenkasse-nál — a járulékot a bérből vonják."] },
@@ -1046,6 +1145,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-adozas",
     title: "Adózás (Lohnsteuer)",
     summary: "A bérből automatikusan vonják a Lohnsteuert; év végén az Arbeitnehmerveranlagung gyakran visszatérítést hoz.",
+    tldr: [
+      "Munkavállalóként a Lohnsteuert és a TB-járulékot a munkáltató automatikusan levonja a bérből.",
+      "Év végén önkéntesen beadhatod az Arbeitnehmerveranlagungot (FinanzOnline) — visszamenőleg 5 évig, gyakran visszajár pénz.",
+      "Levonható többek közt az ingázás (Pendlerpauschale), a gyermek (Familienbonus Plus) és a továbbképzés.",
+    ],
     icon: "document",
     sections: [
       { heading: "Bérből vont adó", body: ["Munkavállalóként a Lohnsteuert (jövedelemadó) és a társadalombiztosítási járulékot a munkáltató automatikusan levonja a bérből, és befizeti.", "A nettó bér a bruttóból a Lohnsteuer + SV-járulék levonása után marad."] },
@@ -1058,6 +1162,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-iskola",
     title: "Iskola és gyerek",
     summary: "Kötelező, ingyenes oktatás; nemzeti rendszer (Volksschule → Mittelschule/AHS → Matura/Lehre).",
+    tldr: [
+      "9 év tankötelezettség (6–15 év) + az utolsó óvodai év (5 évtől) is kötelező; az állami iskola ingyenes.",
+      "Az út: Volksschule → Mittelschule vagy AHS → Matura, illetve szakképzés (BHS/Lehre).",
+      "Ha a gyerek nem tud németül, a Deutschförderklasse segíti a felzárkózást; a beiratkozáshoz az előző bizonyítvány (fordítással) kell.",
+    ],
     icon: "bookmark",
     sections: [
       { heading: "Tankötelezettség", body: ["9 év tankötelezettség (6–15 éves kor). Az állami iskola ingyenes. Az utolsó óvodai év (5 éves kortól) is kötelező.", "Ha a gyerek nem tud németül, a Deutschförderklasse / Deutschförderkurs segíti a felzárkózást."] },
@@ -1070,6 +1179,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-munkavallalas",
     title: "Munkavállalás",
     summary: "EU-állampolgárként szabadon dolgozhatsz; a Kollektivvertrag szabja a minimálbért és a feltételeket.",
+    tldr: [
+      "EU-állampolgárként engedély nélkül, szabadon dolgozhatsz; a minimálbért és a feltételeket a Kollektivvertrag szabja.",
+      "Normál munkaidő heti 40 óra (sok KV-ben 38,5); évi 5 hét (25 munkanap) fizetett szabadság.",
+      "A 13. és 14. havi fizetés (Urlaubsgeld + Weihnachtsgeld) szokásos; munkanélküliségkor az AMS-nél jelentkezz.",
+    ],
     icon: "briefcase",
     sections: [
       { heading: "Szabad munkavállalás", body: ["EU-állampolgárként engedély nélkül, szabadon vállalhatsz munkát Ausztriában.", "A legtöbb ágazatban Kollektivvertrag (kollektív szerződés) szabja a minimálbért, a béremelést és a feltételeket — szakmánként eltér."] },
@@ -1082,6 +1196,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-bankszamla",
     title: "Bankszámla",
     summary: "A fizetésedhez és a lakbérhez kell; a Meldezettel + útlevél elég a nyitáshoz.",
+    tldr: [
+      "A bérutaláshoz és a lakbérhez folyószámla (Girokonto) kell — a nyitáshoz jellemzően útlevél/igazolvány + Meldezettel elég.",
+      "A kártya a Bankomatkarte (debit), a Bankomat az ATM; a számlákat Erlagschein/Zahlschein (csekk) vagy átutalás fedi.",
+      "A betétek bankonként 100 000 €-ig védettek (Einlagensicherung).",
+    ],
     icon: "trending",
     sections: [
       { heading: "Számlanyitás", body: ["Nyiss Girokonto-t (folyószámla) banknál (Erste Bank/Sparkasse — Bécsben Erste, vidéken a helyi Sparkasse, egy csoport —, Bank Austria, BAWAG, Raiffeisen) vagy online (N26, bank99).", "Általában kell: érvényes útlevél/igazolvány + Meldezettel. A bérutaláshoz és a Daueraufträge (állandó megbízás, pl. lakbér) beállításához is ez kell."] },
@@ -1094,6 +1213,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-nyugdij",
     title: "Nyugdíj (Pensionsversicherung)",
     summary: "A bérből kötelező nyugdíjjárulékot vonnak; az EU-ban szerzett évek összeszámítódnak.",
+    tldr: [
+      "Munkavállalóként kötelező nyugdíjbiztosítás (Pensionsversicherung); a járulékot a bérből vonják (PVA).",
+      "A magyar és az osztrák (és más EU-) szolgálati évek az EU-koordináció miatt összeszámítódnak — a külföldön szerzett idő nem vész el.",
+      "Az 1. pillér az állami rész; mellé jöhet vállalati (2.) és magán (3.) nyugdíj-előtakarékosság.",
+    ],
     icon: "globe",
     sections: [
       { heading: "Kötelező rendszer", body: ["Munkavállalóként kötelező nyugdíjbiztosítás (Pensionsversicherung); a járulékot a bérből vonják (PVA — Pensionsversicherungsanstalt).", "A magyar és az osztrák (és más EU-) szolgálati évek a nyugdíjnál összeszámítódnak — az EU-koordináció miatt nem vész el a külföldön szerzett idő."] },
@@ -1105,6 +1229,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-lakasberles",
     title: "Lakásbérlés",
     summary: "Hauptmietvertrag, Kaution (kb. 3 havi bér), esetleg Provision; figyelj a Betriebskostenre.",
+    tldr: [
+      "A leggyakoribb a Hauptmietvertrag (határozott vagy határozatlan); a bér mellé jön a Betriebskosten — kérdezd az összköltséget (Bruttomiete).",
+      "Beköltözéskor: kaució ~3 havi bruttó bér, ingatlanoson keresztül max. 2 havi jutalék (Provision), esetleg Ablöse.",
+      "A Mietrechtsgesetz (MRG) sok bérleményt véd; vitában az Arbeiterkammer vagy a Mietervereinigung segít.",
+    ],
     icon: "home",
     sections: [
       { heading: "Bérleti szerződés", body: ["A leggyakoribb a Hauptmietvertrag (fő bérleti szerződés). Lehet határozott (befristet) vagy határozatlan (unbefristet) idejű.", "A bérleti díjon (Miete) felül jön a Betriebskosten (üzemeltetési/rezsi költség) — kérdezd meg az összköltséget (Bruttomiete)."] },
@@ -1117,6 +1246,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-jogositvany",
     title: "Jogosítvány Ausztriában",
     summary: "A magyar (EU) jogosítvány érvényes — átírni nem kötelező; csere lejáratkor/elvesztéskor a Führerscheinbehördénél.",
+    tldr: [
+      "Az EU-s magyar jogosítvány Ausztriában korlátlanul érvényes — beköltözéskor NEM kell osztrák okmányra cserélni.",
+      "Csere csak lejáratkor, elvesztéskor vagy rongálódáskor kell, a Führerscheinbehördénél, vizsga nélkül.",
+      "A régi papíralapú jogsikat az EU-ban 2033-ig fokozatosan kártyára kell cserélni.",
+    ],
     icon: "car",
     sections: [
       { heading: "Érvényes a magyar jogsi?", body: ["IGEN — az EU-s magyar jogosítvány Ausztriában korlátlanul érvényes, beköltözéskor NEM kell osztrák okmányra cserélni.", "Csere (Umschreibung) lejáratkor, elvesztéskor vagy rongálódáskor kell — a Führerscheinbehördénél (LPD / Bezirkshauptmannschaft), vizsga nélkül."] },
@@ -1128,6 +1262,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-munkanelkuli",
     title: "Munkanélküli-ellátás (AMS)",
     summary: "Arbeitslosengeld az AMS-nél: első alkalommal 52 hét biztosítás kell 2 éven belül; a magyar időszak is beszámíthat (U1).",
+    tldr: [
+      "Első igénylésnél az utolsó 2 évben legalább 52 hét biztosítással járó munkaviszony kell; az ellátás alapja a korábbi nettó kb. 55%-a.",
+      "Már az utolsó munkanap MÁSNAPJÁN jelentkezz az AMS-nél — a késés ellátás-vesztés; az eAMS-fiók a legegyszerűbb út.",
+      "A magyar biztosítási idők az U1-es igazolással beszámíthatnak, ha Ausztriában is dolgoztál.",
+    ],
     icon: "briefcase",
     sections: [
       { heading: "Jogosultság", body: ["Első igénylésnél az utolsó 2 évben legalább 52 hét munkanélküli-biztosítással járó munkaviszony kell (25 év alatt és ismételt igénylésnél kevesebb).", "Az ellátás alapja a korábbi nettó kb. 55%-a (Grundbetrag), pótlékokkal (család) többre nőhet. FONTOS: már az utolsó munkanap MÁSNAPJÁN jelentkezz az AMS-nél — a késés ellátás-vesztés."] },
@@ -1140,6 +1279,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-csaladi-potlek",
     title: "Familienbeihilfe (családi pótlék)",
     summary: "A Finanzamtnál (FinanzOnline) igényled; kor szerint sávos, EU-koordinációval a magyar ellátással összehangolva.",
+    tldr: [
+      "Ha Ausztriában élsz vagy dolgozol, a gyerek(ek) után Familienbeihilfe járhat — akkor is, ha a gyerek Magyarországon él (különbözet-fizetéssel).",
+      "Az összeg a gyerek korával sávosan nő; mellé automatikusan jár a Kinderabsetzbetrag.",
+      "A FinanzOnline-on (Beih 100) igényled; Ausztriában született babánál gyakran hivatalból elindul.",
+    ],
     icon: "users",
     sections: [
       { heading: "Ki jogosult?", body: ["Ha Ausztriában élsz vagy itt dolgozol, a gyerek(ek) után Familienbeihilfe járhat — EU-állampolgárként magyarként is, akkor is, ha a gyerek Magyarországon él (különbözet-fizetés a két ország között).", "Az összeg a gyerek korával sávosan nő, és évente valorizálják — az aktuális összegeket a hivatalos oldalon találod. Mellé automatikusan jár a Kinderabsetzbetrag (adójóváírás)."] },
@@ -1151,6 +1295,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-szules",
     title: "Szülés, Karenz és Kinderbetreuungsgeld",
     summary: "Mutterschutz 8+8 hét (Wochengeld), Karenz a 2. életévig, Kinderbetreuungsgeld átalány vagy jövedelemfüggő.",
+    tldr: [
+      "A szülés előtt és után 8-8 hét abszolút munkavégzési tilalom (Mutterschutz), ez idő alatt Wochengeld jár a korábbi nettó alapján.",
+      "A Karenz (szülői szabadság, felmondási védelemmel) legfeljebb a gyerek 2. születésnapjáig tart.",
+      "A Kinderbetreuungsgeld átalány vagy jövedelemfüggő modellben kérhető az ÖGK-nál — előre számold ki, melyik éri meg.",
+    ],
     icon: "users",
     sections: [
       { heading: "Mutterschutz (anyavédelem)", body: ["A szülés előtt és után 8-8 hét abszolút munkavégzési tilalom (koraszülésnél/császárnál utána 12) — ez idő alatt Wochengeld jár (az ÖGK fizeti, a korábbi nettó alapján).", "A terhesség bejelentésétől erős felmondási védelem él."] },
@@ -1163,6 +1312,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-auto",
     title: "Autó Ausztriában",
     summary: "Az átíratás a BIZTOSÍTÓ Zulassungsstelle-jénél megy; §57a Pickerl évente, autópályán Vignette.",
+    tldr: [
+      "Az autót a biztosítók Zulassungsstelle-jén helyezed forgalomba — előbb kötelező biztosítást (Haftpflicht) kötsz, utána kapsz rendszámot.",
+      "Magyar autó behozatalánál NoVA (normfogyasztási adó) esedékes (FinanzOnline); a §57a „Pickerl” éves műszaki vizsga.",
+      "Autópályán Vignette kötelező (digitális, asfinag.at); a gépjárműadót a biztosítási díjjal együtt fizeted.",
+    ],
     icon: "car",
     sections: [
       { heading: "Regisztráció", body: ["Ausztriában az autó forgalomba helyezése a biztosítók által működtetett Zulassungsstellén történik — ELŐBB köss kötelező biztosítást (Haftpflicht), utána kapsz rendszámot.", "Magyarországról hozott autónál: EU-n belül vám nincs, de behozatalkor NoVA (normfogyasztási adó) és regisztráció esedékes — a NoVA-t a FinanzOnline-on vallod be."] },
@@ -1174,6 +1328,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-orf-dij",
     title: "ORF-Beitrag (TV-rádió díj)",
     summary: "2024 óta a GIS helyett háztartásonkénti ORF-Beitrag (~15,30 €/hó) — készüléktől függetlenül.",
+    tldr: [
+      "2024 óta a GIS helyett háztartásonkénti (Hauptwohnsitz) ORF-Beitrag jár, kb. 15,30 €/hó, tévétől függetlenül.",
+      "A Meldezettel alapján automatikusan megtalálnak — a levélre reagálj, különben visszamenőleg követelik.",
+      "Egy főlakhely = egy díj; mentesség rászorultsági alapon kérhető, külföldre költözéskor jelentsd le.",
+    ],
     icon: "bell",
     sections: [
       { heading: "Hogyan működik?", body: ["2024-től a régi GIS-díjat az ORF-Beitrag váltotta: főlakhelyenként (Hauptwohnsitz) fizetendő, függetlenül attól, van-e tévéd — az összeg kb. 15,30 €/hó, tartományi pótdíj jöhet rá (az aktuálisat a hivatalos oldalon találod).", "A Meldezettel alapján automatikusan megtalálnak — a levélre reagálj, különben visszamenőleg követelik."] },
@@ -1185,6 +1344,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-orvos",
     title: "Orvos és e-card Ausztriában",
     summary: "Az e-card a kulcs mindenhez; Kassenarzt ingyen, Wahlarzt részben térített — sürgősségnél 1450.",
+    tldr: [
+      "Az e-card a kulcs mindenhez — vidd magaddal minden orvoshoz, enélkül készpénzt kérhetnek.",
+      "Az e-card ma már csak fényképpel érvényes (14 év felett) — magyar állampolgárként a fotódat személyesen kell regisztráltatnod (chipkarte.at/foto).",
+      "A Kassenarzt az e-carddal ingyenes; a Wahlarzt (magánorvos) számláját kifizeted, a pénztár utólag részben térít. Sürgősségnél 1450.",
+    ],
     icon: "heart",
     sections: [
       { heading: "Az e-card", body: ["A munkaviszonnyal automatikusan biztosított vagy (ÖGK), és postán kapod az e-cardot — ezt VIDD MAGADDAL minden orvoshoz, enélkül készpénzt kérhetnek.", "Az e-card ma már csak FÉNYKÉPPEL érvényes (14 év felett). Magyar állampolgárként a fotód jellemzően nincs az osztrák nyilvántartásokban — személyesen kell regisztráltatnod (útlevél-minőségű fotó + úti okmány) a tartományi rendőr-igazgatóságon vagy a kijelölt községi hivatalokban, különben nem tudják legyártani a kártyát. Részletek: chipkarte.at/foto.", "Az e-card hátoldala az európai betegbiztosítási kártya (EKVK) is — az EU-ban, így Magyarországon is véd sürgősségnél."] },
@@ -1197,6 +1361,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-geringfugig",
     title: "Geringfügige Beschäftigung (kis-munka)",
     summary: "Az osztrák „minijob”: a havi határ alatt csak baleset-biztosítás jár — de olcsón beléphetsz a teljes TB-be.",
+    tldr: [
+      "A geringfügige Beschäftigung a havi Geringfügigkeitsgrenze alatti, bejelentett kis-munka — a munkáltató alapból csak baleset-biztosítást fizet.",
+      "Egészség- és nyugdíjbiztosítás alapból nincs, de havi fix díjért önkéntes belépéssel (§19a ASVG, ÖGK) teljes TB-t kaphatsz.",
+      "Több kis-munka keresete összeadódik — a határ átlépésével teljes biztosítási kötelezettség jöhet.",
+    ],
     icon: "briefcase",
     sections: [
       { heading: "Mi az?", body: ["A geringfügige Beschäftigung a havi Geringfügigkeitsgrenze alatti kereset (évente emelik — az aktuális összeget a hivatalos oldalon találod). Ilyenkor a munkáltató csak BALESET-biztosítást fizet utánad.", "FONTOS: eü- és nyugdíjbiztosítás e munkából alapból NINCS — főállás vagy más biztosítás mellett kiegészítésnek jó, egyedüli munkaként kockázatos."] },
@@ -1209,6 +1378,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-vallalkozas",
     title: "Vállalkozásindítás Ausztriában",
     summary: "Gewerbeschein a Bezirkshauptmannschaftnál/WKO-nál; automatikus WKO-tagság + SVS-biztosítás.",
+    tldr: [
+      "EU-állampolgárként ugyanúgy alapíthatsz; a szabad szakmák bejelentéssel indulnak, a szabályozottakhoz képesítés-igazolás (Befähigungsnachweis) kell.",
+      "A bejelentés a kerületi hatóságnál (BH/Magistrat) vagy a WKO Gründerservice-en megy — a NeuFöG-kedvezmény sok illetéket elenged.",
+      "Automatikusan jön a WKO-tagság és az SVS (vállalkozói TB); a magyar ev./kata NEM helyettesíti az osztrák bejelentést.",
+    ],
     icon: "trending",
     sections: [
       { heading: "Gewerbe bejelentése", body: ["EU-állampolgárként ugyanúgy alapíthatsz, mint egy osztrák. A „szabad” szakmák (freies Gewerbe) bejelentéssel indulnak; a „szabályozott” szakmákhoz (reglementiertes Gewerbe — pl. építőmester, villanyszerelő) képesítés-igazolás (Befähigungsnachweis) kell.", "A bejelentés a kerületi hatóságnál (BH/Magistrat) vagy a WKO Gründerservice-en keresztül megy — a NeuFöG-kedvezménnyel az alapítási illetékek jelentős része elengedhető."] },
@@ -1221,6 +1395,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-felmondas",
     title: "Felmondás és végkielégítés (Abfertigung Neu)",
     summary: "A felmondási idő Angestellte-nél törvényi; az Abfertigung Neu a BV-kasszában gyűlik — munkahelyváltásnál NEM vész el.",
+    tldr: [
+      "Angestellte-ként a munkáltatói felmondási idő a szolgálati idővel nő (6 hét → 5 hónap); mindig kérj/adj írásos felmondást.",
+      "Az Abfertigung Neu (a bruttó 1,53%-a) egy BV-kasszában gyűlik — a TIÉD, munkahelyváltásnál sem vész el, 3 év után kivehető.",
+      "Felmondáskor még aznap jelentkezz az AMS-nél; az Arbeiterkammer ingyenes jogi segítséget ad a tagoknak.",
+    ],
     icon: "document",
     sections: [
       { heading: "Felmondási szabályok", body: ["Angestellte-ként (alkalmazott) a munkáltatói felmondási idő a szolgálati idővel nő (6 hét → 5 hónap), és jellemzően negyedév-végére szól; munkavállalóként alap esetben 1 hónap. 2021 óta az Arbeiter-ekre (fizikai) is a törvényi Angestellte-szabályok érvényesek, kollektívszerződés eltérhet.", "A felmondás Ausztriában szóban is érvényes lehet — de MINDIG kérj/adj írásosat a bizonyíthatóságért."] },
@@ -1233,6 +1412,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-ksv",
     title: "KSV1870 — hitelképesség Ausztriában",
     summary: "Az osztrák „SCHUFA”: lakásbérlésnél, hitelnél, részletvételnél nézik; évente ingyenes önlekérdezés jár.",
+    tldr: [
+      "A KSV1870 az osztrák hitelinformációs iroda — lakásbérlésnél, hitelnél, részletvételnél nézik a fizetési megbízhatóságod.",
+      "Frissen érkezőként még nincs osztrák hiteltörténeted (ez nem negatív, de az elején kérhetnek kauciót).",
+      "GDPR alapján évente egyszer ingyen lekérheted az adataid (ksv.at); hibás bejegyzést írásban vitathatsz.",
+    ],
     icon: "document",
     sections: [
       { heading: "Mi az a KSV?", body: ["A KSV1870 a legnagyobb osztrák hitelinformációs iroda: bankok, mobilszolgáltatók és főbérlők ellenőrzik rajta a fizetési megbízhatóságod.", "Frissen érkezőként még nincs osztrák hiteltörténeted — ez nem negatív, de az elején kérhetnek kauciót/előrefizetést."] },
@@ -1245,6 +1429,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-13-14-fizetes",
     title: "13. és 14. havi fizetés (Urlaubs- és Weihnachtsgeld)",
     summary: "Ausztriában a legtöbb dolgozó ÉVI 14 havi bért kap — a két extra hónap adózása kedvezményes.",
+    tldr: [
+      "Ausztriában a legtöbb dolgozó évi 14 havi bért kap: Urlaubsgeld (nyáron) + Weihnachtsgeld (novemberben), kollektívszerződés alapján.",
+      "A két extra havi bér kedvezményes adókulccsal (jelentős részük 6%) adózik — nettóban többet ér egy normál hónapnál.",
+      "Éves összehasonlításkor mindig az éves bruttót nézd: AT havi bér × 14.",
+    ],
     icon: "trending",
     sections: [
       { heading: "Mi ez és kinek jár?", body: ["Az Urlaubsgeld (nyáron) és a Weihnachtsgeld (novemberben) NEM törvényi, hanem KOLLEKTÍVSZERZŐDÉSES juttatás — de mivel Ausztriában szinte minden ágazatnak van kollektívszerződése, a munkavállalók túlnyomó többsége megkapja.", "Év közben belépve/kilépve IDŐARÁNYOSAN jár. Nézd meg a szerződésed/kollektívszerződésed — az álláshirdetések bruttó havi bére általában a 14×-es rendszerre értendő."] },
@@ -1257,6 +1446,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-klimaticket",
     title: "KlimaTicket — közlekedés egész Ausztriában",
     summary: "EGY bérlet az ország ÖSSZES vonatára, buszára, villamosára — ingázóknak szinte mindig megéri.",
+    tldr: [
+      "Egy bérlet az ország ÖSSZES menetrend szerinti tömegközlekedésére (vonat, busz, villamos, metró, minden tartományban).",
+      "Éves konstrukció (havi részlettel is), kedvezménnyel 26 alatt, 65 fölött és fogyatékkal élőknek; olcsóbb regionális változatok is vannak.",
+      "Városok közti ingázóknak szinte mindig megéri; a munkáltató adómentesen átvállalhatja (Jobticket).",
+    ],
     icon: "nav",
     sections: [
       { heading: "Mi az a KlimaTicket?", body: ["A KlimaTicket Österreich az ország TELJES menetrend szerinti tömegközlekedésére érvényes — vonat (ÖBB, Westbahn), busz, villamos, metró, minden tartományban.", "Éves konstrukció (havi részletfizetés is lehet); kedvezmény jár 26 alatt, 65 fölött és fogyatékkal élőknek. Az aktuális árakat a hivatalos oldalon találod."] },
@@ -1269,6 +1463,11 @@ export const GUIDES_AT: Guide[] = [
     slug: "at-id-austria",
     title: "ID Austria — az osztrák digitális azonosító",
     summary: "A digitális ügyintézés kulcsa (FinanzOnline, Digitales Amt, e-aláírás) — EU-állampolgárként is igényelhető.",
+    tldr: [
+      "Az ID Austria az osztrák állami digitális azonosító (a Handy-Signatur utódja) — ezzel lépsz be a FinanzOnline-ba és írhatsz alá teljes értékű e-aláírással.",
+      "Magyarként, osztrák lakcímmel (Meldezettel) is igényelheted, személyesen egy regisztrációs hatóságnál, fényképes okmánnyal.",
+      "A telefonos „Digitales Amt” appal intézed az adóbevallást, a hivatali kivonatokat és az ajánlott levelek átvételét.",
+    ],
     icon: "lock",
     sections: [
       { heading: "Mi az az ID Austria?", body: ["Az ID Austria az osztrák állami digitális azonosító (a korábbi Handy-Signatur utódja): ezzel lépsz be a FinanzOnline-ba (adó, Familienbeihilfe), a Digitales Amt appba, és ezzel írhatsz alá TELJES ÉRTÉKŰ elektronikus aláírással szerződéseket, kérelmeket.", "Magyarként, osztrák lakcímmel (Meldezettel) is igényelheted — a legtöbb hivatali ügyet utána sorban állás nélkül, telefonról intézed."] },
@@ -1284,6 +1483,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-bejelentkezes",
     title: "Bejelentkezés (Anmeldung) és tartózkodás",
     summary: "Anmeldung a Bürgeramtnál ~1-2 héten belül; EU-állampolgárként Freizügigkeit — nincs külön engedély.",
+    tldr: [
+      "A beköltözéstől általában 1–2 héten belül jelentkezz be a Bürgeramtnál — időpontot (Termin) foglalj, nagyvárosban hetekkel előre.",
+      "Kell a Wohnungsgeberbestätigung (a főbérlő aláírt igazolása) + okmány; a Meldebescheinigung sok más ügyhöz (bank, Steuer-ID) kell.",
+      "EU-állampolgárként nincs szükség tartózkodási engedélyre; állampolgárság már 5 év után, és a kettős állampolgárság engedélyezett.",
+    ],
     icon: "home",
     sections: [
       { heading: "Lakcímbejelentés (Anmeldung)", body: ["A beköltözéstől általában 1-2 héten belül (városonként eltér, pl. Berlin 14 nap) be kell jelentkezned a Bürgeramt / Einwohnermeldeamt-nál — Termin-foglalással (nagyvárosban hetekre előre telt!).", "Kell: a Wohnungsgeberbestätigung (a főbérlő/tulajdonos aláírt igazolása) + útlevél/igazolvány. A kapott Meldebescheinigung sok más ügyhöz kell (bankszámla, Steuer-ID, biztosítás)."] },
@@ -1296,6 +1500,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-egeszsegbiztositas",
     title: "Egészségbiztosítás (Krankenversicherung)",
     summary: "Kötelező; gesetzlich (GKV — AOK/TK/Barmer) vagy privat (PKV). A GKV-nál a pénztárt TE választod.",
+    tldr: [
+      "Az egészségbiztosítás kötelező; a legtöbben a gesetzliche Krankenversicherung (GKV) tagjai — a pénztárt (AOK, TK, Barmer…) TE választod.",
+      "A GKV-járulék kb. 14,6% + a pénztár Zusatzbeitragja, nagyjából fele-fele a munkáltatóval.",
+      "Magas jövedelem felett választható a magán (PKV) is, de oda visszalépni nehéz; a nem dolgozó házastárs+gyerekek gyakran ingyen társbiztosítottak.",
+    ],
     icon: "heart",
     sections: [
       { heading: "Kötelező biztosítás", body: ["Németországban KÖTELEZŐ az egészségbiztosítás. A legtöbb munkavállaló a gesetzliche Krankenversicherung (GKV) tagja.", "A munkáltató bejelent, de a Krankenkassét TE választod (AOK, TK, Barmer, DAK…) — eltér a Zusatzbeitrag és a szolgáltatás. Svájccal ellentétben itt választani KELL pénztárt."] },
@@ -1308,6 +1517,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-adozas",
     title: "Adózás (Steuer / Lohnsteuer)",
     summary: "Steuer-ID postán; a bérből vonják a Lohnsteuert; a Steuererklärung (ELSTER) gyakran visszatérítést hoz.",
+    tldr: [
+      "Az Anmeldung után postán kapod a Steuer-ID-t; a Steuerklasse (I–VI) szabja a bérből vont Lohnsteuert.",
+      "A munkáltató automatikusan levonja a Lohnsteuert + a TB-járulékot; a Kirchensteuer csak bejelentett egyháztagnak.",
+      "Az éves Steuererklärung-ot az ELSTER-en adod be — sokszor visszajár pénz (ingázás, home office, továbbképzés).",
+    ],
     icon: "document",
     sections: [
       { heading: "Steuer-ID és Steuerklasse", body: ["Az Anmeldung után postán kapsz egy Steuerliche Identifikationsnummert (Steuer-ID) — ez kell a munkához és a bankhoz.", "A Steuerklasse (I–VI) szabja a levont Lohnsteuert: I egyedülálló, III/V vagy IV/IV házasoknak, VI a második állásra."] },
@@ -1320,6 +1534,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-iskola",
     title: "Iskola és gyerek (Schule)",
     summary: "Tankötelezettség, ingyenes állami iskola; a rendszer tartományonként (Bundesland) eltér.",
+    tldr: [
+      "9–10 év tankötelezettség (kb. 6 évtől); az állami iskola ingyenes, a rendszer tartományonként (Bundesland) eltér.",
+      "Út: Grundschule → Gymnasium / Realschule / Hauptschule / Gesamtschule; a nevek és az átmenet Bundesland-függők.",
+      "A duális szakképzés (Ausbildung): iskola + fizetett céges gyakorlat, ~3 év — erős, megbecsült út egy szakmához.",
+    ],
     icon: "bookmark",
     sections: [
       { heading: "Tankötelezettség", body: ["Általában 9–10 év Schulpflicht (kb. 6 éves kortól). Az állami iskola ingyenes.", "Ha a gyerek nem tud németül, Willkommensklasse / Sprachförderung segíti a felzárkózást."] },
@@ -1332,6 +1551,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-munkavallalas",
     title: "Munkavállalás (Arbeit)",
     summary: "EU-állampolgárként szabadon dolgozhatsz; Mindestlohn + írott Arbeitsvertrag véd.",
+    tldr: [
+      "EU-állampolgárként engedély nélkül dolgozhatsz; az írott Arbeitsvertrag rögzíti a bért, munkaidőt, szabadságot, felmondási időt.",
+      "Törvényi Mindestlohn ~13,90 €/óra (2026; évente emelkedik); sok ágazatban a Tarifvertrag magasabb bért ad.",
+      "Min. évi 20 munkanap fizetett szabadság; a felmondás mindig írásban, törvényi/szerződéses határidővel.",
+    ],
     icon: "briefcase",
     sections: [
       { heading: "Szabad munkavállalás", body: ["EU-állampolgárként engedély nélkül, szabadon dolgozhatsz Németországban.", "Az írott Arbeitsvertrag (munkaszerződés) rögzíti a bért, a munkaidőt, a szabadságot és a felmondási időt."] },
@@ -1344,6 +1568,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-bankszamla",
     title: "Bankszámla (Girokonto)",
     summary: "A fizetéshez és a lakbérhez kell; banknál vagy online (N26, DKB, ING).",
+    tldr: [
+      "A fizetéshez és lakbérhez folyószámla (Girokonto) kell — banknál vagy online (N26, DKB, ING).",
+      "A nyitáshoz okmány + Meldebescheinigung (gyakran Steuer-ID) kell; EU-ban jogod van Basiskonto-hoz papírhiány esetén is.",
+      "A Girocard/debit + SEPA-átutalás az alap; a betétek bankonként 100 000 €-ig védettek.",
+    ],
     icon: "trending",
     sections: [
       { heading: "Számlanyitás", body: ["Nyiss Girokonto-t (folyószámla) — Sparkasse, Volksbank, vagy online (N26, DKB, ING).", "Kell: útlevél/igazolvány + Meldebescheinigung (gyakran a Steuer-ID is). EU-ban jogod van Basiskonto-hoz akkor is, ha még nincs minden papírod."] },
@@ -1356,6 +1585,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-lakasberles",
     title: "Lakásbérlés (Wohnung)",
     summary: "Mietvertrag, Kaution (max 3 havi Kaltmiete); figyelj a Warmmiete-re és a Schufa-ra.",
+    tldr: [
+      "A Mietvertrag a Kaltmiete-t + Nebenkosten-t (= Warmmiete, a tényleges havi díj) rögzíti — mindig az összköltséget nézd.",
+      "A kaució max. 3 havi Kaltmiete; gyakran kell Schufa-Auskunft + Mietschuldenfreiheitsbescheinigung.",
+      "A német Mietrecht erősen védi a bérlőt; az ügynöki díjat 2015 óta a megrendelő fizeti (bérlőként ritkán a tiéd).",
+    ],
     icon: "home",
     sections: [
       { heading: "Bérleti szerződés", body: ["A Mietvertrag rögzíti a Kaltmiete-t (hideg bérleti díj) + a Nebenkosten (rezsi/üzemeltetés) = Warmmiete (a TÉNYLEGES havi díj). Mindig az összköltséget nézd!", "Lehet határozott (befristet) vagy határozatlan (unbefristet) idejű."] },
@@ -1369,6 +1603,11 @@ export const GUIDES_DE: Guide[] = [
     title: "Kindergeld (családi pótlék) Németországban",
     summary:
       "A német családi pótlék (Kindergeld) minden Németországban adóköteles szülőnek járhat — a jogosultságot a lakóhely és a munkaviszony alapozza meg, nem az állampolgárság.",
+    tldr: [
+      "A Kindergeld minden Németországban élő/dolgozó, adóköteles szülőnek járhat — állampolgárságtól függetlenül, magyarként is.",
+      "Egy gyerek után jellemzően egy országból jár támogatás; a magyar ellátással a különbözetet a Familienkasse koordinálja.",
+      "A kérelmet (Antrag + Anlage Kind) a Familienkasse-nál, online is beadhatod; a nemzetközi anyakönyvi kivonatot szerezd be előre.",
+    ],
     icon: "users",
     sections: [
       {
@@ -1410,6 +1649,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-nyugdij",
     title: "Nyugdíj (Rente) Németországban",
     summary: "A Deutsche Rentenversicherung a kötelező pillér; a magyar és a német évek EU-szabály szerint összeszámítanak.",
+    tldr: [
+      "Munkavállalóként automatikusan a gesetzliche Rentenversicherung tagja vagy (járulék 18,6%, fele-fele a munkáltatóval).",
+      "A jogosultsághoz min. 5 év kell, de a MAGYAR biztosítási éveid EU-szabály szerint beszámítanak (a kifizetést arányosan kapod).",
+      "A kint szerzett évek nem vesznek el; a Renteninformation levél mutatja a várható nyugdíjad.",
+    ],
     icon: "clock",
     sections: [
       { heading: "Hogyan épül fel?", body: ["Munkavállalóként automatikusan a gesetzliche Rentenversicherung tagja vagy — a járulékot (18,6%, fele-fele a munkáltatóval) a bérből vonják.", "A nyugdíjjogosultsághoz minimum 5 év (Wartezeit) kell — de EU-állampolgárként a MAGYAR biztosítási éveid is BESZÁMÍTANAK a jogosultságba (a kifizetést országonként arányosan kapod)."] },
@@ -1422,6 +1666,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-jogositvany",
     title: "Jogosítvány Németországban",
     summary: "A magyar (EU) jogosítvány érvényes — nem kell átírni; cserélni lejáratkor vagy elvesztéskor kell.",
+    tldr: [
+      "Az EU-s magyar jogosítvány Németországban korlátlanul érvényes — beköltözéskor NEM kell átíratni.",
+      "Csere (Umtausch) csak lejáratkor, elvesztéskor vagy rongálódáskor kell, a Führerscheinstelle-nél, vizsga nélkül.",
+      "A régi papíralapú jogsikat az EU-ban 2033-ig kártyára kell cserélni.",
+    ],
     icon: "car",
     sections: [
       { heading: "Érvényes a magyar jogsi?", body: ["IGEN — az EU-s (kártyaformátumú) magyar jogosítvány Németországban korlátlanul érvényes, NEM kell átíratni német okmányra a beköltözéskor.", "Csere (Umtausch) akkor kell, ha lejár, elveszik, vagy megrongálódik — ilyenkor a lakóhelyed Führerscheinstelle-jénél német okmányt kapsz, vizsga nélkül."] },
@@ -1433,6 +1682,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-munkanelkuli",
     title: "Munkanélküli-ellátás (Arbeitslosengeld)",
     summary: "ALG I: az utolsó 30 hónapból 12 hónap biztosítás kell; a magyar időszakok is beszámíthatnak (U1).",
+    tldr: [
+      "ALG I: az utolsó 30 hónapban legalább 12 hónap járulékfizetés kell; az ellátás a korábbi nettó kb. 60%-a (gyerekkel 67%).",
+      "Legkésőbb a felmondás kézhezvétele után 3 nappal (de lehetőleg azonnal) jelentkezz arbeitsuchend-nek az Agentur für Arbeit-nál.",
+      "A magyar biztosítási időszakok az U1-es igazolással beszámíthatnak; az ALG I után a Bürgergeld a következő háló.",
+    ],
     icon: "briefcase",
     sections: [
       { heading: "Arbeitslosengeld I", body: ["Jogosultság: az utolsó 30 hónapban legalább 12 hónap járulékfizetés. Az ellátás a korábbi nettó kb. 60%-a (gyerekkel 67%), jellemzően 6–12 hónapig (50 felett tovább).", "FONTOS határidő: legkésőbb a felmondás kézhezvétele után 3 nappal (de lehetőleg azonnal) jelentkezz arbeitsuchend-nek az Agentur für Arbeit-nál — a késés az ellátás csökkentésével járhat."] },
@@ -1445,6 +1699,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-auto",
     title: "Autó Németországban",
     summary: "Zulassung a lakóhelyeden, kötelező Haftpflicht, HU (TÜV) 2 évente; behozott autót is regisztrálni kell.",
+    tldr: [
+      "Az autót a lakóhelyeden kell forgalomba helyezni (Zulassungsstelle) — eVB-szám, okmányok és SEPA-mandátum a Kfz-Steuerhez.",
+      "Kötelező Haftpflicht nélkül nincs rendszám; a Hauptuntersuchung (HU/„TÜV”) 2 évente, sok belvárosban zöld matrica (Umweltplakette) kell.",
+      "A díj erősen függ a kármentes évektől (SF-Klasse) — a magyar kármentességi igazolást sok biztosító elfogadja.",
+    ],
     icon: "car",
     sections: [
       { heading: "Regisztráció (Zulassung)", body: ["Ha Németországban élsz, az autódat itt kell forgalomba helyezni — a Zulassungsstelle-nél (kell: eVB-szám a biztosítótól, okmányok, adásvételi, SEPA-mandátum a Kfz-Steuerhez).", "Magyarországról hozott autónál is ez a menet: EU-n belül vám nincs, de a német regisztráció (és jellemzően friss HU-vizsga) kell."] },
@@ -1457,6 +1716,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-tv-radio-dij",
     title: "TV-rádió díj (Rundfunkbeitrag)",
     summary: "Háztartásonként EGY díj (~18,36 €/hó) — automatikusan megtalálnak az Anmeldung után.",
+    tldr: [
+      "A Rundfunkbeitrag háztartásonként fizetendő (jelenleg 18,36 €/hó), tévétől/rádiótól függetlenül.",
+      "Az Anmeldung után a Beitragsservice automatikusan levélben megkeres — válaszolj, különben visszamenőleg követelik.",
+      "Egy lakás = egy díj; ha lakótársad már fizeti, az ő Beitragsnummer-ével jelentsd be magad.",
+    ],
     icon: "bell",
     sections: [
       { heading: "Hogyan működik?", body: ["A Rundfunkbeitrag háztartásonként fizetendő (jelenleg 18,36 €/hó — az aktuálisat a hivatalos oldalon találod), függetlenül attól, van-e tévéd vagy rádiód.", "A lakcímbejelentés után a Beitragsservice automatikusan LEVÉLBEN megkeres — ne dobd ki, válaszolj, különben visszamenőleg is követelik."] },
@@ -1468,6 +1732,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-szules-elterngeld",
     title: "Szülés, Elternzeit és Elterngeld",
     summary: "Mutterschutz (6+8 hét), Elternzeit max. 3 év, Elterngeld a nettó ~65%-a (min. 300 / max. 1800 €/hó).",
+    tldr: [
+      "A szülés előtt 6, utána 8 hét védett Mutterschutz — ez idő alatt a Mutterschaftsgeld + munkáltatói kiegészítés a teljes nettót fedezi.",
+      "Az Elterngeld a korábbi nettó kb. 65%-a (min. 300 / max. 1800 €/hó), alap 12 hónap + 2 partnerhónap; az igénylés az Elterngeldstelle-nél.",
+      "Az Elternzeit (szülői szabadság) gyermekenként max. 3 év, felmondási védelemmel; a munkáltatónak 7 héttel előre, írásban jelentsd be.",
+    ],
     icon: "users",
     sections: [
       { heading: "Mutterschutz (anyavédelem)", body: ["A szülés előtt 6 és utána 8 héttel védett időszak jár (Mutterschutzfrist) — ilyenkor a Mutterschaftsgeld + munkáltatói kiegészítés a teljes nettót fedezi.", "A terhességet érdemes (nem kötelező) korán jelezni — onnantól erős felmondási védelem él."] },
@@ -1480,6 +1749,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-felmondas",
     title: "Felmondás és a jogaid (Kündigung)",
     summary: "Felmondás csak ÍRÁSBAN érvényes; vitatni 3 HÉTEN belül lehet (Kündigungsschutzklage).",
+    tldr: [
+      "A felmondás CSAK papíron, eredeti aláírással érvényes (e-mail/WhatsApp nem az).",
+      "6 hónap után és 10 főnél nagyobb cégnél a Kündigungsschutzgesetz véd (indok kell a felmondáshoz).",
+      "KRITIKUS: vitatni a kézhezvételtől 3 HÉTEN belül lehet (Kündigungsschutzklage) — utána a felmondás automatikusan érvényessé válik.",
+    ],
     icon: "document",
     sections: [
       { heading: "A felmondás szabályai", body: ["Németországban a felmondás CSAK papíron, eredeti aláírással érvényes (e-mail/WhatsApp NEM az).", "A törvényi felmondási idő alap esetben 4 hét (a hó 15-ére vagy végére); a munkáltató oldalán a munkaviszony hosszával nő (2 év után 1 hónap, 5 év után 2 hónap…)."] },
@@ -1492,6 +1766,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-minijob",
     title: "Minijob és Midijob",
     summary: "A Minijob-határ ~556 €/hó (évente emelkedik) — adómentes zsebpénz vagy kiegészítés, bejelentve.",
+    tldr: [
+      "A Minijob a havi keresethatárig (2025-ben 556 €) adó- és járulékmentes a munkavállalónak; főállás mellett is vállalható.",
+      "A határ fölött ~2000 €-ig Midijob: csökkentett járulék, de TELJES társadalombiztosítási védelemmel.",
+      "A Minijob is bejelentett munka — jár minimálbér, fizetett szabadság, betegszabadság; a feketemunka bírsággal jár.",
+    ],
     icon: "briefcase",
     sections: [
       { heading: "Minijob", body: ["A Minijob havi keresethatárig (2025-ben 556 €; a minimálbérrel évente emelkedik — az aktuálisat a Minijob-Zentrale oldalán találod) adó- és járulékmentes a munkavállalónak.", "Főállás MELLETT egy Minijob vállalható a főállás érintése nélkül; a Minijob is BEJELENTETT munka — ragaszkodj hozzá (a feketemunka biztosítás nélkül hagy és bírsággal jár)."] },
@@ -1504,6 +1783,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-schufa",
     title: "SCHUFA — a német hitelképesség",
     summary: "Lakásbérléshez, mobil-szerződéshez, hitelhez kérik; évente ingyenes önlekérdezés (Datenkopie) jár.",
+    tldr: [
+      "A SCHUFA a legnagyobb német hitelinformációs rendszer — bankok, mobilszolgáltatók, főbérlők nézik a score-od.",
+      "Frissen érkezőként még nincs SCHUFA-történeted (nem negatív, de emiatt kérhetnek kauciót az elején).",
+      "A GDPR szerinti Datenkopie ingyenes (schufa.de); a számlákat fizesd időben, és költözéskor minden szerződést zárj le rendben.",
+    ],
     icon: "document",
     sections: [
       { heading: "Mi az a SCHUFA?", body: ["A SCHUFA a legnagyobb német hitelinformációs rendszer: bankok, mobilszolgáltatók és főbérlők ellenőrzik rajta a fizetési megbízhatóságod (score).", "Frissen érkezőként még nincs SCHUFA-történeted — ez nem negatív, de emiatt kérhetnek kauciót/előrefizetést az elején."] },
@@ -1516,6 +1800,11 @@ export const GUIDES_DE: Guide[] = [
     slug: "de-vallalkozas",
     title: "Vállalkozásindítás Németországban",
     summary: "Gewerbeanmeldung pár tízezer forintnyi díjért, vagy Freiberufler közvetlenül a Finanzamtnál; Kleinunternehmer-áfamentesség.",
+    tldr: [
+      "A legtöbb tevékenység Gewerbe — a Gewerbeamt-nál jelented be (jellemzően 20–60 €); a szabad foglalkozások (Freiberufler) közvetlenül a Finanzamtnál.",
+      "A Fragebogen zur steuerlichen Erfassung (ELSTER) után kapsz Steuernummer-t; a Kleinunternehmerregelung az áfa alól mentesíthet a forgalomhatárig.",
+      "Önállóként az egészségbiztosítást magadnak kell intézned; a magyar kata/ev. NEM helyettesíti a német bejelentést.",
+    ],
     icon: "trending",
     sections: [
       { heading: "Gewerbe vagy Freiberufler?", body: ["A legtöbb tevékenység Gewerbe: a helyi Gewerbeamt-nál jelented be (Gewerbeanmeldung, jellemzően 20–60 €) — EU-állampolgárként ugyanúgy, mint egy német.", "A „szabad foglalkozások” (Freie Berufe: pl. fordító, oktató, tervező, orvos) NEM Gewerbék — ők közvetlenül a Finanzamt-nál regisztrálnak. A besorolás adót is érint (Gewerbesteuer csak a Gewerbénél)."] },
@@ -1531,6 +1820,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-bejelentkezes",
     title: "Bejelentkezés (inschrijving BRP) és BSN",
     summary: "4+ hónap tartózkodásnál a gemeenténél BRP-regisztráció → BSN; EU-állampolgárként vrij verkeer — nincs engedély.",
+    tldr: [
+      "4 hónapnál hosszabb tartózkodásnál a gemeenténél be kell jelentkezned a BRP-be — ekkor kapod a BSN-t, ami mindenhez kell.",
+      "EU-állampolgárként nincs szükség tartózkodási engedélyre (vrij verkeer); az IND-dokumentum 2014 óta opcionális.",
+      "5 év után tartós tartózkodás jár; az állampolgárság inburgering-vizsgával, de Hollandia fő szabályként a korábbi állampolgárság lemondását kéri.",
+    ],
     icon: "home",
     sections: [
       { heading: "BRP-regisztráció + BSN", body: ["Ha 4 hónapnál tovább maradsz, a lakóhelyed szerinti gemeenténél (önkormányzat) be kell jelentkezned a BRP-be (Basisregistratie Personen) — időpontfoglalással (afspraak), a beköltözéstől néhány napon belül.", "Ekkor kapod a BSN-t (burgerservicenummer), ami MINDENHEZ kell: munka, bankszámla, zorgverzekering, adó. 4 hónapnál rövidebb tartózkodásnál RNI-regisztrációval kaphatsz BSN-t."] },
@@ -1543,6 +1837,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-egeszsegbiztositas",
     title: "Egészségbiztosítás (zorgverzekering)",
     summary: "Kötelező basisverzekering (~140 €/hó) a biztosítás/munka kezdetétől 4 hónapon belül; a biztosítót TE választod.",
+    tldr: [
+      "Kötelező a basisverzekering (~140 €/hó), ha itt laksz/dolgozol — a start-tól 4 hónapon belül, a biztosítót TE választod.",
+      "Van éves eigen risico (önrész, ~385 €/év); alacsony jövedelemnél a Belastingdienst zorgtoeslagot ad.",
+      "A huisarts (háziorvos) az első kontakt és a kapuőr; a 18 alattiak díjmentesen biztosítottak, a fogászat jellemzően nincs az alapcsomagban.",
+    ],
     icon: "heart",
     sections: [
       { heading: "Kötelező alapbiztosítás", body: ["Hollandiában KÖTELEZŐ a basisverzekering (alap-egészségbiztosítás), ha itt laksz vagy dolgozol — jellemzően a start-tól számított 4 hónapon belül kell megkötnöd (visszamenőleg is fizetendő).", "A zorgverzekeraart TE választod (Zilveren Kruis, VGZ, CZ, Menzis…) — az alapcsomag tartalma törvényi, de az ár és a szolgáltatás eltér. Havidíj ~140 €/hó (2025)."] },
@@ -1555,6 +1854,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-adozas",
     title: "Adózás (belasting) és DigiD",
     summary: "A bérből loonheffing; éves aangifte a Belastingdiensten DigiD-vel; expatnak 30%-regeling.",
+    tldr: [
+      "A DigiD a holland digitális azonosítód — a BRP-regisztráció (BSN) után igényelhető, minden hivatali ügyhöz kell.",
+      "A jövedelemadót a munkáltató a bérből vonja (loonheffing); az éves aangifte-t a Mijn Belastingdienst-en adod be, gyakran visszajár pénz.",
+      "Külföldről toborzott szakembernek a 30%-regeling adómentessé teheti a bér egy részét (a kulcs 2027-től 27%).",
+    ],
     icon: "document",
     sections: [
       { heading: "DigiD és a BSN", body: ["A DigiD a holland digitális azonosítód — ezzel intézed online a hivatali ügyeket (adó, gemeente, egészségügy). A BRP-regisztráció (BSN) után igényelhető.", "A jövedelemadó a Box 1 (munka/otthon) progresszív sávjaiban működik; a munkáltató a bérből vonja a loonheffinget."] },
@@ -1567,6 +1871,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-iskola",
     title: "Iskola és gyerek (school)",
     summary: "Leerplicht 5–16 év, ingyenes állami iskola; a nieuwkomers-osztály segít a holland nyelvvel.",
+    tldr: [
+      "A leerplicht 5–16 év (utána 18-ig kwalificatieplicht); az állami iskola ingyenes, a legtöbb gyerek már 4 évesen kezdi a basisschoolt.",
+      "Út: basisschool → doorstroomtoets → VMBO / HAVO / VWO (a szint a toets + tanári javaslat alapján).",
+      "Ha a gyerek nem tud hollandul, nieuwkomersklas segíti a nyelvet a rendes osztály előtt.",
+    ],
     icon: "bookmark",
     sections: [
       { heading: "Tankötelezettség (leerplicht)", body: ["A leerplicht 5 éves kortól 16 éves korig tart (utána 18-ig kwalificatieplicht, amíg nincs startkwalificatie). Az állami iskola ingyenes (kis önkéntes hozzájárulás lehet).", "A legtöbb gyerek már 4 évesen kezdi a basisschoolt."] },
@@ -1579,6 +1888,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-munkavallalas",
     title: "Munkavállalás (werk)",
     summary: "EU-állampolgárként szabadon dolgozhatsz; minimumloon + 8% vakantiegeld + írott arbeidsovereenkomst véd.",
+    tldr: [
+      "EU-állampolgárként engedély nélkül dolgozhatsz — csak BSN kell; az írott arbeidsovereenkomst rögzíti a feltételeket.",
+      "Törvényi minimumloon (egységes óradíj, ~14 €/óra 2025) + 8% vakantiegeld (jellemzően májusban); min. évi ~20 nap szabadság.",
+      "Az ontslag az UWV-n vagy a kantonrechteren megy, transitievergoedinggel; munkanélküliségkor WW-t igényelsz az UWV-nél.",
+    ],
     icon: "briefcase",
     sections: [
       { heading: "Szabad munkavállalás", body: ["EU-állampolgárként engedély nélkül, szabadon dolgozhatsz Hollandiában — csak BSN kell.", "Az írott arbeidsovereenkomst (munkaszerződés) rögzíti a bért, a munkaidőt és a felmondási feltételeket. Gyakori a láncszerződés (max 3 határozott idejű, utána határozatlan)."] },
@@ -1591,6 +1905,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-bankszamla",
     title: "Bankszámla (betaalrekening)",
     summary: "A fizetéshez és a lakbérhez kell; ING/Rabobank/ABN AMRO vagy online (bunq). iDEAL a fő fizetőmód.",
+    tldr: [
+      "A fizetéshez és lakbérhez betaalrekening kell (ING, Rabobank, ABN AMRO vagy online bunq/Revolut).",
+      "A nyitáshoz BSN + okmány kell; EU-ban jogod van alap-fizetési számlához papírhiány esetén is.",
+      "Az iDEAL a domináns online fizetés, a PIN/debit mindenhol elfogadott (hitelkártya kevésbé); a betétek 100 000 €-ig védettek.",
+    ],
     icon: "trending",
     sections: [
       { heading: "Számlanyitás", body: ["Nyiss betaalrekeninget (folyószámla) — ING, Rabobank, ABN AMRO, vagy online (bunq, Revolut, N26).", "Kell: BSN + útlevél/igazolvány (gyakran lakcím-igazolás). EU-ban jogod van alap-fizetési számlához akkor is, ha még nincs minden papírod."] },
@@ -1603,6 +1922,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-lakasberles",
     title: "Lakásbérlés (huren)",
     summary: "Huurcontract; waarborgsom max 2 havi (2023); figyelj a servicekosten-re és a lakáshiányra.",
+    tldr: [
+      "A huurcontract a kale huurt + servicekosten-t rögzíti — az összköltséget nézd; a waarborgsom 2023 óta max. 2 havi bér.",
+      "A puntensysteem (WWS) a lakás pontszáma alapján maximalizálja a bért (a Huurcommissie ellenőrzi).",
+      "Súlyos a lakáshiány, főleg a Randstadban — óvakodj a csalóktól (lakásnézés nélkül előre kért kaució).",
+    ],
     icon: "home",
     sections: [
       { heading: "Bérleti szerződés", body: ["A huurcontract rögzíti a kale huurt (csupasz bér) + a servicekosten-t (rezsi/szolgáltatás). Mindig az összköltséget nézd!", "2023 óta (Wet goed verhuurderschap) a waarborgsom (kaució) max 2 havi bér lehet, és a kiköltözés után max 14 napon belül vissza kell adni."] },
@@ -1615,6 +1939,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-digid",
     title: "DigiD — a holland digitális ügyintézés kulcsa",
     summary: "BSN-nel igényled; enélkül nincs online adóbevallás, toeslagen, egészségügyi portál — az első dolgok egyike legyen.",
+    tldr: [
+      "A DigiD a holland állami digitális azonosító — szinte minden hivatali ügyhöz kell (adó, toeslagen, egészségügy, gemeente).",
+      "Igényléséhez BSN kell; a digid.nl-en igényled, majd postai aktiváló kód érkezik a bejelentett címedre.",
+      "Töltsd le a DigiD appot; a MijnOverheid a hivatalos digitális postaládád — kapcsold be az értesítéseket.",
+    ],
     icon: "lock",
     sections: [
       { heading: "Mi az a DigiD?", body: ["A DigiD a holland állami digitális azonosító: ezzel lépsz be az adóhivatalhoz (Belastingdienst), a támogatásokhoz (toeslagen), az egészségügyi portálokhoz, a településedhez (gemeente) — szinte MINDEN hivatalos ügyhöz kell.", "Igényléséhez BSN (burgerservicenummer) kell — azt a gemeente-bejelentkezéskor kapod."] },
@@ -1626,6 +1955,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-jogositvany",
     title: "Jogosítvány Hollandiában",
     summary: "A magyar (EU) jogosítvány érvényes; cserélni (omwisselen) lejáratkor a gemeentén keresztül, az RDW-nél kell.",
+    tldr: [
+      "Az EU-s magyar jogosítvány Hollandiában érvényes — beköltözéskor NEM kötelező holland okmányra cserélni.",
+      "Csere (omwisselen) lejáratkor/elvesztéskor: a gemeente-jénél adod be, az RDW intézi, vizsga nélkül.",
+      "A cseréhez BSN, okmány és holland szabvány szerinti fotó kell; a holland jogsi 10 évig érvényes.",
+    ],
     icon: "car",
     sections: [
       { heading: "Érvényes a magyar jogsi?", body: ["IGEN — az EU-s magyar jogosítvány Hollandiában érvényes; beköltözéskor NEM kötelező holland okmányra cserélni (az EU-szabály szerinti érvényességi időn belül).", "Csere (omwisselen) lejáratkor vagy elvesztéskor: a lakóhelyed gemeente-jénél adod be, az RDW intézi — vizsga nélkül."] },
@@ -1637,6 +1971,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-munkanelkuli",
     title: "Munkanélküli-ellátás (WW-uitkering)",
     summary: "UWV: 26 hét munka az utolsó 36 hétben; az első 2 hónapban 75%, utána 70% — DigiD-vel igényled.",
+    tldr: [
+      "WW-uitkering jár, ha az utolsó 36 hétből legalább 26-ban dolgoztál, és nem a te hibádból szűnt meg a munkaviszony.",
+      "Az ellátás az első 2 hónapban a napi bér 75%-a, utána 70% (min. 3 hónap); az uwv.nl-en, DigiD-vel igényled.",
+      "A magyar biztosítási idők U1-gyel beszámíthatnak; a WW mellett álláskeresési kötelezettség (sollicitatieplicht) van.",
+    ],
     icon: "briefcase",
     sections: [
       { heading: "Jogosultság", body: ["WW-uitkering jár, ha az utolsó 36 hétből legalább 26-ban dolgoztál, és nem a te hibádból szűnt meg a munkaviszony.", "Az ellátás az első 2 hónapban a (maximált) napi bér 75%-a, utána 70%; az időtartam a munkatörténetedtől függ (minimum 3 hónap). Az igénylés az uwv.nl-en, DigiD-vel — lehetőleg az utolsó munkanap utáni EGY héten belül."] },
@@ -1649,6 +1988,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-csaladi-potlek",
     title: "Kinderbijslag (családi pótlék)",
     summary: "Az SVB fizeti, NEGYEDÉVENTE, a gyerek kora szerint; mellé jövedelemfüggő kindgebonden budget járhat.",
+    tldr: [
+      "Ha Hollandiában élsz/dolgozol, a 18 alatti gyerek után kinderbijslag jár — akkor is, ha a gyerek Magyarországon él (EU-koordinációval).",
+      "Az összeg a gyerek korával nő, és NEGYEDÉVENTE utalja az SVB (DigiD-vel igényled).",
+      "Mellé jövedelemfüggő kiegészítés (kindgebonden budget) járhat a Belastingdienst toeslagen-rendszeréből.",
+    ],
     icon: "users",
     sections: [
       { heading: "Ki jogosult?", body: ["Ha Hollandiában élsz vagy dolgozol, a 18 év alatti gyerek(ek) után kinderbijslag jár — EU-állampolgárként magyarként is, akkor is, ha a gyerek Magyarországon él (EU-koordinációval, különbözet-elszámolással).", "Az összeg a gyerek korával nő (0–5 / 6–11 / 12–17 sáv), és NEGYEDÉVENTE utalják — az aktuális összegeket az SVB oldalán találod."] },
@@ -1661,6 +2005,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-toeslagen",
     title: "Támogatások (toeslagen): zorg-, huur-, kinderopvangtoeslag",
     summary: "Jövedelemfüggő állami támogatások a Belastingdiensttől — sok magyar NEM igényli, pedig járna neki.",
+    tldr: [
+      "Jövedelemfüggő állami támogatások a Belastingdiensttől: zorgtoeslag, huurtoeslag, kinderopvangtoeslag, kindgebonden budget.",
+      "A Mijn toeslagen-en, DigiD-vel igényled — év közben is, és visszamenőleg is jár az adott évre.",
+      "A támogatás ELŐLEG a becsült jövedelmed alapján — a többletet visszakérik, ezért a jövedelmet inkább felfelé becsüld és jelents minden változást.",
+    ],
     icon: "trending",
     sections: [
       { heading: "Milyen toeslag létezik?", bullets: ["Zorgtoeslag — az egészségbiztosítási díjhoz (alacsony/közepes jövedelemnél a havi díj jelentős részét fedezheti)", "Huurtoeslag — lakbér-támogatás (bérleti díj- és jövedelemhatárokkal)", "Kinderopvangtoeslag — bölcsőde/gyerekfelügyelet költségeihez (dolgozó szülőknél)", "Kindgebonden budget — gyerekek utáni jövedelemfüggő kiegészítés"] },
@@ -1673,6 +2022,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-nyugdij",
     title: "Nyugdíj Hollandiában (AOW + pensioen)",
     summary: "Az AOW államnyugdíj a NL-ben töltött évekkel épül (évi ~2%); mellé munkahelyi pensioen — a magyar évek koordinálva.",
+    tldr: [
+      "Az AOW államnyugdíj LAKÓHELY-alapú: minden itt töltött biztosított év a teljes összeg ~2%-át építi (50 év alatt teljes).",
+      "A kint töltött évek nem vesznek el — a magyar nyugdíjjal EU-koordinációban, arányosan kapod.",
+      "A legtöbb munkáltatónál kötelező ágazati pensioenfonds van; a mijnpensioenoverzicht.nl egy helyen mutatja a jogosultságod.",
+    ],
     icon: "clock",
     sections: [
       { heading: "AOW — az állami pillér", body: ["Az AOW nem járulék-, hanem LAKÓHELY-alapú: minden Hollandiában (biztosítottként) töltött év a teljes AOW kb. 2%-át építi — 50 év alatt épül fel a teljes összeg.", "Aki csak pár évet él itt, arányos AOW-t kap majd nyugdíjkorban — a magyar nyugdíjjal EU-koordinációban, a kint töltött évek NEM vesznek el. Az AOW-korhatár a várható élettartammal emelkedik (jelenleg 67 körül) — az aktuálisat az SVB oldalán találod."] },
@@ -1685,6 +2039,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-orvos",
     title: "Huisarts — az orvosi rendszer kulcsa",
     summary: "Hollandiában MINDEN a háziorvosnál kezdődik — regisztrálj az első hetekben, ne várd meg, míg beteg leszel.",
+    tldr: [
+      "Hollandiában szakorvoshoz CSAK a huisarts (háziorvos) beutalójával jutsz — háziorvos nélkül nincs belépésed az egészségügybe.",
+      "A praxisok gyakran teltek, a felvétel lakóhely-alapú — a beköltözés utáni ELSŐ hetekben regisztrálj, ne az első betegségnél.",
+      "A holland háziorvos visszafogottabban gyógyszerez; a háziorvosi vizit nem terheli az eigen risico-t, a szakorvosi/kórházi igen.",
+    ],
     icon: "heart",
     sections: [
       { heading: "Miért sürgős regisztrálni?", body: ["Hollandiában szakorvoshoz CSAK a huisarts (háziorvos) beutalójával jutsz — háziorvos nélkül gyakorlatilag nincs belépésed az egészségügybe.", "A praxisok gyakran teltek, a felvétel lakóhely-alapú — a beköltözés utáni ELSŐ HETEKBEN regisztrálj (BSN + biztosítás kell hozzá), ne az első betegségnél keress."] },
@@ -1697,6 +2056,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-vallalkozas",
     title: "Vállalkozás (ZZP) Hollandiában — KVK-regisztráció",
     summary: "A KVK-bejegyzés fél óra; utána BTW-szám, adminisztrációs kötelezettség és adókedvezmények (zelfstandigenaftrek).",
+    tldr: [
+      "Önállóként (zzp'er) a KVK-nál regisztrálsz (online időpont + személyes megjelenés); utána a Belastingdiensttől BTW-számot kapsz.",
+      "A kisvállalkozói áfamentesség (KOR) a forgalomhatárig választható; a vállalkozói kedvezmények (zelfstandigenaftrek) az óraszám-feltételhez (1225 óra/év) kötöttek.",
+      "Zzp-ként betegség esetén NINCS automatikus táppénz — mérlegeld az AOV-t vagy broodfonds-t, és több lábon állj.",
+    ],
     icon: "trending",
     sections: [
       { heading: "KVK-regisztráció", body: ["Önállóként (zzp'er / eenmanszaak) a Kamer van Koophandel-nél (KVK) regisztrálsz — online időpont + személyes megjelenés, egyszeri díjjal. Kell: BSN, cím, tevékenység-leírás.", "A KVK továbbítja az adatokat a Belastingdienstnek → BTW-azonosítót (áfa-szám) kapsz. A kisvállalkozói áfamentesség (KOR) az éves forgalomhatárig választható — az aktuális határt a Belastingdienst oldala közli."] },
@@ -1709,6 +2073,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-bkr",
     title: "BKR — a holland hitelnyilvántartás",
     summary: "Már egy telefon-részletvétel is BKR-bejegyzés — hitelnél, jelzálognál számít; az önlekérdezés ingyenes.",
+    tldr: [
+      "A Stichting BKR MINDEN hitelviszonyt nyilvántart — a részletre vett telefon is számít jelzáloghitel-igénylésnél.",
+      "Negatív bejegyzés (fizetési késedelem) évekig látszik és nehezíti a hitelfelvételt.",
+      "A bkr.nl-en ingyen lekérheted az adataid; jelzálog előtt a telefon-részlet lezárása hónapokkal emelheti a hitelkeretet.",
+    ],
     icon: "document",
     sections: [
       { heading: "Mi az a BKR?", body: ["A Stichting BKR nyilvántart MINDEN hitelviszonyt: személyi kölcsön, hitelkártya, folyószámla-hitelkeret, sőt a RÉSZLETRE VETT TELEFON is — ezek jelzáloghitel-igénylésnél mind számítanak.", "Negatív bejegyzés (fizetési késedelem) évekig látszik és komolyan nehezíti a hitelfelvételt."] },
@@ -1721,6 +2090,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-felmondas",
     title: "Felmondás Hollandiában — a jogaid",
     summary: "A munkáltató NEM mondhat fel csak úgy (UWV/bíróság kell); transitievergoeteség az 1. naptól jár.",
+    tldr: [
+      "A munkáltató határozatlan szerződést egyoldalúan NEM szüntethet meg — UWV-engedély, bírói döntés vagy közös megegyezés kell.",
+      "A megszüntető megállapodást (vaststellingsovereenkomst) SOHA ne írd alá azonnal — 14 napos elállási jogod van, és a feltételek tárgyalhatók.",
+      "A transitievergoeding (végkielégítés) a munkaviszony ELSŐ napjától jár, határozott szerződés le nem hosszabbításánál is.",
+    ],
     icon: "document",
     sections: [
       { heading: "Erős felmondás-védelem", body: ["Hollandiában a munkáltató határozatlan idejű szerződést egyoldalúan NEM szüntethet meg: vagy az UWV engedélye (gazdasági ok/tartós betegség), vagy a kantonrechter (bíróság) döntése kell — vagy KÖZÖS megegyezés.", "A leggyakoribb út a vaststellingsovereenkomst (megszüntető megállapodás): SOHA ne írd alá azonnal — 14 napos elállási jogod van, és a feltételek (felmondási idő, végkielégítés, WW-jogosultság megőrzése) tárgyalhatók. Kérj jogi tanácsot (a jogvédelmi biztosítás vagy a Juridisch Loket ingyen segít)."] },
@@ -1733,6 +2107,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-30-ruling",
     title: "30%-os adókedvezmény (30% ruling)",
     summary: "Külföldről toborzott szakembereknek a bér egy része ADÓMENTES lehet — a munkáltatóval KÖZÖSEN kell kérni.",
+    tldr: [
+      "A 30% ruling a külföldről toborzott szakembereknek a bér egy részét adómentessé teheti — jelentős nettó-többlet.",
+      "Fő feltétel: a felvétel előtt a holland határtól legalább 150 km-re éltél + a béred elér egy szakértelmi küszöböt (a szabályt többször szigorították).",
+      "A MUNKÁLTATÓVAL KÖZÖSEN, a felvételtől 4 hónapon belül add be a Belastingdiensthez — magadban nem megy.",
+    ],
     icon: "trending",
     sections: [
       { heading: "Mi ez és ki kaphatja?", body: ["A 30% ruling (expatregeling) a külföldről toborzott munkavállalók kedvezménye: a bruttó bér egy része adómentesen fizethető ki — jelentős nettó-többlet.", "Fő feltételek: a felvétel előtt a holland határtól legalább 150 km-re éltél (a magyarok jellemzően megfelelnek), és a béred elér egy szakértelmi küszöböt (fiatal mesterdiplomásoknak alacsonyabb) — az aktuális összegeket és a kedvezmény éppen érvényes mértékét/időtartamát a Belastingdienst oldalán ellenőrizd, mert a szabályt az utóbbi években többször szigorították."] },
@@ -1745,6 +2124,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-auto",
     title: "Autó Hollandiában",
     summary: "RDW-átírás, éves APK, wegenbelasting — és behozatalnál BPM: sokszor NEM éri meg autót hozni.",
+    tldr: [
+      "EU-n belül vám nincs, DE Hollandia BPM-et (regisztrációs adót) vet a behozott autóra a CO2 alapján — régi/nagy motornál nagyon magas lehet.",
+      "Behozatal előtt számold ki a BPM-et — gyakran olcsóbb kint eladni és Hollandiában venni; az átírás az RDW-nél megy, APK évente.",
+      "A be nem biztosított REGISZTRÁLT autó önmagában bírságolható; a nagyvárosokban a parkolás extrém drága és engedély-köteles.",
+    ],
     icon: "car",
     sections: [
       { heading: "Behozatal Magyarországról — számolj!", body: ["EU-n belül vám nincs, DE Hollandia BPM-et (regisztrációs adót) vet ki a behozott autóra — a CO2-kibocsátás alapján, ami régebbi/nagyobb motoros autónál NAGYON magas lehet. A wegenbelasting (súlyadó) is a súly+üzemanyag szerint megy.", "Behozatal előtt számold ki a BPM-et a Belastingdienst kalkulátorával — gyakran olcsóbb kint eladni és Hollandiában venni."] },
@@ -1757,6 +2141,11 @@ export const GUIDES_NL: Guide[] = [
     slug: "nl-kerekpar",
     title: "Kerékpár Hollandiában — a valódi közlekedés",
     summary: "A bicikli itt nem hobbi, hanem infrastruktúra — szabályok, lopás-védelem és OV-fiets egy helyen.",
+    tldr: [
+      "A bicikli itt nem hobbi, hanem alap-infrastruktúra — külön kerékpárút-hálózat, saját lámpák és szabályok.",
+      "Amit tényleg büntetnek: hiányzó világítás sötétben, telefon a kézben, ittas bringázás.",
+      "Két zár a minimum a lopás ellen; ingázóknak az OV-fiets (az NS-bérlethez kapcsolódó megosztott bringa) aranyat ér.",
+    ],
     icon: "nav",
     sections: [
       { heading: "Az alapok", body: ["Hollandiában több bicikli van, mint ember — a munkába járás, bevásárlás, ovi-vitel alapjárműve. Külön kerékpárút-hálózat (fietspad), saját lámpák, saját szabályok.", "Használt bringát vegyél megbízható helyről (bike shop, Marktplaats óvatosan) — a LOPOTT bicikli vásárlása is büntethető, kérd el az eredetigazolást/számlát."] },
