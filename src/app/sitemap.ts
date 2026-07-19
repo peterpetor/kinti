@@ -32,6 +32,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/utalas", priority: 0.6, changeFrequency: "monthly" },
     { path: "/munkaltato/kozvetites", priority: 0.8, changeFrequency: "monthly" },
     { path: "/tudasbazis", priority: 0.8, changeFrequency: "weekly" },
+    // Országos összehasonlító hub (CH/AT/DE/NL egymás mellett — magas „melyik ország" SEO-intent).
+    { path: "/tudasbazis/osszehasonlitas", priority: 0.75, changeFrequency: "monthly" },
     // Kereshető eszköz-oldalak (long-tail SEO): kalkulátorok + CV-készítő.
     { path: "/berkalkulator", priority: 0.8, changeFrequency: "weekly" },
     { path: "/berkalkulator/nemetorszag", priority: 0.75, changeFrequency: "weekly" },

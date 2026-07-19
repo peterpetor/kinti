@@ -47,6 +47,22 @@ export default function TudasbazisPage() {
         <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
       </Link>
 
+      {/* Országos összehasonlító hub — a „melyik ország?" döntéshez a 4 ország
+          egymás mellett (CH/AT/DE/NL), az összes cikk-adatból. */}
+      <Link
+        href="/tudasbazis/osszehasonlitas"
+        className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
+      >
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-lg">⚖️</span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">Országok összehasonlítása</span>
+          <span className="block text-[11.5px] leading-snug text-ink-muted">
+            Svájc, Ausztria, Németország, Hollandia egymás mellett — biztosítás, adó, bér, lakhatás.
+          </span>
+        </span>
+        <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
+      </Link>
+
       <GuideList />
 
       {/* Cross-link: Ügyintézés Varázsló */}
