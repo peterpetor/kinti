@@ -39,18 +39,18 @@ export default async function JobsPage() {
             Magyar-barát munkalehetőségek külföldön. Böngéssz az ellenőrzött állások között, vagy
             készülj fel az interjúra!
           </p>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <Link
               href="/allasok/profil"
-              className="inline-flex items-center gap-2 rounded-pill bg-primary/10 px-4 py-2 text-[13.5px] font-bold text-primary transition-all active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-primary/10 px-3 py-2.5 text-center text-[12.5px] font-bold leading-tight text-primary transition-all active:scale-[0.98]"
             >
-              <Icon name="upload" size={16} strokeWidth={2.4} /> Töltsd fel a CV-det
+              <Icon name="upload" size={15} strokeWidth={2.4} className="shrink-0" /> Töltsd fel a CV-det
             </Link>
             <Link
               href="/munkaltato/uj-hirdetes"
-              className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-4 py-2 text-[13.5px] font-bold text-ink transition-all active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-2.5 text-center text-[12.5px] font-bold leading-tight text-ink transition-all active:scale-[0.98]"
             >
-              <Icon name="plus" size={16} strokeWidth={2.4} /> Álláshirdetés feladása
+              <Icon name="plus" size={15} strokeWidth={2.4} className="shrink-0" /> Álláshirdetés feladása
             </Link>
           </div>
         </section>

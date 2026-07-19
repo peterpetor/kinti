@@ -586,25 +586,36 @@ export function ExploreView({
           </span>
         </button>
 
-        {/* Tapasztalat (év) szűrő — Advanced search. text-center + appearance-none:
-            a natív select nyíl aszimmetrikus helyfoglalása nélkül a szöveg
-            valóban középre kerül, mint a többi rács-elemé (user-jelzés). */}
-        <select
-          value={minYears}
-          onChange={(e) => setMinYears(Number(e.target.value))}
-          aria-label="Szűrés tapasztalatra"
-          className={cn(
-            "inline-flex min-w-0 items-center justify-center appearance-none rounded-pill border px-3 py-2 text-center text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
-            minYears > 0
-              ? "bg-primary/10 border-primary/30 text-primary"
-              : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
-          )}
-        >
-          <option value={0}>Tapasztalat</option>
-          <option value={3}>3+ év</option>
-          <option value={5}>5+ év</option>
-          <option value={10}>10+ év</option>
-        </select>
+        {/* Tapasztalat (év) szűrő — Advanced search. A natív select-nyilat elrejtjük
+            (appearance-none), és a Tartomány-szűrőével EGYSÉGES chevD-nyilat teszünk
+            a jobb szélre (user-kérés) — a pr-7 hagy neki helyet, a text-center marad. */}
+        <div className="relative inline-flex min-w-0">
+          <select
+            value={minYears}
+            onChange={(e) => setMinYears(Number(e.target.value))}
+            aria-label="Szűrés tapasztalatra"
+            className={cn(
+              "w-full appearance-none rounded-pill border py-2 pl-3 pr-7 text-center text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
+              minYears > 0
+                ? "bg-primary/10 border-primary/30 text-primary"
+                : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
+            )}
+          >
+            <option value={0}>Tapasztalat</option>
+            <option value={3}>3+ év</option>
+            <option value={5}>5+ év</option>
+            <option value={10}>10+ év</option>
+          </select>
+          <Icon
+            name="chevD"
+            size={13}
+            strokeWidth={2.2}
+            className={cn(
+              "pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 shrink-0",
+              minYears > 0 ? "text-primary/70" : "text-ink-muted",
+            )}
+          />
+        </div>
 
         {/* Közelemben / radius-szűrő */}
         <button
