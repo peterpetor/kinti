@@ -220,6 +220,23 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
               </tbody>
             </table>
           </div>
+          {/* Kereszt-ország hidak: a MEGEGYEZŐ téma teljes cikke a másik 3
+              országban (a guide-ok eddig ország-silóban álltak — ez az EGYETLEN
+              cross-country belső link, SEO-gráf + a „melyik ország" út). */}
+          <div className="flex flex-wrap items-center gap-1.5 px-1 pt-0.5">
+            <span className="text-[11px] font-semibold text-ink-muted">A teljes cikk országonként:</span>
+            {cmpCols
+              .filter((c) => c.code !== country)
+              .map((c) => (
+                <Link
+                  key={c.key}
+                  href={`/tudasbazis/${comparison.slugs[c.key]}`}
+                  className="rounded-full border border-line bg-surface px-2.5 py-1 text-[11.5px] font-bold text-primary transition active:scale-95"
+                >
+                  {c.label}
+                </Link>
+              ))}
+          </div>
           <p className="px-1 text-[11px] leading-relaxed text-ink-faint">
             A számok tájékoztató nagyságrendek — a pontos, aktuális értékért nézd az adott ország cikkét és a hivatalos forrást.
           </p>
