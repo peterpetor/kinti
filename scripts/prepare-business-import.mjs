@@ -537,6 +537,13 @@ const CITY = {
   "deitingen": ["SO", 47.2167, 7.6167],
   "widen": ["AG", 47.2967, 8.4192],
   "salez": ["SG", 47.1667, 9.4667],
+  // 2026-07-19 bővítés — Thalwil (Nominatim-mal ellenőrizve): a "hard" kulcs
+  // (VBG, Bregenz-környék) a "Gotthardstrasse" utcanévben SUBSTRING-ként
+  // illeszkedett, hibás VBG kantont adva egy zürichi címre (CITY-map
+  // substring-shadow csapda, ld. [[precise-address-seed]] linz/bellinzona
+  // esete) — az explicit kulcs a hibás egyezés ELŐTT oldódik fel.
+  "thalwil": ["ZH", 47.2960, 8.5630],
+  "bergdietikon": ["AG", 47.3881, 8.3930],
   "wädenswil": ["ZH", 47.2297, 8.6725],
   "waedenswil": ["ZH", 47.2297, 8.6725],
   "horgenberg": ["ZH", 47.2578, 8.5987],
@@ -631,6 +638,28 @@ function resolveCity(city, address, country) {
   return [null, f[0], f[1]];
 }
 
+// Nominatim addressdetails ISO3166-2-lvl4 → app canton_code. CH/DE/NL: a
+// hivatalos ISO alrégió-kód MEGEGYEZIK az app kódjával (csak az "XX-"
+// ország-előtag esik le). AT: a Nominatim/OSM a HIVATALOS NUMERIKUS
+// ISO 3166-2:AT kódot adja (AT-1..AT-9), az app viszont betűs rövidítést
+// használ (W/NOE/OOE/...) — itt fordítás kell.
+// 2026-07-19: ennek a hiányának ára volt — a canton_code korábban KIZÁRÓLAG a
+// kézzel karbantartott CITY-térkép várostalálatából jött, sosem a tényleges
+// geokód-eredményből. Egy pontosan geokódolt cím is NULL kantont kapott, ha a
+// városa nem volt a térképben (189 élő sor derült ki élesben, 3 nap alatt
+// felgyűlve — [[business-address-geocode]]). A "hard" kulcs (VBG, Bregenz
+// mellett) a "Gotthardstrasse" utcanévben SUBSTRING-ként illeszkedve rossz
+// kantont is adott (CITY-map substring-shadow csapda).
+const AT_ISO_TO_CANTON = {
+  "AT-1": "BGL", "AT-2": "KTN", "AT-3": "NOE", "AT-4": "OOE",
+  "AT-5": "SBG", "AT-6": "STM", "AT-7": "TIR", "AT-8": "VBG", "AT-9": "W",
+};
+function isoToCanton(iso, country) {
+  if (!iso) return null;
+  if (country === "AT") return AT_ISO_TO_CANTON[iso] ?? null;
+  return iso.split("-")[1] || null; // CH-ZH → ZH, DE-BW → BW, NL-NH → NH
+}
+
 // --- Nominatim geokódolás: a PONTOS cím → házszám-szintű lat/lng -------------
 // A [[precise-address-seed]] elv: sosem tippelünk — a megadott címet a Nominatim
 // oldja fel, országra szűrve; bbox-validálás után fogadjuk csak el. Cache-fájl
@@ -668,7 +697,7 @@ function simplifyAddress(address) {
 
 async function fetchNominatim(query, country) {
   const url =
-    `https://nominatim.openstreetmap.org/search?format=json&limit=1` +
+    `https://nominatim.openstreetmap.org/search?format=json&limit=1&addressdetails=1` +
     `&countrycodes=${country.toLowerCase()}&q=${encodeURIComponent(query)}`;
   try {
     const res = await fetch(url, { headers: { "user-agent": "kinti-import/1.0 (kinti.app)" } });
@@ -676,7 +705,10 @@ async function fetchNominatim(query, country) {
     const hit = Array.isArray(data) && data[0];
     if (hit) {
       const lat = Number(hit.lat), lng = Number(hit.lon);
-      if (inBbox(country, lat, lng)) return { lat, lng };
+      if (inBbox(country, lat, lng)) {
+        const canton = isoToCanton(hit.address?.["ISO3166-2-lvl4"], country);
+        return { lat, lng, canton };
+      }
     }
   } catch { /* hálózati hiba → null */ }
   return null;
@@ -740,12 +772,16 @@ for (const r of records) {
   if (!cat) { skipped.push(`${r.name} — ismeretlen kategória: "${r.category_id}"`); continue; }
   const [catId, catLabel] = cat;
   const country = r.country_code.toUpperCase();
-  const [region, cityLat, cityLng] = resolveCity(r.city, r.address, country);
+  const [cityRegion, cityLat, cityLng] = resolveCity(r.city, r.address, country);
   // Pontos cím → Nominatim (házszám-szintű koordináta); ha nem oldódik fel,
   // a város-koordináta marad, és a [FIGYELEM] log jelzi kézi ellenőrzésre.
   const geo = await geocode(r.address, country);
   const lat = geo?.lat ?? cityLat;
   const lng = geo?.lng ?? cityLng;
+  // A kanton ELSŐDLEGESEN a Nominatim tényleges geokód-eredményéből (ISO3166-2)
+  // jön — ez a valódi cím szerinti, hiteles régió. A CITY-térkép csak akkor
+  // esik latba, ha a geokódolás sikertelen (nincs mit reverse-geocode-olni).
+  const region = geo?.canton ?? cityRegion;
   if (geo) geocoded++;
   else if (region === null) {
     // Se Nominatim, se ismert város → ORSZÁG-KÖZÉP koordináta + NULL canton.
