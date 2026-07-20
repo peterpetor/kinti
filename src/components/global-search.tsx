@@ -356,6 +356,7 @@ export function GlobalSearchOverlay() {
           <input
             ref={inputRef}
             type="search"
+            enterKeyHint="search"
             role="combobox"
             aria-expanded={rows.length > 0}
             aria-controls="gs-listbox"

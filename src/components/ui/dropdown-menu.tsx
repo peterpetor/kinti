@@ -335,6 +335,7 @@ export function DropdownMenu() {
                 <Icon name="search" size={15} strokeWidth={2.4} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-faint" />
                 <input
                   type="search"
+                  enterKeyHint="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Keresés a menüben…"

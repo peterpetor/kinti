@@ -43,6 +43,7 @@ export function SearchBar({
       <Icon name="search" size={20} className="shrink-0 text-ink-muted" />
       <input
         type="search"
+        enterKeyHint="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
