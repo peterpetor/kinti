@@ -6,7 +6,7 @@ export const metadata = { title: "Felhasználási Feltételek" };
 
 export default function AszfPage() {
   return (
-    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-17">
+    <LegalPage title="Felhasználási Feltételek (ÁSZF)" updatedAt="2026-07-20">
       <p>
         A kinti.app szolgáltatás (a továbbiakban: <strong>„Szolgáltatás"</strong>) használatával
         elfogadod az itt rögzített feltételeket. Kérlek, olvasd el figyelmesen.
@@ -412,12 +412,28 @@ export default function AszfPage() {
       <p>
         A Szaknévsorban/Vállalkozói modulban szereplő szakemberek nem állnak az üzemeltető alkalmazásában. 
         Az üzemeltető nem ellenőrzi a vállalkozók szakképesítését, engedélyeit, vagy az általuk végzett munka 
-        minőségét. A vállalkozó által okozott esetleges hibás teljesítésért, károkért vagy pénzügyi vitákért 
-        kizárólag az adott vállalkozó felel, az üzemeltető felelőssége kizárt. A vállalkozó köteles a profilján 
+        minőségét. A vállalkozó által okozott esetleges hibás teljesítésért, károkért vagy pénzügyi vitákért
+        kizárólag az adott vállalkozó felel, az üzemeltető felelőssége kizárt. A vállalkozó köteles a profilján
         szereplő adatokat valósághűen tartani.
       </p>
       <p>
-        A platform kifejezetten <strong>tiltja a feketemunka (Schwarzarbeit)</strong> és a be nem jelentett 
+        <strong>A Szaknévsor adatainak forrása és pontossága:</strong> egyes bejegyzéseket a vállalkozás
+        maga regisztrálja (admin-moderáció mellett), másokat az üzemeltető állít össze
+        nyilvánosan elérhető forrásokból (pl. hivatalos nyilvántartások, a vállalkozás saját
+        honlapja, szakmai és közösségi katalógusok). Az üzemeltető <strong>nem garantálja a
+        megjelenített cím, telefonszám, weboldal vagy egyéb elérhetőségi adat pontosságát,
+        teljességét vagy aktualitását</strong> — egy vállalkozás időközben költözhetett,
+        megszűnhetett, vagy adatai megváltozhattak, és ezt az üzemeltető nem minden esetben
+        tudja azonnal követni. A kinti.app <strong>nem vállal felelősséget</strong> a pontatlan,
+        elavult vagy hibás cím-/elérhetőségi adatból eredő károkért vagy egyéb következményért
+        (pl. sikertelen hívás, rossz címre érkezés). Fontos döntés (pl. időpontfoglalás, hosszabb
+        útra indulás) előtt javasolt az adatot közvetlenül a vállalkozásnál ellenőrizni. Ha egy
+        bejegyzés pontatlan, a vállalkozás tulajdonosa a profilt a <strong>„Foglald el a
+        vállalkozásod"</strong> funkcióval igényelheti és javíthatja; egyéb hibajelzés az{" "}
+        <a href="mailto:abuse@kinti.app">abuse@kinti.app</a> címen tehető.
+      </p>
+      <p>
+        A platform kifejezetten <strong>tiltja a feketemunka (Schwarzarbeit)</strong> és a be nem jelentett
         gazdasági tevékenységek hirdetését. A hirdető vállalkozó/szakember kizárólagos felelőssége, hogy 
         rendelkezzen a svájci (vagy a tevékenység helye szerinti) jogszabályok által előírt érvényes 
         munkavállalási és letelepedési engedélyekkel, cégbejegyzéssel (pl. UID, MWST), valamint az adó- és 
