@@ -54,14 +54,41 @@ export default function AdatvedelemPage() {
         <li><strong>Adatfeldolgozó:</strong> Clerk Inc. — <a href="https://clerk.com/privacy" target="_blank" rel="noreferrer">privacy policy</a></li>
       </ul>
 
-      <h3>2.2 Vállalkozási adatok (D1 adatbázis)</h3>
+      <h3>2.2 Vállalkozási / szakember-adatok (Szaknévsor)</h3>
       <p>
-        A vállalkozó által megadott céges adatok (cégnév, cím, telefonszám, kategória, fotó / logó).
-        Ezek a vállalkozás megtalálhatóságát szolgálják.
+        A Szaknévsorban megjelenő céges és szakmai adatok (cégnév vagy a szakember neve, cím,
+        telefonszám, weboldal, kategória, fotó / logó) a vállalkozás megtalálhatóságát szolgálják
+        a külföldön élő magyar közösség számára. Ezek az adatok <strong>két forrásból</strong>{" "}
+        származhatnak, eltérő jogalappal:
       </p>
       <ul>
-        <li><strong>Jogalap:</strong> GDPR 6. cikk (1) b) — szerződés teljesítése</li>
-        <li><strong>Tárolási idő:</strong> a vállalkozás törléséig</li>
+        <li>
+          <strong>(a) Önregisztráció</strong> — a vállalkozó maga küldi be vagy veszi át a
+          profilját. <strong>Jogalap:</strong> GDPR 6. cikk (1) b) — a szolgáltatás
+          (megjelenítés) teljesítése, illetve 6. cikk (1) a) — hozzájárulás.
+        </li>
+        <li>
+          <strong>(b) Az üzemeltető által, nyilvánosan elérhető forrásokból összeállított
+          bejegyzések</strong> (pl. hivatalos nyilvántartások, a vállalkozás saját honlapja,
+          szakmai és közösségi katalógusok, OpenStreetMap). Itt kizárólag <strong>nyilvános,
+          foglalkozással összefüggő üzleti elérhetőségi adatot</strong> kezelünk (nem különleges
+          adatot). <strong>Jogalap:</strong> GDPR 6. cikk (1) f) — jogos érdek: a külföldön élő
+          magyar közösséget kiszolgáló, magyarul (is) elérhető szakember-jegyzék fenntartása. Az
+          érdekmérlegelés során figyelembe vettük, hogy kizárólag már nyilvános, szakmai adatot
+          kezelünk, és az érintett bármikor tiltakozhat, illetve töröltetheti azt.
+        </li>
+      </ul>
+      <p>
+        <strong>Tiltakozás és törlés (mindkét forrásnál):</strong> a szakember / vállalkozás a
+        saját bejegyzését a <strong>„Foglald el a vállalkozásod"</strong> funkcióval átveheti és
+        javíthatja, vagy a törlését, eltávolítását kérheti az{" "}
+        <a href="mailto:info@kinti.app">info@kinti.app</a> / {" "}
+        <a href="mailto:abuse@kinti.app">abuse@kinti.app</a> címen (GDPR 21. cikk szerinti
+        tiltakozási jog) — a kérést haladéktalanul teljesítjük. A megjelenített adatok
+        pontosságáról és forrásáról lásd az ÁSZF 10. pontját is.
+      </p>
+      <ul>
+        <li><strong>Tárolási idő:</strong> a bejegyzés törléséig, illetve az érintett tiltakozásának teljesítéséig.</li>
       </ul>
 
       <h3>2.3 Tartalom-beküldés (account nélkül)</h3>
