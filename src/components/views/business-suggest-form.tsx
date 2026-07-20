@@ -119,8 +119,8 @@ export function BusinessSuggestForm({ categories, turnstileSiteKey }: { categori
       </Section>
 
       <Section title="Elérhetőség (opcionális)">
-        <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Telefon" maxLength={40} className={inputCls} />
-        <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="Weboldal (https://…)" maxLength={200} className={cn(inputCls, "mt-2")} />
+        <input type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Telefon" maxLength={40} className={inputCls} />
+        <input type="url" inputMode="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="Weboldal (https://…)" maxLength={200} className={cn(inputCls, "mt-2")} />
         <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Pár szó róla (opcionális)" rows={2} maxLength={600} className={cn(inputCls, "mt-2 resize-none")} />
       </Section>
 

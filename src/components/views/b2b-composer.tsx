@@ -125,11 +125,13 @@ export function B2bComposer({
         </select>
         <input
           className={inputCls}
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
           placeholder="Kapcsolat-telefon (a jelentkezőknek)"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           maxLength={40}
-          inputMode="tel"
         />
 
         {/* Honeypot — rejtett, ember sose tölti ki. */}

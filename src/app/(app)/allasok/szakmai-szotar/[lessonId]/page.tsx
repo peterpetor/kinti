@@ -147,7 +147,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
           <button
             key={opt.id}
             disabled={isAnswered}
-            onClick={() => setSelectedOption(opt.id)}
+            onClick={() => { haptic("selection"); setSelectedOption(opt.id); }}
             className={cn(
               "p-4 rounded-2xl border-2 text-left font-bold text-[17px] transition-all relative flex items-center justify-between",
               !isAnswered && !isSelected && "border-border-subtle bg-surface hover:bg-surface-alt",
@@ -217,6 +217,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
 
   const handleMatchClick = (side: "left" | "right", itemId: string) => {
     if (side === "left") {
+      haptic("selection");
       if (matchSelectedLeft === itemId) setMatchSelectedLeft(null);
       else setMatchSelectedLeft(itemId);
       setMatchWrong(false);
