@@ -29,7 +29,7 @@ export interface BusinessCardProps {
 
 export function BusinessCard({ business: b, href, className, distanceKm, showFavorite }: BusinessCardProps) {
   const classes = cn(
-    "relative flex min-w-0 gap-3 rounded-card border bg-surface p-3",
+    "group relative flex min-w-0 gap-3 rounded-card border bg-surface p-3",
     b.featured ? "border-2 border-pro shadow-pop bg-pro/[0.02]" : "border-line shadow-card",
     // Desktop-hoveren a meglévő árnyék-emelés mellé egy leheletnyi (2px) lift —
     // „premium" érzet; érintőn (mobil) nincs hover, így ott változatlan.
@@ -180,6 +180,18 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
           )}
         </div>
       </div>
+
+      {/* Tap-affordancia: a kártya megnyitja a részleteket — halvány, függőlegesen
+          középre igazított nyíl (csak linkelt kártyán; a kedvenc-szív fölötte ül). */}
+      {href && (
+        <Icon
+          name="chevR"
+          size={15}
+          strokeWidth={2.2}
+          aria-hidden
+          className="shrink-0 self-center text-ink-faint/70 transition-transform md:group-hover:translate-x-0.5"
+        />
+      )}
     </>
   );
 
