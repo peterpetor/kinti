@@ -11,6 +11,7 @@ import { SERVICE_CATEGORIES, serviceCategory } from "@/lib/service-categories";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { ReportButton } from "@/components/report-button";
 import { Skeleton } from "@/components/skeleton";
+import { EmptyState } from "@/components/ui";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 
 function fmtAgo(iso: string): string {
@@ -124,9 +125,11 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
           ))}
         </div>
       ) : requests.length === 0 ? (
-        <div className="rounded-card border border-dashed border-line bg-surface px-6 py-10 text-center text-[13px] text-ink-muted">
-          Még nincs nyitott keresés {countryLocative(country)}. Legyél te az első — add fel, mit keresel!
-        </div>
+        <EmptyState
+          icon="search"
+          title={`Még nincs nyitott keresés ${countryLocative(country)}`}
+          description="Legyél te az első — add fel, mit keresel, és a magyar szakemberek jelentkeznek."
+        />
       ) : (
         <div className="space-y-2.5">
           {requests.map((r) => {

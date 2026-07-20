@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import { getApplicationsByEmail, type CandidateApplication } from "@/lib/repo";
-import { Icon } from "@/components/ui";
+import { Icon, EmptyState } from "@/components/ui";
 import type { Metadata } from "next";
 
 export const runtime = "edge";
@@ -59,19 +59,12 @@ export default async function MyApplicationsPage() {
       </header>
 
       {apps.length === 0 ? (
-        <div className="rounded-card border border-dashed border-line bg-surface-alt px-4 py-12 text-center">
-          <Icon name="send" size={26} className="mx-auto text-ink-faint" />
-          <p className="mt-2 text-[14px] font-semibold text-ink">Még nincs jelentkezésed</p>
-          <p className="mt-1 text-[12.5px] text-ink-muted">
-            A beküldött pályázataidat itt követheted nyomon.
-          </p>
-          <Link
-            href="/allasok"
-            className="mt-4 inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12.5px] font-bold text-white shadow-card active:scale-95"
-          >
-            Állások böngészése
-          </Link>
-        </div>
+        <EmptyState
+          icon="send"
+          title="Még nincs jelentkezésed"
+          description="A beküldött pályázataidat itt követheted nyomon."
+          action={{ label: "Állások böngészése", href: "/allasok" }}
+        />
       ) : (
         <div className="space-y-3">
           {apps.map((a) => {

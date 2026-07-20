@@ -13,3 +13,4 @@ export * from "./search-bar";
 export * from "./headers";
 export * from "./stat-card";
 export * from "./dropdown-menu";
+export * from "./empty-state";

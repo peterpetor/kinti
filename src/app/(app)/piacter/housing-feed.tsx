@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Icon } from "@/components/ui";
+import { Icon, EmptyState } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { COUNTRIES, DEFAULT_COUNTRY } from "@/lib/countries";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -168,33 +168,26 @@ export function HousingFeed({
       )}
 
       {visible.length === 0 ? (
-        <div className="rounded-card border border-dashed border-line bg-surface p-6 text-center">
-          <p className="text-[28px]">🛏️</p>
-          {listings.length > 0 ? (
-            <>
-              <p className="mt-1 text-[14px] font-bold text-ink">Nincs találat erre a szűrésre</p>
-              <p className="mx-auto mt-1 max-w-xs text-[12.5px] leading-snug text-ink-muted">
-                Próbáld tágítani: másik régió, „Minden hirdetés", vagy töröld a keresőszót.
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="mt-1 text-[14px] font-bold text-ink">Itt még nincs hirdetés</p>
-              <p className="mx-auto mt-1 max-w-xs text-[12.5px] leading-snug text-ink-muted">
-                Légy az első — adj fel egy kiadó szobát, vagy írd meg, mit keresel.
-              </p>
-            </>
-          )}
-          {/* Az üres állapot ne zsákutca legyen: a régió-push feliratkozás a
-              „gyere vissza"-hurok — szólunk, amint jön ide hirdetés. */}
-          <Link
-            href="/ertesitesek"
-            className="mt-3 inline-flex items-center gap-1.5 rounded-pill border border-primary/40 bg-primary/10 px-4 py-2 text-[12px] font-extrabold text-primary transition active:scale-[0.98]"
-          >
-            <Icon name="bell" size={13} strokeWidth={2.4} />
-            Szólunk, ha új hirdetés érkezik a régiódba
-          </Link>
-        </div>
+        <EmptyState
+          icon="bed"
+          title={listings.length > 0 ? "Nincs találat erre a szűrésre" : "Itt még nincs hirdetés"}
+          description={
+            listings.length > 0
+              ? 'Próbáld tágítani: másik régió, „Minden hirdetés", vagy töröld a keresőszót.'
+              : 'Légy az első — adj fel egy kiadó szobát, vagy írd meg, mit keresel.'
+          }
+          // Az üres állapot ne zsákutca legyen: a régió-push feliratkozás a
+          // „gyere vissza"-hurok — szólunk, amint jön ide hirdetés.
+          secondary={
+            <Link
+              href="/ertesitesek"
+              className="inline-flex items-center gap-1.5 rounded-pill border border-primary/40 bg-primary/10 px-4 py-2 text-[12px] font-extrabold text-primary transition active:scale-[0.98]"
+            >
+              <Icon name="bell" size={13} strokeWidth={2.4} />
+              Szólunk, ha új hirdetés érkezik a régiódba
+            </Link>
+          }
+        />
       ) : (
         <div className="grid gap-2.5">
           {visible.map((l) => (

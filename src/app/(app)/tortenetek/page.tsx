@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { KintiLogo, ScreenHeader } from "@/components/ui";
+import { KintiLogo, ScreenHeader, EmptyState } from "@/components/ui";
 import { getPublishedStories } from "@/lib/repo";
 import { getCountry } from "@/lib/countries";
 import { mediaUrl } from "@/lib/media";
@@ -50,9 +50,11 @@ export default async function StoriesPage() {
       <StorySubmitForm turnstileSiteKey={turnstileSiteKey} />
 
       {stories.length === 0 ? (
-        <div className="rounded-card border border-dashed border-line bg-surface-alt px-6 py-10 text-center text-[13px] text-ink-muted">
-          Hamarosan itt jelennek meg az első történetek — legyél te az első, aki megírja a sajátját!
-        </div>
+        <EmptyState
+          icon="heart"
+          title="Hamarosan itt lesznek az első történetek"
+          description="Legyél te az első, aki megírja a sajátját — a fenti űrlapon pár perc az egész."
+        />
       ) : (
         <div className="space-y-3">
           {stories.map((s) => {
