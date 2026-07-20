@@ -77,7 +77,7 @@ export default function AdatvedelemPage() {
           <ul>
             <li><strong>Kapcsolatfelvétel</strong>: A feladó a telefonszámát vagy egyéb publikus elérhetőségét adhatja meg. A kinti.app belső üzenetküldőt nem üzemeltet, és nem közvetít üzeneteket a felek között.</li>
             <li><strong>Képek feltöltése</strong>: A feltöltött képek a Cloudflare R2 felhőtárolóba kerülnek, amiket a tartalom lejártával / törlésével fizikailag törlünk.</li>
-            <li><strong>Esemény jelentkezés (RSVP)</strong>: A spam-védelem érdekében a jelentkezések során az IP-címeket egyirányú, visszafejthetetlen (SHA-256) hash formátumban tároljuk.</li>
+            <li><strong>Spam-védelem</strong>: A beküldések (pl. vélemény) során az IP-címet egyirányú, visszafejthetetlen (SHA-256) hash formátumban tároljuk — az eredeti IP-cím nem visszaállítható belőle.</li>
             <li><strong>Biztonságos tartalomkezelés</strong>: A tartalom utólagos szerkesztéséhez szükséges azonosító kulcsok (tokenek) kizárólag a felhasználó böngészőjében (<code>localStorage</code>) tárolódnak.</li>
           </ul>
         </li>
@@ -101,8 +101,8 @@ export default function AdatvedelemPage() {
           automatikus napi szkript (Cloudflare cron) <strong>fizikailag és véglegesen törli</strong>:
         </p>
         <ul style={{ margin: "8px 0 0" }}>
-          <li>a <strong>30 napnál régebben lezajlott eseményeket</strong> a képeikkel és a leadott
-            RSVP-kkel együtt;</li>
+          <li>a <strong>lejárt hirdetéseket</strong> (álláshirdetés, „Keresek"- és albérlet-hirdetés)
+            a rájuk vonatkozó lejárati idő elteltével, a hozzájuk feltöltött képekkel együtt;</li>
           <li>a meg nem erősített piszkozatokat és beküldéseket (24 órán túl).</li>
         </ul>
         <p style={{ margin: "8px 0 0" }}>
@@ -679,7 +679,7 @@ export default function AdatvedelemPage() {
         <li><strong>Kezdőlapi személyre szabás</strong> (<code>kinti.personalize</code>) — a „Szabjuk rád" varázsló válaszai (mióta élsz kint, mi a fő kihívásod); kizárólag az eszközödön, a kezdőlapi ajánló ehhez igazodik.</li>
         <li><strong>Mentett bér-ajánlatok</strong> — lásd a 2.11 pontot.</li>
         <li><strong>Látogatás-számláló és állapotjelzők</strong> — pl. hányadszor jársz itt (a feliratkozás-felkérés időzítéséhez), illetve hogy beküldtél-e már tartalmat.</li>
-        <li><strong>Tartalom-kezelő tokenek</strong> — a saját vállalkozásod/eseményed/hirdetésed utólagos szerkesztéséhez (lásd 2.1).</li>
+        <li><strong>Tartalom-kezelő tokenek</strong> — a saját vállalkozásod/hirdetésed/értékelésed utólagos szerkesztéséhez (lásd 2.1).</li>
         <li><strong>Letöltött offline útmutatók</strong> — ha letöltöd a tudásbázist offline olvasásra, az a böngésződ gyorsítótárában marad.</li>
       </ul>
       <p>

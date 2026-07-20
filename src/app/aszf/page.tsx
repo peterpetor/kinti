@@ -17,7 +17,7 @@ export default function AszfPage() {
         A kinti.app egy közösségi platform, amely a Svájcban és Európában élő magyarokat
         és a velük kapcsolatban álló vállalkozásokat / szakembereket köti össze. A Szolgáltatás
         üzemeltetője a <strong>Feedback Jobs S.R.L.</strong> Az <strong>alapszolgáltatások</strong>{" "}
-        (kereső, regisztráció, hirdetésfeladás, események, állásbörze, kalkulátorok) <strong>ingyenesek</strong>;
+        (kereső, regisztráció, hirdetésfeladás, állásbörze, kalkulátorok) <strong>ingyenesek</strong>;
         egyes <strong>prémium funkciók opcionális, díjköteles PRO-előfizetés</strong> keretében
         érhetők el, amelyet <span className="web-only-payment">a Paddle fizetési szolgáltatón
         keresztül</span><span className="android-only-payment">a Google Play fizetési rendszerén
@@ -90,8 +90,8 @@ export default function AszfPage() {
       <h3>2.1 Kinti felhasználó (közösségi tag)</h3>
       <p>
         Bárki, aki a Szolgáltatást <strong>hagyományos regisztráció nélkül</strong> használja: böngészi a
-        vállalkozásokat, nézi az eseményeket, hirdetést, eseményt vagy értékelést
-        adhat fel. Felhasználói fiók és jelszó nem szükséges (a hitelesítés egyszeri megerősítő 
+        vállalkozásokat, hirdetést vagy értékelést
+        adhat fel. Felhasználói fiók és jelszó nem szükséges (a hitelesítés egyszeri megerősítő
         e-maillel történik) — a beküldést ezen felül Cloudflare Turnstile CAPTCHA és IP-alapú rate-limit 
         védi a spam ellen.
       </p>
@@ -209,7 +209,7 @@ export default function AszfPage() {
       <h2>4. Szolgáltatásmegtagadás és Kitiltás joga</h2>
       <p>
         Az üzemeltető fenntartja a jogot, hogy indoklás és előzetes értesítés nélkül, azonnali hatállyal 
-        eltávolítson bármilyen hirdetést, eseményt vagy vállalkozói profilt, illetve IP-cím vagy egyéb 
+        eltávolítson bármilyen hirdetést, értékelést vagy vállalkozói profilt, illetve IP-cím vagy egyéb
         azonosító alapján véglegesen kitiltson bármely felhasználót a platformról, amennyiben az a 
         jelen ÁSZF-et, a közösségi irányelveket, vagy a svájci/uniós jogszabályokat megsérti, vagy a 
         platform biztonságát és jó hírnevét veszélyezteti.
@@ -275,8 +275,9 @@ export default function AszfPage() {
 
       <h2>6. Tartalom lejárta és törlése</h2>
       <ul>
-        <li>A felhasználók által beküldött tartalmak (pl. események) a jellegüktől függő
-          ideig láthatók, utána automatikusan eltűnnek (törlődnek);</li>
+        <li>A felhasználók által beküldött tartalmak (pl. álláshirdetések, „Keresek"- és
+          albérlet-hirdetések) a jellegüktől függő ideig láthatók, utána automatikusan
+          eltűnnek (törlődnek);</li>
         <li>A feladó <strong>bármikor törölheti</strong> a saját tartalmát a beküldés után
           megjelenő (és a böngésző helyi tárolójában elmentett) <em>kezelő linkről</em>;</li>
         <li>Az üzemeltető fenntartja a jogot a jogszabálysértő vagy a 3. pontba ütköző tartalmak
@@ -294,16 +295,32 @@ export default function AszfPage() {
         kérelem helyett is irányadó.
       </p>
 
-      <h2>7. Csillagos Értékelési Rendszer</h2>
+      <h2>7. Értékelési rendszer (csillag + szöveges vélemény)</h2>
       <p>
-        A platformon <strong>kizárólag csillagos értékelés</strong> adható (1–5 csillag);
-        szöveges vélemény írására nincs mód. A leadott csillagos értékelések a felhasználók
-        <strong> szubjektív megítélését</strong> tükrözik. A közzététel előtt az értékeléseket
-        a jelen ÁSZF-nek való megfelelés (visszaélés-, spam- és jogsértés-szűrés) szempontjából
-        <strong> ellenőrizzük</strong> (admin-jóváhagyás, jellemzően 24 órán belül); az értékelések
-        <strong> valóságtartalmát, megalapozottságát azonban nem vizsgáljuk és nem szavatoljuk</strong>.
-        Ez az előzetes ellenőrzés a DSA 7. cikke szerinti önkéntes, saját kezdeményezésű intézkedés,
-        és nem keletkeztet az üzemeltető részéről felelősséget az értékelések tartalmáért.
+        A platformon egy vállalkozásról <strong>1–5 csillagos értékelés</strong> adható, amelyhez a
+        felhasználó <strong>opcionálisan rövid szöveges véleményt</strong> (max. 1000 karakter) és egy
+        megjelenő nevet/álnevet is fűzhet. Az értékelések a felhasználók{" "}
+        <strong>szubjektív megítélését és személyes tapasztalatát</strong> tükrözik — nem az
+        üzemeltető álláspontja.
+      </p>
+      <p>
+        <strong>Beküldés és közzététel.</strong> A beküldést Cloudflare Turnstile CAPTCHA és
+        IP-alapú rate-limit védi a visszaélés ellen; ha a felhasználó e-mail-címet ad meg, a
+        beküldés csak az e-mailre küldött <strong>megerősítő linkre kattintva</strong> válik
+        érvényessé (ez igazolja, hogy a beküldő az adott e-mail-fiók felett rendelkezik). Minden
+        értékelés — a csillag és a szöveg egyaránt — <strong>a közzététel előtt admin-moderáción
+        esik át</strong> (visszaélés-, spam- és jogsértés-szűrés, tipikusan 24 órán belül); a
+        szöveget ezen felül automatikus trágárság-szűrő is ellenőrzi.
+      </p>
+      <p>
+        <strong>Amit nem szavatolunk (fogyasztói átláthatóság).</strong> Az előzetes moderáció a
+        DSA 7. cikke szerinti önkéntes, saját kezdeményezésű intézkedés, és <strong>nem keletkeztet
+        az üzemeltető részéről felelősséget az értékelések tartalmáért</strong>. Az értékelések{" "}
+        <strong>valóságtartalmát, megalapozottságát nem vizsgáljuk és nem szavatoljuk</strong>, és —
+        az (EU) 2019/2161 irányelv (Omnibus) szerinti kötelező tájékoztatásként — kifejezetten
+        közöljük, hogy <strong>nem ellenőrizzük, hogy az értékelő ténylegesen igénybe vette-e</strong>{" "}
+        az adott vállalkozás szolgáltatását. Ugyanez a tájékoztatás megjelenik ott is, ahol az
+        értékelések láthatók (a vállalkozás oldalán).
       </p>
       <p>
         A közzétett értékelésekből fakadó esetleges hitelrontásért vagy személyiségi jogsértésért 
@@ -579,8 +596,8 @@ export default function AszfPage() {
       </p>
       <p>
         Ahol egy adott módul külön felelősség-kizáró nyilatkozatot tartalmaz (például a
-        vám-kalkulátor, a bérkalkulátor, az eszköz-leg lejárati nyilatkozata, a határátkelő-figyelő,
-        az akció-térkép), az ott rögzített kizáró feltételek a jelen 12. ponttal
+        vám-kalkulátor, a bérkalkulátorok, a gyorshajtás-bírság kalkulátor, a lakbér-kalkulátor
+        vagy az utalás-asszisztens), az ott rögzített kizáró feltételek a jelen 12. ponttal
         együtt alkalmazandók, és egymást erősítik, nem győzik le.
       </p>
 
@@ -832,7 +849,7 @@ export default function AszfPage() {
       <ul>
         <li>
           a Szolgáltatás egészét vagy annak bármely funkcióját, modulját, tartalmát vagy elemét
-          (különösen, de nem kizárólagosan: Szaknévsor, Állások / állásbörze, események,
+          (különösen, de nem kizárólagosan: Szaknévsor, Állások / állásbörze,
           kalkulátorok és varázslók, térképek, AI-funkciók, Kinti Pass, Kinti Radar /
           push-értesítések, hírlevél) <strong>módosítsa, korlátozza, átalakítsa, ideiglenesen
           szüneteltesse vagy véglegesen megszüntesse</strong>;
