@@ -1,9 +1,34 @@
 import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
-import { ChecklistList } from "./ChecklistList";
+import { ChecklistList, type ChecklistIndexEntry } from "./ChecklistList";
 import { CountryGuard } from "@/components/country-guard";
+import { getChecklists } from "@/lib/admin-checklists";
 
 export const dynamic = "force-static";
+
+/**
+ * Könnyű lista-index SZERVEREN (build-időben) mind a 4 országra — a teljes
+ * `admin-checklists.ts` (843 sor: minden lépés szövege, linkjei, figyelmeztetései,
+ * forrásai) így NEM kerül a kliens-JS-bundle-be, csak ez a lapos tömb (ugyanaz
+ * a minta, mint a Tudásbázis GuideList-jénél, ld. ott a méret-hatás kommentet).
+ */
+function buildIndex(country: string): ChecklistIndexEntry[] {
+  return getChecklists(country).map((c) => ({
+    slug: c.slug,
+    title: c.title,
+    emoji: c.emoji,
+    summary: c.summary,
+    deadline: c.deadline,
+    stepCount: c.steps.length,
+  }));
+}
+
+const CHECKLIST_INDEX_BY_COUNTRY: Record<"CH" | "AT" | "DE" | "NL", ChecklistIndexEntry[]> = {
+  CH: buildIndex("CH"),
+  AT: buildIndex("AT"),
+  DE: buildIndex("DE"),
+  NL: buildIndex("NL"),
+};
 
 export const metadata = {
   title: "Ügyintézés Varázsló — Hivatalos papírmunka",
@@ -59,7 +84,7 @@ export default function UgyintezesPage() {
         <Icon name="arrowRight" size={16} strokeWidth={2.4} className="shrink-0 text-ink-muted" />
       </Link>
 
-      <ChecklistList />
+      <ChecklistList indexByCountry={CHECKLIST_INDEX_BY_COUNTRY} />
     </div>
   );
 }

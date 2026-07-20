@@ -2,23 +2,36 @@
 
 import Link from "next/link";
 import { Icon } from "@/components/ui";
-import { getChecklists } from "@/lib/admin-checklists";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+
+/** Lapos lista-vetület egy AdminChecklist-ből (ld. page.tsx build-időbeli fv-je). */
+export interface ChecklistIndexEntry {
+  slug: string;
+  title: string;
+  emoji: string;
+  summary: string;
+  deadline?: string;
+  stepCount: number;
+}
 
 /**
  * Ország-tudatos ügyintézési csekklista-lista. A lap statikus (force-static),
  * az ország kliensoldali → kliens-komponens. Hidratálás-biztos: mount előtt CH
  * (az SSR is azt rendereli), mount után a választott ország.
+ *
+ * Az `indexByCountry`-t a szülő `page.tsx` építi fel SZERVEREN — a teljes
+ * `admin-checklists.ts` (lépés-szövegek, linkek, források) NEM kerül a
+ * kliens-bundle-be, csak ez a lapos index.
  */
-export function ChecklistList() {
+export function ChecklistList({ indexByCountry }: { indexByCountry: Record<string, ChecklistIndexEntry[]> }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
   const isNL = country === "NL";
-  const checklists = getChecklists(country);
+  const checklists = indexByCountry[country] ?? indexByCountry[DEFAULT_COUNTRY];
 
   return (
     <>
@@ -46,7 +59,7 @@ export function ChecklistList() {
                     </span>
                   )}
                   <span className="inline-flex items-center gap-1 rounded-pill bg-surface-alt px-2 py-0.5 font-bold text-ink-muted">
-                    {c.steps.length} lépés
+                    {c.stepCount} lépés
                   </span>
                 </div>
               </div>

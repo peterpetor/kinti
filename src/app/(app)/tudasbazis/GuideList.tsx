@@ -2,40 +2,28 @@
 
 import Link from "next/link";
 import { Icon } from "@/components/ui";
-import { getGuides } from "@/lib/guides";
-import { GuideSearch } from "@/components/guide-search";
+import { GuideSearch, type GuideSearchItem } from "@/components/guide-search";
 import { OfflineGuidesButton } from "@/components/offline-guides-button";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
-import { foldSearchText } from "@/lib/sql-fold";
 
 /**
  * Ország-tudatos tudásbázis-lista + kereső. Hidratálás-biztos: mount előtt CH
  * (az SSR is azt rendereli), mount után a választott ország guide-jai.
+ *
+ * Az `indexByCountry`-t a szülő (force-static) `page.tsx` építi fel SZERVEREN,
+ * a teljes `guides.ts`-ből — ez a komponens csak a kész, lapos indexet kapja,
+ * így a `guides.ts` (81 cikk teljes szövege + segédfüggvényei) NEM kerül a
+ * kliens-JS-bundle-be (ld. a page.tsx komment-je a méret-hatásról).
  */
-export function GuideList() {
+export function GuideList({ indexByCountry }: { indexByCountry: Record<string, GuideSearchItem[]> }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const guides = getGuides(country);
-
-  const index = guides.map((g) => ({
-    slug: g.slug,
-    title: g.title,
-    summary: g.summary,
-    icon: g.icon,
-    hay: foldSearchText(
-      [
-        g.title,
-        g.summary,
-        ...(g.tldr ?? []),
-        ...g.sections.flatMap((s) => [s.heading, s.body?.join(" ") ?? "", s.bullets?.join(" ") ?? ""]),
-      ].join(" "),
-    ),
-  }));
+  const guides = indexByCountry[country] ?? indexByCountry[DEFAULT_COUNTRY];
 
   return (
     <>
-      <GuideSearch guides={index} />
+      <GuideSearch guides={guides} />
 
       <OfflineGuidesButton paths={["/tudasbazis", ...guides.map((g) => `/tudasbazis/${g.slug}`)]} />
 

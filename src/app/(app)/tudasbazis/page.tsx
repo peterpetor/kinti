@@ -3,6 +3,41 @@ import { Icon, ScreenHeader } from "@/components/ui";
 import { GuideList } from "./GuideList";
 import { ToolsList } from "./ToolsList";
 import { CountryGuard } from "@/components/country-guard";
+import { getGuides } from "@/lib/guides";
+import { foldSearchText } from "@/lib/sql-fold";
+import type { GuideSearchItem } from "@/components/guide-search";
+
+/**
+ * A könnyű lista+kereső index SZERVEREN (build-időben, force-static) épül fel
+ * mind a 4 országra — a teljes `guides.ts` modul (81 cikk, teljes szakasz-
+ * szöveg, forrás-linkek, exportált segédfüggvények) így SOSE kerül a kliens-
+ * JS-bundle-be: a GuideList csak ezt a lapos {slug,title,summary,icon,hay}
+ * tömböt kapja propként. Korábban a "use client" GuideList importálta
+ * közvetlenül a guides.ts-t → az /tudasbazis oldal saját JS-e ~51 kB volt.
+ */
+function buildIndex(country: string): GuideSearchItem[] {
+  return getGuides(country).map((g) => ({
+    slug: g.slug,
+    title: g.title,
+    summary: g.summary,
+    icon: g.icon,
+    hay: foldSearchText(
+      [
+        g.title,
+        g.summary,
+        ...(g.tldr ?? []),
+        ...g.sections.flatMap((s) => [s.heading, s.body?.join(" ") ?? "", s.bullets?.join(" ") ?? ""]),
+      ].join(" "),
+    ),
+  }));
+}
+
+const INDEX_BY_COUNTRY: Record<"CH" | "AT" | "DE" | "NL", GuideSearchItem[]> = {
+  CH: buildIndex("CH"),
+  AT: buildIndex("AT"),
+  DE: buildIndex("DE"),
+  NL: buildIndex("NL"),
+};
 
 // Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
 export const dynamic = "force-static";
@@ -63,7 +98,7 @@ export default function TudasbazisPage() {
         <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
       </Link>
 
-      <GuideList />
+      <GuideList indexByCountry={INDEX_BY_COUNTRY} />
 
       {/* Cross-link: Ügyintézés Varázsló */}
       <Link
