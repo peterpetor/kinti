@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { findLessonById } from "../data";
+import { haptic } from "@/lib/haptics";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
@@ -66,9 +67,9 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
           if (next <= 0) setIsGameOver(true);
           return next;
         });
-        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(200);
+        haptic("warning");
       } else {
-        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate([50, 50, 50]);
+        haptic("success");
       }
     } else if (question.type === "flashcard") {
       setIsCorrect(true);
@@ -77,7 +78,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
       if (matchedPairs.length === question.pairs?.length) {
         setIsCorrect(true);
         setIsAnswered(true);
-        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate([50, 50, 50]);
+        haptic("success");
       }
     }
   };
@@ -241,7 +242,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
           if (next <= 0) setIsGameOver(true);
           return next;
         });
-        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(200);
+        haptic("warning");
       }
     }
   };

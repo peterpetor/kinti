@@ -194,6 +194,18 @@
     -webkit-user-select: none;
     user-select: none;
     touch-action: manipulation;
+    /* Natív érzet: hosszú-nyomásra NE ugorjon fel a böngésző kontextus-menüje
+       ("Megnyitás új lapon / Link másolása / Kép mentése") a vezérlőkön és
+       linkeken — natív appban ez sosem történik. CSAK a chrome-ra szűkítve, a
+       tartalom-szöveg (cím, telefonszám) továbbra is jelölhető/másolható. */
+    -webkit-touch-callout: none;
+  }
+
+  /* A képek (logók, kártya-fotók) ne legyenek kihúzhatók szellemkép-drag-gel
+     (natív érzet). Ez a MENTÉST nem tiltja — a touch-callout a képeken marad,
+     így a QR-kód / tartalom-kép hosszú-nyomásra továbbra is menthető. */
+  img {
+    -webkit-user-drag: none;
   }
 
   /* Egységes press-feedback minden gombon. @layer base → a Tailwind

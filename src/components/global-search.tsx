@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { haptic } from "@/lib/haptics";
 import { Icon } from "@/components/ui";
 import type { IconName } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
@@ -80,13 +81,9 @@ function writeRecent(item: RecentItem) {
   }
 }
 
-/** Finom haptika (ahol van vibrációs motor) — progresszív, hibára néma. */
+/** Finom kiválasztás-haptika (a közös lib mintája — hibára néma). */
 function buzz() {
-  try {
-    navigator.vibrate?.(8);
-  } catch {
-    /* nem támogatott */
-  }
+  haptic("selection");
 }
 
 /** Igaz, ha a billentyű-esemény szerkeszthető mezőben született (ott a „/" gépelés). */
