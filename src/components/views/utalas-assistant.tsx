@@ -285,7 +285,7 @@ export function UtalasAssistant() {
     return (
       <ProLockOverlay
         title="Utalás-asszisztens — PRO"
-        subtitle="Mérhető havi spórolás a hazautaláson: mikor és melyik szolgáltatóval éri meg utalni, és mennyit spóroltál eddig."
+        subtitle="A díj-összehasonlítás ingyen megvan a kalkulátorban. A PRO azt teszi hozzá, amit az nem: megmondja, MIKOR éri meg utalni (a 30-napos átlaghoz mérve), a szokásos összegedre szabva — és vezeti, mennyit spóroltál eddig a bankhoz képest."
       >
         {content}
       </ProLockOverlay>

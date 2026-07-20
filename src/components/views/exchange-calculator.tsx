@@ -251,8 +251,8 @@ export function ExchangeCalculator({
               href="#utalas-asszisztens"
               className="flex items-center gap-2 rounded-[12px] border border-primary/25 bg-primary-soft/40 px-3.5 py-2.5 text-[12.5px] font-bold text-primary transition active:scale-[0.99]"
             >
-              <Icon name="bell" size={14} strokeWidth={2.2} />
-              Szólj, ha jó az árfolyam — Utalás-asszisztens
+              <Icon name="trending" size={14} strokeWidth={2.2} />
+              Jó most hazautalni? — Utalás-asszisztens
               <Icon name="chevR" size={14} strokeWidth={2.2} className="ml-auto" />
             </a>
           </div>

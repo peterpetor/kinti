@@ -71,7 +71,7 @@ export default function ProPage() {
     "Állás-találat (%-egyezés) — melyik állás illik a profilodhoz + becsült nettó bér a régiódban",
     "AI Interjú Szimulátor — országod cégeihez, magyarul kiértékelve (CH/AT/DE/NL)",
     "AI CV-audit — önéletrajz-elemzés, konkrét javítási tippekkel",
-    "Utalás-asszisztens — árfolyam-figyelés + szolgáltató-összevetés a hazautaláshoz",
+    "Utalás-asszisztens — megmondja, MIKOR éri meg hazautalni (árfolyam-időzítés), és követi a megtakarításod (a díj-összevetés ingyen is elérhető)",
     "Határidő-asszisztens — push-emlékeztető 14/7/1 nappal a fontos határidők előtt",
     // A nyelvkurzus 2026-07-11 óta INGYENES mind a 4 országban (user-döntés) —
     // ezért NEM szerepel a PRO-listában; ne tedd vissza.
