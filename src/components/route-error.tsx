@@ -36,10 +36,15 @@ export function RouteError({
       )}
     >
       <div className="w-full max-w-sm rounded-card border border-line bg-surface p-6 text-center shadow-card">
-        <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-accent/15 text-2xl">
-          ⚠️
-        </div>
-        <h1 className="mt-3 text-[18px] font-extrabold tracking-tight text-ink">{title}</h1>
+        {/* Ugyanaz az ikon-halo nyelv, mint az EmptyState-nél — az „üres" és a
+            „hiba" állapot így testvérként néz ki; itt accent (piros) tonalitással. */}
+        <span
+          aria-hidden
+          className="kinti-pop mx-auto grid h-14 w-14 place-items-center rounded-full bg-accent/10 text-accent shadow-[0_0_0_5px_rgb(var(--accent)/0.06),0_0_0_11px_rgb(var(--accent)/0.03)]"
+        >
+          <Icon name="alert" size={24} strokeWidth={2.1} />
+        </span>
+        <h1 className="mt-4 text-[18px] font-extrabold tracking-tight text-ink">{title}</h1>
         <p className="mx-auto mt-2 max-w-xs text-pretty text-[13.5px] leading-relaxed text-ink-muted">
           {message}
         </p>

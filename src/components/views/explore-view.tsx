@@ -969,8 +969,14 @@ export function ExploreView({
               const cantonLabel = canton !== "all" ? regions.find((c) => c.code === canton)?.name ?? null : null;
               const subject = !showFavs ? (cat !== "all" ? (categories.find((c) => c.id === cat)?.label ?? null) : (q.trim() || null)) : null;
               return (
-            <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
-              <Icon name={showFavs ? "heart" : "pin"} size={28} className="text-ink-faint" />
+            <div className="flex flex-col items-center gap-2 rounded-card border border-dashed border-line bg-surface px-6 py-10 text-center shadow-card">
+              {/* Ikon-halo — egységes „állapot" nyelv az EmptyState / RouteError-rel. */}
+              <span
+                aria-hidden
+                className="kinti-pop mb-1 grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary shadow-[0_0_0_5px_rgb(var(--primary)/0.06),0_0_0_11px_rgb(var(--primary)/0.03)]"
+              >
+                <Icon name={showFavs ? "heart" : "pin"} size={24} strokeWidth={2.1} />
+              </span>
               <p className="text-[15px] font-extrabold text-ink">
                 {showFavs
                   ? "Nincs mentett kedvenced"

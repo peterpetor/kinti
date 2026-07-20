@@ -13,7 +13,8 @@ export type IconName =
   | "trending" | "eye" | "cursor" | "flag" | "send" | "car" | "question"
   | "facebook" | "instagram" | "linkedin" | "youtube" | "tiktok" | "shoppingBag" | "briefcase"
   | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock"
-  | "compass" | "mail" | "shareIos" | "whatsapp" | "bed" | "house" | "key" | "truck";
+  | "compass" | "mail" | "shareIos" | "whatsapp" | "bed" | "house" | "key" | "truck"
+  | "alert";
 
 const PATHS: Record<IconName, string[]> = {
   bed: ["M2 18v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8", "M2 14h20", "M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"],
@@ -45,6 +46,9 @@ const PATHS: Record<IconName, string[]> = {
   arrowUp: ["M12 5v14", "M5 12l7-7l7 7"],
   more: ["M5 12h.01", "M12 12h.01", "M19 12h.01"],
   close: ["M6 6l12 12", "M18 6l-12 12"],
+  // Figyelmeztető háromszög felkiáltójellel — hiba-/figyelem-állapotokhoz
+  // (RouteError, kritikus jelzések). Lekerekített csúcsok a márka-lágyságért.
+  alert: ["M10.3 4.6L2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.6a2 2 0 0 0-3.4 0z", "M12 9.5v4.2", "M12 17.2h.01"],
   check: ["M4 12l5 5L20 6"],
   plus: ["M12 5v14", "M5 12h14"],
   filter: ["M3 5h18", "M6 12h12", "M10 19h4"],
