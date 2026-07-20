@@ -357,6 +357,9 @@ export function GlobalSearchOverlay() {
             ref={inputRef}
             type="search"
             enterKeyHint="search"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             role="combobox"
             aria-expanded={rows.length > 0}
             aria-controls="gs-listbox"

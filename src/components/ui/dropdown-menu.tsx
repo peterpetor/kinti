@@ -336,6 +336,9 @@ export function DropdownMenu() {
                 <input
                   type="search"
                   enterKeyHint="search"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Keresés a menüben…"

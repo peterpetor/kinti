@@ -44,6 +44,9 @@ export function SearchBar({
       <input
         type="search"
         enterKeyHint="search"
+        autoCapitalize="none"
+        autoCorrect="off"
+        spellCheck={false}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

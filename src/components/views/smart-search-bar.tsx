@@ -107,6 +107,10 @@ export function SmartSearchBar({
         <Icon name="search" size={20} className="shrink-0 text-ink-muted" />
         <input
           type="search"
+          enterKeyHint="search"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           value={value}
           onChange={(e) => {
             onChange(e.target.value);
