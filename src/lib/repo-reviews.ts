@@ -76,6 +76,20 @@ export async function deleteReviewDraft(id: string): Promise<void> {
   await getDB().prepare("DELETE FROM review_drafts WHERE id = ?").bind(id).run();
 }
 
+/**
+ * A meg nem erősített, LEJÁRT vélemény-piszkozatok fizikai törlése (email +
+ * vélemény-szöveg + név + IP-hash PII). Eddig CSAK olvasáskor szűrtük ki őket
+ * (expires_at > now), de fizikailag sosem törlődtek — miközben az Adatvédelmi
+ * Tájékoztató 2.3 kifejezetten „napi szkript fizikailag és véglegesen törli"-t
+ * ígér a 24 órán túli megerősítetlen beküldésekre. A daily-nudge cron hívja.
+ */
+export async function purgeExpiredReviewDrafts(): Promise<number> {
+  const res = await getDB()
+    .prepare("DELETE FROM review_drafts WHERE expires_at <= datetime('now')")
+    .run();
+  return res.meta.changes ?? 0;
+}
+
 export async function hasReviewByEmail(businessId: string, email: string): Promise<boolean> {
   const row = await getDB()
     .prepare(`SELECT 1 AS one FROM reviews WHERE business_id = ? AND lower(email) = lower(?) LIMIT 1`)

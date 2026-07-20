@@ -70,6 +70,20 @@ export async function deleteServiceRequestById(id: string): Promise<void> {
   await getDB().prepare("DELETE FROM service_requests WHERE id = ?").bind(id).run();
 }
 
+/**
+ * A LEJÁRT (30 napnál régebbi) „Keresek"-hirdetések fizikai törlése — a
+ * kontakt-mező PII. A lista eddig is elrejtette a lejártakat (expires_at szűrő),
+ * de a sor a benne lévő elérhetőséggel örökre bent maradt. Adattakarékosság
+ * (GDPR 5. cikk (1) e)) + az Adatvédelmi 2.25 „lejár és lekerül a tábláról"
+ * ígéretének fizikai betartatása. A daily-nudge cron hívja.
+ */
+export async function purgeExpiredServiceRequests(): Promise<number> {
+  const res = await getDB()
+    .prepare("DELETE FROM service_requests WHERE expires_at IS NOT NULL AND expires_at <= datetime('now')")
+    .run();
+  return res.meta.changes ?? 0;
+}
+
 /** Mai (24h) beküldések egy ip_hash-ről — rate-limit. */
 export async function countServiceRequestByIp(ipHash: string | null): Promise<number> {
   if (!ipHash) return 0;

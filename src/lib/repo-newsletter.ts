@@ -60,6 +60,24 @@ export async function deleteNewsletterSubscription(manageToken: string): Promise
   return res.meta.changes > 0;
 }
 
+/**
+ * A meg nem erősített (dupla opt-in kapun át NEM jutott), régi feliratkozások
+ * fizikai törlése — az Adatvédelmi Tájékoztató 2.16 ezt ígéri („a megerősítetlen
+ * feliratkozásokat automatikusan töröljük"), de eddig egyetlen kód sem törölte
+ * őket. 7 nap türelmi idő (a megerősítő linkre később kattintóknak). Napi cron.
+ */
+export async function purgeUnconfirmedNewsletterSubscribers(graceDays = 7): Promise<number> {
+  const res = await getDB()
+    .prepare(
+      `DELETE FROM newsletter_subscribers
+       WHERE confirmed_at IS NULL
+         AND created_at < datetime('now', '-' || ? || ' days')`,
+    )
+    .bind(graceDays)
+    .run();
+  return res.meta.changes ?? 0;
+}
+
 /** Megerősített feliratkozók (opcionálisan ország-KÓD szerint szűrve) — a hírlevél-küldéshez. */
 export async function listConfirmedNewsletterSubscribers(
   country?: string | null,

@@ -253,6 +253,23 @@ async function handle(req: Request): Promise<Response> {
     safeLogError("daily-nudge:lead-retention", err);
   }
 
+  // GDPR tárolás-korlátozás — az Adatvédelmi Tájékoztató által ígért, de eddig
+  // NEM érvényesített törlések fizikai betartatása (megszegett törlési ígéret =
+  // jogi kockázat, ld. a korábbi SOS-eset tanulságát). Saját try/catch — egyik
+  // sem törheti a napi nudge-ot.
+  //  • review_drafts: 24h-n túli, megerősítetlen vélemény-piszkozatok (2.3 doboz)
+  //  • newsletter: megerősítetlen, dupla-opt-in kapun át nem jutott sorok (2.16)
+  //  • service_requests: lejárt (30 nap) „Keresek"-kontakt PII (2.25)
+  try {
+    const { purgeExpiredReviewDrafts, purgeUnconfirmedNewsletterSubscribers, purgeExpiredServiceRequests } =
+      await import("@/lib/repo");
+    await purgeExpiredReviewDrafts();
+    await purgeUnconfirmedNewsletterSubscribers();
+    await purgeExpiredServiceRequests();
+  } catch (err) {
+    safeLogError("daily-nudge:pii-retention", err);
+  }
+
   // Üzenet-rotáció a nap sorszáma szerint (determinisztikus, nincs Math.random).
   const dayIndex = Math.floor(now.getTime() / 86_400_000);
   let payload = NUDGES[dayIndex % NUDGES.length];
