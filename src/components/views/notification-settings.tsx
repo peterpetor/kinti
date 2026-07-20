@@ -8,11 +8,11 @@ import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { readPreferredCanton } from "@/lib/canton-pref";
 
 type Status = "checking" | "unsupported" | "ios-install" | "denied" | "unsubscribed" | "subscribed";
-interface Prefs { notifyBusiness: boolean; notifyEvent: boolean; notifyJob: boolean; notifyDaily: boolean; notifyKeresek: boolean; notifyHousing: boolean }
+interface Prefs { notifyBusiness: boolean; notifyJob: boolean; notifyDaily: boolean; notifyKeresek: boolean; notifyHousing: boolean }
 
 export function NotificationSettings() {
   const [status, setStatus] = useState<Status>("checking");
-  const [prefs, setPrefs] = useState<Prefs>({ notifyBusiness: true, notifyEvent: true, notifyJob: true, notifyDaily: true, notifyKeresek: true, notifyHousing: true });
+  const [prefs, setPrefs] = useState<Prefs>({ notifyBusiness: true, notifyJob: true, notifyDaily: true, notifyKeresek: true, notifyHousing: true });
   const [busy, setBusy] = useState(false);
 
   async function loadPrefs(endpoint: string) {
@@ -159,13 +159,6 @@ export function NotificationSettings() {
               hint="Ha jóváhagynak egy új vállalkozást a régiódban."
               on={prefs.notifyBusiness}
               onToggle={() => togglePref("notifyBusiness")}
-            />
-            <ToggleRow
-              icon="📅"
-              label="Új esemény"
-              hint="Ha új közösségi esemény kerül a régiódba."
-              on={prefs.notifyEvent}
-              onToggle={() => togglePref("notifyEvent")}
             />
             <ToggleRow
               icon="💼"

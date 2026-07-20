@@ -5,7 +5,7 @@ import { getDB } from "./cloudflare";
 
 // --- Web Push ----------------------------------------------------------------
 
-export interface PushSubscriptionRow { id: string; endpoint: string; p256dh: string; auth: string; canton_code: string | null; notify_business?: number; notify_event?: number; notify_daily?: number; }
+export interface PushSubscriptionRow { id: string; endpoint: string; p256dh: string; auth: string; canton_code: string | null; notify_business?: number; notify_daily?: number; }
 
 export interface SavePushSubscriptionInput {
   id: string;
@@ -49,7 +49,10 @@ export async function getPushKeysByEndpoint(endpoint: string): Promise<{ p256dh:
   return row ?? null;
 }
 
-export type PushCategory = "business" | "event" | "job" | "daily" | "keresek" | "housing" | "remit";
+// ⚠️ Az "event" kategória KIVEZETVE (2026-07-09 feature-bloat leépítés — nincs
+// esemény-modul). A `notify_event` OSZLOP a DB-ben marad (NOT NULL DEFAULT 1),
+// csak már senki nem írja/olvassa: destruktív migrációt nem érünk meg vele.
+export type PushCategory = "business" | "job" | "daily" | "keresek" | "housing" | "remit";
 
 export async function listPushSubscriptions(
   cantonCode?: string | null,
@@ -65,7 +68,6 @@ export async function listPushSubscriptions(
   // COALESCE(...,1): a 0075 migráció NOT NULL DEFAULT 1, így a régi sorok már
   // 1-et adnak — ez csak védőháló, hogy egy esetleges NULL se essen ki.
   if (category === "business") conds.push("COALESCE(notify_business, 1) = 1");
-  else if (category === "event") conds.push("COALESCE(notify_event, 1) = 1");
   else if (category === "job") conds.push("COALESCE(notify_job, 1) = 1");
   else if (category === "daily") conds.push("COALESCE(notify_daily, 1) = 1");
   else if (category === "keresek") conds.push("COALESCE(notify_keresek, 1) = 1");
@@ -79,7 +81,7 @@ export async function listPushSubscriptions(
   return results;
 }
 
-export interface PushPreferences { notifyBusiness: boolean; notifyEvent: boolean; notifyJob: boolean; notifyDaily: boolean; notifyKeresek: boolean; notifyHousing: boolean; }
+export interface PushPreferences { notifyBusiness: boolean; notifyJob: boolean; notifyDaily: boolean; notifyKeresek: boolean; notifyHousing: boolean; }
 
 /**
  * A feliratkozás kategória-preferenciái endpoint alapján (a beállítások UI-hoz).
@@ -89,12 +91,12 @@ export interface PushPreferences { notifyBusiness: boolean; notifyEvent: boolean
 export async function getPushPreferences(endpoint: string): Promise<PushPreferences | null> {
   try {
     const row = await getDB()
-      .prepare("SELECT notify_business, notify_event, notify_job, notify_daily, notify_keresek, notify_housing FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
+      .prepare("SELECT notify_business, notify_job, notify_daily, notify_keresek, notify_housing FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
       .bind(endpoint)
-      .first<{ notify_business: number; notify_event: number; notify_job: number; notify_daily: number; notify_keresek: number; notify_housing: number }>();
+      .first<{ notify_business: number; notify_job: number; notify_daily: number; notify_keresek: number; notify_housing: number }>();
     if (!row) return null;
     return {
-      notifyBusiness: row.notify_business === 1, notifyEvent: row.notify_event === 1,
+      notifyBusiness: row.notify_business === 1,
       notifyJob: row.notify_job === 1, notifyDaily: row.notify_daily === 1,
       notifyKeresek: row.notify_keresek === 1, notifyHousing: row.notify_housing === 1,
     };
@@ -102,26 +104,26 @@ export async function getPushPreferences(endpoint: string): Promise<PushPreferen
     // A notify_housing (0136) / notify_keresek (0129) / notify_daily (0084) /
     // notify_job (0080) oszlop még hiányozhat — a hiányzókat alapból bekapcsoltnak vesszük.
     const row = await getDB()
-      .prepare("SELECT notify_business, notify_event FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
+      .prepare("SELECT notify_business FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
       .bind(endpoint)
-      .first<{ notify_business: number; notify_event: number }>();
+      .first<{ notify_business: number }>();
     if (!row) return null;
-    return { notifyBusiness: row.notify_business === 1, notifyEvent: row.notify_event === 1, notifyJob: true, notifyDaily: true, notifyKeresek: true, notifyHousing: true };
+    return { notifyBusiness: row.notify_business === 1, notifyJob: true, notifyDaily: true, notifyKeresek: true, notifyHousing: true };
   }
 }
 
 export async function updatePushPreferences(endpoint: string, prefs: PushPreferences): Promise<boolean> {
   try {
     const res = await getDB()
-      .prepare("UPDATE push_subscriptions SET notify_business = ?, notify_event = ?, notify_job = ?, notify_daily = ?, notify_keresek = ?, notify_housing = ? WHERE endpoint = ?")
-      .bind(prefs.notifyBusiness ? 1 : 0, prefs.notifyEvent ? 1 : 0, prefs.notifyJob ? 1 : 0, prefs.notifyDaily ? 1 : 0, prefs.notifyKeresek ? 1 : 0, prefs.notifyHousing ? 1 : 0, endpoint)
+      .prepare("UPDATE push_subscriptions SET notify_business = ?, notify_job = ?, notify_daily = ?, notify_keresek = ?, notify_housing = ? WHERE endpoint = ?")
+      .bind(prefs.notifyBusiness ? 1 : 0, prefs.notifyJob ? 1 : 0, prefs.notifyDaily ? 1 : 0, prefs.notifyKeresek ? 1 : 0, prefs.notifyHousing ? 1 : 0, endpoint)
       .run();
     return (res.meta.changes ?? 0) > 0;
   } catch {
     // Újabb oszlopok még hiányozhatnak (migráció előtt) — a régi oszlopokat frissítjük.
     const res = await getDB()
-      .prepare("UPDATE push_subscriptions SET notify_business = ?, notify_event = ? WHERE endpoint = ?")
-      .bind(prefs.notifyBusiness ? 1 : 0, prefs.notifyEvent ? 1 : 0, endpoint)
+      .prepare("UPDATE push_subscriptions SET notify_business = ? WHERE endpoint = ?")
+      .bind(prefs.notifyBusiness ? 1 : 0, endpoint)
       .run();
     return (res.meta.changes ?? 0) > 0;
   }

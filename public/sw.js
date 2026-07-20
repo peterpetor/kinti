@@ -146,7 +146,7 @@ self.addEventListener("message", (event) => {
 // titkosított payloadot küldenénk, itt olvasnánk az `event.data`-ból.
 self.addEventListener("push", (event) => {
   let title = "Kinti";
-  let body = "Új esemény vagy hirdetés a közösségben! — nézd meg az appban 🎉";
+  let body = "Friss hirdetés a közösségben! — nézd meg az appban 🎉";
   let url = "/";
 
   if (event.data) {

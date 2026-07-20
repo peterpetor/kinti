@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * GET  /api/push/preferences?endpoint=... — a kanton-push kategória-preferenciái.
- * PATCH /api/push/preferences — { endpoint, notifyBusiness, notifyEvent, notifyJob } frissítés.
+ * PATCH /api/push/preferences — { endpoint, notifyBusiness, notifyJob, … } frissítés.
  *
  * A feliratkozást az endpoint azonosítja (a böngésző push-feliratkozása); nincs
  * account. Csak a saját endpointját tudja módosítani, aki birtokolja.
@@ -20,7 +20,7 @@ export async function GET(req: Request) {
   return NextResponse.json(
     {
       subscribed: !!prefs,
-      preferences: prefs ?? { notifyBusiness: true, notifyEvent: true, notifyJob: true, notifyDaily: true, notifyKeresek: true, notifyHousing: true },
+      preferences: prefs ?? { notifyBusiness: true, notifyJob: true, notifyDaily: true, notifyKeresek: true, notifyHousing: true },
       // Az árfolyam-riasztás KÜLÖN mező (opt-in, alapból false) — ld. repo-misc.
       notifyRemit,
     },
@@ -30,7 +30,7 @@ export async function GET(req: Request) {
 
 export async function PATCH(req: Request) {
   const body = (await req.json().catch(() => ({}))) as {
-    endpoint?: string; notifyBusiness?: boolean; notifyEvent?: boolean; notifyJob?: boolean; notifyDaily?: boolean; notifyKeresek?: boolean; notifyHousing?: boolean;
+    endpoint?: string; notifyBusiness?: boolean; notifyJob?: boolean; notifyDaily?: boolean; notifyKeresek?: boolean; notifyHousing?: boolean;
     notifyRemit?: boolean;
   };
   const endpoint = typeof body.endpoint === "string" ? body.endpoint.trim() : "";
@@ -38,17 +38,18 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "Hiányzó endpoint." }, { status: 400 });
   }
 
-  // A 6 régi kategória EGYBEN íródik (a hiányzó mezőt `!== false` bekapcsoltnak
+  // Az 5 régió-kategória EGYBEN íródik (a hiányzó mezőt `!== false` bekapcsoltnak
   // veszi) — ezért CSAK akkor nyúlunk hozzá, ha a hívó ténylegesen küldött
   // ilyen mezőt. Így az asszisztens „csak remit" hívása nem kapcsol be mindent.
-  const LEGACY = ["notifyBusiness", "notifyEvent", "notifyJob", "notifyDaily", "notifyKeresek", "notifyHousing"] as const;
+  // (A `notifyEvent` KIVEZETVE — egy régi, cache-elt kliens még küldheti, de a
+  // szerver már nem írja: a notify_event oszlop érintetlen marad.)
+  const LEGACY = ["notifyBusiness", "notifyJob", "notifyDaily", "notifyKeresek", "notifyHousing"] as const;
   const hasLegacy = LEGACY.some((k) => k in body);
 
   let ok = true;
   if (hasLegacy) {
     ok = await updatePushPreferences(endpoint, {
       notifyBusiness: body.notifyBusiness !== false,
-      notifyEvent: body.notifyEvent !== false,
       notifyJob: body.notifyJob !== false,
       notifyDaily: body.notifyDaily !== false,
       notifyKeresek: body.notifyKeresek !== false,
