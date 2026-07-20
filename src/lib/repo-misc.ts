@@ -49,7 +49,7 @@ export async function getPushKeysByEndpoint(endpoint: string): Promise<{ p256dh:
   return row ?? null;
 }
 
-export type PushCategory = "business" | "event" | "job" | "daily" | "keresek" | "housing";
+export type PushCategory = "business" | "event" | "job" | "daily" | "keresek" | "housing" | "remit";
 
 export async function listPushSubscriptions(
   cantonCode?: string | null,
@@ -70,6 +70,9 @@ export async function listPushSubscriptions(
   else if (category === "daily") conds.push("COALESCE(notify_daily, 1) = 1");
   else if (category === "keresek") conds.push("COALESCE(notify_keresek, 1) = 1");
   else if (category === "housing") conds.push("COALESCE(notify_housing, 1) = 1");
+  // Árfolyam-riasztás: OPT-IN → NINCS COALESCE(...,1) védőháló (az visszahozná az
+  // opt-out viselkedést, és mindenkinek menne). Csak a kifejezetten bekapcsolók.
+  else if (category === "remit") conds.push("notify_remit = 1");
 
   const where = conds.length ? ` WHERE ${conds.join(" AND ")}` : "";
   const { results } = await getDB().prepare(`SELECT * FROM push_subscriptions${where}`).bind(...binds).all<PushSubscriptionRow>();
@@ -121,6 +124,40 @@ export async function updatePushPreferences(endpoint: string, prefs: PushPrefere
       .bind(prefs.notifyBusiness ? 1 : 0, prefs.notifyEvent ? 1 : 0, endpoint)
       .run();
     return (res.meta.changes ?? 0) > 0;
+  }
+}
+
+/**
+ * Árfolyam-riasztás (hazautalás) opt-in — KÜLÖN kezelve a többi kategóriától.
+ *
+ * ⚠️ Szándékosan NEM része a PushPreferences-nek: a beállítások-oldal a 6 régi
+ * kategóriát EGYBEN írja (`UPDATE ... SET notify_business=?, ...`), és a PATCH
+ * a hiányzó mezőket `!== false` miatt BEKAPCSOLTNAK veszi. Ha a remit is ott
+ * lenne, minden beállítás-mentés vagy bekapcsolná, vagy kitörölné az opt-int.
+ * Így viszont a két útvonal független: a remitet csak az írja, aki kifejezetten
+ * azt kapcsolja.
+ */
+export async function getPushRemitPref(endpoint: string): Promise<boolean> {
+  try {
+    const row = await getDB()
+      .prepare("SELECT notify_remit FROM push_subscriptions WHERE endpoint = ? LIMIT 1")
+      .bind(endpoint)
+      .first<{ notify_remit: number | null }>();
+    return row?.notify_remit === 1;
+  } catch {
+    return false; // a 0137 migráció még nem futott → nincs opt-in
+  }
+}
+
+export async function updatePushRemitPref(endpoint: string, on: boolean): Promise<boolean> {
+  try {
+    const res = await getDB()
+      .prepare("UPDATE push_subscriptions SET notify_remit = ? WHERE endpoint = ?")
+      .bind(on ? 1 : 0, endpoint)
+      .run();
+    return (res.meta.changes ?? 0) > 0;
+  } catch {
+    return false; // migráció előtt csendben nem-op (a UI hibát jelez)
   }
 }
 

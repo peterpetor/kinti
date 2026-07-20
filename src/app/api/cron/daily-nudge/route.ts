@@ -9,6 +9,7 @@ import { sendWeeklyOpsReportEmail } from "@/lib/email";
 import { unfeatureExpiredJobs, expireOldJobs } from "@/lib/repo-jobs";
 import { battleRanking, BATTLE_MIN_COUNTRY } from "@/lib/quiz-battle";
 import { notifyCanton } from "@/lib/push-notify";
+import { baseToHufSeries, detectUpwardCrossing, type RatePoint } from "@/lib/remit-alert";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
@@ -33,6 +34,51 @@ const NUDGES = [
   { title: "🇨🇭 Napi 2 perc német?", body: "Egy mondat Mundartul közelebb visz a beilleszkedéshez.", url: "/nyelvlecke" },
   { title: "📰 Itt a napi adag", body: "Nézd meg, mi történt ma a magyar közösségben.", url: "/" },
 ];
+
+interface RemitAlertResult { crossed: boolean; sent?: number; pct?: number }
+
+/**
+ * Árfolyam-riasztás: friss fölfelé-keresztezésnél push az OPT-IN feliratkozóknak.
+ *
+ * A forrás ugyanaz a frankfurter API, amiből a kalkulátor/asszisztens is dolgozik
+ * (CHF-bázisú lekérés, EUR-bázis kereszt-árfolyammal). MINDKÉT bázist nézzük
+ * (CH = CHF, AT/DE/NL = EUR); ha bármelyik most lépte át a szintet, megy a jelzés.
+ * A push szövege szándékosan ÁLTALÁNOS („a forint gyengébb a havi átlagnál") —
+ * a pontos, országhelyes számot az asszisztens mutatja megnyitáskor.
+ */
+async function maybeSendRemitAlert(): Promise<RemitAlertResult> {
+  const end = new Date();
+  const start = new Date(end.getTime() - 45 * 86_400_000);
+  const s = start.toISOString().slice(0, 10);
+  const e = end.toISOString().slice(0, 10);
+
+  const res = await fetch(`https://api.frankfurter.app/${s}..${e}?from=CHF&to=HUF,EUR`, { cache: "no-store" });
+  if (!res.ok) return { crossed: false };
+  const data = (await res.json()) as { rates?: Record<string, { HUF?: number; EUR?: number }> };
+  const series: RatePoint[] = Object.entries(data.rates ?? {}).map(([date, r]) => ({
+    date,
+    huf: r.HUF ?? 0,
+    eur: r.EUR ?? 0,
+  }));
+  if (series.length < 10) return { crossed: false };
+
+  const eur = detectUpwardCrossing(baseToHufSeries(series, "EUR"));
+  const chf = detectUpwardCrossing(baseToHufSeries(series, "CHF"));
+  const hit = (eur?.crossed ? eur : null) ?? (chf?.crossed ? chf : null);
+  if (!hit) return { crossed: false };
+
+  const sign = hit.pct >= 0 ? "+" : "";
+  const out = await notifyCanton(
+    null,
+    {
+      title: "📈 Most jó hazautalni",
+      body: `A forint gyengébb a havi átlagnál (${sign}${hit.pct.toFixed(1)}%) — ugyanannyiból most több forint érkezik haza.`,
+      url: "/utalas#utalas-asszisztens",
+    },
+    "remit",
+  );
+  return { crossed: true, sent: out.sent, pct: Number(hit.pct.toFixed(2)) };
+}
 
 async function handle(req: Request): Promise<Response> {
   const env = getCloudflareEnv() as unknown as { CRON_SECRET?: string; VAPID_PRIVATE_KEY?: string };
@@ -63,6 +109,17 @@ async function handle(req: Request): Promise<Response> {
   if (!force) {
     const claimed = await claimDailyNudge(day);
     if (!claimed) return Response.json({ ok: true, skipped: "already-sent-today", day });
+  }
+
+  // ÁRFOLYAM-RIASZTÁS (hazautalás) — OPT-IN kategória, a napi claim UTÁN (így
+  // naponta legfeljebb egyszer fut). Csak a FRISS fölfelé-keresztezés napján
+  // küld, ezért nem kell állapotot tárolni és nem spamel. Best-effort: saját
+  // try/catch, sose törheti a napi nudge-ot.
+  let remit: RemitAlertResult = { crossed: false };
+  try {
+    remit = await maybeSendRemitAlert();
+  } catch (err) {
+    safeLogError("daily-nudge:remit", err);
   }
 
   // HÉTFŐ: heti operátori pulzus-email az adminnak (a claim UTÁN vagyunk → napi
@@ -222,7 +279,7 @@ async function handle(req: Request): Promise<Response> {
 
   try {
     const res = await notifyCanton(null, payload, "daily");
-    return Response.json({ ok: true, day, ...res });
+    return Response.json({ ok: true, day, ...res, remit });
   } catch (err) {
     safeLogError("daily-nudge", err);
     return Response.json({ ok: false, error: "internal" }, { status: 500 });

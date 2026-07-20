@@ -6,6 +6,8 @@ import { ProLockOverlay } from "@/components/pro-lock-overlay";
 import { cn } from "@/lib/cn";
 import { usePersistedState } from "@/hooks/use-persisted-state";
 import { useIsPro } from "@/lib/use-is-pro";
+import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
+import { readPreferredCanton } from "@/lib/canton-pref";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { rankedProviders, receivedAmount, savingsVsBank, effectiveSpread } from "@/lib/exchange-providers";
@@ -97,6 +99,81 @@ export function UtalasAssistant() {
     }
     return s;
   }, [best, second, amount, baseToHuf, weekend]);
+
+  // — Árfolyam-riasztás opt-in (push) —
+  // Külön, RÉSZLEGES preferencia (notifyRemit): a beállítások-oldal 6 kategóriás
+  // mentése szándékosan nem nyúl hozzá, így nem kapcsolja se be, se ki.
+  const [remitOn, setRemitOn] = useState<boolean | null>(null); // null = még nem tudjuk
+  const [remitBusy, setRemitBusy] = useState(false);
+  const [remitErr, setRemitErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isPro !== true) return; // csak PRO-nál kérdezzük le
+    let on = true;
+    (async () => {
+      try {
+        if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+          if (on) setRemitOn(false);
+          return;
+        }
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.getSubscription();
+        if (!sub) { if (on) setRemitOn(false); return; }
+        const res = await fetch(`/api/push/preferences?endpoint=${encodeURIComponent(sub.endpoint)}`);
+        const json = (await res.json()) as { notifyRemit?: boolean };
+        if (on) setRemitOn(!!json.notifyRemit);
+      } catch {
+        if (on) setRemitOn(false);
+      }
+    })();
+    return () => { on = false; };
+  }, [isPro]);
+
+  async function toggleRemit() {
+    if (remitBusy) return;
+    setRemitBusy(true);
+    setRemitErr(null);
+    const next = !remitOn;
+    try {
+      if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+        setRemitErr("Ez a böngésző nem támogatja az értesítéseket.");
+        return;
+      }
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+
+      // Bekapcsoláskor, ha még nincs feliratkozás → engedély + feliratkozás.
+      if (next && !sub) {
+        const perm = await Notification.requestPermission();
+        if (perm !== "granted") {
+          setRemitErr("Az értesítés-engedély nélkül nem tudunk szólni.");
+          return;
+        }
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
+        });
+        await fetch("/api/push/subscribe", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ subscription: sub.toJSON(), cantonCode: readPreferredCanton() }),
+        });
+      }
+      if (!sub) { setRemitErr("Nincs aktív értesítés-feliratkozás."); return; }
+
+      const res = await fetch("/api/push/preferences", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ endpoint: sub.endpoint, notifyRemit: next }),
+      });
+      if (!res.ok) { setRemitErr("Nem sikerült menteni — próbáld újra."); return; }
+      setRemitOn(next);
+    } catch {
+      setRemitErr("Nem sikerült menteni — próbáld újra.");
+    } finally {
+      setRemitBusy(false);
+    }
+  }
 
   function logTransfer() {
     if (bestSavings <= 0) return;
@@ -195,6 +272,43 @@ export function UtalasAssistant() {
           </p>
         </section>
       )}
+
+      {/* Árfolyam-riasztás opt-in — ettől lesz a „mikor" PROAKTÍV (nem kell
+          naponta benézni). Alapból KI: csak az kapja, aki kifejezetten kéri. */}
+      <section className="rounded-card border border-line bg-surface p-5 shadow-card">
+        <div className="flex items-start gap-3">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary">
+            <Icon name="bell" size={16} strokeWidth={2.2} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[14px] font-extrabold text-ink">Szóljak, ha jó az árfolyam?</p>
+            <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
+              Push-értesítést küldünk azon a napon, amikor az árfolyam a 30-napos átlag fölé fordul — nem
+              minden nap, csak a fordulónapon. Bármikor kikapcsolhatod.
+            </p>
+            {remitErr && <p className="mt-1.5 text-[11.5px] font-semibold text-accent">{remitErr}</p>}
+          </div>
+          <button
+            type="button"
+            onClick={toggleRemit}
+            disabled={remitBusy || remitOn === null}
+            aria-pressed={remitOn === true}
+            aria-label="Árfolyam-riasztás be- és kikapcsolása"
+            className={cn(
+              "relative h-6 w-11 shrink-0 rounded-full transition",
+              remitOn ? "bg-primary" : "bg-ink/15",
+              (remitBusy || remitOn === null) && "opacity-60",
+            )}
+          >
+            <span
+              className={cn(
+                "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all",
+                remitOn ? "left-[22px]" : "left-0.5",
+              )}
+            />
+          </button>
+        </div>
+      </section>
 
       {/* Szolgáltató-összehasonlítás (rangsor) + megtakarítás + Elutaltam */}
       {now && best && amount > 0 && (

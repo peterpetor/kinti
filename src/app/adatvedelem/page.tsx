@@ -6,7 +6,7 @@ export const metadata = { title: "Adatkezelési Tájékoztató" };
 
 export default function AdatvedelemPage() {
   return (
-    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-17">
+    <LegalPage title="Adatkezelési Tájékoztató" updatedAt="2026-07-20">
       <p>
         Ez a tájékoztató ismerteti, milyen személyes adatokat kezelünk a kinti.app szolgáltatás
         nyújtása során, milyen jogalapon, mennyi ideig, és milyen jogaid vannak ezzel kapcsolatban.
@@ -264,6 +264,19 @@ export default function AdatvedelemPage() {
         <code>endpoint</code> URL, a hozzá tartozó nyilvános titkosító kulcsok
         (<code>p256dh</code>, <code>auth</code> — ezekkel titkosítjuk neked az értesítést),
         és az általad választott <strong>kanton-preferencia</strong> a célzáshoz.
+      </p>
+      <p>
+        <strong>Árfolyam-riasztás (hazautalás):</strong> ha az Utalás-asszisztensben bekapcsolod, a
+        személytelen push-feliratkozásodhoz egy <strong>jelzőt</strong> tárolunk arról, hogy kérsz
+        értesítést, amikor a hazautaláshoz kedvezőre fordul az árfolyam. Ez a kategória{" "}
+        <strong>alapértelmezetten KI van kapcsolva</strong> (kifejezett opt-in), a többi
+        kategóriától függetlenül működik, és bármikor kikapcsolhatod ugyanitt vagy a böngésződ
+        értesítés-engedélyénél. Az értesítés kiküldése <strong>kizárólag nyilvános
+        árfolyamadatból</strong> dől el (Frankfurter/EKB) — <strong>nem</strong> az utalásaidból: az
+        általad beállított összeget és a megtakarítás-számlálót{" "}
+        <strong>kizárólag a saját eszközöd tárolja</strong> (böngésző-tároló), azokat nem küldjük a
+        szerverre és nem is látjuk. Az értesítés tájékoztató jellegű, <strong>nem pénzügyi
+        tanácsadás</strong> és nem ajánlat.
       </p>
       <p>
         <strong>Adatbiztonság:</strong> az értesítés tartalmát <strong>végpontig titkosítva</strong>{" "}
