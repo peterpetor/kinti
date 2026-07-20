@@ -588,14 +588,15 @@ export function ExploreView({
 
         {/* Tapasztalat (év) szűrő — Advanced search. A natív select-nyilat elrejtjük
             (appearance-none), és a Tartomány-szűrőével EGYSÉGES chevD-nyilat teszünk
-            a jobb szélre (user-kérés) — a pr-7 hagy neki helyet, a text-center marad. */}
+            a jobb szélre; a bal szélen VEZETŐ ikon (mint a többi szűrő-pillnél — ez
+            volt az egyetlen jelölő nélküli), a pl-7/pr-7 szimmetrikusan középre tart. */}
         <div className="relative inline-flex min-w-0">
           <select
             value={minYears}
             onChange={(e) => setMinYears(Number(e.target.value))}
             aria-label="Szűrés tapasztalatra"
             className={cn(
-              "w-full appearance-none rounded-pill border py-2 pl-3 pr-7 text-center text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
+              "w-full appearance-none rounded-pill border py-2 pl-7 pr-7 text-center text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
               minYears > 0
                 ? "bg-primary/10 border-primary/30 text-primary"
                 : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
@@ -606,6 +607,16 @@ export function ExploreView({
             <option value={5}>5+ év</option>
             <option value={10}>10+ év</option>
           </select>
+          <Icon
+            name="star"
+            size={12}
+            strokeWidth={2.4}
+            filled={minYears > 0}
+            className={cn(
+              "pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 shrink-0",
+              minYears > 0 ? "text-primary" : "text-ink-muted",
+            )}
+          />
           <Icon
             name="chevD"
             size={13}
