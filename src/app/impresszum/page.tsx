@@ -7,6 +7,7 @@ export const metadata = { title: "Impresszum" };
 const OPERATOR = {
   name: "Feedback Jobs S.R.L.",
   role: "korlátolt felelősségű társaság (S.R.L., Románia)",
+  representative: "Gellért Fülöp",
   address: "Cart. Bekecs, Bloc F, Ap. 15, 545500 Szováta (Sovata), Maros megye, Románia",
   addressNote: "Bejegyzett székhely — jogi kézbesítés is itt érvényes.",
   email: "info@kinti.app",
@@ -21,7 +22,7 @@ const OPERATOR = {
 
 export default function ImpresszumPage() {
   return (
-    <LegalPage title="Impresszum" updatedAt="2026-06-15">
+    <LegalPage title="Impresszum" updatedAt="2026-07-20">
       <p>
         Az elektronikus kereskedelemről szóló <strong>2000/31/EK irányelv</strong> és a
         vonatkozó nemzeti jogszabályok alapján a kinti.app szolgáltatás üzemeltetőjének adatai:
@@ -31,6 +32,7 @@ export default function ImpresszumPage() {
       <ul>
         <li>Cégnév: <strong>{OPERATOR.name}</strong></li>
         <li>Jogállás: {OPERATOR.role}</li>
+        <li>Képviseletre jogosult (ügyvezető): <strong>{OPERATOR.representative}</strong></li>
         <li>Cégjegyzékszám: <strong>{OPERATOR.regNumber}</strong></li>
         <li>Adószám (CUI): <strong>{OPERATOR.cui}</strong></li>
         <li>
