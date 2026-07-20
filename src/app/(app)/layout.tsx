@@ -1,4 +1,4 @@
-import { TabBar } from "@/components/ui";
+import { TabBar, ToastHost } from "@/components/ui";
 import { CountryGate } from "@/components/country-gate";
 import { CountryBanner } from "@/components/country-banner";
 import { ScrollRestorer } from "@/components/page-transition";
@@ -19,6 +19,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           még működnek. A nav-rezerv padding immerzív lecke-nézetben elmarad. */}
       <AppMain>{children}</AppMain>
       <TabBar />
+      {/* Globális toast-sín (lib/toast.ts) — vágólap-másolás és egyéb rövid
+          megerősítések egységes helye, a TabBar fölött. */}
+      <ToastHost />
       {/* Tab-szintű scroll-pozíció megőrzés (natív tab-bar viselkedés). */}
       <ScrollRestorer />
       {/* Privacy-first oldal-használat mérés (aggregált, azonosító nélkül). */}

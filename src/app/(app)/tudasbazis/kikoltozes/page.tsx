@@ -6,6 +6,7 @@ import { ScreenHeader } from "@/components/ui/headers";
 import { Icon, IconName } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
+import { toast } from "@/lib/toast";
 
 import {
   getPhases,
@@ -72,7 +73,10 @@ export default function RelocationTrackerPage() {
     if (typeof navigator !== "undefined" && navigator.share) {
       navigator.share({ title: "Kiköltözési terv", text, url }).catch(() => {});
     } else if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(`${text} ${url}`).catch(() => {});
+      navigator.clipboard
+        .writeText(`${text} ${url}`)
+        .then(() => toast("Link kimásolva"))
+        .catch(() => {});
     }
   };
 

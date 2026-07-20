@@ -239,6 +239,18 @@
     .kinti-page-in { animation: none; }
   }
 
+  /* Toast belépés (ToastHost) — alulról felúszó, finoman felnagyuló buborék. */
+  @keyframes kintiToastIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .kinti-toast-in {
+    animation: kintiToastIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kinti-toast-in { animation: none; }
+  }
+
   /* Téma-váltás View Transition (ThemeToggle hívja startViewTransition-nel,
      reduced-motion alatt NEM indítja): a teljes oldal puha cross-fade-je.
      A rövid időzítés a natív érzet — a hosszú fade "webes"-nek hat. */

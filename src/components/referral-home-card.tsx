@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
 import { getMyInviteCode, inviteUrl } from "@/lib/referral-client";
+import { toast } from "@/lib/toast";
 
 const TIERS = [
   { n: 1, label: "Küldtem egy magyart" },
@@ -46,7 +47,10 @@ export function ReferralHomeCard() {
     if (typeof navigator !== "undefined" && navigator.share) {
       navigator.share({ title: "Küldj egy magyart — Kinti", text: shareText, url }).catch(() => {});
     } else if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(url).catch(() => {});
+      navigator.clipboard
+        .writeText(url)
+        .then(() => toast("Meghívó-link kimásolva"))
+        .catch(() => {});
     }
   }
 
