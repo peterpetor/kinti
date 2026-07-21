@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect, useRef, lazy, Suspense } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback, lazy, Suspense } from "react";
 import { haptic } from "@/lib/haptics";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -86,23 +86,46 @@ export function ExploreView({
    *  teljes listát mount után töltjük be a /api/businesses/list-ből. */
   businesses: ListBusiness[];
 }) {
-  // Teljes lista aszinkron betöltése — amíg nincs meg, az SSR-szelet szolgálja
-  // ki a szűrőket/keresőt (a leggyakoribb use-case-t, a böngészést az lefedi).
+  // A TELJES lista (2000+ rekord ≈ 1,16 MB nyers JSON, ~155 KB tömörítve) betöltése
+  // — de a KRITIKUS ÚTON KÍVÜL. Korábban a mount-effekt AZONNAL lekérte, így a
+  // ~1,16 MB `JSON.parse` a hidratálással versengett a fő szálon; ez tette EZT az
+  // oldalt betöltéskor nehezebbé a többinél (a JS-bundle amúgy azonos sávban van).
+  // Most: (1) `requestIdleCallback`-ben indul (2,5 s watchdog) — a passzív user is
+  // megkapja a teljes listát/térképet/számlálót, de csak az ELSŐ FESTÉS UTÁN; (2)
+  // ha a user előbb térképre vált (ott kell az összes tű), az azonnal beindítja.
+  // Amíg nincs meg, az SSR-szelet (országonként 60) szolgálja ki a böngészést és a
+  // gépelős szűrést — a leggyakoribb use-case-t lefedi.
   const [fullList, setFullList] = useState<ListBusiness[] | null>(null);
-  useEffect(() => {
-    let cancelled = false;
+  const fullReqRef = useRef(false);
+  const loadFullList = useCallback(() => {
+    if (fullReqRef.current) return;
+    fullReqRef.current = true;
     fetch("/api/businesses/list")
       .then((r) => (r.ok ? (r.json() as Promise<{ businesses?: ListBusiness[] }>) : null))
       .then((d) => {
-        if (!cancelled && d?.businesses?.length) setFullList(d.businesses);
+        if (d?.businesses?.length) setFullList(d.businesses);
       })
       .catch(() => {
-        /* hálózati hiba → marad az SSR-szelet (működő, csak rövidebb lista) */
+        // hálózati hiba → marad az SSR-szelet (működő, csak rövidebb lista);
+        // engedjük az újrapróbát egy későbbi interakcióra.
+        fullReqRef.current = false;
       });
-    return () => {
-      cancelled = true;
-    };
   }, []);
+  useEffect(() => {
+    type RIC = (cb: () => void, opts?: { timeout: number }) => number;
+    const w = window as unknown as {
+      requestIdleCallback?: RIC;
+      cancelIdleCallback?: (h: number) => void;
+    };
+    if (w.requestIdleCallback) {
+      const id = w.requestIdleCallback(() => loadFullList(), { timeout: 2500 });
+      return () => w.cancelIdleCallback?.(id);
+    }
+    // requestIdleCallback nélkül (Safari): rövid késleltetés, hogy a hidratálás
+    // előbb végezzen, csak azután fusson a nagy fetch/parse.
+    const t = window.setTimeout(loadFullList, 1200);
+    return () => clearTimeout(t);
+  }, [loadFullList]);
   const businesses = fullList ?? initialBusinesses;
 
   // Render-sapka: egyszerre legfeljebb ennyi kártya van a DOM-ban; a lista alján
@@ -116,6 +139,17 @@ export function ExploreView({
   const initialFav = searchParams?.get("fav") === "1";
   const initialCat = searchParams?.get("cat") ?? "all";
   const initialPass = searchParams?.get("pass") === "1";
+
+  // Deep-link szűrővel érkezve (?cat=/?q=/?canton=/?fav=/?pass= a főoldalról vagy a
+  // keresőből) a user KERESNI jött → a pontos találathoz azonnal kell a teljes lista,
+  // nem várunk az idle-watchdogra. Sima látogatásnál (alap szűrők) nem fut → marad
+  // a deferrált betöltés.
+  useEffect(() => {
+    if (initialCat !== "all" || initialQ.trim() !== "" || initialCanton !== "all" || initialFav || initialPass) {
+      loadFullList();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [cat, setCat] = useState(initialCat);
   const [q, setQ] = useState(initialQ);
@@ -142,10 +176,16 @@ export function ExploreView({
     try {
       const saved = localStorage.getItem("kinti_szaknevsor_view");
       if (saved === "map" || saved === "list") setView(saved);
+      // Ha a user mentett nézete a térkép, ott az ÖSSZES tű kell → azonnal
+      // betöltjük a teljes listát (nem várunk az idle-watchdogra).
+      if (saved === "map") loadFullList();
     } catch { /* ignore */ }
-  }, []);
+  }, [loadFullList]);
   const setViewPersist = (v: ViewMode) => {
     setView(v);
+    // Térképre váltás → a teljes lista kell (minden tű); a guard miatt csak
+    // egyszer kér. Lista-nézethez az SSR-szelet + idle-betöltés elég.
+    if (v === "map") loadFullList();
     try { localStorage.setItem("kinti_szaknevsor_view", v); } catch { /* ignore */ }
   };
   const [cantonSheetOpen, setCantonSheetOpen] = useState(false);
@@ -352,7 +392,14 @@ export function ExploreView({
   // Szűrő-váltás → vissza az 1. oldalra (a lapozás ne ragadjon be).
   useEffect(() => {
     setPage(1);
-  }, [cat, canton, q, showFavs, openNow, minYears, passOnly, sortBy, country]);
+    // Bármely TÉNYLEGES szűkítés (kategória / szöveg / régió / kapcsoló) esetén a
+    // pontos találathoz kell a teljes lista → azonnal betöltjük (a loader guardolt,
+    // csak egyszer kér). Guard: friss mounton, ALAP szűrőkkel NEM fut, így a sima
+    // böngészésnél megmarad a deferrált (idle) betöltés, és nem blokkolja a festést.
+    if (cat !== "all" || q.trim() !== "" || canton !== "all" || showFavs || passOnly || openNow || minYears > 0) {
+      loadFullList();
+    }
+  }, [cat, canton, q, showFavs, openNow, minYears, passOnly, sortBy, country, loadFullList]);
 
   // Lapozás: oldal-váltáskor vissza a lista tetejére (a user ne a 100. kártya
   // után találja magát).

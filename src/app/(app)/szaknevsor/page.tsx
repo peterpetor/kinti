@@ -17,11 +17,15 @@ export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Szaknévsor" };
 
-/** SSR-be kerülő rekordok száma ORSZÁGONKÉNT. A teljes (1000+) lista SSR-je
- *  worker CPU-limitbe ütközött (1102) és ~1,2 MB HTML-t adott — az első
- *  képernyőhöz országonként ennyi bőven elég, a többit az ExploreView tölti be
- *  aszinkron a /api/businesses/list-ből. */
-const SSR_PER_COUNTRY = 60;
+/** SSR-be kerülő rekordok száma ORSZÁGONKÉNT. A teljes (2000+) lista SSR-je worker
+ *  CPU-limitbe ütközött (1102) és ~1,2 MB HTML-t adott. A kliens EGYSZERRE csak EGY
+ *  ország szeletét mutatja, de a szerver nem tudja, melyiket (az ország-pref
+ *  kliensoldali) → mind a 4 ország szeletét be kell ágyazni a HTML-be. 30/ország
+ *  bőven fedi az első (passzív) képernyőt bármelyik országra; amint a user szűkít
+ *  (kategória/kereső/régió) vagy térképre vált, az ExploreView AZONNAL betölti a
+ *  teljes listát (a többinél idle-ben). A 60→30 csökkentés ~felére vágja a
+ *  kezdeti HTML-payloadot és a szerver render-CPU-t. */
+const SSR_PER_COUNTRY = 30;
 
 export default async function SzaknevsorPage() {
   // Payload-diéta + izolátum-cache: a lista karcsú vetület (getBusinessesForList,
