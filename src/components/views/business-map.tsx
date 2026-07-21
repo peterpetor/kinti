@@ -288,14 +288,19 @@ export function BusinessMap({
  * ResultsCarousel — vízszintesen lapozható kártya-sor a térkép alján, KÉTIRÁNYÚ
  * szinkronban a markerekkel (Google Maps / Airbnb-minta):
  *
- *   • Kártyát húzol/lapozol → a középre álló kártya lesz a kiválasztott →
- *     a térkép finoman ráúszik a pinjére (a szülő `panToId`-ján át).
+ *   • Kártyát húzol/lapozol → a leállás UTÁN a középre álló kártya lesz a
+ *     kiválasztott → a térkép finoman ráúszik a pinjére (a szülő `panToId`-ján át).
  *   • Markert koppintasz → a carousel odagördül az adott kártyához.
  *
- * A visszacsatolási hurok ellen: a saját scroll-ból eredő kiválasztást a
- * `fromScrollRef` jelöli, így a rákövetkező „gördülj a kiválasztotthoz" effekt
- * nem küzd a felhasználó ujjával; a programozott gördülést az `ignoreScrollRef`
- * kizárja a scroll-detektálásból.
+ * ⚠️ Visszacsatolás-mentes terv (a korábbi fromScrollRef + fix időzítő villódzott):
+ *   • `programmaticRef` — igaz, amíg egy MI ÁLTALUNK indított gördülés tart. A
+ *     gördülés-leállás (idle-debounce) ilyenkor NEM választ ki kártyát (különben a
+ *     programozott gördülés túllövése egy köztes kártyát villantana fel).
+ *   • Csak a gördülés TELJES leállása után (120 ms idle) döntünk — momentum közben
+ *     soha, így nincs köztes „villanás".
+ *   • A programozott gördülést CSAK akkor indítjuk, ha ténylegesen elmozdul (a
+ *     clamp-elt cél ≠ jelenlegi pozíció) — különben a flag beragadna (nincs
+ *     scroll-esemény, ami leálláskor törölné).
  */
 function ResultsCarousel({
   list,
@@ -309,19 +314,12 @@ function ResultsCarousel({
   userPos: { lat: number; lng: number } | null;
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const ignoreScrollRef = useRef(false); // programozott gördülés → ne detektáljon
-  const fromScrollRef = useRef(false); // a kiválasztás a saját scroll-ból jött
-  const rafRef = useRef<number | null>(null);
-  const ignoreTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const programmaticRef = useRef(false); // a jelenlegi gördülést mi indítottuk
+  const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // activeId (marker-koppintás vagy alap) → a megfelelő kártya középre gördítése.
-  // A getBoundingClientRect-alapú számítás CSAK a scrollert mozgatja (soha nem az
-  // oldalt — a scrollIntoView oldalt is görgethetne).
+  // activeId (marker-koppintás / alap) → a megfelelő kártya középre gördítése.
+  // Csak a scrollert mozgatja (rect-alapú delta), soha nem az oldalt.
   useEffect(() => {
-    if (fromScrollRef.current) {
-      fromScrollRef.current = false;
-      return; // a saját scroll váltotta ki → már a helyén van
-    }
     const scroller = scrollerRef.current;
     if (!scroller || !activeId) return;
     const idx = list.findIndex((b) => b.id === activeId);
@@ -331,25 +329,29 @@ function ResultsCarousel({
     const scRect = scroller.getBoundingClientRect();
     const chRect = child.getBoundingClientRect();
     const delta = chRect.left + chRect.width / 2 - (scRect.left + scRect.width / 2);
-    if (Math.abs(delta) < 4) return; // már középen
+    const maxLeft = scroller.scrollWidth - scroller.clientWidth;
+    const target = Math.max(0, Math.min(maxLeft, scroller.scrollLeft + delta));
+    if (Math.abs(target - scroller.scrollLeft) < 2) return; // már a helyén / nem mozdítható
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    ignoreScrollRef.current = true;
-    scroller.scrollTo({ left: scroller.scrollLeft + delta, behavior: reduce ? "auto" : "smooth" });
-    if (ignoreTimer.current) clearTimeout(ignoreTimer.current);
-    ignoreTimer.current = setTimeout(() => { ignoreScrollRef.current = false; }, 450);
+    programmaticRef.current = true;
+    scroller.scrollTo({ left: target, behavior: reduce ? "auto" : "smooth" });
   }, [activeId, list]);
 
   useEffect(() => () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    if (ignoreTimer.current) clearTimeout(ignoreTimer.current);
+    if (idleTimer.current) clearTimeout(idleTimer.current);
   }, []);
 
+  // Minden scroll-esemény újraindítja az idle-időzítőt; csak a TELJES leállás után
+  // (a felhasználó ujja + a momentum is megállt) döntünk kiválasztásról.
   const handleScroll = () => {
-    if (ignoreScrollRef.current) return;
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => {
+      if (programmaticRef.current) {
+        programmaticRef.current = false; // a MI gördülésünk állt le → nem választunk
+        return;
+      }
       const scroller = scrollerRef.current;
       if (!scroller) return;
       const scRect = scroller.getBoundingClientRect();
@@ -363,11 +365,8 @@ function ResultsCarousel({
         if (d < bestDist) { bestDist = d; best = i; }
       }
       const b = list[best];
-      if (b && b.id !== activeId) {
-        fromScrollRef.current = true;
-        onSelect(b.id);
-      }
-    });
+      if (b && b.id !== activeId) onSelect(b.id);
+    }, 120);
   };
 
   return (
