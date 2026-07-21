@@ -9,6 +9,8 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryLocative, countryIllative } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { CountryFlag } from "@/components/ui/country-flag";
+import { CountrySelectSheet } from "@/components/ui/country-switcher";
+import { haptic } from "@/lib/haptics";
 
 /**
  * A kezdőlap ország-függő darabjai (a lap szerver-renderelt, az ország
@@ -22,9 +24,32 @@ function useEffectiveCountry(): string {
   return mounted ? prefCountry ?? DEFAULT_COUNTRY : DEFAULT_COUNTRY;
 }
 
-/** A fejléc ország-zászlója (a választott országé; default CH). */
+/**
+ * A fejléc ország-zászlója — KOPPINTHATÓ (egyszerűsítés, 2026-07-21): eddig
+ * csak dekoráció volt, és aki rossz ország tartalmát látta, nem tudta, hol
+ * váltson (a váltó a „…" menü mélyén volt). Most a zászló maga nyitja az
+ * ország-választó alsó lapot; a kis nyíl jelzi, hogy tappolható.
+ */
 export function HomeCountryFlag() {
-  return <CountryFlag code={useEffectiveCountry()} className="h-[22px] w-[30px]" />;
+  const country = useEffectiveCountry();
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          haptic("selection");
+          setOpen(true);
+        }}
+        aria-label="Ország váltása"
+        className="inline-flex items-center gap-1 rounded-[10px] border border-line bg-surface px-1.5 py-1 shadow-card transition active:scale-95"
+      >
+        <CountryFlag code={country} className="h-[18px] w-[26px]" />
+        <Icon name="chevD" size={11} strokeWidth={2.6} className="text-ink-muted" />
+      </button>
+      <CountrySelectSheet open={open} onClose={() => setOpen(false)} />
+    </>
+  );
 }
 
 /** A „Mit szeretnél?" fő belépési pontok — az Ügyintézés ország-tudatos felirattal. */

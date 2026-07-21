@@ -40,38 +40,52 @@ export function CountrySwitcher() {
         <Icon name="chevR" size={16} strokeWidth={2.4} className="text-ink-muted" />
       </button>
 
-      <BottomSheet open={open} onClose={() => setOpen(false)} title="Válassz országot">
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          {COUNTRIES.map((c) => {
-            const active = c.code === current.code;
-            return (
-              <button
-                key={c.code}
-                type="button"
-                onClick={() => {
-                  setCode(c.code);
-                  setOpen(false);
-                }}
-                className={cn(
-                  "relative flex items-center gap-2 rounded-xl border px-3 py-3 text-left transition active:scale-[0.97]",
-                  active
-                    ? "border-primary/40 bg-primary/10"
-                    : "border-line bg-surface hover:bg-surface-alt",
-                )}
-              >
-                <CountryFlag code={c.code} className="h-[18px] w-[26px]" />
-                <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-ink">{c.name}</span>
-                {active && <Icon name="check" size={15} strokeWidth={3} className="shrink-0 text-primary" />}
-                {!c.enabled && !active && (
-                  <span className="absolute right-1.5 top-1.5 rounded-full bg-ink/10 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wide text-ink-muted">
-                    soon
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </BottomSheet>
+      <CountrySelectSheet open={open} onClose={() => setOpen(false)} />
     </div>
+  );
+}
+
+/**
+ * Újrahasznosítható ország-választó alsó lap — a menü CountrySwitcher-e ÉS a
+ * kezdőlapi koppintható zászló is ezt nyitja. A választás a közös
+ * country-pref tárolóba megy.
+ */
+export function CountrySelectSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [code, setCode] = usePreferredCountry();
+  const current = getCountry(code) ?? getCountry(DEFAULT_COUNTRY)!;
+
+  return (
+    <BottomSheet open={open} onClose={onClose} title="Válassz országot">
+      <div className="grid grid-cols-2 gap-2 pt-1">
+        {COUNTRIES.map((c) => {
+          const active = c.code === current.code;
+          return (
+            <button
+              key={c.code}
+              type="button"
+              onClick={() => {
+                setCode(c.code);
+                onClose();
+              }}
+              className={cn(
+                "relative flex items-center gap-2 rounded-xl border px-3 py-3 text-left transition active:scale-[0.97]",
+                active
+                  ? "border-primary/40 bg-primary/10"
+                  : "border-line bg-surface hover:bg-surface-alt",
+              )}
+            >
+              <CountryFlag code={c.code} className="h-[18px] w-[26px]" />
+              <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-ink">{c.name}</span>
+              {active && <Icon name="check" size={15} strokeWidth={3} className="shrink-0 text-primary" />}
+              {!c.enabled && !active && (
+                <span className="absolute right-1.5 top-1.5 rounded-full bg-ink/10 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wide text-ink-muted">
+                  soon
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </BottomSheet>
   );
 }
