@@ -2,26 +2,18 @@
 
 import { ScreenHeader } from "@/components/ui";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { getCountry, countryLocative, DEFAULT_COUNTRY } from "@/lib/countries";
+import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 
 /**
- * Ország-tudatos állások-fejléc — a többi menüvel egységes ScreenHeader
- * (eyebrow + cím + „…" menü). Mount előtt CH (= SSR), mount után a választott
- * ország neve (Svájc / Ausztria / …).
- *
- * A cím (nem csak az apró eyebrow) is kimondja az országot — user-visszajelzés
- * (2026-07-21): a kis eyebrow-szöveg könnyen elsikkad, a nagy H1-ben viszont
- * egyértelmű. Ugyanaz a „-ban/-ben" minta, mint a kezdőlapi „Ügyintézés
- * Ausztriában" gombnál (countryLocative).
+ * Ország-tudatos állások-fejléc — EGYSÉGES mintát követ a Szaknévsor-
+ * fejléccel (SzaknevsorHeader.tsx): `eyebrow="{Funkció} · {Ország}"` + rövid
+ * cím. ⚠️ NINCS zászló-emoji az eyebrow-ban: Windows-on a 🇦🇹-szerű
+ * zászló-emojik nem képként, hanem a két betűkódként ("AT") jelennek meg —
+ * user-visszajelzés (2026-07-21) szerint ez zavaró/nem egységes volt.
+ * Mount előtt CH (= SSR), mount után a választott ország neve.
  */
 export function AllasokHeader() {
   const [prefCountry] = usePreferredCountry();
-  const code = prefCountry ?? DEFAULT_COUNTRY;
-  const flag = getCountry(code)?.flag ?? "🇨🇭";
-  return (
-    <ScreenHeader
-      eyebrow={`${flag} Kinti Állások`}
-      title={`Állások ${countryLocative(code)}`}
-    />
-  );
+  const name = getCountry(prefCountry ?? DEFAULT_COUNTRY)?.name ?? "Svájc";
+  return <ScreenHeader eyebrow={`Állások · ${name}`} title="Állások" />;
 }

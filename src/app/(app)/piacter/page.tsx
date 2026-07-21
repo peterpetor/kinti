@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
-import { ScreenHeader } from "@/components/ui/headers";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { getHousingListings, getHousingListingForNotify } from "@/lib/repo";
 import { isPro } from "@/lib/subscriptions";
@@ -8,6 +7,7 @@ import { formatHousingPrice, HOUSING_TYPE_LABELS, type HousingType } from "@/lib
 import { regionName } from "@/lib/regions";
 import { housingListingJsonLd, safeJsonLdStringify } from "@/lib/json-ld";
 import { PiacterTabs, type PiacterTab } from "./piacter-tabs";
+import { PiacterHeader } from "./PiacterHeader";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -130,8 +130,9 @@ async function PiacterContent({ tab, hirdetesId }: { tab: PiacterTab; hirdetesId
         {hirdetesId && <HousingListingJsonLd id={hirdetesId} />}
         {/* ROOT tab-oldal (TabBar 4. fül) → nincs back, a „…" menü látszik —
             ugyanaz a gomb, ugyanott, mint a többi fő oldalon (user-jelzés;
-            a ScreenHeader root-szabálya adja automatikusan). */}
-        <ScreenHeader eyebrow="Piactér" title="Albérlet és hirdetések" />
+            a ScreenHeader root-szabálya adja automatikusan). Ország-tudatos
+            fejléc (PiacterHeader), egységes a Szaknévsor/Állások mintával. */}
+        <PiacterHeader />
 
         <PiacterTabs
           initialTab={tab}
