@@ -4,9 +4,10 @@ import { getJobs, getWorkerProfileByUser } from "@/lib/repo";
 import { isPro } from "@/lib/subscriptions";
 import { Icon } from "@/components/ui";
 import { AllasokHeader } from "./AllasokHeader";
-import { JobAlertRadar } from "@/components/views/job-alert-radar";
 import { JobsBrowser } from "@/components/views/jobs-browser";
-import { JobSourcesSection } from "@/components/views/job-sources-section";
+// A jobs-lista ALATTI modulok (radar + külső források) lazy chunkban — nem
+// terhelik a kezdeti /allasok bundle-t (ld. allasok-lazy.tsx).
+import { JobAlertRadarLazy, JobSourcesSectionLazy } from "@/components/views/allasok-lazy";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 
 export const runtime = "edge";
@@ -65,7 +66,7 @@ export default async function JobsPage() {
 
         {/* Állás-riasztás modul — a lista után: „nem találtad? kérj értesítést". */}
         <div className="animate-fade-up animate-delay-100">
-          <JobAlertRadar />
+          <JobAlertRadarLazy />
         </div>
 
         {/* PRO álláskeresési eszközök — PRO-konverziós horgony (user-kérés);
@@ -123,7 +124,7 @@ export default async function JobsPage() {
         </Link>
 
         {/* Hol keress még? — ország-tudatos hivatalos álláskereső-források (jogtiszta, link-out) */}
-        <JobSourcesSection />
+        <JobSourcesSectionLazy />
 
         {/* Állás→lakhatás híd: az új munka gyakran költözéssel jár — a börze
             a természetes következő lépés (és a börze kínálat-építése is). */}
