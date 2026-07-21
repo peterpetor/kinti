@@ -1,14 +1,38 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Icon, type IconName } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { RentCostCalculator } from "@/components/views/rent-cost-calculator";
-import { HousingSourcesSection } from "@/components/views/housing-sources-section";
 import { HOUSING_DISCLAIMER, HOUSING_SAFETY_TIPS } from "@/lib/housing";
 import type { HousingListing } from "@/lib/repo-housing";
 import { HousingFeed } from "./housing-feed";
+
+/** aria-rejtett magasság-tartó helyőrző a lazy chunkokhoz (CLS-védelem). */
+function box(cls: string) {
+  const Placeholder = () => <div className={cls} aria-hidden />;
+  return Placeholder;
+}
+
+// A Lakbér-kalkulátor TELJES lánca (RentCostCalculator + RentCompare +
+// lib/rent-cost adat, ~1000 sor kliens-kód) CSAK a Kalkulátor-fülön kell —
+// az alapfül (Börze) látogatója sosem látja. Lazy chunk: fül-váltáskor
+// (vagy ?tab=kalkulator mély-linknél mount után) töltődik be. A memória-
+// szabály (interaktív eszköz teljes adata a kliensen = valós UX-igény)
+// TELJESÜL: az adat a kalkulátor chunkjában marad, csak nem a Börze-fül
+// kezdeti bundle-jét terheli.
+const RentCostCalculatorLazy = dynamic(
+  () => import("@/components/views/rent-cost-calculator").then((m) => m.RentCostCalculator),
+  { ssr: false, loading: box("min-h-[420px]") },
+);
+
+// Link-out szekció a feed ALATT; minden linkje rel=...nofollow (nem SEO-cél)
+// → az ssr:false biztonságos, a hajtás alatti helye miatt vizuálisan ingyenes.
+const HousingSourcesSectionLazy = dynamic(
+  () => import("@/components/views/housing-sources-section").then((m) => m.HousingSourcesSection),
+  { ssr: false, loading: box("min-h-[180px]") },
+);
 
 export type PiacterTab = "borze" | "kalkulator" | "koltoztetes";
 
@@ -126,7 +150,7 @@ export function PiacterTabs({
           {/* Link-out a fő portálokra — a börze így sosem „üres" (jogtiszta:
               csak kilinkelünk, idegen hirdetést nem tárolunk/mutatunk —
               részletek a lib/housing-sources fejlécében). */}
-          <HousingSourcesSection />
+          <HousingSourcesSectionLazy />
         </div>
       )}
 
@@ -136,7 +160,7 @@ export function PiacterTabs({
             Mielőtt aláírod a bérleti szerződést: kaució, rezsi és az év végi elszámolás
             várható költségei — országra szabva.
           </p>
-          <RentCostCalculator />
+          <RentCostCalculatorLazy />
         </div>
       )}
 
