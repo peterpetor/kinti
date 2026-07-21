@@ -5,27 +5,28 @@ import {
   SectionHeader,
   DropdownMenu,
 } from "@/components/ui";
-import { WeatherWidget } from "@/components/weather-widget";
+// FENT MARADÓ (eager, first paint fölött): fejléc + hero-zóna.
 import { HomeCountryFlag, HomePrimaryActions, HomeChCards } from "@/components/home-country-aware";
-import { MyPostsBanner } from "@/components/my-posts-banner";
-import { DailyStreak } from "@/components/daily-streak";
-import { OnboardingChecklist } from "@/components/onboarding-checklist";
-import { ReviewFollowupCard } from "@/components/review-followup-card";
 import { GlobalSearch } from "@/components/global-search";
-import { PwaInstallCard } from "@/components/pwa-install-card";
-import { RelocationReminderBanner } from "@/components/relocation-reminder-banner";
-import { ExchangeRateWidget } from "@/components/exchange-rate-widget";
-import { KvizDailyCard } from "@/components/kviz-daily-card";
-import { NapiSzoCard } from "@/components/napi-szo-card";
-import { HomePlatformGrid } from "@/components/home-platform-grid";
 import { KintiAssistant } from "@/components/kinti-assistant";
-import { PersonalizedHome } from "@/components/personalized-home";
 import { HomeGreeting } from "@/components/home-greeting";
-import { ReferralHomeCard } from "@/components/referral-home-card";
 import { TrustBar } from "@/components/trust-bar";
-import { NewsletterCtaCard } from "@/components/newsletter-cta-card";
-import { NearbyBusinesses } from "@/components/nearby-businesses";
-import { HomeWidgets } from "@/components/home-widgets";
+// HAJTÁS ALATTI / feltételes komponensek — LAZY chunk (ld. home-lazy.tsx), hogy
+// ne terheljék a kezdőlap első bundle-jét (231 kB → mérve kevesebb).
+import {
+  MyPostsBannerLazy,
+  ReviewFollowupCardLazy,
+  RelocationReminderBannerLazy,
+  PersonalizedHomeLazy,
+  OnboardingChecklistLazy,
+  DailyStreakLazy,
+  HomeWidgetsSectionLazy,
+  NearbyBusinessesLazy,
+  HomePlatformGridLazy,
+  ReferralHomeCardLazy,
+  NewsletterCtaCardLazy,
+  PwaInstallCardLazy,
+} from "@/components/home-lazy";
 import { getBusinessesForList, countOpenB2bProjects } from "@/lib/repo";
 import { cached } from "@/lib/edge-cache";
 
@@ -76,10 +77,10 @@ export default async function FeedPage() {
       {/* ── 1. STÁTUSZ-SÁV: kontextuális bannerek (többnyire null-t adnak,
           csak akkor jelennek meg, ha VAN mondanivalójuk — így elöl állhatnak
           anélkül, hogy a hétköznapi nyitóképet terhelnék). ─────────────────── */}
-      <MyPostsBanner />
+      <MyPostsBannerLazy />
       {/* Hívás-utáni vélemény-kérő (2 óra – 14 nap ablak, cégenként egyszer). */}
-      <ReviewFollowupCard />
-      <RelocationReminderBanner />
+      <ReviewFollowupCardLazy />
+      <RelocationReminderBannerLazy />
 
       {/* ── 2. HERO: az asszisztens a nyitó-elem — „mi a kérdésed?" a
           legerősebb belépő (irányít, nem tanácsol). ─────────────────────────── */}
@@ -93,20 +94,13 @@ export default async function FeedPage() {
 
       {/* ── 4. SZEMÉLYES RÉTEG: rád-hangolt ajánló + aktivációs checklist —
           a cselekvő-zóna UTÁN (nem tolja le a fő célokat), de még elöl. ─────── */}
-      <PersonalizedHome />
-      <OnboardingChecklist />
+      <PersonalizedHomeLazy />
+      <OnboardingChecklistLazy />
 
       {/* ── 5. NAPI RITMUS: sorozat + testreszabható napi widgetek — a
           visszatérés-motorok egy blokkban. ──────────────────────────────────── */}
-      <DailyStreak />
-      <HomeWidgets
-        widgets={[
-          { id: "weather", label: "Időjárás", node: <WeatherWidget /> },
-          { id: "exchange", label: "Árfolyam", node: <ExchangeRateWidget /> },
-          { id: "kviz", label: "Napi kvíz", node: <KvizDailyCard /> },
-          { id: "napiszo", label: "Napi szó", node: <NapiSzoCard /> },
-        ]}
-      />
+      <DailyStreakLazy />
+      <HomeWidgetsSectionLazy />
 
       {/* ── 6. FELFEDEZÉS: a környék + a két nagy belépő-kártya. ───────────── */}
       <section className="space-y-3">
@@ -119,7 +113,7 @@ export default async function FeedPage() {
         >
           A közeledben
         </SectionHeader>
-        <NearbyBusinesses businesses={nearby} />
+        <NearbyBusinessesLazy businesses={nearby} />
       </section>
 
       <HomeChCards />
@@ -127,12 +121,12 @@ export default async function FeedPage() {
       {/* ── 7. TELJES KATALÓGUS — a 27-csempés modul-térkép a böngészőknek;
           lentebb a helye, mint a cselekvő-zónának (a gyakori célok fent vannak,
           a menü-szűrő és a kereső is odavisz). ──────────────────────────────── */}
-      <HomePlatformGrid b2bOpenCount={b2bOpenCount} />
+      <HomePlatformGridLazy b2bOpenCount={b2bOpenCount} />
 
       {/* ── 8. NÖVEKEDÉS: meghívó, hírlevél, telepítés, bizalom. ───────────── */}
-      <ReferralHomeCard />
-      <NewsletterCtaCard />
-      <PwaInstallCard />
+      <ReferralHomeCardLazy />
+      <NewsletterCtaCardLazy />
+      <PwaInstallCardLazy />
       <TrustBar />
       </div>
     </>
