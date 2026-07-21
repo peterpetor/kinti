@@ -86,6 +86,64 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
         </p>
       </header>
 
+      {/* Admin-menük — legfelül, mert ezek a leggyakrabban használt belépési pontok */}
+      <section className="space-y-2">
+        <h2 className="text-[14px] font-extrabold text-ink">Admin-menük</h2>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/admin/moderation"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            🛡️ Moderációs sor (kézi jóváhagyás)
+          </Link>
+          <Link
+            href="/admin/job-board"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-success px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            💼 Állásportál moderáció
+          </Link>
+          <Link
+            href="/admin/jeloltek"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            🤝 Jelöltek (közvetítés)
+          </Link>
+          <Link
+            href="/admin/kozvetites"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            🔎 Közvetítő-kereső
+          </Link>
+          <Link
+            href="/admin/blocklist"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-accent px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
+          >
+            🚫 Tiltólista (ban)
+          </Link>
+
+          <Link
+            href="/admin/claims"
+            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
+          >
+            <Icon name="flag" size={13} strokeWidth={2.4} /> Claim-igénylések
+          </Link>
+          <Link
+            href="/admin/newsletter"
+            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
+          >
+            <Icon name="send" size={13} strokeWidth={2.4} /> Hírlevél küldése
+          </Link>
+          <Link
+            href="/admin/moderation/audit-log"
+            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
+          >
+            📋 Audit log (idővonal)
+          </Link>
+          {/* Szemantikus kereső: teljes Vectorize-újraindexelés (seed-import után kell) */}
+          <ReindexSearchButton />
+        </div>
+      </section>
+
       {/* Ország-szűrő: a country_code-os adatok (vállalkozás, esemény, állás) + listák */}
       <nav className="flex flex-wrap gap-1.5">
         <CountryTab code="all" label="🌍 Mind" active={country === "all"} />
@@ -524,63 +582,6 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
       </section>
 
 
-      {/* Egyéb admin linkek */}
-      <section className="space-y-2 border-t border-line pt-4">
-        <h2 className="text-[14px] font-extrabold text-ink">Egyéb admin</h2>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href="/admin/moderation"
-            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
-          >
-            🛡️ Moderációs sor (kézi jóváhagyás)
-          </Link>
-          <Link
-            href="/admin/job-board"
-            className="inline-flex items-center gap-1.5 rounded-pill bg-success px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
-          >
-            💼 Állásportál moderáció
-          </Link>
-          <Link
-            href="/admin/jeloltek"
-            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
-          >
-            🤝 Jelöltek (közvetítés)
-          </Link>
-          <Link
-            href="/admin/kozvetites"
-            className="inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
-          >
-            🔎 Közvetítő-kereső
-          </Link>
-          <Link
-            href="/admin/blocklist"
-            className="inline-flex items-center gap-1.5 rounded-pill bg-accent px-4 py-2 text-[12px] font-extrabold text-white shadow-card"
-          >
-            🚫 Tiltólista (ban)
-          </Link>
-
-          <Link
-            href="/admin/claims"
-            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
-          >
-            <Icon name="flag" size={13} strokeWidth={2.4} /> Claim-igénylések
-          </Link>
-          <Link
-            href="/admin/newsletter"
-            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
-          >
-            <Icon name="send" size={13} strokeWidth={2.4} /> Hírlevél küldése
-          </Link>
-          <Link
-            href="/admin/moderation/audit-log"
-            className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink"
-          >
-            📋 Audit log (idővonal)
-          </Link>
-          {/* Szemantikus kereső: teljes Vectorize-újraindexelés (seed-import után kell) */}
-          <ReindexSearchButton />
-        </div>
-      </section>
     </div>
   );
 }
