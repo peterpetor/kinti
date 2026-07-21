@@ -55,8 +55,21 @@ export default async function JobsPage() {
           </div>
         </section>
 
-        {/* PRO álláskeresési eszközök — a két kész AI-eszköz eddig csak a
-            menüből volt elérhető; ez a fő PRO-konverziós horgony (user-kérés). */}
+        {/* Kereső + EGYESÍTETT lista: kiemelt Kinti-hirdetések elöl, majd a többi
+            Kinti állás, végül az API-ból aggregált élő (kifelé linkelő) hirdetések.
+            A LISTA AZ ELSŐ (egyszerűsítés, 2026-07-21): aki az Állások fülre
+            koppint, állásokat akar látni — a kiegészítő modulok (radar, PRO-
+            eszközök, közvetítés) a lista UTÁN következnek, ahol a végigböngészés
+            után természetes következő lépések. */}
+        <JobsBrowser jobs={jobs} proMatch={proMatch} />
+
+        {/* Állás-riasztás modul — a lista után: „nem találtad? kérj értesítést". */}
+        <div className="animate-fade-up animate-delay-100">
+          <JobAlertRadar />
+        </div>
+
+        {/* PRO álláskeresési eszközök — PRO-konverziós horgony (user-kérés);
+            a lista után is az Állások oldal törzs-eleme marad. */}
         <section className="rounded-card border border-primary/25 bg-gradient-to-br from-primary/5 to-surface p-4 shadow-card">
           <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">
             <Icon name="sparkles" size={13} strokeWidth={2.4} /> PRO álláskeresési eszközök
@@ -91,11 +104,6 @@ export default async function JobsPage() {
           </div>
         </section>
 
-        {/* Állás-riasztás modul */}
-        <div className="animate-fade-up animate-delay-100">
-          <JobAlertRadar />
-        </div>
-
         {/* B2B jelölt-tölcsér: ingyenes aktív közvetítés (layer3 opt-in a profilban) */}
         <Link
           href="/allasok/profil"
@@ -113,10 +121,6 @@ export default async function JobsPage() {
           </span>
           <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
         </Link>
-
-        {/* Kereső + EGYESÍTETT lista: kiemelt Kinti-hirdetések elöl, majd a többi Kinti
-            állás, végül az API-ból aggregált élő (kifelé linkelő) hirdetések — egy helyen. */}
-        <JobsBrowser jobs={jobs} proMatch={proMatch} />
 
         {/* Hol keress még? — ország-tudatos hivatalos álláskereső-források (jogtiszta, link-out) */}
         <JobSourcesSection />
