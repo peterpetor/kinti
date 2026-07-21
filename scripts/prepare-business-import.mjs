@@ -635,6 +635,11 @@ const CITY = {
   // Neuzeug (Sierning község, Steyr-Land, Felső-Ausztria) hiányzott, ORSZÁG-KÖZÉP
   // fallbackra esett (hibás pin + NULL canton) — Nominatim-mal ellenőrzött koordináta.
   "neuzeug": ["OOE", 48.0455687, 14.3351690],
+  // 2026-07-21 bővítés (18. kör) — NL fordító (Wapenveld, Gelderland) + AT/DE
+  // gyógyszerész-találatok (pharmacy staff-oldalak, ld. Rechnitz/Oberpullendorf
+  // már fent, itt csak az újak):
+  "wapenveld": ["GE", 52.4333, 6.0667],
+  "tuningen": ["BW", 48.0331, 8.6000],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
