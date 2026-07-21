@@ -200,7 +200,7 @@ export function PhoneReveal({
       aria-label={variant === "icon" ? "Telefonszám mutatása" : undefined}
       className={className}
     >
-      <Icon name="phone" size={16} strokeWidth={2.2} />
+      <Icon name="phone" size={16} strokeWidth={2.2} className="shrink-0" />
       {variant === "button" && <span>{loading ? "Betöltés…" : "Telefonszám mutatása"}</span>}
     </button>
   );

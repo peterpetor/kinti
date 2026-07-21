@@ -90,7 +90,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 const actionBtn =
-  "flex h-[46px] flex-1 items-center justify-center gap-1.5 rounded-[14px] text-sm font-bold tracking-[-0.01em] transition active:scale-[0.98]";
+  "flex h-[46px] flex-1 items-center justify-center gap-1.5 rounded-[14px] px-3 text-center text-sm font-bold leading-tight tracking-[-0.01em] transition active:scale-[0.98]";
 
 export default async function BusinessPage({
   params,
