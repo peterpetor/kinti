@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, useRef, lazy, Suspense } from "react";
+import { haptic } from "@/lib/haptics";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BusinessCard, CategoryPills, Icon } from "@/components/ui";
@@ -123,6 +124,14 @@ export function ExploreView({
   const [openNow, setOpenNow] = useState(false);
   const [passOnly, setPassOnly] = useState(initialPass);
   const [minYears, setMinYears] = useState(0);
+  // Progresszív szűrő-felfedés: alapból csak a két hétköznapi szűrő (Régió +
+  // Közelemben) látszik, a ritkábban használtak a „További szűrők" mögött.
+  // Automatikusan nyitva, ha bármelyik rejtett szűrő aktív (pl. a menü
+  // „Kedvenceim" ?fav=1 linkjéről érkezve) — aktív szűrő SOSEM tűnhet el.
+  const [moreFiltersOpen, setMoreFiltersOpen] = useState(initialFav || initialPass);
+  const advancedActiveCount =
+    (showFavs ? 1 : 0) + (passOnly ? 1 : 0) + (openNow ? 1 : 0) + (minYears > 0 ? 1 : 0);
+  const filtersExpanded = moreFiltersOpen || advancedActiveCount > 0;
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   // Alapból LISTA (gyors pásztázás + SEO + nincs hydration-mismatch: az SSR és az
   // első kliens-render is "list"). A user térkép/lista választását megjegyezzük:
@@ -522,6 +531,62 @@ export function ExploreView({
           </div>
         </BottomSheet>
 
+        {/* Közelemben / radius-szűrő — a Régió mellett ez a másik hétköznapi szűrő */}
+        <button
+          type="button"
+          onClick={userPos ? clearGeolocation : requestGeolocation}
+          aria-pressed={userPos != null}
+          disabled={geoState === "loading"}
+          className={cn(
+            "inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            userPos
+              ? "bg-primary/10 border-primary/30 text-primary font-bold"
+              : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
+            geoState === "loading" && "opacity-60 cursor-wait",
+          )}
+        >
+          <Icon
+            name="pin"
+            size={12}
+            strokeWidth={2.4}
+            className={cn("shrink-0", userPos ? "text-primary" : "text-ink-muted")}
+          />
+          <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
+            {geoState === "loading"
+              ? "Helymeghatározás…"
+              : userPos
+                ? `${radiusKm} km-en belül · ✕`
+                : "Közelemben"}
+          </span>
+        </button>
+
+        {/* Radius választó — csak ha aktív a helymeghatározás */}
+        {userPos && (
+          <label className="relative inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border border-primary/30 bg-primary/5 px-3 py-2 shadow-card cursor-pointer transition hover:bg-primary/10">
+            <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-primary/70 select-none">
+              Sugár
+            </span>
+            <span className="shrink-0 text-[13px] font-bold tracking-[-0.01em] text-primary">
+              {radiusKm} km
+            </span>
+            <Icon name="chevD" size={13} strokeWidth={2.2} className="shrink-0 text-primary/70" />
+            <select
+              value={radiusKm}
+              onChange={(e) => handleRadiusChange(Number(e.target.value) as RadiusKm)}
+              aria-label="Keresési sugár"
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+            >
+              {RADIUS_OPTIONS_KM.map((km) => (
+                <option key={km} value={km}>
+                  {km} km
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+
+        {filtersExpanded && (
+          <>
         {/* Kedvencek szűrő */}
         <button
           type="button"
@@ -628,58 +693,29 @@ export function ExploreView({
           />
         </div>
 
-        {/* Közelemben / radius-szűrő */}
-        <button
-          type="button"
-          onClick={userPos ? clearGeolocation : requestGeolocation}
-          aria-pressed={userPos != null}
-          disabled={geoState === "loading"}
-          className={cn(
-            "inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
-            userPos
-              ? "bg-primary/10 border-primary/30 text-primary font-bold"
-              : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
-            geoState === "loading" && "opacity-60 cursor-wait",
-          )}
-        >
-          <Icon
-            name="pin"
-            size={12}
-            strokeWidth={2.4}
-            className={cn("shrink-0", userPos ? "text-primary" : "text-ink-muted")}
-          />
-          <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
-            {geoState === "loading"
-              ? "Helymeghatározás…"
-              : userPos
-                ? `${radiusKm} km-en belül · ✕`
-                : "Közelemben"}
-          </span>
-        </button>
+          </>
+        )}
 
-        {/* Radius választó — csak ha aktív a helymeghatározás */}
-        {userPos && (
-          <label className="relative inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border border-primary/30 bg-primary/5 px-3 py-2 shadow-card cursor-pointer transition hover:bg-primary/10">
-            <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-primary/70 select-none">
-              Sugár
-            </span>
-            <span className="shrink-0 text-[13px] font-bold tracking-[-0.01em] text-primary">
-              {radiusKm} km
-            </span>
-            <Icon name="chevD" size={13} strokeWidth={2.2} className="shrink-0 text-primary/70" />
-            <select
-              value={radiusKm}
-              onChange={(e) => handleRadiusChange(Number(e.target.value) as RadiusKm)}
-              aria-label="Keresési sugár"
-              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-            >
-              {RADIUS_OPTIONS_KM.map((km) => (
-                <option key={km} value={km}>
-                  {km} km
-                </option>
-              ))}
-            </select>
-          </label>
+        {/* A ritkább szűrők kapcsolója — csak akkor látszik, ha egyik rejtett
+            szűrő sem aktív (aktív szűrőt nem engedünk eltüntetni). */}
+        {advancedActiveCount === 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              haptic("selection");
+              setMoreFiltersOpen((v) => !v);
+            }}
+            aria-expanded={filtersExpanded}
+            className="col-span-2 inline-flex items-center justify-center gap-1.5 rounded-pill border border-dashed border-line bg-surface px-3 py-2 text-[11.5px] font-bold tracking-wide text-ink-muted transition hover:bg-surface-alt active:scale-[0.97]"
+          >
+            {filtersExpanded ? "Kevesebb szűrő" : "További szűrők"}
+            <Icon
+              name="chevD"
+              size={13}
+              strokeWidth={2.2}
+              className={cn("shrink-0 transition-transform", filtersExpanded && "rotate-180")}
+            />
+          </button>
         )}
       </div>
 
