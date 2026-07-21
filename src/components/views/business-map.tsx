@@ -15,6 +15,8 @@ import { mapEngine } from "@/lib/map-config";
 import { spreadColocated } from "@/lib/cluster";
 import { haversineKm, formatDistanceKm } from "@/lib/distance";
 import { PhoneReveal } from "@/components/business-analytics-tracker";
+import { hasStreetAddress } from "@/lib/address";
+import { getCountry } from "@/lib/countries";
 
 /**
  * BusinessMap — wrapper: WebGL-detektálás + motor-választás + közös overlay-ek.
@@ -399,6 +401,13 @@ function SelectedCard({ business: b, distanceKm }: { business: ListBusiness; dis
   const knownHours = parseWorkingHoursStrict(b.workingHours ?? null);
   const openStatus = knownHours ? calculateBusinessHoursStatus(knownHours) : null;
   const openTextTrim = b.openText?.trim() || null;
+  // Útvonal (turn-by-turn a Maps-appban) CSAK utcaszintű címnél — városközpontra
+  // geokódolt cégnél félrevezető lenne (ugyanaz a guard, mint a /szaknevsor/[id]).
+  const directionsHref = hasStreetAddress(b.address)
+    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+        [b.address, getCountry(b.country)?.name].filter(Boolean).join(", "),
+      )}`
+    : null;
   return (
     <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-pop">
       <Link
@@ -470,13 +479,30 @@ function SelectedCard({ business: b, distanceKm }: { business: ListBusiness; dis
           className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-success text-white active:scale-95"
         />
       )}
-      <Link
-        href={`/szaknevsor/${b.id}`}
-        aria-label="Részletek"
-        className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-primary text-white active:scale-95"
-      >
-        <Icon name="arrowRight" size={16} strokeWidth={2.4} />
-      </Link>
+      {/* Útvonal (Maps-app navigáció) ha van utcaszintű cím, egyébként a
+          Részletek-nyíl — a kártya-törzs koppintása amúgy is a részletoldalra visz,
+          így a Részletek-akció sosem vész el, az Útvonal viszont a térkép „megtaláltam
+          → odamegyek" hurkát zárja be. */}
+      {directionsHref ? (
+        <a
+          href={directionsHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Útvonal ide: ${b.name}`}
+          title="Útvonal"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-primary text-white active:scale-95"
+        >
+          <Icon name="nav" size={16} strokeWidth={2.4} />
+        </a>
+      ) : (
+        <Link
+          href={`/szaknevsor/${b.id}`}
+          aria-label="Részletek"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-primary text-white active:scale-95"
+        >
+          <Icon name="arrowRight" size={16} strokeWidth={2.4} />
+        </Link>
+      )}
     </div>
   );
 }

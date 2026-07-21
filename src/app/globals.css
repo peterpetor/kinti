@@ -546,16 +546,28 @@
   border-color: rgb(var(--accent)) transparent transparent transparent;
 }
 
-/* Kiválasztott pin — kicsit nagyobb + erősebb gyűrű (kártya hozzá tartozik). */
+/* Kiválasztott pin — kicsit nagyobb + erősebb gyűrű (kártya hozzá tartozik).
+   A pin DivIcon-ja aktiváláskor újra-renderelődik (más cache-kulcs), ezért a
+   pop-animáció minden kiválasztáskor egyszer lefut → a carousel-lapozásnál a
+   szem azonnal megtalálja, MELYIK pinhez tartozik az épp mutatott kártya. */
 .kinti-pin-v2--active {
   transform: scale(1.18) translateY(-2px);
   z-index: 1000 !important;
+  animation: kinti-pin-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .kinti-pin-v2--active::before {
   box-shadow:
     inset 1.5px 1.5px 0 rgb(255 255 255 / 0.2),
     0 0 0 3px rgb(var(--surface)),
     0 4px 10px rgb(0 0 0 / 0.25);
+}
+@keyframes kinti-pin-pop {
+  0%   { transform: scale(1) translateY(0); }
+  55%  { transform: scale(1.32) translateY(-8px); }
+  100% { transform: scale(1.18) translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kinti-pin-v2--active { animation: none; }
 }
 
 /* ===========================================================================
