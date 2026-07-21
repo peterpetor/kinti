@@ -7,10 +7,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ScreenHeader } from "@/components/ui/headers";
 import { Icon } from "@/components/ui/icons";
-import { LESSONS } from "./data";
-import { LESSONS_AT } from "./data-at";
-import { LESSONS_DE } from "./data-de";
-import { LESSONS_NL } from "./data-nl";
+import type { Lesson } from "./data";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { cn } from "@/lib/cn";
@@ -22,6 +19,12 @@ export default function LanguagePathPage() {
   const [totalXp, setTotalXp] = useState(0);
   const [streak, setStreak] = useState(0);
   const [prefCountry] = usePreferredCountry();
+  // A 4 ország lecke-adata (CH/AT/DE/NL, ~6000 sor összesen, mind a teljes
+  // gyakorlat-szöveggel) korábban MIND a 4 statikusan importálva volt, pedig
+  // egyszerre csak EGY ország kurzusa kell — ez tette az oldalt az egész app
+  // legnehezebbjévé (220 kB First Load). Most CSAK a választott ország
+  // moduljának dinamikus importja fut, mount után.
+  const [lessons, setLessons] = useState<Lesson[] | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("kinti_language_progress");
@@ -30,7 +33,7 @@ export default function LanguagePathPage() {
         const data = JSON.parse(saved);
         setCompletedLessons(data.completed || []);
         setTotalXp(data.xp || 0);
-        
+
         let currentStreak = data.streak || 0;
         if (data.lastPlayedDate) {
           const todayDate = new Date();
@@ -50,12 +53,29 @@ export default function LanguagePathPage() {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+
+  useEffect(() => {
+    let cancelled = false;
+    const load =
+      country === "AT"
+        ? import("./data-at").then((m) => m.LESSONS_AT)
+        : country === "DE"
+          ? import("./data-de").then((m) => m.LESSONS_DE)
+          : country === "NL"
+            ? import("./data-nl").then((m) => m.LESSONS_NL)
+            : import("./data").then((m) => m.LESSONS);
+    load.then((l) => {
+      if (!cancelled) setLessons(l);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [country]);
+
+  if (!mounted || !lessons) {
     return <div className="p-4">Betöltés...</div>;
   }
-
-  const country = prefCountry ?? DEFAULT_COUNTRY;
-  const lessons = country === "AT" ? LESSONS_AT : country === "DE" ? LESSONS_DE : country === "NL" ? LESSONS_NL : LESSONS;
 
   // Group lessons by chapter dynamically
   const chapters = Array.from(new Set(lessons.map((l) => l.chapter))).sort((a, b) => a - b);
