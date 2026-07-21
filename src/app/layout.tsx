@@ -27,6 +27,13 @@ const ORG_JSON_LD = {
   areaServed: ["CH", "AT", "DE", "NL"],
   knowsLanguage: ["hu", "de", "nl"],
   email: "info@kinti.app",
+  sameAs: [
+    "https://www.facebook.com/profile.php?id=61591833836890",
+    "https://www.instagram.com/kinti.app/",
+    "https://www.linkedin.com/company/kintiapp",
+    "https://www.youtube.com/@kintiapp",
+    "https://www.tiktok.com/@kintiapp",
+  ],
 };
 const WEBSITE_JSON_LD = {
   "@context": "https://schema.org",

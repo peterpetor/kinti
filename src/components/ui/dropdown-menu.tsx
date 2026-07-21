@@ -275,6 +275,7 @@ export function DropdownMenu() {
       defaultOpen: true,
       items: [
         { key: "fb", label: "Facebook", href: "https://www.facebook.com/profile.php?id=61591833836890", external: true, tint: "bg-[#1877F2]/10 text-[#1877F2]", icon: { name: "facebook" } },
+        { key: "ig", label: "Instagram", href: "https://www.instagram.com/kinti.app/", external: true, tint: "bg-[#E4405F]/10 text-[#E4405F]", icon: { name: "instagram" } },
         { key: "li", label: "LinkedIn", href: "https://www.linkedin.com/company/kintiapp", external: true, tint: "bg-[#0A66C2]/10 text-[#0A66C2]", icon: { name: "linkedin" } },
         { key: "yt", label: "YouTube", href: "https://www.youtube.com/@kintiapp", external: true, tint: "bg-[#FF0000]/10 text-[#FF0000]", icon: { name: "youtube" } },
         { key: "tt", label: "TikTok", href: "https://www.tiktok.com/@kintiapp", external: true, tint: "bg-[#FE2C55]/10 text-[#FE2C55]", icon: { name: "tiktok" } },
