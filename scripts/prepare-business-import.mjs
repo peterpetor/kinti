@@ -622,6 +622,10 @@ const CITY = {
   "warngau": ["BY", 47.7667, 11.7333],
   "grevenbroich": ["NW", 51.0908, 6.5828],
   "königsfeld": ["NW", 50.6167, 6.9333],
+  // 2026-07-21 bővítés (14. kör) — herold.at "ungarisch" tolmács/fordító találat:
+  // Neuzeug (Sierning község, Steyr-Land, Felső-Ausztria) hiányzott, ORSZÁG-KÖZÉP
+  // fallbackra esett (hibás pin + NULL canton) — Nominatim-mal ellenőrzött koordináta.
+  "neuzeug": ["OOE", 48.0455687, 14.3351690],
 };
 // Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
 const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
