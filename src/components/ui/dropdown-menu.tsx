@@ -12,6 +12,7 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { haptic } from "@/lib/haptics";
+import { recordUse, getTopUsed } from "@/lib/usage-frecency";
 
 /**
  * Főmenü („…") — ADAT-VEZÉRELT szerkezet (2026-07-12-i átalakítás):
@@ -95,6 +96,14 @@ export function DropdownMenu() {
   // Nyitáskor a szűrő tisztán indul.
   useEffect(() => {
     if (isOpen) setQuery("");
+  }, [isOpen]);
+
+  // „Gyakran használt" — a menü a saját használathoz idomul (kliensoldali
+  // számláló, ld. usage-frecency.ts; szerverre semmi nem megy). Nyitáskor
+  // frissül, hogy az aznapi kattintások is számítsanak.
+  const [topUsed, setTopUsed] = useState<string[]>([]);
+  useEffect(() => {
+    if (isOpen) setTopUsed(getTopUsed(5));
   }, [isOpen]);
 
   useEffect(() => {
@@ -294,6 +303,21 @@ export function DropdownMenu() {
     },
   ];
 
+  // ── „Gyakran használt" sor-lista: a mért top-hrefekhez tartozó menüpontok
+  // (a szekciókból visszakeresve, hogy címke/ikon/badge egyezzen). Csak akkor
+  // jelenik meg, ha már legalább 3 valódi szokás kirajzolódott — addig a menü
+  // változatlan, semmi nem ugrál.
+  const itemByHref = new Map<string, MenuItem>();
+  for (const s of sections) {
+    for (const it of s.items) {
+      if (it.href && !it.external && !itemByHref.has(it.href)) itemByHref.set(it.href, it);
+    }
+  }
+  const frequentItems = topUsed
+    .map((h) => itemByHref.get(h))
+    .filter((x): x is MenuItem => !!x)
+    .slice(0, 5);
+
   // ── Szűrés ────────────────────────────────────────────────────────────────
   const q = fold(query.trim());
   const filtering = q.length > 0;
@@ -381,6 +405,20 @@ export function DropdownMenu() {
                 </>
               )}
 
+              {/* ── Gyakran használt (adaptív) — a top 5 egy érintésre. ──── */}
+              {!filtering && frequentItems.length >= 3 && (
+                <div className="pt-1.5">
+                  <div className="px-3 py-2.5 text-[11px] font-black uppercase tracking-widest text-ink-faint">
+                    Gyakran használt
+                  </div>
+                  <div className="space-y-1">
+                    {frequentItems.map((it) => (
+                      <MenuRow key={`freq-${it.key}`} item={it} onNavigate={close} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {visibleSections.length === 0 ? (
                 <p className="px-4 py-10 text-center text-[13px] text-ink-muted">
                   Nincs találat a menüben erre: „{query.trim()}".
@@ -429,6 +467,11 @@ const linkClass =
 /** Egy menüsor — Link / külső <a> / egyedi node, közös ikon-doboz + badge. */
 function MenuRow({ item, onNavigate }: { item: MenuItem; onNavigate: () => void }) {
   if (item.custom) return <>{item.custom}</>;
+  // Belső navigációnál a használat-számláló is tanul (→ „Gyakran használt").
+  const handleNavigate = () => {
+    if (item.href && !item.external) recordUse(item.href);
+    onNavigate();
+  };
   const inner = (
     <>
       <span className={cn("grid h-8 w-8 place-items-center rounded-xl text-base", item.tint)}>
@@ -454,7 +497,7 @@ function MenuRow({ item, onNavigate }: { item: MenuItem; onNavigate: () => void 
     );
   }
   return (
-    <Link href={item.href ?? "/"} onClick={onNavigate} className={linkClass}>
+    <Link href={item.href ?? "/"} onClick={handleNavigate} className={linkClass}>
       {inner}
     </Link>
   );
