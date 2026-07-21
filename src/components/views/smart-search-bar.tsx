@@ -155,6 +155,10 @@ export function SmartSearchBar({
         >
           <Icon name="sparkles" size={15} strokeWidth={2.4} className={busy ? "animate-pulse text-primary" : "text-primary"} />
           {busy ? "…" : "AI-mód"}
+          {/* Kereső-ikon a gomb végén — user-visszajelzés (2026-07-21): a sparkles+
+              „AI-mód" felirat önmagában nem mondta ki egyértelműen, hogy a gombra
+              koppintás KERESÉST indít (inkább egy mód-váltónak tűnt). */}
+          {!busy && <Icon name="search" size={13} strokeWidth={2.6} className="text-ink-faint" />}
         </button>
       </div>
 
