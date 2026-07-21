@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { ListBusiness, Category } from "@/lib/types";
 import { Icon } from "@/components/ui";
@@ -78,30 +78,33 @@ export function BusinessMap({
     [businesses],
   );
 
-  // Alapértelmezett (kiválasztás előtti) kártya: a kiemelt (PRO) mindig elöl
-  // (P2B-átláthatóság), utána — ha van GPS-pozíció — a TÉNYLEGESEN legközelebbi,
-  // nem csak "az első a listában" (ami korábban gyakorlatilag véletlenszerű volt,
-  // ha nem volt sem kiemelt, sem eltérő értékelésű találat).
-  const defaultBiz = useMemo(() => {
-    const featuredBiz = located.find((b) => b.featured);
-    if (featuredBiz) return featuredBiz;
-    if (userPos) {
-      let nearest: ListBusiness | null = null;
-      let nearestDist = Infinity;
-      for (const b of located) {
-        if (b.lat == null || b.lng == null) continue;
-        const d = haversineKm(userPos.lat, userPos.lng, b.lat, b.lng);
-        if (d < nearestDist) {
-          nearestDist = d;
-          nearest = b;
-        }
+  // A lapozható kártya-carousel STABIL sorrendje: a kiemelt (PRO) mindig elöl
+  // (P2B-átláthatóság), utána — ha van GPS — a legközelebbi. Ez a rendezés a
+  // carousel ÉS a defaultBiz közös forrása, így a carousel első kártyája = az
+  // alapból mutatott kártya (nincs ugrás mount után).
+  const carouselList = useMemo(() => {
+    const arr = [...located];
+    arr.sort((a, b) => {
+      if (!!a.featured !== !!b.featured) return a.featured ? -1 : 1;
+      if (userPos && a.lat != null && a.lng != null && b.lat != null && b.lng != null) {
+        return (
+          haversineKm(userPos.lat, userPos.lng, a.lat, a.lng) -
+          haversineKm(userPos.lat, userPos.lng, b.lat, b.lng)
+        );
       }
-      if (nearest) return nearest;
-    }
-    return located[0] ?? null;
+      return 0;
+    });
+    return arr;
   }, [located, userPos]);
+
+  const defaultBiz = carouselList[0] ?? null;
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = located.find((b) => b.id === selectedId) ?? defaultBiz ?? null;
+  // A carousel akkor jelenik meg, ha van mit lapozni (2+), de nem parttalanul
+  // sok kártyát (40 fölött a klaszterezés úgyis szűrésre/zoomra terel — ott az
+  // alap egy-kártyás nézet marad, a DOM-terhelés bekorlátozva).
+  const CAROUSEL_CAP = 40;
+  const showCarousel = carouselList.length >= 2 && carouselList.length <= CAROUSEL_CAP;
   const selectedDist =
     selected && userPos && selected.lat != null && selected.lng != null
       ? haversineKm(userPos.lat, userPos.lng, selected.lat, selected.lng)
@@ -177,6 +180,7 @@ export function BusinessMap({
             fallbackCenter={fallbackCenter}
             fallbackZoom={fallbackZoom}
             onFail={handleMaplibreFail}
+            panToId={selectedId}
           />
         ) : (
           <LeafletEngine
@@ -186,6 +190,7 @@ export function BusinessMap({
             fallbackCenter={fallbackCenter}
             fallbackZoom={fallbackZoom}
             fullscreen={fullscreen}
+            panToId={selectedId}
           />
         )}
       </ErrorBoundary>
@@ -252,7 +257,16 @@ export function BusinessMap({
           </div>
         )}
 
-        {selected && <SelectedCard business={selected} distanceKm={selectedDist} />}
+        {showCarousel ? (
+          <ResultsCarousel
+            list={carouselList}
+            activeId={selected?.id ?? null}
+            onSelect={setSelectedId}
+            userPos={userPos}
+          />
+        ) : (
+          selected && <SelectedCard business={selected} distanceKm={selectedDist} />
+        )}
       </div>
 
       {located.length === 0 && (
@@ -262,6 +276,117 @@ export function BusinessMap({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// --- lapozható eredmény-carousel (térkép ⇄ kártya szinkron) -----------------
+
+/**
+ * ResultsCarousel — vízszintesen lapozható kártya-sor a térkép alján, KÉTIRÁNYÚ
+ * szinkronban a markerekkel (Google Maps / Airbnb-minta):
+ *
+ *   • Kártyát húzol/lapozol → a középre álló kártya lesz a kiválasztott →
+ *     a térkép finoman ráúszik a pinjére (a szülő `panToId`-ján át).
+ *   • Markert koppintasz → a carousel odagördül az adott kártyához.
+ *
+ * A visszacsatolási hurok ellen: a saját scroll-ból eredő kiválasztást a
+ * `fromScrollRef` jelöli, így a rákövetkező „gördülj a kiválasztotthoz" effekt
+ * nem küzd a felhasználó ujjával; a programozott gördülést az `ignoreScrollRef`
+ * kizárja a scroll-detektálásból.
+ */
+function ResultsCarousel({
+  list,
+  activeId,
+  onSelect,
+  userPos,
+}: {
+  list: ListBusiness[];
+  activeId: string | null;
+  onSelect: (id: string) => void;
+  userPos: { lat: number; lng: number } | null;
+}) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const ignoreScrollRef = useRef(false); // programozott gördülés → ne detektáljon
+  const fromScrollRef = useRef(false); // a kiválasztás a saját scroll-ból jött
+  const rafRef = useRef<number | null>(null);
+  const ignoreTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // activeId (marker-koppintás vagy alap) → a megfelelő kártya középre gördítése.
+  // A getBoundingClientRect-alapú számítás CSAK a scrollert mozgatja (soha nem az
+  // oldalt — a scrollIntoView oldalt is görgethetne).
+  useEffect(() => {
+    if (fromScrollRef.current) {
+      fromScrollRef.current = false;
+      return; // a saját scroll váltotta ki → már a helyén van
+    }
+    const scroller = scrollerRef.current;
+    if (!scroller || !activeId) return;
+    const idx = list.findIndex((b) => b.id === activeId);
+    if (idx < 0) return;
+    const child = scroller.children[idx] as HTMLElement | undefined;
+    if (!child) return;
+    const scRect = scroller.getBoundingClientRect();
+    const chRect = child.getBoundingClientRect();
+    const delta = chRect.left + chRect.width / 2 - (scRect.left + scRect.width / 2);
+    if (Math.abs(delta) < 4) return; // már középen
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    ignoreScrollRef.current = true;
+    scroller.scrollTo({ left: scroller.scrollLeft + delta, behavior: reduce ? "auto" : "smooth" });
+    if (ignoreTimer.current) clearTimeout(ignoreTimer.current);
+    ignoreTimer.current = setTimeout(() => { ignoreScrollRef.current = false; }, 450);
+  }, [activeId, list]);
+
+  useEffect(() => () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (ignoreTimer.current) clearTimeout(ignoreTimer.current);
+  }, []);
+
+  const handleScroll = () => {
+    if (ignoreScrollRef.current) return;
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const scroller = scrollerRef.current;
+      if (!scroller) return;
+      const scRect = scroller.getBoundingClientRect();
+      const center = scRect.left + scRect.width / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      for (let i = 0; i < scroller.children.length; i++) {
+        const el = scroller.children[i] as HTMLElement;
+        const r = el.getBoundingClientRect();
+        const d = Math.abs(r.left + r.width / 2 - center);
+        if (d < bestDist) { bestDist = d; best = i; }
+      }
+      const b = list[best];
+      if (b && b.id !== activeId) {
+        fromScrollRef.current = true;
+        onSelect(b.id);
+      }
+    });
+  };
+
+  return (
+    <div
+      ref={scrollerRef}
+      onScroll={handleScroll}
+      className="no-scrollbar pointer-events-auto flex snap-x snap-mandatory gap-2 overflow-x-auto px-0.5"
+      style={{ scrollbarWidth: "none" }}
+      aria-label="Találatok lapozása"
+    >
+      {list.map((b) => {
+        const dist =
+          userPos && b.lat != null && b.lng != null
+            ? haversineKm(userPos.lat, userPos.lng, b.lat, b.lng)
+            : null;
+        return (
+          <div key={b.id} className="w-[86%] shrink-0 snap-center">
+            <SelectedCard business={b} distanceKm={dist} />
+          </div>
+        );
+      })}
     </div>
   );
 }

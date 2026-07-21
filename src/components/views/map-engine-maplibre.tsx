@@ -28,6 +28,9 @@ export interface MaplibreEngineProps {
   onFail: (reason: string) => void;
   sosAlerts?: SosAlert[];
   onSelectSosAlert?: (id: string) => void;
+  /** Kifejezetten kiválasztott cég (carousel/marker) → finom pásztázás. Ld. a
+   *  Leaflet-motor azonos nevű propját. */
+  panToId?: string | null;
 }
 
 const MAPTILER_KEY = process.env.NEXT_PUBLIC_MAPTILER_KEY;
@@ -80,6 +83,7 @@ export function MaplibreEngine({
   fallbackZoom,
   onFail,
   sosAlerts = [],
+  panToId,
 }: MaplibreEngineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
@@ -95,6 +99,21 @@ export function MaplibreEngine({
   const effectivePosition = myPosition ?? autoPosition;
   const failedRef = useRef(false);
   const sosMarkersRef = useRef<Map<string, MlMarker>>(new Map());
+  const prevPanRef = useRef<string | null>(null);
+
+  // Kifejezett kiválasztás (carousel/marker) → finom pásztázás a cég koordinátájára,
+  // a zoom megtartásával. Azonos id-re nem pásztáz újra (pl. located-frissülésnél).
+  useEffect(() => {
+    if (!panToId || panToId === prevPanRef.current) return;
+    const map = mapRef.current;
+    if (!map) return;
+    const b = located.find((x) => x.id === panToId);
+    if (!b || b.lat == null || b.lng == null) return;
+    prevPanRef.current = panToId;
+    const reduce = typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    map.easeTo({ center: [b.lng, b.lat], duration: reduce ? 0 : 400 });
+  }, [panToId, located]);
 
   // --- init (egyszer) ---
   useEffect(() => {

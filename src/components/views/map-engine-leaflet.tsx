@@ -29,6 +29,11 @@ export interface MapEngineProps {
   onSelectSosAlert?: (id: string) => void;
   /** Ha true, a térkép teljes képernyőn van → a Leaflet-nek újra kell mérnie. */
   fullscreen?: boolean;
+  /** A kártya-carousel/marker-koppintás által KIFEJEZETTEN kiválasztott cég id-je
+   *  (null a kezdő/alapértelmezett kiválasztásnál) → a térkép finoman ráúszik.
+   *  A `selectedId`-től külön, mert az az alap-kártyánál is nem-null lehet, és
+   *  arra NEM akarunk pásztázni (a FitToMarkers keretezi az egészet). */
+  panToId?: string | null;
 }
 
 export function LeafletEngine({
@@ -40,6 +45,7 @@ export function LeafletEngine({
   sosAlerts = [],
   onSelectSosAlert,
   fullscreen,
+  panToId,
 }: MapEngineProps) {
   const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
   // Automatikus pozíció, ha a helymeghatározás már engedélyezve van (prompt nélkül).
@@ -86,6 +92,7 @@ export function LeafletEngine({
       )}
 
       <FitToMarkers businesses={located} sosAlerts={sosAlerts} />
+      <PanToSelected id={panToId ?? null} businesses={located} />
       <Controls onLocate={setMyPosition} />
       <InvalidateSize trigger={fullscreen} />
     </MapContainer>
@@ -282,6 +289,27 @@ function FitToMarkers({ businesses, sosAlerts = [] }: { businesses: ListBusiness
     map.fitBounds(bounds, { padding: [50, 70], maxZoom: 16, animate: true });
   }, [businesses, sosAlerts, map]);
 
+  return null;
+}
+
+/**
+ * A kiválasztott (carousel/marker-koppintás) céghez finoman pásztáz — a zoom-
+ * szintet MEGTARTJA (nem ugrik bele/ki), így a felhasználó térbeli kontextusa
+ * megmarad. Csak explicit (nem-null) kiválasztásnál mozdul; az azonos id ismételt
+ * beállítására nem pásztáz újra (pl. a `located` frissülésekor).
+ */
+function PanToSelected({ id, businesses }: { id: string | null; businesses: ListBusiness[] }) {
+  const map = useMap();
+  const prev = useRef<string | null>(null);
+  useEffect(() => {
+    if (!id || id === prev.current) return;
+    const b = businesses.find((x) => x.id === id);
+    if (!b || b.lat == null || b.lng == null) return;
+    prev.current = id;
+    const reduce = typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    map.panTo([b.lat, b.lng], { animate: !reduce, duration: 0.4 });
+  }, [id, businesses, map]);
   return null;
 }
 
