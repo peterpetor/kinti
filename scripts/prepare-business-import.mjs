@@ -113,6 +113,15 @@ const CATEGORY = {
   alternativgyogyasz: ["termeszetgyogyasz", "Természetgyógyász"],
   ingatlan: ["ingatlan", "Ingatlan"],
   it: ["it", "Informatikus"],
+  // 2026-07-21 (16. kör, OSM regionális harvest): a `husszek`/`kavez`/
+  // `zoldseges` KANONIKUS kategóriák már léteztek a `categories` táblában
+  // (a régi harvest-osm-hu-biz.mjs / db/seed-osm-biz.sql pipeline hozta létre),
+  // de a CSV-importos útnak eddig nem volt hozzájuk alias-kulcsa — az ilyen
+  // category_id-jú sorok csendben kimaradtak volna (ugyanaz a hibaosztály,
+  // mint a korábbi bolt/orvos-hiányok).
+  hentes: ["husszek", "Hentes / Húsbolt"],
+  kavezo: ["kavez", "Kávézó / Cukrászda"],
+  zoldseges: ["zoldseges", "Zöldséges / Hofladen"],
 };
 
 // Város (kisbetűs részlet) → [régiókód, lat, lng].
