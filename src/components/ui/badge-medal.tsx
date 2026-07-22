@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import { Icon } from "./icons";
 
 /**
  * BadgeMedal — egy kitűző „érem" megjelenítése tisztán SVG/CSS-ből (nincs külső
@@ -63,8 +64,8 @@ export function BadgeMedal({
         {icon}
       </span>
       {!earned && (
-        <span className="absolute -bottom-0.5 -right-0.5 grid h-[18px] w-[18px] place-items-center rounded-full bg-surface text-[10px] shadow ring-1 ring-line">
-          🔒
+        <span className="absolute -bottom-0.5 -right-0.5 grid h-[18px] w-[18px] place-items-center rounded-full bg-surface text-ink-muted shadow ring-1 ring-line">
+          <Icon name="lock" size={10} strokeWidth={2.4} />
         </span>
       )}
     </div>

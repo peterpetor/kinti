@@ -14,7 +14,8 @@ export type IconName =
   | "facebook" | "instagram" | "linkedin" | "youtube" | "tiktok" | "shoppingBag" | "briefcase"
   | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock"
   | "compass" | "mail" | "shareIos" | "whatsapp" | "bed" | "house" | "key" | "truck"
-  | "alert";
+  | "alert" | "store" | "exchange" | "wallet" | "refresh" | "trophy" | "edit"
+  | "ticket" | "train" | "plane" | "book" | "target" | "sun" | "moon" | "lightbulb" | "box";
 
 const PATHS: Record<IconName, string[]> = {
   bed: ["M2 18v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8", "M2 14h20", "M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"],
@@ -125,6 +126,38 @@ const PATHS: Record<IconName, string[]> = {
   upload: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "M17 8l-5-5l-5 5", "M12 3v12"],
   // Iránytű: kör + rombusz-tű (Lucide compass).
   compass: ["M12 3a9 9 0 1 1 0 18a9 9 0 0 1 0-18", "M16.24 7.76L14.12 14.12L7.76 16.24L9.88 9.88z"],
+  // Üzlet-homlokzat (napellenző + ajtó) — a Vállalkozásom menüpont ikonja
+  // (2026-07-22, emoji-lecsere: a 🏪 helyett, a "house" nyelvét folytatva).
+  store: ["M3 9l1.5-5h15L21 9", "M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9", "M9 20v-6h6v6"],
+  // Valutaváltás — két ellentétes irányú nyíl-sor (Utalás/Árfolyam menüpont).
+  exchange: ["M7 7h13l-3-3", "M7 7l3 3", "M17 17H4l3-3", "M17 17l-3 3"],
+  // Pénztárca — a Bérkalkulátor menüpont ikonja (a "briefcase" nyelvét folytatva).
+  wallet: ["M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", "M16 12h3a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-3a2 2 0 0 1 0-4z"],
+  // Frissítés/csere — a Szolgáltató-váltó menüpont ikonja.
+  refresh: ["M4 12a8 8 0 0 1 14.5-4.5", "M20 12a8 8 0 0 1-14.5 4.5", "M18 3v5h-5", "M6 21v-5h5"],
+  // Kupa — a Közösségi ranglista menüpont ikonja.
+  trophy: ["M7 4h10v4a5 5 0 0 1-10 0z", "M7 5H4a1 1 0 0 0-1 1c0 2 1.5 3.5 4 3.8", "M17 5h3a1 1 0 0 1 1 1c0 2-1.5 3.5-4 3.8", "M12 13v4", "M9 21h6", "M9 21c0-1.5 1-2 3-2s3 .5 3 2"],
+  // Toll — az Élettörténetek menüpont ikonja.
+  edit: ["M4 20l1-4l11-11l3 3l-11 11z", "M14.5 5.5l3 3"],
+  // Jegy — a Kinti Pass menüpont ikonja (a "bed"/"house" doboz-nyelvét folytatva).
+  ticket: ["M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z", "M14 6v12"],
+  // Vonat-homlokzat — a Tömegközlekedés menüpont ikonja (a "car" nyelvét folytatva).
+  train: ["M6 3h12a2 2 0 0 1 2 2v10a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2z", "M4 11h16", "M8 19l-2 3", "M16 19l2 3", "M9 7h2", "M13 7h2"],
+  // Repülőgép — a Repülőjegy-figyelő menüpont ikonja.
+  plane: ["M2 16l20-6l-3 8l-6-2l-2 4l-2-1v-4z"],
+  // Nyitott könyv — a Nyelvlecke menüpont ikonja + tipp-tartalmú „olvass tovább" jelzés.
+  book: ["M12 6c-2-1.5-5-2-8-1v13c3-1 6-.5 8 1c2-1.5 5-2 8-1V5c-3-1-6-.5-8 1z", "M12 6v13"],
+  // Célkereszt — a Napi kvíz menüpont ikonja.
+  target: ["M12 21a9 9 0 1 0 0-18a9 9 0 0 0 0 18", "M12 16a4 4 0 1 0 0-8a4 4 0 0 0 0 8", "M12 13a1 1 0 1 0 0-2a1 1 0 0 0 0 2"],
+  // Nap — a téma-váltó „Világos" gombja.
+  sun: ["M12 17a5 5 0 1 0 0-10a5 5 0 0 0 0 10", "M12 2v2", "M12 20v2", "M4.2 4.2l1.4 1.4", "M18.4 18.4l1.4 1.4", "M2 12h2", "M20 12h2", "M4.2 19.8l1.4-1.4", "M18.4 5.6l1.4-1.4"],
+  // Félhold — a téma-váltó „Sötét" gombja.
+  moon: ["M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"],
+  // Villanykörte — tipp/magyarázat-jelzés (a 💡 emoji lecserélve, sok helyen
+  // visszatérő minta: AI-magyarázat, „Költözés okosan", forrás-doboz tippje stb.).
+  lightbulb: ["M9 18h6", "M10 21h4", "M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"],
+  // Csomag/doboz — a Keresek-táblára feladás ikonja (a "truck" mellett, költöztetés-kontextusban).
+  box: ["M3 8l9-5l9 5v8l-9 5l-9-5z", "M3 8l9 5l9-5", "M12 13v8"],
 };
 
 // A '…' (more) három pöttye vastagabb vonallal néz jól ki.

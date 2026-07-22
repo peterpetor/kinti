@@ -113,7 +113,7 @@ export function GamificationCard() {
             <p className="mt-1 text-[11.5px] font-semibold text-ink-faint">
               {pointsSpan > 0
                 ? `${pointsIntoLevel} / ${pointsSpan} XP — még ${toNext} a következő szintig`
-                : "Elérted a legmagasabb szintet 🎉"}
+                : "Elérted a legmagasabb szintet"}
             </p>
           </div>
         </div>

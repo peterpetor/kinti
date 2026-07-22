@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect, useRef, useCallback, lazy, Suspense } fro
 import { haptic } from "@/lib/haptics";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { BusinessCard, CategoryPills, Icon } from "@/components/ui";
+import { BusinessCard, CategoryPills, Icon, type IconName } from "@/components/ui";
 import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Category, ListBusiness } from "@/lib/types";
@@ -58,11 +58,11 @@ const BusinessMap =
 type ViewMode = "list" | "map";
 
 type SortMode = "relevant" | "rating" | "distance" | "newest";
-const SORT_OPTIONS: { id: SortMode; label: string }[] = [
+const SORT_OPTIONS: { id: SortMode; label: string; icon?: IconName }[] = [
   { id: "relevant", label: "Ajánlott" },
-  { id: "rating", label: "⭐ Értékelés" },
-  { id: "distance", label: "📍 Közelség" },
-  { id: "newest", label: "🆕 Legújabb" },
+  { id: "rating", label: "Értékelés", icon: "star" },
+  { id: "distance", label: "Közelség", icon: "pin" },
+  { id: "newest", label: "Legújabb", icon: "sparkles" },
 ];
 /** SQLite ("YYYY-MM-DD HH:MM:SS") vagy ISO dátum → ms. Hiányzó/hibás → 0. */
 function tsOf(s?: string | null): number {
@@ -598,11 +598,15 @@ export function ExploreView({
             strokeWidth={2.4}
             className={cn("shrink-0", userPos ? "text-primary" : "text-ink-muted")}
           />
-          <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
+          <span className="flex min-w-0 items-center gap-1 truncate text-[11.5px] font-bold tracking-wide select-none">
             {geoState === "loading"
               ? "Helymeghatározás…"
               : userPos
-                ? `${radiusKm} km-en belül · ✕`
+                ? (
+                  <>
+                    {radiusKm} km-en belül <Icon name="close" size={10} strokeWidth={3} className="shrink-0" />
+                  </>
+                )
                 : "Közelemben"}
           </span>
         </button>
@@ -669,7 +673,7 @@ export function ExploreView({
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
           )}
         >
-          <span aria-hidden className="shrink-0 text-[13px] leading-none">🎟️</span>
+          <Icon name="ticket" size={13} strokeWidth={2.2} className={cn("shrink-0", passOnly ? "text-star" : "text-ink-muted")} />
           <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
             Csak Kinti Pass helyek
           </span>
@@ -773,8 +777,8 @@ export function ExploreView({
             href="/profil/kinti-pass"
             className="flex items-center gap-3 rounded-card border border-star/40 bg-star/10 px-4 py-3 shadow-card transition active:scale-[0.99]"
           >
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-star/20 text-[18px]">
-              🎟️
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-star/20 text-star">
+              <Icon name="ticket" size={18} strokeWidth={2} />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
@@ -893,12 +897,13 @@ export function ExploreView({
                 onClick={() => setSortBy(o.id)}
                 aria-pressed={on}
                 className={cn(
-                  "inline-flex flex-none items-center rounded-pill px-3 py-1.5 text-[12px] font-bold tracking-[-0.01em] transition",
+                  "inline-flex flex-none items-center gap-1 rounded-pill px-3 py-1.5 text-[12px] font-bold tracking-[-0.01em] transition",
                   on
                     ? "bg-primary text-white shadow-card"
                     : "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-alpha))]",
                 )}
               >
+                {o.icon && <Icon name={o.icon} size={12} strokeWidth={2.4} filled={o.icon === "star"} />}
                 {o.label}
               </button>
             );
@@ -948,7 +953,7 @@ export function ExploreView({
               onClick={() => trackAction("lead-group-cta")}
               className="flex items-center gap-3 rounded-card border-2 border-primary/25 bg-gradient-to-br from-primary/5 to-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
             >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary text-xl text-white">📨</span>
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary text-white"><Icon name="send" size={19} strokeWidth={2.2} /></span>
               <span className="min-w-0 flex-1">
                 <span className="block text-[11px] font-bold uppercase tracking-wider text-primary">Csoportos árajánlat</span>
                 <span className="block text-[14.5px] font-extrabold leading-tight tracking-[-0.01em] text-ink">

@@ -154,7 +154,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
         {/* Kinti Pass elfogadóhely — arany jelvény + a konkrét ajánlat szövege. */}
         {b.kintiPassActive && (
           <div className="mb-1.5 flex items-center gap-1.5 rounded-[10px] border border-star/40 bg-star/10 px-2 py-1">
-            <span aria-hidden className="text-[13px] leading-none">🎟️</span>
+            <Icon name="ticket" size={13} strokeWidth={2.4} className="shrink-0 text-star" />
             <span className="min-w-0 truncate text-[11.5px] font-bold text-ink">
               Kinti Pass{b.kintiPassOffer ? `: ${b.kintiPassOffer}` : " elfogadóhely"}
             </span>

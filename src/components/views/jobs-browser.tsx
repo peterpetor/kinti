@@ -206,7 +206,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
             onClick={() => setShowMap((s) => !s)}
             className="flex w-full items-center gap-2.5 rounded-card border border-line bg-surface px-4 py-3 text-left shadow-card transition active:scale-[0.99]"
           >
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-[17px]">🗺️</span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary"><Icon name="map" size={18} strokeWidth={2} /></span>
             <span className="min-w-0 flex-1">
               <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
                 Térkép — hol vannak az állások?
@@ -239,7 +239,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
             href="/allasok/profil"
             className="flex items-center gap-2.5 rounded-card border border-primary/20 bg-primary/5 px-4 py-3 text-left transition active:scale-[0.99]"
           >
-            <span className="text-lg">🎯</span>
+            <Icon name="target" size={18} strokeWidth={2} className="shrink-0 text-primary" />
             <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
               <strong className="text-ink">Tölts ki egy munkavállalói profilt</strong> (szakma + kanton), és minden álláshoz látod a <strong className="text-primary">% egyezést</strong>.
             </span>
@@ -250,7 +250,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
             href="/pro"
             className="flex items-center gap-2.5 rounded-card border border-pro/25 bg-pro/5 px-4 py-3 text-left transition active:scale-[0.99]"
           >
-            <span className="text-lg">🔒</span>
+            <Icon name="lock" size={18} strokeWidth={2} className="shrink-0 text-[#cc7700]" />
             <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
               <strong className="text-[#cc7700]">Kinti PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% egyezés</strong> minden hirdetésnél. <span className="text-ink-muted">(Ez a Kinti PRO álláskereső funkciója — <strong>nem</strong> a Szaknévsor PRO, amit a vállalkozásodhoz vehetsz.)</span>
             </span>
@@ -363,7 +363,10 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
               <>
                 <div className="flex items-center gap-2 pt-1">
                   <span className="h-px flex-1 bg-line" />
-                  <span className="shrink-0 text-[11px] font-bold uppercase tracking-wider text-ink-faint">Élő hirdetések partnerektől 🔴</span>
+                  <span className="flex shrink-0 items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-ink-faint">
+                    Élő hirdetések partnerektől
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                  </span>
                   <span className="h-px flex-1 bg-line" />
                 </div>
                 {externalFiltered.map((j) => (

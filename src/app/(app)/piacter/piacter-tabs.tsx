@@ -52,22 +52,22 @@ const MOVING_TIPS: string[] = [
 
 /** A Költöztetés-fül gyorslinkjei — mind MEGLÉVŐ funkcióra mutat
  *  (csoportos ajánlatkérés, Keresek-tábla, Szaknévsor), új backend nincs. */
-const MOVING_LINKS: { href: string; emoji: string; title: string; subtitle: string }[] = [
+const MOVING_LINKS: { href: string; icon: IconName; title: string; subtitle: string }[] = [
   {
     href: "/szaknevsor/ajanlatkeres?cat=futas",
-    emoji: "📨",
+    icon: "send",
     title: "Kérj árajánlatot költöztetőktől",
     subtitle: "Egy űrlap — a környéked magyar fuvarozói keresnek meg téged.",
   },
   {
     href: "/keresek",
-    emoji: "📦",
+    icon: "box",
     title: "Írd ki a Keresek-táblára",
     subtitle: "Add fel „Költöztetés / fuvar” kategóriában, mit keresel — a vállalkozók jelentkeznek.",
   },
   {
     href: "/szaknevsor?cat=futas",
-    emoji: "🚚",
+    icon: "truck",
     title: "Magyar fuvarozók a Szaknévsorban",
     subtitle: "Böngéssz a fuvarozás-kategóriában, és hívd őket közvetlenül.",
   },
@@ -135,7 +135,7 @@ export function PiacterTabs({
               csalás-terep; lenyitható, hogy ne nyomja el a listát, de mindig ott van. */}
           <details className="group rounded-card border border-star/30 bg-star/5 p-3">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-[12.5px] font-extrabold text-ink [&::-webkit-details-marker]:hidden">
-              <span aria-hidden>⚠️</span> Így ismerd fel a kaució-csalást
+              <Icon name="alert" size={14} strokeWidth={2.2} className="shrink-0 text-star" /> Így ismerd fel a kaució-csalást
               <Icon name="chevD" size={14} strokeWidth={2.4} className="ml-auto shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
             </summary>
             <ul className="mt-2 space-y-1.5">
@@ -177,7 +177,7 @@ export function PiacterTabs({
               href={l.href}
               className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
             >
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-lg">{l.emoji}</span>
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary"><Icon name={l.icon} size={17} strokeWidth={2.1} /></span>
               <span className="min-w-0 flex-1">
                 <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">{l.title}</span>
                 <span className="block text-[11.5px] leading-snug text-ink-muted">{l.subtitle}</span>
@@ -189,7 +189,7 @@ export function PiacterTabs({
           {/* Kurált tanácsok — lenyitható, hogy ne nyomja el a cselekvés-kártyákat. */}
           <details className="group rounded-card border border-line bg-surface-alt/60 p-3">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-[12.5px] font-extrabold text-ink [&::-webkit-details-marker]:hidden">
-              <span aria-hidden>💡</span> Költözés okosan — a legfontosabb tudnivalók
+              <Icon name="lightbulb" size={14} strokeWidth={2.2} className="shrink-0 text-primary" /> Költözés okosan — a legfontosabb tudnivalók
               <Icon name="chevD" size={14} strokeWidth={2.4} className="ml-auto shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
             </summary>
             <ul className="mt-2 space-y-1.5">

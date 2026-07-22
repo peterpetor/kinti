@@ -140,7 +140,10 @@ export function KintiAssistant() {
           {/* A magyarázat csak TALÁLAT mellett hasznos — üres eredménynél a
               (néha sután fogalmazó) AI-mondat többet árt, mint segít. */}
           {hasHits && result.explanation && (
-            <p className="text-[12px] italic text-ink-muted">💡 {result.explanation}</p>
+            <p className="flex items-start gap-1.5 text-[12px] italic text-ink-muted">
+              <Icon name="lightbulb" size={13} strokeWidth={2.2} className="mt-0.5 shrink-0 not-italic" />
+              {result.explanation}
+            </p>
           )}
 
           {result.guides.length > 0 && (
@@ -154,7 +157,7 @@ export function KintiAssistant() {
                     onClick={() => trackAction("assistant-click")}
                     className="flex items-center gap-2.5 rounded-xl border border-line bg-surface px-3.5 py-2.5 transition active:scale-[0.99]"
                   >
-                    <span className="text-base">📖</span>
+                    <Icon name="book" size={16} strokeWidth={2.1} className="shrink-0 text-primary" />
                     <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-ink">{g.title}</span>
                     <Icon name="chevR" size={14} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
                   </Link>
@@ -209,7 +212,7 @@ export function KintiAssistant() {
                   onClick={() => trackAction("assistant-lead-group")}
                   className="mt-2 flex items-center justify-center gap-1.5 rounded-pill bg-pro px-4 py-2.5 text-[12.5px] font-extrabold text-white transition active:scale-[0.98]"
                 >
-                  📨 Kérj ajánlatot több szakitól egyszerre
+                  <Icon name="send" size={14} strokeWidth={2.4} /> Kérj ajánlatot több szakitól egyszerre
                 </Link>
               )}
               <Link

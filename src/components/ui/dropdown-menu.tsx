@@ -137,7 +137,7 @@ export function DropdownMenu() {
           key: "biz",
           label: "Vállalkozásom",
           tint: "bg-pro/10 text-pro",
-          icon: { emoji: "🏪" },
+          icon: { name: "store" },
           custom: (
             <div key="biz" className="flex items-center gap-3 px-4 py-3.5 rounded-xl" aria-hidden>
               <span className="h-8 w-8 shrink-0 rounded-xl bg-surface-alt animate-pulse" />
@@ -146,7 +146,7 @@ export function DropdownMenu() {
           ),
         }
       : isSignedIn && hasBusiness
-        ? { key: "biz", label: "Vállalkozásom", href: "/profil", tint: "bg-pro/10 text-pro", icon: { emoji: "🏪" }, badge: "bizpro" }
+        ? { key: "biz", label: "Vállalkozásom", href: "/profil", tint: "bg-pro/10 text-pro", icon: { name: "store" }, badge: "bizpro" }
         : { key: "biz", label: "Vidd fel a vállalkozásod", href: "/vallalkozo", tint: "bg-primary/10 text-primary", icon: { name: "plus" } };
 
   const sections: MenuSection[] = [
@@ -157,7 +157,7 @@ export function DropdownMenu() {
       items: [
         { key: "ajanlas", label: "Ajánlj egy magyar vállalkozást", href: "/szaknevsor/ajanlas", tint: "bg-accent/10 text-accent", icon: { name: "send" } },
         businessItem,
-        { key: "b2b", label: "B2B Hub — projektpiac", href: "/b2b", tint: "bg-pro/10", icon: { emoji: "🤝" }, badge: "bizpro" },
+        { key: "b2b", label: "B2B Hub — projektpiac", href: "/b2b", tint: "bg-pro/10", icon: { name: "trending" }, badge: "bizpro" },
         { key: "allasok", label: "Álláshirdetések", href: "/allasok", tint: "bg-primary/10 text-primary", icon: { name: "briefcase" } },
         // A Keresek az Álláshirdetések ALATT (user-kérés 2026-07-13).
         { key: "keresek", label: "Keresek — igény-hirdetés", href: "/keresek", tint: "bg-primary/10 text-primary", icon: { name: "search" } },
@@ -172,17 +172,17 @@ export function DropdownMenu() {
       items: [
         // Összevonások (2026-07-16): árfolyam → az Utalás oldalán él;
         // „Mennyi marad?" → a Bérkalkulátorba olvadt. Egy-egy menüpont maradt.
-        { key: "utalas", label: "Utalás / Árfolyam", href: "/utalas", tint: "bg-primary/10", icon: { emoji: "💱" } },
+        { key: "utalas", label: "Utalás / Árfolyam", href: "/utalas", tint: "bg-primary/10", icon: { name: "exchange" } },
         ...(has("berkalkulator")
-          ? [{ key: "ber", label: "Bérkalkulátor — mennyi marad?", href: "/berkalkulator", tint: "bg-success/10", icon: { emoji: "💰" } } as MenuItem]
+          ? [{ key: "ber", label: "Bérkalkulátor — mennyi marad?", href: "/berkalkulator", tint: "bg-success/10", icon: { name: "wallet" } } as MenuItem]
           : []),
         ...(has("iranytu")
-          ? [{ key: "iranytu", label: "Iránytű — bérek és lakbérek", href: "/iranytu", tint: "bg-success/10", icon: { emoji: "📊" } } as MenuItem]
+          ? [{ key: "iranytu", label: "Iránytű — bérek és lakbérek", href: "/iranytu", tint: "bg-success/10", icon: { name: "trending" } } as MenuItem]
           : []),
         // Piactér-összevonás (2026-07-16): a lakbér-kalkulátor a Piactér füle.
-        { key: "piacter", label: "Piactér — albérlet-börze", href: "/piacter", tint: "bg-primary/10", icon: { emoji: "🏠" } },
+        { key: "piacter", label: "Piactér — albérlet-börze", href: "/piacter", tint: "bg-primary/10", icon: { name: "house" } },
         ...(has("szolgaltato-valto")
-          ? [{ key: "valto", label: "Szolgáltató-váltó", href: "/szolgaltato-valto", tint: "bg-success/10", icon: { emoji: "🔄" } } as MenuItem]
+          ? [{ key: "valto", label: "Szolgáltató-váltó", href: "/szolgaltato-valto", tint: "bg-success/10", icon: { name: "refresh" } } as MenuItem]
           : []),
       ],
     },
@@ -197,9 +197,9 @@ export function DropdownMenu() {
         // van, a Tudásbázis-oldal eszköz-szekciója sorolja fel őket.
         { key: "tudasbazis", label: "Tudásbázis — minden útmutató és eszköz", href: "/tudasbazis", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
         ...(has("ugyintezes")
-          ? [{ key: "ugyintezes", label: "Ügyintézés-varázsló", href: "/ugyintezes", tint: "bg-primary/10", icon: { emoji: "📋" } } as MenuItem]
+          ? [{ key: "ugyintezes", label: "Ügyintézés-varázsló", href: "/ugyintezes", tint: "bg-primary/10", icon: { name: "document" } } as MenuItem]
           : []),
-        { key: "hatarido", label: "Határidő-asszisztens", href: "/hatarido", tint: "bg-accent/10", icon: { emoji: "⏰" }, badge: "pro" },
+        { key: "hatarido", label: "Határidő-asszisztens", href: "/hatarido", tint: "bg-accent/10", icon: { name: "clock" }, badge: "pro" },
       ],
     },
     {
@@ -209,9 +209,9 @@ export function DropdownMenu() {
       items: [
         { key: "kedvencek", label: "Kedvenceim", href: "/szaknevsor?fav=1", tint: "bg-accent/10 text-accent", icon: { name: "heart", filled: true } },
         { key: "sajat", label: "Saját posztjaim", href: "/sajatjaim", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
-        { key: "ranglista", label: "Közösségi ranglista", href: "/ranglista", tint: "bg-star/15", icon: { emoji: "🏆" } },
-        { key: "tortenetek", label: "Élettörténetek", href: "/tortenetek", tint: "bg-accent/10", icon: { emoji: "✍️" } },
-        { key: "pass", label: "Kinti Pass — kedvezménykártya", href: "/profil/kinti-pass", tint: "bg-star/15", icon: { emoji: "🎟️" } },
+        { key: "ranglista", label: "Közösségi ranglista", href: "/ranglista", tint: "bg-star/15", icon: { name: "trophy" } },
+        { key: "tortenetek", label: "Élettörténetek", href: "/tortenetek", tint: "bg-accent/10", icon: { name: "edit" } },
+        { key: "pass", label: "Kinti Pass — kedvezménykártya", href: "/profil/kinti-pass", tint: "bg-star/15", icon: { name: "ticket" } },
       ],
     },
     {
@@ -232,10 +232,10 @@ export function DropdownMenu() {
       title: "Utazás & Autó",
       defaultOpen: true,
       items: [
-        ...(has("kozlekedes") ? [{ key: "kozlekedes", label: "Tömegközlekedés", href: "/kozlekedes", tint: "bg-primary/10", icon: { emoji: "🚆" } } as MenuItem] : []),
-        ...(has("repulojegy") ? [{ key: "repjegy", label: "Repülőjegy-figyelő", href: "/repulojegy", tint: "bg-primary/10", icon: { emoji: "✈️" } } as MenuItem] : []),
-        ...(has("vam") ? [{ key: "vam", label: "Vám-kalkulátor", href: "/tudasbazis/vam", tint: "bg-primary/10", icon: { emoji: "🛂" } } as MenuItem] : []),
-        ...(has("bussen") ? [{ key: "bussen", label: "Gyorshajtás-kalkulátor", href: "/tudasbazis/bussen", tint: "bg-accent/10", icon: { emoji: "🚓" } } as MenuItem] : []),
+        ...(has("kozlekedes") ? [{ key: "kozlekedes", label: "Tömegközlekedés", href: "/kozlekedes", tint: "bg-primary/10", icon: { name: "train" } } as MenuItem] : []),
+        ...(has("repulojegy") ? [{ key: "repjegy", label: "Repülőjegy-figyelő", href: "/repulojegy", tint: "bg-primary/10", icon: { name: "plane" } } as MenuItem] : []),
+        ...(has("vam") ? [{ key: "vam", label: "Vám-kalkulátor", href: "/tudasbazis/vam", tint: "bg-primary/10", icon: { name: "document" } } as MenuItem] : []),
+        ...(has("bussen") ? [{ key: "bussen", label: "Gyorshajtás-kalkulátor", href: "/tudasbazis/bussen", tint: "bg-accent/10", icon: { name: "alert" } } as MenuItem] : []),
       ],
     },
     {
@@ -247,10 +247,10 @@ export function DropdownMenu() {
           ? [{
               key: "nyelv",
               label: isCH ? "Nyelvlecke — svájci német" : country === "DE" ? "Nyelvlecke — német" : country === "NL" ? "Nyelvlecke — holland" : "Nyelvlecke — osztrák német",
-              href: "/nyelvlecke", tint: "bg-primary/10", icon: { emoji: "🦉" },
+              href: "/nyelvlecke", tint: "bg-primary/10", icon: { name: "book" },
             } as MenuItem]
           : []),
-        ...(has("kviz") ? [{ key: "kviz", label: "Napi kvíz", href: "/kviz", tint: "bg-accent/10", icon: { emoji: "🎯" } } as MenuItem] : []),
+        ...(has("kviz") ? [{ key: "kviz", label: "Napi kvíz", href: "/kviz", tint: "bg-accent/10", icon: { name: "target" } } as MenuItem] : []),
       ],
     },
     {
@@ -262,11 +262,13 @@ export function DropdownMenu() {
           key: "tema",
           label: "Megjelenés — világos/sötét téma",
           tint: "bg-primary/10",
-          icon: { emoji: "🎨" },
+          icon: { name: "sun" },
           custom: (
             <div key="tema" className="flex items-center justify-between gap-3 px-4 py-3.5">
               <span className="flex items-center gap-3 text-[15px] font-bold text-ink">
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-base">🎨</span>
+                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Icon name="sun" size={16} strokeWidth={2.2} />
+                </span>
                 Megjelenés
               </span>
               <ThemeToggle />
@@ -351,7 +353,7 @@ export function DropdownMenu() {
                   aria-label="Menü bezárása"
                   className="grid h-10 w-10 place-items-center rounded-full bg-surface-alt text-ink transition-transform hover:rotate-90 hover:bg-line active:scale-90"
                 >
-                  ✕
+                  <Icon name="close" size={16} strokeWidth={2.4} />
                 </button>
               </div>
               {/* Menü-szűrő: 35+ elemnél a gépelés a leggyorsabb út. */}
@@ -374,9 +376,9 @@ export function DropdownMenu() {
                     type="button"
                     onClick={() => setQuery("")}
                     aria-label="Szűrő törlése"
-                    className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full bg-line/60 text-[11px] text-ink-muted active:scale-90"
+                    className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full bg-line/60 text-ink-muted active:scale-90"
                   >
-                    ✕
+                    <Icon name="close" size={12} strokeWidth={2.6} />
                   </button>
                 )}
               </div>

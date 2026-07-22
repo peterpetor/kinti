@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Icon } from "@/components/ui/icons";
 import { applyThemeColor } from "@/lib/theme-color";
 
 type Theme = "warm" | "dark";
@@ -60,11 +61,12 @@ export function ThemeToggle() {
           key={t}
           type="button"
           onClick={() => choose(t)}
-          className={`relative z-[1] rounded-pill px-4 py-1.5 transition ${
+          className={`relative z-[1] inline-flex items-center gap-1.5 rounded-pill px-4 py-1.5 transition ${
             theme === t ? "bg-primary text-white shadow-card" : "text-ink-muted"
           }`}
         >
-          {t === "warm" ? "☀️ Világos" : "🌙 Sötét"}
+          <Icon name={t === "warm" ? "sun" : "moon"} size={14} strokeWidth={2.2} />
+          {t === "warm" ? "Világos" : "Sötét"}
         </button>
       ))}
     </div>

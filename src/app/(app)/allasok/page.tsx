@@ -80,7 +80,7 @@ export default async function JobsPage() {
               href="/allasok/interju-szimulator"
               className="group flex flex-col rounded-xl border border-line bg-surface p-3 transition active:scale-[0.98] hover:border-primary/40 hover:shadow-card"
             >
-              <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-primary/10 text-[17px] leading-none">🎤</span>
+              <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-primary/10 text-primary"><Icon name="sparkles" size={17} strokeWidth={2.2} /></span>
               <span className="mt-2 block text-[13px] font-extrabold leading-tight tracking-[-0.01em] text-ink">AI interjú-szimulátor</span>
               <span className="mt-0.5 block text-[11px] leading-snug text-ink-muted">
                 Próbainterjú a helyi kérdésekkel — visszajelzéssel
@@ -93,7 +93,7 @@ export default async function JobsPage() {
               href="/allasok/cv-audit"
               className="group flex flex-col rounded-xl border border-line bg-surface p-3 transition active:scale-[0.98] hover:border-primary/40 hover:shadow-card"
             >
-              <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-primary/10 text-[17px] leading-none">🔍</span>
+              <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-primary/10 text-primary"><Icon name="document" size={17} strokeWidth={2.2} /></span>
               <span className="mt-2 block text-[13px] font-extrabold leading-tight tracking-[-0.01em] text-ink">AI CV-asszisztens</span>
               <span className="mt-0.5 block text-[11px] leading-snug text-ink-muted">
                 Átnézi az önéletrajzod, mielőtt elküldöd
@@ -110,7 +110,7 @@ export default async function JobsPage() {
           href="/allasok/profil"
           className="flex items-center gap-3 rounded-card border-2 border-primary/25 bg-gradient-to-br from-primary/5 to-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
         >
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary text-white text-xl">🤝</span>
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary text-white"><Icon name="users" size={20} strokeWidth={2.2} /></span>
           <span className="min-w-0 flex-1">
             <span className="block text-[11px] font-bold uppercase tracking-wider text-primary">Ingyenes állásközvetítés</span>
             <span className="block text-[14.5px] font-extrabold leading-tight tracking-[-0.01em] text-ink">
@@ -132,7 +132,7 @@ export default async function JobsPage() {
           href="/piacter"
           className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
         >
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-star/15 text-xl">🔑</span>
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-star/15 text-star"><Icon name="key" size={20} strokeWidth={2.2} /></span>
           <span className="min-w-0 flex-1">
             <span className="block text-[14.5px] font-extrabold leading-tight tracking-[-0.01em] text-ink">
               Új munka, új város? Nézd az albérlet-börzét
