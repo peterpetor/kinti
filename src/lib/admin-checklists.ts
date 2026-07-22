@@ -100,7 +100,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
       "A Quellensteuer-fizető nem automatikusan kapja vissza az adót — kérvényezni kell a NOV-ot határidőn belül.",
     ],
     sources: [
-      { label: "ch.ch — Beköltözés Svájcba", url: "https://www.ch.ch/de/leben-in-der-schweiz/zuzug/" },
+      { label: "ch.ch — Beköltözés Svájcba", url: "https://www.ch.ch/de/einreise-in-die-schweiz-das-muss-man-wissen/" },
       { label: "SEM — Aufenthalt", url: "https://www.sem.admin.ch/sem/de/home/themen/aufenthalt.html" },
     ],
   },
@@ -149,7 +149,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
         title: "Cím-frissítés egyéb helyeken",
         body:
           "Bank, autóregisztráció (Strassenverkehrsamt), előfizetések (telefon, internet), címátirányítás (Post — Nachsendeauftrag).",
-        link: { label: "Swiss Post — Nachsendeauftrag", url: "https://www.post.ch/de/empfangen/umleiten/nachsendeauftrag-bestellen" },
+        link: { label: "Swiss Post — Nachsendeauftrag", url: "https://www.post.ch/de/empfangen/umzug/adressaenderung-mit-nachsendung" },
         duration: "1-2 óra",
       },
     ],
@@ -158,7 +158,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
       "Ha eltér a postacímed a lakcímedtől, hivatalos levelek elveszhetnek — Nachsendeauftrag ajánlott.",
     ],
     sources: [
-      { label: "ch.ch — Umzug", url: "https://www.ch.ch/de/leben-in-der-schweiz/wohnen-und-umzug/umzug-innerhalb-der-schweiz/" },
+      { label: "ch.ch — Umzug", url: "https://www.ch.ch/de/wohnen/umzug/ab-und-anmelden-bei-der-wohngemeinde/" },
       { label: "eMovingCH portál", url: "https://www.eumzug.swiss/" },
     ],
   },
@@ -188,7 +188,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
         title: "Kérelem benyújtása a Strassenverkehrsamt-on",
         body:
           "Időpontfoglalás online a kantoni Strassenverkehrsamt oldalán. Magaddal viszed: jogsi, fotó, szemvizsgálat, útlevél/engedély, kitöltött űrlap, illeték (kb. 50-130 CHF kantontól függően).",
-        link: { label: "Strassenverkehrsamt időpont — pl. ZH", url: "https://www.stva.zh.ch/" },
+        link: { label: "Strassenverkehrsamt időpont — pl. ZH", url: "https://www.zh.ch/de/mobilitaet/fuehrerausweis-fahren-lernen.html" },
         duration: "30-60 perc",
       },
       {
@@ -208,7 +208,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
       "Néhány kantonban (pl. ZH) próba-időszak van (Probezeit) — új jogsi-tulajdonosokra. Magyar jogsi-cseréhez nem releváns, ha már 3+ éve vezetsz.",
     ],
     sources: [
-      { label: "ch.ch — Führerausweis-Umtausch", url: "https://www.ch.ch/de/strassenverkehr/fuehrerausweis/auslaendischen-fuehrerausweis-umtauschen/" },
+      { label: "ch.ch — Führerausweis-Umtausch", url: "https://www.ch.ch/de/ausweise-und-dokumente/fuhrerausweis/fuhrerausweis-umtauschen/" },
       { label: "ASTRA — Strassen", url: "https://www.astra.admin.ch/" },
     ],
   },
@@ -238,7 +238,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
         title: "Kérelem benyújtása a kanton-migrációs hivatalhoz",
         body:
           "A lakhely-kantonod Migrationsamt / Office cantonal de la population oldalán találod a kérvény-űrlapot. Mellékelni kell: útlevél-másolat, B-engedély-másolat, fizetési igazolások (utolsó 6 hónap), nyelv-vizsga eredmény, kivonat a büntetlen előéletről (Strafregisterauszug — pénznek éri 18 CHF online), Betreibungs-kivonat (nincs végrehajtás).",
-        link: { label: "Strafregister online", url: "https://www.e-service.admin.ch/crex/cms/content/strafregister/de/start/" },
+        link: { label: "Strafregister online", url: "https://www.ch.ch/de/ausweise-und-dokumente/strafregisterauszug/" },
         duration: "1-2 nap dokumentum-gyűjtés",
       },
       {
@@ -265,7 +265,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
     ],
     sources: [
       { label: "SEM — Niederlassungsbewilligung C", url: "https://www.sem.admin.ch/sem/de/home/themen/aufenthalt/eu_efta/ausweis_c_eu_efta.html" },
-      { label: "ch.ch — C-engedély", url: "https://www.ch.ch/de/leben-in-der-schweiz/aufenthalt/niederlassungsbewilligung/" },
+      { label: "ch.ch — C-engedély", url: "https://www.ch.ch/de/ausweise-und-dokumente/aufenthaltsbewilligungen/" },
     ],
   },
   {
@@ -288,7 +288,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
         title: "Adóbevallás-űrlap megnyitása",
         body:
           "A kantonod adóhivatala küld egy levelet januárban — abban benne van az online belépési kód. Belépés a kantonális adó-portálra (pl. ZHprivateTax, BE eTax, AGtax). Sok kanton enged offline kitöltést (XML export/import).",
-        link: { label: "ch.ch — Steuern", url: "https://www.ch.ch/de/steuern-und-finanzen/steuererklaerung-ausfuellen/" },
+        link: { label: "ch.ch — Steuern", url: "https://www.ch.ch/de/steuern-und-finanzen/steuererklarung/" },
         duration: "30 perc beállítás",
       },
       {
@@ -322,8 +322,8 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
       "Több kanton 'EasyTax' vagy 'TaxMe' szoftvere segít — pdf-importtal pl. a Lohnausweisből.",
     ],
     sources: [
-      { label: "ch.ch — Steuererklärung", url: "https://www.ch.ch/de/steuern-und-finanzen/steuererklaerung-ausfuellen/" },
-      { label: "ESTV — Bundessteuer", url: "https://www.estv.admin.ch/estv/de/home.html" },
+      { label: "ch.ch — Steuererklärung", url: "https://www.ch.ch/de/steuern-und-finanzen/steuererklarung/" },
+      { label: "ESTV — Bundessteuer", url: "https://www.estv.admin.ch/" },
     ],
   },
   {
@@ -372,7 +372,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
       "Az 'olcsó' Krankenkasse-k (pl. Assura, KPT) jellemzően lassabb visszafizetést adnak — érdemes ezt is mérlegelni.",
     ],
     sources: [
-      { label: "BAG — Grundversicherung", url: "https://www.bag.admin.ch/bag/de/home/versicherungen/krankenversicherung.html" },
+      { label: "ch.ch — Krankenkasse", url: "https://www.ch.ch/de/versicherungen/krankenkasse/krankenkasse-abschliessen/" },
       { label: "Priminfo — Prämienrechner", url: "https://www.priminfo.admin.ch/" },
     ],
   },
@@ -395,7 +395,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
         title: "Kérvény az adóhivatalhoz",
         body:
           "A lakhely-kantonod adóhivatalához (Steueramt) küldött formális kérelem. Sok kantonban online (pl. ZH, BE), másoknál papír. A kérelmet március 31-ig kell beadni.",
-        link: { label: "ESTV — Quellensteuer + NOV", url: "https://www.estv.admin.ch/estv/de/home/direkte-bundessteuer/quellensteuer.html" },
+        link: { label: "ESTV — Quellensteuer + NOV", url: "https://www.ch.ch/de/steuern-und-finanzen/steuerarten/quellensteuer/" },
         duration: "30 perc",
       },
       {
@@ -418,7 +418,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
     ],
     sources: [
       { label: "ch.ch — Quellensteuer", url: "https://www.ch.ch/de/quellensteuer/" },
-      { label: "ESTV — Quellensteuer hivatalos", url: "https://www.estv.admin.ch/estv/de/home/direkte-bundessteuer/quellensteuer.html" },
+      { label: "ESTV — Quellensteuer hivatalos", url: "https://www.ch.ch/de/steuern-und-finanzen/steuerarten/quellensteuer/" },
     ],
   },
   {
@@ -442,7 +442,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
         title: "Quellensteuer-igazolás (Lohnausweis / Quellensteuerausweis) igénylése",
         body:
           "Ha B-engedéllyel dolgoztál, a munkáltatód kiállít egy éves Quellensteuerausweis-t (forrásadó-igazolást). Kérd el a munkáltatódtól a távozásod évének összes bérpapírját (Lohnausweis). Ha NOV-ot (Nachträgliche ordentliche Veranlagung) kértél, az adóhivatal postán megküldi a lezárt adóhatározatot (Verfügung) a bejelentett külföldi címedre. Ha még volt visszatérítési igényed, érdemes NOV-ot beadni mielőtt elmész (határidő: március 31.).",
-        link: { label: "ESTV — Quellensteuer visszatérítés", url: "https://www.estv.admin.ch/estv/de/home/direkte-bundessteuer/quellensteuer.html" },
+        link: { label: "ESTV — Quellensteuer visszatérítés", url: "https://www.ch.ch/de/steuern-und-finanzen/steuerarten/quellensteuer/" },
         duration: "1-2 hét (munkáltatón múlik)",
       },
       {
@@ -456,7 +456,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
         title: "3. pillér (Säule 3a) lezárása — kivét",
         body:
           "A 3a-pillér (magán nyugdíjmegtakarítás) az Abmeldung napjától TELJES egészében kivehető! Ez azért érvényes, mert Svájcot végleg elhagyod. Értesítsd a bankodat vagy a Versicherungs-társaságot (pl. Swiss Life, AXA, Zurich) legalább 4-6 héttel előre. A kifizetésre végső forrásadót vonnak le (jellemzően 5-8% kantontól függően). Külföldi bankszámlára is lehet utalni.",
-        link: { label: "ch.ch — Säule 3a kifizetés", url: "https://www.ch.ch/de/steuern-und-finanzen/altersvorsorge/saeule-3a/" },
+        link: { label: "ch.ch — Säule 3a kifizetés", url: "https://www.ch.ch/de/steuern-und-finanzen/altersvorsorge/3-saule/" },
         duration: "4-6 hét kifizetési átfutás",
       },
       {
@@ -503,7 +503,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
         title: "Leiratkozás: telefon, internet, előfizetések",
         body:
           "Mondj fel minden svájci előfizetést: Swisscom / Salt / Sunrise telefon+internet (figyelem: jellemzően 3-6 hónap felmondási idő!), streaming-szolgáltatások (Netflix, Disney+ — ha svájci fizetési módra kapcsolva), NZZ / Watson / egyéb svájci sajtó. Hagyd érvényben a Nachsendeauftrag-ot (levéltovábbítás) legalább 6 hónapra — így a visszakapott levelek és csekkek utolérnek.",
-        link: { label: "Swiss Post — Nachsendeauftrag", url: "https://www.post.ch/de/empfangen/umleiten/nachsendeauftrag-bestellen" },
+        link: { label: "Swiss Post — Nachsendeauftrag", url: "https://www.post.ch/de/empfangen/umzug/adressaenderung-mit-nachsendung" },
         duration: "1-2 óra",
       },
     ],
@@ -515,7 +515,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
       "A Quellensteuer NOV-kérelmet (ha visszaigényeltél) BE kell adni MIELŐTT kimész, különben az idei éves visszatérítés elvész.",
     ],
     sources: [
-      { label: "ch.ch — Abmeldung külföldre", url: "https://www.ch.ch/de/leben-in-der-schweiz/zuzug/wegzug-ins-ausland/" },
+      { label: "ch.ch — Abmeldung külföldre", url: "https://www.ch.ch/de/reisen-und-auswandern/im-ausland-leben/aus-der-schweiz-auswandern/" },
       { label: "AHV — Freizügigkeitsleistung", url: "https://www.ahv-iv.ch/" },
       { label: "Magyar Vámhatóság — Áttelepülés", url: "https://nav.gov.hu/vam/vasarlasok_kulfoldrol/letelepedes" },
     ],
@@ -533,10 +533,10 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
     deadline: "Meldezettel: 3 napon belül! Anmeldebescheinigung: 4 hónapon belül (ha >3 hó maradsz).",
     totalDuration: "Kb. 2-4 hét",
     steps: [
-      { title: "Lakcímbejelentés (Meldezettel)", body: "A beköltözéstől 3 NAPON belül a Meldeamtnál (Bécsben a kerületi Magistratisches Bezirksamt). Vidd: útlevél/igazolvány, kitöltött Meldezettel a szállásadó aláírásával.", link: { label: "oesterreich.gv.at — Meldepflicht", url: "https://www.oesterreich.gv.at/themen/dokumente_und_recht/meldebestaetigung.html" }, duration: "30-60 perc" },
+      { title: "Lakcímbejelentés (Meldezettel)", body: "A beköltözéstől 3 NAPON belül a Meldeamtnál (Bécsben a kerületi Magistratisches Bezirksamt). Vidd: útlevél/igazolvány, kitöltött Meldezettel a szállásadó aláírásával.", link: { label: "oesterreich.gv.at — Meldepflicht", url: "https://www.oesterreich.gv.at/de/lebenslagen/Ich-wohne-bald-in-einem-neuen-Zuhause/Melden" }, duration: "30-60 perc" },
       { title: "Bankszámlanyitás", body: "Erste Bank/Sparkasse, Bank Austria, BAWAG vagy online (N26, bank99). A Meldezettel + útlevél kell. A fizetésedhez és a bérleti díjhoz elengedhetetlen.", duration: "30-60 perc" },
       { title: "Egészségbiztosítás (e-card / ÖGK)", body: "A munkaviszonnyal AUTOMATIKUSAN biztosított leszel — a munkáltató bejelent az ÖGK-hoz. Az e-card már csak FÉNYKÉPPEL készül: magyar állampolgárként a fotódat személyesen kell regisztráltatnod (útlevél-minőségű fotó + úti okmány, helyszínek: chipkarte.at/foto), utána postán jön a kártya.", link: { label: "chipkarte.at — fotó-regisztráció", url: "https://www.chipkarte.at/foto" }, duration: "fotó-regisztráció ~30 perc" },
-      { title: "EU-regisztráció (Anmeldebescheinigung)", body: "3 hónapnál hosszabb tartózkodáshoz 4 hónapon belül kérd a tartózkodási hatóságnál (Bécsben MA 35). Kell: munkaviszony-igazolás VAGY elég jövedelem + biztosítás.", link: { label: "oesterreich.gv.at — Anmeldebescheinigung", url: "https://www.oesterreich.gv.at/themen/leben_in_oesterreich/aufenthalt/3.html" }, duration: "1-2 óra" },
+      { title: "EU-regisztráció (Anmeldebescheinigung)", body: "3 hónapnál hosszabb tartózkodáshoz 4 hónapon belül kérd a tartózkodási hatóságnál (Bécsben MA 35). Kell: munkaviszony-igazolás VAGY elég jövedelem + biztosítás.", link: { label: "oesterreich.gv.at — Anmeldebescheinigung", url: "https://www.oesterreich.gv.at/de/themen/menschen_aus_anderen_staaten/aufenthalt/3/Seite.120221" }, duration: "1-2 óra" },
     ],
     warnings: ["A Meldezettel 3 napos határideje SZIGORÚ — a késés bírsággal járhat.", "Minden költözéskor frissíteni kell (Ummeldung)."],
     sources: [{ label: "oesterreich.gv.at", url: "https://www.oesterreich.gv.at/" }, { label: "migration.gv.at", url: "https://www.migration.gv.at/" }],
@@ -550,12 +550,12 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
     deadline: "A beköltözéstől 3 napon belül.",
     totalDuration: "30-60 perc",
     steps: [
-      { title: "Meldezettel-űrlap kitöltése", body: "Töltsd ki a Meldezettel nyomtatványt (online letölthető). A szállásadónak (Unterkunftgeber) alá kell írnia.", link: { label: "BMI — Meldewesen", url: "https://www.bmi.gv.at/personenwesen/meldewesen/start.aspx" }, duration: "10 perc" },
+      { title: "Meldezettel-űrlap kitöltése", body: "Töltsd ki a Meldezettel nyomtatványt (online letölthető). A szállásadónak (Unterkunftgeber) alá kell írnia.", link: { label: "Meldezettel-űrlap (PDF)", url: "https://www.oesterreich.gv.at/dam/jcr:d0c97509-1a04-4b5a-8626-8a5f9e6b4b39/Meldezettel_2023_ausfuellbar.pdf" }, duration: "10 perc" },
       { title: "Személyes megjelenés a Meldeamtnál", body: "Bécsben a kerületi Magistratisches Bezirksamt; tartományokban a Gemeindeamt. Vidd: kitöltött Meldezettel + útlevél/igazolvány.", duration: "20-40 perc" },
       { title: "Meldebestätigung átvétele", body: "Megkapod az igazolást. Őrizd meg — bankhoz, hivatalokhoz kelleni fog.", duration: "azonnal" },
     ],
     warnings: ["Költözéskor Ummeldung, kiköltözéskor Abmeldung is kell."],
-    sources: [{ label: "oesterreich.gv.at — Meldewesen", url: "https://www.oesterreich.gv.at/themen/dokumente_und_recht/meldebestaetigung.html" }],
+    sources: [{ label: "oesterreich.gv.at — Meldewesen", url: "https://www.oesterreich.gv.at/de/lebenslagen/Ich-wohne-bald-in-einem-neuen-Zuhause/Melden" }],
   },
   {
     slug: "at-adobevallas",
@@ -583,10 +583,10 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
     totalDuration: "0 (általában nincs teendő)",
     steps: [
       { title: "EU-jogosítvány = érvényes", body: "A magyar jogosítvány EU-s, így Ausztriában is érvényes. NEM kell osztrákra cserélni a használathoz.", duration: "—" },
-      { title: "Opcionális csere", body: "Ha mégis osztrák jogosítványt szeretnél (lejár, elveszett), a Führerscheinbehörde-nél cserélheted. Kell: Meldezettel, fotó, a magyar jogosítvány.", link: { label: "oesterreich.gv.at — Führerschein", url: "https://www.oesterreich.gv.at/themen/dokumente_und_recht/fuehrerschein.html" }, duration: "ha kell: 1 óra + díj" },
+      { title: "Opcionális csere", body: "Ha mégis osztrák jogosítványt szeretnél (lejár, elveszett), a Führerscheinbehörde-nél cserélheted. Kell: Meldezettel, fotó, a magyar jogosítvány.", link: { label: "oesterreich.gv.at — Führerschein", url: "https://www.oesterreich.gv.at/de/themen/mobilitaet/kfz/9/Seite.063502" }, duration: "ha kell: 1 óra + díj" },
     ],
     warnings: ["A magyar jogosítvány lejáratakor osztrák lakosként már Ausztriában kell megújítani."],
-    sources: [{ label: "oesterreich.gv.at — Führerschein", url: "https://www.oesterreich.gv.at/themen/dokumente_und_recht/fuehrerschein.html" }],
+    sources: [{ label: "oesterreich.gv.at — Führerschein", url: "https://www.oesterreich.gv.at/de/themen/mobilitaet/kfz/9/Seite.063502" }],
   },
   {
     slug: "at-familienbeihilfe",
@@ -598,11 +598,11 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
     totalDuration: "30 perc + feldolgozás",
     steps: [
       { title: "Jogosultság ellenőrzése", body: "EU-munkavállalóként jár a Familienbeihilfe; ha a gyerek másik EU-országban él, kiegészítő/különbözeti összeg jár.", duration: "—" },
-      { title: "Igénylés a Finanzamtnál", body: "FinanzOnline-on vagy a Finanzamtnál add be a Beih 100 űrlapot. Kell: a gyerek születési anyakönyve, Meldezettel, munkaviszony-igazolás.", link: { label: "BMF — Familienbeihilfe", url: "https://www.bmf.gv.at/themen/familienfoerderung.html" }, duration: "30 perc" },
+      { title: "Igénylés a Finanzamtnál", body: "FinanzOnline-on vagy a Finanzamtnál add be a Beih 100 űrlapot. Kell: a gyerek születési anyakönyve, Meldezettel, munkaviszony-igazolás.", link: { label: "BMF — Familienbeihilfe", url: "https://www.bmf.gv.at/themen/steuern/familienbeihilfe-faqs.html" }, duration: "30 perc" },
       { title: "Folyósítás", body: "Jóváhagyás után havonta a számládra utalják.", duration: "néhány hét" },
     ],
     warnings: ["A Familienbonus Plus az adóból külön levonható (Arbeitnehmerveranlagung) — a Familienbeihilfe mellett."],
-    sources: [{ label: "BMF — Familienförderung", url: "https://www.bmf.gv.at/themen/familienfoerderung.html" }],
+    sources: [{ label: "BMF — Familienbeihilfe", url: "https://www.bmf.gv.at/themen/steuern/familienbeihilfe-faqs.html" }],
   },
 ];
 
@@ -686,10 +686,10 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
     totalDuration: "0 (általában nincs teendő)",
     steps: [
       { title: "EU-jogosítvány = érvényes", body: "A magyar jogosítvány EU-s, így Németországban is érvényes a rajta szereplő lejáratig. NEM kell németre cserélni a használathoz.", duration: "—" },
-      { title: "Opcionális csere / megújítás", body: "Ha lejár, elveszett, vagy német jogsit szeretnél, a Führerscheinstelle-nél (Fahrerlaubnisbehörde) intézed. Kell: Anmeldung, biometrikus fotó, a magyar jogosítvány, esetleg látásteszt.", link: { label: "Bürgerservice — Führerschein", url: "https://www.bmdv.bund.de/DE/Themen/Mobilitaet/Strasse/Fuehrerschein/fuehrerschein.html" }, duration: "ha kell: 1 óra + díj" },
+      { title: "Opcionális csere / megújítás", body: "Ha lejár, elveszett, vagy német jogsit szeretnél, a Führerscheinstelle-nél (Fahrerlaubnisbehörde) intézed. Kell: Anmeldung, biometrikus fotó, a magyar jogosítvány, esetleg látásteszt.", link: { label: "Bürgerservice — Führerschein", url: "https://verwaltung.bund.de/leistungsverzeichnis/de/rechte-und-pflichten/102837920" }, duration: "ha kell: 1 óra + díj" },
     ],
     warnings: ["A magyar jogosítvány lejáratakor német lakosként már Németországban kell megújítani.", "Tehergépjármű/busz (C, D kategória) esetén lehetnek külön orvosi/időbeli feltételek."],
-    sources: [{ label: "BMDV — Führerschein", url: "https://www.bmdv.bund.de/DE/Themen/Mobilitaet/Strasse/Fuehrerschein/fuehrerschein.html" }],
+    sources: [{ label: "BMDV — Führerschein", url: "https://verwaltung.bund.de/leistungsverzeichnis/de/rechte-und-pflichten/102837920" }],
   },
   {
     slug: "de-kindergeld",
@@ -701,11 +701,11 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
     totalDuration: "30 perc + feldolgozás",
     steps: [
       { title: "Steuer-ID beszerzése (szülő + gyerek)", body: "A Kindergeld-igényléshez kell a saját ÉS a gyerek Steuer-ID-je. A gyereké az Anmeldung után automatikusan jön postán.", duration: "—" },
-      { title: "Igénylés a Familienkasse-nál", body: "Töltsd ki a Kindergeldantrag-ot (online vagy papíron) a Familienkasse-nál (a Bundesagentur für Arbeit része). Kell: a gyerek születési anyakönyve, Steuer-ID-k, Anmeldung.", link: { label: "Familienkasse — Kindergeld", url: "https://www.arbeitsagentur.de/familie-und-kinder/kindergeld-verstehen-beantragen" }, duration: "30 perc" },
+      { title: "Igénylés a Familienkasse-nál", body: "Töltsd ki a Kindergeldantrag-ot (online vagy papíron) a Familienkasse-nál (a Bundesagentur für Arbeit része). Kell: a gyerek születési anyakönyve, Steuer-ID-k, Anmeldung.", link: { label: "Familienkasse — Kindergeld", url: "https://www.arbeitsagentur.de/familie-und-kinder/infos-rund-um-kindergeld" }, duration: "30 perc" },
       { title: "Folyósítás", body: "Jóváhagyás után havonta a számládra utalják. Ha a gyerek másik EU-országban él, kiegészítő/különbözeti összeg jár.", duration: "néhány hét" },
     ],
     warnings: ["Ha a gyerek Magyarországon él és ott is kaptok családi pótlékot, Németország a KÜLÖNBÖZETET fizeti (EU-koordináció).", "18 év felett (tanulmányok alatt) is járhat 25 éves korig — külön igazolással."],
-    sources: [{ label: "Familienkasse — Kindergeld", url: "https://www.arbeitsagentur.de/familie-und-kinder/kindergeld-verstehen-beantragen" }],
+    sources: [{ label: "Familienkasse — Kindergeld", url: "https://www.arbeitsagentur.de/familie-und-kinder/infos-rund-um-kindergeld" }],
   },
   {
     slug: "de-hazakoltozes",
@@ -738,7 +738,7 @@ export const CHECKLISTS_NL: AdminChecklist[] = [
     deadline: "Inschrijving: ha 4 hónapnál tovább maradsz, az érkezéstől 5 napon belül.",
     totalDuration: "Kb. 2-4 hét",
     steps: [
-      { title: "Bejelentkezés a gemeentén (inschrijving / BRP)", body: "Foglalj időpontot a lakóhelyed gemeente (önkormányzat) oldalán, és jelentkezz be a lakcímnyilvántartásba (Basisregistratie Personen). Vidd: érvényes útlevél/igazolvány, bérleti szerződés vagy a lakásadó hozzájárulása, és (ha van) nemzetközi születési anyakönyvi kivonat. A regisztrációkor kapod a BSN-t.", link: { label: "rijksoverheid.nl — persoonsgegevens (BRP)", url: "https://www.rijksoverheid.nl/onderwerpen/persoonsgegevens" }, duration: "20-30 perc + időpont-várakozás" },
+      { title: "Bejelentkezés a gemeentén (inschrijving / BRP)", body: "Foglalj időpontot a lakóhelyed gemeente (önkormányzat) oldalán, és jelentkezz be a lakcímnyilvántartásba (Basisregistratie Personen). Vidd: érvényes útlevél/igazolvány, bérleti szerződés vagy a lakásadó hozzájárulása, és (ha van) nemzetközi születési anyakönyvi kivonat. A regisztrációkor kapod a BSN-t.", link: { label: "rijksoverheid.nl — persoonsgegevens (BRP)", url: "https://www.rijksoverheid.nl/themas/overheid-en-democratie/privacy-en-persoonsgegevens" }, duration: "20-30 perc + időpont-várakozás" },
       { title: "BSN (Burgerservicenummer) megérkezése", body: "A BSN a személyi azonosító szám — a regisztrációkor vagy pár napon belül megkapod. Szinte minden ügyhöz kell: munka, bank, zorgverzekering, adó.", duration: "azonnal / pár nap" },
       { title: "DigiD igénylése", body: "A DigiD a digitális azonosítód a hivatali ügyintézéshez. A BSN birtokában igényeld a digid.nl-en; az aktiváló kód postán jön a regisztrált címedre (kb. 3-5 munkanap).", link: { label: "digid.nl", url: "https://www.digid.nl/" }, duration: "10 perc + postai kód" },
       { title: "Bankszámla nyitása", body: "Holland bankszámla a fizetéshez és a lakbérhez. ING, ABN AMRO, Rabobank, vagy online bunq. Kell: BSN + útlevél/igazolvány + lakcím.", duration: "20-40 perc" },
@@ -761,7 +761,7 @@ export const CHECKLISTS_NL: AdminChecklist[] = [
       { title: "Megjelenés és regisztráció", body: "A gemeentén személyesen regisztrálsz. A BSN-t a helyszínen vagy pár napon belül kapod meg. Ezzel bekerülsz a BRP-be.", duration: "20-30 perc" },
     ],
     warnings: ["Lakásadói hozzájárulás vagy bérleti szerződés nélkül elutasíthatják a bejelentést.", "Az anyakönyvi kivonatok fordítása/legalizálása időbe telhet — intézd előre."],
-    sources: [{ label: "rijksoverheid.nl — BSN", url: "https://www.rijksoverheid.nl/onderwerpen/persoonsgegevens/burgerservicenummer-bsn" }],
+    sources: [{ label: "rijksoverheid.nl — BSN", url: "https://www.rijksoverheid.nl/themas/overheid-en-democratie/privacy-en-persoonsgegevens/burgerservicenummer-bsn" }],
   },
   {
     slug: "nl-digid",
