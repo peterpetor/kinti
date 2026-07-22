@@ -9,12 +9,21 @@ export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Regisztráció" };
 
-/** Csak relatív / ugyanorigóra mutató URL — open-redirect ellen. */
+/**
+ * Csak relatív / ugyanorigóra mutató URL — open-redirect ellen.
+ *
+ * ⚠️ A puszta `//` tiltás NEM elég: a böngésző az URL-ben a visszaperjelet
+ * előre-perjellé alakítja, a TAB/CR/LF karaktereket pedig eldobja. Emiatt a
+ * `/\evil.com` és a `/<TAB>/evil.com` is PROTOKOLL-RELATÍV URL-lé válik a
+ * böngészőben → külső átirányítás (adathalász-vektor). Ezért ELŐBB ugyanúgy
+ * normalizálunk, mint a böngésző, és a normalizált értéket adjuk vissza.
+ */
 function safeRedirect(target: string | undefined): string {
   if (!target) return "/profil";
-  if (target.startsWith("/") && !target.startsWith("//")) return target;
+  const norm = target.replace(/[\t\r\n]/g, "").replace(/\\/g, "/");
+  if (norm.startsWith("/") && !norm.startsWith("//")) return norm;
   try {
-    const u = new URL(target);
+    const u = new URL(norm);
     if (u.host === "kinti.app") return u.pathname + u.search;
   } catch {
     /* érvénytelen URL */
