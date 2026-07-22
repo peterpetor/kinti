@@ -108,6 +108,32 @@ function setSecurityHeaders(res: NextResponse, pathname: string): void {
   res.headers.set("Referrer-Policy", isTokenPage ? "no-referrer" : "strict-origin-when-cross-origin");
 }
 
+/**
+ * ÉRVÉNYESÍTETT (nem Report-Only) CSP — CSAK azok a direktívák, amelyek NEM a
+ * scriptekről szólnak, ezért nem tudják eltörni a beágyazott boot-szkripteket
+ * (ország-kapu, jogi kapu, téma, Android-detektálás) sem a statikus oldalakat.
+ *
+ * Miért külön a `buildStrictCsp`-től: a teljes szabályzat élesítése `script-src`
+ * miatt nonce/hash-bevezetést és oldalankénti tesztelést igényelne. Ez a szűk
+ * halmaz viszont AZONNAL, kockázat nélkül élesíthető, és pont az XSS UTÁNI
+ * „adat-kiszivárgás" lépést zárja:
+ *
+ *  • frame-ancestors — kattintás-eltérítés (az X-Frame-Options modern párja)
+ *  • object-src      — plugin-alapú beszúrás (nincs <object>/<embed> az appban)
+ *  • base-uri        — <base>-eltérítés: enélkül egy beszúrt <base> MINDEN
+ *                      relatív linket/kérést idegen szerverre irányíthatna
+ *  • form-action     — beszúrt űrlap ne tudjon adatot idegen szerverre POST-olni
+ *
+ * A form-action allowlistán a fizetés (Paddle) és a bejelentkezés (Clerk) is
+ * rajta van, hogy egyik folyamat se sérüljön.
+ */
+const ENFORCED_CSP = [
+  "frame-ancestors 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self' https://*.paddle.com https://*.clerk.com https://clerk.kinti.app https://*.clerk.accounts.dev",
+].join("; ");
+
 /** Edge-kompatibilis base64 nonce (16 random bájt). */
 function makeNonce(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
@@ -191,7 +217,11 @@ export default clerkMiddleware(async (auth, req) => {
     requestHeaders.set("x-nonce", nonce);
     requestHeaders.set("Content-Security-Policy", csp);
     const res = NextResponse.next({ request: { headers: requestHeaders } });
+    // A TELJES szigorú szabályzat továbbra is csak jelent (script-src élesítése
+    // nonce/hash-bevezetést igényelne — ld. ENFORCED_CSP kommentje).
     res.headers.set("Content-Security-Policy-Report-Only", csp);
+    // A script-független direktívák viszont ÉRVÉNYESEK (kockázatmentes réteg).
+    res.headers.set("Content-Security-Policy", ENFORCED_CSP);
 
     // ── Anonim HTML edge-cache ────────────────────────────────────────────────
     // A kezdőlap és a szaknévsor SSR-je FELHASZNÁLÓ-FÜGGETLEN (nincs auth()/
