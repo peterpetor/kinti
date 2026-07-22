@@ -1,0 +1,62 @@
+{
+  "source": "Statistik Austria",
+  "file": "https://www.statistik.at/fileadmin/pages/407/Bev_Staatsangeh_Bundesland_Zeitreihe.ods",
+  "year": 2026,
+  "fetchedAt": "2026-07-22T22:41:12.847Z",
+  "rows": [
+    {
+      "code": "BGL",
+      "name": "Burgenland",
+      "year": 2026,
+      "count": 8872
+    },
+    {
+      "code": "KTN",
+      "name": "Kärnten",
+      "year": 2026,
+      "count": 4011
+    },
+    {
+      "code": "NOE",
+      "name": "Niederösterreich",
+      "year": 2026,
+      "count": 17587
+    },
+    {
+      "code": "OOE",
+      "name": "Oberösterreich",
+      "year": 2026,
+      "count": 19944
+    },
+    {
+      "code": "SBG",
+      "name": "Salzburg",
+      "year": 2026,
+      "count": 8309
+    },
+    {
+      "code": "STM",
+      "name": "Steiermark",
+      "year": 2026,
+      "count": 13762
+    },
+    {
+      "code": "TIR",
+      "name": "Tirol",
+      "year": 2026,
+      "count": 8774
+    },
+    {
+      "code": "VBG",
+      "name": "Vorarlberg",
+      "year": 2026,
+      "count": 3496
+    },
+    {
+      "code": "W",
+      "name": "Wien",
+      "year": 2026,
+      "count": 30423
+    }
+  ]
+}

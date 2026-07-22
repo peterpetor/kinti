@@ -1,0 +1,2158 @@
+{
+  "source": "CBS StatLine",
+  "table": "85644NED",
+  "period": "2026JJ00",
+  "year": 2026,
+  "fetchedAt": "2026-07-22T22:43:18.071Z",
+  "countryTotal": 24863,
+  "rows": [
+    {
+      "code": "LD01",
+      "name": "Noord-Nederland (LD)",
+      "level": "landsdeel",
+      "count": 1479
+    },
+    {
+      "code": "LD02",
+      "name": "Oost-Nederland (LD)",
+      "level": "landsdeel",
+      "count": 3305
+    },
+    {
+      "code": "LD03",
+      "name": "West-Nederland (LD)",
+      "level": "landsdeel",
+      "count": 13734
+    },
+    {
+      "code": "LD04",
+      "name": "Zuid-Nederland (LD)",
+      "level": "landsdeel",
+      "count": 6345
+    },
+    {
+      "code": "PV20",
+      "name": "Groningen (PV)",
+      "level": "provincie",
+      "count": 640
+    },
+    {
+      "code": "PV21",
+      "name": "Fryslân (PV)",
+      "level": "provincie",
+      "count": 594
+    },
+    {
+      "code": "PV22",
+      "name": "Drenthe (PV)",
+      "level": "provincie",
+      "count": 245
+    },
+    {
+      "code": "PV23",
+      "name": "Overijssel (PV)",
+      "level": "provincie",
+      "count": 869
+    },
+    {
+      "code": "PV24",
+      "name": "Flevoland (PV)",
+      "level": "provincie",
+      "count": 695
+    },
+    {
+      "code": "PV25",
+      "name": "Gelderland (PV)",
+      "level": "provincie",
+      "count": 1741
+    },
+    {
+      "code": "PV26",
+      "name": "Utrecht (PV)",
+      "level": "provincie",
+      "count": 1147
+    },
+    {
+      "code": "PV27",
+      "name": "Noord-Holland (PV)",
+      "level": "provincie",
+      "count": 5149
+    },
+    {
+      "code": "PV28",
+      "name": "Zuid-Holland (PV)",
+      "level": "provincie",
+      "count": 6747
+    },
+    {
+      "code": "PV29",
+      "name": "Zeeland (PV)",
+      "level": "provincie",
+      "count": 691
+    },
+    {
+      "code": "PV30",
+      "name": "Noord-Brabant (PV)",
+      "level": "provincie",
+      "count": 4189
+    },
+    {
+      "code": "PV31",
+      "name": "Limburg (PV)",
+      "level": "provincie",
+      "count": 2156
+    },
+    {
+      "code": "GM1680",
+      "name": "Aa en Hunze",
+      "level": "gemeente",
+      "count": 4
+    },
+    {
+      "code": "GM0358",
+      "name": "Aalsmeer",
+      "level": "gemeente",
+      "count": 36
+    },
+    {
+      "code": "GM0197",
+      "name": "Aalten",
+      "level": "gemeente",
+      "count": 6
+    },
+    {
+      "code": "GM0059",
+      "name": "Achtkarspelen",
+      "level": "gemeente",
+      "count": 5
+    },
+    {
+      "code": "GM0482",
+      "name": "Alblasserdam",
+      "level": "gemeente",
+      "count": 12
+    },
+    {
+      "code": "GM0613",
+      "name": "Albrandswaard",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0361",
+      "name": "Alkmaar",
+      "level": "gemeente",
+      "count": 118
+    },
+    {
+      "code": "GM0141",
+      "name": "Almelo",
+      "level": "gemeente",
+      "count": 94
+    },
+    {
+      "code": "GM0034",
+      "name": "Almere",
+      "level": "gemeente",
+      "count": 355
+    },
+    {
+      "code": "GM0484",
+      "name": "Alphen aan den Rijn",
+      "level": "gemeente",
+      "count": 94
+    },
+    {
+      "code": "GM1723",
+      "name": "Alphen-Chaam",
+      "level": "gemeente",
+      "count": 6
+    },
+    {
+      "code": "GM1959",
+      "name": "Altena",
+      "level": "gemeente",
+      "count": 51
+    },
+    {
+      "code": "GM0060",
+      "name": "Ameland",
+      "level": "gemeente",
+      "count": 6
+    },
+    {
+      "code": "GM0307",
+      "name": "Amersfoort",
+      "level": "gemeente",
+      "count": 107
+    },
+    {
+      "code": "GM0362",
+      "name": "Amstelveen",
+      "level": "gemeente",
+      "count": 237
+    },
+    {
+      "code": "GM0363",
+      "name": "Amsterdam",
+      "level": "gemeente",
+      "count": 2547
+    },
+    {
+      "code": "GM0200",
+      "name": "Apeldoorn",
+      "level": "gemeente",
+      "count": 278
+    },
+    {
+      "code": "GM0202",
+      "name": "Arnhem",
+      "level": "gemeente",
+      "count": 185
+    },
+    {
+      "code": "GM0106",
+      "name": "Assen",
+      "level": "gemeente",
+      "count": 22
+    },
+    {
+      "code": "GM0743",
+      "name": "Asten",
+      "level": "gemeente",
+      "count": 18
+    },
+    {
+      "code": "GM0744",
+      "name": "Baarle-Nassau",
+      "level": "gemeente",
+      "count": 3
+    },
+    {
+      "code": "GM0308",
+      "name": "Baarn",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM0489",
+      "name": "Barendrecht",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM0203",
+      "name": "Barneveld",
+      "level": "gemeente",
+      "count": 48
+    },
+    {
+      "code": "GM0888",
+      "name": "Beek (L.)",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM1954",
+      "name": "Beekdaelen",
+      "level": "gemeente",
+      "count": 21
+    },
+    {
+      "code": "GM0889",
+      "name": "Beesel",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM1945",
+      "name": "Berg en Dal",
+      "level": "gemeente",
+      "count": 17
+    },
+    {
+      "code": "GM1724",
+      "name": "Bergeijk",
+      "level": "gemeente",
+      "count": 49
+    },
+    {
+      "code": "GM0893",
+      "name": "Bergen (L.)",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM0373",
+      "name": "Bergen (NH.)",
+      "level": "gemeente",
+      "count": 33
+    },
+    {
+      "code": "GM0748",
+      "name": "Bergen op Zoom",
+      "level": "gemeente",
+      "count": 121
+    },
+    {
+      "code": "GM1859",
+      "name": "Berkelland",
+      "level": "gemeente",
+      "count": 15
+    },
+    {
+      "code": "GM1721",
+      "name": "Bernheze",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0753",
+      "name": "Best",
+      "level": "gemeente",
+      "count": 39
+    },
+    {
+      "code": "GM0209",
+      "name": "Beuningen",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM0375",
+      "name": "Beverwijk",
+      "level": "gemeente",
+      "count": 57
+    },
+    {
+      "code": "GM0310",
+      "name": "De Bilt",
+      "level": "gemeente",
+      "count": 12
+    },
+    {
+      "code": "GM1728",
+      "name": "Bladel",
+      "level": "gemeente",
+      "count": 18
+    },
+    {
+      "code": "GM0376",
+      "name": "Blaricum",
+      "level": "gemeente",
+      "count": 2
+    },
+    {
+      "code": "GM0377",
+      "name": "Bloemendaal",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM1901",
+      "name": "Bodegraven-Reeuwijk",
+      "level": "gemeente",
+      "count": 34
+    },
+    {
+      "code": "GM0755",
+      "name": "Boekel",
+      "level": "gemeente",
+      "count": 5
+    },
+    {
+      "code": "GM1681",
+      "name": "Borger-Odoorn",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0147",
+      "name": "Borne",
+      "level": "gemeente",
+      "count": 19
+    },
+    {
+      "code": "GM0654",
+      "name": "Borsele",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM0757",
+      "name": "Boxtel",
+      "level": "gemeente",
+      "count": 35
+    },
+    {
+      "code": "GM0758",
+      "name": "Breda",
+      "level": "gemeente",
+      "count": 319
+    },
+    {
+      "code": "GM1876",
+      "name": "Bronckhorst",
+      "level": "gemeente",
+      "count": 23
+    },
+    {
+      "code": "GM0213",
+      "name": "Brummen",
+      "level": "gemeente",
+      "count": 4
+    },
+    {
+      "code": "GM0899",
+      "name": "Brunssum",
+      "level": "gemeente",
+      "count": 43
+    },
+    {
+      "code": "GM0312",
+      "name": "Bunnik",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0313",
+      "name": "Bunschoten",
+      "level": "gemeente",
+      "count": 5
+    },
+    {
+      "code": "GM0214",
+      "name": "Buren",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0502",
+      "name": "Capelle aan den IJssel",
+      "level": "gemeente",
+      "count": 99
+    },
+    {
+      "code": "GM0383",
+      "name": "Castricum",
+      "level": "gemeente",
+      "count": 15
+    },
+    {
+      "code": "GM0109",
+      "name": "Coevorden",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM1706",
+      "name": "Cranendonck",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM0216",
+      "name": "Culemborg",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0148",
+      "name": "Dalfsen",
+      "level": "gemeente",
+      "count": 33
+    },
+    {
+      "code": "GM1891",
+      "name": "Dantumadiel",
+      "level": "gemeente",
+      "count": 7
+    },
+    {
+      "code": "GM0503",
+      "name": "Delft",
+      "level": "gemeente",
+      "count": 230
+    },
+    {
+      "code": "GM0762",
+      "name": "Deurne",
+      "level": "gemeente",
+      "count": 22
+    },
+    {
+      "code": "GM0150",
+      "name": "Deventer",
+      "level": "gemeente",
+      "count": 139
+    },
+    {
+      "code": "GM0384",
+      "name": "Diemen",
+      "level": "gemeente",
+      "count": 110
+    },
+    {
+      "code": "GM1980",
+      "name": "Dijk en Waard",
+      "level": "gemeente",
+      "count": 63
+    },
+    {
+      "code": "GM1774",
+      "name": "Dinkelland",
+      "level": "gemeente",
+      "count": 1
+    },
+    {
+      "code": "GM0221",
+      "name": "Doesburg",
+      "level": "gemeente",
+      "count": 1
+    },
+    {
+      "code": "GM0222",
+      "name": "Doetinchem",
+      "level": "gemeente",
+      "count": 36
+    },
+    {
+      "code": "GM0766",
+      "name": "Dongen",
+      "level": "gemeente",
+      "count": 15
+    },
+    {
+      "code": "GM0505",
+      "name": "Dordrecht",
+      "level": "gemeente",
+      "count": 166
+    },
+    {
+      "code": "GM0498",
+      "name": "Drechterland",
+      "level": "gemeente",
+      "count": 21
+    },
+    {
+      "code": "GM1719",
+      "name": "Drimmelen",
+      "level": "gemeente",
+      "count": 22
+    },
+    {
+      "code": "GM0303",
+      "name": "Dronten",
+      "level": "gemeente",
+      "count": 53
+    },
+    {
+      "code": "GM0225",
+      "name": "Druten",
+      "level": "gemeente",
+      "count": 3
+    },
+    {
+      "code": "GM0226",
+      "name": "Duiven",
+      "level": "gemeente",
+      "count": 18
+    },
+    {
+      "code": "GM1711",
+      "name": "Echt-Susteren",
+      "level": "gemeente",
+      "count": 51
+    },
+    {
+      "code": "GM0385",
+      "name": "Edam-Volendam",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM0228",
+      "name": "Ede",
+      "level": "gemeente",
+      "count": 98
+    },
+    {
+      "code": "GM0317",
+      "name": "Eemnes",
+      "level": "gemeente",
+      "count": 0
+    },
+    {
+      "code": "GM1979",
+      "name": "Eemsdelta",
+      "level": "gemeente",
+      "count": 36
+    },
+    {
+      "code": "GM0770",
+      "name": "Eersel",
+      "level": "gemeente",
+      "count": 25
+    },
+    {
+      "code": "GM1903",
+      "name": "Eijsden-Margraten",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM0772",
+      "name": "Eindhoven",
+      "level": "gemeente",
+      "count": 824
+    },
+    {
+      "code": "GM0230",
+      "name": "Elburg",
+      "level": "gemeente",
+      "count": 34
+    },
+    {
+      "code": "GM0114",
+      "name": "Emmen",
+      "level": "gemeente",
+      "count": 87
+    },
+    {
+      "code": "GM0388",
+      "name": "Enkhuizen",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0153",
+      "name": "Enschede",
+      "level": "gemeente",
+      "count": 205
+    },
+    {
+      "code": "GM0232",
+      "name": "Epe",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM0233",
+      "name": "Ermelo",
+      "level": "gemeente",
+      "count": 19
+    },
+    {
+      "code": "GM0777",
+      "name": "Etten-Leur",
+      "level": "gemeente",
+      "count": 58
+    },
+    {
+      "code": "GM1940",
+      "name": "De Fryske Marren",
+      "level": "gemeente",
+      "count": 12
+    },
+    {
+      "code": "GM0779",
+      "name": "Geertruidenberg",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM1771",
+      "name": "Geldrop-Mierlo",
+      "level": "gemeente",
+      "count": 73
+    },
+    {
+      "code": "GM1652",
+      "name": "Gemert-Bakel",
+      "level": "gemeente",
+      "count": 62
+    },
+    {
+      "code": "GM0907",
+      "name": "Gennep",
+      "level": "gemeente",
+      "count": 31
+    },
+    {
+      "code": "GM0784",
+      "name": "Gilze en Rijen",
+      "level": "gemeente",
+      "count": 25
+    },
+    {
+      "code": "GM1924",
+      "name": "Goeree-Overflakkee",
+      "level": "gemeente",
+      "count": 40
+    },
+    {
+      "code": "GM0664",
+      "name": "Goes",
+      "level": "gemeente",
+      "count": 51
+    },
+    {
+      "code": "GM0785",
+      "name": "Goirle",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM1942",
+      "name": "Gooise Meren",
+      "level": "gemeente",
+      "count": 43
+    },
+    {
+      "code": "GM0512",
+      "name": "Gorinchem",
+      "level": "gemeente",
+      "count": 24
+    },
+    {
+      "code": "GM0513",
+      "name": "Gouda",
+      "level": "gemeente",
+      "count": 145
+    },
+    {
+      "code": "GM0518",
+      "name": "'s-Gravenhage (gemeente)",
+      "level": "gemeente",
+      "count": 2013
+    },
+    {
+      "code": "GM0014",
+      "name": "Groningen (gemeente)",
+      "level": "gemeente",
+      "count": 463
+    },
+    {
+      "code": "GM1729",
+      "name": "Gulpen-Wittem",
+      "level": "gemeente",
+      "count": 17
+    },
+    {
+      "code": "GM0158",
+      "name": "Haaksbergen",
+      "level": "gemeente",
+      "count": 4
+    },
+    {
+      "code": "GM0392",
+      "name": "Haarlem",
+      "level": "gemeente",
+      "count": 350
+    },
+    {
+      "code": "GM0394",
+      "name": "Haarlemmermeer",
+      "level": "gemeente",
+      "count": 268
+    },
+    {
+      "code": "GM1655",
+      "name": "Halderberge",
+      "level": "gemeente",
+      "count": 71
+    },
+    {
+      "code": "GM0160",
+      "name": "Hardenberg",
+      "level": "gemeente",
+      "count": 12
+    },
+    {
+      "code": "GM0243",
+      "name": "Harderwijk",
+      "level": "gemeente",
+      "count": 10
+    },
+    {
+      "code": "GM0523",
+      "name": "Hardinxveld-Giessendam",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0072",
+      "name": "Harlingen",
+      "level": "gemeente",
+      "count": 15
+    },
+    {
+      "code": "GM0244",
+      "name": "Hattem",
+      "level": "gemeente",
+      "count": 1
+    },
+    {
+      "code": "GM0396",
+      "name": "Heemskerk",
+      "level": "gemeente",
+      "count": 31
+    },
+    {
+      "code": "GM0397",
+      "name": "Heemstede",
+      "level": "gemeente",
+      "count": 11
+    },
+    {
+      "code": "GM0246",
+      "name": "Heerde",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM0074",
+      "name": "Heerenveen",
+      "level": "gemeente",
+      "count": 35
+    },
+    {
+      "code": "GM0917",
+      "name": "Heerlen",
+      "level": "gemeente",
+      "count": 292
+    },
+    {
+      "code": "GM1658",
+      "name": "Heeze-Leende",
+      "level": "gemeente",
+      "count": 10
+    },
+    {
+      "code": "GM0399",
+      "name": "Heiloo",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM0400",
+      "name": "Den Helder",
+      "level": "gemeente",
+      "count": 110
+    },
+    {
+      "code": "GM0163",
+      "name": "Hellendoorn",
+      "level": "gemeente",
+      "count": 5
+    },
+    {
+      "code": "GM0794",
+      "name": "Helmond",
+      "level": "gemeente",
+      "count": 233
+    },
+    {
+      "code": "GM0531",
+      "name": "Hendrik-Ido-Ambacht",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM0164",
+      "name": "Hengelo (O.)",
+      "level": "gemeente",
+      "count": 53
+    },
+    {
+      "code": "GM0796",
+      "name": "'s-Hertogenbosch",
+      "level": "gemeente",
+      "count": 168
+    },
+    {
+      "code": "GM0252",
+      "name": "Heumen",
+      "level": "gemeente",
+      "count": 3
+    },
+    {
+      "code": "GM0797",
+      "name": "Heusden",
+      "level": "gemeente",
+      "count": 32
+    },
+    {
+      "code": "GM0534",
+      "name": "Hillegom",
+      "level": "gemeente",
+      "count": 11
+    },
+    {
+      "code": "GM0798",
+      "name": "Hilvarenbeek",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM0402",
+      "name": "Hilversum",
+      "level": "gemeente",
+      "count": 144
+    },
+    {
+      "code": "GM1963",
+      "name": "Hoeksche Waard",
+      "level": "gemeente",
+      "count": 46
+    },
+    {
+      "code": "GM1735",
+      "name": "Hof van Twente",
+      "level": "gemeente",
+      "count": 7
+    },
+    {
+      "code": "GM1966",
+      "name": "Het Hogeland",
+      "level": "gemeente",
+      "count": 34
+    },
+    {
+      "code": "GM1911",
+      "name": "Hollands Kroon",
+      "level": "gemeente",
+      "count": 99
+    },
+    {
+      "code": "GM0118",
+      "name": "Hoogeveen",
+      "level": "gemeente",
+      "count": 44
+    },
+    {
+      "code": "GM0405",
+      "name": "Hoorn",
+      "level": "gemeente",
+      "count": 87
+    },
+    {
+      "code": "GM1507",
+      "name": "Horst aan de Maas",
+      "level": "gemeente",
+      "count": 57
+    },
+    {
+      "code": "GM0321",
+      "name": "Houten",
+      "level": "gemeente",
+      "count": 31
+    },
+    {
+      "code": "GM0406",
+      "name": "Huizen",
+      "level": "gemeente",
+      "count": 23
+    },
+    {
+      "code": "GM0677",
+      "name": "Hulst",
+      "level": "gemeente",
+      "count": 28
+    },
+    {
+      "code": "GM0353",
+      "name": "IJsselstein",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM1884",
+      "name": "Kaag en Braassem",
+      "level": "gemeente",
+      "count": 25
+    },
+    {
+      "code": "GM0166",
+      "name": "Kampen",
+      "level": "gemeente",
+      "count": 65
+    },
+    {
+      "code": "GM0678",
+      "name": "Kapelle",
+      "level": "gemeente",
+      "count": 17
+    },
+    {
+      "code": "GM0537",
+      "name": "Katwijk",
+      "level": "gemeente",
+      "count": 55
+    },
+    {
+      "code": "GM0928",
+      "name": "Kerkrade",
+      "level": "gemeente",
+      "count": 186
+    },
+    {
+      "code": "GM1598",
+      "name": "Koggenland",
+      "level": "gemeente",
+      "count": 10
+    },
+    {
+      "code": "GM0542",
+      "name": "Krimpen aan den IJssel",
+      "level": "gemeente",
+      "count": 18
+    },
+    {
+      "code": "GM1931",
+      "name": "Krimpenerwaard",
+      "level": "gemeente",
+      "count": 120
+    },
+    {
+      "code": "GM1659",
+      "name": "Laarbeek",
+      "level": "gemeente",
+      "count": 11
+    },
+    {
+      "code": "GM1982",
+      "name": "Land van Cuijk",
+      "level": "gemeente",
+      "count": 44
+    },
+    {
+      "code": "GM0882",
+      "name": "Landgraaf",
+      "level": "gemeente",
+      "count": 59
+    },
+    {
+      "code": "GM0415",
+      "name": "Landsmeer",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM1621",
+      "name": "Lansingerland",
+      "level": "gemeente",
+      "count": 30
+    },
+    {
+      "code": "GM0417",
+      "name": "Laren (NH.)",
+      "level": "gemeente",
+      "count": 12
+    },
+    {
+      "code": "GM0080",
+      "name": "Leeuwarden",
+      "level": "gemeente",
+      "count": 274
+    },
+    {
+      "code": "GM0546",
+      "name": "Leiden",
+      "level": "gemeente",
+      "count": 241
+    },
+    {
+      "code": "GM0547",
+      "name": "Leiderdorp",
+      "level": "gemeente",
+      "count": 17
+    },
+    {
+      "code": "GM1916",
+      "name": "Leidschendam-Voorburg",
+      "level": "gemeente",
+      "count": 177
+    },
+    {
+      "code": "GM0995",
+      "name": "Lelystad",
+      "level": "gemeente",
+      "count": 194
+    },
+    {
+      "code": "GM1640",
+      "name": "Leudal",
+      "level": "gemeente",
+      "count": 43
+    },
+    {
+      "code": "GM0327",
+      "name": "Leusden",
+      "level": "gemeente",
+      "count": 17
+    },
+    {
+      "code": "GM1705",
+      "name": "Lingewaard",
+      "level": "gemeente",
+      "count": 31
+    },
+    {
+      "code": "GM0553",
+      "name": "Lisse",
+      "level": "gemeente",
+      "count": 6
+    },
+    {
+      "code": "GM0262",
+      "name": "Lochem",
+      "level": "gemeente",
+      "count": 19
+    },
+    {
+      "code": "GM0809",
+      "name": "Loon op Zand",
+      "level": "gemeente",
+      "count": 23
+    },
+    {
+      "code": "GM0331",
+      "name": "Lopik",
+      "level": "gemeente",
+      "count": 6
+    },
+    {
+      "code": "GM0168",
+      "name": "Losser",
+      "level": "gemeente",
+      "count": 1
+    },
+    {
+      "code": "GM0263",
+      "name": "Maasdriel",
+      "level": "gemeente",
+      "count": 26
+    },
+    {
+      "code": "GM1641",
+      "name": "Maasgouw",
+      "level": "gemeente",
+      "count": 35
+    },
+    {
+      "code": "GM1991",
+      "name": "Maashorst",
+      "level": "gemeente",
+      "count": 32
+    },
+    {
+      "code": "GM0556",
+      "name": "Maassluis",
+      "level": "gemeente",
+      "count": 21
+    },
+    {
+      "code": "GM0935",
+      "name": "Maastricht",
+      "level": "gemeente",
+      "count": 398
+    },
+    {
+      "code": "GM0420",
+      "name": "Medemblik",
+      "level": "gemeente",
+      "count": 52
+    },
+    {
+      "code": "GM0938",
+      "name": "Meerssen",
+      "level": "gemeente",
+      "count": 11
+    },
+    {
+      "code": "GM1948",
+      "name": "Meierijstad",
+      "level": "gemeente",
+      "count": 72
+    },
+    {
+      "code": "GM0119",
+      "name": "Meppel",
+      "level": "gemeente",
+      "count": 33
+    },
+    {
+      "code": "GM0687",
+      "name": "Middelburg (Z.)",
+      "level": "gemeente",
+      "count": 52
+    },
+    {
+      "code": "GM1842",
+      "name": "Midden-Delfland",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM1731",
+      "name": "Midden-Drenthe",
+      "level": "gemeente",
+      "count": 7
+    },
+    {
+      "code": "GM1952",
+      "name": "Midden-Groningen",
+      "level": "gemeente",
+      "count": 42
+    },
+    {
+      "code": "GM1709",
+      "name": "Moerdijk",
+      "level": "gemeente",
+      "count": 29
+    },
+    {
+      "code": "GM1978",
+      "name": "Molenlanden",
+      "level": "gemeente",
+      "count": 34
+    },
+    {
+      "code": "GM1955",
+      "name": "Montferland",
+      "level": "gemeente",
+      "count": 23
+    },
+    {
+      "code": "GM0335",
+      "name": "Montfoort",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM0944",
+      "name": "Mook en Middelaar",
+      "level": "gemeente",
+      "count": 4
+    },
+    {
+      "code": "GM1740",
+      "name": "Neder-Betuwe",
+      "level": "gemeente",
+      "count": 29
+    },
+    {
+      "code": "GM0946",
+      "name": "Nederweert",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0356",
+      "name": "Nieuwegein",
+      "level": "gemeente",
+      "count": 44
+    },
+    {
+      "code": "GM0569",
+      "name": "Nieuwkoop",
+      "level": "gemeente",
+      "count": 27
+    },
+    {
+      "code": "GM0267",
+      "name": "Nijkerk",
+      "level": "gemeente",
+      "count": 86
+    },
+    {
+      "code": "GM0268",
+      "name": "Nijmegen",
+      "level": "gemeente",
+      "count": 220
+    },
+    {
+      "code": "GM1930",
+      "name": "Nissewaard",
+      "level": "gemeente",
+      "count": 146
+    },
+    {
+      "code": "GM1970",
+      "name": "Noardeast-Fryslân",
+      "level": "gemeente",
+      "count": 31
+    },
+    {
+      "code": "GM1695",
+      "name": "Noord-Beveland",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM1699",
+      "name": "Noordenveld",
+      "level": "gemeente",
+      "count": 3
+    },
+    {
+      "code": "GM0171",
+      "name": "Noordoostpolder",
+      "level": "gemeente",
+      "count": 57
+    },
+    {
+      "code": "GM0575",
+      "name": "Noordwijk",
+      "level": "gemeente",
+      "count": 33
+    },
+    {
+      "code": "GM0820",
+      "name": "Nuenen, Gerwen en Nederwetten",
+      "level": "gemeente",
+      "count": 26
+    },
+    {
+      "code": "GM0302",
+      "name": "Nunspeet",
+      "level": "gemeente",
+      "count": 28
+    },
+    {
+      "code": "GM0579",
+      "name": "Oegstgeest",
+      "level": "gemeente",
+      "count": 35
+    },
+    {
+      "code": "GM0823",
+      "name": "Oirschot",
+      "level": "gemeente",
+      "count": 19
+    },
+    {
+      "code": "GM0824",
+      "name": "Oisterwijk",
+      "level": "gemeente",
+      "count": 15
+    },
+    {
+      "code": "GM1895",
+      "name": "Oldambt",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM0269",
+      "name": "Oldebroek",
+      "level": "gemeente",
+      "count": 39
+    },
+    {
+      "code": "GM0173",
+      "name": "Oldenzaal",
+      "level": "gemeente",
+      "count": 10
+    },
+    {
+      "code": "GM1773",
+      "name": "Olst-Wijhe",
+      "level": "gemeente",
+      "count": 2
+    },
+    {
+      "code": "GM0175",
+      "name": "Ommen",
+      "level": "gemeente",
+      "count": 36
+    },
+    {
+      "code": "GM1586",
+      "name": "Oost Gelre",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0826",
+      "name": "Oosterhout",
+      "level": "gemeente",
+      "count": 41
+    },
+    {
+      "code": "GM0085",
+      "name": "Ooststellingwerf",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0431",
+      "name": "Oostzaan",
+      "level": "gemeente",
+      "count": 2
+    },
+    {
+      "code": "GM0432",
+      "name": "Opmeer",
+      "level": "gemeente",
+      "count": 5
+    },
+    {
+      "code": "GM0086",
+      "name": "Opsterland",
+      "level": "gemeente",
+      "count": 19
+    },
+    {
+      "code": "GM0828",
+      "name": "Oss",
+      "level": "gemeente",
+      "count": 81
+    },
+    {
+      "code": "GM1509",
+      "name": "Oude IJsselstreek",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM0437",
+      "name": "Ouder-Amstel",
+      "level": "gemeente",
+      "count": 22
+    },
+    {
+      "code": "GM0589",
+      "name": "Oudewater",
+      "level": "gemeente",
+      "count": 14
+    },
+    {
+      "code": "GM1734",
+      "name": "Overbetuwe",
+      "level": "gemeente",
+      "count": 11
+    },
+    {
+      "code": "GM0590",
+      "name": "Papendrecht",
+      "level": "gemeente",
+      "count": 15
+    },
+    {
+      "code": "GM1894",
+      "name": "Peel en Maas",
+      "level": "gemeente",
+      "count": 21
+    },
+    {
+      "code": "GM0765",
+      "name": "Pekela",
+      "level": "gemeente",
+      "count": 10
+    },
+    {
+      "code": "GM1926",
+      "name": "Pijnacker-Nootdorp",
+      "level": "gemeente",
+      "count": 42
+    },
+    {
+      "code": "GM0439",
+      "name": "Purmerend",
+      "level": "gemeente",
+      "count": 108
+    },
+    {
+      "code": "GM0273",
+      "name": "Putten",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0177",
+      "name": "Raalte",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM0703",
+      "name": "Reimerswaal",
+      "level": "gemeente",
+      "count": 157
+    },
+    {
+      "code": "GM0274",
+      "name": "Renkum",
+      "level": "gemeente",
+      "count": 24
+    },
+    {
+      "code": "GM0339",
+      "name": "Renswoude",
+      "level": "gemeente",
+      "count": 1
+    },
+    {
+      "code": "GM1667",
+      "name": "Reusel-De Mierden",
+      "level": "gemeente",
+      "count": 12
+    },
+    {
+      "code": "GM0275",
+      "name": "Rheden",
+      "level": "gemeente",
+      "count": 22
+    },
+    {
+      "code": "GM0340",
+      "name": "Rhenen",
+      "level": "gemeente",
+      "count": 6
+    },
+    {
+      "code": "GM0597",
+      "name": "Ridderkerk",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM1742",
+      "name": "Rijssen-Holten",
+      "level": "gemeente",
+      "count": 31
+    },
+    {
+      "code": "GM0603",
+      "name": "Rijswijk (ZH.)",
+      "level": "gemeente",
+      "count": 129
+    },
+    {
+      "code": "GM1669",
+      "name": "Roerdalen",
+      "level": "gemeente",
+      "count": 38
+    },
+    {
+      "code": "GM0957",
+      "name": "Roermond",
+      "level": "gemeente",
+      "count": 169
+    },
+    {
+      "code": "GM0736",
+      "name": "De Ronde Venen",
+      "level": "gemeente",
+      "count": 31
+    },
+    {
+      "code": "GM1674",
+      "name": "Roosendaal",
+      "level": "gemeente",
+      "count": 225
+    },
+    {
+      "code": "GM0599",
+      "name": "Rotterdam",
+      "level": "gemeente",
+      "count": 1793
+    },
+    {
+      "code": "GM0277",
+      "name": "Rozendaal",
+      "level": "gemeente",
+      "count": 0
+    },
+    {
+      "code": "GM0840",
+      "name": "Rucphen",
+      "level": "gemeente",
+      "count": 17
+    },
+    {
+      "code": "GM0441",
+      "name": "Schagen",
+      "level": "gemeente",
+      "count": 35
+    },
+    {
+      "code": "GM0279",
+      "name": "Scherpenzeel",
+      "level": "gemeente",
+      "count": 5
+    },
+    {
+      "code": "GM0606",
+      "name": "Schiedam",
+      "level": "gemeente",
+      "count": 186
+    },
+    {
+      "code": "GM0088",
+      "name": "Schiermonnikoog",
+      "level": "gemeente",
+      "count": 2
+    },
+    {
+      "code": "GM1676",
+      "name": "Schouwen-Duiveland",
+      "level": "gemeente",
+      "count": 12
+    },
+    {
+      "code": "GM0965",
+      "name": "Simpelveld",
+      "level": "gemeente",
+      "count": 3
+    },
+    {
+      "code": "GM0845",
+      "name": "Sint-Michielsgestel",
+      "level": "gemeente",
+      "count": 23
+    },
+    {
+      "code": "GM1883",
+      "name": "Sittard-Geleen",
+      "level": "gemeente",
+      "count": 142
+    },
+    {
+      "code": "GM0610",
+      "name": "Sliedrecht",
+      "level": "gemeente",
+      "count": 18
+    },
+    {
+      "code": "GM1714",
+      "name": "Sluis",
+      "level": "gemeente",
+      "count": 54
+    },
+    {
+      "code": "GM0090",
+      "name": "Smallingerland",
+      "level": "gemeente",
+      "count": 17
+    },
+    {
+      "code": "GM0342",
+      "name": "Soest",
+      "level": "gemeente",
+      "count": 36
+    },
+    {
+      "code": "GM0847",
+      "name": "Someren",
+      "level": "gemeente",
+      "count": 24
+    },
+    {
+      "code": "GM0848",
+      "name": "Son en Breugel",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0037",
+      "name": "Stadskanaal",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM0180",
+      "name": "Staphorst",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0532",
+      "name": "Stede Broec",
+      "level": "gemeente",
+      "count": 19
+    },
+    {
+      "code": "GM0851",
+      "name": "Steenbergen",
+      "level": "gemeente",
+      "count": 25
+    },
+    {
+      "code": "GM1708",
+      "name": "Steenwijkerland",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0971",
+      "name": "Stein (L.)",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM1904",
+      "name": "Stichtse Vecht",
+      "level": "gemeente",
+      "count": 43
+    },
+    {
+      "code": "GM1900",
+      "name": "Súdwest-Fryslân",
+      "level": "gemeente",
+      "count": 47
+    },
+    {
+      "code": "GM0715",
+      "name": "Terneuzen",
+      "level": "gemeente",
+      "count": 101
+    },
+    {
+      "code": "GM0093",
+      "name": "Terschelling",
+      "level": "gemeente",
+      "count": 7
+    },
+    {
+      "code": "GM0448",
+      "name": "Texel",
+      "level": "gemeente",
+      "count": 7
+    },
+    {
+      "code": "GM1525",
+      "name": "Teylingen",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0716",
+      "name": "Tholen",
+      "level": "gemeente",
+      "count": 43
+    },
+    {
+      "code": "GM0281",
+      "name": "Tiel",
+      "level": "gemeente",
+      "count": 51
+    },
+    {
+      "code": "GM0855",
+      "name": "Tilburg",
+      "level": "gemeente",
+      "count": 637
+    },
+    {
+      "code": "GM0183",
+      "name": "Tubbergen",
+      "level": "gemeente",
+      "count": 7
+    },
+    {
+      "code": "GM1700",
+      "name": "Twenterand",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM1730",
+      "name": "Tynaarlo",
+      "level": "gemeente",
+      "count": 11
+    },
+    {
+      "code": "GM0737",
+      "name": "Tytsjerksteradiel",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0450",
+      "name": "Uitgeest",
+      "level": "gemeente",
+      "count": 0
+    },
+    {
+      "code": "GM0451",
+      "name": "Uithoorn",
+      "level": "gemeente",
+      "count": 35
+    },
+    {
+      "code": "GM0184",
+      "name": "Urk",
+      "level": "gemeente",
+      "count": 11
+    },
+    {
+      "code": "GM0344",
+      "name": "Utrecht (gemeente)",
+      "level": "gemeente",
+      "count": 563
+    },
+    {
+      "code": "GM1581",
+      "name": "Utrechtse Heuvelrug",
+      "level": "gemeente",
+      "count": 10
+    },
+    {
+      "code": "GM0981",
+      "name": "Vaals",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0994",
+      "name": "Valkenburg aan de Geul",
+      "level": "gemeente",
+      "count": 22
+    },
+    {
+      "code": "GM0858",
+      "name": "Valkenswaard",
+      "level": "gemeente",
+      "count": 48
+    },
+    {
+      "code": "GM0047",
+      "name": "Veendam",
+      "level": "gemeente",
+      "count": 7
+    },
+    {
+      "code": "GM0345",
+      "name": "Veenendaal",
+      "level": "gemeente",
+      "count": 27
+    },
+    {
+      "code": "GM0717",
+      "name": "Veere",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0861",
+      "name": "Veldhoven",
+      "level": "gemeente",
+      "count": 85
+    },
+    {
+      "code": "GM0453",
+      "name": "Velsen",
+      "level": "gemeente",
+      "count": 56
+    },
+    {
+      "code": "GM0983",
+      "name": "Venlo",
+      "level": "gemeente",
+      "count": 235
+    },
+    {
+      "code": "GM0984",
+      "name": "Venray",
+      "level": "gemeente",
+      "count": 86
+    },
+    {
+      "code": "GM1961",
+      "name": "Vijfheerenlanden",
+      "level": "gemeente",
+      "count": 60
+    },
+    {
+      "code": "GM0622",
+      "name": "Vlaardingen",
+      "level": "gemeente",
+      "count": 124
+    },
+    {
+      "code": "GM0096",
+      "name": "Vlieland",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM0718",
+      "name": "Vlissingen",
+      "level": "gemeente",
+      "count": 141
+    },
+    {
+      "code": "GM0986",
+      "name": "Voerendaal",
+      "level": "gemeente",
+      "count": 10
+    },
+    {
+      "code": "GM1992",
+      "name": "Voorne aan Zee",
+      "level": "gemeente",
+      "count": 31
+    },
+    {
+      "code": "GM0626",
+      "name": "Voorschoten",
+      "level": "gemeente",
+      "count": 18
+    },
+    {
+      "code": "GM0285",
+      "name": "Voorst",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM0865",
+      "name": "Vught",
+      "level": "gemeente",
+      "count": 21
+    },
+    {
+      "code": "GM1949",
+      "name": "Waadhoeke",
+      "level": "gemeente",
+      "count": 84
+    },
+    {
+      "code": "GM0866",
+      "name": "Waalre",
+      "level": "gemeente",
+      "count": 29
+    },
+    {
+      "code": "GM0867",
+      "name": "Waalwijk",
+      "level": "gemeente",
+      "count": 227
+    },
+    {
+      "code": "GM0627",
+      "name": "Waddinxveen",
+      "level": "gemeente",
+      "count": 38
+    },
+    {
+      "code": "GM0289",
+      "name": "Wageningen",
+      "level": "gemeente",
+      "count": 58
+    },
+    {
+      "code": "GM0629",
+      "name": "Wassenaar",
+      "level": "gemeente",
+      "count": 62
+    },
+    {
+      "code": "GM0852",
+      "name": "Waterland",
+      "level": "gemeente",
+      "count": 6
+    },
+    {
+      "code": "GM0988",
+      "name": "Weert",
+      "level": "gemeente",
+      "count": 91
+    },
+    {
+      "code": "GM1960",
+      "name": "West Betuwe",
+      "level": "gemeente",
+      "count": 39
+    },
+    {
+      "code": "GM0668",
+      "name": "West Maas en Waal",
+      "level": "gemeente",
+      "count": 13
+    },
+    {
+      "code": "GM1969",
+      "name": "Westerkwartier",
+      "level": "gemeente",
+      "count": 10
+    },
+    {
+      "code": "GM1701",
+      "name": "Westerveld",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0293",
+      "name": "Westervoort",
+      "level": "gemeente",
+      "count": 10
+    },
+    {
+      "code": "GM1950",
+      "name": "Westerwolde",
+      "level": "gemeente",
+      "count": 12
+    },
+    {
+      "code": "GM1783",
+      "name": "Westland",
+      "level": "gemeente",
+      "count": 129
+    },
+    {
+      "code": "GM0098",
+      "name": "Weststellingwerf",
+      "level": "gemeente",
+      "count": 8
+    },
+    {
+      "code": "GM0189",
+      "name": "Wierden",
+      "level": "gemeente",
+      "count": 5
+    },
+    {
+      "code": "GM0296",
+      "name": "Wijchen",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM1696",
+      "name": "Wijdemeren",
+      "level": "gemeente",
+      "count": 16
+    },
+    {
+      "code": "GM0352",
+      "name": "Wijk bij Duurstede",
+      "level": "gemeente",
+      "count": 7
+    },
+    {
+      "code": "GM0294",
+      "name": "Winterswijk",
+      "level": "gemeente",
+      "count": 15
+    },
+    {
+      "code": "GM0873",
+      "name": "Woensdrecht",
+      "level": "gemeente",
+      "count": 20
+    },
+    {
+      "code": "GM0632",
+      "name": "Woerden",
+      "level": "gemeente",
+      "count": 32
+    },
+    {
+      "code": "GM1690",
+      "name": "De Wolden",
+      "level": "gemeente",
+      "count": 9
+    },
+    {
+      "code": "GM0880",
+      "name": "Wormerland",
+      "level": "gemeente",
+      "count": 11
+    },
+    {
+      "code": "GM0351",
+      "name": "Woudenberg",
+      "level": "gemeente",
+      "count": 3
+    },
+    {
+      "code": "GM0479",
+      "name": "Zaanstad",
+      "level": "gemeente",
+      "count": 257
+    },
+    {
+      "code": "GM0297",
+      "name": "Zaltbommel",
+      "level": "gemeente",
+      "count": 18
+    },
+    {
+      "code": "GM0473",
+      "name": "Zandvoort",
+      "level": "gemeente",
+      "count": 30
+    },
+    {
+      "code": "GM0050",
+      "name": "Zeewolde",
+      "level": "gemeente",
+      "count": 25
+    },
+    {
+      "code": "GM0355",
+      "name": "Zeist",
+      "level": "gemeente",
+      "count": 44
+    },
+    {
+      "code": "GM0299",
+      "name": "Zevenaar",
+      "level": "gemeente",
+      "count": 36
+    },
+    {
+      "code": "GM0637",
+      "name": "Zoetermeer",
+      "level": "gemeente",
+      "count": 104
+    },
+    {
+      "code": "GM0638",
+      "name": "Zoeterwoude",
+      "level": "gemeente",
+      "count": 2
+    },
+    {
+      "code": "GM1892",
+      "name": "Zuidplas",
+      "level": "gemeente",
+      "count": 44
+    },
+    {
+      "code": "GM0879",
+      "name": "Zundert",
+      "level": "gemeente",
+      "count": 17
+    },
+    {
+      "code": "GM0301",
+      "name": "Zutphen",
+      "level": "gemeente",
+      "count": 29
+    },
+    {
+      "code": "GM1896",
+      "name": "Zwartewaterland",
+      "level": "gemeente",
+      "count": 7
+    },
+    {
+      "code": "GM0642",
+      "name": "Zwijndrecht",
+      "level": "gemeente",
+      "count": 25
+    },
+    {
+      "code": "GM0193",
+      "name": "Zwolle",
+      "level": "gemeente",
+      "count": 88
+    }
+  ]
+}
