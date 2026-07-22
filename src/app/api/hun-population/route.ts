@@ -6,12 +6,16 @@ import { safeLogError } from "@/lib/safe-log";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-// A kulcs verziója (v2): 2026-07-22-én egy ország adatának feltöltés ELŐTTI
-// tesztlekérdezése 24 órára lecache-elte a `null` választ (a cache POP-onként
-// túléli a deployt is) — a v1→v2 bump egyszeri, azonnali gyógyír volt. A lenti
-// null-ág immár ÖNGYÓGYÍTÓ (ld. kommentje), így ez TÖBBÉ NEM ismétlődhet meg —
-// nincs szükség további verzió-bumpra.
-const CACHE_KEY_PREFIX = "hun-pop:v2:";
+// A kulcs verziója: minden bump egyszeri, azonnali gyógyír egy konkrét
+// beragadt/elavult cache-bejegyzésre (a cache POP-onként TÚLÉLI a deployt is).
+//   v1→v2 (2026-07-22): adat-feltöltés ELŐTTI teszt-hívás lefagyasztotta a
+//     `null` választ 24 órára — a null-ág azóta ÖNGYÓGYÍTÓ (ld. lent), ez a
+//     konkrét eset többé nem ismétlődhet meg.
+//   v2→v3 (2026-07-22): a NL gemeente-nevek utólagos kozmetikai javítása
+//     (pl. "Utrecht (gemeente)" → "Utrecht") már bent volt a D1-ben, de a
+//     RÉGI (helyes adatú, csak elavult nevű) válasz még érvényes cache-ként
+//     élt — ez NEM null, tehát az öngyógyító ág nem érintette; egyszeri bump.
+const CACHE_KEY_PREFIX = "hun-pop:v3:";
 
 /**
  * GET /api/hun-population?country=CH — hivatalos népességstatisztika (magyar

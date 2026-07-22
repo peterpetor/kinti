@@ -82,7 +82,15 @@ async function main() {
       // CR.. = COROP-régió (statisztikai egység, nem közigazgatási — a
       // hollandok nem ismerik névről, ezért lentebb kiszűrjük).
       const level = code === "NL01" ? "country" : code.startsWith("LD") ? "landsdeel" : code.startsWith("PV") ? "provincie" : code.startsWith("CR") ? "corop" : "gemeente";
-      return { code, name: regioMap.get(code) ?? code, level, count: r.Bevolking_1 };
+      let name = regioMap.get(code) ?? code;
+      // A CBS néhány gemeente-nevet "(gemeente)"-vel különböztet meg az
+      // AZONOS NEVŰ tartománytól (pl. "Utrecht (gemeente)" vs. Utrecht
+      // provincia, "Groningen (gemeente)" vs. Groningen provincia). Mivel a
+      // MI listánk csak gemeente-szintet mutat, ez a toldalék felesleges —
+      // levágjuk. A MÁSIK zárójeles forma (pl. "Beek (L.)" vs. "Beek (NH.)")
+      // VALÓDI két különböző település közti megkülönböztetés — az MARAD.
+      if (level === "gemeente") name = name.replace(/\s*\(gemeente\)$/, "");
+      return { code, name, level, count: r.Bevolking_1 };
     })
     // Az ország-összesent és a COROP-régiókat NEM tesszük a régió-táblába —
     // előbbinek nincs helye régió-listában, utóbbi nem felismerhető egység.

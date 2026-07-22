@@ -3,7 +3,7 @@
   "table": "85644NED",
   "period": "2026JJ00",
   "year": 2026,
-  "fetchedAt": "2026-07-22T22:43:18.071Z",
+  "fetchedAt": "2026-07-22T23:25:37.061Z",
   "countryTotal": 24863,
   "rows": [
     {
@@ -722,13 +722,13 @@
     },
     {
       "code": "GM0518",
-      "name": "'s-Gravenhage (gemeente)",
+      "name": "'s-Gravenhage",
       "level": "gemeente",
       "count": 2013
     },
     {
       "code": "GM0014",
-      "name": "Groningen (gemeente)",
+      "name": "Groningen",
       "level": "gemeente",
       "count": 463
     },
@@ -1790,7 +1790,7 @@
     },
     {
       "code": "GM0344",
-      "name": "Utrecht (gemeente)",
+      "name": "Utrecht",
       "level": "gemeente",
       "count": 563
     },
