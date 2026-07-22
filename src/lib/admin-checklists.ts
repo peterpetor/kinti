@@ -7,6 +7,8 @@
  * időben változnak. NEM jogi tanács.
  */
 
+import type { IconName } from "@/components/ui/icons";
+
 export interface ChecklistStep {
   title: string;
   body?: string;
@@ -23,7 +25,9 @@ export interface ChecklistSource {
 export interface AdminChecklist {
   slug: string;
   title: string;
-  emoji: string;
+  /** A csekklista vonal-ikonja (a korábbi nyers emoji helyett — egységes
+   *  ikonrendszer, téma-reaktív currentColor). */
+  icon: IconName;
   /** Egy mondatos leírás a csekklista-listán. */
   summary: string;
   /** Részletes magyarázat a detail oldal tetején. */
@@ -45,7 +49,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
   {
     slug: "uj-bevandorlo",
     title: "Most költöztem Svájcba",
-    emoji: "🇨🇭",
+    icon: "compass",
     summary: "Az első 90 nap dolgai — bejelentkezés, engedély, biztosítás, lakcímkártya.",
     description:
       "Az első hetekben több hivatalos lépést kell megtenned. Sorrendben végigmenve elkerülöd a leggyakoribb buktatókat (Quellensteuer, késedelmi pótlék, biztosítás-büntetés).",
@@ -107,7 +111,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
   {
     slug: "lakcimbejelentes",
     title: "Lakcím-bejelentés / Átköltözés",
-    emoji: "🏠",
+    icon: "house",
     summary: "Új lakásba költöztél? 14 napon belül jelentkezz be a községnél.",
     description:
       "Akár Svájcon belül költözöl, akár külföldről jössz, az új lakcímet 14 napon belül be kell jelentened. Kanton-váltáskor mindkét helyen — a régi községnél kijelentkezés (Abmeldung), az újnál bejelentkezés (Anmeldung).",
@@ -165,7 +169,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
   {
     slug: "jogositvany-csere",
     title: "Magyar jogosítvány cseréje svájcira",
-    emoji: "🚗",
+    icon: "car",
     summary: "12 hónapod van Svájcba érkezéstől, hogy lecseréld magyar jogsidat.",
     description:
       "EU/EFTA-állampolgárként a magyar jogosítványod 12 hónapig érvényes Svájcban — utána kötelezően svájcira kell cserélned. Vizsga nem szükséges, papíralapú eljárás a kantoni Strassenverkehrsamt-on.",
@@ -215,7 +219,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
   {
     slug: "c-engedely",
     title: "C-letelepedési engedély igénylése",
-    emoji: "🆔",
+    icon: "document",
     summary: "5 év folyamatos tartózkodás után igényelhető — végleges letelepedés.",
     description:
       "A C-engedély a letelepedési engedély — gyakorlatilag a svájci 'permanent resident' státusz. EU/EFTA-állampolgároknak 5 év folyamatos tartózkodás után igényelhető. Előnyei: nincs munkahely-váltási korlátozás, nincs Quellensteuer (átáll Normalbesteuerung-ra), könnyebb a hitel-felvétel.",
@@ -271,7 +275,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
   {
     slug: "adobevallas",
     title: "Adóbevallás (Steuererklärung)",
-    emoji: "💰",
+    icon: "wallet",
     summary: "Évente március 31-ig. C-engedélyeseknek mindenki, B-eseknek csak ha >120k bér.",
     description:
       "Svájcban háromszintű az adó: szövetségi (direkte Bundessteuer), kantoni és községi (Gemeindesteuer). A bevallást a kantonod oldalán online töltheted ki, vagy papíron. Határidő: március 31. (kantontól függően néha április 30. — lehet hosszabbítást kérni).",
@@ -329,7 +333,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
   {
     slug: "krankenkasse-valtas",
     title: "Krankenkasse váltása",
-    emoji: "🏥",
+    icon: "health",
     summary: "Évente november 30-ig (alap) — utána a jövő január 1-jétől új biztosító.",
     description:
       "A svájci Grundversicherung kötelező, és minden Krankenkasse-nál ugyanazt nyújtja. De a havi díjak között 100-200 CHF eltérés is lehet — érdemes évente összehasonlítani és váltani.",
@@ -379,7 +383,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
   {
     slug: "quellensteuer-nov",
     title: "Quellensteuer visszatérítés (NOV)",
-    emoji: "📋",
+    icon: "list",
     summary: "B-engedélyes vagy? Március 31-ig kérvényezz NOV-ot, ha visszaigényelni szeretnél.",
     description:
       "A B-engedélyes EU-állampolgárok forrásadót (Quellensteuer) fizetnek — a bér automatikusan adózott. DE: ha 3a-pillerbe fizetsz, vagy szakmai költséged van, vagy gyermek-támogatás jár neked, akkor érdemes egy Nachträgliche ordentliche Veranlagung-ot (NOV) kérvényezni — visszakapod a túlfizetést.",
@@ -424,7 +428,7 @@ export const CHECKLISTS_CH: AdminChecklist[] = [
   {
     slug: "hazakoltozes",
     title: "Hazaköltözés Svájcból (Rückwanderung)",
-    emoji: "🏡",
+    icon: "truck",
     summary: "Végleg elhagyod Svájcot? Ez a lépéssor segít rendezni minden ügyet: lakcím-kijelentés, adók, bank, BVG, autó, ingóságok.",
     description:
       "A svájci hazaköltözés tele van kevéssé ismert buktatóval — az Abmeldungtól a 2. pillérig. Ha nem intézed el időben, elmaradhat a Quellensteuer-visszatérítés, a zárolhatja a bankszámládat, vagy elveszítesz komoly összeget a nyugdíjpénztárból. Ez a csekklista sorban végigvezet minden fontos lépésen.",
@@ -527,7 +531,7 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
   {
     slug: "at-uj-bevandorlo",
     title: "Most költöztem Ausztriába",
-    emoji: "🇦🇹",
+    icon: "compass",
     summary: "Az első hetek lépései — Meldezettel, bankszámla, e-card, EU-regisztráció.",
     description: "EU-állampolgárként szabad mozgásod van, de pár hivatalos lépés kell az első hetekben. A Meldezettel határideje SZIGORÚAN 3 nap!",
     deadline: "Meldezettel: 3 napon belül! Anmeldebescheinigung: 4 hónapon belül (ha >3 hó maradsz).",
@@ -544,7 +548,7 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
   {
     slug: "at-meldezettel",
     title: "Lakcímbejelentés (Meldezettel)",
-    emoji: "🏠",
+    icon: "house",
     summary: "Be-, át- és kijelentkezés a Meldeamtnál — 3 napon belül kötelező.",
     description: "Ausztriában minden lakcímváltozást 3 napon belül be kell jelenteni. A Meldezettel sok más ügyhöz (bank, hivatal) is kell.",
     deadline: "A beköltözéstől 3 napon belül.",
@@ -560,7 +564,7 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
   {
     slug: "at-adobevallas",
     title: "Adóelszámolás (Arbeitnehmerveranlagung)",
-    emoji: "💶",
+    icon: "wallet",
     summary: "Év végi munkavállalói adóelszámolás — gyakran VISSZAJÁR pénz!",
     description: "A bérből automatikusan vonják a Lohnsteuert. Év végén az Arbeitnehmerveranlagung (önkéntes elszámolás) gyakran visszatérítést hoz — érdemes beadni.",
     deadline: "Visszamenőleg 5 évig beadható.",
@@ -576,7 +580,7 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
   {
     slug: "at-jogositvany",
     title: "Jogosítvány Ausztriában",
-    emoji: "🚗",
+    icon: "car",
     summary: "A magyar (EU) jogosítvány érvényes — általában NEM kell cserélni!",
     description: "Jó hír: EU-állampolgárként a magyar jogosítványod Ausztriában korlátlanul érvényes. Cserére általában nincs szükség (ellentétben Svájccal).",
     deadline: "Nincs határidő — az EU-jogosítvány érvényes.",
@@ -591,7 +595,7 @@ export const CHECKLISTS_AT: AdminChecklist[] = [
   {
     slug: "at-familienbeihilfe",
     title: "Családi pótlék (Familienbeihilfe)",
-    emoji: "👨‍👩‍👧",
+    icon: "users",
     summary: "Gyerek után járó osztrák családi támogatás — EU-munkavállalóként is jár.",
     description: "Ha Ausztriában dolgozol és gyereked van, jár a Familienbeihilfe + a Kinderabsetzbetrag — akkor is, ha a gyerek Magyarországon él (EU-szabály, különbözeti összeg).",
     deadline: "Visszamenőleg 5 évig igényelhető.",
@@ -611,7 +615,7 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
   {
     slug: "de-uj-bevandorlo",
     title: "Most költöztem Németországba",
-    emoji: "🇩🇪",
+    icon: "compass",
     summary: "Az első hetek lépései — Anmeldung, Steuer-ID, bankszámla, egészségbiztosítás.",
     description: "EU-állampolgárként szabad mozgásod van (nem kell tartózkodási engedély!), de pár hivatalos lépés kell az első hetekben. A legfontosabb az Anmeldung — abból jön minden más (Steuer-ID, bank, biztosítás).",
     deadline: "Anmeldung: a beköltözéstől 14 napon belül.",
@@ -629,7 +633,7 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
   {
     slug: "de-anmeldung",
     title: "Lakcímbejelentés (Anmeldung)",
-    emoji: "🏠",
+    icon: "house",
     summary: "Be- és átjelentkezés a Bürgeramt-nál — 14 napon belül kötelező.",
     description: "Németországban minden beköltözést/költözést 14 napon belül be kell jelenteni a Bürgeramt-nál. Az Anmeldung-igazolás (Meldebescheinigung) sok más ügyhöz (bank, Steuer-ID, szerződések) is kell.",
     deadline: "A beköltözéstől 14 napon belül.",
@@ -645,7 +649,7 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
   {
     slug: "de-krankenversicherung",
     title: "Egészségbiztosítás (Krankenversicherung)",
-    emoji: "🏥",
+    icon: "health",
     summary: "Kötelező! Törvényes (GKV) pénztár választása — TK, AOK, Barmer.",
     description: "Németországban az egészségbiztosítás kötelező. Munkavállalóként a törvényes (gesetzliche, GKV) rendszerbe tartozol; magas jövedelem felett választható a magán (PKV). A GKV-díj nagyjából mindenhol azonos — a pénztár szolgáltatása és a Zusatzbeitrag tér el.",
     deadline: "A munkakezdéskor azonnal (a munkáltató bejelent).",
@@ -662,7 +666,7 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
   {
     slug: "de-steuererklarung",
     title: "Adóbevallás (Steuererklärung)",
-    emoji: "💶",
+    icon: "wallet",
     summary: "ELSTER-en online — gyakran VISSZAJÁR pénz! Határidő: a következő év júl. 31.",
     description: "A bérből automatikusan vonják a Lohnsteuert (a Steuerklasse szerint). Az éves Steuererklärung gyakran visszatérítést hoz (átlag ~1000 €). Önállóan kitöltve a határidő a következő év július 31. — Steuerberaterrel később.",
     deadline: "A következő év július 31. (önállóan); Steuerberaterrel hosszabb.",
@@ -679,7 +683,7 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
   {
     slug: "de-fuhrerschein",
     title: "Jogosítvány Németországban",
-    emoji: "🚗",
+    icon: "car",
     summary: "A magyar (EU) jogosítvány érvényes — általában NEM kell cserélni!",
     description: "Jó hír: EU-állampolgárként a magyar jogosítványod Németországban korlátlanul érvényes a lejáratáig. Cserére általában nincs szükség (ellentétben Svájccal).",
     deadline: "Nincs határidő — az EU-jogosítvány érvényes.",
@@ -694,7 +698,7 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
   {
     slug: "de-kindergeld",
     title: "Családi pótlék (Kindergeld)",
-    emoji: "👨‍👩‍👧",
+    icon: "users",
     summary: "Gyerek után járó német családi támogatás — havi 250 €/gyerek.",
     description: "Ha Németországban dolgozol/laksz és gyereked van, jár a Kindergeld (2024-től 250 €/hó/gyerek) — akkor is, ha a gyerek Magyarországon él (EU-szabály, különbözeti összeg). A Familienkasse intézi.",
     deadline: "Visszamenőleg 6 hónapra igényelhető.",
@@ -710,7 +714,7 @@ export const CHECKLISTS_DE: AdminChecklist[] = [
   {
     slug: "de-hazakoltozes",
     title: "Hazaköltözés Németországból (Abmeldung)",
-    emoji: "🏡",
+    icon: "truck",
     summary: "Végleg elhagyod Németországot? Abmeldung, adók, bank, nyugdíj, Kindergeld leállítás.",
     description: "A német hazaköltözésnek is van pár fontos lépése — az Abmeldungtól a nyugdíjbiztosításig. Ha nem intézed időben, gondok lehetnek a banki/adóügyekkel és elmaradhat a túlfizetett adó visszatérítése.",
     deadline: "Az Abmeldung a kiköltözés körül (sok város 14 napos ablakot ad).",
@@ -732,7 +736,7 @@ export const CHECKLISTS_NL: AdminChecklist[] = [
   {
     slug: "nl-uj-bevandorlo",
     title: "Most költöztem Hollandiába",
-    emoji: "🇳🇱",
+    icon: "compass",
     summary: "Az első hetek lépései — inschrijving + BSN, DigiD, bankszámla, zorgverzekering.",
     description: "EU-állampolgárként szabad mozgásod van (nem kell tartózkodási engedély!), de pár hivatalos lépés kell az első hetekben. A legfontosabb az inschrijving a gemeentén — abból jön a BSN, és arra épül minden más (DigiD, bank, biztosítás).",
     deadline: "Inschrijving: ha 4 hónapnál tovább maradsz, az érkezéstől 5 napon belül.",
@@ -750,7 +754,7 @@ export const CHECKLISTS_NL: AdminChecklist[] = [
   {
     slug: "nl-inschrijving-bsn",
     title: "Bejelentkezés (inschrijving) + BSN",
-    emoji: "🏠",
+    icon: "house",
     summary: "Regisztráció a gemeentén (BRP) — ebből jön a BSN, minden más alapja.",
     description: "Ha 4 hónapnál tovább élsz Hollandiában, be kell jelentkezned a gemeente lakcímnyilvántartásába (Basisregistratie Personen, BRP). A regisztráció adja a BSN-t, ami szinte minden hivatali és munkaügyi lépéshez kell.",
     deadline: "Az érkezéstől 5 napon belül (ha 4 hónapnál tovább maradsz).",
@@ -766,7 +770,7 @@ export const CHECKLISTS_NL: AdminChecklist[] = [
   {
     slug: "nl-digid",
     title: "DigiD igénylése",
-    emoji: "🔐",
+    icon: "lock",
     summary: "Digitális azonosító az állami és egészségügyi online ügyintézéshez.",
     description: "A DigiD-vel lépsz be a holland hivatali online rendszerekbe: gemeente, Belastingdienst (adó), zorgverzekering, DUO, UWV. A BSN megléte után igényelheted.",
     deadline: "Amint megvan a BSN.",
@@ -782,7 +786,7 @@ export const CHECKLISTS_NL: AdminChecklist[] = [
   {
     slug: "nl-zorgverzekering",
     title: "Egészségbiztosítás (zorgverzekering)",
-    emoji: "🏥",
+    icon: "health",
     summary: "Kötelező alapbiztosítás 4 hónapon belül — + zorgtoeslag, ha alacsony a jövedelem.",
     description: "Hollandiában, ha dolgozol vagy itt élsz, kötelező holland alap-egészségbiztosítást (basisverzekering) kötni egy magán biztosítónál. A díj és a fedezet alapja törvényileg azonos, az extrák (aanvullend) és az önrész-kezelés eltér.",
     deadline: "A biztosítottá válástól (érkezés/regisztráció) 4 hónapon belül — visszamenőleg fizetsz.",
@@ -798,7 +802,7 @@ export const CHECKLISTS_NL: AdminChecklist[] = [
   {
     slug: "nl-bank-belasting",
     title: "Bankszámla + adózás (Belastingdienst)",
-    emoji: "🏦",
+    icon: "bank",
     summary: "Holland IBAN-számla és a jövedelemadó / juttatások (toeslagen) alapjai.",
     description: "A holland bankszámla (IBAN) a fizetéshez, lakbérhez és a legtöbb fizetéshez kell (sok helyen csak iDEAL/PIN megy). Az adót a Belastingdienst kezeli; alacsonyabb jövedelemnél juttatások (toeslagen) járhatnak.",
     totalDuration: "Bankszámla: 20-40 perc; adóbevallás: évente",
@@ -814,7 +818,7 @@ export const CHECKLISTS_NL: AdminChecklist[] = [
   {
     slug: "nl-rijbewijs",
     title: "Jogosítvány (rijbewijs)",
-    emoji: "🚗",
+    icon: "car",
     summary: "Magyar (EU) jogosítvány érvényes; csere opcionális a gemeentén.",
     description: "EU-állampolgárként a magyar jogosítványod Hollandiában is érvényes a lejáratáig (legfeljebb 15 évig az adott kategóriától függően). Cserélni nem kötelező, de kérheted holland rijbewijsre.",
     totalDuration: "Csere esetén: 1-2 hét",

@@ -16,7 +16,7 @@ function buildIndex(country: string): ChecklistIndexEntry[] {
   return getChecklists(country).map((c) => ({
     slug: c.slug,
     title: c.title,
-    emoji: c.emoji,
+    icon: c.icon,
     summary: c.summary,
     deadline: c.deadline,
     stepCount: c.steps.length,

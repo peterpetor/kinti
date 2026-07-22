@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Icon } from "@/components/ui";
+import { Icon, type IconName } from "@/components/ui";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -10,7 +10,7 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 export interface ChecklistIndexEntry {
   slug: string;
   title: string;
-  emoji: string;
+  icon: IconName;
   summary: string;
   deadline?: string;
   stepCount: number;
@@ -46,8 +46,8 @@ export function ChecklistList({ indexByCountry }: { indexByCountry: Record<strin
               href={`/ugyintezes/${c.slug}`}
               className="flex items-start gap-3 rounded-card border border-line bg-surface p-4 shadow-card transition active:scale-[0.99]"
             >
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-2xl">
-                {c.emoji}
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-primary">
+                <Icon name={c.icon} size={22} strokeWidth={2} />
               </span>
               <div className="min-w-0 flex-1">
                 <h3 className="text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">{c.title}</h3>
@@ -55,7 +55,7 @@ export function ChecklistList({ indexByCountry }: { indexByCountry: Record<strin
                 <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
                   {c.deadline && (
                     <span className="inline-flex items-center gap-1 rounded-pill bg-accent/10 px-2 py-0.5 font-bold text-accent">
-                      ⏰ {c.deadline}
+                      <Icon name="clock" size={11} strokeWidth={2.4} className="shrink-0" /> {c.deadline}
                     </span>
                   )}
                   <span className="inline-flex items-center gap-1 rounded-pill bg-surface-alt px-2 py-0.5 font-bold text-ink-muted">

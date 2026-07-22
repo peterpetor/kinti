@@ -15,7 +15,8 @@ export type IconName =
   | "sparkles" | "magic" | "trash" | "qrCode" | "document" | "upload" | "lock"
   | "compass" | "mail" | "shareIos" | "whatsapp" | "bed" | "house" | "key" | "truck"
   | "alert" | "store" | "exchange" | "wallet" | "refresh" | "trophy" | "edit"
-  | "ticket" | "train" | "plane" | "book" | "target" | "sun" | "moon" | "lightbulb" | "box";
+  | "ticket" | "train" | "plane" | "book" | "target" | "sun" | "moon" | "lightbulb" | "box"
+  | "health" | "bank";
 
 const PATHS: Record<IconName, string[]> = {
   bed: ["M2 18v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8", "M2 14h20", "M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"],
@@ -158,6 +159,11 @@ const PATHS: Record<IconName, string[]> = {
   lightbulb: ["M9 18h6", "M10 21h4", "M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"],
   // Csomag/doboz — a Keresek-táblára feladás ikonja (a "truck" mellett, költöztetés-kontextusban).
   box: ["M3 8l9-5l9 5v8l-9 5l-9-5z", "M3 8l9 5l9-5", "M12 13v8"],
+  // Egészségügyi kereszt pajzsban — biztosítás/egészségügy (Krankenkasse,
+  // zorgverzekering). Pajzs = biztosítás, kereszt = egészség.
+  health: ["M12 3l7 3v6c0 4.2-2.9 7.6-7 9c-4.1-1.4-7-4.8-7-9V6z", "M12 8.5v6", "M9 11.5h6"],
+  // Bank-homlokzat (oromzat + oszlopok) — bankszámla/pénzintézet.
+  bank: ["M3 9.5L12 4l9 5.5", "M4 9.5h16", "M6 12v5", "M10 12v5", "M14 12v5", "M18 12v5", "M3.5 20h17"],
 };
 
 // A '…' (more) három pöttye vastagabb vonallal néz jól ki.

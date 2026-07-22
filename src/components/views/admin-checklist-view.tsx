@@ -79,7 +79,9 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
       {/* Hero — cím + leírás + meta */}
       <section className="rounded-card border-2 border-primary/20 bg-primary-soft/50 p-5 shadow-card">
         <div className="flex items-start gap-3">
-          <span className="text-4xl shrink-0">{checklist.emoji}</span>
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary/10 text-primary">
+            <Icon name={checklist.icon} size={26} strokeWidth={2} />
+          </span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[22px] font-extrabold leading-tight tracking-tight text-ink">
               {checklist.title}
@@ -126,8 +128,9 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
           />
         </div>
         {progress === 100 && (
-          <p className="mt-2 text-[12.5px] font-bold text-success">
-            🎉 Minden lépés kész — gratulálunk!
+          <p className="mt-2 flex items-center gap-1.5 text-[12.5px] font-bold text-success">
+            <Icon name="check" size={14} strokeWidth={3} className="shrink-0" />
+            Minden lépés kész — gratulálunk!
           </p>
         )}
       </section>
@@ -201,7 +204,7 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
                       rel="noopener noreferrer"
                       className="mt-2 inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[11.5px] font-bold text-primary hover:bg-primary-soft transition"
                     >
-                      🔗 {step.link.label}
+                      <Icon name="globe" size={12} strokeWidth={2.2} className="shrink-0" /> {step.link.label}
                     </a>
                   )}
                 </div>
@@ -215,7 +218,7 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
       {checklist.warnings && checklist.warnings.length > 0 && (
         <section className="rounded-card border border-accent/30 bg-accent-soft p-4 shadow-card">
           <h2 className="mb-2 flex items-center gap-1.5 text-[12px] font-extrabold uppercase tracking-wide text-accent">
-            ⚠️ Figyelmeztetések
+            <Icon name="alert" size={13} strokeWidth={2.4} className="shrink-0" /> Figyelmeztetések
           </h2>
           <ul className="space-y-1.5 text-[12.5px] leading-relaxed text-ink">
             {checklist.warnings.map((w, i) => (
