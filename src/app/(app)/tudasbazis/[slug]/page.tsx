@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { safeJsonLdStringify } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Icon } from "@/components/ui";
@@ -89,7 +90,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       <ReadingProgress />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(breadcrumbLd) }}
       />
       <header className="flex items-start gap-3">
         <div className="min-w-0 flex-1">

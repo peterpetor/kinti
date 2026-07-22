@@ -73,6 +73,41 @@ function buildStrictCsp(nonce: string): string {
   ].join("; ");
 }
 
+/**
+ * Biztonsági fejlécek a DINAMIKUS (SSR/edge) válaszokra.
+ *
+ * ⚠️ MIÉRT ITT: a `public/_headers` fájl a Cloudflare Pages-en KIZÁRÓLAG a
+ * statikusan kiszolgált fájlokra érvényes — a Pages Function (a Next edge
+ * worker) által generált válaszokra NEM. Mivel az app minden oldala
+ * `runtime="edge"` + `force-dynamic`, a `_headers`-ben definiált védelem a
+ * TELJES HTML-felületen hatástalan volt (élesben mérve: statikus fájlon 5
+ * fejléc, /szaknevsor-on 0). Ezért a middleware-ben is ki kell tenni őket.
+ *
+ * Eltérések a `_headers`-hez képest, szándékosan:
+ *  • `payment=()` NINCS a Permissions-Policyban — az blokkolná a Payment
+ *    Request API-t, amit a Paddle-fizetés használ (a statikus fájloknál ez
+ *    sosem számított, itt viszont eltörné a checkoutot).
+ *  • `X-Frame-Options: SAMEORIGIN` (a statikus DENY helyett) — így összhangban
+ *    van a CSP `frame-ancestors 'self'`-fel, és nem tör el semmilyen
+ *    saját-eredetű beágyazást. A kattintás-eltérítés ellen ugyanúgy véd.
+ */
+function setSecurityHeaders(res: NextResponse, pathname: string): void {
+  res.headers.set("X-Content-Type-Options", "nosniff");
+  res.headers.set("X-Frame-Options", "SAMEORIGIN");
+  res.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+  res.headers.set("Permissions-Policy", "camera=(), microphone=(), usb=(), interest-cohort=()");
+  res.headers.set("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  // A token-alapú kezelő-oldalak URL-je TITKOT tartalmaz — kifelé mutató link
+  // esetén a Referer fejléc kiszivárogtatná. Ezeken az oldalakon nincs referrer.
+  // (Ez a szabály a _headers-ben is szerepelt, de ott — dinamikus route lévén —
+  // sosem érvényesült.)
+  const isTokenPage =
+    pathname.startsWith("/szaknevsor/kezeles/") ||
+    pathname.startsWith("/velemeny-kezeles/") ||
+    pathname.startsWith("/leiratkozas/");
+  res.headers.set("Referrer-Policy", isTokenPage ? "no-referrer" : "strict-origin-when-cross-origin");
+}
+
 /** Edge-kompatibilis base64 nonce (16 random bájt). */
 function makeNonce(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
@@ -97,7 +132,13 @@ async function isCurrentUserAdmin(): Promise<boolean> {
 
     const user = await currentUser();
     if (!user) return false;
-    const emails = user.emailAddresses.map((e) => e.emailAddress.toLowerCase());
+    // Csak IGAZOLT (verified) e-mail számít — különben egy támadó a saját
+    // fiókjához hozzáadhatna egy nem-igazolt admin-címet, és megkerülné a
+    // karbantartási kaput. (Ugyanaz a szabály, mint a lib/admin.ts-ben; ez a
+    // másolat korábban lemaradt róla.)
+    const emails = user.emailAddresses
+      .filter((e) => e.verification?.status === "verified")
+      .map((e) => e.emailAddress.toLowerCase());
     return emails.some((e) => allowed.includes(e));
   } catch (err) {
     console.error("[middleware] isCurrentUserAdmin error:", err);
@@ -168,8 +209,15 @@ export default clerkMiddleware(async (auth, req) => {
     if (cachePath === "/" || cachePath === "/szaknevsor") {
       res.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
     }
+    setSecurityHeaders(res, cachePath);
     return res;
   }
+
+  // API-válaszok: a MIME-sniffing elleni védelem a JSON-végpontokon is számít
+  // (a többi fejléc — framing/referrer — HTML nélkül értelmetlen).
+  const apiRes = NextResponse.next();
+  apiRes.headers.set("X-Content-Type-Options", "nosniff");
+  return apiRes;
 });
 
 export const config = {

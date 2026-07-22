@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { safeJsonLdStringify } from "@/lib/json-ld";
 import type { Metadata } from "next";
 import { Icon, ScreenHeader } from "@/components/ui";
 import { CountryFlag } from "@/components/ui/country-flag";
@@ -43,7 +44,7 @@ export default function OsszehasonlitasPage() {
 
   return (
     <div className="space-y-5 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(breadcrumbLd) }} />
 
       <ScreenHeader
         eyebrow="Összehasonlítás"
