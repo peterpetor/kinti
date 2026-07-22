@@ -39,6 +39,7 @@ export interface HungarianPopulationSummary {
 const DISPLAY_LEVEL: Record<string, string> = {
   CH: "canton",
   AT: "bundesland",
+  DE: "bundesland",
   NL: "gemeente",
 };
 

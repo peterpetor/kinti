@@ -1,0 +1,90 @@
+{
+  "source": "Destatis (Statistisches Bundesamt)",
+  "file": "https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Migration-Integration/Publikationen/Downloads-Migration/statistischer-bericht-auslaend-bevoelkerung-2010200257005.xlsx?__blob=publicationFile&v=2",
+  "table": "12521-08",
+  "year": 2025,
+  "nationalTotal": 212415,
+  "fetchedAt": "2026-07-22T23:05:50.057Z",
+  "rows": [
+    {
+      "code": "BW",
+      "name": "Baden-Württemberg",
+      "count": 52245
+    },
+    {
+      "code": "BY",
+      "name": "Bayern",
+      "count": 76270
+    },
+    {
+      "code": "BE",
+      "name": "Berlin",
+      "count": 7315
+    },
+    {
+      "code": "BB",
+      "name": "Brandenburg",
+      "count": 2040
+    },
+    {
+      "code": "HB",
+      "name": "Bremen",
+      "count": 780
+    },
+    {
+      "code": "HH",
+      "name": "Hamburg",
+      "count": 1180
+    },
+    {
+      "code": "HE",
+      "name": "Hessen",
+      "count": 13195
+    },
+    {
+      "code": "MV",
+      "name": "Mecklenburg-Vorpommern",
+      "count": 1265
+    },
+    {
+      "code": "NI",
+      "name": "Niedersachsen",
+      "count": 9325
+    },
+    {
+      "code": "NW",
+      "name": "Nordrhein-Westfalen",
+      "count": 21940
+    },
+    {
+      "code": "RP",
+      "name": "Rheinland-Pfalz",
+      "count": 9820
+    },
+    {
+      "code": "SL",
+      "name": "Saarland",
+      "count": 2325
+    },
+    {
+      "code": "SN",
+      "name": "Sachsen",
+      "count": 6680
+    },
+    {
+      "code": "ST",
+      "name": "Sachsen-Anhalt",
+      "count": 2965
+    },
+    {
+      "code": "SH",
+      "name": "Schleswig-Holstein",
+      "count": 1860
+    },
+    {
+      "code": "TH",
+      "name": "Thüringen",
+      "count": 3215
+    }
+  ]
+}
