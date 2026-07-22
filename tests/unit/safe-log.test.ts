@@ -7,7 +7,7 @@ import { redactPii, safeIdHint } from "@/lib/safe-log";
  */
 describe("redactPii", () => {
   it("email-címet kitakar", () => {
-    expect(redactPii("hiba: peterpetor1987@gmail.com nem létezik")).toBe(
+    expect(redactPii("hiba: teszt.felhasznalo@example.com nem létezik")).toBe(
       "hiba: [email-redacted] nem létezik",
     );
   });
