@@ -71,6 +71,14 @@ function tsOf(s?: string | null): number {
   return Number.isNaN(t) ? 0 : t;
 }
 
+/** Van-e a cégnek elérhetősége: telefon (hasPhone — a lista scrape-védetten csak
+ *  a MEGLÉTÉT adja, a számot nem) VAGY weboldal a bemutatkozóban. A „csak-cím"
+ *  zsákutca-találatok kiszűréséhez (Elérhetőséggel szűrő). */
+function hasContactInfo(b: { hasPhone?: boolean; blurb?: string | null }): boolean {
+  if (b.hasPhone) return true;
+  return /https?:\/\/|www\.|\.(ch|de|at|nl|com|hu|eu|be|org)\b/i.test(b.blurb ?? "");
+}
+
 /** Egyszerre ennyi kártya kerül a DOM-ba — görgetésre (vagy gombbal) bővül.
  *  1000+ kártya egyszerre = több másodperces main-thread blokk mobilon. */
 /** Találatok laponként — lapozott lista (user-kérés: „az első százat mutassa
@@ -158,13 +166,14 @@ export function ExploreView({
   const [openNow, setOpenNow] = useState(false);
   const [passOnly, setPassOnly] = useState(initialPass);
   const [minYears, setMinYears] = useState(0);
+  const [withContact, setWithContact] = useState(false);
   // Progresszív szűrő-felfedés: alapból csak a két hétköznapi szűrő (Régió +
   // Közelemben) látszik, a ritkábban használtak a „További szűrők" mögött.
   // Automatikusan nyitva, ha bármelyik rejtett szűrő aktív (pl. a menü
   // „Kedvenceim" ?fav=1 linkjéről érkezve) — aktív szűrő SOSEM tűnhet el.
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(initialFav || initialPass);
   const advancedActiveCount =
-    (showFavs ? 1 : 0) + (passOnly ? 1 : 0) + (openNow ? 1 : 0) + (minYears > 0 ? 1 : 0);
+    (showFavs ? 1 : 0) + (passOnly ? 1 : 0) + (openNow ? 1 : 0) + (minYears > 0 ? 1 : 0) + (withContact ? 1 : 0);
   const filtersExpanded = moreFiltersOpen || advancedActiveCount > 0;
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   // Alapból LISTA (gyors pásztázás + SEO + nincs hydration-mismatch: az SSR és az
@@ -327,13 +336,15 @@ export function ExploreView({
         const byYears = minYears === 0 || (b.yearsHere ?? 0) >= minYears;
         // Kinti Pass elfogadóhely-szűrő (a kedvezménykártyát elfogadó helyek).
         const byPass = !passOnly || b.kintiPassActive === true;
+        // Elérhetőséggel: csak azok, akiknek van telefonjuk vagy weboldaluk.
+        const byContact = !withContact || hasContactInfo(b);
         const byText =
           !needle ||
           // Ékezet-hajtott, előszámolt blob (név+kategória+bemutatkozó+cím).
           (searchIndex.get(b.id)?.includes(foldedNeedle) ?? false) ||
           // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
           matchesCanton({ address: b.address ?? null }, needle);
-        return byCountry && byCat && byCanton && byFav && byOpen && byYears && byPass && byText;
+        return byCountry && byCat && byCanton && byFav && byOpen && byYears && byPass && byContact && byText;
       })
       .map((b) => {
         // Házszám nélküli cím (pl. csak "Wien") esetén a lat/lng városközpont —
@@ -380,7 +391,7 @@ export function ExploreView({
     });
 
     return radiusFiltered;
-  }, [businesses, searchIndex, country, cat, canton, q, showFavs, openNow, minYears, passOnly, favoriteIds, userPos, radiusKm, sortBy]);
+  }, [businesses, searchIndex, country, cat, canton, q, showFavs, openNow, minYears, passOnly, withContact, favoriteIds, userPos, radiusKm, sortBy]);
 
   const locatedCount = useMemo(
     () => filtered.filter(({ b }) => b.lat != null && b.lng != null).length,
@@ -396,10 +407,10 @@ export function ExploreView({
     // pontos találathoz kell a teljes lista → azonnal betöltjük (a loader guardolt,
     // csak egyszer kér). Guard: friss mounton, ALAP szűrőkkel NEM fut, így a sima
     // böngészésnél megmarad a deferrált (idle) betöltés, és nem blokkolja a festést.
-    if (cat !== "all" || q.trim() !== "" || canton !== "all" || showFavs || passOnly || openNow || minYears > 0) {
+    if (cat !== "all" || q.trim() !== "" || canton !== "all" || showFavs || passOnly || openNow || minYears > 0 || withContact) {
       loadFullList();
     }
-  }, [cat, canton, q, showFavs, openNow, minYears, passOnly, sortBy, country, loadFullList]);
+  }, [cat, canton, q, showFavs, openNow, minYears, passOnly, withContact, sortBy, country, loadFullList]);
 
   // Lapozás: oldal-váltáskor vissza a lista tetejére (a user ne a 100. kártya
   // után találja magát).
@@ -699,6 +710,25 @@ export function ExploreView({
           />
           <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
             Most nyitva
+          </span>
+        </button>
+
+        {/* Elérhetőséggel szűrő — csak akinek van telefonja vagy weboldala (nem
+            zsákutca csak-cím találat). A kontakt-dúsítás eredményét használja ki. */}
+        <button
+          type="button"
+          onClick={() => setWithContact((v) => !v)}
+          aria-pressed={withContact}
+          className={cn(
+            "inline-flex min-w-0 items-center justify-center gap-1.5 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
+            withContact
+              ? "bg-primary/10 border-primary/40 text-primary font-bold"
+              : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
+          )}
+        >
+          <Icon name="phone" size={13} strokeWidth={2.2} className={cn("shrink-0", withContact ? "text-primary" : "text-ink-muted")} />
+          <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
+            Elérhetőséggel
           </span>
         </button>
 
