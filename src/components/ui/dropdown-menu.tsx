@@ -210,7 +210,7 @@ export function DropdownMenu() {
         { key: "kedvencek", label: "Kedvenceim", href: "/szaknevsor?fav=1", tint: "bg-accent/10 text-accent", icon: { name: "heart", filled: true } },
         { key: "sajat", label: "Saját posztjaim", href: "/sajatjaim", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
         { key: "ranglista", label: "Közösségi ranglista", href: "/ranglista", tint: "bg-star/15", icon: { name: "trophy" } },
-        { key: "hol-elnek", label: "Merre élnek a legtöbb magyarok?", href: "/hol-elnek-a-magyarok", tint: "bg-primary/10 text-primary", icon: { name: "pin" } },
+        { key: "hol-elnek", label: "Merre él a legtöbb magyar?", href: "/hol-elnek-a-magyarok", tint: "bg-primary/10 text-primary", icon: { name: "pin" } },
         { key: "tortenetek", label: "Élettörténetek", href: "/tortenetek", tint: "bg-accent/10", icon: { name: "edit" } },
         { key: "pass", label: "Kinti Pass — kedvezménykártya", href: "/profil/kinti-pass", tint: "bg-star/15", icon: { name: "ticket" } },
       ],

@@ -9,9 +9,9 @@ import { LegalDisclaimer } from "@/components/legal-disclaimer";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Merre élnek a legtöbb magyarok? | Kinti",
+  title: "Merre él a legtöbb magyar? | Kinti",
   description:
-    "Hivatalos statisztikai hivatalok (BFS, Statistik Austria, CBS) nyilvános adatai alapján — hol él a legtöbb magyar Svájcban, Ausztriában, Németországban és Hollandiában.",
+    "Hivatalos statisztikai hivatalok (BFS, Statistik Austria, Destatis, CBS) nyilvános adatai alapján — hol él a legtöbb magyar Svájcban, Ausztriában, Németországban és Hollandiában.",
 };
 
 export default function HunPopulationPage() {
@@ -20,7 +20,7 @@ export default function HunPopulationPage() {
       <div className="px-5">
         <ScreenHeader
           eyebrow="Közösség"
-          title="Merre élnek a legtöbb magyarok?"
+          title="Merre él a legtöbb magyar?"
           back={
             <Link
               href="/"
@@ -43,7 +43,7 @@ export default function HunPopulationPage() {
         <HunPopulationBoard />
 
         <LegalDisclaimer
-          toolName="Merre élnek a legtöbb magyarok"
+          toolName="Merre él a legtöbb magyar"
           variant="info"
           notAdviceFor="statisztikai"
           extraWarning="A számok a hivatkozott statisztikai hivatal legutóbbi közzétett adatai — az aktuális állapot ettől eltérhet, és a kis településeknél a hivatal adatvédelmi okból nem közöl pontos (5 fő alatti) számot."
