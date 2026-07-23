@@ -42,13 +42,6 @@ const FEATURES: AiFeature[] = [
     limits: "Csak a találatok SORRENDJÉT befolyásolja; tartalmat nem hoz létre.",
   },
   {
-    emoji: "🤖",
-    name: "AI Interjú-szimulátor (PRO)",
-    what: "Szerepjáték: az AI HR-menedzserként kérdez a választott nyelven, a végén magyar nyelvű gyakorlási visszajelzést ad.",
-    model: "Meta Llama 3.1 8B (Cloudflare Workers AI)",
-    limits: "Minden kérdés és visszajelzés AI-generált — hibázhat, torzíthat. Gyakorlási segédlet: valós felvételi döntésre nincs hatása. A prompt tiltja a származás, akcentus, kor, nem, családi állapot alapján való ítélkezést és az érzelmi állapot minősítését.",
-  },
-  {
     emoji: "📄",
     name: "CV-audit (PRO)",
     what: "A feltöltött önéletrajzhoz javítási javaslatokat ad (szerkezet, megfogalmazás, helyi elvárások).",
@@ -102,7 +95,7 @@ export default function AiAtlathatosagPage() {
         <p className="text-[13.5px] leading-relaxed text-ink-muted">
           A Kinti több funkciója mesterséges intelligenciát használ. Itt átláthatóan
           leírjuk: melyik funkció mit csinál, milyen modellel, és mik a korlátai.
-          Utoljára frissítve: 2026. július 3.
+          Utoljára frissítve: 2026. július 23.
         </p>
       </section>
 
@@ -143,7 +136,7 @@ export default function AiAtlathatosagPage() {
         <p className="text-[12.5px] leading-relaxed text-ink-muted">
           AI-funkcióink a felhasználót segítő, átláthatósági kötelezettség alá eső
           eszközök: mindig jelezzük, ha AI-jal beszélsz vagy AI-generált tartalmat
-          látsz. Az interjú-szimulátor a te önkéntes felkészülő-eszközöd — valós
+          látsz. A CV-audit a te önkéntes felkészülő-eszközöd — valós
           felvételi vagy munkáltatói döntést nem hoz és nem támogat. Tiltott
           AI-gyakorlatot (érzelem-felismerés, social scoring, manipuláció) nem
           alkalmazunk.

@@ -7,7 +7,7 @@ import { DEFAULT_COUNTRY, countryAdjective } from "@/lib/countries";
 /**
  * A Kinti PRO előnyök ország-tudatos listája (a /allasok/pro upsell-oldalhoz).
  * Eddig fixen svájci tartalom volt — DE/NL-en is „svájci" jelent meg. Most a
- * választott ország szerint helyes (nyelvkurzus + interjú-szöveg), és csak a
+ * választott ország szerint helyes (CV-audit szöveg), és csak a
  * tényleg létező elemeket mutatja (szakmai szótár CH-only, állampolgársági teszt mind a 4 országra).
  */
 export function ProFeatures() {
@@ -21,7 +21,7 @@ export function ProFeatures() {
   if (country === "CH") {
     items.push({ title: "Teljes Szakmai Gyors-Szótár", desc: "500+ svájci szakmai kifejezés és munkahelyi párbeszéd hanganyaggal." });
   }
-  items.push({ title: "AI Munkainterjú Szimulátor + CV-audit", desc: `Gyakorolj ${adj} cégek interjúira, és elemeztesd az önéletrajzod mesterséges intelligenciával.` });
+  items.push({ title: "AI CV-audit", desc: `Elemeztesd az önéletrajzod mesterséges intelligenciával, ${adj} elvárásokhoz igazítva.` });
   items.push({ title: "Állampolgársági teszt-szimulátor", desc: "Vizsga-szimuláció a saját országod kérdéssorával — mind a 4 országra." });
   items.push({ title: "Minden prémium modul + jövőbeni PRO funkció", desc: "Minden új funkció és frissítés az előfizetés része marad." });
 

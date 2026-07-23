@@ -221,7 +221,6 @@ export function DropdownMenu() {
       defaultOpen: true,
       items: [
         { key: "cv", label: "Német önéletrajz-készítő", href: "/nemet-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" } },
-        { key: "interju", label: "AI interjú-szimulátor", href: "/allasok/interju-szimulator", tint: "bg-primary/10 text-primary", icon: { name: "sparkles" }, badge: "pro" },
         { key: "cvaudit", label: "AI CV-asszisztens", href: "/allasok/cv-audit", tint: "bg-success/10 text-success", icon: { name: "sparkles" }, badge: "pro" },
         ...(has("szakmai-szotar")
           ? [{ key: "szotar", label: "Szakmai szótár", href: "/allasok/szakmai-szotar", tint: "bg-star/10 text-star", icon: { name: "document" }, badge: "pro" } as MenuItem]

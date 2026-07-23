@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Kinti Premium | Kinti PRO",
-  description: "Oldd fel az összes prémium modult — AI munkainterjú-szimulátor, CV-audit, állampolgárság-szimulátor és minden jövőbeni PRO funkció egy havidíjért.",
+  description: "Oldd fel az összes prémium modult — AI CV-audit, állampolgárság-szimulátor és minden jövőbeni PRO funkció egy havidíjért.",
 };
 
 export default async function KintiProPage() {

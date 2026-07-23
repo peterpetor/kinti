@@ -224,10 +224,6 @@ export default function AdatvedelemPage() {
           profilján.
         </li>
         <li>
-          <strong>AI interjú-szimulátor</strong>: a felhasználó által gyakorlásként
-          beírt válaszok. Kérünk, hogy ide valós személyes adatot ne írj be.
-        </li>
-        <li>
           <strong>Német szó-szótár</strong>: egyetlen szó vagy rövid kifejezés (max
           60 karakter). Személyes adatot nem tartalmaz.
         </li>

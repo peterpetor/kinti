@@ -1,6 +1,6 @@
 # EU AI Act — belső klasszifikációs feljegyzés (Kinti / Feedback Jobs S.R.L.)
 
-Utoljára frissítve: **2026-07-03**. Ez a feljegyzés dokumentálja, hogy a Kinti
+Utoljára frissítve: **2026-07-23**. Ez a feljegyzés dokumentálja, hogy a Kinti
 AI-funkciói az EU AI-rendelet (Regulation (EU) 2024/1689) mely kockázati sávjába
 tartoznak, és milyen intézkedések élnek. NEM jogi tanácsadás — a magas kockázatú
 besorolás-közeli kérdésekben (lásd 3. pont) jogász bevonása szükséges.
@@ -20,7 +20,6 @@ az AI-interakció/AI-tartalom jelölése — **teljesítve** (UI-jelölések + /
 
 | Funkció | Modell | Intézkedések |
 |---|---|---|
-| AI Interjú-szimulátor (PRO) | Llama 3.1 8B | Az oldal + a chat állandó „AI-generált, hibázhat" jelölése; LegalDisclaimer; prompt-szintű fairness-szabályok (védett tulajdonságok alapján tilos ítélni/kérdezni; érzelmi állapot minősítése tilos — 5. cikk-kompatibilitás); a visszajelzés gyakorlási segédlet, valós felvételi döntésre nincs hatása |
 | AI-kereső (parse-search) | Llama 3.1 8B | Csak szűrőket állít, tartalmat nem generál a usernek; kézzel felülbírálható |
 | Szemantikus keresés | bge-m3 (embedding) | Csak rangsorol; fallback kulcsszavasra |
 | CV-audit (PRO) | Llama + toMarkdown | Javaslat-jellegű, jelölt AI-kimenet; a user dönt |
@@ -28,17 +27,13 @@ az AI-interakció/AI-tartalom jelölése — **teljesítve** (UI-jelölések + /
 | Spam-előszűrés | Llama 3.1 8B | Csak előszűr; a publikálásról EMBERI moderátor dönt |
 | Napi szó TTS | beszédszintézis | Nem személyre vonatkozó tartalom |
 
-Indoklás (interjú-szimulátor): az Annex III 4. pont a munkáltatói oldali
-toborzás/kiválasztás rendszereit sorolja magas kockázatba (jelöltek szűrése,
-értékelése, döntéstámogatás). A szimulátor a jelölt ÖNKÉNTES, saját célú
-felkészülő-eszköze; kimenete munkáltatóhoz nem jut el, valós kiválasztási
-folyamatban nem vesz részt → nem Annex III. Az 50. cikk átláthatósági
-kötelezettségei érvényesek és teljesítve vannak.
+Megjegyzés (2026-07-23): a korábbi AI Interjú-szimulátor (PRO) funkciót
+kivezettük — a kód, az útvonalak és a felhasználói felületek eltávolítva. Az
+alábbi tiltott-gyakorlat szakasz így a megmaradt AI-funkciókra vonatkozik.
 
 ## 2. Tiltott gyakorlatok (5. cikk) — nem alkalmazunk
 
-- Munkahelyi/oktatási **érzelem-felismerés**: NINCS (a szimulátor promptja
-  explicit tiltja az érzelmi állapot minősítését).
+- Munkahelyi/oktatási **érzelem-felismerés**: NINCS.
 - Social scoring, manipulatív/kihasználó technikák, valós idejű biometria: NINCS.
 
 ## 3. Recruiter-oldali AI (admin /kozvetites) — **A-ÚT VÉGREHAJTVA (2026-07-03)**

@@ -174,43 +174,6 @@ export async function runAiChat(params: {
   }
 }
 
-export async function runAiMultiTurnChat(params: {
-  system: string;
-  messages: Array<{ role: "user" | "assistant"; content: string }>;
-  maxTokens?: number;
-  temperature?: number;
-  model?: string;
-}): Promise<AiTextResult> {
-  const env = getCloudflareEnv();
-  if (!env.AI) {
-    return { ok: false, text: "" };
-  }
-  try {
-    const response = (await env.AI.run(params.model ?? DEFAULT_MODEL, {
-      messages: [
-        { role: "system", content: params.system },
-        ...params.messages,
-      ],
-      max_tokens: params.maxTokens ?? 350,
-      ...(params.temperature !== undefined ? { temperature: params.temperature } : {}),
-    })) as { response?: unknown; usage?: { prompt_tokens?: number; completion_tokens?: number } };
-
-    const text = aiResponseToText(response?.response);
-    if (!text) return { ok: false, text: "" };
-    const model = params.model ?? DEFAULT_MODEL;
-    const ptAll = params.messages.reduce((n, m) => n + estTokens(m.content), 0);
-    await deferAiUsage(
-      model,
-      response?.usage?.prompt_tokens ?? estTokens(params.system) + ptAll,
-      response?.usage?.completion_tokens ?? estTokens(text),
-    );
-    return { ok: true, text };
-  } catch (err) {
-    console.error("[ai] runAiMultiTurnChat hiba:", err);
-    return { ok: false, text: "" };
-  }
-}
-
 // ============================================================================
 //  Rate-limit (közös, sliding-window, IP-hash alapú)
 // ============================================================================
@@ -231,7 +194,6 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "review-summary": { windowHours: 1, maxPerWindow: 30 },
   "media-upload": { windowHours: 1, maxPerWindow: 30 }, // Image upload rate limit
   "radar-subscribe": { windowHours: 1, maxPerWindow: 10 }, // Radar DoS védelem
-  "interview-sim": { windowHours: 1, maxPerWindow: 50 }, // Interview simulator
   "cv-review": { windowHours: 24, maxPerWindow: 5 }, // PRO CV-audit — 5/FELHASZNÁLÓ/nap (userId-kulcs, nem IP)
   "recruiter-parse": { windowHours: 24, maxPerWindow: 300 }, // admin CV-elemzés — runaway-guard
   "recruiter-match": { windowHours: 24, maxPerWindow: 300 }, // admin match+e-mail — runaway-guard

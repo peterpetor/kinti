@@ -65,11 +65,10 @@ export default function ProPage() {
   // A Kinti PRO MIND A 4 országra szól (EGY előfizetés) — ezért a marketing-lista
   // ország-SEMLEGES, nem írja ki egy ország nevét (különben Ausztria-specifikusnak
   // tűnne, pedig nem az). A funkciók in-app úgyis a választott országhoz igazodnak
-  // (interjú, nyelvkurzus, állampolgárság-szimulátor). A szakmai szótár CH-only
+  // (nyelvkurzus, állampolgárság-szimulátor). A szakmai szótár CH-only
   // valódi tartalom, ezért az marad CH-feltételes.
   const proFeatures = [
     "Állás-találat (%-egyezés) — melyik állás illik a profilodhoz + becsült nettó bér a régiódban",
-    "AI Interjú Szimulátor — országod cégeihez, magyarul kiértékelve (CH/AT/DE/NL)",
     "AI CV-audit — önéletrajz-elemzés, konkrét javítási tippekkel",
     "Utalás-asszisztens — megmondja, MIKOR éri meg hazautalni (árfolyam-időzítés), és követi a megtakarításod (a díj-összevetés ingyen is elérhető)",
     "Határidő-asszisztens — push-emlékeztető 14/7/1 nappal a fontos határidők előtt",
@@ -423,7 +422,7 @@ export default function ProPage() {
           <Link href="/aszf" target="_blank" className="underline">ÁSZF 1.1</Link>).
         </p>
         <p className="mx-auto mt-2 max-w-md text-[11px] leading-snug text-ink-faint">
-          Az AI-alapú funkciók (interjú-szimulátor, CV-audit) működéséről és korlátairól:{" "}
+          Az AI-alapú funkciók (CV-audit) működéséről és korlátairól:{" "}
           <Link href="/ai-atlathatosag" className="underline">AI-átláthatóság</Link>.
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] font-semibold text-ink-faint">

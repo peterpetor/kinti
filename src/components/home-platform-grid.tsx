@@ -55,7 +55,6 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone; extern
   { href: "/nemet-oneletrajz", icon: "document", label: "Német CV", tone: "work" },
   // ── Innen a speciálisabb réteg (összecsukva rejtve) ──
   { href: "/keresek", icon: "search", label: "Keresek", tone: "work" },
-  { href: "/allasok/interju-szimulator", icon: "sparkles", label: "AI interjú-szimulátor", tone: "work" },
   { href: "/allasok/cv-audit", icon: "magic", label: "AI CV-asszisztens", tone: "work" },
   { href: "/iranytu", icon: "compass", label: "Iránytű", tone: "money" },
   { href: "/szolgaltato-valto", icon: "filter", label: "Szolgáltató-váltó", tone: "money" },

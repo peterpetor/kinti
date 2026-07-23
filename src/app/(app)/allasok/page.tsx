@@ -75,20 +75,7 @@ export default async function JobsPage() {
           <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">
             <Icon name="sparkles" size={13} strokeWidth={2.4} /> PRO álláskeresési eszközök
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <Link
-              href="/allasok/interju-szimulator"
-              className="group flex flex-col rounded-xl border border-line bg-surface p-3 transition active:scale-[0.98] hover:border-primary/40 hover:shadow-card"
-            >
-              <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-primary/10 text-primary"><Icon name="sparkles" size={17} strokeWidth={2.2} /></span>
-              <span className="mt-2 block text-[13px] font-extrabold leading-tight tracking-[-0.01em] text-ink">AI interjú-szimulátor</span>
-              <span className="mt-0.5 block text-[11px] leading-snug text-ink-muted">
-                Próbainterjú a helyi kérdésekkel — visszajelzéssel
-              </span>
-              <span className="mt-auto inline-flex items-center gap-0.5 pt-2 text-[10.5px] font-bold text-primary">
-                Kipróbálom <Icon name="chevR" size={11} strokeWidth={2.8} className="transition-transform group-active:translate-x-0.5" />
-              </span>
-            </Link>
+          <div className="mt-3 grid grid-cols-1 gap-2">
             <Link
               href="/allasok/cv-audit"
               className="group flex flex-col rounded-xl border border-line bg-surface p-3 transition active:scale-[0.98] hover:border-primary/40 hover:shadow-card"
