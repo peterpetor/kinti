@@ -3,8 +3,10 @@ import { Icon, KintiLogo } from "@/components/ui";
 import { KeresekView } from "@/components/views/keresek-view";
 import { TelegramBotCard } from "@/components/telegram-bot-card";
 
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
+// Statikus shell (a KeresekView kliensoldali, saját fetch-csel; a Turnstile-kulcs
+// build-időben inline-olódó NEXT_PUBLIC_ env) → force-static, runtime NÉLKÜL: nem
+// fogyaszt edge-route-ot (deploy-plafon-tartalék).
+export const dynamic = "force-static";
 
 export const metadata = {
   title: "Keresek — magyar szakembert keresel?",

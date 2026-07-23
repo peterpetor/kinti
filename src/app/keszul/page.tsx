@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { KintiLogo } from "@/components/ui";
 
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
+// Tiszta statikus tartalom → force-static, runtime NÉLKÜL (nem fogyaszt
+// edge-route-ot — ld. deploy-edge-route-plafon; a copyright-év build-időben fixál,
+// noindex karbantartó oldalon ez rendben).
+export const dynamic = "force-static";
 
 export const metadata = {
   title: "Hamarosan érkezünk — Kinti",

@@ -194,6 +194,18 @@ const NL_TIPS = [
   { icon: "🔄", text: "Az átjárás felfelé lehetséges (»stapelen«: VMBO → HAVO → VWO) — a gyerek nincs véglegesen »beskatulyázva«." },
 ];
 
+// A szint-kártyák tónusa a szint SORRENDJE szerint (minden ország/kanton azonos
+// 4-szín-sorrendet használ: óvoda→amber, alap→emerald, Sek I→indigo, Sek II→sky).
+// Téma-tudatos: világosban a pontos pasztell, sötétben az accent 10%-os tintje —
+// így a kártya nem ragad be világosnak sötét módban (a data.color/.bg innentől
+// nem renderel, hogy a 44 bejegyzést ne kelljen átírni). Ld. [[dark-mode-hardcoded-light-bg]].
+const LEVEL_TONE = [
+  { bg: "bg-[#fef3c7] dark:bg-[#f59e0b]/10", text: "text-[#f59e0b]", dot: "bg-[#f59e0b]" },
+  { bg: "bg-[#d1fae5] dark:bg-[#10b981]/10", text: "text-[#10b981]", dot: "bg-[#10b981]" },
+  { bg: "bg-[#ede9fe] dark:bg-[#6366f1]/10", text: "text-[#6366f1]", dot: "bg-[#6366f1]" },
+  { bg: "bg-[#e0f2fe] dark:bg-[#0ea5e9]/10", text: "text-[#0ea5e9]", dot: "bg-[#0ea5e9]" },
+] as const;
+
 export function SchoolSystem() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
@@ -268,34 +280,36 @@ export function SchoolSystem() {
       {/* Vizuális szintlépők */}
       <div className="space-y-3">
         <h2 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted px-1">Iskolai szintek — {regionTitle}</h2>
-        {levels.map((level, idx) => (
-          <div key={idx} className={cn("rounded-card border-2 p-4 shadow-card", level.bg, "border-transparent")}>
+        {levels.map((level, idx) => {
+          const tone = LEVEL_TONE[idx % LEVEL_TONE.length];
+          return (
+          <div key={idx} className={cn("rounded-card border-2 border-transparent p-4 shadow-card", tone.bg)}>
             {/* Fejléc */}
             <div className="flex items-start gap-3">
               {/* Kor-sáv */}
               <div className="flex flex-col items-center shrink-0">
                 <span className="text-2xl">{level.emoji}</span>
-                <div className={cn("mt-1 rounded-pill px-2 py-0.5 text-[11px] font-black", level.color, "bg-white/60")}>
+                <div className={cn("mt-1 rounded-pill px-2 py-0.5 text-[11px] font-black bg-white/70 dark:bg-white/10", tone.text)}>
                   {level.ages}
                 </div>
-                <div className="text-[11px] font-semibold text-slate-500 mt-0.5">{level.years} év</div>
+                <div className="text-[11px] font-semibold text-ink-muted mt-0.5">{level.years} év</div>
               </div>
 
               {/* Tartalom */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 flex-wrap">
-                  <h3 className={cn("text-[15px] font-extrabold tracking-tight", level.color)}>{level.name}</h3>
+                  <h3 className={cn("text-[15px] font-extrabold tracking-tight", tone.text)}>{level.name}</h3>
                   {level.nameDe && (
-                    <span className="text-[11px] font-bold text-slate-500">({level.nameDe})</span>
+                    <span className="text-[11px] font-bold text-ink-muted">({level.nameDe})</span>
                   )}
                 </div>
-                <p className="mt-1 text-[12.5px] leading-snug text-slate-600">{level.description}</p>
+                <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">{level.description}</p>
 
                 {level.tracks && (
                   <div className="mt-2 space-y-1">
                     {level.tracks.map((track, ti) => (
-                      <div key={ti} className="flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-800">
-                        <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", level.color.replace("text-", "bg-"))} />
+                      <div key={ti} className="flex items-center gap-1.5 text-[11.5px] font-semibold text-ink">
+                        <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", tone.dot)} />
                         {track}
                       </div>
                     ))}
@@ -303,7 +317,7 @@ export function SchoolSystem() {
                 )}
 
                 {level.tip && (
-                  <div className="mt-2 rounded-[10px] bg-white/70 px-2.5 py-1.5 text-[11.5px] font-semibold text-slate-600">
+                  <div className="mt-2 rounded-[10px] bg-white/70 dark:bg-white/10 px-2.5 py-1.5 text-[11.5px] font-semibold text-ink-muted">
                     💡 {level.tip}
                   </div>
                 )}
@@ -313,11 +327,12 @@ export function SchoolSystem() {
             {/* Szintek összekötője */}
             {idx < levels.length - 1 && (
               <div className="flex justify-center mt-2">
-                <span className="text-slate-400 text-lg">↓</span>
+                <span className="text-ink-faint text-lg">↓</span>
               </div>
             )}
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Általános tippek */}

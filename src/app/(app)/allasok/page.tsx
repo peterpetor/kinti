@@ -38,7 +38,7 @@ export default async function JobsPage() {
         <section className="animate-fade-up space-y-3">
           <p className="text-[14px] leading-relaxed text-ink-muted">
             Magyar-barát munkalehetőségek külföldön. Böngéssz az ellenőrzött állások között, vagy
-            készülj fel az interjúra!
+            csiszold az önéletrajzod, mielőtt jelentkezel!
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Link

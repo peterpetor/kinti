@@ -2,8 +2,10 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { PlacementInquiryForm } from "@/components/views/placement-inquiry-form";
 
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
+// Statikus pitch-oldal (a PlacementInquiryForm kliensoldali; csak build-időben
+// inline-olt NEXT_PUBLIC_ Turnstile-kulcsot olvas) → force-static, runtime NÉLKÜL:
+// nem fogyaszt edge-route-ot (deploy-plafon-tartalék).
+export const dynamic = "force-static";
 
 export const metadata = {
   title: "Magyar munkaerő közvetítés — Ausztria, Németország, Hollandia",
