@@ -57,7 +57,6 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone; extern
   { href: "/keresek", icon: "search", label: "Keresek", tone: "work" },
   { href: "/allasok/cv-audit", icon: "magic", label: "AI CV-asszisztens", tone: "work" },
   { href: "/iranytu", icon: "compass", label: "Iránytű", tone: "money" },
-  { href: "/hova-koltozzek", icon: "pin", label: "Hova költözzek?", tone: "money" },
   { href: "/szolgaltato-valto", icon: "filter", label: "Szolgáltató-váltó", tone: "money" },
   { href: "/kviz", icon: "star", label: "Kvíz", tone: "learn" },
   { href: "/hatarido", icon: "clock", label: "Határidők", tone: "work" },

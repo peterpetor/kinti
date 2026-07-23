@@ -179,7 +179,6 @@ export function DropdownMenu() {
         ...(has("iranytu")
           ? [{ key: "iranytu", label: "Iránytű — bérek és lakbérek", href: "/iranytu", tint: "bg-success/10", icon: { name: "trending" } } as MenuItem]
           : []),
-        { key: "hova-koltozzek", label: "Hova költözzek? — megélhetési térkép", href: "/hova-koltozzek", tint: "bg-success/10 text-success", icon: { name: "pin" } },
         // Piactér-összevonás (2026-07-16): a lakbér-kalkulátor a Piactér füle.
         { key: "piacter", label: "Piactér — albérlet-börze", href: "/piacter", tint: "bg-primary/10", icon: { name: "house" } },
         ...(has("szolgaltato-valto")

@@ -84,11 +84,8 @@ export function CantonBubbleMap({
   country = "CH",
   coordsOverride,
   nameOf,
-  formatValue,
-  colorForValue,
-  sizeMode = "abs",
 }: {
-  /** régió-kód → érték (darabszám VAGY tetszőleges mérőszám, pl. „mennyi marad") */
+  /** régió-kód → darabszám */
   counts: Record<string, number>;
   selectedCanton: string;
   onSelectCanton: (code: string) => void;
@@ -97,13 +94,6 @@ export function CantonBubbleMap({
   coordsOverride?: Record<string, { lat: number; lng: number }>;
   /** Opcionális név-feloldó a kiválasztott buborékhoz (különben régió-név). */
   nameOf?: (code: string) => string;
-  /** Buborék-felirat formázó (pl. „1200 €"). Alapból a nyers szám. */
-  formatValue?: (v: number) => string;
-  /** Buborék-szín az érték/tartomány alapján (pl. zöld→piros skála). Alapból primary/accent. */
-  colorForValue?: (v: number, min: number, max: number) => string;
-  /** „abs": méret = érték/max (darabszámhoz). „range": méret a min–max közti helyezés
-   *  szerint (előjeles/negatív értékekhez, pl. mennyi-marad). */
-  sizeMode?: "abs" | "range";
 }) {
   const [fullscreen, setFullscreen] = useState(false);
 
@@ -127,16 +117,12 @@ export function CantonBubbleMap({
     };
   }, [fullscreen]);
 
-  // Érték-mód (mennyi-marad stb.): előjeles/0 érték is látszik. Count-mód: csak n>0.
-  const valueMode = sizeMode === "range" || !!colorForValue || !!formatValue;
   const entries = useMemo(
-    () => Object.entries(counts).filter(([code, n]) => COORDS[code] && (valueMode || n > 0)),
+    () => Object.entries(counts).filter(([code, n]) => n > 0 && COORDS[code]),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [counts, country, valueMode],
+    [counts, country],
   );
   const maxCount = useMemo(() => Math.max(1, ...entries.map(([, n]) => n)), [entries]);
-  const minVal = useMemo(() => Math.min(0, ...entries.map(([, n]) => n)), [entries]);
-  const maxVal = useMemo(() => Math.max(1, ...entries.map(([, n]) => n)), [entries]);
 
   return (
     <div
@@ -163,22 +149,11 @@ export function CantonBubbleMap({
         />
         {entries.map(([code, n]) => {
           const c = COORDS[code];
-          const active = code === selectedCanton;
-          // Méret: „range" módban a min–max közti helyezés (előjeles), különben érték/max.
-          const frac = sizeMode === "range"
-            ? (maxVal - minVal > 0 ? (n - minVal) / (maxVal - minVal) : 1)
-            : n / maxCount;
-          const bg = active
-            ? "rgb(var(--accent))"
-            : colorForValue
-              ? colorForValue(n, minVal, maxVal)
-              : "rgb(var(--primary))";
-          const label = formatValue ? formatValue(n) : String(n);
           return (
             <Marker
               key={code}
               position={[c.lat, c.lng]}
-              icon={bubbleIcon(label, frac, bg)}
+              icon={bubbleIcon(n, maxCount, code === selectedCanton)}
               eventHandlers={{ click: () => onSelectCanton(code === selectedCanton ? "" : code) }}
             />
           );
@@ -232,28 +207,22 @@ export function CantonBubbleMap({
 
 const BUBBLE_CACHE = new Map<string, L.DivIcon>();
 
-/** label = kiírt felirat, frac = 0..1 méret-arány, bg = háttérszín (CSS). */
-function bubbleIcon(label: string, frac: number, bg: string): L.DivIcon {
-  const active = bg === "rgb(var(--accent))";
-  const key = `${label}|${Math.round(frac * 100)}|${bg}`;
+function bubbleIcon(count: number, max: number, active: boolean): L.DivIcon {
+  const key = `${count}-${max}-${active ? "a" : "n"}`;
   const cached = BUBBLE_CACHE.get(key);
   if (cached) return cached;
 
-  const clamped = Math.min(1, Math.max(0, frac));
-  // Hosszabb feliratnál (pl. „1200 €") szélesebb pill, hogy elférjen.
-  const wide = label.length > 3;
-  const h = 28 + Math.round(clamped * 28); // 28..56 px
-  const w = wide ? Math.max(h, 24 + label.length * 8) : h;
+  const dim = 28 + Math.round((count / max) * 28); // 28..56 px, darabszám-arányos
+  const bg = active ? "rgb(var(--accent))" : "rgb(var(--primary))";
   const shadow = active
     ? "box-shadow:0 0 0 3px #fff,0 4px 14px rgba(14,31,23,.32);"
     : "box-shadow:0 4px 14px rgba(14,31,23,.28);";
-  const fontSize = label.length > 5 ? 11 : 13;
 
   const icon = L.divIcon({
     className: "",
-    html: `<div style="min-width:${w}px;height:${h}px;padding:0 ${wide ? 8 : 0}px;display:grid;place-items:center;border-radius:9999px;background:${bg};color:#fff;font-size:${fontSize}px;font-weight:800;white-space:nowrap;${shadow}">${label}</div>`,
-    iconSize: [w, h],
-    iconAnchor: [w / 2, h / 2],
+    html: `<div style="width:${dim}px;height:${dim}px;display:grid;place-items:center;border-radius:9999px;background:${bg};color:#fff;font-size:${count > 99 ? 11 : 13}px;font-weight:800;${shadow}">${count}</div>`,
+    iconSize: [dim, dim],
+    iconAnchor: [dim / 2, dim / 2],
   });
   BUBBLE_CACHE.set(key, icon);
   return icon;
