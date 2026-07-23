@@ -38,10 +38,14 @@ export async function GET(req: NextRequest) {
   const adults = clampInt(req.nextUrl.searchParams.get("adults"), 1, 2, 1);
   const kids = clampInt(req.nextUrl.searchParams.get("kids"), 0, 6, 0);
   const rooms = clampInt(req.nextUrl.searchParams.get("rooms"), 1, 6, 2);
+  // Saját lakbér (opcionális): >0 → MINDEN régióban ezzel számol (személyes mód);
+  // 0/hiányzó → a régiós medián (összehasonlító mód). A 0-t szándékosan NEM
+  // fogadjuk el „ingyen lakás"-ként itt (az a bérkalkulátoré) — 0 = nincs megadva.
+  const manualRent = clampInt(req.nextUrl.searchParams.get("rent"), 0, 100000, 0);
 
-  const key = `megelheto:v1:${country}:${grossNum}:${adults}:${kids}:${rooms}`;
+  const key = `megelheto:v2:${country}:${grossNum}:${adults}:${kids}:${rooms}:${manualRent}`;
   const payload = await cached(key, 30 * 60_000, () =>
-    computeAll(country as BudgetCountry, grossNum, adults, kids, rooms),
+    computeAll(country as BudgetCountry, grossNum, adults, kids, rooms, manualRent),
   );
 
   return NextResponse.json(payload, {
@@ -49,26 +53,29 @@ export async function GET(req: NextRequest) {
   });
 }
 
-async function computeAll(country: BudgetCountry, gross: number, adults: number, kids: number, rooms: number) {
+async function computeAll(country: BudgetCountry, gross: number, adults: number, kids: number, rooms: number, manualRent: number) {
   const regions = getRegions(country);
   const benefit = childBenefit(country, kids);
   // A megélhetési baseline országos (cost_benchmarks üres → csak a kurált baseline).
   const costs = blendCosts(baselineCosts(country, adults, kids), {});
   const costTotal = costs.reduce((s, c) => s + c.amount, 0);
   const currency = budgetCurrency(country);
+  const useManual = manualRent > 0;
 
   // Nem-CH: a nettó bér országos (nincs régiós adó-eltérés) → egyszer számoljuk.
   const nationalNet = country !== "CH" ? netFor(country, gross, adults, kids) : 0;
 
-  // Régiós lakbér + országos fallback párhuzamosan.
-  const [regionalRents, nationalRents] = await Promise.all([
-    Promise.all(regions.map((r) => getRentStats(country, r.code))),
-    getRentStats(country, "all"),
-  ]);
-  const nationalRent = pickRentFor(nationalRents, rooms);
+  // Régiós lakbér csak akkor kell, ha NINCS saját összeg (különben MINDEN régió a sajátoddal számol).
+  const [regionalRents, nationalRents] = useManual
+    ? [[], []]
+    : await Promise.all([
+        Promise.all(regions.map((r) => getRentStats(country, r.code))),
+        getRentStats(country, "all"),
+      ]);
+  const nationalRent = useManual ? null : pickRentFor(nationalRents, rooms);
 
   const out = regions.map((r, i) => {
-    const rent = pickRentFor(regionalRents[i], rooms) ?? nationalRent;
+    const rent = useManual ? manualRent : (pickRentFor(regionalRents[i], rooms) ?? nationalRent);
     if (rent == null) return null; // se régiós, se országos lakbér → kihagyva
     const net = country === "CH" ? netFor("CH", gross, adults, kids, r.code) : nationalNet;
     const summary = summarizeBudget({
@@ -89,7 +96,22 @@ async function computeAll(country: BudgetCountry, gross: number, adults: number,
   }).filter((x): x is NonNullable<typeof x> => x != null);
 
   out.sort((a, b) => b.leftover - a.leftover);
-  return { country, currency, gross, adults, kids, rooms, costTotal: Math.round(costTotal), regions: out };
+  // „uniform": ha saját (fix) lakbérrel számolunk és a nettó országos (nem-CH),
+  // minden régió ugyanannyit hoz → a kliens jelzi, hogy a térkép ilyenkor nem
+  // hasonlít (a régiós különbséghez üresen kell hagyni a lakbért).
+  const uniform = useManual && country !== "CH";
+  const netMonthly = out.length ? out[0].net : 0;
+  return {
+    country, currency, gross, adults, kids, rooms,
+    rentMode: useManual ? "manual" : "median",
+    manualRent: useManual ? manualRent : null,
+    uniform,
+    net: Math.round(netMonthly),          // nem-CH: országos nettó; CH: a legjobb régióé (tájékoztató)
+    childBenefit: Math.round(benefit),
+    costTotal: Math.round(costTotal),
+    costs: costs.map((c) => ({ label: c.label, amount: Math.round(c.amount) })),
+    regions: out,
+  };
 }
 
 /** Havi nettó (a 13./14. havit szétosztva) — a budget-planner logikáját tükrözi. */

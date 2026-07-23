@@ -27,9 +27,12 @@ const CantonBubbleMap =
 interface RegionRow {
   code: string; name: string; net: number; rent: number; cost: number; leftover: number; verdict: string;
 }
+interface CostItem { label: string; amount: number }
 interface ApiData {
   country: BudgetCountry; currency: "CHF" | "EUR"; gross: number;
-  adults: number; kids: number; rooms: number; costTotal: number; regions: RegionRow[];
+  adults: number; kids: number; rooms: number;
+  rentMode: "median" | "manual"; manualRent: number | null; uniform: boolean;
+  net: number; childBenefit: number; costTotal: number; costs: CostItem[]; regions: RegionRow[];
 }
 
 const DEFAULT_GROSS: Record<BudgetCountry, number> = { CH: 6000, AT: 2800, DE: 3200, NL: 3000 };
@@ -67,9 +70,11 @@ export function MegelhetoView() {
   const [adults, setAdults] = useState(1);
   const [kids, setKids] = useState(0);
   const [rooms, setRooms] = useState(2);
+  const [manualRent, setManualRent] = useState("");
   const [data, setData] = useState<ApiData | null>(null);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState("");
+  const [showMethod, setShowMethod] = useState(false);
 
   // Ország-váltáskor töltsük fel az alap bruttót (ha üres a mező).
   useEffect(() => {
@@ -78,13 +83,15 @@ export function MegelhetoView() {
   }, [country]);
 
   const grossNum = Number(gross) || 0;
+  const manualRentNum = /^\d{1,6}$/.test(manualRent.trim()) ? Number(manualRent.trim()) : 0;
 
   useEffect(() => {
     if (grossNum <= 0) { setData(null); return; }
     const ctrl = new AbortController();
     setLoading(true);
     const t = setTimeout(() => {
-      fetch(`/api/megelheto?country=${country}&gross=${grossNum}&adults=${adults}&kids=${kids}&rooms=${rooms}`, {
+      const rentParam = manualRentNum > 0 ? `&rent=${manualRentNum}` : "";
+      fetch(`/api/megelheto?country=${country}&gross=${grossNum}&adults=${adults}&kids=${kids}&rooms=${rooms}${rentParam}`, {
         signal: ctrl.signal,
       })
         .then((r) => (r.ok ? (r.json() as Promise<ApiData>) : null))
@@ -92,7 +99,7 @@ export function MegelhetoView() {
         .catch(() => { /* abort / hálózati hiba */ });
     }, 300);
     return () => { ctrl.abort(); clearTimeout(t); };
-  }, [country, grossNum, adults, kids, rooms]);
+  }, [country, grossNum, adults, kids, rooms, manualRentNum]);
 
   const counts = useMemo(() => {
     const m: Record<string, number> = {};
@@ -157,17 +164,32 @@ export function MegelhetoView() {
           </div>
         </div>
 
-        <div className="min-w-0">
-          <span className={labelCls}>Lakásméret (szoba)</span>
-          <div className="flex gap-1.5">
-            {[1, 2, 3, 4].map((n) => (
-              <button key={n} type="button" onClick={() => setRooms(n)}
-                className={cn(pillNum, "min-w-0 flex-1", rooms === n ? pillOn : pillOff)}>
-                {n}
-              </button>
-            ))}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="min-w-0">
+            <span className={labelCls}>Lakásméret (szoba)</span>
+            <div className="flex gap-1.5">
+              {[1, 2, 3, 4].map((n) => (
+                <button key={n} type="button" onClick={() => setRooms(n)}
+                  className={cn(pillNum, "min-w-0 flex-1", rooms === n ? pillOn : pillOff)}>
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="min-w-0">
+            <label htmlFor="mh-rent" className={labelCls}>Saját lakbér ({cur})</label>
+            <input
+              id="mh-rent" type="number" inputMode="numeric" min={0}
+              placeholder="üresen: régiós medián"
+              value={manualRent} onChange={(e) => setManualRent(e.target.value)} className={inputCls}
+            />
           </div>
         </div>
+        <p className="-mt-1 text-[11.5px] leading-snug text-ink-muted">
+          {manualRentNum > 0
+            ? <>A <strong className="text-ink">te lakbéreddel</strong> ({fmt(manualRentNum)}/hó) számol minden régióban.</>
+            : <>Üresen a régió <strong className="text-ink">tipikus (medián)</strong> lakbérével hasonlít össze — így látod, hol olcsóbb az élet. Van konkrét albérleted? Írd be a saját összeged.</>}
+        </p>
       </section>
 
       {/* ── Térkép ────────────────────────────────────────────────── */}
@@ -193,7 +215,55 @@ export function MegelhetoView() {
             több marad <span className="h-2.5 w-2.5 rounded-full" style={{ background: "hsl(128 66% 42%)" }} />
           </span>
         </div>
+        {data?.uniform && (
+          <div className="flex items-start gap-2 rounded-card border border-star/40 bg-[#fff8ed] px-3 py-2 text-[11.5px] leading-snug text-ink dark:bg-[#241d10]">
+            <span className="shrink-0">⚠️</span>
+            <span>
+              Saját (fix) lakbérrel {countryName}ban minden régió ugyanannyit hoz — a nettó bér itt
+              országos, a régiós különbséget csak a lakbér adja. A régiók <strong>összehasonlításához
+              hagyd üresen</strong> a lakbér-mezőt.
+            </span>
+          </div>
+        )}
       </section>
+
+      {/* ── Hogyan számolunk? (átláthatóság) ──────────────────────────── */}
+      {data && (
+        <section className="rounded-card border border-line bg-surface-alt/40 shadow-card">
+          <button
+            type="button"
+            onClick={() => setShowMethod((s) => !s)}
+            className="flex w-full items-center gap-2 px-4 py-3 text-left"
+          >
+            <Icon name="question" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+            <span className="flex-1 text-[13.5px] font-bold text-ink">Hogyan számolunk?</span>
+            <Icon name={showMethod ? "chevU" : "chevD"} size={16} strokeWidth={2.4} className="shrink-0 text-ink-faint" />
+          </button>
+          {showMethod && (
+            <div className="space-y-3 border-t border-line px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted">
+              <p className="rounded-[10px] bg-surface px-3 py-2 text-center text-[12.5px] font-bold text-ink">
+                nettó bér + családi pótlék − lakbér − megélhetés = <span className="text-success">mennyi marad</span>
+              </p>
+              <dl className="space-y-1.5">
+                <Row label={`Nettó bér (${grossNum} ${cur} bruttóból, havi átlag)`} value={`+ ${fmt(data.net)}`} pos />
+                {data.childBenefit > 0 && <Row label="Családi pótlék" value={`+ ${fmt(data.childBenefit)}`} pos />}
+                <Row
+                  label={data.rentMode === "manual" ? "Lakbér (a te összeged)" : `Lakbér (${rooms} szoba, régiós medián)`}
+                  value={data.rentMode === "manual" ? `− ${fmt(data.manualRent ?? 0)}` : "− régiónként változó"}
+                />
+                {data.costs.map((c) => (
+                  <Row key={c.label} label={c.label} value={`− ${fmt(c.amount)}`} />
+                ))}
+              </dl>
+              <ul className="space-y-1 text-[11.5px] text-ink-faint">
+                <li>• <strong className="text-ink-muted">Nettó bér:</strong> ugyanaz a motor, mint a bérkalkulátorban{country === "CH" ? " — Svájcban kantononként eltér (kantonális adó)" : " — országos (a régió nem befolyásolja)"}. Egy fizetésből.</li>
+                <li>• <strong className="text-ink-muted">Lakbér:</strong> {data.rentMode === "manual" ? "a te megadott összeged, minden régióban." : "a régió közösségi lakbér-mediánja a választott szobaszámra (rent_benchmarks)."}</li>
+                <li>• <strong className="text-ink-muted">Megélhetés:</strong> országos referencia-becslés (rezsi, élelmiszer, közlekedés, biztosítás…), a családmérethez igazítva.</li>
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* ── Kiválasztott régió részletei ─────────────────────────────── */}
       {selectedRow && (
@@ -206,7 +276,7 @@ export function MegelhetoView() {
           </div>
           <dl className="mt-3 space-y-1.5 text-[12.5px]">
             <Row label="Nettó bér (havi átlag)" value={`+ ${fmt(selectedRow.net)}`} pos />
-            <Row label={`Lakbér (${rooms} szoba, medián)`} value={`− ${fmt(selectedRow.rent)}`} />
+            <Row label={data?.rentMode === "manual" ? "Lakbér (a te összeged)" : `Lakbér (${rooms} szoba, régiós medián)`} value={`− ${fmt(selectedRow.rent)}`} />
             <Row label="Megélhetés (rezsi, kaja, közlekedés…)" value={`− ${fmt(selectedRow.cost)}`} />
           </dl>
         </section>
