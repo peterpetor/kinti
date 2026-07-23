@@ -369,7 +369,9 @@ export default async function BusinessPage({
 
         {/* meta sor */}
         <div className="mt-3 flex items-center gap-4">
-          <div>
+          {/* A rating-blokk a lenti vélemény-szekcióra ugrik (#ertekeles) — 0
+              véleménynél kifejezett hívás az elsőre (vélemény-motor, konverzió). */}
+          <a href="#ertekeles" className="block transition active:scale-[0.97]">
             {b.reviews > 0 ? (
               <>
                 <div className="flex items-center gap-1">
@@ -381,10 +383,10 @@ export default async function BusinessPage({
             ) : (
               <>
                 <div className="text-[15px] font-bold text-ink-muted">Új</div>
-                <div className="text-[11px] font-medium text-ink-muted">Még nincs értékelés</div>
+                <div className="text-[11px] font-medium text-primary underline decoration-primary/40 underline-offset-2">Írd meg az elsőt!</div>
               </>
             )}
-          </div>
+          </a>
           <span className="h-8 w-px self-stretch bg-line" />
           <div>
             <DynamicDistance lat={b.lat} lng={b.lng} address={b.address} precise={hasStreetAddress(b.address)} />
