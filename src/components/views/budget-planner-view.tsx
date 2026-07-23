@@ -41,6 +41,12 @@ const inputCls =
 const labelCls = "mb-1.5 block text-[12.5px] font-bold text-ink";
 const pillBase =
   "rounded-pill px-3.5 py-2 text-[13px] font-bold transition active:scale-95 border";
+// Szám-gomboknak (Gyerekek 0–3, Lakásméret 1–4): NINCS vízszintes padding, hogy a
+// félszéles grid-oszlopban flex-1-gyel egyenlő szélességre zsugorodva mindig
+// beférjenek (px-3.5 mellett a 4 gomb kilógott — a "3" a képernyőről, a "4" a
+// lakbér-mezőre). Ld. [[cn-no-tailwind-merge]]: külön osztály, nem px-ütköztetés.
+const pillNum =
+  "rounded-pill py-2 text-[13px] font-bold text-center transition active:scale-95 border";
 const pillOn = "border-primary bg-primary text-white";
 const pillOff = "border-line bg-surface text-ink-muted";
 
@@ -367,23 +373,23 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
 
         {/* Háztartás */}
         <div className="grid grid-cols-2 gap-3">
-          <div>
+          <div className="min-w-0">
             <span className={labelCls}>Felnőttek</span>
             <div className="flex gap-2">
               {[1, 2].map((n) => (
                 <button key={n} type="button" onClick={() => setAdults(n)}
-                  className={cn(pillBase, adults === n ? pillOn : pillOff)}>
+                  className={cn(pillBase, "min-w-0 flex-1", adults === n ? pillOn : pillOff)}>
                   {n === 1 ? "Egyedül" : "Párban"}
                 </button>
               ))}
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <span className={labelCls}>Gyerekek</span>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               {[0, 1, 2, 3].map((n) => (
                 <button key={n} type="button" onClick={() => setKids(n)}
-                  className={cn(pillBase, "px-3", kids === n ? pillOn : pillOff)}>
+                  className={cn(pillNum, "min-w-0 flex-1", kids === n ? pillOn : pillOff)}>
                   {n}
                 </button>
               ))}
@@ -403,18 +409,18 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
 
         {/* Lakás */}
         <div className="grid grid-cols-2 gap-3">
-          <div>
+          <div className="min-w-0">
             <span className={labelCls}>Lakásméret (szoba)</span>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               {[1, 2, 3, 4].map((n) => (
                 <button key={n} type="button" onClick={() => { setRooms(n); setRoomsTouched(true); }}
-                  className={cn(pillBase, "px-3", rooms === n ? pillOn : pillOff)}>
+                  className={cn(pillNum, "min-w-0 flex-1", rooms === n ? pillOn : pillOff)}>
                   {n}
                 </button>
               ))}
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <label htmlFor="bp-rent" className={labelCls}>
               Saját lakbér <span className="font-medium text-ink-muted">(0 = nem fizetsz, pl. céges szállás)</span>
             </label>

@@ -264,14 +264,16 @@ export function DropdownMenu() {
           tint: "bg-primary/10",
           icon: { name: "sun" },
           custom: (
-            <div key="tema" className="flex items-center justify-between gap-3 px-4 py-3.5">
-              <span className="flex items-center gap-3 text-[15px] font-bold text-ink">
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary">
+            <div key="tema" className="flex items-center justify-between gap-2 px-4 py-3.5">
+              <span className="flex min-w-0 items-center gap-3 text-[15px] font-bold text-ink">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
                   <Icon name="sun" size={16} strokeWidth={2.2} />
                 </span>
-                Megjelenés
+                <span className="truncate">Megjelenés</span>
               </span>
-              <ThemeToggle />
+              <div className="shrink-0">
+                <ThemeToggle />
+              </div>
             </div>
           ),
         },

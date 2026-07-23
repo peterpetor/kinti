@@ -61,7 +61,7 @@ export function ThemeToggle() {
           key={t}
           type="button"
           onClick={() => choose(t)}
-          className={`relative z-[1] inline-flex items-center gap-1.5 rounded-pill px-4 py-1.5 transition ${
+          className={`relative z-[1] inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 transition ${
             theme === t ? "bg-primary text-white shadow-card" : "text-ink-muted"
           }`}
         >
