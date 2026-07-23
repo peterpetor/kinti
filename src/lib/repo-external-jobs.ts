@@ -90,7 +90,11 @@ export async function getExternalJobs(
   opts: { category?: string | null; cantonCode?: string | null; limit?: number } = {},
 ): Promise<ExternalJob[]> {
   const binds: unknown[] = [country];
-  let where = "country_code = ?";
+  // Frissesség-védelem: csak a max. 21 napja látott hirdetések (a sync 14 naponta
+  // purge-öl + naponta frissíti a fetched_at-et). Ha a külső sync-cron leáll, a
+  // börze így fokozatosan kiürül (nem mutat hónapos halott linkeket) — a normál
+  // működést nem érinti (a hirdetések ilyenkor <14 naposak).
+  let where = "country_code = ? AND fetched_at >= datetime('now', '-21 days')";
   if (opts.category && opts.category !== "all") { where += " AND category = ?"; binds.push(opts.category); }
   // Régió-szűrő: CSAK a feloldott (canton_code IS NOT NULL) sorokra illeszt —
   // a fel nem oldott (null régió) sorok régió-választáskor kiesnek (nem tudjuk,
