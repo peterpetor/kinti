@@ -165,7 +165,6 @@ export function ExploreView({
   const [showFavs, setShowFavs] = useState(initialFav);
   const [openNow, setOpenNow] = useState(false);
   const [passOnly, setPassOnly] = useState(initialPass);
-  const [minYears, setMinYears] = useState(0);
   const [withContact, setWithContact] = useState(false);
   // Progresszív szűrő-felfedés: alapból csak a két hétköznapi szűrő (Régió +
   // Közelemben) látszik, a ritkábban használtak a „További szűrők" mögött.
@@ -173,7 +172,7 @@ export function ExploreView({
   // „Kedvenceim" ?fav=1 linkjéről érkezve) — aktív szűrő SOSEM tűnhet el.
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(initialFav || initialPass);
   const advancedActiveCount =
-    (showFavs ? 1 : 0) + (passOnly ? 1 : 0) + (openNow ? 1 : 0) + (minYears > 0 ? 1 : 0) + (withContact ? 1 : 0);
+    (showFavs ? 1 : 0) + (passOnly ? 1 : 0) + (openNow ? 1 : 0) + (withContact ? 1 : 0);
   const filtersExpanded = moreFiltersOpen || advancedActiveCount > 0;
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   // Alapból LISTA (gyors pásztázás + SEO + nincs hydration-mismatch: az SSR és az
@@ -333,7 +332,6 @@ export function ExploreView({
         // őszinte szűrő, összhangban a kártya megjelenítésével.
         const wh = parseWorkingHoursStrict(b.workingHours ?? null);
         const byOpen = !openNow || (wh != null && calculateBusinessHoursStatus(wh).isOpen);
-        const byYears = minYears === 0 || (b.yearsHere ?? 0) >= minYears;
         // Kinti Pass elfogadóhely-szűrő (a kedvezménykártyát elfogadó helyek).
         const byPass = !passOnly || b.kintiPassActive === true;
         // Elérhetőséggel: csak azok, akiknek van telefonjuk vagy weboldaluk.
@@ -344,7 +342,7 @@ export function ExploreView({
           (searchIndex.get(b.id)?.includes(foldedNeedle) ?? false) ||
           // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
           matchesCanton({ address: b.address ?? null }, needle);
-        return byCountry && byCat && byCanton && byFav && byOpen && byYears && byPass && byContact && byText;
+        return byCountry && byCat && byCanton && byFav && byOpen && byPass && byContact && byText;
       })
       .map((b) => {
         // Házszám nélküli cím (pl. csak "Wien") esetén a lat/lng városközpont —
@@ -391,7 +389,7 @@ export function ExploreView({
     });
 
     return radiusFiltered;
-  }, [businesses, searchIndex, country, cat, canton, q, showFavs, openNow, minYears, passOnly, withContact, favoriteIds, userPos, radiusKm, sortBy]);
+  }, [businesses, searchIndex, country, cat, canton, q, showFavs, openNow, passOnly, withContact, favoriteIds, userPos, radiusKm, sortBy]);
 
   const locatedCount = useMemo(
     () => filtered.filter(({ b }) => b.lat != null && b.lng != null).length,
@@ -407,10 +405,10 @@ export function ExploreView({
     // pontos találathoz kell a teljes lista → azonnal betöltjük (a loader guardolt,
     // csak egyszer kér). Guard: friss mounton, ALAP szűrőkkel NEM fut, így a sima
     // böngészésnél megmarad a deferrált (idle) betöltés, és nem blokkolja a festést.
-    if (cat !== "all" || q.trim() !== "" || canton !== "all" || showFavs || passOnly || openNow || minYears > 0 || withContact) {
+    if (cat !== "all" || q.trim() !== "" || canton !== "all" || showFavs || passOnly || openNow || withContact) {
       loadFullList();
     }
-  }, [cat, canton, q, showFavs, openNow, minYears, passOnly, withContact, sortBy, country, loadFullList]);
+  }, [cat, canton, q, showFavs, openNow, passOnly, withContact, sortBy, country, loadFullList]);
 
   // Lapozás: oldal-váltáskor vissza a lista tetejére (a user ne a 100. kártya
   // után találja magát).
@@ -731,48 +729,6 @@ export function ExploreView({
             Elérhetőséggel
           </span>
         </button>
-
-        {/* Tapasztalat (év) szűrő — Advanced search. A natív select-nyilat elrejtjük
-            (appearance-none), és a Tartomány-szűrőével EGYSÉGES chevD-nyilat teszünk
-            a jobb szélre; a bal szélen VEZETŐ ikon (mint a többi szűrő-pillnél — ez
-            volt az egyetlen jelölő nélküli), a pl-7/pr-7 szimmetrikusan középre tart. */}
-        <div className="relative inline-flex min-w-0">
-          <select
-            value={minYears}
-            onChange={(e) => setMinYears(Number(e.target.value))}
-            aria-label="Szűrés tapasztalatra"
-            className={cn(
-              "w-full appearance-none rounded-pill border py-2 pl-7 pr-7 text-center text-[11.5px] font-bold tracking-wide shadow-card transition cursor-pointer outline-none",
-              minYears > 0
-                ? "bg-primary/10 border-primary/30 text-primary"
-                : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
-            )}
-          >
-            <option value={0}>Tapasztalat</option>
-            <option value={3}>3+ év</option>
-            <option value={5}>5+ év</option>
-            <option value={10}>10+ év</option>
-          </select>
-          <Icon
-            name="star"
-            size={12}
-            strokeWidth={2.4}
-            filled={minYears > 0}
-            className={cn(
-              "pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 shrink-0",
-              minYears > 0 ? "text-primary" : "text-ink-muted",
-            )}
-          />
-          <Icon
-            name="chevD"
-            size={13}
-            strokeWidth={2.2}
-            className={cn(
-              "pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 shrink-0",
-              minYears > 0 ? "text-primary/70" : "text-ink-muted",
-            )}
-          />
-        </div>
 
           </>
         )}

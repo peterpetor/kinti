@@ -79,7 +79,7 @@ const PATHS: Record<IconName, string[]> = {
   chevR: ["M9 5l7 7l-7 7"],
   chevD: ["M5 9l7 7l7-7"],
   chevU: ["M5 15l7-7l7 7"],
-  sliders: ["M4 6h10", "M18 6h2", "M4 12h4", "M12 12h8", "M4 18h12", "M20 18h0"],
+  sliders: ["M4 6h3", "M11 6h9", "M9 3v6", "M4 12h9", "M17 12h3", "M15 9v6", "M4 18h6", "M14 18h6", "M12 15v6"],
   bell: ["M6 9a6 6 0 1 1 12 0v5l2 2H4l2-2z", "M10 19a2 2 0 0 0 4 0"],
   trending: ["M3 17l6-6l4 4l8-8", "M14 7h7v7"],
   eye: ["M2 12s4-7 10-7s10 7 10 7s-4 7-10 7s-10-7-10-7", "M12 9a3 3 0 1 1 0 6a3 3 0 0 1 0-6"],
