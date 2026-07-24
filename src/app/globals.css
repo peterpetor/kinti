@@ -239,16 +239,36 @@
     body { transition: none; }
   }
 
-  /* Oldal-átmenet (PageTransition) — natív-szerű belépés minden route-váltáskor. */
-  @keyframes kintiPageIn {
+  /* Oldal-átmenet (PageTransition) — natív-szerű belépés minden route-váltáskor.
+     IRÁNY-TUDATOS (2026-07-24): a PageTransition a route-mélység (szegmens-szám)
+     változásából + popstate-ből dönti el, hogy mélyebbre lépünk (forward — mint
+     egy natív stack-nav push, jobbról csúszik be), visszalépünk (back — balról,
+     mint egy pop), vagy azonos szinten váltunk fület (cross — a régi sima
+     fel-fade, natív tab-bar viselkedés: nincs vízszintes irány, mert testvér-
+     nézetek közt nincs hierarchia). */
+  @keyframes kintiPageInCross {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .kinti-page-in {
-    animation: kintiPageIn 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  @keyframes kintiPageInForward {
+    from { opacity: 0; transform: translateX(28px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes kintiPageInBack {
+    from { opacity: 0; transform: translateX(-28px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .kinti-page-in-cross {
+    animation: kintiPageInCross 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .kinti-page-in-forward {
+    animation: kintiPageInForward 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .kinti-page-in-back {
+    animation: kintiPageInBack 0.26s cubic-bezier(0.22, 1, 0.36, 1);
   }
   @media (prefers-reduced-motion: reduce) {
-    .kinti-page-in { animation: none; }
+    .kinti-page-in-cross, .kinti-page-in-forward, .kinti-page-in-back { animation: none; }
   }
 
   /* Toast belépés (ToastHost) — alulról felúszó, finoman felnagyuló buborék. */

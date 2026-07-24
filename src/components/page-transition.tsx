@@ -1,22 +1,51 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
+function segmentDepth(path: string): number {
+  return path.split("/").filter(Boolean).length;
+}
+
 /**
- * PageTransition — natív-szerű belépő-animáció minden route-váltáskor.
+ * PageTransition — natív-szerű, IRÁNY-TUDATOS belépő-animáció route-váltáskor.
  *
- * A `key={pathname}` miatt a tartalom újra-mountolódik navigációkor, így a
- * `.kinti-page-in` CSS-animáció (lágy fade + felfelé csúszás) minden oldalon
- * lejátszódik. Next 14-en ez a megbízható megoldás (a View Transitions API
- * config-flag csak Next 15+), next-on-pages-en is stabil, függőség nélkül.
+ * A `key={pathname}` miatt a tartalom újra-mountolódik navigációkor, a
+ * `.kinti-page-in-*` CSS-animáció pedig minden oldalon lejátszódik. Az irányt
+ * (forward/back/cross) a route-mélység (szegmens-szám) változásából +
+ * popstate-ből (böngésző vissza/előre, edge-swipe) számoljuk RENDER KÖZBEN
+ * (ref-be, nem state-be) — így az első festésnél már a helyes osztály van a
+ * DOM-on, nincs "rossz irányból induló, majd újrainduló" villanás. Next 14-en
+ * ez a megbízható, függőség-mentes megoldás (a View Transitions API csak
+ * Next 15+; a next-on-pages-en is stabil).
  *
  * A `prefers-reduced-motion`-t a CSS kezeli (globals.css).
  */
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const prevPathRef = useRef(pathname);
+  const isPopRef = useRef(false);
+  const directionRef = useRef<"forward" | "back" | "cross">("cross");
+
+  useEffect(() => {
+    const onPopState = () => {
+      isPopRef.current = true;
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  if (prevPathRef.current !== pathname) {
+    const wasPop = isPopRef.current;
+    isPopRef.current = false;
+    const prevDepth = segmentDepth(prevPathRef.current);
+    const nextDepth = segmentDepth(pathname);
+    directionRef.current = wasPop || nextDepth < prevDepth ? "back" : nextDepth > prevDepth ? "forward" : "cross";
+    prevPathRef.current = pathname;
+  }
+
   return (
-    <div key={pathname} className="kinti-page-in">
+    <div key={pathname} className={`kinti-page-in-${directionRef.current}`}>
       {children}
     </div>
   );
