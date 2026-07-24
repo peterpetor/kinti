@@ -4,8 +4,8 @@ import { useMemo, useState, useEffect, useRef, useCallback, lazy, Suspense } fro
 import { haptic } from "@/lib/haptics";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { BusinessCard, CategoryPills, Icon, type IconName } from "@/components/ui";
-import { FAVORITES_CHANGED_EVENT } from "@/components/ui/favorite-button";
+import { BusinessCard, CategoryPills, Icon, SwipeAction, type IconName } from "@/components/ui";
+import { FAVORITES_CHANGED_EVENT, removeFavorite } from "@/components/ui/favorite-button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Category, ListBusiness } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -997,15 +997,37 @@ export function ExploreView({
             </Link>
           )}
 
-          {filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map(({ b, dist }) => (
-            <BusinessCard
-              key={b.id}
-              business={b}
-              href={`/szaknevsor/${b.id}${q.trim() ? `?st=${encodeURIComponent(q.trim())}` : ""}`}
-              distanceKm={dist}
-              showFavorite
-            />
-          ))}
+          {filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map(({ b, dist }) => {
+            const card = (
+              <BusinessCard
+                key={b.id}
+                business={b}
+                href={`/szaknevsor/${b.id}${q.trim() ? `?st=${encodeURIComponent(q.trim())}` : ""}`}
+                distanceKm={dist}
+                showFavorite
+              />
+            );
+            // Kedvenceim-nézetben (showFavs) balra húzva eltávolítható a listáról —
+            // a szív-gomb a kártyán marad, ez egy kiegészítő gesztus-út ugyanahhoz.
+            if (!showFavs) return card;
+            return (
+              <SwipeAction
+                key={b.id}
+                actionLabel="Törlés"
+                actionIcon="close"
+                onAction={() => removeFavorite(b.id)}
+                className={b.featured ? "border-2 border-pro shadow-pop bg-pro/[0.02]" : "border border-line shadow-card"}
+              >
+                <BusinessCard
+                  business={b}
+                  href={`/szaknevsor/${b.id}${q.trim() ? `?st=${encodeURIComponent(q.trim())}` : ""}`}
+                  distanceKm={dist}
+                  showFavorite
+                  flat
+                />
+              </SwipeAction>
+            );
+          })}
 
           {/* Lapozó — 100 találat / oldal (Előző · „x/y. oldal" · Következő). */}
           {totalPages > 1 && (

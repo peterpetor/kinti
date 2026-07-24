@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Icon } from "@/components/ui";
+import { Icon, SwipeAction } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import {
@@ -276,7 +276,14 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
           {filtered.map((it) => {
             const meta = TYPE_META[it.type];
             return (
-              <div key={`${it.type}::${it.id}`} className="rounded-card border border-line bg-surface p-3 shadow-card">
+              <SwipeAction
+                key={`${it.type}::${it.id}`}
+                actionLabel="Törlés"
+                actionIcon="trash"
+                onAction={() => onDelete(it)}
+                className="border border-line bg-surface shadow-card"
+              >
+                <div className="p-3">
                 <div className="flex items-start gap-2.5">
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] text-base" style={{ backgroundColor: `${meta.color}22`, color: meta.color }}>
                     {meta.icon}
@@ -309,7 +316,8 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
                     onSaved={(n) => showMsg(`Megjelenő név átírva: ${n}`)}
                   />
                 )}
-              </div>
+                </div>
+              </SwipeAction>
             );
           })}
         </div>

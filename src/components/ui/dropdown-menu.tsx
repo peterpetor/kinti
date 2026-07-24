@@ -68,6 +68,13 @@ const BADGE_META: Record<Badge, { label: string; cls: string }> = {
 export function DropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
+  // Húzd-le-bezárás (ugyanaz a minta, mint a BottomSheet-nél): a fogantyú-sávról
+  // indított húzás a panelt tolja lefelé, >90px zár (haptikával), alatta visszaugrik.
+  // Csak mobil-nézetben aktív (a fogantyú `sm:hidden` — desktopon a menü centrált
+  // dialógus, ott a húzás-gesztusnak nincs natív jelentése).
+  const [dragY, setDragY] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const dragStartY = useRef<number | null>(null);
   const { isSignedIn, isLoaded } = useAuth();
   // Tulajdonosi állapot: van-e már Szaknévsor-vállalkozása? (egy fiók = egy cég)
   // A legutóbbi ismert értéket localStorage-ból indítjuk (azonnal a HELYES pont
@@ -88,10 +95,31 @@ export function DropdownMenu() {
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
+    if (isOpen) setDragY(0);
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  const onDragStart = (y: number) => {
+    dragStartY.current = y;
+    setDragging(true);
+  };
+  const onDragMove = (y: number) => {
+    if (dragStartY.current == null) return;
+    const dy = y - dragStartY.current;
+    setDragY(dy > 0 ? dy : 0);
+  };
+  const onDragEnd = () => {
+    setDragging(false);
+    dragStartY.current = null;
+    if (dragY > 90) {
+      haptic("tap");
+      setIsOpen(false);
+    } else {
+      setDragY(0);
+    }
+  };
 
   // Nyitáskor a szűrő tisztán indul.
   useEffect(() => {
@@ -346,7 +374,23 @@ export function DropdownMenu() {
 
       {isOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex justify-center sm:items-center bg-surface sm:bg-black/50 sm:backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="flex w-full max-w-md flex-col bg-surface h-full sm:h-auto sm:max-h-[90vh] sm:rounded-3xl sm:shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300">
+          <div
+            className="flex w-full max-w-md flex-col bg-surface h-full sm:h-auto sm:max-h-[90vh] sm:rounded-3xl sm:shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300"
+            style={{
+              transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
+              transition: dragging ? "none" : "transform 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
+          >
+            {/* Fogantyú — CSAK mobil-nézetben (desktopon centrált dialógus, ott a
+                húzás-gesztusnak nincs natív jelentése). Innen húzva lefelé zár. */}
+            <div
+              onTouchStart={(e) => onDragStart(e.touches[0].clientY)}
+              onTouchMove={(e) => onDragMove(e.touches[0].clientY)}
+              onTouchEnd={onDragEnd}
+              className="touch-none pb-1 pt-2.5 sm:hidden"
+            >
+              <div className="mx-auto h-1.5 w-10 rounded-full bg-line" />
+            </div>
             <div className="shrink-0 border-b border-line px-5 py-4 sm:px-6 sm:py-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-black text-ink tracking-tight">Menü</h2>

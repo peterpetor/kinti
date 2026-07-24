@@ -20,6 +20,22 @@ function readFavorites(): string[] {
 }
 
 /**
+ * Kedvenc eltávolítása kívülről (pl. swipe-gesztus) — a `FavoriteButton` saját
+ * toggle-jével AZONOS logika (esemény, offline-cache takarítás), csak nem
+ * gombhoz, hanem egy külső triggerhez kötve.
+ */
+export function removeFavorite(businessId: string): void {
+  try {
+    const next = readFavorites().filter((id) => id !== businessId);
+    localStorage.setItem(LS_KEY, JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent(FAVORITES_CHANGED_EVENT));
+    void removeOfflinePath(`/szaknevsor/${businessId}`);
+  } catch {
+    /* localStorage letiltva — csendben elnyeljük */
+  }
+}
+
+/**
  * Szív-toggle a vállalkozás-kártyán. A kedvenceket localStorage-ban tartja
  * (kinti_favorites), és a `kinti-favorites-changed` eseménnyel értesíti a
  * lista-nézetet. Link-en belül is használható: a kattintás NEM navigál.

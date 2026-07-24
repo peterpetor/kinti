@@ -25,12 +25,15 @@ export interface BusinessCardProps {
   distanceKm?: number | null;
   /** Szív-toggle a kártya sarkában (kedvencek). Lista-nézetben kapcsoljuk be. */
   showFavorite?: boolean;
+  /** Keret/árnyék/rounded-corner NÉLKÜL — amikor egy külső réteg (pl. SwipeAction)
+   * már adja a keretet, különben az `overflow-hidden` levágná a saját árnyékát. */
+  flat?: boolean;
 }
 
-export function BusinessCard({ business: b, href, className, distanceKm, showFavorite }: BusinessCardProps) {
+export function BusinessCard({ business: b, href, className, distanceKm, showFavorite, flat }: BusinessCardProps) {
   const classes = cn(
-    "group relative flex min-w-0 gap-3 rounded-card border bg-surface p-3",
-    b.featured ? "border-2 border-pro shadow-pop bg-pro/[0.02]" : "border-line shadow-card",
+    "group relative flex min-w-0 gap-3 p-3",
+    flat ? "bg-surface" : cn("rounded-card border bg-surface", b.featured ? "border-2 border-pro shadow-pop bg-pro/[0.02]" : "border-line shadow-card"),
     // Desktop-hoveren a meglévő árnyék-emelés mellé egy leheletnyi (2px) lift —
     // „premium" érzet; érintőn (mobil) nincs hover, így ott változatlan.
     href && "transition hover:shadow-card-hover md:hover:-translate-y-0.5 active:scale-[0.99]",
