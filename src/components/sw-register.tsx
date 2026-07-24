@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Service Worker regisztrálás + frissítés-figyelő.
@@ -19,6 +19,8 @@ export function SWRegister() {
   // Verzió-eltérés (új deploy) észlelve — akkor is, ha nincs „waiting" SW.
   const [versionStale, setVersionStale] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  // Biztonsági háló a "Frissítés" gombhoz — ld. applyUpdate.
+  const fallbackReload = useRef<number | null>(null);
 
   // Build-ID alapú frissítés-figyelő: melegindításnál is elkapja az új verziót.
   useEffect(() => {
@@ -82,6 +84,10 @@ export function SWRegister() {
     let cancelled = false;
 
     const handleControllerChange = () => {
+      if (fallbackReload.current != null) {
+        window.clearTimeout(fallbackReload.current);
+        fallbackReload.current = null;
+      }
       // Az új SW átvette az irányítást → friss kód, friss oldal.
       window.location.reload();
     };
@@ -126,6 +132,7 @@ export function SWRegister() {
     return () => {
       cancelled = true;
       swc.removeEventListener("controllerchange", handleControllerChange);
+      if (fallbackReload.current != null) window.clearTimeout(fallbackReload.current);
     };
   }, []);
 
@@ -134,8 +141,14 @@ export function SWRegister() {
 
   const applyUpdate = () => {
     if (waitingSW) {
-      // A SW átveszi → controllerchange → automatikus reload.
+      // A SW átveszi → controllerchange → automatikus reload. DE: a sw.js
+      // `install` handlere MINDIG lefuttat egy skipWaiting-et (a régi SW
+      // esetleg már korábban, a user tudta nélkül átvette az irányítást),
+      // ezért előfordulhat, hogy EZ a controllerchange már nem sül el —
+      // ilyenkor a gomb kattintása némán semmit nem csinálna. Biztonsági
+      // háló: ha 2,5 mp múlva sincs reload, kényszerítjük.
       waitingSW.postMessage({ type: "SKIP_WAITING" });
+      fallbackReload.current = window.setTimeout(() => window.location.reload(), 2500);
     } else {
       // Csak verzió-eltérés (nincs waiting SW) → friss oldalbetöltés.
       window.location.reload();
