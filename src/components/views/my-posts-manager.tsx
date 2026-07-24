@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Icon, SwipeAction } from "@/components/ui";
+import { useVisualViewportHeight } from "@/lib/use-visual-viewport-height";
 import { cn } from "@/lib/cn";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import {
@@ -31,6 +32,7 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
 
   // Email-export modal
   const [emailOpen, setEmailOpen] = useState(false);
+  const emailModalVvh = useVisualViewportHeight(emailOpen);
   const [emailAddr, setEmailAddr] = useState("");
   const [emailBusy, setEmailBusy] = useState(false);
   const [emailErr, setEmailErr] = useState<string | null>(null);
@@ -178,6 +180,7 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
       {emailOpen && (
         <div
           className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center bg-ink/40 backdrop-blur-sm p-4"
+          style={emailModalVvh != null ? { height: emailModalVvh } : undefined}
           onClick={() => !emailBusy && setEmailOpen(false)}
         >
           <div

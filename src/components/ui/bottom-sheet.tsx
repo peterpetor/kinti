@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { haptic } from "@/lib/haptics";
+import { useVisualViewportHeight } from "@/lib/use-visual-viewport-height";
 import { Icon } from "./icons";
 
 /**
@@ -30,6 +31,8 @@ export function BottomSheet({
   const [dragY, setDragY] = useState(0);
   const [dragging, setDragging] = useState(false);
   const startY = useRef<number | null>(null);
+  // Billentyűzet-kerülés — ld. use-visual-viewport-height.ts.
+  const vvh = useVisualViewportHeight(open);
 
   useEffect(() => setMounted(true), []);
 
@@ -70,7 +73,10 @@ export function BottomSheet({
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[110] flex items-end justify-center">
+    <div
+      className="fixed inset-0 z-[110] flex items-end justify-center"
+      style={vvh != null ? { height: vvh } : undefined}
+    >
       <button
         type="button"
         aria-label="Bezárás"

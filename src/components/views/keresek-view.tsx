@@ -13,6 +13,7 @@ import { ReportButton } from "@/components/report-button";
 import { Skeleton } from "@/components/skeleton";
 import { EmptyState } from "@/components/ui";
 import { PullToRefresh } from "@/components/pull-to-refresh";
+import { useVisualViewportHeight } from "@/lib/use-visual-viewport-height";
 
 function fmtAgo(iso: string): string {
   const t = Date.parse(iso.replace(" ", "T") + (iso.endsWith("Z") ? "" : "Z"));
@@ -34,6 +35,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [modal, setModal] = useState(false);
+  const modalVvh = useVisualViewportHeight(modal);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -162,7 +164,11 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
 
       {/* Beküldő modal */}
       {modal && (
-        <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 bg-ink/40 backdrop-blur-sm" onClick={() => !submitting && setModal(false)}>
+        <div
+          className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 bg-ink/40 backdrop-blur-sm"
+          style={modalVvh != null ? { height: modalVvh } : undefined}
+          onClick={() => !submitting && setModal(false)}
+        >
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-card border border-line bg-surface p-5 shadow-card-strong space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-[16px] font-extrabold text-ink">➕ Mit keresel?</h3>
