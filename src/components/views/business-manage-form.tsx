@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { confirmDialog } from "@/lib/confirm";
 import { cn } from "@/lib/cn";
 import type { Business } from "@/lib/types";
 import { useCheckout } from "@/hooks/useCheckout";
@@ -109,7 +110,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
   }
 
   async function remove() {
-    if (!confirm(`Biztosan törlöd a(z) "${business.name}" vállalkozást? Ez nem visszavonható, és a vélemények is törlődnek.`)) return;
+    if (!(await confirmDialog({ message: `Biztosan törlöd a(z) "${business.name}" vállalkozást? Ez nem visszavonható, és a vélemények is törlődnek.`, destructive: true }))) return;
     setPhase("saving");
     try {
       const res = await fetch(`/api/business/manage/${token}`, { method: "DELETE" });

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Icon, SwipeAction } from "@/components/ui";
+import { confirmDialog } from "@/lib/confirm";
 import { useVisualViewportHeight } from "@/lib/use-visual-viewport-height";
 import { cn } from "@/lib/cn";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
@@ -94,8 +95,11 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
     setTimeout(() => setMsg(null), 3000);
   }
 
-  function onDelete(it: MyPostEntry) {
-    if (!confirm(`Eltávolítod a saját posztjaid közül? Ez nem törli az élesben — csak a böngésződből.\n\n"${it.title}"`)) return;
+  async function onDelete(it: MyPostEntry) {
+    if (!(await confirmDialog({
+      message: `Eltávolítod a saját posztjaid közül? Ez nem törli az élesben — csak a böngésződből.\n\n"${it.title}"`,
+      destructive: true,
+    }))) return;
     removeMyPost(it.type, it.id);
     refresh();
   }
@@ -136,8 +140,12 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
     e.target.value = "";
   }
 
-  function onClearAll() {
-    if (!confirm("Biztosan kitörlöd a TELJES helyi listát? Az élesben lévő posztok megmaradnak, csak a böngésződből tűnnek el. Ha nincs backup, a manage-linkek elvesznek!")) return;
+  async function onClearAll() {
+    if (!(await confirmDialog({
+      message: "Biztosan kitörlöd a TELJES helyi listát? Az élesben lévő posztok megmaradnak, csak a böngésződből tűnnek el. Ha nincs backup, a manage-linkek elvesznek!",
+      destructive: true,
+      confirmLabel: "Kitörlés",
+    }))) return;
     clearMyPosts();
     refresh();
     showMsg("Lista kiürítve.");

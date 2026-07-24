@@ -16,3 +16,4 @@ export * from "./dropdown-menu";
 export * from "./empty-state";
 export * from "./toast-host";
 export * from "./swipe-action";
+export * from "./confirm-host";

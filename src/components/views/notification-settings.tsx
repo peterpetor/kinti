@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { confirmDialog } from "@/lib/confirm";
 import { cn } from "@/lib/cn";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { readPreferredCanton } from "@/lib/canton-pref";
@@ -94,7 +95,7 @@ export function NotificationSettings() {
   }
 
   async function disableAll() {
-    if (!confirm("Biztosan kikapcsolod az összes régió-értesítést?")) return;
+    if (!(await confirmDialog({ message: "Biztosan kikapcsolod az összes régió-értesítést?", confirmLabel: "Kikapcsolás" }))) return;
     setBusy(true);
     try {
       const reg = await navigator.serviceWorker.ready;

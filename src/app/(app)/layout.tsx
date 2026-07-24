@@ -1,4 +1,4 @@
-import { TabBar, ToastHost } from "@/components/ui";
+import { TabBar, ToastHost, ConfirmHost } from "@/components/ui";
 import { CountryGate } from "@/components/country-gate";
 import { CountryBanner } from "@/components/country-banner";
 import { ScrollRestorer } from "@/components/page-transition";
@@ -22,6 +22,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Globális toast-sín (lib/toast.ts) — vágólap-másolás és egyéb rövid
           megerősítések egységes helye, a TabBar fölött. */}
       <ToastHost />
+      {/* Natív-stílusú megerősítő-dialógus (lib/confirm.ts) — a nyers böngésző-
+          confirm() helyett, egységes megjelenéssel és haptikával. */}
+      <ConfirmHost />
       {/* Tab-szintű scroll-pozíció megőrzés (natív tab-bar viselkedés). */}
       <ScrollRestorer />
       {/* Privacy-first oldal-használat mérés (aggregált, azonosító nélkül). */}

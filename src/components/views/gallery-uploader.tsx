@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
+import { confirmDialog } from "@/lib/confirm";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import { compressImage } from "@/lib/compress";
@@ -150,7 +151,7 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
   }
 
   async function removeImage(key: string) {
-    if (!confirm("Biztosan törlöd ezt a képet a galériából?")) return;
+    if (!(await confirmDialog({ message: "Biztosan törlöd ezt a képet a galériából?", destructive: true }))) return;
     setPhase("removing");
     setError(null);
     try {

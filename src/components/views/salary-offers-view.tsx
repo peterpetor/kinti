@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { confirmDialog } from "@/lib/confirm";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -280,8 +281,8 @@ function OfferDetail({
 
       <button
         type="button"
-        onClick={() => {
-          if (confirm(`Biztos törlöd: "${offer.label}"?`)) onDelete();
+        onClick={async () => {
+          if (await confirmDialog({ message: `Biztos törlöd: "${offer.label}"?`, destructive: true })) onDelete();
         }}
         className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-pill border border-accent/30 bg-accent/5 px-4 py-2 text-[12.5px] font-bold text-accent transition active:scale-95"
       >

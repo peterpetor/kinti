@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
+import { confirmDialog } from "@/lib/confirm";
 import { ReportButton } from "@/components/report-button";
 import { getCountry } from "@/lib/countries";
 import { relTimeFromMs } from "@/lib/relative-time";
@@ -29,7 +30,7 @@ export function B2bProjectCard({
   const flag = getCountry(project.targetCountry)?.flag ?? "";
 
   async function close() {
-    if (!confirm("Biztosan lezárod ezt a projektet? Utána nem jelenik meg a feedben.")) return;
+    if (!(await confirmDialog({ message: "Biztosan lezárod ezt a projektet? Utána nem jelenik meg a feedben.", confirmLabel: "Lezárás" }))) return;
     setClosing(true);
     try {
       const res = await fetch("/api/b2b/projects", {

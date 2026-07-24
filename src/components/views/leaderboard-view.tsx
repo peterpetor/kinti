@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui";
+import { confirmDialog } from "@/lib/confirm";
 import { cn } from "@/lib/cn";
 import {
   getLeaderboardToken,
@@ -98,7 +99,7 @@ export function LeaderboardView() {
   }
 
   async function handleLeave() {
-    if (!confirm("Biztosan kilépsz a ranglistáról? A becenevedet és pontodat töröljük onnan.")) return;
+    if (!(await confirmDialog({ message: "Biztosan kilépsz a ranglistáról? A becenevedet és pontodat töröljük onnan.", destructive: true, confirmLabel: "Kilépés" }))) return;
     setBusy(true);
     await leaveLeaderboard();
     setBusy(false);

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
+import { confirmDialog } from "@/lib/confirm";
 import { cn } from "@/lib/cn";
 import {
   EB_BANK,
@@ -311,8 +312,8 @@ function QuizScreen({
         </p>
         <button
           type="button"
-          onClick={() => {
-            if (confirm("Biztos félbe szakítod? Az eddigi válaszok elvesznek.")) {
+          onClick={async () => {
+            if (await confirmDialog({ message: "Biztos félbe szakítod? Az eddigi válaszok elvesznek.", destructive: true, confirmLabel: "Megszakítás" })) {
               onAbort();
             }
           }}

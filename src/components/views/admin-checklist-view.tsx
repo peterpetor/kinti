@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
+import { confirmDialog } from "@/lib/confirm";
 import { cn } from "@/lib/cn";
 import type { AdminChecklist } from "@/lib/admin-checklists";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
@@ -61,8 +62,8 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
     });
   }
 
-  function reset() {
-    if (!confirm("Visszaállítod az összes pipát?")) return;
+  async function reset() {
+    if (!(await confirmDialog({ message: "Visszaállítod az összes pipát?", destructive: true, confirmLabel: "Visszaállítás" }))) return;
     const state = loadState();
     delete state[checklist.slug];
     saveState(state);
