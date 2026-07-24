@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Skeleton } from "@/components/skeleton";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { benchRegions, benchCurrency, benchAllLabel, benchRegionLabel, benchDefaultSalary, benchDefaultRent } from "./region-util";
@@ -156,7 +157,10 @@ export function RentToSalaryCalculator({
           Te a béred <strong>{userRatio}%</strong>-át költöd lakbérre.
         </p>
         {loading ? (
-          <p className="text-[13px] mt-1 flex items-center gap-2"><span className="animate-spin w-3 h-3 border-2 border-ink border-t-transparent rounded-full" /> Közösségi átlag számítása...</p>
+          <div className="mt-1.5" aria-busy="true" aria-live="polite">
+            <span className="sr-only">Közösségi átlag számítása…</span>
+            <Skeleton className="h-3.5 w-48" />
+          </div>
         ) : avgRatio ? (
           <p className={`text-[13px] mt-1 ${isGood ? "text-primary" : "text-accent"}`}>
             A {canton === "all" ? (country === "AT" ? "ausztriai" : country === "DE" ? "németországi" : country === "NL" ? "hollandiai" : "svájci") : `${canton} ${country === "CH" ? "kantonban" : country === "NL" ? "provinciában" : "tartományban"} élő`} magyarok átlaga: <strong>{avgRatio}%</strong>.

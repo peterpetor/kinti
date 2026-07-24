@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
  * pulzálással jelzik a betöltést, és az oldalváz nagyjából a valódi tartalom
  * elrendezését követi (kevesebb „ugrálás" betöltéskor).
  */
-export function Skeleton({ className }: { className?: string }) {
+export function Skeleton({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <div
       aria-hidden
@@ -14,6 +14,7 @@ export function Skeleton({ className }: { className?: string }) {
       // kinti-shimmer: átfutó fény-söprés (globals.css) — prémiumabb, mint a
       // pulzálás; reduced-motion alatt statikus blokk.
       className={cn("kinti-shimmer rounded-md bg-ink/10", className)}
+      style={style}
     />
   );
 }

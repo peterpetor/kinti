@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Skeleton } from "@/components/skeleton";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { SalaryCard } from "./SalaryCard";
 import { SalaryCalculator, AlertSubscription, RentToSalaryCalculator } from "./SalaryWidgets";
@@ -54,8 +55,26 @@ function isStale(iso: string | null): boolean {
 const inputCls = "w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 transition";
 const labelCls = "block text-[11px] font-bold text-ink-muted mb-1 uppercase tracking-wide";
 
+/** Statisztika-lista betöltő váza — a SalaryCard-ok arányát követi, nem nyers pörgő. */
 function Spinner() {
-  return <div className="py-14 flex justify-center"><div className="animate-spin w-7 h-7 border-[3px] border-primary border-t-transparent rounded-full" /></div>;
+  return (
+    <div className="grid gap-3 md:grid-cols-2" aria-busy="true" aria-live="polite">
+      <span className="sr-only">Statisztikák betöltése…</span>
+      {[0, 1].map((i) => (
+        <div key={i} className="rounded-2xl border border-line bg-surface p-5 space-y-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <div className="flex-1 space-y-1.5">
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-3 w-1/3" />
+            </div>
+          </div>
+          <Skeleton className="h-3 w-full" />
+          <Skeleton className="h-3 w-4/5" />
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function SubmitForm({ tab, mode, initialData, onSuccess, onCancel, turnstileSiteKey, country }: {

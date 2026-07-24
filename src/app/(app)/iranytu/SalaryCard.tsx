@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { Skeleton } from "@/components/skeleton";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { MiniTrendChart } from "./MiniTrendChart";
 import { MiniHistogram } from "./MiniHistogram";
@@ -160,7 +161,7 @@ export function SalaryCard({
       {showTrend && (
         <div className="border-t border-line pt-3">
           {loadingTrend
-            ? <div className="py-4 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" /></div>
+            ? <Skeleton className="h-20 w-full" />
             : <ErrorBoundary label="trend-chart" fallback={chartErrorFallback}><MiniTrendChart data={trend ?? []} cur={cur} /></ErrorBoundary>
           }
         </div>
@@ -170,7 +171,7 @@ export function SalaryCard({
       {showHist && (
         <div className="border-t border-line pt-3">
           {loadingHist
-            ? <div className="py-4 flex justify-center"><div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" /></div>
+            ? <Skeleton className="h-20 w-full" />
             : <ErrorBoundary label="histogram" fallback={chartErrorFallback}><MiniHistogram data={hist ?? []} userValueChf={userSalaryChf} cur={cur} /></ErrorBoundary>
           }
         </div>

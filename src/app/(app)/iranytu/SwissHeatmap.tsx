@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/cn";
+import { Skeleton } from "@/components/skeleton";
 import { benchRegionName, benchCurrency } from "./region-util";
 
 /** CH-rács (8×6) — a kantonok geográfiai elrendezése. */
@@ -114,8 +115,20 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
       </div>
 
       {loading ? (
-        <div className="py-10 flex justify-center">
-          <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
+        <div className="no-scrollbar overflow-x-auto" aria-busy="true" aria-live="polite">
+          <span className="sr-only">Hőtérkép betöltése…</span>
+          <div
+            className={cn("grid gap-1.5", isAT || isDE ? "w-full" : "min-w-[360px]")}
+            style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, 1fr)` }}
+          >
+            {grid.map((cell) => (
+              <Skeleton
+                key={cell.c}
+                className="aspect-square rounded-md"
+                style={{ gridColumn: cell.x, gridRow: cell.y }}
+              />
+            ))}
+          </div>
         </div>
       ) : (
         <>
