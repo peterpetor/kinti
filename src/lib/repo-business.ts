@@ -294,6 +294,67 @@ export async function getBusinessesForList(): Promise<ListBusiness[]> {
   });
 }
 
+export interface UnclaimedBusinessRow {
+  id: string;
+  name: string;
+  categoryLabel: string | null;
+  phone: string;
+  address: string | null;
+  countryCode: string;
+}
+
+/** A "vedd át" (claim) kampányhoz: még nem foglalt, DE telefonszámmal
+ * elérhető cégek — ők a személyes megkeresésre alkalmas, meleg leadek
+ * (a claimed=0 sorok túlnyomó többsége az importált/seedelt cégekből jön). */
+function unclaimedWhere(params: { q?: string; country?: string }): { where: string; binds: unknown[] } {
+  const conditions = ["COALESCE(hidden, 0) = 0", "COALESCE(claimed, 0) = 0", "phone IS NOT NULL", "phone != ''"];
+  const binds: unknown[] = [];
+  if (params.country) {
+    conditions.push("country_code = ?");
+    binds.push(params.country);
+  }
+  if (params.q) {
+    conditions.push("(name LIKE ? OR category_label LIKE ?)");
+    binds.push(`%${params.q}%`, `%${params.q}%`);
+  }
+  return { where: conditions.join(" AND "), binds };
+}
+
+export async function getUnclaimedBusinesses(params: {
+  q?: string;
+  country?: string;
+  limit: number;
+  offset: number;
+}): Promise<UnclaimedBusinessRow[]> {
+  const { where, binds } = unclaimedWhere(params);
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, name, category_label, phone, address, country_code
+       FROM businesses WHERE ${where}
+       ORDER BY country_code, category_label, name
+       LIMIT ? OFFSET ?`,
+    )
+    .bind(...binds, params.limit, params.offset)
+    .all<{ id: string; name: string; category_label: string | null; phone: string; address: string | null; country_code: string }>();
+  return results.map((r) => ({
+    id: r.id,
+    name: r.name,
+    categoryLabel: r.category_label,
+    phone: r.phone,
+    address: r.address,
+    countryCode: r.country_code,
+  }));
+}
+
+export async function countUnclaimedBusinesses(params: { q?: string; country?: string }): Promise<number> {
+  const { where, binds } = unclaimedWhere(params);
+  const row = await getDB()
+    .prepare(`SELECT COUNT(*) AS cnt FROM businesses WHERE ${where}`)
+    .bind(...binds)
+    .first<{ cnt: number }>();
+  return row?.cnt ?? 0;
+}
+
 export async function getBusinessById(id: string): Promise<Business | null> {
   const row = await getDB()
     .prepare("SELECT * FROM businesses WHERE id = ? AND COALESCE(hidden, 0) = 0")
