@@ -74,7 +74,24 @@ export default function LanguagePathPage() {
   }, [country]);
 
   if (!mounted || !lessons) {
-    return <div className="p-4">Betöltés...</div>;
+    return (
+      <div className="flex flex-col gap-4 px-4 pb-4 pt-6" aria-busy="true">
+        <span className="sr-only">Betöltés…</span>
+        <div className="space-y-2">
+          <div className="kinti-shimmer h-3 w-24 rounded-md bg-ink/10" />
+          <div className="kinti-shimmer h-8 w-48 rounded-md bg-ink/10" />
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="kinti-shimmer h-16 flex-1 rounded-2xl bg-ink/10" />
+          <div className="kinti-shimmer h-16 flex-1 rounded-2xl bg-ink/10" />
+        </div>
+        <div className="flex flex-col items-center gap-6 pt-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="kinti-shimmer h-16 w-16 rounded-full bg-ink/10" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   // Group lessons by chapter dynamically

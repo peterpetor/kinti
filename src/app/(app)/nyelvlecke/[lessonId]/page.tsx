@@ -50,7 +50,20 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
     }
   }, []);
 
-  if (!mounted) return <div className="p-4">Betöltés...</div>;
+  if (!mounted) {
+    return (
+      <div className="space-y-3 p-4" aria-busy="true">
+        <span className="sr-only">Betöltés…</span>
+        <div className="kinti-shimmer h-2 w-full rounded-full bg-ink/10" />
+        <div className="space-y-2.5 rounded-card border border-line bg-surface p-5 shadow-card">
+          <div className="kinti-shimmer h-4 w-3/4 rounded-md bg-ink/10" />
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="kinti-shimmer h-11 w-full rounded-[12px] bg-ink/10" />
+          ))}
+        </div>
+      </div>
+    );
+  }
   if (!lesson) return <div className="p-4">Lecke nem található.</div>;
 
   // A nyelvtanulás INGYENES mind a 4 országban (user-döntés, 2026-07-11): a korábbi

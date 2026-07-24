@@ -124,7 +124,26 @@ export default function RelocationTrackerPage() {
     : [];
 
   if (!mounted) {
-    return <div className="p-4">Betöltés...</div>;
+    return (
+      <div className="flex flex-col gap-4 px-4 pb-4 pt-6" aria-busy="true">
+        <span className="sr-only">Betöltés…</span>
+        <div className="space-y-2">
+          <div className="kinti-shimmer h-3 w-20 rounded-md bg-ink/10" />
+          <div className="kinti-shimmer h-8 w-56 rounded-md bg-ink/10" />
+        </div>
+        <div className="rounded-2xl border border-line bg-surface p-4 shadow-card space-y-2.5">
+          <div className="kinti-shimmer h-3 w-1/2 rounded-md bg-ink/10" />
+          <div className="kinti-shimmer h-9 w-full rounded-xl bg-ink/10" />
+          <div className="kinti-shimmer h-9 w-full rounded-xl bg-ink/10" />
+        </div>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-card border border-line bg-surface p-4 shadow-card space-y-2">
+            <div className="kinti-shimmer h-4 w-1/2 rounded-md bg-ink/10" />
+            <div className="kinti-shimmer h-3 w-3/4 rounded-md bg-ink/10" />
+          </div>
+        ))}
+      </div>
+    );
   }
 
   return (
