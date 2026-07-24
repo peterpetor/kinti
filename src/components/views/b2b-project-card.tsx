@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Icon } from "@/components/ui";
+import { Icon, SwipeAction } from "@/components/ui";
 import { confirmDialog } from "@/lib/confirm";
+import { cn } from "@/lib/cn";
 import { ReportButton } from "@/components/report-button";
 import { getCountry } from "@/lib/countries";
 import { relTimeFromMs } from "@/lib/relative-time";
@@ -44,8 +45,8 @@ export function B2bProjectCard({
     }
   }
 
-  return (
-    <div className="rounded-card border border-line bg-surface p-4 shadow-card">
+  const content = (
+    <div className={cn("p-4", !isMine && "rounded-card border border-line bg-surface shadow-card")}>
       {/* Kiíró cég + trust badge */}
       <div className="mb-2 flex items-center gap-2">
         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary text-[13px] font-extrabold text-white">
@@ -124,5 +125,19 @@ export function B2bProjectCard({
         </div>
       )}
     </div>
+  );
+
+  // Saját projektnél balra húzva is lezárható (a "Lezárás" gomb a kártyán
+  // marad, ez egy kiegészítő gesztus-út ugyanahhoz).
+  if (!isMine) return content;
+  return (
+    <SwipeAction
+      actionLabel="Lezárás"
+      actionIcon="close"
+      onAction={close}
+      className="border border-line bg-surface shadow-card"
+    >
+      {content}
+    </SwipeAction>
   );
 }
