@@ -92,6 +92,16 @@ export default async function FeedPage() {
         <HomePrimaryActions />
       </section>
 
+      {/* ⚠️ IDEIGLENES KAMPÁNY-ELHELYEZÉS (2026-07-24, piacra lépési terv):
+          a "Küldj egy magyart" ajánló-kártya normál helye a 8. szekció volt
+          (LENT, a teljes katalógus után) — ez a Főoldal-ív dokumentált,
+          szándékos sorrendje (ld. design-system-notes memória). Erre a ~2
+          hetes növekedési kampányra IDE hozva előre (a lenti 8. szekcióból
+          a hívás KIVÉVE, nincs duplikáció), hogy tényleges megosztás induljon
+          a Facebook-csoportokban. HA A KAMPÁNY LEZÁRULT: told vissza ezt a
+          hívást a 8. szekcióba (NÖVEKEDÉS blokk, a Hírlevél-kártya elé). */}
+      <ReferralHomeCardLazy />
+
       {/* ── 4. SZEMÉLYES RÉTEG: rád-hangolt ajánló + aktivációs checklist —
           a cselekvő-zóna UTÁN (nem tolja le a fő célokat), de még elöl. ─────── */}
       <PersonalizedHomeLazy />
@@ -123,8 +133,8 @@ export default async function FeedPage() {
           a menü-szűrő és a kereső is odavisz). ──────────────────────────────── */}
       <HomePlatformGridLazy b2bOpenCount={b2bOpenCount} />
 
-      {/* ── 8. NÖVEKEDÉS: meghívó, hírlevél, telepítés, bizalom. ───────────── */}
-      <ReferralHomeCardLazy />
+      {/* ── 8. NÖVEKEDÉS: hírlevél, telepítés, bizalom. (A meghívó-kártya
+          IDEIGLENESEN feljebb költözött — ld. a fenti kampány-jegyzetet.) ──── */}
       <NewsletterCtaCardLazy />
       <PwaInstallCardLazy />
       <TrustBar />
