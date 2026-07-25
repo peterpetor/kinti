@@ -60,7 +60,7 @@
   // HERO
   add('Európa-szerte élőben · egy térkép, anyanyelven', 'Europaweit live · eine Karte, in deiner Sprache', 'Live across Europe · one map, in your language');
   add('Találj magyart a közeledben.', 'Finde <em>Ungarn</em> in deiner Nähe.', 'Find a <em>Hungarian</em> near you.');
-  add('Fodrász, autószerelő, orvos, ügyvéd, pék — bármi. Egy térkép. Anyanyelven. A Kinti GPS-alapú szakember kereső a külföldön élő magyaroknak.',
+  add('Fodrász, autószerelő, orvos, ügyvéd, pék — bármi. Egy térkép. Anyanyelven. A Kinti GPS-alapú szakemberkereső a külföldön élő magyaroknak.',
       'Friseur, KFZ-Werkstatt, Arzt, Anwalt, Bäcker — was auch immer. Eine Karte. In deiner Sprache. Kinti ist die GPS-basierte Fachkräfte-Suche für Ungarn im Ausland.',
       'Hairdresser, mechanic, doctor, lawyer, baker — anything. One map. In your language. Kinti is the GPS-based professional finder for Hungarians living abroad.');
   add('Letöltöm — ingyenes', 'Herunterladen — kostenlos', 'Get the app — free');
@@ -319,7 +319,7 @@
       'Cloudflare Workers AI (open-source Meta Llama) — we don’t use your text to train models and don’t share it with third parties.');
   add('🔍 Természetes nyelvű keresés', '🔍 Suche in natürlicher Sprache', '🔍 Natural-language search');
   add('„Magyar villanyszerelő AG-ban aki angolul is tud."', '„Ungarischer Elektriker im Kanton AG, der auch Englisch spricht."', '“A Hungarian electrician in canton AG who also speaks English.”');
-  add('Mondatba írod amit keresel — az AI strukturált szűrőkre fordítja és automatikusan beállítja.',
+  add('Mondatba írod, amit keresel — az AI strukturált szűrőkre fordítja és automatikusan beállítja.',
       'Du schreibst als Satz, was du suchst — die KI übersetzt es in strukturierte Filter und stellt sie automatisch ein.',
       'Type what you want as a sentence — the AI turns it into structured filters and sets them automatically.');
   add('✍️ Leírás-asszisztens', '✍️ Beschreibungs-Assistent', '✍️ Description assistant');
