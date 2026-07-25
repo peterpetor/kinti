@@ -2062,7 +2062,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <!-- Landing i18n motor (HU/DE/EN) — a fő IIFE ELŐTT tölt be, hogy a kintiCat/kintiJS globálisok készen álljanak. -->
-<script src="/landing-i18n.js?v=20260725d"></script>
+<script src="/landing-i18n.js?v=20260726a"></script>
 <script>
 (function () {
   'use strict';
@@ -2072,6 +2072,7 @@
   var chipL = function (cat)  { return window.kintiCat ? window.kintiCat(cat) : cat; };
   var jsL   = function (k, fb) { var v = window.kintiJS ? window.kintiJS(k) : null; return v != null ? v : fb; };
   var distL = function (d)    { var m = window.kintiJS ? window.kintiJS('min') : null; return m ? String(d).replace('perc', m) : d; };
+  var nameL = function (n)    { return window.kintiName ? window.kintiName(n) : n; };
   var HTXT  = { 'fodrász':'fodrasz', 'autószerelő':'auto', 'pék':'pek' };
 
   // ─── shared data ─────────────────────────────
@@ -2189,7 +2190,7 @@
       // 3. card slide up (featured photo)
       const cparts = q.card.cat.split(' · ★ ');
       cardCat.textContent  = catL(cparts[0]) + (cparts[1] ? ' · ★ ' + cparts[1] : '');
-      cardName.textContent = q.card.name;
+      cardName.textContent = nameL(q.card.name);
       const mparts = q.card.meta.split(' · ');
       cardMeta.textContent = distL(mparts[0]) + (mparts[1] ? ' · ' + jsL('open', mparts[1]) : '');
       cardPh.style.background = q.card.photo;
@@ -2274,7 +2275,7 @@
 
   function fuzzyMatch(b, q) {
     if (!q) return true;
-    const hay = (b.name + ' ' + b.catLabel + ' ' + catL(b.catLabel)).toLowerCase();
+    const hay = (b.name + ' ' + nameL(b.name) + ' ' + b.catLabel + ' ' + catL(b.catLabel)).toLowerCase();
     return hay.includes(q);
   }
 
@@ -2326,7 +2327,7 @@
         '</div>' +
         '<div class="info">' +
           '<div class="cat">' + catL(b.catLabel) + ' <span class="star"><span>★</span> ' + b.rating.toFixed(1) + '</span></div>' +
-          '<div class="name">' + b.name + '</div>' +
+          '<div class="name">' + nameL(b.name) + '</div>' +
           '<div class="meta">' + distL(b.dist) + ' · <span class="open">' + jsL('open', 'Nyitva') + '</span></div>' +
         '</div>';
       list.appendChild(row);
@@ -2390,7 +2391,7 @@
             '<span class="sep"></span>' +
             '<span class="star"><svg class="s" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6l6.3.9l-4.5 4.4l1 6.1L12 17.5l-5.5 2.5l1-6.1L3 9.5l6.3-.9z"/></svg> ' + b.rating.toFixed(1) + '</span>' +
           '</div>' +
-          '<h3 class="name">' + b.name + '</h3>' +
+          '<h3 class="name">' + nameL(b.name) + '</h3>' +
           '<div class="meta">' +
             '<span>📍 ' + distL(b.dist) + '</span>' +
             '<span class="sep"></span>' +

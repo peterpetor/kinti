@@ -148,14 +148,14 @@
       'Kintis Rechner und Ratgeber sind informative Schätzungen — sie stellen keine rechtliche, steuerliche, finanzielle oder migrationsbezogene Beratung dar; in offiziellen Angelegenheiten ist stets die zuständige Behörde maßgeblich. Die gezeigten Profil-, Bewertungs- und Statistik-Beispiele sind Illustrationen. Kartendaten: © OpenStreetMap-Mitwirkende (ODbL).',
       'Kinti’s calculators and guides are informational estimates — they are not legal, tax, financial or immigration advice; for official matters the competent authority always prevails. The profile, review and statistics examples shown are illustrations. Map data: © OpenStreetMap contributors (ODbL).');
   add('© 2026 kinti.app · Üzemelteti: Feedback Jobs S.R.L. — Made with ♥ for kintiek',
-      '© 2026 kinti.app · Betrieben von <strong>Feedback Jobs S.R.L.</strong> — Made with ♥ for kintiek',
-      '© 2026 kinti.app · Operated by <strong>Feedback Jobs S.R.L.</strong> — Made with ♥ for kintiek');
+      '© 2026 kinti.app · Betrieben von <strong>Feedback Jobs S.R.L.</strong> — Made with ♥ für Auslandsungarn',
+      '© 2026 kinti.app · Operated by <strong>Feedback Jobs S.R.L.</strong> — Made with ♥ for Hungarians abroad');
 
   // ESZKÖZÖK (modulok)
   add('Több, mint kereső', 'Mehr als eine Suche', 'More than a finder');
   add('Eszközök — magyarul a kinti hétköznapokhoz.', 'Tools — <em>auf Ungarisch</em> für den Alltag im Ausland.', 'Tools — <em>in Hungarian</em> for everyday life abroad.');
   add('Bérkalkulátor, árfolyam-kalkulátor, ügyintézés-varázsló, engedély-kalauz, állásbörze — minden, amit egy újonnan érkezett magyarnak külföldön tudni érdemes. Hat országban — 🇨🇭 Svájc, 🇦🇹 Ausztria, 🇩🇪 Németország, 🇳🇱 Hollandia, 🇬🇧 Anglia, 🇪🇸 Spanyolország — egy appban. Ahol egy eszköz még nem minden országban él, ott jelöljük.',
-      'Lohnrechner, Wechselkurs-Rechner, Behörden-Assistent, Aufenthalts-Guide, Jobbörse — alles, was ein neu angekommener Ungar im Ausland wissen sollte. In sechs Ländern — 🇨🇭 Schweiz, 🇦🇹 Österreich, 🇩🇪 Deutschland, 🇳🇱 Niederlande, 🇬🇧 England, 🇪🇸 Spanien — in einer App. Wo ein Tool noch nicht in jedem Land verfügbar ist, kennzeichnen wir es.',
+      'Lohnrechner, Wechselkurs-Rechner, Behörden-Assistent, Aufenthalts-Guide, Jobbörse — alles, was neu angekommene Ungarn im Ausland wissen sollten. In sechs Ländern — 🇨🇭 Schweiz, 🇦🇹 Österreich, 🇩🇪 Deutschland, 🇳🇱 Niederlande, 🇬🇧 England, 🇪🇸 Spanien — in einer App. Wo ein Tool noch nicht in jedem Land verfügbar ist, kennzeichnen wir es.',
       'Salary calculator, exchange-rate calculator, admin wizard, permit guide, job board — everything a newly arrived Hungarian should know abroad. In six countries — 🇨🇭 Switzerland, 🇦🇹 Austria, 🇩🇪 Germany, 🇳🇱 Netherlands, 🇬🇧 England, 🇪🇸 Spain — in one app. Where a tool isn’t live in every country yet, we flag it.');
   add('💰 Pénz', '💰 Geld', '💰 Money');
   add('Bérkalkulátor + Ajánlataim', 'Lohnrechner + Meine Angebote', 'Salary calculator + My offers');
@@ -170,7 +170,7 @@
   add('🏠 Lakhatás', '🏠 Wohnen', '🏠 Housing');
   add('Lakásbérlés rejtett-költség', 'Miete: versteckte Kosten', 'Renting: hidden costs');
   add('Kaució blokkolása + rezsi (Nebenkosten/Betriebskosten/Servicekosten) év-végi elszámolás becslése, mind a 4 országban (🇨🇭 🇦🇹 🇩🇪 🇳🇱). Mire számíts havonta valójában?',
-      'Kautions-Sperrung + Jahresabrechnung der Nebenkosten (Betriebskosten/Servicekosten) — Schätzung, in allen 4 Ländern (🇨🇭 🇦🇹 🇩🇪 🇳🇱). Womit du monatlich wirklich rechnen musst.',
+      'Mietkaution (Sperrkonto) + Jahresabrechnung der Nebenkosten (Betriebskosten/Servicekosten) — Schätzung, in allen 4 Ländern (🇨🇭 🇦🇹 🇩🇪 🇳🇱). Womit du monatlich wirklich rechnen musst.',
       'Deposit blocking + year-end utilities (Nebenkosten/Betriebskosten/Servicekosten) estimate, in all 4 countries (🇨🇭 🇦🇹 🇩🇪 🇳🇱). What to really expect per month.');
   add('🛂 Vám', '🛂 Zoll', '🛂 Customs');
   add('Vám- és határinfó', 'Zoll- & Grenzinfo', 'Customs & border info');
@@ -180,7 +180,7 @@
   add('🚓 Bírság', '🚓 Bußgeld', '🚓 Fines');
   add('Gyorshajtás-bírság becslő', 'Tempo-Bußgeld-Schätzer', 'Speeding-fine estimator');
   add('A helyi bírság-rendszerek becslője, mind a 4 országban (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Mennyit fog fájni a gyorshajtás?',
-      'Schätzer für die lokalen Bußgeld-Systeme, in allen 4 Ländern (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Wie sehr tut das Rasen weh?',
+      'Schätzer für die lokalen Bußgeld-Systeme, in allen 4 Ländern (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Was kostet zu schnelles Fahren?',
       'Estimator for local fine systems, in all 4 countries (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). How much will speeding cost you?');
   add('🚆 Közlekedés', '🚆 Verkehr', '🚆 Transport');
   add('Tömegközlekedés-kalauz', 'ÖPNV-Guide', 'Public transport guide');
@@ -270,7 +270,7 @@
   add('📄 Önéletrajz', '📄 Lebenslauf', '📄 CV');
   add('Német önéletrajz-készítő', 'Deutscher Lebenslauf-Generator', 'German CV builder');
   add('Magyarul kitöltöd, DIN-szabványos német Lebenslauf PDF-et kapsz — ingyen, a szakmád hivatalos német nevével. A kész önéletrajzhoz magyar-barát állásokat is ajánlunk.',
-      'Du füllst es auf Ungarisch aus und erhältst einen DIN-konformen deutschen Lebenslauf als PDF — gratis, mit dem offiziellen deutschen Namen deines Berufs. Zum fertigen Lebenslauf empfehlen wir auch ungarnfreundliche Jobs.',
+      'Du füllst das Formular auf Ungarisch aus und erhältst einen DIN-konformen deutschen Lebenslauf als PDF — gratis, mit dem offiziellen deutschen Namen deines Berufs. Zum fertigen Lebenslauf empfehlen wir auch ungarnfreundliche Jobs.',
       'Fill it in Hungarian and get a DIN-standard German Lebenslauf PDF — free, with the official German name of your profession. We also suggest Hungarian-friendly jobs for your finished CV.');
   add('🏫 Iskola', '🏫 Schule', '🏫 School');
   add('Iskolarendszer-kalauz', 'Schulsystem-Guide', 'School-system guide');
@@ -364,6 +364,7 @@
   add('Regisztrálok — ingyen', 'Registrieren — gratis', 'Register — free');
   add('Tudj meg többet', 'Mehr erfahren', 'Learn more');
   add('Szia,', 'Hallo,', 'Hi,');
+  add('★ KIEMELT', '★ HERVORGEHOBEN', '★ FEATURED');
   add('EZ A HÉT', 'DIESE WOCHE', 'THIS WEEK');
   add('Kinti nézte meg a profilodat', 'Kinti-Nutzer haben dein Profil angesehen', 'Kinti users viewed your profile');
   add('Megtekintés', 'Aufrufe', 'Views');
@@ -489,8 +490,8 @@
   add('Hogyan mondhatom le a PRO-t? Van elállási jog?', 'Wie kündige ich PRO? Gibt es ein Widerrufsrecht?', 'How do I cancel PRO? Is there a right of withdrawal?');
   // Hero lebegő címkék (.float) — a név marad, a „kategória · idő" fordul
   add('Kovács Anna Fodrász · 4 perc', 'Kovács Anna<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Friseur · 4 Min.</span>', 'Kovács Anna<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Hairdresser · 4 min</span>');
-  add('Horváth szerviz Autószerelő · 11 perc', 'Horváth szerviz<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">KFZ-Werkstatt · 11 Min.</span>', 'Horváth szerviz<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Mechanic · 11 min</span>');
-  add('Nagy pékség Pék · 6 perc', 'Nagy pékség<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Bäcker · 6 Min.</span>', 'Nagy pékség<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Baker · 6 min</span>');
+  add('Horváth szerviz Autószerelő · 11 perc', 'Horváth<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">KFZ-Werkstatt · 11 Min.</span>', 'Horváth<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Mechanic · 11 min</span>');
+  add('Nagy pékség Pék · 6 perc', 'Nagy<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Bäcker · 6 Min.</span>', 'Nagy<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Baker · 6 min</span>');
 
   // Ország-kártyák város-listái (a névvariánsok fordulnak: Bécs→Wien, Hága→Den Haag, Genf→Geneva)
   add('Zürich · Genf · Basel', 'Zürich · Genf · Basel', 'Zürich · Geneva · Basel');
@@ -631,6 +632,26 @@
   window.kintiCat = function (cat) { return (CATS[current] && CATS[current][cat]) || CATS.hu[cat] || cat; };
   window.kintiJLabel = function (huLabel) { return current === 'hu' ? huLabel : ((JLABEL[current] && JLABEL[current][huLabel]) || huLabel); };
   window.kintiJS = function (k) { return current === 'hu' ? null : (JS[current] && JS[current][k]); };
+  // Demó cég-nevek (a személynév marad, a magyar közös főnév fordul).
+  var NAMES = {
+    de: {
+      'Kovács Anna fodrászat': 'Friseursalon Anna Kovács', 'Dr. Szabó Eszter — fogorvos': 'Dr. Eszter Szabó — Zahnärztin',
+      'Nagy pékség': 'Bäckerei Nagy', 'Horváth autószerviz': 'KFZ-Werkstatt Horváth',
+      'Kiskocsma — magyar étterem': 'Kiskocsma — ungarisches Restaurant', 'Molnár & Partner ügyvédi iroda': 'Kanzlei Molnár & Partner',
+      'Tóth villanyszerelő': 'Elektriker Tóth', 'Lakatos Krisztina takarítás': 'Gebäudereinigung Krisztina Lakatos',
+      'Farkas István — fordító': 'István Farkas — Übersetzer', 'Kiss Bence — matek korrep.': 'Bence Kiss — Mathe-Nachhilfe',
+      'Varga Péter — háziorvos': 'Dr. Péter Varga — Hausarzt', 'Bátori autószerviz': 'KFZ-Werkstatt Bátori',
+    },
+    en: {
+      'Kovács Anna fodrászat': 'Anna Kovács Hair Salon', 'Dr. Szabó Eszter — fogorvos': 'Dr. Eszter Szabó — Dentist',
+      'Nagy pékség': 'Nagy Bakery', 'Horváth autószerviz': 'Horváth Auto Repair',
+      'Kiskocsma — magyar étterem': 'Kiskocsma — Hungarian Restaurant', 'Molnár & Partner ügyvédi iroda': 'Molnár & Partner Law Firm',
+      'Tóth villanyszerelő': 'Tóth Electrician', 'Lakatos Krisztina takarítás': 'Krisztina Lakatos Cleaning',
+      'Farkas István — fordító': 'István Farkas — Translator', 'Kiss Bence — matek korrep.': 'Bence Kiss — Maths Tutoring',
+      'Varga Péter — háziorvos': 'Dr. Péter Varga — GP', 'Bátori autószerviz': 'Bátori Auto Repair',
+    },
+  };
+  window.kintiName = function (n) { return current === 'hu' ? n : ((NAMES[current] && NAMES[current][n]) || n); };
 
   // ─── detektálás ────────────────────────────────
   function detect() {
