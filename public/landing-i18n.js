@@ -55,7 +55,7 @@
   add('Vállalkozóknak', 'Für Unternehmer', 'For businesses');
   add('PRO', 'PRO', 'PRO');
   add('GYIK', 'FAQ', 'FAQ');
-  add('Letöltöm', 'Herunterladen', 'Get the app');
+  add('Letöltés', 'Herunterladen', 'Get the app');
 
   // HERO
   add('Európa-szerte élőben · egy térkép, anyanyelven', 'Europaweit live · eine Karte, in deiner Sprache', 'Live across Europe · one map, in your language');
@@ -63,7 +63,7 @@
   add('Fodrász, autószerelő, orvos, ügyvéd, pék — bármi. Egy térkép. Anyanyelven. A Kinti GPS-alapú szakemberkereső a külföldön élő magyaroknak.',
       'Friseur, KFZ-Werkstatt, Arzt, Anwalt, Bäcker — was auch immer. Eine Karte. In deiner Sprache. Kinti ist die GPS-basierte Fachkräfte-Suche für Ungarn im Ausland.',
       'Hairdresser, mechanic, doctor, lawyer, baker — anything. One map. In your language. Kinti is the GPS-based professional finder for Hungarians living abroad.');
-  add('Letöltöm — ingyenes', 'Herunterladen — kostenlos', 'Get the app — free');
+  add('Letöltés — ingyenes', 'Herunterladen — kostenlos', 'Get the app — free');
   add('Vállalkozó vagyok', 'Ich bin Unternehmer', 'I’m a business');
   add('Magyar szakemberek és közösség Európa-szerte — egy térképen, anyanyelven.',
       '<strong>Ungarische Fachkräfte</strong> und Community<br>europaweit — auf einer Karte, in deiner Sprache.',
@@ -129,7 +129,8 @@
       'GPS-based finder for Hungarian professionals and jobs, for Hungarians living abroad. In four countries — Switzerland, Austria, Germany, the Netherlands — right where you live.');
   add('Termék', 'Produkt', 'Product');
   add('Kategóriák', 'Kategorien', 'Categories');
-  add('Letöltés', 'Download', 'Download');
+  // 'Letöltés' fordítását a nav-CTA add()-ja adja (Herunterladen / Get the app) — a footer
+  // link is azt használja; itt szándékosan NINCS külön (kulcs-ütközés lenne, ld. nav-CTA).
   add('Regisztráció', 'Registrieren', 'Register');
   add('Kiemelt csomag', 'Premium-Paket', 'Premium plan');
   add('Dashboard belépés', 'Dashboard-Login', 'Dashboard login');
@@ -527,6 +528,17 @@
       // span-es elemek MOST fordíthatók (a fordításuk reprodukálja a kbd-ket / span-eket).
       if (el.querySelector && el.querySelector('svg')) continue;
       if (!isLeaf(el)) continue;
+      // Tiszta link-lista (nav-menü, footer link-sor): 2+ önálló link/gomb, és a linkeken
+      // KÍVÜL alig van saját szöveg → NE a konténert fordítsuk egyben (összefűzött kulcs),
+      // hanem a gyerekeket egyenként. (A bekezdés + néhány inline link — pl. GYIK-válasz —
+      // NEM link-lista: ott van bőven saját szöveg, azt egyben fordítjuk.)
+      var linkCount = 0;
+      for (var lc = 0; lc < el.children.length; lc++) { var lt = el.children[lc].tagName; if (lt === 'A' || lt === 'BUTTON') linkCount++; }
+      if (linkCount >= 2) {
+        var bareLetters = 0;
+        for (var tn = 0; tn < el.childNodes.length; tn++) { if (el.childNodes[tn].nodeType === 3) bareLetters += (el.childNodes[tn].textContent.match(/[A-Za-zÀ-ÿ]/g) || []).length; }
+        if (bareLetters < 5) continue; // csak link-lista → gyerekek egyenként
+      }
       // csak a legkülső levél-konténert tartjuk (egy már hozzáadott unit leszármazottja kimarad)
       var inside = false;
       for (var k = 0; k < added.length; k++) { if (added[k].contains(el)) { inside = true; break; } }
@@ -563,7 +575,7 @@
     // hero gombok (kimaradtak a bejárásból): letöltés-gomb szövegcsomó (svg marad) + ghost
     var tr = function (huKey) { return lang === 'hu' ? huKey : (TR[lang][norm(huKey)] || huKey); };
     var hp = document.querySelector('.hero-actions .btn-primary');
-    if (hp) { for (var n = 0; n < hp.childNodes.length; n++) { var cn = hp.childNodes[n]; if (cn.nodeType === 3 && norm(cn.textContent)) { cn.textContent = tr('Letöltöm — ingyenes') + ' '; break; } } }
+    if (hp) { for (var n = 0; n < hp.childNodes.length; n++) { var cn = hp.childNodes[n]; if (cn.nodeType === 3 && norm(cn.textContent)) { cn.textContent = tr('Letöltés — ingyenes') + ' '; break; } } }
     var hg = document.querySelector('.hero-actions .btn-ghost');
     if (hg) hg.textContent = tr('Vállalkozó vagyok');
 
