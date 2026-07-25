@@ -103,14 +103,16 @@
   // GEOMAP
   add('Európai közösség', 'Europäische Community', 'European community');
   add('Ott, ahol magyarok élnek.', 'Dort, wo <em>Ungarn</em> leben.', 'Where <em>Hungarians</em> live.');
-  add('Négy országban, egy térképen, anyanyelven. Válaszd ki, hol vagy kint — a magyar közösség már ott van.',
-      'In vier Ländern, auf einer Karte, in deiner Sprache. Wähle, wo du im Ausland bist — die ungarische Community ist schon da.',
-      'In four countries, on one map, in your language. Pick where you live abroad — the Hungarian community is already there.');
+  add('Hat országban, egy térképen, anyanyelven. Válaszd ki, hol vagy kint — a magyar közösség már ott van.',
+      'In sechs Ländern, auf einer Karte, in deiner Sprache. Wähle, wo du im Ausland bist — die ungarische Community ist schon da.',
+      'In six countries, on one map, in your language. Pick where you live abroad — the Hungarian community is already there.');
   add('Élőben', 'Live', 'Live');
   add('Svájc', 'Schweiz', 'Switzerland');
   add('Ausztria', 'Österreich', 'Austria');
   add('Németország', 'Deutschland', 'Germany');
   add('Hollandia', 'Niederlande', 'Netherlands');
+  add('Anglia', 'England', 'England');
+  add('Spanyolország', 'Spanien', 'Spain');
   add('Válaszd ki a menüből, melyik országban vagy kint — a térkép és a tartalom oda igazodik.',
       'Wähle im Menü, in welchem Land du im Ausland bist — Karte und Inhalte passen sich an.',
       'Pick your country from the menu — the map and content adapt to it.');
@@ -118,15 +120,15 @@
   // CTA
   add('★ INGYENES · 2026 ÓTA ÉL', '★ KOSTENLOS · SEIT 2026 LIVE', '★ FREE · LIVE SINCE 2026');
   add('Egy térkép. Egy közösség. Az otthon, ami kint maradt.', 'Eine Karte. Eine Community.<br><em>Das Zuhause, das im Ausland blieb.</em>', 'One map. One community.<br><em>The home you carried abroad.</em>');
-  add('Töltsd le, és csatlakozz a magyar közösséghez — Európa négy országában, egy térképen. Ingyenes, és fiók nélkül is használható.',
-      'Lade sie herunter und schließ dich der ungarischen Community an — in vier Ländern Europas, auf einer Karte. Kostenlos und auch ohne Konto nutzbar.',
-      'Download it and join the Hungarian community — in four European countries, on one map. Free, and usable without an account.');
+  add('Töltsd le, és csatlakozz a magyar közösséghez — Európa hat országában, egy térképen. Ingyenes, és fiók nélkül is használható.',
+      'Lade sie herunter und schließ dich der ungarischen Community an — in sechs Ländern Europas, auf einer Karte. Kostenlos und auch ohne Konto nutzbar.',
+      'Download it and join the Hungarian community — in six European countries, on one map. Free, and usable without an account.');
   add('Iratkozz fel az értesítésre', 'Für Benachrichtigungen anmelden', 'Sign up for alerts');
 
   // FOOTER
-  add('GPS-alapú magyar szakember- és állás-kereső a külföldön élő magyaroknak. Négy országban — Svájc, Ausztria, Németország, Hollandia —, ott, ahol kint élsz.',
-      'GPS-basierte Suche nach ungarischen Fachkräften und Jobs für Ungarn im Ausland. In vier Ländern — Schweiz, Österreich, Deutschland, Niederlande —, dort, wo du lebst.',
-      'GPS-based finder for Hungarian professionals and jobs, for Hungarians living abroad. In four countries — Switzerland, Austria, Germany, the Netherlands — right where you live.');
+  add('GPS-alapú magyar szakember- és állás-kereső a külföldön élő magyaroknak. Hat országban — Svájc, Ausztria, Németország, Hollandia, Anglia, Spanyolország —, ott, ahol kint élsz.',
+      'GPS-basierte Suche nach ungarischen Fachkräften und Jobs für Ungarn im Ausland. In sechs Ländern — Schweiz, Österreich, Deutschland, Niederlande, England, Spanien —, dort, wo du lebst.',
+      'GPS-based finder for Hungarian professionals and jobs, for Hungarians living abroad. In six countries — Switzerland, Austria, Germany, the Netherlands, England, Spain — right where you live.');
   add('Termék', 'Produkt', 'Product');
   add('Kategóriák', 'Kategorien', 'Categories');
   // 'Letöltés' fordítását a nav-CTA add()-ja adja (Herunterladen / Get the app) — a footer
@@ -152,9 +154,9 @@
   // ESZKÖZÖK (modulok)
   add('Több, mint kereső', 'Mehr als eine Suche', 'More than a finder');
   add('Eszközök — magyarul a kinti hétköznapokhoz.', 'Tools — <em>auf Ungarisch</em> für den Alltag im Ausland.', 'Tools — <em>in Hungarian</em> for everyday life abroad.');
-  add('Bérkalkulátor, árfolyam-kalkulátor, ügyintézés-varázsló, engedély-kalauz, állásbörze — minden, amit egy újonnan érkezett magyarnak külföldön tudni érdemes. Négy országban — 🇨🇭 Svájc, 🇦🇹 Ausztria, 🇩🇪 Németország, 🇳🇱 Hollandia — egy appban. Ahol egy eszköz még nem minden országban él, ott jelöljük.',
-      'Lohnrechner, Wechselkurs-Rechner, Behörden-Assistent, Aufenthalts-Guide, Jobbörse — alles, was ein neu angekommener Ungar im Ausland wissen sollte. In vier Ländern — 🇨🇭 Schweiz, 🇦🇹 Österreich, 🇩🇪 Deutschland, 🇳🇱 Niederlande — in einer App. Wo ein Tool noch nicht in jedem Land verfügbar ist, kennzeichnen wir es.',
-      'Salary calculator, exchange-rate calculator, admin wizard, permit guide, job board — everything a newly arrived Hungarian should know abroad. In four countries — 🇨🇭 Switzerland, 🇦🇹 Austria, 🇩🇪 Germany, 🇳🇱 Netherlands — in one app. Where a tool isn’t live in every country yet, we flag it.');
+  add('Bérkalkulátor, árfolyam-kalkulátor, ügyintézés-varázsló, engedély-kalauz, állásbörze — minden, amit egy újonnan érkezett magyarnak külföldön tudni érdemes. Hat országban — 🇨🇭 Svájc, 🇦🇹 Ausztria, 🇩🇪 Németország, 🇳🇱 Hollandia, 🇬🇧 Anglia, 🇪🇸 Spanyolország — egy appban. Ahol egy eszköz még nem minden országban él, ott jelöljük.',
+      'Lohnrechner, Wechselkurs-Rechner, Behörden-Assistent, Aufenthalts-Guide, Jobbörse — alles, was ein neu angekommener Ungar im Ausland wissen sollte. In sechs Ländern — 🇨🇭 Schweiz, 🇦🇹 Österreich, 🇩🇪 Deutschland, 🇳🇱 Niederlande, 🇬🇧 England, 🇪🇸 Spanien — in einer App. Wo ein Tool noch nicht in jedem Land verfügbar ist, kennzeichnen wir es.',
+      'Salary calculator, exchange-rate calculator, admin wizard, permit guide, job board — everything a newly arrived Hungarian should know abroad. In six countries — 🇨🇭 Switzerland, 🇦🇹 Austria, 🇩🇪 Germany, 🇳🇱 Netherlands, 🇬🇧 England, 🇪🇸 Spain — in one app. Where a tool isn’t live in every country yet, we flag it.');
   add('💰 Pénz', '💰 Geld', '💰 Money');
   add('Bérkalkulátor + Ajánlataim', 'Lohnrechner + Meine Angebote', 'Salary calculator + My offers');
   add('Nettó-bér becslés a helyi adó- és járulékszabályokkal, mind a 4 országban (🇳🇱 Box 1 + heffingskortingen is). Interjún kapott ajánlatokat elmenthetsz és összehasonlíthatsz.',
@@ -458,9 +460,9 @@
       'Die freigegebene Stellenanzeige ist <strong>30 Tage aktiv</strong> und läuft danach automatisch ab — so bleiben keine veralteten Angebote stehen. Die Anzeige wird <strong>nicht gelöscht</strong>: der Arbeitgeber kann sie im eigenen Dashboard <strong>mit einem Klick, kostenlos um weitere 30 Tage verlängern</strong>, ohne Neueingabe. Die <strong>Hervorgehobene Stelle</strong> für 49 € läuft ebenfalls 30 Tage und die Hervorhebung frischt auch das Ablaufdatum auf.',
       'An approved job listing is <strong>active for 30 days</strong>, then expires automatically — so no stale offers linger. The listing is <strong>not deleted</strong>: the employer can <strong>renew it in one click, free, for another 30 days</strong> from their dashboard, no re-typing. The €49 <strong>Featured Job</strong> also runs 30 days, and featuring refreshes the expiry too.');
   add('Mely országokban érhető el?', 'In welchen Ländern ist es verfügbar?', 'Which countries is it available in?');
-  add('Mind a négy országban élőben: Svájc, Ausztria, Németország és Hollandia — régió- és város-szintű szűrővel. Válaszd ki a menüből, melyikben vagy kint, és a térkép, a szakemberek és a tartalom helyre igazodik.',
-      'In allen vier Ländern <strong>live</strong>: Schweiz, Österreich, Deutschland und Niederlande — mit Filter auf Regions- und Stadtebene. Wähle im Menü, in welchem du im Ausland bist, und Karte, Fachkräfte und Inhalte passen sich an.',
-      'Live in all four countries: Switzerland, Austria, Germany and the Netherlands — with region- and city-level filters. Pick from the menu which one you’re in, and the map, professionals and content adapt.');
+  add('Mind a hat országban élőben: Svájc, Ausztria, Németország, Hollandia, Anglia és Spanyolország — régió- és város-szintű szűrővel. Válaszd ki a menüből, melyikben vagy kint, és a térkép, a szakemberek és a tartalom helyre igazodik.',
+      'In allen sechs Ländern <strong>live</strong>: Schweiz, Österreich, Deutschland, Niederlande, England und Spanien — mit Filter auf Regions- und Stadtebene. Wähle im Menü, in welchem du im Ausland bist, und Karte, Fachkräfte und Inhalte passen sich an.',
+      'Live in all six countries: Switzerland, Austria, Germany, the Netherlands, England and Spain — with region- and city-level filters. Pick from the menu which one you’re in, and the map, professionals and content adapt.');
   add('Adatvédelem? Geolokáció? Cookie?', 'Datenschutz? Geolokalisierung? Cookies?', 'Privacy? Geolocation? Cookies?');
   add('A GPS pozíciód a böngészőben marad — szerverre nem küldjük. Csak a működéshez szükséges sütiket használjuk (pl. a bejelentkezett funkciókhoz Clerk-session) — marketing- vagy nyomkövető sütit nem. GDPR + svájci revFADP-kompatibilis, Cloudflare EU-edge szervereken. Az IP-címet csak SHA-256 hash-ként tároljuk; az e-mail-címed a megerősítéshez és a kapcsolatfelvételhez kerül tárolásra.',
       'Deine GPS-Position bleibt im Browser — wir senden sie nicht an den Server. Wir nutzen nur <strong>technisch notwendige Cookies</strong> (z. B. Clerk-Session für angemeldete Funktionen) — keine Marketing- oder Tracking-Cookies. DSGVO- + Schweizer revDSG-konform, auf Cloudflare-EU-Edge-Servern. Die IP-Adresse speichern wir nur als SHA-256-Hash; deine E-Mail wird zur Bestätigung und Kontaktaufnahme gespeichert.',
