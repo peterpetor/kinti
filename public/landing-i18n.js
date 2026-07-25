@@ -482,6 +482,25 @@
       'Kinti installiert sich als PWA auf jedem Handy. Auf Android findest du sie auch im <strong>Google Play Store</strong>; auf dem iPhone legst du sie mit Safari „Zum Home-Bildschirm" auf den Startbildschirm (keine App-Store-Präsenz). So müssen Nutzer nie eine Store-Gebühr zahlen.',
       'Kinti installs as a PWA on any phone. On Android you’ll also find it in the <strong>Google Play Store</strong>; on iPhone you add it to your home screen via Safari’s “Add to Home Screen” (no App Store presence). This way users never pay a store fee.');
 
+  // FAQ #2/#3 kérdései (a válaszaik lentebb a fizetési blokkban) — korábban kimaradtak
+  add('Mit ad a Kinti PRO?', 'Was bietet Kinti PRO?', 'What does Kinti PRO offer?');
+  add('Hogyan mondhatom le a PRO-t? Van elállási jog?', 'Wie kündige ich PRO? Gibt es ein Widerrufsrecht?', 'How do I cancel PRO? Is there a right of withdrawal?');
+  // Hero lebegő címkék (.float) — a név marad, a „kategória · idő" fordul
+  add('Kovács Anna Fodrász · 4 perc', 'Kovács Anna<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Friseur · 4 Min.</span>', 'Kovács Anna<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Hairdresser · 4 min</span>');
+  add('Horváth szerviz Autószerelő · 11 perc', 'Horváth szerviz<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">KFZ-Werkstatt · 11 Min.</span>', 'Horváth szerviz<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Mechanic · 11 min</span>');
+  add('Nagy pékség Pék · 6 perc', 'Nagy pékség<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Bäcker · 6 Min.</span>', 'Nagy pékség<br><span style="color: var(--text-muted); font-weight: 500; font-size: 11.5px;">Baker · 6 min</span>');
+
+  // Ország-kártyák város-listái (a névvariánsok fordulnak: Bécs→Wien, Hága→Den Haag, Genf→Geneva)
+  add('Zürich · Genf · Basel', 'Zürich · Genf · Basel', 'Zürich · Geneva · Basel');
+  add('Bécs · Graz · Linz', 'Wien · Graz · Linz', 'Vienna · Graz · Linz');
+  add('Berlin · München · Frankfurt', 'Berlin · München · Frankfurt', 'Berlin · Munich · Frankfurt');
+  add('Amszterdam · Rotterdam · Hága', 'Amsterdam · Rotterdam · Den Haag', 'Amsterdam · Rotterdam · The Hague');
+  // Cookie-banner
+  add('🍪 A kinti.app sütiket használ. A Clerk (bejelentkezés) és az alapvető működési sütik segítségével biztosítjuk a platform biztonságát és megfelelő működését. Marketing- vagy nyomkövető sütiket nem használunk. Részletes tájékoztató: Adatkezelési tájékoztató.',
+    '🍪 <strong>kinti.app verwendet Cookies.</strong> Mit Clerk (Login) und den grundlegenden Betriebs-Cookies gewährleisten wir Sicherheit und Funktion der Plattform. Marketing- oder Tracking-Cookies verwenden wir nicht. Ausführliche Infos: <a href="/adatvedelem" class="cookie-link">Datenschutzhinweise</a>.',
+    '🍪 <strong>kinti.app uses cookies.</strong> With Clerk (login) and essential operational cookies we ensure the platform’s security and proper function. We don’t use marketing or tracking cookies. Details: <a href="/adatvedelem" class="cookie-link">privacy notice</a>.');
+  add('Elfogadom', 'Akzeptieren', 'Accept');
+
   // ── Fizetési/jogi fine-print (a web-only/android-only span-eket a fordítás reprodukálja) ──
   add('A keresés, a profilok böngészése és a hívás ingyenes marad. Ha mélyebbre mennél — vagy magyar ügyfeleket, munkaerőt szereznél — itt vannak az opcionális prémium csomagok. A feltüntetett árak nettó árak (ÁFA nélkül); az ÁFA-t a pénztár az adott ország szabályai szerint adja hozzá — a pontos, áfával együttes végső összeget a pénztár és a kinti.app/pro oldal mutatja. A fizetést a Paddle (Merchant of Record) bonyolítja; ha a Kinti Android-alkalmazásból vásárolsz, ott a Google Play fizetési rendszere érvényes.A fizetést a Google Play fizetési rendszere bonyolítja.',
     'Suche, das Durchstöbern von Profilen und Anrufe bleiben kostenlos. Wenn du tiefer einsteigen — oder ungarische Kunden und Arbeitskräfte gewinnen — möchtest, findest du hier die optionalen Premium-Pakete. Die angegebenen Preise sind <strong>Netto</strong>-Preise (ohne MwSt.); die MwSt. fügt die Kasse nach den Regeln des jeweiligen Landes hinzu — den genauen Endbetrag inkl. MwSt. zeigen die Kasse und die Seite <a href="/pro" style="color: inherit; text-decoration: underline;">kinti.app/pro</a>. <span class="web-only-payment">Die Zahlung wickelt <strong>Paddle</strong> (Merchant of Record) ab; kaufst du aus der Kinti-<strong>Android-App</strong>, gilt dort das Zahlungssystem von <strong>Google Play</strong>.</span><span class="android-only-payment">Die Zahlung wickelt das Zahlungssystem von <strong>Google Play</strong> ab.</span>',
@@ -524,6 +543,9 @@
       var el = nodes[i];
       if (el.closest('script,style,svg,.brand,.demo-chip,.cf-chip,.lang-switch,.hero-actions')) continue;
       if (el.classList && (el.classList.contains('gly') || el.classList.contains('hcard-ico') || el.classList.contains('ph-ico') || el.classList.contains('hbadge'))) continue;
+      // Strukturált kombinált konténerek (fejléc+törzs, ill. összeg+pénznem+egység):
+      // NE egyben fordítsuk — a részeket (strong/span, ill. .per) a saját add()-jaik fordítják.
+      if (el.classList && (el.classList.contains('biz-feat-text') || el.classList.contains('price-amount'))) continue;
       // ikon-gomb (svg + szöveg) → kihagyjuk (külön kezeljük); a kbd-s és a fizetési-
       // span-es elemek MOST fordíthatók (a fordításuk reprodukálja a kbd-ket / span-eket).
       if (el.querySelector && el.querySelector('svg')) continue;
@@ -545,7 +567,12 @@
       if (inside) continue;
       var txt = norm(el.textContent);
       if (!txt || !/[A-Za-zÀ-ÿ]/.test(txt)) continue; // üres / csak szám-szimbólum
-      units.push({ el: el, html: el.innerHTML, key: txt });
+      // KULCS: a <br>-t SZÓKÖZKÉNT kezeljük (a textContent-ben a <br> nem ad szóközt, de a
+      // szótár-kulcsok természetes szóközzel íródnak — enélkül a <br>-es elemek — stats-címke,
+      // hero-proof, CTA-cím, lebegő címkék — nem találnának kulcsot). A többi inline tag
+      // szóköz NÉLKÜL tűnik el, hogy a fizetési span-ek összefűzött kulcsa stimmeljen.
+      var key = norm(el.innerHTML.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, ''));
+      units.push({ el: el, html: el.innerHTML, key: key });
       added.push(el);
     }
   }

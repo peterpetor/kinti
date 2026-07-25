@@ -2178,7 +2178,9 @@
       cardMeta.textContent = distL(mparts[0]) + (mparts[1] ? ' · ' + jsL('open', mparts[1]) : '');
       cardPh.style.background = q.card.photo;
       document.getElementById('heroCardIco').innerHTML = q.card.g || '';
-      cardPh.querySelector('.hbadge').style.display = q.card.featured ? '' : 'none';
+      var hbadge = cardPh.querySelector('.hbadge');
+      hbadge.textContent = jsL('featured', 'KIEMELT');
+      hbadge.style.display = q.card.featured ? '' : 'none';
       card.classList.add('in');
 
       // 4. hold
@@ -2304,7 +2306,7 @@
       row.innerHTML =
         '<div class="ph" style="background: ' + b.photo + '">' +
           '<div class="ph-ico">' + (CAT_GLYPHS[b.cat] || '\u25CF') + '</div>' +
-          (b.featured ? '<div class="badge">KIEMELT</div>' : '') +
+          (b.featured ? '<div class="badge">' + jsL('featured', 'KIEMELT') + '</div>' : '') +
         '</div>' +
         '<div class="info">' +
           '<div class="cat">' + catL(b.catLabel) + ' <span class="star"><span>★</span> ' + b.rating.toFixed(1) + '</span></div>' +
