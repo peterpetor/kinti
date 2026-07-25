@@ -38,3 +38,11 @@
 
 /offline
   Cache-Control: public, max-age=0, must-revalidate
+
+# --- Landing oldal + i18n motor: MINDIG revalidálódjon, hogy a frissítés azonnal
+# --- propagáljon (a Pages-default ~4 órás cache miatt egyébként az edge stale
+# --- verziót szolgálna ki deploy után — pl. a nyelvváltó/menü-fordítás javítás).
+/landing.html
+  Cache-Control: public, max-age=0, must-revalidate
+/landing-i18n.js
+  Cache-Control: public, max-age=0, must-revalidate
