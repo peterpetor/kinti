@@ -85,6 +85,12 @@
     @media (max-width: 820px) {
       .nav-links, .nav-lang { display: none; }
     }
+    /* Nyelvváltó (HU/DE/EN) — jobbra fent, mobilon is látszik */
+    .lang-switch { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); }
+    .lang-switch button { border: none; background: transparent; padding: 5px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.2px; line-height: 1; transition: background .15s, color .15s; }
+    .lang-switch button:hover { color: var(--text); }
+    .lang-switch button[aria-pressed="true"] { background: var(--primary); color: #fff; }
+    @media (max-width: 820px) { .lang-switch { margin-left: auto; } .lang-switch button { padding: 5px 7px; font-size: 11.5px; } }
 
     /* ─── HERO ─────────────────────────────────────── */
     section.hero {
@@ -1013,6 +1019,11 @@
       <a href="#gyik">GYIK</a>
     </div>
     <div class="nav-spacer"></div>
+    <div class="lang-switch" role="group" aria-label="Nyelv / Language / Sprache">
+      <button type="button" data-lang="hu" aria-pressed="true">HU</button>
+      <button type="button" data-lang="de" aria-pressed="false">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
     <button class="nav-cta">Letöltöm</button>
   </div>
 </nav>
@@ -2033,9 +2044,19 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<!-- Landing i18n motor (HU/DE/EN) — a fő IIFE ELŐTT tölt be, hogy a kintiCat/kintiJS globálisok készen álljanak. -->
+<script src="/landing-i18n.js"></script>
+<script>
 (function () {
   'use strict';
+
+  // ─── i18n segédek (a landing-i18n.js globálisaira; HU fallback) ─────────────
+  var catL  = function (hu)   { return window.kintiJLabel ? window.kintiJLabel(hu) : hu; };
+  var chipL = function (cat)  { return window.kintiCat ? window.kintiCat(cat) : cat; };
+  var jsL   = function (k, fb) { var v = window.kintiJS ? window.kintiJS(k) : null; return v != null ? v : fb; };
+  var distL = function (d)    { var m = window.kintiJS ? window.kintiJS('min') : null; return m ? String(d).replace('perc', m) : d; };
+  var HTXT  = { 'fodrász':'fodrasz', 'autószerelő':'auto', 'pék':'pek' };
 
   // ─── shared data ─────────────────────────────
   const ICO_BREAD  = '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M3 14c0-3.9 4-7 9-7s9 3.1 9 7v1.8A1.7 1.7 0 0 1 19.3 17.5H4.7A1.7 1.7 0 0 1 3 15.8z"/><path d="M9 10.6l-1.4 4M13 10.2l-1.4 4.4M17 10.6l-1.4 4"/></svg>';
@@ -2124,9 +2145,10 @@
         f.classList.toggle('dim',    i !== q.floatIdx);
       });
 
-      // 1. type the query character by character
+      // 1. type the query character by character (nyelv-tudatos keresőszó)
       typedEl.textContent = '';
-      for (const ch of q.text) {
+      const qtext = (window.kintiLang && window.kintiLang !== 'hu') ? (chipL(HTXT[q.text]) || q.text) : q.text;
+      for (const ch of qtext) {
         typedEl.textContent += ch;
         await sleep(85);
       }
@@ -2149,9 +2171,11 @@
       await sleep(pinEls.length * 90 + 350);
 
       // 3. card slide up (featured photo)
-      cardCat.textContent  = q.card.cat;
+      const cparts = q.card.cat.split(' · ★ ');
+      cardCat.textContent  = catL(cparts[0]) + (cparts[1] ? ' · ★ ' + cparts[1] : '');
       cardName.textContent = q.card.name;
-      cardMeta.textContent = q.card.meta;
+      const mparts = q.card.meta.split(' · ');
+      cardMeta.textContent = distL(mparts[0]) + (mparts[1] ? ' · ' + jsL('open', mparts[1]) : '');
       cardPh.style.background = q.card.photo;
       document.getElementById('heroCardIco').innerHTML = q.card.g || '';
       cardPh.querySelector('.hbadge').style.display = q.card.featured ? '' : 'none';
@@ -2213,17 +2237,18 @@
       renderDemo();
     });
 
-    // kbd shortcut clicks fill the input
-    document.querySelectorAll('.demo-hint kbd').forEach((k) => {
-      k.addEventListener('click', () => {
-        input.value = k.dataset.fill || k.textContent;
-        clear.classList.add('show');
-        // also reset cat to all so the keyword doesn't get over-filtered
-        demoCat = 'all';
-        document.querySelectorAll('.demo-chip').forEach(x => x.classList.toggle('active', x.dataset.cat === 'all'));
-        renderDemo();
-        input.focus();
-      });
+    // kbd shortcut clicks fill the input — DELEGÁLT, hogy túlélje a nyelvváltás-kori
+    // innerHTML-cserét (az i18n motor újrarajzolja a demo-tippet a fordított kbd-kkel).
+    document.addEventListener('click', (e) => {
+      const k = e.target.closest('.demo-hint kbd');
+      if (!k) return;
+      input.value = k.dataset.fill || k.textContent;
+      clear.classList.add('show');
+      // also reset cat to all so the keyword doesn't get over-filtered
+      demoCat = 'all';
+      document.querySelectorAll('.demo-chip').forEach(x => x.classList.toggle('active', x.dataset.cat === 'all'));
+      renderDemo();
+      input.focus();
     });
 
     renderDemo();
@@ -2231,7 +2256,7 @@
 
   function fuzzyMatch(b, q) {
     if (!q) return true;
-    const hay = (b.name + ' ' + b.catLabel).toLowerCase();
+    const hay = (b.name + ' ' + b.catLabel + ' ' + catL(b.catLabel)).toLowerCase();
     return hay.includes(q);
   }
 
@@ -2258,16 +2283,16 @@
     const head = document.createElement('div');
     head.className = 'demo-result-head';
     if (filtered.length === 0) {
-      head.innerHTML = '<strong>0 találat</strong> · próbálj rá másra';
+      head.innerHTML = jsL('zero', '<strong>0 találat</strong> · próbálj rá másra');
     } else {
-      head.innerHTML = '<strong>' + filtered.length + '</strong> találat · közelség szerint';
+      head.innerHTML = '<strong>' + filtered.length + '</strong> ' + jsL('by_distance', 'találat · közelség szerint');
     }
     list.appendChild(head);
 
     if (filtered.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'demo-empty';
-      empty.innerHTML = '<div class="big">🤷</div>Hopp — erre még nincs találat. Légy az első, aki regisztrál a kategóriába!';
+      empty.innerHTML = jsL('empty', '<div class="big">🤷</div>Hopp — erre még nincs találat. Légy az első, aki regisztrál a kategóriába!');
       list.appendChild(empty);
       return;
     }
@@ -2282,9 +2307,9 @@
           (b.featured ? '<div class="badge">KIEMELT</div>' : '') +
         '</div>' +
         '<div class="info">' +
-          '<div class="cat">' + b.catLabel + ' <span class="star"><span>★</span> ' + b.rating.toFixed(1) + '</span></div>' +
+          '<div class="cat">' + catL(b.catLabel) + ' <span class="star"><span>★</span> ' + b.rating.toFixed(1) + '</span></div>' +
           '<div class="name">' + b.name + '</div>' +
-          '<div class="meta">' + b.dist + ' · <span class="open">Nyitva</span></div>' +
+          '<div class="meta">' + distL(b.dist) + ' · <span class="open">' + jsL('open', 'Nyitva') + '</span></div>' +
         '</div>';
       list.appendChild(row);
     });
@@ -2336,25 +2361,25 @@
       card.innerHTML =
         '<div class="ph" style="background: ' + b.photo + '">' +
           '<div class="ph-ico">' + (CAT_GLYPHS[b.cat] || '\u25CF') + '</div>' +
-          (b.featured ? '<div class="badge">★ KIEMELT</div>' : '') +
+          (b.featured ? '<div class="badge">' + jsL('featuredStar', '★ KIEMELT') + '</div>' : '') +
           '<div class="save">' +
             '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>' +
           '</div>' +
         '</div>' +
         '<div class="info">' +
           '<div class="row1">' +
-            '<span>' + b.catLabel + '</span>' +
+            '<span>' + catL(b.catLabel) + '</span>' +
             '<span class="sep"></span>' +
             '<span class="star"><svg class="s" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6l6.3.9l-4.5 4.4l1 6.1L12 17.5l-5.5 2.5l1-6.1L3 9.5l6.3-.9z"/></svg> ' + b.rating.toFixed(1) + '</span>' +
           '</div>' +
           '<h3 class="name">' + b.name + '</h3>' +
           '<div class="meta">' +
-            '<span>📍 ' + b.dist + '</span>' +
+            '<span>📍 ' + distL(b.dist) + '</span>' +
             '<span class="sep"></span>' +
-            '<span class="open">Nyitva</span>' +
+            '<span class="open">' + jsL('open', 'Nyitva') + '</span>' +
           '</div>' +
           '<div class="langs">' +
-            '<span class="lang">magyarul</span>' +
+            '<span class="lang">' + jsL('native', 'magyarul') + '</span>' +
             '<span class="lang de">DE</span>' +
           '</div>' +
         '</div>';
@@ -2378,6 +2403,13 @@
     initDemo();
     initCarousel();
     runHeroLoop();
+
+    // Nyelvváltáskor a JS-generált tartalom (demó + carousel) újrarenderel.
+    // A hero-loop magától követi az új nyelvet a következő ciklusban.
+    window.addEventListener('kintilang', () => {
+      try { renderDemo(); } catch (e) {}
+      try { renderCarousel(); } catch (e) {}
+    });
 
     // Cookie consent logic
     const banner = document.getElementById('cookieConsentBanner');
