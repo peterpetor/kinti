@@ -20,6 +20,10 @@ import {
   DE_TRANSPORT_TIPS,
   calculateDeTransport,
   NL_TARIF_SYSTEMS,
+  GB_TARIF_SYSTEMS,
+  GB_TICKET_TYPES,
+  GB_MOBILE_APPS,
+  GB_TRANSPORT_TIPS,
   NL_TICKET_TYPES,
   NL_MOBILE_APPS,
   NL_TRANSPORT_TIPS,
@@ -35,11 +39,12 @@ export function TransportGuide() {
   const isAT = country === "AT";
   const isDE = country === "DE";
   const isNL = country === "NL";
-  const cur = country === "CH" ? "CHF" : "EUR";
-  const tarifSystems = isNL ? NL_TARIF_SYSTEMS : isDE ? DE_TARIF_SYSTEMS : isAT ? AT_TARIF_SYSTEMS : TARIF_SYSTEMS;
-  const ticketTypes = isNL ? NL_TICKET_TYPES : isDE ? DE_TICKET_TYPES : isAT ? AT_TICKET_TYPES : TICKET_TYPES;
-  const mobileApps = isNL ? NL_MOBILE_APPS : isDE ? DE_MOBILE_APPS : isAT ? AT_MOBILE_APPS : MOBILE_APPS;
-  const tips = isNL ? NL_TRANSPORT_TIPS : isDE ? DE_TRANSPORT_TIPS : isAT ? AT_TRANSPORT_TIPS : TRANSPORT_TIPS;
+  const isGB = country === "GB";
+  const cur = country === "CH" ? "CHF" : country === "GB" ? "GBP" : "EUR";
+  const tarifSystems = isGB ? GB_TARIF_SYSTEMS : isNL ? NL_TARIF_SYSTEMS : isDE ? DE_TARIF_SYSTEMS : isAT ? AT_TARIF_SYSTEMS : TARIF_SYSTEMS;
+  const ticketTypes = isGB ? GB_TICKET_TYPES : isNL ? NL_TICKET_TYPES : isDE ? DE_TICKET_TYPES : isAT ? AT_TICKET_TYPES : TICKET_TYPES;
+  const mobileApps = isGB ? GB_MOBILE_APPS : isNL ? NL_MOBILE_APPS : isDE ? DE_MOBILE_APPS : isAT ? AT_MOBILE_APPS : MOBILE_APPS;
+  const tips = isGB ? GB_TRANSPORT_TIPS : isNL ? NL_TRANSPORT_TIPS : isDE ? DE_TRANSPORT_TIPS : isAT ? AT_TRANSPORT_TIPS : TRANSPORT_TIPS;
   return (
     <div className="space-y-4">
       {/* Hero */}
@@ -48,10 +53,12 @@ export function TransportGuide() {
           <span className="text-4xl shrink-0">🚆</span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[20px] font-extrabold leading-tight tracking-tight text-ink">
-              {isNL ? "Holland Tömegközlekedés" : isDE ? "Német Tömegközlekedés" : isAT ? "Osztrák Tömegközlekedés" : "Svájci Tömegközlekedés"}
+              {isGB ? "Angol Tömegközlekedés" : isNL ? "Holland Tömegközlekedés" : isDE ? "Német Tömegközlekedés" : isAT ? "Osztrák Tömegközlekedés" : "Svájci Tömegközlekedés"}
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              {isNL
+              {isGB
+                ? "Londoni érintős fizetés és capping (napi + heti plafon), National Rail, Railcard, appok (TfL Go, Citymapper) — egyszerűen elmagyarázva."
+                : isNL
                 ? "OVpay / OV-chipkaart (in- és uitchecken), NS-vonatok, GVB/RET/HTM, jegytípusok, appok (NS, 9292) és Dal Voordeel-kalkulátor — egyszerűen elmagyarázva."
                 : isDE
                 ? "Deutsche Bahn, Verkehrsverbünde (VBB, MVV, HVV), jegytípusok, DB Navigator és Deutschlandticket-kalkulátor — egyszerűen elmagyarázva."
@@ -66,10 +73,21 @@ export function TransportGuide() {
       {/* Hogyan működik a zóna-rendszer */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card space-y-3">
         <h2 className="text-[14px] font-extrabold text-ink flex items-center gap-1.5">
-          📍 {isNL ? "Hogy működik a fizetés (OVpay)?" : "Hogy működik a zónarendszer?"}
+          📍 {isGB ? "Hogy működik a capping (plafon)?" : isNL ? "Hogy működik a fizetés (OVpay)?" : "Hogy működik a zónarendszer?"}
         </h2>
         <div className="space-y-2 text-[12.5px] leading-relaxed text-ink-muted">
-          {isNL ? (
+          {isGB ? (
+            <>
+              <p>Londonban <strong className="text-ink">nem kell jegyet venni</strong>: érintős bankkártyával vagy telefonnal érintesz be, és a rendszer <strong className="text-ink">automatikusan plafonoz (capping)</strong>.</p>
+              <ul className="space-y-1 ml-4 list-disc">
+                <li><strong className="text-ink">Napi plafon:</strong> ha sokat utazol egy nap, egy összeg fölött már nem vonnak le többet — mintha napijegyed lenne.</li>
+                <li><strong className="text-ink">Heti plafon:</strong> hétfőtől vasárnapig is van egy felső határ — mintha hetijegyed lenne. Külön bérletet venni ezért ritkán éri meg.</li>
+                <li>⚠️ <strong className="text-ink">Mindig UGYANAZT a kártyát/eszközt használd</strong> — különben a rendszer két utasnak vesz, és nem áll össze a plafon.</li>
+                <li>Metrón és vonaton <strong className="text-ink">KI is kell érinteni</strong>; buszon csak be. Kiérintés nélkül a maximális díjat vonják le.</li>
+                <li>Londonon kívül <strong className="text-ink">nincs zónarendszer</strong> — ott sima menetdíj van, városonként saját (gyakran szintén plafonos) rendszerrel.</li>
+              </ul>
+            </>
+          ) : isNL ? (
             <>
               <p>Hollandiában NINCS zóna-jegy — a rendszer <strong className="text-ink">táv-alapú (per km)</strong>, és az <strong className="text-ink">OVpay / OV-chipkaart</strong> köré épül.</p>
               <ul className="space-y-1 ml-4 list-disc">
@@ -265,7 +283,11 @@ export function TransportGuide() {
         variant="info"
         notAdviceFor="utazási, jegyügyi vagy szerződéses"
         extraWarning="A megjelölt árak és zónák a tájékoztató publikálásakor érvényesek — időnként változnak. Jegyvásárlás előtt mindig ellenőrizd a hivatalos szolgáltató oldalán vagy alkalmazásában. A megjelölt szolgáltatókkal NEM állunk affiliate vagy kereskedelmi kapcsolatban."
-        officialSources={isNL ? [
+        officialSources={isGB ? [
+          { label: "TfL — Fares", url: "https://tfl.gov.uk/fares" },
+          { label: "National Rail", url: "https://www.nationalrail.co.uk/" },
+          { label: "Railcard", url: "https://www.railcard.co.uk/" },
+        ] : isNL ? [
           { label: "NS — Nederlandse Spoorwegen", url: "https://www.ns.nl/" },
           { label: "OVpay", url: "https://www.ovpay.nl/" },
         ] : isDE ? [
@@ -348,7 +370,8 @@ function GaVsHalbtaxCalculator() {
   const isAT = country === "AT";
   const isDE = country === "DE";
   const isNL = country === "NL";
-  const cur = country === "CH" ? "CHF" : "EUR";
+  const isGB = country === "GB";
+  const cur = country === "CH" ? "CHF" : country === "GB" ? "GBP" : "EUR";
   const [avgTripPrice, setAvgTripPrice] = useState(isDE ? 3.5 : isAT ? 3 : isNL ? 4 : 12);
   const [tripsPerWeek, setTripsPerWeek] = useState(5);
 

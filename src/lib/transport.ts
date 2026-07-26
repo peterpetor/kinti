@@ -616,3 +616,119 @@ export function calculateNlTransport(input: GaVsHalbtaxInput): NlTransportResult
     recommendation: dalVoordeelCost < fullPriceCost ? "dal-voordeel" : "full-price",
   };
 }
+
+/**
+ * ⚠️ ANGLIA — a rendszer logikája MÁS, mint bármelyik kontinentális országé:
+ *  - Londonban NINCS jegyvásárlás: érintős bankkártyával/telefonnal be- és
+ *    kiérintesz, a rendszer pedig automatikusan CAPPING-el (napi és HETI
+ *    plafon) — sosem fizetsz többet, mint a napi/heti bérlet ára,
+ *  - London ZÓNÁS (1–9), a többi város viszont NEM: ott sima menetdíj van,
+ *  - a vonat NEM egységes: sok magáncég (TOC) üzemelteti, és ugyanarra az
+ *    útra 3-4 különböző ár létezik attól függően, mikor és hol veszed.
+ */
+export const GB_TARIF_SYSTEMS: TarifSystem[] = [
+  {
+    id: "tfl", name: "TfL (London) — érintős fizetés + capping", abbreviation: "TfL", region: "London (1–9 zóna)", emoji: "🚇",
+    zonesCount: 9, description: "Londonban NE VEGYÉL JEGYET: érintős bankkártyával vagy telefonnal érints be a kapunál (metró/vonat/DLR esetén KI is), buszon csak be. A rendszer naponta és HETENTE is plafonoz (capping) — automatikusan a legolcsóbb tarifát adja.",
+    exampleZones: [{ name: "1-es zóna, egy metróút (csúcs)", zones: "~2,90 £" }, { name: "Busz (bármilyen táv)", zones: "1,75 £" }, { name: "1–2 zóna NAPI plafon", zones: "~8,90 £" }],
+    singleZonePrice: 2.9, dailyPrice: 8.9, websiteUrl: "https://tfl.gov.uk/fares", color: "#DC241F",
+  },
+  {
+    id: "national-rail", name: "National Rail (országos vonat)", abbreviation: "Rail", region: "Egész Anglia", emoji: "🚆",
+    zonesCount: 0, description: "Nem egy cég: sok magánüzemeltető (TOC) közös hálózata. Ugyanarra az útra több ár is van — az Advance (előre, adott vonatra) a legolcsóbb, az Anytime a legdrágább.",
+    exampleZones: [{ name: "London → Manchester (Advance)", zones: "~30–45 £" }, { name: "Ugyanaz aznap (Anytime)", zones: "~180 £!" }, { name: "Split ticketing trükkel", zones: "gyakran 20-40% olcsóbb" }],
+    singleZonePrice: 35, dailyPrice: 0, websiteUrl: "https://www.nationalrail.co.uk/", color: "#C00000",
+  },
+  {
+    id: "bus-england", name: "Városi buszok (Londonon kívül)", abbreviation: "Bus", region: "Manchester, Birmingham, Leeds…", emoji: "🚌",
+    zonesCount: 0, description: "Londonon kívül NINCS zónarendszer: a buszon sima menetdíjat fizetsz (érintős kártyával is). Az egyszeri buszjegy ára kormányzati sapka alatt van a legtöbb járaton.",
+    exampleZones: [{ name: "Egy buszút (sapkázott ár)", zones: "~2–3 £" }, { name: "Napijegy egy városban", zones: "~5–6 £" }, { name: "Manchester (Bee Network) napi plafon", zones: "~5 £" }],
+    singleZonePrice: 2.5, dailyPrice: 5.5, websiteUrl: "https://www.gov.uk/apply-for-subsidised-travel", color: "#0075C9",
+  },
+  {
+    id: "metro-regional", name: "Regionális metró/villamos", abbreviation: "Metro", region: "Manchester, Newcastle, Birmingham", emoji: "🚊",
+    zonesCount: 0, description: "Manchester (Metrolink), Newcastle (Tyne and Wear Metro), Birmingham (West Midlands Metro) — saját zónás/táv-alapú rendszer, jellemzően saját appal és napi plafonnal.",
+    exampleZones: [{ name: "Metrolink, városközpont", zones: "~1,60–3 £" }, { name: "Metrolink napi plafon", zones: "~5–8 £" }, { name: "Tyne and Wear Metro (1 zóna)", zones: "~2,20 £" }],
+    singleZonePrice: 2.5, dailyPrice: 6.5, websiteUrl: "https://tfgm.com/", color: "#FFB800",
+  },
+];
+
+export const GB_TICKET_TYPES: TicketType[] = [
+  { id: "contactless", name: "Érintős bankkártya / telefon", emoji: "💳", description: "A legegyszerűbb Londonban: NEM kell jegy és nem kell Oyster. Érints be (metrón/vonaton ki is), a rendszer napi és heti plafonnal a legolcsóbb árat számolja. ⚠️ MINDIG ugyanazt a kártyát/eszközt használd, különben nem áll össze a capping.", price: "használat szerint, plafonnal", validity: "Utanként (napi + heti plafon)", bestFor: "Szinte mindenki Londonban" },
+  { id: "oyster", name: "Oyster card", emoji: "🟦", description: "A feltölthető londoni kártya. Ma már főleg annak kell, aki nem érintős bankkártyás, vagy kedvezményt (Railcard-összekötés, Young Visitor) akar rátenni. Az árak azonosak az érintőssel.", price: "7 £ letét + feltöltés", validity: "Korlátlan (feltöltésig)", bestFor: "Kedvezmény vagy nincs érintős kártya" },
+  { id: "railcard", name: "Railcard (⅓ kedvezmény)", emoji: "🎫", description: "Éves kedvezménykártya a vonatra: 16-25, 26-30, Two Together (párban), Family & Friends, Senior. ⚠️ Kb. 1-2 hosszabb út alatt megtérül — és Londonban rá lehet kötni az Oysterre a csúcsidőn kívüli plafon csökkentéséhez.", price: "~35 £ / év", validity: "1 év", bestFor: "Aki évente 2+ hosszabb vonatutat tesz" },
+  { id: "advance", name: "Advance vonatjegy", emoji: "⏱️", description: "Konkrét vonatra, előre megvásárolt jegy — messze a legolcsóbb. Cserébe kötött: csak arra a járatra érvényes. A jegyek jellemzően 12 héttel előre nyílnak.", price: "az Anytime ár töredéke", validity: "Egy adott vonatra", bestFor: "Tervezett, hosszabb utak" },
+  { id: "season", name: "Season ticket (bérlet)", emoji: "📅", description: "Heti, havi vagy éves bérlet egy fix útvonalra — az ingázók megoldása. Az éves nagyjából 40 hét árába kerül. Sok munkáltató kamatmentes kölcsönt ad rá.", price: "útvonal szerint", validity: "1 hét – 1 év", bestFor: "Napi ingázó fix útvonalon" },
+  { id: "travelcard", name: "Travelcard (London, zónás bérlet)", emoji: "🎟️", description: "Hagyományos zónás bérlet (heti/havi/éves) Londonra. Érintős fizetésnél a HETI plafon jórészt kiváltja — havi vagy éves távon viszont még mindig olcsóbb lehet.", price: "zóna szerint", validity: "1 nap – 1 év", bestFor: "Havi/éves londoni ingázás" },
+];
+
+export const GB_MOBILE_APPS: MobileApp[] = [
+  { id: "tfl-go", name: "TfL Go", emoji: "🚇", description: "A londoni közlekedés hivatalos appja: élő menetrend, akadálymentes útvonalak, zsúfoltság, díj- és capping-áttekintés.", iosUrl: "https://apps.apple.com/gb/app/tfl-go/id1477875859", androidUrl: "https://play.google.com/store/apps/details?id=uk.gov.tfl.tflgo", pros: ["Élő metró-státusz", "Lépcsőmentes útvonalak", "Díj-áttekintés"] },
+  { id: "citymapper", name: "Citymapper", emoji: "🗺️", description: "A londoniak kedvence: minden közlekedési mód egyben, valós idejű útvonaltervezés, „mikor induljak” és melyik kocsiba szállj.", iosUrl: "https://apps.apple.com/gb/app/citymapper/id469463298", androidUrl: "https://play.google.com/store/apps/details?id=com.citymapper.app.release", pros: ["Minden mód egyben", "Valós idejű", "Melyik kocsiba szállj"] },
+  { id: "trainline", name: "Trainline", emoji: "🎫", description: "Vonatjegy-vásárlás az összes üzemeltetőtől egy helyen, árfigyelővel és split-ticketing javaslattal.", iosUrl: "https://apps.apple.com/gb/app/trainline/id417374590", androidUrl: "https://play.google.com/store/apps/details?id=com.thetrainline", pros: ["Minden TOC egy helyen", "Split ticketing", "Digitális jegy"] },
+];
+
+export const GB_TRANSPORT_TIPS: { emoji: string; title: string; body: string }[] = [
+  { emoji: "💳", title: "Londonban NE vegyél jegyet", body: "Érints be az érintős bankkártyáddal vagy telefonoddal — a rendszer napi ÉS heti plafonnal automatikusan a legolcsóbb tarifát számolja. Egy külön papírjegy szinte mindig drágább." },
+  { emoji: "⚠️", title: "Ugyanazt a kártyát használd végig", body: "A capping csak akkor áll össze, ha minden útnál UGYANAZT a kártyát/eszközt érinted. Ha hol a telefonod, hol a kártyád használod, a rendszer két külön utasnak veszi, és kétszer fizetsz." },
+  { emoji: "🚪", title: "Metrón/vonaton KI is kell érinteni", body: "Ha elfelejtesz kiérinteni, a maximális díjat (incomplete journey) vonják le. A TfL fiókodban visszaigényelhető, de macerás. Buszon viszont CSAK beérintés van." },
+  { emoji: "🎫", title: "Railcard: 1-2 út alatt megtérül", body: "A ~35 £/év Railcard ⅓ kedvezményt ad a vonatjegyekre. Egyetlen London–Manchester oda-vissza út alatt visszahozhatja az árát — és Londonban rá lehet kötni az Oysterre." },
+  { emoji: "⏱️", title: "Advance jegy vs Anytime: akár 5× különbség", body: "Ugyanaz a London–Manchester út Advance jeggyel ~35 £, aznapi Anytime jeggyel akár 180 £. A jegyek 12 héttel előre nyílnak — hosszabb útra MINDIG előre vegyél." },
+  { emoji: "✂️", title: "Split ticketing", body: "Ugyanarra az útra több, egymást követő szakaszjegy gyakran olcsóbb, mint egy végig-jegy — ugyanazon a vonaton maradsz. A Trainline és a Split My Fare automatikusan megkeresi." },
+  { emoji: "🚌", title: "Londonon kívül nincs zóna", body: "Manchesterben, Birminghamben és a legtöbb városban sima menetdíj van, nem zónarendszer. A buszjegy ára kormányzati sapka alatt van, és sok városnak van saját napi plafonja (pl. Bee Network)." },
+];
+
+/** Az Anglia-kalkulátor bemenete: heti utak száma és a tipikus egy-út ár. */
+export interface GbTravelInput {
+  /** Hány NAPON utazol egy héten (a plafon napi alapon számol). */
+  daysPerWeek: number;
+  /** Egy napon hány utat teszel (oda-vissza = 2). */
+  tripsPerDay: number;
+  /** Egy út ára plafon nélkül (£). */
+  singleFare: number;
+  /** Napi plafon (£) — TfL 1–2 zóna alapértelmezés. */
+  dailyCap: number;
+  /** Heti plafon (£). */
+  weeklyCap: number;
+}
+
+export interface GbTravelResult {
+  /** Plafon NÉLKÜL mennyi lenne egy hét. */
+  rawWeekly: number;
+  /** A napi plafon alkalmazása után. */
+  afterDailyCap: number;
+  /** A heti plafon alkalmazása után — ennyit fizetsz ténylegesen. */
+  actualWeekly: number;
+  /** Mennyit spórol neked a capping hetente. */
+  savedWeekly: number;
+  /** Melyik plafon lépett életbe. */
+  cappedBy: "none" | "daily" | "weekly";
+}
+
+/**
+ * TfL capping-számítás. A logika: minden NAP külön a napi plafonig számol,
+ * majd a heti összeget a heti plafon vágja le. Ez a valós TfL-mechanika, és
+ * ezért éri meg Londonban érintős kártyával utazni jegy helyett.
+ */
+export function calculateGbTravel(input: GbTravelInput): GbTravelResult {
+  const days = Math.max(0, input.daysPerWeek);
+  const perDayRaw = Math.max(0, input.tripsPerDay) * Math.max(0, input.singleFare);
+  const rawWeekly = perDayRaw * days;
+
+  const perDayCapped = input.dailyCap > 0 ? Math.min(perDayRaw, input.dailyCap) : perDayRaw;
+  const afterDailyCap = perDayCapped * days;
+
+  const actualWeekly = input.weeklyCap > 0 ? Math.min(afterDailyCap, input.weeklyCap) : afterDailyCap;
+
+  let cappedBy: "none" | "daily" | "weekly" = "none";
+  if (input.weeklyCap > 0 && actualWeekly < afterDailyCap) cappedBy = "weekly";
+  else if (perDayCapped < perDayRaw) cappedBy = "daily";
+
+  return {
+    rawWeekly,
+    afterDailyCap,
+    actualWeekly,
+    savedWeekly: Math.max(0, rawWeekly - actualWeekly),
+    cappedBy,
+  };
+}

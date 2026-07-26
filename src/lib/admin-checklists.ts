@@ -832,13 +832,131 @@ export const CHECKLISTS_NL: AdminChecklist[] = [
 ];
 
 /** Az összes csekklista (statikus generáláshoz + slug-kereséshez). */
-export const CHECKLISTS: AdminChecklist[] = [...CHECKLISTS_CH, ...CHECKLISTS_AT, ...CHECKLISTS_DE, ...CHECKLISTS_NL];
+
+/**
+ * ⚠️ ANGLIA — Brexit UTÁNI állapot. A legnagyobb szerkezeti különbség a többi
+ * országhoz képest: NINCS „bejelentkezés” (Anmeldung / inschrijving) —
+ * Nagy-Britanniában nem létezik lakcímnyilvántartás. Ezért itt nem a bejelentés,
+ * hanem a lakcím IGAZOLÁSA (proof of address) a fő nehézség, és emiatt épül a
+ * legtöbb csekklista párhuzamos szálakra, nem egyetlen hivatali sorra.
+ */
+export const CHECKLISTS_GB: AdminChecklist[] = [
+  {
+    slug: "gb-uj-bevandorlo",
+    title: "Most költöztem Angliába",
+    icon: "compass",
+    summary: "Az első hetek: National Insurance Number, GP-regisztráció, bankszámla, council tax.",
+    description: "⚠️ Angliában NINCS lakcímbejelentés — nem létezik lakcímnyilvántartó hivatal. Nincs tehát egyetlen „elintézem és kész” lépés; helyette több párhuzamos szálon kell elindulnod. A legfontosabb: a munkavállalási jogod igazolása, a National Insurance Number, a háziorvos (GP) és a bankszámla.",
+    deadline: "Council tax: a beköltözéstől mielőbb. NIN: amint tudsz.",
+    totalDuration: "Kb. 2-6 hét (a bankszámla és a NIN a szűk keresztmetszet)",
+    steps: [
+      { title: "Munkavállalási jog igazolása (share code)", body: "A munkáltató törvényi kötelessége ellenőrizni, hogy jogosult vagy-e dolgozni (right to work check). Ha EUSS-státuszod van (pre-settled/settled), a gov.uk-on generálsz egy share code-ot; ha vízumod, akkor az eVisa vagy a BRP-kártya igazolja.", link: { label: "gov.uk — Prove your right to work", url: "https://www.gov.uk/prove-right-to-work" }, duration: "10 perc" },
+      { title: "National Insurance Number igénylése", body: "A NIN a munkához, adóhoz és nyugdíjhoz kell. Online igényled a gov.uk-on. ⚠️ FONTOS: a NIN megérkezése ELŐTT is jogszerűen dolgozhatsz, ha van munkavállalási jogod — csak szólj a munkáltatónak, hogy igényelted.", link: { label: "gov.uk — Apply for a National Insurance number", url: "https://www.gov.uk/apply-national-insurance-number" }, duration: "20 perc + több hét átfutás" },
+      { title: "Bankszámla nyitása", body: "⚠️ Klasszikus 22-es csapdája: a hagyományos bank lakcímigazolást kér, ami frissen érkezőnek nincs. Kerülőút: digitális bank (Monzo, Starling, Revolut) — appból, pár nap alatt, rugalmasabb igazolással, teljes értékű brit számlaszámmal.", duration: "1-5 nap (digitális bank)" },
+      { title: "Regisztráció háziorvoshoz (GP)", body: "Keress egy közeli GP surgery-t és regisztrálj (GMS1 nyomtatvány, sokszor online). Ekkor kapsz NHS-számot. ⚠️ A rendelő NEM utasíthat el azért, mert nincs lakcímigazolásod vagy okmányod — ez a jogod.", link: { label: "NHS — How to register with a GP", url: "https://www.nhs.uk/nhs-services/gps/how-to-register-with-a-gp-surgery/" }, duration: "15-30 perc" },
+      { title: "Council tax bejelentés", body: "A council tax a LAKÓT terheli, nem a tulajdonost. Jelentkezz be a helyi önkormányzatnál (postcode alapján megtalálod). ⚠️ Egyedül élőként 25% kedvezmény, teljes idős hallgatóként jellemzően mentesség jár — de ezt IGÉNYELNI kell.", link: { label: "gov.uk — Council Tax", url: "https://www.gov.uk/council-tax" }, duration: "15 perc" },
+      { title: "Feliratkozás a választói névjegyzékre (electoral roll)", body: "Nem csak szavazáshoz jó: ez az egyik legerősebb eleme a brit hitel-előéletnek (credit score), ami a lakásbérlésnél, telefon-előfizetésnél és biztosításnál is számít.", link: { label: "gov.uk — Register to vote", url: "https://www.gov.uk/register-to-vote" }, duration: "5 perc" },
+    ],
+    warnings: ["⚠️ Brexit óta az EU-állampolgárság ÖNMAGÁBAN nem ad munkavállalási jogot — ehhez vízum vagy EUSS-státusz kell.", "NINCS lakcímbejelentés Angliában — ne keresd a hivatalt, nem létezik. A „proof of address” helyette rezsiszámlával, bérleti szerződéssel vagy council tax levéllel igazolható.", "A brit credit score NULLÁRÓL indul — a magyar előélet nem számít bele. Ez az első hónapokban lakásbérlésnél is akadály lehet."],
+    sources: [{ label: "gov.uk — Living in the UK", url: "https://www.gov.uk/browse/citizenship" }, { label: "NHS — Services", url: "https://www.nhs.uk/nhs-services/" }],
+  },
+  {
+    slug: "gb-nin",
+    title: "National Insurance Number igénylése",
+    icon: "document",
+    summary: "A brit adó- és járulék-azonosító — munkához, nyugdíjhoz kell.",
+    description: "A National Insurance Number (formátum: QQ 12 34 56 C) élethosszig ugyanaz marad, és nem változik munkahely- vagy névváltáskor. Ezen tartják nyilván a járulék-befizetéseidet és az adódat.",
+    deadline: "Nincs jogi határidő, de a munkakezdés után mielőbb.",
+    totalDuration: "20 perc kérelem + 2-8 hét átfutás",
+    steps: [
+      { title: "Jogosultság ellenőrzése", body: "Kell hozzá munkavállalási jog: EUSS-státusz (pre-settled/settled) vagy megfelelő vízum. Enélkül a kérelmet elutasítják.", duration: "5 perc" },
+      { title: "Online kérelem beadása", body: "A gov.uk „Apply for a National Insurance number” oldalán. Kell: útlevél, a munkavállalási jog igazolása (share code), brit lakcím.", link: { label: "gov.uk — Apply for a NIN", url: "https://www.gov.uk/apply-national-insurance-number" }, duration: "20 perc" },
+      { title: "Azonosítás (ha kérik)", body: "Néha személyes azonosítást, videóhívást vagy okmány-feltöltést kérnek. Válaszolj gyorsan, különben újraindul a sor.", duration: "változó" },
+      { title: "A szám megérkezése", body: "Postán küldik a megadott címre. Jegyezd fel — ez élethosszig a tiéd.", duration: "2-8 hét" },
+    ],
+    warnings: ["⚠️ Gyakori tévhit: „NIN nélkül nem alkalmazhatnak”. EZ NEM IGAZ — ha van munkavállalási jogod, addig is dolgozhatsz, csak jelezd, hogy igényelted.", "Emergency tax kóddal átmenetileg többet vonhatnak; a túlfizetést a HMRC Personal Tax Accountban INGYEN visszaigényelheted — ne fizess jutalékos „adó-visszatérítő” cégnek."],
+    sources: [{ label: "gov.uk — National Insurance", url: "https://www.gov.uk/national-insurance" }],
+  },
+  {
+    slug: "gb-nhs-gp",
+    title: "Regisztráció háziorvoshoz (GP)",
+    icon: "heart",
+    summary: "Az NHS kapuja — szinte minden ellátás a GP-nél kezdődik.",
+    description: "A brit egészségügy kapuőr-elvű: a GP (general practitioner, háziorvos) utal tovább szakorvoshoz és kórházba. Ezért az egyik első teendő beköltözés után a regisztráció.",
+    deadline: "Mielőbb — ne várd meg, amíg beteg leszel.",
+    totalDuration: "15-30 perc + pár nap feldolgozás",
+    steps: [
+      { title: "Rendelő keresése", body: "Az NHS oldalán postcode alapján keresd meg a hozzád tartozó GP surgery-ket. A körzet (catchment area) számít: jellemzően a lakóhelyedhez közelibe vesznek fel.", link: { label: "NHS — Find a GP", url: "https://www.nhs.uk/service-search/find-a-gp" }, duration: "10 perc" },
+      { title: "Regisztrációs űrlap (GMS1)", body: "Sok rendelőnél online, máshol személyesen. Kérhetnek okmányt és lakcímigazolást — de ezek HIÁNYA nem lehet elutasítási ok.", duration: "15 perc" },
+      { title: "NHS-szám megérkezése", body: "A regisztráció után kapsz NHS-számot (vagy a meglévő aktiválódik). Ez azonosít az egész rendszerben.", duration: "pár nap - 2 hét" },
+      { title: "Első egészségügyi felmérés", body: "Új páciensnél gyakran hívnak egy rövid health check-re (vérnyomás, kórtörténet). Érdemes elmenni, mert így kerülnek be az alapadataid.", duration: "20 perc" },
+    ],
+    warnings: ["⚠️ A rendelő NEM utasíthat el lakcímigazolás, okmány vagy állandó lakhatás hiánya miatt. Ha mégis, kérj írásos indoklást, vagy fordulj az NHS England-hez.", "Sürgősség: 999 (mentő), 111 (nem-sürgős tanácsadás, 0-24). A gyógyszertár sok kisebb panaszra beutaló nélkül ad tanácsot.", "Angliában a receptért tételenként fizetni kell (kb. 10 £) — Skóciában és Walesben ingyenes."],
+    sources: [{ label: "NHS — How to register with a GP surgery", url: "https://www.nhs.uk/nhs-services/gps/how-to-register-with-a-gp-surgery/" }],
+  },
+  {
+    slug: "gb-council-tax",
+    title: "Council tax bejelentés és kedvezmények",
+    icon: "house",
+    summary: "A lakóra kivetett helyi adó — a kedvezményt IGÉNYELNI kell.",
+    description: "A council tax a helyi önkormányzatnak fizetett éves adó (szemétszállítás, közszolgáltatások, közvilágítás), jellemzően 10 vagy 12 részletben. ⚠️ A LAKÓ fizeti, nem a tulajdonos — sokan ezt későn tudják meg.",
+    deadline: "A beköltözés után mielőbb; a tartozás visszamenőleg is behajtható.",
+    totalDuration: "15 perc",
+    steps: [
+      { title: "Az önkormányzat megkeresése", body: "A postcode alapján a gov.uk megmondja, melyik council alá tartozol. Ott jelented be a beköltözést.", link: { label: "gov.uk — Find your local council", url: "https://www.gov.uk/find-local-council" }, duration: "5 perc" },
+      { title: "Az ingatlan sávjának (band) ellenőrzése", body: "Minden ingatlan A-H sávba sorolt, a sáv határozza meg az összeget.", link: { label: "gov.uk — Check your Council Tax band", url: "https://www.gov.uk/council-tax-bands" }, duration: "5 perc" },
+      { title: "Kedvezmény igénylése", body: "⚠️ Egyedül élőként 25% Single Person Discount jár. Teljes idős hallgatóként jellemzően TELJES mentesség. Alacsony jövedelemnél Council Tax Reduction kérhető. Ezek egyike sem automatikus — igényelni kell.", duration: "10 perc" },
+      { title: "Fizetés beállítása", body: "Direct debit a legegyszerűbb. Kérheted a 12 részletes fizetést a 10 helyett — így alacsonyabb a havi teher.", duration: "5 perc" },
+    ],
+    warnings: ["⚠️ Ha nem jelentkezel be, az nem mentesség — a tartozás gyűlik, és behajtási eljárás indulhat.", "Költözéskor JELENTSD a kiköltözést is, különben a régi címen tovább számláznak.", "Szobabérlésnél (HMO) gyakran a főbérlő fizeti — de ezt a szerződésben ellenőrizd, ne feltételezd."],
+    sources: [{ label: "gov.uk — Council Tax", url: "https://www.gov.uk/council-tax" }],
+  },
+  {
+    slug: "gb-lakasberles",
+    title: "Lakásbérlés és kaució-védelem",
+    icon: "house",
+    summary: "AST-szerződés, kötelező kaució-védelem 30 napon belül, Right to Rent.",
+    description: "A tipikus magánbérlet Angliában assured shorthold tenancy (AST). A legfontosabb jogod a kaució állami védelme — ezt a legtöbb újonnan érkező nem ismeri, és ezen a ponton érik a legtöbb visszaélés.",
+    deadline: "A kauciót a bérbeadónak 30 napon belül védett sémába kell helyeznie.",
+    totalDuration: "1-4 hét (a lakáskereséstől a beköltözésig)",
+    steps: [
+      { title: "Right to Rent ellenőrzés", body: "A bérbeadó törvényi kötelessége ellenőrizni a tartózkodási jogodat (share code-dal igazolható). Ez normális eljárás, nem diszkrimináció.", duration: "10 perc" },
+      { title: "A szerződés (AST) átolvasása", body: "Nézd: a fix időszak hossza (jellemzően 6 vagy 12 hónap), a felmondási feltételek, ki fizeti a council taxet és a rezsit. ⚠️ 2019 óta TILOS adminisztrációs díjat (agency fee) kérni a bérlőtől.", duration: "30 perc" },
+      { title: "Kaució befizetése", body: "A törvényi maximum 5 heti bérleti díj (50 000 £ éves bér alatt). Kérj írásos átvételi elismervényt.", duration: "10 perc" },
+      { title: "⚠️ A kaució-védelem igazolásának bekérése", body: "A bérbeadónak 30 napon belül egy állami engedélyű sémába kell tennie a kauciót (Deposit Protection Service, MyDeposits vagy Tenancy Deposit Scheme), ÉS erről igazolást adni. Ha nem teszi, a kaució 1-3-szorosát perelheted, és a bérbeadó nem tud szabályosan felmondani.", link: { label: "gov.uk — Tenancy deposit protection", url: "https://www.gov.uk/tenancy-deposit-protection" }, duration: "5 perc (de KÉRD EL!)" },
+      { title: "Állapotfelmérés (inventory) fotókkal", body: "Beköltözéskor készíts részletes, dátumozott fotókat minden hibáról és a mérőórákról. A kaució-vitáknál ez dönt.", duration: "30 perc" },
+    ],
+    warnings: ["⚠️ A kaució-védelem igazolásának elmaradása a leggyakoribb visszaélés az újonnan érkezőkkel szemben — MINDIG kérd el.", "Kezes (guarantor) vagy több havi bér előre gyakori kérés, ha nincs brit hitel-előéleted.", "Bérlőként védett vagy: 2 hónapos felmondás és bírósági eljárás nélkül nem lakoltathatnak ki."],
+    sources: [{ label: "gov.uk — Private renting", url: "https://www.gov.uk/private-renting" }, { label: "Shelter England", url: "https://england.shelter.org.uk/" }],
+  },
+  {
+    slug: "gb-ado-paye",
+    title: "Adózás: PAYE, tax code, Self Assessment",
+    icon: "document",
+    summary: "A bérből automatikusan vonják — de a rossz tax code sokba kerülhet.",
+    description: "⚠️ A brit adóév NEM naptári év: április 6-tól a következő április 5-ig tart. Alkalmazottként a munkáltató a PAYE rendszerben vonja az adót és a National Insurance-t; a legtöbb embernek nem kell adóbevallást beadnia.",
+    deadline: "Self Assessment (ha kell): az adóév végét követő január 31.",
+    totalDuration: "Folyamatos; az ellenőrzés 20 perc",
+    steps: [
+      { title: "P45 átadása az új munkáltatónak", body: "Ha volt korábbi brit munkahelyed, a kilépéskor kapott P45-öt add oda az újnak. Enélkül emergency tax kódra tehetnek, és túl sokat vonnak.", duration: "5 perc" },
+      { title: "Personal Tax Account létrehozása", body: "A HMRC online fiókjában látod a tax code-odat, a befizetéseidet és a becsült éves adódat. Itt tudod javíttatni a hibás kódot is.", link: { label: "gov.uk — Personal tax account", url: "https://www.gov.uk/personal-tax-account" }, duration: "15 perc" },
+      { title: "A tax code ellenőrzése", body: "A payslipen látod (pl. 1257L = teljes Personal Allowance). Ha BR, D0 vagy W1/M1 van rajta, valószínűleg túl sokat vonnak — jelezd a HMRC-nek.", link: { label: "gov.uk — Tax codes", url: "https://www.gov.uk/tax-codes" }, duration: "5 perc" },
+      { title: "P60 megőrzése", body: "Az adóév végén kapod: összesíti az éves keresetet és a levont adót. Lakásbérlésnél, hitelnél is kérhetik.", duration: "—" },
+      { title: "Self Assessment — csak ha kell", body: "Akkor kötelező, ha önfoglalkoztató vagy, 1 000 £ fölött van mellékjövedelmed, ingatlant adsz bérbe, vagy 100 000 £ fölött keresel.", link: { label: "gov.uk — Self Assessment", url: "https://www.gov.uk/self-assessment-tax-returns" }, duration: "1-3 óra (ha releváns)" },
+    ],
+    warnings: ["⚠️ Túlfizetés esetén a HMRC gyakran automatikusan visszatérít (P800 levél), de magad is igényelheted a Personal Tax Accountban — INGYEN. Ne fizess jutalékot „adó-visszatérítő” cégnek.", "A Self Assessment késedelméért automatikus 100 £ bírság jár, akkor is, ha nincs fizetendő adód.", "Skóciában ELTÉRŐ jövedelemadó-sávok vannak."],
+    sources: [{ label: "gov.uk — Income Tax", url: "https://www.gov.uk/income-tax" }],
+  },
+];
+
+export const CHECKLISTS: AdminChecklist[] = [...CHECKLISTS_CH, ...CHECKLISTS_AT, ...CHECKLISTS_DE, ...CHECKLISTS_NL, ...CHECKLISTS_GB];
 
 /** A választott ország csekklistái (a lista-nézethez). */
 export function getChecklists(country: string | null | undefined): AdminChecklist[] {
   if (country === "AT") return CHECKLISTS_AT;
   if (country === "DE") return CHECKLISTS_DE;
   if (country === "NL") return CHECKLISTS_NL;
+  if (country === "GB") return CHECKLISTS_GB;
   return CHECKLISTS_CH;
 }
 

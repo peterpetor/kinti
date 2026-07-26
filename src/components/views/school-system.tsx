@@ -185,6 +185,33 @@ const NL_LEVELS: SchoolLevel[] = [
   { name: "Voortgezet onderwijs", nameDe: "VMBO / HAVO / VWO", emoji: "🏫", ages: "12–16/18 év", years: "4–6", color: "text-[#6366f1]", bg: "bg-[#ede9fe]", description: "Három fő irány a schooladvies alapján. Az átjárás felfelé lehetséges (»stapelen«).", tracks: ["VWO (6 év, benne gymnasium latin/göröggel) → WO (kutatóegyetem)", "HAVO (5 év) → HBO (alkalmazott egyetem)", "VMBO (4 év, szakmai) → MBO (szakképzés)"], tip: "A »brugklas« (1. év) gyakran vegyes szintű — az első év után pontosít a szint." },
   { name: "Vervolgonderwijs (MBO / HBO / WO)", emoji: "🎓", ages: "16/18+ év", years: "1–6", color: "text-[#0ea5e9]", bg: "bg-[#e0f2fe]", description: "A középiskola után a szint szerinti továbbtanulás.", tracks: ["MBO (szakképzés, niveau 1–4) — VMBO után", "HBO (hogeschool, alkalmazott felsőoktatás) — HAVO után", "WO (universiteit, kutatóegyetem) — VWO után"] },
 ];
+
+/**
+ * ⚠️ ANGLIA — a rendszer szerkezetileg más, mint a kontinentális:
+ *  - a gyerek már 4 évesen iskolába kerül (Reception), nem óvodába,
+ *  - NINCS korai szétválasztás képzési ágakra (mint a német/holland modell):
+ *    mindenki ugyanazt a secondary schoolt járja 16-ig, GCSE-vel a végén,
+ *  - a szétválás 16 évesen jön (A-level vagy szakmai BTEC/apprenticeship),
+ *  - a helyet nem az iskolánál, hanem az ÖNKORMÁNYZATNÁL kell megpályázni,
+ *    szigorú határidőkkel — ez a leggyakoribb hibaforrás az érkezőknél.
+ */
+const GB_LEVELS: SchoolLevel[] = [
+  { name: "Nursery / Early Years", emoji: "🎨", ages: "0–4 év", years: "0–4", color: "text-[#f59e0b]", bg: "bg-[#fef3c7]", description: "Bölcsőde és óvoda — nem kötelező. 3–4 éves kortól minden gyereknek jár heti 15 óra ingyenes ellátás (dolgozó szülőknek 30 óra); a fiatalabb korosztályra is bővült a támogatás.", tip: "Az ingyenes órakeretet IGÉNYELNI kell a childcare-choices oldalon — nem automatikus, és a helyeket korán elkapkodják." },
+  { name: "Primary school", nameDe: "Reception + Year 1–6", emoji: "📚", ages: "4–11 év", years: 7, color: "text-[#10b981]", bg: "bg-[#d1fae5]", description: "A gyerek a 4. életévét betöltő tanévben kezdi a Receptiont (a tankötelezettség hivatalosan 5 évesen indul). Infants (Reception–Y2) és Juniors (Y3–Y6) tagolás.", tip: "Year 6 végén nincs felvételi vizsga a legtöbb helyen — a továbbmenetel automatikus a körzeti secondary schoolba." },
+  { name: "Secondary school", nameDe: "Year 7–11 → GCSE", emoji: "🏫", ages: "11–16 év", years: 5, color: "text-[#6366f1]", bg: "bg-[#ede9fe]", description: "⚠️ Itt NINCS ágakra bontás, mint Németországban vagy Hollandiában: minden gyerek ugyanazt az iskolatípust járja, és 16 évesen GCSE-vizsgákat tesz 8–10 tantárgyból.", tracks: ["Comprehensive school — a legtöbb gyerek ide jár, nincs felvételi", "Grammar school — csak néhány megyében, 11+ felvételi vizsgával", "Academy / Free school — állami finanszírozású, önálló irányítású", "Independent (private) school — tandíjas"], tip: "A GCSE-eredmény 9–1 skálán megy (9 a legjobb) — a régi A*–G helyett. A 4-es a „standard pass”, az 5-ös a „strong pass”." },
+  { name: "Sixth form / College", nameDe: "Year 12–13 → A-level", emoji: "🎓", ages: "16–18 év", years: 2, color: "text-[#0ea5e9]", bg: "bg-[#e0f2fe]", description: "16 után is kötelező oktatásban vagy képzésben maradni 18-ig. Itt válik szét az út.", tracks: ["A-level (jellemzően 3 tantárgy) — az egyetemi út", "BTEC / T-level — szakmai, gyakorlat-orientált képzés", "Apprenticeship — fizetett tanulószerződés munka mellett"], tip: "Az egyetemi jelentkezés a UCAS-on keresztül megy, jellemzően az utolsó előtti évben, januári fő határidővel." },
+];
+const GB_NOTE = "Angliában a tankötelezettség 5–16 év, de 18 éves korig oktatásban vagy képzésben kell maradni. ⚠️ A rendszer két ponton tér el élesen a kontinentálistól: (1) a gyerek már 4 évesen iskolába kerül, nem óvodába, és (2) NINCS korai szétválasztás képzési ágakra — mindenki ugyanazt a secondary schoolt járja 16-ig. Az osztályzás GCSE-n 9–1 skálán megy (9 a legjobb), A-level-en A*–E — egyik sem hasonlít a magyar 1–5-re.";
+const GB_TIPS = [
+  { icon: "📅", text: "⚠️ A jelentkezési határidők KÖTÖTTEK és a lekésésük komoly hátrány: általános iskolába jellemzően január 15., középiskolába október 31. Év közbeni érkezésnél külön „in-year admission” eljárás van — közvetlenül az önkormányzatnál." },
+  { icon: "🏛️", text: "A helyet NEM az iskolánál, hanem a lakóhely szerinti önkormányzatnál (local council) pályázod meg, több iskolát rangsorolva. A felvétel fő szempontja a lakóhely távolsága (catchment area) és a testvér az iskolában." },
+  { icon: "📝", text: "Beiratkozáshoz: útlevél/születési anyakönyvi kivonat, lakcímigazolás (bérleti szerződés, council tax levél) és az előző iskola bizonyítványa — a fordítást gyakran kérik." },
+  { icon: "🗣️", text: "Ha a gyerek nem tud angolul: EAL (English as an Additional Language) támogatást kap a NORMÁL osztályban. Külön felzárkóztató osztály — a holland nieuwkomersklas-szal ellentétben — a legtöbb helyen NINCS." },
+  { icon: "👕", text: "Az állami iskola tandíjmentes, de az egyenruha (uniform) KÖTELEZŐ és költséges. Sok iskolának van használt-egyenruha börzéje; alacsony jövedelemnél a council adhat támogatást." },
+  { icon: "🍽️", text: "Alacsony jövedelemnél jár a free school meals (ingyenes ebéd) — ezt igényelni kell. Angliában minden Reception–Year 2 gyerek jövedelemtől függetlenül ingyen ebédel." },
+  { icon: "📊", text: "Az iskolák minőségét az Ofsted értékeli, és a jelentések nyilvánosak — iskolaválasztás előtt érdemes elolvasni őket." },
+];
+
 const NL_TIPS = [
   { icon: "📝", text: "Beiratkozáshoz: útlevél/igazolvány, BSN, uittreksel BRP (lakcím-kivonat), és az előző iskola bizonyítványa (lehetőleg hitelesített fordítással)." },
   { icon: "🗣️", text: "Ha a gyerek nem tud hollandul: nieuwkomersklas / taalklas (középiskolában ISK — internationale schakelklas) segíti a felzárkózást — ingyenes." },
@@ -212,11 +239,12 @@ export function SchoolSystem() {
   const isAT = country === "AT";
   const isDE = country === "DE";
   const isNL = country === "NL";
-  const isNational = isAT || isDE || isNL; // nemzeti rendszer (nincs régió-választó)
+  const isGB = country === "GB";
+  const isNational = isAT || isDE || isNL || isGB; // nemzeti rendszer (nincs régió-választó)
   const [selected, setSelected] = useState<CantonCode>("ZH");
   const canton = CANTONS[selected];
-  const levels = isNL ? NL_LEVELS : isDE ? DE_LEVELS : isAT ? AT_LEVELS : canton.levels;
-  const regionTitle = isNL ? "Hollandia" : isDE ? "Németország" : isAT ? "Ausztria" : canton.name;
+  const levels = isGB ? GB_LEVELS : isNL ? NL_LEVELS : isDE ? DE_LEVELS : isAT ? AT_LEVELS : canton.levels;
+  const regionTitle = isGB ? "Anglia" : isNL ? "Hollandia" : isDE ? "Németország" : isAT ? "Ausztria" : canton.name;
 
   const langLabel: Record<string, string> = { de: "🇩🇪 Német", fr: "🇫🇷 Francia", it: "🇮🇹 Olasz" };
 
@@ -227,9 +255,11 @@ export function SchoolSystem() {
         <div className="flex items-start gap-3">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary text-white text-2xl">🏫</span>
           <div>
-            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">{isNL ? "Holland Iskolarendszer" : isDE ? "Német Iskolarendszer" : isAT ? "Osztrák Iskolarendszer" : "Svájci Iskolarendszer"}</h1>
+            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">{isGB ? "Angol Iskolarendszer" : isNL ? "Holland Iskolarendszer" : isDE ? "Német Iskolarendszer" : isAT ? "Osztrák Iskolarendszer" : "Svájci Iskolarendszer"}</h1>
             <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
-              {isNL
+              {isGB
+                ? "Az angol iskolarendszer szintjei kiköltöző szülőknek — a Receptiontől a GCSE-n át az A-levelig."
+                : isNL
                 ? "A holland iskolarendszer szintjei kiköltöző szülőknek — a basisschooltól a VMBO/HAVO/VWO-n át az MBO/HBO/WO-ig."
                 : isDE
                 ? "A német iskolarendszer szintjei kiköltöző szülőknek — a Kitától az Abiturig és az Ausbildungig (Bundeslandonként eltér)."
@@ -271,10 +301,10 @@ export function SchoolSystem() {
         <div className="flex items-center gap-2 mb-2">
           <span className="text-[14px] font-extrabold text-ink">{regionTitle}</span>
           <span className="rounded-pill bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-muted">
-            {isNL ? "🇳🇱 Holland nyelvű" : isAT || isDE ? "🇩🇪 Német nyelvű" : `${langLabel[canton.lang]} nyelvű`}
+            {isGB ? "🏴 Angol nyelvű" : isNL ? "🇳🇱 Holland nyelvű" : isAT || isDE ? "🇩🇪 Német nyelvű" : `${langLabel[canton.lang]} nyelvű`}
           </span>
         </div>
-        <p className="text-[12.5px] leading-snug text-ink-muted">{isNL ? NL_NOTE : isDE ? DE_NOTE : isAT ? AT_NOTE : canton.note}</p>
+        <p className="text-[12.5px] leading-snug text-ink-muted">{isGB ? GB_NOTE : isNL ? NL_NOTE : isDE ? DE_NOTE : isAT ? AT_NOTE : canton.note}</p>
       </div>
 
       {/* Vizuális szintlépők */}
@@ -338,7 +368,7 @@ export function SchoolSystem() {
       {/* Általános tippek */}
       <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
         <h2 className="text-[13px] font-extrabold text-ink">📌 Amit minden szülőnek tudni kell</h2>
-        {(isNL ? NL_TIPS : isDE ? DE_TIPS : isAT ? AT_TIPS : [
+        {(isGB ? GB_TIPS : isNL ? NL_TIPS : isDE ? DE_TIPS : isAT ? AT_TIPS : [
           { icon: "📝", text: "Beiratkozáshoz: útlevél, tartózkodási engedély, és az előző iskola bizonyítványa (lehetőleg hitelesített fordítással)." },
           { icon: "🗣️", text: "Ha a gyerek nem tud svájcin / franciául / olaszul: a legtöbb kanton ingyenes INTENSIVKURS-t (felzárkóztató tanfolyamot) biztosít." },
           { icon: "🚌", text: "Az iskolabusz (Schulbus) sok helyen ingyenes — a körzet határolja meg. A lakcím megválasztása kulcsfontosságú." },
@@ -364,7 +394,11 @@ export function SchoolSystem() {
           : isAT
           ? "Az osztrák iskolarendszer szabályai tartományonként kis eltéréssel és évente változhatnak. Beiratkozás előtt ellenőrizd a lakhely szerinti tartományi oktatási igazgatóság (Bildungsdirektion) aktuális tájékoztatóját."
           : "A svájci iskolarendszer szabályai kantononként és évente változhatnak. Mindig ellenőrizd a lakhely szerinti kanton oktatási hivatal (Volksschulamt / Service de l'enseignement) aktuális tájékoztatóját beiratkozás előtt."}
-        officialSources={isNL ? [
+        officialSources={isGB ? [
+          { label: "gov.uk — Schools and education", url: "https://www.gov.uk/browse/education" },
+          { label: "gov.uk — Apply for a school place", url: "https://www.gov.uk/apply-for-primary-school-place" },
+          { label: "Ofsted — iskolai jelentések", url: "https://reports.ofsted.gov.uk/" },
+        ] : isNL ? [
           { label: "Rijksoverheid — Basisonderwijs", url: "https://www.rijksoverheid.nl/onderwerpen/basisonderwijs" },
           { label: "DUO — Dienst Uitvoering Onderwijs", url: "https://www.duo.nl/" },
         ] : isDE ? [

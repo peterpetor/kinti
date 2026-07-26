@@ -117,6 +117,9 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "angol-oneletrajz",// ⭐ brit CV-készítő (fotó/születési év NÉLKÜL, UK-konvenció)
   "berkalkulator",   // ⭐ VAN GB-számítás (computeSalaryGB: PAYE + Class 1 NI)
   "vizum",           // ⭐ VAN GB letelepedés-varázsló (EUSS vs Skilled Worker)
+  "ugyintezes",      // ⭐ VAN GB csekklista-bank (CHECKLISTS_GB, 6 db)
+  "iskolarendszer",  // ⭐ VAN GB iskolarendszer (GB_LEVELS: Reception→GCSE→A-level)
+  "kozlekedes",      // ⭐ VAN GB közlekedés (TfL capping, National Rail, Railcard)
 ]);
 
 export function isFeatureAvailable(
