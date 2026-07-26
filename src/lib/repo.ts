@@ -25,4 +25,3 @@ export * from "./repo-quiz-stats";
 export * from "./repo-b2b";
 export * from "./repo-cv";
 export * from "./repo-housing";
-export * from "./repo-hun-population";
