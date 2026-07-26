@@ -15,6 +15,9 @@ const SWISS_CENTER: [number, number] = [46.82, 8.23];
 const AT_CENTER: [number, number] = [47.7, 13.9];
 const DE_CENTER: [number, number] = [51.1, 10.4];
 const NL_CENTER: [number, number] = [52.2, 5.4];
+/** ⚠️ Anglia közepe (Midlands) — GB-ág nélkül a térkép SVÁJCRA nagyított volna
+ *  az Állások oldalon, ami GB-ben engedélyezett funkció. */
+const GB_CENTER: [number, number] = [52.6, -1.5];
 
 /** Osztrák Bundesland-centroidok (a regions.ts AT-kódjaival). A jobs/events
  *  ugyanezeket a kódokat tárolja, így a buborékok a megfelelő helyre kerülnek. */
@@ -53,6 +56,19 @@ const DE_BUNDESLAND_COORDS: Record<string, { lat: number; lng: number }> = {
 
 /** Holland provincia-centroidok (a regions.ts NL-kódjaival). Az NL "ZH" itt
  *  Zuid-Holland — ez a tábla CSAK country="NL" mellett kerül elő. */
+/** Angol régió-központok (a gb-points.ts régió-pontjaival egyező kódokkal). */
+const GB_REGION_COORDS: Record<string, { lat: number; lng: number }> = {
+  LDN: { lat: 51.5074, lng: -0.1278 },
+  SE:  { lat: 51.2,    lng: -0.6 },
+  SW:  { lat: 50.9,    lng: -3.2 },
+  EE:  { lat: 52.2,    lng:  0.5 },
+  WM:  { lat: 52.4862, lng: -1.8904 },
+  EM:  { lat: 52.9,    lng: -1.0 },
+  NW:  { lat: 53.7,    lng: -2.6 },
+  YH:  { lat: 53.9,    lng: -1.3 },
+  NE:  { lat: 54.9,    lng: -1.8 },
+};
+
 const NL_PROVINCE_COORDS: Record<string, { lat: number; lng: number }> = {
   NH: { lat: 52.60, lng: 4.92 },
   ZH: { lat: 52.02, lng: 4.49 },
@@ -101,9 +117,10 @@ export function CantonBubbleMap({
   const isAT = country === "AT";
   const isDE = country === "DE";
   const isNL = country === "NL";
+  const isGB = country === "GB";
   const COORDS: Record<string, { lat: number; lng: number }> =
-    coordsOverride ?? (isDE ? DE_BUNDESLAND_COORDS : isAT ? AT_BUNDESLAND_COORDS : isNL ? NL_PROVINCE_COORDS : CANTON_COORDS);
-  const center = isDE ? DE_CENTER : isAT ? AT_CENTER : isNL ? NL_CENTER : SWISS_CENTER;
+    coordsOverride ?? (isDE ? DE_BUNDESLAND_COORDS : isAT ? AT_BUNDESLAND_COORDS : isNL ? NL_PROVINCE_COORDS : isGB ? GB_REGION_COORDS : CANTON_COORDS);
+  const center = isDE ? DE_CENTER : isAT ? AT_CENTER : isNL ? NL_CENTER : isGB ? GB_CENTER : SWISS_CENTER;
 
   useEffect(() => {
     if (!fullscreen) return;
