@@ -113,6 +113,7 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "b2b",             // zárt vállalkozói projektpiac
   "utalas",          // árfolyam/utalás — GBP→HUF ugyanúgy működik
   "vam",             // ⭐ VAN GB-konfig (customs.ts CUSTOMS_CONFIG.GB, gov.uk)
+  "tudasbazis",      // ⭐ VAN GB guide-bank (guides.ts GUIDES_GB, 8 cikk gov.uk/NHS forrásból)
 ]);
 
 export function isFeatureAvailable(

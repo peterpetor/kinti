@@ -25,7 +25,9 @@ export function ComparisonTable({
   showNote = true,
 }: {
   comparison: GuideComparison;
-  currentCountry?: "CH" | "AT" | "DE" | "NL" | null;
+  // GB is elfogadott: az összehasonlító táblák CH/AT/DE/NL-t hasonlítanak,
+  // GB-cikknél egyszerűen nincs kiemelt sor (a tábla maga sem jelenik meg).
+  currentCountry?: "CH" | "AT" | "DE" | "NL" | "GB" | null;
   showNote?: boolean;
 }) {
   return (

@@ -2157,13 +2157,193 @@ export const GUIDES_NL: Guide[] = [
 ];
 
 /** Az összes guide (statikus generáláshoz + slug-kereséshez). */
-export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT, ...GUIDES_DE, ...GUIDES_NL];
+
+/**
+ * Anglia — Brexit UTÁNI állapot. ⚠️ A legfontosabb különbség a többi országhoz
+ * képest: Nagy-Britannia NEM EU-tag, nincs szabad mozgás. Aki 2020. dec. 31.
+ * UTÁN érkezik, annak VÍZUM kell (jellemzően munkáltatói szponzorálással).
+ * A számadatok gyorsan változnak — minden cikk alján a hivatalos gov.uk forrás.
+ */
+export const GUIDES_GB: Guide[] = [
+  {
+    slug: "gb-letelepedes",
+    title: "Letelepedés és vízum (Brexit után)",
+    summary: "Nincs szabad mozgás: 2021 óta vízum kell. Aki 2020 vége előtt érkezett: EU Settlement Scheme (pre-settled / settled status).",
+    tldr: [
+      "⚠️ Brexit óta NINCS szabad mozgás: EU-állampolgárként is vízum kell a munkavállaláshoz, ha 2021. január 1. után érkeztél.",
+      "Aki 2020. december 31. előtt már itt élt: az EU Settlement Scheme adja a pre-settled (5 év alatt) vagy settled (5 év után) státuszt.",
+      "A leggyakoribb út új érkezőnek a Skilled Worker vízum — ehhez KELL egy szponzor-engedéllyel rendelkező munkáltató álláskánlata.",
+    ],
+    icon: "home",
+    sections: [
+      { heading: "Aki 2020. december 31. előtt érkezett", body: ["Rájuk az EU Settlement Scheme (EUSS) vonatkozik. A fő jelentkezési határidő 2021. június 30. volt, de „ésszerű indok\" (reasonable grounds) esetén késői jelentkezés ma is lehetséges — pl. gyerek, betegség, tájékozatlanság miatt.", "5 évnél rövidebb ittlét → pre-settled status (határozott idejű); 5 év folyamatos tartózkodás után → settled status (indefinite leave to remain, határozatlan). A pre-settled státuszt 2023 óta automatikusan meghosszabbítják, de a settled státuszért JELENTKEZNI kell."] },
+      { heading: "Aki 2021. január 1. után érkezik", body: ["Nincs automatikus munkavállalási jog. A legjellemzőbb út a Skilled Worker vízum: kell hozzá (1) állásajánlat egy Home Office által engedélyezett szponzor-munkáltatótól, (2) Certificate of Sponsorship, (3) a szakmára előírt bérküszöb elérése, (4) angol nyelvtudás igazolása (jellemzően B1).", "A bérküszöb 2024 áprilisában jelentősen emelkedett (a legtöbb szakmánál 38 700 £ körüli szintre, egyes egészségügyi/oktatási szakmáknál alacsonyabb) — ez a szám gyakran változik, indulás előtt MINDIG a gov.uk aktuális oldalán ellenőrizd."] },
+      { heading: "Egyéb utak", bullets: ["Health and Care Worker vízum — ápolóknak, gondozóknak, alacsonyabb küszöbbel és IHS-mentességgel", "Youth Mobility Scheme — 18–30/35 év között, egyes országoknak (Magyarország jelenleg NEM tagja)", "Graduate vízum — brit diploma után 2 év munkavállalás szponzor nélkül", "Global Talent, Innovator Founder — kiemelt szakembereknek, vállalkozóknak", "Családtag-vízum brit/letelepedett házastárssal (jövedelem-küszöbbel)"] },
+      { heading: "Immigration Health Surcharge (IHS)", body: ["A legtöbb vízumnál a kérelemmel EGYÜTT ki kell fizetni az IHS-t — ez adja az NHS-hozzáférést. Felnőttnek évi ~1 035 £ (2024 februárja óta), a teljes vízum-időszakra előre. Ez a vízumdíjon FELÜL értendő.", "Ez az egyik legnagyobb rejtett költség — egy 3 éves vízumnál egyedül több mint 3 000 £, családnál sokszorosa."] },
+    ],
+    sources: [
+      { label: "gov.uk — Skilled Worker visa", url: "https://www.gov.uk/skilled-worker-visa" },
+      { label: "gov.uk — EU Settlement Scheme", url: "https://www.gov.uk/settled-status-eu-citizens-families" },
+      { label: "gov.uk — Immigration Health Surcharge", url: "https://www.gov.uk/healthcare-immigration-application" },
+    ],
+  },
+  {
+    slug: "gb-nin",
+    title: "National Insurance Number (NIN)",
+    summary: "A brit „TAJ+adószám\": munkához, adóhoz, nyugdíjhoz kell. Online igényelhető, de dolgozni már előtte is lehet.",
+    tldr: [
+      "A National Insurance Number (NIN) a brit azonosítód a munkához, adóhoz és nyugdíjhoz — élethosszig ugyanaz marad.",
+      "Online igényled a gov.uk-on; kell hozzá igazolt munkavállalási jog (vízum vagy settled/pre-settled státusz).",
+      "⚠️ NIN nélkül IS elkezdhetsz dolgozni, ha van munkavállalási jogod — csak szólj a munkáltatónak, hogy igényelted.",
+    ],
+    icon: "document",
+    sections: [
+      { heading: "Mi ez és mire kell", body: ["A National Insurance Number (formátum: QQ 12 34 56 C) az az azonosító, amin a járulék-befizetéseidet és az adódat nyilvántartják. Kell a munkához, az adóbevalláshoz, a nyugdíjhoz és a legtöbb szociális ellátáshoz.", "Egy életre szól, nem jár le, és nem változik akkor sem, ha munkahelyet vagy nevet váltasz."] },
+      { heading: "Hogyan igényled", body: ["A gov.uk „Apply for a National Insurance number\" oldalán, online. Kell hozzá: személyi okmány (útlevél), a munkavállalási jogod igazolása (vízum vagy EUSS-státusz share code), és brit lakcím.", "A folyamat több hetet is igénybe vehet; néha személyes azonosítást vagy videóhívást kérnek. A számot postán küldik."] },
+      { heading: "⚠️ Dolgozhatsz addig is", body: ["Ha van munkavállalási jogod, a NIN megérkezése ELŐTT is jogszerűen dolgozhatsz — csak jelezd a munkáltatónak, hogy igényelted. Ilyenkor átmenetileg „emergency tax\" kóddal adóztathatnak, a túlfizetést később visszakapod.", "Ha valaki azt mondja, NIN nélkül nem alkalmazhat, az téves — de a munkáltató jogosan kéri a munkavállalási jog igazolását (right to work check)."] },
+    ],
+    sources: [
+      { label: "gov.uk — Apply for a National Insurance number", url: "https://www.gov.uk/apply-national-insurance-number" },
+      { label: "gov.uk — Prove your right to work", url: "https://www.gov.uk/prove-right-to-work" },
+    ],
+  },
+  {
+    slug: "gb-nhs",
+    title: "Egészségügy (NHS) és GP-regisztráció",
+    summary: "Az NHS a használat pontján ingyenes; az első lépés a GP (háziorvos) rendelőbe való regisztráció — ő a kapuőr.",
+    tldr: [
+      "Az NHS ellátása a használat pontján ingyenes; a vízumosok ezt az IHS befizetésével „előre megvették\".",
+      "Az első teendő: regisztrálj egy helyi GP surgery-be (háziorvosi rendelő) — ő a kapuőr a szakorvoshoz.",
+      "⚠️ A GP NEM utasíthat el azért, mert nincs lakcímigazolásod vagy okmányod — ez gyakori félreértés.",
+    ],
+    icon: "heart",
+    sections: [
+      { heading: "Hogyan működik", body: ["Az NHS (National Health Service) adóból finanszírozott: a legtöbb ellátás a használat pontján ingyenes. Nincs havi biztosítási díj úgy, mint Svájcban vagy Hollandiában — a vízumkérelemnél fizetett IHS fedezi a hozzáférést.", "A rendszer kapuőr-elvű: szinte minden a GP-nél (general practitioner, háziorvos) kezdődik, ő utal tovább szakorvoshoz vagy kórházba."] },
+      { heading: "GP-regisztráció (az első teendő)", body: ["Keress egy hozzád közeli GP surgery-t az NHS oldalán, és regisztrálj (GMS1 nyomtatvány, sok helyen online). Ekkor kapsz NHS-számot.", "⚠️ Fontos jogod: a rendelő NEM utasíthat vissza azért, mert nincs lakcímigazolásod, okmányod vagy állandó lakhatásod. Ha mégis elutasítanak, kérj írásos indoklást vagy fordulj az NHS England-hez."] },
+      { heading: "Sürgősség és ügyelet", bullets: ["999 — életveszély esetén mentő (ingyenes)", "111 — NHS non-emergency vonal, ha nem tudod, hova fordulj (0–24, ingyenes)", "A&E (Accident & Emergency) — kórházi sürgősségi, súlyos esetre; hosszú várakozás jellemző", "Pharmacy (gyógyszertár) — sok kisebb panaszra ingyen ad tanácsot, beutaló nélkül"] },
+      { heading: "Amiért fizetni kell", bullets: ["Recept (prescription charge) Angliában tételenként ~10 £ — Skóciában/Walesben ingyenes", "Fogászat: az NHS-fogászat támogatott sávos díjas, de nehéz szabad helyet találni; a magánfogászat drága", "Szemvizsgálat és szemüveg jellemzően önköltséges (kivételekkel: gyerek, alacsony jövedelem)"] },
+    ],
+    sources: [
+      { label: "NHS — How to register with a GP surgery", url: "https://www.nhs.uk/nhs-services/gps/how-to-register-with-a-gp-surgery/" },
+      { label: "NHS — 111 service", url: "https://111.nhs.uk/" },
+    ],
+  },
+  {
+    slug: "gb-adozas",
+    title: "Adózás: PAYE, National Insurance, HMRC",
+    summary: "A bérből a munkáltató vonja az adót (PAYE). Adóév: április 6. – április 5. Személyi mentesség 12 570 £.",
+    tldr: [
+      "⚠️ A brit adóév NEM naptári év: április 6-tól a következő április 5-ig tart.",
+      "A munkáltató a bérből automatikusan vonja az adót és a járulékot (PAYE) — a legtöbb alkalmazottnak nem kell adóbevallást beadnia.",
+      "Személyi adómentes sáv (Personal Allowance) 12 570 £/év; efölött 20%, majd 40%, majd 45% a kulcs.",
+    ],
+    icon: "document",
+    sections: [
+      { heading: "PAYE — a bérből vonják", body: ["Alkalmazottként a munkáltató a Pay As You Earn (PAYE) rendszerben vonja a jövedelemadót és a National Insurance-t, és utalja a HMRC-nek. A fizetési papíron (payslip) tételesen látod.", "Az adószámod helyett itt a tax code (pl. 1257L) mondja meg, mennyi az adómentes kereted. Ha rossz a kód, túl sokat vonhatnak — a HMRC személyes fiókjában (Personal Tax Account) ellenőrizheted és javíttathatod."] },
+      { heading: "Kulcsok (2025/26, Anglia)", bullets: ["Personal Allowance: 12 570 £/év — eddig 0% adó (100 000 £ fölött fokozatosan elveszik)", "Basic rate: 20% — kb. 12 571–50 270 £ között", "Higher rate: 40% — kb. 50 271–125 140 £ között", "Additional rate: 45% — 125 140 £ fölött", "National Insurance (alkalmazott, Class 1): 8% a heti ~242–967 £ sávban, fölötte 2%", "⚠️ Skóciában ELTÉRŐ jövedelemadó-sávok vannak"] },
+      { heading: "P45, P60, P11D", bullets: ["P45 — munkahely elhagyásakor kapod, az új munkáltatónak add oda (enélkül emergency tax jöhet)", "P60 — adóév végi összesítő az éves keresetről és a levont adóról; őrizd meg", "P11D — a béren kívüli juttatások (céges autó, magánbiztosítás) adózásához"] },
+      { heading: "Mikor kell adóbevallást (Self Assessment) beadni", body: ["A legtöbb alkalmazottnak NEM kell. Akkor igen, ha: önfoglalkoztató (self-employed) vagy, 1 000 £ fölött van mellékjövedelmed, ingatlant adsz bérbe, vagy 100 000 £ fölött keresel.", "Az online bevallás határideje az adóév végét követő január 31. Késésért automatikus 100 £ bírság jár."] },
+      { heading: "Ha túl sok adót vontak", body: ["Emergency tax vagy rossz tax code esetén gyakori a túlfizetés. A HMRC sokszor automatikusan visszatéríti (P800 levél), de a Personal Tax Accountban magad is igényelheted.", "⚠️ Ne fizess „adó-visszatérítő\" cégeknek a jutalékért — a HMRC-nél ingyen intézhető."] },
+    ],
+    sources: [
+      { label: "gov.uk — Income Tax rates", url: "https://www.gov.uk/income-tax-rates" },
+      { label: "gov.uk — Personal tax account", url: "https://www.gov.uk/personal-tax-account" },
+      { label: "gov.uk — Self Assessment", url: "https://www.gov.uk/self-assessment-tax-returns" },
+    ],
+  },
+  {
+    slug: "gb-lakhatas",
+    title: "Lakhatás: bérlés, kaució, council tax",
+    summary: "Assured shorthold tenancy, kötelező kaució-védelem 30 napon belül, és a lakóra kivetett council tax.",
+    tldr: [
+      "⚠️ A kauciódat a bérbeadó KÖTELES 30 napon belül állami védelmi sémába (TDP) tenni — kérd el az igazolást.",
+      "A council tax a lakót terheli (nem a tulajdonost); egyedül élőnek 25% kedvezmény jár, diáknak jellemzően teljes mentesség.",
+      "A bérbeadó törvényi kötelessége Right to Rent ellenőrzést végezni — ez normális, nem diszkrimináció.",
+    ],
+    icon: "house",
+    sections: [
+      { heading: "A bérleti szerződés (AST)", body: ["A tipikus magánbérlet Angliában assured shorthold tenancy (AST), jellemzően 6 vagy 12 hónapos fix időszakkal, utána havi gördülő (rolling) folytatással.", "Költségek induláskor: jellemzően 1 havi bérleti díj kaució (5 heti bér a törvényi maximum 50 000 £ éves bérleti díj alatt) + az első havi bér. ⚠️ 2019 óta TILOS adminisztrációs díjat (agency fee) kérni a bérlőtől."] },
+      { heading: "⚠️ Kaució-védelem (deposit protection)", body: ["A bérbeadó KÖTELES a kauciót 30 napon belül egy állami engedélyű sémába helyezni (Deposit Protection Service, MyDeposits vagy Tenancy Deposit Scheme), és erről igazolást adni.", "Ha nem teszi, a bérlő a kaució 1–3-szorosát perelheti, és a bérbeadó nem tudja szabályosan felmondani a bérletet. Költözés után MINDIG kérd el az igazolást — ez a leggyakoribb visszaélés az újonnan érkezőkkel szemben."] },
+      { heading: "Council tax", body: ["A council tax a helyi önkormányzatnak fizetett éves adó (szemétszállítás, közszolgáltatások), jellemzően 10 vagy 12 részletben. A LAKÓ fizeti, nem a tulajdonos (kivéve pl. szobabérlős HMO-ingatlanoknál).", "Az ingatlan A–H sávba (band) sorolt; a sávot és az összeget a helyi tanács oldalán ellenőrizheted a postcode alapján. Egyedül élőknek 25% Single Person Discount jár, teljes idős hallgatók jellemzően mentesek — de ezt IGÉNYELNI kell."] },
+      { heading: "Right to Rent és gyakorlati buktatók", bullets: ["A bérbeadónak törvényi kötelessége ellenőrizni a bérlő tartózkodási jogát (share code-dal igazolható) — ez nem diszkrimináció", "Sokszor kérnek kezest (guarantor) vagy több havi bért előre, ha nincs brit hitel-előéleted", "A bérlő védett: 2 hónapos felmondás és bírósági eljárás nélkül nem lakoltatható ki", "Költözéskor készíts részletes fotós leltárt (inventory) — a kaució-vitáknál ez dönt"] },
+    ],
+    sources: [
+      { label: "gov.uk — Tenancy deposit protection", url: "https://www.gov.uk/tenancy-deposit-protection" },
+      { label: "gov.uk — Council Tax", url: "https://www.gov.uk/council-tax" },
+      { label: "Shelter England — lakhatási tanácsadás", url: "https://england.shelter.org.uk/" },
+    ],
+  },
+  {
+    slug: "gb-iskola",
+    title: "Iskola és gyerek",
+    summary: "Tankötelezettség 5–16 év (18-ig képzés), ingyenes állami iskola, GCSE 16 évesen, A-level 18-ig.",
+    tldr: [
+      "A tankötelezettség 5–16 év, de 18 éves korig oktatásban vagy képzésben kell maradni.",
+      "Az állami iskola ingyenes; a helyet a helyi önkormányzatnál (council) kell megpályázni, szigorú határidőkkel.",
+      "⚠️ Jelentkezési határidők: általános iskola január 15., középiskola október 31. — a késés komoly hátrány.",
+    ],
+    icon: "bookmark",
+    sections: [
+      { heading: "A rendszer", bullets: ["Primary school: Reception (4–5 év) → Year 1–6 (11 éves korig)", "Secondary school: Year 7–11 (11–16 év), a végén GCSE-vizsgák", "Sixth form / college: Year 12–13 (16–18 év), A-level vagy szakmai (BTEC) képzés", "Az iskolaév szeptembertől júliusig tart, három trimeszterben (term)"] },
+      { heading: "Beiratkozás (school admissions)", body: ["A helyet nem az iskolánál, hanem a lakóhely szerinti önkormányzatnál (local council) pályázod meg, több iskolát rangsorolva. A felvétel fő szempontja jellemzően a lakóhely távolsága (catchment area) és a testvér az iskolában.", "⚠️ Határidők: általános iskolába jellemzően január 15., középiskolába október 31. Ha év közben érkeztek (in-year admission), külön eljárás van — közvetlenül a councilnál intézd."] },
+      { heading: "Ha a gyerek nem tud angolul", body: ["Az iskolák EAL (English as an Additional Language) támogatást adnak — a gyerek a normál osztályba jár, és mellette kap nyelvi segítséget. Külön „felzárkóztató osztály\" a legtöbb helyen nincs, mint Hollandiában.", "Alacsony jövedelemnél jár a free school meals (ingyenes ebéd) és néha egyenruha-támogatás — ezt igényelni kell a councilnál."] },
+      { heading: "Költségek", bullets: ["Az állami iskola tandíjmentes, de az egyenruha (uniform) kötelező és költséges", "Kirándulásokra, eszközökre önkéntes hozzájárulást kérnek", "A magániskola (independent/private school) évi tízezres fontos nagyságrend"] },
+    ],
+    sources: [
+      { label: "gov.uk — Schools and education", url: "https://www.gov.uk/browse/education" },
+      { label: "gov.uk — Apply for a school place", url: "https://www.gov.uk/apply-for-primary-school-place" },
+    ],
+  },
+  {
+    slug: "gb-bankszamla",
+    title: "Bankszámla és a lakcím-csapda",
+    summary: "A klasszikus bankoknál lakcímigazolás kell, ami frissen érkezőnek nincs — a digitális bankok kerülőutat adnak.",
+    tldr: [
+      "⚠️ Klasszikus 22-es csapdája: a bank lakcímigazolást kér, a lakcímigazoláshoz viszont sokszor bankszámla kellene.",
+      "Megoldás: digitális bank (Monzo, Starling, Revolut) — jellemzően pár nap alatt, szigorú lakcímigazolás nélkül nyílik.",
+      "A brit hitel-előéleted (credit score) nulláról indul — ez befolyásolja a lakásbérlést és a szerződéseket.",
+    ],
+    icon: "trending",
+    sections: [
+      { heading: "A lakcím-csapda", body: ["A hagyományos bankok (Barclays, HSBC, Lloyds, NatWest) jellemzően fényképes okmányt ÉS lakcímigazolást (proof of address) kérnek: rezsiszámla, bérleti szerződés, council tax levél vagy banki kivonat. Frissen érkezőnek ezek egyike sincs meg.", "Kerülőutak: a munkáltatói igazolás (employer letter) sok banknál elfogadott; a GP-regisztrációs levél és a council tax értesítő is működhet; egyes bankoknál van kifejezett „newly arrived\" számlanyitási folyamat."] },
+      { heading: "Digitális bankok — a gyors út", body: ["A Monzo, Starling és Revolut appból nyitható, jellemzően néhány nap alatt, sokkal rugalmasabb lakcím-igazolással. Teljes értékű brit számlaszámot (sort code + account number) adnak, tehát a munkabér is érkezhet rá.", "Sokan ezzel kezdik, majd a rendes lakcím kialakulása után nyitnak klasszikus banknál is (jelzáloghoz jellemzően az kell)."] },
+      { heading: "Credit score — nulláról indulsz", body: ["A brit rendszerben a hitel-előélet (credit file: Experian, Equifax, TransUnion) sokra megy: lakásbérlésnél, telefon-előfizetésnél, biztosításnál, hitelnél is nézik. Külföldi előélet NEM számít bele.", "Építeni lehet: iratkozz fel a választói névjegyzékre (electoral roll), fizess időben minden számlát, és tartsd a nevedet a rezsiszámlákon."] },
+    ],
+    sources: [
+      { label: "gov.uk — Register to vote (electoral roll)", url: "https://www.gov.uk/register-to-vote" },
+      { label: "MoneyHelper — Opening a bank account", url: "https://www.moneyhelper.org.uk/en/everyday-money/banking" },
+    ],
+  },
+  {
+    slug: "gb-jogositvany",
+    title: "Jogosítvány és autó",
+    summary: "A magyar jogosítvánnyal vezethetsz; hosszabb távon érdemes átcserélni. Kötelező MOT, tax és biztosítás.",
+    tldr: [
+      "A magyar (EU) jogosítvánnyal vezethetsz Nagy-Britanniában, 70 éves korig jellemzően cseremenetesen.",
+      "Autóhoz három dolog KÖTELEZŐ: érvényes biztosítás, vehicle tax (road tax) és 3 évnél idősebb autónál MOT-vizsga.",
+      "⚠️ Biztosítás nélküli vezetés súlyos szabálysértés — automatikus kamerás ellenőrzés (ANPR) figyeli.",
+    ],
+    icon: "car",
+    sections: [
+      { heading: "A magyar jogosítvány", body: ["Magyar (EU/EGT) vezetői engedéllyel vezethetsz — jellemzően 70 éves korig, illetve amíg a kártya érvényes. Nem kötelező azonnal cserélni.", "Ha letelepedsz, érdemes DVLA-nál brit engedélyre cserélni (D1 nyomtatvány): vizsga nélkül megy EU-s engedélyről, és sok helyzetben (bérlés, azonosítás) egyszerűbb a brit kártya."] },
+      { heading: "Az autó három kötelező eleme", bullets: ["Insurance — kötelező biztosítás; a brit biztosítási előélet (no-claims bonus) külföldről nem mindig vihető át, ezért az első év drága lehet", "Vehicle tax (road tax) — online fizetendő a gov.uk-on, havi vagy éves", "MOT — 3 évnél idősebb autónál kötelező éves műszaki vizsga; MOT nélkül a biztosítás is érvénytelen lehet"] },
+      { heading: "Gyakorlati tudnivalók", bullets: ["⚠️ Bal oldali közlekedés, a körforgalom az óramutató irányában megy", "Sebességhatárok mérföld/órában (mph): jellemzően 30 mph lakott területen, 70 mph autópályán", "London: ULEZ és Congestion Charge — régebbi autóval napi díjat kell fizetni, kamerák ellenőrzik", "Az ANPR-kamerák automatikusan szűrik a biztosítás/tax nélküli autókat"] },
+    ],
+    sources: [
+      { label: "gov.uk — Driving in Great Britain on a non-GB licence", url: "https://www.gov.uk/driving-nongb-licence" },
+      { label: "gov.uk — Vehicle tax, MOT and insurance", url: "https://www.gov.uk/browse/driving/vehicle-tax-mot-insurance" },
+    ],
+  },
+];
+
+export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT, ...GUIDES_DE, ...GUIDES_NL, ...GUIDES_GB];
 
 /** A választott ország guide-jai (a lista + kereső). */
 export function getGuides(country: string | null | undefined): Guide[] {
   if (country === "AT") return GUIDES_AT;
   if (country === "DE") return GUIDES_DE;
   if (country === "NL") return GUIDES_NL;
+  if (country === "GB") return GUIDES_GB;
   return GUIDES_CH;
 }
 
@@ -2171,11 +2351,12 @@ export function getGuide(slug: string): Guide | undefined {
   return GUIDES.find((g) => g.slug === slug);
 }
 
-/** A cikk országa a slug-előtagból (at-/de-/nl-, egyébként CH). */
-export function guideCountry(slug: string): "CH" | "AT" | "DE" | "NL" {
+/** A cikk országa a slug-előtagból (at-/de-/nl-/gb-, egyébként CH). */
+export function guideCountry(slug: string): "CH" | "AT" | "DE" | "NL" | "GB" {
   if (slug.startsWith("at-")) return "AT";
   if (slug.startsWith("de-")) return "DE";
   if (slug.startsWith("nl-")) return "NL";
+  if (slug.startsWith("gb-")) return "GB";
   return "CH";
 }
 

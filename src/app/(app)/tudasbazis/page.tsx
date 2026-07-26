@@ -32,11 +32,12 @@ function buildIndex(country: string): GuideSearchItem[] {
   }));
 }
 
-const INDEX_BY_COUNTRY: Record<"CH" | "AT" | "DE" | "NL", GuideSearchItem[]> = {
+const INDEX_BY_COUNTRY: Record<"CH" | "AT" | "DE" | "NL" | "GB", GuideSearchItem[]> = {
   CH: buildIndex("CH"),
   AT: buildIndex("AT"),
   DE: buildIndex("DE"),
   NL: buildIndex("NL"),
+  GB: buildIndex("GB"),
 };
 
 // Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
@@ -45,7 +46,7 @@ export const dynamic = "force-static";
 export const metadata = {
   title: "Tudásbázis — útmutatók kint élő magyaroknak",
   description:
-    "Hivatalos forrásból: bejelentkezés, egészségbiztosítás, adózás, iskola, munka, lakásbérlés — kint élő magyaroknak (Svájc, Ausztria, Németország, Hollandia).",
+    "Hivatalos forrásból: bejelentkezés, egészségbiztosítás, adózás, iskola, munka, lakásbérlés — kint élő magyaroknak (Svájc, Ausztria, Németország, Hollandia, Anglia).",
 };
 
 export default function TudasbazisPage() {
