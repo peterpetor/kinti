@@ -589,3 +589,161 @@ export function salaryPercentileNL(grossMonthly: number, province?: string): Sal
   const p = Math.round(normalCdf(z) * 100);
   return { percentile: Math.min(99, Math.max(1, p)), median };
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ANGLIA (GB) — PAYE + National Insurance, 2025/26 adóév
+// ═══════════════════════════════════════════════════════════════════════════
+/**
+ * ⚠️ A brit rendszer ALAPVETŐEN MÁS, mint a kontinentális:
+ *  - Az adóév NEM naptári év: április 6. – április 5.
+ *  - Nincs „családi adózás": a Personal Allowance SZEMÉLYES, a házastárs
+ *    jövedelme nem számít bele (ezért nincs civilStatus paraméter, mint CH/DE-nél).
+ *  - A National Insurance (NI) KÜLÖN sávrendszer az adótól, más küszöbökkel.
+ *  - 100 000 £ fölött a Personal Allowance FOKOZATOSAN elvész (2 £-onként 1 £),
+ *    ami egy 60%-os effektív marginális sávot hoz létre 100–125 140 £ között —
+ *    ez a brit adórendszer leggyakrabban félreértett része.
+ *
+ * ⚠️ SKÓCIA ELTÉRŐ jövedelemadó-sávokkal működik. Ez a kalkulátor
+ * Anglia/Wales/Észak-Írország szerint számol (a Kinti amúgy is csak Angliát
+ * kezeli országként — ld. regions.ts GB_REGIONS megjegyzés).
+ */
+const GB_PERSONAL_ALLOWANCE = 12570;
+const GB_PA_TAPER_START = 100000;      // efölött fogy a Personal Allowance
+const GB_BASIC_BAND = 37700;           // az adóköteles jövedelem első sávja (20%)
+const GB_HIGHER_LIMIT = 125140;        // efölött 45%
+const GB_NI_PRIMARY_THRESHOLD = 12570; // NI-mentes határ
+const GB_NI_UPPER_LIMIT = 50270;       // efölött csak 2% NI
+const GB_NI_MAIN_RATE = 0.08;          // 2024. április óta 8% (előtte 10%, majd 12%)
+const GB_NI_UPPER_RATE = 0.02;
+/** Auto-enrolment nyugdíj: a „qualifying earnings" sáv és az alap-munkavállalói kulcs. */
+const GB_PENSION_LOWER = 6240;
+const GB_PENSION_UPPER = 50270;
+const GB_PENSION_EMPLOYEE_RATE = 0.05; // 5% munkavállalói rész (a 8% összesből)
+/** Diákhitel Plan 2 (a 2012–2023 közötti angol/walesi hallgatóké — a leggyakoribb). */
+const GB_SL_PLAN2_THRESHOLD = 27295;
+const GB_SL_PLAN2_RATE = 0.09;
+
+/** Sávos, PA-tapert is kezelő Personal Allowance. */
+export function gbPersonalAllowance(grossYearly: number): number {
+  if (grossYearly <= GB_PA_TAPER_START) return GB_PERSONAL_ALLOWANCE;
+  const reduction = Math.floor((grossYearly - GB_PA_TAPER_START) / 2);
+  return Math.max(0, GB_PERSONAL_ALLOWANCE - reduction);
+}
+
+/** Jövedelemadó (Anglia/Wales/É-Írország) az éves bruttóból. */
+export function gbIncomeTax(grossYearly: number, pensionYearly = 0): number {
+  // A nyugdíj-hozzájárulás (net pay arrangement) csökkenti az adóalapot.
+  const gross = Math.max(0, grossYearly - pensionYearly);
+  const pa = gbPersonalAllowance(grossYearly); // a taper a NYERS bérből számol
+  const taxable = Math.max(0, gross - pa);
+  let tax = 0;
+  const basic = Math.min(taxable, GB_BASIC_BAND);
+  tax += basic * 0.2;
+  const higherBase = Math.max(0, Math.min(taxable, GB_HIGHER_LIMIT - pa) - GB_BASIC_BAND);
+  tax += higherBase * 0.4;
+  const additional = Math.max(0, taxable - Math.max(GB_BASIC_BAND, GB_HIGHER_LIMIT - pa));
+  tax += additional * 0.45;
+  return tax;
+}
+
+/** Munkavállalói National Insurance (Class 1) az éves bruttóból. */
+export function gbNationalInsurance(grossYearly: number): number {
+  if (grossYearly <= GB_NI_PRIMARY_THRESHOLD) return 0;
+  const main = Math.min(grossYearly, GB_NI_UPPER_LIMIT) - GB_NI_PRIMARY_THRESHOLD;
+  let ni = Math.max(0, main) * GB_NI_MAIN_RATE;
+  if (grossYearly > GB_NI_UPPER_LIMIT) ni += (grossYearly - GB_NI_UPPER_LIMIT) * GB_NI_UPPER_RATE;
+  return ni;
+}
+
+export interface SalaryCalcInputGB {
+  gross: number;
+  period: PayPeriod;
+  /** Auto-enrolment nyugdíj (alapértelmezett 5% a qualifying earnings sávban). */
+  pension?: boolean;
+  /** Diákhitel Plan 2 törlesztés (a legtöbb 2012 utáni angol hallgatóé). */
+  studentLoanPlan2?: boolean;
+}
+
+export interface SalaryCalcResultGB {
+  grossMonthly: number;
+  grossYearly: number;
+  personalAllowance: number;   // a ténylegesen érvényes PA (taper után)
+  taxableYearly: number;       // adóalap (bruttó − nyugdíj − PA)
+  incomeTaxYearly: number;
+  niYearly: number;
+  pensionYearly: number;
+  studentLoanYearly: number;
+  netMonthly: number;
+  netYearly: number;
+  effectiveRate: number;       // összes levonás / bruttó (%)
+  /** ⚠️ Igaz, ha a bér a 100–125 140 £ sávba esik (60%-os effektív marginális kulcs). */
+  inTaperTrap: boolean;
+}
+
+/** Brit nettó-bér becslés (PAYE + NI) — a kalkulátor magja. */
+export function computeSalaryGB(input: SalaryCalcInputGB): SalaryCalcResultGB {
+  const grossMonthly = input.period === "month" ? input.gross : input.gross / 12;
+  const grossYearly = grossMonthly * 12;
+
+  const pensionYearly = input.pension
+    ? Math.max(0, Math.min(grossYearly, GB_PENSION_UPPER) - GB_PENSION_LOWER) * GB_PENSION_EMPLOYEE_RATE
+    : 0;
+
+  const personalAllowance = gbPersonalAllowance(grossYearly);
+  const incomeTaxYearly = gbIncomeTax(grossYearly, pensionYearly);
+  const niYearly = gbNationalInsurance(grossYearly);
+  const studentLoanYearly = input.studentLoanPlan2
+    ? Math.max(0, grossYearly - GB_SL_PLAN2_THRESHOLD) * GB_SL_PLAN2_RATE
+    : 0;
+
+  const taxableYearly = Math.max(0, grossYearly - pensionYearly - personalAllowance);
+  const netYearly = grossYearly - incomeTaxYearly - niYearly - pensionYearly - studentLoanYearly;
+  const netMonthly = netYearly / 12;
+  const effectiveRate = grossYearly > 0 ? ((grossYearly - netYearly) / grossYearly) * 100 : 0;
+
+  return {
+    grossMonthly, grossYearly, personalAllowance, taxableYearly,
+    incomeTaxYearly, niYearly, pensionYearly, studentLoanYearly,
+    netMonthly, netYearly, effectiveRate,
+    inTaperTrap: grossYearly > GB_PA_TAPER_START && grossYearly < GB_HIGHER_LIMIT,
+  };
+}
+
+/** Angol medián havi BRUTTÓ (teljes munkaidő) — ONS ASHE-alapú becslés. */
+export const GB_NATIONAL_MEDIAN_GROSS = 2900;
+
+/** Régió-medián havi BRUTTÓ — ONS regionális kereseti adatokból származtatott
+ *  becslés. A kódok a regions.ts GB_REGIONS kódjaival EGYEZNEK. */
+export const GB_REGION_MEDIAN_GROSS: Record<string, number> = {
+  LDN: 3700, // London
+  SE: 3100,  // South East
+  EE: 2950,  // East of England
+  SW: 2800,  // South West
+  WM: 2750,  // West Midlands
+  EM: 2700,  // East Midlands
+  NW: 2750,  // North West
+  YH: 2650,  // Yorkshire and the Humber
+  NE: 2650,  // North East
+};
+
+/** Régió-lista a kalkulátor-választóhoz (regions.ts GB-kódok). */
+export const GB_REGIONS_LIST: { code: string; name: string }[] = [
+  { code: "LDN", name: "London" },
+  { code: "SE", name: "South East (Brighton, Oxford)" },
+  { code: "EE", name: "East of England (Cambridge)" },
+  { code: "SW", name: "South West (Bristol)" },
+  { code: "WM", name: "West Midlands (Birmingham)" },
+  { code: "EM", name: "East Midlands (Nottingham)" },
+  { code: "NW", name: "North West (Manchester, Liverpool)" },
+  { code: "YH", name: "Yorkshire and the Humber (Leeds)" },
+  { code: "NE", name: "North East (Newcastle)" },
+];
+
+/** Percentilis a régió- (vagy nemzeti) mediánhoz (log-normál becslés). */
+export function salaryPercentileGB(grossMonthly: number, region?: string): SalaryPercentile {
+  const median = (region && GB_REGION_MEDIAN_GROSS[region]) || GB_NATIONAL_MEDIAN_GROSS;
+  const sigma = 0.34;
+  const z = (Math.log(Math.max(1, grossMonthly)) - Math.log(median)) / sigma;
+  const p = Math.round(normalCdf(z) * 100);
+  return { percentile: Math.min(99, Math.max(1, p)), median };
+}

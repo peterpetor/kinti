@@ -52,7 +52,7 @@ describe("GB (Anglia) mint ország", () => {
 
 describe("GB feature-gating (engedélyező-lista)", () => {
   it("engedi a listán szereplő, ország-független funkciókat", () => {
-    for (const f of ["szaknevsor", "allasok", "piacter", "utalas", "vam", "tudasbazis"]) {
+    for (const f of ["szaknevsor", "allasok", "piacter", "utalas", "vam", "tudasbazis", "berkalkulator", "angol-oneletrajz"]) {
       expect(isFeatureAvailable(f, "GB")).toBe(true);
     }
   });
@@ -60,7 +60,6 @@ describe("GB feature-gating (engedélyező-lista)", () => {
   it("⚠️ REJTI a CH/EU-specifikus eszközöket, amikhez NINCS angol tartalom", () => {
     // Ezek svájci/EU-s adatot mutatnának hitelesnek tűnő módon — tilos.
     for (const f of [
-      "berkalkulator",
       "allampolgarsag",
       "iskolarendszer",
       "ugyintezes",
@@ -85,6 +84,7 @@ describe("GB feature-gating (engedélyező-lista)", () => {
   it("a többi ország viselkedése változatlan (nincs regresszió)", () => {
     expect(isFeatureAvailable("berkalkulator", "CH")).toBe(true);
     expect(isFeatureAvailable("berkalkulator", "DE")).toBe(true);
+    expect(isFeatureAvailable("iskolarendszer", "DE")).toBe(true); // DE-ben van tartalom
     expect(isFeatureAvailable("vam", "CH")).toBe(true);
     expect(isFeatureAvailable("vam", "DE")).toBe(false); // EU-n belül nincs vámhatár
     expect(isFeatureAvailable("vam", "NL")).toBe(false);
