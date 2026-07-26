@@ -11,7 +11,7 @@
 
 export type FlatSize = "studio" | "1-room" | "2-room" | "3-room" | "4-room" | "5plus-room";
 export type HeatingType = "gas" | "oil" | "district" | "heatpump" | "pellet" | "unknown";
-export type RentCountry = "CH" | "AT" | "DE" | "NL";
+export type RentCountry = "CH" | "AT" | "DE" | "NL" | "GB";
 export type Region =
   | "city-zh" | "city-ge" | "city-bs" | "city-bern" | "suburb" | "rural"
   | "at-wien" | "at-graz" | "at-linz" | "at-salzburg" | "at-suburb" | "at-rural"
@@ -77,7 +77,7 @@ export const REGIONS: { id: Region; label: string; emoji: string; nebenkostenMod
 
 /** A választott ország régiói (a régió-választóhoz). Ismeretlen ország → CH. */
 export function regionsFor(country: string): { id: Region; label: string; emoji: string; nebenkostenMod: number }[] {
-  const c: RentCountry = country === "AT" || country === "DE" || country === "NL" ? country : "CH";
+  const c: RentCountry = country === "AT" || country === "DE" || country === "NL" || country === "GB" ? country : "CH";
   return REGIONS.filter((r) => r.country === c);
 }
 
@@ -195,7 +195,7 @@ export function calculateRentCost(input: RentCalcInput): RentCalcResult {
  * olvasnak (nincs `isAT ? ... : ...` binárisozás, ami DE/NL-t a svájci ágra ejtené).
  */
 export interface RentCountryConfig {
-  currency: "CHF" | "EUR";
+  currency: "CHF" | "EUR" | "GBP";
   /** Kaució hónapok (CH/AT/DE: 3, NL: 2). */
   depositMonths: number;
   /** Rezsi-alapráta /m²/év a becsléshez. */
@@ -349,10 +349,54 @@ export const RENT_CONFIG: Record<RentCountry, RentCountryConfig> = {
       { label: "Het Juridisch Loket", url: "https://www.juridischloket.nl/" },
     ],
   },
+  /**
+   * ⚠️ ANGLIA — a rendszer szerkezetileg más, mint a kontinentális:
+   *  - a kaució HETEKBEN van maximálva (5 heti bér), nem hónapokban, és
+   *    KÖTELEZŐ állami védelmi sémába kerülnie 30 napon belül (TDP);
+   *  - nincs „Nebenkosten" fogalom: a rezsit közvetlenül a szolgáltatóknak
+   *    fizeted, ehhez jön a COUNCIL TAX, ami a LAKÓT terheli és a kontinensen
+   *    nincs megfelelője;
+   *  - 2019 óta TILOS ingatlanos-jutalékot kérni a bérlőtől.
+   * A depositMonths ezért közelítés: 5 heti bér ≈ 1,15 havi.
+   */
+  GB: {
+    currency: "GBP",
+    depositMonths: 1.15,
+    baseNkPerM2: 26,
+    depositNoun: "Kaució (deposit)",
+    nkNoun: "Rezsi + council tax",
+    nkShort: "Rezsi",
+    depositEyebrow: "Kaució",
+    depositHeadline: "Mennyit kérhetnek el induláskor?",
+    depositAccountSub:
+      "A kaució törvényi felső határa 5 heti bérleti díj (50 000 £ éves bér alatt). ⚠️ A bérbeadónak 30 napon belül állami engedélyű védelmi sémába (TDP) kell tennie, ÉS erről igazolást adnia.",
+    depositExtra: "none",
+    depositNote:
+      "⚠️ 2019 óta TILOS adminisztrációs/ingatlanos díjat (agency fee) kérni a bérlőtől — ha kérnek, az jogszabálysértés.",
+    depositTip:
+      "MINDIG kérd el a kaució-védelem igazolását. Ha a bérbeadó elmulasztja, a kaució 1–3-szorosát perelheted, és nem tud szabályosan felmondani. Ez a leggyakoribb visszaélés az újonnan érkezőkkel szemben.",
+    nkTip:
+      "A council tax NEM a tulajdonost, hanem a LAKÓT terheli — egyedül élőként 25% kedvezmény, teljes idős hallgatóként jellemzően mentesség jár, de IGÉNYELNI kell. Beköltözéskor fotózd le a mérőórákat.",
+    questions: [
+      { bold: "Védett-e a kaució?", rest: "melyik sémában (DPS / MyDeposits / TDS), és mikor kapom meg az igazolást?" },
+      { bold: "Ki fizeti a council taxet?", rest: "a bérlő vagy a főbérlő? (Szobabérlésnél/HMO-nál gyakran a főbérlő.)" },
+      { bold: "Benne van-e bármelyik rezsi a bérben?", rest: "vagy mindet külön szerződöm a szolgáltatóval?" },
+      { bold: "Mennyi a fix időszak?", rest: "és utána havi gördülő lesz-e (rolling)?" },
+      { bold: "Van-e leltár (inventory)?", rest: "fotókkal, aláírva — a kaució-vitáknál ez dönt." },
+    ],
+    disclaimerWarning:
+      "A becslés általános angliai adatokon alapul — a TE konkrét lakásod tényleges költsége jelentősen eltérhet (a council tax sávtól, az energiaár-sapkától és a szigeteléstől függően). A kaució 5 heti felső határa 50 000 £ éves bérleti díj alatt érvényes. Bérleti vita esetén fordulj a Shelter Englandhez vagy a Citizens Advice-hoz; a kaució-vitát a védelmi séma ingyenes vitarendezése is kezeli.",
+    officialSources: [
+      { label: "gov.uk — Tenancy deposit protection", url: "https://www.gov.uk/tenancy-deposit-protection" },
+      { label: "gov.uk — Private renting", url: "https://www.gov.uk/private-renting" },
+      { label: "gov.uk — Council Tax", url: "https://www.gov.uk/council-tax" },
+      { label: "Shelter England", url: "https://england.shelter.org.uk/" },
+    ],
+  },
 };
 
 /** Ország → rent-konfig (ismeretlen ország → CH). */
 export function getRentConfig(country: string | null | undefined): RentCountryConfig {
-  if (country === "AT" || country === "DE" || country === "NL") return RENT_CONFIG[country];
+  if (country === "AT" || country === "DE" || country === "NL" || country === "GB") return RENT_CONFIG[country];
   return RENT_CONFIG.CH;
 }

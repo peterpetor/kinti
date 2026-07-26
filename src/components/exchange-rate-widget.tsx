@@ -8,7 +8,7 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 
 interface ExchangeData {
   date: string;
-  rates: { HUF: number; EUR: number };
+  rates: { HUF: number; EUR: number; GBP: number };
   inverse: { hufToChf: number; eurToChf: number };
 }
 
@@ -42,11 +42,15 @@ export function ExchangeRateWidget() {
 
   if (error || !data) return null;
 
-  // CH: 1 CHF = X Ft. Más ország (EUR-bázis, AT/DE/NL): 1 EUR = Y Ft, a CHF-alap
-  // rátákból számolva (HUF/CHF ÷ EUR/CHF). DKK/SEK később (nem élő még).
-  const isEur = (prefCountry ?? DEFAULT_COUNTRY) !== "CH";
-  const base = isEur ? "EUR" : "CHF";
-  const perHuf = isEur && data.rates.EUR ? data.rates.HUF / data.rates.EUR : data.rates.HUF;
+  // A megjelenített bázis a VÁLASZTOTT ORSZÁG pénzneme: CH → CHF, GB → GBP,
+  // egyébként EUR. Az API CHF-bázisú, ezért a nem-CHF bázisokat átszámoljuk
+  // (HUF/CHF ÷ CÉL/CHF).
+  // ⚠️ Korábban BINÁRIS volt (CH vagy EUR), ezért Anglián EURÓS árfolyam
+  // jelent meg font helyett — a user jelentette.
+  const cc = prefCountry ?? DEFAULT_COUNTRY;
+  const base = cc === "CH" ? "CHF" : cc === "GB" ? "GBP" : "EUR";
+  const cross = base === "CHF" ? 1 : base === "GBP" ? data.rates.GBP : data.rates.EUR;
+  const perHuf = cross ? data.rates.HUF / cross : data.rates.HUF;
   const hufFmt = perHuf.toLocaleString("hu-HU", { maximumFractionDigits: 1 });
 
   return (

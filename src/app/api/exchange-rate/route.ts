@@ -17,6 +17,8 @@ interface ExchangeResult {
   rates: {
     HUF: number;
     EUR: number;
+    /** ⚠️ Anglia miatt kell: font-bázisú megjelenítéshez (1 GBP = X Ft). */
+    GBP: number;
   };
   /** Plus pár fontos kereszt-árfolyam tájékoztatóul. */
   inverse: {
@@ -44,7 +46,7 @@ async function getHistory(days: number): Promise<Response> {
   const s = start.toISOString().slice(0, 10);
   const e = end.toISOString().slice(0, 10);
   try {
-    const res = await fetch(`https://api.frankfurter.app/${s}..${e}?from=CHF&to=HUF,EUR`, {
+    const res = await fetch(`https://api.frankfurter.app/${s}..${e}?from=CHF&to=HUF,EUR,GBP`, {
       next: { revalidate: 3600 },
     });
     if (!res.ok) {
@@ -74,7 +76,7 @@ export async function GET(request: Request) {
   const days = Math.min(90, Math.max(0, parseInt(new URL(request.url).searchParams.get("history") ?? "0", 10) || 0));
   if (days > 0) return getHistory(days);
   try {
-    const res = await fetch("https://api.frankfurter.app/latest?from=CHF&to=HUF,EUR", {
+    const res = await fetch("https://api.frankfurter.app/latest?from=CHF&to=HUF,EUR,GBP", {
       // Cloudflare edge cache — kibír 1 órát.
       next: { revalidate: 3600 },
     });
@@ -89,11 +91,12 @@ export async function GET(request: Request) {
     const data = (await res.json()) as FrankfurterResponse;
     const huf = data.rates.HUF;
     const eur = data.rates.EUR;
+    const gbp = data.rates.GBP;
 
     const result: ExchangeResult = {
       base: "CHF",
       date: data.date,
-      rates: { HUF: huf, EUR: eur },
+      rates: { HUF: huf, EUR: eur, GBP: gbp },
       inverse: {
         hufToChf: huf > 0 ? Math.round((100 / huf) * 100000) / 100000 : 0,
         eurToChf: eur > 0 ? Math.round((1 / eur) * 10000) / 10000 : 0,
