@@ -39,6 +39,7 @@
     "gen:de-seed": "node scripts/gen-de-seed.mjs",
     "gen:ch-seed": "node scripts/gen-ch-seed.mjs",
     "gen:nl-seed": "node scripts/gen-nl-seed.mjs",
+    "gen:gb-seed": "node scripts/gen-gb-seed.mjs",
     "gen:icons": "node scripts/gen-icons.mjs"
   },
   "dependencies": {

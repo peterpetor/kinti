@@ -1,0 +1,176 @@
+{
+  "_comment": "Valódi ANGLIAI magyar közösségi szervezetek (egyházközségek, hétvégi iskolák, kulturális központok, hivatalos képviseletek) — a kinti.app angliai (GB) induló tartalmának forrása. ⚠️ MINDEN tétel ellenőrzött, publikus forrásból származó elérhetőséggel szerepel (cím és/vagy e-mail/telefon/weboldal); találgatott adat NINCS. ⚠️ SZÁNDÉKOSAN CSAK ANGLIA — a Kőrösi-program listáján szereplő skóciai (Edinburgh) és walesi (Cardiff, Newport, Magyar Cymru) szervezetek KIMARADTAK, mert a Kinti GB-országa csak Angliát fedi (Skócia/Wales külön jogrend, ld. regions.ts). ⚠️ Nem vettünk fel olyan tételt, ahol az egyetlen elérhetőség egy magánszemély személyes e-mail-címe vagy mobilszáma lett volna (adatvédelem).",
+  "country": "GB",
+  "source": "korosiprogram.hu diaszpóra-lista, szentistvanhaz.org, reflondon.hu, london.mfa.gov.hu, birminghamimagyarok.org, angliaikisokos.com magyar iskola-lista, hungarianschool.co.uk — 2026-07",
+  "organizations": [
+    {
+      "name": "Szent István Ház — Angliai Római Katolikus Magyarok Egyesülete (ARKME)",
+      "type": "katolikus közösségi ház",
+      "city": "London",
+      "region": "LDN",
+      "address": "62 Little Ealing Lane, London W5 4EA",
+      "email": "hello@szentistvanhaz.org",
+      "website": "https://szentistvanhaz.org"
+    },
+    {
+      "name": "Angliai Magyar Református Egyház",
+      "type": "református gyülekezet",
+      "city": "London",
+      "region": "LDN",
+      "address": "17 St Dunstan's Road, London W6 8RD",
+      "phone": "+44 20 8748 8858",
+      "email": "info@reflondon.hu",
+      "website": "https://reflondon.hu"
+    },
+    {
+      "name": "Magyar Kulturális Központ London",
+      "type": "kulturális központ",
+      "city": "London",
+      "region": "LDN",
+      "address": "10 Maiden Lane, Covent Garden, London WC2E 7NA",
+      "phone": "+44 20 7257 2023",
+      "website": "https://www.hungary.org.uk"
+    },
+    {
+      "name": "Magyarország Nagykövetsége — London",
+      "type": "nagykövetség",
+      "city": "London",
+      "region": "LDN",
+      "address": "35 Eaton Place, London SW1X 8BY",
+      "phone": "+44 20 7201 3440",
+      "email": "mission.lon@mfa.gov.hu",
+      "website": "https://london.mfa.gov.hu"
+    },
+    {
+      "name": "Magyarország Nagykövetsége — Konzuli Osztály",
+      "type": "konzuli osztály",
+      "city": "London",
+      "region": "LDN",
+      "address": "100 Brompton Road, London SW3 1ER",
+      "phone": "+44 20 7235 5218",
+      "email": "consulate.lon@mfa.gov.hu",
+      "website": "https://london.mfa.gov.hu"
+    },
+    {
+      "name": "Londoni Magyar Iskola+",
+      "type": "hétvégi magyar iskola",
+      "city": "London",
+      "region": "LDN",
+      "email": "LMIplusz@gmail.com",
+      "website": "https://magyariskola.org.uk"
+    },
+    {
+      "name": "MOSOLY Magyar Ovi-Suli",
+      "type": "hétvégi magyar óvoda és iskola",
+      "city": "London",
+      "region": "LDN",
+      "phone": "+44 7961 441041",
+      "email": "info@magyarovisuli.co.uk",
+      "website": "https://magyarovisuli.co.uk"
+    },
+    {
+      "name": "MAKI Suli London",
+      "type": "hétvégi magyar iskola",
+      "city": "London",
+      "region": "LDN",
+      "email": "makisulilondon@gmail.com",
+      "website": "https://makisulilondon.wixsite.com/maki"
+    },
+    {
+      "name": "Birminghami Magyar Tanoda és Kulturális Központ",
+      "type": "hétvégi magyar iskola és kulturális központ",
+      "city": "Birmingham",
+      "region": "WM",
+      "address": "Selly Oak Methodist Church, Langleys Road, Birmingham B29 6HT",
+      "phone": "+44 7756 214875",
+      "email": "birminghamiskola@gmail.com",
+      "website": "https://birminghamimagyarok.org"
+    },
+    {
+      "name": "Coventry Magyar Tanoda és Közösség",
+      "type": "hétvégi magyar iskola és közösség",
+      "city": "Coventry",
+      "region": "WM",
+      "email": "coventrymagyartanoda@gmail.com",
+      "website": "https://comat.org.uk"
+    },
+    {
+      "name": "Zsigmond Király Magyar Kulturális Klub és Iskola",
+      "type": "magyar kulturális klub és hétvégi iskola",
+      "city": "Manchester",
+      "region": "NW",
+      "email": "zsk.iskola@gmail.com",
+      "website": "https://zsigmondkiraly.co.uk"
+    },
+    {
+      "name": "Magyar Iskola Cambridge",
+      "type": "hétvégi magyar iskola",
+      "city": "Cambridge",
+      "region": "EE",
+      "email": "magyariskolacambridge@gmail.com"
+    },
+    {
+      "name": "St Albans-i Magyar Iskola",
+      "type": "hétvégi magyar iskola",
+      "city": "St Albans",
+      "region": "EE",
+      "email": "hungarianschoolofstalbans@gmail.com",
+      "website": "https://www.hungarianschool.co.uk"
+    },
+    {
+      "name": "Guildfordi Magyar Tanoda és Játszóház",
+      "type": "hétvégi magyar iskola és játszóház",
+      "city": "Guildford",
+      "region": "SE",
+      "phone": "+44 1483 808643",
+      "email": "info@hcaguildford.org.uk",
+      "website": "https://hcaguildford.org.uk"
+    },
+    {
+      "name": "Readingi Magyar Iskola",
+      "type": "hétvégi magyar iskola",
+      "city": "Reading",
+      "region": "SE",
+      "phone": "+44 7533 337720",
+      "email": "readingi.magyar.iskola@gmail.com"
+    },
+    {
+      "name": "Magyar Iskola Woking",
+      "type": "hétvégi magyar iskola",
+      "city": "Woking",
+      "region": "SE",
+      "email": "info@magyariskolawoking.org.uk",
+      "website": "https://magyariskolawoking.org.uk"
+    },
+    {
+      "name": "Magyar Iskola Oxford",
+      "type": "hétvégi magyar iskola",
+      "city": "Oxford",
+      "region": "SE",
+      "email": "hunschoolox@gmail.com"
+    },
+    {
+      "name": "Basingstoke-i Magyar Ovi és Suli",
+      "type": "hétvégi magyar óvoda és iskola",
+      "city": "Basingstoke",
+      "region": "SE",
+      "phone": "+44 7766 951790",
+      "email": "basingstoke@magyar.org.uk"
+    },
+    {
+      "name": "Southamptoni Magyar Iskola",
+      "type": "hétvégi magyar iskola",
+      "city": "Southampton",
+      "region": "SE",
+      "email": "hello@southamptonimagyariskola.org.uk",
+      "website": "https://southamptonimagyariskola.org.uk"
+    },
+    {
+      "name": "Bristoli Magyar Kisiskola",
+      "type": "hétvégi magyar iskola",
+      "city": "Bristol",
+      "region": "SW",
+      "website": "https://bristolikisiskola.org"
+    }
+  ]
+}
