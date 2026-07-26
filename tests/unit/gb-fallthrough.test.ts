@@ -120,3 +120,52 @@ describe("GB régió-pontok", () => {
     expect(gbPoint("XX").code).toBe("LDN");
   });
 });
+
+describe("GB budget-tervező (Mennyi marad?)", () => {
+  it("GB érvényes budget-ország, fonttal", async () => {
+    const { isBudgetCountry, budgetCurrency } = await import("@/lib/budget-plan");
+    expect(isBudgetCountry("GB")).toBe(true);
+    expect(budgetCurrency("GB")).toBe("GBP");
+    // ⚠️ nem eshet euróra/frankra
+    expect(budgetCurrency("GB")).not.toBe("EUR");
+    expect(budgetCurrency("CH")).toBe("CHF");
+  });
+
+  it("⚠️ a GB költség-alap NHS miatt 0 egészségbiztosítást tartalmaz", async () => {
+    const { COST_BASELINE } = await import("@/lib/budget-plan");
+    const kk = COST_BASELINE.GB.find((c) => c.id === "krankenkasse")!;
+    expect(kk.firstAdult).toBe(0);
+    expect(kk.extraAdult).toBe(0);
+    // …miközben CH-ban és NL-ben VAN havi díj
+    expect(COST_BASELINE.CH.find((c) => c.id === "krankenkasse")!.firstAdult).toBeGreaterThan(0);
+    expect(COST_BASELINE.NL.find((c) => c.id === "krankenkasse")!.firstAdult).toBeGreaterThan(0);
+  });
+
+  it("a GB rezsi-sor tartalmazza a council taxet (a többi országban nincs ilyen)", async () => {
+    const { COST_BASELINE } = await import("@/lib/budget-plan");
+    const rezsi = COST_BASELINE.GB.find((c) => c.id === "rezsi")!;
+    expect(rezsi.label.toLowerCase()).toContain("council tax");
+    expect(rezsi.firstAdult).toBeGreaterThan(0);
+  });
+
+  it("minden ország ugyanazokat a költség-kategóriákat használja", async () => {
+    const { COST_BASELINE } = await import("@/lib/budget-plan");
+    const ids = (c: keyof typeof COST_BASELINE) => COST_BASELINE[c].map((x) => x.id).sort();
+    for (const cc of ["AT", "DE", "NL", "GB"] as const) {
+      expect(ids(cc), cc).toEqual(ids("CH"));
+    }
+  });
+
+  it("van GB gyerek-juttatás és ország-céloldal", async () => {
+    const { childBenefit } = await import("@/lib/budget-plan");
+    const { budgetLandingBySlug, BUDGET_LANDINGS } = await import("@/lib/budget-landing");
+    expect(childBenefit("GB", 2)).toBeGreaterThan(0);
+    expect(childBenefit("GB", 0)).toBe(0);
+    const gb = budgetLandingBySlug("anglia");
+    expect(gb?.cc).toBe("GB");
+    expect(gb?.faq.length).toBeGreaterThan(3);
+    // minden landing-slug egyedi
+    const slugs = BUDGET_LANDINGS.map((l) => l.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
+  });
+});

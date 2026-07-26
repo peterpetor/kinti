@@ -21,7 +21,7 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { getRegions, REGIONS, REGION_LABEL } from "@/lib/regions";
 import { getCountry } from "@/lib/countries";
 import {
-  computeSalary, computeSalaryAT, computeSalaryDE, computeSalaryNL,
+  computeSalary, computeSalaryAT, computeSalaryDE, computeSalaryNL, computeSalaryGB,
   type AgeBracket, type CivilStatus, type Steuerklasse,
 } from "@/lib/salary-calc";
 import {
@@ -250,6 +250,13 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
     }
     if (country === "DE") {
       const r = computeSalaryDE({ gross: grossNum, period: "month", steuerklasse: sk, kids, churchTax: church });
+      return r.netMonthly;
+    }
+    if (country === "GB") {
+      // ⚠️ Anglia: nincs családi adózás (a Personal Allowance személyes), ezért
+      // az adults/partnerWorks/kids NEM befolyásolja a nettót — a családi
+      // támogatás a Child Benefiten keresztül jön, nem az adóban.
+      const r = computeSalaryGB({ gross: grossNum, period: "month", pension: true });
       return r.netMonthly;
     }
     const r = computeSalaryNL({ gross: grossNum, period: "month", holidayAllowance: vakantie, ruling30 });
@@ -616,7 +623,7 @@ function EditableCostRow({
   value: string;
   onChange: (v: string) => void;
   total: number;
-  currency: "CHF" | "EUR";
+  currency: "CHF" | "EUR" | "GBP";
 }) {
   const pct = total > 0 ? Math.min(100, Math.round((item.amount / total) * 100)) : 0;
   const srcLabel =

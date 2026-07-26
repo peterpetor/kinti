@@ -144,6 +144,40 @@ export const BUDGET_LANDINGS: BudgetLanding[] = [
       },
     ],
   },
+  {
+    slug: "anglia",
+    cc: "GB",
+    name: "Anglia",
+    inName: "Angliában",
+    flag: "",
+    title: "Angliai nettó bér és megélhetés kalkulátor",
+    description:
+      "Mennyi marad az angol fizetésedből? Bruttó bér + PAYE + National Insurance + család → nettó, lakbér és megélhetés. Ingyenes kalkulátor.",
+    intro:
+      "Az angol nettót a PAYE-adó és a National Insurance alakítja, a Personal Allowance (12 570 £) pedig adómentes keretet ad. ⚠️ Két dolog, ami meglepi az érkezőket: az adóév április 6-tól április 5-ig tart (nem naptári év), és nincs havi egészségbiztosítási díj — az NHS-t az adó fedezi. Cserébe a council tax a lakót terheli. A kalkulátor mindezt kezeli, és a régió-szintű lakbér-mediánnal együtt mutatja, mennyi marad a hónap végén.",
+    faq: [
+      {
+        q: "Mennyi a nettó 3000 £ bruttóból Angliában?",
+        a: "Kb. 2400–2450 £ havonta (2025/26-os sávokkal, nyugdíj nélkül számolt becslés). A kalkulátor a te adataiddal számol, az auto-enrolment nyugdíjjal és a diákhitellel is, ha releváns.",
+      },
+      {
+        q: "Mikor kezdődik a brit adóév?",
+        a: "Április 6-tól a következő április 5-ig — nem naptári év. Ez fontos a bevallásnál és a tax code-nál is: a P60-at az adóév végén kapod meg.",
+      },
+      {
+        q: "Kell külön egészségbiztosítást fizetnem?",
+        a: "Nem. Az NHS adóból finanszírozott, a használat pontján ingyenes — nincs havi biztosítási díj, mint Svájcban vagy Hollandiában. Vízumos érkezőknél viszont a kérelemkor egyszeri IHS-t (~1035 £/év) kell előre fizetni.",
+      },
+      {
+        q: "Mi az a council tax, és ki fizeti?",
+        a: "A helyi önkormányzatnak fizetett éves adó (szemétszállítás, közszolgáltatások), jellemzően 10-12 részletben. A LAKÓ fizeti, nem a tulajdonos. Egyedül élőként 25% kedvezmény jár, teljes idős hallgatóként jellemzően mentesség — de igényelni kell.",
+      },
+      {
+        q: "Jár-e családi pótlék Angliában?",
+        a: "Igen, a Child Benefit: az első gyerekre magasabb, a többire alacsonyabb összeg (havi átlagban kb. 90 £/gyerek becslés). ⚠️ Magas jövedelemnél fokozatosan visszaadózzák (High Income Child Benefit Charge).",
+      },
+    ],
+  },
 ];
 
 export function budgetLandingBySlug(slug: string): BudgetLanding | null {

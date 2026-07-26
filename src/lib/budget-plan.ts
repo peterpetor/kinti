@@ -12,14 +12,16 @@
  * lásd a quiz-percentile mintát).
  */
 
-export type BudgetCountry = "CH" | "AT" | "DE" | "NL";
+export type BudgetCountry = "CH" | "AT" | "DE" | "NL" | "GB";
 
 export function isBudgetCountry(c: unknown): c is BudgetCountry {
-  return c === "CH" || c === "AT" || c === "DE" || c === "NL";
+  return c === "CH" || c === "AT" || c === "DE" || c === "NL" || c === "GB";
 }
 
-export function budgetCurrency(country: BudgetCountry): "CHF" | "EUR" {
-  return country === "CH" ? "CHF" : "EUR";
+export function budgetCurrency(country: BudgetCountry): "CHF" | "EUR" | "GBP" {
+  if (country === "CH") return "CHF";
+  if (country === "GB") return "GBP";
+  return "EUR";
 }
 
 /** Ennyi közösségi beküldés felett a közösségi medián írja felül a referenciát. */
@@ -44,7 +46,13 @@ export interface CostBaselineRule {
  * Priminfo átlagprémium; AT — Statistik Austria fogyasztás-felmérés (az egészség-
  * biztosítás az SV része, a családtag mitversichert → 0); DE — Destatis EVS
  * (törvényes KV a bérből levonva, családtag ingyen biztosított → 0); NL — Nibud
- * referencia-büdzsék (zorgverzekering felnőttenként, 18 alatt ingyenes).
+ * referencia-büdzsék (zorgverzekering felnőttenként, 18 alatt ingyenes);
+ * GB — ONS háztartási kiadás-felmérés + Ofgem ársapka (⚠️ FONTBAN).
+ *
+ * ⚠️ GB-SPECIFIKUS: az egészségbiztosítás 0, mert az NHS adóból megy — nincs
+ * havi biztosítási díj, mint CH-ban vagy NL-ben. Cserébe a „rezsi" itt
+ * TARTALMAZZA a council taxet is, ami a többi országban nem létezik ilyen
+ * formában, és a lakót terheli (jellemzően 150-200 £/hó).
  */
 export const COST_BASELINE: Record<BudgetCountry, CostBaselineRule[]> = {
   CH: [
@@ -71,6 +79,14 @@ export const COST_BASELINE: Record<BudgetCountry, CostBaselineRule[]> = {
     { id: "internet_mobil", label: "Internet + mobil", emoji: "📱", firstAdult: 45, extraAdult: 15, perChild: 0 },
     { id: "szabadido", label: "Szabadidő", emoji: "🎭", firstAdult: 180, extraAdult: 140, perChild: 60 },
   ],
+  GB: [
+    { id: "rezsi", label: "Rezsi + council tax", emoji: "🔌", firstAdult: 300, extraAdult: 55, perChild: 25 },
+    { id: "krankenkasse", label: "Egészségbiztosítás (NHS — adóból)", emoji: "🏥", firstAdult: 0, extraAdult: 0, perChild: 0 },
+    { id: "kaja", label: "Élelmiszer", emoji: "🛒", firstAdult: 300, extraAdult: 230, perChild: 150 },
+    { id: "kozlekedes", label: "Közlekedés", emoji: "🚆", firstAdult: 110, extraAdult: 85, perChild: 25 },
+    { id: "internet_mobil", label: "Internet + mobil", emoji: "📱", firstAdult: 50, extraAdult: 15, perChild: 0 },
+    { id: "szabadido", label: "Szabadidő", emoji: "🎭", firstAdult: 180, extraAdult: 140, perChild: 60 },
+  ],
   NL: [
     { id: "rezsi", label: "Rezsi / energie & water", emoji: "🔌", firstAdult: 230, extraAdult: 60, perChild: 30 },
     { id: "krankenkasse", label: "Zorgverzekering", emoji: "🏥", firstAdult: 160, extraAdult: 160, perChild: 0 },
@@ -94,6 +110,9 @@ export const CHILD_BENEFIT_MONTHLY: Record<BudgetCountry, number> = {
   AT: 230,
   CH: 215,
   NL: 115,
+  // ⚠️ UK Child Benefit: az ELSŐ gyerekre magasabb (~£26/hét), a többire
+  // alacsonyabb (~£17/hét). Itt havi ÁTLAGOT használunk, mint a többi országnál.
+  GB: 90,
 };
 
 export function childBenefit(country: BudgetCountry, kids: number): number {
