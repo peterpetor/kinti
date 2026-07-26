@@ -3,7 +3,12 @@ import { cn } from "@/lib/cn";
 /**
  * CountryFlag — valódi, platform-független SVG-zászló (a zászló-emoji Windows-on
  * csak betűpárként, pl. „AT" jelenik meg, mert nincs hozzá glyph). Egyszerűsített,
- * de felismerhető zászlók a 6 Kinti-országhoz. Ismeretlen kód → CH.
+ * de felismerhető zászlók a Kinti-országokhoz.
+ *
+ * ⚠️ Ismeretlen kód → SEMLEGES szürke, NEM svájci. Korábban a fallback a
+ * svájcira esett, ezért az újonnan felvett Anglia (GB) svájci zászlót kapott,
+ * amíg a GB be nem került ide. Új ország felvételekor MINDIG vedd fel ide is a
+ * zászlót — a semleges fallback most már láthatóvá teszi, ha kimaradt.
  */
 const FLAGS: Record<string, React.ReactNode> = {
   CH: (
@@ -47,7 +52,25 @@ const FLAGS: Record<string, React.ReactNode> = {
       <rect y="6.5" width="24" height="3" fill="#FECC00" />
     </>
   ),
+  // Anglia — a Union Jack egyszerűsített, de felismerhető változata.
+  GB: (
+    <>
+      <rect width="24" height="16" fill="#012169" />
+      <path d="M0 0 L24 16 M24 0 L0 16" stroke="#fff" strokeWidth="3.4" />
+      <path d="M0 0 L24 16 M24 0 L0 16" stroke="#C8102E" strokeWidth="1.8" />
+      <path d="M12 0 V16 M0 8 H24" stroke="#fff" strokeWidth="5.4" />
+      <path d="M12 0 V16 M0 8 H24" stroke="#C8102E" strokeWidth="3.2" />
+    </>
+  ),
 };
+
+/** Ismeretlen kód → SEMLEGES szürke (NEM svájci!). */
+const UNKNOWN_FLAG = (
+  <>
+    <rect width="24" height="16" fill="#d8dcd9" />
+    <rect y="7" width="24" height="2" fill="#b6bcb8" />
+  </>
+);
 
 export function CountryFlag({
   code,
@@ -59,7 +82,7 @@ export function CountryFlag({
   return (
     <span className={cn("inline-flex shrink-0 overflow-hidden rounded-[3px] ring-1 ring-black/10", className)}>
       <svg viewBox="0 0 24 16" className="h-full w-full" role="img" aria-hidden="true" preserveAspectRatio="none">
-        {FLAGS[code] ?? FLAGS.CH}
+        {FLAGS[code] ?? UNKNOWN_FLAG}
       </svg>
     </span>
   );

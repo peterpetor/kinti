@@ -528,7 +528,13 @@
     'Try: <kbd data-fill="Hairdresser">Hairdresser</kbd> <kbd data-fill="Mechanic">Mechanic</kbd> <kbd data-fill="Doctor">Doctor</kbd> <kbd data-fill="Baker">Baker</kbd> — or click a category chip ↑');
 
   // ─── auto-bejárás: fordítható "levél" szöveg-elemek ────────────────────────
-  var SEL = 'h1,h2,h3,h4,h5,p,span,a,button,li,div';
+  // ⚠️ A 'strong' KELL ide: a .biz-feat-text kombinált konténer (strong=címsor +
+  // span=törzs) KI VAN HAGYVA konténerként, ezért a gyerekeit külön kell
+  // begyűjteni. A 'strong' hiánya miatt a 4 vállalkozói lépés CÍMSORA magyarul
+  // maradt DE/EN-ben, miközben a törzs (span) rendben fordult.
+  // A duplán-gyűjtés ellen az „csak a legkülső levél" szabály véd: ha egy <p>
+  // már unit, a benne lévő <strong> kimarad (added[k].contains(el)).
+  var SEL = 'h1,h2,h3,h4,h5,p,span,strong,a,button,li,div';
   var INLINE_OK = { EM:1, STRONG:1, B:1, I:1, BR:1, A:1, SPAN:1, KBD:1 };
   var units = null; // [{el, html, key}]
   function isLeaf(el) {
