@@ -11,6 +11,7 @@ const EXAMPLE_BY_COUNTRY: Record<string, string> = {
   AT: "fodrász Graz",
   DE: "fodrász München",
   NL: "fodrász Rotterdam",
+  GB: "fodrász London",
 };
 
 /**
