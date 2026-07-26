@@ -4,8 +4,8 @@ import { useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { JobCategoryOptions } from "@/components/views/job-category-options";
 import { CvJobMatch } from "@/components/views/cv-job-match";
-import { cvProfessionDe, CV_LANGUAGE_LEVELS } from "@/lib/cv-professions";
-import { generateCvPdf, type CvData, type CvExperience, type CvEducation, type CvLanguage } from "@/lib/cv-pdf";
+import { cvProfession, CV_LANGUAGE_LEVELS } from "@/lib/cv-professions";
+import { generateCvPdf, type CvData, type CvExperience, type CvEducation, type CvLanguage, type CvLocale } from "@/lib/cv-pdf";
 
 const inputCls =
   "w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-[14px] text-ink outline-none transition focus:border-primary";
@@ -75,7 +75,14 @@ const ACCENTS: { hex: string; label: string }[] = [
   { hex: "#6b2233", label: "Bordó" },
 ];
 
-export function CvWizard() {
+/**
+ * `locale` — melyik ország CV-konvenciója. "de" (alap): DIN-5008 Lebenslauf
+ * fotóval és születési évvel. "en": brit CV — ⚠️ fotó és születési év NÉLKÜL
+ * (Equality Act / age discrimination), „References available on request" záró
+ * sorral. A szakma-megnevezés a megfelelő kurált szótárból jön.
+ */
+export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
+  const isEn = locale === "en";
   const [step, setStep] = useState(0);
   const [f, setF] = useState<FormState>({
     fullName: "", email: "", phone: "", city: "", birthYear: "",
@@ -103,14 +110,15 @@ export function CvWizard() {
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setF((s) => ({ ...s, [k]: v }));
 
   const professionDe = useMemo(
-    () => f.customProfession.trim() || cvProfessionDe(f.categoryId) || "",
-    [f.customProfession, f.categoryId],
+    () => f.customProfession.trim() || cvProfession(f.categoryId, locale) || "",
+    [f.customProfession, f.categoryId, locale],
   );
 
   function toCvData(): CvData {
     return {
       fullName: f.fullName.trim(),
       professionDe,
+      locale,
       birthYear: f.birthYear.trim(),
       city: f.city.trim(),
       phone: f.phone.trim(),
@@ -130,7 +138,8 @@ export function CvWizard() {
     setBusy(true);
     try {
       // A fotó CSAK itt, a PDF-be kerül — a mentés-payload (toCvData) nem tartalmazza.
-      await generateCvPdf({ ...toCvData(), photo: f.photo || undefined });
+      // Brit CV-be SOHA nem kerül fotó (a generátor is védi, itt sem küldjük).
+      await generateCvPdf({ ...toCvData(), photo: isEn ? undefined : (f.photo || undefined) });
       setPdfDone(true);
     } catch {
       setPdfError("Nem sikerült a PDF készítése. Próbáld újra.");
@@ -210,15 +219,19 @@ export function CvWizard() {
             <label className={labelCls}>Teljes név *</label>
             <input className={inputCls} value={f.fullName} onChange={(e) => set("fullName", e.target.value)} placeholder="Kovács János" maxLength={120} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className={isEn ? "" : "grid grid-cols-2 gap-3"}>
             <div>
-              <label className={labelCls}>Város (Wohnort)</label>
-              <input className={inputCls} value={f.city} onChange={(e) => set("city", e.target.value)} placeholder="München" maxLength={80} />
+              <label className={labelCls}>{isEn ? "Város (Location)" : "Város (Wohnort)"}</label>
+              <input className={inputCls} value={f.city} onChange={(e) => set("city", e.target.value)} placeholder={isEn ? "London" : "München"} maxLength={80} />
             </div>
-            <div>
-              <label className={labelCls}>Születési év</label>
-              <input className={inputCls} inputMode="numeric" value={f.birthYear} onChange={(e) => set("birthYear", e.target.value.replace(/\D/g, "").slice(0, 4))} placeholder="1990" />
-            </div>
+            {/* ⚠️ A születési év a BRIT CV-ből kimarad (age discrimination) — a
+                mezőt EN-ben be sem kérjük, hogy ne is kerülhessen a PDF-be. */}
+            {!isEn && (
+              <div>
+                <label className={labelCls}>Születési év</label>
+                <input className={inputCls} inputMode="numeric" value={f.birthYear} onChange={(e) => set("birthYear", e.target.value.replace(/\D/g, "").slice(0, 4))} placeholder="1990" />
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -227,10 +240,19 @@ export function CvWizard() {
             </div>
             <div>
               <label className={labelCls}>Telefon</label>
-              <input className={inputCls} inputMode="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+49 …" maxLength={40} />
+              <input className={inputCls} inputMode="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder={isEn ? "+44 …" : "+49 …"} maxLength={40} />
             </div>
           </div>
-          {/* Profilkép (Bewerbungsfoto) — opcionális, a böngészőben vágódik 35:45-re */}
+          {/* Profilkép (Bewerbungsfoto) — opcionális, a böngészőben vágódik 35:45-re.
+              ⚠️ EN-ben NEM jelenik meg: a brit CV-be nem tesznek fényképet. */}
+          {isEn ? (
+            <p className="rounded-xl border border-line bg-surface-alt px-3 py-2.5 text-[11.5px] leading-snug text-ink-muted">
+              <strong className="text-ink">Fénykép nincs — és ez így helyes.</strong> A brit CV-re
+              szándékosan <strong>nem tesznek fotót</strong>, és születési évet sem írnak rá: a
+              munkáltatók a diszkrimináció elkerülése miatt kifejezetten kerülik. Ha fotós CV-t
+              küldesz, az sok helyen visszatetsző.
+            </p>
+          ) : (
           <div>
             <label className={labelCls}>Profilkép (opcionális)</label>
             <div className="flex items-center gap-3">
@@ -248,7 +270,7 @@ export function CvWizard() {
                   {f.photo ? "Másik kép" : "Kép feltöltése"}
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => { onPhotoFile(e.target.files?.[0] ?? null); e.target.value = ""; }} />
                 </label>
-                {f.photo && (
+                {!isEn && f.photo && (
                   <button type="button" onClick={() => { set("photo", ""); setPhotoError(null); }} className="ml-2 text-[12px] font-bold text-accent">
                     Eltávolítás
                   </button>
@@ -260,6 +282,7 @@ export function CvWizard() {
               A kép a böngésződben 35×45 mm-es igazolványkép-arányra vágódik, és <strong>nem töltődik fel sehová</strong> — csak a PDF-be kerül. Sok modern német CV szándékosan fotó nélküli (anonymer Lebenslauf) — nyugodtan kihagyhatod.
             </p>
           </div>
+          )}
         </div>
       )}
 
@@ -395,7 +418,7 @@ export function CvWizard() {
             <div className="flex items-start gap-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[17px] font-extrabold leading-tight text-[#212b36]">
-                  {f.fullName.trim() || "Vor- und Nachname"}
+                  {f.fullName.trim() || (isEn ? "First and last name" : "Vor- und Nachname")}
                 </p>
                 {professionDe && (
                   <p className="mt-0.5 truncate text-[12.5px] font-bold" style={{ color: f.accent }}>
@@ -408,7 +431,7 @@ export function CvWizard() {
                   </p>
                 )}
               </div>
-              {f.photo && (
+              {!isEn && f.photo && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={f.photo} alt="" className="h-[54px] w-[42px] shrink-0 rounded-[3px] border border-[#c8ced4] object-cover" />
               )}

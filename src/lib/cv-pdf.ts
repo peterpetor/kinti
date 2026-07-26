@@ -25,10 +25,22 @@ export interface CvLanguage {
   name: string;
   level: string;
 }
+/**
+ * Melyik ország CV-konvenciója szerint készüljön a PDF.
+ * ⚠️ A brit CV ÉRDEMBEN más, nem csak fordítás:
+ *  - NINCS fotó és NINCS születési év (kor/kinézet szerinti diszkrimináció
+ *    elkerülése; a UK HR kifejezetten elvárja a kihagyásukat),
+ *  - „Curriculum Vitae", nem „Lebenslauf",
+ *  - a végén „References available on request".
+ */
+export type CvLocale = "de" | "en";
+
 export interface CvData {
   fullName: string;
-  /** Feloldott német szakma-megnevezés (a szótárból vagy egyedi). */
+  /** Feloldott szakma-megnevezés (a szótárból vagy egyedi) a cél-nyelven. */
   professionDe: string;
+  /** CV-konvenció; elhagyva: "de" (visszafelé kompatibilis). */
+  locale?: CvLocale;
   birthYear: string;
   city: string;
   phone: string;
@@ -57,6 +69,23 @@ const CONTENT_W = PAGE_W - M_LEFT - M_RIGHT; // 165 mm
 const DATE_COL_W = 38; // a bal oldali „von–bis" oszlop
 const BODY_X = M_LEFT + DATE_COL_W + 4;
 const BODY_W = CONTENT_W - DATE_COL_W - 4;
+
+/** Szakasz-címkék nyelvenként. */
+const LABELS = {
+  de: {
+    personal: "Persönliche Daten", birthYear: "Geburtsjahr", city: "Wohnort",
+    profile: "Kurzprofil", experience: "Berufserfahrung", education: "Ausbildung",
+    skills: "Kenntnisse", language: "Sprache", other: "Weitere",
+    docTitle: "Lebenslauf", fileBase: "Lebenslauf", references: null as string | null,
+  },
+  en: {
+    personal: "Personal Details", birthYear: "", city: "Location",
+    profile: "Personal Profile", experience: "Work Experience", education: "Education",
+    skills: "Skills", language: "Languages", other: "Additional skills",
+    docTitle: "Curriculum Vitae", fileBase: "CV",
+    references: "References available on request.",
+  },
+} as const;
 
 // Színek (professzionális sötét-pala; nem harsány)
 const INK: [number, number, number] = [33, 43, 54];
@@ -87,6 +116,8 @@ export async function generateCvPdf(data: CvData): Promise<void> {
 
   // Kiemelőszín: a felhasználó választása, vagy visszafogott antracit alapérték.
   const ACCENT: [number, number, number] = hexToRgb(data.accent) ?? INK;
+  const L = LABELS[data.locale ?? "de"];
+  const isEn = (data.locale ?? "de") === "en";
 
   const setInk = () => doc.setTextColor(INK[0], INK[1], INK[2]);
   const setMuted = () => doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
@@ -122,7 +153,9 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   const lh = (pt: number) => pt * 1.15 * 0.3528;
   const PHOTO_W = 35; // DIN-igazodású Bewerbungsfoto (35×45 mm)
   const PHOTO_H = 45;
-  const hasPhoto = typeof data.photo === "string" && data.photo.startsWith("data:image");
+  // ⚠️ Brit CV-ben NINCS fotó (diszkrimináció-elkerülés) — EN-ben akkor sem
+  // tesszük be, ha a felhasználó feltöltött egyet.
+  const hasPhoto = !isEn && typeof data.photo === "string" && data.photo.startsWith("data:image");
   const photoX = M_LEFT + CONTENT_W - PHOTO_W;
   const headerTop = y;
   const textMaxW = hasPhoto ? photoX - M_LEFT - 6 : CONTENT_W;
@@ -173,10 +206,11 @@ export async function generateCvPdf(data: CvData): Promise<void> {
 
   // ── Persönliche Daten (a kontakt már a fejlécben — itt a stabil törzsadatok) ──
   const personal: [string, string][] = [];
-  if (data.birthYear) personal.push(["Geburtsjahr", data.birthYear]);
-  if (data.city) personal.push(["Wohnort", data.city]);
+  // ⚠️ EN: születési év KIMARAD (UK age-discrimination konvenció).
+  if (!isEn && data.birthYear) personal.push([L.birthYear, data.birthYear]);
+  if (data.city) personal.push([L.city, data.city]);
   if (personal.length) {
-    sectionTitle("Persönliche Daten");
+    sectionTitle(L.personal);
     doc.setFontSize(10.5);
     for (const [label, value] of personal) {
       ensure(6);
@@ -192,7 +226,7 @@ export async function generateCvPdf(data: CvData): Promise<void> {
 
   // ── Kurzprofil (opcionális) ─────────────────────────────────────────────
   if (data.summary.trim()) {
-    sectionTitle("Kurzprofil");
+    sectionTitle(L.profile);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10.5);
     setInk();
@@ -207,7 +241,7 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   // ── Berufserfahrung ─────────────────────────────────────────────────────
   const exp = data.experience.filter((e) => e.role.trim() || e.employer.trim());
   if (exp.length) {
-    sectionTitle("Berufserfahrung");
+    sectionTitle(L.experience);
     for (const e of exp) {
       ensure(10);
       // dátum-oszlop
@@ -242,7 +276,7 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   // ── Ausbildung ──────────────────────────────────────────────────────────
   const edu = data.education.filter((e) => e.school.trim() || e.qualification.trim());
   if (edu.length) {
-    sectionTitle("Ausbildung");
+    sectionTitle(L.education);
     for (const e of edu) {
       ensure(9);
       doc.setFont("helvetica", "normal");
@@ -274,14 +308,14 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   const langs = data.languages.filter((l) => l.name.trim());
   const hasSkills = data.skills.trim().length > 0;
   if (langs.length || hasSkills) {
-    sectionTitle("Kenntnisse");
+    sectionTitle(L.skills);
     if (langs.length) {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10.5);
       for (const l of langs) {
         ensure(5.5);
         setMuted();
-        doc.text("Sprache", M_LEFT, y);
+        doc.text(L.language, M_LEFT, y);
         setInk();
         const val = l.level.trim() ? `${l.name.trim()} — ${l.level.trim()}` : l.name.trim();
         doc.text(val, BODY_X, y);
@@ -293,12 +327,22 @@ export async function generateCvPdf(data: CvData): Promise<void> {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10.5);
       setMuted();
-      doc.text("Weitere", M_LEFT, y);
+      doc.text(L.other, M_LEFT, y);
       setInk();
       const skillLines = doc.splitTextToSize(data.skills.trim(), BODY_W) as string[];
       doc.text(skillLines, BODY_X, y);
       y += skillLines.length * 5.5;
     }
+  }
+
+  // ── References (csak EN — a UK CV bevett záró sora) ─────────────────────
+  if (L.references) {
+    ensure(10);
+    y += 4;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(9.5);
+    setMuted();
+    doc.text(L.references, M_LEFT, y);
   }
 
   // Ort/Datum + Unterschrift blokk SZÁNDÉKOSAN NINCS (user-döntés, 2026-07-10):
@@ -312,10 +356,13 @@ export async function generateCvPdf(data: CvData): Promise<void> {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
-    doc.text("Lebenslauf", M_LEFT, PAGE_H - 10);
-    doc.text(`Seite ${i}/${pages}`, PAGE_W - M_RIGHT, PAGE_H - 10, { align: "right" });
+    doc.text(L.docTitle, M_LEFT, PAGE_H - 10);
+    doc.text(
+      isEn ? `Page ${i}/${pages}` : `Seite ${i}/${pages}`,
+      PAGE_W - M_RIGHT, PAGE_H - 10, { align: "right" },
+    );
   }
 
-  const safeName = (data.fullName || "Lebenslauf").replace(/[^\p{L}\p{N}]+/gu, "_").replace(/^_+|_+$/g, "");
-  doc.save(`Lebenslauf_${safeName || "Kinti"}.pdf`);
+  const safeName = (data.fullName || L.fileBase).replace(/[^\p{L}\p{N}]+/gu, "_").replace(/^_+|_+$/g, "");
+  doc.save(`${L.fileBase}_${safeName || "Kinti"}.pdf`);
 }

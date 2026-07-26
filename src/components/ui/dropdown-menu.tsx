@@ -248,7 +248,10 @@ export function DropdownMenu() {
       title: "Felkészülés & AI",
       defaultOpen: true,
       items: [
-        { key: "cv", label: "Német önéletrajz-készítő", href: "/nemet-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" } },
+        ...(has("nemet-oneletrajz")
+          ? [{ key: "cv", label: "Német önéletrajz-készítő", href: "/nemet-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
+          : []),
+        { key: "cven", label: "Angol önéletrajz-készítő", href: "/angol-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" } },
         { key: "cvaudit", label: "AI CV-asszisztens", href: "/allasok/cv-audit", tint: "bg-success/10 text-success", icon: { name: "sparkles" }, badge: "pro" },
         ...(has("szakmai-szotar")
           ? [{ key: "szotar", label: "Szakmai szótár", href: "/allasok/szakmai-szotar", tint: "bg-star/10 text-star", icon: { name: "document" }, badge: "pro" } as MenuItem]

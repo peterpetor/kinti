@@ -169,3 +169,32 @@ describe("GB vám-kalkulátor (gov.uk, Brexit utáni keretek)", () => {
     expect(calculateAll({ persons: 1, amounts: { sparkling: 99 }, country: "GB" }).anyAlcoholOver).toBe(true);
   });
 });
+
+describe("Angol önéletrajz-készítő (brit CV-konvenció)", () => {
+  it("GB-ben az ANGOL CV elérhető, a NÉMET rejtve", async () => {
+    expect(isFeatureAvailable("angol-oneletrajz", "GB")).toBe(true);
+    expect(isFeatureAvailable("nemet-oneletrajz", "GB")).toBe(false);
+  });
+
+  it("a szakma-szótár ugyanazokat a kulcsokat fedi DE-ben és EN-ben", async () => {
+    const { CV_PROFESSION_DE, CV_PROFESSION_EN } = await import("@/lib/cv-professions");
+    expect(Object.keys(CV_PROFESSION_EN).sort()).toEqual(Object.keys(CV_PROFESSION_DE).sort());
+  });
+
+  it("a brit megnevezésekben NINCS német gender-jelölés (/in)", async () => {
+    const { CV_PROFESSION_EN } = await import("@/lib/cv-professions");
+    for (const [id, label] of Object.entries(CV_PROFESSION_EN)) {
+      expect(label, `${id}: "${label}"`).not.toMatch(/\/in\b/);
+    }
+  });
+
+  it("cvProfession a kért nyelv szótárából old fel", async () => {
+    const { cvProfession } = await import("@/lib/cv-professions");
+    expect(cvProfession("targoncas", "en")).toBe("Forklift Driver");
+    expect(cvProfession("targoncas", "de")).toBe("Gabelstaplerfahrer/in");
+    expect(cvProfession("villanyszerelo", "en")).toBe("Electrician");
+    expect(cvProfession(null, "en")).toBeNull();
+    // az „egyeb" szándékosan üres → null (a wizard a saját megnevezést használja)
+    expect(cvProfession("egyeb", "en")).toBeNull();
+  });
+});

@@ -40,6 +40,8 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "munka allas melo job karrier munkahely allasok allaskereses" },
   { href: "/nemet-oneletrajz", title: "Német önéletrajz készítő", subtitle: "Ingyenes Lebenslauf PDF magyar → német szakmanévvel", icon: "document",
     keywords: "onéletrajz oneletrajz cv lebenslauf nemet pdf allas munka jelentkezes bewerbung szakma forditas" },
+  { href: "/angol-oneletrajz", title: "Angol önéletrajz készítő", subtitle: "Ingyenes brit CV PDF magyar → angol szakmanévvel", icon: "document",
+    keywords: "onéletrajz oneletrajz cv angol english brit uk anglia pdf allas munka jelentkezes szakma forditas resume" },
   { href: "/keresek", title: "Keresek", subtitle: "Igény-hirdetés — jelentkezzenek rád a szakik", icon: "search",
     keywords: "keresek igeny hirdetes keres kerdes szukseg" },
   { href: "/tortenetek", title: "Élettörténetek", subtitle: "Valódi kiköltözési sztorik magyaroktól — írd meg a tiédet", icon: "heart",

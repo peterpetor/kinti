@@ -134,6 +134,16 @@ export function cvProfessionDe(categoryId: string | null | undefined): string | 
   return CV_PROFESSION_DE[categoryId] ?? null;
 }
 
+/** Szakma-megnevezés a kért CV-nyelven (de = német, en = brit angol). */
+export function cvProfession(
+  categoryId: string | null | undefined,
+  locale: "de" | "en",
+): string | null {
+  if (!categoryId) return null;
+  const map = locale === "en" ? CV_PROFESSION_EN : CV_PROFESSION_DE;
+  return map[categoryId] || null;
+}
+
 /** Német nyelvi szintek (CEFR + anyanyelv) a nyelvtudás-blokkhoz. */
 export const CV_LANGUAGE_LEVELS = [
   "A1 (Anfänger)",
@@ -144,3 +154,129 @@ export const CV_LANGUAGE_LEVELS = [
   "C2 (Annähernd muttersprachlich)",
   "Muttersprache",
 ] as const;
+
+/**
+ * cv-professions EN — magyar → ANGOL (UK) szakma-megnevezés az Angol Önéletrajz
+ * Készítőhöz. Ugyanaz az elv, mint a németnél: KURÁLT lista, nem gépi fordítás.
+ *
+ * ⚠️ A brit CV-ben NINCS gender-jelölés (a német /in párja) — ez a UK-ban
+ * kifejezetten kerülendő (Equality Act). A megnevezések a bevett brit
+ * álláshirdetés-nyelvet követik (pl. „Forklift Driver", nem „Fork-lift operator").
+ */
+export const CV_PROFESSION_EN: Record<string, string> = {
+  // Építőipar & szakiparok
+  epitoipar: "Construction Worker",
+  komuves: "Bricklayer",
+  burkolo: "Tiler",
+  padloburkolo: "Flooring Fitter",
+  festo: "Painter and Decorator",
+  asztalos: "Carpenter / Joiner",
+  tetofedo: "Roofer",
+  gipszkarton: "Dry Liner (Plasterboard Fitter)",
+  szigetelo: "Insulation Installer",
+  uveges: "Glazier",
+  villanyszerelo: "Electrician",
+  vizszerelo: "Plumber",
+  epuletgepesz: "Building Services Engineer (HVAC)",
+  hegeszto: "Welder / Fabricator",
+  allvanyozo: "Scaffolder",
+  foldmunkas: "Groundworker / Plant Operator",
+  daru: "Crane Operator",
+  // Ipar, gyártás, technika
+  "ipar-gyartas": "Production Operative",
+  szereldei: "Assembly Operative",
+  cnc: "CNC Machine Operator",
+  forgacsolo: "CNC Machinist (Turner)",
+  gepesz: "Maintenance Fitter",
+  elektronika: "Electronics Technician",
+  muanyag: "Plastics / Rubber Process Operative",
+  csomagolo: "Packing Operative",
+  // Jármű & szállítás
+  logisztika: "Warehouse Operative",
+  sofor: "HGV / LGV Driver",
+  buszsofor: "Bus Driver",
+  taxi: "Taxi / Private Hire Driver",
+  futar: "Delivery Driver / Courier",
+  targoncas: "Forklift Driver",
+  gepjarmu: "Vehicle Mechanic (MOT Tester)",
+  // Vendéglátás
+  vendeglatas: "Hospitality Staff",
+  szakacs: "Chef",
+  pincer: "Waiter / Waitress",
+  konyhai: "Kitchen Porter",
+  gyorsetterem: "Fast Food Team Member",
+  pek: "Baker",
+  barista: "Barista",
+  csapos: "Bartender",
+  catering: "Catering Assistant",
+  hotel: "Hotel Receptionist / Housekeeper",
+  idegenvezeto: "Tour Guide",
+  // Egészségügy & gondozás
+  egeszsegugy: "Healthcare Assistant",
+  idosgondozas: "Care Assistant (Elderly Care)",
+  gyermekfelugyelet: "Childcare Worker / Nanny",
+  szocialis: "Support Worker",
+  mento: "Ambulance Care Assistant",
+  fogaszat: "Dental Nurse",
+  optikus: "Optical Assistant",
+  gyogyszertar: "Pharmacy Assistant",
+  laborasszisztens: "Laboratory Assistant",
+  massaz: "Massage Therapist",
+  // Szépségipar
+  szepsegipar: "Beauty Therapist",
+  fodrasz: "Hairdresser",
+  borbely: "Barber",
+  kozmetikus: "Beautician",
+  sminkes: "Make-up Artist",
+  mukormos: "Nail Technician",
+  tetovalo: "Tattoo Artist",
+  wellness: "Spa Therapist",
+  // Kereskedelem
+  kereskedelem: "Retail Assistant",
+  penztaros: "Cashier",
+  arufeltolto: "Shelf Stacker / Replenishment Assistant",
+  boltvezeto: "Store Manager",
+  ugyfelszolgalat: "Customer Service Advisor",
+  ertekesites: "Sales Advisor",
+  webshop: "E-commerce Assistant",
+  ingatlan: "Estate Agent",
+  biztositas: "Insurance Advisor",
+  // Szolgáltatás
+  takaritas: "Cleaner",
+  ablaktisztito: "Window Cleaner",
+  mosoda: "Laundry Operative",
+  koltoztetes: "Removals Operative",
+  biztonsag: "Security Officer (SIA)",
+  karbantartas: "Maintenance Operative / Handyperson",
+  hulladek: "Waste and Recycling Operative",
+  // Mezőgazdaság
+  mezogazdasag: "Agricultural Worker",
+  idenymunkas: "Seasonal Farm Worker (Fruit Picker)",
+  kertesz: "Gardener / Landscaper",
+  viragkoto: "Florist",
+  allattenyesztes: "Livestock Worker",
+  borasz: "Winemaker",
+  // Iroda & szakma
+  iroda: "Office Administrator",
+  asszisztens: "Personal Assistant",
+  penzugy: "Accounts Assistant",
+  bank: "Bank Clerk",
+  beszerzes: "Procurement Officer",
+  hr: "HR Administrator",
+  jog: "Legal Assistant / Paralegal",
+  // IT & média
+  it: "Software Developer",
+  rendszergazda: "IT Systems Administrator",
+  tesztelo: "QA Tester",
+  adatelemzo: "Data Analyst",
+  media: "Media Assistant",
+  grafikus: "Graphic Designer",
+  fotos: "Photographer",
+  // Oktatás
+  oktatas: "Teaching Assistant",
+  ovoda: "Nursery Practitioner",
+  korrepetalo: "Private Tutor",
+  nyelvtanar: "Language Teacher",
+  edzo: "Fitness Instructor / Personal Trainer",
+  egyeb: "",
+};

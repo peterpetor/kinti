@@ -114,6 +114,7 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "utalas",          // árfolyam/utalás — GBP→HUF ugyanúgy működik
   "vam",             // ⭐ VAN GB-konfig (customs.ts CUSTOMS_CONFIG.GB, gov.uk)
   "tudasbazis",      // ⭐ VAN GB guide-bank (guides.ts GUIDES_GB, 8 cikk gov.uk/NHS forrásból)
+  "angol-oneletrajz",// ⭐ brit CV-készítő (fotó/születési év NÉLKÜL, UK-konvenció)
 ]);
 
 export function isFeatureAvailable(
