@@ -555,16 +555,20 @@
       // span-es elemek MOST fordíthatók (a fordításuk reprodukálja a kbd-ket / span-eket).
       if (el.querySelector && el.querySelector('svg')) continue;
       if (!isLeaf(el)) continue;
-      // Tiszta link-lista (nav-menü, footer link-sor): 2+ önálló link/gomb, és a linkeken
-      // KÍVÜL alig van saját szöveg → NE a konténert fordítsuk egyben (összefűzött kulcs),
-      // hanem a gyerekeket egyenként. (A bekezdés + néhány inline link — pl. GYIK-válasz —
-      // NEM link-lista: ott van bőven saját szöveg, azt egyben fordítjuk.)
+      // Tiszta link-konténer (nav-menü, footer link-sor, egyetlen linket csomagoló <li>): 1+
+      // önálló link/gomb, és a linkeken KÍVÜL alig van saját szöveg → NE a konténert fordítsuk
+      // egyben (összefűzött kulcs, ELVESZTVE a href-et), hanem a gyerek <a>/<button>-t magát.
+      // (A bekezdés + néhány inline link — pl. GYIK-válasz — NEM link-konténer: ott van bőven
+      // saját szöveg, azt egyben fordítjuk, a href-es <a> a snapshotban megmarad.)
+      // ⚠️ KRITIKUS: 1 linkes <li><a href="...">Szöveg</a></li> esetén korábban (2+ küszöbnél)
+      // a <li> lett a levél, a fordítás pedig sima szöveggel ÍRTA FELÜL a teljes <a>-t —
+      // a href elveszett, a link DE/EN-ben nem működött (kattintásra nem navigált).
       var linkCount = 0;
       for (var lc = 0; lc < el.children.length; lc++) { var lt = el.children[lc].tagName; if (lt === 'A' || lt === 'BUTTON') linkCount++; }
-      if (linkCount >= 2) {
+      if (linkCount >= 1) {
         var bareLetters = 0;
         for (var tn = 0; tn < el.childNodes.length; tn++) { if (el.childNodes[tn].nodeType === 3) bareLetters += (el.childNodes[tn].textContent.match(/[A-Za-zÀ-ÿ]/g) || []).length; }
-        if (bareLetters < 5) continue; // csak link-lista → gyerekek egyenként
+        if (bareLetters < 5) continue; // csak link-konténer → a gyerek <a>/<button> fordul önállóan
       }
       // csak a legkülső levél-konténert tartjuk (egy már hozzáadott unit leszármazottja kimarad)
       var inside = false;
