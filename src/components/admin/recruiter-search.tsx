@@ -12,6 +12,8 @@ import type { AdzunaJob } from "@/lib/adzuna";
  * NEM scrape — az Adzuna API kifejezetten listázásra való; a portál-linkek
  * deep-linkek. Admin-only (Clerk).
  */
+// ⚠️ CH (SECO-engedély) és GB (Brexit — nem EU, sponsor licence kell) SZÁNDÉKOSAN
+// nincs a listán: ezekbe az országokba nem közvetítünk. Ne vedd fel őket.
 const PLACEMENT_COUNTRIES = [
   { code: "AT", label: "🇦🇹 Ausztria", cc: "at", name: "Austria" },
   { code: "DE", label: "🇩🇪 Németország", cc: "de", name: "Germany" },

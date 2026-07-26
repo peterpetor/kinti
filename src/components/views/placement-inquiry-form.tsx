@@ -7,7 +7,9 @@ import { cn } from "@/lib/cn";
 /**
  * Munkáltatói megkeresés-űrlap a /kozvetites B2B oldalhoz.
  * POST /api/kozvetites → email az adminnak. CH szándékosan nincs a listában
- * (a svájci közvetítés SECO-engedélyköteles).
+ * (a svájci közvetítés SECO-engedélyköteles); GB (Anglia) szintén NINCS —
+ * Brexit óta nem EU-tag, sponsor licence + skilled worker vízum kellene, ezért
+ * oda nem közvetítünk.
  */
 export function PlacementInquiryForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [form, setForm] = useState({

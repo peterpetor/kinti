@@ -18,7 +18,9 @@ import { DEFAULT_COUNTRY } from "./countries";
  * csak Svájcban jelennek meg, amíg nincs ország-specifikus változatuk.
  */
 export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
-  "vam",               // vám-kalkulátor (svájci határ)
+  "vam",               // vám-kalkulátor: CH (BAZG) + GB (gov.uk) — az AT/DE/NL
+                       //   EU-n belül van, ott nincs vámhatár, ezért marad rejtve.
+                       //   GB-t a GB_ALLOWED_FEATURES engedi külön.
   // "szolgaltato-valto" — KIVÉVE (2026-07-05): mind a 4 országra van szolgáltató-
   //   adat (provider-switch PROVIDER_CATEGORIES_BY_COUNTRY CH/AT/DE/NL: valós
   //   szolgáltatók + felmondási szabályok + német/holland levél-sablon).
@@ -77,12 +79,51 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
  * vállalkozás-felvétel, árfolyam, repülőjegy, hírlevél, értesítések, ranglista,
  * akció-térkép — ezek nincsenek a CH-only halmazban, így automatikusan mennek.
  */
+
+/**
+ * ⚠️ ANGLIA (GB) — MEGFORDÍTOTT MODELL: EXPLICIT ENGEDÉLYEZŐ-LISTA.
+ *
+ * A CH/AT/DE/NL országoknál a modell „minden megy, kivéve a felsoroltakat".
+ * GB-nél ez VESZÉLYES lenne: Anglia Brexit óta nem EU-tag, más az adórendszer
+ * (PAYE/NI, nem AHV/Quellensteuer), más az egészségügy (NHS, nem Krankenkasse),
+ * más a lakhatás (council tax, tenancy deposit scheme), és nincs sem
+ * letelepedési varázslónk, sem állampolgársági kérdésbankunk hozzá. Ha a
+ * „minden megy" ág érvényesülne, a magyar felhasználó SVÁJCI/EU-s számokat
+ * látna hitelesnek tűnő módon — pontosan az a hiba-osztály, amit a
+ * binary-country-fallthrough tanulság ír le.
+ *
+ * Ezért GB-ben CSAK az itt felsorolt funkciók jelennek meg — azok, amelyek
+ * vagy ország-függetlenek (közösség, szaknévsor, állás-lista), vagy amelyekhez
+ * ténylegesen készült GB-adat (vám-kalkulátor: gov.uk Brexit utáni keretek).
+ *
+ * Új GB-tartalom elkészültekor ADD HOZZÁ a kulcsot ehhez a listához — ne a
+ * modellt fordítsd vissza.
+ */
+export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
+  // Ország-független közösségi/piac funkciók
+  "szaknevsor",      // magyar szakemberek — a felhasználók töltik
+  "allasok",         // állás-lista (aggregátor + saját hirdetés)
+  "piacter",         // börze/albérlet — user-tartalom
+  "keresek",         // igény-hirdetések
+  "tortenetek",      // élettörténetek
+  "iranytu",         // közösségi benchmark — a userek töltik
+  "ranglista",
+  "kviz",            // napi kvíz (általános, nem ország-jogi)
+  "hatarido",        // saját határidők — a user viszi fel
+  "b2b",             // zárt vállalkozói projektpiac
+  "utalas",          // árfolyam/utalás — GBP→HUF ugyanúgy működik
+  "vam",             // ⭐ VAN GB-konfig (customs.ts CUSTOMS_CONFIG.GB, gov.uk)
+]);
+
 export function isFeatureAvailable(
   feature: string,
   country: string | null | undefined,
 ): boolean {
   const c = country || DEFAULT_COUNTRY;
   if (c === "CH") return true; // Svájcban minden elérhető (a teljes meglévő app)
+  // GB: engedélyező-lista (ld. a GB_ALLOWED_FEATURES fenti magyarázatát) — a
+  // fel nem sorolt funkciók REJTVE maradnak, mert nincs hozzájuk angol tartalom.
+  if (c === "GB") return GB_ALLOWED_FEATURES.has(feature);
   if (CH_ONLY_FEATURES.has(feature)) return false;
   // DE/NL: a csak-CH+AT funkciók még nem elérhetők (AT-ban igen).
   if (c !== "AT" && CH_AT_ONLY_FEATURES.has(feature)) return false;

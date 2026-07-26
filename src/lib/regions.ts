@@ -24,6 +24,7 @@ export const REGION_LABEL: Record<string, string> = {
   AT: "tartomány",
   DE: "tartomány",
   NL: "provincia",
+  GB: "régió",
 };
 
 // Ausztria — 9 Bundesland. Az aliasok közt a NAGYVÁROSOK is (a szabad-szöveges
@@ -79,12 +80,30 @@ const NL_REGIONS: Region[] = [
   { code: "ZE", name: "Zeeland", aliases: ["middelburg"] },
 ];
 
+
+// Anglia — a 9 hivatalos angol régió (ONS „regions of England"). ⚠️ SZÁNDÉKOSAN
+// csak ANGLIA, nem a teljes Egyesült Királyság: Skócia/Wales/Észak-Írország
+// más jogrend (külön egészségügy, oktatás, sőt Skóciában külön adósáv), ezért
+// ide nem vesszük fel. Város-aliasok: lásd az AT-megjegyzést.
+const GB_REGIONS: Region[] = [
+  { code: "LDN", name: "London", aliases: ["londonban", "greater london", "croydon", "wembley"] },
+  { code: "SE", name: "South East", aliases: ["délkelet-anglia", "brighton", "reading", "oxford", "southampton", "portsmouth", "milton keynes", "slough", "luton"] },
+  { code: "SW", name: "South West", aliases: ["délnyugat-anglia", "bristol", "plymouth", "exeter", "bournemouth", "swindon", "gloucester"] },
+  { code: "EE", name: "East of England", aliases: ["kelet-anglia", "cambridge", "norwich", "ipswich", "peterborough", "colchester", "chelmsford"] },
+  { code: "WM", name: "West Midlands", aliases: ["birmingham", "coventry", "wolverhampton", "stoke-on-trent", "stoke"] },
+  { code: "EM", name: "East Midlands", aliases: ["nottingham", "leicester", "derby", "northampton", "lincoln"] },
+  { code: "YH", name: "Yorkshire and the Humber", aliases: ["yorkshire", "leeds", "sheffield", "bradford", "hull", "york", "doncaster"] },
+  { code: "NW", name: "North West", aliases: ["manchester", "liverpool", "preston", "blackpool", "bolton", "warrington", "chester"] },
+  { code: "NE", name: "North East", aliases: ["newcastle", "sunderland", "middlesbrough", "durham", "gateshead"] },
+];
+
 /** Ország → régiók. A CH a meglévő CANTONS-ra mutat (egyetlen forrás). */
 export const REGIONS: Record<string, Region[]> = {
   CH: CANTONS,
   AT: AT_REGIONS,
   DE: DE_REGIONS,
   NL: NL_REGIONS,
+  GB: GB_REGIONS,
 };
 
 /** Az adott ország régiói (ismeretlen ország → üres lista). */

@@ -6,7 +6,13 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
 import { getJobSources } from "@/lib/job-sources";
 
-/** EU-országok, ahova a Feedback Jobs közvetít (Svájc kimarad — SECO-engedély). */
+/**
+ * EU-országok, ahova a Feedback Jobs közvetít.
+ * ⚠️ Svájc kimarad — SECO-engedélyköteles.
+ * ⚠️ ANGLIA (GB) SZÁNDÉKOSAN KIMARAD — Brexit óta NEM EU-tag: a munkavállaláshoz
+ *    sponsor licence + skilled worker vízum kell, ez más engedélyezési rezsim,
+ *    ide NEM közvetítünk. GB-t NE vedd fel ehhez a listához.
+ */
 const PLACEMENT_COUNTRIES = new Set(["AT", "DE", "NL"]);
 
 /**

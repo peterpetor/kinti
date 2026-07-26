@@ -24,6 +24,7 @@ export const COUNTRIES: Country[] = [
   { code: "AT", name: "Ausztria", flag: "🇦🇹", enabled: true },
   { code: "DE", name: "Németország", flag: "🇩🇪", enabled: true },
   { code: "NL", name: "Hollandia", flag: "🇳🇱", enabled: true },
+  { code: "GB", name: "Anglia", flag: "🇬🇧", enabled: true },
 ];
 
 /** Alapértelmezett ország, ha a felhasználó még nem választott (vagy érvénytelen). */
@@ -44,6 +45,7 @@ export function countryLocative(code: string | null | undefined): string {
     case "AT": return "Ausztriában";
     case "DE": return "Németországban";
     case "NL": return "Hollandiában";
+    case "GB": return "Angliában";
     default: return "Svájcban";
   }
 }
@@ -54,6 +56,7 @@ export function countrySuperessive(code: string | null | undefined): string {
     case "AT": return "Ausztrián";
     case "DE": return "Németországon";
     case "NL": return "Hollandián";
+    case "GB": return "Anglián";
     default: return "Svájcon";
   }
 }
@@ -64,12 +67,14 @@ export function countryAdjective(code: string | null | undefined): string {
     case "AT": return "osztrák";
     case "DE": return "német";
     case "NL": return "holland";
+    case "GB": return "angol";
     default: return "svájci";
   }
 }
 
 /** A közigazgatási régió-egység neve. CH: kanton; AT/DE/NL: tartomány. */
 export function regionWord(code: string | null | undefined): string {
+  if (code === "GB") return "régió";
   return code && code !== "CH" ? "tartomány" : "kanton";
 }
 
@@ -79,6 +84,7 @@ export function countryIllative(code: string | null | undefined): string {
     case "AT": return "Ausztriába";
     case "DE": return "Németországba";
     case "NL": return "Hollandiába";
+    case "GB": return "Angliába";
     default: return "Svájcba";
   }
 }
