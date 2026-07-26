@@ -120,11 +120,21 @@ function isDutchCoord(lat: number, lng: number): boolean {
   return lat >= 50.7 && lat <= 53.7 && lng >= 3.2 && lng <= 7.3;
 }
 
-/** Ország-tudatos koordináta-épelméjűség (CH/AT/DE/NL). */
+/** Angol bounding box. ⚠️ SZÁNDÉKOSAN csak Anglia (a Kinti nem kezeli
+ *  Skóciát/Walest/Észak-Írországot) — a Scilly-szigetektől a northumberlandi
+ *  határig. A nyugati határ így kizárja Walest, az északi Skóciát. */
+function isEnglishCoord(lat: number, lng: number): boolean {
+  return lat >= 49.8 && lat <= 55.9 && lng >= -6.5 && lng <= 1.8;
+}
+
+/** Ország-tudatos koordináta-épelméjűség (CH/AT/DE/NL/GB).
+ *  ⚠️ GB-ág NÉLKÜL az angol koordinátákat a SVÁJCI doboz utasította volna el,
+ *  ami teljesen ellehetetlenítette volna a Szaknévsor-beküldést Angliából. */
 export function isInCountryCoord(country: string, lat: number, lng: number): boolean {
   if (country === "AT") return isAustrianCoord(lat, lng);
   if (country === "DE") return isGermanCoord(lat, lng);
   if (country === "NL") return isDutchCoord(lat, lng);
+  if (country === "GB") return isEnglishCoord(lat, lng);
   return isSwissCoord(lat, lng);
 }
 

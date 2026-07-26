@@ -60,7 +60,7 @@ export const KONZULI_SERVICE_URL = "https://konzuliszolgalat.kormany.hu/";
 /** A Konzuli Szolgálat 0–24 ügyelete (díjmentes). Forrás: konzuliszolgalat.kormany.hu. */
 export const KONZULI_EMERGENCY_PHONE = "+36 80 36 80 36";
 
-const OFFICIAL: Record<"CH" | "AT" | "DE" | "NL", OfficialCountry> = {
+const OFFICIAL: Record<"CH" | "AT" | "DE" | "NL" | "GB", OfficialCountry> = {
   CH: {
     consulate: {
       name: "Magyarország Nagykövetsége",
@@ -239,6 +239,105 @@ const OFFICIAL: Record<"CH" | "AT" | "DE" | "NL", OfficialCountry> = {
       },
     ],
   },
+  /**
+   * ⚠️ ANGLIA. A hiánya KOMOLY hiba volt: a getterek a svájci ágra estek, így
+   * angliai felhasználónak SVÁJCI SEGÉLYHÍVÓ SZÁMOKAT (117/118/144) és svájci
+   * hivatalokat mutatott volna a rendszer. Új ország felvételekor EZT a blokkot
+   * is kötelező megírni — a `hivatalos` oldal NINCS feature-gate mögött.
+   */
+  GB: {
+    consulate: {
+      name: "Magyarország Nagykövetsége",
+      city: "London",
+      website: "https://london.mfa.gov.hu/",
+      extra: [
+        { name: "Konzuli Szolgálat — Egyesült Királyság", url: "https://london.mfa.gov.hu/page/konzuli-ugyek" },
+      ],
+    },
+    emergency: [
+      { label: "Sürgősség (mentő, rendőrség, tűzoltó)", number: "999" },
+      { label: "Sürgősség (EU-s szám, itt is működik)", number: "112" },
+      { label: "NHS — nem sürgős egészségügy (0–24)", number: "111" },
+      { label: "Rendőrség — nem sürgős", number: "101" },
+    ],
+    links: [
+      {
+        trigger: "Útlevelem / személyim lejár",
+        explain: "Magyar okmányt (útlevél, személyi) a konzulátus állít ki — időpontot a Konzinfón foglalsz.",
+        url: KONZINFO_APPOINTMENT_URL, source: "konzinfoidopont.mfa.gov.hu", emoji: "🛂", category: "okmany",
+      },
+      {
+        trigger: "Anyakönyvi / állampolgársági ügy itthonról",
+        explain: "Születés, házasság, honosítás konzuli intézése — a Konzuli Szolgálat hivatalos oldalán.",
+        url: KONZULI_SERVICE_URL, source: "konzuliszolgalat.kormany.hu", emoji: "📜", category: "okmany",
+      },
+      {
+        trigger: "Itt élek — mi a státuszom Brexit után?",
+        explain: "Aki 2020. december 31. előtt érkezett, az EU Settlement Scheme-ben kaphat pre-settled / settled státuszt.",
+        url: "https://www.gov.uk/settled-status-eu-citizens-families", source: "gov.uk", emoji: "🪪", category: "tartozkodas",
+      },
+      {
+        trigger: "Most jövök — milyen vízum kell?",
+        explain: "A 2021 után érkezőknek vízum kell; a vízum-kereső megmondja, melyik út illik rád.",
+        url: "https://www.gov.uk/check-uk-visa", source: "gov.uk", emoji: "✈️", category: "tartozkodas",
+      },
+      {
+        trigger: "Igazolnom kell, hogy dolgozhatok",
+        explain: "A munkáltató right to work ellenőrzést végez — itt generálsz hozzá share code-ot.",
+        url: "https://www.gov.uk/prove-right-to-work", source: "gov.uk", emoji: "✅", category: "munka",
+      },
+      {
+        trigger: "Kell a National Insurance Number",
+        explain: "A munkához, adóhoz és nyugdíjhoz szükséges azonosító online igényelhető.",
+        url: "https://www.gov.uk/apply-national-insurance-number", source: "gov.uk", emoji: "🔢", category: "munka",
+      },
+      {
+        trigger: "Adóügy, tax code, túlfizetés",
+        explain: "A HMRC személyes adószámlájában látod a tax code-od és igényelheted vissza a túlfizetést.",
+        url: "https://www.gov.uk/personal-tax-account", source: "gov.uk", emoji: "💷", category: "munka",
+      },
+      {
+        trigger: "Adóbevallást kell beadnom",
+        explain: "Self Assessment — önfoglalkoztatóknak és bizonyos jövedelmeknél; határidő január 31.",
+        url: "https://www.gov.uk/self-assessment-tax-returns", source: "gov.uk", emoji: "🧾", category: "munka",
+      },
+      {
+        trigger: "Háziorvoshoz (GP) kell regisztrálnom",
+        explain: "Az NHS-ellátás kapuja a GP — a rendelő nem utasíthat el lakcímigazolás hiánya miatt.",
+        url: "https://www.nhs.uk/nhs-services/gps/how-to-register-with-a-gp-surgery/", source: "nhs.uk", emoji: "🏥", category: "egeszseg",
+      },
+      {
+        trigger: "Nem tudom, hova forduljak egészségügyi ügyben",
+        explain: "Az NHS 111 online és telefonon is eligazít, ha nem sürgősségi az eset.",
+        url: "https://111.nhs.uk/", source: "111.nhs.uk", emoji: "☎️", category: "egeszseg",
+      },
+      {
+        trigger: "Council taxet kell fizetnem / bejelentkeznem",
+        explain: "A lakóhelyed önkormányzatát a postcode alapján találod meg — a council tax a lakót terheli.",
+        url: "https://www.gov.uk/find-local-council", source: "gov.uk", emoji: "🏛️", category: "tartozkodas",
+      },
+      {
+        trigger: "A kaucióm védve van?",
+        explain: "A bérbeadónak 30 napon belül állami sémába kell tennie a kauciót — itt ellenőrizheted a szabályokat.",
+        url: "https://www.gov.uk/tenancy-deposit-protection", source: "gov.uk", emoji: "🔐", category: "tartozkodas",
+      },
+      {
+        trigger: "Magyar jogosítvánnyal vezethetek?",
+        explain: "Az EU-s engedéllyel való vezetés és a brit engedélyre cserélés feltételei.",
+        url: "https://www.gov.uk/driving-nongb-licence", source: "gov.uk", emoji: "🚗", category: "kozlekedes",
+      },
+      {
+        trigger: "Autó: adó, MOT, biztosítás",
+        explain: "A három kötelező elem ellenőrzése és intézése egy helyen.",
+        url: "https://www.gov.uk/browse/driving/vehicle-tax-mot-insurance", source: "gov.uk", emoji: "🔧", category: "kozlekedes",
+      },
+      {
+        trigger: "Iskolai helyet kell igényelnem a gyereknek",
+        explain: "A helyet az önkormányzatnál pályázod meg — szigorú határidőkkel (jan. 15. / okt. 31.).",
+        url: "https://www.gov.uk/apply-for-primary-school-place", source: "gov.uk", emoji: "🎒", category: "tartozkodas",
+      },
+    ],
+  },
   NL: {
     consulate: {
       name: "Magyarország Nagykövetsége",
@@ -298,6 +397,7 @@ export function getConsulate(country: string | null | undefined): Consulate {
   if (country === "AT") return OFFICIAL.AT.consulate;
   if (country === "DE") return OFFICIAL.DE.consulate;
   if (country === "NL") return OFFICIAL.NL.consulate;
+  if (country === "GB") return OFFICIAL.GB.consulate;
   return OFFICIAL.CH.consulate;
 }
 
@@ -305,6 +405,7 @@ export function getEmergencyNumbers(country: string | null | undefined): Emergen
   if (country === "AT") return OFFICIAL.AT.emergency;
   if (country === "DE") return OFFICIAL.DE.emergency;
   if (country === "NL") return OFFICIAL.NL.emergency;
+  if (country === "GB") return OFFICIAL.GB.emergency;
   return OFFICIAL.CH.emergency;
 }
 
@@ -312,5 +413,6 @@ export function getOfficialLinks(country: string | null | undefined): OfficialLi
   if (country === "AT") return OFFICIAL.AT.links;
   if (country === "DE") return OFFICIAL.DE.links;
   if (country === "NL") return OFFICIAL.NL.links;
+  if (country === "GB") return OFFICIAL.GB.links;
   return OFFICIAL.CH.links;
 }
