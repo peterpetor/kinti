@@ -253,13 +253,63 @@ const STEPS_NL: Step[] = [
   },
 ];
 
+
+/**
+ * ⚠️ ANGLIA — a kérdések SZÖVEGE szándékosan más, mint a többi országnál.
+ * Máshol az „EU-állampolgár" válasz megnyugtató („szabad mozgás"); Angliában
+ * Brexit óta NEM jogosít semmire, és a `previousStay` a DÖNTŐ kérdés (2020 vége
+ * előtt itt éltél-e). A hintek ezt előre kimondják, hogy a felhasználó ne
+ * hamis biztonságérzettel válaszoljon.
+ */
+const STEPS_GB: Step[] = [
+  {
+    id: "citizenship",
+    question: "Honnan jössz?",
+    options: [
+      { value: "eu", label: "🇭🇺 Magyarország / 🇪🇺 EU / 🇮🇸 EFTA", emoji: "🇪🇺", hint: "⚠️ Brexit óta az EU-állampolgárság ÖNMAGÁBAN nem ad munkavállalási jogot Angliában." },
+      { value: "non-eu", label: "🌍 Nem-EU ország", emoji: "🌍", hint: "Ugyanaz a vízumrendszer vonatkozik rád, mint az EU-állampolgárokra." },
+    ],
+  },
+  {
+    id: "duration",
+    question: "Mennyi időre tervezel Angliában maradni?",
+    options: [
+      { value: "short", label: "< 6 hónap (turizmus, üzleti út, családlátogatás)", emoji: "✈️", hint: "Magyar útlevéllel vízummentes — de dolgozni TILOS." },
+      { value: "medium", label: "6-12 hónap", emoji: "📅" },
+      { value: "long", label: "1-5 év (munkavállalás, tanulás, család)", emoji: "🏠" },
+      { value: "permanent", label: "5+ év / végleges letelepedés", emoji: "🏡" },
+    ],
+  },
+  {
+    id: "purpose",
+    question: "Mi a fő célod?",
+    options: [
+      { value: "work", label: "Munkavállalás Angliában", emoji: "💼", hint: "Szponzor-engedélyes munkáltató kell hozzá (Skilled Worker)." },
+      { value: "study", label: "Tanulás (egyetem, kurzus)", emoji: "🎓" },
+      { value: "family", label: "Családi okok (brit házastárs, családtag)", emoji: "👨‍👩‍👧" },
+      { value: "retired", label: "Nyugdíjasként, anyagi-független", emoji: "🏖️", hint: "⚠️ Angliának nincs általános nyugdíjas-vízuma." },
+      { value: "cross-border", label: "Máshol élek, csak Angliában dolgoznék", emoji: "🚗", hint: "⚠️ Nincs ingázó-engedély — szigetország, és nincs szabad mozgás." },
+    ],
+  },
+  {
+    id: "previousStay",
+    question: "Éltél már Angliában — és mióta?",
+    options: [
+      { value: "5-or-more", label: "Már 5+ éve folyamatosan itt élek", emoji: "🏅", hint: "Ha 2020.12.31. előtt érkeztél: settled status (letelepedés) jár." },
+      { value: "less-than-5", label: "Kevesebb mint 5 éve, de 2021 előtt jöttem", emoji: "🕗", hint: "Pre-settled status — 5 év után settledre váltható." },
+      { value: "none", label: "Most érkezem / 2021 után jöttem", emoji: "✨", hint: "⚠️ Ekkor vízum kell — az EU Settlement Scheme már nem vonatkozik rád." },
+    ],
+  },
+];
+
 export function PermitWizard() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
   const isNL = country === "NL";
-  const STEPS = isNL ? STEPS_NL : isDE ? STEPS_DE : isAT ? STEPS_AT : STEPS_CH;
+  const isGB = country === "GB";
+  const STEPS = isGB ? STEPS_GB : isNL ? STEPS_NL : isDE ? STEPS_DE : isAT ? STEPS_AT : STEPS_CH;
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<WizardAnswers>>({});
   const [result, setResult] = useState<WizardResult | null>(null);

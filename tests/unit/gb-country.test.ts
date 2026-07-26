@@ -52,7 +52,7 @@ describe("GB (Anglia) mint ország", () => {
 
 describe("GB feature-gating (engedélyező-lista)", () => {
   it("engedi a listán szereplő, ország-független funkciókat", () => {
-    for (const f of ["szaknevsor", "allasok", "piacter", "utalas", "vam", "tudasbazis", "berkalkulator", "angol-oneletrajz"]) {
+    for (const f of ["szaknevsor", "allasok", "piacter", "utalas", "vam", "tudasbazis", "berkalkulator", "angol-oneletrajz", "vizum"]) {
       expect(isFeatureAvailable(f, "GB")).toBe(true);
     }
   });
@@ -67,7 +67,6 @@ describe("GB feature-gating (engedélyező-lista)", () => {
       "kozlekedes",
       "lakberles",
       "szolgaltato-valto",
-      "vizum",
       "nyelvlecke",
       "nemet-oneletrajz",
     ]) {

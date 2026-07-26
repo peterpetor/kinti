@@ -116,6 +116,7 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "tudasbazis",      // ⭐ VAN GB guide-bank (guides.ts GUIDES_GB, 8 cikk gov.uk/NHS forrásból)
   "angol-oneletrajz",// ⭐ brit CV-készítő (fotó/születési év NÉLKÜL, UK-konvenció)
   "berkalkulator",   // ⭐ VAN GB-számítás (computeSalaryGB: PAYE + Class 1 NI)
+  "vizum",           // ⭐ VAN GB letelepedés-varázsló (EUSS vs Skilled Worker)
 ]);
 
 export function isFeatureAvailable(
