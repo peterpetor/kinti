@@ -112,6 +112,7 @@ export default function SalaryCalculatorPage() {
           { label: "Brutto-Netto (AT) — BMF", url: "https://onlinerechner.haude.at/bmf/brutto-netto-rechner.html" },
           { label: "Quellensteuer (CH) — ESTV", url: "https://www.estv.admin.ch" },
           { label: "Loonheffing (NL) — Belastingdienst", url: "https://www.belastingdienst.nl" },
+          { label: "Income Tax & NI (Anglia) — gov.uk", url: "https://www.gov.uk/income-tax-rates" },
         ]}
       />
     </div>
