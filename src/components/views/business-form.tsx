@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { countryExamples } from "@/lib/country-examples";
+import { usePreferredCountry } from "@/lib/country-pref";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
@@ -11,7 +13,6 @@ import { nearestDeBundesland } from "@/lib/de-points";
 import { nearestNlProvince } from "@/lib/nl-points";
 import { nearestGbRegion } from "@/lib/gb-points";
 import { readPreferredCanton } from "@/lib/canton-pref";
-import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countrySuperessive, countryAdjective, regionWord } from "@/lib/countries";
 import { getRegions, regionLabel } from "@/lib/regions";
 import { BUSINESS_LIMITS, isInCountryCoord, type BusinessValidationError } from "@/lib/business";
@@ -105,6 +106,7 @@ interface AiSuggestion {
 }
 
 export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps) {
+  const ex = countryExamples(usePreferredCountry()[0] ?? DEFAULT_COUNTRY);
   const [form, setForm] = useState<FormState>(INITIAL);
   // Ország-tudatos: a régió-lista, a geo-derivation és a cím-ellenőrzés a választott országhoz.
   const [prefCountry] = usePreferredCountry();
@@ -515,7 +517,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           type="tel"
           value={form.phone}
           onChange={(e) => setField("phone", e.target.value)}
-          placeholder="Telefonszám (pl. +41 79 123 45 67)"
+          placeholder={`Telefonszám (pl. ${ex.phone})`}
           maxLength={BUSINESS_LIMITS.phoneMax}
           className={inputCls(errors.phone)}
         />

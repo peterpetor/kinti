@@ -1,6 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { countryExamples } from "@/lib/country-examples";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { CANTONS } from "@/lib/cantons";
@@ -21,6 +24,8 @@ export interface WorkerProfileInitial {
 const MAX_CV_BYTES = 10 * 1024 * 1024;
 
 export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }) {
+  const [prefCountryEx] = usePreferredCountry();
+  const ex = countryExamples(prefCountryEx ?? DEFAULT_COUNTRY);
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -171,7 +176,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
             className={inputCls}
-            placeholder="+41 79 123 45 67"
+            placeholder={ex.phone}
           />
         </div>
       </div>

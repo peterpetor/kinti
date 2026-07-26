@@ -10,6 +10,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { currencySymbol } from "@/lib/country-examples";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { trackAction } from "@/components/usage-tracker";
@@ -26,7 +27,7 @@ interface SalaryJob {
 }
 
 function fmtRange(j: SalaryJob): string {
-  const cur = j.currency === "CHF" ? "CHF" : "€";
+  const cur = currencySymbol(j.currency);
   const nf = new Intl.NumberFormat("hu-HU", { maximumFractionDigits: 0 });
   if (j.salaryMin != null && j.salaryMax != null && j.salaryMin !== j.salaryMax) {
     return `${nf.format(j.salaryMin)}–${nf.format(j.salaryMax)} ${cur}/hó`;

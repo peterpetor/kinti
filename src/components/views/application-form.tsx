@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { countryExamples } from "@/lib/country-examples";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
@@ -16,6 +19,8 @@ interface Props {
 }
 
 export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
+  const [prefCountryEx] = usePreferredCountry();
+  const ex = countryExamples(prefCountryEx ?? DEFAULT_COUNTRY);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -171,7 +176,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
           value={form.phone}
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
           className={inputCls}
-          placeholder="+41 79 123 45 67"
+          placeholder={ex.phone}
         />
       </div>
 

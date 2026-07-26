@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { countryExamples } from "@/lib/country-examples";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { Icon } from "@/components/ui";
 import { LogoUploader } from "./logo-uploader";
 import { BUSINESS_ACCENT_COLORS } from "@/lib/business-branding";
@@ -76,6 +79,8 @@ export function ProfileEditor({
   initialKintiPassOffer = null,
   isFeatured,
 }: ProfileEditorProps & { isFeatured?: boolean }) {
+  const [prefCountryEx] = usePreferredCountry();
+  const ex = countryExamples(prefCountryEx ?? DEFAULT_COUNTRY);
   const [accentColor, setAccentColor] = useState(initialAccentColor ?? "");
   const [kintiPassActive, setKintiPassActive] = useState(initialKintiPassActive);
   const [kintiPassOffer, setKintiPassOffer] = useState(initialKintiPassOffer ?? "");
@@ -337,7 +342,7 @@ export function ProfileEditor({
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Pl. +41 79 123 45 67"
+                  placeholder={`Pl. ${ex.phone}`}
                   className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2 text-[13.5px] text-ink focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                 />
               </div>

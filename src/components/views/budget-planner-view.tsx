@@ -12,6 +12,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { currencySymbol } from "@/lib/country-examples";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -293,7 +294,7 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
 
   const currency = budgetCurrency(country);
   const nf = useMemo(() => new Intl.NumberFormat("hu-HU", { maximumFractionDigits: 0 }), []);
-  const fmt = (n: number) => `${nf.format(Math.round(n))} ${currency === "CHF" ? "CHF" : "€"}`;
+  const fmt = (n: number) => `${nf.format(Math.round(n))} ${currencySymbol(currency)}`;
   // Lakbér 0-val is van eredmény (saját megadás) — csak akkor nincs, ha se medián,
   // se saját összeg nem áll rendelkezésre.
   const showResult = grossNum > 0 && (manualRentSet || rentPick != null);
@@ -334,7 +335,7 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
         <div>
           <span className={labelCls}>Hová költöznél?</span>
           <div className="flex flex-wrap gap-2">
-            {(["DE", "AT", "CH", "NL"] as const).map((c) => (
+            {(["DE", "AT", "CH", "NL", "GB"] as const).map((c) => (
               <button key={c} type="button"
                 onClick={() => {
                   countryTouched.current = true;
@@ -354,7 +355,7 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
         {/* Bruttó bér */}
         <div>
           <label htmlFor="bp-gross" className={labelCls}>
-            Felajánlott HAVI bruttó bér ({currency === "CHF" ? "CHF" : "€"})
+            Felajánlott HAVI bruttó bér ({currencySymbol(currency)})
             {country === "AT" && <span className="ml-1 font-medium text-ink-muted">— a szerződéses havi (a 13./14. külön)</span>}
           </label>
           <input id="bp-gross" type="number" inputMode="numeric" min={0} placeholder={country === "CH" ? "pl. 5800" : "pl. 3200"}
@@ -651,7 +652,7 @@ function EditableCostRow({
             aria-label={`${item.label} havi összege`}
             className="h-9 w-[84px] rounded-lg border border-line bg-surface px-2 text-right text-[13.5px] font-bold text-ink outline-none placeholder:text-ink-faint focus:border-primary/50"
           />
-          <span className="text-[12px] font-bold text-ink-muted">{currency === "CHF" ? "CHF" : "€"}</span>
+          <span className="text-[12px] font-bold text-ink-muted">{currencySymbol(currency)}</span>
         </span>
       </div>
       <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-ink/10">

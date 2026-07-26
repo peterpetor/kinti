@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { countryExamples } from "@/lib/country-examples";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { Category } from "@/lib/types";
@@ -52,7 +53,7 @@ export function LeadRequestForm({ categories, initialCategoryId, initialCantonCo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [country, prefCountry]);
   const cityExample = country === "AT" ? "Bécsben" : country === "DE" ? "Berlinben" : country === "NL" ? "Amszterdamban" : "Zürichben";
-  const phoneExample = country === "AT" ? "+43 660 123 4567" : country === "DE" ? "+49 151 23456789" : country === "NL" ? "+31 6 12345678" : "+41 79 123 45 67";
+  const phoneExample = countryExamples(country).phone;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

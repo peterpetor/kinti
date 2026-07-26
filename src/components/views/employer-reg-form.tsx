@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { countryExamples } from "@/lib/country-examples";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -13,6 +16,8 @@ export function EmployerRegForm({
   /** Ha a Szaknévsor-vállalkozásból hoztuk be az adatokat: a cég neve (banner). */
   prefillFrom?: string | null;
 } = {}) {
+  const [prefCountryEx] = usePreferredCountry();
+  const ex = countryExamples(prefCountryEx ?? DEFAULT_COUNTRY);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +85,7 @@ export function EmployerRegForm({
           value={form.companyName}
           onChange={(e) => setForm({ ...form, companyName: e.target.value })}
           className={inputCls}
-          placeholder="Pl. Kinti AG"
+          placeholder={ex.companyName}
         />
       </div>
 
@@ -94,7 +99,7 @@ export function EmployerRegForm({
           value={form.contactEmail}
           onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
           className={inputCls}
-          placeholder="hr@ceged.ch"
+          placeholder={ex.companyEmail}
         />
         <p className="mt-1 text-[11.5px] text-ink-faint">
           Ezen az emailen keresztül küldjük a számlákat és az értesítéseket.
@@ -110,7 +115,7 @@ export function EmployerRegForm({
           value={form.website}
           onChange={(e) => setForm({ ...form, website: e.target.value })}
           className={inputCls}
-          placeholder="https://ceged.ch"
+          placeholder={ex.companyWebsite}
         />
       </div>
 
@@ -123,7 +128,7 @@ export function EmployerRegForm({
           value={form.companyUid}
           onChange={(e) => setForm({ ...form, companyUid: e.target.value })}
           className={inputCls}
-          placeholder="CHE-123.456.789"
+          placeholder={ex.companyIdExample}
         />
         <p className="mt-1 text-[11.5px] text-ink-faint">
           Ha megadod és ellenőrizzük, „Hiteles cég" jelzést kapsz a hirdetéseiden.

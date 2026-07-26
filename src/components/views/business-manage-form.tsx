@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { countryExamples } from "@/lib/country-examples";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
@@ -18,6 +21,8 @@ import { parseWorkingHours, type WorkingHours } from "@/lib/hours";
  * A PATCH /api/business/manage/<token> hívásokat csinálja, sikerre router.refresh().
  */
 export function BusinessManageForm({ business, token }: { business: Business; token: string }) {
+  const [prefCountryEx] = usePreferredCountry();
+  const ex = countryExamples(prefCountryEx ?? DEFAULT_COUNTRY);
   const router = useRouter();
   const [form, setForm] = useState({
     name: business.name,
@@ -241,7 +246,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           type="tel"
           value={form.phone}
           onChange={(e) => set("phone", e.target.value)}
-          placeholder="+41 79 123 45 67"
+          placeholder={ex.phone}
           className={inputCls()}
           maxLength={30}
         />
