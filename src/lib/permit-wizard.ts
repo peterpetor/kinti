@@ -16,7 +16,8 @@ export type PermitType =
   // Németország (EU: Freizügigkeit → Anmeldung → Daueraufenthalt; Blaue Karte nem-EU-nak)
   | "de-freizug" | "de-anmeldung" | "de-dauer" | "de-aufenthalt"
   // Hollandia (EU: vrij verkeer → BRP-inschrijving/BSN → duurzaam verblijf; verblijfsvergunning nem-EU-nak)
-  | "nl-vrijverkeer" | "nl-inschrijving" | "nl-duurzaam" | "nl-verblijf";
+  | "nl-vrijverkeer" | "nl-inschrijving" | "nl-duurzaam" | "nl-verblijf"
+  | "gb-settled" | "gb-presettled" | "gb-skilled" | "gb-other";
 
 export interface PermitInfo {
   type: PermitType;
@@ -358,6 +359,72 @@ export const PERMITS: Record<PermitType, PermitInfo> = {
     applyTo: "Immigratie- en Naturalisatiedienst (IND).",
     links: [{ label: "IND — Duurzaam verblijf EU", url: "https://ind.nl/en/eu-eea-and-swiss-citizens" }],
   },
+  // ─────────────── ANGLIA (Brexit után) ───────────────
+  // ⚠️ Itt az EU-állampolgárság ÖNMAGÁBAN NEM jogosít semmire — 2021.01.01. óta
+  // nincs szabad mozgás. A döntő kérdés: 2020.12.31. ELŐTT itt éltél-e már.
+  "gb-settled": {
+    type: "gb-settled",
+    name: "Settled status (indefinite leave to remain)",
+    emoji: "🏅",
+    color: "#16a34a",
+    shortDesc: "Határozatlan idejű letelepedés az EU Settlement Scheme alapján",
+    duration: "Határozatlan — de 5 évnél hosszabb külföldi távollét megszüntetheti.",
+    workPermitted: "Igen, korlátlanul — bármilyen munkáltatónál, szponzor nélkül.",
+    cantonChange: "Szabad — az Egyesült Királyságon belül bárhova költözhetsz.",
+    familyReunion: "Igen; a közeli hozzátartozókra külön EUSS-szabályok élnek.",
+    pros: ["Korlátlan munkavállalás, szponzor nélkül", "Nincs vízumdíj és nincs IHS", "5 év után állampolgárság kérhető", "Jogosultság a legtöbb ellátásra"],
+    cons: ["Csak annak jár, aki 2020.12.31. előtt itt élt", "5+ év távollét elveszejtheti", "A státusz digitális — share code-dal kell igazolni"],
+    applyTo: "Home Office — EU Settlement Scheme (aki még nem jelentkezett, „reasonable grounds” esetén késve is megteheti).",
+    links: [{ label: "gov.uk — EU Settlement Scheme", url: "https://www.gov.uk/settled-status-eu-citizens-families" }],
+  },
+  "gb-presettled": {
+    type: "gb-presettled",
+    name: "Pre-settled status (5 év alatt)",
+    emoji: "🕗",
+    color: "#d8a32a",
+    shortDesc: "Határozott idejű EUSS-státusz, ami 5 év után settledre váltható",
+    duration: "5 év; 2023 óta automatikusan hosszabbítják, de a settledért JELENTKEZNI kell.",
+    workPermitted: "Igen, korlátlanul — szponzor nélkül.",
+    cantonChange: "Szabad az Egyesült Királyságon belül.",
+    familyReunion: "Igen, EUSS-szabályok szerint.",
+    pros: ["Korlátlan munkavállalás", "Nincs szponzor-kötelezettség", "5 év után settled statusra váltható"],
+    cons: ["⚠️ A settled statusért KÜLÖN jelentkezni kell — nem automatikus", "Hosszabb távollét megszakíthatja a folyamatos tartózkodást", "Digitális státusz, share code kell az igazoláshoz"],
+    applyTo: "Home Office — EU Settlement Scheme; az 5 év meglétekor váltás settled statusra.",
+    links: [{ label: "gov.uk — Settled and pre-settled status", url: "https://www.gov.uk/settled-status-eu-citizens-families" }],
+  },
+  "gb-skilled": {
+    type: "gb-skilled",
+    name: "Skilled Worker vízum",
+    emoji: "🛂",
+    color: "#c8392e",
+    shortDesc: "Munkavállalói vízum — KELL hozzá szponzor-engedélyes munkáltató",
+    duration: "Max. 5 év, hosszabbítható; 5 év után ILR (letelepedés) kérhető.",
+    workPermitted: "Igen, de KIZÁRÓLAG a szponzoráló munkáltatónál (munkahelyváltáshoz új szponzorálás kell).",
+    cantonChange: "Szabad a költözés, de a munkáltató-váltás engedélyhez kötött.",
+    familyReunion: "Igen (dependant partner/gyerek), külön díjjal és IHS-sel fejenként.",
+    pros: ["5 év után letelepedés (ILR) kérhető", "Családtag hozható", "Több szakmában alacsonyabb bérküszöb (egészségügy, oktatás)"],
+    cons: ["⚠️ Munkáltatóhoz kötött — állásvesztésnél 60 nap az új szponzor keresésére", "Drága: vízumdíj + IHS (~1035 £/év/fő) ELŐRE, a teljes időszakra", "Bérküszöb és angol nyelvvizsga (B1) kell", "A munkáltatónak sponsor licence-szel kell rendelkeznie"],
+    applyTo: "Home Office (gov.uk) — Certificate of Sponsorship a munkáltatótól, majd online kérelem.",
+    links: [{ label: "gov.uk — Skilled Worker visa", url: "https://www.gov.uk/skilled-worker-visa" }],
+  },
+  "gb-other": {
+    type: "gb-other",
+    name: "Egyéb vízum-út (tanulmány, család, tehetség)",
+    emoji: "🎓",
+    color: "#1d4434",
+    shortDesc: "Student, Family, Graduate, Global Talent vagy Health and Care Worker vízum",
+    duration: "Úttól függ (Student: a képzés hossza; Family: 2,5–5 év; Graduate: 2 év).",
+    workPermitted: "Úttól függ — Studentnél korlátozott óraszám, Family/Graduate vízumnál szabad.",
+    cantonChange: "Szabad az Egyesült Királyságon belül.",
+    familyReunion: "Úttól függ; a Family vízumnál jövedelmi küszöb van.",
+    pros: ["Nem mindegyikhez kell munkáltatói szponzor (pl. Graduate, Family)", "A Health and Care Worker vízum olcsóbb és IHS-mentes", "Brit diploma után 2 év szabad munkavállalás (Graduate)"],
+    cons: ["Mindegyikhez vízumdíj és jellemzően IHS jár", "Feltételek úttól függően szigorúak (jövedelem, nyelv, megélhetés)", "Turista-vízummal DOLGOZNI TILOS"],
+    applyTo: "Home Office (gov.uk) — az adott vízum-típus online kérelmén keresztül.",
+    links: [
+      { label: "gov.uk — Vízum-kereső", url: "https://www.gov.uk/check-uk-visa" },
+      { label: "gov.uk — Health and Care Worker visa", url: "https://www.gov.uk/health-care-worker-visa" },
+    ],
+  },
   "nl-verblijf": {
     type: "nl-verblijf",
     name: "Verblijfsvergunning / kennismigrant (nem-EU)",
@@ -402,6 +469,7 @@ export function evaluatePermit(a: WizardAnswers, country: string = "CH"): Wizard
   if (country === "AT") return evaluatePermitAT(a);
   if (country === "DE") return evaluatePermitDE(a);
   if (country === "NL") return evaluatePermitNL(a);
+  if (country === "GB") return evaluatePermitGB(a);
   // 1. Cross-border (G-engedély) — különleges eset
   if (a.purpose === "cross-border") {
     return {
@@ -702,4 +770,114 @@ function evaluatePermitNL(a: WizardAnswers): WizardResult {
   else if (a.purpose === "family") notes.push("Családtagként: az EU-s rokon státusza + házassági/születési anyakönyvi kivonat kell.");
   else if (a.purpose === "retired") notes.push("Nyugdíjasként: elég jövedelem + egészségbiztosítás igazolása.");
   return { primary: "nl-inschrijving", alternatives: ["nl-vrijverkeer"], notes };
+}
+
+/**
+ * ⚠️ ANGLIA — a logika MEGFORDUL a többi országhoz képest.
+ *
+ * CH/AT/DE/NL-ben az „EU-állampolgár" válasz azt jelenti: szabad mozgás, nincs
+ * engedély. NAGY-BRITANNIÁBAN 2021. január 1. óta NEM: az EU-állampolgárság
+ * önmagában SEMMIRE nem jogosít. A döntő kérdés az, hogy a kérelmező
+ * 2020. december 31. ELŐTT itt élt-e már (→ EU Settlement Scheme), vagy sem
+ * (→ vízum kell).
+ *
+ * Ezt a `previousStay` válaszból vezetjük le, mert a varázslónak nincs külön
+ * „mikor érkeztél" kérdése:
+ *   - "5-or-more"   → jóval 2021 előtt itt élt → settled status (ILR)
+ *   - "less-than-5" → 2021 előtt érkezett, de még nincs 5 éve → pre-settled
+ *   - "none"        → új érkező → VÍZUM kell
+ * A visszaadott notes MINDIG kimondja ezt a feltételezést, hogy a felhasználó
+ * korrigálni tudja, ha nem illik rá.
+ */
+function evaluatePermitGB(a: WizardAnswers): WizardResult {
+  const EUSS_CAVEAT =
+    "⚠️ Ez arra az esetre igaz, ha 2020. december 31. ELŐTT már Nagy-Britanniában éltél. Ha később érkeztél, az EU Settlement Scheme NEM vonatkozik rád — akkor vízum kell.";
+
+  // Rövid látogatás — se EU, se nem-EU állampolgárnak nem kell vízum turistaként
+  // (magyar útlevéllel 6 hónapig vízummentes a látogatás), de DOLGOZNI TILOS.
+  if (a.duration === "short" && a.purpose !== "work") {
+    return {
+      primary: "gb-other",
+      alternatives: [],
+      notes: [
+        "Magyar útlevéllel turistaként vízum nélkül utazhatsz be, jellemzően legfeljebb 6 hónapra.",
+        "⚠️ Látogatóként DOLGOZNI TILOS — még alkalmi vagy távmunkát sem végezhetsz brit munkáltatónak.",
+        "2025 óta a vízummentes belépéshez is előzetes elektronikus engedély (ETA) kell — indulás előtt ellenőrizd a gov.uk-on.",
+      ],
+    };
+  }
+
+  // ⚠️ Ingázás: szigetország, az EU-ból napi ingázás nem életszerű út.
+  if (a.purpose === "cross-border") {
+    return {
+      primary: "gb-skilled",
+      alternatives: ["gb-other"],
+      notes: [
+        "⚠️ Nagy-Britanniában nincs a svájcihoz hasonló határátlépő (ingázó) engedély — szigetország, és Brexit óta nincs szabad mozgás.",
+        "Ha brit munkáltatónak dolgoznál, ahhoz munkavállalási jog kell (vízum vagy EUSS-státusz), akkor is, ha nem költözöl ki véglegesen.",
+        "Ha magyar munkáltatónak dolgozol távolról, ahhoz nem kell brit engedély — de az adózás helye külön kérdés, nézz utána.",
+      ],
+    };
+  }
+
+  // Már itt élt korábban → EU Settlement Scheme
+  if (a.previousStay === "5-or-more") {
+    return {
+      primary: "gb-settled",
+      alternatives: ["gb-presettled"],
+      notes: [
+        "5+ év folyamatos tartózkodás után settled status (indefinite leave to remain) jár az EU Settlement Scheme keretében.",
+        EUSS_CAVEAT,
+        "A jelentkezési fő határidő 2021. június 30. volt, de „reasonable grounds” (pl. betegség, tájékozatlanság, gyerek) esetén ma is lehet késve jelentkezni.",
+        "A settled status után 12 hónappal brit állampolgárságot is kérhetsz (ha a többi feltétel teljesül).",
+      ],
+    };
+  }
+
+  if (a.previousStay === "less-than-5") {
+    return {
+      primary: "gb-presettled",
+      alternatives: ["gb-settled"],
+      notes: [
+        "5 évnél rövidebb ittlétnél pre-settled status jár (EU Settlement Scheme).",
+        EUSS_CAVEAT,
+        "⚠️ Az 5 év összejöttével a settled statusért KÜLÖN kell jelentkezni — nem automatikus. A pre-settled státuszt 2023 óta automatikusan hosszabbítják, de ez nem pótolja a váltást.",
+        "Vigyázz a hosszabb külföldi tartózkodásra: évi 6 hónapnál több távollét megszakíthatja a folyamatos tartózkodást.",
+      ],
+    };
+  }
+
+  // Új érkező (previousStay === "none") → vízum kell
+  const notes: string[] = [
+    "⚠️ Brexit óta az EU-állampolgárság ÖNMAGÁBAN nem jogosít munkavállalásra vagy letelepedésre Nagy-Britanniában — vízum kell.",
+    "A legtöbb vízumnál a kérelemmel együtt ki kell fizetni az Immigration Health Surcharge-t (~1035 £/év/fő, a TELJES időszakra előre) — ez a vízumdíjon felül értendő, és családnál sokszorozódik.",
+  ];
+
+  if (a.purpose === "study") {
+    notes.push("Tanulmányi célra a Student vízum az út: elfogadó levél (CAS) egy engedélyes intézménytől, megélhetés igazolása, angol nyelvtudás.");
+    notes.push("Student vízummal a munkavégzés korlátozott (jellemzően heti 20 óra szorgalmi időszakban).");
+    notes.push("A brit diploma után a Graduate vízum 2 év szabad, szponzor nélküli munkavállalást ad — ez a leggyakoribb átmenet munkavállalói státuszba.");
+    return { primary: "gb-other", alternatives: ["gb-skilled"], notes };
+  }
+
+  if (a.purpose === "family") {
+    notes.push("Brit vagy letelepedett házastárssal/partnerrel a Family (spouse) vízum az út — jövedelmi küszöbbel és angol nyelvi követelménnyel.");
+    notes.push("A jövedelmi küszöb az utóbbi években jelentősen emelkedett, és gyakran változik — a kérelem előtt MINDIG a gov.uk aktuális értékét nézd.");
+    notes.push("5 év után ILR (letelepedés) kérhető ezen az úton is.");
+    return { primary: "gb-other", alternatives: ["gb-skilled"], notes };
+  }
+
+  if (a.purpose === "retired") {
+    notes.push("⚠️ Nagy-Britanniának NINCS általános „nyugdíjas vízuma” — a korábbi retired person of independent means út 2008-ban megszűnt.");
+    notes.push("Reális utak: brit családtag (Family vízum), Global Talent, vagy jelentős befektetéshez kötött vállalkozói utak.");
+    notes.push("Elég megtakarítás önmagában NEM elég a letelepedéshez, ellentétben több EU-országgal.");
+    return { primary: "gb-other", alternatives: [], notes };
+  }
+
+  // Munkavállalás (alapeset)
+  notes.push("A fő út a Skilled Worker vízum: KELL egy Home Office által engedélyezett (sponsor licence-szel rendelkező) munkáltató álláskánlata és Certificate of Sponsorship-je.");
+  notes.push("További feltételek: a szakmára előírt bérküszöb elérése és angol nyelvtudás (jellemzően B1). A bérküszöb 2024-ben jelentősen emelkedett és gyakran változik — a gov.uk aktuális értéke a mérvadó.");
+  notes.push("Egészségügyi és gondozói szakmákban a Health and Care Worker vízum alacsonyabb küszöböt ad, és mentes az IHS alól — ápolóként, gondozóként ezt nézd először.");
+  notes.push("⚠️ A vízum a MUNKÁLTATÓHOZ kötött: ha elveszíted az állásod, jellemzően 60 napod van új szponzort találni.");
+  return { primary: "gb-skilled", alternatives: ["gb-other"], notes };
 }

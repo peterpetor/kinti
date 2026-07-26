@@ -13,20 +13,29 @@ import { isFeatureAvailable } from "@/lib/feature-availability";
  * mount előtt CH-default = SSR-egyezés); a kapu ugyanaz az isFeatureAvailable,
  * mint a menüben/keresőben.
  */
-const TOOLS: { href: string; emoji: string; label: string; desc: string; feature?: string }[] = [
+const TOOLS: {
+  href: string; emoji: string; label: string; desc: string; feature?: string;
+  /** Ország-specifikus leírás-felülírás (több országban élő, de ország-kötött eszközhöz). */
+  descByCountry?: Record<string, string>;
+}[] = [
   { href: "/tudasbazis/kikoltozes", emoji: "✈️", label: "Kiköltözési teendőlista", desc: "Lépésről lépésre az indulásig — idővonallal" },
   { href: "/tudasbazis/vizum", emoji: "🪪", label: "Tartózkodás és engedélyek", desc: "Engedély-varázsló: mi kell, mikor, hova", feature: "vizum" },
   { href: "/tudasbazis/hivatalos", emoji: "🏛️", label: "Hivatalos linkek", desc: "Konzulátus, hivatalok — egy kattintásra" },
   { href: "/tudasbazis/iskolarendszer", emoji: "🎒", label: "Iskolarendszer", desc: "Óvodától az egyetemig, országonként", feature: "iskolarendszer" },
   { href: "/tudasbazis/allampolgarsag", emoji: "🏅", label: "Állampolgárság", desc: "Honosítási felkészítő és teszt", feature: "allampolgarsag" },
   { href: "/tudasbazis/bussen", emoji: "🚗", label: "Bírság-becslő", desc: "Gyorshajtás: mennyi büntetés jár?", feature: "bussen" },
-  { href: "/tudasbazis/vam", emoji: "📦", label: "Vám-kalkulátor", desc: "Behozatal a svájci határon", feature: "vam" },
+  // ⚠️ A vám-kalkulátor CH-ban ÉS GB-ben is él, de a leírása országhoz kötött —
+  // enélkül „Behozatal a svájci határon" jelent meg az angol oldalon (valós bug).
+  { href: "/tudasbazis/vam", emoji: "📦", label: "Vám-kalkulátor", desc: "Behozatal a vámhatáron", feature: "vam",
+    descByCountry: { CH: "Behozatal a svájci határon", GB: "Behozatal Angliába (Brexit után)" } },
 ];
 
 export function ToolsList() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const tools = TOOLS.filter((t) => !t.feature || isFeatureAvailable(t.feature, country));
+  const tools = TOOLS
+    .filter((t) => !t.feature || isFeatureAvailable(t.feature, country))
+    .map((t) => ({ ...t, desc: t.descByCountry?.[country] ?? t.desc }));
 
   return (
     <section className="space-y-2">

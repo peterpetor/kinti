@@ -198,3 +198,47 @@ describe("Angol önéletrajz-készítő (brit CV-konvenció)", () => {
     expect(cvProfession("egyeb", "en")).toBeNull();
   });
 });
+
+describe("⚠️ Fallthrough-őrök: GB nem eshet a svájci alapesetre", () => {
+  it("az Iránytű régió-segédei MIND explicit GB-értéket adnak", async () => {
+    const u = await import("@/app/(app)/iranytu/region-util");
+    // régiólista: ANGOL régiók, nem svájci kantonok
+    const regions = u.benchRegions("GB");
+    expect(regions.map((r) => r.code)).toContain("LDN");
+    expect(regions.map((r) => r.code)).not.toContain("ZH"); // Zürich NEM lehet benne
+    expect(u.benchRegionLabel("GB")).toBe("Régió");
+    expect(u.benchCurrency("GB")).toBe("GBP");
+    expect(u.benchAllLabel("GB")).toBe("Egész Anglia");
+    expect(u.benchDefaultRegion("GB")).toBe("LDN");
+    // a svájci alapeset értékei NEM szivároghatnak át
+    expect(u.benchAllLabel("GB")).not.toContain("Svájc");
+    expect(u.benchDefaultSalary("GB")).not.toBe(u.benchDefaultSalary("CH"));
+    expect(u.benchDefaultRent("GB")).not.toBe(u.benchDefaultRent("CH"));
+  });
+
+  it("a vám-csempe alcíme ország-specifikus (nem 'svájci határon' Anglián)", async () => {
+    const { quickActions, APP_DESTINATIONS } = await import("@/lib/app-destinations");
+    const base = APP_DESTINATIONS.find((d) => d.href === "/tudasbazis/vam")!;
+    expect(base.subtitleByCountry?.GB).toBeTruthy();
+    expect(base.subtitleByCountry?.GB).not.toContain("svájci");
+    // ahol a quickActions listázza, ott a feloldott alcím szerepel
+    for (const c of ["CH", "GB"] as const) {
+      const found = quickActions(c).find((d) => d.href === "/tudasbazis/vam");
+      if (found) {
+        expect(found.subtitle, `${c} alcím`).toBe(base.subtitleByCountry![c]);
+      }
+    }
+  });
+
+  it("a countries.ts helperek egyike sem ad svájci értéket GB-re", async () => {
+    const c = await import("@/lib/countries");
+    const gbStrings = [
+      c.countryLocative("GB"), c.countrySuperessive("GB"),
+      c.countryAdjective("GB"), c.countryIllative("GB"), c.regionWord("GB"),
+    ];
+    for (const v of gbStrings) {
+      expect(v.toLowerCase()).not.toContain("svájc");
+      expect(v.toLowerCase()).not.toContain("kanton");
+    }
+  });
+});

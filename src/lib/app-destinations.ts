@@ -27,6 +27,20 @@ export interface AppDestination {
   icon: IconName;
   /** Opcionális feature-kulcs; ha adott, csak az elérhető országban jelenik meg. */
   feature?: string;
+  /**
+   * Ország-specifikus alcím-felülírás. ⚠️ Azoknál az eszközöknél KELL, amelyek
+   * több országban élnek, de a leírásuk országhoz kötött — pl. a vám-kalkulátor
+   * CH-ban a svájci, GB-ben a brit határról szól. Enélkül a svájci szöveg
+   * jelenne meg Anglián is (ez tényleges hiba volt: „Behozatal a svájci
+   * határon" látszott az angol oldalon).
+   */
+  subtitleByCountry?: Record<string, string>;
+}
+
+/** Az ország-specifikus alcímet alkalmazza (ha van); egyébként az alapot adja. */
+function localizeDestination(d: AppDestination, country: string | null | undefined): AppDestination {
+  const sub = country && d.subtitleByCountry?.[country];
+  return sub ? { ...d, subtitle: sub } : d;
 }
 
 /**
@@ -74,8 +88,9 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "lakas alberlet lakber berles kaucio ingatlan berleti lakhatas szoba kiado borze piacter hirdetes zwischenmiete untermiete wg" },
   { href: "/piacter?tab=koltoztetes", title: "Költöztetés", subtitle: "Árajánlat magyar költöztetőktől + tippek", icon: "truck",
     keywords: "koltoztetes koltozes fuvar fuvarozas szallitas butorszallitas teherauto umzug" },
-  { href: "/tudasbazis/vam", title: "Vám-kalkulátor", subtitle: "Behozatal a svájci határon", icon: "shoppingBag", feature: "vam",
-    keywords: "vam behozatal csomag import hatar zoll vamkalkulator" },
+  { href: "/tudasbazis/vam", title: "Vám-kalkulátor", subtitle: "Behozatal a vámhatáron", icon: "shoppingBag", feature: "vam",
+    subtitleByCountry: { CH: "Behozatal a svájci határon", GB: "Behozatal Angliába (Brexit után)" },
+    keywords: "vam behozatal csomag import hatar zoll vamkalkulator customs duty free" },
   { href: "/gyik", title: "Gyakori kérdések", subtitle: "Lakásbérlés, szakember, hivatali ügyek — válaszokkal", icon: "question",
     keywords: "gyik gyakori kerdesek valaszok kaucio alberlet szakember ugyintezes anmeldung meldezettel" },
   { href: "/tudasbazis/iskolarendszer", title: "Iskolarendszer", subtitle: "Hogyan épül fel az oktatás", icon: "bookmark",
@@ -123,7 +138,7 @@ export function quickActions(country: string | null | undefined): AppDestination
     const d = byHref.get(href);
     if (!d) continue;
     if (d.feature && !isFeatureAvailable(d.feature, country)) continue;
-    out.push(d);
+    out.push(localizeDestination(d, country));
   }
   return out;
 }
@@ -210,7 +225,7 @@ export function searchDestinations(
     if (!tokens.every((t) => hay.includes(t))) continue;
     let score = 0;
     for (const t of tokens) score += titleF.includes(t) ? 2 : 1;
-    scored.push({ d, score });
+    scored.push({ d: localizeDestination(d, country), score });
   }
   scored.sort((a, b) => b.score - a.score);
   return scored.slice(0, limit).map((s) => s.d);
