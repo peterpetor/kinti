@@ -24,7 +24,11 @@ export const COUNTRIES: Country[] = [
   { code: "AT", name: "Ausztria", flag: "🇦🇹", enabled: true },
   { code: "DE", name: "Németország", flag: "🇩🇪", enabled: true },
   { code: "NL", name: "Hollandia", flag: "🇳🇱", enabled: true },
-  { code: "GB", name: "Anglia", flag: "🇬🇧", enabled: true },
+  // ⚠️ Anglia zászló-emojija a Szent György-kereszt (tag-sequence), NEM a
+  // 🇬🇧 Union Jack — az az EGYESÜLT KIRÁLYSÁGÉ, mi pedig szándékosan csak
+  // Angliát kezeljük országként. (Ahol platform-független megjelenés kell,
+  // ott a CountryFlag SVG-komponens fut, nem ez az emoji.)
+  { code: "GB", name: "Anglia", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", enabled: true },
 ];
 
 /** Alapértelmezett ország, ha a felhasználó még nem választott (vagy érvénytelen). */

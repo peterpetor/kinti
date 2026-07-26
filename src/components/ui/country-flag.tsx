@@ -52,14 +52,15 @@ const FLAGS: Record<string, React.ReactNode> = {
       <rect y="6.5" width="24" height="3" fill="#FECC00" />
     </>
   ),
-  // Anglia — a Union Jack egyszerűsített, de felismerhető változata.
+  // ⚠️ ANGLIA zászlaja a Szent György-kereszt (fehér alap, piros kereszt) —
+  // NEM a Union Jack, az az EGYESÜLT KIRÁLYSÁGÉ. A Kinti szándékosan csak
+  // Angliát kezeli országként (Skócia/Wales/É-Írország külön jogrend, ld.
+  // regions.ts GB_REGIONS), ezért itt az angol zászló a helyes.
   GB: (
     <>
-      <rect width="24" height="16" fill="#012169" />
-      <path d="M0 0 L24 16 M24 0 L0 16" stroke="#fff" strokeWidth="3.4" />
-      <path d="M0 0 L24 16 M24 0 L0 16" stroke="#C8102E" strokeWidth="1.8" />
-      <path d="M12 0 V16 M0 8 H24" stroke="#fff" strokeWidth="5.4" />
-      <path d="M12 0 V16 M0 8 H24" stroke="#C8102E" strokeWidth="3.2" />
+      <rect width="24" height="16" fill="#fff" />
+      <rect x="10.4" y="0" width="3.2" height="16" fill="#CE1124" />
+      <rect x="0" y="6.4" width="24" height="3.2" fill="#CE1124" />
     </>
   ),
 };
