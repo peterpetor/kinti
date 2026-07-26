@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { KintiLogo } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { CountryFlag } from "@/components/ui/country-flag";
 import { COUNTRIES } from "@/lib/countries";
 import { hasChosenCountry, setPreferredCountry } from "@/lib/country-pref";
 
@@ -77,9 +78,9 @@ export function CountryGate() {
                   : "border-white/15 bg-white/[0.06] hover:bg-white/10",
               )}
             >
-              <span className="text-[40px] leading-none" aria-hidden="true">
-                {c.flag}
-              </span>
+              {/* ⚠️ SVG-zászló, NEM a c.flag emoji: Anglia zászlaja tag-sequence
+                  emoji, amit Windows nem renderel (sima fekete lobogó lenne). */}
+              <CountryFlag code={c.code} className="h-[38px] w-[54px]" />
               <span className="text-[15px] font-extrabold tracking-tight">{c.name}</span>
               {!c.enabled && (
                 <span className="absolute right-2 top-2 rounded-full bg-white/20 px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-white/90">
