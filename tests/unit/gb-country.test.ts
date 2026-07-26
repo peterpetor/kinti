@@ -241,3 +241,20 @@ describe("⚠️ Fallthrough-őrök: GB nem eshet a svájci alapesetre", () => {
     }
   });
 });
+
+describe("Anglia zászló-megjelenítés", () => {
+  it("a GB emoji-mező ÜRES (a tag-sequence nem renderel, a 🇬🇧 rossz ország)", async () => {
+    const { COUNTRIES } = await import("@/lib/countries");
+    const gb = COUNTRIES.find((c) => c.code === "GB")!;
+    expect(gb.flag).toBe("");
+    // ⚠️ SOHA ne kerüljön vissza a UK-zászló Angliához
+    expect(gb.flag).not.toContain("\u{1F1EC}\u{1F1E7}");
+  });
+
+  it("a többi ország emojija érintetlen (nincs regresszió)", async () => {
+    const { COUNTRIES } = await import("@/lib/countries");
+    for (const code of ["CH", "AT", "DE", "NL"]) {
+      expect(COUNTRIES.find((c) => c.code === code)!.flag.length).toBeGreaterThan(0);
+    }
+  });
+});

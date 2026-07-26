@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { Sparkline } from "@/components/ui/sparkline";
 import { cn } from "@/lib/cn";
+import { CountryFlag } from "@/components/ui/country-flag";
 import { COUNTRIES, getCountry } from "@/lib/countries";
 import { getAdminUserId } from "@/lib/admin";
 import { AdminVerifyToggle } from "@/components/views/admin-verify-toggle";
@@ -251,7 +252,8 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
         <div className="flex flex-wrap gap-2">
           {COUNTRIES.map((c) => (
             <span key={c.code} className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink">
-              {c.flag} {c.name}
+              <CountryFlag code={c.code} className="h-[12px] w-[17px]" />
+              {c.name}
               <span className="text-ink-muted">{fmt(newsletterByCountry[c.code] ?? 0)}</span>
             </span>
           ))}

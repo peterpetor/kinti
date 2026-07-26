@@ -28,7 +28,13 @@ export const COUNTRIES: Country[] = [
   // 🇬🇧 Union Jack — az az EGYESÜLT KIRÁLYSÁGÉ, mi pedig szándékosan csak
   // Angliát kezeljük országként. (Ahol platform-független megjelenés kell,
   // ott a CountryFlag SVG-komponens fut, nem ez az emoji.)
-  { code: "GB", name: "Anglia", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", enabled: true },
+  // ⚠️ Anglia zászló-emojija SZÁNDÉKOSAN ÜRES. A 🇬🇧 az EGYESÜLT KIRÁLYSÁGÉ
+  // (rossz ország), az angol 🏴 pedig tag-sequence emoji, amit a Windows NEM
+  // renderel — sima fekete lobogó lesz belőle. Üresen a szöveges helyeken
+  // (<option>, chip) csak az „Anglia" név jelenik meg, ami tiszta és pontos.
+  // Ahol grafikus zászló kell, ott a CountryFlag SVG-komponens fut (az rajzolja
+  // a Szent György-keresztet), a landingen pedig a .fl-eng CSS-zászló.
+  { code: "GB", name: "Anglia", flag: "", enabled: true },
 ];
 
 /** Alapértelmezett ország, ha a felhasználó még nem választott (vagy érvénytelen). */
