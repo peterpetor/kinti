@@ -38,6 +38,12 @@
 
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+    /* ⚠️ Vízszintes pan-olás megakadályozása. `clip` és NEM `hidden`, mert a
+       hidden scroll-konténert csinál a gyökérből, amitől a sticky nav
+       elromlana. A clip nem hoz létre scroll-konténert, így a nav marad.
+       (A fő szerkezeti okot a .comm-grid min-width: 0 javítja lentebb — ez itt
+       a védőháló a dekoratív, kilógó elemekre.) */
+    html, body { overflow-x: clip; }
     body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.5; }
     img, svg { display: block; max-width: 100%; }
     a { color: inherit; text-decoration: none; }
@@ -440,7 +446,15 @@
     .event-info .t { font-weight: 700; font-size: 14px; line-height: 1.2; }
     .event-info .v { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 
-    .board-list { display: flex; flex-direction: column; gap: 10px; }
+    /* ⚠️ A grid-elemek alapértelmezett min-width: auto miatt a sáv a TARTALOM
+       min-content szélességére nőhet — a .board-info .t nowrap-szövege így
+       395px-re feszítette a kártyát 360px-es mobilon, és VÍZSZINTESEN
+       görgethetővé tette az EGÉSZ oldalt (mind a három nyelven).
+       A min-width: 0 engedi a sávot a konténerhez zsugorodni; a nowrap-szöveg
+       ettől a meglévő text-overflow: ellipsis szerint vágódik. */
+    .comm-grid > * { min-width: 0; }
+    .comm-card { min-width: 0; }
+    .board-list { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
     .board-item {
       padding: 14px 16px; border-radius: 14px;
       border: 1px solid var(--border); background: var(--surface-alt);
@@ -2071,7 +2085,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <!-- Landing i18n motor (HU/DE/EN) — a fő IIFE ELŐTT tölt be, hogy a kintiCat/kintiJS globálisok készen álljanak. -->
-<script src="/landing-i18n.js?v=20260726g"></script>
+<script src="/landing-i18n.js?v=20260726h"></script>
 <script>
 (function () {
   'use strict';
