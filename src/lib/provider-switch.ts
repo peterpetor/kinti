@@ -1100,12 +1100,229 @@ ${p.customerName}`,
   },
 ];
 
+
+/**
+ * ⚠️ ANGLIA — két szerkezeti eltérés a kontinentális országoktól:
+ *
+ * 1. NINCS egészségbiztosítás-váltás. Az NHS adóból finanszírozott, a
+ *    használat pontján ingyenes — nem választasz biztosítót, nincs havidíj,
+ *    és nincs mit felmondani. Ezért a "krankenkasse" kategória KIMARAD a
+ *    GB-listából (nem üres kategóriát adunk, hanem egyáltalán nem kínáljuk).
+ *
+ * 2. A BANKVÁLTÁS itt a legerősebb: a Current Account Switch Service (CASS)
+ *    7 munkanap alatt, garanciával, automatikusan átvisz MINDENT (direct
+ *    debitek, állandó átutalások, beérkező utalások), és 36 hónapig
+ *    átirányítja a régi számlára érkező pénzt. Ilyen a kontinensen nincs.
+ *
+ * A felmondó-levél sablon itt ANGOLUL van (a mezőnév germanTemplate marad,
+ * hogy a közös CategoryInfo-típust ne kelljen országonként szétvágni).
+ */
+const GB_CATEGORIES: CategoryInfo[] = [
+  {
+    id: "bank",
+    label: "Bankszámla (Current Account)",
+    emoji: "🏦",
+    description: "A Current Account Switch Service (CASS) 7 MUNKANAP alatt, garanciával átvisz mindent: direct debiteket, állandó átutalásokat, beérkező fizetést. A régi számlára érkező pénzt 36 hónapig automatikusan átirányítja. Sok bank pénzjutalmat (switch bonus) is ad a váltásért.",
+    noticePeriod: "Nincs — a CASS intézi, te csak elindítod",
+    deadline: "Bármikor (nincs határidő)",
+    newProviderStarts: "7 munkanap múlva (te választod a napot)",
+    bestSwitchWindow: "Amikor épp fut switch bonus akció (jellemzően 100–200 £)",
+    minContract: "Nincs hűségidő",
+    tips: [
+      "⚠️ NE mondd fel magad a régi számlát! A CASS zárja le automatikusan — ha te zárod le előbb, a switch nem tud lefutni.",
+      "A CASS-garancia szerint ha bármi félremegy (pl. egy direct debit nem érkezik meg), a bank megtéríti a kárt.",
+      "A switch bonus adóköteles jövedelemnek NEM számít, de gyakran feltételhez kötött (pl. 2 direct debit + minimum befizetés).",
+      "Frissen érkezőként a hagyományos bankok lakcímigazolást kérnek — kezdd digitális bankkal (Monzo, Starling), és később válts CASS-szel.",
+      "A váltás rontja átmenetileg a credit score-t (kemény hitelvizsgálat) — ne csinálj switchet közvetlenül lakáshitel-igénylés előtt.",
+    ],
+    officialLinks: [
+      { label: "CASS — hivatalos", url: "https://www.currentaccountswitch.co.uk/" },
+      { label: "MoneySavingExpert — Best bank accounts", url: "https://www.moneysavingexpert.com/banking/compare-best-bank-accounts/" },
+    ],
+    providers: [
+      { id: "monzo",    name: "Monzo",           note: "Digitális, gyors nyitás, jó app",     url: "https://monzo.com/",            tier: "budget",  color: "#FF3464" },
+      { id: "starling", name: "Starling Bank",   note: "Digitális, ingyenes külföldi költés", url: "https://www.starlingbank.com/", tier: "budget",  color: "#6935D3" },
+      { id: "nationwide", name: "Nationwide",    note: "Building society, gyakori switch bonus", url: "https://www.nationwide.co.uk/", tier: "mid",  color: "#1B478B" },
+      { id: "firstdirect", name: "First Direct", note: "Kiemelkedő ügyfélszolgálat",          url: "https://www1.firstdirect.com/",  tier: "mid",     color: "#000000" },
+      { id: "barclays", name: "Barclays",        note: "Nagy hálózat, fiókok mindenhol",      url: "https://www.barclays.co.uk/",   tier: "premium", color: "#00AEEF" },
+    ],
+    germanTemplate: (p) => `${p.customerName}
+${p.customerAddress}
+
+${p.providerName}
+
+${p.todayDate}
+
+Dear Sir or Madam,
+
+Re: Account closure request${p.contractNumber ? ` – Account/Customer reference: ${p.contractNumber}` : ""}
+
+I am writing to request the closure of my current account held with you${p.contractNumber ? ` (reference: ${p.contractNumber})` : ""}.
+
+Please transfer any remaining balance to the account I have nominated, and confirm in writing once the account has been closed.
+
+Please note: if I am switching via the Current Account Switch Service (CASS), my new bank will handle the closure automatically and this letter is not required.
+
+Yours faithfully,
+
+${p.customerName}`,
+  },
+  {
+    id: "electricity",
+    label: "Energia (áram és gáz)",
+    emoji: "⚡",
+    description: "Az energiaárakat az Ofgem price cap (ársapka) korlátozza, amit negyedévente felülvizsgálnak. A váltás ingyenes és 5 munkanapon belül lefut; 14 napos elállási jog is van. A legtöbb háztartás dual fuelt (áram + gáz egy szolgáltatótól) használ.",
+    noticePeriod: "Nincs — a váltás automatikus",
+    deadline: "Bármikor (fix tarifánál figyelj a kilépési díjra)",
+    newProviderStarts: "Kb. 5 munkanap",
+    bestSwitchWindow: "A fix szerződésed lejárta előtt 49 nappal (ekkor már nincs kilépési díj)",
+    minContract: "Változó tarifánál nincs; fix tarifánál 12–24 hónap",
+    tips: [
+      "⚠️ Ha lejár a fix tarifád, automatikusan a drágább standard variable tarifára (price cap) kerülsz — állíts emlékeztetőt 49 nappal a lejárat elé.",
+      "A fix tarifából 49 nappal a lejárat előtt kilépési díj NÉLKÜL válthatsz.",
+      "Add meg a mérőóra-állást a váltáskor, és fotózd le — így nem tudnak a korábbi fogyasztásért számlázni.",
+      "A Warm Home Discount és a Winter Fuel Payment alacsony jövedelmű vagy nyugdíjas háztartásoknak jár — igényelni kell.",
+      "Prepayment (előre fizetős) mérő esetén a váltás is lehetséges, és gyakran megéri hitelmérőre cserélni.",
+    ],
+    officialLinks: [
+      { label: "Ofgem — Energy price cap", url: "https://www.ofgem.gov.uk/energy-price-cap" },
+      { label: "Citizens Advice — Energy", url: "https://www.citizensadvice.org.uk/consumer/energy/energy-supply/" },
+    ],
+    providers: [
+      { id: "octopus",  name: "Octopus Energy", note: "Kiemelkedő ügyfélszolgálat, zöld áram", url: "https://octopus.energy/",       tier: "mid",     color: "#FF69B4" },
+      { id: "ovo",      name: "OVO Energy",     note: "Nagy, széles tarifakínálat",            url: "https://www.ovoenergy.com/",    tier: "mid",     color: "#0A9928" },
+      { id: "eon",      name: "E.ON Next",      note: "Nagy szolgáltató, zöld alaptarifa",     url: "https://www.eonnext.com/",      tier: "mid",     color: "#E2001A" },
+      { id: "britishgas", name: "British Gas",  note: "A legnagyobb, sok fiók és szerelő",     url: "https://www.britishgas.co.uk/", tier: "premium", color: "#0396D6" },
+      { id: "edf",      name: "EDF",            note: "Nagy, gyakori fix tarifák",             url: "https://www.edfenergy.com/",    tier: "mid",     color: "#FE5000" },
+    ],
+    germanTemplate: (p) => `${p.customerName}
+${p.customerAddress}
+
+${p.providerName}
+
+${p.todayDate}
+
+Dear Sir or Madam,
+
+Re: Notice to terminate energy supply${p.contractNumber ? ` – Account number: ${p.contractNumber}` : ""}
+
+I am writing to give notice that I wish to end my energy supply contract with you${p.contractNumber ? ` (account number: ${p.contractNumber})` : ""}.
+
+I am switching to a new supplier, who will contact you to complete the transfer. Please confirm the switch date and send a final bill to the address above.
+
+My final meter readings will be provided on the switch date.
+
+Yours faithfully,
+
+${p.customerName}`,
+  },
+  {
+    id: "internet",
+    label: "Internet (Broadband)",
+    emoji: "🌐",
+    description: "Az Ofcom szabályai szerint a szolgáltatónak ÉRTESÍTENIE kell, mielőtt lejár a szerződésed, és közölnie a legjobb elérhető tarifát. A legtöbb lakcímen Openreach-hálózaton fut a szolgáltatás, ezért a váltás jellemzően egyszerű — de a Virgin Media saját kábelhálózaton megy.",
+    noticePeriod: "Jellemzően 30 nap",
+    deadline: "A szerződés lejárta előtt (utána bármikor)",
+    newProviderStarts: "1–3 hét (a vonal aktiválásától függ)",
+    bestSwitchWindow: "A minimum futamidő lejárta előtt 1 hónappal",
+    minContract: "12–24 hónap (a legtöbb ajánlatnál)",
+    tips: [
+      "⚠️ A hűségidő lejárta után az ár gyakran MEREDEKEN megugrik — ekkor éri meg váltani vagy alkudni (a „retentions” osztály sokszor ad kedvezményt, ha felmondást emlegetsz).",
+      "Sok szerződésben van évközi áremelés (jellemzően infláció + néhány százalék) — ez önmagában nem jogosít díjmentes felmondásra, de az Ofcom szabályai szigorodtak, ellenőrizd a szerződést.",
+      "A One Touch Switch rendszerrel az új szolgáltató intézi a régi felmondását — külön felmondó levélre gyakran nincs is szükség.",
+      "Ha csak te költözöl (nem a szolgáltató a baj), kérj költöztetést (home move) — így nem indul újra a hűségidő minden esetben.",
+      "Social tariff: alacsony jövedelmű (pl. Universal Credit-es) háztartásoknak több szolgáltató kínál olcsó csomagot — ritkán reklámozzák, kérdezz rá.",
+    ],
+    officialLinks: [
+      { label: "Ofcom — Broadband switching", url: "https://www.ofcom.org.uk/phones-and-broadband/changing-provider/" },
+      { label: "Ofcom — Social tariffs", url: "https://www.ofcom.org.uk/phones-and-broadband/saving-money/social-tariffs" },
+    ],
+    providers: [
+      { id: "bt",       name: "BT",            note: "Legnagyobb, országos lefedettség",   url: "https://www.bt.com/",            tier: "premium", color: "#5514B4" },
+      { id: "virgin",   name: "Virgin Media",  note: "Saját kábel, nagyon gyors",          url: "https://www.virginmedia.com/",   tier: "premium", color: "#ED1A3B" },
+      { id: "sky",      name: "Sky Broadband", note: "TV-vel csomagolva kedvező",          url: "https://www.sky.com/broadband",  tier: "mid",     color: "#0072C9" },
+      { id: "plusnet",  name: "Plusnet",       note: "Olcsó, jó ügyfélszolgálat",          url: "https://www.plus.net/",          tier: "budget",  color: "#7CBB00" },
+      { id: "community", name: "Community Fibre", note: "Londonban olcsó full fibre",      url: "https://communityfibre.co.uk/",  tier: "budget",  color: "#00C1B5" },
+    ],
+    germanTemplate: (p) => `${p.customerName}
+${p.customerAddress}
+
+${p.providerName}
+
+${p.todayDate}
+
+Dear Sir or Madam,
+
+Re: Notice to terminate broadband service${p.contractNumber ? ` – Account number: ${p.contractNumber}` : ""}
+
+I am writing to give notice to terminate my broadband service${p.contractNumber ? ` (account number: ${p.contractNumber})` : ""} at the address above, in accordance with the notice period set out in my contract.
+
+I would like the service to end on ${p.dateOfTermination}. Please confirm in writing the termination date, any final charges, and arrangements for returning your equipment.
+
+Please also confirm that no early termination charges apply, as my minimum contract term has ended.
+
+Yours faithfully,
+
+${p.customerName}`,
+  },
+  {
+    id: "mobile",
+    label: "Mobil előfizetés",
+    emoji: "📱",
+    description: "A számhordozás egyszerű: küldj SMS-t a PAC kódért, és az új szolgáltatónak add meg — 1 munkanap alatt átvisz. A SIM-only csomagok jóval olcsóbbak, mint a készülékkel csomagolt szerződések.",
+    noticePeriod: "30 nap (a PAC-kódos hordozás ezt lerövidíti 1 napra)",
+    deadline: "Bármikor a hűségidő után",
+    newProviderStarts: "1 munkanap (PAC-kóddal)",
+    bestSwitchWindow: "A hűségidő lejárta után azonnal",
+    minContract: "SIM-only: 1–12 hónap; készülékes: 24–36 hónap",
+    tips: [
+      "⚠️ SMS-ben kérd a kódot: PAC a 65075-re (számmegtartással) vagy STAC a 75075-re (szám nélkül). Ingyenes, és 1 percen belül megjön.",
+      "A PAC kód 30 napig érvényes; az új szolgáltatónak megadva ő intézi a váltást — a régit NEM kell külön felmondanod.",
+      "⚠️ Ha készülékkel csomagolt szerződésed van, a hűségidő után gyakran TOVÁBB fizeted a készülék részletét is — pedig már rég kifizetted. Ilyenkor válts SIM-onlyra, sokszor a havidíj harmadára esik.",
+      "Az MVNO-k (Giffgaff, Smarty, Voxi, Lebara) ugyanazon a hálózaton futnak, mint a nagyok, sokkal olcsóbban.",
+      "EU-roaming: Brexit óta több szolgáltató újra felszámít roamingdíjat az EU-ban — magyarországi látogatás előtt ellenőrizd.",
+    ],
+    officialLinks: [
+      { label: "Ofcom — Switching mobile", url: "https://www.ofcom.org.uk/phones-and-broadband/changing-provider/switching-mobile-network/" },
+      { label: "Ofcom — Mobile coverage checker", url: "https://checker.ofcom.org.uk/" },
+    ],
+    providers: [
+      { id: "giffgaff", name: "Giffgaff", note: "O2-hálózat, olcsó, havi felmondható", url: "https://www.giffgaff.com/", tier: "budget",  color: "#000000" },
+      { id: "smarty",   name: "SMARTY",   note: "Three-hálózat, egyszerű árazás",      url: "https://smarty.co.uk/",     tier: "budget",  color: "#00D8C3" },
+      { id: "id",       name: "iD Mobile", note: "Three-hálózat, olcsó SIM-only",      url: "https://www.idmobile.co.uk/", tier: "budget", color: "#FF6900" },
+      { id: "vodafone", name: "Vodafone", note: "Nagy lefedettség, sok csomag",        url: "https://www.vodafone.co.uk/", tier: "mid",     color: "#E60000" },
+      { id: "ee",       name: "EE",        note: "Legjobb lefedettség, prémium",       url: "https://ee.co.uk/",          tier: "premium", color: "#00B5B0" },
+    ],
+    germanTemplate: (p) => `${p.customerName}
+${p.customerAddress}
+
+${p.providerName}
+
+${p.todayDate}
+
+Dear Sir or Madam,
+
+Re: Notice to terminate mobile contract${p.contractNumber ? ` – Account/Mobile number: ${p.contractNumber}` : ""}
+
+I am writing to give notice to terminate my mobile contract${p.contractNumber ? ` (account/mobile number: ${p.contractNumber})` : ""}.
+
+I would like the contract to end on ${p.dateOfTermination}. My minimum contract term has ended, so I do not expect any early termination charges. Please confirm the termination date and send a final bill.
+
+Note: if I am keeping my number, I will request a PAC code and provide it to my new provider, who will complete the transfer.
+
+Yours faithfully,
+
+${p.customerName}`,
+  },
+];
+
 /** Ország → kategóriák (ismeretlen ország → CH). */
 export const PROVIDER_CATEGORIES_BY_COUNTRY: Record<string, CategoryInfo[]> = {
   CH: CH_CATEGORIES,
   AT: AT_CATEGORIES,
   DE: DE_CATEGORIES,
   NL: NL_CATEGORIES,
+  GB: GB_CATEGORIES,
 };
 
 export function getProviderCategories(country: string | null | undefined): CategoryInfo[] {

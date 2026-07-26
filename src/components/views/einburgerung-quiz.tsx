@@ -26,6 +26,9 @@ import {
 import {
   NL_BANK, NL_PROVINCES, NL_TOPIC_META, generateQuizNL, NL_QUIZ_LENGTH, NL_PASS_THRESHOLD,
 } from "@/lib/nl-inburgering-bank";
+import {
+  GB_BANK, GB_QUIZ_REGIONS, GB_TOPIC_META, generateQuizGB, GB_QUIZ_LENGTH, GB_PASS_THRESHOLD,
+} from "@/lib/gb-lifeintheuk-bank";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 type Phase = "intro" | "quiz" | "result";
@@ -128,6 +131,28 @@ const NL_CONFIG: QuizConfig = {
   },
 };
 
+
+const GB_CONFIG: QuizConfig = {
+  bank: GB_BANK,
+  regions: GB_QUIZ_REGIONS,
+  topicMeta: GB_TOPIC_META,
+  generate: generateQuizGB,
+  flag: "🏴",
+  title: "Life in the UK teszt",
+  intro: `${GB_QUIZ_LENGTH} kérdés: kormányzás, történelem, földrajz, értékek és jog + kérdés a választott régióra. A vizsga-küszöb: ${GB_PASS_THRESHOLD}%.`,
+  regionPrompt: "Melyik régióban élsz / mire készülsz?",
+  passThreshold: GB_PASS_THRESHOLD,
+  disclaimer: {
+    toolName: "Life in the UK teszt-szimulátor",
+    warning:
+      "Ez egy oktatási játék — NEM HIVATALOS VIZSGA. A valódi Life in the UK Test 24 kérdésből áll, 75% az átmenő, és a hivatalos „Life in the United Kingdom: A Guide for New Residents” kézikönyvből kérdez; a vizsgát előre kell foglalni és díja van. ⚠️ A vizsga az EGÉSZ Egyesült Királyságról kérdez (Anglia, Skócia, Wales, Észak-Írország). A szimulátor „átmenő” eredménye semmilyen módon nem helyettesíti a tényleges vizsgát.",
+    sources: [
+      { label: "gov.uk — Life in the UK Test", url: "https://www.gov.uk/life-in-the-uk-test" },
+      { label: "gov.uk — Book the test", url: "https://www.gov.uk/life-in-the-uk-test/book-the-test" },
+    ],
+  },
+};
+
 /** Svájci Einbürgerung-kvíz (változatlan viselkedés). */
 export function EinburgerungQuiz() {
   return <CitizenshipQuiz config={CH_CONFIG} />;
@@ -146,6 +171,11 @@ export function EinburgerungQuizDE() {
 /** Holland inburgering (KNM) kvíz. */
 export function InburgeringQuizNL() {
   return <CitizenshipQuiz config={NL_CONFIG} />;
+}
+
+/** Angol „Life in the UK" kvíz. */
+export function LifeInTheUkQuizGB() {
+  return <CitizenshipQuiz config={GB_CONFIG} />;
 }
 
 function CitizenshipQuiz({ config }: { config: QuizConfig }) {

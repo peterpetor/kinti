@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import {
-  EinburgerungQuiz, StaatsbuergerschaftQuiz, EinburgerungQuizDE, InburgeringQuizNL,
+  EinburgerungQuiz, StaatsbuergerschaftQuiz, EinburgerungQuizDE, InburgeringQuizNL, LifeInTheUkQuizGB,
 } from "@/components/views/einburgerung-quiz";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -18,10 +18,12 @@ const QUIZ_BY_COUNTRY: Record<string, { Quiz: () => JSX.Element; name: string; d
     desc: "Teszteld le, hogy átmennél-e a német állampolgársági vizsgán (Einbürgerungstest): politika és Grundgesetz, történelem, földrajz, alapjogok + a választott Bundesland." },
   NL: { Quiz: InburgeringQuizNL, name: "Állampolgársági teszt",
     desc: "Teszteld le a holland beilleszkedési vizsga (inburgering, KNM) tudásod: államszervezet, történelem, földrajz és társadalmi normák." },
+  GB: { Quiz: LifeInTheUkQuizGB, name: "Life in the UK teszt",
+    desc: "Teszteld le, hogy átmennél-e a Life in the UK Teszten: kormányzás, történelem, földrajz, brit értékek és jog. ⚠️ A vizsga az EGÉSZ Egyesült Királyságról kérdez, nem csak Angliáról." },
 };
 
 /**
- * Az állampolgársági kvíz-szekció — ország-tudatos (CH/AT/DE/NL).
+ * Az állampolgársági kvíz-szekció — ország-tudatos (CH/AT/DE/NL/GB).
  * Mindegyik PRO-funkció (az engedély-varázsló fent ingyenes).
  */
 export function CitizenshipQuizSection({ isPro }: { isPro: boolean }) {

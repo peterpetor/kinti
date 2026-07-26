@@ -98,3 +98,86 @@ describe("GB feature-gate — az új modulok engedélyezve", () => {
     }
   });
 });
+
+describe("GB Life in the UK kvíz", () => {
+  it("a menet 24 kérdés, ismétlés nélkül", async () => {
+    const { generateQuizGB, GB_QUIZ_LENGTH } = await import("@/lib/gb-lifeintheuk-bank");
+    expect(GB_QUIZ_LENGTH).toBe(24);
+    for (const region of ["LDN", "NW", "YH", null]) {
+      const q = generateQuizGB(region);
+      expect(q.length, `region=${region}`).toBe(24);
+      expect(new Set(q.map((x) => x.id)).size, `region=${region} — duplikátum`).toBe(24);
+    }
+  });
+
+  it("minden kérdésnek 4 opciója van és érvényes a helyes index", async () => {
+    const { GB_BANK } = await import("@/lib/gb-lifeintheuk-bank");
+    for (const q of GB_BANK) {
+      expect(q.options.length, q.id).toBe(4);
+      expect(q.correct, q.id).toBeGreaterThanOrEqual(0);
+      expect(q.correct, q.id).toBeLessThanOrEqual(3);
+      expect(q.explanation.length, q.id).toBeGreaterThan(10);
+      expect(new Set(q.options).size, `${q.id} — azonos opciók`).toBe(4);
+    }
+  });
+
+  it("a régió-kódok EGYEZNEK a regions.ts GB-kódjaival", async () => {
+    const { GB_QUIZ_REGIONS, GB_BANK } = await import("@/lib/gb-lifeintheuk-bank");
+    const { getRegions } = await import("@/lib/regions");
+    const geo = new Set(getRegions("GB").map((r) => r.code));
+    for (const r of GB_QUIZ_REGIONS) expect(geo.has(r.code), r.code).toBe(true);
+    for (const q of GB_BANK) {
+      if (q.cantonCode) expect(geo.has(q.cantonCode), `${q.id}: ${q.cantonCode}`).toBe(true);
+    }
+  });
+
+  it("a küszöb a valódi vizsgát követi (75%)", async () => {
+    const { GB_PASS_THRESHOLD } = await import("@/lib/gb-lifeintheuk-bank");
+    expect(GB_PASS_THRESHOLD).toBe(75);
+  });
+});
+
+describe("GB szolgáltató-váltó", () => {
+  it("⚠️ NINCS egészségbiztosítás-kategória (az NHS adóból megy)", async () => {
+    const { getProviderCategories } = await import("@/lib/provider-switch");
+    const gb = getProviderCategories("GB");
+    expect(gb.some((c) => c.id === "krankenkasse")).toBe(false);
+    // …miközben a többi országban VAN
+    expect(getProviderCategories("CH").some((c) => c.id === "krankenkasse")).toBe(true);
+  });
+
+  it("a négy releváns kategória megvan, brit szolgáltatókkal", async () => {
+    const { getProviderCategories } = await import("@/lib/provider-switch");
+    const gb = getProviderCategories("GB");
+    expect(gb.map((c) => c.id).sort()).toEqual(["bank", "electricity", "internet", "mobile"]);
+    for (const c of gb) {
+      expect(c.providers.length, c.id).toBeGreaterThanOrEqual(4);
+      expect(c.tips.length, c.id).toBeGreaterThan(2);
+      for (const pr of c.providers) expect(pr.url, `${c.id}/${pr.id}`).toMatch(/^https:\/\//);
+    }
+  });
+
+  it("a felmondó-sablon ANGOLUL van és kitölti a paramétereket", async () => {
+    const { getCategoryInfo } = await import("@/lib/provider-switch");
+    const cat = getCategoryInfo("internet", "GB")!;
+    const letter = cat.germanTemplate({
+      customerName: "Teszt Elek", customerAddress: "1 Test Road, London",
+      providerName: "BT", contractNumber: "ABC123",
+      dateOfTermination: "2026-09-01", todayDate: "2026-07-26",
+    });
+    expect(letter).toContain("Dear Sir or Madam");
+    expect(letter).toContain("Teszt Elek");
+    expect(letter).toContain("ABC123");
+    // ⚠️ nem szivároghat be német sablon-szöveg
+    expect(letter).not.toContain("Sehr geehrte");
+    expect(letter).not.toContain("Kündigung");
+  });
+
+  it("a többi ország kategóriái változatlanok", async () => {
+    const { getProviderCategories } = await import("@/lib/provider-switch");
+    expect(getProviderCategories("NL").length).toBeGreaterThan(0);
+    expect(getProviderCategories("CH").length).toBeGreaterThan(0);
+    // ismeretlen ország → CH (a régi viselkedés)
+    expect(getProviderCategories("XX")).toEqual(getProviderCategories("CH"));
+  });
+});
