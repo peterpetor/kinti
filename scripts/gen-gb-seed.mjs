@@ -39,6 +39,8 @@ const CITY_COORDS = {
   basingstoke: [51.2665, -1.0873],
   southampton: [50.9097, -1.4044],
   bristol: [51.4545, -2.5879],
+  "milton keynes": [52.0406, -0.7594],
+  witchford: [52.4033, 0.2166],
 };
 
 // Régió-kód → központ fallback (regions.ts GB-kódjaival és a gb-points.ts-szel egyezően).
@@ -86,6 +88,9 @@ const q = (s) => (s == null ? "NULL" : `'${esc(s)}'`);
 
 // ── Épelméjűség-ellenőrzés a generálás ELŐTT ────────────────────────────────
 const VALID_REGIONS = new Set(Object.keys(REGION_COORDS));
+// ⚠️ Csak olyan kategória mehet ki, ami LÉTEZIK a categories táblában — különben
+// a bejegyzés kategória nélkül, kereshetetlenül landolna az adatbázisban.
+const VALID_CATEGORIES = new Set(["magyar-kozosseg", "elelmiszer", "etterem"]);
 const problems = [];
 const nameSeen = new Map();
 for (const org of data.organizations) {
@@ -94,6 +99,7 @@ for (const org of data.organizations) {
   // ⚠️ A user-követelmény: legyen valódi elérhetőség. Cím VAGY e-mail VAGY
   // telefon VAGY weboldal nélkül a bejegyzés használhatatlan — ne is menjen ki.
   if (!org.address && !org.email && !org.phone && !org.website) problems.push(`nincs semmilyen elérhetőség: ${org.name}`);
+  if (org.category && !VALID_CATEGORIES.has(org.category)) problems.push(`ismeretlen kategória (${org.category}): ${org.name}`);
   const k = nameKey(org.name);
   if (nameSeen.has(k)) problems.push(`DUPLIKÁTUM név szerint: "${org.name}" ≈ "${nameSeen.get(k)}"`);
   else nameSeen.set(k, org.name);
@@ -123,6 +129,9 @@ for (const org of data.organizations) {
   seen.add(id);
   const [lat, lng] = coordsFor(org);
   const typeLabel = org.type ? org.type[0].toUpperCase() + org.type.slice(1) : "Magyar közösségi szervezet";
+  // A `category` a categories tábla id-je (pl. elelmiszer, etterem). Ahol nincs
+  // megadva, a tétel a közösségi kategóriába kerül (egyesület/iskola/egyház).
+  const categoryId = org.category || "magyar-kozosseg";
   // A blurb a listán látszik: típus · város · (weboldal-domain).
   const blurbParts = [typeLabel, org.city].filter(Boolean);
   if (org.website) blurbParts.push(org.website.replace(/^https?:\/\//, "").replace(/\/$/, ""));
@@ -135,7 +144,7 @@ for (const org of data.organizations) {
   const vals = [
     q(id),
     q(org.name),
-    "'magyar-kozosseg'",
+    q(categoryId),
     q(typeLabel),
     q(address),
     q(org.phone ?? null),

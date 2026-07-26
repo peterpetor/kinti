@@ -1,7 +1,7 @@
 {
-  "_comment": "Valódi ANGLIAI magyar közösségi szervezetek (egyházközségek, hétvégi iskolák, kulturális központok, hivatalos képviseletek) — a kinti.app angliai (GB) induló tartalmának forrása. ⚠️ MINDEN tétel ellenőrzött, publikus forrásból származó elérhetőséggel szerepel (cím és/vagy e-mail/telefon/weboldal); találgatott adat NINCS. ⚠️ SZÁNDÉKOSAN CSAK ANGLIA — a Kőrösi-program listáján szereplő skóciai (Edinburgh) és walesi (Cardiff, Newport, Magyar Cymru) szervezetek KIMARADTAK, mert a Kinti GB-országa csak Angliát fedi (Skócia/Wales külön jogrend, ld. regions.ts). ⚠️ Nem vettünk fel olyan tételt, ahol az egyetlen elérhetőség egy magánszemély személyes e-mail-címe vagy mobilszáma lett volna (adatvédelem).",
+  "_comment": "Valódi ANGLIAI magyar közösségi szervezetek (egyházközségek, hétvégi iskolák, kulturális központok, hivatalos képviseletek) — a kinti.app angliai (GB) induló tartalmának forrása. ⚠️ MINDEN tétel ellenőrzött, publikus forrásból származó elérhetőséggel szerepel (cím és/vagy e-mail/telefon/weboldal); találgatott adat NINCS. ⚠️ SZÁNDÉKOSAN CSAK ANGLIA — a Kőrösi-program listáján szereplő skóciai (Edinburgh) és walesi (Cardiff, Newport, Magyar Cymru) szervezetek KIMARADTAK, mert a Kinti GB-országa csak Angliát fedi (Skócia/Wales külön jogrend, ld. regions.ts). ⚠️ Nem vettünk fel olyan tételt, ahol az egyetlen elérhetőség egy magánszemély személyes e-mail-címe vagy mobilszáma lett volna (adatvédelem). ⚠️ VENDÉGLÁTÁS/KERESKEDELEM: az éttermek és boltok nyitva tartása/léte gyorsabban változik, mint a közösségi szervezeteké — ezeket időnként újra kell ellenőrizni (a londoni Gay Hussar pl. 2018-ban bezárt, ezért NEM került be). A `category` mező a categories tábla id-je (elelmiszer/etterem); ahol nincs, a tétel a magyar-kozosseg kategóriába kerül.",
   "country": "GB",
-  "source": "korosiprogram.hu diaszpóra-lista, szentistvanhaz.org, reflondon.hu, london.mfa.gov.hu, birminghamimagyarok.org, angliaikisokos.com magyar iskola-lista, hungarianschool.co.uk — 2026-07",
+  "source": "korosiprogram.hu diaszpóra-lista, szentistvanhaz.org, reflondon.hu, london.mfa.gov.hu, birminghamimagyarok.org, angliaikisokos.com magyar iskola-lista, hungarianschool.co.uk — 2026-07; boltok/éttermek: hungariandeli.co.uk, lakehouserestaurant.co.uk, turulproject.com, facebook.com/HUNFLAV, chamberofcommerce.uk, britainfirm.com — 2026-07",
   "organizations": [
     {
       "name": "Szent István Ház — Angliai Római Katolikus Magyarok Egyesülete (ARKME)",
@@ -171,6 +171,74 @@
       "city": "Bristol",
       "region": "SW",
       "website": "https://bristolikisiskola.org"
+    },
+    {
+      "name": "Magyar Ízek — Hungarian Flavors Ltd",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "London",
+      "region": "LDN",
+      "address": "660 High Road, North Finchley, London N12 0NL",
+      "phone": "+44 20 8446 2793",
+      "website": "https://www.facebook.com/HUNFLAV"
+    },
+    {
+      "name": "Magyarok Boltja Wimbledon",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "London",
+      "region": "LDN",
+      "address": "177 Kingston Road, Wimbledon, London SW19 1LH",
+      "phone": "+44 20 8540 1119",
+      "website": "https://hungariandeli.co.uk"
+    },
+    {
+      "name": "Taste From Hungary Magyar Bolt",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "Cambridge",
+      "region": "EE",
+      "address": "50 Chesterton Road, Cambridge CB4 1EN"
+    },
+    {
+      "name": "Pick Your Taste Magyar Bolt / Paprika Store",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "Milton Keynes",
+      "region": "SE",
+      "address": "72 Queensway, Bletchley, Milton Keynes",
+      "phone": "+44 7429 499115"
+    },
+    {
+      "name": "Taste From Europe — Angliai Magyar Bolt",
+      "type": "magyar élelmiszer webshop és bolt",
+      "category": "elelmiszer",
+      "city": "Witchford",
+      "region": "EE",
+      "address": "35 Field End, Witchford, Cambridgeshire CB6 2XE",
+      "phone": "+44 7951 923337",
+      "website": "https://store75949285.company.site"
+    },
+    {
+      "name": "Lakehouse Hungarian Restaurant",
+      "type": "magyar étterem",
+      "category": "etterem",
+      "city": "London",
+      "region": "LDN",
+      "address": "83 High Road, South Woodford, London E18 2QP",
+      "phone": "+44 7711 585380",
+      "email": "324lakehouse@gmail.com",
+      "website": "https://www.lakehouserestaurant.co.uk"
+    },
+    {
+      "name": "Turul Project — magyar étterem és borbár",
+      "type": "magyar étterem, borbár és delikát",
+      "category": "etterem",
+      "city": "London",
+      "region": "LDN",
+      "address": "1 Turnpike Parade, London N15 3LA",
+      "phone": "+44 20 8888 9886",
+      "website": "https://www.turulproject.com"
     }
   ]
 }
