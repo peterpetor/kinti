@@ -14,7 +14,7 @@ export const dynamic = "force-static";
 const PATH = "/tudasbazis/osszehasonlitas";
 const TITLE = "Svájc, Ausztria, Németország, Hollandia — összehasonlítás magyaroknak";
 const DESCRIPTION =
-  "Egészségbiztosítás, adózás, bér, lakásbérlés, nyugdíj, felmondás és további témák a 4 országban egymás mellett — hivatalos forrásból, magyaroknak. Melyik országban éri meg kint élni és dolgozni?";
+  "Egészségbiztosítás, adózás, bér, lakásbérlés, nyugdíj, felmondás és további témák az 5 országban egymás mellett — hivatalos forrásból, magyaroknak. Melyik országban éri meg kint élni és dolgozni?";
 const OG_IMAGE = "https://kinti.app/icons/og-default.png";
 
 export const metadata: Metadata = {
@@ -52,7 +52,7 @@ export default function OsszehasonlitasPage() {
           <>
             Melyik ország?
             <br />
-            A 4 ország egymás mellett.
+            Az 5 ország egymás mellett.
           </>
         }
         back={
@@ -67,12 +67,12 @@ export default function OsszehasonlitasPage() {
       />
 
       <p className="text-[13.5px] leading-relaxed text-ink-muted">
-        Svájc, Ausztria, Németország vagy Hollandia? A legfontosabb hétköznapi témák — biztosítás, adó, bér,
-        lakásbérlés, nyugdíj, felmondás — a 4 országban egymás mellett, hivatalos forrásból. Minden sor a
+        Svájc, Ausztria, Németország, Hollandia vagy Anglia? A legfontosabb hétköznapi témák — biztosítás, adó, bér,
+        lakásbérlés, nyugdíj, felmondás — az 5 országban egymás mellett, hivatalos forrásból. Minden sor a
         részletes cikkek tömör kivonata; a táblázatok alól a teljes, országra szabott útmutatóra lépsz tovább.
       </p>
 
-      {/* A 4 ország — a lap tézise egy pillantásra. */}
+      {/* Az 5 ország — a lap tézise egy pillantásra. */}
       <div className="grid grid-cols-4 gap-2 rounded-card border border-line bg-surface p-3 shadow-card">
         {COUNTRIES.map((c) => (
           <div key={c.code} className="flex flex-col items-center gap-1.5">

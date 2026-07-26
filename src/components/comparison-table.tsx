@@ -4,12 +4,17 @@ import { CountryFlag } from "@/components/ui/country-flag";
 import { cn } from "@/lib/cn";
 import type { GuideComparison } from "@/lib/guide-comparisons";
 
-/** Fix oszlop-sorrend a 4 országhoz (a caption/sorok ezt feltételezik). */
+/** Fix oszlop-sorrend (a caption/sorok ezt feltételezik).
+ *  ⚠️ Új ország felvételekor IDE is fel kell venni az oszlopot, ÉS a
+ *  guide-comparisons.ts minden sorába kell érték — különben a tábla
+ *  ország-listája és a szövegben szereplő ország-szám elcsúszik egymástól
+ *  (ez élesben elő is fordult: 5 zászló a linksorban, „4 ország" a címben). */
 const COLS = [
   { key: "ch", label: "Svájc", code: "CH" },
   { key: "at", label: "Ausztria", code: "AT" },
   { key: "de", label: "Németország", code: "DE" },
   { key: "nl", label: "Hollandia", code: "NL" },
+  { key: "gb", label: "Anglia", code: "GB" },
 ] as const;
 
 /**
@@ -25,8 +30,6 @@ export function ComparisonTable({
   showNote = true,
 }: {
   comparison: GuideComparison;
-  // GB is elfogadott: az összehasonlító táblák CH/AT/DE/NL-t hasonlítanak,
-  // GB-cikknél egyszerűen nincs kiemelt sor (a tábla maga sem jelenik meg).
   currentCountry?: "CH" | "AT" | "DE" | "NL" | "GB" | null;
   showNote?: boolean;
 }) {

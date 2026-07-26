@@ -120,6 +120,37 @@ const PERMIT_CONFIG: Record<string, PermitConfig> = {
       "Részvétel a »naturalisatieceremonie«-n (állampolgársági ünnepség).",
     ],
   },
+  /**
+   * ⚠️ ANGLIA — a varázsló logikája itt MÁS, mint a többi országnál. Máshol az
+   * EU-állampolgárság önmagában elindítja az 5/10 éves órát; Nagy-Britanniában
+   * Brexit óta NEM. A dátum-alapú számláló csak annak érvényes, aki 2020.12.31.
+   * ELŐTT érkezett (EU Settlement Scheme) — ezt a szöveg minden ponton kimondja.
+   */
+  GB: {
+    intro: "⚠️ Brexit óta az EU-állampolgárság önmagában NEM ad letelepedési jogot Angliában. Ez a számláló arra érvényes, aki 2020. december 31. ELŐTT már itt élt (EU Settlement Scheme). Ha később érkeztél, vízum kell — nézd meg a letelepedés-varázslót. Add meg, mikor költöztél ki.",
+    arrivalLabel: "Angliai kiköltözésed",
+    residenceYears: 5,
+    citizenYears: 6,
+    resTitle: "Settled status (indefinite leave to remain)",
+    resDesc: "5 év folyamatos tartózkodás után határozatlan idejű letelepedés jár az EU Settlement Scheme keretében — korlátlan munkavállalással, szponzor nélkül.",
+    resDoneMsg: "Az 5 évet elérted! Ha van pre-settled státuszod, KÜLÖN kell jelentkezned a settledre — nem automatikus.",
+    resConds: [
+      <>⚠️ <strong>Csak akkor, ha 2020. december 31. előtt érkeztél</strong> — az EU Settlement Scheme késői jelentkezést „reasonable grounds" esetén fogad be.</>,
+      "5 év folyamatos tartózkodás (évente legfeljebb 6 hónap távollét).",
+      <><strong>A settled statusért JELENTKEZNI kell</strong> — a pre-settled automatikus hosszabbítása NEM pótolja.</>,
+      "Nincs nyelvvizsga- vagy teszt-követelmény ezen a szinten.",
+    ],
+    citTitle: "Brit állampolgárság (naturalisation)",
+    citDesc: "A settled status megszerzése után jellemzően 12 hónappal kérhető. ⚠️ Az Egyesült Királyság ENGEDI a kettős állampolgárságot — a magyart megtarthatod.",
+    citDoneMsg: "Elérted az időtartamot! Ellenőrizd, hogy a settled statusod óta eltelt-e 12 hónap.",
+    citConds: [
+      <><strong>Settled status (ILR) megléte + jellemzően 12 hónap</strong> annak megszerzése óta.</>,
+      "Összesen 5 év tartózkodás, a kérelem előtti 12 hónapban legfeljebb 90 nap távollét.",
+      <><strong>Life in the UK Test</strong> sikeres teljesítése (24 kérdés, 75% az átmenő) — a szimulátor lent segít a felkészülésben.</>,
+      "Angol nyelvtudás igazolása (jellemzően B1 szint), ha nem mentesülsz.",
+      "Jó jellem (good character): büntetlen előélet, rendezett adóügyek.",
+    ],
+  },
 };
 
 export function PermitWizardClient() {
