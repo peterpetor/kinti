@@ -163,7 +163,7 @@ export default function LanguagePathPage() {
                   // Next lesson is unlocked if previous is completed (or if it's the first lesson)
                   const prevLessonIndex = lessons.findIndex(l => l.id === lesson.id) - 1;
                   const isUnlocked = prevLessonIndex < 0 || completedLessons.includes(lessons[prevLessonIndex].id);
-                  // A nyelvtanulás INGYENES mind a 4 országban (user-döntés, 2026-07-11):
+                  // A nyelvtanulás INGYENES mind a 6 országban (user-döntés, 2026-07-11):
                   // a fejezet-freemium PRO-lakat KIVEZETVE — ne tedd vissza.
 
                   // Zigzag offsets

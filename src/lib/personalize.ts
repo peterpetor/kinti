@@ -150,7 +150,7 @@ export function buildPersonalizedItems(
       { emoji: "💳", title: "Kinti Pass — kedvezmények", desc: "Mutasd fel a kártyát magyar helyeken", href: "/profil/kinti-pass" },
     ],
     nyelv: [
-      { emoji: "🗣️", title: "Nyelvlecke — teljesen ingyenes", desc: "Napi gyakorlás kiejtéssel, mind a 4 országra", href: "/nyelvlecke" },
+      { emoji: "🗣️", title: "Nyelvlecke — teljesen ingyenes", desc: "Napi gyakorlás kiejtéssel, mind a 6 országra", href: "/nyelvlecke" },
       { emoji: "🎯", title: "Napi kvíz + napi szó", desc: "5 kérdés naponta — tartsd a sorozatod", href: "/kviz" },
       { emoji: "📚", title: "Szakmai szótár", desc: "A szakmád kifejezései helyi nyelven, kiejtéssel", href: "/allasok/szakmai-szotar" },
     ],

@@ -8,7 +8,7 @@ import {
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 
-/** Ország → állampolgársági kvíz (mind a 4 országra; mind PRO-funkció). */
+/** Ország → állampolgársági kvíz (mind a 6 országra; mind PRO-funkció). */
 const QUIZ_BY_COUNTRY: Record<string, { Quiz: () => JSX.Element; name: string; desc: string }> = {
   CH: { Quiz: EinburgerungQuiz, name: "Állampolgársági teszt",
     desc: "Teszteld le, hogy átmennél-e a hivatalos svájci állampolgársági (Einbürgerung) tudásfelmérőn! Svájci történelmi és politikai kérdésekkel." },

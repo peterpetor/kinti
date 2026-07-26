@@ -20,7 +20,7 @@ export const metadata = { title: "Szaknévsor" };
 /** SSR-be kerülő rekordok száma ORSZÁGONKÉNT. A teljes (2000+) lista SSR-je worker
  *  CPU-limitbe ütközött (1102) és ~1,2 MB HTML-t adott. A kliens EGYSZERRE csak EGY
  *  ország szeletét mutatja, de a szerver nem tudja, melyiket (az ország-pref
- *  kliensoldali) → mind a 4 ország szeletét be kell ágyazni a HTML-be. 30/ország
+ *  kliensoldali) → mind a 6 ország szeletét be kell ágyazni a HTML-be. 30/ország
  *  bőven fedi az első (passzív) képernyőt bármelyik országra; amint a user szűkít
  *  (kategória/kereső/régió) vagy térképre vált, az ExploreView AZONNAL betölti a
  *  teljes listát (a többinél idle-ben). A 60→30 csökkentés ~felére vágja a

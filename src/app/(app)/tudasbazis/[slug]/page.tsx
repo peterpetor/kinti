@@ -70,7 +70,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
   const related = relatedGuides(guide.slug);
   const relatedPros = relatedCategoriesForGuide(guide.slug);
   // Országos összehasonlító táblázat (AEO + CH/AT/DE/NL választás), ha a téma
-  // mind a 4 országban létezik — a reader országának oszlopa kiemelve.
+  // mind a 6 országban létezik — a reader országának oszlopa kiemelve.
   const comparison = comparisonForSlug(guide.slug);
   const toc = guide.sections.map((s, i) => ({ id: sectionId(s.heading, i), heading: s.heading }));
 

@@ -10,7 +10,7 @@ import { isPro } from "@/lib/subscriptions";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-// A funkció mind a 4 országban él (CH/AT/DE/NL kérdésbank) — a metadata statikus
+// A funkció mind a 6 országban él (CH/AT/DE/NL kérdésbank) — a metadata statikus
 // (minden országnak ugyanaz az URL), ezért ország-SEMLEGES, nem svájci copy.
 export const metadata = {
   title: "Engedély Varázsló & Kvíz | Kinti",

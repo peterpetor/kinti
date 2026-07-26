@@ -7,7 +7,7 @@ import { getChecklists } from "@/lib/admin-checklists";
 export const dynamic = "force-static";
 
 /**
- * Könnyű lista-index SZERVEREN (build-időben) mind a 4 országra — a teljes
+ * Könnyű lista-index SZERVEREN (build-időben) mind a 6 országra — a teljes
  * `admin-checklists.ts` (843 sor: minden lépés szövege, linkjei, figyelmeztetései,
  * forrásai) így NEM kerül a kliens-JS-bundle-be, csak ez a lapos tömb (ugyanaz
  * a minta, mint a Tudásbázis GuideList-jénél, ld. ott a méret-hatás kommentet).

@@ -162,19 +162,19 @@
       'Salary calculator, exchange-rate calculator, admin wizard, permit guide, job board — everything a newly arrived Hungarian should know abroad. In six countries — 🇨🇭 Switzerland, 🇦🇹 Austria, 🇩🇪 Germany, 🇳🇱 Netherlands, <span class="fl-eng" role="img" aria-label="Flag of England"></span> England, 🇪🇸 Spain — in one app. If a tool isn’t available in all countries yet, we mark it.');
   add('💰 Pénz', '💰 Geld', '💰 Money');
   add('Bérkalkulátor + Ajánlataim', 'Lohnrechner + Meine Angebote', 'Salary calculator + My offers');
-  add('Nettó-bér becslés a helyi adó- és járulékszabályokkal, mind a 4 országban (🇳🇱 Box 1 + heffingskortingen is). Interjún kapott ajánlatokat elmenthetsz és összehasonlíthatsz.',
-      'Nettolohn-Schätzung mit den lokalen Steuer- und Abgabenregeln, in allen 4 Ländern (🇳🇱 Box 1 + heffingskortingen inklusive). Angebote aus Vorstellungsgesprächen kannst du speichern und vergleichen.',
-      'Net-salary estimate with local tax and contribution rules, in all 4 countries (🇳🇱 Box 1 + heffingskortingen too). Save and compare offers you get from interviews.');
+  add('Nettó-bér becslés a helyi adó- és járulékszabályokkal, mind a 6 országban (🇳🇱 Box 1 + heffingskortingen is). Interjún kapott ajánlatokat elmenthetsz és összehasonlíthatsz.',
+      'Nettolohn-Schätzung mit den lokalen Steuer- und Abgabenregeln, in allen 6 Ländern (🇳🇱 Box 1 + heffingskortingen inklusive). Angebote aus Vorstellungsgesprächen kannst du speichern und vergleichen.',
+      'Net-salary estimate with local tax and contribution rules, in all 6 countries (🇳🇱 Box 1 + heffingskortingen too). Save and compare offers you get from interviews.');
   add('💱 Árfolyam', '💱 Wechselkurs', '💱 Exchange rate');
   add('CHF / EUR → HUF push-riasztó', 'CHF / EUR → HUF Push-Alarm', 'CHF / EUR → HUF push alert');
-  add('Beállítasz egy küszöböt („értesíts ha 1 CHF ≥ 410 HUF"), és a böngésződ riaszt — bejelentkezés és email-cím nélkül. Mind a 4 országban.',
-      'Du setzt einen Schwellenwert („benachrichtige mich, wenn 1 CHF ≥ 410 HUF"), und dein Browser warnt dich — ohne Login und E-Mail. In allen 4 Ländern.',
-      'Set a threshold (“alert me when 1 CHF ≥ 410 HUF”) and your browser notifies you — no login or email. In all 4 countries.');
+  add('Beállítasz egy küszöböt („értesíts ha 1 CHF ≥ 410 HUF"), és a böngésződ riaszt — bejelentkezés és email-cím nélkül. Mind a 6 országban.',
+      'Du setzt einen Schwellenwert („benachrichtige mich, wenn 1 CHF ≥ 410 HUF"), und dein Browser warnt dich — ohne Login und E-Mail. In allen 6 Ländern.',
+      'Set a threshold (“alert me when 1 CHF ≥ 410 HUF”) and your browser notifies you — no login or email. In all 6 countries.');
   add('🏠 Lakhatás', '🏠 Wohnen', '🏠 Housing');
   add('Lakásbérlés rejtett-költség', 'Miete: versteckte Kosten', 'Renting: hidden costs');
-  add('Kaució blokkolása + rezsi (Nebenkosten/Betriebskosten/Servicekosten) év-végi elszámolás becslése, mind a 4 országban (🇨🇭 🇦🇹 🇩🇪 🇳🇱). Mire számíts havonta valójában?',
-      'Mietkaution (Sperrkonto) + Jahresabrechnung der Nebenkosten (Betriebskosten/Servicekosten) — Schätzung, in allen 4 Ländern (🇨🇭 🇦🇹 🇩🇪 🇳🇱). Womit du monatlich wirklich rechnen musst.',
-      'Deposit blocking + year-end utilities (Nebenkosten/Betriebskosten/Servicekosten) estimate, in all 4 countries (🇨🇭 🇦🇹 🇩🇪 🇳🇱). What to really expect per month.');
+  add('Kaució blokkolása + rezsi (Nebenkosten/Betriebskosten/Servicekosten) év-végi elszámolás becslése, mind a 6 országban (🇨🇭 🇦🇹 🇩🇪 🇳🇱 🇪🇸). Mire számíts havonta valójában?',
+      'Mietkaution (Sperrkonto) + Jahresabrechnung der Nebenkosten (Betriebskosten/Servicekosten) — Schätzung, in allen 6 Ländern (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸). Womit du monatlich wirklich rechnen musst.',
+      'Deposit blocking + year-end utilities (Nebenkosten/Betriebskosten/Servicekosten) estimate, in all 6 countries (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸). What to really expect per month.');
   add('🛂 Vám', '🛂 Zoll', '🛂 Customs');
   add('Vám- és határinfó', 'Zoll- & Grenzinfo', 'Customs & border info');
   add('300 CHF értékhatár, 1 kg/fő húskorlát, 5 l bor, 1 l pálinka. Mi van a kocsiban — mit deklarálj? (🇨🇭 svájci határ)',
@@ -182,24 +182,24 @@
       '300 CHF allowance, 1 kg meat/person, 5 l wine, 1 l spirits. What’s in the car — what to declare? (🇨🇭 Swiss border)');
   add('🚓 Bírság', '🚓 Bußgeld', '🚓 Fines');
   add('Gyorshajtási bírságbecslő', 'Tempo-Bußgeld-Schätzer', 'Speeding Fine Estimator');
-  add('A helyi bírság-rendszerek becslője, mind a 4 országban (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Mennyit fog fájni a gyorshajtás?',
-      'Schätzer für die lokalen Bußgeld-Systeme, in allen 4 Ländern (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Was kostet zu schnelles Fahren?',
-      'Estimator for local fine systems, in all 4 countries (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). How much will speeding cost you?');
+  add('A helyi bírság-rendszerek becslője, mind a 6 országban (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Mennyit fog fájni a gyorshajtás?',
+      'Schätzer für die lokalen Bußgeld-Systeme, in allen 6 Ländern (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Was kostet zu schnelles Fahren?',
+      'Estimator for local fine systems, in all 6 countries (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). How much will speeding cost you?');
   add('🚆 Közlekedés', '🚆 Verkehr', '🚆 Transport');
   add('Tömegközlekedés-kalauz', 'ÖPNV-Guide', 'Public transport guide');
-  add('Zónarendszerek + bérlet-kalkulátor + mobil-appok, mind a 4 országban (🇨🇭 GA/Halbtax·SBB, 🇦🇹 KlimaTicket, 🇩🇪 Deutschlandticket, 🇳🇱 OVpay/OV-chipkaart).',
-      'Zonensysteme + Abo-Rechner + Mobil-Apps, in allen 4 Ländern (🇨🇭 GA/Halbtax·SBB, 🇦🇹 KlimaTicket, 🇩🇪 Deutschlandticket, 🇳🇱 OVpay/OV-chipkaart).',
-      'Zone systems + pass calculator + mobile apps, in all 4 countries (🇨🇭 GA/Halbtax·SBB, 🇦🇹 KlimaTicket, 🇩🇪 Deutschlandticket, 🇳🇱 OVpay/OV-chipkaart).');
+  add('Zónarendszerek + bérlet-kalkulátor + mobil-appok, mind a 6 országban (🇨🇭 GA/Halbtax·SBB, 🇦🇹 KlimaTicket, 🇩🇪 Deutschlandticket, 🇳🇱 OVpay/OV-chipkaart).',
+      'Zonensysteme + Abo-Rechner + Mobil-Apps, in allen 6 Ländern (🇨🇭 GA/Halbtax·SBB, 🇦🇹 KlimaTicket, 🇩🇪 Deutschlandticket, 🇳🇱 OVpay/OV-chipkaart).',
+      'Zone systems + pass calculator + mobile apps, in all 6 countries (🇨🇭 GA/Halbtax·SBB, 🇦🇹 KlimaTicket, 🇩🇪 Deutschlandticket, 🇳🇱 OVpay/OV-chipkaart).');
   add('🔄 Szolgáltató', '🔄 Anbieter', '🔄 Providers');
   add('Szolgáltató-váltó', 'Anbieterwechsel', 'Switch providers');
-  add('Krankenkasse, áram, internet, mobil, bank — mikor és hogyan érdemes váltani, valós szolgáltató-listákkal mind a 4 országban (🇨🇭 🇦🇹 🇩🇪 🇳🇱). Német és holland felmondó-sablon is.',
-      'Krankenkasse, Strom, Internet, Mobilfunk, Bank — wann und wie sich ein Wechsel lohnt, mit echten Anbieterlisten in allen 4 Ländern (🇨🇭 🇦🇹 🇩🇪 🇳🇱). Inkl. deutscher und niederländischer Kündigungsvorlage.',
-      'Health insurance, electricity, internet, mobile, bank — when and how to switch, with real provider lists in all 4 countries (🇨🇭 🇦🇹 🇩🇪 🇳🇱). Plus German and Dutch cancellation templates.');
+  add('Krankenkasse, áram, internet, mobil, bank — mikor és hogyan érdemes váltani, valós szolgáltató-listákkal mind a 6 országban (🇨🇭 🇦🇹 🇩🇪 🇳🇱 🇪🇸). Német és holland felmondó-sablon is.',
+      'Krankenkasse, Strom, Internet, Mobilfunk, Bank — wann und wie sich ein Wechsel lohnt, mit echten Anbieterlisten in allen 6 Ländern (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸). Inkl. deutscher und niederländischer Kündigungsvorlage.',
+      'Health insurance, electricity, internet, mobile, bank — when and how to switch, with real provider lists in all 6 countries (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸). Plus German and Dutch cancellation templates.');
   add('📋 Ügyintézés', '📋 Behörden', '📋 Admin');
   add('Ügyintézés varázsló', 'Behörden-Assistent', 'Admin wizard');
-  add('Az érkezéstől az állampolgárságig — csekklisták az Anmeldung-tól a letelepedésig, mind a 4 országban (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 BRP/BSN/DigiD), kattintható hivatali szó-magyarázattal.',
-      'Von der Ankunft bis zur Staatsbürgerschaft — Checklisten von der Anmeldung bis zur Niederlassung, in allen 4 Ländern (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 BRP/BSN/DigiD), mit anklickbarer Erklärung von Behördenbegriffen.',
-      'From arrival to citizenship — checklists from Anmeldung to settling in, in all 4 countries (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 BRP/BSN/DigiD), with clickable explanations of official terms.');
+  add('Az érkezéstől az állampolgárságig — csekklisták az Anmeldung-tól a letelepedésig, mind a 6 országban (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 BRP/BSN/DigiD), kattintható hivatali szó-magyarázattal.',
+      'Von der Ankunft bis zur Staatsbürgerschaft — Checklisten von der Anmeldung bis zur Niederlassung, in allen 6 Ländern (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 BRP/BSN/DigiD), mit anklickbarer Erklärung von Behördenbegriffen.',
+      'From arrival to citizenship — checklists from Anmeldung to settling in, in all 6 countries (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 BRP/BSN/DigiD), with clickable explanations of official terms.');
   add('🪪 Engedély', '🪪 Aufenthalt', '🪪 Permit');
   add('Melyik engedély kell?', 'Welchen Aufenthaltstitel brauchst du?', 'Which permit do you need?');
   add('Interaktív varázsló, ami megmondja melyik tartózkodási státusz vonatkozik rád (🇨🇭 B/C/L/G, 🇦🇹 🇩🇪 EU-regisztráció, 🇳🇱 BRP/BSN + duurzaam verblijf).',
@@ -207,34 +207,34 @@
       'An interactive wizard that tells you which residence status applies to you (🇨🇭 B/C/L/G, 🇦🇹 🇩🇪 EU registration, 🇳🇱 BRP/BSN + duurzaam verblijf).');
   add('✈️ Repjegy', '✈️ Flug', '✈️ Flights');
   add('Budapest ↔ hazaút figyelő', 'Budapest ↔ Heimreise-Beobachter', 'Budapest ↔ home-trip watcher');
-  add('Repjegy ár-sávok Zürich, Bécs, a német városok és Amszterdam felé-vissza (🇨🇭 🇦🇹 🇩🇪 🇳🇱) + szezonális tippek + link a foglalási oldalakra.',
-      'Flugpreis-Bänder von/nach Zürich, Wien, den deutschen Städten und Amsterdam (🇨🇭 🇦🇹 🇩🇪 🇳🇱) + saisonale Tipps + Links zu Buchungsseiten.',
-      'Flight-price ranges to/from Zürich, Vienna, the German cities and Amsterdam (🇨🇭 🇦🇹 🇩🇪 🇳🇱) + seasonal tips + links to booking sites.');
+  add('Repjegy ár-sávok Zürich, Bécs, a német városok és Amszterdam felé-vissza (🇨🇭 🇦🇹 🇩🇪 🇳🇱 🇪🇸) + szezonális tippek + link a foglalási oldalakra.',
+      'Flugpreis-Bänder von/nach Zürich, Wien, den deutschen Städten und Amsterdam (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸) + saisonale Tipps + Links zu Buchungsseiten.',
+      'Flight-price ranges to/from Zürich, Vienna, the German cities and Amsterdam (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸) + seasonal tips + links to booking sites.');
   add('💼 Munka', '💼 Arbeit', '💼 Work');
   add('Magyar állásbörze + radar', 'Ungarische Jobbörse + Radar', 'Hungarian job board + radar');
-  add('Állások magyaroknak mind a 4 országban — CV-profillal és állás-radar push-értesítéssel, ha új találat jön a környékeden.',
-      'Jobs für Ungarn in allen 4 Ländern — mit CV-Profil und Job-Radar-Push, wenn ein neuer Treffer in deiner Nähe erscheint.',
-      'Jobs for Hungarians in all 4 countries — with a CV profile and job-radar push when a new match appears near you.');
+  add('Állások magyaroknak mind a 6 országban — CV-profillal és állás-radar push-értesítéssel, ha új találat jön a környékeden.',
+      'Jobs für Ungarn in allen 6 Ländern — mit CV-Profil und Job-Radar-Push, wenn ein neuer Treffer in deiner Nähe erscheint.',
+      'Jobs for Hungarians in all 6 countries — with a CV profile and job-radar push when a new match appears near you.');
   add('🛡️ Polgárság', '🛡️ Bürgerschaft', '🛡️ Citizenship');
   add('Állampolgárság-szimulátor', 'Einbürgerungs-Simulator', 'Citizenship simulator');
-  add('Felkészítő kvíz mind a 4 országra (🇨🇭 Einbürgerung, 🇦🇹 Staatsbürgerschaft, 🇩🇪 Einbürgerungstest, 🇳🇱 inburgering). Hivatalos vizsgát nem helyettesít.',
-      'Vorbereitungs-Quiz für alle 4 Länder (🇨🇭 Einbürgerung, 🇦🇹 Staatsbürgerschaft, 🇩🇪 Einbürgerungstest, 🇳🇱 inburgering). Ersetzt keine offizielle Prüfung.',
-      'Prep quiz for all 4 countries (🇨🇭 Einbürgerung, 🇦🇹 Staatsbürgerschaft, 🇩🇪 Einbürgerungstest, 🇳🇱 inburgering). Not a substitute for the official exam.');
+  add('Felkészítő kvíz mind a 6 országra (🇨🇭 Einbürgerung, 🇦🇹 Staatsbürgerschaft, 🇩🇪 Einbürgerungstest, 🇳🇱 inburgering). Hivatalos vizsgát nem helyettesít.',
+      'Vorbereitungs-Quiz für alle 6 Länder (🇨🇭 Einbürgerung, 🇦🇹 Staatsbürgerschaft, 🇩🇪 Einbürgerungstest, 🇳🇱 inburgering). Ersetzt keine offizielle Prüfung.',
+      'Prep quiz for all 6 countries (🇨🇭 Einbürgerung, 🇦🇹 Staatsbürgerschaft, 🇩🇪 Einbürgerungstest, 🇳🇱 inburgering). Not a substitute for the official exam.');
   add('🎯 Tudás', '🎯 Wissen', '🎯 Knowledge');
   add('Napi kvíz', 'Tägliches Quiz', 'Daily quiz');
-  add('Egy kérdés naponta — kultúra, történelem, gasztronómia, az országodhoz igazítva (mind a 4 ország). Lazító ismeret-szerzés.',
-      'Eine Frage pro Tag — Kultur, Geschichte, Gastronomie, an dein Land angepasst (alle 4 Länder). Entspanntes Dazulernen.',
-      'One question a day — culture, history, food, tailored to your country (all 4 countries). Relaxed learning.');
+  add('Egy kérdés naponta — kultúra, történelem, gasztronómia, az országodhoz igazítva (mind a 6 ország). Lazító ismeret-szerzés.',
+      'Eine Frage pro Tag — Kultur, Geschichte, Gastronomie, an dein Land angepasst (alle 6 Länder). Entspanntes Dazulernen.',
+      'One question a day — culture, history, food, tailored to your country (all 6 countries). Relaxed learning.');
   add('🧭 Iránytű', '🧭 Kompass', '🧭 Compass');
   add('Bér- és lakbér-iránytű', 'Lohn- & Miet-Kompass', 'Salary & rent compass');
-  add('Anonim közösségi benchmark: mennyit keresnek és mennyi lakbért fizetnek a magyarok a régiódban. Mind a 4 országban.',
-      'Anonymer Community-Benchmark: wie viel Ungarn in deiner Region verdienen und Miete zahlen. In allen 4 Ländern.',
-      'Anonymous community benchmark: how much Hungarians earn and pay in rent in your region. In all 4 countries.');
+  add('Anonim közösségi benchmark: mennyit keresnek és mennyi lakbért fizetnek a magyarok a régiódban. Mind a 6 országban.',
+      'Anonymer Community-Benchmark: wie viel Ungarn in deiner Region verdienen und Miete zahlen. In allen 6 Ländern.',
+      'Anonymous community benchmark: how much Hungarians earn and pay in rent in your region. In all 6 countries.');
   add('🧾 Megélhetés', '🧾 Lebenshaltung', '🧾 Cost of living');
   add('Mennyi marad?', 'Was bleibt übrig?', 'What’s left?');
-  add('Kiköltözési költségvetés-tervező: bruttó bér + család + város → nettó fizetés, lakbér, megélhetés — és ami a hónap végén marad. Mind a 4 országban.',
-      'Auswanderungs-Budgetplaner: Bruttolohn + Familie + Stadt → Nettolohn, Miete, Lebenshaltung — und was am Monatsende übrig bleibt. In allen 4 Ländern.',
-      'Relocation budget planner: gross salary + family + city → net pay, rent, living costs — and what’s left at month-end. In all 4 countries.');
+  add('Kiköltözési költségvetés-tervező: bruttó bér + család + város → nettó fizetés, lakbér, megélhetés — és ami a hónap végén marad. Mind a 6 országban.',
+      'Auswanderungs-Budgetplaner: Bruttolohn + Familie + Stadt → Nettolohn, Miete, Lebenshaltung — und was am Monatsende übrig bleibt. In allen 6 Ländern.',
+      'Relocation budget planner: gross salary + family + city → net pay, rent, living costs — and what’s left at month-end. In all 6 countries.');
   add('💸 Utalás', '💸 Überweisung', '💸 Transfers');
   add('Utalás-asszisztens', 'Überweisungs-Assistent', 'Transfer assistant');
   add('Hazautalás-tervező: árfolyam-figyelés és költség-összevetés a szolgáltatók között. (Kinti PRO.)',
@@ -247,19 +247,19 @@
       'The deadlines of bureaucracy abroad (health-insurance switch, tax return…) in one place, with push reminders 14/7/1 days before. (Kinti PRO.)');
   add('📌 Hivatal', '📌 Behörde', '📌 Officials');
   add('Itt intézheted — hivatalos linkek', 'Hier erledigst du es — offizielle Links', 'Do it here — official links');
-  add('Ellenőrzött hivatalos link-gyűjtemény + magyar konzulátusok és időpontfoglalás, mind a 4 országra. Nem tanácsadás — odavezet.',
-      'Geprüfte Sammlung offizieller Links + ungarische Konsulate und Terminbuchung, für alle 4 Länder. Keine Beratung — führt dich hin.',
-      'A verified collection of official links + Hungarian consulates and appointment booking, for all 4 countries. Not advice — it points you there.');
+  add('Ellenőrzött hivatalos link-gyűjtemény + magyar konzulátusok és időpontfoglalás, mind a 6 országra. Nem tanácsadás — odavezet.',
+      'Geprüfte Sammlung offizieller Links + ungarische Konsulate und Terminbuchung, für alle 6 Länder. Keine Beratung — führt dich hin.',
+      'A verified collection of official links + Hungarian consulates and appointment booking, for all 6 countries. Not advice — it points you there.');
   add('🙋 Keresek', '🙋 Ich suche', '🙋 Wanted');
   add('„Keresek…" tábla', '„Ich suche…"-Board', '“Wanted…” board');
-  add('Kiírod, mire van szükséged (költöztető, bébiszitter, fordító…), és a magyar szakik jelentkeznek. Mind a 4 országban.',
-      'Du schreibst aus, was du brauchst (Umzug, Babysitter, Übersetzer…), und ungarische Profis melden sich. In allen 4 Ländern.',
-      'Post what you need (mover, babysitter, translator…) and Hungarian pros reach out. In all 4 countries.');
+  add('Kiírod, mire van szükséged (költöztető, bébiszitter, fordító…), és a magyar szakik jelentkeznek. Mind a 6 országban.',
+      'Du schreibst aus, was du brauchst (Umzug, Babysitter, Übersetzer…), und ungarische Profis melden sich. In allen 6 Ländern.',
+      'Post what you need (mover, babysitter, translator…) and Hungarian pros reach out. In all 6 countries.');
   add('🔑 Albérlet', '🔑 Mietwohnung', '🔑 Rentals');
   add('Szoba- és albérlet-börze', 'Zimmer- & Wohnungsbörse', 'Rooms & flats board');
-  add('Kiadó szobák és albérletek magyaroktól magyaroknak — vagy add fel, mit keresel. Ország-, régió- és település-szűrővel, moderált hirdetésekkel, mind a 4 országban. A hirdetők közvetlenül egymással egyeznek meg — a böngészés ingyenes, a hirdető elérhetőségének megnyitásához Kinti PRO kell. (Kinti PRO.)',
-      'Zimmer und Wohnungen von Ungarn für Ungarn — oder inseriere, was du suchst. Mit Länder-, Regions- und Ortsfilter, moderierte Anzeigen, in allen 4 Ländern. Inserenten einigen sich direkt — Stöbern ist gratis, für die Kontaktdaten des Inserenten brauchst du Kinti PRO. (Kinti PRO.)',
-      'Rooms and flats from Hungarians for Hungarians — or post what you’re looking for. With country, region and town filters, moderated listings, in all 4 countries. Posters arrange directly — browsing is free, opening a poster’s contact needs Kinti PRO. (Kinti PRO.)');
+  add('Kiadó szobák és albérletek magyaroktól magyaroknak — vagy add fel, mit keresel. Ország-, régió- és település-szűrővel, moderált hirdetésekkel, mind a 6 országban. A hirdetők közvetlenül egymással egyeznek meg — a böngészés ingyenes, a hirdető elérhetőségének megnyitásához Kinti PRO kell. (Kinti PRO.)',
+      'Zimmer und Wohnungen von Ungarn für Ungarn — oder inseriere, was du suchst. Mit Länder-, Regions- und Ortsfilter, moderierte Anzeigen, in allen 6 Ländern. Inserenten einigen sich direkt — Stöbern ist gratis, für die Kontaktdaten des Inserenten brauchst du Kinti PRO. (Kinti PRO.)',
+      'Rooms and flats from Hungarians for Hungarians — or post what you’re looking for. With country, region and town filters, moderated listings, in all 6 countries. Posters arrange directly — browsing is free, opening a poster’s contact needs Kinti PRO. (Kinti PRO.)');
   add('🎟️ Kedvezmény', '🎟️ Rabatt', '🎟️ Discount');
   add('Kinti Pass kedvezménykártya', 'Kinti-Pass-Rabattkarte', 'Kinti Pass discount card');
   add('Ingyenes digitális kártya az appban — mutasd fel a Kinti Pass elfogadóhelyeken (magyar vállalkozások a Szaknévsorból), és kedvezményt kapsz. Az elfogadóhelyeket külön szűrővel találod meg.',
@@ -267,9 +267,9 @@
       'Free digital card in the app — show it at Kinti Pass partner spots (Hungarian businesses from the directory) and get a discount. Find partner spots with a dedicated filter.');
   add('📚 Tudástár', '📚 Wissensbasis', '📚 Knowledge base');
   add('Tudásbázis — 80+ útmutató', 'Wissensbasis — 80+ Ratgeber', 'Knowledge base — 80+ guides');
-  add('Bejelentkezés, egészségbiztosítás, adózás, lakásbérlés, nyugdíj, családi pótlék — hivatalos forrásokból, magyarul, mind a 4 országban (🇨🇭 🇦🇹 🇩🇪 🇳🇱).',
-      'Anmeldung, Krankenversicherung, Steuern, Miete, Rente, Kindergeld — aus offiziellen Quellen, auf Ungarisch, in allen 4 Ländern (🇨🇭 🇦🇹 🇩🇪 🇳🇱).',
-      'Registration, health insurance, taxes, renting, pension, family allowance — from official sources, in Hungarian, in all 4 countries (🇨🇭 🇦🇹 🇩🇪 🇳🇱).');
+  add('Bejelentkezés, egészségbiztosítás, adózás, lakásbérlés, nyugdíj, családi pótlék — hivatalos forrásokból, magyarul, mind a 6 országban (🇨🇭 🇦🇹 🇩🇪 🇳🇱 🇪🇸).',
+      'Anmeldung, Krankenversicherung, Steuern, Miete, Rente, Kindergeld — aus offiziellen Quellen, auf Ungarisch, in allen 6 Ländern (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸).',
+      'Registration, health insurance, taxes, renting, pension, family allowance — from official sources, in Hungarian, in all 6 countries (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸).');
   add('📄 Önéletrajz', '📄 Lebenslauf', '📄 CV');
   add('Német önéletrajz-készítő', 'Deutscher Lebenslauf-Generator', 'German CV builder');
   add('Magyarul kitöltöd, DIN-szabványos német Lebenslauf PDF-et kapsz — ingyen, a szakmád hivatalos német nevével. A kész önéletrajzhoz magyar-barát állásokat is ajánlunk.',
@@ -277,9 +277,9 @@
       'Fill it in Hungarian and get a DIN-standard German Lebenslauf PDF — free, with the official German name of your profession. We also suggest Hungarian-friendly jobs for your finished CV.');
   add('🏫 Iskola', '🏫 Schule', '🏫 School');
   add('Iskolarendszer-kalauz', 'Schulsystem-Guide', 'School-system guide');
-  add('Hogyan épül fel a helyi iskolarendszer, és mikor mit kell intézned, ha gyerekkel érkezel — mind a 4 országban (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 basisschool→VWO).',
-      'Wie das lokale Schulsystem aufgebaut ist und was du wann erledigen musst, wenn du mit Kind ankommst — in allen 4 Ländern (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 basisschool→VWO).',
-      'How the local school system is structured and what to arrange when, if you arrive with a child — in all 4 countries (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 basisschool→VWO).');
+  add('Hogyan épül fel a helyi iskolarendszer, és mikor mit kell intézned, ha gyerekkel érkezel — mind a 6 országban (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 basisschool→VWO).',
+      'Wie das lokale Schulsystem aufgebaut ist und was du wann erledigen musst, wenn du mit Kind ankommst — in allen 6 Ländern (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 basisschool→VWO).',
+      'How the local school system is structured and what to arrange when, if you arrive with a child — in all 6 countries (🇨🇭 🇦🇹 🇩🇪 + 🇳🇱 basisschool→VWO).');
   add('✍️ Történetek', '✍️ Geschichten', '✍️ Stories');
   add('Élettörténetek — magyarok külföldön', 'Lebensgeschichten — Ungarn im Ausland', 'Life stories — Hungarians abroad');
   add('Valódi kiköltözési sztorik magyaroktól — munka, lakás, mélypontok és sikerek. Olvasd, meríts belőle, és írd meg a sajátodat is; minden történet szerkesztői ellenőrzés után jelenik meg.',
@@ -287,14 +287,14 @@
       'Real relocation stories from Hungarians — work, housing, low points and wins. Read, take inspiration, and write your own; every story appears after editorial review.');
   add('🤖 Telegram', '🤖 Telegram', '🤖 Telegram');
   add('Kinti bot Telegramon', 'Kinti-Bot auf Telegram', 'Kinti bot on Telegram');
-  add('A Szaknévsor ott is, ahol a csoportok élnek: írd be bármelyik Telegram-chatben, hogy @KintiSzaknevsorBot fodrász Graz, és azonnal hozza a magyar szakikat — letöltés nélkül, mind a 4 országban.',
-      'Das Branchenbuch auch dort, wo die Gruppen leben: schreib in jedem Telegram-Chat <strong>@KintiSzaknevsorBot Friseur Graz</strong>, und es bringt sofort die ungarischen Profis — ohne Download, in allen 4 Ländern.',
-      'The directory where the groups live too: type <strong>@KintiSzaknevsorBot hairdresser Graz</strong> in any Telegram chat and it instantly brings up Hungarian pros — no download, in all 4 countries.');
+  add('A Szaknévsor ott is, ahol a csoportok élnek: írd be bármelyik Telegram-chatben, hogy @KintiSzaknevsorBot fodrász Graz, és azonnal hozza a magyar szakikat — letöltés nélkül, mind a 6 országban.',
+      'Das Branchenbuch auch dort, wo die Gruppen leben: schreib in jedem Telegram-Chat <strong>@KintiSzaknevsorBot Friseur Graz</strong>, und es bringt sofort die ungarischen Profis — ohne Download, in allen 6 Ländern.',
+      'The directory where the groups live too: type <strong>@KintiSzaknevsorBot hairdresser Graz</strong> in any Telegram chat and it instantly brings up Hungarian pros — no download, in all 6 countries.');
   add('🗣️ Nyelv', '🗣️ Sprache', '🗣️ Language');
   add('Nyelvlecke + napi szó', 'Sprachlektion + Wort des Tages', 'Language lesson + word of the day');
-  add('100-100 lecke kiejtéssel, mind a 4 országra (🇨🇭 svájci-német Mundart, 🇦🇹 osztrák, 🇩🇪 német, 🇳🇱 holland) + napi szó a kezdőlapon. Teljesen ingyenes.',
-      'Je 100 Lektionen mit Aussprache, für alle 4 Länder (🇨🇭 Schweizerdeutsch/Mundart, 🇦🇹 Österreichisch, 🇩🇪 Deutsch, 🇳🇱 Niederländisch) + Wort des Tages auf der Startseite. Komplett kostenlos.',
-      '100 lessons each with pronunciation, for all 4 countries (🇨🇭 Swiss-German dialect, 🇦🇹 Austrian, 🇩🇪 German, 🇳🇱 Dutch) + word of the day on the home screen. Completely free.');
+  add('100-100 lecke kiejtéssel, mind a 6 országra (🇨🇭 svájci-német Mundart, 🇦🇹 osztrák, 🇩🇪 német, 🇳🇱 holland) + napi szó a kezdőlapon. Teljesen ingyenes.',
+      'Je 100 Lektionen mit Aussprache, für alle 6 Länder (🇨🇭 Schweizerdeutsch/Mundart, 🇦🇹 Österreichisch, 🇩🇪 Deutsch, 🇳🇱 Niederländisch) + Wort des Tages auf der Startseite. Komplett kostenlos.',
+      '100 lessons each with pronunciation, for all 6 countries (🇨🇭 Swiss-German dialect, 🇦🇹 Austrian, 🇩🇪 German, 🇳🇱 Dutch) + word of the day on the home screen. Completely free.');
 
   // COMMUNITY (#kozosseg)
   add('Kint vagy, de nem vagy egyedül', 'Im Ausland, aber nicht allein', 'Abroad, but not alone');
@@ -383,8 +383,8 @@
   add('/ hó · nettó + ÁFA', '/ Monat · netto + MwSt.', '/ mo · net + VAT');
   add('Állás-találat (% match) + becsült nettó bér', 'Job-Match (% Übereinstimmung) + geschätzter Nettolohn', 'Job match (% match) + estimated net salary');
   add('AI CV-audit — önéletrajz-elemzés', 'KI-CV-Audit — Lebenslauf-Analyse', 'AI CV audit — resume analysis');
-  add('Állampolgárság-szimulátor mind a 4 országra', 'Einbürgerungs-Simulator für alle 4 Länder', 'Citizenship simulator for all 4 countries');
-  add('Szakmai gyors-szótár — iparági leckék kiejtéssel (🇨🇭 🇦🇹 🇩🇪 🇳🇱)', 'Fach-Schnellwörterbuch — Branchenlektionen mit Aussprache (🇨🇭 🇦🇹 🇩🇪 🇳🇱)', 'Pro quick dictionary — industry lessons with pronunciation (🇨🇭 🇦🇹 🇩🇪 🇳🇱)');
+  add('Állampolgárság-szimulátor mind a 6 országra', 'Einbürgerungs-Simulator für alle 6 Länder', 'Citizenship simulator for all 6 countries');
+  add('Szakmai gyors-szótár — iparági leckék kiejtéssel (🇨🇭 🇦🇹 🇩🇪 🇳🇱 🇪🇸)', 'Fach-Schnellwörterbuch — Branchenlektionen mit Aussprache (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸)', 'Pro quick dictionary — industry lessons with pronunciation (🇨🇭 🇦🇹 🇩🇪 🇳🇱 <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> 🇪🇸)');
   add('Utalás- és Határidő-asszisztens push-emlékeztetőkkel', 'Überweisungs- und Fristen-Assistent mit Push-Erinnerungen', 'Transfer and deadline assistant with push reminders');
   add('Albérlet-börze kapcsolatfelvétel — a hirdetők elérhetőségének megnyitása', 'Wohnungsbörse-Kontakt — Kontaktdaten der Inserenten öffnen', 'Rentals board contact — open posters’ contact details');
   add('Válts Kinti PRO-ba', 'Auf Kinti PRO wechseln', 'Switch to Kinti PRO');

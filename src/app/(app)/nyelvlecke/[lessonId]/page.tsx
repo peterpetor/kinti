@@ -66,7 +66,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   }
   if (!lesson) return <div className="p-4">Lecke nem található.</div>;
 
-  // A nyelvtanulás INGYENES mind a 4 országban (user-döntés, 2026-07-11): a korábbi
+  // A nyelvtanulás INGYENES mind a 6 országban (user-döntés, 2026-07-11): a korábbi
   // fejezet-freemium (1. fejezet ingyen, 2.+ PRO) KIVEZETVE — ne tedd vissza. A PRO
   // értékajánlatból is kikerült (/pro + landing.html ugyanebben a körben frissült).
 

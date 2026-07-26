@@ -101,7 +101,7 @@ export async function POST(req: Request) {
     const cantonCode = typeof body.cantonCode === "string" ? body.cantonCode.trim() : "all";
     // Ország a fan-out célzásához (a kérő app-országa). Régi kliens nem küldi →
     // null = nincs ország-szűrés (a korábbi viselkedés), de a régió-kód akkor is
-    // mind a 4 ország kódkészlete ellen validálódik (ne 400-azzon az AT Bundesland).
+    // mind a 6 ország kódkészlete ellen validálódik (ne 400-azzon az AT Bundesland).
     const rawCountry = typeof body.country === "string" ? body.country.trim() : null;
     const country = isValidCountry(rawCountry) ? rawCountry : null;
     const message = typeof body.message === "string" ? body.message.trim() : "";

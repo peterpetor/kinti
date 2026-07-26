@@ -21,10 +21,10 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
   "vam",               // vám-kalkulátor: CH (BAZG) + GB (gov.uk) — az AT/DE/NL
                        //   EU-n belül van, ott nincs vámhatár, ezért marad rejtve.
                        //   GB-t a GB_ALLOWED_FEATURES engedi külön.
-  // "szolgaltato-valto" — KIVÉVE (2026-07-05): mind a 4 országra van szolgáltató-
+  // "szolgaltato-valto" — KIVÉVE (2026-07-05): mind a 6 országra van szolgáltató-
   //   adat (provider-switch PROVIDER_CATEGORIES_BY_COUNTRY CH/AT/DE/NL: valós
   //   szolgáltatók + felmondási szabályok + német/holland levél-sablon).
-  // "szakmai-szotar" — KIVÉVE (2026-07-04): mind a 4 országra van szótár-bank
+  // "szakmai-szotar" — KIVÉVE (2026-07-04): mind a 6 országra van szótár-bank
   //   (data.ts INDUSTRY_LESSONS + _AT/_DE/_NL, ország-tudatos TTS-nyelvvel).
   // "repulojegy" — már ország-tudatos (CH + AT + DE, lib/flights.ts); a komponens a
   // konfig nélküli országokat (NL) „hamarosan" üzenettel kezeli.
@@ -35,9 +35,9 @@ export const CH_ONLY_FEATURES: ReadonlySet<string> = new Set([
  * a benchmark-seed). Ezeket DE/NL-ben rejtjük, amíg el nem készül a tartalmuk.
  */
 export const CH_AT_ONLY_FEATURES: ReadonlySet<string> = new Set([
-  // „allampolgarsag" KIVÉVE: mind a 4 országra van kérdésbank (CH Einbürgerung,
+  // „allampolgarsag" KIVÉVE: mind a 6 országra van kérdésbank (CH Einbürgerung,
   // AT Staatsbürgerschaft, DE Einbürgerungstest, NL inburgering/KNM) → minden országban él.
-  // „lakberles" KIVÉVE (2026-07-04): mind a 4 országra van rent-konfig (RENT_CONFIG
+  // „lakberles" KIVÉVE (2026-07-04): mind a 6 országra van rent-konfig (RENT_CONFIG
   //   CH/AT/DE/NL — kaució-szabály, rezsi-alapráta, tippek, hivatalos források).
   // "iranytu" — KIVÉVE: az Iránytű közösségi benchmark (a userek töltik), DE-tudatos
   // (region-util DE-ág), és fő nav-fül → ne tűnjön el DE-ben; üresen indul, mint AT.
@@ -51,24 +51,24 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   // NL-en (egyelőre) rejtett: a tartalom CH/AT/DE-specifikus, nincs holland verzió.
   // Amint elkészül egy holland változat, vedd ki innen (vagy tedd per-ország listára).
   // "iskolarendszer" — KIVÉVE (2026-07-05): VAN holland változat (school-system
-  //   NL_LEVELS: basisschool → VMBO/HAVO/VWO → MBO/HBO/WO) — mind a 4 országra él.
+  //   NL_LEVELS: basisschool → VMBO/HAVO/VWO → MBO/HBO/WO) — mind a 6 országra él.
   // "tudasbazis" — KIVÉVE (2026-07-05): VAN holland guide-bank (GUIDES_NL,
   //   7 cikk: BRP+BSN / zorgverzekering / belasting+DigiD / school / werk /
-  //   betaalrekening / huren) — mind a 4 országra él.
+  //   betaalrekening / huren) — mind a 6 országra él.
   // "kozlekedes" — KIVÉVE (2026-07-05): VAN holland verzió (transport NL_TARIF_
   //   SYSTEMS/NL_TICKET_TYPES + calculateNlTransport: OVpay/OV-chipkaart, NS,
-  //   GVB/RET/HTM, Dal Voordeel) — mind a 4 országra él.
+  //   GVB/RET/HTM, Dal Voordeel) — mind a 6 országra él.
   // "bussen" — KIVÉVE (2026-07-05): VAN holland verzió (speeding-fine
   //   calculateFineNL: WAHV-boete + CJIB, 30 km/h fölött strafrecht, 50 km/h+
-  //   rijbewijs ingevorderd) — mind a 4 országra él.
+  //   rijbewijs ingevorderd) — mind a 6 országra él.
   // "akciok" — KIVÉVE (2026-07-05): VAN holland boltlánc-lista (DEAL_STORES_NL:
   //   Albert Heijn/Jumbo/Lidl/Aldi/PLUS/Dirk/Spar/Vomar); a geo-bbox + térkép-
-  //   középpont már NL-kész — mind a 4 országra él.
+  //   középpont már NL-kész — mind a 6 országra él.
   // "repulojegy" — KIVÉVE (2026-07-05): VAN holland konfig (flights.ts FLIGHT_
-  //   CONFIG.NL: AMS/EIN/RTM ↔ BUD, KLM/Transavia/WizzAir/Ryanair) — mind a 4 ország.
+  //   CONFIG.NL: AMS/EIN/RTM ↔ BUD, KLM/Transavia/WizzAir/Ryanair) — mind a 6 ország.
   // "vizum" — KIVÉVE (2026-07-05): VAN holland verzió (permit-wizard STEPS_NL +
   //   evaluatePermitNL: vrij verkeer / BRP-inschrijving+BSN / duurzaam verblijf /
-  //   kennismigrant) — mind a 4 országra él.
+  //   kennismigrant) — mind a 6 országra él.
   // "berkalkulator" — KIVÉVE (2026-07-04): VAN holland verzió (computeSalaryNL,
   // 2025 Box 1 + heffingskortingen, c8bb005 óta él) — a 07-04-i vissza-gate-elés
   // tévedés volt („NL nincs" feltételezéssel).

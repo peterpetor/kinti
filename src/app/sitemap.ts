@@ -64,7 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // 2) Tudásbázis cikkek (mind a 4 ország: CH/AT/DE/NL, slug-előtaggal).
+  // 2) Tudásbázis cikkek (mind a 6 ország: CH/AT/DE/NL, slug-előtaggal).
   // lastModified = a bank VALÓDI frissítés-dátuma (a korábbi `now` minden
   // crawlnál „most változott"-at hazudott → a Google elengedi a lastmodot).
   for (const g of GUIDES) {

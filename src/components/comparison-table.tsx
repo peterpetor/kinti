@@ -16,7 +16,7 @@ const COLS = [
  * Egy országos összehasonlító táblázat. A 4 oszlop valódi SVG-zászlóval fejléces
  * (a zászló-emoji Windows-on törik → CountryFlag), a téma-ikon a cím elé kerül.
  * A guide-lapon a reader ORSZÁGÁNAK oszlopa kiemelve (`currentCountry`); a
- * hub-on `currentCountry={null}` → nincs kiemelés, és a link-sor mind a 4 ország
+ * hub-on `currentCountry={null}` → nincs kiemelés, és a link-sor mind a 6 ország
  * teljes cikkére mutat.
  */
 export function ComparisonTable({

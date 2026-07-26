@@ -125,7 +125,7 @@ export const FAQ_PAGES: FaqPage[] = [
       ],
     },
     ctas: [
-      { href: "/piacter", emoji: "🔑", title: "Albérlet-börze", subtitle: "Kiadó szobák és albérletek magyaroktól magyaroknak — 4 országban." },
+      { href: "/piacter", emoji: "🔑", title: "Albérlet-börze", subtitle: "Kiadó szobák és albérletek magyaroktól magyaroknak — 6 országban." },
       { href: "/piacter?tab=kalkulator", emoji: "🧮", title: "Lakbér-kalkulátor", subtitle: "Kaució, rezsi és év végi elszámolás — országra szabva." },
       { href: "/szaknevsor", emoji: "🤝", title: "Magyar szakemberek", subtitle: "Ingatlanos, ügyvéd, fordító — ellenőrzött szaknévsorban." },
     ],
@@ -211,7 +211,7 @@ export const FAQ_PAGES: FaqPage[] = [
       ],
     },
     ctas: [
-      { href: "/szaknevsor", emoji: "📒", title: "Szaknévsor", subtitle: "1400+ magyarul beszélő szakember 4 országban." },
+      { href: "/szaknevsor", emoji: "📒", title: "Szaknévsor", subtitle: "1400+ magyarul beszélő szakember 6 országban." },
       { href: "/szaknevsor/ajanlatkeres", emoji: "📨", title: "Csoportos ajánlatkérés", subtitle: "Egy űrlap — a vállalkozók keresnek meg téged." },
       { href: "/keresek", emoji: "🙋", title: "Keresek-tábla", subtitle: "Írd ki az igényed — a szakik jelentkeznek." },
     ],

@@ -4,7 +4,7 @@
  * A bot a magyar expat-csoportokban élő keresést szolgálja ki: „villanyszerelő
  * Bécs" → top 3 szaknévsor-találat linkkel. A szöveg-értelmezés a meglévő
  * kereső-heurisztikára épül (heurisztika-először elv — AI nélkül, determinisztikus),
- * ORSZÁG-FÜGGETLENÜL: mind a 4 ország ellen lefuttatjuk, és az nyer, amelyik
+ * ORSZÁG-FÜGGETLENÜL: mind a 6 ország ellen lefuttatjuk, és az nyer, amelyik
  * maradék nélkül értelmezi a szöveget RÉGIÓVAL együtt (a „Bécs" csak AT-ben
  * oldódik fel). Környezet-független (nincs Cloudflare-import) → unit-tesztelhető.
  *
@@ -31,7 +31,7 @@ export interface BotParseOutcome {
 }
 
 /**
- * Ország-független query-parse: a heurisztika mind a 4 országra fut; az a
+ * Ország-független query-parse: a heurisztika mind a 6 országra fut; az a
  * jelölt nyer, amelyik RÉGIÓT is talált (az dönti el az országot). Ha csak
  * kategória oldódott fel (minden országban ugyanaz), hely kell → needsPlace.
  */

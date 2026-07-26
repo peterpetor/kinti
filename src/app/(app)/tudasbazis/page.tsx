@@ -9,7 +9,7 @@ import type { GuideSearchItem } from "@/components/guide-search";
 
 /**
  * A könnyű lista+kereső index SZERVEREN (build-időben, force-static) épül fel
- * mind a 4 országra — a teljes `guides.ts` modul (81 cikk, teljes szakasz-
+ * mind a 6 országra — a teljes `guides.ts` modul (81 cikk, teljes szakasz-
  * szöveg, forrás-linkek, exportált segédfüggvények) így SOSE kerül a kliens-
  * JS-bundle-be: a GuideList csak ezt a lapos {slug,title,summary,icon,hay}
  * tömböt kapja propként. Korábban a "use client" GuideList importálta
