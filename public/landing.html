@@ -1356,7 +1356,7 @@
   <div class="wrap">
     <div class="sec-eyebrow">Több, mint kereső</div>
     <h2 class="sec-title">Eszközök — <em>magyarul</em> a kinti hétköznapokhoz.</h2>
-    <p class="sec-sub">Bérkalkulátor, árfolyam-kalkulátor, ügyintézés-varázsló, engedély-kalauz, állásbörze — minden, amit egy újonnan érkezett magyarnak külföldön tudni érdemes. Hat országban — 🇨🇭 Svájc, 🇦🇹 Ausztria, 🇩🇪 Németország, 🇳🇱 Hollandia, 🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anglia, 🇪🇸 Spanyolország — egy appban. Ahol egy eszköz még nem minden országban él, ott jelöljük.</p>
+    <p class="sec-sub">Bérkalkulátor, árfolyam-kalkulátor, ügyintézés-varázsló, engedély-kalauz, állásbörze — minden, amit egy újonnan érkezett magyarnak külföldön tudni érdemes. Hat országban — 🇨🇭 Svájc, 🇦🇹 Ausztria, 🇩🇪 Németország, 🇳🇱 Hollandia, <span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span> Anglia, 🇪🇸 Spanyolország — egy appban. Ahol egy eszköz még nem minden országban él, ott jelöljük.</p>
 
     <div class="comm-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
       <div class="comm-card" style="background: #fbf7ee;">
@@ -1907,6 +1907,17 @@
       @media (max-width: 520px) { .ctry-grid { grid-template-columns: 1fr; } }
       .ctry { display: flex; align-items: center; gap: 13px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-card); transition: transform .15s, box-shadow .15s; }
       .ctry:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); }
+      /* Anglia zászlaja (Szent György-kereszt) CSS-sel rajzolva: a 🏴 tag-sequence
+         emoji Windows/Chrome alatt sima FEKETE zászlóként jelenik meg, a 🇬🇧 pedig
+         az Egyesült Királyságé lenne — egyik sem jó. Nem SVG, mert az i18n-motor
+         kihagyja az SVG-t tartalmazó elemeket (elromlana a mondat fordítása). */
+      .fl-eng { display: inline-block; width: 1.15em; height: 0.82em; vertical-align: -0.09em; border-radius: 2px;
+        background:
+          linear-gradient(#CE1124, #CE1124) center / 100% 22% no-repeat,
+          linear-gradient(#CE1124, #CE1124) center / 22% 100% no-repeat,
+          #fff;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,.10); }
+      .ctry-flag .fl-eng { width: 30px; height: 21px; border-radius: 3px; }
       .ctry-flag { width: 48px; height: 48px; border-radius: 13px; background: var(--surface-alt); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 26px; line-height: 1; flex-shrink: 0; }
       .ctry-name { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
       .ctry-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; font-weight: 600; }
@@ -1948,7 +1959,7 @@
         </div>
       </div>
       <div class="ctry">
-        <div class="ctry-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+        <div class="ctry-flag"><span class="fl-eng" role="img" aria-label="Anglia zászlaja"></span></div>
         <div>
           <div class="ctry-name">Anglia</div>
           <div class="ctry-sub">London · Manchester · Birmingham</div>
@@ -2060,7 +2071,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <!-- Landing i18n motor (HU/DE/EN) — a fő IIFE ELŐTT tölt be, hogy a kintiCat/kintiJS globálisok készen álljanak. -->
-<script src="/landing-i18n.js?v=20260726f"></script>
+<script src="/landing-i18n.js?v=20260726g"></script>
 <script>
 (function () {
   'use strict';

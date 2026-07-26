@@ -154,9 +154,12 @@
   // ESZKÖZÖK (modulok)
   add('Több, mint kereső', 'Mehr als eine Suche', 'More than a finder');
   add('Eszközök — magyarul a kinti hétköznapokhoz.', 'Tools — <em>auf Ungarisch</em> für den Alltag im Ausland.', 'Tools — <em>in Hungarian</em> for everyday life abroad.');
-  add('Bérkalkulátor, árfolyam-kalkulátor, ügyintézés-varázsló, engedély-kalauz, állásbörze — minden, amit egy újonnan érkezett magyarnak külföldön tudni érdemes. Hat országban — 🇨🇭 Svájc, 🇦🇹 Ausztria, 🇩🇪 Németország, 🇳🇱 Hollandia, 🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anglia, 🇪🇸 Spanyolország — egy appban. Ahol egy eszköz még nem minden országban él, ott jelöljük.',
-      'Lohnrechner, Wechselkurs-Rechner, Behörden-Assistent, Aufenthalts-Guide, Jobbörse — alles, was neu angekommene Ungarn im Ausland wissen sollten. In sechs Ländern — 🇨🇭 Schweiz, 🇦🇹 Österreich, 🇩🇪 Deutschland, 🇳🇱 Niederlande, 🏴󠁧󠁢󠁥󠁮󠁧󠁿 England, 🇪🇸 Spanien — in einer App. Wo ein Tool noch nicht in jedem Land verfügbar ist, kennzeichnen wir es.',
-      'Salary calculator, exchange-rate calculator, admin wizard, permit guide, job board — everything a newly arrived Hungarian should know abroad. In six countries — 🇨🇭 Switzerland, 🇦🇹 Austria, 🇩🇪 Germany, 🇳🇱 Netherlands, 🏴󠁧󠁢󠁥󠁮󠁧󠁿 England, 🇪🇸 Spain — in one app. If a tool isn’t available in all countries yet, we mark it.');
+  // ⚠️ A KULCS-ban NINCS a zászló-span: a motor a markupból TAG NÉLKÜL számítja
+  // a kulcsot. Az ÉRTÉKEKBEN viszont reprodukálni kell, különben nyelvváltáskor
+  // eltűnne az angol zászló.
+  add('Bérkalkulátor, árfolyam-kalkulátor, ügyintézés-varázsló, engedély-kalauz, állásbörze — minden, amit egy újonnan érkezett magyarnak külföldön tudni érdemes. Hat országban — 🇨🇭 Svájc, 🇦🇹 Ausztria, 🇩🇪 Németország, 🇳🇱 Hollandia, Anglia, 🇪🇸 Spanyolország — egy appban. Ahol egy eszköz még nem minden országban él, ott jelöljük.',
+      'Lohnrechner, Wechselkurs-Rechner, Behörden-Assistent, Aufenthalts-Guide, Jobbörse — alles, was neu angekommene Ungarn im Ausland wissen sollten. In sechs Ländern — 🇨🇭 Schweiz, 🇦🇹 Österreich, 🇩🇪 Deutschland, 🇳🇱 Niederlande, <span class="fl-eng" role="img" aria-label="Flag of England"></span> England, 🇪🇸 Spanien — in einer App. Wo ein Tool noch nicht in jedem Land verfügbar ist, kennzeichnen wir es.',
+      'Salary calculator, exchange-rate calculator, admin wizard, permit guide, job board — everything a newly arrived Hungarian should know abroad. In six countries — 🇨🇭 Switzerland, 🇦🇹 Austria, 🇩🇪 Germany, 🇳🇱 Netherlands, <span class="fl-eng" role="img" aria-label="Flag of England"></span> England, 🇪🇸 Spain — in one app. If a tool isn’t available in all countries yet, we mark it.');
   add('💰 Pénz', '💰 Geld', '💰 Money');
   add('Bérkalkulátor + Ajánlataim', 'Lohnrechner + Meine Angebote', 'Salary calculator + My offers');
   add('Nettó-bér becslés a helyi adó- és járulékszabályokkal, mind a 4 országban (🇳🇱 Box 1 + heffingskortingen is). Interjún kapott ajánlatokat elmenthetsz és összehasonlíthatsz.',
