@@ -79,7 +79,7 @@
   // DEMO
   add('Próbáld ki — most', 'Jetzt ausprobieren', 'Try it — now');
   add('Élőben — egyetlen érintés a magyar segítségig.', 'Live — <em>ein Tipp</em> bis zur ungarischen Hilfe.', 'Live — <em>one tap</em> to Hungarian help.');
-  add('Tényleg így működik. Gépelj a keresőbe vagy válassz kategóriát, és nézd ahogy real-time változnak a pinek és a lista. (A demó minta-adatokkal fut — az appban a valódi, moderált bejegyzések jelennek meg.)',
+  add('Tényleg így működik. Gépelj a keresőbe vagy válassz kategóriát, és nézd, ahogy valós időben változnak a pinek és a lista. (A demó minta-adatokkal fut — az appban a valódi, moderált bejegyzések jelennek meg.)',
       'Genau so funktioniert es. Tippe in die Suche oder wähle eine Kategorie und sieh, wie sich Pins und Liste in Echtzeit ändern. (Die Demo läuft mit Beispieldaten — in der App erscheinen echte, moderierte Einträge.)',
       'This is exactly how it works. Type in the search or pick a category and watch the pins and list change in real time. (The demo runs on sample data — the app shows real, moderated listings.)');
   add('— vagy kattints egy kategória chipre ↑', '— oder klick auf einen Kategorie-Chip ↑', '— or click a category chip ↑');
@@ -178,7 +178,7 @@
       '300 CHF Freigrenze, 1 kg Fleisch/Person, 5 l Wein, 1 l Schnaps. Was ist im Auto — was musst du deklarieren? (🇨🇭 Schweizer Grenze)',
       '300 CHF allowance, 1 kg meat/person, 5 l wine, 1 l spirits. What’s in the car — what to declare? (🇨🇭 Swiss border)');
   add('🚓 Bírság', '🚓 Bußgeld', '🚓 Fines');
-  add('Gyorshajtás-bírság becslő', 'Tempo-Bußgeld-Schätzer', 'Speeding-fine estimator');
+  add('Gyorshajtási bírságbecslő', 'Tempo-Bußgeld-Schätzer', 'Speeding-fine estimator');
   add('A helyi bírság-rendszerek becslője, mind a 4 országban (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Mennyit fog fájni a gyorshajtás?',
       'Schätzer für die lokalen Bußgeld-Systeme, in allen 4 Ländern (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Was kostet zu schnelles Fahren?',
       'Estimator for local fine systems, in all 4 countries (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). How much will speeding cost you?');
@@ -453,7 +453,7 @@
       'Sie tragen sich selbst ein — ohne Konto; sie erhalten sofort einen Verwaltungs-Link (E-Mail nicht Pflicht). Der Administrator prüft und aktiviert innerhalb von 24 Stunden. Das „✓ Verifiziert"-Badge bedeutet eine sprachliche Verifizierung — KEINE Qualitätsgarantie.',
       'They submit themselves — no account; they instantly get a manage link (email optional). The administrator reviews and activates within 24 hours. The “✓ Verified” badge means a language verification — NOT a quality guarantee.');
   add('Mi a tartalom-moderációs eljárás?', 'Wie läuft die Inhalts-Moderation ab?', 'What is the content moderation process?');
-  add('Minden hirdetés, értékelés és vállalkozói profil admin-jóváhagyásra vár (típikusan 24 órán belül). Llama AI szűri a szöveg + képtartalmat.',
+  add('Minden hirdetés, értékelés és vállalkozói profil admin-jóváhagyásra vár (tipikusan 24 órán belül). Llama AI szűri a szöveg + képtartalmat.',
       '<strong>Jede Anzeige, Bewertung und jedes Unternehmensprofil wartet auf Admin-Freigabe</strong> (typischerweise innerhalb von 24 Stunden). Llama-KI filtert Text- und Bildinhalte.',
       '<strong>Every listing, review and business profile awaits admin approval</strong> (typically within 24 hours). Llama AI filters text and image content.');
   add('Meddig van fent egy álláshirdetés?', 'Wie lange bleibt eine Stellenanzeige online?', 'How long does a job listing stay up?');
@@ -469,11 +469,11 @@
       'Deine GPS-Position bleibt im Browser — wir senden sie nicht an den Server. Wir nutzen nur <strong>technisch notwendige Cookies</strong> (z. B. Clerk-Session für angemeldete Funktionen) — keine Marketing- oder Tracking-Cookies. DSGVO- + Schweizer revDSG-konform, auf Cloudflare-EU-Edge-Servern. Die IP-Adresse speichern wir nur als SHA-256-Hash; deine E-Mail wird zur Bestätigung und Kontaktaufnahme gespeichert.',
       'Your GPS position stays in the browser — we don’t send it to the server. We use only <strong>strictly necessary cookies</strong> (e.g. Clerk session for logged-in features) — no marketing or tracking cookies. GDPR + Swiss revFADP compliant, on Cloudflare EU edge servers. We store the IP address only as a SHA-256 hash; your email is stored for confirmation and contact.');
   add('Mit jelentenek az ✨ AI-jelölt funkciók?', 'Was bedeuten die ✨ KI-gekennzeichneten Funktionen?', 'What do the ✨ AI-marked features mean?');
-  add('A Cloudflare Workers AI (Llama modell, EU-szervereken) használjuk: természetes nyelvű kereső, vállalkozói leírás-csiszolás, német szó-magyarázat. Automatikus becslés, nem szakvélemény — minden AI-output ✨ ikonnal jelölve.',
+  add('A Cloudflare Workers AI-t (Llama modell, EU-szervereken) használjuk: természetes nyelvű kereső, vállalkozói leírás-csiszolás, német szó-magyarázat. Automatikus becslés, nem szakvélemény — minden AI-output ✨ ikonnal jelölve.',
       'Wir nutzen Cloudflare Workers AI (Llama-Modell, auf EU-Servern): Suche in natürlicher Sprache, Aufpolieren von Unternehmensbeschreibungen, deutsche Worterklärung. <strong>Automatische Schätzung, kein Gutachten</strong> — jede KI-Ausgabe ist mit ✨-Symbol gekennzeichnet.',
       'We use Cloudflare Workers AI (Llama model, on EU servers): natural-language search, polishing business descriptions, German word explanations. <strong>Automated estimate, not professional advice</strong> — every AI output is marked with a ✨ icon.');
   add('A kalkulátorok pontosak?', 'Sind die Rechner genau?', 'Are the calculators accurate?');
-  add('Bér-, vám-, gyorshajtás-, lakhatás-, repjegy-kalkulátorok mind BECSLŐK. Publikus forrásokat (ECB, ESTV, BAZG) és általános mintákat használnak. Hivatalos döntéshez (pl. nettó-bér, adóvallás) mindig a hivatalos forrás kell.',
+  add('Bér-, vám-, gyorshajtás-, lakhatás-, repjegy-kalkulátorok mind BECSLŐK. Publikus forrásokat (ECB, ESTV, BAZG) és általános mintákat használnak. Hivatalos döntéshez (pl. nettó-bér, adóbevallás) mindig a hivatalos forrás kell.',
       'Lohn-, Zoll-, Tempo-, Wohn- und Flugpreis-Rechner sind alle <strong>Schätzer</strong>. Sie nutzen öffentliche Quellen (EZB, ESTV, BAZG) und allgemeine Muster. Für offizielle Entscheidungen (z. B. Nettolohn, Steuererklärung) ist immer die offizielle Quelle maßgeblich.',
       'Salary, customs, speeding, housing and flight-price calculators are all <strong>estimators</strong>. They use public sources (ECB, ESTV, BAZG) and general patterns. For official decisions (e.g. net salary, tax return) the official source always applies.');
   add('Push-értesítéseket (Kinti Radar) hogyan kapok?', 'Wie erhalte ich Push-Benachrichtigungen (Kinti Radar)?', 'How do I get push notifications (Kinti Radar)?');

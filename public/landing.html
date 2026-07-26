@@ -949,7 +949,6 @@
       font-size: 10.5px; font-weight: 800; letter-spacing: 0.4px;
       text-transform: uppercase; color: var(--primary);
     }
-    .biz-card .info .row1 .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-faint); }
     .biz-card .info .row1 .star { color: var(--text); display: inline-flex; align-items: center; gap: 3px; text-transform: none; }
     .biz-card .info .row1 .star .s { color: #f0a23a; }
     .biz-card .info .name {
@@ -960,7 +959,6 @@
       font-size: 13px; color: var(--text-muted);
       display: flex; align-items: center; gap: 7px;
     }
-    .biz-card .info .meta .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-faint); }
     .biz-card .info .meta .open { color: #1d6a3c; font-weight: 600; }
     .biz-card .info .langs { display: flex; gap: 6px; margin-top: 14px; }
     .biz-card .info .lang {
@@ -1166,7 +1164,7 @@
   <div class="wrap">
     <div class="sec-eyebrow">Próbáld ki — most</div>
     <h2 class="sec-title">Élőben — <em>egyetlen érintés</em> a magyar segítségig.</h2>
-    <p class="sec-sub">Tényleg így működik. Gépelj a keresőbe vagy válassz kategóriát, és nézd ahogy real-time változnak a pinek és a lista. (A demó minta-adatokkal fut — az appban a valódi, moderált bejegyzések jelennek meg.)</p>
+    <p class="sec-sub">Tényleg így működik. Gépelj a keresőbe vagy válassz kategóriát, és nézd, ahogy valós időben változnak a pinek és a lista. (A demó minta-adatokkal fut — az appban a valódi, moderált bejegyzések jelennek meg.)</p>
 
     <div class="demo-frame">
       <!-- search bar -->
@@ -1383,7 +1381,7 @@
       </div>
       <div class="comm-card" style="background: #fbf7ee;">
         <div class="comm-eyebrow">🚓 Bírság</div>
-        <h3 class="comm-title" style="font-size: 18px;">Gyorshajtás-bírság becslő</h3>
+        <h3 class="comm-title" style="font-size: 18px;">Gyorshajtási bírságbecslő</h3>
         <p class="comm-body">A helyi bírság-rendszerek becslője, mind a 4 országban (🇨🇭 Tagessätze/Raserdelikt, 🇦🇹, 🇩🇪 Bußgeldkatalog, 🇳🇱 WAHV-boete/CJIB). Mennyit fog fájni a gyorshajtás?</p>
       </div>
       <div class="comm-card" style="background: #fbf7ee;">
@@ -1862,7 +1860,7 @@
       </div>
       <div class="faq-item">
         <div class="faq-q">Mi a tartalom-moderációs eljárás?</div>
-        <div class="faq-a"><strong>Minden hirdetés, értékelés és vállalkozói profil admin-jóváhagyásra vár</strong> (típikusan 24 órán belül). Llama AI szűri a szöveg + képtartalmat.</div>
+        <div class="faq-a"><strong>Minden hirdetés, értékelés és vállalkozói profil admin-jóváhagyásra vár</strong> (tipikusan 24 órán belül). Llama AI szűri a szöveg + képtartalmat.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">Meddig van fent egy álláshirdetés?</div>
@@ -1878,11 +1876,11 @@
       </div>
       <div class="faq-item">
         <div class="faq-q">Mit jelentenek az ✨ AI-jelölt funkciók?</div>
-        <div class="faq-a">A Cloudflare Workers AI (Llama modell, EU-szervereken) használjuk: természetes nyelvű kereső, vállalkozói leírás-csiszolás, német szó-magyarázat. <strong>Automatikus becslés, nem szakvélemény</strong> — minden AI-output ✨ ikonnal jelölve.</div>
+        <div class="faq-a">A Cloudflare Workers AI-t (Llama modell, EU-szervereken) használjuk: természetes nyelvű kereső, vállalkozói leírás-csiszolás, német szó-magyarázat. <strong>Automatikus becslés, nem szakvélemény</strong> — minden AI-output ✨ ikonnal jelölve.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">A kalkulátorok pontosak?</div>
-        <div class="faq-a">Bér-, vám-, gyorshajtás-, lakhatás-, repjegy-kalkulátorok mind <strong>BECSLŐK</strong>. Publikus forrásokat (ECB, ESTV, BAZG) és általános mintákat használnak. Hivatalos döntéshez (pl. nettó-bér, adóvallás) mindig a hivatalos forrás kell.</div>
+        <div class="faq-a">Bér-, vám-, gyorshajtás-, lakhatás-, repjegy-kalkulátorok mind <strong>BECSLŐK</strong>. Publikus forrásokat (ECB, ESTV, BAZG) és általános mintákat használnak. Hivatalos döntéshez (pl. nettó-bér, adóbevallás) mindig a hivatalos forrás kell.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">Push-értesítéseket (Kinti Radar) hogyan kapok?</div>
@@ -2062,7 +2060,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <!-- Landing i18n motor (HU/DE/EN) — a fő IIFE ELŐTT tölt be, hogy a kintiCat/kintiJS globálisok készen álljanak. -->
-<script src="/landing-i18n.js?v=20260726a"></script>
+<script src="/landing-i18n.js?v=20260726b"></script>
 <script>
 (function () {
   'use strict';
@@ -2388,13 +2386,13 @@
         '<div class="info">' +
           '<div class="row1">' +
             '<span>' + catL(b.catLabel) + '</span>' +
-            '<span class="sep"></span>' +
+            '<span>&nbsp;·&nbsp;</span>' +
             '<span class="star"><svg class="s" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6l6.3.9l-4.5 4.4l1 6.1L12 17.5l-5.5 2.5l1-6.1L3 9.5l6.3-.9z"/></svg> ' + b.rating.toFixed(1) + '</span>' +
           '</div>' +
           '<h3 class="name">' + nameL(b.name) + '</h3>' +
           '<div class="meta">' +
             '<span>📍 ' + distL(b.dist) + '</span>' +
-            '<span class="sep"></span>' +
+            '<span>&nbsp;·&nbsp;</span>' +
             '<span class="open">' + jsL('open', 'Nyitva') + '</span>' +
           '</div>' +
           '<div class="langs">' +
