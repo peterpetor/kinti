@@ -13,9 +13,18 @@ export const metadata = { title: "Ajánlj egy magyar vállalkozást" };
  * Moderációval kerül be; jóváhagyás után nem-megerősített listaként jelenik
  * meg, a tulaj később átveheti.
  */
-export default async function AjanlasPage() {
+export default async function AjanlasPage({
+  searchParams,
+}: {
+  searchParams?: { cat?: string };
+}) {
   const categories = await getCategories();
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+  // A Szaknévsor „hiányzó szakma" blokkjáról érkezve a kategória már ismert.
+  const defaultCategoryId = searchParams?.cat;
+  const catLabel = defaultCategoryId
+    ? categories.find((c) => c.id === defaultCategoryId)?.label
+    : undefined;
 
   return (
     <div className="px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
@@ -33,12 +42,27 @@ export default async function AjanlasPage() {
       />
 
       <div className="mb-4 rounded-card border border-line bg-surface-alt px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted">
-        Ismersz egy <strong className="text-ink">magyar vállalkozást</strong> a környékeden, ami hiányzik
-        a Szaknévsorból? Ajánld 30 másodperc alatt — mi ellenőrizzük és felvesszük. A tulajdonos
-        később <strong className="text-ink">átveheti</strong> a profilt.
+        {catLabel ? (
+          <>
+            Ebből a szakmából <strong className="text-ink">még egy bejegyzésünk sincs</strong> a
+            környékeden: <strong className="text-ink">{catLabel}</strong>. Ha ismersz egyet, ajánld
+            30 másodperc alatt — mi ellenőrizzük és felvesszük. A tulajdonos később{" "}
+            <strong className="text-ink">átveheti</strong> a profilt.
+          </>
+        ) : (
+          <>
+            Ismersz egy <strong className="text-ink">magyar vállalkozást</strong> a környékeden, ami
+            hiányzik a Szaknévsorból? Ajánld 30 másodperc alatt — mi ellenőrizzük és felvesszük. A
+            tulajdonos később <strong className="text-ink">átveheti</strong> a profilt.
+          </>
+        )}
       </div>
 
-      <BusinessSuggestForm categories={categories} turnstileSiteKey={turnstileSiteKey} />
+      <BusinessSuggestForm
+        categories={categories}
+        turnstileSiteKey={turnstileSiteKey}
+        defaultCategoryId={defaultCategoryId}
+      />
     </div>
   );
 }

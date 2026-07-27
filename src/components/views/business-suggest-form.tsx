@@ -18,13 +18,26 @@ const inputCls =
  * — egy ismert, valódi magyar vállalkozást ajánlasz. Admin jóváhagyás után
  * jelenik meg, nem-megerősített listaként (a tulaj később átveheti).
  */
-export function BusinessSuggestForm({ categories, turnstileSiteKey }: { categories: Category[]; turnstileSiteKey: string }) {
+export function BusinessSuggestForm({
+  categories,
+  turnstileSiteKey,
+  defaultCategoryId,
+}: {
+  categories: Category[];
+  turnstileSiteKey: string;
+  /** Előválasztott kategória a „hiányzó szakma" belépési pontról (?cat=…).
+   *  A user onnan indul, hogy TUDJA, melyik szakma hiányzik — ne kelljen újra
+   *  kiválasztania. Ismeretlen kulcsot szándékosan figyelmen kívül hagyunk. */
+  defaultCategoryId?: string;
+}) {
   const cats = categories.filter((c) => c.id !== "all");
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const regions = getRegions(country);
   const [name, setName] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState(
+    defaultCategoryId && cats.some((c) => c.id === defaultCategoryId) ? defaultCategoryId : "",
+  );
   const [cantonCode, setCantonCode] = useState("");
   const [city, setCity] = useState("");
   const [phone, setPhone] = useState("");

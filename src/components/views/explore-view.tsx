@@ -16,7 +16,7 @@ import { dePoint } from "@/lib/de-points";
 import { readPreferredCanton, setPreferredCanton } from "@/lib/canton-pref";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { getRegions, regionLabel } from "@/lib/regions";
-import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
+import { getCountry, DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
 import { calculateBusinessHoursStatus, parseWorkingHoursStrict } from "@/lib/hours";
 import { RecentBusinessesStrip } from "@/components/views/recent-businesses";
 import { trackAction } from "@/components/usage-tracker";
@@ -36,8 +36,29 @@ const COUNTRY_MAP_CENTER: Record<string, [number, number]> = {
   AT: [47.59, 14.14],
   DE: [51.1, 10.4],
   NL: [52.13, 5.29],
+  // ⚠️ GB nélkül a lenti `?? COUNTRY_MAP_CENTER.CH` miatt az angliai user
+  // térképe SVÁJCRA állt középre. Anglia közepe (Midlands), nem az egész UK-é.
+  GB: [52.6, -1.3],
 };
-const COUNTRY_MAP_ZOOM: Record<string, number> = { CH: 7, AT: 7, DE: 6, NL: 7 };
+const COUNTRY_MAP_ZOOM: Record<string, number> = { CH: 7, AT: 7, DE: 6, NL: 7, GB: 6 };
+
+/**
+ * Nagy keresletű szakmák, amiket akkor is KIÍRUNK, ha az adott országban nulla
+ * a találat — így lesz belőlük ajánlás-kérés a zsákutca helyett.
+ * Sorrend = prioritás (ld. [[business-directory-high-frequency-focus]]).
+ */
+const HIGH_DEMAND_CATEGORY_IDS = [
+  "orvos",
+  "fogorvos",
+  "autoszer",
+  "fodrasz",
+  "elelmiszer",
+  "etterem",
+  "ugyved",
+  "konyveles",
+  "fordito",
+  "koltoztetes",
+] as const;
 
 /**
  * ExploreView (Szaknévsor) — szerverről kapja a teljes adatkészletet, és
@@ -481,12 +502,31 @@ export function ExploreView({
   // Csak azokat a kategóriákat mutatjuk a pill-sorban, amikben TÉNYLEG van
   // vállalkozás (+ „Mind", + az épp kiválasztott) — így nincs üres, irreleváns
   // kategória, és a sor rövid/letisztult marad.
-  const visibleCategories = useMemo(() => {
-    const present = new Set(
-      businesses.filter((b) => (b.country ?? "CH") === country).map((b) => b.categoryId),
-    );
-    return categories.filter((c) => c.id === "all" || c.id === cat || present.has(c.id));
-  }, [categories, businesses, country, cat]);
+  const presentCatIds = useMemo(
+    () =>
+      new Set(businesses.filter((b) => (b.country ?? "CH") === country).map((b) => b.categoryId)),
+    [businesses, country],
+  );
+  const visibleCategories = useMemo(
+    () => categories.filter((c) => c.id === "all" || c.id === cat || presentCatIds.has(c.id)),
+    [categories, cat, presentCatIds],
+  );
+
+  // ⚠️ A pill-sor elrejtése önmagában ZSÁKUTCA: ha egy szakmából nulla a
+  // találat az adott országban, a user nem tudja kiválasztani → nem látja a
+  // „nulla találat" állapot ajánló-CTA-it, és a kereslet-rés mérés
+  // (zero-<cc>-<kat>) sem sül el SOHA. Vagyis pont azokról a szakmákról nem
+  // kapunk se ajánlást, se jelzést, amik hiányoznak. Ezért a NAGY KERESLETŰ
+  // szakmákat, amikből az adott országban nincs egy sem, külön kiírjuk a lista
+  // alján — ott a hiány információ, nem zaj (ld. [[business-directory-high-
+  // frequency-focus]]: fodrász/orvos/bolt/étterem/autószerelő a prioritás).
+  const missingHighDemand = useMemo(() => {
+    if (businesses.length === 0) return [];
+    return HIGH_DEMAND_CATEGORY_IDS.filter((id) => !presentCatIds.has(id))
+      .map((id) => categories.find((c) => c.id === id))
+      .filter((c): c is Category => Boolean(c))
+      .slice(0, 6);
+  }, [categories, presentCatIds, businesses.length]);
 
   // A térkép hely-pillhez: a kiválasztott régió neve, vagy "Egész <ország>"
   const locationLabel = useMemo(() => {
@@ -1149,6 +1189,34 @@ export function ExploreView({
               </span>
               <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
             </Link>
+          )}
+
+          {/* Hiányzó nagy-keresletű szakmák. Ezek a kategóriák NEM jelennek meg a
+              pill-sorban (nincs bennük egy tétel sem), így a user eddig nem is
+              tudta, hogy hiányoznak — és ajánlani sem tudott rájuk. A `?cat=`
+              előválasztja a szakmát az ajánló-űrlapon. Csak akkor jelenik meg,
+              ha van mit ajánlani, és nem szűkített nézetben (kedvencek/keresés). */}
+          {missingHighDemand.length > 0 && cat === "all" && !showFavs && !q.trim() && (
+            <section className="rounded-card border border-dashed border-line bg-surface px-4 py-3">
+              <p className="text-[13px] font-extrabold tracking-[-0.01em] text-ink">
+                Ezek a szakmák még hiányoznak {countryLocative(country)}
+              </p>
+              <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">
+                Ismersz egyet? Koppints rá és ajánld be — mi ellenőrizzük és felvesszük.
+              </p>
+              <div className="mt-2.5 flex flex-wrap gap-1.5">
+                {missingHighDemand.map((c) => (
+                  <Link
+                    key={c.id}
+                    href={`/szaknevsor/ajanlas?cat=${encodeURIComponent(c.id)}`}
+                    className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-3 py-1.5 text-[12px] font-bold text-ink transition active:scale-95"
+                  >
+                    <Icon name="plus" size={12} strokeWidth={2.6} className="text-primary" />
+                    {c.label}
+                  </Link>
+                ))}
+              </div>
+            </section>
           )}
         </div>
       ) : (
