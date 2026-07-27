@@ -10,7 +10,9 @@
       "region": "LDN",
       "address": "62 Little Ealing Lane, London W5 4EA",
       "email": "hello@szentistvanhaz.org",
-      "website": "https://szentistvanhaz.org"
+      "website": "https://szentistvanhaz.org",
+      "lat": 51.4973104,
+      "lng": -0.3113869
     },
     {
       "name": "Angliai Magyar Református Egyház",
@@ -20,7 +22,9 @@
       "address": "17 St Dunstan's Road, London W6 8RD",
       "phone": "+44 20 8748 8858",
       "email": "info@reflondon.hu",
-      "website": "https://reflondon.hu"
+      "website": "https://reflondon.hu",
+      "lat": 51.48979,
+      "lng": -0.21629
     },
     {
       "name": "Magyar Kulturális Központ London",
@@ -29,7 +33,9 @@
       "region": "LDN",
       "address": "10 Maiden Lane, Covent Garden, London WC2E 7NA",
       "phone": "+44 20 7257 2023",
-      "website": "https://www.hungary.org.uk"
+      "website": "https://www.hungary.org.uk",
+      "lat": 51.5106708,
+      "lng": -0.1228868
     },
     {
       "name": "Magyarország Nagykövetsége — London",
@@ -39,7 +45,9 @@
       "address": "35 Eaton Place, London SW1X 8BY",
       "phone": "+44 20 7201 3440",
       "email": "mission.lon@mfa.gov.hu",
-      "website": "https://london.mfa.gov.hu"
+      "website": "https://london.mfa.gov.hu",
+      "lat": 51.4972713,
+      "lng": -0.1527801
     },
     {
       "name": "Magyarország Nagykövetsége — Konzuli Osztály",
@@ -49,7 +57,9 @@
       "address": "100 Brompton Road, London SW3 1ER",
       "phone": "+44 20 7235 5218",
       "email": "consulate.lon@mfa.gov.hu",
-      "website": "https://london.mfa.gov.hu"
+      "website": "https://london.mfa.gov.hu",
+      "lat": 51.4994966,
+      "lng": -0.1644538
     },
     {
       "name": "Londoni Magyar Iskola+",
@@ -84,7 +94,9 @@
       "address": "Selly Oak Methodist Church, Langleys Road, Birmingham B29 6HT",
       "phone": "+44 7756 214875",
       "email": "birminghamiskola@gmail.com",
-      "website": "https://birminghamimagyarok.org"
+      "website": "https://birminghamimagyarok.org",
+      "lat": 52.4345424,
+      "lng": -1.9407083
     },
     {
       "name": "Coventry Magyar Tanoda és Közösség",
@@ -180,7 +192,9 @@
       "region": "LDN",
       "address": "660 High Road, North Finchley, London N12 0NL",
       "phone": "+44 20 8446 2793",
-      "website": "https://www.facebook.com/HUNFLAV"
+      "website": "https://www.facebook.com/HUNFLAV",
+      "lat": 51.6120246,
+      "lng": -0.1754892
     },
     {
       "name": "Magyarok Boltja Wimbledon",
@@ -190,7 +204,9 @@
       "region": "LDN",
       "address": "177 Kingston Road, Wimbledon, London SW19 1LH",
       "phone": "+44 20 8540 1119",
-      "website": "https://hungariandeli.co.uk"
+      "website": "https://hungariandeli.co.uk",
+      "lat": 51.4146026,
+      "lng": -0.2016084
     },
     {
       "name": "Taste From Hungary Magyar Bolt",
@@ -198,7 +214,9 @@
       "category": "elelmiszer",
       "city": "Cambridge",
       "region": "EE",
-      "address": "50 Chesterton Road, Cambridge CB4 1EN"
+      "address": "50 Chesterton Road, Cambridge CB4 1EN",
+      "lat": 52.214405,
+      "lng": 0.1266061
     },
     {
       "name": "Pick Your Taste Magyar Bolt / Paprika Store",
@@ -206,8 +224,10 @@
       "category": "elelmiszer",
       "city": "Milton Keynes",
       "region": "SE",
-      "address": "72 Queensway, Bletchley, Milton Keynes",
-      "phone": "+44 7429 499115"
+      "address": "72 Queensway, Bletchley, Milton Keynes MK2 2SA",
+      "phone": "+44 7429 499115",
+      "lat": 51.9944976,
+      "lng": -0.7319751
     },
     {
       "name": "Taste From Europe — Angliai Magyar Bolt",
@@ -217,7 +237,9 @@
       "region": "EE",
       "address": "35 Field End, Witchford, Cambridgeshire CB6 2XE",
       "phone": "+44 7951 923337",
-      "website": "https://store75949285.company.site"
+      "website": "https://store75949285.company.site",
+      "lat": 52.3888329,
+      "lng": 0.1994636
     },
     {
       "name": "Lakehouse Hungarian Restaurant",
@@ -228,7 +250,9 @@
       "address": "83 High Road, South Woodford, London E18 2QP",
       "phone": "+44 7711 585380",
       "email": "324lakehouse@gmail.com",
-      "website": "https://www.lakehouserestaurant.co.uk"
+      "website": "https://www.lakehouserestaurant.co.uk",
+      "lat": 51.5945276,
+      "lng": 0.0221148
     },
     {
       "name": "Turul Project — magyar étterem és borbár",
@@ -239,6 +263,110 @@
       "address": "1 Turnpike Parade, London N15 3LA",
       "phone": "+44 20 8888 9886",
       "website": "https://www.turulproject.com"
+    },
+    {
+      "name": "Paprika Store London — Green Lanes",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "London",
+      "region": "LDN",
+      "address": "50 Grand Parade, Green Lanes, Haringey, London N4 1AG",
+      "phone": "+44 20 3645 9092",
+      "email": "london@paprikastore.co.uk",
+      "website": "https://www.paprikastore.co.uk",
+      "lat": 51.5790634,
+      "lng": -0.0988797,
+      "hours": "H–P 10–19, Szo 9–19, V és bank holiday 10–19"
+    },
+    {
+      "name": "Paprika Store Twickenham",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "Twickenham",
+      "region": "LDN",
+      "address": "40B Heath Road, Twickenham TW1 4BZ",
+      "phone": "+44 20 7998 7608",
+      "email": "twickenham@paprikastore.co.uk",
+      "website": "https://www.paprikastore.co.uk",
+      "lat": 51.4454274,
+      "lng": -0.3317172,
+      "hours": "H–P 10–19, V és bank holiday 10–16"
+    },
+    {
+      "name": "Paprika Store Bristol",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "Bristol",
+      "region": "SW",
+      "address": "47 Old Market Street, Bristol BS2 0EX",
+      "phone": "+44 117 329 1370",
+      "email": "bristol@paprikastore.co.uk",
+      "website": "https://www.paprikastore.co.uk",
+      "lat": 51.4565176,
+      "lng": -2.5804175,
+      "hours": "H–Szo 10–19, V és bank holiday 10–16"
+    },
+    {
+      "name": "Paprika Store Nottingham",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "Nottingham",
+      "region": "EM",
+      "address": "1 The City, Beeston, Nottingham NG9 2ED",
+      "phone": "+44 115 837 0080",
+      "email": "nottingham@paprikastore.co.uk",
+      "website": "https://www.paprikastore.co.uk",
+      "lat": 52.9272746,
+      "lng": -1.2098735,
+      "hours": "H–Szo 10–19, V és bank holiday 10–16"
+    },
+    {
+      "name": "Hungarian Market Birmingham",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "Birmingham",
+      "region": "WM",
+      "address": "184 Sutton New Road, Erdington, Birmingham B23 6QU",
+      "phone": "+44 7564 226951",
+      "email": "hungarianmarket012@gmail.com",
+      "website": "https://hungarianmarket.co.uk",
+      "lat": 52.5263302,
+      "lng": -1.8378371
+    },
+    {
+      "name": "Louis Hungarian Patisserie",
+      "type": "magyar cukrászda (1963 óta)",
+      "category": "cukrasz",
+      "city": "London",
+      "region": "LDN",
+      "address": "32 Heath Street, Hampstead, London NW3 6TE",
+      "phone": "+44 20 7435 9908",
+      "lat": 51.5556728,
+      "lng": -0.1786265
+    },
+    {
+      "name": "Chimney Cake Lady — kürtőskalács",
+      "type": "kürtőskalács-pult a Camden Marketen",
+      "category": "cukrasz",
+      "city": "London",
+      "region": "LDN",
+      "address": "Waterside Halls, Camden Market Hawley Wharf, London NW1 8QH",
+      "website": "https://www.instagram.com/chimneycakelady/",
+      "lat": 51.5422296,
+      "lng": -0.1442459
+    },
+    {
+      "name": "Strike Consulting (London) Ltd — magyar könyvelőiroda",
+      "type": "magyar könyvelőiroda (self-employed, Ltd, cégalapítás)",
+      "category": "konyveles",
+      "city": "London",
+      "region": "LDN",
+      "address": "44 Broadway, Stratford, London E15 1XH",
+      "phone": "+44 20 3987 4684",
+      "email": "tax@akonyvelo.co.uk",
+      "website": "https://akonyvelo.co.uk",
+      "lat": 51.5410349,
+      "lng": 0.0007492
     }
   ]
 }

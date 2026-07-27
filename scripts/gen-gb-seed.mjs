@@ -57,6 +57,10 @@ const REGION_COORDS = {
 };
 
 function coordsFor(org) {
+  // ⚠️ Ha a tételhez VAN házszám-szintű, geokódolt koordináta (Nominatim/OSM),
+  // az mindig veri a város-középpontot — a térkép-pin különben a belvárosba
+  // mutatna egy külvárosi bolt helyett. Tippelt koordináta SOHA ne kerüljön ide.
+  if (typeof org.lat === "number" && typeof org.lng === "number") return [org.lat, org.lng];
   const city = (org.city || "").toLowerCase();
   for (const key of Object.keys(CITY_COORDS)) {
     if (city.includes(key)) return CITY_COORDS[key];
@@ -83,6 +87,12 @@ function nameKey(s) {
   return s.toLowerCase().replace(/[áéíóöőúüű]/g, (c) => map[c] || c).replace(/[^a-z0-9]/g, "");
 }
 
+/** Dedup-kulcs címre: kisbetűs, csak betű+szám (így a „Rd." / „Road" és a
+ *  vesszők/szóközök eltérése nem rejt el egy valódi duplikátumot). */
+function addrKey(s) {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
 const esc = (s) => (s == null ? null : String(s).replace(/'/g, "''"));
 const q = (s) => (s == null ? "NULL" : `'${esc(s)}'`);
 
@@ -90,9 +100,10 @@ const q = (s) => (s == null ? "NULL" : `'${esc(s)}'`);
 const VALID_REGIONS = new Set(Object.keys(REGION_COORDS));
 // ⚠️ Csak olyan kategória mehet ki, ami LÉTEZIK a categories táblában — különben
 // a bejegyzés kategória nélkül, kereshetetlenül landolna az adatbázisban.
-const VALID_CATEGORIES = new Set(["magyar-kozosseg", "elelmiszer", "etterem"]);
+const VALID_CATEGORIES = new Set(["magyar-kozosseg", "elelmiszer", "etterem", "cukrasz", "konyveles"]);
 const problems = [];
 const nameSeen = new Map();
+const addrSeen = new Map();
 for (const org of data.organizations) {
   if (!org.name || !org.city || !org.region) problems.push(`hiányzó alapmező: ${org.name || "(névtelen)"}`);
   if (!VALID_REGIONS.has(org.region)) problems.push(`ismeretlen régió-kód (${org.region}): ${org.name}`);
@@ -103,6 +114,14 @@ for (const org of data.organizations) {
   const k = nameKey(org.name);
   if (nameSeen.has(k)) problems.push(`DUPLIKÁTUM név szerint: "${org.name}" ≈ "${nameSeen.get(k)}"`);
   else nameSeen.set(k, org.name);
+  // ⚠️ A név-dedup nem elég: ugyanaz a bolt két néven is felkerülhet
+  // (pl. „Magyarok Boltja" és „Hungarian Delicatessen Ltd" egy címen).
+  // Az utcaszintű cím a megbízhatóbb azonosító, ezért arra is szűrünk.
+  if (org.address) {
+    const a = addrKey(org.address);
+    if (addrSeen.has(a)) problems.push(`DUPLIKÁTUM cím szerint: "${org.name}" ≈ "${addrSeen.get(a)}" (${org.address})`);
+    else addrSeen.set(a, org.name);
+  }
 }
 if (problems.length) {
   console.error("A seed NEM generálódott le — javítsd ezeket:");
@@ -140,7 +159,7 @@ for (const org of data.organizations) {
   const address = org.address || org.city;
 
   const cols =
-    "(id, name, category_id, category_label, address, phone, contact_email, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, source, country_code, canton_code)";
+    "(id, name, category_id, category_label, address, phone, contact_email, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, open_text, moderation_status, claimed, hidden, source, country_code, canton_code)";
   const vals = [
     q(id),
     q(org.name),
@@ -159,6 +178,7 @@ for (const org of data.organizations) {
     0,
     0,
     0,
+    q(org.hours ?? null),
     1, // moderation_status = jóváhagyva
     0, // claimed = nem foglalt (a valódi szervezet átveheti)
     0, // hidden
@@ -167,6 +187,17 @@ for (const org of data.organizations) {
     q(org.region),
   ].join(", ");
   lines.push(`INSERT OR IGNORE INTO businesses ${cols} VALUES (${vals});`);
+  // ⚠️ Az INSERT OR IGNORE a MÁR MEGLÉVŐ sort némán átugorja, így egy utólagos
+  // pontosítás (házszám-szintű koordináta, irányítószám, telefon, nyitvatartás)
+  // sosem érne célba — ezért minden tételhez UPDATE is megy.
+  // A `claimed = 0 AND source` feltétel védi azt, amit egy valódi tulajdonos
+  // már átvett és a saját kezével szerkesztett: azt NEM írjuk felül.
+  lines.push(
+    `UPDATE businesses SET address = ${q(address)}, phone = ${q(org.phone ?? null)}, ` +
+      `contact_email = ${q(org.email ?? null)}, open_text = ${q(org.hours ?? null)}, ` +
+      `lat = ${lat}, lng = ${lng}, category_id = ${q(categoryId)}, blurb = ${q(blurb)} ` +
+      `WHERE id = ${q(id)} AND claimed = 0 AND source = 'seed-gb-org';`,
+  );
 }
 
 lines.push("");
