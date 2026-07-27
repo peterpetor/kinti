@@ -514,6 +514,20 @@
       "lat": 51.3713049,
       "lng": -0.101957,
       "hours": "H, K, Cs, P 10–19, Szo 9–17, Sze és V zárva"
+    },
+    {
+      "name": "Rózsa Dental — magyar fogászat, Henley-on-Thames",
+      "type": "magyarul beszélő fogászat és dentálhigiénia",
+      "category": "fogorvos",
+      "city": "Henley-on-Thames",
+      "region": "SE",
+      "address": "30 Market Place, Henley-on-Thames, Oxfordshire RG9 2AH",
+      "phone": "+44 7881 298766",
+      "email": "clinic@rozsadental.co.uk",
+      "website": "https://rozsadental.co.uk",
+      "lat": 51.537463,
+      "lng": -0.9052871,
+      "hours": "K–V 9–18, H zárva"
     }
   ]
 }
