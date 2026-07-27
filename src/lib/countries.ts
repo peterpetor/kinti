@@ -97,6 +97,24 @@ export function countryResidentialAdjective(code: string | null | undefined): st
   }
 }
 
+/**
+ * A nyelvlecke-kurzus nyelvének magyar neve (menü/csempe-címkéhez).
+ *
+ * ⚠️ Ez KORÁBBAN láncolt elágazás volt a menüben, aminek az UTOLSÓ ága az
+ * osztrák volt — így az angliai felhasználó „Nyelvlecke — osztrák német"
+ * feliratot látott (user jelezte 2026-07-28). Új ország felvételekor IDE
+ * kell írni, és a `default` szándékosan a svájci: az a DEFAULT_COUNTRY.
+ */
+export function courseLanguageName(code: string | null | undefined): string {
+  switch (code) {
+    case "AT": return "osztrák német";
+    case "DE": return "német";
+    case "NL": return "holland";
+    case "GB": return "brit angol";
+    default: return "svájci német";
+  }
+}
+
 /** A közigazgatási régió-egység neve. CH: kanton; AT/DE/NL: tartomány. */
 export function regionWord(code: string | null | undefined): string {
   if (code === "GB") return "régió";

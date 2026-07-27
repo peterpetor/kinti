@@ -9,7 +9,7 @@ import { CountrySwitcher } from "./country-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, courseLanguageName } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { haptic } from "@/lib/haptics";
 import { recordUse, getTopUsed } from "@/lib/usage-frecency";
@@ -90,7 +90,6 @@ export function DropdownMenu() {
   const statusFetched = useRef(false);
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const isCH = country === "CH";
   const has = (feature: string) => isFeatureAvailable(feature, country);
 
   useEffect(() => {
@@ -276,7 +275,7 @@ export function DropdownMenu() {
         ...(has("nyelvlecke")
           ? [{
               key: "nyelv",
-              label: isCH ? "Nyelvlecke — svájci német" : country === "DE" ? "Nyelvlecke — német" : country === "NL" ? "Nyelvlecke — holland" : "Nyelvlecke — osztrák német",
+              label: `Nyelvlecke — ${courseLanguageName(country)}`,
               href: "/nyelvlecke", tint: "bg-primary/10", icon: { name: "book" },
             } as MenuItem]
           : []),
