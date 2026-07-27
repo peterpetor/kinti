@@ -600,6 +600,32 @@
       "address": "Online szolgáltatás — telefonon és e-mailben intézhető",
       "phone": "+44 20 7281 2328",
       "website": "https://bonaventura.uk"
+    },
+    {
+      "name": "Chimney Cake Paradise — kürtőskalács, Stratford",
+      "type": "magyar kürtőskalács- és lángospult a stratfordi piacon",
+      "category": "cukrasz",
+      "city": "London",
+      "region": "LDN",
+      "address": "Pitch 2, Broadway Market, Stratford Broadway, London E15 1NG",
+      "phone": "+44 7833 857505",
+      "email": "chimney.cake.paradise@gmail.com",
+      "lat": 51.5419588,
+      "lng": 0.000685
+    },
+    {
+      "name": "MK Smiles — magyar fogorvos rendel (Dr. Anita Éles)",
+      "type": "fogászat, ahol magyar fogorvos is rendel (a rendelő nyelve angol)",
+      "category": "fogorvos",
+      "city": "Milton Keynes",
+      "region": "SE",
+      "address": "Brooklands Health Centre, Montague Crescent, Milton Keynes MK10 7LN",
+      "phone": "+44 1908 348100",
+      "email": "enquiries@mksmiles.co.uk",
+      "website": "https://www.mksmiles.co.uk",
+      "lat": 52.0461838,
+      "lng": -0.6761886,
+      "hours": "H és Sze 8.45–19, K/Cs/P 8.45–17, Szo 8.45–16.30, V zárva"
     }
   ]
 }
