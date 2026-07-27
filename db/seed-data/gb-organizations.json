@@ -367,6 +367,86 @@
       "website": "https://akonyvelo.co.uk",
       "lat": 51.5410349,
       "lng": 0.0007492
+    },
+    {
+      "name": "Hungarian Bistro Eastbourne",
+      "type": "magyar bisztró (gulyás, lángos)",
+      "category": "etterem",
+      "city": "Eastbourne",
+      "region": "SE",
+      "address": "144A Seaside, Eastbourne BN22 7QW",
+      "phone": "+44 7519 125324",
+      "lat": 50.7720468,
+      "lng": 0.2949707
+    },
+    {
+      "name": "Hungarian Shop Stoke-on-Trent",
+      "type": "magyar élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "Stoke-on-Trent",
+      "region": "WM",
+      "address": "22 Hartshill Road, Hartshill, Stoke-on-Trent ST4 7QU",
+      "lat": 53.0053662,
+      "lng": -2.1871891
+    },
+    {
+      "name": "Sweet Hungarian Kiss — magyar cukrászda",
+      "type": "magyar cukrászda és pékség",
+      "category": "cukrasz",
+      "city": "Burton upon Trent",
+      "region": "WM",
+      "address": "335 Uxbridge Street, Burton upon Trent DE14 3JS",
+      "lat": 52.8009514,
+      "lng": -1.6392375,
+      "hours": "Sze–V 12–18"
+    },
+    {
+      "name": "Budapest Cafe Bristol",
+      "type": "magyar kávézó és reggeliző",
+      "category": "etterem",
+      "city": "Bristol",
+      "region": "SW",
+      "address": "58 Alma Vale Road, Clifton, Bristol BS8 2HS",
+      "phone": "+44 7475 384539",
+      "email": "budapestcafebristol@gmail.com",
+      "website": "https://budapestcafe.co.uk",
+      "lat": 51.4631967,
+      "lng": -2.613192,
+      "hours": "K–P 9–14, Szo 9–16, V 9.30–16, H zárva"
+    },
+    {
+      "name": "Budapest Food Store — magyar bolt Bolton",
+      "type": "magyar és közép-európai élelmiszerbolt",
+      "category": "elelmiszer",
+      "city": "Bolton",
+      "region": "NW",
+      "address": "132–134 Deane Road, Bolton BL3 5HL",
+      "lat": 53.5734866,
+      "lng": -2.441091
+    },
+    {
+      "name": "Lángos Huddersfield",
+      "type": "magyar utcaétel-pult a piaccsarnokban",
+      "category": "etterem",
+      "city": "Huddersfield",
+      "region": "YH",
+      "address": "Stall 8, Huddersfield Open Market, Brook Street, Huddersfield HD1 1DY",
+      "phone": "+44 7384 421951",
+      "lat": 53.6493062,
+      "lng": -1.7817712,
+      "hours": "H 8–12, K/Cs/P/Szo 8–16, Sze és V zárva"
+    },
+    {
+      "name": "Taste From Hungary Étterem Cambridge",
+      "type": "magyar étterem (a magyar bolt mellett)",
+      "category": "etterem",
+      "city": "Cambridge",
+      "region": "EE",
+      "address": "48 Chesterton Road, Cambridge CB4 1EN",
+      "phone": "+44 7561 496977",
+      "website": "https://tastefromhungary.uk",
+      "lat": 52.2143894,
+      "lng": 0.1265274
     }
   ]
 }
