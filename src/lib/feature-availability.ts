@@ -122,6 +122,8 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "kozlekedes",      // ⭐ VAN GB közlekedés (TfL capping, National Rail, Railcard)
   "allampolgarsag",  // ⭐ VAN GB kérdésbank (Life in the UK, GB_BANK)
   "szolgaltato-valto", // ⭐ VAN GB szolgáltató-adat (CASS bankváltás, Ofgem, Ofcom)
+  "repulojegy",      // ⭐ VAN GB járat-konfig (7 angol reptér, WizzAir/Ryanair/BA)
+  "lakberles",       // ⭐ VAN GB rent-konfig (5 heti kaució, TDP, council tax)
 ]);
 
 export function isFeatureAvailable(

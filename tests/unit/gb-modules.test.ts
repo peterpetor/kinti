@@ -181,3 +181,46 @@ describe("GB szolgáltató-váltó", () => {
     expect(getProviderCategories("XX")).toEqual(getProviderCategories("CH"));
   });
 });
+
+describe("GB repülőjegy-konfig", () => {
+  it("van GB járat-konfig, angol reptérekkel és fonttal", async () => {
+    const { FLIGHT_CONFIG } = await import("@/lib/flights");
+    const gb = FLIGHT_CONFIG.GB;
+    expect(gb).toBeTruthy();
+    expect(gb.currency).toBe("£");
+    const codes = gb.origins.map((o) => o.code);
+    for (const c of ["LTN", "STN", "LHR", "MAN", "BHX"]) expect(codes, c).toContain(c);
+    // ⚠️ skót/walesi reptér NEM kerülhet be (a Kinti GB-je csak Anglia)
+    for (const c of ["EDI", "GLA", "CWL", "BFS"]) expect(codes, c).not.toContain(c);
+  });
+
+  it("minden GB-légitársaság útvonala létező reptérre mutat", async () => {
+    const { FLIGHT_CONFIG } = await import("@/lib/flights");
+    const codes = new Set(FLIGHT_CONFIG.GB.origins.map((o) => o.code));
+    for (const a of FLIGHT_CONFIG.GB.airlines) {
+      for (const r of a.routes) expect(codes.has(r), `${a.id} → ${r}`).toBe(true);
+      expect(a.url).toMatch(/^https:\/\//);
+    }
+  });
+
+  it("⚠️ a tippek kimondják, hogy Brexit óta ÚTLEVÉL kell", async () => {
+    const { FLIGHT_CONFIG } = await import("@/lib/flights");
+    const all = FLIGHT_CONFIG.GB.tips.map((t) => t.title + " " + t.body).join(" ");
+    expect(all).toMatch(/útlevél/i);
+    expect(all).toMatch(/személyi igazolvánnyal már nem|SZEMÉLYI IGAZOLVÁNNYAL/i);
+  });
+});
+
+describe("GB lakhatás-konfig", () => {
+  it("fontban számol, és a kaució-védelmet kiemeli", async () => {
+    const { getRentConfig } = await import("@/lib/rent-cost");
+    const gb = getRentConfig("GB");
+    expect(gb.currency).toBe("GBP");
+    expect(gb.depositTip).toMatch(/kaució-védelem|TDP/i);
+    expect(gb.nkTip.toLowerCase()).toContain("council tax");
+    // ⚠️ nem eshet a svájci configra
+    const ch = getRentConfig("CH");
+    expect(gb.currency).not.toBe(ch.currency);
+    expect(gb.officialSources.every((s) => /gov\.uk|shelter/.test(s.url))).toBe(true);
+  });
+});

@@ -194,6 +194,45 @@ export const FLIGHT_CONFIG: Record<string, FlightConfig> = {
       { emoji: "🚆", title: "Vonat Hollandiából nem alternatíva", body: "Amszterdam → Budapest vonattal 15+ óra, több átszállással (Németországon/Ausztrián át). BUD-ra repülni gyorsabb és olcsóbb; a vonat inkább Bécs/München felé jó." },
     ],
   },
+  /**
+   * ⚠️ ANGLIA — a leghosszabb táv a négy kontinentális országhoz képest
+   * (London–Budapest ~2,5 óra), és Brexit óta a repülő gyakorlatilag az
+   * EGYETLEN reális út: nincs értelmes vonat-alternatíva, mint Bécsből vagy
+   * Zürichből. Ezért a szezonális sávok magasabbak, és a tippek a
+   * poggyász-politikára és a reptér-választásra összpontosítanak.
+   */
+  GB: {
+    country: "GB",
+    origins: [
+      { code: "LTN", name: "London Luton", city: "London", emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+      { code: "STN", name: "London Stansted", city: "London", emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+      { code: "LGW", name: "London Gatwick", city: "London", emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+      { code: "LHR", name: "London Heathrow", city: "London", emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+      { code: "MAN", name: "Manchester", city: "Manchester", emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+      { code: "BHX", name: "Birmingham", city: "Birmingham", emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+      { code: "BRS", name: "Bristol", city: "Bristol", emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    ],
+    home: BUD,
+    originFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    homeFlag: "🇭🇺",
+    currency: "£",
+    roundStep: 10,
+    airlines: [
+      { id: "wizzair", name: "WizzAir", type: "low-cost", routes: ["LTN", "LGW", "MAN", "BHX", "BRS"], color: "#C6037E", emoji: "💜", notes: "A legsűrűbb magyar útvonalhálózat Angliából (Luton a fő bázis). Olcsó alapár, minden poggyász külön fizetős.", url: "https://wizzair.com/" },
+      { id: "ryanair", name: "Ryanair", type: "low-cost", routes: ["STN", "MAN", "BRS"], color: "#073590", emoji: "💙", notes: "Stansted-bázis. Nagyon olcsó alapár, szigorú kézipoggyász-méret és fizetős beszállókártya-nyomtatás.", url: "https://www.ryanair.com/" },
+      { id: "britishairways", name: "British Airways", type: "full-service", routes: ["LHR"], color: "#075AAA", emoji: "🇬🇧", notes: "Heathrow-ról, drágább, de a jegyben van kézipoggyász, és Heathrow jobban megközelíthető a belvárosból.", url: "https://www.britishairways.com/" },
+    ],
+    // ⚠️ Hosszabb táv + erős szezonalitás → magasabb sávok, mint Bécsnél.
+    seasons: seasons("£", [[25, 90], [45, 140], [90, 240], [160, 400]]),
+    tips: [
+      { emoji: "🛫", title: "Luton és Stansted az olcsó, Heathrow a kényelmes", body: "A WizzAir Lutonról, a Ryanair Stanstedről repül Budapestre — ezek a legolcsóbbak, de a belvárosból 1–1,5 óra kijutni. Számold bele a reptéri transzfer árát (vonat 15–25 £), mert gyakran elviszi a különbséget." },
+      { emoji: "🎒", title: "A poggyász viszi el a különbséget", body: "A low-cost alapjegy CSAK egy ülés alá férő kis táskát enged. Kézipoggyász a kalapba + feladott bőrönd oda-vissza könnyen +60–100 £ — a „20 fontos jegy” így lesz 120." },
+      { emoji: "📅", title: "Foglalj 6–8 héttel előre", body: "Ugyanaz a szabály, mint a kontinensen: 5+ hónappal még magas, 2 héten belül drága. A hét közepe (kedd–szerda) 15–20%-kal olcsóbb." },
+      { emoji: "🎄", title: "Karácsony: a legdrágább időszak", body: "December 20–24. és január 2–6. között az árak 3–4-szeresükre ugranak. Ha teheted, dec. 23-án menj és jan. 7-én gyere vissza." },
+      { emoji: "🛂", title: "⚠️ Brexit óta útlevél kell", body: "Magyar SZEMÉLYI IGAZOLVÁNNYAL már nem lehet belépni az Egyesült Királyságba — érvényes útlevél kell. Indulás előtt ellenőrizd a lejáratot; a beszállásnál a légitársaság is nézi." },
+      { emoji: "🚂", title: "Vonat-alternatíva gyakorlatilag nincs", body: "London–Budapest vonattal 20+ óra, több átszállással, és jellemzően DRÁGÁBB a repülőnél. Bécsből vagy Münchenből még van értelme éjszakai vonatnak, Angliából nincs." },
+    ],
+  },
 };
 
 /** Egy ország járat-konfigja (vagy null, ha nincs felvéve). */
