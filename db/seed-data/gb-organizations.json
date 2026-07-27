@@ -461,6 +461,59 @@
       "lat": 51.5182064,
       "lng": -0.1250818,
       "hours": "H–P 8–22, Szo–V 9–17"
+    },
+    {
+      "name": "Sopron Off Licence — magyar termékek, Bolton",
+      "type": "közép-európai vegyesbolt magyar termékekkel",
+      "category": "elelmiszer",
+      "city": "Bolton",
+      "region": "NW",
+      "address": "141 Chorley Old Road, Bolton BL1 3BD",
+      "lat": 53.5851656,
+      "lng": -2.4484634,
+      "hours": "Hosszú nyitvatartás (24 órás alkoholengedéllyel)"
+    },
+    {
+      "name": "Figaro London — magyar csapatú haj- és szépségszalon",
+      "type": "fodrászat és szépségszalon, túlnyomórészt magyar csapattal",
+      "category": "fodrasz",
+      "city": "London",
+      "region": "LDN",
+      "address": "95–97 Lever Street, London EC1V 3RQ",
+      "phone": "+44 20 7253 7057",
+      "email": "info@figarolondon.uk",
+      "website": "https://www.figarolondon.uk",
+      "lat": 51.527186,
+      "lng": -0.0959713,
+      "hours": "H–P 9–21, Szo 10–20, V 11–18"
+    },
+    {
+      "name": "Oxygen Beauty Studio — magyar kozmetika",
+      "type": "magyar kozmetika (időpontfoglalás után adják a pontos címet)",
+      "category": "szepseg",
+      "city": "London",
+      "region": "LDN",
+      "address": "Cricklewood, London NW2",
+      "phone": "+44 7846 513901",
+      "email": "info@oxygenbeautystudio.co.uk",
+      "website": "http://oxygenbeautystudio.co.uk",
+      "lat": 51.5566986,
+      "lng": -0.2157507,
+      "hours": "H–Cs 10–20, P 10–18, Szo 9.30–15, V zárva"
+    },
+    {
+      "name": "BeautyGarden — magyar kozmetika Croydon",
+      "type": "magyar kozmetika (időpontfoglalás után adják a pontos címet)",
+      "category": "szepseg",
+      "city": "London",
+      "region": "LDN",
+      "address": "Croydon, London CR0",
+      "phone": "+44 7704 679971",
+      "email": "info@beauty-garden.co.uk",
+      "website": "http://www.beauty-garden.co.uk",
+      "lat": 51.3713049,
+      "lng": -0.101957,
+      "hours": "H, K, Cs, P 10–19, Szo 9–17, Sze és V zárva"
     }
   ]
 }
