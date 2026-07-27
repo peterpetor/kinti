@@ -447,6 +447,20 @@
       "website": "https://tastefromhungary.uk",
       "lat": 52.2143894,
       "lng": 0.1265274
+    },
+    {
+      "name": "Forest & Ray — magyar fogorvos London",
+      "type": "fogászati rendelő magyarul beszélő fogorvosokkal",
+      "category": "fogorvos",
+      "city": "London",
+      "region": "LDN",
+      "address": "8F Gilbert Place, Bloomsbury, London WC1A 2JD",
+      "phone": "+44 20 8158 7163",
+      "email": "info@magyar-fogorvos-londonban.co.uk",
+      "website": "https://magyar-fogorvos-londonban.co.uk",
+      "lat": 51.5182064,
+      "lng": -0.1250818,
+      "hours": "H–P 8–22, Szo–V 9–17"
     }
   ]
 }
