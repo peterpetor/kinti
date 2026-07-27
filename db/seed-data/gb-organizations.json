@@ -604,6 +604,32 @@
       "lat": 52.0461838,
       "lng": -0.6761886,
       "hours": "H és Sze 8.45–19, K/Cs/P 8.45–17, Szo 8.45–16.30, V zárva"
+    },
+    {
+      "name": "Hungarian Soul — magyar étterem és kávézó, Cambridge",
+      "type": "magyar étterem és reggeliző",
+      "category": "etterem",
+      "city": "Cambridge",
+      "region": "EE",
+      "address": "94 Mill Road, Cambridge CB1 2BD",
+      "email": "hello@hungariansoul.co.uk",
+      "website": "https://hungariansoul.co.uk",
+      "lat": 52.1999741,
+      "lng": 0.1371123,
+      "hours": "K–P 8–14 és 17–22, Szo–V 8–22"
+    },
+    {
+      "name": "Paprika Restaurant & Café — magyar étterem, Bournemouth",
+      "type": "magyar és közép-európai étterem",
+      "category": "etterem",
+      "city": "Bournemouth",
+      "region": "SW",
+      "address": "332 Holdenhurst Road, Springbourne, Bournemouth BH8 8BE",
+      "phone": "+44 1202 801862",
+      "email": "paprikabournemouth@gmail.com",
+      "lat": 50.7311474,
+      "lng": -1.8535581,
+      "hours": "K–Cs 17–21.30, P 17–22.30, Szo 13–22.30"
     }
   ]
 }
