@@ -13,12 +13,18 @@ import {
   receivedAmount,
   bestProvider,
   savingsVsBank,
+  baseCurrencyFor,
 } from "@/lib/exchange-providers";
 
 /**
  * Hazautalás-kalkulátor — ország-tudatos. CH: bázis CHF (CHF→HUF + CHF→EUR).
- * Eurozóna (AT/DE): bázis EUR, csak EUR→HUF (az EUR→HUF a CHF-keresztből:
- * chfToHuf / chfToEur). A díjak BECSÜLTEK (publikált átlag), nem real-time.
+ * Eurozóna (AT/DE/NL): bázis EUR. ⚠️ ANGLIA: bázis GBP — korábban az
+ * `isEuro = country !== "CH"` BINÁRIS elágazás minden nem-svájci országot
+ * eurózónának vett, így az angliai felhasználónak EURÓBAN számolt (a user
+ * jelezte: „Itt vagyok az angolon aztán eurót ír font helyett").
+ * Az /api/exchange-rate a GBP-t MÁR visszaadta, csak ez a komponens nem
+ * használta. Minden nem-HUF bázis a CHF-keresztből jön: chfToHuf / chfToX.
+ * A díjak BECSÜLTEK (publikált átlag), nem real-time.
  *
  * A szolgáltató-adatok a KÖZÖS lib/exchange-providers-ből jönnek (a korábbi
  * lokális 3-elemű duplikátum a Revolut hétvégi felárát sem tudta) — így a
@@ -28,22 +34,26 @@ import {
 export function ExchangeCalculator({
   chfToHuf,
   chfToEur,
+  chfToGbp,
   date,
 }: {
   chfToHuf: number;
   chfToEur: number;
+  /** 1 CHF = X GBP. Anglia bázis-átváltásához (hiányában EUR-ra esünk vissza). */
+  chfToGbp?: number;
   date: string;
 }) {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const isEuro = country !== "CH"; // AT/DE/NL eurozóna → EUR bázis; csak CH a CHF
-  const base = isEuro ? "EUR" : "CHF";
-  // Eurozónában a bázis EUR; az EUR→HUF a CHF-keresztből: chfToHuf / chfToEur.
-  const baseToHuf = isEuro ? (chfToEur > 0 ? chfToHuf / chfToEur : 0) : chfToHuf;
+  const base = baseCurrencyFor(country, chfToGbp);
+  const isChf = base === "CHF";
+  // A bázis→HUF a CHF-keresztből: chfToHuf / chfToBase.
+  const chfToBase = base === "CHF" ? 1 : base === "GBP" ? (chfToGbp ?? 0) : chfToEur;
+  const baseToHuf = chfToBase > 0 ? chfToHuf / chfToBase : 0;
 
   const [amount, setAmount] = usePersistedState("kinti_calc_exchange_amount", "100");
   const [dirRaw, setDirection] = usePersistedState<"to-huf" | "to-eur">("kinti_calc_exchange_dir", "to-huf");
-  const direction = isEuro ? "to-huf" : dirRaw; // EUR-ban csak HUF-irány van értelme
+  const direction = isChf ? dirRaw : "to-huf"; // csak CHF-ben van EUR-irány
 
   const amt = useMemo(() => {
     const n = Number(amount.replace(",", "."));
@@ -68,13 +78,13 @@ export function ExchangeCalculator({
           </p>
         </div>
 
-        <div className={cn("grid gap-3", isEuro ? "grid-cols-1" : "grid-cols-2")}>
+        <div className={cn("grid gap-3", isChf ? "grid-cols-2" : "grid-cols-1")}>
           <RateCard
             label={`1 ${base} =`}
             value={baseToHuf.toLocaleString("hu-HU", { maximumFractionDigits: 2 })}
             unit="Ft"
           />
-          {!isEuro && (
+          {isChf && (
             <RateCard label="1 CHF =" value={chfToEur.toFixed(4)} unit="€" />
           )}
         </div>
@@ -91,8 +101,8 @@ export function ExchangeCalculator({
           <h2 className="text-[14px] font-extrabold text-ink">Hazautalás kalkulátor</h2>
         </div>
 
-        {/* Irány-toggle — csak CH-ban (EUR-ban csak HUF-irány) */}
-        {!isEuro && (
+        {/* Irány-toggle — csak CH-ban (máshol csak HUF-irány) */}
+        {isChf && (
           <div className="flex gap-1 rounded-pill border border-line bg-surface-alt p-1">
             <button
               type="button"

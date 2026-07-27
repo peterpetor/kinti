@@ -374,6 +374,7 @@ const COUNTRY_PHRASE: Record<string, string> = {
   AT: "az Ausztriában élők",
   DE: "a Németországban élők",
   NL: "a Hollandiában élők",
+  GB: "az Angliában élők",
 };
 
 /**

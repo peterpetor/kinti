@@ -12,6 +12,9 @@ const EXAMPLE_CITY: Record<string, string> = {
   AT: "Bécsben",
   DE: "Münchenben",
   NL: "Amszterdamban",
+  // ⚠️ GB nélkül a `?? EXAMPLE_CITY[DEFAULT_COUNTRY]` visszaesés miatt az
+  // angliai felhasználó „…autószerelő ZÜRICHBEN" helyőrzőt látott.
+  GB: "Londonban",
 };
 
 /**

@@ -5,7 +5,7 @@ import { ExchangeCalculator } from "@/components/views/exchange-calculator";
 
 interface ExchangeData {
   date: string;
-  rates: { HUF: number; EUR: number };
+  rates: { HUF: number; EUR: number; GBP?: number };
 }
 
 /**
@@ -48,5 +48,12 @@ export function ExchangeRateSection() {
       </div>
     );
   }
-  return <ExchangeCalculator chfToHuf={data.rates.HUF} chfToEur={data.rates.EUR} date={data.date} />;
+  return (
+    <ExchangeCalculator
+      chfToHuf={data.rates.HUF}
+      chfToEur={data.rates.EUR}
+      chfToGbp={data.rates.GBP}
+      date={data.date}
+    />
+  );
 }

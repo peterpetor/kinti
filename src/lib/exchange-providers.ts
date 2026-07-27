@@ -110,3 +110,20 @@ export function rankedProviders(amount: number, baseToTarget: number, weekend = 
 export function savingsVsBank(amount: number, baseToTarget: number, p: XProvider, weekend = false): number {
   return Math.max(0, receivedAmount(amount, baseToTarget, p, weekend) - receivedAmount(amount, baseToTarget, X_BANK, weekend));
 }
+
+/**
+ * Ország → a hazautalás bázisvalutája.
+ *
+ * ⚠️ NE legyen bináris elágazás („ami nem CH, az euró") — pontosan ez küldte
+ * Anglián EUR-ban a számolást. Új ország felvételekor IDE is fel kell venni.
+ * A GBP csak akkor bázis, ha tényleg megjött a kurzus (különben inkább EUR,
+ * mint nullával osztás).
+ */
+export function baseCurrencyFor(
+  country: string,
+  chfToGbp?: number,
+): "CHF" | "EUR" | "GBP" {
+  if (country === "CH") return "CHF";
+  if (country === "GB") return chfToGbp && chfToGbp > 0 ? "GBP" : "EUR";
+  return "EUR";
+}
