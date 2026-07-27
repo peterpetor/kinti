@@ -2,7 +2,14 @@
  * Országos összehasonlító táblázatok a tudásbázis-cikkekhez (AEO — a
  * válaszgépek/featured-snippet a struktúrált összehasonlítást idézik a
  * „melyik országban jobb/könnyebb X?" kérdésekre; a magyar olvasónak pedig
- * a CH/AT/DE/NL közti választáshoz ad egy-pillantásos képet).
+ * a CH/AT/DE/NL/GB közti választáshoz ad egy-pillantásos képet).
+ *
+ * ⚠️ ANGLIA MIATT: az `intro` mondatok NEM általánosíthatnak az egész
+ * táblázatra. Ami a négy kontinentális országban közös EU-szabály (szabad
+ * letelepedés, engedély nélküli munkavállalás, U1-beszámítás, családi
+ * ellátás koordinációja), az Angliára Brexit óta NEM igaz — új sor vagy új
+ * intro írásakor ezt külön ellenőrizd, különben a bevezető az alatta lévő
+ * saját cellájának mond ellent.
  *
  * FONTOS: minden cella a MEGLÉVŐ, hivatalos forrásokból írt guide-tartalom
  * (lib/guides.ts) tömörítése — NEM új tényállítás. A pontos, dátumozott
@@ -43,9 +50,9 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   {
     id: "egeszsegbiztositas",
     icon: "heart",
-    caption: "Egészségbiztosítás az 5 országban — egy pillantásra",
+    caption: "Egészségbiztosítás — egy pillantásra",
     intro:
-      "A fő szerkezeti különbség: Svájcban és Hollandiában fix havi díjat fizetsz és biztosítót választasz, Ausztriában és Németországban a bérből vont járulék fedezi.",
+      "A fő szerkezeti különbség: Svájcban és Hollandiában fix havi díjat fizetsz és biztosítót választasz, Ausztriában és Németországban a bérből vont járulék fedezi — Angliában pedig egyik sincs: az NHS-t az általános adó állja, biztosítót nem választasz.",
     slugs: {
       ch: "egeszsegbiztositas-krankenkasse",
       at: "at-egeszsegbiztositas",
@@ -66,7 +73,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
     icon: "home",
     caption: "Bejelentkezés és tartózkodás — egy pillantásra",
     intro:
-      "EU-állampolgárként mind az 5 országban szabadon letelepedhetsz — a határidők és a kapott azonosítók viszont eltérnek.",
+      "⚠️ A négy kontinentális országban EU-állampolgárként szabadon letelepedhetsz — Angliában Brexit óta NEM: 2021 januárja óta vízum kell hozzá (kivéve, akinek EUSS-státusza van). A határidők és a kapott azonosítók egyébként is eltérnek.",
     slugs: {
       ch: "bejelentkezes-letelepedes",
       at: "at-bejelentkezes",
@@ -85,9 +92,9 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   {
     id: "munkavallalas",
     icon: "briefcase",
-    caption: "Munka és bér az 5 országban — egy pillantásra",
+    caption: "Munka és bér — egy pillantásra",
     intro:
-      "EU-állampolgárként mindenhol engedély nélkül dolgozhatsz — a szabadság, a minimálbér és a 13.–14. havi juttatás viszont országonként más.",
+      "⚠️ EU-állampolgárként a négy kontinentális országban engedély nélkül dolgozhatsz — Angliában viszont munkavállalási jogot adó vízum vagy EUSS-státusz kell. A szabadság, a minimálbér és a 13.–14. havi juttatás mindenhol más.",
     slugs: {
       ch: "munkavallalas",
       at: "at-munkavallalas",
@@ -107,7 +114,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
     icon: "search",
     caption: "Munkanélküli-ellátás — egy pillantásra",
     intro:
-      "A hivatal és a jogosultsági minimum országonként más, de közös: a magyar biztosítási idők U1-igazolással mindenhol beszámíthatnak.",
+      "A hivatal és a jogosultsági minimum országonként más. A négy EU-s országban a magyar biztosítási idők U1-igazolással beszámíthatnak; ⚠️ Angliára ez Brexit után nem általánosítható — ott a saját jogosultságodat a DWP-nél kell tisztázni.",
     slugs: {
       ch: "munkanelkuli-biztositas",
       at: "at-munkanelkuli",
@@ -127,7 +134,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
     icon: "users",
     caption: "Családi pótlék — egy pillantásra",
     intro:
-      "Ha a gyerek Magyarországon él, mind az 5 országban EU-koordináció szerint, különbözet-elszámolással jár az ellátás.",
+      "Ha a gyerek Magyarországon él, a négy EU-s országban EU-koordináció szerint, különbözet-elszámolással jár az ellátás; ⚠️ Angliára ez Brexit után nem általánosítható.",
     slugs: {
       ch: "csaladi-potlek",
       at: "at-csaladi-potlek",
@@ -146,7 +153,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
     icon: "document",
     caption: "Adózás és adóbevallás — egy pillantásra",
     intro:
-      "A bérből mindenhol vonják az adót — a különbség, hogy az éves bevallás mikor kötelező, és hol jár vissza gyakran pénz.",
+      "A bérből mindenhol vonják az adót (Angliában PAYE néven, ez áll a bérpapíron is) — a különbség, hogy az éves bevallás mikor kötelező, és hol jár vissza gyakran pénz.",
     slugs: {
       ch: "adozas-quellensteuer",
       at: "at-adozas",
@@ -183,9 +190,9 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   {
     id: "auto",
     icon: "car",
-    caption: "Autó az 5 országban — egy pillantásra",
+    caption: "Autó és behozatal — egy pillantásra",
     intro:
-      "EU-n belül nincs vám, de a behozatali adók és a műszaki-vizsga rendje élesen eltér — Hollandiában a BPM miatt sokszor nem éri meg autót hozni.",
+      "EU-n belül nincs vám, ⚠️ Angliába viszont Brexit óta lehet vám és áfa a behozott autón. A behozatali adók és a műszaki-vizsga rendje egyébként is élesen eltér — Hollandiában a BPM miatt sokszor nem éri meg autót hozni.",
     slugs: {
       ch: "auto-svajcban",
       at: "at-auto",
@@ -203,9 +210,9 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
   {
     id: "nyugdij",
     icon: "clock",
-    caption: "Nyugdíj az 5 országban — egy pillantásra",
+    caption: "Nyugdíj — egy pillantásra",
     intro:
-      "A fő különbség: Svájc, Ausztria és Németország a bérből vont járulékra épít, Hollandia (AOW) a lakóhelyen töltött évekre.",
+      "A fő különbség: Svájc, Ausztria és Németország a bérből vont járulékra épít, Hollandia (AOW) a lakóhelyen töltött évekre, Anglia (State Pension) a National Insurance-évekre.",
     slugs: {
       ch: "ahv-nyugdij",
       at: "at-nyugdij",
@@ -223,7 +230,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
     icon: "send",
     caption: "Felmondás és a jogaid — egy pillantásra",
     intro:
-      "A felmondás-védelem országonként nagyon eltér — és Németországban, Hollandiában kemény határidők köthetik a kezed.",
+      "A felmondás-védelem országonként nagyon eltér — Németországban és Hollandiában kemény határidők köthetik a kezed, ⚠️ Angliában pedig a valódi védelem jellemzően csak 2 év szolgálati idő után kezdődik.",
     slugs: {
       ch: "felmondas-munkabizonyitvany",
       at: "at-felmondas",
