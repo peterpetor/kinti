@@ -567,6 +567,39 @@
       "website": "https://hungarian.levenes.co.uk",
       "lat": 51.5981689,
       "lng": -0.1110945
+    },
+    {
+      "name": "Pimlico Psychotherapists — magyar nyelvű terápia",
+      "type": "pszichoterápiás rendelő, magyar nyelvű egyéni és párterápiával",
+      "category": "pszichologus",
+      "city": "London",
+      "region": "LDN",
+      "address": "6a Bessborough Place, Pimlico, London SW1V 3SG",
+      "website": "https://www.pimlicocounsellors.co.uk/languages/pszichoterapia_magyar_londonban/",
+      "lat": 51.4887074,
+      "lng": -0.1324986
+    },
+    {
+      "name": "Menthelp Klinika — magyar pszichológus és pszichoterapeuta",
+      "type": "magyar nyelvű magánrendelő (időpontfoglalás után adják a pontos címet)",
+      "category": "pszichologus",
+      "city": "London",
+      "region": "LDN",
+      "address": "London Paddington és Reading",
+      "phone": "+44 20 7097 4694",
+      "website": "https://menthelp.co.uk",
+      "lat": 51.5161629,
+      "lng": -0.1744856
+    },
+    {
+      "name": "Bonaventura Fordítóiroda és Nyelviskola",
+      "type": "magyar–angol fordítás és online angoltanítás (nincs ügyfélfogadó iroda)",
+      "category": "fordito",
+      "city": "London",
+      "region": "LDN",
+      "address": "Online szolgáltatás — telefonon és e-mailben intézhető",
+      "phone": "+44 20 7281 2328",
+      "website": "https://bonaventura.uk"
     }
   ]
 }
