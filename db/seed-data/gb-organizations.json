@@ -542,6 +542,31 @@
       "lat": 50.9772082,
       "lng": 0.1003203,
       "hours": "H–P 9–17, hétvégén zárva"
+    },
+    {
+      "name": "Osbornes Law — magyar nyelvű ügyintézés",
+      "type": "ügyvédi iroda magyarul beszélő ügyintézéssel",
+      "category": "ugyved",
+      "city": "London",
+      "region": "LDN",
+      "address": "Livery House, 9 Pratt Street, Camden, London NW1 0AE",
+      "phone": "+44 20 7485 8811",
+      "email": "diana.magyar@osborneslaw.com",
+      "website": "https://osborneslaw.com/hu/",
+      "lat": 51.5373216,
+      "lng": -0.1405722
+    },
+    {
+      "name": "Levenes Solicitors — magyar nyelvű ügyfélvonal",
+      "type": "ügyvédi iroda (személyi sérülés, kártérítés), SRA 70449",
+      "category": "ugyved",
+      "city": "London",
+      "region": "LDN",
+      "address": "Ashley House, 235–239 High Road, Wood Green, London N22 8HF",
+      "phone": "+44 800 048 2357",
+      "website": "https://hungarian.levenes.co.uk",
+      "lat": 51.5981689,
+      "lng": -0.1110945
     }
   ]
 }
