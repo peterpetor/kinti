@@ -30,6 +30,10 @@ export interface CountryExamples {
   regionLabel: string;
   /** Pénznem-kód. */
   currency: string;
+  /** Példa postai cím (levél-generátorok helyőrzője). */
+  postalAddress: string;
+  /** Példa szolgáltató-cím (felmondólevél címzettje). */
+  providerAddress: string;
 }
 
 const CH: CountryExamples = {
@@ -42,6 +46,8 @@ const CH: CountryExamples = {
   city: "Zürich",
   regionLabel: "Kanton",
   currency: "CHF",
+  postalAddress: "Bahnhofstrasse 1, 8001 Zürich",
+  providerAddress: "CSS Versicherung, Postfach, 6002 Luzern",
 };
 
 const EXAMPLES: Record<string, CountryExamples> = {
@@ -56,6 +62,8 @@ const EXAMPLES: Record<string, CountryExamples> = {
     city: "Wien",
     regionLabel: "Bundesland",
     currency: "EUR",
+    postalAddress: "Hauptstraße 1, 1010 Wien",
+    providerAddress: "Wiener Netze GmbH, Erdbergstraße 236, 1110 Wien",
   },
   DE: {
     phone: "+49 151 12345678",
@@ -67,6 +75,8 @@ const EXAMPLES: Record<string, CountryExamples> = {
     city: "München",
     regionLabel: "Bundesland",
     currency: "EUR",
+    postalAddress: "Hauptstraße 1, 80331 München",
+    providerAddress: "Stadtwerke München, Postfach, 80287 München",
   },
   NL: {
     phone: "+31 6 12345678",
@@ -78,6 +88,8 @@ const EXAMPLES: Record<string, CountryExamples> = {
     city: "Amsterdam",
     regionLabel: "Provincia",
     currency: "EUR",
+    postalAddress: "Damrak 1, 1012 LG Amsterdam",
+    providerAddress: "Eneco, Postbus 1014, 3000 BA Rotterdam",
   },
   GB: {
     phone: "+44 7700 900123",
@@ -89,6 +101,8 @@ const EXAMPLES: Record<string, CountryExamples> = {
     city: "London",
     regionLabel: "Régió",
     currency: "GBP",
+    postalAddress: "1 High Street, London SW1A 1AA",
+    providerAddress: "Customer Services, PO Box 100, London EC1A 1AA",
   },
 };
 
@@ -103,6 +117,8 @@ const NEUTRAL: CountryExamples = {
   city: "—",
   regionLabel: "Régió",
   currency: "EUR",
+  postalAddress: "Utca, házszám, irányítószám, város",
+  providerAddress: "A szolgáltató neve és postacíme",
 };
 
 export function countryExamples(country: string | null | undefined): CountryExamples {

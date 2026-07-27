@@ -31,6 +31,7 @@ export function ChecklistList({ indexByCountry }: { indexByCountry: Record<strin
   const isAT = country === "AT";
   const isDE = country === "DE";
   const isNL = country === "NL";
+  const isGB = country === "GB";
   const checklists = indexByCountry[country] ?? indexByCountry[DEFAULT_COUNTRY];
 
   return (
@@ -73,14 +74,19 @@ export function ChecklistList({ indexByCountry }: { indexByCountry: Record<strin
         toolName="ügyintézés varázsló"
         variant="legal"
         notAdviceFor="jogi vagy hatósági"
-        extraWarning={isAT
+        extraWarning={isGB
+          ? "Angliában nincs lakcím-bejelentés, és az ügyintézés nagy része online, a gov.uk-n zajlik; a helyi ügyeket (council tax, szemétszállítás, iskolai hely) a lakóhely szerinti council intézi. A csekklisták általános minták — mindig a gov.uk-n vagy a saját councilod oldalán ellenőrizd."
+          : isAT
           ? "Az osztrák ügyintézés részletei tartományonként (Bundesland) kissé eltérhetnek és időben változnak — a csekklisták általános minták. Mindig a lakhelyed szerinti hatóságnál (Magistrat / Gemeindeamt / Finanzamt) tájékozódj."
           : isDE
           ? "A német ügyintézés részletei tartományonként (Bundesland) és városonként kissé eltérhetnek és időben változnak — a csekklisták általános minták. Mindig a lakhelyed szerinti hatóságnál (Bürgeramt / Finanzamt / Familienkasse) tájékozódj."
           : isNL
           ? "A holland ügyintézés a gemeente (önkormányzat) szerint kissé eltérhet és időben változik — a csekklisták általános minták. Mindig a lakhelyed szerinti gemeente hivatalos oldalán vagy a rijksoverheid.nl-en tájékozódj."
           : "A svájci ügyintézés kantononként és községenként ELTÉR — a csekklisták általános minták, nem a te konkrét helyzeted. Mindig a lakhelyed kantoni Migrationsamt-jánál vagy a helyi Gemeinde-nél tájékozódj."}
-        officialSources={isAT ? [
+        officialSources={isGB ? [
+          { label: "gov.uk — Hivatalos portál", url: "https://www.gov.uk/" },
+          { label: "gov.uk — Találd meg a councilodat", url: "https://www.gov.uk/find-local-council" },
+        ] : isAT ? [
           { label: "oesterreich.gv.at — Hivatalos portál", url: "https://www.oesterreich.gv.at/" },
           { label: "migration.gv.at — Migráció", url: "https://www.migration.gv.at/" },
         ] : isDE ? [

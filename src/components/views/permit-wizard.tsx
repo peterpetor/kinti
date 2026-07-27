@@ -11,7 +11,7 @@ import {
 } from "@/lib/permit-wizard";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, countryResidentialAdjective } from "@/lib/countries";
 
 interface StepOption {
   value: string;
@@ -355,7 +355,7 @@ export function PermitWizard() {
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
               4 gyors kérdés alapján megmondjuk, mi a legrelevánsabb a{" "}
-              {isNL ? "hollandiai" : isDE ? "németországi" : isAT ? "ausztriai" : "svájci"} tartózkodási helyzetedhez.
+              {countryResidentialAdjective(country)} tartózkodási helyzetedhez.
             </p>
           </div>
         </div>
@@ -421,14 +421,19 @@ export function PermitWizard() {
         toolName="engedély-varázsló"
         variant="legal"
         notAdviceFor="jogi vagy bevándorlási"
-        extraWarning={isNL
+        extraWarning={isGB
+          ? "⚠️ Angliában Brexit óta a bevándorlási szabály élesen más, mint az EU-ban, és gyakran változik. A varázsló csak általános útmutatás — a TE konkrét státuszodat a Home Office (UKVI) határozza meg. Fizetős bevándorlási tanácsadót Angliában CSAK OISC-nyilvántartásba vett tanácsadótól vagy ügyvédtől (solicitor) fogadj el."
+          : isNL
           ? "A pontos eljárás és feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó státuszt a lakóhely szerinti gemeente, az IND (Immigratie- en Naturalisatiedienst) vagy szakképzett ügyvéd határozza meg."
           : isDE
           ? "A pontos eljárás és feltételek időnként változnak, és a határidők városonként (Bundesland) eltérnek. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó státuszt a helyi Bürgeramt / Ausländerbehörde vagy szakképzett ügyvéd határozza meg."
           : isAT
           ? "A pontos eljárás és feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó státuszt a tartózkodási hatóság (Bécsben MA 35, tartományokban Landeshauptmann/BH) vagy szakképzett ügyvéd határozza meg."
           : "Az engedély-eljárás kantonok közt eltér, és a feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó engedélyt mindig a kantoni Migrationsamt vagy szakképzett ügyvéd határozza meg."}
-        officialSources={isNL ? [
+        officialSources={isGB ? [
+          { label: "gov.uk — Vízumok és bevándorlás", url: "https://www.gov.uk/browse/visas-immigration" },
+          { label: "gov.uk — EU Settlement Scheme", url: "https://www.gov.uk/settled-status-eu-citizens-families" },
+        ] : isNL ? [
           { label: "IND — Immigratie- en Naturalisatiedienst", url: "https://ind.nl/en" },
           { label: "Rijksoverheid — BSN", url: "https://www.government.nl/topics/personal-data/citizen-service-number-bsn" },
         ] : isDE ? [
@@ -501,7 +506,8 @@ function ResultView({ result, onRestart, country }: { result: WizardResult; onRe
         <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
           <DetailRow label="Időtartam" value={primary.duration} />
           <DetailRow label="Munkavállalás" value={primary.workPermitted} />
-          <DetailRow label={isAT || isDE || isNL ? "Költözés" : "Kanton-váltás"} value={primary.cantonChange} />
+          {/* A „Kanton-váltás" CSAK Svájcban értelmes fogalom — máshol sima költözés. */}
+          <DetailRow label={country === "CH" ? "Kanton-váltás" : "Költözés"} value={primary.cantonChange} />
           <DetailRow label="Családtag-egyesítés" value={primary.familyReunion} />
         </div>
       </section>
@@ -600,7 +606,9 @@ function ResultView({ result, onRestart, country }: { result: WizardResult; onRe
         variant="legal"
         notAdviceFor="jogi vagy bevándorlási"
         extraWarning="A varázsló javaslata egyszerű, általános minták alapján készült. A te konkrét helyzetedet (családi állapot, munkaadói támogatás, korábbi tartózkodás, büntetett előélet) csak az illetékes hatóság és/vagy szakképzett ügyvéd tudja értékelni."
-        officialSources={isNL ? [
+        officialSources={country === "GB" ? [
+          { label: "gov.uk — Vízumok és bevándorlás", url: "https://www.gov.uk/browse/visas-immigration" },
+        ] : isNL ? [
           { label: "IND — Immigratie- en Naturalisatiedienst", url: "https://ind.nl/en" },
         ] : isDE ? [
           { label: "make-it-in-germany.com", url: "https://www.make-it-in-germany.com/" },

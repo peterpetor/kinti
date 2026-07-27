@@ -6,6 +6,8 @@ import { TurnstileWidget } from "@/components/turnstile-widget";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { benchRegions, benchCurrency, benchAllLabel, benchRegionLabel, benchDefaultSalary, benchDefaultRent } from "./region-util";
 import { BENCHMARK_INDUSTRIES } from "@/lib/benchmark-meta";
+import { countryResidentialAdjective } from "@/lib/countries";
+import { regionLabel } from "@/lib/regions";
 
 const INDUSTRIES: readonly string[] = BENCHMARK_INDUSTRIES;
 
@@ -163,12 +165,12 @@ export function RentToSalaryCalculator({
           </div>
         ) : avgRatio ? (
           <p className={`text-[13px] mt-1 ${isGood ? "text-primary" : "text-accent"}`}>
-            A {canton === "all" ? (country === "AT" ? "ausztriai" : country === "DE" ? "németországi" : country === "NL" ? "hollandiai" : "svájci") : `${canton} ${country === "CH" ? "kantonban" : country === "NL" ? "provinciában" : "tartományban"} élő`} magyarok átlaga: <strong>{avgRatio}%</strong>.
+            A {canton === "all" ? countryResidentialAdjective(country) : `${canton} ${regionLabel(country)}ban élő`} magyarok átlaga: <strong>{avgRatio}%</strong>.
             <br />
             {isGood ? "Jól gazdálkodsz, ez az átlag alatti teher!" : "Ez az átlagnál magasabb teher a fizetésedhez képest."}
           </p>
         ) : (
-          <p className="text-[13px] text-ink-muted mt-1">Nincs még elég közösségi adat a párosításhoz ebben a kantonban.</p>
+          <p className="text-[13px] text-ink-muted mt-1">Nincs még elég közösségi adat a párosításhoz ebben a {regionLabel(country)}ban.</p>
         )}
       </div>
     </div>

@@ -82,6 +82,21 @@ export function countryAdjective(code: string | null | undefined): string {
   }
 }
 
+/**
+ * „Ott lakó" melléknév — az ORSZÁGBAN élőkre utal, nem a nemzetiségre.
+ * Pl. „ausztriai magyarok" (= Ausztriában élő magyarok), szemben az
+ * „osztrák magyarok"-kal, ami mást jelent. Ezért NEM a countryAdjective.
+ */
+export function countryResidentialAdjective(code: string | null | undefined): string {
+  switch (code) {
+    case "AT": return "ausztriai";
+    case "DE": return "németországi";
+    case "NL": return "hollandiai";
+    case "GB": return "angliai";
+    default: return "svájci";
+  }
+}
+
 /** A közigazgatási régió-egység neve. CH: kanton; AT/DE/NL: tartomány. */
 export function regionWord(code: string | null | undefined): string {
   if (code === "GB") return "régió";

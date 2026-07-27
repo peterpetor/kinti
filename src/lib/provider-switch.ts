@@ -1342,3 +1342,17 @@ export function formatDateDe(d: Date): string {
   const month = String(d.getMonth() + 1).padStart(2, "0");
   return `${day}.${month}.${d.getFullYear()}`;
 }
+
+const EN_MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+/**
+ * Brit levélforma: „3 April 2026". Szándékosan KIÍRT hónapnév — a tisztán
+ * számjegyes dátum félreérthető (03/04 az USA-ban március 4., a briteknél
+ * április 3.), és egy felmondólevélben pont a dátum a bizonyíték.
+ */
+export function formatDateEn(d: Date): string {
+  return `${d.getDate()} ${EN_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}

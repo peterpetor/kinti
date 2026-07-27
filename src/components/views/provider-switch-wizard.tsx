@@ -7,12 +7,14 @@ import {
   getProviderCategories,
   getCategoryInfo,
   formatDateDe,
+  formatDateEn,
   type ProviderCategory,
   type CategoryInfo,
 } from "@/lib/provider-switch";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { countryExamples } from "@/lib/country-examples";
 
 // Ország-specifikus disclaimer-forrás (semleges összehasonlítók).
 const DISCLAIMER_SOURCES: Record<string, { label: string; url: string }[]> = {
@@ -31,6 +33,11 @@ const DISCLAIMER_SOURCES: Record<string, { label: string; url: string }[]> = {
   NL: [
     { label: "Independer — Vergelijken", url: "https://www.independer.nl/" },
     { label: "Pricewise — Vergelijken", url: "https://www.pricewise.nl/" },
+  ],
+  GB: [
+    { label: "MoneySavingExpert — Összehasonlító", url: "https://www.moneysavingexpert.com/" },
+    { label: "Ofgem — Energia-szabályozó", url: "https://www.ofgem.gov.uk/" },
+    { label: "Citizens Advice — Fogyasztóvédelem", url: "https://www.citizensadvice.org.uk/consumer/" },
   ],
 };
 
@@ -275,20 +282,34 @@ function RuleRow({
 }
 
 function TemplateGenerator({ category, country }: { category: CategoryInfo; country: string }) {
+  // ⚠️ A `germanTemplate` mező NEVE megtévesztő: a levél nyelve mindig az
+  // ADOTT ORSZÁGÉ (a GB-kategóriák törzse angolul van megírva). A körítést
+  // — nyelvcímke, postázási mód, dátumforma, helyőrzők — ezért itt kell
+  // ország-tudatossá tenni, különben az angliai felhasználó „német nyelvű"
+  // levelet kap Einschreibe-utasítással.
   const isNL = country === "NL";
-  const langLabel = isNL ? "holland" : "német";
-  const langTag = isNL ? "NL" : "DE";
-  const registeredPost = isNL
+  const isGB = country === "GB";
+  const langLabel = isGB ? "angol" : isNL ? "holland" : "német";
+  const langTag = isGB ? "EN" : isNL ? "NL" : "DE";
+  const ex = countryExamples(country);
+  const registeredPost = isGB
+    ? "Royal Mail Signed For (aláírással átvett) küldeményként add fel — a feladási igazolás a határidő bizonyítéka."
+    : isNL
     ? "Ajánlott (aangetekend) postai levélként küldd — a feladás dátuma a határidő bizonyítéka."
     : "Postán Einschreiben (tértivevényes) ajánlott levélként küldd — a feladás dátuma a határidő bizonyítéka.";
   const [customerName, setCustomerName] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [providerName, setProviderName] = useState("");
   const [contractNumber, setContractNumber] = useState("");
-  const [dateOfTermination, setDateOfTermination] = useState(getDefaultTerminationDate(category.id));
+  const [dateOfTermination, setDateOfTermination] = useState(() => getDefaultTerminationDate(category.id, country === "GB"));
   const [copied, setCopied] = useState(false);
 
-  const today = useMemo(() => formatDateDe(new Date()), []);
+  // A német „nn.hh.éééé" dátum egy angol nyelvű levélben idegen (és a 03.04. a
+  // brit olvasónak április 3-a). Angliában ezért kiírt hónapnevet használunk.
+  const today = useMemo(
+    () => (isGB ? formatDateEn(new Date()) : formatDateDe(new Date())),
+    [isGB],
+  );
 
   const generatedLetter = useMemo(() => {
     return category.germanTemplate({
@@ -332,13 +353,13 @@ function TemplateGenerator({ category, country }: { category: CategoryInfo; coun
           label="Saját címed (utca, irsz., város)"
           value={customerAddress}
           onChange={setCustomerAddress}
-          placeholder="Pl. Bahnhofstrasse 1, 8001 Zürich"
+          placeholder={`Pl. ${ex.postalAddress}`}
         />
         <InputField
           label="Szolgáltató címe"
           value={providerName}
           onChange={setProviderName}
-          placeholder="Pl. CSS Versicherung, Postfach 6002 Luzern"
+          placeholder={`Pl. ${ex.providerAddress}`}
         />
         <InputField
           label="Szerződésszám / biztosítás-szám"
@@ -347,7 +368,7 @@ function TemplateGenerator({ category, country }: { category: CategoryInfo; coun
           placeholder="Pl. 123-456-789"
         />
         <InputField
-          label="Felmondás napja (DD.MM.YYYY)"
+          label={isGB ? "Felmondás napja (DD/MM/YYYY)" : "Felmondás napja (DD.MM.YYYY)"}
           value={dateOfTermination}
           onChange={setDateOfTermination}
           placeholder="Pl. 31.12.2026"
@@ -406,22 +427,25 @@ function InputField({
   );
 }
 
-function getDefaultTerminationDate(categoryId: ProviderCategory): string {
+// A kezdo-datum formaja is orszagfuggo: a levelbe kerulo datum nem lehet
+// nemet formatumu egy angol nyelvu levelben.
+function getDefaultTerminationDate(categoryId: ProviderCategory, isGB = false): string {
   const now = new Date();
   const year = now.getFullYear();
+  const fmt = isGB ? formatDateEn : formatDateDe;
   switch (categoryId) {
     case "krankenkasse":
       // Always Dec 31 of current year (if before Nov 30) or next year
       if (now.getMonth() < 10 || (now.getMonth() === 10 && now.getDate() <= 30)) {
-        return `31.12.${year}`;
+        return fmt(new Date(year, 11, 31));
       }
-      return `31.12.${year + 1}`;
+      return fmt(new Date(year + 1, 11, 31));
     case "internet":
     case "mobile": {
       // +30 days
       const target = new Date(now);
       target.setDate(target.getDate() + 30);
-      return formatDateDe(target);
+      return fmt(target);
     }
     case "bank":
     case "electricity":
@@ -429,7 +453,7 @@ function getDefaultTerminationDate(categoryId: ProviderCategory): string {
       // +30 days
       const target = new Date(now);
       target.setDate(target.getDate() + 30);
-      return formatDateDe(target);
+      return fmt(target);
     }
   }
 }

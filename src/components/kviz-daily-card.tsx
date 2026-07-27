@@ -25,13 +25,14 @@ export function KvizDailyCard() {
   if (!state) return null;
 
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  // Mind a 4 országnak van kvíz-bankja (quiz-daily.ts választja ki) — csak
-  // ismeretlen országnál rejtjük.
-  if (country !== "CH" && country !== "AT" && country !== "DE" && country !== "NL") return null;
+  // Mind az 5 országnak van kvíz-bankja (quiz-daily.ts választja ki: GB_QUIZ_BANK
+  // is) — csak ismeretlen országnál rejtjük.
+  if (country !== "CH" && country !== "AT" && country !== "DE" && country !== "NL" && country !== "GB") return null;
   const quizLabel =
     country === "AT" ? "Mai Osztrák Kvíz"
     : country === "DE" ? "Mai Német Kvíz"
     : country === "NL" ? "Mai Holland Kvíz"
+    : country === "GB" ? "Mai Angol Kvíz"
     : "Mai Svájci Kvíz";
   const played = !!state.today;
   const score = state.today?.score ?? 0;
