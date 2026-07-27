@@ -4,7 +4,11 @@
  */
 
 /** Ország → nemzetközi hívókód (a wa.me-nek országkódos szám kell). */
-const COUNTRY_DIAL: Record<string, string> = { CH: "41", AT: "43", DE: "49", NL: "31", HU: "36" };
+// ⚠️ GB nélkül az angliai vállalkozásoknál a helyi „020…"/„07…" alakból nem
+// állt elő nemzetközi szám → a WhatsApp-gomb NÉMÁN elmaradt. (A seedelt
+// angliai számok „+44…" alakúak, de a self-service felvitelnél a tulajdonos
+// jellemzően a helyi alakot írja be.)
+const COUNTRY_DIAL: Record<string, string> = { CH: "41", AT: "43", DE: "49", NL: "31", GB: "44", HU: "36" };
 
 /**
  * Telefonszám → wa.me-kompatibilis nemzetközi számjegysor, vagy null, ha nem

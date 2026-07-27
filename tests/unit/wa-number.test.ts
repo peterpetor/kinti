@@ -14,6 +14,9 @@ describe("waNumber (wa.me nemzetközi normalizálás)", () => {
     expect(waNumber("079 123 45 67", "CH")).toBe("41791234567");
     expect(waNumber("0660 1234567", "AT")).toBe("436601234567");
     expect(waNumber("06 12345678", "NL")).toBe("31612345678");
+    // ⚠️ Anglia: a „020…" (vezetékes) és a „07…" (mobil) is helyi alak.
+    expect(waNumber("020 7201 3440", "GB")).toBe("442072013440");
+    expect(waNumber("07564 226951", "GB")).toBe("447564226951");
     // ország nélkül a helyi alak NEM konvertálható → nincs WhatsApp-gomb
     expect(waNumber("079 123 45 67")).toBeNull();
     expect(waNumber("079 123 45 67", "XX")).toBeNull();

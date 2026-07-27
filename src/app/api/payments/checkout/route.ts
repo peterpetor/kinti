@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createTransaction } from "@/lib/paddle";
-import { getPriceId, PRODUCT_ENTITLEMENT, ProductType, CountryCode } from "@/lib/payments-config";
+import { getPriceId, isPurchasableCountry, PRODUCT_ENTITLEMENT, ProductType, CountryCode } from "@/lib/payments-config";
 import { getBusinessByOwner, getBusinessByManageToken, getEmployerByOwner, getJobById } from "@/lib/repo";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -43,9 +43,13 @@ export async function POST(req: Request) {
 
     // Ország-validáció: ismeretlen kódnál a getPriceId dobna (500 lenne) —
     // helyette tiszta 400. Hiányzó országnál a CH a default (eddigi viselkedés).
-    const VALID_COUNTRIES: readonly CountryCode[] = ["CH", "AT", "DE", "NL"];
-    if (country !== undefined && !VALID_COUNTRIES.includes(country)) {
-      return NextResponse.json({ error: "Érvénytelen ország." }, { status: 400 });
+    // A lista forrása a payments-config (ott van a Price ID is) — így nem
+    // csúszhat szét az API-validáció és a tényleges ár-elérhetőség.
+    if (country !== undefined && !isPurchasableCountry(country)) {
+      return NextResponse.json(
+        { error: "Ebből az országból a fizetés még nem elérhető." },
+        { status: 400 },
+      );
     }
 
     const priceId = getPriceId(product, country || "CH");

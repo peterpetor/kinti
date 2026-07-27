@@ -4,7 +4,7 @@
 // csak CH aktív). Az értékek NEXT_PUBLIC env-ből jönnek (a Price ID nem titok).
 
 export type ProductType = "kinti_pro_monthly" | "business_pro_monthly" | "job_featured";
-export type CountryCode = "CH" | "AT" | "DE" | "NL"; // Bővíthető
+export type CountryCode = "CH" | "AT" | "DE" | "NL" | "GB"; // Bővíthető
 
 /** Termék → ország → Paddle Price ID (`pri_...`). */
 // FALLBACK Price ID-k (ÉLES, 2026-06-29 a Paddle API-val létrehozva, mind EUR).
@@ -12,7 +12,8 @@ export type CountryCode = "CH" | "AT" | "DE" | "NL"; // Bővíthető
 // hardcode-oljuk tartaléknak, mert a `process.env.NEXT_PUBLIC_*` a Cloudflare
 // edge FUNCTION-ökben (szerveroldali checkout-route) NEM mindig oldódik fel
 // futásidőben → enélkül „Nincs beállítva Price ID" hiba. Az env felülírhatja.
-const FALLBACK_PRICES: Record<ProductType, Record<CountryCode, string>> = {
+// ⚠️ Partial: GB-hez SZÁNDÉKOSAN nincs Price ID (ld. PURCHASABLE_COUNTRIES).
+const FALLBACK_PRICES: Record<ProductType, Partial<Record<CountryCode, string>>> = {
   kinti_pro_monthly: {
     CH: "pri_01kw9ys53dvqc0tjpr17zay66t", AT: "pri_01kw9ys5act5k3fpy7v81263bx",
     DE: "pri_01kw9ys5h35jxnfqckvf0sgne1", NL: "pri_01kw9ys5qr3x6dxn2j12chrft1",
@@ -38,6 +39,25 @@ export const PADDLE_PRICES: Record<ProductType, Partial<Record<CountryCode, stri
  * A megfelelő Paddle Price ID a termékhez és országhoz. Ha nincs beállítva
  * (üres env), hibát dob.
  */
+/**
+ * Mely országokból lehet TÉNYLEGESEN fizetni (van hozzá Paddle Price ID).
+ *
+ * ⚠️ ANGLIA MÉG NINCS BENNE. A GB valós app-ország (`isValidCountry("GB")`
+ * igaz), ezért a `country` végigment a fizetési láncon, a Price ID-k közt
+ * viszont nincs GB → a checkout-route „Érvénytelen ország." 400-zal állt meg,
+ * vagyis az angliai felhasználó a GOMB MEGNYOMÁSA UTÁN futott falba. Amíg a
+ * Paddle-ben nem jön létre a GBP-ár, inkább ELŐRE, a gomb helyén mondjuk meg.
+ *
+ * Bekapcsolás: hozz létre GB (GBP) árat a Paddle-ben mindhárom termékre, írd
+ * be a `FALLBACK_PRICES`-ba, és vedd fel a `GB`-t ebbe a halmazba.
+ */
+export const PURCHASABLE_COUNTRIES: readonly CountryCode[] = ["CH", "AT", "DE", "NL"];
+
+/** Van-e élő Paddle-ár ehhez az országhoz? (UI-gate ÉS API-validáció ebből.) */
+export function isPurchasableCountry(country: string | null | undefined): country is CountryCode {
+  return !!country && (PURCHASABLE_COUNTRIES as readonly string[]).includes(country);
+}
+
 export function getPriceId(product: ProductType, country: CountryCode = "CH"): string {
   const priceId = PADDLE_PRICES[product]?.[country];
   if (!priceId) {
