@@ -651,6 +651,19 @@
       "phone": "+44 7599 322717",
       "email": "info@everymanjustice.co.uk",
       "website": "https://everymanjustice.co.uk"
+    },
+    {
+      "name": "Ildikó's Artisan Chocolates — magyar csokoládékészítő",
+      "type": "kézműves csokoládé, gelato és kávézó (magyar házaspár vezeti)",
+      "category": "cukrasz",
+      "city": "Great Bookham",
+      "region": "SE",
+      "address": "17 High Street, Great Bookham, Surrey KT23 4AA",
+      "phone": "+44 1372 451368",
+      "email": "info@ildikoschocolate.co.uk",
+      "website": "https://ildikoschocolate.co.uk",
+      "lat": 51.2787816,
+      "lng": -0.3734975
     }
   ]
 }
