@@ -640,6 +640,17 @@
       "address": "Országos, telefonos és online tanácsadás",
       "email": "info@danubefs.co.uk",
       "website": "https://danubefs.co.uk/hu/"
+    },
+    {
+      "name": "Everyman Justice — McKenzie Friend (bírósági kísérő, NEM ügyvéd)",
+      "type": "magyar nyelvű bírósági kíséret a brit családi bíróságon — nem jogi képviselet",
+      "category": "jogtanacsado",
+      "city": "London",
+      "region": "LDN",
+      "address": "Anglia és Wales — bírósági kíséret, nincs ügyfélfogadó iroda",
+      "phone": "+44 7599 322717",
+      "email": "info@everymanjustice.co.uk",
+      "website": "https://everymanjustice.co.uk"
     }
   ]
 }
