@@ -100,7 +100,7 @@ const q = (s) => (s == null ? "NULL" : `'${esc(s)}'`);
 const VALID_REGIONS = new Set(Object.keys(REGION_COORDS));
 // ⚠️ Csak olyan kategória mehet ki, ami LÉTEZIK a categories táblában — különben
 // a bejegyzés kategória nélkül, kereshetetlenül landolna az adatbázisban.
-const VALID_CATEGORIES = new Set(["magyar-kozosseg", "elelmiszer", "etterem", "cukrasz", "konyveles", "fogorvos", "fodrasz", "szepseg", "ugyved", "pszichologus", "fordito"]);
+const VALID_CATEGORIES = new Set(["magyar-kozosseg", "elelmiszer", "etterem", "cukrasz", "konyveles", "fogorvos", "fodrasz", "szepseg", "ugyved", "pszichologus", "fordito", "penzugyi_tanacsado"]);
 const problems = [];
 const nameSeen = new Map();
 const addrSeen = new Map();

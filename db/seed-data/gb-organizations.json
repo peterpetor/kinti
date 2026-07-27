@@ -630,6 +630,16 @@
       "lat": 50.7311474,
       "lng": -1.8535581,
       "hours": "K–Cs 17–21.30, P 17–22.30, Szo 13–22.30"
+    },
+    {
+      "name": "Danube Financial Solutions — magyar jelzálog-tanácsadás",
+      "type": "FCA-szabályozott jelzálog- és biztosítási tanácsadás magyarul (nincs ügyfélfogadó iroda)",
+      "category": "penzugyi_tanacsado",
+      "city": "Worksop",
+      "region": "EM",
+      "address": "Országos, telefonos és online tanácsadás",
+      "email": "info@danubefs.co.uk",
+      "website": "https://danubefs.co.uk/hu/"
     }
   ]
 }
