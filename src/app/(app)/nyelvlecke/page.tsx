@@ -19,8 +19,8 @@ export default function LanguagePathPage() {
   const [totalXp, setTotalXp] = useState(0);
   const [streak, setStreak] = useState(0);
   const [prefCountry] = usePreferredCountry();
-  // A 4 ország lecke-adata (CH/AT/DE/NL, ~6000 sor összesen, mind a teljes
-  // gyakorlat-szöveggel) korábban MIND a 4 statikusan importálva volt, pedig
+  // Az 5 ország lecke-adata (CH/AT/DE/NL/GB, ~7500 sor összesen, mind a teljes
+  // gyakorlat-szöveggel) korábban MIND statikusan importálva volt, pedig
   // egyszerre csak EGY ország kurzusa kell — ez tette az oldalt az egész app
   // legnehezebbjévé (220 kB First Load). Most CSAK a választott ország
   // moduljának dinamikus importja fut, mount után.
@@ -64,7 +64,9 @@ export default function LanguagePathPage() {
           ? import("./data-de").then((m) => m.LESSONS_DE)
           : country === "NL"
             ? import("./data-nl").then((m) => m.LESSONS_NL)
-            : import("./data").then((m) => m.LESSONS);
+            : country === "GB"
+              ? import("./data-gb").then((m) => m.LESSONS_GB)
+              : import("./data").then((m) => m.LESSONS);
     load.then((l) => {
       if (!cancelled) setLessons(l);
     });
@@ -104,7 +106,7 @@ export default function LanguagePathPage() {
       <div className="sticky top-0 z-20 bg-background/80 px-4 pb-4 pt-6 backdrop-blur-xl border-b border-border-subtle">
         <ScreenHeader 
           eyebrow="Nyelvlecke" 
-          title={country === "AT" ? "Österreichisch" : country === "DE" ? "Hochdeutsch" : country === "NL" ? "Nederlands" : "Schwyzerdütsch"}
+          title={country === "AT" ? "Österreichisch" : country === "DE" ? "Hochdeutsch" : country === "NL" ? "Nederlands" : country === "GB" ? "British English" : "Schwyzerdütsch"}
           back={
             <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-full bg-ink/5 text-ink hover:bg-ink/10 transition">
               <Icon name="arrowLeft" size={20} strokeWidth={2.5} />

@@ -1,26 +1,41 @@
 "use client";
 
 // A segment-config (force-static + generateStaticParams) a layout.tsx-ben él —
-// kliens-komponensből nem exportálható. Az oldal SSG-prerenderelt (400 lecke).
+// kliens-komponensből nem exportálható. Az oldal SSG-prerenderelt (500 lecke).
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { LESSONS, Question } from "../data";
+import type { Lesson, Question } from "../data";
 import { haptic } from "@/lib/haptics";
-import { LESSONS_AT } from "../data-at";
-import { LESSONS_DE } from "../data-de";
-import { LESSONS_NL } from "../data-nl";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
+/**
+ * A lecke-id előtagja mondja meg, MELYIK ország kurzusából való a lecke
+ * (al=AT, dl=DE, nl=NL, gl=GB, egyébként CH). Ebből jön a TTS-nyelv és az is,
+ * melyik adat-modult kell betölteni — a kettő SOHA ne csússzon szét.
+ */
+function courseOf(lessonId: string) {
+  if (lessonId.startsWith("al")) return { tts: "de-AT", load: () => import("../data-at").then((m) => m.LESSONS_AT) };
+  if (lessonId.startsWith("dl")) return { tts: "de-DE", load: () => import("../data-de").then((m) => m.LESSONS_DE) };
+  if (lessonId.startsWith("nl")) return { tts: "nl-NL", load: () => import("../data-nl").then((m) => m.LESSONS_NL) };
+  // ⚠️ Az angolnál a BRIT hang a lényeg: az amerikai kiejtés pont azt mossa el,
+  // amit ez a kurzus megkülönböztetni tanít.
+  if (lessonId.startsWith("gl")) return { tts: "en-GB", load: () => import("../data-gb").then((m) => m.LESSONS_GB) };
+  return { tts: "de-CH", load: () => import("../data").then((m) => m.LESSONS) };
+}
+
 export default function LessonPage({ params }: { params: { lessonId: string } }) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  
-  const lesson = [...LESSONS, ...LESSONS_AT, ...LESSONS_DE, ...LESSONS_NL].find((l) => l.id === params.lessonId);
-  // A lecke-id előtagból az ország-megfelelő TTS-nyelv (nl=nl-NL, dl=de-DE, al=de-AT, egyébként de-CH).
-  const ttsLang = params.lessonId.startsWith("nl") ? "nl-NL" : params.lessonId.startsWith("dl") ? "de-DE" : params.lessonId.startsWith("al") ? "de-AT" : "de-CH";
+
+  // ⚠️ Az 5 ország lecke-adata együtt ~380 kB nyers szöveg, de egy megnyitott
+  // leckéhez EGYETLEN modul kell. Ezért nincs statikus import: az id-előtagból
+  // adódó kurzust töltjük be mount után (ugyanaz a minta, mint a listaoldalon).
+  // `undefined` = még tölt, `null` = nincs ilyen lecke.
+  const [lesson, setLesson] = useState<Lesson | null | undefined>(undefined);
+  const ttsLang = courseOf(params.lessonId).tts;
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   
@@ -50,7 +65,20 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
     }
   }, []);
 
-  if (!mounted) {
+  useEffect(() => {
+    let cancelled = false;
+    const id = params.lessonId;
+    courseOf(id)
+      .load()
+      .then((lessons) => {
+        if (!cancelled) setLesson(lessons.find((l) => l.id === id) ?? null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [params.lessonId]);
+
+  if (!mounted || lesson === undefined) {
     return (
       <div className="space-y-3 p-4" aria-busy="true">
         <span className="sr-only">Betöltés…</span>
@@ -81,11 +109,20 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
     window.speechSynthesis.cancel(); // Stop current speech
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // Az ország-megfelelő hangot keressük (pl. nl-NL / de-DE / de-AT / de-CH), majd
-    // bármilyen azonos nyelvű (nl/de) hangra esünk vissza.
+    // Az ország-megfelelő hangot keressük (pl. nl-NL / de-DE / de-AT / de-CH / en-GB),
+    // majd bármilyen azonos nyelvű (nl/de/en) hangra esünk vissza.
     const want = ttsLang.toLowerCase();
-    const langPrefix = want.split("-")[0]; // "nl" vagy "de"
+    const langPrefix = want.split("-")[0]; // "nl", "de" vagy "en"
     let voice = voices.find(v => v.lang.toLowerCase() === want || v.lang.toLowerCase() === want.replace("-", "_"));
+    // ⚠️ Angolnál a legtöbb gépen en-US az alapértelmezett hang — az pont azt a
+    // kiejtést adná vissza, amit ez a kurzus MEGKÜLÖNBÖZTETNI tanít. Ezért az
+    // en-US-t utolsó előttire soroljuk: előbb minden más angol változat jön.
+    if (!voice && langPrefix === "en") {
+      voice = voices.find(v => {
+        const l = v.lang.toLowerCase();
+        return l.startsWith("en") && !l.startsWith("en-us") && !l.startsWith("en_us");
+      });
+    }
     if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith(`${langPrefix}-`));
     if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith(langPrefix));
 

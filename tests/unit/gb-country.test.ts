@@ -52,7 +52,7 @@ describe("GB (Anglia) mint ország", () => {
 
 describe("GB feature-gating (engedélyező-lista)", () => {
   it("engedi a listán szereplő, ország-független funkciókat", () => {
-    for (const f of ["szaknevsor", "allasok", "piacter", "utalas", "vam", "tudasbazis", "berkalkulator", "angol-oneletrajz", "vizum", "ugyintezes", "iskolarendszer", "kozlekedes", "allampolgarsag", "szolgaltato-valto", "repulojegy", "lakberles"]) {
+    for (const f of ["szaknevsor", "allasok", "piacter", "utalas", "vam", "tudasbazis", "berkalkulator", "angol-oneletrajz", "vizum", "ugyintezes", "iskolarendszer", "kozlekedes", "allampolgarsag", "szolgaltato-valto", "repulojegy", "lakberles", "nyelvlecke"]) {
       expect(isFeatureAvailable(f, "GB")).toBe(true);
     }
   });
@@ -61,7 +61,6 @@ describe("GB feature-gating (engedélyező-lista)", () => {
     // Ezek svájci/EU-s adatot mutatnának hitelesnek tűnő módon — tilos.
     for (const f of [
       "bussen",
-      "nyelvlecke",
       "nemet-oneletrajz",
     ]) {
       expect(isFeatureAvailable(f, "GB")).toBe(false);

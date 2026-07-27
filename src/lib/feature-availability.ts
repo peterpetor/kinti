@@ -124,6 +124,7 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "szolgaltato-valto", // ⭐ VAN GB szolgáltató-adat (CASS bankváltás, Ofgem, Ofcom)
   "repulojegy",      // ⭐ VAN GB járat-konfig (7 angol reptér, WizzAir/Ryanair/BA)
   "lakberles",       // ⭐ VAN GB rent-konfig (5 heti kaució, TDP, council tax)
+  "nyelvlecke",      // ⭐ VAN GB kurzus (data-gb.ts, 100 lecke: brit angol, en-GB TTS)
 ]);
 
 export function isFeatureAvailable(
