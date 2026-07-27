@@ -528,6 +528,20 @@
       "lat": 51.537463,
       "lng": -0.9052871,
       "hours": "K–V 9–18, H zárva"
+    },
+    {
+      "name": "Evabookkeeping (EVLA Team) — magyar könyvelőiroda",
+      "type": "magyar könyvelőiroda (self-employed, Ltd, adóvisszaigénylés)",
+      "category": "konyveles",
+      "city": "Uckfield",
+      "region": "SE",
+      "address": "1A Falmer Court, London Road, Uckfield TN22 1HN",
+      "phone": "+44 1825 222 825",
+      "email": "info@evabookkeeping.co.uk",
+      "website": "https://evabookkeeping.co.uk",
+      "lat": 50.9772082,
+      "lng": 0.1003203,
+      "hours": "H–P 9–17, hétvégén zárva"
     }
   ]
 }
