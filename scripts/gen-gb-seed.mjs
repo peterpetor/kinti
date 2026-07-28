@@ -117,10 +117,20 @@ for (const org of data.organizations) {
   // ⚠️ A név-dedup nem elég: ugyanaz a bolt két néven is felkerülhet
   // (pl. „Magyarok Boltja" és „Hungarian Delicatessen Ltd" egy címen).
   // Az utcaszintű cím a megbízhatóbb azonosító, ezért arra is szűrünk.
-  if (org.address) {
+  //
+  // KIVÉTEL: van, hogy KÉT KÜLÖNBÖZŐ szervezet valóban ugyanazon a címen
+  // működik — közösségi épületek (Magyar Ház: Liszt Intézet + magyar iskola)
+  // vagy templomok, ahol több csoport is bérel helyet. Ilyenkor a tételre
+  // `sharedAddress` mezőt kell tenni, aminek az ÉRTÉKE a magyarázat — így a
+  // kivétel dokumentált marad, és nem lehet véletlenül, néma `true`-val
+  // kikapcsolni a védelmet egy valódi duplikátum felett.
+  if (org.address && !org.sharedAddress) {
     const a = addrKey(org.address);
     if (addrSeen.has(a)) problems.push(`DUPLIKÁTUM cím szerint: "${org.name}" ≈ "${addrSeen.get(a)}" (${org.address})`);
     else addrSeen.set(a, org.name);
+  }
+  if (org.sharedAddress && typeof org.sharedAddress !== "string") {
+    problems.push(`a sharedAddress értéke legyen a MAGYARÁZAT (string), ne ${typeof org.sharedAddress}: ${org.name}`);
   }
 }
 if (problems.length) {

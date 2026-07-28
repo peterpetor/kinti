@@ -27,15 +27,18 @@
       "lng": -0.21629
     },
     {
+      "_comment": "⚠️ A NEVET NE írd át: az `id` a névből (slugify) képződik, így egy átnevezés nem UPDATE-elné a meglévő sort, hanem ÚJ sort szúrna be — a régi, elavult címmel együtt bent maradna. A mai hivatalos márkanév „Liszt Intézet”, ezért az a `type`-ban szerepel.",
       "name": "Magyar Kulturális Központ London",
-      "type": "kulturális központ",
+      "type": "Liszt Intézet — magyar kulturális központ a Magyar Házban (koncert, kiállítás, filmvetítés)",
       "city": "London",
       "region": "LDN",
-      "address": "10 Maiden Lane, Covent Garden, London WC2E 7NA",
-      "phone": "+44 20 7257 2023",
-      "website": "https://www.hungary.org.uk",
-      "lat": 51.5106708,
-      "lng": -0.1228868
+      "address": "17-19 Cockspur Street, St James, London SW1Y 5BL",
+      "phone": "+44 20 7240 8448",
+      "email": "info@hungary.org.uk",
+      "website": "https://culture.hu/uk/london",
+      "lat": 51.5076791,
+      "lng": -0.1307098,
+      "sharedAddress": "Magyar Ház — a Londoni Magyar Iskola+ is itt működik"
     },
     {
       "name": "Magyarország Nagykövetsége — London",
