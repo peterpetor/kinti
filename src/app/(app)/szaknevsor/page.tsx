@@ -46,6 +46,12 @@ export default async function SzaknevsorPage() {
     perCountry.set(c, n);
     return n <= SSR_PER_COUNTRY;
   });
+  // ⚠️ A VALÓDI országonkénti darabszám — a `perCountry` a szelet-számlálás
+  // mellékterméke, tehát INGYEN megvan (nincs plusz D1-kérés). Ezt a szám a
+  // kliens azonnal kiírja, amíg a teljes lista tölt: enélkül a friss
+  // felhasználó „30 találat"-ot lát 413 helyett, és üresnek hiszi a
+  // szaknévsort (user-jelzés: „letölti, látja csak 30 van, aztán le is törli").
+  const countryTotals = Object.fromEntries(perCountry);
 
   // SEO belső-link blokk adatai: országonként a 4 legnépesebb kategória
   // ország-szintű céloldala (/magyar/[kat]/[ország]) — a TELJES listából
@@ -89,7 +95,7 @@ export default async function SzaknevsorPage() {
               subtitle="Engedélyezd, és értesítünk, amint új magyar szakember vagy vállalkozás jelenik meg a környékeden."
             />
           </div>
-          <ExploreView categories={categories} businesses={businesses} />
+          <ExploreView categories={categories} businesses={businesses} countryTotals={countryTotals} />
           {/* Telegram-bot promó — a Szaknévsor ott is él, ahol a csoportok:
               inline mód (@botnév + keresés) bármely chatben, hozzáadás nélkül. */}
           <div className="px-5">

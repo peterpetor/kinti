@@ -109,37 +109,61 @@ const PAGE_SIZE = 100;
 export function ExploreView({
   categories,
   businesses: initialBusinesses,
+  countryTotals,
 }: {
   categories: Category[];
   /** Az SSR-ből érkező ELSŐ KÉPERNYŐNYI szelet (országonként limitált) — a
    *  teljes listát mount után töltjük be a /api/businesses/list-ből. */
   businesses: ListBusiness[];
+  /** A VALÓDI országonkénti darabszám a szerverről (a szelet-számlálás
+   *  mellékterméke, plusz lekérdezés nélkül) — a számlálót ebből írjuk ki,
+   *  amíg a teljes lista tölt. */
+  countryTotals?: Record<string, number>;
 }) {
-  // A TELJES lista (2000+ rekord ≈ 1,16 MB nyers JSON, ~155 KB tömörítve) betöltése
-  // — de a KRITIKUS ÚTON KÍVÜL. Korábban a mount-effekt AZONNAL lekérte, így a
-  // ~1,16 MB `JSON.parse` a hidratálással versengett a fő szálon; ez tette EZT az
-  // oldalt betöltéskor nehezebbé a többinél (a JS-bundle amúgy azonos sávban van).
-  // Most: (1) `requestIdleCallback`-ben indul (2,5 s watchdog) — a passzív user is
-  // megkapja a teljes listát/térképet/számlálót, de csak az ELSŐ FESTÉS UTÁN; (2)
-  // ha a user előbb térképre vált (ott kell az összes tű), az azonnal beindítja.
-  // Amíg nincs meg, az SSR-szelet (országonként 60) szolgálja ki a böngészést és a
-  // gépelős szűrést — a leggyakoribb use-case-t lefedi.
-  const [fullList, setFullList] = useState<ListBusiness[] | null>(null);
-  const fullReqRef = useRef(false);
-  const loadFullList = useCallback(() => {
-    if (fullReqRef.current) return;
-    fullReqRef.current = true;
-    fetch("/api/businesses/list")
+  // A teljes lista betöltése — a KRITIKUS ÚTON KÍVÜL. Korábban a mount-effekt
+  // AZONNAL lekérte MIND az 5 ország ~2000 rekordját (≈1,16 MB nyers JSON), így a
+  // `JSON.parse` a hidratálással versengett a fő szálon.
+  //
+  // ⚠️ 2026-07-29 óta ORSZÁG-SZŰKÍTETT a kérés (`?country=`): a kliens úgyis egy
+  // ország listáját mutatja, így a payload ~ötödére esett, és a „teljes lista
+  // megjött" pillanat sokkal hamarabb jön el. Ez azért fontos, mert addig a
+  // felhasználó csak az SSR-szeletet (30) látja — user-jelzés: „letölti, látja
+  // csak 30 van, aztán le is törli". Ezért lett a watchdog is 2,5 s → 700 ms.
+  //
+  // Országonként külön tároljuk, hogy ország-váltáskor is legyen teljes lista
+  // (és ne kelljen újratölteni azt, ami már megvan).
+  const [fullByCountry, setFullByCountry] = useState<Record<string, ListBusiness[]>>({});
+  const requestedRef = useRef<Set<string>>(new Set());
+  // Hányszor futott már neki egy ország betöltése. KORLÁTOS (MAX_LIST_TRIES) —
+  // egy tartós hiba ne pörgesse végtelenbe a kéréseket (a végpont IP/óra
+  // rate-limitelt is), de egy pillanatnyi hálózati zökkenő magától gyógyuljon.
+  const triesRef = useRef<Record<string, number>>({});
+  const MAX_LIST_TRIES = 2;
+  const loadFullList = useCallback((code: string) => {
+    if (requestedRef.current.has(code)) return;
+    if ((triesRef.current[code] ?? 0) >= MAX_LIST_TRIES) return;
+    requestedRef.current.add(code);
+    triesRef.current[code] = (triesRef.current[code] ?? 0) + 1;
+    fetch(`/api/businesses/list?country=${encodeURIComponent(code)}`)
       .then((r) => (r.ok ? (r.json() as Promise<{ businesses?: ListBusiness[] }>) : null))
       .then((d) => {
-        if (d?.businesses?.length) setFullList(d.businesses);
+        if (d?.businesses?.length) {
+          setFullByCountry((prev) => ({ ...prev, [code]: d.businesses as ListBusiness[] }));
+          return;
+        }
+        // Üres/hibás válasz → szabadítsuk fel, hogy a következő próba mehessen.
+        requestedRef.current.delete(code);
       })
       .catch(() => {
-        // hálózati hiba → marad az SSR-szelet (működő, csak rövidebb lista);
-        // engedjük az újrapróbát egy későbbi interakcióra.
-        fullReqRef.current = false;
+        // Hálózati hiba → marad az SSR-szelet (működő, csak rövidebb lista).
+        requestedRef.current.delete(code);
       });
   }, []);
+  // Választott ország (6-ország rendszer) — ELÖL kell, mert a teljes lista
+  // betöltése ország-szűkített. `null` = a preferencia még olvasás alatt.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+
   useEffect(() => {
     type RIC = (cb: () => void, opts?: { timeout: number }) => number;
     const w = window as unknown as {
@@ -147,14 +171,24 @@ export function ExploreView({
       cancelIdleCallback?: (h: number) => void;
     };
     if (w.requestIdleCallback) {
-      const id = w.requestIdleCallback(() => loadFullList(), { timeout: 2500 });
+      const id = w.requestIdleCallback(() => loadFullList(country), { timeout: 700 });
       return () => w.cancelIdleCallback?.(id);
     }
     // requestIdleCallback nélkül (Safari): rövid késleltetés, hogy a hidratálás
-    // előbb végezzen, csak azután fusson a nagy fetch/parse.
-    const t = window.setTimeout(loadFullList, 1200);
+    // előbb végezzen, csak azután fusson a fetch/parse.
+    const t = window.setTimeout(() => loadFullList(country), 400);
     return () => clearTimeout(t);
-  }, [loadFullList]);
+  }, [loadFullList, country]);
+  // Késleltetett újrapróba, ha az első kérés nem hozott listát: enélkül a
+  // „lista töltődik…" felirat beragadna, és a user 30 kártyát látna. A
+  // loadFullList guardja (MAX_LIST_TRIES) korlátozza, hányszor futhat.
+  useEffect(() => {
+    const t = window.setTimeout(() => loadFullList(country), 3000);
+    return () => clearTimeout(t);
+  }, [loadFullList, country, fullByCountry]);
+  const fullList = fullByCountry[country] ?? null;
+  // ⚠️ Ha megvan az ország teljes listája, CSAK azt használjuk — az SSR-szelet
+  // többi országa amúgy is kiesne az ország-szűrőn, de így a szűrés is olcsóbb.
   const businesses = fullList ?? initialBusinesses;
 
   // Render-sapka: egyszerre legfeljebb ennyi kártya van a DOM-ban; a lista alján
@@ -175,7 +209,7 @@ export function ExploreView({
   // a deferrált betöltés.
   useEffect(() => {
     if (initialCat !== "all" || initialQ.trim() !== "" || initialCanton !== "all" || initialFav || initialPass) {
-      loadFullList();
+      loadFullList(country);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -207,22 +241,22 @@ export function ExploreView({
       if (saved === "map" || saved === "list") setView(saved);
       // Ha a user mentett nézete a térkép, ott az ÖSSZES tű kell → azonnal
       // betöltjük a teljes listát (nem várunk az idle-watchdogra).
-      if (saved === "map") loadFullList();
+      if (saved === "map") loadFullList(country);
     } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadFullList]);
   const setViewPersist = (v: ViewMode) => {
     setView(v);
     // Térképre váltás → a teljes lista kell (minden tű); a guard miatt csak
     // egyszer kér. Lista-nézethez az SSR-szelet + idle-betöltés elég.
-    if (v === "map") loadFullList();
+    if (v === "map") loadFullList(country);
     try { localStorage.setItem("kinti_szaknevsor_view", v); } catch { /* ignore */ }
   };
   const [cantonSheetOpen, setCantonSheetOpen] = useState(false);
 
-  // Választott ország (6-ország rendszer). A régiók/szűrés/feliratok ehhez igazodnak.
-  // CH a default; a régiók a lib/regions.ts-ből (CH: kantonok, AT: Bundeslandok, …).
-  const [prefCountry] = usePreferredCountry();
-  const country = prefCountry ?? DEFAULT_COUNTRY;
+  // A választott ország (`country`) FENT dől el (a teljes lista betöltése
+  // ország-szűkített, ezért kell előbb). A régiók/feliratok ehhez igazodnak;
+  // a régiók a lib/regions.ts-ből (CH: kantonok, AT: Bundeslandok, …).
   const countryName = getCountry(country)?.name ?? "Svájc";
   const regions = useMemo(() => getRegions(country), [country]);
 
@@ -417,6 +451,21 @@ export function ExploreView({
     [filtered],
   );
 
+  /**
+   * ⚠️ A KIÍRT találatszám. Amíg a teljes lista tölt, a `filtered.length` csak az
+   * SSR-szeletből számol (országonként 30) — a friss felhasználó ilyenkor
+   * „30 találat"-ot lát 413 helyett, és üresnek hiszi a szaknévsort. Ezért
+   * SZŰRETLEN nézetben a szerverről kapott VALÓDI országos darabszámot írjuk ki.
+   * Szűrés/keresés esetén marad a tényleges találatszám: ott a szerver-összeg
+   * hazugság lenne (nem tudjuk, hány felel meg a szűrőnek).
+   */
+  const filtersActive =
+    cat !== "all" || canton !== "all" || q.trim() !== "" ||
+    showFavs || openNow || passOnly || withContact || userPos != null;
+  const serverTotal = countryTotals?.[country] ?? 0;
+  const displayCount =
+    !fullList && !filtersActive && serverTotal > filtered.length ? serverTotal : filtered.length;
+
   const filteredBusinesses = useMemo(() => filtered.map(({ b }) => b), [filtered]);
 
   // Szűrő-váltás → vissza az 1. oldalra (a lapozás ne ragadjon be).
@@ -427,7 +476,7 @@ export function ExploreView({
     // csak egyszer kér). Guard: friss mounton, ALAP szűrőkkel NEM fut, így a sima
     // böngészésnél megmarad a deferrált (idle) betöltés, és nem blokkolja a festést.
     if (cat !== "all" || q.trim() !== "" || canton !== "all" || showFavs || passOnly || openNow || withContact) {
-      loadFullList();
+      loadFullList(country);
     }
   }, [cat, canton, q, showFavs, openNow, passOnly, withContact, sortBy, country, loadFullList]);
 
@@ -890,11 +939,12 @@ export function ExploreView({
       {/* Lista / Térkép váltó + meta-sor */}
       <div className="flex items-center justify-between gap-3 px-5">
         <p className="text-[11.5px] font-semibold uppercase tracking-wide text-ink-muted">
-          {filtered.length} találat
-          {/* Amíg a teljes lista töltődik, jelezzük, hogy a szám még bővülhet. */}
+          {displayCount} találat
+          {/* Töltés közben jelezzük, hogy a lista még épül — a SZÁM viszont már
+              a valódi (ld. displayCount), hogy ne tűnjön üresnek a szaknévsor. */}
           {!fullList && (
             <span className="ml-1 normal-case tracking-normal text-ink-faint">
-              (teljes lista töltődik…)
+              (lista töltődik…)
             </span>
           )}
           {view === "map" && locatedCount < filtered.length && (

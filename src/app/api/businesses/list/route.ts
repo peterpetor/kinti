@@ -1,4 +1,5 @@
 import { getBusinessesForList, isBlocked } from "@/lib/repo";
+import { isValidCountry } from "@/lib/countries";
 import { cached } from "@/lib/edge-cache";
 import { hashIp } from "@/lib/security";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
@@ -41,10 +42,26 @@ export async function GET(req: Request) {
     });
   }
 
-  const body = await cached("biz:list-json-v1", 180_000, async () => {
-    const businesses = await getBusinessesForList();
-    return JSON.stringify({ businesses });
-  });
+  // 3) ⚠️ ORSZÁG-SZŰKÍTÉS (`?country=CH`) — a kliens EGYSZERRE csak egy ország
+  // listáját mutatja, a teljes dump (5 ország, 2000+ tétel) fölöslegesen nagy
+  // payload volt mobilon. Ez ~5-szörösére gyorsítja a „teljes lista megjött"
+  // pillanatot, ami közvetlenül a látott találatszámot javítja. A kód
+  // VALIDÁLVA van (isValidCountry) — így a cache-kulcsok halmaza zárt, egy
+  // tetszőleges query-param nem tud cache-t szemetelni.
+  const raw = new URL(req.url).searchParams.get("country");
+  const country = isValidCountry(raw) ? raw : null;
+
+  const body = await cached(
+    country ? `biz:list-json-v1:${country}` : "biz:list-json-v1",
+    180_000,
+    async () => {
+      // A D1-lekérés (getBusinessesForList) SAJÁT cache-en ül, ezért az
+      // ország-szeletek nem sokszorozzák a lekérdezést — csak a szerializálást.
+      const all = await getBusinessesForList();
+      const businesses = country ? all.filter((b) => (b.country ?? "CH") === country) : all;
+      return JSON.stringify({ businesses });
+    },
+  );
   await logAiRateLimit("biz-list", ipHash);
 
   return new Response(body, {
