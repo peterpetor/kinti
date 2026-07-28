@@ -858,6 +858,18 @@
       "website": "https://www.symlawmanagement.co.uk",
       "lat": 50.9157061,
       "lng": -1.4005986
+    },
+    {
+      "name": "Gábor Nagy — magyarul beszélő bevándorlási ügyvéd, Duncan Lewis",
+      "type": "ügyvédi iroda (Duncan Lewis), magyarul beszélő bevándorlási ügyvéd — Legal 500 UK 2026 ajánlott",
+      "category": "ugyved",
+      "city": "London",
+      "region": "LDN",
+      "address": "143-149 Fenchurch Street, London EC3M 6BL",
+      "phone": "+44 20 7275 2780",
+      "website": "https://www.duncanlewis.co.uk/Gabor-Nagy-Immigration-Solicitor-City-of-London-/",
+      "lat": 51.5116463,
+      "lng": -0.0836295
     }
   ]
 }
