@@ -65,6 +65,13 @@
       'Hairdresser, mechanic, doctor, lawyer, baker — anything. One map. In your language. Kinti is the GPS-based professional finder for Hungarians living abroad.');
   add('Letöltés — ingyenes', 'Herunterladen — kostenlos', 'Get the app — free');
   add('Vállalkozó vagyok', 'Ich bin Unternehmer', 'I’m a business');
+  // Google Play badge melletti jegyzet (magát a badge-et a landing.html IIFE-je
+  // cseréli nyelvenként — kép, nem szöveg, ezért nem a szótárból jön).
+  // ⚠️ RÖVID maradjon mindhárom nyelven: a badge mellett áll, és hosszabb
+  // német mondat mobilon két sorra tört (a badge alá csúszott).
+  add('Androidra · iPhone-on a böngészőből telepíthető',
+      'Für Android · auf dem iPhone über den Browser',
+      'For Android · on iPhone via the browser');
   add('Magyar szakemberek és közösség Európa-szerte — egy térképen, anyanyelven.',
       '<strong>Ungarische Fachkräfte</strong> und Community<br>europaweit — auf einer Karte, in deiner Sprache.',
       '<strong>Hungarian professionals</strong> and community<br>across Europe — on one map, in your language.');
