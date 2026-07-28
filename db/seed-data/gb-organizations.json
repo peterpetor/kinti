@@ -1040,6 +1040,19 @@
       "website": "https://hunique.co.uk",
       "lat": 51.4918407,
       "lng": -0.2604789
+    },
+    {
+      "name": "Magyarország Főkonzulátusa — Manchester",
+      "type": "főkonzulátus (útlevél, személyi igazolvány, anyakönyvezés, állampolgárság) — Észak-Anglia konzuli kerülete",
+      "city": "Manchester",
+      "region": "NW",
+      "address": "1 Portland Street, Manchester M1 3BE",
+      "phone": "+44 161 503 5678",
+      "email": "konz.man@mfa.gov.hu",
+      "website": "https://manchester.mfa.gov.hu",
+      "lat": 53.4805348,
+      "lng": -2.2348712,
+      "hours": "Konzuli ügyfélfogadás H–Cs 10–12 és 15–16 (időpontfoglalással)"
     }
   ]
 }
