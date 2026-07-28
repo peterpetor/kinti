@@ -1,5 +1,5 @@
 {
-  "_comment": "Valódi ANGLIAI magyar közösségi szervezetek (egyházközségek, hétvégi iskolák, kulturális központok, hivatalos képviseletek) — a kinti.app angliai (GB) induló tartalmának forrása. ⚠️ MINDEN tétel ellenőrzött, publikus forrásból származó elérhetőséggel szerepel (cím és/vagy e-mail/telefon/weboldal); találgatott adat NINCS. ⚠️ SZÁNDÉKOSAN CSAK ANGLIA — a Kőrösi-program listáján szereplő skóciai (Edinburgh) és walesi (Cardiff, Newport, Magyar Cymru) szervezetek KIMARADTAK, mert a Kinti GB-országa csak Angliát fedi (Skócia/Wales külön jogrend, ld. regions.ts). ⚠️ Nem vettünk fel olyan tételt, ahol az egyetlen elérhetőség egy magánszemély személyes e-mail-címe vagy mobilszáma lett volna (adatvédelem). ⚠️ VENDÉGLÁTÁS/KERESKEDELEM: az éttermek és boltok nyitva tartása/léte gyorsabban változik, mint a közösségi szervezeteké — ezeket időnként újra kell ellenőrizni (a londoni Gay Hussar pl. 2018-ban bezárt, ezért NEM került be). A `category` mező a categories tábla id-je (elelmiszer/etterem); ahol nincs, a tétel a magyar-kozosseg kategóriába kerül.\n\n⚠️ ELLENŐRZÉS UTÁN ELTÁVOLÍTVA (2026-07-27), hogy egy újrafuttatás se hozza vissza:\n• „Turul Project — magyar étterem és borbár” (1 Turnpike Parade, N15 3LA): az FSA szerint 2025-08-11 óta\n  az „Olive Brunch” működik ezen a címen, a turulproject.com nem válaszol, 2022 utáni nyom nincs.\n• „Taste From Europe — Angliai Magyar Bolt” (35 Field End, Witchford): a webshopjuk „not available”,\n  és az East Cambridgeshire FSA-nyilvántartásban nincs bejegyzés erre az utcára.\n\n⚠️ ELLENŐRZÉS UTÁN ELTÁVOLÍTVA (2026-07-28, weboldal-audit), hogy egy újrafuttatás se hozza vissza — mindhármat ELŐZŐLEG UGYANEZEN A NAPON vettem fel, TÚL GYENGE bizonyíték alapján (keresőtalálat-összefoglaló és a halott magyarok.co.uk közösségi lista), a „magyar szolgáltatást a JELENLEGI saját weboldalon kell látni” szabály megsértésével:\n• „Magyar Fogorvos Bristol — Bristol Implants” (28 Portland Street, BS8 4JB): a saját domainje (bristol-implants.co.uk) MA MÁR NEM LÉTEZIK, és a CQC szerint ezen a címen „The Smile Design Company” (Smile Design Direct Ltd) van bejegyezve, más telefonszámmal. Az OSM POI-neve is ezt adta — akkor tévesen „elavult tagnek” minősítettem.\n• „Sweet Smiles — magyar fogorvos, Liverpool” (35 Rodney Street): a rendelő LÉTEZIK (CQC-regisztrált), DE a magyar fogorvos (Dr. Kárpáti Krisztina) a Doctify szerint MA LONDONBAN dolgozik, a rendelő jelenlegi profilja pedig egy szót sem ír magyar nyelvről. A saját domain (sweetsmiles.co.uk) sem él.\n• „Gillies Dental Studio — magyar fogorvos, Chorley” (8 Bolton Road): a rendelő él, DE a magyar fogorvos aloldala (/ferenc.html) MA 404, és a jelenlegi weboldal teljes szövegében NULLA magyar/Sisák/Ferenc említés van.",
+  "_comment": "Valódi ANGLIAI magyar közösségi szervezetek (egyházközségek, hétvégi iskolák, kulturális központok, hivatalos képviseletek) — a kinti.app angliai (GB) induló tartalmának forrása. ⚠️ MINDEN tétel ellenőrzött, publikus forrásból származó elérhetőséggel szerepel (cím és/vagy e-mail/telefon/weboldal); találgatott adat NINCS. ⚠️ SZÁNDÉKOSAN CSAK ANGLIA — a Kőrösi-program listáján szereplő skóciai (Edinburgh) és walesi (Cardiff, Newport, Magyar Cymru) szervezetek KIMARADTAK, mert a Kinti GB-országa csak Angliát fedi (Skócia/Wales külön jogrend, ld. regions.ts). ⚠️ Nem vettünk fel olyan tételt, ahol az egyetlen elérhetőség egy magánszemély személyes e-mail-címe vagy mobilszáma lett volna (adatvédelem). ⚠️ VENDÉGLÁTÁS/KERESKEDELEM: az éttermek és boltok nyitva tartása/léte gyorsabban változik, mint a közösségi szervezeteké — ezeket időnként újra kell ellenőrizni (a londoni Gay Hussar pl. 2018-ban bezárt, ezért NEM került be). A `category` mező a categories tábla id-je (elelmiszer/etterem); ahol nincs, a tétel a magyar-kozosseg kategóriába kerül.\n\n⚠️ ELLENŐRZÉS UTÁN ELTÁVOLÍTVA (2026-07-27), hogy egy újrafuttatás se hozza vissza:\n• „Turul Project — magyar étterem és borbár” (1 Turnpike Parade, N15 3LA): az FSA szerint 2025-08-11 óta\n  az „Olive Brunch” működik ezen a címen, a turulproject.com nem válaszol, 2022 utáni nyom nincs.\n• „Taste From Europe — Angliai Magyar Bolt” (35 Field End, Witchford): a webshopjuk „not available”,\n  és az East Cambridgeshire FSA-nyilvántartásban nincs bejegyzés erre az utcára.\n\n⚠️ ELLENŐRZÉS UTÁN ELTÁVOLÍTVA (2026-07-28, weboldal-audit), hogy egy újrafuttatás se hozza vissza — mindhármat ELŐZŐLEG UGYANEZEN A NAPON vettem fel, TÚL GYENGE bizonyíték alapján (keresőtalálat-összefoglaló és a halott magyarok.co.uk közösségi lista), a „magyar szolgáltatást a JELENLEGI saját weboldalon kell látni” szabály megsértésével:\n• „Magyar Fogorvos Bristol — Bristol Implants” (28 Portland Street, BS8 4JB): a saját domainje (bristol-implants.co.uk) MA MÁR NEM LÉTEZIK, és a CQC szerint ezen a címen „The Smile Design Company” (Smile Design Direct Ltd) van bejegyezve, más telefonszámmal. Az OSM POI-neve is ezt adta — akkor tévesen „elavult tagnek” minősítettem.\n• „Sweet Smiles — magyar fogorvos, Liverpool” (35 Rodney Street): a rendelő LÉTEZIK (CQC-regisztrált), DE a magyar fogorvos (Dr. Kárpáti Krisztina) a Doctify szerint MA LONDONBAN dolgozik, a rendelő jelenlegi profilja pedig egy szót sem ír magyar nyelvről. A saját domain (sweetsmiles.co.uk) sem él.\n• „Gillies Dental Studio — magyar fogorvos, Chorley” (8 Bolton Road): a rendelő él, DE a magyar fogorvos aloldala (/ferenc.html) MA 404, és a jelenlegi weboldal teljes szövegében NULLA magyar/Sisák/Ferenc említés van.\n\n⚠️ ELLENŐRZÉS UTÁN ELTÁVOLÍTVA (2026-07-28, FSA+cégstátusz-audit):\n• „Haraszti Meat Ltd” (9 Austin Way, Daventry NN11 8QY): a Companies House szerint a cég 2018-02-27 ÓTA MEGSZŰNT (dissolved), és nincs FSA-bejegyzése sem. Az OSM POI-név-tag („Haraszti Meat”) ELAVULT — 8 éve megszűnt céget tagel. ⚠️ Ezt a tételt aznap vettem fel, a cégstátusz ellenőrzése NÉLKÜL, pedig ugyanaznap a „Hungry Hungarian” esetnél már pont ez buktatott le egy jelöltet.\n• „Chimney Cake Lady — kürtőskalács” (Camden Market Hawley Wharf, NW1 8QH): a camdeni piac címén az FSA 8 bejegyzett ételárust ismer, EGYIK SEM kürtőskalácsos/magyar — piaci ételárusnál a regisztráció kötelező. Az egyetlen elérhetőségként megadott Instagram-fiók („ChimneyCakesLady.Cy”) sem igazolható londoniként.",
   "country": "GB",
   "source": "korosiprogram.hu diaszpóra-lista, szentistvanhaz.org, reflondon.hu, london.mfa.gov.hu, birminghamimagyarok.org, angliaikisokos.com magyar iskola-lista, hungarianschool.co.uk — 2026-07; boltok/éttermek: hungariandeli.co.uk, lakehouserestaurant.co.uk, turulproject.com, facebook.com/HUNFLAV, chamberofcommerce.uk, britainfirm.com — 2026-07",
   "organizations": [
@@ -393,12 +393,12 @@
       "category": "elelmiszer",
       "city": "Nottingham",
       "region": "EM",
-      "address": "1 The City, Beeston, Nottingham NG9 2ED",
+      "address": "77 City Road, Beeston, Nottingham NG9 2LQ",
       "phone": "+44 115 837 0080",
       "email": "nottingham@paprikastore.co.uk",
       "website": "https://www.paprikastore.co.uk",
-      "lat": 52.9272746,
-      "lng": -1.2098735,
+      "lat": 52.9272548,
+      "lng": -1.2099711,
       "hours": "H–Szo 10–19, V és bank holiday 10–16"
     },
     {
@@ -424,17 +424,6 @@
       "phone": "+44 20 7435 9908",
       "lat": 51.5556728,
       "lng": -0.1786265
-    },
-    {
-      "name": "Chimney Cake Lady — kürtőskalács",
-      "type": "kürtőskalács-pult a Camden Marketen",
-      "category": "cukrasz",
-      "city": "London",
-      "region": "LDN",
-      "address": "Waterside Halls, Camden Market Hawley Wharf, London NW1 8QH",
-      "website": "https://www.instagram.com/chimneycakelady/",
-      "lat": 51.5422296,
-      "lng": -0.1442459
     },
     {
       "name": "Strike Consulting (London) Ltd — magyar könyvelőiroda",
@@ -838,16 +827,6 @@
       "website": "https://www.duncanlewis.co.uk/Gabor-Nagy-Immigration-Solicitor-City-of-London-/",
       "lat": 51.5116463,
       "lng": -0.0836295
-    },
-    {
-      "name": "Haraszti Meat Ltd — magyar húsfeldolgozó és disznótoros",
-      "type": "magyar húsfeldolgozó (disznótoros termékek, rendelés Facebookon, angliai/skóciai házhozszállítás)",
-      "category": "elelmiszer",
-      "city": "Daventry",
-      "region": "EM",
-      "address": "9 Austin Way, Royal Oak Industrial Estate, Daventry NN11 8QY",
-      "lat": 52.2668869,
-      "lng": -1.1816257
     },
     {
       "name": "Magyar Katolikus Közösség — Leeds",
