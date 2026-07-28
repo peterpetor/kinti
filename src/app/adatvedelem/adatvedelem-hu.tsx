@@ -504,9 +504,10 @@ export function AdatvedelemHU() {
         <li><strong>Címzettek:</strong> a többi Szaknévsor PRO tag (a kiírás tartalma); adatfeldolgozó: Cloudflare (tárolás).</li>
       </ul>
 
-      <h3>2.22 Német Önéletrajz Készítő</h3>
+      <h3>2.22 Önéletrajz-készítők (német, holland, angol)</h3>
       <p>
-        A Német Önéletrajz Készítővel készített PDF <strong>kizárólag a böngésződben</strong> jön
+        Az önéletrajz-készítőkkel (Német, Holland és Angol Önéletrajz Készítő) létrehozott
+        PDF <strong>kizárólag a böngésződben</strong> jön
         létre — az önéletrajzod adatai alapesetben <strong>nem kerülnek fel a szerverünkre</strong>.
         A profil elmentése <strong>opcionális</strong>, és kizárólag akkor történik, ha a végén{" "}
         <strong>kifejezetten bepipálod</strong> a „Keressenek meg állással" jelölőnégyzetet. Ebben az

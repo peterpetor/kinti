@@ -474,9 +474,9 @@ export function AdatvedelemEN() {
         <li><strong>Recipients:</strong> other Directory PRO members (the content of the posting); processor: Cloudflare (storage).</li>
       </ul>
 
-      <h3>2.22 German CV builder</h3>
+      <h3>2.22 CV builders (German, Dutch, English)</h3>
       <p>
-        The PDF produced by the German CV builder is created{" "}
+        The PDF produced by the CV builders (German, Dutch and English) is created{" "}
         <strong>exclusively in your browser</strong> — by default your CV data{" "}
         <strong>does not reach our server</strong>. Saving the profile is{" "}
         <strong>optional</strong> and happens only if, at the end, you{" "}

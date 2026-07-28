@@ -1,11 +1,13 @@
 /**
- * cv-pdf.ts — DIN-5008 igazodású, tabellarischer Lebenslauf generálása jsPDF-fel.
+ * cv-pdf.ts — önéletrajz-PDF generálása jsPDF-fel, három ország-konvencióban
+ * (`CvLocale`): német (DIN-5008 tabellarischer Lebenslauf), brit CV és holland CV.
  *
  * TELJESEN a böngészőben fut (0 API-költség, 0 szerver): a jsPDF-et CSAK a
  * `generateCvPdf` hívásakor, DINAMIKUSAN importáljuk — így nincs a build/SSR
  * gráfban, és nem terheli az oldal kezdő bundle-jét. mm-egység + A4 → a DIN-5008
  * margók (bal 25 / jobb 20 / fent-lent 20 mm) pontosan méretezhetők. A Helvetica
- * WinAnsi kódolása fedi a német umlautokat (ä ö ü ß).
+ * WinAnsi kódolása fedi a német umlautokat (ä ö ü ß) és a holland ékezeteket
+ * (ë é ï) is.
  */
 
 export interface CvExperience {
@@ -32,8 +34,12 @@ export interface CvLanguage {
  *    elkerülése; a UK HR kifejezetten elvárja a kihagyásukat),
  *  - „Curriculum Vitae", nem „Lebenslauf",
  *  - a végén „References available on request".
+ * A holland CV szerkezetileg a némethez áll közel (fotó és születési év
+ * megengedett — a holland HR-nél mindkettő bevett), de a szakasz-címkék és a
+ * szakma-megnevezések hollandok, és a végén ott a bevett „Referenties op
+ * aanvraag beschikbaar" sor.
  */
-export type CvLocale = "de" | "en";
+export type CvLocale = "de" | "en" | "nl";
 
 export interface CvData {
   fullName: string;
@@ -77,6 +83,7 @@ const LABELS = {
     profile: "Kurzprofil", experience: "Berufserfahrung", education: "Ausbildung",
     skills: "Kenntnisse", language: "Sprache", other: "Weitere",
     docTitle: "Lebenslauf", fileBase: "Lebenslauf", references: null as string | null,
+    namePlaceholder: "Vor- und Nachname", page: "Seite",
   },
   en: {
     personal: "Personal Details", birthYear: "", city: "Location",
@@ -84,6 +91,15 @@ const LABELS = {
     skills: "Skills", language: "Languages", other: "Additional skills",
     docTitle: "Curriculum Vitae", fileBase: "CV",
     references: "References available on request.",
+    namePlaceholder: "First and last name", page: "Page",
+  },
+  nl: {
+    personal: "Persoonlijke gegevens", birthYear: "Geboortejaar", city: "Woonplaats",
+    profile: "Profiel", experience: "Werkervaring", education: "Opleiding",
+    skills: "Vaardigheden", language: "Taal", other: "Overige vaardigheden",
+    docTitle: "Curriculum Vitae", fileBase: "CV",
+    references: "Referenties op aanvraag beschikbaar.",
+    namePlaceholder: "Voor- en achternaam", page: "Pagina",
   },
 } as const;
 
@@ -117,6 +133,8 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   // Kiemelőszín: a felhasználó választása, vagy visszafogott antracit alapérték.
   const ACCENT: [number, number, number] = hexToRgb(data.accent) ?? INK;
   const L = LABELS[data.locale ?? "de"];
+  // ⚠️ CSAK a brit CV tiltja a fotót és a születési évet — a holland (mint a
+  // német) mindkettőt megengedi, ezért a kapu az EN, nem a „nem-DE".
   const isEn = (data.locale ?? "de") === "en";
 
   const setInk = () => doc.setTextColor(INK[0], INK[1], INK[2]);
@@ -174,7 +192,7 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(23);
   setInk();
-  const nameLines = doc.splitTextToSize(data.fullName || "Vor- und Nachname", textMaxW) as string[];
+  const nameLines = doc.splitTextToSize(data.fullName || L.namePlaceholder, textMaxW) as string[];
   doc.text(nameLines, M_LEFT, y + 6);
   y += 6 + (nameLines.length - 1) * lh(23) + 3.5;
   if (data.professionDe) {
@@ -357,10 +375,7 @@ export async function generateCvPdf(data: CvData): Promise<void> {
     doc.setFontSize(8);
     doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
     doc.text(L.docTitle, M_LEFT, PAGE_H - 10);
-    doc.text(
-      isEn ? `Page ${i}/${pages}` : `Seite ${i}/${pages}`,
-      PAGE_W - M_RIGHT, PAGE_H - 10, { align: "right" },
-    );
+    doc.text(`${L.page} ${i}/${pages}`, PAGE_W - M_RIGHT, PAGE_H - 10, { align: "right" });
   }
 
   const safeName = (data.fullName || L.fileBase).replace(/[^\p{L}\p{N}]+/gu, "_").replace(/^_+|_+$/g, "");

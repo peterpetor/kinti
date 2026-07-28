@@ -52,8 +52,14 @@ export const APP_DESTINATIONS: readonly AppDestination[] = [
     keywords: "magyar vallalkozas szakember fodrasz orvos ugyved bolt szolgaltato ceg cegek kereso" },
   { href: "/allasok", title: "Állások", subtitle: "Magyaroknak szóló munkalehetőségek", icon: "briefcase",
     keywords: "munka allas melo job karrier munkahely allasok allaskereses" },
+  // A három CV-készítő ország-tudatos: NL-ben a német helyett a holland
+  // listázódik (feature-kulcs → isFeatureAvailable), nincs félrevezető találat.
   { href: "/nemet-oneletrajz", title: "Német önéletrajz készítő", subtitle: "Ingyenes Lebenslauf PDF magyar → német szakmanévvel", icon: "document",
+    feature: "nemet-oneletrajz",
     keywords: "onéletrajz oneletrajz cv lebenslauf nemet pdf allas munka jelentkezes bewerbung szakma forditas" },
+  { href: "/holland-oneletrajz", title: "Holland önéletrajz készítő", subtitle: "Ingyenes holland CV PDF magyar → holland szakmanévvel", icon: "document",
+    feature: "holland-oneletrajz",
+    keywords: "onéletrajz oneletrajz cv holland nederlands hollandia pdf allas munka jelentkezes sollicitatie szakma forditas" },
   { href: "/angol-oneletrajz", title: "Angol önéletrajz készítő", subtitle: "Ingyenes brit CV PDF magyar → angol szakmanévvel", icon: "document",
     keywords: "onéletrajz oneletrajz cv angol english brit uk anglia pdf allas munka jelentkezes szakma forditas resume" },
   { href: "/keresek", title: "Keresek", subtitle: "Igény-hirdetés — jelentkezzenek rád a szakik", icon: "search",

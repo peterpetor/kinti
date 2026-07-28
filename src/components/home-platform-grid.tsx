@@ -53,6 +53,9 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone; extern
   // A CV-készítő a mérés szerint alul-exponált volt (csak menüből ért el) —
   // a kezdőlap a legerősebb felület, ide való a zászlós ingyenes eszköz.
   { href: "/nemet-oneletrajz", icon: "document", label: "Német CV", tone: "work" },
+  // Ország-tudatos párja: NL-ben a német CV helyére a holland lép (a rács
+  // szűrője az isFeatureAvailable, ld. feature-availability CV-blokk).
+  { href: "/holland-oneletrajz", icon: "document", label: "Holland CV", tone: "work" },
   { href: "/angol-oneletrajz", icon: "document", label: "Angol CV", tone: "work" },
   // ── Innen a speciálisabb réteg (összecsukva rejtve) ──
   { href: "/keresek", icon: "search", label: "Keresek", tone: "work" },

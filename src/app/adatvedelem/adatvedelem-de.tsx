@@ -499,9 +499,10 @@ export function AdatvedelemDE() {
         <li><strong>Empfänger:</strong> die übrigen Branchenbuch-PRO-Mitglieder (Inhalt der Ausschreibung); Auftragsverarbeiter: Cloudflare (Speicherung).</li>
       </ul>
 
-      <h3>2.22 Deutscher Lebenslauf-Generator</h3>
+      <h3>2.22 Lebenslauf-Generatoren (deutsch, niederländisch, englisch)</h3>
       <p>
-        Das mit dem deutschen Lebenslauf-Generator erstellte PDF entsteht{" "}
+        Das mit den Lebenslauf-Generatoren (deutscher, niederländischer und englischer)
+        erstellte PDF entsteht{" "}
         <strong>ausschließlich in deinem Browser</strong> — die Daten deines Lebenslaufs gelangen
         im Regelfall <strong>nicht auf unseren Server</strong>. Das Speichern des Profils ist{" "}
         <strong>optional</strong> und erfolgt nur, wenn du am Ende das Kontrollkästchen{" "}

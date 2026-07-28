@@ -127,11 +127,49 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "nyelvlecke",      // ⭐ VAN GB kurzus (data-gb.ts, 100 lecke: brit angol, en-GB TTS)
 ]);
 
+/**
+ * ⚠️ ÖNÉLETRAJZ-KÉSZÍTŐK — ORSZÁGONKÉNT PONTOSAN EGY a helyes.
+ *
+ * Ugyanaz az eszköz három ország-konvencióban (német Lebenslauf / brit CV /
+ * holland CV). Hollandiában a német CV kifejezetten HIBÁS ajánlás: a holland
+ * munkáltató holland nyelvű, holland szakma-megnevezésű CV-t vár. Ezért NL-ben
+ * a német belépési pont eltűnik, és helyette a holland jelenik meg.
+ *
+ * A német CV továbbra is univerzális (CH/AT/DE — a teljes német nyelvterület),
+ * a holland viszont KIZÁRÓLAG NL. Maguk az oldalak közvetlen linkről bárhonnan
+ * elérhetők maradnak — ez a szabály csak a belépési pontokat (kezdőlap-rács,
+ * menü, kereső, „Neked ajánljuk") rendezi.
+ */
+const NL_ONLY_FEATURES: ReadonlySet<string> = new Set(["holland-oneletrajz"]);
+const NL_HIDDEN_FEATURES: ReadonlySet<string> = new Set(["nemet-oneletrajz"]);
+
+/**
+ * Ország → a HELYES önéletrajz-készítő. Egyetlen forrás, hogy a szöveges
+ * ajánlók (jelentkezés-oldal, hírlevél) ne csússzanak el a menü-gate-től.
+ * Az `adj` a magyar mondatba illő melléknév („német önéletrajz").
+ */
+export const CV_BUILDER_BY_COUNTRY: Readonly<Record<string, { href: string; adj: string }>> = {
+  CH: { href: "/nemet-oneletrajz", adj: "német" },
+  AT: { href: "/nemet-oneletrajz", adj: "német" },
+  DE: { href: "/nemet-oneletrajz", adj: "német" },
+  NL: { href: "/holland-oneletrajz", adj: "holland" },
+  GB: { href: "/angol-oneletrajz", adj: "angol" },
+};
+
+/** A megadott országhoz illő CV-készítő; ismeretlen ország → a német (CH-alap). */
+export function cvBuilderFor(country: string | null | undefined): { href: string; adj: string } {
+  return CV_BUILDER_BY_COUNTRY[country || DEFAULT_COUNTRY] ?? CV_BUILDER_BY_COUNTRY.CH;
+}
+
 export function isFeatureAvailable(
   feature: string,
   country: string | null | undefined,
 ): boolean {
   const c = country || DEFAULT_COUNTRY;
+  // ⚠️ A CV-készítők kapuja MINDEN más ág ELŐTT fut — a lenti „CH-ban minden
+  // elérhető" ág egyébként a holland CV-t is beengedné Svájcba.
+  if (NL_ONLY_FEATURES.has(feature)) return c === "NL";
+  if (c === "NL" && NL_HIDDEN_FEATURES.has(feature)) return false;
   if (c === "CH") return true; // Svájcban minden elérhető (a teljes meglévő app)
   // GB: engedélyező-lista (ld. a GB_ALLOWED_FEATURES fenti magyarázatát) — a
   // fel nem sorolt funkciók REJTVE maradnak, mert nincs hozzájuk angol tartalom.

@@ -13,6 +13,7 @@
  * mintája szerint.
  */
 import { getGuides, type Guide } from "./guides";
+import { cvBuilderFor } from "./feature-availability";
 
 /** ISO-8601 hét sorszáma (determinisztikus heti forgatáshoz). */
 export function isoWeek(d: Date = new Date()): { year: number; week: number } {
@@ -91,9 +92,12 @@ export function buildNewsletterText(d: NewsletterDraftData): { subject: string; 
     }
   }
 
+  // ⚠️ A hírlevél ország-szegmentált — a CV-tipp is az legyen: holland
+  // olvasónak a német Lebenslauf téves ajánlás.
+  const cv = cvBuilderFor(d.countryCode);
   parts.push(
     ``,
-    `💡 Tudtad? Német önéletrajzot 2 perc alatt, ingyen készíthetsz: https://kinti.app/nemet-oneletrajz`,
+    `💡 Tudtad? ${cv.adj.charAt(0).toUpperCase()}${cv.adj.slice(1)} önéletrajzot 2 perc alatt, ingyen készíthetsz: https://kinti.app${cv.href}`,
     ``,
     `Üdv,`,
     `a Kinti csapata`,

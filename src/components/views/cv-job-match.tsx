@@ -1,7 +1,8 @@
 "use client";
 
 /**
- * cv-job-match.tsx — „Intelligens állásajánló" a Német Önéletrajz Készítőben.
+ * cv-job-match.tsx — „Intelligens állásajánló" az önéletrajz-készítőkben
+ * (német / holland / angol — mindhárom ugyanezt a wizardot használja).
  *
  * A kész (letöltött) CV szakma-kategóriáját és az app-országot összeveti az aktív
  * hirdetésekkel (/api/jobs/match): az ELSŐ sikeres PDF-letöltés után BottomSheet
@@ -87,7 +88,12 @@ function MatchList({ data }: { data: MatchData }) {
   );
 }
 
-export function CvJobMatch({ categoryId, armed }: { categoryId: string; armed: boolean }) {
+/**
+ * `adj` — a kész CV nyelvének magyar melléknévi alakja („német"/„angol"/
+ * „holland"). A wizard adja át; enélkül a holland CV letöltése után is „friss
+ * német önéletrajzod" állna a sheetben.
+ */
+export function CvJobMatch({ categoryId, armed, adj = "német" }: { categoryId: string; armed: boolean; adj?: string }) {
   const [country] = usePreferredCountry();
   const [data, setData] = useState<MatchData | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -128,7 +134,7 @@ export function CvJobMatch({ categoryId, armed }: { categoryId: string; armed: b
       <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="A CV-d kész! 🎉">
         <div className="space-y-3 pt-1">
           <p className="text-[13.5px] leading-relaxed text-ink-muted">
-            A friss német önéletrajzod már az eszközödön van — ezek pedig a szakmádhoz
+            A friss {adj} önéletrajzod már az eszközödön van — ezek pedig a szakmádhoz
             illő, most aktív állások. Jelentkezz, amíg friss a CV!
           </p>
           <MatchList data={data} />

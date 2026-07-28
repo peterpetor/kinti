@@ -249,6 +249,9 @@ export function DropdownMenu() {
         ...(has("nemet-oneletrajz")
           ? [{ key: "cv", label: "Német önéletrajz-készítő", href: "/nemet-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
           : []),
+        ...(has("holland-oneletrajz")
+          ? [{ key: "cvnl", label: "Holland önéletrajz-készítő", href: "/holland-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
+          : []),
         { key: "cven", label: "Angol önéletrajz-készítő", href: "/angol-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" } },
         { key: "cvaudit", label: "AI CV-asszisztens", href: "/allasok/cv-audit", tint: "bg-success/10 text-success", icon: { name: "sparkles" }, badge: "pro" },
         ...(has("szakmai-szotar")

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { JobCategoryOptions } from "@/components/views/job-category-options";
 import { CvJobMatch } from "@/components/views/cv-job-match";
-import { cvProfession, CV_LANGUAGE_LEVELS } from "@/lib/cv-professions";
+import { cvProfession, cvLanguageLevels } from "@/lib/cv-professions";
 import { generateCvPdf, type CvData, type CvExperience, type CvEducation, type CvLanguage, type CvLocale } from "@/lib/cv-pdf";
 
 const inputCls =
@@ -67,7 +67,7 @@ const emptyEdu: CvEducation = { school: "", qualification: "", from: "", to: "" 
 
 const STEPS = ["Adatok", "Szakma", "Tapasztalat", "Végzettség", "Nyelvek & PDF"];
 
-/** PDF-kiemelőszínek — visszafogott, nyomtatásbarát árnyalatok (német HR-konform). */
+/** PDF-kiemelőszínek — visszafogott, nyomtatásbarát árnyalatok (HR-konform). */
 const ACCENTS: { hex: string; label: string }[] = [
   { hex: "#1d4434", label: "Zöld (klasszikus)" },
   { hex: "#212b36", label: "Antracit" },
@@ -76,23 +76,108 @@ const ACCENTS: { hex: string; label: string }[] = [
 ];
 
 /**
+ * Nyelv-függő szövegek. ⚠️ Az ŰRLAP MAGA VÉGIG MAGYAR (ez az app szabálya) —
+ * ami itt vált, az a CÉLNYELVRE mutató rész: a példák, a helyőrzők és a
+ * megnevezés-blokk címkéje. Enélkül az angol/holland CV-készítőn is német
+ * példák (Gabelstaplerfahrer, „heute", Führerschein) jelentek meg.
+ */
+interface CvTexts {
+  /** Célnyelv magyar melléknévi alakja: „németre", „angolra", „hollandra". */
+  toLang: string;
+  /** „német" / „angol" / „holland" — mondat közepére. */
+  adj: string;
+  /** Kezdő nyelvsorok (a felhasználó szerkesztheti). */
+  langs: CvLanguage[];
+  cityLabel: string;
+  cityPh: string;
+  phonePh: string;
+  professionPh: string;
+  profileLabel: string;
+  summaryPh: string;
+  rolePh: string;
+  toPh: string;
+  qualificationPh: string;
+  langsLabel: string;
+  langNamePh: string;
+  skillsLabel: string;
+  skillsPh: string;
+  namePreview: string;
+  downloadLabel: string;
+}
+
+const TXT: Record<CvLocale, CvTexts> = {
+  de: {
+    toLang: "németre", adj: "német",
+    langs: [
+      { name: "Ungarisch", level: "Muttersprache" },
+      { name: "Deutsch", level: "B1 (Fortgeschritten)" },
+    ],
+    cityLabel: "Város (Wohnort)", cityPh: "München", phonePh: "+49 …",
+    professionPh: "pl. Elektroniker für Betriebstechnik",
+    profileLabel: "Rövid bemutatkozás (Kurzprofil, opcionális)",
+    summaryPh: "1-2 mondat magadról, erősségeidről (németül, ha tudsz).",
+    rolePh: "Pozíció (pl. Gabelstaplerfahrer)", toPh: "Vége (pl. heute)",
+    qualificationPh: "Végzettség / szak (pl. Fachkraft, Abitur)",
+    langsLabel: "Nyelvtudás (Sprachkenntnisse)", langNamePh: "Nyelv (pl. Deutsch)",
+    skillsLabel: "Egyéb készségek (Weitere Kenntnisse, opcionális)",
+    skillsPh: "pl. Führerschein C+E, Staplerschein, MS Office, EDV-Grundkenntnisse",
+    namePreview: "Vor- und Nachname", downloadLabel: "Német önéletrajz letöltése (PDF)",
+  },
+  en: {
+    toLang: "angolra", adj: "angol",
+    langs: [
+      { name: "Hungarian", level: "Native speaker" },
+      { name: "English", level: "B1 (Intermediate)" },
+    ],
+    cityLabel: "Város (Location)", cityPh: "London", phonePh: "+44 …",
+    professionPh: "pl. Maintenance Electrician",
+    profileLabel: "Rövid bemutatkozás (Personal Profile, opcionális)",
+    summaryPh: "3-4 mondat arról, mit tudsz és mit keresel (angolul, ha tudsz).",
+    rolePh: "Pozíció (pl. Forklift Driver)", toPh: "Vége (pl. present)",
+    qualificationPh: "Végzettség / szak (pl. NVQ Level 3, A-levels)",
+    langsLabel: "Nyelvtudás (Languages)", langNamePh: "Nyelv (pl. English)",
+    skillsLabel: "Egyéb készségek (Additional skills, opcionális)",
+    skillsPh: "pl. Full UK driving licence, forklift licence (RTITB), CSCS card, MS Office",
+    namePreview: "First and last name", downloadLabel: "Angol önéletrajz letöltése (PDF)",
+  },
+  nl: {
+    toLang: "hollandra", adj: "holland",
+    langs: [
+      { name: "Hongaars", level: "Moedertaal" },
+      { name: "Nederlands", level: "B1 (Gevorderd)" },
+    ],
+    cityLabel: "Város (Woonplaats)", cityPh: "Amsterdam", phonePh: "+31 …",
+    professionPh: "pl. Elektromonteur industrie",
+    profileLabel: "Rövid bemutatkozás (Profiel, opcionális)",
+    summaryPh: "3-4 mondat arról, mit tudsz és mit keresel (hollandul, ha tudsz).",
+    rolePh: "Pozíció (pl. Heftruckchauffeur)", toPh: "Vége (pl. heden)",
+    qualificationPh: "Végzettség / szak (pl. mbo-diploma, havo)",
+    langsLabel: "Nyelvtudás (Talenkennis)", langNamePh: "Nyelv (pl. Nederlands)",
+    skillsLabel: "Egyéb készségek (Overige vaardigheden, opcionális)",
+    skillsPh: "pl. Rijbewijs C+E, heftruckcertificaat, VCA-diploma, MS Office",
+    namePreview: "Voor- en achternaam", downloadLabel: "Holland önéletrajz letöltése (PDF)",
+  },
+};
+
+/**
  * `locale` — melyik ország CV-konvenciója. "de" (alap): DIN-5008 Lebenslauf
  * fotóval és születési évvel. "en": brit CV — ⚠️ fotó és születési év NÉLKÜL
  * (Equality Act / age discrimination), „References available on request" záró
- * sorral. A szakma-megnevezés a megfelelő kurált szótárból jön.
+ * sorral. "nl": holland CV — szerkezetileg a némethez áll közel (fotó és
+ * születési év megengedett), de holland címkékkel és a bevett „Referenties op
+ * aanvraag" záró sorral. A szakma-megnevezés a megfelelő kurált szótárból jön.
  */
 export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
   const isEn = locale === "en";
+  const t = TXT[locale];
+  const levels = cvLanguageLevels(locale);
   const [step, setStep] = useState(0);
   const [f, setF] = useState<FormState>({
     fullName: "", email: "", phone: "", city: "", birthYear: "",
     categoryId: "", customProfession: "", yearsExperience: "", summary: "",
     experience: [{ ...emptyExp }],
     education: [{ ...emptyEdu }],
-    languages: [
-      { name: "Ungarisch", level: "Muttersprache" },
-      { name: "Deutsch", level: "B1 (Fortgeschritten)" },
-    ],
+    languages: t.langs.map((l) => ({ ...l })),
     skills: "",
     photo: "",
     accent: ACCENTS[0].hex,
@@ -221,8 +306,8 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
           </div>
           <div className={isEn ? "" : "grid grid-cols-2 gap-3"}>
             <div>
-              <label className={labelCls}>{isEn ? "Város (Location)" : "Város (Wohnort)"}</label>
-              <input className={inputCls} value={f.city} onChange={(e) => set("city", e.target.value)} placeholder={isEn ? "London" : "München"} maxLength={80} />
+              <label className={labelCls}>{t.cityLabel}</label>
+              <input className={inputCls} value={f.city} onChange={(e) => set("city", e.target.value)} placeholder={t.cityPh} maxLength={80} />
             </div>
             {/* ⚠️ A születési év a BRIT CV-ből kimarad (age discrimination) — a
                 mezőt EN-ben be sem kérjük, hogy ne is kerülhessen a PDF-be. */}
@@ -240,7 +325,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
             </div>
             <div>
               <label className={labelCls}>Telefon</label>
-              <input className={inputCls} inputMode="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder={isEn ? "+44 …" : "+49 …"} maxLength={40} />
+              <input className={inputCls} inputMode="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder={t.phonePh} maxLength={40} />
             </div>
           </div>
           {/* Profilkép (Bewerbungsfoto) — opcionális, a böngészőben vágódik 35:45-re.
@@ -279,7 +364,10 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
               </div>
             </div>
             <p className="mt-1.5 text-[11px] leading-snug text-ink-faint">
-              A kép a böngésződben 35×45 mm-es igazolványkép-arányra vágódik, és <strong>nem töltődik fel sehová</strong> — csak a PDF-be kerül. Sok modern német CV szándékosan fotó nélküli (anonymer Lebenslauf) — nyugodtan kihagyhatod.
+              A kép a böngésződben 35×45 mm-es igazolványkép-arányra vágódik, és <strong>nem töltődik fel sehová</strong> — csak a PDF-be kerül.{" "}
+              {locale === "nl"
+                ? "Hollandiában a fotó megengedett, de nem elvárás — egyre több CV készül fotó nélkül, nyugodtan kihagyhatod."
+                : "Sok modern német CV szándékosan fotó nélküli (anonymer Lebenslauf) — nyugodtan kihagyhatod."}
             </p>
           </div>
           )}
@@ -290,7 +378,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
       {step === 1 && (
         <div className="space-y-3">
           <div>
-            <label className={labelCls}>Szakma (magyarul választd — németre fordítjuk)</label>
+            <label className={labelCls}>Szakma (magyarul választd — {t.toLang} fordítjuk)</label>
             <select className={inputCls} value={f.categoryId} onChange={(e) => set("categoryId", e.target.value)}>
               <option value="">Válassz szakmát…</option>
               <JobCategoryOptions />
@@ -298,21 +386,21 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
           </div>
           {professionDe && (
             <div className="rounded-xl border border-primary/20 bg-primary-soft/40 px-3 py-2.5">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-primary">Német megnevezés (a CV-ben)</p>
+              <p className="text-[11px] font-bold uppercase tracking-wide text-primary">{t.adj.charAt(0).toUpperCase() + t.adj.slice(1)} megnevezés (a CV-ben)</p>
               <p className="text-[15px] font-extrabold text-ink">{professionDe}</p>
             </div>
           )}
           <div>
             <label className={labelCls}>Egyedi megnevezés (opcionális — felülírja a fentit)</label>
-            <input className={inputCls} value={f.customProfession} onChange={(e) => set("customProfession", e.target.value)} placeholder="pl. Elektroniker für Betriebstechnik" maxLength={120} />
+            <input className={inputCls} value={f.customProfession} onChange={(e) => set("customProfession", e.target.value)} placeholder={t.professionPh} maxLength={120} />
           </div>
           <div>
             <label className={labelCls}>Tapasztalat (év)</label>
             <input className={inputCls} inputMode="numeric" value={f.yearsExperience} onChange={(e) => set("yearsExperience", e.target.value.replace(/\D/g, "").slice(0, 2))} placeholder="5" />
           </div>
           <div>
-            <label className={labelCls}>Rövid bemutatkozás (Kurzprofil, opcionális)</label>
-            <textarea className={`${inputCls} min-h-[80px] resize-y`} value={f.summary} onChange={(e) => set("summary", e.target.value)} placeholder="1-2 mondat magadról, erősségeidről (németül, ha tudsz)." maxLength={600} />
+            <label className={labelCls}>{t.profileLabel}</label>
+            <textarea className={`${inputCls} min-h-[80px] resize-y`} value={f.summary} onChange={(e) => set("summary", e.target.value)} placeholder={t.summaryPh} maxLength={600} />
           </div>
         </div>
       )}
@@ -320,7 +408,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
       {/* ── 2: Tapasztalat ── */}
       {step === 2 && (
         <div className="space-y-3">
-          <p className="text-[12px] text-ink-muted">A legfrissebb munkahelyed legyen legfelül (a német CV fordított időrendű).</p>
+          <p className="text-[12px] text-ink-muted">A legfrissebb munkahelyed legyen legfelül (a {t.adj} CV fordított időrendű).</p>
           {f.experience.map((e, i) => (
             <div key={i} className="space-y-2 rounded-xl border border-line bg-surface-alt/40 p-3">
               <div className="flex items-center justify-between">
@@ -329,11 +417,11 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
                   <button type="button" onClick={() => set("experience", f.experience.filter((_, j) => j !== i))} className="text-[11px] font-bold text-accent">Törlés</button>
                 )}
               </div>
-              <input className={inputCls} value={e.role} onChange={(ev) => updateExp(i, { role: ev.target.value })} placeholder="Pozíció (pl. Gabelstaplerfahrer)" maxLength={120} />
+              <input className={inputCls} value={e.role} onChange={(ev) => updateExp(i, { role: ev.target.value })} placeholder={t.rolePh} maxLength={120} />
               <input className={inputCls} value={e.employer} onChange={(ev) => updateExp(i, { employer: ev.target.value })} placeholder="Munkáltató / cég" maxLength={120} />
               <div className="grid grid-cols-2 gap-2">
                 <input className={inputCls} value={e.from} onChange={(ev) => updateExp(i, { from: ev.target.value })} placeholder="Kezdés (pl. 2020)" maxLength={20} />
-                <input className={inputCls} value={e.to} onChange={(ev) => updateExp(i, { to: ev.target.value })} placeholder="Vége (pl. heute)" maxLength={20} />
+                <input className={inputCls} value={e.to} onChange={(ev) => updateExp(i, { to: ev.target.value })} placeholder={t.toPh} maxLength={20} />
               </div>
               <textarea className={`${inputCls} min-h-[60px] resize-y`} value={e.desc} onChange={(ev) => updateExp(i, { desc: ev.target.value })} placeholder="Feladatok, felelősségek (opcionális)" maxLength={500} />
             </div>
@@ -355,7 +443,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
                   <button type="button" onClick={() => set("education", f.education.filter((_, j) => j !== i))} className="text-[11px] font-bold text-accent">Törlés</button>
                 )}
               </div>
-              <input className={inputCls} value={e.qualification} onChange={(ev) => updateEdu(i, { qualification: ev.target.value })} placeholder="Végzettség / szak (pl. Fachkraft, Abitur)" maxLength={120} />
+              <input className={inputCls} value={e.qualification} onChange={(ev) => updateEdu(i, { qualification: ev.target.value })} placeholder={t.qualificationPh} maxLength={120} />
               <input className={inputCls} value={e.school} onChange={(ev) => updateEdu(i, { school: ev.target.value })} placeholder="Iskola / intézmény neve" maxLength={120} />
               <div className="grid grid-cols-2 gap-2">
                 <input className={inputCls} value={e.from} onChange={(ev) => updateEdu(i, { from: ev.target.value })} placeholder="Kezdés (pl. 2005)" maxLength={20} />
@@ -373,13 +461,13 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
       {step === 4 && (
         <div className="space-y-3">
           <div className="space-y-2">
-            <label className={labelCls}>Nyelvtudás (Sprachkenntnisse)</label>
+            <label className={labelCls}>{t.langsLabel}</label>
             {f.languages.map((l, i) => (
               <div key={i} className="flex gap-2">
-                <input className={`${inputCls} flex-1`} value={l.name} onChange={(e) => updateLang(i, { name: e.target.value })} placeholder="Nyelv (pl. Deutsch)" maxLength={40} />
+                <input className={`${inputCls} flex-1`} value={l.name} onChange={(e) => updateLang(i, { name: e.target.value })} placeholder={t.langNamePh} maxLength={40} />
                 <select className={`${inputCls} flex-1`} value={l.level} onChange={(e) => updateLang(i, { level: e.target.value })}>
                   <option value="">Szint…</option>
-                  {CV_LANGUAGE_LEVELS.map((lv) => <option key={lv} value={lv}>{lv}</option>)}
+                  {levels.map((lv) => <option key={lv} value={lv}>{lv}</option>)}
                 </select>
                 {f.languages.length > 1 && (
                   <button type="button" onClick={() => set("languages", f.languages.filter((_, j) => j !== i))} aria-label="Törlés" className="shrink-0 rounded-lg px-2 text-accent">✕</button>
@@ -389,8 +477,8 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
             <button type="button" onClick={() => set("languages", [...f.languages, { name: "", level: "" }])} className="text-[12px] font-bold text-primary">+ Nyelv hozzáadása</button>
           </div>
           <div>
-            <label className={labelCls}>Egyéb készségek (Weitere Kenntnisse, opcionális)</label>
-            <textarea className={`${inputCls} min-h-[60px] resize-y`} value={f.skills} onChange={(e) => set("skills", e.target.value)} placeholder="pl. Führerschein C+E, Staplerschein, MS Office, EDV-Grundkenntnisse" maxLength={400} />
+            <label className={labelCls}>{t.skillsLabel}</label>
+            <textarea className={`${inputCls} min-h-[60px] resize-y`} value={f.skills} onChange={(e) => set("skills", e.target.value)} placeholder={t.skillsPh} maxLength={400} />
           </div>
 
           {/* PDF-megjelenés: kiemelőszín + élő fejléc-előnézet */}
@@ -418,7 +506,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
             <div className="flex items-start gap-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[17px] font-extrabold leading-tight text-[#212b36]">
-                  {f.fullName.trim() || (isEn ? "First and last name" : "Vor- und Nachname")}
+                  {f.fullName.trim() || t.namePreview}
                 </p>
                 {professionDe && (
                   <p className="mt-0.5 truncate text-[12.5px] font-bold" style={{ color: f.accent }}>
@@ -442,13 +530,13 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
           {/* PDF letöltés */}
           <button type="button" onClick={downloadPdf} disabled={busy} className="flex w-full items-center justify-center gap-2 rounded-pill bg-primary px-4 py-3 text-[15px] font-extrabold text-white transition active:scale-[0.98] disabled:opacity-60">
             <Icon name="document" size={17} strokeWidth={2.4} />
-            {busy ? "Készül a PDF…" : "Német önéletrajz letöltése (PDF)"}
+            {busy ? "Készül a PDF…" : t.downloadLabel}
           </button>
           {pdfError && <p className="text-[12.5px] font-semibold text-accent">{pdfError}</p>}
           <p className="text-center text-[11px] text-ink-faint">A PDF a böngésződben készül — az adataid nem hagyják el az eszközöd.</p>
 
           {/* Intelligens állásajánló: a kész CV szakmájára illő aktív hirdetések. */}
-          <CvJobMatch categoryId={f.categoryId} armed={pdfDone} />
+          <CvJobMatch categoryId={f.categoryId} armed={pdfDone} adj={t.adj} />
 
 
           {/* Opcionális, hozzájárulás-alapú mentés */}

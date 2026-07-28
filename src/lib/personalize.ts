@@ -123,11 +123,12 @@ export function buildPersonalizedItems(
   const byFocus: Record<PersonalizeFocus, PersonalItem[]> = {
     munka: [
       { emoji: "💼", title: `Állások ${inCountry}`, desc: "Magyar nyelvű hirdetések + heti válogatás", href: "/allasok" },
-      // A német CV a német nyelvterületre való — NL-ben nem ajánljuk, GB-ben
-      // pedig az ANGOL CV-készítő a helyes (brit konvenció: fotó/szül.év nélkül).
+      // A német CV a német nyelvterületre való — NL-ben a HOLLAND, GB-ben az
+      // ANGOL CV-készítő a helyes (más konvenció, nem csak más nyelv).
       ...(country === "GB"
         ? [{ emoji: "📄", title: "Angol önéletrajz-készítő", desc: "Brit szabvány szerinti CV magyarul kitöltve, ingyen", href: "/angol-oneletrajz" }]
-        : country === "NL" ? []
+        : country === "NL"
+        ? [{ emoji: "📄", title: "Holland önéletrajz-készítő", desc: "Holland szabvány szerinti CV magyarul kitöltve, ingyen", href: "/holland-oneletrajz" }]
         : [{ emoji: "📄", title: "Német önéletrajz-készítő", desc: "DIN-szabványos PDF magyarul kitöltve, ingyen", href: "/nemet-oneletrajz" }]),
       { emoji: "🧮", title: "Bérkalkulátor", desc: "Bruttó → nettó: mennyit ér az ajánlat?", href: "/berkalkulator" },
       guideItem("munkavallalas", country, "📖", "Munkavállalás — a tudnivalók", "Szerződés, próbaidő, jogaid — hivatalos forrásból"),

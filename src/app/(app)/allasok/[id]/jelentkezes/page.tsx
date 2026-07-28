@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getJobById, getEmployerById, getWorkerProfileByUser } from "@/lib/repo";
+import { cvBuilderFor } from "@/lib/feature-availability";
 import { Icon } from "@/components/ui";
 import { ApplicationForm } from "@/components/views/application-form";
 import { Metadata } from "next";
@@ -32,6 +33,8 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
     ? { fullName: profile.fullName, email: profile.email, phone: profile.phone, hasCv: !!profile.cvKey }
     : null;
 
+  const cvBuilder = cvBuilderFor(job.country);
+
   return (
     <div className="mx-auto max-w-md space-y-6 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+2rem)]">
       <header className="flex items-center gap-3">
@@ -57,10 +60,12 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
         <ApplicationForm jobId={job.id} jobTitle={job.title} prefill={prefill} />
       </section>
 
-      {/* Fordított tölcsér: jelentkezés közben derül ki, hogy nincs német CV. */}
+      {/* Fordított tölcsér: jelentkezés közben derül ki, hogy nincs kész CV.
+          ⚠️ A HIRDETÉS országa dönt (nem a felhasználó beállítása): holland
+          álláshoz holland, angolhoz brit CV a helyes. */}
       <p className="text-center text-[12.5px] text-ink-muted">
-        Nincs még német önéletrajzod?{" "}
-        <Link href="/nemet-oneletrajz" className="font-bold text-primary underline">
+        Nincs még {cvBuilder.adj} önéletrajzod?{" "}
+        <Link href={cvBuilder.href} className="font-bold text-primary underline">
           Készítsd el pár perc alatt →
         </Link>
       </p>

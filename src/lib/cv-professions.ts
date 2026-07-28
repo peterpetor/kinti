@@ -134,13 +134,14 @@ export function cvProfessionDe(categoryId: string | null | undefined): string | 
   return CV_PROFESSION_DE[categoryId] ?? null;
 }
 
-/** Szakma-megnevezés a kért CV-nyelven (de = német, en = brit angol). */
+/** Szakma-megnevezés a kért CV-nyelven (de = német, en = brit angol, nl = holland). */
 export function cvProfession(
   categoryId: string | null | undefined,
-  locale: "de" | "en",
+  locale: "de" | "en" | "nl",
 ): string | null {
   if (!categoryId) return null;
-  const map = locale === "en" ? CV_PROFESSION_EN : CV_PROFESSION_DE;
+  const map =
+    locale === "en" ? CV_PROFESSION_EN : locale === "nl" ? CV_PROFESSION_NL : CV_PROFESSION_DE;
   return map[categoryId] || null;
 }
 
@@ -154,6 +155,35 @@ export const CV_LANGUAGE_LEVELS = [
   "C2 (Annähernd muttersprachlich)",
   "Muttersprache",
 ] as const;
+
+/** Brit angol nyelvi szintek (CEFR + anyanyelv). */
+export const CV_LANGUAGE_LEVELS_EN = [
+  "A1 (Beginner)",
+  "A2 (Elementary)",
+  "B1 (Intermediate)",
+  "B2 (Upper intermediate)",
+  "C1 (Advanced)",
+  "C2 (Proficient)",
+  "Native speaker",
+] as const;
+
+/** Holland nyelvi szintek (ERK = a CEFR holland neve + anyanyelv). */
+export const CV_LANGUAGE_LEVELS_NL = [
+  "A1 (Beginner)",
+  "A2 (Basisgebruiker)",
+  "B1 (Gevorderd)",
+  "B2 (Zelfstandig)",
+  "C1 (Vergevorderd)",
+  "C2 (Bijna moedertaal)",
+  "Moedertaal",
+] as const;
+
+/** A nyelvtudás-szintek listája a kért CV-nyelven. */
+export function cvLanguageLevels(locale: "de" | "en" | "nl"): readonly string[] {
+  if (locale === "en") return CV_LANGUAGE_LEVELS_EN;
+  if (locale === "nl") return CV_LANGUAGE_LEVELS_NL;
+  return CV_LANGUAGE_LEVELS;
+}
 
 /**
  * cv-professions EN — magyar → ANGOL (UK) szakma-megnevezés az Angol Önéletrajz
@@ -278,5 +308,134 @@ export const CV_PROFESSION_EN: Record<string, string> = {
   korrepetalo: "Private Tutor",
   nyelvtanar: "Language Teacher",
   edzo: "Fitness Instructor / Personal Trainer",
+  egyeb: "",
+};
+
+/**
+ * cv-professions NL — magyar → HOLLAND szakma-megnevezés a Holland Önéletrajz
+ * Készítőhöz. Ugyanaz az elv, mint a németnél és az angolnál: KURÁLT lista,
+ * nem gépi fordítás (ld. [[ai-content-accuracy]]).
+ *
+ * ⚠️ A holland CV-ben NINCS gender-jelölés (a német /in párja) — a holland
+ * álláshirdetés-nyelv semleges alakot használ („Kapper", nem „Kapper/ster").
+ * A megnevezések a bevett holland vacaturetekst-szóhasználatot követik: sok
+ * szakmánál a `-medewerker` (pl. Productiemedewerker) és a `-monteur`
+ * (pl. Onderhoudsmonteur) a HR-standard, nem a szótári alak.
+ */
+export const CV_PROFESSION_NL: Record<string, string> = {
+  // Építőipar & szakiparok
+  epitoipar: "Bouwvakker",
+  komuves: "Metselaar",
+  burkolo: "Tegelzetter",
+  padloburkolo: "Vloerenlegger (parketteur)",
+  festo: "Schilder (afwerking)",
+  asztalos: "Timmerman / Meubelmaker",
+  tetofedo: "Dakdekker",
+  gipszkarton: "Wand- en plafondmonteur (gipsplaat)",
+  szigetelo: "Isolatiemonteur (gevel)",
+  uveges: "Glaszetter",
+  villanyszerelo: "Elektricien (elektromonteur)",
+  vizszerelo: "Loodgieter (installatiemonteur)",
+  epuletgepesz: "Installatiemonteur klimaattechniek (W-installaties)",
+  hegeszto: "Lasser (constructiebankwerker)",
+  allvanyozo: "Steigerbouwer",
+  foldmunkas: "Grondwerker / Machinist",
+  daru: "Kraanmachinist",
+  // Ipar, gyártás, technika
+  "ipar-gyartas": "Productiemedewerker",
+  szereldei: "Assemblagemedewerker (lopende band)",
+  cnc: "CNC-operator",
+  forgacsolo: "CNC-verspaner (draaier)",
+  gepesz: "Onderhoudsmonteur (machinebouw)",
+  elektronika: "Elektrotechnicus (industriële automatisering)",
+  muanyag: "Procesoperator kunststof/rubber",
+  csomagolo: "Inpakmedewerker (productie)",
+  // Jármű & szállítás
+  logisztika: "Magazijnmedewerker (logistiek)",
+  sofor: "Vrachtwagenchauffeur (C/CE)",
+  buszsofor: "Buschauffeur",
+  taxi: "Taxichauffeur",
+  futar: "Bezorger / Koerier",
+  targoncas: "Heftruckchauffeur",
+  gepjarmu: "Automonteur (APK-keurmeester)",
+  // Vendéglátás & turizmus
+  vendeglatas: "Horecamedewerker",
+  szakacs: "Kok",
+  pincer: "Medewerker bediening (ober)",
+  konyhai: "Keukenhulp / Afwasser",
+  gyorsetterem: "Crewmedewerker (fastfood)",
+  pek: "Bakker / Banketbakker",
+  barista: "Barista",
+  csapos: "Barmedewerker (barman)",
+  catering: "Cateringmedewerker (banqueting)",
+  hotel: "Hotelmedewerker / Receptionist",
+  idegenvezeto: "Reisleider / Gids",
+  // Egészségügy & gondozás
+  egeszsegugy: "Zorgmedewerker (verzorgende IG)",
+  idosgondozas: "Verzorgende ouderenzorg",
+  gyermekfelugyelet: "Pedagogisch medewerker kinderopvang",
+  szocialis: "Begeleider (sociaal werk)",
+  mento: "Ambulancemedewerker (zorgvervoer)",
+  fogaszat: "Tandartsassistent",
+  optikus: "Opticien (optiekmedewerker)",
+  gyogyszertar: "Apothekersassistent",
+  laborasszisztens: "Laboratoriumassistent (analist)",
+  massaz: "Masseur / Fysiotherapeut",
+  // Szépség & wellness
+  szepsegipar: "Medewerker schoonheidsverzorging",
+  fodrasz: "Kapper",
+  borbely: "Barbier (herenkapper)",
+  kozmetikus: "Schoonheidsspecialist",
+  sminkes: "Visagist (make-upartiest)",
+  mukormos: "Nagelstylist",
+  tetovalo: "Tatoeëerder / Piercer",
+  wellness: "Wellness-/spamedewerker",
+  // Kereskedelem & ügyfélszolgálat
+  kereskedelem: "Verkoopmedewerker (detailhandel)",
+  penztaros: "Kassamedewerker",
+  arufeltolto: "Vakkenvuller",
+  boltvezeto: "Filiaalmanager",
+  ugyfelszolgalat: "Klantenservicemedewerker (callcenter)",
+  ertekesites: "Verkoopadviseur (accountmanager)",
+  webshop: "E-commercemedewerker",
+  ingatlan: "Makelaar (onroerend goed)",
+  biztositas: "Verzekeringsadviseur",
+  // Szolgáltatás & háztartás
+  takaritas: "Schoonmaakmedewerker",
+  ablaktisztito: "Glazenwasser (gevelreiniger)",
+  mosoda: "Medewerker wasserij (textielreiniging)",
+  koltoztetes: "Verhuismedewerker",
+  biztonsag: "Beveiligingsmedewerker",
+  karbantartas: "Onderhoudsmedewerker (huismeester)",
+  hulladek: "Medewerker afval en recycling",
+  // Mezőgazdaság & kertészet
+  mezogazdasag: "Agrarisch medewerker",
+  idenymunkas: "Seizoenmedewerker (oogst)",
+  kertesz: "Hovenier (tuinonderhoud)",
+  viragkoto: "Bloemist",
+  allattenyesztes: "Dierverzorger (veehouderij)",
+  borasz: "Wijnmaker (keldermeester)",
+  // Iroda, pénzügy, jog
+  iroda: "Administratief medewerker",
+  asszisztens: "Managementassistent (secretariaat)",
+  penzugy: "Boekhouder (financiële administratie)",
+  bank: "Bankmedewerker",
+  beszerzes: "Inkoper (inkoopmedewerker)",
+  hr: "HR-medewerker (personeelszaken)",
+  jog: "Juridisch medewerker (jurist)",
+  // IT & média
+  it: "Softwareontwikkelaar",
+  rendszergazda: "Systeembeheerder (IT-support)",
+  tesztelo: "Softwaretester (QA)",
+  adatelemzo: "Data-analist",
+  media: "Marketing-/mediamedewerker",
+  grafikus: "Grafisch vormgever (UX/UI)",
+  fotos: "Fotograaf / Videograaf",
+  // Oktatás & nyelvek
+  oktatas: "Leerkracht / Docent",
+  ovoda: "Pedagogisch medewerker (kinderdagverblijf)",
+  korrepetalo: "Bijlesdocent",
+  nyelvtanar: "Taaldocent / Vertaler",
+  edzo: "Sportinstructeur / Personal trainer",
   egyeb: "",
 };
