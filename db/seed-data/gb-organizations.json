@@ -698,6 +698,18 @@
       "phone": "+44 7539 853547",
       "lat": 52.4877341,
       "lng": -0.7032713
+    },
+    {
+      "name": "Good Accountant Ltd — magyar könyvelőiroda, Manchester",
+      "type": "magyar könyvelőiroda (self-employed, Ltd, bérszámfejtés, adóvisszaigénylés)",
+      "category": "konyveles",
+      "city": "Manchester",
+      "region": "NW",
+      "address": "Országos, online könyvelés és bérszámfejtés — telefonon és e-mailben (manchesteri bázissal)",
+      "phone": "+44 78055 27006",
+      "email": "contact@goodaccountant.co.uk",
+      "website": "https://konyveles.co.uk",
+      "hours": "H–P 9–17, Szo 10–13, V zárva"
     }
   ]
 }
