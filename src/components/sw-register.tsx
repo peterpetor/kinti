@@ -2,21 +2,32 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { isSafeToReload } from "@/lib/auto-update-safety";
+
 /**
- * Service Worker regisztrálás + frissítés-figyelő.
+ * Service Worker regisztrálás + NÉMA, automatikus frissítés.
  *
  *   • Csak production buildben fut (dev alatt a Next HMR-jét megzavarná).
- *   • Ha új SW-t észlel (`updatefound` → `installed` állapot), megjelenít
- *     egy diszkrét Liquid Glass értesítést: „Új verzió érhető el — Frissítés”.
- *     A felhasználó vezérli, ne legyen meglepetés-reload.
- *   • Üzenetet küld a SW-nek (`SKIP_WAITING`), majd a `controllerchange`
- *     eseményre újratölti az oldalt.
- *   • KÉNYSZERÍTETT MÓD (2026-07-25, user-döntés): ha egy frissítés
- *     GRACE_MS-nél régebb óta függőben van (a user sosem kattintott), a
- *     banner nem-elutasíthatóvá válik és FORCE_COUNTDOWN_S után magától
- *     lefut — így senki nem ragadhat végtelenül régi verzión, de mindig
- *     kap egy látható, pár másodperces figyelmeztetést előtte (nincs
- *     figyelmeztetés nélküli reload, ami félbeszakítana egy űrlap-kitöltést).
+ *   • ⚠️ 2026-07-28 (user-döntés: „idegesítő a gomb, frissítsen magától"):
+ *     a régi „Új verzió érhető el — Frissítés" banner ALAPESETBEN NEM
+ *     jelenik meg. Helyette az app magától frissül, de CSAK olyan
+ *     pillanatban, amikor az nem szakít félbe semmit:
+ *       1. „hideg indítás" — a frissítést az app megnyitása utáni pár
+ *          másodpercben vesszük észre → azonnal alkalmazzuk (a user még
+ *          nem csinál semmit, gyakorlatilag láthatatlan);
+ *       2. hosszabb távollét utáni VISSZATÉRÉS (AWAY_MS) → ilyenkor egy
+ *          friss betöltés amúgy is természetes érzés.
+ *     Aktív használat közben SOHA nem rántjuk ki a lábad alól a szőnyeget.
+ *   • Két biztonsági fék:
+ *       – `isSafeToReload()`: ha bármelyik űrlapmezőbe írtál, vagy épp
+ *         szól egy hang/videó, az automatikus frissítés KIMARAD;
+ *       – `MAX_AUTO_TRIES`: ha az automata már kétszer próbálkozott és a
+ *         verzió MÉGSEM változott (pl. edge-cache régi HTML-t ad), akkor
+ *         feladja és inkább megmutatja a kézi gombot — így egy hibás
+ *         deploy nem tud végtelen újratöltés-hurokba vinni.
+ *   • Végső háló: ha egy frissítés GRACE_MS-nél régebb óta függ (mert pl.
+ *     mindig volt félkész űrlap), a banner nem-elutasíthatóvá válik és
+ *     FORCE_COUNTDOWN_S látható visszaszámlálás után magától lefut.
  *
  * A SW bejegyzése `/sw.js` — public/-ból a Cloudflare Pages közvetlenül szolgálja ki.
  */
@@ -29,6 +40,15 @@ const FORCE_COUNTDOWN_S = 20;
 // futó) build-hez kötött, hogy egy sikeres frissítés után természetesen
 // nullázódjon (a következő stale-észlelésnél a myBuild már más lesz).
 const PENDING_KEY = "kinti_update_pending_since";
+
+// ── Néma automatika ─────────────────────────────────────────────────────────
+/** Az oldal betöltése után ennyi ideig számít „épp most nyitotta meg". */
+const COLD_START_MS = 10_000;
+/** Ennyi távollét után a visszatérés már „friss indulásnak" érződik. */
+const AWAY_MS = 3 * 60 * 1000; // 3 perc
+/** Hányszor próbálkozhat az automata ugyanarról a buildről, mielőtt feladja. */
+const MAX_AUTO_TRIES = 2;
+const AUTO_KEY = "kinti_auto_update_tries";
 
 interface PendingRecord {
   build: string;
@@ -69,6 +89,29 @@ function clearPending(): void {
   }
 }
 
+/** Hányszor próbált már az automata EBBŐL a buildből frissíteni. A rekord a
+ * SAJÁT build-hez kötött, így egy sikeres frissítés után magától nullázódik
+ * (az új buildre még 0 próbálkozás tartozik) — nem kell takarítani. */
+function readTries(myBuild: string): number {
+  try {
+    const raw = localStorage.getItem(AUTO_KEY);
+    if (!raw) return 0;
+    const v = JSON.parse(raw) as { build?: string; n?: number };
+    if (v && v.build === myBuild && typeof v.n === "number") return v.n;
+    return 0;
+  } catch {
+    return 0;
+  }
+}
+
+function bumpTries(myBuild: string): void {
+  try {
+    localStorage.setItem(AUTO_KEY, JSON.stringify({ build: myBuild, n: readTries(myBuild) + 1 }));
+  } catch {
+    /* ignore */
+  }
+}
+
 export function SWRegister() {
   const [waitingSW, setWaitingSW] = useState<ServiceWorker | null>(null);
   // Verzió-eltérés (új deploy) észlelve — akkor is, ha nincs „waiting" SW.
@@ -76,10 +119,15 @@ export function SWRegister() {
   const [dismissed, setDismissed] = useState(false);
   const [pendingSince, setPendingSince] = useState<number | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
+  // Az automata feladta (MAX_AUTO_TRIES elfogyott) → jöhet a kézi gomb.
+  const [autoExhausted, setAutoExhausted] = useState(false);
   // Biztonsági háló a "Frissítés" gombhoz — ld. applyUpdate.
   const fallbackReload = useRef<number | null>(null);
   const countdownTimer = useRef<number | null>(null);
   const applyUpdateRef = useRef<() => void>(() => {});
+  // Mikor töltődött be ez az oldal, és mikor tűnt el a szem elől.
+  const mountedAt = useRef(Date.now());
+  const hiddenAt = useRef<number | null>(null);
 
   const updateReady = !!waitingSW || versionStale;
 
@@ -157,8 +205,8 @@ export function SWRegister() {
 
     // A build-ID-t a regisztrációs URL-be tesszük: deployonként változik
     // (CF_PAGES_COMMIT_SHA), így a böngésző "új" SW-t lát és lefut az
-    // updatefound → "Új verzió érhető el" prompt. Build-ID nélkül (régi
-    // cache) sima /sw.js-re esünk vissza.
+    // updatefound → frissítés-folyamat. Build-ID nélkül (régi cache) sima
+    // /sw.js-re esünk vissza.
     const buildId = process.env.NEXT_PUBLIC_BUILD_ID;
     const swUrl = buildId ? `/sw.js?v=${encodeURIComponent(buildId)}` : "/sw.js";
 
@@ -230,6 +278,47 @@ export function SWRegister() {
   };
   applyUpdateRef.current = applyUpdate;
 
+  // ── NÉMA AUTOMATIKUS FRISSÍTÉS ────────────────────────────────────────────
+  // Nem kérdezünk, csak megvárjuk a megfelelő pillanatot: vagy épp most indult
+  // az app, vagy a user hosszabb távollét után tér vissza. Aktív használat
+  // közben nem nyúlunk hozzá semmihez.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (process.env.NODE_ENV !== "production") return;
+    if (!updateReady) return;
+    const myBuild = process.env.NEXT_PUBLIC_BUILD_ID ?? "unknown";
+
+    const tryAuto = () => {
+      // Ha az automata már MAX_AUTO_TRIES-szor nekifutott EBBŐL a buildből és
+      // még mindig itt vagyunk, akkor nem működik (rossz deploy / stale edge
+      // cache) — ne pörögjünk hurokban, adjuk vissza a döntést a usernek.
+      if (readTries(myBuild) >= MAX_AUTO_TRIES) {
+        setAutoExhausted(true);
+        return;
+      }
+      if (!isSafeToReload()) return;
+      bumpTries(myBuild);
+      applyUpdateRef.current();
+    };
+
+    const onVis = () => {
+      if (document.visibilityState === "hidden") {
+        hiddenAt.current = Date.now();
+        return;
+      }
+      const away = hiddenAt.current == null ? 0 : Date.now() - hiddenAt.current;
+      hiddenAt.current = null;
+      if (away >= AWAY_MS) tryAuto();
+    };
+    document.addEventListener("visibilitychange", onVis);
+
+    // Hideg indítás: a frissítést az app megnyitása utáni pár másodpercben
+    // vettük észre → most a legolcsóbb alkalmazni, a user még nem csinál semmit.
+    if (Date.now() - mountedAt.current < COLD_START_MS) tryAuto();
+
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, [updateReady]);
+
   // Kényszerített visszaszámlálás — csak akkor indul, amikor a "forced" állapot
   // igazzá válik; a user még ekkor is lát egy pár másodperces figyelmeztetést
   // (nincs előzmény nélküli reload egy épp kitöltött űrlap alatt).
@@ -261,6 +350,10 @@ export function SWRegister() {
   }, [forced]);
 
   if (!updateReady) return null;
+  // ⚠️ ALAPESETBEN NINCS BANNER: az automata majd elintézi a következő
+  // alkalmas pillanatban. Csak akkor szólunk, ha az automata feladta
+  // (autoExhausted), vagy ha már napok óta függ a frissítés (forced).
+  if (!forced && !autoExhausted) return null;
   // Kényszerített módban a "Később" hatástalan lenne — a bannernek látszania
   // KELL, hogy a visszaszámlálás ne legyen meglepetés.
   if (!forced && dismissed) return null;
