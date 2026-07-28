@@ -808,6 +808,56 @@
       "email": "contact@goodaccountant.co.uk",
       "website": "https://konyveles.co.uk",
       "hours": "H–P 9–17, Szo 10–13, V zárva"
+    },
+    {
+      "name": "Magyar Fogorvos Bristol — Bristol Implants",
+      "type": "fogászati rendelő magyarul beszélő fogorvosokkal",
+      "category": "fogorvos",
+      "city": "Bristol",
+      "region": "SW",
+      "address": "28 Portland Street, Clifton Village, Bristol BS8 4JB",
+      "phone": "+44 117 973 1789",
+      "email": "thesmile@btconnect.com",
+      "website": "https://bristol-implants.co.uk",
+      "lat": 51.4556354,
+      "lng": -2.6217807
+    },
+    {
+      "name": "Sweet Smiles — magyar fogorvos, Liverpool",
+      "type": "fogászati rendelő (Dr. Kárpáti Krisztina)",
+      "category": "fogorvos",
+      "city": "Liverpool",
+      "region": "NW",
+      "address": "35 Rodney Street, Liverpool L1 9EN",
+      "phone": "+44 151 707 7840",
+      "website": "https://www.sweetsmiles.co.uk",
+      "lat": 53.4010805,
+      "lng": -2.9732464
+    },
+    {
+      "name": "Gillies Dental Studio — magyar fogorvos, Chorley",
+      "type": "fogászat, ahol magyar fogorvos is rendel (Dr. Sisák Ferenc)",
+      "category": "fogorvos",
+      "city": "Chorley",
+      "region": "NW",
+      "address": "8 Bolton Road, Adlington, Chorley PR6 9NA",
+      "phone": "+44 1257 485982",
+      "website": "https://gilliesdentalstudio.co.uk",
+      "lat": 53.6138763,
+      "lng": -2.5914921
+    },
+    {
+      "name": "Symlaw Management Ltd — magyar jogi tanácsadás, Southampton",
+      "type": "magyar nyelvű jogi tanácsadás (családjog, munkajog, állampolgárság) — nem ügyvédi iroda",
+      "category": "jogtanacsado",
+      "city": "Southampton",
+      "region": "SE",
+      "address": "62 Liverpool Street, Southampton SO14 6GA",
+      "phone": "+44 7949 976826",
+      "email": "danidr@symlawmanagement.co.uk",
+      "website": "https://www.symlawmanagement.co.uk",
+      "lat": 50.9157061,
+      "lng": -1.4005986
     }
   ]
 }
