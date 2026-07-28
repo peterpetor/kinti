@@ -54,15 +54,16 @@
     },
     {
       "name": "Magyarország Nagykövetsége — Konzuli Osztály",
-      "type": "konzuli osztály",
+      "type": "konzuli osztály (útlevél, személyi igazolvány, anyakönyvezés, állampolgárság) — Dél-Anglia konzuli kerülete",
       "city": "London",
       "region": "LDN",
-      "address": "100 Brompton Road, London SW3 1ER",
+      "address": "100 Brompton Road, 1. emelet, London SW3 1ER",
       "phone": "+44 20 7235 5218",
-      "email": "consulate.lon@mfa.gov.hu",
+      "email": "konz.lon@mfa.gov.hu",
       "website": "https://london.mfa.gov.hu",
       "lat": 51.4994966,
-      "lng": -0.1644538
+      "lng": -0.1644538,
+      "hours": "Konzuli telefonos ügyfélfogadás H–Cs 13–16 (személyes ügyintézés időpontfoglalással)"
     },
     {
       "name": "Londoni Magyar Iskola+",
