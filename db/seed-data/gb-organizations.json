@@ -943,6 +943,26 @@
       "address": "St Andrew's Close, Hunter Street, Whitmore Reans, Wolverhampton WV6 0QZ",
       "lat": 52.5944363,
       "lng": -2.1452444
+    },
+    {
+      "name": "Magyar Evangélikus Gyülekezet — London",
+      "type": "magyar nyelvű evangélikus istentisztelet (lelkész: Mesterházy Balázs), St George's German Lutheran Church, vasárnap 11.00",
+      "city": "London",
+      "region": "LDN",
+      "address": "St George's German Lutheran Church, 55 Alie Street, London E1 8EB",
+      "lat": 51.5141993,
+      "lng": -0.0704889
+    },
+    {
+      "name": "ACS Liberty Group — magyar könyvelés, Teddington",
+      "type": "könyvelés és bérszámfejtés (Companies House-igazolt, angliai magyaroknak ajánlott)",
+      "category": "konyveles",
+      "city": "Teddington",
+      "region": "LDN",
+      "address": "171 Kingston Road, Teddington TW11 9JP",
+      "website": "https://www.acslibertygroup.com",
+      "lat": 51.4229637,
+      "lng": -0.3206207
     }
   ]
 }
