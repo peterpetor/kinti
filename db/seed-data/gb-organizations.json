@@ -66,17 +66,23 @@
       "type": "hétvégi magyar iskola",
       "city": "London",
       "region": "LDN",
+      "address": "17-19 Cockspur Street, St James, London SW1Y 5BL",
       "email": "LMIplusz@gmail.com",
-      "website": "https://magyariskola.org.uk"
+      "website": "https://magyariskola.org.uk",
+      "lat": 51.5076791,
+      "lng": -0.1307098
     },
     {
       "name": "MOSOLY Magyar Ovi-Suli",
       "type": "hétvégi magyar óvoda és iskola",
-      "city": "London",
+      "city": "New Malden, London",
       "region": "LDN",
+      "address": "St John's Church, Kingston Road, New Malden KT3 3RX",
       "phone": "+44 7961 441041",
       "email": "info@magyarovisuli.co.uk",
-      "website": "https://magyarovisuli.co.uk"
+      "website": "https://magyarovisuli.co.uk",
+      "lat": 51.4047561,
+      "lng": -0.2777757
     },
     {
       "name": "MAKI Suli London",
@@ -103,56 +109,77 @@
       "type": "hétvégi magyar iskola és közösség",
       "city": "Coventry",
       "region": "WM",
+      "address": "Aldermoor Farm Primary School, Acorn Street, Coventry CV3 1DP",
       "email": "coventrymagyartanoda@gmail.com",
-      "website": "https://comat.org.uk"
+      "website": "https://comat.org.uk",
+      "lat": 52.3981408,
+      "lng": -1.4761356
     },
     {
       "name": "Zsigmond Király Magyar Kulturális Klub és Iskola",
       "type": "magyar kulturális klub és hétvégi iskola",
       "city": "Manchester",
       "region": "NW",
+      "address": "277 Liverpool Road, Eccles, Manchester M30 0QN",
       "email": "zsk.iskola@gmail.com",
-      "website": "https://zsigmondkiraly.co.uk"
+      "website": "https://zsigmondkiraly.co.uk",
+      "lat": 53.4819152,
+      "lng": -2.3566555
     },
     {
       "name": "Magyar Iskola Cambridge",
       "type": "hétvégi magyar iskola",
       "city": "Cambridge",
       "region": "EE",
-      "email": "magyariskolacambridge@gmail.com"
+      "address": "The Fields Children's Centre, Galfrid Road, Cambridge CB5 8ND",
+      "email": "magyariskolacambridge@gmail.com",
+      "lat": 52.20834,
+      "lng": 0.1606026
     },
     {
       "name": "St Albans-i Magyar Iskola",
       "type": "hétvégi magyar iskola",
       "city": "St Albans",
       "region": "EE",
+      "address": "Cottonmill Lane, St Albans AL1 1HL",
       "email": "hungarianschoolofstalbans@gmail.com",
-      "website": "https://www.hungarianschool.co.uk"
+      "website": "https://www.hungarianschool.co.uk",
+      "lat": 51.746797,
+      "lng": -0.3356841
     },
     {
       "name": "Guildfordi Magyar Tanoda és Játszóház",
       "type": "hétvégi magyar iskola és játszóház",
       "city": "Guildford",
       "region": "SE",
+      "address": "St Thomas of Canterbury Primary School, Horseshoe Lane West, Guildford GU1 2SX",
       "phone": "+44 1483 808643",
       "email": "info@hcaguildford.org.uk",
-      "website": "https://hcaguildford.org.uk"
+      "website": "https://hcaguildford.org.uk",
+      "lat": 51.2436791,
+      "lng": -0.5418406
     },
     {
       "name": "Readingi Magyar Iskola",
       "type": "hétvégi magyar iskola",
       "city": "Reading",
       "region": "SE",
+      "address": "Caversham Methodist Church, Gosbrook Road, Reading RG4 8DY",
       "phone": "+44 7533 337720",
-      "email": "readingi.magyar.iskola@gmail.com"
+      "email": "readingi.magyar.iskola@gmail.com",
+      "lat": 51.4658995,
+      "lng": -0.9639185
     },
     {
       "name": "Magyar Iskola Woking",
       "type": "hétvégi magyar iskola",
       "city": "Woking",
       "region": "SE",
+      "address": "Send Barns Lane, Send, Woking GU23 7BS",
       "email": "info@magyariskolawoking.org.uk",
-      "website": "https://magyariskolawoking.org.uk"
+      "website": "https://magyariskolawoking.org.uk",
+      "lat": 51.2861943,
+      "lng": -0.5238546
     },
     {
       "name": "Magyar Iskola Oxford",
@@ -166,23 +193,94 @@
       "type": "hétvégi magyar óvoda és iskola",
       "city": "Basingstoke",
       "region": "SE",
+      "address": "Mosaic Centre, Chute House, Church Street, Basingstoke RG21 7QT",
       "phone": "+44 7766 951790",
-      "email": "basingstoke@magyar.org.uk"
+      "email": "basingstoke@magyar.org.uk",
+      "lat": 51.266287,
+      "lng": -1.0889901
     },
     {
       "name": "Southamptoni Magyar Iskola",
       "type": "hétvégi magyar iskola",
       "city": "Southampton",
       "region": "SE",
+      "address": "Richard Taunton Sixth Form College, Hill Lane, Southampton SO15 5RL",
       "email": "hello@southamptonimagyariskola.org.uk",
-      "website": "https://southamptonimagyariskola.org.uk"
+      "website": "https://southamptonimagyariskola.org.uk",
+      "lat": 50.926335,
+      "lng": -1.4171214
     },
     {
       "name": "Bristoli Magyar Kisiskola",
-      "type": "hétvégi magyar iskola",
+      "type": "hétvégi magyar iskola (kéthetente, szombatonként)",
       "city": "Bristol",
       "region": "SW",
-      "website": "https://bristolikisiskola.org"
+      "website": "https://bristolikisiskola.org.uk"
+    },
+    {
+      "name": "Tűzmadár Tanoda — The Hungarian School of Bristol",
+      "type": "hétvégi magyar iskola, állandó helyszínnel Patchwayben",
+      "city": "Bristol",
+      "region": "SW",
+      "address": "The Parade, Coniston Road, Patchway, Bristol BS34 5LP",
+      "phone": "+44 7564 215722",
+      "email": "info@tuzmadartanoda.org.uk",
+      "website": "https://tuzmadartanoda.org.uk",
+      "lat": 51.5384597,
+      "lng": -2.5831402
+    },
+    {
+      "name": "Csigabiga Tanoda",
+      "type": "hétvégi magyar iskola",
+      "city": "Peacehaven",
+      "region": "SE",
+      "address": "The Hub, Piddinghoe Avenue, Peacehaven BN10 8RH",
+      "lat": 50.7929294,
+      "lng": 0.0124275
+    },
+    {
+      "name": "Magyar Tanoda és Közösség Northamptonshire",
+      "type": "hétvégi magyar iskola és közösség",
+      "city": "Corby",
+      "region": "EM",
+      "address": "Beanfield Avenue, Corby NN18 0AX",
+      "phone": "+44 7526 623961",
+      "email": "tanoda.mkknuk@gmail.com",
+      "lat": 52.4864459,
+      "lng": -0.721907
+    },
+    {
+      "name": "Szóló Szőlő Chesteri Tanoda",
+      "type": "hétvégi magyar iskola",
+      "city": "Chester",
+      "region": "NW",
+      "address": "The Unity Centre, 17 Cuppin Street, Chester CH1 2BN",
+      "phone": "+44 7712 417759",
+      "email": "huncomchester@gmail.com",
+      "lat": 53.1880636,
+      "lng": -2.8926766
+    },
+    {
+      "name": "Kerek Egy Esztendő",
+      "type": "hétvégi magyar iskola és közösségi program",
+      "city": "Fen Drayton, Cambridge",
+      "region": "EE",
+      "address": "Cootes Lane, Fen Drayton, Cambridge CB24 4SL",
+      "phone": "+44 7736 157632",
+      "email": "kerekegyesztendo@gmail.com",
+      "lat": 52.2984655,
+      "lng": -0.0481857
+    },
+    {
+      "name": "Southend-i Magyar Iskola",
+      "type": "hétvégi magyar iskola",
+      "city": "Southend-on-Sea",
+      "region": "EE",
+      "address": "Quaker House, 18 Dundonald Drive, Southend-on-Sea SS9 1NB",
+      "phone": "+44 7841 646469",
+      "email": "hungariansouthend@gmail.com",
+      "lat": 51.5453234,
+      "lng": 0.666224
     },
     {
       "name": "Magyar Ízek — Hungarian Flavors Ltd",
