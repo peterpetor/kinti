@@ -1029,6 +1029,17 @@
       "address": "St Ethelbert's RC Church, Hawthorne Street, Deane, Bolton BL3 5RG",
       "lat": 53.5678949,
       "lng": -2.4556431
+    },
+    {
+      "name": "Hunique Dance — magyar néptáncegyüttes, London",
+      "type": "magyar néptáncegyüttes felnőtteknek (2008 óta), heti próbák: hétfő/kedd/csütörtök 19.30–22.00",
+      "city": "London",
+      "region": "LDN",
+      "address": "Chiswick Catholic Centre, 2 Dukes Avenue, London W4 2AE",
+      "email": "hunique.dance08@gmail.com",
+      "website": "https://hunique.co.uk",
+      "lat": 51.4918407,
+      "lng": -0.2604789
     }
   ]
 }
