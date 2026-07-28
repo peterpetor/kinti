@@ -963,6 +963,72 @@
       "website": "https://www.acslibertygroup.com",
       "lat": 51.4229637,
       "lng": -0.3206207
+    },
+    {
+      "name": "Magyar Katolikus Közösség — South Croydon",
+      "type": "magyar nyelvű szentmise (Csicsó János főlelkész), St Gertrude templom, minden hónap utolsó vasárnapján 12.00",
+      "city": "London",
+      "region": "LDN",
+      "address": "St Gertrude's Catholic Church, 46 Purley Road, South Croydon CR2 6EY",
+      "website": "https://szentistvanhaz.org/miserend/",
+      "lat": 51.3508784,
+      "lng": -0.0972423
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Luton",
+      "type": "alkalmi magyar nyelvű szentmise (Csicsó János főlelkész), Our Lady Help of Christians templom — az aktuális időpontokat a főlelkészség miserendje tartalmazza",
+      "city": "Luton",
+      "region": "EE",
+      "address": "Our Lady Help of Christians, 52 Castle Street, Luton LU1 3AG",
+      "website": "https://szentistvanhaz.org/miserend/",
+      "lat": 51.8760718,
+      "lng": -0.4157988
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Cambridge",
+      "type": "alkalmi magyar nyelvű szentmise (Csicsó János főlelkész), St Laurence templom — az aktuális időpontokat a főlelkészség miserendje tartalmazza",
+      "city": "Cambridge",
+      "region": "EE",
+      "address": "St Laurence's Catholic Church, 91 Milton Road, Cambridge CB4 1XB",
+      "website": "https://szentistvanhaz.org/miserend/",
+      "lat": 52.2182577,
+      "lng": 0.1291971
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Manchester",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), St Malachy templom, szombatonként",
+      "city": "Manchester",
+      "region": "NW",
+      "address": "St Malachy RC Church, Eggington Street, Collyhurst, Manchester M40 7RG",
+      "lat": 53.4980553,
+      "lng": -2.2224592
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Liverpool",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), Szent Erzsébet templom, vasárnap 19.00",
+      "city": "Liverpool",
+      "region": "NW",
+      "address": "St Elizabeth of Hungary RC Church, Webster Street, Litherland, Liverpool L21 8JH",
+      "lat": 53.4627878,
+      "lng": -2.9935376
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Birmingham",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), St Mary and St John templom, vasárnap 19.00",
+      "city": "Birmingham",
+      "region": "WM",
+      "address": "St Mary and St John RC Church, 20 Gravelly Hill North, Erdington, Birmingham B23 6BQ",
+      "lat": 52.5159899,
+      "lng": -1.8486086
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Bolton",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), St Ethelbert templom, péntek 18.00",
+      "city": "Bolton",
+      "region": "NW",
+      "address": "St Ethelbert's RC Church, Hawthorne Street, Deane, Bolton BL3 5RG",
+      "lat": 53.5678949,
+      "lng": -2.4556431
     }
   ]
 }
