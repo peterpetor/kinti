@@ -1000,6 +1000,18 @@
       "lat": 53.4805348,
       "lng": -2.2348712,
       "hours": "Konzuli ügyfélfogadás H–Cs 10–12 és 15–16 (időpontfoglalással)"
+    },
+    {
+      "name": "Kamra — magyar élelmiszer-webshop",
+      "type": "online magyar élelmiszerbolt (házi kolbász, hurka, tepertő, pékáru) — CSAK raktár, személyes kiszolgálás nincs; ütemezett házhozszállítás",
+      "category": "elelmiszer",
+      "city": "Robertsbridge",
+      "region": "SE",
+      "address": "Online webshop — raktár: Unit 1, Ockham Farm, Dagg Lane, Ewhurst Green, Robertsbridge TN32 5RD (személyes átvétel nincs)",
+      "phone": "+44 7453 961168",
+      "website": "https://kamra.shop",
+      "lat": 50.99084,
+      "lng": 0.54326
     }
   ]
 }
