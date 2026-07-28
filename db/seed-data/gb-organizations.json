@@ -664,6 +664,40 @@
       "website": "https://ildikoschocolate.co.uk",
       "lat": 51.2787816,
       "lng": -0.3734975
+    },
+    {
+      "name": "Hungarian Sausage Ltd — magyar élelmiszerbolt, Warrington",
+      "type": "magyar élelmiszerbolt (házi kolbász, szalámi, fűszerek, bogrács)",
+      "category": "elelmiszer",
+      "city": "Warrington",
+      "region": "NW",
+      "address": "Unit 1, John Street, Warrington WA2 7UB",
+      "phone": "+44 7933 762879",
+      "website": "https://hungarian-sausage.co.uk",
+      "lat": 53.3935231,
+      "lng": -2.5911135
+    },
+    {
+      "name": "Nokedli — magyar street food, Carlisle Market Hall",
+      "type": "magyar utcaétel-pult a viktoriánus piaccsarnokban (nokedli, körettel)",
+      "category": "etterem",
+      "city": "Carlisle",
+      "region": "NW",
+      "address": "Market Hall, Scotch Street, Carlisle CA3 8QX",
+      "lat": 54.8958408,
+      "lng": -2.9357013,
+      "hours": "K–Szo 11–15"
+    },
+    {
+      "name": "Zoltán Gomora — Mobil Autószerelő",
+      "type": "helyszíni (mobil) autószerelő szolgáltatás, nincs ügyfélfogadó cím",
+      "category": "autoszer",
+      "city": "Corby",
+      "region": "EM",
+      "address": "Corby és környéke — helyszíni kiszállásos szerviz",
+      "phone": "+44 7539 853547",
+      "lat": 52.4877341,
+      "lng": -0.7032713
     }
   ]
 }
