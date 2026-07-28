@@ -408,7 +408,9 @@ function SelectedCard({ business: b, distanceKm }: { business: ListBusiness; dis
       )}`
     : null;
   return (
-    <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-pop">
+    // h-full: a carousel-kártyák egyforma magasak (a wrapper stretch-el) — így
+    // egy hosszabb tartalmú szomszéd sem billenti meg a sort.
+    <div className="pointer-events-auto flex h-full items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-pop">
       <Link
         href={`/szaknevsor/${b.id}`}
         className="flex min-w-0 flex-1 items-center gap-3 transition active:scale-[0.99]"
@@ -428,16 +430,20 @@ function SelectedCard({ business: b, distanceKm }: { business: ListBusiness; dis
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary">
-          {b.categoryLabel}
-          <span className="text-ink-faint">·</span>
+        {/* ⚠️ A kategória-címke EGY SOR marad (truncate). Enélkül a hosszú, saját
+            megnevezések (pl. „Magyar bolt, pékség és kávézó" — a mező 50 karaktert
+            enged) 4-5 sorra tördelődtek, és a carousel kártyái különböző magasak
+            lettek. A csillag/„Új" jelölő shrink-0, hogy a szűkülés a címkét érje. */}
+        <div className="flex min-w-0 items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary">
+          <span className="truncate">{b.categoryLabel}</span>
+          <span className="shrink-0 text-ink-faint">·</span>
           {b.reviews > 0 ? (
-            <span className="inline-flex items-center gap-0.5 text-ink">
+            <span className="inline-flex shrink-0 items-center gap-0.5 text-ink">
               <Icon name="star" size={10} filled className="text-star" />
               {b.rating.toFixed(1)}
             </span>
           ) : (
-            <span className="text-ink-faint">Új</span>
+            <span className="shrink-0 text-ink-faint">Új</span>
           )}
         </div>
         <div className="mt-0.5 truncate text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">

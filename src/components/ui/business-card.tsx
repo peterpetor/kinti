@@ -82,19 +82,23 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
             <Icon name="star" size={9} filled /> Szaknévsor PRO
           </div>
         )}
-        <div className="mb-0.5 flex items-center gap-1.5">
-          <span className="text-[11.5px] font-bold uppercase tracking-wide text-primary">
+        {/* ⚠️ A kategória-címke EGY SOR marad (truncate). A mező 50 karaktert enged
+            (BUSINESS_LIMITS.labelMax), és a hosszú saját megnevezések tördelve
+            magasabbra nyújtották a kártyát a szomszédainál — a lista így
+            egyenetlen lett. Az értékelés-jelölő shrink-0: a szűkülés a címkét érje. */}
+        <div className="mb-0.5 flex min-w-0 items-center gap-1.5">
+          <span className="truncate text-[11.5px] font-bold uppercase tracking-wide text-primary">
             {b.categoryLabel}
           </span>
-          <span className="text-[11px] text-ink-faint">•</span>
+          <span className="shrink-0 text-[11px] text-ink-faint">•</span>
           {b.reviews > 0 ? (
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-ink">
+            <span className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-ink">
               <Icon name="star" size={11} filled className="text-star" />
               {b.rating.toFixed(1)}
               <span className="font-medium text-ink-muted">({b.reviews})</span>
             </span>
           ) : (
-            <span className="text-[11px] font-semibold text-ink-faint">Új</span>
+            <span className="shrink-0 text-[11px] font-semibold text-ink-faint">Új</span>
           )}
         </div>
 
