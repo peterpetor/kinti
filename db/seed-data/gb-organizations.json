@@ -1012,6 +1012,19 @@
       "website": "https://kamra.shop",
       "lat": 50.99084,
       "lng": 0.54326
+    },
+    {
+      "name": "AWOC Accountants — magyar könyvelés, Winchester",
+      "type": "magyar nyelvű könyvelés (self-employed, Ltd, bérszámfejtés, cégalapítás) — országos, online ügyintézéssel; a winchesteri iroda üzleti központban van, előzetes egyeztetéssel",
+      "category": "konyveles",
+      "city": "Winchester",
+      "region": "SE",
+      "address": "BM Centre, 11 St Martins Close, Winchester SO23 0HD",
+      "phone": "+44 1962 841362",
+      "email": "info@awoc.co.uk",
+      "website": "https://www.awoc.co.uk",
+      "lat": 51.0644,
+      "lng": -1.30489
     }
   ]
 }
