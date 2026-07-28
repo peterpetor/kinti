@@ -880,6 +880,69 @@
       "address": "9 Austin Way, Royal Oak Industrial Estate, Daventry NN11 8QY",
       "lat": 52.2668869,
       "lng": -1.1816257
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Leeds",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), Holy Family templom, vasárnap 17.30",
+      "city": "Leeds",
+      "region": "YH",
+      "address": "Holy Family RC Church, 12 Green Lane, Armley, Leeds LS12 1HU",
+      "lat": 53.7923067,
+      "lng": -1.5749603
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Sheffield",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), Mother of God and Saint Wilfrid templom, vasárnap 14.30",
+      "city": "Sheffield",
+      "region": "YH",
+      "address": "Mother of God and Saint Wilfrid RC Church, Saint Ronan's Road, Abbeydale, Sheffield S7 1DX",
+      "lat": 53.36245,
+      "lng": -1.47991
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Nottingham",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), lengyel katolikus templom, vasárnap 15.00",
+      "city": "Nottingham",
+      "region": "EM",
+      "address": "2 Sherwood Rise, Nottingham NG7 6JN",
+      "lat": 52.9695829,
+      "lng": -1.1566801
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Derby",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), Szent Maximilian Kolbe lengyel katolikus templom, vasárnap 17.00",
+      "city": "Derby",
+      "region": "EM",
+      "address": "Saint Maksymilian Kolbe Polish RC Church, 9 Gordon Road, Derby DE23 6WR",
+      "lat": 52.9116837,
+      "lng": -1.4823556
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Rochdale",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), St John the Baptist templom, vasárnap 14.00",
+      "city": "Rochdale",
+      "region": "NW",
+      "address": "St John the Baptist RC Church, Dowling Street, Rochdale OL11 1EX",
+      "lat": 53.6112727,
+      "lng": -2.1549457
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Southport",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), St Teresa of Avila templom, hétfő 18.00",
+      "city": "Southport",
+      "region": "NW",
+      "address": "St Teresa of Avila RC Church, 27 Everton Road, Southport PR8 4BT",
+      "lat": 53.6333554,
+      "lng": -3.0080086
+    },
+    {
+      "name": "Magyar Katolikus Közösség — Wolverhampton",
+      "type": "magyar nyelvű szentmise (Fülöp Menyhért atya), St Andrew templom, vasárnap 15.00",
+      "city": "Wolverhampton",
+      "region": "WM",
+      "address": "St Andrew's Close, Hunter Street, Whitmore Reans, Wolverhampton WV6 0QZ",
+      "lat": 52.5944363,
+      "lng": -2.1452444
     }
   ]
 }
