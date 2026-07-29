@@ -127,6 +127,8 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "repulojegy",      // ⭐ VAN GB járat-konfig (7 angol reptér, WizzAir/Ryanair/BA)
   "lakberles",       // ⭐ VAN GB rent-konfig (5 heti kaució, TDP, council tax)
   "nyelvlecke",      // ⭐ VAN GB kurzus (data-gb.ts, 100 lecke: brit angol, en-GB TTS)
+  "szakmai-szotar",  // ⭐ VAN GB szótár-bank (data-gb.ts, 19 szakma / 23 lecke — brit↔amerikai
+                     //   csapdák + CSCS/DBS/SIA/Gas Safe engedélyek, en-GB TTS)
 ]);
 
 /**
@@ -168,6 +170,7 @@ export const ES_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "nyelvlecke",        // ⭐ VAN ES kurzus (data-es.ts, 100 lecke: kasztíliai spanyol, es-ES TTS)
   "allampolgarsag",    // ⭐ VAN ES kérdésbank (es-ccse-bank.ts — CCSE, 25 kérdés / 60%)
   "szolgaltato-valto", // ⭐ VAN ES szolgáltató-adat (bank/energia/fibra/móvil, burofax-tudatos)
+  "szakmai-szotar",    // ⭐ VAN ES szótár-bank (data-es.ts, 19 szakma / 23 lecke, es-ES TTS)
   // ⚠️ „spanyol-oneletrajz" NEM ide tartozik — a CV-készítőket a
   //   CV_FEATURE_COUNTRIES tábla kapuzza (ld. lentebb), MINDEN ág előtt.
   // ⚠️ „vam" SZÁNDÉKOSAN KIMARAD: Spanyolország EU-tag, nincs vámhatár

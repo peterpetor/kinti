@@ -1,3 +1,9 @@
+// ⚠️ A GB és az ES bank KÜLÖN FÁJLBAN van (data-gb.ts / data-es.ts): ez a
+// fájl már 3700+ soros volt, és a nyelvlecke-modul is ezt a mintát követi.
+// A típusokat innen importálják, a resolver pedig itt fogja össze őket.
+import { INDUSTRY_LESSONS_GB } from "./data-gb";
+import { INDUSTRY_LESSONS_ES } from "./data-es";
+
 export type QuestionType = "multiple_choice" | "flashcard" | "match";
 
 export type Option = {
@@ -3698,6 +3704,8 @@ export function getIndustryLessons(country: string | null | undefined): Lesson[]
   if (country === "AT") return INDUSTRY_LESSONS_AT;
   if (country === "DE") return INDUSTRY_LESSONS_DE;
   if (country === "NL") return INDUSTRY_LESSONS_NL;
+  if (country === "GB") return INDUSTRY_LESSONS_GB;
+  if (country === "ES") return INDUSTRY_LESSONS_ES;
   return INDUSTRY_LESSONS;
 }
 
@@ -3708,5 +3716,7 @@ export function findLessonById(id: string): Lesson | undefined {
     ...INDUSTRY_LESSONS_AT,
     ...INDUSTRY_LESSONS_DE,
     ...INDUSTRY_LESSONS_NL,
+    ...INDUSTRY_LESSONS_GB,
+    ...INDUSTRY_LESSONS_ES,
   ].find((l) => l.id === id);
 }
