@@ -36,6 +36,31 @@ export function benchRegionLabel(country: string): string {
   return "Bundesland";
 }
 
+/**
+ * A régió-szint RAGOZOTT alakjai a hőtérkép feliratához.
+ *
+ * ⚠️ Miért itt, és miért nem a komponensben inline? Mert ott már volt belőle
+ * hiba: a `SwissHeatmap` „Koppints egy {isAT || isDE ? "tartományra" : "kantonra"}"
+ * kifejezése HOLLANDIÁBAN is „kantonra"-t írt — svájci szó a holland
+ * provinciákra. Pontosan a bináris ország-fallthrough hibaosztály. Egy helyen
+ * tartva mind a hat ország egyszerre kap helyes ragozást, és új ország
+ * felvételekor egy helyen kell bővíteni.
+ */
+export function benchRegionWordDistributive(country: string): string {
+  if (country === "CH") return "kantononként";
+  if (country === "NL") return "provinciánként";
+  if (country === "GB" || country === "ES") return "régiónként";
+  return "Bundeslandonként";
+}
+
+/** „Koppints egy …" — a régió-szint -ra/-re ragozott alakja. */
+export function benchRegionWordSublative(country: string): string {
+  if (country === "CH") return "kantonra";
+  if (country === "NL") return "provinciára";
+  if (country === "GB" || country === "ES") return "régióra";
+  return "tartományra";
+}
+
 export function benchCurrency(country: string): string {
   if (country === "CH") return "CHF";
   if (country === "GB") return "GBP";

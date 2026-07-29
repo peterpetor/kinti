@@ -6,7 +6,7 @@ import {
   salaryPercentileES,
   ES_REGIONS_LIST,
   ES_REGION_MEDIAN_GROSS,
-  ES_SMI_2025_YEARLY,
+  ES_SMI_YEARLY,
 } from "@/lib/salary-calc-es";
 import { getRegions } from "@/lib/regions";
 
@@ -148,7 +148,7 @@ describe("minimálbér-figyelmeztetés", () => {
    */
   it("a 2025-ös SMI alatti bérre figyelmeztet, fölötte nem", () => {
     expect(computeSalaryES({ gross: 12000, period: "year" }).belowMinimumWage).toBe(true);
-    expect(computeSalaryES({ gross: ES_SMI_2025_YEARLY + 1, period: "year" }).belowMinimumWage).toBe(false);
+    expect(computeSalaryES({ gross: ES_SMI_YEARLY + 1, period: "year" }).belowMinimumWage).toBe(false);
   });
 
   it("nulla bérre NEM figyelmeztet (üres űrlap nem hiba)", () => {

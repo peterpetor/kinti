@@ -68,14 +68,17 @@ const ES_IRPF_BANDS: { upTo: number; rate: number }[] = [
 ];
 
 /**
- * ⚠️ A 2025-ös minimálbér (SMI) éves összege, 14 pagára számolva.
+ * ⚠️ A minimálbér (SMI) éves összege, 14 pagára számolva.
+ * 2026: 1 221 €/hó × 14 = 17 094 €/év (BOE, 2026. február, januárra visszamenő
+ * hatállyal; +3,1% a 2025-ös 16 576 €-hoz képest).
+ *
  * SZÁNDÉKOSAN csak ALSÓ korlátként használjuk: a minimálbér évről évre NŐ, így
- * ami a 2025-ös szint alatt van, az biztosan a mostani alatt is. Fordítva nem
+ * ami az itteni szint alatt van, az biztosan a mostani alatt is. Fordítva nem
  * igaz — ezért NEM állítjuk, hogy a fölötte lévő bér megfelel a minimálbérnek.
  * Ez a féloldalas következtetés teszi lehetővé, hogy elavult adattal is csak
  * IGAZ figyelmeztetést adjunk.
  */
-export const ES_SMI_2025_YEARLY = 16576;
+export const ES_SMI_YEARLY = 17094;
 
 /** Sávos adó egy adóalapra. */
 function esScale(base: number): number {
@@ -184,7 +187,7 @@ export function computeSalaryES(input: SalaryCalcInputES): SalaryCalcResultES {
     netMonthlyAverage: netYearly / 12,
     pagas,
     effectiveRate: grossYearly > 0 ? ((grossYearly - netYearly) / grossYearly) * 100 : 0,
-    belowMinimumWage: grossYearly > 0 && grossYearly < ES_SMI_2025_YEARLY,
+    belowMinimumWage: grossYearly > 0 && grossYearly < ES_SMI_YEARLY,
   };
 }
 

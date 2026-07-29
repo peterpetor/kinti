@@ -114,8 +114,13 @@ async function handleUpsert(mode: "insert" | "update", body: BenchmarkBody, ipHa
     if (!isValidBenchmarkRooms(body.rooms))
       return NextResponse.json({ error: "Érvénytelen szobaszám." }, { status: 400 });
     const maxR = country !== "CH" ? 6000 : 10000;
-    if (body.rentChf < 300 || body.rentChf > maxR)
-      return NextResponse.json({ error: `Érvényes havi lakbér adatot adj meg (300–${maxR.toLocaleString("hu-HU")} ${cur} között).` }, { status: 400 });
+    // ⚠️ A 300-as alsó korlát SPANYOLORSZÁGBAN kizárt volna valós lakbéreket:
+    // Extremadurában/Castilla-La Manchában a kínálati ár ~7 €/m², vagyis egy
+    // 40 m²-es stúdió reálisan 280 € körül van. A guard célja a szemét-adat
+    // kiszűrése, nem a legszegényebb régiók kizárása.
+    const minR = country === "ES" ? 200 : 300;
+    if (body.rentChf < minR || body.rentChf > maxR)
+      return NextResponse.json({ error: `Érvényes havi lakbér adatot adj meg (${minR}–${maxR.toLocaleString("hu-HU")} ${cur} között).` }, { status: 400 });
     const input = { country, cantonCode: body.cantonCode, rooms: body.rooms, rentChf: body.rentChf, ipHash };
     mode === "update" ? await updateRentBenchmark(input) : await submitRentBenchmark(input);
     return NextResponse.json({ ok: true, type: "rent" });

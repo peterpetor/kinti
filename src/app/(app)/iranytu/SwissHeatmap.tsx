@@ -3,7 +3,12 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/cn";
 import { Skeleton } from "@/components/skeleton";
-import { benchRegionName, benchCurrency } from "./region-util";
+import {
+  benchRegionName,
+  benchCurrency,
+  benchRegionWordDistributive,
+  benchRegionWordSublative,
+} from "./region-util";
 
 /** CH-rács (8×6) — a kantonok geográfiai elrendezése. */
 const CH_GRID = [
@@ -40,6 +45,53 @@ const NL_GRID = [
   { c: "LI", x: 3, y: 5 },
 ];
 
+/** Anglia — a 9 statisztikai régió észak→dél, nyugat→kelet (3 oszlop × 4 sor).
+ *  London tudatosan a South East-től jobbra: a rácsban a főváros önálló
+ *  régió, nem a délkeleti cellába olvasztva. */
+const GB_GRID = [
+  { c: "NE", x: 2, y: 1 },
+  { c: "NW", x: 1, y: 2 }, { c: "YH", x: 2, y: 2 },
+  { c: "WM", x: 1, y: 3 }, { c: "EM", x: 2, y: 3 }, { c: "EE", x: 3, y: 3 },
+  { c: "SW", x: 1, y: 4 }, { c: "SE", x: 2, y: 4 }, { c: "LDN", x: 3, y: 4 },
+];
+
+/** Spanyolország — 17 comunidad autónoma + a 2 autonóm város (6 oszlop × 5 sor).
+ *  Az északi part balról jobbra (Galicia → País Vasco), a keleti sarokban
+ *  Cataluña, a szigetek a maguk irányában: Baleárok Valencia mellett keletre,
+ *  Kanári-szigetek bal alul (délnyugatra, a kontinensen kívül), Ceuta/Melilla
+ *  legalul (Észak-Afrika).
+ *  ⚠️ Ceuta és Melilla SZÁNDÉKOSAN adat nélkül marad — az INE közösségi
+ *  bértáblája nem tartalmazza őket, ezért nincsenek seedelve. A cella
+ *  „nincs elég adat"-ot ír, ami igaz; kitalált szám nem kerül oda. */
+const ES_GRID = [
+  { c: "GA", x: 1, y: 1 }, { c: "AS", x: 2, y: 1 }, { c: "CB", x: 3, y: 1 }, { c: "PV", x: 4, y: 1 }, { c: "NC", x: 5, y: 1 },
+  { c: "CL", x: 2, y: 2 }, { c: "RI", x: 4, y: 2 }, { c: "AR", x: 5, y: 2 }, { c: "CT", x: 6, y: 2 },
+  { c: "EX", x: 1, y: 3 }, { c: "MD", x: 3, y: 3 }, { c: "VC", x: 5, y: 3 }, { c: "IB", x: 6, y: 3 },
+  { c: "AN", x: 2, y: 4 }, { c: "CM", x: 3, y: 4 }, { c: "MC", x: 4, y: 4 },
+  { c: "CN", x: 1, y: 5 }, { c: "CE", x: 3, y: 5 }, { c: "ML", x: 4, y: 5 },
+];
+
+/**
+ * ⚠️ ORSZÁG → RÁCS TÁBLÁVAL, NEM TERNÁRIUS-LÁNCCAL.
+ *
+ * Korábban `isDE ? DE_GRID : isAT ? AT_GRID : isNL ? NL_GRID : CH_GRID` volt,
+ * vagyis a lánc VÉGÉN a svájci rács állt — minden új ország csendben svájci
+ * kanton-alakzatot kapott volna, üres cellákkal (a kódok nem is egyeznek). Ez az
+ * app legdrágább hibaosztálya (ld. binary-country-fallthrough). Táblával a
+ * hiányzó bejegyzés = nincs hőtérkép (fail-closed), nem = rossz hőtérkép.
+ *
+ * `wide`: a keskeny rácsok (CH 8 oszlop) vízszintesen görgethetők egy minimális
+ * szélességgel, a szélesebbek kitöltik a rendelkezésre álló helyet.
+ */
+const GRIDS: Record<string, { grid: { c: string; x: number; y: number }[]; cols: number; rows: number; wide: boolean }> = {
+  CH: { grid: CH_GRID, cols: 8, rows: 6, wide: false },
+  AT: { grid: AT_GRID, cols: 5, rows: 3, wide: true },
+  DE: { grid: DE_GRID, cols: 6, rows: 5, wide: true },
+  NL: { grid: NL_GRID, cols: 4, rows: 5, wide: false },
+  GB: { grid: GB_GRID, cols: 3, rows: 4, wide: true },
+  ES: { grid: ES_GRID, cols: 6, rows: 5, wide: true },
+};
+
 interface HeatmapRow {
   canton_code: string;
   avg_salary: number;
@@ -67,20 +119,16 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
 
-  const isAT = country === "AT";
-  const isDE = country === "DE";
-  const isNL = country === "NL";
-  // ⚠️ A hőtérkép KÉZZEL RAJZOLT, ország-specifikus rácsra épül (a cellák a
-  // valódi földrajzi elrendezést utánozzák). Angliához és Spanyolországhoz nincs
-  // ilyen rács — kapu nélkül a lánc végén a SVÁJCI rács állt, vagyis az angliai
-  // és spanyolországi felhasználó svájci kanton-alakzatot kapott volna, üres
-  // cellákkal (a kódok nem is egyeznek). Inkább nem rajzolunk semmit.
-  const hasGrid = country === "CH" || country === "AT" || country === "DE" || country === "NL";
-  const grid = isDE ? DE_GRID : isAT ? AT_GRID : isNL ? NL_GRID : CH_GRID;
-  const cols = isDE ? 6 : isAT ? 5 : isNL ? 4 : 8;
-  const rows = isDE ? 5 : isAT ? 3 : isNL ? 5 : 6;
+  // A hőtérkép KÉZZEL RAJZOLT, ország-specifikus rácsra épül (a cellák a valódi
+  // földrajzi elrendezést utánozzák). Ismeretlen ország → nincs rács → nem
+  // rajzolunk semmit, nem rajzolunk RÉGI ország alakzatát.
+  const conf = GRIDS[country];
+  const grid = conf?.grid ?? [];
+  const cols = conf?.cols ?? 1;
+  const rows = conf?.rows ?? 1;
+  const wide = conf?.wide ?? false;
   const cur = benchCurrency(country);
-  const regionWord = isNL ? "provinciánként" : isAT || isDE ? "Bundeslandonként" : "kantononként";
+  const regionWord = benchRegionWordDistributive(country);
 
   useEffect(() => {
     let active = true;
@@ -104,7 +152,7 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
   const max = vals.length > 0 ? Math.max(...vals) : 0;
   const range = max - min || 1;
 
-  if (!hasGrid) return null;
+  if (!conf) return null;
 
   const byCode = new Map(data.map((d) => [d.canton_code, d]));
   const selRow = selected ? byCode.get(selected) : undefined;
@@ -126,7 +174,7 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
         <div className="no-scrollbar overflow-x-auto" aria-busy="true" aria-live="polite">
           <span className="sr-only">Hőtérkép betöltése…</span>
           <div
-            className={cn("grid gap-1.5", isAT || isDE ? "w-full" : "min-w-[360px]")}
+            className={cn("grid gap-1.5", wide ? "w-full" : "min-w-[360px]")}
             style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, 1fr)` }}
           >
             {grid.map((cell) => (
@@ -142,7 +190,7 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
         <>
           <div className="no-scrollbar overflow-x-auto">
             <div
-              className={cn("grid gap-1.5", isAT || isDE ? "w-full" : "min-w-[360px]")}
+              className={cn("grid gap-1.5", wide ? "w-full" : "min-w-[360px]")}
               style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, 1fr)` }}
             >
               {grid.map((cell) => {
@@ -189,7 +237,7 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
                 </span>
               )
             ) : (
-              <span className="text-ink-faint">Koppints egy {isAT || isDE ? "tartományra" : "kantonra"} a részletekért</span>
+              <span className="text-ink-faint">Koppints egy {benchRegionWordSublative(country)} a részletekért</span>
             )}
           </div>
 
