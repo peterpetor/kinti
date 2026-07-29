@@ -114,7 +114,9 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "utalas",          // árfolyam/utalás — GBP→HUF ugyanúgy működik
   "vam",             // ⭐ VAN GB-konfig (customs.ts CUSTOMS_CONFIG.GB, gov.uk)
   "tudasbazis",      // ⭐ VAN GB guide-bank (guides.ts GUIDES_GB, 8 cikk gov.uk/NHS forrásból)
-  "angol-oneletrajz",// ⭐ brit CV-készítő (fotó/születési év NÉLKÜL, UK-konvenció)
+  // ⚠️ „angol-oneletrajz" INNEN KIKERÜLT — a CV-készítőket a CV_FEATURE_COUNTRIES
+  //   tábla kapuzza, ami MINDEN ág előtt fut. Ha itt is szerepelne, két helyen
+  //   kellene karbantartani ugyanazt a szabályt.
   "berkalkulator",   // ⭐ VAN GB-számítás (computeSalaryGB: PAYE + Class 1 NI)
   "vizum",           // ⭐ VAN GB letelepedés-varázsló (EUSS vs Skilled Worker)
   "ugyintezes",      // ⭐ VAN GB csekklista-bank (CHECKLISTS_GB, 6 db)
@@ -128,20 +130,66 @@ export const GB_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
 ]);
 
 /**
+ * ⚠️ SPANYOLORSZÁG (ES) — szintén ENGEDÉLYEZŐ-LISTA, a GB-modell szerint.
+ *
+ * Spanyolország EU-tag, tehát a vám/letelepedés oldaláról közelebb van az
+ * AT/DE/NL hármashoz, mint Anglia. A „minden megy, kivéve…" ág mégis hibás
+ * lenne: az adórendszer (IRPF + Seguridad Social, autonóm közösségenként ELTÉRŐ
+ * sávokkal), az egészségügy (tarjeta sanitaria a közösségtől függ, nem
+ * Krankenkasse), a lakhatás (LAU, fianza) és mindenekelőtt az ÜGYINTÉZÉS
+ * logikája (cita previa-kényszer) más. Ha a fel nem sorolt eszközök is
+ * megjelennének, a spanyolországi magyar SVÁJCI számokat kapna hitelesnek tűnő
+ * formában — ez a binary-country-fallthrough hiba-osztály.
+ *
+ * Új ES-tartalom elkészültekor ADD HOZZÁ a kulcsot ehhez a listához.
+ */
+export const ES_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
+  // Ország-független közösségi/piac funkciók
+  "szaknevsor",        // magyar szakemberek — a felhasználók töltik
+  "allasok",           // állás-lista (aggregátor + saját hirdetés)
+  "piacter",           // börze/albérlet — user-tartalom
+  "keresek",           // igény-hirdetések
+  "tortenetek",        // élettörténetek
+  "iranytu",           // közösségi benchmark — a userek töltik
+  "ranglista",
+  "kviz",              // napi kvíz (általános, nem ország-jogi)
+  "hatarido",          // saját határidők — a user viszi fel
+  "b2b",               // zárt vállalkozói projektpiac
+  "utalas",            // árfolyam/utalás — EUR→HUF ugyanúgy működik
+  // ── Spanyol tartalommal elkészült eszközök ──
+  "tudasbazis",        // ⭐ VAN ES guide-bank (guides.ts GUIDES_ES, 12 cikk BOE/gob.es forrásból)
+  "ugyintezes",        // ⭐ VAN ES csekklista-bank (CHECKLISTS_ES, 6 db, cita previa-tudatos)
+  // ⚠️ „vam" SZÁNDÉKOSAN KIMARAD: Spanyolország EU-tag, nincs vámhatár
+  //   Magyarország felé — vám-kalkulátort mutatni félrevezető lenne.
+]);
+
+/**
  * ⚠️ ÖNÉLETRAJZ-KÉSZÍTŐK — ORSZÁGONKÉNT PONTOSAN EGY a helyes.
  *
- * Ugyanaz az eszköz három ország-konvencióban (német Lebenslauf / brit CV /
- * holland CV). Hollandiában a német CV kifejezetten HIBÁS ajánlás: a holland
- * munkáltató holland nyelvű, holland szakma-megnevezésű CV-t vár. Ezért NL-ben
- * a német belépési pont eltűnik, és helyette a holland jelenik meg.
+ * Ugyanaz az eszköz NÉGY ország-konvencióban (német Lebenslauf / brit CV /
+ * holland CV / spanyol currículum). Hollandiában a német CV kifejezetten HIBÁS
+ * ajánlás: a holland munkáltató holland nyelvű, holland szakma-megnevezésű CV-t
+ * vár — és ugyanez igaz Spanyolországra is. Ezért minden országban CSAK a hozzá
+ * illő belépési pont jelenik meg.
  *
- * A német CV továbbra is univerzális (CH/AT/DE — a teljes német nyelvterület),
- * a holland viszont KIZÁRÓLAG NL. Maguk az oldalak közvetlen linkről bárhonnan
- * elérhetők maradnak — ez a szabály csak a belépési pontokat (kezdőlap-rács,
- * menü, kereső, „Neked ajánljuk") rendezi.
+ * ⚠️ 2026-07-29-ig ez ORSZÁGONKÉNT KÜLÖN ÁGON futott (NL_ONLY / NL_HIDDEN
+ * halmaz), és emiatt az ANGOL CV-készítő minden országban látszott: sem a
+ * menüben, sem a kereső-találatokban nem volt kapuja, a `c === "CH"` ág pedig
+ * mindent beenged. A svájci felhasználó tehát „Német CV" és „Angol CV" közül
+ * választhatott — értelmetlenül. Ezért lett belőle EGY tábla: itt egyszerre
+ * látszik, hogy melyik készítő melyik országban való, és új ország felvételekor
+ * nem lehet elfelejteni a másik irányt (elrejtést) megírni.
+ *
+ * Maguk az oldalak közvetlen linkről bárhonnan elérhetők maradnak — ez a
+ * szabály csak a belépési pontokat (kezdőlap-rács, menü, kereső,
+ * „Neked ajánljuk") rendezi.
  */
-const NL_ONLY_FEATURES: ReadonlySet<string> = new Set(["holland-oneletrajz"]);
-const NL_HIDDEN_FEATURES: ReadonlySet<string> = new Set(["nemet-oneletrajz"]);
+const CV_FEATURE_COUNTRIES: Readonly<Record<string, readonly string[]>> = {
+  "nemet-oneletrajz": ["CH", "AT", "DE"], // a teljes német nyelvterület
+  "holland-oneletrajz": ["NL"],
+  "angol-oneletrajz": ["GB"],
+  "spanyol-oneletrajz": ["ES"],
+};
 
 /**
  * Ország → a HELYES önéletrajz-készítő. Egyetlen forrás, hogy a szöveges
@@ -154,6 +202,7 @@ export const CV_BUILDER_BY_COUNTRY: Readonly<Record<string, { href: string; adj:
   DE: { href: "/nemet-oneletrajz", adj: "német" },
   NL: { href: "/holland-oneletrajz", adj: "holland" },
   GB: { href: "/angol-oneletrajz", adj: "angol" },
+  ES: { href: "/spanyol-oneletrajz", adj: "spanyol" },
 };
 
 /** A megadott országhoz illő CV-készítő; ismeretlen ország → a német (CH-alap). */
@@ -167,13 +216,16 @@ export function isFeatureAvailable(
 ): boolean {
   const c = country || DEFAULT_COUNTRY;
   // ⚠️ A CV-készítők kapuja MINDEN más ág ELŐTT fut — a lenti „CH-ban minden
-  // elérhető" ág egyébként a holland CV-t is beengedné Svájcba.
-  if (NL_ONLY_FEATURES.has(feature)) return c === "NL";
-  if (c === "NL" && NL_HIDDEN_FEATURES.has(feature)) return false;
+  // elérhető" ág egyébként a holland CV-t is beengedné Svájcba, a GB/ES
+  // engedélyező-lista pedig a sajátját duplán sorolná.
+  const cvCountries = CV_FEATURE_COUNTRIES[feature];
+  if (cvCountries) return cvCountries.includes(c);
   if (c === "CH") return true; // Svájcban minden elérhető (a teljes meglévő app)
   // GB: engedélyező-lista (ld. a GB_ALLOWED_FEATURES fenti magyarázatát) — a
   // fel nem sorolt funkciók REJTVE maradnak, mert nincs hozzájuk angol tartalom.
   if (c === "GB") return GB_ALLOWED_FEATURES.has(feature);
+  // ES: ugyanaz a megfordított modell (ld. ES_ALLOWED_FEATURES).
+  if (c === "ES") return ES_ALLOWED_FEATURES.has(feature);
   if (CH_ONLY_FEATURES.has(feature)) return false;
   // DE/NL: a csak-CH+AT funkciók még nem elérhetők (AT-ban igen).
   if (c !== "AT" && CH_AT_ONLY_FEATURES.has(feature)) return false;

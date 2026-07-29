@@ -23,12 +23,13 @@ function buildIndex(country: string): ChecklistIndexEntry[] {
   }));
 }
 
-const CHECKLIST_INDEX_BY_COUNTRY: Record<"CH" | "AT" | "DE" | "NL" | "GB", ChecklistIndexEntry[]> = {
+const CHECKLIST_INDEX_BY_COUNTRY: Record<"CH" | "AT" | "DE" | "NL" | "GB" | "ES", ChecklistIndexEntry[]> = {
   CH: buildIndex("CH"),
   AT: buildIndex("AT"),
   DE: buildIndex("DE"),
   NL: buildIndex("NL"),
   GB: buildIndex("GB"),
+  ES: buildIndex("ES"),
 };
 
 export const metadata = {

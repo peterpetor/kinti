@@ -55,22 +55,35 @@ describe("fizetési ország-lefedettség", () => {
     }
   });
 
-  it("MIND az 5 app-ország vásárolható (egy sem marad fizetés nélkül)", () => {
+  it("MINDEN app-ország vásárolható (egy sem marad fizetés nélkül)", () => {
     for (const c of COUNTRIES) {
       expect(isPurchasableCountry(c.code), `${c.code} nem vásárolható`).toBe(true);
     }
   });
 
-  it("⚠️ Spanyolország NEM app-ország — az ES-ár csak a webhookhoz kell", () => {
-    // A Paddle-ben VAN spanyol ár (a user létrehozta), de Spanyolország nincs a
-    // COUNTRIES-ban → a felhasználó nem tud spanyolt választani, a checkout
-    // sosem kérne ES-t. Az ID-nek MÉGIS a PADDLE_PRICES-ban a helye: ha valaki
-    // egy Paddle-oldali spanyol fizetési linken fizet, a webhooknak fel kell
-    // ismernie a terméket — különben a pénz beérkezik, de nem aktiválunk semmit.
-    expect(COUNTRIES.some((c) => c.code === "ES")).toBe(false);
-    expect(isPurchasableCountry("ES")).toBe(false);
+  it("⚠️ Spanyolország (ES) VÁSÁROLHATÓ — 2026-07-29 óta app-ország is", () => {
+    // Korábban ez fordítva állt: a Paddle-ben MÁR volt spanyol ár, de az ES még
+    // nem volt app-ország, ezért az ID-k csak a webhook felismeréséhez kellettek
+    // (hogy egy Paddle-oldali spanyol fizetési linken beérkező pénz ne maradjon
+    // aktiválás nélkül). Most az ES valódi app-ország → a checkoutnak is mennie kell.
+    expect(COUNTRIES.some((c) => c.code === "ES")).toBe(true);
+    expect(isPurchasableCountry("ES")).toBe(true);
     for (const product of PRODUCTS) {
-      expect(PADDLE_PRICES[product]?.["ES" as never], `${product}/ES`).toMatch(/^pri_/);
+      expect(getPriceId(product, "ES"), `${product}/ES`).toMatch(/^pri_/);
+    }
+  });
+
+  it("⚠️ nincs két termék ugyanazzal a Price ID-val (a webhook félreaktiválna)", () => {
+    // Az `entitlementFromPriceId` az ID-ból vezeti le, mit aktiváljon. Ha egy ID
+    // két termékhez tartozna, a bejárási sorrend döntené el a jogosultságot —
+    // vagyis olcsó terméket fizetve lehetne drágát kapni.
+    const seen = new Map<string, string>();
+    for (const product of PRODUCTS) {
+      for (const [market, id] of Object.entries(PADDLE_PRICES[product] ?? {})) {
+        const prev = seen.get(id);
+        expect(prev, `${id}: ${prev} ÉS ${product}/${market}`).toBeUndefined();
+        seen.set(id, `${product}/${market}`);
+      }
     }
   });
 });

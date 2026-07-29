@@ -4,21 +4,22 @@
 // csak CH aktív). Az értékek NEXT_PUBLIC env-ből jönnek (a Price ID nem titok).
 
 export type ProductType = "kinti_pro_monthly" | "business_pro_monthly" | "job_featured";
-export type CountryCode = "CH" | "AT" | "DE" | "NL" | "GB"; // Bővíthető
+export type CountryCode = "CH" | "AT" | "DE" | "NL" | "GB" | "ES"; // Bővíthető
 
 /**
  * Fizetési PIAC: minden app-ország, PLUSZ olyan Paddle-piac, amihez már van ár,
  * de még nincs mögötte app-ország.
  *
- * ⚠️ Ilyen most az **ES (Spanyolország)**: a Paddle-ben létezik mind a három
- * spanyol ár, de a `COUNTRIES` (lib/countries.ts) NEM tartalmazza Spanyolországot
- * — a felhasználó nem tud spanyol Kintit választani, tehát a checkout SOSEM kérhet
- * ES-árat. Az ID-k mégis KELLENEK ide, mert az `entitlementFromPriceId` ebből a
- * táblából ismeri fel a kifizetett terméket: ha valaki a Paddle-ben generált
- * SPANYOL fizetési linken fizet, a webhook enélkül `null` jogosultságot kapna,
- * és a **pénz beérkezne anélkül, hogy bármit aktiválnánk**.
+ * ⚠️ 2026-07-29-ig ilyen volt az ES (a Paddle-ben megvolt mind a három spanyol
+ * ár, de Spanyolország még nem volt app-ország). **Ez megszűnt: az ES már valódi
+ * app-ország**, tehát a két halmaz jelenleg EGYBEESIK. A típust szándékosan
+ * megtartjuk külön névvel, mert a különbség bármikor visszatérhet: ha egy új
+ * piacra előbb készül el a Paddle-ár, mint a tartalom, az ID-nek AKKOR IS itt a
+ * helye — az `entitlementFromPriceId` ebből a táblából ismeri fel a kifizetett
+ * terméket, enélkül a webhook `null` jogosultságot kapna, és a **pénz beérkezne
+ * anélkül, hogy bármit aktiválnánk**.
  */
-export type PriceMarket = CountryCode | "ES";
+export type PriceMarket = CountryCode;
 
 /** Termék → piac → Paddle Price ID (`pri_...`). */
 // FALLBACK Price ID-k (ÉLES). A Price ID NEM titok (NEXT_PUBLIC, úgyis a
@@ -70,15 +71,14 @@ export const PADDLE_PRICES: Record<ProductType, Partial<Record<PriceMarket, stri
  * de nem volt hozzá Price ID → az angliai felhasználó a GOMB MEGNYOMÁSA UTÁN
  * futott falba („Érvénytelen ország." 400). Ez most megszűnt.
  *
- * ⚠️ **ES SZÁNDÉKOSAN NINCS ITT.** A Paddle-ben van spanyol ár, de Spanyolország
- * NEM app-ország (`COUNTRIES` nem tartalmazza) → a felhasználó nem is tud
- * spanyolt választani, a checkout sosem kérne ES-t. Ha egyszer Spanyolország
- * élesedik a `countries.ts`-ben, itt EGY sor a bekapcsolás (az árak megvannak).
+ * ⚠️ 2026-07-29: **SPANYOLORSZÁG (ES) IS BEKERÜLT** — a Paddle-árak már
+ * korábban elkészültek, most lett mellé app-ország (`countries.ts`). Ezzel a
+ * PURCHASABLE_COUNTRIES pontosan lefedi a `COUNTRIES` listát.
  *
  * Új ország bekapcsolása: Paddle-ár mindhárom termékre → `FALLBACK_PRICES` →
  * fel ebbe a halmazba.
  */
-export const PURCHASABLE_COUNTRIES: readonly CountryCode[] = ["CH", "AT", "DE", "NL", "GB"];
+export const PURCHASABLE_COUNTRIES: readonly CountryCode[] = ["CH", "AT", "DE", "NL", "GB", "ES"];
 
 /** Van-e élő Paddle-ár ehhez az országhoz? (UI-gate ÉS API-validáció ebből.) */
 export function isPurchasableCountry(country: string | null | undefined): country is CountryCode {

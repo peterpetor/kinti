@@ -129,6 +129,8 @@ export function buildPersonalizedItems(
         ? [{ emoji: "📄", title: "Angol önéletrajz-készítő", desc: "Brit szabvány szerinti CV magyarul kitöltve, ingyen", href: "/angol-oneletrajz" }]
         : country === "NL"
         ? [{ emoji: "📄", title: "Holland önéletrajz-készítő", desc: "Holland szabvány szerinti CV magyarul kitöltve, ingyen", href: "/holland-oneletrajz" }]
+        : country === "ES"
+        ? [{ emoji: "📄", title: "Spanyol önéletrajz-készítő", desc: "Spanyol szabvány szerinti CV magyarul kitöltve, ingyen", href: "/spanyol-oneletrajz" }]
         : [{ emoji: "📄", title: "Német önéletrajz-készítő", desc: "DIN-szabványos PDF magyarul kitöltve, ingyen", href: "/nemet-oneletrajz" }]),
       { emoji: "🧮", title: "Bérkalkulátor", desc: "Bruttó → nettó: mennyit ér az ajánlat?", href: "/berkalkulator" },
       guideItem("munkavallalas", country, "📖", "Munkavállalás — a tudnivalók", "Szerződés, próbaidő, jogaid — hivatalos forrásból"),

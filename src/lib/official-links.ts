@@ -60,7 +60,7 @@ export const KONZULI_SERVICE_URL = "https://konzuliszolgalat.kormany.hu/";
 /** A Konzuli Szolgálat 0–24 ügyelete (díjmentes). Forrás: konzuliszolgalat.kormany.hu. */
 export const KONZULI_EMERGENCY_PHONE = "+36 80 36 80 36";
 
-const OFFICIAL: Record<"CH" | "AT" | "DE" | "NL" | "GB", OfficialCountry> = {
+const OFFICIAL: Record<"CH" | "AT" | "DE" | "NL" | "GB" | "ES", OfficialCountry> = {
   CH: {
     consulate: {
       name: "Magyarország Nagykövetsége",
@@ -391,6 +391,108 @@ const OFFICIAL: Record<"CH" | "AT" | "DE" | "NL" | "GB", OfficialCountry> = {
       },
     ],
   },
+  // ⚠️ SPANYOLORSZÁG. Két sajátosság szervezi ezt a listát:
+  //   1) CITA PREVIA — szinte minden hivatalnál előzetes időpont kell, ezért a
+  //      lista ELSŐ eleme (a magyar okmányügyek után) az időpontfoglalás.
+  //   2) AUTONÓM KÖZÖSSÉG — az egészségügy és az oktatás nem országos, hanem
+  //      közösségi hatáskör. Ilyen ügynél SZÁNDÉKOSAN az országos belépő
+  //      oldalra linkelünk, és a magyarázat mondja ki, hogy a saját közösséged
+  //      oldala a végállomás — nem tettetjük, hogy egy országos link elég.
+  ES: {
+    consulate: {
+      name: "Magyarország Nagykövetsége",
+      city: "Madrid",
+      website: "https://madrid.mfa.gov.hu/",
+      extra: [
+        { name: "Madridi Nagykövetség Konzuli Hivatala", url: "https://madrid.mfa.gov.hu/hu/Magyarorszag-Madridi-Nagykovetsegenek-Konzuli-Hivatala" },
+        { name: "Magyarország Főkonzulátusa — Barcelona", url: "https://barcelona.mfa.gov.hu/" },
+        { name: "Miben tud (és miben nem) segíteni a konzulátus", url: "https://madrid.mfa.gov.hu/hu/miben-tud-nem-tud-segiteni-a-konzulatus" },
+      ],
+    },
+    emergency: [
+      { label: "Egységes segélyhívó (mentő, rendőrség, tűzoltó)", number: "112" },
+      { label: "Policía Nacional", number: "091" },
+      { label: "Guardia Civil", number: "062" },
+      { label: "Helyi rendőrség (Policía Local)", number: "092" },
+    ],
+    links: [
+      {
+        trigger: "Útlevelem / személyim lejár",
+        explain: "Magyar okmányt (útlevél, személyi) a konzulátus állít ki — időpontot a Konzinfón foglalsz.",
+        url: KONZINFO_APPOINTMENT_URL, source: "konzinfoidopont.mfa.gov.hu", emoji: "🛂", category: "okmany",
+      },
+      {
+        trigger: "Anyakönyvi / állampolgársági ügy itthonról",
+        explain: "Születés, házasság, honosítás konzuli intézése — a Konzuli Szolgálat hivatalos oldalán.",
+        url: KONZULI_SERVICE_URL, source: "konzuliszolgalat.kormany.hu", emoji: "📜", category: "okmany",
+      },
+      {
+        trigger: "Időpontot kell foglalnom egy hivatalba",
+        explain: "A legtöbb spanyol hivatal csak előzetes időponttal (cita previa) fogad — az idegenrendészeti ügyek foglalója ez.",
+        url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus", source: "administracionespublicas.gob.es", emoji: "🗓️", category: "tartozkodas",
+      },
+      {
+        trigger: "Kell a NIE-szám / regisztrálnom kell uniós polgárként",
+        explain: "3 hónapnál hosszabb tartózkodásnál a külföldiek nyilvántartásába kell bejelentkezni; itt az összes idegenrendészeti eljárás.",
+        url: "https://www.inclusion.gob.es/", source: "inclusion.gob.es", emoji: "🪪", category: "tartozkodas",
+      },
+      {
+        trigger: "Be kell jelentenem a lakcímemet (empadronamiento)",
+        explain: "A padrónt a lakóhelyed szerinti önkormányzat vezeti — a te településed hivatalát a központi portálon találod meg.",
+        url: "https://administracion.gob.es/", source: "administracion.gob.es", emoji: "🏛️", category: "tartozkodas",
+      },
+      {
+        trigger: "Kell a társadalombiztosítási számom",
+        explain: "A Seguridad Social-szám online is igényelhető az Importass portálon — a munkába állás feltétele.",
+        url: "https://portal.seg-social.gob.es/wps/portal/importass/importass/tramites/obtenernumeroseguridadsocial", source: "seg-social.gob.es", emoji: "🔢", category: "munka",
+      },
+      {
+        trigger: "Tényleg bejelentett a munkáltatóm?",
+        explain: "Az informe de vida laboral felsorolja az összes bejelentett munkaviszonyodat — bárki lekérheti a sajátját.",
+        url: "https://portal.seg-social.gob.es/wps/portal/importass/importass/tramites/informedevidalaboral", source: "seg-social.gob.es", emoji: "📄", category: "munka",
+      },
+      {
+        trigger: "Munkanélküli lettem",
+        explain: "A járulékalapú ellátást (paro) a SEPE folyósítja — a jelentkezésre a munkaviszony vége után rövid határidő van.",
+        url: "https://www.sepe.es/HomeSepe/Personas/distributiva-prestaciones.html", source: "sepe.es", emoji: "🔎", category: "munka",
+      },
+      {
+        trigger: "Adóbevallást kell beadnom (la Renta)",
+        explain: "Az éves IRPF-bevallás az Agencia Tributaria oldalán készül el, a hivatal által előkészített tervezetből.",
+        url: "https://sede.agenciatributaria.gob.es/Sede/Renta.html", source: "agenciatributaria.gob.es", emoji: "🧾", category: "munka",
+      },
+      {
+        trigger: "Digitális azonosító kell az ügyintézéshez",
+        explain: "A Cl@ve a spanyol állam belépési rendszere — enélkül a legtöbb online ügyintézés nem megy.",
+        url: "https://clave.gob.es/", source: "clave.gob.es", emoji: "🔐", category: "okmany",
+      },
+      {
+        trigger: "Kell az egészségügyi kártya (tarjeta sanitaria)",
+        explain: "Az egészségügy AUTONÓM KÖZÖSSÉGI hatáskör — a kártyát a lakóhelyed szerinti egészségügyi szolgálat adja ki, ez az országos belépő.",
+        url: "https://www.sanidad.gob.es/", source: "sanidad.gob.es", emoji: "🏥", category: "egeszseg",
+      },
+      {
+        trigger: "Európai egészségbiztosítási kártya kell",
+        explain: "Az EU-kártyát a Seguridad Socialnál igényled — külföldi ideiglenes tartózkodásra való, itthoni ellátásra nem.",
+        url: "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938/11566/1761", source: "seg-social.es", emoji: "💳", category: "egeszseg",
+      },
+      {
+        trigger: "Jogosítvány, forgalmi, bírság",
+        explain: "A DGT intézi a közúti ügyeket — időpontfoglalással, a bírságokat is itt látod és rendezheted.",
+        url: "https://sede.dgt.gob.es/es/", source: "dgt.gob.es", emoji: "🚗", category: "kozlekedes",
+      },
+      {
+        trigger: "El kell ismertetnem a magyar bizonyítványt",
+        explain: "A közoktatási bizonyítvány honosítását (homologación) az oktatási minisztérium végzi — időigényes eljárás.",
+        url: "https://www.educacionfpydeportes.gob.es/servicios-al-ciudadano/catalogo/gestion-titulos/estudios-no-universitarios/titulos-extranjeros/homologacion-convalidacion-no-universitarios.html", source: "educacionfpydeportes.gob.es", emoji: "🎓", category: "okmany",
+      },
+      {
+        trigger: "Lakhatási kérdésem van",
+        explain: "A lakhatási minisztérium oldala a bérlővédelem, a támogatások és a jogszabályok hivatalos belépője.",
+        url: "https://www.mivau.gob.es/", source: "mivau.gob.es", emoji: "🏠", category: "tartozkodas",
+      },
+    ],
+  },
 };
 
 export function getConsulate(country: string | null | undefined): Consulate {
@@ -398,6 +500,7 @@ export function getConsulate(country: string | null | undefined): Consulate {
   if (country === "DE") return OFFICIAL.DE.consulate;
   if (country === "NL") return OFFICIAL.NL.consulate;
   if (country === "GB") return OFFICIAL.GB.consulate;
+  if (country === "ES") return OFFICIAL.ES.consulate;
   return OFFICIAL.CH.consulate;
 }
 
@@ -406,6 +509,7 @@ export function getEmergencyNumbers(country: string | null | undefined): Emergen
   if (country === "DE") return OFFICIAL.DE.emergency;
   if (country === "NL") return OFFICIAL.NL.emergency;
   if (country === "GB") return OFFICIAL.GB.emergency;
+  if (country === "ES") return OFFICIAL.ES.emergency;
   return OFFICIAL.CH.emergency;
 }
 
@@ -414,5 +518,6 @@ export function getOfficialLinks(country: string | null | undefined): OfficialLi
   if (country === "DE") return OFFICIAL.DE.links;
   if (country === "NL") return OFFICIAL.NL.links;
   if (country === "GB") return OFFICIAL.GB.links;
+  if (country === "ES") return OFFICIAL.ES.links;
   return OFFICIAL.CH.links;
 }

@@ -127,7 +127,20 @@ function isEnglishCoord(lat: number, lng: number): boolean {
   return lat >= 49.8 && lat <= 55.9 && lng >= -6.5 && lng <= 1.8;
 }
 
-/** Ország-tudatos koordináta-épelméjűség (CH/AT/DE/NL/GB).
+/** Spanyol bounding box. ⚠️ KÉT dobozból áll, és ez nem szépséghiba: a
+ *  Kanári-szigetek ~1000 km-re vannak a szárazföldtől, Afrika magasságában —
+ *  egyetlen befoglaló doboz fél Marokkót és az Atlanti-óceánt is elnyelné,
+ *  vagyis a szűrő elveszítené az értelmét. Az első doboz a szárazföld + a
+ *  Baleárok + Ceuta + Melilla, a második a Kanári-szigetek.
+ *  Mint a többi ország-doboz, ez is épelméjűségi szűrő (Portugália egy része
+ *  belefér), nem határ-pontos teszt. */
+function isSpanishCoord(lat: number, lng: number): boolean {
+  const peninsula = lat >= 35.1 && lat <= 43.9 && lng >= -9.4 && lng <= 4.4;
+  const canarias = lat >= 27.5 && lat <= 29.5 && lng >= -18.3 && lng <= -13.3;
+  return peninsula || canarias;
+}
+
+/** Ország-tudatos koordináta-épelméjűség (CH/AT/DE/NL/GB/ES).
  *  ⚠️ GB-ág NÉLKÜL az angol koordinátákat a SVÁJCI doboz utasította volna el,
  *  ami teljesen ellehetetlenítette volna a Szaknévsor-beküldést Angliából. */
 export function isInCountryCoord(country: string, lat: number, lng: number): boolean {
@@ -135,6 +148,7 @@ export function isInCountryCoord(country: string, lat: number, lng: number): boo
   if (country === "DE") return isGermanCoord(lat, lng);
   if (country === "NL") return isDutchCoord(lat, lng);
   if (country === "GB") return isEnglishCoord(lat, lng);
+  if (country === "ES") return isSpanishCoord(lat, lng);
   return isSwissCoord(lat, lng);
 }
 

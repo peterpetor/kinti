@@ -57,6 +57,7 @@ const MODULES: { href: string; icon: IconName; label: string; tone: Tone; extern
   // szűrője az isFeatureAvailable, ld. feature-availability CV-blokk).
   { href: "/holland-oneletrajz", icon: "document", label: "Holland CV", tone: "work" },
   { href: "/angol-oneletrajz", icon: "document", label: "Angol CV", tone: "work" },
+  { href: "/spanyol-oneletrajz", icon: "document", label: "Spanyol CV", tone: "work" },
   // ── Innen a speciálisabb réteg (összecsukva rejtve) ──
   { href: "/keresek", icon: "search", label: "Keresek", tone: "work" },
   { href: "/allasok/cv-audit", icon: "magic", label: "AI CV-asszisztens", tone: "work" },

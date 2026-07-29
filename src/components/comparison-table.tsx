@@ -15,6 +15,7 @@ const COLS = [
   { key: "de", label: "Németország", code: "DE" },
   { key: "nl", label: "Hollandia", code: "NL" },
   { key: "gb", label: "Anglia", code: "GB" },
+  { key: "es", label: "Spanyolország", code: "ES" },
 ] as const;
 
 /**
@@ -30,7 +31,9 @@ export function ComparisonTable({
   showNote = true,
 }: {
   comparison: GuideComparison;
-  currentCountry?: "CH" | "AT" | "DE" | "NL" | "GB" | null;
+  /** A megjelenítendő ország kódja (kiemelés). Szándékosan sima string: az
+   *  ország-lista a countries.ts-ben él, ne kelljen két helyen bővíteni. */
+  currentCountry?: string | null;
   showNote?: boolean;
 }) {
   return (
@@ -85,10 +88,14 @@ export function ComparisonTable({
         </table>
       </div>
 
-      {/* Teljes cikkek mini-zászlóval — a guide-lapon a másik 3 ország, a hub-on mind a 4. */}
+      {/* Teljes cikkek mini-zászlóval — a guide-lapon a többi ország, a hub-on mind.
+          ⚠️ A slug-hiányt SZŰRNI kell: a `slugs.gb`/`slugs.es` opcionális (nem
+          minden témához van angol/spanyol cikk), és szűrés nélkül a link
+          `/tudasbazis/undefined`-re mutatott — élesben 6 táblán volt törött
+          Anglia-gomb. Ha nincs cikk, inkább NE legyen link. */}
       <div className="flex flex-wrap items-center gap-1.5 px-0.5 pt-0.5">
         <span className="text-[11px] font-semibold text-ink-muted">A teljes cikk országonként:</span>
-        {COLS.filter((c) => c.code !== currentCountry).map((c) => (
+        {COLS.filter((c) => c.code !== currentCountry && comparison.slugs[c.key]).map((c) => (
           <Link
             key={c.key}
             href={`/tudasbazis/${comparison.slugs[c.key]}`}

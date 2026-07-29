@@ -4,7 +4,7 @@ import { getRegions } from "@/lib/regions";
 
 /**
  * Iránytű régió-segédek — ország szerint kanton (CH) / Bundesland (AT/DE) /
- * provincia (NL) / régió (GB).
+ * provincia (NL) / régió (GB) / régió (ES).
  *
  * ⚠️ MINDEN függvénynek KELL explicit GB-ág: a `return`-ök végén a svájci
  * alapeset áll, így GB nélkül Anglián svájci KANTONOK, „Egész Svájc" felirat
@@ -20,6 +20,7 @@ export function benchRegions(country: string): BenchRegion[] {
   if (country === "DE") return DE_BUNDESLAENDER.map((b) => ({ code: b.code, name: b.name }));
   if (country === "NL") return getRegions("NL").map((r) => ({ code: r.code, name: r.name }));
   if (country === "GB") return getRegions("GB").map((r) => ({ code: r.code, name: r.name }));
+  if (country === "ES") return getRegions("ES").map((r) => ({ code: r.code, name: r.name }));
   return CANTONS.map((c) => ({ code: c.code, name: c.name }));
 }
 
@@ -31,7 +32,7 @@ export function benchRegionName(country: string, code: string): string {
 export function benchRegionLabel(country: string): string {
   if (country === "CH") return "Kanton";
   if (country === "NL") return "Provincia";
-  if (country === "GB") return "Régió";
+  if (country === "GB" || country === "ES") return "Régió";
   return "Bundesland";
 }
 
@@ -46,6 +47,7 @@ export function benchAllLabel(country: string): string {
   if (country === "DE") return "Egész Németország";
   if (country === "NL") return "Egész Hollandia";
   if (country === "GB") return "Egész Anglia";
+  if (country === "ES") return "Egész Spanyolország";
   return "Egész Svájc";
 }
 
@@ -55,6 +57,7 @@ export function benchDefaultRegion(country: string): string {
   if (country === "DE") return "BY";
   if (country === "NL") return "NH";
   if (country === "GB") return "LDN";
+  if (country === "ES") return "MD";
   return "ZH";
 }
 
@@ -64,6 +67,7 @@ export function benchDefaultSalary(country: string): number {
   if (country === "DE") return 48000;
   if (country === "NL") return 44000;
   if (country === "GB") return 35000; // £ — ONS medián körüli éves bruttó
+  if (country === "ES") return 26000; // € — INE medián körüli éves bruttó (a spanyol bérszint jóval alacsonyabb)
   return 80000;
 }
 
@@ -73,5 +77,6 @@ export function benchDefaultRent(country: string): number {
   if (country === "DE") return 1000;
   if (country === "NL") return 1400;
   if (country === "GB") return 1300; // £ — londoni átlag alatt, országos fölött
+  if (country === "ES") return 950; // € — országos átlag; Madrid/Barcelona ennek másfélszerese
   return 1800;
 }

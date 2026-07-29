@@ -19,6 +19,7 @@ import { PushOptin } from "@/components/push-optin";
 import { QuizProCta } from "@/components/views/quiz-pro-cta";
 import { pickQuizProTarget } from "@/lib/quiz-pro-map";
 import { AT_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-at";
+import { ES_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-es";
 import { DE_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-de";
 import { NL_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-nl";
 import { GB_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-gb";
@@ -40,7 +41,7 @@ export function KvizGame() {
 
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const categoryMeta = country === "AT" ? AT_QUIZ_CATEGORY_META : country === "DE" ? DE_QUIZ_CATEGORY_META : country === "NL" ? NL_QUIZ_CATEGORY_META : country === "GB" ? GB_QUIZ_CATEGORY_META : QUIZ_CATEGORY_META;
+  const categoryMeta = country === "AT" ? AT_QUIZ_CATEGORY_META : country === "DE" ? DE_QUIZ_CATEGORY_META : country === "NL" ? NL_QUIZ_CATEGORY_META : country === "GB" ? GB_QUIZ_CATEGORY_META : country === "ES" ? ES_QUIZ_CATEGORY_META : QUIZ_CATEGORY_META;
 
   // Mount-on: load state
   useEffect(() => {

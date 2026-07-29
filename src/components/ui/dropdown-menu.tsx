@@ -252,7 +252,12 @@ export function DropdownMenu() {
         ...(has("holland-oneletrajz")
           ? [{ key: "cvnl", label: "Holland önéletrajz-készítő", href: "/holland-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
           : []),
-        { key: "cven", label: "Angol önéletrajz-készítő", href: "/angol-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" } },
+        ...(has("angol-oneletrajz")
+          ? [{ key: "cven", label: "Angol önéletrajz-készítő", href: "/angol-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
+          : []),
+        ...(has("spanyol-oneletrajz")
+          ? [{ key: "cves", label: "Spanyol önéletrajz-készítő", href: "/spanyol-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
+          : []),
         { key: "cvaudit", label: "AI CV-asszisztens", href: "/allasok/cv-audit", tint: "bg-success/10 text-success", icon: { name: "sparkles" }, badge: "pro" },
         ...(has("szakmai-szotar")
           ? [{ key: "szotar", label: "Szakmai szótár", href: "/allasok/szakmai-szotar", tint: "bg-star/10 text-star", icon: { name: "document" }, badge: "pro" } as MenuItem]

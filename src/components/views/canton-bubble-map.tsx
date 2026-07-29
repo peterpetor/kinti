@@ -18,6 +18,11 @@ const NL_CENTER: [number, number] = [52.2, 5.4];
 /** ⚠️ Anglia közepe (Midlands) — GB-ág nélkül a térkép SVÁJCRA nagyított volna
  *  az Állások oldalon, ami GB-ben engedélyezett funkció. */
 const GB_CENTER: [number, number] = [52.6, -1.5];
+/** ⚠️ A spanyol szárazföld közepe. A Kanári-szigetek SZÁNDÉKOSAN kilógnak a
+ *  kezdő nézetből: ha beleférnének, a felhasználók túlnyomó részét adó
+ *  szárazföld a képernyő sarkába zsugorodna. A buborékuk ott van, csak
+ *  görgetni/kicsinyíteni kell hozzá. */
+const ES_CENTER: [number, number] = [40.0, -3.7];
 
 /** Osztrák Bundesland-centroidok (a regions.ts AT-kódjaival). A jobs/events
  *  ugyanezeket a kódokat tárolja, így a buborékok a megfelelő helyre kerülnek. */
@@ -69,6 +74,32 @@ const GB_REGION_COORDS: Record<string, { lat: number; lng: number }> = {
   NE:  { lat: 54.9,    lng: -1.8 },
 };
 
+/** Spanyol közösség-centroidok (a regions.ts ES-kódjaival). ⚠️ Ezek CENTROIDOK,
+ *  nem székhelyek (azok az es-points.ts-ben vannak): a buborék a közösség
+ *  KÖZEPÉRE kerüljön, különben Andalúzia buborékja Sevillánál, a régió nyugati
+ *  szélén ülne. A CE/ML két autonóm város — ott a centroid = maga a város. */
+const ES_REGION_COORDS: Record<string, { lat: number; lng: number }> = {
+  MD: { lat: 40.50, lng: -3.70 },
+  CT: { lat: 41.80, lng:  1.70 },
+  AN: { lat: 37.55, lng: -4.75 },
+  VC: { lat: 39.45, lng: -0.60 },
+  IB: { lat: 39.60, lng:  2.90 },
+  CN: { lat: 28.35, lng: -15.80 },
+  PV: { lat: 43.00, lng: -2.60 },
+  GA: { lat: 42.75, lng: -7.90 },
+  CL: { lat: 41.75, lng: -4.60 },
+  CM: { lat: 39.50, lng: -3.00 },
+  AR: { lat: 41.60, lng: -0.60 },
+  MC: { lat: 38.00, lng: -1.50 },
+  AS: { lat: 43.30, lng: -5.95 },
+  EX: { lat: 39.20, lng: -6.10 },
+  NC: { lat: 42.70, lng: -1.65 },
+  CB: { lat: 43.20, lng: -4.00 },
+  RI: { lat: 42.30, lng: -2.50 },
+  CE: { lat: 35.89, lng: -5.32 },
+  ML: { lat: 35.29, lng: -2.94 },
+};
+
 const NL_PROVINCE_COORDS: Record<string, { lat: number; lng: number }> = {
   NH: { lat: 52.60, lng: 4.92 },
   ZH: { lat: 52.02, lng: 4.49 },
@@ -118,9 +149,10 @@ export function CantonBubbleMap({
   const isDE = country === "DE";
   const isNL = country === "NL";
   const isGB = country === "GB";
+  const isES = country === "ES";
   const COORDS: Record<string, { lat: number; lng: number }> =
-    coordsOverride ?? (isDE ? DE_BUNDESLAND_COORDS : isAT ? AT_BUNDESLAND_COORDS : isNL ? NL_PROVINCE_COORDS : isGB ? GB_REGION_COORDS : CANTON_COORDS);
-  const center = isDE ? DE_CENTER : isAT ? AT_CENTER : isNL ? NL_CENTER : isGB ? GB_CENTER : SWISS_CENTER;
+    coordsOverride ?? (isDE ? DE_BUNDESLAND_COORDS : isAT ? AT_BUNDESLAND_COORDS : isNL ? NL_PROVINCE_COORDS : isGB ? GB_REGION_COORDS : isES ? ES_REGION_COORDS : CANTON_COORDS);
+  const center = isDE ? DE_CENTER : isAT ? AT_CENTER : isNL ? NL_CENTER : isGB ? GB_CENTER : isES ? ES_CENTER : SWISS_CENTER;
 
   useEffect(() => {
     if (!fullscreen) return;

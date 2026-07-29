@@ -35,6 +35,7 @@ export const COUNTRIES: Country[] = [
   // Ahol grafikus zászló kell, ott a CountryFlag SVG-komponens fut (az rajzolja
   // a Szent György-keresztet), a landingen pedig a .fl-eng CSS-zászló.
   { code: "GB", name: "Anglia", flag: "", enabled: true },
+  { code: "ES", name: "Spanyolország", flag: "🇪🇸", enabled: true },
 ];
 
 /** Alapértelmezett ország, ha a felhasználó még nem választott (vagy érvénytelen). */
@@ -56,6 +57,7 @@ export function countryLocative(code: string | null | undefined): string {
     case "DE": return "Németországban";
     case "NL": return "Hollandiában";
     case "GB": return "Angliában";
+    case "ES": return "Spanyolországban";
     default: return "Svájcban";
   }
 }
@@ -67,6 +69,7 @@ export function countrySuperessive(code: string | null | undefined): string {
     case "DE": return "Németországon";
     case "NL": return "Hollandián";
     case "GB": return "Anglián";
+    case "ES": return "Spanyolországon";
     default: return "Svájcon";
   }
 }
@@ -78,6 +81,7 @@ export function countryAdjective(code: string | null | undefined): string {
     case "DE": return "német";
     case "NL": return "holland";
     case "GB": return "angol";
+    case "ES": return "spanyol";
     default: return "svájci";
   }
 }
@@ -93,6 +97,7 @@ export function countryResidentialAdjective(code: string | null | undefined): st
     case "DE": return "németországi";
     case "NL": return "hollandiai";
     case "GB": return "angliai";
+    case "ES": return "spanyolországi";
     default: return "svájci";
   }
 }
@@ -111,6 +116,7 @@ export function courseLanguageName(code: string | null | undefined): string {
     case "DE": return "német";
     case "NL": return "holland";
     case "GB": return "brit angol";
+    case "ES": return "spanyol";
     default: return "svájci német";
   }
 }
@@ -128,6 +134,7 @@ export function countryIllative(code: string | null | undefined): string {
     case "DE": return "Németországba";
     case "NL": return "Hollandiába";
     case "GB": return "Angliába";
+    case "ES": return "Spanyolországba";
     default: return "Svájcba";
   }
 }

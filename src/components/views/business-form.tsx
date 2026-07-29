@@ -12,6 +12,7 @@ import { nearestAtBundesland } from "@/lib/at-points";
 import { nearestDeBundesland } from "@/lib/de-points";
 import { nearestNlProvince } from "@/lib/nl-points";
 import { nearestGbRegion } from "@/lib/gb-points";
+import { nearestEsRegion } from "@/lib/es-points";
 import { readPreferredCanton } from "@/lib/canton-pref";
 import { DEFAULT_COUNTRY, countrySuperessive, countryAdjective, regionWord } from "@/lib/countries";
 import { getRegions, regionLabel } from "@/lib/regions";
@@ -115,12 +116,14 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
   const isDE = country === "DE";
   const isNL = country === "NL";
   const isGB = country === "GB";
+  const isES = country === "ES";
   /** A koordinátához tartozó régió-kód az aktuális ország szerint. */
   const nearestRegion = (lat: number, lng: number) =>
     isDE ? nearestDeBundesland(lat, lng)
     : isAT ? nearestAtBundesland(lat, lng)
     : isNL ? nearestNlProvince(lat, lng)
     : isGB ? nearestGbRegion(lat, lng)
+    : isES ? nearestEsRegion(lat, lng)
     : nearestCantonCode(lat, lng);
   const regions = getRegions(country);
 

@@ -104,6 +104,25 @@ const EXAMPLES: Record<string, CountryExamples> = {
     postalAddress: "1 High Street, London SW1A 1AA",
     providerAddress: "Customer Services, PO Box 100, London EC1A 1AA",
   },
+  ES: {
+    phone: "+34 612 34 56 78",
+    companyEmail: "rrhh@empresa.es",
+    companyWebsite: "https://empresa.es",
+    // S.L. (Sociedad Limitada) = a spanyol kft. — messze a leggyakoribb forma.
+    companyName: "Pl. Kinti S.L.",
+    // ⚠️ A cégek adószáma a NIF (régebbi nevén CIF): egy betű + 8 karakter. A
+    // kezdőbetű a társasági formát kódolja — az S.L. „B"-vel kezdődik.
+    companyIdLabel: "Cég-azonosító (NIF/CIF)",
+    companyIdExample: "B12345678",
+    city: "Madrid",
+    regionLabel: "Régió",
+    currency: "EUR",
+    postalAddress: "Calle Mayor 1, 28013 Madrid",
+    // ⚠️ SZÁNDÉKOSAN általános cím, nem egy valódi szolgáltatóé: spanyol
+    // szolgáltatói postacímet nem tudtam hitelesen ellenőrizni, találgatni
+    // pedig félrevezető lenne (a felmondólevél rossz helyre menne).
+    providerAddress: "Atención al Cliente, Apartado de Correos 1, 28080 Madrid",
+  },
 };
 
 /** Semleges példák ismeretlen országra — SZÁNDÉKOSAN nem svájciak. */

@@ -39,8 +39,14 @@ const COUNTRY_MAP_CENTER: Record<string, [number, number]> = {
   // ⚠️ GB nélkül a lenti `?? COUNTRY_MAP_CENTER.CH` miatt az angliai user
   // térképe SVÁJCRA állt középre. Anglia közepe (Midlands), nem az egész UK-é.
   GB: [52.6, -1.3],
+  // Spanyolország: a szárazföld mértani közepe (Madridtól kissé délnyugatra).
+  // ⚠️ A Kanári-szigetek SZÁNDÉKOSAN nem befolyásolják a középpontot: ha úgy
+  // állítanánk be a nézetet, hogy azok is látszódjanak, a felhasználók ~95%-át
+  // adó szárazföld egy pici folttá zsugorodna a képernyő sarkában. Aki a
+  // Kanári-szigeteken él, a régió-szűrővel egy kattintással odaugrik.
+  ES: [40.0, -3.7],
 };
-const COUNTRY_MAP_ZOOM: Record<string, number> = { CH: 7, AT: 7, DE: 6, NL: 7, GB: 6 };
+const COUNTRY_MAP_ZOOM: Record<string, number> = { CH: 7, AT: 7, DE: 6, NL: 7, GB: 6, ES: 6 };
 
 /**
  * Nagy keresletű szakmák, amiket akkor is KIÍRUNK, ha az adott országban nulla

@@ -949,7 +949,308 @@ export const CHECKLISTS_GB: AdminChecklist[] = [
   },
 ];
 
-export const CHECKLISTS: AdminChecklist[] = [...CHECKLISTS_CH, ...CHECKLISTS_AT, ...CHECKLISTS_DE, ...CHECKLISTS_NL, ...CHECKLISTS_GB];
+/**
+ * ⚠️ SPANYOLORSZÁG. A csekklisták szervező elve NEM a jogi sorrend, hanem az
+ * IDŐPONT-KÉNYSZER: minden listánál az első valódi lépés az időpontfoglalás,
+ * mert a szűk keresztmetszet sosem az ügyintézés, hanem a bejutás. Ezért
+ * szerepel mindenütt a „mennyivel előre indulj” — ez a leggyakoribb ok, amiért
+ * egy magyar család lecsúszik egy iskolai vagy munkaügyi határidőről.
+ */
+export const CHECKLISTS_ES: AdminChecklist[] = [
+  {
+    slug: "es-uj-bevandorlo",
+    title: "Most költöztem Spanyolországba",
+    icon: "compass",
+    summary: "Az első hetek helyes sorrendje: empadronamiento → NIE → TB-szám → egészségügyi kártya.",
+    description:
+      "Spanyolországban a lépések SORRENDJE számít a legtöbbet, mert egymásra épülnek. Aki rossz sorrendben indul, kétszer foglal időpontot ugyanarra — és mivel az időpontok hetekre előre elfogynak, ez könnyen egy elvesztett hónap. Ez a lista a bevált sorrendet adja.",
+    deadline: "Az empadronamientót a beköltözés után azonnal; a regisztrációt a 3. hónap előtt.",
+    totalDuration: "Kb. 4–10 hét — az időpontok elérhetőségétől függ",
+    steps: [
+      {
+        title: "Foglalj időpontot — MÁR MA",
+        body: "Mielőtt bármi mást csinálnál: nézd meg, mikorra van szabad időpont az idegenrendészethez (extranjería) és az önkormányzathoz. Ha hat hét múlva van a legközelebbi, akkor onnantól számolj visszafelé. Az időpont ingyenes — aki pénzt kér érte, viszonteladó.",
+        link: { label: "Cita previa — extranjería", url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus" },
+        duration: "20 perc + akár több hét várakozás",
+      },
+      {
+        title: "Empadronamiento az önkormányzatnál",
+        body: "Ez az alap, amire minden más épül. Vidd: útlevél + másolat, kitöltött nyomtatvány, és lakcím-igazolás (bérleti szerződés, VAGY a főbérlő/tulajdonos aláírt hozzájárulása az okmánymásolatával). Kérj CERTIFICADO-t, ne csak volante-t — a hatósági ügyekhez az kell.",
+        link: { label: "Önkormányzat-kereső — administracion.gob.es", url: "https://administracion.gob.es/" },
+        duration: "30 perc a hivatalban",
+      },
+      {
+        title: "NIE + uniós regisztráció (certificado de registro)",
+        body: "3 hónapnál hosszabb tartózkodásnál kötelező. Vidd: útlevél + másolat, EX-18 nyomtatvány, a BEFIZETETT modelo 790 (012-es kód) igazolása, és a megélhetés igazolása (munkaszerződés / TB-bejelentés / elegendő fedezet + biztosítás). A zöld igazoláson rajta lesz a NIE-számod.",
+        duration: "45 perc a hivatalban",
+      },
+      {
+        title: "Seguridad Social-szám",
+        body: "A munkába állás feltétele — a munkáltató enélkül nem tud bejelenteni. Jó hír: ezt online is elintézheted az Importass portálon, nem kell hozzá időpont.",
+        link: { label: "Importass — TB-szám igénylése", url: "https://portal.seg-social.gob.es/wps/portal/importass/importass/tramites/obtenernumeroseguridadsocial" },
+        duration: "20 perc online",
+      },
+      {
+        title: "Egészségügyi kártya (tarjeta sanitaria)",
+        body: "A lakóhelyed szerinti centro de saludban vagy a közösséged online felületén. Kell hozzá az empadronamiento és a TB-jogosultság igazolása. Itt rendelnek hozzád háziorvost (médico de cabecera).",
+        duration: "30 perc + 2–4 hét a kártyára",
+      },
+      {
+        title: "Bankszámla",
+        body: "NIE-vel bármelyik banknál nyithatsz. ⚠️ Nézd meg a havidíj feltételeit: sok számla csak akkor ingyenes, ha rendszeres bérjóváírás érkezik rá.",
+        duration: "1 óra",
+      },
+      {
+        title: "Cl@ve — digitális azonosító",
+        body: "Ezzel intézed online az adó-, TB- és idegenrendészeti ügyeidet. Megéri az elején beszerezni, mert utána sok ügyhöz már nem kell időpontot kérned.",
+        link: { label: "Cl@ve — hivatalos oldal", url: "https://clave.gob.es/" },
+        duration: "30 perc",
+      },
+    ],
+    warnings: [
+      "⚠️ A SORREND számít: empadronamiento nélkül nincs egészségügyi kártya és nincs iskolai beiratkozás.",
+      "⚠️ Az időpont MINDIG ingyenes. A fizetős „segítők” ugyanabban a rendszerben foglalnak — a pénz csak a sorbaállást veszi meg tőled.",
+      "Hiányzó papír = új időpont. A hivatalnok nem tud utólag befogadni semmit, ezért indulás előtt tételesen nézd át a listát.",
+      "Ha gyereked van: az iskolai beiratkozás egy szűk tavaszi ablakban zajlik. Az empadronamientót ehhez időzítsd, ne fordítva.",
+    ],
+    sources: [
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+      { label: "Real Decreto 240/2007 — uniós polgárok tartózkodása (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-4184" },
+    ],
+  },
+  {
+    slug: "es-cita-previa",
+    title: "Cita previa — időpontot kell szereznem",
+    icon: "clock",
+    summary: "Ha nincs szabad időpont: mit tehetsz, és mit ne csinálj.",
+    description:
+      "A „no hay citas disponibles” üzenet a spanyolországi ügyintézés legnagyobb frusztrációja. Nem végleges állapot: a rendszer folyamatosan szabadít fel helyeket. Ez a lista összeszedi, mi működik — és mi az, ami csak pénzbe kerül.",
+    deadline: "Amint tudod, hogy szükséged lesz egy ügyre.",
+    totalDuration: "Napok–hetek, hivataltól és várostól függően",
+    steps: [
+      {
+        title: "Tisztázd, MELYIK hivatalhoz kell időpont",
+        body: "Az idegenrendészeti (extranjería) ügyeknek külön foglalója van, a Seguridad Socialnak, az adóhivatalnak és a DGT-nek is saját. Az önkormányzati empadronamientót a saját városod oldalán foglalod. Ha rossz helyen keresel, hiába van szabad hely.",
+        duration: "10 perc",
+      },
+      {
+        title: "Készítsd elő az azonosítót",
+        body: "A foglaláshoz már kell útlevélszám vagy NIE. Ha ez nincs kéznél, a foglalás közben lejár a munkamenet, és kezdheted elölről.",
+        duration: "2 perc",
+      },
+      {
+        title: "Próbálkozz a jó időpontokban",
+        body: "Új helyeket jellemzően kora reggel és a hét első napjaiban nyitnak. Érdemes naponta egyszer ránézni — a lemondások miatt is szabadulnak fel helyek.",
+        duration: "5 perc naponta",
+      },
+      {
+        title: "Nézd meg a szomszédos hivatalokat",
+        body: "Az idegenrendészeti ügyek a tartományhoz kötöttek, de a tartományon belül több iroda is lehet. Sok más ügynél (például a TB-nél) még szabadabb a választás — egy 30 km-rel távolabbi hivatalban gyakran hetekkel korábbi időpont van.",
+        duration: "15 perc",
+      },
+      {
+        title: "Keresd meg, mit lehet ELKERÜLNI",
+        body: "Egyre több ügy intézhető teljesen online, ha van digitális azonosítód (Cl@ve vagy elektronikus tanúsítvány). A TB-szám, a vida laboral és sok adóügy ilyen. Ez a leggyorsabb megoldás: nem szerzel jobb időpontot, hanem nem is kell időpont.",
+        link: { label: "Cl@ve — hivatalos oldal", url: "https://clave.gob.es/" },
+        duration: "30 perc egyszeri beruházás",
+      },
+      {
+        title: "Ha megvan: mentsd el és készülj fel",
+        body: "Mentsd a visszaigazolót (justificante) telefonra ÉS nyomtatva. Nézd át a kért dokumentumok listáját tételesen, és készíts mindenből fénymásolatot.",
+        duration: "20 perc",
+      },
+    ],
+    warnings: [
+      "⚠️ NE fizess időpontért. Az időpont ingyenes; a viszonteladók ugyanabban a nyilvános rendszerben foglalnak.",
+      "⚠️ Ha nem tudsz menni, MONDD LE. A meg nem jelenés miatt egyes hivatalok egy időre kizárnak az újrafoglalásból.",
+      "A foglalt időpontot ne add tovább másnak — a névre szóló időpontot a hivatalban ellenőrzik.",
+    ],
+    sources: [
+      { label: "Cita previa — extranjería", url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus" },
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+    ],
+  },
+  {
+    slug: "es-empadronamiento",
+    title: "Empadronamiento — lakcím-bejelentés",
+    icon: "home",
+    summary: "Az önkormányzati bejelentkezés — erre épül az egészségügy és az iskola.",
+    description:
+      "A padrón municipal a település lakónyilvántartása. Törvény írja elő, hogy ott jelentkezz be, ahol ténylegesen élsz. Gyakorlatilag ez a spanyolországi léted alapdokumentuma.",
+    deadline: "A beköltözés után mielőbb — nincs napra szóló országos határidő, de minden más erre vár.",
+    totalDuration: "Egy hivatali látogatás + 1–2 hét az igazolásra",
+    steps: [
+      {
+        title: "Nézd meg a saját önkormányzatod eljárását",
+        body: "Városonként eltér, hogy kell-e időpont, mit fogadnak el lakcím-igazolásként, és lehet-e online intézni. Nagyvárosban jellemzően időpont kell.",
+        link: { label: "Önkormányzat-kereső — administracion.gob.es", url: "https://administracion.gob.es/" },
+        duration: "15 perc",
+      },
+      {
+        title: "Szedd össze a lakcím-igazolást",
+        body: "A neveden lévő bérleti szerződés a legegyszerűbb. Ha nincs: a szerződéses bérlő vagy a tulajdonos aláírt hozzájárulása (autorización de empadronamiento) + az ő okmánymásolata. Sok hivatal friss közüzemi számlát is kér.",
+        duration: "1–3 nap",
+      },
+      {
+        title: "Add be a kérelmet",
+        body: "Vidd: útlevél/személyi + másolat, kitöltött nyomtatvány, lakcím-igazolás. Gyerek esetén születési anyakönyvi kivonat és mindkét szülő okmánya.",
+        duration: "30 perc",
+      },
+      {
+        title: "Kérd a CERTIFICADO-t",
+        body: "Két papír létezik: a volante tájékoztató jellegű (gyorsan megkapod), a certificado hivatalos igazolás. Az idegenrendészeti és más hatósági ügyekhez a certificado kell — ha csak volantét kérsz, később újra sorba kell állnod.",
+        duration: "azonnal – 2 hét",
+      },
+    ],
+    warnings: [
+      "⚠️ A bejelentkezés NEM ad jogot a lakásra, és nem kockázat a tulajdonosnak — ezt érdemes elmondani, ha vonakodik aláírni a hozzájárulást.",
+      "Ha a településen belül költözöl, a címváltozást is be kell jelenteni.",
+      "Uniós polgárként ötévente meg kell erősíteni a bejegyzést, ha nincs állandó tartózkodási igazolásod — a lejárt padrón csendben megszűnik.",
+    ],
+    sources: [
+      { label: "Ley 7/1985 a helyi önkormányzatokról (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-1985-5392" },
+      { label: "INE — padrón", url: "https://www.ine.es/" },
+    ],
+  },
+  {
+    slug: "es-nie",
+    title: "NIE és uniós regisztráció",
+    icon: "document",
+    summary: "A külföldiek azonosító száma és a zöld igazolás — 3 hónap után kötelező.",
+    description:
+      "Magyar állampolgárként szabadon beköltözhetsz, de három hónapnál hosszabb tartózkodásnál regisztrálnod kell a külföldiek központi nyilvántartásába. Az igazoláson rajta lesz a NIE-számod, ami szinte minden további ügyhöz kell.",
+    deadline: "A beköltözéstől számított 3 hónapon belül.",
+    totalDuration: "1 hivatali látogatás — de az időpontra hetek várakozás lehet",
+    steps: [
+      {
+        title: "Foglalj időpontot az extranjeríához",
+        body: "Ez az egyik legkeresettebb időpont-típus. Ezért ne a harmadik hónap végén kezdd, hanem a beköltözés első hetében.",
+        link: { label: "Cita previa — extranjería", url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus" },
+        duration: "20 perc + hetek várakozás",
+      },
+      {
+        title: "Töltsd ki az EX-18 nyomtatványt",
+        body: "Ez az uniós polgár regisztrációs kérelme. Töltsd ki előre, nyomtasd ki két példányban.",
+        duration: "20 perc",
+      },
+      {
+        title: "Fizesd be a díjat ELŐRE (modelo 790, 012-es kód)",
+        body: "⚠️ A díjat a hivatali időpont ELŐTT kell befizetni bankban vagy online, és a befizetés igazolását magaddal vinni. Enélkül nem fogadják be a kérelmet — ez a leggyakoribb ok az újrafoglalásra.",
+        duration: "30 perc",
+      },
+      {
+        title: "Igazold, hogy miből élsz",
+        body: "Ezek közül elég egy: munkaszerződés vagy a TB-bejelentés (alta), önfoglalkoztatói bejelentkezés, VAGY elegendő anyagi fedezet + egészségbiztosítás, VAGY hallgatói jogviszony + biztosítás.",
+        duration: "változó",
+      },
+      {
+        title: "Menj el az időpontra",
+        body: "Vidd: útlevél/személyi + másolat, EX-18, a befizetés igazolása, a megélhetés igazolása, és az empadronamiento igazolása. A zöld igazolást jellemzően a helyszínen megkapod.",
+        duration: "45 perc",
+      },
+    ],
+    warnings: [
+      "⚠️ A zöld igazolás NEM személyi igazolvány — nincs rajta fénykép. Az útlevelet vagy a személyidet is vidd magaddal mindenhová.",
+      "Ne hagyd a harmadik hónap végére: az időpont-várakozás miatt a határidő könnyen lejár, mielőtt bejutnál.",
+      "5 év folyamatos tartózkodás után kérheted az állandó tartózkodási igazolást — az erősebb jogállás.",
+    ],
+    sources: [
+      { label: "Real Decreto 240/2007 (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-4184" },
+      { label: "Policía Nacional — ügyfélportál", url: "https://sede.policia.gob.es/portalCiudadano/" },
+    ],
+  },
+  {
+    slug: "es-munkakezdes",
+    title: "Munkába állás — mit ellenőrizz",
+    icon: "briefcase",
+    summary: "TB-szám, bejelentés, szerződés és a nómina — mielőtt aláírsz.",
+    description:
+      "A spanyol munkaviszony két dolgon áll: az írásos szerződésen és a társadalombiztosítási bejelentésen. A második a fontosabb — az dönti el, hogy létezel-e a rendszerben.",
+    deadline: "A TB-szám a munkakezdés ELŐTT legyen meg.",
+    totalDuration: "1–2 hét",
+    steps: [
+      {
+        title: "Szerezd meg a Seguridad Social-számot",
+        body: "Online, az Importass portálon — nem kell hozzá időpont. A munkáltató enélkül nem tud bejelenteni.",
+        link: { label: "Importass — TB-szám igénylése", url: "https://portal.seg-social.gob.es/wps/portal/importass/importass/tramites/obtenernumeroseguridadsocial" },
+        duration: "20 perc",
+      },
+      {
+        title: "Kérdezd meg: 12 vagy 14 fizetés?",
+        body: "⚠️ Ez a legfontosabb bér-kérdés Spanyolországban. Ugyanaz az éves bruttó havi szinten teljesen máshogy néz ki 12 és 14 részletben. Az álláshirdetések jellemzően csak az éves összeget írják.",
+        duration: "1 perc — de sok pénzt ér",
+      },
+      {
+        title: "Nézd meg, melyik convenio colectivo vonatkozik rád",
+        body: "Az ágazati kollektív szerződés dönt a minimálbéredről, a szabadságodról és a felmondási idődről — és sokszor jobbat ad, mint a törvény. A szerződésben szerepelnie kell, melyik convenio az.",
+        duration: "20 perc",
+      },
+      {
+        title: "Ellenőrizd a bejelentést",
+        body: "Az első fizetés után kérd le az informe de vida laboralt. Ha nem szerepel benne a munkahelyed, akkor nem jelentettek be — ezt azonnal tisztázd.",
+        link: { label: "Importass — vida laboral", url: "https://portal.seg-social.gob.es/wps/portal/importass/importass/tramites/informedevidalaboral" },
+        duration: "10 perc",
+      },
+      {
+        title: "Olvasd el a nóminát",
+        body: "A bérpapíron elkülönül a bruttó és a levonás. A két nagy levonás a TB-járulékod és az IRPF-előleg. Ha változik a családi helyzeted, szólj a bérszámfejtésnek — különben az éves bevallásnál egy összegben rendeződik.",
+        duration: "15 perc",
+      },
+    ],
+    warnings: [
+      "⚠️ Bejelentés nélkül dolgozni: nincs biztosításod, nem gyűlik a nyugdíjad, és baleset esetén nem véd semmi.",
+      "⚠️ Ha felmondanak és vitatnád, HÚSZ MUNKANAPOD van megtámadni — ez jogvesztő határidő.",
+      "A finiquito (végelszámolás) aláírása sokszor lemondás a további igényekről. Ha vitatod, írd oda: „no conforme”.",
+    ],
+    sources: [
+      { label: "Estatuto de los Trabajadores (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430" },
+      { label: "SEPE — állami foglalkoztatási szolgálat", url: "https://www.sepe.es/" },
+    ],
+  },
+  {
+    slug: "es-egeszsegugyi-kartya",
+    title: "Egészségügyi kártya (tarjeta sanitaria)",
+    icon: "heart",
+    summary: "A közellátás belépője — a közösséged adja ki, nem az állam.",
+    description:
+      "A spanyol közegészségügyet az autonóm közösségek működtetik. Ezért a kártyaigénylés menete régiónként eltér — de a váz mindenütt ugyanaz: empadronamiento, jogosultság-igazolás, centro de salud.",
+    deadline: "Mielőbb — ne várd meg, amíg beteg leszel.",
+    totalDuration: "1 látogatás + 2–4 hét a kártyára",
+    steps: [
+      {
+        title: "Legyen meg az empadronamiento",
+        body: "Enélkül nem tudják, melyik körzethez tartozol. Ez az első feltétel.",
+        duration: "—",
+      },
+      {
+        title: "Igazold a jogosultságot",
+        body: "Jellemzően a TB-bejelentés (alta). Nyugdíjasként az S1 nyomtatvány. Ha egyik sincs, kérdezd meg a közösségedben, mi az eljárás — az egyetemes hozzáférés szabálya alapján lehetsz jogosult munkaviszony nélkül is.",
+        duration: "változó",
+      },
+      {
+        title: "Menj a lakóhelyedhez tartozó centro de saludba",
+        body: "Az ügyfélszolgálaton (vagy a közösség online felületén) indítod a kérelmet. Itt rendelnek hozzád háziorvost is.",
+        duration: "30 perc",
+      },
+      {
+        title: "Használd az ideiglenes igazolást",
+        body: "Amíg a plasztik kártya elkészül, ideiglenes papírt adnak — azzal is elmehetsz orvoshoz. Ne várj a kártyára.",
+        duration: "azonnal",
+      },
+    ],
+    warnings: [
+      "⚠️ Az európai kártya (EU-kártya) csak IDEIGLENES külföldi tartózkodásra való — ha ideköltöztél, nem helyettesíti a spanyol kártyát.",
+      "Sürgős esetben ellátnak kártya nélkül is: a segélyhívó a 112.",
+      "A vényköteles gyógyszereknél önrészt fizetsz; a mértéke a jövedelmedtől és a jogállásodtól függ, a gyógyszertár automatikusan számolja.",
+    ],
+    sources: [
+      { label: "Real Decreto-ley 7/2018 — egyetemes hozzáférés (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2018-10752" },
+      { label: "Sanidad minisztérium", url: "https://www.sanidad.gob.es/" },
+    ],
+  },
+];
+
+export const CHECKLISTS: AdminChecklist[] = [...CHECKLISTS_CH, ...CHECKLISTS_AT, ...CHECKLISTS_DE, ...CHECKLISTS_NL, ...CHECKLISTS_GB, ...CHECKLISTS_ES];
 
 /** A választott ország csekklistái (a lista-nézethez). */
 export function getChecklists(country: string | null | undefined): AdminChecklist[] {
@@ -957,6 +1258,7 @@ export function getChecklists(country: string | null | undefined): AdminChecklis
   if (country === "DE") return CHECKLISTS_DE;
   if (country === "NL") return CHECKLISTS_NL;
   if (country === "GB") return CHECKLISTS_GB;
+  if (country === "ES") return CHECKLISTS_ES;
   return CHECKLISTS_CH;
 }
 

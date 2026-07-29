@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { getTodayState, type QuizState } from "@/lib/quiz-daily";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, isValidCountry } from "@/lib/countries";
 
 /**
  * KvizDailyCard — kompakt napi-kvíz widget a főoldalon.
@@ -25,14 +25,15 @@ export function KvizDailyCard() {
   if (!state) return null;
 
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  // Mind az 5 országnak van kvíz-bankja (quiz-daily.ts választja ki: GB_QUIZ_BANK
-  // is) — csak ismeretlen országnál rejtjük.
-  if (country !== "CH" && country !== "AT" && country !== "DE" && country !== "NL" && country !== "GB") return null;
+  // MINDEN app-országnak van kvíz-bankja (quiz-daily.ts választja ki) — csak
+  // ismeretlen országnál rejtjük.
+  if (!isValidCountry(country)) return null;
   const quizLabel =
     country === "AT" ? "Mai Osztrák Kvíz"
     : country === "DE" ? "Mai Német Kvíz"
     : country === "NL" ? "Mai Holland Kvíz"
     : country === "GB" ? "Mai Angol Kvíz"
+    : country === "ES" ? "Mai Spanyol Kvíz"
     : "Mai Svájci Kvíz";
   const played = !!state.today;
   const score = state.today?.score ?? 0;

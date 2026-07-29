@@ -32,6 +32,7 @@ export function ChecklistList({ indexByCountry }: { indexByCountry: Record<strin
   const isDE = country === "DE";
   const isNL = country === "NL";
   const isGB = country === "GB";
+  const isES = country === "ES";
   const checklists = indexByCountry[country] ?? indexByCountry[DEFAULT_COUNTRY];
 
   return (
@@ -74,7 +75,9 @@ export function ChecklistList({ indexByCountry }: { indexByCountry: Record<strin
         toolName="ügyintézés varázsló"
         variant="legal"
         notAdviceFor="jogi vagy hatósági"
-        extraWarning={isGB
+        extraWarning={isES
+          ? "A spanyol ügyintézés autonóm közösségenként és önkormányzatonként eltér, és szinte mindenhol előzetes időpont (cita previa) kell — a csekklisták általános minták, nem a te konkrét helyzeted. Mindig a saját közösséged és önkormányzatod hivatalos oldalán tájékozódj."
+          : isGB
           ? "Angliában nincs lakcím-bejelentés, és az ügyintézés nagy része online, a gov.uk-n zajlik; a helyi ügyeket (council tax, szemétszállítás, iskolai hely) a lakóhely szerinti council intézi. A csekklisták általános minták — mindig a gov.uk-n vagy a saját councilod oldalán ellenőrizd."
           : isAT
           ? "Az osztrák ügyintézés részletei tartományonként (Bundesland) kissé eltérhetnek és időben változnak — a csekklisták általános minták. Mindig a lakhelyed szerinti hatóságnál (Magistrat / Gemeindeamt / Finanzamt) tájékozódj."
@@ -83,7 +86,10 @@ export function ChecklistList({ indexByCountry }: { indexByCountry: Record<strin
           : isNL
           ? "A holland ügyintézés a gemeente (önkormányzat) szerint kissé eltérhet és időben változik — a csekklisták általános minták. Mindig a lakhelyed szerinti gemeente hivatalos oldalán vagy a rijksoverheid.nl-en tájékozódj."
           : "A svájci ügyintézés kantononként és községenként ELTÉR — a csekklisták általános minták, nem a te konkrét helyzeted. Mindig a lakhelyed kantoni Migrationsamt-jánál vagy a helyi Gemeinde-nél tájékozódj."}
-        officialSources={isGB ? [
+        officialSources={isES ? [
+          { label: "administracion.gob.es — Hivatalos portál", url: "https://administracion.gob.es/" },
+          { label: "Cita previa — extranjería", url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus" },
+        ] : isGB ? [
           { label: "gov.uk — Hivatalos portál", url: "https://www.gov.uk/" },
           { label: "gov.uk — Találd meg a councilodat", url: "https://www.gov.uk/find-local-council" },
         ] : isAT ? [

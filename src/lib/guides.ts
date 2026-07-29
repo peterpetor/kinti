@@ -36,7 +36,7 @@ export interface Guide {
 /** A guide-bank utolsó tartalmi frissítése — a sitemap lastModified-je (bump
  *  cikk-bővítéskor/-átíráskor). Korábban `now` ment MINDEN crawlnál → a Google
  *  megtanulja figyelmen kívül hagyni a hazug lastmodot. */
-export const GUIDES_UPDATED_AT = new Date("2026-07-19");
+export const GUIDES_UPDATED_AT = new Date("2026-07-29");
 
 export const GUIDES_DISCLAIMER =
   "Ez általános tájékoztatás hivatalos forrásokból, nem jogi tanács. A részletek kantononként és időben változnak — a pontos, rád vonatkozó információért mindig a hivatalos oldalt és a lakóhelyed kantonját nézd.";
@@ -2336,7 +2336,778 @@ export const GUIDES_GB: Guide[] = [
   },
 ];
 
-export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT, ...GUIDES_DE, ...GUIDES_NL, ...GUIDES_GB];
+/**
+ * Spanyolország — EU-tag, tehát magyar állampolgárként SZABADON beköltözhetsz.
+ *
+ * ⚠️ A spanyol ügyintézés fő sajátossága NEM jogi, hanem GYAKORLATI: majdnem
+ * minden hivatalnál CITA PREVIA (előzetes időpont) kell, és az időpontok
+ * hetekre előre elfogynak. Ezért a cikkek mindenütt kiemelik, MENNYIVEL előre
+ * kell indulni — ez a leggyakoribb ok, amiért valaki lecsúszik egy határidőről.
+ *
+ * ⚠️ MÁSODIK sajátosság: sok ügy AUTONÓM KÖZÖSSÉGENKÉNT eltér (egészségügy,
+ * iskola, sőt az IRPF egy része is). Ahol ez így van, a cikk kimondja, és a
+ * saját közösséged oldalára irányít — nem ad országos „egy igazságot”.
+ */
+export const GUIDES_ES: Guide[] = [
+  {
+    slug: "es-cita-previa",
+    title: "Cita previa — az időpontfoglalás rendszere",
+    summary:
+      "Spanyolországban a legtöbb hivatalba nem lehet csak úgy beesni: előzetes időpont kell, és az gyakran hetekre előre elfogy.",
+    tldr: [
+      "Szinte minden hivatalos ügyhöz (NIE, empadronamiento, Seguridad Social, adóügy, DGT) előzetes időpont — cita previa — kell.",
+      "Az időpont INGYENES. Aki pénzt kér érte, az viszonteladó — a hivatalos oldalon foglalj.",
+      "Számolj 2–6 hét csúszással: nagyvárosban gyakran hetekig nincs szabad időpont, és ez a te határidőidet is eltolja.",
+      "A „no hay citas disponibles” nem végleges: új helyeket jellemzően reggel és a hét elején szabadítanak fel — érdemes naponta próbálkozni.",
+    ],
+    icon: "clock",
+    sections: [
+      {
+        heading: "Miért ez az első cikk, amit el kell olvasnod",
+        body: [
+          "A legtöbb kint élő magyar nem egy szabályba szalad bele Spanyolországban, hanem az időbe. Az ügy maga jellemzően egyszerű — de az az egy nap, amikor be tudsz menni intézni, akár másfél hónapra van.",
+          "Ha ezzel nem számolsz, láncreakció indul: nincs empadronamiento → nincs egészségügyi kártya és nem tudod beíratni a gyereket; nincs NIE → nem tudsz szerződést kötni és bankszámlát nyitni. Egyetlen elmaradt időpont hetekre megakaszthatja az egész beilleszkedést.",
+        ],
+      },
+      {
+        heading: "Mely ügyekhez kell cita previa?",
+        bullets: [
+          "Extranjería / Policía Nacional — NIE-szám, uniós polgár regisztrációs igazolása (certificado de registro)",
+          "Ayuntamiento (önkormányzat) — empadronamiento, azaz a lakcím-bejelentés; sok városban kötelező az időpont",
+          "Seguridad Social (TGSS / INSS) — társadalombiztosítási szám, nyugdíjügyek",
+          "Agencia Tributaria (Hacienda) — adószám, adóbevallás személyes segítséggel",
+          "DGT — jogosítvány, forgalmi engedély, gépjármű-átírás",
+          "Centro de salud — a háziorvosi időpont is foglalásos (de az sürgős esetben aznapi)",
+        ],
+      },
+      {
+        heading: "Mennyivel előre indulj?",
+        body: [
+          "Nincs egységes országos szabály, mert városonként (sőt hivatalonként) drasztikusan eltér. Ami stabil tapasztalat: kisebb településen napok, Madridban / Barcelonában / a Costa del Solon viszont sokszor hetek a várakozás.",
+          "Gyakorlati ökölszabály: ha egy ügynek van határideje, az időpontfoglalást a határidő előtt legalább HAT héttel kezdd el. Ha hamarabb kapsz helyet, csak nyertél.",
+        ],
+        bullets: [
+          "Munkakezdés előtt: a Seguridad Social-számot még a szerződés aláírása előtt indítsd el",
+          "Iskolakezdés előtt: az empadronamiento nélkül nem tudod beadni a beiratkozást — a beiratkozási időszak (jellemzően tavasz) ELŐTT legyen meg",
+          "Költözés után: az empadronamiento az első lépés, mert szinte minden más erre épül",
+        ],
+      },
+      {
+        heading: "Így foglalj — és mire figyelj",
+        bullets: [
+          "CSAK a hivatalos oldalon foglalj. Az időpont ingyenes; a fizetős „segítők” ugyanazt a rendszert használják, csak pénzt kérnek érte.",
+          "Készítsd elő a NIE-t vagy az útlevélszámot, mert a foglaláshoz már kell azonosító",
+          "Ha nincs szabad hely, próbáld a szomszéd település hivatalát — az Extranjería-ügyek a tartományhoz kötöttek, de sok más ügy nem",
+          "Új időpontokat jellemzően kora reggel és a hét elején nyitnak — érdemes naponta ránézni",
+          "Mentsd el a foglalás visszaigazolóját (justificante) telefonon ÉS kinyomtatva — sok helyen kérik a bejáratnál",
+          "Ha nem tudsz menni, MONDD LE. A meg nem jelenés miatt egyes hivatalok időszakos tiltást alkalmaznak.",
+        ],
+      },
+      {
+        heading: "Amit mindenképp vigyél magaddal",
+        body: [
+          "A leggyakoribb ok, amiért valakinek újra kell foglalnia, nem az időpont hiánya, hanem egy hiányzó papír. A hivatalnok nem tud „majd utólag” elfogadni semmit — új időpontot kell kérned.",
+        ],
+        bullets: [
+          "Érvényes útlevél vagy személyi igazolvány + FÉNYMÁSOLAT (sok helyen a másolatot is kérik)",
+          "A konkrét ügyhöz tartozó kitöltött nyomtatvány",
+          "Ha díjköteles az ügy: a BEFIZETETT díj banki igazolása (a modelo 790 a legtöbb extranjería-ügynél)",
+          "A foglalás visszaigazolója",
+          "Ha nem beszélsz spanyolul: vigyél magaddal valakit, aki fordít — hivatalos tolmácsot csak ritkán biztosítanak",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+      { label: "Cita previa Extranjería (sede electrónica)", url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus" },
+      { label: "Seguridad Social — hivatalos portál", url: "https://www.seg-social.es/" },
+      { label: "Agencia Tributaria — sede electrónica", url: "https://sede.agenciatributaria.gob.es/" },
+      { label: "DGT — cita previa", url: "https://sede.dgt.gob.es/es/tramites-y-multas/cita-previa/" },
+    ],
+  },
+  {
+    slug: "es-nie-regisztracio",
+    title: "NIE-szám és uniós regisztráció",
+    summary:
+      "A NIE a külföldiek azonosító száma — szinte minden ügyhöz kell. 3 hónapnál hosszabb tartózkodáshoz uniós polgárként regisztrálnod is kell.",
+    tldr: [
+      "NIE = Número de Identidad de Extranjero. Enélkül nincs munkaszerződés, bankszámla, lakásbérlés, autóvásárlás.",
+      "Magyar állampolgárként SZABADON beköltözhetsz, de 3 hónapnál hosszabb tartózkodásnál regisztrálnod kell a külföldiek központi nyilvántartásába.",
+      "A regisztrációért kapott zöld igazolás (certificado de registro) tartalmazza a NIE-t — de ez NEM személyi igazolvány, az útlevelet is vidd magaddal.",
+      "5 év folyamatos tartózkodás után kérheted az állandó tartózkodási igazolást.",
+    ],
+    icon: "document",
+    sections: [
+      {
+        heading: "Mi a NIE, és mihez kell?",
+        body: [
+          "A NIE a spanyol állam által kiadott azonosító szám külföldieknek — nagyjából az, ami a spanyoloknak a DNI. Egy betűvel kezdődik, hét számjegy, majd egy ellenőrző betű.",
+          "Élethosszig ugyanaz marad: ha egyszer megkaptad, akkor is érvényes, ha közben hazaköltözöl és évek múlva visszatérsz.",
+        ],
+        bullets: [
+          "Munkaszerződés és a társadalombiztosítási bejelentés",
+          "Bankszámlanyitás",
+          "Lakásbérlés, közműszerződés",
+          "Adóügyek, cégalapítás, önfoglalkoztatói (autónomo) bejelentkezés",
+          "Autóvásárlás, forgalmi engedély",
+        ],
+      },
+      {
+        heading: "Uniós polgárként: a regisztráció (certificado de registro)",
+        body: [
+          "Magyar állampolgárként vízum nélkül költözhetsz Spanyolországba, és az első három hónapban semmit nem kell intézned. Ha három hónapnál tovább maradsz, be kell jelentkezned a külföldiek központi nyilvántartásába (Registro Central de Extranjeros).",
+          "Amit kapsz, az egy zöld igazolás — A4-es lap vagy bankkártya méretű kártya, innen a beceneve: „tarjeta verde”. Ezen szerepel a NIE-számod és a bejelentett lakcímed.",
+          "⚠️ Fontos félreértés: ez NEM azonosító okmány. Fénykép sincs rajta. Igazoltatásnál, banki ügyintézésnél az útlevelet vagy a személyidet is kérni fogják mellé.",
+        ],
+      },
+      {
+        heading: "Mit kell vinni a regisztrációhoz?",
+        bullets: [
+          "Érvényes útlevél vagy személyi igazolvány + fénymásolat",
+          "Kitöltött EX-18 nyomtatvány (uniós polgár regisztrációja)",
+          "A díj befizetésének igazolása — modelo 790, 012-es kód; ELŐRE, a bankban vagy online fizetendő",
+          "Igazolás arról, hogy miből élsz — ez a kulcs: munkaszerződés vagy a társadalombiztosítási bejelentés (alta), önfoglalkoztatói bejelentkezés, VAGY elegendő anyagi fedezet + egészségbiztosítás, VAGY hallgatói jogviszony + biztosítás",
+          "Két lehetőség hallgatóknak és nem dolgozóknak: a magánbiztosítás akkor is elfogadható, ha nincs spanyol munkaviszonyod",
+        ],
+      },
+      {
+        heading: "Hol és hogyan?",
+        body: [
+          "Az illetékes hely a lakóhelyed szerinti Oficina de Extranjería vagy a Policía Nacional idegenrendészeti ügyfélszolgálata. ⚠️ Cita previa kell hozzá — ez az egyik legkeresettebb időpont-típus, ezért indulj el vele jóval korábban, mint gondolnád.",
+          "Nagyvárosokban gyakori, hogy hetekig nincs szabad hely. Ha sürget az idő, érdemes a tartományon belül több hivatal időpontjait is nézni.",
+        ],
+      },
+      {
+        heading: "NIE tartózkodás nélkül",
+        body: [
+          "Ha csak egy konkrét ügyhöz kell a szám (például ingatlant vásárolsz, de nem költözöl ide), külön is kérhető NIE — ehhez az EX-15 nyomtatvány tartozik, és igazolnod kell, milyen gazdasági vagy jogi érdeked fűződik hozzá.",
+          "Ez NEM ad tartózkodási jogot, csak azonosító számot.",
+        ],
+      },
+      {
+        heading: "5 év után: állandó tartózkodás",
+        body: [
+          "Öt év folyamatos, jogszerű spanyolországi tartózkodás után kérheted az állandó tartózkodási igazolást (certificado de residencia permanente). Ez erősebb jogállás: már nem kell igazolnod, hogy miből élsz.",
+        ],
+      },
+      {
+        heading: "És az állampolgárság?",
+        body: [
+          "A spanyol állampolgárság honosítással jellemzően 10 év jogszerű, folyamatos, közvetlenül a kérelem előtti tartózkodás után kérhető. Vannak jóval rövidebb utak (például latin-amerikai, portugál, andorrai, Fülöp-szigeteki és Egyenlítői-guineai állampolgároknak 2 év), de ezek magyar állampolgárként nem alkalmazhatók.",
+          "⚠️ A spanyol szabály fő szabályként a korábbi állampolgárságról való lemondást kívánja meg — a rövidített úthoz kötött országok élveznek csak kivételt, Magyarország nem tartozik közéjük. A honosítás előtt mindenképpen kérj személyre szabott jogi tanácsot; ez a cikk erre nem elég.",
+          "A kérelemhez tartozik a CCSE nevű alkotmányos és társadalmi ismereti vizsga, és — ha nem vagy spanyol ajkú országból — a DELE A2 nyelvvizsga.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Real Decreto 240/2007 — uniós polgárok belépése és tartózkodása (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-4184" },
+      { label: "Cita previa Extranjería (sede electrónica)", url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus" },
+      { label: "Policía Nacional — ügyfélportál", url: "https://sede.policia.gob.es/portalCiudadano/" },
+      { label: "Inclusión, Seguridad Social y Migraciones minisztérium", url: "https://www.inclusion.gob.es/" },
+    ],
+  },
+  {
+    slug: "es-empadronamiento",
+    title: "Empadronamiento — lakcím-bejelentés",
+    summary:
+      "Az önkormányzati lakcímnyilvántartásba (padrón) való bejegyzés kötelező, és szinte minden más ügy erre épül: egészségügy, iskola, hivatalos igazolások.",
+    tldr: [
+      "Az empadronamiento a lakóhelyed szerinti önkormányzatnál (ayuntamiento) intézett lakcím-bejelentés — törvény írja elő.",
+      "Erre épül az egészségügyi kártya, az iskolai beiratkozás és sok hivatali ügy — ezért ez az ELSŐ, amit intézz.",
+      "Kell hozzá lakcím-igazolás: bérleti szerződés vagy a tulajdonos/bérlő írásos hozzájárulása.",
+      "Kétféle papírt adnak: a volante tájékoztató jellegű, a certificado a hivatalos igazolás — mindig nézd meg, melyiket kérik.",
+    ],
+    icon: "home",
+    sections: [
+      {
+        heading: "Mi ez, és miért ez az első lépés?",
+        body: [
+          "A padrón municipal az önkormányzat lakónyilvántartása. A helyi önkormányzatokról szóló törvény szerint mindenkinek be kell jelentkeznie abban a településen, ahol ténylegesen él — állampolgárságtól függetlenül.",
+          "A gyakorlatban ez a kulcs, ami a többi ajtót nyitja. Egészségügyi kártyát, iskolai férőhelyet, sok esetben szociális ellátást is csak bejelentett lakcímmel tudsz igényelni.",
+          "Az önkormányzat a bejelentett lakosszám alapján kap költségvetést — ezért a bejelentkezésed a településnek is érdeke, nem akadályt fognak gördíteni elé.",
+        ],
+      },
+      {
+        heading: "Mit kell vinni?",
+        bullets: [
+          "Érvényes útlevél vagy személyi igazolvány (+ fénymásolat)",
+          "Kitöltött bejelentőlap — az önkormányzat oldaláról letölthető",
+          "Lakcím-igazolás: bérleti szerződés, VAGY adásvételi szerződés, VAGY a tulajdonos/főbérlő aláírt hozzájárulása (autorización de empadronamiento) az ő okmánymásolatával",
+          "Sok önkormányzat friss közüzemi számlát is kér a címre",
+          "Gyerek bejelentéséhez: születési anyakönyvi kivonat és mindkét szülő okmánya",
+        ],
+      },
+      {
+        heading: "Ha nincs a nevedre szóló szerződésed",
+        body: [
+          "Ez a leggyakoribb elakadás: albérletben laksz, de a szerződés a szobatársadé, vagy szívességi lakáshasználó vagy.",
+          "A megoldás az autorización de empadronamiento: a szerződéses bérlő (vagy a tulajdonos) írásban nyilatkozik, hogy nála laksz, és csatolja a saját okmánymásolatát. Ez teljesen szabályos út.",
+          "⚠️ A bejelentkezés NEM ad neked semmilyen jogot a lakásra, és nem is kockázat a tulajdonosnak — ezt érdemes elmondani, ha vonakodik.",
+        ],
+      },
+      {
+        heading: "Volante vagy certificado?",
+        body: [
+          "Két papírt adhat az önkormányzat, és nem cserélhetők fel. A volante de empadronamiento tájékoztató jellegű, gyorsan (sokszor azonnal, online is) megkapod. A certificado de empadronamiento hivatalos igazolás, amit hatósági eljárásokban kérnek.",
+          "Idegenrendészeti és több más hivatalos ügyben a certificado kell. Mielőtt sorba állsz, nézd meg, melyiket írja elő az ügy — ez pár hetet megspórolhat.",
+        ],
+      },
+      {
+        heading: "Költözés és megújítás",
+        bullets: [
+          "Ha másik településre költözöl, ott jelentkezz be újra — a régi bejegyzést az új önkormányzat automatikusan törli",
+          "Ha a településen belül költözöl, a címváltozást is be kell jelenteni",
+          "Uniós polgárként ötévente meg kell erősíteni a bejegyzést, ha nincs állandó tartózkodási igazolásod — figyelj rá, mert a lejárt padrón csendben megszűnik",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Ley 7/1985 a helyi önkormányzatokról — padrón (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-1985-5392" },
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+      { label: "INE — a padrón statisztikai hivatala", url: "https://www.ine.es/" },
+    ],
+  },
+  {
+    slug: "es-seguridad-social",
+    title: "Seguridad Social — társadalombiztosítási szám",
+    summary:
+      "A munkaviszony bejelentésének feltétele. Nélküle a munkáltató nem tud szabályosan alkalmazni — intézd a szerződés előtt.",
+    tldr: [
+      "A Seguridad Social-szám (NUSS) élethosszig szóló azonosító — ez alapozza meg az egészségügyi ellátást, a táppénzt és a nyugdíjat.",
+      "A munkáltatónak a MUNKAKEZDÉS ELŐTT be kell jelentenie téged (alta) — ehhez kell a szám.",
+      "Ma már online is igényelhető az Importass portálon, nem feltétlenül kell személyesen bemenni.",
+      "⚠️ A szám megléte NEM egyenlő a bejelentéssel. Az első fizetés előtt kérd el az alta igazolását.",
+    ],
+    icon: "users",
+    sections: [
+      {
+        heading: "Szám és bejelentés — két külön dolog",
+        body: [
+          "Ezt a kettőt nagyon gyakran keverik össze, és a különbség pénzben mérhető.",
+          "A NUSS (número de la Seguridad Social) a te azonosítód — egyszer kapod, örökre. Az alta a munkáltató bejelentése arról, hogy nála dolgozol; ez alapján fizeti a járulékot és ez alapján jár a táppénz.",
+          "Ha van számod, de nincs alta, akkor a papíron nem dolgozol. Ilyenkor nincs biztosításod, nem gyűlik a nyugdíjad, és baleset esetén nem véd semmi.",
+        ],
+      },
+      {
+        heading: "Hogyan igényeld a számot?",
+        bullets: [
+          "Online: az Importass portálon (a Seguridad Social ügyfélportálja) — ez a leggyorsabb út, és nem kell hozzá időpont",
+          "Személyesen: a TGSS (Tesorería General) ügyfélszolgálatán, TA.1 nyomtatvánnyal — ehhez cita previa kell",
+          "Amit kérnek: útlevél vagy személyi igazolvány, NIE (ha már van), és a kitöltött nyomtatvány",
+        ],
+      },
+      {
+        heading: "Ellenőrizd, hogy tényleg bejelentettek",
+        body: [
+          "Erre van hivatalos, bárki által lekérhető dokumentum: az informe de vida laboral. Ez felsorolja az összes bejelentett munkaviszonyodat és azok napra pontos időtartamát.",
+          "Kérd le évente legalább egyszer, és mindig az első fizetés után. Ha nem szerepel benne a munkahelyed, akkor nem jelentettek be — ezt minél hamarabb tisztázd, mert visszamenőleg rendezni nehéz.",
+        ],
+      },
+      {
+        heading: "Mit fedez?",
+        bullets: [
+          "Közegészségügyi ellátás (ez alapozza meg az egészségügyi kártyát)",
+          "Táppénz betegség és munkahelyi baleset esetén",
+          "Munkanélküli-ellátás (paro) — a ledolgozott idő alapján",
+          "Öregségi nyugdíj — a magyarországi és a spanyol jogszerző idő uniós szabály szerint összeszámít",
+          "Szülési/apasági ellátás",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Seguridad Social — hivatalos portál", url: "https://www.seg-social.es/" },
+      { label: "Importass — társadalombiztosítási szám igénylése", url: "https://portal.seg-social.gob.es/wps/portal/importass/importass/tramites/obtenernumeroseguridadsocial" },
+      { label: "Ley General de la Seguridad Social (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724" },
+    ],
+  },
+  {
+    slug: "es-egeszsegugy",
+    title: "Egészségügy és a tarjeta sanitaria",
+    summary:
+      "A közegészségügyet nem az állam, hanem az autonóm közösséged működteti — a kártyát is ott igényled, a szabályok régiónként eltérnek.",
+    tldr: [
+      "Az ellátás közfinanszírozott és a használat pontján ingyenes; a gyógyszerekhez viszont önrész tartozik.",
+      "⚠️ Az egészségügy AUTONÓM KÖZÖSSÉGI hatáskör — a kártyát (tarjeta sanitaria) a lakóhelyed szerinti regionális egészségügyi szolgálat adja ki.",
+      "Kell hozzá: empadronamiento + igazolás arról, hogy jogosult vagy (jellemzően a társadalombiztosítási bejelentés).",
+      "Az európai kártya (EU-kártya) csak IDEIGLENES tartózkodásra való — ha ideköltöztél, nem helyettesíti a spanyol kártyát.",
+    ],
+    icon: "heart",
+    sections: [
+      {
+        heading: "Hogyan épül fel a rendszer?",
+        body: [
+          "A spanyol közegészségügy (Sistema Nacional de Salud) egységes elvekre épül, de a működtetés az autonóm közösségeké. Ezért hívják máshogy Madridban (SERMAS), Katalóniában (CatSalut), Andalúziában (SAS), Galiciában (SERGAS), Baszkföldön (Osakidetza) és így tovább.",
+          "Ennek gyakorlati következménye van: a kártyaigénylés menete, a szükséges papírok és néha a jogosultsági feltételek is közösségenként eltérnek. Egy Madridra vonatkozó leírás Valenciában félrevezető lehet.",
+          "A belépési pont mindenütt ugyanaz: a lakóhelyedhez tartozó centro de salud és az ott hozzád rendelt háziorvos (médico de cabecera). Szakorvoshoz jellemzően tőle kapsz beutalót.",
+        ],
+      },
+      {
+        heading: "Hogyan szerzed meg a kártyát?",
+        bullets: [
+          "Előbb legyen meg az empadronamiento — enélkül nem tudják, melyik körzethez tartozol",
+          "Vidd a társadalombiztosítási jogosultság igazolását: a munkaviszony bejelentése (alta), vagy nyugdíjasként az S1 nyomtatvány",
+          "Menj a lakóhelyed szerinti centro de salud ügyfélszolgálatára (vagy a közösség online felületére) — sok helyen itt is időpont kell",
+          "Amíg a plasztik kártya elkészül, ideiglenes igazolást adnak, azzal is elmehetsz orvoshoz",
+        ],
+      },
+      {
+        heading: "Ha nincs munkaviszonyod",
+        body: [
+          "A 2018-as, egyetemes hozzáférésről szóló jogszabály óta a Spanyolországban élők akkor is jogosultak lehetnek az ellátásra, ha nincs munkaviszonyuk — a feltételeket a közösséged határozza meg.",
+          "Ha kimaradnál a rendszerből, van fizetős belépő: a convenio especial keretében havi díj ellenében csatlakozhatsz a közellátáshoz. Ezt is a közösséged intézi.",
+        ],
+      },
+      {
+        heading: "Gyógyszer-önrész",
+        body: [
+          "A vényköteles gyógyszereknél önrészt (copago) fizetsz, ami a jövedelmedtől és a jogállásodtól függ. A dolgozók jellemzően az ár egy részét fizetik, a nyugdíjasok kisebb hányadát, havi felső korláttal.",
+          "A gyógyszertárban a kártyád alapján automatikusan a rád vonatkozó árat számolják — nem neked kell kiszámolni.",
+        ],
+      },
+      {
+        heading: "Sürgősség és nyaralás",
+        bullets: [
+          "Sürgős esetben a segélyhívó a 112 — ellátnak kártya nélkül is",
+          "Az európai kártya (TSE/EU-kártya) csak ideiglenes tartózkodásra való: turistaként igen, lakosként nem",
+          "Ha Magyarországra utazol, a spanyol rendszerben kiváltott európai kártyád ott érvényes",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Real Decreto-ley 7/2018 — egyetemes egészségügyi hozzáférés (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2018-10752" },
+      { label: "Sanidad minisztérium", url: "https://www.sanidad.gob.es/" },
+      { label: "Seguridad Social — jogosultság", url: "https://www.seg-social.es/" },
+    ],
+  },
+  {
+    slug: "es-adozas",
+    title: "Adózás — IRPF és a Hacienda",
+    summary:
+      "183 napnál több itt töltött idő után spanyol adóügyi illetőségű vagy. Az adókulcsok részben az autonóm közösségedtől függnek.",
+    tldr: [
+      "Ha egy naptári évben 183 napnál többet töltesz Spanyolországban, adóügyi illetőségű vagy — a VILÁGJÖVEDELMED után adózol itt.",
+      "⚠️ Az IRPF két részből áll: állami és autonóm közösségi sávból — ezért ugyanaz a fizetés Madridban és Katalóniában más nettót ad.",
+      "Az éves bevallás („la Renta”) időszaka jellemzően tavasszal indul és nyár elején zárul.",
+      "A munkáltató havonta von le előleget (retención) — ez becslés, az éves bevallásnál rendeződik.",
+    ],
+    icon: "trending",
+    sections: [
+      {
+        heading: "Mikor vagy spanyol adóalany?",
+        bullets: [
+          "Ha egy naptári évben több mint 183 napot töltesz Spanyolországban, VAGY",
+          "ha a fő gazdasági érdekeltséged (a jövedelmed forrása) itt van, VAGY",
+          "ha a nem különélő házastársad és kiskorú gyermekeid szokásosan itt élnek (ez megdönthető vélelem)",
+        ],
+        body: [
+          "Ha adóügyi illetőségű vagy, a világjövedelmed után itt adózol — nem csak a spanyol keresetedet kell bevallani. A kettős adóztatást a magyar–spanyol egyezmény rendezi, de a bevallási kötelezettséget nem szünteti meg.",
+        ],
+      },
+      {
+        heading: "Miért függ a nettód attól, hol laksz?",
+        body: [
+          "Ez a spanyol adórendszer legfontosabb, magyar szemmel legszokatlanabb vonása. Az IRPF egyik fele állami sáv, a másik fele az autonóm közösségedé — és a közösségek maguk állapítják meg a sajátjukat.",
+          "Emiatt két azonos bruttó fizetés között akár érzékelhető nettó különbség lehet Madrid és Katalónia között. Ha költözésben gondolkodsz, ez valós szempont.",
+          "Ugyanez igaz az öröklési és vagyonadóra is, ott még nagyobbak az eltérések.",
+        ],
+      },
+      {
+        heading: "Hogyan zajlik az év?",
+        bullets: [
+          "A munkáltató minden hónapban levon egy adóelőleget (retención) a becsült éves jövedelmed alapján",
+          "A következő év tavaszán megnyílik a bevallási időszak — a Hacienda elkészít egy tervezetet (borrador), amit ellenőrizned kell",
+          "Ha túl sokat vontak le, visszakapod; ha keveset, befizeted",
+          "⚠️ A tervezet NEM automatikusan helyes: ha költöztél, gyereked született, vagy több munkáltatód volt, jellemzően javítani kell rajta",
+        ],
+      },
+      {
+        heading: "Két munkáltató — gyakori csapda",
+        body: [
+          "Ha egy évben több munkáltatód is volt, mindegyik külön-külön, alacsonyabb sávot feltételezve vonta az előleget. Összeadva viszont magasabb sávba kerülsz — és a különbözetet a bevallásnál egy összegben kell befizetned.",
+          "Ez sok magyart váratlanul ér az első teljes spanyol évében. Ha év közben munkahelyet váltottál, számolj vele, és tegyél félre rá.",
+        ],
+      },
+      {
+        heading: "Gyerek után járó kedvezmények — más logika, mint otthon",
+        body: [
+          "⚠️ Magyar szemmel ez az egyik legnagyobb meglepetés: Spanyolországban NINCS a Kindergeldhez vagy a magyar családi pótlékhoz hasonló, mindenkinek alanyi jogon járó havi családi ellátás.",
+          "Helyette a támogatás nagyrészt az adórendszeren keresztül érkezik: a gyerekek után adóalap-csökkentő tétel (mínimo por descendientes) jár, a dolgozó anyáknak külön levonás a három év alatti gyerek után, és több autonóm közösség saját kiegészítő kedvezményt is ad.",
+          "Emellett létezik rászorultsági alapú gyermektámogatás is (az alapjövedelem-rendszer részeként), de az jövedelemhez kötött — nem automatikus.",
+          "Ha a gyereked Magyarországon él, az uniós koordinációs szabályok alapján a magyar és a spanyol ellátás különbözete akkor is szóba jöhet — ezt a két ország hatóságai egymás közt rendezik.",
+        ],
+      },
+      {
+        heading: "Áfa (IVA) — ha vállalkozol",
+        bullets: [
+          "Általános kulcs: 21%",
+          "Kedvezményes kulcs: 10% (pl. vendéglátás, tömegközlekedés, egyes élelmiszerek)",
+          "Szuperkedvezményes kulcs: 4% (alapélelmiszerek, gyógyszerek, könyvek)",
+          "⚠️ A Kanári-szigeteken nem IVA, hanem IGIC van, más kulcsokkal — a szigeteken az egész közvetett adózás külön rendszer",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Agencia Tributaria — sede electrónica", url: "https://sede.agenciatributaria.gob.es/" },
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+      { label: "BOE — jogszabálykereső", url: "https://www.boe.es/" },
+    ],
+  },
+  {
+    slug: "es-munkavallalas",
+    title: "Munkavállalás — szerződés, bér, szabadság",
+    summary:
+      "A spanyol bér gyakran 14 részletben érkezik, a szabadság törvényi minimuma évi 30 naptári nap, és az ágazati kollektív szerződés sok mindent felülír.",
+    tldr: [
+      "A fizetést hagyományosan 14 részletben adják: 12 havi + 2 extra (nyáron és karácsonykor) — de ez szétosztható 12 hónapra.",
+      "⚠️ Ha bérről alkudsz, MINDIG kérdezd meg: 12 vagy 14 részlet? Ugyanaz az évi összeg havi szinten nagyon máshogy néz ki.",
+      "A törvényi minimum szabadság évi 30 NAPTÁRI nap (nem munkanap) — kb. 22 munkanap.",
+      "Az ágazati kollektív szerződés (convenio colectivo) a te szakmádra sokszor jobbat ír elő, mint a törvény — keresd meg a sajátodat.",
+    ],
+    icon: "briefcase",
+    sections: [
+      {
+        heading: "12 vagy 14 fizetés? — a legfontosabb kérdés",
+        body: [
+          "Spanyolországban bevett, hogy az éves bért 14 részletben fizetik ki: minden hónapban egyet, plusz egy extra júliusban és egy decemberben (pagas extraordinarias). Sok cég viszont „prorrateado” módon, 12 egyenlő részletben fizet.",
+          "Ez nem több pénz, csak más eloszlás — de a havi költségvetésedet teljesen átírja. Egy 28 000 eurós éves bér 14 részletben havi 2000 euró, 12 részletben havi 2333 euró.",
+          "Ezért állásinterjún ez konkrét kérdés: bruto anual, és hány pagában? Az álláshirdetések gyakran csak az éves összeget írják.",
+        ],
+      },
+      {
+        heading: "Mit néz meg a szerződésben (contrato)?",
+        bullets: [
+          "Határozott vagy határozatlan idejű (temporal / indefinido) — a 2022-es munkajogi reform óta a határozatlan a főszabály",
+          "Az alkalmazandó kollektív szerződés (convenio colectivo) megnevezése — ez dönt a béredről, a szabadságodról és a felmondási idődről",
+          "Besorolási kategória (categoría profesional) — ez határozza meg a convenio szerinti minimálbéredet",
+          "Munkaidő és a próbaidő hossza",
+          "A pagas extra kezelése (12 vagy 14 részlet)",
+        ],
+      },
+      {
+        heading: "Munkaidő és szabadság",
+        bullets: [
+          "A törvényi maximum heti 40 óra, éves átlagban számolva",
+          "Szabadság: évi legalább 30 NAPTÁRI nap — a hétvégék beleszámítanak, ezért ez nagyjából 22 munkanap",
+          "A szabadságot nem lehet pénzre váltani (kivéve a munkaviszony megszűnésekor)",
+          "Munkaidő-nyilvántartás kötelező — a munkáltatónak rögzítenie kell a napi kezdést és végzést",
+          "Évente 14 munkaszüneti nap: országos, közösségi és helyi ünnepek keveréke — a helyi kettő településenként más",
+        ],
+      },
+      {
+        heading: "A nómina (bérpapír) olvasása",
+        body: [
+          "A havi bérpapíron elkülönül a bruttó (devengos) és a levonások (deducciones) blokkja. A levonásoknál két nagy tétel van: a társadalombiztosítási járulékod és az adóelőleg (IRPF).",
+          "Az IRPF-előleg százaléka a te becsült éves jövedelmedtől és a családi helyzetedtől függ — ha változik valami (gyerek születik, munkahelyet váltasz), szólj a bérszámfejtésnek, különben az éves bevallásnál rendeződik egy összegben.",
+        ],
+      },
+      {
+        heading: "Ha megszűnik a munkaviszony",
+        bullets: [
+          "Végkielégítés (indemnización) jár jogszerűtlen vagy gazdasági okú felmondásnál — mértéke a szerződés típusától és a ledolgozott évektől függ",
+          "A finiquito az elszámolás: ki nem vett szabadság, arányos pagas extra, utolsó havi bér — ezt aláírás ELŐTT nézd át tételesen",
+          "Munkanélküli-ellátás (paro): a SEPE intézi; a járulékalapú ellátáshoz az utolsó 6 évben legalább 360 nap járulékfizetés kell",
+          "⚠️ A paro igénylésére 15 MUNKANAPOD van a munkaviszony megszűnésétől — a késés napjai elvesznek az ellátásból",
+          "⚠️ A finiquito aláírása sokszor egyben lemondás is a további igényekről — ha vitatod az elszámolást, írd oda: „no conforme”",
+        ],
+      },
+      {
+        heading: "⚠️ 20 munkanap — a legfontosabb határidő",
+        body: [
+          "Ha jogellenesnek tartod a felmondásodat, arra HÚSZ MUNKANAPOD van, hogy megtámadd. Ez jogvesztő határidő: utána a legerősebb ügy is elveszik.",
+          "Az első lépés nem a bíróság, hanem egy kötelező egyeztetési kérelem (papeleta de conciliación) a közösség munkaügyi egyeztető szervénél. Ennek benyújtása megállítja az óra ketyegését.",
+          "Húsz munkanap a naptárban nagyjából egy hónap — ünnepnapokkal még kevesebb. Ez a leggyakoribb ok, amiért egy egyébként megnyerhető munkaügyi vita elévül. Ha felmondanak, még aznap keress szakszervezetet vagy munkajogászt.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Estatuto de los Trabajadores (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430" },
+      { label: "Munkaügyi minisztérium (MITES)", url: "https://www.mites.gob.es/" },
+      { label: "SEPE — állami foglalkoztatási szolgálat", url: "https://www.sepe.es/" },
+    ],
+  },
+  {
+    slug: "es-lakasberles",
+    title: "Lakásbérlés — szerződés, kaució, jogaid",
+    summary:
+      "A bérleti törvény (LAU) erős védelmet ad a bérlőnek: hosszú kötelező meghosszabbítás és szabályozott kaució.",
+    tldr: [
+      "A hosszú távú lakásbérlést a Ley de Arrendamientos Urbanos (LAU) szabályozza — ez erősen bérlő-párti.",
+      "A törvényi kaució (fianza) lakásnál EGY havi bér; a tulajdonos ezen felül további garanciát is kérhet, de annak is van felső korlátja.",
+      "A bérlő évről évre meghosszabbíthatja a szerződést a törvényi minimumig, akkor is, ha a szerződés rövidebbre szól.",
+      "⚠️ A fianzát a tulajdonosnak le kell tennie a közösség hivatalánál — ez a te biztosítékod, hogy visszakapod.",
+    ],
+    icon: "house",
+    sections: [
+      {
+        heading: "Miért fontos a LAU?",
+        body: [
+          "A hosszú távú lakhatási bérlet nem szabad megállapodás kérdése: a LAU kötelező szabályokat ír elő, amelyektől a bérlő hátrányára nem lehet eltérni. Ha a szerződésed rosszabbat mond, a törvény az erősebb.",
+          "⚠️ Ez CSAK a lakhatási célú bérletre igaz. A nyaralóknak szóló, szezonális (alquiler de temporada) és a turisztikai bérlet más szabályok alá esik — sok magyart ezzel a szerződéstípussal fosztanak meg a bérlővédelemtől. Nézd meg, mi áll a szerződés címében.",
+        ],
+      },
+      {
+        heading: "Kaució és egyéb garanciák",
+        bullets: [
+          "Fianza: lakásbérletnél törvény szerint EGY havi bér — ennél többet fianza címén nem kérhetnek",
+          "A tulajdonosnak ezt le kell tennie az autonóm közösség letéti szervénél; kérd el a letét igazolását",
+          "Ezen felül kérhet további garanciát (garantía adicional), de annak is korlátja van",
+          "Gyakori még a kezes (aval) vagy bérleti biztosítás kérése — ez legális, de alkupozíció kérdése",
+          "A kauciót a kiköltözéskor kell visszaadni; a szokásos elhasználódásért nem vonhatnak le",
+        ],
+      },
+      {
+        heading: "Meddig maradhatsz?",
+        body: [
+          "A bérlő évente meghosszabbíthatja a szerződést egészen a törvényi minimumig — ez természetes személy tulajdonos esetén hosszabb védelem, cég esetén még hosszabb. Ehhez nem kell a tulajdonos beleegyezése.",
+          "A tulajdonos csak szűk, törvényben felsorolt esetben (például saját vagy közeli hozzátartozói lakhatás) szakíthatja meg korábban, és ezt előre jeleznie kell.",
+        ],
+      },
+      {
+        heading: "Mire figyelj aláírás előtt?",
+        bullets: [
+          "A szerződés típusa: vivienda habitual (lakhatás) vagy temporada (szezonális)? — ez dönti el, véd-e a LAU",
+          "Ki fizeti a közös költséget (comunidad), az IBI ingatlanadót és a közműveket",
+          "Az indexálás módja (a bérleti díj éves emelése) — ezt a szerződésnek konkrétan meg kell határoznia",
+          "Készíts fényképes átadás-átvételi állapotfelmérést — ez a kaució visszaszerzésének legjobb eszköze",
+          "Ingatlanos díja: a 2023-as lakhatási törvény óta a lakhatási bérletnél az ügynöki díj a TULAJDONOST terheli, nem a bérlőt",
+          "Nézd meg, „zona tensionada”-nak minősített területen van-e a lakás — ott a bérleti díjra külön korlát lehet",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Ley 29/1994 de Arrendamientos Urbanos (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-1994-26003" },
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+    ],
+  },
+  {
+    slug: "es-bankszamla",
+    title: "Bankszámla nyitása",
+    summary:
+      "NIE-vel bármelyik banknál nyithatsz számlát. A legnagyobb különbség a magyar szokáshoz képest: sok számla havidíjas, ha nem teljesíted a feltételeket.",
+    tldr: [
+      "Kell hozzá: útlevél/személyi, NIE és jellemzően lakcím- vagy munkaviszony-igazolás.",
+      "⚠️ Sok spanyol banknál a számla ingyenessége FELTÉTELES (rendszeres jóváírás, kártyahasználat) — enélkül havi díjat vonnak.",
+      "NIE nélkül is nyitható „nem rezidens” számla, de drágább és korlátozottabb.",
+      "A bérszámla (nómina) csomagok jellemzően a legjobb feltételűek, ha van munkaszerződésed.",
+    ],
+    icon: "lock",
+    sections: [
+      {
+        heading: "Mit visz magával?",
+        bullets: [
+          "Érvényes útlevél vagy személyi igazolvány",
+          "NIE-szám (rezidens számlához gyakorlatilag elengedhetetlen)",
+          "Lakcím-igazolás: empadronamiento vagy bérleti szerződés + közüzemi számla",
+          "Munkaszerződés vagy jövedelemigazolás — a kedvezményes bérszámlához kell",
+        ],
+      },
+      {
+        heading: "A havidíj-csapda",
+        body: [
+          "Magyar szemmel a legszokatlanabb, hogy a spanyol lakossági számlák egy része alapból havidíjas, és a díjmentesség feltételekhez kötött: rendszeres bérjóváírás, minimális kártyás költés, vagy egy bizonyos összegű megtakarítás.",
+          "Ha megszűnik a munkaviszonyod és elmarad a jóváírás, a számla csendben díjkötelessé válhat. Ezért év elején érdemes ránézni a kondíciós listára.",
+        ],
+      },
+      {
+        heading: "Nem rezidens számla",
+        body: [
+          "Ha még nincs NIE-d vagy nem költözöl ide, „cuenta de no residente” nyitható. Ehhez a bank kérhet a rendőrségtől beszerzett igazolást arról, hogy nem vagy rezidens, és ezt jellemzően évente megújíttatja — díj ellenében.",
+          "Ha ideköltözöl, érdemes átminősíttetni rezidens számlává, mert az olcsóbb.",
+        ],
+      },
+      {
+        heading: "Utalás haza",
+        body: [
+          "Spanyolország euróövezeti tagja, tehát a magyar euroszámlára történő SEPA-utalás olcsó és gyors. Forintra váltásnál viszont a bankok árfolyamrése gyakran drágább, mint a specializált szolgáltatóké.",
+          "A Kinti Utalás-kalkulátorával összehasonlíthatod, melyik úton mennyi érkezik meg ténylegesen.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Banco de España — ügyfélportál", url: "https://www.bde.es/" },
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+    ],
+  },
+  {
+    slug: "es-iskola",
+    title: "Iskola és gyerek",
+    summary:
+      "A tankötelezettség 6-tól 16 éves korig tart. A beiratkozás egy szűk tavaszi időszakban zajlik — aki lecsúszik róla, marad a szabad helyekkel.",
+    tldr: [
+      "Tankötelezettség: 6–16 év (a primaria és az ESO). A 3–6 éves óvodai szakasz nem kötelező, de ingyenes és szinte mindenki jár.",
+      "⚠️ A beiratkozás (escolarización) egy MEGHATÁROZOTT tavaszi időszakban zajlik — ezt nem lehet később bepótolni, csak a maradék helyekre jelentkezni.",
+      "Kell hozzá empadronamiento: a körzethez tartozás a felvételi pontozás legerősebb eleme.",
+      "Háromféle iskola van: állami (pública), egyházi/alapítványi de államilag támogatott (concertada) és magán (privada).",
+    ],
+    icon: "users",
+    sections: [
+      {
+        heading: "A rendszer szintjei",
+        bullets: [
+          "Educación infantil (0–6 év) — nem kötelező; a második szakasza (3–6) az állami iskolákban ingyenes",
+          "Educación primaria (6–12 év) — kötelező, hat évfolyam",
+          "ESO (12–16 év) — kötelező középiskolai szakasz, ezzel ér véget a tankötelezettség",
+          "Bachillerato (16–18 év) — érettségire készítő, egyetemi irány",
+          "Formación Profesional (FP) — szakképzés, a bachillerato alternatívája, több szinten",
+        ],
+      },
+      {
+        heading: "A beiratkozás időzítése — a legfontosabb tudnivaló",
+        body: [
+          "A szabad iskolaválasztás Spanyolországban egy évente egyszeri, néhány hetes ablakban működik. Ez jellemzően tavasszal van, autonóm közösségenként eltérő időpontban.",
+          "Aki lecsúszik róla — mert például akkor még nem volt meg az empadronamiento —, annak marad a tanév közbeni beiratkozás, ahol már csak a maradék szabad helyekre lehet jelentkezni. Ez sokszor azt jelenti, hogy nem a körzeti iskolába kerül a gyerek.",
+          "⚠️ Ezért az empadronamiento és a beiratkozási időszak összehangolása a legfontosabb tervezési feladat egy gyerekes családnál.",
+        ],
+      },
+      {
+        heading: "Hogyan pontoznak?",
+        bullets: [
+          "Lakóhely vagy a szülő munkahelye az iskola körzetében — ez a legerősebb tétel",
+          "Testvér már az iskolába jár",
+          "Családi jövedelem, nagycsaládos vagy fogyatékossági státusz",
+          "A pontos súlyozást az autonóm közösség határozza meg — a saját közösséged oktatási portálján nézd meg",
+        ],
+      },
+      {
+        heading: "Nyelv — közösségtől függ",
+        body: [
+          "Több autonóm közösségben a tanítás nyelve nem (csak) a spanyol: Katalóniában a katalán, Baszkföldön a baszk, Galiciában a galiciai, a Valenciai Közösségben a valenciai is tanítási nyelv.",
+          "Az újonnan érkező gyerekeknek jellemzően felzárkóztató nyelvi támogatás jár. Ha nyelvileg érzékeny a döntésed, ezt a költözés helyszínének kiválasztásakor érdemes mérlegelni, nem utána.",
+        ],
+      },
+      {
+        heading: "Bizonyítvány-elismerés",
+        body: [
+          "A magyar bizonyítványt honosítani kell (homologación / convalidación) ahhoz, hogy a gyerek a megfelelő évfolyamon folytathassa. Ezt az oktatási minisztérium intézi, és időigényes.",
+          "A folyamat alatt a gyerek feltételesen már beiratkozhat és járhat iskolába — ne várd meg a végleges döntést az iskolakezdéssel.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Ley Orgánica 2/2006 de Educación (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2006-7899" },
+      { label: "Oktatási és szakképzési minisztérium", url: "https://www.educacionfpydeportes.gob.es/" },
+    ],
+  },
+  {
+    slug: "es-autonomo",
+    title: "Önfoglalkoztatás (autónomo)",
+    summary:
+      "A spanyol egyéni vállalkozó havi járulékot fizet a bevallott jövedelme alapján — akkor is, ha épp nincs megbízása.",
+    tldr: [
+      "Két helyen kell bejelentkezned: az adóhatóságnál (tevékenység bejelentése) és a Seguridad Socialnál (RETA).",
+      "⚠️ A járulék (cuota) HAVI fix teher, a várható nettó jövedelmed sávja alapján — üres hónapban is fizetendő.",
+      "2023 óta a járulék a TÉNYLEGES jövedelemhez igazodik: év közben módosíthatod a sávodat, és év végén elszámolják.",
+      "Új induló vállalkozóknak kedvezményes átalánydíj (tarifa plana) létezik, feltételekkel és időkorláttal.",
+    ],
+    icon: "briefcase",
+    sections: [
+      {
+        heading: "A két bejelentkezés",
+        bullets: [
+          "Agencia Tributaria: a gazdasági tevékenység bejelentése (alta censal) — itt adod meg, mivel foglalkozol és milyen adózási rend alá esel",
+          "Seguridad Social: bejelentkezés az önfoglalkoztatók rendszerébe (RETA) — ebből jön a havi járulék",
+          "A sorrend számít: előbb az adóhatósági bejelentés, aztán a társadalombiztosítási",
+          "Mindkettő online is intézhető digitális azonosítóval (Cl@ve vagy elektronikus tanúsítvány)",
+        ],
+      },
+      {
+        heading: "A cuota — amivel a legtöbben nem számolnak",
+        body: [
+          "Ez a magyar KATA-hoz szokott fülnek a legfontosabb különbség: a spanyol autónomo havi járulékot fizet, amelynek mértéke a bevallott várható nettó jövedelmi sávjától függ — de nem nullázható azzal, hogy egy hónapban nem volt bevételed.",
+          "2023 óta a rendszer a tényleges jövedelemhez igazodik: évente többször módosíthatod a sávodat, ha változik a bevételed, és év végén a hatóság a valós adatok alapján elszámol veled — vagy visszatérít, vagy utólag beszed.",
+          "⚠️ Ezért az induló hónapokban érdemes reálisan (nem optimistán) beállítani a sávot, és félretenni a különbözetre.",
+        ],
+      },
+      {
+        heading: "Kedvezmény induláskor",
+        body: [
+          "Első alkalommal induló (vagy hosszabb szünet után visszatérő) autónomóknak kedvezményes átalánydíj (tarifa plana) jár egy meghatározott ideig, ami után fokozatosan áll be a normál járulék.",
+          "A feltételek és az összegek évente változnak, és egyes autonóm közösségek saját kiegészítő kedvezményt is adnak — a saját közösséged oldalán nézd meg, mert ez több száz eurót jelenthet az első évben.",
+        ],
+      },
+      {
+        heading: "Negyedéves kötelezettségek",
+        bullets: [
+          "Negyedéves áfabevallás (ha áfaköteles a tevékenységed)",
+          "Negyedéves IRPF-előleg",
+          "Éves összesítők és az éves személyi jövedelemadó-bevallás",
+          "Számlázási és nyilvántartási kötelezettség — az elektronikus számlázás felé tartó szabályozás miatt ez folyamatosan szigorodik",
+        ],
+      },
+      {
+        heading: "Érdemes-e könyvelő?",
+        body: [
+          "Spanyolországban a gestoría (könyvelő/ügyintéző iroda) használata az autónomók körében nem kivétel, hanem a norma. A havi díj jellemzően jóval kisebb, mint egy elmulasztott bevallás bírsága.",
+          "Ha nem beszélsz magas szinten spanyolul, ez gyakorlatilag kötelező tétel a költségvetésedben. A Kinti Szaknévsorában magyarul beszélő könyvelőket is találsz.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Seguridad Social — önfoglalkoztatók (RETA)", url: "https://www.seg-social.es/" },
+      { label: "Agencia Tributaria — sede electrónica", url: "https://sede.agenciatributaria.gob.es/" },
+      { label: "Ley General de la Seguridad Social (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724" },
+    ],
+  },
+  {
+    slug: "es-kozlekedes-jogositvany",
+    title: "Jogosítvány és autózás",
+    summary:
+      "A magyar jogosítvány érvényes, de rezidensként több kötelezettséged keletkezik. A műszaki vizsga (ITV) és a pontrendszer a két gyakori buktató.",
+    tldr: [
+      "A magyar (uniós) jogosítvány Spanyolországban érvényes — nem kell lecserélni, de rezidensként érdemes bejelentkezni a DGT nyilvántartásába.",
+      "⚠️ Az ITV (műszaki vizsga) elmulasztása bírságolható, és a rendszámfelismerő kamerák automatikusan szűrik.",
+      "A spanyol pontrendszer FORDÍTOTT: pontokat vonnak le, nem gyűjtesz.",
+      "A bírságot jellemzően kedvezménnyel lehet rendezni, ha rövid határidőn belül fizetsz.",
+    ],
+    icon: "car",
+    sections: [
+      {
+        heading: "A jogosítványod",
+        body: [
+          "Uniós jogosítványként a magyar vezetői engedélyed Spanyolországban érvényes, és nem kell kicserélni. Ha viszont itt élsz, a DGT nyilvántartásába való bejelentkezés praktikus: enélkül a bírságok, a pontlevonás és az adminisztráció nehezebben követhető.",
+          "Ha lejár a magyar jogosítványod és már spanyol rezidens vagy, jellemzően itt kell megújítanod — ehhez orvosi alkalmassági vizsgálat tartozik egy erre feljogosított központban.",
+        ],
+      },
+      {
+        heading: "ITV — a műszaki vizsga",
+        bullets: [
+          "Ez a magyar műszaki vizsga megfelelője, időszakos és kötelező",
+          "A gyakoriság a jármű korától és típusától függ",
+          "Az érvényességet matrica jelzi a szélvédőn",
+          "⚠️ Lejárt ITV-vel közlekedni bírságolható, és a biztosító kárrendezésnél is hivatkozhat rá",
+        ],
+      },
+      {
+        heading: "Pontrendszer — fordítva működik",
+        body: [
+          "A magyar rendszerrel ellentétben Spanyolországban a jogosítványhoz tartozó pontkeretedből VONNAK le szabálysértéskor. Ha elfogy, elveszíted a vezetési jogosultságot, és tanfolyammal szerezheted vissza.",
+          "A pontok idővel visszaépülnek, ha nincs újabb szabálysértés.",
+        ],
+      },
+      {
+        heading: "Bírságok",
+        bullets: [
+          "Rövid határidőn belüli fizetésnél jelentős kedvezmény jár — de ezzel jellemzően lemondasz a jogorvoslatról",
+          "A hivatalos elektronikus kézbesítés (DEV) rendszerébe érdemes regisztrálni, hogy értesülj a bírságról",
+          "⚠️ Ha nem érkezik meg a papír, az nem mentesít — a bírság a háttérben nő",
+        ],
+      },
+      {
+        heading: "Városi korlátozások",
+        body: [
+          "A nagyvárosokban alacsony kibocsátású zónák (ZBE) működnek, ahol a régebbi, környezetvédelmi besorolás nélküli autók nem hajthatnak be, vagy csak korlátozottan.",
+          "A besorolást a DGT környezetvédelmi matricája (distintivo ambiental) mutatja. Használt autó vásárlása előtt ezt nézd meg, mert egy matrica nélküli autóval a városközpont zárva van.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "DGT — Dirección General de Tráfico", url: "https://sede.dgt.gob.es/es/tramites-y-multas/cita-previa/" },
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+    ],
+  },
+];
+
+export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT, ...GUIDES_DE, ...GUIDES_NL, ...GUIDES_GB, ...GUIDES_ES];
 
 /** A választott ország guide-jai (a lista + kereső). */
 export function getGuides(country: string | null | undefined): Guide[] {
@@ -2344,6 +3115,7 @@ export function getGuides(country: string | null | undefined): Guide[] {
   if (country === "DE") return GUIDES_DE;
   if (country === "NL") return GUIDES_NL;
   if (country === "GB") return GUIDES_GB;
+  if (country === "ES") return GUIDES_ES;
   return GUIDES_CH;
 }
 
@@ -2351,12 +3123,13 @@ export function getGuide(slug: string): Guide | undefined {
   return GUIDES.find((g) => g.slug === slug);
 }
 
-/** A cikk országa a slug-előtagból (at-/de-/nl-/gb-, egyébként CH). */
-export function guideCountry(slug: string): "CH" | "AT" | "DE" | "NL" | "GB" {
+/** A cikk országa a slug-előtagból (at-/de-/nl-/gb-/es-, egyébként CH). */
+export function guideCountry(slug: string): "CH" | "AT" | "DE" | "NL" | "GB" | "ES" {
   if (slug.startsWith("at-")) return "AT";
   if (slug.startsWith("de-")) return "DE";
   if (slug.startsWith("nl-")) return "NL";
   if (slug.startsWith("gb-")) return "GB";
+  if (slug.startsWith("es-")) return "ES";
   return "CH";
 }
 

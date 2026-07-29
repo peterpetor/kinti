@@ -25,6 +25,12 @@ export const REGION_LABEL: Record<string, string> = {
   DE: "tartomány",
   NL: "provincia",
   GB: "régió",
+  // ⚠️ ES-nél SZÁNDÉKOSAN „régió", nem „tartomány". Spanyolországban KÉT
+  // közigazgatási szint van, és mindkettőt „tartomány"-nak szokás fordítani:
+  // a 17 comunidad autónoma (ez a mi listánk) és az 50 provincia. Ha
+  // „tartomány"-t írnánk, a Málagában élő user a provinciáját keresné a
+  // listában, és Andalucíát találna — a „régió" ezt a félreértést kizárja.
+  ES: "régió",
 };
 
 // Ausztria — 9 Bundesland. Az aliasok közt a NAGYVÁROSOK is (a szabad-szöveges
@@ -97,6 +103,37 @@ const GB_REGIONS: Region[] = [
   { code: "NE", name: "North East", aliases: ["newcastle", "sunderland", "middlesbrough", "durham", "gateshead"] },
 ];
 
+// Spanyolország — a 17 comunidad autónoma + a 2 autonóm város (Ceuta, Melilla),
+// hivatalos ISO 3166-2:ES kódokkal. ⚠️ SZÁNDÉKOSAN a közösség-szint, NEM az 50
+// provincia: a provincia-lista háromszor hosszabb választót adna, és a magyar
+// közösség földrajzilag amúgy is néhány gócban él (Costa del Sol, Costa Blanca,
+// Baleárok, Kanári-szigetek, Madrid, Barcelona) — azok mind egy-egy közösségen
+// belül vannak. A provincia-székhelyek és az üdülővárosok ezért ALIASKÉNT
+// szerepelnek, hogy a szabad-szöveges hely-feloldás (kereső-heurisztika,
+// Telegram-bot, külső állás-szinkron) „Marbella"-ra is megtalálja Andalúziát.
+// Az ékezet nélküli alak is bent van, mert a felhasználók ritkán ékezetesen írják.
+const ES_REGIONS: Region[] = [
+  { code: "MD", name: "Comunidad de Madrid", aliases: ["madrid", "alcalá de henares", "alcala de henares", "móstoles", "mostoles", "getafe", "leganés", "leganes", "fuenlabrada", "alcorcón", "alcorcon", "torrejón", "torrejon", "las rozas"] },
+  { code: "CT", name: "Cataluña", aliases: ["katalónia", "katalonia", "catalunya", "barcelona", "girona", "gerona", "tarragona", "lleida", "lérida", "lerida", "badalona", "sabadell", "terrassa", "hospitalet", "l'hospitalet", "mataró", "mataro", "sitges", "salou", "lloret de mar", "costa brava", "costa dorada"] },
+  { code: "AN", name: "Andalucía", aliases: ["andalúzia", "andaluzia", "andalucia", "sevilla", "málaga", "malaga", "granada", "córdoba", "cordoba", "cádiz", "cadiz", "almería", "almeria", "huelva", "jaén", "jaen", "marbella", "fuengirola", "torremolinos", "benalmádena", "benalmadena", "estepona", "nerja", "mijas", "jerez", "costa del sol"] },
+  { code: "VC", name: "Comunitat Valenciana", aliases: ["valencia", "valència", "alicante", "alacant", "castellón", "castellon", "benidorm", "torrevieja", "elche", "elx", "dénia", "denia", "jávea", "javea", "xàbia", "gandía", "gandia", "calpe", "altea", "orihuela", "costa blanca"] },
+  { code: "IB", name: "Illes Balears", aliases: ["baleár-szigetek", "balear-szigetek", "baleárok", "balearok", "baleares", "mallorca", "palma", "palma de mallorca", "ibiza", "eivissa", "menorca", "formentera", "manacor", "alcúdia", "alcudia", "magaluf"] },
+  { code: "CN", name: "Canarias", aliases: ["kanári-szigetek", "kanari-szigetek", "kanárik", "kanarik", "tenerife", "gran canaria", "las palmas", "santa cruz de tenerife", "lanzarote", "fuerteventura", "la palma", "la gomera", "el hierro", "maspalomas", "playa del inglés", "playa del ingles", "arrecife", "puerto de la cruz", "adeje", "arona"] },
+  { code: "PV", name: "País Vasco", aliases: ["baszkföld", "baszkfold", "euskadi", "bilbao", "bilbo", "san sebastián", "san sebastian", "donostia", "vitoria", "gasteiz", "vitoria-gasteiz", "barakaldo", "getxo", "irún", "irun"] },
+  { code: "GA", name: "Galicia", aliases: ["galícia", "galicia", "a coruña", "a coruna", "la coruña", "la coruna", "vigo", "santiago de compostela", "santiago", "ourense", "orense", "pontevedra", "lugo", "ferrol"] },
+  { code: "CL", name: "Castilla y León", aliases: ["kasztília és león", "kasztilia es leon", "valladolid", "salamanca", "burgos", "león", "leon", "segovia", "ávila", "avila", "zamora", "palencia", "soria", "ponferrada"] },
+  { code: "CM", name: "Castilla-La Mancha", aliases: ["kasztília-la mancha", "kasztilia-la mancha", "toledo", "albacete", "ciudad real", "guadalajara", "cuenca", "talavera", "puertollano"] },
+  { code: "AR", name: "Aragón", aliases: ["aragónia", "aragonia", "aragon", "zaragoza", "saragossza", "huesca", "teruel", "calatayud"] },
+  { code: "MC", name: "Región de Murcia", aliases: ["murcia", "cartagena", "lorca", "molina de segura", "mar menor", "san javier", "los alcázares", "los alcazares"] },
+  { code: "AS", name: "Asturias", aliases: ["asztúria", "aszturia", "asturia", "oviedo", "gijón", "gijon", "avilés", "aviles", "langreo"] },
+  { code: "EX", name: "Extremadura", aliases: ["badajoz", "cáceres", "caceres", "mérida", "merida", "plasencia", "don benito"] },
+  { code: "NC", name: "Navarra", aliases: ["nafarroa", "pamplona", "iruña", "iruna", "tudela", "barañáin", "baranain"] },
+  { code: "CB", name: "Cantabria", aliases: ["kantábria", "kantabria", "santander", "torrelavega", "castro-urdiales"] },
+  { code: "RI", name: "La Rioja", aliases: ["rioja", "logroño", "logrono", "calahorra"] },
+  { code: "CE", name: "Ceuta", aliases: [] },
+  { code: "ML", name: "Melilla", aliases: [] },
+];
+
 /** Ország → régiók. A CH a meglévő CANTONS-ra mutat (egyetlen forrás). */
 export const REGIONS: Record<string, Region[]> = {
   CH: CANTONS,
@@ -104,6 +141,7 @@ export const REGIONS: Record<string, Region[]> = {
   DE: DE_REGIONS,
   NL: NL_REGIONS,
   GB: GB_REGIONS,
+  ES: ES_REGIONS,
 };
 
 /** Az adott ország régiói (ismeretlen ország → üres lista). */

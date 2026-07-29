@@ -99,7 +99,7 @@ export function HomeChCards() {
           <span className="min-w-0 flex-1">
             <span className="block text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">Tudásbázis — hasznos tudnivalók</span>
             <span className="block text-[12px] text-ink-muted">
-              Bejelentkezés, {country === "AT" ? "ÖGK" : country === "NL" ? "zorgverzekering" : country === "GB" ? "NHS" : "Krankenkasse"}, adó, iskola — hivatalos forrásból
+              Bejelentkezés, {country === "AT" ? "ÖGK" : country === "NL" ? "zorgverzekering" : country === "GB" ? "NHS" : country === "ES" ? "tarjeta sanitaria" : "Krankenkasse"}, adó, iskola — hivatalos forrásból
             </span>
           </span>
           <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />

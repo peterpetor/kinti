@@ -146,7 +146,7 @@ export function BulkJobForm() {
               value={row.location}
               onChange={(e) => update(i, "location", e.target.value)}
               className={inputCls}
-              placeholder={country === "DE" ? "Város (pl. Berlin)" : isAT ? "Város (pl. Wien)" : country === "NL" ? "Város (pl. Amsterdam)" : country === "GB" ? "Város (pl. London)" : "Város (pl. Zürich)"}
+              placeholder={country === "DE" ? "Város (pl. Berlin)" : isAT ? "Város (pl. Wien)" : country === "NL" ? "Város (pl. Amsterdam)" : country === "GB" ? "Város (pl. London)" : country === "ES" ? "Város (pl. Madrid)" : "Város (pl. Zürich)"}
             />
             <select value={row.employmentType} onChange={(e) => update(i, "employmentType", e.target.value)} className={inputCls}>
               <option value="full-time">Teljes (100%)</option>

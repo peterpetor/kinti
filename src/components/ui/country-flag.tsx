@@ -63,6 +63,16 @@ const FLAGS: Record<string, React.ReactNode> = {
       <rect x="0" y="6.4" width="24" height="3.2" fill="#CE1124" />
     </>
   ),
+  // ⚠️ SPANYOLORSZÁG: a sávok aránya 1:2:1 (a sárga KÉTSZER olyan magas, mint
+  // egy-egy piros) — nem egyenlő harmadolás, mint a németnél/hollandnál.
+  // A címer SZÁNDÉKOSAN marad le: 26×18 képpontnál felismerhetetlen folt lenne,
+  // és a többi zászlónk is címer nélküli, egyszerűsített rajz.
+  ES: (
+    <>
+      <rect width="24" height="16" fill="#AA151B" />
+      <rect y="4" width="24" height="8" fill="#F1BF00" />
+    </>
+  ),
 };
 
 /** Ismeretlen kód → SEMLEGES szürke (NEM svájci!). */

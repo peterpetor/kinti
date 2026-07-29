@@ -32,12 +32,13 @@ function buildIndex(country: string): GuideSearchItem[] {
   }));
 }
 
-const INDEX_BY_COUNTRY: Record<"CH" | "AT" | "DE" | "NL" | "GB", GuideSearchItem[]> = {
+const INDEX_BY_COUNTRY: Record<"CH" | "AT" | "DE" | "NL" | "GB" | "ES", GuideSearchItem[]> = {
   CH: buildIndex("CH"),
   AT: buildIndex("AT"),
   DE: buildIndex("DE"),
   NL: buildIndex("NL"),
   GB: buildIndex("GB"),
+  ES: buildIndex("ES"),
 };
 
 // Statikus oldal (kliens-shell / statikus adat) — nem fogyaszt edge-route-ot (deploy-plafon).
