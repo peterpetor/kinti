@@ -166,6 +166,7 @@ export const ES_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "vizum",             // ⭐ VAN ES letelepedés-varázsló (certificado de registro, cita previa-tudatos)
   "kozlekedes",        // ⭐ VAN ES közlekedés (CRTM/ATM zónák, Renfe Cercanías + AVE, abono joven)
   "nyelvlecke",        // ⭐ VAN ES kurzus (data-es.ts, 100 lecke: kasztíliai spanyol, es-ES TTS)
+  "allampolgarsag",    // ⭐ VAN ES kérdésbank (es-ccse-bank.ts — CCSE, 25 kérdés / 60%)
   // ⚠️ „spanyol-oneletrajz" NEM ide tartozik — a CV-készítőket a
   //   CV_FEATURE_COUNTRIES tábla kapuzza (ld. lentebb), MINDEN ág előtt.
   // ⚠️ „vam" SZÁNDÉKOSAN KIMARAD: Spanyolország EU-tag, nincs vámhatár

@@ -29,6 +29,9 @@ import {
 import {
   GB_BANK, GB_QUIZ_REGIONS, GB_TOPIC_META, generateQuizGB, GB_QUIZ_LENGTH, GB_PASS_THRESHOLD,
 } from "@/lib/gb-lifeintheuk-bank";
+import {
+  ES_BANK, ES_QUIZ_REGIONS, ES_TOPIC_META, generateQuizES, ES_QUIZ_LENGTH, ES_PASS_THRESHOLD,
+} from "@/lib/es-ccse-bank";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 
 type Phase = "intro" | "quiz" | "result";
@@ -153,6 +156,35 @@ const GB_CONFIG: QuizConfig = {
   },
 };
 
+/**
+ * ⚠️ A SPANYOL VIZSGA ORSZÁGOSAN AZONOS — nincs benne „a te közösséged” rész,
+ * ellentétben a svájcival (kanton) és az osztrákkal (Bundesland). A régió-
+ * választó itt TANULÁSI segédlet: az autonóm közösségek ismerete a hivatalos
+ * anyag része, de a vizsgán NEM a lakóhelyedről kérdeznek. A prompt és a
+ * disclaimer ezt kimondja, hogy senki ne készüljön rossz feltételezéssel.
+ */
+const ES_CONFIG: QuizConfig = {
+  bank: ES_BANK,
+  regions: ES_QUIZ_REGIONS,
+  topicMeta: ES_TOPIC_META,
+  generate: generateQuizES,
+  flag: "🇪🇸",
+  title: "CCSE teszt",
+  intro: `${ES_QUIZ_LENGTH} kérdés: állam és jog, jogok és társadalom, területi rend, történelem és kultúra + kérdés a választott közösségre. A vizsga-küszöb: ${ES_PASS_THRESHOLD}%.`,
+  regionPrompt: "Melyik autonóm közösségben élsz? (A vizsgán nem kérdezik — csak a tanuláshoz)",
+  passThreshold: ES_PASS_THRESHOLD,
+  disclaimer: {
+    toolName: "CCSE teszt-szimulátor",
+    warning:
+      "Ez egy oktatási játék — NEM HIVATALOS VIZSGA. A valódi CCSE-t (Conocimientos Constitucionales y Socioculturales de España) az Instituto Cervantes szervezi: 25 kérdés, 45 perc, 60% az átmenő, és díjköteles, előre foglalandó. A hivatalos kérdések egy évente kiadott felkészítő anyagból származnak — ez a szimulátor a TÉMAKÖRÖKET követi, nem a hivatalos kérdés-szöveget. ⚠️ A valódi vizsga ORSZÁGOSAN AZONOS: nincs benne külön rész a lakóhelyed közösségéről. ⚠️ A honosításhoz a CCSE MELLETT jellemzően DELE A2 nyelvvizsga is kell, és a spanyol szabály fő szabályként a korábbi állampolgárságról való lemondást kívánja meg — döntés előtt kérj személyre szabott jogi tanácsot.",
+    sources: [
+      { label: "Instituto Cervantes — CCSE", url: "https://ccse.cervantes.es/" },
+      { label: "Instituto Cervantes — DELE", url: "https://examenes.cervantes.es/" },
+      { label: "Az 1978-as alkotmány (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-1978-31229" },
+    ],
+  },
+};
+
 /** Svájci Einbürgerung-kvíz (változatlan viselkedés). */
 export function EinburgerungQuiz() {
   return <CitizenshipQuiz config={CH_CONFIG} />;
@@ -176,6 +208,11 @@ export function InburgeringQuizNL() {
 /** Angol „Life in the UK" kvíz. */
 export function LifeInTheUkQuizGB() {
   return <CitizenshipQuiz config={GB_CONFIG} />;
+}
+
+/** Spanyol CCSE-kvíz. */
+export function CcseQuizES() {
+  return <CitizenshipQuiz config={ES_CONFIG} />;
 }
 
 function CitizenshipQuiz({ config }: { config: QuizConfig }) {

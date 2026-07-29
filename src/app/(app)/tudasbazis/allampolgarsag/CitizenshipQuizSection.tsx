@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Icon } from "@/components/ui";
 import {
   EinburgerungQuiz, StaatsbuergerschaftQuiz, EinburgerungQuizDE, InburgeringQuizNL, LifeInTheUkQuizGB,
+  CcseQuizES,
 } from "@/components/views/einburgerung-quiz";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -20,10 +21,12 @@ const QUIZ_BY_COUNTRY: Record<string, { Quiz: () => JSX.Element; name: string; d
     desc: "Teszteld le a holland beilleszkedési vizsga (inburgering, KNM) tudásod: államszervezet, történelem, földrajz és társadalmi normák." },
   GB: { Quiz: LifeInTheUkQuizGB, name: "Life in the UK teszt",
     desc: "Teszteld le, hogy átmennél-e a Life in the UK Teszten: kormányzás, történelem, földrajz, brit értékek és jog. ⚠️ A vizsga az EGÉSZ Egyesült Királyságról kérdez, nem csak Angliáról." },
+  ES: { Quiz: CcseQuizES, name: "CCSE teszt",
+    desc: "Teszteld le, hogy átmennél-e a spanyol CCSE-vizsgán: alkotmány és intézmények, jogok, területi szervezet, történelem és kultúra. ⚠️ A honosításhoz a CCSE mellett DELE A2 nyelvvizsga is kell." },
 };
 
 /**
- * Az állampolgársági kvíz-szekció — ország-tudatos (CH/AT/DE/NL/GB).
+ * Az állampolgársági kvíz-szekció — ország-tudatos (mind a 6 ország).
  * Mindegyik PRO-funkció (az engedély-varázsló fent ingyenes).
  */
 export function CitizenshipQuizSection({ isPro }: { isPro: boolean }) {
