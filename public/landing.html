@@ -1972,6 +1972,28 @@
           #fff;
         box-shadow: inset 0 0 0 1px rgba(0,0,0,.10); }
       .ctry-flag .fl-eng { width: 30px; height: 21px; border-radius: 3px; }
+
+      /* ⚠️ A TÖBBI ORSZÁG ZÁSZLAJA IS CSS-SEL RAJZOLT — ugyanazért, amiért az
+         angolé: a 🇨🇭/🇦🇹/🇩🇪/🇳🇱/🇪🇸 „regional indicator" emojikhoz a WINDOWS
+         NEM szállít zászló-glifát, ezért a Chrome a két betűt mutatja helyettük
+         („CH", „AT", …) — a felhasználó ezt látta „hiányzó ikonként". (Androidon
+         és iOS-en rendben megjelentek, ezért maradt sokáig észrevétlen.)
+         A cserét JS végzi (renderFlags a fájl végi IIFE-ben): a DOM-ban BENT
+         MARAD az emoji-karakter, csak vizuálisan kitakarjuk — így az i18n-motor
+         szótár-kulcsai (= a magyar szöveg az emojikkal EGYÜTT) érintetlenek. */
+      .fl { display: inline-block; width: 1.15em; height: 0.82em; vertical-align: -0.09em;
+        border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.10);
+        /* klasszikus szöveg-elrejtés: a glifa kitolódik és levágódik */
+        overflow: hidden; text-indent: 110%; white-space: nowrap; }
+      .fl-ch { background:
+        linear-gradient(#fff, #fff) center / 62% 21% no-repeat,
+        linear-gradient(#fff, #fff) center / 21% 62% no-repeat,
+        #DA291C; }
+      .fl-at { background: linear-gradient(#ED2939 33.34%, #fff 33.34% 66.67%, #ED2939 66.67%); }
+      .fl-de { background: linear-gradient(#000 33.34%, #DD0000 33.34% 66.67%, #FFCE00 66.67%); }
+      .fl-nl { background: linear-gradient(#AE1C28 33.34%, #fff 33.34% 66.67%, #21468B 66.67%); }
+      .fl-es { background: linear-gradient(#AA151B 25%, #F1BF00 25% 75%, #AA151B 75%); }
+      .ctry-flag .fl { width: 30px; height: 21px; border-radius: 3px; }
       .ctry-flag { width: 48px; height: 48px; border-radius: 13px; background: var(--surface-alt); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 26px; line-height: 1; flex-shrink: 0; }
       .ctry-name { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
       .ctry-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; font-weight: 600; }
@@ -2155,13 +2177,62 @@
     de: 'Jetzt bei Google Play',
     en: 'Get it on Google Play',
   };
+  // ⚠️ A `?v=` NEM felesleges: a badge-fájlok kirakása utáni percekben a
+  // Cloudflare-edge még 404-et adott rájuk, és a böngészők ELTÁROLTÁK ezt a
+  // 404-et — a képek törött ikonként maradtak azoknál, akik akkor jártak itt.
+  // A verzió-bump friss URL-t ad, ami megkerüli a beragadt negatív cache-t.
+  // (Ugyanaz a minta, mint a landing-i18n.js `?v=` bumpja.)
+  var PLAY_V = '2';
   function syncPlayBadges() {
     var lang = window.kintiLang || 'hu';
     if (!PLAY_ALT[lang]) lang = 'hu';
     var imgs = document.querySelectorAll('.play-badge img');
     for (var i = 0; i < imgs.length; i++) {
-      imgs[i].src = '/badges/google-play-' + lang + '.svg';
+      imgs[i].src = '/badges/google-play-' + lang + '.svg?v=' + PLAY_V;
       imgs[i].alt = PLAY_ALT[lang];
+    }
+  }
+
+  // ─── Zászló-emoji → CSS-zászló ─────────────────────────────────────────────
+  // Windows/Chrome nem rendereli a regional-indicator zászló-emojikat (a két
+  // betűt mutatja helyettük). Itt a szöveg-csomópontokban lévő emojikat egy
+  // `.fl.fl-xx` spanbe csomagoljuk; a span CSS-sel RAJZOLJA a zászlót, az
+  // emoji-karakter pedig BENT MARAD (kitakarva) — így a szótár-kulcsok és a
+  // szöveg-kimásolás/akadálymentesség sem sérül.
+  var FLAGS = { '🇨🇭': ['ch', 'Svájc'], '🇦🇹': ['at', 'Ausztria'],
+    '🇩🇪': ['de', 'Németország'], '🇳🇱': ['nl', 'Hollandia'],
+    '🇪🇸': ['es', 'Spanyolország'] };
+  var FLAG_RX = new RegExp('(' + Object.keys(FLAGS).join('|') + ')');
+  function renderFlags() {
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue || !FLAG_RX.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+        var p = n.parentElement;
+        // .fl: már feldolgozott (különben minden futásnál egymásba ágyazódna)
+        if (!p || p.closest('script,style,.fl')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      var parts = node.nodeValue.split(FLAG_RX);
+      var frag = document.createDocumentFragment();
+      for (var j = 0; j < parts.length; j++) {
+        var f = FLAGS[parts[j]];
+        if (f) {
+          var span = document.createElement('span');
+          span.className = 'fl fl-' + f[0];
+          span.setAttribute('role', 'img');
+          span.setAttribute('aria-label', f[1] + ' zászlaja');
+          span.textContent = parts[j];
+          frag.appendChild(span);
+        } else if (parts[j]) {
+          frag.appendChild(document.createTextNode(parts[j]));
+        }
+      }
+      node.parentNode.replaceChild(frag, node);
     }
   }
 
@@ -2519,12 +2590,16 @@
       try { renderDemo(); } catch (e) {}
       try { renderCarousel(); } catch (e) {}
       try { syncPlayBadges(); } catch (e) {}
+      // Nyelvváltáskor az i18n-motor visszaírja az EREDETI innerHTML-t (benne a
+      // nyers emojival) → a zászlókat újra ki kell rajzolni.
+      try { renderFlags(); } catch (e) {}
     });
     // A badge KÉP, nem szöveg → az i18n-motor (ami innerHTML-t cserél) nem
     // nyúl hozzá; a nyelvi változatot itt állítjuk be. Induláskor is fut, mert
     // a mentett nyelvű `applyLang` már LEFUTHATOTT, mielőtt a fenti listener
     // felkerült (a motor a body végén bootol).
     try { syncPlayBadges(); } catch (e) {}
+    try { renderFlags(); } catch (e) {}
 
     // Cookie consent logic
     const banner = document.getElementById('cookieConsentBanner');
