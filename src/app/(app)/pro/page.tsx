@@ -157,7 +157,7 @@ const T: Record<LegalLang, {
     netPriceLive: "Nettó ár — az ÁFÁ-t a pénztár az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható.",
     netPriceStatic: "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható.",
     webPay: "A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.",
-    notPurchasable: "Angliából az előfizetés még nem indítható — dolgozunk a fontos fizetésen. Addig is minden ingyenes funkció elérhető.",
+    notPurchasable: "Ebből az országból az előfizetés még nem indítható. Addig is minden ingyenes funkció elérhető.",
     androidPay: "A fizetést a Google Play fizetési rendszere bonyolítja.",
     activeSub: "✓ Aktív — előfizetve", switchBtn: "Válts Kinti PRO-ba",
     bizBadge: "🏪 A vállalkozásodnak", bizTitle: "Szaknévsor PRO",
@@ -203,7 +203,7 @@ const T: Record<LegalLang, {
     netPriceLive: "Nettopreis — die MwSt. wird an der Kasse gemäß den Regeln deines Landes hinzugefügt. Verlängert sich monatlich automatisch, jederzeit kündbar.",
     netPriceStatic: "Informativer Nettopreis (ohne MwSt.) — den genauen Endbetrag inklusive MwSt. zeigt die Kasse. Verlängert sich monatlich automatisch, jederzeit kündbar.",
     webPay: "Die Zahlung wickelt Paddle (Merchant of Record) ab — kaufst du aus der Android-App, gilt dort das Zahlungssystem von Google Play.",
-    notPurchasable: "Aus England ist das Abo noch nicht startbar — die Zahlung in Pfund ist in Arbeit. Alle kostenlosen Funktionen bleiben verfügbar.",
+    notPurchasable: "Aus diesem Land kann das Abo noch nicht gestartet werden. Alle kostenlosen Funktionen bleiben verfügbar.",
     androidPay: "Die Zahlung wickelt das Zahlungssystem von Google Play ab.",
     activeSub: "✓ Aktiv — abonniert", switchBtn: "Zu Kinti PRO wechseln",
     bizBadge: "🏪 Für dein Unternehmen", bizTitle: "Branchenbuch PRO",
@@ -249,7 +249,7 @@ const T: Record<LegalLang, {
     netPriceLive: "Net price — VAT is added at checkout per your country's rules. Renews automatically each month, cancel anytime.",
     netPriceStatic: "Informational net price (excl. VAT) — the exact final amount incl. VAT is shown at checkout. Renews automatically each month, cancel anytime.",
     webPay: "Payment is handled by Paddle (Merchant of Record) — if you buy from the Android app, Google Play's payment system applies there.",
-    notPurchasable: "Subscriptions can't be started from England yet — payment in pounds is on the way. All free features stay available.",
+    notPurchasable: "Subscriptions can't be started from this country yet. All free features stay available.",
     androidPay: "Payment is handled by Google Play's payment system.",
     activeSub: "✓ Active — subscribed", switchBtn: "Switch to Kinti PRO",
     bizBadge: "🏪 For your business", bizTitle: "Directory PRO",
@@ -292,7 +292,9 @@ export default function ProPage() {
   // a feltüntetett ár a pénztárral egyezik (a fix EUR-ár CH-ban félrevezető volt).
   // Hiba esetén statikus tájékoztató ár + „a végső árat a pénztár mutatja" jelzés.
   const paddleCountry: CountryCode = isValidCountry(country) ? (country as CountryCode) : "CH";
-  // Van-e egyáltalán élő Paddle-ár ehhez az országhoz? (GB-hez még nincs.)
+  // Van-e egyáltalán élő Paddle-ár ehhez az országhoz? (2026-07-29 óta MIND az
+  // 5 app-országhoz van — a GB-ár is elkészült. Az ág védőhálóként marad: egy
+  // új app-ország ár nélkül ne a kattintás UTÁN fusson falba.)
   const canPurchase = isPurchasableCountry(paddleCountry);
   const livePrices = usePaddlePrices(paddleCountry);
   // Melyik csomag AKTÍV már nálad? (átláthatóság — a kártyák „Aktív” jelzést kapnak)

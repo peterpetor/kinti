@@ -6,25 +6,48 @@
 export type ProductType = "kinti_pro_monthly" | "business_pro_monthly" | "job_featured";
 export type CountryCode = "CH" | "AT" | "DE" | "NL" | "GB"; // Bővíthető
 
-/** Termék → ország → Paddle Price ID (`pri_...`). */
-// FALLBACK Price ID-k (ÉLES, 2026-06-29 a Paddle API-val létrehozva, mind EUR).
-// A Price ID NEM titok (NEXT_PUBLIC, úgyis a kliens-bundle-ben van). Azért
-// hardcode-oljuk tartaléknak, mert a `process.env.NEXT_PUBLIC_*` a Cloudflare
-// edge FUNCTION-ökben (szerveroldali checkout-route) NEM mindig oldódik fel
-// futásidőben → enélkül „Nincs beállítva Price ID" hiba. Az env felülírhatja.
-// ⚠️ Partial: GB-hez SZÁNDÉKOSAN nincs Price ID (ld. PURCHASABLE_COUNTRIES).
-const FALLBACK_PRICES: Record<ProductType, Partial<Record<CountryCode, string>>> = {
+/**
+ * Fizetési PIAC: minden app-ország, PLUSZ olyan Paddle-piac, amihez már van ár,
+ * de még nincs mögötte app-ország.
+ *
+ * ⚠️ Ilyen most az **ES (Spanyolország)**: a Paddle-ben létezik mind a három
+ * spanyol ár, de a `COUNTRIES` (lib/countries.ts) NEM tartalmazza Spanyolországot
+ * — a felhasználó nem tud spanyol Kintit választani, tehát a checkout SOSEM kérhet
+ * ES-árat. Az ID-k mégis KELLENEK ide, mert az `entitlementFromPriceId` ebből a
+ * táblából ismeri fel a kifizetett terméket: ha valaki a Paddle-ben generált
+ * SPANYOL fizetési linken fizet, a webhook enélkül `null` jogosultságot kapna,
+ * és a **pénz beérkezne anélkül, hogy bármit aktiválnánk**.
+ */
+export type PriceMarket = CountryCode | "ES";
+
+/** Termék → piac → Paddle Price ID (`pri_...`). */
+// FALLBACK Price ID-k (ÉLES). A Price ID NEM titok (NEXT_PUBLIC, úgyis a
+// kliens-bundle-ben van). Azért hardcode-oljuk tartaléknak, mert a
+// `process.env.NEXT_PUBLIC_*` a Cloudflare edge FUNCTION-ökben (szerveroldali
+// checkout-route) NEM mindig oldódik fel futásidőben → enélkül „Nincs beállítva
+// Price ID" hiba. Az env felülírhatja.
+//
+// Forrás:
+//   • CH/AT/DE/NL — 2026-06-29, Paddle API-val létrehozva (mind EUR).
+//   • GB/ES       — 2026-07-28, a user hozta létre (mind EUR). A Paddle-ben a
+//     `custom_data.country` az angolnál **"EN"** (nyelvkód!), nálunk viszont az
+//     ország-kód **"GB"** (ld. countries.ts: „Anglia") — ez a leképezés, ne
+//     lepődj meg rajta, ha a Paddle-dashboardot nézed.
+const FALLBACK_PRICES: Record<ProductType, Partial<Record<PriceMarket, string>>> = {
   kinti_pro_monthly: {
     CH: "pri_01kw9ys53dvqc0tjpr17zay66t", AT: "pri_01kw9ys5act5k3fpy7v81263bx",
     DE: "pri_01kw9ys5h35jxnfqckvf0sgne1", NL: "pri_01kw9ys5qr3x6dxn2j12chrft1",
+    GB: "pri_01kynhr893fy1hjz3n3e30hfm2", ES: "pri_01kynhsy9w203e3ffejnt4rxj2",
   },
   business_pro_monthly: {
     CH: "pri_01kw9ys5ys0h3gesm7pdpfz6h3", AT: "pri_01kw9ys65cps9xnyj9b74gfmy7",
     DE: "pri_01kw9ys6edn7zeyw83s4hgqn9h", NL: "pri_01kw9ys6vrxs64rxtb33vfem8q",
+    GB: "pri_01kynhj3bkwqrz7dv67vsp5s04", ES: "pri_01kynhmgdp5t5exqde7m3dq4r9",
   },
   job_featured: {
     CH: "pri_01kw9ys72bmkm2vh6bkvj7qy1p", AT: "pri_01kw9ys795nbhbkc5y4d7vrpjx",
     DE: "pri_01kw9ys7ftvgb8hbb4jm9eeymf", NL: "pri_01kw9ys7qga63mtcv690vh5jaa",
+    GB: "pri_01kynhakn6yvfgm65rdm9q2f8m", ES: "pri_01kynhf49nnx3hfh0tvnmb09x9",
   },
 };
 
@@ -33,7 +56,7 @@ const FALLBACK_PRICES: Record<ProductType, Partial<Record<CountryCode, string>>>
 // NEM LÉTEZŐ ID-t adott vissza (`transaction_price_not_found` a checkouton). A
 // Price ID-k publikusak és stabilak → a kódba égetett érték a megbízható forrás.
 // Ár-összeg módosítása a Paddle dashboardon (ugyanaz az ID marad) → nincs kódváltás.
-export const PADDLE_PRICES: Record<ProductType, Partial<Record<CountryCode, string>>> = FALLBACK_PRICES;
+export const PADDLE_PRICES: Record<ProductType, Partial<Record<PriceMarket, string>>> = FALLBACK_PRICES;
 
 /**
  * A megfelelő Paddle Price ID a termékhez és országhoz. Ha nincs beállítva
@@ -42,16 +65,20 @@ export const PADDLE_PRICES: Record<ProductType, Partial<Record<CountryCode, stri
 /**
  * Mely országokból lehet TÉNYLEGESEN fizetni (van hozzá Paddle Price ID).
  *
- * ⚠️ ANGLIA MÉG NINCS BENNE. A GB valós app-ország (`isValidCountry("GB")`
- * igaz), ezért a `country` végigment a fizetési láncon, a Price ID-k közt
- * viszont nincs GB → a checkout-route „Érvénytelen ország." 400-zal állt meg,
- * vagyis az angliai felhasználó a GOMB MEGNYOMÁSA UTÁN futott falba. Amíg a
- * Paddle-ben nem jön létre a GBP-ár, inkább ELŐRE, a gomb helyén mondjuk meg.
+ * ⚠️ 2026-07-29: **ANGLIA (GB) BEKERÜLT** — mindhárom termékhez létrejött az ár
+ * a Paddle-ben. Eddig a GB valós app-ország volt (`isValidCountry("GB")` igaz),
+ * de nem volt hozzá Price ID → az angliai felhasználó a GOMB MEGNYOMÁSA UTÁN
+ * futott falba („Érvénytelen ország." 400). Ez most megszűnt.
  *
- * Bekapcsolás: hozz létre GB (GBP) árat a Paddle-ben mindhárom termékre, írd
- * be a `FALLBACK_PRICES`-ba, és vedd fel a `GB`-t ebbe a halmazba.
+ * ⚠️ **ES SZÁNDÉKOSAN NINCS ITT.** A Paddle-ben van spanyol ár, de Spanyolország
+ * NEM app-ország (`COUNTRIES` nem tartalmazza) → a felhasználó nem is tud
+ * spanyolt választani, a checkout sosem kérne ES-t. Ha egyszer Spanyolország
+ * élesedik a `countries.ts`-ben, itt EGY sor a bekapcsolás (az árak megvannak).
+ *
+ * Új ország bekapcsolása: Paddle-ár mindhárom termékre → `FALLBACK_PRICES` →
+ * fel ebbe a halmazba.
  */
-export const PURCHASABLE_COUNTRIES: readonly CountryCode[] = ["CH", "AT", "DE", "NL"];
+export const PURCHASABLE_COUNTRIES: readonly CountryCode[] = ["CH", "AT", "DE", "NL", "GB"];
 
 /** Van-e élő Paddle-ár ehhez az országhoz? (UI-gate ÉS API-validáció ebből.) */
 export function isPurchasableCountry(country: string | null | undefined): country is CountryCode {

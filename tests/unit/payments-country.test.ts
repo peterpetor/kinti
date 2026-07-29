@@ -45,9 +45,32 @@ describe("fizetési ország-lefedettség", () => {
     expect(isPurchasableCountry("XX")).toBe(false);
   });
 
-  it("⚠️ Anglia egyelőre NEM vásárolható (amíg nincs GBP-ár a Paddle-ben)", () => {
-    // Ha ez a teszt elbukik, mert felvetted a GB-árat: vedd fel a GB-t a
-    // PURCHASABLE_COUNTRIES-ba is, és fordítsd meg ezt az elvárást.
-    expect(isPurchasableCountry("GB")).toBe(false);
+  it("⚠️ Anglia (GB) VÁSÁROLHATÓ — 2026-07-29 óta van Paddle-ára", () => {
+    // Korábban ez fordítva állt (nem volt GB-ár). Az angliai felhasználó a
+    // vásárlás-gomb megnyomása UTÁN kapott 400-at; most mindhárom termékhez
+    // van élő ár, tehát a gombnak működnie KELL.
+    expect(isPurchasableCountry("GB")).toBe(true);
+    for (const product of PRODUCTS) {
+      expect(getPriceId(product, "GB")).toMatch(/^pri_/);
+    }
+  });
+
+  it("MIND az 5 app-ország vásárolható (egy sem marad fizetés nélkül)", () => {
+    for (const c of COUNTRIES) {
+      expect(isPurchasableCountry(c.code), `${c.code} nem vásárolható`).toBe(true);
+    }
+  });
+
+  it("⚠️ Spanyolország NEM app-ország — az ES-ár csak a webhookhoz kell", () => {
+    // A Paddle-ben VAN spanyol ár (a user létrehozta), de Spanyolország nincs a
+    // COUNTRIES-ban → a felhasználó nem tud spanyolt választani, a checkout
+    // sosem kérne ES-t. Az ID-nek MÉGIS a PADDLE_PRICES-ban a helye: ha valaki
+    // egy Paddle-oldali spanyol fizetési linken fizet, a webhooknak fel kell
+    // ismernie a terméket — különben a pénz beérkezik, de nem aktiválunk semmit.
+    expect(COUNTRIES.some((c) => c.code === "ES")).toBe(false);
+    expect(isPurchasableCountry("ES")).toBe(false);
+    for (const product of PRODUCTS) {
+      expect(PADDLE_PRICES[product]?.["ES" as never], `${product}/ES`).toMatch(/^pri_/);
+    }
   });
 });
