@@ -18,6 +18,7 @@ import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { trackAction } from "@/components/usage-tracker";
 import { SalaryJobsCta } from "@/components/views/salary-jobs-cta";
+import { computeSalaryES } from "@/lib/salary-calc-es";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { getRegions, REGIONS, REGION_LABEL } from "@/lib/regions";
 import { getCountry } from "@/lib/countries";
@@ -259,6 +260,15 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
       // támogatás a Child Benefiten keresztül jön, nem az adóban.
       const r = computeSalaryGB({ gross: grossNum, period: "month", pension: true });
       return r.netMonthly;
+    }
+    if (country === "ES") {
+      // ⚠️ A megadott bruttó itt HAVI ÁTLAG (a tervező mindenhol így kezeli),
+      // ezért 12 pagával számolunk — NEM 14-gyel. A 14 pagás felosztás a
+      // /berkalkulator spanyol lapján választható; ott az a kérdés, hogy egy
+      // KIFIZETÉS mekkora, itt viszont a havi költségvetés a tét, amihez a
+      // 12 hónapra elosztott átlag a helyes szám.
+      const r = computeSalaryES({ gross: grossNum, period: "month", pagas: 12, children: kids });
+      return r.netMonthlyAverage;
     }
     const r = computeSalaryNL({ gross: grossNum, period: "month", holidayAllowance: vakantie, ruling30 });
     return r.netMonthly;

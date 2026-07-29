@@ -23,6 +23,13 @@ import { getRentConfig, regionsFor } from "@/lib/rent-cost";
 import { getFlightConfig } from "@/lib/flights";
 import { evaluatePermit, PERMITS } from "@/lib/permit-wizard";
 import { ES_QUIZ_BANK, ES_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-es";
+import {
+  isBudgetCountry,
+  budgetCurrency,
+  childBenefit,
+  COST_BASELINE,
+} from "@/lib/budget-plan";
+import { BUDGET_LANDINGS, budgetLandingBySlug } from "@/lib/budget-landing";
 
 describe("ES (Spanyolország) mint ország", () => {
   it("szerepel a COUNTRIES listában és érvényes", () => {
@@ -323,5 +330,62 @@ describe("ES eszköz-konfigurációk", () => {
       "CH",
     );
     expect(r.primary.startsWith("es-")).toBe(false);
+  });
+});
+
+/**
+ * ⚠️ A KÖLTSÉGTERVEZŐ KÜLÖN HIBAOSZTÁLY.
+ *
+ * A tervező NEM a `feature-availability` kapuját használja, hanem saját
+ * `isBudgetCountry` szűrőjét — és ha az adott ország nincs benne, NEM elrejti
+ * magát, hanem a `useState<BudgetCountry>("DE")` alapértelmezésre esik. Ez azt
+ * jelenti, hogy a spanyolországi felhasználó NÉMET költségeket és német
+ * Kindergeldet látott volna, hibaüzenet nélkül. Angliánál ugyanez a hiba
+ * élesben elő is fordult (svájci költségek + frank).
+ *
+ * Ezért itt MINDEN app-országra kimondjuk a szabályt, nem csak az ES-re.
+ */
+describe("költségtervező ország-lefedettség", () => {
+  it("⚠️ MINDEN app-ország költségtervezhető (egy sem esik idegen alapértelmezésre)", () => {
+    for (const c of COUNTRIES) {
+      expect(isBudgetCountry(c.code), `${c.code} nincs a költségtervezőben`).toBe(true);
+    }
+  });
+
+  it("minden országhoz van teljes költség-alapvonal, azonos kategóriákkal", () => {
+    const ref = COST_BASELINE.CH.map((r) => r.id).sort();
+    for (const c of COUNTRIES) {
+      const rows = COST_BASELINE[c.code as keyof typeof COST_BASELINE];
+      expect(rows, c.code).toBeDefined();
+      expect(rows.map((r) => r.id).sort(), c.code).toEqual(ref);
+    }
+  });
+
+  it("minden országhoz van SEO-céloldal, létező slug-gal", () => {
+    for (const c of COUNTRIES) {
+      const landing = BUDGET_LANDINGS.find((l) => l.cc === c.code);
+      expect(landing, `${c.code}: nincs céloldal`).toBeDefined();
+      expect(budgetLandingBySlug(landing!.slug)?.cc, landing!.slug).toBe(c.code);
+      expect(landing!.faq.length, landing!.slug).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it("ES: euró a pénznem, és a spanyol költségek nem a németek", () => {
+    expect(budgetCurrency("ES")).toBe("EUR");
+    const es = COST_BASELINE.ES.map((r) => r.firstAdult);
+    const de = COST_BASELINE.DE.map((r) => r.firstAdult);
+    expect(es).not.toEqual(de);
+  });
+
+  /**
+   * ⚠️ A 0 itt NEM hiányzó adat, hanem MAGA A TÉNY: Spanyolországban nincs
+   * alanyi jogon járó havi családi pótlék (a támogatás az adóban jön).
+   * Egy „becsült" összeg hamis biztonságot adna a költségtervben.
+   */
+  it("⚠️ ES családi pótlék = 0 (nincs alanyi jogú havi ellátás)", () => {
+    expect(childBenefit("ES", 2)).toBe(0);
+    // A többi ország viselkedése változatlan.
+    expect(childBenefit("DE", 2)).toBeGreaterThan(0);
+    expect(childBenefit("GB", 2)).toBeGreaterThan(0);
   });
 });

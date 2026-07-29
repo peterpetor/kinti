@@ -12,10 +12,10 @@
  * lásd a quiz-percentile mintát).
  */
 
-export type BudgetCountry = "CH" | "AT" | "DE" | "NL" | "GB";
+export type BudgetCountry = "CH" | "AT" | "DE" | "NL" | "GB" | "ES";
 
 export function isBudgetCountry(c: unknown): c is BudgetCountry {
-  return c === "CH" || c === "AT" || c === "DE" || c === "NL" || c === "GB";
+  return c === "CH" || c === "AT" || c === "DE" || c === "NL" || c === "GB" || c === "ES";
 }
 
 export function budgetCurrency(country: BudgetCountry): "CHF" | "EUR" | "GBP" {
@@ -47,7 +47,9 @@ export interface CostBaselineRule {
  * biztosítás az SV része, a családtag mitversichert → 0); DE — Destatis EVS
  * (törvényes KV a bérből levonva, családtag ingyen biztosított → 0); NL — Nibud
  * referencia-büdzsék (zorgverzekering felnőttenként, 18 alatt ingyenes);
- * GB — ONS háztartási kiadás-felmérés + Ofgem ársapka (⚠️ FONTBAN).
+ * GB — ONS háztartási kiadás-felmérés + Ofgem ársapka (⚠️ FONTBAN);
+ * ES — INE háztartási kiadás-felmérés (az egészségügy a Seguridad Social
+ * járulékból megy, nincs havi biztosítási díj → 0).
  *
  * ⚠️ GB-SPECIFIKUS: az egészségbiztosítás 0, mert az NHS adóból megy — nincs
  * havi biztosítási díj, mint CH-ban vagy NL-ben. Cserébe a „rezsi" itt
@@ -87,6 +89,20 @@ export const COST_BASELINE: Record<BudgetCountry, CostBaselineRule[]> = {
     { id: "internet_mobil", label: "Internet + mobil", emoji: "📱", firstAdult: 50, extraAdult: 15, perChild: 0 },
     { id: "szabadido", label: "Szabadidő", emoji: "🎭", firstAdult: 180, extraAdult: 140, perChild: 60 },
   ],
+  // ⚠️ SPANYOLORSZÁG. Két eltérés, amit a számok mögött érteni kell:
+  //   • az egészségbiztosítás 0 — a közellátás a Seguridad Social járulékból
+  //     megy, nincs havi díj (mint CH-ban vagy NL-ben),
+  //   • a „rezsi" itt TARTALMAZZA a comunidad-ot (társasházi közös költség),
+  //     ami a legtöbb spanyol bérleménynél valós havi tétel. A fűtés olcsóbb,
+  //     mint északon, de a nyári klíma és a magas áramár visszahozza.
+  ES: [
+    { id: "rezsi", label: "Rezsi + comunidad", emoji: "🔌", firstAdult: 140, extraAdult: 35, perChild: 15 },
+    { id: "krankenkasse", label: "Egészségbiztosítás (közellátás — járulékból)", emoji: "🏥", firstAdult: 0, extraAdult: 0, perChild: 0 },
+    { id: "kaja", label: "Élelmiszer", emoji: "🛒", firstAdult: 280, extraAdult: 210, perChild: 140 },
+    { id: "kozlekedes", label: "Közlekedés", emoji: "🚆", firstAdult: 50, extraAdult: 40, perChild: 15 },
+    { id: "internet_mobil", label: "Internet + mobil", emoji: "📱", firstAdult: 45, extraAdult: 12, perChild: 0 },
+    { id: "szabadido", label: "Szabadidő", emoji: "🎭", firstAdult: 160, extraAdult: 120, perChild: 55 },
+  ],
   NL: [
     { id: "rezsi", label: "Rezsi / energie & water", emoji: "🔌", firstAdult: 230, extraAdult: 60, perChild: 30 },
     { id: "krankenkasse", label: "Zorgverzekering", emoji: "🏥", firstAdult: 160, extraAdult: 160, perChild: 0 },
@@ -113,6 +129,13 @@ export const CHILD_BENEFIT_MONTHLY: Record<BudgetCountry, number> = {
   // ⚠️ UK Child Benefit: az ELSŐ gyerekre magasabb (~£26/hét), a többire
   // alacsonyabb (~£17/hét). Itt havi ÁTLAGOT használunk, mint a többi országnál.
   GB: 90,
+  // ⚠️ SPANYOLORSZÁGBAN NINCS alanyi jogon járó havi családi pótlék — ez a 0
+  // NEM hiányzó adat, hanem MAGA A TÉNY. A gyerek utáni támogatás az
+  // adórendszeren keresztül érkezik (mínimo por descendientes, dolgozó anyák
+  // levonása), plusz létezik rászorultsági alapú ellátás. Egy „becsült havi
+  // összeg" itt hamis biztonságot adna a költségtervben. A magyar felhasználó
+  // számára ez az egyik legnagyobb, legkevésbé ismert különbség.
+  ES: 0,
 };
 
 export function childBenefit(country: BudgetCountry, kids: number): number {

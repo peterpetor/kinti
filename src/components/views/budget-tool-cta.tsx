@@ -8,6 +8,7 @@ const SLUG_BY_CC: Record<BudgetCountry, string> = {
   CH: "svajc",
   NL: "hollandia",
   GB: "anglia",
+  ES: "spanyolorszag",
 };
 
 /**

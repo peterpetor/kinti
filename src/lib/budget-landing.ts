@@ -178,6 +178,44 @@ export const BUDGET_LANDINGS: BudgetLanding[] = [
       },
     ],
   },
+  {
+    slug: "spanyolorszag",
+    cc: "ES",
+    name: "Spanyolország",
+    inName: "Spanyolországban",
+    flag: "🇪🇸",
+    title: "Spanyolországi nettó bér és megélhetés kalkulátor",
+    description:
+      "Mennyi marad a spanyol fizetésedből? Bruttó bér + IRPF + Seguridad Social + család → nettó, lakbér és megélhetés. Ingyenes kalkulátor.",
+    intro:
+      "A spanyol nettót az IRPF (személyi jövedelemadó) és a Seguridad Social munkavállalói járuléka alakítja. ⚠️ Két dolog, ami meglepi az érkezőket: a fizetést gyakran 14 részletben adják (12 havi + nyári és karácsonyi extra), ezért ugyanaz az éves bér havi szinten egészen máshogy néz ki — és az IRPF fele az autonóm közösségé, tehát Madridban és Katalóniában eltér a nettó. A tervező a havi ÁTLAGGAL számol (a két extra fizetést szétosztva), mert a lakbért és a rezsit ebből kell fedezni.",
+    faq: [
+      {
+        q: "Mennyi a nettó 24 000 € bruttóból Spanyolországban?",
+        a: "Kb. 19 200 € évente, ami havi átlagban kb. 1600 € (2025-ös sávokkal, referencia-kulccsal számolt becslés). 14 pagás felosztásnál a bérpapíron ennél kevesebb, kb. 1370 € szerepel — júliusban és decemberben viszont ennek a duplája érkezik.",
+      },
+      {
+        q: "Mit jelent a 12 és a 14 paga?",
+        a: "Azt, hány részletben fizetik ki az éves bért. A 14 pagás modellben 12 havi fizetés mellé jön egy nyári és egy karácsonyi extra; a 12 pagásban ugyanaz az összeg egyenlően eloszlik. Nem több pénz, csak más eloszlás — de a havi költségvetést teljesen átírja, ezért állásinterjún érdemes rákérdezni.",
+      },
+      {
+        q: "Miért függ a nettó attól, hol lakom?",
+        a: "Mert az IRPF egyik fele állami, a másik fele az autonóm közösségé, és a közösségek maguk állapítják meg a sajátjukat. Emiatt azonos bruttónál Madridban valamivel több, Katalóniában valamivel kevesebb nettó marad. A kalkulátor a referencia-kulccsal számol — a pontos összeget az Agencia Tributaria hivatalos kalkulátora adja.",
+      },
+      {
+        q: "Kell külön egészségbiztosítást fizetnem?",
+        a: "Nem. A közellátást a Seguridad Social járulék fedezi, nincs havi biztosítási díj, mint Svájcban vagy Hollandiában. ⚠️ Az egészségügyi kártyát viszont az autonóm közösséged adja ki, és ehhez előbb empadronamiento (lakcím-bejelentés) kell.",
+      },
+      {
+        q: "Jár-e családi pótlék Spanyolországban?",
+        a: "⚠️ Nincs a magyarhoz vagy a némethez hasonló, alanyi jogon járó havi családi pótlék. A gyerek utáni támogatás jellemzően az adórendszeren keresztül érkezik (adóalap-csökkentő minimum, dolgozó anyák levonása), és több autonóm közösség ad saját kiegészítést. Emellett létezik rászorultsági alapú gyermektámogatás is. Ezért a tervező NEM ír be becsült havi családi pótlékot — az hamis biztonságot adna.",
+      },
+      {
+        q: "Mennyi a megélhetés Spanyolországban?",
+        a: "Az élelmiszer és a tömegközlekedés érzékelhetően olcsóbb, mint Nyugat-Európa nagy részén; a lakbér viszont Madridban, Barcelonában és a tengerparti üdülőövezetekben magas. A tervező a te régiód lakbér-mediánjával számol, és minden költség-sort felülírhatsz a saját összegeddel.",
+      },
+    ],
+  },
 ];
 
 export function budgetLandingBySlug(slug: string): BudgetLanding | null {
