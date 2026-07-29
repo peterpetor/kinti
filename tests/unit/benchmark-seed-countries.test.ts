@@ -131,27 +131,27 @@ describe("Iránytű régió-szó ragozása", () => {
 // A GENERÁLT SEED-SQL
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface SalRow { region: string; industry: string; yrs: number; gross: number }
-interface RentRow { region: string; rooms: number; rent: number }
+interface SalRow { region: string; industry: string; yrs: number; gross: number; ip: string; days: number }
+interface RentRow { region: string; rooms: number; rent: number; ip: string; days: number }
 
-const SAL_RE = /INSERT INTO salary_benchmarks .*VALUES \('[^']+', '([A-Z]{2})', '([A-Z]+)', '(.*?)', (\d+), (\d+),/;
-const RENT_RE = /INSERT INTO rent_benchmarks .*VALUES \('[^']+', '([A-Z]{2})', '([A-Z]+)', ([\d.]+), (\d+),/;
+const SAL_RE = /VALUES \('[^']+', '([A-Z]{2})', '([A-Z]+)', '(.*?)', (\d+), (\d+), '([^']+)', datetime\('now', '-(\d+) days'\)\)/;
+const RENT_RE = /VALUES \('[^']+', '([A-Z]{2})', '([A-Z]+)', ([\d.]+), (\d+), '([^']+)', datetime\('now', '-(\d+) days'\)\)/;
 
 function parseSeed(file: string, cc: string) {
   const src = read(file);
   const sal: SalRow[] = [];
   const rent: RentRow[] = [];
   for (const line of src.split("\n")) {
-    let m = SAL_RE.exec(line);
-    if (m) {
+    if (line.startsWith("INSERT INTO salary_benchmarks")) {
+      const m = SAL_RE.exec(line);
+      if (!m) continue;
       expect(m[1], `${file}: idegen country_code`).toBe(cc);
-      sal.push({ region: m[2], industry: m[3], yrs: Number(m[4]), gross: Number(m[5]) });
-      continue;
-    }
-    m = RENT_RE.exec(line);
-    if (m) {
+      sal.push({ region: m[2], industry: m[3], yrs: Number(m[4]), gross: Number(m[5]), ip: m[6], days: Number(m[7]) });
+    } else if (line.startsWith("INSERT INTO rent_benchmarks")) {
+      const m = RENT_RE.exec(line);
+      if (!m) continue;
       expect(m[1], `${file}: idegen country_code`).toBe(cc);
-      rent.push({ region: m[2], rooms: Number(m[3]), rent: Number(m[4]) });
+      rent.push({ region: m[2], rooms: Number(m[3]), rent: Number(m[4]), ip: m[5], days: Number(m[6]) });
     }
   }
   return { src, sal, rent };
@@ -236,36 +236,138 @@ describe.each(SEEDS)("$cc benchmark-seed", ({ cc, file, gen, table, floor, natio
   });
 
   /**
-   * A régió-szorzók a generátor hivatkozott hivatalos táblájából jönnek. A
-   * MINTAVÉTELEZETT mediánok sorrendje a szűk középső sávban felcserélődhet
-   * (a spanyol közösségek 15-ből 12 értéke 12%-os sávban van, a zaj ±6%),
-   * ezért csak a két végét kötjük meg — az a rész, amit a hőtérkép színe
-   * tényleg kommunikál.
+   * ⚠️ A HŐTÉRKÉP SZÍNE NEM MONDHAT MÁST, MINT A HIVATALOS TÁBLA.
+   *
+   * Két hibát is elkövettem, amíg ide jutottam — mindkettő a TESZTBEN volt:
+   *
+   * 1) Mediánt mértem, holott a hőtérkép ÁTLAGOT jelenít meg
+   *    (`getSalaryHeatmap`: `ROUND(AVG(...))`). A medián a spanyol lista szűk
+   *    alsó sávjában mintavételi okokból cserélődik, az átlag stabil.
+   * 2) A két vég PONTOS sorrendjét kötöttem meg. Csak hogy Angliában East
+   *    Midlands (30 690 £) és Yorkshire (30 682 £) között NYOLC FONT a
+   *    különbség — a sorrendjük megkötése nem követelmény, hanem véletlen.
+   *
+   * A helyes megfogalmazás: ahol a hivatalos tábla ÉRDEMI különbséget mond
+   * (>1,5%), ott a seed sem fordulhat meg. Az ez alatti különbségek döntetlenek,
+   * és döntetlent nem kötünk meg. Ez az egész táblát lefedi, nem csak a végeit.
+   *
+   * ⚠️ ÉS EZ VALÓDI SEED-HIBÁT FOGOTT: a cellánkénti 1-2 soros véletlen a
+   * régió-cikluson BELÜL volt, tehát minden régió más iparág-összetételt kapott.
+   * Mivel az iparágak között ~2-szeres bérkülönbség van, ez dominálta a
+   * régiós átlagot: Cantabria a seedben Castilla y León ALATT végzett, holott
+   * 3,5%-kal fölötte van. A generátorban a sorszám most régió-független.
    */
-  it("⚠️ a legjobb 3 és a legrosszabb 2 régió EGYEZIK a hivatalos rangsorral", () => {
+  it("⚠️ ahol a hivatalos tábla >1,5% különbséget mond, ott a seed sem fordul meg", () => {
     const genSrc = read(gen);
     const block = new RegExp(`const ${table} = \\{([\\s\\S]*?)\\n\\};`).exec(genSrc);
     expect(block, `${gen}: nem találom a ${table} táblát`).not.toBeNull();
-    const official = [...block![1].matchAll(/([A-Z]+):\s*(\d+)/g)]
-      .map((m) => [m[1], Number(m[2])] as const);
-    expect(official.length, "üres hivatalos tábla").toBeGreaterThan(8);
-    for (const [code] of official) {
+    const official = new Map(
+      [...block![1].matchAll(/([A-Z]+):\s*(\d+)/g)].map((m) => [m[1], Number(m[2])] as const),
+    );
+    expect(official.size, "üres hivatalos tábla").toBeGreaterThan(8);
+    for (const code of official.keys()) {
       expect(validRegions.has(code), `${gen}: „${code}" nem ${cc}-régió`).toBe(true);
     }
 
-    const officialRank = [...official].sort((a, b) => b[1] - a[1]).map(([c]) => c);
+    // A megjelenített statisztika: régiós ÁTLAG.
     const byReg = new Map<string, number[]>();
     for (const s of sal) {
       if (!byReg.has(s.region)) byReg.set(s.region, []);
       byReg.get(s.region)!.push(s.gross);
     }
-    const sampledRank = [...byReg]
-      .map(([r, v]) => [r, median(v)] as const)
-      .sort((a, b) => b[1] - a[1])
-      .map(([r]) => r);
+    const avg = new Map(
+      [...byReg].map(([r, v]) => [r, v.reduce((a, b) => a + b, 0) / v.length] as const),
+    );
 
-    expect(sampledRank.slice(0, 3), "a 3 legjobban fizető régió elcsúszott").toEqual(officialRank.slice(0, 3));
-    expect(sampledRank.slice(-2), "a 2 legrosszabbul fizető régió elcsúszott").toEqual(officialRank.slice(-2));
+    const codes = [...official.keys()].filter((c) => avg.has(c));
+    let checked = 0;
+    for (const a of codes) {
+      for (const b of codes) {
+        if (a === b) continue;
+        const oa = official.get(a)!, ob = official.get(b)!;
+        if (oa / ob <= 1.015) continue; // döntetlen — nem követelmény
+        checked++;
+        expect(
+          avg.get(a)!,
+          `${a} (hivatalos ${oa}) a seedben ${b} (${ob}) alatt van`,
+        ).toBeGreaterThan(avg.get(b)!);
+      }
+    }
+    expect(checked, "egyetlen érdemi pár sem volt — a teszt nem mér semmit").toBeGreaterThan(10);
+  });
+
+  /**
+   * ⚠️ A LAKBÉR/FIZETÉS-ARÁNY WIDGET a `getRentToSalaryRatio`-ból él, ami
+   * ip_hash-en JOIN-olja a két táblát. A svájci seed ezért SZÁNDÉKOSAN párosítja
+   * a sorok egy részét („a lakbér egy része egy bér-sorral PÁROSÍTVA"); az
+   * AT/DE/NL generátorok ezt elhagyták, és ott ma is `avg_ratio: null` jön
+   * vissza. GB/ES párosít — ez a teszt védi, hogy a párosítás ne csak létezzen,
+   * hanem ÉRTELMES is legyen.
+   */
+  it("⚠️ a lakbér-sorok egy része PÁROSÍTVA van bér-sorral (különben null az arány)", () => {
+    const byIp = new Map(sal.map((s) => [s.ip, s]));
+    const paired = rent.filter((r) => byIp.has(r.ip));
+    const share = paired.length / rent.length;
+    expect(share, `csak ${Math.round(share * 100)}% párosított`).toBeGreaterThan(0.3);
+  });
+
+  it("⚠️ a párosítás NEM lóg át más régióba", () => {
+    const byIp = new Map(sal.map((s) => [s.ip, s]));
+    for (const r of rent) {
+      const mate = byIp.get(r.ip);
+      if (!mate) continue;
+      expect(mate.region, `${r.rooms} szoba: ${r.region} lakbér ${mate.region} bérhez párosítva`).toBe(r.region);
+    }
+  });
+
+  /**
+   * ⚠️ MÓDSZERTANI DÖNTÉS, NEM VÉLETLEN: az 5 szobás (4+ hálószobás) lakást
+   * HÁZTARTÁS bérli, nem egy személy. Egyetlen fizetéshez mérve 70% körüli
+   * lakbér-terhet adott — ezért ezek a sorok a lakbér-statisztikában benne
+   * vannak, az arány-widgetben nem.
+   */
+  it("⚠️ az 5 szobás lakások NINCSENEK párosítva (háztartás-szint)", () => {
+    const ips = new Set(sal.map((s) => s.ip));
+    for (const r of rent.filter((x) => x.rooms >= 5)) {
+      expect(ips.has(r.ip), `${r.rooms} szobás lakás párosítva egyetlen fizetéshez`).toBe(false);
+    }
+  });
+
+  it("a párosított bér NŐ a szobaszámmal (nem stúdióban élő csúcskereső)", () => {
+    const byIp = new Map(sal.map((s) => [s.ip, s]));
+    const byRoom = new Map<number, number[]>();
+    for (const r of rent) {
+      const mate = byIp.get(r.ip);
+      if (!mate) continue;
+      if (!byRoom.has(r.rooms)) byRoom.set(r.rooms, []);
+      byRoom.get(r.rooms)!.push(mate.gross);
+    }
+    const keys = [...byRoom.keys()].sort((a, b) => a - b);
+    expect(keys.length, "nincs elég párosított szobaszám").toBeGreaterThan(2);
+    let prev = 0;
+    for (const k of keys) {
+      const v = byRoom.get(k)!;
+      const avg = v.reduce((a, b) => a + b, 0) / v.length;
+      expect(avg, `${k} szoba párjainak átlagbére (${Math.round(avg)}) nem nagyobb az előzőnél (${Math.round(prev)})`).toBeGreaterThan(prev);
+      prev = avg;
+    }
+  });
+
+  /**
+   * ⚠️ A TREND-DIAGRAM 12 hónapot rajzol, IPARÁGRA szűrve. Ha a dátumok
+   * sorrendben (`n % 200`) állnának, minden iparág egy ~55 napos szeletet kapna,
+   * és a diagram iparágonként 2 pontot tudna kirajzolni. A szórásnak ezért
+   * iparágon BELÜL is végig kell futnia az éven.
+   */
+  it("⚠️ a dátumok a teljes 12 hónapra szórnak — IPARÁGON BELÜL is", () => {
+    const byInd = new Map<string, Set<number>>();
+    for (const s of sal) {
+      if (!byInd.has(s.industry)) byInd.set(s.industry, new Set());
+      byInd.get(s.industry)!.add(Math.floor(s.days / 30));
+    }
+    for (const [ind, bands] of byInd) {
+      expect(bands.size, `„${ind}": csak ${bands.size} hónap-sáv (a trend így ${bands.size} pontot rajzol)`).toBeGreaterThan(7);
+    }
   });
 
   it("a lakbér nő a szobaszámmal (monoton)", () => {

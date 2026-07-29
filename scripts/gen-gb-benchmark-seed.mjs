@@ -107,6 +107,41 @@ const RENT_REGION_AVG = {
 const ROOM_FACTOR = { 1: 0.72, 2: 0.81, 3: 0.95, 4: 1.06, 5: 1.49 };
 const ROOMS = [1, 2, 3, 4, 5];
 
+// ── Bér–lakbér párosítás ───────────────────────────────────────
+// A generált bér-sorok (ip + régió + összeg), hogy a lakbérek egy részét
+// ugyanahhoz a szintetikus „személyhez" tudjuk kötni.
+const salaryPool = [];
+
+/**
+ * Szobaszám → melyik bér-percentilis-sávból válasszunk párt.
+ *
+ * ⚠️ AZ 5 SZOBÁS SZÁNDÉKOSAN NINCS BENNE. A lakbér/fizetés-arány EGY ember
+ * bérét méri EGY lakás bérleti díjához — egy 4+ hálószobás házat viszont
+ * HÁZTARTÁS bérel (két kereset vagy lakótársak), nem egy személy. Ha ezeket is
+ * párosítanám, a közösségi átlag felfelé csúszna: az első futtatásnál 71%-os
+ * maximumot adott (londoni 5 szobás ház egyetlen 52 ezres fizetéshez mérve).
+ * Az 5 szobás sorok így önálló beküldésként maradnak: a lakbér-statisztikában
+ * benne vannak, az arány-widgetben nem.
+ */
+const MATE_BAND = {
+  1: [0.0, 0.35],
+  2: [0.15, 0.5],
+  3: [0.35, 0.7],
+  4: [0.55, 0.85],
+};
+
+/** Egy azonos régióbeli bér-sor ip_hash-e a szobaszámhoz illő sávból (vagy null). */
+function pickMate(code, rooms) {
+  const band = MATE_BAND[rooms];
+  if (!band) return null; // 5 szobás (háztartás-szintű) — nem párosítjuk
+  if (rnd() > 0.6) return null; // ~40% marad önálló beküldés
+  const pool = salaryPool.filter((s) => s.code === code).sort((a, b) => a.gross - b.gross);
+  if (pool.length === 0) return null;
+  const from = Math.floor(band[0] * (pool.length - 1));
+  const to = Math.floor(band[1] * (pool.length - 1));
+  return pool[from + Math.floor(rnd() * (to - from + 1))].ip;
+}
+
 const lines = [];
 lines.push("-- seed-benchmark-gb.sql — angliai Iránytű referencia-adat (generált).");
 lines.push("-- Generátor: scripts/gen-gb-benchmark-seed.mjs · BECSLÉS hivatalos horgonyokkal.");
@@ -118,11 +153,31 @@ lines.push("DELETE FROM rent_benchmarks   WHERE country_code = 'GB' AND ip_hash 
 let n = 0;
 const esc = (s) => s.replace(/'/g, "''");
 
+/**
+ * ⚠️ A CELLÁNKÉNTI SORSZÁM RÉGIÓ-FÜGGETLEN — EZ NEM SZŐRSZÁLHASOGATÁS.
+ *
+ * Korábban `1 + (rnd() < 0.5 ? 1 : 0)` volt a régió-ciklus BELSEJÉBEN, tehát
+ * minden régió MÁS iparág-összetételt kapott: az egyik régióban a vendéglátás
+ * kapott 2 sort és az IT 1-et, a másikban fordítva. Mivel az iparágak között
+ * ~2-szeres bérkülönbség van (a zaj csak ±6%), EZ dominálta a régiós átlagot —
+ * vagyis a hőtérkép „összes iparág" nézete részben azt színezte, melyik
+ * iparág kapott véletlenül eggyel több sort. A saját tesztem buktatta le:
+ * Cantabria (hivatalos 27 097 €) a seedben Castilla y León (26 177 €) ALATT
+ * végzett, holott 3,5%-kal fölötte kell lennie.
+ *
+ * Most a sorszám CSAK (iparág × tapasztalat)-tól függ, tehát minden régió
+ * ÓRA-AZONOS összetételt kap, és a régiók közötti különbség pontosan a
+ * hivatalos szorzót + a zajt tükrözi.
+ */
+const CELL_COUNT = Object.fromEntries(
+  Object.keys(INDUSTRIES).map((ind) => [ind, EXP.map(() => 1 + (rnd() < 0.5 ? 1 : 0))]),
+);
+
 // ── Bérek: minden (iparág × régió × tapasztalat-sáv) → 1-2 sor ──
 for (const [industry, base] of Object.entries(INDUSTRIES)) {
   for (const code of RG_CODES) {
-    for (const [yrs, em] of EXP) {
-      const count = 1 + (rnd() < 0.5 ? 1 : 0); // 1-2 sor / cella
+    for (const [ei, [yrs, em]] of EXP.entries()) {
+      const count = CELL_COUNT[industry][ei];
       for (let i = 0; i < count; i++) {
         const raw = base * RG[code] * em * noise(0.06);
         const gross = Math.max(NLW_YEARLY, Math.round(raw / 100) * 100);
@@ -130,9 +185,16 @@ for (const [industry, base] of Object.entries(INDUSTRIES)) {
         const id = `seed-sal-gb-${n}`;
         const ip = `seed-gb-${n}`;
         n++;
+        // ⚠️ A dátum a TELJES 12 hónapra szórva, nem `n % 200` szerint sorban.
+        // A sorrendi változat minden iparágnak egy ~55 napos SZELETET adott (az `n`
+        // az iparágakon át fut), így a trend-diagram iparágonként mindössze 2 pontot
+        // tudott kirajzolni. Szórással mind a 12 hónap kap adatot.
+        // A szórás EGYENLETES, nem emelkedő: nem építünk bele bérnövekedési sztorit.
+        const ageDays = 1 + Math.floor(rnd() * 330);
+        salaryPool.push({ ip: ip, code: code, gross: gross });
         lines.push(
           `INSERT INTO salary_benchmarks (id, country_code, canton_code, industry, years_experience, gross_salary_chf, ip_hash, created_at) ` +
-          `VALUES ('${id}', 'GB', '${code}', '${esc(industry)}', ${yExp}, ${gross}, '${ip}', datetime('now', '-${1 + (n % 200)} days'));`
+          `VALUES ('${id}', 'GB', '${code}', '${esc(industry)}', ${yExp}, ${gross}, '${ip}', datetime('now', '-${ageDays} days'));`
         );
       }
     }
@@ -148,11 +210,20 @@ for (const code of RG_CODES) {
     for (let i = 0; i < count; i++) {
       const rent = Math.round((base2 * noise(0.08)) / 10) * 10;
       const id = `seed-rent-gb-${m}`;
-      const ip = `seed-gb-rent-${m}`;
+      // ⚠️ A lakbér-sorok ~60%-a PÁROSÍTVA egy bér-sorral (ugyanaz az ip_hash).
+      // Enélkül a lakbér/fizetés-arány widget üresen marad: a `getRentToSalaryRatio`
+      // ip_hash-en JOIN-ol. A svájci seed ezt SZÁNDÉKOSAN megteszi („a lakbér egy
+      // része egy bér-sorral PÁROSÍTVA"), az AT/DE/NL generátorok elhagyták —
+      // ezért ott ma is null az arány.
+      // A párosítás nem véletlen: a szobaszám választja a bér-sávot (nagyobb lakás
+      // → magasabb keresetű háztartás), különben stúdióban élő csúcskereső és
+      // 5 szobás házban élő minimálbéres párok születnének.
+      const mate = pickMate(code, rooms);
+      const ip = mate !== null ? mate : `seed-gb-rent-${m}`;
       m++;
       lines.push(
         `INSERT INTO rent_benchmarks (id, country_code, canton_code, rooms, rent_chf, ip_hash, created_at) ` +
-        `VALUES ('${id}', 'GB', '${code}', ${rooms}, ${Math.max(400, rent)}, '${ip}', datetime('now', '-${1 + (m % 150)} days'));`
+        `VALUES ('${id}', 'GB', '${code}', ${rooms}, ${Math.max(400, rent)}, '${ip}', datetime('now', '-${1 + Math.floor(rnd() * 330)} days'));`
       );
     }
   }
