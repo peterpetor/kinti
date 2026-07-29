@@ -11,7 +11,8 @@ import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY, isValidCountry } from "@/lib/countries";
+import { COUNTRIES, DEFAULT_COUNTRY, isValidCountry } from "@/lib/countries";
+import { CountryFlag } from "@/components/ui/country-flag";
 
 type OwnerStatus = { kintiPro?: boolean; businessPro?: boolean; lockedLeads?: number };
 
@@ -152,7 +153,8 @@ const T: Record<LegalLang, {
     planBiz: "Szaknévsor PRO", planBizDesc: "ha vállalkozásod van, és ügyfeleket szereznél.",
     planJob: "Kiemelt Állás", planJobDesc: "ha munkáltatóként állást hirdetsz.",
     userBadge: "🧑 Neked · magánszemély", userTitle: "Kinti PRO",
-    userDesc: "Magánszemélyeknek. AI-asszisztens, prémium modulok és kalkulátorok — egy havidíjért, mind a 6 országra 🇨🇭 🇦🇹 🇩🇪 🇳🇱 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸.",
+    userDesc:
+      "Magánszemélyeknek. AI-asszisztens, prémium modulok és kalkulátorok — egy havidíjért, mind a 6 országra.",
     perMonth: " / hó",
     netPriceLive: "Nettó ár — az ÁFÁ-t a pénztár az országod szabályai szerint adja hozzá. Havonta automatikusan megújul, bármikor lemondható.",
     netPriceStatic: "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Havonta automatikusan megújul, bármikor lemondható.",
@@ -161,14 +163,16 @@ const T: Record<LegalLang, {
     androidPay: "A fizetést a Google Play fizetési rendszere bonyolítja.",
     activeSub: "✓ Aktív — előfizetve", switchBtn: "Válts Kinti PRO-ba",
     bizBadge: "🏪 A vállalkozásodnak", bizTitle: "Szaknévsor PRO",
-    bizDesc: "Vállalkozóknak és szakembereknek. Szerezz több ügyfelet prémium láthatósággal — a Szaknévsor mind a 6 országban él 🇨🇭 🇦🇹 🇩🇪 🇳🇱 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸.",
+    bizDesc:
+      "Vállalkozóknak és szakembereknek. Szerezz több ügyfelet prémium láthatósággal — a Szaknévsor mind a 6 országban él.",
     recommended: "Ajánlott",
     proLabelNote: "A kiemelt találatok a listában „PRO” jelöléssel, a nem fizetett találatok előtt jelennek meg — a rangsorolás elveiről az ÁSZF 10/A ad tájékoztatást.",
     aszfLink: "ÁSZF 10/A",
     bizActive: "✓ Aktív — a céged PRO", bizActiveNote: "A vállalkozásod a Szaknévsorban kiemelten jelenik meg. Kezelés: „…” menü → Vállalkozásom.",
     buyHighlight: "Kiemelés Vásárlása", buyHighlightNote: "A vállalkozásod kezelőjében véglegesíted. Ha még nincs Szaknévsor-listázásod, ott 1 perc alatt létrehozod — utána fizethetsz elő.",
     jobBadge: "💼 Munkáltatóként", jobTitle: "Kiemelt Állás",
-    jobDesc: "Munkáltatóknak. Találj gyorsabban megbízható magyar munkaerőt — hirdetés a 6 ország magyar közösségének 🇨🇭 🇦🇹 🇩🇪 🇳🇱 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸.",
+    jobDesc:
+      "Munkáltatóknak. Találj gyorsabban megbízható magyar munkaerőt — hirdetés a 6 ország magyar közösségének.",
     perListing: " / hirdetés",
     netPriceLiveJob: "Nettó ár — az ÁFÁ-t a pénztár az országod szabályai szerint adja hozzá. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan.",
     netPriceStaticJob: "Tájékoztató nettó ár (ÁFA nélkül) — a pontos, áfával együttes végső összeget a pénztár mutatja. Egyszeri díj: a kiemelés 30 napig él, NEM újul meg automatikusan.",
@@ -198,7 +202,8 @@ const T: Record<LegalLang, {
     planBiz: "Branchenbuch PRO", planBizDesc: "wenn du ein Unternehmen hast und Kunden gewinnen möchtest.",
     planJob: "Hervorgehobene Stelle", planJobDesc: "wenn du als Arbeitgeber eine Stelle ausschreibst.",
     userBadge: "🧑 Für dich · Privatperson", userTitle: "Kinti PRO",
-    userDesc: "Für Privatpersonen. KI-Assistent, Premium-Module und Rechner — für eine monatliche Gebühr, für alle 6 Länder 🇨🇭 🇦🇹 🇩🇪 🇳🇱 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸.",
+    userDesc:
+      "Für Privatpersonen. KI-Assistent, Premium-Module und Rechner — für eine monatliche Gebühr, für alle 6 Länder.",
     perMonth: " / Monat",
     netPriceLive: "Nettopreis — die MwSt. wird an der Kasse gemäß den Regeln deines Landes hinzugefügt. Verlängert sich monatlich automatisch, jederzeit kündbar.",
     netPriceStatic: "Informativer Nettopreis (ohne MwSt.) — den genauen Endbetrag inklusive MwSt. zeigt die Kasse. Verlängert sich monatlich automatisch, jederzeit kündbar.",
@@ -207,14 +212,16 @@ const T: Record<LegalLang, {
     androidPay: "Die Zahlung wickelt das Zahlungssystem von Google Play ab.",
     activeSub: "✓ Aktiv — abonniert", switchBtn: "Zu Kinti PRO wechseln",
     bizBadge: "🏪 Für dein Unternehmen", bizTitle: "Branchenbuch PRO",
-    bizDesc: "Für Unternehmer und Fachkräfte. Gewinne mehr Kunden mit Premium-Sichtbarkeit — das Branchenbuch ist in allen 6 Ländern aktiv 🇨🇭 🇦🇹 🇩🇪 🇳🇱 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸.",
+    bizDesc:
+      "Für Unternehmer und Fachkräfte. Gewinne mehr Kunden mit Premium-Sichtbarkeit — das Branchenbuch ist in allen 6 Ländern aktiv.",
     recommended: "Empfohlen",
     proLabelNote: "Hervorgehobene Treffer erscheinen in der Liste mit „PRO“-Kennzeichnung vor den nicht bezahlten Treffern — über die Rangordnungsprinzipien informieren die AGB, Punkt 10/A.",
     aszfLink: "AGB Punkt 10/A",
     bizActive: "✓ Aktiv — dein Unternehmen ist PRO", bizActiveNote: "Dein Unternehmen erscheint hervorgehoben im Branchenbuch. Verwaltung: „…“-Menü → Mein Unternehmen.",
     buyHighlight: "Hervorhebung kaufen", buyHighlightNote: "Du schließt es in der Verwaltung deines Unternehmens ab. Falls du noch keinen Branchenbuch-Eintrag hast, erstellst du ihn dort in 1 Minute — danach kannst du abonnieren.",
     jobBadge: "💼 Als Arbeitgeber", jobTitle: "Hervorgehobene Stelle",
-    jobDesc: "Für Arbeitgeber. Finde schneller verlässliche ungarische Arbeitskräfte — Anzeige für die ungarische Community in 6 Ländern 🇨🇭 🇦🇹 🇩🇪 🇳🇱 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸.",
+    jobDesc:
+      "Für Arbeitgeber. Finde schneller verlässliche ungarische Arbeitskräfte — Anzeige für die ungarische Community in 6 Ländern.",
     perListing: " / Anzeige",
     netPriceLiveJob: "Nettopreis — die MwSt. wird an der Kasse gemäß den Regeln deines Landes hinzugefügt. Einmalige Gebühr: die Hervorhebung gilt 30 Tage und verlängert sich NICHT automatisch.",
     netPriceStaticJob: "Informativer Nettopreis (ohne MwSt.) — den genauen Endbetrag inklusive MwSt. zeigt die Kasse. Einmalige Gebühr: die Hervorhebung gilt 30 Tage und verlängert sich NICHT automatisch.",
@@ -244,7 +251,8 @@ const T: Record<LegalLang, {
     planBiz: "Directory PRO", planBizDesc: "if you have a business and want to win customers.",
     planJob: "Featured Job", planJobDesc: "if you're an employer posting a job listing.",
     userBadge: "🧑 For you · individual", userTitle: "Kinti PRO",
-    userDesc: "For individuals. AI assistant, premium modules, and calculators — for one monthly fee, across all 6 countries 🇨🇭 🇦🇹 🇩🇪 🇳🇱 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸.",
+    userDesc:
+      "For individuals. AI assistant, premium modules, and calculators — for one monthly fee, across all 6 countries.",
     perMonth: " / month",
     netPriceLive: "Net price — VAT is added at checkout per your country's rules. Renews automatically each month, cancel anytime.",
     netPriceStatic: "Informational net price (excl. VAT) — the exact final amount incl. VAT is shown at checkout. Renews automatically each month, cancel anytime.",
@@ -253,14 +261,16 @@ const T: Record<LegalLang, {
     androidPay: "Payment is handled by Google Play's payment system.",
     activeSub: "✓ Active — subscribed", switchBtn: "Switch to Kinti PRO",
     bizBadge: "🏪 For your business", bizTitle: "Directory PRO",
-    bizDesc: "For businesses and professionals. Win more customers with premium visibility — the Directory is live in all 6 countries 🇨🇭 🇦🇹 🇩🇪 🇳🇱 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸.",
+    bizDesc:
+      "For businesses and professionals. Win more customers with premium visibility — the Directory is live in all 6 countries.",
     recommended: "Recommended",
     proLabelNote: "Featured results appear in the list marked “PRO”, ahead of unpaid results — Terms of Use, section 10/A, explains the ranking principles.",
     aszfLink: "Terms of Use 10/A",
     bizActive: "✓ Active — your business is PRO", bizActiveNote: "Your business appears featured in the Directory. Manage it via the “…” menu → My business.",
     buyHighlight: "Buy highlight", buyHighlightNote: "You finalize it in your business dashboard. If you don't have a Directory listing yet, you'll create one there in 1 minute — then you can subscribe.",
     jobBadge: "💼 As an employer", jobTitle: "Featured Job",
-    jobDesc: "For employers. Find reliable Hungarian workers faster — your listing reaches the Hungarian community in 6 countries 🇨🇭 🇦🇹 🇩🇪 🇳🇱 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇪🇸.",
+    jobDesc:
+      "For employers. Find reliable Hungarian workers faster — your listing reaches the Hungarian community in 6 countries.",
     perListing: " / listing",
     netPriceLiveJob: "Net price — VAT is added at checkout per your country's rules. One-time fee: the highlight is valid for 30 days and does NOT renew automatically.",
     netPriceStaticJob: "Informational net price (excl. VAT) — the exact final amount incl. VAT is shown at checkout. One-time fee: the highlight is valid for 30 days and does NOT renew automatically.",
@@ -280,6 +290,29 @@ const T: Record<LegalLang, {
     active: "Active",
   },
 };
+
+/**
+ * ⚠️ A HAT ORSZÁG ZÁSZLÓ-SORA — EGYETLEN FORRÁSBÓL.
+ *
+ * Korábban ez a sor 9 helyen (3 nyelv × 3 termék) EMOJIKÉNT volt beírva a
+ * leíró szövegbe, és 6 helyen DUPLIKÁLVA szerepelt az Anglia+Spanyolország pár.
+ * Ez elkerülhetetlen: kilenc kézzel másolt stringet nem lehet szinkronban
+ * tartani. Most a `COUNTRIES`-ból renderel, tehát új ország felvételekor
+ * automatikusan helyes, és duplikálni sem lehet.
+ *
+ * ⚠️ SVG, NEM EMOJI. Anglia zászlaja tag-sequence emoji, amit a
+ * Windows NEM renderel — sima fekete lobogó lesz belőle. A CountryFlag
+ * komponens rajzolja (a Szent György-keresztet), így minden platformon látszik.
+ */
+function CountryFlagRow() {
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-1.5" aria-hidden="true">
+      {COUNTRIES.map((c) => (
+        <CountryFlag key={c.code} code={c.code} className="h-[13px] w-[19px]" />
+      ))}
+    </div>
+  );
+}
 
 export default function ProPage() {
   const { startCheckout, isLoading } = useCheckout();
@@ -431,7 +464,10 @@ export default function ProPage() {
             <h2 className="text-[22px] font-black text-ink">{t.userTitle}</h2>
             {kintiProActive && <ActiveBadge label={t.active} />}
           </div>
-          <p className="text-[13px] text-ink-muted mt-2 mb-6 flex-1">{t.userDesc}</p>
+          <div className="mt-2 mb-6 flex-1">
+            <p className="text-[13px] text-ink-muted">{t.userDesc}</p>
+            <CountryFlagRow />
+          </div>
 
           <div className="mb-6">
             <span className="text-3xl font-black text-ink">{livePrices?.total.kinti_pro_monthly ?? "19 €"}</span>
@@ -491,7 +527,10 @@ export default function ProPage() {
             <h2 className="text-[22px] font-black text-pro">{t.bizTitle}</h2>
             {businessProActive && <ActiveBadge label={t.active} />}
           </div>
-          <p className="text-[13px] text-ink-muted mt-2 mb-6 flex-1">{t.bizDesc}</p>
+          <div className="mt-2 mb-6 flex-1">
+            <p className="text-[13px] text-ink-muted">{t.bizDesc}</p>
+            <CountryFlagRow />
+          </div>
 
           <div className="mb-6">
             <span className="text-3xl font-black text-ink">{livePrices?.total.business_pro_monthly ?? "19 €"}</span>
@@ -546,7 +585,10 @@ export default function ProPage() {
             {t.jobBadge}
           </span>
           <h2 className="text-[22px] font-black text-ink">{t.jobTitle}</h2>
-          <p className="text-[13px] text-ink-muted mt-2 mb-6 flex-1">{t.jobDesc}</p>
+          <div className="mt-2 mb-6 flex-1">
+            <p className="text-[13px] text-ink-muted">{t.jobDesc}</p>
+            <CountryFlagRow />
+          </div>
 
           <div className="mb-6">
             <span className="text-3xl font-black text-ink">{livePrices?.total.job_featured ?? "49 €"}</span>
