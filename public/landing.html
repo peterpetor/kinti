@@ -174,10 +174,14 @@
        keskeny mobilon vízszintesen elhúzhatóvá tenné a lapot. */
     .play-row { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
     .play-badge { display: inline-flex; max-width: 100%; transition: transform .15s; }
-    .play-badge img { display: block; height: 52px; width: auto; max-width: 100%; }
+    /* ⚠️ A MAGASSÁG A GOMBOKÉHOZ VAN IGAZÍTVA (.btn-primary/.btn-ghost = 55px
+       asztali, 53px mobil — mérve). Korábban 52/46 px volt, és a badge
+       láthatóan kisebb volt a mellette álló gomboknál. Ha a gomb-padding
+       (.btn-primary) valaha változik, EZT is igazítsd újra. */
+    .play-badge img { display: block; height: 55px; width: auto; max-width: 100%; }
     .play-badge:hover { transform: translateY(-2px); }
     .play-note { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
-    @media (max-width: 420px) { .play-badge img { height: 46px; } }
+    @media (max-width: 420px) { .play-badge img { height: 53px; } }
 
     .hero-proof {
       margin-top: 30px; display: flex; align-items: center; gap: 14px;
