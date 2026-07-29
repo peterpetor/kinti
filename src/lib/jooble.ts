@@ -13,9 +13,10 @@ const COUNTRY_LOCATION: Record<string, string> = {
   DE: "Deutschland",
   NL: "Nederland",
   CH: "Schweiz",
-  // Jooble-nál a helyi nyelvű ország-név a jó szűrő; GB nélkül üres
-  // location ment ki → az angliai keresés nem szűkült országra.
+  // Jooble-nál a helyi nyelvű ország-név a jó szűrő; GB/ES nélkül üres
+  // location ment ki → a keresés nem szűkült országra.
   GB: "United Kingdom",
+  ES: "España",
 };
 
 interface JoobleJob {

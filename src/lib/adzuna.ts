@@ -25,7 +25,11 @@ export interface AdzunaJob {
 }
 
 /** Adzuna-támogatott (és nálunk EU-placement) országkódok. */
-const ADZUNA_COUNTRIES = new Set(["at", "de", "nl"]);
+// Az Adzuna támogatott piacai közül azok, amiken a Kinti országai vannak.
+// A `gb` az Adzuna saját első piaca, az `es` szintén támogatott.
+// ⚠️ CH NINCS és nem is lesz: az Adzuna nem fedi Svájcot — ott a hivatalos
+// Job-Room (SECO) API megy (`jobroom.ts`).
+const ADZUNA_COUNTRIES = new Set(["at", "de", "nl", "gb", "es"]);
 
 interface AdzunaResult {
   title?: string;

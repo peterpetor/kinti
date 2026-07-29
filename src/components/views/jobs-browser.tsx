@@ -30,6 +30,16 @@ export interface ProMatchContext {
 
 const EXT_SOURCE_LABEL: Record<string, string> = { adzuna: "Adzuna", jooble: "Jooble", arbeitnow: "Arbeitnow", "job-room": "job-room.ch (SECO)" };
 
+/**
+ * Az Adzuna ORSZÁGONKÉNT külön domainen fut, és a forrás-attribúció (API-feltétel)
+ * a felhasználó saját piacára mutasson — egy spanyolországi olvasónak a
+ * `adzuna.at` link se nem hasznos, se nem korrekt. Ismeretlen ország → a
+ * semleges .com.
+ */
+const ADZUNA_DOMAIN: Record<string, string> = {
+  AT: "adzuna.at", DE: "adzuna.de", NL: "adzuna.nl", GB: "adzuna.co.uk", ES: "adzuna.es",
+};
+
 function fmtExtSalary(j: ExternalJob): string | null {
   if (j.salaryMin == null && j.salaryMax == null) return null;
   const cur = j.currency ?? "EUR";
@@ -400,7 +410,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                     mutat, ez a sor a formális „powered by" követelményt fedi. */}
                 <p className="px-1 text-[10.5px] leading-snug text-ink-faint">
                   Az élő hirdetések forrása:{" "}
-                  <a href="https://www.adzuna.at/" target="_blank" rel="noopener noreferrer" className="underline">Adzuna</a>,{" "}
+                  <a href={`https://www.${ADZUNA_DOMAIN[country] ?? "adzuna.com"}/`} target="_blank" rel="noopener noreferrer" className="underline">Adzuna</a>,{" "}
                   <a href="https://jooble.org/" target="_blank" rel="noopener noreferrer" className="underline">Jooble</a>,{" "}
                   <a href="https://www.arbeitnow.com/" target="_blank" rel="noopener noreferrer" className="underline">Arbeitnow</a>{" "}
                   és a hivatalos{" "}

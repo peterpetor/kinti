@@ -19,11 +19,19 @@ interface ArbeitnowJob {
   created_at?: number;
 }
 
-/** Ország → város/ország-kulcsszavak a feed-szűréshez. */
+/**
+ * Ország → város/ország-kulcsszavak a feed-szűréshez.
+ *
+ * ⚠️ A KULCSSZAVAK SUBSTRING-KÉNT illeszkednek (`loc.includes(h)`), ezért rövid
+ * töredék NEM kerülhet ide: az „uk" például illeszkedne az „Ukraine"-ra is, és
+ * ukrajnai állásokat sorolna Angliához. Ezért „united kingdom" és „england".
+ */
 const COUNTRY_HINTS: Record<string, string[]> = {
   AT: ["austria", "österreich", "osterreich", "wien", "vienna", "graz", "linz", "salzburg", "innsbruck"],
   DE: ["germany", "deutschland", "berlin", "münchen", "munich", "hamburg", "köln", "cologne", "frankfurt", "stuttgart"],
   NL: ["netherlands", "nederland", "amsterdam", "rotterdam", "utrecht", "den haag", "the hague", "eindhoven"],
+  GB: ["united kingdom", "england", "london", "manchester", "birmingham", "leeds", "liverpool", "bristol", "sheffield", "newcastle"],
+  ES: ["spain", "españa", "espana", "madrid", "barcelona", "valencia", "sevilla", "málaga", "malaga", "bilbao", "zaragoza"],
 };
 
 export async function searchArbeitnowJobs(country: string, keyword: string, limit = 20, region?: string): Promise<AdzunaJob[]> {
@@ -46,7 +54,16 @@ export async function searchArbeitnowJobs(country: string, keyword: string, limi
         // Tartomány-szűrő (best-effort): ha megadtak régiót, a location tartalmazza.
         if (reg && !loc.includes(reg)) return false;
         // Ország-egyezés: remote, vagy a location tartalmaz egy ország-kulcsszót.
-        return j.remote === true || hints.length === 0 || hints.some((h) => loc.includes(h));
+        //
+        // ⚠️ A `hints.length === 0` KORÁBBAN ELFOGADTA MINDENT. A feed erősen
+        // NÉMET, tehát egy hint nélküli országra (GB, ES) az ország-szűrő
+        // teljesen kikapcsolt: német állások kerültek volna be angliai és
+        // spanyolországi hirdetésként. Élesben ez nem sült ki, mert az
+        // Adzuna/Jooble kulcs be van állítva, és ez az ág csak kulcs nélkül fut
+        // — de egy lejárt kulcs csendben ezt hozta volna. Most FAIL-CLOSED:
+        // ismeretlen ország → nincs találat, nem „minden találat".
+        if (j.remote === true) return true;
+        return hints.length > 0 && hints.some((h) => loc.includes(h));
       })
       .slice(0, limit)
       .map((j) => ({

@@ -1,13 +1,17 @@
 import { getAdminUserId } from "@/lib/admin";
 import { getCloudflareEnv } from "@/lib/cloudflare";
-import { syncAllExternalJobs, syncExternalJobsForCountry } from "@/lib/job-sync";
+import { syncAllExternalJobs, syncExternalJobsForCountry, SYNC_COUNTRIES } from "@/lib/job-sync";
 import { purgeStaleExternalJobs } from "@/lib/repo-external-jobs";
 import { safeLogError } from "@/lib/safe-log";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-const COUNTRIES = new Set(["AT", "DE", "NL", "CH"]);
+// ⚠️ A lista a `job-sync`-ből jön, NEM kézzel írva ide. Korábban két külön lista
+// volt, és két listát nem lehet szinkronban tartani: egy új ország itt hiányozva
+// azt jelentette volna, hogy a `?country=GB` CSENDBEN az „összes ország" ágra
+// esik — vagyis a percenkénti Adzuna-kvótát túllépő burst indul.
+const COUNTRIES = new Set<string>(SYNC_COUNTRIES);
 
 /**
  * /api/cron/sync-jobs — a publikus „Élő állások" feltöltése jogtiszta aggregátor-
@@ -17,9 +21,10 @@ const COUNTRIES = new Set(["AT", "DE", "NL", "CH"]);
  *   • Külső ütemező (cron-job.org) → `Authorization: Bearer <CRON_SECRET>`
  *   • Admin (bejelentkezve) → manuális futtatás
  *
- * `?country=AT|DE|NL` → CSAK az adott ország (a cron-job.org-on országonként
- * külön, eltolt időben — így nem lépjük túl az Adzuna percenkénti rate-limitjét).
- * Param nélkül mind a három (manuális / admin). A 14 napnál régebbi sorokat takarítja.
+ * `?country=AT|DE|NL|GB|ES|CH` → CSAK az adott ország (a cron-job.org-on
+ * országonként külön, eltolt időben — így nem lépjük túl az Adzuna percenkénti
+ * rate-limitjét). Param nélkül MIND A HAT egymás után — ez csak admin-futtatásra
+ * való, a cron sosem hívja param nélkül. A 14 napnál régebbi sorokat takarítja.
  */
 async function handle(req: Request): Promise<Response> {
   const secret = (getCloudflareEnv() as unknown as { CRON_SECRET?: string }).CRON_SECRET;

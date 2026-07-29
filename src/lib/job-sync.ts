@@ -14,52 +14,100 @@ import { searchArbeitnowJobs } from "./arbeitnow";
 import { fetchJobRoomJobs } from "./jobroom";
 import { upsertExternalJobs, type ExternalJobInput } from "./repo-external-jobs";
 import { regionCodeFromLocation } from "./region-resolve";
+import { budgetCurrency, isBudgetCountry } from "./budget-plan";
 
 /**
- * Szektor → lokális-nyelvű keresőszó (de: AT+DE német; nl: NL holland). Egy
- * kategóriához több konkrét szakma is tartozhat (a kkint élő magyarok tipikus
- * szakmáira fókuszálva) → szélesebb lefedés. Volumen: N × 3 ország × 2 forrás
- * API-hívás futásonként; az Adzuna napi 250-es kvótáját szem előtt tartva ~22
- * szektor a felső határ napi 2 futásnál.
+ * Szektor → LOKÁLIS NYELVŰ keresőszó, országnyelv szerint:
+ *   de → AT + DE · nl → NL · en → GB · es → ES
+ *
+ * Egy kategóriához több konkrét szakma is tartozhat (a kint élő magyarok tipikus
+ * szakmáira fókuszálva) → szélesebb lefedés.
+ *
+ * ⚠️ A `core` MEZŐ NEM DÍSZ — KVÓTA-KORLÁT.
+ * Az Adzuna ingyenes szintje **250 hívás/nap**. A cron országonként külön fut,
+ * napi 2×; egy futás = szektor-szám darab Adzuna-hívás. A számla:
+ *
+ *   AT + DE + NL:  3 × 24 szektor × 2 futás = 144 hívás/nap   (a mai állapot)
+ *   + GB + ES teljes szélességgel: +2 × 24 × 2 =  96          → 240/nap = 96%
+ *   + GB + ES csak `core`:          +2 × 12 × 2 =  48          → 192/nap = 77%
+ *
+ * A 240 nem hagy semmi ráhagyást admin-futtatásra vagy újrapróbálkozásra, ezért
+ * GB/ES **kategóriánként EGY kulcsszót** kap — a `core: true` sorokat. A szabály
+ * egyszerű és ellenőrizhető (teszt köti): a 12 kategória mindegyikéből pontosan
+ * egy sor `core`. Így egyetlen kategória sem marad üresen a két új országban,
+ * és a kvótán belül maradunk. Ha az Adzuna-kvóta egyszer megnő, elég a
+ * `SECTORS_FOR` szűrőt kivenni.
  */
-const SECTOR_QUERIES: { category: string; de: string; nl: string }[] = [
+const SECTOR_QUERIES: { category: string; de: string; nl: string; en: string; es: string; core?: true }[] = [
   // Építőipar / szakmunkák
-  { category: "epitoipar",    de: "Bau",            nl: "Bouw" },
-  { category: "epitoipar",    de: "Maler",          nl: "Schilder" },
-  { category: "epitoipar",    de: "Elektriker",     nl: "Elektricien" },
-  { category: "epitoipar",    de: "Installateur",   nl: "Loodgieter" },
+  { category: "epitoipar",    de: "Bau",            nl: "Bouw",              en: "Construction",          es: "Construcción",   core: true },
+  { category: "epitoipar",    de: "Maler",          nl: "Schilder",          en: "Painter Decorator",     es: "Pintor" },
+  { category: "epitoipar",    de: "Elektriker",     nl: "Elektricien",       en: "Electrician",           es: "Electricista" },
+  { category: "epitoipar",    de: "Installateur",   nl: "Loodgieter",        en: "Plumber",               es: "Fontanero" },
   // Vendéglátás
-  { category: "vendeglatas",  de: "Gastronomie",    nl: "Horeca" },
-  { category: "vendeglatas",  de: "Koch",           nl: "Kok" },
-  { category: "vendeglatas",  de: "Kellner",        nl: "Ober" },
+  { category: "vendeglatas",  de: "Gastronomie",    nl: "Horeca",            en: "Hospitality",           es: "Hostelería",     core: true },
+  { category: "vendeglatas",  de: "Koch",           nl: "Kok",               en: "Chef",                  es: "Cocinero" },
+  { category: "vendeglatas",  de: "Kellner",        nl: "Ober",              en: "Waiter",                es: "Camarero" },
   // Egészségügy / ápolás
-  { category: "egeszsegugy",  de: "Pflege",         nl: "Zorg" },
-  { category: "egeszsegugy",  de: "Altenpflege",    nl: "Verpleegkundige" },
+  // ⚠️ GB-ben a magyarok tipikus belépő-állása a „care assistant" (idősgondozás),
+  // nem a „nurse" (ahhoz NMC-regisztráció kell) — ezért az a `core`.
+  { category: "egeszsegugy",  de: "Pflege",         nl: "Zorg",              en: "Care Assistant",        es: "Cuidador",       core: true },
+  { category: "egeszsegugy",  de: "Altenpflege",    nl: "Verpleegkundige",   en: "Nurse",                 es: "Enfermero" },
   // Logisztika / sofőr
-  { category: "logisztika",   de: "Lager",          nl: "Logistiek" },
-  { category: "logisztika",   de: "Fahrer",         nl: "Chauffeur" },
-  { category: "logisztika",   de: "Staplerfahrer",  nl: "Heftruckchauffeur" },
+  { category: "logisztika",   de: "Lager",          nl: "Logistiek",         en: "Warehouse",             es: "Almacén",        core: true },
+  { category: "logisztika",   de: "Fahrer",         nl: "Chauffeur",         en: "Driver",                es: "Conductor" },
+  { category: "logisztika",   de: "Staplerfahrer",  nl: "Heftruckchauffeur", en: "Forklift Driver",       es: "Carretillero" },
   // Ipar / gyártás
-  { category: "ipar-gyartas", de: "Produktion",     nl: "Productie" },
-  { category: "ipar-gyartas", de: "Schweißer",      nl: "Lasser" },
-  { category: "ipar-gyartas", de: "Mechaniker",     nl: "Monteur" },
+  { category: "ipar-gyartas", de: "Produktion",     nl: "Productie",         en: "Production Operative",  es: "Producción",     core: true },
+  { category: "ipar-gyartas", de: "Schweißer",      nl: "Lasser",            en: "Welder",                es: "Soldador" },
+  { category: "ipar-gyartas", de: "Mechaniker",     nl: "Monteur",           en: "Mechanic",              es: "Mecánico" },
   // Takarítás / háztartás
-  { category: "takaritas",    de: "Reinigung",      nl: "Schoonmaak" },
-  { category: "takaritas",    de: "Hausmeister",    nl: "Huismeester" },
+  { category: "takaritas",    de: "Reinigung",      nl: "Schoonmaak",        en: "Cleaner",               es: "Limpieza",       core: true },
+  { category: "takaritas",    de: "Hausmeister",    nl: "Huismeester",       en: "Caretaker",             es: "Conserje" },
   // Kereskedelem
-  { category: "kereskedelem", de: "Verkauf",        nl: "Verkoop" },
+  { category: "kereskedelem", de: "Verkauf",        nl: "Verkoop",           en: "Sales Assistant",       es: "Dependiente",    core: true },
   // Szépségipar
-  { category: "szepsegipar",  de: "Friseur",        nl: "Kapper" },
+  { category: "szepsegipar",  de: "Friseur",        nl: "Kapper",            en: "Hairdresser",           es: "Peluquero",      core: true },
   // Mezőgazdaság / kertészet
-  { category: "mezogazdasag", de: "Landwirtschaft", nl: "Landbouw" },
-  { category: "mezogazdasag", de: "Gärtner",        nl: "Tuinder" },
+  { category: "mezogazdasag", de: "Landwirtschaft", nl: "Landbouw",          en: "Farm Worker",           es: "Agricultura",    core: true },
+  { category: "mezogazdasag", de: "Gärtner",        nl: "Tuinder",           en: "Gardener",              es: "Jardinero" },
   // Iroda / adminisztráció
-  { category: "iroda",        de: "Büro",           nl: "Kantoor" },
+  { category: "iroda",        de: "Büro",           nl: "Kantoor",           en: "Office Administrator",  es: "Administrativo", core: true },
   // IT
-  { category: "it",           de: "IT",             nl: "IT" },
+  // Spanyolországban az „Informática" hoz többet, mint a puszta „IT" (utóbbi
+  // rövidítésként bármibe beleillik).
+  { category: "it",           de: "IT",             nl: "IT",                en: "IT",                    es: "Informática",    core: true },
   // Egyéb segéd / betanított
-  { category: "egyeb",        de: "Helfer",         nl: "Helper" },
+  // A „Helfer" angol megfelelője a „Labourer", spanyolul a „Peón" — mindkettő a
+  // betanított/segédmunka hirdetések bevett szava.
+  { category: "egyeb",        de: "Helfer",         nl: "Helper",            en: "Labourer",              es: "Peón",           core: true },
 ];
+
+/**
+ * Ország → melyik keresőszó-oszlop. TÁBLA, nem ternárius-lánc: a korábbi
+ * `isNL ? sector.nl : sector.de` alak minden NEM-holland országra NÉMET szót
+ * adott, tehát Anglia/Spanyolország bekapcsolása németül keresett volna angol és
+ * spanyol állásokat. Ismeretlen ország → nincs nyelv → nem keresünk (fail-closed).
+ */
+const SECTOR_LANG: Record<string, "de" | "nl" | "en" | "es"> = {
+  AT: "de", DE: "de", NL: "nl", GB: "en", ES: "es",
+};
+
+/** Az adott országon futtatandó szektorok (GB/ES: csak `core` — ld. a kvóta-számlát). */
+function sectorsFor(country: string): typeof SECTOR_QUERIES {
+  const coreOnly = country === "GB" || country === "ES";
+  return coreOnly ? SECTOR_QUERIES.filter((s) => s.core) : SECTOR_QUERIES;
+}
+
+/**
+ * A szinkronban részt vevő országok — EGYETLEN FORRÁS. A cron-route eddig SAJÁT
+ * `COUNTRIES` halmazt tartott; két listát nem lehet szinkronban tartani, és a
+ * `?country=GB` így csendben az „összes ország" ágra esett volna.
+ *
+ * A CH utolsó, mert az a hivatalos Job-Room (SECO) API-t használja, nem az
+ * Adzuna/Jooble szektor-keresést.
+ */
+export const SYNC_COUNTRIES = ["AT", "DE", "NL", "GB", "ES", "CH"] as const;
 
 /** Tömb felaprózása N-es csoportokra (párhuzamos batch-futtatáshoz). */
 function chunk<T>(arr: T[], size: number): T[][] {
@@ -68,9 +116,17 @@ function chunk<T>(arr: T[], size: number): T[][] {
   return out;
 }
 
-/** CH → CHF, a többi (AT/DE/NL) → EUR. (Jooble amúgy nem ad bért, csak Adzuna.) */
+/**
+ * Ország → pénznem. (Jooble amúgy nem ad bért, csak Adzuna.)
+ *
+ * ⚠️ EZ VALÓDI HIBA VOLT: `country === "CH" ? "CHF" : "EUR"` — vagyis egy angliai
+ * hirdetés fontban megadott bére EURÓKÉNT került volna az adatbázisba. A
+ * bináris ország-fallthrough hibaosztály. Most a `budgetCurrency` az egyetlen
+ * forrás (függőség-mentes tiszta lib, GB-t is ismeri).
+ */
 function currencyFor(country: string): string {
-  return country.toUpperCase() === "CH" ? "CHF" : "EUR";
+  const cc = country.toUpperCase();
+  return isBudgetCountry(cc) ? budgetCurrency(cc) : "EUR";
 }
 
 interface SourcedJob { job: AdzunaJob; source: string }
@@ -102,15 +158,19 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
     return jobs.length === 0 ? 0 : upsertExternalJobs(jobs);
   }
 
-  const isNL = cc === "NL";
+  // Nyelv nélküli országon NEM keresünk: jobb nulla találat, mint német
+  // kulcsszavakkal keresett angol/spanyol állás.
+  const lang = SECTOR_LANG[cc];
+  if (!lang) return 0;
+
   const byUrl = new Map<string, ExternalJobInput>();
 
   // A szektorokat 6-os batch-ekben, párhuzamosan futtatjuk (a sok kulcsszó se
   // nyújtsa el a futásidőt; a batch-méret tartja a rate-limit alatt a burst-öt).
-  for (const batch of chunk(SECTOR_QUERIES, 6)) {
+  for (const batch of chunk(sectorsFor(cc), 6)) {
     const settled = await Promise.all(
       batch.map(async (sector) => {
-        const keyword = isNL ? sector.nl : sector.de;
+        const keyword = sector[lang];
         try {
           return { sector, res: await searchSector(cc, keyword) };
         } catch {
@@ -147,19 +207,17 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
 }
 
 /**
- * Az összes lefedett ország szinkronja.
+ * Az összes lefedett ország szinkronja — 2026-07-30 óta MIND A HAT.
  *
- * ⚠️ ANGLIA ÉS SPANYOLORSZÁG SZÁNDÉKOSAN NINCS ITT — és ez TUDOTT HIÁNY, nem
- * feledékenység: a `SECTOR_QUERIES` tábla csak NÉMET és HOLLAND keresőszót
- * tartalmaz. Ha a GB/ES bekerülne a listába, a szinkron NÉMET kulcsszavakkal
- * keresne angol és spanyol állásokat — az eredmény használhatatlan zaj lenne.
- * A helyes sorrend: előbb `en`/`es` kulcsszó-oszlop a SECTOR_QUERIES-be, és
- * CSAK utána ide a két ország. Addig az Állások mindkét országban a saját
- * hirdetésekre és a link-out katalógusra támaszkodik.
+ * ⚠️ EZ A FUNKCIÓ CSAK ADMIN-FUTTATÁSRA VALÓ. Az éles cron ORSZÁGONKÉNT hívja a
+ * route-ot (`?country=XX`, eltolt időben), mert mind a hat ország egy futásban,
+ * párhuzamos burst-ben túllépi az Adzuna PERCENKÉNTI kvótáját — ez élesben már
+ * megtörtént: az első ország elvitte a kvótát, a többi 429-et kapott és üresen
+ * tért vissza. Innen a sorrendben (nem párhuzamosan) futó ciklus.
  */
 export async function syncAllExternalJobs(): Promise<Record<string, number>> {
   const out: Record<string, number> = {};
-  for (const c of ["AT", "DE", "NL", "CH"]) {
+  for (const c of SYNC_COUNTRIES) {
     try {
       out[c] = await syncExternalJobsForCountry(c);
     } catch {
