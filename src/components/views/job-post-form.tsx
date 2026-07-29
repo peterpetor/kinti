@@ -9,6 +9,9 @@ import { useCheckout } from "@/hooks/useCheckout";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { getRegions, regionLabel } from "@/lib/regions";
+// ⚠️ EGY forrás a példa-városra. A korábbi kézi ország-lánc végén Zürich állt,
+// így az angliai és a spanyolországi hirdetőnek is „Pl. Zürich" jelent meg.
+import { countryExamples } from "@/lib/country-examples";
 
 export interface JobFormInitial {
   title?: string;
@@ -194,7 +197,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
             className={inputCls}
-            placeholder={country === "AT" ? "Pl. Wien" : country === "DE" ? "Pl. Berlin" : country === "NL" ? "Pl. Amsterdam" : "Pl. Zürich"}
+            placeholder={`Pl. ${countryExamples(country).city}`}
           />
         </div>
         <div>

@@ -8,6 +8,8 @@ import { cantonPoint } from "@/lib/cantons";
 import { atPoint } from "@/lib/at-points";
 import { dePoint } from "@/lib/de-points";
 import { nlPoint } from "@/lib/nl-points";
+import { gbPoint } from "@/lib/gb-points";
+import { esPoint } from "@/lib/es-points";
 import { getRegion } from "@/lib/regions";
 import { getCountry } from "@/lib/countries";
 import { sendEmail } from "@/lib/email";
@@ -66,6 +68,11 @@ export async function POST(req: Request) {
       country === "AT" ? atPoint(cantonCode)
       : country === "DE" ? dePoint(cantonCode)
       : country === "NL" ? nlPoint(cantonCode)
+      // ⚠️ GB/ES ág NÉLKÜL az ajánlott vállalkozás SVÁJCI koordinátát kapott
+      // volna (a `cantonPoint` ismeretlen kódra Zürichre esik) — vagyis egy
+      // londoni vagy madridi ajánlás a svájci térképen jelent volna meg.
+      : country === "GB" ? gbPoint(cantonCode)
+      : country === "ES" ? esPoint(cantonCode)
       : cantonPoint(cantonCode);
     const blurbParts = [note, website ? `Web: ${website}` : null].filter(Boolean);
 

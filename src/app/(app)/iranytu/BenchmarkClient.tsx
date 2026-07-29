@@ -10,7 +10,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { foldSearchText } from "@/lib/sql-fold";
 import { salaryStanding, rentStanding, type SalaryStanding } from "@/lib/benchmark-stats";
 import { usePreferredCountry } from "@/lib/country-pref";
-import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { DEFAULT_COUNTRY, isValidCountry } from "@/lib/countries";
 import {
   benchRegions, benchRegionName, benchCurrency, benchAllLabel, benchRegionLabel,
   benchDefaultRegion, benchDefaultSalary, benchDefaultRent,
@@ -356,7 +356,11 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
 
   const [prefCountry] = usePreferredCountry();
   const c = prefCountry ?? DEFAULT_COUNTRY;
-  const country = c === "AT" || c === "DE" || c === "NL" ? c : "CH";
+  // ⚠️ isValidCountry, NEM kézi whitelist: a korábbi 4-elemű lista miatt a GB
+  // és az ES a svájci ágra esett — az angliai/spanyolországi felhasználó
+  // svájci kantonokat, „Egész Svájc" feliratot és CHF-et látott, pedig az
+  // Iránytű mindkét országban engedélyezett funkció.
+  const country = isValidCountry(c) ? c : DEFAULT_COUNTRY;
   const cur = benchCurrency(country);
 
   const fetchStats = useCallback(async () => {

@@ -70,6 +70,12 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
   const isAT = country === "AT";
   const isDE = country === "DE";
   const isNL = country === "NL";
+  // ⚠️ A hőtérkép KÉZZEL RAJZOLT, ország-specifikus rácsra épül (a cellák a
+  // valódi földrajzi elrendezést utánozzák). Angliához és Spanyolországhoz nincs
+  // ilyen rács — kapu nélkül a lánc végén a SVÁJCI rács állt, vagyis az angliai
+  // és spanyolországi felhasználó svájci kanton-alakzatot kapott volna, üres
+  // cellákkal (a kódok nem is egyeznek). Inkább nem rajzolunk semmit.
+  const hasGrid = country === "CH" || country === "AT" || country === "DE" || country === "NL";
   const grid = isDE ? DE_GRID : isAT ? AT_GRID : isNL ? NL_GRID : CH_GRID;
   const cols = isDE ? 6 : isAT ? 5 : isNL ? 4 : 8;
   const rows = isDE ? 5 : isAT ? 3 : isNL ? 5 : 6;
@@ -97,6 +103,8 @@ export function SwissHeatmap({ industry, period, country = "CH" }: { industry: s
   const min = vals.length > 0 ? Math.min(...vals) : 0;
   const max = vals.length > 0 ? Math.max(...vals) : 0;
   const range = max - min || 1;
+
+  if (!hasGrid) return null;
 
   const byCode = new Map(data.map((d) => [d.canton_code, d]));
   const selRow = selected ? byCode.get(selected) : undefined;

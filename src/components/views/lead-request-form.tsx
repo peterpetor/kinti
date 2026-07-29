@@ -9,6 +9,16 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { getCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 import { getRegions } from "@/lib/regions";
 
+/** Példa-város a mondatba illő (-ban/-ben) alakban, országonként. */
+const CITY_IN_EXAMPLE: Record<string, string> = {
+  CH: "Zürichben",
+  AT: "Bécsben",
+  DE: "Berlinben",
+  NL: "Amszterdamban",
+  GB: "Londonban",
+  ES: "Madridban",
+};
+
 interface Props {
   categories: Category[];
   /** Előre kiválasztott kategória (pl. a Szaknévsor üres-találat CTA-jából, ?cat=). */
@@ -52,7 +62,10 @@ export function LeadRequestForm({ categories, initialCategoryId, initialCantonCo
     if (cantonCode !== "all" && !regions.some((r) => r.code === cantonCode)) setCantonCode("all");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [country, prefCountry]);
-  const cityExample = country === "AT" ? "Bécsben" : country === "DE" ? "Berlinben" : country === "NL" ? "Amszterdamban" : "Zürichben";
+  // ⚠️ Ez a mondatba illeszkedő, -ban/-ben alakú példa. Kézi lánc helyett
+  // ország-tábla: a korábbi változat végén Zürich állt, így az angliai és a
+  // spanyolországi felhasználó is „Zürichben" példát látott.
+  const cityExample = CITY_IN_EXAMPLE[country] ?? CITY_IN_EXAMPLE.CH;
   const phoneExample = countryExamples(country).phone;
 
   async function handleSubmit(e: React.FormEvent) {

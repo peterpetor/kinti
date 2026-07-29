@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getRentHistogram } from "@/lib/benchmark";
+import { isValidCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -13,7 +14,10 @@ export async function GET(req: NextRequest) {
   const roomsStr = searchParams.get("rooms");
   const canton = searchParams.get("canton") || "all";
   const cGet = searchParams.get("country");
-  const country = cGet === "AT" || cGet === "DE" || cGet === "NL" ? cGet : "CH";
+  // ⚠️ isValidCountry, NEM kézi whitelist: a korábbi 4-elemű lista miatt a GB
+  // és az ES a svájci ágra esett (svájci kantonok + CHF az angol/spanyol
+  // felhasználónál), pedig az Iránytű mindkét országban engedélyezett.
+  const country = isValidCountry(cGet) ? cGet : DEFAULT_COUNTRY;
   const rooms = roomsStr ? parseFloat(roomsStr) : NaN;
 
   if (!Number.isFinite(rooms) || rooms <= 0) {

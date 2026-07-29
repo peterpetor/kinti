@@ -9,6 +9,7 @@ import { hashIp } from "@/lib/security";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { getRegion } from "@/lib/regions";
 import { isValidBenchmarkIndustry, isValidBenchmarkRooms } from "@/lib/benchmark-meta";
+import { isValidCountry, DEFAULT_COUNTRY } from "@/lib/countries";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -36,7 +37,10 @@ export async function GET(req: NextRequest) {
   const canton = searchParams.get("canton") || "all";
   const period = searchParams.get("period") || "12m";
   const cGet = searchParams.get("country");
-  const country = cGet === "AT" || cGet === "DE" || cGet === "NL" ? cGet : "CH";
+  // ⚠️ isValidCountry, NEM kézi whitelist: a korábbi 4-elemű lista miatt a GB
+  // és az ES a svájci ágra esett (svájci kantonok + CHF az angol/spanyol
+  // felhasználónál), pedig az Iránytű mindkét országban engedélyezett.
+  const country = isValidCountry(cGet) ? cGet : DEFAULT_COUNTRY;
 
   const [status, myData] = await Promise.all([
     getUserSubmissionStatus(ipHash, country),
@@ -78,8 +82,10 @@ export async function PUT(req: NextRequest) {
 }
 
 async function handleUpsert(mode: "insert" | "update", body: BenchmarkBody, ipHash: string) {
-  const country = body.country === "AT" || body.country === "DE" || body.country === "NL" ? body.country : "CH";
-  const cur = country !== "CH" ? "EUR" : "CHF";
+  const country = isValidCountry(body.country) ? body.country : DEFAULT_COUNTRY;
+  // ⚠️ NEM bináris: a `!== "CH" ? EUR : CHF` minden nem-svájci országot
+  // euróssá tett — Angliában fontban gondolkodik a felhasználó.
+  const cur = country === "CH" ? "CHF" : country === "GB" ? "GBP" : "EUR";
   if (body.type === "salary") {
     if (!body.cantonCode || !body.industry || typeof body.yearsExperience !== "number" || typeof body.grossSalaryChf !== "number")
       return NextResponse.json({ error: "Hiányzó bér adatok." }, { status: 400 });

@@ -7,6 +7,7 @@ import { getWorkerProfileByUser } from "@/lib/repo";
 import { extractCvText } from "@/lib/cv-extract";
 import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
+import { isValidCountry } from "@/lib/countries";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -81,13 +82,18 @@ export async function POST(req: Request) {
     let country = "CH";
     try {
       const b = (await req.json()) as { country?: string };
-      if (b?.country === "AT" || b?.country === "DE" || b?.country === "NL") country = b.country;
+      // ⚠️ isValidCountry, NEM kézi lista: a korábbi hármas whitelist miatt a
+      // GB és az ES a SVÁJCI profilra esett — az angol és spanyol CV-t „svájci
+      // CV-szakértő" auditálta, B/C/L engedélyt kérve számon rajta.
+      if (isValidCountry(b?.country)) country = b.country as string;
     } catch { /* üres/hibás body → CH */ }
     const LAND: Record<string, { adj: string; loc: string; permit: string; lang: string; refDoc: string }> = {
       CH: { adj: "svájci", loc: "Svájcban", permit: "Tartózkodási/munkavállalási engedély (B/C/L) feltüntetése — a HR ezt rögtön keresi.", lang: "német", refDoc: "Arbeitszeugnis" },
       AT: { adj: "osztrák", loc: "Ausztriában", permit: "EU-állampolgárként NINCS szükség munkavállalási engedélyre — a CV-n nem kötelező feltüntetni (a Meldezettel legfeljebb említhető).", lang: "német", refDoc: "Arbeitszeugnis" },
       DE: { adj: "német", loc: "Németországban", permit: "EU-állampolgárként szabad mozgás (Freizügigkeit) — NINCS engedély, a CV-n NEM kell feltüntetni.", lang: "német", refDoc: "Arbeitszeugnis" },
       NL: { adj: "holland", loc: "Hollandiában", permit: "EU-állampolgárként szabad mozgás — NINCS munkavállalási engedély, a CV-n NEM kell feltüntetni (a BSN legfeljebb említhető).", lang: "holland vagy angol", refDoc: "referentie / getuigschrift" },
+      GB: { adj: "brit", loc: "Angliában", permit: "⚠️ Brexit óta az EU-állampolgárság ÖNMAGÁBAN nem ad munkavállalási jogot: a CV-n érdemes jelezni a státuszt (settled/pre-settled) vagy a vízumot, mert a munkáltató right to work ellenőrzést végez.", lang: "angol", refDoc: "reference" },
+      ES: { adj: "spanyol", loc: "Spanyolországban", permit: "EU-állampolgárként szabad mozgás — NINCS munkavállalási engedély. A NIE-számot viszont érdemes feltüntetni, mert a bejelentéshez kell.", lang: "spanyol", refDoc: "referencias" },
     };
     const L = LAND[country] ?? LAND.CH;
 
