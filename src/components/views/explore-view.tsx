@@ -45,7 +45,7 @@ const CITY_IN_EXAMPLE: Record<string, string> = {
 };
 
 // Ország-tudatos térkép-közép (ha nincs találat / „Egész ország" van kiválasztva).
-// Eddig fix Zürich volt → DE/AT/NL-en is Svájcot mutatott. Lásd deals-map.
+// Eddig fix Zürich volt → DE/AT/NL-en is Svájcot mutatott.
 const COUNTRY_MAP_CENTER: Record<string, [number, number]> = {
   CH: [46.82, 8.23],
   AT: [47.59, 14.14],

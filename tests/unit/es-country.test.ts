@@ -116,13 +116,18 @@ describe("ES engedélyező-lista (GB-modell)", () => {
     }
   });
 
-  it("⚠️ REJTI a CH-specifikus eszközöket, amikhez NINCS spanyol tartalom", () => {
-    // ⚠️ Ez a lista FOGY, ahogy készül a spanyol tartalom — sorrendben kikerült
-    // innen a „nyelvlecke", az „allampolgarsag" (CCSE-bank), a
-    // „szolgaltato-valto", a „szakmai-szotar" és a „bussen" (DGT-sávok +
-    // pronto pago). Ha egy kulcsot bekapcsolsz az ES_ALLOWED_FEATURES-ben,
-    // ITT is vedd ki, különben a teszt a saját, elavult elvárásán bukik el.
-    for (const key of ["akciok"]) {
+  /**
+   * ⚠️ 2026-07-30: ez a lista KIÜRÜLT — a spanyol eszközkészlet teljes lett.
+   * Sorrendben kikerült innen a „nyelvlecke", az „allampolgarsag" (CCSE-bank),
+   * a „szolgaltato-valto", a „szakmai-szotar" és a „bussen" (DGT-sávok +
+   * pronto pago). Az „akciok" nem elkészült, hanem MEGSZŰNT funkció — azt a
+   * REMOVED_FEATURES zárja minden országban (ld. lentebb).
+   *
+   * A teszt ezért már nem egy kulcs-listát ellenőriz, hanem azt, hogy a
+   * fail-closed modell ÉL: ami nincs az engedélyező-listán, az rejtve van.
+   */
+  it("⚠️ ami NINCS az engedélyező-listán, az REJTVE van (fail-closed)", () => {
+    for (const key of ["valami-uj-eszkoz", "esemenyek", "telekocsi"]) {
       expect(isFeatureAvailable(key, "ES"), key).toBe(false);
     }
   });

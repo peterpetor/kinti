@@ -59,7 +59,7 @@ NEXT_PUBLIC_MAP_STYLE_URL= https://tiles.kinti.app/maps/style.json
 
 ## 5. Hátralévő migráció (a fő térkép után, opcionális)
 
-A többi 5 Leaflet-nézet (kanton-buborék, események, magyar bolt, akciók,
+A többi Leaflet-nézet (kanton-buborék, események, 
 location-picker) **továbbra is Leaflet+CARTO+Esri-fallback** marad — ezek kisebb
 forgalmúak, és a fallback megvédi őket. Amikor mind a 6-ot MapLibre-re vinnéd:
 - minden nézet markerei/popupjai/klaszterei MapLibre-re átírva (a `business-map`

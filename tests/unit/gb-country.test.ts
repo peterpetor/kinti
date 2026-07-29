@@ -60,11 +60,10 @@ describe("GB feature-gating (engedélyező-lista)", () => {
   it("⚠️ REJTI a CH/EU-specifikus eszközöket, amikhez NINCS angol tartalom", () => {
     // Ezek svájci/EU-s adatot mutatnának hitelesnek tűnő módon — tilos.
     // ⚠️ Ez a lista FOGY, ahogy készül az angol tartalom: 2026-07-30-án a
-    // „bussen" kikerült innen (elkészült a brit bírság-becslő: FPN +
-    // Sentencing Council sávok, MÉRFÖLDBEN). Ha egy kulcsot bekapcsolsz a
-    // GB_ALLOWED_FEATURES-ben, ITT is vedd ki.
+    // „bussen" (brit bírság-becslő) és a „szakmai-szotar" kikerült innen.
+    // Az „akciok" ELTŰNT a listáról, de NEM azért, mert elkészült: a funkciót
+    // kivezettük — a REMOVED_FEATURES halmaz zárja MINDEN országban.
     for (const f of [
-      "akciok",
       "nemet-oneletrajz",
     ]) {
       expect(isFeatureAvailable(f, "GB")).toBe(false);

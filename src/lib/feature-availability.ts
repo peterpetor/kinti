@@ -61,9 +61,6 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
   // "bussen" — KIVÉVE (2026-07-05): VAN holland verzió (speeding-fine
   //   calculateFineNL: WAHV-boete + CJIB, 30 km/h fölött strafrecht, 50 km/h+
   //   rijbewijs ingevorderd) — mind a 6 országra él.
-  // "akciok" — KIVÉVE (2026-07-05): VAN holland boltlánc-lista (DEAL_STORES_NL:
-  //   Albert Heijn/Jumbo/Lidl/Aldi/PLUS/Dirk/Spar/Vomar); a geo-bbox + térkép-
-  //   középpont már NL-kész — mind a 6 országra él.
   // "repulojegy" — KIVÉVE (2026-07-05): VAN holland konfig (flights.ts FLIGHT_
   //   CONFIG.NL: AMS/EIN/RTM ↔ BUD, KLM/Transavia/WizzAir/Ryanair) — mind a 6 ország.
   // "vizum" — KIVÉVE (2026-07-05): VAN holland verzió (permit-wizard STEPS_NL +
@@ -79,6 +76,37 @@ export const CH_AT_DE_ONLY_FEATURES: ReadonlySet<string> = new Set([
  * vállalkozás-felvétel, árfolyam, repülőjegy, hírlevél, értesítések, ranglista,
  * akció-térkép — ezek nincsenek a CH-only halmazban, így automatikusan mennek.
  */
+
+/**
+ * ⚠️ KIVEZETETT FUNKCIÓK — MINDEN ORSZÁGBAN REJTVE, VISSZAÚT NÉLKÜL.
+ *
+ * Ezek a modulok megszűntek (a tábláikat a 0123-as migráció eldobta), és NINCS
+ * hozzájuk sem route, sem belépési pont. A kulcsuk mégis „elérhetőnek"
+ * számított a megengedő CH/AT/DE/NL ágon — vagyis ha bárhol maradt volna egy
+ * elszórt `isFeatureAvailable("akciok", …)` hívás vagy egy csempe, az CSENDBEN
+ * újraélesítette volna egy nem létező funkciót (404-re mutató linkkel).
+ *
+ * Ez a halmaz MINDEN ág ELŐTT fut, tehát a válasz mindig `false`. Ha egy
+ * funkciót valaha vissza akarsz hozni, vedd ki innen — így a visszahozás
+ * tudatos döntés, nem véletlen mellékhatás.
+ *
+ * User-kérés (2026-07-30): „Az akciókat töröld ki mindenhonnét, mert már nincs
+ * ilyen." A hétköznapi „akció" szó (készülék-akció, jegy-akció) a tartalomban
+ * SZÁNDÉKOSAN megmaradt — az nem ez a funkció.
+ *
+ * ⚠️ Az adatvédelmi tájékoztató 2.13 szakasza SZÁNDÉKOSAN bent marad mindhárom
+ * nyelven („MEGSZŰNT" jelöléssel): az jogi nyilatkozat arról, milyen adatot
+ * gyűjtött a funkció és hogy azt töröltük. A szakaszszámokra kód hivatkozik.
+ */
+export const REMOVED_FEATURES: ReadonlySet<string> = new Set([
+  "akciok",            // Akció-térkép (bolt-akció bejelentés) — 2026-07-09
+  "esemenyek",         // Közösség / Események
+  "telekocsi",         // Telekocsi (rides)
+  "arfolyam-riasztas", // Árfolyam-riasztás
+  "magyar-bolt",       // Hofladen / termelői piac
+  "presence",          // Presence / GPS-jelenlét
+  "cost-benchmark",    // Költség-benchmark (az Iránytűbe olvadt)
+]);
 
 /**
  * ⚠️ ANGLIA (GB) — MEGFORDÍTOTT MODELL: EXPLICIT ENGEDÉLYEZŐ-LISTA.
@@ -231,6 +259,9 @@ export function isFeatureAvailable(
   country: string | null | undefined,
 ): boolean {
   const c = country || DEFAULT_COUNTRY;
+  // ⚠️ LEGELSŐ ÁG: a kivezetett funkciók MINDEN országban rejtve maradnak —
+  // enélkül a megengedő CH/AT/DE/NL ág újraélesítené őket.
+  if (REMOVED_FEATURES.has(feature)) return false;
   // ⚠️ A CV-készítők kapuja MINDEN más ág ELŐTT fut — a lenti „CH-ban minden
   // elérhető" ág egyébként a holland CV-t is beengedné Svájcba, a GB/ES
   // engedélyező-lista pedig a sajátját duplán sorolná.
