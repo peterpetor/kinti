@@ -146,7 +146,17 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
   return upsertExternalJobs(jobs);
 }
 
-/** Az összes lefedett ország (AT/DE/NL) szinkronja. */
+/**
+ * Az összes lefedett ország szinkronja.
+ *
+ * ⚠️ ANGLIA ÉS SPANYOLORSZÁG SZÁNDÉKOSAN NINCS ITT — és ez TUDOTT HIÁNY, nem
+ * feledékenység: a `SECTOR_QUERIES` tábla csak NÉMET és HOLLAND keresőszót
+ * tartalmaz. Ha a GB/ES bekerülne a listába, a szinkron NÉMET kulcsszavakkal
+ * keresne angol és spanyol állásokat — az eredmény használhatatlan zaj lenne.
+ * A helyes sorrend: előbb `en`/`es` kulcsszó-oszlop a SECTOR_QUERIES-be, és
+ * CSAK utána ide a két ország. Addig az Állások mindkét országban a saját
+ * hirdetésekre és a link-out katalógusra támaszkodik.
+ */
 export async function syncAllExternalJobs(): Promise<Record<string, number>> {
   const out: Record<string, number> = {};
   for (const c of ["AT", "DE", "NL", "CH"]) {

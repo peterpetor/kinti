@@ -29,6 +29,21 @@ const RADIUS_OPTIONS_KM = [5, 10, 20, 50] as const;
 type RadiusKm = (typeof RADIUS_OPTIONS_KM)[number];
 const RADIUS_LS_KEY = "kinti_radius_km";
 
+/**
+ * Példa-város a kereső helyőrzőjébe, a mondatba illő (-ban/-ben) alakban.
+ * ⚠️ Kézi lánc helyett tábla: a korábbi változat végén Zürich állt, így az
+ * angliai és a spanyolországi felhasználó is „villanyszerelő Zürichben"
+ * példát látott a saját városa helyett.
+ */
+const CITY_IN_EXAMPLE: Record<string, string> = {
+  CH: "Zürichben",
+  AT: "Bécsben",
+  DE: "Berlinben",
+  NL: "Amszterdamban",
+  GB: "Londonban",
+  ES: "Madridban",
+};
+
 // Ország-tudatos térkép-közép (ha nincs találat / „Egész ország" van kiválasztva).
 // Eddig fix Zürich volt → DE/AT/NL-en is Svájcot mutatott. Lásd deals-map.
 const COUNTRY_MAP_CENTER: Record<string, [number, number]> = {
@@ -627,7 +642,7 @@ export function ExploreView({
           onApplyCanton={setCanton}
           onApplyQuery={setQ}
           categories={categories}
-          placeholder={`Mit keresel? Pl. villanyszerelő ${country === "AT" ? "Bécsben" : country === "DE" ? "Berlinben" : country === "NL" ? "Amszterdamban" : "Zürichben"}`}
+          placeholder={`Mit keresel? Pl. villanyszerelő ${CITY_IN_EXAMPLE[country] ?? CITY_IN_EXAMPLE.CH}`}
         />
       </div>
 
