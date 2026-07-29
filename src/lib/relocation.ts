@@ -174,10 +174,173 @@ export const PHASES_DE: RoadmapPhase[] = [
   },
 ];
 
+/**
+ * ⚠️ HOLLANDIA. A sorrend ITT a legfontosabb tudás: a BRP-bejelentkezés adja a
+ * BSN-t, és BSN nélkül nincs bér, nincs biztosítás, nincs DigiD. Ezért a BRP az
+ * érkezési fázis ELSŐ eleme, és a leírása kimondja, mi múlik rajta.
+ */
+export const PHASES_NL: RoadmapPhase[] = [
+  {
+    id: "phase-1",
+    title: "Tervezés (-3 hónap)",
+    icon: "map",
+    tasks: [
+      { id: "nl-cv", title: "Holland önéletrajz (CV)", description: "A holland munkáltató holland nyelvű, holland szakma-megnevezésű CV-t vár — a német CV lefordítása nem elég.", linkHref: "/holland-oneletrajz", linkLabel: "Holland CV-készítő", linkIcon: "document" },
+      { id: "nl-ber", title: "Bérszint tájékozódás", description: "Nézd meg a szakmád szokásos bruttó bérét, és számold ki a nettót (a vakantiegeld külön jön).", linkHref: "/berkalkulator", linkLabel: "Bérkalkulátor", linkIcon: "trending" },
+      { id: "nl-megtakaritas", title: "Megtakarítás kalkuláció", description: "Számolj kaucióval (2023 óta max 2 havi bér) és 2-3 hónap megélhetéssel. A Randstadban a lakás a szűk keresztmetszet.", linkHref: "/piacter?tab=kalkulator", linkLabel: "Lakbér-kalkulátor", linkIcon: "bookmark" },
+      { id: "nl-permit", title: "Tartózkodási engedély (nem EU)", description: "Nem EU-állampolgárként MVV / verblijfsvergunning kell az IND-től — kezdd korán. EU-soknak szabad mozgás, nincs engedély.", tags: ["noneu"], linkHref: "/tudasbazis/vizum", linkLabel: "Engedély-varázsló", linkIcon: "bookmark" },
+    ],
+  },
+  {
+    id: "phase-2",
+    title: "Érkezés (1. hét)",
+    icon: "flag",
+    tasks: [
+      { id: "nl-brp", title: "Bejelentkezés a gemeenténél (BRP) → BSN", description: "⚠️ EZ AZ ELSŐ. A BRP-regisztrációval kapod a BSN-számot, és BSN nélkül nincs bér, nincs egészségbiztosítás, nincs DigiD. Időpontot foglalj még érkezés előtt.", linkHref: "/tudasbazis/nl-bejelentkezes", linkLabel: "Bejelentkezés lépésről lépésre", linkIcon: "bookmark" },
+      { id: "nl-sim", title: "Holland SIM kártya", description: "KPN, Vodafone, Odido vagy olcsóbb (Simyo, Lebara) — holland szám kell a hivatali ügyekhez és a bankhoz." },
+      { id: "nl-bank", title: "Bankszámla (betaalrekening)", description: "ING, Rabobank, ABN AMRO vagy online (bunq). ⚠️ Jellemzően BSN kell hozzá — ezért megy a BRP előre." },
+    ],
+  },
+  {
+    id: "phase-3",
+    title: "Berendezkedés (1. hónap)",
+    icon: "home",
+    tasks: [
+      { id: "nl-zorgverzekering", title: "Egészségbiztosítás (zorgverzekering)", description: "⚠️ KÖTELEZŐ, és 4 hónapon belül meg kell kötni — visszamenőleg az érkezéstől fizetsz. Fix havi díj + éves önrész (eigen risico).", linkHref: "/tudasbazis/nl-egeszsegbiztositas", linkLabel: "Egészségbiztosítás", linkIcon: "heart" },
+      { id: "nl-digid", title: "DigiD igénylése", description: "A holland online ügyintézés belépője (adó, biztosítás, gemeente). BSN kell hozzá, postán jön az aktiváló kód." },
+      { id: "nl-lakas", title: "Állandó lakás és huurcontract", description: "⚠️ Kérdezd meg, engedi-e a bérbeadó a BRP-bejelentkezést — ha nem, a lakás hosszú távon használhatatlan. Nézd meg a magyarok albérlet-börzéjét is.", linkHref: "/piacter", linkLabel: "Albérlet-börze", linkIcon: "key" },
+      { id: "nl-toeslagen", title: "Toeslagen (támogatások) igénylése", description: "Jövedelemtől függő támogatások: zorgtoeslag (biztosításra), huurtoeslag (lakbérre). Sokan nem is tudnak róla — érdemes megnézni, jogosult vagy-e." },
+      { id: "nl-iskola", title: "Iskola / óvoda beíratás", description: "A gyerek beíratása a lakóhely szerinti basisschoolba; a nyelvet nem beszélő gyerekeknek felzárkóztató osztály (nieuwkomersklas) is van.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
+      { id: "nl-kinderbijslag", title: "Kinderbijslag (családi pótlék)", description: "Negyedévente fizetett gyerek utáni támogatás — az SVB-nél igényelhető. BSN kell hozzá.", tags: ["family"], linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "bookmark" },
+    ],
+  },
+  {
+    id: "phase-4",
+    title: "Integráció (3-6 hónap)",
+    icon: "users",
+    tasks: [
+      { id: "nl-kozosseg", title: "Magyar közösség megtalálása", description: "Keresd a hollandiai magyar szervezeteket és szakembereket a Szaknévsorban.", linkHref: "/szaknevsor", linkLabel: "Szaknévsor", linkIcon: "list" },
+      { id: "nl-nyelv", title: "Holland nyelvtanulás", description: "A munkahelyen sokszor elég az angol, a hivatalban és a szomszédságban nem — gyakorolj a Kinti holland leckékkel.", linkHref: "/nyelvlecke", linkLabel: "Holland nyelvlecke", linkIcon: "magic" },
+    ],
+  },
+];
+
+/**
+ * ⚠️ ANGLIA. A szerkezet ITT tér el a legjobban a kontinentálistól: NINCS
+ * lakcímbejelentés (nem létezik ilyen hivatal), ezért nem a bejelentés, hanem a
+ * lakcím IGAZOLÁSA a nehézség, és a feladatok párhuzamos szálakon futnak.
+ * Brexit óta a munkavállalási jog NEM automatikus — ez a tervezési fázis eleje.
+ */
+export const PHASES_GB: RoadmapPhase[] = [
+  {
+    id: "phase-1",
+    title: "Tervezés (-3 hónap)",
+    icon: "map",
+    tasks: [
+      { id: "gb-vizum", title: "⚠️ Munkavállalási jog tisztázása", description: "Brexit óta az EU-állampolgárság ÖNMAGÁBAN nem jogosít munkára. Vagy EUSS-státuszod van (2020 vége előtti érkezés), vagy vízum kell — jellemzően szponzor-munkáltatóval.", linkHref: "/tudasbazis/vizum", linkLabel: "Letelepedés-varázsló", linkIcon: "bookmark" },
+      { id: "gb-cv", title: "Angol önéletrajz (CV)", description: "A brit CV fotó és születési év NÉLKÜL készül (életkor-diszkrimináció), és „References available on request” zárja.", linkHref: "/angol-oneletrajz", linkLabel: "Angol CV-készítő", linkIcon: "document" },
+      { id: "gb-ber", title: "Bérszint ellenőrzése", description: "Nézd meg a szakmád szokásos bérét, és számold ki a nettót (PAYE + National Insurance).", linkHref: "/berkalkulator", linkLabel: "Bérkalkulátor", linkIcon: "trending" },
+      { id: "gb-megtakaritas", title: "Megtakarítás kalkuláció", description: "Számolj kaucióval (max 5 heti bér), az első havi bérrel előre, és 2-3 hónap megélhetéssel. ⚠️ Vízumnál az IHS-t is előre kell fizetni.", linkHref: "/piacter?tab=kalkulator", linkLabel: "Lakbér-kalkulátor", linkIcon: "bookmark" },
+    ],
+  },
+  {
+    id: "phase-2",
+    title: "Érkezés (1. hét)",
+    icon: "flag",
+    tasks: [
+      { id: "gb-nin", title: "National Insurance Number igénylése", description: "A munkához, adóhoz és nyugdíjhoz kell. ⚠️ FONTOS: a NIN megérkezése ELŐTT is dolgozhatsz jogszerűen — csak szólj a munkáltatónak, hogy igényelted.", linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "bookmark" },
+      { id: "gb-bank", title: "Bankszámla nyitása", description: "⚠️ 22-es csapdája: a hagyományos bank lakcímigazolást kér, ami frissen érkezőnek nincs. Kerülőút: digitális bank (Monzo, Starling, Revolut) — appból, pár nap alatt." },
+      { id: "gb-sim", title: "Brit SIM kártya", description: "EE, O2, Vodafone vagy olcsóbb (Giffgaff, Lebara) — brit szám kell szinte mindenhez." },
+    ],
+  },
+  {
+    id: "phase-3",
+    title: "Berendezkedés (1. hónap)",
+    icon: "home",
+    tasks: [
+      { id: "gb-gp", title: "Regisztráció háziorvoshoz (GP)", description: "Az NHS kapuja — szinte minden ellátás a GP-nél kezdődik. ⚠️ A rendelő NEM utasíthat el lakcímigazolás vagy okmány hiánya miatt.", linkHref: "/tudasbazis/gb-nhs", linkLabel: "NHS és a GP", linkIcon: "heart" },
+      { id: "gb-counciltax", title: "Council tax bejelentés", description: "⚠️ A council taxet a LAKÓ fizeti, nem a tulajdonos. Egyedül élőként 25% kedvezmény, teljes idős hallgatóként jellemzően mentesség — de IGÉNYELNI kell.", linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "bookmark" },
+      { id: "gb-lakas", title: "Állandó lakás és tenancy", description: "⚠️ A kaució 30 napon belül állami védelmi sémába (TDP) kell kerüljön, és erről igazolást kell kapnod. Nézd meg a magyarok albérlet-börzéjét is.", linkHref: "/piacter", linkLabel: "Albérlet-börze", linkIcon: "key" },
+      { id: "gb-electoral", title: "Feliratkozás a választói névjegyzékre", description: "Nem csak szavazáshoz jó: ez a brit hitel-előélet (credit score) egyik legerősebb eleme, ami lakásbérlésnél és előfizetéseknél is számít." },
+      { id: "gb-iskola", title: "Iskola beíratás", description: "⚠️ A helyet NEM az iskolánál, hanem a lakóhely szerinti önkormányzatnál pályázod meg, több iskolát rangsorolva. Év közbeni érkezésnél külön eljárás van.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
+      { id: "gb-childbenefit", title: "Child Benefit igénylése", description: "Gyerek utáni támogatás a HMRC-nél. ⚠️ Magas jövedelemnél fokozatosan visszaadózzák (High Income Child Benefit Charge).", tags: ["family"], linkHref: "/ugyintezes", linkLabel: "Ügyintézés", linkIcon: "bookmark" },
+    ],
+  },
+  {
+    id: "phase-4",
+    title: "Integráció (3-6 hónap)",
+    icon: "users",
+    tasks: [
+      { id: "gb-kozosseg", title: "Magyar közösség megtalálása", description: "Keresd az angliai magyar szervezeteket, iskolákat és boltokat a Szaknévsorban.", linkHref: "/szaknevsor", linkLabel: "Szaknévsor", linkIcon: "list" },
+      { id: "gb-nyelv", title: "Brit angol finomhangolás", description: "Az iskolai angol jellemzően amerikaias — a Kinti brit leckéi a hivatali szókincsre és a valódi brit szóhasználatra mennek rá.", linkHref: "/nyelvlecke", linkLabel: "Angol nyelvlecke", linkIcon: "magic" },
+    ],
+  },
+];
+
+/**
+ * ⚠️ SPANYOLORSZÁG. A roadmap szervező elve NEM a jogi sorrend, hanem az
+ * IDŐPONT-KÉNYSZER: majdnem minden hivatalhoz cita previa kell, és az hetekre
+ * előre elfogyhat. Ezért az időpontfoglalás a TERVEZÉSI fázisba került — még a
+ * költözés előtt el kell kezdeni, nem érkezés után.
+ */
+export const PHASES_ES: RoadmapPhase[] = [
+  {
+    id: "phase-1",
+    title: "Tervezés (-3 hónap)",
+    icon: "map",
+    tasks: [
+      { id: "es-cita", title: "⚠️ Időpontfoglalás (cita previa) — MÁR MOST", description: "A legtöbb spanyol hivatal csak előzetes időponttal fogad, és nagyvárosban hetekre előre elfogy. Nézd meg a szabad időpontokat, mielőtt dátumot tűzöl ki. Az időpont INGYENES — aki pénzt kér érte, viszonteladó.", linkHref: "/tudasbazis/es-cita-previa", linkLabel: "Cita previa", linkIcon: "bookmark" },
+      { id: "es-cv", title: "Spanyol önéletrajz (currículum)", description: "A spanyol CV a némethez áll közel: a fotó és a születési év bevett, sőt elvárás. ⚠️ A szakma-megnevezést a saját nemedben írd ki (Camarero / Camarera).", linkHref: "/spanyol-oneletrajz", linkLabel: "Spanyol CV-készítő", linkIcon: "document" },
+      { id: "es-ber", title: "Bérszint ellenőrzése", description: "⚠️ Kérdezd meg, HÁNY PAGÁBAN fizetnek: ugyanaz az éves bér 14 és 12 részletben egészen más havi valóság.", linkHref: "/berkalkulator", linkLabel: "Bérkalkulátor", linkIcon: "trending" },
+      { id: "es-megtakaritas", title: "Megtakarítás kalkuláció", description: "Számolj kaucióval (fianza: 1 havi bér), esetleg további garanciával és 2-3 hónap megélhetéssel. Az ügyintézés csúszása is pénzbe kerül.", linkHref: "/piacter?tab=kalkulator", linkLabel: "Lakbér-kalkulátor", linkIcon: "bookmark" },
+    ],
+  },
+  {
+    id: "phase-2",
+    title: "Érkezés (1. hét)",
+    icon: "flag",
+    tasks: [
+      { id: "es-empadronamiento", title: "Empadronamiento az önkormányzatnál", description: "⚠️ EZ AZ ELSŐ. A lakcím-bejelentésre épül az egészségügyi kártya és az iskolai beiratkozás is. Kérj CERTIFICADO-t, ne csak volantét — a hatósági ügyekhez az kell.", linkHref: "/ugyintezes/es-empadronamiento", linkLabel: "Empadronamiento", linkIcon: "bookmark" },
+      { id: "es-ss", title: "Seguridad Social-szám igénylése", description: "A munkába állás feltétele — enélkül a munkáltató nem tud bejelenteni. Jó hír: ONLINE is elintézhető, nem kell hozzá időpont.", linkHref: "/tudasbazis/es-seguridad-social", linkLabel: "Seguridad Social", linkIcon: "bookmark" },
+      { id: "es-sim", title: "Spanyol SIM kártya", description: "Movistar, Vodafone, Orange vagy olcsóbb (Digi, Lowi, Pepephone) — spanyol szám kell a hivatali ügyekhez." },
+    ],
+  },
+  {
+    id: "phase-3",
+    title: "Berendezkedés (1. hónap)",
+    icon: "home",
+    tasks: [
+      { id: "es-nie", title: "NIE + uniós regisztráció (certificado de registro)", description: "3 hónapnál hosszabb tartózkodásnál kötelező. ⚠️ A díjat (modelo 790, 012) a hivatali időpont ELŐTT kell befizetni, és a bizonylatot vinni.", linkHref: "/ugyintezes/es-nie", linkLabel: "NIE és regisztráció", linkIcon: "bookmark" },
+      { id: "es-bank", title: "Bankszámla nyitása", description: "NIE-vel bármelyik banknál nyithatsz. ⚠️ Nézd meg a havidíj feltételeit: sok számla csak rendszeres bérjóváírással ingyenes." },
+      { id: "es-tarjeta", title: "Egészségügyi kártya (tarjeta sanitaria)", description: "⚠️ Az egészségügy AUTONÓM KÖZÖSSÉGI hatáskör — a kártyát a lakóhelyed szerinti szolgálat adja ki. Kell hozzá empadronamiento + TB-jogosultság.", linkHref: "/ugyintezes/es-egeszsegugyi-kartya", linkLabel: "Egészségügyi kártya", linkIcon: "heart" },
+      { id: "es-lakas", title: "Állandó lakás és szerződés", description: "⚠️ Nézd meg a szerződés CÍMÉT: a „vivienda habitual” alá tartozol a bérlővédelmi törvény (LAU) alá, a „temporada” alá NEM. Nézd meg a magyarok albérlet-börzéjét is.", linkHref: "/piacter", linkLabel: "Albérlet-börze", linkIcon: "key" },
+      { id: "es-iskola", title: "Iskola beíratás", description: "⚠️ A beiratkozás egy szűk, évente EGYSZERI tavaszi ablakban zajlik — aki lecsúszik, a maradék helyekre kerül. Ehhez időzítsd az empadronamientót.", tags: ["family"], linkHref: "/tudasbazis/iskolarendszer", linkLabel: "Iskolarendszer", linkIcon: "bookmark" },
+      { id: "es-csaladi", title: "Gyerek utáni kedvezmények", description: "⚠️ Spanyolországban NINCS alanyi jogon járó havi családi pótlék — a támogatás az adórendszeren keresztül jön, és a közösséged saját kiegészítést is adhat.", tags: ["family"], linkHref: "/tudasbazis/es-adozas", linkLabel: "Adózás", linkIcon: "bookmark" },
+    ],
+  },
+  {
+    id: "phase-4",
+    title: "Integráció (3-6 hónap)",
+    icon: "users",
+    tasks: [
+      { id: "es-clave", title: "Cl@ve digitális azonosító", description: "Ezzel sok ügyet online intézel — vagyis NEM kell hozzá időpontot kérni. Megéri az elején beszerezni.", linkHref: "/tudasbazis/es-cita-previa", linkLabel: "Ügyintézés online", linkIcon: "bookmark" },
+      { id: "es-kozosseg", title: "Magyar közösség megtalálása", description: "Keresd a spanyolországi magyar szervezeteket és szakembereket a Szaknévsorban.", linkHref: "/szaknevsor", linkLabel: "Szaknévsor", linkIcon: "list" },
+      { id: "es-nyelv", title: "Spanyol nyelvtanulás", description: "A spanyol kiejtés hat szabályon áll — aki ezeket tudja, hetek alatt érthetően beszél. Gyakorolj a Kinti spanyol leckékkel.", linkHref: "/nyelvlecke", linkLabel: "Spanyol nyelvlecke", linkIcon: "magic" },
+    ],
+  },
+];
+
 /** A választott ország roadmapje (default CH). */
 export function getPhases(country: string | null | undefined): RoadmapPhase[] {
   if (country === "AT") return PHASES_AT;
   if (country === "DE") return PHASES_DE;
+  // ⚠️ NL/GB/ES ág NÉLKÜL ezek a SVÁJCI listát kapták: „Svájci önéletrajz”,
+  // „Kreisbüro”, „Krankenkasse”, „Quellensteuer” és „célkantonod” — user
+  // jelentette Hollandiából (2026-07-29). Új ország felvételekor IDE IS írj ágat;
+  // a relocation-phases.test.ts minden app-országra kikényszeríti.
+  if (country === "NL") return PHASES_NL;
+  if (country === "GB") return PHASES_GB;
+  if (country === "ES") return PHASES_ES;
   return PHASES_CH;
 }
 
@@ -214,6 +377,27 @@ export const TASK_DEADLINES: Record<string, { days: number; hard?: boolean }> = 
   "de-anmeldung": { days: 14, hard: true }, "de-sim": { days: 7 }, "de-bank": { days: 7 },
   "de-krankenversicherung": { days: 14, hard: true }, "de-steuerid": { days: 21 }, "de-lakas": { days: 30 },
   "de-iskola": { days: 30 }, "de-kindergeld": { days: 60 }, "de-kozosseg": { days: 90 }, "de-nyelv": { days: 120 },
+  // NL — ⚠️ a BRP a kulcs: BSN nélkül nincs bér és nincs biztosítás, ezért
+  // a bank és a zorgverzekering IS utána következik.
+  "nl-cv": { days: -60 }, "nl-ber": { days: -60 }, "nl-megtakaritas": { days: -45 }, "nl-permit": { days: -90 },
+  "nl-brp": { days: 5, hard: true }, "nl-sim": { days: 7 }, "nl-bank": { days: 10 },
+  "nl-zorgverzekering": { days: 120, hard: true }, "nl-digid": { days: 21 }, "nl-lakas": { days: 30 },
+  "nl-toeslagen": { days: 45 }, "nl-iskola": { days: 30 }, "nl-kinderbijslag": { days: 60 },
+  "nl-kozosseg": { days: 90 }, "nl-nyelv": { days: 120 },
+  // GB — ⚠️ a vízum/munkavállalási jog a LEGKORÁBBI tétel (Brexit), és nincs
+  // lakcímbejelentés, ezért a council tax veszi át a „bejelentkezés” szerepét.
+  "gb-vizum": { days: -120, hard: true }, "gb-cv": { days: -60 }, "gb-ber": { days: -60 }, "gb-megtakaritas": { days: -45 },
+  "gb-nin": { days: 7 }, "gb-bank": { days: 7 }, "gb-sim": { days: 7 },
+  "gb-gp": { days: 21 }, "gb-counciltax": { days: 14, hard: true }, "gb-lakas": { days: 30 },
+  "gb-electoral": { days: 45 }, "gb-iskola": { days: 30 }, "gb-childbenefit": { days: 60 },
+  "gb-kozosseg": { days: 90 }, "gb-nyelv": { days: 120 },
+  // ES — ⚠️ a cita previa a költözés ELŐTT indul (-90), mert az időpont-
+  // várakozás maga több hét lehet; a regisztráció határideje 3 hónap.
+  "es-cita": { days: -90, hard: true }, "es-cv": { days: -60 }, "es-ber": { days: -60 }, "es-megtakaritas": { days: -45 },
+  "es-empadronamiento": { days: 7 }, "es-ss": { days: 10 }, "es-sim": { days: 7 },
+  "es-nie": { days: 90, hard: true }, "es-bank": { days: 21 }, "es-tarjeta": { days: 30 },
+  "es-lakas": { days: 30 }, "es-iskola": { days: 30 }, "es-csaladi": { days: 60 },
+  "es-clave": { days: 60 }, "es-kozosseg": { days: 90 }, "es-nyelv": { days: 120 },
 };
 
 export function parseYMD(s: string): Date | null {
@@ -242,7 +426,7 @@ export function taskDeadline(taskId: string, moveDateObj: Date | null): { date: 
 /**
  * Természetes nyelvű címke a költözés dátumához KÉPESTI eltolásra (idővonal-nézet).
  * A nyers T-eltolás (TASK_DEADLINES[id].days) → olvasható magyar mondat.
- * Szándékosan NEM „T-30" jelölés (érthetőség a szintaxis-tipp helyett).
+ * Szándékosan NEM „T-30” jelölés (érthetőség a szintaxis-tipp helyett).
  */
 export function moveOffsetLabel(offsetDays: number): string {
   if (offsetDays === 0) return "A költözés napján";
