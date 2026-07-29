@@ -118,11 +118,11 @@ describe("ES engedélyező-lista (GB-modell)", () => {
 
   it("⚠️ REJTI a CH-specifikus eszközöket, amikhez NINCS spanyol tartalom", () => {
     // ⚠️ Ez a lista FOGY, ahogy készül a spanyol tartalom — sorrendben kikerült
-    // innen a „nyelvlecke" (100 leckés kurzus), az „allampolgarsag" (CCSE-bank),
-    // a „szolgaltato-valto" és a „szakmai-szotar" (19 szakma / 23 lecke).
-    // Ha egy kulcsot bekapcsolsz az ES_ALLOWED_FEATURES-ben, ITT is vedd ki,
-    // különben a teszt a saját, elavult elvárásán bukik el — nem valódi hibán.
-    for (const key of ["bussen", "akciok"]) {
+    // innen a „nyelvlecke", az „allampolgarsag" (CCSE-bank), a
+    // „szolgaltato-valto", a „szakmai-szotar" és a „bussen" (DGT-sávok +
+    // pronto pago). Ha egy kulcsot bekapcsolsz az ES_ALLOWED_FEATURES-ben,
+    // ITT is vedd ki, különben a teszt a saját, elavult elvárásán bukik el.
+    for (const key of ["akciok"]) {
       expect(isFeatureAvailable(key, "ES"), key).toBe(false);
     }
   });

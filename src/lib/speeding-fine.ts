@@ -19,6 +19,24 @@ export interface RoadInfo {
   speedLimits: number[];
 }
 
+/**
+ * ⚠️ MÉRTÉKEGYSÉG. Ez NEM kozmetikai kérdés: Angliában a táblák, a bírság és a
+ * jogszabály MÉRFÖLD/ÓRÁBAN mérnek. Ha a UI „km/h”-t írna a brit 30/60/70
+ * értékek mellé, az számszerűen hamis lenne (a 30 mph ≈ 48 km/h), és a
+ * felhasználó rossz sebességnél hinné magát biztonságban.
+ */
+export type SpeedUnit = "kmh" | "mph";
+
+/** Az adott ország sebesség-mértékegysége. ⚠️ Csak Anglia mérföldes. */
+export function getSpeedUnit(country: string | null | undefined): SpeedUnit {
+  return country === "GB" ? "mph" : "kmh";
+}
+
+/** A mértékegység megjelenítendő címkéje. */
+export function speedUnitLabel(country: string | null | undefined): string {
+  return getSpeedUnit(country) === "mph" ? "mph" : "km/h";
+}
+
 // Svájc: Autobahn 120, Ausserorts 80, Innerorts 50.
 export const ROADS: RoadInfo[] = [
   { type: "city",    label: "Településen belül",       emoji: "🏘️", defaultSpeedLimit: 50,  speedLimits: [30, 50] },
@@ -48,11 +66,31 @@ export const ROADS_NL: RoadInfo[] = [
   { type: "highway", label: "Autópálya (autosnelweg)",               emoji: "🛣️", defaultSpeedLimit: 100, speedLimits: [100, 120, 130] },
 ];
 
+// ⚠️ ANGLIA — MÉRFÖLD/ÓRA, nem km/h! Built-up area 30 mph (egyre több 20-as
+// zóna), single carriageway 60, dual carriageway és motorway 70.
+export const ROADS_GB: RoadInfo[] = [
+  { type: "city",    label: "Lakott területen (built-up)", emoji: "🏘️", defaultSpeedLimit: 30, speedLimits: [20, 30] },
+  { type: "rural",   label: "Egysávos országút",           emoji: "🛣️", defaultSpeedLimit: 60, speedLimits: [40, 50, 60] },
+  { type: "highway", label: "Autópálya / osztott pályás",  emoji: "🛣️", defaultSpeedLimit: 70, speedLimits: [70] },
+];
+
+// Spanyolország: autopista/autovía 120, carretera convencional 90, városban 50.
+// ⚠️ 2021 májusa óta a városi, IRÁNYONKÉNT EGYSÁVOS utakon 30 km/h az általános
+// limit (és 20, ahol az útpálya és a járda egy szintben van) — ezt a legtöbb
+// külföldi nem tudja, és pont ez a leggyakoribb városi bírság-ok.
+export const ROADS_ES: RoadInfo[] = [
+  { type: "city",    label: "Városban (zona urbana)",      emoji: "🏘️", defaultSpeedLimit: 30,  speedLimits: [20, 30, 50] },
+  { type: "rural",   label: "Országút (convencional)",     emoji: "🛣️", defaultSpeedLimit: 90,  speedLimits: [70, 80, 90] },
+  { type: "highway", label: "Autópálya (autovía/autopista)", emoji: "🛣️", defaultSpeedLimit: 120, speedLimits: [80, 100, 120] },
+];
+
 /** Az adott ország útjai (sebesség-limitekkel). */
 export function getRoads(country: string | null | undefined): RoadInfo[] {
   if (country === "AT") return ROADS_AT;
   if (country === "DE") return ROADS_DE;
   if (country === "NL") return ROADS_NL;
+  if (country === "GB") return ROADS_GB;
+  if (country === "ES") return ROADS_ES;
   return ROADS;
 }
 
@@ -450,4 +488,303 @@ export function calculateFineNL(input: { roadType: RoadType; speedLimit: number;
   return { ...base, severity: "ordnungsbusse", estimatedFineChf: total, licenseSuspension: null,
     description: "Adminisztratív boete (WAHV/Mulder) — a CJIB postázza, online fizethető.",
     legalNote: adminNote };
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ANGLIA — Fixed Penalty Notice + Sentencing Council A/B/C sávok
+//
+// ⚠️ HÁROM DOLOG, AMI A BRIT RENDSZERT MÁSSÁ TESZI:
+//
+// 1) MÉRFÖLD/ÓRA. A limitek 20/30/40/50/60/70 mph — a bemenet is mérföld.
+//
+// 2) A BÍRÓSÁGI BÍRSÁG JÖVEDELEM-ARÁNYOS, mint a svájci Tagessatz: a
+//    Sentencing Council sávjai a HETI nettó jövedelem százalékában adják meg
+//    (A: 50%, B: 100%, C: 150%), felső korláttal (1 000 £, autópályán 2 500 £).
+//    A kisebb túllépés viszont FIX: Fixed Penalty Notice 100 £ + 3 pont.
+//
+// 3) A PONTRENDSZER FORDÍTVA MŰKÖDIK, mint a magyar: pontokat GYŰJTESZ, és
+//    12 pont / 3 év után jön az eltiltás. ⚠️ ÚJ VEZETŐNÉL (a jogosítvány első
+//    2 évében) már 6 pont VISSZAVONÁST jelent — ezt a legtöbben nem tudják,
+//    és két apró gyorshajtás elég hozzá.
+//
+// Forrás: gov.uk (speeding penalties, penalty points) + Sentencing Council
+// speeding guideline. Tájékoztató becslés, NEM jogi tanács.
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * ACPO/NPCC iránymutatás: a rendőrség jellemzően a limit 10%-a + 2 mph fölött
+ * jár el. ⚠️ Ez NEM jogszabály — jogilag már 1 mph túllépés is szabálysértés,
+ * a tolerancia csak vádemelési gyakorlat. A UI ezt kimondja.
+ */
+function gbToleranceMph(limit: number): number {
+  return Math.floor(limit * 0.1) + 2;
+}
+
+/**
+ * ⚠️ A BRIT RENDSZER KÉTLÉPCSŐS, és ezt az első modellem elrontotta: a
+ * Sentencing Council A/B/C sávjai CSAK a bírósági ügyre vonatkoznak. A kisebb
+ * túllépés nem bíróságra megy, hanem fix bírságot (FPN) vagy tanfolyamot kap —
+ * és mivel a Band A alsó határa (30-as limitnél 31 mph) a tolerancia-küszöb
+ * ALATT van, a sávok önmagukban használva ELÉRHETETLENNÉ tették az FPN-t.
+ *
+ * Az NPCC vádemelési iránymutatás felső határa az FPN-re: limit + 10% + 9 mph.
+ * (30-as limitnél 42, 70-esnél 86 — egyezik a közzétett táblázattal.)
+ * Efölött megy az ügy bíróságra, és ONNAN számítanak a sávok.
+ */
+function gbFpnMaxMph(limit: number): number {
+  return limit + Math.floor(limit * 0.1) + 9;
+}
+
+/**
+ * Sentencing Council sáv-táblázat: a MÉRT sebesség alapján (nem a túllépésből).
+ * Band C = eltiltás vagy 6 pont, Band B = 4–6 pont vagy rövid eltiltás,
+ * Band A = 3 pont.
+ */
+const GB_BANDS: { limit: number; bandC: number; bandB: number; bandA: number }[] = [
+  { limit: 20, bandC: 41, bandB: 31, bandA: 21 },
+  { limit: 30, bandC: 51, bandB: 41, bandA: 31 },
+  { limit: 40, bandC: 66, bandB: 56, bandA: 41 },
+  { limit: 50, bandC: 76, bandB: 66, bandA: 51 },
+  { limit: 60, bandC: 91, bandB: 81, bandA: 61 },
+  { limit: 70, bandC: 101, bandB: 91, bandA: 71 },
+];
+
+const GB_FPN_POUNDS = 100;
+const GB_FINE_CAP = 1000;
+const GB_FINE_CAP_MOTORWAY = 2500;
+
+export function calculateFineGB(input: {
+  roadType: RoadType;
+  speedLimit: number;
+  actualSpeed: number;
+  /** Havi NETTÓ jövedelem fontban — a bírósági sávok ebből számolnak. */
+  monthlyNetIncome?: number;
+}): FineResult {
+  const tolerance = gbToleranceMph(input.speedLimit);
+  const rawOver = Math.max(0, input.actualSpeed - input.speedLimit);
+  const overage = Math.max(0, rawOver - tolerance);
+  const base = { effectiveOverage: overage, tagessatzChf: null, daysOfFine: null, prisonInfo: null as string | null };
+
+  const toleranceNote = `A rendőrség jellemzően a limit 10%-a + 2 mph fölött jár el (itt ${input.speedLimit} mph-nál kb. ${input.speedLimit + tolerance} mph). ⚠️ Ez NEM jogszabály, csak vádemelési gyakorlat — jogilag már 1 mph túllépés is szabálysértés.`;
+
+  if (rawOver === 0) {
+    return {
+      ...base,
+      severity: "no-fine",
+      estimatedFineChf: 0,
+      licenseSuspension: null,
+      description: "A sebesség a megengedett limiten belül van.",
+      legalNote: toleranceNote,
+    };
+  }
+
+  if (overage === 0) {
+    return {
+      ...base,
+      severity: "no-fine",
+      estimatedFineChf: 0,
+      licenseSuspension: null,
+      description: "A túllépés a rendőrségi tolerancia-sávon belül van — jellemzően nem indul eljárás.",
+      legalNote: toleranceNote,
+    };
+  }
+
+  // Heti nettó jövedelem a sávos bírsághoz (havi × 12 / 52).
+  const weekly = input.monthlyNetIncome && input.monthlyNetIncome > 0
+    ? Math.round((input.monthlyNetIncome * 12) / 52)
+    : null;
+  const cap = input.roadType === "highway" ? GB_FINE_CAP_MOTORWAY : GB_FINE_CAP;
+  const capped = (v: number) => Math.min(v, cap);
+
+  // A táblázat sora a legközelebbi (nem nagyobb) kitáblázott limithez.
+  const row = [...GB_BANDS].reverse().find((b) => input.speedLimit >= b.limit) ?? GB_BANDS[0];
+  const measured = input.actualSpeed;
+
+  const pointsNote = "⚠️ A pontrendszer fordítva működik, mint otthon: pontokat GYŰJTESZ. 12 pont 3 év alatt → legalább 6 hónap eltiltás. ⚠️ ÚJ VEZETŐNÉL (az első 2 évben) már 6 pont a jogosítvány VISSZAVONÁSÁT jelenti — ehhez két apró gyorshajtás is elég.";
+  const nipNote = "A hatóságnak 14 napon belül ki kell postáznia a NIP-et (Notice of Intended Prosecution) a jármű nyilvántartott üzembentartójának. ⚠️ A vezető megnevezése KÖTELEZŐ: ha nem adod meg, az önálló szabálysértés (6 pont + akár 1 000 £ bírság), és jellemzően súlyosabb, mint maga a gyorshajtás.";
+
+  // ⚠️ ELSŐ LÉPCSŐ: fix bírság (FPN) vagy tanfolyam — a túllépések nagy része
+  // ide esik, és NEM kerül bíróságra. Ez az ág a Band-ellenőrzések ELŐTT áll,
+  // különben a bírósági sávok elnyelnék (a Band A alsó határa a tolerancia
+  // küszöbe alatt van).
+  if (measured <= gbFpnMaxMph(input.speedLimit)) {
+    return {
+      ...base,
+      severity: "ordnungsbusse",
+      estimatedFineChf: GB_FPN_POUNDS,
+      licenseSuspension: null,
+      description: `Fixed Penalty Notice (FPN): ${GB_FPN_POUNDS} £ fix bírság + 3 büntetőpont. Első alkalommal jellemzően felajánlják helyette a Speed Awareness Course-t.`,
+      legalNote: `A Speed Awareness Course (kb. 100 £, félnapos online/tantermi tanfolyam) esetén NINCS büntetőpont — de 3 éven belül csak EGYSZER kapható, és a biztosítónak jellemzően be kell jelenteni. Ha nem fogadod el az FPN-t, az ügy bíróságra kerül, ahol a bírság jövedelem-arányos lesz. ${pointsNote} ${nipNote}`,
+    };
+  }
+
+  if (measured >= row.bandC) {
+    return {
+      ...base,
+      severity: "raser",
+      estimatedFineChf: weekly ? capped(Math.round(weekly * 1.5)) : 0,
+      licenseSuspension: "7–56 nap eltiltás VAGY 6 büntetőpont",
+      description: `Band C — a legsúlyosabb sáv (${row.limit} mph-os limitnél ${row.bandC} mph-tól). A bíróság jellemzően ELTILTÁST szab ki, nem csak pontot.`,
+      legalNote: `A Band C bírság a heti nettó jövedelem ~150%-a, felső korláttal (${cap.toLocaleString("hu-HU")} £${input.roadType === "highway" ? " autópályán" : ""}). ${pointsNote} ${nipNote}`,
+    };
+  }
+
+  if (measured >= row.bandB) {
+    return {
+      ...base,
+      severity: "schwer",
+      estimatedFineChf: weekly ? capped(weekly) : 0,
+      licenseSuspension: "4–6 büntetőpont VAGY 7–28 nap eltiltás",
+      description: `Band B (${row.limit} mph-os limitnél ${row.bandB}–${row.bandC - 1} mph). Bíróság dönt: pont vagy rövid eltiltás.`,
+      legalNote: `A Band B bírság a heti nettó jövedelem ~100%-a, felső korláttal (${cap.toLocaleString("hu-HU")} £). ${pointsNote} ${nipNote}`,
+    };
+  }
+
+  return {
+    ...base,
+    severity: "mittelschwer",
+    estimatedFineChf: weekly ? capped(Math.round(weekly * 0.5)) : 0,
+    licenseSuspension: null,
+    description: `Band A (${row.limit} mph-os limitnél ${row.bandA}–${row.bandB - 1} mph). Bírósági ügyként jellemzően 3 büntetőpont — de ebben a sávban a rendőrség gyakran még fix bírságot vagy tanfolyamot ajánl.`,
+    legalNote: `A Band A bírság a heti nettó jövedelem ~50%-a. ${pointsNote} ${nipNote}`,
+  };
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SPANYOLORSZÁG — DGT fix bírságsávok + pronto pago
+//
+// ⚠️ HÁROM DOLOG, AMI A SPANYOL RENDSZERT MÁSSÁ TESZI:
+//
+// 1) 50%-OS KEDVEZMÉNY 20 NAPON BELÜL („pronto pago”). Ez a legfontosabb
+//    gyakorlati tudás: a 300 €-s bírság 150 € lesz, ha időben fizetsz — DE
+//    ezzel lemondasz a jogorvoslatról. A kalkulátor MINDKÉT összeget kiírja.
+//
+// 2) A PONTRENDSZER FORDÍTVA: 12 ponttal indulsz és VESZÍTED őket (kezdő
+//    vezetőként csak 8-cal). Nullánál a jogosítvány felfüggesztésre kerül, és
+//    tanfolyammal kell visszaszerezni.
+//
+// 3) BÜNTETŐJOGI HATÁR (Código Penal 379. cikk): városban +60, országúton
+//    +80 km/h fölött már NEM szabálysértés, hanem BŰNCSELEKMÉNY — börtön,
+//    közmunka vagy napi-pénzbírság, PLUS 1–4 év vezetéstől eltiltás.
+//
+// Forrás: DGT + Ley de Seguridad Vial (Anexo IV bírságtábla) + Código Penal.
+// ⚠️ A sávhatárok a hivatalos táblázat SZERKEZETÉT követik; a pontos sávot a
+// DGT határozata adja meg. Tájékoztató becslés, NEM jogi tanács.
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Radar-tolerancia: fix radarnál 5 km/h a 100 km/h-ig, felette a mért 5%-a.
+ * (Mobil radarnál nagyobb, 7 km/h illetve 7% — itt a szigorúbbal számolunk,
+ * hogy a becslés ne legyen megnyugtatóbb a valóságnál.)
+ */
+function esTolerance(actualSpeed: number): number {
+  return actualSpeed <= 100 ? 5 : Math.round(actualSpeed * 0.05);
+}
+
+/** A pronto pago kedvezmény mértéke és határideje. */
+export const ES_PRONTO_PAGO_RATE = 0.5;
+export const ES_PRONTO_PAGO_DAYS = 20;
+
+/**
+ * Bírságsávok a TÚLLÉPÉS alapján. A hivatalos tábla a mért sebességet veti
+ * össze a limittel; a sávok szélessége attól függ, hogy a limit 50 km/h-ig
+ * terjed-e (városi jelleg) vagy fölötte van.
+ */
+const ES_TIERS_LOW: { maxOver: number; eur: number; points: number }[] = [
+  { maxOver: 20, eur: 100, points: 0 },
+  { maxOver: 30, eur: 300, points: 2 },
+  { maxOver: 40, eur: 400, points: 4 },
+  { maxOver: 50, eur: 500, points: 6 },
+  { maxOver: Infinity, eur: 600, points: 6 },
+];
+const ES_TIERS_HIGH: { maxOver: number; eur: number; points: number }[] = [
+  { maxOver: 30, eur: 100, points: 0 },
+  { maxOver: 50, eur: 300, points: 2 },
+  { maxOver: 60, eur: 400, points: 4 },
+  { maxOver: 70, eur: 500, points: 6 },
+  { maxOver: Infinity, eur: 600, points: 6 },
+];
+
+/** A büntetőjogi határ: városban +60, egyéb úton +80 km/h túllépés. */
+function esCriminalThreshold(roadType: RoadType): number {
+  return roadType === "city" ? 60 : 80;
+}
+
+export interface FineResultES extends FineResult {
+  /** Levont pontok (0/2/4/6). */
+  penaltyPoints: number;
+  /** A bírság 20 napon belüli fizetés esetén (50% kedvezmény). */
+  discountedFineEur: number;
+}
+
+export function calculateFineES(input: {
+  roadType: RoadType;
+  speedLimit: number;
+  actualSpeed: number;
+}): FineResultES {
+  const tolerance = esTolerance(input.actualSpeed);
+  const rawOver = Math.max(0, input.actualSpeed - input.speedLimit);
+  const overage = Math.max(0, rawOver - tolerance);
+  const base = {
+    effectiveOverage: overage,
+    tagessatzChf: null,
+    daysOfFine: null,
+    prisonInfo: null as string | null,
+    penaltyPoints: 0,
+    discountedFineEur: 0,
+  };
+
+  const toleranceNote = `A radar toleranciát von le: 5 km/h a mért 100 km/h-ig, felette a mért sebesség 5%-a (mobil radarnál nagyobb).`;
+  const pointsNote = "⚠️ A spanyol pontrendszer fordítva működik, mint a magyar: 12 ponttal INDULSZ és veszíted őket (kezdő vezetőként csak 8-cal). Nullánál a jogosítványt felfüggesztik, és tanfolyammal kell visszaszerezni.";
+  const prontoNote = `⚠️ PRONTO PAGO: ha ${ES_PRONTO_PAGO_DAYS} naptári napon belül fizetsz, a bírság 50%-át kell megfizetni — DE ezzel lemondasz a jogorvoslatról (a pontlevonás viszont NEM csökken).`;
+
+  if (rawOver === 0) {
+    return { ...base, severity: "no-fine", estimatedFineChf: 0, licenseSuspension: null,
+      description: "A sebesség a megengedett limiten belül van.", legalNote: toleranceNote };
+  }
+  if (overage === 0) {
+    return { ...base, severity: "no-fine", estimatedFineChf: 0, licenseSuspension: null,
+      description: "A túllépés a radar-tolerancián belül van — jellemzően nem szankcionálják.",
+      legalNote: toleranceNote };
+  }
+
+  // Büntetőjogi sáv (Código Penal 379. cikk).
+  const crimAt = esCriminalThreshold(input.roadType);
+  if (overage > crimAt) {
+    return {
+      ...base,
+      severity: "raser",
+      estimatedFineChf: 0,
+      penaltyPoints: 6,
+      prisonInfo: "3–6 hónap börtön VAGY 6–12 hónap napi-pénzbírság VAGY 31–90 nap közmunka",
+      licenseSuspension: "1–4 év vezetéstől eltiltás (kötelező)",
+      description: `⚠️ BŰNCSELEKMÉNY, nem szabálysértés. ${input.roadType === "city" ? "Városban +60" : "Országúton/autópályán +80"} km/h fölött a Código Penal 379. cikke alkalmazandó.`,
+      legalNote: `Itt már nem a DGT szab bírságot, hanem BÍRÓSÁG ítélkezik: börtön, napi-pénzbírság vagy közmunka, ÉS kötelező 1–4 év eltiltás. A pronto pago kedvezmény NEM alkalmazható. ${pointsNote} Ilyen ügyben azonnal keress ügyvédet (abogado).`,
+    };
+  }
+
+  const tiers = input.speedLimit <= 50 ? ES_TIERS_LOW : ES_TIERS_HIGH;
+  const tier = tiers.find((t) => overage <= t.maxOver)!;
+  const discounted = Math.round(tier.eur * (1 - ES_PRONTO_PAGO_RATE));
+
+  const common = {
+    ...base,
+    estimatedFineChf: tier.eur,
+    penaltyPoints: tier.points,
+    discountedFineEur: discounted,
+  };
+
+  if (tier.points >= 6) {
+    return { ...common, severity: "schwer", licenseSuspension: null,
+      description: `Súlyos túllépés: ${tier.eur} € bírság és ${tier.points} pont levonása. Két ilyen eset a pontkeret felét elviszi.`,
+      legalNote: `${prontoNote} ${pointsNote} ${toleranceNote}` };
+  }
+  if (tier.points > 0) {
+    return { ...common, severity: "mittelschwer", licenseSuspension: null,
+      description: `Jelentős túllépés: ${tier.eur} € bírság és ${tier.points} pont levonása.`,
+      legalNote: `${prontoNote} ${pointsNote} ${toleranceNote}` };
+  }
+  return { ...common, severity: "ordnungsbusse", licenseSuspension: null,
+    description: `Könnyű szabálysértés (infracción leve): ${tier.eur} € bírság, pontlevonás NÉLKÜL.`,
+    legalNote: `${prontoNote} ${toleranceNote} A bírságot a DGT postázza vagy a hivatalos elektronikus kézbesítésen (DEV) küldi — érdemes regisztrálni rá, mert a nem átvett levél is kézbesítettnek számít.` };
 }

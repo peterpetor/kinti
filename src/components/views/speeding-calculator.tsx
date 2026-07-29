@@ -9,6 +9,9 @@ import {
   calculateFineAT,
   calculateFineDE,
   calculateFineNL,
+  calculateFineGB,
+  calculateFineES,
+  speedUnitLabel,
   type RoadType,
   type FineResult,
 } from "@/lib/speeding-fine";
@@ -51,13 +54,37 @@ const NL_LABELS: Record<FineResult["severity"], string> = {
   "raser":         "Rijbewijs ingevorderd",
 };
 
+/** Angol súlyossági címkék (a Sentencing Council sávjai szerint). */
+const GB_LABELS: Record<FineResult["severity"], string> = {
+  "no-fine":       "Nincs büntetés",
+  "ordnungsbusse": "Fix bírság (FPN) + 3 pont",
+  "mittelschwer":  "Band A — 3 pont",
+  "schwer":        "Band B — pont vagy eltiltás",
+  "raser":         "Band C — eltiltás",
+};
+
+/** Spanyol súlyossági címkék (DGT). */
+const ES_LABELS: Record<FineResult["severity"], string> = {
+  "no-fine":       "Nincs büntetés",
+  "ordnungsbusse": "Leve — pont nélkül",
+  "mittelschwer":  "Grave — pontlevonás",
+  "schwer":        "Grave — 6 pont",
+  "raser":         "⚠️ Bűncselekmény",
+};
+
 export function SpeedingCalculator() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const isDE = country === "DE";
   const isNL = country === "NL";
-  const cur = country === "CH" ? "CHF" : "EUR";
+  const isGB = country === "GB";
+  const isES = country === "ES";
+  // ⚠️ NEM bináris: a `=== "CH" ? "CHF" : "EUR"` minden nem-svájci országot
+  // eurósnak vett volna — Angliában fontban szabják ki a bírságot.
+  const cur = country === "CH" ? "CHF" : country === "GB" ? "GBP" : "EUR";
+  // ⚠️ Anglia MÉRFÖLDBEN mér — a „km/h" felirat ott számszerűen hamis lenne.
+  const unit = speedUnitLabel(country);
   const roads = getRoads(country);
   const [roadType, setRoadType] = useState<RoadType>("highway");
   const [speedLimit, setSpeedLimit] = useState(120);
@@ -76,7 +103,11 @@ export function SpeedingCalculator() {
 
   const result = useMemo(
     () =>
-      isNL
+      isES
+        ? calculateFineES({ roadType, speedLimit, actualSpeed })
+        : isGB
+        ? calculateFineGB({ roadType, speedLimit, actualSpeed, monthlyNetIncome: monthlyIncome })
+        : isNL
         ? calculateFineNL({ roadType, speedLimit, actualSpeed })
         : isDE
         ? calculateFineDE({ roadType, speedLimit, actualSpeed })
@@ -88,7 +119,7 @@ export function SpeedingCalculator() {
             actualSpeed,
             monthlyNetIncomeChf: monthlyIncome,
           }),
-    [isNL, isDE, isAT, roadType, speedLimit, actualSpeed, monthlyIncome],
+    [isES, isGB, isNL, isDE, isAT, roadType, speedLimit, actualSpeed, monthlyIncome],
   );
 
   function changeRoadType(t: RoadType) {
@@ -112,7 +143,11 @@ export function SpeedingCalculator() {
               Gyorshajtás bírság-BECSLŐ
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              {isNL ? (
+              {isES ? (
+                <>Tájékoztató becslés a publikus spanyol szabályok (Ley de Seguridad Vial / DGT) alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót a DGT vagy az önkormányzat szabja meg.</>
+              ) : isGB ? (
+                <>Tájékoztató becslés a publikus brit szabályok (gov.uk + Sentencing Council) alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót a rendőrség vagy a bíróság szabja meg. ⚠️ Minden érték MÉRFÖLD/ÓRÁBAN.</>
+              ) : isNL ? (
                 <>Tájékoztató becslés a publikus holland boetetabel (WAHV / OM) alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót a hatóság (CJIB / OM) szabja meg.</>
               ) : isDE ? (
                 <>Tájékoztató becslés a publikus német Bußgeldkatalog alapján. <strong className="text-ink">NEM hivatalos büntetés-megállapítás</strong> — a tényleges szankciót a hatóság (Bußgeldstelle) szabja meg.</>
@@ -183,7 +218,7 @@ export function SpeedingCalculator() {
       {/* Actual speed slider */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
         <label className="block mb-3 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-          2. Hány km/h-val haladtál?
+          2. Hány {unit}-val haladtál?
         </label>
         <div className="flex items-center gap-3">
           <input
@@ -197,26 +232,34 @@ export function SpeedingCalculator() {
           />
           <div className="min-w-[5rem] text-right">
             <div className="text-[24px] font-extrabold leading-none text-primary">{actualSpeed}</div>
-            <div className="text-[11px] font-bold uppercase text-ink-faint">km/h</div>
+            <div className="text-[11px] font-bold uppercase text-ink-faint">{unit}</div>
           </div>
         </div>
         <div className="mt-2 flex items-center justify-between text-[11.5px] text-ink-muted">
-          <span>Limit: {speedLimit} km/h</span>
+          <span>Limit: {speedLimit} {unit}</span>
           <span className="font-bold">
-            Túllépés: +{actualSpeed - speedLimit} km/h
-            <span className="text-ink-faint ml-1">(−{isDE || isNL ? 3 : 5} tolerancia)</span>
+            Túllépés: +{actualSpeed - speedLimit} {unit}
+            <span className="text-ink-faint ml-1">
+              {isGB
+                ? `(−${Math.floor(speedLimit * 0.1) + 2} tolerancia)`
+                : `(−${isDE || isNL ? 3 : 5} tolerancia)`}
+            </span>
           </span>
         </div>
       </section>
 
-      {/* Income — csak CH (AT/DE/NL: a bírság NEM jövedelem-arányos) */}
-      {!isAT && !isDE && !isNL && (
+      {/* ⚠️ Jövedelem-mező: CH ÉS GB. A svájci Tagessatz és a brit Sentencing
+          Council sávjai EGYARÁNT jövedelem-arányosak (a brit a HETI nettó
+          százalékában). AT/DE/NL/ES bírsága fix összegű → ott elrejtjük. */}
+      {!isAT && !isDE && !isNL && !isES && (
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
         <label className="block mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
-          3. Havi nettó jövedelem (CHF)
+          3. Havi nettó jövedelem ({cur})
         </label>
         <p className="mb-3 text-[11.5px] leading-snug text-ink-faint">
-          A büntetőeljárásnál a bírság jövedelem-arányos. Csak akkor releváns, ha közepes vagy súlyos a túllépés.
+          {isGB
+            ? "A bírósági sávok (Band A/B/C) a HETI nettó jövedelem százalékában adják meg a bírságot — felső korláttal. Csak akkor releváns, ha az ügy bíróságra kerül."
+            : "A büntetőeljárásnál a bírság jövedelem-arányos. Csak akkor releváns, ha közepes vagy súlyos a túllépés."}
         </p>
         <div className="flex items-center gap-3">
           <input
@@ -236,7 +279,7 @@ export function SpeedingCalculator() {
             onChange={(e) => setMonthlyIncome(Math.max(0, Number(e.target.value)))}
             className="w-20 rounded-[8px] border border-line bg-surface-alt px-2 py-1 text-[13px] font-bold text-ink text-right outline-none focus:bg-surface focus:ring-2 focus:ring-primary/30"
           />
-          <span className="text-[11px] font-bold text-ink-muted">CHF</span>
+          <span className="text-[11px] font-bold text-ink-muted">{cur}</span>
         </div>
       </section>
       )}
@@ -250,7 +293,7 @@ export function SpeedingCalculator() {
           <span className="text-4xl shrink-0">{meta.emoji}</span>
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: meta.color }}>
-              {isNL ? NL_LABELS[result.severity] : isDE ? DE_LABELS[result.severity] : isAT ? AT_LABELS[result.severity] : meta.label}
+              {isES ? ES_LABELS[result.severity] : isGB ? GB_LABELS[result.severity] : isNL ? NL_LABELS[result.severity] : isDE ? DE_LABELS[result.severity] : isAT ? AT_LABELS[result.severity] : meta.label}
             </p>
             <h2 className="mt-1 text-[20px] font-extrabold leading-tight tracking-tight text-ink">
               {result.severity === "no-fine"
