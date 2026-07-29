@@ -12,11 +12,49 @@
   <link rel="apple-touch-icon" href="/icons/kinti-logo-180.png">
   <link rel="manifest" href="/manifest.webmanifest">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,700&display=swap" rel="stylesheet">
+  <!-- A hero legfontosabb betűfájlja előre (a latin lefedi a címsort); a
+       latin-ext (ő/ű) és a dőlt a szokásos sorrendben töltődik. -->
+  <link rel="preload" href="/fonts/plus-jakarta-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 
   <style>
+    /* ─── Plus Jakarta Sans — SAJÁT KISZOLGÁLÁS ────────────────────────────
+       ⚠️ NE tedd vissza a `<link href="fonts.googleapis.com…">`-t! Két okból:
+        1) A saját CSP-nk (public/_headers, `style-src 'self' 'unsafe-inline'`)
+           BLOKKOLTA a Google stíluslapját — a landing ezért ÉVEKIG tartalék
+           betűtípussal jelent meg élesben, észrevétlenül. (A hiba csak a
+           böngésző-konzolban látszott: „…violates the following Content
+           Security Policy directive".)
+        2) A Google Fonts közvetlen beágyazása a látogató IP-címét a Google-höz
+           küldi — ez a német joggyakorlat szerint GDPR-sértés (LG München I,
+           2022. 3 O 17493/20). A saját kiszolgálás ezt kiküszöböli.
+       VARIÁLHATÓ font (wght 200–800): 4 fájl fedi az összes vastagságot és a
+       dőlt változatot is. A `unicode-range` miatt a böngésző csak azt tölti le,
+       amire ténylegesen szüksége van (a magyar ő/ű a latin-ext-ben van). */
+    @font-face {
+      font-family: 'Plus Jakarta Sans';
+      font-style: normal; font-weight: 200 800; font-display: swap;
+      src: url('/fonts/plus-jakarta-sans-normal-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Plus Jakarta Sans';
+      font-style: normal; font-weight: 200 800; font-display: swap;
+      src: url('/fonts/plus-jakarta-sans-normal-latin-ext.woff2') format('woff2');
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+    @font-face {
+      font-family: 'Plus Jakarta Sans';
+      font-style: italic; font-weight: 200 800; font-display: swap;
+      src: url('/fonts/plus-jakarta-sans-italic-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Plus Jakarta Sans';
+      font-style: italic; font-weight: 200 800; font-display: swap;
+      src: url('/fonts/plus-jakarta-sans-italic-latin-ext.woff2') format('woff2');
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+
     :root {
       --bg: #f4ede0;
       --bg-deep: #ede4d2;
@@ -1355,10 +1393,16 @@
     <p class="sec-sub">Rövid bemutató a Kintiről — hogyan találsz magyar szakembert vagy munkát pár érintéssel, ott ahol kint élsz.</p>
     <div class="video-shell">
       <div class="video-frame">
+        <!-- ⚠️ Az előnézetkép SAJÁT KISZOLGÁLÁSÚ (/media/), nem az i.ytimg.com-ról
+             jön: úgy már az oldal MEGNYITÁSAKOR a Google-höz került a látogató
+             IP-címe, hozzájárulás nélkül — ugyanaz a GDPR-probléma, mint a
+             beágyazott Google Fontsnál (ld. a fejléc @font-face megjegyzését).
+             A videó továbbra is CSAK kattintásra töltődik be, és a
+             youtube-nocookie.com domainről (ezt a CSP frame-src is engedi). -->
         <button class="video-poster" id="videoPoster" type="button"
           aria-label="Videó lejátszása"
-          style="background-image: url('https://i.ytimg.com/vi/1_6SXxeMQyc/maxresdefault.jpg');"
-          onclick="var f=document.createElement('iframe');f.src='https://www.youtube.com/embed/1_6SXxeMQyc?rel=0&autoplay=1';f.title='Kinti bemutató videó';f.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');f.setAttribute('allowfullscreen','');f.setAttribute('referrerpolicy','strict-origin-when-cross-origin');this.parentNode.appendChild(f);this.remove();">
+          style="background-image: url('/media/kinti-video-cover.jpg');"
+          onclick="var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/1_6SXxeMQyc?rel=0&autoplay=1';f.title='Kinti bemutató videó';f.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');f.setAttribute('allowfullscreen','');f.setAttribute('referrerpolicy','strict-origin-when-cross-origin');this.parentNode.appendChild(f);this.remove();">
           <span class="video-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
         </button>
       </div>

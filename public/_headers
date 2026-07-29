@@ -33,6 +33,11 @@
 /icons/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Saját kiszolgálású betűtípus (Plus Jakarta Sans) — a fájlnév a tartalomhoz
+# kötött, cserénél új nevet kap, ezért örökre cache-elhető.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
 
