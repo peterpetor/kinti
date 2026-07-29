@@ -48,7 +48,13 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     description: "Alapvető szerszámok és kifejezések a svájci építkezéseken (Baustelle).",
     industry: "Építőipar (Baubranche)",
     xpReward: 15,
-    isPro: true,
+    // ⚠️ INGYENES KÓSTOLÓ (2026-07-30). Eddig a svájci bank MINDEN leckéje PRO
+    // volt — egyedül a hat ország közül —, vagyis a legnagyobb piacon senki nem
+    // tudta kipróbálni a szótárt fizetés előtt. A többi öt országban a bank
+    // ELSŐ leckéje mindig ingyenes; ez most a svájcira is igaz.
+    // A szabályt teszt őrzi (szakmai-szotar-countries.test.ts): PONTOSAN egy
+    // ingyenes lecke országonként — se nulla, se több.
+    isPro: false,
     questions: [
       {
         id: "bau_q1",

@@ -132,25 +132,32 @@ describe("lecke-integritás mind a hat országban", () => {
   });
 
   /**
-   * ⚠️ SZERKEZETI SZABÁLY: legfeljebb EGY ingyenes bevezető lecke országonként.
-   * Több ingyenes lecke elvinné a PRO-tartalom értékét; a fizetős bank lényege,
-   * hogy a kóstoló után jön a zár.
-   *
-   * ⚠️ MEGFIGYELÉS, NEM HIBA: Svájcban jelenleg NULLA ingyenes lecke van (mind
-   * a 23 PRO), miközben AT/DE/NL/GB/ES mindegyikében van egy kóstoló. Ez
-   * TERMÉKI DÖNTÉS kérdése — a teszt ezért nem kényszeríti ki az egyet, csak a
-   * felső korlátot. Ha a CH is kapna kóstolót, ez a teszt akkor is zöld marad.
+   * ⚠️ SZERKEZETI SZABÁLY: PONTOSAN EGY ingyenes bevezető lecke országonként.
+   * Mindkét irány hiba:
+   *   • NULLA ingyenes → a felhasználó fizetés előtt ki sem tudja próbálni a
+   *     szótárt. 2026-07-30-ig a SVÁJCI bank pontosan ilyen volt (mind a 23
+   *     lecke PRO), egyedül a hat ország közül — vagyis épp a legnagyobb piacon
+   *     nem volt kóstoló. User-döntéssel javítva (bau_1 → ingyenes).
+   *   • KETTŐ VAGY TÖBB ingyenes → elviszi a PRO-tartalom értékét.
+   * Ez a teszt korábban csak a felső korlátot kérte; most mindkét irányt.
    */
-  it("egy országban sincs egynél több ingyenes lecke", () => {
+  it("⚠️ MINDEN országban PONTOSAN EGY ingyenes kóstoló lecke van", () => {
     for (const [cc, bank] of ALL_BANKS) {
       const free = bank.filter((l) => !l.isPro);
-      expect(free.length, `${cc}: ${free.length} ingyenes lecke`).toBeLessThanOrEqual(1);
+      expect(free.length, `${cc}: ${free.length} ingyenes lecke`).toBe(1);
     }
   });
 
-  it("a GB és az ES bankban VAN ingyenes kóstoló lecke", () => {
-    expect(INDUSTRY_LESSONS_GB.filter((l) => !l.isPro)).toHaveLength(1);
-    expect(INDUSTRY_LESSONS_ES.filter((l) => !l.isPro)).toHaveLength(1);
+  /**
+   * ⚠️ A kóstoló mindenhol a bank ELSŐ leckéje (építőipari alapok) — ez a
+   * legnagyobb szakma a magyar közösségben, tehát a legtöbb embert szólítja meg.
+   * Ha a kóstoló egy hátsó, ritka szakmához csúszna, a legtöbb felhasználó
+   * továbbra is zárt tartalommal találkozna először.
+   */
+  it("a kóstoló a bank ELSŐ leckéje, nem egy hátsó szakma", () => {
+    for (const [cc, bank] of ALL_BANKS) {
+      expect(bank[0].isPro, `${cc}: az első lecke nem ingyenes`).toBeFalsy();
+    }
   });
 });
 
