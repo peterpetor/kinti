@@ -132,6 +132,7 @@ describe("forráskód-őr: nincs kézi ország-whitelist a közös útvonalakon"
     "app/api/benchmark/rent-histogram/route.ts",
     "app/api/benchmark/trend/route.ts",
     "app/api/ai/cv-review/route.ts",
+    "app/api/ai/parse-search/route.ts",
   ];
 
   it("⚠️ a benchmark- és CV-audit-útvonalak isValidCountry-t használnak", () => {

@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { runAiChat, extractJsonObject, checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { getCategories } from "@/lib/repo";
-import { CANTONS } from "@/lib/cantons";
 import { AT_BUNDESLAENDER, DE_BUNDESLAENDER } from "@/lib/salary-calc";
 import { getRegions } from "@/lib/regions";
+import {
+  isValidCountry,
+  DEFAULT_COUNTRY,
+  countryLocative,
+  regionWord as countryRegionWord,
+} from "@/lib/countries";
 import { hashIp } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -34,7 +39,10 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json().catch(() => ({}))) as { query?: string; country?: string };
     const query = typeof body.query === "string" ? body.query.trim() : "";
-    const country = body.country === "AT" || body.country === "DE" || body.country === "NL" ? body.country : "CH";
+    // ⚠️ isValidCountry, NEM kézi whitelist: a hármas lista miatt a GB és az ES
+    // a svájci ágra esett — az angliai/spanyolországi kereséshez az AI SVÁJCI
+    // kantonokat kapott listaként, és „Svájcban" keresett.
+    const country = isValidCountry(body.country) ? body.country : DEFAULT_COUNTRY;
     if (!query || query.length < 3 || query.length > 200) {
       return NextResponse.json({ error: "Adj meg egy keresési szöveget." }, { status: 400 });
     }
@@ -59,10 +67,13 @@ export async function POST(req: Request) {
     const catList = cats.map((c) => `${c.id}=${c.label}`).join("; ");
     // Ország-tudatos régiólista (CH: kanton, AT/DE: Bundesland) — különben a német
     // user keresésében pl. „Berlinben" nem mappelődne régióra (eddig csak CH-kantonok).
-    const regions = country === "AT" ? AT_BUNDESLAENDER : country === "DE" ? DE_BUNDESLAENDER : country === "NL" ? getRegions("NL") : CANTONS;
+    // AT/DE marad a salary-calc Bundesland-listáján (bevált, ellenőrzött),
+    // minden más országnál a kanonikus regions.ts a forrás — így egy ÚJ ország
+    // automatikusan a saját régióit kapja, nem a svájci kantonokat.
+    const regions = country === "AT" ? AT_BUNDESLAENDER : country === "DE" ? DE_BUNDESLAENDER : getRegions(country);
     const regionList = regions.map((r) => `${r.code}=${r.name}`).join("; ");
-    const landLoc = country === "AT" ? "Ausztriában" : country === "DE" ? "Németországban" : country === "NL" ? "Hollandiában" : "Svájcban";
-    const regionWord = country === "CH" ? "KANTON" : country === "NL" ? "PROVINCIA" : "BUNDESLAND";
+    const landLoc = countryLocative(country);
+    const regionWord = (country === "AT" || country === "DE" ? "Bundesland" : countryRegionWord(country)).toUpperCase();
 
     const system = `Te a kinti.app Szaknévsor keresési asszisztense vagy.
 A felhasználó természetes magyar nyelven leírja, hogy milyen vállalkozót keres
