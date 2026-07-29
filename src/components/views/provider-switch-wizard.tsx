@@ -8,6 +8,7 @@ import {
   getCategoryInfo,
   formatDateDe,
   formatDateEn,
+  formatDateEs,
   type ProviderCategory,
   type CategoryInfo,
 } from "@/lib/provider-switch";
@@ -289,10 +290,13 @@ function TemplateGenerator({ category, country }: { category: CategoryInfo; coun
   // levelet kap Einschreibe-utasítással.
   const isNL = country === "NL";
   const isGB = country === "GB";
-  const langLabel = isGB ? "angol" : isNL ? "holland" : "német";
-  const langTag = isGB ? "EN" : isNL ? "NL" : "DE";
+  const isES = country === "ES";
+  const langLabel = isES ? "spanyol" : isGB ? "angol" : isNL ? "holland" : "német";
+  const langTag = isES ? "ES" : isGB ? "EN" : isNL ? "NL" : "DE";
   const ex = countryExamples(country);
-  const registeredPost = isGB
+  const registeredPost = isES
+    ? "⚠️ BUROFAX-szal küldd (acuse de recibo + certificación de contenido). Ez nem csak a kézbesítést, hanem a TARTALMAT is tanúsítja — vitában ez a különbség dönt. Az ajánlott levél (carta certificada) olcsóbb, de csak azt bizonyítja, hogy küldtél valamit, azt nem, hogy mit."
+    : isGB
     ? "Royal Mail Signed For (aláírással átvett) küldeményként add fel — a feladási igazolás a határidő bizonyítéka."
     : isNL
     ? "Ajánlott (aangetekend) postai levélként küldd — a feladás dátuma a határidő bizonyítéka."
@@ -301,14 +305,14 @@ function TemplateGenerator({ category, country }: { category: CategoryInfo; coun
   const [customerAddress, setCustomerAddress] = useState("");
   const [providerName, setProviderName] = useState("");
   const [contractNumber, setContractNumber] = useState("");
-  const [dateOfTermination, setDateOfTermination] = useState(() => getDefaultTerminationDate(category.id, country === "GB"));
+  const [dateOfTermination, setDateOfTermination] = useState(() => getDefaultTerminationDate(category.id, country));
   const [copied, setCopied] = useState(false);
 
   // A német „nn.hh.éééé" dátum egy angol nyelvű levélben idegen (és a 03.04. a
   // brit olvasónak április 3-a). Angliában ezért kiírt hónapnevet használunk.
   const today = useMemo(
-    () => (isGB ? formatDateEn(new Date()) : formatDateDe(new Date())),
-    [isGB],
+    () => dateFormatterFor(country)(new Date()),
+    [country],
   );
 
   const generatedLetter = useMemo(() => {
@@ -368,7 +372,7 @@ function TemplateGenerator({ category, country }: { category: CategoryInfo; coun
           placeholder="Pl. 123-456-789"
         />
         <InputField
-          label={isGB ? "Felmondás napja (DD/MM/YYYY)" : "Felmondás napja (DD.MM.YYYY)"}
+          label={isES ? "Felmondás napja (3 de abril de 2026)" : isGB ? "Felmondás napja (DD/MM/YYYY)" : "Felmondás napja (DD.MM.YYYY)"}
           value={dateOfTermination}
           onChange={setDateOfTermination}
           placeholder="Pl. 31.12.2026"
@@ -429,10 +433,23 @@ function InputField({
 
 // A kezdo-datum formaja is orszagfuggo: a levelbe kerulo datum nem lehet
 // nemet formatumu egy angol nyelvu levelben.
-function getDefaultTerminationDate(categoryId: ProviderCategory, isGB = false): string {
+/** Ország → a felmondólevél dátumformázója (a levél nyelvéhez igazítva). */
+function dateFormatterFor(country: string): (d: Date) => string {
+  if (country === "GB") return formatDateEn;
+  if (country === "ES") return formatDateEs;
+  return formatDateDe;
+}
+
+/**
+ * ⚠️ Ez a segéd korábban egy `isGB` BOOLEAN-t kapott — vagyis szerkezetileg
+ * csak KÉT dátumformát ismert. Egy harmadik nyelv (spanyol) felvételéhez ez
+ * nem bővíthető tovább tisztán, ezért ország-kódot kap, és a formázót a
+ * `dateFormatterFor` adja. Új ország: EGY sor ott, nem újabb boolean itt.
+ */
+function getDefaultTerminationDate(categoryId: ProviderCategory, country: string): string {
   const now = new Date();
   const year = now.getFullYear();
-  const fmt = isGB ? formatDateEn : formatDateDe;
+  const fmt = dateFormatterFor(country);
   switch (categoryId) {
     case "krankenkasse":
       // Always Dec 31 of current year (if before Nov 30) or next year

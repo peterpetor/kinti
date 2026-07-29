@@ -1,9 +1,11 @@
 /**
- * Szolgáltató Váltó modul — adatok és logika (CH / AT / DE / NL).
+ * Szolgáltató Váltó modul — adatok és logika (mind a 6 ország).
  *
  * Lefedi: egészségbiztosítás, Internet/TV, Mobil, Bank, Áram/energia.
  * Ország-kulcsos: PROVIDER_CATEGORIES_BY_COUNTRY + getProviderCategories(country).
- * A felmondó-sablon CH/AT/DE-ben németül, NL-ben hollandul.
+ * A felmondó-sablon CH/AT/DE-ben németül, NL-ben hollandul, GB-ben angolul,
+ * ES-ben spanyolul. ⚠️ A `germanTemplate` mező NEVE történeti — a levél
+ * nyelve MINDIG az adott országé.
  *
  * FONTOS: tájékoztató eszköz, NEM jogi tanács. A pontos felmondási
  * feltételeket mindig a szerződésben ellenőrizd.
@@ -1316,6 +1318,233 @@ ${p.customerName}`,
   },
 ];
 
+/**
+ * ⚠️ SPANYOLORSZÁG. Három dologban tér el a kontinentális mintától:
+ *
+ * 1) NINCS „krankenkasse” kategória — ahogy Angliában sem. A spanyol közellátást
+ *    a Seguridad Social járuléka fedezi, nincs biztosító, amit váltani lehetne.
+ *    Ez NEM üres kategória, hanem egyáltalán nem kínáljuk (teszt őrzi).
+ *
+ * 2) A felmondás bizonyítéka a BUROFAX, nem az ajánlott levél. A burofax a
+ *    kézbesítést ÉS a tartalmat is tanúsítja — vitában ez a különbség dönt.
+ *    Drágább, de egy elhúzódó felmondási vitánál sokszorosan megtérül.
+ *
+ * 3) A telefon- és energiaszolgáltatónál a felmondáshoz jár egy
+ *    „número de referencia de baja” — ha nem adják meg, nincs bizonyítékod,
+ *    hogy egyáltalán kérted. Ezt minden vonatkozó tipp kimondja.
+ */
+const ES_CATEGORIES: CategoryInfo[] = [
+  {
+    id: "bank",
+    label: "Bankszámla (cuenta corriente)",
+    emoji: "🏦",
+    description: "Spanyolországban törvényi számlaváltó szolgáltatás működik (servicio de traslado de cuentas de pago): az ÚJ bank intézi a beszedések (recibos) és az állandó átutalások átvitelét, jellemzően 13 munkanapon belül. A legnagyobb csapda nem a váltás, hanem a havidíj: sok számla csak feltételekkel ingyenes.",
+    noticePeriod: "Nincs — az új bank intézi",
+    deadline: "Bármikor",
+    newProviderStarts: "Jellemzően 13 munkanapon belül",
+    bestSwitchWindow: "Bármikor; ha van bérjóváírásod, azzal a legjobbak a feltételek",
+    minContract: "Nincs hűségidő",
+    tips: [
+      "⚠️ NE zárd le magad a régi számlát elsőként! Előbb fusson le a traslado, különben a beszedések (recibos) a semmibe futnak, és késedelmi díjat kapsz.",
+      "⚠️ A „sin comisiones” jellemzően FELTÉTELES: rendszeres bérjóváírás (nómina domiciliada) vagy minimális kártyás költés. Ha megszűnik a munkaviszonyod, a számla csendben díjkötelessé válhat.",
+      "Kérdezd meg konkrétan: „¿Con qué condiciones es gratis?” — és kérd írásban a kondíciós listát.",
+      "Mindenkinek joga van alap fizetési számlához (cuenta de pago básica) korlátozott díjjal — ezt kevesen ismerik.",
+      "Panasz esetén előbb a bank saját ügyfélszolgálatához (SAC) fordulj; ha 1 hónapon belül nincs megoldás, a Banco de España reklamációs szolgálatához.",
+    ],
+    officialLinks: [
+      { label: "Banco de España — Portal del Cliente Bancario", url: "https://clientebancario.bde.es/" },
+      { label: "Banco de España", url: "https://www.bde.es/" },
+    ],
+    providers: [
+      { id: "openbank",   name: "Openbank",     note: "Digitális (Santander-csoport), díjmentes alapszámla", url: "https://www.openbank.es/",        tier: "budget",  color: "#EC0000" },
+      { id: "myinvestor", name: "MyInvestor",   note: "Digitális, feltétel nélküli díjmentesség",            url: "https://www.myinvestor.es/",      tier: "budget",  color: "#00B2A9" },
+      { id: "ing",        name: "ING",          note: "Széles körben használt, egyszerű feltételek",         url: "https://www.ing.es/",             tier: "mid",     color: "#FF6200" },
+      { id: "sabadell",   name: "Banco Sabadell", note: "Hagyományos, fiókhálózattal",                       url: "https://www.bancsabadell.com/",   tier: "mid",     color: "#0069B4" },
+      { id: "caixabank",  name: "CaixaBank",    note: "A legnagyobb fiókhálózat",                            url: "https://www.caixabank.es/",       tier: "premium", color: "#007FC4" },
+      { id: "santander",  name: "Banco Santander", note: "Nagy hálózat, bérszámla-csomagok",                 url: "https://www.bancosantander.es/",  tier: "premium", color: "#EC0000" },
+    ],
+    germanTemplate: (p) => `${p.customerName}
+${p.customerAddress}
+
+${p.providerName}
+
+${p.todayDate}
+
+Estimados señores:
+
+Asunto: Solicitud de cancelación de cuenta${p.contractNumber ? ` – Nº de cuenta/cliente: ${p.contractNumber}` : ""}
+
+Por la presente solicito la cancelación de mi cuenta corriente${p.contractNumber ? ` con número ${p.contractNumber}` : ""}, con efecto desde el ${p.dateOfTermination}.
+
+Les ruego que transfieran el saldo restante a la cuenta que he indicado y que me confirmen por escrito la cancelación, así como la ausencia de comisiones pendientes.
+
+Asimismo, solicito la baja de cualquier producto asociado a dicha cuenta.
+
+Nota: si el cambio se realiza mediante el servicio de traslado de cuentas de pago, mi nueva entidad gestionará el proceso y esta carta no será necesaria.
+
+Atentamente,
+
+${p.customerName}`,
+  },
+  {
+    id: "electricity",
+    label: "Áram és gáz (luz y gas)",
+    emoji: "⚡",
+    description: "Két piac létezik: a SZABÁLYOZOTT (PVPC — óránként változó ár, csak a kijelölt szolgáltatóktól) és a SZABAD piac (fix ajánlatok). A váltás ingyenes, és a hálózatüzemeltető (distribuidora) NEM változik — csak a kereskedő (comercializadora). A CNMC hivatalos, független ár-összehasonlítót üzemeltet.",
+    noticePeriod: "Nincs — az új kereskedő intézi",
+    deadline: "Bármikor (fix szerződésnél figyelj a hűségidőre)",
+    newProviderStarts: "Jellemzően 5–21 nap",
+    bestSwitchWindow: "A hűségidő (permanencia) lejárta után; PVPC-ről bármikor",
+    minContract: "Szabad piacon gyakori 12 hónap; PVPC-n nincs",
+    tips: [
+      "⚠️ A váltáshoz a CUPS-kód kell — a mérési pont azonosítója, ott van a számládon. Enélkül nem tudnak átvenni.",
+      "⚠️ ÓVAKODJ AZ AJTÓS ÜGYNÖKÖKTŐL. Spanyolországban bevett csalás-minta, hogy „a hálózat ellenőre” néven kérik a számlát, majd szerződést váltanak a nevedben. SOHA ne add oda a számládat és ne írj alá az ajtóban.",
+      "A hivatalos, független összehasonlító a CNMC-é — a kereskedelmi összehasonlító oldalak jutalékot kapnak.",
+      "A distribuidora (hálózat) NEM változik váltáskor: hibabejelentés és áramszünet továbbra is hozzá tartozik.",
+      "Alacsony jövedelemnél a bono social kedvezmény járhat — igényelni kell, nem automatikus.",
+      "Felmondáskor kérd a „número de referencia de baja”-t, és jegyezd fel a mérőóra-állást.",
+    ],
+    officialLinks: [
+      { label: "CNMC — hivatalos ár-összehasonlító", url: "https://comparador.cnmc.gob.es/" },
+      { label: "CNMC — a szabályozó hatóság", url: "https://www.cnmc.es/" },
+    ],
+    providers: [
+      { id: "holaluz",  name: "Holaluz",        note: "100% megújuló, átlátható árazás",      url: "https://www.holaluz.com/",       tier: "mid",     color: "#00B5AD" },
+      { id: "octopus",  name: "Octopus Energy", note: "Erős ügyfélszolgálat, zöld áram",      url: "https://octopusenergy.es/",      tier: "mid",     color: "#FF69B4" },
+      { id: "totalenergies", name: "TotalEnergies", note: "Fix tarifák, áram és gáz együtt",  url: "https://www.totalenergies.es/",  tier: "mid",     color: "#ED0000" },
+      { id: "naturgy",  name: "Naturgy",        note: "Nagy szolgáltató, gázban erős",        url: "https://www.naturgy.es/",        tier: "premium", color: "#FF6900" },
+      { id: "endesa",   name: "Endesa",         note: "A legnagyobbak egyike, PVPC-t is ad",  url: "https://www.endesa.com/",        tier: "premium", color: "#0072CE" },
+      { id: "repsol",   name: "Repsol",         note: "Áram, gáz és üzemanyag-kedvezmények",  url: "https://www.repsol.es/",         tier: "mid",     color: "#FF7900" },
+    ],
+    germanTemplate: (p) => `${p.customerName}
+${p.customerAddress}
+
+${p.providerName}
+
+${p.todayDate}
+
+Estimados señores:
+
+Asunto: Solicitud de baja del contrato de suministro${p.contractNumber ? ` – Contrato/CUPS: ${p.contractNumber}` : ""}
+
+Por la presente solicito la baja de mi contrato de suministro${p.contractNumber ? ` (referencia: ${p.contractNumber})` : ""}, con efecto desde el ${p.dateOfTermination}.
+
+Les ruego que:
+1. Me faciliten el número de referencia de la baja.
+2. Me confirmen por escrito la fecha efectiva y la lectura del contador utilizada para la facturación final.
+3. No emitan cargos posteriores a la fecha indicada.
+
+Atentamente,
+
+${p.customerName}`,
+  },
+  {
+    id: "internet",
+    label: "Internet (fibra)",
+    emoji: "🌐",
+    description: "A spanyol optikai lefedettség Európa egyik legjobbja, és az árverseny erős. A fő kötöttség a hűségidő (permanencia): akciós ár vagy eszköz mellé jellemzően 12 hónap jár. A vezetékes szám átvihető (portabilidad).",
+    noticePeriod: "Jellemzően 30 nap",
+    deadline: "A hűségidő lejárta előtt figyelj a kilépési díjra",
+    newProviderStarts: "Portabilidadnál néhány nap; új kiépítésnél 1–3 hét",
+    bestSwitchWindow: "A permanencia lejárta után azonnal — az akciós ár utána jellemzően megugrik",
+    minContract: "Akciónál jellemzően 12 hónap",
+    tips: [
+      "⚠️ Az akciós ár jellemzően 12 hónapig él, utána ugrik. Állíts emlékeztetőt a 11. hónapra — a felhívásra a legtöbb szolgáltató ad új kedvezményt.",
+      "⚠️ Ha van hűségidőd, a kilépési díj (penalización) az abból hátralévő hónapokkal arányos — kérdezd meg a pontos összeget felmondás ELŐTT.",
+      "A felmondást ugyanazon a csatornán lehet benyújtani, ahol szerződtél (telefonon is) — és KÖTELESEK számot adni róla: kérd a „número de referencia de baja”-t.",
+      "Az útválasztót (router) jellemzően vissza kell küldeni — ha nem teszed, kiszámlázzák. Kérj feladási igazolást.",
+      "Csomagban (fibra + móvil) olcsóbb, de a hűségidő is összekapcsolódik — külön-külön felmondani nehezebb.",
+    ],
+    officialLinks: [
+      { label: "CNMC — távközlési szabályozó", url: "https://www.cnmc.es/" },
+      { label: "Fogyasztóvédelmi minisztérium", url: "https://www.consumo.gob.es/" },
+    ],
+    providers: [
+      { id: "digi",       name: "Digi",       note: "Rendszerint a legolcsóbb, hűségidő nélkül", url: "https://www.digimobil.es/",  tier: "budget",  color: "#E30613" },
+      { id: "pepephone",  name: "Pepephone",  note: "Egyszerű árazás, nincs rejtett emelés",     url: "https://www.pepephone.com/", tier: "budget",  color: "#78BE20" },
+      { id: "lowi",       name: "Lowi",       note: "Vodafone-hálózat olcsóbban",                url: "https://lowi.es/",           tier: "budget",  color: "#00B0CA" },
+      { id: "orange",     name: "Orange",     note: "Nagy lefedettség, csomagajánlatok",         url: "https://www.orange.es/",     tier: "mid",     color: "#FF7900" },
+      { id: "vodafone",   name: "Vodafone",   note: "Nagy hálózat, TV-csomagok",                 url: "https://www.vodafone.es/",   tier: "mid",     color: "#E60000" },
+      { id: "movistar",   name: "Movistar",   note: "A legnagyobb lefedettség, prémium ár",      url: "https://www.movistar.es/",   tier: "premium", color: "#019DF4" },
+    ],
+    germanTemplate: (p) => `${p.customerName}
+${p.customerAddress}
+
+${p.providerName}
+
+${p.todayDate}
+
+Estimados señores:
+
+Asunto: Solicitud de baja del servicio${p.contractNumber ? ` – Nº de contrato/cliente: ${p.contractNumber}` : ""}
+
+Por la presente solicito la baja definitiva de los servicios contratados${p.contractNumber ? ` (referencia: ${p.contractNumber})` : ""}, con efecto desde el ${p.dateOfTermination}.
+
+Les ruego que:
+1. Me faciliten el NÚMERO DE REFERENCIA DE LA BAJA.
+2. Me confirmen por escrito la fecha efectiva y el importe final, incluida cualquier penalización por permanencia, detallando su cálculo.
+3. Me indiquen cómo devolver el router y me faciliten justificante de la devolución.
+
+No autorizo la renovación automática ni la contratación de servicios adicionales.
+
+Atentamente,
+
+${p.customerName}`,
+  },
+  {
+    id: "mobile",
+    label: "Mobil (móvil)",
+    emoji: "📱",
+    description: "A számhordozás (portabilidad) ingyenes, és jellemzően EGY munkanap alatt lefut. Az ÚJ szolgáltató intézi — a réginél nem kell külön felmondani. Hűségidő csak akkor van, ha támogatott készüléket vagy erős akciót kaptál.",
+    noticePeriod: "Nincs — a portabilidadot az új szolgáltató intézi",
+    deadline: "Bármikor",
+    newProviderStarts: "Jellemzően a következő munkanapon",
+    bestSwitchWindow: "A permanencia lejárta után; készülék nélküli tarifánál bármikor",
+    minContract: "Csak támogatott készüléknél (jellemzően 12–24 hónap)",
+    tips: [
+      "⚠️ NE mondd fel magad a régi előfizetést! A portabilidad automatikusan lezárja — ha te mondod fel előbb, ELVESZÍTED a számodat.",
+      "A hordozáshoz a DNI/NIE és a jelenlegi szolgáltatód adatai kellenek; a szám átvitele ingyenes.",
+      "⚠️ Ha támogatott készüléket kaptál, a hűségidő megszegésekor a készülék hátralévő értékét kiszámlázzák — ez sokszor több, mint amennyit a váltással spórolnál.",
+      "Feltöltőkártyás (prepago) számot is lehet hordozni — ehhez a szám regisztrálva kell legyen a nevedre.",
+      "Ha a hordozás nem sikerül határidőre, kártérítés járhat — a CNMC oldalán találod a szabályokat.",
+    ],
+    officialLinks: [
+      { label: "CNMC — távközlési szabályozó", url: "https://www.cnmc.es/" },
+      { label: "Fogyasztóvédelmi minisztérium", url: "https://www.consumo.gob.es/" },
+    ],
+    providers: [
+      { id: "digi",      name: "Digi",       note: "Rendszerint a legolcsóbb, hűségidő nélkül", url: "https://www.digimobil.es/",  tier: "budget",  color: "#E30613" },
+      { id: "simyo",     name: "Simyo",      note: "Olcsó, rugalmas csomagok",                  url: "https://www.simyo.es/",      tier: "budget",  color: "#8DC63F" },
+      { id: "pepephone", name: "Pepephone",  note: "Nincs rejtett áremelés",                    url: "https://www.pepephone.com/", tier: "budget",  color: "#78BE20" },
+      { id: "lowi",      name: "Lowi",       note: "Vodafone-hálózat olcsóbban",                url: "https://lowi.es/",           tier: "budget",  color: "#00B0CA" },
+      { id: "yoigo",     name: "Yoigo",      note: "Közepes ár, jó lefedettség",                url: "https://www.yoigo.com/",     tier: "mid",     color: "#E5007D" },
+      { id: "movistar",  name: "Movistar",   note: "A legjobb lefedettség, prémium ár",         url: "https://www.movistar.es/",   tier: "premium", color: "#019DF4" },
+    ],
+    germanTemplate: (p) => `${p.customerName}
+${p.customerAddress}
+
+${p.providerName}
+
+${p.todayDate}
+
+Estimados señores:
+
+Asunto: Solicitud de baja de línea móvil${p.contractNumber ? ` – Nº de línea/cliente: ${p.contractNumber}` : ""}
+
+Por la presente solicito la baja de mi línea móvil${p.contractNumber ? ` (referencia: ${p.contractNumber})` : ""}, con efecto desde el ${p.dateOfTermination}.
+
+Les ruego que:
+1. Me faciliten el NÚMERO DE REFERENCIA DE LA BAJA.
+2. Me confirmen por escrito la fecha efectiva y el importe final, incluida cualquier penalización por permanencia, detallando su cálculo.
+
+Nota: si voy a conservar mi número mediante portabilidad, será mi nuevo operador quien tramite el cambio y esta solicitud no será necesaria.
+
+Atentamente,
+
+${p.customerName}`,
+  },
+];
+
 /** Ország → kategóriák (ismeretlen ország → CH). */
 export const PROVIDER_CATEGORIES_BY_COUNTRY: Record<string, CategoryInfo[]> = {
   CH: CH_CATEGORIES,
@@ -1323,6 +1552,7 @@ export const PROVIDER_CATEGORIES_BY_COUNTRY: Record<string, CategoryInfo[]> = {
   DE: DE_CATEGORIES,
   NL: NL_CATEGORIES,
   GB: GB_CATEGORIES,
+  ES: ES_CATEGORIES,
 };
 
 export function getProviderCategories(country: string | null | undefined): CategoryInfo[] {
@@ -1349,10 +1579,24 @@ const EN_MONTHS = [
 ];
 
 /**
- * Brit levélforma: „3 April 2026". Szándékosan KIÍRT hónapnév — a tisztán
+ * Brit levélforma: „3 April 2026”. Szándékosan KIÍRT hónapnév — a tisztán
  * számjegyes dátum félreérthető (03/04 az USA-ban március 4., a briteknél
  * április 3.), és egy felmondólevélben pont a dátum a bizonyíték.
  */
 export function formatDateEn(d: Date): string {
   return `${d.getDate()} ${EN_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+const ES_MONTHS = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+];
+
+/**
+ * Spanyol levélforma: „3 de abril de 2026”. A hónapnév KIÍRVA, mint a britnél —
+ * egy felmondólevélben a dátum a bizonyíték, és a csak számjegyes alak
+ * félreérthető. A spanyol hivatalos levelezés amúgy is ezt a formát használja.
+ */
+export function formatDateEs(d: Date): string {
+  return `${d.getDate()} de ${ES_MONTHS[d.getMonth()]} de ${d.getFullYear()}`;
 }
