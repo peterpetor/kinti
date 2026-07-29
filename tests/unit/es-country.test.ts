@@ -117,7 +117,11 @@ describe("ES engedélyező-lista (GB-modell)", () => {
   });
 
   it("⚠️ REJTI a CH-specifikus eszközöket, amikhez NINCS spanyol tartalom", () => {
-    for (const key of ["bussen", "allampolgarsag", "nyelvlecke", "szakmai-szotar", "akciok"]) {
+    // ⚠️ Ez a lista FOGY, ahogy készül a spanyol tartalom — a „nyelvlecke"
+    // 2026-07-29-én került ki innen (elkészült a 100 leckés kurzus). Ha egy
+    // kulcsot bekapcsolsz az ES_ALLOWED_FEATURES-ben, ITT is vedd ki, különben
+    // a teszt a saját, elavult elvárásán bukik el — nem valódi hibán.
+    for (const key of ["bussen", "allampolgarsag", "szakmai-szotar", "akciok"]) {
       expect(isFeatureAvailable(key, "ES"), key).toBe(false);
     }
   });

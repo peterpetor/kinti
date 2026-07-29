@@ -13,7 +13,7 @@ import { cn } from "@/lib/cn";
 
 /**
  * A lecke-id előtagja mondja meg, MELYIK ország kurzusából való a lecke
- * (al=AT, dl=DE, nl=NL, gl=GB, egyébként CH). Ebből jön a TTS-nyelv és az is,
+ * (al=AT, dl=DE, nl=NL, gl=GB, sl=ES, egyébként CH). Ebből jön a TTS-nyelv és az is,
  * melyik adat-modult kell betölteni — a kettő SOHA ne csússzon szét.
  */
 function courseOf(lessonId: string) {
@@ -23,6 +23,9 @@ function courseOf(lessonId: string) {
   // ⚠️ Az angolnál a BRIT hang a lényeg: az amerikai kiejtés pont azt mossa el,
   // amit ez a kurzus megkülönböztetni tanít.
   if (lessonId.startsWith("gl")) return { tts: "en-GB", load: () => import("../data-gb").then((m) => m.LESSONS_GB) };
+  // ⚠️ es-ES = KASZTÍLIAI spanyol. A latin-amerikai hang pont azt a pöszített
+  // z/c-t mossa el, amit a 2. fejezet megkülönböztetni tanít.
+  if (lessonId.startsWith("sl")) return { tts: "es-ES", load: () => import("../data-es").then((m) => m.LESSONS_ES) };
   return { tts: "de-CH", load: () => import("../data").then((m) => m.LESSONS) };
 }
 

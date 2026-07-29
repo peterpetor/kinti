@@ -66,7 +66,9 @@ export default function LanguagePathPage() {
             ? import("./data-nl").then((m) => m.LESSONS_NL)
             : country === "GB"
               ? import("./data-gb").then((m) => m.LESSONS_GB)
-              : import("./data").then((m) => m.LESSONS);
+              : country === "ES"
+                ? import("./data-es").then((m) => m.LESSONS_ES)
+                : import("./data").then((m) => m.LESSONS);
     load.then((l) => {
       if (!cancelled) setLessons(l);
     });
