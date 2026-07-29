@@ -253,6 +253,54 @@ const STEPS_NL: Step[] = [
   },
 ];
 
+/**
+ * ⚠️ SPANYOLORSZÁG — a kérdések szövege az IDŐZÍTÉSRE hangolt.
+ * A jogi helyzet uniós polgárként egyszerű, ezért a hintek nem a jogosultságot
+ * magyarázzák (azt tudja a felhasználó), hanem azt, hogy MIKOR kell elindulni:
+ * a spanyol elakadások túlnyomó része nem jogi, hanem naptári — az időpont
+ * (cita previa) hetekre előre elfogy.
+ */
+const STEPS_ES: Step[] = [
+  {
+    id: "citizenship",
+    question: "Honnan jössz?",
+    options: [
+      { value: "eu", label: "🇭🇺 Magyarország / 🇪🇺 EU / 🇮🇸 EFTA", emoji: "🇪🇺", hint: "Szabad mozgás — engedély nem kell, de 3 hónap után regisztrálni igen." },
+      { value: "non-eu", label: "🌍 Nem-EU ország (USA, India, UK, stb.)", emoji: "🌍", hint: "Harmadik országbeli — TIE-kártya, külön eljárás." },
+    ],
+  },
+  {
+    id: "duration",
+    question: "Mennyi időre tervezed Spanyolországban tartózkodni?",
+    options: [
+      { value: "short", label: "< 3 hónap (turizmus, üzleti út, családlátogatás)", emoji: "✈️", hint: "Ez alatt semmit nem kell intézni." },
+      { value: "medium", label: "3-12 hónap (szezonális munka, csere, kurzus)", emoji: "📅", hint: "⚠️ Már regisztrálni kell — az időpontot AZONNAL foglald." },
+      { value: "long", label: "1-5 év (munkavállalás, családi)", emoji: "🏠" },
+      { value: "permanent", label: "5+ év / végleges letelepedés", emoji: "🏡" },
+    ],
+  },
+  {
+    id: "purpose",
+    question: "Mi a fő célod?",
+    options: [
+      { value: "work", label: "Munkavállalás Spanyolországban", emoji: "💼" },
+      { value: "study", label: "Tanulás (egyetem, kurzus, csere)", emoji: "🎓" },
+      { value: "family", label: "Családi okok (házasság, családtag)", emoji: "👨‍👩‍👧" },
+      { value: "retired", label: "Nyugdíjasként, anyagi-független", emoji: "🏖️", hint: "Magyar nyugdíjasként az S1 nyomtatványt MÉG ITTHON kérd meg." },
+      { value: "cross-border", label: "Másik országban élek, csak Spanyolországban dolgozom", emoji: "🚗", hint: "⚠️ 183 nap fölött adóügyi illetőségű leszel." },
+    ],
+  },
+  {
+    id: "previousStay",
+    question: "Mióta élsz (jogszerűen) Spanyolországban?",
+    options: [
+      { value: "5-or-more", label: "Már 5+ éve folyamatosan itt élek", emoji: "🪪", hint: "Állandó tartózkodási igazolásra lehetsz jogosult." },
+      { value: "less-than-5", label: "Kevesebb mint 5 éve", emoji: "📅" },
+      { value: "none", label: "Most érkezem / első alkalom", emoji: "✨" },
+    ],
+  },
+];
+
 
 /**
  * ⚠️ ANGLIA — a kérdések SZÖVEGE szándékosan más, mint a többi országnál.
@@ -309,7 +357,8 @@ export function PermitWizard() {
   const isDE = country === "DE";
   const isNL = country === "NL";
   const isGB = country === "GB";
-  const STEPS = isGB ? STEPS_GB : isNL ? STEPS_NL : isDE ? STEPS_DE : isAT ? STEPS_AT : STEPS_CH;
+  const isES = country === "ES";
+  const STEPS = isES ? STEPS_ES : isGB ? STEPS_GB : isNL ? STEPS_NL : isDE ? STEPS_DE : isAT ? STEPS_AT : STEPS_CH;
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<WizardAnswers>>({});
   const [result, setResult] = useState<WizardResult | null>(null);
@@ -421,7 +470,9 @@ export function PermitWizard() {
         toolName="engedély-varázsló"
         variant="legal"
         notAdviceFor="jogi vagy bevándorlási"
-        extraWarning={isGB
+        extraWarning={isES
+          ? "A jogi helyzet uniós polgárként egyszerű, a GYAKORLATI viszont nem: szinte minden idegenrendészeti ügyhöz előzetes időpont (cita previa) kell, ami hetekre előre elfogyhat. A varázsló csak általános útmutatás — a TE konkrét státuszodat az Oficina de Extranjería vagy szakképzett ügyvéd határozza meg. ⚠️ Az időpont INGYENES: aki pénzt kér érte, viszonteladó."
+          : isGB
           ? "⚠️ Angliában Brexit óta a bevándorlási szabály élesen más, mint az EU-ban, és gyakran változik. A varázsló csak általános útmutatás — a TE konkrét státuszodat a Home Office (UKVI) határozza meg. Fizetős bevándorlási tanácsadót Angliában CSAK OISC-nyilvántartásba vett tanácsadótól vagy ügyvédtől (solicitor) fogadj el."
           : isNL
           ? "A pontos eljárás és feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó státuszt a lakóhely szerinti gemeente, az IND (Immigratie- en Naturalisatiedienst) vagy szakképzett ügyvéd határozza meg."
@@ -430,7 +481,10 @@ export function PermitWizard() {
           : isAT
           ? "A pontos eljárás és feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó státuszt a tartózkodási hatóság (Bécsben MA 35, tartományokban Landeshauptmann/BH) vagy szakképzett ügyvéd határozza meg."
           : "Az engedély-eljárás kantonok közt eltér, és a feltételek időnként változnak. A varázsló csak általános útmutatás — a TE konkrét helyzetedre vonatkozó engedélyt mindig a kantoni Migrationsamt vagy szakképzett ügyvéd határozza meg."}
-        officialSources={isGB ? [
+        officialSources={isES ? [
+          { label: "Cita previa — extranjería", url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus" },
+          { label: "Real Decreto 240/2007 — uniós polgárok (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-4184" },
+        ] : isGB ? [
           { label: "gov.uk — Vízumok és bevándorlás", url: "https://www.gov.uk/browse/visas-immigration" },
           { label: "gov.uk — EU Settlement Scheme", url: "https://www.gov.uk/settled-status-eu-citizens-families" },
         ] : isNL ? [
@@ -606,7 +660,9 @@ function ResultView({ result, onRestart, country }: { result: WizardResult; onRe
         variant="legal"
         notAdviceFor="jogi vagy bevándorlási"
         extraWarning="A varázsló javaslata egyszerű, általános minták alapján készült. A te konkrét helyzetedet (családi állapot, munkaadói támogatás, korábbi tartózkodás, büntetett előélet) csak az illetékes hatóság és/vagy szakképzett ügyvéd tudja értékelni."
-        officialSources={country === "GB" ? [
+        officialSources={country === "ES" ? [
+          { label: "Cita previa — extranjería", url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus" },
+        ] : country === "GB" ? [
           { label: "gov.uk — Vízumok és bevándorlás", url: "https://www.gov.uk/browse/visas-immigration" },
         ] : isNL ? [
           { label: "IND — Immigratie- en Naturalisatiedienst", url: "https://ind.nl/en" },

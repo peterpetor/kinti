@@ -20,6 +20,10 @@ import {
   DE_TRANSPORT_TIPS,
   calculateDeTransport,
   NL_TARIF_SYSTEMS,
+  ES_TARIF_SYSTEMS,
+  ES_TICKET_TYPES,
+  ES_MOBILE_APPS,
+  ES_TRANSPORT_TIPS,
   GB_TARIF_SYSTEMS,
   GB_TICKET_TYPES,
   GB_MOBILE_APPS,
@@ -40,11 +44,12 @@ export function TransportGuide() {
   const isDE = country === "DE";
   const isNL = country === "NL";
   const isGB = country === "GB";
+  const isES = country === "ES";
   const cur = country === "CH" ? "CHF" : country === "GB" ? "GBP" : "EUR";
-  const tarifSystems = isGB ? GB_TARIF_SYSTEMS : isNL ? NL_TARIF_SYSTEMS : isDE ? DE_TARIF_SYSTEMS : isAT ? AT_TARIF_SYSTEMS : TARIF_SYSTEMS;
-  const ticketTypes = isGB ? GB_TICKET_TYPES : isNL ? NL_TICKET_TYPES : isDE ? DE_TICKET_TYPES : isAT ? AT_TICKET_TYPES : TICKET_TYPES;
-  const mobileApps = isGB ? GB_MOBILE_APPS : isNL ? NL_MOBILE_APPS : isDE ? DE_MOBILE_APPS : isAT ? AT_MOBILE_APPS : MOBILE_APPS;
-  const tips = isGB ? GB_TRANSPORT_TIPS : isNL ? NL_TRANSPORT_TIPS : isDE ? DE_TRANSPORT_TIPS : isAT ? AT_TRANSPORT_TIPS : TRANSPORT_TIPS;
+  const tarifSystems = isES ? ES_TARIF_SYSTEMS : isGB ? GB_TARIF_SYSTEMS : isNL ? NL_TARIF_SYSTEMS : isDE ? DE_TARIF_SYSTEMS : isAT ? AT_TARIF_SYSTEMS : TARIF_SYSTEMS;
+  const ticketTypes = isES ? ES_TICKET_TYPES : isGB ? GB_TICKET_TYPES : isNL ? NL_TICKET_TYPES : isDE ? DE_TICKET_TYPES : isAT ? AT_TICKET_TYPES : TICKET_TYPES;
+  const mobileApps = isES ? ES_MOBILE_APPS : isGB ? GB_MOBILE_APPS : isNL ? NL_MOBILE_APPS : isDE ? DE_MOBILE_APPS : isAT ? AT_MOBILE_APPS : MOBILE_APPS;
+  const tips = isES ? ES_TRANSPORT_TIPS : isGB ? GB_TRANSPORT_TIPS : isNL ? NL_TRANSPORT_TIPS : isDE ? DE_TRANSPORT_TIPS : isAT ? AT_TRANSPORT_TIPS : TRANSPORT_TIPS;
   return (
     <div className="space-y-4">
       {/* Hero */}
@@ -53,10 +58,12 @@ export function TransportGuide() {
           <span className="text-4xl shrink-0">🚆</span>
           <div className="min-w-0 flex-1">
             <h1 className="text-[20px] font-extrabold leading-tight tracking-tight text-ink">
-              {isGB ? "Angol Tömegközlekedés" : isNL ? "Holland Tömegközlekedés" : isDE ? "Német Tömegközlekedés" : isAT ? "Osztrák Tömegközlekedés" : "Svájci Tömegközlekedés"}
+              {isES ? "Spanyol Tömegközlekedés" : isGB ? "Angol Tömegközlekedés" : isNL ? "Holland Tömegközlekedés" : isDE ? "Német Tömegközlekedés" : isAT ? "Osztrák Tömegközlekedés" : "Svájci Tömegközlekedés"}
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
-              {isGB
+              {isES
+                ? "Madrid (CRTM) és Barcelona (ATM) zónarendszere, Renfe Cercanías és AVE, a 26 alattiak abono jovenje, appok — egyszerűen elmagyarázva."
+                : isGB
                 ? "Londoni érintős fizetés és capping (napi + heti plafon), National Rail, Railcard, appok (TfL Go, Citymapper) — egyszerűen elmagyarázva."
                 : isNL
                 ? "OVpay / OV-chipkaart (in- és uitchecken), NS-vonatok, GVB/RET/HTM, jegytípusok, appok (NS, 9292) és Dal Voordeel-kalkulátor — egyszerűen elmagyarázva."
@@ -73,10 +80,21 @@ export function TransportGuide() {
       {/* Hogyan működik a zóna-rendszer */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card space-y-3">
         <h2 className="text-[14px] font-extrabold text-ink flex items-center gap-1.5">
-          📍 {isGB ? "Hogy működik a capping (plafon)?" : isNL ? "Hogy működik a fizetés (OVpay)?" : "Hogy működik a zónarendszer?"}
+          📍 {isES ? "Hogy működik a zónarendszer Spanyolországban?" : isGB ? "Hogy működik a capping (plafon)?" : isNL ? "Hogy működik a fizetés (OVpay)?" : "Hogy működik a zónarendszer?"}
         </h2>
         <div className="space-y-2 text-[12.5px] leading-relaxed text-ink-muted">
-          {isGB ? (
+          {isES ? (
+            <>
+              <p>Spanyolországban <strong className="text-ink">nincs országos rendszer</strong>: minden nagyvárosnak saját, egymással NEM kompatibilis tarifa-rendszere van.</p>
+              <ul className="space-y-1 ml-4 list-disc">
+                <li><strong className="text-ink">Madrid és Barcelona zónás</strong> — a bérleted addig a zónáig érvényes, ameddig megvetted. A legtöbben a belvárosi zónában élnek.</li>
+                <li><strong className="text-ink">Az elővárosi vonat (Cercanías / Rodalies) beletartozik</strong> a városi bérletbe — nem kell külön jegy az ingázáshoz.</li>
+                <li>⭐ <strong className="text-ink">26 év alatt Madridban az abono joven</strong> havi fix áron KORLÁTLAN utazást ad az EGÉSZ közösségben, bármelyik zónában. Ez a legnagyobb spórolási lehetőség.</li>
+                <li>⚠️ <strong className="text-ink">A havi bérlet NAPTÁRI hónapra szól</strong>, nem 30 napra a vásárlástól — hónap elején vedd meg.</li>
+                <li>⚠️ <strong className="text-ink">A madridi kártya Barcelonában semmit nem ér</strong> (és fordítva). Költözésnél új kártya kell.</li>
+              </ul>
+            </>
+          ) : isGB ? (
             <>
               <p>Londonban <strong className="text-ink">nem kell jegyet venni</strong>: érintős bankkártyával vagy telefonnal érintesz be, és a rendszer <strong className="text-ink">automatikusan plafonoz (capping)</strong>.</p>
               <ul className="space-y-1 ml-4 list-disc">
@@ -249,7 +267,13 @@ export function TransportGuide() {
           Hivatalos források
         </h3>
         <ul className="space-y-1.5">
-          {isNL ? (
+          {isES ? (
+            <>
+              <li><a href="https://www.renfe.com/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Renfe — spanyol vasút</a></li>
+              <li><a href="https://www.crtm.es/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 CRTM — Madrid közlekedése</a></li>
+              <li><a href="https://www.atm.cat/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 ATM — Barcelona közlekedése</a></li>
+            </>
+          ) : isNL ? (
             <>
               <li><a href="https://www.ns.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 NS — Nederlandse Spoorwegen</a></li>
               <li><a href="https://www.ovpay.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 OVpay — érintős fizetés</a></li>
@@ -283,7 +307,11 @@ export function TransportGuide() {
         variant="info"
         notAdviceFor="utazási, jegyügyi vagy szerződéses"
         extraWarning="A megjelölt árak és zónák a tájékoztató publikálásakor érvényesek — időnként változnak. Jegyvásárlás előtt mindig ellenőrizd a hivatalos szolgáltató oldalán vagy alkalmazásában. A megjelölt szolgáltatókkal NEM állunk affiliate vagy kereskedelmi kapcsolatban."
-        officialSources={isGB ? [
+        officialSources={isES ? [
+          { label: "Renfe — spanyol vasút", url: "https://www.renfe.com/" },
+          { label: "CRTM — Madrid", url: "https://www.crtm.es/" },
+          { label: "ATM — Barcelona", url: "https://www.atm.cat/" },
+        ] : isGB ? [
           { label: "TfL — Fares", url: "https://tfl.gov.uk/fares" },
           { label: "National Rail", url: "https://www.nationalrail.co.uk/" },
           { label: "Railcard", url: "https://www.railcard.co.uk/" },
@@ -371,6 +399,7 @@ function GaVsHalbtaxCalculator() {
   const isDE = country === "DE";
   const isNL = country === "NL";
   const isGB = country === "GB";
+  const isES = country === "ES";
   const cur = country === "CH" ? "CHF" : country === "GB" ? "GBP" : "EUR";
   const [avgTripPrice, setAvgTripPrice] = useState(isDE ? 3.5 : isAT ? 3 : isNL ? 4 : 12);
   const [tripsPerWeek, setTripsPerWeek] = useState(5);
@@ -402,6 +431,14 @@ function GaVsHalbtaxCalculator() {
         halbtax:      { emoji: "✂️", label: "Halbtax éri meg!",          color: "#16a34a" },
         ga:           { emoji: "🎟️", label: "GA éri meg!",               color: "#1d4434" },
       } as const)[chResult.recommendation];
+
+  // ⚠️ EZ A KALKULÁTOR CSAK OTT ÉRTELMES, AHOL VAN HOZZÁ ORSZÁG-MODELL.
+  // Angliában és Spanyolországban nincs: a brit rendszer automatikus plafonnal
+  // (capping) működik — nincs mit „megérni" —, a spanyol pedig városonként
+  // külön bérlet-rendszer, egyetlen országos termék nélkül. Kapu nélkül a lenti
+  // ág a SVÁJCI „GA vs Halbtax" ajánlást írta ki angliai és spanyolországi
+  // felhasználónak is (élő fallthrough-bug volt). Inkább semmit, mint rosszat.
+  if (isGB || isES) return null;
 
   return (
     <section className="rounded-card border-2 border-primary/30 bg-gradient-to-br from-primary-soft to-surface p-5 shadow-pop space-y-4">

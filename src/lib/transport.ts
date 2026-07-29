@@ -679,6 +679,77 @@ export const GB_TRANSPORT_TIPS: { emoji: string; title: string; body: string }[]
 ];
 
 /** Az Anglia-kalkulátor bemenete: heti utak száma és a tipikus egy-út ár. */
+/**
+ * ⚠️ SPANYOLORSZÁG — a rendszer szervező elve az AUTONÓM KÖZÖSSÉG, nem az állam.
+ *
+ * Nincs országos városi bérlet-rendszer: Madridnak, Barcelonának és Valenciának
+ * KÜLÖN, egymással nem kompatibilis tarifa-rendszere van. Ami viszont országos:
+ *   • a Renfe (vasút) — AVE nagysebességű + Cercanías elővárosi,
+ *   • és a FIATALOKNAK szóló kedvezmény, ami a legnagyobb pénzt jelenti egy
+ *     26 alatti magyarnak (Madridban az abono joven az egész közösségre érvényes,
+ *     havi fix áron — ez a hat ország legjobb fiatal-bérlete).
+ *
+ * ⚠️ Az árak évente változnak, és az elmúlt években több átmeneti állami
+ * kedvezmény is volt a Cercanías/Rodalies vonalakon. A konkrét összeget MINDIG
+ * az adott üzemeltető oldalán nézd — ezért van minden rendszernél hivatalos URL.
+ */
+export const ES_TARIF_SYSTEMS: TarifSystem[] = [
+  {
+    id: "crtm", name: "CRTM (Madrid)", abbreviation: "CRTM", region: "Madrid + az egész közösség", emoji: "🚇",
+    zonesCount: 6, description: "Madrid ZÓNÁS rendszer (A, B1–B3, C1–C2): metró, busz, villamos és a Cercanías egy bérletben. A havi bérlet (abono mensual) a zónádig érvényes — a legtöbben az A zónában (a város) élnek.",
+    exampleZones: [{ name: "A zóna (Madrid város)", zones: "a belváros egésze" }, { name: "B1–B3", zones: "agglomeráció" }, { name: "⭐ Abono joven (26 alatt)", zones: "az EGÉSZ közösség, egy áron" }],
+    singleZonePrice: 1.5, dailyPrice: 8.4, websiteUrl: "https://www.crtm.es/", color: "#E30613",
+  },
+  {
+    id: "atm", name: "ATM (Barcelona)", abbreviation: "ATM", region: "Barcelona + Katalónia", emoji: "🚈",
+    zonesCount: 6, description: "Barcelona is zónás (1–6). A leggyakoribb jegy a T-casual (10 utazás egy zónán belül) és a T-usual (30 napos korlátlan). Metró, busz, FGC és a Rodalies (elővárosi vonat) egy rendszerben.",
+    exampleZones: [{ name: "1. zóna", zones: "Barcelona város" }, { name: "T-casual", zones: "10 utazás, nem átruházható" }, { name: "T-usual", zones: "30 nap korlátlan" }],
+    singleZonePrice: 2.65, dailyPrice: 11.2, websiteUrl: "https://www.atm.cat/", color: "#D50032",
+  },
+  {
+    id: "renfe-cercanias", name: "Renfe Cercanías", abbreviation: "Cercanías", region: "Nagyvárosi agglomerációk", emoji: "🚆",
+    zonesCount: 0, description: "Az elővárosi vasút — a napi ingázás gerince Madridban, Barcelonában (ott Rodalies), Valenciában, Sevillában és Bilbaóban. Zóna- vagy táv-alapú, a városi bérletbe jellemzően beleszámít.",
+    exampleZones: [{ name: "Madrid, 1 zóna", zones: "~1,80 €" }, { name: "Barcelona, 1 zóna", zones: "~2,65 €" }, { name: "Bérlettel", zones: "a városi abonóba beletartozik" }],
+    singleZonePrice: 1.8, dailyPrice: 0, websiteUrl: "https://www.renfe.com/es/es/cercanias", color: "#8B1A3A",
+  },
+  {
+    id: "renfe-ave", name: "Renfe AVE (nagysebességű)", abbreviation: "AVE", region: "Országos", emoji: "🚄",
+    zonesCount: 0, description: "Európa leghosszabb nagysebességű hálózata. Madrid–Barcelona ~2,5 óra, Madrid–Sevilla ~2,5 óra — ajtótól ajtóig gyakran GYORSABB, mint a repülő. Az ár a foglalás idejétől függ, mint a repülőnél.",
+    exampleZones: [{ name: "Madrid → Barcelona", zones: "~30–120 € (mikor foglalsz)" }, { name: "Madrid → Sevilla", zones: "~25–90 €" }, { name: "Olcsó márkák", zones: "Avlo, Ouigo, Iryo" }],
+    singleZonePrice: 30, dailyPrice: 0, websiteUrl: "https://www.renfe.com/", color: "#7B1FA2",
+  },
+  {
+    id: "emt-valencia", name: "Valencia / Alicante (helyi)", abbreviation: "EMT / TRAM", region: "Costa Blanca", emoji: "🚊",
+    zonesCount: 0, description: "Valenciában az EMT (busz) és a Metrovalencia, Alicantéban a TRAM. ⚠️ Nem kompatibilisek a madridi vagy barcelonai bérletekkel — külön kártya kell.",
+    exampleZones: [{ name: "Valencia, 1 út", zones: "~1,50 €" }, { name: "Alicante TRAM", zones: "~1,45 €-tól" }, { name: "Bérlet", zones: "helyi rendszer szerint" }],
+    singleZonePrice: 1.5, dailyPrice: 4.0, websiteUrl: "https://www.metrovalencia.es/", color: "#0072BC",
+  },
+];
+
+export const ES_TICKET_TYPES: TicketType[] = [
+  { id: "sencillo", name: "Billete sencillo (egyszeri jegy)", emoji: "🎫", description: "Egy utazás. A legdrágább mód — ha hetente többször utazol, szinte mindig megéri a 10-utas jegy vagy a bérlet.", price: "~1,50–2,65 € (városonként)", validity: "1 utazás", bestFor: "Alkalmi utazás, turista" },
+  { id: "t-casual", name: "10 utazásos jegy (T-casual / metrobús)", emoji: "🎟️", description: "Tíz utazás egy kártyán, jelentős kedvezménnyel az egyszeri jegyhez képest. Barcelonában T-casual, Madridban metrobús a neve. ⚠️ A T-casual NEM osztható meg többek közt.", price: "~12–13 € / 10 út", validity: "Amíg el nem fogy", bestFor: "Heti 2–4 utazás" },
+  { id: "abono-mensual", name: "Abono mensual (havi bérlet)", emoji: "📅", description: "Korlátlan utazás a zónádon belül, egy naptári hónapra. Napi ingázónak szinte mindig ez a legolcsóbb.", price: "~20–60 € (zónától függően)", validity: "1 hónap", bestFor: "Napi ingázó" },
+  { id: "abono-joven", name: "⭐ Abono joven (26 év alatt)", emoji: "🧑‍🎓", description: "A legnagyobb kedvezmény Spanyolországban. Madridban a 26 év alattiak havi fix áron KORLÁTLANUL utazhatnak az EGÉSZ közösségben — bármelyik zónában. Más közösségekben is van fiatal-kedvezmény, más feltételekkel.", price: "Madrid: ~20 € / hó", validity: "1 hónap (megújítható)", bestFor: "26 év alatti diák vagy dolgozó" },
+  { id: "renfe-abono", name: "Renfe bérlet / többutas jegy", emoji: "🚆", description: "A Cercanías és a közepes távú vonatokra van többutas jegy és bérlet is. Az elmúlt években több átmeneti állami kedvezmény is élt ezeken a vonalakon — érdemes ránézni, mi van érvényben.", price: "vonalanként eltérő", validity: "1 hó / utazásszám", bestFor: "Vonatos ingázó" },
+  { id: "ave-anticipado", name: "AVE előre foglalt jegy", emoji: "🚄", description: "A nagysebességű vonat ára a repülőjegy logikáját követi: minél korábban foglalsz, annál olcsóbb. Az Avlo (Renfe), az Ouigo és az Iryo a fapados márkák ugyanazokon a vonalakon.", price: "~7 €-tól (Avlo/Ouigo)", validity: "Adott vonatra", bestFor: "Belföldi távolsági út" },
+];
+
+export const ES_MOBILE_APPS: MobileApp[] = [
+  { id: "renfe", name: "Renfe Cercanías", emoji: "🚆", description: "A spanyol vasút hivatalos elővárosi appja: menetrend, valós idejű járatinformáció, vonalak és állomások.", iosUrl: "https://apps.apple.com/es/app/renfe-cercanias/id1055293155", androidUrl: "https://play.google.com/store/apps/details?id=com.renfe.renfecercanias", pros: ["Hivatalos", "Real-time", "Minden agglomeráció"] },
+  { id: "renfe-billetes", name: "Renfe", emoji: "🚄", description: "Jegyvásárlás a nagysebességű és távolsági vonatokra, digitális jegy, foglalás-kezelés.", iosUrl: "https://apps.apple.com/es/app/renfe/id1006925439", androidUrl: "https://play.google.com/store/apps/details?id=com.renfe.renfeticket", pros: ["Jegyvásárlás", "Digitális jegy", "AVE + Avlo"] },
+  { id: "citymapper", name: "Citymapper", emoji: "🗺️", description: "Madridra és Barcelonára a legjobb door-to-door útvonaltervező — minden közlekedési mód, valós idejű adatokkal.", iosUrl: "https://apps.apple.com/es/app/citymapper/id469463298", androidUrl: "https://play.google.com/store/apps/details?id=com.citymapper.app.release", pros: ["Door-to-door", "Madrid + Barcelona", "Real-time"] },
+];
+
+export const ES_TRANSPORT_TIPS: { emoji: string; title: string; body: string }[] = [
+  { emoji: "⭐", title: "26 alatt: az abono joven a legnagyobb spórolás", body: "Madridban a 26 év alattiak havi fix áron (~20 €) KORLÁTLANUL utazhatnak az EGÉSZ közösségben — bármelyik zónában, metrón, buszon és Cercanías-vonaton. Ez nagyságrenddel olcsóbb a felnőtt bérletnél. Más közösségekben is van fiatal-kedvezmény, kérdezz rá." },
+  { emoji: "🚄", title: "Belföldön a vonat sokszor jobb, mint a repülő", body: "Madrid–Barcelona AVE-vel ~2,5 óra, városközponttól városközpontig. Repülővel a menetidő rövidebb, de a reptéri transzferrel és a becsekkolással együtt jellemzően hosszabb ÉS drágább. Az Avlo, az Ouigo és az Iryo a fapados márkák ugyanazokon a sínpárokon." },
+  { emoji: "⚠️", title: "A városi bérletek NEM kompatibilisek", body: "A madridi abono Barcelonában semmit nem ér, és fordítva. Minden nagyváros önálló rendszer, saját kártyával. Ha költözöl, számolj egy új kártya beszerzésével." },
+  { emoji: "🎟️", title: "Ne egyszeri jegyet vegyél", body: "A billete sencillo a legdrágább mód. Már heti 2–3 utazásnál megéri a 10-utas jegy (T-casual / metrobús), napi ingázásnál pedig szinte mindig a havi bérlet." },
+  { emoji: "📅", title: "A havi bérlet NAPTÁRI hónapra szól", body: "Nem 30 napra a vásárlástól, hanem a hónap végéig — ha 20-án veszed, 10 napra fizetted ki a teljes árat. Hónap elején vedd meg." },
+  { emoji: "🏝️", title: "A szigeteken más a helyzet", body: "A Baleárokon és a Kanári-szigeteken nincs metró és nincs elővárosi vasút (Palma és Tenerife kivételével részben) — ott a busz (guagua a Kanárikon) és az autó a valódi opció. Számolj ezzel, ha ott keresel lakást." },
+];
+
 export interface GbTravelInput {
   /** Hány NAPON utazol egy héten (a plafon napi alapon számol). */
   daysPerWeek: number;

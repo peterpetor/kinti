@@ -233,6 +233,47 @@ export const FLIGHT_CONFIG: Record<string, FlightConfig> = {
       { emoji: "🚂", title: "Vonat-alternatíva gyakorlatilag nincs", body: "London–Budapest vonattal 20+ óra, több átszállással, és jellemzően DRÁGÁBB a repülőnél. Bécsből vagy Münchenből még van értelme éjszakai vonatnak, Angliából nincs." },
     ],
   },
+  // ⚠️ SPANYOLORSZÁG. Két dolog tér el élesen a többi országtól:
+  //   1) A magyar közösség NEM a fővárosban koncentrálódik, hanem a tengerparti
+  //      és szigeti üdülőövezetekben (Costa del Sol, Costa Blanca, Baleárok,
+  //      Kanárik) — ezért az indulási repterek listája nem „Madrid + 2 nagyváros".
+  //   2) A KANÁRI-SZIGETEK külön világ: onnan jellemzően NINCS közvetlen járat
+  //      Budapestre, mindig át kell szállni. Ezt a tippekben ki is mondjuk,
+  //      mert egy Tenerifén élő magyarnak a „2 óra repülés" becslés hamis lenne.
+  ES: {
+    country: "ES",
+    origins: [
+      { code: "MAD", name: "Madrid-Barajas", city: "Madrid", emoji: "🇪🇸" },
+      { code: "BCN", name: "Barcelona-El Prat", city: "Barcelona", emoji: "🇪🇸" },
+      { code: "AGP", name: "Málaga-Costa del Sol", city: "Málaga", emoji: "🇪🇸" },
+      { code: "ALC", name: "Alicante-Elche", city: "Alicante", emoji: "🇪🇸" },
+      { code: "VLC", name: "Valencia", city: "Valencia", emoji: "🇪🇸" },
+      { code: "PMI", name: "Palma de Mallorca", city: "Palma", emoji: "🇪🇸" },
+      { code: "TFS", name: "Tenerife Sur", city: "Tenerife", emoji: "🇪🇸" },
+    ],
+    home: BUD,
+    originFlag: "🇪🇸",
+    homeFlag: "🇭🇺",
+    currency: "€",
+    roundStep: 10,
+    airlines: [
+      { id: "wizzair", name: "WizzAir", type: "low-cost", routes: ["MAD", "BCN", "AGP", "ALC", "VLC", "PMI", "TFS"], color: "#C6037E", emoji: "💜", notes: "A legszélesebb magyar útvonalhálózat Spanyolországból. Olcsó alapár, minden poggyász külön fizetős — a kézipoggyász mérete szigorúan ellenőrzött.", url: "https://wizzair.com/" },
+      { id: "ryanair", name: "Ryanair", type: "low-cost", routes: ["MAD", "BCN", "AGP", "ALC", "VLC", "PMI"], color: "#073590", emoji: "💙", notes: "Erős spanyol jelenlét. Nagyon olcsó alapár, de a fizetős extrák (ülőhely, poggyász, beszállókártya) gyorsan hozzáadódnak.", url: "https://www.ryanair.com/" },
+      { id: "vueling", name: "Vueling", type: "low-cost", routes: ["BCN"], color: "#FFCC00", emoji: "💛", notes: "Spanyol low-cost, barcelonai bázissal. A belföldi csatlakozásoknál (pl. a szigetekről) gyakran ez a legkényelmesebb kombináció.", url: "https://www.vueling.com/" },
+      { id: "iberia", name: "Iberia", type: "full-service", routes: ["MAD"], color: "#D7192D", emoji: "🇪🇸", notes: "Madridból, drágább, de a jegyben van kézipoggyász, és a szigetekről van rá belföldi csatlakozás egy jegyen.", url: "https://www.iberia.com/" },
+    ],
+    // Hasonló távolság, mint Angliából, de sűrűbb a verseny és erősebb a
+    // nyári csúcs (a turista-szezon felnyomja a saját járatainkat is).
+    seasons: seasons("€", [[30, 100], [50, 150], [100, 260], [170, 420]]),
+    tips: [
+      { emoji: "🏝️", title: "⚠️ A Kanári-szigetekről NINCS közvetlen járat", body: "Tenerifétől vagy Gran Canariától Budapestig mindig át kell szállni (jellemzően Madridon, Barcelonán vagy egy másik európai hubon). Számolj 8–12 óra teljes úttal, és a szigetről induló belföldi szakasz árával — ez sokszor annyi, mint maga a nemzetközi jegy." },
+      { emoji: "🌞", title: "A tengerparti repterek olcsóbbak lehetnek a fővárosnál", body: "Málaga, Alicante és Palma erős low-cost bázisok a turizmus miatt — a magyar járatokon gyakran olcsóbb jegy van innen, mint Madridból. Ha nem vagy a fővároshoz kötve, hasonlítsd össze mind a hármat." },
+      { emoji: "🎒", title: "A poggyász viszi el a különbséget", body: "A low-cost alapjegy CSAK egy ülés alá férő kis táskát enged. Kézipoggyász a kalapba + feladott bőrönd oda-vissza könnyen +70–110 € — a „30 eurós jegy” így lesz 140." },
+      { emoji: "📅", title: "Foglalj 6–8 héttel előre", body: "5+ hónappal még magas, 2 héten belül drága. A hét közepe (kedd–szerda) 15–20%-kal olcsóbb, és a kora reggeli járatok is." },
+      { emoji: "🎄", title: "Karácsony és augusztus a két csúcs", body: "December 18–január 6. és augusztus első fele a legdrágább. Augusztusban ráadásul a spanyol belföldi turizmus is tetőzik — a szigeti csatlakozások is felmennek." },
+      { emoji: "🚄", title: "Belföldön a vonat gyakran jobb, mint a repülő", body: "Madrid–Barcelona, Madrid–Sevilla, Madrid–Valencia között az AVE nagysebességű vonat ajtótól ajtóig sokszor gyorsabb, mint a repülő — és a reptéri transzfer nélkül olcsóbb is. A Budapestre tartó járathoz is jó ráhordó." },
+    ],
+  },
 };
 
 /** Egy ország járat-konfigja (vagy null, ha nincs felvéve). */

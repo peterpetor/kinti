@@ -121,9 +121,28 @@ export function courseLanguageName(code: string | null | undefined): string {
   }
 }
 
-/** A közigazgatási régió-egység neve. CH: kanton; AT/DE/NL: tartomány. */
+/**
+ * A közigazgatási régió-egység neve. CH: kanton; AT/DE: tartomány;
+ * NL: provincia; GB/ES: régió.
+ *
+ * ⚠️ EZT A LISTÁT A `regions.ts` REGION_LABEL-JÉVEL SZINKRONBAN KELL TARTANI —
+ * ugyanarra a fogalomra nem szólhat kétféleképpen a UI. A két függvény
+ * SZÁNDÉKOSAN külön modulban él (a countries.ts-t szinte minden oldal
+ * behúzza, a regions.ts viszont a teljes régió-adatbázist is hozná), ezért a
+ * szinkront nem import, hanem teszt őrzi (es-country.test.ts).
+ *
+ * ⚠️ 2026-07-29: a teszt EGY MEGLÉVŐ eltérést is kimutatott — Hollandiára ez a
+ * függvény „tartomány"-t adott, a REGION_LABEL viszont „provincia"-t, így a
+ * holland felhasználó képernyőtől függően más szót látott ugyanarra. A helyes
+ * a „provincia" (az a szándékos, ország-illő megnevezés).
+ *
+ * ⚠️ ES-nél a „régió" SZÁNDÉKOS: Spanyolországban két közigazgatási szint van,
+ * és mindkettőt „tartomány"-nak szokás fordítani (17 comunidad autónoma és
+ * 50 provincia). A „tartomány" ezért félreértést szülne — ld. regions.ts.
+ */
 export function regionWord(code: string | null | undefined): string {
-  if (code === "GB") return "régió";
+  if (code === "GB" || code === "ES") return "régió";
+  if (code === "NL") return "provincia";
   return code && code !== "CH" ? "tartomány" : "kanton";
 }
 

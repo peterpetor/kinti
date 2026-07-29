@@ -212,6 +212,30 @@ const GB_TIPS = [
   { icon: "📊", text: "Az iskolák minőségét az Ofsted értékeli, és a jelentések nyilvánosak — iskolaválasztás előtt érdemes elolvasni őket." },
 ];
 
+// ⚠️ SPANYOLORSZÁG. Két dolgot kell megérteni, mielőtt a szinteket nézed:
+//   1) Az oktatás AUTONÓM KÖZÖSSÉGI hatáskör — az országos váz mindenütt azonos,
+//      de a beiratkozás menete, a pontozás és a TANÍTÁS NYELVE közösségenként
+//      eltér. Ezért a jegyzet a saját közösséghez irányít, nem ad „egy igazságot".
+//   2) A beiratkozás egy szűk, évente egyszeri tavaszi ablakban zajlik. Aki
+//      lecsúszik róla, a maradék helyekre kerül — ez a leggyakoribb, elkerülhető
+//      kár, amit egy kiköltöző magyar család elszenved.
+const ES_LEVELS: SchoolLevel[] = [
+  { name: "Educación infantil", nameDe: "Óvoda (0–6 év)", emoji: "🎨", ages: "0–6 év", years: 6, color: "text-[#f59e0b]", bg: "bg-[#fef3c7]", description: "Két szakasz: az első ciklus (0–3 év) fizetős és korlátozott férőhelyű, a második ciklus (3–6 év) viszont az állami iskolákban INGYENES, és gyakorlatilag minden gyerek jár rá.", tip: "A második ciklus (3–6 év) nem kötelező, de ez a legjobb nyelvi felzárkózás — a gyerekek itt szedik fel a spanyolt észrevétlenül." },
+  { name: "Educación primaria", nameDe: "Általános iskola", emoji: "📚", ages: "6–12 év", years: 6, color: "text-[#10b981]", bg: "bg-[#d1fae5]", description: "Hat évfolyam (1.º–6.º), a tankötelezettség első szakasza. A gyerek jellemzően végig ugyanabban az iskolában marad, és a tanév szeptember közepén indul.", tip: "Az évfolyam-besorolás az ÉLETKOR szerint megy, nem a magyar bizonyítvány szerint — a honosítás (homologación) ezt később rendezi." },
+  { name: "ESO", nameDe: "Educación Secundaria Obligatoria", emoji: "🏫", ages: "12–16 év", years: 4, color: "text-[#6366f1]", bg: "bg-[#ede9fe]", description: "⚠️ Itt NINCS korai szétválasztás képzési ágakra, mint Németországban vagy Hollandiában: minden gyerek ugyanazt az ESO-t járja 16-ig. Ezzel ér véget a tankötelezettség.", tip: "Az ESO sikeres elvégzésével kapott bizonyítvány (título de Graduado en ESO) a belépő a bachilleratóhoz és a szakképzéshez is." },
+  { name: "Bachillerato / FP", nameDe: "Érettségi vagy szakképzés", emoji: "🎓", ages: "16–18 év", years: 2, color: "text-[#0ea5e9]", bg: "bg-[#e0f2fe]", description: "16 után válik szét az út. A bachillerato az egyetemi irány, a Formación Profesional (FP) a szakmai — az FP ma már nem zsákutca, felsőfokú szintje is van.", tracks: ["Bachillerato — 2 év, több szakiránnyal (tudományos, humán, művészeti)", "FP Grado Medio — középfokú szakképzés, ESO után", "FP Grado Superior — felsőfokú szakképzés, bachillerato után", "Az egyetemhez a bachillerato után EBAU-vizsga (»selectividad«) kell"], tip: "A magyar szakmunkás-bizonyítvány elismertetése külön eljárás — a Kinti Ügyintézés-varázslójában megtalálod a hivatalos belépőt." },
+];
+const ES_NOTE = "Spanyolországban a tankötelezettség 6–16 év (primaria + ESO). ⚠️ A rendszer legfontosabb tulajdonsága magyar szemmel NEM a szerkezet, hanem a HATÁSKÖR: az oktatás az autonóm közösségeké. A váz országos, de a beiratkozás menete, a pontozás és több közösségben a TANÍTÁS NYELVE is eltér — Katalóniában a katalán, Baszkföldön a baszk, Galiciában a galiciai, a Valenciai Közösségben a valenciai is tanítási nyelv. Iskolaválasztás előtt MINDIG a saját közösséged oktatási portálját nézd.";
+const ES_TIPS = [
+  { icon: "📅", text: "⚠️ A LEGFONTOSABB: a beiratkozás (escolarización) egy szűk, évente EGYSZERI tavaszi ablakban zajlik, közösségenként eltérő időpontban. Aki lecsúszik róla, csak a maradék szabad helyekre jelentkezhet — jellemzően nem a körzeti iskolába. Ehhez időzítsd az empadronamientót, ne fordítva." },
+  { icon: "🏛️", text: "A felvételi pontozás legerősebb eleme a LAKÓHELY (vagy a szülő munkahelye) az iskola körzetében — ezt az empadronamiento igazolja. Utána jön a testvér az iskolában, majd a jövedelmi és családi helyzet." },
+  { icon: "🏫", text: "Háromféle iskola van: pública (állami, ingyenes), concertada (egyházi vagy alapítványi, de államilag támogatott — jellemzően jelképes havidíjjal) és privada (magán, tandíjas). A concertada nagyon elterjedt, sokan ezt választják." },
+  { icon: "🗣️", text: "Ha a gyerek nem tud spanyolul: az újonnan érkezőknek felzárkóztató nyelvi támogatás jár, de ennek formája és neve közösségenként más. Kérdezd meg konkrétan az iskolában, mit tudnak biztosítani." },
+  { icon: "📝", text: "Beiratkozáshoz: útlevél/személyi, a gyerek születési anyakönyvi kivonata, empadronamiento-igazolás, egészségügyi kártya vagy oltási könyv, és az előző iskola bizonyítványa — a fordítást gyakran kérik." },
+  { icon: "🎓", text: "A magyar bizonyítványt honosítani kell (homologación / convalidación) az oktatási minisztériumnál. ⚠️ Ez időigényes, DE a gyerek közben feltételesen már beiratkozhat és járhat iskolába — ne várd meg a végleges döntést az iskolakezdéssel." },
+  { icon: "🍽️", text: "Az állami iskola tandíjmentes, de a menza (comedor), a tankönyvek és a délutáni foglalkozások külön fizetendők. Alacsony jövedelemnél a közösség ad támogatást (beca de comedor, beca de libros) — ezt IGÉNYELNI kell." },
+];
+
 const NL_TIPS = [
   { icon: "📝", text: "Beiratkozáshoz: útlevél/igazolvány, BSN, uittreksel BRP (lakcím-kivonat), és az előző iskola bizonyítványa (lehetőleg hitelesített fordítással)." },
   { icon: "🗣️", text: "Ha a gyerek nem tud hollandul: nieuwkomersklas / taalklas (középiskolában ISK — internationale schakelklas) segíti a felzárkózást — ingyenes." },
@@ -240,11 +264,12 @@ export function SchoolSystem() {
   const isDE = country === "DE";
   const isNL = country === "NL";
   const isGB = country === "GB";
-  const isNational = isAT || isDE || isNL || isGB; // nemzeti rendszer (nincs régió-választó)
+  const isES = country === "ES";
+  const isNational = isAT || isDE || isNL || isGB || isES; // nemzeti rendszer (nincs régió-választó)
   const [selected, setSelected] = useState<CantonCode>("ZH");
   const canton = CANTONS[selected];
-  const levels = isGB ? GB_LEVELS : isNL ? NL_LEVELS : isDE ? DE_LEVELS : isAT ? AT_LEVELS : canton.levels;
-  const regionTitle = isGB ? "Anglia" : isNL ? "Hollandia" : isDE ? "Németország" : isAT ? "Ausztria" : canton.name;
+  const levels = isES ? ES_LEVELS : isGB ? GB_LEVELS : isNL ? NL_LEVELS : isDE ? DE_LEVELS : isAT ? AT_LEVELS : canton.levels;
+  const regionTitle = isES ? "Spanyolország" : isGB ? "Anglia" : isNL ? "Hollandia" : isDE ? "Németország" : isAT ? "Ausztria" : canton.name;
 
   const langLabel: Record<string, string> = { de: "🇩🇪 Német", fr: "🇫🇷 Francia", it: "🇮🇹 Olasz" };
 
@@ -255,9 +280,11 @@ export function SchoolSystem() {
         <div className="flex items-start gap-3">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary text-white text-2xl">🏫</span>
           <div>
-            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">{isGB ? "Angol Iskolarendszer" : isNL ? "Holland Iskolarendszer" : isDE ? "Német Iskolarendszer" : isAT ? "Osztrák Iskolarendszer" : "Svájci Iskolarendszer"}</h1>
+            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">{isES ? "Spanyol Iskolarendszer" : isGB ? "Angol Iskolarendszer" : isNL ? "Holland Iskolarendszer" : isDE ? "Német Iskolarendszer" : isAT ? "Osztrák Iskolarendszer" : "Svájci Iskolarendszer"}</h1>
             <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
-              {isGB
+              {isES
+                ? "A spanyol iskolarendszer szintjei kiköltöző szülőknek — az infantiltól az ESO-n át a bachilleratóig és az FP-ig."
+                : isGB
                 ? "Az angol iskolarendszer szintjei kiköltöző szülőknek — a Receptiontől a GCSE-n át az A-levelig."
                 : isNL
                 ? "A holland iskolarendszer szintjei kiköltöző szülőknek — a basisschooltól a VMBO/HAVO/VWO-n át az MBO/HBO/WO-ig."
@@ -304,7 +331,7 @@ export function SchoolSystem() {
             {isGB ? "🏴 Angol nyelvű" : isNL ? "🇳🇱 Holland nyelvű" : isAT || isDE ? "🇩🇪 Német nyelvű" : `${langLabel[canton.lang]} nyelvű`}
           </span>
         </div>
-        <p className="text-[12.5px] leading-snug text-ink-muted">{isGB ? GB_NOTE : isNL ? NL_NOTE : isDE ? DE_NOTE : isAT ? AT_NOTE : canton.note}</p>
+        <p className="text-[12.5px] leading-snug text-ink-muted">{isES ? ES_NOTE : isGB ? GB_NOTE : isNL ? NL_NOTE : isDE ? DE_NOTE : isAT ? AT_NOTE : canton.note}</p>
       </div>
 
       {/* Vizuális szintlépők */}
@@ -368,7 +395,7 @@ export function SchoolSystem() {
       {/* Általános tippek */}
       <div className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
         <h2 className="text-[13px] font-extrabold text-ink">📌 Amit minden szülőnek tudni kell</h2>
-        {(isGB ? GB_TIPS : isNL ? NL_TIPS : isDE ? DE_TIPS : isAT ? AT_TIPS : [
+        {(isES ? ES_TIPS : isGB ? GB_TIPS : isNL ? NL_TIPS : isDE ? DE_TIPS : isAT ? AT_TIPS : [
           { icon: "📝", text: "Beiratkozáshoz: útlevél, tartózkodási engedély, és az előző iskola bizonyítványa (lehetőleg hitelesített fordítással)." },
           { icon: "🗣️", text: "Ha a gyerek nem tud svájcin / franciául / olaszul: a legtöbb kanton ingyenes INTENSIVKURS-t (felzárkóztató tanfolyamot) biztosít." },
           { icon: "🚌", text: "Az iskolabusz (Schulbus) sok helyen ingyenes — a körzet határolja meg. A lakcím megválasztása kulcsfontosságú." },

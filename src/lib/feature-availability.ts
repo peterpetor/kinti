@@ -160,6 +160,11 @@ export const ES_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   "tudasbazis",        // ⭐ VAN ES guide-bank (guides.ts GUIDES_ES, 12 cikk BOE/gob.es forrásból)
   "ugyintezes",        // ⭐ VAN ES csekklista-bank (CHECKLISTS_ES, 6 db, cita previa-tudatos)
   "berkalkulator",     // ⭐ VAN ES-számítás (computeSalaryES: IRPF + Seguridad Social, 12/14 paga)
+  "lakberles",         // ⭐ VAN ES rent-konfig (LAU, 1 havi fianza, temporada-csapda)
+  "repulojegy",        // ⭐ VAN ES járat-konfig (7 reptér, ⚠️ a Kanárikról nincs közvetlen)
+  "iskolarendszer",    // ⭐ VAN ES iskolarendszer (infantil→primaria→ESO→bachillerato/FP)
+  "vizum",             // ⭐ VAN ES letelepedés-varázsló (certificado de registro, cita previa-tudatos)
+  "kozlekedes",        // ⭐ VAN ES közlekedés (CRTM/ATM zónák, Renfe Cercanías + AVE, abono joven)
   // ⚠️ „spanyol-oneletrajz" NEM ide tartozik — a CV-készítőket a
   //   CV_FEATURE_COUNTRIES tábla kapuzza (ld. lentebb), MINDEN ág előtt.
   // ⚠️ „vam" SZÁNDÉKOSAN KIMARAD: Spanyolország EU-tag, nincs vámhatár

@@ -17,7 +17,9 @@ export type PermitType =
   | "de-freizug" | "de-anmeldung" | "de-dauer" | "de-aufenthalt"
   // Hollandia (EU: vrij verkeer → BRP-inschrijving/BSN → duurzaam verblijf; verblijfsvergunning nem-EU-nak)
   | "nl-vrijverkeer" | "nl-inschrijving" | "nl-duurzaam" | "nl-verblijf"
-  | "gb-settled" | "gb-presettled" | "gb-skilled" | "gb-other";
+  | "gb-settled" | "gb-presettled" | "gb-skilled" | "gb-other"
+  // Spanyolország (EU: szabad beutazás → registro/NIE → permanente; tarjeta nem-EU-nak)
+  | "es-libre" | "es-registro" | "es-permanente" | "es-tarjeta";
 
 export interface PermitInfo {
   type: PermitType;
@@ -440,6 +442,73 @@ export const PERMITS: Record<PermitType, PermitInfo> = {
     applyTo: "Holland külképviselet (MVV) + Immigratie- en Naturalisatiedienst (IND).",
     links: [{ label: "IND — Working in the Netherlands", url: "https://ind.nl/en/work" }],
   },
+  // ⚠️ SPANYOLORSZÁG. A jogi helyzet egyszerű (EU-tag, szabad mozgás), a
+  // GYAKORLATI viszont nem: a regisztrációhoz cita previa kell, ami hetekre
+  // előre elfogyhat. Ezért minden spanyol bejegyzés kimondja az időzítést —
+  // a legtöbb elakadás nem jogi, hanem naptári.
+  "es-libre": {
+    type: "es-libre",
+    name: "Szabad tartózkodás (első 3 hónap)",
+    emoji: "🛬",
+    color: "#3a6ea5",
+    shortDesc: "Uniós polgárként az első 3 hónapban semmit nem kell intézned",
+    duration: "Legfeljebb 3 hónap — utána regisztrációs kötelezettség.",
+    workPermitted: "Igen, korlátlanul — uniós polgárként engedély nélkül dolgozhatsz.",
+    cantonChange: "Szabad — az országon belül bárhova költözhetsz.",
+    familyReunion: "Igen; uniós családtagra ugyanez vonatkozik.",
+    pros: ["Semmilyen engedély nem kell", "Azonnal munkába állhatsz", "Elég az érvényes útlevél vagy személyi"],
+    cons: ["3 hónap után regisztrálni KELL", "NIE nélkül nincs szerződés, bankszámla, bejelentés", "Az empadronamiento nélkül nincs egészségügyi kártya"],
+    applyTo: "Nincs teendő — de az empadronamientót és a NIE-t érdemes AZONNAL elkezdeni (időpont-várakozás!).",
+    links: [{ label: "Real Decreto 240/2007 (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-4184" }],
+  },
+  "es-registro": {
+    type: "es-registro",
+    name: "Certificado de registro (zöld igazolás)",
+    emoji: "🪪",
+    color: "#16a34a",
+    shortDesc: "Uniós polgár regisztrációja — 3 hónapnál hosszabb tartózkodáshoz kötelező",
+    duration: "Határozatlan, de 5 év után érdemes állandóra váltani.",
+    workPermitted: "Igen, korlátlanul.",
+    cantonChange: "Szabad; címváltozásnál az empadronamientót frissítsd.",
+    familyReunion: "Igen; nem-EU családtag külön kártyát (tarjeta) kap.",
+    pros: ["Tartalmazza a NIE-számot — ez kell minden ügyhöz", "Egyszeri eljárás, nem kell megújítani", "Uniós polgárként alanyi jogon jár, ha teljesíted a feltételt"],
+    cons: ["⚠️ Cita previa kell — hetekre előre elfogyhat", "Igazolni kell, miből élsz (munka / fedezet + biztosítás)", "A díjat ELŐRE be kell fizetni (modelo 790, 012)", "NEM személyi igazolvány — az útlevelet is vinni kell mellé"],
+    applyTo: "Oficina de Extranjería vagy a Policía Nacional idegenrendészeti ügyfélszolgálata, EX-18 nyomtatvánnyal.",
+    links: [
+      { label: "Cita previa — extranjería", url: "https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus" },
+      { label: "Real Decreto 240/2007 (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-4184" },
+    ],
+  },
+  "es-permanente": {
+    type: "es-permanente",
+    name: "Residencia permanente (5 év után)",
+    emoji: "🏅",
+    color: "#0ea5e9",
+    shortDesc: "Állandó tartózkodási igazolás 5 év folyamatos tartózkodás után",
+    duration: "Határozatlan.",
+    workPermitted: "Igen, korlátlanul.",
+    cantonChange: "Szabad.",
+    familyReunion: "Igen, kedvezőbb feltételekkel.",
+    pros: ["Már NEM kell igazolnod, miből élsz", "Erősebb jogállás, nehezebben veszíthető el", "Az állampolgársághoz vezető út része"],
+    cons: ["5 év folyamatos, jogszerű tartózkodás kell hozzá", "Hosszabb távollét megszakíthatja a folyamatosságot", "⚠️ Ehhez is cita previa kell"],
+    applyTo: "Oficina de Extranjería — a folyamatos tartózkodás igazolásával.",
+    links: [{ label: "Real Decreto 240/2007 (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-4184" }],
+  },
+  "es-tarjeta": {
+    type: "es-tarjeta",
+    name: "TIE — Tarjeta de Identidad de Extranjero",
+    emoji: "💳",
+    color: "#e3a233",
+    shortDesc: "Nem-uniós állampolgárok tartózkodási kártyája",
+    duration: "A megadott engedély szerint, megújítandó.",
+    workPermitted: "Az engedély típusától függ (munkavállalási jogot külön kell tartalmaznia).",
+    cantonChange: "Az engedély feltételei szerint.",
+    familyReunion: "Külön eljárás (reagrupación familiar), feltételekkel.",
+    pros: ["Fényképes okmány — a zöld igazolással ellentétben azonosításra is jó", "Uniós polgár családtagjaként kedvezőbb elbírálás"],
+    cons: ["Nem uniós polgárként bonyolultabb és hosszabb eljárás", "Ujjnyomat-vétel miatt személyes megjelenés kötelező", "Megújítási kötelezettség"],
+    applyTo: "Oficina de Extranjería / Policía Nacional — ujjnyomat-vétellel.",
+    links: [{ label: "Policía Nacional — ügyfélportál", url: "https://sede.policia.gob.es/portalCiudadano/" }],
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -470,6 +539,7 @@ export function evaluatePermit(a: WizardAnswers, country: string = "CH"): Wizard
   if (country === "DE") return evaluatePermitDE(a);
   if (country === "NL") return evaluatePermitNL(a);
   if (country === "GB") return evaluatePermitGB(a);
+  if (country === "ES") return evaluatePermitES(a);
   // 1. Cross-border (G-engedély) — különleges eset
   if (a.purpose === "cross-border") {
     return {
@@ -880,4 +950,103 @@ function evaluatePermitGB(a: WizardAnswers): WizardResult {
   notes.push("Egészségügyi és gondozói szakmákban a Health and Care Worker vízum alacsonyabb küszöböt ad, és mentes az IHS alól — ápolóként, gondozóként ezt nézd először.");
   notes.push("⚠️ A vízum a MUNKÁLTATÓHOZ kötött: ha elveszíted az állásod, jellemzően 60 napod van új szponzort találni.");
   return { primary: "gb-skilled", alternatives: ["gb-other"], notes };
+}
+
+
+/**
+ * Spanyol letelepedés-értékelő.
+ *
+ * ⚠️ A JOGI kép egyszerű (EU-tag → szabad mozgás), ezért a hozzáadott érték
+ * NEM a jogszabály ismertetése, hanem az IDŐZÍTÉS. A spanyolországi elakadások
+ * túlnyomó része abból ered, hogy a felhasználó a harmadik hónap végén kezdi
+ * intézni a regisztrációt — mire időpontot kap, a határidő lejárt. Ezért minden
+ * ág kimondja, mikor kell ELINDULNI, nem csak azt, hogy mit kell tenni.
+ */
+function evaluatePermitES(a: WizardAnswers): WizardResult {
+  const CITA_NOTE =
+    "⚠️ IDŐZÍTÉS: az idegenrendészeti ügyintézéshez előzetes időpont (cita previa) kell, ami nagyvárosban hetekre előre elfogyhat. A regisztrációt a beköltözés ELSŐ hetében indítsd el, ne a harmadik hónap végén.";
+
+  // Nem-uniós állampolgár — külön rendszer, itt csak irányt adunk.
+  if (a.citizenship === "non-eu") {
+    return {
+      primary: "es-tarjeta",
+      alternatives: ["es-registro"],
+      notes: [
+        "Nem uniós állampolgárként a spanyol idegenrendészeti rendszer (TIE) vonatkozik rád, nem az uniós szabad mozgás.",
+        "Ha uniós polgár (pl. magyar) házastársa vagy közeli hozzátartozója vagy, kedvezőbb, uniós családtagi elbírálás jár — ezt kifejezetten kérni kell.",
+        CITA_NOTE,
+        "A konkrét engedélytípust a célod (munka, tanulás, család) dönti el — ez a varázsló uniós polgárokra van hangolva, nem-uniós ügyben kérj személyre szabott tanácsot.",
+      ],
+    };
+  }
+
+  // Ingázás: Spanyolország csak Portugáliával és Franciaországgal határos —
+  // napi ingázás Magyarországról nem életszerű, de a kérdés jöhet.
+  if (a.purpose === "cross-border") {
+    return {
+      primary: "es-libre",
+      alternatives: ["es-registro"],
+      notes: [
+        "Uniós polgárként szabadon beutazhatsz és dolgozhatsz — külön határátlépő engedély nem létezik.",
+        "Ha spanyol munkáltatónak dolgozol, a Seguridad Social-bejelentés akkor is kötelező, ha nem költözöl ki véglegesen.",
+        "Ha magyar munkáltatónak dolgozol távolról, spanyol engedély nem kell — de ha 183 napnál többet töltesz itt, spanyol adóügyi illetőségű leszel. Ez a leggyakrabban elfelejtett következmény.",
+      ],
+    };
+  }
+
+  // Rövid tartózkodás (3 hónap alatt)
+  if (a.duration === "short") {
+    return {
+      primary: "es-libre",
+      alternatives: [],
+      notes: [
+        "Az első 3 hónapban uniós polgárként semmilyen engedélyt nem kell intézned — elég az érvényes útlevél vagy személyi igazolvány.",
+        "Dolgozni is szabad ez idő alatt, DE a munkáltatónak be kell jelentenie: ehhez kell a NIE és a Seguridad Social-szám.",
+        "Ha van esély rá, hogy maradsz, akkor is érdemes AZONNAL elindítani az empadronamientót és a NIE-t — az időpont-várakozás miatt.",
+      ],
+    };
+  }
+
+  // Már 5+ éve itt él → állandó tartózkodás
+  if (a.previousStay === "5-or-more" || a.duration === "permanent") {
+    return {
+      primary: "es-permanente",
+      alternatives: ["es-registro"],
+      notes: [
+        "5 év folyamatos, jogszerű tartózkodás után kérheted az állandó tartózkodási igazolást (certificado de residencia permanente).",
+        "Ennél már NEM kell igazolnod, miből élsz — ez az erősebb jogállás fő előnye.",
+        "⚠️ Ha még nincs meg az 5 év, előbb a rendes regisztráció (zöld igazolás) az út.",
+        "Spanyol állampolgárság magyarként jellemzően 10 év után kérhető, és fő szabályként a magyar állampolgárságról le kellene mondani — ez külön, alapos utánajárást igényel.",
+        CITA_NOTE,
+      ],
+    };
+  }
+
+  // 3 hónapnál hosszabb tartózkodás → regisztráció
+  const notes: string[] = [
+    "3 hónapnál hosszabb tartózkodásnál be kell jelentkezned a külföldiek központi nyilvántartásába — ezért kapod a zöld igazolást (certificado de registro), rajta a NIE-számoddal.",
+    CITA_NOTE,
+    "⚠️ A díjat (modelo 790, 012-es kód) a hivatali időpont ELŐTT kell befizetni, és a bizonylatot vinni. Enélkül nem fogadják be a kérelmet — ez a leggyakoribb ok az újrafoglalásra.",
+  ];
+
+  if (a.purpose === "work") {
+    notes.push("Munkavállalóként a megélhetést a munkaszerződés vagy a társadalombiztosítási bejelentés (alta) igazolja — ez a legegyszerűbb út.");
+    notes.push("A munkába álláshoz a NIE mellett Seguridad Social-szám is kell; azt viszont ONLINE is megkapod, időpont nélkül.");
+  } else if (a.purpose === "study") {
+    notes.push("Hallgatóként a beiratkozási igazolás + teljes körű egészségbiztosítás + a megélhetés igazolása kell.");
+    notes.push("A magánbiztosítás akkor is elfogadható, ha nincs spanyol munkaviszonyod — ez tanulóknál a bevett út.");
+  } else if (a.purpose === "family") {
+    notes.push("Uniós polgár családtagjaként a rokoni kapcsolat igazolása és az eltartás bizonyítása a kulcs.");
+    notes.push("Nem-uniós családtag NEM zöld igazolást, hanem TIE-kártyát kap — más eljárás, ujjnyomat-vétellel.");
+  } else if (a.purpose === "retired") {
+    notes.push("Nyugdíjasként elegendő anyagi fedezetet és teljes körű egészségbiztosítást kell igazolnod.");
+    notes.push("Magyar nyugdíjasként az S1 nyomtatvánnyal léphetsz be a spanyol közegészségügybe — ezt a magyar egészségbiztosítótól kérd MÉG A KIKÖLTÖZÉS ELŐTT.");
+    notes.push("⚠️ Ha 183 napnál többet töltesz itt, spanyol adóügyi illetőségű leszel, és a nyugdíjadról is itt kell bevallást adni.");
+  }
+
+  return {
+    primary: "es-registro",
+    alternatives: a.previousStay === "less-than-5" ? ["es-permanente"] : ["es-libre"],
+    notes,
+  };
 }

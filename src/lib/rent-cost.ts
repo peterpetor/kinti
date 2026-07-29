@@ -11,12 +11,13 @@
 
 export type FlatSize = "studio" | "1-room" | "2-room" | "3-room" | "4-room" | "5plus-room";
 export type HeatingType = "gas" | "oil" | "district" | "heatpump" | "pellet" | "unknown";
-export type RentCountry = "CH" | "AT" | "DE" | "NL" | "GB";
+export type RentCountry = "CH" | "AT" | "DE" | "NL" | "GB" | "ES";
 export type Region =
   | "city-zh" | "city-ge" | "city-bs" | "city-bern" | "suburb" | "rural"
   | "at-wien" | "at-graz" | "at-linz" | "at-salzburg" | "at-suburb" | "at-rural"
   | "de-munchen" | "de-berlin" | "de-frankfurt" | "de-hamburg" | "de-suburb" | "de-rural"
-  | "nl-amsterdam" | "nl-rotterdam" | "nl-denhaag" | "nl-utrecht" | "nl-suburb" | "nl-rural";
+  | "nl-amsterdam" | "nl-rotterdam" | "nl-denhaag" | "nl-utrecht" | "nl-suburb" | "nl-rural"
+  | "es-madrid" | "es-barcelona" | "es-valencia" | "es-malaga" | "es-suburb" | "es-rural";
 
 export interface FlatSizeInfo {
   id: FlatSize;
@@ -73,11 +74,24 @@ export const REGIONS: { id: Region; label: string; emoji: string; nebenkostenMod
   { id: "nl-utrecht",   label: "Utrecht",     emoji: "🏙️", nebenkostenMod: 1.10, country: "NL" },
   { id: "nl-suburb",    label: "Agglomeráció", emoji: "🏘️", nebenkostenMod: 1.00, country: "NL" },
   { id: "nl-rural",     label: "Vidék",       emoji: "🌳", nebenkostenMod: 0.85, country: "NL" },
+  // Spanyolország — a magyar közösség fő gócai. ⚠️ Málaga (Costa del Sol) és
+  // Valencia/Alicante (Costa Blanca) SZÁNDÉKOSAN külön tétel: ott él a
+  // spanyolországi magyarok jelentős része, és a lakhatási költség érdemben
+  // eltér a fővárositól — egy „nagyváros/vidék" bontás elrejtené ezt.
+  { id: "es-madrid",    label: "Madrid",       emoji: "🏙️", nebenkostenMod: 1.15, country: "ES" },
+  { id: "es-barcelona", label: "Barcelona",    emoji: "🏙️", nebenkostenMod: 1.15, country: "ES" },
+  { id: "es-valencia",  label: "Valencia / Alicante", emoji: "🏖️", nebenkostenMod: 1.00, country: "ES" },
+  { id: "es-malaga",    label: "Málaga / Costa del Sol", emoji: "🌞", nebenkostenMod: 1.05, country: "ES" },
+  { id: "es-suburb",    label: "Agglomeráció", emoji: "🏘️", nebenkostenMod: 0.95, country: "ES" },
+  { id: "es-rural",     label: "Vidék",        emoji: "🌳", nebenkostenMod: 0.80, country: "ES" },
 ];
 
 /** A választott ország régiói (a régió-választóhoz). Ismeretlen ország → CH. */
 export function regionsFor(country: string): { id: Region; label: string; emoji: string; nebenkostenMod: number }[] {
-  const c: RentCountry = country === "AT" || country === "DE" || country === "NL" || country === "GB" ? country : "CH";
+  const c: RentCountry =
+    country === "AT" || country === "DE" || country === "NL" || country === "GB" || country === "ES"
+      ? country
+      : "CH";
   return REGIONS.filter((r) => r.country === c);
 }
 
@@ -393,10 +407,55 @@ export const RENT_CONFIG: Record<RentCountry, RentCountryConfig> = {
       { label: "Shelter England", url: "https://england.shelter.org.uk/" },
     ],
   },
+  // ⚠️ SPANYOLORSZÁG. A kaució (fianza) itt a legalacsonyabb a hat ország közül
+  // — EGY havi bér —, ami magyar szemmel jó hír. A valódi kockázat máshol van:
+  // a SZERZŐDÉS TÍPUSÁBAN. A „temporada" (szezonális) szerződés kikerüli a
+  // bérlővédelmi törvényt, és sok magyart pont ezzel fosztanak meg a jogaitól,
+  // miközben azt hiszi, hosszú távra bérel. Ezért ez a konfig a fianza összege
+  // helyett a szerződéstípusra irányítja a figyelmet.
+  ES: {
+    currency: "EUR",
+    depositMonths: 1,
+    baseNkPerM2: 22,
+    depositNoun: "Fianza (kaució)",
+    nkNoun: "Comunidad + rezsi",
+    nkShort: "Rezsi",
+    depositEyebrow: "Fianza — LAU 36. cikk",
+    depositHeadline: "Egy havi bérleti díj",
+    depositAccountSub:
+      "Lakhatási bérletnél a fianza törvény szerint EGY havi bér. A tulajdonosnak le kell tennie az autonóm közösség letéti szervénél — kérd el a letét igazolását, ez a te biztosítékod.",
+    depositExtra: "none",
+    depositNote:
+      "⚠️ A fianzán FELÜL kérhetnek további garanciát (garantía adicional), de annak is van törvényi korlátja. Kezes (aval) vagy bérleti biztosítás kérése legális — az alkupozíció kérdése.",
+    depositTip:
+      "⚠️ A LEGFONTOSABB: nézd meg a szerződés CÍMÉT. Az „arrendamiento de vivienda habitual” (lakhatási bérlet) alá tartozol a bérlővédelmi törvény (LAU) alá — az „arrendamiento de temporada” (szezonális) alá NEM. Utóbbinál nincs kötelező meghosszabbítás és gyengébb a védelmed, miközben ugyanúgy ott laksz.",
+    nkTip:
+      "A hirdetett díj ritkán a teljes költség. Kérdezd meg tételesen: ki fizeti a comunidad-ot (közös költség), az IBI ingatlanadót és a vizet? Beköltözéskor fotózd le a mérőórákat, és jegyezd fel az állásukat a szerződésben.",
+    questions: [
+      { bold: "Milyen típusú a szerződés?", rest: "vivienda habitual vagy temporada? (Ez dönti el, véd-e a LAU.)" },
+      { bold: "Letették a fianzát?", rest: "melyik közösségi letéti szervnél, és mikor kapom meg az igazolást?" },
+      { bold: "Ki fizeti a comunidad-ot és az IBI-t?", rest: "a hirdetett ár tartalmazza-e?" },
+      { bold: "Hogyan emelkedik a díj?", rest: "a szerződésnek konkrétan meg kell határoznia az indexálás módját." },
+      { bold: "„Zona tensionada” a környék?", rest: "ott a bérleti díjra külön korlát lehet." },
+      { bold: "Van-e átadás-átvételi állapotfelmérés?", rest: "fotókkal — a kaució visszaszerzésénél ez dönt." },
+    ],
+    disclaimerWarning:
+      "A becslés általános spanyolországi adatokon alapul — a TE lakásod tényleges költsége jelentősen eltérhet (a comunidad összegétől, a klímahasználattól és a régiótól függően). ⚠️ A bérlővédelem CSAK a lakhatási célú (vivienda habitual) bérletre vonatkozik: a szezonális és a turisztikai bérlet más szabályok alá esik. Vita esetén az autonóm közösséged fogyasztóvédelmi szerve (OMIC) és a bérlői érdekvédelmi szervezetek segítenek.",
+    officialSources: [
+      { label: "Ley 29/1994 de Arrendamientos Urbanos (BOE)", url: "https://www.boe.es/buscar/act.php?id=BOE-A-1994-26003" },
+      { label: "Lakhatási minisztérium (MIVAU)", url: "https://www.mivau.gob.es/" },
+      { label: "Punto de Acceso General", url: "https://administracion.gob.es/" },
+    ],
+  },
 };
 
 /** Ország → rent-konfig (ismeretlen ország → CH). */
 export function getRentConfig(country: string | null | undefined): RentCountryConfig {
-  if (country === "AT" || country === "DE" || country === "NL" || country === "GB") return RENT_CONFIG[country];
+  if (
+    country === "AT" || country === "DE" || country === "NL" ||
+    country === "GB" || country === "ES"
+  ) {
+    return RENT_CONFIG[country];
+  }
   return RENT_CONFIG.CH;
 }
