@@ -43,6 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/nemet-oneletrajz", priority: 0.7, changeFrequency: "monthly" },
     { path: "/holland-oneletrajz", priority: 0.7, changeFrequency: "monthly" },
     { path: "/angol-oneletrajz", priority: 0.7, changeFrequency: "monthly" },
+    { path: "/spanyol-oneletrajz", priority: 0.7, changeFrequency: "monthly" },
     { path: "/iranytu", priority: 0.6, changeFrequency: "weekly" },
     { path: "/hirlevel", priority: 0.6, changeFrequency: "monthly" },
     { path: "/szaknevsor/uj", priority: 0.6, changeFrequency: "monthly" },

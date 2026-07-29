@@ -157,6 +157,23 @@ const TXT: Record<CvLocale, CvTexts> = {
     skillsPh: "pl. Rijbewijs C+E, heftruckcertificaat, VCA-diploma, MS Office",
     namePreview: "Voor- en achternaam", downloadLabel: "Holland önéletrajz letöltése (PDF)",
   },
+  es: {
+    toLang: "spanyolra", adj: "spanyol",
+    langs: [
+      { name: "Húngaro", level: "Lengua materna" },
+      { name: "Español", level: "B1 (Intermedio)" },
+    ],
+    cityLabel: "Város (Localidad)", cityPh: "Madrid", phonePh: "+34 …",
+    professionPh: "pl. Electricista de mantenimiento",
+    profileLabel: "Rövid bemutatkozás (Perfil profesional, opcionális)",
+    summaryPh: "3-4 mondat arról, mit tudsz és mit keresel (spanyolul, ha tudsz).",
+    rolePh: "Pozíció (pl. Carretillero)", toPh: "Vége (pl. actualidad)",
+    qualificationPh: "Végzettség / szak (pl. FP Grado Medio, Bachillerato)",
+    langsLabel: "Nyelvtudás (Idiomas)", langNamePh: "Nyelv (pl. Español)",
+    skillsLabel: "Egyéb készségek (Otros conocimientos, opcionális)",
+    skillsPh: "pl. Carnet C+E, carnet de carretillero, curso PRL 60 h, MS Office",
+    namePreview: "Nombre y apellidos", downloadLabel: "Spanyol önéletrajz letöltése (PDF)",
+  },
 };
 
 /**
@@ -367,6 +384,8 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
               A kép a böngésződben 35×45 mm-es igazolványkép-arányra vágódik, és <strong>nem töltődik fel sehová</strong> — csak a PDF-be kerül.{" "}
               {locale === "nl"
                 ? "Hollandiában a fotó megengedett, de nem elvárás — egyre több CV készül fotó nélkül, nyugodtan kihagyhatod."
+                : locale === "es"
+                ? "Spanyolországban a fotó bevett, sőt a legtöbb HR el is várja — érdemes feltölteni egy semleges, mosolygós képet."
                 : "Sok modern német CV szándékosan fotó nélküli (anonymer Lebenslauf) — nyugodtan kihagyhatod."}
             </p>
           </div>

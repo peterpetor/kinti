@@ -1,6 +1,7 @@
 /**
  * cv-pdf.ts — önéletrajz-PDF generálása jsPDF-fel, három ország-konvencióban
- * (`CvLocale`): német (DIN-5008 tabellarischer Lebenslauf), brit CV és holland CV.
+ * (`CvLocale`): német (DIN-5008 tabellarischer Lebenslauf), brit CV, holland CV
+ * és spanyol currículum vítae.
  *
  * TELJESEN a böngészőben fut (0 API-költség, 0 szerver): a jsPDF-et CSAK a
  * `generateCvPdf` hívásakor, DINAMIKUSAN importáljuk — így nincs a build/SSR
@@ -39,7 +40,7 @@ export interface CvLanguage {
  * szakma-megnevezések hollandok, és a végén ott a bevett „Referenties op
  * aanvraag beschikbaar" sor.
  */
-export type CvLocale = "de" | "en" | "nl";
+export type CvLocale = "de" | "en" | "nl" | "es";
 
 export interface CvData {
   fullName: string;
@@ -100,6 +101,16 @@ const LABELS = {
     docTitle: "Curriculum Vitae", fileBase: "CV",
     references: "Referenties op aanvraag beschikbaar.",
     namePlaceholder: "Voor- en achternaam", page: "Pagina",
+  },
+  // ⚠️ A spanyol CV a NÉMET konvencióhoz áll közelebb, nem a brithez: a fotó és
+  // a születési év bevett, sőt elvárt — ezért NEM esik a fotó-tiltás alá.
+  es: {
+    personal: "Datos personales", birthYear: "Año de nacimiento", city: "Localidad",
+    profile: "Perfil profesional", experience: "Experiencia laboral", education: "Formación",
+    skills: "Conocimientos", language: "Idiomas", other: "Otros conocimientos",
+    docTitle: "Currículum Vítae", fileBase: "CV",
+    references: "Referencias disponibles a petición.",
+    namePlaceholder: "Nombre y apellidos", page: "Página",
   },
 } as const;
 

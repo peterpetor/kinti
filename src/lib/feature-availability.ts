@@ -159,6 +159,9 @@ export const ES_ALLOWED_FEATURES: ReadonlySet<string> = new Set([
   // ── Spanyol tartalommal elkészült eszközök ──
   "tudasbazis",        // ⭐ VAN ES guide-bank (guides.ts GUIDES_ES, 12 cikk BOE/gob.es forrásból)
   "ugyintezes",        // ⭐ VAN ES csekklista-bank (CHECKLISTS_ES, 6 db, cita previa-tudatos)
+  "berkalkulator",     // ⭐ VAN ES-számítás (computeSalaryES: IRPF + Seguridad Social, 12/14 paga)
+  // ⚠️ „spanyol-oneletrajz" NEM ide tartozik — a CV-készítőket a
+  //   CV_FEATURE_COUNTRIES tábla kapuzza (ld. lentebb), MINDEN ág előtt.
   // ⚠️ „vam" SZÁNDÉKOSAN KIMARAD: Spanyolország EU-tag, nincs vámhatár
   //   Magyarország felé — vám-kalkulátort mutatni félrevezető lenne.
 ]);
