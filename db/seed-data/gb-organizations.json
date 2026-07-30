@@ -1394,6 +1394,20 @@
       "address": "Space To Be You (Hackney) és North London Therapy Practice (Golders Green) — online is elérhető",
       "email": "info@zsofiatoth-counselling.com",
       "website": "https://www.zsofiatoth-counselling.com/"
+    },
+    {
+      "_comment": "⭐ ÚJ KATEGÓRIA (koltoztetes) — a categories tábla MÁR tartalmazta globálisan ('Költöztetés' 📦), csak a GB generátor allow-listájából hiányzott (ugyanaz a minta, mint korábban az 'orvos'/'nogyogyasz' GB-bővítésnél). Companies House 08418834 AKTÍV (2013 óta, SIC 49420 Removal services), a bejegyzett igazgató magyar állampolgárságú. A bejegyzett székhely (Preston) ELTÉR a kereskedelmi/ügyfélfogadó címtől (London N12) — ez normális kis cégeknél (könyvelői székhely ≠ tényleges telephely), a SAJÁT weboldal adja a valódi ügyfélcímet (Big Yellow Self Storage-on belüli raktáregység, nyitvatartással).",
+      "name": "Hunparcel Ltd — csomagszállítás és költöztetés Anglia–Magyarország között",
+      "type": "nemzetközi költöztetés, csomagszállítás, raktározás, áruszállítás Anglia és Magyarország között",
+      "category": "koltoztetes",
+      "city": "London",
+      "region": "LDN",
+      "address": "447 High Road, London N12 0AF (Big Yellow Self Storage)",
+      "phone": "+44 20 3384 3317",
+      "website": "https://www.hunparcel.com",
+      "hours": "H-P 08:30-17:30, Szo 09:00-17:30, V 10:00-16:00",
+      "lat": 51.6033,
+      "lng": -0.1752
     }
   ]
 }
