@@ -1534,6 +1534,17 @@
       "hours": "Szerda 18:45-20:45; minden hónap 2. vasárnapja 10:00-16:00 (téli/nyári szünetben nincs próba)",
       "lat": 51.4676,
       "lng": -2.5029
+    },
+    {
+      "_comment": "Kőrösi-partnerlistáról (magyar állami, kurált forrás — a listán szereplés igazolt aktivitás). 30+ fős csapat kiscserkészektől a tizenévesekig, vezetők: Kollár Erika és Tolnai Judit. HETI, konkrét helyszínű foglalkozás — a Sharon Youth Centre-t az OSM is önálló POI-ként azonosítja (M16 7WR), tehát valódi, felkereshető közösségi ház. ⚠️ Bérelt helyszín, csak tanévben és szombatonként — a `type`/`hours` ezt kimondja. A magyar cserkészet (KMCSSZ) jelentős diaszpóra-intézmény; a londoni ág weboldala (cserkesz.uk) MA NEM oldódik fel, ezért csak a manchesteri, helyszínnel igazolt csapat került be.",
+      "name": "Boldog Salkaházi Sára Cserkészcsapat — Manchester",
+      "type": "magyar cserkészcsapat (kiscserkészektől tizenévesekig), szombati foglalkozások bérelt közösségi házban, tanév alatt",
+      "city": "Manchester",
+      "region": "NW",
+      "address": "Sharon Youth Centre, Eton Court, Old Trafford, Manchester M16 7WR",
+      "hours": "Tanév alatt szombatonként (a pontos időpontért érdemes előre egyeztetni)",
+      "lat": 53.4615,
+      "lng": -2.2587
     }
   ]
 }
