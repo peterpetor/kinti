@@ -3374,6 +3374,111 @@ export const GUIDES_ES: Guide[] = [
       { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
     ],
   },
+  {
+    slug: "es-nyugdij",
+    title: "Nyugdíj: jubilación és a Seguridad Social",
+    summary:
+      "A rendes korhatár 2026-ban 66 év 10 hónap (vagy 65 év, elég hosszú járulékfizetéssel) — a teljes összeghez kb. 36,5 év kell.",
+    tldr: [
+      "2026-ban a rendes nyugdíjkorhatár 66 év 10 hónap — DE csak 65 év, ha legalább 38 év 3 hónap járulékfizetési időd (cotización) van.",
+      "Minimum 15 év járulékfizetés kell BÁRMILYEN nyugdíjhoz (ekkor az összeg csak az 50%-a), a teljes összeghez kb. 36,5 év szükséges.",
+      "⚠️ A korhatár 2027-re tovább emelkedik 67 évre — mindig a Seguridad Social aktuális táblázatát nézd, ne egy rögzített számra hagyatkozz.",
+    ],
+    icon: "clock",
+    sections: [
+      {
+        heading: "Korhatár — a két út",
+        body: [
+          "2026-ban a jubilación ordinaria korhatára 66 év 10 hónap, ha kevesebb mint 38 év 3 hónap járulékfizetési időd van.",
+          "Ha ELÉRED a 38 év 3 hónapos (vagy hosszabb) járulékfizetést, 65 évesen is elmehetsz nyugdíjba, teljes (100%-os) összeggel — ez a leggyakoribb út azoknak, akik fiatalon kezdtek dolgozni.",
+        ],
+      },
+      {
+        heading: "Mennyi jár",
+        body: [
+          "Minimum 15 év (ebből legalább 2 az utolsó 15 évben) járulékfizetés kell BÁRMILYEN nyugdíjhoz — ekkor a base reguladora (a járulékalapod átlaga) 50%-át kapod.",
+          "A teljes (100%-os) összeghez kb. 36,5 év szükséges; a 15 és 36,5 év közötti sávban az összeg arányosan nő.",
+        ],
+      },
+      {
+        heading: "⚠️ A korhatár tovább emelkedik",
+        body: [
+          "A 2013-as reform óta a korhatár fokozatosan emelkedik: 2027-re a rendes korhatár 67 évre nő (a hosszú járulékfizetésű 65 éves út továbbra is megmarad).",
+          "A pontos, rád vonatkozó dátumot és feltételeket a Seguridad Social honlapján, a saját adataiddal ellenőrizd — a szám évente finomodik.",
+        ],
+      },
+      {
+        heading: "Hogyan igényeld",
+        body: [
+          "Online a Seguridad Social honlapján, Cl@ve-vel vagy elektronikus tanúsítvánnyal — a rendszer megmutatja a becsült összeget is (jubilación — simulador).",
+          "Személyesen is intézhető, cita previával (előre foglalt időpont) a helyi Seguridad Social irodában.",
+        ],
+      },
+      {
+        heading: "A magyarországi évek nem vesznek el",
+        body: [
+          "Az EU-s szociálisbiztonsági koordinációs szabályok alapján a magyarországi és a spanyolországi járulékéveket ÖSSZESZÁMÍTJÁK a jogosultsághoz (az összeg kiszámítása országonként külön történik) — a hazai éveid tehát nem tűnnek el, ha kint folytatod a munkát.",
+          "A pontos, személyre szabott elszámoláshoz a Nyugdíjbiztosítási Alap (Magyarország) és a spanyol Seguridad Social nemzetközi osztálya tud érdemben segíteni.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Seguridad Social — Jubilación", url: "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963" },
+    ],
+  },
+  {
+    slug: "es-munkanelkuli",
+    title: "Ha elveszted az állásod: a paro (SEPE)",
+    summary:
+      "Az első 180 napban a bázisjövedelem 70%-a, utána 60%-a jár, max. 24 hónapig — de a kérelmet 15 MUNKANAPON belül be kell nyújtani.",
+    tldr: [
+      "A prestación contributiva (köznyelven „el paro”): az első 180 napban a base reguladora 70%-a, utána 60%-a — max. 24 hónapig, a járulékfizetési időd szerint.",
+      "⚠️ A kérelmet a munkaviszony megszűnése utáni 15 MUNKANAPON belül be kell nyújtani a SEPE-nél — ez sokkal szigorúbb határidő, mint a legtöbb országban.",
+      "Jogosultsághoz minimum 360 nap (kb. 1 év) járulékfizetés kell az elmúlt 6 évben, és a munkahely elvesztésének önhibán kívülinek kell lennie.",
+    ],
+    icon: "briefcase",
+    sections: [
+      {
+        heading: "Mennyi jár és meddig",
+        body: [
+          "Az összeg a base reguladorára (a legutolsó hónapok járulékalapjának átlaga) épül: az első 180 napban ennek 70%-a, a 181. naptól 60%-a jár.",
+          "Alsó és felső korlátja is van: a felső határ az IPREM 175%-a (gyermekkel 225%, két vagy több gyermekkel 275%), az alsó az IPREM 80%-a (gyermekkel 107%).",
+        ],
+        bullets: [
+          "360–539 nap járulékfizetés → 4 hónap ellátás",
+          "1080 nap (kb. 3 év) → 12 hónap ellátás",
+          "2160 nap vagy több (kb. 6 év) → a maximum 24 hónap ellátás",
+        ],
+      },
+      {
+        heading: "⚠️ A 15 munkanapos határidő",
+        body: [
+          "A kérelmet a munkaviszony utolsó napját követő 15 MUNKANAPON belül (hétvége és ünnepnap nélkül számolva) be kell nyújtani — a késés a jogosultság egy részét elveszejtheti.",
+          "Igényelhető online a sede.sepe.gob.es oldalon (Cl@ve vagy elektronikus tanúsítvány kell hozzá) vagy személyesen, cita previával.",
+        ],
+      },
+      {
+        heading: "Feltételek",
+        bullets: [
+          "Legalább 360 nap járulékfizetés az elmúlt 6 évben",
+          "A munkahely elvesztése ÖNHIBÁN KÍVÜLI legyen — elbocsátás, határozott idejű szerződés lejárta, jelentős óraszám-csökkentés, ERE/ERTE (kollektív létszámleépítés/munkaidő-csökkentés)",
+          "Regisztrálnod kell demandante de empleo-ként (álláskeresőként) a helyi foglalkoztatási hivatalnál",
+          "Még nem érted el a nyugdíjkorhatárt",
+        ],
+      },
+      {
+        heading: "Ha nincs elég járulékod: subsidio",
+        body: [
+          "Ha nem gyűlik össze a 360 nap, vagy lejárt a contributiva, alacsonyabb összegű, jövedelemfüggő subsidio por desempleo jöhet szóba — ennek saját, szűkebb feltételei vannak (családi jövedelemhatár, korábbi ellátási előzmény).",
+          "A pontos jogosultságodat a SEPE oldalán vagy személyesen a hivatalban érdemes tisztázni — ez már egyedi elbírálás, nem általános szabály.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "SEPE — Prestaciones por desempleo", url: "https://www.sepe.es/HomeSepe/en/prestaciones-desempleo.html" },
+      { label: "SEPE — Prestación contributiva", url: "https://www.sepe.es/HomeSepe/en/prestaciones-desempleo/prestacion-contributiva.html" },
+    ],
+  },
 ];
 
 export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT, ...GUIDES_DE, ...GUIDES_NL, ...GUIDES_GB, ...GUIDES_ES];
@@ -3520,6 +3625,8 @@ const GUIDE_TOPIC: Record<string, string> = {
   "gb-munkanelkuli": "munkanelkuli-biztositas",
   "gb-vallalkozas": "adozas-quellensteuer",
   "gb-lakhatas": "lakasberles",
+  "es-nyugdij": "ahv-nyugdij",
+  "es-munkanelkuli": "munkanelkuli-biztositas",
 };
 function guideTopic(slug: string): string {
   return GUIDE_TOPIC[slug] ?? slug;
@@ -3558,7 +3665,7 @@ const MONEY_GUIDE_SLUGS = new Set<string>([
   "gb-adozas", "gb-bankszamla", "gb-munkavallalas", "gb-nyugdij",
   "gb-csaladi-potlek", "gb-munkanelkuli", "gb-vallalkozas",
   // ES
-  "es-adozas", "es-bankszamla", "es-autonomo",
+  "es-adozas", "es-bankszamla", "es-autonomo", "es-nyugdij", "es-munkanelkuli",
 ]);
 
 export function isMoneyGuide(slug: string): boolean {

@@ -128,6 +128,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       de: "de-munkanelkuli",
       nl: "nl-munkanelkuli",
       gb: "gb-munkanelkuli",
+      es: "es-munkanelkuli",
     },
     rows: [
       { label: "Hol igényled", ch: "RAV", at: "AMS", de: "Agentur für Arbeit", nl: "UWV", gb: "gov.uk — DWP (Universal Credit / New Style JSA)", es: "SEPE" },
@@ -231,6 +232,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       de: "de-nyugdij",
       nl: "nl-nyugdij",
       gb: "gb-nyugdij",
+      es: "es-nyugdij",
     },
     rows: [
       { label: "Állami pillér", ch: "AHV (1. pillér)", at: "Pensionsversicherung (PVA)", de: "Gesetzliche Rentenversicherung", nl: "AOW", gb: "State Pension", es: "Seguridad Social — pensión de jubilación" },
