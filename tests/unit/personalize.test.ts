@@ -139,4 +139,18 @@ describe("buildPersonalizedItems", () => {
     const es = buildPersonalizedItems("ES", "settled", "penzugy").map((i) => i.href);
     expect(es).toContain("/tudasbazis/es-bankszamla");
   });
+
+  /**
+   * 2026-07-30: MEGSZÜLETTEK a gb-/es- bejelentkezés + egészségbiztosítás
+   * cikkek, így a papírmunka-fókusz most már ORSZÁG-HELYES cikket ad
+   * GB/ES-nek is (korábban null → kimaradt, most valódi tartalom).
+   */
+  it("GB/ES papírmunka-fókusz: az ORSZÁG-HELYES bejelentkezés + egészségügy cikk jelenik meg", () => {
+    const gb = buildPersonalizedItems("GB", "fresh", "papirmunka").map((i) => i.href);
+    expect(gb).toContain("/tudasbazis/gb-bejelentkezes");
+    expect(gb).toContain("/tudasbazis/gb-egeszsegbiztositas");
+    const es = buildPersonalizedItems("ES", "fresh", "papirmunka").map((i) => i.href);
+    expect(es).toContain("/tudasbazis/es-bejelentkezes");
+    expect(es).toContain("/tudasbazis/es-egeszsegbiztositas");
+  });
 });

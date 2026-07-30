@@ -78,12 +78,16 @@ export const PERSONALIZE_GUIDE_SLUGS: Record<string, Record<string, string>> = {
     AT: "at-bejelentkezes",
     DE: "de-bejelentkezes",
     NL: "nl-bejelentkezes",
+    GB: "gb-bejelentkezes",
+    ES: "es-bejelentkezes",
   },
   egeszsegbiztositas: {
     CH: "egeszsegbiztositas-krankenkasse",
     AT: "at-egeszsegbiztositas",
     DE: "de-egeszsegbiztositas",
     NL: "nl-egeszsegbiztositas",
+    GB: "gb-egeszsegbiztositas",
+    ES: "es-egeszsegbiztositas",
   },
   bankszamla: {
     CH: "bankszamla",
@@ -104,14 +108,14 @@ export const PERSONALIZE_GUIDE_SLUGS: Record<string, Record<string, string>> = {
 };
 
 /**
- * ⚠️ ORSZÁG-FALLTHROUGH VÉDELEM (binary-country-fallthrough): a `bejelentkezes`
- * és `egeszsegbiztositas` témára EGYELŐRE NINCS gb-/es- cikk. Korábban a
+ * ⚠️ ORSZÁG-FALLTHROUGH VÉDELEM (binary-country-fallthrough): korábban a
  * `?? slugs.CH` fallback miatt egy GB/ES-user a SVÁJCI cikket kapta a
- * személyre szabott kezdőlapon — néma, rossz-országú tartalom. Ehelyett most
+ * személyre szabott kezdőlapon — néma, rossz-országú tartalom. Ehelyett
  * `null`-t adunk vissza, ha a KÉRT ország-specifikus slug nem létezik, és a
  * hívó kiszűri: inkább egy elemmel kevesebb, mint idegen ország cikke.
- * (Ha valaha születik gb-bejelentkezes/es-egeszsegbiztositas stb., csak a
- * fenti táblát kell bővíteni — a szűrés automatikusan elkezdi mutatni.)
+ * 2026-07-30: mind a 4 téma (bejelentkezes/egeszsegbiztositas/bankszamla/
+ * munkavallalas) MOST MÁR mind a 6 országra ki van kötve, mert megszülettek a
+ * gb-/es- cikkek is — a null-ág innentől csak jövőbeli, még hiányzó cikkeknél süt el.
  */
 function guideItem(topic: keyof typeof PERSONALIZE_GUIDE_SLUGS, country: string, emoji: string, title: string, desc: string): PersonalItem | null {
   const slug = PERSONALIZE_GUIDE_SLUGS[topic][country];

@@ -61,8 +61,8 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       at: "at-egeszsegbiztositas",
       de: "de-egeszsegbiztositas",
       nl: "nl-egeszsegbiztositas",
-      gb: "gb-nhs",
-      es: "es-egeszsegugy",
+      gb: "gb-egeszsegbiztositas",
+      es: "es-egeszsegbiztositas",
     },
     rows: [
       { label: "Rendszer", ch: "Alapbiztosítás (KVG/LAMal)", at: "ÖGK + e-card", de: "GKV (vagy PKV)", nl: "Basisverzekering", gb: "NHS — adóból finanszírozott", es: "SNS — az autonóm közösséged szolgálata" },
@@ -83,8 +83,8 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       at: "at-bejelentkezes",
       de: "de-bejelentkezes",
       nl: "nl-bejelentkezes",
-      gb: "gb-letelepedes",
-      es: "es-nie-regisztracio",
+      gb: "gb-bejelentkezes",
+      es: "es-bejelentkezes",
     },
     rows: [
       { label: "Lakcím-bejelentés határideje", ch: "14 nap", at: "3 nap", de: "kb. 1–2 hét (városfüggő)", nl: "néhány nap (4+ hó tartózkodásnál)", gb: "⚠️ Nincs lakcímbejelentés", es: "Empadronamiento — beköltözéskor (nincs napra szóló határidő)" },

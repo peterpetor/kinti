@@ -36,7 +36,7 @@ export interface Guide {
 /** A guide-bank utolsó tartalmi frissítése — a sitemap lastModified-je (bump
  *  cikk-bővítéskor/-átíráskor). Korábban `now` ment MINDEN crawlnál → a Google
  *  megtanulja figyelmen kívül hagyni a hazug lastmodot. */
-export const GUIDES_UPDATED_AT = new Date("2026-07-29");
+export const GUIDES_UPDATED_AT = new Date("2026-07-30");
 
 export const GUIDES_DISCLAIMER =
   "Ez általános tájékoztatás hivatalos forrásokból, nem jogi tanács. A részletek kantononként és időben változnak — a pontos, rád vonatkozó információért mindig a hivatalos oldalt és a lakóhelyed kantonját nézd.";
@@ -2603,6 +2603,103 @@ export const GUIDES_GB: Guide[] = [
       { label: "gov.uk — TV Licence", url: "https://www.gov.uk/tv-licence" },
     ],
   },
+  {
+    slug: "gb-bejelentkezes",
+    title: "Az első hivatali kör Angliában (NI-szám, háziorvos, bank)",
+    summary:
+      "Angliában NINCS kötelező lakcím-bejelentés (se Anmeldung, se padrón) — de van pár elkerülhetetlen első lépés: National Insurance-szám, háziorvos-regisztráció, bankszámla.",
+    tldr: [
+      "⚠️ Nincs kötelező lakcím-bejelentés a hivatalnál (a kontinenssel ellentétben) — ne ezt keresd; a fontos lépések máshol vannak.",
+      "National Insurance (NI) szám: a munkához és az adóhoz kell — az érkezés után igényeld a gov.uk-n (dolgozni már közben is szabad).",
+      "Regisztrálj egy háziorvosnál (GP surgery) és nyiss bankszámlát — ez a két gyakorlati alap; a lakhatáshoz council tax jár.",
+    ],
+    icon: "home",
+    sections: [
+      {
+        heading: "⚠️ Nincs kötelező lakcím-bejelentés",
+        body: [
+          "Angliában — a német Anmeldunggal vagy a spanyol empadronamientóval ellentétben — NEM kell a hatóságnál bejelenteni a lakcímedet. Sokan hiába keresik ezt az első hetekben.",
+          "A „bejelentkezés” helyett néhány konkrét, gyakorlati lépés az, ami valóban kell — ezeket sorra vesszük lent.",
+        ],
+      },
+      {
+        heading: "National Insurance (NI) szám",
+        body: [
+          "Az NI-szám a társadalombiztosítási és adó-azonosítód — a bejelentett munkához és a helyes adózáshoz kell. Dolgozni már azelőtt is szabad, hogy megérkezne (a munkáltatónak jelezd, hogy igényelted).",
+          "Az igénylés online indul a gov.uk-n; személyazonosság-igazolás szükséges.",
+        ],
+      },
+      {
+        heading: "Regisztrálj egy háziorvosnál (GP)",
+        body: [
+          "Az NHS-ellátáshoz be kell iratkoznod egy helyi háziorvosi rendelőbe (GP surgery) — enélkül a rutinellátás nehézkes. Részletek a külön Egészségügy (NHS) cikkben.",
+        ],
+      },
+      {
+        heading: "Bankszámla és Council Tax",
+        body: [
+          "A brit bankszámlához jellemzően cím- és személyazonosság-igazolás kell (a részletek a Bankszámlanyitás cikkben). A lakhatás után a helyi önkormányzatnak council taxot fizetsz — ezt a beköltözéskor jelezd nekik.",
+        ],
+      },
+      {
+        heading: "Letelepedési státusz",
+        body: [
+          "⚠️ Brexit óta a szabad beköltözés megszűnt: aki a 2020-as határidő előtt érkezett, az EU Settlement Scheme (settled/pre-settled status) alatt rendezheti a helyzetét; az újonnan érkezőknek jellemzően vízum kell. A saját helyzetedet a gov.uk hivatalos oldalán ellenőrizd.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "gov.uk — Apply for a National Insurance number", url: "https://www.gov.uk/apply-national-insurance-number" },
+      { label: "NHS — Register with a GP surgery", url: "https://www.nhs.uk/nhs-services/gps/how-to-register-with-a-gp-surgery/" },
+      { label: "gov.uk — Council Tax", url: "https://www.gov.uk/council-tax" },
+    ],
+  },
+  {
+    slug: "gb-egeszsegbiztositas",
+    title: "Egészségügy Angliában (NHS): nincs biztosítás, de regisztrálni kell",
+    summary:
+      "Az NHS-t az általános adó fedezi — nincs havi biztosítási díj, és nem választasz biztosítót. DE be kell iratkoznod egy háziorvoshoz (GP), különben a rutinellátás akadozik.",
+    tldr: [
+      "Nincs havi egészségbiztosítási díj és nincs biztosító-választás — az NHS-t az adó állja, az ellátás a lakosoknak ingyenes a rendelőben.",
+      "⚠️ Regisztrálj egy háziorvosnál (GP surgery) a lakcímed körzetében — ez a belépő az egész NHS-rendszerbe (beutaló, receptek, szűrések).",
+      "A sürgősségi ellátás (A&E / 999) mindenkinek jár; nem sürgős esetben a 111 vonal segít. A receptekért Angliában díjat kell fizetni (sok mentességgel).",
+    ],
+    icon: "heart",
+    sections: [
+      {
+        heading: "Nincs havi díj, nincs biztosító-választás",
+        body: [
+          "A svájci/holland modelltől eltérően Angliában nem fizetsz havi egészségbiztosítási díjat és nem választasz pénztárat: az NHS-t az általános adóból finanszírozzák, és az ellátás a bejelentett lakosoknak a rendelőben ingyenes.",
+        ],
+      },
+      {
+        heading: "⚠️ Regisztrálj egy háziorvosnál (GP)",
+        body: [
+          "A rendszerbe a háziorvosi rendelőn (GP surgery) keresztül lépsz be: iratkozz be a lakcímed körzetéhez tartozó rendelőbe. A háziorvos a kapuőr — tőle jön a szakorvosi beutaló, a legtöbb recept és a szűrővizsgálat.",
+          "A regisztráció ingyenes, és jellemzően online is elindítható (részletek a bejelentkezés-cikkben és az NHS oldalán).",
+        ],
+      },
+      {
+        heading: "Sürgősség: A&E, 999 és a 111",
+        body: [
+          "Életveszélyben a 999-et hívd, vagy menj a legközelebbi A&E-re (sürgősségi) — ez mindenkinek jár, regisztrációtól függetlenül.",
+          "Nem sürgős, de aznap segítséget igénylő esetben a 111 (telefon vagy online) irányít a megfelelő ellátáshoz.",
+        ],
+      },
+      {
+        heading: "Receptek és GHIC",
+        body: [
+          "⚠️ Angliában a vényköteles gyógyszerért fix recept-díjat (prescription charge) kell fizetni — sok mentességgel (pl. gyerekek, bizonyos betegségek, alacsony jövedelem). A pontos, aktuális díjat az NHS oldalán nézd.",
+          "Rövid EU-s utazáshoz a GHIC (a régi EHIC utódja) átmeneti, orvosilag szükséges ellátást biztosít — igényeld a beutazás előtt.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "NHS — Register with a GP surgery", url: "https://www.nhs.uk/nhs-services/gps/how-to-register-with-a-gp-surgery/" },
+      { label: "NHS — Prescription charges", url: "https://www.nhs.uk/nhs-services/prescriptions/nhs-prescription-charges/" },
+      { label: "NHS — GHIC (Global Health Insurance Card)", url: "https://www.nhs.uk/using-the-nhs/healthcare-abroad/apply-for-a-free-uk-global-health-insurance-card-ghic/" },
+    ],
+  },
 ];
 
 /**
@@ -3479,6 +3576,100 @@ export const GUIDES_ES: Guide[] = [
       { label: "SEPE — Prestación contributiva", url: "https://www.sepe.es/HomeSepe/en/prestaciones-desempleo/prestacion-contributiva.html" },
     ],
   },
+  {
+    slug: "es-bejelentkezes",
+    title: "Az első hivatali kör: empadronamiento és NIE",
+    summary:
+      "Spanyolországban az első két lépés az empadronamiento (bejelentkezés a helyi önkormányzatnál) és a NIE (külföldi azonosító szám) — szinte minden további ügy ezekre épül. ⚠️ Szinte mindenhez cita previa (előzetes időpont) kell.",
+    tldr: [
+      "Empadronamiento: jelentkezz be a helyi önkormányzatnál (ayuntamiento) a padrónba — sok ügy (NIE, egészségügy, iskola) ezt alapfeltételként kéri.",
+      "NIE (Número de Identidad de Extranjero): a külföldi azonosító/adószámod — szinte mindenhez kell (munka, bankszámla, szerződés).",
+      "⚠️ A spanyol hivatalok CITA PREVIA (előre foglalt időpont) nélkül általában nem fogadnak — ezt minden ügynél foglald le előre, online.",
+    ],
+    icon: "home",
+    sections: [
+      {
+        heading: "Empadronamiento (a padrón)",
+        body: [
+          "Az empadronamiento a lakóhely szerinti önkormányzatnál (ayuntamiento) való nyilvántartásba vétel — a certificado/volante de empadronamiento sok további ügy alapja.",
+          "Jellemzően a lakcímet igazoló irat (bérleti szerződés vagy tulajdoni lap), útlevél/személyi és a kitöltött űrlap kell hozzá; a pontos lista és az időpont az önkormányzat oldalán.",
+        ],
+      },
+      {
+        heading: "NIE — a külföldi azonosító",
+        body: [
+          "A NIE a spanyol adó- és azonosító számod külföldiként — munkához, bankszámlához, szerződéshez, autóvásárláshoz mind kell. EU-állampolgárként a rendőrség (Policía Nacional) idegenrendészeti irodáján vagy a megfelelő hivatalnál igényled.",
+          "A jelenlét igazolása (empadronamiento) és a cita previa itt is jellemzően feltétel.",
+        ],
+      },
+      {
+        heading: "Número de la Seguridad Social",
+        body: [
+          "A munkához társadalombiztosítási szám (número de la Seguridad Social) is kell — ezt a Seguridad Social (TGSS) hivatalánál igényled, jellemzően még a munkába állás előtt.",
+        ],
+      },
+      {
+        heading: "⚠️ Cita previa mindenhez",
+        body: [
+          "A spanyol közigazgatás erősen időpont-alapú: empadronamiento, NIE, TB-szám, egészségügy — szinte mindenhez CITA PREVIA (online előre foglalt időpont) kell, sorban állva ritkán fogadnak. Foglalj korán, mert a szabad időpontok gyorsan elfogynak.",
+        ],
+      },
+      {
+        heading: "Az EU-s szabadság — de a papírmunka marad",
+        body: [
+          "Magyar állampolgárként szabadon beköltözhetsz és dolgozhatsz, de a fenti nyilvántartásba vételek (padrón, NIE, TB) elkerülhetetlenek. A több hónapig maradóknak a rendőrségi külföldi-regisztráció (certificado de registro de ciudadano de la UE) is ajánlott — a részleteket a hivatalos oldalon ellenőrizd.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+      { label: "Seguridad Social — Número de afiliación", url: "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/Afiliacion" },
+    ],
+  },
+  {
+    slug: "es-egeszsegbiztositas",
+    title: "Egészségügy Spanyolországban: Seguridad Social és a tarjeta sanitaria",
+    summary:
+      "Ha dolgozol vagy járulékot fizetsz, jogosult vagy a közegészségügyi ellátásra a Seguridad Socialon keresztül — a tarjeta sanitariát a helyi egészségügyi központban (centro de salud) igényled. ⚠️ A rendszer autonóm közösségenként eltér.",
+    tldr: [
+      "Dolgozóként/járulékfizetőként jogosult vagy a közegészségügyre (Seguridad Social) — a tarjeta sanitariát (egészségügyi kártya) a centro de salud-ban kapod, empadronamiento + TB-szám után.",
+      "⚠️ Az egészségügy AUTONÓM KÖZÖSSÉGENKÉNT szervezett (Andalúzia, Katalónia, Valencia stb. külön rendszerrel) — a kártya-igénylés részletei a saját közösséged egészségügyi szolgálatánál.",
+      "Aki nem dolgozik és nem járulékfizető: convenio especial (fizetős belépés a közrendszerbe) vagy magánbiztosítás (Sanitas, Adeslas) az út.",
+    ],
+    icon: "heart",
+    sections: [
+      {
+        heading: "Ki jogosult a közegészségügyre",
+        body: [
+          "A közegészségügyi ellátás alapja a Seguridad Social: ha bejelentetten dolgozol vagy autónomóként járulékot fizetsz, te (és eltartottjaid) jogosultak vagytok. A jogosultságot a TB-szám és a bejelentés igazolja.",
+        ],
+      },
+      {
+        heading: "Tarjeta sanitaria + centro de salud",
+        body: [
+          "Az ellátáshoz tarjeta sanitaria (egészségügyi kártya) kell, amit a lakóhelyed szerinti egészségügyi központban (centro de salud) igényelsz — jellemzően empadronamiento + TB-szám szükséges hozzá.",
+          "A háziorvos (médico de cabecera) itt a belépő: tőle jön a szakorvosi beutaló és a recept.",
+        ],
+      },
+      {
+        heading: "⚠️ Autonóm közösségenként eltér",
+        body: [
+          "Az egészségügy Spanyolországban a comunidades autónomas hatásköre: a kártya neve, az igénylés menete és az online felület közösségenként más (pl. Andalúzia: SAS; Katalónia: CatSalut; Valencia: a saját szolgálata). A pontos lépéseket MINDIG a saját közösséged egészségügyi szolgálatánál nézd — nincs egyetlen országos ügymenet.",
+        ],
+      },
+      {
+        heading: "Ha nem dolgozol: convenio especial vagy magánbiztosítás",
+        body: [
+          "Ha nem vagy járulékfizető (pl. korai nyugdíjas, még nem dolgozol), két fő út van: a convenio especial (havidíjas belépés a közrendszerbe), vagy egy magánbiztosítás.",
+          "A magánbiztosítás (pl. Sanitas, Adeslas) a gyorsabb szakorvosi hozzáférés miatt népszerű, és a residencia-kérelemhez is gyakran feltétel a nem-dolgozóknak.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "Seguridad Social — Asistencia sanitaria", url: "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938" },
+      { label: "Punto de Acceso General — administracion.gob.es", url: "https://administracion.gob.es/" },
+    ],
+  },
 ];
 
 export const GUIDES: Guide[] = [...GUIDES_CH, ...GUIDES_AT, ...GUIDES_DE, ...GUIDES_NL, ...GUIDES_GB, ...GUIDES_ES];
@@ -3572,9 +3763,13 @@ const GUIDE_TOPIC: Record<string, string> = {
   "at-bejelentkezes": "bejelentkezes-letelepedes",
   "de-bejelentkezes": "bejelentkezes-letelepedes",
   "nl-bejelentkezes": "bejelentkezes-letelepedes",
+  "gb-bejelentkezes": "bejelentkezes-letelepedes",
+  "es-bejelentkezes": "bejelentkezes-letelepedes",
   "at-egeszsegbiztositas": "egeszsegbiztositas-krankenkasse",
   "de-egeszsegbiztositas": "egeszsegbiztositas-krankenkasse",
   "nl-egeszsegbiztositas": "egeszsegbiztositas-krankenkasse",
+  "gb-egeszsegbiztositas": "egeszsegbiztositas-krankenkasse",
+  "es-egeszsegbiztositas": "egeszsegbiztositas-krankenkasse",
   "at-adozas": "adozas-quellensteuer",
   "de-adozas": "adozas-quellensteuer",
   "nl-adozas": "adozas-quellensteuer",
