@@ -63,7 +63,12 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
     if (e) e.stopPropagation();
     if (!window.speechSynthesis) return;
     const utterance = new SpeechSynthesisUtterance(text);
-    // A lecke nyelve szerint (de-CH / de-AT / de-DE / nl-NL); default svájci német.
+    // A lecke nyelve szerint (de-CH / de-AT / de-DE / nl-NL / en-GB / es-ES).
+    // ⚠️ A `?? "de-CH"` MÁR CSAK VÉDŐHÁLÓ: 2026-07-30-ig a svájci leckék NEM
+    // adták meg a `lang`-ot, és a helyes hangot a VÉLETLEN adta — az, hogy a
+    // default épp a svájci. Amíg ez így volt, egy „állítsuk át a defaultot"
+    // változás csendben elrontotta volna a svájci szótár hangját is. Most mind
+    // a hat ország adata kiírja a nyelvet, és teszt kényszeríti ki.
     utterance.lang = lesson?.lang ?? "de-CH";
     utterance.rate = 0.85; // slightly slower for learners
     window.speechSynthesis.speak(utterance);

@@ -10,6 +10,7 @@ import { haptic } from "@/lib/haptics";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
+import { lessonTtsLang } from "@/lib/lesson-tts";
 
 /**
  * A lecke-id előtagja mondja meg, MELYIK ország kurzusából való a lecke
@@ -105,17 +106,24 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   const isLastQuestion = currentQuestionIdx === lesson.questions.length - 1;
   const progressPercent = Math.round((currentQuestionIdx / lesson.questions.length) * 100);
 
-  const playAudio = (text: string, e?: React.MouseEvent) => {
+  /**
+   * Felolvasás. A `prompt` NEM dísz: belőle tudjuk meg, hogy a szöveg magyarul
+   * vagy a célnyelven van — a felelet-választós opciók ugyanis hol így, hol úgy
+   * (a „Mit jelent: …" típusú kérdésnél magyarul). Ennélkül egy angol hang
+   * olvasta fel a magyar választ — érthetetlen kása. Lásd `lib/lesson-tts.ts`.
+   */
+  const playAudio = (text: string, e?: React.MouseEvent, prompt = "") => {
     if (e) e.stopPropagation();
     if (!window.speechSynthesis) return;
 
     window.speechSynthesis.cancel(); // Stop current speech
     const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Az ország-megfelelő hangot keressük (pl. nl-NL / de-DE / de-AT / de-CH / en-GB),
-    // majd bármilyen azonos nyelvű (nl/de/en) hangra esünk vissza.
-    const want = ttsLang.toLowerCase();
-    const langPrefix = want.split("-")[0]; // "nl", "de" vagy "en"
+
+    const wantLang = lessonTtsLang(text, prompt, ttsLang);
+    // Az ország-megfelelő hangot keressük (pl. nl-NL / de-DE / de-AT / de-CH /
+    // en-GB / es-ES / hu-HU), majd bármilyen azonos nyelvű hangra esünk vissza.
+    const want = wantLang.toLowerCase();
+    const langPrefix = want.split("-")[0]; // "nl", "de", "en", "es" vagy "hu"
     let voice = voices.find(v => v.lang.toLowerCase() === want || v.lang.toLowerCase() === want.replace("-", "_"));
     // ⚠️ Angolnál a legtöbb gépen en-US az alapértelmezett hang — az pont azt a
     // kiejtést adná vissza, amit ez a kurzus MEGKÜLÖNBÖZTETNI tanít. Ezért az
@@ -129,13 +137,18 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
     if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith(`${langPrefix}-`));
     if (!voice) voice = voices.find(v => v.lang.toLowerCase().startsWith(langPrefix));
 
+    // ⚠️ Ha MAGYAR hangot kértünk, de a készüléken nincs, akkor INKÁBB NE
+    // olvassuk fel: egy angol hang szájából a magyar szöveg pont az a „nagyon
+    // rossz" élmény, amit ez a javítás megszüntet.
+    if (!voice && langPrefix === "hu") return;
+
     if (voice) {
       utterance.voice = voice;
       utterance.lang = voice.lang;
     } else {
-      utterance.lang = ttsLang;
+      utterance.lang = wantLang;
     }
-    
+
     utterance.rate = 0.85; // slightly slower for learners
     window.speechSynthesis.speak(utterance);
   };
@@ -246,7 +259,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
           >
             <span>{opt.text}</span>
             <div 
-              onClick={(e) => playAudio(opt.text, e)}
+              onClick={(e) => playAudio(opt.text, e, question.prompt)}
               className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ink/5 hover:bg-ink/10 transition-colors text-xl"
               title="Kiejtés meghallgatása"
             >
@@ -407,7 +420,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
                 <span>{r.text}</span>
                 {!isMatched && (
                   <div 
-                    onClick={(e) => playAudio(r.text, e)}
+                    onClick={(e) => playAudio(r.text, e, question.prompt)}
                     className="absolute -right-2 -top-2 grid h-7 w-7 place-items-center rounded-full bg-surface-alt border border-line shadow-sm text-[12px] hover:bg-ink/10 transition-colors"
                     title="Kiejtés meghallgatása"
                   >

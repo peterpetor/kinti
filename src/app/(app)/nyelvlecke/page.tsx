@@ -13,6 +13,52 @@ import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { cn } from "@/lib/cn";
 import { CountryGuard } from "@/components/country-guard";
 
+/**
+ * ⚠️ A KURZUS NEVE ORSZÁG SZERINT — TÁBLÁVAL, NEM TERNÁRIUS-LÁNCCAL.
+ *
+ * User-bejelentés (2026-07-30, képernyőképpel): a SPANYOL nyelvleckén
+ * „Schwyzerdütsch" cím állt, miközben a leckék helyesen spanyolok voltak (Hola,
+ * Buenos días, Adiós). Ok: a cím egy `AT ? … : DE ? … : NL ? … : GB ? … :
+ * "Schwyzerdütsch"` lánc volt, aminek a VÉGÉN a svájci név áll — a hatodik
+ * ország csendben odaesett. Ez az app legdrágább hibaosztálya
+ * (binary-country-fallthrough): a tartalom jó, csak a fejléc hazudik, ezért
+ * ránézésre nem tűnik fel.
+ *
+ * Táblával a hiányzó bejegyzés üres címet ad, nem MÁS ORSZÁG nevét.
+ */
+const COURSE_TITLE: Record<string, string> = {
+  CH: "Schwyzerdütsch",
+  AT: "Österreichisch",
+  DE: "Hochdeutsch",
+  NL: "Nederlands",
+  GB: "British English",
+  ES: "Español",
+};
+
+function courseTitle(country: string): string {
+  return COURSE_TITLE[country] ?? "Nyelvlecke";
+}
+
+/**
+ * Ország → a kurzus adat-modulja. Ugyanaz a tábla-elv, mint a címnél.
+ *
+ * A lánc-változat itt is CH-ra végződött. Ma mind a hat ág megvolt, tehát hiba
+ * nem látszott — de ez a rosszabb fajta: egy hetedik ország felvételekor nem a
+ * FEJLÉC hazudna, hanem SVÁJCI LECKÉKET tanítanánk. Ezért itt is tábla.
+ *
+ * ⚠️ Dinamikus import SZÁNDÉKOSAN: a hat ország lecke-adata együtt ~380 kB, de
+ * egyszerre csak egy kurzus kell (ez tette korábban 220 kB-os First Load-dal az
+ * app legnehezebb oldalává).
+ */
+const COURSE_LOADER: Record<string, () => Promise<Lesson[]>> = {
+  CH: () => import("./data").then((m) => m.LESSONS),
+  AT: () => import("./data-at").then((m) => m.LESSONS_AT),
+  DE: () => import("./data-de").then((m) => m.LESSONS_DE),
+  NL: () => import("./data-nl").then((m) => m.LESSONS_NL),
+  GB: () => import("./data-gb").then((m) => m.LESSONS_GB),
+  ES: () => import("./data-es").then((m) => m.LESSONS_ES),
+};
+
 export default function LanguagePathPage() {
   const [mounted, setMounted] = useState(false);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
@@ -57,18 +103,7 @@ export default function LanguagePathPage() {
 
   useEffect(() => {
     let cancelled = false;
-    const load =
-      country === "AT"
-        ? import("./data-at").then((m) => m.LESSONS_AT)
-        : country === "DE"
-          ? import("./data-de").then((m) => m.LESSONS_DE)
-          : country === "NL"
-            ? import("./data-nl").then((m) => m.LESSONS_NL)
-            : country === "GB"
-              ? import("./data-gb").then((m) => m.LESSONS_GB)
-              : country === "ES"
-                ? import("./data-es").then((m) => m.LESSONS_ES)
-                : import("./data").then((m) => m.LESSONS);
+    const load = (COURSE_LOADER[country] ?? COURSE_LOADER.CH)();
     load.then((l) => {
       if (!cancelled) setLessons(l);
     });
@@ -108,7 +143,7 @@ export default function LanguagePathPage() {
       <div className="sticky top-0 z-20 bg-background/80 px-4 pb-4 pt-6 backdrop-blur-xl border-b border-border-subtle">
         <ScreenHeader 
           eyebrow="Nyelvlecke" 
-          title={country === "AT" ? "Österreichisch" : country === "DE" ? "Hochdeutsch" : country === "NL" ? "Nederlands" : country === "GB" ? "British English" : "Schwyzerdütsch"}
+          title={courseTitle(country)}
           back={
             <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-full bg-ink/5 text-ink hover:bg-ink/10 transition">
               <Icon name="arrowLeft" size={20} strokeWidth={2.5} />

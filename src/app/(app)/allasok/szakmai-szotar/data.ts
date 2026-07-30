@@ -55,6 +55,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     // A szabályt teszt őrzi (szakmai-szotar-countries.test.ts): PONTOSAN egy
     // ingyenes lecke országonként — se nulla, se több.
     isPro: false,
+    lang: "de-CH",
     questions: [
       {
         id: "bau_q1",
@@ -109,6 +110,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Építőipar (Baubranche)",
     xpReward: 20,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "bau2_q1",
@@ -164,6 +166,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Vendéglátás (Gastronomie)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "gas_q1",
@@ -218,6 +221,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Vendéglátás (Gastronomie)",
     xpReward: 20,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "gas2_q1",
@@ -273,6 +277,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Egészségügy (Gesundheitswesen)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "pfl_q1",
@@ -309,6 +314,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Egészségügy (Gesundheitswesen)",
     xpReward: 20,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "pfl2_q1",
@@ -364,6 +370,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Kiskereskedelem (Verkauf)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "verk_q1",
@@ -419,6 +426,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Raktár (Lager)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "lager_q1",
@@ -474,6 +482,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Takarítás (Reinigung)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "reinig_q1",
@@ -529,6 +538,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Gyártás (Produktion)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "prod_q1",
@@ -584,6 +594,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Szépségipar (Coiffeur)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "coif_q1",
@@ -639,6 +650,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Szállítás (Fahrer)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "fahrer_q1",
@@ -694,6 +706,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Gyermekgondozás (Kinderbetreuung)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "kinder_q1",
@@ -749,6 +762,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Mezőgazdaság (Landwirtschaft)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "landw_q1",
@@ -804,6 +818,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Gépjárműipar (Automechaniker)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "auto_q1",
@@ -859,6 +874,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Biztonsági szolgálat (Sicherheitsdienst)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "sich_q1",
@@ -914,6 +930,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Szállodaipar (Hotellerie)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "hotel_q1",
@@ -969,6 +986,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Konyhai személyzet (Küche)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "kueche_q1",
@@ -1024,6 +1042,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Élelmiszeripar (Bäckerei)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "back_q1",
@@ -1079,6 +1098,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Villanyszerelés (Elektriker)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "elek_q1",
@@ -1134,6 +1154,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Kozmetika (Kosmetik)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "kosm_q1",
@@ -1189,6 +1210,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Vízvezeték-szerelés (Installateur)",
     xpReward: 15,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "instal_q1",
@@ -1244,6 +1266,7 @@ export const INDUSTRY_LESSONS: Lesson[] = [
     industry: "Építőipar (Baubranche)",
     xpReward: 50,
     isPro: true,
+    lang: "de-CH",
     questions: [
       {
         id: "bau_pro_q1",

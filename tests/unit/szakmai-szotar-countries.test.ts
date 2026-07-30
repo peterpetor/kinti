@@ -132,6 +132,25 @@ describe("lecke-integritás mind a hat országban", () => {
   });
 
   /**
+   * ⚠️ MINDEN leckének KELL `lang`, mert a felolvasó `lesson?.lang ?? "de-CH"`
+   * alakban esik vissza — vagyis egy hiányzó `lang` SVÁJCI NÉMET hangot adna egy
+   * angol vagy spanyol szótárnak. A tartalom közben helyes lenne, csak a hang
+   * lenne érthetetlen: pontosan az a hibaosztály, amit a user a nyelvleckén
+   * bejelentett (2026-07-30).
+   */
+  it("⚠️ MINDEN szótár-leckének van saját TTS-nyelve (nincs svájci visszaesés)", () => {
+    const EXPECTED: Record<string, string> = {
+      CH: "de-CH", AT: "de-AT", DE: "de-DE", NL: "nl-NL", GB: "en-GB", ES: "es-ES",
+    };
+    for (const [cc, bank] of ALL_BANKS) {
+      for (const l of bank as { id: string; lang?: string }[]) {
+        expect(l.lang, `${cc}/${l.id}: nincs lang → svájci hangra esne vissza`).toBeTruthy();
+        expect(l.lang, `${cc}/${l.id}`).toBe(EXPECTED[cc as string]);
+      }
+    }
+  });
+
+  /**
    * ⚠️ SZERKEZETI SZABÁLY: PONTOSAN EGY ingyenes bevezető lecke országonként.
    * Mindkét irány hiba:
    *   • NULLA ingyenes → a felhasználó fizetés előtt ki sem tudja próbálni a
