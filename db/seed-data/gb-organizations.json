@@ -1512,6 +1512,28 @@
       "website": "https://szicsekpalinka.co.uk",
       "lat": 52.5298,
       "lng": 1.2221
+    },
+    {
+      "_comment": "⭐⭐ ERNYŐSZERVEZET — a Kőrösi Csoma Sándor Program hivatalos partnerlistájáról (magyar állami, kurált forrás). Charity Commission 1174243 (bejegyezve 2017-08-14, HMRC gift-aid elismeréssel), a weboldal ÉLŐ és aktív (2026 áprilisi eseményekkel). Anglia és Wales egészében működik, tagszervezetei a magyar iskolák/közösségek. ⚠️ A bejegyzett cím (17 Lidiard Road, SW18) MAGÁNLAKÁS (kurátori otthon) és a telefon személyes mobil — ADATVÉDELMI okból egyiket sem tesszük ki; a kapcsolat a SZERVEZETI e-mail (info@maosz.co.uk) + weboldal, város-szinten elhelyezve.",
+      "name": "MAOSZ — Magyarok Angliai Országos Szövetsége",
+      "type": "a magyar közösségek és hétvégi iskolák angliai ernyőszervezete (bejegyzett jótékonysági szervezet) — e-mailben és a weboldalon érhető el",
+      "city": "London",
+      "region": "LDN",
+      "address": "Országos szervezet (Anglia és Wales) — kapcsolat e-mailben és a weboldalon",
+      "email": "info@maosz.co.uk",
+      "website": "https://maosz.org.uk"
+    },
+    {
+      "_comment": "Kőrösi-partnerlistáról. A SAJÁT weboldala (dunavon.dance) konkrét PRÓBAHELYSZÍNT és időpontot ad — ez valódi, felkereshető hely, nem csak online jelenlét. Instagram+Facebook is aktív. ⚠️ A helyszín egy BÉRELT közösségi ház (New Cheltenham Community Centre) — a `type` kimondja, hogy próbaidőpontban látogatható, nem állandó iroda.",
+      "name": "DunAvon — Bristoli Magyar Néptáncegyüttes",
+      "type": "magyar néptáncegyüttes, próbák szerdánként 18:45-20:45 és minden hónap 2. vasárnapján (bérelt közösségi házban)",
+      "city": "Bristol",
+      "region": "SW",
+      "address": "New Cheltenham Community Centre, 57 New Cheltenham Rd, Bristol BS15 1UL",
+      "website": "https://www.dunavon.dance",
+      "hours": "Szerda 18:45-20:45; minden hónap 2. vasárnapja 10:00-16:00 (téli/nyári szünetben nincs próba)",
+      "lat": 51.4676,
+      "lng": -2.5029
     }
   ]
 }
