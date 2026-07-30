@@ -66,7 +66,7 @@ const VALID_CATEGORIES = new Set([
   "magyar-kozosseg", "fordito", "forditasszak", "ugyved", "jogtanacsado",
   "fogorvos", "orvos", "borgyogyasz", "konyveles", "penzugyi_tanacsado",
   "ingatlan", "etterem", "elelmiszer", "cukrasz", "autoszer", "fodrasz",
-  "pszichiater", "pszichologus",
+  "pszichiater", "pszichologus", "dietetikus",
 ]);
 // ⚠️ A spanyol bounding box (business.ts isSpanishCoord): a kontinentális
 // félsziget VAGY a Kanári-szigetek — máshova eső koordináta hibás geokódra utal.
