@@ -625,6 +625,31 @@
       "website": "https://hotelalgorfa.mydirectstay.com",
       "lat": 38.0670,
       "lng": -0.7825
+    },
+    {
+      "_comment": "Forrás: eatoutcostablanca.com dedikált 'Hungarian Restaurant' kategóriája (5 találat a Costa Blancán). Tripadvisor 4,4/5, #10 az 56 rojalesi étterem közül — jól bejáratott hely, gulyáslevessel és élőzenével. Cím+telefon több független forrásból egyezik.",
+      "name": "Restaurante Budapest — Ciudad Quesada",
+      "type": "magyar étterem (gulyásleves és magyaros fogások, alkalmanként élőzene)",
+      "category": "etterem",
+      "city": "Ciudad Quesada",
+      "region": "VC",
+      "address": "Avenida del Mar 2, 03170 Ciudad Quesada, Rojales, Alicante",
+      "phone": "+34 966 717 406",
+      "lat": 38.0585,
+      "lng": -0.7093
+    },
+    {
+      "_comment": "Ugyanabból a Costa Blanca-kategóriából. A név a magyar Esterházy-kastélyra utal (a forrás ezt ki is mondja). ⚠️ A pontos utcacím két forrásban eltérően szerepel (C/San Pere 33 vs. 'Playa Flamenca Commercial Centre'), ezért a `address` a bevásárlóközpontot adja meg horgonyként, a koordináta pedig Playa Flamenca központja — házszámot NEM találgatunk.",
+      "name": "Eszterhazy — magyar étterem, Playa Flamenca",
+      "type": "magyar étterem a Playa Flamenca bevásárlóközpontban (napi menü, korai vacsora-ajánlat)",
+      "category": "etterem",
+      "city": "Playa Flamenca",
+      "region": "VC",
+      "address": "Playa Flamenca Commercial Centre, 03189 Playa Flamenca, Orihuela Costa, Alicante",
+      "phone": "+34 966 881 040",
+      "hours": "Naponta 17:30-24:00",
+      "lat": 37.9316,
+      "lng": -0.7250
     }
   ]
 }
