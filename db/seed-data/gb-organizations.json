@@ -1041,6 +1041,56 @@
       "lng": -0.171748
     },
     {
+      "_comment": "⭐ Psychology Today (psychologytoday.com/gb) — hivatalos, önkitöltős szakember-profil, a Client Focus mezőben SAJÁT NYILATKOZATTAL („I also speak Hungarian”) — ugyanaz a fajta elsődleges forrás, mint az AT/DE-nél bevált psyonline.at profilok. Yorkshire (YH) MÁSODIK tétele (Dr. Vasas Péter pontefracti rendelője után).",
+      "name": "Nea Clark — pszichoterapeuta, Leeds",
+      "type": "magyarul is beszélő pszichoterapeuta (szorongás, ADHD, párterápia) — személyes és online konzultáció",
+      "category": "pszichologus",
+      "city": "Leeds",
+      "region": "YH",
+      "address": "2 Devonshire Crescent, Margaret House, 1st Floor, Roundhay, Leeds LS8 1EP",
+      "phone": "+44 113 467 9038",
+      "website": "https://neaclark.com",
+      "lat": 53.8412222,
+      "lng": -1.5146127
+    },
+    {
+      "_comment": "Psychology Today profil, saját nyilatkozat („I also speak Hungarian”).",
+      "name": "Szabolcs Gálvölgyi — pszichoterapeuta, Stoke-on-Trent",
+      "type": "magyarul is beszélő pszichoterapeuta (szorongás, depresszió, stressz) — személyes és online konzultáció, klinikai szupervízió",
+      "category": "pszichologus",
+      "city": "Stoke-on-Trent",
+      "region": "WM",
+      "address": "Blythe Bridge Primary Care Centre, Uttoxeter Road, Blythe Bridge, Stoke-on-Trent ST11",
+      "phone": "+44 1296 323423",
+      "lat": 52.9741762,
+      "lng": -2.0899172
+    },
+    {
+      "_comment": "Psychology Today profil, saját nyilatkozat („I offer CBT in English and in Hungarian”). ⚠️ A gyakorlatnak KÉT rendelő-helyszíne van (Chester + Wrexham) — a Wrexham WALES-ben van, ezért CSAK a chesteri (angliai) helyszín szerepel. Nincs utcaszintű cím publikálva a chesteri rendelőhöz, csak az irányítószám-körzet — a `type` ezt kimondja.",
+      "name": "Aniko Cullen — Best Self CBT, Chester",
+      "type": "magyarul is beszélő CBT-terapeuta — a pontos rendelőcímet időpontfoglalás után adják (Chester CH2 körzet)",
+      "category": "pszichologus",
+      "city": "Chester",
+      "region": "NW",
+      "address": "Chester CH2",
+      "phone": "+44 1244 727269",
+      "lat": 53.1908873,
+      "lng": -2.8908955
+    },
+    {
+      "_comment": "Psychology Today profil, saját nyilatkozat („I also speak Hungarian”); korábban Magyarországon tanított. Nincs utcaszintű cím publikálva — a `type` ezt kimondja.",
+      "name": "Erika Kovacs-Peter — Counselling for Personal Empowerment, Bodmin",
+      "type": "magyarul is beszélő tanácsadó/terapeuta (trauma, szorongás, depresszió) — a pontos rendelőcímet időpontfoglalás után adják (Bodmin PL31 körzet), online is elérhető",
+      "category": "pszichologus",
+      "city": "Bodmin",
+      "region": "SW",
+      "address": "Bodmin PL31",
+      "phone": "+44 1494 411854",
+      "website": "https://counselling4personalempowerment.co.uk",
+      "lat": 50.4712568,
+      "lng": -4.7175734
+    },
+    {
       "_comment": "⭐ Az ELSŐ 'orvos' kategóriás GB-tétel — korábban ez a kategória nem is szerepelt a generátor VALID_CATEGORIES listájában (csak fogorvos volt), mert a háziorvos-rés a legrégebbi nyitott hiány volt (ld. gb-szaknevsor-seed memória). Dr. Vasas Péter GMC-regisztrált (6138971), Debreceni Egyetemen végzett sebész, jelenleg Ramsay Health/Park Hill Hospital Doncaster bariátriai/általános sebésze — SAJÁT klinikai weboldala (haemorrhoidclinic.co.uk) külön magyar nyelvű aloldalt tart fenn, ahol explicit szombat délutáni magánrendelést hirdet Londonban, és hétköznap Doncaster/Pontefract környékén érhető el. Mindkét helyszín felvéve, mert a magyar oldal mindkettőt megadja elérhetőségként.",
       "name": "Dr. Vasas Péter — proktológiai/sebészeti magánrendelés (London)",
       "type": "magyarul beszélő sebész (aranyér-kezelés, gasztrointesztinális sebészet) — szombat délutáni (15–19h) magánrendelés, kizárólag magánbetegek, előzetes bejelentkezéssel",
