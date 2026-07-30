@@ -1193,6 +1193,32 @@
       "website": "https://orbancounselling.co.uk",
       "lat": 52.1871394,
       "lng": 0.1909255
+    },
+    {
+      "_comment": "⭐ Doctify (site:doctify.com „Hungarian” dentist/doctor keresés) — brit orvos/fogorvos-értékelő platform, hasonló módszer, mint a spanyol Doctoralia. Companies House AKTÍV (07027619), CQC-regisztrált, OSM SAJÁT NÉVVEL tageli a helyet („London Dental Implant”) — a legerősebb megerősítés-típus. ⚠️ A cég ELSŐDLEGESEN dental TOURISM ügynökség (a nagyobb kezelések Budapesten történnek), DE a londoni rendelő valódi, CQC-engedélyes hely konzultációra, ellenőrzésre és kisebb kezelésekre (1-2 implantátum, fogfehérítés, higiénia) — a `type` ezt kimondja, hogy ne legyen félreértés.",
+      "name": "Hungarian DentaCare (London Dental Implant)",
+      "type": "fogászati rendelő és dentál-turisztikai ügynökség — konzultáció/ellenőrzés/kisebb kezelés Londonban, nagyobb beavatkozás (implantátum, All-on-4/6) Budapesten",
+      "category": "fogorvos",
+      "city": "London",
+      "region": "LDN",
+      "address": "158-160 Battersea Park Road, Battersea, London SW11 4ET",
+      "phone": "+44 20 7450 2920",
+      "website": "https://london-dental-implant.co.uk",
+      "lat": 51.4738696,
+      "lng": -0.1597445
+    },
+    {
+      "_comment": "Doctify saját profil, explicit nyelvi lista: „English” és „Hungarian”. Szegedi Tudományegyetemen végzett fogszabályzász (ortodontia).",
+      "name": "Dr. Krisztina Karpati — fogszabályozó szakorvos (Vidadent)",
+      "type": "fogszabályozó szakorvos, magyarul is beszél (Szegedi Tudományegyetem) — másik rendelője: Buckingham Gate Orthodontics, Westminster",
+      "category": "fogorvos",
+      "city": "London",
+      "region": "LDN",
+      "address": "Vidadent, 252 Bethnal Green Road, London E2 0AA",
+      "phone": "+44 20 7729 1385",
+      "website": "https://www.vidadent.co.uk",
+      "lat": 51.5261122,
+      "lng": -0.0665219
     }
   ]
 }
