@@ -285,9 +285,24 @@ export async function getBusinessesForList(): Promise<ListBusiness[]> {
   return cached("biz:list-v1", LIST_TTL_MS, async () => {
     const { results } = await getDB()
       .prepare(
+        // ⚠️ A `kontaktolható` döntetlen-feloldó a kapcsolatfelvételi tölcsérért van.
+        // A szaknévsor 22%-ának (2369-ből 518) NINCS SEMMILYEN elérhetősége —
+        // se telefon, se e-mail, se weboldal (AT 33%, NL 35%, GB 26%) —, az ilyen
+        // adatlapon a felhasználónak szó szerint nincs mit kattintania. Mivel az
+        // értékelés szinte mindenhol 0, a korábbi `featured DESC, rating DESC`
+        // gyakorlatilag véletlen sorrendet adott, így ezek a zsákutca-tételek a
+        // lista elejére is felkerültek. A `featured` (fizetett kiemelés) TOVÁBBRA IS
+        // elsőbbséget élvez — ez csak az azonos súlyúak között dönt: azonos
+        // körülmények mellett előbb az jöjjön, akivel a felhasználó fel is tud venni
+        // a kapcsolatot. (A weboldal a `blurb`-ben él, nincs külön oszlopa.)
         `SELECT ${LIST_COLUMNS} FROM businesses
          WHERE COALESCE(hidden, 0) = 0 AND moderation_status = 1
-         ORDER BY featured DESC, rating DESC`,
+         ORDER BY featured DESC,
+                  (CASE WHEN (phone IS NOT NULL AND trim(phone) <> '')
+                          OR (contact_email IS NOT NULL AND trim(contact_email) <> '')
+                          OR (blurb LIKE '%http%')
+                        THEN 1 ELSE 0 END) DESC,
+                  rating DESC`,
       )
       .all<ListBusinessRow>();
     return results.map(toListBusiness);
@@ -376,6 +391,14 @@ export async function getSimilarBusinesses(b: Business, limit = 3): Promise<Busi
        WHERE COALESCE(hidden, 0) = 0 AND moderation_status = 1
          AND id != ? AND category_id = ? AND country_code = ?
        ORDER BY (canton_code = ?) DESC, featured DESC,
+         -- Ajánló-modul: egy elérhetőség NÉLKÜLI cég ajánlása zsákutca, ezért a
+         -- kontaktolhatóság a TÁVOLSÁG ELÉ kerül. (A listánál ez csak döntetlent
+         -- old fel, itt tudatosan erősebb: inkább egy kicsit távolabbi, de
+         -- felhívható vállalkozást ajánljunk, mint egy közeli zsákutcát.)
+         (CASE WHEN (phone IS NOT NULL AND trim(phone) <> '')
+                 OR (contact_email IS NOT NULL AND trim(contact_email) <> '')
+                 OR (blurb LIKE '%http%')
+               THEN 1 ELSE 0 END) DESC,
          CASE WHEN ? = 1 AND lat IS NOT NULL
               THEN (lat - ?) * (lat - ?) + 0.5 * (lng - ?) * (lng - ?)
               ELSE 9999 END ASC,
