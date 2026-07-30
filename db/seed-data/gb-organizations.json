@@ -1282,6 +1282,28 @@
       "website": "https://www.doctify.com/uk/practice/hotel-dent",
       "lat": 51.5646624,
       "lng": -0.1968508
+    },
+    {
+      "_comment": "ITI+CIOL saját szakmai-regiszter profil (Chartered Linguist + MITI), a saját weboldal a lábjegyzetben megerősíti: 'Anikó Pető-Mordovski, Cambridge, UK'. Otthonról dolgozó szabadúszó — nincs ügyfélfogadó iroda/utcacím.",
+      "name": "Paprika Translations — Pető-Mordovski Anikó, fordító",
+      "type": "magyar–angol fordítás, marketingszöveg és copywriting (online, nincs ügyfélfogadó iroda)",
+      "category": "fordito",
+      "city": "Cambridge",
+      "region": "EE",
+      "address": "Online szolgáltatás — e-mailben intézhető (Cambridge, UK)",
+      "email": "aniko@paprikatranslations.co.uk",
+      "website": "https://paprikatranslations.co.uk"
+    },
+    {
+      "_comment": "ITI-regiszter (MITI+MCIL), CIOL Diptrans magyar-angol jogi/orvosi szakfordítás 2016 óta; független megerősítés proz.com/LinkedIn/TranslatorsCafe-n is. ⚠️ Anyanyelve angol (nem magyar), DE a professzionális magyar-angol fordítói/jogi képesítés (LLB Law) miatt felvéve — a cél 'ahol magyarul intézhető ügy', nem kizárólag anyanyelvi magyar szakember.",
+      "name": "Koczor Translation — Koczor Ida, jogi/orvosi szakfordító",
+      "type": "magyar–angol jogi és orvosi szakfordítás (online, nincs ügyfélfogadó iroda)",
+      "category": "fordito",
+      "city": "London",
+      "region": "LDN",
+      "address": "Online szolgáltatás — e-mailben intézhető (London, UK)",
+      "email": "ida@koczortranslation.co.uk",
+      "website": "https://koczortranslation.co.uk"
     }
   ]
 }
