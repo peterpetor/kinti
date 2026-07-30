@@ -467,6 +467,43 @@
       "website": "https://go2costablanca.com",
       "lat": 38.53425,
       "lng": -0.108045
+    },
+    {
+      "_comment": "⭐ Doctoralia.es (site:doctoralia.es \"húngaro\" keresés) — spanyol orvosi/pszichológusi foglalás-platform, a szakember SAJÁT nyelvi profilja tünteti fel a húngaro nyelvet. Ez az ELSŐ háziorvos/általános orvos jellegű ES-tétel (a Dr. Szilágyi szívsebész mellett). Csak magánrendelés, nincs biztosítós ellátás.",
+      "name": "Dra. Nadine Varga — általános orvos (Clínica Sermed)",
+      "type": "általános orvos, esztétikai/anti-aging fókusszal — magyarul is beszél; csak magánrendelés, biztosítót nem fogad",
+      "category": "orvos",
+      "city": "Barcelona",
+      "region": "CT",
+      "address": "Clínica Sermed, Carrer del Dos de Maig 283, L'Eixample, 08025 Barcelona",
+      "phone": "+34 931 89 39 42",
+      "website": "https://www.doctoralia.es/nadine-varga/medico-general/barcelona",
+      "lat": 41.4091762,
+      "lng": 2.1790561
+    },
+    {
+      "name": "Nikoletta Holch — pszichológus",
+      "type": "pszichológus (Colegiado 17754), stratégiai rövid terápia és párterápia — magyarul is beszél, személyesen és online",
+      "category": "pszichologus",
+      "city": "Barcelona",
+      "region": "CT",
+      "address": "Carrer de Madrazo 14, 6º 2ª, 08006 Barcelona",
+      "phone": "+34 659 29 30 37",
+      "website": "https://nikolettaholch.com",
+      "lat": 41.4006056,
+      "lng": 2.1496292
+    },
+    {
+      "name": "Dra. Alessia Simon — pszichiáter (Institut Sarró)",
+      "type": "pszichiáter — magyarul is beszél",
+      "category": "pszichiater",
+      "city": "Barcelona",
+      "region": "CT",
+      "address": "Carrer de Muntaner 200, entresuelo 3-B, L'Eixample, 08036 Barcelona",
+      "phone": "+34 934 51 59 40",
+      "website": "https://www.institutsarro.com",
+      "lat": 41.3929252,
+      "lng": 2.1513059
     }
   ]
 }
