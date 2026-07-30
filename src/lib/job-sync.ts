@@ -13,7 +13,7 @@ import { searchJoobleJobs } from "./jooble";
 import { searchArbeitnowJobs } from "./arbeitnow";
 import { fetchJobRoomJobs } from "./jobroom";
 import { upsertExternalJobs, type ExternalJobInput } from "./repo-external-jobs";
-import { regionCodeFromLocation } from "./region-resolve";
+import { regionCodeFromLocation, isOutsideCountryScope } from "./region-resolve";
 import { budgetCurrency, isBudgetCountry } from "./budget-plan";
 
 /**
@@ -181,6 +181,10 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
     for (const { sector, res } of settled) {
       for (const { job: j, source } of res) {
         if (!j.url || byUrl.has(j.url)) continue; // első kategória nyer
+        // ⚠️ Az Adzuna `gb` piaca a TELJES Egyesült Királyság, a Kinti „GB"-je
+        // viszont ANGLIA. A skót/walesi/észak-írországi hirdetés nem hiányos, hanem
+        // TÉVES adat lenne „Anglia" alatt — élesben 255-ből 30 ilyen sor volt.
+        if (isOutsideCountryScope(cc, j.location, j.area)) continue;
         const hasSalary = j.salaryMin != null || j.salaryMax != null;
         byUrl.set(j.url, {
           source,

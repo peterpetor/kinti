@@ -15,6 +15,66 @@
 import { getRegions } from "./regions";
 import { cantonFromAddress } from "./cantons";
 
+/**
+ * ⚠️ AZ ADZUNA `gb` PIACA A TELJES EGYESÜLT KIRÁLYSÁG — A KINTI „GB"-JE ANGLIA.
+ *
+ * A Kinti ötödik országa `{ code: "GB", name: "Anglia" }`, és CSAK a 9 angol
+ * statisztikai régiót ismeri. Az Adzuna viszont skót, walesi és észak-írországi
+ * hirdetéseket is ad ugyanabban a `gb` feedben — élesben ez 255 angliai
+ * hirdetésből 30-at jelentett („County Antrim", „Omagh, Northern Ireland",
+ * „Newry", „Bathgate"), amik így „Anglia" alatt jelentek meg, régió nélkül.
+ * Nem hiányos adat volt, hanem TÉVES: olyan országhoz sorolva, ahol nincsenek.
+ *
+ * A szűrő szándékosan CSAK egyértelmű jelzőkre lép. A többértelmű helyneveket
+ * KIHAGYTAM, mert egy téves kizárás valódi angliai állást dobna el:
+ *   • „Newport" — Wales (Gwent), DE Newport, Shropshire és Newport, Isle of
+ *     Wight is létezik Angliában → NINCS a listán.
+ *   • „Bangor" — Észak-Írország ÉS Wales; mindkettő Anglián kívül, ezért BENNE
+ *     lehet (bármelyik találat helyes kizárás).
+ *   • „Perth" magában nem szerepel (Perth & Kinross → „kinross" a jelző).
+ */
+const NOT_ENGLAND: readonly string[] = [
+  // Országnevek
+  "scotland", "wales", "cymru", "northern ireland",
+  // Skócia
+  "glasgow", "edinburgh", "aberdeen", "aberdeenshire", "dundee", "inverness",
+  "stirling", "falkirk", "paisley", "livingston", "bathgate", "kilmarnock",
+  "dumfries", "kinross", "perthshire", "lanarkshire", "renfrewshire",
+  "ayrshire", "lothian", "fife", "argyll", "moray", "clackmannanshire",
+  // Wales
+  "cardiff", "swansea", "wrexham", "aberystwyth", "carmarthen", "pembrokeshire",
+  "powys", "gwynedd", "conwy", "denbighshire", "flintshire", "monmouthshire",
+  "ceredigion", "merthyr tydfil", "rhondda", "bridgend", "llanelli",
+  "caerphilly", "torfaen", "blaenau gwent", "glamorgan", "anglesey", "gwent",
+  // Észak-Írország
+  "antrim", "armagh", "tyrone", "fermanagh", "londonderry", "belfast", "newry",
+  "omagh", "lisburn", "craigavon", "ballymena", "newtownabbey", "coleraine",
+  "enniskillen", "dungannon", "portadown", "larne", "carrickfergus",
+  "downpatrick", "banbridge", "cookstown", "magherafelt", "limavady",
+  "strabane", "bangor",
+];
+
+/**
+ * A hely NYILVÁNVALÓAN kívül van-e az adott Kinti-ország területén?
+ *
+ * Csak akkor ad `true`-t, ha a forrás piaca nagyobb, mint a Kinti országa
+ * (ma egyedül a GB ilyen). Bizonytalanság esetén `false` — inkább maradjon benne
+ * egy régió nélküli hirdetés, mint hogy valódi angliai állást dobjunk el.
+ */
+export function isOutsideCountryScope(
+  country: string,
+  location: string | null | undefined,
+  areas?: (string | null | undefined)[],
+): boolean {
+  if (country !== "GB") return false;
+  const parts = [...(areas ?? []), location].filter(
+    (x): x is string => typeof x === "string" && x.trim().length > 0,
+  );
+  if (parts.length === 0) return false;
+  const corpus = foldTokens(parts.join(" "));
+  return NOT_ENGLAND.some((m) => corpus.includes(` ${m} `));
+}
+
 /** Ékezet-hajtás + nem-alfanumerikus → szóköz, szóközzel keretezve (token-illesztéshez). */
 function foldTokens(s: string): string {
   const folded = s

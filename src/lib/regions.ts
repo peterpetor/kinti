@@ -91,16 +91,25 @@ const NL_REGIONS: Region[] = [
 // csak ANGLIA, nem a teljes Egyesült Királyság: Skócia/Wales/Észak-Írország
 // más jogrend (külön egészségügy, oktatás, sőt Skóciában külön adósáv), ezért
 // ide nem vesszük fel. Város-aliasok: lásd az AT-megjegyzést.
+// Anglia — a 9 statisztikai régió.
+// ⚠️ A MEGYE-ALIASOK NEM DÍSZEK. A külső állás-aggregátor (Adzuna) az angol
+// hirdetésekhez többnyire VÁROS + MEGYE alakot ad („Basildon, Essex"), nem
+// régiót — megye-alias nélkül ezek a sorok régió nélkül maradnak, és a
+// /allasok régió-szűrője ELDOBJA őket. A ceremoniális megyeneveket használom,
+// mert az aggregátorok is azokat adják.
+// ⚠️ A név-illesztés TOKEN-határos, ezért a többszór-alakot IS fel kell venni:
+// a „hampshire" nem illeszkedik a „northamptonshire"-re, és ez jó — az két
+// KÜLÖNBÖZŐ régió (SE, illetve EM).
 const GB_REGIONS: Region[] = [
-  { code: "LDN", name: "London", aliases: ["londonban", "greater london", "croydon", "wembley"] },
-  { code: "SE", name: "South East", aliases: ["délkelet-anglia", "brighton", "reading", "oxford", "southampton", "portsmouth", "milton keynes", "slough", "luton"] },
-  { code: "SW", name: "South West", aliases: ["délnyugat-anglia", "bristol", "plymouth", "exeter", "bournemouth", "swindon", "gloucester"] },
-  { code: "EE", name: "East of England", aliases: ["kelet-anglia", "cambridge", "norwich", "ipswich", "peterborough", "colchester", "chelmsford"] },
-  { code: "WM", name: "West Midlands", aliases: ["birmingham", "coventry", "wolverhampton", "stoke-on-trent", "stoke"] },
-  { code: "EM", name: "East Midlands", aliases: ["nottingham", "leicester", "derby", "northampton", "lincoln"] },
-  { code: "YH", name: "Yorkshire and the Humber", aliases: ["yorkshire", "leeds", "sheffield", "bradford", "hull", "york", "doncaster"] },
-  { code: "NW", name: "North West", aliases: ["manchester", "liverpool", "preston", "blackpool", "bolton", "warrington", "chester"] },
-  { code: "NE", name: "North East", aliases: ["newcastle", "sunderland", "middlesbrough", "durham", "gateshead"] },
+  { code: "LDN", name: "London", aliases: ["londonban", "greater london", "croydon", "wembley", "middlesex"] },
+  { code: "SE", name: "South East", aliases: ["délkelet-anglia", "south east england", "brighton", "reading", "oxford", "southampton", "portsmouth", "milton keynes", "slough", "luton", "kent", "surrey", "west sussex", "east sussex", "sussex", "hampshire", "berkshire", "buckinghamshire", "oxfordshire", "isle of wight"] },
+  { code: "SW", name: "South West", aliases: ["délnyugat-anglia", "south west england", "bristol", "plymouth", "exeter", "bournemouth", "swindon", "gloucester", "devon", "cornwall", "somerset", "dorset", "gloucestershire", "wiltshire"] },
+  { code: "EE", name: "East of England", aliases: ["kelet-anglia", "east anglia", "cambridge", "norwich", "ipswich", "peterborough", "colchester", "chelmsford", "essex", "hertfordshire", "bedfordshire", "cambridgeshire", "norfolk", "suffolk"] },
+  { code: "WM", name: "West Midlands", aliases: ["birmingham", "coventry", "wolverhampton", "stoke-on-trent", "stoke", "staffordshire", "warwickshire", "worcestershire", "shropshire", "herefordshire", "solihull", "dudley", "walsall"] },
+  { code: "EM", name: "East Midlands", aliases: ["nottingham", "leicester", "derby", "northampton", "lincoln", "derbyshire", "nottinghamshire", "leicestershire", "lincolnshire", "northamptonshire", "rutland"] },
+  { code: "YH", name: "Yorkshire and the Humber", aliases: ["yorkshire", "leeds", "sheffield", "bradford", "hull", "york", "doncaster", "humberside", "rotherham", "barnsley", "huddersfield", "wakefield", "harrogate"] },
+  { code: "NW", name: "North West", aliases: ["manchester", "liverpool", "preston", "blackpool", "bolton", "warrington", "chester", "lancashire", "cheshire", "merseyside", "cumbria", "wigan", "stockport", "oldham", "rochdale", "salford"] },
+  { code: "NE", name: "North East", aliases: ["newcastle", "sunderland", "middlesbrough", "durham", "gateshead", "northumberland", "tyne and wear", "tyneside", "teesside", "darlington", "hartlepool", "stockton-on-tees"] },
 ];
 
 // Spanyolország — a 17 comunidad autónoma + a 2 autonóm város (Ceuta, Melilla),
