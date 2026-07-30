@@ -1179,6 +1179,20 @@
       "website": "https://immersiveminds-psychology.co.uk",
       "lat": 51.485,
       "lng": -0.1107
+    },
+    {
+      "_comment": "Psychology Today profil szerint magyarul is dolgozik; ELTÉN (Budapest) végzett pszichológia szakon. Önkéntesként segít a Magyar Iskola Cambridge-nél (MÁR a szaknévsorban szereplő szervezet) — ez független megerősítés a magyar kötődésre. East of England (EE) régió ELSŐ pszichológus-tétele.",
+      "name": "Kitti Eva Orban — pszichológus, Cambridge",
+      "type": "magyarul is beszélő pszichológus (GMBPsS) — elsősorban online konzultáció, felnőtteknek és időseknek",
+      "category": "pszichologus",
+      "city": "Cambridge",
+      "region": "EE",
+      "address": "Fulbourn, Cambridge CB25",
+      "phone": "+44 1954 770236",
+      "email": "info@orbancounselling.co.uk",
+      "website": "https://orbancounselling.co.uk",
+      "lat": 52.1871394,
+      "lng": 0.1909255
     }
   ]
 }
