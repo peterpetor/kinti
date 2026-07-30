@@ -1456,6 +1456,27 @@
       "website": "https://www.langosboys.com",
       "lat": 51.4491,
       "lng": 0.0095
+    },
+    {
+      "_comment": "⭐ ÚJ FORRÁS: a Charity Commission (a Companies House-tól KÜLÖN nyilvántartás — sok magyar közösségi szervezet egyesületként, nem cégként létezik). Bejegyzett jótékonysági szervezet 1152984, 2011 óta, a bejelentése naprakész. ⚠️ A bejegyzett cím egy MAGÁNLAKÁS (Flat 20, Coopers Court, W3) — ADATVÉDELMI okból NEM tesszük ki; helyette a PUBLIKUS szervezeti e-mail (info@hchs.org.uk) és a saját weboldal az elérhetőség. A weboldal élő, 2026 AUGUSZTUSIG tartó programnaptárral (néptánc, szavalókör, ifjúsági tehetségkutató) — igazoltan aktív.",
+      "name": "Hungarian Culture & Heritage Society (HCHS) — magyar kulturális egyesület",
+      "type": "magyar kulturális egyesület Londonban: néptánc, szavalókör, ifjúsági programok (nincs állandó ügyfélfogadó iroda — e-mailben és a programokon érhető el)",
+      "city": "London",
+      "region": "LDN",
+      "address": "Londoni programhelyszínek — kapcsolat e-mailben és a weboldalon",
+      "email": "info@hchs.org.uk",
+      "website": "http://www.hchs.org.uk/"
+    },
+    {
+      "_comment": "Charity Commission 1195411, AKTÍV, a bejelentése naprakész. A bejegyzett célja PONTOSAN a mi felhasználóink igénye: 'promotes social inclusion for people from Hungary residing in the UK who are socially excluded or at risk of social exclusion'. ⚠️ A bejegyzett cím MAGÁNLAKÁS (Redditch) — nem tesszük ki; a kapcsolat a SZERVEZETI e-mail (thehungarianassociation@gmail.com, nem magánszemélyé). ⚠️ NÉVÜTKÖZÉS: a 'hungarianassociation.com' egy CLEVELANDI (USA) szervezet, NEM ez — ne keverd össze. Nincs saját weboldala; ha egy jövőbeli körben sem lesz nyoma aktivitásnak, érdemes újraértékelni.",
+      "name": "The Hungarian Association — magyar segítő egyesület, Redditch",
+      "type": "bejegyzett jótékonysági egyesület: társadalmi beilleszkedés segítése az Egyesült Királyságban élő magyaroknak (e-mailben érhető el)",
+      "city": "Redditch",
+      "region": "WM",
+      "address": "Redditch, Worcestershire — kapcsolat e-mailben",
+      "email": "thehungarianassociation@gmail.com",
+      "lat": 52.3058,
+      "lng": -1.9417
     }
   ]
 }
