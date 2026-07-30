@@ -556,14 +556,21 @@ export interface WeeklyOpsCounts {
   dataHealthIssues: number;
 }
 
-/** A négy ország geokód-fallback középpontja (prepare-business-import.mjs). */
+/** Az országok geokód-fallback KÖZÉP-sentinelje (prepare-business-import.mjs).
+ *  ⚠️ CSAK CH/AT/DE/NL: ezeknél az import egy ORSZÁG-KÖZÉP (lakatlan) pontra
+ *  esik vissza, ha a geokód meghiúsul — ez a sentinel. GB/ES-re SZÁNDÉKOSAN
+ *  NINCS itt: ott sok legitim tétel (venue nélküli szolgáltatás, város-szintű
+ *  egyesület — pl. MADACH Madrid-közép) tudatosan város-középen áll, azt NEM
+ *  hibának számoljuk. A GB/ES adat-integritást a bbox + régió-halmaz fedi (lent). */
 const HEALTH_CENTERS: Record<string, [number, number]> = {
   CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29],
 };
-/** Ország-bbox [latMin, latMax, lngMin, lngMax] (prepare-business-import.mjs). */
+/** Ország-bbox [latMin, latMax, lngMin, lngMax] (prepare-business-import.mjs).
+ *  ES: a félsziget ÉS a Kanári-szigetek uniója (business.ts isSpanishCoord tükre). */
 const HEALTH_BBOX: Record<string, [number, number, number, number]> = {
   CH: [45.8, 47.9, 5.9, 10.6], AT: [46.3, 49.1, 9.4, 17.2],
   DE: [47.2, 55.1, 5.8, 15.1], NL: [50.7, 53.6, 3.3, 7.3],
+  GB: [49.9, 55.85, -6.5, 1.85], ES: [27.5, 43.9, -18.3, 4.4],
 };
 /** Érvényes tartomány-kódok országonként (regions.ts / cantons.ts tükre). */
 const HEALTH_CANTONS: Record<string, string[]> = {
@@ -571,6 +578,8 @@ const HEALTH_CANTONS: Record<string, string[]> = {
   DE: ["BW", "BY", "BE", "BB", "HB", "HH", "HE", "MV", "NI", "NW", "RP", "SL", "SN", "ST", "SH", "TH"],
   NL: ["NH", "ZH", "UT", "NB", "GE", "OV", "LI", "FR", "GR", "DR", "FL", "ZE"],
   CH: ["ZH", "BE", "LU", "UR", "SZ", "OW", "NW", "GL", "ZG", "FR", "SO", "BS", "BL", "SH", "AR", "AI", "SG", "GR", "AG", "TG", "TI", "VD", "VS", "NE", "GE", "JU"],
+  GB: ["LDN", "SE", "SW", "EE", "WM", "EM", "YH", "NW", "NE"],
+  ES: ["MD", "CT", "AN", "VC", "IB", "CN", "PV", "GA", "CL", "CM", "AR", "MC", "AS", "EX", "NC", "CB", "RI", "CE", "ML"],
 };
 
 /**
