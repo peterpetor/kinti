@@ -22,7 +22,8 @@
       "region": "MD",
       "address": "Madrid",
       "email": "info@madach.es",
-      "website": "https://madach.es",
+      "_comment": "⚠️ A site-nak NINCS érvényes HTTPS-e (2026-07-30 liveness-audit): https://madach.es → 000, csak http://www.madach.es/ → 200. A tárolt URL ezért http+www — a szervezet aktív (email is működik), csak a tanúsítvány hiányzik.",
+      "website": "http://www.madach.es/",
       "lat": 40.4168,
       "lng": -3.7038
     },
