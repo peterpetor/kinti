@@ -1117,6 +1117,30 @@
       "website": "https://www.haemorrhoidclinic.co.uk/magyar",
       "lat": 53.5930678,
       "lng": -1.3123265
+    },
+    {
+      "_comment": "Psychology Today profil, saját nyilatkozat („I also speak Hungarian”). Lincolnshire/East Midlands ELSŐ pszichológus-tétele.",
+      "name": "Csilla Varga — tanácsadó/terapeuta, Sleaford",
+      "type": "magyarul is beszélő tanácsadó (BA, MBACP) — személyes és online konzultáció",
+      "category": "pszichologus",
+      "city": "Sleaford",
+      "region": "EM",
+      "address": "10 Brecon Way, Sleaford NG34",
+      "phone": "+44 1529 404569",
+      "lat": 52.993112,
+      "lng": -0.4272143
+    },
+    {
+      "_comment": "Psychology Today profil, saját nyilatkozat („I also speak Hungarian”). Lancaster ELSŐ tétele.",
+      "name": "Judit Szilagyi — pszichológus, Lancaster",
+      "type": "magyarul is beszélő pszichológus (HCPC-regisztrált, EMDR/CBT/DBT) — poszttraumás stressz, szorongás, OCD",
+      "category": "pszichologus",
+      "city": "Lancaster",
+      "region": "NW",
+      "address": "Lancaster University Health Innovation Campus, Lancaster LA1 4AT",
+      "phone": "+44 1524 938728",
+      "lat": 54.0162532,
+      "lng": -2.7934535
     }
   ]
 }
