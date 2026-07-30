@@ -24,23 +24,35 @@ export interface BlurbContact {
   email: string | null;
 }
 
+/** Egy szegmensről eldönti, hogy weboldal/e-mail-e; ha igen, strukturáltan adja. */
+function segmentContact(seg: string, rest: string | null): BlurbContact | null {
+  const email = seg.match(EMAIL_RE);
+  if (email) return { blurb: rest, website: null, email: email[1] };
+
+  const url = seg.match(URL_RE);
+  if (url) {
+    const website = /^https?:\/\//i.test(seg) ? seg : `https://${seg}`;
+    return { blurb: rest, website, email: null };
+  }
+  return null;
+}
+
 export function extractContactFromBlurb(raw: string | null | undefined): BlurbContact {
   if (!raw) return { blurb: raw ?? null, website: null, email: null };
   const parts = raw.split(" · ");
-  if (parts.length < 2) return { blurb: raw, website: null, email: null };
+
+  // ⚠️ EGYETLEN szegmens is lehet TISZTA weboldal/e-mail — a seed-pipeline több
+  // száz sornál CSAK a címet írta a leírásba („www.example.at"), elválasztó
+  // nélkül. Amíg ezt nem kezeltük, 35 élő cégnél a weboldal NYERS SZÖVEGKÉNT
+  // állt a leírás helyén, és NEM lett belőle kattintható „Weboldal" gomb —
+  // vagyis kívülről zsákutcának látszottak, pedig volt elérhetőségük.
+  if (parts.length < 2) {
+    return segmentContact(raw.trim(), null) ?? { blurb: raw, website: null, email: null };
+  }
 
   const last = parts[parts.length - 1].trim();
   const rest = parts.slice(0, -1).join(" · ").trim() || null;
-
-  const email = last.match(EMAIL_RE);
-  if (email) return { blurb: rest, website: null, email: email[1] };
-
-  const url = last.match(URL_RE);
-  if (url) {
-    const website = /^https?:\/\//i.test(last) ? last : `https://${last}`;
-    return { blurb: rest, website, email: null };
-  }
-  return { blurb: raw, website: null, email: null };
+  return segmentContact(last, rest) ?? { blurb: raw, website: null, email: null };
 }
 
 /** Melyik gomb kapja a kiemelt (elsődleges) stílust a cégadatlapon. */
