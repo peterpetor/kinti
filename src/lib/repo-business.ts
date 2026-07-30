@@ -286,21 +286,28 @@ export async function getBusinessesForList(): Promise<ListBusiness[]> {
     const { results } = await getDB()
       .prepare(
         // ⚠️ A `kontaktolható` döntetlen-feloldó a kapcsolatfelvételi tölcsérért van.
-        // A szaknévsor 22%-ának (2369-ből 518) NINCS SEMMILYEN elérhetősége —
-        // se telefon, se e-mail, se weboldal (AT 33%, NL 35%, GB 26%) —, az ilyen
+        // A szaknévsor 12%-ának (2369-ből 285) NINCS SEMMILYEN elérhetősége — se
+        // telefon, se e-mail, se weboldal (AT 20%, GB 18%, NL 16%) —, az ilyen
         // adatlapon a felhasználónak szó szerint nincs mit kattintania. Mivel az
         // értékelés szinte mindenhol 0, a korábbi `featured DESC, rating DESC`
         // gyakorlatilag véletlen sorrendet adott, így ezek a zsákutca-tételek a
         // lista elejére is felkerültek. A `featured` (fizetett kiemelés) TOVÁBBRA IS
-        // elsőbbséget élvez — ez csak az azonos súlyúak között dönt: azonos
-        // körülmények mellett előbb az jöjjön, akivel a felhasználó fel is tud venni
-        // a kapcsolatot. (A weboldal a `blurb`-ben él, nincs külön oszlopa.)
+        // elsőbbséget élvez — ez csak az azonos súlyúak között dönt.
+        //
+        // ⚠️⚠️ A WEBOLDAL-FELTÉTEL FINOM: a seed/CSV pipeline a weboldalt a blurb
+        // végére fűzi ` · ` elválasztóval, PROTOKOLL NÉLKÜL („… · maosz.org.uk"),
+        // ezért egy `blurb LIKE '%http%'` teszt 233 weboldallal RENDELKEZŐ céget
+        // sorolt volna tévesen zsákutcának (ld. lib/contact-links.ts:
+        // extractContactFromBlurb — az utolsó szegmenst nézi URL/email-mintára).
+        // A lenti `' · '` + pont közelítés a valós logikához 99,96%-ban illeszkedik
+        // (2369-ből 1 eltérés) — ha ezt módosítod, MÉRD ÚJRA a contact-links.ts
+        // logikájával szemben.
         `SELECT ${LIST_COLUMNS} FROM businesses
          WHERE COALESCE(hidden, 0) = 0 AND moderation_status = 1
          ORDER BY featured DESC,
                   (CASE WHEN (phone IS NOT NULL AND trim(phone) <> '')
                           OR (contact_email IS NOT NULL AND trim(contact_email) <> '')
-                          OR (blurb LIKE '%http%')
+                          OR (blurb LIKE '% · %.%')
                         THEN 1 ELSE 0 END) DESC,
                   rating DESC`,
       )
@@ -397,7 +404,7 @@ export async function getSimilarBusinesses(b: Business, limit = 3): Promise<Busi
          -- felhívható vállalkozást ajánljunk, mint egy közeli zsákutcát.)
          (CASE WHEN (phone IS NOT NULL AND trim(phone) <> '')
                  OR (contact_email IS NOT NULL AND trim(contact_email) <> '')
-                 OR (blurb LIKE '%http%')
+                 OR (blurb LIKE '% · %.%')
                THEN 1 ELSE 0 END) DESC,
          CASE WHEN ? = 1 AND lat IS NOT NULL
               THEN (lat - ?) * (lat - ?) + 0.5 * (lng - ?) * (lng - ?)
