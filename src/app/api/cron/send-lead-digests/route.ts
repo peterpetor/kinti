@@ -1,5 +1,6 @@
 import { getDB, getCloudflareEnv } from "@/lib/cloudflare";
 import { getAdminUserId } from "@/lib/admin";
+import { timingSafeEqualStr } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
 import { sendLeadDigestEmail, sendLeadLockedEmail } from "@/lib/email";
 
@@ -37,7 +38,7 @@ interface BusinessRow {
 async function handle(req: Request): Promise<Response> {
   const env = getCloudflareEnv() as unknown as { CRON_SECRET?: string };
   const auth = req.headers.get("authorization") ?? "";
-  const okSecret = !!env.CRON_SECRET && auth === `Bearer ${env.CRON_SECRET}`;
+  const okSecret = !!env.CRON_SECRET && (await timingSafeEqualStr(auth, `Bearer ${env.CRON_SECRET}`));
   const okAdmin = okSecret ? false : !!(await getAdminUserId());
   if (!okSecret && !okAdmin) {
     return new Response("Unauthorized", { status: 401 });

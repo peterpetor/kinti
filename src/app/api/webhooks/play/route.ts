@@ -4,6 +4,7 @@ import { activateEntitlement, deactivateEntitlement } from "@/lib/entitlements";
 import { isPlayConfigured, getSubscriptionState } from "@/lib/google-play";
 import type { EntitlementType } from "@/lib/payments-config";
 import { safeLogError } from "@/lib/safe-log";
+import { timingSafeEqualStr } from "@/lib/security";
 
 export const runtime = "edge";
 
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
     secret = process.env.PLAY_RTDN_SECRET;
   }
   const key = new URL(req.url).searchParams.get("key");
-  if (!secret || key !== secret) {
+  if (!secret || !key || !(await timingSafeEqualStr(key, secret))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   if (!isPlayConfigured()) return NextResponse.json({ ok: true, skipped: "not-configured" });

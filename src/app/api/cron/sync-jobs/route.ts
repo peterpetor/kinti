@@ -1,4 +1,5 @@
 import { getAdminUserId } from "@/lib/admin";
+import { timingSafeEqualStr } from "@/lib/security";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { syncAllExternalJobs, syncExternalJobsForCountry, SYNC_COUNTRIES } from "@/lib/job-sync";
 import { purgeStaleExternalJobs } from "@/lib/repo-external-jobs";
@@ -46,7 +47,7 @@ const COUNTRIES = new Set<string>(SYNC_COUNTRIES);
 async function handle(req: Request): Promise<Response> {
   const secret = (getCloudflareEnv() as unknown as { CRON_SECRET?: string }).CRON_SECRET;
   const auth = req.headers.get("authorization") ?? "";
-  const okSecret = !!secret && auth === `Bearer ${secret}`;
+  const okSecret = !!secret && (await timingSafeEqualStr(auth, `Bearer ${secret}`));
   const okAdmin = okSecret ? false : !!(await getAdminUserId());
   if (!okSecret && !okAdmin) return new Response("Unauthorized", { status: 401, headers: NO_STORE });
 

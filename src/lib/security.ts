@@ -122,3 +122,27 @@ export async function hashEmail(email: string | null): Promise<string | null> {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 }
+
+/**
+ * Konstans-idejű string-összehasonlítás megosztott titkokhoz (cron `Bearer`,
+ * Telegram/Play webhook-kulcs). A sima `===`/`!==` a V8-ban az ELSŐ eltérő
+ * bájtnál kilép, így elvben timing-oráklummá válhat; hálózaton át a jitter
+ * miatt gyakorlatilag nem kihasználható, de a titok-összevetés bevett
+ * best-practice-e a konstans idő — ez a defense-in-depth réteg.
+ *
+ * Megvalósítás: MINDKÉT oldalt SHA-256-tal fix 32 bájtra hasheljük (a hossz
+ * így nem szivárog), majd a 32 bájtot XOR-akkumulációval, korai kilépés
+ * NÉLKÜL vetjük össze. Edge-kompatibilis (`crypto.subtle`), ezért async.
+ */
+export async function timingSafeEqualStr(a: string, b: string): Promise<boolean> {
+  const enc = new TextEncoder();
+  const [da, db] = await Promise.all([
+    crypto.subtle.digest("SHA-256", enc.encode(a)),
+    crypto.subtle.digest("SHA-256", enc.encode(b)),
+  ]);
+  const va = new Uint8Array(da);
+  const vb = new Uint8Array(db);
+  let diff = 0;
+  for (let i = 0; i < va.length; i++) diff |= va[i] ^ vb[i];
+  return diff === 0;
+}

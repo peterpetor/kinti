@@ -3,6 +3,7 @@ import { getDB, getCloudflareEnv } from "@/lib/cloudflare";
 import { safeLogError } from "@/lib/safe-log";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
 import { getCategories, recordUsage } from "@/lib/repo";
+import { timingSafeEqualStr } from "@/lib/security";
 import {
   parseBotQuery,
   formatBotReply,
@@ -130,7 +131,8 @@ export async function POST(req: Request) {
     if (!token || !secret) {
       return NextResponse.json({ error: "not-configured" }, { status: 503 });
     }
-    if (req.headers.get("x-telegram-bot-api-secret-token") !== secret) {
+    const provided = req.headers.get("x-telegram-bot-api-secret-token") ?? "";
+    if (!(await timingSafeEqualStr(provided, secret))) {
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
 

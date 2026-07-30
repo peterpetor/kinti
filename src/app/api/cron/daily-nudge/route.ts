@@ -1,5 +1,6 @@
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { getAdminUserId } from "@/lib/admin";
+import { timingSafeEqualStr } from "@/lib/security";
 import { claimDailyNudge, getWeeklyOpsCounts, getFeatureUsageStats } from "@/lib/repo-misc";
 import { moderationCount } from "@/lib/repo-spam";
 import { sendModerationReminderEmail } from "@/lib/email";
@@ -83,7 +84,7 @@ async function maybeSendRemitAlert(): Promise<RemitAlertResult> {
 async function handle(req: Request): Promise<Response> {
   const env = getCloudflareEnv() as unknown as { CRON_SECRET?: string; VAPID_PRIVATE_KEY?: string };
   const auth = req.headers.get("authorization") ?? "";
-  const okSecret = !!env.CRON_SECRET && auth === `Bearer ${env.CRON_SECRET}`;
+  const okSecret = !!env.CRON_SECRET && (await timingSafeEqualStr(auth, `Bearer ${env.CRON_SECRET}`));
   const okAdmin = okSecret ? false : !!(await getAdminUserId());
   if (!okSecret && !okAdmin) {
     return new Response("Unauthorized", { status: 401 });
