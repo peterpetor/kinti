@@ -1408,6 +1408,54 @@
       "hours": "H-P 08:30-17:30, Szo 09:00-17:30, V 10:00-16:00",
       "lat": 51.6033,
       "lng": -0.1752
+    },
+    {
+      "_comment": "⭐ ÚJ FORRÁSTÍPUS: OSM Overpass name-regex ('Magyar|Hungar') ORSZÁGOS (egész Anglia) lekérdezés — ez egy 'langos'-vállalkozás fürtöt hozott elő (Companies House-on több aktív/megszűnt 'Langos'-nevű cég is van). FSA 5-ös értékelés (2025-11-24) + Companies House AKTÍV (14854159, 2023 óta, SIC 56103 'Take-away food shops and mobile food stands'). A bejegyzett cím a legjobb elérhető horgony (mobil/piaci elárusítóhely, nincs önálló utcai üzlet).",
+      "name": "Vagabonds Langos — Taste of Hungary Ltd",
+      "type": "magyar lángos (utcai gyorsétel), take-away/piaci elárusítóhely",
+      "category": "etterem",
+      "city": "Spalding",
+      "region": "EM",
+      "address": "32 The Crescent, Spalding PE11 1AF",
+      "lat": 52.7865,
+      "lng": -0.1536
+    },
+    {
+      "_comment": "Ugyanaz az OSM-fürt hozta elő. Companies House 11280223 AKTÍV (2018 óta), saját weboldal+telefon+Facebook (2756 like) — a legjobban dokumentált a 'langos'-vállalkozások közül. A bejegyzett cím EGYBEN a tényleges kereskedelmi cím is (több forrás egyezik).",
+      "name": "The Langos Factory Ltd",
+      "type": "magyar lángos (utcai gyorsétel), take-away + rendezvényes catering",
+      "category": "etterem",
+      "city": "Bushey",
+      "region": "EE",
+      "address": "7 Cooks Mead, Bushey WD23 4FE",
+      "phone": "+44 7598 668101",
+      "website": "https://www.thelangosfactory.com",
+      "lat": 51.6463,
+      "lng": -0.3571
+    },
+    {
+      "_comment": "Ugyanaz az OSM-fürt hozta elő. Budapesti családi vállalkozás — a York Food Festival sikere után 2023-ban ÁLLANDÓ helyet kapott a Clifton Moor-i B&Q parkolójában (Yorkshire Post-cikk). Companies House 14173722 AKTÍV, FSA-értékelt, Tripadvisor 5.0.",
+      "name": "House of Langos — York",
+      "type": "magyar lángos (utcai gyorsétel), állandó elárusítóhely a Clifton Moor B&Q parkolójában",
+      "category": "etterem",
+      "city": "York",
+      "region": "YH",
+      "address": "B&Q Clifton Moor, Hurricane Way, York YO30 4XU",
+      "lat": 53.9911,
+      "lng": -1.1082
+    },
+    {
+      "_comment": "Ugyanaz az OSM-fürt hozta elő. ⚠️ A csapat SAJÁT bevallása szerint LENGYEL ÉS MAGYAR ('Polish and Hungarian team'), nem kizárólag magyar — a `type` ezt kimondja. Companies House 15293331 AKTÍV, saját weboldal+telefon. Rendezvény/piaci elárusítóhely (utánfutó/pavilon), nincs önálló utcai üzlet — a bejegyzett cím a legjobb elérhető horgony.",
+      "name": "Lángos Boys Ltd",
+      "type": "lengyel–magyar utcai gyorsétel (lángos, zapiekanka, kürtőskalács), rendezvényes/piaci elárusítóhely",
+      "category": "etterem",
+      "city": "London",
+      "region": "LDN",
+      "address": "34 Holme Lacey Road, London SE12 0HR",
+      "phone": "+44 7933 570439",
+      "website": "https://www.langosboys.com",
+      "lat": 51.4491,
+      "lng": 0.0095
     }
   ]
 }
