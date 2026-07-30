@@ -306,6 +306,19 @@
       "sharedAddress": "NH Clínicas — Dr. Visky Szabolcs fogorvos is itt rendel"
     },
     {
+      "_comment": "⭐ Az ELSŐ 'orvos' kategóriás ES-tétel (eddig csak fogorvos/bőrgyógyász volt). CGCOM (spanyol orvosi kamara) regisztrációs szám: 292912849. Semmelweis Egyetemen végzett, 2022-ben kapott hivatalos spanyol egészségügyi minisztériumi szakorvosi elismerést; korábban Németországban (Bundeswehr Zentralkrankenhaus Koblenz, Helios Klinikum Siegburg) dolgozott. A Vithas Xanit Internacional a munkahelye (nem saját magánrendelő) — a beütemezés/konzultáció a Global Health platformon keresztül megy.",
+      "name": "Dr. Szilágyi Eszter — szív- és érsebész (Vithas Xanit Internacional)",
+      "type": "szív- és érsebész, magyar anyanyelvű — kórházi szakrendelés + online konzultáció a Global Health platformon (myglobalhealth.online) keresztül",
+      "category": "orvos",
+      "city": "Benalmádena",
+      "region": "AN",
+      "address": "Vithas Xanit Internacional, Avenida de los Argonautas, s/n, 29631 Benalmádena, Málaga",
+      "phone": "+34 952 367 190",
+      "website": "https://www.myglobalhealth.online/spain/es/book?doctor=dr-eszter-szilagyi",
+      "lat": 36.5992167,
+      "lng": -4.560385
+    },
+    {
       "name": "Asesoría Infinity",
       "type": "adótanácsadás és könyvelés magyarul (autónomo-bejelentkezés, cégalapítás, adóbevallás) — Costa del Sol",
       "category": "konyveles",
