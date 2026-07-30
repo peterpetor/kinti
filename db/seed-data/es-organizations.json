@@ -504,6 +504,20 @@
       "website": "https://www.institutsarro.com",
       "lat": 41.3929252,
       "lng": 2.1513059
+    },
+    {
+      "_comment": "Kettős HU/ES jelenlétű ügyvédi iroda (madridi SZÉKHELY + budapesti iroda) — a saját oldaluk kimondja: 'implantación de empresas húngaras en España'. A madridi cím VALÓDI iroda (nem csak a budapesti cég marketingoldala), ezért NEM esik a Budapest-HQ kizárás alá — ugyanaz a minta, mint az Amigo Húngarónál/BONAVIDA-nál.",
+      "name": "Martin Herreros Abogados — ügyvédi iroda magyar ügyfeleknek",
+      "type": "ügyvédi iroda magyarul (nemzetközi kereskedelmi jog, cégalapítás, ingatlanjog, adójog) — spanyolországi és uniós befektetések magyar vállalkozásoknak",
+      "category": "ugyved",
+      "city": "Torrelodones",
+      "region": "MD",
+      "address": "Avenida de la Dehesa 62, 28250 Torrelodones, Madrid",
+      "phone": "+34 91 815 01 49",
+      "email": "info@martinherreroslawyers.com",
+      "website": "https://martinherreroslawyers.com/hu",
+      "lat": 40.5820592,
+      "lng": -3.9335258
     }
   ]
 }
