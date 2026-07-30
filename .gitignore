@@ -87,3 +87,5 @@ app-release-*.apk
 android/*
 !android/README.md
 !android/twa-manifest.json
+nocontact_rows.json
+osm-contact-candidates.json
