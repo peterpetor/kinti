@@ -547,6 +547,44 @@
       "website": "https://nutricionista-malaga.com",
       "lat": 36.7193219,
       "lng": -4.4302215
+    },
+    {
+      "_comment": "⭐ ÚJ TECHNIKA: OSM Overpass name-regex ('Lángos|Kürtős|Gulyás|Paprika' + cuisine=hungarian) ORSZÁGOS Spanyolország-lekérdezés — ez hozta elő. ⭐⭐ Baleár-szigetek (IB) ELSŐ tétele valaha! Független forrás (top-rated.online) explicit 'Hungarian restaurant'-ként azonosítja, saját Instagram (@langosbar23).",
+      "name": "Langos Bar — Ca'n Picafort",
+      "type": "magyar étterem/bár (lángos, kávé, italok)",
+      "category": "etterem",
+      "city": "Ca'n Picafort",
+      "region": "IB",
+      "address": "Avenida Josep Trias 24, 07458 Ca'n Picafort, Mallorca",
+      "phone": "+34 617 72 89 72",
+      "lat": 39.7672397,
+      "lng": 3.14757
+    },
+    {
+      "_comment": "Ugyanaz az OSM-fürt. Az OSM régi neve ('Rose & Stein') mára 'Paprika Fusion Restaurant'-ra váltott (családi vállalkozás, Rose és Laszlo — Laszlo a magyar tulajdonos), a JELENLEGI nevet és állapotot használva (2025-ös vendégértékelések is megerősítik, hogy még üzemel). Mediterrán-magyar fúziós konyha, gulyásleves/pörkölt a kínálatban.",
+      "name": "Paprika Fusion Restaurant — Ciudad Quesada",
+      "type": "mediterrán–magyar fúziós étterem (családi vállalkozás, magyar tulajdonossal)",
+      "category": "etterem",
+      "city": "Ciudad Quesada",
+      "region": "VC",
+      "address": "Avenida de las Naciones 1-C, 03170 Ciudad Quesada, Rojales, Alicante",
+      "lat": 38.0642086,
+      "lng": -0.7267207
+    },
+    {
+      "_comment": "Ugyanaz az OSM-fürt. Saját weboldal (.hu domain) + magyar telefonszám (+36) + magyar e-mail (halasznepapp.kata@gmail.com) — egyértelmű magyar tulajdonos/üzemeltető, kettős HU/ES telefonvonal.",
+      "name": "Gastro Vinum — Fuengirola",
+      "type": "tapas bár, magyar tulajdonos (mediterrán konyha magyaros hangsúllyal)",
+      "category": "etterem",
+      "city": "Fuengirola",
+      "region": "AN",
+      "address": "Calle Palangreros 22, 29640 Fuengirola, Málaga",
+      "phone": "+34 604 272 835",
+      "email": "halasznepapp.kata@gmail.com",
+      "website": "https://gastrovinumfuengirola.webnode.hu",
+      "hours": "H-V 19:00-23:00",
+      "lat": 36.5370615,
+      "lng": -4.6240406
     }
   ]
 }
