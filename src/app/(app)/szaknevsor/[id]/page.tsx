@@ -866,6 +866,29 @@ export default async function BusinessPage({
             </Link>
           );
         })()}
+
+        {/* Adatlap-szintű jelentés / adattörlés (DSA Art. 16 notice-and-action +
+            GDPR tiltakozás/törlés): a listázott adat sok esetben publikus forrásból,
+            a szakember ELŐZETES regisztrációja NÉLKÜL került fel — ezért kell egy
+            KÖNNYEN elérhető út, amivel az érintett (vagy bárki) hibás/jogsértő adatot
+            jelenthet, illetve a saját adata törlését kérheti. Beküldés után a tétel
+            AZONNAL rejtett, amíg az admin dönt. */}
+        <section className="mt-8 rounded-card border border-line bg-surface-alt/50 px-4 py-3.5">
+          <p className="text-[11.5px] leading-snug text-ink-muted">
+            Hibás, elavult vagy jogsértő adatot látsz ezen az adatlapon? Esetleg ez a
+            te vállalkozásod / a saját adatod, és nem szeretnéd, hogy itt szerepeljen?
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <ReportButton contentType="business" contentId={b.id} variant="link" />
+            <span className="text-[11px] text-ink-faint">
+              vagy írj az{" "}
+              <a href="mailto:info@kinti.app" className="underline">info@kinti.app</a>{" "}
+              címre — az adatkezelésről az{" "}
+              <Link href="/adatvedelem" className="underline">Adatkezelési tájékoztató</Link> ad
+              részletes leírást (tiltakozás, törlés joga).
+            </span>
+          </div>
+        </section>
       </div>
     </div>
   );

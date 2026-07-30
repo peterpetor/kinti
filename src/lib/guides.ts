@@ -39,7 +39,7 @@ export interface Guide {
 export const GUIDES_UPDATED_AT = new Date("2026-07-30");
 
 export const GUIDES_DISCLAIMER =
-  "Ez általános tájékoztatás hivatalos forrásokból, nem jogi tanács. A részletek kantononként és időben változnak — a pontos, rád vonatkozó információért mindig a hivatalos oldalt és a lakóhelyed kantonját nézd.";
+  "Ez általános tájékoztatás hivatalos forrásokból — NEM minősül jogi, adóügyi, pénzügyi vagy egészségügyi tanácsnak, és nem helyettesíti a hatóság, ügyvéd, adótanácsadó vagy orvos egyedi véleményét. A részletek régiónként és időben változnak, előzetes értesítés nélkül — a pontos, rád vonatkozó információért mindig a hivatalos oldalt és a lakóhelyed szerinti hatóságot nézd. Az itt közöltek felhasználása saját felelősségre történik.";
 
 export const GUIDES_CH: Guide[] = [
   {
