@@ -1025,6 +1025,34 @@
       "website": "https://www.awoc.co.uk",
       "lat": 51.0644,
       "lng": -1.30489
+    },
+    {
+      "_comment": "⭐ Az ELSŐ 'orvos' kategóriás GB-tétel — korábban ez a kategória nem is szerepelt a generátor VALID_CATEGORIES listájában (csak fogorvos volt), mert a háziorvos-rés a legrégebbi nyitott hiány volt (ld. gb-szaknevsor-seed memória). Dr. Vasas Péter GMC-regisztrált (6138971), Debreceni Egyetemen végzett sebész, jelenleg Ramsay Health/Park Hill Hospital Doncaster bariátriai/általános sebésze — SAJÁT klinikai weboldala (haemorrhoidclinic.co.uk) külön magyar nyelvű aloldalt tart fenn, ahol explicit szombat délutáni magánrendelést hirdet Londonban, és hétköznap Doncaster/Pontefract környékén érhető el. Mindkét helyszín felvéve, mert a magyar oldal mindkettőt megadja elérhetőségként.",
+      "name": "Dr. Vasas Péter — proktológiai/sebészeti magánrendelés (London)",
+      "type": "magyarul beszélő sebész (aranyér-kezelés, gasztrointesztinális sebészet) — szombat délutáni (15–19h) magánrendelés, kizárólag magánbetegek, előzetes bejelentkezéssel",
+      "category": "orvos",
+      "city": "London",
+      "region": "LDN",
+      "address": "6 Bendall Mews, Marylebone, London NW1 6SN",
+      "phone": "+44 20 3129 5383",
+      "email": "contact@haemorrhoidclinic.co.uk",
+      "website": "https://www.haemorrhoidclinic.co.uk/magyar",
+      "hours": "Szombat 15–19h, előzetes bejelentkezéssel",
+      "lat": 51.52177,
+      "lng": -0.1654687
+    },
+    {
+      "name": "Dr. Vasas Péter — sebészeti konzultáció (Pontefract/Doncaster)",
+      "type": "magyarul beszélő sebész — hétköznapi konzultáció és vizsgálat (Church View Medical Centre), a londoni szombati magánrendelés hétköznapi alternatívája ugyanazzal az orvossal",
+      "category": "orvos",
+      "city": "Pontefract",
+      "region": "YH",
+      "address": "Church View Medical Centre, Langthwaite Road, Pontefract WF9 3AP",
+      "phone": "+44 1302 265270",
+      "email": "contact@haemorrhoidclinic.co.uk",
+      "website": "https://www.haemorrhoidclinic.co.uk/magyar",
+      "lat": 53.5930678,
+      "lng": -1.3123265
     }
   ]
 }
