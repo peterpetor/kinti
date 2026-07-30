@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Icon } from "@/components/ui";
 import { BottomSheet } from "@/components/bottom-sheet";
+import { trackAction } from "@/components/usage-tracker";
 
 /**
  * BusinessLeadCta — cég-specifikus árajánlatkérés a profil-oldalon.
@@ -55,6 +56,8 @@ export function BusinessLeadCta({
         setPhase("form");
         return;
       }
+      // Konverzió: sikeres ajánlatkérés (a `lead-cta-open` szándék párja).
+      trackAction("lead-submit");
       setPhase("done");
     } catch {
       setError("Hálózati hiba. Próbáld újra.");
@@ -64,7 +67,16 @@ export function BusinessLeadCta({
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={className}>
+      <button
+        type="button"
+        onClick={() => {
+          // Szándék-jel: az űrlap MEGNYITÁSA. A `lead-submit`-tel párban
+          // megmutatja, hányan hagyják félbe a kitöltést (eddig egyik sem volt mérve).
+          trackAction("lead-cta-open");
+          setOpen(true);
+        }}
+        className={className}
+      >
         <Icon name="send" size={16} strokeWidth={2.2} />
         <span>Árajánlat</span>
       </button>

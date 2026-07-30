@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { recordCallForReview } from "@/lib/review-prompt";
 import { decodeContact } from "@/lib/contact-obfuscate";
 import { waNumber, WA_PREFILL } from "@/lib/wa-phone";
+import { trackAction } from "@/components/usage-tracker";
 import { Icon } from "@/components/ui/icons";
 
 /**
@@ -145,6 +146,13 @@ export function PhoneReveal({
   async function reveal() {
     if (loading || phone) return;
     setLoading(true);
+    // ⚠️ A felfedés a kapcsolatfelvételi tölcsér LEGFONTOSABB szándék-jele, és
+    // korábban EGYÁLTALÁN nem volt mérve: csak a cégoldal-megnyitás (view) és a
+    // tényleges hívás (phone) számított. Emiatt nem lehetett megkülönböztetni,
+    // hogy a felhasználó meg sem próbál kapcsolatba lépni, VAGY felfedi a
+    // számot, de mégsem hív. Aggregált, privacy-first számláló (nap+esemény),
+    // a felfedés SZÁNDÉKÁRA — a hívás-oldali `phone` track ettől független.
+    trackAction("phone-reveal");
     try {
       const r = await fetch(`/api/businesses/${businessId}?contact=1`);
       if (r.ok) {
