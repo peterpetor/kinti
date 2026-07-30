@@ -1141,6 +1141,44 @@
       "phone": "+44 1524 938728",
       "lat": 54.0162532,
       "lng": -2.7934535
+    },
+    {
+      "_comment": "⭐ Counselling Directory (site:counselling-directory.org.uk „Hungarian” keresés) — a Psychology Today mellett egy MÁSIK legitim, önkitöltős brit terapeuta-katalógus. Hédi SAJÁT weboldalán van külön magyar nyelvű aloldal (nem csak egy harmadik fél állítása). North East England (NE) régió ELSŐ tétele — korábban ez a régió teljesen üres volt.",
+      "name": "Hédi Salánki — Cherry Tree Counselling, Gateshead",
+      "type": "magyarul beszélő tanácsadó (MBACP Accred) — kelet-európai klienseknek is, személyesen (Bill Quay, Gateshead) és online/telefonon világszerte",
+      "category": "pszichologus",
+      "city": "Gateshead",
+      "region": "NE",
+      "address": "Bill Quay, Gateshead NE10",
+      "phone": "+44 7724 245556",
+      "email": "cherrytreegateshead@gmail.com",
+      "website": "https://www.cherrytreecounsellinggateshead.co.uk/in-hungarian",
+      "lat": 54.9581276,
+      "lng": -1.5368625
+    },
+    {
+      "_comment": "Counselling Directory profil, saját szöveg: „She is Hungarian who has lived in the UK for over 25 years, and she is bilingual and can work with Hungarians.”",
+      "name": "Monika Bakonyi — tanácsadó, Fulham (London)",
+      "type": "magyarul is beszélő tanácsadó (BACP Accred), narcisztikus bántalmazásból való felépülésre specializálódva",
+      "category": "pszichologus",
+      "city": "London",
+      "region": "LDN",
+      "address": "Hurlingham Studios, Ranelagh Gardens, Fulham, London SW6 3PA",
+      "website": "https://www.monikabakonyi.com",
+      "lat": 51.4675591,
+      "lng": -0.2071469
+    },
+    {
+      "_comment": "Counselling Directory profil, saját szöveg: „speaks Hungarian”. Nincs publikált telefon/email/utcacím — a `type` mezőben kimondva, csak a weboldalon (kapcsolatfelvételi űrlap) érhető el.",
+      "name": "Dr. Wanda Fischera — Immersive Minds Psychology, Kennington (London)",
+      "type": "magyarul is beszélő klinikai pszichológus (HCPC-regisztrált) — önértékelés, szégyen, perfekcionizmus; kizárólag weboldalas kapcsolatfelvétel",
+      "category": "pszichologus",
+      "city": "London",
+      "region": "LDN",
+      "address": "Kennington, London SE11",
+      "website": "https://immersiveminds-psychology.co.uk",
+      "lat": 51.485,
+      "lng": -0.1107
     }
   ]
 }
