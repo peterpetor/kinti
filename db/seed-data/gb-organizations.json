@@ -1231,6 +1231,19 @@
       "website": "https://www.doctify.com/uk/specialist/dr-yvonne-juhasz",
       "lat": 51.5224709,
       "lng": -0.1435858
+    },
+    {
+      "_comment": "⭐ Az ELSŐ „nogyogyasz” kategóriás GB-tétel — Doctify profil, saját nyelvi lista („English”, „Hungarian”). OSM SAJÁT NÉVVEL tageli a klinikát. CQC-regisztrált (London Women's Clinic Limited).",
+      "name": "Dr. Timea Kovats — szülész-nőgyógyász (London Women's Clinic)",
+      "type": "magyarul is beszélő szülész-nőgyógyász, meddőségi kezelésekre (IVF) specializálódva, 35 év tapasztalattal",
+      "category": "nogyogyasz",
+      "city": "London",
+      "region": "LDN",
+      "address": "London Women's Clinic, 113-115 Harley Street, London W1G 6AP",
+      "phone": "+44 20 7487 5050",
+      "website": "https://www.londonwomensclinic.com",
+      "lat": 51.52146,
+      "lng": -0.1484552
     }
   ]
 }
