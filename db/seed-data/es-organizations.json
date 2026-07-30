@@ -612,6 +612,19 @@
       "phone": "+34 914 026 574",
       "lat": 40.4310,
       "lng": -3.6718
+    },
+    {
+      "_comment": "⭐ ÚJ KATEGÓRIA ES-re (szallas) — a categories tábla MÁR tartalmazta globálisan ('Szálláshely / Panzió' 🏨), csak az ES allow-listából hiányzott (ugyanaz a minta, mint a GB koltoztetes-nél; a teszt SAJÁT VALID_CATEGORIES-ét is bővíteni kellett). ⭐ Az ELSŐ szálláshely-tétel Spanyolországban. Forrás: Páginas Amarillas 'cocina húngara' kategória (mindössze 2 találat egész Spanyolországra). TÖBB FÜGGETLEN foglalási oldal (Booking/KAYAK/Airpaz/Planet of Hotels/PlanMyTour) egybehangzóan írja, hogy a személyzet beszél MAGYARUL (spanyol/magyar/angol), és az étterem étlapján gulyás/gulyásleves szerepel. ⚠️ NEM állítjuk, hogy magyar tulajdonú (arra nincs bizonyíték) — a `type` pontosan azt mondja, ami igazolt: magyarul is beszélő személyzet.",
+      "name": "Hotel Algorfa — magyarul is beszélő szálloda és étterem",
+      "type": "3 csillagos szálloda étteremmel a Costa Blancán, magyarul is beszélő személyzettel (az étlapon gulyás is)",
+      "category": "szallas",
+      "city": "Algorfa",
+      "region": "VC",
+      "address": "Calle Pablo Picasso 1 (Urb. Montemar), 03169 Algorfa, Alicante",
+      "phone": "+34 966 729 707",
+      "website": "https://hotelalgorfa.mydirectstay.com",
+      "lat": 38.0670,
+      "lng": -0.7825
     }
   ]
 }

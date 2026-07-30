@@ -44,7 +44,7 @@ const VALID_CATEGORIES = new Set([
   "magyar-kozosseg", "fordito", "forditasszak", "ugyved", "jogtanacsado",
   "fogorvos", "orvos", "borgyogyasz", "konyveles", "penzugyi_tanacsado",
   "ingatlan", "etterem", "elelmiszer", "cukrasz", "autoszer", "fodrasz",
-  "pszichiater", "pszichologus", "dietetikus",
+  "pszichiater", "pszichologus", "dietetikus", "szallas",
 ]);
 
 /** ⚠️ business.ts `isSpanishCoord` tükre — a két doboznak IDE is egyeznie kell. */
