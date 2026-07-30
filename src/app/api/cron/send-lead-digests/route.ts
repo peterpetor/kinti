@@ -73,6 +73,25 @@ async function handle(req: Request): Promise<Response> {
     safeLogError("send-lead-digests:reviewNudges", e);
   }
 
+  // Szemantikus kereső-index fokozatos feltöltése. ⚠️ A teljes reindex
+  // (/api/admin/reindex-search) SOSEM tudott lefutni: ~2400 sorra 95 egymás
+  // utáni AI+upsert kört tett egyetlen edge-kérésbe → CPU-/alkérés-limit, és a
+  // job félbeszakadt (ezért volt az index évek óta hiányos). Itt futásonként
+  // KORLÁTOZOTT szeletet dolgozunk fel, és a `search_indexed_at` oszlop teszi
+  // folytathatóvá: a hátralék napok alatt magától lefogy, utána a lekérdezés
+  // nullára apad (nincs fölösleges Workers AI fogyasztás). Független, saját
+  // try/catch, a korai return-ök ELŐTT.
+  let searchIndexed = 0;
+  let searchRemaining = 0;
+  try {
+    const { indexPendingBusinessVectors } = await import("@/lib/vector-search");
+    const r = await indexPendingBusinessVectors(200);
+    searchIndexed = r.indexed;
+    searchRemaining = r.remaining;
+  } catch (e) {
+    safeLogError("send-lead-digests:searchIndex", e);
+  }
+
   // Karbantartás: régi rate-limit sorok törlése (a COUNT ablakos, a sorok nem) —
   // különben a tábla korlátlanul nőne. 48h-nál (a leghosszabb, 24h-s ablak fölött)
   // régebbieket törlünk. Best-effort, korai return előtt.
@@ -125,7 +144,7 @@ async function handle(req: Request): Promise<Response> {
       .all<LeadRow>();
 
     if (pendingLeads.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, rateLimitPurged });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, searchIndexed, searchRemaining, rateLimitPurged });
     }
 
     // Csoportosítás vállalkozónként
@@ -141,7 +160,7 @@ async function handle(req: Request): Promise<Response> {
     // Defenzív: üres tömbnél az IN () érvénytelen SQL — bár a pendingLeads>0
     // miatt ez gyakorlatilag elérhetetlen, expliciten kezeljük.
     if (businessIds.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, rateLimitPurged });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, searchIndexed, searchRemaining, rateLimitPurged });
     }
     const { results: businesses } = await getDB()
       .prepare(
@@ -209,7 +228,7 @@ async function handle(req: Request): Promise<Response> {
     return Response.json({ ok: false, error: "internal" }, { status: 500 });
   }
 
-  return Response.json({ ok: true, digestsSent, leadsMarked, errors, radarDigests, deadlineReminders, reviewNudges, rateLimitPurged });
+  return Response.json({ ok: true, digestsSent, leadsMarked, errors, radarDigests, deadlineReminders, reviewNudges, searchIndexed, searchRemaining, rateLimitPurged });
 }
 
 export const GET = handle;
