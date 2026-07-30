@@ -635,6 +635,17 @@
       "hours": "Naponta 17:30-24:00",
       "lat": 37.9316,
       "lng": -0.725
+    },
+    {
+      "_comment": "A 20. körben még FÉLRETETTÜK (csak kategória-címke volt rá), most IGAZOLVA: a Tripadvisor-vendégértékelések kimondják, hogy MAGYAROK ÜZEMELTETIK ('run by Hungarian people'), a konyha magyar/közép-európai, a gulyás 'must try'. Friss fogyasztói forrás: Tripadvisor 4,0/5, 35 értékelés, #37 a 67 Ciudad Quesada-i étterem közül. ⚠️ Két azonos nevű Tripadvisor-bejegyzés van Ciudad Quesadában (Calle Turismo vs. Carrer de Blanca) — a MAGYAR a Calle Turismo-i. Ugyanez a tulajdonos visz egy másik éttermet is ('The Bells').",
+      "name": "La Campana — magyar üzemeltetésű étterem, Ciudad Quesada",
+      "type": "magyar és közép-európai konyha (gulyás, házi tiramisu), napi és esti fix menüvel",
+      "category": "etterem",
+      "city": "Ciudad Quesada",
+      "region": "VC",
+      "address": "Calle Turismo 1c, 03170 Ciudad Quesada, Rojales, Alicante",
+      "lat": 38.0642,
+      "lng": -0.7262
     }
   ]
 }
