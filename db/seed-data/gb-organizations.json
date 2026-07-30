@@ -1269,6 +1269,19 @@
       "website": "https://www.fortiusclinic.com/specialists/mr-peter-domos",
       "lat": 51.5162998,
       "lng": -0.1498767
+    },
+    {
+      "_comment": "⚠️ Ugyanaz az üzleti modell, mint a Hungarian DentaCare-nél (dental-turisztikai ügynökség, valódi de kisebb londoni rendelővel) — DE ELTÉRŐ cég/cím/tulajdonos (Dr. Pál Katona, Miskolcon végzett szájsebész, 2002 óta). Nem duplikátum.",
+      "name": "Hotel Dent — magyar fogászati konzultáció, Golders Green",
+      "type": "fogászati konzultáció/utókövetés Londonban (Dr. Pál Katona, szájsebész és implantológus) — a nagyobb kezelések Magyarországon (Miskolc) történnek",
+      "category": "fogorvos",
+      "city": "London",
+      "region": "LDN",
+      "address": "771 Finchley Road, Golders Green, London NW11 8DN",
+      "phone": "+44 20 3239 3093",
+      "website": "https://www.doctify.com/uk/practice/hotel-dent",
+      "lat": 51.5646624,
+      "lng": -0.1968508
     }
   ]
 }
