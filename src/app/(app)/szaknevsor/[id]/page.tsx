@@ -20,8 +20,8 @@ import { TrackBusinessView, PhoneReveal } from "@/components/business-analytics-
 import { BusinessLeadCta } from "@/components/views/business-lead-cta";
 import { RecentBusinessRecorder } from "@/components/views/recent-businesses";
 import { safeJsonLdStringify } from "@/lib/json-ld";
-import { hasStreetAddress, hasContactInfo } from "@/lib/address";
-import { extractContactFromBlurb } from "@/lib/contact-links";
+import { hasStreetAddress } from "@/lib/address";
+import { extractContactFromBlurb, primaryContactKind } from "@/lib/contact-links";
 import { getCountry, countryLocative } from "@/lib/countries";
 import { registryForCategory } from "@/lib/business-registry";
 import { guidesForCategory } from "@/lib/guides";
@@ -138,6 +138,13 @@ export default async function BusinessPage({
       )}`
     : undefined;
   const heroUrl = mediaUrl(b.logoKey);
+  // ⚠️ ADATVEZÉRELT: a 2356 élő cégből JELENLEG EGYNEK SINCS borítóképe, saját
+  // színe vagy fotója — vagyis a 280px-es hero MINDEN adatlapon üres díszdoboz
+  // volt, ami telefonon a „Hívás"/„Árajánlat" gombot a hajtás ALÁ tolta.
+  // Kép nélkül ezért alacsony sávot adunk (a lebegő fejléc-gomboknak épp elég),
+  // hogy a kapcsolatfelvétel az első képernyőre kerüljön. Ha egy vállalkozó
+  // FELTÖLT borítót, magától visszakapja a teljes magasságú herót.
+  const hasHeroArt = !!heroUrl || !!b.accentColor || !!b.photo;
 
   // Frissesség-jelző: az utolsó szerkesztés (vagy létrehozás) időbélyege.
   const freshIso = b.updatedAt ?? b.createdAt ?? null;
@@ -166,6 +173,33 @@ export default async function BusinessPage({
   const website = socials?.website ?? contact.website;
   const email = socials?.email ?? contact.email;
   const displayBlurb = contact.blurb;
+
+  // A kapcsolatfelvétel elsődleges (kiemelt) gombja — a szabály és az indoklása
+  // a lib/contact-links.ts `primaryContactKind`-jában, teszttel lefedve.
+  const primaryContact = primaryContactKind({ phone: b.phone, website, email });
+  // ⚠️ A cn() NEM tailwind-merge (ld. [[cn-no-tailwind-merge]]): az ütköző
+  // utilityk emit-sorrend szerint dőlnének el. Ezért két TELJES, egymást
+  // kölcsönösen kizáró osztály-string van, és mindig csak az egyiket adjuk át.
+  const primaryBtn = cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-primary text-white shadow-card-hover");
+  const secondaryBtn = cn(
+    actionBtn,
+    "min-w-[calc(50%-0.25rem)] bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]",
+  );
+
+  // ⚠️ Van-e EGYÁLTALÁN kapcsolatfelvételi lehetőség? Az „Útvonal" NEM számít:
+  // odajutni tudni anélkül, hogy bárkit elérnél, még zsákutca.
+  // A megnézett adatlapok ~40%-a ilyen (a globális 11,4%-os kontakthiány
+  // MEGTÉVESZTŐEN alacsony: pont a sokat kattintott egyesületek/iskolák/
+  // cserkészcsapatok azok, amelyeknél nincs elérhetőség) — ezért ilyenkor
+  // AZONNAL, a gombsor helyén kell következő lépést ajánlani, nem az oldal
+  // aljára rejtett „Hasonló szakemberek" szekcióban.
+  const hasContactAction = !!(b.contactEmail && !b.leadOptOut) || !!b.phone || !!website || !!email;
+  // A legspecifikusabb terület-oldal (régió-kódos), különben az ország-oldal.
+  // ORSZÁG-TUDATOS (ld. [[binary-country-fallthrough]]).
+  const areas = b.categoryId ? areasForBusiness(b) : [];
+  const area = areas.find((a) => a.code !== null) ?? areas[0] ?? null;
+  // Ne legyen „magyar magyar …", ha a kategória neve maga is „magyar"-ral kezdődik.
+  const catLabelLower = (b.categoryLabel || "szakember").toLowerCase().replace(/^magyar\s+/i, "");
 
   // JSON-LD strukturált adat — Schema.org LocalBusiness (Google rich snippets)
   const schemaDays: Record<string, string> = {
@@ -296,7 +330,11 @@ export default async function BusinessPage({
       {/* hero fotó + lebegő vezérlők — R2-kép, ha van; különben PRO accent szín, vagy gradiens placeholder */}
       <div
         className={cn(
-          "relative h-[280px]",
+          "relative",
+          // 148px = biztonsági sáv (max. 47px) + 12px + 38px gomb + 14px, majd a
+          // tartalom-lap 24px-es átfedése (-mt-6) — notch-os telefonon sem takar
+          // bele a fejléc-gombokba.
+          hasHeroArt ? "h-[280px]" : "h-[148px]",
           !heroUrl && !b.accentColor && !b.photo &&
             "bg-gradient-to-br from-primary/15 via-surface-alt to-accent/10",
         )}
@@ -323,7 +361,12 @@ export default async function BusinessPage({
         {/* Üres borító → kategória-vízjel (nem fake fotó), hogy ne legyen csúnya az üres box */}
         {!heroUrl && !b.accentColor && !b.photo && (
           <div className="pointer-events-none absolute inset-0 grid place-items-center">
-            <CategoryIcon categoryId={b.categoryId} categoryLabel={b.categoryLabel} size={96} className="text-primary/20" />
+            <CategoryIcon
+              categoryId={b.categoryId}
+              categoryLabel={b.categoryLabel}
+              size={hasHeroArt ? 96 : 52}
+              className="text-primary/20"
+            />
           </div>
         )}
         <div className="absolute inset-x-0 top-0 flex gap-2 bg-gradient-to-b from-black/30 to-transparent px-3.5 pb-3.5 pt-[calc(env(safe-area-inset-top)+0.75rem)]">
@@ -441,29 +484,21 @@ export default async function BusinessPage({
                 businessName={b.name}
                 variant="button"
                 country={b.country}
-                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-primary text-white shadow-card-hover")}
+                className={primaryBtn}
                 // WhatsApp — a felfedés után második gombként (fix márka-zöld +
                 // fix fehér szöveg = téma-biztos pár; a szám ország-tudatosan
                 // normalizálódik, bizonytalan formátumnál a gomb el sem készül).
                 waClassName={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-[#25D366] text-white shadow-card-hover")}
               />
             )}
-            {mapsHref && (
-              <a
-                href={mapsHref}
-                target="_blank"
-                rel="noreferrer"
-                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
-              >
-                <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
-              </a>
-            )}
+            {/* A kapcsolat-gombok az „Útvonal" ELÉ kerülnek: a felhasználó előbb
+                akar kapcsolatba lépni, mint odajutni. */}
             {website && (
               <a
                 href={website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
+                className={primaryContact === "website" ? primaryBtn : secondaryBtn}
               >
                 <Icon name="globe" size={16} strokeWidth={2.2} /> Weboldal
               </a>
@@ -471,10 +506,52 @@ export default async function BusinessPage({
             {email && (
               <a
                 href={`mailto:${email}`}
-                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))]")}
+                className={primaryContact === "email" ? primaryBtn : secondaryBtn}
               >
                 <Icon name="mail" size={16} strokeWidth={2.2} /> Email
               </a>
+            )}
+            {mapsHref && (
+              <a href={mapsHref} target="_blank" rel="noreferrer" className={secondaryBtn}>
+                <Icon name="nav" size={16} strokeWidth={2.2} /> Útvonal
+              </a>
+            )}
+          </div>
+        )}
+
+        {/* ZSÁKUTCA-MENTESÍTÉS: ha semmilyen elérhetőség nincs, ne hagyjuk a
+            felhasználót következő lépés nélkül. A versenytárs-linkek PRO
+            (featured) cégnél kimaradnak — ott a „konkurencia kizárása" ígéret
+            érvényes —, de a nyílt beismerés akkor is jár. */}
+        {!hasContactAction && (
+          <div className="mt-4 rounded-card border border-line bg-surface-alt/70 px-4 py-3.5 shadow-card">
+            <p className="text-[13.5px] font-extrabold leading-snug text-ink">
+              Ehhez a bejegyzéshez nincs elérhetőségünk
+            </p>
+            <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
+              Csak a nevét és a helyét ismerjük — telefonszám, weboldal és e-mail nélkül.
+              {b.claimed === false && " Ha a tiéd, vedd át fent, és egészítsd ki."}
+            </p>
+            {!b.featured && (similar.length > 0 || area) && (
+              <div className="mt-2.5 flex flex-wrap gap-2">
+                {similar.length > 0 && (
+                  <a
+                    href="#hasonlo"
+                    className="inline-flex h-10 items-center gap-1.5 rounded-pill bg-primary px-4 text-[13px] font-bold text-white transition active:scale-[0.98]"
+                  >
+                    Elérhető alternatívák ({similar.length})
+                    <Icon name="arrowRight" size={14} strokeWidth={2.4} />
+                  </a>
+                )}
+                {area && (
+                  <Link
+                    href={`/magyar/${b.categoryId}/${area.slug}`}
+                    className="inline-flex h-10 items-center gap-1.5 rounded-pill bg-surface px-4 text-[13px] font-bold text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-channel)/var(--border-strong-alpha))] transition active:scale-[0.98]"
+                  >
+                    Több magyar {catLabelLower} {area.locative}
+                  </Link>
+                )}
+              </div>
             )}
           </div>
         )}
@@ -629,10 +706,12 @@ export default async function BusinessPage({
             {b.yearsHere != null && <Chip>{b.yearsHere} éve kint</Chip>}
             {freshIso && <Chip icon="calendar">Frissítve {fmtRelative(freshIso)}</Chip>}
           </div>
-          {!hasContactInfo(b) && (
+          {/* Csak a HIÁNYZÓ PONTOS CÍM-ről szól. Az elérhetőség hiányát a fenti,
+              gombsor helyén álló kártya kezeli — ne mondjuk el kétszer,
+              egymásnak félig ellentmondva. */}
+          {hasContactAction && !hasStreetAddress(b.address) && (
             <p className="mt-2 text-[11.5px] leading-snug text-ink-faint">
-              ⓘ Erről a bejegyzésről csak a nevet és a várost ismerjük — nincs pontos cím, telefon vagy
-              weboldal.
+              ⓘ Ehhez a bejegyzéshez nincs utca-házszám szintű címünk, csak a település ismert.
               {b.claimed === false && (
                 <>
                   {" "}
@@ -829,7 +908,7 @@ export default async function BusinessPage({
             vagy nem válaszol, innen egy koppintással van alternatíva. PRO cégnél
             nem jelenik meg (konkurencia-kizárás, ld. lent). */}
         {similar.length > 0 && (
-          <section className="mt-6">
+          <section id="hasonlo" className="mt-6 scroll-mt-24">
             <SectionHeader>Hasonló magyar szakemberek</SectionHeader>
             <div className="mt-2.5 grid gap-2.5">
               {similar.map((s) => (
@@ -847,25 +926,15 @@ export default async function BusinessPage({
             cantonFromAddress ment minden országra, és a bécsi „1150" PLZ-t a
             svájci 1xxx-sávba (Vaud!) sorolta — a seo-areas terület-modell viszont
             a business.canton + ország párost nézi, ország-oldal fallbackkel. */}
-        {!b.featured && (() => {
-          if (!b.categoryId) return null;
-          const areas = areasForBusiness(b);
-          // A legspecifikusabb terület (régió-kódos), különben az ország-oldal.
-          const area = areas.find((a) => a.code !== null) ?? areas[0];
-          if (!area) return null;
-          // Ne legyen „magyar magyar …", ha a kategória neve maga is „magyar"-ral
-          // kezdődik (pl. „Magyar bolt, pékség" → „magyar bolt, pékség").
-          const catLabel = (b.categoryLabel || "szakember").toLowerCase().replace(/^magyar\s+/i, "");
-          return (
-            <Link
-              href={`/magyar/${b.categoryId}/${area.slug}`}
-              className="mt-6 flex items-center gap-2 text-[13px] font-bold text-primary"
-            >
-              Több magyar {catLabel} {area.locative}
-              <Icon name="arrowRight" size={14} strokeWidth={2.4} />
-            </Link>
-          );
-        })()}
+        {!b.featured && area && (
+          <Link
+            href={`/magyar/${b.categoryId}/${area.slug}`}
+            className="mt-6 flex items-center gap-2 text-[13px] font-bold text-primary"
+          >
+            Több magyar {catLabelLower} {area.locative}
+            <Icon name="arrowRight" size={14} strokeWidth={2.4} />
+          </Link>
+        )}
 
         {/* Adatlap-szintű jelentés / adattörlés (DSA Art. 16 notice-and-action +
             GDPR tiltakozás/törlés): a listázott adat sok esetben publikus forrásból,

@@ -43,6 +43,31 @@ export function extractContactFromBlurb(raw: string | null | undefined): BlurbCo
   return { blurb: raw, website: null, email: null };
 }
 
+/** Melyik gomb kapja a kiemelt (elsődleges) stílust a cégadatlapon. */
+export type PrimaryContactKind = "phone" | "website" | "email" | null;
+
+/**
+ * A kapcsolatfelvétel elsődleges csatornája — telefon > weboldal > e-mail.
+ *
+ * ⚠️ Korábban KIZÁRÓLAG a telefon kapta a kiemelt stílust. A tényleges
+ * forgalomban viszont a megnézett cégek nagyjából felénél NINCS telefonszám
+ * (egyesületek, iskolák, cserkészcsapatok), és ilyenkor a felhasználó egy csupa
+ * szürke gombsort látott — semmi nem jelölte ki a következő lépést.
+ *
+ * ⚠️ Az „Útvonal" SZÁNDÉKOSAN nem szerepel: odajutni tudni anélkül, hogy bárkit
+ * elérnél, még zsákutca — ezért sosem lehet elsődleges akció.
+ */
+export function primaryContactKind(c: {
+  phone?: string | null;
+  website?: string | null;
+  email?: string | null;
+}): PrimaryContactKind {
+  if (c.phone?.trim()) return "phone";
+  if (c.website?.trim()) return "website";
+  if (c.email?.trim()) return "email";
+  return null;
+}
+
 /** Rövid, megjeleníthető domain-címke egy URL-ből (pl. „example.com"). */
 export function websiteLabel(url: string): string {
   return url
