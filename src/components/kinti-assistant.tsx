@@ -235,8 +235,10 @@ export function KintiAssistant() {
           )}
 
           <p className="text-[10px] leading-snug text-ink-faint">
-            Az asszisztens útmutatókhoz és szakemberekhez irányít — nem ad jogi, pénzügyi
-            vagy egészségügyi tanácsot.
+            Ez egy AI-alapú asszisztens: a kérdésed értelmezéséhez mesterséges
+            intelligenciát használ, majd VALÓDI útmutatókhoz és magyar szakemberekhez
+            irányít — nem ad jogi, pénzügyi vagy egészségügyi tanácsot.{" "}
+            <Link href="/ai-atlathatosag" className="underline">Mikor és hogyan használunk AI-t?</Link>
           </p>
         </div>
       )}
