@@ -1,12 +1,14 @@
 /**
  * napi-szo.ts — „Napi szó": napi helyi kifejezés a kezdőlapon, a napi
  * szokás tartalom-horga. Ország-tudatos: CH = svájci német (Mundart), AT =
- * osztrák német, DE = hétköznapi/hivatali német, NL = hétköznapi holland.
+ * osztrák német, DE = hétköznapi/hivatali német, NL = hétköznapi holland,
+ * GB = brit angol (britizmusok), ES = spanyol (hétköznapi + hivatali szavak).
  * A választás determinisztikus a nap sorszámából (nincs Math.random —
  * SSR-stabil), így mindenkinek ugyanaz a szó aznap.
  *
  * Hang: a kártya böngésző-TTS-t használ (speechSynthesis, de-CH / de-AT /
- * de-DE / nl-NL) — nincs hangfájl, és kecsesen elmarad, ha nem támogatott.
+ * de-DE / nl-NL / en-GB / es-ES) — nincs hangfájl, és kecsesen elmarad, ha nem
+ * támogatott.
  */
 
 export interface DailyWord {
@@ -162,7 +164,73 @@ const NL_WORDS: DailyWord[] = [
   { hu: "Beszél angolul?", word: "Spreekt u Engels?", phonetic: "szprékt ü engelsz", standard: "—", note: "Szinte mindenki igen — de a holland próbálkozást nagyon értékelik." },
 ];
 
-const LISTS: Record<string, DailyWord[]> = { CH: CH_WORDS, AT: AT_WORDS, DE: DE_WORDS, NL: NL_WORDS };
+/** Brit angol — hétköznapi kifejezések és britizmusok (amit egy magyar nem tanul az iskolában). */
+const GB_WORDS: DailyWord[] = [
+  { hu: "Kösz (és „szia” is)", word: "Cheers", phonetic: "csírsz", standard: "Thanks / Bye", note: "Briteknél a „cheers” köszönetet ÉS elköszönést is jelent, nemcsak koccintást." },
+  { hu: "Szia, minden oké?", word: "You alright?", phonetic: "ju ólrájt", standard: "Hello / How are you?", note: "Bevett köszönés — nem tényleges kérdés, elég rá a „Yeah, you?”." },
+  { hu: "Kösz (röviden)", word: "Ta", phonetic: "tá", standard: "Thanks", note: "Nagyon informális „köszi”." },
+  { hu: "Sor (várakozó)", word: "Queue", phonetic: "kjú", standard: "Line", note: "A britek szentsége — SOHA ne tolakodj be a queue-ba." },
+  { hu: "Két hét", word: "Fortnight", phonetic: "fótnájt", standard: "Two weeks", note: "Fizetés és bérlet gyakran „per fortnight”." },
+  { hu: "Hulla fáradt", word: "Knackered", phonetic: "nekörd", standard: "Very tired" },
+  { hu: "Vécé", word: "Loo", phonetic: "lú", standard: "Toilet", note: "„Where's the loo?” — a legbarátságosabb forma." },
+  { hu: "Font (szleng)", word: "Quid", phonetic: "kvid", standard: "Pound (£)", note: "„Ten quid” = 10 font. Fiver = 5 £, tenner = 10 £." },
+  { hu: "Örülök / meg vagyok elégedve", word: "Chuffed", phonetic: "csaft", standard: "Pleased" },
+  { hu: "Csalódott / le vagyok törve", word: "Gutted", phonetic: "gatid", standard: "Very disappointed" },
+  { hu: "Kedve van vmihez", word: "Fancy (a…)", phonetic: "fenszi", standard: "Would like", note: "„Fancy a cuppa?” = Kérsz egy teát?" },
+  { hu: "Egy tea (bögrével)", word: "Cuppa", phonetic: "kapö", standard: "Cup of tea" },
+  { hu: "Pulóver", word: "Jumper", phonetic: "dzsampör", standard: "Sweater", note: "USA-ban „sweater”, de itt „jumper”." },
+  { hu: "Sportcipő", word: "Trainers", phonetic: "trénörz", standard: "Sneakers" },
+  { hu: "Bevásárlókocsi", word: "Trolley", phonetic: "troli", standard: "Shopping cart" },
+  { hu: "Elvitel (étel)", word: "Takeaway", phonetic: "tékövéj", standard: "Takeout" },
+  { hu: "Kuka / szemetes", word: "Bin", phonetic: "bin", standard: "Trash can", note: "A szelektív kukák színe városonként más — nézd meg a council oldalát." },
+  { hu: "Járda", word: "Pavement", phonetic: "pévment", standard: "Sidewalk" },
+  { hu: "Benzin", word: "Petrol", phonetic: "petrol", standard: "Gasoline" },
+  { hu: "Csomagtartó (autó)", word: "Boot", phonetic: "bút", standard: "Trunk" },
+  { hu: "Gyógyszertár", word: "Chemist", phonetic: "kemiszt", standard: "Pharmacy", note: "A Boots és a Superdrug a legismertebb láncok." },
+  { hu: "Háziorvos", word: "GP", phonetic: "dzsí-pí", standard: "General Practitioner", note: "Előbb GP-hez KELL regisztrálni (surgery) — enélkül nincs NHS-ellátás." },
+  { hu: "Munkaszüneti nap", word: "Bank Holiday", phonetic: "benk holidéj", standard: "Public holiday" },
+  { hu: "Kassza (bolt)", word: "Till", phonetic: "til", standard: "Checkout / Register" },
+  { hu: "Lakás", word: "Flat", phonetic: "flet", standard: "Apartment", note: "USA „apartment”, itt „flat”." },
+  { hu: "Szemtelen / vagány", word: "Cheeky", phonetic: "csíki", standard: "Cheeky", note: "„A cheeky pint” = egy gyors sör spontán." },
+  { hu: "Rendben / szuper", word: "Brilliant", phonetic: "briliönt", standard: "Great", note: "Britek gyakran röviden: „Brill!”" },
+  { hu: "Beszélgetni / cseverészni", word: "To have a chat", phonetic: "cset", standard: "To talk" },
+  { hu: "Köszönöm, nagyon kedves", word: "Cheers, much appreciated", phonetic: "csírsz macs öprísiétid", standard: "Thank you very much" },
+];
+
+/** Spanyol — hétköznapi kifejezések + a kint élőnek fontos hivatali szavak. */
+const ES_WORDS: DailyWord[] = [
+  { hu: "Szia / Helló", word: "Hola", phonetic: "ola", standard: "Hola", note: "A „h” néma a spanyolban." },
+  { hu: "Jó reggelt / jó napot", word: "Buenos días", phonetic: "buenosz díász", standard: "Buenos días" },
+  { hu: "Jó napot (délután)", word: "Buenas tardes", phonetic: "buenasz tardesz", standard: "Buenas tardes", note: "Kb. déltől estig." },
+  { hu: "Köszönöm", word: "Gracias", phonetic: "grásziász", standard: "Gracias" },
+  { hu: "Szívesen", word: "De nada", phonetic: "de nada", standard: "De nada" },
+  { hu: "Kérem / legyen szíves", word: "Por favor", phonetic: "por favor", standard: "Por favor" },
+  { hu: "Bocsánat / elnézést", word: "Perdona", phonetic: "perdona", standard: "Perdón", note: "Figyelemfelkeltésre és bocsánatkérésre is." },
+  { hu: "Hogy vagy?", word: "¿Qué tal?", phonetic: "ke tál", standard: "¿Qué tal?" },
+  { hu: "Oké / rendben", word: "Vale", phonetic: "bále", standard: "Vale", note: "A LEGgyakoribb spanyol szó — „oké” értelemben mindenre." },
+  { hu: "Jó étvágyat", word: "Buen provecho", phonetic: "buen provecso", standard: "Buen provecho" },
+  { hu: "Viszlát", word: "Hasta luego", phonetic: "aszta luego", standard: "Hasta luego", note: "Szó szerint „a későbbiig” — boltból kimenet is ezt mondják." },
+  { hu: "Menő / klassz", word: "Guay", phonetic: "gvái", standard: "Guay", note: "Fiatalos „szuper”." },
+  { hu: "Haver / csávó (szleng)", word: "Tío / Tía", phonetic: "tío / tía", standard: "Tío", note: "Szó szerint „nagybácsi/néni”, de baráti megszólítás is." },
+  { hu: "Előzetes időpont", word: "Cita previa", phonetic: "szita prévia", standard: "Cita previa", note: "SZINTE MINDENHEZ ez kell (orvos, hivatal, NIE) — enélkül nem fogadnak." },
+  { hu: "Egyéni vállalkozó", word: "Autónomo", phonetic: "autonomo", standard: "Autónomo", note: "A magyar „ev.” megfelelője — havi cuota jár vele." },
+  { hu: "Lakcímre bejelentkezni", word: "Empadronarse", phonetic: "empadronarsze", standard: "Empadronarse", note: "Az első hivatali kör: a padrón (lakónyilvántartás) sok ügyhöz alapfeltétel." },
+  { hu: "Ügyintéző iroda", word: "Gestoría", phonetic: "hesztoría", standard: "Gestoría", note: "A gestor intézi a hivatali/adó papírmunkát — kint gyakran nélkülözhetetlen." },
+  { hu: "Külföldi azonosító szám", word: "NIE", phonetic: "ní-e", standard: "Número de Identidad de Extranjero", note: "A spanyol adószám/azonosító — szinte minden ügyhöz kell." },
+  { hu: "Napi menü", word: "Menú del día", phonetic: "menú del día", standard: "Menú del día", note: "Ebédkor fix áras 2-3 fogás itallal — a legjobb ár-érték." },
+  { hu: "Csapolt sör (kicsi)", word: "Caña", phonetic: "kanya", standard: "Caña", note: "A bárban „una caña” = egy kis csapolt sör." },
+  { hu: "Számla (fizetés)", word: "La cuenta", phonetic: "la kuenta", standard: "La cuenta", note: "„La cuenta, por favor” = a számlát kérem." },
+  { hu: "Leárazás / kiárusítás", word: "Rebajas", phonetic: "rebahász", standard: "Rebajas", note: "A nagy szezonvégi akciók (január, július)." },
+  { hu: "Gyógyszertár", word: "Farmacia", phonetic: "farmászia", standard: "Farmacia", note: "A zöld kereszt jelzi; ügyeletes = „farmacia de guardia”." },
+  { hu: "Egészségügyi kártya", word: "Tarjeta sanitaria", phonetic: "tarheta szanitária", standard: "Tarjeta sanitaria", note: "A közegészségügyi ellátáshoz — a centro de salud-ban igényled." },
+  { hu: "Hosszú hétvége", word: "Puente", phonetic: "puente", standard: "Puente", note: "Ha az ünnep csütörtökre esik, a pénteket is „hídként” kiveszik." },
+  { hu: "Ebéd utáni beszélgetés", word: "Sobremesa", phonetic: "szobremesza", standard: "Sobremesa", note: "Az asztalnál maradás étkezés után — fontos társasági szokás." },
+  { hu: "Lakás", word: "Piso", phonetic: "pizo", standard: "Piso", note: "„Piso de alquiler” = kiadó lakás." },
+  { hu: "Egészségedre!", word: "¡Salud!", phonetic: "szalúd", standard: "¡Salud!" },
+  { hu: "Beszél angolul?", word: "¿Habla inglés?", phonetic: "abla inglész", standard: "¿Habla inglés?", note: "Sok helyen nem — a spanyol próbálkozást nagyra értékelik." },
+];
+
+const LISTS: Record<string, DailyWord[]> = { CH: CH_WORDS, AT: AT_WORDS, DE: DE_WORDS, NL: NL_WORDS, GB: GB_WORDS, ES: ES_WORDS };
 
 /** Van-e napi szó az adott országhoz? (Csak az élő nyelvi tartalmú országok.) */
 export function hasDailyWord(country: string): boolean {
@@ -174,6 +242,8 @@ export function ttsLang(country: string): string {
   if (country === "AT") return "de-AT";
   if (country === "DE") return "de-DE";
   if (country === "NL") return "nl-NL";
+  if (country === "GB") return "en-GB";
+  if (country === "ES") return "es-ES";
   return "de-CH";
 }
 

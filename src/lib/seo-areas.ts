@@ -19,7 +19,7 @@ import type { Business } from "./types";
 export interface SeoArea {
   /** URL-szegmens: /magyar/[kategoria]/[slug]. */
   slug: string;
-  country: "CH" | "AT" | "DE" | "NL";
+  country: "CH" | "AT" | "DE" | "NL" | "GB" | "ES";
   /** Régió-kód (business.canton); null = az EGÉSZ ország oldala. */
   code: string | null;
   /** Megjelenő név: „Zürich kanton", „Bécs", „Ausztria". */
@@ -61,6 +61,8 @@ export const COUNTRY_NAMES: Record<string, string> = {
   AT: "Ausztria",
   DE: "Németország",
   NL: "Hollandia",
+  GB: "Anglia",
+  ES: "Spanyolország",
 };
 
 /** A 26 svájci kanton — a slugok a KORÁBBI landing-URL-ekkel azonosak. */
@@ -129,6 +131,38 @@ const EXTRA_AREAS: SeoArea[] = [
   { slug: "rotterdam", country: "NL", code: "ZH", name: "Rotterdam", locative: "Rotterdamban", cityMatch: ["Rotterdam"] },
   { slug: "haga", country: "NL", code: "ZH", name: "Hága", locative: "Hágában", cityMatch: ["Den Haag", "'s-Gravenhage", "The Hague"] },
   { slug: "eindhoven", country: "NL", code: "NB", name: "Eindhoven", locative: "Eindhovenben", cityMatch: ["Eindhoven"] },
+  // Anglia — a 9 statisztikai régió (magyar exonimákkal) + a magyarok-lakta nagyvárosok.
+  // ⚠️ CSAK Anglia (a Kinti GB-je nem a teljes UK): Skócia/Wales/ÉÍ nem terület.
+  { slug: "anglia", country: "GB", code: null, name: "Anglia", locative: "Angliában" },
+  { slug: "london", country: "GB", code: "LDN", name: "London", locative: "Londonban" },
+  { slug: "delkelet-anglia", country: "GB", code: "SE", name: "Délkelet-Anglia", locative: "Délkelet-Angliában" },
+  { slug: "delnyugat-anglia", country: "GB", code: "SW", name: "Délnyugat-Anglia", locative: "Délnyugat-Angliában" },
+  { slug: "kelet-anglia", country: "GB", code: "EE", name: "Kelet-Anglia", locative: "Kelet-Angliában" },
+  { slug: "west-midlands", country: "GB", code: "WM", name: "West Midlands", locative: "West Midlandsben" },
+  { slug: "east-midlands", country: "GB", code: "EM", name: "East Midlands", locative: "East Midlandsben" },
+  { slug: "yorkshire", country: "GB", code: "YH", name: "Yorkshire", locative: "Yorkshire-ban" },
+  { slug: "eszaknyugat-anglia", country: "GB", code: "NW", name: "Északnyugat-Anglia", locative: "Északnyugat-Angliában" },
+  { slug: "eszakkelet-anglia", country: "GB", code: "NE", name: "Északkelet-Anglia", locative: "Északkelet-Angliában" },
+  { slug: "manchester", country: "GB", code: "NW", name: "Manchester", locative: "Manchesterben", cityMatch: ["Manchester"] },
+  { slug: "birmingham", country: "GB", code: "WM", name: "Birmingham", locative: "Birminghamben", cityMatch: ["Birmingham"] },
+  { slug: "liverpool", country: "GB", code: "NW", name: "Liverpool", locative: "Liverpoolban", cityMatch: ["Liverpool"] },
+  { slug: "leeds", country: "GB", code: "YH", name: "Leeds", locative: "Leedsben", cityMatch: ["Leeds"] },
+  { slug: "bristol", country: "GB", code: "SW", name: "Bristol", locative: "Bristolban", cityMatch: ["Bristol"] },
+  { slug: "cambridge", country: "GB", code: "EE", name: "Cambridge", locative: "Cambridge-ben", cityMatch: ["Cambridge"] },
+  // Spanyolország — a fő comunidades autónomas (magyar exonimákkal) + a magyarok-lakta városok.
+  { slug: "spanyolorszag", country: "ES", code: null, name: "Spanyolország", locative: "Spanyolországban" },
+  { slug: "madrid", country: "ES", code: "MD", name: "Madrid", locative: "Madridban" },
+  { slug: "katalonia", country: "ES", code: "CT", name: "Katalónia", locative: "Katalóniában" },
+  { slug: "andaluzia", country: "ES", code: "AN", name: "Andalúzia", locative: "Andalúziában" },
+  { slug: "valenciai-kozosseg", country: "ES", code: "VC", name: "Valenciai Közösség", locative: "a Valenciai Közösségben" },
+  { slug: "kanari-szigetek", country: "ES", code: "CN", name: "Kanári-szigetek", locative: "a Kanári-szigeteken" },
+  { slug: "balear-szigetek", country: "ES", code: "IB", name: "Baleár-szigetek", locative: "a Baleár-szigeteken" },
+  { slug: "baszkfold", country: "ES", code: "PV", name: "Baszkföld", locative: "Baszkföldön" },
+  { slug: "asztturia", country: "ES", code: "AS", name: "Asztúria", locative: "Asztúriában" },
+  { slug: "kasztilia-la-mancha", country: "ES", code: "CM", name: "Kasztília-La Mancha", locative: "Kasztília-La Manchában" },
+  { slug: "barcelona", country: "ES", code: "CT", name: "Barcelona", locative: "Barcelonában", cityMatch: ["Barcelona"] },
+  { slug: "malaga", country: "ES", code: "AN", name: "Málaga és Costa del Sol", locative: "Málaga környékén", cityMatch: ["Málaga", "Fuengirola", "Marbella", "Torremolinos", "Benalmádena"] },
+  { slug: "alicante", country: "ES", code: "VC", name: "Alicante és Costa Blanca", locative: "Alicante környékén", cityMatch: ["Alicante", "Torrevieja", "Benidorm", "Orihuela", "San Miguel"] },
 ];
 
 export const SEO_AREAS: SeoArea[] = [...CH_CANTON_AREAS, ...EXTRA_AREAS];

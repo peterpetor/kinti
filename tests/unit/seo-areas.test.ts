@@ -26,13 +26,24 @@ describe("SEO_AREAS konzisztencia", () => {
     }
   });
 
-  it("mind a 9 AT + 16 DE + 12 NL régióhoz van terület-oldal", () => {
-    for (const country of ["AT", "DE", "NL"] as const) {
+  it("mind a 9 AT + 16 DE + 12 NL + 9 GB (Anglia) régióhoz van terület-oldal", () => {
+    // GB = Anglia mind a 9 statisztikai régiója lefedett (2026-07-30).
+    for (const country of ["AT", "DE", "NL", "GB"] as const) {
       const covered = new Set(SEO_AREAS.filter((a) => a.country === country && !a.cityMatch).map((a) => a.code));
       for (const r of REGIONS[country]) {
         expect(covered.has(r.code), `${country}/${r.code} lefedetlen`).toBe(true);
       }
     }
+  });
+
+  it("ES: a lefedett comunidades + ország-oldal jelen (a szaknévsor-jelenlét szerint)", () => {
+    // ⚠️ ES SZÁNDÉKOSAN NEM teljes: csak a szaknévsorban ténylegesen lefedett
+    // közösségek + a fő ismertek kapnak oldalt; az üres kombó amúgy is noindex.
+    const es = new Set(SEO_AREAS.filter((a) => a.country === "ES" && !a.cityMatch).map((a) => a.code));
+    for (const code of ["MD", "CT", "AN", "VC", "CN"]) {
+      expect(es.has(code), `ES/${code} lefedetlen`).toBe(true);
+    }
+    expect(SEO_AREAS.some((a) => a.country === "ES" && a.code === null), "nincs ES ország-oldal").toBe(true);
   });
 
   it("név és helyhatározó minden területen kitöltött", () => {

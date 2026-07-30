@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/magyar" },
 };
 
-const COUNTRY_ORDER = ["CH", "AT", "DE", "NL"] as const;
+const COUNTRY_ORDER = ["CH", "AT", "DE", "NL", "GB", "ES"] as const;
 
 export default async function MagyarHub() {
   // Karcsú, cache-elt vetület (getBusinessesForList) — csak categoryId +

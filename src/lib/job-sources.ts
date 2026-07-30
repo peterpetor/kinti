@@ -89,6 +89,30 @@ export const JOB_SOURCES: Record<string, CountryJobSources> = {
     ],
     tip: "Hollandiában munkához BSN-szám (társadalombiztosítási azonosító) kell — intézd a beköltözéskor. Sok nemzetközi állás angolul is elérhető.",
   },
+  GB: {
+    sources: [
+      { name: "Find a job (gov.uk)", url: "https://www.gov.uk/find-a-job", note: "A brit állami (DWP) hivatalos állásportálja — ingyenes, sok bejelentett állás.", official: true },
+      { name: "Indeed UK", url: "https://uk.indeed.com", note: "A legnagyobb aggregátor — sok hirdetés egy helyen, kényelmes kereső." },
+      { name: "Reed.co.uk", url: "https://www.reed.co.uk", note: "Az egyik legnagyobb brit állásportál, széles kínálattal." },
+      { name: "Totaljobs", url: "https://www.totaljobs.com", note: "Nagy piaci állásportál, minden szektorra." },
+      { name: "CV-Library", url: "https://www.cv-library.co.uk", note: "Nagy brit állás-adatbázis, egyszerű jelentkezéssel." },
+      { name: "Caterer.com", url: "https://www.caterer.com", note: "Vendéglátás és szálloda — sok magyarnak releváns belépő." },
+      { name: "LinkedIn Jobs", url: "https://www.linkedin.com/jobs", note: "Nemzetközi szakmai állások, sok brit munkáltatóval." },
+    ],
+    tip: "⚠️ Brexit óta az EURES NEM fedi Angliát, és a munkához letelepedési státusz (settled/pre-settled) + National Insurance szám kell — ezekről a Tudásbázis GB-cikkei segítenek. A vendéglátás-szektor a leggyakoribb magyar belépő.",
+  },
+  ES: {
+    sources: [
+      { name: "SEPE — Empléate", url: "https://www.empleate.gob.es", note: "A spanyol állami foglalkoztatási szolgálat (SEPE) hivatalos állásportálja.", official: true },
+      { name: "InfoJobs", url: "https://www.infojobs.net", note: "Spanyolország messze legnagyobb állásportálja." },
+      { name: "Indeed España", url: "https://es.indeed.com", note: "Aggregátor — sok hirdetés egy helyen, kényelmes kereső." },
+      { name: "InfoEmpleo", url: "https://www.infoempleo.com", note: "Nagy spanyol piaci állásportál, széles kínálattal." },
+      { name: "Turijobs", url: "https://www.turijobs.com", note: "Turizmus és vendéglátás — a Costa del Sol/Blanca magyar közösségének fő belépője." },
+      { name: "LinkedIn Jobs", url: "https://www.linkedin.com/jobs", note: "Nemzetközi szakmai állások, spanyol munkáltatókkal." },
+      EURES,
+    ],
+    tip: "EU-állampolgárként szabadon vállalhatsz munkát, de kell NIE-szám + társadalombiztosítási szám (número de la Seguridad Social) — a bejelentkezésről a Tudásbázis ES-cikkei segítenek. A part menti régiókban a turizmus/vendéglátás a legtöbb magyar belépője.",
+  },
 };
 
 /** Egy ország forrás-katalógusa (vagy `null`, ha nincs felvéve). */

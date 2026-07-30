@@ -61,6 +61,24 @@ const DATA: Record<string, HousingSourcesData> = {
     ],
     tip: "Hollandiában sok a kamu hirdetés: sose fizess a lakás megtekintése előtt, és ellenőrizd, jogosult vagy-e huurtoeslagra (lakbér-támogatás).",
   },
+  GB: {
+    sources: [
+      { name: "Rightmove", url: "https://www.rightmove.co.uk/property-to-rent.html", note: "A legnagyobb brit ingatlanportál — a bérleti kínálat zöme itt van." },
+      { name: "Zoopla", url: "https://www.zoopla.co.uk/to-rent/", note: "A második legnagyobb portál, részletes szűrőkkel." },
+      { name: "SpareRoom", url: "https://www.spareroom.co.uk/", note: "Szobák és lakótársak (flatshare) — külföldiként a leggyorsabb belépő." },
+      { name: "OpenRent", url: "https://www.openrent.com/", note: "Közvetlenül a bérbeadótól, ingatlanosi jutalék nélkül." },
+    ],
+    tip: "⚠️ Angliában 2019 óta TILOS a bérlőre terhelt ingatlanosi jutalék, a kaució max. 5 heti bér (50 000 £ éves bér alatt), és a bérbeadónak 30 napon belül védett letéti sémába (TDP) kell tennie a kauciót — a részletek a Tudásbázis gb-lakhatás cikkében.",
+  },
+  ES: {
+    sources: [
+      { name: "Idealista", url: "https://www.idealista.com/alquiler-viviendas/", note: "Spanyolország messze legnagyobb ingatlanportálja." },
+      { name: "Fotocasa", url: "https://www.fotocasa.es/es/alquiler/viviendas/", note: "A második legnagyobb portál — érdemes az Idealistával párhuzamosan nézni." },
+      { name: "Habitaclia", url: "https://www.habitaclia.com/alquiler.htm", note: "Erős Katalóniában és a Valenciai Közösségben (Costa Blanca)." },
+      { name: "Badi", url: "https://badi.com/", note: "Szobák és lakótársak — a szoba-szintű piac fő helye." },
+    ],
+    tip: "⚠️ Spanyolországban 2023 óta az ingatlanosi jutalékot a TULAJDONOS fizeti (nem a bérlő), a kaució (fianza) alapból 1 havi bér, és a szerződés a LAU törvény alá tartozik — a részletek a Tudásbázis es-lakásbérlés cikkében. A part menti régiókban (Costa del Sol/Blanca) nagy a magyar-barát kínálat.",
+  },
 };
 
 /** Az adott ország link-out forrásai — ismeretlen országra null. */

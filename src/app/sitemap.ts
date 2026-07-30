@@ -99,9 +99,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
 
-    // SEO landing oldalak: kategória×terület kombók MIND A 4 ORSZÁGRA
-    // (lib/seo-areas.ts: CH-kantonok + AT/DE/NL területek + ország-oldalak) —
-    // csak ahol van legalább 1 vállalkozás (különben "thin content" lenne).
+    // SEO landing oldalak: kategória×terület kombók MIND A 6 ORSZÁGRA
+    // (lib/seo-areas.ts: CH-kantonok + AT/DE/NL/GB/ES területek + ország-oldalak) —
+    // adat-vezérelt: csak ahol van legalább 1 vállalkozás (különben "thin content").
     const combos = new Set<string>();
     for (const b of businesses) {
       if (!categories.some((c) => c.id === b.categoryId)) continue;
