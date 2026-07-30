@@ -1304,6 +1304,96 @@
       "address": "Online szolgáltatás — e-mailben intézhető (London, UK)",
       "email": "ida@koczortranslation.co.uk",
       "website": "https://koczortranslation.co.uk"
+    },
+    {
+      "_comment": "BACP saját nyilvántartás (regisztrált szakmai kamara-szintű regiszter, hasonló a Doctify/PT önkitöltős profilhoz) — a nyelvi mező MINDEN gyakorlati helyszínén 'English, Hungarian'-t ad, függetlenül a saját weboldal szövegétől (ami nem említi külön).",
+      "name": "Eszter Lukacsi — MBACP terapeuta, Bristol",
+      "type": "magyarul is beszélő párkapcsolati/egyéni terapeuta (BACP-regisztrált, Bristol/Clevedon/Portishead térség)",
+      "category": "pszichologus",
+      "city": "Bristol",
+      "region": "SW",
+      "address": "Online / személyes konzultáció Bristol (BS9), Clevedon (BS21) és Portishead (BS20) térségében",
+      "phone": "+44 7786 886705",
+      "email": "esztercounselling@gmail.com",
+      "website": "https://www.esztercounselling.com/"
+    },
+    {
+      "_comment": "BACP-regiszter, saját weboldala PONTOS utcacímet ad (közösségi irodaház, Canary Wharf) — a nyelv ('English, Hungarian') a BACP-profilon minden helyszínnél szerepel.",
+      "name": "Linda Kralovics — MBACP terapeuta, Canary Wharf",
+      "type": "magyarul is beszélő terapeuta (BACP-regisztrált; további helyszínek: Nottingham, York, Bristol, London SW1W/SE3 — csak online/alkalmi)",
+      "category": "pszichologus",
+      "city": "London",
+      "region": "LDN",
+      "address": "UNTIL, 30 South Colonnade, Canary Wharf, London E14 5HX",
+      "phone": "+44 7881 432510",
+      "email": "hello@lindaktherapy.com",
+      "website": "https://www.lindaktherapy.com/"
+    },
+    {
+      "_comment": "BACP-regiszter + saját weboldal EXPLICIT nyilatkozattal: 'I offer talking therapy sessions in English and Hungarian (English is my second language)'.",
+      "name": "Laura Erdelyi — terapeuta, London (Carshalton/Clapham/Wimbledon)",
+      "type": "magyarul is beszélő terapeuta (BACP-regisztrált, Dél-London — Clapham/Carshalton/Wimbledon térség + online)",
+      "category": "pszichologus",
+      "city": "London",
+      "region": "LDN",
+      "address": "Online / személyes konzultáció Clapham (SW4), Carshalton (SM5) és Wimbledon (SW19) térségében",
+      "email": "lauraerdelyicounselling@gmail.com",
+      "website": "https://www.le-counselling.com/"
+    },
+    {
+      "_comment": "Psychology Today saját profil EXPLICIT nyilatkozattal: 'I also speak Hungarian' (román mellett). Pontos utcacím a profilon.",
+      "name": "Norbert Marcel Adorjan — terapeuta, Watford",
+      "type": "magyarul is beszélő terapeuta (Psychology Today-regisztrált; további helyszín: Hemel Hempstead)",
+      "category": "pszichologus",
+      "city": "Watford",
+      "region": "EE",
+      "address": "24 Station Road, Watford WD17",
+      "phone": "+44 1923 961105",
+      "website": "https://www.psychologytoday.com/gb/counselling/norbert-marcel-adorjan-watford/1178639"
+    },
+    {
+      "_comment": "BACP-regiszter, nyelv 'English, Hungarian' mindkét (DH3-as) helyszínen. ⭐ Gateshead (Hédi Salánki) melletti MÁSODIK North East-i tétel.",
+      "name": "Bettina McKinnon — Mind Solution Therapy, Chester-le-Street",
+      "type": "magyarul is beszélő terapeuta (BACP-regisztrált; Chester-le-Street és Birtley térség, DH3)",
+      "category": "pszichologus",
+      "city": "Chester-le-Street",
+      "region": "NE",
+      "address": "Online / személyes konzultáció Chester-le-Street és Birtley (DH3) térségében",
+      "phone": "+44 7708 029509",
+      "website": "https://mindsolutiontherapy.co.uk/"
+    },
+    {
+      "_comment": "Psychology Today profil EXPLICIT: 'I also speak Hungarian'. ⭐ Kent megye/Canterbury ELSŐ tétele.",
+      "name": "Nikolett Megyeri — pszichoterapeuta, Canterbury",
+      "type": "magyarul is beszélő pszichoterapeuta (Psychology Today-regisztrált; Canterbury CT2 + Petham)",
+      "category": "pszichologus",
+      "city": "Canterbury",
+      "region": "SE",
+      "address": "Online / személyes konzultáció Canterbury (CT2) térségében",
+      "phone": "+44 1227 202239",
+      "website": "https://www.psychologytoday.com/gb/counselling/nikolett-megyeri-canterbury/721743"
+    },
+    {
+      "_comment": "Psychology Today + Counselling Directory + Harley Therapy + BACP — négyszeres független megerősítés, mindegyik magyar nyelvet listáz. Személyes ('cosy log cabin') helyszín Basingstoke-ban (RG24, már bent van a CITY_COORDS-ban).",
+      "name": "Szabina Tomicsne Wagner — pszichodinamikus tanácsadó, Basingstoke",
+      "type": "magyarul is beszélő pszichodinamikus tanácsadó (BACP-regisztrált, személyes+online, Basingstoke RG24)",
+      "category": "pszichologus",
+      "city": "Basingstoke",
+      "region": "SE",
+      "address": "Online / személyes konzultáció Basingstoke (RG24) térségében",
+      "phone": "+44 1256 961184",
+      "website": "https://www.psychologytoday.com/gb/counselling/szabina-tomicsne-wagner-basingstoke/1015274"
+    },
+    {
+      "_comment": "Psychology Today profil EXPLICIT: 'in English and in Hungarian'. Két bérelt terápiás iroda (Space To Be You/Hackney, North London Therapy Practice/Golders Green) — a megosztott iroda saját pontos címét a praxis-oldalak nem közlik, ezért a kerület-szintű elhelyezés marad.",
+      "name": "Zsofia Toth — pszichoterapeuta, London (Hackney)",
+      "type": "magyarul is beszélő pszichoterapeuta (Psychology Today-regisztrált; Hackney E8 + Golders Green + online)",
+      "category": "pszichologus",
+      "city": "London",
+      "region": "LDN",
+      "address": "Space To Be You (Hackney) és North London Therapy Practice (Golders Green) — online is elérhető",
+      "email": "info@zsofiatoth-counselling.com",
+      "website": "https://www.zsofiatoth-counselling.com/"
     }
   ]
 }

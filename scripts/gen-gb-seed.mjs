@@ -41,6 +41,9 @@ const CITY_COORDS = {
   bristol: [51.4545, -2.5879],
   "milton keynes": [52.0406, -0.7594],
   witchford: [52.4033, 0.2166],
+  watford: [51.6554, -0.3957],
+  canterbury: [51.2800, 1.0803],
+  "chester-le-street": [54.8543, -1.5750],
 };
 
 // Régió-kód → központ fallback (regions.ts GB-kódjaival és a gb-points.ts-szel egyezően).
