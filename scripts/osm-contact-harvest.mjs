@@ -20,8 +20,13 @@
  */
 import { readFileSync, writeFileSync } from "node:fs";
 
-const OVERPASS = "https://overpass-api.de/api/interpreter";
-const CHUNK = 40;        // koordináta / lekérdezés
+// Több végpont: az overpass-api.de gyakran túlterhelt/hálózati hibát ad.
+const ENDPOINTS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
+];
+const CHUNK = 25;        // koordináta / lekérdezés (kisebb = megbízhatóbb)
 const RADIUS = 60;       // méter
 const MIN_JACCARD = 0.6;
 
@@ -59,12 +64,19 @@ function jaccard(a, b) {
 function namesMatch(ourName, osmName) {
   const A = tokens(ourName);
   const B = tokens(osmName);
+  if (A.size === 0 || B.size === 0) return null;
   if (jaccard(A, B) >= MIN_JACCARD) return "jaccard";
-  // Tartalmazás: pl. „Kovács Fogászat" ⊂ „Zahnarztpraxis Kovács Fogászat"
-  const na = [...A].join(" ");
-  const nb = [...B].join(" ");
-  if (na.length >= 5 && nb.includes(na)) return "contains";
-  if (nb.length >= 5 && na.includes(nb)) return "contains";
+
+  // Részhalmaz: pl. {kovacs, fogaszat} ⊆ {zahnarztpraxis, kovacs, fogaszat}.
+  //
+  // ⚠️ EZ KORÁBBAN NYERS SUBSTRING-TESZT VOLT, ÉS HAMIS EGYEZÉST ADOTT: az
+  // „Abel" vezetéknév beleillett az „Izabella" keresztnévbe
+  // („gombos izabella".includes("abel") === true), vagyis egy IDEGEN telefonszám
+  // került volna egy másik személyhez. Ezért TOKEN-SZINTŰ (szóhatáros) a teszt:
+  // a kisebb névhalmaz MINDEN tokenje szerepeljen a nagyobban, teljes tokenként,
+  // és legalább 2 token egyezzen (egyetlen közös szó — pl. „Praxis" — nem elég).
+  const [small, large] = A.size <= B.size ? [A, B] : [B, A];
+  if (small.size >= 2 && [...small].every((t) => large.has(t))) return "subset";
   return null;
 }
 
@@ -75,40 +87,51 @@ function haversine(lat1, lon1, lat2, lon2) {
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
-async function waitForSlot() {
-  for (let i = 0; i < 40; i++) {
-    try {
-      const t = await (await fetch("https://overpass-api.de/api/status")).text();
-      if (/slots available now|\d+ slots available/i.test(t) && !/rate_limited/i.test(t)) return;
-    } catch { /* hálózati hiba → várunk */ }
-    await new Promise((r) => setTimeout(r, 4000));
-  }
-}
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/** Egy köteg lekérdezése — végpontonként és többször újrapróbálva. */
 async function queryChunk(chunk) {
   const coords = chunk.map((r) => `${r.lat},${r.lng}`).join(",");
-  const q = `[out:json][timeout:120];
+  const q = `[out:json][timeout:90];
 nwr(around:${RADIUS},${coords})["name"](if:is_tag("phone") || is_tag("contact:phone") || is_tag("website") || is_tag("contact:website") || is_tag("email") || is_tag("contact:email"));
 out center tags 400;`;
-  await waitForSlot();
-  const res = await fetch(OVERPASS, { method: "POST", body: q });
-  if (!res.ok) return [];
-  const j = await res.json().catch(() => null);
-  return j?.elements ?? [];
+
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const url = ENDPOINTS[attempt % ENDPOINTS.length];
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        body: q,
+        headers: { "content-type": "text/plain" },
+        signal: AbortSignal.timeout(120000),
+      });
+      if (res.status === 429 || res.status === 504) {
+        await sleep(8000);
+        continue;
+      }
+      if (!res.ok) { await sleep(3000); continue; }
+      const j = await res.json().catch(() => null);
+      if (j?.elements) return j.elements;
+    } catch {
+      /* hálózati hiba → másik végpont / újra */
+    }
+    await sleep(5000);
+  }
+  return null; // 6 próba után sem sikerült
 }
 
 const found = [];
+let failedChunks = 0;
 for (let i = 0; i < targets.length; i += CHUNK) {
   const chunk = targets.slice(i, i + CHUNK);
-  process.stdout.write(`\n[${i + 1}-${Math.min(i + CHUNK, targets.length)}] lekérdezés… `);
-  let els = [];
-  try {
-    els = await queryChunk(chunk);
-  } catch (e) {
-    console.log("hiba:", e.message);
+  console.log(`[${i + 1}-${Math.min(i + CHUNK, targets.length)}] lekérdezés…`);
+  const els = await queryChunk(chunk);
+  if (els === null) {
+    failedChunks++;
+    console.log("  ✗ nem sikerült (6 próba után sem)");
     continue;
   }
-  process.stdout.write(`${els.length} POI → `);
+  console.log(`  ${els.length} POI érkezett`);
 
   let hits = 0;
   for (const r of chunk) {
@@ -138,9 +161,11 @@ for (let i = 0; i < targets.length; i += CHUNK) {
       hits++;
     }
   }
-  process.stdout.write(`${hits} egyezés`);
+  console.log(`  → ${hits} szigorú egyezés`);
+  writeFileSync("osm-contact-candidates.json", JSON.stringify(found, null, 2)); // részleges mentés
+  await sleep(2000); // udvarias tempó a köz-végpontokhoz
 }
 
-console.log(`\n\nÖSSZESEN ${found.length} egyezés a ${targets.length} célból.`);
+console.log(`\nÖSSZESEN ${found.length} egyezés a ${targets.length} célból (sikertelen köteg: ${failedChunks}).`);
 writeFileSync("osm-contact-candidates.json", JSON.stringify(found, null, 2));
 console.log("→ osm-contact-candidates.json");
