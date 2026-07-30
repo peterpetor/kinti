@@ -585,6 +585,21 @@
       "hours": "H-V 19:00-23:00",
       "lat": 36.5370615,
       "lng": -4.6240406
+    },
+    {
+      "_comment": "⭐ FUERTEVENTURA ELSŐ tétele (a CN régió eddigi 3 tétele MIND Tenerifén volt). Saját domain + telefon/WhatsApp + e-mail + konkrét piaci helyszín ÉS nyitvatartás — jól dokumentált. ⚠️ Egy '7 legjobb magyar étterem Spanyolországban' listacikk (7mejores.com) LANZAROTE/Puerto del Carmen néven hozta — a saját weboldala szerint FUERTEVENTURA: a listacikk téves, ne használd forrásként (ld. memória). ⚠️ Piaci mozgó árus: CSAK kedden és szombaton 9-14h van kint — ezt a `hours` és a `type` is kimondja, hogy senki ne menjen hiába.",
+      "name": "Peter's Hungarian Kitchen — magyar lángos, Fuerteventura",
+      "type": "magyar lángos (sós és édes) piaci árus — CSAK kedden és szombaton, kiszállítással",
+      "category": "etterem",
+      "city": "Caleta de Fuste",
+      "region": "CN",
+      "address": "Mercado de Caleta de Fuste, 35610 Caleta de Fuste, Antigua (Fuerteventura)",
+      "phone": "+34 658 825 901",
+      "email": "info@peters-hungarian.kitchen",
+      "website": "https://www.peters-hungarian.kitchen",
+      "hours": "K és Szo 09:00-14:00",
+      "lat": 28.3983006,
+      "lng": -13.8602305
     }
   ]
 }
