@@ -1027,6 +1027,20 @@
       "lng": -1.30489
     },
     {
+      "_comment": "Companies House 08381240, AKTÍV, a bejegyzett székhely EGYEZIK a kereskedelmi címmel (nem üzleti-központ/postafiók-cím) — a tulajdonosok angol-magyar kettős állampolgárok.",
+      "name": "Griff Consulting — angol cégalapítás és könyvelés magyarul, Brighton & Hove",
+      "type": "magyar nyelvű könyvelés és cégalapítási tanácsadás (Ltd-alapítás, ÁFA, adóbevallás) — országos, online ügyintézéssel",
+      "category": "konyveles",
+      "city": "Hove",
+      "region": "SE",
+      "address": "Hova House, 1 Hova Villas, Hove, Brighton and Hove BN3 3DH",
+      "phone": "+44 7901 279641",
+      "email": "info@griffconsulting.co.uk",
+      "website": "https://griffconsulting.co.uk",
+      "lat": 50.8293387,
+      "lng": -0.171748
+    },
+    {
       "_comment": "⭐ Az ELSŐ 'orvos' kategóriás GB-tétel — korábban ez a kategória nem is szerepelt a generátor VALID_CATEGORIES listájában (csak fogorvos volt), mert a háziorvos-rés a legrégebbi nyitott hiány volt (ld. gb-szaknevsor-seed memória). Dr. Vasas Péter GMC-regisztrált (6138971), Debreceni Egyetemen végzett sebész, jelenleg Ramsay Health/Park Hill Hospital Doncaster bariátriai/általános sebésze — SAJÁT klinikai weboldala (haemorrhoidclinic.co.uk) külön magyar nyelvű aloldalt tart fenn, ahol explicit szombat délutáni magánrendelést hirdet Londonban, és hétköznap Doncaster/Pontefract környékén érhető el. Mindkét helyszín felvéve, mert a magyar oldal mindkettőt megadja elérhetőségként.",
       "name": "Dr. Vasas Péter — proktológiai/sebészeti magánrendelés (London)",
       "type": "magyarul beszélő sebész (aranyér-kezelés, gasztrointesztinális sebészet) — szombat délutáni (15–19h) magánrendelés, kizárólag magánbetegek, előzetes bejelentkezéssel",
