@@ -1499,6 +1499,19 @@
       "address": "Mobil elárusítóhely — Winchester (Hampshire) piacain",
       "lat": 51.0761,
       "lng": -1.3371
+    },
+    {
+      "_comment": "⭐ ÚJ FORRÁSTÍPUS: Companies House 'palinka' kulcsszó-söprés (a 'langos'-technika ismételve más magyar termékszóra). Companies House AKTÍV (09951878, 2016 óta), saját weboldal (szicsekpalinka.co.uk) + telefon + a Guild of Fine Food (brit minőségi élelmiszer-szövetség) hivatalos tagja/nyilvántartott termelője. Családi vállalkozás, 30+ éve készít pálinkát. A megadott cím egy MEZŐGAZDASÁGI/vidéki telephely (Mandhari, The Street) — ingyenes helyszíni átvétel is van, nem csak webshop.",
+      "name": "Szicsek Palinka Ltd — magyar pálinkafőzde, Norfolk",
+      "type": "kézműves magyar pálinka gyártó és webshop, helyszíni átvétellel",
+      "category": "elelmiszer",
+      "city": "Flordon",
+      "region": "EE",
+      "address": "Mandhari, The Street, Flordon, Norwich NR15 1RN",
+      "phone": "+44 7449 870164",
+      "website": "https://szicsekpalinka.co.uk",
+      "lat": 52.5298,
+      "lng": 1.2221
     }
   ]
 }
