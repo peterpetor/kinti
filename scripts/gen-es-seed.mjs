@@ -172,7 +172,8 @@ for (const org of data.organizations) {
   lines.push(
     `UPDATE businesses SET address = ${q(address)}, phone = ${q(org.phone ?? null)}, ` +
       `contact_email = ${q(org.email ?? null)}, open_text = ${q(org.hours ?? null)}, ` +
-      `lat = ${lat}, lng = ${lng}, category_id = ${q(categoryId)}, blurb = ${q(blurb)} ` +
+      `lat = ${lat}, lng = ${lng}, category_id = ${q(categoryId)}, blurb = ${q(blurb)}, ` +
+      `canton_code = ${q(org.region)} ` +
       `WHERE id = ${q(id)} AND claimed = 0 AND source = 'seed-es-org';`,
   );
 }

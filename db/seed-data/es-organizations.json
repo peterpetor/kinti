@@ -75,15 +75,17 @@
       "lng": 2.1367
     },
     {
+      "_comment": "⚠️ 2026-07-30, 10. kör: a MAEC hivatalos ONLINE keresője (exteriores.gob.es, 2026-04-11 frissítés) szerint a bejegyzett tartománya MA Sevilla, nem Huelva — a régi 'Huelva' adat elavult (feltehetően költözés). Javítva a friss kormányzati forrás alapján; a régió (AN) nem változott.",
       "name": "Kiss Barbara Katalin — hites fordító és tolmács (magyar–spanyol)",
       "type": "MAEC hites fordító-tolmács (Traductora-Intérprete Jurada), TIJ 11026",
       "category": "fordito",
-      "city": "Huelva",
+      "city": "Sevilla",
       "region": "AN",
-      "address": "Huelva",
+      "address": "Sevilla",
       "phone": "+34 669 971 640",
-      "lat": 37.2614,
-      "lng": -6.9447
+      "email": "kiss.barbi@gmail.com",
+      "lat": 37.3891,
+      "lng": -5.9845
     },
     {
       "name": "Borosi Szabó Bernadette — hites fordító és tolmács (magyar–spanyol)",
@@ -146,16 +148,16 @@
       "lng": -3.8460
     },
     {
+      "_comment": "⚠️ 2026-07-30, 10. kör: a MAEC hivatalos ONLINE keresője (exteriores.gob.es, 2026-04-11 frissítés) szerint a bejegyzett tartománya MA Madrid, nem Valencia (telefon+email egyezik, tehát ugyanaz a személy) — a régi 'Valencia' adat elavult volt. Javítva, régió VC→MD.",
       "name": "Felföldy Vinczer Csilla María — hites fordító és tolmács (magyar–spanyol)",
       "type": "MAEC hites fordító-tolmács (Traductora-Intérprete Jurada), TIJ 845",
       "category": "fordito",
-      "city": "Valencia",
-      "region": "VC",
-      "address": "Valencia",
+      "city": "Madrid",
+      "region": "MD",
       "phone": "+34 649 551 476",
       "email": "csilla.felfoldy@gmail.com",
-      "lat": 39.4699,
-      "lng": -0.3763
+      "lat": 40.4168,
+      "lng": -3.7038
     },
     {
       "_comment": "A Madridi Nagykövetség saját ügyvéd-listája (2026-01-20 frissítés) szerint kapcsolattartó Lőrincz Tünde (tunde@rodriguezbernal.com), a pontos ajtószám 'Planta 3, Puerta 2' (nem Puerta 3, ahogy egy korábbi másodlagos forrás adta) — a hivatalos nagykövetségi lista alapján javítva.",
