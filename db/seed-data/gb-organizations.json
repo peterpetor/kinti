@@ -1244,6 +1244,31 @@
       "website": "https://www.londonwomensclinic.com",
       "lat": 51.52146,
       "lng": -0.1484552
+    },
+    {
+      "_comment": "Doctify saját profil: „English” és „Hungarian”. Semmelweis Egyetemen végzett (1994), GMC-regisztrált, 32 év tapasztalat. Bristol MÁR van a szaknévsorban (más kategóriákkal) — ez egy TOVÁBBI, önálló szakember-tétel.",
+      "name": "Dr. Zsolt Hegedus — ortopéd sebész (csípő/térd), Bristol",
+      "type": "magyarul is beszélő ortopéd sebész, csípő- és térdsebészetre specializálódva, 32 év tapasztalattal",
+      "category": "orvos",
+      "city": "Bristol",
+      "region": "SW",
+      "address": "The Brooms, Emersons Green, Bristol BS16 7FH",
+      "website": "https://www.doctify.com/uk/specialist/zsolt-hegedus",
+      "lat": 51.4908229,
+      "lng": -2.4635085
+    },
+    {
+      "_comment": "Doctify saját profil, explicit magyar nyelvvel. Több londoni/környéki rendelőhelyszíne van (Fortius Clinic Wigmore St a fő), a Fortius Clinic CQC-regisztrált.",
+      "name": "Mr Peter Domos — ortopéd sebész (Fortius Clinic)",
+      "type": "magyarul is beszélő ortopéd sebész (Fortius Clinic, több londoni kórházban is rendel)",
+      "category": "orvos",
+      "city": "London",
+      "region": "LDN",
+      "address": "Fortius Clinic, 66 Wigmore Street, London W1U 2SB",
+      "phone": "+44 20 3195 2442",
+      "website": "https://www.fortiusclinic.com/specialists/mr-peter-domos",
+      "lat": 51.5162998,
+      "lng": -0.1498767
     }
   ]
 }
