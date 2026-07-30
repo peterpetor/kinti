@@ -1477,6 +1477,28 @@
       "email": "thehungarianassociation@gmail.com",
       "lat": 52.3058,
       "lng": -1.9417
+    },
+    {
+      "_comment": "FSA-regisztrált mobil árus (2 bejegyzés, mindkettő 5-ös), Companies House 'langos' kulcsszó-söprésből NEM jött elő (nincs önálló cégbejegyzése — egyéni vállalkozó lehet). Nincs utcaszintű cím (mobil elárusítóhely), a `type`/`hours` ezt kimondja.",
+      "name": "Monika's Langos — Ludlow (Shropshire)",
+      "type": "magyar lángos, mobil piaci elárusítóhely (Ludlow és környéke)",
+      "category": "etterem",
+      "city": "Ludlow",
+      "region": "WM",
+      "address": "Mobil elárusítóhely — Ludlow (Shropshire) piacain",
+      "lat": 52.3680,
+      "lng": -2.7176
+    },
+    {
+      "_comment": "FSA-regisztrált mobil árus (5-ös értékelés). Nincs utcaszintű cím (mobil elárusítóhely), a `type`/`hours` ezt kimondja.",
+      "name": "Gergo's Langos — Winchester (Hampshire)",
+      "type": "magyar lángos, mobil piaci elárusítóhely (Winchester és környéke)",
+      "category": "etterem",
+      "city": "Winchester",
+      "region": "SE",
+      "address": "Mobil elárusítóhely — Winchester (Hampshire) piacain",
+      "lat": 51.0761,
+      "lng": -1.3371
     }
   ]
 }
