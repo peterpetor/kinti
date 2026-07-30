@@ -90,18 +90,32 @@ export const PERSONALIZE_GUIDE_SLUGS: Record<string, Record<string, string>> = {
     AT: "at-bankszamla",
     DE: "de-bankszamla",
     NL: "nl-bankszamla",
+    GB: "gb-bankszamla",
+    ES: "es-bankszamla",
   },
   munkavallalas: {
     CH: "munkavallalas",
     AT: "at-munkavallalas",
     DE: "de-munkavallalas",
     NL: "nl-munkavallalas",
+    GB: "gb-munkavallalas",
+    ES: "es-munkavallalas",
   },
 };
 
-function guideItem(topic: keyof typeof PERSONALIZE_GUIDE_SLUGS, country: string, emoji: string, title: string, desc: string): PersonalItem {
-  const slugs = PERSONALIZE_GUIDE_SLUGS[topic];
-  const slug = slugs[country] ?? slugs.CH;
+/**
+ * ⚠️ ORSZÁG-FALLTHROUGH VÉDELEM (binary-country-fallthrough): a `bejelentkezes`
+ * és `egeszsegbiztositas` témára EGYELŐRE NINCS gb-/es- cikk. Korábban a
+ * `?? slugs.CH` fallback miatt egy GB/ES-user a SVÁJCI cikket kapta a
+ * személyre szabott kezdőlapon — néma, rossz-országú tartalom. Ehelyett most
+ * `null`-t adunk vissza, ha a KÉRT ország-specifikus slug nem létezik, és a
+ * hívó kiszűri: inkább egy elemmel kevesebb, mint idegen ország cikke.
+ * (Ha valaha születik gb-bejelentkezes/es-egeszsegbiztositas stb., csak a
+ * fenti táblát kell bővíteni — a szűrés automatikusan elkezdi mutatni.)
+ */
+function guideItem(topic: keyof typeof PERSONALIZE_GUIDE_SLUGS, country: string, emoji: string, title: string, desc: string): PersonalItem | null {
+  const slug = PERSONALIZE_GUIDE_SLUGS[topic][country];
+  if (!slug) return null;
   return { emoji, title, desc, href: `/tudasbazis/${slug}` };
 }
 
@@ -120,7 +134,7 @@ export function buildPersonalizedItems(
 ): PersonalItem[] {
   const inCountry = countryLocative(country); // pl. „Ausztriában"
 
-  const byFocus: Record<PersonalizeFocus, PersonalItem[]> = {
+  const byFocus: Record<PersonalizeFocus, (PersonalItem | null)[]> = {
     munka: [
       { emoji: "💼", title: `Állások ${inCountry}`, desc: "Magyar nyelvű hirdetések + heti válogatás", href: "/allasok" },
       // A német CV a német nyelvterületre való — NL-ben a HOLLAND, GB-ben az
@@ -159,7 +173,7 @@ export function buildPersonalizedItems(
     ],
   };
 
-  let items = [...byFocus[focus]];
+  let items: (PersonalItem | null)[] = [...byFocus[focus]];
 
   if (stage === "planning") {
     items.unshift({ emoji: "✈️", title: "Kiköltözési teendőlista", desc: "Lépésről-lépésre teendők az indulásig", href: "/tudasbazis/kikoltozes" });
@@ -174,12 +188,13 @@ export function buildPersonalizedItems(
     items.push({ emoji: "💳", title: "Kinti Pass — kedvezmények", desc: "Mutasd fel a kártyát magyar helyeken", href: "/profil/kinti-pass" });
   }
 
-  // Href-dedup (az első előfordulás nyer — a stage-hangolás elsőbbsége) + plafon.
+  // Null-szűrés (a hiányzó gb-/es- cikkek helyén guideItem null-t ad — ld. fent)
+  // + href-dedup (az első előfordulás nyer — a stage-hangolás elsőbbsége) + plafon.
   const seen = new Set<string>();
-  items = items.filter((it) => {
-    if (seen.has(it.href)) return false;
+  const result = items.filter((it): it is PersonalItem => {
+    if (it === null || seen.has(it.href)) return false;
     seen.add(it.href);
     return true;
   });
-  return items.slice(0, MAX_ITEMS);
+  return result.slice(0, MAX_ITEMS);
 }
