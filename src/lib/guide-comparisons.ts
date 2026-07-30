@@ -105,6 +105,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       at: "at-munkavallalas",
       de: "de-munkavallalas",
       nl: "nl-munkavallalas",
+      gb: "gb-munkavallalas",
       es: "es-munkavallalas",
     },
     rows: [
@@ -126,6 +127,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       at: "at-munkanelkuli",
       de: "de-munkanelkuli",
       nl: "nl-munkanelkuli",
+      gb: "gb-munkanelkuli",
     },
     rows: [
       { label: "Hol igényled", ch: "RAV", at: "AMS", de: "Agentur für Arbeit", nl: "UWV", gb: "gov.uk — DWP (Universal Credit / New Style JSA)", es: "SEPE" },
@@ -146,6 +148,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       at: "at-csaladi-potlek",
       de: "de-csaladi-potlek",
       nl: "nl-csaladi-potlek",
+      gb: "gb-csaladi-potlek",
     },
     rows: [
       { label: "Neve", ch: "Kinderzulage", at: "Familienbeihilfe", de: "Kindergeld", nl: "Kinderbijslag", gb: "Child Benefit", es: "⚠️ Nincs alanyi jogú havi ellátás — adókedvezmény" },
@@ -227,6 +230,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       at: "at-nyugdij",
       de: "de-nyugdij",
       nl: "nl-nyugdij",
+      gb: "gb-nyugdij",
     },
     rows: [
       { label: "Állami pillér", ch: "AHV (1. pillér)", at: "Pensionsversicherung (PVA)", de: "Gesetzliche Rentenversicherung", nl: "AOW", gb: "State Pension", es: "Seguridad Social — pensión de jubilación" },
@@ -264,6 +268,7 @@ export const GUIDE_COMPARISONS: GuideComparison[] = [
       at: "at-vallalkozas",
       de: "de-vallalkozas",
       nl: "nl-vallalkozas",
+      gb: "gb-vallalkozas",
       es: "es-autonomo",
     },
     rows: [

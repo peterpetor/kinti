@@ -2334,6 +2334,275 @@ export const GUIDES_GB: Guide[] = [
       { label: "gov.uk — Vehicle tax, MOT and insurance", url: "https://www.gov.uk/browse/driving/vehicle-tax-mot-insurance" },
     ],
   },
+  {
+    slug: "gb-munkavallalas",
+    title: "Munkavállalás: szerződés, bér, jogok",
+    summary: "National Living Wage 12,71 £/óra (2026. ápr.), kötelező right to work ellenőrzés, és a leggyakoribb szerződés-típusok.",
+    tldr: [
+      "A National Living Wage 2026. áprilistól 12,71 £/óra (21 év fölött) — ez alá senki nem mehet, uniform/szerszám/borravaló-levonás sem viheti alá.",
+      "⚠️ Munkába állás előtt a munkáltató TÖRVÉNYI KÖTELESSÉGE ellenőrizni a munkavállalási jogodat (right to work check) — ez nem diszkrimináció.",
+      "A zero-hours contract (nulla órás szerződés) legális Nagy-Britanniában, de nem garantál egyetlen munkaórát sem — érdemes tudni, mibe mész bele.",
+    ],
+    icon: "briefcase",
+    sections: [
+      {
+        heading: "Szerződés-típusok",
+        bullets: [
+          "Permanent (állandó) — határozatlan idejű, a leggyakoribb forma",
+          "Fixed-term contract — határozott idejű, konkrét végdátummal vagy projekt végéig",
+          "Part-time — heti óraszám arányosan kevesebb, ugyanazok a jogok illetik meg, mint a teljes állásút",
+          "⚠️ Zero-hours contract — a munkáltató NEM garantál minimum óraszámot; te is jogosult vagy visszautasítani egy felajánlott műszakot",
+          "Agency work — munkaerő-közvetítőn keresztül, a közvetítő a munkáltatód, nem a cég, ahol dolgozol",
+        ],
+      },
+      {
+        heading: "Minimálbér (2026. április 1-től)",
+        body: [
+          "National Living Wage (21 év fölött): 12,71 £/óra. 18–20 év: 10,85 £/óra. 16–17 év és tanonc (apprentice): 8,00 £/óra.",
+          "⚠️ Az egyenruha, szerszám, borravaló-elszámolás vagy fizetésből levont „önkéntes” juttatás NEM viheti a tényleges órabért a minimum alá — ha mégis, a HMRC-hez fordulhatsz, a szankció a hiány akár 200%-a (munkavállalónként max. 20 000 £).",
+        ],
+      },
+      {
+        heading: "Right to work ellenőrzés",
+        body: [
+          "A munkáltató köteles a munkaviszony KEZDETE ELŐTT ellenőrizni a munkavállalási jogodat — vízum/EUSS-státusz esetén ez jellemzően egy online share code-dal történik (ugyanaz, mint a NIN-igényléshez).",
+          "Ez törvényi kötelesség, nem a te személyed elleni bizalmatlanság — minden alkalmazottnál (brit állampolgárnál is) el kell végezni valamilyen formában.",
+        ],
+      },
+      {
+        heading: "A payslip (fizetési papír)",
+        body: [
+          "Minden fizetésnél kötelező payslipet kapnod: bruttó bér, a levonások (adó, National Insurance, esetleg nyugdíjpénztári befizetés) és a nettó összeg tételesen szerepel rajta.",
+          "Az adólevonások részleteit (tax code, PAYE) a Munkavállalás → Adózás cikk fejti ki bővebben — érdemes az első payslipnél összevetni a National Insurance-számoddal (NIN), hogy minden stimmel.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "gov.uk — National Minimum Wage and Living Wage rates", url: "https://www.gov.uk/national-minimum-wage-rates" },
+      { label: "gov.uk — Prove your right to work", url: "https://www.gov.uk/prove-right-to-work" },
+      { label: "gov.uk — Employment contracts and conditions", url: "https://www.gov.uk/employment-contracts-and-conditions" },
+    ],
+  },
+  {
+    slug: "gb-csaladi-potlek",
+    title: "Családi pótlék (Child Benefit)",
+    summary: "27,05 £/hét az első gyerekre, 17,90 £ minden továbbira — de 60 000 £ fölötti jövedelemnél visszafizetési kötelezettség jöhet.",
+    tldr: [
+      "Child Benefit: 27,05 £/hét az első/egyetlen gyerekre, 17,90 £/hét minden további gyerekre (2026. április óta).",
+      "⚠️ High Income Child Benefit Charge: ha a háztartás magasabb keresetű tagjának éves jövedelme 60 000 £ fölött van, az ellátás egy részét vagy egészét vissza kell fizetni adóban.",
+      "Online igényelhető kb. 15 perc alatt, és visszamenőleg is legfeljebb 3 hónapra érvényesíthető.",
+    ],
+    icon: "users",
+    sections: [
+      {
+        heading: "Kinek jár és mennyi",
+        body: [
+          "A Child Benefitet a gyereket nevelő egyik szülő/gondviselő igényli (nem osztható meg a két szülő között), és jellemzően 4 hetente utalják.",
+          "18 éves korig jár, ha a fiatal még nappali oktatásban vagy elismert képzésben vesz részt — utána megszűnik.",
+        ],
+      },
+      {
+        heading: "⚠️ High Income Child Benefit Charge (HICBC)",
+        body: [
+          "Ha a háztartás MAGASABB keresetű tagjának éves jövedelme meghaladja a 60 000 £-ot, a többletjövedelem minden 200 £-ja után 1%-ot vissza kell fizetni adóban — 80 000 £ jövedelemnél a teljes ellátás elúszik.",
+          "A díj csak az EGYIK, magasabb keresetű felet terheli — ha mindkét szülő jövedelme a küszöb fölött van, a charge akkor sem duplázódik.",
+        ],
+      },
+      {
+        heading: "Hogyan igényeld",
+        body: [
+          "Online a gov.uk/child-benefit oldalon vagy a HMRC appban, kb. 15 perc. Kell hozzá: a gyerek születési anyakönyvi kivonata, a te National Insurance számod, és egy bankszámlaszám.",
+          "Az igénylés visszamenőleg legfeljebb 3 hónapig érvényesíthető — ha csúsztál a bejelentéssel, ne várj tovább, a késés csak a visszamenőleges összeget csökkenti.",
+        ],
+      },
+      {
+        heading: "Miért érdemes igényelni akkor is, ha a HICBC miatt visszafizetnéd",
+        bullets: [
+          "Az igénylő szülő National Insurance jóváírást (credit) kap a State Pension-rekordjába, akkor is, ha maga nem dolgozik — ez a leggyakoribb ok, amiért a magasabb keresetű háztartások is érdemes igényelniük, csak épp „nulla összegű” igénylésként",
+          "A gyerek 16 éves korban automatikusan kap National Insurance számot, ha a szülő igényelte a Child Benefitet",
+        ],
+      },
+    ],
+    sources: [
+      { label: "gov.uk — Child Benefit", url: "https://www.gov.uk/child-benefit" },
+      { label: "gov.uk — High Income Child Benefit Charge", url: "https://www.gov.uk/child-benefit-tax-charge" },
+    ],
+  },
+  {
+    slug: "gb-nyugdij",
+    title: "Nyugdíj: State Pension és a NI-rekord",
+    summary: "A teljes új State Pension heti 241,30 £ (2026. ápr.), 35 „qualifying year” kell hozzá — és a korhatár épp most emelkedik 66-ról 67-re.",
+    tldr: [
+      "A teljes új State Pension 2026 áprilisától heti 241,30 £ — ehhez 35 „qualifying year” (teljesített járulék- vagy jóváírás-év) kell a National Insurance-rekordban.",
+      "⚠️ Az állami nyugdíjkorhatár jelenleg 66 év, DE 2026. május 6. és 2028. április 6. között fokozatosan 67-re emelkedik.",
+      "10 évnél kevesebb qualifying year esetén NEM jár State Pension — 10 és 35 között arányosan (pl. 20 év = 20/35-öd rész).",
+    ],
+    icon: "clock",
+    sections: [
+      {
+        heading: "Hogyan épül fel az ellátás",
+        body: [
+          "Egy „qualifying year” az az adóév, amiben elég National Insurance járulékot fizettél (vagy jóváírást kaptál, pl. Child Benefit igénylőként vagy betegség miatt) ahhoz, hogy az az év beleszámítson.",
+          "Minimum 10 qualifying year kell BÁRMILYEN State Pensionhoz; a TELJES összeghez 35 kell. A köztes sávban arányosan kevesebb jár — nem kell, hogy az évek egymást követők legyenek, az egész munkás életed alatt összeadódnak.",
+        ],
+      },
+      {
+        heading: "⚠️ A nyugdíjkorhatár most emelkedik",
+        body: [
+          "Ma 66 év. 2026. május 6. és 2028. április 6. között fokozatosan 67-re nő — a pontos dátum a születési dátumodtól függ, a gov.uk kalkulátora megmondja a sajátodat.",
+          "Egy további, 67-ről 68-ra emelés 2044–2046 körülre van tervezve, de ennek előrehozatala politikai vita tárgya — ez a részlet még változhat.",
+        ],
+      },
+      {
+        heading: "Ellenőrizd a saját rekordodat",
+        body: [
+          "A HMRC appban vagy a Personal Tax Accountban (gov.uk) megnézheted, hány qualifying year van eddig a rekordodban, és van-e hiányzó év.",
+          "Hiányzó évekre lehetőség van önkéntes (Class 3) National Insurance befizetésre, hogy utólag pótold — ez sokszor megéri, de érdemes előbb a State Pension forecast oldalon kiszámoltatni, mennyit ér.",
+        ],
+      },
+      {
+        heading: "A magyarországi évek nem vesznek el",
+        body: [
+          "Az EU-s szociálisbiztonsági koordinációs szabályok alapján a magyarországi és a brit járulékéveket ÖSSZESZÁMÍTJÁK a jogosultsághoz (bár az összeg kiszámítása országonként külön történik) — a hazai éveid tehát nem tűnnek el, ha kint folytatod a munkát.",
+          "A pontos, személyre szabott elszámoláshoz a Nyugdíjbiztosítási Alap (Magyarország) és a brit International Pension Centre tud érdemben segíteni — ez már egyedi ügyintézés, nem általános szabály.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "gov.uk — The new State Pension", url: "https://www.gov.uk/new-state-pension" },
+      { label: "gov.uk — Check your State Pension forecast", url: "https://www.gov.uk/check-state-pension" },
+    ],
+  },
+  {
+    slug: "gb-munkanelkuli",
+    title: "Ha elveszted az állásod: Universal Credit és JSA",
+    summary: "A fő ellátás a jövedelemfüggő Universal Credit; a New Style JSA a National Insurance-járulékodra épül, és legfeljebb 182 napig jár.",
+    tldr: [
+      "A fő ellátás munkanélküliségre/alacsony jövedelemre a Universal Credit (UC) — jövedelem- és vagyonfüggő, havonta folyósított.",
+      "Az egyedülálló, 25 év feletti alapösszeg (standard allowance) 2026/27-ben havi 424,90 £ — plusz lakhatási/gyermek-elemek, ha azokra is jogosult vagy.",
+      "⚠️ A New Style JSA a National Insurance-járulékodra épül (nem vagyonfüggő), de max. 182 napig jár — sokan a Universal Credittel EGYÜTT igénylik.",
+    ],
+    icon: "briefcase",
+    sections: [
+      {
+        heading: "Universal Credit — a fő ellátás",
+        body: [
+          "Jövedelem- és vagyonfüggő; a „standard allowance” (alapösszeg) mellé a helyzetedtől függő kiegészítő elemek járhatnak (lakhatási költség, gyerek, egészségi állapot).",
+          "2026/27-es alapösszegek havonta: egyedülálló 25 év alatt 338,58 £, egyedülálló 25 fölött 424,90 £, pár (mindkettő 25 alatt) 528,34 £, pár (egyikük 25 fölött) 666,97 £.",
+          "Az első folyósításig kb. 5 hét telik el — ha ez alatt nincs miből élned, előleg (advance) igényelhető, amit később a folyósításból vonnak le.",
+        ],
+      },
+      {
+        heading: "New Style JSA — ha van elég NI-járulékod",
+        body: [
+          "Nem vagyonfüggő: a jogosultság azon múlik, hogy az elmúlt két teljes adóévben fizettél-e (vagy kaptál-e jóváírást) elég Class 1 National Insurance járulékot.",
+          "A 2026/27-es heti maximum 95,55 £, legfeljebb 182 napig folyósítva. Igényelhető önmagában vagy a Universal Credit MELLETT — a kettő nem zárja ki egymást.",
+        ],
+      },
+      {
+        heading: "Hogyan igényeld",
+        bullets: [
+          "Online a gov.uk-on (Universal Credit és New Style JSA is), vagy telefonon, ha az online út nem elérhető",
+          "Igényléskor „claimant commitment”-et írsz alá — ebben vállalod, hogy elérhető vagy munkára és aktívan keresel állást",
+          "A helyi Jobcentre Plus behív egy első interjúra (New Jobseeker Interview) — ez normális eljárás, nem szankció",
+        ],
+      },
+    ],
+    sources: [
+      { label: "gov.uk — Universal Credit", url: "https://www.gov.uk/universal-credit" },
+      { label: "gov.uk — New Style Jobseeker's Allowance", url: "https://www.gov.uk/jobseekers-allowance" },
+    ],
+  },
+  {
+    slug: "gb-vallalkozas",
+    title: "Önfoglalkoztatás: sole trader és HMRC-regisztráció",
+    summary: "1000 £ éves önfoglalkoztatói jövedelem fölött KÖTELEZŐ regisztrálni a HMRC-nél — ingyenes, kb. 10 perc, a végén jön egy UTR-szám.",
+    tldr: [
+      "Ha önfoglalkoztatóként (self-employed/sole trader) egy adóéven belül 1000 £ fölött keresel, KÖTELES vagy regisztrálni a HMRC-nél.",
+      "A regisztráció ingyenes és kb. 10 perc online — a végén kapsz egy 10 jegyű UTR-számot (Unique Taxpayer Reference) a Self Assessment adóbevalláshoz.",
+      "⚠️ A regisztráció határideje október 5. (annak az adóévnek a végét követően, amiben elkezdted a vállalkozást) — késésért bírság jár.",
+    ],
+    icon: "trending",
+    sections: [
+      {
+        heading: "Mikor kötelező regisztrálni",
+        body: [
+          "A küszöb 1000 £ bruttó önfoglalkoztatói bevétel egy adóéven (április 6. – április 5.) belül. E fölött, sole traderként, regisztrálnod KELL — akkor is, ha ez csak mellékjövedelem egy alkalmazotti állás mellett.",
+          "⚠️ A határidő az adóév vége utáni október 5. — vagyis ha 2026 nyarán kezdesz vállalkozni, 2027. október 5-ig kell regisztrálnod. A késői regisztráció önmagában bírságot vonhat maga után, függetlenül attól, hogy időben befizetted-e az adót.",
+        ],
+      },
+      {
+        heading: "Hogyan regisztrálj",
+        body: [
+          "Government Gateway fiókot kell létrehoznod (vagy a meglévőt használni), majd kitölteni a HMRC Self Assessment regisztrációs űrlapját online.",
+          "A regisztráció végén kapsz egy 10 jegyű UTR-számot (Unique Taxpayer Reference) — ez azonosít téged a Self Assessment rendszerben, minden jövőbeli adóbevallásnál ezt kell megadnod.",
+        ],
+      },
+      {
+        heading: "Ami utána jön",
+        body: [
+          "A tényleges adózás (Self Assessment bevallás, sávos jövedelemadó-kulcsok, a január 31-i beadási határidő) a Munkavállalás → Adózás cikkben van részletesen kifejtve — sole traderként ugyanazok a szabályok vonatkoznak rád, csak neked magadnak kell bevallanod, nem a munkáltató vonja automatikusan.",
+          "Önfoglalkoztatóként külön National Insurance-t (Class 2/Class 4) is fizetsz a profitod után — ez épül be a State Pension-rekordodba is.",
+        ],
+      },
+      {
+        heading: "⚠️ Ha alkalmazotti állás MELLETT vállalkozol",
+        body: [
+          "A regisztrációs kötelezettség akkor is fennáll, ha „csak” mellékjövedelemről van szó egy rendes állás mellett — a HMRC nem tesz különbséget fő- és mellékjövedelem között az 1000 £-os küszöbnél.",
+          "1000 £ ALATTI éves önfoglalkoztatói bevételre létezik egy adómentes „trading allowance” — eddig a szintig nem kell se regisztrálni, se bevallani."
+        ],
+      },
+    ],
+    sources: [
+      { label: "gov.uk — Set up as a sole trader", url: "https://www.gov.uk/set-up-sole-trader" },
+      { label: "gov.uk — Register for Self Assessment", url: "https://www.gov.uk/register-for-self-assessment" },
+    ],
+  },
+  {
+    slug: "gb-tv-dij",
+    title: "TV Licence: kötelező előfizetés élő tévézéshez",
+    summary: "Élő tévénézéshez vagy a BBC iPlayer használatához TV Licence kell — enélkül bűncselekmény. 2026-ban évi 180 £.",
+    tldr: [
+      "⚠️ Ha ÉLŐ tévét nézel (bármelyik csatornán, bármilyen eszközön) vagy a BBC iPlayert használod, TV Licence KELL — enélkül bűncselekmény, akár 1000 £ pénzbírsággal.",
+      "2026. április 1. óta az éves díj 180 £ (színes licenc); havi részletben is fizethető.",
+      "Ha KIZÁRÓLAG lejátszott (nem élő) tartalmat nézel más streaming-szolgáltatókon (Netflix, Disney+ stb.), NEM kell — de a BBC iPlayer ez alól kivétel.",
+    ],
+    icon: "bell",
+    sections: [
+      {
+        heading: "Mikor kötelező",
+        body: [
+          "TV Licence kell, ha ÉLŐ adást nézel vagy rögzítesz — bármelyik csatornán (nem csak BBC-n), bármilyen eszközön (tévé, laptop, telefon, tablet).",
+          "A BBC iPlayer KÜLÖN szabály alá esik: ahhoz akkor is licenc kell, ha nem élő adást, hanem visszanézhető (catch-up) tartalmat nézel rajta.",
+        ],
+      },
+      {
+        heading: "Mikor NEM kell",
+        bullets: [
+          "Ha kizárólag lejátszott (on-demand/catch-up) tartalmat nézel NEM a BBC iPlayeren (pl. Netflix, Disney+, YouTube feltöltött videók)",
+          "Ha csak rádiót hallgatsz",
+          "Ha nincs otthon semmilyen tévé vagy élő tévét/BBC iPlayert lejátszó eszköz",
+        ],
+      },
+      {
+        heading: "Ár és fizetés",
+        body: [
+          "2026. április 1. óta a színes (colour) licenc éves díja 180 £ (a fekete-fehér, ma már ritkán releváns licenc 60,50 £). Havi direct debit is választható, nem csak éves egyösszegű befizetés.",
+          "EGY licenc az egész, ugyanazon a címen élő háztartást fedezi — nem kell külön minden tévére vagy eszközre.",
+        ],
+      },
+      {
+        heading: "⚠️ Az ellenőrzés valós",
+        body: [
+          "A TV Licensing (a BBC megbízásából működő szervezet) adatbázisából és bejelentés nélküli ellenőrzésekből dolgozik — licenc nélküli, de TV-t/élő adást néző háztartás elvi kockázata akár 1000 £ pénzbírság PLUSZ bírósági költség.",
+          "Ha új címre költözöl és nincs szükséged licencre (pl. csak streaminget nézel), ezt bejelentheted a TV Licensingnek — a rendszer alapból feltételezi, hogy egy lakott ingatlanban kell licenc.",
+        ],
+      },
+    ],
+    sources: [
+      { label: "gov.uk — TV Licence", url: "https://www.gov.uk/tv-licence" },
+    ],
+  },
 ];
 
 /**
@@ -3245,6 +3514,12 @@ const GUIDE_TOPIC: Record<string, string> = {
   "at-lakasberles": "lakasberles",
   "de-lakasberles": "lakasberles",
   "nl-lakasberles": "lakasberles",
+  "gb-munkavallalas": "munkavallalas",
+  "gb-csaladi-potlek": "csaladi-potlek",
+  "gb-nyugdij": "ahv-nyugdij",
+  "gb-munkanelkuli": "munkanelkuli-biztositas",
+  "gb-vallalkozas": "adozas-quellensteuer",
+  "gb-lakhatas": "lakasberles",
 };
 function guideTopic(slug: string): string {
   return GUIDE_TOPIC[slug] ?? slug;
@@ -3275,6 +3550,15 @@ const MONEY_GUIDE_SLUGS = new Set<string>([
   // NL
   "nl-bankszamla", "nl-adozas", "nl-munkavallalas", "nl-nyugdij",
   "nl-csaladi-potlek", "nl-munkanelkuli", "nl-toeslagen", "nl-30-ruling",
+  // GB
+  // ⚠️ A GB (és lent az ES) cikkek EDDIG teljesen hiányoztak ebből a
+  // listából — nem tudatos kizárás volt (a hazautalás-affiliate CTA GBP-re
+  // és EUR-ra is működik, ld. feature-availability.ts "utalas"), hanem a
+  // lista egyszerűen nem lett bővítve, amikor a GB/ES cikkek megszülettek.
+  "gb-adozas", "gb-bankszamla", "gb-munkavallalas", "gb-nyugdij",
+  "gb-csaladi-potlek", "gb-munkanelkuli", "gb-vallalkozas",
+  // ES
+  "es-adozas", "es-bankszamla", "es-autonomo",
 ]);
 
 export function isMoneyGuide(slug: string): boolean {
