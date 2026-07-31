@@ -7,6 +7,14 @@ import { cn } from "@/lib/cn";
 /**
  * „Foglald el a vállalkozásod" kártya a nem megerősített (claimed=0) listákon.
  * A tulajdonos beküld egy igénylést → admin jóváhagyja → kezelő-linket kap.
+ *
+ * ⚠️ EZ A KÁRTYA A TULAJDONOSNAK SZÓL, NEM A LÁTOGATÓNAK — és a látogató van
+ * túlnyomó többségben: 2248 látható cégből MINDÖSSZE 3 átvett (2026-08-01).
+ * Ezért NEM állhat az adatlap tetején (ld. a [id]/page.tsx-beli elhelyezést) és
+ * a címsora NEM sugallhat adatminőségi kételyt. A korábbi „Nem megerősített
+ * lista" felirat pont ezt tette: a látogató úgy olvasta, hogy a telefonszámban
+ * sem lehet megbízni — miközben 40px-szel lejjebb az „Ellenőrizve" jel állt.
+ * A tartalmi átláthatóság (honnan van az adat) megmarad, csak a szövegtestben.
  */
 export function BusinessClaimCard({ businessId, businessName }: { businessId: string; businessName: string }) {
   const [open, setOpen] = useState(false);
@@ -51,13 +59,14 @@ export function BusinessClaimCard({ businessId, businessName }: { businessId: st
           <Icon name="flag" size={16} strokeWidth={2.4} />
         </span>
         <div className="min-w-0 flex-1">
-          <h3 className="text-[13.5px] font-extrabold text-ink">Nem megerősített lista</h3>
+          <h3 className="text-[13.5px] font-extrabold text-ink">
+            Tiéd a <span className="text-star">{businessName}</span>?
+          </h3>
           <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
             {businessId.startsWith("sug-")
               ? "Ezt a vállalkozást egy közösségi tag ajánlotta — a tulajdonos még nem erősítette meg."
               : "Ezt a vállalkozást nyilvános adatokból listáztuk — a tulajdonos még nem vette át."}{" "}
-            Tiéd a <strong className="text-ink">{businessName}</strong>? Foglald el, és szerkeszd
-            az adatokat (logó, nyitvatartás, leírás, kapcsolat).
+            Foglald el, és szerkeszd az adatokat (logó, nyitvatartás, leírás, kapcsolat).
           </p>
         </div>
       </div>

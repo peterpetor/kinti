@@ -409,11 +409,6 @@ export default async function BusinessPage({
         <h1 className="text-[26px] font-extrabold leading-[1.08] tracking-tight text-ink text-balance">
           {b.name}
         </h1>
-        {b.claimed === false && (
-          <div className="mt-3">
-            <BusinessClaimCard businessId={b.id} businessName={b.name} />
-          </div>
-        )}
         {b.verified && (
           <p
             title="Az üzemeltető meggyőződött róla, hogy valódi magyarul beszélő vállalkozás — ez NEM minőségi garancia, a szakképesítést és a munka minőségét nem ellenőrizzük."
@@ -963,6 +958,26 @@ export default async function BusinessPage({
             Több magyar {catLabelLower} {area.locative}
             <Icon name="arrowRight" size={14} strokeWidth={2.4} />
           </Link>
+        )}
+
+        {/* „Tiéd ez a vállalkozás?" — TULAJDONOSNAK szóló blokk, ezért az adatlap
+            ALJÁN, a többi adatgazda-akció (javítás, jelentés) mellett.
+
+            ⚠️ EZ KORÁBBAN A CÍM ALATT, AZ ELSŐ KÉPERNYŐN ÁLLT, és mérve 197px-et
+            (a 664px-es mobil-képernyő 30%-át) vett el — a 2248 látható cégből
+            2245-nél, hiszen mindössze 3 átvett tétel van. Vagyis a látogató, aki
+            magyar fogorvost keresett, gyakorlatilag MINDIG egy neki nem szóló,
+            narancs dobozt kapott előbb, mint a telefonszámot; a hívás-gomb így a
+            képernyő aljára, a TabBar-hoz szorult (y=521 a 664-ből). Ez pontosan a
+            mért tölcsér-szakadék helye (100 adatlap-megnyitás → 1 hívás) —
+            ld. [[funnel-reality-check]].
+
+            ⚠️ A tulajdonos ettől nem veszíti el: ő a saját cégét keresi és
+            végigolvassa az adatlapot; a látogató viszont az első képernyőn dönt. */}
+        {b.claimed === false && (
+          <div className="mt-8">
+            <BusinessClaimCard businessId={b.id} businessName={b.name} />
+          </div>
         )}
 
         {/* Adatlap-szintű jelentés / adattörlés (DSA Art. 16 notice-and-action +
