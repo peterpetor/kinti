@@ -89,3 +89,8 @@ android/*
 !android/twa-manifest.json
 nocontact_rows.json
 osm-contact-candidates.json
+# Szaknévsor-munkafájlok (D1-exportok és link-ellenőrző kimenetek) — NEM repo-tartalom.
+all-blurbs.json
+web-rows.json
+website-check.json
+website-recheck.json
