@@ -7,9 +7,27 @@ import { VamBody } from "./vam-body";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Vám-kalkulátor — Kinti",
+  title: "Vám-kalkulátor — mit vihetsz be Svájcba és Angliába",
   description:
     "Vám-kalkulátor: hány embernek mennyi húst, alkoholt, dohányt szabad bevinni az EU területéről Svájcba, illetve Angliába (Brexit utáni keretek).",
+  alternates: { canonical: "/tudasbazis/vam" },
+  // ⚠️ Megosztási előnézet: e nélkül a Facebookra/WhatsAppra illesztett link
+  // az ÁLTALÁNOS oldalcímet mutatta, nem a cikkét.
+  openGraph: {
+    title: "Vám-kalkulátor — mit vihetsz be Svájcba és Angliába",
+    description: "Vám-kalkulátor: hány embernek mennyi húst, alkoholt, dohányt szabad bevinni az EU területéről Svájcba, illetve Angliába (Brexit utáni keretek).",
+    url: "https://kinti.app/tudasbazis/vam",
+    siteName: "Kinti",
+    type: "article",
+    locale: "hu_HU",
+    images: [{ url: "/icons/og-default.png", width: 1200, height: 630, alt: "Kinti Tudásbázis" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vám-kalkulátor — mit vihetsz be Svájcba és Angliába",
+    description: "Vám-kalkulátor: hány embernek mennyi húst, alkoholt, dohányt szabad bevinni az EU területéről Svájcba, illetve Angliába (Brexit utáni keretek).",
+    images: ["/icons/og-default.png"],
+  },
 };
 
 export default function VamPage() {

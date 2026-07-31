@@ -9,6 +9,24 @@ export const metadata = {
   title: "Gyorshajtás-bírság kalkulátor — Svájc, Ausztria, Németország, Hollandia",
   description:
     "Gyorshajtás-bírság becslő: Svájc (Ordnungsbusse + jövedelem-arányos Tagessatz), Ausztria (Organmandat + Führerscheinentzug), Németország (Bußgeldkatalog + Punkte + Fahrverbot), Hollandia (WAHV-boete + CJIB, rijbewijs ingevorderd). Csak becslés!",
+  alternates: { canonical: "/tudasbazis/bussen" },
+  // ⚠️ Megosztási előnézet: e nélkül a Facebookra/WhatsAppra illesztett link
+  // az ÁLTALÁNOS oldalcímet mutatta, nem a cikkét.
+  openGraph: {
+    title: "Gyorshajtás-bírság kalkulátor — Svájc, Ausztria, Németország, Hollandia",
+    description: "Gyorshajtás-bírság becslő: Svájc (Ordnungsbusse + jövedelem-arányos Tagessatz), Ausztria (Organmandat + Führerscheinentzug), Németország (Bußgeldkatalog + Punkte + Fahrverbot), Hollandia (WAHV-boete + CJIB, rijbewijs ingevorderd). Csak becslés!",
+    url: "https://kinti.app/tudasbazis/bussen",
+    siteName: "Kinti",
+    type: "article",
+    locale: "hu_HU",
+    images: [{ url: "/icons/og-default.png", width: 1200, height: 630, alt: "Kinti Tudásbázis" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gyorshajtás-bírság kalkulátor — Svájc, Ausztria, Németország, Hollandia",
+    description: "Gyorshajtás-bírság becslő: Svájc (Ordnungsbusse + jövedelem-arányos Tagessatz), Ausztria (Organmandat + Führerscheinentzug), Németország (Bußgeldkatalog + Punkte + Fahrverbot), Hollandia (WAHV-boete + CJIB, rijbewijs ingevorderd). Csak becslés!",
+    images: ["/icons/og-default.png"],
+  },
 };
 
 export default function BussenPage() {

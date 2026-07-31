@@ -13,9 +13,27 @@ export const dynamic = "force-dynamic";
 // A funkció mind a 6 országban él (CH/AT/DE/NL kérdésbank) — a metadata statikus
 // (minden országnak ugyanaz az URL), ezért ország-SEMLEGES, nem svájci copy.
 export const metadata = {
-  title: "Engedély Varázsló & Kvíz | Kinti",
+  title: "Letelepedés és állampolgárság — engedély-varázsló",
   description:
     "Mikor kaphatsz letelepedési engedélyt vagy állampolgárságot az országodban? Számold ki a varázslóval, és teszteld a tudásod a kvízzel!",
+  alternates: { canonical: "/tudasbazis/allampolgarsag" },
+  // ⚠️ Megosztási előnézet: e nélkül a Facebookra/WhatsAppra illesztett link
+  // az ÁLTALÁNOS oldalcímet mutatta, nem a cikkét.
+  openGraph: {
+    title: "Letelepedés és állampolgárság — engedély-varázsló",
+    description: "Mikor kaphatsz letelepedési engedélyt vagy állampolgárságot az országodban? Számold ki a varázslóval, és teszteld a tudásod a kvízzel!",
+    url: "https://kinti.app/tudasbazis/allampolgarsag",
+    siteName: "Kinti",
+    type: "article",
+    locale: "hu_HU",
+    images: [{ url: "/icons/og-default.png", width: 1200, height: 630, alt: "Kinti Tudásbázis" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Letelepedés és állampolgárság — engedély-varázsló",
+    description: "Mikor kaphatsz letelepedési engedélyt vagy állampolgárságot az országodban? Számold ki a varázslóval, és teszteld a tudásod a kvízzel!",
+    images: ["/icons/og-default.png"],
+  },
 };
 
 export default async function AllampolgarsagPage() {

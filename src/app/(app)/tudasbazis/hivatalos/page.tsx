@@ -9,6 +9,24 @@ export const metadata = {
   title: "Hivatalos ügyek — konzulátus és linkek egy helyen",
   description:
     "Útlevél, jogosítvány, lakcím, adó, biztosítás: megmutatjuk, melyik HIVATALOS oldalon intézheted, magyarul elmagyarázva. A magyar konzulátus és időpontfoglalás egy kattintásra.",
+  alternates: { canonical: "/tudasbazis/hivatalos" },
+  // ⚠️ Megosztási előnézet: e nélkül a Facebookra/WhatsAppra illesztett link
+  // az ÁLTALÁNOS oldalcímet mutatta, nem a cikkét.
+  openGraph: {
+    title: "Hivatalos ügyek — konzulátus és linkek egy helyen",
+    description: "Útlevél, jogosítvány, lakcím, adó, biztosítás: megmutatjuk, melyik HIVATALOS oldalon intézheted, magyarul elmagyarázva. A magyar konzulátus és időpontfoglalás egy kattintásra.",
+    url: "https://kinti.app/tudasbazis/hivatalos",
+    siteName: "Kinti",
+    type: "article",
+    locale: "hu_HU",
+    images: [{ url: "/icons/og-default.png", width: 1200, height: 630, alt: "Kinti Tudásbázis" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hivatalos ügyek — konzulátus és linkek egy helyen",
+    description: "Útlevél, jogosítvány, lakcím, adó, biztosítás: megmutatjuk, melyik HIVATALOS oldalon intézheted, magyarul elmagyarázva. A magyar konzulátus és időpontfoglalás egy kattintásra.",
+    images: ["/icons/og-default.png"],
+  },
 };
 
 export default function HivatalosPage() {

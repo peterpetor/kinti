@@ -9,6 +9,24 @@ export const metadata = {
   title: "Engedély-varázsló — tartózkodás Svájcban, Ausztriában, Németországban, Hollandiában",
   description:
     "Interaktív kérdés-sor, ami megmondja, melyik tartózkodási státusz releváns a helyzetedre. Svájc (L/B/C/G), Ausztria (Anmeldebescheinigung/Daueraufenthalt), Németország (Freizügigkeit/Anmeldung), Hollandia (vrij verkeer/BRP-inschrijving/BSN/duurzaam verblijf).",
+  alternates: { canonical: "/tudasbazis/vizum" },
+  // ⚠️ Megosztási előnézet: e nélkül a Facebookra/WhatsAppra illesztett link
+  // az ÁLTALÁNOS oldalcímet mutatta, nem a cikkét.
+  openGraph: {
+    title: "Engedély-varázsló — tartózkodás Svájcban, Ausztriában, Németországban, Hollandiában",
+    description: "Interaktív kérdés-sor, ami megmondja, melyik tartózkodási státusz releváns a helyzetedre. Svájc (L/B/C/G), Ausztria (Anmeldebescheinigung/Daueraufenthalt), Németország (Freizügigkeit/Anmeldung), Hollandia (vrij verkeer/BRP-inschrijving/BSN/duurzaam verblijf).",
+    url: "https://kinti.app/tudasbazis/vizum",
+    siteName: "Kinti",
+    type: "article",
+    locale: "hu_HU",
+    images: [{ url: "/icons/og-default.png", width: 1200, height: 630, alt: "Kinti Tudásbázis" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Engedély-varázsló — tartózkodás Svájcban, Ausztriában, Németországban, Hollandiában",
+    description: "Interaktív kérdés-sor, ami megmondja, melyik tartózkodási státusz releváns a helyzetedre. Svájc (L/B/C/G), Ausztria (Anmeldebescheinigung/Daueraufenthalt), Németország (Freizügigkeit/Anmeldung), Hollandia (vrij verkeer/BRP-inschrijving/BSN/duurzaam verblijf).",
+    images: ["/icons/og-default.png"],
+  },
 };
 
 export default function VizumPage() {

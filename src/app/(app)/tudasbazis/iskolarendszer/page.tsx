@@ -7,6 +7,24 @@ export const metadata = {
   title: "Iskolarendszer Útmutató — Svájc, Ausztria, Németország, Hollandia",
   description:
     "Vizuális útmutató az iskolarendszerhez kiköltöző szülőknek. Svájc: Kindergarten/Primarschule/Sekundar (kantononként). Ausztria: Volksschule/Mittelschule/AHS. Németország: Grundschule/Gymnasium/Ausbildung. Hollandia: basisschool/VMBO/HAVO/VWO.",
+  alternates: { canonical: "/tudasbazis/iskolarendszer" },
+  // ⚠️ Megosztási előnézet: e nélkül a Facebookra/WhatsAppra illesztett link
+  // az ÁLTALÁNOS oldalcímet mutatta, nem a cikkét.
+  openGraph: {
+    title: "Iskolarendszer Útmutató — Svájc, Ausztria, Németország, Hollandia",
+    description: "Vizuális útmutató az iskolarendszerhez kiköltöző szülőknek. Svájc: Kindergarten/Primarschule/Sekundar (kantononként). Ausztria: Volksschule/Mittelschule/AHS. Németország: Grundschule/Gymnasium/Ausbildung. Hollandia: basisschool/VMBO/HAVO/VWO.",
+    url: "https://kinti.app/tudasbazis/iskolarendszer",
+    siteName: "Kinti",
+    type: "article",
+    locale: "hu_HU",
+    images: [{ url: "/icons/og-default.png", width: 1200, height: 630, alt: "Kinti Tudásbázis" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Iskolarendszer Útmutató — Svájc, Ausztria, Németország, Hollandia",
+    description: "Vizuális útmutató az iskolarendszerhez kiköltöző szülőknek. Svájc: Kindergarten/Primarschule/Sekundar (kantononként). Ausztria: Volksschule/Mittelschule/AHS. Németország: Grundschule/Gymnasium/Ausbildung. Hollandia: basisschool/VMBO/HAVO/VWO.",
+    images: ["/icons/og-default.png"],
+  },
 };
 
 export default function IskolarendszerPage() {
