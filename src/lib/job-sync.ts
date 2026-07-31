@@ -13,6 +13,7 @@ import { searchJoobleJobs } from "./jooble";
 import { searchArbeitnowJobs } from "./arbeitnow";
 import { fetchJobRoomJobs } from "./jobroom";
 import { upsertExternalJobs, type ExternalJobInput } from "./repo-external-jobs";
+import { externalJobDedupeKey } from "./external-job-url";
 import { regionCodeFromLocation, isOutsideCountryScope } from "./region-resolve";
 import { budgetCurrency, isBudgetCountry } from "./budget-plan";
 
@@ -163,7 +164,7 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
   const lang = SECTOR_LANG[cc];
   if (!lang) return 0;
 
-  const byUrl = new Map<string, ExternalJobInput>();
+  const byKey = new Map<string, ExternalJobInput>();
 
   // A szektorokat 6-os batch-ekben, párhuzamosan futtatjuk (a sok kulcsszó se
   // nyújtsa el a futásidőt; a batch-méret tartja a rate-limit alatt a burst-öt).
@@ -180,13 +181,20 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
     );
     for (const { sector, res } of settled) {
       for (const { job: j, source } of res) {
-        if (!j.url || byUrl.has(j.url)) continue; // első kategória nyer
+        // ⚠️ A kulcs a STABIL dedup-kulcs, NEM a nyers URL. A „első kategória
+        // nyer" szándék eddig SOSEM teljesült: az Adzuna/Jooble kérésenként új
+        // követő-paramétert tesz ugyanarra az állásra (`elckey`/`se`/`v`), így
+        // minden keresőszó külön sort csinált belőle. Egy Waffle House szakács
+        // így „egészségügy" és „takarítás" alatt is szerepelt, egy állás pedig
+        // akár 23× a listában. Ld. lib/external-job-url.ts.
+        const key = externalJobDedupeKey(j.url);
+        if (!key || byKey.has(key)) continue; // első kategória nyer
         // ⚠️ Az Adzuna `gb` piaca a TELJES Egyesült Királyság, a Kinti „GB"-je
         // viszont ANGLIA. A skót/walesi/észak-írországi hirdetés nem hiányos, hanem
         // TÉVES adat lenne „Anglia" alatt — élesben 255-ből 30 ilyen sor volt.
         if (isOutsideCountryScope(cc, j.location, j.area)) continue;
         const hasSalary = j.salaryMin != null || j.salaryMax != null;
-        byUrl.set(j.url, {
+        byKey.set(key, {
           source,
           sourceUrl: j.url,
           title: j.title,
@@ -205,7 +213,7 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
     }
   }
 
-  const jobs = [...byUrl.values()];
+  const jobs = [...byKey.values()];
   if (jobs.length === 0) return 0;
   return upsertExternalJobs(jobs);
 }

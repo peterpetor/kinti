@@ -4,6 +4,7 @@
  * a publikus listázás KIFELÉ, a `source_url`-re mutató linkkel történik. Lásd 0096.
  */
 import { getDB } from "./cloudflare";
+import { externalJobDedupeKey, dedupeByKey } from "./external-job-url";
 
 export interface ExternalJob {
   id: string;
@@ -56,32 +57,53 @@ export interface ExternalJobInput {
 }
 
 /**
- * Beszúrás/frissítés source_url alapján (idempotens). Ütközéskor frissül a
- * `fetched_at` (és a változó mezők) — így a friss feedek megújítják a sort, a
- * `purgeStaleExternalJobs` pedig a régóta nem látottakat takarítja.
+ * Beszúrás/frissítés STABIL dedup-kulcs alapján (idempotens).
+ *
+ * ⚠️ KORÁBBAN a teljes `source_url` volt az ütközés-kulcs — és ez ÉLESBEN NEM
+ * MŰKÖDÖTT: az Adzuna és a Jooble kérésenként ÚJ követő-paramétereket tesz
+ * ugyanarra az állásra (`elckey`, `se`, `v`), így minden szinkron-futás ÚJRA
+ * beszúrta ugyanazt a hirdetést. 7227 sorból 3294 volt egyedi; a felhasználó
+ * ugyanazt az állást akár 23× látta. A kulcs ezért a hosztnév+útvonal
+ * (lib/external-job-url.ts), a `source_url` pedig marad kattintási cél, és
+ * ütközéskor FRISSÜL — hogy a partner-követő paraméterek érvényesek maradjanak.
+ *
+ * A visszatérési érték a TÉNYLEGESEN egyedi darabszám (nem a bemenet hossza) —
+ * ha egy jövőbeli forrás az állás azonosítóját a query-be tenné, a kulcs
+ * mindent egy sorra vonna össze, és ez a szám azonnal leesne.
  */
 export async function upsertExternalJobs(jobs: ExternalJobInput[]): Promise<number> {
   if (jobs.length === 0) return 0;
+  // Kötegen BELÜL is szűkítünk: ugyanaz az állás több keresőszóra is visszajön,
+  // és egy batch-en belüli ismétlés fölöslegesen írna kétszer ugyanarra a sorra.
+  const unique = dedupeByKey(jobs);
+  if (unique.length === 0) return 0;
   const db = getDB();
   const stmt = db.prepare(
     `INSERT INTO external_jobs
-       (id, source, source_url, title, company, location, country_code, canton_code, category,
+       (id, dedupe_key, source, source_url, title, company, location, country_code, canton_code, category,
         salary_min, salary_max, currency, posted_at, fetched_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-     ON CONFLICT(source_url) DO UPDATE SET
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+     ON CONFLICT(dedupe_key) DO UPDATE SET
+       source_url = excluded.source_url,
        title = excluded.title, company = excluded.company, location = excluded.location,
-       canton_code = excluded.canton_code, category = excluded.category, salary_min = excluded.salary_min,
+       canton_code = excluded.canton_code, salary_min = excluded.salary_min,
        salary_max = excluded.salary_max, currency = excluded.currency,
-       posted_at = excluded.posted_at, fetched_at = datetime('now')`,
+       posted_at = excluded.posted_at, fetched_at = datetime('now'),
+       -- ⚠️ A kategória a KERESŐSZÓBÓL jön, és a Jooble ugyanazt az állást több
+       -- kulcsszóra is visszaadja (egy szakács „egészségügy" alatt is előjött).
+       -- Egyik keresőszó sem megbízhatóbb, de a STABIL választás igen: marad az
+       -- elsőként eltalált kategória, hogy a hirdetés ne ugráljon két látogatás
+       -- között. Csak akkor töltjük, ha eddig üres volt.
+       category = COALESCE(external_jobs.category, excluded.category)`,
   );
-  const batch = jobs.map((j) =>
+  const batch = unique.map((j) =>
     stmt.bind(
-      crypto.randomUUID(), j.source, j.sourceUrl, j.title, j.company, j.location,
+      crypto.randomUUID(), externalJobDedupeKey(j.sourceUrl), j.source, j.sourceUrl, j.title, j.company, j.location,
       j.country, j.cantonCode, j.category, j.salaryMin, j.salaryMax, j.currency, j.postedAt,
     ),
   );
   await db.batch(batch);
-  return jobs.length;
+  return unique.length;
 }
 
 /** Friss külső állások egy országban (opcionális kategória- és régió-szűrő). */

@@ -15,6 +15,7 @@ import { jobCategoryLabel, formatJobCurrency } from "@/lib/job-categories";
 import { JobCategoryOptions } from "@/components/views/job-category-options";
 import { jobMatchScore, hasMatchableProfile, type MatchProfile } from "@/lib/job-match";
 import { parseDbDate } from "@/lib/dates";
+import { trackAction } from "@/components/usage-tracker";
 import type { Job } from "@/lib/types";
 
 // Leaflet csak kliensen (window-függő) → SSR-en () => null.
@@ -385,6 +386,12 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                     href={j.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer nofollow"
+                    // ⚠️ Az „Élő állások" EGYETLEN valódi konverziója a kifelé
+                    // kattintás (a hirdetés a forrás oldalán nyílik, nálunk nincs
+                    // mire jelentkezni) — és ez eddig EGYÁLTALÁN nem volt mérve.
+                    // Az /allasok a második legnagyobb forgalmú oldal, mégsem
+                    // tudtuk, kattint-e rá bárki. Anonim, aggregált nap+esemény.
+                    onClick={() => trackAction("external-job-open")}
                     className="block rounded-card border border-line bg-surface p-4 shadow-card transition active:scale-[0.99]"
                   >
                     <div className="flex items-start gap-2">
