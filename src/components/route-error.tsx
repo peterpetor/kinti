@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { reportClientError } from "@/lib/report-client-error";
+import { isChunkLoadError, tryReloadOnChunkError, hardReload } from "@/lib/chunk-error";
 
 /**
  * Barátságos, újrapróbálható hiba-határ a route-szintű error.tsx-ekhez.
@@ -22,11 +23,17 @@ export function RouteError({
   message?: string;
   className?: string;
 }) {
+  // ⚠️ Deploy-közbeni darab-hiba: a `reset()` NEM segít (ugyanazt a hiányzó
+  // fájlt kérné újra) — VALÓDI újratöltés kell. Egyszer, automatikusan.
+  const chunkError = isChunkLoadError(error);
+
   useEffect(() => {
+    if (tryReloadOnChunkError(error)) return; // újratöltünk, minden más felesleges
     console.error("[route-error]", error);
-    // Éles hiba-jelentés a monitoringnak (redaktálva, best-effort).
-    reportClientError(error);
-  }, [error]);
+    // A deploy utáni darab-hiba VÁRT jelenség, nem jelentjük (zaj lenne) —
+    // ugyanaz a megfontolás, mint a sandbox-tiltásnál a global-error.tsx-ben.
+    if (!chunkError) reportClientError(error);
+  }, [error, chunkError]);
 
   return (
     <div
@@ -44,17 +51,21 @@ export function RouteError({
         >
           <Icon name="alert" size={24} strokeWidth={2.1} />
         </span>
-        <h1 className="mt-4 text-[18px] font-extrabold tracking-tight text-ink">{title}</h1>
+        <h1 className="mt-4 text-[18px] font-extrabold tracking-tight text-ink">
+          {chunkError ? "Frissült az alkalmazás" : title}
+        </h1>
         <p className="mx-auto mt-2 max-w-xs text-pretty text-[13.5px] leading-relaxed text-ink-muted">
-          {message}
+          {chunkError
+            ? "Új verzió jelent meg, amíg nyitva volt az oldal. Töltsd újra, és minden a helyére kerül."
+            : message}
         </p>
         <button
           type="button"
-          onClick={() => reset()}
+          onClick={() => (chunkError ? hardReload() : reset())}
           className="mt-4 inline-flex items-center gap-1.5 rounded-pill bg-primary px-5 py-2.5 text-[13px] font-extrabold text-white shadow-card-hover transition active:scale-[0.98]"
         >
           <Icon name="arrowRight" size={14} strokeWidth={2.6} />
-          Újrapróbálom
+          {chunkError ? "Újratöltés" : "Újrapróbálom"}
         </button>
       </div>
     </div>

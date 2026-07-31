@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { reportClientError } from "@/lib/report-client-error";
+import { isChunkLoadError, tryReloadOnChunkError, hardReload } from "@/lib/chunk-error";
 
 /**
  * Globális hiba-határ (App Router). Akkor lép életbe, ha a gyökér-layout
@@ -23,10 +24,17 @@ export default function GlobalError({
     typeof error?.message === "string" &&
     /localStorage|sandbox|serviceWorker|SecurityError/i.test(error.message);
 
+  // ⚠️ Deploy-közbeni darab-hiba: a `reset()` NEM segít, mert ugyanazt a már nem
+  // létező JS-fájlt kérné újra. Ez ÉLESBEN megtörtént (2026-07-31), és a gomb
+  // felirata („Újratöltés") azt ígérte, amit nem csinált.
+  const chunkError = isChunkLoadError(error);
+
   useEffect(() => {
-    // A sandbox-tiltás várt környezeti hiba, NEM jelentjük (zaj lenne).
-    if (!isStorageBlocked) reportClientError(error);
-  }, [error, isStorageBlocked]);
+    if (tryReloadOnChunkError(error)) return; // újratöltünk, minden más felesleges
+    // A sandbox-tiltás és a deploy utáni darab-hiba is VÁRT környezeti jelenség,
+    // egyiket sem jelentjük (zaj lenne a monitoringban).
+    if (!isStorageBlocked && !chunkError) reportClientError(error);
+  }, [error, isStorageBlocked, chunkError]);
 
   return (
     <html lang="hu">
@@ -86,6 +94,16 @@ export default function GlobalError({
                 <strong style={{ color: "#0e1f17" }}>kinti.app</strong> címen.
               </p>
             </>
+          ) : chunkError ? (
+            <>
+              <h1 style={{ fontSize: 19, fontWeight: 800, margin: "0 0 8px" }}>
+                Frissült az alkalmazás
+              </h1>
+              <p style={{ fontSize: 14, lineHeight: 1.55, color: "#5c6d63", margin: "0 0 16px" }}>
+                Új verzió jelent meg, amíg nyitva volt az oldal. Töltsd újra, és
+                minden a helyére kerül.
+              </p>
+            </>
           ) : (
             <>
               <h1 style={{ fontSize: 19, fontWeight: 800, margin: "0 0 8px" }}>
@@ -100,7 +118,7 @@ export default function GlobalError({
 
           <button
             type="button"
-            onClick={() => reset()}
+            onClick={() => (chunkError ? hardReload() : reset())}
             style={{
               display: "inline-flex",
               alignItems: "center",
