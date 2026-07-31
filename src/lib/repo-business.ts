@@ -302,12 +302,20 @@ export async function getBusinessesForList(): Promise<ListBusiness[]> {
         // A lenti `' · '` + pont közelítés a valós logikához 99,96%-ban illeszkedik
         // (2369-ből 1 eltérés) — ha ezt módosítod, MÉRD ÚJRA a contact-links.ts
         // logikájával szemben.
+        //
+        // ⚠️ A MÁSODIK ÁG (`nincs benne szóköz` + pont) sem elhagyható: a
+        // seed-pipeline 35 sornál a leírás HELYETT csak a webcímet írta be
+        // („www.example.at"), elválasztó nélkül. Amióta az
+        // `extractContactFromBlurb` ezt is felismeri, ezeknél MEGJELENIK a
+        // „Weboldal" gomb — a rendezés viszont e nélkül továbbra is
+        // zsákutcaként sorolta volna őket hátra. A két oldalnak egyeznie kell.
         `SELECT ${LIST_COLUMNS} FROM businesses
          WHERE COALESCE(hidden, 0) = 0 AND moderation_status = 1
          ORDER BY featured DESC,
                   (CASE WHEN (phone IS NOT NULL AND trim(phone) <> '')
                           OR (contact_email IS NOT NULL AND trim(contact_email) <> '')
                           OR (blurb LIKE '% · %.%')
+                          OR (blurb LIKE '%.%' AND blurb NOT LIKE '% %')
                         THEN 1 ELSE 0 END) DESC,
                   rating DESC`,
       )
@@ -405,6 +413,8 @@ export async function getSimilarBusinesses(b: Business, limit = 3): Promise<Busi
          (CASE WHEN (phone IS NOT NULL AND trim(phone) <> '')
                  OR (contact_email IS NOT NULL AND trim(contact_email) <> '')
                  OR (blurb LIKE '% · %.%')
+                 -- Egyszegmensű, csupa-webcím leírás (ld. a lista-lekérdezésnél).
+                 OR (blurb LIKE '%.%' AND blurb NOT LIKE '% %')
                THEN 1 ELSE 0 END) DESC,
          CASE WHEN ? = 1 AND lat IS NOT NULL
               THEN (lat - ?) * (lat - ?) + 0.5 * (lng - ?) * (lng - ?)
