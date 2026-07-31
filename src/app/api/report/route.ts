@@ -7,6 +7,7 @@ import {
   setBusinessHidden,
   createContentReport,
   countRecentReports,
+  countRecentReportsGlobal,
   getB2bProjectBasic,
   setB2bProjectStatus,
   getStoryAdminById,
@@ -66,12 +67,31 @@ export async function POST(req: Request) {
   // IP-alapú rate-limit (abuse / tömeges jelentgetés ellen)
   const ip = req.headers.get("cf-connecting-ip") ?? null;
   const ipHash = await hashIp(ip);
-  if ((await countRecentReports(ipHash)) >= REPORTS_PER_HOUR) {
+  const fromThisIp = await countRecentReports(ipHash);
+  if (fromThisIp >= REPORTS_PER_HOUR) {
     return NextResponse.json(
       { error: "Túl sok jelentés rövid idő alatt. Próbáld később." },
       { status: 429 },
     );
   }
+
+  // ⚠️ VISSZAÉLÉS-JELZÉS AZ ADMINNAK (nem blokkol!).
+  //
+  // A bejelentés AZONNAL elrejti a tartalmat, és ez szándékos (DSA Art. 16
+  // notice-and-action). Csakhogy így egyetlen IP óránként 8 vállalkozást tud
+  // levenni, több címről pedig ennél jóval többet — miközben az operátorhoz
+  // 50 KÜLÖNÁLLÓ e-mail érkezne, összefüggés nélkül, és a kampány órákig
+  // észrevétlen maradhatna.
+  //
+  // A per-IP korlát egyetlen támadót fékez, de a megosztott/VPN-nel forgatott
+  // címeket nem látja — ezért a GLOBÁLIS órás darabszámot is nézzük.
+  // ⚠️ Ez SEM blokkol: a bejelentés fogadása kötelezettség, nem korlátozható
+  // el egy küszöbbel. Csak feltűnőbbé tesszük a levelet.
+  const globalLastHour = await countRecentReportsGlobal();
+  const warnings: string[] = [];
+  if (fromThisIp >= 2) warnings.push(`ebből a bejelentőből ez a ${fromThisIp + 1}. bejelentés egy órán belül`);
+  if (globalLastHour >= 10) warnings.push(`az elmúlt órában összesen ${globalLastHour + 1} bejelentés érkezett`);
+  const abuseWarning = warnings.length ? warnings.join("; ") : null;
 
   // A tartalom kivonata + létezés-ellenőrzés
   let contentLabel = "";
@@ -164,6 +184,7 @@ export async function POST(req: Request) {
   try {
     await sendContentReportEmail({
       adminEmail,
+      abuseWarning,
       contentLabel,
       contentExcerpt,
       reason,

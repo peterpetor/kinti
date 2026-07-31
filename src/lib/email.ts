@@ -608,15 +608,31 @@ interface ContentReportEmailArgs {
   keepUrl: string;
   /** Végleges törlés URL. */
   removeUrl: string;
+  /**
+   * ⚠️ Visszaélés-jelzés: „ebből az IP-ből ez az N. bejelentés" / „az elmúlt
+   * órában összesen N bejelentés érkezett". Ha ki van töltve, a levél TETEJÉN
+   * jelenik meg — mert egy tömeges levágás különben 50 különálló, összefüggés
+   * nélküli e-mailként érkezne, és órákig észrevétlen maradhatna.
+   */
+  abuseWarning?: string | null;
 }
 
 export async function sendContentReportEmail(args: ContentReportEmailArgs): Promise<void> {
   const env = getCloudflareEnv();
   const from = env.EMAIL_FROM || "Kinti <info@kinti.app>";
-  const subject = `⚠️ Bejelentett ${args.contentLabel.toLowerCase()} — el van rejtve, döntened kell`;
+  const subject = args.abuseWarning?.trim()
+    ? `🚨 TÖMEGES BEJELENTÉS? — ${args.contentLabel.toLowerCase()} elrejtve, döntened kell`
+    : `⚠️ Bejelentett ${args.contentLabel.toLowerCase()} — el van rejtve, döntened kell`;
+
+  const warn = args.abuseWarning?.trim()
+    ? `
+⚠️ FIGYELEM — LEHETSÉGES VISSZAÉLÉS: ${args.abuseWarning.trim()}
+   Mielőtt döntesz, nézd meg a többi friss bejelentést is.
+`
+    : "";
 
   const text = `Kinti Admin
-
+${warn}
 Egy ${args.contentLabel.toLowerCase()} tartalmat bejelentettek, ezért AZONNAL elrejtettük a publikum elől.
 
 Tartalom: ${args.contentExcerpt}

@@ -224,6 +224,25 @@ export async function countRecentReports(ipHash: string | null): Promise<number>
   return res?.n ?? 0;
 }
 
+/**
+ * Az ÖSSZES bejelentés száma az elmúlt órában, bejelentőtől függetlenül.
+ *
+ * ⚠️ MIÉRT KELL A PER-IP KORLÁT MELLÉ: a bejelentés AZONNAL elrejti a tartalmat
+ * (DSA Art. 16 notice-and-action). A per-IP korlát egyetlen támadót fékez, de
+ * megosztott vagy VPN-nel forgatott címekről érkező kampányt NEM lát. Ez a szám
+ * viszont igen — és az admin-értesítésbe kerül figyelmeztetésként, hogy egy
+ * tömeges levágás ne 50 külön e-mailként, összefüggés nélkül érkezzen.
+ *
+ * ⚠️ SZÁNDÉKOSAN NEM BLOKKOL: a jogszabályi kötelezettség a bejelentés
+ * FOGADÁSA, azt nem korlátozhatjuk el egy küszöbbel. Csak jelzünk.
+ */
+export async function countRecentReportsGlobal(): Promise<number> {
+  const res = await getDB()
+    .prepare(`SELECT COUNT(*) AS n FROM content_reports WHERE created_at >= datetime('now', '-1 hour')`)
+    .first<{ n: number }>();
+  return res?.n ?? 0;
+}
+
 
 export async function countRecentSpamLog(kind: string, ipHash: string | null, windowMinutes: number = 60): Promise<number> {
   if (!ipHash) return 0;
