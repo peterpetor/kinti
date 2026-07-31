@@ -76,3 +76,59 @@ describe("bejelentés — visszaélés elleni védelem", () => {
     expect(before).not.toMatch(/if\s*\(autoHide\)\s*\{[^}]*$/);
   });
 });
+
+/**
+ * A HELYREÁLLÍTÁSI oldal őre.
+ *
+ * ⚠️ MIÉRT KELL: a rejtés-szabályt szándékosan NEM gyengítettük (DSA Art. 16),
+ * a kockázatot az ellensúlyozza, hogy a helyreállítás azonnali és tömeges.
+ * Ha az admin-áttekintő vagy a tömeges visszaállító elhal, a védelmi terv
+ * FELE tűnik el — pontosan ez történt egyszer már: a lekérdezések megvoltak,
+ * de egyetlen felület sem hívta őket (halott kód), miközben az admin-menüben
+ * egy MAKETT dashboard volt kilinkelve valódi adat nélkül.
+ */
+const adminPage = readFileSync(
+  "src/app/admin/moderation/abuse-dashboard/page.tsx",
+  "utf8",
+);
+const bulkRestore = readFileSync(
+  "src/app/api/admin/reports/restore-by-reporter/route.ts",
+  "utf8",
+);
+
+describe("bejelentés — helyreállítás (admin-áttekintő + tömeges visszaállítás)", () => {
+  it("az admin-áttekintő VALÓDI adatot kérdez le (nem makett)", () => {
+    expect(adminPage).toMatch(/listContentReports\s*\(/);
+    // A korábbi makett jellemzői — ezek NEM térhetnek vissza.
+    expect(adminPage).not.toMatch(/Implementation Roadmap/);
+    expect(adminPage).not.toMatch(/value:\s*"—"/);
+  });
+
+  it("az áttekintő CSOPORTOSÍT bejelentő szerint (a kampány-mintázat így látszik)", () => {
+    expect(adminPage).toMatch(/reporterIpHash/);
+    expect(adminPage).toMatch(/RestoreReporterButton/);
+  });
+
+  it("a tömeges visszaállító admin-hitelesítés mögött van", () => {
+    expect(bulkRestore).toMatch(/getAdminUserId\s*\(/);
+    expect(bulkRestore).toMatch(/forbidden/);
+  });
+
+  it("a tömeges visszaállító a KÖZÖS restore-modult hívja (nem saját elágazást)", () => {
+    // Egy második, saját tartalomtípus-elágazás némán elavulna egy új típusnál.
+    expect(bulkRestore).toMatch(/restoreReportedContent\s*\(/);
+    expect(bulkRestore).toMatch(/listOpenReportsByReporter\s*\(/);
+  });
+
+  it("a visszaállítás LEZÁRJA a bejelentést (különben örökre 'open' maradna)", () => {
+    expect(bulkRestore).toMatch(/updateContentReportStatus\s*\(/);
+    expect(bulkRestore).toMatch(/"kept"/);
+  });
+
+  it("egy hibás sor NEM akasztja meg a többi visszaállítását", () => {
+    // A ciklusban try/catch kell — részleges helyreállítás > semmi.
+    const loop = bulkRestore.slice(bulkRestore.indexOf("for (const report"));
+    expect(loop).toMatch(/try\s*\{/);
+    expect(loop).toMatch(/catch/);
+  });
+});

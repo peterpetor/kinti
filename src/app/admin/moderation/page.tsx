@@ -180,9 +180,9 @@ export default async function ModerationPage({
           className="rounded-card border border-line bg-surface p-4 shadow-card transition hover:bg-surface-alt"
         >
           <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
-            📊 Abuse Dashboard
+            🚨 Bejelentések
           </div>
-          <div className="mt-1 text-sm font-semibold text-ink">Rate limits & patterns</div>
+          <div className="mt-1 text-sm font-semibold text-ink">Ki mit jelentett be</div>
         </Link>
       </div>
 
