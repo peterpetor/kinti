@@ -130,8 +130,12 @@ const PATHS: Record<IconName, string[]> = {
   // Üzlet-homlokzat (napellenző + ajtó) — a Vállalkozásom menüpont ikonja
   // (2026-07-22, emoji-lecsere: a 🏪 helyett, a "house" nyelvét folytatva).
   store: ["M3 9l1.5-5h15L21 9", "M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9", "M9 20v-6h6v6"],
-  // Valutaváltás — két ellentétes irányú nyíl-sor (Utalás/Árfolyam menüpont).
-  exchange: ["M7 7h13l-3-3", "M7 7l3 3", "M17 17H4l3-3", "M17 17l-3 3"],
+  // Valutaváltás — két ellentétes irányú nyíl (Utalás/Árfolyam menüpont).
+  // ⚠️ A korábbi rajz TÖRT volt: mindkét nyílnál a nyílhegy két fele a vonal
+  // ELLENTÉTES végeire került („M7 7h13l-3-3" + „M7 7l3 3"), ezért cikkcakknak
+  // látszott, nem nyílnak. Most a felső nyíl jobbra, az alsó balra mutat, és a
+  // hegyek a SAJÁT vonaluk végén, szimmetrikusan (x: 4→20, y: 8 és 16) állnak.
+  exchange: ["M4 8h16", "M17 5l3 3l-3 3", "M20 16H4", "M7 13l-3 3l3 3"],
   // Pénztárca — a Bérkalkulátor menüpont ikonja (a "briefcase" nyelvét folytatva).
   wallet: ["M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", "M16 12h3a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-3a2 2 0 0 1 0-4z"],
   // Frissítés/csere — a Szolgáltató-váltó menüpont ikonja.
