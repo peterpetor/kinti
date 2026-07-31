@@ -33,6 +33,7 @@ interface BusinessRow {
   claimed: number | null; lead_opt_out: number | null;
   country_code: string | null; canton_code: string | null;
   kinti_pass_active: number | null; kinti_pass_offer: string | null;
+  last_verified_at: string | null; last_verified_by: string | null;
 }
 
 interface BusinessSubmissionRow {
@@ -76,6 +77,10 @@ export function toBusiness(r: BusinessRow): Business {
     // nem-fizető cég sosem viseli a jelvényt (webhook + admin kézi elvétel egyaránt).
     kintiPassActive: bool(r.kinti_pass_active ?? 0) && bool(r.featured),
     kintiPassOffer: r.kinti_pass_offer ?? null,
+    // ⚠️ SZŰK ÁLLÍTÁS: azt igazolja, hogy a vállalkozás MŰKÖDIK — nem azt,
+    // hogy minden mezője helyes. A felületen se állítsunk többet (ld. 0143).
+    lastVerifiedAt: r.last_verified_at ?? null,
+    lastVerifiedBy: r.last_verified_by ?? null,
   };
 }
 

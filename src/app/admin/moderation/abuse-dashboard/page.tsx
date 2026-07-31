@@ -2,7 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminUserId } from "@/lib/admin";
 import { listContentReports, type AdminContentReport } from "@/lib/repo-spam";
+import { listCorrections } from "@/lib/repo-corrections";
+import { CORRECTION_FIELD_LABELS, type CorrectionField } from "@/lib/correction-fields";
 import { RestoreReporterButton } from "@/components/admin/restore-reporter-button";
+import { CorrectionResolveButtons } from "@/components/admin/correction-resolve-buttons";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -48,6 +51,7 @@ const STATUS_LABELS: Record<string, string> = {
   removed: "Törölve",
 };
 
+
 /** A bejelentett tartalom publikus útvonala, ahol van ilyen. */
 function contentHref(r: AdminContentReport): string | null {
   if (r.contentType === "business") return `/szaknevsor/${r.contentId}`;
@@ -75,9 +79,10 @@ export default async function ReportsOverviewPage() {
   const adminId = await getAdminUserId();
   if (!adminId) notFound();
 
-  const [open, recent] = await Promise.all([
+  const [open, recent, corrections] = await Promise.all([
     listContentReports({ status: "open", limit: 500 }),
     listContentReports({ status: "all", limit: 100 }),
+    listCorrections({ status: "open", limit: 100 }),
   ]);
 
   // Bejelentőnkénti csoportosítás — a kampány-mintázat ITT válik láthatóvá.
@@ -103,9 +108,9 @@ export default async function ReportsOverviewPage() {
 
   const stats = [
     { label: "Nyitott bejelentés", value: String(open.length) },
+    { label: "Nyitott javaslat", value: String(corrections.length) },
     { label: "Elmúlt 24 óra", value: String(last24h) },
     { label: "Egyedi bejelentő", value: String(byReporter.size) },
-    { label: "Összes bejelentés", value: String(recent.length) },
   ];
 
   return (
@@ -183,6 +188,49 @@ export default async function ReportsOverviewPage() {
           ))}
         </section>
       )}
+
+      {/* „Javíts rajta" javaslatok — NEM rejtenek el semmit, csak sorban állnak.
+          ⚠️ Az adatot az admin a cég-szerkesztőn vezeti át; itt csak lezárjuk a
+          javaslatot. Nincs „egy kattintással beírom" út, mert az egy nyílt
+          űrlapról érkező értéket tenne ellenőrzés nélkül a szaknévsorba. */}
+      <section className="space-y-2">
+        <h2 className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">
+          Adatjavítási javaslatok · {corrections.length} db
+        </h2>
+        {corrections.length === 0 ? (
+          <div className="rounded-card border border-line bg-surface p-4 text-center shadow-card">
+            <p className="text-[12.5px] text-ink-muted">Nincs nyitott javaslat.</p>
+          </div>
+        ) : (
+          <ul className="space-y-2">
+            {corrections.map((c) => (
+              <li key={c.id} className="rounded-card border border-line bg-surface p-3 shadow-card">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-pill bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-muted">
+                    {CORRECTION_FIELD_LABELS[c.field as CorrectionField] ?? c.field}
+                  </span>
+                  <span className="text-[11px] text-ink-faint">{formatWhen(c.createdAt)}</span>
+                </div>
+                <div className="mt-1.5 text-[12.5px]">
+                  <Link
+                    href={`/szaknevsor/${c.businessId}`}
+                    className="font-semibold text-accent hover:underline"
+                  >
+                    {c.businessId}
+                  </Link>
+                </div>
+                {c.suggestion && (
+                  <p className="mt-1 text-[12.5px] text-ink">
+                    Javasolt érték: <span className="font-semibold">{c.suggestion}</span>
+                  </p>
+                )}
+                {c.note && <p className="mt-0.5 text-[12.5px] text-ink-muted">„{c.note}”</p>}
+                <CorrectionResolveButtons id={c.id} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       {/* Teljes lista */}
       <section className="space-y-2">

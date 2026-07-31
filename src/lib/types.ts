@@ -55,6 +55,17 @@ export interface Business {
   /** Telefonszám-kattintások összes idejű száma (analitika). */
   phoneClickCount?: number;
 
+  /**
+   * Mikor ellenőriztük utoljára, hogy a vállalkozás TÉNYLEGESEN MŰKÖDIK (ISO dátum).
+   *
+   * ⚠️ SZŰK ÁLLÍTÁS: azt igazolja, hogy a hely nem szűnt meg — NEM azt, hogy
+   * minden mezője (telefon, cím, nyitvatartás) helyes. A felületen se
+   * állítsunk többet ennél. Forrás: 0143 migráció + frissesség-audit.
+   */
+  lastVerifiedAt?: string | null;
+  /** Ki ellenőrizte: 'audit' | 'owner' | 'user'. */
+  lastVerifiedBy?: string | null;
+
   /** Admin-moderation állapot: 0=pending, 1=approved, 2=rejected. */
   moderationStatus?: number;
   moderationDecisionAt?: string | null;

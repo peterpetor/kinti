@@ -10,6 +10,7 @@ import { ReviewForm } from "@/components/views/review-form";
 import { areasForBusiness } from "@/lib/seo-areas";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
+import { CorrectionButton } from "@/components/correction-button";
 import { BusinessClaimCard } from "@/components/views/business-claim-card";
 import { parseWorkingHoursStrict, calculateBusinessHoursStatus, formatWeeklyHours, swissWeekdayKey } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
@@ -22,6 +23,7 @@ import { RecentBusinessRecorder } from "@/components/views/recent-businesses";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 import { hasStreetAddress } from "@/lib/address";
 import { extractContactFromBlurb, primaryContactKind } from "@/lib/contact-links";
+import { formatVerifiedLabel } from "@/lib/verified-label";
 import { getCountry, countryLocative } from "@/lib/countries";
 import { registryForCategory } from "@/lib/business-registry";
 import { guidesForCategory } from "@/lib/guides";
@@ -165,6 +167,12 @@ export default async function BusinessPage({
   const wh = parseWorkingHoursStrict(b.workingHours ?? null);
   const status = wh ? calculateBusinessHoursStatus(wh) : null;
   const openTextTrim = b.openText?.trim() || null;
+
+  // Frissesség-jel: mikor ellenőriztük utoljára, hogy a vállalkozás MŰKÖDIK.
+  // ⚠️ Hónap-pontosság szándékosan: a napra pontos dátum tévesen azt sugallná,
+  // hogy naponta újraellenőrzünk. Ha 12 hónapnál régebbi, NEM írjuk ki — egy
+  // elavult „ellenőrizve" rosszabb, mint a semmi.
+  const verifiedLabel = formatVerifiedLabel(b.lastVerifiedAt ?? null);
 
   let socials: Record<string, string> | null = null;
   try {
@@ -452,14 +460,29 @@ export default async function BusinessPage({
                   {status.detailText}
                 </div>
               </>
-            ) : (
+            ) : openTextTrim ? (
               // Nincs strukturált nyitvatartás → nem találunk ki státuszt; a valódi
-              // openText-et mutatjuk (ha van), vagy „Nyitvatartás nem ismert".
+              // openText-et mutatjuk.
               <>
                 <div className="text-[15px] font-bold text-ink-muted">Nyitvatartás</div>
-                <div className="text-[11px] font-medium text-ink-muted">
-                  {openTextTrim ?? "nem ismert"}
-                </div>
+                <div className="text-[11px] font-medium text-ink-muted">{openTextTrim}</div>
+              </>
+            ) : verifiedLabel ? (
+              // ⚠️ A cégek ~99%-ánál nincs SEMMILYEN nyitvatartás-adat, és ez a cella
+              // eddig csak annyit írt ki: „Nyitvatartás — nem ismert". Halott hely egy
+              // olyan sávban, ahol a felhasználó épp azt méri fel, megbízhat-e a
+              // tételben. Helyette a frissesség-jelet mutatjuk, ha van.
+              //
+              // ⚠️ SZŰK ÁLLÍTÁS: „működés ellenőrizve" — NEM azt állítjuk, hogy minden
+              // mező (telefon, cím) helyes. A szöveg se ígérjen többet.
+              <>
+                <div className="text-[15px] font-bold text-success">Ellenőrizve</div>
+                <div className="text-[11px] font-medium text-ink-muted">{verifiedLabel}</div>
+              </>
+            ) : (
+              <>
+                <div className="text-[15px] font-bold text-ink-muted">Nyitvatartás</div>
+                <div className="text-[11px] font-medium text-ink-muted">nem ismert</div>
               </>
             )}
           </div>
@@ -953,7 +976,12 @@ export default async function BusinessPage({
             Hibás, elavult vagy jogsértő adatot látsz ezen az adatlapon? Esetleg ez a
             te vállalkozásod / a saját adatod, és nem szeretnéd, hogy itt szerepeljen?
           </p>
+          {/* ⚠️ KÉT KÜLÖN ÚT, SZÁNDÉKOSAN: a „Javíts rajta" csak javaslatot küld (a
+              cég látható marad), a „Jelentés" viszont AZONNAL elrejti a tartalmat
+              (DSA Art. 16). Egy elgépelt telefonszám miatt ne kelljen levetetni egy
+              működő vállalkozást — eddig csak az utóbbi út létezett. */}
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <CorrectionButton businessId={b.id} />
             <ReportButton contentType="business" contentId={b.id} variant="link" />
             <span className="text-[11px] text-ink-faint">
               vagy írj az{" "}
