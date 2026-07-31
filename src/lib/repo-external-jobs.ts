@@ -4,7 +4,7 @@
  * a publikus listázás KIFELÉ, a `source_url`-re mutató linkkel történik. Lásd 0096.
  */
 import { getDB } from "./cloudflare";
-import { externalJobDedupeKey, dedupeByKey, jobVarietyKey } from "./external-job-url";
+import { externalJobDedupeKey, dedupeByKey } from "./external-job-url";
 
 export interface ExternalJob {
   id: string;
@@ -123,31 +123,42 @@ export async function getExternalJobs(
   // hova valók), de „egész ország" nézetben továbbra is megjelennek.
   if (opts.cantonCode && opts.cantonCode !== "all") { where += " AND canton_code = ?"; binds.push(opts.cantonCode); }
   const limit = Math.min(opts.limit ?? 60, 100);
-  // ⚠️ TÚLKÉRÉS, mert utána SZŰKÍTÜNK. Egy toborzó ugyanazt az állást tucatnyi
-  // településen is feladja (mérve: a „Bedrijfsleider … | NLwerkt" **17 helyen**,
-  // vagyis a holland lista 60 helyéből 17-et EGYETLEN hirdetés foglalt el), és
-  // előfordul valódi ismétlés is (ugyanaz a cím+cég+hely, más hirdetés-azonosító
-  // — pl. a „Hoofd zorg | NLwerkt" 3×). Ez nem a tárolás hibája (azok külön
-  // hirdetések külön URL-lel), hanem a LISTÁÉ: a felhasználó változatosságot vár.
-  const fetchLimit = Math.min(limit * 4, 400);
+
+  // ⚠️ A VÁLTOZATOSSÁGI SZŰKÍTÉS AZ ADATBÁZISBAN FUT, nem a Workerben.
+  //
+  // Miért kell egyáltalán: egy toborzó ugyanazt az állást tucatnyi településen
+  // is feladja (mérve: a „Bedrijfsleider … | NLwerkt" **17 helyen**, vagyis a
+  // holland lista 60 helyéből 17-et EGYETLEN hirdetés foglalt el), és van valódi
+  // ismétlés is (ugyanaz a cím+cég+hely, más hirdetés-azonosító). Ezek külön
+  // hirdetések külön URL-lel, tehát a TÁROLÁSBAN jogosan külön sorok — a LISTA
+  // viszont változatosságot kíván.
+  //
+  // ⚠️ MIÉRT SQL-BEN: az első megoldásom a Workerben szűkített, ezért 4×
+  // TÚLKÉRT (240 sor 60 helyett). Egy edge-route-nál minden fölösleges sor
+  // kockázat, és épp az `/allasok` az egyik legnehezebb oldal. Így a Worker
+  // PONTOSAN annyi sort kap, mint az eredeti kódban (limit), a szűkítést a D1
+  // végzi — mérve 2 ms / 3804 olvasott sor.
+  //
+  // A PARTITION kulcsnak egyeznie kell a `jobVarietyKey`-jel (lib/external-job-url.ts):
+  // cím + cég, és cég HIÁNYÁBAN cím + helyszín — különben két különböző cég
+  // azonos, generikus című hirdetése („Schoonmaker") olvadna össze.
+  const varietyKey =
+    "lower(trim(title)) || '|' || CASE WHEN trim(COALESCE(company,'')) = ''" +
+    " THEN '@' || lower(trim(COALESCE(location,''))) ELSE lower(trim(company)) END";
   const { results } = await getDB()
     .prepare(
-      `SELECT * FROM external_jobs WHERE ${where}
-        ORDER BY COALESCE(posted_at, fetched_at) DESC LIMIT ${fetchLimit}`,
+      `SELECT * FROM (
+         SELECT *, ROW_NUMBER() OVER (
+           PARTITION BY ${varietyKey}
+           ORDER BY COALESCE(posted_at, fetched_at) DESC
+         ) AS rn
+         FROM external_jobs WHERE ${where}
+       ) WHERE rn = 1
+        ORDER BY COALESCE(posted_at, fetched_at) DESC LIMIT ${limit}`,
     )
     .bind(...binds)
     .all<Row>();
-
-  const seen = new Set<string>();
-  const out: ExternalJob[] = [];
-  for (const r of results ?? []) {
-    const key = jobVarietyKey(r);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(toJob(r));
-    if (out.length >= limit) break;
-  }
-  return out;
+  return (results ?? []).map(toJob);
 }
 
 export async function countExternalJobs(country: string): Promise<number> {
