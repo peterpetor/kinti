@@ -33,6 +33,12 @@ import { cached } from "@/lib/edge-cache";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
+// ⚠️ A kanonikus URL a KEZDŐLAPON van megadva, NEM a gyökér-elrendezésben:
+// az `alternates.canonical` a layoutból MINDEN aloldalra öröklődne, és akkor a
+// teljes oldal a „/"-t jelölné meg kanonikusnak. A cím/leírás továbbra is a
+// gyökér-elrendezésből jön (title.default).
+export const metadata = { alternates: { canonical: "/" } };
+
 export default async function FeedPage() {
   // Karcsú vetület + saját (3 perces) cache a repóban — a /szaknevsor oldallal
   // KÖZÖS kulcson, így a két oldal TTL-enként EGYSZER megy D1-re.

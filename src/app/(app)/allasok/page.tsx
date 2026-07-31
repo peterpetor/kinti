@@ -13,7 +13,10 @@ import { PullToRefresh } from "@/components/pull-to-refresh";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Állások — Kint élő magyaroknak" };
+export const metadata = {
+  title: "Állások — Kint élő magyaroknak",
+  alternates: { canonical: "/allasok" },
+};
 
 export default async function JobsPage() {
   const [jobs, { userId }] = await Promise.all([getJobs(), auth()]);

@@ -72,6 +72,12 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   return {
     title: b.name,
     description,
+    // ⚠️ KANONIKUS URL — a cégadatlap a legnagyobb indexelhető oldalosztály
+    // (2353 lap, a sitemap kétharmada), ÉS rendszeresen kap query-paramétert:
+    // `?st=<keresőszó>` a belső keresőből érkezéskor, `?ertekeles=1` a
+    // vélemény-kérő e-mail mélylinkjéből. Enélkül a Google ezeket KÜLÖN
+    // URL-ként indexelheti, és szétaprózza ugyanannak az oldalnak a jeleit.
+    alternates: { canonical: `/szaknevsor/${b.id}` },
     openGraph: {
       title,
       description,

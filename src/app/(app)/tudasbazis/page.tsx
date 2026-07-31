@@ -48,6 +48,7 @@ export const metadata = {
   title: "Tudásbázis — útmutatók kint élő magyaroknak",
   description:
     "Hivatalos forrásból: bejelentkezés, egészségbiztosítás, adózás, iskola, munka, lakásbérlés — kint élő magyaroknak (Svájc, Ausztria, Németország, Hollandia, Anglia).",
+  alternates: { canonical: "/tudasbazis" },
 };
 
 export default function TudasbazisPage() {

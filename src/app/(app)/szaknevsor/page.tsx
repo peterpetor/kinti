@@ -15,7 +15,12 @@ const COUNTRY_SLUG: Record<string, string> = {
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Szaknévsor" };
+export const metadata = {
+  title: "Szaknévsor",
+  // Kanonikus URL: a listát ország-/kategória-paraméterekkel is hívjuk
+  // (?canton=, ?cat=), és azok NEM külön oldalak a Google szemében.
+  alternates: { canonical: "/szaknevsor" },
+};
 
 /** SSR-be kerülő rekordok száma ORSZÁGONKÉNT. A teljes (2000+) lista SSR-je worker
  *  CPU-limitbe ütközött (1102) és ~1,2 MB HTML-t adott. A kliens EGYSZERRE csak EGY
