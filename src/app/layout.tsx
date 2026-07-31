@@ -107,9 +107,16 @@ export const metadata: Metadata = {
   applicationName: "Kinti",
   manifest: "/manifest.webmanifest",
   metadataBase: new URL("https://kinti.app"),
+  // ⚠️ EZ A SZÖVEG JELENIK MEG, AMIKOR VALAKI BEMÁSOLJA A LINKET egy
+  // Facebook-csoportba, Messengerbe vagy WhatsAppra — vagyis pontosan a
+  // tervezett indulási csatornán ez az első mondat, amit olvasnak.
+  // Korábban „…szakemberkereső SVÁJCBAN" állt itt, holott az app hat országot
+  // fed le. Egy Ausztriában vagy Angliában élő olvasónak ez tévedés, és épp
+  // őt veszíti el. Ha új ország jön, EZT IS frissítsd.
   openGraph: {
     title: "Kinti — Találj magyart a közeledben",
-    description: "GPS-alapú magyar szakemberkereső Svájcban. Fodrász, autószerelő, orvos, ügyvéd — bármi. Egy térkép. Anyanyelven.",
+    description:
+      "Magyar fodrász, orvos, ügyvéd, autószerelő, bolt — hat országban: Svájc, Ausztria, Németország, Hollandia, Anglia, Spanyolország. Egy térkép, anyanyelven.",
     url: "https://kinti.app",
     siteName: "Kinti",
     type: "website",
@@ -119,7 +126,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Kinti — Találj magyart a közeledben",
-    description: "GPS-alapú magyar szakemberkereső Svájcban.",
+    description: "Magyarul beszélő szakemberek hat országban — egy térkép, anyanyelven.",
     images: ["/icons/og-default.png"],
   },
   appleWebApp: {
