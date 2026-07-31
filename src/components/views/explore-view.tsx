@@ -10,6 +10,7 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Category, ListBusiness } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { foldSearchText } from "@/lib/sql-fold";
+import { matchesSearchQuery, relaxSearchQuery } from "@/lib/search-match";
 import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode, cantonPoint } from "@/lib/cantons";
 import { atPoint } from "@/lib/at-points";
 import { dePoint } from "@/lib/de-points";
@@ -414,8 +415,11 @@ export function ExploreView({
         const byContact = !withContact || hasContactInfo(b);
         const byText =
           !needle ||
-          // Ékezet-hajtott, előszámolt blob (név+kategória+bemutatkozó+cím).
-          (searchIndex.get(b.id)?.includes(foldedNeedle) ?? false) ||
+          // ⚠️ SZÓ-SZINTŰ illesztés (nem összefüggő részlánc): minden szónak
+          // szerepelnie kell, tetszőleges sorrendben, toldalék-tűréssel — így a
+          // „bécsi fodrász" és a „fodrász wien" is talál. A korábbi
+          // `blob.includes(needle)` ezekre NÉMÁN nullát adott.
+          matchesSearchQuery(searchIndex.get(b.id) ?? "", foldedNeedle) ||
           // Svájci kanton-keresés szövegből is: pl. "Aargau", "ZH", "Tessin", …
           matchesCanton({ address: b.address ?? null }, needle);
         return byCountry && byCat && byCanton && byFav && byOpen && byPass && byContact && byText;
@@ -522,9 +526,9 @@ export function ExploreView({
       if ((b.country ?? "CH") !== country) return false;
       if (cat !== "all" && b.categoryId !== cat) return false;
       if (needle) {
-        // Ékezet-hajtott illesztés (ld. searchIndex) + kanton-szöveg keresés.
+        // Ékezet-hajtott, SZÓ-SZINTŰ illesztés (ld. searchIndex) + kanton-szöveg.
         const hit =
-          (searchIndex.get(b.id)?.includes(foldedNeedle) ?? false) ||
+          matchesSearchQuery(searchIndex.get(b.id) ?? "", foldedNeedle) ||
           matchesCanton({ address: b.address ?? null }, needle);
         if (!hit) return false;
       }
@@ -548,6 +552,36 @@ export function ExploreView({
       )
       .slice(0, 6);
   }, [businesses, searchIndex, country, cat, q, userPos, showFavs]);
+
+  // „Sosem üres kéz": ha a SZÖVEGES keresés nullát ad, elejtünk egy szót
+  // (jellemzően a helynevet) és megmutatjuk, mi van nélküle. A szaknévsor
+  // ritka (2248 tétel, 6 ország) — a „fogorvos bécs" simán nulla lehet
+  // pusztán azért, mert abban a városban nincs. A puszta „nincs találat"
+  // eltitkolná, hogy a szomszéd városban VAN.
+  // ⚠️ A kategórianeveket ÁTADJUK védettként: a szakma a kérés lényege, a
+  // helynév csak szűkítés — a szakmát elejteni használhatatlan ajánlást ad.
+  const relaxed = useMemo(() => {
+    if (filtered.length > 0 || showFavs) return null;
+    const folded = foldSearchText(q.trim());
+    if (!folded) return null;
+    const pool = businesses.filter(
+      (b) => (b.country ?? "CH") === country && (cat === "all" || b.categoryId === cat),
+    );
+    if (pool.length === 0) return null;
+    const protectedTokens = categories
+      .filter((c) => c.id !== "all")
+      .map((c) => foldSearchText(c.label));
+    const r = relaxSearchQuery(
+      pool.map((b) => searchIndex.get(b.id) ?? ""),
+      folded,
+      protectedTokens,
+    );
+    if (!r) return null;
+    const items = pool.filter((b) =>
+      matchesSearchQuery(searchIndex.get(b.id) ?? "", r.kept.join(" ")),
+    );
+    return { dropped: r.dropped, items: items.slice(0, 12) };
+  }, [filtered.length, showFavs, q, businesses, country, cat, categories, searchIndex]);
 
   // Kereslet-rés jel: a kategória-szűrős NULLA pontos találat eddig csak a
   // kliensen látszott — a szerver (és az operátor) semmit nem tudott róla.
@@ -1121,6 +1155,26 @@ export function ExploreView({
             </div>
           )}
 
+          {/* „Sosem üres kéz": a szöveges keresés nullát adott, de EGY szó
+              elhagyásával van találat. Kiírjuk, MELYIK szót ejtettük el —
+              különben a felhasználó nem értené, miért mást lát. */}
+          {filtered.length === 0 && nearbyFallback.length === 0 && relaxed && relaxed.items.length > 0 && (
+            <>
+              <div className="rounded-card border border-star/30 bg-star/5 px-4 py-3 text-[12.5px] leading-snug text-ink-muted">
+                Nincs pontos találat erre: <strong className="text-ink">„{q.trim()}"</strong>.
+                A(z) <strong className="text-ink">„{relaxed.dropped}"</strong> szó nélkül ezeket találtuk:
+              </div>
+              {relaxed.items.map((b) => (
+                <BusinessCard
+                  key={b.id}
+                  business={b}
+                  href={`/szaknevsor/${b.id}${q.trim() ? `?st=${encodeURIComponent(q.trim())}` : ""}`}
+                  showFavorite
+                />
+              ))}
+            </>
+          )}
+
           {/* „0 találat" fallback: a legközelebbi/hasonló találatok a semmi helyett */}
           {filtered.length === 0 && nearbyFallback.length > 0 && (
             (() => {
@@ -1171,7 +1225,7 @@ export function ExploreView({
             })()
           )}
 
-          {filtered.length === 0 && nearbyFallback.length === 0 && (
+          {filtered.length === 0 && nearbyFallback.length === 0 && !(relaxed && relaxed.items.length > 0) && (
             (() => {
               const cantonLabel = canton !== "all" ? regions.find((c) => c.code === canton)?.name ?? null : null;
               const subject = !showFavs ? (cat !== "all" ? (categories.find((c) => c.id === cat)?.label ?? null) : (q.trim() || null)) : null;
