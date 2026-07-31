@@ -43,29 +43,29 @@ for (const seed of SEEDS) {
 }
 console.log(`\n${links.size} egyedi belső hivatkozás a ${SEEDS.length} kiinduló oldalról\n`);
 
-// ⚠️ ALACSONY PÁRHUZAMOSSÁG ÉS SZÜNET — TANULT LECKE. A szkript először 8
-// párhuzamos szálon futott, és tömegesen 503-at kapott OLYAN oldalakra is
-// (/munkaltato, /szaknevsor/uj), amelyek egyesével lekérve hibátlanul 200-at
-// adnak. Vagyis a terhelés MAGA váltotta ki a hibát, és a mérés hamis riasztást
-// termelt. Egy link-ellenőrzőnek a NORMÁLIS használatot kell utánoznia,
-// különben nem tudod megkülönböztetni a valódi hibát a saját zajodtól.
+// ⚠️⚠️ SZIGORÚAN SOROS, SZÜNETEKKEL — KÉTSZER MEGTANULT LECKE.
+//
+// A szkript először 8, majd 2 párhuzamos szálon futott, és MINDKÉTSZER
+// tömegesen 503-at kapott OLYAN oldalakra is (/munkaltato, /szaknevsor/uj),
+// amelyek egyesével, 3 mp szünettel lekérve hibátlanul 200-at adnak. A kinti.app
+// (helyesen) korlátozza az agresszív klienseket — vagyis MÁR 2 PÁRHUZAMOS SZÁL
+// IS hamis riasztást termel.
+//
+// Ezért: EGY szál, 1,5 mp szünet, és hiba esetén 5 mp után újramérés. Így ~250
+// hivatkozás ~8 perc — lassú, de a kimenete MEGBÍZHATÓ. Ha egy mérőeszköz maga
+// termeli a hibát, amit keres, akkor rosszabb a semminél: valódi hibákat rejt
+// el a zajban, és nem létezőket jelent.
 const bad = [];
-const queue = [...links];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-async function worker() {
-  while (queue.length) {
-    const href = queue.shift();
-    const { status, err } = await get(BASE + href);
-    if (status !== 200) {
-      // Egy próba nem elég: újramérés szünet után, mielőtt hibának mondanánk.
-      await sleep(2500);
-      const retry = await get(BASE + href);
-      if (retry.status !== 200) bad.push({ href, status: retry.status, err: retry.err });
-    }
-    await sleep(400);
+for (const href of links) {
+  const { status } = await get(BASE + href);
+  if (status !== 200) {
+    await sleep(5000);
+    const retry = await get(BASE + href);
+    if (retry.status !== 200) bad.push({ href, status: retry.status, err: retry.err });
   }
+  await sleep(1500);
 }
-await Promise.all(Array.from({ length: 2 }, worker));
 
 if (bad.length === 0) {
   console.log("✓ Minden belső hivatkozás 200-at ad.");
