@@ -224,6 +224,86 @@ export async function countRecentReports(ipHash: string | null): Promise<number>
   return res?.n ?? 0;
 }
 
+export interface AdminContentReport {
+  id: string;
+  contentType: string;
+  contentId: string;
+  reason: string;
+  reporterIpHash: string | null;
+  moderateToken: string;
+  status: string;
+  createdAt: string;
+}
+
+/**
+ * Bejelentések listája az admin-áttekintőhöz (legfrissebb elöl).
+ *
+ * ⚠️ MIÉRT KELL: eddig CSAK bejelentésenként egy e-mail ment, áttekintő nélkül.
+ * Egy tömeges, rosszhiszemű kampány így 50 különálló, összefüggés nélküli
+ * levélként érkezett volna — miközben 50 vállalkozás rejtve van. Az azonnali
+ * rejtés szándékos (DSA Art. 16), ezért nem azt gyengítettük, hanem a
+ * HELYREÁLLÍTÁST tettük azonnalivá.
+ */
+export async function listContentReports(
+  opts: { status?: string | null; limit?: number } = {},
+): Promise<AdminContentReport[]> {
+  const limit = Math.max(1, Math.min(opts.limit ?? 200, 500));
+  const binds: unknown[] = [];
+  let where = "";
+  if (opts.status && opts.status !== "all") {
+    where = "WHERE status = ?";
+    binds.push(opts.status);
+  }
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, content_type, content_id, reason, reporter_ip_hash, moderate_token, status, created_at
+         FROM content_reports ${where} ORDER BY created_at DESC LIMIT ${limit}`,
+    )
+    .bind(...binds)
+    .all<{
+      id: string; content_type: string; content_id: string; reason: string;
+      reporter_ip_hash: string | null; moderate_token: string; status: string; created_at: string;
+    }>();
+  return (results ?? []).map((r) => ({
+    id: r.id,
+    contentType: r.content_type,
+    contentId: r.content_id,
+    reason: r.reason,
+    reporterIpHash: r.reporter_ip_hash,
+    moderateToken: r.moderate_token,
+    status: r.status,
+    createdAt: r.created_at,
+  }));
+}
+
+/**
+ * Egy BEJELENTŐ összes nyitott bejelentésének visszaállítása — a rosszhiszemű
+ * kampány ellenszere. A tokenek listáját adja vissza a hívónak, hogy az a
+ * tartalom-visszaállítást is elvégezhesse.
+ */
+export async function listOpenReportsByReporter(ipHash: string): Promise<AdminContentReport[]> {
+  const { results } = await getDB()
+    .prepare(
+      `SELECT id, content_type, content_id, reason, reporter_ip_hash, moderate_token, status, created_at
+         FROM content_reports WHERE reporter_ip_hash = ? AND status = 'open' ORDER BY created_at DESC LIMIT 500`,
+    )
+    .bind(ipHash)
+    .all<{
+      id: string; content_type: string; content_id: string; reason: string;
+      reporter_ip_hash: string | null; moderate_token: string; status: string; created_at: string;
+    }>();
+  return (results ?? []).map((r) => ({
+    id: r.id,
+    contentType: r.content_type,
+    contentId: r.content_id,
+    reason: r.reason,
+    reporterIpHash: r.reporter_ip_hash,
+    moderateToken: r.moderate_token,
+    status: r.status,
+    createdAt: r.created_at,
+  }));
+}
+
 /**
  * Az ÖSSZES bejelentés száma az elmúlt órában, bejelentőtől függetlenül.
  *

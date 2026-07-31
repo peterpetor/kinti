@@ -16,6 +16,7 @@ import {
   deleteHousingListingById,
 } from "@/lib/repo";
 import { getMediaBucket } from "@/lib/cloudflare";
+import { restoreReportedContent } from "@/lib/report-restore";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -44,23 +45,10 @@ export async function GET(req: Request, { params }: { params: { token: string } 
   }
 
   if (action === "keep") {
-    if (report.contentType === "business") {
-      await setBusinessHidden(report.contentId, false);
-    } else if (report.contentType === "review") {
-      const businessId = await setReviewHidden(report.contentId, false);
-      if (businessId) await recomputeBusinessRating(businessId);
-    } else if (report.contentType === "sos") {
-      const { unresolveSosAlert } = await import("@/lib/sos-repo");
-      await unresolveSosAlert(report.contentId);
-    } else if (report.contentType === "b2b") {
-      await setB2bProjectStatus(report.contentId, "open");
-    } else if (report.contentType === "story") {
-      await setStoryPublicVisibility(report.contentId, true);
-    } else if (report.contentType === "request") {
-      await setServiceRequestVisibility(report.contentId, true);
-    } else if (report.contentType === "housing") {
-      await setHousingListingVisibility(report.contentId, true);
-    }
+    // ⚠️ A tartalomtípus-elágazás KÖZÖS modulban (lib/report-restore.ts), mert
+    // az admin-áttekintő tömeges visszaállítása is ezt hívja. Két példányban
+    // élve egy új tartalomtípus az egyikből biztosan lemaradna.
+    await restoreReportedContent(report.contentType, report.contentId);
     await updateContentReportStatus(params.token, "kept");
     return html(
       "Visszaállítva ✅",

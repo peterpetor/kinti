@@ -615,6 +615,12 @@ interface ContentReportEmailArgs {
    * nélküli e-mailként érkezne, és órákig észrevétlen maradhatna.
    */
   abuseWarning?: string | null;
+  /**
+   * Elrejtettük-e ténylegesen a tartalmat. FALSE, ha a bejelentő átlépte az
+   * automatikus-rejtés küszöbét (visszaélés-gyanú) — ilyenkor a tartalom LÁTHATÓ
+   * marad, és emberi döntésre vár. A levélnek ezt IGAZAT kell mondania.
+   */
+  hidden?: boolean;
 }
 
 export async function sendContentReportEmail(args: ContentReportEmailArgs): Promise<void> {
@@ -633,19 +639,22 @@ export async function sendContentReportEmail(args: ContentReportEmailArgs): Prom
 
   const text = `Kinti Admin
 ${warn}
-Egy ${args.contentLabel.toLowerCase()} tartalmat bejelentettek, ezért AZONNAL elrejtettük a publikum elől.
+Egy ${args.contentLabel.toLowerCase()} tartalmat bejelentettek.
+${args.hidden === false
+  ? "A tartalom LÁTHATÓ MARADT: a bejelentő átlépte az automatikus-rejtés küszöbét (visszaélés-gyanú), ezért nem vettük le magától — te döntesz."
+  : "AZONNAL elrejtettük a publikum elől."}
 
 Tartalom: ${args.contentExcerpt}
 Indok: ${args.reason}
 
 Döntsd el:
-- VISSZAÁLLÍTÁS (a bejelentés alaptalan, jelenjen meg újra):
+- VISSZAÁLLÍTÁS / MEGHAGYÁS (a bejelentés alaptalan):
 ${args.keepUrl}
 
 - VÉGLEGES TÖRLÉS:
 ${args.removeUrl}
 
-A tartalom addig rejtve marad, amíg nem döntesz.`;
+${args.hidden === false ? "A tartalom a döntésedig LÁTHATÓ marad." : "A tartalom addig rejtve marad, amíg nem döntesz."}`;
 
   const html = baseLayout({
     preheader: `Bejelentett ${args.contentLabel.toLowerCase()} — el van rejtve, döntened kell`,

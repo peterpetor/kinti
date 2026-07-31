@@ -18,6 +18,7 @@ import {
   setHousingListingVisibility,
 } from "@/lib/repo";
 import { hashIp } from "@/lib/security";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { sendContentReportEmail } from "@/lib/email";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { getSosAlertById, hideSosAlert } from "@/lib/sos-repo";
@@ -36,6 +37,25 @@ export const dynamic = "force-dynamic";
  * rate-limit + kötelező indok.
  */
 const REPORTS_PER_HOUR = 8;
+
+/**
+ * ⚠️ AZ AZONNALI REJTÉS KÜSZÖBE — a második védelmi réteg a Turnstile mögött.
+ *
+ * A Turnstile a scripteket állítja meg, de egy elszánt ember (vagy valódi
+ * böngészőt automatizáló bot) kézzel is végigkattinthatna sok tartalmat.
+ * Ezért: az első pár bejelentés egy bejelentőtől VÁLTOZATLANUL azonnal rejt —
+ * a jóhiszemű használat érintetlen. A küszöb FÖLÖTT a bejelentést továbbra is
+ * ELFOGADJUK és rögzítjük (a fogadás jogszabályi kötelezettség), az adminnak
+ * is szólunk, de a tartalom NEM tűnik el magától: emberi döntésre vár.
+ *
+ * ⚠️ Ez NEM a DSA-megfelelés gyengítése: a rendelet a bejelentés FOGADÁSÁT és
+ * gondos elbírálását írja elő, nem az automatikus levételt — sőt a 23. cikk
+ * kifejezetten megengedi a visszaélésszerű bejelentőkkel szembeni fellépést.
+ *
+ * A küszöb szándékosan bőkezű: az app teljes eddigi élete alatt ÖSSZESEN 3
+ * bejelentés érkezett, tehát bármilyen sorozat eleve rendellenes.
+ */
+const AUTO_HIDE_LIMIT_PER_HOUR = 3;
 
 export async function POST(req: Request) {
   let body: Record<string, unknown> = {};
@@ -64,8 +84,35 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Az indok túl hosszú." }, { status: 400 });
   }
 
-  // IP-alapú rate-limit (abuse / tömeges jelentgetés ellen)
   const ip = req.headers.get("cf-connecting-ip") ?? null;
+
+  // ⚠️⚠️ BOT-VÉDELEM — EZ HIÁNYZOTT, ÉS EZ VOLT A LEGNAGYOBB LYUK.
+  //
+  // A bejelentés AZONNAL elrejti a tartalmat. Turnstile nélkül egy script
+  // végigmehetett a 2353 vállalkozás azonosítóján, és csak az órás IP-korlát
+  // állt az útjában — forgatott címekről az egész szaknévsor eltüntethető lett
+  // volna. A vélemény-végpont ugyanezt a védelmet régóta használja; itt nem volt.
+  //
+  // ⚠️ SZÁNDÉKOSAN FAIL-CLOSED (hiányzó kulcsnál is elutasít): a Turnstile
+  // megkerülhetősége itt súlyosabb, mint a rövid kiesés — ÉS a bejelentésnek
+  // VAN kulcs nélküli útja is, az info@kinti.app cím, amit a felület minden
+  // „Jelentem" gomb mellett kiír. A DSA-kötelezettség tehát akkor is teljesül,
+  // ha a robot-ellenőrzés épp nem elérhető.
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken : null;
+  const captcha = await verifyTurnstile(turnstileToken, ip);
+  if (!captcha.ok) {
+    return NextResponse.json(
+      {
+        error:
+          "A robot-ellenőrzés sikertelen. Próbáld újra — ha nem megy, írj az info@kinti.app címre, azt is feldolgozzuk.",
+        codes: captcha.errorCodes,
+      },
+      { status: 400 },
+    );
+  }
+
+  // IP-alapú rate-limit (a Turnstile MELLÉ — az önmagában nem elég egy elszánt
+  // támadó ellen, aki valódi böngészőt automatizál)
   const ipHash = await hashIp(ip);
   const fromThisIp = await countRecentReports(ipHash);
   if (fromThisIp >= REPORTS_PER_HOUR) {
@@ -93,6 +140,9 @@ export async function POST(req: Request) {
   if (globalLastHour >= 10) warnings.push(`az elmúlt órában összesen ${globalLastHour + 1} bejelentés érkezett`);
   const abuseWarning = warnings.length ? warnings.join("; ") : null;
 
+  // A küszöb fölött a bejelentés ÉRVÉNYES, de nem rejt automatikusan.
+  const autoHide = fromThisIp < AUTO_HIDE_LIMIT_PER_HOUR;
+
   // A tartalom kivonata + létezés-ellenőrzés
   let contentLabel = "";
   let contentExcerpt = "";
@@ -104,7 +154,7 @@ export async function POST(req: Request) {
       found = true;
       contentLabel = "Vállalkozás / Szakember";
       contentExcerpt = biz.name;
-      await setBusinessHidden(contentId, true);
+      if (autoHide) await setBusinessHidden(contentId, true);
     }
   } else if (contentType === "review") {
     const review = await getReviewSummaryById(contentId);
@@ -112,8 +162,10 @@ export async function POST(req: Request) {
       found = true;
       contentLabel = "Vélemény";
       contentExcerpt = `${review.reviewerName}: ${review.body.slice(0, 160)}`;
-      await setReviewHidden(contentId, true);
-      await recomputeBusinessRating(review.businessId);
+      if (autoHide) {
+        await setReviewHidden(contentId, true);
+        await recomputeBusinessRating(review.businessId);
+      }
     }
   } else if (contentType === "sos") {
     const sos = await getSosAlertById(contentId);
@@ -121,7 +173,7 @@ export async function POST(req: Request) {
       found = true;
       contentLabel = "S.O.S. Riasztás";
       contentExcerpt = `Tel: ${sos.contactPhone} - ${sos.description.slice(0, 160)}`;
-      await hideSosAlert(contentId);
+      if (autoHide) await hideSosAlert(contentId);
     }
   } else if (contentType === "b2b") {
     const project = await getB2bProjectBasic(contentId);
@@ -130,7 +182,7 @@ export async function POST(req: Request) {
       contentLabel = "B2B projekt";
       contentExcerpt = project.title.slice(0, 160);
       // Azonnali rejtés a feedből ('closed'); admin „keep" visszanyitja.
-      await setB2bProjectStatus(contentId, "closed");
+      if (autoHide) await setB2bProjectStatus(contentId, "closed");
     }
   } else if (contentType === "story") {
     const story = await getStoryAdminById(contentId);
@@ -139,7 +191,7 @@ export async function POST(req: Request) {
       contentLabel = "Élettörténet";
       contentExcerpt = story.title.slice(0, 160);
       // Azonnali rejtés (vissza a moderációs sorba); admin „keep" visszaállítja.
-      await setStoryPublicVisibility(contentId, false);
+      if (autoHide) await setStoryPublicVisibility(contentId, false);
     }
   } else if (contentType === "request") {
     const request = await getServiceRequestBasic(contentId);
@@ -148,7 +200,7 @@ export async function POST(req: Request) {
       contentLabel = "Keresek-hirdetés";
       contentExcerpt = request.title.slice(0, 160);
       // Azonnali rejtés a tábláról; a routed_at claim marad (keep nem routol újra).
-      await setServiceRequestVisibility(contentId, false);
+      if (autoHide) await setServiceRequestVisibility(contentId, false);
     }
   } else if (contentType === "housing") {
     const listing = await getHousingListingBasic(contentId);
@@ -157,7 +209,7 @@ export async function POST(req: Request) {
       contentLabel = "Albérlet-hirdetés";
       contentExcerpt = `${listing.city}: ${listing.description.slice(0, 160)}`;
       // Azonnali levétel a börzéről; admin „keep" visszaállítja.
-      await setHousingListingVisibility(contentId, false);
+      if (autoHide) await setHousingListingVisibility(contentId, false);
     }
   }
 
@@ -185,6 +237,7 @@ export async function POST(req: Request) {
     await sendContentReportEmail({
       adminEmail,
       abuseWarning,
+      hidden: autoHide,
       contentLabel,
       contentExcerpt,
       reason,

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Icon } from "@/components/ui";
+import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
 import { cn } from "@/lib/cn";
 import { BottomSheet } from "./bottom-sheet";
 
@@ -28,10 +29,21 @@ export function ReportButton({
   const [reason, setReason] = useState("");
   const [phase, setPhase] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  // ⚠️ BOT-VÉDELEM. A bejelentés AZONNAL elrejti a tartalmat, tehát ez a
+  // legkényesebb névtelen írási pont az egész appban — eddig mégis védtelen volt.
+  // A kulcsot közvetlenül az env-ből olvassuk (NEXT_PUBLIC_*, build-időben
+  // beépül), így egyetlen hívási helyet sem kellett módosítani.
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   async function submit() {
     if (reason.trim().length < 3) {
       setError("Kérlek, írd le röviden, miért jelented.");
+      return;
+    }
+    if (siteKey && !turnstileToken) {
+      setError("Várj a robot-ellenőrzésre (pár másodperc).");
       return;
     }
     setPhase("sending");
@@ -40,12 +52,13 @@ export function ReportButton({
       const res = await fetch("/api/report", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ contentType, contentId, reason: reason.trim() }),
+        body: JSON.stringify({ contentType, contentId, reason: reason.trim(), turnstileToken }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
         setError(data.error ?? "Nem sikerült elküldeni a jelentést.");
         setPhase("error");
+        turnstileRef.current?.reset(); // egyszer használatos token
         return;
       }
       setPhase("done");
@@ -62,6 +75,7 @@ export function ReportButton({
       setReason("");
       setPhase("idle");
       setError(null);
+      setTurnstileToken("");
     }, 200);
   }
 
@@ -94,8 +108,8 @@ export function ReportButton({
             </div>
             <p className="text-[14px] font-bold text-ink">Köszönjük, megkaptuk!</p>
             <p className="mx-auto mt-1 max-w-xs text-[12.5px] leading-relaxed text-ink-muted">
-              A tartalmat azonnal elrejtettük, és ellenőrizzük. Ha alaptalan a jelentés,
-              hamarosan újra megjelenik.
+              Ellenőrizzük, és döntünk róla. Ha jogsértő, eltávolítjuk — ha alaptalan a
+              bejelentés, a tartalom marad.
             </p>
             <button
               type="button"
@@ -108,8 +122,8 @@ export function ReportButton({
         ) : (
           <div className="space-y-3">
             <p className="text-[12.5px] leading-relaxed text-ink-muted">
-              Miért jelented ezt a tartalmat? (pl. jogsértő, csalás, sértő, spam) A bejelentés
-              után azonnal elrejtjük, amíg ellenőrizzük.
+              Miért jelented ezt a tartalmat? (pl. jogsértő, csalás, sértő, spam) Minden
+              bejelentést emberi szem néz át.
             </p>
             <textarea
               value={reason}
@@ -119,6 +133,14 @@ export function ReportButton({
               maxLength={1000}
               className="w-full resize-none rounded-[12px] border border-line bg-surface-alt px-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/30"
             />
+            {siteKey && (
+              <TurnstileWidget
+                ref={turnstileRef}
+                siteKey={siteKey}
+                onToken={setTurnstileToken}
+                className="flex justify-center"
+              />
+            )}
             {error && (
               <p className="text-[11.5px] font-semibold text-accent">{error}</p>
             )}
