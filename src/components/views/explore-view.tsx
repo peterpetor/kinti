@@ -611,6 +611,17 @@ export function ExploreView({
       new Set(businesses.filter((b) => (b.country ?? "CH") === country).map((b) => b.categoryId)),
     [businesses, country],
   );
+  // Kategóriánkénti darabszám az AKTUÁLIS országban — a kereső javaslataihoz.
+  // ⚠️ Ez szűri ki a nulla-találatos kategóriákat: azok felajánlása zsákutca.
+  const categoryCounts = useMemo(() => {
+    const m: Record<string, number> = {};
+    for (const b of businesses) {
+      if ((b.country ?? "CH") !== country) continue;
+      m[b.categoryId] = (m[b.categoryId] ?? 0) + 1;
+    }
+    return m;
+  }, [businesses, country]);
+
   const visibleCategories = useMemo(
     () => categories.filter((c) => c.id === "all" || c.id === cat || presentCatIds.has(c.id)),
     [categories, cat, presentCatIds],
@@ -676,6 +687,7 @@ export function ExploreView({
           onApplyCanton={setCanton}
           onApplyQuery={setQ}
           categories={categories}
+          categoryCounts={categoryCounts}
           placeholder={`Mit keresel? Pl. villanyszerelő ${CITY_IN_EXAMPLE[country] ?? CITY_IN_EXAMPLE.CH}`}
         />
       </div>

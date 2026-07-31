@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { heuristicParseSearch, type HeuristicCategory } from "@/lib/search-heuristic";
+import { buildSearchSuggestions } from "@/lib/search-suggest";
 
 /**
  * SmartSearchBar — EGY kereső, ami kétféleképp dolgozik:
@@ -33,6 +34,12 @@ interface Props {
    *  (pl. „fodrász" → Fodrász), hogy a gyakori „kat + hely" keresés AI-hívás
    *  nélkül feloldódjon. Üresen hagyva mindig az AI-hoz fordulunk. */
   categories?: HeuristicCategory[];
+  /**
+   * Kategóriánkénti darabszám az AKTUÁLIS országban — a gépelés közbeni
+   * javaslatokhoz. ⚠️ Enélkül nem tudnánk kiszűrni a nulla-találatos
+   * kategóriákat, és zsákutcát ajánlanánk.
+   */
+  categoryCounts?: Record<string, number>;
   placeholder?: string;
   className?: string;
 }
@@ -44,6 +51,7 @@ export function SmartSearchBar({
   onApplyCanton,
   onApplyQuery,
   categories,
+  categoryCounts,
   placeholder = "Mit keresel? Pl. villanyszerelő Zürichben",
   className,
 }: Props) {
@@ -51,6 +59,17 @@ export function SmartSearchBar({
   const [note, setNote] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [prefCountry] = usePreferredCountry();
+  // Gépelés közbeni javaslatok. ⚠️ A mező eddig NÉMA volt: 70 szakma van az
+  // adatbázisban, de a pill-sor csak néhányat mutat — aki nem tudta a szó
+  // pontos alakját, nem talált rá. A javaslat elgépelést is javít.
+  const [sugOpen, setSugOpen] = useState(false);
+  const suggestions = useMemo(
+    () =>
+      categories && categoryCounts
+        ? buildSearchSuggestions(value, categories, categoryCounts)
+        : [],
+    [value, categories, categoryCounts],
+  );
 
   async function runAi() {
     const q = value.trim();
@@ -102,7 +121,7 @@ export function SmartSearchBar({
   }
 
   return (
-    <div className={className}>
+    <div className={cn("relative", className)}>
       <div className="flex items-center gap-2 rounded-[18px] border border-line bg-surface px-3.5 py-3 shadow-card">
         <Icon name="search" size={20} className="shrink-0 text-ink-muted" />
         <input
@@ -114,12 +133,22 @@ export function SmartSearchBar({
           value={value}
           onChange={(e) => {
             onChange(e.target.value);
+            setSugOpen(true);
             if (note) setNote(null);
             if (error) setError(null);
           }}
+          onFocus={() => setSugOpen(true)}
+          // ⚠️ Késleltetett zárás: enélkül a blur ELŐBB tüzelne, mint a
+          // javaslatra való kattintás, és a választás elveszne.
+          onBlur={() => setTimeout(() => setSugOpen(false), 150)}
           onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              setSugOpen(false);
+              return;
+            }
             if (e.key === "Enter") {
               e.preventDefault();
+              setSugOpen(false);
               void runAi();
             }
           }}
@@ -161,6 +190,51 @@ export function SmartSearchBar({
           {!busy && <Icon name="search" size={13} strokeWidth={2.6} className="text-ink-faint" />}
         </button>
       </div>
+
+      {/* Gépelés közbeni javaslatok — a szakma nevére, darabszámmal.
+          ⚠️ Csak olyat kínálunk, amiben VAN találat (a nulla-találatos
+          kategória zsákutcába küldene). Az elgépelés-javítást külön jelöljük,
+          hogy a felhasználó lássa: nem azt írta, amit ajánlunk. */}
+      {sugOpen && suggestions.length > 0 && (
+        <ul
+          role="listbox"
+          aria-label="Keresési javaslatok"
+          className="absolute left-0 right-0 top-full z-30 mt-1.5 overflow-hidden rounded-[14px] border border-line bg-surface shadow-card-hover"
+        >
+          {suggestions.map((s) => (
+            <li key={s.categoryId}>
+              <button
+                type="button"
+                role="option"
+                aria-selected={false}
+                // onMouseDown: a blur ELŐTT tüzel, így a választás sosem vész el.
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onApplyCategory(s.categoryId);
+                  onApplyQuery("");
+                  onChange("");
+                  setSugOpen(false);
+                  setNote(`Szűrő: ${s.label}`);
+                }}
+                className="flex w-full items-center gap-2 px-3.5 py-2.5 text-left transition hover:bg-surface-alt active:bg-surface-alt"
+              >
+                <Icon name="search" size={14} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
+                <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-ink">
+                  {s.label}
+                  {s.fuzzy && (
+                    <span className="ml-1.5 text-[11px] font-semibold text-ink-muted">
+                      — erre gondoltál?
+                    </span>
+                  )}
+                </span>
+                <span className="shrink-0 rounded-full bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-muted">
+                  {s.count}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {error && <p className="mt-1.5 px-1 text-[11.5px] font-bold text-accent">{error}</p>}
       {note && (
