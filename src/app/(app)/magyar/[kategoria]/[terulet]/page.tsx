@@ -120,8 +120,14 @@ export default async function MagyarLanding({ params }: { params: Params }) {
         "@context": "https://schema.org",
         "@type": "ItemList",
         name: `Magyar ${category.label} — ${area.name}`,
+        // A `numberOfItems` a VALÓDI darabszám marad; csak a felsorolást vágjuk.
         numberOfItems: businesses.length,
-        itemListElement: businesses.map((b, i) => ({
+        // ⚠️ A felsorolás 30 tételre korlátozva. A legnagyobb oldalon
+        // (/magyar/orvos/nemetorszag, 189 cég) a teljes ItemList 26 kB volt egy
+        // amúgy is ~930 kB-os lapon — miközben a strukturált adat csak KAPASZKODÓ
+        // a keresőnek, nem a tartalom pótléka: a Google a lista elejét használja,
+        // a teljes felsorolásból nem lesz jobb találat. A látható lista teljes marad.
+        itemListElement: businesses.slice(0, 30).map((b, i) => ({
           "@type": "ListItem",
           position: i + 1,
           url: `${base}/szaknevsor/${b.id}`,
