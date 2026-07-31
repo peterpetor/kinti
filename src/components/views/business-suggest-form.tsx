@@ -109,11 +109,11 @@ export function BusinessSuggestForm({
   return (
     <form onSubmit={submit} className="space-y-3">
       <Section title="Vállalkozás neve" required>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Pl. Joe's Bolt" maxLength={120} className={inputCls} />
+        <input aria-label="Vállalkozás neve" aria-required="true" value={name} onChange={(e) => setName(e.target.value)} placeholder="Pl. Joe's Bolt" maxLength={120} className={inputCls} />
       </Section>
 
       <Section title="Kategória" required>
-        <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={inputCls}>
+        <select aria-label="Kategória" aria-required="true" value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={inputCls}>
           <option value="">Válassz kategóriát…</option>
           {cats.map((c) => (
             <option key={c.id} value={c.id}>{c.label}</option>
@@ -122,19 +122,19 @@ export function BusinessSuggestForm({
       </Section>
 
       <Section title="Hol van?" required>
-        <select value={cantonCode} onChange={(e) => setCantonCode(e.target.value)} className={inputCls}>
+        <select aria-label="Régió" aria-required="true" value={cantonCode} onChange={(e) => setCantonCode(e.target.value)} className={inputCls}>
           <option value="">Melyik {regionLabel(country).toLowerCase()}?</option>
           {regions.map((c) => (
             <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
           ))}
         </select>
-        <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Város / cím (opcionális)" maxLength={120} className={cn(inputCls, "mt-2")} />
+        <input aria-label="Város vagy cím (nem kötelező)" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Város / cím (opcionális)" maxLength={120} className={cn(inputCls, "mt-2")} />
       </Section>
 
       <Section title="Elérhetőség (opcionális)">
-        <input type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Telefon" maxLength={40} className={inputCls} />
-        <input type="url" inputMode="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="Weboldal (https://…)" maxLength={200} className={cn(inputCls, "mt-2")} />
-        <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Pár szó róla (opcionális)" rows={2} maxLength={600} className={cn(inputCls, "mt-2 resize-none")} />
+        <input aria-label="Telefonszám (nem kötelező)" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Telefon" maxLength={40} className={inputCls} />
+        <input aria-label="Weboldal (nem kötelező)" type="url" inputMode="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="Weboldal (https://…)" maxLength={200} className={cn(inputCls, "mt-2")} />
+        <textarea aria-label="Pár szó a vállalkozásról (nem kötelező)" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Pár szó róla (opcionális)" rows={2} maxLength={600} className={cn(inputCls, "mt-2 resize-none")} />
       </Section>
 
       {error && <p className="px-1 text-[12px] font-semibold text-accent">{error}</p>}

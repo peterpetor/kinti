@@ -144,7 +144,7 @@ export function EmployerRegForm({
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           className={cn(inputCls, "resize-none")}
-          placeholder="Mivel foglalkoztok? Milyen a vállalati kultúra?"
+          aria-label="Cég bemutatása" placeholder="Mivel foglalkoztok? Milyen a vállalati kultúra?"
         />
       </div>
 

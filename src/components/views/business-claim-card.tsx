@@ -78,19 +78,19 @@ export function BusinessClaimCard({ businessId, businessName }: { businessId: st
         <form onSubmit={submit} className="mt-3 space-y-2">
           <input
             type="text" value={name} onChange={(e) => setName(e.target.value)}
-            placeholder="Neved" maxLength={120} className={inputCls}
+            aria-label="Neved" placeholder="Neved" maxLength={120} className={inputCls}
           />
           <input
             type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-            placeholder="E-mail (ide küldjük a kezelő-linket) *" autoComplete="email" maxLength={160} className={inputCls}
+            aria-label="E-mail cím" placeholder="E-mail (ide küldjük a kezelő-linket) *" autoComplete="email" maxLength={160} className={inputCls}
           />
           <input
             type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
-            placeholder="Telefon (opcionális)" maxLength={40} className={inputCls}
+            aria-label="Telefonszám (nem kötelező)" placeholder="Telefon (opcionális)" maxLength={40} className={inputCls}
           />
           <textarea
             value={message} onChange={(e) => setMessage(e.target.value)}
-            placeholder="Pár szó, hogy ez tényleg a te vállalkozásod (opcionális)" rows={2} maxLength={1000}
+            aria-label="Indoklás: miért a tiéd ez a vállalkozás (nem kötelező)" placeholder="Pár szó, hogy ez tényleg a te vállalkozásod (opcionális)" rows={2} maxLength={1000}
             className={cn(inputCls, "resize-none")}
           />
           {error && <p className="text-[11.5px] font-semibold text-accent">{error}</p>}

@@ -91,14 +91,14 @@ export function B2bComposer({
       <div className="space-y-2.5">
         <input
           className={inputCls}
-          placeholder="Projekt címe (pl. 2 festőt keresek bécsi munkára)"
+          aria-label="Projekt címe" placeholder="Projekt címe (pl. 2 festőt keresek bécsi munkára)"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={120}
         />
         <textarea
           className={`${inputCls} min-h-[90px] resize-y`}
-          placeholder="Részletek: mikor, meddig, milyen feltételekkel, mit kell tudni…"
+          aria-label="Projekt részletei" placeholder="Részletek: mikor, meddig, milyen feltételekkel, mit kell tudni…"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           maxLength={2000}
@@ -111,7 +111,7 @@ export function B2bComposer({
           </select>
           <input
             className={inputCls}
-            placeholder="Város (opcionális)"
+            aria-label="Város (nem kötelező)" placeholder="Város (opcionális)"
             value={city}
             onChange={(e) => setCity(e.target.value)}
             maxLength={80}
@@ -128,7 +128,7 @@ export function B2bComposer({
           type="tel"
           inputMode="tel"
           autoComplete="tel"
-          placeholder="Kapcsolat-telefon (a jelentkezőknek)"
+          aria-label="Kapcsolattartó telefonszáma" placeholder="Kapcsolat-telefon (a jelentkezőknek)"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           maxLength={40}

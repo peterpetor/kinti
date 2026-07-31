@@ -210,7 +210,7 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
                 type="email"
                 value={emailAddr}
                 onChange={(e) => setEmailAddr(e.target.value)}
-                placeholder="email@pelda.hu"
+                aria-label="E-mail cím" placeholder="email@pelda.hu"
                 autoComplete="email"
                 required
                 className="w-full rounded-[14px] border border-line bg-surface px-3.5 py-2.5 text-[14px] font-semibold text-ink placeholder-ink-faint focus:border-primary focus:outline-none shadow-sm"

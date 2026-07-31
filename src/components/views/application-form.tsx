@@ -146,7 +146,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
           value={form.fullName}
           onChange={(e) => setForm({ ...form, fullName: e.target.value })}
           className={inputCls}
-          placeholder="Kovács János"
+          aria-label="Neved" placeholder="Kovács János"
         />
       </div>
 
@@ -160,7 +160,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           className={inputCls}
-          placeholder="janos@example.com"
+          aria-label="E-mail cím" placeholder="janos@example.com"
         />
         <p className="mt-1 text-[11.5px] text-ink-faint">
           A munkáltató erre az email-re fogja felvenni veled a kapcsolatot.
@@ -189,7 +189,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
           value={form.message}
           onChange={(e) => setForm({ ...form, message: e.target.value })}
           className={cn(inputCls, "resize-none")}
-          placeholder="Miért Te vagy a legalkalmasabb erre az állásra?"
+          aria-label="Bemutatkozás: miért téged válasszanak" placeholder="Miért Te vagy a legalkalmasabb erre az állásra?"
         />
       </div>
 

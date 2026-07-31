@@ -228,6 +228,7 @@ export function ReviewForm({
           jelenik meg; a trágár szöveget a szerver beküldéskor elutasítja. */}
       <Section title="Írnál róla pár mondatot? (opcionális)">
         <textarea
+          aria-label="Vélemény szövege"
           value={form.body}
           onChange={(e) => setField("body", e.target.value)}
           placeholder="Pl. Pontos volt, korrekt áron dolgozott, magyarul intéztünk mindent…"
@@ -246,6 +247,7 @@ export function ReviewForm({
       <Section title="Becenév / keresztnév (opcionális)">
         <input
           type="text"
+          aria-label="Becenév vagy keresztnév (nem kötelező)"
           value={form.reviewerName}
           onChange={(e) => setField("reviewerName", e.target.value)}
           placeholder="Pl. Kata — vagy hagyd üresen"
@@ -266,6 +268,7 @@ export function ReviewForm({
           <div>
             <input
               type="email"
+              aria-label="E-mail cím (nem kötelező)"
               value={form.email}
               onChange={(e) => setField("email", e.target.value)}
               placeholder="Email — vagy hagyd üresen"

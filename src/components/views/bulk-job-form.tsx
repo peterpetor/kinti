@@ -125,7 +125,7 @@ export function BulkJobForm() {
             value={row.title}
             onChange={(e) => update(i, "title", e.target.value)}
             className={inputCls}
-            placeholder="Pozíció (pl. Pincér)"
+            aria-label="Pozíció megnevezése" placeholder="Pozíció (pl. Pincér)"
           />
 
           <div className="grid grid-cols-2 gap-2">
@@ -178,7 +178,7 @@ export function BulkJobForm() {
             value={row.description}
             onChange={(e) => update(i, "description", e.target.value)}
             className={cn(inputCls, "resize-none")}
-            placeholder="Rövid leírás (feladatok, elvárások) — min. 20 karakter"
+            aria-label="Rövid leírás" placeholder="Rövid leírás (feladatok, elvárások) — min. 20 karakter"
           />
         </div>
       ))}

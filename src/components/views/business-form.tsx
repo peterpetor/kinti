@@ -384,7 +384,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           type="text"
           value={form.name}
           onChange={(e) => setField("name", e.target.value)}
-          placeholder="Pl. Kovács Anna Fodrászat"
+          aria-label="Vállalkozás neve" placeholder="Pl. Kovács Anna Fodrászat"
           maxLength={BUSINESS_LIMITS.nameMax}
           className={inputCls(errors.name)}
         />
@@ -410,7 +410,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           type="text"
           value={form.categoryLabel}
           onChange={(e) => setField("categoryLabel", e.target.value)}
-          placeholder="Pontos szakma (opcionális) — pl. Női fodrász, Burkoló"
+          aria-label="Pontos szakma (nem kötelező)" placeholder="Pontos szakma (opcionális) — pl. Női fodrász, Burkoló"
           maxLength={BUSINESS_LIMITS.labelMax}
           className={cn(inputCls(errors.categoryLabel), "mt-2")}
         />
@@ -528,7 +528,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         <textarea
           value={form.blurb}
           onChange={(e) => setField("blurb", e.target.value)}
-          placeholder="Pár mondat a szolgáltatásodról…"
+          aria-label="Rövid bemutatkozás" placeholder="Pár mondat a szolgáltatásodról…"
           maxLength={BUSINESS_LIMITS.blurbMax}
           rows={3}
           className={cn(inputCls(errors.blurb), "mt-2 resize-none")}
@@ -700,7 +700,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
               type="text"
               value={form.licenseNumber}
               onChange={(e) => setField("licenseNumber", e.target.value)}
-              placeholder="Pl. FMH 12345 · GLN 7601003456789 · ZH RA 2024/001"
+              aria-label="Hatósági engedélyszám vagy kamarai szám (nem kötelező)" placeholder="Pl. FMH 12345 · GLN 7601003456789 · ZH RA 2024/001"
               maxLength={120}
               className={inputCls(errors.licenseNumber)}
             />
@@ -737,7 +737,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           type="email"
           value={form.email}
           onChange={(e) => setField("email", e.target.value)}
-          placeholder="te@example.ch (nem kötelező)"
+          aria-label="Kapcsolattartó e-mail cím (nem kötelező)" placeholder="te@example.ch (nem kötelező)"
           autoComplete="email"
           maxLength={BUSINESS_LIMITS.emailMax}
           className={inputCls(errors.email)}

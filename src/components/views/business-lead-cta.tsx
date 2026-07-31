@@ -106,10 +106,16 @@ export function BusinessLeadCta({
               Írd le, mire kérsz ajánlatot — a vállalkozó közvetlenül a megadott
               e-mail-címedre válaszol.
             </p>
-            <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder="Neved *" maxLength={80} autoComplete="name" />
-            <input className={inputCls} type="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail címed *" maxLength={200} autoComplete="email" />
-            <input className={inputCls} inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Telefonszám (opcionális)" maxLength={40} autoComplete="tel" />
-            <textarea className={`${inputCls} min-h-[96px] resize-y`} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Mire kérsz ajánlatot? (mit, hol, mikor…) *" maxLength={2000} />
+            {/* ⚠️ `aria-label` MINDEN mezőn: ezek CSAK helykitöltővel voltak
+                jelölve, az viszont gépeléskor ELTŰNIK, halvány a kontrasztja, és
+                a képernyőolvasók nem egységesen jelentik be címkeként (WCAG 2.1
+                A, 3.3.2). A látvány nem változik — a helykitöltő marad a látható
+                útmutató, az `aria-label` a stabil, felolvasható mezőnév.
+                A kötelezőséget `aria-required` jelzi, nem csak a csillag. */}
+            <input aria-label="Neved" aria-required="true" className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder="Neved *" maxLength={80} autoComplete="name" />
+            <input aria-label="E-mail címed" aria-required="true" className={inputCls} type="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail címed *" maxLength={200} autoComplete="email" />
+            <input aria-label="Telefonszám (nem kötelező)" className={inputCls} inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Telefonszám (opcionális)" maxLength={40} autoComplete="tel" />
+            <textarea aria-label="Mire kérsz ajánlatot" aria-required="true" className={`${inputCls} min-h-[96px] resize-y`} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Mire kérsz ajánlatot? (mit, hol, mikor…) *" maxLength={2000} />
             {/* Honeypot — botok kitöltik, emberek nem. */}
             <input type="text" tabIndex={-1} autoComplete="off" value={hp} onChange={(e) => setHp(e.target.value)} className="pointer-events-none absolute -left-[9999px] h-0 w-0 opacity-0" aria-hidden="true" />
             {error && <p className="text-[12.5px] font-semibold text-accent">{error}</p>}

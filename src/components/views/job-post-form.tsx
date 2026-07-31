@@ -149,7 +149,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           className={inputCls}
-          placeholder="Pl. Tapétázó / Festő szakember"
+          aria-label="Álláshirdetés címe" placeholder="Pl. Tapétázó / Festő szakember"
         />
       </div>
 
@@ -227,7 +227,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
             value={form.salaryMin}
             onChange={(e) => setForm({ ...form, salaryMin: e.target.value })}
             className={inputCls}
-            placeholder="5000"
+            aria-label="Bér alsó határa" placeholder="5000"
           />
         </div>
         <div>
@@ -239,7 +239,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
             value={form.salaryMax}
             onChange={(e) => setForm({ ...form, salaryMax: e.target.value })}
             className={inputCls}
-            placeholder="6500"
+            aria-label="Bér felső határa" placeholder="6500"
           />
         </div>
         <div>
@@ -269,7 +269,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           className={cn(inputCls, "resize-none")}
-          placeholder="Milyen feladatokat kell ellátni? Milyen a munkakörnyezet?"
+          aria-label="Munkakör leírása" placeholder="Milyen feladatokat kell ellátni? Milyen a munkakörnyezet?"
         />
       </div>
 
@@ -282,7 +282,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
           value={form.requirements}
           onChange={(e) => setForm({ ...form, requirements: e.target.value })}
           className={cn(inputCls, "resize-none")}
-          placeholder="Nyelvtudás, végzettség, tapasztalat..."
+          aria-label="Elvárások" placeholder="Nyelvtudás, végzettség, tapasztalat..."
         />
       </div>
 

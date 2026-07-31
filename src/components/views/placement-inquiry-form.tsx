@@ -72,7 +72,7 @@ export function PlacementInquiryForm({ turnstileSiteKey }: { turnstileSiteKey: s
     <form onSubmit={submit} className="space-y-3" noValidate>
       <div className="grid grid-cols-2 gap-2">
         <input value={form.company} onChange={(e) => set("company", e.target.value)} maxLength={120}
-          placeholder="Cég neve *" required className={inputCls} />
+          aria-label="Cég neve" placeholder="Cég neve *" required className={inputCls} />
         <select value={form.country} onChange={(e) => set("country", e.target.value)} className={inputCls}>
           <option value="AT">Ausztria</option>
           <option value="DE">Németország</option>
@@ -81,16 +81,16 @@ export function PlacementInquiryForm({ turnstileSiteKey }: { turnstileSiteKey: s
       </div>
       <div className="grid grid-cols-2 gap-2">
         <input value={form.name} onChange={(e) => set("name", e.target.value)} maxLength={80}
-          placeholder="Kapcsolattartó neve *" required className={inputCls} />
+          aria-label="Kapcsolattartó neve" placeholder="Kapcsolattartó neve *" required className={inputCls} />
         <input value={form.phone} onChange={(e) => set("phone", e.target.value)} maxLength={40}
-          placeholder="Telefon (opcionális)" className={inputCls} />
+          aria-label="Telefonszám (nem kötelező)" placeholder="Telefon (opcionális)" className={inputCls} />
       </div>
       <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} maxLength={254}
-        placeholder="Email *" required autoComplete="email" className={inputCls} />
+        aria-label="E-mail cím" placeholder="Email *" required autoComplete="email" className={inputCls} />
       <input value={form.position} onChange={(e) => set("position", e.target.value)} maxLength={120}
-        placeholder="Milyen pozícióra keresel? * (pl. szakács, villanyszerelő, ápoló)" required className={inputCls} />
+        aria-label="Keresett pozíció" placeholder="Milyen pozícióra keresel? * (pl. szakács, villanyszerelő, ápoló)" required className={inputCls} />
       <textarea value={form.message} onChange={(e) => set("message", e.target.value)} maxLength={1200} rows={3}
-        placeholder="Röviden a feltételekről: hány fő, mikortól, bér-sáv, helyszín… (opcionális)"
+        aria-label="Feltételek röviden (nem kötelező)" placeholder="Röviden a feltételekről: hány fő, mikortól, bér-sáv, helyszín… (opcionális)"
         className="w-full rounded-[12px] border border-line bg-surface-alt px-3 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/30" />
 
       {/* Honeypot */}

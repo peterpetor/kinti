@@ -187,7 +187,7 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
                   {SERVICE_CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>)}
                 </select>
                 <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120}
-                  placeholder="Pl. Magyarul beszélő villanyszerelőt keresek" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink" />
+                  aria-label="Mit keresel" placeholder="Pl. Magyarul beszélő villanyszerelőt keresek" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink" />
                 {/* Hely: régió-választó (a szakik régió-célzott értesítéséhez) +
                     SZABAD-SZÖVEGES település — falu/kisváros is (user-visszajelzés:
                     a zárt város-lista kizárta a kisebb településeket). */}
@@ -197,18 +197,18 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
                     {regions.map((r) => <option key={r.code} value={r.code}>{r.name}</option>)}
                   </select>
                   <input value={city} onChange={(e) => setCity(e.target.value)} maxLength={60} list="keresek-telepules"
-                    placeholder="Település (falu is)" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink" />
+                    aria-label="Település" placeholder="Település (falu is)" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink" />
                   <datalist id="keresek-telepules">
                     {cityList.map((c) => <option key={c.name} value={c.name} />)}
                   </datalist>
                 </div>
                 <input value={whenText} onChange={(e) => setWhenText(e.target.value)} maxLength={60}
-                  placeholder="Mikorra? (pl. jövő hét)" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink" />
+                  aria-label="Mikorra kell" placeholder="Mikorra? (pl. jövő hét)" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13px] text-ink" />
                 <textarea value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={600} rows={2}
-                  placeholder="Részletek (opcionális)" className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink" />
+                  aria-label="Részletek (nem kötelező)" placeholder="Részletek (opcionális)" className="w-full rounded-[10px] border border-line bg-surface-alt px-3 py-2 text-[13px] text-ink" />
                 <div>
                   <input value={contact} onChange={(e) => setContact(e.target.value)} maxLength={120}
-                    placeholder="Elérhetőség: telefon, WhatsApp, e-mail…" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink" />
+                    aria-label="Elérhetőséged" placeholder="Elérhetőség: telefon, WhatsApp, e-mail…" className="h-10 w-full rounded-[10px] border border-line bg-surface-alt px-3 text-[13.5px] text-ink" />
                   <p className="mt-1 text-[11px] text-ink-faint">Ez <strong>nyilvánosan</strong> megjelenik a hirdetésen, hogy a szakik elérjenek. Csak annyit adj meg, amit megosztanál.</p>
                 </div>
 

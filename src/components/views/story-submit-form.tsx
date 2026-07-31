@@ -137,13 +137,13 @@ export function StorySubmitForm({ turnstileSiteKey }: { turnstileSiteKey: string
         placeholder={`Cím — pl. Hogyan lettem autószerelő ${EXAMPLE_CITY[effCountry] ?? EXAMPLE_CITY[DEFAULT_COUNTRY]}`} className={inputCls} />
       <div className="grid grid-cols-2 gap-2">
         <input value={authorName} onChange={(e) => setAuthorName(e.target.value)} maxLength={60}
-          placeholder="Neved / beceneved" className={inputCls} />
+          aria-label="Neved vagy beceneved" placeholder="Neved / beceneved" className={inputCls} />
         <select value={effCountry} onChange={(e) => setCountry(e.target.value)} className={inputCls}>
           {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.flag} {c.name}</option>)}
         </select>
       </div>
       <input value={city} onChange={(e) => setCity(e.target.value)} maxLength={60}
-        placeholder="Város (opcionális)" className={inputCls} />
+        aria-label="Város (nem kötelező)" placeholder="Város (opcionális)" className={inputCls} />
       <div>
         {/* Formázó-gombok — nem kell markdown-t ismerni (user-kérés). */}
         <div className="mb-1.5 flex gap-1.5">
@@ -180,7 +180,7 @@ export function StorySubmitForm({ turnstileSiteKey }: { turnstileSiteKey: string
 
       <div>
         <input value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} maxLength={160}
-          placeholder="E-mail (opcionális — szólunk, ha megjelent)" className={inputCls} />
+          aria-label="E-mail cím (nem kötelező)" placeholder="E-mail (opcionális — szólunk, ha megjelent)" className={inputCls} />
         <p className="mt-1 text-[11px] text-ink-faint">Az e-mail-címed <strong>nem jelenik meg</strong> — csak az értesítéshez használjuk.</p>
       </div>
 
