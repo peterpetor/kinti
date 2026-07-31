@@ -43,16 +43,29 @@ for (const seed of SEEDS) {
 }
 console.log(`\n${links.size} egyedi belső hivatkozás a ${SEEDS.length} kiinduló oldalról\n`);
 
+// ⚠️ ALACSONY PÁRHUZAMOSSÁG ÉS SZÜNET — TANULT LECKE. A szkript először 8
+// párhuzamos szálon futott, és tömegesen 503-at kapott OLYAN oldalakra is
+// (/munkaltato, /szaknevsor/uj), amelyek egyesével lekérve hibátlanul 200-at
+// adnak. Vagyis a terhelés MAGA váltotta ki a hibát, és a mérés hamis riasztást
+// termelt. Egy link-ellenőrzőnek a NORMÁLIS használatot kell utánoznia,
+// különben nem tudod megkülönböztetni a valódi hibát a saját zajodtól.
 const bad = [];
 const queue = [...links];
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function worker() {
   while (queue.length) {
     const href = queue.shift();
     const { status, err } = await get(BASE + href);
-    if (status !== 200) bad.push({ href, status, err });
+    if (status !== 200) {
+      // Egy próba nem elég: újramérés szünet után, mielőtt hibának mondanánk.
+      await sleep(2500);
+      const retry = await get(BASE + href);
+      if (retry.status !== 200) bad.push({ href, status: retry.status, err: retry.err });
+    }
+    await sleep(400);
   }
 }
-await Promise.all(Array.from({ length: 8 }, worker));
+await Promise.all(Array.from({ length: 2 }, worker));
 
 if (bad.length === 0) {
   console.log("✓ Minden belső hivatkozás 200-at ad.");
