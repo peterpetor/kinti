@@ -6,6 +6,7 @@ import { GalleryUploader } from "@/components/views/gallery-uploader";
 import { BusinessManageForm } from "@/components/views/business-manage-form";
 import { BusinessAnalyticsDashboard } from "@/components/views/business-analytics-card";
 import { ReviewReplyForm } from "@/components/views/review-reply-form";
+import { ReviewRequestCard } from "@/components/views/review-request-card";
 import { handleFromId } from "@/lib/handle";
 import {
   getBusinessAnalytics,
@@ -82,6 +83,20 @@ export default async function BusinessManagePage({ params }: { params: { token: 
       )}
 
       <BusinessManageForm business={business} token={params.token} />
+
+      {/* ⚠️ VÉLEMÉNYKÉRŐ ESZKÖZ — a hideg start feloldása.
+          A szaknévsorban 2353 cég van és NULLA vélemény. A vélemény-gépezet
+          hibátlan, de mind a három kiváltója azt feltételezi, hogy a felhasználó
+          ELŐBB kapcsolatba lépett egy céggel az appon át — eddig 1 hívás és 0
+          ajánlatkérés volt, vagyis a hurok bemenete üres. Az első véleményeket
+          MEG KELL KÉRNI: minden katalógus így indul, a cégek a meglévő
+          ügyfeleiktől. A `?ertekeles=1` mélylink már működött, csak a vállalkozó
+          sehol nem látta. SZÁNDÉKOSAN nem PRO-funkció. */}
+      <ReviewRequestCard
+        businessId={business.id}
+        businessName={business.name}
+        reviewCount={reviews.length}
+      />
 
       {/* Vélemények — nyilvános válaszadás (ingyenes; a válasz a publikus profilon
           is megjelenik). */}

@@ -15,6 +15,17 @@ export const metadata = {
 const MESSAGE_TEMPLATE = `Szia! Rád találtam a Kinti magyar szaknévsorában — a profilod már fent van, ingyen (nem én tettem fel, egy nyilvános forrásból került be). Ha szeretnéd, 2 perc alatt átveheted és kiegészítheted (fotó, nyitvatartás, weboldal): {profil_link}
 Ha nem érdekel, bátran hagyd figyelmen kívül — a profil enélkül is látszik.`;
 
+/**
+ * ⚠️ A véleménykérő ajánlat — EZ oldja a hideg startot (2353 cég, 0 vélemény).
+ * A vállalkozó a saját, MEGLÉVŐ ügyfeleit kérdezi meg; a link egyből a
+ * véleményíró űrlapot nyitja, és ehhez a profil átvétele SEM szükséges.
+ */
+const REVIEW_MESSAGE_TEMPLATE = `Szia! A Kinti magyar szaknévsorában fent van a vállalkozásod, és látom, hogy még nincs rajta vélemény. Ez a legtöbbet segítene: aki keresgél, a vélemények alapján dönt.
+
+Ha van pár elégedett magyar ügyfeled, küldd el nekik ezt a linket — egyből a véleményíró űrlapot nyitja meg, fiók nélkül, egy perc az egész: {velemeny_link}
+
+(A véleményeket közzététel előtt átnézzük, és nem lehet őket megrendelni — csak kérni.)`;
+
 export default async function AdminUnclaimedPage({
   searchParams,
 }: {
@@ -58,6 +69,28 @@ export default async function AdminUnclaimedPage({
         </p>
         <p className="mt-1.5 text-[11px] text-ink-faint">
           {"{profil_link}"} = a lenti lista "Profil ↗" linkje az adott cégnél.
+        </p>
+      </details>
+
+      {/* ⚠️ A MÁSODIK AJÁNLAT — ez oldja a hideg startot.
+          A szaknévsorban 2353 cég van és NULLA vélemény. A vélemény-gépezet
+          hibátlan, de mind a három kiváltója azt feltételezi, hogy a felhasználó
+          ELŐBB kapcsolatba lépett egy céggel az appon át — eddig 1 hívás és 0
+          ajánlatkérés volt, vagyis a hurok bemenete üres, és magától sosem indul.
+          Minden katalógus (Google, Trustpilot) ugyanígy indul: a cégek a MEGLÉVŐ
+          ügyfeleiktől kérik az első véleményeket. Ehhez NEM kell átvétel — a
+          `?ertekeles=1` link bárkinél egyből a véleményíró űrlapot nyitja. */}
+      <details className="rounded-card border border-dashed border-primary/40 bg-primary/[0.04] px-4 py-3 text-[12.5px] text-ink-muted">
+        <summary className="cursor-pointer font-bold text-ink">
+          ⭐ Véleménykérő üzenet minta — ezzel indul a hideg start
+        </summary>
+        <p className="mt-2 whitespace-pre-line rounded-[10px] bg-surface p-3 text-[12px] leading-relaxed text-ink">
+          {REVIEW_MESSAGE_TEMPLATE}
+        </p>
+        <p className="mt-1.5 text-[11px] text-ink-faint">
+          {"{velemeny_link}"} = a profil URL <code>?ertekeles=1</code> végződéssel — egyből a
+          véleményíró űrlapot nyitja meg. A CSV-export külön oszlopban tartalmazza. ⚠️ Átvétel
+          NEM kell hozzá, tehát ez a leggyorsabb út az első véleményekhez.
         </p>
       </details>
 

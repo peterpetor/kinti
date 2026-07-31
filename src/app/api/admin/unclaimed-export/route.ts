@@ -29,7 +29,12 @@ export async function GET(req: Request) {
   const rows = await getUnclaimedBusinesses({ q, country, limit: 5000, offset: 0 });
 
   const baseUrl = getCloudflareEnv().PUBLIC_BASE_URL?.replace(/\/$/, "") || url.origin;
-  const header = ["Cégnév", "Kategória", "Ország", "Telefon", "Cím", "Profil URL"].join(",");
+  // ⚠️ A VÉLEMÉNYKÉRŐ LINK is bekerül. A megkeresésnek KÉT ajánlata van, és a
+  // második a fontosabb: „vedd át a profilod" (hosszú távú) ÉS „kérd meg pár
+  // ügyfeled, hogy írjon rólad" (ez oldja a hideg startot — 2353 cég, 0
+  // vélemény). A `?ertekeles=1` egyből a véleményíró űrlapot nyitja, tehát a
+  // vállalkozónak elég továbbküldenie; átvétel sem kell hozzá.
+  const header = ["Cégnév", "Kategória", "Ország", "Telefon", "Cím", "Profil URL", "Véleménykérő link"].join(",");
   const lines = rows.map((b) =>
     [
       csvCell(b.name),
@@ -38,6 +43,7 @@ export async function GET(req: Request) {
       csvCell(b.phone),
       csvCell(b.address),
       csvCell(`${baseUrl}/szaknevsor/${b.id}`),
+      csvCell(`${baseUrl}/szaknevsor/${b.id}?ertekeles=1`),
     ].join(","),
   );
   const csv = "﻿" + [header, ...lines].join("\n");
