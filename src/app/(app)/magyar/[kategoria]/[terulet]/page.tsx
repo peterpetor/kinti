@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { BusinessCard, Icon, ScreenHeader } from "@/components/ui";
 import { getBusinessesForList, getCategories } from "@/lib/repo";
-import { areaFromSlug, businessInArea, areasForBusiness, COUNTRY_NAMES } from "@/lib/seo-areas";
+import { areaFromSlug, businessInArea, SEO_AREAS, COUNTRY_NAMES } from "@/lib/seo-areas";
 import { safeJsonLdStringify } from "@/lib/json-ld";
 
 export const runtime = "edge";
@@ -44,8 +44,14 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   // ugyanaz az adatforrás, mint a lenti oldal-render, hogy ne fusson kétszer
   // teljes SELECT * a businesses táblán minden metaadat-generáláskor (37+ SEO
   // régió-oldal, gyakran botok/AI-crawlerek látogatják — 2026-07-19 audit).
-  const all = (await getBusinessesForList()).filter((b) => b.categoryId === category.id);
-  const hasContent = all.some((b) => businessInArea(b, area));
+  // ⚠️ EGYETLEN, KORÁN KILÉPŐ pásztázás — nem `filter().some()`. A korábbi alak
+  // előbb felépített egy köztes tömböt a kategória MINDEN cégéből (a legnagyobb
+  // oldalon 189 elem), és csak utána keresett benne. Ez a route CPU-limitbe
+  // futott élesben (ld. a komponens fölötti megjegyzést), és minden fölösleges
+  // menet számít. A legolcsóbb feltétel megy előre.
+  const hasContent = (await getBusinessesForList()).some(
+    (b) => b.categoryId === category.id && businessInArea(b, area),
+  );
 
   const url = `https://kinti.app/magyar/${params.kategoria}/${params.terulet}`;
   const image = "https://kinti.app/icons/og-default.png";
@@ -74,22 +80,34 @@ export default async function MagyarLanding({ params }: { params: Params }) {
   // EGY (cache-elt, karcsú) lekérdezésből dolgozik minden szekció (lista +
   // kapcsolódó linkek) — ld. a generateMetadata melletti jegyzetet.
   const everything = await getBusinessesForList();
-  const byCategory = everything.filter((b) => b.categoryId === category.id);
+
+  // ⚠️⚠️ ORSZÁG-SZŰRÉS ELŐSZÖR. Ez a legolcsóbb szűrő (egy mező-hasonlítás),
+  // és utána MINDEN további menet a töredékén fut — a `businessInArea` amúgy is
+  // ezzel kezdi. 2353 sorból pl. Németországra ~1050 marad.
+  const inCountry = everything.filter((b) => (b.country || "CH") === area.country);
+  const byCategory = inCountry.filter((b) => b.categoryId === category.id);
   const businesses = byCategory.filter((b) => businessInArea(b, area));
 
-  // Kapcsolódó területek ugyanebben a kategóriában — CSAK ahol van találat
-  // (nincs „thin content" link üres oldalakra).
-  const otherAreaSlugs = new Map<string, string>(); // slug → name
-  for (const b of byCategory) {
-    for (const a of areasForBusiness(b)) {
-      if (a.slug !== area.slug) otherAreaSlugs.set(a.slug, a.name);
-    }
+  // ⚠️ Kapcsolódó területek — MEGFORDÍTOTT ciklus, korai kilépéssel.
+  //
+  // A korábbi alak minden céghez végigpásztázta az ÖSSZES SEO-területet
+  // (`areasForBusiness`), vagyis a legnagyobb oldalon 189 cég × 107 terület =
+  // **20 223** `businessInArea` hívás, mindegyik string-műveletekkel. Ez volt a
+  // route CPU-limitbe futásának fő oka.
+  //
+  // Most területenként kérdezünk, `some()`-mal (az első találatnál kilép), és
+  // csak az AZONOS ORSZÁG területeit nézzük — a 10. találat után megállunk.
+  const otherAreas: [string, string][] = [];
+  for (const a of SEO_AREAS) {
+    if (a.country !== area.country || a.slug === area.slug) continue;
+    if (byCategory.some((b) => businessInArea(b, a))) otherAreas.push([a.slug, a.name]);
+    if (otherAreas.length >= 10) break;
   }
-  const otherAreas = [...otherAreaSlugs.entries()].slice(0, 10);
 
   // Más szakmák EZEN a területen — csak ahol tényleg van találat.
-  const inArea = everything.filter((b) => businessInArea(b, area));
-  const otherCatIds = new Set(inArea.map((b) => b.categoryId));
+  // (Az ország-szűrt halmazon fut, nem a teljes 2353 soron.)
+  const otherCatIds = new Set<string>();
+  for (const b of inCountry) if (businessInArea(b, area)) otherCatIds.add(b.categoryId);
   const otherCategories = categories
     .filter((c) => otherCatIds.has(c.id) && c.id !== category.id && c.id !== "all")
     .slice(0, 10);

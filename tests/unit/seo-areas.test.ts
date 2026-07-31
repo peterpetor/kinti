@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { SEO_AREAS, areaFromSlug, addressMatchesCity, businessInArea } from "@/lib/seo-areas";
+import { SEO_AREAS, areaFromSlug, addressMatchesCity, businessInArea, areasForBusiness } from "@/lib/seo-areas";
 import { REGIONS } from "@/lib/regions";
 import type { Business } from "@/lib/types";
 
@@ -97,5 +97,57 @@ describe("businessInArea — város-szintű terület", () => {
     const de = areaFromSlug("nemetorszag")!;
     expect(businessInArea(biz({ country: "DE", canton: "SH" }), de)).toBe(true);
     expect(businessInArea(biz({ country: "AT", canton: "W" }), de)).toBe(false);
+  });
+});
+
+/**
+ * ⚠️ ÉLESBEN MÉRT HIBA regresszió-védelme.
+ *
+ * Az `areasForBusiness` eredetileg a TELJES `SEO_AREAS` tömböt (107 elem)
+ * végigpásztázta MINDEN vállalkozásra. A /magyar index-hubon ez 2353 cég ×
+ * 107 terület = 251 771 `businessInArea` hívás volt — a route a Cloudflare
+ * CPU-limitjébe futott, és a teljes /magyar SEO-fa (1056 URL) 520/503-at adott.
+ *
+ * A javítás ország + régió-kód szerint előindexel. Ez a teszt azt köti, hogy az
+ * optimalizálás EGZAKT: pontosan ugyanazt adja, mint a naiv végigpásztázás.
+ */
+describe("areasForBusiness — az előindexelt változat EGZAKT", () => {
+  const naive = (b: Parameters<typeof areasForBusiness>[0]) =>
+    SEO_AREAS.filter((a) => businessInArea(b, a));
+
+  const samples: Parameters<typeof areasForBusiness>[0][] = [
+    // Minden ország, régió-kóddal és anélkül.
+    { country: "CH", canton: "ZH", address: "Bahnhofstrasse 1, 8001 Zürich" },
+    { country: "CH", canton: null, address: "8001 Zürich" },            // PLZ-ből oldódik fel
+    { country: "CH", canton: null, address: "Genf" },
+    { country: "CH", canton: "BE", address: "Spitalgasse 18, 3011 Bern" },
+    { country: "AT", canton: "W", address: "Schottenring 19, 1010 Wien" },
+    { country: "AT", canton: "ST", address: "Graz" },
+    { country: "AT", canton: null, address: "Bécs" },
+    { country: "DE", canton: "BY", address: "Marienplatz 1, 80331 München" },
+    { country: "DE", canton: "NW", address: "Köln" },
+    { country: "DE", canton: "NW", address: "Kölner Straße 5, 40211 Düsseldorf" }, // szó-határos csapda
+    { country: "NL", canton: "NH", address: "Amsterdam" },
+    { country: "NL", canton: null, address: "Rotterdam" },
+    { country: "GB", canton: "LDN", address: "London" },
+    { country: "GB", canton: null, address: "Manchester" },
+    { country: "ES", canton: "MD", address: "Madrid" },
+    { country: "ES", canton: null, address: "Barcelona" },
+    // Hiányos / szélső esetek.
+    { country: "CH", canton: null, address: null },
+    { country: "DE", canton: "XX", address: "ismeretlen" },  // nem létező régió-kód
+    { country: "XX" as never, canton: null, address: "sehol" }, // ismeretlen ország
+  ];
+
+  it("minden mintára ugyanazt a terület-halmazt adja, mint a naiv szűrés", () => {
+    for (const b of samples) {
+      const fast = areasForBusiness(b).map((a) => a.slug).sort();
+      const slow = naive(b).map((a) => a.slug).sort();
+      expect(fast, `eltérés: ${JSON.stringify(b)}`).toEqual(slow);
+    }
+  });
+
+  it("ismeretlen országra üres tömb (nem dob)", () => {
+    expect(areasForBusiness({ country: "XX" as never, canton: null, address: "x" })).toEqual([]);
   });
 });

@@ -192,7 +192,49 @@ export function businessInArea(b: AreaMatchable, area: SeoArea): boolean {
   return true;
 }
 
-/** Az összes terület, amibe a vállalkozás beleesik (sitemap-kombókhoz). */
+/**
+ * Terület-index a gyors kereséshez: ország → { ország-szintű területek,
+ * régió-kód → területek }. Egyszer épül fel, modul-szinten.
+ *
+ * ⚠️ MIÉRT KELL — ÉLESBEN MÉRT HIBA: az `areasForBusiness` eredetileg a TELJES
+ * `SEO_AREAS` tömböt (107 elem) végigpásztázta MINDEN vállalkozásra. A /magyar
+ * index-hubon ez 2353 cég × 107 terület = **251 771** `businessInArea` hívás
+ * volt, mindegyik string-műveletekkel — a route emiatt a Cloudflare CPU-limitjébe
+ * futott, és 520/503-at adott. A teljes /magyar SEO-fa (1056 URL a sitemapben)
+ * hibás volt.
+ */
+const AREA_INDEX = (() => {
+  const idx = new Map<string, { countryWide: SeoArea[]; byCode: Map<string, SeoArea[]> }>();
+  for (const a of SEO_AREAS) {
+    let e = idx.get(a.country);
+    if (!e) {
+      e = { countryWide: [], byCode: new Map() };
+      idx.set(a.country, e);
+    }
+    if (a.code === null) e.countryWide.push(a);
+    else e.byCode.set(a.code, [...(e.byCode.get(a.code) ?? []), a]);
+  }
+  return idx;
+})();
+
+/**
+ * Az összes terület, amibe a vállalkozás beleesik (sitemap-kombókhoz, hub-hoz).
+ *
+ * ⚠️ Ez EGZAKT optimalizálás, nem közelítés: a `businessInArea` csak akkor ad
+ * `true`-t, ha az ország egyezik ÉS (a terület ország-szintű VAGY a régió-kódja
+ * egyezik a cég kódjával). Ezért elég EZT a két csoportot végignézni — a többi
+ * terület biztosan `false` lenne. A város-szintű (cityMatch) finomítást
+ * változatlanul a `businessInArea` végzi el a jelölteken.
+ */
 export function areasForBusiness(b: AreaMatchable): SeoArea[] {
-  return SEO_AREAS.filter((a) => businessInArea(b, a));
+  const country = b.country || "CH";
+  const e = AREA_INDEX.get(country);
+  if (!e) return [];
+
+  // A cég régió-kódja: a tárolt érték, vagy svájci örökség-soroknál a cím PLZ-je.
+  let code = b.canton ?? null;
+  if (!code && country === "CH") code = cantonFromAddress(b.address ?? null)?.code ?? null;
+
+  const candidates = code ? [...e.countryWide, ...(e.byCode.get(code) ?? [])] : e.countryWide;
+  return candidates.filter((a) => businessInArea(b, a));
 }
