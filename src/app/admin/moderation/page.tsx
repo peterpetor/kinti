@@ -9,6 +9,8 @@ import {
   moderationCount,
   type ModerationTable,
 } from "@/lib/repo";
+import { countOpenContentReports } from "@/lib/repo-spam";
+import { countOpenCorrections } from "@/lib/repo-corrections";
 import { ModerationDecideButtons } from "@/components/admin/moderation-decide-buttons";
 import { mediaUrl } from "@/lib/media";
 
@@ -77,6 +79,8 @@ export default async function ModerationPage({
     pendingStories,
     pendingHousing,
     items,
+    openReports,
+    openCorrections,
   ] = await Promise.all([
     moderationCount("reviews", 0),
     moderationCount("businesses", 0, country),
@@ -84,7 +88,13 @@ export default async function ModerationPage({
     moderationCount("stories", 0, country),
     moderationCount("kinti_housing_listings", 0, country),
     listModerationQueue(typeParam, statusValue, 100, country),
+    // ⚠️ A bejelentés/javaslat NEM megy át a moderációs soron (más tábla), ezért
+    // a saját jelvényét is külön kell számolni — enélkül CSAK a lap megnyitásakor
+    // derülne ki, hogy van új. Ugyanaz az elv, mint a típus-fülek badge-einél.
+    countOpenContentReports(),
+    countOpenCorrections(),
   ]);
+  const openFeedback = openReports + openCorrections;
 
   const pendingPerType: Record<ModerationTable, number> = {
     reviews: pendingReviews,
@@ -177,12 +187,31 @@ export default async function ModerationPage({
         </Link>
         <Link
           href="/admin/moderation/abuse-dashboard"
-          className="rounded-card border border-line bg-surface p-4 shadow-card transition hover:bg-surface-alt"
+          className={cn(
+            "rounded-card border bg-surface p-4 shadow-card transition hover:bg-surface-alt",
+            // Van teendő → kiemelt keret, hogy a kártya RÁNÉZÉSRE elüssön.
+            openFeedback > 0 ? "border-accent" : "border-line",
+          )}
         >
-          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-ink-muted">
             🚨 Bejelentések
+            {openFeedback > 0 && (
+              <span className="rounded-full bg-accent px-1.5 py-0.5 text-[10.5px] font-extrabold text-white">
+                {openFeedback}
+              </span>
+            )}
           </div>
-          <div className="mt-1 text-sm font-semibold text-ink">Ki mit jelentett be</div>
+          <div className="mt-1 text-sm font-semibold text-ink">
+            {openFeedback > 0 ? (
+              <>
+                {openReports > 0 && `${openReports} bejelentés`}
+                {openReports > 0 && openCorrections > 0 && " · "}
+                {openCorrections > 0 && `${openCorrections} javítási javaslat`}
+              </>
+            ) : (
+              "Bejelentések és adatjavítások"
+            )}
+          </div>
         </Link>
       </div>
 

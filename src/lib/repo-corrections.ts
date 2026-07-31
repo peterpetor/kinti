@@ -66,6 +66,17 @@ export async function countRecentCorrections(ipHash: string | null): Promise<num
   return r?.n ?? 0;
 }
 
+/**
+ * Nyitott javaslatok száma — a moderációs sor kártya-jelvényéhez.
+ * ⚠️ COUNT, nem `listCorrections().length`: a jelvényhez nem kell a teljes lista.
+ */
+export async function countOpenCorrections(): Promise<number> {
+  const r = await getDB()
+    .prepare("SELECT COUNT(*) AS n FROM business_corrections WHERE status = 'open'")
+    .first<{ n: number }>();
+  return r?.n ?? 0;
+}
+
 /** Javaslatok az admin-áttekintőhöz (legfrissebb elöl). */
 export async function listCorrections(
   opts: { status?: string | null; limit?: number } = {},

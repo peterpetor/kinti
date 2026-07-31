@@ -224,6 +224,18 @@ export async function countRecentReports(ipHash: string | null): Promise<number>
   return res?.n ?? 0;
 }
 
+/**
+ * Nyitott bejelentések száma — a moderációs sor kártya-jelvényéhez.
+ * ⚠️ Szándékosan COUNT és nem `listContentReports().length`: a jelvényhez nem
+ * kell lehúzni az összes sort.
+ */
+export async function countOpenContentReports(): Promise<number> {
+  const r = await getDB()
+    .prepare("SELECT COUNT(*) AS n FROM content_reports WHERE status = 'open'")
+    .first<{ n: number }>();
+  return r?.n ?? 0;
+}
+
 export interface AdminContentReport {
   id: string;
   contentType: string;
