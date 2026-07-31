@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { externalJobDedupeKey, dedupeByKey } from "@/lib/external-job-url";
+import { externalJobDedupeKey, dedupeByKey, jobVarietyKey } from "@/lib/external-job-url";
 
 /**
  * Az `external_jobs` ütközés-kulcsa eredetileg a TELJES `source_url` volt, és ez
@@ -76,5 +76,38 @@ describe("dedupeByKey — kötegen belüli szűkítés", () => {
     const out = dedupeByKey([j("", "a"), j("", "b"), j("https://jooble.org/desc/9", "c")]);
     expect(out).toHaveLength(1);
     expect(out[0].category).toBe("c");
+  });
+});
+
+/**
+ * A LISTA-szintű változatossági kulcs — más, mint a tárolási dedup-kulcs.
+ * Mérve: a „Bedrijfsleider … | NLwerkt" 17 különböző településen szerepelt,
+ * vagyis a holland lista 60 helyéből 17-et EGYETLEN hirdetés foglalt el.
+ */
+describe("jobVarietyKey — a lista változatossága", () => {
+  it("ugyanazt a cím+cég párost egy kulcsra hozza, HELYSZÍNTŐL függetlenül", () => {
+    const a = jobVarietyKey({ title: "Schilder", company: "Faber", location: "Sneek" });
+    const b = jobVarietyKey({ title: "Schilder", company: "Faber", location: "Joure" });
+    expect(a).toBe(b);
+  });
+
+  it("kis-nagybetűre és szóközre nem érzékeny", () => {
+    expect(jobVarietyKey({ title: " Kok ", company: "HORECA BV" })).toBe(
+      jobVarietyKey({ title: "kok", company: "horeca bv" }),
+    );
+  });
+
+  it("KÜLÖNBÖZŐ cégek azonos címét NEM vonja össze", () => {
+    expect(jobVarietyKey({ title: "Schoonmaker", company: "A BV" })).not.toBe(
+      jobVarietyKey({ title: "Schoonmaker", company: "B BV" }),
+    );
+  });
+
+  it("⚠️ cég NÉLKÜL a helyszín lép a kulcsba (generikus cím-ütközés ellen)", () => {
+    const a = jobVarietyKey({ title: "Schoonmaker", company: null, location: "Eindhoven" });
+    const b = jobVarietyKey({ title: "Schoonmaker", company: null, location: "Rotterdam" });
+    expect(a).not.toBe(b);
+    // …de ugyanaz a cím+hely igen.
+    expect(a).toBe(jobVarietyKey({ title: "schoonmaker", company: "", location: "eindhoven" }));
   });
 });

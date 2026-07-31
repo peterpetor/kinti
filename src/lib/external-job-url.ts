@@ -53,6 +53,24 @@ export function externalJobDedupeKey(sourceUrl: string | null | undefined): stri
 }
 
 /**
+ * LISTA-szintű változatossági kulcs: `cím|cég`.
+ *
+ * ⚠️ Ez MÁS, mint a tárolási dedup-kulcs. Egy toborzó ugyanazt az állást
+ * tucatnyi településen is feladja — ezek KÜLÖN hirdetések külön URL-lel, tehát
+ * a tárolásban jogosan külön sorok, de a listában elnyomják a változatosságot
+ * (mérve: a „Bedrijfsleider … | NLwerkt" 17 helyen, vagyis a holland lista 60
+ * helyéből 17-et EGYETLEN hirdetés foglalt el).
+ *
+ * ⚠️ Cég nélküli sornál a HELYSZÍN lép a kulcsba: különben két KÜLÖNBÖZŐ cég
+ * azonos, generikus című hirdetése („Schoonmaker") olvadna össze.
+ */
+export function jobVarietyKey(j: { title?: string | null; company?: string | null; location?: string | null }): string {
+  const norm = (s: string | null | undefined) => (s ?? "").trim().toLowerCase();
+  const company = norm(j.company);
+  return company ? `${norm(j.title)}|${company}` : `${norm(j.title)}|@${norm(j.location)}`;
+}
+
+/**
  * Egy köteg hirdetés szűkítése dedup-kulcs szerint, az ELSŐ előfordulást tartva.
  *
  * ⚠️ Az „első nyer" szándékos: a kategória a KERESŐSZÓBÓL származik, és a Jooble

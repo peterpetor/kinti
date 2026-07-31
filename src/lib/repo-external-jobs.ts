@@ -4,7 +4,7 @@
  * a publikus listázás KIFELÉ, a `source_url`-re mutató linkkel történik. Lásd 0096.
  */
 import { getDB } from "./cloudflare";
-import { externalJobDedupeKey, dedupeByKey } from "./external-job-url";
+import { externalJobDedupeKey, dedupeByKey, jobVarietyKey } from "./external-job-url";
 
 export interface ExternalJob {
   id: string;
@@ -123,14 +123,31 @@ export async function getExternalJobs(
   // hova valók), de „egész ország" nézetben továbbra is megjelennek.
   if (opts.cantonCode && opts.cantonCode !== "all") { where += " AND canton_code = ?"; binds.push(opts.cantonCode); }
   const limit = Math.min(opts.limit ?? 60, 100);
+  // ⚠️ TÚLKÉRÉS, mert utána SZŰKÍTÜNK. Egy toborzó ugyanazt az állást tucatnyi
+  // településen is feladja (mérve: a „Bedrijfsleider … | NLwerkt" **17 helyen**,
+  // vagyis a holland lista 60 helyéből 17-et EGYETLEN hirdetés foglalt el), és
+  // előfordul valódi ismétlés is (ugyanaz a cím+cég+hely, más hirdetés-azonosító
+  // — pl. a „Hoofd zorg | NLwerkt" 3×). Ez nem a tárolás hibája (azok külön
+  // hirdetések külön URL-lel), hanem a LISTÁÉ: a felhasználó változatosságot vár.
+  const fetchLimit = Math.min(limit * 4, 400);
   const { results } = await getDB()
     .prepare(
       `SELECT * FROM external_jobs WHERE ${where}
-        ORDER BY COALESCE(posted_at, fetched_at) DESC LIMIT ${limit}`,
+        ORDER BY COALESCE(posted_at, fetched_at) DESC LIMIT ${fetchLimit}`,
     )
     .bind(...binds)
     .all<Row>();
-  return (results ?? []).map(toJob);
+
+  const seen = new Set<string>();
+  const out: ExternalJob[] = [];
+  for (const r of results ?? []) {
+    const key = jobVarietyKey(r);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(toJob(r));
+    if (out.length >= limit) break;
+  }
+  return out;
 }
 
 export async function countExternalJobs(country: string): Promise<number> {
