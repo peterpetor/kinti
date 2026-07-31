@@ -27,6 +27,17 @@ const CARD = readFileSync(
   "utf8",
 );
 
+/**
+ * ⚠️ A magyarázó kommentek IDÉZIK a kivezetett feliratokat (hogy egy későbbi
+ * olvasó értse, mi volt a hiba) — ezért a „nincs benne" jellegű állításokat a
+ * kommentektől MEGTISZTÍTOTT forráson kell nézni, különben a dokumentáció
+ * buktatja meg a saját tesztjét.
+ */
+const stripComments = (s: string) =>
+  s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+const PAGE_CODE = stripComments(PAGE);
+const CARD_CODE = stripComments(CARD);
+
 describe("cégadatlap — a kapcsolatfelvétel megy elöl", () => {
   it("a claim-kártya a telefon-gomb UTÁN áll a forrásban", () => {
     const claim = PAGE.indexOf("<BusinessClaimCard");
@@ -47,8 +58,23 @@ describe("cégadatlap — a kapcsolatfelvétel megy elöl", () => {
     // és az „Ellenőrizve — 2026. július" jel, egymástól 300px-re. A látogató a
     // kettőt nem tudja összeegyeztetni; a claim-kártya a TULAJDONLÁSRÓL szól,
     // nem az adat helyességéről.
-    expect(CARD).not.toContain("Nem megerősített lista");
+    expect(CARD_CODE).not.toContain("Nem megerősített lista");
     expect(CARD).toContain("Tiéd a");
+  });
+
+  it("⚠️ a lábjegyzet nem mondja ellent a frissesség-jelnek", () => {
+    // Ugyanaz a hibaosztály: a lap egyszerre állította, hogy „Ellenőrizve —
+    // 2026. július" ÉS hogy „frissességüket az üzemeltető nem ellenőrzi".
+    expect(PAGE_CODE).not.toContain("frissességüket az üzemeltető nem ellenőrzi");
+    // A tulajdonos-feltöltés csak az ÁTVETT (claimed) tételekre igaz — 3 db.
+    expect(PAGE).toContain("b.claimed");
+    expect(PAGE).toContain("nyilvános forrásokból állítottuk össze");
+  });
+
+  it("a jogilag lényeges kitétel MINDEN ágon megmarad", () => {
+    // Bármelyik ágra fut a lábjegyzet, a hatósági megerősítés kérése kimarad
+    // nem lehet — ez nem stílus, hanem felelősség-korlátozás.
+    expect(PAGE).toContain("közvetlenül a hatóságoknál erősíts meg");
   });
 
   it("a kártya megtartja az adat eredetére vonatkozó átláthatóságot", () => {

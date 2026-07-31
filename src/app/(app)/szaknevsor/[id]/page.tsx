@@ -714,8 +714,23 @@ export default async function BusinessPage({
             </div>
           )}
 
+          {/* ⚠️ EZ A LÁBJEGYZET KÉT VALÓTLANT ÁLLÍTOTT (2026-08-01):
+              (1) „a profil adatait a vállalkozó tölti fel" — a 2248 látható
+                  cégből MINDÖSSZE 3 az átvett, tehát a tételek 99,9%-át MI
+                  állítottuk össze nyilvános forrásokból;
+              (2) „frissességüket az üzemeltető nem ellenőrzi" — a frissesség-
+                  audit óta 2221 cégnél ÁLL a lapon az „Ellenőrizve — 2026.
+                  július" jel, 400px-szel feljebb. A kettő kizárta egymást.
+              A jogilag fontos rész (hivatalos adatot a hatóságnál erősíts meg)
+              MINDHÁROM ágon megmarad; a szűk állítás elve ugyanaz, mint a
+              frissesség-bélyegnél: MŰKÖDIK ≠ minden mező helyes. */}
           <p className="mt-3 text-[11.5px] leading-snug text-ink-faint italic">
-            ⓘ A profil adatait a vállalkozó tölti fel — frissességüket az üzemeltető nem ellenőrzi.
+            ⓘ{" "}
+            {b.claimed
+              ? "A profil adatait a vállalkozó tölti fel — a frissességükért ő felel."
+              : verifiedLabel
+                ? `Ezt a tételt nyilvános forrásokból állítottuk össze. A legutóbbi ellenőrzésünk (${verifiedLabel}) azt igazolta, hogy a vállalkozás működik — az egyes mezők (telefonszám, cím, nyitvatartás) helyességét nem garantáljuk.`
+                : "Ezt a tételt nyilvános forrásokból állítottuk össze — az egyes adatok helyességét az üzemeltető nem garantálja."}{" "}
             Hivatalos adatokat (engedélyszám, cégjegyzékszám) közvetlenül a hatóságoknál erősíts meg.
           </p>
           <div className="mt-3 flex flex-wrap gap-1.5">
