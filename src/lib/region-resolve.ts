@@ -55,22 +55,61 @@ const NOT_ENGLAND: readonly string[] = [
 ];
 
 /**
+ * ⚠️ EGYESÜLT ÁLLAMOK-BELI HELY FELISMERÉSE — ÉLESBEN MÉRT HIBA MIATT.
+ *
+ * A Jooble globális végpontja a `location: "Nederland"` keresésre **Nederland,
+ * Texas** városát találta meg, és a holland állás-lista 100%-a (149 hirdetés)
+ * délkelet-texasi lett. A gyökérokot az ország-specifikus Jooble-aldomain
+ * javítja (lib/jooble.ts), EZ pedig a második védvonal: forrástól függetlenül
+ * kiszűri a „Város, XX" alakú amerikai helyeket.
+ *
+ * ⚠️ ÜTKÖZÉS-ELLENŐRZÉS ÉLES ADATON: a teljes `external_jobs` táblában
+ * MINDÖSSZE KÉT ilyen végződés fordult elő — `, TX` (149 sor, a hibás) és
+ * `, UK` (13 sor, jogos, és nem tagállam-kód). Tehát nincs valós ütközés.
+ * Az AR (Arkansas) és NE (Nebraska) mégis KIMARAD a listából, mert svájci
+ * kanton-rövidítés is (Appenzell Ausserrhoden, Neuchâtel) — egy „Herisau, AR"
+ * alakú svájci hirdetést nem dobunk el egy amerikai tagállam kedvéért.
+ */
+const US_STATE_SUFFIX = new Set([
+  "AL", "AK", "AZ", "CA", "CO", "CT", "DC", "FL", "GA", "HI", "IA", "ID", "IL",
+  "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC",
+  "ND", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD",
+  "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY",
+  // SZÁNDÉKOSAN KIHAGYVA: AR, NE (svájci kantonkód is), DE (Németország kódja).
+]);
+
+/** „Beaumont, TX" / „Port Arthur, TX" alakú amerikai hely? */
+function looksUnitedStates(text: string): boolean {
+  const m = text.trim().match(/,\s*([A-Za-z]{2})\.?$/);
+  return m ? US_STATE_SUFFIX.has(m[1].toUpperCase()) : false;
+}
+
+/**
  * A hely NYILVÁNVALÓAN kívül van-e az adott Kinti-ország területén?
  *
- * Csak akkor ad `true`-t, ha a forrás piaca nagyobb, mint a Kinti országa
- * (ma egyedül a GB ilyen). Bizonytalanság esetén `false` — inkább maradjon benne
- * egy régió nélküli hirdetés, mint hogy valódi angliai állást dobjunk el.
+ * Két eset ad `true`-t:
+ *   1. a hely felismerhetően EGYESÜLT ÁLLAMOK-beli (minden országra), és
+ *   2. a forrás piaca nagyobb, mint a Kinti országa (ma egyedül a GB ilyen:
+ *      az Adzuna `gb` piaca a teljes Egyesült Királyság, a Kinti GB-je Anglia).
+ *
+ * Bizonytalanság esetén `false` — inkább maradjon benne egy régió nélküli
+ * hirdetés, mint hogy valódi hazai állást dobjunk el.
  */
 export function isOutsideCountryScope(
   country: string,
   location: string | null | undefined,
   areas?: (string | null | undefined)[],
 ): boolean {
-  if (country !== "GB") return false;
   const parts = [...(areas ?? []), location].filter(
     (x): x is string => typeof x === "string" && x.trim().length > 0,
   );
   if (parts.length === 0) return false;
+
+  // 1) Amerikai hely — minden Kinti-országra hibás találat.
+  if (parts.some(looksUnitedStates)) return true;
+
+  // 2) GB = Anglia (a skót/walesi/észak-írországi hirdetés téves adat lenne).
+  if (country !== "GB") return false;
   const corpus = foldTokens(parts.join(" "));
   return NOT_ENGLAND.some((m) => corpus.includes(` ${m} `));
 }

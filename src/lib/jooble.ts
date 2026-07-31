@@ -19,6 +19,31 @@ const COUNTRY_LOCATION: Record<string, string> = {
   ES: "España",
 };
 
+/**
+ * ⚠️ ORSZÁG-SPECIFIKUS VÉGPONT — ÉLESBEN MÉRT HIBA MIATT.
+ *
+ * A kód eddig a GLOBÁLIS `jooble.org/api/<kulcs>` végpontot hívta, és a
+ * helyszínt szövegként adta át. A holland keresés így a `location: "Nederland"`
+ * paraméterrel ment ki — a globális (amerikai) index pedig megtalálta
+ * **Nederland, Texas** városát. Eredmény: a holland Jooble-lista 100%-a
+ * délkelet-texasi állás lett (Beaumont, Port Arthur, Port Neches, Groves…),
+ * 149 hirdetés — hollandiai magyaroknak kínálva.
+ *
+ * A Jooble ország-aldomainjei saját indexet szolgálnak ki, ezért a keresés
+ * eleve nem tud kilépni az országból. Ha a kulcs egy aldomainen nem érvényes,
+ * a hívás nem-OK választ ad, és a forrás egyszerűen üresen tér vissza (az
+ * Adzuna adja a sorok több mint 90%-át) — ez rosszabb esetben kevesebb
+ * hirdetés, de SOSEM rossz országbeli hirdetés.
+ */
+const COUNTRY_HOST: Record<string, string> = {
+  AT: "at.jooble.org",
+  DE: "de.jooble.org",
+  NL: "nl.jooble.org",
+  CH: "ch.jooble.org",
+  GB: "uk.jooble.org",
+  ES: "es.jooble.org",
+};
+
 interface JoobleJob {
   title?: string;
   location?: string;
@@ -43,8 +68,10 @@ export async function searchJoobleJobs(country: string, keyword: string, limit =
   // különben az egész országot.
   const location = (region ?? "").trim() || COUNTRY_LOCATION[country.toUpperCase()] || "";
 
+  const host = COUNTRY_HOST[country.toUpperCase()] ?? "jooble.org";
+
   try {
-    const res = await fetch(`https://jooble.org/api/${encodeURIComponent(key)}`, {
+    const res = await fetch(`https://${host}/api/${encodeURIComponent(key)}`, {
       method: "POST",
       headers: { "content-type": "application/json", accept: "application/json" },
       body: JSON.stringify({ keywords: q, location }),

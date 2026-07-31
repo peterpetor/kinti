@@ -1,5 +1,58 @@
 import { describe, it, expect } from "vitest";
-import { regionCodeFromLocation } from "@/lib/region-resolve";
+import { regionCodeFromLocation, isOutsideCountryScope } from "@/lib/region-resolve";
+
+/**
+ * ⚠️ ÉLESBEN MÉRT HIBA regresszió-védelme. A Jooble GLOBÁLIS végpontja a
+ * `location: "Nederland"` keresésre megtalálta **Nederland, Texas** városát, és
+ * a holland állás-lista 100%-a (149 hirdetés) délkelet-texasi lett. A gyökérokot
+ * az ország-specifikus aldomain javítja, ez a szűrő a második védvonal.
+ */
+describe("isOutsideCountryScope — amerikai hely kiszűrése", () => {
+  it("a valódi hibás adat mindegyik alakját elkapja", () => {
+    for (const loc of [
+      "Beaumont, TX", "Nederland, TX", "Port Arthur, TX", "Bridge City, TX",
+      "Groves, TX", "Port Neches, TX", "Orange, TX", "Rose Hill Acres, TX",
+    ]) {
+      expect(isOutsideCountryScope("NL", loc)).toBe(true);
+    }
+  });
+
+  it("MINDEN országra fog, nem csak a GB-re", () => {
+    for (const cc of ["AT", "DE", "NL", "GB", "ES", "CH"]) {
+      expect(isOutsideCountryScope(cc, "Austin, TX")).toBe(true);
+    }
+  });
+
+  it("a jogos európai helyeket NEM dobja el", () => {
+    expect(isOutsideCountryScope("GB", "London, UK")).toBe(false);
+    expect(isOutsideCountryScope("NL", "Amsterdam, Noord-Holland")).toBe(false);
+    expect(isOutsideCountryScope("AT", "Wien")).toBe(false);
+    expect(isOutsideCountryScope("DE", "München, Bayern")).toBe(false);
+    expect(isOutsideCountryScope("ES", "Madrid")).toBe(false);
+  });
+
+  it("⚠️ a svájci kanton-rövidítést NEM nézi amerikai tagállamnak", () => {
+    // AR = Appenzell Ausserrhoden, NE = Neuchâtel — ezért maradtak ki a listából.
+    expect(isOutsideCountryScope("CH", "Herisau, AR")).toBe(false);
+    expect(isOutsideCountryScope("CH", "La Chaux-de-Fonds, NE")).toBe(false);
+    // DE = Németország kódja (nem Delaware).
+    expect(isOutsideCountryScope("DE", "Berlin, DE")).toBe(false);
+  });
+
+  it("a GB=Anglia szűrés változatlanul működik", () => {
+    expect(isOutsideCountryScope("GB", "Glasgow")).toBe(true);
+    expect(isOutsideCountryScope("GB", "Cardiff")).toBe(true);
+    expect(isOutsideCountryScope("GB", "Manchester")).toBe(false);
+    // Más országra a nem-angliai lista NEM fut (egy „Belfast" nevű hely másutt is lehet).
+    expect(isOutsideCountryScope("DE", "Glasgow")).toBe(false);
+  });
+
+  it("üres bemenetre false (nem dobunk el adat hiányában)", () => {
+    expect(isOutsideCountryScope("NL", null)).toBe(false);
+    expect(isOutsideCountryScope("NL", "")).toBe(false);
+    expect(isOutsideCountryScope("NL", "   ")).toBe(false);
+  });
+});
 
 describe("regionCodeFromLocation", () => {
   it("AT: régiónév a location-szövegben", () => {
