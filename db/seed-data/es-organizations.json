@@ -646,6 +646,33 @@
       "address": "Calle Turismo 1c, 03170 Ciudad Quesada, Rojales, Alicante",
       "lat": 38.0642,
       "lng": -0.7262
+    },
+    {
+      "_comment": "⭐⭐ ÚJ MÓDSZER (2026-07-31): Google Maps közvetlen keresés Playwrighttal ('tienda húngara San Sebastián' — a Google ezt a Costa Blanca-i boltot hozta fel távoli, de releváns találatként, mert nincs helyi baszkföldi egyezés). Saját weboldal (hungaromarket.com) kimondja: 'Eredeti magyar termékek' (tejtermék, füstölt hús, konzerv, fűszer, édesség, alkohol, üdítő). E-mail+telefon+pontos nyitvatartás. ⭐ A VC régió ELSŐ élelmiszerbolt-tétele (eddig csak étterem/ingatlan/szálloda volt ott).",
+      "name": "Hungaro Market",
+      "type": "magyar élelmiszerbolt (eredeti magyar termékek: tejtermék, felvágott, konzerv, fűszer, édesség, alkohol)",
+      "category": "elelmiszer",
+      "city": "San Fulgencio",
+      "region": "VC",
+      "address": "Centro Comercial Bahía del Segura, local 22, 03177 San Fulgencio, Alicante",
+      "phone": "+34 722 56 70 71",
+      "email": "hungaromarketalc@gmail.com",
+      "website": "https://hungaromarket.com",
+      "hours": "Kedd-Péntek 10:00-16:00 (szerdán 15:00-19:00 is), Szombat 10:00-14:00, Vasárnap-Hétfő zárva",
+      "lat": 38.1120,
+      "lng": -0.7189
+    },
+    {
+      "_comment": "⭐⭐⭐ Google Maps 'peluquería húngara Barcelona' — ⭐ AZ ELSŐ fodrász-kategóriás ES-tétel (korábban NULLA volt). Saját Instagram+Facebook+Fresha-foglalás, LGBTQ+ barát jelzés. A név ('El Húngaro' = 'A Magyar') önazonosító, ugyanaz a minta, mint az Amigo Húngaro ingatlanirodánál.",
+      "name": "El Húngaro Hair Stylist",
+      "type": "magyar fodrász, L'Oréal Professionnel szalon",
+      "category": "fodrasz",
+      "city": "Barcelona",
+      "region": "CT",
+      "address": "Carrer de València 377, 08013 Barcelona",
+      "phone": "+34 722 56 00 53",
+      "lat": 41.4005527,
+      "lng": 2.1734456
     }
   ]
 }
