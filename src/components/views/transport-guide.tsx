@@ -564,7 +564,11 @@ function CostRow({
     <div
       className={cn(
         "flex items-center justify-between rounded-[10px] px-3 py-2",
-        highlight ? "bg-success/15 border-2 border-success/40" : "bg-white/60",
+        // ⚠️ bg-surface/60 (NEM bg-white/60): a lenti szöveg `text-ink`, ami
+        // sötét módban VILÁGOS — fix fehéres dobozon olvashatatlan lenne.
+        // Ugyanez a hiba a speeding-calculatorban már javítva volt, itt maradt
+        // a testvér-példány.
+        highlight ? "bg-success/15 border-2 border-success/40" : "bg-surface/60",
       )}
     >
       <div className="min-w-0 flex-1">

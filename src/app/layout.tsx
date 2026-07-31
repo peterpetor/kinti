@@ -172,7 +172,20 @@ export const viewport: Viewport = {
   ],
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  // ⚠️ A `maximumScale: 1` KIVÉVE (2026-07-31) — az LETILTOTTA a nagyítást.
+  //
+  // Ez WCAG 2.1 AA (1.4.4 „Resize text") sértés volt, és nem elméleti: az app
+  // KÉT LEGGYAKORIBB szövegmérete a 11px és a 11,5px (912 előfordulás, a
+  // méretezett szövegek 35%-a 12px alatti). Vagyis apró szöveg, amit a
+  // felhasználó nem tudott felnagyítani. Az idősebb, kint élő magyar
+  // korosztálynak ez valódi akadály — és a hat országból négy EU-tag, ahol
+  // 2025 júniusától az akadálymentességi irányelv is érvényes.
+  //
+  // ⚠️ AMIÉRT BÁTRAN KIVEHETŐ: a beállítás egyetlen jogos célja a véletlen
+  // dupla-koppintásos nagyítás megelőzése lenne — azt viszont MÁR MEGOLDJA a
+  // `touch-action: manipulation` a globals.css-ben (a, [role=button], label,
+  // summary, nav, select). Vagyis a `maximumScale` fölösleges volt, csak a
+  // kárt okozta. Ha valaha visszatenné valaki: NE, ez tudatos döntés.
   viewportFit: "cover",
 };
 
