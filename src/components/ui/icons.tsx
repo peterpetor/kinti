@@ -16,7 +16,7 @@ export type IconName =
   | "compass" | "mail" | "shareIos" | "whatsapp" | "bed" | "house" | "key" | "truck"
   | "alert" | "store" | "exchange" | "wallet" | "refresh" | "trophy" | "edit"
   | "ticket" | "train" | "plane" | "book" | "target" | "sun" | "moon" | "lightbulb" | "box"
-  | "health" | "bank";
+  | "health" | "bank" | "themeAuto";
 
 const PATHS: Record<IconName, string[]> = {
   bed: ["M2 18v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8", "M2 14h20", "M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"],
@@ -158,6 +158,14 @@ const PATHS: Record<IconName, string[]> = {
   sun: ["M12 17a5 5 0 1 0 0-10a5 5 0 0 0 0 10", "M12 2v2", "M12 20v2", "M4.2 4.2l1.4 1.4", "M18.4 18.4l1.4 1.4", "M2 12h2", "M20 12h2", "M4.2 19.8l1.4-1.4", "M18.4 5.6l1.4-1.4"],
   // Félhold — a téma-váltó „Sötét" gombja.
   moon: ["M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"],
+  // „Rendszer szerinti megjelenés" — a szokásos fél-világos/fél-sötét korong:
+  // kör + függőleges átmérő + a jobb fél belső satírozása (csak vonalakkal, mert
+  // a készlet stroke-alapú; a `filled` prop az EGÉSZ ikont töltené ki).
+  themeAuto: [
+    "M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18",
+    "M12 3v18",
+    "M12 7.5h4.9", "M12 10.5h6.4", "M12 13.5h6.4", "M12 16.5h4.9",
+  ],
   // Villanykörte — tipp/magyarázat-jelzés (a 💡 emoji lecserélve, sok helyen
   // visszatérő minta: AI-magyarázat, „Költözés okosan", forrás-doboz tippje stb.).
   lightbulb: ["M9 18h6", "M10 21h4", "M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"],

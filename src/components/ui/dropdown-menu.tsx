@@ -301,14 +301,18 @@ export function DropdownMenu() {
           tint: "bg-primary/10",
           icon: { name: "sun" },
           custom: (
-            <div key="tema" className="flex items-center justify-between gap-2 px-4 py-3.5">
+            // A választó a címke ALÁ került (2026-08-01): a „Rendszer" mód
+            // bevezetésével három pirula lett, és azok a címke MELLETT nem
+            // fértek el egy 390px-es képernyőn. Ez egyben a natívabb elrendezés
+            // is (iOS „Megjelenés": felirat fölül, szegmentált választó alatta).
+            <div key="tema" className="px-4 py-3.5">
               <span className="flex min-w-0 items-center gap-3 text-[15px] font-bold text-ink">
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
                   <Icon name="sun" size={16} strokeWidth={2.2} />
                 </span>
                 <span className="truncate">Megjelenés</span>
               </span>
-              <div className="shrink-0">
+              <div className="mt-2.5">
                 <ThemeToggle />
               </div>
             </div>

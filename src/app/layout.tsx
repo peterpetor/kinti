@@ -95,7 +95,23 @@ const ANDROID_APP_SCRIPT = `(function(){try{var t=location.search.indexOf('sourc
 // statikus media-query-s meta nem elég). A setThemeColor a meglévő metákat írja
 // át, vagy (ha a szkript előbb fut) a head végére tesz egyet (a Chrome az utolsó
 // érvényeset használja). Ugyanez fut a ThemeToggle-ból váltáskor (lib/theme-color).
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('kinti-theme');if(t==='modern'){t='dark';localStorage.setItem('kinti-theme','dark');}if(t==='dark'||t==='warm'){document.documentElement.dataset.theme=t;}var col=(t==='dark')?'#101411':'#f4ede0';var ms=document.querySelectorAll('meta[name="theme-color"]');if(ms.length){for(var i=0;i<ms.length;i++){ms[i].setAttribute('content',col);}}else{var m=document.createElement('meta');m.name='theme-color';m.content=col;document.head.appendChild(m);}var c=localStorage.getItem('kinti.country');if(c==='CH'||c==='AT'||c==='DE'||c==='NL'){document.documentElement.dataset.country=c;}}catch(e){}})();`;
+// ⚠️ RENDSZER-TÉMA KÖVETÉSE (2026-08-01). Eddig a szkript CSAK a mentett
+// választást olvasta: ha a felhasználó soha nem nyúlt a váltóhoz, `data-theme`
+// se került ki, és maradt a világos alapértelmezés — vagyis egy sötét módban
+// futó telefonon a Kinti VILÁGOSAN nyílt. Ez a legfeltűnőbb „ez egy weboldal,
+// nem app" jel: natív app soha nem hagyja figyelmen kívül a rendszer-témát.
+// (Mérve: `colorScheme: dark` böngészőben `data-theme=warm`, body-fény 0.93.)
+//
+// A logika: MENTETT VÁLASZTÁS > RENDSZER. A váltó továbbra is felülbírál, és a
+// választás megmarad; ha nincs választás, a rendszert követjük — ÉLŐBEN is, mert
+// a rendszer-téma menet közben vált (napnyugta-ütemezés), és egy natív app
+// ilyenkor vele vált. A `matchMedia`-figyelő minden alkalommal újraolvassa a
+// localStorage-t: ha időközben a felhasználó választott, a figyelő félreáll.
+//
+// ⚠️ Csak akkor volt szabad élesíteni, hogy sok felhasználó hirtelen sötétben
+// lássa az appot, miután a sötét témát VÉGIGMÉRTEM: 6 fő képernyőn 0 világos
+// folt és 0 olvashatatlan elem (ld. [[dark-mode-hardcoded-light-bg]]).
+const THEME_INIT_SCRIPT = `(function(){try{var K='kinti-theme';var t=localStorage.getItem(K);if(t==='modern'){t='dark';localStorage.setItem(K,'dark');}var manual=(t==='dark'||t==='warm');var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;if(!manual){t=(mq&&mq.matches)?'dark':'warm';}document.documentElement.dataset.theme=t;var paint=function(th){document.documentElement.dataset.theme=th;var col=(th==='dark')?'#101411':'#f4ede0';var ms=document.querySelectorAll('meta[name="theme-color"]');if(ms.length){for(var i=0;i<ms.length;i++){ms[i].setAttribute('content',col);}}else{var m=document.createElement('meta');m.name='theme-color';m.content=col;document.head.appendChild(m);}};paint(t);if(mq){var h=function(e){try{var s=localStorage.getItem(K);if(s==='dark'||s==='warm')return;}catch(x){}paint(e.matches?'dark':'warm');};if(mq.addEventListener){mq.addEventListener('change',h);}else if(mq.addListener){mq.addListener(h);}}var c=localStorage.getItem('kinti.country');if(c==='CH'||c==='AT'||c==='DE'||c==='NL'){document.documentElement.dataset.country=c;}}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: {
