@@ -87,14 +87,16 @@ const ANDROID_APP_SCRIPT = `(function(){try{var t=location.search.indexOf('sourc
 // A mentett témát (Világos/Sötét) még a festés előtt visszaállítjuk, hogy reload
 // után is éljen a választás, villanás (FOUC) nélkül. A régi „modern" mentett
 // értéket sötétre migráljuk (a Modern skin helyére a Sötét mód lépett). Lásd ThemeToggle.
-// A mentett országot is kitesszük data-country-ba (whitelist!) — így a csak
-// CH/AT-ban élő elemek (pl. weather-widget) CSS-ből már az ELSŐ frame-ben
-// rejthetők DE/NL-ben, hidratálás-villanás nélkül (a JS-guard marad a döntő).
 // + theme-color szinkron: a böngésző-króm (címsor/állapotsor, PWA-címsor) színe
 // kövesse az AKTUÁLIS témát — sötét módban is (a data-theme kézi váltó miatt a
 // statikus media-query-s meta nem elég). A setThemeColor a meglévő metákat írja
 // át, vagy (ha a szkript előbb fut) a head végére tesz egyet (a Chrome az utolsó
 // érvényeset használja). Ugyanez fut a ThemeToggle-ból váltáskor (lib/theme-color).
+// A mentett országot a `data-country`-ba is kitesszük (whitelist) — ország-
+// függő CSS-hez, még az első frame előtt. ⚠️ Jelenleg NINCS olvasója: az
+// egyetlen felhasználója az időjárás-widget volt, amit 2026-08-02-án
+// kivezettünk. A mechanizmus szándékosan maradt (olcsó, és ország-függő
+// megjelenítéshez bármikor kell) — de ha sokáig árván marad, törölhető.
 // ⚠️ RENDSZER-TÉMA KÖVETÉSE (2026-08-01). Eddig a szkript CSAK a mentett
 // választást olvasta: ha a felhasználó soha nem nyúlt a váltóhoz, `data-theme`
 // se került ki, és maradt a világos alapértelmezés — vagyis egy sötét módban
