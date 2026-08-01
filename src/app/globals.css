@@ -208,6 +208,41 @@
     -webkit-user-drag: none;
   }
 
+  /* ⚠️ iOS AUTO-ZOOM ELLEN (2026-08-01). A Safari BELENAGYÍT a lapba, ha egy
+     beviteli mező betűmérete 16px ALATT van — és utána nagyítva is marad, a
+     felhasználónak kézzel kell visszahúznia. Ez az egyik legárulkodóbb
+     „ez egy weboldal, nem app" viselkedés.
+
+     Mérve (iPhone 13, éles, 8 útvonal): 25 mezőből 24 volt 16px alatt
+     (13–15px) — vagyis gyakorlatilag MINDEN űrlapmező nagyított.
+
+     ⚠️ Korábban ezt a `viewport.maximumScale = 1` véletlenül elfedte, de azt
+     2026-07-31-én HELYESEN kivezettük, mert a nagyítást is letiltotta
+     (akadálymentesség, teszt őrzi) — a tünet ekkor vált láthatóvá. A megoldás
+     tehát NEM a nagyítás újratiltása, hanem a mezők betűmérete.
+
+     Hatókör: CSAK érintőképernyőn (`pointer: coarse`) — egérrel a tervezett
+     kisebb méretek maradnak. `!important` kell, mert a méretet Tailwind
+     utility-osztályok adják (`text-[14px]`), azok pedig a base rétegnél
+     erősebbek — ld. [[cn-no-tailwind-merge]]. */
+  @media (pointer: coarse) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+
+    /* ⚠️ A 16px-re növelt szöveg egy HOSSZÚ opciónál kicsordulhat: mérve az
+       Állások „Egész Németország (minden régió)" választója 274px-es dobozban
+       281px-et kért. Nem a szabály hibás — a select eddig se tudott elegánsan
+       csonkolni, csak 14px-en épp befért. Így a levágás helyett „…" jön. */
+    select {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
   /* Egységes press-feedback minden gombon. @layer base → a Tailwind
      `active:scale-*` utility-k (utilities layer) felülírják, ahol egyedi van. */
   button:not(:disabled):active,
