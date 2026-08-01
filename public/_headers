@@ -3,15 +3,29 @@
 
 # ⚠️⚠️ FIZETÉS ÉS CSP — EGYÜTT KELL MÓDOSÍTANI (2026-08-01-i audit tanulsága)
 #
-# A Paddle-fizetés 2026-06-22 (Lemon Squeezy → Paddle váltás) óta ÉLESBEN NEM
-# MŰKÖDÖTT: a `script-src` nem engedte a `cdn.paddle.com`-ot, így a
-# `paddle.js` betöltése `csp` indokkal megszakadt, a `Paddle.Checkout.open()`
-# overlay pedig soha nem nyílt meg. Mindhárom PRO-termék megvásárolhatatlan volt.
+# A `script-src` nem engedte a `cdn.paddle.com`-ot, így a `/pro` oldalon a
+# `paddle.js` betöltése `csp` indokkal MEGSZAKADT (élesben mérve:
+# `window.Paddle === undefined`), és a `Paddle.Checkout.open()` overlay nem
+# nyílt meg. A CSP 2026-05-30 óta soha nem tartalmazta a fizetés-szolgáltatót,
+# a Paddle-re váltás pedig 2026-06-22-én történt.
 #
-# ⚠️ MIÉRT MARADT 5+ HÉTIG ÉSZREVÉTLEN: ez a fájl CSAK Cloudflare Pages-en él —
-# helyi `next dev`-ben NINCS ilyen fejléc. A fizetés tehát lokálisan tökéletesen
-# működik, és kizárólag élesben bukik. Ha fizetés-szolgáltatót cserélsz, EZT a
-# fájlt is módosítsd, és élesben ellenőrizd (`window.Paddle` létezik-e).
+# ⚠️⚠️ A HATÓKÖR PONTOSAN: KÉT KÜLÖNBÖZŐ CSP ÉL, ÚTVONALTÍPUS SZERINT.
+# Ez a fájl a Cloudflare Pages STATIKUS eszköz-válaszaira vonatkozik — tehát a
+# prerenderelt oldalakra (/pro, /gyik, /berkalkulator, /sajatjaim…). A
+# DINAMIKUSAN renderelt útvonalakat (/szaknevsor, /profil, /piacter,
+# /allasok/pro…) a Pages Function szolgálja ki, ott a `src/middleware.ts`
+# ENFORCED_CSP-je megy, amiben NINCS `script-src` — ott tehát a Paddle betöltött.
+# Ezért volt lehetséges, hogy közben mégis született előfizetés (2026-06-29,
+# 2026-07-02): a fő árazó oldal (/pro) útja volt zárva, nem mindegyik út.
+#
+# ⚠️ EZ A KETTŐSSÉG ÖNMAGÁBAN KOCKÁZAT: ha egy útvonal dinamikusból statikussá
+# válik (rutinszerű változás), CSENDBEN szigorodik a CSP-je, és elhasalhat egy
+# harmadik feles integráció. Új külső szkriptnél MINDIG ezt a fájlt is nézd.
+#
+# ⚠️ MIÉRT MARADT ÉSZREVÉTLEN: ez a fájl CSAK Cloudflare Pages-en él — helyi
+# `next dev`-ben NINCS ilyen fejléc. A fizetés lokálisan tökéletesen működik.
+# Ha fizetés-szolgáltatót cserélsz, EZT a fájlt is módosítsd, és élesben
+# ellenőrizd (`window.Paddle` létezik-e a /pro oldalon).
 # Teszt őrzi: tests/unit/csp-payment-provider.test.ts
 #
 # A Paddle-hez KELL: script-src (cdn), style-src (cdn — a checkout overlay

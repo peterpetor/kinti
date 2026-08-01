@@ -5,13 +5,20 @@ import { resolve } from "node:path";
 /**
  * A CSP és a FIZETÉS-SZOLGÁLTATÓ összekötésének őre.
  *
- * ⚠️⚠️ A JAVÍTOTT HIBA (2026-08-01-i audit): a Paddle-fizetés 2026-06-22 óta —
- * a Lemon Squeezy → Paddle váltás óta, tehát 5+ hétig — ÉLESBEN NEM MŰKÖDÖTT.
- * A `public/_headers` CSP-je nem engedte a `cdn.paddle.com`-ot, így a
- * `paddle.js` betöltése `csp` indokkal megszakadt (élesben mérve:
- * `requestfailed` → `errorText: "csp"`, és `window.Paddle === undefined`),
- * a `Paddle.Checkout.open()` overlay pedig soha nem nyílt meg.
- * Mindhárom PRO-termék megvásárolhatatlan volt.
+ * ⚠️⚠️ A JAVÍTOTT HIBA (2026-08-01-i audit): a `public/_headers` CSP-je nem
+ * engedte a `cdn.paddle.com`-ot, így a **/pro oldalon** a `paddle.js` betöltése
+ * `csp` indokkal megszakadt (élesben mérve: `requestfailed` → `errorText:
+ * "csp"`, és `window.Paddle === undefined`), a `Paddle.Checkout.open()` overlay
+ * pedig nem nyílt meg. A CSP 2026-05-30 óta soha nem tartalmazta a
+ * fizetés-szolgáltatót; a Paddle-re váltás 2026-06-22-én történt.
+ *
+ * ⚠️ A HATÓKÖR PONTOSAN — ELŐSZÖR TÚLBECSÜLTEM: ez a fejléc a STATIKUSAN
+ * kiszolgált oldalakra vonatkozik (/pro, /gyik, /berkalkulator…), a
+ * dinamikusan renderelt útvonalakon a middleware megengedőbb CSP-je megy
+ * (nincs `script-src`). Ezért NEM igaz, hogy senki nem tudott vásárolni —
+ * 2026-06-29-én és 07-02-án született előfizetés. A FŐ ÁRAZÓ OLDAL útja volt
+ * zárva, nem mindegyik. Tanulság: mielőtt „X hete törött" állítást teszel,
+ * nézd meg, cáfolja-e az ADAT (itt: a subscriptions tábla dátumai).
  *
  * ⚠️ MIÉRT NEM DERÜLT KI: a `public/_headers` CSAK Cloudflare Pages-en él —
  * helyi `next dev`-ben nincs ilyen fejléc. A fizetés lokálisan tökéletesen
