@@ -6,7 +6,7 @@ import { resolve } from "node:path";
  * A CSP és a FIZETÉS-SZOLGÁLTATÓ összekötésének őre.
  *
  * ⚠️⚠️ A JAVÍTOTT HIBA (2026-08-01-i audit): a `public/_headers` CSP-je nem
- * engedte a `cdn.paddle.com`-ot, így a **/pro oldalon** a `paddle.js` betöltése
+ * engedte a `cdn.paddle.com`-ot, így a /pro OLDALON a `paddle.js` betöltése
  * `csp` indokkal megszakadt (élesben mérve: `requestfailed` → `errorText:
  * "csp"`, és `window.Paddle === undefined`), a `Paddle.Checkout.open()` overlay
  * pedig nem nyílt meg. A CSP 2026-05-30 óta soha nem tartalmazta a
