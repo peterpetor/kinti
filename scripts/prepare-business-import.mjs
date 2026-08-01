@@ -763,6 +763,25 @@ const q = (s) => (s == null || s === "" ? "NULL" : `'${esc(s)}'`);
 const records = parseCSV(fs.readFileSync(CSV_FILE, "utf8"));
 const seen = new Set();
 const skipped = [];
+
+/**
+ * A bemutatkozó-szövegbe TILOS bekerülő tartalom.
+ *
+ * (1) SEED-MÓDSZERTAN: a felhasználót nem érdekli, mi hozta elő a tételt, és
+ *     rontja is a hitelét („Vezetéknév+szakma Google Maps-keresés hozta elő").
+ * (2) IDEGEN PLATFORM PONTSZÁMA: a saját véleményrendszerünkben minden cég
+ *     0 véleményes, és az adatlapon „Új · Írd meg az elsőt!" áll — a leírásban
+ *     lévő „5,0 csillag" ezt UGYANAZON A KÉPERNYŐN cáfolja. Ráadásul idegen
+ *     platform összeállított adatának újraközlése (ToS + EU adatbázisjog),
+ *     és egy régi pontszám ma már bármi lehet.
+ */
+const DESCRIPTION_BANS = [
+  [/hozta el[őo]|vezet[ée]kn[ée]v\s*\+|keresztn[ée]v\s*\+|keres[ée]sb[őo]l|Google Maps|Google-poszt/i,
+    "SEED-MÓDSZERTAN a leírásban"],
+  [/\d[,.]\d\s*csillag|\d[,.]\d\s*\/\s*5|\d+\s*[ée]rt[ée]kel[ée]s\b/i,
+    "IDEGEN PLATFORM PONTSZÁMA a leírásban"],
+];
+const contentViolations = [];
 const lines = [
   "-- scripts/import_businesses.sql — AUTOGENERÁLT (prepare-business-import.mjs). NE szerkeszd kézzel.",
   "-- Valódi magyar szakemberek (CH/AT/DE/NL), per-cég kategóriával, jóváhagyva (moderation_status=1),",
@@ -816,6 +835,15 @@ for (const r of records) {
   seen.add(id);
 
   const website = r.website ? r.website.replace(/^https?:\/\//, "").replace(/\/$/, "") : null;
+  // ⚠️ A leírás a PUBLIKUS bemutatkozó — se belső jegyzet, se idegen pontszám.
+  // 2026-08-01-ig 13 élő tételbe szivárgott be (user-jelzés indította a
+  // takarítást), ld. db/clean-blurbs-2026-08-01.sql. Itt HARD KAPU: inkább
+  // álljon meg az import, mint hogy megint a felhasználó elé kerüljön.
+  for (const [re, mit] of DESCRIPTION_BANS) {
+    if (re.test(r.description || "")) {
+      contentViolations.push(`${mit}: ${r.name} — „${r.description}"`);
+    }
+  }
   const blurb = [r.description, website].filter(Boolean).join(" · ");
   const address = r.address || r.city || null;
 
@@ -835,6 +863,19 @@ for (const r of records) {
   );
   count++;
   perCountry[country] = (perCountry[country] || 0) + 1;
+}
+
+// ⚠️ HARD KAPU a kiírás ELŐTT: ha tiltott tartalom van a leírásban, NEM
+// generálunk SQL-t. Szándékosan nem „megtisztítjuk és megyünk tovább" — a
+// csendes javítás elrejtené, hogy a forrás-CSV-t kell rendbe tenni.
+if (contentViolations.length) {
+  console.error(
+    `[LEÁLLÁS] ${contentViolations.length} tiltott tartalom a bemutatkozó-szövegben.\n` +
+      "A leírás a felhasználónak szól: mit csinál a cég, hol, mit kínál — se belső\n" +
+      "jegyzet arról, hogyan találtuk meg, se idegen platform pontszáma.\n  " +
+      contentViolations.join("\n  "),
+  );
+  process.exit(1);
 }
 
 fs.writeFileSync(SQL_OUTPUT, lines.join("\n") + "\n", "utf8");
