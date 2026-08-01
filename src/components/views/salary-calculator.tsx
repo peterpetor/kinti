@@ -117,9 +117,9 @@ export function SalaryCalculator() {
             💰
           </span>
           <div className="min-w-0 flex-1">
-            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">
+            <h2 className="text-[20px] font-extrabold tracking-tight text-ink">
               Bérkalkulátor Svájc
-            </h1>
+            </h2>
             <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
               Nettó fizetés becslése forrásadóval (Quellensteuer), AHV, ALV és nyugdíjpénztár levonásokkal.
             </p>

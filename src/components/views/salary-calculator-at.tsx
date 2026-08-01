@@ -43,7 +43,7 @@ export function SalaryCalculatorAT() {
             💶
           </span>
           <div className="min-w-0 flex-1">
-            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">Bérkalkulátor Ausztria</h1>
+            <h2 className="text-[20px] font-extrabold tracking-tight text-ink">Bérkalkulátor Ausztria</h2>
             <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
               Nettó bér becslése: SV-járulékok (ÖGK) + Lohnsteuer + 13./14. havi (Urlaubs-/Weihnachtsgeld) kedvező adózása.
             </p>

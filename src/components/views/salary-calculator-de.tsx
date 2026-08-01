@@ -45,7 +45,7 @@ export function SalaryCalculatorDE() {
         <div className="flex items-start gap-3">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary text-white text-2xl">💶</span>
           <div className="min-w-0 flex-1">
-            <h1 className="text-[20px] font-extrabold tracking-tight text-ink">Bérkalkulátor Németország</h1>
+            <h2 className="text-[20px] font-extrabold tracking-tight text-ink">Bérkalkulátor Németország</h2>
             <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
               Nettó bér becslése: SV-járulékok (RV/AV/KV/PV) + Lohnsteuer (§32a) Steuerklasse szerint + Soli + Kirchensteuer.
             </p>

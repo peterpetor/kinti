@@ -66,6 +66,16 @@ export default async function FeedPage() {
   return (
     <>
       <div className="space-y-6 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
+      {/* ⚠️ A kezdőlapnak NEM VOLT `h1`-e (2026-08-01-i audit, élesben mérve:
+          0 db). A márkanév `span`, a szekció-címek pedig `h3`-ak, így a lap
+          címsor-fa nélkül maradt — ez a képernyőolvasós tájékozódást és a
+          kereső-értelmezést is rontja.
+
+          Vizuálisan REJTETT, de LEÍRÓ h1: a fejlécben látható „Kinti" felirat
+          önmagában nem mondaná meg, miről szól a lap, a design viszont
+          szándékosan nem tartalmaz nagy címsort (az asszisztens a hős). */}
+      <h1 className="sr-only">Kinti — magyar szakemberek, állások és ügyintézés külföldön</h1>
+
       <header className="flex items-center gap-2.5">
         <div className="flex items-center gap-2">
           <KintiLogo size={28} />
