@@ -17,6 +17,7 @@ import { jobMatchScore, hasMatchableProfile, type MatchProfile } from "@/lib/job
 import { parseDbDate } from "@/lib/dates";
 import { trackAction } from "@/components/usage-tracker";
 import type { Job } from "@/lib/types";
+import { Skeleton } from "@/components/skeleton";
 
 // Leaflet csak kliensen (window-függő) → SSR-en () => null.
 const CantonBubbleMap =
@@ -232,8 +233,12 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
           {showMap && (
             <Suspense
               fallback={
-                <div className="grid h-[320px] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
-                  Térkép betöltése…
+                // ⚠️ Nyers szöveges „Térkép betöltése…" helyett shimmer-váz — a
+                // design-rendszer szabálya: TARTALOM-töltésnél sosem szöveg vagy
+                // pörgő kör, mert az a legerősebb „ez egy weboldal" jel.
+                <div className="relative h-[320px] overflow-hidden rounded-card border border-line shadow-card">
+                  <Skeleton className="h-full w-full rounded-none" />
+                  <span className="sr-only">Térkép betöltése…</span>
                 </div>
               }
             >
@@ -274,7 +279,22 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
       <section className="space-y-4">
         {filtered.length === 0 && externalFiltered.length === 0 ? (
           extLoading ? (
-            <p className="py-8 text-center text-[13px] text-ink-muted">Állások betöltése…</p>
+            // ⚠️ Ez volt a legláthatóbb: az Állások fő listája NYERS SZÖVEGGEL
+            // töltött. A dokumentált grep-recept („Betöltés…") nem fogta meg,
+            // mert itt fordított a szórend („Állások betöltése…").
+            <div className="space-y-3">
+              <span className="sr-only">Állások betöltése…</span>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-card border border-line bg-surface p-4 shadow-card">
+                  <Skeleton className="h-4 w-2/3 rounded-md" />
+                  <Skeleton className="mt-2 h-3 w-1/2 rounded-md" />
+                  <div className="mt-3 flex gap-2">
+                    <Skeleton className="h-6 w-20 rounded-pill" />
+                    <Skeleton className="h-6 w-16 rounded-pill" />
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
           <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
             <Icon name="search" size={28} className="text-ink-faint" />

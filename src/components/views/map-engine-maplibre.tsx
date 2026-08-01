@@ -10,6 +10,7 @@ import { pmtilesUrl, mapStyleUrl } from "@/lib/map-config";
 import { clusterBusinesses, clusterBounds, clusterSize } from "@/lib/cluster";
 import { useMyLocation } from "@/lib/use-my-location";
 import type { SosAlert } from "@/lib/sos-repo";
+import { Skeleton } from "@/components/skeleton";
 
 /**
  * MapLibre (vektoros) motor — szép, sima, prémium, WebGL-alapú.
@@ -429,10 +430,13 @@ export function MaplibreEngine({
       </div>
 
       {!ready && (
-        <div className="pointer-events-none absolute inset-0 z-[5] grid place-items-center">
-          <div className="glass rounded-pill px-4 py-2 text-[12px] font-semibold text-ink-muted shadow-card">
-            Térkép betöltése…
-          </div>
+        // ⚠️ A motor még nem áll készen → NINCS mit nézni a felület alatt.
+        // Korábban egy szöveges „Térkép betöltése…" pirula lebegett az üres
+        // dobozban; shimmer-vázzal a betöltés a felület RÉSZÉNEK látszik, nem
+        // egy állapotüzenetnek (design-rendszer: tartalom-loader sosem szöveg).
+        <div className="pointer-events-none absolute inset-0 z-[5] overflow-hidden">
+          <Skeleton className="h-full w-full rounded-none" />
+          <span className="sr-only">Térkép betöltése…</span>
         </div>
       )}
     </>

@@ -39,9 +39,15 @@ export default async function JobsPage() {
 
       <main className="flex-1 pb-20 space-y-6">
         <section className="animate-fade-up space-y-3">
+          {/* ⚠️ A második mondat KIVEZETVE (2026-08-01): „Böngéssz az ellenőrzött
+              állások között, vagy csiszold az önéletrajzod" — szó szerint azt
+              ismételte, amit a KÖZVETLENÜL alatta lévő két gomb csinál, és a
+              68px-ével a lista elé tolt egy képernyőnyi magyarázatot. Aki az
+              Állások fülre koppintott, tudja, hol van; a natív app nem magyarázza
+              el a képernyőt, amit épp megnyitottál. A lap saját elve is ez —
+              ld. a JobsBrowser fölötti kommentet („a lista az első"). */}
           <p className="text-[14px] leading-relaxed text-ink-muted">
-            Magyar-barát munkalehetőségek külföldön. Böngéssz az ellenőrzött állások között, vagy
-            csiszold az önéletrajzod, mielőtt jelentkezel!
+            Magyar-barát munkalehetőségek külföldön.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Link

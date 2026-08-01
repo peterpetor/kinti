@@ -26,6 +26,7 @@ import { hasStreetAddress } from "@/lib/address";
 import { relevanceScore } from "@/lib/listing-score";
 import { SmartSearchBar } from "./smart-search-bar";
 import { PushOptin } from "@/components/push-optin";
+import { Skeleton } from "@/components/skeleton";
 
 const RADIUS_OPTIONS_KM = [5, 10, 20, 50] as const;
 type RadiusKm = (typeof RADIUS_OPTIONS_KM)[number];
@@ -692,7 +693,13 @@ export function ExploreView({
           onApplyQuery={setQ}
           categories={categories}
           categoryCounts={categoryCounts}
-          placeholder={`Mit keresel? Pl. villanyszerelő ${CITY_IN_EXAMPLE[country] ?? CITY_IN_EXAMPLE.CH}`}
+          // ⚠️ RÖVID placeholder KELL: a mező mellett ülő „AI-mód" gomb miatt a
+          // beviteli sáv mobilon csak ~170px — a korábbi „Mit keresel? Pl.
+          // villanyszerelő Berlinben" szó közepén vágódott el („…villanysze"),
+          // ami törött benyomást keltett. Ez a változat elfér, ÉS továbbra is a
+          // szakma+város mintát tanítja (a többszavas keresés most már működik,
+          // ld. [[directory-search-tokenization]]).
+          placeholder={`Pl. fodrász ${CITY_IN_EXAMPLE[country] ?? CITY_IN_EXAMPLE.CH}`}
         />
       </div>
 
@@ -707,9 +714,20 @@ export function ExploreView({
           className="inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 shadow-card transition hover:bg-surface-alt active:scale-[0.97]"
         >
           <Icon name="pin" size={14} strokeWidth={2.2} className="shrink-0 text-accent" />
-          {/* Ország-illő régió-megnevezés (user-jelzés: Ausztriában nincs kanton). */}
-          <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-ink-muted">{regionLabel(country)}</span>
-          <span className="truncate text-[13.5px] font-bold tracking-[-0.01em] text-ink">{locationLabel}</span>
+          {/* ⚠️ FORDÍTVA VOLT: a KONSTANS „TARTOMÁNY" címke volt `shrink-0`, a
+              VÁLTOZÓ érték pedig `truncate` — így a gomb „TARTOMÁNY E…"-t
+              mutatott, vagyis pont az információt vágta le, a díszítést hagyta
+              meg. A pin-ikon amúgy is jelzi, hogy helyről van szó, és a
+              megnyíló alsó lap címe kimondja („Válassz tartományt”), ezért a
+              címke csak akkor fér be, ha marad hely — az ÉRTÉK viszi a sort.
+              Ország-illő megnevezés (user-jelzés: Ausztriában nincs kanton). */}
+          {/* Mobilon elrejtve (ott a szűk hely az ÉRTÉKÉ), tágasabb képernyőn
+              visszajön. ⚠️ `sm:` — VALÓDI breakpoint; egy nem létező (pl. `xs:`)
+              változat némán soha nem kapcsolna vissza. */}
+          <span className="hidden shrink truncate text-[11px] font-bold uppercase tracking-wide text-ink-muted sm:inline">
+            {regionLabel(country)}
+          </span>
+          <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold tracking-[-0.01em] text-ink">{locationLabel}</span>
           <Icon name="chevD" size={13} strokeWidth={2.2} className="shrink-0 text-ink-muted" />
         </button>
         <BottomSheet open={cantonSheetOpen} onClose={() => setCantonSheetOpen(false)} title={`Válassz ${regionLabel(country)}t`}>
@@ -955,52 +973,25 @@ export function ExploreView({
         </div>
       )}
 
-      {/* Self-service CTA-k + push — csak lista-nézetben; map-módban a térkép a hős. */}
-      {view === "list" && (
-      <div className="px-5">
-        <Link
-          href="/vallalkozo"
-          className="flex items-center gap-3 rounded-card border border-primary/25 bg-primary-soft px-4 py-3 shadow-card transition active:scale-[0.99]"
-        >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary text-white">
-            <Icon name="plus" size={17} strokeWidth={2.6} />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
-              Magyar vállalkozásod van? Add hozzá ingyen!
-            </span>
-            <span className="block text-[11.5px] text-ink-muted">
-              Gyors regisztráció, és 1 perc alatt fent vagy.
-            </span>
-          </span>
-          <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
-        </Link>
+      {/* ⚠️ ITT KORÁBBAN HÁROM BLOKK ÁLLT (2026-08-01-ig): a vállalkozás-
+          regisztrációs CTA, az árajánlat-kérő CTA és a push-feliratkozás.
+          Együtt ~200px-t vittek el a TALÁLATOK ELŐL, és emiatt az első
+          cégkártya y=810px-re, azaz 1,2 képernyővel lejjebb került — a
+          látogató a szaknévsor FŐ képernyőjén végiggörgetett egy teljes
+          képernyőt, mire egyetlen céget látott.
 
-        {/* Lead gen CTA — árajánlat-kérés */}
-        <Link
-          href="/szaknevsor/ajanlatkeres"
-          className="flex items-center gap-3 rounded-card border border-accent/25 bg-accent/5 px-4 py-3 shadow-card transition active:scale-[0.99] mt-2"
-        >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-accent text-white">
-            <Icon name="send" size={17} strokeWidth={2.4} />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
-              Kérj árajánlatot egyszerre mindenkitől!
-            </span>
-            <span className="block text-[11.5px] text-ink-muted">
-              Egy űrlap — több vállalkozó válaszol neked.
-            </span>
-          </span>
-          <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-accent" />
-        </Link>
+          Mindhárom a lista ALJÁRA került (ld. lentebb):
+          • a regisztrációs CTA a TULAJDONOSNAK szól, nem a keresőnek —
+            ugyanaz a hibaosztály, mint a cégadatlap claim-kártyája volt;
+          • a push-engedélykérés AZELŐTT kért értesítés-jogot, hogy az app
+            bármit adott volna — natív appban is érték UTÁN kérünk engedélyt,
+            és egy elutasított push-jogot nem lehet újra kérni;
+          • az árajánlat-CTA maradna hasznos, de a lead-út KONTEXTUÁLISAN már
+            le van fedve (zsákutca-pillanat, „kevés a találat", üres térkép) —
+            azok jobban céloznak, mint egy fejléc-banner.
 
-        {/* Push-feliratkozás: új vállalkozás/állás/esemény a kantonodban */}
-        <div className="mt-2">
-          <PushOptin />
-        </div>
-      </div>
-      )}
+          A kategória-pillek SZÁNDÉKOSAN maradnak itt: azok a szaknévsor
+          elsődleges navigációja, és a tördelt elrendezés user-döntés. */}
 
       {/* A kategória-pillek list-módban itt fent; map-módban a térképre úsztatva. */}
       {view === "list" && (
@@ -1359,13 +1350,63 @@ export function ExploreView({
               </div>
             </section>
           )}
+
+          {/* Self-service CTA-k + push — a LISTA UTÁN. Fentről kerültek ide
+              (ld. a fenti magyarázatot): a kereső dolga a találat, ezek pedig
+              más közönségnek (tulajdonos) vagy későbbi pillanatnak (értesítés-
+              engedély) szólnak. Aki végiggörgette a listát, az vagy megtalálta,
+              amit keresett, vagy nyitott a következő lépésre — mindkét esetben
+              ITT van a helyük. */}
+          <Link
+            href="/vallalkozo"
+            className="flex items-center gap-3 rounded-card border border-primary/25 bg-primary-soft px-4 py-3 shadow-card transition active:scale-[0.99]"
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary text-white">
+              <Icon name="plus" size={17} strokeWidth={2.6} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
+                Magyar vállalkozásod van? Add hozzá ingyen!
+              </span>
+              <span className="block text-[11.5px] text-ink-muted">
+                Gyors regisztráció, és 1 perc alatt fent vagy.
+              </span>
+            </span>
+            <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
+          </Link>
+
+          {/* Lead gen CTA — árajánlat-kérés */}
+          <Link
+            href="/szaknevsor/ajanlatkeres"
+            className="flex items-center gap-3 rounded-card border border-accent/25 bg-accent/5 px-4 py-3 shadow-card transition active:scale-[0.99]"
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-accent text-white">
+              <Icon name="send" size={17} strokeWidth={2.4} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
+                Kérj árajánlatot egyszerre mindenkitől!
+              </span>
+              <span className="block text-[11.5px] text-ink-muted">
+                Egy űrlap — több vállalkozó válaszol neked.
+              </span>
+            </span>
+            <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-accent" />
+          </Link>
+
+          {/* Push-feliratkozás: új vállalkozás/állás/esemény a kantonodban */}
+          <PushOptin />
         </div>
       ) : (
         <div className="px-3">
           <Suspense
             fallback={
-              <div className="mb-2 grid h-[calc(100dvh-300px)] min-h-[440px] max-h-[760px] place-items-center rounded-card border border-line bg-surface text-[12.5px] font-semibold text-ink-muted shadow-card">
-                Térkép betöltése…
+              // ⚠️ Shimmer-váz a nyers „Térkép betöltése…" szöveg helyett — a
+              // térkép a szaknévsor MÁSODIK fő nézete, és ez a doboz 440px+
+              // magas: szöveggel kitöltve az egész képernyő „weboldalnak" néz ki.
+              <div className="relative mb-2 h-[calc(100dvh-300px)] min-h-[440px] max-h-[760px] overflow-hidden rounded-card border border-line shadow-card">
+                <Skeleton className="h-full w-full rounded-none" />
+                <span className="sr-only">Térkép betöltése…</span>
               </div>
             }
           >

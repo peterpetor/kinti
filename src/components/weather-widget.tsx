@@ -8,6 +8,7 @@ import { usePreferredCanton } from "@/lib/canton-pref";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
 import { describeWeather, type WeatherNow } from "@/lib/weather";
+import { Skeleton } from "@/components/skeleton";
 
 /**
  * WeatherWidget — a főoldal tetején lévő svájci időjárás-csík.
@@ -94,7 +95,13 @@ export function WeatherWidget() {
         </div>
         <div className="mt-0.5 truncate text-[11.5px] font-semibold text-ink-muted">
           {phase === "loading" || !data || !cond ? (
-            "Időjárás betöltése…"
+            // ⚠️ Szöveges „Időjárás betöltése…" helyett vékony shimmer-csík: a
+            // widget így nem VÁLTOZTAT MÉRETET a betöltés végén (nincs ugrás),
+            // és nem olvastat el a felhasználóval egy állapotüzenetet.
+            <>
+              <Skeleton className="h-3 w-28 rounded-md" />
+              <span className="sr-only">Időjárás betöltése…</span>
+            </>
           ) : (
             <>
               {cond.label}
