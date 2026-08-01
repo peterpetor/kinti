@@ -34,7 +34,7 @@ UPDATE businesses SET blurb =
   WHERE id = 'ch-imp-dr-med-edit-kovacs-psychiatrie';
 
 UPDATE businesses SET blurb =
-  'Autókereskedés (luxusautók) Bern mellett — Németh Tibor értékesítési szakértővel. · nemeth.ch'
+  'Autókereskedés (luxusautók) Bern mellett. · nemeth.ch'
   WHERE id = 'ch-imp-automobile-nemeth-ag';
 
 -- (1)+(2) egyszerre: módszertan ÉS csillag
