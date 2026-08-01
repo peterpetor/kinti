@@ -50,8 +50,8 @@ export default async function KintiProPage() {
                 adó az áron FELÜL jönne — tehát valótlan volt, és drágábbnak
                 mutatta a terméket, mint amennyi. Fogyasztónak amúgy is a
                 végösszeget kell feltüntetni. */}
-            Egy díj, minden PRO funkció. Bármikor lemondható. Tájékoztató ár, ÁFÁ-val
-            együtt — a pontos végösszeget a pénztár mutatja.{" "}
+            Egy díj, minden PRO funkció. Bármikor lemondható. Tájékoztató ár — a pontos,
+            adóval együttes végösszeget a pénztár mutatja.{" "}
             <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
             <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
           </p>

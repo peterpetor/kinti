@@ -402,7 +402,7 @@ async function OwnerDashboard({
           {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár ÁFÁ-val együtt értendő
               — a Paddle így árazik (élesben mérve, ld. price-vat-claim.test.ts). */}
           <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
-            Tájékoztató ár, ÁFÁ-val együtt — a pontos végösszeget a pénztár mutatja. Havonta megújul, bármikor lemondható.
+            Tájékoztató ár — a pontos, adóval együttes végösszeget a pénztár mutatja. Havonta megújul, bármikor lemondható.
           </p>
         </div>
       )}
