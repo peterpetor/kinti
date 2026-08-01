@@ -721,13 +721,22 @@ export function ExploreView({
               megnyíló alsó lap címe kimondja („Válassz tartományt”), ezért a
               címke csak akkor fér be, ha marad hely — az ÉRTÉK viszi a sort.
               Ország-illő megnevezés (user-jelzés: Ausztriában nincs kanton). */}
-          {/* Mobilon elrejtve (ott a szűk hely az ÉRTÉKÉ), tágasabb képernyőn
-              visszajön. ⚠️ `sm:` — VALÓDI breakpoint; egy nem létező (pl. `xs:`)
-              változat némán soha nem kapcsolna vissza. */}
-          <span className="hidden shrink truncate text-[11px] font-bold uppercase tracking-wide text-ink-muted sm:inline">
-            {regionLabel(country)}
+          {/* Natív szűrő-csip viselkedés: BEÁLLÍTATLANUL a szűrő NEVE, beállítva
+              az ÉRTÉKE. Így egyik állapotban sem vágódik le semmi.
+
+              ⚠️ Korábban a konstans „TARTOMÁNY" címke ÉS az érték egyszerre
+              fértek volna a fél szélességű pirulába — nem fértek, és mivel a
+              címke volt `shrink-0`, pont az információ csonkult: „TARTOMÁNY E…".
+              Az „Egész Németország" önmagában is túl hosszú ide (17 karakter),
+              ezért az alaphelyzet a rövid szűrőnév.
+
+              ⚠️ A `locationLabel`-hez NEM nyúlunk: azt a térkép is megkapja
+              (lásd lentebb), ott a teljes „Egész Németország" a helyes szöveg. */}
+          <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold tracking-[-0.01em] text-ink">
+            {canton === "all"
+              ? regionLabel(country).charAt(0).toUpperCase() + regionLabel(country).slice(1)
+              : locationLabel}
           </span>
-          <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold tracking-[-0.01em] text-ink">{locationLabel}</span>
           <Icon name="chevD" size={13} strokeWidth={2.2} className="shrink-0 text-ink-muted" />
         </button>
         <BottomSheet open={cantonSheetOpen} onClose={() => setCantonSheetOpen(false)} title={`Válassz ${regionLabel(country)}t`}>
