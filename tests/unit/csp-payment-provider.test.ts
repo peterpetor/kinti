@@ -61,6 +61,19 @@ describe("CSP — a fizetés-szolgáltató engedélyezve van", () => {
     expect(directive("connect-src")).toContain("paddle.com");
   });
 
+  it("a checkout overlay CSS-e betölthet (style-src)", () => {
+    // Élesben mérve a script-src javítása UTÁN: a `paddle.css` külön `csp`
+    // hibával elhasalt → a fizetőablak stílus nélkül jelent volna meg.
+    expect(directive("style-src")).toContain("cdn.paddle.com");
+  });
+
+  it("⚠️ a ProfitWell követő-szkript SZÁNDÉKOSAN blokkolva marad", () => {
+    // Paddle opcionális megtartás-analitikája: a fizetéshez nem kell
+    // (ellenőrizve), és harmadik feles követő. A visszaengedése legyen TUDATOS
+    // döntés, ne egy CSP-lazítás mellékhatása.
+    expect(CSP).not.toContain("profitwell.com");
+  });
+
   it("a form-action engedi a Paddle-t", () => {
     expect(directive("form-action")).toContain("paddle.com");
   });
