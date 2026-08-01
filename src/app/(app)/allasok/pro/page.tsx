@@ -44,8 +44,14 @@ export default async function KintiProPage() {
             19 <span className="text-[20px] text-ink-muted font-bold">€ / hó</span>
           </div>
           <p className="text-[12px] text-ink-muted mt-1 mb-6">
-            Egy díj, minden PRO funkció. Bármikor lemondható. Tájékoztató nettó ár (ÁFA nélkül) —
-            a végső, áfával együttes összeget a pénztár mutatja.{" "}
+            {/* ⚠️ A Paddle-árak ÁFÁ-VAL EGYÜTT vannak beállítva — élesben mérve:
+                DE subtotal €15.97 + tax €3.03 = total €19.00 (CH/AT/NL is 19,00 €
+                végösszeg, csak a kulcs más). A korábbi megfogalmazás — amely szerint az
+                adó az áron FELÜL jönne — tehát valótlan volt, és drágábbnak
+                mutatta a terméket, mint amennyi. Fogyasztónak amúgy is a
+                végösszeget kell feltüntetni. */}
+            Egy díj, minden PRO funkció. Bármikor lemondható. Tájékoztató ár, ÁFÁ-val
+            együtt — a pontos végösszeget a pénztár mutatja.{" "}
             <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
             <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
           </p>

@@ -399,9 +399,10 @@ async function OwnerDashboard({
             label="Kiemelés vásárlása (19 € / hó)"
             className="bg-pro text-white hover:bg-[#e68600]"
           />
-          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár tájékoztató nettó. */}
+          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár ÁFÁ-val együtt értendő
+              — a Paddle így árazik (élesben mérve, ld. price-vat-claim.test.ts). */}
           <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
-            Tájékoztató nettó ár (ÁFA nélkül) — a végső, áfával együttes összeget a pénztár mutatja. Havonta megújul, bármikor lemondható.
+            Tájékoztató ár, ÁFÁ-val együtt — a pontos végösszeget a pénztár mutatja. Havonta megújul, bármikor lemondható.
           </p>
         </div>
       )}

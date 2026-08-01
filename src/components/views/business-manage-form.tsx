@@ -175,9 +175,10 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           >
             {isCheckoutLoading ? "Töltés…" : "Kiemelés vásárlása (19 €/hó)"}
           </button>
-          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár tájékoztató nettó. */}
+          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár ÁFÁ-val együtt értendő
+              — a Paddle így árazik (élesben mérve, ld. price-vat-claim.test.ts). */}
           <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
-            Tájékoztató nettó ár (ÁFA nélkül) — a végső, áfával együttes összeget a pénztár mutatja. Havonta megújul, bármikor lemondható.{" "}
+            Tájékoztató ár, ÁFÁ-val együtt — a pontos végösszeget a pénztár mutatja. Havonta megújul, bármikor lemondható.{" "}
             <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
             <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
           </p>
@@ -369,9 +370,10 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           >
             {isCheckoutLoading ? "Töltés…" : "Előfizetés — Szaknévsor PRO (19 €/hó)"}
           </button>
-          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár tájékoztató nettó. */}
+          {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár ÁFÁ-val együtt értendő
+              — a Paddle így árazik (élesben mérve, ld. price-vat-claim.test.ts). */}
           <p className="mt-1.5 text-[10.5px] leading-snug text-ink-faint">
-            Tájékoztató nettó ár (ÁFA nélkül) — a végső, áfával együttes összeget a pénztár mutatja. Havonta megújul, bármikor lemondható.{" "}
+            Tájékoztató ár, ÁFÁ-val együtt — a pontos végösszeget a pénztár mutatja. Havonta megújul, bármikor lemondható.{" "}
             <span className="web-only-payment">A fizetést a Paddle (Merchant of Record) bonyolítja — az Android-alkalmazásból vásárolva a Google Play fizetési rendszere érvényes.</span>
             <span className="android-only-payment">A fizetést a Google Play fizetési rendszere bonyolítja.</span>
           </p>
