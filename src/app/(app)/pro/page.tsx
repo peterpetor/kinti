@@ -319,7 +319,12 @@ export default function ProPage() {
   const { user } = useUser();
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
-  const [lang, setLang] = useLegalLang();
+  // ⚠️ `detectByIp: false` — a /pro APP-ON BELÜLI oldal, és az app közönsége
+  // definíció szerint külföldön élő magyar. Az IP-tipp emiatt gyakorlatilag
+  // MINDIG idegen nyelvet adott: aki addig végig magyar felületet használt,
+  // a fizetés előtti pillanatban NÉMET oldalt kapott. Alapból magyar; a
+  // nyelvváltó ettől függetlenül működik, és a választás megmarad.
+  const [lang, setLang] = useLegalLang({ detectByIp: false });
   const t = T[lang];
   // ÉLŐ, lokalizált NETTÓ árak a Paddle-től (az ÁFÁ-t a pénztár adja hozzá) —
   // a feltüntetett ár a pénztárral egyezik (a fix EUR-ár CH-ban félrevezető volt).
