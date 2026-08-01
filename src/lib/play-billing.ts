@@ -62,9 +62,14 @@ export async function getPlayPrices(
     const details = await service.getDetails(products);
     const out: Partial<Record<ProductType, string>> = {};
     for (const d of details) {
+      // `narrowSymbol`: „19,00 €" a „19,00 EUR" helyett — így az Android-ág
+      // ugyanúgy néz ki, mint a webes (Paddle) ág, ami szimbólumot ad.
+      // A forint enélkül is helyes („7400 Ft", tizedes nélkül), a CHF-nek
+      // pedig nincs rövid szimbóluma — ott marad a kód, ez rendben van.
       const formatted = new Intl.NumberFormat("hu-HU", {
         style: "currency",
         currency: d.price.currency,
+        currencyDisplay: "narrowSymbol",
       }).format(Number(d.price.value));
       out[d.itemId as ProductType] = formatted;
     }
