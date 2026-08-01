@@ -1,15 +1,32 @@
 # Cloudflare Pages — globális security + útvonal-specifikus HTTP fejlécek.
 # Doc: https://developers.cloudflare.com/pages/configuration/headers/
 
+# ⚠️⚠️ FIZETÉS ÉS CSP — EGYÜTT KELL MÓDOSÍTANI (2026-08-01-i audit tanulsága)
+#
+# A Paddle-fizetés 2026-06-22 (Lemon Squeezy → Paddle váltás) óta ÉLESBEN NEM
+# MŰKÖDÖTT: a `script-src` nem engedte a `cdn.paddle.com`-ot, így a
+# `paddle.js` betöltése `csp` indokkal megszakadt, a `Paddle.Checkout.open()`
+# overlay pedig soha nem nyílt meg. Mindhárom PRO-termék megvásárolhatatlan volt.
+#
+# ⚠️ MIÉRT MARADT 5+ HÉTIG ÉSZREVÉTLEN: ez a fájl CSAK Cloudflare Pages-en él —
+# helyi `next dev`-ben NINCS ilyen fejléc. A fizetés tehát lokálisan tökéletesen
+# működik, és kizárólag élesben bukik. Ha fizetés-szolgáltatót cserélsz, EZT a
+# fájlt is módosítsd, és élesben ellenőrizd (`window.Paddle` létezik-e).
+# Teszt őrzi: tests/unit/csp-payment-provider.test.ts
+#
+# A Paddle-hez KELL: script-src (cdn), frame-src (buy.* = a fizető-overlay
+# iframe-je), connect-src (api/checkout-service), form-action, és a
+# `Permissions-Policy: payment` engedélye (Apple Pay / Google Pay).
+
 # --- Minden válaszra: alap security headerek -------------------------------
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Permissions-Policy: camera=(), microphone=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=()
+  Permissions-Policy: camera=(), microphone=(), payment=(self "https://buy.paddle.com" "https://sandbox-buy.paddle.com"), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin-allow-popups
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://challenges.cloudflare.com https://clerk.kinti.app; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.cloudflareinsights.com https://*.clerk.accounts.dev https://clerk.kinti.app https://api.frankfurter.app https://geocoding-api.open-meteo.com https://api.open-meteo.com https://*.basemaps.cartocdn.com https://challenges.cloudflare.com; worker-src 'self' blob:; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://challenges.cloudflare.com https://clerk.kinti.app https://cdn.paddle.com https://sandbox-cdn.paddle.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.cloudflareinsights.com https://*.clerk.accounts.dev https://clerk.kinti.app https://api.frankfurter.app https://geocoding-api.open-meteo.com https://api.open-meteo.com https://*.basemaps.cartocdn.com https://challenges.cloudflare.com https://*.paddle.com; worker-src 'self' blob:; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com https://www.youtube.com https://buy.paddle.com https://sandbox-buy.paddle.com; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
 
 # --- Manage-page-ek: szigorúbb referrer-policy hogy a token ne szivárogjon
 /szaknevsor/kezeles/*
