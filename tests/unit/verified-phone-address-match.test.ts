@@ -1,0 +1,55 @@
+import { describe, it, expect } from "vitest";
+// @ts-expect-error — .mjs segédszkript, nincs típusdefiníciója
+import { cimEgyezik, nemzetkozi, utcaEsSzam } from "../../scripts/match-verified-phones.mjs";
+
+/**
+ * A Maps-ből visszakapott telefonok hozzárendelésének biztonsági szabálya.
+ *
+ * ⚠️⚠️ MIÉRT: a Maps a NÉVRE keresve „segítőkészen" egy MÁSIK, hasonló profilú
+ * helyet is visszaad. 2026-08-03-i valós mérés: 10 osztrák pszichológusból
+ * 6-ra jött találat, de kettő HAMIS volt — Göschl-Kraemer Karla (Phorusgasse 2,
+ * 1040 Wien) helyett egy másik praxis a Semperstraße 5-ben (1180 Wien).
+ * Ha a nevet fogadtam volna el bizonyítéknak, IDEGEN TELEFONSZÁM került volna
+ * egy magyar szakember adatlapjára — pontosan az a hiba, amit a
+ * contact-completion runbook „nyers substring-illesztés IDEGEN telefont ad"
+ * néven dokumentál.
+ *
+ * ⚠️ A német utcanév-normalizálás nélkül a VALÓDI egyezések hullanának el
+ * („Grazer Straße" vs „Grazer Str."), ezért a teszt MINDKÉT irányban mér.
+ */
+describe("cím-egyeztetés a telefon-hozzárendeléshez", () => {
+  it("elfogadja a valódi egyezést a német rövidítések ellenére", () => {
+    // Straße ↔ Str.
+    expect(cimEgyezik("Grazer Straße 71/1/3, 2700 Wiener Neustadt", "Grazer Str. 71/1/3, 2700 Wiener Neustadt")).toBe(true);
+    // platz ↔ Pl. + a Maps elhagyja az ajtószámot
+    expect(cimEgyezik("Zimmermannplatz 4/27, 1090 Wien", "Zimmermannpl. 4, 1090 Wien")).toBe(true);
+    // ß ↔ ss
+    expect(cimEgyezik("Tiroler Straße 22/8/3, 9800 Spittal", "Tiroler Strasse 22, 9800 Spittal")).toBe(true);
+    expect(cimEgyezik("St. Veiter Straße 41/1, 9020 Klagenfurt", "St. Veiter Str. 41/1, 9020 Klagenfurt")).toBe(true);
+  });
+
+  it("⚠️ ELUTASÍTJA, ha más az utca vagy a házszám — ez véd az idegen telefontól", () => {
+    // A valós hamis pozitív, ami miatt a szabály létezik:
+    expect(cimEgyezik("Phorusgasse 2/9a, 1040 Wien", "Semperstraße 5/Tür 7, 1180 Wien")).toBe(false);
+    // Ugyanaz az utca, MÁS házszám:
+    expect(cimEgyezik("Grazer Straße 71, 2700 Wiener Neustadt", "Grazer Straße 17, 2700 Wiener Neustadt")).toBe(false);
+    // Ugyanaz a házszám, MÁS utca:
+    expect(cimEgyezik("Löblichgasse 13/16, 1090 Wien", "Landhausgasse 13/1/5, 1010 Wien")).toBe(false);
+    // Hiányzó adat sosem egyezés:
+    expect(cimEgyezik("", "Grazer Str. 71, 2700 Wiener Neustadt")).toBe(false);
+    expect(cimEgyezik("Grazer Str. 71, 2700 Wiener Neustadt", "")).toBe(false);
+  });
+
+  it("kiemeli az utcanevet és az ELSŐ házszámot (az ajtó-jelölő nélkül)", () => {
+    expect(utcaEsSzam("Grazer Straße 71/1/3, 2700 Wiener Neustadt")).toEqual({ utca: "grazer str", szam: "71" });
+    expect(utcaEsSzam("Phorusgasse 2/9a, 1040 Wien")).toEqual({ utca: "phorusgasse", szam: "2" });
+  });
+
+  it("osztrák helyi telefonszámot nemzetközi alakra hoz", () => {
+    expect(nemzetkozi("0660 4846455")).toBe("+43 660 4846455");
+    expect(nemzetkozi("01 5334740")).toBe("+43 1 5334740");
+    // A már nemzetközi alakot NEM bántja:
+    expect(nemzetkozi("+43 664 5141035")).toBe("+43 664 5141035");
+    expect(nemzetkozi("")).toBeNull();
+  });
+});
