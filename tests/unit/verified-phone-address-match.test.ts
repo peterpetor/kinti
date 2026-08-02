@@ -45,6 +45,19 @@ describe("cím-egyeztetés a telefon-hozzárendeléshez", () => {
     expect(utcaEsSzam("Phorusgasse 2/9a, 1040 Wien")).toEqual({ utca: "phorusgasse", szam: "2" });
   });
 
+  it("a PsyOnline szóközös-kötőjeles alakját is nemzetközire hozza", async () => {
+    // @ts-expect-error — .mjs segédszkript, nincs típusdefiníciója
+    const { atTelefon } = await import("../../scripts/psyonline-match.mjs");
+    // A regiszter „0676 - 3508814" alakban írja ki:
+    expect(atTelefon("0676 - 3508814")).toBe("+43 676 3508814");
+    expect(atTelefon("0680 - 140 99 85")).toBe("+43 680 1409985");
+    expect(atTelefon("0699 - 11510203")).toBe("+43 699 11510203");
+    // ⚠️ Ami nem telefonszám, arra NULL — különben szemét kerülne az adatlapra:
+    expect(atTelefon("")).toBeNull();
+    expect(atTelefon("12345")).toBeNull();
+    expect(atTelefon("Kontaktdaten")).toBeNull();
+  });
+
   it("osztrák helyi telefonszámot nemzetközi alakra hoz", () => {
     expect(nemzetkozi("0660 4846455")).toBe("+43 660 4846455");
     expect(nemzetkozi("01 5334740")).toBe("+43 1 5334740");
