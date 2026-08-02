@@ -26,8 +26,13 @@
 -- nincs. Ez AKTÍV kár, rosszabb, mint az üres találat.
 -- Megtekintés-szám: mind a 14 tételen 0 — senki nem nyitotta meg őket.
 --
--- ⚠️ A `verified=1` / `last_verified_at=2026-07-31` NEM cáfolat: az egy TÖMEGES
--- bélyegzés volt (db/stamp-verified-2026-07-31.sql), nem tételenkénti ellenőrzés.
+-- ⚠️ A `verified=1` / `last_verified_at=2026-07-31` NEM cáfolat — de nem is
+-- hamis bélyeg. A stamp-verified-2026-07-31.sql VALÓDI auditra épül (2213 cég,
+-- a hibás lekérésűeket kihagyta). A bélyeg azt jelenti: „az audit megnézte ezt
+-- a sort" — NEM azt, hogy „ma is van itt magyar mise".
+-- Ezeknél a tételeknél az auditnak NEM VOLT MIT MÉRNIE: se telefon, se
+-- weboldal, se saját Maps-tétel — legfeljebb azt igazolhatta, hogy A TEMPLOM
+-- létezik. Az, hogy tartanak-e ott MAGYAR misét, mérésen kívül esett.
 --
 -- hidden=1, SOHA nem DELETE. VISSZAVONÁS egyetlen paranccsal:
 --   UPDATE businesses SET hidden=0 WHERE id LIKE 'gb-magyar-katolikus-kozosseg-%';
