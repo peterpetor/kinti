@@ -51,6 +51,33 @@ export function cimEgyezik(mienk, mapse) {
   return a.utca === b.utca || a.utca.includes(b.utca) || b.utca.includes(a.utca);
 }
 
+/**
+ * ORSZÁG-FÜGGETLEN cím-egyezés.
+ *
+ * ⚠️ MIÉRT KELL A `cimEgyezik` MELLÉ: az a német/osztrák címrendre készült
+ * („Utcanév 12"). A BRIT cím viszont HÁZSZÁMMAL KEZDŐDIK („353 Green Lanes"),
+ * a spanyol pedig vesszőzik („Carrer de Lepant, 311") — ezeken az
+ * „első szó(ak) + első szám" logika félreolvas, és VALÓDI egyezéseket dobna el.
+ *
+ * Ez a változat nyelvfüggetlen: (1) minden házszám-jelölt kigyűjtése, (2) az
+ * utcanév-tokenek metszete. Egyezés = van KÖZÖS házszám ÉS közös utcanév-token.
+ */
+export function cimEgyezikAltalanos(a, b) {
+  const bont = (s) => {
+    const n = normCim(s).replace(/[^a-z0-9\s]/g, " ");
+    const szamok = new Set((n.match(/\b\d{1,4}[a-z]?\b/g) || []).map((x) => x.replace(/[a-z]$/, "")));
+    // ⚠️ Az irányítószámot (4-5 jegy) NEM tekintjük házszámnak, de a
+    // token-halmazba bevesszük — két különböző utca ritkán osztozik rajta.
+    const tokenek = new Set((n.match(/\b[a-z]{4,}\b/g) || []));
+    return { szamok, tokenek };
+  };
+  const A = bont(a), B = bont(b);
+  if (!A.szamok.size || !B.szamok.size || !A.tokenek.size || !B.tokenek.size) return false;
+  const kozosSzam = [...A.szamok].some((x) => B.szamok.has(x));
+  const kozosToken = [...A.tokenek].some((x) => B.tokenek.has(x));
+  return kozosSzam && kozosToken;
+}
+
 /** Osztrák helyi alak (0660 …) → nemzetközi (+43 660 …). */
 export function nemzetkozi(tel) {
   const t = (tel || "").replace(/\s+/g, " ").trim();

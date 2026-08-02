@@ -40,6 +40,27 @@ describe("cím-egyeztetés a telefon-hozzárendeléshez", () => {
     expect(cimEgyezik("Grazer Str. 71, 2700 Wiener Neustadt", "")).toBe(false);
   });
 
+  it("az ORSZÁG-FÜGGETLEN változat a brit és spanyol címrendet is kezeli", async () => {
+    // @ts-expect-error — .mjs segédszkript, nincs típusdefiníciója
+    const { cimEgyezikAltalanos } = await import("../../scripts/match-verified-phones.mjs");
+    // ⚠️ Brit: a HÁZSZÁM elöl áll — a német logika ezt félreolvasná.
+    expect(cimEgyezikAltalanos("353 Green Lanes, Harringay, London N4 1DZ", "353 Green Lanes, Finsbury Park, London N4 1DZ")).toBe(true);
+    // ⚠️ Spanyol: vesszős tagolás.
+    expect(cimEgyezikAltalanos("Carrer de Lepant 311, Barcelona", "Carrer de Lepant, 311, Eixample, 08025 Barcelona")).toBe(true);
+    // Holland: házszám a név után.
+    expect(cimEgyezikAltalanos("Pottenbakkerstraat 4, 2984 AX Ridderkerk", "Pottenbakkerstraat 4, Ridderkerk")).toBe(true);
+    // Német továbbra is:
+    expect(cimEgyezikAltalanos("Grazer Straße 71/1/3, 2700 Wiener Neustadt", "Grazer Str. 71, 2700 Wiener Neustadt")).toBe(true);
+
+    // ⚠️ ELUTASÍTÁS: más utca, más házszám.
+    expect(cimEgyezikAltalanos("Phorusgasse 2, 1040 Wien", "Semperstraße 5, 1180 Wien")).toBe(false);
+    // Azonos utcanév, de MÁS házszám → nem egyezés.
+    expect(cimEgyezikAltalanos("353 Green Lanes, London", "17 Green Lanes, London")).toBe(false);
+    // Hiányzó adat sosem egyezés.
+    expect(cimEgyezikAltalanos("", "353 Green Lanes, London")).toBe(false);
+    expect(cimEgyezikAltalanos("London", "353 Green Lanes, London")).toBe(false);
+  });
+
   it("kiemeli az utcanevet és az ELSŐ házszámot (az ajtó-jelölő nélkül)", () => {
     expect(utcaEsSzam("Grazer Straße 71/1/3, 2700 Wiener Neustadt")).toEqual({ utca: "grazer str", szam: "71" });
     expect(utcaEsSzam("Phorusgasse 2/9a, 1040 Wien")).toEqual({ utca: "phorusgasse", szam: "2" });
