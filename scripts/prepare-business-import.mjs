@@ -765,6 +765,24 @@ const seen = new Set();
 const skipped = [];
 
 /**
+ * ⚠️ „ANGLIA"-HATÓKÖR-ŐR. A GB ország az appban **Anglia** néven fut
+ * (`countries.ts`: `{ code: "GB", name: "Anglia" }`), és a `GB_REGIONS` is CSAK
+ * a 9 angol ONS-régiót ismeri. Egy skót/walesi/észak-ír tétel ezért `canton_code
+ * IS NULL`-lal ülne bent: látszik a teljes listában, de a RÉGIÓ-SZŰRŐ SOHA nem
+ * hozza elő — vagyis a hiba NÉMA, semmilyen hibaüzenet nem jelzi.
+ *
+ * 2026-08-03: 6 ilyen élő sort kellett kivezetni (Aberdeen, 2× Belfast és 3
+ * edinburgh-i, amit épp aznap vettem fel — a hatókört csak UTÁNA ellenőriztem).
+ *
+ * ⚠️ A `CH` (Chester) és `SY` (Shrewsbury) körzet SZÁNDÉKOSAN NINCS a listán:
+ * azok átnyúlnak az angol–walesi határon, vak kizárásuk ANGOL tételt dobna ki.
+ * Ugyanezért `\b`-határos az illesztés — a „SA" különben a „…, SALFORD"-ra is
+ * illeszkedne.
+ */
+const NEM_ANGLIA =
+  /\b(AB|DD|DG|EH|FK|HS|IV|KA|KW|KY|ML|PA|PH|TD|ZE|G|CF|LL|NP|SA|BT)\d{1,2}[A-Z]?\s*\d[A-Z]{2}\b/;
+
+/**
  * A bemutatkozó-szövegbe TILOS bekerülő tartalom.
  *
  * (1) SEED-MÓDSZERTAN: a felhasználót nem érdekli, mi hozta elő a tételt, és
@@ -810,6 +828,10 @@ for (const r of records) {
   if (!cat) { skipped.push(`${r.name} — ismeretlen kategória: "${r.category_id}"`); continue; }
   const [catId, catLabel] = cat;
   const country = r.country_code.toUpperCase();
+  if (country === "GB" && NEM_ANGLIA.test(`${r.address ?? ""} ${r.city ?? ""}`.toUpperCase())) {
+    skipped.push(`${r.name} — NEM Anglia (skót/walesi/észak-ír irányítószám): ${r.address}`);
+    continue;
+  }
   const [cityRegion, cityLat, cityLng] = resolveCity(r.city, r.address, country);
   // Pontos cím → Nominatim (házszám-szintű koordináta); ha nem oldódik fel,
   // a város-koordináta marad, és a [FIGYELEM] log jelzi kézi ellenőrzésre.
