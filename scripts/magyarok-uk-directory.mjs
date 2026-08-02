@@ -9,12 +9,21 @@ import { chromium } from "playwright";
 import { writeFileSync } from "node:fs";
 
 const KATEGORIAK = [
-  ["autoszereles-jarmuvek-javitasa", "autoszerelo"],
-  ["fodrasz-pedikur-manikur", "fodrasz"],
-  ["etel-elelmiszer-magyar-boltok", "bolt"],
-  ["fogaszat-fogorvos", "fogorvos"],
-  ["forditas-tolmacsolas", "fordito"],
-  ["konyveles-adotanacsadas", "konyveles"],
+  ["allatorvosok", "allatorvos"],
+  ["borgyogyasz", "borgyogyasz"],
+  ["csomagszallitas", "koltoztetes"],
+  ["eletmod-tanacsado-szexualterapeuta", "pszichologus"],
+  ["fenykepesz-fotos-videos", "fotos"],
+  ["festo-szobafesto-mazolo-lakberendezo", "festo"],
+  ["fizioterapeuta", "gyogytornasz"],
+  ["gepjarmuvezetes-oktatas", "autosiskola"],
+  ["informatika", "it"],
+  ["kutya-macska-kisallat-szallitas", "allatorvos"],
+  ["masszazs", "masszazs"],
+  ["media-szolgaltatasok", "marketing"],
+  ["neurologus", "orvos"],
+  ["nyelvoktatas-nyelvtanar", "nyelvtanar"],
+  ["oktatas-tanulas", "oktato"],
 ];
 
 const b = await chromium.launch();
@@ -55,6 +64,6 @@ for (const [slug, kat] of KATEGORIAK) {
     console.log(`! ${slug} — ${String(e).slice(0, 50)}`);
   }
 }
-writeFileSync("magyarok-uk.json", JSON.stringify(out, null, 1), "utf8");
+writeFileSync("magyarok-uk2.json", JSON.stringify(out, null, 1), "utf8");
 console.log(`\nÖSSZESEN ${out.length} tétel → magyarok-uk.json`);
 await b.close();
