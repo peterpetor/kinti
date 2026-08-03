@@ -793,9 +793,30 @@ const NEM_ANGLIA =
  *     platform összeállított adatának újraközlése (ToS + EU adatbázisjog),
  *     és egy régi pontszám ma már bármi lehet.
  */
+/**
+ * ⚠️⚠️ A leírás a PUBLIKUS bemutatkozó. Tilos benne: (a) a seed-módszertan,
+ * (b) idegen platform pontszáma, (c) belső munkajegyzet.
+ *
+ * ⚠️ 2026-08-03: a lista ELSŐ változata csak KONKRÉT SZÓFORDULATOKRA figyelt
+ * („hozta elő", „Google Maps"), ezért **97 élő tétel átcsúszott rajta**, mert
+ * MÁSKÉPP fogalmazott ugyanarról:
+ *   „… — a nemetorszagi-magyarok.de közösségi adatbázisából."
+ *   „… (Iránytű Németországban cégregiszter)."
+ *   „… — a MÁR bent lévő 'Magyar etterem Kassel' éttermtől eltérő, önálló bolt"
+ * (az utolsó egy BELSŐ DEDUP-JEGYZET volt, ami a felhasználó elé került).
+ *
+ * ⇒ A mintákat a HIBAOSZTÁLYRA kell írni, nem egyetlen megfogalmazásra:
+ *   „honnan szereztük" · „mi különbözteti meg egy MÁSIK TÉTELÜNKTŐL" · pontszám.
+ */
 const DESCRIPTION_BANS = [
   [/hozta el[őo]|vezet[ée]kn[ée]v\s*\+|keresztn[ée]v\s*\+|keres[ée]sb[őo]l|Google Maps|Google-poszt/i,
     "SEED-MÓDSZERTAN a leírásban"],
+  // „honnan szereztük" — bármilyen forrás-hivatkozás, tetszőleges megfogalmazásban
+  [/adatb[áa]zis[áa]b[óo]l|c[ée]gregiszter|regiszterb[őo]l|c[íi]mt[áa]r[áa]b[óo]l|list[áa]j[áa]r[óo]l|gy[űu]jt[ée]s[ée]b[őo]l|forr[áa]s\s*:/i,
+    "FORRÁS-HIVATKOZÁS a leírásban (honnan szereztük — a usernek nem tartozik rá)"],
+  // belső munkajegyzet: másik tételünkre hivatkozik, vagy a saját folyamatunkra
+  [/M[ÁA]R bent|duplik[áa]tum|dedup|ellen[őo]rizve\s*:|seed\b|import[áa]lva/i,
+    "BELSŐ MUNKAJEGYZET a leírásban"],
   [/\d[,.]\d\s*csillag|\d[,.]\d\s*\/\s*5|\d+\s*[ée]rt[ée]kel[ée]s\b/i,
     "IDEGEN PLATFORM PONTSZÁMA a leírásban"],
 ];
