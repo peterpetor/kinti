@@ -25,14 +25,33 @@ const ZAJ = new Set([
   "bolt", "shop", "store", "laden", "winkel", "cafe", "café", "bistro", "salon", "studio", "gmbh",
   "kft", "ltd", "bar", "food", "market", "supermarket", "elelmiszer", "fodrasz", "friseur", "the",
   "and", "und", "van", "der", "des", "kozmetika", "beauty", "haus", "house",
+  /**
+   * ⚠️ SZAKMA-SZAVAK. Élesben a „Happy Face Killer – Tattoo & **Barber**" és a
+   * „Bandido **Barber** Shop Horb" egyezőnek látszott — pusztán a szakma közös
+   * szavától. A szakmanév épp azért közös, mert ugyanabba a kategóriába
+   * soroltuk őket; bizonyítéknak ezért használhatatlan.
+   */
+  "barber", "tattoo", "garage", "werkstatt", "autoszerviz", "szerviz", "service", "pizzeria",
+  "delikatessen", "feinkost", "backerei", "pekseg", "konditorei", "cukraszda", "gasthaus",
+  "gaststatte", "imbiss", "buffet", "bufe", "nails", "korom", "massage", "masszazs", "praxis",
 ]);
 
 const norm = (s) =>
   (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9\s]/g, " ");
 
-/** Van-e KÖZÖS, érdemi (nem zaj) szó a két névben? */
-export function nevEgyezik(mienk, mapse) {
-  const t = (s) => new Set(norm(s).split(/\s+/).filter((w) => w.length > 3 && !ZAJ.has(w)));
+/**
+ * Van-e KÖZÖS, érdemi (nem zaj) szó a két névben?
+ *
+ * ⚠️ A `cim` paraméter NEM opcionális dísz: ami a CÍMBEN is szerepel, az
+ * HELYNÉV, nem cégnév-jel. Élesben a „Happy Face Killer" és a „Bandido Barber
+ * Shop **Horb**" egyezőnek látszott — pusztán azért, mert mindkettőben ott volt
+ * a VÁROS neve (Horb am Neckar). Cím-tokenek kizárása nélkül minden olyan
+ * üzlet „egyezik", amelyik a nevébe teszi a városát.
+ */
+export function nevEgyezik(mienk, mapse, cim = "") {
+  const tok = (s) => norm(s).split(/\s+/).filter((w) => w.length > 3 && !ZAJ.has(w));
+  const helynevek = new Set(tok(cim));
+  const t = (s) => new Set(tok(s).filter((w) => !helynevek.has(w)));
   const A = t(mienk), B = t(mapse);
   if (!A.size || !B.size) return false;
   return [...A].some((w) => B.has(w));
@@ -48,10 +67,25 @@ if (process.argv[2] && process.argv[3]) {
   for (const x of sorok) {
     const sajat = byId.get(x.id);
     if (!sajat || !x.egyertelmu) continue;
-    if (x.bezart) { bezart.push({ id: x.id, nev: sajat.name, maps: x.nev }); continue; }
-    if (!x.tel && !x.web) continue;
     const cimOk = cimEgyezikAltalanos(sajat.address, x.cim);
-    const nevOk = nevEgyezik(sajat.name, x.nev);
+    const nevOk = nevEgyezik(sajat.name, x.nev, `${sajat.address ?? ""} ${x.cim ?? ""}`);
+
+    /**
+     * ⚠️⚠️ A BEZÁRÁS-JELZŐ CSAK EGYEZŐ CÍMMEL ÉRVÉNYES. Élesben előfordult, hogy
+     * a „Magyar etterem Gernrode" (Quedlinburger Straße 7, **06507 Gernrode**)
+     * keresésre a Maps egy MÁSIK, 06485 **Quedlinburg**-i „Csarda"-t adott
+     * vissza — bezártként. Cím-ellenőrzés nélkül egy ÉLŐ éttermet rejtettem
+     * volna el egy másik város bezárt étterme miatt.
+     * Ugyanez a hiba fordítva is: a `bezart` mező akkor is igaz lehet, ha a
+     * Maps egyáltalán nem azonosított helyet (`egyertelmu=false`) — azt a fenti
+     * `continue` már kiszűri.
+     */
+    if (x.bezart) {
+      if (cimOk) bezart.push({ id: x.id, nev: sajat.name, mapsNev: x.nev, maps: x.cim });
+      else elutasitva.push({ id: x.id, nev: sajat.name, mapsNev: x.nev, mienk: sajat.address, maps: x.cim, megj: "bezártnak jelölve, DE más cím" });
+      continue;
+    }
+    if (!x.tel && !x.web) continue;
     const rec = { id: x.id, nev: sajat.name, mapsNev: x.nev, tel: x.tel, web: x.web, mienk: sajat.address, maps: x.cim };
     if (cimOk && nevOk) jo.push(rec);
     else if (cimOk) csakCim.push(rec); // ⚠️ KÉZI döntés kell: lehet helyszín-csapda

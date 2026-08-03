@@ -61,6 +61,31 @@ describe("cím-egyeztetés a telefon-hozzárendeléshez", () => {
     expect(cimEgyezikAltalanos("London", "353 Green Lanes, London")).toBe(false);
   });
 
+  it("⚠️⚠️ UGYANAZ AZ UTCANÉV MÁSIK VÁROSBAN nem egyezés — az irányítószám dönt", async () => {
+    // @ts-expect-error — .mjs segédszkript, nincs típusdefiníciója
+    const { cimEgyezikAltalanos } = await import("../../scripts/match-verified-phones.mjs");
+    // Valós eset: a Maps a 06507 Gernrode-i étterem keresésére a 06485
+    // Quedlinburg-i (BEZÁRT) éttermet adta — azonos utca, azonos házszám.
+    expect(cimEgyezikAltalanos("Quedlinburger Straße 7, 06507 Gernrode", "Quedlinburger Str. 7, 06485 Quedlinburg")).toBe(false);
+    // Ugyanaz az irányítószám → egyezés (a kerület-nevek eltérhetnek):
+    expect(cimEgyezikAltalanos("Konradstraße 52, 63741 Aschaffenburg", "Konradstraße 52, 63741 Aschaffenburg-Strietwald")).toBe(true);
+    // ⚠️ Ha az EGYIK címben nincs irányítószám, ne bukjon el a valódi egyezés:
+    expect(cimEgyezikAltalanos("Konradstraße 52, Aschaffenburg", "Konradstraße 52, 63741 Aschaffenburg")).toBe(true);
+  });
+
+  it("⚠️ a NÉV-egyeztető nem dől be a szakma- és helynévnek", async () => {
+    // @ts-expect-error — .mjs segédszkript, nincs típusdefiníciója
+    const { nevEgyezik } = await import("../../scripts/match-physical-contacts.mjs");
+    const cim = "Gutermannstr. 16, 72160 Horb am Neckar";
+    // Valós eset: a közös szó a SZAKMA („Barber") és a VÁROS („Horb") volt.
+    expect(nevEgyezik("Happy Face Killer – Tattoo & Barber", "Bandido Barber Shop Horb", cim)).toBe(false);
+    // Valódi név-egyezés viszont átmegy:
+    expect(nevEgyezik("Scharfer Kessel", "Scharfer Kessel", "Taubacher Straße 1, 99425 Weimar")).toBe(true);
+    expect(nevEgyezik("Ungarische Speisekammer", "Ungarische Speisekammer in Nauheim", "Georg-Mischlich-Str. 2, Nauheim")).toBe(true);
+    // ⚠️ A puszta „magyar/restaurant/bolt" egyezés NEM bizonyíték:
+    expect(nevEgyezik("Magyar Étterem Berlin", "Ungarisches Restaurant Puszta", "Hauptstraße 1, 10115 Berlin")).toBe(false);
+  });
+
   it("kiemeli az utcanevet és az ELSŐ házszámot (az ajtó-jelölő nélkül)", () => {
     expect(utcaEsSzam("Grazer Straße 71/1/3, 2700 Wiener Neustadt")).toEqual({ utca: "grazer str", szam: "71" });
     expect(utcaEsSzam("Phorusgasse 2/9a, 1040 Wien")).toEqual({ utca: "phorusgasse", szam: "2" });

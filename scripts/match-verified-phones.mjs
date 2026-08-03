@@ -65,14 +65,26 @@ export function cimEgyezik(mienk, mapse) {
 export function cimEgyezikAltalanos(a, b) {
   const bont = (s) => {
     const n = normCim(s).replace(/[^a-z0-9\s]/g, " ");
-    const szamok = new Set((n.match(/\b\d{1,4}[a-z]?\b/g) || []).map((x) => x.replace(/[a-z]$/, "")));
-    // ⚠️ Az irányítószámot (4-5 jegy) NEM tekintjük házszámnak, de a
-    // token-halmazba bevesszük — két különböző utca ritkán osztozik rajta.
-    const tokenek = new Set((n.match(/\b[a-z]{4,}\b/g) || []));
-    return { szamok, tokenek };
+    // ⚠️ Az IRÁNYÍTÓSZÁM (4-5 jegy) külön kezelendő: se nem házszám, se nem
+    // utcanév-token — DE ha mindkét címben van, akkor DÖNTŐ.
+    const irsz = new Set((n.match(/\b\d{4,5}\b/g) || []));
+    const szamok = new Set(
+      (n.match(/\b\d{1,4}[a-z]?\b/g) || []).map((x) => x.replace(/[a-z]$/, "")).filter((x) => !irsz.has(x)),
+    );
+    const tokenek = new Set(n.match(/\b[a-z]{4,}\b/g) || []);
+    return { szamok, tokenek, irsz };
   };
   const A = bont(a), B = bont(b);
   if (!A.szamok.size || !B.szamok.size || !A.tokenek.size || !B.tokenek.size) return false;
+  /**
+   * ⚠️⚠️ UGYANAZ AZ UTCANÉV MÁSIK VÁROSBAN. Élesben: a „Quedlinburger Straße 7,
+   * **06507 Gernrode**" keresésre a Maps a „Quedlinburger Str. 7, **06485
+   * Quedlinburg**"-i éttermet adta — azonos utcanév, azonos házszám, MÁS város.
+   * Irányítószám-ellenőrzés nélkül egy ÉLŐ éttermet rejtettem volna el egy másik
+   * település bezárt étterme miatt.
+   * Ha MINDKÉT címben van irányítószám, egyeznie KELL.
+   */
+  if (A.irsz.size && B.irsz.size && ![...A.irsz].some((x) => B.irsz.has(x))) return false;
   const kozosSzam = [...A.szamok].some((x) => B.szamok.has(x));
   const kozosToken = [...A.tokenek].some((x) => B.tokenek.has(x));
   return kozosSzam && kozosToken;
@@ -87,7 +99,15 @@ export function nemzetkozi(tel) {
   return t;
 }
 
-if (process.argv[2] && process.argv[3]) {
+/**
+ * ⚠️ CSAK KÖZVETLEN FUTTATÁSKOR fusson a CLI. Enélkül a fájl IMPORTÁLÁSA is
+ * elindította a feldolgozást (a `match-physical-contacts.mjs` ugyanazokkal az
+ * argumentumokkal hívódik), és két, egymásnak ellentmondó összegzés íródott ki
+ * ugyanarra a futásra — nehéz volt eldönteni, melyik az igazi.
+ */
+const kozvetlen = process.argv[1] && process.argv[1].endsWith("match-verified-phones.mjs");
+
+if (kozvetlen && process.argv[2] && process.argv[3]) {
   const sorok = JSON.parse(readFileSync(process.argv[2], "utf8"));
   const dbNyers = JSON.parse(readFileSync(process.argv[3], "utf8"));
   const dbSorok = Array.isArray(dbNyers) ? (dbNyers[0]?.results ?? dbNyers) : dbNyers.results;
