@@ -7,6 +7,7 @@ import type { Business, Category, DashboardStats, ListBusiness } from "./types";
 import { bool, jsonArray } from "./repo-shared";
 import { DEFAULT_COUNTRY } from "./countries";
 import { cached } from "./edge-cache";
+import { ellenorizKvota } from "./quota-guard-runtime";
 
 // --- Row types ---------------------------------------------------------------
 
@@ -311,6 +312,10 @@ const LIST_TTL_MS = 1_800_000; // 30 perc
  */
 export async function getBusinessesForList(): Promise<ListBusiness[]> {
   return cached("biz:list-v1", LIST_TTL_MS, async () => {
+    // ⚠️ CSAK IDE kerülhet a keret-jelzés: ez a blokk kizárólag VALÓDI
+    // cache-kihagyáskor fut. A cache-ből kiszolgált kérés nem olvas sort — ha
+    // azt is számolnánk, a riasztás a forgalmat mérné, nem a fogyasztást.
+    ellenorizKvota("biz-list");
     const { results } = await getDB()
       .prepare(
         // ⚠️ A `kontaktolható` döntetlen-feloldó a kapcsolatfelvételi tölcsérért van.
