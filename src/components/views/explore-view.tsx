@@ -11,10 +11,9 @@ import type { Category, ListBusiness } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { foldSearchText } from "@/lib/sql-fold";
 import { matchesSearchQuery, relaxSearchQuery } from "@/lib/search-match";
-import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode, cantonPoint } from "@/lib/cantons";
-import { atPoint } from "@/lib/at-points";
-import { dePoint } from "@/lib/de-points";
-import { readPreferredCanton, setPreferredCanton } from "@/lib/canton-pref";
+import { CANTONS, cantonFromAddress, matchesCanton, nearestCantonCode } from "@/lib/cantons";
+import { readPreferredCanton, setPreferredCanton, readCantonView, setCantonView } from "@/lib/canton-pref";
+import { regionPoint } from "@/lib/region-point";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { getRegions, regionLabel } from "@/lib/regions";
 import { getCountry, DEFAULT_COUNTRY, countryLocative } from "@/lib/countries";
@@ -285,17 +284,18 @@ export function ExploreView({
   const regions = useMemo(() => getRegions(country), [country]);
 
   // Ország-/régió-tudatos térkép-közép a fallbackhez (találat nélkül se essen Svájcra).
+  // ⚠️ MIND A HAT ország a KÖZÖS `regionPoint`-ból. Korábban itt csak CH/AT/DE
+  // ága volt, ezért ES/GB/NL-ben a régió-választás nem mozgatta a térképet:
+  // Galiciát választva a térkép Madridra zoomolt (a zoom 10-re ment, tehát a
+  // ROSSZ helyre közelített is). A pont-modulok végig léteztek.
+  const regioPont = useMemo(() => regionPoint(country, canton), [country, canton]);
   const mapCenter = useMemo<[number, number]>(() => {
-    if (canton !== "all") {
-      if (country === "DE") { const p = dePoint(canton); return [p.lat, p.lng]; }
-      if (country === "AT") { const p = atPoint(canton); return [p.lat, p.lng]; }
-      // cantonPoint CH-specifikus; NL provincia-kódok (ZH/FR/GR/GE) ütköznek a svájci
-      // kantonokkal → csak CH-ra hívjuk, különben a nemzeti középre esünk vissza.
-      if (country === "CH") { const p = cantonPoint(canton); if (p) return [p.lat, p.lng]; }
-    }
+    if (regioPont) return [regioPont.lat, regioPont.lng];
     return COUNTRY_MAP_CENTER[country] ?? COUNTRY_MAP_CENTER.CH;
-  }, [country, canton]);
-  const mapZoom = canton !== "all" ? 10 : (COUNTRY_MAP_ZOOM[country] ?? 7);
+  }, [country, regioPont]);
+  // ⚠️ Csak akkor közelítünk régió-szintre, ha TÉNYLEG a régióra állt a térkép.
+  // Ismeretlen kódnál az ország közepén maradunk — ott a 10-es zoom félrevezet.
+  const mapZoom = regioPont ? 10 : (COUNTRY_MAP_ZOOM[country] ?? 7);
   // Ország-váltáskor a más országbeli régió-választás érvénytelen → vissza "all"-ra.
   // ⚠️ Az ország-preferencia KÉSVE érkezik (null = még töltődik): amíg nincs meg, NEM
   // törlünk — különben egy megosztott ?canton=W link régió-szűrője nem-CH usernél a
@@ -306,13 +306,26 @@ export function ExploreView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [country, prefCountry]);
 
-  // Ha nem URL-ből érkezett kanton, a felhasználó preferált kantonjára szűrünk
-  // alapból (kanton-személyre szabás). A hidratálás után, hogy ne legyen mismatch.
+  /*
+   * Kezdő régió-szűrő, ha nem URL-ből érkezett. Sorrend SZÁMÍT:
+   *   1. amit a felhasználó UTOLJÁRA nézett ezen az oldalon — az „Egész
+   *      országot" is beleértve,
+   *   2. ha még sosem járt itt: a lakhely-preferenciája.
+   *
+   * ⚠️ Az 1. lépés hiányzott, és ez volt a jelentett hiba: aki tartományról
+   * „Egész országra" váltott, majd visszajött, MEGINT a tartományt kapta —
+   * mert a nézet a lakhely-preferenciából töltődött, az „all" pedig sehova
+   * nem íródott. A hidratálás után futtatjuk, hogy ne legyen SSR-eltérés.
+   */
   useEffect(() => {
-    if (!searchParams?.get("canton")) {
-      const pref = readPreferredCanton();
-      if (pref) setCanton(pref);
+    if (searchParams?.get("canton")) return;
+    const nezet = readCantonView();
+    if (nezet) {
+      setCanton(nezet);
+      return;
     }
+    const pref = readPreferredCanton();
+    if (pref) setCanton(pref);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -749,10 +762,14 @@ export function ExploreView({
                   type="button"
                   onClick={() => {
                     setCanton(c.code);
-                    // Csak VALÓDI régióból tanulunk. Az „Egész ország" itt
-                    // nézet-szűrő, nem lakhely-nyilatkozat — a "all" a tárolóban
-                    // törlésként viselkedne, és némán kiütné a mentett
-                    // tartomány-preferenciát (onboarding-lépés + push-célzás).
+                    // A NÉZETET mindig megjegyezzük — az „Egész országot" is,
+                    // különben visszatéréskor újra a régi tartomány jönne fel
+                    // (ez volt a jelentett hiba).
+                    setCantonView(c.code);
+                    // A LAKHELY-preferenciát viszont csak VALÓDI régióból
+                    // tanuljuk. Az „Egész ország" nézet-szűrő, nem
+                    // lakhely-nyilatkozat — törlésként kiütné a mentett
+                    // tartományt (onboarding-lépés + push-célzás).
                     if (c.code !== "all") setPreferredCanton(c.code);
                     setCantonSheetOpen(false);
                   }}

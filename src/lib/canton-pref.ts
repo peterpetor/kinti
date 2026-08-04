@@ -101,6 +101,56 @@ export function setPreferredCanton(code: string | null): void {
   }
 }
 
+/*
+ * ─── UTOLJÁRA NÉZETT RÉGIÓ (nézet-állapot, NEM lakhely) ────────────────────
+ *
+ * ⚠️ KÉT KÜLÖNBÖZŐ DOLOG, amit korábban egy érték szolgált ki:
+ *   • „hol lakom" (fent) — ezt az onboarding-lépés és a push-célzás olvassa,
+ *     ezért az „Egész ország" választás SZÁNDÉKOSAN nem törli;
+ *   • „mit néztem utoljára" (itt) — ez viszont az „Egész országot" IS meg kell
+ *     jegyezze.
+ *
+ * A kettő összemosásából jött a felhasználó által jelentett hiba: kiválasztott
+ * egy tartományt, átváltott az egész országos nézetre, kilépett — és
+ * visszatérve MEGINT a tartományt kapta, mert a nézet a lakhely-preferenciából
+ * töltődött. Az „all" ugyanis nem íródott sehova.
+ */
+const VIEW_MAP_KEY = "kinti.cantonViewByCountry";
+
+/** Az utoljára NÉZETT régió az adott országban — az „all" is érvényes érték. */
+export function readCantonView(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(VIEW_MAP_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    const country = effectiveCountry();
+    const v = (parsed as Record<string, unknown>)[country];
+    if (typeof v !== "string" || v.length === 0) return null;
+    // Érvénytelenné vált kód (ország-váltás, átnevezett régió) → nincs nézet.
+    return v === "all" || isValidCodeFor(country, v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Az utoljára nézett régió mentése — „all" esetén IS. */
+export function setCantonView(code: string | null): void {
+  if (typeof window === "undefined") return;
+  try {
+    const country = effectiveCountry();
+    const raw = localStorage.getItem(VIEW_MAP_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    const map: Record<string, string> = parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    if (code) map[country] = code;
+    else delete map[country];
+    localStorage.setItem(VIEW_MAP_KEY, JSON.stringify(map));
+  } catch {
+    /* privát mód — a szűrő ettől még működik, csak nem őrződik meg */
+  }
+}
+
 /**
  * React hook: az aktuális ország preferált régiója (vagy `null`) + setter.
  * Reagál a tabon belüli (`kinti:canton`), a tabok közti (`storage`) ÉS az

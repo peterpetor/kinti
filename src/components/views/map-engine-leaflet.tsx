@@ -92,6 +92,7 @@ export function LeafletEngine({
       )}
 
       <FitToMarkers businesses={located} sosAlerts={sosAlerts} />
+      <RecenterOnFallback center={fallbackCenter} zoom={fallbackZoom} hasMarkers={located.length > 0 || sosAlerts.length > 0} />
       <PanToSelected id={panToId ?? null} businesses={located} />
       <Controls onLocate={setMyPosition} />
       <InvalidateSize trigger={fullscreen} />
@@ -254,6 +255,36 @@ function clusterIconFor(count: number, sz: "sm" | "md" | "lg"): L.DivIcon {
 // ---------------------------------------------------------------------------
 // Helper komponensek
 // ---------------------------------------------------------------------------
+
+/**
+ * Újraközpontosítás, ha NINCS mit a markerekhez illeszteni.
+ *
+ * ⚠️ A react-leaflet `MapContainer` `center` propja CSAK MOUNTKOR hat — a
+ * későbbi változása nyomtalanul elvész. Emiatt a régió-váltás nem mozgatta a
+ * térképet: a felhasználó Galiciát választott, 0 találattal, és a térkép
+ * Madridon maradt (a `FitToMarkers` üres listánál korán kilép, tehát az sem
+ * mozdított). A `center` prop változását tehát KÜLÖN kell alkalmazni.
+ *
+ * ⚠️ CSAK marker nélkül lépünk be. Ha VAN találat, a `FitToMarkers` illesztése
+ * a helyes viselkedés (a valódi eredményeket mutatja) — különben a kettő
+ * egymás ellen dolgozna, és a térkép ugrálna.
+ */
+function RecenterOnFallback({
+  center, zoom, hasMarkers,
+}: { center: [number, number]; zoom: number; hasMarkers: boolean }) {
+  const map = useMap();
+  const utolso = useRef<string>("");
+
+  useEffect(() => {
+    if (hasMarkers) return;
+    const sig = `${center[0].toFixed(4)},${center[1].toFixed(4)},${zoom}`;
+    if (sig === utolso.current) return;
+    utolso.current = sig;
+    map.setView(center, zoom, { animate: true });
+  }, [center, zoom, hasMarkers, map]);
+
+  return null;
+}
 
 function FitToMarkers({ businesses, sosAlerts = [] }: { businesses: ListBusiness[], sosAlerts?: SosAlert[] }) {
   const map = useMap();
