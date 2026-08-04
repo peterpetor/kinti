@@ -641,8 +641,28 @@ const CITY = {
   "wapenveld": ["GE", 52.4333, 6.0667],
   "tuningen": ["BW", 48.0331, 8.6000],
 };
-// Ország-középpont, ha a város ismeretlen (pl. csak „Hollandia").
-const COUNTRY_FALLBACK = { CH: [46.8, 8.23], AT: [47.6, 14.5], DE: [51.1, 10.4], NL: [52.13, 5.29] };
+/**
+ * Ország-középpont, ha a város ismeretlen (pl. a city-mező csak „Hollandia").
+ *
+ * ⚠️⚠️ MINDEN ENGEDÉLYEZETT ORSZÁGNAK BENNE KELL LENNIE. 2026-08-03-ig csak a
+ * négy eredeti ország (CH/AT/DE/NL) szerepelt itt, az app viszont azóta
+ * hatországos — az ES és a GB ezért NÉMÁN a lenti zürichi tartalék-koordinátára
+ * esett. Élő következmény: **21 tétel (13 brit + 8 spanyol) térkép-pinje
+ * Zürichben volt**, pontos utcacím mellett. A londoni user a „Térkép"-re
+ * koppintva Svájcot látott.
+ *
+ * Ez a [[binary-country-fallthrough]] hibaosztály: a hallgatólagos default nem
+ * ad hibaüzenetet, csak rossz adatot. A `tests/unit/country-fallback-coverage`
+ * teszt ezért összeveti ezt a listát a `countries.ts` engedélyezett országaival.
+ */
+const COUNTRY_FALLBACK = {
+  CH: [46.8, 8.23],
+  AT: [47.6, 14.5],
+  DE: [51.1, 10.4],
+  NL: [52.13, 5.29],
+  ES: [40.24, -3.65],
+  GB: [52.36, -1.17], // ⚠️ Anglia közepe (nem az Egyesült Királyságé) — ld. gb-england-country
+};
 
 // A régió/fallback-koordináta a városból VAGY a cím szövegéből (a CSV-ben a
 // city néha csak „Hollandia", de a cím tartalmazza a valódi települést).
@@ -653,7 +673,17 @@ function resolveCity(city, address, country) {
   for (const k of Object.keys(CITY)) if (cityOnly.includes(k)) return CITY[k];
   const c = `${cityOnly} ${(address || "").toLowerCase()}`;
   for (const k of Object.keys(CITY)) if (c.includes(k)) return CITY[k];
-  const f = COUNTRY_FALLBACK[country] || [47.3769, 8.5417];
+  /**
+   * ⚠️ HANGOS bukás néma default helyett. A korábbi `|| [47.3769, 8.5417]`
+   * (Zürich) csendben elnyelte a hiányzó országokat — 21 élő tétel került így
+   * rossz országba. Ha egy ország kimarad a térképből, azt LÁTNI kell.
+   */
+  const f = COUNTRY_FALLBACK[country];
+  if (!f) {
+    // ⚠️ Nem `skipped.push` — az a tömb a fájlban KÉSŐBB van deklarálva (TDZ).
+    console.error(`[HIBA] Nincs ország-tartalék koordináta: "${country}" (${city || address}). Vedd fel a COUNTRY_FALLBACK-be!`);
+    return [null, null, null];
+  }
   return [null, f[0], f[1]];
 }
 
