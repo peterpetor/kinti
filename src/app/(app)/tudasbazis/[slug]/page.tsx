@@ -3,7 +3,9 @@ import { safeJsonLdStringify } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Icon } from "@/components/ui";
-import { getGuide, guideCountry, GUIDES, GUIDES_DISCLAIMER, isMoneyGuide, relatedCategoriesForGuide, relatedGuides } from "@/lib/guides";
+import { getGuide, guideCountry, GUIDES, GUIDES_DISCLAIMER, GUIDES_UPDATED_AT, isMoneyGuide, relatedCategoriesForGuide, relatedGuides } from "@/lib/guides";
+import { guideJsonLd, guideQaPairs, sectionAnchor } from "@/lib/guide-schema";
+import { CikkGyik } from "@/components/views/cikk-gyik";
 import { comparisonForSlug } from "@/lib/guide-comparisons";
 import { ComparisonTable } from "@/components/comparison-table";
 import { GuideProCta } from "./GuideProCta";
@@ -51,16 +53,15 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-/** Fejezet-cím → horgony-id (a tartalomjegyzékhez). */
-function sectionId(heading: string, i: number): string {
-  const slug = heading
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-  return slug ? `${slug}-${i}` : `szakasz-${i}`;
-}
+/**
+ * Fejezet-cím → horgony-id (a tartalomjegyzékhez ÉS a „Gyors válaszok" blokk
+ * „Részletek" linkjeihez).
+ *
+ * ⚠️ A képzés a `guide-schema.ts`-ben él, EGY helyen. Korábban itt volt egy
+ * másolat, és amikor a séma-modul is megkapta a magáét, a kettő elcsúszott
+ * (lemaradt az index) — a linkek némán nem működtek. Ne másold vissza.
+ */
+const sectionId = sectionAnchor;
 
 export default function GuidePage({ params }: { params: { slug: string } }) {
   const guide = getGuide(params.slug);
@@ -76,7 +77,9 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
   const comparison = comparisonForSlug(guide.slug);
   const toc = guide.sections.map((s, i) => ({ id: sectionId(s.heading, i), heading: s.heading }));
 
-  // Strukturált adat a SERP-hez (morzsasor) — csak kurált, statikus mezők.
+  // Strukturált adat a SERP-hez és a válaszgépekhez — csak kurált mezőkből:
+  // morzsasor + Article (hivatalos forrásokkal) + FAQPage (ahol VAN valódi
+  // kérdés-válasz) + HowTo (ahol VAN kurált teendőlista). Lásd guide-schema.ts.
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -85,6 +88,8 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       { "@type": "ListItem", position: 2, name: guide.title, item: `https://kinti.app/tudasbazis/${guide.slug}` },
     ],
   };
+  const jsonLd = guideJsonLd(guide, GUIDES_UPDATED_AT, breadcrumbLd);
+  const qaParok = guideQaPairs(guide);
 
   return (
     <div className="space-y-5 px-5 pb-10 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
@@ -92,7 +97,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       <ReadingProgress />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(jsonLd) }}
       />
       <header className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
@@ -119,9 +124,11 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
         </div>
       </header>
 
-      {/* TL;DR — featured-snippet / AI-idézhetőség (AEO), csak ahol van tartalom. */}
+      {/* TL;DR — featured-snippet / AI-idézhetőség (AEO), csak ahol van tartalom.
+          A `data-speakable` a JSON-LD SpeakableSpecification horgonya: a
+          hangalapú keresés EZT a blokkot olvassa fel (lásd guide-schema.ts). */}
       {guide.tldr && guide.tldr.length > 0 && (
-        <section className="rounded-card border border-primary/25 bg-primary-soft/40 p-4">
+        <section data-speakable className="rounded-card border border-primary/25 bg-primary-soft/40 p-4">
           <h2 className="text-[12px] font-bold uppercase tracking-wide text-primary">Röviden</h2>
           <ul className="mt-2 space-y-1.5">
             {guide.tldr.map((t) => (
@@ -179,10 +186,16 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
         ))}
       </article>
 
+      {/* Gyors válaszok — a cikk saját kérdés-fejezetei tömören, horgonnyal.
+          Csak ott jelenik meg, ahol VAN valódi kérdés-válasz pár. */}
+      <CikkGyik parok={qaParok} />
+
       {/* Teendőlista — csak az ELJÁRÁST leíró cikkeknél van (a komponens
           magától nem renderel, ha nincs lista). A cikk után jön: előbb értsd
           meg, aztán intézd. */}
-      <CikkChecklista slug={guide.slug} />
+      <div id="teendolista" className="scroll-mt-24">
+        <CikkChecklista slug={guide.slug} />
+      </div>
 
       {/* Országos összehasonlító táblázat — a válaszgépek/featured-snippet
           kedvence, és a CH/AT/DE/NL közti választáshoz egy-pillantásos kép.
