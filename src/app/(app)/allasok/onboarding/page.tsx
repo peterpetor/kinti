@@ -7,48 +7,19 @@ import Link from "next/link";
 import { Icon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { KintiLogo } from "@/components/ui";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
+import { kezdoLepesek } from "@/lib/kezdocsomag";
 
-const CHECKLIST_ITEMS = [
-  {
-    id: "ahv",
-    title: "AHV-Szám (TB Szám) igénylése",
-    description: "A munkáltatónak kell kiváltania az első fizetéshez. Kérdezz rá a HR-nél!",
-    icon: "briefcase" as const,
-  },
-  {
-    id: "bank",
-    title: "Svájci Bankszámla Nyitása",
-    description: "Kantonalbank, UBS vagy Neon/Yuh (digitális). Szükség lesz a munkaszerződésre hozzá.",
-    icon: "bank" as const, // We might not have 'bank', using 'creditCard' or similar later if it fails. Let's use generic ones.
-    iconFallback: "briefcase",
-  },
-  {
-    id: "kreisburo",
-    title: "Lakcím Bejelentés (Kreisbüro / Gemeinde)",
-    description: "A beköltözéstől számított 14 napon belül be kell jelentkezned az önkormányzatnál.",
-    icon: "home" as const,
-  },
-  {
-    id: "krankenkasse",
-    title: "Egészségbiztosítás (Krankenkasse)",
-    description: "3 hónapod van kötni, de visszamenőleg kell fizetni az első naptól! Válaszd ki a franchiset okosan.",
-    icon: "heart" as const,
-  },
-  {
-    id: "permit",
-    title: "Tartózkodási Engedély (Ausweis) átvétele",
-    description: "Általában postán küldik ki (L vagy B engedély) a bejelentkezés után 2-4 héttel.",
-    icon: "fileText" as const,
-  },
-  {
-    id: "phone",
-    title: "Svájci Telefonszám",
-    description: "Wingo, Yallo vagy Swisscom. A legtöbb helyi cég nem szívesen hív vissza magyar számot.",
-    icon: "smartphone" as const,
-  }
-];
 
 export default function OnboardingChecklistPage() {
+  // ⚠️ ORSZÁG-TUDATOS. Ez a lap az ÁLTALÁNOS jelentkezés-visszaigazolóból
+  // nyílik, tehát bármelyik ország állására jelentkező ide kerülhet —
+  // korábban mindenki svájci teendőlistát kapott.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const lepesek = kezdoLepesek(country);
+  const orszag = getCountry(country);
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
   const [mounted, setMounted] = useState(false);
 
@@ -66,7 +37,10 @@ export default function OnboardingChecklistPage() {
     localStorage.setItem("kinti_onboarding", JSON.stringify(next));
   };
 
-  const progress = Math.round((Object.values(completed).filter(Boolean).length / CHECKLIST_ITEMS.length) * 100) || 0;
+  // ⚠️ CSAK az adott ország lépéseit számoljuk. Ország-váltás után a másik
+  // ország pipái nem duzzaszthatják fel a százalékot („7/6 kész”).
+  const keszSzam = lepesek.filter((l) => completed[l.id]).length;
+  const progress = lepesek.length > 0 ? Math.round((keszSzam / lepesek.length) * 100) : 0;
 
   if (!mounted) return null;
 
@@ -84,7 +58,7 @@ export default function OnboardingChecklistPage() {
       <header className="mb-8 text-center">
         <KintiLogo size={42} className="mx-auto" />
         <h1 className="mt-4 text-[26px] font-extrabold tracking-tight text-ink">
-          Svájci Kezdőcsomag 🇨🇭
+          Kezdőcsomag {orszag?.flag} {orszag?.name}
         </h1>
         <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
           Gratulálunk az új munkához! Ez a lista segít abban, hogy az első 3 hónapban 
@@ -111,8 +85,16 @@ export default function OnboardingChecklistPage() {
         </div>
       </header>
 
+      {lepesek.length === 0 && (
+        <p className="rounded-card border border-line bg-surface-alt px-4 py-3 text-[13px] leading-relaxed text-ink-muted">
+          Ehhez az országhoz még nincs kezdőcsomagunk. Addig is nézd meg a{" "}
+          <Link href="/tudasbazis" className="font-bold text-ink underline">Tudásbázis</Link>{" "}
+          bejelentkezés- és biztosítás-útmutatóit.
+        </p>
+      )}
+
       <div className="space-y-3">
-        {CHECKLIST_ITEMS.map((item) => {
+        {lepesek.map((item) => {
           const isDone = completed[item.id];
           return (
             <button

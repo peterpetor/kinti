@@ -6,6 +6,9 @@ import Link from "next/link";
 import { Icon, type IconName } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { HOUSING_DISCLAIMER, HOUSING_SAFETY_TIPS } from "@/lib/housing";
+import { usePreferredCountry } from "@/lib/country-pref";
+import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import type { HousingListing } from "@/lib/repo-housing";
 import { HousingFeed } from "./housing-feed";
 
@@ -42,13 +45,67 @@ const TABS: { id: PiacterTab; label: string; icon: IconName }[] = [
   { id: "koltoztetes", label: "Költöztetés", icon: "truck" },
 ];
 
-/** Kurált költözés-tippek — a Költöztetés-fül lenyitható tanács-doboza. */
-const MOVING_TIPS: string[] = [
+/**
+ * Kurált költözés-tippek — a Költöztetés-fül lenyitható tanács-doboza.
+ *
+ * ⚠️ EZ KORÁBBAN EGY LAPOS TÖMB VOLT, benne a „Sok NÉMET és SVÁJCI városban…
+ * Halteverbot" és a „Svájcba vagy Svájcból… vámkezelés" ponttal — ORSZÁGTÓL
+ * FÜGGETLENÜL. Az angol felhasználó tehát a „PIACTÉR · ANGLIA" fejléc alatt
+ * svájci-német tanácsot kapott. (Ez az app legdrágább hibaosztálya: a
+ * hallgatólagos ország-default. A fix MINDIG TÁBLA — így egy 7. ország
+ * felvételekor a hiányzó sor azonnal látszik, nem némán CH-t örököl.)
+ */
+const MOVING_TIPS_KOZOS: string[] = [
   "Foglalj időben: hónap végére és hétvégére a költöztetők hetekkel előre betelnek.",
   "Kérj írásos, fix árat több cégtől — az órabéres elszámolás könnyen elszalad.",
   "Kérdezz rá a szállítmány-biztosításra: enélkül a sérült bútor a te károd.",
-  "Sok német és svájci városban a teherautóhoz ideiglenes megállási tilalmat (Halteverbot) kell igényelni — intézd el pár nappal előre.",
 ];
+
+/**
+ * Ország-specifikus tipp: a teherautó helyfoglalása. Mindenhol létezik, de más
+ * a neve és MÁS HATÓSÁG adja — ez a tipp actionable része.
+ */
+const MOVING_TIPS_ORSZAG: Record<string, string[]> = {
+  CH: [
+    "A teherautóhoz ideiglenes megállási tilalmat (Halteverbot) kell kérni a várostól/községtől — intézd el pár nappal előre.",
+  ],
+  AT: [
+    "A teherautóhoz Halteverbotszonét kell igényelni a városnál (Bécsben a kerületi Magistratisches Bezirksamtnál) — pár nappal előre.",
+  ],
+  DE: [
+    "A teherautóhoz Halteverbotszonét kell igényelni a városnál (Straßenverkehrsbehörde), vagy a költöztető cég intézi — pár nappal előre.",
+  ],
+  NL: [
+    "A teherautó vagy a bútorlift utcai helyfoglalásához a gemeenténél kell engedélyt kérni — nézd meg a saját városod oldalán.",
+  ],
+  GB: [
+    "A teherautó elé parkolóhely-felfüggesztést (parking bay suspension) a helyi councilnál kell kérni — általában több munkanappal előre, díj ellenében.",
+  ],
+  ES: [
+    "A teherautó elé a helyfoglalást (reserva de estacionamiento) az ayuntamientónál kell kérni — a szabályok városonként eltérnek.",
+  ],
+};
+
+/** Az adott ország tippjei. A hiányzó ország-sor NEM örököl csendben CH-t. */
+function movingTips(country: string): string[] {
+  return [...MOVING_TIPS_KOZOS, ...(MOVING_TIPS_ORSZAG[country] ?? [])];
+}
+
+/**
+ * A közigazgatási egység „-onként" alakja a lábjegyzethez.
+ *
+ * ⚠️ TÁBLA, NEM TOLDALÉKOLÁS. A `regionWord(country) + "onként"` magyartalan
+ * alakokat adna („provinciaonként", „régioonként") — a magánhangzó-harmónia
+ * miatt ezt nem lehet ragasztással megoldani.
+ */
+const REGIO_ONKENT: Record<string, string> = {
+  CH: "kantononként",
+  AT: "tartományonként",
+  DE: "tartományonként",
+  NL: "provinciánként",
+  GB: "régiónként",
+  ES: "régiónként",
+};
 
 /** A Költöztetés-fül gyorslinkjei — mind MEGLÉVŐ funkcióra mutat
  *  (csoportos ajánlatkérés, Keresek-tábla, Szaknévsor), új backend nincs. */
@@ -91,6 +148,13 @@ export function PiacterTabs({
   signedIn: boolean;
 }) {
   const [tab, setTab] = useState<PiacterTab>(initialTab);
+  // ⚠️ A költözés-tippek ORSZÁG-FÜGGŐK (Halteverbot vs. council suspension vs.
+  // ayuntamiento), és a vám csak EU-n kívülre igaz. Enélkül az angol
+  // felhasználó svájci tanácsot kapott a saját ország-fejléce alatt.
+  const [prefCountry] = usePreferredCountry();
+  const country = prefCountry ?? DEFAULT_COUNTRY;
+  const countryName = getCountry(country)?.name ?? "Az ország";
+  const regioSzo = REGIO_ONKENT[country] ?? "régiónként";
 
   const switchTab = (t: PiacterTab) => {
     setTab(t);
@@ -193,22 +257,28 @@ export function PiacterTabs({
               <Icon name="chevD" size={14} strokeWidth={2.4} className="ml-auto shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
             </summary>
             <ul className="mt-2 space-y-1.5">
-              {MOVING_TIPS.map((tip) => (
+              {movingTips(country).map((tip) => (
                 <li key={tip} className="flex gap-1.5 text-[11.5px] leading-snug text-ink-muted">
                   <span className="shrink-0" aria-hidden>•</span> {tip}
                 </li>
               ))}
-              <li className="flex gap-1.5 text-[11.5px] leading-snug text-ink-muted">
-                <span className="shrink-0" aria-hidden>•</span>
-                <span>
-                  Svájcba vagy Svájcból költözésnél a holmid vámkezelést igényelhet —{" "}
-                  <Link href="/tudasbazis/vam" className="font-bold text-primary underline">nézd meg a vám-kalauzt</Link>.
-                </span>
-              </li>
+              {/* ⚠️ Vám CSAK ott, ahol tényleg van vámhatár Magyarország felé.
+                  A döntést a projekt SAJÁT táblája adja (isFeatureAvailable
+                  „vam" = CH + GB), nem külön feltevés — így nem csúszhat el
+                  attól, amit a vám-kalauz maga állít. */}
+              {isFeatureAvailable("vam", country) && (
+                <li className="flex gap-1.5 text-[11.5px] leading-snug text-ink-muted">
+                  <span className="shrink-0" aria-hidden>•</span>
+                  <span>
+                    {countryName} EU-n kívül van, ezért a holmid vámkezelést igényelhet —{" "}
+                    <Link href="/tudasbazis/vam" className="font-bold text-primary underline">nézd meg a vám-kalauzt</Link>.
+                  </span>
+                </li>
+              )}
             </ul>
             <p className="mt-2 text-[10.5px] leading-snug text-ink-faint">
               A tippek tájékoztató jellegűek, nem minősülnek jogi tanácsadásnak — a pontos
-              szabályok városonként és kantononként/tartományonként eltérhetnek.
+              szabályok városonként és {regioSzo} eltérhetnek.
             </p>
           </details>
         </div>
