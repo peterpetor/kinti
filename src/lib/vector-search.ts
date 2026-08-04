@@ -161,14 +161,37 @@ export interface SemanticHit {
  * Index/embedding nélkül → null (a hívó kulcsszavas keresésre vált).
  */
 export async function semanticBusinessIds(query: string, topK = 20): Promise<SemanticHit[] | null> {
+  return (await semanticBusinessIdsDiag(query, topK)).hits;
+}
+
+/** Hol bukott el a szemantikus keresés. */
+export type SzemantikusHiba = "nincs-index" | "embedding" | "lekerdezes" | null;
+
+export interface SzemantikusValasz {
+  hits: SemanticHit[] | null;
+  hiba: SzemantikusHiba;
+  /** A kivétel szövege — CSAK diagnosztikához, felhasználónak SOHA. */
+  uzenet?: string;
+}
+
+/**
+ * Ugyanaz, mint a `semanticBusinessIds`, de MEGMONDJA, hol bukott el.
+ *
+ * ⚠️ Ez nem kényelmi extra. Az első éles mérésnél minden kérdés üres listát
+ * adott, és a `null` visszatérés HÁROM különböző okot takart (nincs binding /
+ * embedding-hiba / lekérdezés-hiba). Amíg ezek egyformán néztek ki, a hibát
+ * nem lehetett megkülönböztetni a jogos „nincs találat"-tól — a funkció némán
+ * halott lett volna. A `catch {}` mindig kényelmes, és mindig ez az ára.
+ */
+export async function semanticBusinessIdsDiag(query: string, topK = 20): Promise<SzemantikusValasz> {
   const index = getVectorize();
-  if (!index) return null;
+  if (!index) return { hits: null, hiba: "nincs-index" };
   const vec = await embedText(query);
-  if (!vec) return null;
+  if (!vec) return { hits: null, hiba: "embedding" };
   try {
     const res = await index.query(vec, { topK, returnMetadata: false });
-    return (res.matches ?? []).map((m) => ({ id: m.id, score: m.score }));
-  } catch {
-    return null;
+    return { hits: (res.matches ?? []).map((m) => ({ id: m.id, score: m.score })), hiba: null };
+  } catch (e) {
+    return { hits: null, hiba: "lekerdezes", uzenet: e instanceof Error ? e.message : String(e) };
   }
 }

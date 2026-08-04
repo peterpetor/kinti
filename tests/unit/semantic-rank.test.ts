@@ -178,7 +178,8 @@ describe("jelentés alapú keresés — bekötés", () => {
     // mind átcsúsznának a számláló-ellenőrzésen.
     const rl = routeSrc.indexOf('checkAiRateLimit("semantic-search"');
     const log = routeSrc.indexOf('logAiRateLimit("semantic-search"');
-    const ai = routeSrc.indexOf("semanticBusinessIds(");
+    // A hívás neve változhat (Diag-változat), a SORREND nem — ezért mintára megyünk.
+    const ai = routeSrc.search(/semanticBusinessIds\w*\(/);
     expect(rl).toBeGreaterThan(-1);
     expect(log).toBeGreaterThan(rl);
     expect(ai).toBeGreaterThan(log);

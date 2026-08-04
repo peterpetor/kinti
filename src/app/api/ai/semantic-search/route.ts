@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkAiRateLimit, logAiRateLimit } from "@/lib/ai";
-import { semanticBusinessIds, getVectorize } from "@/lib/vector-search";
+import { semanticBusinessIdsDiag, getVectorize } from "@/lib/vector-search";
 // ⚠️ Közvetlenül a modulból, NEM a `repo` barrel-ből: az a teljes adatréteget
 // behúzná ebbe az edge-bundle-be.
 import { getBusinessesForList } from "@/lib/repo-business";
@@ -43,15 +43,20 @@ export const dynamic = "force-dynamic";
  * A nyers pontszám nem publikus (a rangsor belső működését mutatná meg egy
  * scrapernek), ezért ugyanaz a gépi belépő védi, mint a cron-végpontokat.
  */
+async function gepiHozzafer(req: Request): Promise<boolean> {
+  const env = getCloudflareEnv() as unknown as { CRON_SECRET?: string };
+  const auth = req.headers.get("authorization") ?? "";
+  if (!env.CRON_SECRET) return false;
+  return timingSafeEqualStr(auth, `Bearer ${env.CRON_SECRET}`);
+}
+
 async function diagnosztika(
   req: Request,
   nyers: { id: string; score: number }[],
   lista: { id: string; country: string; name: string }[],
   orszag: string,
 ): Promise<Record<string, unknown>> {
-  const env = getCloudflareEnv() as unknown as { CRON_SECRET?: string };
-  const auth = req.headers.get("authorization") ?? "";
-  if (!env.CRON_SECRET || !(await timingSafeEqualStr(auth, `Bearer ${env.CRON_SECRET}`))) return {};
+  if (!(await gepiHozzafer(req))) return {};
 
   const szerint = new Map(lista.map((b) => [b.id, b]));
   return {
@@ -102,13 +107,20 @@ export async function POST(req: Request) {
     // egyben tárol, és az ország-szűrés UTÁN kell maradnia elég találatnak.
     // 6 találathoz 6 kérése kevés lenne — egy holland keresésnél a lista simán
     // elfogyhatna csupa német tételre.
-    const nyers = await semanticBusinessIds(query, 40);
+    const valasz = await semanticBusinessIdsDiag(query, 40);
+    const nyers = valasz.hits;
     // ⚠️ A KÉT ÜRES ESET NEM UGYANAZ, és külön névvel kell látszaniuk:
     //   • `no-vector` = az embedding vagy a Vectorize-lekérdezés HIBÁZOTT,
     //   • `no-match`  = megvolt a keresés, csak nem maradt elég jó találat.
     // Amíg mindkettőre ugyanaz a válasz ment, egy néma AI-hiba pontosan úgy
     // nézett ki, mint egy jogos „nincs találat" — vagyis sosem derülne ki.
-    if (!nyers) return NextResponse.json({ hits: [], reason: "no-vector" });
+    if (!nyers) {
+      return NextResponse.json({
+        hits: [],
+        reason: "no-vector",
+        ...(await gepiHozzafer(req) ? { debug: { hiba: valasz.hiba, uzenet: valasz.uzenet } } : {}),
+      });
+    }
     if (nyers.length === 0) return NextResponse.json({ hits: [], reason: "no-match" });
 
     const lista = await getBusinessesForList();
