@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import { getAdminUserId } from "@/lib/admin";
-import { getCloudflareEnv } from "@/lib/cloudflare";
-import { timingSafeEqualStr } from "@/lib/security";
 import { getVectorize, indexPendingBusinessVectors } from "@/lib/vector-search";
 import { safeLogError } from "@/lib/safe-log";
 
@@ -24,16 +22,8 @@ export const dynamic = "force-dynamic";
  * Query: `limit` (alap 200, max 500).
  */
 export async function POST(req: Request) {
-  // Auth: admin session VAGY `Bearer <CRON_SECRET>` — ugyanaz a minta, mint a
-  // /api/cron/* végpontoknál. A gépi út azért kell, hogy a hátralék
-  // karbantartható legyen böngésző-munkamenet nélkül is (nagy backfill,
-  // ütemezett feltöltés) — a végpont csak a SAJÁT adatunkat indexeli, nem ad ki
-  // semmit.
-  const env = getCloudflareEnv() as unknown as { CRON_SECRET?: string };
-  const auth = req.headers.get("authorization") ?? "";
-  const okSecret = !!env.CRON_SECRET && (await timingSafeEqualStr(auth, `Bearer ${env.CRON_SECRET}`));
-  const okAdmin = okSecret ? false : !!(await getAdminUserId());
-  if (!okSecret && !okAdmin) {
+  const adminId = await getAdminUserId();
+  if (!adminId) {
     return NextResponse.json({ error: "Csak adminisztrátor." }, { status: 403 });
   }
 
