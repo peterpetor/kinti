@@ -25,6 +25,7 @@ import { NL_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-nl";
 import { GB_QUIZ_CATEGORY_META } from "@/lib/quiz-bank-gb";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, countryAdjective } from "@/lib/countries";
+import { recordAnswer, kvizBank } from "@/lib/tanulas";
 
 /**
  * KvizGame — interaktív napi 3 kérdéses kvíz játék.
@@ -81,6 +82,8 @@ export function KvizGame() {
     setAnswers(next);
     setRevealed(true);
     haptic(idx === question.correct ? "success" : "warning");
+    // Ismétlő: az elrontott kérdés pár nap múlva visszajön a profilban.
+    recordAnswer("quiz", kvizBank(country), question.id, idx === question.correct);
   }
 
   function goNext() {

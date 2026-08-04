@@ -33,11 +33,14 @@ import {
   ES_BANK, ES_QUIZ_REGIONS, ES_TOPIC_META, generateQuizES, ES_QUIZ_LENGTH, ES_PASS_THRESHOLD,
 } from "@/lib/es-ccse-bank";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { recordAnswer, polgBank } from "@/lib/tanulas";
 
 type Phase = "intro" | "quiz" | "result";
 
 /** Ország-specifikus konfiguráció — a kvíz-motor + UI közös, csak az adat/szöveg tér el. */
 interface QuizConfig {
+  /** Ország-kód — az ismétlő bank-azonosítójához. */
+  country: string;
   bank: EbQuestion[];
   regions: { code: string; name: string }[];
   topicMeta: Record<EbTopic, { label: string; emoji: string; color: string }>;
@@ -51,6 +54,7 @@ interface QuizConfig {
 }
 
 const CH_CONFIG: QuizConfig = {
+  country: "CH",
   bank: EB_BANK,
   regions: EB_CANTONS,
   topicMeta: EB_TOPIC_META,
@@ -72,6 +76,7 @@ const CH_CONFIG: QuizConfig = {
 };
 
 const AT_CONFIG: QuizConfig = {
+  country: "AT",
   bank: AT_BANK,
   regions: AT_BUNDESLAENDER,
   topicMeta: AT_TOPIC_META,
@@ -93,6 +98,7 @@ const AT_CONFIG: QuizConfig = {
 };
 
 const DE_CONFIG: QuizConfig = {
+  country: "DE",
   bank: DE_BANK,
   regions: DE_BUNDESLAENDER,
   topicMeta: DE_TOPIC_META,
@@ -114,6 +120,7 @@ const DE_CONFIG: QuizConfig = {
 };
 
 const NL_CONFIG: QuizConfig = {
+  country: "NL",
   bank: NL_BANK,
   regions: NL_PROVINCES,
   topicMeta: NL_TOPIC_META,
@@ -136,6 +143,7 @@ const NL_CONFIG: QuizConfig = {
 
 
 const GB_CONFIG: QuizConfig = {
+  country: "GB",
   bank: GB_BANK,
   regions: GB_QUIZ_REGIONS,
   topicMeta: GB_TOPIC_META,
@@ -164,6 +172,7 @@ const GB_CONFIG: QuizConfig = {
  * disclaimer ezt kimondja, hogy senki ne készüljön rossz feltételezéssel.
  */
 const ES_CONFIG: QuizConfig = {
+  country: "ES",
   bank: ES_BANK,
   regions: ES_QUIZ_REGIONS,
   topicMeta: ES_TOPIC_META,
@@ -238,6 +247,9 @@ function CitizenshipQuiz({ config }: { config: QuizConfig }) {
     next[currentIdx] = idx;
     setAnswers(next);
     setRevealed(true);
+    // Ismétlő: az elrontott kérdés pár nap múlva visszajön a profilban.
+    const q = questions[currentIdx];
+    if (q) recordAnswer("quiz", polgBank(config.country), q.id, idx === q.correct);
   }
 
   function next() {

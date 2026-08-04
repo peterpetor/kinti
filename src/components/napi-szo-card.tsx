@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
 import { getDailyWord, hasDailyWord, ttsLang, type DailyWord } from "@/lib/napi-szo";
+import { readCards, recordAnswer, szoBank } from "@/lib/tanulas";
+import { haptic } from "@/lib/haptics";
 
 /**
  * NapiSzoCard — „Napi szó": napi helyi kifejezés a kezdőlapon, a napi
@@ -18,6 +20,14 @@ export function NapiSzoCard() {
   const [country, setCountry] = useState<string>(DEFAULT_COUNTRY);
   const [canSpeak, setCanSpeak] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const [jelolt, setJelolt] = useState<"tudom" | "gyakorlom" | null>(null);
+
+  function jelol(mit: "tudom" | "gyakorlom") {
+    if (!word) return;
+    recordAnswer("word", szoBank(country), word.word, mit === "tudom");
+    setJelolt(mit);
+    haptic(mit === "tudom" ? "success" : "tap");
+  }
 
   useEffect(() => {
     const c = prefCountry ?? DEFAULT_COUNTRY;
@@ -27,7 +37,12 @@ export function NapiSzoCard() {
       return;
     }
     const dayIndex = Math.floor(Date.now() / 86_400_000);
-    setWord(getDailyWord(c, dayIndex));
+    const w = getDailyWord(c, dayIndex);
+    setWord(w);
+    // Ha ma már megjelölted, ne kérdezzük újra (különben a „seen" is hízna).
+    // A doboz mondja meg, MELYIK gombot nyomtad: a 0. doboz = „még gyakorlom".
+    const meglevo = w ? readCards().find((k) => k.bank === szoBank(c) && k.id === w.word && k.due > dayIndex) : undefined;
+    setJelolt(meglevo ? (meglevo.box === 0 ? "gyakorlom" : "tudom") : null);
     try {
       setCanSpeak(typeof window !== "undefined" && "speechSynthesis" in window);
     } catch {
@@ -92,6 +107,34 @@ export function NapiSzoCard() {
           💡 {word.note}
         </p>
       )}
+
+      {/* Ismétlőbe küldés. A „Még gyakorlom" a szót a 0. dobozba teszi, így
+          HOLNAP visszajön a profil ismétlőjében — ettől lesz a napi szóból
+          tanulás, nem csak elolvasott érdekesség. */}
+      <div className="mt-2.5 flex items-center gap-2">
+        {jelolt ? (
+          <p className="text-[11.5px] font-semibold text-success">
+            {jelolt === "tudom" ? "✓ Elmentve tudottként" : "🔄 Holnap újra elődhozzuk"}
+          </p>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => jelol("gyakorlom")}
+              className="flex-1 rounded-[11px] border border-line bg-surface px-3 py-2 text-[12px] font-bold text-ink transition active:scale-[0.98]"
+            >
+              Még gyakorlom
+            </button>
+            <button
+              type="button"
+              onClick={() => jelol("tudom")}
+              className="flex-1 rounded-[11px] border border-success/40 bg-success/10 px-3 py-2 text-[12px] font-bold text-ink transition active:scale-[0.98]"
+            >
+              Tudom
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

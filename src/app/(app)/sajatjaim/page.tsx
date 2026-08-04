@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BookmarksSection } from "@/components/views/bookmarks-section";
+import { TanulasSection } from "@/components/views/tanulas-section";
 import { MyPostsManager } from "@/components/views/my-posts-manager";
 import { GamificationCard } from "@/components/views/gamification-card";
 import { ReferralHub } from "@/components/views/referral-hub";
@@ -49,6 +50,9 @@ export default function MyPostsPage() {
       {/* Saját gyűjtemény — a fenti „csak a böngésződben" figyelmeztetés erre is
           vonatkozik: a mentések is localStorage-ban vannak. */}
       <BookmarksSection />
+
+      {/* Ismétlő + tanulási statisztika — szintén csak localStorage. */}
+      <TanulasSection />
 
       <GamificationCard />
 
