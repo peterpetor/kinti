@@ -11,6 +11,7 @@ import { areasForBusiness } from "@/lib/seo-areas";
 import { ProfileHeaderActions } from "@/components/views/profile-action-buttons";
 import { ReportButton } from "@/components/report-button";
 import { CorrectionButton } from "@/components/correction-button";
+import { BookmarkButton } from "@/components/bookmark-button";
 import { BusinessClaimCard } from "@/components/views/business-claim-card";
 import { parseWorkingHoursStrict, calculateBusinessHoursStatus, formatWeeklyHours, swissWeekdayKey } from "@/lib/hours";
 import { handleFromId } from "@/lib/handle";
@@ -406,9 +407,21 @@ export default async function BusinessPage({
         <p className="mb-1 text-[12.5px] font-bold uppercase tracking-wide text-primary">
           {b.categoryLabel}
         </p>
-        <h1 className="text-[26px] font-extrabold leading-[1.08] tracking-tight text-ink text-balance">
-          {b.name}
-        </h1>
+        <div className="flex items-start gap-2">
+          <h1 className="min-w-0 flex-1 text-[26px] font-extrabold leading-[1.08] tracking-tight text-ink text-balance">
+            {b.name}
+          </h1>
+          {/* Mentés a Saját Gyűjteménybe — kliensoldali, a szerver nem tudja meg,
+              ki mit ment (ld. privacy-no-server-identity). */}
+          <BookmarkButton
+            kind="business"
+            id={b.id}
+            title={b.name}
+            subtitle={[b.categoryLabel, b.address].filter(Boolean).join(" · ")}
+            href={`/szaknevsor/${b.id}`}
+            className="mt-1"
+          />
+        </div>
         {b.verified && (
           <p
             title="Az üzemeltető meggyőződött róla, hogy valódi magyarul beszélő vállalkozás — ez NEM minőségi garancia, a szakképesítést és a munka minőségét nem ellenőrizzük."

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { BookmarkButton } from "@/components/bookmark-button";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getJobById, getEmployerById, getWorkerProfileByUser, getBusinessByOwner } from "@/lib/repo";
@@ -177,9 +178,22 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           </div>
         )}
         
-        <h1 className="text-[24px] font-extrabold tracking-tight text-ink leading-tight text-balance">
-          {job.title}
-        </h1>
+        <div className="flex items-start gap-2">
+          <h1 className="min-w-0 flex-1 text-[24px] font-extrabold tracking-tight text-ink leading-tight text-balance">
+            {job.title}
+          </h1>
+          {/* Mentés a Saját Gyűjteménybe. ⚠️ Az állások LEJÁRNAK (30 nap, ld.
+              job-listing-expiry) — a mentett link ilyenkor a lejárt hirdetésre
+              visz, ami korrekt: a user látja, hogy már nem aktuális. */}
+          <BookmarkButton
+            kind="job"
+            id={job.id}
+            title={job.title}
+            subtitle={[employer?.companyName, job.location].filter(Boolean).join(" · ")}
+            href={`/allasok/${job.id}`}
+            className="mt-0.5"
+          />
+        </div>
         <p className="mt-1 flex items-center gap-1.5 text-[15px] font-bold text-ink-muted">
           {employer?.companyName || "Ismeretlen cég"}
           {employer?.verified && (

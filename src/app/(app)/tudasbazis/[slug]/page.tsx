@@ -8,6 +8,7 @@ import { comparisonForSlug } from "@/lib/guide-comparisons";
 import { ComparisonTable } from "@/components/comparison-table";
 import { GuideProCta } from "./GuideProCta";
 import { GuideFeedback } from "@/components/views/guide-feedback";
+import { BookmarkButton } from "@/components/bookmark-button";
 import { GuideNewsletterCta } from "@/components/views/guide-newsletter-cta";
 import { GuideShareButton } from "@/components/views/guide-share-button";
 import { RemittanceAffiliateCta } from "@/components/views/remittance-affiliate-cta";
@@ -206,6 +207,17 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       </section>
 
       <p className="px-1 text-[11px] leading-relaxed text-ink-faint">{GUIDES_DISCLAIMER}</p>
+
+      {/* 1-kattintásos mentés a Saját Gyűjteménybe (/sajatjaim). Kliensoldali,
+          localStorage — a statikus cikkoldal így sem fogyaszt edge-route-ot. */}
+      <BookmarkButton
+        variant="full"
+        kind="guide"
+        id={guide.slug}
+        title={guide.title}
+        subtitle={guide.summary}
+        href={`/tudasbazis/${guide.slug}`}
+      />
 
       {/* Anonim hasznosság-szavazás → tartalom-roadmap adat (usage-analytics). */}
       <GuideFeedback slug={guide.slug} />

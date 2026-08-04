@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BookmarksSection } from "@/components/views/bookmarks-section";
 import { MyPostsManager } from "@/components/views/my-posts-manager";
 import { GamificationCard } from "@/components/views/gamification-card";
 import { ReferralHub } from "@/components/views/referral-hub";
@@ -9,8 +10,8 @@ import { Icon, KintiLogo } from "@/components/ui";
 export const dynamic = "force-static";
 
 export const metadata = {
-  title: "Saját posztjaim",
-  description: "A böngésződben tárolt manage-link-jeid — szerkesztés, törlés, backup, sync.",
+  title: "Sajátjaim",
+  description: "A gyűjteményed és a böngésződben tárolt manage-link-jeid — mentések, szerkesztés, backup.",
   robots: { index: false, follow: false },
 };
 
@@ -44,6 +45,10 @@ export default function MyPostsPage() {
         eltűnik. Másik eszközhöz: <strong className="text-ink">letöltés / import</strong> vagy{" "}
         <strong className="text-ink">email-küldés</strong>.
       </div>
+
+      {/* Saját gyűjtemény — a fenti „csak a böngésződben" figyelmeztetés erre is
+          vonatkozik: a mentések is localStorage-ban vannak. */}
+      <BookmarksSection />
 
       <GamificationCard />
 
