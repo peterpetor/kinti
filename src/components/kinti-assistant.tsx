@@ -114,6 +114,19 @@ export function KintiAssistant() {
         </button>
       </form>
 
+      {/*
+        ⚠️ AI ACT 50. cikk (1): a felhasználót AZ ELSŐ ÉRINTKEZÉSKOR tájékoztatni
+        kell arról, hogy AI-rendszerrel áll kapcsolatban. Korábban ez a mondat
+        CSAK az első válasz MELLETT jelent meg (a `{result && …}` blokkban) —
+        vagyis a user már beírta és elküldte a kérdését, mire megtudta. Ezért
+        kell egy rövid jelzés MÁR A BEVITEL ALATT is.
+        A válasz melletti, részletesebb magyarázat változatlanul megmarad.
+      */}
+      <p className="mt-1.5 text-[10px] leading-snug text-ink-faint">
+        Mesterséges intelligencia értelmezi a kérdésed — nem élő ügyintéző.{" "}
+        <Link href="/ai-atlathatosag" className="underline">Részletek</Link>
+      </p>
+
       {/* Példa-chipek — az üres prompt hidegindítója. */}
       {!result && !loading && (
         <div className="no-scrollbar kinti-hfade -mx-1 mt-2 flex gap-1.5 overflow-x-auto px-1 pb-0.5">
