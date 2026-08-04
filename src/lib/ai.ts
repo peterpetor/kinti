@@ -188,6 +188,10 @@ export interface AiRateLimitConfig {
 /** Per-endpoint default-ok. Adott IP-ről X hívás Y órán belül. */
 export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
   "parse-search": { windowHours: 1, maxPerWindow: 20 },
+  // Jelentés alapú (vektoros) keresés — a parse-search TARTALÉKA, tehát ritkábban
+  // fut nála. Ugyanaz a nagyságrend: 1 embedding-hívás + 1 Vectorize-lekérdezés
+  // kérésenként, D1-olvasás nélkül (a céglista a gyorsítótárból jön).
+  "semantic-search": { windowHours: 1, maxPerWindow: 20 },
   "business-helper": { windowHours: 1, maxPerWindow: 10 },
 
   "german-term": { windowHours: 1, maxPerWindow: 50 },

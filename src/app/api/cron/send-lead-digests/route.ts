@@ -81,13 +81,26 @@ async function handle(req: Request): Promise<Response> {
   // folytathatóvá: a hátralék napok alatt magától lefogy, utána a lekérdezés
   // nullára apad (nincs fölösleges Workers AI fogyasztás). Független, saját
   // try/catch, a korai return-ök ELŐTT.
+  //
+  // ⚠️ 2026-08-05: napi 200 → körönként 500, legfeljebb 4 kör (max 2000/futás).
+  // A 200-as szelet mellett az akkori 1720-as hátralék KILENC napig tartott
+  // volna, és közben minden szerkesztés újratermeli a sajátját — a jelentés
+  // alapú keresés (/api/ai/semantic-search) addig hiányos indexen dolgozna,
+  // ami rosszabb, mint ha nem is lenne. A korábbi 200-as korlát a 10 ms-os
+  // CPU-keretű ingyenes csomaghoz készült; a fizetős csomagon 30 s a keret, a
+  // munka pedig amúgy is I/O-várakozás (AI + Vectorize), nem CPU.
   let searchIndexed = 0;
   let searchRemaining = 0;
   try {
     const { indexPendingBusinessVectors } = await import("@/lib/vector-search");
-    const r = await indexPendingBusinessVectors(200);
-    searchIndexed = r.indexed;
-    searchRemaining = r.remaining;
+    for (let kor = 0; kor < 4; kor++) {
+      const r = await indexPendingBusinessVectors(500);
+      searchIndexed += r.indexed;
+      searchRemaining = r.remaining;
+      // Kilépés, ha kész — VAGY ha egy kör semmit sem haladt. Az utóbbi nélkül
+      // egy tartósan hibázó köteg (pl. AI-hiba) végtelen körözést okozna.
+      if (r.remaining === 0 || r.indexed === 0) break;
+    }
   } catch (e) {
     safeLogError("send-lead-digests:searchIndex", e);
   }

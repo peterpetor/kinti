@@ -24,6 +24,14 @@ interface ParsedFilter {
   explanation: string;
 }
 
+/** Egy jelentés alapú (vektoros) találat — lásd lib/semantic-rank.ts. */
+interface JelentesTalalat {
+  id: string;
+  name: string;
+  categoryLabel: string | null;
+  elerheto: boolean;
+}
+
 interface Props {
   value: string;
   onChange: (value: string) => void;
@@ -63,6 +71,9 @@ export function SmartSearchBar({
   // adatbázisban, de a pill-sor csak néhányat mutat — aki nem tudta a szó
   // pontos alakját, nem talált rá. A javaslat elgépelést is javít.
   const [sugOpen, setSugOpen] = useState(false);
+  // Jelentés alapú találatok — csak akkor telik meg, ha az AI a kérést egyik
+  // szakmára sem tudta ráhúzni (lásd keressJelentesAlapjan).
+  const [jelentesHits, setJelentesHits] = useState<JelentesTalalat[]>([]);
   const suggestions = useMemo(
     () =>
       categories && categoryCounts
@@ -71,7 +82,30 @@ export function SmartSearchBar({
     [value, categories, categoryCounts],
   );
 
+  /**
+   * Jelentés alapú tartalék-keresés.
+   *
+   * ⚠️ SOHA nem törli a szűrőket és nem ír hibát: ez egy RÁADÁS. Ha nincs
+   * találat vagy elfogyott az óránkénti keret, a felhasználó pontosan azt látja,
+   * amit e nélkül is látott volna — csak a lenyíló marad üres.
+   */
+  async function keressJelentesAlapjan(q: string) {
+    try {
+      const res = await fetch("/api/ai/semantic-search", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ query: q, country: prefCountry ?? DEFAULT_COUNTRY }),
+      });
+      if (!res.ok) return;
+      const data = (await res.json()) as { hits?: JelentesTalalat[] };
+      setJelentesHits(data.hits ?? []);
+    } catch {
+      /* a tartalék-út hibája nem ronthatja el a fő keresést */
+    }
+  }
+
   async function runAi() {
+    setJelentesHits([]);
     const q = value.trim();
     if (q.length < 3) {
       setError("Írj előbb pár szót a keresőbe, aztán nyomd meg az ✨ AI gombot.");
@@ -113,6 +147,11 @@ export function SmartSearchBar({
       if (data.cantonCode) onApplyCanton(data.cantonCode);
       onApplyQuery(data.keywords ?? "");
       setNote(data.explanation || "Beállítottam a szűrőket.");
+
+      // 3) TARTALÉK: ha a kérést egyik szakmára sem lehetett ráhúzni, a szűrők
+      //    nem segítenek — a szabad szöveg pedig szó szerint keres, ami ilyen
+      //    kérdésnél nulla találat. Ilyenkor kérünk jelentés alapú találatokat.
+      if (!data.categoryId) await keressJelentesAlapjan(q);
     } catch {
       setError("Hálózati hiba — próbáld újra.");
     } finally {
@@ -136,6 +175,9 @@ export function SmartSearchBar({
             setSugOpen(true);
             if (note) setNote(null);
             if (error) setError(null);
+            // A találatok az ELŐZŐ kérdésre vonatkoznak — gépelés közben
+            // megtartva félrevezetnének.
+            if (jelentesHits.length > 0) setJelentesHits([]);
           }}
           onFocus={() => setSugOpen(true)}
           // ⚠️ Késleltetett zárás: enélkül a blur ELŐBB tüzelne, mint a
@@ -163,6 +205,7 @@ export function SmartSearchBar({
               onChange("");
               setNote(null);
               setError(null);
+              setJelentesHits([]);
             }}
             className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-surface-alt text-ink-muted transition hover:text-ink"
           >
@@ -234,6 +277,43 @@ export function SmartSearchBar({
             </li>
           ))}
         </ul>
+      )}
+
+      {/* Jelentés alapú találatok — akkor jelennek meg, ha a kérésre nem volt
+          ráhúzható szakma, tehát a szűrők önmagukban üres listát adnának.
+          ⚠️ Ez RÁADÁS a szűrők mellé, nem a helyettük: a lista alatt látható
+          eredményt nem írja felül, csak ide kínál közvetlen ugrást. */}
+      {jelentesHits.length > 0 && (
+        <div className="mt-2 overflow-hidden rounded-[14px] border border-line bg-surface">
+          <p className="flex items-center gap-1.5 border-b border-line bg-surface-alt px-3.5 py-2 text-[11.5px] font-bold text-ink-muted">
+            <Icon name="sparkles" size={12} strokeWidth={2.4} className="shrink-0 text-primary" />
+            Ezek illenek a kérdésedhez
+          </p>
+          <ul>
+            {jelentesHits.map((h) => (
+              <li key={h.id} className="border-b border-line last:border-b-0">
+                <a
+                  href={`/szaknevsor/${h.id}`}
+                  className="flex items-center gap-2 px-3.5 py-2.5 transition hover:bg-surface-alt active:bg-surface-alt"
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[13.5px] font-bold text-ink">{h.name}</span>
+                    {h.categoryLabel && (
+                      <span className="block truncate text-[11.5px] text-ink-muted">{h.categoryLabel}</span>
+                    )}
+                  </span>
+                  {/* Az elérhetőség jelzése SZÁNDÉKOS: a mért tölcsérben a
+                      szakadék a kapcsolatfelvételnél van, és a szaknévsor egy
+                      részének semmilyen elérhetősége nincs. */}
+                  {h.elerheto && (
+                    <Icon name="phone" size={13} strokeWidth={2.4} className="shrink-0 text-ink-faint" />
+                  )}
+                  <Icon name="arrowRight" size={14} strokeWidth={2.4} className="shrink-0 text-ink-faint" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {error && <p className="mt-1.5 px-1 text-[11.5px] font-bold text-accent">{error}</p>}
