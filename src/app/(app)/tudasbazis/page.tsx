@@ -85,6 +85,23 @@ export default function TudasbazisPage() {
         <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
       </Link>
 
+      {/* Döntési mátrix — a „melyik ország?" kérdés INTERAKTÍV oldala:
+          személyre szabott rangsor. Az alatta lévő táblázatos hub a
+          referencia-olvasás; a kettő szándékosan más feladatra való. */}
+      <Link
+        href="/hova-koltozzek"
+        className="flex items-center gap-3 rounded-card border-2 border-primary/30 bg-primary-soft/50 px-4 py-3 shadow-card transition active:scale-[0.99]"
+      >
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/15 text-lg">🗺️</span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">Hová költözzek?</span>
+          <span className="block text-[11.5px] leading-snug text-ink-muted">
+            Állítsd be, mi fontos neked — és megmutatjuk, hol marad több, és hol tarthatod meg a magyart.
+          </span>
+        </span>
+        <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
+      </Link>
+
       {/* Országos összehasonlító hub — a „melyik ország?" döntéshez a 4 ország
           egymás mellett (CH/AT/DE/NL), az összes cikk-adatból. */}
       <Link

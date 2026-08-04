@@ -137,7 +137,9 @@ export const GUIDE_CHECKLISTS: Record<string, ChecklistLepes[]> = {
   "de-bejelentkezes": [
     { text: "Kérd el a főbérlőtől a Wohnungsgeberbestätigungot", hint: "Enélkül NEM tudsz bejelentkezni — ne indulj el nélküle." },
     { text: "Foglalj időpontot a Bürgeramtnál", hint: "Nagyvárosban hetekre előre telt; hajnalban szabadulnak fel helyek." },
-    { text: "Jelentkezz be 14 napon belül (Anmeldung)" },
+    // ⚠️ A cikk szándékosan hedgel („általában 1-2 héten belül, városonként
+    // eltér"). Ne írjunk határozottabbat a forrásnál.
+    { text: "Jelentkezz be a beköltözés után 1–2 héten belül (Anmeldung)", hint: "Városonként eltér — Berlinben 14 nap." },
     { text: "Tedd el a Meldebescheinigungot" },
     { text: "Várd meg a Steuer-ID-t postán", hint: "2–3 hét. Enélkül a legrosszabb adósávba sorolnak." },
     { text: "Add meg a Steuer-ID-t a munkáltatódnak" },
@@ -186,7 +188,8 @@ export const GUIDE_CHECKLISTS: Record<string, ChecklistLepes[]> = {
   // ─── HOLLANDIA ───────────────────────────────────────────────────────────
   "nl-bejelentkezes": [
     { text: "Foglalj időpontot a gemeenténél" },
-    { text: "Jelentkezz be 5 napon belül (inschrijven)", hint: "Enélkül nincs BSN — és BSN nélkül semmi sem megy." },
+    // ⚠️ A cikk „néhány napon belül"-t ír; ne pontosítsuk napra a forrás mögé.
+    { text: "Jelentkezz be a BRP-be a beköltözés után pár napon belül", hint: "Enélkül nincs BSN — és BSN nélkül semmi sem megy." },
     { text: "Vedd át a BSN-t", hint: "Adó, bank, biztosítás, orvos — mindenhez ez kell." },
     { text: "Igényeld a DigiD-t", hint: "Minden online ügyintézés ezzel megy." },
   ],

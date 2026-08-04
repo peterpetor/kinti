@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -155,14 +156,19 @@ export function OrszagOsszehasonlitoChart() {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => setTablazat((t) => !t)}
-        className="flex items-center gap-1.5 text-[11.5px] font-bold text-ink-muted underline underline-offset-2"
-      >
-        <Icon name={tablazat ? "trending" : "list"} size={13} strokeWidth={2.4} />
-        {tablazat ? "Vissza a grafikonhoz" : "Táblázatos nézet"}
-      </button>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={() => setTablazat((t) => !t)}
+          className="flex items-center gap-1.5 text-[11.5px] font-bold text-ink-muted underline underline-offset-2"
+        >
+          <Icon name={tablazat ? "trending" : "list"} size={13} strokeWidth={2.4} />
+          {tablazat ? "Vissza a grafikonhoz" : "Táblázatos nézet"}
+        </button>
+        <Link href="/hova-koltozzek" className="flex items-center gap-1 text-[11.5px] font-bold text-primary underline underline-offset-2">
+          Hová költözzek? <Icon name="chevR" size={12} strokeWidth={2.6} />
+        </Link>
+      </div>
 
       {/* ⚠️ A biztosítás-sáv 0 négy országban — ez NEM azt jelenti, hogy nincs
           biztosítás. Enélkül a grafikon félrevezető lenne. */}
