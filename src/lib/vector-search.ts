@@ -19,7 +19,13 @@ interface VectorizeLike {
   upsert(vectors: { id: string; values: number[]; metadata?: Record<string, unknown> }[]): Promise<unknown>;
   query(
     vector: number[],
-    opts?: { topK?: number; returnValues?: boolean; returnMetadata?: boolean | "all" },
+    // ⚠️ `returnMetadata` a Vectorize V2-ben SZÖVEGES felsorolás, NEM logikai
+    // érték. A `false` a szerveren JSON-értelmezési hibát ad
+    // („VECTOR_QUERY_ERROR 40026 … expected value"), amit a hívó `catch`-e
+    // elnyelt — így a keresés MINDEN kérdésre üres listát adott, és kívülről
+    // pontosan úgy nézett ki, mint egy jogos „nincs találat". A típus ezért
+    // szándékosan NEM enged logikai értéket: a fordító fogja meg, ne az éles.
+    opts?: { topK?: number; returnValues?: boolean; returnMetadata?: "none" | "indexed" | "all" },
   ): Promise<{ matches: { id: string; score: number }[] }>;
 }
 
@@ -189,7 +195,7 @@ export async function semanticBusinessIdsDiag(query: string, topK = 20): Promise
   const vec = await embedText(query);
   if (!vec) return { hits: null, hiba: "embedding" };
   try {
-    const res = await index.query(vec, { topK, returnMetadata: false });
+    const res = await index.query(vec, { topK, returnMetadata: "none" });
     return { hits: (res.matches ?? []).map((m) => ({ id: m.id, score: m.score })), hiba: null };
   } catch (e) {
     return { hits: null, hiba: "lekerdezes", uzenet: e instanceof Error ? e.message : String(e) };
