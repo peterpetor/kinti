@@ -8,6 +8,7 @@ import { comparisonForSlug } from "@/lib/guide-comparisons";
 import { ComparisonTable } from "@/components/comparison-table";
 import { GuideProCta } from "./GuideProCta";
 import { GuideFeedback } from "@/components/views/guide-feedback";
+import { CikkChecklista } from "@/components/views/cikk-checklista";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { GuideNewsletterCta } from "@/components/views/guide-newsletter-cta";
 import { GuideShareButton } from "@/components/views/guide-share-button";
@@ -177,6 +178,11 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
           </section>
         ))}
       </article>
+
+      {/* Teendőlista — csak az ELJÁRÁST leíró cikkeknél van (a komponens
+          magától nem renderel, ha nincs lista). A cikk után jön: előbb értsd
+          meg, aztán intézd. */}
+      <CikkChecklista slug={guide.slug} />
 
       {/* Országos összehasonlító táblázat — a válaszgépek/featured-snippet
           kedvence, és a CH/AT/DE/NL közti választáshoz egy-pillantásos kép.

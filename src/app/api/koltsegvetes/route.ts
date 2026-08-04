@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getRentStats } from "@/lib/benchmark";
+import { getRentStats, getRentAcrossCountries } from "@/lib/benchmark";
 import { getCostBenchmarks } from "@/lib/cost-benchmark";
 import { getRegions } from "@/lib/regions";
 import { isBudgetCountry } from "@/lib/budget-plan";
@@ -20,6 +20,25 @@ export async function GET(req: NextRequest) {
   if (!isBudgetCountry(country)) {
     return NextResponse.json({ error: "Hibás ország." }, { status: 400 });
   }
+  /*
+   * `compare=1`: az ország-összehasonlító grafikon adata — mind a 6 ország
+   * országos lakbér-mediánja egy szobaszámra. SZÁNDÉKOSAN ugyanez a route
+   * szolgálja ki (nem új végpont): ~205 edge-route-nál a deploy némán bukik
+   * (lásd deploy-edge-route-ceiling), és ez a mód ugyanabból a táblából olvas.
+   * A válasz ország-független, ezért a cache-kulcs sem tartalmaz országot.
+   */
+  if (req.nextUrl.searchParams.get("compare") === "1") {
+    const rawRooms = Number(req.nextUrl.searchParams.get("rooms"));
+    const rooms = Number.isFinite(rawRooms) && rawRooms >= 1 && rawRooms <= 6 ? Math.floor(rawRooms) : 2;
+    const data = await cached(`budget-cmp:${rooms}`, 10 * 60_000, async () => ({
+      rooms,
+      countries: await getRentAcrossCountries(rooms),
+    }));
+    return NextResponse.json(data, {
+      headers: { "cache-control": "public, max-age=300, s-maxage=600, stale-while-revalidate=1800" },
+    });
+  }
+
   const rawCanton = req.nextUrl.searchParams.get("canton") ?? "all";
   const canton =
     rawCanton !== "all" && getRegions(country).some((r) => r.code === rawCanton) ? rawCanton : "all";

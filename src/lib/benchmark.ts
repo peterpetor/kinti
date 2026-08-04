@@ -521,6 +521,62 @@ export async function getRentStats(
   return out.slice(0, 50);
 }
 
+export interface CountryRentRow {
+  country_code: string;
+  median_rent: number;
+  entry_count: number;
+}
+
+/**
+ * MINDEN ország országos lakbér-mediánja adott szobaszámra — az ország-
+ * összehasonlító grafikonhoz. Egy lekérdezés, a csoportosítás és a 2,5σ-os
+ * kiugró-szűrés itt fut (ugyanaz a logika, mint a `getRentStats`-ban, hogy a
+ * két felület ne mondjon mást ugyanarra az adatra).
+ *
+ * ⚠️ MIÉRT ORSZÁG-SZINT ÉS NEM RÉGIÓ-SZINT? 2026-08-04-én lemértem: régióra
+ * bontva CSAK Svájcban van 5-nél nagyobb mintájú cella (18-ból 8), a másik öt
+ * országban NULLA. Egy régió-rangsor tehát öt országban vagy üres lenne, vagy
+ * 2 elemű mintákból rangsorolna magabiztosan — ez utóbbi kitalált adat.
+ * Országos szinten viszont mindenhol 21–77 a minta, ami vállalható medián.
+ */
+export async function getRentAcrossCountries(
+  rooms: number,
+  period: string = "12m",
+): Promise<CountryRentRow[]> {
+  const threshold = periodThreshold(period);
+  const conditions = ["rooms = ?"];
+  const binds: unknown[] = [rooms];
+  if (threshold) { conditions.push("created_at >= ?"); binds.push(threshold); }
+
+  const { results } = await getDB()
+    .prepare(`SELECT country_code, rent_chf FROM rent_benchmarks WHERE ${conditions.join(" AND ")} LIMIT 50000`)
+    .bind(...binds)
+    .all<{ country_code: string; rent_chf: number }>();
+
+  const byCountry = new Map<string, number[]>();
+  for (const r of results) {
+    if (!r.country_code) continue;
+    if (!byCountry.has(r.country_code)) byCountry.set(r.country_code, []);
+    byCountry.get(r.country_code)!.push(r.rent_chf);
+  }
+
+  const out: CountryRentRow[] = [];
+  for (const [country_code, values] of byCountry) {
+    let filtered = values;
+    if (values.length >= 3) {
+      const mean = values.reduce((a, b) => a + b, 0) / values.length;
+      const variance = values.reduce((a, b) => a + (b - mean) ** 2, 0) / (values.length - 1);
+      const stddev = Math.sqrt(variance);
+      const lo = mean - 2.5 * stddev;
+      const hi = mean + 2.5 * stddev;
+      filtered = values.filter((v) => v >= lo && v <= hi);
+      if (filtered.length === 0) filtered = values;
+    }
+    out.push({ country_code, median_rent: median(filtered), entry_count: values.length });
+  }
+  return out;
+}
+
 // ─── EMAIL ALERTS ────────────────────────────────────────────────────────
 
 export async function subscribeToAlert(input: AlertSubscription): Promise<"created" | "updated"> {

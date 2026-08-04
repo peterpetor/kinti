@@ -333,6 +333,32 @@
      bg-ink/10 (lásd skeleton.tsx). Reduced-motion → statikus blokk. */
   :root, [data-theme="warm"] { --shimmer-a: 0.55; }
   [data-theme="dark"] { --shimmer-a: 0.06; }
+
+  /* ── Grafikon-paletta (ország-összehasonlító sávdiagram) ──────────────────
+     ⚠️ NEM a márka-tokenekből származik, és NEM szabad rájuk cserélni: a
+     `primary` (#1d4434) és a `success` (#1d6a3c) két majdnem azonos sötétzöld,
+     szomszédos szegmensként összeolvadnának, a `star` és az `accent` pedig
+     színtévesztéssel (és normál látással is!) alig különböztethető meg — ezt
+     mértük, nem becsültük.
+
+     A négy érték a dataviz-validátor kategorikus ellenőrzésén ment át, VILÁGOS
+     és SÖTÉT módra KÜLÖN léptetve (a sötét nem a világos megfordítása):
+       világos (felület #ffffff): CVD ΔE 10,5 · normál ΔE 21,3
+       sötét   (felület #1a201c): CVD ΔE  9,2 · normál ΔE 17,4
+     A SORREND is mérési eredmény: piros és zöld nem lehet szomszédos szegmens
+     (deuteranopiánál egybeolvad) — ezért ül a borostyán közéjük. */
+  :root, [data-theme="warm"] {
+    --sav-lakhatas: #2f6fb3;
+    --sav-megelhetes: #b5352b;
+    --sav-biztositas: #e0a53f;
+    --sav-marad: #3a9d6e;
+  }
+  [data-theme="dark"] {
+    --sav-lakhatas: #4e90d2;
+    --sav-megelhetes: #b03a35;
+    --sav-biztositas: #bf8a1e;
+    --sav-marad: #2ba077;
+  }
   .kinti-shimmer {
     position: relative;
     overflow: hidden;

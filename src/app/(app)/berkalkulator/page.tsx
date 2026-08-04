@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Icon, KintiLogo } from "@/components/ui";
 import { SalaryCalculatorSwitch } from "@/components/views/salary-calculator-switch";
 import { BudgetPlannerView } from "@/components/views/budget-planner-view";
+import { OrszagOsszehasonlitoChart } from "@/components/views/orszag-osszehasonlito-chart";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { CountryGuard } from "@/components/country-guard";
 import { BUDGET_LANDINGS } from "@/lib/budget-landing";
@@ -61,6 +62,12 @@ export default function SalaryCalculatorPage() {
 
       <div className="animate-fade-up animate-delay-100">
         <BudgetPlannerView />
+      </div>
+
+      {/* Ország-összehasonlító: a tervezőben EGY ország a te adataiddal, itt
+          mind a hat, azonos relatív jövedelmen — a kettő egymást egészíti ki. */}
+      <div className="animate-fade-up animate-delay-100">
+        <OrszagOsszehasonlitoChart />
       </div>
 
       {/* Tételes levonás-bontás (a korábbi önálló bérkalkulátor) — lenyitható:
