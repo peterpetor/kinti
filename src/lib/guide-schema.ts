@@ -22,7 +22,7 @@
  * értik meg és idézik a tartalmat.
  */
 
-import type { Guide, GuideSection } from "./guides";
+import { guideCountry, type Guide, type GuideSection } from "./guides";
 import { getChecklist } from "./guide-checklists";
 import { countryAdjective, countryResidentialAdjective } from "./countries";
 
@@ -173,7 +173,7 @@ function onalloKerdes(heading: string, title: string): boolean {
  * kitalált kérdésre adott helyes válasz is félrevezető.
  */
 export function guideQaPairs(guide: Guide): QaPar[] {
-  const kod = guideOrszagKod(guide.slug);
+  const kod = guideCountry(guide.slug);
   const orszag = ORSZAG_NEV[kod] ?? "";
   /*
    * ⚠️ Az ország csak akkor kerül a kérdésbe, ha a cím NEM utal rá már.
@@ -204,11 +204,6 @@ export function guideQaPairs(guide: Guide): QaPar[] {
   return out;
 }
 
-/** A slug elejéből az ország — a `guides.ts` `guideCountry`-jával egyező logika. */
-function guideOrszagKod(slug: string): string {
-  const m = slug.match(/^(at|de|nl|gb|es)-/);
-  return m ? m[1].toUpperCase() : "CH";
-}
 
 /* ─── JSON-LD építők ──────────────────────────────────────────────────────── */
 

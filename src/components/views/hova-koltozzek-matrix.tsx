@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { szam } from "@/lib/szam-format";
 import { getCountry } from "@/lib/countries";
 import { currencySymbol } from "@/lib/country-examples";
 import { suggestedRooms, type BudgetCountry } from "@/lib/budget-plan";
@@ -145,8 +146,8 @@ export function HovaKoltozzekMatrix() {
         />
         <p className="text-[11px] leading-snug text-ink-faint">
           A helyi átlaghoz mérünk, mert három pénznem van: ez Németországban{" "}
-          {Math.round((MEDIAN_GROSS.DE * szazalek) / 100).toLocaleString("hu-HU")} € bruttó, Svájcban{" "}
-          {Math.round((MEDIAN_GROSS.CH * szazalek) / 100).toLocaleString("hu-HU")} CHF.
+          {szam(Math.round((MEDIAN_GROSS.DE * szazalek) / 100))} € bruttó, Svájcban{" "}
+          {szam(Math.round((MEDIAN_GROSS.CH * szazalek) / 100))} CHF.
         </p>
       </section>
 
@@ -257,7 +258,7 @@ function OrszagKartya({
           </span>
           <span className="block text-[11.5px] text-ink-muted">
             {eg >= 0 ? "~" : "−"}
-            {Math.abs(eg).toLocaleString("hu-HU")} {jel} marad · {t.allampolgarsagEv != null ? `${t.allampolgarsagEv} év állampolgárság` : "állampolgárság: nincs adatunk"}
+            {szam(Math.abs(eg))} {jel} marad · {t.allampolgarsagEv != null ? `${t.allampolgarsagEv} év állampolgárság` : "állampolgárság: nincs adatunk"}
           </span>
         </span>
         <Icon name="chevD" size={15} strokeWidth={2.4} className={cn("shrink-0 text-ink-faint transition-transform", nyitott && "rotate-180")} />
@@ -299,13 +300,13 @@ function OrszagKartya({
 
       {nyitott && (
         <dl className="space-y-1.5 border-t border-line px-4 py-3">
-          <Sor cimke="Bruttó (a csúszka szerint)" ertek={`${sor.gross.toLocaleString("hu-HU")} ${jel}`} />
-          <Sor cimke="Nettó" ertek={`${sor.net.toLocaleString("hu-HU")} ${jel}`} />
+          <Sor cimke="Bruttó (a csúszka szerint)" ertek={`${szam(sor.gross)} ${jel}`} />
+          <Sor cimke="Nettó" ertek={`${szam(sor.net)} ${jel}`} />
           <Sor cimke="Levonás a bruttóból" ertek={`${Math.round((1 - szamok.nettoArany) * 100)}%`} />
-          <Sor cimke="Albérlet + rezsi" ertek={`${sor.osszeg.lakhatas.toLocaleString("hu-HU")} ${jel}`} />
-          <Sor cimke="Megélhetés" ertek={`${sor.osszeg.megelhetes.toLocaleString("hu-HU")} ${jel}`} />
+          <Sor cimke="Albérlet + rezsi" ertek={`${szam(sor.osszeg.lakhatas)} ${jel}`} />
+          <Sor cimke="Megélhetés" ertek={`${szam(sor.osszeg.megelhetes)} ${jel}`} />
           {sor.osszeg.biztositas > 0 && (
-            <Sor cimke="Egészségbiztosítás" ertek={`${sor.osszeg.biztositas.toLocaleString("hu-HU")} ${jel}`} />
+            <Sor cimke="Egészségbiztosítás" ertek={`${szam(sor.osszeg.biztositas)} ${jel}`} />
           )}
           <div className="my-1 border-t border-line/60" />
           <Sor

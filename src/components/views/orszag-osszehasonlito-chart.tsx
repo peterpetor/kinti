@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { szam } from "@/lib/szam-format";
 import { getCountry } from "@/lib/countries";
 import { currencySymbol } from "@/lib/country-examples";
 import {
@@ -115,8 +116,8 @@ export function OrszagOsszehasonlitoChart() {
           <span>2,5×</span>
         </div>
         <p className="mt-1.5 text-[11px] leading-snug text-ink-faint">
-          Pl. Németországban ez {Math.round((MEDIAN_GROSS.DE * szazalek) / 100).toLocaleString("hu-HU")} € bruttó,
-          Svájcban {Math.round((MEDIAN_GROSS.CH * szazalek) / 100).toLocaleString("hu-HU")} CHF.
+          Pl. Németországban ez {szam(Math.round((MEDIAN_GROSS.DE * szazalek) / 100))} € bruttó,
+          Svájcban {szam(Math.round((MEDIAN_GROSS.CH * szazalek) / 100))} CHF.
         </p>
       </div>
 
@@ -213,7 +214,7 @@ function Rud({
         <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-ink">{o?.name ?? sor.country}</span>
         <span className={cn("shrink-0 text-[12.5px] font-extrabold tabular-nums", eg >= 0 ? "text-ink" : "text-accent")}>
           {eg >= 0 ? "" : "−"}
-          {Math.abs(eg).toLocaleString("hu-HU")} {jel}
+          {szam(Math.abs(eg))} {jel}
         </span>
         <Icon name="chevD" size={13} strokeWidth={2.4} className={cn("shrink-0 text-ink-faint transition-transform", nyitott && "rotate-180")} />
       </button>
@@ -226,7 +227,7 @@ function Rud({
           return (
             <div
               key={s.id}
-              title={`${s.label}: ${Math.round(pct)}% — ${sor.osszeg[s.id].toLocaleString("hu-HU")} ${jel}`}
+              title={`${s.label}: ${Math.round(pct)}% — ${szam(sor.osszeg[s.id])} ${jel}`}
               className="grid min-w-0 place-items-center first:rounded-l-[8px] last:rounded-r-[8px]"
               style={{ width: `${pct}%`, background: `var(--sav-${s.id})` }}
             >
@@ -246,13 +247,13 @@ function Rud({
 
       {nyitott && (
         <dl className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-1 rounded-[10px] bg-surface-alt/70 px-3 py-2">
-          <Tetel cimke="Bruttó" ertek={`${sor.gross.toLocaleString("hu-HU")} ${jel}`} />
-          <Tetel cimke="Nettó" ertek={`${sor.net.toLocaleString("hu-HU")} ${jel}`} />
+          <Tetel cimke="Bruttó" ertek={`${szam(sor.gross)} ${jel}`} />
+          <Tetel cimke="Nettó" ertek={`${szam(sor.net)} ${jel}`} />
           {SAVOK.filter((s) => s.id !== "marad").map((s) => (
             <Tetel
               key={s.id}
               cimke={`${s.emoji} ${s.label}`}
-              ertek={`${sor.osszeg[s.id].toLocaleString("hu-HU")} ${jel}`}
+              ertek={`${szam(sor.osszeg[s.id])} ${jel}`}
             />
           ))}
           <Tetel cimke="Lakbér-minta" ertek={`${sor.rentMinta} beküldés`} />
