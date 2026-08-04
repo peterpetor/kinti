@@ -41,8 +41,25 @@ export interface RangsoroltTalalat {
  * semmi köze a szaknévsorhoz („milyen idő lesz holnap"). Küszöb nélkül a
  * felhasználó magabiztosan tálalt, teljesen oda nem illő céglistát kapna —
  * ami rosszabb, mint a nulla találat, mert elhiszi.
+ *
+ * ⚠️⚠️ MÉRT ÉRTÉK, NEM TIPP (2026-08-05, éles index, 2251 vektor, bge-m3).
+ * Az első változatban 0,55 volt — tippelve —, és ez NÉMÁN levágta a valódi
+ * találatokat is. A mérés (a végpont `Bearer <CRON_SECRET>`-es diagnosztikája):
+ *
+ *   ZAJ  „milyen idő lesz holnap"        → legjobb 0,4197
+ *   ZAJ  „asdfgh qwerty zxcvb"           → legjobb 0,4236
+ *   VALÓS „kinek tudom levágatni a hajam" → 0,5284 … a CH-beli fodrászok 0,4927–0,5011
+ *   VALÓS „fáj a fogam, kihez menjek"     → 0,5584 (fogorvos)
+ *   VALÓS „magyar fodrász"                → 0,5773
+ *   VALÓS „…német adóbevallásomban"       → 0,6403 (adótanácsadók)
+ *   VALÓS „hol kapok magyar kolbászt"     → 0,6799 (magyar boltok)
+ *
+ * A zaj plafonja ~0,424, a leggyengébb VALÓDI találat 0,4927. A küszöb a kettő
+ * közé kerül, a valós oldalhoz közelebb. ⚠️ Ha az embedding-modell vagy az
+ * indexelt szöveg változik, EZT ÚJRA KELL MÉRNI — egy elcsúszott küszöb némán
+ * nullázza a funkciót (pontosan ez történt).
  */
-export const MIN_PONT = 0.55;
+export const MIN_PONT = 0.48;
 
 /**
  * A legjobb találathoz képest ekkora esésig tartjuk meg a többit.

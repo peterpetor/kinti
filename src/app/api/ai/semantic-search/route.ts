@@ -105,9 +105,13 @@ export async function POST(req: Request) {
 
     // ⚠️ topK bőven a megjelenítendő darabszám FÖLÖTT: az index minden országot
     // egyben tárol, és az ország-szűrés UTÁN kell maradnia elég találatnak.
-    // 6 találathoz 6 kérése kevés lenne — egy holland keresésnél a lista simán
-    // elfogyhatna csupa német tételre.
-    const valasz = await semanticBusinessIdsDiag(query, 40);
+    //
+    // ⚠️⚠️ MÉRVE (2026-08-05): 40-nél a „magyar fodrász" CH-keresés legjobb 40
+    // találatából MINDÖSSZE EGY volt svájci — a többit elvitték a német és
+    // osztrák fodrászok (a 2251 vektorból a CH csak ~400). Vagyis a kis topK
+    // nem „gyorsabb", hanem NÉMÁN kiüresíti a kisebb országok keresését.
+    // 100 a Vectorize felső határa, ha nem kérünk metaadatot.
+    const valasz = await semanticBusinessIdsDiag(query, 100);
     const nyers = valasz.hits;
     // ⚠️ A KÉT ÜRES ESET NEM UGYANAZ, és külön névvel kell látszaniuk:
     //   • `no-vector` = az embedding vagy a Vectorize-lekérdezés HIBÁZOTT,
