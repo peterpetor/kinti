@@ -18,6 +18,7 @@ import { trackAction } from "@/components/usage-tracker";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { BusinessLeadCta } from "@/components/views/business-lead-cta";
+import { assistantExamples } from "@/lib/assistant-examples";
 
 interface AssistantResult {
   categoryId: string | null;
@@ -27,15 +28,15 @@ interface AssistantResult {
   businesses: { id: string; name: string; categoryLabel: string | null; featured: boolean; leadCapable?: boolean }[];
 }
 
-const EXAMPLES = [
-  "Csőtörés van, a főbérlő nem veszi fel — ki segít?",
-  "Hogyan működik az adóbevallás?",
-  "Magyar fodrászt keresek a közelben",
-];
 
 export function KintiAssistant() {
   const [prefCountry] = usePreferredCountry();
   const country = prefCountry ?? DEFAULT_COUNTRY;
+  // ⚠️ ORSZÁG-FÜGGŐ példák: korábban egy közös lista volt, és az első példa
+  // („Csőtörés van…”) GB/ES/NL-ben nem volt megválaszolható — nincs ott egy
+  // víz-gáz szerelőnk sem. Az app így a saját ajánlatára mondta, hogy nem
+  // találta meg. Lásd lib/assistant-examples.ts.
+  const examples = assistantExamples(country);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -128,19 +129,19 @@ export function KintiAssistant() {
       </p>
 
       {/* Példa-chipek — az üres prompt hidegindítója. */}
-      {!result && !loading && (
+      {!result && !loading && examples.length > 0 && (
         <div className="no-scrollbar kinti-hfade -mx-1 mt-2 flex gap-1.5 overflow-x-auto px-1 pb-0.5">
-          {EXAMPLES.map((ex) => (
+          {examples.map((ex) => (
             <button
-              key={ex}
+              key={ex.text}
               type="button"
               onClick={() => {
-                setQuery(ex);
-                void ask(ex);
+                setQuery(ex.text);
+                void ask(ex.text);
               }}
               className="shrink-0 rounded-pill border border-line bg-surface px-3 py-1.5 text-[11.5px] font-semibold text-ink-muted transition active:scale-95"
             >
-              {ex}
+              {ex.text}
             </button>
           ))}
         </div>
