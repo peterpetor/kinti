@@ -27,7 +27,7 @@ import {
   NewsletterCtaCardLazy,
   PwaInstallCardLazy,
 } from "@/components/home-lazy";
-import { getBusinessesForList, countOpenB2bProjects } from "@/lib/repo";
+import { getBusinessesForListSlice, countOpenB2bProjects } from "@/lib/repo";
 import { cached } from "@/lib/edge-cache";
 
 export const runtime = "edge";
@@ -44,8 +44,10 @@ export default async function FeedPage() {
   // KÖZÖS kulcson, így a két oldal TTL-enként EGYSZER megy D1-re.
   // A B2B nyitott-projekt szám 5 percig cache-elt (élő badge a rácson,
   // TTL-enként egy skalár-query — nem terheli a főoldal-rendert).
-  const [allBusinesses, b2bOpenCount] = await Promise.all([
-    getBusinessesForList(),
+  // ⚠️ ÉLES INCIDENS (Error 1102): korábban a TELJES 2200+ tételes lista jött be
+  // ide, hogy utána 3/ország maradjon. A szeletelés most az SQL-ben van.
+  const [nearby, b2bOpenCount] = await Promise.all([
+    getBusinessesForListSlice(3, { requireCoords: true }),
     cached("home:b2b-open", 300_000, () => countOpenB2bProjects()),
   ]);
   // „A közeledben" — PAYLOAD-DIÉTA: a szerver csak a fallback-kártyákat adja át
@@ -54,14 +56,8 @@ export default async function FeedPage() {
   // listát a cache-elt /api/businesses/list-ből kéri (jobb "legközelebbi" is:
   // teljes pool a 200-as szelet helyett). A lista featured→rating rendezett, így
   // az országonkénti első 3 = a fallback-nézet top-3-a.
-  const nearbyPerCountry = new Map<string, number>();
-  const nearby = allBusinesses.filter((b) => {
-    if (b.lat == null || b.lng == null) return false;
-    const c = b.country ?? "CH";
-    const n = (nearbyPerCountry.get(c) ?? 0) + 1;
-    nearbyPerCountry.set(c, n);
-    return n <= 3;
-  });
+  // A szeletelés (3/ország, csak koordinátás) MÁR az SQL-ben megtörtént —
+  // a `nearby` közvetlenül használható, nincs több szűrés a workerben.
 
   return (
     <>

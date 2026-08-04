@@ -4,7 +4,7 @@ import { PushOptin } from "@/components/push-optin";
 import { TelegramBotCard } from "@/components/telegram-bot-card";
 import { SzaknevsorSeoLinks, type SeoLinkGroup } from "@/components/views/szaknevsor-seo-links";
 import { SzaknevsorHeader } from "./SzaknevsorHeader";
-import { getBusinessesForList, getCategories } from "@/lib/repo";
+import { getBusinessesForListSlice, getBusinessCountsByCountry, getTopCategoriesByCountry, getCategories } from "@/lib/repo";
 import { cached } from "@/lib/edge-cache";
 
 /** Ország → az ország-szintű SEO-céloldal terület-slugja (lib/seo-areas). */
@@ -33,56 +33,34 @@ export const metadata = {
 const SSR_PER_COUNTRY = 30;
 
 export default async function SzaknevsorPage() {
-  // Payload-diéta + izolátum-cache: a lista karcsú vetület (getBusinessesForList,
+  // Payload-diéta + izolátum-cache: karcsú vetület (getBusinessesForListSlice,
   // benne 3 perces cache — a kezdőlappal KÖZÖS kulcson), a kategória-tábla pedig
   // gyakorlatilag statikus seed → 10 percig nem kell újra D1-re menni.
-  const [categories, allBusinesses] = await Promise.all([
+  // ⚠️ ÉLES INCIDENS (Cloudflare Error 1102): korábban a TELJES, 2200+ tételes
+  // lista jött be ide, hogy utána 30/ország szelet maradjon, plusz a
+  // darabszámok és a SEO-kategóriák is a teljes bejárásból. A worker ettől
+  // túllépte az erőforrás-korlátot, és a lap az esetek nagy részében 500/503-at
+  // adott. Mostantól HÁROM olcsó lekérdezés: szelet + két aggregátum — a worker
+  // legfeljebb ~180 sort lát.
+  const [categories, businesses, countryTotals, topCats] = await Promise.all([
     cached("szaknevsor:categories", 600_000, () => getCategories()),
-    getBusinessesForList(),
+    getBusinessesForListSlice(SSR_PER_COUNTRY),
+    getBusinessCountsByCountry(),
+    getTopCategoriesByCountry(8),
   ]);
-
-  // Országonkénti szelet (a lista featured→rating rendezett): mindegyik ország
-  // induló nézete kap tartalmat — a kliens-oldali ország-szűrő egyiken sem
-  // talál üres listát, amíg a teljes adat betölt.
-  const perCountry = new Map<string, number>();
-  const businesses = allBusinesses.filter((b) => {
-    const c = b.country ?? "CH";
-    const n = (perCountry.get(c) ?? 0) + 1;
-    perCountry.set(c, n);
-    return n <= SSR_PER_COUNTRY;
-  });
-  // ⚠️ A VALÓDI országonkénti darabszám — a `perCountry` a szelet-számlálás
-  // mellékterméke, tehát INGYEN megvan (nincs plusz D1-kérés). Ezt a szám a
-  // kliens azonnal kiírja, amíg a teljes lista tölt: enélkül a friss
-  // felhasználó „30 találat"-ot lát 413 helyett, és üresnek hiszi a
-  // szaknévsort (user-jelzés: „letölti, látja csak 30 van, aztán le is törli").
-  const countryTotals = Object.fromEntries(perCountry);
-
-  // SEO belső-link blokk adatai: országonként a 4 legnépesebb kategória
-  // ország-szintű céloldala (/magyar/[kat]/[ország]) — a TELJES listából
-  // számolva. A megjelenítés kliens-oldalon az AKTÍV ország linkjeire szűr
-  // (SzaknevsorSeoLinks — user-visszajelzés: a 4 ország keveréke zavaró volt);
-  // a /magyar hub a teljes index.
-  const countryCatCount = new Map<string, Map<string, number>>();
-  for (const b of allBusinesses) {
-    const c = b.country ?? "CH";
-    const perCat = countryCatCount.get(c) ?? new Map<string, number>();
-    perCat.set(b.categoryId, (perCat.get(b.categoryId) ?? 0) + 1);
-    countryCatCount.set(c, perCat);
-  }
   const seoGroups: SeoLinkGroup[] = (["CH", "AT", "DE", "NL"] as const).map((c) => {
     const slug = COUNTRY_SLUG[c];
-    const perCat = countryCatCount.get(c);
+    // A kategória-sorrend MÁR az SQL-ből rendezve jön (COUNT DESC).
+    const perCat = topCats[c];
     if (!slug || !perCat) return { country: c, links: [] };
     return {
       country: c,
-      links: [...perCat.entries()]
-        .filter(([catId]) => categories.some((k) => k.id === catId))
-        .sort((a, b) => b[1] - a[1])
+      links: perCat
+        .filter((x) => categories.some((k) => k.id === x.categoryId))
         .slice(0, 4)
-        .map(([catId]) => ({
-          href: `/magyar/${catId}/${slug}`,
-          label: categories.find((k) => k.id === catId)?.label ?? catId,
+        .map((x) => ({
+          href: `/magyar/${x.categoryId}/${slug}`,
+          label: categories.find((k) => k.id === x.categoryId)?.label ?? x.categoryId,
         })),
     };
   });
