@@ -10,11 +10,23 @@
  *
  *   Minified React error #425 — „Text content does not match server-rendered HTML"
  *
- * Ez ÉLESBEN történt meg a /berkalkulator lapon (#425 + #422); a testvér-lapok
- * ugyanazzal a tervezővel, de a csúszka-felirat nélkül tiszták voltak.
- *
  * Ez a függvény tisztán aritmetikából dolgozik, így szerveren és kliensen
- * BETŰRE ugyanazt adja — az eltérés lehetősége megszűnik.
+ * BETŰRE ugyanazt adja — az eltérés lehetősége megszűnik. Az éles HTML-ben
+ * ellenőrizve: `4300` helyett most `4 300` megy ki.
+ *
+ * ⚠️⚠️ HELYESBÍTÉS — EZ NEM OLDOTTA MEG A /berkalkulator HIBÁJÁT.
+ * Ezt a modult azért írtam, mert azt hittem, a lap #425/#422 hibájának ez az
+ * oka. TÉVEDTEM: a javítás kiment élesbe, a hiba MEGMARADT. Az eredeti
+ * következtetésem hibás összehasonlításon állt — a /berkalkulator és a
+ * /berkalkulator/[orszag] lap HÁROM dologban tér el (ez a grafikon, a
+ * SalaryCalculatorSwitch és a CountryGuard), én meg egyre fogtam.
+ *
+ * Amit a fenti kockázatról tudunk, az attól még igaz és valós: a locale-függő
+ * formázás SSR-ben tényleg eltérést okozhat, és a /hova-koltozzek lapon
+ * ugyanez a minta lappangott. A /berkalkulator hibája viszont NYITOTT — a
+ * mérések szerint ország-független, 537 ms-nál (adat előtt) csattan, a
+ * grafikon API-ját blokkolva is megjelenik, és az AZONOS tartalmú helyi
+ * produkciós buildben NEM reprodukálódik.
  */
 
 /** Nem törő szóköz — a magyar ezres elválasztó (így nem törik sorvégen). */
