@@ -278,7 +278,30 @@ export function businessToListItem(b: Business): ListBusiness {
 }
 
 /** A teljes publikus lista élettartama az izolátum-cache-ben (lásd edge-cache.ts). */
-const LIST_TTL_MS = 180_000; // 3 perc
+/**
+ * ⚠️ ÉLES KIESÉS UTÁN EMELVE (2026-08-04): 3 perc → 30 perc.
+ *
+ * A D1 ingyenes napi kerete 5 millió OLVASOTT SOR. A `rows_read_24h`
+ * 7 619 336-ra ment fel, a keret elfogyott, és a D1 elutasította az
+ * olvasásokat — a kezdőlap és a /szaknevsor (meg minden D1-es lap)
+ * 500/503-at adott, miközben a statikus lapok végig működtek.
+ *
+ * A hajtóerő EZ a lista-lekérdezés: ~4800 olvasott sor HÍVÁSONKÉNT, és a
+ * 3 perces TTL miatt minden Cloudflare-POP naponta ~480-szor frissítette
+ * (24 óra / 3 perc). Néhány aktív POP már kiadja a 7,6 milliót.
+ *
+ * 30 perccel ugyanez ~48 frissítés/POP/nap — nagyságrenddel a keret alatt.
+ * A frissesség ára vállalható: ez a lista moderáció-jóváhagyáskor változik,
+ * nem percenként.
+ *
+ * ⚠️ AMI NEM MŰKÖDÖTT: a szeletelést ablakfüggvénnyel az SQL-be tolni.
+ * A `ROW_NUMBER() OVER (PARTITION BY …)` KÉTSZER pásztázza a táblát —
+ * 9272 olvasott sor a 4815 helyett —, ráadásul a külön cache-kulcsok
+ * megszüntették a kezdőlap és a /szaknevsor KÖZÖS kulcsát, vagyis
+ * négyszerezték a lekérdezéseket. Vissza lett vonva. Ha a payload a cél,
+ * NE az olvasott sorok árán.
+ */
+const LIST_TTL_MS = 1_800_000; // 30 perc
 
 /**
  * A teljes publikus vállalkozás-lista a lista-/térkép-nézeteknek — karcsú
