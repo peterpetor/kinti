@@ -45,7 +45,7 @@ export default function OfflinePage() {
           href="/szaknevsor"
           className="inline-flex h-11 items-center justify-center gap-2 rounded-pill border border-line bg-surface px-5 text-[13.5px] font-bold text-ink"
         >
-          <Icon name="list" size={15} strokeWidth={2.2} className="text-primary" />
+          <Icon name="list" size={15} strokeWidth={2.2} className="text-primary-ink" />
           Szaknévsor (gyorsítótár)
         </Link>
       </div>

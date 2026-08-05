@@ -65,7 +65,7 @@ export default async function ApplyPage({ params }: { params: { id: string } }) 
           álláshoz holland, angolhoz brit CV a helyes. */}
       <p className="text-center text-[12.5px] text-ink-muted">
         Nincs még {cvBuilder.adj} önéletrajzod?{" "}
-        <Link href={cvBuilder.href} className="font-bold text-primary underline">
+        <Link href={cvBuilder.href} className="font-bold text-primary-ink underline">
           Készítsd el pár perc alatt →
         </Link>
       </p>

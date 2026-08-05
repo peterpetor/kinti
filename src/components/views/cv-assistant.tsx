@@ -61,7 +61,7 @@ export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
   return (
     <section className="rounded-card border-2 border-primary/20 bg-primary-soft/40 p-5 shadow-card">
       <div className="mb-3 flex items-center gap-2">
-        <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary/10 text-primary">
+        <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary/10 text-primary-ink">
           <Icon name="sparkles" size={15} strokeWidth={2.4} />
         </span>
         <div className="min-w-0 flex-1">
@@ -75,7 +75,7 @@ export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
       {!hasCv && !result && (
         <p className="mb-3 rounded-[12px] border border-accent/20 bg-accent/5 px-3 py-2 text-[12.5px] leading-snug text-ink-muted">
           📄 Tölts fel egy <strong>szöveges (nem szkennelt) PDF</strong> CV-t a{" "}
-          <Link href="/allasok/profil" className="font-bold text-primary underline">profilodnál</Link>, aztán
+          <Link href="/allasok/profil" className="font-bold text-primary-ink underline">profilodnál</Link>, aztán
           futtasd az auditot.
         </p>
       )}
@@ -111,7 +111,7 @@ export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
               <ul className="space-y-1">
                 {result.strengths.map((s, i) => (
                   <li key={i} className="flex gap-1.5 text-[13px] leading-snug text-ink">
-                    <span className="text-primary">✓</span>
+                    <span className="text-primary-ink">✓</span>
                     <span>{s}</span>
                   </li>
                 ))}
@@ -135,7 +135,7 @@ export function CvAssistant({ hasCv = false }: { hasCv?: boolean }) {
                     )}
                     {it.fix && (
                       <p className="mt-1 flex gap-1.5 text-[12.5px] leading-snug text-ink">
-                        <span className="text-primary">→</span>
+                        <span className="text-primary-ink">→</span>
                         <span>{it.fix}</span>
                       </p>
                     )}

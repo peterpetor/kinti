@@ -45,7 +45,7 @@ export function B2bPaywall({ businessId }: { businessId: string | null }) {
                   {s.who.slice(0, 1)}
                 </span>
                 <span className="text-[13px] font-bold text-ink">{s.who}</span>
-                <Icon name="check" size={14} strokeWidth={2.8} className="text-primary" />
+                <Icon name="check" size={14} strokeWidth={2.8} className="text-primary-ink" />
               </div>
               <p className="text-[14px] font-extrabold text-ink">{s.title}</p>
               <p className="mt-1 text-[12px] text-ink-muted">{s.c} {s.cat}</p>
@@ -75,7 +75,7 @@ export function B2bPaywall({ businessId }: { businessId: string | null }) {
                 "Nincs jutalék, csak tiszta üzlet",
               ].map((b) => (
                 <li key={b} className="flex items-start gap-2 text-[12.5px] font-semibold text-ink">
-                  <Icon name="check" size={14} strokeWidth={2.8} className="mt-0.5 shrink-0 text-primary" />
+                  <Icon name="check" size={14} strokeWidth={2.8} className="mt-0.5 shrink-0 text-primary-ink" />
                   <span>{b}</span>
                 </li>
               ))}

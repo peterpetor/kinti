@@ -66,7 +66,7 @@ export function ReviewReplyForm({
           <div className="rounded-[12px] bg-primary-soft/60 px-3 py-2.5">
             <div className="mb-1 flex items-center gap-1.5">
               <span className="text-[13px]">💬</span>
-              <span className="text-[11.5px] font-bold uppercase tracking-wide text-primary">
+              <span className="text-[11.5px] font-bold uppercase tracking-wide text-primary-ink">
                 A vállalkozás válasza
               </span>
             </div>
@@ -74,7 +74,7 @@ export function ReviewReplyForm({
             <button
               type="button"
               onClick={() => { setText(current); setEditing(true); }}
-              className="mt-1.5 text-[12px] font-bold text-primary hover:underline"
+              className="mt-1.5 text-[12px] font-bold text-primary-ink hover:underline"
             >
               Szerkesztés
             </button>

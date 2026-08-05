@@ -409,7 +409,7 @@ export function MaplibreEngine({
             locating && "animate-pulse",
           )}
         >
-          <Icon name="nav" size={16} strokeWidth={2.2} className="text-primary" />
+          <Icon name="nav" size={16} strokeWidth={2.2} className="text-primary-ink" />
         </button>
         <button
           type="button"

@@ -201,7 +201,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
           <button
             type="button"
             onClick={() => { setQuery(""); setCanton(""); setCategory(""); }}
-            className="text-[12px] font-bold text-primary hover:underline"
+            className="text-[12px] font-bold text-primary-ink hover:underline"
           >
             Szűrők törlése ({filtered.length + externalFiltered.length} találat)
           </button>
@@ -218,7 +218,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
             onClick={() => setShowMap((s) => !s)}
             className="flex w-full items-center gap-2.5 rounded-card border border-line bg-surface px-4 py-3 text-left shadow-card transition active:scale-[0.99]"
           >
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary"><Icon name="map" size={18} strokeWidth={2} /></span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary-ink"><Icon name="map" size={18} strokeWidth={2} /></span>
             <span className="min-w-0 flex-1">
               <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
                 Térkép — hol vannak az állások?
@@ -336,7 +336,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                 {(cat || (job.salaryMin && job.salaryMax)) && (
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     {cat && (
-                      <span className="rounded-[8px] bg-primary/10 px-2.5 py-1 text-[12px] font-bold text-primary">
+                      <span className="rounded-[8px] bg-primary/10 px-2.5 py-1 text-[12px] font-bold text-primary-ink">
                         {cat}
                       </span>
                     )}
@@ -355,7 +355,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
 
                 <div className="mt-4 border-t border-line/60 pt-3 flex items-center justify-between text-[11px] font-bold text-ink-faint uppercase tracking-wide">
                   <span>Dátum: {parseDbDate(job.createdAt)?.toLocaleDateString("hu-HU") ?? ""}</span>
-                  <span className="text-primary flex items-center gap-1">
+                  <span className="text-primary-ink flex items-center gap-1">
                     Részletek <Icon name="chevR" size={12} strokeWidth={3} />
                   </span>
                 </div>
@@ -393,7 +393,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                         <p className="mt-0.5 text-[12.5px] text-ink-muted">{[j.company, j.location].filter(Boolean).join(" · ") || "—"}</p>
                         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                           {j.category && (
-                            <span className="rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">{jobCategoryLabel(j.category)}</span>
+                            <span className="rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary-ink">{jobCategoryLabel(j.category)}</span>
                           )}
                           {fmtExtSalary(j) && (
                             <span className="rounded-pill bg-star/10 px-2 py-0.5 text-[11px] font-bold text-star">{fmtExtSalary(j)}</span>
@@ -437,11 +437,11 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
             href="/allasok/profil"
             className="flex items-center gap-2.5 rounded-card border border-primary/20 bg-primary/5 px-4 py-3 text-left transition active:scale-[0.99]"
           >
-            <Icon name="target" size={18} strokeWidth={2} className="shrink-0 text-primary" />
+            <Icon name="target" size={18} strokeWidth={2} className="shrink-0 text-primary-ink" />
             <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
-              <strong className="text-ink">Tölts ki egy munkavállalói profilt</strong> (szakma + kanton), és minden álláshoz látod a <strong className="text-primary">% egyezést</strong>.
+              <strong className="text-ink">Tölts ki egy munkavállalói profilt</strong> (szakma + kanton), és minden álláshoz látod a <strong className="text-primary-ink">% egyezést</strong>.
             </span>
-            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-primary" />
+            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-primary-ink" />
           </Link>
         ) : (
           <Link

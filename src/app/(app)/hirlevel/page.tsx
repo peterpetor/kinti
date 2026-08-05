@@ -84,7 +84,7 @@ export default function HirlevelPage() {
                   className={cn(
                     "rounded-xl border py-2.5 text-[13px] font-bold transition-all active:scale-95",
                     country === c.code
-                      ? "border-primary bg-primary/10 text-primary"
+                      ? "border-primary bg-primary/10 text-primary-ink"
                       : "border-line bg-surface-alt text-ink-muted hover:border-primary/50"
                   )}
                 >

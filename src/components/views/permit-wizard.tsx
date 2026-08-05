@@ -420,7 +420,7 @@ export function PermitWizard() {
             <button
               type="button"
               onClick={back}
-              className="text-[11.5px] font-bold text-primary underline"
+              className="text-[11.5px] font-bold text-primary-ink underline"
             >
               ← Vissza
             </button>
@@ -538,13 +538,13 @@ function ResultView({ result, onRestart, country }: { result: WizardResult; onRe
       {/* Tanácsok */}
       {result.notes.length > 0 && (
         <section className="rounded-card border-2 border-primary/30 bg-primary-soft p-4 shadow-card">
-          <h3 className="mb-2 flex items-center gap-1.5 text-[12px] font-extrabold uppercase tracking-wide text-primary">
+          <h3 className="mb-2 flex items-center gap-1.5 text-[12px] font-extrabold uppercase tracking-wide text-primary-ink">
             💡 Egyedi tanácsok a helyzetedhez
           </h3>
           <ul className="space-y-1.5 text-[12.5px] leading-relaxed text-ink">
             {result.notes.map((n, i) => (
               <li key={i} className="flex gap-2">
-                <span className="text-primary shrink-0">•</span>
+                <span className="text-primary-ink shrink-0">•</span>
                 <span>{n}</span>
               </li>
             ))}
@@ -611,7 +611,7 @@ function ResultView({ result, onRestart, country }: { result: WizardResult; onRe
                 href={l.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-3 py-1.5 text-[11.5px] font-bold text-primary hover:bg-primary-soft transition"
+                className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-3 py-1.5 text-[11.5px] font-bold text-primary-ink hover:bg-primary-soft transition"
               >
                 🔗 {l.label}
               </a>

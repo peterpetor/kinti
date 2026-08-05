@@ -9,7 +9,7 @@ import type { BusinessLead } from "@/lib/repo-leads";
 
 const STATUS_META: Record<string, { label: string; cls: string }> = {
   new: { label: "Új", cls: "bg-accent/15 text-accent" },
-  contacted: { label: "Megkeresve", cls: "bg-primary/15 text-primary" },
+  contacted: { label: "Megkeresve", cls: "bg-primary/15 text-primary-ink" },
   archived: { label: "Archivált", cls: "bg-ink-muted/15 text-ink-muted" },
 };
 
@@ -130,12 +130,12 @@ function UnlockedLeadCard({
       <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1.5">
         {/* A Keresek-routolt leadnél a kontakt lehet csak-telefon → az email üres */}
         {lead.senderEmail && (
-          <a href={`mailto:${lead.senderEmail}`} className="flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
+          <a href={`mailto:${lead.senderEmail}`} className="flex items-center gap-1.5 text-[13px] font-semibold text-primary-ink hover:underline">
             <Icon name="send" size={13} strokeWidth={2.2} /> {lead.senderEmail}
           </a>
         )}
         {lead.senderPhone && (
-          <a href={`tel:${lead.senderPhone}`} className="flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
+          <a href={`tel:${lead.senderPhone}`} className="flex items-center gap-1.5 text-[13px] font-semibold text-primary-ink hover:underline">
             <Icon name="phone" size={13} strokeWidth={2.2} /> {lead.senderPhone}
           </a>
         )}
@@ -147,7 +147,7 @@ function UnlockedLeadCard({
         </span>
         <div className="flex items-center gap-2 text-[12px] font-bold">
           {lead.status !== "contacted" && (
-            <button onClick={() => onStatus(lead.id, "contacted")} disabled={busy} className="text-primary hover:underline disabled:opacity-60">
+            <button onClick={() => onStatus(lead.id, "contacted")} disabled={busy} className="text-primary-ink hover:underline disabled:opacity-60">
               Megkerestem
             </button>
           )}

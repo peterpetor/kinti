@@ -520,7 +520,7 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
             <p className="text-[12px] font-bold uppercase tracking-wide text-ink-muted">
               Ennyi marad a hónap végén{regionName ? ` — ${regionName}` : ` — ${countryName}`}
             </p>
-            <p className={cn("mt-1 text-[36px] font-extrabold tracking-tight tabular-nums", summary.leftover >= 0 ? "text-primary" : "text-accent")}>
+            <p className={cn("mt-1 text-[36px] font-extrabold tracking-tight tabular-nums", summary.leftover >= 0 ? "text-primary-ink" : "text-accent")}>
               {animatedLeftover >= 0 ? "~" : "−"}{fmt(Math.abs(animatedLeftover))}
             </p>
             <p className="text-[13px] font-bold text-ink">
@@ -579,11 +579,11 @@ export function BudgetPlannerView({ initialCountry }: { initialCountry?: BudgetC
       {/* Kereszt-linkek */}
       <section className="grid gap-2">
         <Link href="/berkalkulator" className="flex items-center gap-2 rounded-card border border-line bg-surface px-4 py-3 text-[13px] font-bold text-ink transition active:scale-[0.99]">
-          <Icon name="sliders" size={15} strokeWidth={2.2} className="text-primary" />
+          <Icon name="sliders" size={15} strokeWidth={2.2} className="text-primary-ink" />
           Részletes nettó-bér bontás (adók, járulékok) <Icon name="chevR" size={14} className="ml-auto text-ink-faint" />
         </Link>
         <Link href="/iranytu" className="flex items-center gap-2 rounded-card border border-line bg-surface px-4 py-3 text-[13px] font-bold text-ink transition active:scale-[0.99]">
-          <Icon name="compass" size={15} strokeWidth={2.2} className="text-primary" />
+          <Icon name="compass" size={15} strokeWidth={2.2} className="text-primary-ink" />
           Jó ez az ajánlat? Nézd meg, mennyit keresnek mások <Icon name="chevR" size={14} className="ml-auto text-ink-faint" />
         </Link>
         {/* A „Mennyit költesz?" kereszt-link 2026-07-11-én kivezetve a modullal együtt. */}
@@ -646,7 +646,7 @@ function EditableCostRow({
       <div className="flex items-center justify-between gap-3">
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[13px] text-ink">{item.emoji} {item.label}</span>
-          <span className={cn("block text-[10.5px]", item.source === "user" ? "font-bold text-primary" : "text-ink-faint")}>
+          <span className={cn("block text-[10.5px]", item.source === "user" ? "font-bold text-primary-ink" : "text-ink-faint")}>
             {srcLabel}
           </span>
         </span>

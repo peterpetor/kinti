@@ -102,7 +102,7 @@ export function HomeChCards() {
               Bejelentkezés, {country === "AT" ? "ÖGK" : country === "NL" ? "zorgverzekering" : country === "GB" ? "NHS" : country === "ES" ? "tarjeta sanitaria" : "Krankenkasse"}, adó, iskola — hivatalos forrásból
             </span>
           </span>
-          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary-ink" />
         </Link>
       )}
     </>
@@ -128,7 +128,7 @@ function PrimaryAction({
       <span
         className={cn(
           "grid h-12 w-12 place-items-center rounded-2xl",
-          tone === "accent" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary",
+          tone === "accent" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary-ink",
         )}
       >
         <Icon name={icon} size={23} strokeWidth={2.2} />

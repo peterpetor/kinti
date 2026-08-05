@@ -92,11 +92,11 @@ export default function FaqPageView({ params }: { params: { slug: string } }) {
 
       {/* TL;DR — a válaszgépek és a sietős olvasók kivonata. */}
       <section className="rounded-card border border-primary/25 bg-primary-soft/40 p-4">
-        <h2 className="text-[12px] font-bold uppercase tracking-wide text-primary">Röviden</h2>
+        <h2 className="text-[12px] font-bold uppercase tracking-wide text-primary-ink">Röviden</h2>
         <ul className="mt-2 space-y-1.5">
           {page.tldr.map((t) => (
             <li key={t} className="flex gap-1.5 text-[13px] leading-relaxed text-ink">
-              <span className="shrink-0 text-primary" aria-hidden>•</span> {t}
+              <span className="shrink-0 text-primary-ink" aria-hidden>•</span> {t}
             </li>
           ))}
         </ul>
@@ -119,7 +119,7 @@ export default function FaqPageView({ params }: { params: { slug: string } }) {
                 <Link
                   key={l.href + l.label}
                   href={l.href}
-                  className="inline-flex items-center gap-1 rounded-pill border border-primary/40 bg-primary/10 px-2.5 py-1 text-[12px] font-bold text-primary transition active:scale-[0.98]"
+                  className="inline-flex items-center gap-1 rounded-pill border border-primary/40 bg-primary/10 px-2.5 py-1 text-[12px] font-bold text-primary-ink transition active:scale-[0.98]"
                 >
                   {l.label}
                   <Icon name="chevR" size={11} strokeWidth={2.6} />

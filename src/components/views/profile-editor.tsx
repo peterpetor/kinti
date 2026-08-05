@@ -287,7 +287,7 @@ export function ProfileEditor({
         <section className="rounded-card border border-line bg-surface p-4 shadow-card space-y-4">
           <div className="flex items-center justify-between border-b border-line pb-2 mb-1">
             <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted flex items-center gap-1.5">
-              <Icon name="sliders" size={12} strokeWidth={2.4} className="text-primary" /> Profil Szerkesztése
+              <Icon name="sliders" size={12} strokeWidth={2.4} className="text-primary-ink" /> Profil Szerkesztése
             </h3>
           </div>
 
@@ -463,7 +463,7 @@ export function ProfileEditor({
                         className={cn(
                           "px-2.5 py-1 rounded-lg text-xs font-bold border transition cursor-pointer active:scale-95",
                           active
-                            ? "bg-primary/10 border-primary/30 text-primary"
+                            ? "bg-primary/10 border-primary/30 text-primary-ink"
                             : "bg-surface-alt border-line text-ink-muted"
                         )}
                       >
@@ -494,7 +494,7 @@ export function ProfileEditor({
         <section className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
           <div className="flex items-center justify-between border-b border-line pb-2 mb-1">
             <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted flex items-center gap-1.5">
-              <Icon name="clock" size={12} strokeWidth={2.4} className="text-primary" /> Heti Nyitvatartás
+              <Icon name="clock" size={12} strokeWidth={2.4} className="text-primary-ink" /> Heti Nyitvatartás
             </h3>
           </div>
 
@@ -517,7 +517,7 @@ export function ProfileEditor({
                         type="checkbox"
                         checked={hours.closed}
                         onChange={(e) => handleHoursChange(day, "closed", e.target.checked)}
-                        className="rounded border-line text-primary focus:ring-primary/30 h-4 w-4"
+                        className="rounded border-line text-primary-ink focus:ring-primary/30 h-4 w-4"
                       />
                       <span className="text-[12px] font-bold text-ink-muted">Zárva</span>
                     </label>
@@ -553,7 +553,7 @@ export function ProfileEditor({
         <section className="rounded-card border border-line bg-surface p-4 shadow-card space-y-3">
           <div className="flex items-center justify-between border-b border-line pb-2 mb-1">
             <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted flex items-center gap-1.5">
-              <Icon name="globe" size={12} strokeWidth={2.4} className="text-primary" /> Kapcsolat & Linkek
+              <Icon name="globe" size={12} strokeWidth={2.4} className="text-primary-ink" /> Kapcsolat & Linkek
             </h3>
           </div>
 
@@ -561,7 +561,7 @@ export function ProfileEditor({
               bejelentkezési/kezelő e-mailed). Opcionális. */}
           <div className="space-y-1">
             <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider flex items-center gap-1">
-              <span className="text-primary"><Icon name="send" size={13} /></span> Kapcsolattartó e-mail (publikus)
+              <span className="text-primary-ink"><Icon name="send" size={13} /></span> Kapcsolattartó e-mail (publikus)
             </label>
             <input
               type="email"
@@ -615,7 +615,7 @@ export function ProfileEditor({
             {/* Időpontfoglalás = PRO-feature: csak kiemelt (featured) cég állíthatja be. */}
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider flex items-center gap-1">
-                <span className="text-primary"><Icon name="calendar" size={13} /></span> Foglalási rendszer (pl. Calendly)
+                <span className="text-primary-ink"><Icon name="calendar" size={13} /></span> Foglalási rendszer (pl. Calendly)
                 {!isFeatured && (
                   <span className="ml-1 rounded-full bg-pro px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-on-pro">PRO</span>
                 )}
@@ -777,7 +777,7 @@ export function ProfileEditor({
             {/* Profil tartalom a telefonon */}
             <div className="relative -mt-4 rounded-t-2xl bg-bg px-3.5 pt-3.5 space-y-3.5">
               <div>
-                <p className="text-[11px] font-extrabold uppercase tracking-wide text-primary mb-0.5">
+                <p className="text-[11px] font-extrabold uppercase tracking-wide text-primary-ink mb-0.5">
                   {categoryLabel || "Kategória"}
                 </p>
                 <h4 className="text-[17px] font-extrabold leading-tight text-ink truncate">
@@ -890,12 +890,12 @@ export function ProfileEditor({
               {/* Chips mockup */}
               <div className="flex flex-wrap gap-1">
                 <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] font-bold text-ink">
-                  <Icon name="clock" size={9} className="text-primary" />
+                  <Icon name="clock" size={9} className="text-primary-ink" />
                   {openText || `${previewStatus.statusText} · ${previewStatus.detailText}`}
                 </span>
                 {(languages.length ? languages : ["Magyar"]).map((lang) => (
                   <span key={lang} className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] font-bold text-ink">
-                    <Icon name="globe" size={9} className="text-primary" /> {lang}
+                    <Icon name="globe" size={9} className="text-primary-ink" /> {lang}
                   </span>
                 ))}
               </div>

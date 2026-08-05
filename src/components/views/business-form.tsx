@@ -427,7 +427,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
             "mb-2 flex w-full items-center justify-center gap-1.5 rounded-[12px] border px-3 py-2.5 text-[13px] font-bold transition active:scale-[0.99]",
             geoBusy
               ? "border-line bg-surface-alt text-ink-muted cursor-wait"
-              : "border-primary/30 bg-primary-soft/40 text-primary",
+              : "border-primary/30 bg-primary-soft/40 text-primary-ink",
           )}
         >
           <Icon name="pin" size={14} strokeWidth={2.4} />
@@ -557,7 +557,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
               "inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[11.5px] font-extrabold transition active:scale-95",
               aiBusy
                 ? "bg-surface-alt text-ink-muted cursor-wait"
-                : "border border-primary/30 bg-primary-soft/40 text-primary hover:bg-primary-soft/60",
+                : "border border-primary/30 bg-primary-soft/40 text-primary-ink hover:bg-primary-soft/60",
             )}
           >
             <Icon name="sparkles" size={11} strokeWidth={2.4} />
@@ -574,8 +574,8 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
         {aiResult && (
           <div className="mt-2 rounded-card border-2 border-primary/30 bg-primary-soft/40 p-3 space-y-2">
             <div className="flex items-center gap-1.5">
-              <Icon name="sparkles" size={12} strokeWidth={2.4} className="text-primary" />
-              <span className="text-[11px] font-extrabold uppercase tracking-wide text-primary">
+              <Icon name="sparkles" size={12} strokeWidth={2.4} className="text-primary-ink" />
+              <span className="text-[11px] font-extrabold uppercase tracking-wide text-primary-ink">
                 AI javaslat — Te döntesz, elfogadod-e
               </span>
             </div>
@@ -591,7 +591,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
                 <button
                   type="button"
                   onClick={() => applyAiSuggestion(true, false)}
-                  className="mt-2 text-[11px] font-bold text-primary underline"
+                  className="mt-2 text-[11px] font-bold text-primary-ink underline"
                 >
                   Ezt használom
                 </button>
@@ -616,7 +616,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
                   <button
                     type="button"
                     onClick={() => applyAiSuggestion(false, true)}
-                    className="mt-2 text-[11px] font-bold text-primary underline"
+                    className="mt-2 text-[11px] font-bold text-primary-ink underline"
                   >
                     Kategória átállítása
                   </button>

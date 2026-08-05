@@ -209,7 +209,7 @@ function CategoryDetail({
                 <span
                   className={cn(
                     "rounded-pill px-1.5 py-0.5 text-[10.5px] font-bold uppercase",
-                    p.tier === "premium" && "bg-primary/10 text-primary",
+                    p.tier === "premium" && "bg-primary/10 text-primary-ink",
                     p.tier === "mid" && "bg-star/10 text-[#9a6b00]",
                     p.tier === "budget" && "bg-success/10 text-success",
                   )}
@@ -236,7 +236,7 @@ function CategoryDetail({
                 href={l.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[12.5px] font-semibold text-primary underline break-all"
+                className="text-[12.5px] font-semibold text-primary-ink underline break-all"
               >
                 🔗 {l.label}
               </a>

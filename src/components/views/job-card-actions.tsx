@@ -70,7 +70,7 @@ export function JobCardActions({
       <div className="flex items-center gap-3 text-[12px] font-semibold">
         <Link
           href={`/munkaltato/allas/${jobId}/jelentkezok`}
-          className="flex items-center gap-1.5 text-primary hover:underline"
+          className="flex items-center gap-1.5 text-primary-ink hover:underline"
         >
           <Icon name="users" size={14} strokeWidth={2.2} />
           Jelentkezők ({applicantCount})
@@ -78,7 +78,7 @@ export function JobCardActions({
 
         <Link
           href={`/munkaltato/allas/${jobId}/szerkesztes`}
-          className="flex items-center gap-1.5 text-ink-muted hover:text-primary transition-colors"
+          className="flex items-center gap-1.5 text-ink-muted hover:text-primary-ink transition-colors"
         >
           <Icon name="sliders" size={14} strokeWidth={2.2} />
           Szerkesztés

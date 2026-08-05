@@ -79,7 +79,7 @@ export default function SpanishCvBuilderPage() {
             A munkába álláshoz <strong className="text-ink">NIE-számra</strong> és{" "}
             <strong className="text-ink">Seguridad Social-számra</strong> is szükséged lesz — a
             munkáltató enélkül nem tud bejelenteni.{" "}
-            <Link href="/tudasbazis/es-nie-regisztracio" className="font-bold text-primary underline">
+            <Link href="/tudasbazis/es-nie-regisztracio" className="font-bold text-primary-ink underline">
               A NIE és az uniós regisztráció →
             </Link>
           </p>
@@ -87,7 +87,7 @@ export default function SpanishCvBuilderPage() {
             ⚠️ A hivatali ügyekhez szinte mindenhol{" "}
             <strong className="text-ink">előzetes időpont (cita previa)</strong> kell, és az hetekre
             előre elfogyhat — ezzel a CV-írással párhuzamosan érdemes elindulni.{" "}
-            <Link href="/tudasbazis/es-cita-previa" className="font-bold text-primary underline">
+            <Link href="/tudasbazis/es-cita-previa" className="font-bold text-primary-ink underline">
               Mit tegyél, ha nincs szabad időpont →
             </Link>
           </p>

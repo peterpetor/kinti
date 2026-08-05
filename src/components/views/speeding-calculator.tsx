@@ -231,7 +231,7 @@ export function SpeedingCalculator() {
             className="flex-1 accent-primary"
           />
           <div className="min-w-[5rem] text-right">
-            <div className="text-[24px] font-extrabold leading-none text-primary">{actualSpeed}</div>
+            <div className="text-[24px] font-extrabold leading-none text-primary-ink">{actualSpeed}</div>
             <div className="text-[11px] font-bold uppercase text-ink-faint">{unit}</div>
           </div>
         </div>

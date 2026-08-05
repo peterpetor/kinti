@@ -225,7 +225,7 @@ export function HataridoAssistant() {
       {/* Aktív határidők */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card space-y-3">
         <div className="flex items-center gap-2">
-          <Icon name="bell" size={15} strokeWidth={2.2} className="text-primary" />
+          <Icon name="bell" size={15} strokeWidth={2.2} className="text-primary-ink" />
           <h2 className="text-[14px] font-extrabold text-ink">A határidőid</h2>
         </div>
 
@@ -389,7 +389,7 @@ export function HataridoAssistant() {
         href="/tudasbazis/hivatalos"
         className="flex items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-card transition hover:border-primary/30 active:scale-[0.99]"
       >
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary text-lg">🏛️</span>
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary-ink text-lg">🏛️</span>
         <div className="min-w-0 flex-1">
           <div className="text-[13.5px] font-extrabold text-ink">Hol intézheted?</div>
           <p className="text-[11.5px] text-ink-muted">Hivatalos linkek és időpontfoglalás országonként.</p>

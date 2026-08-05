@@ -73,7 +73,7 @@ export function ExchangeCalculator({
       <section className="rounded-card border-2 border-primary/30 bg-gradient-to-br from-primary-soft to-surface p-5 shadow-pop">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-2xl">💱</span>
-          <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">
             Mai középárfolyam (ECB)
           </p>
         </div>
@@ -97,7 +97,7 @@ export function ExchangeCalculator({
       {/* Kalkulátor */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card space-y-4">
         <div className="flex items-center gap-2">
-          <Icon name="sliders" size={14} strokeWidth={2.2} className="text-primary" />
+          <Icon name="sliders" size={14} strokeWidth={2.2} className="text-primary-ink" />
           <h2 className="text-[14px] font-extrabold text-ink">Hazautalás kalkulátor</h2>
         </div>
 
@@ -159,7 +159,7 @@ export function ExchangeCalculator({
               Becslés
             </span>
           </div>
-          <p className="mt-0.5 text-[22px] font-extrabold tracking-tight text-primary">
+          <p className="mt-0.5 text-[22px] font-extrabold tracking-tight text-primary-ink">
             {grossTargetFmt} {targetSymbol}
           </p>
         </div>
@@ -259,7 +259,7 @@ export function ExchangeCalculator({
                 UGYANEZEN az oldalon él lentebb → horgony-link (nem route). */}
             <a
               href="#utalas-asszisztens"
-              className="flex items-center gap-2 rounded-[12px] border border-primary/25 bg-primary-soft/40 px-3.5 py-2.5 text-[12.5px] font-bold text-primary transition active:scale-[0.99]"
+              className="flex items-center gap-2 rounded-[12px] border border-primary/25 bg-primary-soft/40 px-3.5 py-2.5 text-[12.5px] font-bold text-primary-ink transition active:scale-[0.99]"
             >
               <Icon name="trending" size={14} strokeWidth={2.2} />
               Jó most hazautalni? — Utalás-asszisztens

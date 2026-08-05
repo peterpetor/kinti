@@ -57,7 +57,7 @@ export function BookmarkButton({
         aria-label={aktiv ? "Eltávolítás a gyűjteményből" : "Mentés a gyűjteménybe"}
         className={cn(
           "grid h-9 w-9 shrink-0 place-items-center rounded-[12px] border transition active:scale-95",
-          aktiv ? "border-primary/40 bg-primary/10 text-primary" : "border-line bg-surface text-ink-muted",
+          aktiv ? "border-primary/40 bg-primary/10 text-primary-ink" : "border-line bg-surface text-ink-muted",
           className,
         )}
       >
@@ -73,7 +73,7 @@ export function BookmarkButton({
       aria-pressed={aktiv}
       className={cn(
         "flex w-full items-center justify-center gap-2 rounded-card border px-4 py-3 text-[13px] font-extrabold tracking-tight transition active:scale-[0.99]",
-        aktiv ? "border-primary/40 bg-primary/10 text-primary" : "border-line bg-surface text-ink",
+        aktiv ? "border-primary/40 bg-primary/10 text-primary-ink" : "border-line bg-surface text-ink",
         className,
       )}
     >

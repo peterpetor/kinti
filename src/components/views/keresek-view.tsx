@@ -142,14 +142,14 @@ export function KeresekView({ turnstileSiteKey }: { turnstileSiteKey: string }) 
             return (
               <article key={r.id} className="rounded-card border border-line bg-surface p-4 shadow-card">
                 <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                  {cat && <span className="inline-flex items-center gap-1 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">{cat.emoji} {cat.label}</span>}
+                  {cat && <span className="inline-flex items-center gap-1 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary-ink">{cat.emoji} {cat.label}</span>}
                   {place && <span className="inline-flex items-center gap-1 rounded-pill bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-ink-muted">📍 {place}</span>}
                   {r.whenText && <span className="inline-flex items-center gap-1 rounded-pill bg-star/10 px-2 py-0.5 text-[11px] font-bold text-star">🗓️ {r.whenText}</span>}
                   <span className="ml-auto text-[10.5px] text-ink-faint">{fmtAgo(r.createdAt)}</span>
                 </div>
                 <h3 className="text-[14.5px] font-extrabold tracking-[-0.01em] text-ink">{r.title}</h3>
                 {r.description && <p className="mt-0.5 text-[12.5px] leading-snug text-ink-muted">{r.description}</p>}
-                <div className="mt-2 flex items-center gap-1.5 rounded-[10px] bg-primary-soft/60 px-3 py-2 text-[12.5px] font-bold text-primary">
+                <div className="mt-2 flex items-center gap-1.5 rounded-[10px] bg-primary-soft/60 px-3 py-2 text-[12.5px] font-bold text-primary-ink">
                   📞 {r.contact}
                 </div>
                 {/* DSA notice-and-action: publikus hirdetésen bejelentő-út. */}

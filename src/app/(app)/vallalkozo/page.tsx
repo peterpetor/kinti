@@ -24,7 +24,7 @@ export default function VallalkozoPage() {
       <main className="flex-1 pb-20">
         {/* Hero */}
         <section className="text-center mb-8 animate-fade-up">
-          <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 text-primary grid place-items-center mb-3">
+          <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 text-primary-ink grid place-items-center mb-3">
             <Icon name="pin" size={30} strokeWidth={2} />
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-pill bg-accent/15 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-accent">
@@ -62,9 +62,9 @@ export default function VallalkozoPage() {
         <div className="w-full max-w-sm mx-auto mt-8 rounded-card border border-line bg-surface-alt/60 p-4 animate-fade-up animate-delay-200">
           <p className="text-[12.5px] leading-relaxed text-ink-muted">
             <strong className="text-ink">Elveszítetted a kezelő-linket?</strong> Először nézd
-            meg a böngésződ <Link href="/sajatjaim" className="font-bold text-primary underline">Saját posztjaim</Link>{" "}
+            meg a böngésződ <Link href="/sajatjaim" className="font-bold text-primary-ink underline">Saját posztjaim</Link>{" "}
             oldalát (ott automatikusan elmentődik). Ha az is üres, írj az{" "}
-            <a href="mailto:info@kinti.app" className="font-bold text-primary underline">
+            <a href="mailto:info@kinti.app" className="font-bold text-primary-ink underline">
               info@kinti.app
             </a>{" "}
             címre a vállalkozásod nevével — visszaküldjük neked a linket.

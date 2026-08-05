@@ -56,7 +56,7 @@ export function SzakmaiSzotarGrid({ userIsPro }: { userIsPro: boolean }) {
                   <span
                     className={cn(
                       "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider",
-                      lesson.isPro ? "bg-star/20 text-star" : "bg-primary/10 text-primary",
+                      lesson.isPro ? "bg-star/20 text-star" : "bg-primary/10 text-primary-ink",
                     )}
                   >
                     {lesson.industry}
@@ -65,7 +65,7 @@ export function SzakmaiSzotarGrid({ userIsPro }: { userIsPro: boolean }) {
                     +{lesson.xpReward} XP
                   </span>
                 </div>
-                <h2 className="text-[16px] font-extrabold text-ink group-hover:text-primary transition-colors flex items-center gap-2">
+                <h2 className="text-[16px] font-extrabold text-ink group-hover:text-primary-ink transition-colors flex items-center gap-2">
                   {lesson.title} {requiresPro && <span className="text-[14px]">🔒</span>}
                 </h2>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-muted line-clamp-2">
@@ -76,7 +76,7 @@ export function SzakmaiSzotarGrid({ userIsPro }: { userIsPro: boolean }) {
               <div
                 className={cn(
                   "mt-4 flex items-center gap-1.5 text-[12px] font-bold",
-                  requiresPro ? "text-star" : "text-primary",
+                  requiresPro ? "text-star" : "text-primary-ink",
                 )}
               >
                 {requiresPro ? (

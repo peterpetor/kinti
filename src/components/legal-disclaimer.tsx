@@ -120,7 +120,7 @@ export function LegalDisclaimer({
                 href={s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary-soft transition"
+                className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface px-2.5 py-1 text-[11px] font-bold text-primary-ink hover:bg-primary-soft transition"
               >
                 🔗 {s.label}
               </a>

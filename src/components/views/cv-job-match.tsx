@@ -125,7 +125,7 @@ export function CvJobMatch({ categoryId, armed, adj = "német" }: { categoryId: 
       {/* Inline panel — a sheet bezárása után is megmarad a letöltés-gomb alatt. */}
       <div className="rounded-xl border border-primary/25 bg-primary-soft/30 p-3.5">
         <p className="mb-2 flex items-center gap-1.5 text-[13px] font-extrabold text-ink">
-          <Icon name="briefcase" size={15} strokeWidth={2.4} className="text-primary" />
+          <Icon name="briefcase" size={15} strokeWidth={2.4} className="text-primary-ink" />
           Hozzád illő aktív állások
         </p>
         <MatchList data={data} />
@@ -149,7 +149,7 @@ export function CvJobMatch({ categoryId, armed, adj = "német" }: { categoryId: 
           <Link
             href={`/allasok?radarcat=${encodeURIComponent(categoryId)}#radar`}
             onClick={() => trackAction("cv-match-radar")}
-            className="block rounded-pill border border-primary/30 bg-primary-soft/40 px-4 py-2.5 text-center text-[13.5px] font-bold text-primary transition active:scale-[0.98]"
+            className="block rounded-pill border border-primary/30 bg-primary-soft/40 px-4 py-2.5 text-center text-[13.5px] font-bold text-primary-ink transition active:scale-[0.98]"
           >
             🔔 Szóljunk, ha új állás jön a szakmádban?
           </Link>

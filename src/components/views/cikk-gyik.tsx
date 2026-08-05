@@ -27,7 +27,7 @@ export function CikkGyik({ parok }: { parok: QaPar[] }) {
             <dt className="text-[13px] font-bold leading-snug text-ink">{p.kerdes}</dt>
             <dd className="mt-1 text-[12.5px] leading-relaxed text-ink-muted">
               {p.rovid}{" "}
-              <a href={`#${p.anchor}`} className="whitespace-nowrap font-bold text-primary underline underline-offset-2">
+              <a href={`#${p.anchor}`} className="whitespace-nowrap font-bold text-primary-ink underline underline-offset-2">
                 Részletek
                 <Icon name="chevR" size={11} strokeWidth={2.8} className="ml-0.5 inline-block align-[-1px]" />
               </a>

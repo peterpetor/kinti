@@ -63,7 +63,7 @@ export function CustomsCalculator() {
             onChange={(e) => setPersons(Number(e.target.value))}
             className="flex-1 accent-primary"
           />
-          <span className="min-w-[3rem] text-center text-[22px] font-extrabold text-primary">
+          <span className="min-w-[3rem] text-center text-[22px] font-extrabold text-primary-ink">
             {persons}
           </span>
         </div>
@@ -105,7 +105,7 @@ export function CustomsCalculator() {
           href={config.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-bold text-primary underline"
+          className="font-bold text-primary-ink underline"
         >
           {config.sourceLabel}
         </a>
@@ -183,7 +183,7 @@ function SwissTips() {
           href="https://www.bazg.admin.ch/bazg/de/home/services/services-firmen/services-firmen-warenanmeldung/quickzoll.html"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-bold text-primary underline"
+          className="font-bold text-primary-ink underline"
         >
           QuickZoll appot
         </a>{" "}
@@ -218,7 +218,7 @@ function BritishTips() {
           href="https://www.gov.uk/duty-free-goods"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-bold text-primary underline"
+          className="font-bold text-primary-ink underline"
         >
           gov.uk
         </a>{" "}

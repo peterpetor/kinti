@@ -48,7 +48,7 @@ export function ChecklistList({ indexByCountry }: { indexByCountry: Record<strin
               href={`/ugyintezes/${c.slug}`}
               className="flex items-start gap-3 rounded-card border border-line bg-surface p-4 shadow-card transition active:scale-[0.99]"
             >
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-primary">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-primary-ink">
                 <Icon name={c.icon} size={22} strokeWidth={2} />
               </span>
               <div className="min-w-0 flex-1">

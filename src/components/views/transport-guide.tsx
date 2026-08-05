@@ -185,7 +185,7 @@ export function TransportGuide() {
                     <p className="font-extrabold text-ink">{t.validity}</p>
                   </div>
                   <div className="rounded-md bg-primary-soft px-2 py-1">
-                    <p className="font-bold uppercase tracking-wide text-primary">Legjobb</p>
+                    <p className="font-bold uppercase tracking-wide text-primary-ink">Legjobb</p>
                     <p className="font-extrabold text-ink">{t.bestFor}</p>
                   </div>
                 </div>
@@ -270,33 +270,33 @@ export function TransportGuide() {
         <ul className="space-y-1.5">
           {isES ? (
             <>
-              <li><a href="https://www.renfe.com/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Renfe — spanyol vasút</a></li>
-              <li><a href="https://www.crtm.es/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 CRTM — Madrid közlekedése</a></li>
-              <li><a href="https://www.atm.cat/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 ATM — Barcelona közlekedése</a></li>
+              <li><a href="https://www.renfe.com/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 Renfe — spanyol vasút</a></li>
+              <li><a href="https://www.crtm.es/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 CRTM — Madrid közlekedése</a></li>
+              <li><a href="https://www.atm.cat/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 ATM — Barcelona közlekedése</a></li>
             </>
           ) : isNL ? (
             <>
-              <li><a href="https://www.ns.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 NS — Nederlandse Spoorwegen</a></li>
-              <li><a href="https://www.ovpay.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 OVpay — érintős fizetés</a></li>
-              <li><a href="https://9292.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 9292 — országos útvonaltervező</a></li>
+              <li><a href="https://www.ns.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 NS — Nederlandse Spoorwegen</a></li>
+              <li><a href="https://www.ovpay.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 OVpay — érintős fizetés</a></li>
+              <li><a href="https://9292.nl/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 9292 — országos útvonaltervező</a></li>
             </>
           ) : isDE ? (
             <>
-              <li><a href="https://www.bahn.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Deutsche Bahn (DB)</a></li>
-              <li><a href="https://www.deutschlandticket.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Deutschlandticket — hivatalos info</a></li>
-              <li><a href="https://www.vbb.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 VBB (Berlin-Brandenburg)</a></li>
+              <li><a href="https://www.bahn.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 Deutsche Bahn (DB)</a></li>
+              <li><a href="https://www.deutschlandticket.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 Deutschlandticket — hivatalos info</a></li>
+              <li><a href="https://www.vbb.de/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 VBB (Berlin-Brandenburg)</a></li>
             </>
           ) : isAT ? (
             <>
-              <li><a href="https://www.oebb.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 ÖBB — Österreichische Bundesbahnen</a></li>
-              <li><a href="https://www.wienerlinien.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Wiener Linien</a></li>
-              <li><a href="https://www.klimaticket.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Klimaticket Österreich</a></li>
+              <li><a href="https://www.oebb.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 ÖBB — Österreichische Bundesbahnen</a></li>
+              <li><a href="https://www.wienerlinien.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 Wiener Linien</a></li>
+              <li><a href="https://www.klimaticket.at/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 Klimaticket Österreich</a></li>
             </>
           ) : (
             <>
-              <li><a href="https://www.sbb.ch/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 SBB — Schweizerische Bundesbahnen</a></li>
-              <li><a href="https://www.allianceswisspass.ch/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 Alliance SwissPass — Halbtax & GA</a></li>
-              <li><a href="https://www.fairtiq.com/de-ch" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary underline break-all">🔗 FAIRTIQ — Auto-jegy app</a></li>
+              <li><a href="https://www.sbb.ch/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 SBB — Schweizerische Bundesbahnen</a></li>
+              <li><a href="https://www.allianceswisspass.ch/" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 Alliance SwissPass — Halbtax & GA</a></li>
+              <li><a href="https://www.fairtiq.com/de-ch" target="_blank" rel="noopener noreferrer" className="text-[12.5px] font-semibold text-primary-ink underline break-all">🔗 FAIRTIQ — Auto-jegy app</a></li>
             </>
           )}
         </ul>
@@ -364,7 +364,7 @@ function TarifCard({ system, cur }: { system: typeof TARIF_SYSTEMS[number]; cur:
             className="flex items-center justify-between rounded-md bg-surface-alt px-2 py-1 text-[11px]"
           >
             <span className="text-ink">{ez.name}</span>
-            <span className="font-bold text-primary">{ez.zones}</span>
+            <span className="font-bold text-primary-ink">{ez.zones}</span>
           </div>
         ))}
       </div>
@@ -372,7 +372,7 @@ function TarifCard({ system, cur }: { system: typeof TARIF_SYSTEMS[number]; cur:
       {/* Árak */}
       <div className="grid grid-cols-2 gap-1.5">
         <div className="rounded-md bg-primary-soft/60 px-2 py-1.5 text-[11.5px]">
-          <p className="font-bold uppercase tracking-wide text-primary">Egyszeri jegy</p>
+          <p className="font-bold uppercase tracking-wide text-primary-ink">Egyszeri jegy</p>
           <p className="font-extrabold text-ink">{system.singleZonePrice.toFixed(2)} {cur}</p>
         </div>
         <div className="rounded-md bg-success/10 px-2 py-1.5 text-[11.5px]">
@@ -385,7 +385,7 @@ function TarifCard({ system, cur }: { system: typeof TARIF_SYSTEMS[number]; cur:
         href={system.websiteUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-3 inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[11.5px] font-bold text-primary"
+        className="mt-3 inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[11.5px] font-bold text-primary-ink"
       >
         🔗 Hivatalos oldal →
       </a>
@@ -490,7 +490,7 @@ function GaVsHalbtaxCalculator() {
               onChange={(e) => setTripsPerWeek(Number(e.target.value))}
               className="flex-1 accent-primary"
             />
-            <span className="w-16 text-right text-[18px] font-extrabold text-primary">
+            <span className="w-16 text-right text-[18px] font-extrabold text-primary-ink">
               {tripsPerWeek}
             </span>
             <span className="text-[11.5px] font-bold text-ink-muted">/ hét</span>

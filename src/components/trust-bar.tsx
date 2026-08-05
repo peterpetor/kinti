@@ -23,7 +23,7 @@ export function TrustBar() {
         {/* A fizetési szolgáltató kontextusfüggő: weben Paddle, az Android-appban
             Google Play (a Play szabályzata a webes fizetés említését is tiltja). */}
         <div className="flex flex-col items-center gap-1 text-center">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-primary">
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-primary-ink">
             <Icon name="lock" size={16} strokeWidth={2.2} />
           </span>
           <span className="text-[11px] font-extrabold leading-tight text-ink">Biztonságos fizetés</span>
@@ -50,7 +50,7 @@ export function TrustBar() {
 function TrustItem({ icon, title, sub }: { icon: IconName; title: string; sub: string }) {
   return (
     <div className="flex flex-col items-center gap-1 text-center">
-      <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-primary">
+      <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-primary-ink">
         <Icon name={icon} size={16} strokeWidth={2.2} />
       </span>
       <span className="text-[11px] font-extrabold leading-tight text-ink">{title}</span>

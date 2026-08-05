@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kinti — Affiliate & Lead-gen monetizációs terv 2026–2028</title>
+<style>
+  :root {
+    --primary: #1d4434;
+    --accent: #c8392e;
+    --gold: #e3a233;
+    --ink: #0e1f17;
+    --ink-muted: #5c6d63;
+    --ink-faint: #94a097;
+    --line: #e6ebe5;
+    --surface: #ffffff;
+    --surface-alt: #fbf7ee;
+    --bg: #f4ede0;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 14px; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 920px;
+    margin: 32px auto;
+    background: var(--surface);
+    padding: 56px 64px;
+    box-shadow: 0 4px 24px rgba(14,31,23,.08);
+    border-radius: 12px;
+  }
+  h1 { font-size: 32px; letter-spacing: -0.02em; margin: 0 0 8px; color: var(--primary); }
+  h2 { font-size: 22px; letter-spacing: -0.015em; margin: 40px 0 12px; color: var(--primary); border-top: 2px solid var(--line); padding-top: 24px; }
+  h3 { font-size: 16px; margin: 18px 0 8px; color: var(--ink); }
+  h4 { font-size: 14px; margin: 12px 0 6px; color: var(--ink-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--ink); }
+  em { font-style: italic; color: var(--ink); }
+  .lead {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-muted);
+    border-left: 3px solid var(--primary);
+    padding: 4px 16px;
+    margin: 16px 0 24px;
+    background: var(--surface-alt);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin: 0 0 28px;
+  }
+  .meta strong { color: var(--primary); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 13px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    background: var(--surface-alt);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-muted);
+    font-weight: 700;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  th.num { text-align: right; }
+  .badge {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: white;
+  }
+  .badge.accent { background: var(--accent); }
+  .badge.gold { background: var(--gold); color: var(--ink); }
+  .badge.muted { background: var(--ink-faint); }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 14px 0 20px;
+  }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: var(--surface);
+  }
+  .card .kpi {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+  .card .label {
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .callout {
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 13px;
+  }
+  .callout.warn { background: #fff8ed; border-color: #f0c14a; }
+  .callout.ok { background: #f0f7f1; border-color: var(--primary); }
+  .callout.info { background: #eff6ff; border-color: #4a7ed4; }
+  .footer-note {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--surface-alt);
+    color: var(--ink-muted);
+    margin-right: 4px;
+  }
+  .priority-1 { border-left: 4px solid var(--primary); }
+  .priority-2 { border-left: 4px solid var(--gold); }
+  .priority-3 { border-left: 4px solid var(--ink-faint); }
+  code {
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 12px;
+    background: var(--surface-alt);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .tech-block {
+    background: #f8faf8;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 10px 0 16px;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 11.5px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+  .revenue-highlight {
+    background: linear-gradient(135deg, #f0f7f1, #e8f5e9);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .revenue-highlight .big-number {
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .revenue-highlight .subtitle {
+    font-size: 14px;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+  @media print {
+    body { background: white; }
+    .page {
+      box-shadow: none;
+      border-radius: 0;
+      padding: 0;
+      margin: 0;
+      max-width: 100%;
+    }
+    h2 { page-break-before: auto; page-break-after: avoid; }
+    h3, h4 { page-break-after: avoid; }
+    table, .callout, .cards, .grid-2 { page-break-inside: avoid; }
+    tr { page-break-inside: avoid; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="no-print" style="background: var(--surface-alt); border: 1px dashed var(--ink-faint); padding: 12px 16px; border-radius: 10px; margin-bottom: 24px; font-size: 13px; color: var(--ink-muted);">
+    📄 <strong>PDF-be mentéshez</strong>: nyomd a <kbd>Ctrl + P</kbd> (Mac: <kbd>⌘ + P</kbd>) gombot, és a Cél / Destination mezőnél válaszd a <em>„Mentés PDF-ként"</em>-et. Az A4-es nyomtatási stílus már be van állítva.
+  </div>
+
+  <header>
+    <span class="badge">Monetizációs terv</span>
+    <h1 style="margin-top: 10px;">Kinti — Affiliate & Lead-gen bevételi stratégia</h1>
+    <p class="meta">
+      <span><strong>Időszak:</strong> 2026–2028</span>
+      <span><strong>Platform:</strong> kinti.app (6 ország)</span>
+      <span><strong>Jelenlegi állapot:</strong> 3 fizetős termék élesben (Paddle + Google Play)</span>
+    </p>
+    <div class="lead">
+      <strong>Cél:</strong> A meglévő 6 országos, 500k fős magyar diaszpóra-platform felhasználóit a <strong>döntési pillanatban</strong> összekötni fizetős partnerekkel (biztosítás, pénzküldés, költöztetés, hitel, e-kereskedelem) — úgy, hogy a user élmény tiszta maradjon, és a bevétel passzívan skálázódjon. Célszám: <strong>+€60–180k/év</strong> a meglévő PRO-bevétel tetejére.
+    </div>
+  </header>
+
+  <!-- ───────── EXECUTIVE SUMMARY ───────── -->
+  <h2>1. Összefoglaló — 5 bevételi csatorna</h2>
+
+  <div class="cards">
+    <div class="card">
+      <div class="kpi">€20–100k</div>
+      <div class="label">🏥 Biztosítás / év</div>
+    </div>
+    <div class="card">
+      <div class="kpi">€5–15k</div>
+      <div class="label">🏦 Hitel & jelzálog / év</div>
+    </div>
+    <div class="card">
+      <div class="kpi">€5–10k</div>
+      <div class="label">🚚 Költöztetés / év</div>
+    </div>
+    <div class="card">
+      <div class="kpi">€3–8k</div>
+      <div class="label">💸 Pénzküldés / év</div>
+    </div>
+    <div class="card">
+      <div class="kpi">€0.5–2k</div>
+      <div class="label">📦 Amazon / év</div>
+    </div>
+  </div>
+
+  <div class="revenue-highlight">
+    <div class="big-number">€60–180k /év</div>
+    <div class="subtitle">Összes affiliate & lead-gen bevétel (Y2–Y3, 6 ország, konzervatív–optimista range)</div>
+  </div>
+
+  <div class="callout ok">
+    <strong>📌 Kontextus:</strong> Ez a bevétel a meglévő PRO-előfizetések (€80–85k/év cél) <strong>tetejére</strong> jön. A kettő együtt: <strong>€140–265k/év</strong> — egyetlen ember, közel nulla infra-költség mellett. A biztosítási csatorna önmagában felülmúlhatja az összes PRO-bevételt.
+  </div>
+
+  <!-- ───────── STREAM 1: BIZTOSÍTÁS ───────── -->
+  <h2>2. 🏥 Biztosítás — a legnagyobb pénz</h2>
+
+  <h3>2.1 Miért ez a #1 prioritás?</h3>
+  <p>A Kinti user a <strong>Szolgáltató-váltó</strong> és a <strong>Bérkalkulátor</strong> modulban ÉPPEN MOST dönt biztosításról. Ez a legértékesebb pillanat: a biztosítók €200–400/szerződés jutalékot fizetnek a közvetítőnek. A Kinti <strong>nem közvetít</strong> — a usert átirányítja egy engedéllyel rendelkező összehasonlító partnerre (Comparis, Check24) affiliate linken.</p>
+
+  <h3>2.2 Országonkénti partnerek</h3>
+  <table>
+    <thead>
+      <tr><th>Ország</th><th>Biztosítás-típus</th><th>Partner (affiliate)</th><th class="num">Jutalék / lead</th><th>Szezonalitás</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>🇨🇭 Svájc</td><td>Krankenkasse (kötelező EBV)</td><td>Comparis.ch, Bonus.ch, PrimApp</td><td class="num">CHF 200–400</td><td>szept–nov (váltási szezon)</td></tr>
+      <tr><td>🇨🇭 Svájc</td><td>Autó, háztartási, jogvédelem</td><td>Comparis.ch, FinanceScout24</td><td class="num">CHF 30–80</td><td>egész évben</td></tr>
+      <tr><td>🇩🇪 Németország</td><td>GKV (törvényes), kiegészítő</td><td>Check24.de, Verivox.de</td><td class="num">€30–80</td><td>egész évben</td></tr>
+      <tr><td>🇦🇹 Ausztria</td><td>Kiegészítő (Zusatzversicherung)</td><td>Durchblicker.at</td><td class="num">€25–60</td><td>egész évben</td></tr>
+      <tr><td>🇳🇱 Hollandia</td><td>Zorgverzekering (kötelező)</td><td>Independer.nl, Zorgwijzer.nl</td><td class="num">€30–60</td><td>nov–dec (váltási szezon)</td></tr>
+      <tr><td>🏴 Anglia</td><td>Council tax, car insurance</td><td>MoneySupermarket.com, GoCompare</td><td class="num">£20–50</td><td>egész évben</td></tr>
+      <tr><td>🇪🇸 Spanyolország</td><td>Seguro de salud (privát)</td><td>Rastreator.com, Acierto.com</td><td class="num">€20–50</td><td>egész évben</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.3 Technikai integráció</h3>
+  <h4>A. Meglévő modul: Szolgáltató-váltó bővítése</h4>
+  <div class="tech-block">src/app/(app)/szolgaltato-valto/
+  ├── page.tsx              ← meglévő, bővíteni
+  ├── biztositas/
+  │   └── page.tsx          ← ÚJ: biztosítás-összehasonlító landing
+  ├── components/
+  │   └── insurance-cta.tsx ← ÚJ: CTA-kártya affiliate linkkel
+  └── lib/
+      └── insurance-partners.ts ← ÚJ: partner-config (link, ország, jutalék-típus)</div>
+
+  <h4>B. Új komponens: InsuranceCTA</h4>
+  <ul>
+    <li>Ország-aware kártya (a user preferált országához igazodik)</li>
+    <li>Partner logó + „Hasonlítsd össze az ajánlatokat →" gomb</li>
+    <li>Affiliate link UTM-paraméterekkel: <code>?ref=kinti&country=CH&utm_source=kinti</code></li>
+    <li>Kattintás-tracking: <code>POST /api/track</code> → D1 <code>affiliate_clicks</code> tábla</li>
+    <li><strong>DSA-jelölés:</strong> „Partneri ajánlat" felirat kötelezően</li>
+  </ul>
+
+  <h4>C. Elhelyezés a platformon (5 természetes érintkezési pont)</h4>
+  <ol>
+    <li><strong>Szolgáltató-váltó</strong> → dedikált „Biztosítás" aloldal (fő konverziós pont)</li>
+    <li><strong>Bérkalkulátor eredmény-oldal</strong> → „Tudtad? A Krankenkasse-díjad akár 40%-kal csökkenthető" kártya</li>
+    <li><strong>Ügyintézés-varázsló</strong> → „Biztosítás lépés" után partner-ajánlat</li>
+    <li><strong>Push-értesítés</strong> → szept/okt: „Krankenkasse-váltási szezon! Hasonlítsd össze →"</li>
+    <li><strong>Költözés checklist</strong> → a biztosítás lépésnél inline CTA</li>
+  </ol>
+
+  <h3>2.4 Bevétel-modell</h3>
+  <table>
+    <thead>
+      <tr><th>Szcenárió</th><th class="num">Kattintás/hó</th><th class="num">Konverzió</th><th class="num">Jutalék/fő</th><th class="num">Éves bevétel</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Konzervatív (Y1)</td><td class="num">200</td><td class="num">5% = 10/hó</td><td class="num">€80</td><td class="num"><strong>€9 600</strong></td></tr>
+      <tr><td>Alap (Y2)</td><td class="num">800</td><td class="num">5% = 40/hó</td><td class="num">€120</td><td class="num"><strong>€57 600</strong></td></tr>
+      <tr><td>Optimista (Y3)</td><td class="num">1 500</td><td class="num">6% = 90/hó</td><td class="num">€100</td><td class="num"><strong>€108 000</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>⚠ Jogi figyelmeztetés:</strong> A Kinti NEM biztosítás-közvetítő — csak <strong>átirányít</strong> egy engedéllyel rendelkező partnerre. Az ÁSZF-ben világosan ki kell mondani: „A Kinti nem nyújt biztosítási tanácsadást; az összehasonlítást harmadik fél végzi." Ez a DSA Art. 6 hosting safe harbor védelme.
+  </div>
+
+  <!-- ───────── STREAM 2: PÉNZKÜLDÉS ───────── -->
+  <h2>3. 💸 Pénzküldés & fintech affiliate</h2>
+
+  <h3>3.1 Partnerek</h3>
+  <table>
+    <thead>
+      <tr><th>Partner</th><th>Típus</th><th class="num">Jutalék</th><th>Integráció</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Wise</strong></td><td>Referral program</td><td class="num">€10–15 / signup</td><td>Referral link + API (opcionális árfolyam-widget)</td></tr>
+      <tr><td><strong>Revolut</strong></td><td>Affiliate program</td><td class="num">€10–20 / signup</td><td>Affiliate link (Impact Radius)</td></tr>
+      <tr><td><strong>Neon</strong> (🇨🇭)</td><td>Referral kód</td><td class="num">CHF 20 / signup</td><td>Promo kód megjelenítés</td></tr>
+      <tr><td><strong>Remitly</strong></td><td>Affiliate program</td><td class="num">$10–25 / first transfer</td><td>Affiliate link (CJ Affiliate)</td></tr>
+      <tr><td><strong>CurrencyFair</strong></td><td>Referral program</td><td class="num">€15 / aktív user</td><td>Referral link</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 Technikai integráció</h3>
+  <h4>Meglévő modul: Utalás-asszisztens bővítése</h4>
+  <ul>
+    <li>Az <code>src/app/(app)/utalas/</code> modul MÁR ÉL — ide kell partner-kártyákat</li>
+    <li>Az <code>exchange-rate-widget.tsx</code> (főoldali widget) alá: „Utald haza olcsóbban → Wise" CTA</li>
+    <li>Az árfolyam-riasztó push-értesítésben: „CHF/HUF ma kedvező! Utalj a Wise-zal →"</li>
+  </ul>
+
+  <div class="tech-block">src/components/
+  └── fintech-partner-card.tsx  ← ÚJ: újrahasználható partner-kártya
+      Props: { partner, country, placement }
+      Render: logó + 1-liner + CTA gomb + „Partneri ajánlat" jelölés
+      onClick: track + redirect (affiliate link)</div>
+
+  <h4>Elhelyezés</h4>
+  <ol>
+    <li><strong>Utalás-asszisztens</strong> → Wise/Revolut összehasonlító tábla affiliate linkekkel</li>
+    <li><strong>Árfolyam-widget</strong> (főoldal) → „Utalj most" mini-CTA</li>
+    <li><strong>Bérkalkulátor</strong> → „A nettód X — ha hazautalsz belőle, a Wise Y%-kal olcsóbb" kártya</li>
+    <li><strong>Kinti PRO utalás-időzítő</strong> → a „most érdemes" push-ban partner-link</li>
+  </ol>
+
+  <h3>3.3 Bevétel-modell</h3>
+  <table>
+    <thead>
+      <tr><th>Szcenárió</th><th class="num">Signupok / hó</th><th class="num">Jutalék / fő</th><th class="num">Éves bevétel</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Konzervatív (Y1)</td><td class="num">15</td><td class="num">€12</td><td class="num"><strong>€2 160</strong></td></tr>
+      <tr><td>Alap (Y2)</td><td class="num">40</td><td class="num">€13</td><td class="num"><strong>€6 240</strong></td></tr>
+      <tr><td>Optimista (Y3)</td><td class="num">60</td><td class="num">€14</td><td class="num"><strong>€10 080</strong></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ───────── STREAM 3: KÖLTÖZTETÉS ───────── -->
+  <h2>4. 🚚 Költöztetés — lead generation</h2>
+
+  <h3>4.1 Hogyan működik</h3>
+  <p>A user a <strong>Költözés checklist</strong>-ben vagy az <strong>Ügyintézés-varázsló</strong>ban éppen most szervezi a költözését. Beír egy „Költöztetés ajánlatkérés" formot (honnan → hová, m³, dátum). A Kinti a kvalifikált leadet <strong>3 partner költöztető cégnek</strong> továbbítja. A user 24h-n belül 3 ajánlatot kap.</p>
+
+  <h3>4.2 Technikai architektúra</h3>
+  <div class="tech-block">src/app/(app)/koltoztetes/          ← ÚJ modul
+  ├── page.tsx                        ← Landing: „Költöztetés ajánlatkérés"
+  ├── form.tsx                        ← Multi-step form:
+  │   Step 1: Honnan? (ország + város)
+  │   Step 2: Hová? (ország + város)
+  │   Step 3: Mekkora? (szoba / m³ slider)
+  │   Step 4: Mikor? (dátum-választó)
+  │   Step 5: Kontakt (név + email + telefon)
+  └── success.tsx                     ← „3 ajánlat 24 órán belül"
+
+src/app/api/koltoztetes/
+  └── route.ts                        ← POST handler:
+      1. Validálás (Turnstile + rate-limit)
+      2. Lead mentés → D1 `moving_leads` tábla
+      3. E-mail a partner(ek)nek (Resend)
+      4. Visszaigazoló e-mail a usernek
+      5. Tracking: affiliate_events tábla</div>
+
+  <h3>4.3 Partner-típusok</h3>
+  <table>
+    <thead>
+      <tr><th>Partner-típus</th><th>Példák</th><th class="num">Lead-díj</th><th>Modell</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Magyar költöztető cégek (DACH)</td><td>Euroteher, MoveHungary, FB-csoportos szolgáltatók</td><td class="num">€20–40</td><td>Per kvalifikált lead</td></tr>
+      <tr><td>Nemzetközi költöztető platformok</td><td>Movinga, Sirelo, Umzugsauktion</td><td class="num">€10–25</td><td>Affiliate / per lead</td></tr>
+      <tr><td>Lokális költöztetők (nemzeti)</td><td>Helyi cégek országonként</td><td class="num">€15–30</td><td>Per lead</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.4 Bevétel-modell</h3>
+  <table>
+    <thead>
+      <tr><th>Szcenárió</th><th class="num">Lead / hó</th><th class="num">Díj / lead</th><th class="num">Éves bevétel</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Konzervatív (Y1)</td><td class="num">10</td><td class="num">€25</td><td class="num"><strong>€3 000</strong></td></tr>
+      <tr><td>Alap (Y2)</td><td class="num">30</td><td class="num">€28</td><td class="num"><strong>€10 080</strong></td></tr>
+      <tr><td>Optimista (Y3)</td><td class="num">50</td><td class="num">€30</td><td class="num"><strong>€18 000</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <strong>💡 Cross-sell lehetőség:</strong> A költöztetés-lead után azonnal jöhet a biztosítás-CTA: „Új országban új biztosítás kell — hasonlítsd össze az ajánlatokat →". A költöztetés → biztosítás funnel a legértékesebb konverziós lánc.
+  </div>
+
+  <!-- ───────── STREAM 4: HITEL ───────── -->
+  <h2>5. 🏦 Hitel & jelzálog</h2>
+
+  <h3>5.1 Jogi keretrendszer</h3>
+  <div class="callout warn">
+    <strong>⚠ KRITIKUS:</strong> A Kinti <strong>NEM ad hitel-tanácsot</strong> és <strong>NEM közvetít hitelt</strong> — ez engedélyköteles (CH: FINMA; DE: §34i GewO; AT: GewO). A Kinti kizárólag <strong>átirányítja</strong> a usert egy engedéllyel rendelkező összehasonlító partnerre. Az ÁSZF-ben ezt explicit ki kell mondani.
+  </div>
+
+  <h3>5.2 Partnerek</h3>
+  <table>
+    <thead>
+      <tr><th>Ország</th><th>Partner</th><th>Típus</th><th class="num">Jutalék</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>🇨🇭 Svájc</td><td>Hypoguide.ch, MoneyPark, Comparis Hypothek</td><td>Jelzálog-összehasonlító</td><td class="num">CHF 200–500 / lezárt</td></tr>
+      <tr><td>🇩🇪 Németország</td><td>Interhyp.de, Dr. Klein, Check24 Baufinanzierung</td><td>Jelzálog-összehasonlító</td><td class="num">€150–400 / lezárt</td></tr>
+      <tr><td>🇩🇪 Németország</td><td>Smava.de, Check24 Kredit</td><td>Személyi hitel</td><td class="num">€30–80 / lezárt</td></tr>
+      <tr><td>🇦🇹 Ausztria</td><td>Durchblicker.at Kredit</td><td>Hitel-összehasonlító</td><td class="num">€30–60 / lezárt</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 Technikai integráció</h3>
+  <ul>
+    <li><strong>Meglévő: Bérkalkulátor</strong> → „Ezzel a fizetéssel ~ X EUR jelzálog-részletet engedhetsz meg — nézd meg az ajánlatokat →"</li>
+    <li><strong>Meglévő: Tudásbázis</strong> → „Lakásvásárlás Svájcban / Németországban" útmutató → inline partner-CTA</li>
+    <li><strong>ÚJ: Jelzálog-kalkulátor</strong> → egyszerű „Mennyit vehetsz fel?" kalkulátor → eredmény oldalon partner-link</li>
+  </ul>
+
+  <h3>5.4 Bevétel-modell</h3>
+  <table>
+    <thead>
+      <tr><th>Szcenárió</th><th class="num">Lezárás / hó</th><th class="num">Jutalék / fő</th><th class="num">Éves bevétel</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Konzervatív (Y1)</td><td class="num">1</td><td class="num">€150</td><td class="num"><strong>€1 800</strong></td></tr>
+      <tr><td>Alap (Y2)</td><td class="num">5</td><td class="num">€180</td><td class="num"><strong>€10 800</strong></td></tr>
+      <tr><td>Optimista (Y3)</td><td class="num">10</td><td class="num">€200</td><td class="num"><strong>€24 000</strong></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ───────── STREAM 5: AMAZON ───────── -->
+  <h2>6. 📦 Amazon Associates</h2>
+
+  <h3>6.1 Hogyan működik a Kintiben</h3>
+  <p>Az Amazon Associates <strong>1–3% jutalékot</strong> fizet a legtöbb termékkategóriában. A Kintiben ez a <strong>tartalomba ágyazott</strong> linkeken keresztül működik — nem bannerekkel, hanem a checklist-ek és útmutatók konkrét termék-ajánlásaiban.</p>
+
+  <h4>Elhelyezési pontok</h4>
+  <table>
+    <thead>
+      <tr><th>Modul</th><th>Példa-termék</th><th>Amazon-link kontextus</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Költözés checklist</td><td>Úti adapter, bőrönd, csomagoló anyag</td><td>„Kell egy CH/UK adapter → ezt ajánljuk"</td></tr>
+      <tr><td>Tudásbázis: „Első hét kint"</td><td>SIM-kártya, prepaid router, szótár</td><td>„Amire szükséged lesz az első héten"</td></tr>
+      <tr><td>Nyelvlecke</td><td>Nyelvtankönyvek, szótárak</td><td>„Ajánlott tankönyv ehhez a kurzushoz"</td></tr>
+      <tr><td>Szakmai szótár</td><td>Iparági szakkönyvek</td><td>„Ezzel a könyvvel mélyítheted"</td></tr>
+      <tr><td>Hofladen / recept (CH)</td><td>Konyhai eszközök, Raclette-grill</td><td>„Svájci specialitások otthon"</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2 Technikai integráció</h3>
+  <div class="tech-block">src/lib/amazon-affiliate.ts           ← ÚJ
+  • AMAZON_TAG per ország: { CH: "kinti-ch-21", DE: "kinti-de-21", ... }
+  • buildAmazonUrl(asin, country) → affiliate URL generátor
+  • Komponens: &lt;AmazonProduct asin="B0xxx" /&gt;
+    → termék-kártya képpel, árral, „Partneri link" jelöléssel
+
+src/components/amazon-product-card.tsx ← ÚJ
+  • Props: { asin, country, title, context }
+  • Render: mini kártya + Amazon logó + „Megnézem →" CTA
+  • onClick: track + redirect</div>
+
+  <h3>6.3 Bevétel-modell</h3>
+  <table>
+    <thead>
+      <tr><th>Szcenárió</th><th class="num">Kattintás / hó</th><th class="num">Konverzió</th><th class="num">Átlag-kosár</th><th class="num">Éves bevétel</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Konzervatív (Y1)</td><td class="num">100</td><td class="num">8% = 8 vásárlás</td><td class="num">€35 × 2%</td><td class="num"><strong>€67</strong></td></tr>
+      <tr><td>Alap (Y2)</td><td class="num">500</td><td class="num">8% = 40 vásárlás</td><td class="num">€40 × 2.5%</td><td class="num"><strong>€480</strong></td></tr>
+      <tr><td>Optimista (Y3)</td><td class="num">1 200</td><td class="num">10% = 120 vásárlás</td><td class="num">€45 × 3%</td><td class="num"><strong>€1 944</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>📌 Megjegyzés:</strong> Az Amazon affiliate önmagában nem változtatja meg a revenue-t. De a 24 órás cookie-szabály miatt: ha a user az Amazon-linken keresztül belép és MÁS dolgokat is vesz, az egész kosár után jár a jutalék. Ezért érdemes — nulla extra költség.
+  </div>
+
+  <!-- ───────── KÖZÖS INFRA ───────── -->
+  <h2>7. Közös technikai infrastruktúra</h2>
+
+  <h3>7.1 Tracking & Analytics rendszer</h3>
+  <div class="tech-block">D1 tábla: affiliate_events
+  ─────────────────────────────────
+  id          TEXT PRIMARY KEY
+  type        TEXT    -- 'click' | 'lead' | 'conversion'
+  partner     TEXT    -- 'comparis' | 'wise' | 'amazon' | ...
+  stream      TEXT    -- 'insurance' | 'fintech' | 'moving' | 'loan' | 'amazon'
+  country     TEXT    -- 'CH' | 'DE' | 'AT' | ...
+  placement   TEXT    -- 'szolgaltato-valto' | 'berkalculator' | 'checklist' | ...
+  user_hash   TEXT    -- IP-hash (GDPR: nem személyes adat)
+  revenue_est REAL    -- becsült jutalék (utólag frissítve)
+  created_at  TEXT
+  ─────────────────────────────────
+  INDEX: (stream, country, created_at)
+  INDEX: (partner, created_at)</div>
+
+  <h3>7.2 API endpoint</h3>
+  <div class="tech-block">src/app/api/track/affiliate/route.ts  ← ÚJ
+  POST { partner, stream, country, placement }
+  → INSERT affiliate_events
+  → Response: { redirect_url } (az affiliate link)</div>
+
+  <h3>7.3 Admin műszerfal bővítés</h3>
+  <ul>
+    <li>Új tab: <strong>„Affiliate bevételek"</strong> — kattintások, konverziók, becsült bevétel</li>
+    <li>Napi/heti/havi bontás, országonként és streamenként</li>
+    <li>Top-performer partnerlinkek + placement-ek</li>
+  </ul>
+
+  <h3>7.4 DSA & jogi compliance</h3>
+  <table>
+    <thead>
+      <tr><th>Követelmény</th><th>Megoldás</th><th>Hol</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Affiliate link jelölés</td><td>„Partneri ajánlat" / „Hirdetés" felirat minden CTA-n</td><td>Minden affiliate komponens</td></tr>
+      <tr><td>ÁSZF frissítés</td><td>Új pont: „Partneri programok és affiliate bevételek"</td><td>ÁSZF 11. pont (új)</td></tr>
+      <tr><td>Adatkezelési tájékoztató</td><td>Affiliate kattintás-tracking leírása (IP-hash, 90 nap retention)</td><td>Adatvédelem bővítés</td></tr>
+      <tr><td>Biztosítás-disclaimer</td><td>„A Kinti nem biztosítás-közvetítő" — világos disclaimer</td><td>Szolgáltató-váltó + biztosítás modul</td></tr>
+      <tr><td>Hitel-disclaimer</td><td>„A Kinti nem ad pénzügyi tanácsot" — minden hitel-CTA-n</td><td>Jelzálog-kalkulátor + hitel-CTA</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ───────── IMPLEMENTÁCIÓS ÜTEMTERV ───────── -->
+  <h2>8. Implementációs ütemterv</h2>
+
+  <table>
+    <thead>
+      <tr><th>Hét</th><th>Mit csinálunk</th><th>Output</th><th>Becsült bevétel-hatás</th></tr>
+    </thead>
+    <tbody>
+      <tr class="priority-1"><td><strong>1–2</strong></td><td>Wise + Revolut affiliate regisztráció; fintech partner-kártya komponens; utalás-asszisztens bővítés</td><td>Első affiliate linkek élesben</td><td>+€2k/év (azonnal indul)</td></tr>
+      <tr class="priority-1"><td><strong>3–4</strong></td><td>Affiliate tracking infrastruktúra (D1 tábla, API, admin tab); DSA-jelölés komponens</td><td>Tracking rendszer él</td><td>— (alap-infra)</td></tr>
+      <tr class="priority-1"><td><strong>5–8</strong></td><td>Biztosítás-partnerségi regisztrációk (Comparis, Check24, Durchblicker); InsuranceCTA komponens; szolgáltató-váltó bővítés</td><td>Biztosítás-affiliate él 4+ országban</td><td>+€10–50k/év</td></tr>
+      <tr class="priority-2"><td><strong>9–10</strong></td><td>Költöztetés lead-gen modul (form + API + partner-keresés)</td><td>Költöztetés ajánlatkérő él</td><td>+€3–10k/év</td></tr>
+      <tr class="priority-2"><td><strong>11–12</strong></td><td>Amazon Associates regisztráció (DE/AT/ES/GB); termékkártyák a checklist-ekbe és útmutatókba</td><td>Amazon linkek 50+ helyen</td><td>+€0.5–2k/év</td></tr>
+      <tr class="priority-3"><td><strong>13–16</strong></td><td>Jelzálog-kalkulátor modul; hitel-partner regisztrációk (Interhyp, Hypoguide); ÁSZF-frissítés</td><td>Hitel-affiliate él</td><td>+€2–10k/év</td></tr>
+      <tr><td><strong>17+</strong></td><td>Optimalizálás: A/B tesztek CTA-helyezésre, szezonális push-kampányok (Krankenkasse szept–nov), partner-bővítés</td><td>Konverzió-optimalizálás</td><td>+20–40% emelkedés</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ───────── ÖSSZESÍTETT BEVÉTEL ───────── -->
+  <h2>9. Összesített bevétel-előrejelzés</h2>
+
+  <h3>9.1 Affiliate & lead-gen bevétel (önállóan)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Stream</th>
+        <th class="num">Y1 (2026)</th>
+        <th class="num">Y2 (2027)</th>
+        <th class="num">Y3 (2028)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>🏥 Biztosítás</td><td class="num">€9 600</td><td class="num">€57 600</td><td class="num">€108 000</td></tr>
+      <tr><td>💸 Pénzküldés (Wise/Revolut)</td><td class="num">€2 160</td><td class="num">€6 240</td><td class="num">€10 080</td></tr>
+      <tr><td>🚚 Költöztetés (lead-gen)</td><td class="num">€3 000</td><td class="num">€10 080</td><td class="num">€18 000</td></tr>
+      <tr><td>🏦 Hitel & jelzálog</td><td class="num">€1 800</td><td class="num">€10 800</td><td class="num">€24 000</td></tr>
+      <tr><td>📦 Amazon</td><td class="num">€67</td><td class="num">€480</td><td class="num">€1 944</td></tr>
+      <tr style="background: var(--surface-alt); font-weight: bold;">
+        <td>ÖSSZESEN (affiliate)</td>
+        <td class="num">€16 627</td>
+        <td class="num">€85 200</td>
+        <td class="num">€162 024</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>9.2 Teljes platform-bevétel (PRO + affiliate együtt)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Bevételi csoport</th>
+        <th class="num">Y1 (2026)</th>
+        <th class="num">Y2 (2027)</th>
+        <th class="num">Y3 (2028)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Kinti PRO (€19/hó × N user)</td><td class="num">€5 000</td><td class="num">€15 000</td><td class="num">€30 000</td></tr>
+      <tr><td>Szaknévsor PRO (€19/hó × N cég)</td><td class="num">€8 000</td><td class="num">€30 000</td><td class="num">€50 000</td></tr>
+      <tr><td>Kiemelt Állás (€49/db)</td><td class="num">€3 000</td><td class="num">€12 000</td><td class="num">€20 000</td></tr>
+      <tr><td><strong>Affiliate & lead-gen (ez a terv)</strong></td><td class="num"><strong>€16 627</strong></td><td class="num"><strong>€85 200</strong></td><td class="num"><strong>€162 024</strong></td></tr>
+      <tr style="background: linear-gradient(135deg, #f0f7f1, #e8f5e9); font-weight: bold; font-size: 15px;">
+        <td>TELJES BEVÉTEL</td>
+        <td class="num">€32 627</td>
+        <td class="num">€142 200</td>
+        <td class="num">€262 024</td>
+      </tr>
+      <tr style="font-weight: bold; color: var(--primary);">
+        <td>Költség (infra + jogi, saját idő nélkül)</td>
+        <td class="num">−€6 000</td>
+        <td class="num">−€15 000</td>
+        <td class="num">−€25 000</td>
+      </tr>
+      <tr style="background: var(--surface-alt); font-weight: bold; font-size: 16px; color: var(--primary);">
+        <td>NETTÓ PROFIT</td>
+        <td class="num">€26 627</td>
+        <td class="num">€127 200</td>
+        <td class="num">€237 024</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="revenue-highlight">
+    <div class="big-number">€390 851</div>
+    <div class="subtitle">3 éves kumulált nettó profit (Y1+Y2+Y3, saját idő nélkül, alap-szcenárió)</div>
+  </div>
+
+  <h3>9.3 A biztosítás-csatorna dominanciája</h3>
+  <p>A teljes affiliate bevétel <strong>60–70%-a</strong> a biztosítás-csatornából jön. Ez nem véletlen: a biztosítás a legdrágább per-lead termék (€80–400), és a Kinti user éppen az a pillanatban keresi, amikor a Szolgáltató-váltót vagy a Bérkalkulátort használja. <strong>Ha egyetlen dolgot csinálsz ebből a tervből, az a biztosítás-affiliate legyen.</strong></p>
+
+  <!-- ───────── KOCKÁZATOK ───────── -->
+  <h2>10. Kockázatok és mitigáció</h2>
+
+  <table>
+    <thead>
+      <tr><th>Kockázat</th><th>Hatás</th><th>Mitigáció</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Partner elutasítja az affiliate-regisztrációt (alacsony traffic)</td>
+        <td>Közepes</td>
+        <td>Kisebb / niche partnerekkel indulni; traffic-adatok bemutatása; regionális partnerek (nem csak a nagyok)</td>
+      </tr>
+      <tr>
+        <td>Affiliate program feltételek változnak (jutalék-csökkentés)</td>
+        <td>Közepes</td>
+        <td>Multi-partner stratégia (ne függj 1 partnertől); lead-gen modellre váltás (fix lead-díj)</td>
+      </tr>
+      <tr>
+        <td>Jogi probléma (biztosítás-/hitel-közvetítés vádja)</td>
+        <td>Magas</td>
+        <td>ÁSZF disclaimer; soha nem „ajánlani" — csak „összehasonlító partnerhez irányítani"; jogi audit Y1-ben</td>
+      </tr>
+      <tr>
+        <td>UX romlik a túl sok affiliate-tartalomtól</td>
+        <td>Magas</td>
+        <td>Max 1 affiliate CTA / képernyő; A/B teszt; user-feedback monitorozás; NPS-figyelés</td>
+      </tr>
+      <tr>
+        <td>User bizalomvesztés („reklámokkal van tele")</td>
+        <td>Magas</td>
+        <td>Transzparens jelölés; releváns ajánlatok (nem random banner); „Miért ajánljuk" tooltip</td>
+      </tr>
+      <tr>
+        <td>GDPR-kockázat (tracking-adatok)</td>
+        <td>Közepes</td>
+        <td>IP-hash (nem személyes adat); 90 nap retention; cookie-mentes tracking; Cloudflare Web Analytics</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ───────── NEXT STEPS ───────── -->
+  <h2>11. Konkrét első 30 nap</h2>
+
+  <table>
+    <thead>
+      <tr><th>Nap</th><th>Feladat</th><th>Eredmény</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1–3</td><td>Wise Affiliate regisztráció + Revolut Impact Radius regisztráció</td><td>Affiliate linkek kézben</td></tr>
+      <tr><td>4–7</td><td>Affiliate tracking D1 tábla + API endpoint + fintech-partner-card.tsx komponens</td><td>Tracking-infrastruktúra kész</td></tr>
+      <tr><td>8–10</td><td>Wise/Revolut kártyák beépítése az Utalás-asszisztensbe + árfolyam-widgetbe</td><td>Első affiliate bevétel indulhat</td></tr>
+      <tr><td>11–15</td><td>Comparis.ch affiliate regisztráció + Check24.de affiliate regisztráció</td><td>Biztosítás-partnerek előkészítve</td></tr>
+      <tr><td>16–20</td><td>InsuranceCTA komponens + Szolgáltató-váltó biztosítás aloldal</td><td>Biztosítás-affiliate él (CH + DE)</td></tr>
+      <tr><td>21–25</td><td>Amazon Associates regisztráció (DE) + AmazonProductCard komponens + 10 termékkártya a checklistekbe</td><td>Amazon-affiliate él</td></tr>
+      <tr><td>26–30</td><td>ÁSZF frissítés (affiliate pont) + Adatkezelési tájékoztató bővítés + DSA-jelölés audit</td><td>Jogi compliance kész</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout ok">
+    <strong>📌 30 nap után:</strong> 3 affiliate csatorna élesben (Wise/Revolut, biztosítás CH+DE, Amazon DE), tracking-rendszer működik, jogi compliance rendben. A bevétel azonnal indulhat — a biztosítás-szezon (szept–nov) a legnagyobb lehetőség, ezért érdemes <strong>augusztusban</strong> elkezdeni.
+  </div>
+
+  <p class="footer-note">
+    Készítette: Kinti monetizációs tervezés · 2026. augusztus 3. · v1.0<br>
+    A bevételi becslések piaci benchmark-adatokra és affiliate-program nyilvános feltételeire épülnek. A tényleges bevétel a traffic-volumentől és a konverziós rátáktól függ.
+  </p>
+
+</div>
+</body>
+</html>

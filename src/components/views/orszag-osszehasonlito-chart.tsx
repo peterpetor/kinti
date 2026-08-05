@@ -98,7 +98,7 @@ export function OrszagOsszehasonlitoChart() {
       <div className="rounded-[14px] bg-surface-alt/70 px-3.5 py-3">
         <label htmlFor="cmp-slider" className="flex items-baseline justify-between gap-2">
           <span className="text-[12px] font-bold text-ink">Jövedelem-szint</span>
-          <span className="text-[13px] font-extrabold tabular-nums text-primary">
+          <span className="text-[13px] font-extrabold tabular-nums text-primary-ink">
             a helyi átlagbér {szazalek}%-a
           </span>
         </label>
@@ -167,7 +167,7 @@ export function OrszagOsszehasonlitoChart() {
           <Icon name={tablazat ? "trending" : "list"} size={13} strokeWidth={2.4} />
           {tablazat ? "Vissza a grafikonhoz" : "Táblázatos nézet"}
         </button>
-        <Link href="/hova-koltozzek" className="flex items-center gap-1 text-[11.5px] font-bold text-primary underline underline-offset-2">
+        <Link href="/hova-koltozzek" className="flex items-center gap-1 text-[11.5px] font-bold text-primary-ink underline underline-offset-2">
           Hová költözzek? <Icon name="chevR" size={12} strokeWidth={2.6} />
         </Link>
       </div>

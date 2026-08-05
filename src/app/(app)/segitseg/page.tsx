@@ -28,7 +28,7 @@ const FAQS: FaqItem[] = [
         <strong>Nem.</strong> A Kinti egyik fő ígérete, hogy nincs fiók és nincs
         email-kérés. Csak nyisd meg, és használd. Amikor feladsz egy eseményt,
         a böngésződ automatikusan megjegyzi a posztodat —
-        és bármikor megnyithatod a <Link href="/sajatjaim" className="text-primary underline font-bold">Saját posztjaim</Link> oldalon.
+        és bármikor megnyithatod a <Link href="/sajatjaim" className="text-primary-ink underline font-bold">Saját posztjaim</Link> oldalon.
       </>
     ),
   },
@@ -39,7 +39,7 @@ const FAQS: FaqItem[] = [
         Két út van:
         <ol className="ml-4 mt-1 list-decimal space-y-0.5">
           <li>
-            Nyisd meg a <Link href="/sajatjaim" className="text-primary underline font-bold">Saját posztjaim</Link> oldalt — ott találsz egy listát.
+            Nyisd meg a <Link href="/sajatjaim" className="text-primary-ink underline font-bold">Saját posztjaim</Link> oldalt — ott találsz egy listát.
           </li>
           <li>
             Vagy nyisd meg a <strong>kezelő-linket</strong>, amit beküldés után
@@ -114,7 +114,7 @@ const FAQS: FaqItem[] = [
         Csak amit te magad megadsz a posztodban (cím, leírás, telefon ha
         megadod). Email-címet nem kérünk, IP-címed csak{" "}
         spam-védelemhez kerül átmeneti hash-be (24 órán belül törlődik). A
-        részletek: <Link href="/adatvedelem" className="text-primary underline font-bold">Adatkezelési Tájékoztató</Link>.
+        részletek: <Link href="/adatvedelem" className="text-primary-ink underline font-bold">Adatkezelési Tájékoztató</Link>.
       </>
     ),
   },
@@ -124,11 +124,11 @@ const FAQS: FaqItem[] = [
       <>
         Minden poszton található <strong>„Jelentem"</strong> gomb — egy kattintás,
         és az admin értesül. Sürgős esetben írj az{" "}
-        <a href="mailto:abuse@kinti.app" className="text-primary underline font-bold">
+        <a href="mailto:abuse@kinti.app" className="text-primary-ink underline font-bold">
           abuse@kinti.app
         </a>{" "}
         címre. Egyéb kérdés:{" "}
-        <a href="mailto:info@kinti.app" className="text-primary underline font-bold">
+        <a href="mailto:info@kinti.app" className="text-primary-ink underline font-bold">
           info@kinti.app
         </a>
         .
@@ -213,7 +213,7 @@ export default function SegitsegPage() {
               className="group rounded-card border border-line bg-surface px-4 py-3 shadow-card transition open:bg-surface-alt"
             >
               <summary className="flex cursor-pointer items-start gap-2 text-[13.5px] font-extrabold text-ink list-none">
-                <span className="mt-0.5 text-primary text-[14px] transition group-open:rotate-90">▶</span>
+                <span className="mt-0.5 text-primary-ink text-[14px] transition group-open:rotate-90">▶</span>
                 <span className="min-w-0 flex-1">{item.q}</span>
               </summary>
               <div className="mt-2 pl-5 text-[12.5px] leading-relaxed text-ink-muted">
@@ -229,7 +229,7 @@ export default function SegitsegPage() {
         <p className="text-[13px] font-bold text-ink">Nem kaptál választ?</p>
         <p className="mt-1 text-[12px] text-ink-muted">
           Írj nekünk:{" "}
-          <a href="mailto:info@kinti.app" className="text-primary underline font-bold">
+          <a href="mailto:info@kinti.app" className="text-primary-ink underline font-bold">
             info@kinti.app
           </a>
         </p>

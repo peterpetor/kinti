@@ -169,7 +169,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
             className={cn(
               "p-4 rounded-2xl border-2 text-left font-bold text-[17px] transition-all relative flex items-center justify-between",
               !isAnswered && !isSelected && "border-border-subtle bg-surface hover:bg-surface-alt",
-              !isAnswered && isSelected && "border-primary bg-primary/5 text-primary",
+              !isAnswered && isSelected && "border-primary bg-primary/5 text-primary-ink",
               showCorrect && "border-success bg-success/10 text-success",
               showWrong && "border-accent bg-accent/10 text-accent animate-shake"
             )}
@@ -216,12 +216,12 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
         >
           <div 
             onClick={(e) => playAudio(question.backText || "", e)}
-            className="mb-4 grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-2xl shadow-pop"
+            className="mb-4 grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary-ink hover:bg-primary/20 transition-colors text-2xl shadow-pop"
             title="Kiejtés meghallgatása"
           >
             🔊
           </div>
-          <h2 className="text-3xl font-black text-primary text-center">{question.backText}</h2>
+          <h2 className="text-3xl font-black text-primary-ink text-center">{question.backText}</h2>
           {question.phonetic && (
             <p className="mt-4 text-lg font-bold text-ink/50 tracking-wider">[{question.phonetic}]</p>
           )}
@@ -286,7 +286,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
                   "p-3 rounded-xl border-2 text-[14px] font-bold transition-all text-center h-[60px] flex items-center justify-center",
                   isMatched ? "opacity-0 invisible" : "",
                   !isSelected && "border-border-subtle bg-surface",
-                  isSelected && "border-primary bg-primary/10 text-primary"
+                  isSelected && "border-primary bg-primary/10 text-primary-ink"
                 )}
               >
                 {l.text}

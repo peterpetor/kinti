@@ -176,7 +176,7 @@ export function LeadRequestForm({ categories, initialCategoryId, initialCantonCo
             setCategoryId(""); setCantonCode("all"); setMessage("");
             setSentCount(0); setExtraCount(0);
           }}
-          className="text-[13px] font-bold text-primary hover:underline"
+          className="text-[13px] font-bold text-primary-ink hover:underline"
         >
           Új árajánlat-kérés küldése
         </button>

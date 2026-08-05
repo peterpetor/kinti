@@ -68,7 +68,7 @@ export function B2bComposer({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-card border-2 border-dashed border-primary/30 bg-primary-soft/30 px-4 py-3.5 text-[14px] font-bold text-primary transition active:scale-[0.99]"
+        className="flex w-full items-center justify-center gap-2 rounded-card border-2 border-dashed border-primary/30 bg-primary-soft/30 px-4 py-3.5 text-[14px] font-bold text-primary-ink transition active:scale-[0.99]"
       >
         <Icon name="plus" size={17} strokeWidth={2.6} />
         Új projekt kiírása

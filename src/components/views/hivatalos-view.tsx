@@ -51,7 +51,7 @@ export function HivatalosView() {
           <div className="mt-2 flex flex-wrap gap-1.5">
             {consulate.extra.map((e) => (
               <a key={e.url} href={e.url} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded-pill border border-primary/20 bg-surface px-2.5 py-1 text-[11.5px] font-bold text-primary">
+                className="inline-flex items-center gap-1 rounded-pill border border-primary/20 bg-surface px-2.5 py-1 text-[11.5px] font-bold text-primary-ink">
                 {e.name} ↗
               </a>
             ))}
@@ -96,7 +96,7 @@ export function HivatalosView() {
               <div className="min-w-0 flex-1">
                 <p className="text-[14px] font-extrabold tracking-[-0.01em] text-ink">{l.trigger}</p>
                 <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">{l.explain}</p>
-                <p className="mt-1 inline-flex items-center gap-1 text-[11.5px] font-bold text-primary">
+                <p className="mt-1 inline-flex items-center gap-1 text-[11.5px] font-bold text-primary-ink">
                   Itt intézheted: {l.source} ↗
                 </p>
               </div>

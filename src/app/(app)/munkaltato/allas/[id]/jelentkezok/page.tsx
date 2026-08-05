@@ -62,11 +62,11 @@ export default async function JobApplicantsPage({ params }: { params: { id: stri
               </div>
 
               <div className="mt-2 space-y-1.5">
-                <a href={`mailto:${app.email}`} className="flex items-center gap-2 text-[13px] font-semibold text-primary hover:underline">
+                <a href={`mailto:${app.email}`} className="flex items-center gap-2 text-[13px] font-semibold text-primary-ink hover:underline">
                   <Icon name="send" size={14} strokeWidth={2.2} /> {app.email}
                 </a>
                 {app.phone && (
-                  <a href={`tel:${app.phone}`} className="flex items-center gap-2 text-[13px] font-semibold text-primary hover:underline">
+                  <a href={`tel:${app.phone}`} className="flex items-center gap-2 text-[13px] font-semibold text-primary-ink hover:underline">
                     <Icon name="phone" size={14} strokeWidth={2.2} /> {app.phone}
                   </a>
                 )}
@@ -83,7 +83,7 @@ export default async function JobApplicantsPage({ params }: { params: { id: stri
                   href={`/api/employer/application-cv/${app.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-pill border border-primary/30 bg-primary-soft px-3 py-1.5 text-[12.5px] font-bold text-primary active:scale-95"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-pill border border-primary/30 bg-primary-soft px-3 py-1.5 text-[12.5px] font-bold text-primary-ink active:scale-95"
                 >
                   <Icon name="document" size={14} strokeWidth={2.2} /> Önéletrajz (CV) letöltése
                 </a>

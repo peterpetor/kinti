@@ -34,7 +34,7 @@ export function GuideList({ indexByCountry }: { indexByCountry: Record<string, G
             href={`/tudasbazis/${g.slug}`}
             className="flex items-start gap-3 rounded-card border border-line bg-surface p-4 shadow-card transition active:scale-[0.99]"
           >
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-primary">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-primary-ink">
               <Icon name={g.icon} size={19} strokeWidth={2.3} />
             </span>
             <span className="min-w-0 flex-1">

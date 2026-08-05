@@ -76,7 +76,7 @@ export function CountrySelectSheet({ open, onClose }: { open: boolean; onClose: 
             >
               <CountryFlag code={c.code} className="h-[18px] w-[26px]" />
               <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-ink">{c.name}</span>
-              {active && <Icon name="check" size={15} strokeWidth={3} className="shrink-0 text-primary" />}
+              {active && <Icon name="check" size={15} strokeWidth={3} className="shrink-0 text-primary-ink" />}
               {!c.enabled && !active && (
                 <span className="absolute right-1.5 top-1.5 rounded-full bg-ink/10 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wide text-ink-muted">
                   soon

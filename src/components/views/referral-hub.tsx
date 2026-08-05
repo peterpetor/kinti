@@ -94,7 +94,7 @@ export function ReferralHub() {
         <button type="button" onClick={copy} className="flex w-full items-center gap-2 rounded-pill border border-line bg-surface-alt px-3 py-2.5 text-left">
           <Icon name="globe" size={14} className="shrink-0 text-ink-muted" />
           <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold text-ink">{url.replace("https://", "")}</span>
-          <span className="shrink-0 text-[11px] font-bold text-primary">{copied ? "Másolva ✓" : "Másol"}</span>
+          <span className="shrink-0 text-[11px] font-bold text-primary-ink">{copied ? "Másolva ✓" : "Másol"}</span>
         </button>
         <button type="button" onClick={share} className="w-full rounded-pill bg-accent py-3 text-[14px] font-black text-white shadow-card transition active:scale-[0.98]">
           🔗 Megosztom egy magyarral

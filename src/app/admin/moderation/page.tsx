@@ -149,7 +149,7 @@ export default async function ModerationPage({
               href={`/admin/moderation?status=${statusParam}&type=${t}&c=${country}`}
               className={`inline-flex items-center gap-1.5 rounded-pill border px-3 py-1.5 text-[11.5px] font-bold transition ${
                 typeParam === t
-                  ? "border-primary bg-primary-soft text-primary"
+                  ? "border-primary bg-primary-soft text-primary-ink"
                   : "border-line bg-surface text-ink-muted hover:bg-surface-alt"
               }`}
             >
@@ -273,7 +273,7 @@ export default async function ModerationPage({
                     <Link
                       href={previewLink(typeParam, it.id)}
                       target="_blank"
-                      className="text-[11.5px] font-bold text-ink-muted hover:text-primary"
+                      className="text-[11.5px] font-bold text-ink-muted hover:text-primary-ink"
                     >
                       ↗ Megnyitás új tab-ban
                     </Link>

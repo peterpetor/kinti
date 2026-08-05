@@ -18,7 +18,7 @@ const ACTION_LABEL: Record<string, ActionStyle> = {
   approve: { label: "Jóváhagyás", cls: "bg-success/15 text-success", dot: "bg-success", icon: "✓" },
   reject: { label: "Elutasítás", cls: "bg-accent/15 text-accent", dot: "bg-accent", icon: "✕" },
   block: { label: "Tiltás", cls: "bg-accent/20 text-accent", dot: "bg-accent", icon: "⛔" },
-  verify: { label: "Ellenőrzés", cls: "bg-primary/15 text-primary", dot: "bg-primary", icon: "✦" },
+  verify: { label: "Ellenőrzés", cls: "bg-primary/15 text-primary-ink", dot: "bg-primary", icon: "✦" },
   delete: { label: "Törlés", cls: "bg-ink-muted/15 text-ink-muted", dot: "bg-ink-faint", icon: "🗑" },
 };
 
@@ -109,7 +109,7 @@ export default async function AuditLogPage() {
           <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
             Tiltás
           </div>
-          <div className="text-2xl font-black text-primary">{stats.blocks24h}</div>
+          <div className="text-2xl font-black text-primary-ink">{stats.blocks24h}</div>
         </div>
       </div>
 

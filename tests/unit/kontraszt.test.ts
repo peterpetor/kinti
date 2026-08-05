@@ -49,6 +49,9 @@ function arany(elo: RGB, hatter: RGB): number {
   return (vil + 0.05) / (sot + 0.05);
 }
 
+const SORTORES = String.fromCharCode(10);
+const NYERS_PRIMARY = new RegExp("\btext-primary\b(?![-/])");
+
 /** WCAG AA normál szövegre. */
 const AA = 4.5;
 
@@ -92,6 +95,25 @@ describe.each([
       expect(a, `--pro-ink a ${fnev} felületen: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
     }
   });
+
+  it("a márka-zöld SZÖVEGKÉNT olvasható (`--primary-ink`) — a `--primary-soft`-on is", () => {
+    // ⚠️ A `--primary-soft` külön eset: a `bg-primary-soft text-primary-ink`
+    // párosítás végigmegy az appon (kategória-címkék, jelvények). Ha csak a
+    // semleges felületeken mérnénk, ez a leggyakoribb páros maradna ki.
+    const fg = token(blokk, "primary-ink");
+    const hatterek: [string, RGB][] = [...feluletek, ["primary-soft", token(blokk, "primary-soft")]];
+    for (const [fnev, bg] of hatterek) {
+      const a = arany(fg, bg);
+      expect(a, `--primary-ink a ${fnev} felületen: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
+    }
+  });
+
+  it("a `--primary` HÁTTÉRKÉNT is működik: a fehér felirat olvasható rajta", () => {
+    // Ez a másik fele annak, amiért két token kell. Ha valaki a `--primary`-t a
+    // szöveg-igényhez világosítaná, ez a teszt bukna el.
+    const a = arany([255, 255, 255], token(blokk, "primary"));
+    expect(a, `fehér a --primary háttéren: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
+  });
 });
 
 describe("PRO-arany — nincs visszacsúszás", () => {
@@ -110,6 +132,19 @@ describe("PRO-arany — nincs visszacsúszás", () => {
       });
     }
     expect(vetkesek, `használd a \`text-on-pro\`-t: ${vetkesek.join(", ")}`).toEqual([]);
+  });
+
+  it("⚠️ nincs nyers `text-primary` (sötét témán 3,57:1) — `text-primary-ink` a helyes", () => {
+    const vetkesek: string[] = [];
+    for (const f of fajlok) {
+      const sorok = readFileSync(resolve(__dirname, "../..", f), "utf8").split(SORTORES);
+      sorok.forEach((sor, i) => {
+        // A `text-primary-soft`, `text-primary-dark` és `text-primary/40` NEM
+        // érintett — a negatív lookahead pont ezekre való.
+        if (NYERS_PRIMARY.test(sor)) vetkesek.push(`${f}:${i + 1}`);
+      });
+    }
+    expect(vetkesek, `használd a \`text-primary-ink\`-et: ${vetkesek.slice(0, 8).join(", ")}`).toEqual([]);
   });
 
   it("⚠️ nincs nyers `text-pro` (világos lapon 2,18:1) — `text-pro-ink` a helyes", () => {

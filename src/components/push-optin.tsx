@@ -219,7 +219,7 @@ function Bell({ active = false }: { active?: boolean }) {
     <span
       className={cn(
         "grid h-9 w-9 shrink-0 place-items-center rounded-[12px]",
-        active ? "bg-primary text-white" : "bg-primary-soft text-primary",
+        active ? "bg-primary text-white" : "bg-primary-soft text-primary-ink",
       )}
     >
       <Icon name="bell" size={17} strokeWidth={2.2} />

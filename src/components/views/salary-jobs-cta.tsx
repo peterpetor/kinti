@@ -97,7 +97,7 @@ export function SalaryJobsCta({ country, grossMonthly }: { country: string; gros
       <Link
         href="/allasok"
         onClick={() => trackAction("salary-jobs-click")}
-        className="mt-2.5 block text-center text-[12px] font-bold text-primary"
+        className="mt-2.5 block text-center text-[12px] font-bold text-primary-ink"
       >
         Összes állás böngészése →
       </Link>

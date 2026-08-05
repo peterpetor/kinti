@@ -111,7 +111,7 @@ export default async function StoryPage({ params }: { params: Params }) {
       )}
 
       <nav className="flex items-center gap-1.5 text-[11.5px] font-semibold text-ink-muted" aria-label="Útvonal">
-        <Link href="/tortenetek" className="hover:text-primary">Élettörténetek</Link>
+        <Link href="/tortenetek" className="hover:text-primary-ink">Élettörténetek</Link>
         <Icon name="chevR" size={11} className="text-ink-faint" />
         <span className="truncate text-ink">{story.title}</span>
       </nav>
@@ -158,7 +158,7 @@ export default async function StoryPage({ params }: { params: Params }) {
           <span className="block text-[14px] font-extrabold tracking-[-0.01em] text-ink">Neked is van sztorid?</span>
           <span className="block text-[11.5px] text-ink-muted">Írd meg — másoknak most jelenthet sokat, amin te már túl vagy.</span>
         </span>
-        <Icon name="chevR" size={16} strokeWidth={2.4} className="text-primary" />
+        <Icon name="chevR" size={16} strokeWidth={2.4} className="text-primary-ink" />
       </Link>
 
       {others.length > 0 && (

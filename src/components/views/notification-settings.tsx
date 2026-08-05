@@ -121,7 +121,7 @@ export function NotificationSettings() {
       {/* Kanton-értesítések */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card">
         <div className="mb-1 flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary/10 text-primary">
+          <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary/10 text-primary-ink">
             <Icon name="bell" size={16} strokeWidth={2.2} />
           </span>
           <h2 className="text-[15px] font-extrabold tracking-tight text-ink">Régió-értesítések</h2>

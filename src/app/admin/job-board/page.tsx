@@ -155,7 +155,7 @@ export default async function JobBoardAdminPage({
               href={`/admin/job-board?status=${statusParam}&tab=${t}&c=${country}`}
               className={`inline-flex items-center gap-1.5 rounded-pill border px-4 py-1.5 text-[11.5px] font-bold transition ${
                 tab === t
-                  ? "border-primary bg-primary-soft text-primary"
+                  ? "border-primary bg-primary-soft text-primary-ink"
                   : "border-line bg-surface text-ink-muted hover:bg-surface-alt"
               }`}
             >
@@ -212,7 +212,7 @@ export default async function JobBoardAdminPage({
                                 href={emp.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-primary hover:underline"
+                                className="text-primary-ink hover:underline"
                               >
                                 {emp.website}
                               </a>
@@ -269,7 +269,7 @@ export default async function JobBoardAdminPage({
                           <Link
                             href={`/allasok/${job.id}`}
                             target="_blank"
-                            className="text-[11px] font-bold text-primary hover:underline"
+                            className="text-[11px] font-bold text-primary-ink hover:underline"
                           >
                             ↗ Előnézet
                           </Link>

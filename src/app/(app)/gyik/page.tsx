@@ -63,7 +63,7 @@ export default function GyikIndexPage() {
 
       <p className="text-[12px] leading-relaxed text-ink-muted">
         Nem találod a kérdésed? Böngéssz a{" "}
-        <Link href="/tudasbazis" className="font-bold text-primary underline">Tudásbázis</Link>{" "}
+        <Link href="/tudasbazis" className="font-bold text-primary-ink underline">Tudásbázis</Link>{" "}
         81 útmutatója között, vagy kérdezd a kezdőlapi asszisztenst.
       </p>
     </div>

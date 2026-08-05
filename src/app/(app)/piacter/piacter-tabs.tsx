@@ -241,7 +241,7 @@ export function PiacterTabs({
               href={l.href}
               className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
             >
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary"><Icon name={l.icon} size={17} strokeWidth={2.1} /></span>
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary-ink"><Icon name={l.icon} size={17} strokeWidth={2.1} /></span>
               <span className="min-w-0 flex-1">
                 <span className="block text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">{l.title}</span>
                 <span className="block text-[11.5px] leading-snug text-ink-muted">{l.subtitle}</span>
@@ -253,7 +253,7 @@ export function PiacterTabs({
           {/* Kurált tanácsok — lenyitható, hogy ne nyomja el a cselekvés-kártyákat. */}
           <details className="group rounded-card border border-line bg-surface-alt/60 p-3">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-[12.5px] font-extrabold text-ink [&::-webkit-details-marker]:hidden">
-              <Icon name="lightbulb" size={14} strokeWidth={2.2} className="shrink-0 text-primary" /> Költözés okosan — a legfontosabb tudnivalók
+              <Icon name="lightbulb" size={14} strokeWidth={2.2} className="shrink-0 text-primary-ink" /> Költözés okosan — a legfontosabb tudnivalók
               <Icon name="chevD" size={14} strokeWidth={2.4} className="ml-auto shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
             </summary>
             <ul className="mt-2 space-y-1.5">
@@ -271,7 +271,7 @@ export function PiacterTabs({
                   <span className="shrink-0" aria-hidden>•</span>
                   <span>
                     {countryName} EU-n kívül van, ezért a holmid vámkezelést igényelhet —{" "}
-                    <Link href="/tudasbazis/vam" className="font-bold text-primary underline">nézd meg a vám-kalauzt</Link>.
+                    <Link href="/tudasbazis/vam" className="font-bold text-primary-ink underline">nézd meg a vám-kalauzt</Link>.
                   </span>
                 </li>
               )}

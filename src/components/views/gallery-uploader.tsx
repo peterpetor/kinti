@@ -205,7 +205,7 @@ export function GalleryUploader({ currentKeys, manageToken }: GalleryUploaderPro
             (busy || currentKeys.length >= 10) && "opacity-60 cursor-not-allowed"
           )}
         >
-          <Icon name="plus" size={14} strokeWidth={2.4} className="text-primary" />
+          <Icon name="plus" size={14} strokeWidth={2.4} className="text-primary-ink" />
           Fájl hozzáadása
         </button>
       </div>

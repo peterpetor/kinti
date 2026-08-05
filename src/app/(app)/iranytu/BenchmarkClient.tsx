@@ -178,7 +178,7 @@ function SalaryStandingInsight({ cantonCode, industry, salary, country }: { cant
 
   return (
     <div className="mt-2.5 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5">
-      <p className="text-[12.5px] font-bold text-primary leading-snug">
+      <p className="text-[12.5px] font-bold text-primary-ink leading-snug">
         {highEarner ? `📈 A béred a felső ${topPct}%-ban van` : "📊 Hol állsz a mezőnyben"} · {industry}, {cantonName}
       </p>
       <p className="mt-0.5 text-[11px] text-ink-muted leading-snug">
@@ -222,7 +222,7 @@ function RentStandingInsight({ cantonCode, rooms, rent, country }: { cantonCode:
 
   return (
     <div className="mt-2.5 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5">
-      <p className="text-[12.5px] font-bold text-primary leading-snug">
+      <p className="text-[12.5px] font-bold text-primary-ink leading-snug">
         {goodDeal ? "🏠 Kedvező lakbér" : "🏠 Hol állsz a lakbér-mezőnyben"} · {rooms} szoba, {cantonName}
       </p>
       <p className="mt-0.5 text-[11px] text-ink-muted leading-snug">
@@ -268,8 +268,8 @@ function MyDataCard({ tab, myData, onEdit, country }: { tab: Tab; myData: MyData
 
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-[11px] font-black uppercase tracking-wide text-primary">Saját adatom</p>
-          <button onClick={onEdit} className="flex items-center gap-1.5 text-[12px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg hover:opacity-70 transition">✏️ Szerkesztés</button>
+          <p className="text-[11px] font-black uppercase tracking-wide text-primary-ink">Saját adatom</p>
+          <button onClick={onEdit} className="flex items-center gap-1.5 text-[12px] font-bold text-primary-ink bg-primary/10 px-2.5 py-1 rounded-lg hover:opacity-70 transition">✏️ Szerkesztés</button>
         </div>
         {tab === "salary" && s && <div className="space-y-0.5 text-[13px] text-ink">
           <p><span className="text-ink-muted">{regionLabel}:</span> {benchRegionName(country, s.cantonCode)} · <span className="text-ink-muted">Iparág:</span> {s.industry}</p>
@@ -321,7 +321,7 @@ function RentCard({ stat, cur }: { stat: RentStatsRow; cur: string }) {
     <div className="rounded-2xl border border-line bg-surface p-4 hover:border-primary/40 transition-colors">
       <div className="flex items-start justify-between gap-2 mb-2">
         <p className="font-bold text-[14px] text-ink">{stat.rooms} szobás lakás</p>
-        <span className="shrink-0 text-[11px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">{stat.entry_count} adat</span>
+        <span className="shrink-0 text-[11px] font-bold bg-primary/10 text-primary-ink px-2 py-0.5 rounded-full">{stat.entry_count} adat</span>
       </div>
       {/* Medián (kiemelt — reprezentatívabb) */}
       <p className="text-[22px] font-extrabold text-ink">{stat.median_rent.toLocaleString("hu-HU")} <span className="text-[13px] font-normal text-ink-muted">{cur}/hó</span></p>
@@ -428,7 +428,7 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
       <div className="flex border-b border-line">
         {(["salary", "rent"] as Tab[]).map(t => (
           <button key={t} onClick={() => { setTab(t); setEditingTab(null); }}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-[14px] font-bold transition-colors ${tab === t ? "text-primary border-b-2 border-primary bg-primary/5" : "text-ink-muted hover:text-ink"}`}>
+            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-[14px] font-bold transition-colors ${tab === t ? "text-primary-ink border-b-2 border-primary bg-primary/5" : "text-ink-muted hover:text-ink"}`}>
             {t === "salary" ? "💰 Bérek" : "🏠 Lakbérek"}
             {lock[t] && <span className="text-[11px] bg-surface-alt text-ink-faint px-1.5 py-0.5 rounded-full font-normal">🔒</span>}
           </button>

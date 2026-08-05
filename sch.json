@@ -1,0 +1,30 @@
+[
+  {
+    "results": [
+      {
+        "sql": "CREATE TABLE feature_usage_daily (\n  day   TEXT    NOT NULL,            \n  event TEXT    NOT NULL,            \n  count INTEGER NOT NULL DEFAULT 0,\n  PRIMARY KEY (day, event)\n)"
+      },
+      {
+        "sql": "CREATE TABLE business_corrections (\n  id            TEXT PRIMARY KEY,\n  business_id   TEXT NOT NULL,\n  -- Melyik mezőre vonatkozik: phone | address | website | email | hours | closed | other\n  field         TEXT NOT NULL,\n  -- A javasolt helyes érték (a „closed\" jelzésnél üres lehet).\n  suggestion    TEXT,\n  -- Szabad szöveges megjegyzés.\n  note          TEXT,\n  -- open | applied | rejected\n  status        TEXT NOT NULL DEFAULT 'open',\n  reporter_ip_hash TEXT,\n  created_at    TEXT NOT NULL DEFAULT (datetime('now')),\n  resolved_at   TEXT,\n  resolved_by   TEXT\n)"
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "EEUR",
+      "served_by_colo": "FRA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.2917
+      },
+      "duration": 0.2917,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 10489856,
+      "rows_read": 273,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]

@@ -75,7 +75,7 @@ export function ReviewRequestCard({
       )}
     >
       <div className="flex items-start gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary-ink">
           <Icon name="star" size={19} strokeWidth={2.2} />
         </span>
         <div className="min-w-0 flex-1">

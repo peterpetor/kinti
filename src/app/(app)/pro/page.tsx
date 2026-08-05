@@ -412,7 +412,7 @@ export default function ProPage() {
           <KintiLogo size={42} />
         </Link>
         <h1 className="text-[28px] font-black text-ink tracking-tight mb-4">
-          {t.h1a}<span className="text-primary">Kinti PRO</span>{t.h1b}
+          {t.h1a}<span className="text-primary-ink">Kinti PRO</span>{t.h1b}
         </h1>
         <p className="text-[15px] text-ink-muted text-balance">
           {t.intro(COUNTRY_IN[lang][country] ?? COUNTRY_IN[lang].CH)}
@@ -441,7 +441,7 @@ export default function ProPage() {
         <div className="space-y-2.5 text-[12.5px] leading-snug">
           <div className="flex items-start gap-2.5">
             <span className="mt-1 h-3 w-3 shrink-0 rounded-full bg-primary" />
-            <span className="text-ink"><strong className="text-primary">{t.planUser}</strong> — {t.planUserDesc}</span>
+            <span className="text-ink"><strong className="text-primary-ink">{t.planUser}</strong> — {t.planUserDesc}</span>
           </div>
           <div className="flex items-start gap-2.5">
             <span className="mt-1 h-3 w-3 shrink-0 rounded-full bg-pro" />
@@ -459,10 +459,10 @@ export default function ProPage() {
 
         {/* Kinti PRO (Users) */}
         <div className="flex flex-col rounded-[32px] border-2 border-line bg-surface p-6 shadow-card hover:border-primary/30 transition-colors relative">
-          <div className="mb-3 inline-flex items-center justify-center rounded-full bg-primary/10 w-14 h-14 text-primary text-2xl">
+          <div className="mb-3 inline-flex items-center justify-center rounded-full bg-primary/10 w-14 h-14 text-primary-ink text-2xl">
             🎓
           </div>
-          <span className="mb-2 inline-flex w-fit items-center gap-1 rounded-pill bg-primary/10 px-2.5 py-1 text-[10.5px] font-black uppercase tracking-wide text-primary">
+          <span className="mb-2 inline-flex w-fit items-center gap-1 rounded-pill bg-primary/10 px-2.5 py-1 text-[10.5px] font-black uppercase tracking-wide text-primary-ink">
             {t.userBadge}
           </span>
           <div className="flex items-center gap-2">
@@ -491,7 +491,7 @@ export default function ProPage() {
           </ul>
 
           {kintiProActive ? (
-            <div className="w-full rounded-pill bg-primary/10 py-3.5 text-center text-[15px] font-black text-primary">
+            <div className="w-full rounded-pill bg-primary/10 py-3.5 text-center text-[15px] font-black text-primary-ink">
               {t.activeSub}
             </div>
           ) : !canPurchase ? (

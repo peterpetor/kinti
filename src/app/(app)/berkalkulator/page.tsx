@@ -76,7 +76,7 @@ export default function SalaryCalculatorPage() {
           itt kapja a részletes, ország-specifikus kalkulátort. */}
       <details className="group rounded-card border border-line bg-surface p-4 shadow-card">
         <summary className="flex cursor-pointer list-none items-center gap-2 text-[14px] font-bold text-ink [&::-webkit-details-marker]:hidden">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-primary">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-primary-ink">
             <Icon name="sliders" size={15} strokeWidth={2.4} />
           </span>
           <span className="min-w-0 flex-1">

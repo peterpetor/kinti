@@ -83,7 +83,7 @@ export default async function StoriesPage() {
                     </div>
                     <h2 className="text-[16px] font-extrabold leading-snug tracking-[-0.01em] text-ink">{s.title}</h2>
                     {s.summary && <p className="mt-1 line-clamp-2 text-[12.5px] leading-snug text-ink-muted">{s.summary}</p>}
-                    <p className="mt-1.5 text-[12px] font-semibold text-primary">{s.authorName} története →</p>
+                    <p className="mt-1.5 text-[12px] font-semibold text-primary-ink">{s.authorName} története →</p>
                   </div>
                 </Link>
               </article>

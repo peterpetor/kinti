@@ -225,12 +225,12 @@ export function PermitWizardClient() {
                 {isCEligible ? (
                   <span className="text-success">{cfg.resDoneMsg}</span>
                 ) : (
-                  <span className="text-primary">Még {(100 - progressToC).toFixed(1)}% van hátra az {cfg.residenceYears} évből.</span>
+                  <span className="text-primary-ink">Még {(100 - progressToC).toFixed(1)}% van hátra az {cfg.residenceYears} évből.</span>
                 )}
               </div>
             </div>
             <div className="bg-primary/5 border border-primary/15 rounded-xl p-4 text-sm space-y-2">
-              <p className="font-semibold text-primary">Mik a feltételei?</p>
+              <p className="font-semibold text-primary-ink">Mik a feltételei?</p>
               <ul className="list-disc pl-5 text-ink-muted space-y-1.5">
                 {cfg.resConds.map((c, i) => <li key={i}>{c}</li>)}
               </ul>

@@ -92,7 +92,7 @@ export default function OsszehasonlitasPage() {
             href={`#${c.id}`}
             className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-[12px] font-bold text-ink transition active:scale-95"
           >
-            <Icon name={c.icon} size={13} strokeWidth={2.4} className="text-primary" />
+            <Icon name={c.icon} size={13} strokeWidth={2.4} className="text-primary-ink" />
             {c.caption.split(" — ")[0]}
           </a>
         ))}

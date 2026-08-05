@@ -160,7 +160,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
 
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-[11.5px] font-semibold text-ink-muted" aria-label="Útvonal">
-        <Link href="/szaknevsor" className="hover:text-primary">Szaknévsor</Link>
+        <Link href="/szaknevsor" className="hover:text-primary-ink">Szaknévsor</Link>
         <Icon name="chevR" size={11} className="text-ink-faint" />
         <span className="text-ink">{category.label}</span>
         <Icon name="chevR" size={11} className="text-ink-faint" />
@@ -237,7 +237,7 @@ export default async function MagyarLanding({ params }: { params: Params }) {
             Jóváhagyás után megjelenik a listában
           </span>
         </span>
-        <Icon name="chevR" size={16} strokeWidth={2.4} className="text-primary" />
+        <Icon name="chevR" size={16} strokeWidth={2.4} className="text-primary-ink" />
       </Link>
 
       {/* Kapcsolódó területek ugyanebben a kategóriában (csak ahol van találat) */}

@@ -156,7 +156,7 @@ export function SalaryCalculatorAT() {
           <span className="absolute right-3 top-3 rounded bg-accent/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-accent">
             Becslés
           </span>
-          <p className="text-[13px] font-bold uppercase tracking-wide text-primary">Becsült nettó bér</p>
+          <p className="text-[13px] font-bold uppercase tracking-wide text-primary-ink">Becsült nettó bér</p>
           <div className="mt-1 flex items-end justify-center gap-2">
             <span className="text-[40px] font-black leading-none tracking-tight text-ink">{fmt(r.netMonthly)}</span>
             <span className="mb-1 text-[14px] font-bold text-ink-muted">/ hó</span>
@@ -171,7 +171,7 @@ export function SalaryCalculatorAT() {
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
-            className="flex w-full items-center justify-between font-bold text-ink hover:text-primary transition-colors"
+            className="flex w-full items-center justify-between font-bold text-ink hover:text-primary-ink transition-colors"
           >
             <span>Részletes levonások (havi)</span>
             <Icon name="chevD" size={18} strokeWidth={2.4} className={cn("transition-transform duration-300", expanded && "rotate-180")} />
@@ -193,7 +193,7 @@ export function SalaryCalculatorAT() {
               </div>
               <div className="flex justify-between text-[14px] font-extrabold text-ink pt-1">
                 <span>Nettó (laufend / hó)</span>
-                <span className="text-primary">{fmt(r.netMonthly)}</span>
+                <span className="text-primary-ink">{fmt(r.netMonthly)}</span>
               </div>
 
               {has14 && (

@@ -218,7 +218,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
           onClick={() => fileRef.current?.click()}
           className="flex h-20 w-full cursor-pointer items-center justify-center rounded-[12px] border-2 border-dashed border-line bg-surface-alt transition hover:border-primary/30 hover:bg-primary/5"
         >
-          <div className="flex items-center gap-2 text-[13px] font-semibold text-primary">
+          <div className="flex items-center gap-2 text-[13px] font-semibold text-primary-ink">
             <Icon name="upload" size={16} strokeWidth={2.2} />
             <span>
               {cvFile ? cvFile.name : initial.hasCv ? "CV feltöltve — kattints a cseréhez" : "Kattints a feltöltéshez"}
@@ -233,7 +233,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
             type="checkbox"
             checked={form.searchable}
             onChange={(e) => setForm({ ...form, searchable: e.target.checked })}
-            className="mt-0.5 rounded border-line text-primary focus:ring-primary"
+            className="mt-0.5 rounded border-line text-primary-ink focus:ring-primary"
           />
           <span className="text-[12.5px] leading-snug text-ink-muted">
             <strong className="font-semibold text-ink">Láthatóság:</strong> Hozzájárulok, hogy a profilom kereshető legyen a kinti.app munkáltatói hálózatában.
@@ -245,7 +245,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
             type="checkbox"
             checked={form.placementOptIn}
             onChange={(e) => setForm({ ...form, placementOptIn: e.target.checked })}
-            className="mt-0.5 rounded border-line text-primary focus:ring-primary"
+            className="mt-0.5 rounded border-line text-primary-ink focus:ring-primary"
           />
           <span className="text-[12.5px] leading-snug text-ink-muted">
             <strong className="font-semibold text-ink">🤝 Aktív állásközvetítés:</strong> Szeretném, hogy a <strong>Feedback Jobs</strong> (a Kinti üzemeltetője) aktívan állást keressen nekem EU-ban (AT/DE/NL), és e célból átadhatja a CV-met és adataimat a munkáltatóknak. A közvetítés <strong>ingyenes</strong> — a díjat a munkáltató fizeti. Bármikor visszavonható.

@@ -85,7 +85,7 @@ export default async function EmployerDashboardPage() {
               // A "beragadt munkáltató" pillanat: a fiók aktív, de nincs hirdetés.
               // Egyértelműsítjük, hogy a profil önmagában NEM hirdetés.
               <div className="rounded-[12px] bg-primary/5 border border-primary/15 px-3.5 py-3 text-[13px] leading-relaxed text-ink mb-4">
-                <span className="font-extrabold text-primary">A fiókod aktív. ✅</span>{" "}
+                <span className="font-extrabold text-primary-ink">A fiókod aktív. ✅</span>{" "}
                 De a profilod önmagában <span className="font-bold">még nem jelenik meg</span> a
                 jelölteknek — ahhoz fel kell adnod egy álláshirdetést. Ez 1 perc, alább kezdheted.
               </div>
@@ -125,7 +125,7 @@ export default async function EmployerDashboardPage() {
               Előszűrt magyar jelölteket közvetítünk (AT/DE/NL) — csak sikeres felvételnél fizetsz.
             </span>
           </span>
-          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary-ink" />
         </Link>
 
         {/* Egy cég, két kapcsoló: ha nincs Szaknévsor-listázás, felkínáljuk (ügyfélszerzés).
@@ -135,7 +135,7 @@ export default async function EmployerDashboardPage() {
             href="/profil"
             className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3.5 shadow-card active:scale-[0.99] transition"
           >
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[11px] bg-primary/10 text-primary">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[11px] bg-primary/10 text-primary-ink">
               <Icon name="search" size={16} strokeWidth={2.2} />
             </span>
             <div className="min-w-0 flex-1">
@@ -256,7 +256,7 @@ function EmployerLanding({ signedIn }: { signedIn: boolean }) {
           Önkiszolgáló: te írod a hirdetést, hozzád jönnek a jelentkezések. Az alap-hirdetés
           ingyenes, 30 napig aktív.
         </span>
-        <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-extrabold text-primary">
+        <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-extrabold text-primary-ink">
           Kezdés (kb. 2 perc) <Icon name="arrowRight" size={14} strokeWidth={2.6} />
         </span>
       </Link>

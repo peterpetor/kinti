@@ -94,14 +94,14 @@ export function NearbyBusinesses({ businesses }: { businesses: ListBusiness[] })
         href="/szaknevsor/uj"
         className="flex items-center gap-3 rounded-card border border-dashed border-line bg-surface px-4 py-3 text-left transition active:scale-[0.99]"
       >
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary-ink">
           <Icon name="pin" size={17} strokeWidth={2.6} />
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-[13px] font-extrabold text-ink">Még nincs vállalkozás a térképen</span>
           <span className="block text-[11.5px] text-ink-muted">Légy te az első — vidd fel a vállalkozásod 30 mp alatt.</span>
         </span>
-        <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
+        <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary-ink" />
       </Link>
     );
   }
@@ -110,7 +110,7 @@ export function NearbyBusinesses({ businesses }: { businesses: ListBusiness[] })
     <div className="grid gap-2.5">
       {locating && !pos && (
         <p className="flex items-center gap-1.5 px-1 text-[11.5px] font-semibold text-ink-muted">
-          <Icon name="pin" size={12} strokeWidth={2.4} className="animate-pulse text-primary" />
+          <Icon name="pin" size={12} strokeWidth={2.4} className="animate-pulse text-primary-ink" />
           Helymeghatározás a legközelebbiekhez…
         </p>
       )}

@@ -58,7 +58,7 @@ export function EmptyState({
   const haloCls =
     tone === "accent"
       ? "bg-accent/10 text-accent shadow-[0_0_0_5px_rgb(var(--accent)/0.06),0_0_0_11px_rgb(var(--accent)/0.03)]"
-      : "bg-primary/10 text-primary shadow-[0_0_0_5px_rgb(var(--primary)/0.06),0_0_0_11px_rgb(var(--primary)/0.03)]";
+      : "bg-primary/10 text-primary-ink shadow-[0_0_0_5px_rgb(var(--primary)/0.06),0_0_0_11px_rgb(var(--primary)/0.03)]";
   return (
     <div
       role="status"

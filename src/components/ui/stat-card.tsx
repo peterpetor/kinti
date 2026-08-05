@@ -19,7 +19,7 @@ export function StatCard({ icon, value, label, delta, accent }: StatCardProps) {
       <div
         className={cn(
           "mb-1.5 grid h-7 w-7 place-items-center rounded-lg",
-          accent ? "bg-accent-soft text-accent" : "bg-primary-soft text-primary",
+          accent ? "bg-accent-soft text-accent" : "bg-primary-soft text-primary-ink",
         )}
       >
         <Icon name={icon} size={14} strokeWidth={2.4} />

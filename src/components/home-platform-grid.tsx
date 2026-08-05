@@ -23,7 +23,7 @@ import { recordUse } from "@/lib/usage-frecency";
  *  nem 17 egyforma szürke chip. A stringek teljesek (nincs cn-merge — lásd cn.ts). */
 type Tone = "work" | "money" | "learn" | "social";
 const TONE_CHIP: Record<Tone, string> = {
-  work: "bg-primary/10 text-primary",
+  work: "bg-primary/10 text-primary-ink",
   money: "bg-gold/10 text-gold",
   learn: "bg-accent/10 text-accent",
   social: "bg-info/10 text-info",

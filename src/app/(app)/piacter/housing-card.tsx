@@ -130,7 +130,7 @@ export function HousingCard({
         <span
           className={cn(
             "inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[11px] font-extrabold",
-            offer ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent",
+            offer ? "bg-primary/10 text-primary-ink" : "bg-accent/10 text-accent",
           )}
         >
           {offer ? "🔑" : "🔎"} {HOUSING_TYPE_LABELS[listing.type]}
@@ -167,7 +167,7 @@ export function HousingCard({
             <button
               type="button"
               onClick={share}
-              className="inline-flex items-center gap-1 text-[11px] font-bold text-ink-faint transition hover:text-primary"
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-ink-faint transition hover:text-primary-ink"
             >
               <Icon name="share" size={11} strokeWidth={2.4} /> {shareDone ? "Link másolva" : "Megosztás"}
             </button>
@@ -185,7 +185,7 @@ export function HousingCard({
             </span>
           )}
         </h3>
-        <p className="shrink-0 text-[14px] font-extrabold text-primary">
+        <p className="shrink-0 text-[14px] font-extrabold text-primary-ink">
           {formatHousingPrice(listing.type, listing.price, listing.currency)}
         </p>
       </div>
@@ -199,7 +199,7 @@ export function HousingCard({
         <p className="mt-2 rounded-card bg-accent/5 px-3 py-2 text-[11px] leading-snug text-ink-muted">
           A hirdetést az adminisztrátor nem hagyta jóvá, mert nem felelt meg a hirdetési
           feltételeknek (ÁSZF 8.2). Ha szerinted tévedés történt, írj nekünk:{" "}
-          <a href="mailto:info@kinti.app" className="font-bold text-primary underline">info@kinti.app</a>.
+          <a href="mailto:info@kinti.app" className="font-bold text-primary-ink underline">info@kinti.app</a>.
         </p>
       )}
 

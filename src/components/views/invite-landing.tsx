@@ -50,7 +50,7 @@ export function InviteLanding({ code }: { code: string }) {
           ["pin", "Nézd meg, hányan vagyunk magyarok a környékeden"],
         ].map(([icon, text]) => (
           <li key={text} className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-2.5">
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-primary">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-primary-ink">
               <Icon name={icon as "list"} size={16} strokeWidth={2.2} />
             </span>
             <span className="text-[13px] font-semibold text-ink">{text}</span>

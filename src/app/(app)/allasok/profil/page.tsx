@@ -74,7 +74,7 @@ export default async function WorkerProfilePage() {
         href="/allasok/jelentkezeseim"
         className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
       >
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary-ink">
           <Icon name="send" size={17} strokeWidth={2.4} />
         </span>
         <span className="min-w-0 flex-1">

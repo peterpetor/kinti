@@ -79,7 +79,7 @@ export default function DutchCvBuilderPage() {
         <p className="text-[12.5px] leading-relaxed text-ink-muted">
           A munkába álláshoz <strong className="text-ink">BSN-re</strong> (burgerservicenummer) is
           szükséged lesz, amit a gemeente-nél való bejelentkezéskor kapsz meg.{" "}
-          <Link href="/tudasbazis/nl-bejelentkezes" className="font-bold text-primary underline">
+          <Link href="/tudasbazis/nl-bejelentkezes" className="font-bold text-primary-ink underline">
             A bejelentkezés lépésről lépésre →
           </Link>
         </p>

@@ -105,7 +105,7 @@ export default async function B2bPage() {
             {countryAdjective(business.country)} PRO cég • ellenőrzött kiíró
           </p>
         </div>
-        <Icon name="check" size={16} strokeWidth={2.8} className="shrink-0 text-primary" />
+        <Icon name="check" size={16} strokeWidth={2.8} className="shrink-0 text-primary-ink" />
       </div>
 
       {/* Új projekt kiírása */}

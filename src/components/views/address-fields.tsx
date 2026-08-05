@@ -171,7 +171,7 @@ export function AddressFields({
                   onClick={() => choose(hit)}
                   className="flex w-full items-start gap-2 px-3 py-2.5 text-left text-[13px] text-ink hover:bg-surface-alt active:bg-primary-soft/40"
                 >
-                  <Icon name="pin" size={13} strokeWidth={2.2} className="mt-0.5 shrink-0 text-primary" />
+                  <Icon name="pin" size={13} strokeWidth={2.2} className="mt-0.5 shrink-0 text-primary-ink" />
                   <span className="leading-snug">{hit.label}</span>
                 </button>
               </li>

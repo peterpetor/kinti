@@ -16,7 +16,7 @@ interface SalaryStatsRow { industry: string; avg_salary: number; median_salary: 
 interface TrendRow { month: string; avg_salary: number; entry_count: number; }
 
 const EXP_ORDER = ["0–2 év", "3–5 év", "5+ év"];
-const EXP_COLORS = ["text-[#0ea5e9]", "text-primary", "text-[#8b5cf6]"];
+const EXP_COLORS = ["text-[#0ea5e9]", "text-primary-ink", "text-[#8b5cf6]"];
 
 export function SalaryCard({
   stat,
@@ -73,7 +73,7 @@ export function SalaryCard({
       {/* Fejléc */}
       <div className="flex items-start justify-between gap-2">
         <p className="font-bold text-[14px] text-ink leading-snug">{stat.industry}</p>
-        <span className="shrink-0 text-[11px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full whitespace-nowrap">
+        <span className="shrink-0 text-[11px] font-bold bg-primary/10 text-primary-ink px-2 py-0.5 rounded-full whitespace-nowrap">
           {stat.entry_count} adat
         </span>
       </div>
@@ -115,7 +115,7 @@ export function SalaryCard({
           <button
             onClick={() => { setShowExp(v => !v); setShowTrend(false); setShowHist(false); }}
             className={`w-full text-[12px] font-bold py-2 px-3 rounded-lg border transition-colors
-              ${showExp ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
+              ${showExp ? "bg-primary/10 border-primary/30 text-primary-ink" : "border-line text-ink-muted hover:text-ink"}`}
           >
             {showExp ? "▲" : "▼"} Tapasztalat szerint
           </button>
@@ -124,14 +124,14 @@ export function SalaryCard({
           <button
             onClick={fetchHist}
             className={`text-[12px] font-bold py-2 px-3 rounded-lg border transition-colors
-              ${showHist ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
+              ${showHist ? "bg-primary/10 border-primary/30 text-primary-ink" : "border-line text-ink-muted hover:text-ink"}`}
           >
             📊 Eloszlás
           </button>
           <button
             onClick={fetchTrend}
             className={`text-[12px] font-bold py-2 px-3 rounded-lg border transition-colors
-              ${showTrend ? "bg-primary/10 border-primary/30 text-primary" : "border-line text-ink-muted hover:text-ink"}`}
+              ${showTrend ? "bg-primary/10 border-primary/30 text-primary-ink" : "border-line text-ink-muted hover:text-ink"}`}
           >
             📈 Trend
           </button>

@@ -115,7 +115,7 @@ export function PostSavePrompt({
           </p>
           <p className="mt-0.5 text-[12px] leading-snug text-ink-muted">
             <strong className="text-ink">A böngésződ már megjegyezte</strong> — bármikor
-            megtalálod a <a href="/sajatjaim" className="text-primary font-bold underline">Saját posztjaim</a> oldalon.
+            megtalálod a <a href="/sajatjaim" className="text-primary-ink font-bold underline">Saját posztjaim</a> oldalon.
           </p>
         </div>
       </div>
@@ -130,7 +130,7 @@ export function PostSavePrompt({
             +{gain.xpGained}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[12.5px] font-extrabold tracking-[-0.01em] text-primary">
+            <span className="block text-[12.5px] font-extrabold tracking-[-0.01em] text-primary-ink">
               +{gain.xpGained} XP a hozzájárulásodért! 🎉
             </span>
             {gain.leveledUp && (
@@ -145,7 +145,7 @@ export function PostSavePrompt({
               </span>
             )}
           </span>
-          <span className="shrink-0 text-primary text-[13px] font-bold">›</span>
+          <span className="shrink-0 text-primary-ink text-[13px] font-bold">›</span>
         </a>
       )}
 

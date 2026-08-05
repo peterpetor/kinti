@@ -79,7 +79,7 @@ export default async function MagyarHub() {
       <p className="text-[13.5px] leading-relaxed text-ink-muted">
         Magyarul beszélő szakemberek és vállalkozások négy országban — válassz
         régiót és szakmát, vagy böngéssz a teljes{" "}
-        <Link href="/szaknevsor" className="font-bold text-primary underline">Szaknévsorban</Link>.
+        <Link href="/szaknevsor" className="font-bold text-primary-ink underline">Szaknévsorban</Link>.
       </p>
 
       {byCountry.map(({ country, areas }) => (
@@ -97,7 +97,7 @@ export default async function MagyarHub() {
                   <Link
                     key={catId}
                     href={`/magyar/${catId}/${area.slug}`}
-                    className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[12px] font-bold text-ink transition hover:border-primary/40 hover:text-primary"
+                    className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[12px] font-bold text-ink transition hover:border-primary/40 hover:text-primary-ink"
                   >
                     {catLabel.get(catId)}
                     <span className="text-[10.5px] font-semibold text-ink-faint">{n}</span>
@@ -111,11 +111,11 @@ export default async function MagyarHub() {
 
       <p className="text-[11.5px] leading-snug text-ink-faint">
         Nem találod a szakmád a régiódban?{" "}
-        <Link href="/szaknevsor/uj" className="font-bold text-primary underline">
+        <Link href="/szaknevsor/uj" className="font-bold text-primary-ink underline">
           Add hozzá a vállalkozásod ingyen
         </Link>{" "}
         — vagy írd ki a{" "}
-        <Link href="/keresek" className="font-bold text-primary underline">Keresek-táblára</Link>,
+        <Link href="/keresek" className="font-bold text-primary-ink underline">Keresek-táblára</Link>,
         mire van szükséged.
       </p>
     </div>

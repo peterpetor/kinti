@@ -80,7 +80,7 @@ export default async function BlocklistPage() {
                       {e.expiresAt == null ? (
                         <span className="text-ink-faint">Végleges</span>
                       ) : (
-                        <span className="text-primary">Auto · lejár {fmtExpiry(e.expiresAt)}</span>
+                        <span className="text-primary-ink">Auto · lejár {fmtExpiry(e.expiresAt)}</span>
                       )}
                     </p>
                   </div>

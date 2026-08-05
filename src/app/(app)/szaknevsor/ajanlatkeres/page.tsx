@@ -41,7 +41,7 @@ export default async function AjanlatkeresPage({
 
       {/* Hero */}
       <section className="animate-fade-up space-y-3">
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-[12px] font-extrabold uppercase tracking-wide text-primary">
+        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-[12px] font-extrabold uppercase tracking-wide text-primary-ink">
           <Icon name="send" size={13} strokeWidth={2.5} />
           Csoportos Árajánlat
         </div>
@@ -65,7 +65,7 @@ export default async function AjanlatkeresPage({
               key={label}
               className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface-alt p-3 text-center"
             >
-              <div className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-primary">
+              <div className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-primary-ink">
                 <Icon name={icon} size={18} strokeWidth={2} />
               </div>
               <p className="text-[11px] font-bold leading-tight text-ink-muted">{label}</p>
@@ -94,7 +94,7 @@ export default async function AjanlatkeresPage({
             A kinti.app csak közvetíti az árajánlat-kérést a vállalkozóknak. Az adataid (név,
             e-mail, leírás) kizárólag a kiválasztott kategória vállalkozói látják, harmadik félnek
             nem adjuk ki.{" "}
-            <Link href="/adatvedelem" className="font-bold text-primary hover:underline">
+            <Link href="/adatvedelem" className="font-bold text-primary-ink hover:underline">
               Adatvédelmi szabályzat →
             </Link>
           </p>

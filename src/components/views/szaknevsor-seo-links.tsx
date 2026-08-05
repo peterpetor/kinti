@@ -35,14 +35,14 @@ export function SzaknevsorSeoLinks({ groups }: { groups: SeoLinkGroup[] }) {
           <Link
             key={l.href}
             href={l.href}
-            className="inline-flex items-center rounded-pill border border-line bg-surface px-2.5 py-1 text-[12px] font-bold text-ink-muted transition hover:border-primary/40 hover:text-primary"
+            className="inline-flex items-center rounded-pill border border-line bg-surface px-2.5 py-1 text-[12px] font-bold text-ink-muted transition hover:border-primary/40 hover:text-primary-ink"
           >
             {l.label}
           </Link>
         ))}
         <Link
           href="/magyar"
-          className="inline-flex items-center gap-1 rounded-pill border border-primary/40 bg-primary/10 px-2.5 py-1 text-[12px] font-extrabold text-primary transition active:scale-[0.98]"
+          className="inline-flex items-center gap-1 rounded-pill border border-primary/40 bg-primary/10 px-2.5 py-1 text-[12px] font-extrabold text-primary-ink transition active:scale-[0.98]"
         >
           Minden régió és szakma
           <Icon name="chevR" size={12} strokeWidth={2.6} />

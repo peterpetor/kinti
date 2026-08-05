@@ -404,7 +404,7 @@ export default async function BusinessPage({
 
       {/* tartalom-lap */}
       <div className="relative z-[2] -mt-6 rounded-t-sheet bg-bg px-[18px] pt-5">
-        <p className="mb-1 text-[12.5px] font-bold uppercase tracking-wide text-primary">
+        <p className="mb-1 text-[12.5px] font-bold uppercase tracking-wide text-primary-ink">
           {b.categoryLabel}
         </p>
         <div className="flex items-start gap-2">
@@ -448,7 +448,7 @@ export default async function BusinessPage({
             ) : (
               <>
                 <div className="text-[15px] font-bold text-ink-muted">Új</div>
-                <div className="text-[11px] font-medium text-primary underline decoration-primary/40 underline-offset-2">Írd meg az elsőt!</div>
+                <div className="text-[11px] font-medium text-primary-ink underline decoration-primary/40 underline-offset-2">Írd meg az elsőt!</div>
               </>
             )}
           </a>
@@ -847,7 +847,7 @@ export default async function BusinessPage({
                     <div className="mt-2.5 rounded-[12px] border-l-2 border-primary/40 bg-primary-soft/50 px-3 py-2.5">
                       <div className="mb-1 flex items-center gap-1.5">
                         <span className="text-[13px]">💬</span>
-                        <span className="text-[11.5px] font-bold uppercase tracking-wide text-primary">
+                        <span className="text-[11.5px] font-bold uppercase tracking-wide text-primary-ink">
                           {b.name} válasza
                         </span>
                       </div>
@@ -878,7 +878,7 @@ export default async function BusinessPage({
                   href={`/tudasbazis/${g.slug}`}
                   className="flex items-center gap-2.5 rounded-2xl border border-line bg-surface p-3 shadow-card transition active:scale-[0.99]"
                 >
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary-ink">
                     <Icon name={g.icon} size={15} strokeWidth={2.3} />
                   </span>
                   <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-ink">
@@ -912,7 +912,7 @@ export default async function BusinessPage({
                         isToday && "bg-primary-soft/60",
                       )}
                     >
-                      <span className={cn("font-bold", isToday ? "text-primary" : "text-ink")}>
+                      <span className={cn("font-bold", isToday ? "text-primary-ink" : "text-ink")}>
                         {row.label}
                         {isToday && <span className="ml-1.5 text-[11px] font-semibold text-primary/80">· ma</span>}
                       </span>
@@ -981,7 +981,7 @@ export default async function BusinessPage({
         {!b.featured && area && (
           <Link
             href={`/magyar/${b.categoryId}/${area.slug}`}
-            className="mt-6 flex items-center gap-2 text-[13px] font-bold text-primary"
+            className="mt-6 flex items-center gap-2 text-[13px] font-bold text-primary-ink"
           >
             Több magyar {catLabelLower} {area.locative}
             <Icon name="arrowRight" size={14} strokeWidth={2.4} />
@@ -1043,7 +1043,7 @@ export default async function BusinessPage({
 function Chip({ icon, children }: { icon?: Parameters<typeof Icon>[0]["name"]; children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1.5 text-xs font-semibold text-ink">
-      {icon && <Icon name={icon} size={12} strokeWidth={2.2} className="text-primary" />}
+      {icon && <Icon name={icon} size={12} strokeWidth={2.2} className="text-primary-ink" />}
       {children}
     </span>
   );

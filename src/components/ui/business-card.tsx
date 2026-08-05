@@ -88,7 +88,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
             magasabbra nyújtották a kártyát a szomszédainál — a lista így
             egyenetlen lett. Az értékelés-jelölő shrink-0: a szűkülés a címkét érje. */}
         <div className="mb-0.5 flex min-w-0 items-center gap-1.5">
-          <span className="truncate text-[11.5px] font-bold uppercase tracking-wide text-primary">
+          <span className="truncate text-[11.5px] font-bold uppercase tracking-wide text-primary-ink">
             {b.categoryLabel}
           </span>
           <span className="shrink-0 text-[11px] text-ink-faint">•</span>
@@ -188,7 +188,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
         )}
 
         <div className="flex gap-1.5">
-          <span className="rounded-md bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary">
+          <span className="rounded-md bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary-ink">
             magyarul
           </span>
           {b.languages?.includes("Deutsch") && (

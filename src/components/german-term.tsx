@@ -66,7 +66,7 @@ export function GermanTerm({ children }: { children: string }) {
       <button
         type="button"
         onClick={toggle}
-        className="inline-flex items-baseline gap-0.5 border-b border-dashed border-primary/50 text-primary hover:text-primary/80 transition cursor-help"
+        className="inline-flex items-baseline gap-0.5 border-b border-dashed border-primary/50 text-primary-ink hover:text-primary/80 transition cursor-help"
         aria-label={`Mit jelent: ${children}?`}
       >
         {children}
@@ -75,7 +75,7 @@ export function GermanTerm({ children }: { children: string }) {
 
       {open && (
         <span className="absolute left-0 top-full z-20 mt-1 w-[260px] rounded-card border border-line bg-surface p-3 shadow-pop">
-          <span className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary">
+          <span className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary-ink">
             <Icon name="sparkles" size={10} strokeWidth={2.4} />
             {source === "curated" ? "Jelentés" : source ? "AI magyarázat (becslés)" : "Magyarázat"}
           </span>

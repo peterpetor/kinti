@@ -60,7 +60,7 @@ function fold(s: string): string {
 const BADGE_META: Record<Badge, { label: string; cls: string }> = {
   // HÁROM külön termék — a badge KI is mondja, melyikhez tartozik a lakat
   // (nem csak „PRO"), a /pro oldal szín-kódját követve.
-  pro: { label: "Kinti PRO", cls: "bg-primary/10 text-primary" },
+  pro: { label: "Kinti PRO", cls: "bg-primary/10 text-primary-ink" },
   bizpro: { label: "Szaknévsor PRO", cls: "bg-pro/15 text-pro-ink" },
   job: { label: "Kiemelt Állás", cls: "bg-accent/15 text-accent" },
 };
@@ -174,7 +174,7 @@ export function DropdownMenu() {
         }
       : isSignedIn && hasBusiness
         ? { key: "biz", label: "Vállalkozásom", href: "/profil", tint: "bg-pro/10 text-pro-ink", icon: { name: "store" }, badge: "bizpro" }
-        : { key: "biz", label: "Vidd fel a vállalkozásod", href: "/vallalkozo", tint: "bg-primary/10 text-primary", icon: { name: "plus" } };
+        : { key: "biz", label: "Vidd fel a vállalkozásod", href: "/vallalkozo", tint: "bg-primary/10 text-primary-ink", icon: { name: "plus" } };
 
   const sections: MenuSection[] = [
     {
@@ -185,9 +185,9 @@ export function DropdownMenu() {
         { key: "ajanlas", label: "Ajánlj egy magyar vállalkozást", href: "/szaknevsor/ajanlas", tint: "bg-accent/10 text-accent", icon: { name: "send" } },
         businessItem,
         { key: "b2b", label: "B2B Hub — projektpiac", href: "/b2b", tint: "bg-pro/10", icon: { name: "trending" }, badge: "bizpro" },
-        { key: "allasok", label: "Álláshirdetések", href: "/allasok", tint: "bg-primary/10 text-primary", icon: { name: "briefcase" } },
+        { key: "allasok", label: "Álláshirdetések", href: "/allasok", tint: "bg-primary/10 text-primary-ink", icon: { name: "briefcase" } },
         // A Keresek az Álláshirdetések ALATT (user-kérés 2026-07-13).
-        { key: "keresek", label: "Keresek — igény-hirdetés", href: "/keresek", tint: "bg-primary/10 text-primary", icon: { name: "search" } },
+        { key: "keresek", label: "Keresek — igény-hirdetés", href: "/keresek", tint: "bg-primary/10 text-primary-ink", icon: { name: "search" } },
         { key: "mv-profil", label: "Munkavállalói profil", href: "/allasok/profil", tint: "bg-accent/10 text-accent", icon: { name: "user" } },
         { key: "munkaltato", label: "Munkáltatói irányítópult", href: "/munkaltato", tint: "bg-accent/10 text-accent", icon: { name: "user" }, badge: "job" },
       ],
@@ -222,7 +222,7 @@ export function DropdownMenu() {
         // (kiköltözés, vízum, vám, állampolgárság, hivatalos linkek, bírság,
         // iskolarendszer) a /tudasbazis alá költöztek — a menüben EGY belépő
         // van, a Tudásbázis-oldal eszköz-szekciója sorolja fel őket.
-        { key: "tudasbazis", label: "Tudásbázis — minden útmutató és eszköz", href: "/tudasbazis", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
+        { key: "tudasbazis", label: "Tudásbázis — minden útmutató és eszköz", href: "/tudasbazis", tint: "bg-primary/10 text-primary-ink", icon: { name: "bookmark" } },
         ...(has("ugyintezes")
           ? [{ key: "ugyintezes", label: "Ügyintézés-varázsló", href: "/ugyintezes", tint: "bg-primary/10", icon: { name: "document" } } as MenuItem]
           : []),
@@ -235,7 +235,7 @@ export function DropdownMenu() {
       defaultOpen: true,
       items: [
         { key: "kedvencek", label: "Kedvenceim", href: "/szaknevsor?fav=1", tint: "bg-accent/10 text-accent", icon: { name: "heart", filled: true } },
-        { key: "sajat", label: "Saját posztjaim", href: "/sajatjaim", tint: "bg-primary/10 text-primary", icon: { name: "bookmark" } },
+        { key: "sajat", label: "Saját posztjaim", href: "/sajatjaim", tint: "bg-primary/10 text-primary-ink", icon: { name: "bookmark" } },
         { key: "ranglista", label: "Közösségi ranglista", href: "/ranglista", tint: "bg-star/15", icon: { name: "trophy" } },
         { key: "tortenetek", label: "Élettörténetek", href: "/tortenetek", tint: "bg-accent/10", icon: { name: "edit" } },
         { key: "pass", label: "Kinti Pass — kedvezménykártya", href: "/profil/kinti-pass", tint: "bg-star/15", icon: { name: "ticket" } },
@@ -307,7 +307,7 @@ export function DropdownMenu() {
             // is (iOS „Megjelenés": felirat fölül, szegmentált választó alatta).
             <div key="tema" className="px-4 py-3.5">
               <span className="flex min-w-0 items-center gap-3 text-[15px] font-bold text-ink">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary-ink">
                   <Icon name="sun" size={16} strokeWidth={2.2} />
                 </span>
                 <span className="truncate">Megjelenés</span>
@@ -318,9 +318,9 @@ export function DropdownMenu() {
             </div>
           ),
         },
-        { key: "hirlevel", label: "Hírlevél", href: "/hirlevel", tint: "bg-primary/10 text-primary", icon: { name: "send" } },
-        { key: "ertesitesek", label: "Értesítések", href: "/ertesitesek", tint: "bg-primary/10 text-primary", icon: { name: "bell" } },
-        { key: "helymeghatarozas", label: "Helymeghatározás", href: "/helymeghatarozas", tint: "bg-primary/10 text-primary", icon: { name: "pin" } },
+        { key: "hirlevel", label: "Hírlevél", href: "/hirlevel", tint: "bg-primary/10 text-primary-ink", icon: { name: "send" } },
+        { key: "ertesitesek", label: "Értesítések", href: "/ertesitesek", tint: "bg-primary/10 text-primary-ink", icon: { name: "bell" } },
+        { key: "helymeghatarozas", label: "Helymeghatározás", href: "/helymeghatarozas", tint: "bg-primary/10 text-primary-ink", icon: { name: "pin" } },
       ],
     },
     {

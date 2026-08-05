@@ -116,7 +116,7 @@ export function TabBar() {
               aria-current={active ? "page" : undefined}
               className={cn(
                 "relative z-[1] flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11.5px] transition duration-200 active:scale-[0.94]",
-                active ? "bg-primary/10 text-primary" : "text-ink-faint hover:text-ink-muted",
+                active ? "bg-primary/10 text-primary-ink" : "text-ink-faint hover:text-ink-muted",
               )}
             >
               {/* Aktívvá váláskor a meglévő kinti-pop mikro-animáció fut le az ikonon

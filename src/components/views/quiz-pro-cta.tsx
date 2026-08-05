@@ -78,7 +78,7 @@ export function QuizProCta({ target, country }: { target: QuizProTarget; country
       <Link
         href={`/szaknevsor?cat=${encodeURIComponent(target.businessCats[0])}`}
         onClick={() => trackAction("quiz-pro-click")}
-        className="mt-2.5 block text-center text-[12px] font-bold text-primary"
+        className="mt-2.5 block text-center text-[12px] font-bold text-primary-ink"
       >
         Több szakértő a Szaknévsorban →
       </Link>

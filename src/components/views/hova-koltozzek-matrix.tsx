@@ -141,7 +141,7 @@ export function HovaKoltozzekMatrix() {
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
         <label htmlFor="hk-slider" className="flex items-baseline justify-between gap-2">
           <span className="text-[13px] font-bold text-ink">Milyen jól keresel?</span>
-          <span className="text-[13px] font-extrabold tabular-nums text-primary">
+          <span className="text-[13px] font-extrabold tabular-nums text-primary-ink">
             a helyi átlag {szazalek}%-a
           </span>
         </label>
@@ -370,7 +370,7 @@ function OrszagKartya({
 
           <Link
             href={`/tudasbazis/${t.forrasSlug}`}
-            className="mt-1.5 flex items-center gap-1.5 text-[12px] font-bold text-primary underline underline-offset-2"
+            className="mt-1.5 flex items-center gap-1.5 text-[12px] font-bold text-primary-ink underline underline-offset-2"
           >
             {o?.name ?? sor.country} — a teljes útmutató
             <Icon name="chevR" size={13} strokeWidth={2.6} />

@@ -33,7 +33,7 @@ export function BudgetToolCta({ country }: { country: BudgetCountry }) {
           Nettó bér + lakbér + megélhetés — egy kalkulátorban.
         </span>
       </span>
-      <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-primary" />
+      <Icon name="chevR" size={15} strokeWidth={2.2} className="shrink-0 text-primary-ink" />
     </Link>
   );
 }

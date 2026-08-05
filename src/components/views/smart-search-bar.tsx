@@ -225,7 +225,7 @@ export function SmartSearchBar({
               : "border-line bg-surface text-ink hover:bg-surface-alt",
           )}
         >
-          <Icon name="sparkles" size={15} strokeWidth={2.4} className={busy ? "animate-pulse text-primary" : "text-primary"} />
+          <Icon name="sparkles" size={15} strokeWidth={2.4} className={busy ? "animate-pulse text-primary-ink" : "text-primary-ink"} />
           {busy ? "…" : "AI-mód"}
           {/* Kereső-ikon a gomb végén — user-visszajelzés (2026-07-21): a sparkles+
               „AI-mód" felirat önmagában nem mondta ki egyértelműen, hogy a gombra
@@ -286,7 +286,7 @@ export function SmartSearchBar({
       {jelentesHits.length > 0 && (
         <div className="mt-2 overflow-hidden rounded-[14px] border border-line bg-surface">
           <p className="flex items-center gap-1.5 border-b border-line bg-surface-alt px-3.5 py-2 text-[11.5px] font-bold text-ink-muted">
-            <Icon name="sparkles" size={12} strokeWidth={2.4} className="shrink-0 text-primary" />
+            <Icon name="sparkles" size={12} strokeWidth={2.4} className="shrink-0 text-primary-ink" />
             Ezek illenek a kérdésedhez
           </p>
           <ul>
@@ -318,7 +318,7 @@ export function SmartSearchBar({
 
       {error && <p className="mt-1.5 px-1 text-[11.5px] font-bold text-accent">{error}</p>}
       {note && (
-        <p className="mt-1.5 flex items-start gap-1.5 px-1 text-[11.5px] text-primary">
+        <p className="mt-1.5 flex items-start gap-1.5 px-1 text-[11.5px] text-primary-ink">
           <Icon name="sparkles" size={12} strokeWidth={2.4} className="mt-0.5 shrink-0" />
           <span>{note}</span>
         </p>

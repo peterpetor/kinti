@@ -109,7 +109,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
       {prefill && (
         <div className="rounded-[12px] border border-primary/25 bg-primary-soft px-3.5 py-3">
           <p className="flex items-center gap-1.5 text-[12.5px] font-bold text-ink">
-            <Icon name="check" size={14} strokeWidth={2.6} className="text-primary" />
+            <Icon name="check" size={14} strokeWidth={2.6} className="text-primary-ink" />
             A profilodból kitöltöttük az adataidat
           </p>
           {prefill.hasCv ? (
@@ -118,7 +118,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
                 type="checkbox"
                 checked={useProfileCv}
                 onChange={(e) => setUseProfileCv(e.target.checked)}
-                className="mt-0.5 h-4 w-4 cursor-pointer rounded border-line text-primary"
+                className="mt-0.5 h-4 w-4 cursor-pointer rounded border-line text-primary-ink"
               />
               <span className="text-[12px] leading-snug text-ink-muted">
                 A mentett önéletrajzomat (CV) csatolom a jelentkezéshez.
@@ -127,7 +127,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
           ) : (
             <p className="mt-1.5 text-[11.5px] text-ink-muted">
               Tölts fel CV-t a{" "}
-              <Link href="/allasok/profil" className="font-bold text-primary underline">
+              <Link href="/allasok/profil" className="font-bold text-primary-ink underline">
                 profilodon
               </Link>
               , hogy automatikusan csatolható legyen.
@@ -199,7 +199,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
           id="consent"
           checked={form.consent}
           onChange={(e) => setForm({ ...form, consent: e.target.checked })}
-          className="mt-0.5 h-4 w-4 cursor-pointer rounded border-line text-primary"
+          className="mt-0.5 h-4 w-4 cursor-pointer rounded border-line text-primary-ink"
         />
         <label htmlFor="consent" className="text-[12px] leading-relaxed text-ink-muted cursor-pointer">
           Elfogadom, hogy a megadott személyes adataimat (név, e-mail cím és telefonszám) a munkáltató kapcsolatfelvétel céljából kezelje. Az adatkezelés az adott álláshirdetés lezárásáig tart.

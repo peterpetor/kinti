@@ -308,7 +308,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
                 <ul className="space-y-1.5">
                   {fbTop.map((g) => (
                     <li key={g.slug} className="flex items-baseline justify-between gap-2 text-[12.5px]">
-                      <Link href={`/tudasbazis/${g.slug}`} className="min-w-0 truncate font-semibold text-ink hover:text-primary">
+                      <Link href={`/tudasbazis/${g.slug}`} className="min-w-0 truncate font-semibold text-ink hover:text-primary-ink">
                         {guideTitle(g.slug)}
                       </Link>
                       <span className="shrink-0 font-bold text-ink-muted">👍 {g.up}{g.down > 0 ? ` · 👎 ${g.down}` : ""}</span>
@@ -325,7 +325,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
                 <ul className="space-y-1.5">
                   {fbFlop.map((g) => (
                     <li key={g.slug} className="flex items-baseline justify-between gap-2 text-[12.5px]">
-                      <Link href={`/tudasbazis/${g.slug}`} className="min-w-0 truncate font-semibold text-ink hover:text-primary">
+                      <Link href={`/tudasbazis/${g.slug}`} className="min-w-0 truncate font-semibold text-ink hover:text-primary-ink">
                         {guideTitle(g.slug)}
                       </Link>
                       <span className="shrink-0 font-bold text-ink-muted">👎 {g.down} · 👍 {g.up}</span>
@@ -556,7 +556,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
                     >
                       {st.label}
                     </span>
-                    <Link href={`/szaknevsor/${b.id}`} className="truncate text-[13px] font-bold text-ink hover:text-primary">
+                    <Link href={`/szaknevsor/${b.id}`} className="truncate text-[13px] font-bold text-ink hover:text-primary-ink">
                       {b.name}
                     </Link>
                   </div>

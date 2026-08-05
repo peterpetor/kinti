@@ -98,7 +98,7 @@ export function WorkingHoursEditor({
                     type="checkbox"
                     checked={hours.closed}
                     onChange={(e) => setDay(day, "closed", e.target.checked)}
-                    className="h-4 w-4 rounded border-line text-primary focus:ring-primary/30"
+                    className="h-4 w-4 rounded border-line text-primary-ink focus:ring-primary/30"
                   />
                   <span className="text-[12px] font-bold text-ink-muted">Zárva</span>
                 </label>

@@ -100,7 +100,7 @@ export function GamificationCard() {
               <span className="text-[14px] font-extrabold tracking-tight text-ink">
                 {stats.level}. szint
               </span>
-              <span className="text-[12px] font-bold text-primary">{stats.points} XP</span>
+              <span className="text-[12px] font-bold text-primary-ink">{stats.points} XP</span>
             </div>
 
             {/* Haladás-sáv a következő szintig */}
@@ -168,7 +168,7 @@ export function GamificationCard() {
               <span
                 className={cn(
                   "text-[11.5px] font-bold leading-tight",
-                  b.earned ? (b.rare ? "text-[#b8860b]" : "text-primary") : "text-ink-faint",
+                  b.earned ? (b.rare ? "text-[#b8860b]" : "text-primary-ink") : "text-ink-faint",
                 )}
               >
                 {b.label}

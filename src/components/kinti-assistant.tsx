@@ -76,7 +76,7 @@ export function KintiAssistant() {
   return (
     <section className="rounded-card border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-surface p-4 shadow-card">
       <p className="flex items-center gap-1.5 text-[14px] font-extrabold text-ink">
-        <Icon name="sparkles" size={16} strokeWidth={2.2} className="text-primary" />
+        <Icon name="sparkles" size={16} strokeWidth={2.2} className="text-primary-ink" />
         Miben segítsünk?
       </p>
       <p className="mt-0.5 text-[11.5px] text-ink-muted">
@@ -171,7 +171,7 @@ export function KintiAssistant() {
                     onClick={() => trackAction("assistant-click")}
                     className="flex items-center gap-2.5 rounded-xl border border-line bg-surface px-3.5 py-2.5 transition active:scale-[0.99]"
                   >
-                    <Icon name="book" size={16} strokeWidth={2.1} className="shrink-0 text-primary" />
+                    <Icon name="book" size={16} strokeWidth={2.1} className="shrink-0 text-primary-ink" />
                     <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-ink">{g.title}</span>
                     <Icon name="chevR" size={14} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
                   </Link>
@@ -232,7 +232,7 @@ export function KintiAssistant() {
               <Link
                 href={szaknevsorHref}
                 onClick={() => trackAction("assistant-click")}
-                className="mt-1.5 block text-center text-[12px] font-bold text-primary"
+                className="mt-1.5 block text-center text-[12px] font-bold text-primary-ink"
               >
                 Összes találat a Szaknévsorban →
               </Link>
@@ -243,8 +243,8 @@ export function KintiAssistant() {
             <p className="rounded-xl border border-line bg-surface-alt/60 px-3.5 py-2.5 text-[12.5px] leading-snug text-ink-muted">
               Erre így nem találtam pontos találatot — próbáld másképp megfogalmazni,
               vagy böngészd a{" "}
-              <Link href="/szaknevsor" className="font-bold text-primary underline">Szaknévsort</Link> és a{" "}
-              <Link href="/tudasbazis" className="font-bold text-primary underline">Tudásbázist</Link>.
+              <Link href="/szaknevsor" className="font-bold text-primary-ink underline">Szaknévsort</Link> és a{" "}
+              <Link href="/tudasbazis" className="font-bold text-primary-ink underline">Tudásbázist</Link>.
             </p>
           )}
 

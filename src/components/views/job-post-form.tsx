@@ -292,7 +292,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
           required
           checked={form.legalAttested}
           onChange={(e) => setForm({ ...form, legalAttested: e.target.checked })}
-          className="mt-0.5 rounded border-line text-primary focus:ring-primary"
+          className="mt-0.5 rounded border-line text-primary-ink focus:ring-primary"
         />
         <span className="text-[12px] leading-snug text-ink-muted">
           <strong className="font-semibold text-ink">Nyilatkozom</strong>, hogy a meghirdetett munka{" "}

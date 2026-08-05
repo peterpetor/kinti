@@ -49,7 +49,7 @@ export function BookmarksSection() {
         <span className="text-base">🔖</span>
         Saját gyűjtemény
         {mounted && items.length > 0 && (
-          <span className="rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">
+          <span className="rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary-ink">
             {items.length}
           </span>
         )}

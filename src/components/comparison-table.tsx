@@ -39,7 +39,7 @@ export function ComparisonTable({
   return (
     <section className="space-y-2.5">
       <div className="flex items-center gap-2">
-        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[9px] bg-primary-soft text-primary">
+        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[9px] bg-primary-soft text-primary-ink">
           <Icon name={comparison.icon} size={15} strokeWidth={2.4} />
         </span>
         <h2 className="text-balance text-[15px] font-extrabold tracking-[-0.01em] text-ink">{comparison.caption}</h2>
@@ -57,10 +57,10 @@ export function ComparisonTable({
                   <th key={c.key} className={cn("px-3 py-2.5 align-bottom", here && "bg-primary-soft/60")}>
                     <span className="flex items-center gap-1.5">
                       <CountryFlag code={c.code} className="h-[12px] w-[18px]" />
-                      <span className={cn("font-extrabold", here ? "text-primary" : "text-ink")}>{c.label}</span>
+                      <span className={cn("font-extrabold", here ? "text-primary-ink" : "text-ink")}>{c.label}</span>
                     </span>
                     {here && (
-                      <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-primary">● itt vagy</span>
+                      <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-primary-ink">● itt vagy</span>
                     )}
                   </th>
                 );
@@ -99,7 +99,7 @@ export function ComparisonTable({
           <Link
             key={c.key}
             href={`/tudasbazis/${comparison.slugs[c.key]}`}
-            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[11.5px] font-bold text-primary transition active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[11.5px] font-bold text-primary-ink transition active:scale-95"
           >
             <CountryFlag code={c.code} className="h-[10px] w-[15px]" />
             {c.label}

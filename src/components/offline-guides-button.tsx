@@ -78,7 +78,7 @@ export function OfflineGuidesButton({
         done ? "border-success/30 bg-success/5" : "border-line bg-surface",
       )}
     >
-      <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-[12px] text-lg", done ? "bg-success/15" : "bg-primary-soft text-primary")}>
+      <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-[12px] text-lg", done ? "bg-success/15" : "bg-primary-soft text-primary-ink")}>
         {done ? "✓" : "📥"}
       </span>
       <div className="min-w-0 flex-1">

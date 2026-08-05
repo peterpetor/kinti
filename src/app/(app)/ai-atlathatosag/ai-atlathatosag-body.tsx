@@ -325,7 +325,7 @@ export function AiAtlathatosagBody() {
         <p className="text-[13.5px] font-extrabold text-ink">{t.reportTitle}</p>
         <p className="mt-1 text-[12.5px] leading-relaxed text-ink-muted">
           {t.reportBody.split("info@kinti.app")[0]}
-          <a href="mailto:info@kinti.app" className="font-bold text-primary underline">info@kinti.app</a>
+          <a href="mailto:info@kinti.app" className="font-bold text-primary-ink underline">info@kinti.app</a>
           {t.reportBody.split("info@kinti.app")[1]}
         </p>
       </section>

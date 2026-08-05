@@ -187,7 +187,7 @@ export function BulkJobForm() {
         <button
           type="button"
           onClick={addRow}
-          className="flex w-full items-center justify-center gap-2 rounded-pill border border-dashed border-line bg-surface-alt py-2.5 text-[13px] font-bold text-primary active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-2 rounded-pill border border-dashed border-line bg-surface-alt py-2.5 text-[13px] font-bold text-primary-ink active:scale-[0.98]"
         >
           <Icon name="plus" size={15} strokeWidth={2.6} /> Még egy hirdetés ({rows.length}/{MAX_ROWS})
         </button>
@@ -199,7 +199,7 @@ export function BulkJobForm() {
           required
           checked={legalAttested}
           onChange={(e) => setLegalAttested(e.target.checked)}
-          className="mt-0.5 rounded border-line text-primary focus:ring-primary"
+          className="mt-0.5 rounded border-line text-primary-ink focus:ring-primary"
         />
         <span className="text-[12px] leading-snug text-ink-muted">
           <strong className="font-semibold text-ink">Nyilatkozom</strong>, hogy minden fenti hirdetés{" "}

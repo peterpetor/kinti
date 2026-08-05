@@ -776,7 +776,7 @@ export function ExploreView({
                   className={cn(
                     "flex items-center justify-between gap-1 rounded-xl border px-3 py-2.5 text-left text-[13.5px] font-bold transition active:scale-[0.97]",
                     active
-                      ? "border-primary/40 bg-primary/10 text-primary"
+                      ? "border-primary/40 bg-primary/10 text-primary-ink"
                       : "border-line bg-surface text-ink hover:bg-surface-alt",
                   )}
                 >
@@ -784,7 +784,7 @@ export function ExploreView({
                     {c.name}
                     {c.code !== "all" ? ` (${c.code})` : ""}
                   </span>
-                  {active && <Icon name="check" size={15} strokeWidth={3} className="shrink-0 text-primary" />}
+                  {active && <Icon name="check" size={15} strokeWidth={3} className="shrink-0 text-primary-ink" />}
                 </button>
               );
             })}
@@ -800,7 +800,7 @@ export function ExploreView({
           className={cn(
             "inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             userPos
-              ? "bg-primary/10 border-primary/30 text-primary font-bold"
+              ? "bg-primary/10 border-primary/30 text-primary-ink font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
             geoState === "loading" && "opacity-60 cursor-wait",
           )}
@@ -809,7 +809,7 @@ export function ExploreView({
             name="pin"
             size={12}
             strokeWidth={2.4}
-            className={cn("shrink-0", userPos ? "text-primary" : "text-ink-muted")}
+            className={cn("shrink-0", userPos ? "text-primary-ink" : "text-ink-muted")}
           />
           <span className="flex min-w-0 items-center gap-1 truncate text-[11.5px] font-bold tracking-wide select-none">
             {geoState === "loading"
@@ -830,7 +830,7 @@ export function ExploreView({
             <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-primary/70 select-none">
               Sugár
             </span>
-            <span className="shrink-0 text-[13px] font-bold tracking-[-0.01em] text-primary">
+            <span className="shrink-0 text-[13px] font-bold tracking-[-0.01em] text-primary-ink">
               {radiusKm} km
             </span>
             <Icon name="chevD" size={13} strokeWidth={2.2} className="shrink-0 text-primary/70" />
@@ -924,11 +924,11 @@ export function ExploreView({
           className={cn(
             "inline-flex min-w-0 items-center justify-center gap-1.5 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             withContact
-              ? "bg-primary/10 border-primary/40 text-primary font-bold"
+              ? "bg-primary/10 border-primary/40 text-primary-ink font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
           )}
         >
-          <Icon name="phone" size={13} strokeWidth={2.2} className={cn("shrink-0", withContact ? "text-primary" : "text-ink-muted")} />
+          <Icon name="phone" size={13} strokeWidth={2.2} className={cn("shrink-0", withContact ? "text-primary-ink" : "text-ink-muted")} />
           <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
             Elérhetőséggel
           </span>
@@ -1095,7 +1095,7 @@ export function ExploreView({
                   Ajánlj egy magyar vállalkozást 30 mp alatt — mi ellenőrizzük és felvesszük.
                 </span>
               </span>
-              <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
+              <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary-ink" />
             </Link>
           </div>
         )}
@@ -1119,7 +1119,7 @@ export function ExploreView({
             >
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary text-white"><Icon name="send" size={19} strokeWidth={2.2} /></span>
               <span className="min-w-0 flex-1">
-                <span className="block text-[11px] font-bold uppercase tracking-wider text-primary">Csoportos árajánlat</span>
+                <span className="block text-[11px] font-bold uppercase tracking-wider text-primary-ink">Csoportos árajánlat</span>
                 <span className="block text-[14.5px] font-extrabold leading-tight tracking-[-0.01em] text-ink">
                   Ne írj mindenkinek külön — kérj ajánlatot egyszerre
                 </span>
@@ -1127,7 +1127,7 @@ export function ExploreView({
                   Írd le egyszer, mire van szükséged — a helyi magyar szakik keresnek meg téged.
                 </span>
               </span>
-              <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+              <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary-ink" />
             </Link>
           )}
 
@@ -1247,7 +1247,7 @@ export function ExploreView({
                     href="/szaknevsor/ajanlas"
                     className="flex items-center gap-3 rounded-card border border-dashed border-line bg-surface px-4 py-3 text-left transition active:scale-[0.99]"
                   >
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary"><Icon name="plus" size={16} strokeWidth={2.6} /></span>
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary-ink"><Icon name="plus" size={16} strokeWidth={2.6} /></span>
                     <span className="min-w-0">
                       <span className="block text-[13.5px] font-bold text-ink">Ismersz egyet{cantonLabel ? ` ${cantonLabel} környékén` : ""}?</span>
                       <span className="block text-[12px] text-ink-muted">Ajánlj egy magyar vállalkozót — pár kattintás, és felkerül.</span>
@@ -1267,7 +1267,7 @@ export function ExploreView({
               {/* Ikon-halo — egységes „állapot" nyelv az EmptyState / RouteError-rel. */}
               <span
                 aria-hidden
-                className="kinti-pop mb-1 grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary shadow-[0_0_0_5px_rgb(var(--primary)/0.06),0_0_0_11px_rgb(var(--primary)/0.03)]"
+                className="kinti-pop mb-1 grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary-ink shadow-[0_0_0_5px_rgb(var(--primary)/0.06),0_0_0_11px_rgb(var(--primary)/0.03)]"
               >
                 <Icon name={showFavs ? "heart" : "pin"} size={24} strokeWidth={2.1} />
               </span>
@@ -1334,7 +1334,7 @@ export function ExploreView({
               href="/szaknevsor/ajanlas"
               className="flex items-center gap-3 rounded-card border border-dashed border-line bg-surface px-4 py-3 text-left transition active:scale-[0.99]"
             >
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-primary/10 text-primary-ink">
                 <Icon name="plus" size={17} strokeWidth={2.6} />
               </span>
               <span className="min-w-0 flex-1">
@@ -1345,7 +1345,7 @@ export function ExploreView({
                   Ajánld 30 mp alatt — mi ellenőrizzük és felvesszük.
                 </span>
               </span>
-              <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
+              <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary-ink" />
             </Link>
           )}
 
@@ -1369,7 +1369,7 @@ export function ExploreView({
                     href={`/szaknevsor/ajanlas?cat=${encodeURIComponent(c.id)}`}
                     className="inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-3 py-1.5 text-[12px] font-bold text-ink transition active:scale-95"
                   >
-                    <Icon name="plus" size={12} strokeWidth={2.6} className="text-primary" />
+                    <Icon name="plus" size={12} strokeWidth={2.6} className="text-primary-ink" />
                     {c.label}
                   </Link>
                 ))}
@@ -1398,7 +1398,7 @@ export function ExploreView({
                 Gyors regisztráció, és 1 perc alatt fent vagy.
               </span>
             </span>
-            <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary" />
+            <Icon name="chevR" size={16} strokeWidth={2.4} className="shrink-0 text-primary-ink" />
           </Link>
 
           {/* Lead gen CTA — árajánlat-kérés */}

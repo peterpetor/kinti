@@ -16,6 +16,10 @@
     --surface: 255 255 255;       /* #ffffff */
     --surface-alt: 251 247 238;   /* #fbf7ee */
     --primary: 29 68 52;          /* #1d4434 */
+    /* A márka-zöld SZÖVEGKÉNT. Világos témán AZONOS a `--primary`-vel (10,9:1),
+       tehát itt semmi nem változik — a token azért kell, mert SÖTÉT témán a
+       kettő nem lehet ugyanaz (lásd a dark blokk indoklását). */
+    --primary-ink: 29 68 52;      /* #1d4434 */
     --primary-soft: 230 235 229;  /* #e6ebe5 */
     --accent: 200 57 46;          /* #c8392e */
     --accent-soft: 251 232 229;   /* #fbe8e5 */
@@ -65,7 +69,17 @@
     --bg: 16 20 17;               /* #101411 */
     --surface: 26 32 28;          /* #1a201c */
     --surface-alt: 21 27 23;      /* #151b17 */
-    --primary: 70 128 98;         /* #468062 — világosabb fenyő: fehér felirat ÉS sötét háttér mellett is olvasható */
+    --primary: 70 128 98;         /* #468062 — HÁTTÉRNEK: a fehér felirat rajta 4,64:1 */
+    /* ⚠️ MIÉRT KÉT TOKEN: a `--primary` sötét témán KÉTFÉLE célt szolgál, és a
+       kettő ELLENTÉTES irányba húz. Háttérként elég sötétnek kell lennie, hogy a
+       fehér felirat olvasható legyen rajta (4,64:1). Szövegként viszont elég
+       világosnak, hogy a sötét felületen olvasható legyen — és ott a #468062
+       csak 3,57:1, ami AA alatt van. Ha a tokent szövegnek jóra világítom
+       (4,57), a fehér ráesik 3,63-ra: egyetlen érték nem tud mindkettőnek
+       megfelelni. Ezért a HÁTTÉR marad, és a SZÖVEG kap saját tokent.
+       MÉRT: 5,34 / 5,99 / 5,64 a három sötét felületen, és 4,67 a
+       `--primary-soft`-on (a `bg-primary-soft text-primary` gyakori párosítás). */
+    --primary-ink: 111 156 133;   /* #6f9c85 */
     --primary-soft: 32 44 37;     /* #202c25 */
     --accent: 224 90 78;          /* #e05a4e */
     --accent-soft: 58 32 29;      /* #3a201d */

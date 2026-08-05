@@ -440,7 +440,7 @@ export function GlobalSearchOverlay() {
                           {r.icon && (
                             <span className={cn(
                               "grid h-8 w-8 shrink-0 place-items-center rounded-[10px]",
-                              r.section === "recent" ? "bg-surface-alt text-ink-muted" : "bg-primary-soft text-primary",
+                              r.section === "recent" ? "bg-surface-alt text-ink-muted" : "bg-primary-soft text-primary-ink",
                             )}>
                               <Icon name={r.icon} size={16} strokeWidth={2.2} />
                             </span>

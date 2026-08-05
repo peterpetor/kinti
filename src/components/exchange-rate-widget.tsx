@@ -58,7 +58,7 @@ export function ExchangeRateWidget() {
       href="/utalas"
       className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition active:scale-[0.99]"
     >
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-primary text-lg">
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-primary-ink text-lg">
         💱
       </span>
       <div className="min-w-0 flex-1">

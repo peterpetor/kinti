@@ -237,11 +237,11 @@ export function JobAlertRadar() {
   return (
     <section id="radar" className="scroll-mt-4 rounded-card border border-primary/20 bg-primary/5 p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-3">
-        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 text-primary shadow-inner">
+        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 text-primary-ink shadow-inner">
           <Icon name="bell" size={20} strokeWidth={2.4} />
         </span>
         <div className="min-w-0 flex-1">
-          <h3 className="text-base font-extrabold tracking-tight text-primary">
+          <h3 className="text-base font-extrabold tracking-tight text-primary-ink">
             Állás-riasztás (Job Alert)
           </h3>
           <p className="text-[12.5px] leading-snug text-ink-muted">
@@ -327,7 +327,7 @@ export function JobAlertRadar() {
             {radars.map((a) => (
               <div key={a.id} className="flex items-center justify-between gap-3 rounded-xl border border-line bg-surface px-3.5 py-2.5 shadow-sm">
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-primary">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-primary-ink">
                     <Icon name="search" size={14} strokeWidth={2.4} />
                   </span>
                   <span className="text-[13px] font-bold text-ink truncate">

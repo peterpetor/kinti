@@ -102,7 +102,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       <header className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary-soft text-primary">
+            <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary-soft text-primary-ink">
               <Icon name={guide.icon} size={16} strokeWidth={2.4} />
             </span>
             <h1 className="text-[21px] font-extrabold leading-tight tracking-tight text-ink text-balance">
@@ -129,11 +129,11 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
           hangalapú keresés EZT a blokkot olvassa fel (lásd guide-schema.ts). */}
       {guide.tldr && guide.tldr.length > 0 && (
         <section data-speakable className="rounded-card border border-primary/25 bg-primary-soft/40 p-4">
-          <h2 className="text-[12px] font-bold uppercase tracking-wide text-primary">Röviden</h2>
+          <h2 className="text-[12px] font-bold uppercase tracking-wide text-primary-ink">Röviden</h2>
           <ul className="mt-2 space-y-1.5">
             {guide.tldr.map((t) => (
               <li key={t} className="flex gap-1.5 text-[13px] leading-relaxed text-ink">
-                <span className="shrink-0 text-primary" aria-hidden>•</span> {t}
+                <span className="shrink-0 text-primary-ink" aria-hidden>•</span> {t}
               </li>
             ))}
           </ul>
@@ -144,14 +144,14 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       {toc.length > 1 && (
         <details className="group rounded-card border border-line bg-surface shadow-card" open>
           <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-[12.5px] font-bold text-ink">
-            <Icon name="list" size={15} strokeWidth={2.4} className="text-primary" />
+            <Icon name="list" size={15} strokeWidth={2.4} className="text-primary-ink" />
             Tartalomjegyzék
             <Icon name="chevD" size={14} strokeWidth={2.4} className="ml-auto text-ink-muted transition-transform group-open:rotate-180" />
           </summary>
           <ul className="space-y-1 px-4 pb-3">
             {toc.map((t) => (
               <li key={t.id}>
-                <a href={`#${t.id}`} className="block rounded-lg px-2 py-1 text-[12.5px] text-ink-muted transition hover:bg-surface-alt hover:text-primary">
+                <a href={`#${t.id}`} className="block rounded-lg px-2 py-1 text-[12.5px] text-ink-muted transition hover:bg-surface-alt hover:text-primary-ink">
                   {t.heading}
                 </a>
               </li>
@@ -176,7 +176,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
               <ul className="mt-1 space-y-1.5">
                 {s.bullets.map((b, j) => (
                   <li key={j} className="flex items-start gap-2 text-[13.5px] leading-relaxed text-ink-muted">
-                    <Icon name="check" size={14} strokeWidth={2.6} className="mt-0.5 shrink-0 text-primary" />
+                    <Icon name="check" size={14} strokeWidth={2.6} className="mt-0.5 shrink-0 text-primary-ink" />
                     <span>{b}</span>
                   </li>
                 ))}
@@ -205,7 +205,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       {/* Hivatalos források */}
       <section className="rounded-card border border-line bg-surface-alt p-4">
         <h2 className="mb-2 flex items-center gap-1.5 text-[11.5px] font-bold uppercase tracking-wide text-ink-muted">
-          <Icon name="globe" size={13} strokeWidth={2.4} className="text-primary" />
+          <Icon name="globe" size={13} strokeWidth={2.4} className="text-primary-ink" />
           Hivatalos források
         </h2>
         <ul className="space-y-2">
@@ -215,7 +215,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
                 href={src.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start gap-1.5 text-[12.5px] font-semibold leading-snug text-primary underline underline-offset-2"
+                className="flex items-start gap-1.5 text-[12.5px] font-semibold leading-snug text-primary-ink underline underline-offset-2"
               >
                 <Icon name="arrowRight" size={13} strokeWidth={2.4} className="mt-0.5 shrink-0" />
                 <span>{src.label}</span>
@@ -274,7 +274,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
                 href={`/tudasbazis/${g.slug}`}
                 className="flex items-center gap-2.5 rounded-2xl border border-line bg-surface p-3 shadow-card transition active:scale-[0.99]"
               >
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary-ink">
                   <Icon name={g.icon} size={15} strokeWidth={2.3} />
                 </span>
                 <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-ink">

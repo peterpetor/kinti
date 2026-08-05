@@ -227,7 +227,7 @@ export function LeaderboardView() {
                     )}
                   </span>
                   {category !== "referral" && (
-                    <span className="shrink-0 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">
+                    <span className="shrink-0 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary-ink">
                       Lv {e.level}
                     </span>
                   )}

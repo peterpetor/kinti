@@ -114,7 +114,7 @@ export function NewsletterComposer({
         disabled={drafting || country === "all"}
         title={country === "all" ? "Előbb válassz konkrét országot" : undefined}
         className={cn(
-          "flex w-full items-center justify-center gap-1.5 rounded-[12px] border border-primary/30 bg-primary-soft/40 px-3 py-2.5 text-[13px] font-bold text-primary transition active:scale-[0.99]",
+          "flex w-full items-center justify-center gap-1.5 rounded-[12px] border border-primary/30 bg-primary-soft/40 px-3 py-2.5 text-[13px] font-bold text-primary-ink transition active:scale-[0.99]",
           (drafting || country === "all") && "cursor-not-allowed opacity-50",
         )}
       >

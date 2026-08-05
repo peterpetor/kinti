@@ -136,7 +136,7 @@ export function HomeWidgets({ widgets }: { widgets: WidgetDef[] }) {
                   aria-label={hidden ? `${w.label} megmutatása` : `${w.label} elrejtése`}
                   className={cn(
                     "grid h-7 w-7 place-items-center rounded-lg active:scale-90",
-                    hidden ? "bg-primary/15 text-primary" : "bg-surface-alt text-ink-muted",
+                    hidden ? "bg-primary/15 text-primary-ink" : "bg-surface-alt text-ink-muted",
                   )}
                 >
                   <Icon name="eye" size={13} strokeWidth={2.2} className={cn(!hidden && "opacity-100", hidden && "opacity-60")} />

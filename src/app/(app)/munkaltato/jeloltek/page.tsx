@@ -112,7 +112,7 @@ export default async function CandidatesPage({
               {(c.category || c.cantonCode) && (
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   {c.category && (
-                    <span className="rounded-[8px] bg-primary/10 px-2 py-0.5 text-[11.5px] font-bold text-primary">
+                    <span className="rounded-[8px] bg-primary/10 px-2 py-0.5 text-[11.5px] font-bold text-primary-ink">
                       {jobCategoryLabel(c.category)}
                     </span>
                   )}
@@ -125,11 +125,11 @@ export default async function CandidatesPage({
               )}
 
               <div className="mt-2 space-y-1.5">
-                <a href={`mailto:${c.email}`} className="flex items-center gap-2 text-[13px] font-semibold text-primary hover:underline">
+                <a href={`mailto:${c.email}`} className="flex items-center gap-2 text-[13px] font-semibold text-primary-ink hover:underline">
                   <Icon name="send" size={14} strokeWidth={2.2} /> {c.email}
                 </a>
                 {c.phone && (
-                  <a href={`tel:${c.phone}`} className="flex items-center gap-2 text-[13px] font-semibold text-primary hover:underline">
+                  <a href={`tel:${c.phone}`} className="flex items-center gap-2 text-[13px] font-semibold text-primary-ink hover:underline">
                     <Icon name="phone" size={14} strokeWidth={2.2} /> {c.phone}
                   </a>
                 )}
@@ -140,7 +140,7 @@ export default async function CandidatesPage({
                   href={`/api/employer/candidate-cv/${c.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-pill bg-primary/10 px-3.5 py-2 text-[12.5px] font-bold text-primary transition active:scale-[0.98]"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-pill bg-primary/10 px-3.5 py-2 text-[12.5px] font-bold text-primary-ink transition active:scale-[0.98]"
                 >
                   <Icon name="document" size={14} strokeWidth={2.2} /> CV letöltése (PDF)
                 </a>

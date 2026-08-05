@@ -60,6 +60,10 @@ const config: Config = {
         // ⚠️ A PRO-arany SZÖVEGKÉNT más érték kell: világos lapon a #ff9600 csak
         // 2,18:1 (olvashatatlan). Téma-függő token — `text-pro` HELYETT ezt használd.
         "pro-ink": "rgb(var(--pro-ink) / <alpha-value>)",
+        // ⚠️ A márka-zöld SZÖVEGKÉNT. Sötét témán a `primary` a HÁTTÉR-érték (hogy
+        // a fehér felirat olvasható legyen rajta), szövegként viszont csak 3,57:1
+        // — AA alatt. `text-primary` HELYETT ezt használd.
+        "primary-ink": "rgb(var(--primary-ink) / <alpha-value>)",
         // Szöveg a PRO-arany HÁTTÉREN: a fehér ott 2,18:1 volt, ez 8,51:1.
         "on-pro": "rgb(var(--on-pro) / <alpha-value>)",
         // Domain-árnyalatok az ikon-chipekhez (kezdőlap-rács) — a star túl világos

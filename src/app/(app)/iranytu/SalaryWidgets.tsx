@@ -164,7 +164,7 @@ export function RentToSalaryCalculator({
             <Skeleton className="h-3.5 w-48" />
           </div>
         ) : avgRatio ? (
-          <p className={`text-[13px] mt-1 ${isGood ? "text-primary" : "text-accent"}`}>
+          <p className={`text-[13px] mt-1 ${isGood ? "text-primary-ink" : "text-accent"}`}>
             A {canton === "all" ? countryResidentialAdjective(country) : `${canton} ${regionLabel(country)}ban élő`} magyarok átlaga: <strong>{avgRatio}%</strong>.
             <br />
             {isGood ? "Jól gazdálkodsz, ez az átlag alatti teher!" : "Ez az átlagnál magasabb teher a fizetésedhez képest."}
@@ -307,7 +307,7 @@ export function AlertSubscription({
         type="button"
         onClick={handlePushSubscribe}
         disabled={submitting}
-        className="w-full rounded-xl border border-primary/30 bg-primary-soft/50 py-3 text-[14px] font-bold text-primary transition hover:bg-primary-soft disabled:opacity-40"
+        className="w-full rounded-xl border border-primary/30 bg-primary-soft/50 py-3 text-[14px] font-bold text-primary-ink transition hover:bg-primary-soft disabled:opacity-40"
       >
         {submitting ? "…" : "📲 Push-értesítést kérek (email nélkül)"}
       </button>

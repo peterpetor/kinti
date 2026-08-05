@@ -103,7 +103,7 @@ export function DeadlineProCta({
       <Link
         href={`/szaknevsor?cat=${encodeURIComponent(topic.cats[0])}`}
         onClick={() => trackAction("deadline-pro-click")}
-        className="mt-2.5 block text-center text-[12px] font-bold text-primary"
+        className="mt-2.5 block text-center text-[12px] font-bold text-primary-ink"
       >
         Több szakértő a Szaknévsorban →
       </Link>

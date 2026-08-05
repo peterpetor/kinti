@@ -130,7 +130,7 @@ export function RecruiterSearch() {
               <a key={i} href={j.url} target="_blank" rel="noopener noreferrer" className="block rounded-card border border-line bg-surface p-3.5 shadow-card transition active:scale-[0.99] hover:border-primary/30">
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-[13.5px] font-extrabold text-ink">{j.title}</p>
-                  <span className="shrink-0 text-primary">↗</span>
+                  <span className="shrink-0 text-primary-ink">↗</span>
                 </div>
                 <p className="mt-0.5 text-[12px] text-ink-muted">
                   {[j.company, j.location].filter(Boolean).join(" · ") || "—"}
@@ -154,7 +154,7 @@ export function RecruiterSearch() {
                 <p className="text-[13.5px] font-bold text-ink">{l.name}</p>
                 <p className="text-[11.5px] text-ink-muted">{l.desc}</p>
               </div>
-              <span className="shrink-0 text-primary">↗</span>
+              <span className="shrink-0 text-primary-ink">↗</span>
             </a>
           ))}
         </section>

@@ -80,7 +80,7 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
       {/* Hero — cím + leírás + meta */}
       <section className="rounded-card border-2 border-primary/20 bg-primary-soft/50 p-5 shadow-card">
         <div className="flex items-start gap-3">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary/10 text-primary">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary/10 text-primary-ink">
             <Icon name={checklist.icon} size={26} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
@@ -203,7 +203,7 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
                       href={step.link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-2 inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[11.5px] font-bold text-primary hover:bg-primary-soft transition"
+                      className="mt-2 inline-flex items-center gap-1 rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[11.5px] font-bold text-primary-ink hover:bg-primary-soft transition"
                     >
                       <Icon name="globe" size={12} strokeWidth={2.2} className="shrink-0" /> {step.link.label}
                     </a>
@@ -244,7 +244,7 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
                 href={s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[12.5px] font-semibold text-primary underline break-all"
+                className="text-[12.5px] font-semibold text-primary-ink underline break-all"
               >
                 {s.label}
               </a>

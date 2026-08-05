@@ -183,7 +183,7 @@ export function FlightFinder() {
             <p className="font-bold text-ink-muted">Vissza</p>
             <p className="text-[13px] font-extrabold text-ink">{returnDate ? fmtDate(returnDate) : "Egyirányú"}</p>
             {returnDate && (
-              <button type="button" onClick={() => setReturnDate(null)} className="text-[11px] font-bold text-primary underline mt-0.5">✕ Csak oda</button>
+              <button type="button" onClick={() => setReturnDate(null)} className="text-[11px] font-bold text-primary-ink underline mt-0.5">✕ Csak oda</button>
             )}
           </div>
         </div>
@@ -313,7 +313,7 @@ function BookingLink({ href, label, desc, icon }: { href: string; label: string;
         <p className="text-[13px] font-extrabold text-ink">{label}</p>
         <p className="mt-0.5 text-[11px] text-ink-muted">{desc}</p>
       </div>
-      <Icon name="chevR" size={13} className="text-primary shrink-0" />
+      <Icon name="chevR" size={13} className="text-primary-ink shrink-0" />
     </a>
   );
 }

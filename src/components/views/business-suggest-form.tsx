@@ -159,7 +159,7 @@ export function BusinessSuggestForm({
 
       <p className="text-center text-[11px] text-ink-faint">
         A saját vállalkozásod?{" "}
-        <Link href="/szaknevsor/uj" className="font-bold text-primary underline">Add hozzá itt</Link> (kezelő-linket is kapsz hozzá).
+        <Link href="/szaknevsor/uj" className="font-bold text-primary-ink underline">Add hozzá itt</Link> (kezelő-linket is kapsz hozzá).
       </p>
     </form>
   );

@@ -184,7 +184,7 @@ function QuestionCard({
   return (
     <article className="rounded-card border border-line bg-surface p-5 shadow-card space-y-4">
       <div className="flex items-center gap-1.5">
-        <span className="inline-flex items-center gap-1 rounded-pill bg-primary-soft px-2 py-0.5 text-[11.5px] font-bold text-primary">
+        <span className="inline-flex items-center gap-1 rounded-pill bg-primary-soft px-2 py-0.5 text-[11.5px] font-bold text-primary-ink">
           {meta.emoji} {meta.label}
         </span>
       </div>
@@ -256,7 +256,7 @@ function ResultScreen({
         <p className="text-[12px] font-bold uppercase tracking-wide text-ink-muted">
           Mai eredményed
         </p>
-        <p className="mt-2 text-[48px] font-extrabold leading-none tracking-tight text-primary">
+        <p className="mt-2 text-[48px] font-extrabold leading-none tracking-tight text-primary-ink">
           {score} / 3
         </p>
         <p className="mt-2 text-[14px] font-bold text-ink">{message}</p>
@@ -470,7 +470,7 @@ function WeeklyCompareBanner({
       <>
         <div className="rounded-card border-2 border-primary/30 bg-primary-soft/60 px-4 py-3.5 text-center shadow-card">
           <p className="text-[13.5px] font-extrabold leading-snug text-ink">
-            📊 Ezen a héten {phrase} <span className="text-primary">{pct.percentile}%-ánál</span> jobb eredményt értél el!
+            📊 Ezen a héten {phrase} <span className="text-primary-ink">{pct.percentile}%-ánál</span> jobb eredményt értél el!
           </p>
           <p className="mt-1 text-[11px] text-ink-muted">heti {pct.total} játék alapján · anonim</p>
         </div>
@@ -531,7 +531,7 @@ function QuizShareButton({ score, streak, country }: { score: number; streak: nu
     <button
       type="button"
       onClick={share}
-      className="mt-4 inline-flex items-center gap-1.5 rounded-pill border border-primary/30 bg-surface px-4 py-2 text-[12.5px] font-bold text-primary transition active:scale-[0.97]"
+      className="mt-4 inline-flex items-center gap-1.5 rounded-pill border border-primary/30 bg-surface px-4 py-2 text-[12.5px] font-bold text-primary-ink transition active:scale-[0.97]"
     >
       <Icon name="share" size={14} strokeWidth={2.4} />
       {copied ? "Kimásolva ✓" : "Megosztom az eredményem"}

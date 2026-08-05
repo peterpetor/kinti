@@ -72,7 +72,7 @@ export function NapiSzoCard() {
   return (
     <div className="rounded-card border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-surface p-4 shadow-card">
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">
           {flag} Napi szó
         </span>
         <span className="text-[11px] font-semibold text-ink-faint">{word.hu}</span>

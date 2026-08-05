@@ -70,7 +70,7 @@ function BattleTable({
               </span>
               <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-ink">
                 {nameOf(r.key)}
-                {own && <span className="ml-1.5 text-[10.5px] font-extrabold text-primary">a te csapatod</span>}
+                {own && <span className="ml-1.5 text-[10.5px] font-extrabold text-primary-ink">a te csapatod</span>}
               </span>
               <span className="shrink-0 text-[12.5px] font-extrabold text-ink">{fmtAvg(r.avg)}</span>
               <span className="shrink-0 text-[10.5px] text-ink-faint">{r.plays} játék</span>
@@ -168,7 +168,7 @@ export function BattleBoard({
         <button
           type="button"
           onClick={shareBadge}
-          className="flex w-full items-center justify-center gap-2 rounded-pill border border-primary/30 bg-primary-soft/40 px-4 py-2.5 text-[13.5px] font-bold text-primary transition active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-2 rounded-pill border border-primary/30 bg-primary-soft/40 px-4 py-2.5 text-[13.5px] font-bold text-primary-ink transition active:scale-[0.98]"
         >
           {copied ? "Kimásolva ✓" : "🏆 Csapat-badge megosztása"}
         </button>

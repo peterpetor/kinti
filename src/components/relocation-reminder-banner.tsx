@@ -56,7 +56,7 @@ export function RelocationReminderBanner() {
           </li>
         ))}
       </ul>
-      <Link href="/tudasbazis/kikoltozes" className="mt-3 inline-flex text-[12.5px] font-bold text-primary active:scale-95 transition-transform">
+      <Link href="/tudasbazis/kikoltozes" className="mt-3 inline-flex text-[12.5px] font-bold text-primary-ink active:scale-95 transition-transform">
         Ugrás a kiköltözés-tervezőhöz ›
       </Link>
     </div>

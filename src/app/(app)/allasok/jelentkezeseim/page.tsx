@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Jelentkezéseim — kinti.app" };
 
 /** Pályázat-státusz → magyar címke + szín. */
 const STATUS: Record<string, { label: string; cls: string }> = {
-  new: { label: "Beküldve", cls: "bg-primary/10 text-primary" },
+  new: { label: "Beküldve", cls: "bg-primary/10 text-primary-ink" },
   reviewed: { label: "Megtekintve", cls: "bg-accent/10 text-accent" },
   rejected: { label: "Elutasítva", cls: "bg-ink/10 text-ink-muted" },
   hired: { label: "Felvéve 🎉", cls: "bg-success/15 text-success" },

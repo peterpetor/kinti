@@ -110,7 +110,7 @@ export default async function AdminJeloltekPage({
                         href={`/api/admin/candidate-cv/${w.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rounded-pill bg-surface-alt border border-line px-3.5 py-1.5 text-[12px] font-bold text-primary active:scale-95"
+                        className="rounded-pill bg-surface-alt border border-line px-3.5 py-1.5 text-[12px] font-bold text-primary-ink active:scale-95"
                       >
                         CV ↗
                       </a>
@@ -122,8 +122,8 @@ export default async function AdminJeloltekPage({
                 </div>
 
                 <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] font-semibold">
-                  <a href={`mailto:${w.email}`} className="text-primary hover:underline">✉️ {w.email}</a>
-                  {w.phone && <a href={`tel:${w.phone}`} className="text-primary hover:underline">📞 {w.phone}</a>}
+                  <a href={`mailto:${w.email}`} className="text-primary-ink hover:underline">✉️ {w.email}</a>
+                  {w.phone && <a href={`tel:${w.phone}`} className="text-primary-ink hover:underline">📞 {w.phone}</a>}
                   <span className="text-ink-faint">Frissítve: {fmtDate(w.updatedAt)}</span>
                 </div>
               </div>

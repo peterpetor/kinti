@@ -298,7 +298,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
       <div className="mb-4">
         <div className="mb-2 flex items-center justify-between text-[11px] font-bold text-ink-muted">
           <span>{step + 1}. lépés / {STEPS.length}</span>
-          <span className="text-primary">{STEPS[step]}</span>
+          <span className="text-primary-ink">{STEPS[step]}</span>
         </div>
         <div className="flex gap-1">
           {STEPS.map((label, i) => (
@@ -405,7 +405,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
           </div>
           {professionDe && (
             <div className="rounded-xl border border-primary/20 bg-primary-soft/40 px-3 py-2.5">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-primary">{t.adj.charAt(0).toUpperCase() + t.adj.slice(1)} megnevezés (a CV-ben)</p>
+              <p className="text-[11px] font-bold uppercase tracking-wide text-primary-ink">{t.adj.charAt(0).toUpperCase() + t.adj.slice(1)} megnevezés (a CV-ben)</p>
               <p className="text-[15px] font-extrabold text-ink">{professionDe}</p>
             </div>
           )}
@@ -445,7 +445,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
               <textarea className={`${inputCls} min-h-[60px] resize-y`} value={e.desc} onChange={(ev) => updateExp(i, { desc: ev.target.value })} placeholder="Feladatok, felelősségek (opcionális)" maxLength={500} />
             </div>
           ))}
-          <button type="button" onClick={() => set("experience", [...f.experience, { ...emptyExp }])} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/30 py-2.5 text-[13px] font-bold text-primary">
+          <button type="button" onClick={() => set("experience", [...f.experience, { ...emptyExp }])} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/30 py-2.5 text-[13px] font-bold text-primary-ink">
             <Icon name="plus" size={15} strokeWidth={2.6} /> Munkahely hozzáadása
           </button>
         </div>
@@ -470,7 +470,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
               </div>
             </div>
           ))}
-          <button type="button" onClick={() => set("education", [...f.education, { ...emptyEdu }])} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/30 py-2.5 text-[13px] font-bold text-primary">
+          <button type="button" onClick={() => set("education", [...f.education, { ...emptyEdu }])} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/30 py-2.5 text-[13px] font-bold text-primary-ink">
             <Icon name="plus" size={15} strokeWidth={2.6} /> Végzettség hozzáadása
           </button>
         </div>
@@ -493,7 +493,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
                 )}
               </div>
             ))}
-            <button type="button" onClick={() => set("languages", [...f.languages, { name: "", level: "" }])} className="text-[12px] font-bold text-primary">+ Nyelv hozzáadása</button>
+            <button type="button" onClick={() => set("languages", [...f.languages, { name: "", level: "" }])} className="text-[12px] font-bold text-primary-ink">+ Nyelv hozzáadása</button>
           </div>
           <div>
             <label className={labelCls}>{t.skillsLabel}</label>
@@ -575,7 +575,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
               </label>
               {/* Honeypot */}
               <input type="text" tabIndex={-1} autoComplete="off" value={hp} onChange={(e) => setHp(e.target.value)} className="pointer-events-none absolute -left-[9999px] h-0 w-0 opacity-0" aria-hidden="true" />
-              <button type="button" onClick={saveProfile} disabled={!consent || saveState === "saving"} className="mt-2.5 w-full rounded-pill border border-primary/30 bg-primary-soft/40 px-4 py-2 text-[13.5px] font-bold text-primary transition active:scale-[0.98] disabled:opacity-50">
+              <button type="button" onClick={saveProfile} disabled={!consent || saveState === "saving"} className="mt-2.5 w-full rounded-pill border border-primary/30 bg-primary-soft/40 px-4 py-2 text-[13.5px] font-bold text-primary-ink transition active:scale-[0.98] disabled:opacity-50">
                 {saveState === "saving" ? "Mentés…" : "Profil mentése + megkeresés kérése"}
               </button>
               {saveError && <p className="mt-1 text-[12px] font-semibold text-accent">{saveError}</p>}

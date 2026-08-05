@@ -175,7 +175,7 @@ export function StorySubmitForm({ turnstileSiteKey }: { turnstileSiteKey: string
         <label className="block text-[12px] font-bold text-ink-muted">Borítókép (opcionális, max 2 MB)</label>
         <input type="file" accept="image/jpeg,image/png,image/webp,image/gif"
           onChange={(e) => setImage(e.target.files?.[0] ?? null)}
-          className="mt-1 w-full text-[12.5px] text-ink-muted file:mr-3 file:rounded-pill file:border-0 file:bg-primary-soft file:px-3 file:py-1.5 file:text-[12px] file:font-bold file:text-primary" />
+          className="mt-1 w-full text-[12.5px] text-ink-muted file:mr-3 file:rounded-pill file:border-0 file:bg-primary-soft file:px-3 file:py-1.5 file:text-[12px] file:font-bold file:text-primary-ink" />
       </div>
 
       <div>

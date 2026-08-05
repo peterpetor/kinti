@@ -83,7 +83,7 @@ export function RecentBusinessesStrip() {
             href={`/szaknevsor/${r.id}`}
             className="flex shrink-0 items-center gap-2 rounded-pill border border-line bg-surface px-3 py-2 transition active:scale-[0.97]"
           >
-            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary/10 text-primary-ink">
               <Icon name="clock" size={12} strokeWidth={2.4} />
             </span>
             <span className="min-w-0">

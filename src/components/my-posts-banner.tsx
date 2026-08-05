@@ -38,7 +38,7 @@ export function MyPostsBanner() {
           <span className="text-[13.5px] font-extrabold tracking-[-0.01em] text-ink">
             {stats.total === 1 ? "1 saját posztod van" : `${stats.total} saját posztod van`}
           </span>
-          <span className="text-[11px] font-bold text-primary">· {stats.points} XP</span>
+          <span className="text-[11px] font-bold text-primary-ink">· {stats.points} XP</span>
         </span>
         {/* Haladás-sáv a következő szintig */}
         <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-surface-alt">
@@ -53,7 +53,7 @@ export function MyPostsBanner() {
             : "Szerkesztés, törlés, mentés másik eszközre — kattints rá!"}
         </span>
       </span>
-      <span className="shrink-0 text-primary text-[14px] font-bold">›</span>
+      <span className="shrink-0 text-primary-ink text-[14px] font-bold">›</span>
     </Link>
   );
 }

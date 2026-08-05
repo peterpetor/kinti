@@ -248,7 +248,7 @@ export function BusinessMap({
                   <span
                     className={cn(
                       "grid h-4 w-4 place-items-center [&>svg]:h-3.5 [&>svg]:w-3.5",
-                      on ? "text-white" : "text-primary",
+                      on ? "text-white" : "text-primary-ink",
                     )}
                     dangerouslySetInnerHTML={{ __html: categoryIconSvgString(c.id) }}
                   />
@@ -434,7 +434,7 @@ function SelectedCard({ business: b, distanceKm }: { business: ListBusiness; dis
             megnevezések (pl. „Magyar bolt, pékség és kávézó" — a mező 50 karaktert
             enged) 4-5 sorra tördelődtek, és a carousel kártyái különböző magasak
             lettek. A csillag/„Új" jelölő shrink-0, hogy a szűkülés a címkét érje. */}
-        <div className="flex min-w-0 items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary">
+        <div className="flex min-w-0 items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary-ink">
           <span className="truncate">{b.categoryLabel}</span>
           <span className="shrink-0 text-ink-faint">·</span>
           {b.reviews > 0 ? (

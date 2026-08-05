@@ -55,7 +55,7 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
                 "flex-1 rounded-xl py-2 text-[12px] font-bold transition-all",
                 tab === t
                   ? "bg-primary text-white shadow-sm"
-                  : "bg-surface-alt text-ink-muted hover:bg-primary/10 hover:text-primary"
+                  : "bg-surface-alt text-ink-muted hover:bg-primary/10 hover:text-primary-ink"
               )}
             >
               {t === "overview" && "📊 Áttekintés"}
@@ -73,7 +73,7 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
           <div className="rounded-2xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 px-4 py-3 flex items-center gap-3">
             <span className="text-2xl">🎯</span>
             <div>
-              <p className="text-[12px] font-black uppercase tracking-wide text-primary">Konverzió</p>
+              <p className="text-[12px] font-black uppercase tracking-wide text-primary-ink">Konverzió</p>
               <p className="text-[22px] font-extrabold text-ink leading-none">{conversionRate}%</p>
               <p className="text-[11px] text-ink-muted">megtekintőből kattintott telefonra</p>
             </div>
@@ -186,7 +186,7 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
               </div>
               <div className="flex justify-between text-[11px] text-ink-faint px-0.5">
                 <span>{last30[0]?.day?.slice(5)}</span>
-                <span className="text-primary font-bold">Ma</span>
+                <span className="text-primary-ink font-bold">Ma</span>
               </div>
               <p className="text-[11px] text-ink-muted text-center">
                 Utolsó {last30.length} nap — összesen:{" "}
@@ -298,7 +298,7 @@ function KpiCard({
 function TipRow({ icon, text }: { icon: IconName; text: string }) {
   return (
     <div className="flex items-start gap-2.5">
-      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary mt-0.5">
+      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary-ink mt-0.5">
         <Icon name={icon} size={12} strokeWidth={2.4} />
       </span>
       <p className="text-[12px] leading-relaxed text-ink-muted">{text}</p>

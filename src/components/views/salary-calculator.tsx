@@ -276,7 +276,7 @@ export function SalaryCalculator() {
           <span className="absolute right-3 top-3 rounded bg-accent/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-accent">
             Becslés
           </span>
-          <p className="text-[13px] font-bold uppercase tracking-wide text-primary">
+          <p className="text-[13px] font-bold uppercase tracking-wide text-primary-ink">
             Becsült Nettó Bér
           </p>
           <div className="mt-1 flex items-end justify-center gap-2">
@@ -295,7 +295,7 @@ export function SalaryCalculator() {
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
-            className="flex w-full items-center justify-between font-bold text-ink hover:text-primary transition-colors"
+            className="flex w-full items-center justify-between font-bold text-ink hover:text-primary-ink transition-colors"
           >
             <span>Részletes levonások (hitel/hó)</span>
             <Icon
@@ -345,7 +345,7 @@ export function SalaryCalculator() {
               
               <div className="flex justify-between text-[14px] font-extrabold text-ink pt-1">
                 <span>Nettó fizetés</span>
-                <span className="text-primary">{formatCHF(netMonthly)}</span>
+                <span className="text-primary-ink">{formatCHF(netMonthly)}</span>
               </div>
             </div>
           )}

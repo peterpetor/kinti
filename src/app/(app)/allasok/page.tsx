@@ -52,7 +52,7 @@ export default async function JobsPage() {
           <div className="grid grid-cols-2 gap-2">
             <Link
               href="/allasok/profil"
-              className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-primary/10 px-3 py-2.5 text-center text-[12.5px] font-bold leading-tight text-primary transition-all active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-primary/10 px-3 py-2.5 text-center text-[12.5px] font-bold leading-tight text-primary-ink transition-all active:scale-[0.98]"
             >
               <Icon name="upload" size={15} strokeWidth={2.4} className="shrink-0" /> Töltsd fel a CV-det
             </Link>
@@ -81,7 +81,7 @@ export default async function JobsPage() {
         {/* PRO álláskeresési eszközök — PRO-konverziós horgony (user-kérés);
             a lista után is az Állások oldal törzs-eleme marad. */}
         <section className="rounded-card border border-primary/25 bg-gradient-to-br from-primary/5 to-surface p-4 shadow-card">
-          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary-ink">
             <Icon name="sparkles" size={13} strokeWidth={2.4} /> PRO álláskeresési eszközök
           </p>
           <div className="mt-3 grid grid-cols-1 gap-2">
@@ -89,12 +89,12 @@ export default async function JobsPage() {
               href="/allasok/cv-audit"
               className="group flex flex-col rounded-xl border border-line bg-surface p-3 transition active:scale-[0.98] hover:border-primary/40 hover:shadow-card"
             >
-              <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-primary/10 text-primary"><Icon name="document" size={17} strokeWidth={2.2} /></span>
+              <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-primary/10 text-primary-ink"><Icon name="document" size={17} strokeWidth={2.2} /></span>
               <span className="mt-2 block text-[13px] font-extrabold leading-tight tracking-[-0.01em] text-ink">AI CV-asszisztens</span>
               <span className="mt-0.5 block text-[11px] leading-snug text-ink-muted">
                 Átnézi az önéletrajzod, mielőtt elküldöd
               </span>
-              <span className="mt-auto inline-flex items-center gap-0.5 pt-2 text-[10.5px] font-bold text-primary">
+              <span className="mt-auto inline-flex items-center gap-0.5 pt-2 text-[10.5px] font-bold text-primary-ink">
                 Kipróbálom <Icon name="chevR" size={11} strokeWidth={2.8} className="transition-transform group-active:translate-x-0.5" />
               </span>
             </Link>
@@ -108,7 +108,7 @@ export default async function JobsPage() {
         >
           <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-primary text-white"><Icon name="users" size={20} strokeWidth={2.2} /></span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[11px] font-bold uppercase tracking-wider text-primary">Ingyenes állásközvetítés</span>
+            <span className="block text-[11px] font-bold uppercase tracking-wider text-primary-ink">Ingyenes állásközvetítés</span>
             <span className="block text-[14.5px] font-extrabold leading-tight tracking-[-0.01em] text-ink">
               Mi keressük az állást — neked
             </span>
@@ -116,7 +116,7 @@ export default async function JobsPage() {
               Töltsd ki a profilod, pipáld be a közvetítést — a többi a mi dolgunk. AT/DE/NL, a díjat a munkáltató fizeti.
             </span>
           </span>
-          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+          <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary-ink" />
         </Link>
 
         {/* Hol keress még? — ország-tudatos hivatalos álláskereső-források (jogtiszta, link-out) */}

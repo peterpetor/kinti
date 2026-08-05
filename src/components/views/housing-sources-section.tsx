@@ -23,7 +23,7 @@ export function HousingSourcesSection() {
   return (
     <section className="rounded-card border border-line bg-surface p-4 shadow-card">
       <header className="flex items-center gap-2.5">
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary-ink">
           <Icon name="key" size={17} strokeWidth={2.2} />
         </span>
         <div className="min-w-0">
@@ -47,7 +47,7 @@ export function HousingSourcesSection() {
                 <span className="block truncate text-[13.5px] font-bold text-ink">{s.name}</span>
                 <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">{s.note}</p>
               </div>
-              <span className="mt-0.5 shrink-0 text-ink-faint transition group-hover:text-primary" aria-hidden>
+              <span className="mt-0.5 shrink-0 text-ink-faint transition group-hover:text-primary-ink" aria-hidden>
                 <Icon name="arrowRight" size={15} strokeWidth={2.4} className="-rotate-45" />
               </span>
             </a>

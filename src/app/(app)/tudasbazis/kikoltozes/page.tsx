@@ -191,7 +191,7 @@ export default function RelocationTrackerPage() {
             <span className="text-[13px] font-bold text-ink/70 uppercase tracking-wide">
               Készültség
             </span>
-            <span className="text-[15px] font-extrabold text-primary">
+            <span className="text-[15px] font-extrabold text-primary-ink">
               {progressPercent}%
             </span>
           </div>
@@ -221,11 +221,11 @@ export default function RelocationTrackerPage() {
           {daysToMove !== null ? (
             <p className="mt-3 text-center text-[14px] font-bold text-ink">
               {daysToMove > 0 ? (
-                <>⏳ <span className="text-[20px] font-extrabold text-primary">{daysToMove}</span> nap a kiköltözésig</>
+                <>⏳ <span className="text-[20px] font-extrabold text-primary-ink">{daysToMove}</span> nap a kiköltözésig</>
               ) : daysToMove === 0 ? (
                 "🎉 Ma van a nagy nap — sok sikert!"
               ) : (
-                <><CountryFlag code={country} className="inline-block h-[13px] w-[19px] align-middle" /> <span className="text-[20px] font-extrabold text-primary">{Math.abs(daysToMove)}</span>. napod {countryLocative(country)}</>
+                <><CountryFlag code={country} className="inline-block h-[13px] w-[19px] align-middle" /> <span className="text-[20px] font-extrabold text-primary-ink">{Math.abs(daysToMove)}</span>. napod {countryLocative(country)}</>
               )}
             </p>
           ) : (

@@ -430,7 +430,7 @@ export function RecruiterWorkspace() {
                   </select>
                   {c.cvKey && <button type="button" onClick={() => parseCv(c)} disabled={parsing === c.id} className="rounded-pill bg-star/15 px-3 py-1 text-[12px] font-bold text-star disabled:opacity-50">{parsing === c.id ? "Elemzés…" : "🪄 AI"}</button>}
                   <button type="button" onClick={() => searchForCandidate(c)} disabled={!c.keyword} className="rounded-pill bg-primary px-3 py-1 text-[12px] font-bold text-white shadow-card disabled:opacity-50">🔎 Keres</button>
-                  {c.cvKey && <a href={`/api/admin/recruiter/cv/${c.id}`} target="_blank" rel="noopener noreferrer" className="rounded-pill border border-line bg-surface-alt px-3 py-1 text-[12px] font-bold text-primary">CV ↗</a>}
+                  {c.cvKey && <a href={`/api/admin/recruiter/cv/${c.id}`} target="_blank" rel="noopener noreferrer" className="rounded-pill border border-line bg-surface-alt px-3 py-1 text-[12px] font-bold text-primary-ink">CV ↗</a>}
                 </div>
                 {(c.status === "placed" || c.status === "paid") && (
                   <div className="mt-2 flex items-center gap-2">
@@ -482,7 +482,7 @@ export function RecruiterWorkspace() {
                           <p className="text-[10px] leading-snug text-ink-faint">⚖️ Üzleti (B2B) megkeresés a hirdetést feladó cégeknek, egyenként személyre szabva. Ne küldj tömeges, irreleváns levelet — csak releváns, nyitott pozícióra.</p>
                         </div>
                       ) : (
-                        withEmail > 0 && <button type="button" onClick={() => openOutreach(c)} className="mt-1 rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary">📧 Körlevél ({withEmail})</button>
+                        withEmail > 0 && <button type="button" onClick={() => openOutreach(c)} className="mt-1 rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary-ink">📧 Körlevél ({withEmail})</button>
                       )}
                     </div>
                   );
@@ -535,7 +535,7 @@ export function RecruiterWorkspace() {
                     {extracting ? "Keresés a hirdetésekben…" : `📧 E-mailek automatikus keresése (${jobs.length})`}
                   </button>
                   {extractedAny && emailCount > 0 && (
-                    <button type="button" onClick={() => { navigator.clipboard?.writeText(foundEmails.join(", ")); setExtractMsg(`📋 ${foundEmails.length} cím a vágólapon (vesszővel elválasztva).`); }} className="rounded-pill border border-primary/40 bg-surface px-3.5 py-1.5 text-[12px] font-bold text-primary">
+                    <button type="button" onClick={() => { navigator.clipboard?.writeText(foundEmails.join(", ")); setExtractMsg(`📋 ${foundEmails.length} cím a vágólapon (vesszővel elválasztva).`); }} className="rounded-pill border border-primary/40 bg-surface px-3.5 py-1.5 text-[12px] font-bold text-primary-ink">
                       📋 Összes cím másolása ({emailCount})
                     </button>
                   )}
@@ -546,7 +546,7 @@ export function RecruiterWorkspace() {
                   )}
                 </div>
                 {extractedAny && !active && emailCount > 0 && (
-                  <p className="text-[11px] font-semibold text-primary">💡 A körlevélhez / tömeges mentéshez válassz ki egy jelöltet fent (🔎 Keres), vagy másold a címeket a saját levelezőbe.</p>
+                  <p className="text-[11px] font-semibold text-primary-ink">💡 A körlevélhez / tömeges mentéshez válassz ki egy jelöltet fent (🔎 Keres), vagy másold a címeket a saját levelezőbe.</p>
                 )}
                 {extractMsg && <p className="text-[11.5px] leading-snug text-ink">{extractMsg}</p>}
                 <p className="text-[10px] leading-snug text-ink-faint">
@@ -570,7 +570,7 @@ export function RecruiterWorkspace() {
                   {/* AI-pontozás ELTÁVOLÍTVA (AI Act A-út) — a lista determinisztikus
                       kulcsszó-átfedés szerint rendeződik, szám nélkül; a döntés emberi. */}
                   {m?.email ? (
-                    <span className="shrink-0 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">✉️ piszkozat kész</span>
+                    <span className="shrink-0 rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary-ink">✉️ piszkozat kész</span>
                   ) : null}
                 </div>
                 {/* Automatikusan kinyert kapcsolattartó e-mail (ha lefutott a kinyerés). */}
@@ -585,8 +585,8 @@ export function RecruiterWorkspace() {
                 )}
                 {active && (
                   <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <button type="button" onClick={() => matchJob(j)} disabled={matching === j.url} className="rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary disabled:opacity-50">{matching === j.url ? "AI…" : m ? "↻ Újra" : "✉️ Megkeresés-piszkozat"}</button>
-                    {m && <button type="button" onClick={() => setOpenEmail(openEmail === j.url ? null : j.url)} className="text-[11.5px] font-bold text-primary hover:underline">{openEmail === j.url ? "Levél elrejt" : "Levél mutat"}</button>}
+                    <button type="button" onClick={() => matchJob(j)} disabled={matching === j.url} className="rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary-ink disabled:opacity-50">{matching === j.url ? "AI…" : m ? "↻ Újra" : "✉️ Megkeresés-piszkozat"}</button>
+                    {m && <button type="button" onClick={() => setOpenEmail(openEmail === j.url ? null : j.url)} className="text-[11.5px] font-bold text-primary-ink hover:underline">{openEmail === j.url ? "Levél elrejt" : "Levél mutat"}</button>}
                     {shortlist.some((s) => s.candidateId === active.id && s.jobUrl === j.url) ? (
                       <span className="rounded-pill bg-success/15 px-3 py-1 text-[11.5px] font-bold text-success">✓ Shortlist</span>
                     ) : (

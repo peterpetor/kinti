@@ -200,8 +200,8 @@ export function UtalasAssistant() {
     <div className="space-y-4">
       {/* Megtakarítás-számláló — a „miért éri meg" érték */}
       <section className="rounded-card border-2 border-primary/30 bg-gradient-to-br from-primary-soft to-surface p-5 shadow-pop">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Eddigi megtakarításod</p>
-        <p className="mt-1 text-[34px] font-black leading-none tracking-tight text-primary">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">Eddigi megtakarításod</p>
+        <p className="mt-1 text-[34px] font-black leading-none tracking-tight text-primary-ink">
           {fmtHuf(savedTotal || 0)} <span className="text-[20px]">Ft</span>
         </p>
         <p className="mt-1.5 text-[12px] text-ink-muted">
@@ -215,7 +215,7 @@ export function UtalasAssistant() {
       {/* Beállítás */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card space-y-3">
         <div className="flex items-center gap-2">
-          <Icon name="sliders" size={14} strokeWidth={2.2} className="text-primary" />
+          <Icon name="sliders" size={14} strokeWidth={2.2} className="text-primary-ink" />
           <h2 className="text-[14px] font-extrabold text-ink">A szokásos utalásod</h2>
         </div>
         <div className="relative">
@@ -263,7 +263,7 @@ export function UtalasAssistant() {
           </div>
           <p className="text-[12.5px] leading-snug text-ink-muted">
             {`1 ${base} = ${fmtHuf(baseToHuf)} Ft — ez a 30-napos átlag (${fmtHuf(trend.avg)} Ft) `}
-            <strong className={trend.pct >= 0 ? "text-primary" : "text-accent"}>
+            <strong className={trend.pct >= 0 ? "text-primary-ink" : "text-accent"}>
               {`${trend.pct >= 0 ? "+" : ""}${trend.pct.toFixed(1)}%`}-a
             </strong>
             {trend.pct >= 1 ? ". Most többet kap a családod ugyanannyi pénzből."
@@ -277,7 +277,7 @@ export function UtalasAssistant() {
           naponta benézni). Alapból KI: csak az kapja, aki kifejezetten kéri. */}
       <section className="rounded-card border border-line bg-surface p-5 shadow-card">
         <div className="flex items-start gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary-ink">
             <Icon name="bell" size={16} strokeWidth={2.2} />
           </span>
           <div className="min-w-0 flex-1">
@@ -342,14 +342,14 @@ export function UtalasAssistant() {
                     <div className="flex items-center gap-1.5">
                       <span className="text-[14px] font-extrabold text-ink truncate">{p.name}</span>
                       {isBest && <span className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-white">Legjobb</span>}
-                      {p.url && <Icon name="chevR" size={12} className="shrink-0 text-primary" />}
+                      {p.url && <Icon name="chevR" size={12} className="shrink-0 text-primary-ink" />}
                     </div>
                     <div className="text-[11px] text-ink-muted truncate">{p.speed} · {p.note}</div>
                   </div>
                   <div className="text-right shrink-0">
                     <div className="text-[14.5px] font-extrabold text-ink">{fmtHuf(recv)} Ft</div>
                     {sav > 0
-                      ? <div className="text-[11px] font-bold text-primary">+{fmtHuf(sav)} Ft vs. bank</div>
+                      ? <div className="text-[11px] font-bold text-primary-ink">+{fmtHuf(sav)} Ft vs. bank</div>
                       : <div className="text-[10.5px] text-ink-faint">banki szint körül</div>}
                   </div>
                 </>

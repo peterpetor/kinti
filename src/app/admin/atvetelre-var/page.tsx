@@ -118,7 +118,7 @@ export default async function AdminUnclaimedPage({
         )}
         <a
           href={csvHref}
-          className="ml-auto inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-4 py-2 text-[12.5px] font-bold text-primary shadow-card"
+          className="ml-auto inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-4 py-2 text-[12.5px] font-bold text-primary-ink shadow-card"
         >
           ⬇ CSV export ({total})
         </a>
@@ -148,12 +148,12 @@ export default async function AdminUnclaimedPage({
                     <Link
                       href={`/szaknevsor/${b.id}`}
                       target="_blank"
-                      className="shrink-0 rounded-pill bg-surface-alt border border-line px-3 py-1.5 text-[12px] font-bold text-primary active:scale-95"
+                      className="shrink-0 rounded-pill bg-surface-alt border border-line px-3 py-1.5 text-[12px] font-bold text-primary-ink active:scale-95"
                     >
                       Profil ↗
                     </Link>
                   </div>
-                  <a href={`tel:${b.phone.replace(/\s+/g, "")}`} className="mt-2 inline-block text-[12.5px] font-semibold text-primary hover:underline">
+                  <a href={`tel:${b.phone.replace(/\s+/g, "")}`} className="mt-2 inline-block text-[12.5px] font-semibold text-primary-ink hover:underline">
                     📞 {b.phone}
                   </a>
                 </div>

@@ -32,7 +32,7 @@ export default async function AdminKozvetitesPage() {
       <div className="rounded-card border border-dashed border-line bg-surface-alt/50 px-4 py-3 text-[11.5px] leading-snug text-ink-muted">
         ⚖️ A linkek <strong>élő keresésre</strong> visznek a portálokon (nem tárolunk idegen hirdetést — jogtiszta). Csak <strong>EU-ba</strong> közvetíts (AT/DE/NL); a jelölttől díjat NEM szedsz, a munkáltató fizet.
         {" "}A jelentkező-oldali (opt-inolt) jelölteket a{" "}
-        <Link href="/admin/jeloltek" className="font-bold text-primary hover:underline">Jelöltek</Link> konzolon találod.
+        <Link href="/admin/jeloltek" className="font-bold text-primary-ink hover:underline">Jelöltek</Link> konzolon találod.
       </div>
     </div>
   );

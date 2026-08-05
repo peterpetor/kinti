@@ -92,7 +92,7 @@ export function CorrectionButton({ businessId }: { businessId: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1 text-[11px] font-bold text-ink-faint transition-colors hover:text-primary"
+        className="inline-flex items-center gap-1 text-[11px] font-bold text-ink-faint transition-colors hover:text-primary-ink"
       >
         <Icon name="edit" size={11} strokeWidth={2.4} /> Javíts rajta
       </button>

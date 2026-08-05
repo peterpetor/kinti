@@ -226,11 +226,11 @@ export default async function JobDetailPage({ params }: { params: { id: string }
       {cantonMedian && diffPercent !== null && (
         <section className="animate-fade-up animate-delay-100">
           <div className="rounded-card border border-primary/20 bg-primary/5 p-4 shadow-sm flex items-start gap-3">
-            <div className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+            <div className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary-ink">
               <Icon name="trending" size={18} strokeWidth={2.5} />
             </div>
             <div>
-              <h3 className="text-[13px] font-extrabold uppercase tracking-wide text-primary">
+              <h3 className="text-[13px] font-extrabold uppercase tracking-wide text-primary-ink">
                 Kinti Iránytű Benchmark
               </h3>
               <p className="mt-1 text-[13.5px] leading-snug text-ink-muted text-balance">
@@ -241,7 +241,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
                   {diffPercent >= 0 ? "magasabb" : "alacsonyabb"}
                 </strong> ennél.
               </p>
-              <Link href="/iranytu" className="inline-flex items-center gap-1 mt-2 text-[12.5px] font-bold text-primary hover:underline">
+              <Link href="/iranytu" className="inline-flex items-center gap-1 mt-2 text-[12.5px] font-bold text-primary-ink hover:underline">
                 Részletes bérstatisztikák <Icon name="arrowRight" size={12} strokeWidth={3} />
               </Link>
             </div>
@@ -278,7 +278,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
                   <strong className="text-success">~{netEstimate.net.toLocaleString("de-CH")} CHF/hó</strong>
                   <span className="text-ink-muted"> (bruttó {netEstimate.gross.toLocaleString("de-CH")} CHF-ből)</span>
                 </p>
-                <Link href="/berkalkulator" className="mt-1 inline-flex items-center gap-1 text-[12px] font-bold text-primary hover:underline">
+                <Link href="/berkalkulator" className="mt-1 inline-flex items-center gap-1 text-[12px] font-bold text-primary-ink hover:underline">
                   Pontosítsd a bérkalkulátorban <Icon name="arrowRight" size={11} strokeWidth={3} />
                 </Link>
               </div>
@@ -331,7 +331,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 {companyHours && (
                   <span className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-1 text-[12px] font-semibold text-ink">
-                    <Icon name="clock" size={12} className="text-primary" /> {companyHours.statusText} · {companyHours.detailText}
+                    <Icon name="clock" size={12} className="text-primary-ink" /> {companyHours.statusText} · {companyHours.detailText}
                   </span>
                 )}
                 {companySocials?.facebook && (
@@ -357,7 +357,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
               {companyBusiness && (
                 <Link
                   href={`/szaknevsor/${companyBusiness.id}`}
-                  className="inline-flex items-center gap-1 text-[13px] font-bold text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-[13px] font-bold text-primary-ink hover:underline"
                 >
                   A cég teljes adatlapja a Szaknévsorban <Icon name="arrowRight" size={12} strokeWidth={3} />
                 </Link>
@@ -367,7 +367,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
                   href={employer.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[13px] font-bold text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-[13px] font-bold text-primary-ink hover:underline"
                 >
                   Weboldal megtekintése <Icon name="arrowRight" size={12} strokeWidth={3} />
                 </a>

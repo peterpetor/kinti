@@ -69,7 +69,7 @@ export default function OnboardingChecklistPage() {
         <div className="mt-6 rounded-2xl bg-surface-alt p-5 border border-line text-left">
           <div className="flex justify-between items-end mb-2">
             <span className="text-[13px] font-bold text-ink">Folyamat</span>
-            <span className="text-[16px] font-extrabold text-primary">{progress}%</span>
+            <span className="text-[16px] font-extrabold text-primary-ink">{progress}%</span>
           </div>
           <div className="h-3 w-full rounded-full bg-line overflow-hidden">
             <div 

@@ -348,7 +348,7 @@ export function RentCostCalculator() {
 
       {/* Összesítő */}
       <section className="rounded-card border-2 border-primary/40 bg-primary-soft p-5 shadow-pop">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-primary mb-2">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-primary-ink mb-2">
           Teljes éves lakhatási költség (becsült)
         </p>
         <p className="text-[32px] font-extrabold leading-none text-ink">
@@ -359,7 +359,7 @@ export function RentCostCalculator() {
         </p>
 
         <div className="mt-4 border-t border-primary/30 pt-3">
-          <p className="text-[11px] font-bold uppercase tracking-wide text-primary mb-1">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-primary-ink mb-1">
             Teljes rejtett költség {years} év alatt
           </p>
           <p className="text-[24px] font-extrabold leading-none text-accent">
@@ -379,7 +379,7 @@ export function RentCostCalculator() {
         <ul className="space-y-1.5 text-[12px] leading-relaxed text-ink-muted">
           {cfg.questions.map((q, i) => (
             <li key={i} className="flex gap-2">
-              <span className="text-primary shrink-0">•</span>
+              <span className="text-primary-ink shrink-0">•</span>
               <span><strong className="text-ink">{q.bold}</strong> {q.rest}</span>
             </li>
           ))}

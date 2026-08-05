@@ -78,7 +78,7 @@ export function DynamicDistance({ lat, lng, address, precise }: DynamicDistanceP
   return (
     <div>
       <div className="text-[15px] font-bold text-ink flex items-center gap-1">
-        {hasLocation && <Icon name="nav" size={13} strokeWidth={2.2} className="text-primary" />}
+        {hasLocation && <Icon name="nav" size={13} strokeWidth={2.2} className="text-primary-ink" />}
         {distanceText}
       </div>
       <div className="text-[11px] font-medium text-ink-muted">{subText}</div>

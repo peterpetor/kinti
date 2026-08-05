@@ -164,7 +164,7 @@ function PendingConfirmView({
       </header>
 
       <section className="rounded-card border border-line bg-surface p-5 shadow-card">
-        <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary">
+        <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary-ink">
           <Icon name="send" size={22} strokeWidth={2.2} />
         </div>
         <h2 className="mt-3 text-center text-[17px] font-extrabold tracking-tight text-ink">

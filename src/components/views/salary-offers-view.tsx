@@ -71,7 +71,7 @@ export function SalaryOffersView() {
   if (country !== "CH") {
     return (
       <section className="rounded-card border border-dashed border-line bg-surface p-8 text-center shadow-card">
-        <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary">
+        <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary-ink">
           <Icon name="globe" size={20} strokeWidth={2.4} />
         </span>
         <h2 className="mt-3 text-[17px] font-extrabold tracking-tight text-ink">
@@ -174,7 +174,7 @@ export function SalaryOffersView() {
                         {o.input.canton} · {fmtDate(o.createdAt)}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-right font-extrabold text-primary">
+                    <td className="px-3 py-2 text-right font-extrabold text-primary-ink">
                       {formatCHF(o.computed.netMonthly)}
                     </td>
                     <td className="px-3 py-2 text-right font-bold text-ink">
@@ -321,7 +321,7 @@ function Row({
       <span
         className={cn(
           "font-extrabold tabular-nums",
-          accent ? "text-primary text-[15px]" : muted ? "text-ink-muted" : "text-ink",
+          accent ? "text-primary-ink text-[15px]" : muted ? "text-ink-muted" : "text-ink",
         )}
       >
         {value}

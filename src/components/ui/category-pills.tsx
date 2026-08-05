@@ -56,7 +56,7 @@ export function CategoryPills({ categories, active, onSelect, className }: Categ
             <span
               className={cn(
                 "grid h-5 w-5 place-items-center rounded-md",
-                on ? "bg-white/20 text-white" : "bg-primary-soft text-primary",
+                on ? "bg-white/20 text-white" : "bg-primary-soft text-primary-ink",
               )}
             >
               <CategoryIcon categoryId={c.id} size={13} />

@@ -176,7 +176,7 @@ function OnboardingCTA({
         <div className="mt-2 grid grid-cols-2 gap-2.5">
           {features.map((f) => (
             <div key={f.title} className="flex h-full items-start gap-2 rounded-2xl border border-line bg-surface-alt/50 p-2.5">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[9px] bg-primary/10 text-primary">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[9px] bg-primary/10 text-primary-ink">
                 <Icon name={f.icon} size={13} strokeWidth={2.2} />
               </span>
               <div className="min-w-0">
@@ -192,7 +192,7 @@ function OnboardingCTA({
         <p className="text-[12px] leading-snug text-ink-muted">
           Már szerepelsz a Szaknévsorban?
         </p>
-        <Link href="/szaknevsor?claim=1" className="inline-block text-[12.5px] font-bold text-primary underline">
+        <Link href="/szaknevsor?claim=1" className="inline-block text-[12.5px] font-bold text-primary-ink underline">
           Igényeld a vállalkozásod →
         </Link>
       </div>
@@ -491,7 +491,7 @@ async function OwnerDashboard({
             <p className="text-[12.5px] font-bold text-ink">Aktivitási arány</p>
             <p className="text-[11.5px] text-ink-muted">A megtekintők hány %-a hívott vagy kért árajánlatot.</p>
           </div>
-          <span className="text-[22px] font-black text-primary">
+          <span className="text-[22px] font-black text-primary-ink">
             {Math.round(((stats.weekCalls + stats.weekLeads) / stats.weekViews) * 100)}%
           </span>
         </div>
@@ -510,7 +510,7 @@ async function OwnerDashboard({
           <p className="mt-0.5 mb-2.5 text-[11.5px] text-ink-muted">A leggyakoribb keresőszavak, amikből rád kattintottak.</p>
           <div className="flex flex-wrap gap-2">
             {topSearchTerms.map((t) => (
-              <span key={t.term} className="inline-flex items-center gap-1.5 rounded-pill bg-primary/10 px-2.5 py-1 text-[12px] font-bold text-primary">
+              <span key={t.term} className="inline-flex items-center gap-1.5 rounded-pill bg-primary/10 px-2.5 py-1 text-[12px] font-bold text-primary-ink">
                 {t.term} <span className="text-primary/60">{t.count}×</span>
               </span>
             ))}
@@ -550,7 +550,7 @@ async function OwnerDashboard({
         <SectionHeader>Valós aktivitás</SectionHeader>
         {activities.map((a, i) => (
           <div key={i} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3">
-            <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary-soft text-primary">
+            <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-primary-soft text-primary-ink">
               <Icon name={a.icon} size={14} strokeWidth={2.2} />
             </span>
             <span className="flex-1 text-[13.5px] font-semibold text-ink">{a.text}</span>

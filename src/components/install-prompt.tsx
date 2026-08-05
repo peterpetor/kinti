@@ -135,7 +135,7 @@ export function InstallPrompt({ className }: { className?: string }) {
               iPhone-on a böngésző alsó sávjában a{" "}
               <span className="inline-flex translate-y-[2px] items-center justify-center rounded-md border border-line bg-surface-alt p-[3px] align-baseline">
                 {/* Szándékosan az iOS-glyph: a Safari VALÓDI megosztás-gombjára mutatunk. */}
-                <Icon name="shareIos" size={11} strokeWidth={2.2} className="text-primary" />
+                <Icon name="shareIos" size={11} strokeWidth={2.2} className="text-primary-ink" />
               </span>{" "}
               Megosztás → <strong className="font-bold text-ink">Hozzáadás a főképernyőhöz</strong>.
             </p>
@@ -156,7 +156,7 @@ export function InstallPrompt({ className }: { className?: string }) {
                   phase === "installing" && "opacity-60",
                 )}
               >
-                <Icon name="arrowUp" size={13} strokeWidth={2.4} className="text-primary" />
+                <Icon name="arrowUp" size={13} strokeWidth={2.4} className="text-primary-ink" />
                 {phase === "installing" ? "Telepítés…" : "Telepítés"}
               </button>
             ) : null}

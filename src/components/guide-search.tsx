@@ -97,7 +97,7 @@ export function GuideSearch({ guides }: { guides: GuideSearchItem[] }) {
                 href={`/tudasbazis/${g.slug}`}
                 className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-card transition active:scale-[0.99] hover:border-primary/30"
               >
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[11px] bg-primary-soft/60 text-primary">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[11px] bg-primary-soft/60 text-primary-ink">
                   <Icon name={g.icon} size={18} strokeWidth={2.3} />
                 </span>
                 <span className="min-w-0 flex-1">

@@ -174,7 +174,7 @@ export function LegalGatekeeper() {
               <Link
                 href="/aszf"
                 target="_blank"
-                className="underline font-bold text-primary hover:text-primary/80 transition"
+                className="underline font-bold text-primary-ink hover:text-primary/80 transition"
               >
                 Felhasználási Feltételeket (ÁSZF)
               </Link>
@@ -200,7 +200,7 @@ export function LegalGatekeeper() {
               <Link
                 href="/adatvedelem"
                 target="_blank"
-                className="underline font-bold text-primary hover:text-primary/80 transition"
+                className="underline font-bold text-primary-ink hover:text-primary/80 transition"
               >
                 Adatkezelési Tájékoztatóban
               </Link>{" "}

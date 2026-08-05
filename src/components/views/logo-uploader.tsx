@@ -170,7 +170,7 @@ export function LogoUploader({ currentKey, fallbackGradient, manageToken }: Logo
             busy && "opacity-60",
           )}
         >
-          <Icon name="arrowUp" size={14} strokeWidth={2.4} className="text-primary" />
+          <Icon name="arrowUp" size={14} strokeWidth={2.4} className="text-primary-ink" />
           {busy ? phaseLabel(phase) : imageUrl ? "Csere" : "Feltöltés"}
         </button>
       </div>

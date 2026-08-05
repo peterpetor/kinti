@@ -136,7 +136,7 @@ export default function TudasbazisPage() {
             Lépésről lépésre: bejelentkezés, jogosítvány-csere, adóbevallás, C-engedély…
           </span>
         </span>
-        <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary" />
+        <Icon name="chevR" size={16} strokeWidth={2.2} className="shrink-0 text-primary-ink" />
       </Link>
 
       <p className="px-1 text-[11px] leading-relaxed text-ink-faint">

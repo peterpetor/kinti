@@ -162,7 +162,7 @@ export function OnboardingChecklist() {
     >
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Kezdd itt</p>
+          <p className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">Kezdd itt</p>
           <h2 className="text-[15.5px] font-extrabold tracking-[-0.01em] text-ink">
             Tedd magadévá a Kintit — {progress.done}/{progress.total} kész
           </h2>
@@ -233,7 +233,7 @@ export function OnboardingChecklist() {
                           setCanton(r.code);
                           setRegionOpen(false);
                         }}
-                        className="shrink-0 rounded-pill border border-line bg-surface-alt px-3 py-1.5 text-[12px] font-bold text-ink transition active:scale-95 hover:border-primary/40 hover:text-primary"
+                        className="shrink-0 rounded-pill border border-line bg-surface-alt px-3 py-1.5 text-[12px] font-bold text-ink transition active:scale-95 hover:border-primary/40 hover:text-primary-ink"
                       >
                         {r.name}
                       </button>
