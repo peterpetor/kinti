@@ -116,7 +116,7 @@ export default async function BusinessManagePage({ params }: { params: { token: 
                   <div className="min-w-0 flex-1">
                     <div className="text-[13.5px] font-bold text-ink">{who}</div>
                   </div>
-                  <div className="flex gap-px text-star">
+                  <div className="flex gap-px text-star-ink">
                     {Array.from({ length: r.rating }).map((_, i) => (
                       <Icon key={i} name="star" size={12} filled />
                     ))}

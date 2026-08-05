@@ -221,7 +221,7 @@ export function LeaderboardView() {
                     {isMe && <span className="ml-1.5 text-[11px] font-bold text-success">(te)</span>}
                     {/* A top 3 meghívó „Kinti-nagykövet" jelölést kap. */}
                     {category === "referral" && i < 3 && (
-                      <span className="ml-1.5 rounded-pill bg-star/15 px-1.5 py-0.5 text-[10px] font-extrabold text-star">
+                      <span className="ml-1.5 rounded-pill bg-star/15 px-1.5 py-0.5 text-[10px] font-extrabold text-star-ink">
                         🏅 Kinti-nagykövet
                       </span>
                     )}

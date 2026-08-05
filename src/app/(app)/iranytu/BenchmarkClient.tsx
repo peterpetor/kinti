@@ -258,7 +258,7 @@ function MyDataCard({ tab, myData, onEdit, country }: { tab: Tab; myData: MyData
             Frissítsd, hogy pontos legyen a statisztika! A béred / lakbéred változhatott azóta.
             <button
               onClick={onEdit}
-              className="block mt-1.5 text-[12px] font-bold text-star underline hover:opacity-70"
+              className="block mt-1.5 text-[12px] font-bold text-star-ink underline hover:opacity-70"
             >
               Frissítem most →
             </button>
@@ -330,7 +330,7 @@ function RentCard({ stat, cur }: { stat: RentStatsRow; cur: string }) {
         <span>Átlag:</span>
         <strong className="text-ink">{stat.avg_rent.toLocaleString("hu-HU")} {cur}</strong>
         {skewed && (
-          <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-star">⚠ eltérés</span>
+          <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-star-ink">⚠ eltérés</span>
         )}
       </div>
       <div className="mt-1.5 h-2 rounded-full bg-surface-alt overflow-hidden">

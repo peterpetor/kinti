@@ -36,13 +36,13 @@ export function B2bTeaser({ match, isPro }: { match: B2bTeaserMatch; isPro: bool
         href="/b2b"
         className="flex items-center gap-3 rounded-card border border-star/30 bg-gradient-to-br from-star/10 to-primary-soft/40 p-4 shadow-card transition active:scale-[0.99]"
       >
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-star text-white">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-star text-on-pro">
           <Icon name="briefcase" size={19} strokeWidth={2.3} />
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[13.5px] font-extrabold text-ink">
             {count > 0 ? (
-              <>Jelenleg <span className="text-star">{count} nyitott projekt</span> vár a B2B Hubban</>
+              <>Jelenleg <span className="text-star-ink">{count} nyitott projekt</span> vár a B2B Hubban</>
             ) : (
               <>Legyél te az első a B2B Hubban</>
             )}
@@ -62,12 +62,12 @@ export function B2bTeaser({ match, isPro }: { match: B2bTeaserMatch; isPro: bool
   const headline =
     scope === "category" ? (
       <>
-        <span className="text-star">{count} nyitott projekt</span> keres pont a te szakmádban
+        <span className="text-star-ink">{count} nyitott projekt</span> keres pont a te szakmádban
         alvállalkozót
       </>
     ) : (
       <>
-        <span className="text-star">{count} nyitott projekt</span> vár a B2B Hubban a te
+        <span className="text-star-ink">{count} nyitott projekt</span> vár a B2B Hubban a te
         országodban
       </>
     );
@@ -78,7 +78,7 @@ export function B2bTeaser({ match, isPro }: { match: B2bTeaserMatch; isPro: bool
       className="block rounded-card border border-star/30 bg-gradient-to-br from-star/10 to-primary-soft/40 p-4 shadow-card transition active:scale-[0.99]"
     >
       <div className="flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-star text-white">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-star text-on-pro">
           <Icon name="briefcase" size={19} strokeWidth={2.3} />
         </span>
         <div className="min-w-0 flex-1">
@@ -116,7 +116,7 @@ export function B2bTeaser({ match, isPro }: { match: B2bTeaserMatch; isPro: bool
         ))}
       </div>
 
-      <p className="mt-3 text-center text-[12.5px] font-extrabold text-star">
+      <p className="mt-3 text-center text-[12.5px] font-extrabold text-star-ink">
         Válts Szaknévsor PRO-ra, és jelentkezz rájuk →
       </p>
     </Link>

@@ -406,7 +406,7 @@ export function RecruiterWorkspace() {
             {professions.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5 border-t border-line pt-2">
                 <span className="text-[10.5px] font-bold uppercase tracking-wide text-ink-faint">Szakmák:</span>
-                {professions.map((p) => <button key={p.keyword} type="button" onClick={() => { setFSearch(fSearch === p.keyword ? "" : p.keyword); setPage(1); }} className={cn("rounded-pill px-2.5 py-1 text-[11px] font-bold transition", fSearch === p.keyword ? "bg-star/20 text-star" : "border border-line bg-surface-alt text-ink-muted")}>{p.keyword} ({p.count})</button>)}
+                {professions.map((p) => <button key={p.keyword} type="button" onClick={() => { setFSearch(fSearch === p.keyword ? "" : p.keyword); setPage(1); }} className={cn("rounded-pill px-2.5 py-1 text-[11px] font-bold transition", fSearch === p.keyword ? "bg-star/20 text-star-ink" : "border border-line bg-surface-alt text-ink-muted")}>{p.keyword} ({p.count})</button>)}
               </div>
             )}
           </div>
@@ -428,7 +428,7 @@ export function RecruiterWorkspace() {
                   <select value={c.status} onChange={(e) => setStatus(c.id, e.target.value as RecruitingStatus)} className="rounded-pill border border-line bg-surface-alt px-2.5 py-1 text-[12px] font-bold text-ink">
                     {STATUS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
                   </select>
-                  {c.cvKey && <button type="button" onClick={() => parseCv(c)} disabled={parsing === c.id} className="rounded-pill bg-star/15 px-3 py-1 text-[12px] font-bold text-star disabled:opacity-50">{parsing === c.id ? "Elemzés…" : "🪄 AI"}</button>}
+                  {c.cvKey && <button type="button" onClick={() => parseCv(c)} disabled={parsing === c.id} className="rounded-pill bg-star/15 px-3 py-1 text-[12px] font-bold text-star-ink disabled:opacity-50">{parsing === c.id ? "Elemzés…" : "🪄 AI"}</button>}
                   <button type="button" onClick={() => searchForCandidate(c)} disabled={!c.keyword} className="rounded-pill bg-primary px-3 py-1 text-[12px] font-bold text-white shadow-card disabled:opacity-50">🔎 Keres</button>
                   {c.cvKey && <a href={`/api/admin/recruiter/cv/${c.id}`} target="_blank" rel="noopener noreferrer" className="rounded-pill border border-line bg-surface-alt px-3 py-1 text-[12px] font-bold text-primary-ink">CV ↗</a>}
                 </div>

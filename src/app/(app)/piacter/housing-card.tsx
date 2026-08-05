@@ -137,7 +137,7 @@ export function HousingCard({
         </span>
         <div className="flex items-center gap-2">
           {listing.own && listing.pending && (
-            <span className="inline-flex items-center gap-1 rounded-pill bg-star/15 px-2 py-0.5 text-[10.5px] font-extrabold text-star">
+            <span className="inline-flex items-center gap-1 rounded-pill bg-star/15 px-2 py-0.5 text-[10.5px] font-extrabold text-star-ink">
               <Icon name="clock" size={10} strokeWidth={2.6} /> Jóváhagyásra vár
             </span>
           )}
@@ -147,7 +147,7 @@ export function HousingCard({
             </span>
           )}
           {listing.own && listing.expired && !listing.pending && !listing.rejected && (
-            <span className="inline-flex items-center gap-1 rounded-pill bg-star/15 px-2 py-0.5 text-[10.5px] font-extrabold text-star">
+            <span className="inline-flex items-center gap-1 rounded-pill bg-star/15 px-2 py-0.5 text-[10.5px] font-extrabold text-star-ink">
               <Icon name="clock" size={10} strokeWidth={2.6} /> Lejárt — nem látható
             </span>
           )}
@@ -239,7 +239,7 @@ export function HousingCard({
               "inline-flex items-center gap-1.5 rounded-pill px-4 py-2 text-[12.5px] font-extrabold transition active:scale-[0.98]",
               isPro
                 ? "bg-primary text-white shadow-card-hover"
-                : "bg-star text-white shadow-card-hover",
+                : "bg-star text-on-pro shadow-card-hover",
             )}
           >
             <Icon name={isPro ? "phone" : "lock"} size={13} strokeWidth={2.4} />

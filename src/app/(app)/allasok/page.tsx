@@ -128,7 +128,7 @@ export default async function JobsPage() {
           href="/piacter"
           className="flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
         >
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-star/15 text-star"><Icon name="key" size={20} strokeWidth={2.2} /></span>
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-star/15 text-star-ink"><Icon name="key" size={20} strokeWidth={2.2} /></span>
           <span className="min-w-0 flex-1">
             <span className="block text-[14.5px] font-extrabold leading-tight tracking-[-0.01em] text-ink">
               Új munka, új város? Nézd az albérlet-börzét

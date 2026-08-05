@@ -140,7 +140,7 @@ export function RelocationTimeline({
                               overdue
                                 ? "bg-accent/10 text-accent"
                                 : soon
-                                  ? "bg-star/15 text-star"
+                                  ? "bg-star/15 text-star-ink"
                                   : "bg-ink/5 text-ink/60",
                             )}
                           >

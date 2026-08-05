@@ -51,6 +51,9 @@ function arany(elo: RGB, hatter: RGB): number {
 
 const SORTORES = String.fromCharCode(10);
 const NYERS_PRIMARY = new RegExp("\btext-primary\b(?![-/])");
+const NYERS_STAR = new RegExp("\btext-star\b(?![-/])");
+const BG_STAR = new RegExp("\bbg-star\b(?![-/])");
+const FEHER = new RegExp("\btext-white\b");
 
 /** WCAG AA normál szövegre. */
 const AA = 4.5;
@@ -81,11 +84,13 @@ describe.each([
     expect(arany(token(blokk, "text-muted"), s)).toBeGreaterThan(arany(token(blokk, "text-faint"), s));
   });
 
-  it("a PRO-arany háttéren a szöveg olvasható (`--on-pro`)", () => {
-    // A márka-arany maga NEM téma-függő (Tailwind `pro` = #ff9600).
-    const arany2: RGB = [255, 150, 0];
-    const a = arany(token(blokk, "on-pro"), arany2);
-    expect(a, `--on-pro az aranyon: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
+  it("mindkét arany HÁTTÉREN olvasható a szöveg (`--on-pro`)", () => {
+    // Az aranyak maguk NEM téma-függők (Tailwind `pro` és `star`).
+    const aranyak: [string, RGB][] = [["pro", [255, 150, 0]], ["star", [240, 162, 58]]];
+    for (const [nev, bg] of aranyak) {
+      const a = arany(token(blokk, "on-pro"), bg);
+      expect(a, `--on-pro a ${nev} háttéren: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
+    }
   });
 
   it("a PRO-arany SZÖVEGKÉNT olvasható (`--pro-ink`)", () => {
@@ -93,6 +98,14 @@ describe.each([
     for (const [fnev, bg] of feluletek) {
       const a = arany(fg, bg);
       expect(a, `--pro-ink a ${fnev} felületen: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
+    }
+  });
+
+  it("a csillag-arany SZÖVEGKÉNT olvasható (`--star-ink`)", () => {
+    const fg = token(blokk, "star-ink");
+    for (const [fnev, bg] of feluletek) {
+      const a = arany(fg, bg);
+      expect(a, `--star-ink a ${fnev} felületen: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
     }
   });
 
@@ -145,6 +158,28 @@ describe("PRO-arany — nincs visszacsúszás", () => {
       });
     }
     expect(vetkesek, `használd a \`text-primary-ink\`-et: ${vetkesek.slice(0, 8).join(", ")}`).toEqual([]);
+  });
+
+  it("⚠️ `bg-star` mellett SOHA nem áll `text-white` (2,11:1 volt)", () => {
+    const vetkesek: string[] = [];
+    for (const f of fajlok) {
+      const sorok = readFileSync(resolve(__dirname, "../..", f), "utf8").split(SORTORES);
+      sorok.forEach((sor, i) => {
+        if (BG_STAR.test(sor) && FEHER.test(sor)) vetkesek.push(`${f}:${i + 1}`);
+      });
+    }
+    expect(vetkesek, `használd a \`text-on-pro\`-t: ${vetkesek.slice(0, 8).join(", ")}`).toEqual([]);
+  });
+
+  it("⚠️ nincs nyers `text-star` (világos lapon 1,82:1) — `text-star-ink` a helyes", () => {
+    const vetkesek: string[] = [];
+    for (const f of fajlok) {
+      const sorok = readFileSync(resolve(__dirname, "../..", f), "utf8").split(SORTORES);
+      sorok.forEach((sor, i) => {
+        if (NYERS_STAR.test(sor)) vetkesek.push(`${f}:${i + 1}`);
+      });
+    }
+    expect(vetkesek, `használd a \`text-star-ink\`-et: ${vetkesek.slice(0, 8).join(", ")}`).toEqual([]);
   });
 
   it("⚠️ nincs nyers `text-pro` (világos lapon 2,18:1) — `text-pro-ink` a helyes", () => {

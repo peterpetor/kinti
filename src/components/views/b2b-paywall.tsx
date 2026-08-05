@@ -56,7 +56,7 @@ export function B2bPaywall({ businessId }: { businessId: string | null }) {
         {/* Fizetőfal — a feed fölé simuló CTA-kártya. */}
         <div className="absolute inset-0 flex items-start justify-center rounded-card bg-gradient-to-b from-bg/10 via-bg/60 to-bg/95 p-4">
           <div className="mt-4 w-full max-w-sm rounded-card border-2 border-star/40 bg-surface p-5 text-center shadow-pop">
-            <div className="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-[15px] bg-star text-white">
+            <div className="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-[15px] bg-star text-on-pro">
               <Icon name="briefcase" size={22} strokeWidth={2.4} />
             </div>
             <p className="text-[16px] font-extrabold leading-tight text-ink">
@@ -87,13 +87,13 @@ export function B2bPaywall({ businessId }: { businessId: string | null }) {
                   product="business_pro_monthly"
                   customData={{ type: "business_pro", businessId }}
                   label="Váltás PRO csomagra"
-                  className="w-full bg-star text-white hover:bg-[#d68f20]"
+                  className="w-full bg-star text-on-pro hover:bg-[#d68f20]"
                 />
               ) : (
                 <>
                   <Link
                     href="/profil"
-                    className="inline-flex w-full items-center justify-center rounded-pill bg-star px-5 py-2.5 text-[14px] font-extrabold text-white transition hover:bg-[#d68f20] active:scale-[0.98]"
+                    className="inline-flex w-full items-center justify-center rounded-pill bg-star px-5 py-2.5 text-[14px] font-extrabold text-on-pro transition hover:bg-[#d68f20] active:scale-[0.98]"
                   >
                     Előbb regisztráld a vállalkozásod
                   </Link>

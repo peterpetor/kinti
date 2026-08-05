@@ -199,7 +199,7 @@ export function PiacterTabs({
               csalás-terep; lenyitható, hogy ne nyomja el a listát, de mindig ott van. */}
           <details className="group rounded-card border border-star/30 bg-star/5 p-3">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-[12.5px] font-extrabold text-ink [&::-webkit-details-marker]:hidden">
-              <Icon name="alert" size={14} strokeWidth={2.2} className="shrink-0 text-star" /> Így ismerd fel a kaució-csalást
+              <Icon name="alert" size={14} strokeWidth={2.2} className="shrink-0 text-star-ink" /> Így ismerd fel a kaució-csalást
               <Icon name="chevD" size={14} strokeWidth={2.4} className="ml-auto shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
             </summary>
             <ul className="mt-2 space-y-1.5">

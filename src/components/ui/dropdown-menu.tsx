@@ -260,7 +260,7 @@ export function DropdownMenu() {
           : []),
         { key: "cvaudit", label: "AI CV-asszisztens", href: "/allasok/cv-audit", tint: "bg-success/10 text-success", icon: { name: "sparkles" }, badge: "pro" },
         ...(has("szakmai-szotar")
-          ? [{ key: "szotar", label: "Szakmai szótár", href: "/allasok/szakmai-szotar", tint: "bg-star/10 text-star", icon: { name: "document" }, badge: "pro" } as MenuItem]
+          ? [{ key: "szotar", label: "Szakmai szótár", href: "/allasok/szakmai-szotar", tint: "bg-star/10 text-star-ink", icon: { name: "document" }, badge: "pro" } as MenuItem]
           : []),
       ],
     },
@@ -453,13 +453,13 @@ export function DropdownMenu() {
                   <Link
                     href="/pro"
                     onClick={close}
-                    className="mb-2 flex items-center gap-3 rounded-xl border border-star/30 bg-star/10 px-4 py-3.5 text-[15px] font-black text-star transition-all hover:bg-star/15 active:scale-[0.98]"
+                    className="mb-2 flex items-center gap-3 rounded-xl border border-star/30 bg-star/10 px-4 py-3.5 text-[15px] font-black text-star-ink transition-all hover:bg-star/15 active:scale-[0.98]"
                   >
-                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/20 text-star">
+                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-star/20 text-star-ink">
                       <Icon name="sparkles" size={16} strokeWidth={2.6} />
                     </span>
                     Kinti PRO csomagok
-                    <span className="ml-auto rounded-full bg-star px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white">
+                    <span className="ml-auto rounded-full bg-star px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-on-pro">
                       PRO
                     </span>
                   </Link>

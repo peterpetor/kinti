@@ -385,7 +385,7 @@ function RatingPicker({
             onClick={() => onChange(n)}
             className={cn(
               "grid h-10 w-10 place-items-center rounded-[12px] transition",
-              active ? "text-star" : "text-line-strong hover:text-ink-muted",
+              active ? "text-star-ink" : "text-line-strong hover:text-ink-muted",
             )}
           >
             <Icon name="star" size={26} strokeWidth={1.8} filled={active} />

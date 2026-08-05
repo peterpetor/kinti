@@ -791,7 +791,7 @@ export function ProfileEditor({
                   {initialReviews > 0 ? (
                     <>
                       <div className="flex items-center gap-0.5 font-bold text-ink">
-                        <Icon name="star" size={10} filled className="text-star" />
+                        <Icon name="star" size={10} filled className="text-star-ink" />
                         <span>{initialRating.toFixed(1)}</span>
                       </div>
                       <div className="text-[10px] text-ink-muted">{initialReviews} vélemény</div>

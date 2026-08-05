@@ -24,7 +24,7 @@ export default async function KintiProPage() {
           <Icon name="lock" size={36} strokeWidth={2.4} />
         </div>
         <h1 className="text-[28px] font-extrabold tracking-tight text-ink">
-          Kinti <span className="text-star">PRO</span> Feloldása
+          Kinti <span className="text-star-ink">PRO</span> Feloldása
         </h1>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-muted px-4">
           Egy előfizetés, minden prémium modul. A Kinti PRO-val feloldod az összes
@@ -63,7 +63,7 @@ export default async function KintiProPage() {
           ) : (
             <Link
               href="/pro"
-              className="flex w-full items-center justify-center rounded-full bg-star py-4 text-[16px] font-extrabold text-white shadow-lg shadow-star/20 transition-all hover:scale-[1.02] hover:bg-[#d68f20]"
+              className="flex w-full items-center justify-center rounded-full bg-star py-4 text-[16px] font-extrabold text-on-pro shadow-lg shadow-star/20 transition-all hover:scale-[1.02] hover:bg-[#d68f20]"
             >
               Kinti PRO feloldása
             </Link>

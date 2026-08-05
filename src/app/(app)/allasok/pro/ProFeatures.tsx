@@ -29,7 +29,7 @@ export function ProFeatures() {
     <ul className="p-6 space-y-4">
       {items.map((it) => (
         <li key={it.title} className="flex gap-3">
-          <span className="text-star shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
+          <span className="text-star-ink shrink-0 mt-0.5"><Icon name="check" size={20} strokeWidth={3} /></span>
           <div>
             <strong className="text-[14px] text-ink block">{it.title}</strong>
             <span className="text-[13px] text-ink-muted">{it.desc}</span>

@@ -125,7 +125,7 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
               <div>
                 <div className="flex gap-0.5">
                   {[1,2,3,4,5].map((i) => (
-                    <span key={i} className={cn("text-base", i <= Math.round(stats.reviewSummary.rating) ? "text-star" : "text-line")}>★</span>
+                    <span key={i} className={cn("text-base", i <= Math.round(stats.reviewSummary.rating) ? "text-star-ink" : "text-line")}>★</span>
                   ))}
                 </div>
                 <p className="text-[11.5px] text-ink-muted mt-0.5">{stats.reviewSummary.reviews} értékelés alapján</p>
@@ -215,7 +215,7 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
                 </p>
                 <p className={cn(
                   "text-[56px] font-extrabold leading-none",
-                  stats.competitorRank.rank === 1 ? "text-star" :
+                  stats.competitorRank.rank === 1 ? "text-star-ink" :
                   stats.competitorRank.rank <= 3 ? "text-success" :
                   "text-ink"
                 )}>
@@ -225,7 +225,7 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
                   {stats.competitorRank.total} regisztrált vállalkozóból
                 </p>
                 {stats.competitorRank.rank === 1 && (
-                  <p className="mt-2 text-[12px] font-bold text-star">🥇 Te vagy a legjobban értékelt!</p>
+                  <p className="mt-2 text-[12px] font-bold text-star-ink">🥇 Te vagy a legjobban értékelt!</p>
                 )}
                 {stats.competitorRank.rank === 2 && (
                   <p className="mt-2 text-[12px] font-bold text-success">🥈 Csak egy lépés az első helytől!</p>

@@ -396,7 +396,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                             <span className="rounded-pill bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary-ink">{jobCategoryLabel(j.category)}</span>
                           )}
                           {fmtExtSalary(j) && (
-                            <span className="rounded-pill bg-star/10 px-2 py-0.5 text-[11px] font-bold text-star">{fmtExtSalary(j)}</span>
+                            <span className="rounded-pill bg-star/10 px-2 py-0.5 text-[11px] font-bold text-star-ink">{fmtExtSalary(j)}</span>
                           )}
                           <span className="rounded-pill bg-surface-alt px-2 py-0.5 text-[10.5px] font-medium text-ink-faint">via {EXT_SOURCE_LABEL[j.source] ?? j.source}</span>
                         </div>
@@ -448,11 +448,11 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
             href="/pro"
             className="flex items-center gap-2.5 rounded-card border border-pro/25 bg-pro/5 px-4 py-3 text-left transition active:scale-[0.99]"
           >
-            <Icon name="lock" size={18} strokeWidth={2} className="shrink-0 text-[#cc7700]" />
+            <Icon name="lock" size={18} strokeWidth={2} className="shrink-0 text-pro-ink" />
             <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
-              <strong className="text-[#cc7700]">Kinti PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% egyezés</strong> minden hirdetésnél. <span className="text-ink-muted">(Ez a Kinti PRO álláskereső funkciója — <strong>nem</strong> a Szaknévsor PRO, amit a vállalkozásodhoz vehetsz.)</span>
+              <strong className="text-pro-ink">Kinti PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% egyezés</strong> minden hirdetésnél. <span className="text-ink-muted">(Ez a Kinti PRO álláskereső funkciója — <strong>nem</strong> a Szaknévsor PRO, amit a vállalkozásodhoz vehetsz.)</span>
             </span>
-            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
+            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-pro-ink" />
           </Link>
         )
       )}

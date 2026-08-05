@@ -21,7 +21,11 @@
        kettő nem lehet ugyanaz (lásd a dark blokk indoklását). */
     --primary-ink: 29 68 52;      /* #1d4434 */
     --primary-soft: 230 235 229;  /* #e6ebe5 */
-    --accent: 200 57 46;          /* #c8392e */
+    /* ⚠️ MÉRT: a korábbi #c8392e a krém háttéren 4,42:1 volt — épp az AA (4,5)
+       ALATT. Ez a szín viszi a lapok szemöldök-sorát („SZAKNÉVSOR · NÉMETORSZÁG"),
+       tehát minden képernyő tetején ott van. A sötétítés a fehér feliratú accent
+       GOMBOKnak is jót tesz: 5,15 → 5,78. */
+    --accent: 186 53 43;          /* #ba352b */
     --accent-soft: 251 232 229;   /* #fbe8e5 */
     --text: 14 31 23;             /* #0e1f17 */
     --text-muted: 92 109 99;      /* #5c6d63 */
@@ -34,8 +38,12 @@
     /* A PRO-arany SZÖVEGKÉNT. A márka-arany (#ff9600) világos lapon 2,18:1 —
        olvashatatlan; sötét lapon viszont 7,6:1, ott maradhat. Ezért TOKEN. */
     --pro-ink: 150 87 10;         /* #96570a — 4,92:1 krémen, 5,73:1 fehéren */
-    /* Szöveg a PRO-arany HÁTTÉREN. A fehér ott 2,18:1 volt. */
-    --on-pro: 26 18 0;            /* #1a1200 — 8,51:1 az aranyon */
+    /* Szöveg BÁRMELYIK arany HÁTTÉREN (PRO #ff9600 és csillag #f0a23a).
+       A fehér ott 2,18:1 illetve 2,11:1 volt — olvashatatlan. */
+    --on-pro: 26 18 0;            /* #1a1200 — 8,51:1 a PRO-n, 8,79:1 a csillagon */
+    /* A csillag-arany SZÖVEGKÉNT: világos lapon 1,82–2,11:1 (a legrosszabb
+       érték az egész palettában), sötét lapon viszont 7,84:1 — ezért token. */
+    --star-ink: 150 87 10;        /* #96570a — 4,92:1 krémen */
     --border-channel: 28 61 46;   /* rgba(28,61,46,...) */
     --border-alpha: 0.1;
     --border-strong-alpha: 0.18;
@@ -90,6 +98,7 @@
     /* Sötét lapon a márka-arany szövegként is bőven megfelel (7,6–8,5:1). */
     --pro-ink: 255 150 0;         /* #ff9600 */
     --on-pro: 26 18 0;            /* #1a1200 — a gomb-háttér mindkét témán ugyanaz az arany */
+    --star-ink: 240 162 58;       /* #f0a23a — sötét lapon 7,84:1, marad a márka-arany */
     --border-channel: 236 231 220;
     --border-alpha: 0.1;
     --border-strong-alpha: 0.2;

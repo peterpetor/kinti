@@ -886,7 +886,7 @@ export function ExploreView({
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
           )}
         >
-          <Icon name="ticket" size={13} strokeWidth={2.2} className={cn("shrink-0", passOnly ? "text-star" : "text-ink-muted")} />
+          <Icon name="ticket" size={13} strokeWidth={2.2} className={cn("shrink-0", passOnly ? "text-star-ink" : "text-ink-muted")} />
           <span className="truncate text-[11.5px] font-bold tracking-wide select-none">
             Csak Kinti Pass helyek
           </span>
@@ -967,7 +967,7 @@ export function ExploreView({
             href="/profil/kinti-pass"
             className="flex items-center gap-3 rounded-card border border-star/40 bg-star/10 px-4 py-3 shadow-card transition active:scale-[0.99]"
           >
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-star/20 text-star">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-star/20 text-star-ink">
               <Icon name="ticket" size={18} strokeWidth={2} />
             </span>
             <span className="min-w-0 flex-1">

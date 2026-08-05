@@ -94,7 +94,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
           <span className="shrink-0 text-[11px] text-ink-faint">•</span>
           {b.reviews > 0 ? (
             <span className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-ink">
-              <Icon name="star" size={11} filled className="text-star" />
+              <Icon name="star" size={11} filled className="text-star-ink" />
               {b.rating.toFixed(1)}
               <span className="font-medium text-ink-muted">({b.reviews})</span>
             </span>
@@ -157,7 +157,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
               <span
                 className={cn(
                   "font-semibold",
-                  openStatus.isOpen ? (openStatus.closingSoon ? "text-star" : "text-success") : "text-accent",
+                  openStatus.isOpen ? (openStatus.closingSoon ? "text-star-ink" : "text-success") : "text-accent",
                 )}
               >
                 {openStatus.isOpen ? "Nyitva" : "Zárva"}
@@ -180,7 +180,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
         {/* Kinti Pass elfogadóhely — arany jelvény + a konkrét ajánlat szövege. */}
         {b.kintiPassActive && (
           <div className="mb-1.5 flex items-center gap-1.5 rounded-[10px] border border-star/40 bg-star/10 px-2 py-1">
-            <Icon name="ticket" size={13} strokeWidth={2.4} className="shrink-0 text-star" />
+            <Icon name="ticket" size={13} strokeWidth={2.4} className="shrink-0 text-star-ink" />
             <span className="min-w-0 truncate text-[11.5px] font-bold text-ink">
               Kinti Pass{b.kintiPassOffer ? `: ${b.kintiPassOffer}` : " elfogadóhely"}
             </span>

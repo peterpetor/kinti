@@ -93,7 +93,7 @@ export function SalaryCard({
               <span>Átlag:</span>
               <strong className="text-ink">{stat.avg_salary.toLocaleString("hu-HU")} {cur}</strong>
               {skewed && (
-                <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-star">⚠ eltérés</span>
+                <span title="Az átlag jelentősen eltér a mediántól — kiugró adat torzíthatja" className="text-[11px] text-star-ink">⚠ eltérés</span>
               )}
             </div>
           );

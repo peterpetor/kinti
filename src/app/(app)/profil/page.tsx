@@ -575,7 +575,7 @@ async function OwnerDashboard({
                     <div className="text-[13.5px] font-bold text-ink">{reviewerHandle}</div>
                     <div className="text-[11px] text-ink-muted">{relTimeFromIso(r.publishedAt)}</div>
                   </div>
-                  <div className="flex gap-px text-star">
+                  <div className="flex gap-px text-star-ink">
                     {Array.from({ length: r.rating }).map((_, i) => (
                       <Icon key={i} name="star" size={12} filled />
                     ))}

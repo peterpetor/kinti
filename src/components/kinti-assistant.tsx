@@ -198,7 +198,7 @@ export function KintiAssistant() {
                         )}
                       </span>
                       {b.featured && (
-                        <span className="shrink-0 rounded-pill bg-star/15 px-2 py-0.5 text-[10px] font-bold text-star">Kiemelt</span>
+                        <span className="shrink-0 rounded-pill bg-star/15 px-2 py-0.5 text-[10px] font-bold text-star-ink">Kiemelt</span>
                       )}
                       <Icon name="chevR" size={14} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
                     </Link>

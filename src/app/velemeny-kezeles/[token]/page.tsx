@@ -39,14 +39,14 @@ export default async function VelemenyKezelesPage({
           </p>
         )}
         <div className="mb-2 flex items-center gap-2">
-          <div className="flex gap-px text-star">
+          <div className="flex gap-px text-star-ink">
             {Array.from({ length: 5 }).map((_, i) => (
               <Icon
                 key={i}
                 name="star"
                 size={16}
                 filled={i < review.rating}
-                className={i < review.rating ? "text-star" : "text-line-strong"}
+                className={i < review.rating ? "text-star-ink" : "text-line-strong"}
               />
             ))}
           </div>

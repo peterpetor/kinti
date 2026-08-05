@@ -440,7 +440,7 @@ export default async function BusinessPage({
             {b.reviews > 0 ? (
               <>
                 <div className="flex items-center gap-1">
-                  <Icon name="star" size={14} filled className="text-star" />
+                  <Icon name="star" size={14} filled className="text-star-ink" />
                   <span className="text-[15px] font-bold text-ink">{b.rating.toFixed(1)}</span>
                 </div>
                 <div className="text-[11px] font-medium text-ink-muted">{b.reviews} vélemény</div>
@@ -829,7 +829,7 @@ export default async function BusinessPage({
                         {fmtRelative(r.publishedAt)}
                       </div>
                     </div>
-                    <div className="flex gap-px text-star">
+                    <div className="flex gap-px text-star-ink">
                       {Array.from({ length: r.rating }).map((_, i) => (
                         <Icon key={i} name="star" size={12} filled />
                       ))}

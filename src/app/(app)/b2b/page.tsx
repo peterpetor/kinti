@@ -76,7 +76,7 @@ export default async function B2bPage() {
             <h1 className="text-[21px] font-extrabold leading-tight tracking-tight text-ink">
               B2B Hub
             </h1>
-            <span className="rounded-pill bg-star/15 px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wide text-star">
+            <span className="rounded-pill bg-star/15 px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wide text-star-ink">
               PRO
             </span>
           </div>

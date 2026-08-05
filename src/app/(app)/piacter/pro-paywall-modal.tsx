@@ -14,7 +14,7 @@ export function ProPaywallModal({ open, onClose }: { open: boolean; onClose: () 
   return (
     <BottomSheet open={open} onClose={onClose} title="Kinti PRO szükséges">
       <div className="pb-2 text-center">
-        <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-[14px] bg-star text-white">
+        <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-[14px] bg-star text-on-pro">
           <Icon name="lock" size={22} strokeWidth={2.4} />
         </div>
         <p className="text-[15px] font-extrabold text-ink">
@@ -26,7 +26,7 @@ export function ProPaywallModal({ open, onClose }: { open: boolean; onClose: () 
         </p>
         <Link
           href="/pro"
-          className="mt-4 inline-flex w-full items-center justify-center rounded-pill bg-star px-5 py-3 text-[14px] font-extrabold text-white transition hover:bg-[#d68f20] active:scale-[0.98]"
+          className="mt-4 inline-flex w-full items-center justify-center rounded-pill bg-star px-5 py-3 text-[14px] font-extrabold text-on-pro transition hover:bg-[#d68f20] active:scale-[0.98]"
         >
           Kinti PRO feloldása
         </Link>

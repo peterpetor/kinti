@@ -86,7 +86,7 @@ export function SalaryJobsCta({ country, grossMonthly }: { country: string; gros
               </span>
             </span>
             {j.featured && (
-              <span className="shrink-0 rounded-pill bg-star/15 px-2 py-0.5 text-[10px] font-bold text-star">
+              <span className="shrink-0 rounded-pill bg-star/15 px-2 py-0.5 text-[10px] font-bold text-star-ink">
                 Kiemelt
               </span>
             )}

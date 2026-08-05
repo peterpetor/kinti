@@ -32,14 +32,14 @@ export function ProLockOverlay({
       {/* Paywall — a tartalom fölé simuló CTA. */}
       <div className="absolute inset-0 flex items-start justify-center overflow-hidden rounded-card bg-gradient-to-b from-bg/10 via-bg/55 to-bg/90 p-4">
         <div className="mt-6 w-full max-w-sm rounded-card border-2 border-star/40 bg-surface p-5 text-center shadow-pop">
-          <div className="mx-auto mb-2 grid h-11 w-11 place-items-center rounded-[14px] bg-star text-white">
+          <div className="mx-auto mb-2 grid h-11 w-11 place-items-center rounded-[14px] bg-star text-on-pro">
             <Icon name="lock" size={20} strokeWidth={2.4} />
           </div>
           <p className="text-[15px] font-extrabold text-ink">{title}</p>
           <p className="mx-auto mt-1 max-w-xs text-[12.5px] leading-snug text-ink-muted">{subtitle}</p>
           <Link
             href="/pro"
-            className="mt-3 inline-flex items-center justify-center rounded-pill bg-star px-5 py-2.5 text-[14px] font-extrabold text-white transition hover:bg-[#d68f20] active:scale-[0.98]"
+            className="mt-3 inline-flex items-center justify-center rounded-pill bg-star px-5 py-2.5 text-[14px] font-extrabold text-on-pro transition hover:bg-[#d68f20] active:scale-[0.98]"
           >
             Kinti PRO feloldása
           </Link>

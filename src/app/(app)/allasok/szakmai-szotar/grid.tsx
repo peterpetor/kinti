@@ -56,12 +56,12 @@ export function SzakmaiSzotarGrid({ userIsPro }: { userIsPro: boolean }) {
                   <span
                     className={cn(
                       "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider",
-                      lesson.isPro ? "bg-star/20 text-star" : "bg-primary/10 text-primary-ink",
+                      lesson.isPro ? "bg-star/20 text-star-ink" : "bg-primary/10 text-primary-ink",
                     )}
                   >
                     {lesson.industry}
                   </span>
-                  <span className={cn("text-[12px] font-bold", lesson.isPro ? "text-star" : "text-accent")}>
+                  <span className={cn("text-[12px] font-bold", lesson.isPro ? "text-star-ink" : "text-accent")}>
                     +{lesson.xpReward} XP
                   </span>
                 </div>
@@ -76,7 +76,7 @@ export function SzakmaiSzotarGrid({ userIsPro }: { userIsPro: boolean }) {
               <div
                 className={cn(
                   "mt-4 flex items-center gap-1.5 text-[12px] font-bold",
-                  requiresPro ? "text-star" : "text-primary-ink",
+                  requiresPro ? "text-star-ink" : "text-primary-ink",
                 )}
               >
                 {requiresPro ? (

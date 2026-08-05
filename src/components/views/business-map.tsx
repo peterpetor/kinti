@@ -439,7 +439,7 @@ function SelectedCard({ business: b, distanceKm }: { business: ListBusiness; dis
           <span className="shrink-0 text-ink-faint">·</span>
           {b.reviews > 0 ? (
             <span className="inline-flex shrink-0 items-center gap-0.5 text-ink">
-              <Icon name="star" size={10} filled className="text-star" />
+              <Icon name="star" size={10} filled className="text-star-ink" />
               {b.rating.toFixed(1)}
             </span>
           ) : (
