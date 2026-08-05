@@ -311,7 +311,13 @@ const LIST_TTL_MS = 1_800_000; // 30 perc
  * contact_email, owner) be sem kerül a SELECT-be → toPublicBusiness sem kell.
  */
 export async function getBusinessesForList(): Promise<ListBusiness[]> {
-  return cached("biz:list-v1", LIST_TTL_MS, async () => {
+  // ⚠️ A KULCS VERZIÓJA KÉZI CACHE-ÜRÍTŐ. A lista 30 percig él a gyorsítótárban
+  // (ld. LIST_TTL_MS), ami normál esetben helyes — de ha egy tételt AZONNAL el
+  // kell tüntetni (pl. a család kérésére egy elhunyt vállalkozó adatlapját),
+  // a `hidden = 1` önmagában csak a TTL lejárta után látszik. Ilyenkor
+  // léptesd a verziót (v1 → v2 → …): a következő deploy után minden POP friss
+  // listát kér. 2026-08-05: v2.
+  return cached("biz:list-v2", LIST_TTL_MS, async () => {
     // ⚠️ CSAK IDE kerülhet a keret-jelzés: ez a blokk kizárólag VALÓDI
     // cache-kihagyáskor fut. A cache-ből kiszolgált kérés nem olvas sort — ha
     // azt is számolnánk, a riasztás a forgalmat mérné, nem a fogyasztást.

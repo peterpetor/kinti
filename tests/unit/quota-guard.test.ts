@@ -143,7 +143,10 @@ describe("keret-őr — bekötés", () => {
     // ⚠️ Ha a hívás a `cached(...)` ELÉ csúszna, minden kérést számolna — a
     // riasztás akkor a forgalmat mérné, nem a D1-fogyasztást, és hamis
     // riasztást adna cache-találatok tömegére.
-    const i = repoSrc.indexOf('cached("biz:list-v1"');
+    // ⚠️ A kulcs VERZIÓJÁRA ne kössük magunkat: a `biz:list-vN` léptetése
+    // szándékos művelet (kézi cache-ürítés), nem regresszió. A teszt a
+    // SORRENDET őrzi, nem a verziószámot.
+    const i = repoSrc.search(/cached\("biz:list-v\d+"/);
     const j = repoSrc.indexOf('ellenorizKvota("biz-list")');
     expect(i).toBeGreaterThan(-1);
     expect(j).toBeGreaterThan(i);
