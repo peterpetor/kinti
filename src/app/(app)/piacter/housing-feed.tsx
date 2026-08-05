@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Icon, EmptyState } from "@/components/ui";
+import { CountryFlag } from "@/components/ui/country-flag";
 import { cn } from "@/lib/cn";
 import { COUNTRIES, DEFAULT_COUNTRY } from "@/lib/countries";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -95,14 +96,20 @@ export function HousingFeed({
 
   return (
     <div className="space-y-3">
-      {/* Ország-szűrő */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      {/* Ország-szűrő
+          ⚠️ TÖRDELT, NEM GÖRGETŐ. Vízszintes görgetéssel az AKTÍV csip lógott ki
+          a képernyő jobb széléről („DE Németorszá"), vagyis épp a kiválasztott
+          ország nem volt olvasható. Ugyanaz a döntés, mint a Szaknévsor fő
+          vezérlőinél (a felhasználó kétszer kérte a görgetés kivezetését):
+          fő szűrő-sor tördeljen, ne rejtsen el elemeket a képernyőn kívül. */}
+      <div className="flex flex-wrap items-center gap-2">
         <FilterChip active={country === ""} label="Mind" onClick={() => setFilter("")} />
         {COUNTRIES.map((c) => (
           <FilterChip
             key={c.code}
             active={country === c.code}
-            label={`${c.flag} ${c.name}`}
+            label={c.name}
+            flagCode={c.code}
             onClick={() => setFilter(c.code)}
           />
         ))}
@@ -139,8 +146,8 @@ export function HousingFeed({
         )}
       </div>
 
-      {/* Típus-szűrő */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      {/* Típus-szűrő — szintén tördelt (a „Kiadó lakás" is levágva lógott ki). */}
+      <div className="flex flex-wrap items-center gap-2">
         <FilterChip active={type === ""} label="Minden hirdetés" onClick={() => setType("")} />
         <FilterChip active={type === "room_offered"} label={`🔑 ${HOUSING_TYPE_LABELS.room_offered}`} onClick={() => setType("room_offered")} />
         <FilterChip active={type === "apartment_offered"} label={`🔑 ${HOUSING_TYPE_LABELS.apartment_offered}`} onClick={() => setType("apartment_offered")} />
@@ -210,17 +217,24 @@ export function HousingFeed({
   );
 }
 
-function FilterChip({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
+function FilterChip({ active, label, flagCode, onClick }: {
+  active: boolean;
+  label: string;
+  /** Ország-kód: SVG-zászlót tesz a felirat elé (a zászló-EMOJI Anglián üres). */
+  flagCode?: string;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "inline-flex shrink-0 items-center whitespace-nowrap rounded-pill border px-3 py-1.5 text-[12px] font-bold shadow-card transition active:scale-[0.97]",
+        "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-pill border px-3 py-1.5 text-[12px] font-bold shadow-card transition active:scale-[0.97]",
         active ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink-muted",
       )}
     >
+      {flagCode && <CountryFlag code={flagCode} className="h-[10px] w-[15px]" />}
       {label}
     </button>
   );
