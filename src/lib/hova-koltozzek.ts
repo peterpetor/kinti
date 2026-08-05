@@ -150,12 +150,21 @@ export type Szempont = "megtakaritas" | "olcso_alberlet" | "gyors_allampolgarsag
  * telefonon egy oszlop ~110 px. A teljes címke ott „Marad a hó…”-ra csonkulna,
  * vagyis pont az veszne el, amit a fejléc mondani akar.
  */
-export const SZEMPONTOK: { id: Szempont; label: string; rovid: string; emoji: string; magyarazat: string }[] = [
+export const SZEMPONTOK: {
+  id: Szempont; label: string; rovid: string; emoji: string; magyarazat: string;
+  /**
+   * IGEN/NEM szempont — nincs „mennyisége".
+   * ⚠️ A felületnek tudnia kell róla: egy logikai értéket nem szabad
+   * NAGYSÁG-sávval ábrázolni. A „nem" 0 pontból 6%-os csonk lenne, ami
+   * úgy néz ki, mintha „kicsit igen" volna — pedig egyszerűen nem.
+   */
+  logikai?: boolean;
+}[] = [
   { id: "megtakaritas", label: "Marad a hónap végén", rovid: "Marad", emoji: "💰", magyarazat: "A nettó bérből a lakhatás és a megélhetés után maradó arány." },
   { id: "olcso_alberlet", label: "Olcsó albérlet", rovid: "Lakhatás", emoji: "🏠", magyarazat: "A közösségi lakbér-medián a helyi nettó bérhez mérve." },
   { id: "alacsony_ado", label: "Alacsony levonás", rovid: "Levonás", emoji: "🧾", magyarazat: "Mennyi marad a bruttóból a járulékok és az adó után." },
   { id: "gyors_allampolgarsag", label: "Gyors állampolgárság", rovid: "Honosítás", emoji: "🛂", magyarazat: "Hány év jogszerű tartózkodás után igényelhető." },
-  { id: "ketto_allampolgarsag", label: "Magyar megtartható", rovid: "Kettős", emoji: "🇭🇺", magyarazat: "Megtarthatod-e a magyar állampolgárságot a honosítás után." },
+  { id: "ketto_allampolgarsag", label: "Magyar megtartható", rovid: "Kettős", emoji: "🇭🇺", logikai: true, magyarazat: "Megtarthatod-e a magyar állampolgárságot a honosítás után." },
 ];
 
 export interface Ertekeles {

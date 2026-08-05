@@ -313,7 +313,12 @@ function OrszagKartya({
                 {/* Mérce-sáv: azonos hosszon fut minden kártyán, ezért a
                     kitöltöttsége ránézésre összevethető. Hiányzó adatnál
                     SZÁNDÉKOSAN nincs sáv — a 0 hosszúságú sáv „mértük, és
-                    rossz”-at jelentene. */}
+                    rossz”-at jelentene.
+
+                    ⚠️ LOGIKAI szempontnál (igen/nem) a sáv VÉGIG fut, és csak a
+                    SZÍNE hordozza az információt. Egy igen/nem értéknek nincs
+                    „mennyisége”: a „nem” arányos sávja 6%-os csonk lenne, ami
+                    úgy néz ki, mintha „kicsit igen” volna. */}
                 <span className="mt-1 block h-1 overflow-hidden rounded-full bg-ink/10">
                   {!nincs && (
                     <span
@@ -321,7 +326,9 @@ function OrszagKartya({
                         "block h-full rounded-full",
                         sav === "jo" ? "bg-success" : sav === "kozepes" ? "bg-star" : "bg-accent",
                       )}
-                      style={{ width: `${Math.max(6, Math.round(e.pont! * 100))}%` }}
+                      style={{
+                        width: meta.logikai ? "100%" : `${Math.max(6, Math.round(e.pont! * 100))}%`,
+                      }}
                     />
                   )}
                 </span>

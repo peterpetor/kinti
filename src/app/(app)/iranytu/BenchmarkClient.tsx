@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Skeleton } from "@/components/skeleton";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { SalaryCard } from "./SalaryCard";
@@ -363,10 +363,34 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
   const country = isValidCountry(c) ? c : DEFAULT_COUNTRY;
   const cur = benchCurrency(country);
 
+  /**
+   * ⚠️ SORREND-ŐR — VALÓS, MÉRT HIBÁBÓL (2026-08-05).
+   *
+   * Ez a lekérés MINDIG legalább kétszer indul: az első renderben a
+   * `usePreferredCountry` még nem olvasta ki a localStorage-t, tehát az
+   * alapértelmezett országgal (CH) megyünk, majd a valódi országgal újra.
+   * A kettő PÁRHUZAMOSAN fut, és eddig semmi nem garantálta a sorrendet — ha a
+   * régebbi (svájci) válasz ért be később, FELÜLÍRTA a németet.
+   *
+   * A tünet nem hibaüzenet volt, hanem egy hihető képernyő: „Bundesland: ZH”
+   * (svájci kanton német címkével), a saját CHF-fizetés pedig a NÉMET
+   * statisztikához mérve adott százalékot. Az összehasonlítás csendben
+   * értelmetlen lett.
+   *
+   * Ezért a válaszokat generációval címkézzük, és csak a LEGUTÓBBI kérésé
+   * kerülhet állapotba; a korábbiakat eldobjuk (és megszakítjuk).
+   */
+  const generacio = useRef(0);
+
   const fetchStats = useCallback(async () => {
+    const sajat = ++generacio.current;
+    const vezerlo = new AbortController();
     setLoading(true);
     try {
-      const res = await fetch(`/api/benchmark?canton=${canton}&period=${period}&country=${country}`);
+      const res = await fetch(
+        `/api/benchmark?canton=${canton}&period=${period}&country=${country}`,
+        { signal: vezerlo.signal },
+      );
       const data = await res.json() as {
         locked?: Parameters<typeof setLock>[0];
         myData?: Parameters<typeof setMyData>[0];
@@ -374,6 +398,8 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
         salaryByExp?: Parameters<typeof setSalaryByExp>[0];
         rent?: Parameters<typeof setRentStats>[0];
       };
+      // Elavult válasz (közben újabb kérés indult) — NEM írjuk állapotba.
+      if (sajat !== generacio.current) return;
       // MINDIG frissítünk (üres/null → ürítés), különben ország- vagy lock-váltáskor
       // a régi ország adata bennragad (pl. CH-stat látszana EUR-címkével AT-n).
       setLock(data.locked ?? { salary: true, rent: true });
@@ -381,8 +407,12 @@ export default function BenchmarkClient({ turnstileSiteKey }: { turnstileSiteKey
       setSalaryStats(data.salary ?? []);
       setSalaryByExp(data.salaryByExp ?? []);
       setRentStats(data.rent ?? []);
-    } catch (e) { console.error(e); }
-    setLoading(false);
+    } catch (e) {
+      if ((e as Error)?.name !== "AbortError") console.error(e);
+    }
+    // A töltés-jelzőt is csak a legutóbbi kérés kapcsolhatja ki, különben egy
+    // korán beérkező régi válasz „késznek” mutatná a még futó újat.
+    if (sajat === generacio.current) setLoading(false);
   }, [canton, period, country]);
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
