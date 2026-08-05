@@ -8,7 +8,7 @@ import { OwnPostBadge } from "@/components/own-post-badge";
 import { FavoriteButton } from "./favorite-button";
 import { formatDistanceKm } from "@/lib/distance";
 import { parseWorkingHoursStrict, calculateBusinessHoursStatus } from "@/lib/hours";
-import { hasContactInfo } from "@/lib/address";
+import { hasContactInfo, varosNev } from "@/lib/address";
 
 /**
  * BusinessCard — a Szaknévsor / találati lista kártyája. Fotó/logó placeholder
@@ -41,6 +41,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
   );
 
   const logoUrl = mediaImageUrl(b.logoKey, { width: 160 });
+  const varos = varosNev(b.address);
 
   // Élő nyitva/zárva CSAK ismert (strukturált) nyitvatartásból — ha nincs adat,
   // nem találunk ki 8–18 default-státuszt (fabricated precision). Ismeretlen
@@ -119,6 +120,24 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
         </div>
 
         <div className="mb-1.5 flex items-center gap-2 text-[12.5px] text-ink-muted">
+          {/* ⚠️ VÁROS — a kártya legfontosabb hiányzó adata volt. A szaknévsor
+              ORSZÁGOS lista (Németországra 973 találat), a kártyán viszont
+              semmi nem mondta meg, hol van a cég: a felhasználónak minden
+              egyes találatot meg kellett nyitnia, hogy ezt megtudja.
+              ⚠️ Ahol a címből nem olvasható ki biztosan (a tételek ~7%-a: csak
+              utca, vagy szolgáltatási terület), ott NEM írunk ki semmit —
+              rossz várost írni sokkal rosszabb, mint egyet sem. */}
+          {varos && (
+            <>
+              <span className="inline-flex min-w-0 items-center gap-1">
+                <Icon name="pin" size={11} strokeWidth={2.2} className="shrink-0" />
+                <span className="truncate">{varos}</span>
+              </span>
+              {(distanceKm != null || openStatus || openTextTrim) && (
+                <span className="h-[3px] w-[3px] shrink-0 rounded-full bg-ink-faint" />
+              )}
+            </>
+          )}
           {/* Csak VALÓDI, élőben számolt távolságot mutatunk — a distText egy
               prototípus-placeholder (kézi seed-érték), azt sosem jelenítjük meg. */}
           {distanceKm != null && (
