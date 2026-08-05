@@ -111,8 +111,11 @@ export function HomePlatformGrid({ b2bOpenCount = 0 }: { b2bOpenCount?: number }
   // üres állapotot nem hirdetünk). Bővítés: új élő szám = egy sor ide.
   const liveBadge: Record<string, number> = { "/b2b": b2bOpenCount };
 
+  // A press-visszajelzés a `.kinti-press`-ből jön (gyors lenyomás, RUGÓS
+  // felengedés) — a Tailwind `active:scale-*` mindkét irányra ugyanazt a
+  // görbét adná. A csempe kicsi, ezért marad a 0,97-es alapérték.
   const tileCls =
-    "relative flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-2 py-3.5 text-center shadow-card transition active:scale-[0.97]";
+    "kinti-press relative flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-2 py-3.5 text-center shadow-card transition-shadow";
   const tileInner = (m: (typeof MODULES)[number]) => (
     <>
       {(liveBadge[m.href] ?? 0) > 0 && (

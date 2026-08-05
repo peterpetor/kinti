@@ -110,7 +110,12 @@ export function BottomSheet({
         className="relative z-[1] w-full max-w-md sm:rounded-[24px] rounded-t-[24px] border border-line bg-surface p-5 sm:pb-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-pop animate-fade-up"
         style={{
           transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
-          transition: dragging ? "none" : "transform .25s cubic-bezier(.2,.8,.2,1)",
+          // ⚠️ Itt egy KÉZZEL BEMÁSOLT bezier állt (.2,.8,.2,1), ami nem is a
+          // közös `--kinti-ease` volt: a két alsó lap MÁSKÉPP mozgott. Most
+          // mindkettő ugyanazt a rugót használja.
+          transition: dragging
+            ? "none"
+            : "transform var(--kinti-spring-ido) var(--kinti-spring)",
         }}
       >
         {/* Húzás-zóna: CSAK a fogantyú-sáv — a tartalomban görgetés/kijelölés

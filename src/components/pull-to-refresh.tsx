@@ -73,7 +73,9 @@ export function PullToRefresh({
         className="flex items-center justify-center overflow-hidden"
         style={{
           height: indicatorH,
-          transition: startY.current == null ? "height 0.25s cubic-bezier(0.22,1,0.36,1)" : "none",
+          // A görbe a közös tokenből (itt korábban ugyanez a bezier volt kézzel
+          // bemásolva). Húzás közben nincs átmenet — az ujj vezet.
+          transition: startY.current == null ? "height 0.25s var(--kinti-ease)" : "none",
         }}
       >
         <div

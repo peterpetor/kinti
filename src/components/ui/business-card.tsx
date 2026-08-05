@@ -36,7 +36,14 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
     flat ? "bg-surface" : cn("rounded-card border bg-surface", b.featured ? "border-2 border-pro shadow-pop bg-pro/[0.02]" : "border-line shadow-card"),
     // Desktop-hoveren a meglévő árnyék-emelés mellé egy leheletnyi (2px) lift —
     // „premium" érzet; érintőn (mobil) nincs hover, így ott változatlan.
-    href && "transition hover:shadow-card-hover md:hover:-translate-y-0.5 active:scale-[0.99]",
+    //
+    // ⚠️ A press-visszajelzés a `.kinti-press` osztályból jön, NEM a Tailwind
+    // `active:scale-*`-ból: a különbség a FELENGEDÉS. A utility-nél a lenyomás
+    // és a visszaengedés ugyanazzal a görbével fut, itt viszont gyorsan
+    // nyomódik és RUGÓSAN pattan vissza. Ezért `transition-shadow` is a puszta
+    // `transition` helyett — az a transformot is elvinné, és felülírná a rugót.
+    // A 0,985 a kártya MÉRETÉHEZ igazodik: nagy felületen a 0,97 rángatásnak hat.
+    href && "kinti-press [--kinti-press:0.985] transition-shadow hover:shadow-card-hover md:hover:-translate-y-0.5",
     className,
   );
 

@@ -114,7 +114,12 @@ export function BottomSheet({
         className="relative w-full max-w-md rounded-t-3xl border border-line bg-surface shadow-pop"
         style={{
           transform: show ? `translateY(${dragY}px)` : "translateY(100%)",
-          transition: dragging ? "none" : "transform 0.28s var(--kinti-ease)",
+          // ⚠️ RUGÓ, nem bezier. A lap a helyére ÜL BE (a végén egy alig
+          // észrevehető, 1,5%-os beleng) — ez a natív iOS-mozgás. Húzás közben
+          // nincs átmenet: ott az ujj a „fizika", minden interpoláció késleltet.
+          transition: dragging
+            ? "none"
+            : "transform var(--kinti-spring-ido) var(--kinti-spring)",
           maxHeight: "88vh",
         }}
       >

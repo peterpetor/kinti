@@ -81,8 +81,49 @@
     --kinti-ease: cubic-bezier(0.22, 1, 0.36, 1);
     --kinti-ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
 
+    /* ── VALÓDI RUGÓ (spring) ─────────────────────────────────────────────
+       A `cubic-bezier` négy kontrollpontja EGYETLEN irányváltást tud leírni:
+       túllendül, aztán monoton beáll. A natív iOS-mozgás ezzel szemben egy
+       CSILLAPÍTOTT RUGÓ — túllendül, VISSZALENG, és úgy ül be. Ezt a `linear()`
+       easing adja meg, mert az a görbét pontonként mintavételezi.
+
+       A számok NEM kézzel hangoltak, hanem a csillapított harmonikus
+       oszcillátorból számoltuk (25 minta, x(t) = 1 − e^(−ζω₀t)·(cos ω_d t +
+       (ζω₀/ω_d)·sin ω_d t)); az időtartam a beállási idő, ahol az amplitúdó
+       0,1% alá csillapodik:
+         --kinti-spring      response 0,40s · ζ 0,80 → 0,55s, max 1,015 (1 lengés)
+         --kinti-spring-pop  response 0,25s · ζ 0,60 → 0,46s, max 1,094 (3 lengés)
+       A modális SZÁNDÉKOSAN alig lendül túl (1,5%): egy nagy felület nagy
+       kilengése olcsónak hat. A mikro-elem (ikon, kapszula) viszont vissza is
+       leng — ott ez adja a „fizikai" érzetet.
+
+       ⚠️ A FALLBACK NEM ELHAGYHATÓ. A `linear()` easing Chrome 113 / Safari
+       17.2 / Firefox 112 óta van meg; régebbi böngészőben az ÉRTÉK érvénytelen,
+       és ilyenkor a CSS az EGÉSZ deklarációt eldobja — vagyis nem a régi
+       görbére esne vissza, hanem a böngésző alap `ease`-ére. Ezért a token
+       alapból a bezier-változat, és csak `@supports` mögött íródik felül. */
+    --kinti-spring: var(--kinti-ease);
+    --kinti-spring-ido: 0.55s;
+    --kinti-spring-pop: var(--kinti-ease-pop);
+    --kinti-spring-pop-ido: 0.46s;
+
     /* Natív vezérlők (form, scrollbar) színsémája */
     color-scheme: light;
+  }
+
+  @supports (transition-timing-function: linear(0, 1)) {
+    :root {
+      --kinti-spring: linear(
+        0, 0.053, 0.176, 0.324, 0.474, 0.609, 0.723, 0.815, 0.884, 0.934,
+        0.969, 0.991, 1.005, 1.012, 1.015, 1.015, 1.014, 1.012, 1.009, 1.007,
+        1.005, 1.004, 1.002, 1.001, 1.001
+      );
+      --kinti-spring-pop: linear(
+        0, 0.094, 0.302, 0.539, 0.752, 0.914, 1.02, 1.076, 1.094, 1.089,
+        1.07, 1.048, 1.027, 1.011, 1, 0.993, 0.991, 0.991, 0.993, 0.995,
+        0.997, 0.999, 1, 1.001, 1.001
+      );
+    }
   }
 
   [data-theme="dark"] {
@@ -394,11 +435,51 @@
   }
 
   /* Egységes press-feedback minden gombon. @layer base → a Tailwind
-     `active:scale-*` utility-k (utilities layer) felülírják, ahol egyedi van. */
+     `active:scale-*` utility-k (utilities layer) felülírják, ahol egyedi van.
+
+     ⚠️ A LENYOMÁS ÉS A FELENGEDÉS NEM SZIMMETRIKUS — ez a natív érzet lényege.
+     Lefelé gyors és lineáris (az ujj alatt azonnal reagáljon), FELFELÉ viszont
+     rugós: a felület visszapattan. Korábban az átmenet CSAK a `:active`
+     szabályban szerepelt, vagyis felengedéskor — amikor a szabály már nem
+     érvényes — nem volt mit interpolálni: az elem VISSZAUGROTT. Pont az a
+     félidő hiányzott, amit a felhasználó a legjobban érez. */
+  button:not(:disabled),
+  [role="button"] {
+    transition: transform var(--kinti-spring-pop-ido) var(--kinti-spring-pop);
+  }
   button:not(:disabled):active,
   [role="button"]:active {
     transform: scale(0.97);
-    transition: transform 0.08s ease;
+    transition: transform 0.09s ease-out;
+  }
+
+  /* Ugyanez KÁRTYÁKRA / csempékre — azok `<a>`-k, nem gombok, tehát a fenti
+     szabály nem éri el őket. Külön osztály (nem `a:active`): egy szöveg-közi
+     hivatkozás összenyomása hibás jelzés lenne, csak a kártya-felület nyomódik.
+
+     A mérték a felület méretével FORDÍTOTTAN arányos: egy nagy kártyán a 0,97
+     már rángatásnak hat, egy kis csempén a 0,99 észrevehetetlen. Ezért van
+     `--kinti-press` felülírható változó. */
+  .kinti-press {
+    --kinti-press: 0.97;
+    transition: transform var(--kinti-spring-pop-ido) var(--kinti-spring-pop);
+  }
+  .kinti-press:active {
+    transform: scale(var(--kinti-press));
+    transition: transform 0.09s ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button:not(:disabled),
+    [role="button"],
+    .kinti-press {
+      transition: none;
+    }
+    button:not(:disabled):active,
+    [role="button"]:active,
+    .kinti-press:active {
+      transform: none;
+      transition: none;
+    }
   }
 
   /* Billentyűzetes fókusz-gyűrű (a11y + polish) — CSAK :focus-visible-re, tehát

@@ -89,9 +89,20 @@ const config: Config = {
         mono: ["var(--font-jetbrains)", "ui-monospace", "SF Mono", "Menlo", "monospace"],
       },
       // Egy mozgas-gorbe az egesz appnak (globals.css `--kinti-ease`).
+      //
+      // ⚠️ A `DEFAULT` NEM DÍSZÍTÉS. A globals.css kimondja, hogy egy görbe van
+      // az egész appnak — csakhogy a puszta `transition` Tailwind-osztály (a
+      // forrásban 460+ helyen) a Tailwind SAJÁT alapgörbéjét használta
+      // (cubic-bezier(0.4, 0, 0.2, 1)), nem a mienket. Vagyis a szabály ki volt
+      // mondva, és közben a felület tulnyomo resze mast mozgott. Ez a sor az,
+      // ami tenylegesen ervenyre juttatja.
       transitionTimingFunction: {
+        DEFAULT: "var(--kinti-ease)",
         kinti: "var(--kinti-ease)",
         "kinti-pop": "var(--kinti-ease-pop)",
+        // Valodi (csillapitott) rugo — lasd globals.css `--kinti-spring`.
+        "kinti-spring": "var(--kinti-spring)",
+        "kinti-spring-pop": "var(--kinti-spring-pop)",
       },
       borderRadius: {
         pill: "9999px",

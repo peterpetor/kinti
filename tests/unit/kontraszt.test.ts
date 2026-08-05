@@ -19,7 +19,17 @@ import { resolve } from "node:path";
  * lesz az app, amit senki nem reklamál. Ezért a tokenekből SZÁMOLUNK.
  */
 
-const CSS = readFileSync(resolve(__dirname, "../../src/app/globals.css"), "utf8");
+/**
+ * ⚠️ SORTÖRÉS-NORMALIZÁLÁS. A blokk-keresés `\n`-t tartalmazó mintákat használ
+ * (`:root,\n  [data-theme="warm"]`). Windowson egy `git checkout` CRLF-fel írja
+ * vissza a fájlt (`core.autocrlf`), és onnantól EGYETLEN minta sem illeszkedik:
+ * a teszt nem hibás értéket jelez, hanem „nincs ilyen téma-blokk"-kal elszáll,
+ * vagyis a kontraszt-őr teljesen kiesik. Ez élesben megtörtént.
+ */
+const CSS = readFileSync(resolve(__dirname, "../../src/app/globals.css"), "utf8").replace(
+  /\r\n/g,
+  "\n",
+);
 
 type RGB = [number, number, number];
 

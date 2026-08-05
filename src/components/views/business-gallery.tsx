@@ -71,17 +71,21 @@ export function BusinessGallery({ galleryKeys, businessName }: Props) {
           from { transform: translateX(32px); opacity: 0; }
           to { transform: translateX(0); opacity: 1; }
         }
+        /* A görbék a közös mozgás-tokenekből jönnek — itt korábban négy
+           kézzel bemásolt cubic-bezier állt, kettő közülük olyan, ami sehol
+           máshol nem szerepel az appban (0.16,1,0.3,1). A nagyítás rugóval
+           ül be (a kép a helyére „pattan"), a többi a közös görbével. */
         .animate-kinti-fade-in {
-          animation: kintiFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: kintiFadeIn 0.3s var(--kinti-ease) forwards;
         }
         .animate-kinti-scale-up {
-          animation: kintiScaleUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: kintiScaleUp var(--kinti-spring-pop-ido) var(--kinti-spring-pop) forwards;
         }
         .animate-kinti-slide-left {
-          animation: kintiSlideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: kintiSlideLeft 0.3s var(--kinti-ease) forwards;
         }
         .animate-kinti-slide-right {
-          animation: kintiSlideRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: kintiSlideRight 0.3s var(--kinti-ease) forwards;
         }
       `}} />
 
