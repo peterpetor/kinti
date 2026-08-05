@@ -365,6 +365,34 @@
     background: rgb(var(--primary));
   }
 
+  /* ── Alsó lap: a háttér hátrébb lép (natív iOS-minta) ────────────────────
+     Amikor BottomSheet nyílik, a fő tartalom kissé összemegy és lekerekedik —
+     így látszik, hogy a lap RÁ nyílt, nem elnavigáltunk.
+
+     ⚠️⚠️ A `body`-t NEM SZABAD transzformálni. A BottomSheet a
+     `document.body`-ba portálozik (bottom-sheet.tsx `createPortal(..., document.body)`),
+     tehát a body kicsinyítése MAGÁT A LAPOT is összenyomná — pont azt, aminek
+     teljes méretben kell maradnia. Ezért a transzformáció a fő tartalom-
+     konténerre megy (`[data-app-main]`), ami a portál-célon KÍVÜL van.
+
+     ⚠️ A `transform` új tartalmazó blokkot hoz létre: a rajta BELÜLI
+     `position: fixed` elemek hozzá igazodnának. Ezért marad a TabBar, a
+     toast-sín és a megerősítő-dialógus a konténeren KÍVÜL (az (app) layout
+     testvér-elemei) — azokat ez a szabály nem érinti. */
+  html[data-sheet-open] [data-app-main] {
+    transform: scale(0.965);
+    border-radius: 22px;
+    overflow: hidden;
+  }
+  [data-app-main] {
+    transform-origin: 50% 0;
+    transition: transform 0.32s var(--kinti-ease), border-radius 0.32s var(--kinti-ease);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html[data-sheet-open] [data-app-main] { transform: none; border-radius: 0; }
+    [data-app-main] { transition: none; }
+  }
+
   /* Egységes press-feedback minden gombon. @layer base → a Tailwind
      `active:scale-*` utility-k (utilities layer) felülírják, ahol egyedi van. */
   button:not(:disabled):active,

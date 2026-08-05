@@ -39,11 +39,23 @@ export function BottomSheet({
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
+      // ⚠️ A HÁTTÉR HÁTRÉBB LÉP (natív iOS-minta, globals.css `[data-sheet-open]`).
+      // Nem díszítés: a kicsinyedő, lekerekedő háttér-réteg megmutatja, hogy a
+      // lap NEM navigáció, hanem RÁ nyílt valami — a felhasználó tudja, hogy
+      // van hova visszazárni. A pusztán sötétített háttérnél ez nem egyértelmű.
+      // ⚠️ SZÁMLÁLÓ, nem logikai jelző: egymásba nyíló lapoknál (lap fölött
+      // megerősítés) a belső bezárása nem állíthatja vissza a hátteret, amíg a
+      // külső még nyitva van.
+      const eddig = Number(document.documentElement.dataset.sheetOpen ?? 0);
+      document.documentElement.dataset.sheetOpen = String(eddig + 1);
       setDragY(0);
       const id = requestAnimationFrame(() => setShow(true));
       return () => {
         cancelAnimationFrame(id);
         document.body.style.overflow = "";
+        const most = Number(document.documentElement.dataset.sheetOpen ?? 1) - 1;
+        if (most > 0) document.documentElement.dataset.sheetOpen = String(most);
+        else delete document.documentElement.dataset.sheetOpen;
       };
     }
     setShow(false);

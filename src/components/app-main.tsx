@@ -15,6 +15,10 @@ export function AppMain({ children }: { children: React.ReactNode }) {
   const immersive = isImmersiveRoute(pathname);
   return (
     <div
+      // A globals.css `html[data-sheet-open]` szabálya ezt a konténert lépteti
+      // hátrébb, amikor alsó lap nyílik. A jelölő SZÁNDÉKOSAN nem osztály:
+      // a CSS-ben így egyértelmű, hogy szerkezeti horgony, nem stílus.
+      data-app-main=""
       className={cn(
         "mx-auto min-h-dvh max-w-md overflow-x-clip",
         !immersive && "pb-[calc(env(safe-area-inset-bottom)+9rem)]",
