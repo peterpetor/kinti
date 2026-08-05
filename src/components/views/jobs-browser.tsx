@@ -248,33 +248,6 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
         </div>
       )}
 
-      {/* PRO match-score sáv */}
-      {proMatch && !canMatch && (
-        proMatch.isPro ? (
-          <Link
-            href="/allasok/profil"
-            className="flex items-center gap-2.5 rounded-card border border-primary/20 bg-primary/5 px-4 py-3 text-left transition active:scale-[0.99]"
-          >
-            <Icon name="target" size={18} strokeWidth={2} className="shrink-0 text-primary" />
-            <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
-              <strong className="text-ink">Tölts ki egy munkavállalói profilt</strong> (szakma + kanton), és minden álláshoz látod a <strong className="text-primary">% egyezést</strong>.
-            </span>
-            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-primary" />
-          </Link>
-        ) : (
-          <Link
-            href="/pro"
-            className="flex items-center gap-2.5 rounded-card border border-pro/25 bg-pro/5 px-4 py-3 text-left transition active:scale-[0.99]"
-          >
-            <Icon name="lock" size={18} strokeWidth={2} className="shrink-0 text-[#cc7700]" />
-            <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
-              <strong className="text-[#cc7700]">Kinti PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% egyezés</strong> minden hirdetésnél. <span className="text-ink-muted">(Ez a Kinti PRO álláskereső funkciója — <strong>nem</strong> a Szaknévsor PRO, amit a vállalkozásodhoz vehetsz.)</span>
-            </span>
-            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
-          </Link>
-        )
-      )}
-
       {/* Találatok */}
       <section className="space-y-4">
         {filtered.length === 0 && externalFiltered.length === 0 ? (
@@ -449,6 +422,41 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
           </>
         )}
       </section>
+
+      {/* ⚠️ A PRO-sáv a TALÁLATOK UTÁN áll, nem előttük.
+          Korábban a szűrők és az első álláshirdetés közé ékelődött, és
+          ~200 px-t vitt el (öt sor, benne egy zárójeles magyarázattal arról,
+          hogy ez MELYIK PRO) — vagyis az látta legelőször, aki állást keresett,
+          nem azt, amiért jött. Ugyanaz a hibaminta, amit a Szaknévsoron és a
+          cégadatlapon már kivezettünk: MÁS közönségnek szóló blokk a látogató
+          célja elé. Itt ráadásul kontextusban is jobb: a „%-os egyezés" ígérete
+          akkor mond valamit, amikor a felhasználó már látott pár hirdetést. */}
+      {proMatch && !canMatch && (
+        proMatch.isPro ? (
+          <Link
+            href="/allasok/profil"
+            className="flex items-center gap-2.5 rounded-card border border-primary/20 bg-primary/5 px-4 py-3 text-left transition active:scale-[0.99]"
+          >
+            <Icon name="target" size={18} strokeWidth={2} className="shrink-0 text-primary" />
+            <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
+              <strong className="text-ink">Tölts ki egy munkavállalói profilt</strong> (szakma + kanton), és minden álláshoz látod a <strong className="text-primary">% egyezést</strong>.
+            </span>
+            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-primary" />
+          </Link>
+        ) : (
+          <Link
+            href="/pro"
+            className="flex items-center gap-2.5 rounded-card border border-pro/25 bg-pro/5 px-4 py-3 text-left transition active:scale-[0.99]"
+          >
+            <Icon name="lock" size={18} strokeWidth={2} className="shrink-0 text-[#cc7700]" />
+            <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink">
+              <strong className="text-[#cc7700]">Kinti PRO:</strong> lásd, melyik állás illik a profilodhoz — <strong>% egyezés</strong> minden hirdetésnél. <span className="text-ink-muted">(Ez a Kinti PRO álláskereső funkciója — <strong>nem</strong> a Szaknévsor PRO, amit a vállalkozásodhoz vehetsz.)</span>
+            </span>
+            <Icon name="chevR" size={15} strokeWidth={2.4} className="shrink-0 text-[#cc7700]" />
+          </Link>
+        )
+      )}
+
     </div>
   );
 }
