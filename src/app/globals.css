@@ -450,17 +450,34 @@
        sötét   (felület #1a201c): CVD ΔE  9,2 · normál ΔE 17,4
      A SORREND is mérési eredmény: piros és zöld nem lehet szomszédos szegmens
      (deuteranopiánál egybeolvad) — ezért ül a borostyán közéjük. */
+  /* ⚠️ A SÁV-FELIRAT TINTÁJA SÁVONKÉNT MÁS — MÉRT ÉRTÉKEK.
+     A szegmensekre írt százalék eddig MINDENHOL fehér volt, `drop-shadow`-val.
+     Az árnyék perceptuálisan segít, de a WCAG-kontrasztba nem számít bele, és a
+     mérés szerint a négy sávból kettőn-hármon a fehér ELBUKOTT:
+       világos: biztosítás 2,18:1 · marad 3,37:1
+       sötét:   lakhatás  3,36:1 · biztosítás 3,06:1 · marad 3,28:1
+     A sáv-színekhez NEM nyúlunk (azok CVD-validált értékek, ld. fent) —
+     helyette sávonként azt a tintát választjuk, amelyik nyer. Így mind a
+     nyolc kombináció 5,19–8,51:1 közé kerül. */
   :root, [data-theme="warm"] {
     --sav-lakhatas: #2f6fb3;
     --sav-megelhetes: #b5352b;
     --sav-biztositas: #e0a53f;
     --sav-marad: #3a9d6e;
+    --on-sav-lakhatas: 255 255 255;
+    --on-sav-megelhetes: 255 255 255;
+    --on-sav-biztositas: 26 18 0;
+    --on-sav-marad: 26 18 0;
   }
   [data-theme="dark"] {
     --sav-lakhatas: #4e90d2;
     --sav-megelhetes: #b03a35;
     --sav-biztositas: #bf8a1e;
     --sav-marad: #2ba077;
+    --on-sav-lakhatas: 26 18 0;
+    --on-sav-megelhetes: 255 255 255;
+    --on-sav-biztositas: 26 18 0;
+    --on-sav-marad: 26 18 0;
   }
   .kinti-shimmer {
     position: relative;

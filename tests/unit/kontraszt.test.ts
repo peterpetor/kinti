@@ -129,6 +129,45 @@ describe.each([
   });
 });
 
+describe("sáv-feliratok tintája (stacked bar)", () => {
+  /** A sáv-színek HEX-ben állnak (nem RGB-csatornákban) — külön kiolvasó. */
+  function savHex(blokk: string, nev: string): RGB {
+    // ⚠️ `new RegExp` STRINGET kap: ott a `\s` csak `s`-t jelentene (ismeretlen
+    // escape), ezért dupla backslash kell. Ez elsőre elszúrva némán nem talált.
+    const m = blokk.match(new RegExp(`--sav-${nev}:\\s*#([0-9a-f]{6})`, "i"));
+    if (!m) throw new Error(`nincs --sav-${nev}`);
+    const h = m[1];
+    return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)) as RGB;
+  }
+
+  // ⚠️ A blokk-kezdetet a sáv-szín HEX-értéke azonosítja: az egyedi, és nem
+  // kell hozzá sortörés-escape a mintában.
+  it.each([
+    ["világos", "--sav-lakhatas: #2f6fb3"],
+    ["sötét", "--sav-lakhatas: #4e90d2"],
+  ])("%s téma: mind a négy sávon olvasható a százalék", (_nev, kezdet) => {
+    const i = CSS.indexOf(kezdet);
+    expect(i, "nincs meg a sáv-blokk").toBeGreaterThan(-1);
+    const blokk = CSS.slice(i, CSS.indexOf(SORTORES + "  }", i));
+    for (const sav of ["lakhatas", "megelhetes", "biztositas", "marad"]) {
+      const a = arany(token(blokk, `on-sav-${sav}`), savHex(blokk, sav));
+      expect(a, `--on-sav-${sav}: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
+    }
+  });
+
+  it("⚠️ a felirat NEM fix `text-white` (a drop-shadow nem számít a kontrasztba)", () => {
+    const chart = readFileSync(
+      resolve(__dirname, "../../src/components/views/orszag-osszehasonlito-chart.tsx"),
+      "utf8",
+    );
+    expect(chart).toContain("--on-sav-");
+    // A szegmens-felirat sorában nem maradhat fix fehér.
+    const feliratSor = chart.split(SORTORES).filter((x) => x.includes("tabular-nums") && x.includes("10.5px"));
+    expect(feliratSor.length).toBeGreaterThan(0);
+    for (const sor of feliratSor) expect(sor).not.toContain("text-white");
+  });
+});
+
 describe("PRO-arany — nincs visszacsúszás", () => {
   const fajlok = globSync("src/**/*.tsx", { cwd: resolve(__dirname, "../..") }).map((f) => f.replace(/\\/g, "/"));
 

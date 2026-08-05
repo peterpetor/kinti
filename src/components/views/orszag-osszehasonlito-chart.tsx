@@ -239,7 +239,13 @@ function Rud({
                   ennek 9%-a ~30px, amibe a „12%" (~20px) még belefér. Ez alatt
                   a felirat kilógna a szegmensből. */}
               {pct >= 9 && (
-                <span className="px-1 text-[10.5px] font-extrabold tabular-nums text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]">
+                <span
+                  className="px-1 text-[10.5px] font-extrabold tabular-nums"
+                  // ⚠️ SÁVONKÉNT MÁS a tinta (globals.css `--on-sav-*`). A fehér
+                  // felirat a négy sávból kettőn-hármon 2,18–3,37:1 volt — a
+                  // `drop-shadow` ezen nem segít, az a WCAG-be nem számít bele.
+                  style={{ color: `rgb(var(--on-sav-${s.id}))` }}
+                >
                   {Math.round(pct)}%
                 </span>
               )}
