@@ -3,7 +3,7 @@ import { readFileSync, globSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
- * `next/dynamic({ ssr: false })` — MINDIG kell mellé `loading`.
+ * `next/dynamic({ ssr: false })` — MINDIG kell mellé SAJÁT `<Suspense>`.
  *
  * ⚠️⚠️ VALÓS, MÉRT HIBÁBÓL (2026-08-06). A kezdőlap kiszolgált HTML-je ezt
  * tartalmazta:
@@ -11,11 +11,16 @@ import { resolve } from "node:path";
  *   <!--$?--><template id="B:0">   ← a lap-szintű határ SOHA nem fejeződött be
  *   <!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING">
  *
- * Az `ssr: false` SSR közben „kliens-oldali renderre bailoutol”. Ha van
- * `loading`, a bailout ODA korlátozódik. Ha NINCS, a legközelebbi
- * Suspense-határig kúszik fel — a kezdőlapon ez a ROUTE-szintű határ
- * (loading.tsx) volt, tehát a szerver a teljes lap helyett a betöltő
- * csontvázat küldte, és a tartalmat a böngészőnek kellett felépítenie.
+ * Az `ssr: false` SSR közben „kliens-oldali renderre bailoutol”, és a bailout a
+ * LEGKÖZELEBBI Suspense-határig kúszik fel. A kezdőlapon nem volt saját határ,
+ * ezért a ROUTE-szintű határig (loading.tsx) ért: a szerver a teljes lap helyett
+ * a betöltő csontvázat küldte ki, a tartalmat a böngészőnek kellett felépítenie.
+ *
+ * ⚠️ A `loading:` NEM ELÉG — ezt MEGMÉRTEM. Hozzáadása után a kiszolgált HTML-ben
+ * a függő `<!--$?-->` határ és a hiányzó lezárás (`completeBoundary` = 0)
+ * VÁLTOZATLAN maradt. A `loading` a kliens-oldali chunk-betöltés állapotát adja,
+ * az SSR-bailoutot nem fogja meg. Ami megfogja: egy valódi `<Suspense>` a
+ * komponens körül — ezért tiszta a /szaknevsor, ahol a lusta térkép abban ül.
  *
  * ⚠️ A TÜNET NEM LÁTSZOTT: a lap „működött”, csak minden szerver-render kárba
  * ment, és a konzol React #419-et dobott. Pontosan ezért kell teszt: emberi
@@ -31,29 +36,27 @@ describe("lusta komponensek határa", () => {
     expect(fajlok.length).toBeGreaterThan(50);
   });
 
-  it("⚠️ minden `ssr: false` mellett van `loading`", () => {
+  it("⚠️ minden `ssr: false`-t tartalmazó modulban van `<Suspense>` határ is", () => {
     const vetkesek: string[] = [];
     for (const f of fajlok) {
       const src = readFileSync(resolve(GYOKER, f), "utf8");
-      // A `dynamic(...)` beállítás-objektumai: `{ ssr: false ... }`.
-      const talalatok = src.match(/\{\s*ssr:\s*false[^}]*\}/g) ?? [];
-      for (const t of talalatok) {
-        if (!t.includes("loading")) vetkesek.push(`${f}: ${t.replace(/\s+/g, " ")}`);
-      }
+      if (!/ssr:\s*false/.test(src)) continue;
+      // Elég a modul-szintű jelenlét: a burkoló lehet segédfüggvényben is
+      // (home-lazy `hatarral`), nem kell minden exportnál külön JSX.
+      if (!/<Suspense/.test(src)) vetkesek.push(f);
     }
     expect(
       vetkesek,
-      `\`loading\` nélkül az EGÉSZ lap kliens-renderre esik: ${vetkesek.slice(0, 6).join(" | ")}`,
+      `saját \`<Suspense>\` nélkül az EGÉSZ lap kliens-renderre esik: ${vetkesek.join(", ")}`,
     ).toEqual([]);
   });
 
-  it("a minta NEM riaszt a szabályos alakra", () => {
-    // Mindkét irányban ellenőrizni kell, különben egy túl szigorú szűrőt
+  it("a szűrő tényleg megkülönbözteti a két alakot", () => {
+    // Mindkét irányban ellenőrizni kell, különben egy túl szigorú szabályt
     // egyszerűen kikapcsolnának.
-    const jo = "{ ssr: false, loading: () => null }";
-    const rossz = "{ ssr: false }";
-    const minta = /\{\s*ssr:\s*false[^}]*\}/;
-    expect(minta.test(jo) && jo.includes("loading")).toBe(true);
-    expect(minta.test(rossz) && !rossz.includes("loading")).toBe(true);
+    const jo = "const X = dynamic(f, { ssr: false }); const Y = <Suspense><X /></Suspense>;";
+    const rossz = "const X = dynamic(f, { ssr: false });";
+    expect(/ssr:\s*false/.test(jo) && /<Suspense/.test(jo)).toBe(true);
+    expect(/ssr:\s*false/.test(rossz) && !/<Suspense/.test(rossz)).toBe(true);
   });
 });

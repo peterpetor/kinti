@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Icon, type IconName } from "@/components/ui";
@@ -25,16 +25,37 @@ function box(cls: string) {
 // szabály (interaktív eszköz teljes adata a kliensen = valós UX-igény)
 // TELJESÜL: az adat a kalkulátor chunkjában marad, csak nem a Börze-fül
 // kezdeti bundle-jét terheli.
-const RentCostCalculatorLazy = dynamic(
+/**
+ * ⚠️ SAJÁT `<Suspense>` HATÁR MINDEN `ssr: false`-HOZ. A bailout különben a
+ * legközelebbi határig kúszik fel — itt a route-szintűig —, és a teljes lap
+ * kliens-renderre esik. A `loading:` erre NEM elég (mérve).
+ */
+function hatarral<P extends object>(C: React.ComponentType<P>, Fallback: () => JSX.Element) {
+  const Wrapped = (props: P) => (
+    <Suspense fallback={<Fallback />}>
+      <C {...props} />
+    </Suspense>
+  );
+  Wrapped.displayName = "Hatarral";
+  return Wrapped;
+}
+
+const RentCostCalculatorLazy = hatarral(
+  dynamic(
   () => import("@/components/views/rent-cost-calculator").then((m) => m.RentCostCalculator),
-  { ssr: false, loading: box("min-h-[420px]") },
+  { ssr: false },
+),
+  box("min-h-[420px]"),
 );
 
 // Link-out szekció a feed ALATT; minden linkje rel=...nofollow (nem SEO-cél)
 // → az ssr:false biztonságos, a hajtás alatti helye miatt vizuálisan ingyenes.
-const HousingSourcesSectionLazy = dynamic(
+const HousingSourcesSectionLazy = hatarral(
+  dynamic(
   () => import("@/components/views/housing-sources-section").then((m) => m.HousingSourcesSection),
-  { ssr: false, loading: box("min-h-[180px]") },
+  { ssr: false },
+),
+  box("min-h-[180px]"),
 );
 
 export type PiacterTab = "borze" | "kalkulator" | "koltoztetes";

@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
 /**
  * A kezdőlap HAJTÁS ALATTI (és feltételes) komponenseinek LAZY betöltése —
@@ -25,7 +26,8 @@ function box(cls: string) {
 }
 
 /**
- * ⚠️⚠️ MINDEN `ssr: false`-HOZ KELL `loading` — KÜLÖNBEN AZ EGÉSZ LAP KLIENSRE ESIK.
+ * ⚠️⚠️ MINDEN `ssr: false`-HOZ KELL SAJÁT `<Suspense>` — KÜLÖNBEN AZ EGÉSZ LAP
+ * KLIENSRE ESIK.
  *
  * VALÓS, MÉRT HIBA (2026-08-06). A kezdőlap kiszolgált HTML-jében ez állt:
  *   <!--$?--><template id="B:0">    ← a lap-szintű határ SOHA nem fejeződött be
@@ -40,56 +42,115 @@ function box(cls: string) {
  * „működik” — közben minden szerver-render kárba ment, és a konzol React #419-et
  * dobott (a határ megszakadt).
  *
- * Az üres helyőrző (`box("")`) elég: nem rajzol semmit, de HATÁRT képez.
- * A magasságot csak ott tartjuk, ahol valódi tartalom jön (CLS-védelem).
+ * ⚠️ A `loading:` NEM ELÉG — ezt megmértem. A `loading` a kliens-oldali
+ * chunk-betöltés állapotát adja, az SSR-bailoutot NEM fogja meg: hozzáadása
+ * után a `<!--$?-->` függő határ és a hiányzó lezárás VÁLTOZATLAN maradt.
+ * Ami megfogja, az egy VALÓDI `<Suspense>` határ a komponens körül — ezért
+ * néz ki tisztán a /szaknevsor, ahol a lusta térkép saját `<Suspense>`-ben ül.
+ *
+ * Bizonyíték a kiszolgált HTML-ből (javítás előtt):
+ *   <!--$?--><template id="B:0">   ← nyitva marad
+ *   completeBoundary ($RC): 0      ← SOHA nem záródik le
+ *   a „Mit szeretnél?" felirat csak az RSC-adatban van, a DOM-ban nincs
+ * Vagyis a szerver a betöltő csontvázat küldte ki, a lapot a böngésző rajzolta.
  */
 const NINCS_HELYORZO = box("");
 
-export const MyPostsBannerLazy = dynamic(
+/**
+ * `ssr: false` komponens SAJÁT határral. A bailout így ide korlátozódik, és a
+ * lap többi része szerver-oldalon renderelt marad.
+ */
+function hatarral<P extends object>(C: React.ComponentType<P>, Fallback: () => JSX.Element) {
+  const Wrapped = (props: P) => (
+    <Suspense fallback={<Fallback />}>
+      <C {...props} />
+    </Suspense>
+  );
+  Wrapped.displayName = "Hatarral";
+  return Wrapped;
+}
+
+export const MyPostsBannerLazy = hatarral(
+  dynamic(
   () => import("./my-posts-banner").then((m) => m.MyPostsBanner),
-  { ssr: false, loading: NINCS_HELYORZO },
+  { ssr: false },
+),
+  NINCS_HELYORZO,
 );
-export const ReviewFollowupCardLazy = dynamic(
+export const ReviewFollowupCardLazy = hatarral(
+  dynamic(
   () => import("./review-followup-card").then((m) => m.ReviewFollowupCard),
-  { ssr: false, loading: NINCS_HELYORZO },
+  { ssr: false },
+),
+  NINCS_HELYORZO,
 );
-export const RelocationReminderBannerLazy = dynamic(
+export const RelocationReminderBannerLazy = hatarral(
+  dynamic(
   () => import("./relocation-reminder-banner").then((m) => m.RelocationReminderBanner),
-  { ssr: false, loading: NINCS_HELYORZO },
+  { ssr: false },
+),
+  NINCS_HELYORZO,
 );
-export const PersonalizedHomeLazy = dynamic(
+export const PersonalizedHomeLazy = hatarral(
+  dynamic(
   () => import("./personalized-home").then((m) => m.PersonalizedHome),
-  { ssr: false, loading: NINCS_HELYORZO },
+  { ssr: false },
+),
+  NINCS_HELYORZO,
 );
-export const OnboardingChecklistLazy = dynamic(
+export const OnboardingChecklistLazy = hatarral(
+  dynamic(
   () => import("./onboarding-checklist").then((m) => m.OnboardingChecklist),
-  { ssr: false, loading: NINCS_HELYORZO },
+  { ssr: false },
+),
+  NINCS_HELYORZO,
 );
-export const DailyStreakLazy = dynamic(
+export const DailyStreakLazy = hatarral(
+  dynamic(
   () => import("./daily-streak").then((m) => m.DailyStreak),
-  { ssr: false, loading: NINCS_HELYORZO },
+  { ssr: false },
+),
+  NINCS_HELYORZO,
 );
-export const HomeWidgetsSectionLazy = dynamic(
+export const HomeWidgetsSectionLazy = hatarral(
+  dynamic(
   () => import("./home-widgets-section").then((m) => m.HomeWidgetsSection),
-  { ssr: false, loading: box("min-h-[128px]") },
+  { ssr: false },
+),
+  box("min-h-[128px]"),
 );
-export const NearbyBusinessesLazy = dynamic(
+export const NearbyBusinessesLazy = hatarral(
+  dynamic(
   () => import("./nearby-businesses").then((m) => m.NearbyBusinesses),
-  { ssr: false, loading: box("min-h-[120px]") },
+  { ssr: false },
+),
+  box("min-h-[120px]"),
 );
-export const HomePlatformGridLazy = dynamic(
+export const HomePlatformGridLazy = hatarral(
+  dynamic(
   () => import("./home-platform-grid").then((m) => m.HomePlatformGrid),
-  { ssr: false, loading: box("min-h-[300px]") },
+  { ssr: false },
+),
+  box("min-h-[300px]"),
 );
-export const ReferralHomeCardLazy = dynamic(
+export const ReferralHomeCardLazy = hatarral(
+  dynamic(
   () => import("./referral-home-card").then((m) => m.ReferralHomeCard),
-  { ssr: false, loading: NINCS_HELYORZO },
+  { ssr: false },
+),
+  NINCS_HELYORZO,
 );
-export const NewsletterCtaCardLazy = dynamic(
+export const NewsletterCtaCardLazy = hatarral(
+  dynamic(
   () => import("./newsletter-cta-card").then((m) => m.NewsletterCtaCard),
-  { ssr: false, loading: NINCS_HELYORZO },
+  { ssr: false },
+),
+  NINCS_HELYORZO,
 );
-export const PwaInstallCardLazy = dynamic(
+export const PwaInstallCardLazy = hatarral(
+  dynamic(
   () => import("./pwa-install-card").then((m) => m.PwaInstallCard),
-  { ssr: false, loading: NINCS_HELYORZO },
+  { ssr: false },
+),
+  NINCS_HELYORZO,
 );

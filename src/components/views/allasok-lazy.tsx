@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
 /**
  * Az /allasok oldal HAJTÁS ALATTI (a jobs-lista után álló) kliens-moduljainak
@@ -25,12 +26,34 @@ function box(cls: string) {
   return Placeholder;
 }
 
-export const JobAlertRadarLazy = dynamic(
+/**
+ * ⚠️ SAJÁT `<Suspense>` HATÁR MINDEN `ssr: false`-HOZ. A bailout különben a
+ * legközelebbi határig kúszik fel — az /allasok lapon a route-szintűig —, és a
+ * teljes lap kliens-renderre esik (mérve a kezdőlapon: a szerver csak a
+ * betöltő csontvázat küldte ki). A `loading:` erre NEM elég.
+ */
+function hatarral<P extends object>(C: React.ComponentType<P>, Fallback: () => JSX.Element) {
+  const Wrapped = (props: P) => (
+    <Suspense fallback={<Fallback />}>
+      <C {...props} />
+    </Suspense>
+  );
+  Wrapped.displayName = "Hatarral";
+  return Wrapped;
+}
+
+export const JobAlertRadarLazy = hatarral(
+  dynamic(
   () => import("./job-alert-radar").then((m) => m.JobAlertRadar),
-  { ssr: false, loading: box("min-h-[220px]") },
+  { ssr: false },
+),
+  box("min-h-[220px]"),
 );
 
-export const JobSourcesSectionLazy = dynamic(
+export const JobSourcesSectionLazy = hatarral(
+  dynamic(
   () => import("./job-sources-section").then((m) => m.JobSourcesSection),
-  { ssr: false, loading: box("min-h-[200px]") },
+  { ssr: false },
+),
+  box("min-h-[200px]"),
 );
