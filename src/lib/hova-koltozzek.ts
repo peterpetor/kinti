@@ -59,9 +59,16 @@ export interface OrszagTeny {
  *        […] tartózkodás után”, „fő szabályként a korábbi állampolgárságról való
  *        lemondást kívánja meg […] Magyarország nem tartozik közéjük”,
  *        „CCSE […] és […] a DELE A2 nyelvvizsga”.
- *   GB — guides.ts (gb-letelepedes): Brexit óta nincs szabad mozgás; a 2020 vége
- *        előtt érkezőkre az EU Settlement Scheme vonatkozik. A honosítás éveit a
- *        saját cikkeink NEM mondják ki → null.
+ *   GB — guides.ts (gb-letelepedes), „Állampolgárság (naturalisation)" szakasz:
+ *        „legalább 5 év jogszerű tartózkodás […] ÉS […] legalább 12 hónapja
+ *        letelepedett státusz […] a gyakorlatban ez összesen 6 év”, „brit
+ *        állampolgár házastársaként […] 3 év”, „angol […] B1 szinten, plusz a
+ *        »Life in the UK« teszt”, „kettős állampolgárság: az Egyesült Királyság
+ *        ENGEDÉLYEZI”. Ugyanennek a cikknek a „⚠️ Nincs lakcím-bejelentkezés”
+ *        szakasza: „NINCS […] kötelező lakónyilvántartás”.
+ *        (2026-08-05-ig itt csupa `null` állt, és a felület „nincs adatunk”-ot
+ *        írt — a cikk akkor tényleg nem mondta ki ezeket. A megoldás NEM a
+ *        mátrix megtippelése volt, hanem a FORRÁSCIKK kiegészítése.)
  */
 export const ORSZAG_TENYEK: Record<BudgetCountry, OrszagTeny> = {
   CH: {
@@ -104,13 +111,23 @@ export const ORSZAG_TENYEK: Record<BudgetCountry, OrszagTeny> = {
     forrasSlug: "nl-bejelentkezes",
   },
   GB: {
-    // ⚠️ Brexit után nincs szabad beköltözés; a honosítás éveit a saját
-    // cikkeink nem mondják ki. NEM tippelünk — a felület „nincs adatunk”-ot ír.
-    allampolgarsagEv: null,
-    kettosAllampolgarsag: null,
-    letelepedesEv: null,
-    nyelvSzint: null,
-    bejelentkezesHatarido: null,
+    // ⚠️ 6, NEM 5. A gov.uk két feltételt EGYÜTT ír elő: 5 év tartózkodás ÉS a
+    // kérelemkor már 12 hónapja meglévő letelepedett státusz. Mivel a
+    // letelepedett státusz maga is ~5 év után jár, a valóságban 6 év. Ha 5-öt
+    // írnánk, Anglia a rangsorban Németországgal/Hollandiával EGY SZINTRE
+    // kerülne — az összehasonlítás pont ott lenne félrevezető, ahol a döntés
+    // születik.
+    allampolgarsagEv: 6,
+    allampolgarsagJegyzet: "5 év + 1 év letelepedett státusz; brit házastárssal 3",
+    kettosAllampolgarsag: true,
+    kettosJegyzet: "A magyar megtartható",
+    letelepedesEv: 5,
+    nyelvSzint: "angol B1 + „Life in the UK” teszt",
+    // ⚠️ NEM `null`. A null „nincs adatunk”-ot ír ki, ami itt HAMIS lenne: nem
+    // hiányzik az adat, hanem Angliában nincs ilyen kötelezettség (nincs
+    // lakónyilvántartás). A kettő összemosása a felhasználót keresi-kutatja
+    // küldené egy nem létező hivatal után.
+    bejelentkezesHatarido: "nincs ilyen kötelezettség",
     forrasSlug: "gb-letelepedes",
   },
   ES: {

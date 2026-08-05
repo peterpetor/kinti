@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { CountryFlag } from "@/components/ui/country-flag";
 import { szam } from "@/lib/szam-format";
 import { getCountry } from "@/lib/countries";
 import { currencySymbol } from "@/lib/country-examples";
@@ -210,7 +211,9 @@ function Rud({
         className="mb-1 flex w-full items-baseline gap-1.5 text-left"
       >
         <span className="text-[11px] font-bold tabular-nums text-ink-faint">{helyezes}.</span>
-        <span className="text-[13px]">{o?.flag}</span>
+        {/* ⚠️ SVG-zászló, NEM a `flag` emoji: Anglia zászlaja tag-sequence,
+            amihez a legtöbb Android/Windows fontban nincs glyph. */}
+        <CountryFlag code={sor.country} className="h-[11px] w-[16px] self-center" />
         <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-ink">{o?.name ?? sor.country}</span>
         <span className={cn("shrink-0 text-[12.5px] font-extrabold tabular-nums", eg >= 0 ? "text-ink" : "text-accent")}>
           {eg >= 0 ? "" : "−"}

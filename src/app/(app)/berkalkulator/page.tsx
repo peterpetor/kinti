@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CountryFlag } from "@/components/ui/country-flag";
 import { Icon, KintiLogo } from "@/components/ui";
 import { SalaryCalculatorSwitch } from "@/components/views/salary-calculator-switch";
 import { BudgetPlannerView } from "@/components/views/budget-planner-view";
@@ -101,9 +102,11 @@ export default function SalaryCalculatorPage() {
             <Link
               key={o.slug}
               href={`/berkalkulator/${o.slug}`}
-              className="rounded-pill border border-line bg-surface px-3.5 py-2 text-[13px] font-bold text-ink transition active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3.5 py-2 text-[13px] font-bold text-ink transition active:scale-95"
             >
-              {o.flag} {o.name}
+              {/* SVG-zászló: Anglia emoji-zászlajához a legtöbb fontban nincs glyph. */}
+              <CountryFlag code={o.cc} className="h-[11px] w-[16px]" />
+              {o.name}
             </Link>
           ))}
         </div>

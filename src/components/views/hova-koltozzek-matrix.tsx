@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { CountryFlag } from "@/components/ui/country-flag";
 import { cn } from "@/lib/cn";
 import { szam } from "@/lib/szam-format";
 import { getCountry } from "@/lib/countries";
@@ -253,8 +254,12 @@ function OrszagKartya({
           </span>
         )}
         <span className="min-w-0 flex-1">
-          <span className="block text-[14px] font-extrabold tracking-[-0.01em] text-ink">
-            {o?.flag} {o?.name ?? sor.country}
+          <span className="flex items-center gap-2 text-[14px] font-extrabold tracking-[-0.01em] text-ink">
+            {/* ⚠️ SVG-zászló, NEM a `flag` emoji: Anglia zászlaja tag-sequence,
+                amihez a legtöbb Android/Windows fontban nincs glyph — a listában
+                emiatt egyedül Anglia állt zászló NÉLKÜL. */}
+            <CountryFlag code={sor.country} className="h-[13px] w-[19px]" />
+            {o?.name ?? sor.country}
           </span>
           <span className="block text-[11.5px] text-ink-muted">
             {eg >= 0 ? "~" : "−"}

@@ -19,42 +19,74 @@ import { OSSZEHASONLITO_ORSZAGOK } from "../../src/lib/orszag-osszehasonlito";
 
 const SZAMOK = { maradPct: 40, alberletPct: 35, nettoArany: 0.72 };
 
+/**
+ * ⚠️ A hiányzó adat kezelését SZÁNDÉKOSAN mesterséges hiánnyal mérjük.
+ *
+ * Korábban ezek a tesztek GB-t használták példának, mert arra tényleg nem volt
+ * adatunk. 2026-08-05-én a forráscikk kiegészült, GB adatai bekerültek — és a
+ * tesztek elbuktak. A helyes válasz NEM az volt, hogy törljük őket: a viselkedés
+ * (hiányzó ≠ rossz) továbbra is kritikus, csak épp MOST nincs hozzá valós
+ * hiányzó adat. Ezért a hiányt ideiglenesen mi állítjuk elő — így a teszt akkor
+ * is véd, ha egyszer minden cellánk kitöltött lesz.
+ */
+function hianyzoAdattal<T>(orszag: keyof typeof ORSZAG_TENYEK, mezo: "allampolgarsagEv" | "kettosAllampolgarsag", fn: () => T): T {
+  const teny = ORSZAG_TENYEK[orszag] as Record<string, unknown>;
+  const eredeti = teny[mezo];
+  teny[mezo] = null;
+  try {
+    return fn();
+  } finally {
+    teny[mezo] = eredeti;
+  }
+}
+
 describe("hiányzó adat kezelése", () => {
   it("⚠️ a „nincs adatunk” NEM nulla pont, hanem null", () => {
-    // GB-re a cikkeink nem mondják ki az állampolgársági éveket.
-    expect(ORSZAG_TENYEK.GB.allampolgarsagEv).toBeNull();
-    const e = ertekel("gyors_allampolgarsag", "GB", SZAMOK);
-    expect(e.pont).toBeNull();
-    expect(e.ertek).toBe("nincs adatunk");
+    hianyzoAdattal("GB", "allampolgarsagEv", () => {
+      const e = ertekel("gyors_allampolgarsag", "GB", SZAMOK);
+      expect(e.pont).toBeNull();
+      expect(e.ertek).toBe("nincs adatunk");
+    });
   });
 
   it("⚠️ a hiányzó szempont KIMARAD az átlagból, nem húzza le", () => {
-    // Két szempont: az egyiket tudjuk (megtakarítás), a másikat GB-re nem.
     const szempontok: Szempont[] = ["megtakaritas", "gyors_allampolgarsag"];
-    const gb = osszPont(szempontok, "GB", SZAMOK);
-    const de = osszPont(szempontok, "DE", SZAMOK);
+    hianyzoAdattal("GB", "allampolgarsagEv", () => {
+      const gb = osszPont(szempontok, "GB", SZAMOK);
+      const de = osszPont(szempontok, "DE", SZAMOK);
 
-    // GB pontja CSAK a megtakarításból jön — nem felezi meg egy 0-s tétel.
-    expect(gb.ertekelt).toBe(1);
-    expect(gb.ossz).toBe(2);
-    expect(gb.pont).toBeCloseTo(ertekel("megtakaritas", "GB", SZAMOK).pont!, 6);
+      // GB pontja CSAK a megtakarításból jön — nem felezi meg egy 0-s tétel.
+      expect(gb.ertekelt).toBe(1);
+      expect(gb.ossz).toBe(2);
+      expect(gb.pont).toBeCloseTo(ertekel("megtakaritas", "GB", SZAMOK).pont!, 6);
 
-    // Ha nullaként számolnánk, GB pontja feleakkora lenne — ezt zárjuk ki.
-    const hibasan = (ertekel("megtakaritas", "GB", SZAMOK).pont! + 0) / 2;
-    expect(gb.pont).not.toBeCloseTo(hibasan, 6);
+      // Ha nullaként számolnánk, GB pontja feleakkora lenne — ezt zárjuk ki.
+      const hibasan = (ertekel("megtakaritas", "GB", SZAMOK).pont! + 0) / 2;
+      expect(gb.pont).not.toBeCloseTo(hibasan, 6);
 
-    expect(de.ertekelt, "DE-re mindkét szempontot tudjuk").toBe(2);
+      expect(de.ertekelt, "DE-re mindkét szempontot tudjuk").toBe(2);
+    });
   });
 
   it("ha EGYETLEN szempontot sem tudunk értékelni, a pont null (nem 0)", () => {
     const csakIsmeretlen: Szempont[] = ["gyors_allampolgarsag", "ketto_allampolgarsag"];
-    const gb = osszPont(csakIsmeretlen, "GB", SZAMOK);
-    expect(gb.pont).toBeNull();
-    expect(gb.ertekelt).toBe(0);
+    hianyzoAdattal("GB", "allampolgarsagEv", () =>
+      hianyzoAdattal("GB", "kettosAllampolgarsag", () => {
+        const gb = osszPont(csakIsmeretlen, "GB", SZAMOK);
+        expect(gb.pont).toBeNull();
+        expect(gb.ertekelt).toBe(0);
+      }),
+    );
   });
 
   it("üres szempont-listára sem dob", () => {
     expect(osszPont([], "DE", SZAMOK).pont).toBeNull();
+  });
+
+  it("a mesterséges hiány UTÁN visszaáll az eredeti adat", () => {
+    // Enélkül egy elszálló teszt csendben elronthatná az összes utána futót.
+    hianyzoAdattal("GB", "allampolgarsagEv", () => undefined);
+    expect(ORSZAG_TENYEK.GB.allampolgarsagEv).not.toBeNull();
   });
 });
 
@@ -194,11 +226,29 @@ describe("a kurált tények egyeznek a forrás-cikkekkel", () => {
     expect(ORSZAG_TENYEK.CH.kettosAllampolgarsag).toBe(true);
   });
 
-  it("⚠️ GB-re NEM tippelünk értéket (Brexit óta más a rendszer)", () => {
-    const t = ORSZAG_TENYEK.GB;
-    expect(t.allampolgarsagEv).toBeNull();
-    expect(t.kettosAllampolgarsag).toBeNull();
-    expect(t.nyelvSzint).toBeNull();
+  it("⚠️ GB: 6 év (5 + 1 letelepedett), NEM 5 — különben DE/NL szintjére kerülne", () => {
+    // A gov.uk KÉT feltételt ír elő EGYÜTT, és a mátrix a valós összidőt
+    // rangsorolja. Ha 5-öt írnánk, Anglia úgy tűnne, mint Németország —
+    // pont ott lenne félrevezető, ahol a döntés születik.
+    expect(guides).toMatch(/legalább 5 év jogszerű tartózkodás/);
+    expect(guides).toMatch(/legalább 12 hónapja letelepedett státusz/);
+    expect(guides).toMatch(/a gyakorlatban ez összesen 6 év/);
+    expect(ORSZAG_TENYEK.GB.allampolgarsagEv).toBe(6);
+    expect(ORSZAG_TENYEK.GB.allampolgarsagJegyzet).toMatch(/letelepedett/);
+  });
+
+  it("GB: a kettős állampolgárság ENGEDÉLYEZETT (a magyar megtartható)", () => {
+    expect(guides).toMatch(/az Egyesült Királyság ENGEDÉLYEZI/);
+    expect(ORSZAG_TENYEK.GB.kettosAllampolgarsag).toBe(true);
+    expect(ORSZAG_TENYEK.GB.nyelvSzint).toMatch(/B1/);
+  });
+
+  it("⚠️ GB: „nincs ilyen kötelezettség” ≠ „nincs adatunk”", () => {
+    // A null „nincs adatunk”-ot írna ki, ami HAMIS: nem hiányzik az adat,
+    // hanem Angliában nincs lakónyilvántartás. A kettő összemosása egy nem
+    // létező hivatal keresésére küldené a felhasználót.
+    expect(guides).toMatch(/NINCS a magyar \(vagy német\/osztrák\) lakcímbejelentéshez hasonló kötelező lakónyilvántartás/);
+    expect(ORSZAG_TENYEK.GB.bejelentkezesHatarido).toBe("nincs ilyen kötelezettség");
   });
 
   it("a bejelentkezési határidők a cikkek MEGFOGALMAZÁSÁT követik (nem pontosítanak)", () => {
