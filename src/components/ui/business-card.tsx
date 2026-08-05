@@ -79,7 +79,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
 
       <div className={cn("min-w-0 flex-1", showFavorite && "pr-7")}>
         {b.featured && (
-          <div className="mb-1.5 inline-flex items-center gap-1 rounded-pill bg-pro px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
+          <div className="mb-1.5 inline-flex items-center gap-1 rounded-pill bg-pro px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-on-pro shadow-sm">
             <Icon name="star" size={9} filled /> Szaknévsor PRO
           </div>
         )}

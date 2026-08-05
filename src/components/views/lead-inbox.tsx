@@ -65,10 +65,10 @@ function LockedLeadCard({ lead, businessId }: { lead: LeadCard; businessId: stri
     <article className="relative overflow-hidden rounded-card border border-pro/30 bg-pro/[0.04] p-4 shadow-card">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Icon name="lock" size={15} className="text-pro" />
+          <Icon name="lock" size={15} className="text-pro-ink" />
           <h3 className="text-[15px] font-extrabold text-ink">Új ajánlatkérés</h3>
         </div>
-        <span className="shrink-0 rounded-full bg-pro/15 px-2 py-0.5 text-[11px] font-extrabold uppercase tracking-wide text-pro">
+        <span className="shrink-0 rounded-full bg-pro/15 px-2 py-0.5 text-[11px] font-extrabold uppercase tracking-wide text-pro-ink">
           Zárolva
         </span>
       </div>
@@ -89,7 +89,7 @@ function LockedLeadCard({ lead, businessId }: { lead: LeadCard; businessId: stri
           product="business_pro_monthly"
           customData={{ type: "business_pro", businessId }}
           label="Oldd fel PRO-val (19 € / hó)"
-          className="bg-pro text-white hover:bg-[#e68600]"
+          className="bg-pro text-on-pro hover:bg-[#e68600]"
         />
       </div>
       {/* Univerzálisan igaz láb: a zár oka lehet kereten-felüliség VAGY rendszer-

@@ -445,7 +445,7 @@ export default function ProPage() {
           </div>
           <div className="flex items-start gap-2.5">
             <span className="mt-1 h-3 w-3 shrink-0 rounded-full bg-pro" />
-            <span className="text-ink"><strong className="text-pro">{t.planBiz}</strong> — {t.planBizDesc}</span>
+            <span className="text-ink"><strong className="text-pro-ink">{t.planBiz}</strong> — {t.planBizDesc}</span>
           </div>
           <div className="flex items-start gap-2.5">
             <span className="mt-1 h-3 w-3 shrink-0 rounded-full bg-accent" />
@@ -518,18 +518,18 @@ export default function ProPage() {
         {/* Szaknévsor PRO (Businesses) */}
         <div className="flex flex-col rounded-[32px] border-2 border-pro bg-surface p-6 shadow-pop relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-pro/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-          <div className="absolute top-4 right-4 bg-pro text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-pill shadow-sm">
+          <div className="absolute top-4 right-4 bg-pro text-on-pro text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-pill shadow-sm">
             {t.recommended}
           </div>
 
-          <div className="mb-3 inline-flex items-center justify-center rounded-full bg-pro/10 w-14 h-14 text-pro text-2xl">
+          <div className="mb-3 inline-flex items-center justify-center rounded-full bg-pro/10 w-14 h-14 text-pro-ink text-2xl">
             🚀
           </div>
-          <span className="mb-2 inline-flex w-fit items-center gap-1 rounded-pill bg-pro/10 px-2.5 py-1 text-[10.5px] font-black uppercase tracking-wide text-pro">
+          <span className="mb-2 inline-flex w-fit items-center gap-1 rounded-pill bg-pro/10 px-2.5 py-1 text-[10.5px] font-black uppercase tracking-wide text-pro-ink">
             {t.bizBadge}
           </span>
           <div className="flex items-center gap-2">
-            <h2 className="text-[22px] font-black text-pro">{t.bizTitle}</h2>
+            <h2 className="text-[22px] font-black text-pro-ink">{t.bizTitle}</h2>
             {businessProActive && <ActiveBadge label={t.active} />}
           </div>
           <div className="mt-2 mb-6 flex-1">
@@ -559,7 +559,7 @@ export default function ProPage() {
 
           {businessProActive ? (
             <>
-              <div className="block w-full rounded-pill bg-pro/10 py-3.5 text-center text-[15px] font-black text-pro">
+              <div className="block w-full rounded-pill bg-pro/10 py-3.5 text-center text-[15px] font-black text-pro-ink">
                 {t.bizActive}
               </div>
               <p className="mt-2 text-center text-[11px] text-ink-faint">
@@ -570,7 +570,7 @@ export default function ProPage() {
             <>
               <Link
                 href="/profil?pro=1"
-                className="block w-full rounded-pill bg-pro py-3.5 text-center text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]"
+                className="block w-full rounded-pill bg-pro py-3.5 text-center text-[15px] font-black text-on-pro shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]"
               >
                 {t.buyHighlight}
               </Link>

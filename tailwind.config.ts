@@ -56,7 +56,12 @@ const config: Config = {
         // Állapot-jelzők
         success: "rgb(29 106 60 / <alpha-value>)",   // #1d6a3c — "Nyitva"
         star: "rgb(240 162 58 / <alpha-value>)",     // #f0a23a — értékelés / arany kiemelés
-        pro: "rgb(255 150 0 / <alpha-value>)",       // #ff9600 — Szaknévsor PRO / kiemelt állás
+        pro: "rgb(255 150 0 / <alpha-value>)",       // #ff9600 — Szaknévsor PRO / kiemelt állás (HÁTTÉRNEK)
+        // ⚠️ A PRO-arany SZÖVEGKÉNT más érték kell: világos lapon a #ff9600 csak
+        // 2,18:1 (olvashatatlan). Téma-függő token — `text-pro` HELYETT ezt használd.
+        "pro-ink": "rgb(var(--pro-ink) / <alpha-value>)",
+        // Szöveg a PRO-arany HÁTTÉREN: a fehér ott 2,18:1 volt, ez 8,51:1.
+        "on-pro": "rgb(var(--on-pro) / <alpha-value>)",
         // Domain-árnyalatok az ikon-chipekhez (kezdőlap-rács) — a star túl világos
         // vonalas ikonnak, ezért a "pénz" chip a sötétebb gold-ot kapja.
         gold: "rgb(180 106 14 / <alpha-value>)",     // #b46a0e — pénz-domain (olvasható borostyán)

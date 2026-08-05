@@ -617,7 +617,7 @@ export function ProfileEditor({
               <label className="text-[11px] font-bold text-ink-muted uppercase tracking-wider flex items-center gap-1">
                 <span className="text-primary"><Icon name="calendar" size={13} /></span> Foglalási rendszer (pl. Calendly)
                 {!isFeatured && (
-                  <span className="ml-1 rounded-full bg-pro px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-white">PRO</span>
+                  <span className="ml-1 rounded-full bg-pro px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-on-pro">PRO</span>
                 )}
               </label>
               {isFeatured ? (
@@ -630,7 +630,7 @@ export function ProfileEditor({
                 />
               ) : (
                 <div className="flex items-center gap-2 rounded-[12px] border border-dashed border-pro/40 bg-pro/5 px-3 py-2 text-[12px] font-semibold text-ink-muted">
-                  <Icon name="lock" size={13} className="shrink-0 text-pro" />
+                  <Icon name="lock" size={13} className="shrink-0 text-pro-ink" />
                   Calendly-időpontfoglalás a Szaknévsor PRO-val.
                 </div>
               )}
@@ -646,7 +646,7 @@ export function ProfileEditor({
             <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-ink-muted flex items-center gap-1.5">
               🎟️ Kinti Pass elfogadóhely
               {!isFeatured && (
-                <span className="ml-1 rounded-full bg-pro px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-white">PRO</span>
+                <span className="ml-1 rounded-full bg-pro px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-on-pro">PRO</span>
               )}
             </h3>
           </div>
@@ -706,7 +706,7 @@ export function ProfileEditor({
             </>
           ) : (
             <div className="flex items-center gap-2 rounded-[12px] border border-dashed border-pro/40 bg-pro/5 px-3 py-2 text-[12px] font-semibold text-ink-muted">
-              <Icon name="lock" size={13} className="shrink-0 text-pro" />
+              <Icon name="lock" size={13} className="shrink-0 text-pro-ink" />
               Kedvezmény-kínálás a Kinti Pass tagoknak a Szaknévsor PRO-val.
             </div>
           )}

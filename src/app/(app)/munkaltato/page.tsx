@@ -274,7 +274,7 @@ function EmployerLanding({ signedIn }: { signedIn: boolean }) {
           Előszűrt, motivált magyar jelölteket közvetítünk (AT/DE/NL). Nincs hirdetési díj —
           csak sikeres felvételnél fizetsz.
         </span>
-        <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-extrabold text-pro">
+        <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-extrabold text-pro-ink">
           Ajánlatot kérek <Icon name="arrowRight" size={14} strokeWidth={2.6} />
         </span>
       </Link>

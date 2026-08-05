@@ -224,7 +224,7 @@ export function KintiAssistant() {
                 <Link
                   href={`/szaknevsor/ajanlatkeres?cat=${encodeURIComponent(result.categoryId)}${result.cantonCode ? `&canton=${encodeURIComponent(result.cantonCode)}` : ""}`}
                   onClick={() => trackAction("assistant-lead-group")}
-                  className="mt-2 flex items-center justify-center gap-1.5 rounded-pill bg-pro px-4 py-2.5 text-[12.5px] font-extrabold text-white transition active:scale-[0.98]"
+                  className="mt-2 flex items-center justify-center gap-1.5 rounded-pill bg-pro px-4 py-2.5 text-[12.5px] font-extrabold text-on-pro transition active:scale-[0.98]"
                 >
                   <Icon name="send" size={14} strokeWidth={2.4} /> Kérj ajánlatot több szakitól egyszerre
                 </Link>

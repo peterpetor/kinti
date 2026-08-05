@@ -148,7 +148,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
         <div className="rounded-[20px] border-2 border-pro/20 bg-pro/5 p-5 text-center shadow-sm relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-pro/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
           <div className="mb-2 text-3xl">🚀</div>
-          <h3 className="mb-1 text-[17px] font-black text-pro tracking-tight">Válts Szaknévsor PRO-ba!</h3>
+          <h3 className="mb-1 text-[17px] font-black text-pro-ink tracking-tight">Válts Szaknévsor PRO-ba!</h3>
           <p className="mb-3 text-[13px] font-medium text-ink-muted leading-snug">
             Tűnj ki a sárga kiemeléssel, kerülj a lista elejére (a kiemelt cégek közé), és{" "}
             <strong className="text-ink">lásd, hányan nézték meg és hívták</strong> a vállalkozásod —
@@ -158,7 +158,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
             {["Megtekintés", "Hívás", "14 napos trend"].map((m) => (
               <span
                 key={m}
-                className="inline-flex items-center gap-1 rounded-pill bg-pro/10 px-2.5 py-1 text-[11px] font-bold text-pro"
+                className="inline-flex items-center gap-1 rounded-pill bg-pro/10 px-2.5 py-1 text-[11px] font-bold text-pro-ink"
               >
                 🔒 {m}
               </span>
@@ -169,7 +169,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
             className={cn(
-              "flex w-full items-center justify-center gap-2 rounded-pill bg-pro px-4 py-3 text-[15px] font-black text-white shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]",
+              "flex w-full items-center justify-center gap-2 rounded-pill bg-pro px-4 py-3 text-[15px] font-black text-on-pro shadow-[0_4px_0_0_#cc7700] transition active:translate-y-1 active:shadow-none hover:bg-[#e68600]",
               isCheckoutLoading && "opacity-60 cursor-wait translate-y-1 shadow-none"
             )}
           >
@@ -364,7 +364,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
             className={cn(
-              "flex w-full items-center justify-center gap-2 rounded-pill bg-pro px-4 py-2.5 text-[13.5px] font-black text-white shadow-card transition active:scale-[0.99] hover:bg-[#e68600]",
+              "flex w-full items-center justify-center gap-2 rounded-pill bg-pro px-4 py-2.5 text-[13.5px] font-black text-on-pro shadow-card transition active:scale-[0.99] hover:bg-[#e68600]",
               isCheckoutLoading && "opacity-60 cursor-wait",
             )}
           >

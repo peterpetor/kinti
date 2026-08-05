@@ -153,12 +153,12 @@ export default function LanguagePathPage() {
 
         <div className="flex items-center gap-4 mt-6">
           <div className={cn("flex flex-1 items-center gap-3 rounded-2xl p-3", streak > 0 ? "bg-pro/10" : "bg-ink/5")}>
-            <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-full text-white", streak > 0 ? "bg-pro" : "bg-ink-muted/50")}>
+            <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-full text-on-pro", streak > 0 ? "bg-pro" : "bg-ink-muted/50")}>
               🔥
             </span>
             <div>
-              <div className={cn("text-[11px] font-black uppercase tracking-wider", streak > 0 ? "text-pro" : "text-ink-muted")}>Streak</div>
-              <div className={cn("text-[17px] font-extrabold leading-none", streak > 0 ? "text-pro" : "text-ink-muted")}>{streak} nap</div>
+              <div className={cn("text-[11px] font-black uppercase tracking-wider", streak > 0 ? "text-pro-ink" : "text-ink-muted")}>Streak</div>
+              <div className={cn("text-[17px] font-extrabold leading-none", streak > 0 ? "text-pro-ink" : "text-ink-muted")}>{streak} nap</div>
             </div>
           </div>
 

@@ -359,7 +359,7 @@ async function OwnerDashboard({
             </p>
             {!isPro ? (
               leadCounts.month >= FREE_LEADS_PER_MONTH ? (
-                <p className="mt-0.5 text-[12px] font-bold text-pro">
+                <p className="mt-0.5 text-[12px] font-bold text-pro-ink">
                   ⭐ Elérted a havi 5 ingyenes ajánlatkérést — {lockedCount} továbbit zároltunk. PRO-val mindet eléred.
                 </p>
               ) : (
@@ -368,7 +368,7 @@ async function OwnerDashboard({
                 </p>
               )
             ) : (
-              <p className="mt-0.5 text-[12px] font-semibold text-pro">PRO aktív — korlátlan ajánlatkérést fogadsz. 🚀</p>
+              <p className="mt-0.5 text-[12px] font-semibold text-pro-ink">PRO aktív — korlátlan ajánlatkérést fogadsz. 🚀</p>
             )}
           </div>
         )}
@@ -379,7 +379,7 @@ async function OwnerDashboard({
       {/* Szaknévsor PRO — korlátlan lead + kiemelés (csak ha még nem PRO) */}
       {isPro ? (
         <div className="rounded-card border border-pro/30 bg-pro/5 px-4 py-3">
-          <div className="flex items-center gap-2 text-[13px] font-bold text-pro">
+          <div className="flex items-center gap-2 text-[13px] font-bold text-pro-ink">
             <Icon name="star" size={15} filled /> PRO aktív — korlátlan ajánlatkérés + kiemelés a Szaknévsorban.
           </div>
           {/* Előfizetés-kezelés/lemondás (Paddle portal) — csak weben. */}
@@ -397,7 +397,7 @@ async function OwnerDashboard({
             product="business_pro_monthly"
             customData={{ type: "business_pro", businessId: business.id }}
             label="Kiemelés vásárlása (19 € / hó)"
-            className="bg-pro text-white hover:bg-[#e68600]"
+            className="bg-pro text-on-pro hover:bg-[#e68600]"
           />
           {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár ÁFÁ-val együtt értendő
               — a Paddle így árazik (élesben mérve, ld. price-vat-claim.test.ts). */}

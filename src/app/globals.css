@@ -21,7 +21,17 @@
     --accent-soft: 251 232 229;   /* #fbe8e5 */
     --text: 14 31 23;             /* #0e1f17 */
     --text-muted: 92 109 99;      /* #5c6d63 */
-    --text-faint: 148 160 151;    /* #94a097 */
+    /* ⚠️ MÉRT ÉRTÉK (WCAG): a korábbi #94a097 csak 2,33–2,72:1 kontrasztot adott
+       a felületeinken — a normál szöveghez 4,5:1 kell. Nem stílus-kérdés volt:
+       ezen a szinten sok felhasználó számára egyszerűen OLVASHATATLAN, kültéri
+       fényben pedig szinte mindenkinek. Az új érték a legvilágosabb felületen is
+       4,51:1 (fehéren 5,26), és a hierarchia megmarad: a `--text` 14,7–17,1:1. */
+    --text-faint: 102 110 104;    /* #666e68 */
+    /* A PRO-arany SZÖVEGKÉNT. A márka-arany (#ff9600) világos lapon 2,18:1 —
+       olvashatatlan; sötét lapon viszont 7,6:1, ott maradhat. Ezért TOKEN. */
+    --pro-ink: 150 87 10;         /* #96570a — 4,92:1 krémen, 5,73:1 fehéren */
+    /* Szöveg a PRO-arany HÁTTÉREN. A fehér ott 2,18:1 volt. */
+    --on-pro: 26 18 0;            /* #1a1200 — 8,51:1 az aranyon */
     --border-channel: 28 61 46;   /* rgba(28,61,46,...) */
     --border-alpha: 0.1;
     --border-strong-alpha: 0.18;
@@ -61,7 +71,11 @@
     --accent-soft: 58 32 29;      /* #3a201d */
     --text: 236 231 220;          /* #ece7dc — meleg törtfehér (a krém-papír inverze) */
     --text-muted: 156 168 159;    /* #9ca89f */
-    --text-faint: 110 121 113;    /* #6e7971 */
+    /* ⚠️ MÉRT: a korábbi #6e7971 3,66–4,10:1 — a 4,5:1 alatt. */
+    --text-faint: 126 136 129;    /* #7e8881 — 4,52:1 a legsötétebb kontraszt-esetben */
+    /* Sötét lapon a márka-arany szövegként is bőven megfelel (7,6–8,5:1). */
+    --pro-ink: 255 150 0;         /* #ff9600 */
+    --on-pro: 26 18 0;            /* #1a1200 — a gomb-háttér mindkét témán ugyanaz az arany */
     --border-channel: 236 231 220;
     --border-alpha: 0.1;
     --border-strong-alpha: 0.2;

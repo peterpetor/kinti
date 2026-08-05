@@ -122,7 +122,7 @@ export function BusinessLeadCta({
             <button
               type="submit"
               disabled={phase === "busy"}
-              className="w-full rounded-pill bg-pro px-4 py-3 text-[14.5px] font-extrabold text-white shadow-card transition active:scale-[0.98] disabled:opacity-60"
+              className="w-full rounded-pill bg-pro px-4 py-3 text-[14.5px] font-extrabold text-on-pro shadow-card transition active:scale-[0.98] disabled:opacity-60"
             >
               {phase === "busy" ? "Küldés…" : "Ajánlatkérés elküldése"}
             </button>

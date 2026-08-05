@@ -510,7 +510,7 @@ export default async function BusinessPage({
               <BusinessLeadCta
                 businessId={b.id}
                 businessName={b.name}
-                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-pro text-white shadow-card-hover")}
+                className={cn(actionBtn, "min-w-[calc(50%-0.25rem)] bg-pro text-on-pro shadow-card-hover")}
               />
             )}
             {b.phone && (

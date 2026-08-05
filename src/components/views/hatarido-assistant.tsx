@@ -256,7 +256,7 @@ export function HataridoAssistant() {
                       {new Date(d.date + "T00:00:00").toLocaleDateString("hu-HU", { year: "numeric", month: "long", day: "numeric" })}
                     </div>
                   </div>
-                  <span className={cn("shrink-0 text-[12px] font-extrabold", n <= 7 ? "text-accent" : n <= 30 ? "text-pro" : "text-ink-muted")}>
+                  <span className={cn("shrink-0 text-[12px] font-extrabold", n <= 7 ? "text-accent" : n <= 30 ? "text-pro-ink" : "text-ink-muted")}>
                     {label}
                   </span>
                   <button

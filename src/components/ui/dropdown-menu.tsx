@@ -61,7 +61,7 @@ const BADGE_META: Record<Badge, { label: string; cls: string }> = {
   // HÁROM külön termék — a badge KI is mondja, melyikhez tartozik a lakat
   // (nem csak „PRO"), a /pro oldal szín-kódját követve.
   pro: { label: "Kinti PRO", cls: "bg-primary/10 text-primary" },
-  bizpro: { label: "Szaknévsor PRO", cls: "bg-pro/15 text-pro" },
+  bizpro: { label: "Szaknévsor PRO", cls: "bg-pro/15 text-pro-ink" },
   job: { label: "Kiemelt Állás", cls: "bg-accent/15 text-accent" },
 };
 
@@ -163,7 +163,7 @@ export function DropdownMenu() {
       ? {
           key: "biz",
           label: "Vállalkozásom",
-          tint: "bg-pro/10 text-pro",
+          tint: "bg-pro/10 text-pro-ink",
           icon: { name: "store" },
           custom: (
             <div key="biz" className="flex items-center gap-3 px-4 py-3.5 rounded-xl" aria-hidden>
@@ -173,7 +173,7 @@ export function DropdownMenu() {
           ),
         }
       : isSignedIn && hasBusiness
-        ? { key: "biz", label: "Vállalkozásom", href: "/profil", tint: "bg-pro/10 text-pro", icon: { name: "store" }, badge: "bizpro" }
+        ? { key: "biz", label: "Vállalkozásom", href: "/profil", tint: "bg-pro/10 text-pro-ink", icon: { name: "store" }, badge: "bizpro" }
         : { key: "biz", label: "Vidd fel a vállalkozásod", href: "/vallalkozo", tint: "bg-primary/10 text-primary", icon: { name: "plus" } };
 
   const sections: MenuSection[] = [
