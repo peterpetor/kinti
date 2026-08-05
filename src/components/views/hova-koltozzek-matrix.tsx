@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Icon } from "@/components/ui";
+import { Icon, EmptyState } from "@/components/ui";
 import { CountryFlag } from "@/components/ui/country-flag";
 import { cn } from "@/lib/cn";
 import { szam } from "@/lib/szam-format";
@@ -80,14 +80,23 @@ export function HovaKoltozzekMatrix() {
   }
 
   if (hiba) {
+    // ⚠️ A hiba-állapot is a KÖZÖS formanyelvet viseli (ikon-halo + cím +
+    // leírás), mint minden „nincs itt semmi" pillanat — eddig egyedi szürke
+    // szövegdoboz volt. És ami fontosabb: ad KIUTAT. Egy zsákutcás hibaüzenet
+    // ugyanolyan rossz, mint a hibátlan üres lista.
     return (
-      <p className="rounded-card border border-line bg-surface-alt px-4 py-3 text-[12.5px] text-ink-muted">
-        Az összehasonlító adat most nem érhető el. Próbáld újra később — addig a{" "}
-        <Link href="/tudasbazis/osszehasonlitas" className="font-bold text-ink underline">
-          témánkénti összehasonlítás
-        </Link>{" "}
-        elérhető.
-      </p>
+      <EmptyState
+        icon="alert"
+        tone="accent"
+        title="Az összehasonlítás most nem érhető el"
+        description="Az élő lakbér- és bér-adat nem jött meg. Próbáld újra — vagy nézd meg addig a témánkénti táblázatokat."
+        action={{ label: "Újra", onClick: () => window.location.reload() }}
+        secondary={
+          <Link href="/tudasbazis/osszehasonlitas" className="font-bold text-ink underline underline-offset-2">
+            Témánkénti összehasonlítás
+          </Link>
+        }
+      />
     );
   }
 
@@ -269,28 +278,53 @@ function OrszagKartya({
         <Icon name="chevD" size={15} strokeWidth={2.4} className={cn("shrink-0 text-ink-faint transition-transform", nyitott && "rotate-180")} />
       </button>
 
-      {/* A választott szempontok teljesülése — mindig látszik, nem csak nyitva. */}
+      {/* A választott szempontok teljesülése — mindig látszik, nem csak nyitva.
+          ⚠️ RÁCS, NEM TÖRDELT PIRULA-SOR. A pirulák szélessége a szövegtől
+          függött, ezért Ausztria „41%”-a és Németország „39%”-a MÁS x-pozícióra
+          került, a harmadik érték pedig külön sorba csúszott. Egy összehasonlító
+          képernyőn ez a lényeget veszi el: összevetni csak azt lehet, ami egy
+          vonalban van. Fix oszlopok + `tabular-nums` + azonos hosszúságú
+          mérce-sáv → a szem végig tud futni a kártyákon. */}
       {szempontok.length > 0 && (
-        <ul className="flex flex-wrap gap-1.5 px-4 pb-3">
+        <ul
+          className="grid gap-x-3 gap-y-2 px-4 pb-3"
+          style={{ gridTemplateColumns: `repeat(${Math.min(szempontok.length, 3)}, minmax(0, 1fr))` }}
+        >
           {szempontok.map((sz) => {
             const e = ertekel(sz, sor.country, szamok);
             const meta = SZEMPONTOK.find((m) => m.id === sz)!;
             const nincs = e.pont == null;
+            // Három sávos állapot — ugyanaz a küszöb, mint eddig a pirula-színnél.
+            const sav = nincs ? "nincs" : e.pont! >= 0.66 ? "jo" : e.pont! >= 0.33 ? "kozepes" : "gyenge";
             return (
-              <li
-                key={sz}
-                className={cn(
-                  "rounded-full px-2.5 py-1 text-[11px] font-semibold",
-                  nincs
-                    ? "bg-surface-alt text-ink-faint"
-                    : e.pont! >= 0.66
-                      ? "bg-success/15 text-ink"
-                      : e.pont! >= 0.33
-                        ? "bg-star/15 text-ink"
-                        : "bg-accent/10 text-ink",
-                )}
-              >
-                {meta.emoji} {e.ertek}
+              <li key={sz} className="min-w-0">
+                <span className="flex items-baseline gap-1 truncate text-[10px] font-bold uppercase tracking-[0.04em] text-ink-faint">
+                  <span aria-hidden="true">{meta.emoji}</span>
+                  <span className="truncate">{meta.rovid}</span>
+                </span>
+                <span
+                  className={cn(
+                    "mt-0.5 block truncate text-[12.5px] font-extrabold tabular-nums",
+                    nincs ? "text-ink-faint" : "text-ink",
+                  )}
+                >
+                  {e.rovidErtek}
+                </span>
+                {/* Mérce-sáv: azonos hosszon fut minden kártyán, ezért a
+                    kitöltöttsége ránézésre összevethető. Hiányzó adatnál
+                    SZÁNDÉKOSAN nincs sáv — a 0 hosszúságú sáv „mértük, és
+                    rossz”-at jelentene. */}
+                <span className="mt-1 block h-1 overflow-hidden rounded-full bg-ink/10">
+                  {!nincs && (
+                    <span
+                      className={cn(
+                        "block h-full rounded-full",
+                        sav === "jo" ? "bg-success" : sav === "kozepes" ? "bg-star" : "bg-accent",
+                      )}
+                      style={{ width: `${Math.max(6, Math.round(e.pont! * 100))}%` }}
+                    />
+                  )}
+                </span>
               </li>
             );
           })}

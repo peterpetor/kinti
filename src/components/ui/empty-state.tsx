@@ -31,6 +31,7 @@ export function EmptyState({
   action,
   secondary,
   compact = false,
+  tone = "primary",
   className,
 }: {
   icon?: IconName;
@@ -40,8 +41,24 @@ export function EmptyState({
   /** Halványabb másodlagos elem az elsődleges CTA alatt (pl. „szólj, ha jön"). */
   secondary?: ReactNode;
   compact?: boolean;
+  /**
+   * A halo hangneme. `primary` = üres állapot („még nincs itt semmi"),
+   * `accent` = HIBA („nem sikerült betölteni").
+   *
+   * ⚠️ Nem díszítés: a kettő MÁST jelent a felhasználónak. Az üres állapot azt
+   * mondja, hogy minden rendben, csak nincs tartalom — a hiba azt, hogy valami
+   * elromlott, és érdemes újrapróbálni. Ha mindkettő ugyanazt a nyugodt zöld
+   * halót viseli, a hiba észrevétlen marad.
+   */
+  tone?: "primary" | "accent";
   className?: string;
 }) {
+  // A Tailwind csak a FORRÁSBAN kiírt osztályokat generálja — a
+  // `bg-${tone}/10` alakot nem találná meg, ezért teljes nevek kellenek.
+  const haloCls =
+    tone === "accent"
+      ? "bg-accent/10 text-accent shadow-[0_0_0_5px_rgb(var(--accent)/0.06),0_0_0_11px_rgb(var(--accent)/0.03)]"
+      : "bg-primary/10 text-primary shadow-[0_0_0_5px_rgb(var(--primary)/0.06),0_0_0_11px_rgb(var(--primary)/0.03)]";
   return (
     <div
       role="status"
@@ -53,7 +70,7 @@ export function EmptyState({
     >
       <span
         aria-hidden
-        className="kinti-pop grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary shadow-[0_0_0_5px_rgb(var(--primary)/0.06),0_0_0_11px_rgb(var(--primary)/0.03)]"
+        className={cn("kinti-pop grid h-14 w-14 place-items-center rounded-full", haloCls)}
       >
         <Icon name={icon} size={24} strokeWidth={2.1} />
       </span>

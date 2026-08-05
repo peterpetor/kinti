@@ -144,12 +144,18 @@ export const ORSZAG_TENYEK: Record<BudgetCountry, OrszagTeny> = {
 /** Amit a felhasználó fontosnak jelölhet. */
 export type Szempont = "megtakaritas" | "olcso_alberlet" | "gyors_allampolgarsag" | "ketto_allampolgarsag" | "alacsony_ado";
 
-export const SZEMPONTOK: { id: Szempont; label: string; emoji: string; magyarazat: string }[] = [
-  { id: "megtakaritas", label: "Marad a hónap végén", emoji: "💰", magyarazat: "A nettó bérből a lakhatás és a megélhetés után maradó arány." },
-  { id: "olcso_alberlet", label: "Olcsó albérlet", emoji: "🏠", magyarazat: "A közösségi lakbér-medián a helyi nettó bérhez mérve." },
-  { id: "alacsony_ado", label: "Alacsony levonás", emoji: "🧾", magyarazat: "Mennyi marad a bruttóból a járulékok és az adó után." },
-  { id: "gyors_allampolgarsag", label: "Gyors állampolgárság", emoji: "🛂", magyarazat: "Hány év jogszerű tartózkodás után igényelhető." },
-  { id: "ketto_allampolgarsag", label: "Magyar megtartható", emoji: "🇭🇺", magyarazat: "Megtarthatod-e a magyar állampolgárságot a honosítás után." },
+/**
+ * ⚠️ A `rovid` NEM stílus-kérdés. Az összehasonlító kártyán a szempontok
+ * OSZLOPOKBAN állnak (hogy a számok egy vonalban legyenek), és egy 390 px-es
+ * telefonon egy oszlop ~110 px. A teljes címke ott „Marad a hó…”-ra csonkulna,
+ * vagyis pont az veszne el, amit a fejléc mondani akar.
+ */
+export const SZEMPONTOK: { id: Szempont; label: string; rovid: string; emoji: string; magyarazat: string }[] = [
+  { id: "megtakaritas", label: "Marad a hónap végén", rovid: "Marad", emoji: "💰", magyarazat: "A nettó bérből a lakhatás és a megélhetés után maradó arány." },
+  { id: "olcso_alberlet", label: "Olcsó albérlet", rovid: "Lakhatás", emoji: "🏠", magyarazat: "A közösségi lakbér-medián a helyi nettó bérhez mérve." },
+  { id: "alacsony_ado", label: "Alacsony levonás", rovid: "Levonás", emoji: "🧾", magyarazat: "Mennyi marad a bruttóból a járulékok és az adó után." },
+  { id: "gyors_allampolgarsag", label: "Gyors állampolgárság", rovid: "Honosítás", emoji: "🛂", magyarazat: "Hány év jogszerű tartózkodás után igényelhető." },
+  { id: "ketto_allampolgarsag", label: "Magyar megtartható", rovid: "Kettős", emoji: "🇭🇺", magyarazat: "Megtarthatod-e a magyar állampolgárságot a honosítás után." },
 ];
 
 export interface Ertekeles {
@@ -157,6 +163,12 @@ export interface Ertekeles {
   pont: number | null;
   /** Amit a cellában mutatunk. */
   ertek: string;
+  /**
+   * Ugyanaz az érték a SZŰK oszlopba — a címkét már a fejléc kimondja.
+   * ⚠️ Enélkül az oszlop „41% marad” lenne egy „Marad” fejléc alatt: kétszer
+   * ugyanaz, és a szűk hasábban csonkolva.
+   */
+  rovidErtek: string;
 }
 
 /**
@@ -173,21 +185,21 @@ export function ertekel(
   const t = ORSZAG_TENYEK[country];
   switch (szempont) {
     case "megtakaritas":
-      return { pont: szamok.maradPct / 100, ertek: `${Math.round(szamok.maradPct)}% marad` };
+      return { pont: szamok.maradPct / 100, ertek: `${Math.round(szamok.maradPct)}% marad`, rovidErtek: `${Math.round(szamok.maradPct)}%` };
     case "olcso_alberlet":
       // Minél kisebb a lakhatás aránya, annál jobb.
-      return { pont: Math.max(0, 1 - szamok.alberletPct / 100), ertek: `${Math.round(szamok.alberletPct)}% lakhatás` };
+      return { pont: Math.max(0, 1 - szamok.alberletPct / 100), ertek: `${Math.round(szamok.alberletPct)}% lakhatás`, rovidErtek: `${Math.round(szamok.alberletPct)}%` };
     case "alacsony_ado":
-      return { pont: szamok.nettoArany, ertek: `${Math.round(szamok.nettoArany * 100)}% marad bruttóból` };
+      return { pont: szamok.nettoArany, ertek: `${Math.round(szamok.nettoArany * 100)}% marad bruttóból`, rovidErtek: `${Math.round(szamok.nettoArany * 100)}%` };
     case "gyors_allampolgarsag": {
-      if (t.allampolgarsagEv == null) return { pont: null, ertek: "nincs adatunk" };
+      if (t.allampolgarsagEv == null) return { pont: null, ertek: "nincs adatunk", rovidErtek: "nincs adat" };
       // 5 év → 1,0 ; 15 év → 0,0 (lineáris, a valós sáv 5–10 év)
       const p = Math.max(0, Math.min(1, (15 - t.allampolgarsagEv) / 10));
-      return { pont: p, ertek: `${t.allampolgarsagEv} év` };
+      return { pont: p, ertek: `${t.allampolgarsagEv} év`, rovidErtek: `${t.allampolgarsagEv} év` };
     }
     case "ketto_allampolgarsag": {
-      if (t.kettosAllampolgarsag == null) return { pont: null, ertek: "nincs adatunk" };
-      return { pont: t.kettosAllampolgarsag ? 1 : 0, ertek: t.kettosAllampolgarsag ? "megtartható" : "le kell mondani" };
+      if (t.kettosAllampolgarsag == null) return { pont: null, ertek: "nincs adatunk", rovidErtek: "nincs adat" };
+      return { pont: t.kettosAllampolgarsag ? 1 : 0, ertek: t.kettosAllampolgarsag ? "megtartható" : "le kell mondani", rovidErtek: t.kettosAllampolgarsag ? "igen" : "nem" };
     }
   }
 }
