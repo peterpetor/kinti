@@ -108,7 +108,7 @@ export function SwipeAction({
           }}
           style={{
             transform: `translateX(${dragX}px)`,
-            transition: dragging ? "none" : "transform 0.22s cubic-bezier(0.22, 1, 0.36, 1)",
+            transition: dragging ? "none" : "transform 0.22s var(--kinti-ease)",
             touchAction: "pan-y",
           }}
           className="relative bg-surface"

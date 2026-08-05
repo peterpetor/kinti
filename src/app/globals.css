@@ -69,6 +69,18 @@
     --glass-edge: 0 0 0;
     --glass-edge-a: 0.06;
 
+    /* ⚠️ EGY MOZGÁS-GÖRBE AZ EGÉSZ APPNAK.
+       Ugyanez a `cubic-bezier` eddig 8 helyen volt bemásolva (lap-átmenet,
+       toast, pop, BottomSheet-húzás, főmenü, swipe). Ha egy helyen elcsúszik,
+       a felület fele „másképp mozog", és ez nem hibaüzenet, csak érzet. Új
+       animációhoz EZT használd (`var(--kinti-ease)` vagy `ease-kinti`).
+
+       Gyorsan induló, lágyan érkező görbe — ez adja a natív, „fizikai" érzetet.
+       A `--kinti-ease-pop` túllendül (1,56): rövid, egyszeri megjelenéshez
+       (pin-pop), NEM folyamatos mozgáshoz. */
+    --kinti-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --kinti-ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+
     /* Natív vezérlők (form, scrollbar) színsémája */
     color-scheme: light;
   }
@@ -404,13 +416,13 @@
     to   { opacity: 1; transform: translateX(0); }
   }
   .kinti-page-in-cross {
-    animation: kintiPageInCross 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: kintiPageInCross 0.26s var(--kinti-ease);
   }
   .kinti-page-in-forward {
-    animation: kintiPageInForward 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: kintiPageInForward 0.26s var(--kinti-ease);
   }
   .kinti-page-in-back {
-    animation: kintiPageInBack 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: kintiPageInBack 0.26s var(--kinti-ease);
   }
   @media (prefers-reduced-motion: reduce) {
     .kinti-page-in-cross, .kinti-page-in-forward, .kinti-page-in-back { animation: none; }
@@ -422,7 +434,7 @@
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
   .kinti-toast-in {
-    animation: kintiToastIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: kintiToastIn 0.28s var(--kinti-ease);
   }
   @media (prefers-reduced-motion: reduce) {
     .kinti-toast-in { animation: none; }
@@ -539,7 +551,7 @@
     100% { transform: scale(1); }
   }
   .kinti-pop {
-    animation: kintiPop 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: kintiPop 0.42s var(--kinti-ease);
   }
   @media (prefers-reduced-motion: reduce) {
     .kinti-pop { animation: none; }
@@ -761,7 +773,7 @@
 .kinti-pin-v2--active {
   transform: scale(1.18) translateY(-2px);
   z-index: 1000 !important;
-  animation: kinti-pin-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: kinti-pin-pop 0.42s var(--kinti-ease-pop);
 }
 .kinti-pin-v2--active::before {
   box-shadow:

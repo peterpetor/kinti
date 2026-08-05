@@ -168,7 +168,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
             onClick={() => { haptic("selection"); setSelectedOption(opt.id); }}
             className={cn(
               "p-4 rounded-2xl border-2 text-left font-bold text-[17px] transition-all relative flex items-center justify-between",
-              !isAnswered && !isSelected && "border-border-subtle bg-surface hover:bg-surface-alt",
+              !isAnswered && !isSelected && "border-line bg-surface hover:bg-surface-alt",
               !isAnswered && isSelected && "border-primary bg-primary/5 text-primary-ink",
               showCorrect && "border-success bg-success/10 text-success-ink",
               showWrong && "border-accent bg-accent/10 text-accent animate-shake"
@@ -285,7 +285,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
                 className={cn(
                   "p-3 rounded-xl border-2 text-[14px] font-bold transition-all text-center h-[60px] flex items-center justify-center",
                   isMatched ? "opacity-0 invisible" : "",
-                  !isSelected && "border-border-subtle bg-surface",
+                  !isSelected && "border-line bg-surface",
                   isSelected && "border-primary bg-primary/10 text-primary-ink"
                 )}
               >
@@ -307,7 +307,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
                 onClick={() => handleMatchClick("right", r.id)}
                 className={cn(
                   "p-3 rounded-xl border-2 text-[14px] font-bold transition-all text-center min-h-[60px] flex items-center justify-center relative",
-                  isMatched ? "opacity-0 invisible" : "border-border-subtle bg-surface",
+                  isMatched ? "opacity-0 invisible" : "border-line bg-surface",
                   matchWrong && "animate-shake border-accent/50"
                 )}
               >
@@ -386,7 +386,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
       </div>
 
       {/* Footer / CTA Area */}
-      <div className="shrink-0 p-5 border-t border-border-subtle bg-surface">
+      <div className="shrink-0 p-5 border-t border-line bg-surface">
         {isLessonComplete ? (
           <Button 
             fullWidth 

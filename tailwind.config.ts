@@ -88,6 +88,11 @@ const config: Config = {
         sans: ["var(--font-jakarta)", "system-ui", "sans-serif"],
         mono: ["var(--font-jetbrains)", "ui-monospace", "SF Mono", "Menlo", "monospace"],
       },
+      // Egy mozgas-gorbe az egesz appnak (globals.css `--kinti-ease`).
+      transitionTimingFunction: {
+        kinti: "var(--kinti-ease)",
+        "kinti-pop": "var(--kinti-ease-pop)",
+      },
       borderRadius: {
         pill: "9999px",
         card: "20px",

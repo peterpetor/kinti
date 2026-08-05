@@ -160,7 +160,7 @@ export default function RelocationTrackerPage() {
         />
 
         {/* Személyre szabás — kinek tervezünk (szűri a checklistet) */}
-        <div className="mt-6 rounded-2xl border border-border-subtle bg-surface p-4 shadow-card">
+        <div className="mt-6 rounded-2xl border border-line bg-surface p-4 shadow-card">
           <p className="mb-3 text-[13px] font-bold uppercase tracking-wide text-ink/70">Kinek tervezünk?</p>
           <div className="flex flex-col gap-2.5">
             <ToggleRow
@@ -179,14 +179,14 @@ export default function RelocationTrackerPage() {
           <button
             type="button"
             onClick={shareplan}
-            className="mt-3 w-full rounded-pill border border-border-subtle bg-surface py-2.5 text-[12.5px] font-bold text-ink/60 transition active:scale-[0.98]"
+            className="mt-3 w-full rounded-pill border border-line bg-surface py-2.5 text-[12.5px] font-bold text-ink/60 transition active:scale-[0.98]"
           >
             🔗 Küldd el egy barátnak, aki szintén költözik
           </button>
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-6 rounded-2xl border border-border-subtle bg-surface p-4 shadow-card">
+        <div className="mt-6 rounded-2xl border border-line bg-surface p-4 shadow-card">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[13px] font-bold text-ink/70 uppercase tracking-wide">
               Készültség
@@ -207,7 +207,7 @@ export default function RelocationTrackerPage() {
         </div>
 
         {/* Tervezett kiköltözés dátuma + visszaszámláló */}
-        <div className="mt-4 rounded-2xl border border-border-subtle bg-surface p-4 shadow-card">
+        <div className="mt-4 rounded-2xl border border-line bg-surface p-4 shadow-card">
           <label htmlFor="movedate" className="mb-2 block text-[13px] font-bold uppercase tracking-wide text-ink/70">
             🗓️ Tervezett kiköltözés
           </label>
@@ -216,7 +216,7 @@ export default function RelocationTrackerPage() {
             type="date"
             value={moveDate}
             onChange={(e) => updateMoveDate(e.target.value)}
-            className="w-full rounded-xl border border-border-subtle bg-ink/5 px-3 py-2.5 text-[14px] font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full rounded-xl border border-line bg-ink/5 px-3 py-2.5 text-[14px] font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
           {daysToMove !== null ? (
             <p className="mt-3 text-center text-[14px] font-bold text-ink">
@@ -259,7 +259,7 @@ export default function RelocationTrackerPage() {
       {/* Nézet-váltó: szakaszok (téma szerint) vagy idővonal (dátum szerint) */}
       <div className="mt-2 flex items-center justify-between px-4">
         <h2 className="text-[13px] font-bold uppercase tracking-wide text-ink/70">Teendők</h2>
-        <div role="tablist" aria-label="Nézet" className="inline-flex rounded-pill border border-border-subtle bg-surface p-0.5 text-[11.5px] font-bold shadow-card">
+        <div role="tablist" aria-label="Nézet" className="inline-flex rounded-pill border border-line bg-surface p-0.5 text-[11.5px] font-bold shadow-card">
           <ViewTab active={view === "phases"} onClick={() => changeView("phases")} label="Szakaszok" icon="list" />
           <ViewTab active={view === "timeline"} onClick={() => changeView("timeline")} label="Idővonal" icon="calendar" />
         </div>
@@ -287,7 +287,7 @@ export default function RelocationTrackerPage() {
               key={phase.id} 
               className={cn(
                 "overflow-hidden rounded-3xl border transition-all duration-300",
-                isExpanded ? "border-border-strong bg-surface shadow-card" : "border-border-subtle bg-surface/50 hover:bg-surface"
+                isExpanded ? "border-border-strong bg-surface shadow-card" : "border-line bg-surface/50 hover:bg-surface"
               )}
             >
               <button
@@ -324,7 +324,7 @@ export default function RelocationTrackerPage() {
                 )}
               >
                 <div className="overflow-hidden">
-                  <div className="border-t border-border-subtle px-4 pb-4 pt-2">
+                  <div className="border-t border-line px-4 pb-4 pt-2">
                     <div className="flex flex-col gap-4">
                       {phase.tasks.map((task) => {
                         const isDone = completedTasks.includes(task.id);
@@ -428,7 +428,7 @@ function ToggleRow({ label, sub, on, onClick }: { label: string; sub: string; on
       aria-pressed={on}
       className={cn(
         "flex items-center gap-3 rounded-2xl border-2 p-3 text-left transition active:scale-[0.99]",
-        on ? "border-primary bg-primary/5" : "border-border-subtle bg-surface",
+        on ? "border-primary bg-primary/5" : "border-line bg-surface",
       )}
     >
       <span

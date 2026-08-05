@@ -90,7 +90,7 @@ export function BottomSheet({
         className="relative w-full max-w-md rounded-t-3xl border border-line bg-surface shadow-pop"
         style={{
           transform: show ? `translateY(${dragY}px)` : "translateY(100%)",
-          transition: dragging ? "none" : "transform 0.28s cubic-bezier(0.22, 1, 0.36, 1)",
+          transition: dragging ? "none" : "transform 0.28s var(--kinti-ease)",
           maxHeight: "88vh",
         }}
       >

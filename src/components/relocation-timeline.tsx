@@ -44,7 +44,7 @@ export function RelocationTimeline({
 }) {
   if (!moveDate) {
     return (
-      <div className="rounded-2xl border border-dashed border-border-subtle bg-surface p-5 text-center">
+      <div className="rounded-2xl border border-dashed border-line bg-surface p-5 text-center">
         <p className="text-[28px]">🗓️</p>
         <p className="mt-1 text-[14px] font-bold text-ink">Add meg a tervezett költözés dátumát</p>
         <p className="mt-1 text-[12.5px] leading-snug text-ink/60">
@@ -108,7 +108,7 @@ export function RelocationTimeline({
                     >
                       <Icon name="check" size={13} strokeWidth={3} />
                     </button>
-                    {!isLast && <span className="w-px flex-1 bg-border-subtle" />}
+                    {!isLast && <span className="w-px flex-1 bg-line" />}
                   </div>
 
                   {/* Kártya */}
@@ -123,7 +123,7 @@ export function RelocationTimeline({
                         >
                           {item.task.title}
                         </h4>
-                        <span className="mt-0.5 shrink-0 rounded-full border border-border-subtle bg-surface px-2 py-0.5 text-[10.5px] font-bold text-ink/55">
+                        <span className="mt-0.5 shrink-0 rounded-full border border-line bg-surface px-2 py-0.5 text-[10.5px] font-bold text-ink/55">
                           {moveOffsetLabel(item.offset)}
                         </span>
                       </div>

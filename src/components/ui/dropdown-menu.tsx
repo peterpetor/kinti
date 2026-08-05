@@ -391,7 +391,7 @@ export function DropdownMenu() {
             className="flex w-full max-w-md flex-col bg-surface h-full sm:h-auto sm:max-h-[90vh] sm:rounded-3xl sm:shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300"
             style={{
               transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
-              transition: dragging ? "none" : "transform 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
+              transition: dragging ? "none" : "transform 0.25s var(--kinti-ease)",
             }}
           >
             {/* Fogantyú — CSAK mobil-nézetben (desktopon centrált dialógus, ott a

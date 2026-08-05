@@ -140,7 +140,7 @@ export default function LanguagePathPage() {
     <div className="flex flex-col pb-24 min-h-screen bg-surface">
       <CountryGuard feature="nyelvlecke" />
       {/* Sticky Header with Stats */}
-      <div className="sticky top-0 z-20 bg-background/80 px-4 pb-4 pt-6 backdrop-blur-xl border-b border-border-subtle">
+      <div className="sticky top-0 z-20 bg-bg/80 px-4 pb-4 pt-6 backdrop-blur-xl border-b border-line">
         <ScreenHeader 
           eyebrow="Nyelvlecke" 
           title={courseTitle(country)}
@@ -192,7 +192,7 @@ export default function LanguagePathPage() {
 
               <div className="relative flex flex-col items-center gap-8">
                 {/* SVG Line connecting the dots */}
-                <svg className="absolute top-0 bottom-0 w-32 -z-10 text-border-subtle" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <svg className="absolute top-0 bottom-0 w-32 -z-10 text-ink-faint" viewBox="0 0 100 100" preserveAspectRatio="none">
                   {/* Simplified wavy line (could be improved with SVG path logic based on items) */}
                   <path d="M50,0 C80,25 20,75 50,100" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="8 8" />
                 </svg>
