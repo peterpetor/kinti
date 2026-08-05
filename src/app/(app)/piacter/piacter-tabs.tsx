@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Icon, type IconName } from "@/components/ui";
+import { Icon, SegmentedControl, type IconName } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { HOUSING_DISCLAIMER, HOUSING_SAFETY_TIPS } from "@/lib/housing";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -187,24 +187,12 @@ export function PiacterTabs({
 
   return (
     <div className="space-y-4">
-      <div role="tablist" aria-label="Piactér-nézetek" className="flex gap-1 rounded-pill border border-line bg-surface p-1 shadow-card">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            aria-selected={tab === t.id}
-            onClick={() => switchTab(t.id)}
-            className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-pill px-2 py-2 text-[11.5px] font-bold transition active:scale-[0.97]",
-              tab === t.id ? "bg-primary text-white shadow-card" : "text-ink-muted hover:text-ink",
-            )}
-          >
-            <Icon name={t.icon} size={13} strokeWidth={2.4} />
-            <span className="truncate">{t.label}</span>
-          </button>
-        ))}
-      </div>
+      <SegmentedControl
+        options={TABS}
+        value={tab}
+        onChange={switchTab}
+        ariaLabel="Piactér-nézetek"
+      />
 
       {tab === "borze" && (
         <div className="space-y-4">

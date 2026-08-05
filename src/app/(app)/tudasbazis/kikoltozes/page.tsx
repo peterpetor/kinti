@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ScreenHeader } from "@/components/ui/headers";
 import { Icon, IconName } from "@/components/ui/icons";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { toast } from "@/lib/toast";
@@ -24,6 +25,12 @@ import { CountryFlag } from "@/components/ui/country-flag";
 import { RelocationTimeline } from "@/components/relocation-timeline";
 
 type RelocationView = "phases" | "timeline";
+
+/** A nézet-váltó opciói — modul-szintű konstans, nem renderenként újra. */
+const NEZET_OPCIOK = [
+  { id: "phases" as const, label: "Szakaszok", icon: "list" as const },
+  { id: "timeline" as const, label: "Idővonal", icon: "calendar" as const },
+];
 
 export default function RelocationTrackerPage() {
   const [mounted, setMounted] = useState(false);
@@ -259,10 +266,14 @@ export default function RelocationTrackerPage() {
       {/* Nézet-váltó: szakaszok (téma szerint) vagy idővonal (dátum szerint) */}
       <div className="mt-2 flex items-center justify-between px-4">
         <h2 className="text-[13px] font-bold uppercase tracking-wide text-ink/70">Teendők</h2>
-        <div role="tablist" aria-label="Nézet" className="inline-flex rounded-pill border border-line bg-surface p-0.5 text-[11.5px] font-bold shadow-card">
-          <ViewTab active={view === "phases"} onClick={() => changeView("phases")} label="Szakaszok" icon="list" />
-          <ViewTab active={view === "timeline"} onClick={() => changeView("timeline")} label="Idővonal" icon="calendar" />
-        </div>
+        <SegmentedControl
+          options={NEZET_OPCIOK}
+          value={view}
+          onChange={changeView}
+          ariaLabel="Nézet"
+          size="sm"
+          fill={false}
+        />
       </div>
 
       {view === "timeline" && (
@@ -400,24 +411,6 @@ export default function RelocationTrackerPage() {
   );
 }
 
-/** Nézet-váltó fül (szakaszok / idővonal). */
-function ViewTab({ active, onClick, label, icon }: { active: boolean; onClick: () => void; label: string; icon: IconName }) {
-  return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={active}
-      onClick={onClick}
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 transition",
-        active ? "bg-primary text-white shadow-card" : "text-ink/60 hover:text-ink",
-      )}
-    >
-      <Icon name={icon} size={12} strokeWidth={2.2} />
-      {label}
-    </button>
-  );
-}
 
 /** Egy kapcsoló-sor a személyre szabó wizardhoz. */
 function ToggleRow({ label, sub, on, onClick }: { label: string; sub: string; on: boolean; onClick: () => void }) {

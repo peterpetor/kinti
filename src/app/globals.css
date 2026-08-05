@@ -482,6 +482,19 @@
     }
   }
 
+  /* Segmented control csúszó kapszulája (SegmentedControl).
+     A rugós görbe adja a natív érzetet: a kapszula átcsúszik, épphogy túlfut,
+     és beül. `will-change` NÉLKÜL — az elem ritkán mozdul, a folyamatos réteg-
+     előkészítés itt csak memóriát enne.
+     ⚠️ Reduced motion alatt AZONNAL ugrik: a mozgás itt díszítés, a kijelölést
+     az `aria-selected` és a szín is hordozza. */
+  .kinti-seg-thumb {
+    transition: transform var(--kinti-spring-pop-ido) var(--kinti-spring-pop);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kinti-seg-thumb { transition: none; }
+  }
+
   /* Billentyűzetes fókusz-gyűrű (a11y + polish) — CSAK :focus-visible-re, tehát
      egér/tap nem villantja. A form-mezőket kihagyjuk: azoknak saját, egyedi
      focus:ring/border stílusuk van (dupla jelzés kerülése). A modern böngészők

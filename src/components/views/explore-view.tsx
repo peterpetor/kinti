@@ -5,7 +5,7 @@ import { useKeyboardDismissOnScroll } from "@/lib/use-keyboard-dismiss";
 import { haptic } from "@/lib/haptics";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { BusinessCard, CategoryPills, Icon, SwipeAction, type IconName } from "@/components/ui";
+import { BusinessCard, CategoryPills, Icon, SegmentedControl, SwipeAction, type IconName } from "@/components/ui";
 import { FAVORITES_CHANGED_EVENT, removeFavorite } from "@/components/ui/favorite-button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { Category, ListBusiness } from "@/lib/types";
@@ -1490,46 +1490,22 @@ export function ExploreView({
   );
 }
 
-// --- nézet-váltó (Liquid Glass szegmentált gomb) ----------------------------
+// --- nézet-váltó (natív szegmentált vezérlő, csúszó kapszulával) ------------
+const NEZET_OPCIOK = [
+  { id: "list" as const, label: "Lista", icon: "list" as const },
+  { id: "map" as const, label: "Térkép", icon: "map" as const },
+];
+
 function ViewSwitch({ value, onChange }: { value: ViewMode; onChange: (v: ViewMode) => void }) {
   return (
-    <div
-      role="tablist"
-      aria-label="Nézet"
-      className="glass inline-flex rounded-pill p-0.5 text-[11.5px] font-bold"
-    >
-      <SwitchBtn active={value === "list"} onClick={() => onChange("list")} label="Lista" icon="list" />
-      <SwitchBtn active={value === "map"} onClick={() => onChange("map")} label="Térkép" icon="map" />
-    </div>
+    <SegmentedControl
+      options={NEZET_OPCIOK}
+      value={value}
+      onChange={onChange}
+      ariaLabel="Nézet"
+      size="sm"
+      fill={false}
+    />
   );
 }
 
-function SwitchBtn({
-  active,
-  onClick,
-  label,
-  icon,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  icon: "list" | "map";
-}) {
-  return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={active}
-      onClick={onClick}
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 transition",
-        active
-          ? "bg-primary text-white shadow-card"
-          : "text-ink-muted hover:text-ink",
-      )}
-    >
-      <Icon name={icon} size={12} strokeWidth={2.2} />
-      {label}
-    </button>
-  );
-}
