@@ -1,4 +1,4 @@
-import { getDB, getCloudflareEnv } from "@/lib/cloudflare";
+import { getDB, getCloudflareEnv, getCloudflareCtx } from "@/lib/cloudflare";
 import { getAdminUserId } from "@/lib/admin";
 import { timingSafeEqualStr } from "@/lib/security";
 import { safeLogError } from "@/lib/safe-log";
@@ -44,63 +44,83 @@ async function handle(req: Request): Promise<Response> {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  // ⚠️⚠️ IDŐKERET — VALÓS HIBÁBÓL (2026-08-05, „Failed (timeout)").
+  //
+  // Ez a route idővel ÖT független feladat gyűjtőhelye lett (radar-digest,
+  // határidő-emlékeztető, vélemény-nudge, kereső-index, takarítás), és csak
+  // UTÁNUK jön a névadó munka: a lead-digest e-mailek. Az ütemező (cron-job.org)
+  // 60 másodperc után bontja a kapcsolatot, és a jobot HIBÁSNAK jelöli — a
+  // félbevágott futásban pedig épp a legfontosabb rész, az e-mail-küldés marad ki.
+  //
+  // Ezért a MELLÉK-feladatok időkeretet kapnak: ha elfogy, KIMARADNAK, és a
+  // válasz megmondja, mi maradt ki. Mindegyik idempotens, tehát a következő
+  // futáson sorra kerülnek — a lead-digest viszont mindig lefut.
+  const KEZDET = Date.now();
+  const MELLEK_IDOKERET_MS = 25_000; // marad ~35 mp a lead-digestnek a 60-ból
+  const kihagyva: string[] = [];
+  const vanIdo = (nev: string) => {
+    if (Date.now() - KEZDET < MELLEK_IDOKERET_MS) return true;
+    kihagyva.push(nev);
+    return false;
+  };
+
   // Állás-radar napi digest (frequency capping) — független a lead-digesttől,
   // ezért az esetleges korai return ELŐTT, saját try/catch-ben fut.
   let radarDigests = 0;
-  try {
-    const { processRadarDigests } = await import("@/lib/radars");
-    radarDigests = await processRadarDigests();
-  } catch (e) {
-    safeLogError("send-lead-digests:radarDigest", e);
+  if (vanIdo("radar-digest")) {
+    try {
+      const { processRadarDigests } = await import("@/lib/radars");
+      radarDigests = await processRadarDigests();
+    } catch (e) {
+      safeLogError("send-lead-digests:radarDigest", e);
+    }
   }
 
   // Határidő-emlékeztetők (14/7/1 nap) — szintén független, korai return előtt.
   let deadlineReminders = 0;
-  try {
-    const { processDeadlineReminders } = await import("@/lib/deadlines");
-    deadlineReminders = await processDeadlineReminders();
-  } catch (e) {
-    safeLogError("send-lead-digests:deadlineReminders", e);
+  if (vanIdo("hatarido-emlekezteto")) {
+    try {
+      const { processDeadlineReminders } = await import("@/lib/deadlines");
+      deadlineReminders = await processDeadlineReminders();
+    } catch (e) {
+      safeLogError("send-lead-digests:deadlineReminders", e);
+    }
   }
 
   // Vélemény-gyűjtő nudge: 3 nappal az ajánlatkérés után „Milyen volt?" email
   // a lead-küldőnek (lead-enként egyszer). Független, saját try/catch.
   let reviewNudges = 0;
-  try {
-    const { processReviewNudges } = await import("@/lib/review-nudge");
-    reviewNudges = await processReviewNudges();
-  } catch (e) {
-    safeLogError("send-lead-digests:reviewNudges", e);
+  if (vanIdo("velemeny-nudge")) {
+    try {
+      const { processReviewNudges } = await import("@/lib/review-nudge");
+      reviewNudges = await processReviewNudges();
+    } catch (e) {
+      safeLogError("send-lead-digests:reviewNudges", e);
+    }
   }
 
-  // Szemantikus kereső-index fokozatos feltöltése. ⚠️ A teljes reindex
-  // (/api/admin/reindex-search) SOSEM tudott lefutni: ~2400 sorra 95 egymás
-  // utáni AI+upsert kört tett egyetlen edge-kérésbe → CPU-/alkérés-limit, és a
-  // job félbeszakadt (ezért volt az index évek óta hiányos). Itt futásonként
-  // KORLÁTOZOTT szeletet dolgozunk fel, és a `search_indexed_at` oszlop teszi
-  // folytathatóvá: a hátralék napok alatt magától lefogy, utána a lekérdezés
-  // nullára apad (nincs fölösleges Workers AI fogyasztás). Független, saját
-  // try/catch, a korai return-ök ELŐTT.
+  // Szemantikus kereső-index fokozatos feltöltése.
   //
-  // ⚠️ 2026-08-05: napi 200 → körönként 500, legfeljebb 4 kör (max 2000/futás).
-  // A 200-as szelet mellett az akkori 1720-as hátralék KILENC napig tartott
-  // volna, és közben minden szerkesztés újratermeli a sajátját — a jelentés
-  // alapú keresés (/api/ai/semantic-search) addig hiányos indexen dolgozna,
-  // ami rosszabb, mint ha nem is lenne. A korábbi 200-as korlát a 10 ms-os
-  // CPU-keretű ingyenes csomaghoz készült; a fizetős csomagon 30 s a keret, a
-  // munka pedig amúgy is I/O-várakozás (AI + Vectorize), nem CPU.
-  let searchIndexed = 0;
-  let searchRemaining = 0;
+  // ⚠️⚠️ A VÁLASZ UTÁN FUT (waitUntil), MERT EZ A LEGDRÁGÁBB ÉS A
+  // LEGVÁLTOZÉKONYABB LÉPÉS. Egy szelet több száz Workers AI embedding-hívás,
+  // aminek az ideje a hátraléktól függ — épp ez tudja átvinni a futást a 60
+  // másodperces ütemező-korláton, és épp ez vágná el a lead-e-maileket.
+  // A `waitUntil` a választ nem késlelteti, a munka mégis lefut.
+  //
+  // ⚠️ EGY KÖR, LEGFELJEBB 500. Rövid ideig 4×500 volt itt, hogy a nagy
+  // hátralék gyorsan lefogyjon — ez rossz csere volt: a nagy backfillnek saját
+  // végpontja van (/api/cron/reindex-search, tetszőlegesen sokszor hívható),
+  // ennek a cronnak pedig csak a napi lemaradást kell behoznia.
   try {
     const { indexPendingBusinessVectors } = await import("@/lib/vector-search");
-    for (let kor = 0; kor < 4; kor++) {
-      const r = await indexPendingBusinessVectors(500);
-      searchIndexed += r.indexed;
-      searchRemaining = r.remaining;
-      // Kilépés, ha kész — VAGY ha egy kör semmit sem haladt. Az utóbbi nélkül
-      // egy tartósan hibázó köteg (pl. AI-hiba) végtelen körözést okozna.
-      if (r.remaining === 0 || r.indexed === 0) break;
-    }
+    const p = indexPendingBusinessVectors(500).catch((e) =>
+      safeLogError("send-lead-digests:searchIndex", e),
+    );
+    const ctx = getCloudflareCtx();
+    // Kontextus nélkül (build/teszt) NE hagyjuk elúszni a hibát — de ott
+    // amúgy sincs se AI, se index, tehát azonnal visszatér.
+    if (ctx) ctx.waitUntil(p);
+    else await p;
   } catch (e) {
     safeLogError("send-lead-digests:searchIndex", e);
   }
@@ -109,21 +129,25 @@ async function handle(req: Request): Promise<Response> {
   // különben a tábla korlátlanul nőne. 48h-nál (a leghosszabb, 24h-s ablak fölött)
   // régebbieket törlünk. Best-effort, korai return előtt.
   let rateLimitPurged = 0;
-  try {
-    const { cleanupOldAiRateLimitLogs } = await import("@/lib/ai");
-    rateLimitPurged = await cleanupOldAiRateLimitLogs(48);
-  } catch (e) {
-    safeLogError("send-lead-digests:rateLimitCleanup", e);
+  if (vanIdo("rate-limit-takaritas")) {
+    try {
+      const { cleanupOldAiRateLimitLogs } = await import("@/lib/ai");
+      rateLimitPurged = await cleanupOldAiRateLimitLogs(48);
+    } catch (e) {
+      safeLogError("send-lead-digests:rateLimitCleanup", e);
+    }
   }
 
   // Karbantartás: a LEJÁRT auto-tiltások (pl. honeypot) végleges törlése — a
   // kézi (végleges) tiltásokat nem érinti. A read-oldali szűrő amúgy is ignorálja
   // őket, ez csak a tábla-higiéniáért van.
-  try {
-    const { purgeExpiredBlocklist } = await import("@/lib/repo");
-    await purgeExpiredBlocklist();
-  } catch (e) {
-    safeLogError("send-lead-digests:blocklistPurge", e);
+  if (vanIdo("blocklist-takaritas")) {
+    try {
+      const { purgeExpiredBlocklist } = await import("@/lib/repo");
+      await purgeExpiredBlocklist();
+    } catch (e) {
+      safeLogError("send-lead-digests:blocklistPurge", e);
+    }
   }
 
   // Mai nap kezdete UTC-ben. SZÓKÖZ-elválasztó (nem 'T'!) — a D1 datetime('now')
@@ -157,7 +181,7 @@ async function handle(req: Request): Promise<Response> {
       .all<LeadRow>();
 
     if (pendingLeads.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, searchIndexed, searchRemaining, rateLimitPurged });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, searchIndex: "hatterben", rateLimitPurged, kihagyva });
     }
 
     // Csoportosítás vállalkozónként
@@ -173,7 +197,7 @@ async function handle(req: Request): Promise<Response> {
     // Defenzív: üres tömbnél az IN () érvénytelen SQL — bár a pendingLeads>0
     // miatt ez gyakorlatilag elérhetetlen, expliciten kezeljük.
     if (businessIds.length === 0) {
-      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, searchIndexed, searchRemaining, rateLimitPurged });
+      return Response.json({ ok: true, digestsSent: 0, leadsMarked: 0, radarDigests, deadlineReminders, reviewNudges, searchIndex: "hatterben", rateLimitPurged, kihagyva });
     }
     const { results: businesses } = await getDB()
       .prepare(
@@ -241,7 +265,7 @@ async function handle(req: Request): Promise<Response> {
     return Response.json({ ok: false, error: "internal" }, { status: 500 });
   }
 
-  return Response.json({ ok: true, digestsSent, leadsMarked, errors, radarDigests, deadlineReminders, reviewNudges, searchIndexed, searchRemaining, rateLimitPurged });
+  return Response.json({ ok: true, digestsSent, leadsMarked, errors, radarDigests, deadlineReminders, reviewNudges, searchIndex: "hatterben", rateLimitPurged, kihagyva });
 }
 
 export const GET = handle;
