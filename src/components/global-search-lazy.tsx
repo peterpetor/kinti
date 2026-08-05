@@ -2,6 +2,10 @@
 
 import dynamic from "next/dynamic";
 
+// ⚠️ `loading` KELL: enélkül az `ssr: false` bailout a legközelebbi
+// Suspense-határig kúszik fel (a layoutban a route-szintű határig), és a
+// teljes lap kliens-oldali renderre esik. Ld. home-lazy.tsx indoklás.
+
 /**
  * A GlobalSearchOverlay (mindenkereső) LAZY betöltése. Az overlay minden (app)
  * oldalon ott ül, de a userek töredéke nyitja meg — eddig mégis minden oldal
@@ -12,5 +16,5 @@ import dynamic from "next/dynamic";
  */
 export const GlobalSearchOverlayLazy = dynamic(
   () => import("./global-search").then((m) => m.GlobalSearchOverlay),
-  { ssr: false },
+  { ssr: false, loading: () => null },
 );
