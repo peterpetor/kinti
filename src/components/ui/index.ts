@@ -11,6 +11,7 @@ export * from "./tab-bar";
 export * from "./sparkline";
 export * from "./search-bar";
 export * from "./headers";
+export * from "./scroll-title-bar";
 export * from "./segmented-control";
 export * from "./stat-card";
 export * from "./dropdown-menu";

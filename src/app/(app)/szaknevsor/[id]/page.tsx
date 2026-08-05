@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BusinessCard, Icon, ListGroup, ListRow, SectionHeader } from "@/components/ui";
+import { BusinessCard, Icon, ListGroup, ListRow, ScrollTitleBar, SectionHeader } from "@/components/ui";
 import { getBusinessById, getReviewsByBusiness, getSimilarBusinesses, getPracticeColleagues, recordBusinessSearchTerm, toPublicBusiness, businessToListItem } from "@/lib/repo";
 import { parseDbDate, dbDateOnly } from "@/lib/dates";
 import { mediaUrl } from "@/lib/media";
@@ -422,6 +422,24 @@ export default async function BusinessPage({
             className="mt-1"
           />
         </div>
+        {/* ⚠️ Beúszó cím-sáv. Ez az adatlap az app leghosszabb oldala, és a
+            felhasználók java keresőből, MÉLY-LINKKEL érkezik ide. Görgetés
+            közben eddig sem a vállalkozás neve, sem visszaút nem látszott: a
+            hero tetején ülő vissza-gomb pont akkor tűnik el, amikor a legtöbb
+            szükség lenne rá. A `/szaknevsor` a fallback, mert mély-linknél nincs
+            értelmes böngésző-előzmény. */}
+        <ScrollTitleBar
+          title={b.name}
+          actions={
+            <Link
+              href="/szaknevsor"
+              aria-label="Vissza a szaknévsorhoz"
+              className="grid h-9 w-9 place-items-center rounded-[11px] bg-surface-alt text-ink"
+            >
+              <Icon name="arrowLeft" size={17} strokeWidth={2.3} />
+            </Link>
+          }
+        />
         {b.verified && (
           <p
             title="Az üzemeltető meggyőződött róla, hogy valódi magyarul beszélő vállalkozás — ez NEM minőségi garancia, a szakképesítést és a munka minőségét nem ellenőrizzük."

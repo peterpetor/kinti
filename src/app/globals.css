@@ -482,6 +482,48 @@
     }
   }
 
+  /* ── Beúszó cím-sáv (ScrollTitleBar) ──────────────────────────────────────
+     A nagy cím kigörgésekor egy áttetsző sáv ereszkedik le a lap tetejére.
+
+     ⚠️ NEM `display: none` A REJTETT ÁLLAPOT. A megjelenéshez animáció kell,
+     ahhoz pedig az elemnek a DOM-ban és a layoutban KELL lennie — a `display`
+     váltása nem interpolálható, a sáv egyik képkockáról a másikra pattanna be.
+     Ezért `opacity` + `translateY` + `visibility` hármas: a `visibility` az,
+     ami a rejtett sávot kiveszi a találati/kattintási rétegből (a puszta
+     `opacity: 0` elem még FOGNÁ a koppintásokat a lap tetején — vagyis a
+     felhasználó egy láthatatlan sávra koppintana a tartalom helyett).
+
+     ⚠️ A `visibility` átmenete SZÁNDÉKOSAN lépcsős (`step-end` / késleltetés):
+     ha együtt fade-elne, a sáv az eltűnés teljes ideje alatt kattintható
+     maradna, illetve megjelenéskor az animáció előtt már fogná az érintést. */
+  .kinti-title-bar {
+    /* Tömörebb üveg, mint a TabBaré: itt folyamatos szöveg ül a rétegen, és a
+       0,5-ös alapérték mellett a mögötte elgörgő tartalom belelógna a betűkbe.
+       ⚠️ Ez NEM elég önmagában: a `backdrop-blur` az, ami a mögötte úszó
+       tartalmat elmossa — átlátszóság önmagában csak halványítana. */
+    --glass-a: 0.86;
+    transition:
+      opacity 0.22s var(--kinti-ease),
+      transform 0.28s var(--kinti-spring),
+      visibility 0s linear 0.22s;
+  }
+  .kinti-title-bar-ki {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+  }
+  .kinti-title-bar-be {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0s, 0s, 0s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kinti-title-bar { transition: opacity 0.01s linear, visibility 0s linear 0.01s; }
+    .kinti-title-bar-ki,
+    .kinti-title-bar-be { transform: none; }
+  }
+
   /* Segmented control csúszó kapszulája (SegmentedControl).
      A rugós görbe adja a natív érzetet: a kapszula átcsúszik, épphogy túlfut,
      és beül. `will-change` NÉLKÜL — az elem ritkán mozdul, a folyamatos réteg-
@@ -760,9 +802,16 @@
    Használat: <div class="glass"> ... </div>
    =========================================================================== */
 @layer components {
+  /* ⚠️ AZ ÁTLÁTSZÓSÁG VÁLTOZÓ, NEM FIX. A 0,5 a lebegő TabBar-hoz jó (nagy
+     ikonok, rövid feliratok, a mögötte átsuhanó kártyák adják a mélységet),
+     de egy FOLYAMATOS SZÖVEGET hordozó sávnál kevés: a mögötte elgörgő
+     tartalom belelóg a betűkbe.
+     Custom property, hogy a felülírás LAYER-FÜGGETLEN legyen — a `.glass` a
+     components layerben él, egy sima háttér-felülírás a base layerből nem
+     tudná legyőzni. */
   .glass {
     @apply relative overflow-hidden backdrop-blur-md;
-    background: rgb(var(--surface) / 0.5);
+    background: rgb(var(--surface) / var(--glass-a, 0.5));
   }
   .glass::after {
     content: "";

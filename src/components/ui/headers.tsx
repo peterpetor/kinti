@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { DropdownMenu } from "./dropdown-menu";
+import { ScrollTitleBar } from "./scroll-title-bar";
 
 /**
  * ScreenHeader — nézet-fejléc nagy címmel + opcionális eyebrow-val.
@@ -14,6 +15,16 @@ import { DropdownMenu } from "./dropdown-menu";
  *
  * `right` — KIEGÉSZÍTŐ akció (pl. kereső ikon), a menü MELLETT jelenik meg
  * (nem helyette). `back` — a vissza-gomb node-ja (al-oldalakon).
+ *
+ * BEÚSZÓ CÍM-SÁV: ha a nagy cím kigörgött, egy áttetsző sáv ereszkedik le a lap
+ * tetejére a kicsinyített címmel és a vissza-gombbal (ScrollTitleBar).
+ *
+ * ⚠️ CSAK AL-OLDALON, és ez SZIMMETRIKUS a menü-szabállyal. Root-oldalon a
+ * navigációt az alsó TabBar adja, a cím pedig („Szia!", „Szaknévsor") görgetés
+ * közben nem hordoz információt — ott a sáv csak elvenné a képernyő tetejét.
+ * Al-oldalon viszont KÉT valós rést zár be: a cím eltűnésével elvész, hogy
+ * melyik tételnél járunk, és a vissza-gomb pont akkor nem elérhető, amikor a
+ * felhasználó a legmélyebben van a tartalomban.
  */
 export function ScreenHeader({
   eyebrow,
@@ -22,6 +33,7 @@ export function ScreenHeader({
   right,
   back,
   menu,
+  stickyTitle,
   className,
 }: {
   eyebrow?: ReactNode;
@@ -31,11 +43,15 @@ export function ScreenHeader({
   back?: ReactNode;
   /** Felülírja a szabályt: explicit true → mindig menü; false → soha. Alapból: csak root-on. */
   menu?: boolean;
+  /** Felülírja a beúszó cím-sáv szabályát. Alapból: csak al-oldalon (van `back`). */
+  stickyTitle?: boolean;
   className?: string;
 }) {
   // A szabály: menü a root oldalakon (nincs back); al-oldalon (van back) nincs.
   const showMenu = menu ?? !back;
-  return (
+  const sav = stickyTitle ?? Boolean(back);
+
+  const header = (
     <header className={cn("flex items-start justify-between gap-3", className)}>
       {left && <div className="shrink-0">{left}</div>}
       <div className="min-w-0 flex-1">
@@ -54,6 +70,15 @@ export function ScreenHeader({
         {showMenu && <DropdownMenu />}
       </div>
     </header>
+  );
+
+  if (!sav) return header;
+  // ⚠️ A MENÜ NEM KERÜL A SÁVBA. Két DropdownMenu-példány két külön nyitott
+  // állapotot és két billentyű-figyelőt jelentene ugyanarra a parancsra.
+  return (
+    <ScrollTitleBar title={title} actions={back}>
+      {header}
+    </ScrollTitleBar>
   );
 }
 
