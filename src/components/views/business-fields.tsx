@@ -126,7 +126,7 @@ export function WorkingHoursEditor({
       </div>
       <p className="px-1 text-[11.5px] font-semibold text-ink-muted">
         Előnézet:{" "}
-        <span className={status.isOpen ? "text-success" : "text-accent"}>
+        <span className={status.isOpen ? "text-success-ink" : "text-accent"}>
           {status.statusText}
         </span>{" "}
         · {status.detailText}

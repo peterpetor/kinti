@@ -209,7 +209,7 @@ export function SalaryCalculatorAT() {
                     <span>Adó (6%, 620 € mentes)</span><span className="text-accent">- {fmt(r.specialTax)}</span>
                   </div>
                   <div className="flex justify-between text-[13px] font-extrabold text-ink pt-1 border-t border-success/20 mt-1">
-                    <span>Nettó extra (évente)</span><span className="text-success">{fmt(r.specialNet)}</span>
+                    <span>Nettó extra (évente)</span><span className="text-success-ink">{fmt(r.specialNet)}</span>
                   </div>
                 </div>
               )}
@@ -242,7 +242,7 @@ export function SalaryCalculatorAT() {
             <div className="h-full rounded-pill bg-success transition-all" style={{ width: `${percentile}%` }} />
           </div>
           <p className="mt-1.5 text-[12.5px] leading-snug text-ink-muted">
-            A becslés szerint a teljes munkaidős dolgozók <strong className="text-success">~{percentile}%-ánál</strong> keresel többet ezzel a bruttóval.
+            A becslés szerint a teljes munkaidős dolgozók <strong className="text-success-ink">~{percentile}%-ánál</strong> keresel többet ezzel a bruttóval.
           </p>
         </div>
 

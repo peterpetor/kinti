@@ -56,7 +56,7 @@ export function DailyStreak() {
         <p className="text-[14.5px] font-extrabold tracking-tight text-ink">
           {current} napos sorozat
           {visit.incremented && (
-            <span className="ml-1.5 text-[12px] font-bold text-success">+{visit.awardedXp} XP</span>
+            <span className="ml-1.5 text-[12px] font-bold text-success-ink">+{visit.awardedXp} XP</span>
           )}
         </p>
         <p className="text-[11.5px] leading-snug text-ink-muted">

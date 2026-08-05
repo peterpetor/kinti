@@ -62,6 +62,8 @@ const config: Config = {
         "pro-ink": "rgb(var(--pro-ink) / <alpha-value>)",
         // A csillag-arany SZOVEGKENT (vilagos lapon 1,82:1 nyersen).
         "star-ink": "rgb(var(--star-ink) / <alpha-value>)",
+        // A siker-zold SZOVEGKENT (sotet feluleten 2,51:1 nyersen).
+        "success-ink": "rgb(var(--success-ink) / <alpha-value>)",
         // ⚠️ A márka-zöld SZÖVEGKÉNT. Sötét témán a `primary` a HÁTTÉR-érték (hogy
         // a fehér felirat olvasható legyen rajta), szövegként viszont csak 3,57:1
         // — AA alatt. `text-primary` HELYETT ezt használd.

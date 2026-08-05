@@ -150,7 +150,7 @@ export function LeaderboardView() {
         <section className="rounded-card border-2 border-success/25 bg-success/5 p-4 shadow-card">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[12px] font-bold uppercase tracking-wide text-success">A helyezésed</p>
+              <p className="text-[12px] font-bold uppercase tracking-wide text-success-ink">A helyezésed</p>
               <p className="mt-0.5 text-[15px] font-extrabold text-ink">
                 {me ? `#${me.rank}` : "—"} · {myNick}
                 {me && <span className="ml-1.5 text-[13px] font-bold text-ink-muted">{me.score} XP</span>}
@@ -218,7 +218,7 @@ export function LeaderboardView() {
                   </span>
                   <span className="min-w-0 flex-1 truncate text-[14px] font-bold text-ink">
                     {e.nickname}
-                    {isMe && <span className="ml-1.5 text-[11px] font-bold text-success">(te)</span>}
+                    {isMe && <span className="ml-1.5 text-[11px] font-bold text-success-ink">(te)</span>}
                     {/* A top 3 meghívó „Kinti-nagykövet" jelölést kap. */}
                     {category === "referral" && i < 3 && (
                       <span className="ml-1.5 rounded-pill bg-star/15 px-1.5 py-0.5 text-[10px] font-extrabold text-star-ink">

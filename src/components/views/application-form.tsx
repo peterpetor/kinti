@@ -73,7 +73,7 @@ export function ApplicationForm({ jobId, jobTitle, prefill }: Props) {
   if (submitted) {
     return (
       <div className="rounded-card border border-line bg-surface p-6 shadow-card text-center animate-fade-up">
-        <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-success/15 text-success grid place-items-center">
+        <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-success/15 text-success-ink grid place-items-center">
           <Icon name="check" size={32} strokeWidth={2.5} />
         </div>
         <h2 className="text-[20px] font-extrabold tracking-tight text-ink">Jelentkezés elküldve!</h2>

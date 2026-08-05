@@ -247,18 +247,18 @@ export function DropdownMenu() {
       defaultOpen: true,
       items: [
         ...(has("nemet-oneletrajz")
-          ? [{ key: "cv", label: "Német önéletrajz-készítő", href: "/nemet-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
+          ? [{ key: "cv", label: "Német önéletrajz-készítő", href: "/nemet-oneletrajz", tint: "bg-success/10 text-success-ink", icon: { name: "document" as const } }]
           : []),
         ...(has("holland-oneletrajz")
-          ? [{ key: "cvnl", label: "Holland önéletrajz-készítő", href: "/holland-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
+          ? [{ key: "cvnl", label: "Holland önéletrajz-készítő", href: "/holland-oneletrajz", tint: "bg-success/10 text-success-ink", icon: { name: "document" as const } }]
           : []),
         ...(has("angol-oneletrajz")
-          ? [{ key: "cven", label: "Angol önéletrajz-készítő", href: "/angol-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
+          ? [{ key: "cven", label: "Angol önéletrajz-készítő", href: "/angol-oneletrajz", tint: "bg-success/10 text-success-ink", icon: { name: "document" as const } }]
           : []),
         ...(has("spanyol-oneletrajz")
-          ? [{ key: "cves", label: "Spanyol önéletrajz-készítő", href: "/spanyol-oneletrajz", tint: "bg-success/10 text-success", icon: { name: "document" as const } }]
+          ? [{ key: "cves", label: "Spanyol önéletrajz-készítő", href: "/spanyol-oneletrajz", tint: "bg-success/10 text-success-ink", icon: { name: "document" as const } }]
           : []),
-        { key: "cvaudit", label: "AI CV-asszisztens", href: "/allasok/cv-audit", tint: "bg-success/10 text-success", icon: { name: "sparkles" }, badge: "pro" },
+        { key: "cvaudit", label: "AI CV-asszisztens", href: "/allasok/cv-audit", tint: "bg-success/10 text-success-ink", icon: { name: "sparkles" }, badge: "pro" },
         ...(has("szakmai-szotar")
           ? [{ key: "szotar", label: "Szakmai szótár", href: "/allasok/szakmai-szotar", tint: "bg-star/10 text-star-ink", icon: { name: "document" }, badge: "pro" } as MenuItem]
           : []),
@@ -339,7 +339,7 @@ export function DropdownMenu() {
       title: "Jogi & Segítség",
       defaultOpen: true,
       items: [
-        { key: "segitseg", label: "Segítség és GYIK", href: "/segitseg", tint: "bg-success/10 text-success", icon: { name: "question" } },
+        { key: "segitseg", label: "Segítség és GYIK", href: "/segitseg", tint: "bg-success/10 text-success-ink", icon: { name: "question" } },
         { key: "impresszum", label: "Impresszum", href: "/impresszum", tint: "bg-ink-muted/10 text-ink-muted", icon: { name: "flag" } },
         { key: "adatvedelem", label: "Adatvédelem", href: "/adatvedelem", tint: "bg-ink-muted/10 text-ink-muted", icon: { name: "bookmark" } },
         { key: "aszf", label: "ÁSZF", href: "/aszf", tint: "bg-ink-muted/10 text-ink-muted", icon: { name: "list" } },

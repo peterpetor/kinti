@@ -32,7 +32,7 @@ export function JobBoardDecideButtons({ table, id, current }: Props) {
   if (current === 1) {
     return (
       <div className="flex items-center gap-2">
-        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-extrabold uppercase text-success">
+        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-extrabold uppercase text-success-ink">
           Jóváhagyva
         </span>
         <button

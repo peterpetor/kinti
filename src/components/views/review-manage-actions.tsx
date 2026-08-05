@@ -37,7 +37,7 @@ export function ReviewManageActions({ token }: { token: string }) {
   if (done) {
     return (
       <div className="rounded-card border border-success/30 bg-surface p-4 text-center shadow-card">
-        <div className="mx-auto grid h-10 w-10 place-items-center rounded-2xl bg-success/15 text-success">
+        <div className="mx-auto grid h-10 w-10 place-items-center rounded-2xl bg-success/15 text-success-ink">
           <Icon name="check" size={18} strokeWidth={2.4} />
         </div>
         <p className="mt-2 text-[13.5px] font-bold text-ink">Vélemény törölve.</p>

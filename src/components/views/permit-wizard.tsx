@@ -569,13 +569,13 @@ function ResultView({ result, onRestart, country }: { result: WizardResult; onRe
       {/* Pros / Cons */}
       <section className="grid sm:grid-cols-2 gap-2">
         <div className="rounded-card border border-success/30 bg-success/5 p-4 shadow-card">
-          <h4 className="mb-2 text-[12px] font-extrabold uppercase tracking-wide text-success">
+          <h4 className="mb-2 text-[12px] font-extrabold uppercase tracking-wide text-success-ink">
             ✓ Előnyök
           </h4>
           <ul className="space-y-1.5 text-[12px] leading-snug text-ink">
             {primary.pros.map((p, i) => (
               <li key={i} className="flex gap-2">
-                <span className="text-success shrink-0">+</span>
+                <span className="text-success-ink shrink-0">+</span>
                 <span>{p}</span>
               </li>
             ))}

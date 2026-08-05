@@ -301,7 +301,7 @@ export default async function AdminPage({ searchParams }: { searchParams: { c?: 
         ) : (
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="rounded-card border border-line bg-surface p-3 shadow-card">
-              <p className="mb-2 text-[11.5px] font-bold uppercase tracking-wide text-success">Leghasznosabbak</p>
+              <p className="mb-2 text-[11.5px] font-bold uppercase tracking-wide text-success-ink">Leghasznosabbak</p>
               {fbTop.length === 0 ? (
                 <p className="text-[12px] text-ink-muted">Még nincs 👍.</p>
               ) : (

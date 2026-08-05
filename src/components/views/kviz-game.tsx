@@ -145,7 +145,7 @@ export function KvizGame() {
               isCorrect ? "border-success/30 bg-success/10" : "border-accent/30 bg-accent-soft",
             )}
           >
-            <p className={cn("text-[13px] font-extrabold", isCorrect ? "text-success" : "text-accent")}>
+            <p className={cn("text-[13px] font-extrabold", isCorrect ? "text-success-ink" : "text-accent")}>
               {isCorrect ? "✓ Helyes!" : "✕ Sajnos nem"}
             </p>
             <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink">
@@ -225,7 +225,7 @@ function QuestionCard({
                 {String.fromCharCode(65 + idx)}
               </span>
               <span className="min-w-0 flex-1 text-[14px] font-semibold text-ink">{opt}</span>
-              {isCorrect && <Icon name="check" size={16} strokeWidth={2.6} className="text-success shrink-0" />}
+              {isCorrect && <Icon name="check" size={16} strokeWidth={2.6} className="text-success-ink shrink-0" />}
               {isWrong && <Icon name="close" size={16} strokeWidth={2.6} className="text-accent shrink-0" />}
             </button>
           );
@@ -333,7 +333,7 @@ function ResultScreen({
                     A te választásod: <strong>{q.options[userAnswer]}</strong>
                   </p>
                 )}
-                <p className="text-success">
+                <p className="text-success-ink">
                   Helyes: <strong>{q.options[q.correct]}</strong>
                 </p>
               </div>

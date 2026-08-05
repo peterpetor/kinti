@@ -110,7 +110,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
           {b.verified && (
             <span
               title="Az üzemeltető meggyőződött róla, hogy valódi magyarul beszélő vállalkozás — ez NEM minőségi garancia, a szakképesítést és a munka minőségét nem ellenőrizzük."
-              className="inline-flex shrink-0 items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[10.5px] font-bold text-success"
+              className="inline-flex shrink-0 items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[10.5px] font-bold text-success-ink"
             >
               <Icon name="check" size={9} strokeWidth={3} />
               Hiteles
@@ -157,7 +157,7 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
               <span
                 className={cn(
                   "font-semibold",
-                  openStatus.isOpen ? (openStatus.closingSoon ? "text-star-ink" : "text-success") : "text-accent",
+                  openStatus.isOpen ? (openStatus.closingSoon ? "text-star-ink" : "text-success-ink") : "text-accent",
                 )}
               >
                 {openStatus.isOpen ? "Nyitva" : "Zárva"}

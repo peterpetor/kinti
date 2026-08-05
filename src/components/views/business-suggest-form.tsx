@@ -84,7 +84,7 @@ export function BusinessSuggestForm({
   if (phase === "sent") {
     return (
       <div className="rounded-card border border-line bg-surface p-6 text-center shadow-card">
-        <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success">
+        <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success-ink">
           <Icon name="check" size={22} strokeWidth={2.4} />
         </div>
         <h2 className="mt-3 text-[18px] font-extrabold text-ink">Köszönjük az ajánlást! 🙏</h2>

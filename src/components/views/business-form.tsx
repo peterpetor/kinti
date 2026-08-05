@@ -309,7 +309,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
       return (
         <div className="rounded-card border border-line bg-surface p-6 shadow-card">
           <div className="mb-4 text-center">
-            <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success-ink">
               <Icon name="check" size={22} strokeWidth={2.4} />
             </div>
             <h2 className="mt-3 text-[18px] font-extrabold tracking-tight text-ink">
@@ -475,7 +475,7 @@ export function BusinessForm({ categories, turnstileSiteKey }: BusinessFormProps
           <FieldError msg={errors.address} />
         )}
         {form.lat != null && form.lng != null ? (
-          <p className="mt-1 flex items-center gap-1 px-1 text-[11.5px] font-semibold text-success">
+          <p className="mt-1 flex items-center gap-1 px-1 text-[11.5px] font-semibold text-success-ink">
             <Icon name="check" size={12} strokeWidth={2.6} className="shrink-0" />
             Pontos hely rögzítve a térképen — a {regionWord(country)} automatikusan beállt.
           </p>

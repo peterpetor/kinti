@@ -48,7 +48,7 @@ export function AdminVerifyToggle({
       className={cn(
         "inline-flex items-center gap-1 rounded-pill border px-2.5 py-1 text-[11px] font-bold transition",
         verified
-          ? "border-success/30 bg-success/10 text-success"
+          ? "border-success/30 bg-success/10 text-success-ink"
           : "border-line bg-surface text-ink-muted",
         busy && "opacity-60",
       )}

@@ -103,7 +103,7 @@ export default async function CandidatesPage({
               <div className="flex items-start justify-between gap-2">
                 <h2 className="text-[15px] font-extrabold text-ink">{c.fullName}</h2>
                 {c.expectedSalaryMin != null && (
-                  <span className="shrink-0 rounded-[8px] bg-success/10 px-2.5 py-1 text-[12px] font-bold text-success">
+                  <span className="shrink-0 rounded-[8px] bg-success/10 px-2.5 py-1 text-[12px] font-bold text-success-ink">
                     ~{c.expectedSalaryMin} CHF+
                   </span>
                 )}

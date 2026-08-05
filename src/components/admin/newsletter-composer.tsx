@@ -133,7 +133,7 @@ export function NewsletterComposer({
 
       {error && <div className="rounded-[10px] bg-accent/10 px-3 py-2.5 text-[12.5px] font-semibold text-accent">{error}</div>}
       {phase === "done" && result && (
-        <div className="rounded-[10px] border border-success/30 bg-success/10 px-3 py-2.5 text-[12.5px] font-semibold text-success">
+        <div className="rounded-[10px] border border-success/30 bg-success/10 px-3 py-2.5 text-[12.5px] font-semibold text-success-ink">
           ✅ Elküldve {result.sent} címzettnek{result.skipped > 0 ? ` · ${result.skipped} kimaradt a napi keret miatt (a maradékot holnap kiküldheted)` : ""}.
         </div>
       )}

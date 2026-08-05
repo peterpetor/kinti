@@ -186,7 +186,7 @@ export function LogoUploader({ currentKey, fallbackGradient, manageToken }: Logo
       )}
 
       {phase === "done" && !error && (
-        <p className="mt-2 inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-success">
+        <p className="mt-2 inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-success-ink">
           <Icon name="check" size={12} strokeWidth={2.4} /> Mentve — az új logó már megjelenik a profilon.
         </p>
       )}

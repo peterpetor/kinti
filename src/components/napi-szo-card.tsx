@@ -113,7 +113,7 @@ export function NapiSzoCard() {
           tanulás, nem csak elolvasott érdekesség. */}
       <div className="mt-2.5 flex items-center gap-2">
         {jelolt ? (
-          <p className="text-[11.5px] font-semibold text-success">
+          <p className="text-[11.5px] font-semibold text-success-ink">
             {jelolt === "tudom" ? "✓ Elmentve tudottként" : "🔄 Holnap újra elődhozzuk"}
           </p>
         ) : (

@@ -138,7 +138,7 @@ function Summary({
           <h3
             className={cn(
               "text-[16px] font-extrabold",
-              ok ? "text-success" : "text-accent",
+              ok ? "text-success-ink" : "text-accent",
             )}
           >
             {ok
@@ -251,7 +251,7 @@ function CategoryRow({
   const step = category.unit === "db" ? 10 : 0.5;
 
   const colors = {
-    ok: { border: "border-success/30", bar: "bg-success", pill: "bg-success/15 text-success" },
+    ok: { border: "border-success/30", bar: "bg-success", pill: "bg-success/15 text-success-ink" },
     warning: { border: "border-star/40", bar: "bg-star", pill: "bg-star/15 text-[#9a6b00]" },
     over: { border: "border-accent/40", bar: "bg-accent", pill: "bg-accent/15 text-accent" },
     prohibited: { border: "border-accent", bar: "bg-accent", pill: "bg-accent text-white" },

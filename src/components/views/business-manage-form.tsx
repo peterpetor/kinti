@@ -225,7 +225,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
           }}
         />
         {coordPicked && lat != null && lng != null ? (
-          <p className="mt-2 flex items-center gap-1 text-[11.5px] font-semibold text-success">
+          <p className="mt-2 flex items-center gap-1 text-[11.5px] font-semibold text-success-ink">
             <Icon name="check" size={12} strokeWidth={2.6} className="shrink-0" />
             Pontos hely rögzítve — mentés után ide kerül a térkép-pin.
           </p>
@@ -387,7 +387,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
       )}
 
       {phase === "saved" && (
-        <div className="rounded-card border border-success/30 bg-success/10 px-4 py-3 text-[12.5px] font-semibold text-success">
+        <div className="rounded-card border border-success/30 bg-success/10 px-4 py-3 text-[12.5px] font-semibold text-success-ink">
           ✓ Mentve.
         </div>
       )}

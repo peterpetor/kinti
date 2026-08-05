@@ -216,7 +216,7 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
                 <p className={cn(
                   "text-[56px] font-extrabold leading-none",
                   stats.competitorRank.rank === 1 ? "text-star-ink" :
-                  stats.competitorRank.rank <= 3 ? "text-success" :
+                  stats.competitorRank.rank <= 3 ? "text-success-ink" :
                   "text-ink"
                 )}>
                   {ordinalLabel(stats.competitorRank.rank)}
@@ -228,10 +228,10 @@ export function BusinessAnalyticsDashboard({ stats }: { stats: BusinessAnalytics
                   <p className="mt-2 text-[12px] font-bold text-star-ink">🥇 Te vagy a legjobban értékelt!</p>
                 )}
                 {stats.competitorRank.rank === 2 && (
-                  <p className="mt-2 text-[12px] font-bold text-success">🥈 Csak egy lépés az első helytől!</p>
+                  <p className="mt-2 text-[12px] font-bold text-success-ink">🥈 Csak egy lépés az első helytől!</p>
                 )}
                 {stats.competitorRank.rank === 3 && (
-                  <p className="mt-2 text-[12px] font-bold text-success">🥉 Top 3-ban vagy!</p>
+                  <p className="mt-2 text-[12px] font-bold text-success-ink">🥉 Top 3-ban vagy!</p>
                 )}
                 {stats.competitorRank.rank > 3 && (
                   <p className="mt-2 text-[12px] text-ink-muted">
@@ -276,7 +276,7 @@ function KpiCard({
   label: string; value: number; icon: IconName;
   accent?: boolean; success?: boolean; highlight?: boolean;
 }) {
-  const color = accent ? "text-accent" : success ? "text-success" : "text-ink";
+  const color = accent ? "text-accent" : success ? "text-success-ink" : "text-ink";
   const bg = accent ? "bg-accent/5 border-accent/15"
     : success ? "bg-success/5 border-success/15"
     : highlight ? "bg-primary/5 border-primary/15"

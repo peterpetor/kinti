@@ -50,10 +50,10 @@ export default function HirlevelPage() {
 
       {status === "success" ? (
         <div className="rounded-card border border-success/30 bg-success-soft p-5 text-center shadow-card">
-          <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/20 text-success text-xl">
+          <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/20 text-success-ink text-xl">
             ✓
           </div>
-          <h2 className="mt-3 text-[16px] font-extrabold tracking-tight text-success">
+          <h2 className="mt-3 text-[16px] font-extrabold tracking-tight text-success-ink">
             Sikeres feliratkozás!
           </h2>
           <p className="mx-auto mt-2 max-w-sm text-pretty text-[13px] leading-relaxed text-success/90">

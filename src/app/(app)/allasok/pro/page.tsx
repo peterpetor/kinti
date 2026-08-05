@@ -57,7 +57,7 @@ export default async function KintiProPage() {
           </p>
           
           {alreadyPro ? (
-            <div className="w-full rounded-full bg-success/15 py-4 text-center text-[15px] font-extrabold text-success">
+            <div className="w-full rounded-full bg-success/15 py-4 text-center text-[15px] font-extrabold text-success-ink">
               ✅ Aktív PRO előfizetésed van
             </div>
           ) : (

@@ -101,7 +101,7 @@ export function RentCompare() {
       >
         {cheaper ? (
           <>
-            <p className="text-[11px] font-bold uppercase tracking-wide text-success">Olcsóbb választás (1. év)</p>
+            <p className="text-[11px] font-bold uppercase tracking-wide text-success-ink">Olcsóbb választás (1. év)</p>
             <h2 className="mt-1 text-[20px] font-extrabold leading-tight text-ink">
               Lakás {cheaper} — évi {fmt(annualDelta, cur)}-fel kevesebb
             </h2>
@@ -168,7 +168,7 @@ function FlatColumn({
         <span className="grid h-7 w-7 place-items-center rounded-full bg-primary text-[13px] font-black text-white">
           {tag}
         </span>
-        {highlight && <span className="text-[10px] font-black uppercase text-success">olcsóbb</span>}
+        {highlight && <span className="text-[10px] font-black uppercase text-success-ink">olcsóbb</span>}
       </div>
 
       <label className="block text-[10px] font-bold uppercase tracking-wide text-ink-faint">Havi bér ({cur})</label>
@@ -224,7 +224,7 @@ function CmpRow({ label, a, b, cur, strong }: { label: string; a: number; b: num
         className={cn(
           "w-[5.5rem] whitespace-nowrap text-right text-[12.5px] tabular-nums",
           strong ? "font-extrabold" : "font-semibold",
-          aBetter ? "text-success" : "text-ink",
+          aBetter ? "text-success-ink" : "text-ink",
         )}
       >
         {fmt(a, cur)}
@@ -233,7 +233,7 @@ function CmpRow({ label, a, b, cur, strong }: { label: string; a: number; b: num
         className={cn(
           "w-[5.5rem] whitespace-nowrap text-right text-[12.5px] tabular-nums",
           strong ? "font-extrabold" : "font-semibold",
-          bBetter ? "text-success" : "text-ink",
+          bBetter ? "text-success-ink" : "text-ink",
         )}
       >
         {fmt(b, cur)}

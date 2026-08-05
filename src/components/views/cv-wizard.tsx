@@ -560,7 +560,7 @@ export function CvWizard({ locale = "de" }: { locale?: CvLocale } = {}) {
 
           {/* Opcionális, hozzájárulás-alapú mentés */}
           {saveState === "done" ? (
-            <div className="rounded-xl border border-success/30 bg-success/5 px-3 py-2.5 text-[13px] font-semibold text-success">
+            <div className="rounded-xl border border-success/30 bg-success/5 px-3 py-2.5 text-[13px] font-semibold text-success-ink">
               ✓ Profilod mentve — ha megfelelő állás van, magyar munkaközvetítő megkeres. Törlést az info@kinti.app-on kérhetsz.
             </div>
           ) : (

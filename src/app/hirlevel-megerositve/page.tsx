@@ -43,7 +43,7 @@ export default function HirlevelMegerositvePage({
 
       <div
         className={`grid h-12 w-12 place-items-center rounded-2xl ${
-          success ? "bg-success/15 text-success" : "bg-accent/15 text-accent"
+          success ? "bg-success/15 text-success-ink" : "bg-accent/15 text-accent"
         }`}
       >
         <Icon name={success ? "check" : "close"} size={22} strokeWidth={2.4} />

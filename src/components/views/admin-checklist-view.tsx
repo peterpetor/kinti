@@ -129,7 +129,7 @@ export function AdminChecklistView({ checklist }: { checklist: AdminChecklist })
           />
         </div>
         {progress === 100 && (
-          <p className="mt-2 flex items-center gap-1.5 text-[12.5px] font-bold text-success">
+          <p className="mt-2 flex items-center gap-1.5 text-[12.5px] font-bold text-success-ink">
             <Icon name="check" size={14} strokeWidth={3} className="shrink-0" />
             Minden lépés kész — gratulálunk!
           </p>

@@ -79,7 +79,7 @@ export function ReviewNameEditor({
         </button>
       </div>
       {saved && (
-        <p className="mt-2 text-[12px] font-bold text-success">✓ Név átírva — már így jelenik meg.</p>
+        <p className="mt-2 text-[12px] font-bold text-success-ink">✓ Név átírva — már így jelenik meg.</p>
       )}
       {error && (
         <p className="mt-2 text-[12px] font-semibold text-accent">{error}</p>

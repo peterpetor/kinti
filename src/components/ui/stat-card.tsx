@@ -26,7 +26,7 @@ export function StatCard({ icon, value, label, delta, accent }: StatCardProps) {
       </div>
       <div className="text-[22px] font-extrabold leading-none tracking-tight text-ink">{value}</div>
       <div className="mt-0.5 text-[11.5px] font-semibold leading-tight text-ink-muted">{label}</div>
-      {delta && <div className="mt-1 text-[11px] font-bold text-success">↑ {delta}</div>}
+      {delta && <div className="mt-1 text-[11px] font-bold text-success-ink">↑ {delta}</div>}
     </div>
   );
 }

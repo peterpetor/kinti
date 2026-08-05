@@ -124,7 +124,7 @@ export function ReviewForm({
       return (
         <div className="rounded-card border border-line bg-surface p-5 shadow-card">
           <div className="mb-4 text-center">
-            <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success-ink">
               <Icon name="check" size={20} strokeWidth={2.4} />
             </div>
             <h3 className="mt-3 text-[16px] font-extrabold tracking-tight text-ink">

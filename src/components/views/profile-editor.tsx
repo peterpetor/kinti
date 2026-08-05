@@ -376,7 +376,7 @@ export function ProfileEditor({
                 }}
               />
               {coordPicked && lat != null && lng != null ? (
-                <p className="flex items-center gap-1 px-0.5 text-[11.5px] font-semibold text-success">
+                <p className="flex items-center gap-1 px-0.5 text-[11.5px] font-semibold text-success-ink">
                   <Icon name="check" size={12} strokeWidth={2.6} className="shrink-0" />
                   Pontos hely rögzítve — mentés után ide kerül a térkép-pin.
                 </p>
@@ -714,7 +714,7 @@ export function ProfileEditor({
 
         {/* Mentés visszajelzés */}
         {phase === "success" && (
-          <div className="rounded-[12px] border border-success/30 bg-success-soft px-3 py-2.5 text-[12px] font-bold text-success flex items-center gap-1.5 animate-fade-in">
+          <div className="rounded-[12px] border border-success/30 bg-success-soft px-3 py-2.5 text-[12px] font-bold text-success-ink flex items-center gap-1.5 animate-fade-in">
             <Icon name="check" size={13} strokeWidth={2.4} /> A profil adatai sikeresen frissítve!
           </div>
         )}
@@ -819,7 +819,7 @@ export function ProfileEditor({
                   <div
                     className={cn(
                       "font-bold flex items-center gap-1 text-[11px]",
-                      previewStatus.isOpen ? "text-success" : "text-accent"
+                      previewStatus.isOpen ? "text-success-ink" : "text-accent"
                     )}
                   >
                     <span

@@ -50,10 +50,21 @@ function arany(elo: RGB, hatter: RGB): number {
 }
 
 const SORTORES = String.fromCharCode(10);
-const NYERS_PRIMARY = new RegExp("\btext-primary\b(?![-/])");
-const NYERS_STAR = new RegExp("\btext-star\b(?![-/])");
-const BG_STAR = new RegExp("\bbg-star\b(?![-/])");
-const FEHER = new RegExp("\btext-white\b");
+
+/**
+ * ⚠️ REGEX-LITERÁL, NEM `new RegExp("…")`.
+ * Egy JS-STRINGBEN a `\b` nem szóhatár, hanem BACKSPACE (U+0008) — a
+ * `new RegExp("\btext-primary\b")` tehát sosem illeszkedik semmire, és az őr
+ * NÉMÁN mindig zöld lesz. Pontosan ez történt az első nekifutásnál: a tesztek
+ * átmentek, miközben nem őriztek semmit. A literál alakot nem lehet így elrontani.
+ */
+const NYERS_PRIMARY = /\btext-primary\b(?![-/])/;
+const NYERS_STAR = /\btext-star\b(?![-/])/;
+const NYERS_SUCCESS = /\btext-success\b(?![-/])/;
+const NYERS_PRO = /\btext-pro\b(?![-/])/;
+const BG_STAR = /\bbg-star\b(?![-/])/;
+const BG_PRO = /\bbg-pro\b(?!\/)/;
+const FEHER = /\btext-white\b/;
 
 /** WCAG AA normál szövegre. */
 const AA = 4.5;
@@ -98,6 +109,14 @@ describe.each([
     for (const [fnev, bg] of feluletek) {
       const a = arany(fg, bg);
       expect(a, `--pro-ink a ${fnev} felületen: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
+    }
+  });
+
+  it("a siker-zöld SZÖVEGKÉNT olvasható (`--success-ink`)", () => {
+    const fg = token(blokk, "success-ink");
+    for (const [fnev, bg] of feluletek) {
+      const a = arany(fg, bg);
+      expect(a, `--success-ink a ${fnev} felületen: ${a.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
     }
   });
 
@@ -219,6 +238,17 @@ describe("PRO-arany — nincs visszacsúszás", () => {
       });
     }
     expect(vetkesek, `használd a \`text-star-ink\`-et: ${vetkesek.slice(0, 8).join(", ")}`).toEqual([]);
+  });
+
+  it("⚠️ nincs nyers `text-success` (sötét felületen 2,51:1) — `text-success-ink` a helyes", () => {
+    const vetkesek: string[] = [];
+    for (const f of fajlok) {
+      const sorok = readFileSync(resolve(__dirname, "../..", f), "utf8").split(SORTORES);
+      sorok.forEach((sor, i) => {
+        if (NYERS_SUCCESS.test(sor)) vetkesek.push(`${f}:${i + 1}`);
+      });
+    }
+    expect(vetkesek, `használd a \`text-success-ink\`-et: ${vetkesek.slice(0, 8).join(", ")}`).toEqual([]);
   });
 
   it("⚠️ nincs nyers `text-pro` (világos lapon 2,18:1) — `text-pro-ink` a helyes", () => {

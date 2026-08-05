@@ -56,7 +56,7 @@ export function EmployerProfileForm({ employer }: { employer: Employer }) {
       )}
       
       {success && (
-        <div className="rounded-[12px] bg-success/10 px-4 py-3 text-[13px] font-semibold text-success">
+        <div className="rounded-[12px] bg-success/10 px-4 py-3 text-[13px] font-semibold text-success-ink">
           A módosítások sikeresen mentve.
         </div>
       )}
@@ -103,7 +103,7 @@ export function EmployerProfileForm({ employer }: { employer: Employer }) {
         <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted">
           Cég-azonosító (UID)
           {employer.verified && (
-            <span className="ml-2 inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[10.5px] font-bold text-success">
+            <span className="ml-2 inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-1.5 py-0.5 text-[10.5px] font-bold text-success-ink">
               Hiteles
             </span>
           )}

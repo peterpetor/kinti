@@ -78,7 +78,7 @@ export default function OnboardingChecklistPage() {
             />
           </div>
           {progress === 100 && (
-            <p className="text-[12px] text-success font-bold mt-3 text-center animate-pulse">
+            <p className="text-[12px] text-success-ink font-bold mt-3 text-center animate-pulse">
               🎉 Minden hivatalos teendőt kipipáltál! Szép munka!
             </p>
           )}

@@ -323,7 +323,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                     </span>
                     {canMatch && (() => {
                       const m = jobMatchScore(proMatch!.profile!, job);
-                      const tone = m.score >= 66 ? "bg-success/15 text-success" : m.score >= 40 ? "bg-star/15 text-[#b8860b]" : "bg-surface-alt text-ink-muted";
+                      const tone = m.score >= 66 ? "bg-success/15 text-success-ink" : m.score >= 40 ? "bg-star/15 text-[#b8860b]" : "bg-surface-alt text-ink-muted";
                       return (
                         <span className={cn("rounded-full px-2.5 py-1 text-[11px] font-black", tone)}>
                           {m.score}% egyezés
@@ -341,7 +341,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                       </span>
                     )}
                     {job.salaryMin && job.salaryMax && (
-                      <span className="flex items-center gap-1.5 rounded-[8px] bg-success/10 px-2.5 py-1 text-[13px] font-bold text-success">
+                      <span className="flex items-center gap-1.5 rounded-[8px] bg-success/10 px-2.5 py-1 text-[13px] font-bold text-success-ink">
                         <Icon name="star" size={14} />
                         {job.salaryMin} - {job.salaryMax} {formatJobCurrency(job.currency)}
                       </span>

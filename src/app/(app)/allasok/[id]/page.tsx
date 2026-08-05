@@ -199,7 +199,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           {employer?.verified && (
             <span
               title="A kinti.app ellenőrizte, hogy bejegyzett svájci cég (UID alapján)."
-              className="inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-2 py-0.5 text-[11.5px] font-bold text-success"
+              className="inline-flex items-center gap-0.5 rounded-pill bg-success/15 px-2 py-0.5 text-[11.5px] font-bold text-success-ink"
             >
               <Icon name="check" size={10} strokeWidth={3} /> Hiteles cég
             </span>
@@ -215,7 +215,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
             {job.employmentType === 'full-time' ? 'Teljes munkaidő' : job.employmentType === 'part-time' ? 'Részmunkaidő' : job.employmentType}
           </span>
           {job.salaryMin && job.salaryMax && (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1.5 text-[12px] font-bold text-success">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1.5 text-[12px] font-bold text-success-ink">
               <Icon name="star" size={14} /> 
               {job.salaryMin.toLocaleString('de-CH')} - {job.salaryMax.toLocaleString('de-CH')} {formatJobCurrency(job.currency)}
             </span>
@@ -237,7 +237,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
                 A(z) <strong>{cantonName}</strong> régióban a Kintiek becsült éves bruttó mediánja{" "}
                 <strong>{cantonMedian.toLocaleString("de-CH")} {jobCountry === "CH" ? "CHF" : "EUR"}</strong>.
                 Ez az állás (évesítve) <strong>{Math.abs(diffPercent)}%-kal </strong>
-                <strong className={diffPercent >= 0 ? "text-success" : "text-accent"}>
+                <strong className={diffPercent >= 0 ? "text-success-ink" : "text-accent"}>
                   {diffPercent >= 0 ? "magasabb" : "alacsonyabb"}
                 </strong> ennél.
               </p>
@@ -255,13 +255,13 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           <section className="animate-fade-up animate-delay-100 rounded-card border-2 border-success/20 bg-success/5 p-4 shadow-card space-y-3">
             <div className="flex items-center gap-2">
               <span className="grid h-7 w-7 place-items-center rounded-[10px] bg-success/15 text-[15px]">⚡</span>
-              <h3 className="text-[13px] font-extrabold uppercase tracking-wide text-success">PRO — neked szabva</h3>
+              <h3 className="text-[13px] font-extrabold uppercase tracking-wide text-success-ink">PRO — neked szabva</h3>
             </div>
             {match && (
               <div>
                 <div className="flex items-center justify-between">
                   <span className="text-[13.5px] font-bold text-ink">Illeszkedés a profilodhoz</span>
-                  <span className="text-[18px] font-black text-success">{match.score}%</span>
+                  <span className="text-[18px] font-black text-success-ink">{match.score}%</span>
                 </div>
                 <div className="mt-1.5 h-2.5 w-full overflow-hidden rounded-pill bg-surface-alt">
                   <div className="h-full rounded-pill bg-success" style={{ width: `${match.score}%` }} />
@@ -275,7 +275,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
               <div className="border-t border-success/15 pt-3">
                 <p className="text-[13.5px] leading-snug text-ink">
                   Becsült <strong>nettó</strong> ({cantonNameByCode(netEstimate.cantonCode) ?? netEstimate.cantonCode}, egyedülálló):{" "}
-                  <strong className="text-success">~{netEstimate.net.toLocaleString("de-CH")} CHF/hó</strong>
+                  <strong className="text-success-ink">~{netEstimate.net.toLocaleString("de-CH")} CHF/hó</strong>
                   <span className="text-ink-muted"> (bruttó {netEstimate.gross.toLocaleString("de-CH")} CHF-ből)</span>
                 </p>
                 <Link href="/berkalkulator" className="mt-1 inline-flex items-center gap-1 text-[12px] font-bold text-primary-ink hover:underline">

@@ -685,7 +685,7 @@ export default function ProPage() {
 /** „Aktív” jelvény — a már megvett csomagon (átláthatóság). */
 function ActiveBadge({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-pill bg-success/15 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-success">
+    <span className="inline-flex items-center gap-1 rounded-pill bg-success/15 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-success-ink">
       <Icon name="check" size={11} strokeWidth={3.5} /> {label}
     </span>
   );
@@ -694,7 +694,7 @@ function ActiveBadge({ label }: { label: string }) {
 function FeatureItem({ text }: { text: string }) {
   return (
     <li className="flex items-start gap-2.5">
-      <div className="mt-0.5 grid shrink-0 h-4 w-4 place-items-center rounded-full bg-success/20 text-success">
+      <div className="mt-0.5 grid shrink-0 h-4 w-4 place-items-center rounded-full bg-success/20 text-success-ink">
         <Icon name="check" size={10} strokeWidth={4} />
       </div>
       <span className="text-[13.5px] font-semibold text-ink/80 leading-snug">{text}</span>

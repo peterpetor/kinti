@@ -84,7 +84,7 @@ export function BusinessLeadCta({
       <BottomSheet open={open} onClose={() => setOpen(false)} title={`Ajánlatkérés — ${businessName}`}>
         {phase === "done" ? (
           <div className="space-y-3 pb-2 text-center">
-            <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-success/15 text-success">
+            <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-success/15 text-success-ink">
               <Icon name="check" size={28} strokeWidth={2.6} />
             </div>
             <p className="text-[15px] font-extrabold text-ink">Elküldve! ✉️</p>

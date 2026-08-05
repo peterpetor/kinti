@@ -74,7 +74,7 @@ export default function VelemenyMegerositvePage({
         </>
       ) : (
         <>
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success">
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-success/15 text-success-ink">
             <Icon name="check" size={22} strokeWidth={2.4} />
           </div>
           <h1 className="text-balance text-[22px] font-extrabold tracking-tight text-ink">

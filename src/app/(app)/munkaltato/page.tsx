@@ -180,7 +180,7 @@ export default async function EmployerDashboardPage() {
                       Lejárt
                     </span>
                   ) : job.moderationStatus === 1 ? (
-                    <span className="rounded-full bg-success/15 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-success">
+                    <span className="rounded-full bg-success/15 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-success-ink">
                       Aktív
                     </span>
                   ) : job.moderationStatus === 2 ? (

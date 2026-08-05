@@ -211,7 +211,7 @@ function CategoryDetail({
                     "rounded-pill px-1.5 py-0.5 text-[10.5px] font-bold uppercase",
                     p.tier === "premium" && "bg-primary/10 text-primary-ink",
                     p.tier === "mid" && "bg-star/10 text-[#9a6b00]",
-                    p.tier === "budget" && "bg-success/10 text-success",
+                    p.tier === "budget" && "bg-success/10 text-success-ink",
                   )}
                 >
                   {p.tier === "premium" ? "Prémium" : p.tier === "mid" ? "Közepes" : "Olcsó"}
@@ -338,7 +338,7 @@ function TemplateGenerator({ category, country }: { category: CategoryInfo; coun
 
   return (
     <section className="rounded-card border-2 border-success/30 bg-success/5 p-4 shadow-card space-y-3">
-      <h3 className="flex items-center gap-1.5 text-[12px] font-extrabold uppercase tracking-wide text-success">
+      <h3 className="flex items-center gap-1.5 text-[12px] font-extrabold uppercase tracking-wide text-success-ink">
         ✍️ Felmondási levél ({langTag})
       </h3>
       <p className="text-[11px] leading-snug text-ink-muted">

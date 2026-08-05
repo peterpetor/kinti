@@ -312,7 +312,7 @@ function Row({ label, value, sign }: { label: string; value: string; sign: "−"
   return (
     <div className="flex items-center justify-between">
       <span className="text-ink-muted">{label}</span>
-      <span className={cn("font-bold", sign === "+" ? "text-success" : "text-ink")}>{sign}{value}</span>
+      <span className={cn("font-bold", sign === "+" ? "text-success-ink" : "text-ink")}>{sign}{value}</span>
     </div>
   );
 }

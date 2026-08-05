@@ -103,7 +103,7 @@ export function ReportButton({
       <BottomSheet open={open} onClose={close} title="Tartalom jelentése">
         {phase === "done" ? (
           <div className="py-2 text-center">
-            <div className="mx-auto mb-2 grid h-11 w-11 place-items-center rounded-2xl bg-success/15 text-success">
+            <div className="mx-auto mb-2 grid h-11 w-11 place-items-center rounded-2xl bg-success/15 text-success-ink">
               <Icon name="check" size={20} strokeWidth={2.6} />
             </div>
             <p className="text-[14px] font-bold text-ink">Köszönjük, megkaptuk!</p>

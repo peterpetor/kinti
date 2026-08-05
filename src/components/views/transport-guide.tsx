@@ -214,7 +214,7 @@ export function TransportGuide() {
                   {app.pros.map((p, i) => (
                     <span
                       key={i}
-                      className="inline-flex items-center rounded-pill bg-success/10 px-2 py-0.5 text-[11px] font-bold text-success"
+                      className="inline-flex items-center rounded-pill bg-success/10 px-2 py-0.5 text-[11px] font-bold text-success-ink"
                     >
                       ✓ {p}
                     </span>
@@ -376,7 +376,7 @@ function TarifCard({ system, cur }: { system: typeof TARIF_SYSTEMS[number]; cur:
           <p className="font-extrabold text-ink">{system.singleZonePrice.toFixed(2)} {cur}</p>
         </div>
         <div className="rounded-md bg-success/10 px-2 py-1.5 text-[11.5px]">
-          <p className="font-bold uppercase tracking-wide text-success">Napijegy</p>
+          <p className="font-bold uppercase tracking-wide text-success-ink">Napijegy</p>
           <p className="font-extrabold text-ink">{system.dailyPrice > 0 ? `${system.dailyPrice.toFixed(2)} ${cur}` : "—"}</p>
         </div>
       </div>
@@ -574,7 +574,7 @@ function CostRow({
         <p className="text-[12.5px] font-bold text-ink">{label}</p>
         {subtitle && <p className="text-[11px] text-ink-muted">{subtitle}</p>}
       </div>
-      <p className={cn("text-[14px] font-extrabold ml-2", highlight ? "text-success" : "text-ink")}>
+      <p className={cn("text-[14px] font-extrabold ml-2", highlight ? "text-success-ink" : "text-ink")}>
         {cost.toLocaleString("hu-HU")} {cur}
       </p>
     </div>

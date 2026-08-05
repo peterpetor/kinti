@@ -367,7 +367,7 @@ export function RecruiterWorkspace() {
             <p className="text-[10px] font-bold uppercase tracking-wide text-ink-muted">Konverzió</p>
           </div>
           <div className="rounded-card border border-success/30 bg-success/5 p-3 text-center shadow-card">
-            <p className="text-[20px] font-extrabold text-success">{stats.revenueTotal.toLocaleString("de-AT")} €</p>
+            <p className="text-[20px] font-extrabold text-success-ink">{stats.revenueTotal.toLocaleString("de-AT")} €</p>
             <p className="text-[10px] font-bold uppercase tracking-wide text-ink-muted">Bevétel ({stats.paid} fő)</p>
           </div>
           <div className="rounded-card border border-line bg-surface p-3 text-center shadow-card">
@@ -461,7 +461,7 @@ export function RecruiterWorkspace() {
                               {/* A régi AI match-% szándékosan NEM jelenik meg (AI Act A-út). */}
                               <span className="block truncate text-[11px] text-ink-muted">{[s.jobCompany, s.jobLocation].filter(Boolean).join(" · ")}</span>
                             </a>
-                            <button type="button" onClick={() => setShortStatus(s.id, s.status === "contacted" ? "saved" : "contacted")} className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[10.5px] font-bold", s.status === "contacted" ? "bg-success/15 text-success" : "border border-line text-ink-muted")}>{s.status === "contacted" ? "✓ Megkeresve" : "Megkeresve?"}</button>
+                            <button type="button" onClick={() => setShortStatus(s.id, s.status === "contacted" ? "saved" : "contacted")} className={cn("shrink-0 rounded-pill px-2 py-0.5 text-[10.5px] font-bold", s.status === "contacted" ? "bg-success/15 text-success-ink" : "border border-line text-ink-muted")}>{s.status === "contacted" ? "✓ Megkeresve" : "Megkeresve?"}</button>
                             <button type="button" onClick={() => removeShort(s.id)} aria-label="Törlés" className="shrink-0 text-ink-faint hover:text-accent">✕</button>
                           </div>
                           <input type="email" defaultValue={s.employerEmail ?? ""} onBlur={(e) => { if ((e.target.value.trim() || null) !== (s.employerEmail ?? null)) setShortEmail(s.id, e.target.value); }} placeholder="munkáltató e-mail (a hirdetésből / cég honlapjáról)" className="mt-1.5 w-full rounded-[8px] border border-line bg-surface px-2.5 py-1 text-[11.5px] text-ink placeholder:text-ink-faint focus:border-primary focus:outline-none" />
@@ -576,7 +576,7 @@ export function RecruiterWorkspace() {
                 {/* Automatikusan kinyert kapcsolattartó e-mail (ha lefutott a kinyerés). */}
                 {j.url in emails && (
                   emails[j.url] ? (
-                    <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-[8px] bg-success/10 px-2 py-1 text-[11.5px] font-bold text-success">
+                    <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-[8px] bg-success/10 px-2 py-1 text-[11.5px] font-bold text-success-ink">
                       📧 {emails[j.url]}
                     </p>
                   ) : (
@@ -588,7 +588,7 @@ export function RecruiterWorkspace() {
                     <button type="button" onClick={() => matchJob(j)} disabled={matching === j.url} className="rounded-pill bg-primary/10 px-3 py-1 text-[11.5px] font-bold text-primary-ink disabled:opacity-50">{matching === j.url ? "AI…" : m ? "↻ Újra" : "✉️ Megkeresés-piszkozat"}</button>
                     {m && <button type="button" onClick={() => setOpenEmail(openEmail === j.url ? null : j.url)} className="text-[11.5px] font-bold text-primary-ink hover:underline">{openEmail === j.url ? "Levél elrejt" : "Levél mutat"}</button>}
                     {shortlist.some((s) => s.candidateId === active.id && s.jobUrl === j.url) ? (
-                      <span className="rounded-pill bg-success/15 px-3 py-1 text-[11.5px] font-bold text-success">✓ Shortlist</span>
+                      <span className="rounded-pill bg-success/15 px-3 py-1 text-[11.5px] font-bold text-success-ink">✓ Shortlist</span>
                     ) : (
                       <button type="button" onClick={() => saveToShortlist(j)} className="rounded-pill border border-line bg-surface-alt px-3 py-1 text-[11.5px] font-bold text-ink">+ Mentés</button>
                     )}

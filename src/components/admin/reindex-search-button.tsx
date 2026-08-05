@@ -104,7 +104,7 @@ export function ReindexSearchButton() {
             result?.startsWith("Hiba") || result?.startsWith("Elakadt")
               ? "text-accent"
               : result
-                ? "text-success"
+                ? "text-success-ink"
                 : "text-ink-muted",
           )}
         >

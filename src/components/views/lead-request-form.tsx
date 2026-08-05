@@ -123,7 +123,7 @@ export function LeadRequestForm({ categories, initialCategoryId, initialCantonCo
   if (step === "success") {
     return (
       <div className="flex flex-col items-center justify-center gap-6 py-12 text-center animate-fade-up">
-        <div className="grid h-20 w-20 place-items-center rounded-full bg-success/10 text-success shadow-sm">
+        <div className="grid h-20 w-20 place-items-center rounded-full bg-success/10 text-success-ink shadow-sm">
           <Icon name="check" size={40} strokeWidth={2.5} />
         </div>
         <div>
@@ -133,7 +133,7 @@ export function LeadRequestForm({ categories, initialCategoryId, initialCantonCo
           <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
             {sentCount > 0 ? (
               <>
-                <strong className="text-success">{sentCount} vállalkozó</strong> kapta meg azonnal az
+                <strong className="text-success-ink">{sentCount} vállalkozó</strong> kapta meg azonnal az
                 árajánlat-kérésed{extraCount > 0 ? (
                   <>, és <strong className="text-ink">további {extraCount} helyi vállalkozó</strong> kap
                   értesítést róla</>
@@ -141,7 +141,7 @@ export function LeadRequestForm({ categories, initialCategoryId, initialCantonCo
               </>
             ) : (
               <>
-                <strong className="text-success">{extraCount} helyi vállalkozó</strong> kap értesítést
+                <strong className="text-success-ink">{extraCount} helyi vállalkozó</strong> kap értesítést
                 az árajánlat-kérésedről.
               </>
             )}
@@ -155,15 +155,15 @@ export function LeadRequestForm({ categories, initialCategoryId, initialCantonCo
           </p>
           <ul className="space-y-2 text-[13px] text-ink-muted">
             <li className="flex items-start gap-2">
-              <span className="text-success font-bold">1.</span>
+              <span className="text-success-ink font-bold">1.</span>
               A vállalkozók átnézik a kérésedet, és válaszolnak e-mailben.
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-success font-bold">2.</span>
+              <span className="text-success-ink font-bold">2.</span>
               Hasonlítsd össze az ajánlatokat, és válaszd a legjobbat.
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-success font-bold">3.</span>
+              <span className="text-success-ink font-bold">3.</span>
               48 óra után ha nincs válasz, böngészd a Szaknévsort közvetlenül.
             </li>
           </ul>

@@ -61,7 +61,7 @@ export function SalaryCalculator({ salaryByExp, country = "CH" }: { salaryByExp:
 
       {avg !== null && diff !== null ? (
         <div className={`rounded-xl p-4 text-center space-y-1 ${diff >= 0 ? "bg-success/10 border border-success/20" : "bg-accent/10 border border-accent/20"}`}>
-          <p className={`text-[28px] font-extrabold ${diff >= 0 ? "text-success" : "text-accent"}`}>
+          <p className={`text-[28px] font-extrabold ${diff >= 0 ? "text-success-ink" : "text-accent"}`}>
             {diff >= 0 ? "+" : ""}{diff}%
           </p>
           <p className="text-[13px] font-medium text-ink">

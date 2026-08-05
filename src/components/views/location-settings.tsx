@@ -117,7 +117,7 @@ export function LocationSettings() {
 
         {state === "granted" && (
           <div className="space-y-2.5">
-            <div className="flex items-center gap-2 rounded-xl bg-success/10 px-3 py-2.5 text-[13px] font-bold text-success">
+            <div className="flex items-center gap-2 rounded-xl bg-success/10 px-3 py-2.5 text-[13px] font-bold text-success-ink">
               <Icon name="check" size={15} strokeWidth={2.6} /> A helymeghatározás engedélyezve van.
             </div>
             <button

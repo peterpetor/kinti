@@ -98,7 +98,7 @@ export function BulkJobForm() {
         <div className="rounded-[12px] bg-accent/10 px-4 py-3 text-[13px] font-semibold text-accent">{error}</div>
       )}
       {result && (
-        <div className="rounded-[12px] bg-success/10 px-4 py-3 text-[13px] font-semibold text-success">
+        <div className="rounded-[12px] bg-success/10 px-4 py-3 text-[13px] font-semibold text-success-ink">
           {result.created} hirdetés beküldve (jóváhagyásra vár).
           {result.errors.length > 0 && (
             <ul className="mt-1.5 list-disc pl-5 font-medium text-accent">

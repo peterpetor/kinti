@@ -26,7 +26,7 @@ export function UnsubscribeConfirm({ token }: { token: string }) {
     <main className="mx-auto flex min-h-[100dvh] max-w-md flex-col items-center justify-center px-6 py-10 text-center">
       {phase === "done" ? (
         <>
-          <div className="mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-success/15 text-2xl text-success">✓</div>
+          <div className="mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-success/15 text-2xl text-success-ink">✓</div>
           <h1 className="text-[22px] font-extrabold tracking-tight text-ink">Leiratkoztál</h1>
           <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
             Többé nem küldünk hírlevelet erre a címre. Bármikor visszatérhetsz.

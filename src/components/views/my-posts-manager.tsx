@@ -249,7 +249,7 @@ export function MyPostsManager({ turnstileSiteKey = "" }: { turnstileSiteKey?: s
       )}
 
       {msg && (
-        <div className="rounded-[10px] border border-success/30 bg-success/10 px-3 py-2 text-[12px] font-semibold text-success">
+        <div className="rounded-[10px] border border-success/30 bg-success/10 px-3 py-2 text-[12px] font-semibold text-success-ink">
           {msg}
         </div>
       )}

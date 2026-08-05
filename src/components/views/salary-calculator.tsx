@@ -377,7 +377,7 @@ export function SalaryCalculator() {
           </div>
           <p className="mt-1.5 text-[12.5px] leading-snug text-ink-muted">
             A(z) <strong className="text-ink">{CANTONS.find((c) => c.code === form.canton)?.name ?? form.canton}</strong>{" "}
-            kantonban a dolgozók becsült <strong className="text-success">~{percentile}%-ánál</strong> keresel többet
+            kantonban a dolgozók becsült <strong className="text-success-ink">~{percentile}%-ánál</strong> keresel többet
             ezzel a bruttóval.
           </p>
         </div>
@@ -409,7 +409,7 @@ export function SalaryCalculator() {
             Ugyanez a bruttó más kantonban (nettó/hó)
           </p>
           {bestCanton.code === form.canton && (
-            <p className="mb-2 text-[12px] font-semibold text-success">
+            <p className="mb-2 text-[12px] font-semibold text-success-ink">
               🏆 A te kantonod adózásilag a legkedvezőbb erre a bruttóra.
             </p>
           )}
@@ -424,7 +424,7 @@ export function SalaryCalculator() {
                   <span className="text-[13px] font-semibold text-ink">{c.name}</span>
                   <span className="flex items-baseline gap-2">
                     <span className="text-[13px] font-bold text-ink">{formatCHF(c.net)}</span>
-                    <span className={cn("text-[12px] font-bold", delta > 0 ? "text-success" : "text-ink-faint")}>
+                    <span className={cn("text-[12px] font-bold", delta > 0 ? "text-success-ink" : "text-ink-faint")}>
                       {delta > 0 ? `+${formatCHF(delta)}` : formatCHF(delta)}
                     </span>
                   </span>
@@ -438,7 +438,7 @@ export function SalaryCalculator() {
       {/* "Ajánlataim" — interjún kapott ajánlatok mentése + összehasonlítás */}
       <section className="rounded-card border border-line bg-surface p-4 shadow-card">
         <div className="mb-3 flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-[12px] bg-success/10 text-success">
+          <span className="grid h-9 w-9 place-items-center rounded-[12px] bg-success/10 text-success-ink">
             <Icon name="bookmark" size={16} strokeWidth={2.4} />
           </span>
           <div className="min-w-0 flex-1">
@@ -476,7 +476,7 @@ export function SalaryCalculator() {
         </div>
 
         {justSaved && (
-          <p className="mt-2 text-[12px] font-bold text-success">
+          <p className="mt-2 text-[12px] font-bold text-success-ink">
             ✓ Ajánlat mentve a böngésződben.
           </p>
         )}
@@ -484,7 +484,7 @@ export function SalaryCalculator() {
         {savedCount > 0 && (
           <Link
             href="/berkalkulator/ajanlataim"
-            className="mt-3 flex items-center justify-between rounded-[10px] border border-success/20 bg-success/5 px-3 py-2 text-[12.5px] font-bold text-success transition hover:bg-success/10"
+            className="mt-3 flex items-center justify-between rounded-[10px] border border-success/20 bg-success/5 px-3 py-2 text-[12.5px] font-bold text-success-ink transition hover:bg-success/10"
           >
             <span>📊 Ajánlataim ({savedCount}) — összehasonlítás</span>
             <Icon name="chevR" size={14} strokeWidth={2.4} />

@@ -529,7 +529,7 @@ async function OwnerDashboard({
             {trendDeltaPct !== null && trendDeltaPct !== 0 && (
               <span
                 className={`ml-1.5 text-[13px] font-bold ${
-                  trendDeltaPct > 0 ? "text-success" : "text-accent"
+                  trendDeltaPct > 0 ? "text-success-ink" : "text-accent"
                 }`}
               >
                 {trendDeltaPct > 0 ? `↑ +${trendDeltaPct}` : `↓ ${trendDeltaPct}`}%

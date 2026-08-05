@@ -91,7 +91,7 @@ const PERMIT_CONFIG: Record<string, PermitConfig> = {
     citConds: [
       <>Legalább <strong>5 év</strong> jogszerű tartózkodás (a 2024-es reform előtt 8 volt). Kiemelkedő integrációval (C1 + különös teljesítmény) <strong>3 év</strong>.</>,
       <>Nyelvtudás <strong>B1</strong> (a gyorsított úthoz C1) + a <strong>„Leben in Deutschland" / Einbürgerungstest</strong> sikeres letétele.</>,
-      <><strong className="text-success">A magyar állampolgárságodat MEGTARTHATOD — a 2024-es reform óta megengedett a kettős állampolgárság.</strong></>,
+      <><strong className="text-success-ink">A magyar állampolgárságodat MEGTARTHATOD — a 2024-es reform óta megengedett a kettős állampolgárság.</strong></>,
       "Önálló megélhetés (általában tartós Bürgergeld-függés nélkül), tiszta büntetlen előélet.",
       "A szabad demokratikus alaprend (freiheitliche demokratische Grundordnung) elismerése.",
     ],
@@ -210,20 +210,20 @@ export function PermitWizardClient() {
             <div className={`absolute top-0 left-0 w-full h-1.5 ${isCEligible ? "bg-success" : "bg-primary"}`} />
             <div className="flex justify-between items-start mb-2 mt-1">
               <h3 className="font-bold text-lg">{cfg.resTitle}</h3>
-              {isCEligible && <span className="bg-success/10 text-success text-xs px-2.5 py-1 rounded-full font-bold whitespace-nowrap ml-2">Jogosult lehetsz!</span>}
+              {isCEligible && <span className="bg-success/10 text-success-ink text-xs px-2.5 py-1 rounded-full font-bold whitespace-nowrap ml-2">Jogosult lehetsz!</span>}
             </div>
             <p className="text-sm text-ink-muted mb-5">{cfg.resDesc}</p>
             <div className="mb-5 bg-surface-alt p-4 rounded-xl">
               <div className="flex justify-between text-xs font-semibold text-ink-muted mb-2">
                 <span>Érkezés: {arrival.toLocaleDateString("hu-HU", { year: "numeric", month: "short" })}</span>
-                <span className={isCEligible ? "text-success font-bold" : ""}>Cél: {cPermitDate.toLocaleDateString("hu-HU", { year: "numeric", month: "short" })}</span>
+                <span className={isCEligible ? "text-success-ink font-bold" : ""}>Cél: {cPermitDate.toLocaleDateString("hu-HU", { year: "numeric", month: "short" })}</span>
               </div>
               <div className="w-full bg-line rounded-full h-3.5 overflow-hidden">
                 <div className={`h-3.5 rounded-full transition-all duration-1000 ${isCEligible ? "bg-success" : "bg-primary"}`} style={{ width: `${progressToC}%` }}></div>
               </div>
               <div className="text-center mt-3 text-sm font-semibold">
                 {isCEligible ? (
-                  <span className="text-success">{cfg.resDoneMsg}</span>
+                  <span className="text-success-ink">{cfg.resDoneMsg}</span>
                 ) : (
                   <span className="text-primary-ink">Még {(100 - progressToC).toFixed(1)}% van hátra az {cfg.residenceYears} évből.</span>
                 )}

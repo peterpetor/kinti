@@ -72,7 +72,7 @@ export function BusinessClaimCard({ businessId, businessName }: { businessId: st
       </div>
 
       {phase === "sent" ? (
-        <div className="mt-3 rounded-[10px] border border-success/30 bg-success/10 px-3 py-2.5 text-[12.5px] font-semibold text-success">
+        <div className="mt-3 rounded-[10px] border border-success/30 bg-success/10 px-3 py-2.5 text-[12.5px] font-semibold text-success-ink">
           ✅ Köszönjük! Az igénylést megkaptuk. Ellenőrzés után e-mailben küldjük a kezelő-linket.
         </div>
       ) : !open ? (

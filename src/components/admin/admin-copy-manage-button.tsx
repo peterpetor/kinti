@@ -58,7 +58,7 @@ export function AdminCopyManageButton({
       className={cn(
         "inline-flex items-center gap-1 rounded-pill border px-2 py-0.5 text-[11.5px] font-bold transition active:scale-95",
         copied
-          ? "border-success/40 bg-success/10 text-success"
+          ? "border-success/40 bg-success/10 text-success-ink"
           : "border-line bg-surface text-ink-muted hover:text-ink",
       )}
     >

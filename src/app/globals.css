@@ -44,6 +44,9 @@
     /* A csillag-arany SZÖVEGKÉNT: világos lapon 1,82–2,11:1 (a legrosszabb
        érték az egész palettában), sötét lapon viszont 7,84:1 — ezért token. */
     --star-ink: 150 87 10;        /* #96570a — 4,92:1 krémen */
+    /* A „siker"-zöld SZÖVEGKÉNT. Világos témán AZONOS a Tailwind `success`
+       értékkel (5,67–6,61:1), tehát itt nem változik semmi. */
+    --success-ink: 29 106 60;     /* #1d6a3c */
     --border-channel: 28 61 46;   /* rgba(28,61,46,...) */
     --border-alpha: 0.1;
     --border-strong-alpha: 0.18;
@@ -99,6 +102,10 @@
     --pro-ink: 255 150 0;         /* #ff9600 */
     --on-pro: 26 18 0;            /* #1a1200 — a gomb-háttér mindkét témán ugyanaz az arany */
     --star-ink: 240 162 58;       /* #f0a23a — sötét lapon 7,84:1, marad a márka-arany */
+    /* ⚠️ Ugyanaz a két-célú csapda, mint a `--primary`-nél: a `success` HÁTTÉRKÉNT
+       jó (fehér rajta 6,61:1), SZÖVEGKÉNT viszont sötét felületen csak 2,51–2,81:1.
+       A háttér marad, a szöveg saját tokent kap. MÉRT: 5,53 / 6,21 / 5,84. */
+    --success-ink: 110 160 130;   /* #6ea082 */
     --border-channel: 236 231 220;
     --border-alpha: 0.1;
     --border-strong-alpha: 0.2;

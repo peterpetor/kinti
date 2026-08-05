@@ -114,7 +114,7 @@ export function WorkerProfileForm({ initial }: { initial: WorkerProfileInitial }
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center py-6 text-center animate-fade-up">
-        <div className="mb-4 grid h-14 w-14 place-items-center rounded-full bg-success/15 text-success">
+        <div className="mb-4 grid h-14 w-14 place-items-center rounded-full bg-success/15 text-success-ink">
           <Icon name="check" size={24} strokeWidth={2.4} />
         </div>
         <h3 className="text-[18px] font-extrabold text-ink">Profil mentve!</h3>

@@ -464,7 +464,7 @@ function SelectedCard({ business: b, distanceKm }: { business: ListBusiness; dis
           {/* Csak VALÓS státusz: ismert nyitvatartásnál nyitva/zárva; egyébként a
               szabad-szöveges openText, vagy semmi (nincs kitalált státusz). */}
           {openStatus ? (
-            <span className={cn("truncate", openStatus.isOpen ? "font-semibold text-success" : "text-accent")}>
+            <span className={cn("truncate", openStatus.isOpen ? "font-semibold text-success-ink" : "text-accent")}>
               {openStatus.isOpen ? "Nyitva" : "Zárva"}
             </span>
           ) : openTextTrim ? (

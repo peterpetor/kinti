@@ -425,7 +425,7 @@ export default async function BusinessPage({
         {b.verified && (
           <p
             title="Az üzemeltető meggyőződött róla, hogy valódi magyarul beszélő vállalkozás — ez NEM minőségi garancia, a szakképesítést és a munka minőségét nem ellenőrizzük."
-            className="mt-1.5 inline-flex items-center gap-1 rounded-pill bg-success/15 px-2.5 py-1 text-[11px] font-bold text-success"
+            className="mt-1.5 inline-flex items-center gap-1 rounded-pill bg-success/15 px-2.5 py-1 text-[11px] font-bold text-success-ink"
           >
             <Icon name="check" size={11} strokeWidth={2.6} />
             Hiteles magyar nyelvű vállalkozó
@@ -460,7 +460,7 @@ export default async function BusinessPage({
           <div>
             {status ? (
               <>
-                <div className={cn("text-[15px] font-bold flex items-center gap-1.5", status.isOpen ? "text-success" : "text-accent")}>
+                <div className={cn("text-[15px] font-bold flex items-center gap-1.5", status.isOpen ? "text-success-ink" : "text-accent")}>
                   <span className={cn("h-2 w-2 rounded-full", status.isOpen ? "bg-success animate-pulse" : "bg-accent")} />
                   {status.statusText}
                 </div>
@@ -484,7 +484,7 @@ export default async function BusinessPage({
               // ⚠️ SZŰK ÁLLÍTÁS: „működés ellenőrizve" — NEM azt állítjuk, hogy minden
               // mező (telefon, cím) helyes. A szöveg se ígérjen többet.
               <>
-                <div className="text-[15px] font-bold text-success">Ellenőrizve</div>
+                <div className="text-[15px] font-bold text-success-ink">Ellenőrizve</div>
                 <div className="text-[11px] font-medium text-ink-muted">{verifiedLabel}</div>
               </>
             ) : (

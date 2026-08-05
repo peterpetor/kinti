@@ -50,7 +50,7 @@ export function GuideNewsletterCta({ country }: { country: string }) {
   if (phase === "done") {
     return (
       <div className="rounded-card border border-success/30 bg-success/5 p-4">
-        <p className="text-[13.5px] font-extrabold text-success">✓ Már csak egy lépés!</p>
+        <p className="text-[13.5px] font-extrabold text-success-ink">✓ Már csak egy lépés!</p>
         <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">
           Küldtünk egy megerősítő e-mailt — kattints a benne lévő linkre, és kész is.
           (Nézd meg a spam-mappát is.)

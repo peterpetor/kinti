@@ -156,7 +156,7 @@ export function AddressFields({
             </span>
           )}
           {picked && !busy && (
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-success">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-success-ink">
               <Icon name="check" size={15} strokeWidth={2.6} />
             </span>
           )}

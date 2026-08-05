@@ -15,7 +15,7 @@ export const metadata = {
 interface ActionStyle { label: string; cls: string; dot: string; icon: string }
 
 const ACTION_LABEL: Record<string, ActionStyle> = {
-  approve: { label: "Jóváhagyás", cls: "bg-success/15 text-success", dot: "bg-success", icon: "✓" },
+  approve: { label: "Jóváhagyás", cls: "bg-success/15 text-success-ink", dot: "bg-success", icon: "✓" },
   reject: { label: "Elutasítás", cls: "bg-accent/15 text-accent", dot: "bg-accent", icon: "✕" },
   block: { label: "Tiltás", cls: "bg-accent/20 text-accent", dot: "bg-accent", icon: "⛔" },
   verify: { label: "Ellenőrzés", cls: "bg-primary/15 text-primary-ink", dot: "bg-primary", icon: "✦" },

@@ -96,7 +96,7 @@ export function SalaryOffersView() {
   if (offers.length === 0) {
     return (
       <section className="rounded-card border border-dashed border-line bg-surface p-8 text-center shadow-card">
-        <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/10 text-success">
+        <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/10 text-success-ink">
           <Icon name="bookmark" size={20} strokeWidth={2.4} />
         </span>
         <h2 className="mt-3 text-[17px] font-extrabold tracking-tight text-ink">

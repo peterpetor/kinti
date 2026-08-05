@@ -900,7 +900,7 @@ export function ExploreView({
           className={cn(
             "inline-flex min-w-0 items-center justify-center gap-2 rounded-pill border px-3 py-2 shadow-card transition cursor-pointer active:scale-[0.97]",
             openNow
-              ? "bg-success/10 border-success/30 text-success font-bold"
+              ? "bg-success/10 border-success/30 text-success-ink font-bold"
               : "bg-surface border-line text-ink-muted hover:bg-surface-alt",
           )}
         >

@@ -135,7 +135,7 @@ export function KintiPassCard() {
       {/* Ellenőrző nézet fejléce (a kártya QR-jából megnyitva) */}
       {verify && (
         <div className="flex items-start gap-2.5 rounded-card border border-success/40 bg-success/10 px-4 py-3">
-          <Icon name="check" size={18} strokeWidth={2.6} className="mt-0.5 shrink-0 text-success" />
+          <Icon name="check" size={18} strokeWidth={2.6} className="mt-0.5 shrink-0 text-success-ink" />
           <div className="text-[12.5px] leading-snug text-ink">
             <strong className="text-ink">Kinti Pass ellenőrzés.</strong> Egy Kinti-tag kártyáját nézed
             — az alábbi név és kód az övé. Add meg neki a saját kedvezményedet. (A Kinti nem hitelesít

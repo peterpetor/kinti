@@ -89,7 +89,7 @@ export function JobSourcesSection() {
                 <div className="flex items-center gap-1.5">
                   <span className="truncate text-[13.5px] font-bold text-ink">{s.name}</span>
                   {s.official && (
-                    <span className="shrink-0 rounded-full bg-success/12 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-success">
+                    <span className="shrink-0 rounded-full bg-success/12 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-success-ink">
                       Hivatalos
                     </span>
                   )}

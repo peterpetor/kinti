@@ -266,7 +266,7 @@ function ContactValue({ value }: { value: string }) {
   const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   const phone = !email && /^[+\d][\d\s/()-]{5,}$/.test(value);
   const cls =
-    "inline-flex max-w-[220px] items-center gap-1.5 truncate rounded-pill bg-success/10 px-3 py-2 text-[12.5px] font-extrabold text-success";
+    "inline-flex max-w-[220px] items-center gap-1.5 truncate rounded-pill bg-success/10 px-3 py-2 text-[12.5px] font-extrabold text-success-ink";
   if (email) return <a className={cls} href={`mailto:${value}`}><Icon name="mail" size={13} strokeWidth={2.4} />{value}</a>;
   if (phone) return <a className={cls} href={`tel:${value.replace(/[^+\d]/g, "")}`}><Icon name="phone" size={13} strokeWidth={2.4} />{value}</a>;
   return <span className={cls}><Icon name="user" size={13} strokeWidth={2.4} />{value}</span>;

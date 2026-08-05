@@ -253,7 +253,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
               "p-4 rounded-2xl border-2 text-left font-bold text-[17px] transition-all relative flex items-center justify-between",
               !isAnswered && !isSelected && "border-border-subtle bg-surface hover:bg-surface-alt",
               !isAnswered && isSelected && "border-primary bg-primary/5 text-primary-ink",
-              showCorrect && "border-success bg-success/10 text-success",
+              showCorrect && "border-success bg-success/10 text-success-ink",
               showWrong && "border-accent bg-accent/10 text-accent animate-shake"
             )}
           >
@@ -539,7 +539,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
               <div>
                 <h3 className={cn(
                   "text-[20px] font-black",
-                  isCorrect || question.type === "flashcard" ? "text-success" : "text-accent"
+                  isCorrect || question.type === "flashcard" ? "text-success-ink" : "text-accent"
                 )}>
                   {isCorrect || question.type === "flashcard" ? "Kiváló!" : "Sajnos nem jó."}
                 </h3>
