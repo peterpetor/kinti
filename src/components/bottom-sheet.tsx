@@ -16,11 +16,19 @@ export function BottomSheet({
   open,
   onClose,
   title,
+  cancelLabel,
   children,
 }: {
   open: boolean;
   onClose: () => void;
   title?: string;
+  /**
+   * „Mégse” külön szigetként a lap alján (natív iOS action-sheet anatómia).
+   * A lap eddig CSAK a háttérre koppintással, lehúzással vagy a kicsi X-szel
+   * volt zárható — mind a három REJTETT megegyezés. Egy teljes szélességű,
+   * elkülönített gomb kimondja, hogy a választás elhagyható.
+   */
+  cancelLabel?: string;
   children: React.ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
@@ -46,6 +54,24 @@ export function BottomSheet({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  // ⚠️ A HÁTTÉR HÁTRÉBB LÉP (globals.css `html[data-sheet-open]`).
+  // ⚠️⚠️ KÉT KÜLÖN BottomSheet VAN A REPÓBAN (ez és a `ui/bottom-sheet.tsx`),
+  // és a hívók fele-fele arányban oszlanak meg köztük. A jelzőt ezért MINDKETTŐBE
+  // be kell tenni — különben a lapok felénél a háttér mozdulatlan marad, ami
+  // nem hibaüzenet, csak következetlen érzet. Teszt őrzi az eltérést.
+  // Számláló, nem logikai jelző: egymásba nyíló lapoknál a belső bezárása nem
+  // állíthatja vissza a hátteret, amíg a külső még nyitva van.
+  useEffect(() => {
+    if (!open) return;
+    const eddig = Number(document.documentElement.dataset.sheetOpen ?? 0);
+    document.documentElement.dataset.sheetOpen = String(eddig + 1);
+    return () => {
+      const most = Number(document.documentElement.dataset.sheetOpen ?? 1) - 1;
+      if (most > 0) document.documentElement.dataset.sheetOpen = String(most);
+      else delete document.documentElement.dataset.sheetOpen;
+    };
+  }, [open]);
 
   if (!open || !mounted) return null;
 
@@ -115,6 +141,19 @@ export function BottomSheet({
           </h3>
         )}
         {children}
+        {cancelLabel && (
+          // ⚠️ KÜLÖN SZIGET, nem a tartalom utolsó sora: a rés és a saját
+          // felület-háttér különíti el a fenti műveletektől.
+          <div className="mt-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full rounded-[16px] border border-line bg-surface-alt py-3 text-[15px] font-extrabold text-ink transition active:scale-[0.98]"
+            >
+              {cancelLabel}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

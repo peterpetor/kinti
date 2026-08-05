@@ -20,7 +20,7 @@ export function AddToCalendar({
   const gcal = event ? googleCalendarUrl(event) : null;
 
   return (
-    <BottomSheet open={open && !!event} onClose={onClose} title="Add a naptáradhoz">
+    <BottomSheet open={open && !!event} onClose={onClose} title="Add a naptáradhoz" cancelLabel="Mégse">
       <div className="space-y-2">
         {gcal && (
           <SheetRow

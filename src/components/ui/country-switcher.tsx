@@ -55,7 +55,7 @@ export function CountrySelectSheet({ open, onClose }: { open: boolean; onClose: 
   const current = getCountry(code) ?? getCountry(DEFAULT_COUNTRY)!;
 
   return (
-    <BottomSheet open={open} onClose={onClose} title="Válassz országot">
+    <BottomSheet open={open} onClose={onClose} title="Válassz országot" cancelLabel="Mégse">
       <div className="grid grid-cols-2 gap-2 pt-1">
         {COUNTRIES.map((c) => {
           const active = c.code === current.code;

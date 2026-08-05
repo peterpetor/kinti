@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { cn } from "@/lib/cn";
 import { haptic } from "@/lib/haptics";
 import { useVisualViewportHeight } from "@/lib/use-visual-viewport-height";
 import { Icon } from "./icons";
@@ -15,12 +16,23 @@ import { Icon } from "./icons";
  */
 export function BottomSheet({
   open,
+  cancelLabel,
   onClose,
   title,
   showClose = false,
   children,
 }: {
   open: boolean;
+  /**
+   * „Mégse” külön szigetként a lap alján (natív iOS action-sheet anatómia).
+   *
+   * ⚠️ NEM ugyanaz, mint a sarok-X. A lap eddig CSAK a háttérre koppintással,
+   * lehúzással vagy a kicsi X-szel volt zárható — mind a három REJTETT
+   * megegyezés. Egy teljes szélességű, elkülönített gomb kimondja, hogy a
+   * választás elhagyható. Külön szigetként ül, nem a lista részeként: így nem
+   * lehet véletlenül a fenti műveletek egyikének nézni.
+   */
+  cancelLabel?: string;
   onClose: () => void;
   title?: string;
   showClose?: boolean;
@@ -131,11 +143,29 @@ export function BottomSheet({
           </button>
         )}
         <div
-          className="overflow-y-auto px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]"
+          className={cn(
+            "overflow-y-auto px-5",
+            // Ha van „Mégse” sziget, az viszi az alsó biztonsági sávot.
+            cancelLabel ? "pb-3" : "pb-[calc(env(safe-area-inset-bottom)+1.25rem)]",
+          )}
           style={{ maxHeight: "calc(88vh - 56px)" }}
         >
           {children}
         </div>
+        {cancelLabel && (
+          // ⚠️ KÜLÖN SZIGET, nem a tartalom utolsó sora. A rés + a saját
+          // felület-háttér az, ami elkülöníti a fenti műveletektől — enélkül
+          // egy újabb választásnak látszana.
+          <div className="px-5 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full rounded-[16px] border border-line bg-surface-alt py-3 text-[15px] font-extrabold text-ink transition active:scale-[0.98]"
+            >
+              {cancelLabel}
+            </button>
+          </div>
+        )}
       </div>
     </div>,
     document.body,

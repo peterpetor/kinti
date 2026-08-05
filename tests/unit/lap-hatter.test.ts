@@ -20,6 +20,9 @@ import { resolve } from "node:path";
 const GYOKER = resolve(__dirname, "../..");
 const CSS = readFileSync(resolve(GYOKER, "src/app/globals.css"), "utf8");
 const SHEET = readFileSync(resolve(GYOKER, "src/components/ui/bottom-sheet.tsx"), "utf8");
+/** ⚠️ KÉT KÜLÖN BottomSheet van a repóban, a hívók fele-fele arányban oszlanak
+ *  meg köztük. Minden lap-szintű viselkedést MINDKETTŐBE be kell tenni. */
+const SHEET_REGI = readFileSync(resolve(GYOKER, "src/components/bottom-sheet.tsx"), "utf8");
 const APPMAIN = readFileSync(resolve(GYOKER, "src/components/app-main.tsx"), "utf8");
 
 describe("háttér-mélység alsó lapnál", () => {
@@ -46,6 +49,24 @@ describe("háttér-mélység alsó lapnál", () => {
     // hátteret, amíg a külső még nyitva van.
     expect(SHEET).toContain("dataset.sheetOpen");
     expect(SHEET).toMatch(/Number\(document\.documentElement\.dataset\.sheetOpen/);
+  });
+
+  it("⚠️ MINDKÉT BottomSheet állítja a jelzőt (különben a lapok fele nem mozdítja a hátteret)", () => {
+    for (const [nev, src] of [["ui/bottom-sheet", SHEET], ["bottom-sheet", SHEET_REGI]] as const) {
+      // ⚠️ A BEÁLLÍTÁST kell néznünk, nem a puszta jelenlétet: az első
+      // változatom csak a `dataset.sheetOpen` szövegre illesztett, és a
+      // takarító ág megléte miatt akkor is átment, amikor a beállító sort
+      // kivettem — vagyis nem őrzött semmit.
+      expect(src, `${nev}: nem ÁLLÍTJA a jelzőt`).toMatch(/dataset\.sheetOpen\s*=\s*String\(/);
+      expect(src, `${nev}: nem takarít`).toMatch(/delete document\.documentElement\.dataset\.sheetOpen/);
+      expect(src, `${nev}: nem számláló`).toMatch(/Number\(document\.documentElement\.dataset\.sheetOpen/);
+    }
+  });
+
+  it("⚠️ a „Mégse” sziget MINDKÉT lapon elérhető", () => {
+    for (const [nev, src] of [["ui/bottom-sheet", SHEET], ["bottom-sheet", SHEET_REGI]] as const) {
+      expect(src, `${nev}: nincs cancelLabel`).toContain("cancelLabel");
+    }
   });
 
   it("a mozgás a közös görbét használja, és van reduced-motion ág", () => {

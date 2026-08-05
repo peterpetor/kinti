@@ -81,7 +81,7 @@ export function ShareSheet({
   };
 
   return (
-    <BottomSheet open={open} onClose={onClose} title="Megosztás">
+    <BottomSheet open={open} onClose={onClose} title="Megosztás" cancelLabel="Mégse">
       <div className="space-y-2">
         {card && (
           <SheetRow
