@@ -86,6 +86,11 @@ export function SwipeAction({
           type="button"
           aria-label={actionLabel}
           onClick={() => {
+            // ⚠️ A swipe-akció mindig pusztító (törlés/eltávolítás), és az
+            // elem AZONNAL eltűnik alóla. Eddig csak a lap KINYITÁSA adott
+            // visszajelzést, a végrehajtás nem — pedig az a visszafordíthatatlan
+            // lépés. A `warning` az egyetlen minta, ami tapintásra is más.
+            haptic("warning");
             close();
             onAction();
           }}

@@ -7,6 +7,7 @@ import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon, type IconName } from "./icons";
 import { CountrySwitcher } from "./country-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { HapticToggle } from "@/components/haptic-toggle";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, courseLanguageName } from "@/lib/countries";
@@ -317,6 +318,16 @@ export function DropdownMenu() {
               </div>
             </div>
           ),
+        },
+        {
+          key: "rezges",
+          label: "Rezgés",
+          tint: "bg-primary/10",
+          icon: { name: "sun" },
+          // A komponens SAJÁT MAGA dönti el, hogy megjelenik-e: iOS-en a
+          // Vibration API nem létezik, ott `null`-t ad vissza (egy kapcsoló,
+          // ami semmit nem kapcsol, rosszabb a hiányánál).
+          custom: <HapticToggle key="rezges" />,
         },
         { key: "hirlevel", label: "Hírlevél", href: "/hirlevel", tint: "bg-primary/10 text-primary-ink", icon: { name: "send" } },
         { key: "ertesitesek", label: "Értesítések", href: "/ertesitesek", tint: "bg-primary/10 text-primary-ink", icon: { name: "bell" } },
