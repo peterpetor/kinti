@@ -457,15 +457,32 @@
   }
 
   /* Toast belépés (ToastHost) — alulról felúszó, finoman felnagyuló buborék. */
+  /* ── Toast: felülről ereszkedő kapszula (Dynamic Island-logika) ──────────
+     ⚠️ A KAPSZULA FELÜLRŐL JÖN, NEM ALULRÓL. Korábban a TabBar fölött úszott
+     fel — csakhogy a megerősítés jellemzően arra a MŰVELETRE vonatkozik, amit
+     a felhasználó épp elvégzett, és az ujja ilyenkor a képernyő alján van:
+     a saját keze takarta ki a visszajelzést. Felül semmi nem takarja.
+
+     A belépés SZÁNDÉKOSAN a túllendülő görbével megy (`--kinti-ease-pop`):
+     a kapszula kicsiből pattan a helyére. A kilépés viszont NEM lendül túl —
+     ott a visszapattanás azt sugallná, hogy még történik valami. */
   @keyframes kintiToastIn {
-    from { opacity: 0; transform: translateY(16px) scale(0.96); }
+    from { opacity: 0; transform: translateY(-14px) scale(0.86); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
+  @keyframes kintiToastOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(-6px) scale(0.9); }
+  }
   .kinti-toast-in {
-    animation: kintiToastIn 0.28s var(--kinti-ease);
+    animation: kintiToastIn 0.34s var(--kinti-ease-pop);
+  }
+  .kinti-toast-out {
+    animation: kintiToastOut 0.18s var(--kinti-ease) forwards;
   }
   @media (prefers-reduced-motion: reduce) {
-    .kinti-toast-in { animation: none; }
+    .kinti-toast-in,
+    .kinti-toast-out { animation: none; }
   }
 
   /* Téma-váltás View Transition (ThemeToggle hívja startViewTransition-nel,

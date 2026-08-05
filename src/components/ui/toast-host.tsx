@@ -18,27 +18,46 @@ const STYLE: Record<ToastVariant, string> = {
   error: "border-accent/30 bg-accent-soft text-accent",
 };
 
+/** Ennyi ideig fut a zsugorodó kilépés — egyeznie kell a CSS-beli 0,18 s-cel. */
+const KILEPES_MS = 180;
+
 /**
  * ToastHost — a globális toast-sín EGYETLEN példánya (az (app) layoutban).
- * A `lib/toast.ts` pub/sub-jára iratkozik fel; a TabBar fölött, középen jeleníti
- * meg a buborékokat (egyszerre max 3, felúszó belépéssel, auto-eltűnéssel).
- * Kattintásra azonnal eltűnik. Haptika megjelenéskor. `aria-live=polite`.
+ * A `lib/toast.ts` pub/sub-jára iratkozik fel; FELÜL, középen jeleníti meg a
+ * kapszulákat (egyszerre max 3). Kattintásra azonnal eltűnik. Haptika
+ * megjelenéskor. `aria-live=polite`.
+ *
+ * ⚠️ FELÜL, NEM ALUL. Korábban a TabBar fölött úszott fel. A megerősítés
+ * viszont arra a MŰVELETRE vonatkozik, amit a felhasználó épp elvégzett, és az
+ * ujja ilyenkor a képernyő alján van — a saját keze takarta ki a visszajelzést.
+ *
+ * ⚠️ A KILÉPÉS KÜLÖN ÁLLAPOT. Enélkül a kapszula egyik képkockáról a másikra
+ * eltűnne; a Dynamic Island-érzethez össze kell mennie. Ezért a lejáratkor
+ * előbb `tavozo` jelölést kap, és csak az animáció után kerül ki a listából.
  */
 export function ToastHost() {
   const [items, setItems] = useState<ToastItem[]>([]);
+  const [tavozo, setTavozo] = useState<number[]>([]);
 
   const remove = useCallback((id: number) => {
     setItems((prev) => prev.filter((t) => t.id !== id));
+    setTavozo((prev) => prev.filter((x) => x !== id));
   }, []);
+
+  /** Zsugorodó kilépés, majd tényleges eltávolítás. */
+  const zar = useCallback((id: number) => {
+    setTavozo((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    window.setTimeout(() => remove(id), KILEPES_MS);
+  }, [remove]);
 
   useEffect(() => {
     return subscribeToasts((t) => {
       // Max 3 egyszerre — a legrégebbit kiszorítja.
       setItems((prev) => [...prev.slice(-2), t]);
       haptic(t.variant === "error" ? "warning" : "success");
-      window.setTimeout(() => remove(t.id), t.duration);
+      window.setTimeout(() => zar(t.id), t.duration);
     });
-  }, [remove]);
+  }, [zar]);
 
   if (items.length === 0) return null;
 
@@ -47,16 +66,18 @@ export function ToastHost() {
       role="status"
       aria-live="polite"
       className="pointer-events-none fixed inset-x-0 z-[95] flex flex-col items-center gap-2 px-4"
-      // A TabBar (~82px) + a készülék safe-area fölé emeljük.
-      style={{ bottom: "calc(env(safe-area-inset-bottom) + 94px)" }}
+      // A notch/állapotsáv alá. A z-95 a notch-scrim (z-80) fölött van, tehát
+      // állványos PWA-ban sem úszik alá.
+      style={{ top: "calc(env(safe-area-inset-top) + 10px)" }}
     >
       {items.map((t) => (
         <button
           key={t.id}
           type="button"
-          onClick={() => remove(t.id)}
+          onClick={() => zar(t.id)}
           className={cn(
-            "kinti-toast-in pointer-events-auto flex max-w-[22rem] items-center gap-2.5 rounded-pill border px-4 py-2.5 text-[13px] font-bold shadow-card backdrop-blur",
+            "pointer-events-auto flex max-w-[22rem] items-center gap-2.5 rounded-pill border px-4 py-2.5 text-[13px] font-bold shadow-card backdrop-blur",
+            tavozo.includes(t.id) ? "kinti-toast-out" : "kinti-toast-in",
             STYLE[t.variant],
           )}
         >
