@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, useRef, useCallback, lazy, Suspense } from "react";
+import { useKeyboardDismissOnScroll } from "@/lib/use-keyboard-dismiss";
 import { haptic } from "@/lib/haptics";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -143,6 +144,9 @@ export function ExploreView({
    *  amíg a teljes lista tölt. */
   countryTotals?: Record<string, number>;
 }) {
+  // Lefelé görgetésre elrejti a billentyűzetet (a találatok fölött ül a kereső).
+  useKeyboardDismissOnScroll();
+
   // A teljes lista betöltése — a KRITIKUS ÚTON KÍVÜL. Korábban a mount-effekt
   // AZONNAL lekérte MIND az 5 ország ~2000 rekordját (≈1,16 MB nyers JSON), így a
   // `JSON.parse` a hidratálással versengett a fő szálon.

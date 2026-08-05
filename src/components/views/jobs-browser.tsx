@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, lazy, Suspense } from "react";
+import { useKeyboardDismissOnScroll } from "@/lib/use-keyboard-dismiss";
 import { useSearchParams } from "next/navigation";
 import type { ExternalJob } from "@/lib/repo-external-jobs";
 import { usePersistedState } from "@/hooks/use-persisted-state";
@@ -59,6 +60,8 @@ function fmtExtSalary(j: ExternalJob): string | null {
  * megjelenik a „X% egyezés" jelvény.
  */
 export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMatchContext }) {
+  // Lefelé görgetésre elrejti a billentyűzetet (a találatok fölött ül a kereső).
+  useKeyboardDismissOnScroll();
   const canMatch = !!proMatch?.isPro && hasMatchableProfile(proMatch.profile);
   // ?q= mélylink (pl. a Mindenkereső / megosztott link) → előtöltött keresés.
   const searchParams = useSearchParams();

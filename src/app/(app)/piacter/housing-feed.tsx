@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useKeyboardDismissOnScroll } from "@/lib/use-keyboard-dismiss";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Icon, EmptyState } from "@/components/ui";
@@ -36,6 +37,8 @@ export function HousingFeed({
   isPro: boolean;
   signedIn: boolean;
 }) {
+  // Lefelé görgetésre elrejti a billentyűzetet (a találatok fölött ül a kereső).
+  useKeyboardDismissOnScroll();
   const router = useRouter();
   const [prefCountry] = usePreferredCountry();
   const [mounted, setMounted] = useState(false);
