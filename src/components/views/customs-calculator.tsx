@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { usePersistedState } from "@/hooks/use-persisted-state";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { cn } from "@/lib/cn";
@@ -54,8 +55,7 @@ export function CustomsCalculator() {
           <h2 className="text-[14px] font-extrabold text-ink">Hány fő utazik?</h2>
         </div>
         <div className="flex items-center gap-3">
-          <input
-            type="range"
+          <RangeSlider
             min={1}
             max={9}
             step={1}
@@ -286,8 +286,7 @@ function CategoryRow({
 
       {/* Slider */}
       <div className="flex items-center gap-3">
-        <input
-          type="range"
+        <RangeSlider
           min={0}
           max={sliderMax}
           step={step}

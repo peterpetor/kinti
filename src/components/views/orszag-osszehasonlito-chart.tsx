@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -101,9 +102,8 @@ export function OrszagOsszehasonlitoChart() {
             a helyi átlagbér {szazalek}%-a
           </span>
         </label>
-        <input
+        <RangeSlider
           id="cmp-slider"
-          type="range"
           min={50}
           max={250}
           step={5}

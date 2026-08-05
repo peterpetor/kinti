@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { cn } from "@/lib/cn";
 import {
   TARIF_SYSTEMS,
@@ -456,8 +457,7 @@ function GaVsHalbtaxCalculator() {
             Átlagos jegyár ({cur} / út)
           </label>
           <div className="flex items-center gap-3">
-            <input
-              type="range"
+            <RangeSlider
               min={2}
               max={50}
               step={1}
@@ -482,8 +482,7 @@ function GaVsHalbtaxCalculator() {
             Heti utazások száma (oda-vissza = 2)
           </label>
           <div className="flex items-center gap-3">
-            <input
-              type="range"
+            <RangeSlider
               min={1}
               max={20}
               step={1}

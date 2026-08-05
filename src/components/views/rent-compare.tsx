@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { cn } from "@/lib/cn";
 import {
   FLAT_SIZES,
@@ -81,8 +82,7 @@ export function RentCompare() {
         <label className="block mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
           Időtáv: <span className="text-ink">{years} év</span>
         </label>
-        <input
-          type="range"
+        <RangeSlider
           min={1}
           max={10}
           step={1}

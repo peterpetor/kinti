@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { usePersistedState } from "@/hooks/use-persisted-state";
 import { cn } from "@/lib/cn";
 import {
@@ -103,8 +104,7 @@ export function RentCostCalculator() {
           1. Havi bérleti díj (kalt, {cfg.nkNoun} nélkül)
         </label>
         <div className="flex items-center gap-3">
-          <input
-            type="range"
+          <RangeSlider
             min={500}
             max={5000}
             step={50}
@@ -204,8 +204,7 @@ export function RentCostCalculator() {
           A bérleti szerződésben általában külön szerepel: pl. „Miete 1800 + {cfg.nkShort} 180".
         </p>
         <div className="flex items-center gap-3">
-          <input
-            type="range"
+          <RangeSlider
             min={0}
             max={600}
             step={10}
@@ -230,8 +229,7 @@ export function RentCostCalculator() {
         <label className="block mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted">
           6. Hány évre kalkulálsz? <span className="text-ink">{years} év</span>
         </label>
-        <input
-          type="range"
+        <RangeSlider
           min={1}
           max={10}
           step={1}

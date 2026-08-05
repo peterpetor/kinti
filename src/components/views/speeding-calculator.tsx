@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { cn } from "@/lib/cn";
 import {
   getRoads,
@@ -221,8 +222,7 @@ export function SpeedingCalculator() {
           2. Hány {unit}-val haladtál?
         </label>
         <div className="flex items-center gap-3">
-          <input
-            type="range"
+          <RangeSlider
             min={speedLimit}
             max={speedLimit + 100}
             step={1}
@@ -262,8 +262,7 @@ export function SpeedingCalculator() {
             : "A büntetőeljárásnál a bírság jövedelem-arányos. Csak akkor releváns, ha közepes vagy súlyos a túllépés."}
         </p>
         <div className="flex items-center gap-3">
-          <input
-            type="range"
+          <RangeSlider
             min={2000}
             max={15000}
             step={100}

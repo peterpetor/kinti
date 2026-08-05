@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { RangeSlider } from "@/components/ui/range-slider";
 import Link from "next/link";
 import { Icon, EmptyState } from "@/components/ui";
 import { CountryFlag } from "@/components/ui/country-flag";
@@ -144,9 +145,8 @@ export function HovaKoltozzekMatrix() {
             a helyi átlag {szazalek}%-a
           </span>
         </label>
-        <input
+        <RangeSlider
           id="hk-slider"
-          type="range"
           min={50}
           max={250}
           step={5}

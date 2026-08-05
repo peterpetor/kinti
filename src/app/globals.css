@@ -243,6 +243,72 @@
     }
   }
 
+  /* ── Csúszka (input[type=range]) ────────────────────────────────────────
+     ⚠️ SÖTÉT TÉMÁN A SÍN VAKÍTÓ FEHÉR VOLT. Az `accent-color` (Tailwind
+     `accent-primary`) csak a KITÖLTÖTT részt és a fogantyút színezi; a
+     kitöltetlen sín a böngésző natív, VILÁGOS alapértelmezése marad. Sötét
+     lapon így egy fehér csík húzódott végig a kártyán — mérve a
+     /hova-koltozzek és a /berkalkulator csúszkáján.
+
+     Ezért saját, TOKEN-ALAPÚ sín: mindkét témán a felülettel harmonizál.
+     A fogantyú marad primér színű (az `accent-color` adja, plusz itt
+     expliciten is), így a fogás pontja továbbra is kiemelkedik.
+
+     8 csúszka van az appban (bér, lakbér, vám, gyorshajtás, közlekedés,
+     összehasonlító) — ezért GLOBÁLIS szabály, nem komponensenkénti javítás.
+
+     ⚠️ NYERS CSS-BEN A TOKEN NEVE `--text`, NEM `--ink`. Az `ink` csak a
+     Tailwind-alias (`text-ink` → `rgb(var(--text))`). A `var(--ink)` definiálatlan,
+     attól pedig az EGÉSZ `linear-gradient` érvénytelen lesz, és a sín NYOM
+     NÉLKÜL eltűnik — nem hibaüzenettel, hanem üres csíkkal. Pontosan ez
+     történt az első nekifutásnál. */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    /* A fogantyú a sín fölé lóg — enélkül a natív magasság vágná. */
+    height: 1.5rem;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(
+      to right,
+      rgb(var(--primary)) 0 var(--kitoltes, 50%),
+      rgb(var(--text) / 0.16) var(--kitoltes, 50%) 100%
+    );
+  }
+  input[type="range"]::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgb(var(--text) / 0.16);
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    margin-top: -7px; /* (20 − 6) / 2 — a sín közepére */
+    border-radius: 999px;
+    background: rgb(var(--primary));
+    border: 2px solid rgb(var(--surface));
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.18);
+  }
+  input[type="range"]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border: 2px solid rgb(var(--surface));
+    border-radius: 999px;
+    background: rgb(var(--primary));
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.18);
+  }
+  /* Firefox: a kitöltött szakasz külön elem (a WebKit-en az accent-color adja). */
+  input[type="range"]::-moz-range-progress {
+    height: 6px;
+    border-radius: 999px;
+    background: rgb(var(--primary));
+  }
+
   /* Egységes press-feedback minden gombon. @layer base → a Tailwind
      `active:scale-*` utility-k (utilities layer) felülírják, ahol egyedi van. */
   button:not(:disabled):active,
