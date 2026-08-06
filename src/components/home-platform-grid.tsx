@@ -115,7 +115,7 @@ export function HomePlatformGrid({ b2bOpenCount = 0 }: { b2bOpenCount?: number }
   // felengedés) — a Tailwind `active:scale-*` mindkét irányra ugyanazt a
   // görbét adná. A csempe kicsi, ezért marad a 0,97-es alapérték.
   const tileCls =
-    "kinti-press relative flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-2 py-3.5 text-center shadow-card transition-shadow";
+    "kinti-press relative flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-2 py-3.5 text-center shadow-card";
   const tileInner = (m: (typeof MODULES)[number]) => (
     <>
       {(liveBadge[m.href] ?? 0) > 0 && (

@@ -40,10 +40,14 @@ export function BusinessCard({ business: b, href, className, distanceKm, showFav
     // ⚠️ A press-visszajelzés a `.kinti-press` osztályból jön, NEM a Tailwind
     // `active:scale-*`-ból: a különbség a FELENGEDÉS. A utility-nél a lenyomás
     // és a visszaengedés ugyanazzal a görbével fut, itt viszont gyorsan
-    // nyomódik és RUGÓSAN pattan vissza. Ezért `transition-shadow` is a puszta
-    // `transition` helyett — az a transformot is elvinné, és felülírná a rugót.
+    // nyomódik és RUGÓSAN pattan vissza.
+    // ⚠️⚠️ SEMMILYEN `transition-*` UTILITY NEM KERÜLHET IDE. A `transition`
+    // shorthand, tehát a utilities layerből bármelyik `transition-*` TELJESEN
+    // felülírja a `.kinti-press` átmenetét. Élesben mérve: `transition-shadow`
+    // mellett a `transition-property` `box-shadow` lett, a `transform` kiesett,
+    // és a felengedés ugorva történt. Az árnyékot a `.kinti-press` animálja.
     // A 0,985 a kártya MÉRETÉHEZ igazodik: nagy felületen a 0,97 rángatásnak hat.
-    href && "kinti-press [--kinti-press:0.985] transition-shadow hover:shadow-card-hover md:hover:-translate-y-0.5",
+    href && "kinti-press [--kinti-press:0.985] hover:shadow-card-hover md:hover:-translate-y-0.5",
     className,
   );
 

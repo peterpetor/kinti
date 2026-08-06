@@ -460,9 +460,22 @@
      A mérték a felület méretével FORDÍTOTTAN arányos: egy nagy kártyán a 0,97
      már rángatásnak hat, egy kis csempén a 0,99 észrevehetetlen. Ezért van
      `--kinti-press` felülírható változó. */
+  /* ⚠️⚠️ AZ ÁRNYÉK IS INNEN MEGY, ÉS EZ NEM KÉNYELEM. A `transition` egy
+     SHORTHAND: bármelyik Tailwind `transition-*` utility (a utilities layerből)
+     TELJESEN felülírja ezt a szabályt, nem kiegészíti. Az első változatban a
+     kártyákon `transition-shadow` állt a rugó mellett — élesben mérve a
+     `transition-property` `box-shadow` LETT, a `transform` kiesett belőle, és a
+     press-visszaengedés animáció nélkül, ugorva történt. Vagyis pontosan az a
+     hiba maradt bent, amit ez az egész osztály javítani hivatott, és a
+     forrás-alapú teszt átengedte.
+     Ezért: a `.kinti-press` maga animálja az árnyékot is, és MELLÉ semmilyen
+     `transition-*` utility nem kerülhet (teszt őrzi). */
   .kinti-press {
     --kinti-press: 0.97;
-    transition: transform var(--kinti-spring-pop-ido) var(--kinti-spring-pop);
+    transition:
+      transform var(--kinti-spring-pop-ido) var(--kinti-spring-pop),
+      box-shadow 0.18s var(--kinti-ease),
+      border-color 0.18s var(--kinti-ease);
   }
   .kinti-press:active {
     transform: scale(var(--kinti-press));

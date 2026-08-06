@@ -92,7 +92,7 @@ export function PersonalizedHome() {
               key={it.href}
               href={it.href}
               onClick={() => trackAction("personalize-click")}
-              className="kinti-press [--kinti-press:0.985] flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card transition-shadow"
+              className="kinti-press [--kinti-press:0.985] flex items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 shadow-card"
             >
               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-primary-soft text-[19px]">
                 {it.emoji}

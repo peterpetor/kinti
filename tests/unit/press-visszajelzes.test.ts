@@ -81,20 +81,35 @@ describe("a Tailwind alapgörbéje a mienk", () => {
 });
 
 describe("nincs ütköző utility a .kinti-press mellett", () => {
-  it("⚠️ ahol `.kinti-press` van, ott nincs puszta `transition` és `active:scale-*`", () => {
+  /**
+   * ⚠️⚠️ EZ AZ ŐR EGYSZER MÁR ÁTENGEDETT EGY VALÓS HIBÁT, ÉS ÉLES MÉRÉS FOGTA MEG.
+   * Az első változata csak a PUSZTA `transition` utility-t tiltotta, mert azt
+   * hittem, a `transition-shadow` „csak az árnyékot adja hozzá". Nem: a
+   * `transition` CSS-shorthand, tehát BÁRMELYIK `transition-*` utility a
+   * utilities layerből TELJESEN felülírja a `.kinti-press` (base layer)
+   * szabályát. Élesben mérve a kártyán a `transition-property` `box-shadow`
+   * lett, a `transform` kiesett belőle, és a press-visszaengedés animáció
+   * nélkül, ugorva történt — vagyis pontosan az a hiba maradt bent, amit az
+   * osztály javítani hivatott. A forrás-alapú teszt zöld volt közben.
+   */
+  const TILTOTT = /\btransition(?:-[a-z]+)?(?=["'\s])/;
+  const AKTIV_SCALE = /\bactive:scale-/;
+
+  it("⚠️ ahol `.kinti-press` van, ott SEMMILYEN `transition-*` és `active:scale-*`", () => {
     const fajlok = globSync("src/**/*.tsx", { cwd: GYOKER }).map((f) => f.replace(/\\/g, "/"));
     const vetkesek: string[] = [];
     for (const f of fajlok) {
       const src = readFileSync(resolve(GYOKER, f), "utf8");
       if (!src.includes("kinti-press")) continue;
       // Soronként nézzük: egy fájlban lehet másik elem is a saját stílusával.
+      // A megjegyzés-sorokat kihagyjuk — azok magyarázzák ezt a szabályt.
       src.split("\n").forEach((sor, i) => {
         if (!sor.includes("kinti-press")) return;
-        // A puszta `transition` (nem `transition-shadow`, `transition-transform` stb.)
-        if (/\btransition(?=["'\s])/.test(sor)) {
-          vetkesek.push(`${f}:${i + 1} — puszta \`transition\` felülírja a rugót`);
+        if (/^\s*(\/\/|\*|\/\*)/.test(sor)) return;
+        if (TILTOTT.test(sor)) {
+          vetkesek.push(`${f}:${i + 1} — \`transition-*\` FELÜLÍRJA a rugót (shorthand!)`);
         }
-        if (/\bactive:scale-/.test(sor)) {
+        if (AKTIV_SCALE.test(sor)) {
           vetkesek.push(`${f}:${i + 1} — \`active:scale-*\` felülírja a mértéket`);
         }
       });
@@ -102,13 +117,30 @@ describe("nincs ütköző utility a .kinti-press mellett", () => {
     expect(vetkesek, vetkesek.join("\n")).toEqual([]);
   });
 
-  it("a szűrő tényleg megkülönbözteti a két alakot", () => {
-    // Kétirányú ellenőrzés: enélkül egy elrontott regex némán mindent átengedne.
-    const rossz = 'className="kinti-press transition active:scale-[0.99]"';
-    const jo = 'className="kinti-press transition-shadow"';
-    expect(/\btransition(?=["'\s])/.test(rossz)).toBe(true);
-    expect(/\btransition(?=["'\s])/.test(jo)).toBe(false);
-    expect(/\bactive:scale-/.test(rossz)).toBe(true);
-    expect(/\bactive:scale-/.test(jo)).toBe(false);
+  it("a .kinti-press maga animálja az árnyékot is", () => {
+    // Ha nem tenné, a kártyák elvesztenék a hover-árnyék átmenetét, amint a
+    // `transition-shadow` utility-t levesszük róluk.
+    const blokk = CSS.slice(CSS.indexOf(".kinti-press {"), CSS.indexOf(".kinti-press:active"));
+    expect(blokk).toContain("transform var(--kinti-spring-pop-ido)");
+    expect(blokk).toContain("box-shadow");
+  });
+
+  it("a szűrő MINDEN transition-alakot fog (kétirányú próba)", () => {
+    // Enélkül egy elrontott regex némán mindent átengedne — ez pontosan
+    // megtörtént: a `transition-shadow` átcsúszott a régi mintán.
+    for (const rossz of [
+      'className="kinti-press transition"',
+      'className="kinti-press transition-shadow"',
+      'className="kinti-press transition-all shadow-card"',
+      'className="kinti-press transition-transform"',
+    ]) {
+      expect(TILTOTT.test(rossz), `nem fogja: ${rossz}`).toBe(true);
+    }
+    // Amit NEM szabad fognia: a rugót nem érintő osztályok.
+    for (const jo of ['className="kinti-press shadow-card"', 'className="kinti-press hover:shadow-card-hover"']) {
+      expect(TILTOTT.test(jo), `tévesen fogja: ${jo}`).toBe(false);
+    }
+    expect(AKTIV_SCALE.test('className="kinti-press active:scale-[0.99]"')).toBe(true);
+    expect(AKTIV_SCALE.test('className="kinti-press shadow-card"')).toBe(false);
   });
 });

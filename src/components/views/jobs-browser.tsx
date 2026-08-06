@@ -410,7 +410,7 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
                     // Press-visszajelzés: `.kinti-press` (gyors le, rugós fel) —
                     // a `transition` utility a transformot is elvinné, ezért
                     // `transition-shadow`.
-                    className="kinti-press [--kinti-press:0.985] block rounded-card border border-line bg-surface p-4 shadow-card transition-shadow"
+                    className="kinti-press [--kinti-press:0.985] block rounded-card border border-line bg-surface p-4 shadow-card"
                   >
                     <div className="flex items-start gap-2">
                       <div className="min-w-0 flex-1">
