@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Icon } from "@/components/ui";
+import { EmptyState, Icon } from "@/components/ui";
 import type { IconName } from "@/components/ui/icons";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -87,9 +87,15 @@ export function GuideSearch({ guides }: { guides: GuideSearchItem[] }) {
       {hasQuery && (
         <div className="mt-3 space-y-1.5">
           {matches.length === 0 ? (
-            <p className="px-1 text-[12.5px] text-ink-muted">
-              Nincs közvetlen találat — görgess le, és böngészd a témákat.
-            </p>
+            // `compact`: ez egy oldalon BELÜLI kereső, nem teljes nézet — a
+            // nagy üres-állapot doboz itt kitakarná a témalistát, ami épp a
+            // következő lépés.
+            <EmptyState
+              icon="search"
+              title="Nincs közvetlen találat"
+              description="Görgess le, és böngészd a témákat — lehet, hogy más néven van meg, amit keresel."
+              compact
+            />
           ) : (
             matches.map((g) => (
               <Link

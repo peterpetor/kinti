@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import type { ExternalJob } from "@/lib/repo-external-jobs";
 import { usePersistedState } from "@/hooks/use-persisted-state";
 import Link from "next/link";
-import { Icon } from "@/components/ui";
+import { EmptyState, Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { foldSearchText } from "@/lib/sql-fold";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -272,27 +272,46 @@ export function JobsBrowser({ jobs, proMatch }: { jobs: Job[]; proMatch?: ProMat
               ))}
             </div>
           ) : (
-          <div className="flex flex-col items-center gap-2 rounded-card border border-line bg-surface px-6 py-10 text-center shadow-card">
-            <Icon name="search" size={28} className="text-ink-faint" />
-            <p className="text-[15px] font-extrabold text-ink">
-              {jobsInCountry.length === 0
+          // ⚠️ A KÉT ÜRES ÁLLAPOT KÜLÖNBÖZŐ, ÉS EDDIG UGYANAZT A GOMBOT KAPTA.
+          // Ha az országban EGYÁLTALÁN nincs hirdetés, a „Hirdesd meg az
+          // állásod" jó következő lépés. Ha viszont csak a SZŰRŐ nem ad
+          // találatot, akkor a látogató állást KERES, nem kínál — neki az a
+          // kiút, hogy tágítsa a szűrőt, és ezt egy koppintással el is lehet
+          // végezni ahelyett, hogy a szöveg elmagyarázza, mit csináljon.
+          <EmptyState
+            icon="search"
+            title={
+              jobsInCountry.length === 0
                 ? "A legjobb álláskereső-források — egy helyen"
                 : canton
                   ? `Nincs állás itt: ${regionName(country, canton)}`
-                  : "Nincs a szűrőknek megfelelő állás"}
-            </p>
-            <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-muted">
-              {jobsInCountry.length === 0
-                ? "Magyar-barát hirdetések folyamatosan érkeznek. Addig is összegyűjtöttük neked a hivatalos és vezető állásportálokat — görgess lejjebb. Munkaerőt keresel? Hirdesd meg ingyen."
-                : "Próbálj tágítani a szűrőkön — vagy ha munkaerőt keresel, add fel az állásod."}
-            </p>
-            <Link
-              href="/munkaltato"
-              className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-pill bg-primary px-4 py-2.5 text-[13px] font-extrabold text-white shadow-card-hover active:scale-[0.98]"
-            >
-              <Icon name="plus" size={14} strokeWidth={2.6} /> Hirdesd meg az állásod
-            </Link>
-          </div>
+                  : "Nincs a szűrőknek megfelelő állás"
+            }
+            description={
+              jobsInCountry.length === 0
+                ? "Magyar-barát hirdetések folyamatosan érkeznek. Addig is összegyűjtöttük neked a hivatalos és vezető állásportálokat — görgess lejjebb."
+                : "Tágíts a szűrőkön, és nézd meg az összes hirdetést ebben az országban."
+            }
+            action={
+              jobsInCountry.length === 0
+                ? { label: "Hirdesd meg az állásod", href: "/munkaltato" }
+                : {
+                    label: "Szűrők törlése",
+                    onClick: () => {
+                      setQuery("");
+                      setCantonPref("");
+                      setCategory("");
+                    },
+                  }
+            }
+            secondary={
+              jobsInCountry.length > 0 ? (
+                <Link href="/munkaltato" className="text-[12px] font-bold text-primary-ink underline">
+                  Munkaerőt keresel? Hirdesd meg ingyen
+                </Link>
+              ) : undefined
+            }
+          />
           )
         ) : (
           <>

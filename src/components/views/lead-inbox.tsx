@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Icon } from "@/components/ui";
+import { EmptyState, Icon } from "@/components/ui";
 import { BoostCheckoutButton } from "@/components/views/boost-checkout-button";
 import { parseDbDate } from "@/lib/dates";
 import type { BusinessLead } from "@/lib/repo-leads";
@@ -40,10 +40,17 @@ export function LeadInbox({ leads, businessId }: { leads: LeadCard[]; businessId
   }
 
   if (leads.length === 0) {
+    // ⚠️ ITT NEM A FELHASZNÁLÓ TEHET A NULLÁRÓL, hanem az, hogy még senki nem
+    // kereste meg — a következő lépés ezért nem „csináld meg", hanem „nézd meg,
+    // mit lát rólad a kereső". Az adatlap kitöltöttsége az, amit tényleg
+    // befolyásolni tud.
     return (
-      <div className="rounded-card border border-dashed border-line bg-surface-alt px-4 py-8 text-center text-[13px] text-ink-muted">
-        Még nincs beérkezett ajánlatkérésed. Amint valaki a Szaknévsoron át megkeres, itt megjelenik.
-      </div>
+      <EmptyState
+        icon="mail"
+        title="Még nincs beérkezett ajánlatkérésed"
+        description="Amint valaki a Szaknévsoron át megkeres, itt jelenik meg — e-mailben is szólunk."
+        action={{ label: "Nézd meg az adatlapod", href: `/szaknevsor/${businessId}` }}
+      />
     );
   }
 

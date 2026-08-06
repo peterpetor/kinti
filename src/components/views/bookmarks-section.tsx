@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Icon } from "@/components/ui";
+import { Icon, EmptyState } from "@/components/ui";
 import {
   BOOKMARK_LABEL,
   groupBookmarks,
@@ -56,11 +56,16 @@ export function BookmarksSection() {
       </h2>
 
       {mounted && items.length === 0 && (
-        <p className="rounded-card border border-line bg-surface-alt/60 px-4 py-3 text-[12px] leading-relaxed text-ink-muted">
-          Még nincs mentésed. A cikkek alján, a szakemberek és állások adatlapján
-          a <strong className="text-ink">könyvjelző</strong> gombbal menthetsz ide bármit
-          — egy kattintás, és itt megtalálod.
-        </p>
+        // ⚠️ ÜRES ÁLLAPOT KÖVETKEZŐ LÉPÉSSEL. A puszta magyarázó bekezdés
+        // elmondta, HOGYAN kell menteni, de nem vitt el oda, AHOL menteni
+        // lehet — a felhasználónak magának kellett kitalálnia, hova menjen.
+        <EmptyState
+          icon="bookmark"
+          title="Még nincs mentésed"
+          description="A cikkek alján, a szakemberek és állások adatlapján a könyvjelző gombbal menthetsz ide bármit."
+          action={{ label: "Böngéssz a szaknévsorban", href: "/szaknevsor" }}
+          compact
+        />
       )}
 
       {csoportok.map(({ kind, items: sorok }) => (

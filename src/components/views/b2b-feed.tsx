@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Icon } from "@/components/ui";
+import { EmptyState, Icon } from "@/components/ui";
 import { COUNTRIES } from "@/lib/countries";
 import { cn } from "@/lib/cn";
 import type { Category } from "@/lib/types";
@@ -80,15 +80,35 @@ export function B2bFeed({
       )}
 
       {filtered.length === 0 ? (
-        <div className="rounded-card border border-dashed border-line bg-surface-alt p-8 text-center">
-          <Icon name="briefcase" size={26} strokeWidth={1.8} className="mx-auto mb-2 text-ink-faint" />
-          <p className="text-[13.5px] font-bold text-ink">Nincs nyitott projekt</p>
-          <p className="mx-auto mt-1 max-w-xs text-[12px] text-ink-muted">
-            {projects.length === 0
-              ? "Te lehetsz az első, aki munkát ír ki a magyar cégeknek."
-              : "Ezzel a szűrővel nincs találat — próbálj másik országot vagy szakmát."}
-          </p>
-        </div>
+        // ⚠️ A KÉT ÜRES ÁLLAPOT KÉT KÜLÖNBÖZŐ DOLOG, és más a következő lépés is.
+        // Ha EGYÁLTALÁN nincs projekt, a felhasználó nem tud mit szűrni — ott
+        // az „írj ki te" a valódi kiút. Ha csak a SZŰRŐ nem ad találatot, a
+        // kiút a szűrő törlése, és azt egy gombbal el is lehet végezni ahelyett,
+        // hogy a szöveg elmagyarázza, mit csináljon.
+        <EmptyState
+          icon="briefcase"
+          title={projects.length === 0 ? "Még nincs nyitott projekt" : "Nincs a szűrőknek megfelelő projekt"}
+          description={
+            projects.length === 0
+              ? "A fenti űrlappal te lehetsz az első, aki munkát ír ki a magyar cégeknek."
+              : "Ezzel az országgal és szakmával nincs találat."
+          }
+          // ⚠️ A NULLA-PROJEKT ÁGBAN SZÁNDÉKOSAN NINCS GOMB. A kiíró űrlap
+          // (B2bComposer) ugyanezen az oldalon, KÖZVETLENÜL e fölött a blokk
+          // fölött ül — egy „Írj ki egy projektet" gomb vagy oda görgetne
+          // vissza (értelmetlen), vagy egy nem létező útvonalra vinne.
+          action={
+            projects.length === 0
+              ? undefined
+              : {
+                  label: "Szűrők törlése",
+                  onClick: () => {
+                    setCountry("all");
+                    setCategory("all");
+                  },
+                }
+          }
+        />
       ) : (
         <div className="space-y-3">
           {filtered.map((p) => (

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Icon } from "@/components/ui";
+import { EmptyState, Icon } from "@/components/ui";
 import { confirmDialog } from "@/lib/confirm";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
@@ -70,50 +70,23 @@ export function SalaryOffersView() {
 
   if (country !== "CH") {
     return (
-      <section className="rounded-card border border-dashed border-line bg-surface p-8 text-center shadow-card">
-        <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary-ink">
-          <Icon name="globe" size={20} strokeWidth={2.4} />
-        </span>
-        <h2 className="mt-3 text-[17px] font-extrabold tracking-tight text-ink">
-          Ez a svájci Bérkalkulátorhoz tartozik
-        </h2>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-muted">
-          Az ajánlat-összehasonlítás a svájci nettó-bér modelljére épül (Quellensteuer,
-          kanton, egyházi adó). A többi ország Bérkalkulátora (osztrák, német, holland)
-          a saját adórendszerével számol, és egyelőre nem ment ajánlatot.
-        </p>
-        <Link
-          href="/berkalkulator"
-          className="mt-4 inline-flex items-center gap-1.5 rounded-pill bg-primary px-5 py-2.5 text-[13px] font-extrabold text-white shadow-card active:scale-95"
-        >
-          <span>💰</span>
-          Bérkalkulátorhoz
-        </Link>
-      </section>
+      <EmptyState
+        icon="globe"
+        title="Ez a svájci Bérkalkulátorhoz tartozik"
+        description="Az ajánlat-összehasonlítás a svájci nettó-bér modelljére épül (Quellensteuer, kanton, egyházi adó). A többi ország Bérkalkulátora a saját adórendszerével számol, és egyelőre nem ment ajánlatot."
+        action={{ label: "Bérkalkulátorhoz", href: "/berkalkulator" }}
+      />
     );
   }
 
   if (offers.length === 0) {
     return (
-      <section className="rounded-card border border-dashed border-line bg-surface p-8 text-center shadow-card">
-        <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-success/10 text-success-ink">
-          <Icon name="bookmark" size={20} strokeWidth={2.4} />
-        </span>
-        <h2 className="mt-3 text-[17px] font-extrabold tracking-tight text-ink">
-          Még nincs mentett ajánlat
-        </h2>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-muted">
-          Menj a Bérkalkulátorra, számolj ki egy ajánlatot, és mentsd el —
-          itt majd összehasonlíthatod a többivel.
-        </p>
-        <Link
-          href="/berkalkulator"
-          className="mt-4 inline-flex items-center gap-1.5 rounded-pill bg-primary px-5 py-2.5 text-[13px] font-extrabold text-white shadow-card active:scale-95"
-        >
-          <span>💰</span>
-          Bérkalkulátorhoz
-        </Link>
-      </section>
+      <EmptyState
+        icon="bookmark"
+        title="Még nincs mentett ajánlat"
+        description="Számolj ki egy ajánlatot a Bérkalkulátoron és mentsd el — itt majd összehasonlíthatod a többivel."
+        action={{ label: "Bérkalkulátorhoz", href: "/berkalkulator" }}
+      />
     );
   }
 
