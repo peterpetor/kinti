@@ -124,14 +124,21 @@ export const NearbyBusinessesLazy = hatarral(
   () => import("./nearby-businesses").then((m) => m.NearbyBusinesses),
   { ssr: false },
 ),
-  box("min-h-[120px]"),
+  // ⚠️ MÉRT: a tényleges magasság 411 px, a helyőrző 120 volt — a NEGYEDE,
+  // vagyis 291 px-es ugrás. A blokk MINDIG 3 kártyát mutat (`slice(0, 3)`),
+  // tehát a magassága stabil, nem találat-függő.
+  box("min-h-[380px]"),
 );
 export const HomePlatformGridLazy = hatarral(
   dynamic(
   () => import("./home-platform-grid").then((m) => m.HomePlatformGrid),
   { ssr: false },
 ),
-  box("min-h-[300px]"),
+  // ⚠️ MÉRT ÉRTÉK, nem becslés (éles Playwright-mérés, 390 px széles nézet):
+  // a rács TÉNYLEGES magassága 439 px, a helyőrző 300 volt — vagyis minden
+  // betöltéskor 139 px-et ugrott a lap alsó fele. A 430 szándékosan épphogy a
+  // mért alatt van: így összecsukott állapotban sem marad üres rés.
+  box("min-h-[430px]"),
 );
 export const ReferralHomeCardLazy = hatarral(
   dynamic(
