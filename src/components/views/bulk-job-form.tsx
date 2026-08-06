@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui";
 import { getRegions, regionLabel } from "@/lib/regions";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { budgetCurrency, isBudgetCountry } from "@/lib/budget-plan";
 import { JobCategoryOptions } from "@/components/views/job-category-options";
 
 interface Row {
@@ -36,7 +37,7 @@ export function BulkJobForm() {
   const country = prefCountry ?? DEFAULT_COUNTRY;
   const isAT = country === "AT";
   const regions = getRegions(country);
-  const cur = country === "CH" ? "CHF" : "EUR";
+  const cur = isBudgetCountry(country) ? budgetCurrency(country) : "EUR";
   const [rows, setRows] = useState<Row[]>([emptyRow(), emptyRow(), emptyRow()]);
   const [legalAttested, setLegalAttested] = useState(false);
   const [loading, setLoading] = useState(false);

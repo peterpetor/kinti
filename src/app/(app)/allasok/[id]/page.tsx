@@ -17,6 +17,7 @@ import { parseWorkingHours, calculateBusinessHoursStatus } from "@/lib/hours";
 import { Icon } from "@/components/ui";
 import { QuickApplyButton } from "@/components/views/quick-apply-button";
 import { Metadata } from "next";
+import { budgetCurrency, isBudgetCountry } from "@/lib/budget-plan";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -235,7 +236,7 @@ export default async function JobDetailPage({ params }: { params: { id: string }
               </h3>
               <p className="mt-1 text-[13.5px] leading-snug text-ink-muted text-balance">
                 A(z) <strong>{cantonName}</strong> régióban a Kintiek becsült éves bruttó mediánja{" "}
-                <strong>{cantonMedian.toLocaleString("de-CH")} {jobCountry === "CH" ? "CHF" : "EUR"}</strong>.
+                <strong>{cantonMedian.toLocaleString("de-CH")} {isBudgetCountry(jobCountry) ? budgetCurrency(jobCountry) : "EUR"}</strong>.
                 Ez az állás (évesítve) <strong>{Math.abs(diffPercent)}%-kal </strong>
                 <strong className={diffPercent >= 0 ? "text-success-ink" : "text-accent"}>
                   {diffPercent >= 0 ? "magasabb" : "alacsonyabb"}

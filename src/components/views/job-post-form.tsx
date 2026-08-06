@@ -8,6 +8,7 @@ import { JobCategoryOptions } from "@/components/views/job-category-options";
 import { useCheckout } from "@/hooks/useCheckout";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
+import { budgetCurrency, isBudgetCountry } from "@/lib/budget-plan";
 import { getRegions, regionLabel } from "@/lib/regions";
 // ⚠️ EGY forrás a példa-városra. A korábbi kézi ország-lánc végén Zürich állt,
 // így az angliai és a spanyolországi hirdetőnek is „Pl. Zürich" jelent meg.
@@ -32,6 +33,17 @@ export interface JobFormInitial {
  * Hirdetésfeladó / -szerkesztő űrlap. `jobId` nélkül új hirdetést készít
  * (POST), megadott `jobId`-vel a meglévőt szerkeszti (PATCH).
  */
+/**
+ * ⚠️ Ország → pénznem EGYETLEN forrásból. A korábbi
+ * `country === "CH" ? "CHF" : "EUR"` alak minden nem-svájci országot euróba
+ * sorolt — vagyis egy ANGLIAI tételt fontban gondolt összeggel EURÓKÉNT
+ * kezelt. Ez a bináris ország-fallthrough hibaosztály; a `job-sync.ts`-ben
+ * egyszer már valódi hibaként javítottuk, itt viszont bent maradt.
+ */
+function penznem(country: string): string {
+  return isBudgetCountry(country) ? budgetCurrency(country) : "EUR";
+}
+
 export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobFormInitial } = {}) {
   const router = useRouter();
   const isEdit = !!jobId;
@@ -72,7 +84,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
   // Új hirdetésnél a pénznem alapból az ország szerinti; szerkesztésnél marad a meglévő.
   useEffect(() => {
     if (isEdit) return;
-    setForm((f) => ({ ...f, currency: country === "CH" ? "CHF" : "EUR" }));
+    setForm((f) => ({ ...f, currency: penznem(country) }));
   }, [country, isEdit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
