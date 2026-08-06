@@ -177,3 +177,36 @@ describe("nincs ad-hoc fül-váltó", () => {
     }
   });
 });
+
+describe("szűk hely három szegmenstől", () => {
+  /**
+   * ⚠️ MÉRT HIBÁBÓL. A Piactéren a „Lakbér-kalkulátor" felirat 24 px-szel
+   * lógott ki a szegmensből (élesben, 390 px-es nézet), tehát
+   * „Lakbér-kalkulá…"-ként jelent meg. 390 px-en három szegmensre 121 px jut,
+   * mínusz 16 px belső padding = 105 px a feliratnak; az ikon + köz ebből 19-et
+   * visz el, a 12,5 px-es félkövér felirat 17 karakteren ~110 px.
+   */
+  it("háromtól elmarad az ikon (19 px-et szabadít fel)", () => {
+    expect(KOD).toMatch(/const szuk = options\.length >= 3/);
+    expect(KOD).toMatch(/\{o\.icon && !szuk &&/);
+  });
+
+  it("háromtól kisebb a betű", () => {
+    expect(KOD).toMatch(/szuk \? "text-\[11\.5px\]" : "text-\[12\.5px\]"/);
+  });
+
+  it("a `truncate` MEGMARAD biztonsági hálónak", () => {
+    // A számítás egy adott képernyőre igaz; egy hosszabb felirat vagy egy
+    // negyedik szegmens újra szűkös lehet — akkor csúnyán levágódjon, ne
+    // lógjon ki.
+    expect(KOD).toContain('className="truncate"');
+  });
+
+  it("a felirathoz NEM nyúlunk (az tartalmi döntés)", () => {
+    const src = readFileSync(
+      resolve(GYOKER, "src/app/(app)/piacter/piacter-tabs.tsx"),
+      "utf8",
+    );
+    expect(src).toContain("Lakbér-kalkulátor");
+  });
+});

@@ -64,6 +64,20 @@ export function SegmentedControl<T extends string>({
   fill?: boolean;
 }) {
   const listRef = useRef<HTMLDivElement>(null);
+  /**
+   * ⚠️ HÁROM SZEGMENSTŐL SZŰKÖS A HELY, ÉS EZT MÉRTEM. A Piactéren a
+   * „Lakbér-kalkulátor" felirat 24 px-szel lógott ki a szegmensből (élesben,
+   * 390 px-es nézetben), tehát „Lakbér-kalkulá…"-ként jelent meg.
+   *
+   * Számolva 390 px-es képernyőn: 372 px konténer − 8 px padding = 364, három
+   * szegmensre 121 px, mínusz 16 px belső padding = 105 px a feliratnak. Az
+   * ikon + köz ebből 19 px-et visz el, és a 12,5 px-es félkövér felirat 17
+   * karakteren ~110 px — nem fér el.
+   *
+   * Ezért háromtól: NINCS ikon, és kisebb a betű. A felirathoz nem nyúlunk (az
+   * tartalmi döntés), a `truncate` pedig marad biztonsági hálónak.
+   */
+  const szuk = options.length >= 3;
   const aktivIndex = Math.max(
     0,
     options.findIndex((o) => o.id === value),
@@ -132,11 +146,12 @@ export function SegmentedControl<T extends string>({
             className={cn(
               // z-[1]: a kapszula FÖLÖTT — az a háttér, nem takarhatja a feliratot.
               "relative z-[1] flex min-w-0 items-center justify-center gap-1.5 rounded-pill font-bold transition-colors",
-              size === "sm" ? "px-3 py-1.5 text-[11.5px]" : "px-2 py-2 text-[12.5px]",
+              size === "sm" ? "px-3 py-1.5 text-[11.5px]" : "px-2 py-2",
+              size === "sm" ? "" : szuk ? "text-[11.5px]" : "text-[12.5px]",
               aktiv ? "text-white" : "text-ink-muted hover:text-ink",
             )}
           >
-            {o.icon && (
+            {o.icon && !szuk && (
               <Icon name={o.icon} size={size === "sm" ? 12 : 13} strokeWidth={2.4} className="shrink-0" />
             )}
             {/* ⚠️ NINCS `active:scale` a szegmensen. Az összenyomás elszakítaná
