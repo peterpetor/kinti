@@ -8,12 +8,14 @@ import { Icon, type IconName } from "./icons";
 import { CountrySwitcher } from "./country-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { HapticToggle } from "@/components/haptic-toggle";
+import { ArcBelepesKapcsolo } from "@/components/arc-belepes-kapcsolo";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, courseLanguageName } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { haptic } from "@/lib/haptics";
 import { recordUse, getTopUsed } from "@/lib/usage-frecency";
+import { openGlobalSearch } from "@/components/global-search";
 
 /**
  * Főmenü („…") — ADAT-VEZÉRELT szerkezet (2026-07-12-i átalakítás):
@@ -329,6 +331,15 @@ export function DropdownMenu() {
           // ami semmit nem kapcsol, rosszabb a hiányánál).
           custom: <HapticToggle key="rezges" />,
         },
+        {
+          key: "arc-belepes",
+          label: "Belépés arccal vagy ujjlenyomattal",
+          tint: "bg-primary/10",
+          icon: { name: "lock" },
+          // Szintén magát rejti el: kilépve, beépített hitelesítő nélküli
+          // eszközön, vagy ha a szolgáltató-oldali kapcsoló hiányzik.
+          custom: <ArcBelepesKapcsolo key="arc-belepes" />,
+        },
         { key: "hirlevel", label: "Hírlevél", href: "/hirlevel", tint: "bg-primary/10 text-primary-ink", icon: { name: "send" } },
         { key: "ertesitesek", label: "Értesítések", href: "/ertesitesek", tint: "bg-primary/10 text-primary-ink", icon: { name: "bell" } },
         { key: "helymeghatarozas", label: "Helymeghatározás", href: "/helymeghatarozas", tint: "bg-primary/10 text-primary-ink", icon: { name: "pin" } },
@@ -492,9 +503,33 @@ export function DropdownMenu() {
               )}
 
               {visibleSections.length === 0 ? (
-                <p className="px-4 py-10 text-center text-[13px] text-ink-muted">
-                  Nincs találat a menüben erre: „{query.trim()}".
-                </p>
+                /* ⚠️ A ZSÁKUTCA HELYETT ÁTVEZETÉS. A menü-szűrő CSAK a menüpontok
+                   között keres; ha valaki egy vállalkozásra, útmutatóra vagy
+                   állásra gondolt, itt eddig üres képernyőt kapott, és semmi nem
+                   mondta meg, hogy a teljes kereső létezik. Az pedig mobilon
+                   EGYETLEN helyről (a kezdőlap fejléc-ikonjáról) nyílt — vagyis
+                   aki nem a kezdőlapon állt, nem is tudott hozzáférni.
+                   A menü minden felső szintű oldalon elérhető, tehát ez a sor
+                   egyben a kereső hiányzó, app-szintű belépési pontja is. */
+                <div className="px-4 py-9 text-center">
+                  <p className="text-[13px] text-ink-muted">
+                    Nincs találat a menüben erre: „{query.trim()}".
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const keresett = query.trim();
+                      close();
+                      // A menü záró-animációja után nyitjuk, különben a két
+                      // átfedő réteg egymásra ugrik.
+                      setTimeout(() => openGlobalSearch(keresett), 180);
+                    }}
+                    className="kinti-press mt-3 inline-flex items-center gap-1.5 rounded-pill bg-primary px-4 py-2 text-[12.5px] font-extrabold text-white shadow-card"
+                  >
+                    <Icon name="search" size={13} strokeWidth={2.6} />
+                    Keresés az egész appban
+                  </button>
+                </div>
               ) : (
                 visibleSections.map((s) => (
                   <CollapsibleSection key={s.id} id={s.id} title={s.title} defaultOpen={s.defaultOpen} forceOpen={filtering}>

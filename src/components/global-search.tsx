@@ -36,9 +36,13 @@ const OPEN_EVENT = "kinti:open-global-search";
 const RECENTS_KEY = "kinti_global_recent_v1";
 const RECENTS_MAX = 5;
 
-/** Bárhonnan megnyitja a mindenkeresőt (pl. fejléc-gomb, üres állapot CTA-k). */
-export function openGlobalSearch() {
-  window.dispatchEvent(new Event(OPEN_EVENT));
+/**
+ * Bárhonnan megnyitja a mindenkeresőt (fejléc-gomb, menü-átvezetés, üres
+ * állapot CTA-k). A `kezdoQuery` átveszi a máshol MÁR BEGÉPELT szöveget —
+ * enélkül a felhasználónak újra be kellene írnia, amit az imént írt.
+ */
+export function openGlobalSearch(kezdoQuery?: string) {
+  window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: kezdoQuery ?? "" }));
 }
 
 interface SearchResults {
@@ -104,7 +108,10 @@ export function GlobalSearch() {
   return (
     <button
       type="button"
-      onClick={openGlobalSearch}
+      // ⚠️ Nyíl-függvény, NEM közvetlen átadás: a React az egéreseményt adná
+      // át első argumentumként, ami így KEZDŐ KERESŐSZÓ lenne (egy
+      // [object MouseEvent] a mezőben). A típusellenőrzés fogta meg.
+      onClick={() => openGlobalSearch()}
       aria-label="Keresés (Ctrl+K)"
       title="Keresés (Ctrl+K)"
       className="grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition active:scale-95"
@@ -136,7 +143,14 @@ export function GlobalSearchOverlay() {
 
   // Megnyitás: fejléc-gomb eseménye + gyorsbillentyűk (Ctrl/⌘+K toggle, „/" nyit).
   useEffect(() => {
-    const onOpen = () => { buzz(); setOpen(true); };
+    const onOpen = (e: Event) => {
+      buzz();
+      // Átvett keresőszó (menü-átvezetés): amit a felhasználó már begépelt, azt
+      // ne kelljen újra beírnia.
+      const atvett = (e as CustomEvent<string>).detail;
+      if (typeof atvett === "string" && atvett.trim()) setQ(atvett.trim());
+      setOpen(true);
+    };
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && !e.altKey && (e.key === "k" || e.key === "K")) {
         e.preventDefault();

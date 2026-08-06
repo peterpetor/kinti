@@ -10,7 +10,7 @@
  * értelmezésre (lásd /api/asszisztens).
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -19,6 +19,7 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { BusinessLeadCta } from "@/components/views/business-lead-cta";
 import { assistantExamples } from "@/lib/assistant-examples";
+import { searchDestinations } from "@/lib/app-destinations";
 
 interface AssistantResult {
   categoryId: string | null;
@@ -41,6 +42,29 @@ export function KintiAssistant() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AssistantResult | null>(null);
+
+  /**
+   * ⚠️ AZONNALI ESZKÖZ-TALÁLAT, MÉG BEKÜLDÉS ELŐTT.
+   *
+   * A kezdőlapon KÉT szöveg-bemenet van: ez az asszisztens (problémát ír le →
+   * szakembert és útmutatót kap) és a fejléc-kereső (az app eszközeire ugrik).
+   * A felhasználónak semmi nem mondja meg, melyikbe írjon — aki ide gépeli be,
+   * hogy „bérkalkulátor", eddig egy AI-kérést indított egy olyan kérdésre,
+   * aminek a válasza egy menüpont.
+   *
+   * Ezért a gépelés közben, hálózat NÉLKÜL (kurált lista + ékezet-érzéketlen
+   * illesztés) felkínáljuk a nyilvánvaló célt. Három haszna van, és a harmadik
+   * a legfontosabb: gyorsabb navigáció, megszűnik a „melyikbe írjak" kérdés,
+   * és NEM FOGY az AI-keret olyan kérésekre, amikhez nem kell értelmezés.
+   *
+   * ⚠️ HOSSZÚ MONDATNÁL MAGÁTÓL ELTŰNIK: a `searchDestinations` MINDEN tokent
+   * megkövetel (AND), és egy valódi kérdés szavai („csőtörés van, ki segít")
+   * nem illeszkednek egyetlen eszköz-címkére sem. Nem kell külön szabály rá.
+   */
+  const eszkozTalalat = useMemo(
+    () => (query.trim().length >= 3 ? searchDestinations(query, country, 2) : []),
+    [query, country],
+  );
 
   async function ask(text: string) {
     const q = text.trim();
@@ -128,8 +152,40 @@ export function KintiAssistant() {
         <Link href="/ai-atlathatosag" className="underline">Részletek</Link>
       </p>
 
+      {/* ⚠️ Az eszköz-találat a példa-chipek HELYÉT foglalja el, nem alattuk ül:
+          gépelés közben a példák úgyis irrelevánsak, és egy új sor lejjebb
+          tolná a lap többi részét (a kezdőlapon a hely a legszűkösebb). */}
+      {!result && !loading && eszkozTalalat.length > 0 && (
+        <div className="mt-2 space-y-1.5">
+          <p className="px-0.5 text-[10.5px] font-bold uppercase tracking-wider text-ink-faint">
+            Erre gondoltál?
+          </p>
+          {eszkozTalalat.map((d) => (
+            <Link
+              key={d.href}
+              href={d.href}
+              onClick={() => trackAction("assistant-shortcut")}
+              className="kinti-press flex items-center gap-2.5 rounded-[12px] border border-line bg-surface px-3 py-2"
+            >
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[9px] bg-primary-soft text-primary-ink">
+                <Icon name={d.icon} size={14} strokeWidth={2.3} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[13px] font-extrabold text-ink">{d.title}</span>
+                {d.subtitle && (
+                  <span className="block truncate text-[11px] leading-snug text-ink-muted">
+                    {d.subtitle}
+                  </span>
+                )}
+              </span>
+              <Icon name="chevR" size={14} strokeWidth={2.4} className="shrink-0 text-ink-faint" />
+            </Link>
+          ))}
+        </div>
+      )}
+
       {/* Példa-chipek — az üres prompt hidegindítója. */}
-      {!result && !loading && examples.length > 0 && (
+      {!result && !loading && eszkozTalalat.length === 0 && examples.length > 0 && (
         <div className="no-scrollbar kinti-hfade -mx-1 mt-2 flex gap-1.5 overflow-x-auto px-1 pb-0.5">
           {examples.map((ex) => (
             <button
