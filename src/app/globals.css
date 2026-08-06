@@ -340,6 +340,22 @@
     }
   }
 
+  /* ⚠️ A FENTI SZABÁLY CSAK A SZÖVEGET VÁGJA LE, A DOBOZT NEM SZŰKÍTI.
+     A `<select>` alapértelmezett minimális szélessége a LEGHOSSZABB OPCIÓ
+     szerint alakul, és ezt a `w-full` sem tudja összenyomni — élesben mérve az
+     Iránytű űrlapja emiatt 56 px-szel lógott ki 360 px-es képernyőn (a
+     leghosszabb iparág-opció: „Pénzügy / Bank / Biztosítás", 27 karakter).
+
+     A `min-width: 0` leveszi ezt az intrinsic korlátot, így a `w-full`
+     érvényesül, és onnantól a fenti `text-overflow` teszi a dolgát. A kettő
+     EGYÜTT működik: külön-külön egyik sem elég.
+
+     Nincs mellékhatása a `width: auto`-s selecteknél sem: azok továbbra is a
+     tartalmuk szerint méreteződnek, csak nem tudják szétfeszíteni a szülőt. */
+  select {
+    min-width: 0;
+  }
+
   /* ── Csúszka (input[type=range]) ────────────────────────────────────────
      ⚠️ SÖTÉT TÉMÁN A SÍN VAKÍTÓ FEHÉR VOLT. Az `accent-color` (Tailwind
      `accent-primary`) csak a KITÖLTÖTT részt és a fogantyút színezi; a

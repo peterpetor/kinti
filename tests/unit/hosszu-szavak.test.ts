@@ -55,3 +55,28 @@ describe("a valós eset", () => {
     expect(cl).toContain("Arbeitnehmerveranlagung");
   });
 });
+
+describe("natív választó (select) szélessége", () => {
+  /**
+   * ⚠️ MÉRT HIBÁBÓL. Az Iránytű űrlapja 56 px-szel lógott ki 360 px-es
+   * képernyőn. A `<select>` alapértelmezett MINIMÁLIS szélessége a leghosszabb
+   * opció szerint alakul („Pénzügy / Bank / Biztosítás", 27 karakter), és ezt a
+   * `w-full` sem tudja összenyomni.
+   */
+  it("a select `min-width: 0`-t kap", () => {
+    expect(CSS).toMatch(/select \{\s*\n\s*min-width:\s*0;/);
+  });
+
+  it("⚠️ a szöveg-levágás ÖNMAGÁBAN nem elég — mindkét szabály kell", () => {
+    // A `text-overflow` csak a SZÖVEGET vágja, a dobozt nem szűkíti; a
+    // `min-width: 0` csak a korlátot veszi le, de nem csonkol. Együtt működnek.
+    expect(CSS).toContain("text-overflow: ellipsis");
+    expect(CSS).toMatch(/select \{\s*\n\s*min-width:\s*0;/);
+  });
+
+  it("a leghosszabb opció tényleg létezik (különben a szabály felesleges)", () => {
+    const meta = readFileSync(resolve(GYOKER, "src/lib/benchmark-meta.ts"), "utf8");
+    const opciok = meta.match(/"[^"]{20,}"/g) ?? [];
+    expect(opciok.length, "nincs 20+ karakteres opció").toBeGreaterThan(0);
+  });
+});
