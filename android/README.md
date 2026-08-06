@@ -114,58 +114,51 @@ API-tól kérdezi le a valós előfizetés-állapotot; a `?key=` csak zajszűrő
     a vásárlás ingyen tesztelhető.
 - Weben (böngészőből) ellenőrizd, hogy MINDEN Paddle-szöveg változatlan.
 
-## Play Billing Library 8 frissítés (Google-figyelmeztetés, határidő 2026-08-31)
+## Play Billing Library 8 — ✅ ELVÉGEZVE (2026-08-07)
 
-A Google Play Console figyelmeztet: **2026. aug. 31. után** minden app-frissítésnek
-a **Google Play Billing Library 8.0.0+** (ajánlott: 9) verziót kell használnia.
-Kérhető hosszabbítás **2026. nov. 1-ig**.
+A Google Play Console követelménye (határidő 2026-08-31): minden app-frissítésnek a
+**Google Play Billing Library 8.0.0+** verziót kell használnia.
 
-**Miért nem elég „csak átírni a verziószámot":** a TWA a Play Billinget a
-`com.google.androidbrowserhelper:billing` (ABH) függőségen át használja
-(`app/build.gradle`). Ez egy **harmadik féltől származó SDK**, ami maga csomagolja a
-`com.android.billingclient:billing`-et.
+**Az akadály elhárult, a frissítés megtörtént.** A TWA a Play Billinget a
+`com.google.androidbrowserhelper:billing` (ABH) függőségen át használja, és 2026-07-22-én
+az ABH legfrissebb kiadása még `1.1.0` volt (→ `billingclient:7.1.1`). A `PlayBillingWrapper`
+akkor a `querySkuDetailsAsync`-et hívta, ami a `billingclient:8.x`-ből **teljesen hiányzik** —
+ezért a neten ajánlott `resolutionStrategy.force` gyorsjavítás RUNTIME-ban eltörte volna a
+fizetést (`NoSuchMethodError`). Erre vártunk.
 
-**Bytecode-szinten ellenőrzött tények (2026-07-22):**
-- Az ABH legfrissebb KIADOTT verziója a Google Maven-en még **`billing:1.1.0`**, ami
-  a `billingclient:7.1.1`-re épül, és a `PlayBillingWrapper` a **`querySkuDetailsAsync`**
-  metódust hívja.
-- A `billingclient:8.0.0` AAR-jából a `querySkuDetailsAsync` **teljesen hiányzik**
-  (a `queryProductDetailsAsync` váltja). A `SkuDetails` adat-osztály még megvan, de a
-  lekérdező metódus nincs.
-- ⚠️ Ezért a neten ajánlott „gyorsjavítás" — `resolutionStrategy { force
-  'com.android.billingclient:billing:8.x' }` a `billing:1.1.0` fölé — **RUNTIME-ban
-  eltöri a fizetést** (`NoSuchMethodError` a vásárlás product-details lépésénél). NE
-  ezt csináld.
+**2026-07-30-án a Google kiadta az `ABH billing:1.2.0`-t**, ami a
+`com.android.billingclient:billing:**8.3.0**`-ra épül, és a wrappert átmigrálták
+`queryProductDetailsAsync`-re.
 
-**A két valós út:**
+**Amit elvégeztünk (2026-08-07):**
+```
+Bubblewrap CLI 1.24.1 → 1.25.0   (az 1.25.0 sablonja már billing:1.2.0-t ír)
+npx @bubblewrap/cli@1.25.0 update --skipVersionUpgrade
+twa-manifest.json + build.gradle: appVersionCode 7 → 8, appVersionName 1.4 → 1.5
+a splash.png-k visszaállítva átlátszóra (az update fehérre lapította — lásd lent)
+```
 
-1. **(AJÁNLOTT) Várd meg a hivatalos ABH Billing-8 kiadást.** A GoogleChrome/
-   android-browser-helper repóban NYITOTT, aktív PR-ek dolgoznak rajta (2026-07 közepe:
-   „Upgrade play billing library to v8.3.0", „Use queryProductDetailsAsync instead of
-   querySkuDetailsAsync"). Amint megjelenik a Google Maven-en (>1.1.0), a frissítés:
-   ```powershell
-   npm update -g @bubblewrap/cli   # legfrissebb Bubblewrap
-   cd android
-   npx @bubblewrap/cli update       # behúzza az új ABH-t
-   # twa-manifest.json: appVersionCode +1 (most 7 → 8), appVersionName emelése
-   npx @bubblewrap/cli build
-   ```
-   Ellenőrzés az új AAB-ben (unzip után): a `billing` transitív függősége már 8.x.
-   Utána **kötelező eszköz-teszt** Play license-test fiókkal (7. pont), CSAK utána a
-   Play-feltöltés. Ez a tesztelt, hivatalosan támogatott út; a nov. 1-i hosszabbított
-   határidőig bőven van idő.
+**Négy lépésben ellenőrizve, nem feltételezve:**
+1. `gradlew app:dependencies` → `billing:1.2.0` → `billingclient:**8.3.0**`
+2. `compileReleaseJavaWithJavac` hibátlan (a `DelegationService` is fordul)
+3. `bundleRelease` SIKERES — beleértve a `minifyReleaseWithR8` lépést, ami a hiányzó
+   metódusokat kimutatná
+4. A kész `.aab` dex-ében: `querySkuDetailsAsync` **0×**, `queryProductDetailsAsync` **2×**
 
-2. **(Ha korábban kell) Vendorold be és migráld az ABH playbilling forrását.** Másold
-   az `androidbrowserhelper` playbilling Java-csomagját az `android/app`-ba, cseréld a
-   `billing:1.1.0` függőséget közvetlen `com.android.billingclient:billing:8.x`-re, és
-   migráld a `PlayBillingWrapper`-t `querySkuDetailsAsync` → `queryProductDetailsAsync`
-   (`SkuDetails` → `ProductDetails`, `BillingFlowParams.setSkuDetails` →
-   `setProductDetailsParamsList` + offer-token). Ez KÉZZEL írt fizetési kód → csak
-   alapos eszköz-teszt után adható ki. (Lényegében ugyanaz, amit a Google fenti PR-jei
-   csinálnak — ezért 1. az alapértelmezés.)
+⚠️ **A gradle-lel épített `.aab` NINCS ALÁÍRVA** (nincs `signingConfig` a build.gradle-ban) —
+az csak verifikációs build volt. A Play-be feltölthető, aláírt csomagot a
+`bubblewrap build` készíti, ami bekéri a keystore-jelszót.
+
+⚠️ **MINDIG rögzített verzióval futtasd:** `npx @bubblewrap/cli@1.25.0 …`. Egy régebbi
+CLI-vel futtatott `update` VISSZAÍRNÁ a `billing:1.1.0`-t a build.gradle-ba, és a
+Play újra elutasítaná. (A `build` nem regenerál gradle-t, csak az `update`.)
+
+⚠️ **Az `update` fehérre lapítja a splash.png-ket.** Az `android/app/` gitignore-olt,
+tehát ez csak lokálisan él, de minden `update` után újra át kell látszósítani az 5 fájlt
+(`drawable-mdpi/hdpi/xhdpi/xxhdpi/xxxhdpi/splash.png`) — lásd a splash-szakaszt.
 
 A verify/RTDN szerver-oldal (`/api/payments/play/verify`, `/api/webhooks/play`) a
-Play Developer API-t hívja, NEM függ a kliens billing-verziótól → ott nincs teendő.
+Play Developer API-t hívja, NEM függ a kliens billing-verziójától → ott nincs teendő.
 
 ## Hibaelhárítás
 
