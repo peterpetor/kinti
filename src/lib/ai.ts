@@ -225,8 +225,16 @@ export const AI_LIMITS: Record<string, AiRateLimitConfig> = {
  *
  * @returns true, ha még szabad hívni; false, ha a limit elért.
  *
- * Ha az `ipHash` null (pl. localhost dev), ÁTengedünk — fejlesztéskor ne
- * korlátozzon. Production-on a cf-connecting-ip mindig van.
+ * ⚠️ HIÁNYZÓ IP ESETÉN **NEM** ENGEDÜNK ÁT — közös `"no-ip"` bucketbe esik, így
+ * a limit ott is érvényes (fail-SAFE, nem fail-open). Ez tudatos döntés: az
+ * IP-hez kötött korlát megkerülésének legkézenfekvőbb módja épp az lenne, hogy
+ * a támadó eléri, hogy ne legyen azonosítható IP-je.
+ *
+ * ⚠️ EZ A MEGJEGYZÉS KORÁBBAN AZ ELLENKEZŐJÉT ÁLLÍTOTTA („ipHash null →
+ * átengedünk"), miközben a kód már fail-safe volt. Egy biztonsági szabálynál a
+ * félrevezető dokumentáció önmagában kockázat: aki a kommentre hagyatkozva
+ * „egyszerűsít", visszaírhatja a fail-open ágat. A viselkedést ezért teszt is
+ * rögzíti (`tests/unit/ai-rate-limit-vedelem.test.ts`).
  */
 export async function checkAiRateLimit(
   endpoint: string,
