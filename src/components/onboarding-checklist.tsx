@@ -171,7 +171,7 @@ export function OnboardingChecklist() {
           type="button"
           onClick={dismiss}
           aria-label="Checklist elrejtése"
-          className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-alt text-ink-muted active:scale-90"
+          className="kinti-tap grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-alt text-ink-muted active:scale-90"
         >
           <Icon name="close" size={13} strokeWidth={2.4} />
         </button>

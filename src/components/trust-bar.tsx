@@ -35,7 +35,16 @@ export function TrustBar() {
 
       <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 border-t border-line pt-3 text-[11.5px] font-semibold text-ink-muted">
         {LEGAL.map((l) => (
-          <Link key={l.href} href={l.href} className="transition hover:text-ink hover:underline">
+          // ⚠️ `py-1.5`: a link ENÉLKÜL 17 px magas volt — a WCAG 2.2 (2.5.8)
+          // 24×24 CSS-px minimuma alatt. Jogi oldalakról van szó (Impresszum,
+          // Adatvédelem, ÁSZF), amiket épp az talál meg nehezen, akinek a
+          // legjobban kellene. A `-my-1.5` visszaveszi a hozzáadott magasságot
+          // a sorközből, tehát a lábléc NEM lesz magasabb.
+          <Link
+            key={l.href}
+            href={l.href}
+            className="-my-1.5 py-1.5 transition hover:text-ink hover:underline"
+          >
             {l.label}
           </Link>
         ))}

@@ -56,7 +56,7 @@ export function NewsletterCtaCard() {
         type="button"
         aria-label="Elrejtem"
         onClick={dismiss}
-        className="absolute right-1.5 top-1.5 grid h-6 w-6 place-items-center rounded-full text-ink-faint hover:text-ink-muted"
+        className="kinti-tap absolute right-1.5 top-1.5 grid h-6 w-6 place-items-center rounded-full text-ink-faint hover:text-ink-muted"
       >
         <Icon name="close" size={11} strokeWidth={2.4} />
       </button>

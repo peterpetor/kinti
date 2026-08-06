@@ -90,7 +90,11 @@ export function FavoriteButton({ businessId, className }: { businessId: string; 
       aria-label={fav ? "Eltávolítás a kedvencekből" : "Hozzáadás a kedvencekhez"}
       aria-pressed={fav}
       className={cn(
-        "grid h-8 w-8 place-items-center rounded-full border bg-surface shadow-sm transition active:scale-90",
+        // ⚠️ `kinti-tap`: a látható szív 32×32 marad (a kártya-rács ezt bírja),
+        // a MEGFOGHATÓ terület viszont 44×44. Élesben 100 darab ült ilyen
+        // gomb a lista kártyáin, közvetlenül a kártya-link mellett — az
+        // elvétés ára egy teljes oldal-navigáció volt mentés helyett.
+        "kinti-tap grid h-8 w-8 place-items-center rounded-full border bg-surface shadow-sm transition active:scale-90",
         fav ? "border-accent/40 text-accent" : "border-line text-ink-muted hover:text-accent hover:border-accent/40",
         className,
       )}

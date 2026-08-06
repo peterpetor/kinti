@@ -401,7 +401,9 @@ export function DropdownMenu() {
         onClick={() => setIsOpen(true)}
         aria-label="Menü megnyitása"
         className={cn(
-          "grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition-all active:scale-95 cursor-pointer focus:outline-none"
+          // `kinti-tap`: a látható gomb 38×38 marad (a fejléc-rács ezt bírja),
+          // a megfogható terület 44×44 — ez a fő navigációs belépő.
+          "kinti-tap grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition-all active:scale-95 cursor-pointer focus:outline-none"
         )}
       >
         <Icon name="more" size={17} strokeWidth={2.6} />

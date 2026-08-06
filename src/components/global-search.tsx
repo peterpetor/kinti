@@ -114,7 +114,7 @@ export function GlobalSearch() {
       onClick={() => openGlobalSearch()}
       aria-label="Keresés (Ctrl+K)"
       title="Keresés (Ctrl+K)"
-      className="grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition active:scale-95"
+      className="kinti-tap grid h-[38px] w-[38px] place-items-center rounded-[12px] border border-line bg-surface text-ink shadow-card transition active:scale-95"
     >
       <Icon name="search" size={17} strokeWidth={2.4} />
     </button>

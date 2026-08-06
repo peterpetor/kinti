@@ -132,7 +132,7 @@ export default async function FeedPage() {
       <section className="space-y-3">
         <SectionHeader
           right={
-            <Link href="/szaknevsor" className="text-[13px] font-bold text-primary-ink">
+            <Link href="/szaknevsor" className="-my-2 py-2 text-[13px] font-bold text-primary-ink">
               Mind ›
             </Link>
           }

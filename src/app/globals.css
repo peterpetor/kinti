@@ -495,6 +495,36 @@
     }
   }
 
+  /* ── Kiterjesztett érintési célpont (a natív `hitSlop` megfelelője) ───────
+     A LÁTHATÓ méret marad, a MEGFOGHATÓ terület nő 44×44-re.
+
+     ⚠️ MÉRT HIBÁBÓL. Az éles listában 100 darab 32×32-es kedvenc-szív ült a
+     kártyák sarkában — közvetlenül a kártya-link mellett. Aki elvétette (menet
+     közben, egy kézzel, buszon ez a tipikus eset), az nem mentett, hanem
+     MEGNYITOTTA az adatlapot: a hiba büntetése egy teljes oldal-navigáció, és
+     a felhasználó nem is tudja, mit rontott el. Az Apple HIG 44×44pt-ot ír elő,
+     a WCAG 2.2 (2.5.8) 24×24 CSS-px-et.
+
+     ⚠️ MIÉRT NEM EGYSZERŰEN NAGYOBB GOMB: a 44×44-es szív vizuálisan agresszív
+     lenne egy 72px magas kártyán, és a `p-3`-as belső rácsot is szétnyomná. A
+     pszeudo-elem ezt szétválasztja: a design változatlan, a találat könnyebb.
+
+     ⚠️ NEM HASZNÁLHATÓ olyan elemen, aminek MÁR van `::after`-e (pl. `.glass`),
+     és `overflow: hidden` szülő levágja — mindkettőre teszt van. */
+  .kinti-tap {
+    position: relative;
+  }
+  .kinti-tap::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+    /* Nincs háttér: tisztán találati felület. */
+  }
+
   /* ── Beúszó cím-sáv (ScrollTitleBar) ──────────────────────────────────────
      A nagy cím kigörgésekor egy áttetsző sáv ereszkedik le a lap tetejére.
 
