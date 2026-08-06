@@ -495,6 +495,29 @@
     }
   }
 
+  /* ── Hosszú szavak tördelése ──────────────────────────────────────────────
+     ⚠️ VALÓS, KÉPERNYŐFOTÓVAL IGAZOLT HIBA. Az „Adóelszámolás
+     (Arbeitnehmerveranlagung)" cím KILÓGOTT a kártyából telefonon: a német
+     összetett szó 23 betű, szóköz nélkül, tehát nem volt hol tördelni.
+
+     ⚠️ EZ NEM EGYEDI ESET, HANEM A TARTALOM TERMÉSZETE. Az app öt német nyelvű
+     országban működik, és a hivatali szókincs csupa ilyen: Arbeitnehmer-
+     veranlagung, Aufenthaltsbewilligung, Krankenversicherungskarte,
+     Meldebestätigung. Egy helyen javítani értelmetlen — a következő hosszú szó
+     a következő kártyából fog kilógni.
+
+     `break-word` és NEM `anywhere`: az előbbi CSAK akkor tör szót, ha az
+     különben kilógna, és nem számít bele a min-content szélességbe — vagyis a
+     meglévő flex/grid elrendezéseket nem mozdítja el. Az `anywhere` agresszívebb
+     lenne, és a rácsok arányait is átrendezhetné.
+
+     Szótagoló kötőjelet (`hyphens: auto`) SZÁNDÉKOSAN nem kérünk: a lap
+     `lang="hu"`, tehát a böngésző MAGYAR szótagolási szabályokat alkalmazna a
+     német szavakra — rosszabb helyen törne, mint ahol nem tör sehol. */
+  h1, h2, h3, h4, h5, h6, p, li, dt, dd {
+    overflow-wrap: break-word;
+  }
+
   /* ── Kiterjesztett érintési célpont (a natív `hitSlop` megfelelője) ───────
      A LÁTHATÓ méret marad, a MEGFOGHATÓ terület nő 44×44-re.
 
