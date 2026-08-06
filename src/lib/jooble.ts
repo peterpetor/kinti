@@ -52,6 +52,17 @@ interface JoobleJob {
   updated?: string;
 }
 
+/**
+ * ⚠️ IDŐKORLÁT A KÜLSŐ HÍVÁSON — VALÓS KIESÉSBŐL (2026-08-05).
+ * A „Kinti Job Sync (NL)" cron 30 mp-es timeoutra futott, miközben a szokásos
+ * futásideje 7–8 mp. Ok: a szinkron 25 szektort kérdez le KÉT szolgáltatótól
+ * (50 külső hívás, 6-os batch-ekben), és EGYIK fetch-en sem volt időkorlát —
+ * egyetlen lassan válaszoló forrás elhúzta az egész futást. A timeout azt is
+ * jelentette, hogy AZNAP EGYETLEN állás sem frissült (az upsert a ciklus után,
+ * egyszer fut).
+ */
+const KULSO_TIMEOUT_MS = 8000;
+
 export interface JoobleSearch {
   jobs: AdzunaJob[];
   configured: boolean;
@@ -75,6 +86,7 @@ export async function searchJoobleJobs(country: string, keyword: string, limit =
       method: "POST",
       headers: { "content-type": "application/json", accept: "application/json" },
       body: JSON.stringify({ keywords: q, location }),
+      signal: AbortSignal.timeout(KULSO_TIMEOUT_MS),
     });
     if (!res.ok) return { jobs: [], configured: true };
     const data = (await res.json()) as { jobs?: JoobleJob[] };

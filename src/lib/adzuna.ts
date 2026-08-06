@@ -10,6 +10,17 @@
  */
 import { getCloudflareEnv } from "./cloudflare";
 
+/**
+ * ⚠️ IDŐKORLÁT A KÜLSŐ HÍVÁSON — VALÓS KIESÉSBŐL (2026-08-05).
+ * A „Kinti Job Sync (NL)" cron 30 mp-es timeoutra futott, miközben a szokásos
+ * futásideje 7–8 mp. Ok: a szinkron 25 szektort kérdez le KÉT szolgáltatótól
+ * (50 külső hívás, 6-os batch-ekben), és EGYIK fetch-en sem volt időkorlát —
+ * egyetlen lassan válaszoló forrás elhúzta az egész futást. A timeout azt is
+ * jelentette, hogy AZNAP EGYETLEN állás sem frissült (az upsert a ciklus után,
+ * egyszer fut).
+ */
+const KULSO_TIMEOUT_MS = 8000;
+
 export interface AdzunaJob {
   title: string;
   company: string | null;
@@ -66,7 +77,10 @@ export async function searchAdzunaJobs(country: string, keyword: string, limit =
     `&what=${encodeURIComponent(q)}${whereParam}&results_per_page=${limit}&content-type=application/json`;
 
   try {
-    const res = await fetch(url, { cf: { cacheTtl: 600, cacheEverything: true } } as RequestInit);
+    const res = await fetch(url, {
+      cf: { cacheTtl: 600, cacheEverything: true },
+      signal: AbortSignal.timeout(KULSO_TIMEOUT_MS),
+    } as RequestInit);
     if (!res.ok) return { jobs: [], configured: true };
     const data = (await res.json()) as { results?: AdzunaResult[] };
     const jobs: AdzunaJob[] = (data.results ?? [])

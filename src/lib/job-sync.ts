@@ -16,6 +16,7 @@ import { upsertExternalJobs, type ExternalJobInput } from "./repo-external-jobs"
 import { externalJobDedupeKey } from "./external-job-url";
 import { regionCodeFromLocation, isOutsideCountryScope } from "./region-resolve";
 import { budgetCurrency, isBudgetCountry } from "./budget-plan";
+import { safeLogError } from "./safe-log";
 
 /**
  * Szektor → LOKÁLIS NYELVŰ keresőszó, országnyelv szerint:
@@ -166,9 +167,28 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
 
   const byKey = new Map<string, ExternalJobInput>();
 
-  // A szektorokat 6-os batch-ekben, párhuzamosan futtatjuk (a sok kulcsszó se
-  // nyújtsa el a futásidőt; a batch-méret tartja a rate-limit alatt a burst-öt).
+  /**
+   * ⚠️ IDŐKERET — VALÓS KIESÉSBŐL (2026-08-05). A „Kinti Job Sync (NL)" cron
+   * 30 mp-es timeoutra futott (a szokásos futásidő 7–8 mp), és mivel az upsert
+   * a ciklus UTÁN fut egyszer, AZNAP EGYETLEN állás sem frissült.
+   *
+   * A per-hívás időkorlát (lásd adzuna/jooble/arbeitnow) egyetlen lassú forrás
+   * ellen véd; ez a keret az ÖSSZEADÓDÁS ellen: 5 batch × 8 mp worst case már
+   * 40 mp. Ha a keret elfogy, abbahagyjuk a további batch-eket — a MÁR
+   * összegyűjtött állásokat viszont elmentjük.
+   *
+   * Részleges szinkron > semmi: a következő futás úgyis mindent újra lekér
+   * (nem inkrementális), tehát a kihagyott szektorok 12 óra múlva bejönnek.
+   */
+  const KEZDET = Date.now();
+  const IDOKERET_MS = 20_000; // a cron-job.org 30 mp-es korlátja alatt, a purge-nek is marad
+  let kihagyottBatch = 0;
+
   for (const batch of chunk(sectorsFor(cc), 6)) {
+    if (Date.now() - KEZDET > IDOKERET_MS) {
+      kihagyottBatch++;
+      continue;
+    }
     const settled = await Promise.all(
       batch.map(async (sector) => {
         const keyword = sector[lang];
@@ -211,6 +231,16 @@ export async function syncExternalJobsForCountry(country: string): Promise<numbe
         });
       }
     }
+  }
+
+  if (kihagyottBatch > 0) {
+    // Nem néma: a kihagyás a riasztó-webhookra is kimegy, hogy a tartósan
+    // lassú forrás ne maradjon észrevétlen (ugyanaz a minta, mint az AI-korlát
+    // fail-open ágánál).
+    safeLogError(
+      `job-sync ${cc}: időkeret elfogyott, ${kihagyottBatch} batch kihagyva`,
+      new Error("sync-time-budget"),
+    );
   }
 
   const jobs = [...byKey.values()];

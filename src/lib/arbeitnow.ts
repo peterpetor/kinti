@@ -34,6 +34,17 @@ const COUNTRY_HINTS: Record<string, string[]> = {
   ES: ["spain", "españa", "espana", "madrid", "barcelona", "valencia", "sevilla", "málaga", "malaga", "bilbao", "zaragoza"],
 };
 
+/**
+ * ⚠️ IDŐKORLÁT A KÜLSŐ HÍVÁSON — VALÓS KIESÉSBŐL (2026-08-05).
+ * A „Kinti Job Sync (NL)" cron 30 mp-es timeoutra futott, miközben a szokásos
+ * futásideje 7–8 mp. Ok: a szinkron 25 szektort kérdez le KÉT szolgáltatótól
+ * (50 külső hívás, 6-os batch-ekben), és EGYIK fetch-en sem volt időkorlát —
+ * egyetlen lassan válaszoló forrás elhúzta az egész futást. A timeout azt is
+ * jelentette, hogy AZNAP EGYETLEN állás sem frissült (az upsert a ciklus után,
+ * egyszer fut).
+ */
+const KULSO_TIMEOUT_MS = 8000;
+
 export async function searchArbeitnowJobs(country: string, keyword: string, limit = 20, region?: string): Promise<AdzunaJob[]> {
   const q = keyword.trim().toLowerCase();
   if (!q) return [];
@@ -43,6 +54,7 @@ export async function searchArbeitnowJobs(country: string, keyword: string, limi
     const res = await fetch("https://www.arbeitnow.com/api/job-board-api", {
       headers: { accept: "application/json", "user-agent": "kinti.app" },
       cf: { cacheTtl: 600, cacheEverything: true },
+      signal: AbortSignal.timeout(KULSO_TIMEOUT_MS),
     } as RequestInit);
     if (!res.ok) return [];
     const data = (await res.json()) as { data?: ArbeitnowJob[] };
