@@ -52,7 +52,7 @@ export default async function LoginPage({
         <div className="w-full max-w-md animate-fade-up">
           <Link
             href="/"
-            className="mb-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-ink-muted hover:text-ink transition-colors"
+            className="-my-2 mb-2 inline-flex items-center gap-1.5 py-2 text-[13px] font-bold text-ink-muted transition-colors hover:text-ink"
           >
             <Icon name="arrowLeft" size={14} strokeWidth={2.4} />
             Vissza
