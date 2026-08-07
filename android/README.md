@@ -52,6 +52,17 @@ cd android
 npx @bubblewrap/cli@1.25.0 build
 ```
 
+⚠️⚠️ **HA A `build` EZT KÉRDEZI:**
+`There are changes in twa-manifest.json. Would you like to apply them?`
+→ **`No`**, ha a `twa:update` már lefutott. Az `Yes` újragenerálja a projektet,
+és **VISSZAÍRJA a tűs betöltőképet** — az átlátszó splash elveszne. Ha mégis
+`Yes`-t nyomtál, futtasd újra: `node ../scripts/twa-splash-atlatszo.mjs`,
+és buildelj megint.
+
+A kérdés akkor jön elő, ha a `twa-manifest.json`-t a `twa:update` óta
+módosítottad (pl. verziót emeltél). Ezért a helyes sorrend: **előbb verzió,
+utána `twa:update`, végül `build`** — így a kérdés fel sem merül.
+
 ⚠️ A `twa:update` `--skipVersionUpgrade`-del fut, tehát **NEM kérdez verziót**.
 Ez szándékos: 2026-08-07-én a Bubblewrap interaktív kérdésére egy beillesztett
 parancssor került a `versionName`-be, és az `.aab` azzal a névvel épült meg —
