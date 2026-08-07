@@ -129,7 +129,12 @@ function hitelesseg(nev) {
     pont += 3; okok.push("magyar szó");
   }
   // két magyar keresztnév egymás mellett (pl. „Hajdu Csaba Jozsef”)
-  const KERESZT = ["zoltan","zoltán","csaba","attila","laszlo","lászló","tibor","sandor","sándor","gabor","gábor","istvan","istván","ferenc","bela","béla","arpad","árpád","zsolt","balazs","balázs","gergely","levente","akos","ákos","imre","geza","géza","janos","jános","jozsef","józsef","andras","andrás","miklos","miklós","gyula","lajos","karoly","károly","ildiko","ildikó","katalin","zsuzsanna","aniko","anikó","eniko","enikő","tunde","tünde","csilla","emese","reka","réka","kinga","bernadett","szilard","szilárd","kalman","kálmán","dezso","dezső","vilmos","botond","marton","márton","aron","áron","szabolcs","krisztian","krisztián","barnabas","barnabás","elemer","elemér","zsombor","bence"];
+  // ⚠️ A listát TARTSD SZINKRONBAN a lekérdezett nevekkel: ha egy néven
+  // kerestél, de itt nincs benne, a találat CSAK EGY jelet kap, és a
+  // két-jeles küszöbön kiesik. Így maradt ki elsőre a „Gál Jenő”.
+  const KERESZT = ["zoltan","zoltán","csaba","attila","laszlo","lászló","tibor","sandor","sándor","gabor","gábor","istvan","istván","ferenc","bela","béla","arpad","árpád","zsolt","balazs","balázs","gergely","levente","akos","ákos","imre","geza","géza","janos","jános","jozsef","józsef","andras","andrás","miklos","miklós","gyula","lajos","karoly","károly","ildiko","ildikó","katalin","zsuzsanna","aniko","anikó","eniko","enikő","tunde","tünde","csilla","emese","reka","réka","kinga","bernadett","szilard","szilárd","kalman","kálmán","dezso","dezső","vilmos","botond","marton","márton","aron","áron","szabolcs","krisztian","krisztián","barnabas","barnabás","elemer","elemér","zsombor","bence",
+    "jeno","jenő","denes","dénes","kristof","kristóf","balint","bálint","gergo","gergő","odon","ödön","zsigmond","kazmer","kázmér","bertalan","domonkos","benedek","ambrus","kornel","kornél","nandor","nándor","tivadar","aladar","aladár","csongor","zalan","zalán","almos","álmos","elod","előd","bulcsu","bulcsú","samuel","sámuel",
+    "piroska","ilona","jolan","jolán","sarolta","ibolya","boglarka","boglárka","hajnalka","orsolya","noemi","noémi","beata","beáta","melinda","zsofia","zsófia","judit","marta","márta","erzsebet","erzsébet","gizella","margit","etelka","rozalia","rozália","terezia","terézia","lilla","zita","borbala","borbála","franciska","henrietta"];
   const kereszt = KERESZT.filter((k) => tokenek.has(k) && !kereszttalalat.has(k));
   if (kereszt.length >= 2) { pont += 2; okok.push("két magyar keresztnév"); }
   if (kereszt.length >= 1) { pont += 3; okok.push(`keresztnév:${kereszt[0]}`); }

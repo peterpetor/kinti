@@ -23,7 +23,10 @@ const FAJLOK = {
   DE: "db/de-kisipar-2026-08-07.sql",
   CH: "db/ch-kisipar-2026-08-07.sql",
   AT: "db/at-kisipar-2026-08-07.sql",
+  DE2: "db/de-kisipar-11880-2026-08-07.sql",
 } as const;
+/** Melyik fájl melyik országkódot használja (a DE2 is német). */
+const ORSZAG: Record<string, string> = { DE: "DE", CH: "CH", AT: "AT", DE2: "DE" };
 
 const SQL = olvas(FAJLOK.DE);
 /** Csak az INSERT-sorok — a fejléc-komment szándékosan leírja a módszertant. */
@@ -111,7 +114,17 @@ describe("mindhárom ország seedje (DE + CH + AT)", () => {
     // Ha egy CH-sor 'DE'-ként kerül be, a régiószűrő NÉMÁN elnyeli a tételt,
     // és a felhasználó soha nem találja meg. Ld. binary-country-fallthrough.
     for (const { cc, sor, fajl } of MIND) {
-      expect(sor, `${fajl}: nem ${cc} országkód`).toMatch(new RegExp(`'${cc}', '[A-Z]{1,3}'\\)$`));
+      const vart = ORSZAG[cc];
+      expect(sor, `${fajl}: nem ${vart} országkód`).toMatch(new RegExp(`'${vart}', '[A-Z]{1,3}'\\)$`));
+    }
+  });
+
+  it("⚠️ elavult tételt CSAK elrejteni szabad, törölni SOHA", () => {
+    // A `hidden = 1` visszafordítható és megőrzi az előzményt; a DELETE nem.
+    // Ld. business-dedup — a szabály az egész szaknévsorra érvényes.
+    for (const p of Object.values(FAJLOK)) {
+      const sql = olvas(p);
+      expect(sql, `${p}: DELETE került a seedbe`).not.toMatch(/\bDELETE\s+FROM\s+businesses\b/i);
     }
   });
 

@@ -31,10 +31,14 @@ const p = await ctx.newPage();
 for (let i = 0; i < nevek.length; i++) {
   const nev = nevek[i];
   try {
-    await p.goto(`https://www.gelbeseiten.de/Suche/${encodeURIComponent(nev)}/Bundesweit`, {
-      waitUntil: "domcontentloaded",
-      timeout: 45000,
-    });
+    // ⚠️ Az országos találati lista ~111 tételnél LEVÁGÓDIK („Attila” 160-ból
+    // csak 111-et adott). A gyakori neveket ezért VÁROSRA szűkítve is le kell
+    // kérdezni: a lista eleme lehet „Attila|Berlin” alakú.
+    const [szo, hol] = nev.split("|");
+    await p.goto(
+      `https://www.gelbeseiten.de/Suche/${encodeURIComponent(szo)}/${encodeURIComponent(hol || "Bundesweit")}`,
+      { waitUntil: "domcontentloaded", timeout: 45000 },
+    );
     await p.waitForTimeout(1200);
     for (const sel of ['button:has-text("Alle akzeptieren")', "#cmpwelcomebtnyes", 'button:has-text("Akzeptieren")']) {
       const c = p.locator(sel).first();
