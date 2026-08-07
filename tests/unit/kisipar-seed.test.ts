@@ -16,9 +16,25 @@ import { resolve } from "node:path";
  */
 
 const GYOKER = resolve(__dirname, "../..");
-const SQL = readFileSync(resolve(GYOKER, "db/de-kisipar-2026-08-07.sql"), "utf8").replace(/\r\n/g, "\n");
+const olvas = (p: string) => readFileSync(resolve(GYOKER, p), "utf8").replace(/\r\n/g, "\n");
+
+/** A kör három seed-fájlja: Németország, Svájc, Ausztria. */
+const FAJLOK = {
+  DE: "db/de-kisipar-2026-08-07.sql",
+  CH: "db/ch-kisipar-2026-08-07.sql",
+  AT: "db/at-kisipar-2026-08-07.sql",
+} as const;
+
+const SQL = olvas(FAJLOK.DE);
 /** Csak az INSERT-sorok — a fejléc-komment szándékosan leírja a módszertant. */
 const SOROK = SQL.split("\n").filter((s) => s.startsWith("('"));
+/** Mindhárom fájl összes adatsora, országkóddal együtt. */
+const MIND = Object.entries(FAJLOK).flatMap(([cc, p]) =>
+  olvas(p)
+    .split("\n")
+    .filter((s) => s.startsWith("('"))
+    .map((sor) => ({ cc, sor, fajl: p })),
+);
 
 describe("kisipari seed — adat-alak", () => {
   it("minden sor a német országkódot és egy tartomány-kódot kap", () => {
@@ -80,6 +96,47 @@ describe("⚠️ blurb = PUBLIKUS szöveg", () => {
     // igazolt nyelvi kiszolgálás — a szöveg ezért nem ígérhet ilyet.
     for (const b of blurbok) {
       expect(b, `nyelvi ígéret a blurb-ben: ${b}`).not.toMatch(/magyarul|magyar nyelv|beszél/i);
+    }
+  });
+});
+
+describe("mindhárom ország seedje (DE + CH + AT)", () => {
+  it("mindhárom fájlban van adat", () => {
+    for (const cc of Object.keys(FAJLOK)) {
+      expect(MIND.filter((x) => x.cc === cc).length, `${cc}: üres seed`).toBeGreaterThan(0);
+    }
+  });
+
+  it("⚠️ a sor országkódja EGYEZIK a fájléval — a bináris ország-fallthrough itt is fáj", () => {
+    // Ha egy CH-sor 'DE'-ként kerül be, a régiószűrő NÉMÁN elnyeli a tételt,
+    // és a felhasználó soha nem találja meg. Ld. binary-country-fallthrough.
+    for (const { cc, sor, fajl } of MIND) {
+      expect(sor, `${fajl}: nem ${cc} országkód`).toMatch(new RegExp(`'${cc}', '[A-Z]{1,3}'\\)$`));
+    }
+  });
+
+  it("⚠️ MINDEN tétel elérhető — telefon nélküli sor egyik országban sincs", () => {
+    const ures = MIND.filter((x) => /,\s*'',\s*'/.test(x.sor) || /,\s*NULL,\s*'/.test(x.sor));
+    expect(ures.map((x) => x.fajl), "telefon nélküli tétel").toEqual([]);
+  });
+
+  it("⚠️ a magyar nyelvű kiszolgálás EGYIK ország blurb-jében sincs ÁLLÍTVA", () => {
+    // Mindhárom kör bizonyítéka ugyanaz: magyar név egy helyi cégjegyzékben,
+    // plusz élő Maps-tétel. Ez nem igazolt nyelvi kiszolgálás.
+    for (const { sor, fajl } of MIND) {
+      const blurb = (sor.match(/, '([^']*környékén\.[^']*)'/) || [])[1];
+      if (!blurb) continue;
+      expect(blurb, `${fajl}: nyelvi ígéret — ${blurb}`).not.toMatch(/magyarul|magyar nyelv|beszél/i);
+    }
+  });
+
+  it("egyik tétel sem indul „ellenőrizve” állapotban, és egyik sincs elrejtve", () => {
+    // A `source` előtti négy oszlop: moderation_status, claimed, hidden, verified.
+    // moderation_status = 1 (jóváhagyva, hogy látszódjon), a másik három 0:
+    // a tétel NEM igényelt, NEM rejtett, és NEM ellenőrzött — a bizonyíték
+    // erős valószínűség, nem igazolás.
+    for (const { sor, fajl } of MIND) {
+      expect(sor, `${fajl}: rossz moderálási/verified állapot`).toMatch(/, 1, 0, 0, 0, 'seed-/);
     }
   });
 });
