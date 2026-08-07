@@ -55,9 +55,8 @@ npx @bubblewrap/cli@1.25.0 build
 ⚠️⚠️ **HA A `build` EZT KÉRDEZI:**
 `There are changes in twa-manifest.json. Would you like to apply them?`
 → **`No`**, ha a `twa:update` már lefutott. Az `Yes` újragenerálja a projektet,
-és **VISSZAÍRJA a tűs betöltőképet** — az átlátszó splash elveszne. Ha mégis
-`Yes`-t nyomtál, futtasd újra: `node ../scripts/twa-splash-atlatszo.mjs`,
-és buildelj megint.
+és **VISSZAÍRJA a natív betöltőképernyőt**. Ha mégis `Yes`-t nyomtál, futtasd
+újra: `node ../scripts/twa-splash-kikapcsol.mjs`, és buildelj megint.
 
 A kérdés akkor jön elő, ha a `twa-manifest.json`-t a `twa:update` óta
 módosítottad (pl. verziót emeltél). Ezért a helyes sorrend: **előbb verzió,
@@ -76,13 +75,23 @@ Két dolgot csinál egyszerre, és mindkettő KELL:
    `twa-manifest.json`-ban megadott URL-ekről. A puszta `build` NEM tölt újra:
    a régi, legenerált erőforrásokat fordítja le. (2026-08-07-i valós hiba: a
    javított ikon két kiadáson át nem jutott ki emiatt.)
-2. **`scripts/twa-splash-atlatszo.mjs`** — a natív TWA-betöltőképet átlátszóra
-   cseréli. A Bubblewrap minden `update`-nél újragenerálja a `splash.png`-ket az
-   ikonból, és a natív splash a STATIKUS logót mutatná az app SAJÁT, animált
-   (pulzáló) betöltő-jelzője helyett. Átlátszó splash-sel csak a háttérszín
-   látszik, ami megegyezik az app hátterével — a váltás észrevehetetlen.
-   ⚠️ Mérve: az első festés melegen ~312 ms, hidegen ~850 ms, tehát a natív
-   splash nem hiányzik.
+2. **`scripts/twa-splash-kikapcsol.mjs`** — KIVESZI a natív betöltőképernyőt a
+   generált `AndroidManifest.xml`-ből (a három `SPLASH_*` meta-datát). Enélkül
+   az app SAJÁT, animált (pulzáló) betöltő-jelzője soha nem látszik.
+
+   ⚠️⚠️ **AMI 1.8-BAN ELROMLOTT, ÉS MIÉRT:** először a splash KÉPÉT cseréltem
+   átlátszóra, abban a hitben, hogy alóla átlátszik a weblap. NEM látszik át.
+   A natív splash nem réteg a weblap fölött, hanem külön natív képernyő, amely
+   ELTAKARJA a Custom Tabot — amíg látszik, a weblap el sem indult. Átlátszó
+   képpel a felhasználó a natív képernyő puszta HÁTTERÉT látta: egy üres,
+   világos felületet. A képet nem elég kicserélni, a KÉPERNYŐT kell kikapcsolni.
+
+   Ha nincs `SPLASH_IMAGE_DRAWABLE` meta-data, az androidbrowserhelper nem hoz
+   létre splash-stratégiát, és a LauncherActivity azonnal megnyitja a Custom
+   Tabot — onnantól a web saját betöltése látszik, pont mint böngészőben.
+   ⚠️ Mérve: az első festés melegen ~312 ms, hidegen ~850 ms.
+   A transzformációt `tests/unit/twa-splash-kikapcsol.test.ts` őrzi (az
+   `android/` gitignore-olt, ezért a kimenetre nem lehet tesztet írni).
 
 ⚠️ Az `android/` mappa gitignore-olt (a `README.md` és a `twa-manifest.json`
 kivételével), ezért a generált fájlokba tett javítás NEM kommitolható —
@@ -202,9 +211,12 @@ az csak verifikációs build volt. A Play-be feltölthető, aláírt csomagot a
 CLI-vel futtatott `update` VISSZAÍRNÁ a `billing:1.1.0`-t a build.gradle-ba, és a
 Play újra elutasítaná. (A `build` nem regenerál gradle-t, csak az `update`.)
 
-⚠️ **Az `update` fehérre lapítja a splash.png-ket.** Az `android/app/` gitignore-olt,
-tehát ez csak lokálisan él, de minden `update` után újra át kell látszósítani az 5 fájlt
-(`drawable-mdpi/hdpi/xhdpi/xxhdpi/xxxhdpi/splash.png`) — lásd a splash-szakaszt.
+⚠️ **Az `update` visszaírja a natív betöltőképernyőt** (a `SPLASH_*` meta-datákat a
+manifestbe és a `splash.png`-ket). Az `android/app/` gitignore-olt, tehát ez csak
+lokálisan él, de minden `update` után újra le kell futtatni a
+`scripts/twa-splash-kikapcsol.mjs`-t — az `npm run twa:update` ezt elvégzi.
+Lásd a splash-szakaszt: 1.8-ban az „átlátszó kép" javítás **nem működött**, mert a
+natív splash eltakarja a webnézetet.
 
 A verify/RTDN szerver-oldal (`/api/payments/play/verify`, `/api/webhooks/play`) a
 Play Developer API-t hívja, NEM függ a kliens billing-verziójától → ott nincs teendő.

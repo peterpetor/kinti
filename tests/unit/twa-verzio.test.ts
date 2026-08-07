@@ -46,8 +46,9 @@ describe("TWA verziószámok", () => {
     // A Play szigorúan növekvő versionCode-ot vár. Ez az alsó korlát a
     // legutóbb kiadott verzió; ha új kiadás megy ki, EZT A SZÁMOT IS emeld,
     // hogy a védelem tovább működjön. (1.6/9 → ikon-javítás, 1.7/10 → az
-    // ikon-javítás, ami a CDN-cache miatt először nem jutott ki.)
-    expect(TWA.appVersionCode).toBeGreaterThanOrEqual(11);
+    // ikon-javítás, ami a CDN-cache miatt először nem jutott ki, 1.8/11 →
+    // átlátszó splash [HIBÁS javítás], 1.9/12 → a natív splash KIKAPCSOLVA.)
+    expect(TWA.appVersionCode).toBeGreaterThanOrEqual(12);
   });
 
   it("az ikon-URL-ek az éles domainre mutatnak (a build onnan tölti le)", () => {
