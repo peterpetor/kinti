@@ -39,6 +39,34 @@ Első futáskor a Bubblewrap:
 Verzió-emelés későbbi kiadásnál: a `twa-manifest.json`-ban `appVersionCode` +1
 (és `appVersionName`), majd újra `npx @bubblewrap/cli build`.
 
+### ⚠️⚠️ FRISSÍTÉSKOR A `npm run twa:update`-et HASZNÁLD, NE a nyers `update`-et
+
+```powershell
+# a repo GYÖKERÉBŐL:
+npm run twa:update
+# majd:
+cd android
+npx @bubblewrap/cli@1.25.0 build
+```
+
+Két dolgot csinál egyszerre, és mindkettő KELL:
+
+1. **`bubblewrap update`** — csak ez tölti le újra az ikonokat a
+   `twa-manifest.json`-ban megadott URL-ekről. A puszta `build` NEM tölt újra:
+   a régi, legenerált erőforrásokat fordítja le. (2026-08-07-i valós hiba: a
+   javított ikon két kiadáson át nem jutott ki emiatt.)
+2. **`scripts/twa-splash-atlatszo.mjs`** — a natív TWA-betöltőképet átlátszóra
+   cseréli. A Bubblewrap minden `update`-nél újragenerálja a `splash.png`-ket az
+   ikonból, és a natív splash a STATIKUS logót mutatná az app SAJÁT, animált
+   (pulzáló) betöltő-jelzője helyett. Átlátszó splash-sel csak a háttérszín
+   látszik, ami megegyezik az app hátterével — a váltás észrevehetetlen.
+   ⚠️ Mérve: az első festés melegen ~312 ms, hidegen ~850 ms, tehát a natív
+   splash nem hiányzik.
+
+⚠️ Az `android/` mappa gitignore-olt (a `README.md` és a `twa-manifest.json`
+kivételével), ezért a generált fájlokba tett javítás NEM kommitolható —
+minden `update` felülírja. A tudást csak ez a szkript és ez a leírás őrzi.
+
 ## 2. Play Console — app létrehozása
 
 1. https://play.google.com/console → Create app → név: **kinti**, nyelv: magyar,

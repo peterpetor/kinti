@@ -45,7 +45,8 @@
     "gen:nl-seed": "node scripts/gen-nl-seed.mjs",
     "gen:gb-seed": "node scripts/gen-gb-seed.mjs",
     "gen:es-seed": "node scripts/gen-es-seed.mjs",
-    "gen:icons": "node scripts/gen-icons.mjs"
+    "gen:icons": "node scripts/gen-icons.mjs",
+    "twa:update": "cd android && npx @bubblewrap/cli@1.25.0 update && cd .. && node scripts/twa-splash-atlatszo.mjs"
   },
   "dependencies": {
     "@clerk/localizations": "^4.6.8",
