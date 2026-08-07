@@ -24,9 +24,10 @@ const FAJLOK = {
   CH: "db/ch-kisipar-2026-08-07.sql",
   AT: "db/at-kisipar-2026-08-07.sql",
   DE2: "db/de-kisipar-11880-2026-08-07.sql",
+  DE3: "db/de-kisipar-vezeteknev-2026-08-08.sql",
 } as const;
-/** Melyik fájl melyik országkódot használja (a DE2 is német). */
-const ORSZAG: Record<string, string> = { DE: "DE", CH: "CH", AT: "AT", DE2: "DE" };
+/** Melyik fájl melyik országkódot használja (a DE2 és a DE3 is német). */
+const ORSZAG: Record<string, string> = { DE: "DE", CH: "CH", AT: "AT", DE2: "DE", DE3: "DE" };
 
 const SQL = olvas(FAJLOK.DE);
 /** Csak az INSERT-sorok — a fejléc-komment szándékosan leírja a módszertant. */
@@ -151,6 +152,48 @@ describe("mindhárom ország seedje (DE + CH + AT)", () => {
     for (const { sor, fajl } of MIND) {
       expect(sor, `${fajl}: rossz moderálási/verified állapot`).toMatch(/, 1, 0, 0, 0, 'seed-/);
     }
+  });
+});
+
+describe("⚠️ vezetéknév-kör (2026-08-08) — a saját csapdái", () => {
+  const SQL3 = olvas(FAJLOK.DE3);
+  const SOROK3 = SQL3.split("\n").filter((s) => s.startsWith("('"));
+
+  it("van benne adat", () => {
+    expect(SOROK3.length).toBeGreaterThanOrEqual(30);
+  });
+
+  it("⚠️ a nyelv-mező NEM állít magyart, ha a névben nincs magyar keresztnév", () => {
+    // ⚠️ Ez a kör VEZETÉKNÉVRE keresett, tehát a tipikus találat „Takacs
+    // Christian" — magyar vezetéknév, német keresztnév. Ez lehet második
+    // generáció, aki nem beszél magyarul. A `languages`-ben ilyenkor CSAK
+    // „Német" állhat; a „Magyar" konkrét állítás, amit nem ellenőriztünk.
+    const KERESZT =
+      /\b(zoltan|zoltán|csaba|attila|laszlo|lászló|laslo|tibor|sandor|sándor|gabor|gábor|istvan|istván|ferenc|bela|béla|arpad|árpád|zsolt|balazs|balázs|gergely|levente|akos|ákos|imre|geza|géza|janos|jános|jozsef|józsef|andras|andrás|miklos|miklós|gyula|lajos|karoly|károly|ildiko|katalin|zsuzsanna|aniko|eniko|tunde|csilla|emese|reka|kinga|bernadett|szilard|kalman|dezso|vilmos|botond|marton|márton|aron|áron|szabolcs|krisztian|barnabas|elemer|zsombor|bence|jeno|denes|kristof|balint|gergo|odon|zsigmond|bertalan|domonkos|benedek|kornel|nandor|tivadar|aladar|csongor|zalan|almos|samuel|piroska|ilona|jolan|sarolta|ibolya|boglarka|hajnalka|orsolya|noemi|beata|melinda|zsofia|judit|marta|erzsebet|gizella|margit|etelka|rozalia|terezia|lilla|zita|borbala|franciska|henrietta|timea|tímea|agnes|ágnes|eva|éva|mate|máté)\b/i;
+    for (const sor of SOROK3) {
+      const nev = (sor.match(/^\('[^']+', '([^']+)'/) || [])[1] ?? "";
+      const nyelv = (sor.match(/'(\["[^']*\])'/) || [])[1] ?? "";
+      if (nyelv.includes("Magyar")) {
+        expect(nev, `„Magyar" nyelv magyar keresztnév nélkül: ${nev}`).toMatch(KERESZT);
+      }
+    }
+  });
+
+  it("⚠️ a cím TISZTA — se távolság-utótag, se dupla városrész-zárójel", () => {
+    // A városra szűkített cégjegyzék-keresés „483 km"-t ragaszt a címhez, a
+    // találati kártya pedig két zárójeles utótagot is adhat
+    // („78224 Singen (Hohentwiel) (Hausen)"). Mindkettő a felhasználónak megy ki.
+    for (const sor of SOROK3) {
+      const cim = (sor.match(/^\('[^']+', '[^']+', '[^']+', '[^']+', '([^']+)'/) || [])[1] ?? "";
+      expect(cim, `távolság-utótag a címben: ${cim}`).not.toMatch(/\d+\s*km\s*$/i);
+      expect((cim.match(/\(/g) || []).length, `több városrész-zárójel: ${cim}`).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it("⚠️ leírja, hogy a Maps-találat önmagában NEM bizonyíték", () => {
+    // Ez a kör legdrágább tanulsága: három téves illesztés (idegen cég, sőt egy
+    // HIRDETÉS) egyetlen szűrővel bekerült volna.
+    expect(SQL3).toMatch(/K[ÉE]T-SZ[ŰU]R[ŐO]S/i);
   });
 });
 
