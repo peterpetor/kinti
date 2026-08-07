@@ -21,7 +21,12 @@ import sharp from "sharp";
  */
 
 const GYOKER = resolve(__dirname, "../..");
-const IKONOK = ["public/icons/icon-maskable-192.png", "public/icons/icon-maskable-512.png"];
+const IKONOK = [
+  "public/icons/icon-maskable-192-v2.png",
+  "public/icons/icon-maskable-512-v2.png",
+  "public/icons/icon-maskable-192.png",
+  "public/icons/icon-maskable-512.png",
+];
 /** A manifest background_color-ja; a generátor ezzel tölti ki a hátteret. */
 const HATTER = [0xf4, 0xed, 0xe0];
 
@@ -50,6 +55,53 @@ async function mer(p: string) {
     }
   }
   return { W, H, atlatszo, kilogo, kitoltesSzazalek: (maxSugar / (W / 2)) * 100 };
+}
+
+describe("⚠️⚠️ az ikonok gyorsítótár-szabálya", () => {
+  /**
+   * ⚠️ EZ VOLT A VALÓDI GYÖKÉR-OK 2026-08-07-én. Az ikon-javítást kétszer is
+   * kideployoltuk, a telefonon mégis a régi kép maradt — és a hibát előbb a
+   * rajzra, majd az Android-buildre fogtuk. Valójában a `_headers` adott
+   * `immutable` fejlécet a `/icons/*` útvonalnak, ami azt ígéri a CDN-nek,
+   * hogy az URL tartalma SOHA nem változik: egy évig a régit szolgálta ki
+   * (`cf-cache-status: HIT`, `Age: 46740`).
+   *
+   * Az `immutable` CSAK tartalomhoz kötött (hash-elt) fájlnévnél helyes.
+   * Az ikonok neve fix, tehát ott TILOS.
+   */
+  const HEADERS = olvasHeaders();
+
+  it("a /icons/* NEM kap `immutable` fejlécet", () => {
+    const blokk = ikonBlokk(HEADERS);
+    expect(blokk, "nincs /icons/* szabály a _headers-ben").not.toBeNull();
+    expect(blokk!, "immutable + fix fájlnév = a csere sosem jut ki").not.toMatch(/immutable/);
+  });
+
+  it("a /icons/* cache-e rövid és újraérvényesít", () => {
+    const blokk = ikonBlokk(HEADERS)!;
+    const m = blokk.match(/max-age=(\d+)/);
+    expect(m, "nincs max-age a /icons/* szabályban").not.toBeNull();
+    // Egy nap alatt ki kell jutnia egy ikoncserének.
+    expect(Number(m![1])).toBeLessThanOrEqual(86_400);
+    expect(blokk).toMatch(/must-revalidate|no-cache/);
+  });
+
+  it("a hash-elt nevű erőforrások VISZONT maradhatnak immutable", () => {
+    // A megkülönböztetés a lényeg: a betűtípus- és a Next-bundle-nevek a
+    // tartalomhoz kötöttek, ott az `immutable` helyes és hasznos.
+    expect(HEADERS).toMatch(/\/_next\/static\/\*[\s\S]{0,120}immutable/);
+  });
+});
+
+function olvasHeaders() {
+  return readFileSync(resolve(GYOKER, "public/_headers"), "utf8").replace(/\r\n/g, "\n");
+}
+/** A `/icons/*` szabály törzse a következő üres sorig. */
+function ikonBlokk(h: string) {
+  const i = h.indexOf("\n/icons/*");
+  if (i < 0) return null;
+  const utana = h.slice(i + 1);
+  return utana.slice(0, utana.indexOf("\n\n") + 1 || utana.length);
 }
 
 describe("maskable app-ikon", () => {

@@ -55,7 +55,22 @@ const TARGETS = [
   [ANY_SVG, "favicon-32.png", 32],
   [ANY_SVG, "favicon-16.png", 16],
 ];
+/**
+ * ⚠️ VERZIÓZOTT FÁJLNÉV — NE VEDD KI.
+ * A `/icons/*` sokáig `immutable` cache-fejlécet kapott, ezért egy fix nevű
+ * ikon cseréje SOHA nem jutott ki a felhasználókhoz: a Cloudflare egy évig a
+ * régit szolgálta ki. A fejléc azóta rövid cache + újraérvényesítés, DE a
+ * korábban gyorsítótárazott bejegyzések csak új URL-lel kerülhetők meg.
+ * Ha legközelebb változik a rajz, EMELD EZT A SZÁMOT, és írd át a
+ * `public/manifest.webmanifest` és az `android/twa-manifest.json` hivatkozását.
+ */
+const MASKABLE_VERZIO = 2;
 const MASKABLE_TARGETS = [
+  [`icon-maskable-192-v${MASKABLE_VERZIO}.png`, 192],
+  [`icon-maskable-512-v${MASKABLE_VERZIO}.png`, 512],
+  // A régi, verziótlan nevek is elkészülnek: régi telepítések gyorsítótárazott
+  // manifestje még ezekre hivatkozhat, és így ott is a javított kép szolgál ki,
+  // amint a mérgezett cache-bejegyzés lejár.
   ["icon-maskable-192.png", 192],
   ["icon-maskable-512.png", 512],
 ];
