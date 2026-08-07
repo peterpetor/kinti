@@ -46,7 +46,7 @@
     "gen:gb-seed": "node scripts/gen-gb-seed.mjs",
     "gen:es-seed": "node scripts/gen-es-seed.mjs",
     "gen:icons": "node scripts/gen-icons.mjs",
-    "twa:update": "cd android && npx @bubblewrap/cli@1.25.0 update && cd .. && node scripts/twa-splash-atlatszo.mjs"
+    "twa:update": "cd android && npx @bubblewrap/cli@1.25.0 update --skipVersionUpgrade && cd .. && node scripts/twa-splash-atlatszo.mjs"
   },
   "dependencies": {
     "@clerk/localizations": "^4.6.8",

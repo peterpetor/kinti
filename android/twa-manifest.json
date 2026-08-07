@@ -21,7 +21,7 @@
     "alias": "android"
   },
   "appVersionName": "1.7",
-  "appVersionCode": 10,
+  "appVersionCode": 11,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://kinti.app/manifest.webmanifest",

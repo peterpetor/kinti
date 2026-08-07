@@ -41,13 +41,23 @@ Verzió-emelés későbbi kiadásnál: a `twa-manifest.json`-ban `appVersionCode
 
 ### ⚠️⚠️ FRISSÍTÉSKOR A `npm run twa:update`-et HASZNÁLD, NE a nyers `update`-et
 
+**Verzió-emelés ELŐSZÖR** — kézzel, a `twa-manifest.json`-ban:
+`appVersionCode` +1, és `appVersionName` + `appVersion` az új verziószámra.
+
+Utána, a repo **gyökeréből**:
+
 ```powershell
-# a repo GYÖKERÉBŐL:
 npm run twa:update
-# majd:
 cd android
 npx @bubblewrap/cli@1.25.0 build
 ```
+
+⚠️ A `twa:update` `--skipVersionUpgrade`-del fut, tehát **NEM kérdez verziót**.
+Ez szándékos: 2026-08-07-én a Bubblewrap interaktív kérdésére egy beillesztett
+parancssor került a `versionName`-be, és az `.aab` azzal a névvel épült meg —
+a Play a boltban azt mutatta volna verziónévként. A verziót ezért a fájlban
+kell emelni, nem a promptban. Teszt is őrzi, hogy a `versionName`
+verziószám-alakú legyen.
 
 Két dolgot csinál egyszerre, és mindkettő KELL:
 
