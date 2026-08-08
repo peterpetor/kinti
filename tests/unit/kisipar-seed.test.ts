@@ -26,9 +26,10 @@ const FAJLOK = {
   DE2: "db/de-kisipar-11880-2026-08-07.sql",
   DE3: "db/de-kisipar-vezeteknev-2026-08-08.sql",
   DE4: "db/de-kisipar-11880-2026-08-08.sql",
+  DE5: "db/de-kisipar-11880-varos-2026-08-08.sql",
 } as const;
-/** Melyik fájl melyik országkódot használja (a DE2–DE4 is német). */
-const ORSZAG: Record<string, string> = { DE: "DE", CH: "CH", AT: "AT", DE2: "DE", DE3: "DE", DE4: "DE" };
+/** Melyik fájl melyik országkódot használja (a DE2–DE5 is német). */
+const ORSZAG: Record<string, string> = { DE: "DE", CH: "CH", AT: "AT", DE2: "DE", DE3: "DE", DE4: "DE", DE5: "DE" };
 
 const SQL = olvas(FAJLOK.DE);
 /** Csak az INSERT-sorok — a fejléc-komment szándékosan leírja a módszertant. */
