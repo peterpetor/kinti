@@ -30,6 +30,12 @@
 -- ugyanazt a 10 tételt, és nagyobb találatszámot jelent, mint amennyi valóban
 -- van. A „Mehr" gomb sem lapoz — az egy menü.
 --
+-- ⚠️⚠️ A MÉLYÍTÉS NULLÁT HOZOTT — ez a kör ezzel LE IS ZÁRULT. A 27 olyan
+-- nevet, amely beleütközött a lap-korlátba, újra lekérdeztem 5 helyett 16
+-- oldalig: a nyers halmaz 2133-ról 3633-ra nőtt, a jelöltek száma viszont
+-- MARADT 26. A mélyebb oldalak gyakorlatilag csak magánszemélyeket
+-- tartalmaznak. Több oldalt kérni tehát felesleges.
+--
 -- ⚠️ SVÁJC NEM EGYNYELVŰ. A `languages` mező a KANTON szerint kap Francia
 -- (GE/VD/NE/JU/FR/VS) vagy Olasz (TI) értéket — egy genfi szakembernél a
 -- „Német" egyszerűen valótlan. A vegyes kantonok a többségi nyelv szerint
