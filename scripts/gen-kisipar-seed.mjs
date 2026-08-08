@@ -36,7 +36,7 @@ const SOURCE = process.argv[5] || "seed-de-vezeteknev-2026-08";
  * kitalálás lenne a hibaforrás.
  */
 const ORSZAG = (process.argv[6] || "DE").toUpperCase();
-const NOMINATIM_CC = { DE: "de", CH: "ch", AT: "at", NL: "nl" }[ORSZAG] || "de";
+const NOMINATIM_CC = { DE: "de", CH: "ch", AT: "at", NL: "nl", GB: "gb", ES: "es" }[ORSZAG] || "de";
 const CACHE = join(__dirname, "geocode-cache.json");
 
 /** PLZ első két jegye → tartomány-kód. */
@@ -58,6 +58,23 @@ const PLZ_KIVETEL = [
   { tol: 88131, ig: 88179, land: "BY" }, // Lindau és környéke
 ];
 
+/**
+ * Osztrák irányítószám → Bundesland-kód (a szaknévsorban használt alakban).
+ *
+ * ⚠️ A 6-os sáv KETTÉVÁLIK: 6000–6499 Tirol, 6700–6999 Vorarlberg. Egyetlen
+ * jegy alapján dönteni itt HIBÁS lenne — pont ez a hibaosztály okozott két
+ * téves tartományt a német oldalon (Zweibrücken, Lindau).
+ */
+const AT_LAND = { 1: "W", 2: "NOE", 3: "NOE", 4: "OOE", 5: "SBG", 7: "BGL", 8: "STM", 9: "KTN" };
+
+function atLand(plz) {
+  const n = Number(plz);
+  if (n >= 6000 && n <= 6499) return "TIR";
+  if (n >= 6700 && n <= 6999) return "VBG";
+  // ⚠️ 6500–6699: Tirol (Landeck/Imst környéke) — a sáv nem folytonos.
+  if (n >= 6500 && n <= 6699) return "TIR";
+  return AT_LAND[Number(String(plz)[0])] || null;
+}
 function land(plz) {
   const n = Number(plz);
   for (const k of PLZ_KIVETEL) if (n >= k.tol && n <= k.ig) return k.land;
@@ -218,10 +235,17 @@ for (const x of be) {
   const zarojelek = cim.match(/\([^)]*\)/g) || [];
   if (zarojelek.length > 1) cim = cim.replace(/\s*\([^)]*\)\s*$/, "").trim();
   // ⚠️ A svájci irányítószám NÉGY jegyű, a német ÖT.
-  const plz = (cim.match(ORSZAG === "CH" ? /\b(\d{4})\b/ : /\b(\d{5})\b/) || [])[1];
-  if (!plz) { kihagyva.push([nev, "nincs irányítószám"]); continue; }
+  // ⚠️ Az irányítószám alakja országonként más: CH/AT négy jegy, DE öt.
+  // GB-n betűs (W5 1UP), ott a régiót nem is ebből számoljuk.
+  const plz = (cim.match(ORSZAG === "CH" || ORSZAG === "AT" ? /\b(\d{4})\b/ : /\b(\d{5})\b/) || [])[1];
+  if (!plz && ORSZAG !== "GB") { kihagyva.push([nev, "nincs irányítószám"]); continue; }
   // CH: a kanton a rekordból jön (a forrás adja), DE: az irányítószámból.
-  const l = ORSZAG === "CH" ? x.kanton : land(plz);
+  // A régió forrása országonként MÁS:
+  //   CH/GB → a rekord hozza (a forrás adja, vagy kézzel ellenőrzött)
+  //   AT    → irányítószám-sáv, a 6-os sáv kettéválásával
+  //   DE    → irányítószám-sáv, két mért kivétellel
+  const l =
+    ORSZAG === "CH" || ORSZAG === "GB" ? x.kanton : ORSZAG === "AT" ? atLand(plz) : land(plz);
   if (!l) { kihagyva.push([nev, "ismeretlen PLZ-sáv: " + plz]); continue; }
   const hely = (cim.split(plz)[1] || "").replace(/\(.*?\)/g, "").replace(/[,–-]\s*$/, "").trim() || "a környék";
   const sablon = BLURB[x.kategoria];
@@ -239,7 +263,16 @@ for (const x of be) {
   // (BE, FR, VS) a többségi nyelv szerint soroljuk be, mert a tétel szintjén
   // nincs jobb adatunk — és inkább a gyakoribbat mondjuk, mint a rosszat.
   const CH_FRANCIA = new Set(["GE", "VD", "NE", "JU", "FR", "VS"]);
-  const helyiNyelv = ORSZAG !== "CH" ? "Német" : CH_FRANCIA.has(l) ? "Francia" : l === "TI" ? "Olasz" : "Német";
+  const helyiNyelv =
+    ORSZAG === "GB"
+      ? "Angol"
+      : ORSZAG !== "CH"
+        ? "Német"
+        : CH_FRANCIA.has(l)
+          ? "Francia"
+          : l === "TI"
+            ? "Olasz"
+            : "Német";
   const nyelvek = vanKeresztnev ? `["Magyar","${helyiNyelv}"]` : `["${helyiNyelv}"]`;
 
   let id = `${ELOTAG}-${slug(nev)}`;
