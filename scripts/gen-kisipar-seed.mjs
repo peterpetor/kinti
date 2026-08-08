@@ -142,9 +142,22 @@ async function egyKeres(cim) {
 async function geokod(cim) {
   const kulcs = "DE|" + cim;
   if (cache[kulcs]) return cache[kulcs];
-  // ⚠️ A cégjegyzék városrészt tesz zárójelbe („67657 Kaiserslautern (Innenstadt)"),
-  // és a Nominatim ettől NULLA találatot ad. Zárójel nélkül újra kell próbálni.
-  const valtozatok = [cim, cim.replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+/g, " ").trim()];
+  // ⚠️ A Nominatim NULLÁT ad több, teljesen ártalmatlan cím-alakra. Mindegyik
+  // MÉRT eset, nem elméleti — egyenként egy-egy kiesett tételbe került:
+  //   1. városrész zárójelben: „67657 Kaiserslautern (Innenstadt)"
+  //   2. emelet/épület a házszám után: „Gollierstr. 70 /Haus C 3.OG"
+  //   3. megkülönböztetős településnév: „Bergheim bei Neuburg an der Donau"
+  // Ezért fokozatosan egyszerűsítünk, és az ELSŐ találat nyer. Koordinátát
+  // SOHA nem tippelünk: ha egyik alak sem oldódik fel, a tétel kimarad.
+  const zarojelNelkul = cim.replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+/g, " ").trim();
+  const emeletNelkul = zarojelNelkul
+    .replace(/\s*\/?\s*(haus|geb(äude)?|hinterhaus|vorderhaus)\s*[a-z0-9]*/gi, " ")
+    .replace(/\s*\d+\.\s*(og|ug|stock|etage)\b/gi, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  // „… bei Neuburg an der Donau" → a megkülönböztető utótag levágása
+  const rovidTelepules = emeletNelkul.replace(/\s+(bei|an der|a\.\s?d\.|im|am)\s+.+$/i, "").trim();
+  const valtozatok = [cim, zarojelNelkul, emeletNelkul, rovidTelepules];
   for (const v of [...new Set(valtozatok)]) {
     const p = await egyKeres(v);
     if (p) {

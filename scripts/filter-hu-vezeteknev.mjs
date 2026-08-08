@@ -95,7 +95,12 @@ gulyas gulyás lukacs lukács szanto szántó szoke szőke kertesz kertész maty
 pongracz rakoczi rákóczi szigeti csordas csordás borbely borbély dudas dudás sebestyen sebestyén
 pasztor pásztor juhasz juhász balogh papp kiraly király somogyi sipos balazs balázs torok török
 hajdu zsigmond racz rácz olah oláh bognar bognár illes illés vincze biro bíró tolnai vamos vámos
-nagy varga molnar molnár fodor veres kelemen fulop fülöp rozsa rózsa farkas`
+nagy varga molnar molnár fodor veres kelemen fulop fülöp rozsa rózsa farkas
+csiszar csiszár csik csík csonka gyori győri herczeg lorincz lőrincz madarasz madarász kaszas kaszás
+szekely székely sarkozi sárközi zsoldos zambo zámbó ujvari újvári ujhelyi újhelyi varady várady
+halasz halász hollo holló galambos revesz révész rigo rigó suto sütő vago vágó voros vörös orsos
+pusztai banyai bányai bartha tarjan tarján vermes erdelyi erdélyi deak deák solymosi magyar ferencz
+mezei nyari nyári pataki kozma lantos kardos kerekes dobos`
   .split(/\s+/)
   .filter(Boolean);
 

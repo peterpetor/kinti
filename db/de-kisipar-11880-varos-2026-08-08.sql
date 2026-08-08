@@ -4,7 +4,7 @@
 -- találatnál vágódott le. Ez nem kimerülés, hanem KORLÁT — a maradék csak
 -- város-szűkítéssel érhető el (`/suche/Szabo/berlin`).
 --   12 vezetéknév × 15 nagyváros = 180 lekérdezés → 1078 nyers → 210 jelölt
---   → 139 dedup után → 22 elfogadott → 20 felvett cég.
+--   → 139 dedup után → 22 elfogadott → 22 felvett cég.
 --
 -- ⚠️ A HOZAM ÉRZÉKELHETŐEN GYENGÉBB, mint az országos körben (73 felvett 242
 -- jelöltből = 30%, itt 22 a 139-ből = 16%). Az ok mérhető: a város-bontás
@@ -12,10 +12,13 @@
 -- sokkal többet szűrt (210-ből 71-et). A módszer tehát MŰKÖDIK, de a
 -- következő kör ne további városokat tegyen hozzá, hanem ÚJ NEVEKET.
 --
--- ⚠️ KÉT tétel geokódolhatatlan címmel esett ki, és mindkettő ugyanaz a minta:
--- a cím EMELETET/ÉPÜLETET is tartalmaz („Gollierstr. 70 /Haus C 3.OG"), vagy
--- a település nevébe ágyazott megkülönböztetőt („Bergheim bei Neuburg an der
--- Donau"). A Nominatim mindkettőn nullát ad. Nem tippelünk koordinátát.
+-- ⚠️ KÉT tétel elsőre geokódolhatatlan címmel esett ki, és mindkettő ugyanaz a
+-- minta: a cím EMELETET/ÉPÜLETET is tartalmaz („Gollierstr. 70 /Haus C 3.OG"),
+-- vagy a település nevébe ágyazott megkülönböztetőt („Bergheim bei Neuburg an
+-- der Donau"). A Nominatim mindkettőn nullát ad. A generátor azóta FOKOZATOSAN
+-- egyszerűsít (zárójel → emelet/épület → megkülönböztető utótag), és az első
+-- feloldódó alak nyer — így mind a 22 tétel bekerült. Koordinátát továbbra sem
+-- tippelünk: ha egyik alak sem oldódik fel, a tétel kimarad.
 --
 -- A módszertan, a szűrők és a két-szűrős Maps-hitelesítés azonos a negyedik
 -- körrel — ld. `db/de-kisipar-11880-2026-08-08.sql` fejlécét.
@@ -62,6 +65,10 @@ INSERT INTO businesses (id, name, category_id, category_label, address, phone, b
 ON CONFLICT(id) DO NOTHING;
 
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES
+('de5-szabo-industriebau-gmbh-co-kg', 'Szabo Industriebau GmbH & Co. KG', 'homlokzatszigetelo', 'Homlokzatszigetelő / Dryvit', 'Riedweg 14 86673 Bergheim bei Neuburg an der Donau', '+49 8431 6446989', 'Homlokzatszigetelés Bergheim bei Neuburg an der Donau környékén.', '["Német"]', 48.7585565, 11.2693984, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'seed-de-11880v-2026-08-08', 'DE', 'BY')
+ON CONFLICT(id) DO NOTHING;
+
+INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES
 ('de5-molnar-luftungs-klimatechnik-ug', 'Molnar Lüftungs-& Klimatechnik UG', 'klima', 'Klíma / Fűtés', 'Goslarer Weg 12 22453 Hamburg (Niendorf)', '+49 176 75927230', 'Fűtés- és klímaszerelés Hamburg környékén.', '["Német"]', 53.6361811, 9.9456622, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'seed-de-11880v-2026-08-08', 'DE', 'HH')
 ON CONFLICT(id) DO NOTHING;
 
@@ -99,6 +106,10 @@ ON CONFLICT(id) DO NOTHING;
 
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES
 ('de5-angelika-szabo', 'Angelika Szabo', 'varrono', 'Varrónő', 'Martersgässle 11 74613 Öhringen', '+49 7941 648356', 'Ruhajavítás és -igazítás Öhringen környékén.', '["Német"]', 49.2008715, 9.501116, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'seed-de-11880v-2026-08-08', 'DE', 'BW')
+ON CONFLICT(id) DO NOTHING;
+
+INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES
+('de5-nagy-stefan', 'Nagy Stefan', 'villany', 'Villanyszerelő', 'Gollierstr. 70 /Haus C 3.OG 80339 München (Schwanthalerhöhe-Laim)', '+49 89 186268', 'Villanyszerelés München környékén.', '["Német"]', 48.1368991, 11.5340595, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, 'seed-de-11880v-2026-08-08', 'DE', 'BY')
 ON CONFLICT(id) DO NOTHING;
 
 INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES
