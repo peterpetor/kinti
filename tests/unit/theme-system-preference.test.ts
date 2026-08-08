@@ -74,7 +74,12 @@ describe("téma — a rendszer-beállítás az alapértelmezés", () => {
 });
 
 describe("téma-váltó — vissza lehet térni az automatikára", () => {
-  it("három mód van, és a Rendszer az első", () => {
+  it("⚠️ három mód van, és a Napszak az első", () => {
+    // A felirat 2026-08-08-tól „Napszak" (az óra dönt), a belső azonosító
+    // viszont MARADT "system" — azt a mentett-érték logika és az init-szkript
+    // is ismeri, átnevezni némán elrontaná a visszatérő felhasználók témáját.
+    expect(TOGGLE).toContain('label: "Napszak"');
+    expect(TOGGLE).not.toContain('label: "Rendszer"');
     const modes = TOGGLE.slice(TOGGLE.indexOf("const MODES"));
     expect(modes).toContain('id: "system"');
     expect(modes).toContain('id: "warm"');

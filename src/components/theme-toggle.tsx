@@ -133,7 +133,10 @@ export function ThemeToggle() {
 
 /** „Rendszer" ELÖL: ez az alapértelmezés, és ez a natív elvárás. */
 const MODES = [
-  { id: "system", label: "Rendszer", icon: "themeAuto" },
+  // ⚠️ A felirat „Napszak", nem „Rendszer": 2026-08-08 óta az óra dönt
+  // (06–18 világos), nem a böngésző téma-beállítása. A régi felirat azt
+  // ígérte, amit a mód már nem csinál.
+  { id: "system", label: "Napszak", icon: "themeAuto" },
   { id: "warm", label: "Világos", icon: "sun" },
   { id: "dark", label: "Sötét", icon: "moon" },
 ] as const satisfies ReadonlyArray<{
