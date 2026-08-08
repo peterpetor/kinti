@@ -29,6 +29,14 @@ const BE = process.argv[2];
 const KI = process.argv[3];
 const ELOTAG = process.argv[4] || "de3";
 const SOURCE = process.argv[5] || "seed-de-vezeteknev-2026-08";
+/**
+ * ⚠️ ORSZÁG. Németországra az irányítószámból SZÁMOLJUK a tartományt (lásd a
+ * két mért kivételt lentebb), Svájcra viszont a FORRÁS adja készen a
+ * kanton-kódot (search.ch `.region`) — ott nincs is mit kitalálni, és a
+ * kitalálás lenne a hibaforrás.
+ */
+const ORSZAG = (process.argv[6] || "DE").toUpperCase();
+const NOMINATIM_CC = { DE: "de", CH: "ch", AT: "at", NL: "nl" }[ORSZAG] || "de";
 const CACHE = join(__dirname, "geocode-cache.json");
 
 /** PLZ első két jegye → tartomány-kód. */
@@ -128,7 +136,7 @@ const alszik = (ms) => new Promise((r) => setTimeout(r, ms));
 async function egyKeres(cim) {
   const u = new URL("https://nominatim.openstreetmap.org/search");
   u.searchParams.set("q", cim);
-  u.searchParams.set("countrycodes", "de");
+  u.searchParams.set("countrycodes", NOMINATIM_CC);
   u.searchParams.set("format", "json");
   u.searchParams.set("limit", "1");
   const r = await fetch(u, { headers: { "User-Agent": "kinti.app szaknevsor seed (snyggdam@gmail.com)" } });
@@ -140,7 +148,10 @@ async function egyKeres(cim) {
 }
 
 async function geokod(cim) {
-  const kulcs = "DE|" + cim;
+  // ⚠️ A cache-kulcsban BENNE KELL LENNIE AZ ORSZÁGNAK: ugyanaz az utcanév
+  // több országban is létezik, és egy DE-kulcs alatt tárolt svájci koordináta
+  // némán rossz helyre tenné a pin-t.
+  const kulcs = ORSZAG + "|" + cim;
   if (cache[kulcs]) return cache[kulcs];
   // ⚠️ A Nominatim NULLÁT ad több, teljesen ártalmatlan cím-alakra. Mindegyik
   // MÉRT eset, nem elméleti — egyenként egy-egy kiesett tételbe került:
@@ -206,9 +217,11 @@ for (const x of be) {
   let cim = (x.cim || "").replace(/\s*\d+\s*km\s*$/i, "").replace(/\s+/g, " ").trim();
   const zarojelek = cim.match(/\([^)]*\)/g) || [];
   if (zarojelek.length > 1) cim = cim.replace(/\s*\([^)]*\)\s*$/, "").trim();
-  const plz = (cim.match(/\b(\d{5})\b/) || [])[1];
+  // ⚠️ A svájci irányítószám NÉGY jegyű, a német ÖT.
+  const plz = (cim.match(ORSZAG === "CH" ? /\b(\d{4})\b/ : /\b(\d{5})\b/) || [])[1];
   if (!plz) { kihagyva.push([nev, "nincs irányítószám"]); continue; }
-  const l = land(plz);
+  // CH: a kanton a rekordból jön (a forrás adja), DE: az irányítószámból.
+  const l = ORSZAG === "CH" ? x.kanton : land(plz);
   if (!l) { kihagyva.push([nev, "ismeretlen PLZ-sáv: " + plz]); continue; }
   const hely = (cim.split(plz)[1] || "").replace(/\(.*?\)/g, "").replace(/[,–-]\s*$/, "").trim() || "a környék";
   const sablon = BLURB[x.kategoria];
@@ -221,7 +234,13 @@ for (const x of be) {
     nev.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z]+/g, " ").split(" "),
   );
   const vanKeresztnev = [...tokenek].some((t) => KERESZT.has(t));
-  const nyelvek = vanKeresztnev ? '["Magyar","Német"]' : '["Német"]';
+  // ⚠️ SVÁJC NEM EGYNYELVŰ. Egy genfi vagy lausanne-i szakembernél a „Német"
+  // egyszerűen valótlan. A helyi nyelvet a KANTON dönti el; a vegyes kantonokat
+  // (BE, FR, VS) a többségi nyelv szerint soroljuk be, mert a tétel szintjén
+  // nincs jobb adatunk — és inkább a gyakoribbat mondjuk, mint a rosszat.
+  const CH_FRANCIA = new Set(["GE", "VD", "NE", "JU", "FR", "VS"]);
+  const helyiNyelv = ORSZAG !== "CH" ? "Német" : CH_FRANCIA.has(l) ? "Francia" : l === "TI" ? "Olasz" : "Német";
+  const nyelvek = vanKeresztnev ? `["Magyar","${helyiNyelv}"]` : `["${helyiNyelv}"]`;
 
   let id = `${ELOTAG}-${slug(nev)}`;
   let n = 2;
@@ -232,7 +251,7 @@ for (const x of be) {
   sorok.push(
     "INSERT INTO businesses (id, name, category_id, category_label, address, phone, blurb, languages, lat, lng, pin_x, pin_y, rating, reviews, featured, open_now, moderation_status, claimed, hidden, verified, source, country_code, canton_code) VALUES\n" +
       `(${q(id)}, ${q(nev)}, ${q(x.kategoria)}, ${q(x.kategoria_cimke)}, ${q(cim)}, ${q(tel)}, ` +
-      `${q(sablon.replace("{hely}", hely))}, ${q(nyelvek)}, ${p.lat}, ${p.lng}, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, ${q(SOURCE)}, 'DE', ${q(l)})\n` +
+      `${q(sablon.replace("{hely}", hely))}, ${q(nyelvek)}, ${p.lat}, ${p.lng}, 50, 50, 0, 0, 0, 0, 1, 0, 0, 0, ${q(SOURCE)}, ${q(ORSZAG)}, ${q(l)})\n` +
       "ON CONFLICT(id) DO NOTHING;",
   );
 }

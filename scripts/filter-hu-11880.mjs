@@ -21,6 +21,8 @@
  * Futtatás: node scripts/filter-hu-11880.mjs nyers.json ki.json
  */
 import { readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { hitelesseg } from "./filter-hu-vezeteknev.mjs";
 
 const BE = process.argv[2];
@@ -76,7 +78,7 @@ const MINTAK = [
   [/fensterbau|fenstermontage/i, "nyilaszaros", "Nyílászáró / Ablak-ajtó"],
 ];
 
-function kategoria(szoveg) {
+export function kategoria(szoveg) {
   for (const [minta, id, cimke] of MINTAK) if (minta.test(szoveg)) return [id, cimke];
   return null;
 }
@@ -85,7 +87,7 @@ function kategoria(szoveg) {
  * A 11880 a települést a cím VÉGÉRE is odaírja („…, 06108 Halle (Altstadt), Halle").
  * A duplikált farok zavaró a felhasználónak és a geokódolásnak is.
  */
-function cimTisztit(cim) {
+export function cimTisztit(cim) {
   let c = (cim || "").replace(/\s+/g, " ").trim();
   const reszek = c.split(",").map((x) => x.trim()).filter(Boolean);
   if (reszek.length >= 2) {
@@ -96,30 +98,37 @@ function cimTisztit(cim) {
   return reszek.join(", ");
 }
 
-const nyers = JSON.parse(readFileSync(BE, "utf8"));
-const ki = [];
-for (const x of nyers) {
-  // ⚠️ MAGÁNSZEMÉLY-SOR: a 11880 külön „Personeneinträge" sávot kínál. Ez nem
-  // cég, és magánszemély lakcíme/telefonja SOHA nem kerülhet a szaknévsorba.
-  if (/personeneinträge/i.test(x.nev || "")) continue;
-  const m = kategoria(x.szakma || "");
-  if (!m) continue;
-  if (!x.tel || x.tel.replace(/\D/g, "").length < 7) continue;
-  const cim = cimTisztit(x.cim);
-  if (!/\b\d{5}\b/.test(cim)) continue; // irányítószám nélkül nincs régió
-  const h = hitelesseg(x.nev || "");
-  if (!h.elfogad) continue;
-  ki.push({ ...x, cim, kategoria: m[0], kategoria_cimke: m[1], pont: h.pont, okok: h.okok });
-}
-ki.sort((a, b) => b.pont - a.pont || a.kategoria.localeCompare(b.kategoria));
-writeFileSync(KI, JSON.stringify(ki, null, 1), "utf8");
+// ⚠️ A modult a `filter-hu-searchch.mjs` IMPORTÁLJA a szakma-illesztésért.
+// A belépési pontot kell nézni, NEM az argumentumok meglétét: a process.argv
+// az importáló szkript argumentumait tartalmazza, tehát a szűrő ott is
+// lefutna és felülírná a másik kimeneti fájlját.
+if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
+  const nyers = JSON.parse(readFileSync(BE, "utf8"));
+  const ki = [];
+  for (const x of nyers) {
+    // ⚠️ MAGÁNSZEMÉLY-SOR: a 11880 külön „Personeneinträge" sávot kínál. Ez nem
+    // cég, és magánszemély lakcíme/telefonja SOHA nem kerülhet a szaknévsorba.
+    if (/personeneinträge/i.test(x.nev || "")) continue;
+    const m = kategoria(x.szakma || "");
+    if (!m) continue;
+    if (!x.tel || x.tel.replace(/\D/g, "").length < 7) continue;
+    const cim = cimTisztit(x.cim);
+    if (!/\b\d{5}\b/.test(cim)) continue; // irányítószám nélkül nincs régió
+    const h = hitelesseg(x.nev || "");
+    if (!h.elfogad) continue;
+    ki.push({ ...x, cim, kategoria: m[0], kategoria_cimke: m[1], pont: h.pont, okok: h.okok });
+  }
+  ki.sort((a, b) => b.pont - a.pont || a.kategoria.localeCompare(b.kategoria));
+  writeFileSync(KI, JSON.stringify(ki, null, 1), "utf8");
 
-const cnt = {};
-for (const x of ki) cnt[x.kategoria] = (cnt[x.kategoria] || 0) + 1;
-console.log(`${nyers.length} nyers → ${ki.length} elfogadott jelölt`);
-console.log(
-  Object.entries(cnt)
-    .sort((a, b) => b[1] - a[1])
-    .map(([k, v]) => `${k}:${v}`)
-    .join("  "),
-);
+  const cnt = {};
+  for (const x of ki) cnt[x.kategoria] = (cnt[x.kategoria] || 0) + 1;
+  console.log(`${nyers.length} nyers → ${ki.length} elfogadott jelölt`);
+  console.log(
+    Object.entries(cnt)
+      .sort((a, b) => b[1] - a[1])
+      .map(([k, v]) => `${k}:${v}`)
+      .join("  "),
+  );
+
+}
