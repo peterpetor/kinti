@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { haptic } from "@/lib/haptics";
 import { Icon } from "@/components/ui";
 import type { IconName } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
@@ -85,11 +84,6 @@ function writeRecent(item: RecentItem) {
   }
 }
 
-/** Finom kiválasztás-haptika (a közös lib mintája — hibára néma). */
-function buzz() {
-  haptic("selection");
-}
-
 /** Igaz, ha a billentyű-esemény szerkeszthető mezőben született (ott a „/" gépelés). */
 function isEditableTarget(t: EventTarget | null): boolean {
   if (!(t instanceof HTMLElement)) return false;
@@ -144,7 +138,6 @@ export function GlobalSearchOverlay() {
   // Megnyitás: fejléc-gomb eseménye + gyorsbillentyűk (Ctrl/⌘+K toggle, „/" nyit).
   useEffect(() => {
     const onOpen = (e: Event) => {
-      buzz();
       // Átvett keresőszó (menü-átvezetés): amit a felhasználó már begépelt, azt
       // ne kelljen újra beírnia.
       const atvett = (e as CustomEvent<string>).detail;
@@ -154,13 +147,11 @@ export function GlobalSearchOverlay() {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && !e.altKey && (e.key === "k" || e.key === "K")) {
         e.preventDefault();
-        buzz();
         setOpen((o) => !o);
         return;
       }
       if (e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey && !isEditableTarget(e.target)) {
         e.preventDefault();
-        buzz();
         setOpen(true);
       }
     };
@@ -303,7 +294,6 @@ export function GlobalSearchOverlay() {
   const close = useCallback(() => setOpen(false), []);
 
   const pick = useCallback((row: Row, viaKeyboard: boolean) => {
-    buzz();
     if (row.section !== "cta") {
       writeRecent({ href: row.href, title: row.title, icon: row.icon });
     }

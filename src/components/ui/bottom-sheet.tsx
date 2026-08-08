@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
-import { haptic } from "@/lib/haptics";
 import { useVisualViewportHeight } from "@/lib/use-visual-viewport-height";
 import { Icon } from "./icons";
 
@@ -89,7 +88,6 @@ export function BottomSheet({
     setDragging(false);
     startY.current = null;
     if (dragY > 90) {
-      haptic("tap");
       onClose();
     } else {
       setDragY(0);

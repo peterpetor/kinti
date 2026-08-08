@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { haptic } from "@/lib/haptics";
 import { confirmDialog } from "@/lib/confirm";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
@@ -72,7 +71,6 @@ export function TanulasSection() {
         setIsmetlo(null);
         return;
       }
-      haptic("tap");
       setIsmetlo(feloldva);
     } finally {
       setToltes(false);
@@ -221,7 +219,6 @@ function IsmetloJatek({ kartyak, onKilep }: { kartyak: Flashcard[]; onKilep: () 
   function rogzit(helyes: boolean) {
     recordAnswer(k.kind, k.bank, k.id, helyes);
     if (helyes) setJok((x) => x + 1);
-    haptic(helyes ? "success" : "warning");
   }
 
   function tovabb() {

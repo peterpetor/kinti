@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Icon, type IconName } from "./icons";
 import { cn } from "@/lib/cn";
-import { haptic } from "@/lib/haptics";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
@@ -106,11 +105,9 @@ export function TabBar() {
                   // Natív minta: az AKTÍV fül újra-koppintása az oldal tetejére
                   // görget (navigáció helyett) — reduced-motion alatt ugrással.
                   e.preventDefault();
-                  haptic("tap");
                   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
                   window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
                 } else {
-                  haptic("selection");
                 }
               }}
               aria-current={active ? "page" : undefined}

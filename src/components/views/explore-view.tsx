@@ -2,7 +2,6 @@
 
 import { useMemo, useState, useEffect, useRef, useCallback, lazy, Suspense } from "react";
 import { useKeyboardDismissOnScroll } from "@/lib/use-keyboard-dismiss";
-import { haptic } from "@/lib/haptics";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BusinessCard, CategoryPills, Icon, SegmentedControl, SwipeAction, type IconName } from "@/components/ui";
@@ -947,7 +946,6 @@ export function ExploreView({
           <button
             type="button"
             onClick={() => {
-              haptic("selection");
               setMoreFiltersOpen((v) => !v);
             }}
             aria-expanded={filtersExpanded}

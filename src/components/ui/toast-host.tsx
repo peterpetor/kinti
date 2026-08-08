@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { subscribeToasts, type ToastItem, type ToastVariant } from "@/lib/toast";
-import { haptic } from "@/lib/haptics";
 import { Icon, type IconName } from "./icons";
 import { cn } from "@/lib/cn";
 
@@ -24,8 +23,7 @@ const KILEPES_MS = 180;
 /**
  * ToastHost — a globális toast-sín EGYETLEN példánya (az (app) layoutban).
  * A `lib/toast.ts` pub/sub-jára iratkozik fel; FELÜL, középen jeleníti meg a
- * kapszulákat (egyszerre max 3). Kattintásra azonnal eltűnik. Haptika
- * megjelenéskor. `aria-live=polite`.
+ * kapszulákat (egyszerre max 3). Kattintásra azonnal eltűnik. `aria-live=polite`.
  *
  * ⚠️ FELÜL, NEM ALUL. Korábban a TabBar fölött úszott fel. A megerősítés
  * viszont arra a MŰVELETRE vonatkozik, amit a felhasználó épp elvégzett, és az
@@ -54,7 +52,6 @@ export function ToastHost() {
     return subscribeToasts((t) => {
       // Max 3 egyszerre — a legrégebbit kiszorítja.
       setItems((prev) => [...prev.slice(-2), t]);
-      haptic(t.variant === "error" ? "warning" : "success");
       window.setTimeout(() => zar(t.id), t.duration);
     });
   }, [zar]);

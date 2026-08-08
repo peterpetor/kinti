@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { haptic } from "@/lib/haptics";
 
 /**
  * PullToRefresh — natív „húzd-le-frissítéshez" minta a listákon. Csak a lap
@@ -52,10 +51,8 @@ export function PullToRefresh({
     if (pull >= THRESHOLD && !refreshing) {
       setRefreshing(true);
       setPull(THRESHOLD);
-      haptic("selection"); // a húzás kioldása
       try {
         await doRefresh();
-        haptic("success"); // sikeres frissítés
       } finally {
         setRefreshing(false);
         setPull(0);

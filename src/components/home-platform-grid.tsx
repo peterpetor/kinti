@@ -7,7 +7,6 @@ import type { IconName } from "@/components/ui/icons";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import { haptic } from "@/lib/haptics";
 import { recordUse } from "@/lib/usage-frecency";
 
 /**
@@ -92,7 +91,6 @@ export function HomePlatformGrid({ b2bOpenCount = 0 }: { b2bOpenCount?: number }
     } catch { /* privát mód — marad az alapállapot */ }
   }, []);
   const toggleExpanded = () => {
-    haptic("selection");
     setExpanded((v) => {
       try {
         localStorage.setItem("kinti.home.grid.open", v ? "0" : "1");

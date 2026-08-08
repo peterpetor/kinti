@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { haptic } from "@/lib/haptics";
 import {
   getDailyQuestions,
   getTodayState,
@@ -81,7 +80,6 @@ export function KvizGame() {
     next[currentIdx] = idx;
     setAnswers(next);
     setRevealed(true);
-    haptic(idx === question.correct ? "success" : "warning");
     // Ismétlő: az elrontott kérdés pár nap múlva visszajön a profilban.
     recordAnswer("quiz", kvizBank(country), question.id, idx === question.correct);
   }

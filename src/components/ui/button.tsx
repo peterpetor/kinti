@@ -3,7 +3,6 @@
 import { forwardRef } from "react";
 import type { ButtonHTMLAttributes, MouseEvent } from "react";
 import { cn } from "@/lib/cn";
-import { haptic } from "@/lib/haptics";
 
 /**
  * Button — a CTA-k atomja (Hívás, Útvonal, Kezdjük el…).
@@ -39,11 +38,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     <button
       ref={ref}
       type={type}
-      onClick={(e: MouseEvent<HTMLButtonElement>) => {
-        // Haptikus visszajelzés a tömör CTA-kon (a ghost/secondary csendben marad).
-        if (variant === "primary" || variant === "accent") haptic("tap");
-        onClick?.(e);
-      }}
+      onClick={onClick}
       className={cn(
         "inline-flex items-center justify-center font-bold tracking-[-0.01em] transition active:scale-[0.98]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:opacity-50",

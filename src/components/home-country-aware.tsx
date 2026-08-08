@@ -10,7 +10,6 @@ import { DEFAULT_COUNTRY, countryLocative, countryIllative } from "@/lib/countri
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { CountryFlag } from "@/components/ui/country-flag";
 import { CountrySelectSheet } from "@/components/ui/country-switcher";
-import { haptic } from "@/lib/haptics";
 
 /**
  * A kezdőlap ország-függő darabjai (a lap szerver-renderelt, az ország
@@ -38,7 +37,6 @@ export function HomeCountryFlag() {
       <button
         type="button"
         onClick={() => {
-          haptic("selection");
           setOpen(true);
         }}
         aria-label="Ország váltása"

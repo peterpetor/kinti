@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { subscribeConfirm, type ConfirmRequest } from "@/lib/confirm";
-import { haptic } from "@/lib/haptics";
 import { cn } from "@/lib/cn";
 
 /**
@@ -19,7 +18,6 @@ export function ConfirmHost() {
   useEffect(() => {
     return subscribeConfirm((req) => {
       setQueue((prev) => [...prev, req]);
-      haptic(req.destructive ? "warning" : "tap");
     });
   }, []);
 
@@ -63,7 +61,6 @@ export function ConfirmHost() {
           <button
             type="button"
             onClick={() => {
-              haptic("tap");
               settle(false);
             }}
             className="flex-1 rounded-pill border border-line bg-surface-alt py-2.5 text-[13px] font-bold text-ink-muted transition active:scale-[0.98]"
@@ -73,7 +70,6 @@ export function ConfirmHost() {
           <button
             type="button"
             onClick={() => {
-              haptic(current.destructive ? "warning" : "selection");
               settle(true);
             }}
             className={cn(

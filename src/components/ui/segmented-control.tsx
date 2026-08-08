@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { Icon, type IconName } from "./icons";
 import { cn } from "@/lib/cn";
-import { haptic } from "@/lib/haptics";
 import {
   szegmensGeometria,
   szegmensInsetOsztaly,
@@ -85,7 +84,6 @@ export function SegmentedControl<T extends string>({
 
   const valaszt = (id: T) => {
     if (id === value) return; // ugyanarra koppintás nem „választás"
-    haptic("selection");
     onChange(id);
   };
 

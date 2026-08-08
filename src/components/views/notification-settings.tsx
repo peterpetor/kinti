@@ -7,7 +7,6 @@ import { confirmDialog } from "@/lib/confirm";
 import { cn } from "@/lib/cn";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/push-keys";
 import { readPreferredCanton } from "@/lib/canton-pref";
-import { haptic } from "@/lib/haptics";
 
 type Status = "checking" | "unsupported" | "ios-install" | "denied" | "unsubscribed" | "subscribed";
 interface Prefs { notifyBusiness: boolean; notifyJob: boolean; notifyDaily: boolean; notifyKeresek: boolean; notifyHousing: boolean }
@@ -246,7 +245,7 @@ function ToggleRow({ icon, label, hint, on, onToggle }: { icon: string; label: s
         type="button"
         role="switch"
         aria-checked={on}
-        onClick={() => { haptic("selection"); onToggle(); }}
+        onClick={() => { onToggle(); }}
         className={cn(
           "relative h-6 w-10 shrink-0 rounded-full transition-colors",
           on ? "bg-primary" : "bg-ink-faint/30",

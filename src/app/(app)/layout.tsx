@@ -23,7 +23,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           megerősítések egységes helye, a TabBar fölött. */}
       <ToastHost />
       {/* Natív-stílusú megerősítő-dialógus (lib/confirm.ts) — a nyers böngésző-
-          confirm() helyett, egységes megjelenéssel és haptikával. */}
+          confirm() helyett, egységes megjelenéssel. */}
       <ConfirmHost />
       {/* Tab-szintű scroll-pozíció megőrzés (natív tab-bar viselkedés). */}
       <ScrollRestorer />

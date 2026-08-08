@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "@/components/ui/icons";
-import { haptic } from "@/lib/haptics";
 
 /**
  * Egyszerű mobil-barát alsó lap (bottom sheet). A megosztás- és naptár-választó
@@ -89,7 +88,6 @@ export function BottomSheet({
     setDragging(false);
     dragStart.current = null;
     if (dragY > 90) {
-      haptic("tap");
       setDragY(0);
       onClose();
     } else {

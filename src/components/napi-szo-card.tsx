@@ -5,7 +5,6 @@ import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, getCountry } from "@/lib/countries";
 import { getDailyWord, hasDailyWord, ttsLang, type DailyWord } from "@/lib/napi-szo";
 import { readCards, recordAnswer, szoBank } from "@/lib/tanulas";
-import { haptic } from "@/lib/haptics";
 
 /**
  * NapiSzoCard — „Napi szó": napi helyi kifejezés a kezdőlapon, a napi
@@ -26,7 +25,6 @@ export function NapiSzoCard() {
     if (!word) return;
     recordAnswer("word", szoBank(country), word.word, mit === "tudom");
     setJelolt(mit);
-    haptic(mit === "tudom" ? "success" : "tap");
   }
 
   useEffect(() => {

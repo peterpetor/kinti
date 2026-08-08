@@ -2,7 +2,6 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
-import { haptic } from "@/lib/haptics";
 
 export function NewsletterToggle() {
   const { user, isLoaded } = useUser();
@@ -14,7 +13,6 @@ export function NewsletterToggle() {
 
   async function toggle() {
     if (!user) return;
-    haptic("selection");
     setLoading(true);
     try {
       await user.update({

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
-import { haptic } from "@/lib/haptics";
 import { cacheOfflinePaths, removeOfflinePath } from "@/lib/offline-cache";
 
 const LS_KEY = "kinti_favorites";
@@ -68,10 +67,6 @@ export function FavoriteButton({ businessId, className }: { businessId: string; 
       localStorage.setItem(LS_KEY, JSON.stringify(next));
       setFav(next.includes(businessId));
       if (isAdding) setPopKey((k) => k + 1);
-      // ⚠️ A KÉT IRÁNY NEM UGYANAZ. A hozzáadás egy elért eredmény („elmentve"),
-      // az eltávolítás sima visszavonás — eddig mindkettő ugyanazt a koppanást
-      // adta, tehát tapintásra nem lehetett megkülönböztetni, mi történt.
-      haptic(isAdding ? "success" : "tap");
       window.dispatchEvent(new CustomEvent(FAVORITES_CHANGED_EVENT));
       // Kedvenc = offline is elérhető: a szakember profil-oldalának cache-elése
       // (best-effort). Eltávolításnál töröljük a cache-ből.

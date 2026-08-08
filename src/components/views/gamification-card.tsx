@@ -8,7 +8,6 @@ import { computeGamification, type GamificationStats } from "@/lib/gamification"
 import { streakXp } from "@/lib/streak";
 import { gatherAchievementExtras } from "@/lib/achievements";
 import { getMyInviteCode, getReferredBy } from "@/lib/referral-client";
-import { haptic } from "@/lib/haptics";
 
 const REFERRAL_XP = 40; // XP behívott magyaronként
 const REFERRED_BONUS = 25; // egyszeri XP, ha meghívó-linkről érkeztél
@@ -28,7 +27,7 @@ export function GamificationCard() {
   // localStorage csak kliensen — useEffect a hidratációs eltérés elkerülésére.
   useEffect(() => {
     // Új kitűző észlelése: a most megszerzett azonosítók összevetése a korábban
-    // látottakkal. Az ELSŐ betöltéskor csak rögzítünk (nincs rezgés a meglévőkre).
+    // látottakkal. Az ELSŐ betöltéskor csak rögzítünk, nem jelölünk újnak.
     const detectFresh = (s: GamificationStats) => {
       try {
         const earnedIds = s.badges.filter((b) => b.earned).map((b) => b.id);
@@ -39,7 +38,6 @@ export function GamificationCard() {
           const seen = new Set<string>(JSON.parse(raw));
           const fresh = earnedIds.filter((id) => !seen.has(id));
           if (fresh.length > 0) {
-            haptic("success");
             setFreshBadges((prev) => new Set([...prev, ...fresh]));
             localStorage.setItem(SEEN_BADGES_KEY, JSON.stringify(earnedIds));
           }

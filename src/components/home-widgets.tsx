@@ -3,7 +3,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { haptic } from "@/lib/haptics";
 
 /**
  * HomeWidgets — testreszabható kezdőlap-blokk. A felhasználó a „Napi infó"
@@ -64,7 +63,6 @@ export function HomeWidgets({ widgets }: { widgets: WidgetDef[] }) {
   const list = mounted ? ordered : widgets;
 
   function move(id: string, dir: -1 | 1) {
-    haptic("selection");
     const ids = ordered.map((w) => w.id);
     const i = ids.indexOf(id);
     const j = i + dir;
@@ -73,7 +71,6 @@ export function HomeWidgets({ widgets }: { widgets: WidgetDef[] }) {
     save({ ...prefs, order: ids });
   }
   function toggleHide(id: string) {
-    haptic("selection");
     const hidden = prefs.hidden.includes(id)
       ? prefs.hidden.filter((x) => x !== id)
       : [...prefs.hidden, id];
@@ -87,7 +84,6 @@ export function HomeWidgets({ widgets }: { widgets: WidgetDef[] }) {
         <button
           type="button"
           onClick={() => {
-            haptic("tap");
             setEdit((e) => !e);
           }}
           className={cn(

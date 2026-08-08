@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { COUNTRIES, DEFAULT_COUNTRY } from "@/lib/countries";
 import { TurnstileWidget, type TurnstileWidgetRef } from "@/components/turnstile-widget";
-import { haptic } from "@/lib/haptics";
 
 /** Ország-illő példa-város a cím-placeholderhez (Svájcban ne Bécs legyen). */
 const EXAMPLE_CITY: Record<string, string> = {
@@ -45,7 +44,6 @@ export function StorySubmitForm({ turnstileSiteKey }: { turnstileSiteKey: string
   function applyFormat(kind: "h2" | "bold" | "list") {
     const ta = bodyRef.current;
     if (!ta) return;
-    haptic("tap");
     const { selectionStart: s, selectionEnd: e, value } = ta;
     let next = value;
     let caret = e;
@@ -94,7 +92,6 @@ export function StorySubmitForm({ turnstileSiteKey }: { turnstileSiteKey: string
         setSubmitting(false);
         return;
       }
-      haptic("success");
       setDone(true);
     } catch {
       setErr("Hálózati hiba.");

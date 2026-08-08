@@ -7,13 +7,10 @@ import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { Icon, type IconName } from "./icons";
 import { CountrySwitcher } from "./country-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { HapticToggle } from "@/components/haptic-toggle";
-import { ArcBelepesKapcsolo } from "@/components/arc-belepes-kapcsolo";
 import { cn } from "@/lib/cn";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY, courseLanguageName } from "@/lib/countries";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import { haptic } from "@/lib/haptics";
 import { recordUse, getTopUsed } from "@/lib/usage-frecency";
 import { openGlobalSearch } from "@/components/global-search";
 
@@ -72,7 +69,7 @@ export function DropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   // Húzd-le-bezárás (ugyanaz a minta, mint a BottomSheet-nél): a fogantyú-sávról
-  // indított húzás a panelt tolja lefelé, >90px zár (haptikával), alatta visszaugrik.
+  // indított húzás a panelt tolja lefelé, >90px zár, alatta visszaugrik.
   // Csak mobil-nézetben aktív (a fogantyú `sm:hidden` — desktopon a menü centrált
   // dialógus, ott a húzás-gesztusnak nincs natív jelentése).
   const [dragY, setDragY] = useState(0);
@@ -116,7 +113,6 @@ export function DropdownMenu() {
     setDragging(false);
     dragStartY.current = null;
     if (dragY > 90) {
-      haptic("tap");
       setIsOpen(false);
     } else {
       setDragY(0);
@@ -320,25 +316,6 @@ export function DropdownMenu() {
               </div>
             </div>
           ),
-        },
-        {
-          key: "rezges",
-          label: "Rezgés",
-          tint: "bg-primary/10",
-          icon: { name: "sun" },
-          // A komponens SAJÁT MAGA dönti el, hogy megjelenik-e: iOS-en a
-          // Vibration API nem létezik, ott `null`-t ad vissza (egy kapcsoló,
-          // ami semmit nem kapcsol, rosszabb a hiányánál).
-          custom: <HapticToggle key="rezges" />,
-        },
-        {
-          key: "arc-belepes",
-          label: "Belépés arccal vagy ujjlenyomattal",
-          tint: "bg-primary/10",
-          icon: { name: "lock" },
-          // Szintén magát rejti el: kilépve, beépített hitelesítő nélküli
-          // eszközön, vagy ha a szolgáltató-oldali kapcsoló hiányzik.
-          custom: <ArcBelepesKapcsolo key="arc-belepes" />,
         },
         { key: "hirlevel", label: "Hírlevél", href: "/hirlevel", tint: "bg-primary/10 text-primary-ink", icon: { name: "send" } },
         { key: "ertesitesek", label: "Értesítések", href: "/ertesitesek", tint: "bg-primary/10 text-primary-ink", icon: { name: "bell" } },
@@ -639,7 +616,6 @@ function CollapsibleSection({
   });
   const effectiveOpen = forceOpen || open;
   const toggle = () => {
-    haptic("selection");
     setOpen((o) => {
       const next = !o;
       try {

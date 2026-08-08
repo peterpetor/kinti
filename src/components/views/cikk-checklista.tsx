@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { haptic } from "@/lib/haptics";
 import { confirmDialog } from "@/lib/confirm";
 import { getChecklist } from "@/lib/guide-checklists";
 import { haladas, readDone, resetGuide, toggleStep } from "@/lib/checklist-progress";
@@ -68,7 +67,6 @@ export function CikkChecklista({ slug }: { slug: string }) {
                 onClick={() => {
                   const uj = toggleStep(slug, l.text);
                   frissit();
-                  haptic(uj ? "success" : "tap");
                 }}
                 className={cn(
                   "flex w-full items-start gap-2.5 rounded-[12px] border px-3 py-2.5 text-left transition active:scale-[0.99]",

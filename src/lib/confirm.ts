@@ -1,6 +1,6 @@
 /**
  * confirm.ts — natív-stílusú megerősítő-dialógus, a nyers böngésző-`confirm()`
- * (rendszer-stílusú, nincs haptika, nem branded) helyett.
+ * (rendszer-stílusú, nem branded) helyett.
  *
  * Ugyanaz a modul-szintű pub/sub minta, mint a `lib/toast.ts`-nél: a
  * `confirmDialog(...)` bárhonnan hívható (Provider nélkül), a `<ConfirmHost/>`
@@ -13,7 +13,7 @@ export interface ConfirmOptions {
   title?: string;
   confirmLabel?: string;
   cancelLabel?: string;
-  /** Pusztító akció (törlés) → accent-színű gomb + „warning" haptika (alapból „tap" + primary). */
+  /** Pusztító akció (törlés) → accent-színű gomb (alapból primary). */
   destructive?: boolean;
 }
 

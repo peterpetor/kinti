@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { haptic } from "@/lib/haptics";
 import { cn } from "@/lib/cn";
 import { Icon, type IconName } from "./icons";
 
@@ -66,7 +65,6 @@ export function SwipeAction({
     axis.current = null;
     if (!wasHorizontal) return;
     if (dragX < -actionWidth * 0.4) {
-      if (!open) haptic("selection");
       setDragX(-actionWidth);
       setOpen(true);
     } else {
@@ -87,10 +85,7 @@ export function SwipeAction({
           aria-label={actionLabel}
           onClick={() => {
             // ⚠️ A swipe-akció mindig pusztító (törlés/eltávolítás), és az
-            // elem AZONNAL eltűnik alóla. Eddig csak a lap KINYITÁSA adott
-            // visszajelzést, a végrehajtás nem — pedig az a visszafordíthatatlan
-            // lépés. A `warning` az egyetlen minta, ami tapintásra is más.
-            haptic("warning");
+            // elem AZONNAL eltűnik alóla.
             close();
             onAction();
           }}

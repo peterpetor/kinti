@@ -6,7 +6,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { findLessonById } from "../data";
-import { haptic } from "@/lib/haptics";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
@@ -85,9 +84,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
           if (next <= 0) setIsGameOver(true);
           return next;
         });
-        haptic("warning");
       } else {
-        haptic("success");
       }
     } else if (question.type === "flashcard") {
       setIsCorrect(true);
@@ -96,7 +93,6 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
       if (matchedPairs.length === question.pairs?.length) {
         setIsCorrect(true);
         setIsAnswered(true);
-        haptic("success");
       }
     }
   };
@@ -165,7 +161,7 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
           <button
             key={opt.id}
             disabled={isAnswered}
-            onClick={() => { haptic("selection"); setSelectedOption(opt.id); }}
+            onClick={() => { setSelectedOption(opt.id); }}
             className={cn(
               "p-4 rounded-2xl border-2 text-left font-bold text-[17px] transition-all relative flex items-center justify-between",
               !isAnswered && !isSelected && "border-line bg-surface hover:bg-surface-alt",
@@ -235,7 +231,6 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
 
   const handleMatchClick = (side: "left" | "right", itemId: string) => {
     if (side === "left") {
-      haptic("selection");
       if (matchSelectedLeft === itemId) setMatchSelectedLeft(null);
       else setMatchSelectedLeft(itemId);
       setMatchWrong(false);
@@ -261,7 +256,6 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
           if (next <= 0) setIsGameOver(true);
           return next;
         });
-        haptic("warning");
       }
     }
   };
