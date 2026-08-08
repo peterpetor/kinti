@@ -153,6 +153,9 @@ async function geokod(cim) {
   const emeletNelkul = zarojelNelkul
     .replace(/\s*\/?\s*(haus|geb(äude)?|hinterhaus|vorderhaus)\s*[a-z0-9]*/gi, " ")
     .replace(/\s*\d+\.\s*(og|ug|stock|etage)\b/gi, " ")
+    // ⚠️ „OT" = Ortsteil (városrész-jelölő), a házszám és az irányítószám KÖZÖTT
+    // állhat: „Ascherslebener Str. 16 OT 06467 Hoym". A Nominatim ettől nullát ad.
+    .replace(/\s+OT\s+(?=\d{5})/g, " ")
     .replace(/\s{2,}/g, " ")
     .trim();
   // „… bei Neuburg an der Donau" → a megkülönböztető utótag levágása
