@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icons";
 import { applyThemeColor } from "@/lib/theme-color";
 
@@ -44,6 +44,28 @@ function systemTheme(): Theme {
  */
 export function ThemeToggle() {
   const [mode, setMode] = useState<Mode>(currentMode);
+  /**
+   * ⚠️ MIT JELENT MOST A „RENDSZER"? A vezérlő eddig ezt nem árulta el, és
+   * emiatt nem lehetett megkülönböztetni két, teljesen eltérő helyzetet:
+   * (a) az eszköz sötét módban van, tehát az app helyesen sötét, vagy
+   * (b) tényleg elromlott valami. A felhasználó jogosan gyanakodott — a
+   * kijelző hiányzott, nem a logika (mérve: világos rendszeren `data-theme=warm`,
+   * sötéten `dark`).
+   *
+   * ⚠️ Androidon a böngésző SAJÁT téma-beállítása dönt, nem az Android
+   * rendszer-beállítása. Ha a Chrome témája „Sötét", akkor az app és a
+   * weboldal is sötét marad, hiába világos maga a telefon.
+   */
+  const [rendszerTema, setRendszerTema] = useState<Theme | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia?.("(prefers-color-scheme: dark)");
+    if (!mq) return;
+    const frissit = () => setRendszerTema(mq.matches ? "dark" : "warm");
+    frissit();
+    mq.addEventListener("change", frissit);
+    return () => mq.removeEventListener("change", frissit);
+  }, []);
 
   const choose = (m: Mode) => {
     setMode(m);
@@ -78,28 +100,39 @@ export function ThemeToggle() {
   };
 
   return (
-    // Teljes szélességű, háromállású választó (a menüsor a címkét FÖLÉ teszi):
-    // három szöveges pirula nem fért volna el a címke MELLETT egy 390px-es
-    // képernyőn — ld. a dropdown-menu „tema" sorát.
-    <div
-      role="group"
-      aria-label="Megjelenés"
-      className="glass grid w-full grid-cols-3 gap-1 rounded-pill p-1 text-[13px] font-semibold"
-    >
-      {MODES.map(({ id, label, icon }) => (
-        <button
-          key={id}
-          type="button"
-          onClick={() => choose(id)}
-          aria-pressed={mode === id}
-          className={`relative z-[1] inline-flex items-center justify-center gap-1.5 rounded-pill px-2 py-1.5 transition ${
-            mode === id ? "bg-primary text-white shadow-card" : "text-ink-muted"
-          }`}
-        >
-          <Icon name={icon} size={14} strokeWidth={2.2} />
-          {label}
-        </button>
-      ))}
+    <div>
+      {/* Teljes szélességű, háromállású választó (a menüsor a címkét FÖLÉ teszi):
+          három szöveges pirula nem fért volna el a címke MELLETT egy 390px-es
+          képernyőn — ld. a dropdown-menu „tema" sorát. */}
+      <div
+        role="group"
+        aria-label="Megjelenés"
+        className="glass grid w-full grid-cols-3 gap-1 rounded-pill p-1 text-[13px] font-semibold"
+      >
+        {MODES.map(({ id, label, icon }) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => choose(id)}
+            aria-pressed={mode === id}
+            className={`relative z-[1] inline-flex items-center justify-center gap-1.5 rounded-pill px-2 py-1.5 transition ${
+              mode === id ? "bg-primary text-white shadow-card" : "text-ink-muted"
+            }`}
+          >
+            <Icon name={icon} size={14} strokeWidth={2.2} />
+            {label}
+          </button>
+        ))}
+      </div>
+      {mode === "system" && rendszerTema && (
+        <p className="mt-1.5 px-1 text-[11.5px] leading-snug text-ink-muted">
+          Az eszközöd most <strong className="text-ink">{rendszerTema === "dark" ? "sötét" : "világos"}</strong>{" "}
+          megjelenítést kér, ezért látod így.{" "}
+          {rendszerTema === "dark"
+            ? "Ha világosat szeretnél, válaszd a „Világos” gombot — vagy állítsd át a böngésződ témáját."
+            : ""}
+        </p>
+      )}
     </div>
   );
 }
