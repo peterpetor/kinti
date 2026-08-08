@@ -23,6 +23,8 @@
  * Futtatás: node scripts/filter-hu-vezeteknev.mjs nyers.json ki.json
  */
 import { readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const BE = process.argv[2];
 const KI = process.argv[3];
@@ -146,7 +148,7 @@ const norm = (s) =>
     .replace(/\s+/g, " ")
     .trim();
 
-function hitelesseg(nev) {
+export function hitelesseg(nev) {
   const n = norm(nev);
   const tokenek = new Set(n.split(" "));
   const okok = [];
@@ -173,26 +175,36 @@ function hitelesseg(nev) {
   return { pont, okok, elfogad };
 }
 
-const nyers = JSON.parse(readFileSync(BE, "utf8"));
-const ki = [];
-for (const x of nyers) {
-  const m = SZAKMA[x.szakma];
-  if (!m) continue;
-  if (!x.tel || x.tel.replace(/\D/g, "").length < 7) continue; // elérhetőség nélkül zsákutca
-  if (!x.cim || !/\d{5}/.test(x.cim)) continue; // ⚠️ irányítószám nélkül nincs régió és nincs geokód
-  const h = hitelesseg(x.nev);
-  if (!h.elfogad) continue;
-  ki.push({ ...x, kategoria: m[0], kategoria_cimke: m[1], pont: h.pont, okok: h.okok });
-}
-ki.sort((a, b) => b.pont - a.pont || a.kategoria.localeCompare(b.kategoria));
-writeFileSync(KI, JSON.stringify(ki, null, 1), "utf8");
+// ⚠️ A modult a `filter-hu-11880.mjs` IMPORTÁLJA a hitelesség-vizsgálatért.
+// A feltétel ezért NEM lehet `if (BE && KI)`: a process.argv az IMPORTÁLÓ
+// szkript argumentumait tartalmazza, tehát a szűrő ott is lefutna, és
+// FELÜLÍRNÁ a másik szűrő kimeneti fájlját (mérve: két „elfogadott jelölt"
+// sor egyetlen futásban). A belépési pontot kell összehasonlítani.
+const kozvetlenulFut =
+  process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url));
+if (kozvetlenulFut) {
+  const nyers = JSON.parse(readFileSync(BE, "utf8"));
+  const ki = [];
+  for (const x of nyers) {
+    const m = SZAKMA[x.szakma];
+    if (!m) continue;
+    if (!x.tel || x.tel.replace(/\D/g, "").length < 7) continue; // elérhetőség nélkül zsákutca
+    if (!x.cim || !/\d{5}/.test(x.cim)) continue; // ⚠️ irányítószám nélkül nincs régió és nincs geokód
+    const h = hitelesseg(x.nev);
+    if (!h.elfogad) continue;
+    ki.push({ ...x, kategoria: m[0], kategoria_cimke: m[1], pont: h.pont, okok: h.okok });
+  }
+  ki.sort((a, b) => b.pont - a.pont || a.kategoria.localeCompare(b.kategoria));
+  writeFileSync(KI, JSON.stringify(ki, null, 1), "utf8");
 
-const cnt = {};
-for (const x of ki) cnt[x.kategoria] = (cnt[x.kategoria] || 0) + 1;
-console.log(`${nyers.length} nyers → ${ki.length} elfogadott jelölt`);
-console.log(
-  Object.entries(cnt)
-    .sort((a, b) => b[1] - a[1])
-    .map(([k, v]) => `${k}:${v}`)
-    .join("  "),
-);
+  const cnt = {};
+  for (const x of ki) cnt[x.kategoria] = (cnt[x.kategoria] || 0) + 1;
+  console.log(`${nyers.length} nyers → ${ki.length} elfogadott jelölt`);
+  console.log(
+    Object.entries(cnt)
+      .sort((a, b) => b[1] - a[1])
+      .map(([k, v]) => `${k}:${v}`)
+      .join("  "),
+  );
+
+}

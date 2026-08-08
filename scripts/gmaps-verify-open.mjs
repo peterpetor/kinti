@@ -15,10 +15,20 @@
  * nyitvatartást NEM (idegen pontszám a blurb-ben tilos, ld. blurb-public-text-rules).
  */
 import { chromium } from "playwright";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const tetelek = JSON.parse(readFileSync(process.argv[2], "utf8"));
 const OUT = process.argv[3] || "verified-open.json";
+
+/**
+ * ⚠️ FOLYTATHATÓ FUTÁS. Egy tétel ~6 másodperc, tehát pár száz jelöltnél a
+ * futás fél óra is lehet — ennyi idő alatt bármi félbeszakíthatja. Korábban a
+ * kimenet CSAK a ciklus után íródott ki, így egy megszakadt futás MINDENT
+ * elvesztett. Most soronként mentünk, és a már ellenőrzött lekérdezéseket
+ * kihagyjuk, tehát az újraindítás ott folytatja, ahol abbamaradt.
+ */
+const korabbi = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")) : [];
+const kesz = new Set(korabbi.map((x) => x.q));
 
 /** Bezárás-jelzők a Maps felületén, több nyelven. */
 const BEZART = /(véglegesen bezárt|cerrado permanentemente|permanently closed|dauerhaft geschlossen|definitief gesloten)/i;
@@ -29,9 +39,10 @@ const MAGYAR_JEL = /(húngaro|hungarian|ungarisch|magyar|hongaars|gulyás|goulas
 const b = await chromium.launch();
 const ctx = await b.newContext({ locale: "es-ES", viewport: { width: 1300, height: 950 } });
 const p = await ctx.newPage();
-const out = [];
+const out = [...korabbi];
 
 for (const t of tetelek) {
+  if (kesz.has(t.q)) continue;
   try {
     await p.goto("https://www.google.com/maps/search/" + encodeURIComponent(t.q), {
       waitUntil: "domcontentloaded",
@@ -82,10 +93,10 @@ for (const t of tetelek) {
     console.log(`! ${t.q.slice(0, 38)} — ${String(e).slice(0, 40)}`);
     out.push({ ...t, hiba: String(e).slice(0, 80) });
   }
+  writeFileSync(OUT, JSON.stringify(out, null, 1), "utf8");
   await p.waitForTimeout(900);
 }
 
-writeFileSync(OUT, JSON.stringify(out, null, 1), "utf8");
 const jo = out.filter((x) => x.egyertelmu && !x.bezart);
 console.log(`\n${jo.length} / ${out.length} nyitva és egyértelmű  (${out.filter((x) => x.bezart).length} bezárt)`);
 await b.close();
