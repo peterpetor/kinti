@@ -113,7 +113,18 @@ const ANDROID_APP_SCRIPT = `(function(){try{var t=location.search.indexOf('sourc
 // ⚠️ Csak akkor volt szabad élesíteni, hogy sok felhasználó hirtelen sötétben
 // lássa az appot, miután a sötét témát VÉGIGMÉRTEM: 6 fő képernyőn 0 világos
 // folt és 0 olvashatatlan elem (ld. [[dark-mode-hardcoded-light-bg]]).
-const THEME_INIT_SCRIPT = `(function(){try{var K='kinti-theme';var t=localStorage.getItem(K);if(t==='modern'){t='dark';localStorage.setItem(K,'dark');}var manual=(t==='dark'||t==='warm');var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;if(!manual){t=(mq&&mq.matches)?'dark':'warm';}document.documentElement.dataset.theme=t;var paint=function(th){document.documentElement.dataset.theme=th;var col=(th==='dark')?'#101411':'#f4ede0';var ms=document.querySelectorAll('meta[name="theme-color"]');if(ms.length){for(var i=0;i<ms.length;i++){ms[i].setAttribute('content',col);}}else{var m=document.createElement('meta');m.name='theme-color';m.content=col;document.head.appendChild(m);}};paint(t);if(mq){var h=function(e){try{var s=localStorage.getItem(K);if(s==='dark'||s==='warm')return;}catch(x){}paint(e.matches?'dark':'warm');};if(mq.addEventListener){mq.addEventListener('change',h);}else if(mq.addListener){mq.addListener(h);}}var c=localStorage.getItem('kinti.country');if(c==='CH'||c==='AT'||c==='DE'||c==='NL'){document.documentElement.dataset.country=c;}}catch(e){}})();`;
+// ⚠️ A „Rendszer” mód NAPSZAK-alapú (06:00–18:00 világos, 18:00–06:00 sötét),
+// nem a böngésző `prefers-color-scheme` beállítását követi. Ok: az sok
+// készüléken fixen sötét (Androidon a Chrome SAJÁT témája dönt, nem a
+// telefoné), ezért a „Rendszer” gyakorlatilag „mindig sötét”-et jelentett.
+//
+// ⚠️ A VÁLTÁS NYITOTT APPBAN IS MEGTÖRTÉNIK: időzítő megy a következő
+// határra, és a lap visszatérésekor is újraszámolunk (a böngésző a háttérben
+// felfüggeszti az időzítőket, tehát önmagában az kevés).
+//
+// ⚠️ A kézi választás (Világos/Sötét) MINDIG erősebb: azt sem az óra, sem a
+// rendszer nem írja felül. A „Rendszer” a kulcs TÖRLÉSE, nem harmadik érték.
+const THEME_INIT_SCRIPT = `(function(){try{var K='kinti-theme';var t=localStorage.getItem(K);if(t==='modern'){t='dark';localStorage.setItem(K,'dark');}var manual=(t==='dark'||t==='warm');var napszak=function(){var h=new Date().getHours();return (h>=6&&h<18)?'warm':'dark';};if(!manual){t=napszak();}var paint=function(th){document.documentElement.dataset.theme=th;var col=(th==='dark')?'#101411':'#f4ede0';var ms=document.querySelectorAll('meta[name="theme-color"]');if(ms.length){for(var i=0;i<ms.length;i++){ms[i].setAttribute('content',col);}}else{var m=document.createElement('meta');m.name='theme-color';m.content=col;document.head.appendChild(m);}};paint(t);var idz;var frissit=function(){try{var s=localStorage.getItem(K);if(s==='dark'||s==='warm')return;}catch(x){}paint(napszak());utemez();};var utemez=function(){clearTimeout(idz);var most=new Date();var kov=new Date(most);kov.setMinutes(0,0,0);var h=most.getHours();kov.setHours(h<6?6:(h<18?18:30));idz=setTimeout(frissit,Math.max(1000,kov.getTime()-most.getTime()));};if(!manual){utemez();}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){frissit();}});var c=localStorage.getItem('kinti.country');if(c==='CH'||c==='AT'||c==='DE'||c==='NL'){document.documentElement.dataset.country=c;}}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: {

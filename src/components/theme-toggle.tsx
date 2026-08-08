@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icons";
 import { applyThemeColor } from "@/lib/theme-color";
+import { systemTheme, kovetkezoValtas } from "@/lib/theme-schedule";
 
-type Theme = "warm" | "dark";
+// A téma-típus és a napszak-logika a `lib/theme-schedule.ts`-ben él.
+import type { Theme } from "@/lib/theme-schedule";
 /** A választható MÓD — a „rendszer" nem téma, hanem „ne dönts helyettem". */
 type Mode = "system" | Theme;
 
@@ -27,13 +29,6 @@ function currentMode(): Mode {
   return "system";
 }
 
-/** A rendszer aktuális preferenciája — a „rendszer" mód feloldásához. */
-function systemTheme(): Theme {
-  return typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "warm";
-}
 
 /**
  * Téma-váltó (Világos / Sötét). A választást ELMENTI (localStorage) és azonnal
@@ -45,27 +40,35 @@ function systemTheme(): Theme {
 export function ThemeToggle() {
   const [mode, setMode] = useState<Mode>(currentMode);
   /**
-   * ⚠️ MIT JELENT MOST A „RENDSZER"? A vezérlő eddig ezt nem árulta el, és
-   * emiatt nem lehetett megkülönböztetni két, teljesen eltérő helyzetet:
-   * (a) az eszköz sötét módban van, tehát az app helyesen sötét, vagy
-   * (b) tényleg elromlott valami. A felhasználó jogosan gyanakodott — a
-   * kijelző hiányzott, nem a logika (mérve: világos rendszeren `data-theme=warm`,
-   * sötéten `dark`).
-   *
-   * ⚠️ Androidon a böngésző SAJÁT téma-beállítása dönt, nem az Android
-   * rendszer-beállítása. Ha a Chrome témája „Sötét", akkor az app és a
-   * weboldal is sötét marad, hiába világos maga a telefon.
+   * ⚠️ A NAPSZAK NYITOTT APPBAN IS VÁLT. A téma nem csak betöltéskor dől el:
+   * ha valaki 17:58-kor nyitja meg a lapot, 18:00-kor át kell váltania. Ezért
+   * időzítő megy a KÖVETKEZŐ határra, és a lap visszatérésekor
+   * (`visibilitychange`) is újraszámolunk — egy háttérben hagyott fülnél az
+   * időzítő önmagában megbízhatatlan (a böngésző felfüggeszti).
    */
-  const [rendszerTema, setRendszerTema] = useState<Theme | null>(null);
-
   useEffect(() => {
-    const mq = window.matchMedia?.("(prefers-color-scheme: dark)");
-    if (!mq) return;
-    const frissit = () => setRendszerTema(mq.matches ? "dark" : "warm");
-    frissit();
-    mq.addEventListener("change", frissit);
-    return () => mq.removeEventListener("change", frissit);
-  }, []);
+    if (mode !== "system") return;
+    let idozito: ReturnType<typeof setTimeout>;
+    const utemez = () => {
+      const most = new Date();
+      idozito = setTimeout(alkalmaz, Math.max(1000, kovetkezoValtas(most).getTime() - most.getTime()));
+    };
+    function alkalmaz() {
+      const t = systemTheme();
+      document.documentElement.dataset.theme = t;
+      applyThemeColor(t);
+      utemez();
+    }
+    const lathato = () => {
+      if (document.visibilityState === "visible") alkalmaz();
+    };
+    alkalmaz();
+    document.addEventListener("visibilitychange", lathato);
+    return () => {
+      clearTimeout(idozito);
+      document.removeEventListener("visibilitychange", lathato);
+    };
+  }, [mode]);
 
   const choose = (m: Mode) => {
     setMode(m);
@@ -124,15 +127,6 @@ export function ThemeToggle() {
           </button>
         ))}
       </div>
-      {mode === "system" && rendszerTema && (
-        <p className="mt-1.5 px-1 text-[11.5px] leading-snug text-ink-muted">
-          Az eszközöd most <strong className="text-ink">{rendszerTema === "dark" ? "sötét" : "világos"}</strong>{" "}
-          megjelenítést kér, ezért látod így.{" "}
-          {rendszerTema === "dark"
-            ? "Ha világosat szeretnél, válaszd a „Világos” gombot — vagy állítsd át a böngésződ témáját."
-            : ""}
-        </p>
-      )}
     </div>
   );
 }

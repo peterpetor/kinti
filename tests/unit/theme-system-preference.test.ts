@@ -12,7 +12,10 @@ import { resolve } from "node:path";
  * = „warm", body-fény 0.93. Vagyis sötét módra állított telefonon a Kinti
  * VILÁGOSAN nyílt — a legfeltűnőbb „ez egy weboldal, nem app" jel.
  *
- * A logika, amit ez a teszt véd: MENTETT VÁLASZTÁS > RENDSZER.
+ * A logika, amit ez a teszt véd: MENTETT VÁLASZTÁS > NAPSZAK.
+ *
+ * ⚠️ 2026-08-08-tól a „Rendszer” mód NAPSZAK szerint dönt (06–18 világos),
+ * nem a `prefers-color-scheme` szerint — ld. `tema-rendszer.test.ts`.
  *
  * ⚠️ A viselkedés egy inline szkript-SZTRINGBEN él (FOUC-mentesség miatt kell a
  * festés elé), ezért nem futtatható unit-tesztként — szerkezeti ellenőrzés.
@@ -28,8 +31,13 @@ const SCRIPT = LAYOUT.slice(
 );
 
 describe("téma — a rendszer-beállítás az alapértelmezés", () => {
-  it("az init-szkript olvassa a prefers-color-scheme-et", () => {
-    expect(SCRIPT).toContain("prefers-color-scheme: dark");
+  it("⚠️ az init-szkript a NAPSZAKOT nézi, nem a prefers-color-scheme-et", () => {
+    // 2026-08-08: a „Rendszer” mód napszak-alapú lett. A böngésző-beállítás
+    // sok készüléken fixen sötét (Androidon a Chrome saját témája dönt),
+    // ezért a régi logika gyakorlatilag „mindig sötét”-et jelentett.
+    expect(SCRIPT).toContain("var napszak=function()");
+    expect(SCRIPT).toContain("(h>=6&&h<18)?'warm':'dark'");
+    expect(SCRIPT).not.toContain("prefers-color-scheme: dark");
   });
 
   it("a MENTETT választás erősebb a rendszernél", () => {
@@ -44,15 +52,18 @@ describe("téma — a rendszer-beállítás az alapértelmezés", () => {
     expect(SCRIPT).toContain("document.documentElement.dataset.theme=t");
   });
 
-  it("élőben is követi a rendszer-váltást (napnyugta-ütemezés)", () => {
-    expect(SCRIPT).toMatch(/addEventListener\('change'|addListener\(/);
+  it("⚠️ élőben is vált: időzítő a HATÁRRA + visibilitychange", () => {
+    // Az időzítő önmagában kevés: a böngésző a háttérben felfüggeszti,
+    // tehát egy éjszakán át nyitva hagyott lap nem váltana reggel.
+    expect(SCRIPT).toContain("setTimeout(frissit");
+    expect(SCRIPT).toContain("visibilitychange");
   });
 
-  it("⚠️ a figyelő félreáll, ha időközben lett kézi választás", () => {
-    // Enélkül a rendszer-váltás felülírná a frissen választott témát.
-    const handler = SCRIPT.slice(SCRIPT.indexOf("var h=function"));
-    expect(handler).toContain("localStorage.getItem(K)");
-    expect(handler).toMatch(/return;?\s*\}/);
+  it("⚠️ a napszak-frissítő félreáll, ha van kézi választás", () => {
+    // Enélkül az óra felülírná a felhasználó döntését.
+    const frissit = SCRIPT.slice(SCRIPT.indexOf("var frissit=function"));
+    expect(frissit).toContain("localStorage.getItem(K)");
+    expect(frissit).toContain("if(s==='dark'||s==='warm')return;");
   });
 
   it("a böngésző-króm színe együtt vált a témával", () => {

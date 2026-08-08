@@ -1,19 +1,18 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { systemTheme, VILAGOS_TOL, VILAGOS_IG } from "../../src/lib/theme-schedule";
 
 /**
  * A „Rendszer” téma-mód őre.
  *
- * ⚠️ 2026-08-08-i user-jelzés: „a Rendszeren vagyok, de MINDIG sötétet mutat”.
- * A logikát megmértem az éles oldalon, és HELYES: világos rendszeren
- * `data-theme=warm` + krém háttér, sötéten `dark` + fenyő-fekete. A hiba a
- * VISSZAJELZÉSBEN volt: a vezérlő nem árulta el, mit jelent épp a „Rendszer”,
- * így nem lehetett megkülönböztetni a helyes működést az elromlástól.
+ * ⚠️ 2026-08-08: a „Rendszer” mostantól NAPSZAK-alapú (06:00–18:00 világos,
+ * 18:00–06:00 sötét), nem a böngésző `prefers-color-scheme` beállítását követi.
  *
- * ⚠️⚠️ ANDROIDON A BÖNGÉSZŐ SAJÁT TÉMÁJA DÖNT, nem az Android rendszer-témája:
- * ha a Chrome témája „Sötét”, a TWA-app ÉS a weboldal is sötét marad, hiába
- * világos a telefon. Ezért látszott ugyanaz mindkét úton.
+ * MIÉRT VÁLTOZOTT: a böngésző-beállítás sok készüléken fixen sötét — Androidon
+ * a Chrome SAJÁT témája dönt, nem a telefoné —, ezért az app éjjel-nappal sötét
+ * maradt, és a „Rendszer” gyakorlatilag „mindig sötét”-et jelentett. A
+ * felhasználó ezt jelezte, és a logika volt a hibás, nem a visszajelzés.
  */
 
 const GYOKER = resolve(__dirname, "../..");
@@ -23,38 +22,60 @@ const TOGGLE = olvas("src/components/theme-toggle.tsx");
 const LAYOUT = olvas("src/app/layout.tsx");
 const CSS = olvas("src/app/globals.css");
 
-describe("„Rendszer” mód", () => {
-  it("⚠️ a „Rendszer” a kulcs TÖRLÉSE, nem harmadik tárolt érték", () => {
-    // Ha „system” néven tárolnánk, a layout inline szkriptje `manual`-nak
-    // hinné, és befagyasztaná az utoljára alkalmazott témát.
+const ora = (h: number) => new Date(2026, 7, 8, h, 30, 0);
+
+describe("„Rendszer” mód — napszak szerint", () => {
+  it("nappal világos, éjjel sötét", () => {
+    expect(systemTheme(ora(6))).toBe("warm");
+    expect(systemTheme(ora(12))).toBe("warm");
+    expect(systemTheme(ora(17))).toBe("warm");
+    expect(systemTheme(ora(18))).toBe("dark");
+    expect(systemTheme(ora(23))).toBe("dark");
+    expect(systemTheme(ora(3))).toBe("dark");
+    expect(systemTheme(ora(5))).toBe("dark");
+  });
+
+  it("⚠️ a HATÁROK pontosan 6 és 18 — a 6:00 már világos, a 18:00 már sötét", () => {
+    // A félreértés klasszikus helye: a záró óra INKLUZÍV vagy sem.
+    expect(VILAGOS_TOL).toBe(6);
+    expect(VILAGOS_IG).toBe(18);
+    expect(systemTheme(new Date(2026, 7, 8, 6, 0, 0))).toBe("warm");
+    expect(systemTheme(new Date(2026, 7, 8, 17, 59, 59))).toBe("warm");
+    expect(systemTheme(new Date(2026, 7, 8, 18, 0, 0))).toBe("dark");
+    expect(systemTheme(new Date(2026, 7, 8, 5, 59, 59))).toBe("dark");
+  });
+
+  it("⚠️ a betöltéskori szkript IS a napszakot nézi, nem a prefers-color-scheme-et", () => {
+    // Ha csak a React-komponens váltana, a lap FOUC-cal indulna és
+    // menü nélkül soha nem frissülne.
+    expect(LAYOUT).toContain("var napszak=function(){var h=new Date().getHours();return (h>=6&&h<18)?'warm':'dark';}");
+    expect(LAYOUT).not.toContain("prefers-color-scheme: dark')");
+  });
+
+  it("⚠️ nyitott appban is vált: időzítő a határra + visibilitychange", () => {
+    // Az időzítő önmagában kevés — a böngésző a háttérben felfüggeszti.
+    expect(LAYOUT).toContain("visibilitychange");
+    expect(LAYOUT).toContain("setTimeout(frissit");
+    expect(TOGGLE).toContain("visibilitychange");
+  });
+
+  it("⚠️ a KÉZI választás erősebb az óránál — azt a napszak nem írja felül", () => {
+    // A `frissit` legelső dolga a mentett érték újraolvasása.
+    expect(LAYOUT).toContain("if(s==='dark'||s==='warm')return;");
     expect(TOGGLE).toMatch(/localStorage\.removeItem\(STORAGE_KEY\)/);
     expect(TOGGLE).not.toMatch(/setItem\(STORAGE_KEY,\s*["']system["']\)/);
   });
 
-  it("a betöltéskori szkript CSAK kézi választás hiányában követi a rendszert", () => {
-    expect(LAYOUT).toContain("var manual=(t==='dark'||t==='warm')");
-    expect(LAYOUT).toContain("if(!manual){t=(mq&&mq.matches)?'dark':'warm';}");
-  });
-
-  it("⚠️ a rendszer-váltásra ÉLŐBEN reagál, de a kézi választást tiszteletben tartja", () => {
-    // A `change`-figyelő minden eseménynél újraolvassa a mentett értéket:
-    // aki kézzel világosat kért, annak a rendszer sötétre váltása se írja felül.
-    expect(LAYOUT).toMatch(/mq\.addEventListener\('change',h\)/);
-    expect(LAYOUT).toMatch(/if\(s==='dark'\|\|s==='warm'\)return;/);
-  });
-
-  it("⚠️ a vezérlő MEGMONDJA, mit jelent épp a „Rendszer”", () => {
-    // Enélkül a helyes működés és az elromlás megkülönböztethetetlen.
-    expect(TOGGLE).toContain("rendszerTema");
-    expect(TOGGLE).toMatch(/mode === "system" && rendszerTema/);
-    expect(TOGGLE).toMatch(/Az eszközöd most/);
-  });
-
   it("⚠️ a téma KIZÁRÓLAG a data-theme-en dől el, nincs vak CSS-média-ág", () => {
     // Egy `@media (prefers-color-scheme: dark)` blokk a stíluslapban felülütné
-    // a kézi „Világos” választást is — pont ez a visszatérő sötét-mód hibaosztály.
+    // a kézi „Világos" választást is — ez a visszatérő sötét-mód hibaosztály.
     expect(CSS).not.toMatch(/@media[^{]*prefers-color-scheme/);
     expect(CSS).toMatch(/\[data-theme="dark"\]/);
     expect(CSS).toMatch(/\[data-theme="warm"\]/);
+  });
+
+  it("⚠️ a magyarázó szöveg NINCS a vezérlő alatt", () => {
+    // A felhasználó kérésére eltávolítva; a napszak-logika magától érthető.
+    expect(TOGGLE).not.toContain("Az eszközöd most");
   });
 });
