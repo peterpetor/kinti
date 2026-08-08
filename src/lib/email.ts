@@ -947,12 +947,12 @@ const JOB_FEATURED_UPSELL_HTML = `
       <div style="margin:0 0 20px;padding:14px;background:#fff7e6;border:1px solid #f0d8a0;border-radius:14px;">
         <div style="font-size:13.5px;line-height:1.6;color:#0e1f17;">
           ⭐ <strong>Tipp: Kiemelt Állás</strong> — a hirdetésed a lista tetejére kerül,
-          jól látható „Kiemelt" jelöléssel, 30 napig. Tájékoztató ár: 49 € (egyszeri) —
+          jól látható „Kiemelt" jelöléssel, 30 napig. Egyszeri díj —
           a pontos összeget a pénztár mutatja. Beállítás a munkáltatói irányítópulton.
         </div>
       </div>`;
 const JOB_FEATURED_UPSELL_TEXT =
-  "Tipp: a Kiemelt Állás a lista tetejére emeli a hirdetésed 30 napra (tájékoztató ár: 49 €, egyszeri — a pontos összeget a pénztár mutatja).";
+  "Tipp: a Kiemelt Állás a lista tetejére emeli a hirdetésed 30 napra (egyszeri díj — a pontos összeget az alkalmazásban és a pénztárban látod).";
 
 /**
  * Lejárat-ELŐTTI figyelmeztető (≤3 nap): a hirdetés hamarosan eltűnik a

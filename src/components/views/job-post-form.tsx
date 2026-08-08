@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui";
 import { JobCategoryOptions } from "@/components/views/job-category-options";
 import { useCheckout } from "@/hooks/useCheckout";
+import { useProductPrice } from "@/hooks/useProductPrice";
 import { usePreferredCountry } from "@/lib/country-pref";
 import { DEFAULT_COUNTRY } from "@/lib/countries";
 import { budgetCurrency, isBudgetCountry } from "@/lib/budget-plan";
@@ -50,6 +51,9 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { startCheckout, isLoading: isCheckoutLoading } = useCheckout();
+  // ⚠️ Androidon a Google Play SAJÁT, régió szerinti ára — a beégetett „49 €"
+  // eltért attól, amit a Play pénztára levont.
+  const kiemelesAr = useProductPrice("job_featured");
 
   const handleUpgrade = () => {
     if (!jobId) return;
@@ -139,7 +143,7 @@ export function JobPostForm({ jobId, initial }: { jobId?: string; initial?: JobF
               isCheckoutLoading && "opacity-60 cursor-wait"
             )}
           >
-            {isCheckoutLoading ? "Töltés..." : "Hirdetés Kiemelése (49 €)"}
+            {isCheckoutLoading ? "Töltés..." : `Hirdetés kiemelése (${kiemelesAr})`}
           </button>
         </div>
       )}

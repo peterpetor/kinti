@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useCheckout } from "@/hooks/useCheckout";
 import { usePaddlePrices } from "@/hooks/usePaddlePrices";
+import { STATIKUS_AR } from "@/hooks/useProductPrice";
 import { isPurchasableCountry, type CountryCode } from "@/lib/payments-config";
 import { Icon, KintiLogo, DropdownMenu } from "@/components/ui";
 import { LegalLangSwitch } from "@/components/ui/legal-lang-switch";
@@ -475,7 +476,7 @@ export default function ProPage() {
           </div>
 
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">{livePrices?.total.kinti_pro_monthly ?? "19 €"}</span>
+            <span className="text-3xl font-black text-ink">{livePrices?.total.kinti_pro_monthly ?? STATIKUS_AR.kinti_pro_monthly}</span>
             <span className="text-[14px] font-bold text-ink-muted">{t.perMonth}</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.kinti_pro_monthly ? t.netPriceLive : t.netPriceStatic}{" "}
@@ -538,7 +539,7 @@ export default function ProPage() {
           </div>
 
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">{livePrices?.total.business_pro_monthly ?? "19 €"}</span>
+            <span className="text-3xl font-black text-ink">{livePrices?.total.business_pro_monthly ?? STATIKUS_AR.business_pro_monthly}</span>
             <span className="text-[14px] font-bold text-ink-muted">{t.perMonth}</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.business_pro_monthly ? t.netPriceLive : t.netPriceStatic}{" "}
@@ -596,7 +597,7 @@ export default function ProPage() {
           </div>
 
           <div className="mb-6">
-            <span className="text-3xl font-black text-ink">{livePrices?.total.job_featured ?? "49 €"}</span>
+            <span className="text-3xl font-black text-ink">{livePrices?.total.job_featured ?? STATIKUS_AR.job_featured}</span>
             <span className="text-[14px] font-bold text-ink-muted">{t.perListing}</span>
             <p className="mt-1 text-[11px] text-ink-faint">
               {livePrices?.total.job_featured ? t.netPriceLiveJob : t.netPriceStaticJob}{" "}

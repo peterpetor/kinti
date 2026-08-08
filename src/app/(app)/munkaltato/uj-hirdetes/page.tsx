@@ -4,6 +4,7 @@ import { getEmployerByOwner } from "@/lib/repo";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { JobPostForm } from "@/components/views/job-post-form";
+import { ProductPrice } from "@/components/views/product-price";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -55,7 +56,7 @@ export default async function NewJobPage() {
           </li>
           <li className="flex gap-2.5 text-[12.5px] leading-snug text-ink-muted">
             <span className="shrink-0 text-[14px]">🚀</span>
-            <span><strong className="text-ink">Kiemelés (opcionális).</strong> 49 €-ért 30 napra piros keretet és a lista elejét kapod — a kiemelés a teljes hirdetés lejáratát is felfrissíti.</span>
+            <span><strong className="text-ink">Kiemelés (opcionális).</strong> 30 napra piros keretet és a lista elejét kapod <ProductPrice product="job_featured" />-ért — a kiemelés a teljes hirdetés lejáratát is felfrissíti.</span>
           </li>
         </ol>
       </section>

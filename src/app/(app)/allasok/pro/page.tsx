@@ -4,6 +4,7 @@ import { Icon } from "@/components/ui/icons";
 import { KintiLogo } from "@/components/ui/kinti-logo";
 import { isPro } from "@/lib/subscriptions";
 import { ProFeatures } from "./ProFeatures";
+import { ProductPrice } from "@/components/views/product-price";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -40,8 +41,11 @@ export default async function KintiProPage() {
 
         <div className="bg-surface-alt p-6 border-t border-line text-center">
           <p className="text-[13px] font-bold text-ink-muted uppercase tracking-wider mb-2">Kinti PRO előfizetés</p>
-          <div className="text-[36px] font-extrabold text-ink">
-            19 <span className="text-[20px] text-ink-muted font-bold">€ / hó</span>
+          {/* ⚠️ Az ár NEM írható be kézzel: az Android-appban a Google Play a
+              készülék Play-régiója szerint áraz (magyar fiókkal forint), és a
+              beégetett „19 € / hó" eltért attól, amit a Play levont. */}
+          <div className="text-[26px] font-extrabold text-ink">
+            <ProductPrice product="kinti_pro_monthly" />
           </div>
           <p className="text-[12px] text-ink-muted mt-1 mb-6">
             {/* ⚠️ A Paddle-árak ÁFÁ-VAL EGYÜTT vannak beállítva — élesben mérve:

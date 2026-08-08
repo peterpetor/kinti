@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCheckout } from "@/hooks/useCheckout";
+import { useProductPrice } from "@/hooks/useProductPrice";
 import { cn } from "@/lib/cn";
 import type { ProductType } from "@/lib/payments-config";
 
@@ -10,6 +11,10 @@ import type { ProductType } from "@/lib/payments-config";
  * megadott `customData`-val indítja — FONTOS, hogy a business_pro / job_featured
  * termékeknél a `businessId` / `jobId` is benne legyen, különben a webhook nem
  * tudja, mit aktiváljon a fizetés után.
+ *
+ * ⚠️ AZ ÁRAT A GOMB TESZI KI, nem a hívó. A `label` ezért NEM tartalmazhat árat.
+ * Korábban minden hívóhely a saját, beégetett „(19 € / hó)" szövegét adta át, és
+ * az Android-appban ez eltért attól, amit a Play ténylegesen levont.
  */
 export function BoostCheckoutButton({
   product,
@@ -19,10 +24,12 @@ export function BoostCheckoutButton({
 }: {
   product: ProductType;
   customData: Record<string, string>;
+  /** Csak a cselekvés — árat NE írj bele, azt a gomb teszi hozzá. */
   label: string;
   className?: string;
 }) {
   const { startCheckout, isLoading, error } = useCheckout();
+  const ar = useProductPrice(product);
 
   // A fogyasztói nyilatkozat tárgya termékfüggő — ne ígérjen mindig "PRO"-t,
   // a hirdetés-kiemelés pl. csak egyetlen hirdetést emel ki.
@@ -43,7 +50,7 @@ export function BoostCheckoutButton({
           className,
         )}
       >
-        {isLoading ? "Átirányítás…" : label}
+        {isLoading ? "Átirányítás…" : `${label} (${ar})`}
       </button>
       {error && <p className="mt-1 text-[11.5px] font-semibold text-accent">{error}</p>}
       {/* Fogyasztói nyilatkozat: a digitális szolgáltatás azonnali teljesítése +

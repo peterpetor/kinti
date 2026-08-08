@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { confirmDialog } from "@/lib/confirm";
 import { cn } from "@/lib/cn";
+import { useProductPrice } from "@/hooks/useProductPrice";
 import type { Business } from "@/lib/types";
 import { useCheckout } from "@/hooks/useCheckout";
 import { SubscriptionManageButton } from "@/components/views/subscription-manage-button";
@@ -48,6 +49,9 @@ export function BusinessManageForm({ business, token }: { business: Business; to
   const [phase, setPhase] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const { startCheckout, isLoading: isCheckoutLoading } = useCheckout();
+  // ⚠️ Androidon a Play SAJÁT (forintos) ára — a beégetett „19 €/hó" eltért
+  // attól, amit a Play pénztára ténylegesen levont.
+  const proAr = useProductPrice("business_pro_monthly");
 
   const handleUpgrade = () => {
     startCheckout({
@@ -173,7 +177,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
               isCheckoutLoading && "opacity-60 cursor-wait translate-y-1 shadow-none"
             )}
           >
-            {isCheckoutLoading ? "Töltés…" : "Kiemelés vásárlása (19 €/hó)"}
+            {isCheckoutLoading ? "Töltés…" : `Kiemelés vásárlása (${proAr})`}
           </button>
           {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár ÁFÁ-val együtt értendő
               — a Paddle így árazik (élesben mérve, ld. price-vat-claim.test.ts). */}
@@ -368,7 +372,7 @@ export function BusinessManageForm({ business, token }: { business: Business; to
               isCheckoutLoading && "opacity-60 cursor-wait",
             )}
           >
-            {isCheckoutLoading ? "Töltés…" : "Előfizetés — Szaknévsor PRO (19 €/hó)"}
+            {isCheckoutLoading ? "Töltés…" : `Előfizetés — Szaknévsor PRO (${proAr})`}
           </button>
           {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár ÁFÁ-val együtt értendő
               — a Paddle így árazik (élesben mérve, ld. price-vat-claim.test.ts). */}

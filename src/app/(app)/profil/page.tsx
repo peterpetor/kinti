@@ -396,7 +396,7 @@ async function OwnerDashboard({
           <BoostCheckoutButton
             product="business_pro_monthly"
             customData={{ type: "business_pro", businessId: business.id }}
-            label="Kiemelés vásárlása (19 € / hó)"
+            label="Kiemelés vásárlása"
             className="bg-pro text-on-pro hover:bg-[#e68600]"
           />
           {/* Ár-záradék (fogyasztóvédelem): a feltüntetett ár ÁFÁ-val együtt értendő

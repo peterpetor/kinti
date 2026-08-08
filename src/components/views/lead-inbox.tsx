@@ -95,7 +95,7 @@ function LockedLeadCard({ lead, businessId }: { lead: LeadCard; businessId: stri
         <BoostCheckoutButton
           product="business_pro_monthly"
           customData={{ type: "business_pro", businessId }}
-          label="Oldd fel PRO-val (19 € / hó)"
+          label="Oldd fel PRO-val"
           className="bg-pro text-on-pro hover:bg-[#e68600]"
         />
       </div>
